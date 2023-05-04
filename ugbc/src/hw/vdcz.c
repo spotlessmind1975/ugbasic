@@ -731,9 +731,65 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
+    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+
+    switch( _screen_mode->id ) {
+        case TILEMAP_MODE_STANDARD:
+            _environment->fontWidth = 8;
+            _environment->fontHeight = 8;
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 25;
+            _environment->screenTiles = 255;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
+            _environment->screenColors = 16;
+            _environment->currentModeBW = 0;
+
+            cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
+            cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x0800 );
+
+            break;
+    }
+
+    cpu_store_16bit( _environment, "CLIPX1", 0 );
+    cpu_store_16bit( _environment, "CLIPX2", (_environment->screenWidth-1) );
+    cpu_store_16bit( _environment, "CLIPY1", 0 );
+    cpu_store_16bit( _environment, "CLIPY2", (_environment->screenHeight-1) );
+
+    cpu_store_16bit( _environment, "ORIGINX", 0 );
+    cpu_store_16bit( _environment, "ORIGINY", 0 );
+
+    cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
+    cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
+    cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
+    cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
+    cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
+
 }
 
 void vdcz_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors, 8, 8 );
+
+    if ( mode ) {
+        vdcz_screen_mode_enable( _environment, mode );
+
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 0 );
+
+        _environment->currentMode = mode->id;
+        _environment->currentTileMode = 0;
+
+        vdcz_cls( _environment );
+
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -742,6 +798,24 @@ void vdcz_bitmap_disable( Environment * _environment ) {
 }
 
 void vdcz_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
+
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
+
+    if ( mode ) {
+
+        vdcz_screen_mode_enable( _environment, mode );
+
+        _environment->currentMode = mode->id;
+        _environment->currentTileMode = 1;
+
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
+
+        vdcz_cls( _environment );
+
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -946,11 +1020,175 @@ void vdcz_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vScrollTextUp, src_hw_vdcz_vscroll_text_up_asm );
+    deploy( clsText, src_hw_vdcz_cls_text_asm );
+
+    outline1("LD DE, (%s)", _text);
+    outline1("LD A, (%s)", _text_size);
+    outline0("LD C, A");
+
     deploy( textEncodedAt, src_hw_vdcz_text_at_asm );
+    deploy( textEncodedAtText, src_hw_vdcz_text_at_text_asm );
+    outline0("CALL TEXTATTILEMODE");
 
 }
 
 void vdcz_initialization( Environment * _environment ) {
+
+    deploy( vdczvars, src_hw_vdcz_vars_asm );
+    deploy( vdczstartup, src_hw_vdcz_startup_asm );
+    src_hw_chipset_mob_asm = src_hw_vdcz_mob_asm;
+    src_hw_chipset_mob_asm_len = src_hw_vdcz_mob_asm_len;
+
+    variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
+    variable_global( _environment, "CURRENTWIDTH" );
+    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 192  );
+    variable_global( _environment, "CURRENTHEIGHT" );
+    variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
+    variable_global( _environment, "CURRENTTILES" );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE, 40 );
+    variable_global( _environment, "CURRENTTILESWIDTH" );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE, 24 );
+    variable_global( _environment, "CURRENTTILESHEIGHT" );
+    variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
+    variable_global( _environment, "FONTWIDTH" );
+    variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
+    variable_global( _environment, "FONTHEIGHT" );
+    variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "SPRITEADDRESS" );    
+    variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1000 );
+    variable_global( _environment, "SPRITEAADDRESS" );    
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x1800 );
+    variable_global( _environment, "TEXTADDRESS" );    
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x3800 );
+    variable_global( _environment, "COLORMAPADDRESS" );    
+    variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "PATTERNADDRESS" );    
+    variable_import( _environment, "PALETTE", VT_BUFFER, 16 );
+    variable_global( _environment, "PALETTE" ); 
+
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 80, 25, 8, 8, 8, "Text Mode" );
+ 
+    outline0("CALL VDCZSTARTUP");
+
+    variable_import( _environment, "XGR", VT_POSITION, 0 );
+    variable_global( _environment, "XGR" );
+    variable_import( _environment, "YGR", VT_POSITION, 0 );
+    variable_global( _environment, "YGR" );
+    variable_import( _environment, "LINE", VT_WORD, (unsigned short)(0xffff) );
+    variable_global( _environment, "LINE" );
+
+    variable_import( _environment, "CLIPX1", VT_POSITION, 0 );
+    variable_global( _environment, "CLIPX1" );
+    variable_import( _environment, "CLIPX2", VT_POSITION, 255 );
+    variable_global( _environment, "CLIPX2" );
+    variable_import( _environment, "CLIPY1", VT_POSITION, 0 );
+    variable_global( _environment, "CLIPY1" );
+    variable_import( _environment, "CLIPY2", VT_POSITION, 191 );
+    variable_global( _environment, "CLIPY2" );
+
+    variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINX" );
+    variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINY" );
+
+    variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONX" );
+    variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONY" );
+    
+    variable_import( _environment, "XCURSYS", VT_BYTE, 0 );
+    variable_global( _environment, "XCURSYS" );
+    variable_import( _environment, "YCURSYS", VT_BYTE, 0 );
+    variable_global( _environment, "YCURSYS" );
+    variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
+    variable_global( _environment, "TABCOUNT" );
+
+    variable_import( _environment, "CLINEX", VT_BYTE, 0 );
+    variable_global( _environment, "CLINEX" );
+
+    variable_import( _environment, "CLINEY", VT_BYTE, 0 );
+    variable_global( _environment, "CLINEY" );
+
+    variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
+    variable_global( _environment, "TABSTODRAW" );
+
+    variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
+    variable_global( _environment, "CURRENTMODE" );
+    variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
+    variable_global( _environment, "CURRENTTILEMODE" );
+
+    variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
+    variable_global( _environment, "SPRITECOUNT" );
+
+    variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
+    variable_global( _environment, "SPRITEXY" );
+
+    variable_import( _environment, "TILEX", VT_BYTE, 0 );
+    variable_global( _environment, "TILEX" );
+    variable_import( _environment, "TILEY", VT_BYTE, 0 );
+    variable_global( _environment, "TILEY" );
+    variable_import( _environment, "TILEX2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEX2" );
+    variable_import( _environment, "TILET", VT_BYTE, 0 );
+    variable_global( _environment, "TILET" );
+    variable_import( _environment, "TILEW", VT_BYTE, 0 );
+    variable_global( _environment, "TILEW" );
+    variable_import( _environment, "TILEH", VT_BYTE, 0 );
+    variable_global( _environment, "TILEH" );
+    variable_import( _environment, "TILEW2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEW2" );
+    variable_import( _environment, "TILEH2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEH2" );
+    variable_import( _environment, "TILEA", VT_BYTE, 0 );
+    variable_global( _environment, "TILEA" );
+    variable_import( _environment, "TILEO", VT_WORD, 0 );
+    variable_global( _environment, "TILEO" );
+
+    variable_import( _environment, "XSCROLLPOS", VT_BYTE, 0 );
+    variable_global( _environment, "XSCROLLPOS" );
+    variable_import( _environment, "YSCROLLPOS", VT_BYTE, 0 );
+    variable_global( _environment, "YSCROLLPOS" );
+    variable_import( _environment, "XSCROLL", VT_BYTE, 0 );
+    variable_global( _environment, "XSCROLL" );
+    variable_import( _environment, "YSCROLL", VT_BYTE, 0 );
+    variable_global( _environment, "YSCROLL" );
+    variable_import( _environment, "DIRECTION", VT_BYTE, 0 );
+    variable_global( _environment, "DIRECTION" );
+
+    variable_import( _environment, "ONSCROLLUP", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLUP" );
+
+    variable_import( _environment, "ONSCROLLDOWN", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLDOWN" );
+
+    variable_import( _environment, "ONSCROLLLEFT", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLLEFT" );
+
+    variable_import( _environment, "ONSCROLLRIGHT", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLRIGHT" );
+
+    variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEF" );
+
+    variable_import( _environment, "IMAGET", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGET" );
+
+    variable_import( _environment, "BLITIMAGEBLITTINGADDR", VT_ADDRESS, 0 );
+    variable_global( _environment, "BLITIMAGEBLITTINGADDR" );
+    variable_import( _environment, "BLITTMPPTR", VT_ADDRESS, 0 );
+    variable_global( _environment, "BLITTMPPTR" );
+    variable_import( _environment, "BLITTMPPTR2", VT_ADDRESS, 0 );
+    variable_global( _environment, "BLITTMPPTR2" );
+
+    variable_import( _environment, "VBLFLAG", VT_BYTE, 0 );
+    variable_global( _environment, "VBLFLAG" ); 
+
+    vdcz_tilemap_enable( _environment, 80, 25, 8, 8, 8 );
+
+    font_descriptors_init( _environment, 0 );
+    
+    _environment->currentRgbConverterFunction = rgbConverterFunction;
+    _environment->screenShades = 16;
 
 }
 
