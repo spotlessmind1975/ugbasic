@@ -34,22 +34,22 @@
 #include "../ugbc.h"
 
 #define COLOR_BLACK					0
-#define COLOR_WHITE					1
-#define COLOR_RED					2
-#define COLOR_CYAN					3
-#define COLOR_VIOLET				4
-#define COLOR_GREEN					5
-#define COLOR_BLUE					6
-#define COLOR_YELLOW				7
-#define COLOR_ORANGE				8
-#define COLOR_BROWN					9
-#define COLOR_LIGHT_RED				10
-#define COLOR_DARK_GREY				11
-#define COLOR_GREY					12
-#define COLOR_LIGHT_GREEN			13
-#define COLOR_LIGHT_BLUE			14
-#define COLOR_LIGHT_GREY			15
-#define COLOR_DARK_BLUE				6
+#define COLOR_WHITE					15
+#define COLOR_RED					8
+#define COLOR_CYAN					6
+#define COLOR_VIOLET				10
+#define COLOR_GREEN					4
+#define COLOR_BLUE					2
+#define COLOR_YELLOW				12
+#define COLOR_ORANGE				COLOR_RED
+#define COLOR_BROWN					COLOR_RED
+#define COLOR_LIGHT_RED				9
+#define COLOR_DARK_GREY				1
+#define COLOR_GREY					14
+#define COLOR_LIGHT_GREEN			5
+#define COLOR_LIGHT_BLUE			3
+#define COLOR_LIGHT_GREY			14
+#define COLOR_DARK_BLUE				2
 #define COLOR_MAGENTA				COLOR_RED
 #define COLOR_PURPLE				COLOR_VIOLET
 #define COLOR_LAVENDER       		COLOR_VIOLET
@@ -73,44 +73,11 @@
 #define TEXT_COLUMNS_COUNT          40
 #define TEXT_ROWS_COUNT             25
 
-#define BITMAP_MODE_STANDARD        2           // Standard Bitmap Mode     320 x 200 x 2
-#define BITMAP_MODE_MULTICOLOR      3           // Multicolor Bitmap Mode   160 x 200 x 4
-#define BITMAP_MODE_AH              5           // Advanced HiRes           320 x 200 x 16 (w/l)
-#define BITMAP_MODE_AIFLI	        6           
-#define BITMAP_MODE_ASSLACE         7
-#define BITMAP_MODE_ECI             8
-#define BITMAP_MODE_IAFLI           9
-#define BITMAP_MODE_IH	           10
-#define BITMAP_MODE_MRFLI          11
-#define BITMAP_MODE_MUCSUFLI       12
-#define BITMAP_MODE_MUCSUH         13
-#define BITMAP_MODE_MUFLI          14
-#define BITMAP_MODE_MUIFLI         15
-#define BITMAP_MODE_NUFLI          16
-#define BITMAP_MODE_NUIFLI         17
-#define BITMAP_MODE_SH             18
-#define BITMAP_MODE_SHFLI          19
-#define BITMAP_MODE_SHI	           20
-#define BITMAP_MODE_SHIFLI         21
-#define BITMAP_MODE_SHIFXL         22
-#define BITMAP_MODE_UFLI           23
-#define BITMAP_MODE_UIFLI          24
-#define BITMAP_MODE_TRIFLI         25
-#define BITMAP_MODE_XFLI           26
-#define BITMAP_MODE_XIFLI          27
-#define BITMAP_MODE_FLI            28
-#define BITMAP_MODE_HCB	           29
-#define BITMAP_MODE_IFLI           30
-#define BITMAP_MODE_MUCSU          31
-#define BITMAP_MODE_MCI            32
-#define BITMAP_MODE_MEGATEXT       33
-#define BITMAP_MODE_PRS            34
+#define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     640 x 200 x 2
 
 #define BITMAP_MODE_DEFAULT     BITMAP_MODE_STANDARD
 
-#define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        40 x 25 x 16
-#define TILEMAP_MODE_MULTICOLOR     1           // Multicolor Character Mode      40 x 25 x 16
-#define TILEMAP_MODE_EXTENDED       4           // Extended Background Color Mode 40 x 25 x 20
+#define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        80 x 25 x 16
 
 #define SPRITE_COUNT                8
 #define SPRITE_WIDTH                24

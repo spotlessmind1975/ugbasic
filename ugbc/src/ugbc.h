@@ -3640,13 +3640,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_c128.h"
     #include "hw/6502.h"
     #include "hw/vic2.h"
-    #include "hw/vdc.h"
     #include "hw/sid.h"
     #include "hw/c128.h"
 #elif __c128z__
     #include "../src-generated/modules_c128z.h"
     #include "hw/z80.h"
-    #include "hw/vic2z.h"
     #include "hw/vdcz.h"
     #include "hw/sidz.h"
     #include "hw/c128z.h"

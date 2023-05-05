@@ -35,5 +35,114 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+; PLOTX    = $F7 ; $F8  -> E
+; PLOTY    = $F9        -> D
+; PLOTM    = $FB        -> B
+; PLOTOMA  = $FD
+; PLOTAMA  = $FC
+
 PLOT:
+
+    PUSH AF
+
+    LD A, (CURRENTTILEMODE)
+    CP 1
+    RET Z
+
+    LD A, (CLIPY2)
+    LD B, A
+    LD A, IYL
+    CP B
+    JR C, PLOTCLIP2
+    JR Z, PLOTCLIP2
+    JP PLOTP
+PLOTCLIP2:
+    LD A, (CLIPY1)
+    LD B, A
+    LD A, IYL
+    CP B
+    JR Z, PLOTCLIP3
+    JR NC, PLOTCLIP3
+    JP PLOTP
+PLOTCLIP3:
+PLOTCLIP3B:
+    LD A, (CLIPX2+1)
+    LD B, A
+    LD A, D
+    CP B
+    JR C, PLOTCLIP4
+    JR Z, PLOTCLIP32
+    JP PLOTP
+PLOTCLIP32:
+PLOTCLIP32B:
+    LD A, (CLIPX2)
+    LD B, A
+    LD A, E
+    CP B
+    JR C, PLOTCLIP4
+    JR Z, PLOTCLIP4
+    JP PLOTP
+PLOTCLIP4:
+PLOTCLIP4B:
+    LD A, (CLIPX1+1)
+    LD B, A
+    LD A, D
+    CP B
+    JR NC, PLOTCLIP5
+    JR Z, PLOTCLIP42
+    JP PLOTP
+PLOTCLIP42:
+PLOTCLIP42B:
+    LD A, (CLIPX1)
+    LD B, A
+    LD A, E
+    CP B
+    JR NC, PLOTCLIP5
+    JR Z, PLOTCLIP5
+    JP PLOTP
+PLOTCLIP5:
+
+PLOTMODE:
+
+    CALL VCDZPOS
+
+    ;----------------------------------------------
+    ;depending on PLOTM, routine draws or erases
+    ;----------------------------------------------
+
+    POP AF
+    CP 0
+    JP Z, PLOTE                  ;if = 0 then branch to clear the point
+    CP 1
+    JP Z, PLOTD                  ;if = 1 then branch to draw the point
+    CP 2
+    JP Z, PLOTG                  ;if = 2 then branch to get the point (0/1)
+    CP 3
+    JP Z, PLOTC                  ;if = 3 then branch to get the color index (0...15)
+    JP PLOTP2
+
+PLOTD:
+
+    LD DE, HL
+    CALL VDCZGETCHAR
+    AND C
+    OR B
+    LD DE, HL
+    CALL VDCZPUTCHAR
+    JP PLOTDONE
+
+PLOTE:
+
+    LD DE, HL
+    CALL VDCZGETCHAR
+    AND C
+    LD DE, HL
+    CALL VDCZPUTCHAR
+    JP PLOTDONE
+
+PLOTC:
+PLOTG:
+    JR PLOTDONE
+
+PLOTDONE:
     RET

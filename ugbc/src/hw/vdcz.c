@@ -38,22 +38,22 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-        { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },
-        { 0xff, 0xff, 0xff, 0xff, 1, "WHITE" },
-        { 0x80, 0x00, 0x00, 0xff, 2, "RED" },
-        { 0xaa, 0xff, 0xe6, 0xff, 3, "CYAN" },
-        { 0xcc, 0x44, 0xcc, 0xff, 4, "VIOLET" },
-        { 0x00, 0xcc, 0x55, 0xff, 5, "GREEN" },
-        { 0x00, 0x00, 0xaa, 0xff, 6, "BLUE" },
-        { 0xee, 0xee, 0x77, 0xff, 7, "YELLOW" },
-        { 0xa1, 0x68, 0x3c, 0xff, 8, "ORANGE" },
-        { 0xdd, 0x88, 0x65, 0xff, 9, "BROWN" },
-        { 0xff, 0x77, 0x77, 0xff, 10, "LIGHT_RED" },
-        { 0x33, 0x33, 0x33, 0xff, 11, "DARK_GREY" },
-        { 0x77, 0x77, 0x77, 0xff, 12, "GREY" },
-        { 0xaa, 0xff, 0x66, 0xff, 13, "LIGHT GREEN" },
-        { 0x00, 0x88, 0xff, 0xff, 14, "LIGHT BLUE" },
-        { 0xbb, 0xbb, 0xbb, 0xff, 15, "LIGHT GREY" }
+        { 0x00, 0x00, 0x00, 0xFF,  0, "BLACK" },
+        { 0x22, 0x22, 0x22, 0xFF,  1, "LIGHT BLACK" },
+        { 0x00, 0x00, 0x88, 0xFF,  2, "DARK BLUE" },
+        { 0x00, 0x00, 0xFF, 0xFF,  3, "LIGHT BLUE" },
+        { 0x00, 0x88, 0x00, 0xFF,  4, "DARK GREEN" },
+        { 0x00, 0xFF, 0x00, 0xFF,  5, "LIGHT GREEN" },
+        { 0x00, 0x88, 0x88, 0xFF,  6, "DARK CYAN" },
+        { 0x00, 0xFF, 0xFF, 0xFF,  7, "LIGHT CYAN" },
+        { 0x88, 0x00, 0x00, 0xFF,  8, "DARK RED" },
+        { 0xFF, 0x00, 0x00, 0xFF,  9, "LIGHT RED" },
+        { 0x80, 0x40, 0x80, 0xFF, 10, "DARK PURPLE" },
+        { 0xFF, 0x80, 0xFF, 0xFF, 11, "LIGHT PURPLE" },
+        { 0x80, 0x80, 0x40, 0xFF, 12, "DARK YELLOW" },
+        { 0xFF, 0xFF, 0x80, 0xFF, 13, "LIGHT YELLOW" },
+        { 0x80, 0x80, 0x80, 0xFF, 14, "DARK WHITE" },
+        { 0xFF, 0xFF, 0xFF, 0xFF, 15, "LIGHT WHITE" },
 };
 
 static RGBi * commonPalette;
@@ -79,315 +79,82 @@ RGBi * vdcz_image_nearest_system_color( RGBi * _color ) {
 
 }
 
-/**
- * This method can be used to convert 
- *     8x8 RGB (3 bytes) pixel (_source) [8x8x3 = 192 bytes]
- * into 
- *     8x8 bitmap (1 bit) pixel + 1 (byte) [8x1 + 1 = 9 bytes]
- *       foreground and background color (_dest)
- * 
- * Since the 8x8 pixel area belong to a larger picture,
- * this function will need the picture _width in order
- * to move to the next line to analyze.
- */
-static void vdcz_image_converter_tile( Environment * _environment, char * _source, char * _dest, int _width, int _depth, int _source_width ) {
+static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
-    int colorIndexesCount[COLOR_COUNT];
-    memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
-    int trans = 0;
-
-    char * source = _source;
-
-    // Clear the box and colors
-    memset( _dest, 0, 9 );
-
-    // Loop for all the box surface
-    for (int y=0; y<8; ++y) {
-        for (int x=0; x<8; ++x) {
-
-            RGBi rgb;
-
-            memset( &rgb, 0, sizeof( RGBi ) );
-
-            // Take the color of the pixel
-            rgb.red = *source;
-            rgb.green = *(source + 1);
-            rgb.blue = *(source + 2);
-            if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
-            } else {
-                rgb.alpha = 255;
-            }
-            if ( rgb.alpha == 0 ) {
-                rgb.red = 0;
-                rgb.green = 0;
-                rgb.blue = 0;
-            }
-
-            if ( rgb.alpha < 255 ) {
-                trans = 1;
-            } else {
-                RGBi *systemRgb = vdcz_image_nearest_system_color( &rgb );
-                ++colorIndexesCount[systemRgb->index];
-            }
-
-            source += _depth;
-
-        }
-
-        source += _depth * ( _source_width - 8 );
-
+    switch( _mode ) {
+        case BITMAP_MODE_STANDARD:
+            return 3 + ( ( _width >> 3 ) * _height );
     }
-
-    int colorBackground = 0;
-    int colorBackgroundMax = 0;
-    int colorForeground = 0;
-    int colorForegroundMax = 0;
-    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
-        if ( colorIndexesCount[xx] > colorBackgroundMax ) {
-            colorBackground = xx;
-            colorBackgroundMax = colorIndexesCount[xx];
-        };
-    }
-
-    colorIndexesCount[colorBackground] = 0;
-
-    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
-        if ( colorIndexesCount[xx] > colorForegroundMax ) {
-            colorForeground = xx;
-            colorForegroundMax = colorIndexesCount[xx];
-        };
-    }
-
-    if ( trans ) {
-        if ( colorForeground == 0 ) {
-            colorForeground = colorBackground; 
-            colorBackground = 0;
-        } else {
-            colorBackground = 0;
-        }
-    }
-
-    source = _source;
-
-    for (int y=0; y<8; ++y) {
-        for (int x=0; x<8; ++x) {
-
-            RGBi rgb;
-
-            memset( &rgb, 0, sizeof( RGBi ) );
-
-            rgb.red = *source;
-            rgb.green = *(source + 1);
-            rgb.blue = *(source + 2);
-            if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
-            } else {
-                rgb.alpha = 255;
-            }
-            if ( rgb.alpha == 0 ) {
-                rgb.red = 0;
-                rgb.green = 0;
-                rgb.blue = 0;
-            }
-
-            RGBi *systemRgb = vdcz_image_nearest_system_color( &rgb );
-
-            char bitmask = 1 << ( 7 - ((x) & 0x7) );
-
-            if ( rgb.alpha < 255 ) {
-                *( _dest + y ) &= ~bitmask;
-                adilinepixel(colorBackground);
-            } else {
-                if ( systemRgb->index != colorBackground ) {
-                    adilinepixel(colorForeground);
-                    *( _dest + y ) |= bitmask;
-                    // printf("*");
-                } else {
-                   adilinepixel(colorBackground);
-                     *( _dest + y ) &= ~bitmask;
-                    // printf(" ");
-                }
-            }
-
-            source += _depth;
-
-        }
-
-        source += _depth * ( _source_width - 8 );
-
-    }
-
-    *( _dest + 8 ) = ( colorForeground << 4 ) | colorBackground ;
+    return 0;
 
 }
 
-/**
- * This method can be used to convert 
- *     WxH RGB (3/4 bytes) pixel (_source) [WxHx3/4 bytes]
- * into 
- *     WxH bitmap (1 bit) pixel + (W/8xH + W/8xH/8) (bytes)
- *       foreground and background color (_dest)
- * 
- * Since the WXH pixel area could belong to a larger picture,
- * this function will need the picture _source_width in order
- * to move to the next line to analyze.
- */
-static void vdcz_image_converter_tiles( Environment * _environment, char * _source, char * _dest, int _width, int _height, int _depth, int _source_width ) {
+static Variable * vcdz_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    int bitmapSize = ( _width>>3 ) * _height;
-    int colormapSize = ( _width>>3 ) * (_height>>3);
+    // ignored on bitmap mode
+    (void)!_transparent_color;
 
-    memset( _dest, 0, bitmapSize + colormapSize );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
-    adilinebeginbitmap("BMD2");
-
-    for( int y=0; y<_height; y+=8 ) {
-        for( int x=0; x<_width; x+=8 ) {
-
-            char * source = _source + ( ( y * _source_width ) + x ) * _depth;
-            char tile[9];
-
-            vdcz_image_converter_tile( _environment, source, tile, _width, _depth, _source_width );
-
-            int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
-            // x = 8, y = 8
-            // offset = ((8 >> 3) * 8 * (16>>3) ) + ((8>>3) * 8) + ((8) & 7)
-            // offset = (1 * 8 * 2 ) + (1 * 8)
-            // offset = 16 + 8 = 24
-
-            char * destBitmap = _dest + offset;
-            char * destColormap = _dest + bitmapSize + ( ( ( y >> 3 ) * ( _width >> 3 ) ) + ( x >> 3 ) );
-            for( int i=0; i<8; ++i ) {
-                *destBitmap = tile[i];
-                ++destBitmap;
-            }
-            // printf("tile at %d,%d color = %2.2x\n", x, y, tile[8] );
-            *destColormap = tile[8];            
-        }
-    }
-
-    adilineendbitmap();
-
-}
-
-/**
- * This method can be used to convert 
- *     4x8 RGB (3/4 bytes) pixel (_source) [8x8x3/4 = 192/256 bytes]
- * into 
- *     4x8 colormap (2 bit) pixel + 1 (bytes) [8x1 + 2 = 10 bytes]
- *       color1 [hi], color2, color3 [hi], background (_dest)
- * 
- * Since the 4x8 pixel area belong to a larger picture,
- * this function will need the picture _width in order
- * to move to the next line to analyze. Moreover, background
- * color should be given since it is not settable and it will
- * be returned as low nibble of second color byte.
- */
-static void vdcz_image_converter_tile_multicolor( Environment * _environment, char * _source, char * _dest, int _width, int _depth, int _background, int _source_width ) {
-
-    int colorIndexesCount[COLOR_COUNT];
-    memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
-    int trans = 0;
-
-    char * source = _source;
-
-    // Clear the box and colors
-    memset( _dest, 0, 10 );
-
-    // Loop for all the box surface
-    for (int y=0; y<8; ++y) {
-        for (int x=0; x<4; ++x) {
-
-            RGBi rgb;
-
-            memset( &rgb, 0, sizeof( RGBi ) );
-
-            // Take the color of the pixel
-            rgb.red = *source;
-            rgb.green = *(source + 1);
-            rgb.blue = *(source + 2);
-            if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
-            } else {
-                rgb.alpha = 255;
-            }
-            if ( rgb.alpha == 0 ) {
-                rgb.red = 0;
-                rgb.green = 0;
-                rgb.blue = 0;
-            }
-
-            if ( rgb.alpha < 255 ) {
-                trans = 1;
-            } else {
-
-                RGBi *systemRgb = vdcz_image_nearest_system_color( &rgb );
-
-                ++colorIndexesCount[systemRgb->index];
-
-            }
-
-            source += _depth;
-
-        }
-
-        source += _depth * ( _source_width - 4 );
-
-    }
-
-    if ( trans ) {
-        _background = 0;
-    }
+    RGBi * palette = malloc_palette( MAX_PALETTE );
     
-    colorIndexesCount[_background] = 0;
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    int colorFirst = 0;
-    int colorFirstMax = 0;
-    int colorSecond = 0;
-    int colorSecondMax = 0;
-    int colorThird = 0;
-    int colorThirdMax = 0;
-
-    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
-        if ( colorIndexesCount[xx] > colorFirstMax ) {
-            colorFirst = xx;
-            colorFirstMax = colorIndexesCount[xx];
-        };
+    if (paletteColorCount > 2) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
 
-    colorIndexesCount[colorFirst] = 0;
+    int i, j, k;
 
-    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
-        if ( colorIndexesCount[xx] > colorSecondMax ) {
-            colorSecond = xx;
-            colorSecondMax = colorIndexesCount[xx];
-        };
-    }
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE[0]) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    colorIndexesCount[colorSecond] = 0;
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE[0]) / sizeof(RGBi), SYSTEM_PALETTE );
 
-    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
-        if ( colorIndexesCount[xx] > colorThirdMax ) {
-            colorThird = xx;
-            colorThirdMax = colorIndexesCount[xx];
-        };
-    }
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    colorIndexesCount[colorThird] = 0;
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
+    // printf("bufferSize = %d\n", bufferSize );
 
-    source = _source;
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_STANDARD );
 
-    for (int y=0; y<8; ++y) {
-        for (int x=0; x<4; ++x) {
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
 
-            RGBi rgb;
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, bitmask;
 
-            memset( &rgb, 0, sizeof( RGBi ) );
+    // Color of the pixel to convert
+    RGBi rgb;
 
-            rgb.red = *source;
-            rgb.green = *(source + 1);
-            rgb.blue = *(source + 2);
+    *(buffer) = (_frame_width & 0XFF );
+    *(buffer+1) = ( (_frame_width>>3) & 0XFF );
+    *(buffer+2) = _frame_height;
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
+
+    adilinebeginbitmap("BMD");
+
+    int colorIndex = 0;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
             if ( _depth > 3 ) {
                 rgb.alpha = *(_source + 3);
             } else {
@@ -399,93 +166,45 @@ static void vdcz_image_converter_tile_multicolor( Environment * _environment, ch
                 rgb.blue = 0;
             }
 
-            char colorIndex = 0;
-
-            if ( rgb.alpha < 255 ) {
-                adilinepixel(_background);
-                colorIndex = 0;
-            } else {
-
-                RGBi *systemRgb = vdcz_image_nearest_system_color( &rgb );
-
-                if ( systemRgb->index == colorFirst ) {
-                    adilinepixel(colorFirst);
-                    colorIndex = 1;
-                } else if ( systemRgb->index == colorSecond ) {
-                    adilinepixel(colorSecond);
-                    colorIndex = 2;
-                } else if ( systemRgb->index == colorThird ) {
-                    adilinepixel(colorThird);
-                    colorIndex = 3;
-                } else {
-                    adilinepixel(_background);
+            int minDistance = 9999;
+            for( int i=0; i<2; ++i ) {
+                int distance = rgbi_distance(&commonPalette[i], &rgb );
+                if ( distance < minDistance ) {
+                    minDistance = distance;
+                    colorIndex = i;
                 }
-
             }
 
-            char bitmask = colorIndex << (6 - ((x & 0x3) * 2));
+            offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
+            bitmask = 1 << ( 7 - (image_x & 0x7) );
 
-            *(_dest + y) |= bitmask;
+            if ( colorIndex > 0) {
+                *( buffer + offset + 2) |= bitmask;
+            } else {
+                *( buffer + offset + 2) &= ~bitmask;
+            }
 
-            source += _depth;
+            adilinepixel(colorIndex);
+
+            _source += _depth;
 
         }
 
-        source += _depth * ( _source_width - 4 );
+        _source += ( _width - _frame_width ) * _depth;
 
-    }
+        // printf("\n" );
 
-    *( _dest + 8 ) = ( colorFirst << 4 ) | colorSecond ;
-    *( _dest + 9 ) = ( _background << 4 ) | colorThird;
-
-}
-
-/**
- * This method can be used to convert 
- *     WxH RGB (3/4 bytes) pixel (_source) [WxHx3/4 bytes]
- * into 
- *     WxH bitmap (2 bit) pixel + (W/4xH + 2*(W/4xH/8)) (bytes)
- *       color1 [hi], color2, color3 [hi], background (_dest)
- * 
- * Since the WXH pixel area could belong to a larger picture,
- * this function will need the picture _source_width in order
- * to move to the next line to analyze. Moreover, background
- * color is fixed also if it is returned as lower nibble
- * of one byte of 2 of colors.
- */
-static void vdcz_image_converter_tiles_multicolor( Environment * _environment, char * _source, char * _dest, int _width, int _height, int _depth, int _source_width, int _background ) {
-
-    int bitmapSize = ( _width>>2 ) * _height;
-    int colormap1Size = ( _width>>2 ) * (_height>>3);
-    int colormap2Size = ( _width>>2 ) * (_height>>3);
-
-    memset( _dest, 0, bitmapSize + colormap1Size + colormap2Size );
-
-    adilinebeginbitmap("BMD4");
-
-    for( int y=0; y<_height; y+=8 ) {
-        for( int x=0; x<_width; x+=4 ) {
-
-            char * source = _source + ( ( y * _source_width ) + x ) * _depth;
-            char tile[10];
-
-            vdcz_image_converter_tile_multicolor( _environment, source, tile, _width, _depth, _background, _source_width );
-
-            int offset = ((y>>3) * 8 *( _width >> 2 ) ) + ((x>>2) * 8) + ((y) & 0x07);
-
-            char * destBitmap = _dest + offset;
-            char * destColormap1 = _dest + bitmapSize + ( ( ( y >> 3 ) * ( _width >> 2 ) ) + ( x >> 2 ) );
-            char * destColormap2 = _dest + bitmapSize + colormap1Size + ( ( ( y >> 3 ) * ( _width >> 2 ) ) + ( x >> 2 ) );
-            for( int i=0; i<8; ++i ) {
-                *destBitmap = tile[i];
-                ++destBitmap;
-            }
-            *destColormap1 = tile[8];
-            *destColormap2 = tile[9];
-        }
     }
 
     adilineendbitmap();
+
+    // printf("----\n");
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    // printf("----\n");
+
+    return result;
 
 }
 
@@ -501,10 +220,6 @@ static void vdcz_image_converter_tiles_multicolor( Environment * _environment, c
  * @param _result Where to store the result
  */
 Variable * vdcz_collision( Environment * _environment, char * _sprite ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    deploy( sprite, src_hw_vdcz_sprites_asm );
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(collision result)");
@@ -557,7 +272,13 @@ void vdcz_border_color( Environment * _environment, char * _border_color ) {
  * @param _background_color Background color to use
  */
 void vdcz_background_color( Environment * _environment, int _index, int _background_color ) {
- 
+
+    outline0("LD A, 26");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", _background_color & 0x0f );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
+
 }
 
 /**
@@ -571,7 +292,13 @@ void vdcz_background_color( Environment * _environment, int _index, int _backgro
  * @param _background_color Background color to use
  */
 void vdcz_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
- 
+
+    outline0("LD A, 26");
+    outline0("LD IXH, A");
+    outline1("LD A, (%s)", _background_color );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
+
 }
 
 /**
@@ -585,7 +312,13 @@ void vdcz_background_color_vars( Environment * _environment, char * _index, char
  * @param _background_color Background color to use
  */
 void vdcz_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
- 
+
+    outline0("LD A, 26");
+    outline0("LD IXH, A");
+    outline1("LD A, (%s)", _background_color );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
+
 }
 
 /**
@@ -599,7 +332,12 @@ void vdcz_background_color_semivars( Environment * _environment, int _index, cha
  * @param _background_color Background color to use
  */
 void vdcz_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
- 
+
+    outline0("LD A, 26");
+    outline0("LD IXH, A");
+    outline0("CALL VDCZREAD");
+    outline1("LD (%s), A", _background_color );
+
 }
 
 /**
@@ -746,8 +484,37 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 16;
             _environment->currentModeBW = 0;
 
+            outline0("LD A, 25");
+            outline0("LD IXH, A");
+            outline0("CALL VDCZREAD");
+            outline0("AND $7F");
+            outline0("LD IXL, A");
+            outline0("CALL VDCZWRITE");
+
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x0800 );
+
+            break;
+        case BITMAP_MODE_STANDARD:
+            _environment->fontWidth = 8;
+            _environment->fontHeight = 8;
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 25;
+            _environment->screenTiles = 255;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
+            _environment->screenColors = 16;
+            _environment->currentModeBW = 1;
+
+            cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
+            cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x8000 );
+
+            outline0("LD A, 25");
+            outline0("LD IXH, A");
+            outline0("CALL VDCZREAD");
+            outline0("OR $80");
+            outline0("LD IXL, A");
+            outline0("CALL VDCZWRITE");
 
             break;
     }
@@ -836,7 +603,16 @@ void vdcz_point_at_int( Environment * _environment, int _x, int _y ) {
     deploy( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( plot, src_hw_vdcz_plot_asm );
-    
+
+    outline1( "LD A, $%2.2x", ( _x & 0xff ) );
+    outline0( "LD E, A" );
+    outline1( "LD A, $%2.2x", ( ( _x >> 8 ) & 0xff ) );
+    outline0( "LD D, A" );
+    outline1( "LD A, $%2.2x", _y );
+    outline0( "LD IYL, A" );
+    outline0( "LD A, 1" );
+    outline0( "CALL PLOT" );
+
 }
 
 void vdcz_point_at_vars( Environment * _environment, char *_x, char *_y ) {
@@ -847,6 +623,15 @@ void vdcz_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     deploy( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( plot, src_hw_vdcz_plot_asm );
+
+    outline1( "LD A, %s", x->realName );
+    outline0( "LD E, A" );
+    outline1( "LD A, %s+1", x->realName );
+    outline0( "LD D, A" );
+    outline1( "LD A, %s", y->realName );
+    outline0( "LD IYL, A" );
+    outline0( "LD A, 1" );
+    outline0( "CALL PLOT" );
     
 }
 
@@ -859,7 +644,17 @@ void vdcz_point( Environment * _environment, char *_x, char *_y, char * _result 
     deploy( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( plot, src_hw_vdcz_plot_asm );
-    
+
+    outline1( "LD A, %s", x->realName );
+    outline0( "LD E, A" );
+    outline1( "LD A, %s+1", x->realName );
+    outline0( "LD D, A" );
+    outline1( "LD A, %s", y->realName );
+    outline0( "LD IYL, A" );
+    outline0( "LD A, 3" );
+    outline0( "CALL PLOT" );
+    outline1( "LD (%s), A", result->realName );
+
 }
 
 void vdcz_screen_on( Environment * _environment ) {
@@ -885,15 +680,11 @@ void vdcz_sprite_data_from( Environment * _environment, char * _sprite, char * _
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * image = variable_retrieve_or_define( _environment, _image, VT_IMAGE, 0 );
 
-    deploy( sprite, src_hw_vdcz_sprites_asm );
-
 }
 
 void vdcz_sprite_enable( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-
-    deploy( sprite, src_hw_vdcz_sprites_asm );
 
 }
 
@@ -901,8 +692,6 @@ void vdcz_sprite_disable( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_vdcz_sprites_asm );
-    
 }
 
 void vdcz_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y ) {
@@ -910,8 +699,6 @@ void vdcz_sprite_at( Environment * _environment, char * _sprite, char * _x, char
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
-
-    deploy( sprite, src_hw_vdcz_sprites_asm );
     
 }
 
@@ -919,47 +706,35 @@ void vdcz_sprite_expand_vertical( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_vdcz_sprites_asm );
-    
 }
 
 void vdcz_sprite_expand_horizontal( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-
-    deploy( sprite, src_hw_vdcz_sprites_asm );
     
 }
 
 void vdcz_sprite_compress_vertical( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-
-    deploy( sprite, src_hw_vdcz_sprites_asm );
     
 }
 
 void vdcz_sprite_compress_horizontal( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-
-    deploy( sprite, src_hw_vdcz_sprites_asm );
     
 }
 
 void vdcz_sprite_multicolor( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-
-    deploy( sprite, src_hw_vdcz_sprites_asm );
     
 }
 
 void vdcz_sprite_monocolor( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-
-    deploy( sprite, src_hw_vdcz_sprites_asm );
     
 }
 
@@ -967,8 +742,6 @@ void vdcz_sprite_color( Environment * _environment, char * _sprite, char * _colo
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
-
-    deploy( sprite, src_hw_vdcz_sprites_asm );
     
 }
 
@@ -1009,7 +782,15 @@ void vdcz_tiles_get_height( Environment * _environment, char *_result ) {
 }
 
 void vdcz_cls( Environment * _environment ) {
-    
+
+    if ( _environment->currentMode == BITMAP_MODE_STANDARD ) {
+        deploy( clsGraphic, src_hw_vdcz_cls_graphic_asm );
+        outline0("CALL CLSG");
+    } else {
+        deploy( clsText, src_hw_vdcz_cls_text_asm );
+        outline0("CALL CLST");
+    }
+
 }
 
 void vdcz_scroll_text( Environment * _environment, int _direction ) {
@@ -1219,12 +1000,6 @@ void vdcz_back( Environment * _environment ) {
 void vdcz_cline( Environment * _environment, char * _characters ) {
 
     deploy( textCline, src_hw_vdcz_cline_asm );
-
-}
-
-static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
-
-    return 0;
 
 }
 

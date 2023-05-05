@@ -171,6 +171,16 @@ VDCZPUTCHAR:
     CALL VDCZWRITE
     RET
 
+; Reading from this RAM:
+;   - DE : address
+;   - A : value
+VDCZGETCHAR:
+    PUSH DE
+    POP IY
+    CALL VCDSETADDR
+    CALL VDCZREAD
+    RET
+
 VDCZSTARTUP:
     RET
 
