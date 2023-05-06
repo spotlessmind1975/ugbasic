@@ -29,12 +29,80 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      CLEAR SCREEN ROUTINE FOR VDC (graphic mode)        *
+;*                      CLEAR SCREEN ROUTINE FOR VDC (graphic mode)            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLSG:
-CLSX:
+    ; Set the start location
+    ; Set address to clear
+    LD HL, (TEXTADDRESS)
+    PUSH HL
+    POP IY
+    CALL VDCZSETADDR
+
+    ; Clear the copy bit && Reverse Bit
+    LD IXH, 24
+    LD IXL, 0
+    CALL VDCZWRITE
+
+    ; Set data byte
+    LD IXH, 31
+    LD A, $0
+    LD IXL, A
+    CALL VDCZWRITE
+
+    LD B, 63
+
+CLSGL1:
+    ; Word count register
+    ; Set data byte
+    LD IXH, 30
+    LD IXL, 0
+    CALL VDCZWRITE
+
+    DEC B
+    JR NZ, CLSGL1
+
+CLSG2:
+    ; Set the start location
+    ; Set address to clear
+    LD HL, (COLORMAPADDRESS)
+    PUSH HL
+    POP IY
+    CALL VDCZSETADDR
+
+    ; Clear the copy bit && Reverse Bit
+    LD IXH, 24
+    LD IXL, 0
+    CALL VDCZWRITE
+
+    ; Set data byte
+    LD IXH, 31
+    LD A, (_PAPER)
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD B, A
+    LD A, (_PAPER)
+    OR B
+    LD IXL, A
+    CALL VDCZWRITE
+
+    LD B, 64
+
+CLSG2L1:
+
+    ; Word count register
+    ; Set data byte
+    LD IXH, 30
+    LD IXL, 0
+    CALL VDCZWRITE
+
+    DEC B
+    JR NZ, CLSG2L1
+
     RET

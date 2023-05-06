@@ -507,7 +507,7 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 1;
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
-            cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x8000 );
+            cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x4000 );
 
             outline0("LD A, 25");
             outline0("LD IXH, A");
@@ -518,6 +518,28 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             break;
     }
+
+    outline0("LD A, 12");
+    outline0("LD IXH, A");
+    outline0("LD A, (TEXTADDRESS+1)");
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
+    outline0("LD A, 13");
+    outline0("LD IXH, A");
+    outline0("LD A, (TEXTADDRESS)");
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
+
+    outline0("LD A, 20");
+    outline0("LD IXH, A");
+    outline0("LD A, (COLORMAPADDRESS+1)");
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
+    outline0("LD A, 21");
+    outline0("LD IXH, A");
+    outline0("LD A, (COLORMAPADDRESS)");
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     cpu_store_16bit( _environment, "CLIPX1", 0 );
     cpu_store_16bit( _environment, "CLIPX2", (_environment->screenWidth-1) );
@@ -624,11 +646,11 @@ void vdcz_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( plot, src_hw_vdcz_plot_asm );
 
-    outline1( "LD A, %s", x->realName );
+    outline1( "LD A, (%s)", x->realName );
     outline0( "LD E, A" );
-    outline1( "LD A, %s+1", x->realName );
+    outline1( "LD A, (%s+1)", x->realName );
     outline0( "LD D, A" );
-    outline1( "LD A, %s", y->realName );
+    outline1( "LD A, (%s)", y->realName );
     outline0( "LD IYL, A" );
     outline0( "LD A, 1" );
     outline0( "CALL PLOT" );
@@ -645,11 +667,11 @@ void vdcz_point( Environment * _environment, char *_x, char *_y, char * _result 
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( plot, src_hw_vdcz_plot_asm );
 
-    outline1( "LD A, %s", x->realName );
+    outline1( "LD A, (%s)", x->realName );
     outline0( "LD E, A" );
-    outline1( "LD A, %s+1", x->realName );
+    outline1( "LD A, (%s+1)", x->realName );
     outline0( "LD D, A" );
-    outline1( "LD A, %s", y->realName );
+    outline1( "LD A, (%s)", y->realName );
     outline0( "LD IYL, A" );
     outline0( "LD A, 3" );
     outline0( "CALL PLOT" );
@@ -848,6 +870,7 @@ void vdcz_initialization( Environment * _environment ) {
     variable_global( _environment, "PALETTE" ); 
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 80, 25, 8, 8, 8, "Text Mode" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 640, 200, 1, 8, 8, "Bitmap Mode" );
  
     outline0("CALL VDCZSTARTUP");
 

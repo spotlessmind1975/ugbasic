@@ -119,7 +119,7 @@ VDCZREADL1:
 ;
 ; This is the macro to set the update address:
 ;   - IY : address to set
-VCDSETADDR:
+VDCZSETADDR:
     PUSH AF
     LD A, 19
     LD IXH, A
@@ -165,7 +165,7 @@ VDCZGETDISPLAYDSTART:
 VDCZPUTCHAR:
     PUSH DE
     POP IY
-    CALL VCDSETADDR
+    CALL VDCZSETADDR
     LD IXH, 31
     LD IXL, A
     CALL VDCZWRITE
@@ -177,7 +177,8 @@ VDCZPUTCHAR:
 VDCZGETCHAR:
     PUSH DE
     POP IY
-    CALL VCDSETADDR
+    CALL VDCZSETADDR
+    LD IXH, 31
     CALL VDCZREAD
     RET
 

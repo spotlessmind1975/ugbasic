@@ -47,7 +47,7 @@ PLOT:
 
     LD A, (CURRENTTILEMODE)
     CP 1
-    RET Z
+    JP Z, PLOTP2
 
     LD A, (CLIPY2)
     LD B, A
@@ -129,6 +129,22 @@ PLOTD:
     OR B
     LD DE, HL
     CALL VDCZPUTCHAR
+
+    LD DE, (COLORMAPADDRESS)
+    ADD HL, DE
+    LD DE, (TEXTADDRESS)
+    SUB HL, DE
+    LD DE, HL
+    LD A, (_PEN)
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD B, A
+    LD A, (_PEN)
+    OR B    
+    CALL VDCZPUTCHAR
+
     JP PLOTDONE
 
 PLOTE:
@@ -138,11 +154,15 @@ PLOTE:
     AND C
     LD DE, HL
     CALL VDCZPUTCHAR
+
     JP PLOTDONE
 
 PLOTC:
 PLOTG:
     JR PLOTDONE
 
+PLOTP2:
+PLOTP:
+    POP AF
 PLOTDONE:
     RET
