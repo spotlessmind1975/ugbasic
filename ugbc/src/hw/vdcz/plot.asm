@@ -130,20 +130,18 @@ PLOTD:
     LD DE, HL
     CALL VDCZPUTCHAR
 
-    LD DE, (COLORMAPADDRESS)
-    ADD HL, DE
-    LD DE, (TEXTADDRESS)
-    SUB HL, DE
-    LD DE, HL
     LD A, (_PEN)
     SLA A
     SLA A
     SLA A
     SLA A
     LD B, A
-    LD A, (_PEN)
-    OR B    
-    CALL VDCZPUTCHAR
+    LD A, (_PAPER)
+    OR B
+    ; Clear the copy bit && Reverse Bit
+    LD IXH, 26
+    LD IXL, A
+    CALL VDCZWRITE
 
     JP PLOTDONE
 

@@ -512,6 +512,7 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("LD A, 25");
             outline0("LD IXH, A");
             outline0("CALL VDCZREAD");
+            outline0("AND $BF");
             outline0("OR $80");
             outline0("LD IXL, A");
             outline0("CALL VDCZWRITE");
