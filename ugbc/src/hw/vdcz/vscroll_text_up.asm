@@ -36,4 +36,70 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLTUP:
+
+    LD A, 24
+    LD IXH, A
+    CALL VDCZREAD
+    OR $80
+    LD IXL, A
+    CALL VDCZWRITE
+
+    LD A, 32
+    LD IXH, A
+    LD A, (TEXTADDRESS+1)
+    LD IXL, A
+    CALL VDCZWRITE
+    LD A, 33
+    LD IXH, A
+    LD A, (TEXTADDRESS)
+    LD E, A
+    LD A, 0
+    LD D, A
+    ADD DE, 80
+    LD A, E
+    LD IXL, A
+    CALL VDCZWRITE
+
+    LD A, 18
+    LD IXH, A
+    LD A, (TEXTADDRESS+1)
+    LD IXL, A
+    CALL VDCZWRITE
+    LD A, 19
+    LD IXH, A
+    LD A, (TEXTADDRESS)
+    LD IXL, A
+    CALL VDCZWRITE
+
+    LD B, 24
+
+VSCROLLTUPL1:
+    LD A, 30
+    LD IXH, A
+    LD A, 80
+    LD IXL, A
+    CALL VDCZWRITE
+
+    DEC B
+    JR NZ, VSCROLLTUPL1
+
+    LD A, 24
+    LD IXH, A
+    CALL VDCZREAD
+    AND $7F
+    LD IXL, A
+    CALL VDCZWRITE
+
+    LD A, 31
+    LD IXH, A
+    LD A, (EMPTYTILE)
+    LD IXL, A
+    CALL VDCZWRITE
+
+    LD A, 30
+    LD IXH, A
+    LD A, 80
+    LD IXL, A
+    CALL VDCZWRITE
+
     RET
