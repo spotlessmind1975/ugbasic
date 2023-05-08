@@ -36,4 +36,84 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLINE:
+    LD A, (CURRENTMODE)
+    CP 0
+    JR Z,CLINE0
+    JP CLINEDONE
+
+CLINE0:
+    LD HL, (TEXTADDRESS)
+    LD (COPYOFTEXTADDRESS), HL
+
+    PUSH BC
+    LD A, (CURRENTTILESWIDTH)
+    LD E, A
+    LD D, 0
+
+    LD A, (YCURSYS)
+    CP 0
+    JR Z, CLINE0SKIP
+    LD C, A
+    LD HL, (COPYOFTEXTADDRESS)
+CLINE0LOOP1:
+    ADD HL, DE
+    DEC C
+    JR NZ, CLINE0LOOP1
+    LD (COPYOFTEXTADDRESS), HL
+
+CLINE0SKIP:
+    LD A, (XCURSYS)
+    LD E, A
+    LD A, 0
+    LD D, 0
+    LD HL, (COPYOFTEXTADDRESS)
+    ADD HL, DE
+    LD (COPYOFTEXTADDRESS), HL
+
+    POP BC
+
+    LD A, C
+    CP 0
+    JR Z, CLINE0CL
+    LD (XCURSYS), A
+CLINE0CL:
+    LD A, (XCURSYS)
+    LD B, A
+    LD A, (CURRENTTILESWIDTH)
+    SUB A, B
+    LD C, A
+    LD A, (EMPTYTILE)
+CLINE0CL1:
+
+    LD A, 18
+    LD IXH, A
+    LD A, (COPYOFTEXTADDRESS+1)
+    LD IXL, A
+    CALL VDCZWRITE
+    LD A, 19
+    LD IXH, A
+    LD A, (COPYOFTEXTADDRESS)
+    LD IXL, A
+    CALL VDCZWRITE
+
+    LD A, 24
+    LD IXH, A
+    CALL VDCZREAD
+    AND $7F
+    LD IXL, A
+    CALL VDCZWRITE
+
+    LD A, 31
+    LD IXH, A
+    LD A, (EMPTYTILE)
+    LD IXL, A
+    CALL VDCZWRITE
+
+    LD A, 30
+    LD IXH, A
+    LD A, C
+    LD IXL, A
+    CALL VDCZWRITE
+
+CLINEDONE:
     RET

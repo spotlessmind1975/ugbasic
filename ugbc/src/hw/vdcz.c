@@ -1033,6 +1033,15 @@ void vdcz_cline( Environment * _environment, char * _characters ) {
 
     deploy( textCline, src_hw_vdcz_cline_asm );
 
+    if ( _characters ) {
+        outline1("LD A, (%s)", _characters);
+        outline0("LD C, A");
+    } else {
+        outline0("LD A, 0");
+        outline0("LD C, A");
+    }
+    outline0("CALL CLINE");
+
 }
 
 Variable * vdcz_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
