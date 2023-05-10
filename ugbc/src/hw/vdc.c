@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#if defined(__c128__)
+#if defined(__c128xx__)
 
 #include "../ugbc.h"
 #include <math.h>
@@ -57,7 +57,7 @@ static RGBi SYSTEM_PALETTE[] = {
 };
 
 static RGBi * commonPalette;
-int lastUsedSlotInCommonPalette = 0;
+static int lastUsedSlotInCommonPalette = 0;
 
 /****************************************************************************
  * CODE SECTION

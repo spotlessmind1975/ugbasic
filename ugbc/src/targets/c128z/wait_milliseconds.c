@@ -48,9 +48,9 @@
  */
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
-    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing >> 4 );
+    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing >> 6 );
 
-    wait_ticks( _environment, _timing >> 4 );
+    wait_ticks( _environment, _timing >> 6 );
 
 }
 
@@ -70,7 +70,7 @@ void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
     Variable * temp = variable_cast( _environment, timing->name, VT_WORD );
 
-    temp = variable_div2_const( _environment, temp->name, 4 );
+    temp = variable_div2_const( _environment, temp->name, 6 );
 
     wait_ticks_var( _environment, temp->name );
     

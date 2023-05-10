@@ -50,22 +50,20 @@ void wait_ticks( Environment * _environment, int _timing ) {
 
     MAKE_LABEL
 
-    outline0("LD HL, (C128ZTIMER)");
-    outline0("LD DE, HL");
+    outline1("LD HL, $%4.4x", _timing);
+    outhead1("%srepeat:", label);
+    outline0("LD A, 0");
+    outline0("LD BC, $DC08");
+    outline0("OUT (C), A");
+    outline0("IN A, (C)");
     outhead1("%s:", label);
-    outline0("LD HL, (C128ZTIMER)");
-    outline0("SBC HL, DE");
-    outline0("INC HL");
-    outline0("LD A, H");
-    outline1("CP $%2.2x", (_timing >> 8) );
-    outline1("JR Z, %s1", label );
-    outline1("JR C, %s", label );
-    outhead1("%s1:", label);
+    outline0("IN A, (C)");
+    outline0("CP 1");
+    outline1("JR C, %s", label);
+    outline0("DEC HL");
     outline0("LD A, L");
-    outline1("CP $%2.2x", (_timing & 0xff) );
-    outline1("JR Z, %s2", label );
-    outline1("JR C, %s", label );
-    outhead1("%s2:", label);
+    outline0("OR H");
+    outline1("JR NZ, %srepeat", label);
 
 }
 
@@ -83,25 +81,19 @@ void wait_ticks_var( Environment * _environment, char * _timing ) {
 
     Variable * timing = variable_retrieve( _environment, _timing );
     
-    outline0("LD HL, (C128ZTIMER)");
-    outline0("LD DE, HL");
+    outline1("LD HL, (%s)", timing->realName);
+    outhead1("%srepeat:", label);
+    outline0("LD A, 0");
+    outline0("LD BC, $DC08");
+    outline0("OUT (C), A");
+    outline0("IN A, (C)");
     outhead1("%s:", label);
-    outline0("LD HL, (C128ZTIMER)");
-    outline0("SBC HL, DE");
-    outline0("INC HL");
-    outline1("LD A, (%s+1)", timing->realName);
-    outline0("LD B, A");
-    outline0("LD A, H");
-    outline0("CP B" );
-    outline1("JR Z, %s1", label );
-    outline1("JR C, %s", label );
-    outhead1("%s1:", label);
-    outline1("LD A, (%s)", timing->realName);
-    outline0("LD B, A");
+    outline0("IN A, (C)");
+    outline0("CP 1");
+    outline1("JR C, %s", label);
+    outline0("DEC HL");
     outline0("LD A, L");
-    outline0("CP B" );
-    outline1("JR Z, %s2", label );
-    outline1("JR C, %s", label );
-    outhead1("%s2:", label);
+    outline0("OR H");
+    outline1("JR NZ, %srepeat", label);
 
 }

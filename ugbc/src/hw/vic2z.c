@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#if defined(__c64__) || defined(__c128__)
+#if defined(__c128zz__)
 
 #include "../ugbc.h"
 #include <math.h>
