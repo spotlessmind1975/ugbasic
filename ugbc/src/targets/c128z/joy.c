@@ -45,7 +45,38 @@ Variable * joy_vars( Environment * _environment, char * _port ) {
     Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    c128z_joy_vars( _environment, port->realName, result->realName );
+    outline1("LD A, (%s)", port->realName );
+    outline1("JR NZ, %sjoy2", label );
+
+    outline1("%sjoy1:", label );
+    outline0("LD A, $7F" );
+    outline0("LD BC, $DC00" );
+    outline0("OUT (C), A" );
+    outline0("INC BC" );
+    outline0("IN A, (C)" );
+    outline0("AND $1F" );
+    outline0("XOR $1F" );
+    outline1("JMP %sendjoy", label );
+
+    outline1("%sjoy2:", label );
+    outline0("LD A, $E0" );
+    outline0("LD BC, $DC02" );
+    outline0("OUT (C), A" );
+    outline0("DEC BC" );
+    outline0("DEC BC" );
+    outline0("IN A, (C)" );
+    outline0("PUSH AF" );
+    outline0("INC BC" );
+    outline0("DEC BC" );
+    outline0("INC BC" );
+    outline0("LD A, $FF" );
+    outline0("OUT (C), A" );
+    outline0("POP AF" );
+    outline0("AND $1F" );
+    outline0("XOR $1F" );
+    outhead1("%sendjoy:", label );
+
+    outline1("LD (%s), A", result->realName );
 
     return result;
 
@@ -57,7 +88,36 @@ Variable * joy( Environment * _environment, int _port ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    c128z_joy( _environment, _port, result->realName );
+    switch( _port ) {
+
+        case 0:
+            outline0("LD A, $7F" );
+            outline0("LD BC, $DC00" );
+            outline0("OUT (C), A" );
+            outline0("INC BC" );
+            outline0("IN A, (C)" );
+            outline0("AND $1F" );
+            outline0("XOR $1F" );
+            break;
+
+        case 1:
+            outline0("LD A, $E0" );
+            outline0("LD BC, $DC02" );
+            outline0("OUT (C), A" );
+            outline0("DEC BC" );
+            outline0("DEC BC" );
+            outline0("IN A, (C)" );
+            outline0("LD A, $FF" );
+            outline0("INC BC" );
+            outline0("INC BC" );
+            outline0("OUT (C), A" );
+            outline0("AND $1F" );
+            outline0("XOR $1F" );
+            break;
+
+    }
+
+    outline1("LD (%s), A", result->realName );
 
     return result;
 

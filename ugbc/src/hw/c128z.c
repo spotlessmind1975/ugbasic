@@ -116,8 +116,10 @@ void c128z_scanshift( Environment * _environment, char * _shifts ) {
     outline0("LD A, 0");
     outline1("LD (%s), A", _shifts);
     outline0("LD A, $10");
-    outline0("LD ($DC00), A");
-    outline0("LD A, ($DC01)");
+    outline0("LD BC, $DC00");
+    outline0("OUT (C), A");
+    outline0("INC BC");
+    outline0("IN A, (C)");
     outline0("AND $80");
     outline1("JR NZ, %snoleft", label);
     outline0("LD A, 1");
@@ -125,8 +127,10 @@ void c128z_scanshift( Environment * _environment, char * _shifts ) {
     outhead1("%snoleft:", label );
 
     outline0("LD A, $20");
-    outline0("LD ($DC00), A");
-    outline0("LD A, ($DC01)");
+    outline0("LD BC, $DC00");
+    outline0("OUT (C), A");
+    outline0("INC BC");
+    outline0("IN A, (C)");
     outline0("AND $10");
     outline1("JR NZ, %snoright", label);
     outline1("LD A, (%s)", _shifts);
@@ -150,7 +154,7 @@ void c128z_keyshift( Environment * _environment, char * _shifts ) {
     outline0("LD ($DC00), A");
     outline0("LD A, ($DC01)");
     outline0("AND $80");
-    outline1("HR NZ, %snoleft", label);
+    outline1("JR NZ, %snoleft", label);
     outline0("LD A, 1");
     outline1("LD (%s), A", _shifts);
     outhead1("%snoleft:", label );
@@ -177,7 +181,7 @@ void c128z_keyshift( Environment * _environment, char * _shifts ) {
     outline0("AND $4");
     outline1("JR Z, %snocontrol", label);
     outline1("LD A, (%s)", _shifts);
-    outline0("ORA 8");
+    outline0("OR 8");
     outline1("LD (%s), A", _shifts);
     outhead1("%snocontrol:", label );
 
@@ -185,16 +189,13 @@ void c128z_keyshift( Environment * _environment, char * _shifts ) {
     outline0("AND $02");
     outline1("JR Z, %snoalt", label);
     outline1("LD A, (%s)", _shifts);
-    outline0("ORA $30");
+    outline0("OR $30");
     outline1("LD A, (%s)", _shifts);
     outhead1("%snoalt:", label );
 
 }
 
 void c128z_clear_key( Environment * _environment ) {
-
-    outline0("LD A, 0");
-    outline0("LD ($c6), 0");
 
 }
 

@@ -102,4 +102,17 @@
 ;     RET   
 
 C128ZSTARTUP:
+
+	LD A, $FF
+    PUSH BC
+    LD BC, $DC02
+    OUT (C), A
+    POP BC
+
+	LD A, $00
+    PUSH BC
+    LD BC, $DC03
+    OUT (C), A
+    POP BC
+
     RET
