@@ -143,7 +143,7 @@ DECB = ./modules/toolshed/build/unix/decb/decb$(EXESUFFIX)
 ifdef 10liner
 EXAMPLES := $(wildcard examples/*_10lines.bas)
 else
-EXAMPLES := $(wildcard examples/stargame.bas)
+EXAMPLES := $(wildcard examples/*.bas)
 endif
 
 # List of assembled files of examples
@@ -389,12 +389,12 @@ generated/c128z/asm/%.asm:
 	@ugbc/exe/ugbc.c128z $(OPTIONS) $(subst generated/c128z/asm/,examples/,$(@:.asm=.bas)) $@ 
 
 generated/c128z/exe/%.prg:
-	$(Z80ASM) -D__c128z__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.prg=.asm))
-	mv $(subst /exe/,/asm/,$(@:.prg=.sym)) $(subst /exe/,/asm/,$(@:.prg=.osym))
-	php sym2c128z.php $(subst /exe/,/asm/,$(@:.prg=.osym)) >$(subst /exe/,/asm/,$(@:.prg=.sym))
-	rm -f $(subst /exe/,/asm/,$(@:.prg=.o))
-	mv $(subst /exe/,/asm/,$(@:.prg=.bin)) $@
-	rm -f $(@:.prg=.bin) $(@:.prg=_*.bin) $(@:.prg=.) $(@:.prg=_*.)
+	@$(Z80ASM) -D__c128z__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@mv $(subst /exe/,/asm/,$(@:.prg=.sym)) $(subst /exe/,/asm/,$(@:.prg=.osym))
+	@php sym2c128z.php $(subst /exe/,/asm/,$(@:.prg=.osym)) >$(subst /exe/,/asm/,$(@:.prg=.sym))
+	@rm -f $(subst /exe/,/asm/,$(@:.prg=.o))
+	@mv $(subst /exe/,/asm/,$(@:.prg=.bin)) $@
+	@rm -f $(@:.prg=.bin) $(@:.prg=_*.bin) $(@:.prg=.) $(@:.prg=_*.)
 
 generated/c128z/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
 	@ugbc/exe/ugbc.c128z $(OPTIONS) -d -D $(@:.prg=.info) -o $@ -O prg $(subst generated/c128z/exeso/,examples/,$(@:.prg=.bas))
