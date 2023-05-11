@@ -455,7 +455,7 @@ generated/coleco/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas
 toolchain.cpc: z88dk
 
 generated/cpc/asm/%.asm:
-	ugbc/exe/ugbc.cpc $(OPTIONS) $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
+	@ugbc/exe/ugbc.cpc $(OPTIONS) $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
 
 generated/cpc/exe/%.dsk:
 	@$(Z80ASM) -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
@@ -463,11 +463,11 @@ generated/cpc/exe/%.dsk:
 	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
 	@mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.)
-	@$(APPMAKE) +cpc --org 4608 --exec 4608 --disk -b $(@:.dsk=.) -o $(dir $@)main.
+	@$(APPMAKE) +cpc --org 256 --exec 256 --disk -b $(@:.dsk=.) -o $(dir $@)main.
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
-	ugbc/exe/ugbc.cpc $(OPTIONS) -d -D $(@:.dsk=.info) -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
+	@ugbc/exe/ugbc.cpc $(OPTIONS) -d -D $(@:.dsk=.info) -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
 
 #------------------------------------------------ 
 # coco:
