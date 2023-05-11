@@ -381,11 +381,12 @@ typedef enum _VariableType {
             : t )
 
 #define VT_SIGN( t ) \
-            ( ! VT_SIGNED( t ) ? \
+            ( ( ! VT_SIGNED( t ) ) ? \
                 ( \
                     ( ( (t) == (VT_BYTE) ) ? VT_SBYTE : 0 ) + \
                     ( ( (t) == (VT_WORD) ) ? VT_SWORD : 0 ) + \
-                    ( ( (t) == (VT_DWORD) ) ? VT_SDWORD : 0 ) \
+                    ( ( (t) == (VT_DWORD) ) ? VT_SDWORD : 0 ) + \
+                    ( ( (t) == (VT_POSITION) ) ? VT_POSITION : 0 ) \
                 ) \
             : t )
 

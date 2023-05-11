@@ -117,11 +117,11 @@ void target_initialization( Environment * _environment ) {
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
 
+    setup_text_variables( _environment );
+
     vdcz_initialization( _environment );
     sidz_initialization( _environment );
     
-    setup_text_variables( _environment );
-
     outline0("CALL C128ZSTARTUP");
 
     if ( _environment->tenLinerRulesEnforced ) {

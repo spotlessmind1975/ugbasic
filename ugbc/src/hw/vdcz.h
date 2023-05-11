@@ -73,11 +73,14 @@
 #define TEXT_COLUMNS_COUNT          40
 #define TEXT_ROWS_COUNT             25
 
-#define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     640 x 200 x 2
+#define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode         640 x 200 x 2
+#define BITMAP_MODE_MULTICOLOR      2           // Standard Multicolor Mode     640 x 176 x 16
+#define BITMAP_MODE_STANDARD_INT    5           // Interlaced Bitmap Mode       640 x 400 x 2
+#define BITMAP_MODE_MULTICOLOR_INT  6           // Interlaced Multicolor Mode   640 x 352 x 16
 
 #define BITMAP_MODE_DEFAULT     BITMAP_MODE_STANDARD
 
-#define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        80 x 25 x 16
+#define TILEMAP_MODE_STANDARD       0           // Standard Character Mode      80 x 25 x 16
 
 #define SPRITE_COUNT                8
 #define SPRITE_WIDTH                24
