@@ -54,7 +54,7 @@ CLSG:
     LD IXL, A
     CALL VDCZWRITE
 
-    LD B, 63
+    LD B, 128
 
 CLSGL1:
     ; Word count register

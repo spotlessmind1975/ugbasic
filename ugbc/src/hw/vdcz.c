@@ -728,6 +728,17 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     int horizontalCharactersPositions = 127;
     int horizontalVerticalSyncWidth = 0x49;
+    int horizontalSyncPosition = 102;
+    int totalNumberOfScreenRows = 39;
+    int verticalFineAdjustment = 0;
+    int numberOfVisibleScreenRows;
+    int verticalSyncPosition = 32;
+    int interlaceModeControl = 0;
+    int totalScanLinePerCharacter = 7;
+    int verticalSmoothScrollingAndControl = 8;
+    int horizontalSmoothScrollingAndControl = 0;
+    int addressIncrementPerRowOfChars = 0;
+    int characterPatternAddress = 0;
 
     switch( _screen_mode->id ) {
         case TILEMAP_MODE_STANDARD:
@@ -741,18 +752,8 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 16;
             _environment->currentModeBW = 0;
 
-            outline0("LD A, $19");
-            outline0("LD IXH, A");
-            outline0("CALL VDCZREAD");
-            outline0("AND $7F");
-            outline0("LD IXL, A");
-            outline0("CALL VDCZWRITE");
-
-            outline0("LD A, $08");
-            outline0("LD IXH, A");
-            outline0("LD A, 0");
-            outline0("LD IXL, A");
-            outline0("CALL VDCZWRITE");
+            numberOfVisibleScreenRows = _environment->screenTilesHeight;
+            horizontalSmoothScrollingAndControl = 0x00;
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x0800 );
@@ -770,22 +771,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
 
+            numberOfVisibleScreenRows = _environment->screenTilesHeight;
+            horizontalSmoothScrollingAndControl = 0x87;
+
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x4000 );
-
-            outline0("LD A, $19");
-            outline0("LD IXH, A");
-            outline0("CALL VDCZREAD");
-            outline0("AND $BF");
-            outline0("OR $80");
-            outline0("LD IXL, A");
-            outline0("CALL VDCZWRITE");
-
-            outline0("LD A, $08");
-            outline0("LD IXH, A");
-            outline0("LD A, 0");
-            outline0("LD IXL, A");
-            outline0("CALL VDCZWRITE");
 
             break;
 
@@ -800,18 +790,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 16;
             _environment->currentModeBW = 1;
 
-            horizontalCharactersPositions = 142;
+            numberOfVisibleScreenRows = _environment->screenTilesHeight;
+            horizontalSmoothScrollingAndControl = 0x87;
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x3700 );
-
-            outline0("LD A, $19");
-            outline0("LD IXH, A");
-            outline0("CALL VDCZREAD");
-            outline0("AND $BF");
-            outline0("OR $C0");
-            outline0("LD IXL, A");
-            outline0("CALL VDCZWRITE");
 
             outline0("LD A, $08");
             outline0("LD IXH, A");
@@ -832,25 +815,22 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
 
-            horizontalCharactersPositions = 142;
+            horizontalCharactersPositions = 0x7e;
             horizontalVerticalSyncWidth = 0x89;
+            horizontalSyncPosition = 0x66;
+            totalNumberOfScreenRows = 0x4c;
+            verticalFineAdjustment = 6;
+            numberOfVisibleScreenRows = 0x4c;
+            verticalSyncPosition = 0x47;
+            interlaceModeControl = 3;
+            totalScanLinePerCharacter = 6;
+            verticalSmoothScrollingAndControl = 0;
+            horizontalSmoothScrollingAndControl = 0x87;
+            addressIncrementPerRowOfChars = 0;
+            characterPatternAddress = 16;
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x4000 );
-
-            outline0("LD A, $19");
-            outline0("LD IXH, A");
-            outline0("CALL VDCZREAD");
-            outline0("AND $BF");
-            outline0("OR $80");
-            outline0("LD IXL, A");
-            outline0("CALL VDCZWRITE");
-
-            outline0("LD A, $08");
-            outline0("LD IXH, A");
-            outline0("LD A, 1");
-            outline0("LD IXL, A");
-            outline0("CALL VDCZWRITE");
 
             break;
 
@@ -865,25 +845,22 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 16;
             _environment->currentModeBW = 1;
 
-            horizontalCharactersPositions = 142;
+            horizontalCharactersPositions = 0x7e;
             horizontalVerticalSyncWidth = 0x89;
+            horizontalSyncPosition = 0x66;
+            totalNumberOfScreenRows = 0x4c;
+            verticalFineAdjustment = 6;
+            numberOfVisibleScreenRows = 0x4c;
+            verticalSyncPosition = 0x47;
+            interlaceModeControl = 3;
+            totalScanLinePerCharacter = 6;
+            verticalSmoothScrollingAndControl = 0;
+            horizontalSmoothScrollingAndControl = 0x87;
+            addressIncrementPerRowOfChars = 0;
+            characterPatternAddress = 16;
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x3700 );
-
-            outline0("LD A, $19");
-            outline0("LD IXH, A");
-            outline0("CALL VDCZREAD");
-            outline0("AND $BF");
-            outline0("OR $C0");
-            outline0("LD IXL, A");
-            outline0("CALL VDCZWRITE");
-
-            outline0("LD A, $08");
-            outline0("LD IXH, A");
-            outline0("LD A, 1");
-            outline0("LD IXL, A");
-            outline0("CALL VDCZWRITE");
             
             break;
 
@@ -955,11 +932,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // 102/$66. Increasing this value moves the active screen area to
     // the left; decreasing it moves the active area to the right.
 
-    // outline0("LD A, $02");
-    // outline0("LD IXH, A");
-    // outline1("LD A, $%2.2x", 102 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $02");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", horizontalSyncPosition );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $03 ] --
@@ -1015,11 +992,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // should remain constant, so if you increase the character height
     // you must decrease the total number of rows, and vice versa.
 
-    // outline0("LD A, $04");
-    // outline0("LD IXH, A");
-    // outline1("LD A, $%2.2x", 39 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $04");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", totalNumberOfScreenRows );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $05 ] --
@@ -1049,11 +1026,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // character positions and store a 3 in this register to provide the
     // required additional scan lines.
 
-    // outline0("LD A, $05");
-    // outline0("LD IXH, A");
-    // outline1("LD A, $%2.2x", 0 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $05");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", verticalFineAdjustment );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $06 ] --
@@ -1070,7 +1047,7 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     outline0("LD A, $06");
     outline0("LD IXH, A");
-    outline1("LD A, $%2.2x", _environment->screenTilesHeight );
+    outline1("LD A, $%2.2x", numberOfVisibleScreenRows );
     outline0("LD IXL, A");
     outline0("CALL VDCZWRITE");
 
@@ -1092,11 +1069,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // not increase the value here above the maximum number of
     // rows specified in register 4/$04.
 
-    // outline0("LD A, $07");
-    // outline0("LD IXH, A");
-    // outline1("LD A, $%2.2x", 32 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $07");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", verticalSyncPosition );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $08 ] --
@@ -1138,11 +1115,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // set is completely drawn. As a result, the screen will appear to
     // jitter annoyingly in this mode.
 
-    // outline0("LD A, $08");
-    // outline0("LD IXH, A");
-    // outline1("LD A, $%2.2x", 0 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $08");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", interlaceModeControl );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $09 ] --
@@ -1186,11 +1163,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // bytes, are required for character memory. Note that this is all
     // the memory available to the VDC.
 
-    // outline0("LD A, $09");
-    // outline0("LD IXH, A");
-    // outline1("LD A, $%2.2x", 7 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $09");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", totalScanLinePerCharacter );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $0A ] --
@@ -1627,11 +1604,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // bit is set to %0 when the register is initialized during the
     // IOINIT routine [$E109].
 
-    // outline0("LD A, $18");
-    // outline0("LD IXH, A");
-    // outline0("LD A, $%2.2x", 0x08 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $18");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", verticalSmoothScrollingAndControl );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $19 ] --
@@ -1725,11 +1702,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // the color of all background (%0) pixels in the character
     // position.
 
-    // outline0("LD A, $19");
-    // outline0("LD IXH, A");
-    // outline0("LD A, $%2.2x", 0x00 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $19");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", horizontalSmoothScrollingAndControl );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $1a ] --
@@ -1789,11 +1766,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // active columns in register l/$01, you should increase the value
     // in this register correspondingly so that the total remains 80.
 
-    // outline0("LD A, $1b");
-    // outline0("LD IXH, A");
-    // outline0("LD A, $%2.2x", 0x00 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $1b");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", addressIncrementPerRowOfChars );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $1c ] --
@@ -1854,11 +1831,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // characters. This step is performed during the IOINIT routine
     // by calling the screen editor INIT80 routine [$CE0C].
 
-    // outline0("LD A, $1c");
-    // outline0("LD IXH, A");
-    // outline0("LD A, $%2.2x", 0x00 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $1c");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", characterPatternAddress );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
     
     /////////////////////////////////////////////////////////////////
     // -- [ $1d ] --
@@ -2119,8 +2096,10 @@ void vdcz_point_at_int( Environment * _environment, int _x, int _y ) {
     outline0( "LD E, A" );
     outline1( "LD A, $%2.2x", ( ( _x >> 8 ) & 0xff ) );
     outline0( "LD D, A" );
-    outline1( "LD A, $%2.2x", _y );
+    outline1( "LD A, $%2.2x", ( _y & 0xff ) );
     outline0( "LD IYL, A" );
+    outline1( "LD A, $%2.2x", ( ( _y >> 8 ) & 0xff ) );
+    outline0( "LD IYH, A" );
     outline0( "LD A, 1" );
     outline0( "CALL PLOT" );
 
@@ -2141,6 +2120,8 @@ void vdcz_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     outline0( "LD D, A" );
     outline1( "LD A, (%s)", y->realName );
     outline0( "LD IYL, A" );
+    outline1( "LD A, (%s+1)", y->realName );
+    outline0( "LD IYH, A" );
     outline0( "LD A, 1" );
     outline0( "CALL PLOT" );
     
@@ -2162,6 +2143,8 @@ void vdcz_point( Environment * _environment, char *_x, char *_y, char * _result 
     outline0( "LD D, A" );
     outline1( "LD A, (%s)", y->realName );
     outline0( "LD IYL, A" );
+    outline1( "LD A, (%s+1)", y->realName );
+    outline0( "LD IYH, A" );
     outline0( "LD A, 3" );
     outline0( "CALL PLOT" );
     outline1( "LD (%s), A", result->realName );
