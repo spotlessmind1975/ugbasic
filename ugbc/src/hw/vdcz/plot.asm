@@ -130,6 +130,25 @@ PLOTD:
     LD DE, HL
     CALL VDCZPUTCHAR
 
+    LD A, (CURRENTMODE)
+    AND $2
+    CP $2
+    JR NZ, PLOTNC
+
+    PUSH HL
+    DI
+    EXX
+    PUSH HL
+    EXX
+    EI
+    POP DE
+    CALL VDCZPUTCHAR
+    POP HL
+
+    JP PLOTDONE
+
+PLOTNC:
+
     LD A, (_PEN)
     SLA A
     SLA A
@@ -138,9 +157,9 @@ PLOTD:
     LD B, A
     LD A, (_PAPER)
     OR B
-    ; Clear the copy bit && Reverse Bit
-    LD IXH, 26
     LD IXL, A
+    LD A, 26
+    LD IXH, A
     CALL VDCZWRITE
 
     JP PLOTDONE
