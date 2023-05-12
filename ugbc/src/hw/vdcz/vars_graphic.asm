@@ -95,6 +95,7 @@ PLOTANDBIT:
 ;   C       = bitmap AND
 VCDZPOS:
     PUSH AF
+
     PUSH DE
 
     LD A, E
@@ -142,5 +143,45 @@ VCDZPOS:
 
     ADD HL, DE
 
+    LD A, (CURRENTMODE)
+    AND $2
+    CP $2
+
+    JR NZ, VDCZPOSDONE
+
+    PUSH DE
+    PUSH IY
+    DI
+    EXX
+    EI
+    POP IY
+    POP DE
+
+    LD A, IYL
+    LD E, A
+    LD A, 0
+    LD D, A
+    LD HL, DE
+    ADD HL, HL
+    LD DE, HL
+    LD HL, PLOTVBASE
+    ADD HL, DE
+    LD DE, $3700
+    ADD HL, DE
+
+    SRL D
+    RR E
+    SRL D
+    RR E
+    SRL D
+    RR E
+
+    ADD HL, DE
+
+    DI
+    EXX
+    EI
+
+VDCZPOSDONE:
     POP AF
     RET

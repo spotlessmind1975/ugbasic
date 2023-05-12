@@ -367,17 +367,17 @@ Variable * variable_retrieve_internal( Environment * _environment, char * _name,
             var = variable_find( _environment->tempVariables[_environment->currentProcedure], _name );
         }
 
+        // If not found, take a look to the resident ones.
+        
+        if ( !var ) {
+            var = variable_find( _environment->tempResidentVariables, _name );
+        }
+
         // Look for variable inside the set of temporary variables
         // for the main program.
 
         if ( !var ) {
             var = variable_find( _environment->tempVariables[0], _name );
-        }
-
-        // If not found, take a look to the resident ones.
-        
-        if ( !var ) {
-            var = variable_find( _environment->tempResidentVariables, _name );
         }
 
         // Again, if not found, take a look into the variables
@@ -2066,9 +2066,16 @@ void variable_add_inplace_vars( Environment * _environment, char * _source, char
         source = variable_cast( _environment, _source, VT_DSTRING );
     }
 
-    Variable * target = variable_cast( _environment, _destination, source->type );
-    if ( ! target ) {
-        CRITICAL_VARIABLE(_destination);
+    Variable * target = variable_retrieve( _environment, _destination );
+    if ( target->type == VT_STRING ) {
+        target = variable_cast( _environment, _destination, VT_DSTRING );
+    }
+
+    if ( source->type != target->type ) {
+        target = variable_cast( _environment, _destination, source->type );
+        if ( ! target ) {
+            CRITICAL_VARIABLE(_destination);
+        }
     }
 
     switch( VT_BITWIDTH( source->type ) ) {
