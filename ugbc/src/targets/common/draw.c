@@ -208,7 +208,6 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
     variable_move( _environment, y0->name, dy0->name );
     variable_move( _environment, x1->name, dx1->name );
     variable_move( _environment, y1->name, dy1->name );
-    variable_move( _environment, y1->name, dy1->name );
 
     if ( c ) {
         variable_move( _environment, c->name, dc->name );
