@@ -726,6 +726,9 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
     cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
 
+    int horizontalCharactersPositions = 127;
+    int horizontalVerticalSyncWidth = 0x49;
+
     switch( _screen_mode->id ) {
         case TILEMAP_MODE_STANDARD:
             _environment->fontWidth = 8;
@@ -797,6 +800,8 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 16;
             _environment->currentModeBW = 1;
 
+            horizontalCharactersPositions = 142;
+
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x3700 );
 
@@ -827,6 +832,9 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
 
+            horizontalCharactersPositions = 142;
+            horizontalVerticalSyncWidth = 0x89;
+
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x4000 );
 
@@ -856,6 +864,9 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             _environment->currentModeBW = 1;
+
+            horizontalCharactersPositions = 142;
+            horizontalVerticalSyncWidth = 0x89;
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x3700 );
@@ -901,11 +912,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // register 25/$19). You may need to increase the value here
     // slightly if you use one of the interlaced modes.
 
-    // outline0("LD A, $00");
-    // outline0("LD IXH, A");
-    // outline0("LD A, $%2.2x", 127 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $00");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", horizontalCharactersPositions );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $01 ] --
@@ -967,11 +978,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // twice the desired number of scan lines). The default value for
     // these bits is 4/$4, for a pulse four scan lines wide.
 
-    // outline0("LD A, $03");
-    // outline0("LD IXH, A");
-    // outline1("LD A, $%2.2x", 0x49 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $03");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", horizontalVerticalSyncWidth );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $04 ] --
@@ -2289,7 +2300,7 @@ void vdcz_tiles_get_height( Environment * _environment, char *_result ) {
 
 void vdcz_cls( Environment * _environment ) {
 
-    if ( _environment->currentMode == BITMAP_MODE_STANDARD ) {
+    if ( _environment->currentMode != TILEMAP_MODE_STANDARD ) {
         deploy( clsGraphic, src_hw_vdcz_cls_graphic_asm );
         outline0("CALL CLSG");
     } else {
