@@ -91,8 +91,8 @@ void bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char *
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * yOrdered = variable_less_than( _environment, y0->name, y1->name, 1 );
-    Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
-
+    Variable * y = variable_resident( _environment, VT_POSITION, "(y)" );
+    
     char labelOrdered[MAX_TEMPORARY_STORAGE]; sprintf(labelOrdered, "%slo", label );
 
     cpu_bvneq( _environment, yOrdered->realName, labelOrdered );
