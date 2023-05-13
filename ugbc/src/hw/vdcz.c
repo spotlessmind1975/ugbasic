@@ -527,11 +527,16 @@ void vdcz_border_color( Environment * _environment, char * _border_color ) {
  */
 void vdcz_background_color( Environment * _environment, int _index, int _background_color ) {
 
+    outline1("LD A, $%2.2x", _background_color & 0x0f );
+    outline0("LD B, A" );
     outline0("LD A, 26");
     outline0("LD IXH, A");
-    outline1("LD A, $%2.2x", _background_color & 0x0f );
+    outline0("CALL VDCZREAD");
+    outline0("AND $F0" );
+    outline0("OR B" );
     outline0("LD IXL, A");
     outline0("CALL VDCZWRITE");
+
 
 }
 
@@ -547,9 +552,13 @@ void vdcz_background_color( Environment * _environment, int _index, int _backgro
  */
 void vdcz_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
+    outline1("LD A, (%s)", _background_color );
+    outline0("LD B, A" );
     outline0("LD A, 26");
     outline0("LD IXH, A");
-    outline1("LD A, (%s)", _background_color );
+    outline0("CALL VDCZREAD");
+    outline0("AND $F0" );
+    outline0("OR B" );
     outline0("LD IXL, A");
     outline0("CALL VDCZWRITE");
 
@@ -567,9 +576,17 @@ void vdcz_background_color_vars( Environment * _environment, char * _index, char
  */
 void vdcz_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
 
+    outline1("LD A, (%s)", _background_color );
+    outline0("SLA A" );
+    outline0("SLA A" );
+    outline0("SLA A" );
+    outline0("SLA A" );
+    outline0("LD B, A" );
     outline0("LD A, 26");
     outline0("LD IXH, A");
-    outline1("LD A, (%s)", _background_color );
+    outline0("CALL VDCZREAD");
+    outline0("AND $F0" );
+    outline0("OR B" );
     outline0("LD IXL, A");
     outline0("CALL VDCZWRITE");
 
@@ -2308,16 +2325,25 @@ void vdcz_scroll_text( Environment * _environment, int _direction ) {
 void vdcz_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( vdczvars, src_hw_vdcz_vars_asm);
-    deploy( vScrollTextUp, src_hw_vdcz_vscroll_text_up_asm );
-    deploy( clsText, src_hw_vdcz_cls_text_asm );
+    deploy( textEncodedAt, src_hw_vdcz_text_at_asm );
 
     outline1("LD DE, (%s)", _text);
     outline1("LD A, (%s)", _text_size);
     outline0("LD C, A");
 
-    deploy( textEncodedAt, src_hw_vdcz_text_at_asm );
-    deploy( textEncodedAtText, src_hw_vdcz_text_at_text_asm );
-    outline0("CALL TEXTATTILEMODE");
+    if ( _environment->currentMode != TILEMAP_MODE_STANDARD ) {
+        deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm);
+        deploy( vScroll, src_hw_vdcz_vscroll_asm );
+        deploy( clsGraphic, src_hw_vdcz_cls_graphic_asm );
+        deploy( textEncodedAtGraphic, src_hw_vdcz_text_at_graphic_asm );
+        outline0("CALL TEXTATBITMAPMODE");
+    } else {
+        deploy( vScrollTextUp, src_hw_vdcz_vscroll_text_up_asm );
+        deploy( clsText, src_hw_vdcz_cls_text_asm );
+        deploy( textEncodedAtText, src_hw_vdcz_text_at_text_asm );
+        outline0("CALL TEXTATTILEMODE");
+    }
+
 
 }
 
@@ -2357,9 +2383,9 @@ void vdcz_initialization( Environment * _environment ) {
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 80, 25, 8, 8, 8, "Text Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 640, 200, 1, 8, 8, "Bitmap Mode" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 640, 200, 16, 8, 8, "Multicolor Mode" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD_INT, 1, 640, 176, 1, 8, 8, "Interlaced bitmap Mode" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR_INT, 1, 640, 352, 1, 8, 8, "Interlaced multicolor Mode" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 640, 200, 16, 8, 8, "Multicolor Mode" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD_INT, 1, 640, 176, 1, 8, 8, "Interlaced bitmap Mode" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR_INT, 1, 640, 352, 1, 8, 8, "Interlaced multicolor Mode" );
  
     outline0("CALL VDCZSTARTUP");
 
