@@ -771,7 +771,7 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 0;
 
             numberOfVisibleScreenRows = _environment->screenTilesHeight;
-            horizontalSmoothScrollingAndControl = 0x07;
+            horizontalSmoothScrollingAndControl = 0x47;
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x0800 );
@@ -809,7 +809,7 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 1;
 
             numberOfVisibleScreenRows = _environment->screenTilesHeight;
-            horizontalSmoothScrollingAndControl = 0x87;
+            horizontalSmoothScrollingAndControl = 0xC7;
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x3700 );
@@ -873,7 +873,7 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             interlaceModeControl = 3;
             totalScanLinePerCharacter = 6;
             verticalSmoothScrollingAndControl = 0;
-            horizontalSmoothScrollingAndControl = 0x87;
+            horizontalSmoothScrollingAndControl = 0xC7;
             addressIncrementPerRowOfChars = 0;
             characterPatternAddress = 16;
 
