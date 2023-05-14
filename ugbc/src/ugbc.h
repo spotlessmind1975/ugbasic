@@ -2518,13 +2518,16 @@ int embed_scan_string (const char *);
 
 #define deploy_begin(s)  \
         if ( ! _environment->deployed.s ) { \
+            int ignoreProtothread = _environment->protothread; \
             int ignoreEmptyProcedure = _environment->emptyProcedure; \
+            _environment->protothread = 0; \
             _environment->emptyProcedure = 0; \
             cpu_jump( _environment, #s "_after" ); \
             cpu_label( _environment, "lib_" #s ); \
 
 #define deploy_end(s)  \
             cpu_label( _environment, #s "_after" ); \
+            _environment->protothread = ignoreProtothread; \
             _environment->emptyProcedure = ignoreEmptyProcedure; \
             _environment->deployed.s = 1; \
         }
