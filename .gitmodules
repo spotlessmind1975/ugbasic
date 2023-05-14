@@ -10,3 +10,6 @@
 [submodule "modules/toolshed"]
 	path = modules/toolshed
 	url = https://github.com/spotlessmind1975/toolshed.git
+[submodule "modules/bison"]
+	path = modules/bison
+	url = https://github.com/spotlessmind1975/bison
