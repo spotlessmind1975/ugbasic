@@ -2821,6 +2821,16 @@ void vdcz_get_image( Environment * _environment, char * _image, char * _x, char 
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( getimage, src_hw_vdcz_get_image_asm );
 
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _image );
+    outline1("LD DE, (%s)", _x );
+    outline1("LD iy, (%s)", _y );
+    outline1("LD A, $%2.2x", _palette );
+    outline0("LD IXH, A" );
+
+    outline0("CALL GETIMAGE");
+
 }
 
 void vdcz_scroll( Environment * _environment, int _dx, int _dy ) {
