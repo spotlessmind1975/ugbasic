@@ -717,7 +717,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
 
     if ( var ) {
         if ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
-            var = variable_cast( _environment, var->name, VT_SIGNED( var->type ) ? VT_SIGN( var->type ) : var->type );
+            var = variable_cast( _environment, var->name, VT_SIGNED( var->type ) ? VT_SIGN( _type ) : _type );
         }
         return var;
     }
@@ -883,7 +883,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
     // Take a look at the temporary variable, to see if any
     // temporary variable is available, inside the procedure.
 
-     var = variable_find_first_unused( *variableSet, _type );
+    var = variable_find_first_unused( *variableSet, _type );
 
     // If the var has been found, we change its meaning.
 
