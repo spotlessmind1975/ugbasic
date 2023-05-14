@@ -771,7 +771,7 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 0;
 
             numberOfVisibleScreenRows = _environment->screenTilesHeight;
-            horizontalSmoothScrollingAndControl = 0x00;
+            horizontalSmoothScrollingAndControl = 0x07;
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x0800 );
@@ -1230,7 +1230,7 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     outline0("LD A, $0a");
     outline0("LD IXH, A");
-    outline1("LD A, $%2.2x", 0x40 );
+    outline1("LD A, $%2.2x", 0x20 );
     outline0("LD IXL, A");
     outline0("CALL VDCZWRITE");
 
