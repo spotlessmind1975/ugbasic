@@ -199,7 +199,7 @@ static Variable * vcdz_image_converter_bitmap_mode_standard( Environment * _envi
 
     }
 
-    *( buffer + 3 + ( ( _frame_width >> 3 ) * _height ) ) = ( commonPalette[1].index << 4 ) | commonPalette[0].index;
+    *( buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = ( commonPalette[1].index << 4 ) | commonPalette[0].index;
 
     adilineendbitmap();
 
