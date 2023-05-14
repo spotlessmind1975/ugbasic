@@ -756,7 +756,7 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     int verticalSmoothScrollingAndControl = 8;
     int horizontalSmoothScrollingAndControl = 0;
     int addressIncrementPerRowOfChars = 0;
-    int characterPatternAddress = 0;
+    int characterPatternAddress = 1;
 
     switch( _screen_mode->id ) {
         case TILEMAP_MODE_STANDARD:
@@ -1851,7 +1851,9 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     outline0("LD A, $1c");
     outline0("LD IXH, A");
-    outline1("LD A, $%2.2x", characterPatternAddress );
+    outline0("CALL VDCZREAD");
+    outline0("AND $1F");
+    outline1("OR $%2.2x", ( characterPatternAddress << 5 ) );
     outline0("LD IXL, A");
     outline0("CALL VDCZWRITE");
     
