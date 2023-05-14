@@ -198,6 +198,8 @@ void cpu6502_dstring_vars( Environment * _environment );
 void cpu6502_set_callback( Environment * _environment, char * _callback, char * _label );
 void cpu6502_out( Environment * _environment, char * _port, char * _value );
 void cpu6502_in( Environment * _environment, char * _port, char * _value );
+void cpu6502_out_direct( Environment * _environment, char * _port, char * _value );
+void cpu6502_in_direct( Environment * _environment, char * _port, char * _value );
 void cpu6502_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size );
 
 void cpu6502_protothread_vars( Environment * _environment );
@@ -380,6 +382,8 @@ void cpu6502_blit_finalize( Environment * _environment );
 #define cpu_set_callback( _environment, _callback, _label ) cpu6502_set_callback( _environment, _callback, _label )
 #define cpu_in( _environment, _port, _value ) cpu6502_in( _environment, _port, _value )
 #define cpu_out( _environment, _port, _value ) cpu6502_out( _environment, _port, _value )
+#define cpu_in_direct( _environment, _port, _value ) cpu6502_in_direct( _environment, _port, _value )
+#define cpu_out_direct( _environment, _port, _value ) cpu6502_out_direct( _environment, _port, _value )
 #define cpu_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size ) cpu6502_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size );
 
 extern char * src_hw_chipset_mob_asm;

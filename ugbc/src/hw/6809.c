@@ -4714,6 +4714,15 @@ void cpu6809_in( Environment * _environment, char * _port, char * _value ) {
     
 }
 
+void cpu6809_out_direct( Environment * _environment, char * _port, char * _value ) {
+
+}
+
+void cpu6809_in_direct( Environment * _environment, char * _port, char * _value ) {
+    
+}
+
+
 void cpu6809_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size ) {
     
     MAKE_LABEL
