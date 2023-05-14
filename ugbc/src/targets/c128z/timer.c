@@ -49,9 +49,9 @@ Variable * get_timer( Environment * _environment ) {
     Variable * result = variable_temporary( _environment, VT_WORD, "(result of get timer)");
 
     char resultAddress[MAX_TEMPORARY_STORAGE]; 
-    cpu_in( _environment, "$DC08", result->realName );
+    cpu_in_direct( _environment, "$DC08", result->realName );
     sprintf( resultAddress, "%s+1", result->realName );
-    cpu_in( _environment, "$DC09", resultAddress );
+    cpu_in_direct( _environment, "$DC09", resultAddress );
     
     return result;
     
@@ -69,7 +69,7 @@ void set_timer( Environment * _environment, char * _value ) {
 
     char resultAddress[MAX_TEMPORARY_STORAGE]; 
     sprintf( resultAddress, "%s+1", value->realName );
-    cpu_out( _environment, "$DC09", resultAddress );
-    cpu_out( _environment, "$DC08", value->realName );
+    cpu_out_direct( _environment, "$DC09", resultAddress );
+    cpu_out_direct( _environment, "$DC08", value->realName );
         
 }
