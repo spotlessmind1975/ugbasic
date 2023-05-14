@@ -141,7 +141,7 @@ static Variable * vcdz_image_converter_bitmap_mode_standard( Environment * _envi
     RGBi rgb;
 
     *(buffer) = (_frame_width & 0XFF );
-    *(buffer+1) = ( (_frame_width>>3) & 0XFF );
+    *(buffer+1) = ( (_frame_width>>8) & 0XFF );
     *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
