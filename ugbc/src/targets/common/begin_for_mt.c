@@ -41,11 +41,16 @@
 void begin_for_mt( Environment * _environment, char * _index, char * _from, char * _to ) {
 
     Variable * index = variable_retrieve( _environment, _index );
+
+    if ( index->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( index->name );
+    }
+
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
-    Variable * step = variable_resident( _environment, VT_WORD, "(step 1)" );
+    Variable * step = variable_resident( _environment, index->arrayType, "(step 1)" );
 
-    Variable * toResident = variable_resident( _environment, index->type, "(resident to)" );
+    Variable * toResident = variable_resident( _environment, index->arrayType, "(resident to)" );
     variable_move( _environment, to->name, toResident->name );
     
     variable_store( _environment, step->name, 1 );
