@@ -67,19 +67,26 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
     Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );
 
     Variable * result = variable_temporary( _environment, _type, "(random value)" );
+    Variable * temp = variable_temporary( _environment, _type, "(temp value)" );
+
+    char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf( resultAddress, "%s", temp->realName );
+    cpu_in_direct( _environment, "$DC08", resultAddress );
+    sprintf( resultAddress, "%s+1", temp->realName );
+    cpu_in_direct( _environment, "$DC09", resultAddress );
+    sprintf( resultAddress, "%s", temp->realName );
 
     switch(_type) {
         case VT_BYTE:
         case VT_COLOR:
-            z80_random_8bit( _environment, "C128ZTIMER", result->realName );
+            z80_random_8bit( _environment, resultAddress, result->realName );
             break;
         case VT_WORD:
         case VT_POSITION:
         case VT_ADDRESS:
-            z80_random_16bit( _environment, "C128ZTIMER", result->realName );
+            z80_random_16bit( _environment, resultAddress, result->realName );
             break;
         case VT_DWORD:
-            z80_random_32bit( _environment, "C128ZTIMER", result->realName );
+            z80_random_32bit( _environment, resultAddress, result->realName );
             break;
     }
 
