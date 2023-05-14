@@ -29,13 +29,143 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          IMAGES ROUTINE FOR VDC                             *
+;*                          IMAGES ROUTINE FOR VDCZ                            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+; IMAGET:     DB 0      -> A
+; IMAGEX:     DB 0      -> E
+; IMAGEY:     DB 0      -> D
+; IMAGEW:     DB 0      -> C
+; IMAGEH:     DB 0      -> B
+; IMAGEH2:    DB 0      -> ?
+; PTR:        DW 0      -> HL
+
+; ----------------------------------------------------------------------------
+; - Put image on bitmap
+; ----------------------------------------------------------------------------
+
 PUTIMAGE:
 
+    LD A, (CURRENTTILEMODE)
+    CP 1
+    RET Z
+
+    LD C, (HL)
+    INC HL
+    LD A, (HL)
+    LD IXH, A
+    INC HL
+    LD B, (HL)
+    INC HL
+
+    DEC IY
+    PUSH IY
+    PUSH DE
+
+    LD A, (CURRENTMODE)
+    CP 1
+    JP Z, PUTIMAGE1
     RET
 
+PUTIMAGE1:
+
+    PUSH BC
+    LD A, IXH
+    LD B, A
+    SRL B
+    RR C
+    SRL B
+    RR C
+    SRL B
+    RR C
+    LD A, C
+    POP BC
+    LD C, A
+    
+PUTIMAGE1L2:
+
+    POP DE
+    POP IY
+
+    INC IY
+
+    PUSH IY
+    PUSH DE
+
+    PUSH HL
+    PUSH BC
+    CALL VCDZPOS
+    LD DE, HL
+    POP BC
+    POP HL
+
+    PUSH BC
+PUTIMAGE1L1:
+    ; Calculate new pixels
+    LD A, (HL)
+    ; Draw them
+    CALL VDCZPUTCHAR
+
+    INC DE
+    INC HL
+
+    DEC C
+    JP NZ, PUTIMAGE1L1
+    LD A, IXH
+    CP $0
+    JR Z, PUTIMAGE1DONEROW
+
+PUTIMAGE1DONEROW:
+    POP BC
+
+    LD A, (IMAGEF)
+    AND $41
+    CP $41
+    JP Z, PUTIMAGE1DONEROW2
+    AND $40
+    CP $40
+    JR NZ, PUTIMAGE1DONEROW2
+    OR $01
+    LD (IMAGEF), A
+
+    PUSH DE
+    LD A, C
+    LD E, A
+    LD A, 0
+    LD D, A
+    AND A
+    SBC HL, DE
+    POP DE
+    JP PUTIMAGE1L2
+
+PUTIMAGE1DONEROW2:
+    LD A, (IMAGEF)
+    AND $FE
+    LD (IMAGEF), A
+
+    DEC B
+    JP NZ, PUTIMAGE1L2
+    
+    LD A, (IMAGET)
+    AND $2
+    CMP $2
+    JR NZ, PUTIMAGEC1DONE
+
+    LD A, (HL)
+    LD IXL, A
+    LD A, 26
+    LD IXH, A
+    CALL VDCZWRITE
+
+PUTIMAGEC1DONE:
+
+    POP DE
+    POP IY
+
+    JP PUTIMAGEDONE
+
+PUTIMAGEDONE:
+    RET

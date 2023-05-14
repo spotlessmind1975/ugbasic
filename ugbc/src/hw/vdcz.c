@@ -84,7 +84,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
     switch( _mode ) {
         case BITMAP_MODE_STANDARD:
         case BITMAP_MODE_STANDARD_INT:
-            return 3 + ( ( _width >> 3 ) * _height );
+            return 3 + ( ( _width >> 3 ) * _height ) + 1;
         case BITMAP_MODE_MULTICOLOR:
         case BITMAP_MODE_MULTICOLOR_INT:
             return 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
@@ -110,12 +110,11 @@ static Variable * vcdz_image_converter_bitmap_mode_standard( Environment * _envi
 
     int i, j, k;
 
-    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE[0]) / sizeof(RGBi) );
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
     commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
     lastUsedSlotInCommonPalette = paletteColorCount;
     adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
-
-    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE[0]) / sizeof(RGBi), SYSTEM_PALETTE );
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -175,17 +174,17 @@ static Variable * vcdz_image_converter_bitmap_mode_standard( Environment * _envi
                 int distance = rgbi_distance(&commonPalette[i], &rgb );
                 if ( distance < minDistance ) {
                     minDistance = distance;
-                    colorIndex = i;
+                    colorIndex = commonPalette[i].index;
                 }
             }
 
             offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
-            if ( colorIndex > 0) {
-                *( buffer + offset + 2) |= bitmask;
+            if ( colorIndex == commonPalette[1].index) {
+                *( buffer + offset + 3) |= bitmask;
             } else {
-                *( buffer + offset + 2) &= ~bitmask;
+                *( buffer + offset + 3) &= ~bitmask;
             }
 
             adilinepixel(colorIndex);
@@ -199,6 +198,8 @@ static Variable * vcdz_image_converter_bitmap_mode_standard( Environment * _envi
         // printf("\n" );
 
     }
+
+    *( buffer + 3 + ( ( _frame_width >> 3 ) * _height ) ) = ( commonPalette[1].index << 4 ) | commonPalette[0].index;
 
     adilineendbitmap();
 
@@ -382,10 +383,10 @@ static void vdcz_image_converter_tiles( Environment * _environment, char * _sour
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
             if ( colorIndex != ( ( destColormap[offsetColor] >> 4 ) & 0x0f ) ) {
-                *( destBitmap + offset + 2) |= bitmask;
+                *( destBitmap + offset + 3) |= bitmask;
                 adilinepixel( destColormap[offsetColor] & 0x0f );
             } else {
-                *( destBitmap + offset + 2) &= ~bitmask;
+                *( destBitmap + offset + 3) &= ~bitmask;
                 adilinepixel( ( destColormap[offsetColor] >> 4 ) & 0x0f );
             }
 
@@ -2552,9 +2553,21 @@ void vdcz_cline( Environment * _environment, char * _characters ) {
 
 Variable * vdcz_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    switch( _mode ) {
 
-    return result;
+        case BITMAP_MODE_STANDARD:
+        case BITMAP_MODE_STANDARD_INT:
+
+            return vcdz_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            
+        case BITMAP_MODE_MULTICOLOR:
+        case BITMAP_MODE_MULTICOLOR_INT:
+
+            return vdcz_image_converter_bitmap_mode_multicolor( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    }
+
+    return vdcz_new_image( _environment, 8, 8, _mode );
 
 }
 
@@ -2651,16 +2664,94 @@ void vdcz_put_image( Environment * _environment, char * _image, char * _x, char 
 
 
     }
-    outline1("LD A, (%s)", _x );
-    outline0("LD E, A" );
-    outline1("LD A, (%s)", _y );
-    outline0("LD D, A" );
+    outline1("LD DE, (%s)", _x );
+    outline1("LD IY, (%s)", _y );
     outline1("LD A, $%2.2x", ( _flags & 0xff ) );
     outline0("LD (IMAGEF), A" );
     outline1("LD A, $%2.2x", ( (_flags>>8) & 0xff ) );
     outline0("LD (IMAGET), A" );
 
     outline0("CALL PUTIMAGE");
+
+}
+
+static void vdcz_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline1("LD HL, %s", _source );
+    if ( _sequence ) {
+
+        outline0("LD DE, $0003" );
+        outline0("ADD HL, DE" );
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline0("PUSH HL" );
+            outline1("LD A, (%s)", _sequence );
+            outline0("LD L, A" );
+            outline0("LD H, 0" );
+            outline0("ADD HL, HL" );
+            outline0("LD DE, HL" );
+            outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("ADD HL, DE" );
+            outline0("LD A, (HL)" );
+            outline0("LD E, A" );
+            outline0("INC HL" );
+            outline0("LD A, (HL)" );
+            outline0("LD D, A" );
+            outline0("POP HL" );
+            outline0("ADD HL, DE" );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("LD DE, $0003" );
+            outline0("ADD HL, DE" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+    }
+    outline1("LD (%s), HL", _register );
 
 }
 
@@ -2681,14 +2772,14 @@ void vdcz_blit_image( Environment * _environment, char * _sources[], int _source
 
     outhead1("blitimage%s:", label);
     if ( _source_count > 0 ) {
-        tms9918_load_image_address_to_register( _environment, "BLITTMPPTR", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+        vdcz_load_image_address_to_register( _environment, "BLITTMPPTR", _sources[0], _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LD HL, 0" );
         outline0( "LD (BLITTMPPTR), HL" );
     }
 
     if ( _source_count > 1 ) {
-        tms9918_load_image_address_to_register( _environment, "BLITTMPPTR2", _sources[1], _sequence, _frame, _frame_size, _frame_count );
+        vdcz_load_image_address_to_register( _environment, "BLITTMPPTR2", _sources[1], _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LD HL, 0" );
         outline0( "LD (BLITTMPPTR2), HL" );
