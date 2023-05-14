@@ -386,7 +386,8 @@ typedef enum _VariableType {
                     ( ( (t) == (VT_BYTE) ) ? VT_SBYTE : 0 ) + \
                     ( ( (t) == (VT_WORD) ) ? VT_SWORD : 0 ) + \
                     ( ( (t) == (VT_DWORD) ) ? VT_SDWORD : 0 ) + \
-                    ( ( (t) == (VT_POSITION) ) ? VT_POSITION : 0 ) \
+                    ( ( (t) == (VT_POSITION) ) ? VT_POSITION : 0 ) + \
+                    ( ( (t) == (VT_COLOR) ) ? VT_COLOR : 0 ) \
                 ) \
             : t )
 
