@@ -59,12 +59,20 @@ endif
 #------------------------------------------------ 
 # BISON
 #------------------------------------------------ 
+ifeq ($(OS),Windows_NT)
+BISON = bison
+else
 BISON = ./../modules/bison/src/bison$(EXESUFFIX)
+endif
 
 #------------------------------------------------ 
 # FLEX
 #------------------------------------------------ 
+ifeq ($(OS),Windows_NT)
+FLEX = flex
+else
 FLEX = ./../modules/flex/src/flex$(EXESUFFIX)
+endif
 
 #------------------------------------------------ 
 # bison:
@@ -75,12 +83,16 @@ FLEX = ./../modules/flex/src/flex$(EXESUFFIX)
 # context-free grammar into a deterministic LR or generalized LR (GLR) 
 # parser employing LALR(1) parser tables.
 #
+ifeq ($(OS),Windows_NT)
+
+else
 $(BISON): $(dir $(BISON))../src/*.c $(dir $(BISON))../src/*.h \
 			$(dir $(BISON))../src/*.c $(dir $(BISON))../src/*.h
 	mkdir -p $(realpath $(dir $(BISON)))/share
 	cd $(dir $(BISON)..).. && ./configure --disable-yacc --prefix=$(realpath $(dir $(BISON)))/share && make install
 
 bison: paths $(BISON)
+endif
 
 #------------------------------------------------ 
 # flex:
@@ -91,11 +103,14 @@ bison: paths $(BISON)
 # software that generates lexical analyzers (also known as "scanners" 
 # or "lexers").
 #
+ifeq ($(OS),Windows_NT)
+else
 $(FLEX): $(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h \
 			$(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h
 	cd $(dir $(FLEX)..).. && touch * && ./configure && make
 
 flex: paths $(FLEX)
+endif
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
