@@ -104,6 +104,7 @@ endif
 # or "lexers").
 #
 ifeq ($(OS),Windows_NT)
+
 else
 $(FLEX): $(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h \
 			$(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h
