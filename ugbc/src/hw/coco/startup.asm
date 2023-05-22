@@ -38,12 +38,52 @@
 OLDISVC
     fdb $0
 
+OLDISVC2
+    fdb $0
+
+OLDNMIISVC
+    fdb $0
+
+OLDNMIISVC2
+    fdb $0
+
 ISVCIRQ
     PSHS D
+    PSHS X
     LDD #0
     STD $00e3
+    STA $FFDE
+    TFR S, X
+    LEAX +14,X
+    LDD ,X
+    STD OLDISVC2
+    LDD #ISVCIRQ2
+    STD ,X
+    PULS X
     PULS D
     JMP [OLDISVC]
+ISVCIRQ2
+    STA $FFDF
+    JMP [OLDISVC2]
+
+NMIISVCIRQ
+    PSHS D
+    PSHS X
+    LDD #0
+    STD $00e3
+    STA $FFDE
+    TFR S, X
+    LEAX +14,X
+    LDD ,X
+    STD OLDNMIISVC2
+    LDD #NMIISVCIRQ2
+    STD ,X
+    PULS X
+    PULS D
+    JMP [OLDNMIISVC]
+NMIISVCIRQ2
+    STA $FFDF
+    JMP [OLDNMIISVC2]
 
 COCOSTARTUP
 
@@ -52,7 +92,15 @@ COCOSTARTUP
 
     LDD #ISVCIRQ
     STD $010D
-    
+
+    LDD $010A
+    STD OLDNMIISVC
+
+    LDD #NMIISVCIRQ
+    STD $010A
+
     LDA #0
     STA $011f
+    
     RTS
+    

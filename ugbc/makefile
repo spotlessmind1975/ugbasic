@@ -34,7 +34,7 @@ CFLAGS=-O3 -fomit-frame-pointer
 LFLAGS=
 LIBS=-lm
 
-.PHONY: paths clean all
+.PHONY: paths clean all bison flex
 
 all: paths compiler
 
@@ -50,6 +50,67 @@ ifeq ($(OS),Windows_NT)
   LFLAGS += -static
 else
   EXESUFFIX = 
+endif
+
+#-----------------------------------------------------------------------------
+#--- MAKEFILE's VARIABLES
+#-----------------------------------------------------------------------------
+
+#------------------------------------------------ 
+# BISON
+#------------------------------------------------ 
+ifeq ($(OS),Windows_NT)
+BISON = bison
+else
+BISON = ./../modules/bison/src/bison$(EXESUFFIX)
+endif
+
+#------------------------------------------------ 
+# FLEX
+#------------------------------------------------ 
+ifeq ($(OS),Windows_NT)
+FLEX = flex
+else
+FLEX = ./../modules/flex/src/flex$(EXESUFFIX)
+endif
+
+#------------------------------------------------ 
+# bison:
+#    General-purpose parser generator
+#------------------------------------------------ 
+# 
+# Bison is a general-purpose parser generator that converts an annotated 
+# context-free grammar into a deterministic LR or generalized LR (GLR) 
+# parser employing LALR(1) parser tables.
+#
+ifeq ($(OS),Windows_NT)
+
+else
+$(BISON): $(dir $(BISON))../src/*.c $(dir $(BISON))../src/*.h \
+			$(dir $(BISON))../src/*.c $(dir $(BISON))../src/*.h
+	mkdir -p $(realpath $(dir $(BISON)))/share
+	cd $(dir $(BISON)..).. && ./configure --disable-yacc --prefix=$(realpath $(dir $(BISON)))/share && make install
+
+bison: paths $(BISON)
+endif
+
+#------------------------------------------------ 
+# flex:
+#    Fast lexical analyzer generator
+#------------------------------------------------ 
+# 
+# Flex (fast lexical analyzer generator) is a free and open-source 
+# software that generates lexical analyzers (also known as "scanners" 
+# or "lexers").
+#
+ifeq ($(OS),Windows_NT)
+
+else
+$(FLEX): $(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h \
+			$(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h
+	cd $(dir $(FLEX)..).. && touch * && ./configure && make
+
+flex: paths $(FLEX)
 endif
 
 # ----------------------------------------------------------------------------
@@ -78,6 +139,18 @@ src-generated/font_complete.c:
 FONTS := src-generated/font_standard.c \
 			src-generated/font_semigraphic.c \
 			src-generated/font_complete.c
+
+# ----------------------------------------------------------------------------
+# PROLOGUE / EPILOGUE FOR BINARY ON COCO
+# ----------------------------------------------------------------------------
+
+src-generated/coco_header.c:
+	@xxd -i $(subst src-generated/coco_,data/coco/,$(@:.c=.bin)) >$@
+
+src-generated/coco_footer.c:
+	@xxd -i $(subst src-generated/coco_,data/coco/,$(@:.c=.bin)) >$@
+
+COCO := src-generated/coco_header.c src-generated/coco_footer.c
 
 # ----------------------------------------------------------------------------
 # Components and chipsets
@@ -365,8 +438,8 @@ SOURCES_COCO := $(subst src/hw/coco/,src-generated/coco_,$(MODULES_COCO:.asm=.c)
 src-generated/coco_%.c: $(MODULES_COCO)
 	@xxd -i $(subst src-generated/coco_,src/hw/coco/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO)
-	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) >src-generated/modules_coco.c
+src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(COCO)
+	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(COCO) >src-generated/modules_coco.c
 	@grep "src" src-generated/modules_coco.c | awk -f modules.awk >src-generated/modules_coco.h
 	@grep "data" src-generated/modules_coco.c | awk -f modules.awk >>src-generated/modules_coco.h
 
@@ -502,17 +575,17 @@ src-generated/modules_zx.c: $(SOURCES_Z80) $(SOURCES_ZX)
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 
-src-generated/ugbc.yy.c: src/ugbc.lex src/ugbc.y
-	@flex ${FLEX_OPTIONS} --outfile=src-generated/ugbc.yy.c src/ugbc.lex
+src-generated/ugbc.yy.c: flex src/ugbc.lex src/ugbc.y
+	@$(FLEX) ${FLEX_OPTIONS} --outfile=src-generated/ugbc.yy.c src/ugbc.lex
 
-src-generated/ugbc.tab.c: src/ugbc.lex src/ugbc.y
-	@bison ${BISON_OPTIONS} --file-prefix=src-generated/ugbc src/ugbc.y
+src-generated/ugbc.tab.c: bison src/ugbc.lex src/ugbc.y
+	@$(BISON) ${BISON_OPTIONS} --file-prefix=src-generated/ugbc src/ugbc.y
 
-src-generated/ugbc.embed.yy.c: src/ugbc.embed.lex src/ugbc.embed.y
-	@flex ${FLEX_OPTIONS} --prefix=embed --outfile=src-generated/ugbc.embed.yy.c src/ugbc.embed.lex
+src-generated/ugbc.embed.yy.c: flex src/ugbc.embed.lex src/ugbc.embed.y
+	@$(FLEX) ${FLEX_OPTIONS} --prefix=embed --outfile=src-generated/ugbc.embed.yy.c src/ugbc.embed.lex
 
-src-generated/ugbc.embed.tab.c: src/ugbc.embed.lex src/ugbc.embed.y
-	@bison ${BISON_OPTIONS} -p embed --file-prefix=src-generated/ugbc.embed src/ugbc.embed.y
+src-generated/ugbc.embed.tab.c: bison src/ugbc.embed.lex src/ugbc.embed.y
+	@$(BISON) ${BISON_OPTIONS} -p embed --file-prefix=src-generated/ugbc.embed src/ugbc.embed.y
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
