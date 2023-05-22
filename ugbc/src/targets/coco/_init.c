@@ -97,7 +97,11 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "FREE_STRING" );    
 
     outline0("ORG $2A00");
-    outline0("LDS #$8000");
+    outline0("JMP CODESTART");
+    outhead0("IRQSTACK rzb 512");
+    outhead0("CODESTART");
+    outline0("LDS #IRQSTACK");
+    outline0("STA $FFDF");
 
     deploy( vars, src_hw_coco_vars_asm);
     deploy( startup, src_hw_coco_startup_asm);

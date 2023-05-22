@@ -131,6 +131,7 @@ APPMAKE = ./modules/z88dk/src/appmake/z88dk-appmake$(EXESUFFIX)
 #------------------------------------------------ 
 ASM6809 = ./modules/asm6809/src/asm6809$(EXESUFFIX)
 DECB = ./modules/toolshed/build/unix/decb/decb$(EXESUFFIX)
+COCODECB = ./coco_decb.sh
 
 #------------------------------------------------ 
 # Examples
@@ -140,7 +141,7 @@ DECB = ./modules/toolshed/build/unix/decb/decb$(EXESUFFIX)
 ifdef 10liner
 EXAMPLES := $(wildcard examples/*_10lines.bas)
 else
-EXAMPLES := $(wildcard examples/*.bas)
+EXAMPLES := $(wildcard examples/test.bas)
 endif
 
 # List of assembled files of examples
@@ -457,8 +458,7 @@ generated/coco/asm/%.asm: compiler
 
 generated/coco/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
-	@$(DECB) dskini $(@)
-	@$(DECB) copy -2 $(@:.dsk=.bin) $(@),$(shell echo $(generated/coco/exe/,,$(@:.dsk=.bin)) | tr '[:lower:]' '[:upper:]')
+	@$(COCODECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/coco/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) $(OPTIONS) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))

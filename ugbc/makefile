@@ -141,6 +141,18 @@ FONTS := src-generated/font_standard.c \
 			src-generated/font_complete.c
 
 # ----------------------------------------------------------------------------
+# PROLOGUE / EPILOGUE FOR BINARY ON COCO
+# ----------------------------------------------------------------------------
+
+src-generated/coco_header.c:
+	@xxd -i $(subst src-generated/coco_,data/coco/,$(@:.c=.bin)) >$@
+
+src-generated/coco_footer.c:
+	@xxd -i $(subst src-generated/coco_,data/coco/,$(@:.c=.bin)) >$@
+
+COCO := src-generated/coco_header.c src-generated/coco_footer.c
+
+# ----------------------------------------------------------------------------
 # Components and chipsets
 # ----------------------------------------------------------------------------
 
@@ -381,8 +393,8 @@ SOURCES_COCO := $(subst src/hw/coco/,src-generated/coco_,$(MODULES_COCO:.asm=.c)
 src-generated/coco_%.c: $(MODULES_COCO)
 	@xxd -i $(subst src-generated/coco_,src/hw/coco/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO)
-	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) >src-generated/modules_coco.c
+src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(COCO)
+	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(COCO) >src-generated/modules_coco.c
 	@grep "src" src-generated/modules_coco.c | awk -f modules.awk >src-generated/modules_coco.h
 	@grep "data" src-generated/modules_coco.c | awk -f modules.awk >>src-generated/modules_coco.h
 
