@@ -112,7 +112,6 @@ void target_linkage( Environment * _environment ) {
         }
 
         int programExeSize = 5 + standardSize + 5;
-        printf( "%d\n", programExeSize );
 
         char * programExe = malloc( programExeSize );
         memset( programExe, 0, programExeSize );
