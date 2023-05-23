@@ -1,9 +1,6 @@
 [submodule "modules/z88dk"]
 	path = modules/z88dk
 	url = https://github.com/z88dk/z88dk.git
-[submodule "modules/cc65"]
-	path = modules/cc65
-	url = https://github.com/cc65/cc65
 [submodule "modules/toolshed"]
 	path = modules/toolshed
 	url = https://github.com/spotlessmind1975/toolshed.git
