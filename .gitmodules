@@ -13,3 +13,6 @@
 [submodule "modules/cc65"]
 	path = modules/cc65
 	url = https://github.com/spotlessmind1975/cc65.git
+[submodule "modules/z88dk"]
+	path = modules/z88dk
+	url = https://github.com/spotlessmind1975/z88dk.git
