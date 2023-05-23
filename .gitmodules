@@ -13,3 +13,6 @@
 [submodule "modules/flex"]
 	path = modules/flex
 	url = https://github.com/spotlessmind1975/flex
+[submodule "modules/asm6809"]
+	path = modules/asm6809
+	url = https://github.com/spotlessmind1975/asm6809.git
