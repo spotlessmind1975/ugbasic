@@ -1184,7 +1184,7 @@ void gtia_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
     if ( VT_BITWIDTH( x->type ) > 8 ) {
-        outline1("LDA %s+1", x->realName );
+        outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
     } else {
         outline0("LDA #0");
     }
@@ -1208,7 +1208,7 @@ void gtia_point( Environment * _environment, char *_x, char *_y, char * _result 
     
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
-    outline1("LDA %s+1", x->realName );
+    outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
     outline0("STA PLOTX+1");
     outline1("LDA %s", y->realName );
     outline0("STA PLOTY");
@@ -1314,7 +1314,7 @@ void gtia_busy_wait( Environment * _environment, char * _timing ) {
 
     outline1("LDA %s", _timing );
     outline0("STA TMPPTR");
-    outline1("LDA %s+1", _timing );
+    outline1("LDA %s", address_displacement(_environment, _timing, "1") );
     outline0("STA TMPPTR+1");
     outhead1("%sfirst:", label );
     outline0("LDA $14");
@@ -1338,7 +1338,7 @@ void gtia_get_width( Environment * _environment, char *_result ) {
     outline0("LDA CURRENTWIDTH" );
     outline1("STA %s", _result );
     outline0("LDA CURRENTWIDTH+1" );
-    outline1("STA %s+1", _result );
+    outline1("STA %s", address_displacement(_environment, _result, "1") );
 
 }
 
@@ -1354,7 +1354,7 @@ void gtia_get_height( Environment * _environment, char *_result ) {
     outline0("LDA CURRENTHEIGHT" );
     outline1("STA %s", _result );
     outline0("LDA CURRENTHEIGHT+1" );
-    outline1("STA %s+1", _result );
+    outline1("STA %s", address_displacement(_environment, _result, "1") );
 
 }
 
@@ -1413,7 +1413,7 @@ void gtia_text( Environment * _environment, char * _text, char * _text_size ) {
 
     outline1("LDA %s", _text);
     outline0("STA TEXTPTR" );
-    outline1("LDA %s+1", _text);
+    outline1("LDA %s", address_displacement(_environment, _text, "1"));
     outline0("STA TEXTPTR+1" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
@@ -2259,11 +2259,11 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
     }
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
-    outline1("LDA %s+1", _x );
+    outline1("LDA %s", address_displacement(_environment, _x, "1") );
     outline0("STA IMAGEX+1" );
     outline1("LDA %s", _y );
     outline0("STA IMAGEY" );
-    outline1("LDA %s+1", _y );
+    outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA IMAGEY+1" );
     outline1("LDA #$%2.2x", ( _flags & 0xff ) );
     outline0("STA IMAGEF" );
@@ -2313,13 +2313,13 @@ void gtia_move_tiles( Environment * _environment, char * _tile, char * _x, char 
     outline0("STA TILEX" );
     outline1("LDA %s", y->realName );
     outline0("STA TILEY" );
-    outline1("LDA %s+1", tile->realName );
+    outline1("LDA %s", address_displacement(_environment, tile->realName, "1") );
     outline0("STA TILEW" );
     outline0("STA TILEW2" );
-    outline1("LDA %s+2", tile->realName );
+    outline1("LDA %s", address_displacement(_environment, tile->realName, "2") );
     outline0("STA TILEH" );
     outline0("STA TILEH2" );
-    outline1("LDA %s+3", tile->realName );
+    outline1("LDA %s", address_displacement(_environment, tile->realName, "3") );
     outline0("STA TILEA" );
 
     int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
@@ -2344,7 +2344,7 @@ static void gtia_load_image_address_to_register( Environment * _environment, cha
     outline1("LDA #<%s", _source );
     outline1("STA %s", _register );
     outline1("LDA #>%s", _source );
-    outline1("STA %s+1", _register );
+    outline1("STA %s", address_displacement(_environment, _register, "1") );
 
     if ( _sequence ) {
 
@@ -2352,9 +2352,9 @@ static void gtia_load_image_address_to_register( Environment * _environment, cha
         outline1("LDA %s", _register );
         outline0("ADC #3" );
         outline1("STA %s", _register );
-        outline1("LDA %s+1", _register );
+        outline1("LDA %s", address_displacement(_environment, _register, "1") );
         outline0("ADC #0" );
-        outline1("STA %s+1", _register );
+        outline1("STA %s", address_displacement(_environment, _register, "1") );
         if ( strlen(_sequence) == 0 ) {
 
         } else {
@@ -2370,9 +2370,9 @@ static void gtia_load_image_address_to_register( Environment * _environment, cha
             outline0("ADC (MATHPTR0), Y" );
             outline1("STA %s", _register );
             outline0("INY" );
-            outline1("LDA %s+1", _register );
+            outline1("LDA %s", address_displacement(_environment, _register, "1") );
             outline0("ADC (MATHPTR0+1), Y" );
-            outline1("STA %s+1", _register );
+            outline1("STA %s", address_displacement(_environment, _register, "1") );
         }
 
         if ( _frame ) {
@@ -2391,9 +2391,9 @@ static void gtia_load_image_address_to_register( Environment * _environment, cha
                 outline0("ADC (MATHPTR0), Y" );
                 outline1("STA %s", _register );
                 outline0("INY" );
-                outline1("LDA %s+1", _register );
+                outline1("LDA %s", address_displacement(_environment, _register, "1") );
                 outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s+1", _register );
+                outline1("STA %s", address_displacement(_environment, _register, "1") );
             }
         }
 
@@ -2404,9 +2404,9 @@ static void gtia_load_image_address_to_register( Environment * _environment, cha
             outline1("LDA %s", _register );
             outline0("ADC #3" );
             outline1("STA %s", _register );
-            outline1("LDA %s+1", _register );
+            outline1("LDA %s", address_displacement(_environment, _register, "1") );
             outline0("ADC #0" );
-            outline1("STA %s+1", _register );
+            outline1("STA %s", address_displacement(_environment, _register, "1") );
             if ( strlen(_frame) == 0 ) {
 
             } else {
@@ -2422,9 +2422,9 @@ static void gtia_load_image_address_to_register( Environment * _environment, cha
                 outline0("ADC (NATHPTR0), Y" );
                 outline1("STA %s", _register );
                 outline0("INY" );
-                outline1("LDA %s+1", _register );
+                outline1("LDA %s", address_displacement(_environment, _register, "1") );
                 outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s+1", _register );
+                outline1("STA %s", address_displacement(_environment, _register, "1") );
             }
         }
 
@@ -2472,11 +2472,11 @@ void gtia_blit_image( Environment * _environment, char * _sources[], int _source
 
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
-    outline1("LDA %s+1", _x );
+    outline1("LDA %s", address_displacement(_environment, _x, "1") );
     outline0("STA IMAGEX+1" );
     outline1("LDA %s", _y );
     outline0("STA IMAGEY" );
-    outline1("LDA %s+1", _y );
+    outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA IMAGEY+1" );
     outline1("LDA #$%2.2x", ( _flags & 0xff ) );
     outline0("STA IMAGEF" );
@@ -2498,9 +2498,9 @@ void gtia_put_tiles( Environment * _environment, char * _tile, char * _x, char *
     outline0("STA TILEX" );
     outline1("LDA %s", _y );
     outline0("STA TILEY" );
-    outline1("LDA %s+1", _tile );
+    outline1("LDA %s", address_displacement(_environment, _tile, "1") );
     outline0("STA TILEW" );
-    outline1("LDA %s+2", _tile );
+    outline1("LDA %s", address_displacement(_environment, _tile, "2") );
     outline0("STA TILEH" );
 
     outline0("JSR PUTTILE");
@@ -2581,11 +2581,11 @@ void gtia_get_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA TMPPTR+1" );
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
-    outline1("LDA %s+1", _x );
+    outline1("LDA %s", address_displacement(_environment, _x, "1") );
     outline0("STA IMAGEX+1" );
     outline1("LDA %s", _y );
     outline0("STA IMAGEY" );
-    outline1("LDA %s+1", _y );
+    outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA IMAGEY+1" );
     outline1("LDA #$%2.2x", _palette );
     outline0("STA IMAGET" );

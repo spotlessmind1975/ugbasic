@@ -55,7 +55,7 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
 
     outline1("LD HL, $%4.4x", address);
     outline1("LD (%s), L", result->realName );
-    outline1("LD (%s+1), H", result->realName );
+    outline1("LD (%s), H", address_displacement( _environment, result->realName, "1" ) );
 
     return result;
     

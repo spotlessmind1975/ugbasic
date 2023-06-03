@@ -127,7 +127,7 @@ void tiles_at_var( Environment * _environment, char * _address ) {
     // it with the requested value.
     Variable * tiles_address = variable_define( _environment, "tiles_address", VT_ADDRESS, 0x0800 );
     
-    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s", address_displacement(_environment, address->realName, "1") );
 
     ted_tiles_at( _environment, addressString );
 

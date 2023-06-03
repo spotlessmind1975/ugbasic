@@ -70,7 +70,7 @@ Variable * tile_get_width( Environment * _environment, char * _tile ) {
     if ( tile->type == VT_TILE ) {
         cpu_store_8bit( _environment, result->realName, 1 );
     } else if ( tile->type == VT_TILES ) {
-        outline1("LDA %s+1", tile->realName );
+        outline1("LDA %s", address_displacement(_environment, tile->realName, "1") );
         outline1("STA %s", result->realName );
     } else {
         CRITICAL_NOT_TILE( _tile );

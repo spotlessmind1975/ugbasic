@@ -1,0 +1,39 @@
+; z80float is a floating point library targeting the Z80 processor. While this
+; project is tested on a TI-84+, the code should be generic enough to run on any
+; Z80 CPU with very little modification (mostly defining scrap RAM locations).
+;
+; adapted by Marco Spedaletti
+
+FPSINGLE_CONST_PI:
+	DEFB $DB,$0F,$49,$40	;3.14159265
+FPSINGLE_CONST_2PI:
+	DEFB $DB,$0F,$C9,$40	;6.28318530
+FPSINGLE_CONST_PI_DIV_2:
+	DEFB $DB,$0F,$C9,$3F	;6.28318530
+FPSINGLE_CONST_0:
+	DEFB $00,$00,$00,$00	;0
+FPSINGLE_CONST_1:
+	DEFB $00,$00,$80,$3F	;1
+FPSINGLE_CONST_N1:
+	DEFB $00,$00,$80,$BF	;-1
+FPSINGLE_CONST_NAN:
+	DEFB $FF,$FF,$FF,$7F	;NAN
+FPSINGLE_CONST_INF:
+	DEFB $00,$00,$80,$7F	;INF
+FPSINGLE_CONST_NINF:
+	DEFB $00,$00,$80,$FF	;-INF
+FPSINGLE_CONST_LN2:
+	DEFB $18,$72,$31,$3F	;.6931471806
+FPSINGLE_CONST_LG_E:
+	DEFB $3B,$AA,$B8,$3F	;1.442695041
+FPSINGLE_CONST_LOG10_E:
+	DEFB $D9,$5B,$DE,$3E	;0.4342944819
+FPSINGLE_CONST_P5:
+	DEFB $00,$00,$00,$3F	;.5
+FPSINGLE_CONST_P25:
+	DEFB $00,$00,$80,$3E	;.25
+FPSINGLE_CONST_2PI_INV:
+	DEFB $83,$F9,$22,$3E	;.1591549431
+FPSINGLE_CONST_LG_10:
+	DEFB $78,$9A,$54,$40	;3.321928095
+

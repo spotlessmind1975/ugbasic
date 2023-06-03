@@ -44,12 +44,18 @@ void const_emit( Environment * _environment, char * _name ) {
 
     if ( c ) {
             if ( !c->imported ) {
-                if ( c->valueString ) {
-                    outhead2("%s equ \"%s\"", c->realName, c->valueString)
-                } else {
-                    outhead2("%s equ $%4.4x", c->realName, c->value);
-                }
-
+                switch( c->type ) {
+                    case CT_INTEGER:
+                        outhead2("%s equ $%4.4x", c->realName, c->value);
+                        break;
+                    case CT_FLOAT: {
+                        CRITICAL_CANNOT_EMIT_FLOAT_CONST(_name);
+                        break;
+                    }
+                    case CT_STRING:
+                        outhead2("%s equ \"%s\"", c->realName, c->valueString)
+                        break;
+                } 
             }
     } else {
         CRITICAL( "Trying to emit an undefined constant");

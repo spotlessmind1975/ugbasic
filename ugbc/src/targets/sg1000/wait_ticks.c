@@ -89,7 +89,7 @@ void wait_ticks_var( Environment * _environment, char * _timing ) {
     outline0("LD HL, (SG1000TIMER)");
     outline0("SBC HL, DE");
     outline0("INC HL");
-    outline1("LD A, (%s+1)", timing->realName);
+    outline1("LD A, (%s)", address_displacement(_environment, timing->realName, "1"));
     outline0("LD B, A");
     outline0("LD A, H");
     outline0("CP B" );

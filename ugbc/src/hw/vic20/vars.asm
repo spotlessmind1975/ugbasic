@@ -80,6 +80,36 @@ CHARACTERS = $25
 CLINEX = $32
 CLINEY = $33
 
+OVFLO  = $26             ; overflow byte for the accumulator when it is shifted left or multiplied by ten.
+MSB    = OVFLO+1         ; most-significant byte of the accumulator.
+NMSB   = MSB+1           ; next-most-significant byte of the accumulator.
+NLSB   = NMSB+1          ; next-least-significant byte of the accumulator.
+LSB    = NLSB+1          ; least-significant byte of the accumulator.
+BEXP   = LSB+1           ; contains the binary exponent, bit seven is the sign bit.
+CHAR   = BEXP+1          ; used to store the character input from the keyboard.
+MFLAG  = CHAR+1          ; set to $FF when a minus sign is entered.
+DPFLAG = MFLAG+1         ; decimal point flag, set when decimal point is entered.
+ESIGN  = DPFLAG+2        ; set to $FF when a minus sign is entered for the exponent.
+MEM    = OVFLO           ; ???
+ACC    = OVFLO           ; ???
+ACCB   = OVFLO+16        ; ???
+TEMP   = OVFLO+11        ; temporary storage location.
+EVAL   = OVFLO+12        ; value of the decimal exponent entered after the "E."
+DEXP   = OVFLO+23        ; current value of the decimal exponent.
+BCDA   = OVFLO+32        ; BCD accumulator (5 bytes)
+BCDN   = OVFLO+37        ; ???
+
+SIGN = $DC
+X2   = SIGN+1        ; EXPONENT 2
+M2   = X2+1          ; MANTISSA 2
+X1   = M2+3          ; EXPONENT 1
+M1   = X1+1          ; MANTISSA 1
+E    = M1+3          ; SCRATCH
+ZZ   = E+4
+T    = ZZ+4
+SEXP = T+4
+INT  = SEXP+4
+
 BITSTOCONVERT = $25
 
 XCURSYS = $D3

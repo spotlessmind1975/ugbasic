@@ -78,11 +78,11 @@ void cline( Environment * _environment, char * _characters ) {
         // Use the current bitmap address as starting address for filling routine.
         outline1("LDA %s", TEXTADDRESS->realName);
         outline0("STA COPYOFTEXTADDRESS");
-        outline1("LDA %s+1", TEXTADDRESS->realName);
+        outline1("LDA %s", address_displacement(_environment, TEXTADDRESS->realName, "1"));
         outline0("STA COPYOFTEXTADDRESS+1");
         outline1("LDA %s", colormapAddress->realName );
         outline0("STA COPYOFCOLORMAPADDRESS");
-        outline1("LDA %s+1", colormapAddress->realName );
+        outline1("LDA %s", address_displacement(_environment, colormapAddress->realName, "1") );
         outline0("STA COPYOFCOLORMAPADDRESS+1");
  
         outline0("LDX CLINEY" ); // y

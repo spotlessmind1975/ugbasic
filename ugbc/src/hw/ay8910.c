@@ -124,7 +124,7 @@ void ay8910_set_volume( Environment * _environment, int _channels, int _volume )
 #define     PROGRAM_FREQUENCY_V( c, f ) \
     outline1("LD A, (%s)", f ); \
     outline0("LD E, A" ); \
-    outline1("LD A, (%s+1)", f ); \
+    outline1("LD A, (%s)", address_displacement(_environment, f, "1") ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
         outline0("LD A, $7"); \
@@ -160,7 +160,7 @@ void ay8910_set_volume( Environment * _environment, int _channels, int _volume )
 #define     PROGRAM_PITCH_V( c, f ) \
     outline1("LD A, (%s)", f ); \
     outline0("LD E, A" ); \
-    outline1("LD A, (%s+1)", f ); \
+    outline1("LD A, (%s)", address_displacement(_environment, f, "1") ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
         outline0("LD A, $7"); \
@@ -196,7 +196,7 @@ void ay8910_set_volume( Environment * _environment, int _channels, int _volume )
 #define     PROGRAM_PULSE_V( c, p ) \
     outline1("LD A, (%s)", p ); \
     outline0("LD E, A" ); \
-    outline1("LD A, (%s+1)", p ); \
+    outline1("LD A, (%s)", address_displacement(_environment, p, "1") ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
         outline0("LD A, $7"); \
@@ -919,7 +919,7 @@ void ay8910_set_frequency_vars( Environment * _environment, char * _channels, ch
 
     outline1("LD A, (%s)", _frequency );
     outline0("LD E, A" );
-    outline1("LD A, (%s+1)", _frequency );
+    outline1("LD A, (%s)", address_displacement(_environment, _frequency, "1") );
     outline0("LD D, A" );
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
@@ -938,7 +938,7 @@ void ay8910_set_pitch_vars( Environment * _environment, char * _channels, char *
 
     outline1("LD A, (%s)", _pitch );
     outline0("LD E, A" );
-    outline1("LD A, (%s+1)", _pitch );
+    outline1("LD A, (%s)", address_displacement(_environment, _pitch, "1") );
     outline0("LD D, A" );
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );

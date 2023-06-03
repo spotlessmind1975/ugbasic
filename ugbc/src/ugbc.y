@@ -38,12 +38,14 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %union {
     int integer;
     char * string;
+    double floating;
 }
 
 %token Remark
 %token NewLine 
 %token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS OP_INC OP_DEC OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
 %token OP_DISEQUAL OP_MULTIPLICATION OP_MULTIPLICATION2 OP_DOLLAR OP_DIVISION OP_DIVISION2 QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
+%token OP_EXCLAMATION
 
 %token RASTER DONE AT COLOR COLOUR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -83,7 +85,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
-%token LBOUND UBOUND BINARY C128Z
+%token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS 
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -97,6 +99,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token <integer> Integer
 %token <string> BufferDefinition
 %token <string> RawString
+%token <floating> Float
 
 %type <string> expr term modula factor exponential expr_math expr_math2
 %type <integer> const_expr const_term const_modula const_factor const_expr_math const_expr_math2
@@ -136,6 +139,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> font_schema
 %type <integer> blit_unary_op blit_binary_op blit_operand
 %type <integer> blit_expression blit_compounded
+%type <integer> precision 
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -753,7 +757,7 @@ const_factor:
           if ( c == NULL ) {
               CRITICAL_UNDEFINED_CONSTANT( $3 );
           }
-          if ( c->valueString == NULL ) {
+          if ( c->type != CT_STRING ) {
               CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $3 );
           }
           $$ = strlen( c->valueString );
@@ -769,20 +773,28 @@ const_factor:
           if ( c == NULL ) {
               CRITICAL_UNDEFINED_CONSTANT( $1 );
           }
-          if ( c->valueString != NULL ) {
+          if ( c->type == CT_STRING ) {
               CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $1 );
           }
-          $$ = c->value;
+          if ( c->type == CT_FLOAT ) {
+              $$ = (int)(c->valueFloating);
+          } else {
+              $$ = c->value;
+          }
       }
       | OP_HASH Identifier {
           Constant * c = constant_find( ((Environment *)_environment)->constants, $2 );
           if ( c == NULL ) {
               CRITICAL_UNDEFINED_CONSTANT( $2 );
           }
-          if ( c->valueString != NULL ) {
+          if ( c->type == CT_STRING ) {
               CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $2 );
           }
-          $$ = c->value;
+          if ( c->type == CT_FLOAT ) {
+              $$ = (int)(c->valueFloating);
+          } else {
+              $$ = c->value;
+          }
       }
       | const_color_enumeration
       | const_key_scancode_definition
@@ -927,10 +939,14 @@ direct_integer:
         if ( !c ) {
             CRITICAL_UNDEFINED_CONSTANT($2);
         }
-        if ( c->valueString ) {
+        if ( c->type == CT_STRING ) {
             CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC($2);
         }
-        $$ = c->value;
+        if ( c->type == CT_FLOAT ) {
+            $$ = (int)(c->valueFloating);
+        } else {
+            $$ = c->value;
+        }
     };
 
 image_load_flag :
@@ -1252,6 +1268,9 @@ random_definition_simple:
     }
     | INTEGER {
         $$ = random_value( _environment, VT_SWORD )->name;
+    }
+    | FLOAT {
+        $$ = random_value( _environment, VT_FLOAT )->name;
     }
     | DWORD {
         $$ = random_value( _environment, VT_DWORD )->name;
@@ -1968,6 +1987,7 @@ exponential:
             } else {
                 array = variable_define( _environment, $1, VT_ARRAY, 0 );
                 array->arrayType = ((struct _Environment *)_environment)->defaultVariableType;
+                array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
             }
         }        
         array = variable_retrieve( _environment, $1 );
@@ -2025,12 +2045,17 @@ exponential:
     | Identifier {
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
         if ( c ) {
-            if ( c->valueString ) {
+            if ( c->type == CT_STRING ) {
                 $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
                 variable_store_string( _environment, $$, c->valueString );
             } else {
-                $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(constant)" )->name;
-                variable_store( _environment, $$, c->value );
+                if ( c->type == CT_FLOAT ) {
+                    $$ = variable_temporary( _environment, VT_FLOAT, "(constant)" )->name;
+                    variable_store_float( _environment, $$, c->valueFloating );
+                } else {
+                    $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(constant)" )->name;
+                    variable_store( _environment, $$, c->value );
+                }
             }
         } else {
             if ( !variable_exists( _environment, $1 ) ) {
@@ -2047,11 +2072,21 @@ exponential:
     | Identifier as_datatype_suffix {
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
         if ( c ) {
-            if ( c->valueString ) {
+            if ( c->type == CT_STRING ) {
                 CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $1 );
             } else {
-                $$ = variable_temporary( _environment, $2, "(constant)" )->name;
-                variable_store( _environment, $$, c->value );
+                if ( c->type == CT_FLOAT ) {
+                    if ( $2 == VT_FLOAT ) {
+                        $$ = variable_temporary( _environment, $2, "(constant)" )->name;
+                        variable_store_float( _environment, $$, c->valueFloating );
+                    } else {
+                        $$ = variable_temporary( _environment, $2, "(constant)" )->name;
+                        variable_store( _environment, $$, (int)c->valueFloating );
+                    }
+                } else {
+                    $$ = variable_temporary( _environment, $2, "(constant)" )->name;
+                    variable_store( _environment, $$, c->value );
+                }
             }
         } else {
             if ( !variable_exists( _environment, $1 ) ) {
@@ -2068,7 +2103,7 @@ exponential:
     | Identifier OP_DOLLAR { 
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
         if ( c ) {
-            if ( !c->valueString ) {
+            if ( c->type != CT_STRING ) {
                 CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $1 );
             }
             $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
@@ -2097,6 +2132,10 @@ exponential:
         }
         variable_store( _environment, $$, $1 );
       }
+    | Float { 
+        $$ = variable_temporary( _environment, VT_FLOAT, "(float))" )->name;
+        variable_store_float( _environment, $$, $1 );
+    }
     | String { 
         $$ = variable_temporary( _environment, VT_STRING, "(string value)" )->name;
         variable_store_string( _environment, $$, $1 );
@@ -2115,12 +2154,20 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP BYTE CP Float { 
+        $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
+        variable_store( _environment, $$, (int)$4 );
+      }
     | OP BYTE CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_BYTE )->name;
       }
     | OP SIGNED BYTE CP Integer { 
         $$ = variable_temporary( _environment, VT_SBYTE, "(signed BYTE value)" )->name;
         variable_store( _environment, $$, $5 );
+      }
+    | OP SIGNED BYTE CP Float { 
+        $$ = variable_temporary( _environment, VT_SBYTE, "(signed BYTE value)" )->name;
+        variable_store( _environment, $$, (int)$5 );
       }
     | OP SIGNED BYTE CP direct_integer { 
         $$ = variable_temporary( _environment, VT_SBYTE, "(signed BYTE value)" )->name;
@@ -2133,6 +2180,10 @@ exponential:
         $$ = variable_temporary( _environment, VT_WORD, "(WORD value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP WORD CP Float { 
+        $$ = variable_temporary( _environment, VT_WORD, "(WORD value)" )->name;
+        variable_store( _environment, $$, (int)$4 );
+      }
     | OP WORD CP direct_integer { 
         $$ = variable_temporary( _environment, VT_WORD, "(WORD value)" )->name;
         variable_store( _environment, $$, $4 );
@@ -2144,6 +2195,10 @@ exponential:
         $$ = variable_temporary( _environment, VT_SWORD, "(signed WORD value)" )->name;
         variable_store( _environment, $$, $5 );
     }
+    | OP SIGNED WORD CP Float { 
+        $$ = variable_temporary( _environment, VT_SWORD, "(signed WORD value)" )->name;
+        variable_store( _environment, $$, (int)$5 );
+    }
     | OP SIGNED WORD CP direct_integer { 
         $$ = variable_temporary( _environment, VT_SWORD, "(signed WORD value)" )->name;
         variable_store( _environment, $$, $5 );
@@ -2151,9 +2206,16 @@ exponential:
     | OP SIGNED WORD CP OP expr CP { 
         $$ = variable_cast( _environment, $6, VT_SWORD )->name;
       }
+    | OP FLOAT CP OP expr CP { 
+        $$ = variable_cast( _environment, $5, VT_FLOAT )->name;
+      }
     | OP DWORD CP Integer { 
         $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
         variable_store( _environment, $$, $4 );
+      }
+    | OP DWORD CP Float { 
+        $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
+        variable_store( _environment, $$, (int)$4 );
       }
     | OP DWORD CP direct_integer { 
         $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
@@ -2166,16 +2228,28 @@ exponential:
         $$ = variable_temporary( _environment, VT_SDWORD, "(SDWORD value)" )->name;
         variable_store( _environment, $$, $5 );
       }
+    | OP SIGNED DWORD CP Float { 
+        $$ = variable_temporary( _environment, VT_SDWORD, "(SDWORD value)" )->name;
+        variable_store( _environment, $$, (int)$5 );
+      }
     | OP SIGNED DWORD CP direct_integer { 
         $$ = variable_temporary( _environment, VT_SDWORD, "(SDWORD value)" )->name;
         variable_store( _environment, $$, $5 );
       }
+    | OP FLOAT CP Float { 
+        $$ = variable_temporary( _environment, VT_FLOAT, "(float)" )->name;
+        variable_store( _environment, $$, $4 );
+    }
     | OP SIGNED DWORD CP OP expr CP { 
         $$ = variable_cast( _environment, $6, VT_SDWORD )->name;
       }
     | OP POSITION CP Integer { 
         $$ = variable_temporary( _environment, VT_POSITION, "(POSITION value)" )->name;
         variable_store( _environment, $$, $4 );
+      }
+    | OP POSITION CP Float { 
+        $$ = variable_temporary( _environment, VT_POSITION, "(POSITION value)" )->name;
+        variable_store( _environment, $$, (int)$4 );
       }
     | OP POSITION CP direct_integer { 
         $$ = variable_temporary( _environment, VT_POSITION, "(POSITION value)" )->name;
@@ -2188,6 +2262,10 @@ exponential:
         $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP COLOR CP Float { 
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
+        variable_store( _environment, $$, (int)$4 );
+      }
     | OP COLOR CP direct_integer { 
         $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
         variable_store( _environment, $$, $4 );
@@ -2198,6 +2276,10 @@ exponential:
     | OP COLOUR CP Integer { 
         $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
         variable_store( _environment, $$, $4 );
+      }
+    | OP COLOUR CP Float { 
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
+        variable_store( _environment, $$, (int)$4 );
       }
     | OP COLOUR CP direct_integer { 
         $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
@@ -2218,8 +2300,27 @@ exponential:
     | OP IMAGES CP BufferDefinition { 
         $$ = parse_buffer_definition( _environment, $4, VT_IMAGES )->name;
       }      
+    | PI {
+        Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
+        variable_store_float( _environment, pi->name, M_PI );
+        $$ = pi->name;
+      }
+    | PI OP CP {
+        Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
+        variable_store_float( _environment, pi->name, M_PI );
+        $$ = pi->name;
+      }
     | SQR OP expr CP {
         $$ = sqroot( _environment, $3 )->name;
+      }
+    | SIN OP expr CP {
+        $$ = fp_sin( _environment, $3 )->name;
+      }
+    | COS OP expr CP {
+        $$ = fp_cos( _environment, $3 )->name;
+      }
+    | TAN OP expr CP {
+        $$ = fp_tan( _environment, $3 )->name;
       }
     | NEW TILESET {
         Variable * index = variable_temporary( _environment, VT_TILESET, "(tileset)");
@@ -3731,7 +3832,11 @@ as_datatype_suffix :
     }
     | OP_AMPERSAND {
         $$ = VT_SDWORD;
-    };
+    }
+    | OP_EXCLAMATION {
+        $$ = VT_FLOAT;
+    }
+    ;
 
 var_definition_simple:
   Identifier as_datatype {
@@ -4623,6 +4728,9 @@ datatype :
     }
     | LONG {
         $$ = VT_SDWORD;
+    }
+    | FLOAT {
+        $$ = VT_FLOAT;
     }
     | ADDRESS {
         $$ = VT_ADDRESS;
@@ -5796,6 +5904,15 @@ font_schema :
     } 
     ;
 
+precision : 
+    FAST {
+        $$ = FT_FAST;
+    }
+    | SINGLE {
+        $$ = FT_SINGLE;
+    }
+    ;
+
 define_definition :
       FONT font_schema {
         ((struct _Environment *)_environment)->fontConfig.schema = $2;
@@ -5811,6 +5928,9 @@ define_definition :
             CRITICAL_INVALID_STRING_SPACE( $3 );
         }
         ((struct _Environment *)_environment)->dstring.space = $3;
+    }
+    | FLOAT PRECISION precision {
+        ((struct _Environment *)_environment)->floatType.precision = $3;
     }
     | TASK COUNT const_expr {
         if ( $3 <= 0 ) {
@@ -6578,6 +6698,12 @@ statement2:
   | GRAPHIC {
       graphic( _environment );
   }
+  | DEGREE {
+     ((struct _Environment *)_environment)->floatType.angle = FT_DEGREE;
+  }
+  | RADIAN {
+     ((struct _Environment *)_environment)->floatType.angle = FT_RADIAN;
+  }
   | BELL bell_definition
   | BOOM boom_definition
   | SHOOT shoot_definition
@@ -6798,6 +6924,7 @@ statement2:
         if ( expr->valueString ) {
             var->valueString = strdup( expr->valueString );
         }
+        var->valueFloating = expr->valueFloating;
         var->size = expr->size;
         if ( expr->valueBuffer ) {
             var->valueBuffer = malloc( expr->size );
@@ -6822,6 +6949,7 @@ statement2:
         var->arrayDimensions = expr->arrayDimensions;
         memcpy( var->arrayDimensionsEach, expr->arrayDimensionsEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );
         var->arrayType = expr->arrayType;
+        var->arrayPrecision = expr->arrayPrecision;
         var->frameSize = expr->frameSize;
         var->frameCount = expr->frameCount;
         expr->assigned = 1;
@@ -7213,6 +7341,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->defaultVariableType = VT_WORD;
 
     _environment->peepholeOptimizationLimit = 16;
+
+    _environment->floatType.precision = FT_FAST;
 
 #if defined(__atari__) 
     _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;

@@ -470,7 +470,7 @@ void vic1_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
     if ( VT_BITWIDTH( x->type ) > 8 ) {
-        outline1("LDA %s+1", x->realName );
+        outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
     } else {
         outline0("LDA #0");
     }
@@ -494,7 +494,7 @@ void vic1_point( Environment * _environment, char *_x, char *_y, char * _result 
     
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
-    outline1("LDA %s+1", x->realName );
+    outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
     outline0("STA PLOTX+1");
     outline1("LDA %s", y->realName );
     outline0("STA PLOTY");
@@ -604,7 +604,7 @@ void vic1_get_width( Environment * _environment, char *_result ) {
     outline0("LDA CURRENTWIDTH" );
     outline1("STA %s", _result );
     outline0("LDA CURRENTWIDTH+1" );
-    outline1("STA %s+1", _result );
+    outline1("STA %s", address_displacement(_environment, _result, "1") );
 
 }
 
@@ -627,7 +627,7 @@ void vic1_get_height( Environment * _environment, char *_result ) {
     outline0("LDA CURRENTHEIGHT" );
     outline1("STA %s", _result );
     outline0("LDA CURRENTHEIGHT+1" );
-    outline1("STA %s+1", _result );
+    outline1("STA %s", address_displacement(_environment, _result, "1") );
 
 }
 
@@ -666,7 +666,7 @@ void vic1_text( Environment * _environment, char * _text, char * _text_size ) {
 
     outline1("LDA %s", _text);
     outline0("STA TEXTPTR" );
-    outline1("LDA %s+1", _text);
+    outline1("LDA %s", address_displacement(_environment, _text, "1"));
     outline0("STA TEXTPTR+1" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
@@ -1427,11 +1427,11 @@ void vic1_put_image( Environment * _environment, char * _image, char * _x, char 
     }
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
-    outline1("LDA %s+1", _x );
+    outline1("LDA %s", address_displacement(_environment, _x, "1") );
     outline0("STA IMAGEX+1" );
     outline1("LDA %s", _y );
     outline0("STA IMAGEY" );
-    outline1("LDA %s+1", _y );
+    outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA IMAGEY+1" );
     outline1("LDA #$%2.2x", ( _flags & 0xff ) );
     outline0("STA IMAGEF" );
@@ -1447,7 +1447,7 @@ static void vic1_load_image_address_to_register( Environment * _environment, cha
     outline1("LDA #<%s", _source );
     outline1("STA %s", _register );
     outline1("LDA #>%s", _source );
-    outline1("STA %s+1", _register );
+    outline1("STA %s", address_displacement(_environment, _register, "1") );
 
     if ( _sequence ) {
 
@@ -1455,9 +1455,9 @@ static void vic1_load_image_address_to_register( Environment * _environment, cha
         outline1("LDA %s", _register );
         outline0("ADC #3" );
         outline1("STA %s", _register );
-        outline1("LDA %s+1", _register );
+        outline1("LDA %s", address_displacement(_environment, _register, "1") );
         outline0("ADC #0" );
-        outline1("STA %s+1", _register );
+        outline1("STA %s", address_displacement(_environment, _register, "1") );
         if ( strlen(_sequence) == 0 ) {
 
         } else {
@@ -1473,9 +1473,9 @@ static void vic1_load_image_address_to_register( Environment * _environment, cha
             outline0("ADC (MATHPTR0), Y" );
             outline1("STA %s", _register );
             outline0("INY" );
-            outline1("LDA %s+1", _register );
+            outline1("LDA %s", address_displacement(_environment, _register, "1") );
             outline0("ADC (MATHPTR0+1), Y" );
-            outline1("STA %s+1", _register );
+            outline1("STA %s", address_displacement(_environment, _register, "1") );
         }
 
         if ( _frame ) {
@@ -1494,9 +1494,9 @@ static void vic1_load_image_address_to_register( Environment * _environment, cha
                 outline0("ADC (MATHPTR0), Y" );
                 outline1("STA %s", _register );
                 outline0("INY" );
-                outline1("LDA %s+1", _register );
+                outline1("LDA %s", address_displacement(_environment, _register, "1") );
                 outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s+1", _register );
+                outline1("STA %s", address_displacement(_environment, _register, "1") );
             }
         }
 
@@ -1507,9 +1507,9 @@ static void vic1_load_image_address_to_register( Environment * _environment, cha
             outline1("LDA %s", _register );
             outline0("ADC #3" );
             outline1("STA %s", _register );
-            outline1("LDA %s+1", _register );
+            outline1("LDA %s", address_displacement(_environment, _register, "1") );
             outline0("ADC #0" );
-            outline1("STA %s+1", _register );
+            outline1("STA %s", address_displacement(_environment, _register, "1") );
             if ( strlen(_frame) == 0 ) {
 
             } else {
@@ -1525,9 +1525,9 @@ static void vic1_load_image_address_to_register( Environment * _environment, cha
                 outline0("ADC (NATHPTR0), Y" );
                 outline1("STA %s", _register );
                 outline0("INY" );
-                outline1("LDA %s+1", _register );
+                outline1("LDA %s", address_displacement(_environment, _register, "1") );
                 outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s+1", _register );
+                outline1("STA %s", address_displacement(_environment, _register, "1") );
             }
         }
 
@@ -1573,11 +1573,11 @@ void vic1_blit_image( Environment * _environment, char * _sources[], int _source
 
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
-    outline1("LDA %s+1", _x );
+    outline1("LDA %s", address_displacement(_environment, _x, "1") );
     outline0("STA IMAGEX+1" );
     outline1("LDA %s", _y );
     outline0("STA IMAGEY" );
-    outline1("LDA %s+1", _y );
+    outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA IMAGEY+1" );
     outline1("LDA #$%2.2x", ( _flags & 0xff ) );
     outline0("STA IMAGEF" );
@@ -1666,13 +1666,13 @@ void vic1_move_tiles( Environment * _environment, char * _tile, char * _x, char 
     outline0("STA TILEX" );
     outline1("LDA %s", y->realName );
     outline0("STA TILEY" );
-    outline1("LDA %s+1", tile->realName );
+    outline1("LDA %s", address_displacement(_environment, tile->realName, "1") );
     outline0("STA TILEW" );
     outline0("STA TILEW2" );
-    outline1("LDA %s+2", tile->realName );
+    outline1("LDA %s", address_displacement(_environment, tile->realName, "2") );
     outline0("STA TILEH" );
     outline0("STA TILEH2" );
-    outline1("LDA %s+3", tile->realName );
+    outline1("LDA %s", address_displacement(_environment, tile->realName, "3") );
     outline0("STA TILEA" );
 
     int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
@@ -1703,13 +1703,13 @@ void vic1_put_tiles( Environment * _environment, char * _tile, char * _x, char *
     outline0("STA TILEX" );
     outline1("LDA %s", _y );
     outline0("STA TILEY" );
-    outline1("LDA %s+1", _tile );
+    outline1("LDA %s", address_displacement(_environment, _tile, "1") );
     outline0("STA TILEW" );
     if ( _w ) {
         outline1("LDA %s", _w );
     }
     outline0("STA TILEW2" );
-    outline1("LDA %s+2", _tile );
+    outline1("LDA %s", address_displacement(_environment, _tile, "2") );
     outline0("STA TILEH" );
     if ( _h ) {
         outline1("LDA %s", _h );
@@ -1757,7 +1757,7 @@ Variable * vic1_get_raster_line( Environment * _environment ) {
     outline1( "STA %s", result->realName );
     outline0( "LDA #$0" );
     outline0( "ROL" );
-    outline1( "STA %s+1", result->realName );
+    outline1( "STA %s", address_displacement(_environment, result->realName, "1") );
 
     return result;
     
@@ -1820,7 +1820,7 @@ void vic1_set_volume( Environment * _environment, int _channels, int _volume ) {
 #define     PROGRAM_FREQUENCY_V( c, f ) \
     outline1("LDA %s", ( c == NULL ? "#$7" : c ) ); \
     outline1("LDX %s", f ); \
-    outline1("LDY %s+1", f ); \
+    outline1("LDY %s", address_displacement(_environment, f, "1") ); \
     outline0("JSR VIC1FREQ" );
 
 #define     PROGRAM_FREQUENCY_SV( c, f ) \
@@ -1842,7 +1842,7 @@ void vic1_set_volume( Environment * _environment, int _channels, int _volume ) {
 #define     PROGRAM_PITCH_V( c, f ) \
     outline1("LDA %s", ( c == NULL ? "#$7" : c ) ); \
     outline1("LDX %s", f ); \
-    outline1("LDY %s+1", f ); \
+    outline1("LDY %s", address_displacement(_environment, f, "1") ); \
     outline0("JSR VIC1PROGFREQ" );
 
 #define     PROGRAM_PITCH_SV( c, f ) \
@@ -1864,7 +1864,7 @@ void vic1_set_volume( Environment * _environment, int _channels, int _volume ) {
 #define     PROGRAM_PULSE_V( c, p ) \
     outline1("LDA %s", ( c == NULL ? "#$7" : c ) ); \
     outline1("LDX %s", p ); \
-    outline1("LDY %s+1", p ); \
+    outline1("LDY %s", address_displacement(_environment, p, "1") ); \
     outline0("JSR VIC1PROGPULSE" );
 
 #define     PROGRAM_PULSE_SV( c, p ) \
@@ -2500,7 +2500,7 @@ void vic1_set_frequency_vars( Environment * _environment, char * _channels, char
         outline0("LDA #$7" );
     }
     outline1("LDX %s", _frequency );
-    outline1("LDY %s+1", _frequency );
+    outline1("LDY %s", address_displacement(_environment, _frequency, "1") );
 
     outline0("JSR VIC1FREQ");
 
@@ -2517,7 +2517,7 @@ void vic1_set_pitch_vars( Environment * _environment, char * _channels, char * _
         outline0("LDA #$7" );
     }
     outline1("LDX %s", _pitch );
-    outline1("LDY %s+1", _pitch );
+    outline1("LDY %s", address_displacement(_environment, _pitch, "1") );
 
     outline0("JSR VIC1PROGFREQ");
 

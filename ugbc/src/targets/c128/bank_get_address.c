@@ -56,7 +56,7 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
     outline1("LDA #$%2.2x", ( address & 0xff ) );
     outline1("STA %s", result->realName );
     outline1("LDA #$%2.2x", ( address >> 8 ) & 0xff );
-    outline1("STA %s+1", result->realName );
+    outline1("STA %s", address_displacement(_environment, result->realName, "1") );
 
     return result;
     
@@ -87,7 +87,7 @@ Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
     outline1("LDA #$%2.2x", ( address & 0xff ) );
     outline1("STA %s", result->realName );
     outline1("LDA #$%2.2x", ( address >> 8 ) & 0xff );
-    outline1("STA %s+1", result->realName );
+    outline1("STA %s", address_displacement(_environment, result->realName, "1") );
 
     outline1("LDX %s", bank->realName );
     outline0("DEX" );
@@ -98,9 +98,9 @@ Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
     outline1("STA %s", result->realName );
     outline1("ADC #$%2.2x", ( BANK_SIZE & 0xff ) );
     outline1("STA %s", result->realName );
-    outline1("STA %s+1", result->realName );
+    outline1("STA %s", address_displacement(_environment, result->realName, "1") );
     outline1("ADC #$%2.2x", ( BANK_SIZE >> 8 ) & 0xff );
-    outline1("STA %s+1", result->realName );
+    outline1("STA %s", address_displacement(_environment, result->realName, "1") );
     outline0("DEX" );
     outline1("BNE %sbga", label );
     outhead1("%sbgaf:", label );

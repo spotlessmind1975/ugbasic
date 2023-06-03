@@ -7,6 +7,15 @@
 [submodule "modules/flex"]
 	path = modules/flex
 	url = https://github.com/spotlessmind1975/flex
+[submodule "modules/fp09"]
+	path = modules/fp09
+	url = https://github.com/spotlessmind1975/fp09.git
+[submodule "modules/6502"]
+	path = modules/6502
+	url = https://github.com/spotlessmind1975/6502.git
+[submodule "modules/z80float"]
+	path = modules/z80float
+	url = https://github.com/spotlessmind1975/z80float.git
 [submodule "modules/asm6809"]
 	path = modules/asm6809
 	url = https://github.com/spotlessmind1975/asm6809.git

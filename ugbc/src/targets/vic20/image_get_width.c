@@ -63,7 +63,7 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     outline1("STA %s", result->realName );
     outline0("LDY #1" );
     outline0("LDA (TMPPTR),Y" );
-    outline1("STA %s+1", result->realName );
+    outline1("STA %s", address_displacement(_environment, result->realName, "1") );
 
     return result;
 

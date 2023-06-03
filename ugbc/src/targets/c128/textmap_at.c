@@ -152,7 +152,7 @@ void textmap_at_var( Environment * _environment, char * _address ) {
 
     variable_move( _environment, address->name, TEXTADDRESS->name );
 
-    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s", address_displacement(_environment, address->realName, "1") );
 
     vic2_textmap_at( _environment, addressString );
 

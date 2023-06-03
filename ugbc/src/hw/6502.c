@@ -34,6 +34,8 @@
 
 #include "../ugbc.h"
 
+#include <math.h>
+
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
@@ -126,7 +128,7 @@ void cpu6502_peek( Environment * _environment, char * _address, char * _target )
 
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1") );
         outline0("STA TMPPTR+1");
         outline0("LDY #0");
         outline0("LDA (TMPPTR),Y");
@@ -142,7 +144,7 @@ void cpu6502_poke( Environment * _environment, char * _address, char * _source )
 
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1") );
         outline0("STA TMPPTR+1");
         outline0("LDY #0");
         outline1("LDA %s", _source);
@@ -174,7 +176,7 @@ void cpu6502_fill_blocks( Environment * _environment, char * _address, char * _b
         // Use the current bitmap address as starting address for filling routine.
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1") );
         outline0("STA TMPPTR+1");
 
         // Fill the bitmap with the given pattern.
@@ -194,7 +196,7 @@ void cpu6502_fill_blocks( Environment * _environment, char * _address, char * _b
 
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1"));
         outline0("STA TMPPTR+1");
         outline1("LDX %s", _blocks );
         outline1("LDA %s", _pattern );
@@ -227,7 +229,7 @@ void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, c
         // Use the current bitmap address as starting address for filling routine.
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1"));
         outline0("STA TMPPTR+1");
 
         outline1("LDA %s", _pattern);
@@ -245,7 +247,7 @@ void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, c
 
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1"));
         outline0("STA TMPPTR+1");
         outline1("LDX %s", _bytes );
         outline1("LDA %s", _pattern);
@@ -277,7 +279,7 @@ void cpu6502_fill_size( Environment * _environment, char * _address, int _bytes,
         // Use the current bitmap address as starting address for filling routine.
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1") );
         outline0("STA TMPPTR+1");
 
         outline1("LDA %s", _pattern);
@@ -295,7 +297,7 @@ void cpu6502_fill_size( Environment * _environment, char * _address, int _bytes,
 
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1") );
         outline0("STA TMPPTR+1");
         outline1("LDX #$%2.2x", _bytes );
         outline1("LDA %s", _pattern);
@@ -327,7 +329,7 @@ void cpu6502_fill_size_value( Environment * _environment, char * _address, int _
         // Use the current bitmap address as starting address for filling routine.
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1"));
         outline0("STA TMPPTR+1");
 
         outline1("LDA #$%2.2x", (_pattern & 0xff ) );
@@ -345,7 +347,7 @@ void cpu6502_fill_size_value( Environment * _environment, char * _address, int _
 
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1") );
         outline0("STA TMPPTR+1");
         outline1("LDX #$%2.2x", ( _bytes & 0xff ) );
         outline1("LDA #$%2.2x", (_pattern & 0xff ) );
@@ -965,7 +967,7 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
             outline1("ROR %s", _other);
             outline0("DEX" );
             outline1("BNE %s1", label);
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
 
             outline0("PLA");
             outline0("AND #$80");
@@ -973,16 +975,16 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
             outline1("LDA %s", _other );
             outline0("EOR #$ff" );
             outline1("STA %s", _other );
-            outline1("LDA %s+1", _other );
+            outline1("LDA %s", address_displacement(_environment, _other, "1") );
             outline0("EOR #$ff" );
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outline0("CLC" );
             outline1("LDA %s", _other );
             outline0("ADC #1" );
             outline1("STA %s", _other );
-            outline1("LDA %s+1", _other );
+            outline1("LDA %s", address_displacement(_environment, _other, "1") );
             outline0("ADC #0" );
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outhead1("%sdone:", label );
 
         } else {
@@ -998,7 +1000,7 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
             outline1("ROR %s", _other);
             outline0("DEX" );
             outline1("BNE %s1", label);
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
         }
 
     embedded( cpu_math_mul_8bit_to_16bit, src_hw_6502_cpu_math_mul_8bit_to_16bit_asm )
@@ -1012,7 +1014,7 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
             outline0("LDA CPUMATHMUL8BITTO16BIT_OTHER");
             outline1("STA %s", _other);
             outline0("LDA CPUMATHMUL8BITTO16BIT_OTHER+1");
-            outline1("STA %s+1", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "1"));
         } else {
             outline1("LDA %s", _source);
             outline0("STA CPUMATHMUL8BITTO16BIT_SOURCE");
@@ -1022,7 +1024,7 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
             outline0("LDA CPUMATHMUL8BITTO16BIT_OTHER");
             outline1("STA %s", _other);
             outline0("LDA CPUMATHMUL8BITTO16BIT_OTHER+1");
-            outline1("STA %s+1", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "1"));
         }
 
     done()
@@ -1293,8 +1295,8 @@ void cpu6502_move_16bit( Environment * _environment, char *_source, char *_desti
 
         outline1("LDA %s", _source);
         outline1("STA %s", _destination);
-        outline1("LDA %s+1", _source);
-        outline1("STA %s+1", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
+        outline1("STA %s", address_displacement(_environment, _destination, "1"));
 
     no_embedded( cpu_move_16bit )
 
@@ -1307,7 +1309,7 @@ void cpu6502_addressof_16bit( Environment * _environment, char *_source, char *_
         outline1("LDA #<%s", _source);
         outline1("STA %s", _destination);
         outline1("LDA #>%s", _source);
-        outline1("STA %s+1", _destination);
+        outline1("STA %s", address_displacement(_environment, _destination, "1"));
 
     no_embedded( cpu_move_16bit )
 
@@ -1327,7 +1329,7 @@ void cpu6502_store_16bit( Environment * _environment, char *_destination, int _v
         outline1("LDA #$%2.2x", ( _value & 0xff ) );
         outline1("STA %s", _destination);
         outline1("LDA #$%2.2x", ( ( _value >> 8 ) & 0xff ) );
-        outline1("STA %s+1", _destination);
+        outline1("STA %s", address_displacement(_environment, _destination, "1"));
 
     no_embedded( cpu_store_16bit )
 
@@ -1351,8 +1353,8 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
         outline1("LDA %s", _source);
         outline1("CMP %s", _destination);
         outline1("BNE %s", label);
-        outline1("LDA %s+1", _source);
-        outline1("CMP %s+1", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
+        outline1("CMP %s", address_displacement(_environment, _destination, "1"));
         outline1("BNE %s", label);
         outline1("LDA #$%2.2x", ( _positive ) ? 0xff : 0x00  );
         if ( _other ) {
@@ -1389,7 +1391,7 @@ void cpu6502_compare_and_branch_16bit_const( Environment * _environment, char *_
 
     inline( cpu_compare_and_branch_16bit_const )
 
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline1("CMP #$%2.2x", ( _destination >> 8 ) & 0xff );
         if ( _positive ) {
             outline1("BNE %s", label);
@@ -1428,8 +1430,8 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
         if ( _signed ) {
 
             outline0("SEC");
-            outline1("LDA %s+1", _source );
-            outline1("SBC %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline1("SBC %s", address_displacement(_environment, _destination, "1") );
             outline1("BVC %sLABEL1", label);
             outline0("EOR #$80" );
             outhead1("%sLABEL1:", label );
@@ -1461,8 +1463,8 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
             }
             outhead1("%sen:", label);
         } else {
-            outline1("LDA %s+1", _source);
-            outline1("CMP %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _source, "1"));
+            outline1("CMP %s", address_displacement(_environment, _destination, "1") );
             outline1("BEQ %s_1", label);
             outline1("BCC %s", label);
             outline1("BCS %s_0", label);
@@ -1504,7 +1506,7 @@ void cpu6502_less_than_16bit_const( Environment * _environment, char *_source, i
         if ( _signed ) {
 
             outline0("SEC");
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline1("SBC #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
             outline1("BVC %sLABEL1", label);
             outline0("EOR #$80" );
@@ -1529,7 +1531,7 @@ void cpu6502_less_than_16bit_const( Environment * _environment, char *_source, i
             outline1("STA %s", _other);
             outhead1("%sen:", label);
         } else {
-            outline1("LDA %s+1", _source);
+            outline1("LDA %s", address_displacement(_environment, _source, "1"));
             outline1("CMP #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
             outline1("BEQ %s_1", label);
             outline1("BCC %s", label);
@@ -1599,12 +1601,12 @@ void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_d
         } else {
             outline1("STA %s", _destination);
         }
-        outline1("LDA %s+1", _source);
-        outline1("ADC %s+1", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
+        outline1("ADC %s", address_displacement(_environment, _destination, "1"));
         if ( _other ) {
-            outline1("STA %s+1", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "1"));
         } else {
-            outline1("STA %s+1", _destination);
+            outline1("STA %s", address_displacement(_environment, _destination, "1"));
         }
 
     no_embedded( cpu_math_add_16bit )
@@ -1627,9 +1629,9 @@ void cpu6502_math_add_16bit_const( Environment * _environment, char *_source, in
         outline1("LDA %s", _source);
         outline1("ADC #$%2.2x", ( _destination & 0xff ) );
         outline1("STA %s", _other);
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline1("ADC #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
-        outline1("STA %s+1", _other);
+        outline1("STA %s", address_displacement(_environment, _other, "1"));
 
     no_embedded( cpu_math_add_16bit_const )
 
@@ -1651,9 +1653,9 @@ void cpu6502_math_add_16bit_with_16bit( Environment * _environment, char *_sourc
         outline1("LDA %s", _source);
         outline1("ADC #<%s", _destination);
         outline1("STA %s", _other);
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline1("ADC #>%s", _destination);
-        outline1("STA %s+1", _other);
+        outline1("STA %s", address_displacement(_environment, _other, "1"));
 
     no_embedded( cpu_math_add_16bit_with_16bit )
     
@@ -1671,12 +1673,12 @@ void cpu6502_math_add_16bit_with_8bit( Environment * _environment, char *_source
         } else {
             outline1("STA %s", _destination);
         }
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline0("ADC #$0");
         if ( _other ) {
-            outline1("STA %s+1", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "1"));
         } else {
-            outline1("STA %s+1", _destination);
+            outline1("STA %s", address_displacement(_environment, _destination, "1"));
         }
 
     no_embedded( cpu_math_add_16bit_with_8bit )
@@ -1701,12 +1703,12 @@ void cpu6502_math_double_16bit( Environment * _environment, char *_source, char 
         } else {
             outline1("STA %s", _source);
         }
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline0("ROL A");
         if ( _other ) {
-            outline1("STA %s+1", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "1"));
         } else {
-            outline1("STA %s+1", _source);
+            outline1("STA %s", address_displacement(_environment, _source, "1"));
         }
 
     no_embedded( cpu_math_double_16bit )
@@ -1730,19 +1732,19 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
         if ( _signed ) {
 
-            outline1("LDA %s+1", _source );
-            outline1("EOR %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline1("EOR %s", address_displacement(_environment, _destination, "1") );
             outline0("AND #$80" );
             outline0("PHA");
 
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("AND #$80" );
             outline1("BEQ %ssecond", label );
             outline0("CLC" );
             outline1("LDA %s", _source );
             outline0("EOR #$ff" );
             outline0("STA MATHPTR0" );
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("EOR #$ff" );
             outline0("STA MATHPTR1" );
             outline0("CLC" );
@@ -1756,19 +1758,19 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outhead1("%ssecond:", label );
             outline1("LDA %s", _source );
             outline0("STA MATHPTR0");
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA MATHPTR1");
             outline1("JMP %ssecond2", label );
 
             outhead1("%ssecond2:", label );
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("AND #$80" );
             outline1("BEQ %sthird", label );
             outline0("CLC" );
             outline1("LDA %s", _destination );
             outline0("EOR #$ff" );
             outline0("STA MATHPTR2" );
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("EOR #$ff" );
             outline0("STA MATHPTR3" );
             outline0("CLC" );
@@ -1782,7 +1784,7 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outhead1("%sthird:", label );
             outline1("LDA %s", _destination );
             outline0("STA MATHPTR2");
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("STA MATHPTR3");
             outline1("JMP %sthird2", label );
 
@@ -1817,11 +1819,11 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline0("LDA MATHPTR4");
             outline1("STA %s", _other );
             outline0("LDA MATHPTR5");
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outline0("LDA MATHPTR6");
-            outline1("STA %s+2", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "2") );
             outline0("LDA MATHPTR7");
-            outline1("STA %s+3", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "3") );
 
             outline0("PLA");
             outline0("AND #$80");
@@ -1829,28 +1831,28 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline1("LDA %s", _other );
             outline0("EOR #$ff" );
             outline1("STA %s", _other );
-            outline1("LDA %s+1", _other );
+            outline1("LDA %s", address_displacement(_environment, _other, "1") );
             outline0("EOR #$ff" );
-            outline1("STA %s+1", _other );
-            outline1("LDA %s+2", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
+            outline1("LDA %s", address_displacement(_environment, _other, "2") );
             outline0("EOR #$ff" );
-            outline1("STA %s+2", _other );
-            outline1("LDA %s+3", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "2") );
+            outline1("LDA %s", address_displacement(_environment, _other, "3") );
             outline0("EOR #$ff" );
-            outline1("STA %s+3", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "3") );
             outline0("CLC" );
             outline1("LDA %s", _other );
             outline0("ADC #1" );
             outline1("STA %s", _other );
-            outline1("LDA %s+1", _other );
+            outline1("LDA %s", address_displacement(_environment, _other, "1") );
             outline0("ADC #0" );
-            outline1("STA %s+1", _other );
-            outline1("LDA %s+2", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
+            outline1("LDA %s", address_displacement(_environment, _other, "2") );
             outline0("ADC #0" );
-            outline1("STA %s+2", _other );
-            outline1("LDA %s+3", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "2") );
+            outline1("LDA %s", address_displacement(_environment, _other, "3") );
             outline0("ADC #0" );
-            outline1("STA %s+3", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "3") );
             outhead1("%sdone:", label );
 
 
@@ -1858,11 +1860,11 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
             outline1("LDA %s", _source );
             outline0("STA MATHPTR0");
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA MATHPTR1");
             outline1("LDA %s", _destination );
             outline0("STA MATHPTR2");
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("STA MATHPTR3");
 
             outline0("LDA #$00");
@@ -1895,11 +1897,11 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline0("LDA MATHPTR4");
             outline1("STA %s", _other );
             outline0("LDA MATHPTR5");
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outline0("LDA MATHPTR6");
-            outline1("STA %s+2", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "2") );
             outline0("LDA MATHPTR7");
-            outline1("STA %s+3", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "3") );
 
         }
 
@@ -1908,39 +1910,39 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
         if ( _signed ) {
             outline1("LDA %s", _source );
             outline0("STA CPUMATHMUL16BITTO32BIT_SOURCE");
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA CPUMATHMUL16BITTO32BIT_SOURCE+1");
             outline1("LDA %s", _destination );
             outline0("STA CPUMATHMUL16BITTO32BIT_DESTINATION");
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("STA CPUMATHMUL16BITTO32BIT_DESTINATION+1");            
             outline0("JSR CPUMATHMUL16BITTO32BIT_SIGNED");
             outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER");
             outline1("STA %s", _other );
             outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+1");
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+2");
-            outline1("STA %s+2", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "2") );
             outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+3");
-            outline1("STA %s+3", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "3") );
         } else {
             outline1("LDA %s", _source );
             outline0("STA CPUMATHMUL16BITTO32BIT_SOURCE");
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA CPUMATHMUL16BITTO32BIT_SOURCE+1");
             outline1("LDA %s", _destination );
             outline0("STA CPUMATHMUL16BITTO32BIT_DESTINATION");
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("STA CPUMATHMUL16BITTO32BIT_DESTINATION+1");            
             outline0("JSR CPUMATHMUL16BITTO32BIT");
             outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER");
             outline1("STA %s", _other );
             outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+1");
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+2");
-            outline1("STA %s+2", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "2") );
             outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+3");
-            outline1("STA %s+3", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "3") );
         }
 
     done()
@@ -1955,19 +1957,19 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
 
         if ( _signed ) {
 
-            outline1("LDA %s+1", _source );
-            outline1("EOR %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline1("EOR %s", address_displacement(_environment, _destination, "1") );
             outline0("AND #$80" );
             outline0("PHA");
 
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("AND #$80" );
             outline1("BEQ %ssecond", label );
             outline0("CLC" );
             outline1("LDA %s", _source );
             outline0("EOR #$ff" );
             outline0("STA MATHPTR0" );
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("EOR #$ff" );
             outline0("STA MATHPTR1" );
             outline0("CLC" );
@@ -1981,19 +1983,19 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outhead1("%ssecond:", label );
             outline1("LDA %s", _source );
             outline0("STA MATHPTR0");
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA MATHPTR1");
             outline1("JMP %ssecond2", label );
 
             outhead1("%ssecond2:", label );
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("AND #$80" );
             outline1("BEQ %sthird", label );
             outline0("CLC" );
             outline1("LDA %s", _destination );
             outline0("EOR #$ff" );
             outline0("STA MATHPTR2" );
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("EOR #$ff" );
             outline0("STA MATHPTR3" );
             outline0("CLC" );
@@ -2007,7 +2009,7 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outhead1("%sthird:", label );
             outline1("LDA %s", _destination );
             outline0("STA MATHPTR2");
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("STA MATHPTR3");
             outline1("JMP %sthird2", label );
 
@@ -2016,25 +2018,25 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outline0("LDA MATHPTR0" );
             outline1("STA %s", _other );
             outline0("LDA MATHPTR1" );
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
 
             outline0("LDA #0" );
             outline1("STA %s", _other_remainder );
-            outline1("STA %s+1", _other_remainder );
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
             outline0("LDX #16" );
             outhead1("%sL1:", label );
             outline1("ASL %s", _other );
-            outline1("ROL %s+1", _other );
+            outline1("ROL %s", address_displacement(_environment, _other, "1") );
             outline1("ROL %s", _other_remainder );
-            outline1("ROL %s+1", _other_remainder );
+            outline1("ROL %s", address_displacement(_environment, _other_remainder, "1") );
             outline1("LDA %s", _other_remainder );
             outline0("SEC" );
             outline0("SBC MATHPTR2" );
             outline0("TAY" );
-            outline1("LDA %s+1", _other_remainder );
+            outline1("LDA %s", address_displacement(_environment, _other_remainder, "1") );
             outline0("SBC MATHPTR3" );
             outline1("BCC %sL2", label );
-            outline1("STA %s+1", _other_remainder );
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
             outline1("STY %s", _other_remainder );
             outline1("INC %s", _other );
             outhead1("%sL2:", label );
@@ -2047,41 +2049,41 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outline1("LDA %s", _other );
             outline0("EOR #$ff" );
             outline1("STA %s", _other );
-            outline1("LDA %s+1", _other );
+            outline1("LDA %s", address_displacement(_environment, _other, "1") );
             outline0("EOR #$ff" );
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outline0("CLC" );
             outline1("LDA %s", _other );
             outline0("ADC #1" );
             outline1("STA %s", _other );
-            outline1("LDA %s+1", _other );
+            outline1("LDA %s", address_displacement(_environment, _other, "1") );
             outline0("ADC #0" );
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outhead1("%sdone:", label );
                     
         } else {
             outline1("LDA %s", _source );
             outline1("STA %s", _other );
-            outline1("LDA %s+1", _source );
-            outline1("STA %s+1", _other );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
 
             outline0("LDA #0" );
             outline1("STA %s", _other_remainder );
-            outline1("STA %s+1", _other_remainder );
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
             outline0("LDX #16" );
             outhead1("%sL1:", label );
             outline1("ASL %s", _other );
-            outline1("ROL %s+1", _other );
+            outline1("ROL %s", address_displacement(_environment, _other, "1") );
             outline1("ROL %s", _other_remainder );
-            outline1("ROL %s+1", _other_remainder );
+            outline1("ROL %s", address_displacement(_environment, _other_remainder, "1") );
             outline1("LDA %s", _other_remainder );
             outline0("SEC" );
             outline1("SBC %s", _destination );
             outline0("TAY" );
-            outline1("LDA %s+1", _other_remainder );
-            outline1("SBC %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _other_remainder, "1") );
+            outline1("SBC %s", address_displacement(_environment, _destination, "1") );
             outline1("BCC %sL2", label );
-            outline1("STA %s+1", _other_remainder );
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
             outline1("STY %s", _other_remainder );
             outline1("INC %s", _other );
             outhead1("%sL2:", label );
@@ -2094,39 +2096,39 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
         if ( _signed ) {
             outline1("LDA %s", _source );
             outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE");
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE+1");
             outline1("LDA %s", _destination );
             outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION");
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION+1");            
             outline0("JSR CPUMATHDIV16BITTO16BIT_SIGNED");
             outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER");
             outline1("STA %s", _other );
             outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER+1");
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER");
             outline1("STA %s", _other_remainder );
             outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER+1");
-            outline1("STA %s+1", _other_remainder );
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
         } else {
             outline1("LDA %s", _source );
             outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE");
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE+1");
             outline1("LDA %s", _destination );
             outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION");
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION+1");            
             outline0("JSR CPUMATHDIV16BITTO16BIT");
             outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER");
             outline1("STA %s", _other );
             outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER+1");
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER");
             outline1("STA %s", _other_remainder );
             outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER+1");
-            outline1("STA %s+1", _other_remainder );
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
         }
 
     done()
@@ -2153,12 +2155,12 @@ void cpu6502_math_sub_16bit( Environment * _environment, char *_source, char *_d
         } else {
             outline1("STA %s", _destination);
         }
-        outline1("LDA %s+1", _source);
-        outline1("SBC %s+1", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
+        outline1("SBC %s", address_displacement(_environment, _destination, "1"));
         if ( _other ) {
-            outline1("STA %s+1", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "1"));
         } else {
-            outline1("STA %s+1", _destination);
+            outline1("STA %s", address_displacement(_environment, _destination, "1"));
         }
 
     no_embedded( cpu_math_sub_16bit )
@@ -2177,12 +2179,12 @@ void cpu6502_math_sub_16bit_with_8bit( Environment * _environment, char *_source
         } else {
             outline1("STA %s", _destination);
         }
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline0("SBC #$0");
         if ( _other ) {
-            outline1("STA %s+1", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "1"));
         } else {
-            outline1("STA %s+1", _destination);
+            outline1("STA %s", address_displacement(_environment, _destination, "1"));
         }
 
     no_embedded( cpu6502_math_sub_16bit_with_8bit )
@@ -2205,8 +2207,8 @@ void cpu6502_math_complement_const_16bit( Environment * _environment, char *_sou
         outline1("SBC %s", _source);
         outline1("STA %s", _source );
         outline1("LDA #$%2.2x", ( ( _value >> 8 ) & 0xff ) );
-        outline1("SBC %s+1", _source);
-        outline1("STA %s+1", _source );
+        outline1("SBC %s", address_displacement(_environment, _source, "1"));
+        outline1("STA %s", address_displacement(_environment, _source, "1") );
 
     no_embedded( cpu_math_complement_const_16bit )
 
@@ -2224,22 +2226,22 @@ void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, i
     inline( cpu_math_div2_const_16bit )
 
         if ( _signed ) {
-            outline1("LDA %s+1", _source);
+            outline1("LDA %s", address_displacement(_environment, _source, "1"));
             outline0("AND #$80" );
             outline0("TAX")
             while( _steps ) {
                 outline0("CLC");
-                outline1("LSR %s+1", _source);
+                outline1("LSR %s", address_displacement(_environment, _source, "1"));
                 outline1("ROR %s", _source);
                 --_steps;
             }
             outline0("TXA")
-            outline1("ORA %s+1", _source);
-            outline1("STA %s+1", _source);
+            outline1("ORA %s", address_displacement(_environment, _source, "1"));
+            outline1("STA %s", address_displacement(_environment, _source, "1"));
         } else {
             while( _steps ) {
                 outline0("CLC");
-                outline1("LSR %s+1", _source);
+                outline1("LSR %s", address_displacement(_environment, _source, "1"));
                 outline1("ROR %s", _source);
                 --_steps;
             }
@@ -2262,23 +2264,23 @@ void cpu6502_math_mul2_const_16bit( Environment * _environment, char *_source, i
     inline( cpu_math_mul2_const_16bit )
 
         if ( _signed ) {
-            outline1("LDA %s+1", _source);
+            outline1("LDA %s", address_displacement(_environment, _source, "1"));
             outline0("AND #$80" );
             outline0("TAX")
             while( _steps ) {
                 outline0("CLC");
                 outline1("ASL %s", _source);
-                outline1("ROL %s+1", _source);
+                outline1("ROL %s", address_displacement(_environment, _source, "1"));
                 --_steps;
             }
             outline0("TXA")
-            outline1("ORA %s+1", _source);
-            outline1("STA %s+1", _source);
+            outline1("ORA %s", address_displacement(_environment, _source, "1"));
+            outline1("STA %s", address_displacement(_environment, _source, "1"));
         } else {
             while( _steps ) {
                 outline0("CLC");
                 outline1("ASL %s", _source);
-                outline1("ROL %s+1", _source);
+                outline1("ROL %s", address_displacement(_environment, _source, "1"));
                 --_steps;
             }
         }
@@ -2301,9 +2303,9 @@ void cpu6502_math_and_const_16bit( Environment * _environment, char *_source, in
         outline1("LDA %s", _source);
         outline1("AND #$%2.2x", (_mask & 0xff ) );
         outline1("STA %s", _source);
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline1("AND #$%2.2x", ((_mask>>8) & 0xff ));
-        outline1("STA %s+1", _source);
+        outline1("STA %s", address_displacement(_environment, _source, "1"));
 
     no_embedded( cpu_math_and_const_16bit )
 
@@ -2326,12 +2328,12 @@ void cpu6502_move_32bit( Environment * _environment, char *_source, char *_desti
 
         outline1("LDA %s", _source);
         outline1("STA %s", _destination);
-        outline1("LDA %s+1", _source);
-        outline1("STA %s+1", _destination);
-        outline1("LDA %s+2", _source);
-        outline1("STA %s+2", _destination);
-        outline1("LDA %s+3", _source);
-        outline1("STA %s+3", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
+        outline1("STA %s", address_displacement(_environment, _destination, "1"));
+        outline1("LDA %s", address_displacement(_environment, _source, "2"));
+        outline1("STA %s", address_displacement(_environment, _destination, "2"));
+        outline1("LDA %s", address_displacement(_environment, _source, "3"));
+        outline1("STA %s", address_displacement(_environment, _destination, "3"));
 
     no_embedded( cpu_move_32bit )
 
@@ -2351,11 +2353,11 @@ void cpu6502_store_32bit( Environment * _environment, char *_destination, int _v
         outline1("LDA #$%2.2x", ( _value & 0xff ) );
         outline1("STA %s", _destination);
         outline1("LDA #$%2.2x", ( ( _value >> 8 ) & 0xff ) );
-        outline1("STA %s+1", _destination);
+        outline1("STA %s", address_displacement(_environment, _destination, "1"));
         outline1("LDA #$%2.2x", ( ( _value >> 16 ) & 0xff ) );
-        outline1("STA %s+2", _destination);
+        outline1("STA %s", address_displacement(_environment, _destination, "2"));
         outline1("LDA #$%2.2x", ( ( _value >> 24 ) & 0xff ) );
-        outline1("STA %s+3", _destination);
+        outline1("STA %s", address_displacement(_environment, _destination, "3"));
 
     no_embedded( cpu_store_32bit )
 
@@ -2369,16 +2371,16 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
 
         outline1("LDA %s", _source );
         outline0("STA MATHPTR4");
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA MATHPTR5");
-        outline1("LDA %s+2", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "2") );
         outline0("STA MATHPTR2");
-        outline1("LDA %s+3", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "3") );
         outline0("STA MATHPTR3" );
 
         outline1("LDA %s", _destination );
         outline0("STA MATHPTR0");
-        outline1("LDA %s+1", _destination );
+        outline1("LDA %s", address_displacement(_environment, _destination, "1") );
         outline0("STA MATHPTR1" );
 
         outhead1("%sSTART:", label );
@@ -2426,35 +2428,35 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
         outline0("LDA MATHPTR4");
         outline1("STA %s", _other );
         outline0("LDA MATHPTR5");
-        outline1("STA %s+1", _other );
+        outline1("STA %s", address_displacement(_environment, _other, "1") );
         outline0("LDA MATHPTR2");
         outline1("STA %s", _other_remainder );
         outline0("LDA MATHPTR3");
-        outline1("STA %s+1", _other_remainder );
+        outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
 
     embedded( cpu_math_div_32bit_to_16bit, src_hw_6502_cpu_math_div_32bit_to_16bit_asm )
 
         outline1("LDA %s", _source );
         outline0("STA MATHPTR4");
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA MATHPTR5");
-        outline1("LDA %s+2", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "2") );
         outline0("STA MATHPTR2");
-        outline1("LDA %s+3", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "3") );
         outline0("STA MATHPTR3" );
         outline1("LDA %s", _destination );
         outline0("STA MATHPTR0");
-        outline1("LDA %s+1", _destination );
+        outline1("LDA %s", address_displacement(_environment, _destination, "1") );
         outline0("STA MATHPTR1" );
         outline0("JSR CPUMATHDIV32BITTO16BIT" );
         outline0("LDA MATHPTR4");
         outline1("STA %s", _other );
         outline0("LDA MATHPTR5");
-        outline1("STA %s+1", _other );
+        outline1("STA %s", address_displacement(_environment, _other, "1") );
         outline0("LDA MATHPTR2");
         outline1("STA %s", _other_remainder );
         outline0("LDA MATHPTR3");
-        outline1("STA %s+1", _other_remainder );
+        outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
 
     done()
 
@@ -2478,14 +2480,14 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
         outline1("LDA %s", _source);
         outline1("CMP %s", _destination);
         outline1("BNE %s", label);
-        outline1("LDA %s+1", _source);
-        outline1("CMP %s+1", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
+        outline1("CMP %s", address_displacement(_environment, _destination, "1"));
         outline1("BNE %s", label);
-        outline1("LDA %s+2", _source);
-        outline1("CMP %s+2", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "2"));
+        outline1("CMP %s", address_displacement(_environment, _destination, "2"));
         outline1("BNE %s", label);
-        outline1("LDA %s+3", _source);
-        outline1("CMP %s+3", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "3"));
+        outline1("CMP %s", address_displacement(_environment, _destination, "3"));
         outline1("BNE %s", label);
         outline1("LDA #$%2.2x", 0xff*_positive);
         if ( _other ) {
@@ -2522,21 +2524,21 @@ void cpu6502_compare_and_branch_32bit_const( Environment * _environment, char *_
 
     inline( cpu_compare_and_branch_32bit_const )
 
-        outline1("LDA %s+3", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "3"));
         outline1("CMP #$%2.2x", ( _destination >> 24 ) & 0xff );
         if ( _positive ) {
             outline1("BNE %s", label);
         } else {
             outline1("BEQ %s", label);
         }
-        outline1("LDA %s+2", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "2"));
         outline1("CMP #$%2.2x", ( _destination >> 16 ) & 0xff );
         if ( _positive ) {
             outline1("BNE %s", label);
         } else {
             outline1("BEQ %s", label);
         }
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline1("CMP #$%2.2x", ( _destination >> 8 ) & 0xff );
         if ( _positive ) {
             outline1("BNE %s", label);
@@ -2575,12 +2577,12 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
         if ( _signed ) {
             outline1("LDA %s", _source);
             outline1("CMP %s", _destination);
-            outline1("LDA %s+1", _source);
-            outline1("SBC %s+1", _destination);
-            outline1("LDA %s+2", _source);
-            outline1("SBC %s+2", _destination);
-            outline1("LDA %s+3", _source);
-            outline1("SBC %s+3", _destination);
+            outline1("LDA %s", address_displacement(_environment, _source, "1"));
+            outline1("SBC %s", address_displacement(_environment, _destination, "1"));
+            outline1("LDA %s", address_displacement(_environment, _source, "2"));
+            outline1("SBC %s", address_displacement(_environment, _destination, "2"));
+            outline1("LDA %s", address_displacement(_environment, _source, "3"));
+            outline1("SBC %s", address_displacement(_environment, _destination, "3"));
             outline1("BVC %sv0", label );
             outline0("EOR #$80" );
             outhead1("%sv0:", label );
@@ -2606,20 +2608,20 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
             outhead1("%sen:", label);
 
         } else {
-            outline1("LDA %s+3", _source);
-            outline1("CMP %s+3", _destination );
+            outline1("LDA %s", address_displacement(_environment, _source, "3"));
+            outline1("CMP %s", address_displacement(_environment, _destination, "3") );
             outline1("BEQ %s_1a", label);
             outline1("BCC %s", label);
             outline1("BCS %s_0", label);
             outhead1("%s_1a:", label);
-            outline1("LDA %s+2", _source);
-            outline1("CMP %s+2", _destination );
+            outline1("LDA %s", address_displacement(_environment, _source, "2"));
+            outline1("CMP %s", address_displacement(_environment, _destination, "2") );
             outline1("BEQ %s_1", label);
             outline1("BCC %s", label);
             outline1("BCS %s_0", label);
             outhead1("%s_1:", label);
-            outline1("LDA %s+1", _source);
-            outline1("CMP %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _source, "1"));
+            outline1("CMP %s", address_displacement(_environment, _destination, "1") );
             outline1("BEQ %s_1b", label);
             outline1("BCC %s", label);
             outline1("BCS %s_0", label);
@@ -2660,11 +2662,11 @@ void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, i
         if ( _signed ) {
             outline1("LDA %s", _source);
             outline1("CMP #$%2.2x", ( _destination & 0xff ) );
-            outline1("LDA %s+1", _source);
+            outline1("LDA %s", address_displacement(_environment, _source, "1"));
             outline1("SBC #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
-            outline1("LDA %s+2", _source);
+            outline1("LDA %s", address_displacement(_environment, _source, "2"));
             outline1("SBC #$%2.2x", ( ( _destination >> 16 ) & 0xff ) );
-            outline1("LDA %s+3", _source);
+            outline1("LDA %s", address_displacement(_environment, _source, "3"));
             outline1("SBC #$%2.2x", ( ( _destination >> 24 ) & 0xff ) );
             outline1("BVC %sv0", label );
             outline0("EOR #$80" );
@@ -2683,19 +2685,19 @@ void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, i
             outhead1("%sen:", label);
 
         } else {
-            outline1("LDA %s+3", _source);
+            outline1("LDA %s", address_displacement(_environment, _source, "3"));
             outline1("CMP #$%2.2x", ( ( _destination >> 24 ) & 0xff ) );
             outline1("BEQ %s_1a", label);
             outline1("BCC %s", label);
             outline1("BCS %s_0", label);
             outhead1("%s_1a:", label);
-            outline1("LDA %s+2", _source);
+            outline1("LDA %s", address_displacement(_environment, _source, "2"));
             outline1("CMP #$%2.2x", ( ( _destination >> 16 ) & 0xff ) );
             outline1("BEQ %s_1", label);
             outline1("BCC %s", label);
             outline1("BCS %s_0", label);
             outhead1("%s_1:", label);
-            outline1("LDA %s+1", _source);
+            outline1("LDA %s", address_displacement(_environment, _source, "1"));
             outline1("CMP #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
             outline1("BEQ %s_1b", label);
             outline1("BCC %s", label);
@@ -2764,26 +2766,26 @@ void cpu6502_math_add_32bit( Environment * _environment, char *_source, char *_d
         } else {
             outline1("STA %s", _destination);
         }
-        outline1("LDA %s+1", _source);
-        outline1("ADC %s+1", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
+        outline1("ADC %s", address_displacement(_environment, _destination, "1"));
         if ( _other ) {
-            outline1("STA %s+1", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "1"));
         } else {
-            outline1("STA %s+1", _destination);
+            outline1("STA %s", address_displacement(_environment, _destination, "1"));
         }
-        outline1("LDA %s+2", _source);
-        outline1("ADC %s+2", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "2"));
+        outline1("ADC %s", address_displacement(_environment, _destination, "2"));
         if ( _other ) {
-            outline1("STA %s+2", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "2"));
         } else {
-            outline1("STA %s+2", _destination);
+            outline1("STA %s", address_displacement(_environment, _destination, "2"));
         }
-        outline1("LDA %s+3", _source);
-        outline1("ADC %s+3", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "3"));
+        outline1("ADC %s", address_displacement(_environment, _destination, "3"));
         if ( _other ) {
-            outline1("STA %s+3", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "3"));
         } else {
-            outline1("STA %s+3", _destination);
+            outline1("STA %s", address_displacement(_environment, _destination, "3"));
         }
 
     no_embedded( cpu_math_add_32bit )
@@ -2798,15 +2800,15 @@ void cpu6502_math_add_32bit_const( Environment * _environment, char *_source, in
         outline1("LDA %s", _source);
         outline1("ADC #$%2.2x", ( _destination & 0xff ) );
         outline1("STA %s", _other);
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline1("ADC #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
-        outline1("STA %s+1", _other);
-        outline1("LDA %s+2", _source);
+        outline1("STA %s", address_displacement(_environment, _other, "1"));
+        outline1("LDA %s", address_displacement(_environment, _source, "2"));
         outline1("ADC #$%2.2x", ( ( _destination >> 16 ) & 0xff ) );
-        outline1("STA %s+2", _other);
-        outline1("LDA %s+3", _source);
+        outline1("STA %s", address_displacement(_environment, _other, "2"));
+        outline1("LDA %s", address_displacement(_environment, _source, "3"));
         outline1("ADC #$%2.2x", ( ( _destination >> 24 ) & 0xff ) );
-        outline1("STA %s+3", _other);
+        outline1("STA %s", address_displacement(_environment, _other, "3"));
 
     no_embedded( cpu_math_add_32bit_const )
 
@@ -2831,26 +2833,26 @@ void cpu6502_math_double_32bit( Environment * _environment, char *_source, char 
         } else {
             outline1("STA %s", _source);
         }
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline0("ROL A");
         if ( _other ) {
-            outline1("STA %s+1", _source);
+            outline1("STA %s", address_displacement(_environment, _source, "1"));
         } else {
-            outline1("STA %s+1", _source);
+            outline1("STA %s", address_displacement(_environment, _source, "1"));
         }
-        outline1("LDA %s+2", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "2"));
         outline0("ROL A");
         if ( _other ) {
-            outline1("STA %s+2", _source);
+            outline1("STA %s", address_displacement(_environment, _source, "2"));
         } else {
-            outline1("STA %s+2", _source);
+            outline1("STA %s", address_displacement(_environment, _source, "2"));
         }
-        outline1("LDA %s+3", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "3"));
         outline0("ROL A");
         if ( _other ) {
-            outline1("STA %s+3", _source);
+            outline1("STA %s", address_displacement(_environment, _source, "3"));
         } else {
-            outline1("STA %s+3", _source);
+            outline1("STA %s", address_displacement(_environment, _source, "3"));
         }
 
     no_embedded( cpu_math_double_32bit )
@@ -2877,26 +2879,26 @@ void cpu6502_math_sub_32bit( Environment * _environment, char *_source, char *_d
         } else {
             outline1("STA %s", _destination);
         }
-        outline1("LDA %s+1", _source);
-        outline1("SBC %s+1", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
+        outline1("SBC %s", address_displacement(_environment, _destination, "1"));
         if ( _other ) {
-            outline1("STA %s+1", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "1"));
         } else {
-            outline1("STA %s+1", _destination);
+            outline1("STA %s", address_displacement(_environment, _destination, "1"));
         }
-        outline1("LDA %s+2", _source);
-        outline1("SBC %s+2", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "2"));
+        outline1("SBC %s", address_displacement(_environment, _destination, "2"));
         if ( _other ) {
-            outline1("STA %s+2", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "2"));
         } else {
-            outline1("STA %s+2", _destination);
+            outline1("STA %s", address_displacement(_environment, _destination, "2"));
         }
-        outline1("LDA %s+3", _source);
-        outline1("SBC %s+3", _destination);
+        outline1("LDA %s", address_displacement(_environment, _source, "3"));
+        outline1("SBC %s", address_displacement(_environment, _destination, "3"));
         if ( _other ) {
-            outline1("STA %s+3", _other);
+            outline1("STA %s", address_displacement(_environment, _other, "3"));
         } else {
-            outline1("STA %s+3", _destination);
+            outline1("STA %s", address_displacement(_environment, _destination, "3"));
         }
 
     no_embedded( cpu_math_sub_32bit )
@@ -2919,14 +2921,14 @@ void cpu6502_math_complement_const_32bit( Environment * _environment, char *_sou
         outline1("SBC %s", _source);
         outline1("STA %s", _source );
         outline1("LDA #$%2.2x", ( ( _value >> 8 ) & 0xff ) );
-        outline1("SBC %s+1", _source);
-        outline1("STA %s+1", _source );
+        outline1("SBC %s", address_displacement(_environment, _source, "1"));
+        outline1("STA %s", address_displacement(_environment, _source, "1") );
         outline1("LDA #$%2.2x", ( ( _value >> 16 ) & 0xff ) );
-        outline1("SBC %s+2", _source);
-        outline1("STA %s+2", _source );
+        outline1("SBC %s", address_displacement(_environment, _source, "2"));
+        outline1("STA %s", address_displacement(_environment, _source, "2") );
         outline1("LDA #$%2.2x", ( ( _value >> 24 ) & 0xff ) );
-        outline1("SBC %s+3", _source);
-        outline1("STA %s+3", _source );
+        outline1("SBC %s", address_displacement(_environment, _source, "3"));
+        outline1("STA %s", address_displacement(_environment, _source, "3") );
 
     no_embedded( cpu_math_complement_const_32bit )
 
@@ -2944,26 +2946,26 @@ void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, i
     inline( cpu_math_div2_const_32bit )
 
         if ( _signed ) {
-            outline1("LDA %s+3", _source);
+            outline1("LDA %s", address_displacement(_environment, _source, "3"));
             outline0("AND #$80");
             outline0("TAX");
             while( _steps ) {
                 outline0("CLC");
-                outline1("LSR %s+3", _source);
-                outline1("ROR %s+2", _source);
-                outline1("ROR %s+1", _source);
+                outline1("LSR %s", address_displacement(_environment, _source, "3"));
+                outline1("ROR %s", address_displacement(_environment, _source, "2"));
+                outline1("ROR %s", address_displacement(_environment, _source, "1"));
                 outline1("ROR %s", _source);
                 --_steps;
             }
             outline0("TXA");
-            outline1("ORA %s+3", _source);
-            outline1("STA %s+3", _source);
+            outline1("ORA %s", address_displacement(_environment, _source, "3"));
+            outline1("STA %s", address_displacement(_environment, _source, "3"));
         } else {
             while( _steps ) {
                 outline0("CLC");
-                outline1("LSR %s+3", _source);
-                outline1("ROR %s+2", _source);
-                outline1("ROR %s+1", _source);
+                outline1("LSR %s", address_displacement(_environment, _source, "3"));
+                outline1("ROR %s", address_displacement(_environment, _source, "2"));
+                outline1("ROR %s", address_displacement(_environment, _source, "1"));
                 outline1("ROR %s", _source);
                 --_steps;
             }
@@ -2985,27 +2987,27 @@ void cpu6502_math_mul2_const_32bit( Environment * _environment, char *_source, i
     inline( cpu_math_mul2_const_32bit )
 
         if ( _signed ) {
-            outline1("LDA %s+3", _source);
+            outline1("LDA %s", address_displacement(_environment, _source, "3"));
             outline0("AND #$80");
             outline0("TAX");
             while( _steps ) {
                 outline0("CLC");
                 outline1("ASL %s", _source);
-                outline1("ROL %s+1", _source);
-                outline1("ROL %s+2", _source);
-                outline1("ROL %s+3", _source);
+                outline1("ROL %s", address_displacement(_environment, _source, "1"));
+                outline1("ROL %s", address_displacement(_environment, _source, "2"));
+                outline1("ROL %s", address_displacement(_environment, _source, "3"));
                 --_steps;
             }
             outline0("TXA");
-            outline1("ORA %s+3", _source);
-            outline1("STA %s+3", _source);
+            outline1("ORA %s", address_displacement(_environment, _source, "3"));
+            outline1("STA %s", address_displacement(_environment, _source, "3"));
         } else {
             while( _steps ) {
                 outline0("CLC");
                 outline1("ASL %s", _source);
-                outline1("ROL %s+1", _source);
-                outline1("ROL %s+2", _source);
-                outline1("ROL %s+3", _source);
+                outline1("ROL %s", address_displacement(_environment, _source, "1"));
+                outline1("ROL %s", address_displacement(_environment, _source, "2"));
+                outline1("ROL %s", address_displacement(_environment, _source, "3"));
                 --_steps;
             }
         }
@@ -3028,15 +3030,15 @@ void cpu6502_math_and_const_32bit( Environment * _environment, char *_source, in
         outline1("LDA %s", _source);
         outline1("AND #$%2.2x", (_mask & 0xff ) );
         outline1("STA %s", _source);
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline1("AND #$%2.2x", ((_mask>>8) & 0xff ));
-        outline1("STA %s+1", _source);
-        outline1("LDA %s+2", _source);
+        outline1("STA %s", address_displacement(_environment, _source, "1"));
+        outline1("LDA %s", address_displacement(_environment, _source, "2"));
         outline1("AND #$%2.2x", ((_mask>>16) & 0xff ) );
-        outline1("STA %s+2", _source);
-        outline1("LDA %s+3", _source);
+        outline1("STA %s", address_displacement(_environment, _source, "2"));
+        outline1("LDA %s", address_displacement(_environment, _source, "3"));
         outline1("AND #$%2.2x", ((_mask>>24) & 0xff ));
-        outline1("STA %s+3", _source);
+        outline1("STA %s", address_displacement(_environment, _source, "3"));
 
     no_embedded( cpu_math_and_const_32bit )
 
@@ -3059,6 +3061,78 @@ void cpu6502_combine_nibbles( Environment * _environment, char * _low_nibble, ch
     no_embedded( cpu_combine_nibbles )
 
 }
+
+/**
+ * @brief <i>CPU cpu6502</i>: emit code to store n bit
+ * 
+ * @param _environment Current calling environment
+ * @param _destination Destination of store
+ * @param _n bits to store (>32)
+ * @param _value[] Value to store (segmented in 32 bit each)
+ */
+void cpu6502_move_nbit( Environment * _environment, int _n, char * _source, char *_destination ) {
+
+    int i = 0;
+    while( _n ) {
+        char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf( sourceAddress, "%s+%d", _source, i*4 );
+        char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf( destinationAddress, "%s+%d", _destination, i*4 );
+        if ( _n <= 32 ) {
+            switch( _n ) {
+                case 1: case 2: case 3: case 4:
+                case 5: case 6: case 7: case 8:
+                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+                case 9: case 10: case 11: case 12:
+                case 13: case 14: case 15: case 16:
+                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+                case 17: case 18: case 19: case 20:
+                case 21: case 22: case 23: case 24:
+                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+                case 25: case 26: case 27: case 28:
+                case 29: case 30: case 31: case 32:
+                default:
+                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+            }
+            _n = 0;
+        } else {
+            cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+            cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+            cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+            cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+            _n -= 32;
+        }
+        ++i;
+    }
+
+}
+
 
 void cpu6502_jump( Environment * _environment, char * _label ) {
 
@@ -3191,7 +3265,7 @@ void cpu6502_random_16bit( Environment * _environment, char * _entropy, char * _
             outline0("LDA CPURANDOM_SEED" );
             outline1("STA %s", _result );
             outline0("LDA CPURANDOM_SEED+1" );
-            outline1("STA %s+1", _result );
+            outline1("STA %ss", address_displacement(_environment, _result, "1") );
         }
 
     no_embedded( cpu_random_8bit );
@@ -3211,11 +3285,11 @@ void cpu6502_random_32bit( Environment * _environment, char * _entropy, char * _
             outline0("LDA CPURANDOM_SEED" );
             outline1("STA %s", _result );
             outline0("LDA CPURANDOM_SEED+1" );
-            outline1("STA %s+1", _result );
+            outline1("STA %ss", address_displacement(_environment, _result, "1") );
             outline0("LDA CPURANDOM_SEED+2" );
-            outline1("STA %s+2", _result );
+            outline1("STA %s", address_displacement(_environment, _result, "2") );
             outline0("LDA CPURANDOM_SEED+3" );
-            outline1("STA %s+3", _result );
+            outline1("STA %s", address_displacement(_environment, _result, "3") );
         }
 
     no_embedded( cpu_random_32bit );
@@ -3229,7 +3303,7 @@ void cpu6502_limit_16bit( Environment * _environment, char * _variable, int _val
     inline( cpu_limit_16bit )
 
         outline0( "LDA #$0" );
-        outline1( "STA %s+1", _variable );
+        outline1( "STA %s", address_displacement(_environment, _variable, "1") );
         outline1( "LDA %s", _variable );
         outline1( "CMP #$%2.2x", _value );
         outline1( "BCC %s", label );
@@ -3301,9 +3375,9 @@ void cpu6502_and_16bit( Environment * _environment, char * _left, char * _right,
         outline1("LDA %s", _left );
         outline1("AND %s", _right );
         outline1("STA %s", _result);
-        outline1("LDA %s+1", _left );
-        outline1("AND %s+1", _right );
-        outline1("STA %s+1", _result);
+        outline1("LDA %s", address_displacement(_environment, _left, "1") );
+        outline1("AND %s", address_displacement(_environment, _right, "1") );
+        outline1("STA %ss", address_displacement(_environment, _result, "1"));
 
     no_embedded( cpu_and_16bit )
 
@@ -3318,15 +3392,15 @@ void cpu6502_and_32bit( Environment * _environment, char * _left, char * _right,
         outline1("LDA %s", _left );
         outline1("AND %s", _right );
         outline1("STA %s", _result);
-        outline1("LDA %s+1", _left );
-        outline1("AND %s+1", _right );
-        outline1("STA %s+1", _result);
-        outline1("LDA %s+2", _left );
-        outline1("AND %s+2", _right );
-        outline1("STA %s+2", _result);
-        outline1("LDA %s+3", _left );
-        outline1("AND %s+3", _right );
-        outline1("STA %s+3", _result);
+        outline1("LDA %s", address_displacement(_environment, _left, "1") );
+        outline1("AND %s", address_displacement(_environment, _right, "1") );
+        outline1("STA %ss", address_displacement(_environment, _result, "1"));
+        outline1("LDA %s", address_displacement(_environment, _left, "2") );
+        outline1("AND %s", address_displacement(_environment, _right, "2") );
+        outline1("STA %s", address_displacement(_environment, _result, "2"));
+        outline1("LDA %s", address_displacement(_environment, _left, "3") );
+        outline1("AND %s", address_displacement(_environment, _right, "3") );
+        outline1("STA %s", address_displacement(_environment, _result, "3"));
 
     no_embedded( cpu_and_8bit )
 
@@ -3379,9 +3453,9 @@ void cpu6502_or_16bit( Environment * _environment, char * _left, char * _right, 
         outline1("LDA %s", _left );
         outline1("ORA %s", _right );
         outline1("STA %s", _result);
-        outline1("LDA %s+1", _left );
-        outline1("ORA %s+1", _right );
-        outline1("STA %s+1", _result);
+        outline1("LDA %s", address_displacement(_environment, _left, "1") );
+        outline1("ORA %s", address_displacement(_environment, _right, "1") );
+        outline1("STA %ss", address_displacement(_environment, _result, "1"));
 
     no_embedded( cpu_or_16bit )
 
@@ -3396,15 +3470,15 @@ void cpu6502_or_32bit( Environment * _environment, char * _left, char * _right, 
         outline1("LDA %s", _left );
         outline1("ORA %s", _right );
         outline1("STA %s", _result);
-        outline1("LDA %s+1", _left );
-        outline1("ORA %s+1", _right );
-        outline1("STA %s+1", _result);
-        outline1("LDA %s+2", _left );
-        outline1("ORA %s+2", _right );
-        outline1("STA %s+2", _result);
-        outline1("LDA %s+3", _left );
-        outline1("ORA %s+3", _right );
-        outline1("STA %s+3", _result);
+        outline1("LDA %s", address_displacement(_environment, _left, "1") );
+        outline1("ORA %s", address_displacement(_environment, _right, "1") );
+        outline1("STA %ss", address_displacement(_environment, _result, "1"));
+        outline1("LDA %s", address_displacement(_environment, _left, "2") );
+        outline1("ORA %s", address_displacement(_environment, _right, "2") );
+        outline1("STA %s", address_displacement(_environment, _result, "2"));
+        outline1("LDA %s", address_displacement(_environment, _left, "3") );
+        outline1("ORA %s", address_displacement(_environment, _right, "3") );
+        outline1("STA %s", address_displacement(_environment, _result, "3"));
 
     no_embedded( cpu_or_32bit )
 
@@ -3433,9 +3507,9 @@ void cpu6502_xor_16bit( Environment * _environment, char * _left, char * _right,
         outline1("LDA %s", _left );
         outline1("EOR %s", _right );
         outline1("STA %s", _result);
-        outline1("LDA %s+1", _left );
-        outline1("EOR %s+1", _right );
-        outline1("STA %s+1", _result);
+        outline1("LDA %s", address_displacement(_environment, _left, "1") );
+        outline1("EOR %s", address_displacement(_environment, _right, "1") );
+        outline1("STA %ss", address_displacement(_environment, _result, "1"));
 
     no_embedded( cpu_xor_16bit )
 
@@ -3450,15 +3524,15 @@ void cpu6502_xor_32bit( Environment * _environment, char * _left, char * _right,
         outline1("LDA %s", _left );
         outline1("EOR %s", _right );
         outline1("STA %s", _result);
-        outline1("LDA %s+1", _left );
-        outline1("EOR %s+1", _right );
-        outline1("STA %s+1", _result);
-        outline1("LDA %s+2", _left );
-        outline1("EOR %s+2", _right );
-        outline1("STA %s+2", _result);
-        outline1("LDA %s+3", _left );
-        outline1("ORA %s+3", _right );
-        outline1("EOR %s+3", _result);
+        outline1("LDA %s", address_displacement(_environment, _left, "1") );
+        outline1("EOR %s", address_displacement(_environment, _right, "1") );
+        outline1("STA %ss", address_displacement(_environment, _result, "1"));
+        outline1("LDA %s", address_displacement(_environment, _left, "2") );
+        outline1("EOR %s", address_displacement(_environment, _right, "2") );
+        outline1("STA %s", address_displacement(_environment, _result, "2"));
+        outline1("LDA %s", address_displacement(_environment, _left, "3") );
+        outline1("ORA %s", address_displacement(_environment, _right, "3") );
+        outline1("EOR %s", address_displacement(_environment, _result, "3"));
 
     no_embedded( cpu_xor_32bit )
 
@@ -3494,12 +3568,12 @@ void cpu6502_swap_16bit( Environment * _environment, char * _left, char * _right
         outline0("PLA" );
         outline1("STA %s", _right);
 
-        outline1("LDA %s+1", _left );
+        outline1("LDA %s", address_displacement(_environment, _left, "1") );
         outline0("PHA" );
-        outline1("LDA %s+1", _right );
-        outline1("STA %s+1", _left );
+        outline1("LDA %s", address_displacement(_environment, _right, "1") );
+        outline1("STA %s", address_displacement(_environment, _left, "1") );
         outline0("PLA" );
-        outline1("STA %s+1", _right);
+        outline1("STA %s", address_displacement(_environment, _right, "1"));
 
     no_embedded( cpu_swap_16bit )
 
@@ -3518,26 +3592,26 @@ void cpu6502_swap_32bit( Environment * _environment, char * _left, char * _right
         outline0("PLA" );
         outline1("STA %s", _right);
 
-        outline1("LDA %s+1", _left );
+        outline1("LDA %s", address_displacement(_environment, _left, "1") );
         outline0("PHA" );
-        outline1("LDA %s+1", _right );
-        outline1("STA %s+1", _left );
+        outline1("LDA %s", address_displacement(_environment, _right, "1") );
+        outline1("STA %s", address_displacement(_environment, _left, "1") );
         outline0("PLA" );
-        outline1("STA %s+1", _right);
+        outline1("STA %s", address_displacement(_environment, _right, "1"));
 
-        outline1("LDA %s+2", _left );
+        outline1("LDA %s", address_displacement(_environment, _left, "2") );
         outline0("PHA" );
-        outline1("LDA %s+2", _right );
-        outline1("STA %s+2", _left );
+        outline1("LDA %s", address_displacement(_environment, _right, "2") );
+        outline1("STA %s", address_displacement(_environment, _left, "2") );
         outline0("PLA" );
-        outline1("STA %s+2", _right);
+        outline1("STA %s", address_displacement(_environment, _right, "2"));
 
-        outline1("LDA %s+3", _left );
+        outline1("LDA %s", address_displacement(_environment, _left, "3") );
         outline0("PHA" );
-        outline1("LDA %s+3", _right );
-        outline1("STA %s+3", _left );
+        outline1("LDA %s", address_displacement(_environment, _right, "3") );
+        outline1("STA %s", address_displacement(_environment, _left, "3") );
         outline0("PLA" );
-        outline1("STA %s+3", _right);
+        outline1("STA %s", address_displacement(_environment, _right, "3"));
 
     no_embedded( cpu_swap_32bit )
 
@@ -3580,9 +3654,9 @@ void cpu6502_not_16bit( Environment * _environment, char * _value, char * _resul
         outline1("LDA %s", _value );
         outline0("EOR #$FF" );
         outline1("STA %s", _result );
-        outline1("LDA %s+1", _value );
+        outline1("LDA %s", address_displacement(_environment, _value, "1") );
         outline0("EOR #$FF" );
-        outline1("STA %s+1", _result );
+        outline1("STA %ss", address_displacement(_environment, _result, "1") );
 
     no_embedded( cpu_not_16bit )
 
@@ -3597,15 +3671,15 @@ void cpu6502_not_32bit( Environment * _environment, char * _value, char * _resul
         outline1("LDA %s", _value );
         outline0("EOR #$FF" );
         outline1("STA %s", _result );
-        outline1("LDA %s+1", _value );
+        outline1("LDA %s", address_displacement(_environment, _value, "1") );
         outline0("EOR #$FF" );
-        outline1("STA %s+1", _result );
-        outline1("LDA %s+2", _value );
+        outline1("STA %ss", address_displacement(_environment, _result, "1") );
+        outline1("LDA %s", address_displacement(_environment, _value, "2") );
         outline0("EOR #$FF" );
-        outline1("STA %s+2", _result );
-        outline1("LDA %s+3", _value );
+        outline1("STA %s", address_displacement(_environment, _result, "2") );
+        outline1("LDA %s", address_displacement(_environment, _value, "3") );
         outline0("EOR #$FF" );
-        outline1("STA %s+3", _result );
+        outline1("STA %s", address_displacement(_environment, _result, "3") );
 
     no_embedded( cpu_not_32bit )
 
@@ -3649,7 +3723,7 @@ void cpu6502_inc_16bit( Environment * _environment, char * _variable ) {
 
         outline1("INC %s", _variable );
         outline1("BNE %s", label );
-        outline1("INC %s+1", _variable );
+        outline1("INC %s", address_displacement(_environment, _variable, "1") );
         outhead1("%s:", label );
 
     no_embedded( cpu_inc_16bit )
@@ -3664,11 +3738,11 @@ void cpu6502_inc_32bit( Environment * _environment, char * _variable ) {
 
         outline1("INC %s", _variable );
         outline1("BNE %s", label );
-        outline1("INC %s+1", _variable );
+        outline1("INC %s", address_displacement(_environment, _variable, "1") );
         outline1("BNE %s", label );
-        outline1("INC %s+2", _variable );
+        outline1("INC %s", address_displacement(_environment, _variable, "2") );
         outline1("BNE %s", label );
-        outline1("INC %s+3", _variable );
+        outline1("INC %s", address_displacement(_environment, _variable, "3") );
         outhead1("%s:", label );
 
     no_embedded( cpu_inc_32bit )
@@ -3695,7 +3769,7 @@ void cpu6502_dec_16bit( Environment * _environment, char * _variable ) {
         outline1("LDA %s", _variable );
         outline0("CMP #$FF" );
         outline1("BNE %s", label );
-        outline1("DEC %s+1", _variable );
+        outline1("DEC %s", address_displacement(_environment, _variable, "1") );
         outhead1("%s:", label );
 
     no_embedded( cpu_dec_16bit )
@@ -3711,11 +3785,11 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
         outline1("LDY %s", _size );
         outline1("BEQ %sdone", label );
         outline0("LDY #$0" );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
-        outline1("LDA %s+1", _destination );
+        outline1("LDA %s", address_displacement(_environment, _destination, "1") );
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _destination );
         outline0("STA TMPPTR2" );
@@ -3734,11 +3808,11 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
         outline0("STX MATHPTR0" );
         outline0("LDX #$0" );
         outline0("STX MATHPTR0+1" );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
-        outline1("LDA %s+1", _destination );
+        outline1("LDA %s", address_displacement(_environment, _destination, "1") );
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _destination );
         outline0("STA TMPPTR2" );
@@ -3761,19 +3835,19 @@ void cpu6502_mem_move_16bit( Environment * _environment, char *_source, char *_d
 
         outline1("LDX %s", _size );
         outline1("BNE %sgo", label );
-        outline1("LDX %s+1", _size );
+        outline1("LDX %s", address_displacement(_environment, _size, "1") );
         outline1("BNE %sgo", label );
         outline1("JMP %sdone", label );
 
         outhead1("%sgo:", label );
         outline0("STX MATHPTR0" );
-        outline1("LDX %s+1", _size );
+        outline1("LDX %s", address_displacement(_environment, _size, "1") );
         outline0("STX MATHPTR0+1" );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
-        outline1("LDA %s+1", _destination );
+        outline1("LDA %s", address_displacement(_environment, _destination, "1") );
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _destination );
         outline0("STA TMPPTR2" );
@@ -3840,11 +3914,11 @@ void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_de
         inline( cpu_mem_move )
 
             outline0("LDY #$0" );
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA TMPPTR+1" );
             outline1("LDA %s", _source );
             outline0("STA TMPPTR" );
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _destination );
             outline0("STA TMPPTR2" );
@@ -3861,11 +3935,11 @@ void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_de
             outline0("STX MATHPTR0" );
             outline1("LDX #$%2.2X", ( _size >> 8 ) & 0xff );
             outline0("STX MATHPTR0+1" );
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA TMPPTR+1" );
             outline1("LDA %s", _source );
             outline0("STA TMPPTR" );
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _destination );
             outline0("STA TMPPTR2" );
@@ -3986,7 +4060,7 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
                 outline0("STA TMPPTR+1" );
                 outline1("LDA #<%s", _source );
                 outline0("STA TMPPTR" );
-                outline1("LDA %s+1", _destination );
+                outline1("LDA %s", address_displacement(_environment, _destination, "1") );
                 outline0("STA TMPPTR2+1" );
                 outline1("LDA %s", _destination );
                 outline0("STA TMPPTR2" );
@@ -4005,7 +4079,7 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
                 outline0("STA TMPPTR+1" );
                 outline1("LDA #<%s", _source );
                 outline0("STA TMPPTR" );
-                outline1("LDA %s+1", _destination );
+                outline1("LDA %s", address_displacement(_environment, _destination, "1") );
                 outline0("STA TMPPTR2+1" );
                 outline1("LDA %s", _destination );
                 outline0("STA TMPPTR2" );
@@ -4054,7 +4128,7 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
             outline0("STA TMPPTR+1" );
             outline1("LDA #<%s", _source );
             outline0("STA TMPPTR" );
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _destination );
             outline0("STA TMPPTR2" );
@@ -4075,11 +4149,11 @@ void cpu6502_compare_memory( Environment * _environment, char *_source, char *_d
         outline1("LDA %s", _size );
         outline1("BEQ %sequal", label );
         outline0("LDY #$0" );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
-        outline1("LDA %s+1", _destination );
+        outline1("LDA %s", address_displacement(_environment, _destination, "1") );
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _destination );
         outline0("STA TMPPTR2" );
@@ -4110,11 +4184,11 @@ void cpu6502_compare_memory_size( Environment * _environment, char *_source, cha
     inline( cpu_compare_memory_size )
 
         outline0("LDY #$0" );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
-        outline1("LDA %s+1", _destination );
+        outline1("LDA %s", address_displacement(_environment, _destination, "1") );
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _destination );
         outline0("STA TMPPTR2" );
@@ -4144,11 +4218,11 @@ void cpu6502_less_than_memory( Environment * _environment, char *_source, char *
     inline( cpu_less_than_memory )
 
         outline0("LDY #$0" );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
-        outline1("LDA %s+1", _destination );
+        outline1("LDA %s", address_displacement(_environment, _destination, "1") );
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _destination );
         outline0("STA TMPPTR2" );    
@@ -4182,11 +4256,11 @@ void cpu6502_less_than_memory_size( Environment * _environment, char *_source, c
     inline( cpu_less_than_memory_size )
 
         outline0("LDY #$0" );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
-        outline1("LDA %s+1", _destination );
+        outline1("LDA %s", address_displacement(_environment, _destination, "1") );
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _destination );
         outline0("STA TMPPTR2" );    
@@ -4220,11 +4294,11 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
     inline( cpu_greater_than_memory )
 
         outline0("LDY #$0" );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
-        outline1("LDA %s+1", _destination );
+        outline1("LDA %s", address_displacement(_environment, _destination, "1") );
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _destination );
         outline0("STA TMPPTR2" );    
@@ -4258,11 +4332,11 @@ void cpu6502_greater_than_memory_size( Environment * _environment, char *_source
     inline( cpu_greater_than_memory_size )
 
         outline0("LDY #$0" );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
-        outline1("LDA %s+1", _destination );
+        outline1("LDA %s", address_displacement(_environment, _destination, "1") );
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _destination );
         outline0("STA TMPPTR2" );    
@@ -4295,7 +4369,7 @@ void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char
 
         outline1("LDA %s", _value);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _value);
+        outline1("LDA %s", address_displacement(_environment, _value, "1"));
         outline0("STA TMPPTR+1");
         outline1("LDA %s", _source);
         outline0("LDY #$0" );
@@ -4311,7 +4385,7 @@ void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_
 
         outline1("LDA %s", _value);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _value);
+        outline1("LDA %s", address_displacement(_environment, _value, "1"));
         outline0("STA TMPPTR+1");
         outline1("LDA %s", _source);
         outline1("LDY #$%2.2x", (_offset & 0xff ) );
@@ -4327,7 +4401,7 @@ void cpu6502_move_8bit_indirect_with_offset2( Environment * _environment, char *
 
         outline1("LDA %s", _value);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _value);
+        outline1("LDA %s", address_displacement(_environment, _value, "1"));
         outline0("STA TMPPTR+1");
         outline1("LDA %s", _source);
         outline1("LDY %s", _offset );
@@ -4359,7 +4433,7 @@ void cpu6502_move_8bit_indirect2( Environment * _environment, char * _value, cha
 
         outline1("LDA %s", _value);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _value);
+        outline1("LDA %s", address_displacement(_environment, _value, "1"));
         outline0("STA TMPPTR+1");
         outline0("LDY #$0" );
         outline0("LDA (TMPPTR),Y");
@@ -4375,12 +4449,12 @@ void cpu6502_move_16bit_indirect( Environment * _environment, char *_source, cha
 
         outline1("LDA %s", _value);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _value);
+        outline1("LDA %s", address_displacement(_environment, _value, "1"));
         outline0("STA TMPPTR+1");
         outline1("LDA %s", _source);
         outline0("LDY #$0" );
         outline0("STA (TMPPTR),Y");
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline0("LDY #$1" );
         outline0("STA (TMPPTR),Y");
 
@@ -4394,14 +4468,14 @@ void cpu6502_move_16bit_indirect2( Environment * _environment, char * _value, ch
 
         outline1("LDA %s", _value);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _value);
+        outline1("LDA %s", address_displacement(_environment, _value, "1"));
         outline0("STA TMPPTR+1");
         outline0("LDY #$0" );
         outline0("LDA (TMPPTR),Y");
         outline1("STA %s", _source);
         outline0("LDY #$1" );
         outline0("LDA (TMPPTR),Y");
-        outline1("STA %s+1", _source);
+        outline1("STA %s", address_displacement(_environment, _source, "1"));
 
     no_embedded( cpu_move_16bit_indirect2 )
 
@@ -4422,7 +4496,7 @@ void cpu6502_move_16bit_indirect2_8bit( Environment * _environment, char * _valu
         outline1("STA %s", _source);
         outline0("INY" );
         outline0("LDA (TMPPTR),Y");
-        outline1("STA %s+1", _source);
+        outline1("STA %s", address_displacement(_environment, _source, "1"));
 
     no_embedded( cpu_move_16bit_indirect2_8bit )
 
@@ -4434,19 +4508,19 @@ void cpu6502_move_32bit_indirect( Environment * _environment, char *_source, cha
 
         outline1("LDA %s", _value);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _value);
+        outline1("LDA %s", address_displacement(_environment, _value, "1"));
         outline0("STA TMPPTR+1");
         outline1("LDA %s", _source);
         outline0("LDY #$0" );
         outline0("STA (TMPPTR),Y");
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline0("LDY #$1" );
         outline0("STA (TMPPTR),Y");
-        outline1("LDA %s+2", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "2"));
         outline0("LDY #$2" );
         outline0("STA (TMPPTR),Y");
-        outline1("LDA %s+2", _source);
-        outline0("LDY #$2" );
+        outline1("LDA %s", address_displacement(_environment, _source, "2"));
+        outline0("LDY #$3" );
         outline0("STA (TMPPTR),Y");
 
     no_embedded( cpu_move_32bit_indirect )
@@ -4459,24 +4533,194 @@ void cpu6502_move_32bit_indirect2( Environment * _environment, char * _value, ch
 
         outline1("LDA %s", _value);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _value);
+        outline1("LDA %s", address_displacement(_environment, _value, "1"));
         outline0("STA TMPPTR+1");
         outline0("LDY #$0" );
         outline0("LDA (TMPPTR),Y");
         outline1("STA %s", _source);
         outline0("LDY #$1" );
         outline0("LDA (TMPPTR),Y");
-        outline1("STA %s+1", _source);
+        outline1("STA %s", address_displacement(_environment, _source, "1"));
         outline0("LDY #$2" );
         outline0("LDA (TMPPTR),Y");
-        outline1("STA %s+2", _source);
+        outline1("STA %s", address_displacement(_environment, _source, "2"));
         outline0("LDY #$3" );
         outline0("LDA (TMPPTR),Y");
-        outline1("STA %s+3", _source);
+        outline1("STA %s", address_displacement(_environment, _source, "3"));
 
     no_embedded( cpu_move_32bit_indirect2 )
 
 }
+
+void cpu6502_move_nbit_indirect( Environment * _environment, int _n, char *_source, char * _value ) {
+
+    outline1("LDA %s", _value);
+    outline0("STA TMPPTR");
+    outline1("LDA %s", address_displacement(_environment, _value, "1"));
+    outline0("STA TMPPTR+1");
+
+    char step[MAX_TEMPORARY_STORAGE];
+    char step1[MAX_TEMPORARY_STORAGE];
+    char step2[MAX_TEMPORARY_STORAGE];
+    char step3[MAX_TEMPORARY_STORAGE];
+
+    int stepIndex = 0;
+    while( _n ) {
+        sprintf( step, "%d", stepIndex );
+        sprintf( step1, "%d", stepIndex+1 );
+        sprintf( step2, "%d", stepIndex+2 );
+        sprintf( step3, "%d", stepIndex+3 );
+        if ( _n >= 32 ) {
+            outline1("LDA %s", address_displacement(_environment, _source, step));
+            outline0("LDY #$0" );
+            outline0("STA (TMPPTR),Y");
+            outline1("LDA %s", address_displacement(_environment, _source, step1));
+            outline0("LDY #$1" );
+            outline0("STA (TMPPTR),Y");
+            outline1("LDA %s", address_displacement(_environment, _source, step2));
+            outline0("LDY #$2" );
+            outline0("STA (TMPPTR),Y");
+            outline1("LDA %s", address_displacement(_environment, _source, step3));
+            outline0("LDY #$3" );
+            outline0("STA (TMPPTR),Y");            
+            stepIndex += 4;
+            _n -= 32;
+            break;
+        } else {
+            switch( _n ) {
+                case 32: case 31: case 30: case 29:
+                case 28: case 27: case 26: case 25:
+                    outline1("LDA %s", address_displacement(_environment, _source, step));
+                    outline0("LDY #$0" );
+                    outline0("STA (TMPPTR),Y");
+                    outline1("LDA %s", address_displacement(_environment, _source, step1));
+                    outline0("LDY #$1" );
+                    outline0("STA (TMPPTR),Y");
+                    outline1("LDA %s", address_displacement(_environment, _source, step2));
+                    outline0("LDY #$2" );
+                    outline0("STA (TMPPTR),Y");
+                    outline1("LDA %s", address_displacement(_environment, _source, step3));
+                    outline0("LDY #$3" );
+                    outline0("STA (TMPPTR),Y");            
+                    break;
+                case 24: case 23: case 22: case 21:
+                case 20: case 19: case 18: case 17:
+                    outline1("LDA %s", address_displacement(_environment, _source, step));
+                    outline0("LDY #$0" );
+                    outline0("STA (TMPPTR),Y");
+                    outline1("LDA %s", address_displacement(_environment, _source, step1));
+                    outline0("LDY #$1" );
+                    outline0("STA (TMPPTR),Y");
+                    outline1("LDA %s", address_displacement(_environment, _source, step2));
+                    outline0("LDY #$2" );
+                    outline0("STA (TMPPTR),Y");
+                    break;
+                case 16: case 15: case 14: case 13:
+                case 12: case 11: case 10: case 9:
+                    outline1("LDA %s", address_displacement(_environment, _source, step));
+                    outline0("LDY #$0" );
+                    outline0("STA (TMPPTR),Y");
+                    outline1("LDA %s", address_displacement(_environment, _source, step1));
+                    outline0("LDY #$1" );
+                    outline0("STA (TMPPTR),Y");
+                    break;
+                case 8: case 7: case 6: case 5:
+                case 4: case 3: case 2: case 1:
+                    outline1("LDA %s", address_displacement(_environment, _source, step));
+                    outline0("LDY #$0" );
+                    outline0("STA (TMPPTR),Y");
+                    break;
+            }
+            _n = 0;
+        }
+    }
+}
+
+void cpu6502_move_nbit_indirect2( Environment * _environment, int _n, char * _value, char *_source ) {
+   
+    outline1("LDA %s", _value);
+    outline0("STA TMPPTR");
+    outline1("LDA %s", address_displacement(_environment, _value, "1"));
+    outline0("STA TMPPTR+1");
+
+    char step[MAX_TEMPORARY_STORAGE];
+    char step1[MAX_TEMPORARY_STORAGE];
+    char step2[MAX_TEMPORARY_STORAGE];
+    char step3[MAX_TEMPORARY_STORAGE];
+
+    int stepIndex = 0;
+    while( _n ) {
+        sprintf( step, "%d", stepIndex );
+        sprintf( step1, "%d", stepIndex+1 );
+        sprintf( step2, "%d", stepIndex+2 );
+        sprintf( step3, "%d", stepIndex+3 );
+        if ( _n >= 32 ) {
+            outline0("LDY #$0" );
+            outline0("LDA (TMPPTR),Y");
+            outline1("STA %s", address_displacement(_environment, _source, step));
+            outline0("LDY #$1" );
+            outline0("LDA (TMPPTR),Y");
+            outline1("STA %s", address_displacement(_environment, _source, step1));
+            outline0("LDY #$2" );
+            outline0("LDA (TMPPTR),Y");
+            outline1("STA %s", address_displacement(_environment, _source, step2));
+            outline0("LDY #$3" );
+            outline0("LDA (TMPPTR),Y");
+            outline1("STA %s", address_displacement(_environment, _source, step3));
+            stepIndex += 4;
+            _n -= 32;
+            break;
+        } else {
+            switch( _n ) {
+                case 32: case 31: case 30: case 29:
+                case 28: case 27: case 26: case 25:
+                    outline0("LDY #$0" );
+                    outline0("LDA (TMPPTR),Y");
+                    outline1("STA %s", address_displacement(_environment, _source, step));
+                    outline0("LDY #$1" );
+                    outline0("LDA (TMPPTR),Y");
+                    outline1("STA %s", address_displacement(_environment, _source, step1));
+                    outline0("LDY #$2" );
+                    outline0("LDA (TMPPTR),Y");
+                    outline1("STA %s", address_displacement(_environment, _source, step2));
+                    outline0("LDY #$3" );
+                    outline0("LDA (TMPPTR),Y");
+                    outline1("STA %s", address_displacement(_environment, _source, step3));
+                    break;
+                case 24: case 23: case 22: case 21:
+                case 20: case 19: case 18: case 17:
+                    outline0("LDY #$0" );
+                    outline0("LDA (TMPPTR),Y");
+                    outline1("STA %s", address_displacement(_environment, _source, step));
+                    outline0("LDY #$1" );
+                    outline0("LDA (TMPPTR),Y");
+                    outline1("STA %s", address_displacement(_environment, _source, step1));
+                    outline0("LDY #$2" );
+                    outline0("LDA (TMPPTR),Y");
+                    outline1("STA %s", address_displacement(_environment, _source, step2));
+                    break;
+                case 16: case 15: case 14: case 13:
+                case 12: case 11: case 10: case 9:
+                    outline0("LDY #$0" );
+                    outline0("LDA (TMPPTR),Y");
+                    outline1("STA %s", address_displacement(_environment, _source, step));
+                    outline0("LDY #$1" );
+                    outline0("LDA (TMPPTR),Y");
+                    outline1("STA %s", address_displacement(_environment, _source, step1));
+                    break;
+                case 8: case 7: case 6: case 5:
+                case 4: case 3: case 2: case 1:
+                    outline0("LDY #$0" );
+                    outline0("LDA (TMPPTR),Y");
+                    outline1("STA %s", address_displacement(_environment, _source, step));
+                    break;
+            }
+            _n = 0;
+        }
+    }
+
+}
+
 
 void cpu6502_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
 
@@ -4501,17 +4745,17 @@ void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, 
     inline( cpu_uppercase )
 
         outline0("LDY #$0" );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
         if ( _result ) {
-            outline1("LDA %s+1", _result );
+            outline1("LDA %ss", address_displacement(_environment, _result, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _result );
             outline0("STA TMPPTR2" );
         } else {
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _source );
             outline0("STA TMPPTR2" );
@@ -4537,17 +4781,17 @@ void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, 
     embedded( cpu_uppercase, src_hw_6502_cpu_uppercase_asm );
 
         outline1("LDX %s", _size );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
         if ( _result ) {
-            outline1("LDA %s+1", _result );
+            outline1("LDA %ss", address_displacement(_environment, _result, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _result );
             outline0("STA TMPPTR2" );
         } else {
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _source );
             outline0("STA TMPPTR2" );
@@ -4564,17 +4808,17 @@ void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, 
     inline( cpu_lowercase )
 
         outline0("LDY #$0" );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
         if ( _result ) {
-            outline1("LDA %s+1", _result );
+            outline1("LDA %ss", address_displacement(_environment, _result, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _result );
             outline0("STA TMPPTR2" );
         } else {
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _source );
             outline0("STA TMPPTR2" );
@@ -4600,17 +4844,17 @@ void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, 
     embedded( cpu_lowercase, src_hw_6502_cpu_lowercase_asm );
 
         outline1("LDX %s", _size );
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
         if ( _result ) {
-            outline1("LDA %s+1", _result );
+            outline1("LDA %ss", address_displacement(_environment, _result, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _result );
             outline0("STA TMPPTR2" );
         } else {
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _source );
             outline0("STA TMPPTR2" );
@@ -4629,9 +4873,9 @@ void cpu6502_convert_string_into_16bit( Environment * _environment, char * _stri
 
         outline0("LDA #$0" );
         outline1("STA %s", _value );
-        outline1("STA %s+1", _value );
+        outline1("STA %s", address_displacement(_environment, _value, "1") );
 
-        outline1("LDA %s+1", _string );
+        outline1("LDA %s", address_displacement(_environment, _string, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _string  );
         outline0("STA TMPPTR" );
@@ -4651,10 +4895,10 @@ void cpu6502_convert_string_into_16bit( Environment * _environment, char * _stri
         outline1("ADC %s", _value);
         outline1("STA %s", _value);
         outline0("LDA #$0");
-        outline1("ADC %s+1", _value);
-        outline1("STA %s+1", _value);
+        outline1("ADC %s", address_displacement(_environment, _value, "1"));
+        outline1("STA %s", address_displacement(_environment, _value, "1"));
 
-        outline1("LDA %s+1", _value );
+        outline1("LDA %s", address_displacement(_environment, _value, "1") );
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _value  );
         outline0("STA TMPPTR2" );
@@ -4666,20 +4910,20 @@ void cpu6502_convert_string_into_16bit( Environment * _environment, char * _stri
         outline0("LDA TMPPTR2" );
         outline1("STA %s", _value );
         outline0("LDA TMPPTR2+1" );
-        outline1("STA %s+1", _value );
+        outline1("STA %s", address_displacement(_environment, _value, "1") );
         outline1("ASL %s", _value );
-        outline1("ROL %s+1", _value );
+        outline1("ROL %s", address_displacement(_environment, _value, "1") );
         outline1("ASL %s", _value );
-        outline1("ROL %s+1", _value );
+        outline1("ROL %s", address_displacement(_environment, _value, "1") );
         outline0("CLC" );
         outline0("LDA TMPPTR2" );
         outline1("ADC %s", _value );
         outline1("STA %s", _value );
         outline0("LDA TMPPTR2+1" );
-        outline1("ADC %s+1", _value );
-        outline1("STA %s+1", _value );
+        outline1("ADC %s", address_displacement(_environment, _value, "1") );
+        outline1("STA %s", address_displacement(_environment, _value, "1") );
         outline1("ASL %s", _value );
-        outline1("ROL %s+1", _value );
+        outline1("ROL %s", address_displacement(_environment, _value, "1") );
 
         outline1("JMP %srepeat", label );
 
@@ -4687,7 +4931,7 @@ void cpu6502_convert_string_into_16bit( Environment * _environment, char * _stri
 
     embedded( cpu_convert_string_into_16bit, src_hw_6502_cpu_convert_string_into_16bit_asm );
 
-        outline1("LDA %s+1", _string );
+        outline1("LDA %s", address_displacement(_environment, _string, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _string  );
         outline0("STA TMPPTR" );
@@ -4696,7 +4940,7 @@ void cpu6502_convert_string_into_16bit( Environment * _environment, char * _stri
         outline0("LDA CPUCONVERTSTRINGINTO16BIT_VALUE" );
         outline1("STA %s", _value );
         outline0("LDA CPUCONVERTSTRINGINTO16BIT_VALUE+1" );
-        outline1("STA %s+1", _value );
+        outline1("STA %s", address_displacement(_environment, _value, "1") );
 
     done()
 }
@@ -4709,12 +4953,12 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
         // Use the current bitmap address as starting address for filling routine.
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1"));
         outline0("STA TMPPTR+1");
 
         outline1("LDA %s", _pattern);
         outline0("STA TMPPTR2");
-        outline1("LDA %s+1", _pattern);
+        outline1("LDA %s", address_displacement(_environment, _pattern, "1"));
         outline0("STA TMPPTR2+1");
 
         // Fill the bitmap with the given pattern.
@@ -4732,12 +4976,12 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
         // Use the current bitmap address as starting address for filling routine.
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _address);
+        outline1("LDA %s", address_displacement(_environment, _address, "1"));
         outline0("STA TMPPTR+1");
 
         outline1("LDA %s", _pattern);
         outline0("STA TMPPTR2");
-        outline1("LDA %s+1", _pattern);
+        outline1("LDA %s", address_displacement(_environment, _pattern, "1"));
         outline0("STA TMPPTR2+1");
         outline0("LDY #0");
         outline0("LDA (TMPPTR2),Y");
@@ -4757,12 +5001,12 @@ void cpu6502_flip( Environment * _environment, char * _source, char * _size, cha
 
         outline1("LDA %s", _source);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline0("STA TMPPTR+1");
 
         outline1("LDA %s", _destination);
         outline0("STA TMPPTR2");
-        outline1("LDA %s+1", _destination);
+        outline1("LDA %s", address_displacement(_environment, _destination, "1"));
         outline0("STA TMPPTR2+1");
 
         outline0("CLC");
@@ -4797,13 +5041,13 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
         outline0("STA TMPPTR" );
         switch( _position ) {
             case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
-                outline1("LDA %s+3", _value);
+                outline1("LDA %s", address_displacement(_environment, _value, "3"));
                 break;
             case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
-                outline1("LDA %s+2", _value);
+                outline1("LDA %s", address_displacement(_environment, _value, "2"));
                 break;
             case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8:
-                outline1("LDA %s+1", _value);
+                outline1("LDA %s", address_displacement(_environment, _value, "1"));
                 break;
             case 7:  case 6:  case 5:  case 4:  case 3:  case 2:  case 1: case 0:
                 outline1("LDA %s", _value);
@@ -4858,13 +5102,13 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
         outline1("LDA %s", _value );
         outline1("JMP %sbit", label );
         outhead1("%sb1:", label );
-        outline1("LDA %s+1", _value );
+        outline1("LDA %s", address_displacement(_environment, _value, "1") );
         outline1("JMP %sbit", label );
         outhead1("%sb2:", label );
-        outline1("LDA %s+2", _value );
+        outline1("LDA %s", address_displacement(_environment, _value, "2") );
         outline1("JMP %sbit", label );
         outhead1("%sb3:", label );
-        outline1("LDA %s+3", _value );
+        outline1("LDA %s", address_displacement(_environment, _value, "3") );
         outline1("JMP %sbit", label );
 
         outhead1("%sbit:", label );
@@ -4890,7 +5134,7 @@ void cpu6502_number_to_string( Environment * _environment, char * _number, char 
 
     outline1("LDA %s", _string );
     outline0("STA TMPPTR");
-    outline1("LDA %s+1", _string );
+    outline1("LDA %s", address_displacement(_environment, _string, "1") );
     outline0("STA TMPPTR+1");
 
     outline0("LDA #0");
@@ -4902,21 +5146,21 @@ void cpu6502_number_to_string( Environment * _environment, char * _number, char 
 
     switch( _bits ) {
         case 32:
-            outline1("LDA %s+3", _number );
+            outline1("LDA %s", address_displacement(_environment, _number, "3") );
             if ( _signed ) {
                 outline0("AND #$80");
                 outline0("STA MATHPTR4");
-                outline1("LDA %s+3", _number );
+                outline1("LDA %s", address_displacement(_environment, _number, "3") );
             }
             outline0("STA MATHPTR3");
-            outline1("LDA %s+2", _number );
+            outline1("LDA %s", address_displacement(_environment, _number, "2") );
             outline0("STA MATHPTR2");
         case 16:
-            outline1("LDA %s+1", _number );
+            outline1("LDA %s", address_displacement(_environment, _number, "1") );
             if ( _signed && _bits == 16 ) {
                 outline0("AND #$80");
                 outline0("STA MATHPTR4");
-                outline1("LDA %s+1", _number );
+                outline1("LDA %s", address_displacement(_environment, _number, "1") );
             }
             outline0("STA MATHPTR1");
         case 8:
@@ -4997,7 +5241,7 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
     outline0("TAY");
     outline1("LDA %s", _string);
     outline0("STA TMPPTR2");
-    outline1("LDA %s+1", _string);
+    outline1("LDA %s", address_displacement(_environment, _string, "1"));
     outline0("STA TMPPTR2+1");
     outline1("%sLOOP:", label );
     outline0("LDA (TMPPTR),Y" );
@@ -5022,7 +5266,7 @@ void cpu6502_hex_to_string( Environment * _environment, char * _number, char * _
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _string );
         outline0("STA TMPPTR2" );
-        outline1("LDA %s+1", _string );
+        outline1("LDA %s", address_displacement(_environment, _string, "1") );
         outline0("STA TMPPTR2+1" );
         
         outline0("JSR H2STRING" );
@@ -5125,7 +5369,7 @@ void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _ad
     outline0( "LDA DSADDRLO" );
     outline1( "STA %s", _address );
     outline0( "LDA DSADDRHI" );
-    outline1( "STA %s+1", _address );
+    outline1( "STA %s", address_displacement(_environment, _address, "1") );
     outline0( "LDA DSSIZE" );
     outline1( "STA %s", _size );
 
@@ -5166,12 +5410,12 @@ void cpu6502_complement2_16bit( Environment * _environment, char * _source, char
     } else {
         outline1( "STA %s", _source );
     }
-    outline1( "LDA %s+1", _source );
+    outline1( "LDA %s", address_displacement(_environment, _source, "1") );
     outline0( "EOR #$FF" );
     if ( _destination ) {
-        outline1( "STA %s+1", _destination );
+        outline1( "STA %s", address_displacement(_environment, _destination, "1") );
     } else {
-        outline1( "STA %s+1", _source );
+        outline1( "STA %s", address_displacement(_environment, _source, "1") );
     }
     if ( _destination ) {
         cpu6502_inc_16bit( _environment, _destination );
@@ -5188,26 +5432,26 @@ void cpu6502_complement2_32bit( Environment * _environment, char * _source, char
     } else {
         outline1( "STA %s", _source );
     }
-    outline1( "LDA %s+1", _source );
+    outline1( "LDA %s", address_displacement(_environment, _source, "1") );
     outline0( "EOR #$FF" );
     if ( _destination ) {
-        outline1( "STA %s+1", _destination );
+        outline1( "STA %s", address_displacement(_environment, _destination, "1") );
     } else {
-        outline1( "STA %s+1", _source );
+        outline1( "STA %s", address_displacement(_environment, _source, "1") );
     }
-    outline1( "LDA %s+2", _source );
+    outline1( "LDA %s", address_displacement(_environment, _source, "2") );
     outline0( "EOR #$FF" );
     if ( _destination ) {
-        outline1( "STA %s+2", _destination );
+        outline1( "STA %s", address_displacement(_environment, _destination, "2") );
     } else {
-        outline1( "STA %s+2", _source );
+        outline1( "STA %s", address_displacement(_environment, _source, "2") );
     }
-    outline1( "LDA %s+3", _source );
+    outline1( "LDA %s", address_displacement(_environment, _source, "3") );
     outline0( "EOR #$FF" );
     if ( _destination ) {
-        outline1( "STA %s+3", _destination );
+        outline1( "STA %s", address_displacement(_environment, _destination, "3") );
     } else {
-        outline1( "STA %s+3", _source );
+        outline1( "STA %s", address_displacement(_environment, _source, "3") );
     }
     if ( _destination ) {
         cpu6502_inc_32bit( _environment, _destination );
@@ -5231,11 +5475,11 @@ void cpu6502_mobinit( Environment * _environment, char * _index, char *_x, char 
     outline1("LDX %s", _index );
     outline1("LDA %s", _x );
     outline0("STA MOBX" );
-    outline1("LDA %s+1", _x );
+    outline1("LDA %s", address_displacement(_environment, _x, "1") );
     outline0("STA MOBX+1" );
     outline1("LDA %s", _y );
     outline0("STA MOBY" );
-    outline1("LDA %s+1", _y );
+    outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA MOBY+1" );
     outline1("LDA #<%s", _draw );
     outline0("STA MOBADDR" );
@@ -5250,7 +5494,7 @@ void cpu6502_mobinit( Environment * _environment, char * _index, char *_x, char 
     outline0("STA MOBADDR+1" );
     outline1("LDA %s", _draw );
     outline0("STA MOBW" );
-    outline1("LDA %s+1", _draw );
+    outline1("LDA %s", address_displacement(_environment, _draw, "1") );
     outline0("STA MOBH" );
 
     outline0("JSR MOBINIT" );
@@ -5289,11 +5533,11 @@ void cpu6502_mobat( Environment * _environment, char * _index, char *_x, char *_
     outline1("LDX %s", _index );
     outline1("LDA %s", _x );
     outline0("STA MOBX" );
-    outline1("LDA %s+1", _x );
+    outline1("LDA %s", address_displacement(_environment, _x, "1") );
     outline0("STA MOBX+1" );
     outline1("LDA %s", _y );
     outline0("STA MOBY" );
-    outline1("LDA %s+1", _y );
+    outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA MOBY+1" );
 
     outline0("JSR MOBAT" );
@@ -5327,7 +5571,7 @@ void cpu6502_sqroot( Environment * _environment, char * _number, char * _result 
 
     outline1("LDA %s", _number );
     outline0("STA Numberl" );
-    outline1("LDA %s+1", _number );
+    outline1("LDA %s", address_displacement(_environment, _number, "1") );
     outline0("STA Numberh" );
 
     outline0("JSR SQROOT" );
@@ -5535,9 +5779,9 @@ void cpu6502_is_negative( Environment * _environment, char * _value, char * _res
 
 void cpu6502_set_callback( Environment * _environment, char * _callback, char * _label ) {
 
-        outline1("LDA #<(%s+1)", _callback);
+        outline1("LDA #<(%s)", address_displacement(_environment, _callback, "1"));
         outline0("STA TMPPTR");
-        outline1("LDA #>(%s+1)", _callback);
+        outline1("LDA #>(%s)", address_displacement(_environment, _callback, "1"));
         outline0("STA TMPPTR+1");
         outline0("LDY #0");
         outline1("LDA #<%s", _label);
@@ -5585,7 +5829,7 @@ void cpu6502_msc1_uncompress_direct_indirect( Environment * _environment, char *
         outline0("STA TMPPTR+1");
         outline1("LDA %s", _output);
         outline0("STA TMPPTR2");
-        outline1("LDA %s+1", _output);
+        outline1("LDA %s", address_displacement(_environment, _output, "1"));
         outline0("STA TMPPTR2+1");
 
         outline0("JSR MSC1UNCOMPRESS");
@@ -5604,7 +5848,7 @@ void cpu6502_msc1_uncompress_indirect_direct( Environment * _environment, char *
 
         outline1("LDA %s", _input);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _input);
+        outline1("LDA %s", address_displacement(_environment, _input, "1"));
         outline0("STA TMPPTR+1");
         outline1("LDA #<%s", _output);
         outline0("STA TMPPTR2");
@@ -5627,11 +5871,11 @@ void cpu6502_msc1_uncompress_indirect_indirect( Environment * _environment, char
 
         outline1("LDA %s", _input);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _input);
+        outline1("LDA %s", address_displacement(_environment, _input, "1"));
         outline0("STA TMPPTR+1");
         outline1("LDA %s", _output);
         outline0("STA TMPPTR2");
-        outline1("LDA %s+1", _output);
+        outline1("LDA %s", address_displacement(_environment, _output, "1"));
         outline0("STA TMPPTR2+1");
 
         outline0("JSR MSC1UNCOMPRESS");
@@ -5666,19 +5910,19 @@ void cpu6502_string_sub( Environment * _environment, char * _source, char * _sou
 
         outline1("LDA %s", _source);
         outline0("STA TMPPTR");
-        outline1("LDA %s+1", _source);
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline0("STA TMPPTR+1");
         outline1("LDA %s", _source_size);
         outline0("STA MATHPTR0");
         outline1("LDA %s", _pattern);
         outline0("STA TMPPTR2");
-        outline1("LDA %s+1", _pattern);
+        outline1("LDA %s", address_displacement(_environment, _pattern, "1"));
         outline0("STA TMPPTR2+1");
         outline1("LDA %s", _pattern_size);
         outline0("STA MATHPTR1");
         outline1("LDA %s", _destination);
         outline0("STA MATHPTR4");
-        outline1("LDA %s+1", _destination);
+        outline1("LDA %s", address_displacement(_environment, _destination, "1"));
         outline0("STA MATHPTR4+1");
 
         outline0("JSR CPUSTRINGSUB");
@@ -5730,7 +5974,7 @@ int cpu6502_blit_alloc_register(  Environment * _environment ) {
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( ! isRegisterUsed ) {
             _environment->blit.freeRegisters |= registerMask;
-            // printf( "z80_blit_alloc_register() %4.4x -> $%4.4x\n", _environment->blit.freeRegisters, reg );
+            // printf( "cpu6502_blit_alloc_register() %4.4x -> $%4.4x\n", _environment->blit.freeRegisters, reg );
             return reg;
         }
     }
@@ -5748,7 +5992,7 @@ int cpu6502_blit_alloc_register(  Environment * _environment ) {
             outline1( "LDA %s", &CPU6502_BLIT_REGISTER[reg][0] );
             outline2( "STA _%sbs+$%2.2x",  _environment->blit.name, location );
             _environment->blit.freeRegisters |= registerMask;
-            // printf( "z80_blit_alloc_register() -> %4.4x $%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
+            // printf( "cpu6502_blit_alloc_register() -> %4.4x $%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
             return ( ( reg << 8 ) | location );
         }
     }
@@ -5759,7 +6003,7 @@ int cpu6502_blit_alloc_register(  Environment * _environment ) {
 
 void cpu6502_blit_free_register(  Environment * _environment, int _register ) {
 
-    // printf( "z80_blit_free_register($%4.4x)\n", _register );
+    // printf( "cpu6502_blit_free_register($%4.4x)\n", _register );
 
     int location = _register & 0xff;
     int reg;
@@ -5785,6 +6029,742 @@ void cpu6502_blit_free_register(  Environment * _environment, int _register ) {
     }
 
     CRITICAL_BLIT_INVALID_FREE_REGISTER( _environment->blit.name, _register );
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to store n bit
+ * 
+ * @param _environment Current calling environment
+ * @param _destination Destination of store
+ * @param _n bits to store (>32)
+ * @param _value[] Value to store (segmented in 32 bit each)
+ */
+void cpu6502_store_nbit( Environment * _environment, char *_destination, int _n, int _value[] ) {
+
+    int i = 0;
+    while( _n ) {
+        char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf( destinationAddress, "%s+%d", _destination, i*4 );
+        if ( _n <= 32 ) {
+            switch( _n ) {
+                case 1: case 2: case 3: case 4:
+                case 5: case 6: case 7: case 8:
+                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff>>(8-_n)) ) );
+                    break;
+                case 9: case 10: case 11: case 12:
+                case 13: case 14: case 15: case 16:
+                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff>>(16-_n)) ) );
+                    break;
+                case 17: case 18: case 19: case 20:
+                case 21: case 22: case 23: case 24:
+                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff>>(24-_n)) ) );
+                    break;
+                case 25: case 26: case 27: case 28:
+                case 29: case 30: case 31: case 32:
+                default:
+                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
+                    break;
+            }
+            _n = 0;
+        } else {
+            cpu6502_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+            cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+            cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+            cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
+            _n -= 32;
+        }
+        ++i;
+    }
+
+
+}
+
+//
+//                  [0]      [1]      [2]      [3]      [4]      [5]      [6]      [7]      [8]      [9]
+// SINGLE	(32)  	seeeeeee emmmmmmm mmmmmmmm mmmmmmmm
+//
+
+void cpu6502_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
+    cpu6502_float_single_from_double_to_int_array( _environment, _value, _result );
+}
+
+void cpu6502_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
+    
+    double value = 0.0;
+    double integral = 0.0;
+    double fractional = 0.0;
+    int sign = 0;
+    int left = 0;
+    int right[3];
+    int steps = 0;
+    int exp = 0;
+    int mantissa_bits = 23;
+
+    memset( &right[0], 0, sizeof( int ) * 3 );
+
+    // Step 1: Determine Sign
+    // If the number is positive, then the sign bit will be 0. If the number is negative, then the sign bit 
+    // will be 1. For the number zero, both positive and negative zero are possible, and these are considered 
+    // different values (a quirk of using sign bits).
+
+    if ( _value >= 0 ) {
+        sign = 0;
+    } else {
+        sign = 1;
+    }
+
+    value = fabs( _value );
+
+    // Step 2: Convert the Integral Portion to Unsigned Binary
+    // Convert the integral portion of the floating-point value to unsigned binary (not two's complement). 
+    // The integral portion is the part of the number before the decimal point. For example, if the 
+    // number to convert is -0.75, then 0 is the integral portion, and it's unsigned binary representation 
+    // is simply 0. As another example, if the number to convert is 127.99, then the integral portion would 
+    // be 127, and it's unsigned binary representation is 1111111.
+
+    fractional = modf(value, &integral);
+
+    left = (unsigned int) integral;
+
+    printf("left = %d\n", left );
+
+    // Step 3: Convert the Fractional Portion to Binary
+    // The fractional portion of the number must also be converted to binary, though the conversion process 
+    // is much different from what you're used to. The algorithm you'll used is based on performing repeated 
+    // multiplications by 2, and then checking if the result is >= 1.0. If the result is >= 1.0, then a 1 is 
+    // recorded for the binary fractional component, and the leading 1 is chopped of the result. If the 
+    // result is < 1.0, then a 0 is recorded for the binary fractional component, and the result is kept 
+    // as-is. The recorded builds are built-up left-to-right. The result keeps getting chained along in this 
+    // way until one of the following is true:
+    //  - The result is exactly 1.0
+    //  - 23 iterations of this process have occurred; i.e. the final converted binary value holds 23 bits
+    // With the first possible terminating condition (the result is exactly 1.0), this means that the fractional 
+    // component has been represented without any loss of precision. With the second possible terminating 
+    // condition (23 iterations have passed), this means that we ran out of bits in the final result, which 
+    // can never exceed 23. In this case, precision loss occurs (an unfortunate consequence of using a finite
+    // number of bits).
+
+    while( ( fractional != 1.0 ) && ( steps < mantissa_bits ) ) {
+
+        printf("%f %d %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+
+        right[2] = right[2] << 1;
+        right[1] = right[1] << 1;
+        right[0] = right[0] << 1;
+        if ( ( right[2] & 0x100 )  ) {
+            right[1] = right[1] | 0x1;
+        }
+        if ( ( right[1] & 0x100 )  ) {
+            right[0] = right[0] | 0x1;
+        }
+        right[2] = right[2] & 0xff;
+        right[1] = right[1] & 0xff;
+        right[0] = right[0] & 0x7f;
+
+        fractional = fractional * 2;
+
+        if ( fractional >= 1.0 ) {
+            right[2] |= 1;
+            fractional = modf(fractional, &integral);
+        }
+
+        ++steps;
+
+    }
+
+    // Step 4: Normalize the Value via Adjusting the Exponent
+    // A trick to encode an extra bit is to make it so that the binary scientific representation is always 
+    // of the form 1.XXXX * 2YYYY. That is, a 1 always leads, so there is no need to explicitly encode it. 
+    // In order to encode this properly, we need to move the decimal point to a position where it is 
+    // immediately after the first 1, and then record exactly how we moved it. To see this in action, consider 
+    // again the example of 0.75, which is encoded in binary as such (not IEEE-754 notation):
+    // 0.11
+    // In order to make the decimal point be after the first 1, we will need to move it one position to the right, like so:
+    // 1.1
+    // Most importantly, we need to record that we moved the decimal point by one position to the right. 
+    // Moves to the right result in negative exponents, and moves to the left result in positive exponents. 
+    // In this case, because we moved the decimal point one position to the right, the recorded exponent should be -1.
+    // As another example, consider the following binary floating point representation (again, not IEEE-754):
+    // 1111111.11100
+    // In this case, we need to move the decimal point six positions to the left to make this begin with a single 1, like so:
+    // 1.11111111100
+    // Because this moves six positions to the left, the recorded exponent should be 6.
+
+    int mantissa_high_bit = 0x80000000 >> ( 32 - mantissa_bits);
+    int mantissa_mask = 0xffffffff >> ( 32 - mantissa_bits);
+
+    if ( left == 0 ) {
+
+        if ( value != 0 ) {
+
+            while( left == 0 ) {
+
+                printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+
+                if ( ! right[0] && ! right[1] && ! right[2] ) {
+                    left = 0x1;
+                }
+
+                if ( right[0] & 0x40 ) {
+                    left = 0x1;
+                }
+
+                right[0] = right[0] << 1;
+                right[1] = right[1] << 1;
+                right[2] = right[2] << 1;
+                if ( ( right[1] & 0x100 )) {
+                    right[0] = right[0] | 0x1;
+                }
+                if ( ( right[2] & 0x100 )) {
+                    right[1] = right[1] | 0x1;
+                }
+                right[0] = right[0] & 0x7f;
+                right[1] = right[1] & 0xff;
+                right[2] = right[2] & 0xff;
+
+                --exp;
+            }
+
+        } else {
+
+            exp = -128;
+
+        }
+
+        printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+
+    } else {
+
+        while( left ) {
+
+            printf("left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+
+            if ( ( right[0] & 0x01 ) ) {
+                right[1] = right[1] | 0x100;
+            }
+            if ( ( right[1] & 0x01 ) ) {
+                right[2] = right[2] | 0x100;
+            }
+            right[0] = right[0] >> 1;
+            right[1] = right[1] >> 1;
+            right[2] = right[2] >> 1;
+            if ( left & 0x1 ) {
+                right[0] = right[0] | 0x40;
+            }
+            left = left >> 1;
+            ++exp;
+        }
+        --exp;
+        // left = 1;
+        // right[2] = right[2] << 1;
+        // right[1] = right[1] << 1;
+        // right[0] = right[0] << 1;
+        // if ( right[2] & 0x100 ) {
+        //     right[1] = right[1] | 0x01;
+        // }
+        // if ( right[1] & 0x100 ) {
+        //     right[0] = right[0] | 0x01;
+        // }
+        // right[2] = right[2] & 0xff;
+        // right[1] = right[1] & 0xff;
+        // right[0] = right[0] & 0x7f;
+        
+    }
+
+    // Step 5: Add Bias to the Exponent
+    // Internally, IEEE-754 values store their exponents in an unsigned representation, which may seem odd considering that 
+    // the exponent can be negative. Negative exponents are accomodated by using a biased representation, wherein a 
+    // pre-set number is always subtracted from the given unsigned number. Because the given unsigned number may be less 
+    // than this number, this allows for negative values to be effectively encoded without resorting to two's complement. 
+    // Specifically, for the binary32 representation, the number 127 will be subtracted from anything encoded in the 
+    // exponent field of the IEEE-754 number. As such, in this step, we need to add 127 to the normalized exponent value 
+    // from the previous step.
+
+    exp += 128;
+
+    printf("exp = %2.2x\n", exp );
+
+    // Step 6: Convert the Biased Exponent to Unsigned Binary
+    // The biased exponent value from the previous step must be converted into unsigned binary, using the usual process.
+    // The result must be exactly 8 bits. It should not be possible to need more than 8 bits. If fewer than 8 bits are 
+    // needed in this conversion process, then leading zeros must be added to the front of the result to produce an 
+    // 8-bit value.
+
+    exp = exp & 0xff;
+
+    printf("exp = %2.2x\n", exp );
+
+    // Step 7: Determine the Final Bits for the Mantissa
+    // After step 4, there are a bunch of bits after the normalized decimal point. These bits will become the 
+    // mantissa (note that we ignore the bits to the left of the decimal point - normalization allows us to do this, 
+    // because it should always be just a 1). We need exactly 23 mantissa bits. If less than 23 mantissa bits follow the 
+    // decimal point, and the algorithm in step 3 ended with a result that wasn't 1.0, then follow the algorithm in step 3 
+    // until we can fill enough bits. If that's still not enough (eventually reaching 1.0 before we had enough bits, or 
+    // perhaps it had ended with 1.0 already), then the right side can be padded with zeros until 23 bits is reached.
+    // If there are more than 23 bits after the decimal point in step 4, then these extra bits are simply cutoff from the 
+    // right. For example, if we had 26 bits to the right of the decimal point, then the last three would need to be cutoff 
+    // to get us to 23 bits. Note that in this case we will necessarily lose some precision.
+
+    // Step 8: Put it All Together
+    // The sign bit from step 1 will be the first bit of the final result. The next 8 bits will be from the exponent from 
+    // step 6. The last 23 bits will be from the mantissa from step 7. The result will be a 32-bit number encoded in 
+    // IEEE-754 binary32 format, assuming no mistakes were made in the process.
+
+    //                  [0]      [1]      [2]      [3]      [4]      [5]      [6]      [7]      [8]      [9]
+    // SINGLE	(32)  	seeeeeee emmmmmmm mmmmmmmm mmmmmmmm
+
+    _result[0] = exp & 0xff;
+    _result[1] = ( sign << 7 ) | ( right[0] );
+    _result[2] = ( right[1] );
+    _result[3] = ( right[2] );
+
+    printf( "%f = %2.2x %2.2x %2.2x %2.2x\n", _value, _result[0], _result[1], _result[2], _result[3] );
+
+}
+
+void cpu6502_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
+    cpu6502_float_single_to_string( _environment, _x, _string, _string_size );
+}
+
+void cpu6502_float_single_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
+
+    MAKE_LABEL
+
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _x, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "3" ) );
+    outline0( "STA M1+2" );
+
+    outline1( "LDA %s", address_displacement( _environment, _string, "0" ) );
+    outline0( "STA TMPPTR" );
+    outline1( "LDA %s", address_displacement( _environment, _string, "1" ) );
+    outline0( "STA TMPPTR+1" );
+    outline0( "LDA #$0" );
+    outline0( "STA TMPPTR2" );
+
+    outline0( "JSR BEGIN" );
+
+    outline0( "LDA TMPPTR2" );
+    outline1( "STA %s", _string_size );
+    
+    // outline0( "JSR FIX" );
+
+    // Variable * number = variable_temporary( _environment, VT_WORD, "(number) ");
+    // outline0( "LDA M1" );
+    // outline1( "STA %s", address_displacement( _environment, number->realName, "1") );
+    // outline0( "LDA M1+1" );
+    // outline1( "STA %s", address_displacement( _environment, number->realName, "0") );
+
+    // cpu6502_number_to_string( _environment, number->realName, _string, _string_size, 16, 1 );
+
+}
+
+void cpu6502_float_fast_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu6502_float_single_from_8( _environment, _value, _result, _signed );
+}
+
+void cpu6502_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+    
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline0( "LDA #$0" );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "0" ) );
+    outline0( "STA M1+1" );
+    outline0( "JSR FLOAT");
+    outline0( "LDA X1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
+    outline0( "LDA M1+2" );
+    outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
+
+}
+
+void cpu6502_float_fast_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu6502_float_single_from_16( _environment, _value, _result, _signed );
+}
+
+void cpu6502_float_single_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+    
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "0" ) );
+    outline0( "STA M1+1" );
+    outline0( "JSR FLOAT");
+    outline0( "LDA X1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
+    outline0( "LDA M1+2" );
+    outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
+
+}
+
+void cpu6502_float_fast_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu6502_float_single_to_8( _environment, _value, _result, _signed );
+}
+
+void cpu6502_float_single_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+    
+    (int)_signed;
+
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _value, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "3" ) );
+    outline0( "STA M1+2" );
+    outline0( "JSR FIX" );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", _result );
+
+}
+
+void cpu6502_float_fast_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu6502_float_single_to_16( _environment, _value, _result, _signed );
+}
+
+void cpu6502_float_single_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+    
+    (int)_signed;
+
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _value, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "3" ) );
+    outline0( "STA M1+2" );
+    outline0( "JSR FIX" );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+
+}
+
+void cpu6502_float_fast_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu6502_float_single_sub( _environment, _x, _y, _result );
+}
+
+void cpu6502_float_single_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _y, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "3" ) );
+    outline0( "STA M1+2" );
+
+    outline1( "LDA %s", address_displacement( _environment, _x, "0" ) );
+    outline0( "STA X2" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "1" ) );
+    outline0( "STA M2" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "2" ) );
+    outline0( "STA M2+1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "3" ) );
+    outline0( "STA M2+2" );
+
+    outline0( "JSR FSUB");
+
+    outline0( "LDA X1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
+    outline0( "LDA M1+2" );
+    outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
+
+}
+
+void cpu6502_float_fast_add( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu6502_float_single_add( _environment, _x, _y, _result );
+}
+
+void cpu6502_float_single_add( Environment * _environment, char * _x, char * _y, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _x, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "3" ) );
+    outline0( "STA M1+2" );
+
+    outline1( "LDA %s", address_displacement( _environment, _y, "0" ) );
+    outline0( "STA X2" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "1" ) );
+    outline0( "STA M2" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "2" ) );
+    outline0( "STA M2+1" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "3" ) );
+    outline0( "STA M2+2" );
+
+    outline0( "JSR FADD");
+
+    outline0( "LDA X1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
+    outline0( "LDA M1+2" );
+    outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
+
+}
+
+void cpu6502_float_fast_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu6502_float_single_cmp( _environment, _x, _y, _result );
+}
+
+void cpu6502_float_single_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
+    
+    MAKE_LABEL
+
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _x, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "3" ) );
+    outline0( "STA M1+2" );
+
+    outline1( "LDA %s", address_displacement( _environment, _y, "0" ) );
+    outline0( "STA X2" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "1" ) );
+    outline0( "STA M2" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "2" ) );
+    outline0( "STA M2+1" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "3" ) );
+    outline0( "STA M2+2" );
+
+    outline0( "JSR FCMP");
+
+    outline1( "STA %s", _result );
+
+}
+
+void cpu6502_float_fast_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu6502_float_single_mul( _environment, _x, _y, _result );
+}
+
+void cpu6502_float_single_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
+    
+    MAKE_LABEL
+    
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _x, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "3" ) );
+    outline0( "STA M1+2" );
+
+    outline1( "LDA %s", address_displacement( _environment, _y, "0" ) );
+    outline0( "STA X2" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "1" ) );
+    outline0( "STA M2" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "2" ) );
+    outline0( "STA M2+1" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "3" ) );
+    outline0( "STA M2+2" );
+
+    outline0( "JSR FMUL");
+
+    outline0( "LDA X1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
+    outline0( "LDA M1+2" );
+    outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
+
+}
+
+void cpu6502_float_fast_div( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu6502_float_single_div( _environment, _x, _y, _result );
+}
+
+void cpu6502_float_single_div( Environment * _environment, char * _x, char * _y, char * _result ) {
+    
+    MAKE_LABEL
+    
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _y, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _y, "3" ) );
+    outline0( "STA M1+2" );
+
+    outline1( "LDA %s", address_displacement( _environment, _x, "0" ) );
+    outline0( "STA X2" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "1" ) );
+    outline0( "STA M2" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "2" ) );
+    outline0( "STA M2+1" );
+    outline1( "LDA %s", address_displacement( _environment, _x, "3" ) );
+    outline0( "STA M2+2" );
+
+    outline0( "JSR FDIV");
+
+    outline0( "LDA X1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
+    outline0( "LDA M1+2" );
+    outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
+
+}
+
+void cpu6502_float_fast_sin( Environment * _environment, char * _angle, char * _result ) {
+    cpu6502_float_single_sin( _environment, _angle, _result );
+}
+
+void cpu6502_float_single_sin( Environment * _environment, char * _angle, char * _result ) {
+    
+    MAKE_LABEL
+    
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _angle, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _angle, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _angle, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _angle, "3" ) );
+    outline0( "STA M1+2" );
+
+    outline0( "JSR FSIN");
+
+    outline0( "LDA X1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
+    outline0( "LDA M1+2" );
+    outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
+
+}
+
+void cpu6502_float_fast_cos( Environment * _environment, char * _angle, char * _result ) {
+    cpu6502_float_single_cos( _environment, _angle, _result );
+}
+
+void cpu6502_float_single_cos( Environment * _environment, char * _angle, char * _result ) {
+    
+    MAKE_LABEL
+    
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _angle, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _angle, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _angle, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _angle, "3" ) );
+    outline0( "STA M1+2" );
+
+    outline0( "JSR FCOS");
+
+    outline0( "LDA X1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
+    outline0( "LDA M1+2" );
+    outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
+
+}
+
+void cpu6502_float_fast_tan( Environment * _environment, char * _angle, char * _result ) {
+    cpu6502_float_single_tan( _environment, _angle, _result );
+}
+
+void cpu6502_float_single_tan( Environment * _environment, char * _angle, char * _result ) {
+    
+    MAKE_LABEL
+    
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _angle, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _angle, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _angle, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _angle, "3" ) );
+    outline0( "STA M1+2" );
+
+    outline0( "JSR FTAN");
+
+    outline0( "LDA X1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
+    outline0( "LDA M1+2" );
+    outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
 
 }
 

@@ -49,7 +49,7 @@ void c64_xpen( Environment * _environment, char * _destination ) {
     outline1("STA %s", _destination);
     outline1("BCC %s", label );
     outline0("LDA #1");    
-    outline1("STA _%s+1", _destination);
+    outline1("STA _%s", address_displacement(_environment, _destination, "1"));
     outhead1("%s:", label );
 
 }
@@ -61,7 +61,7 @@ void c64_ypen( Environment * _environment, char * _destination ) {
     outline0("LDA $d014");
     outline1("STA %s", _destination);    
     outline0("LDA #0");
-    outline1("STA %s+1", _destination);    
+    outline1("STA %s", address_displacement(_environment, _destination, "1"));    
    
 }
 
@@ -257,7 +257,7 @@ void c64_dload( Environment * _environment, char * _target_name, char * _result 
 
     outline1("LDA %s", tnaddress->realName);
     outline0("STA TMPPTR");
-    outline1("LDA %s+1", tnaddress->realName);
+    outline1("LDA %s", address_displacement(_environment, tnaddress->realName, "1"));
     outline0("STA TMPPTR+1");
     outline1("LDA %s", tnsize->realName);
     outline0("STA MATHPTR0");
@@ -269,7 +269,7 @@ void c64_dload( Environment * _environment, char * _target_name, char * _result 
 
     outline1("LDA %s", address->realName);
     outline0("STA TMPPTR2");
-    outline1("LDA %s+1", address->realName);
+    outline1("LDA %s", address_displacement(_environment, address->realName, "1"));
     outline0("STA TMPPTR2+1");
 
     outline0("JSR C64STORAGELOAD");

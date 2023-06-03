@@ -110,7 +110,7 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
 #define     PROGRAM_FREQUENCY_V( c, f ) \
     outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
     outline1("LDX %s", f ); \
-    outline1("LDY %s+1", f ); \
+    outline1("LDY %s", address_displacement(_environment, f, "1") ); \
     outline0("JSR POKEYFREQ" );
 
 #define     PROGRAM_FREQUENCY_SV( c, f ) \
@@ -134,7 +134,7 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
 #define     PROGRAM_PITCH_V( c, f ) \
     outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
     outline1("LDX %s", f ); \
-    outline1("LDY %s+1", f ); \
+    outline1("LDY %s", address_displacement(_environment, f, "1") ); \
     outline0("JSR POKEYPROGFREQ" );
 
 #define     PROGRAM_PITCH_SV( c, f ) \
@@ -158,7 +158,7 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
 #define     PROGRAM_PULSE_V( c, p ) \
     outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
     outline1("LDX %s", p ); \
-    outline1("LDY %s+1", p ); \
+    outline1("LDY %s", address_displacement(_environment, p, "1") ); \
     outline0("JSR POKEYPROGPULSE" );
 
 #define     PROGRAM_PULSE_SV( c, p ) \
@@ -808,7 +808,7 @@ void pokey_set_frequency_vars( Environment * _environment, char * _channels, cha
         outline0("LDA #$f" );
     }
     outline1("LDX %s", _frequency );
-    outline1("LDY %s+1", _frequency );
+    outline1("LDY %s", address_displacement(_environment, _frequency, "1") );
 
     outline0("JSR POKEYFREQ");
 
@@ -825,7 +825,7 @@ void pokey_set_pitch_vars( Environment * _environment, char * _channels, char * 
         outline0("LDA #$f" );
     }
     outline1("LDX %s", _pitch );
-    outline1("LDY %s+1", _pitch );
+    outline1("LDY %s", address_displacement(_environment, _pitch, "1") );
 
     outline0("JSR POKEYPROGFREQ");
 

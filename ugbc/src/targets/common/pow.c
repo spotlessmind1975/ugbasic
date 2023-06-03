@@ -131,8 +131,8 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
             cpu_label( _environment, label );
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char baseRealName[MAX_TEMPORARY_STORAGE]; sprintf( baseRealName, "%s+2", base->realName );
-                    char resultRealName[MAX_TEMPORARY_STORAGE]; sprintf( resultRealName, "%s+2", result->realName );
+                    char baseRealName[MAX_TEMPORARY_STORAGE]; sprintf( baseRealName, "%s", address_displacement(_environment, base->realName, "2") );
+                    char resultRealName[MAX_TEMPORARY_STORAGE]; sprintf( resultRealName, "%s", address_displacement(_environment, result->realName, "2") );
                     cpu_math_mul_16bit_to_32bit( _environment, baseRealName, resultRealName, temporary->realName, VT_SIGNED( base->type ) );
                 }
             #else
@@ -151,7 +151,7 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
             cpu_label( _environment, label );
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char resultRealName[MAX_TEMPORARY_STORAGE]; sprintf( resultRealName, "%s+2", result->realName );
+                    char resultRealName[MAX_TEMPORARY_STORAGE]; sprintf( resultRealName, "%s", address_displacement(_environment, result->realName, "2") );
                     cpu_math_mul_16bit_to_32bit( _environment, base->realName, resultRealName, temporary->realName, VT_SIGNED( base->type ) );
                 }
             #else
@@ -170,7 +170,7 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
             cpu_label( _environment, label );
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char resultRealName[MAX_TEMPORARY_STORAGE]; sprintf( resultRealName, "%s+1", result->realName );
+                    char resultRealName[MAX_TEMPORARY_STORAGE]; sprintf( resultRealName, "%s", address_displacement(_environment, result->realName, "1") );
                     cpu_math_mul_8bit_to_16bit( _environment, base->realName, resultRealName, temporary->realName, VT_SIGNED( base->type ) );
                 }
             #else

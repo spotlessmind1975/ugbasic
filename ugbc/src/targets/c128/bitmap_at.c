@@ -120,7 +120,7 @@ void bitmap_at_var( Environment * _environment, char * _address ) {
 
     variable_move_naked( _environment, address->name, bitmapAddress->name );
 
-    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s", address_displacement(_environment, address->realName, "1") );
 
     vic2_bitmap_at( _environment, addressString );
 

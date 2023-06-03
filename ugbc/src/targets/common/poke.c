@@ -46,8 +46,20 @@
  * @param _value Expression to write.
  */
 /* <usermanual>
-@keyword PEEK
-@target atari
+@keyword POKE
+
+@english
+Store a byte to memory.
+
+@italian
+Memorizza un byte nella memoria.
+
+@syntax POKE [address], [value]
+
+@example POKE 32768, 2
+
+@target all
+
 </usermanual> */
 void poke_var( Environment * _environment, char * _address, char * _value ) {
 

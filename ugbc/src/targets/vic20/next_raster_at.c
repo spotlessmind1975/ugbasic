@@ -109,7 +109,7 @@ void next_raster_at_with_var( Environment * _environment, char * _position, char
     Variable * var = variable_retrieve( _environment, _position );
 
     char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "%s", var->realName );
-    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%s+1", var->realName );
+    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%s", address_displacement(_environment, var->realName, "1") );
 
     vic1_next_raster_at( _environment, _label, positionlo, positionhi );
 

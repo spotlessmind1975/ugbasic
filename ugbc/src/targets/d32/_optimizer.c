@@ -398,12 +398,12 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
     
-    if ( (po_buf_match( buf[0], " LD* ", v1) || po_buf_match( buf[0], " CLR*", v1))
-    &&   (po_buf_match( buf[1], " LD* ", v2) || po_buf_match( buf[1], " CLR*", v2))
-    &&  po_buf_strcmp( v1, v2)==0) {
-        optim(buf[0], RULE "(LOAD/CLR,LOAD/CLR)->(LOAD/CLR)", NULL);
-        ++_environment->removedAssemblyLines;
-    }
+    // if ( (po_buf_match( buf[0], " LD* *", v1, v3) || po_buf_match( buf[0], " CLR* *", v1, v3))
+    // &&   (po_buf_match( buf[1], " LD* *", v2, v4) || po_buf_match( buf[1], " CLR* *", v2, v4))
+    // &&  po_buf_strcmp( v1, v2)==0 && !strstr( v3->str, "+" ) && !strstr( v4->str, "+" ) && !strstr( v3->str, "-" ) && !strstr( v4->str, "-" ) ) {
+    //     optim(buf[0], RULE "(LOAD/CLR,LOAD/CLR)->(LOAD/CLR)", NULL);
+    //     ++_environment->removedAssemblyLines;
+    // }
 
 
     if ( po_buf_match(buf[0], " ST")
@@ -1094,17 +1094,19 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
     /* direct page or inlined */
    if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) ) {
         struct var *v = vars_get(var);
-        if(v->offset > 0) {
-            optim(buf[0], "direct-page", "\t%s <%s", op->str, var->str);
-        } else if(v->offset == -1 && chg_reg(buf[0], REG)
-               && ((strchr("DXYU", *REG->str)!=NULL  && v->size==2) || v->size==1) ) {
-            v->offset = -2;
-            v->flags |= NO_REMOVE;
-            optim(buf[0], "inlined", "\t%s #%s%s\n%s equ *-%d", op->str,
-                  v->init==NULL ? "*" : v->init,
-                  v->init==NULL ? (v->size==2 ? "" : "&255") : "",
-                  var->str, v->size);
-        }            
+        if ( strcmp( v->name, var->str ) == 0 ) {
+            if(v->offset > 0) {
+                optim(buf[0], "direct-page", "\t%s <%s", op->str, var->str);
+            } else if(v->offset == -1 && chg_reg(buf[0], REG)
+                && ((strchr("DXYU", *REG->str)!=NULL  && v->size==2) || v->size==1) ) {
+                v->offset = -2;
+                v->flags |= NO_REMOVE;
+                optim(buf[0], "inlined", "\t%s #%s%s\n%s equ *-%d", op->str,
+                    v->init==NULL ? "*" : v->init,
+                    v->init==NULL ? (v->size==2 ? "" : "&255") : "",
+                    var->str, v->size);
+            }            
+        }
     }
 
     if(po_buf_match( buf[0], " * [*]", op, var) && vars_ok(var)) {
@@ -1361,6 +1363,7 @@ void target_peephole_optimizer( Environment * _environment ) {
         for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_del(buf[i]);
         TMP_BUF_CLR;
     }
+    
 }
 
 void target_finalize( Environment * _environment ) {

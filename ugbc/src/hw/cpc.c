@@ -670,7 +670,7 @@ void cpc_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     outline1("LD A, (%s)", x->realName );
     outline0("LD E, A");
     if ( VT_BITWIDTH( x->type ) > 8 ) {
-        outline1("LD A, (%s+1)", x->realName );
+        outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
     } else {
         outline0("LD A, 0" );
     }
@@ -695,7 +695,7 @@ void cpc_point( Environment * _environment, char *_x, char *_y, char * _result )
     outline1("LD A, (%s)", x->realName );
     outline0("LD E, A");
     if ( VT_BITWIDTH( x->type ) > 8 ) {
-        outline1("LD A, (%s+1)", x->realName );
+        outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
     } else {
         outline0("LD A, 0" );
     }
@@ -1007,6 +1007,9 @@ void cpc_initialization( Environment * _environment ) {
     variable_global( _environment, "EVERYCOUNTER" );
     variable_import( _environment, "EVERYTIMING", VT_BYTE, 0 );
     variable_global( _environment, "EVERYTIMING" );
+
+    variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
+    variable_global( _environment, "FPSCRAP" );
 
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
 
@@ -1698,7 +1701,7 @@ void cpc_put_image( Environment * _environment, char * _image, char * _x, char *
     }
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );
-    outline1("LD A, (%s+1)", _x );
+    outline1("LD A, (%s)", address_displacement(_environment, _x, "1") );
     outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
@@ -1827,7 +1830,7 @@ void cpc_blit_image( Environment * _environment, char * _sources[], int _source_
 
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );
-    outline1("LD A, (%s+1)", _x );
+    outline1("LD A, (%s)", address_displacement(_environment, _x, "1") );
     outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
@@ -1886,7 +1889,7 @@ void cpc_get_image( Environment * _environment, char * _image, char * _x, char *
     outline1("LD HL, %s", _image );
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );
-    outline1("LD A, (%s+1)", _x );
+    outline1("LD A, (%s)", address_displacement(_environment, _x, "1") );
     outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
@@ -1964,13 +1967,13 @@ void cpc_move_tiles( Environment * _environment, char * _tile, char * _x, char *
     outline0("LD (TILEX), A" );
     outline1("LD A, (%s)", y->realName );
     outline0("LD (TILEY), A" );
-    outline1("LD A, (%s+1)", tile->realName );
+    outline1("LD A, (%s)", address_displacement(_environment, tile->realName, "1") );
     outline0("LD (TILEW), A" );
     outline0("LD (TILEW2), A" );
-    outline1("LD A, (%s+2)", tile->realName );
+    outline1("LD A, (%s)", address_displacement(_environment, tile->realName, "2") );
     outline0("LD (TILEH), A" );
     outline0("LD (TILEH2), A" );
-    outline1("LD A, (%s+3)", tile->realName );
+    outline1("LD A, (%s)", address_displacement(_environment, tile->realName, "3") );
     outline0("LD (TILEA), A" );
 
     outline0("CALL MOVETILE");
@@ -1988,13 +1991,13 @@ void cpc_put_tiles( Environment * _environment, char * _tile, char * _x, char * 
     outline0("LD (TILEX), A" );
     outline1("LD A, (%s)", _y );
     outline0("LD (TILEY), A" );
-    outline1("LD A, (%s+1)", _tile );
+    outline1("LD A, (%s)", address_displacement(_environment, _tile, "1") );
     outline0("LD (TILEW), A" );
     if ( _w ) {
         outline1("LD A, (%s)", _w );
     }
     outline0("LD (TILEW2), A" );
-    outline1("LD A, (%s+2)", _tile );
+    outline1("LD A, (%s)", address_displacement(_environment, _tile, "2") );
     outline0("LD (TILEH), A" );
     if ( _h ) {
         outline1("LD A, (%s)", _h );

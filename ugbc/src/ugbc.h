@@ -332,7 +332,10 @@ typedef enum _VariableType {
     VT_MUSIC = 24,
 
     /** BLIT (blit definition) */
-    VT_BLIT = 25
+    VT_BLIT = 25,
+
+    /** FLOAT (floating point) */
+    VT_FLOAT = 26
 
 } VariableType;
 
@@ -357,18 +360,31 @@ typedef enum _VariableType {
 
 #define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
 #define VT_BW_16BIT( t, v )             ( ( (t) == (v) ) ? 16 : 0 )
+#define VT_BW_24BIT( t, v )             ( ( (t) == (v) ) ? 24 : 0 )
 #define VT_BW_32BIT( t, v )             ( ( (t) == (v) ) ? 32 : 0 )
+#define VT_BW_40BIT( t, v )             ( ( (t) == (v) ) ? 40 : 0 )
+#define VT_BW_64BIT( t, v )             ( ( (t) == (v) ) ? 64 : 0 )
+#define VT_BW_80BIT( t, v )             ( ( (t) == (v) ) ? 80 : 0 )
+#define VT_BW_128BIT( t, v )             ( ( (t) == (v) ) ? 128 : 0 )
 
 #define VT_BITWIDTH( t ) \
         ( VT_BW_8BIT( t, VT_CHAR ) + VT_BW_8BIT( t, VT_BYTE ) + VT_BW_8BIT( t, VT_SBYTE ) + VT_BW_8BIT( t, VT_COLOR ) + VT_BW_8BIT( t, VT_THREAD ) + \
         VT_BW_16BIT( t, VT_WORD ) + VT_BW_16BIT( t, VT_SWORD ) + VT_BW_16BIT( t, VT_ADDRESS ) + VT_BW_16BIT( t, VT_POSITION ) + \
         VT_BW_32BIT( t, VT_DWORD ) + VT_BW_32BIT( t, VT_SDWORD ) )
 
+#define VT_POW2_2( t, v )             ( ( (t) == (v) ) ? 2 : 0 )
+#define VT_POW2_3( t, v )             ( ( (t) == (v) ) ? 3 : 0 )
+#define VT_POW2_4( t, v )             ( ( (t) == (v) ) ? 4 : 0 )
+
 #define VT_MAX_BITWIDTH_TYPE( a, b ) \
-        ( ( VT_BITWIDTH( a ) > VT_BITWIDTH( b ) ) ? ( a ) : ( b ) )
+        ( ( ( a == VT_FLOAT ) || ( b == VT_FLOAT ) ) ? ( VT_FLOAT ) : \
+            ( VT_BITWIDTH( a ) > VT_BITWIDTH( b ) ) ? ( a ) : ( b ) )
+
+#define VT_MAX_FLOAT_BITWIDTH_TYPE( a, b ) \
+        ( ( VT_FLOAT_BITWIDTH( a ) > VT_FLOAT_BITWIDTH( b ) ) ? ( a ) : ( b ) )
 
 #define VT_SIGNED( t ) \
-        ( ( (t) == VT_SBYTE ) || ( (t) == VT_SWORD ) || ( (t) == VT_SDWORD ) || ( (t) == VT_POSITION ) )
+        ( ( (t) == VT_SBYTE ) || ( (t) == VT_SWORD ) || ( (t) == VT_SDWORD ) || ( (t) == VT_POSITION ) || ( (t) == VT_FLOAT ) )
 
 #define VT_UNSIGN( t ) \
             ( VT_SIGNED( t ) ? \
@@ -376,7 +392,8 @@ typedef enum _VariableType {
                     ( ( (t) == (VT_SBYTE) ) ? VT_BYTE : 0 ) + \
                     ( ( (t) == (VT_SWORD) ) ? VT_WORD : 0 ) + \
                     ( ( (t) == (VT_SDWORD) ) ? VT_DWORD : 0 ) + \
-                    ( ( (t) == (VT_POSITION) ) ? VT_WORD : 0 ) \
+                    ( ( (t) == (VT_POSITION) ) ? VT_WORD : 0 ) + \
+                    ( ( (t) == (VT_FLOAT) ) ? VT_FLOAT : 0 ) \
                 ) \
             : t )
 
@@ -386,6 +403,7 @@ typedef enum _VariableType {
                     ( ( (t) == (VT_BYTE) ) ? VT_SBYTE : 0 ) + \
                     ( ( (t) == (VT_WORD) ) ? VT_SWORD : 0 ) + \
                     ( ( (t) == (VT_DWORD) ) ? VT_SDWORD : 0 ) + \
+                    ( ( (t) == (VT_FLOAT) ) ? VT_FLOAT : 0 ) + \
                     ( ( (t) == (VT_POSITION) ) ? VT_POSITION : 0 ) + \
                     ( ( (t) == (VT_COLOR) ) ? VT_COLOR : 0 ) \
                 ) \
@@ -410,7 +428,7 @@ typedef enum _VariableType {
 /**
  * @brief Maximum number of variable types
  */
-#define VARIABLE_TYPE_COUNT   16
+#define VARIABLE_TYPE_COUNT   26
 
 /**
  * @brief Enum for memory area type
@@ -498,6 +516,14 @@ typedef struct _MemoryArea {
         } \
     }
 
+typedef enum _ConstantType {
+
+    CT_INTEGER = 0,         // integer
+    CT_STRING = 1,          // string
+    CT_FLOAT = 2            // float
+
+} ConstantType;
+
 /**
  * @brief Structure of a single constant
  */
@@ -508,6 +534,8 @@ typedef struct _Constant {
 
     /** Real name (used for source generation) */
     char * realName;
+
+    ConstantType    type;
 
     /** 
      * This flag mark if this variable is imported by external ASM
@@ -524,10 +552,36 @@ typedef struct _Constant {
      */
     char * valueString;
 
+    /** 
+     * The initial (floating) value of the variable, as given by last (re)definition.
+     */
+    double valueFloating;
+
     /** Link to the next constant (NULL if this is the last one) */
     struct _Constant * next;
 
 } Constant;
+
+typedef enum _FloatTypePrecision {
+
+    FT_FAST = 0,        // fast = 24 bit
+    FT_SINGLE = 1       // single = 32 bit
+
+} FloatTypePrecision;
+
+typedef enum _FloatTypeAngle {
+
+    FT_RADIAN = 0,        // radiants
+    FT_DEGREE = 1          // degrees
+
+} FloatTypeAngle;
+
+typedef struct _FloatType {
+
+    FloatTypePrecision precision;
+    FloatTypeAngle angle;
+
+} FloatType;
 
 /**
  * @brief Structure of a single variable
@@ -545,6 +599,9 @@ typedef struct _Variable {
 
     /** Variable type */
     VariableType type;
+
+    /** Precision type (if float) */
+    FloatTypePrecision precision;
 
     /** 
      * This flag mark if this variable is temporary or not 
@@ -584,6 +641,11 @@ typedef struct _Variable {
      * The static string's valu, as given by last (re)definition.
      */
     char * valueString;
+
+    /** 
+     * The static floating's value, as given by last (re)definition.
+     */
+    double valueFloating;
 
     /** 
      * The static buffer's value, as given by last (re)definition.
@@ -642,6 +704,9 @@ typedef struct _Variable {
 
     /** Variable type */
     VariableType arrayType;
+
+    /** Float precision */
+    FloatTypePrecision arrayPrecision;
 
     /** Is threaded? */
     int threaded;
@@ -1191,6 +1256,72 @@ typedef struct _Deployed {
 
     Embedded embedded;
 
+    int fp_vars;
+
+    int fp_mul4;
+    int fp_mul24;
+    int fp_mul16;
+    int fp_mul24_stack_based;
+    int fp_pushpop;
+    int fp_c_times_bde;
+    int fp_mov4;
+    int fp_common_str;
+    int fp_div24_24;
+    int fp_sqrt24_mant;
+    int fp_sqrt32;
+    int fp_div32_16;
+    
+    int fp_fast_mul;
+    int fp_fast_to_string;
+    int fp_fast_pow10_lut;
+    int fp_format_str;
+    int fp_fast_from_16;
+    int fp_fast_from_8;
+    int fp_fast_to_16;
+    int fp_fast_to_8;
+    int fp_fast_add;
+    int fp_fast_sub;
+    int fp_fast_div;
+    int fp_fast_cmp;
+    int fp_fast_sin;
+    int fp_fast_cos;
+    int fp_fast_sqr;
+    int fp_fast_mod1;
+    int fp_fast_neg;
+    int fp_fast_abs;
+    int fp_fast_tan;
+    int fp_fast_bg;
+    int fp_fast_amean;
+    int fp_fast_geomean;
+    int fp_fast_div_pow2;
+
+    int fp_single_vars;
+    int fp_single_mul;
+    int fp_single_pow10_lut;
+    int fp_single_mul24;
+    int fp_single_to_string;
+    int fp_single_from_16;
+    int fp_single_from_8;
+    int fp_single_to_16;
+    int fp_single_to_8;
+    int fp_single_add;
+    int fp_single_sub;
+    int fp_single_div;
+    int fp_single_cmp;
+    int fp_single_sin;
+    int fp_single_cos;
+    int fp_single_mod1;
+    int fp_single_neg;
+    int fp_single_horner_step;
+    int fp_single_abs;
+    int fp_single_tan;
+    int fp_single_bgi;
+    int fp_single_sqrt;
+    int fp_single_mulpow2;
+    int fp_single_amean;
+    int fp_single_mulu8_divpow2;
+    int fp_single_geomean;
+    
 } Deployed;
 
 typedef struct _DString {
@@ -1409,6 +1540,11 @@ typedef struct _Environment {
      * Stats about usage of embedded methods
      */
     Embedded embeddedStats;
+
+    /**
+     * 
+     */
+    FloatType floatType;
 
     /**
      * 
@@ -1920,10 +2056,10 @@ typedef struct _Environment {
 #define UNIQUE_RESOURCE_ID   ((struct _Environment *)_environment)->uniqueResourceId++
 #define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
 
-#define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL( s ) fprintf(stderr, "%s %d\n CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", __FILE__, __LINE__, ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL2( s, v ) fprintf(stderr, "%s %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", __FILE__, __LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL3( s, v1, v2 ) fprintf(stderr, "%s %d\n CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", __FILE__, __LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL4si( s, v, d1, d2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL_UNIMPLEMENTED( v ) CRITICAL2("E000 - Internal method not implemented:", v );
@@ -2103,6 +2239,9 @@ typedef struct _Environment {
 #define CRITICAL_ARRAY_MISSING_SIZE( n ) CRITICAL2("E173 - missing size on one or more dimensions", n );
 #define CRITICAL_ARRAY_MULTIDIMENSIONAL( n ) CRITICAL2("E174 - simple UBOUND/LBOUND cannot be used on multidimensional array", n );
 #define CRITICAL_ARRAY_DATATYPE_NOT_SUPPORTED( n ) CRITICAL2("E175 - datatype not supported for array loading from binary file", n );
+#define CRITICAL_CANNOT_CAST_FLOAT_PRECISION( v1, v2 ) CRITICAL3("E0176 - Cannot cast types since float precision mismatch", v1, v2 );
+#define CRITICAL_SWAP_UNSUPPORTED( v, t ) CRITICAL3("E177 - Swap unsupported for variable of given datatype", v, t );
+#define CRITICAL_CANNOT_EMIT_FLOAT_CONST( v ) CRITICAL2("E178 - cannot emit floating point constants", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2964,6 +3103,7 @@ void                    add_complex( Environment * _environment, char * _variabl
 void                    add_complex_vars( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 void                    add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
+char *                  address_displacement( Environment * _environment, char * _address, char * _displacement );
 
 //----------------------------------------------------------------------------
 // *B*
@@ -3056,6 +3196,7 @@ void                    colormap_clear_with( Environment * _environment, int _fo
 void                    colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background );
 void                    const_define_numeric( Environment * _environment, char * _name, int _value );
 void                    const_define_string( Environment * _environment, char * _name, char * _value );
+void                    const_define_float( Environment * _environment, char * _name, double _value );
 void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
 Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
@@ -3107,6 +3248,9 @@ void                    exit_procedure( Environment * _environment );
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
 void                    font_descriptors_init( Environment * _environment, int _embedded_present );
 int                     frames( Environment * _environment, char * _image );
+Variable *              fp_cos( Environment * _environment, char * _angle );
+Variable *              fp_sin( Environment * _environment, char * _angle );
+Variable *              fp_tan( Environment * _environment, char * _angle );
 
 //----------------------------------------------------------------------------
 // *G*
@@ -3487,6 +3631,7 @@ Variable *              variable_store_array( Environment * _environment, char *
 void                    variable_store_array_const( Environment * _environment, char * _array, int _value  );
 Variable *              variable_store_buffer( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at );
 Variable *              variable_store_string( Environment * _environment, char * _source, char * _string );
+Variable *              variable_store_float( Environment * _environment, char * _destination, double _value );
 Variable *              variable_string_asc( Environment * _environment, char * _char );
 Variable *              variable_string_chr( Environment * _environment, char * _ascii  );
 Variable *              variable_string_flip( Environment * _environment, char * _string  );

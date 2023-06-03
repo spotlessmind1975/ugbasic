@@ -285,6 +285,8 @@ Cms { RETURN(COLUMNS,1); }
 COMMA { RETURN(COMMA,1); }
 COMMODORE { RETURN(COMMODORE,1); }
 COMPLETE { RETURN(COMPLETE,1); }
+COS { RETURN(COS,1); }
+Cx { RETURN(COS,1); }
 Cmp { RETURN(COMPLETE,1); }
 C= { RETURN(COMMODORE,1); }
 COMPRESS { RETURN(COMPRESS,1); }
@@ -326,6 +328,8 @@ DEFAULT { RETURN(DEFAULT,1); }
 Dft { RETURN(DEFAULT,1); }
 DEFINE { RETURN(DEFINE,1); }
 De { RETURN(DEFINE,1); }
+DEGREE { RETURN(DEGREE,1); }
+Deg { RETURN(DEGREE,1); }
 DELETE { RETURN(DELETE,1); }
 Del { RETURN(DELETE,1); }
 DESTINATION { RETURN(DESTINATION,1); }
@@ -411,6 +415,8 @@ EVERY { RETURN(EVERY,1); }
 Ev { RETURN(EVERY,1); }
 FALSE { RETURN(FALSE,1); }
 Fa { RETURN(FALSE,1); }
+FAST { RETURN(FAST,1); } 
+Fst { RETURN(FAST,1); } 
 F { RETURN(F,1); }
 F1 { RETURN(F1,1); }
 F2 { RETURN(F2,1); }
@@ -434,6 +440,8 @@ FST { RETURN(FIRST,1); }
 FLIP { RETURN(FLIP,1); }
 FLIP\$ { RETURN(FLIP,1); }
 Fl { RETURN(FLIP,1); }
+FLOAT { RETURN(FLOAT,1); }
+Ft { RETURN(FLOAT,1); }
 FLUTE { RETURN(FLUTE,1); }
 FONT { RETURN(FONT,1); }
 Fnt { RETURN(FONT,1); }
@@ -711,6 +719,8 @@ Pn { RETURN(PEN,1); }
 PERCUSSIVE { RETURN(PERCUSSIVE,1); }
 PERIOD { RETURN(PERIOD,1); }
 Per { RETURN(PERIOD,1); }
+PI { RETURN(PI,1); }
+Pi { RETURN(PI,1); }
 PIANO { RETURN(PIANO,1); }
 PICCOLO { RETURN(PICCOLO,1); }
 PICK { RETURN(PICK,1); }
@@ -743,6 +753,8 @@ POSITION { RETURN(POSITION,1); }
 Ps { RETURN(POSITION,1); }
 POW { RETURN(POWERING,1); }
 Pw { RETURN(POWERING,1); }
+PRECISION { RETURN(PRECISION,1); }
+Pre { RETURN(PRECISION,1); }
 PRESERVE { RETURN(PRESERVE,1); }
 Pv { RETURN(PRESERVE,1); }
 PRESSED { RETURN(PRESSED,1); }
@@ -758,6 +770,8 @@ PUT { RETURN(PUT,1); }
 Pu { RETURN(PUT,1); }
 Q { RETURN(Q,1); }
 R { RETURN(R,1); }
+RADIAN { RETURN(RADIAN,1); }
+Rdn { RETURN(RADIAN,1); }
 RAIN { RETURN(RAIN,1); }
 RANDOM { RETURN(RANDOM,1); }
 Rd { RETURN(RANDOM,1); }
@@ -854,6 +868,10 @@ SHOW { RETURN(SHOW,1); }
 Sh { RETURN(SHOW,1); }
 SIGNED { RETURN(SIGNED,1); }
 Sgnd { RETURN(SIGNED,1); }
+SIN { RETURN(SIN,1); }
+Sn { RETURN(SIN,1); }
+SINGLE { RETURN(SINGLE,1); }
+Sng { RETURN(SINGLE,1); }
 SITAR { RETURN(SITAR,1); }
 SIZE { RETURN(SIZE,1); }
 Sz { RETURN(SIZE,1); }
@@ -1069,6 +1087,7 @@ ZX { RETURN(ZX,1); }
 [a-fA-F0-9]+[hH] { int c = strlen(yytext); yytext[c-1] = 0; yylval.integer = strtol(yytext,0,16); RETURN(Integer,1); }
 %[0-1]+ { yylval.integer = strtol(yytext+1,0,2); RETURN(Integer,1); }
 [0-9]+ { yylval.integer = atoi(yytext); RETURN(Integer,1);  }
+[\-]*[0-9]*\.[0-9]+ { yylval.floating = atof(yytext); RETURN(Float,1);  }
 
 [ \t]+ { yycolno = (yycolno + yyleng); yyposno = (yyposno + yyleng); }
 
