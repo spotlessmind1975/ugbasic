@@ -1066,7 +1066,7 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
                     rep = tst;
                 }
             }
-            optim(buf[0], "unread", rep != NULL ? "%s" : NULL, rep);
+            optim(buf[0], "unread1", rep != NULL ? "%s" : NULL, rep);
             ++_environment->removedAssemblyLines;
         }
     }
@@ -1077,7 +1077,8 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     || po_buf_match( buf[0], "* fdb ", var) ) if(vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd==0 && 0<v->size && v->size<=4 && 0==(v->flags & NO_REMOVE) && v->offset!=-2) {
-            optim(buf[0], "unread",NULL);
+            // fprintf( stderr, "[unread2] = %s\n", buf[0]->str );
+            optim(buf[0], "unread2",NULL);
             ++_environment->removedAssemblyLines;
             ++num_unread;
         }             
@@ -1288,22 +1289,32 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
 
         switch(kind) {
             case PEEPHOLE:
+            // fprintf( stderr, "kind = PEEPHOLE buf = [%s]\n", buf[0]->str );
             basic_peephole(_environment, buf, zA, zB);
             optim_zAB(_environment, buf, &zA, &zB);
             
+            // fprintf( stderr, "change = %d buf = [%s]\n", change, buf[0]->str );
+
             /* only look fo variable when no peephole has been performed */
-            if(change == 0) vars_scan(buf);
+            /*if(change == 0)*/ vars_scan(buf);
             break;
             
             case DEADVARS:
+            // fprintf( stderr, "kind = DEADVARS buf = [%s]\n", buf[0]->str );
             vars_remove(_environment, buf);
             break;
             
             case RELOCATION1:
             case RELOCATION2:
+            // fprintf( stderr, "kind = RELOCATION 1/2 buf = [%s]\n", buf[0]->str );
             vars_relocate(_environment, buf);
             break;
         }
+
+        // for(int i=0; i<vars.size; ++i) {
+        //     fprintf( stderr, "%d ) %s (rd = %d, wr = %d)\n", i, vars.tab[i].name, vars.tab[i].nb_rd, vars.tab[i].nb_wr );
+        // }
+        // fprintf( stderr, "\n------------------------\n" );
 
         ++line;
     }
