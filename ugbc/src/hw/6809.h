@@ -167,6 +167,7 @@ void cpu6809_mem_move_direct( Environment * _environment, char *_source, char *_
 void cpu6809_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6809_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6809_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size );
+void cpu6809_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6809_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
 void cpu6809_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char *_result, int _equal );
 void cpu6809_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
@@ -405,6 +406,8 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_mem_move_size( _environment, _source, _destination, _size ) cpu6809_mem_move_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_size( _environment, _source, _destination, _size ) cpu6809_mem_move_direct_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_indirect_size( _environment, _source, _destination, _size ) cpu6809_mem_move_direct_indirect_size( _environment, _source, _destination, _size )
+#define cpu_mem_move_direct2( E_environment, _source, _destination, _size ) cpu6809_mem_move_direct2( _environment, _source, _destination, _size )
+
 #define cpu_compare_memory( _environment, _source, _destination, _size, _result, _equal ) cpu6809_compare_memory( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_compare_memory_size( _environment, _source, _destination, _size, _result, _equal ) cpu6809_compare_memory_size( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_less_than_memory( _environment, _source, _destination, _size, _result, _equal ) cpu6809_less_than_memory( _environment, _source, _destination, _size, _result, _equal )

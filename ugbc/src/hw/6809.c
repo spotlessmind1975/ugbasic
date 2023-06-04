@@ -3189,6 +3189,37 @@ void cpu6809_mem_move_direct( Environment * _environment, char *_source, char *_
 
 }
 
+void cpu6809_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+
+    inline( cpu_mem_move )
+
+        MAKE_LABEL
+
+        outline1("LDU %s", _size );
+        outline0("CMPU #$0" );
+        outline1("BEQ %sdone", label );
+
+        outline1("LDY %s", _source );
+        outline1("LDX #%s", _destination );
+
+        outhead1("%s", label );
+        outline0("LDA ,Y+" );
+        outline0("STA ,X+" );
+        outline0("LEAU -1, U" );
+        outline0("CMPU #$0" );
+        outline1("BNE %s", label );
+
+    embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm )
+
+        outline1("LDU %s", _size );
+        outline1("LDY %s", _source );
+        outline1("LDX #%s", _destination );
+        outline0("JSR CPUMEMMOVE" );
+
+    done( )
+
+}
+
 void cpu6809_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     inline( cpu_mem_move )
