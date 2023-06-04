@@ -82,28 +82,41 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
-                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                if ( image->uncompressedSize ) {
-                    bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
-                } else {
-                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
-                }
-                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
-                cpu_label( _environment, alreadyLoadedLabel );
+                // cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                // if ( image->uncompressedSize ) {
+                //     bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
+                // } else {
+                //     bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                // }
+                // cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                // cpu_label( _environment, alreadyLoadedLabel );
+
+                Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
+                variable_store( _environment, frameSize->name, image->frameSize );
+                Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
+                variable_store( _environment, bank->name, image->bankAssigned );
+                Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
+                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
                     } else {
-                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
                     }
                 } else {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
                     } else {
-                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
                     }
                 }
+
+                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                variable_store( _environment, address->name, image->absoluteAddress );
+                variable_add_inplace_vars( _environment, address->name, offset->name );
+                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, image->frameSize, 0, _flags );
+
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
@@ -132,20 +145,33 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
-                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                if ( image->uncompressedSize ) {
-                    bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
-                } else {
-                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
-                }
-                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
-                cpu_label( _environment, alreadyLoadedLabel );
+                // cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                // if ( image->uncompressedSize ) {
+                //     bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
+                // } else {
+                //     bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                // }
+                // cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                // cpu_label( _environment, alreadyLoadedLabel );
+
+                Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
+                variable_store( _environment, frameSize->name, image->frameSize );
+                Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
+                variable_store( _environment, bank->name, image->bankAssigned );
+                Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
                 if ( !frame ) {
-                    ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
+                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
                 }
+
+                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                variable_store( _environment, address->name, image->absoluteAddress );
+                variable_add_inplace_vars( _environment, address->name, offset->name );
+                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, image->frameSize, 0, _flags );
+                
             } else {
                 if ( !frame ) {
                     ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );

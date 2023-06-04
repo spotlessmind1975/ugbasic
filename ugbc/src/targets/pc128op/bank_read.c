@@ -136,3 +136,20 @@ void bank_read_vars( Environment * _environment, char * _bank, char * _address1,
     outline0("; end bank read")
 
 }
+
+void bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
+
+    outline0("; bank read direct")
+    Variable * previous = bank_get( _environment );
+    bank_set_var( _environment, _bank );
+    Variable * bankAddress = bank_get_address_var( _environment, _bank );
+    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
+    
+    cpu_mem_move_direct2( _environment, realAddress->realName, _address2, size->realName );
+
+    bank_set_var( _environment, previous->name );
+    outline0("; end bank read direct")
+
+}

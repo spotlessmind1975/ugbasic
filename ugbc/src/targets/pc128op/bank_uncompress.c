@@ -70,7 +70,7 @@ del banco), ed infine l'indirizzo di destinazione, che sarà la memoria RAM.
 </usermanual> */
 void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
 
-    outline0("; bank uncompress")
+    outline0("; bank uncompress (1)")
     Variable * previous = bank_get( _environment );
     bank_set( _environment, _bank );
     int realAddress = 0x6000 + _address1;
@@ -78,7 +78,7 @@ void bank_uncompress_semi_var( Environment * _environment, int _bank, int _addre
     sprintf(realAddressAsString, "$%4.4x", realAddress);
     cpu_msc1_uncompress_direct_direct( _environment, realAddressAsString, _address2 );
     bank_set_var( _environment, previous->name );
-    outline0("; end bank uncompress")
+    outline0("; end bank uncompress (1)")
 
 }
 
@@ -98,7 +98,7 @@ void bank_uncompress_semi_var( Environment * _environment, int _bank, int _addre
 </usermanual> */
 void bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 ) {
 
-    outline0("; bank uncompress")
+    outline0("; bank uncompress (2)")
     Variable * previous = bank_get( _environment );
     bank_set_var( _environment, _bank );
     Variable * bankAddress = bank_get_address_var( _environment, _bank );
@@ -107,6 +107,6 @@ void bank_uncompress_vars( Environment * _environment, char * _bank, char * _add
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
     cpu_msc1_uncompress_indirect_indirect( _environment, realAddress->name, address2->name );
     bank_set_var( _environment, previous->name );
-    outline0("; end bank uncompress")
+    outline0("; end bank uncompress (2)")
 
 }
