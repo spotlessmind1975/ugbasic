@@ -2914,6 +2914,21 @@ void z80_mem_move_direct( Environment * _environment, char *_source, char *_dest
 
 }
 
+void z80_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, (%s)", _source);
+    outline1("LD DE, %s", _destination);
+    outline1("LD BC, (%s)", _size);
+    outline0("LD A, B");
+    outline0("OR C");
+    outline1("JR Z, %sdone", label);
+    outline0("LDIR");
+    outhead1("%sdone:", label);
+
+}
+
 void z80_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size > 0 ) {
