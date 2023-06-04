@@ -214,6 +214,8 @@ void ef936x_blit_image( Environment * _environment, char * _sources[], int _sour
 Variable * ef936x_new_image( Environment * _environment, int _width, int _height, int _mode );
 void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette );
 
+void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
+
 void ef936x_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
 void ef936x_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void ef936x_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
