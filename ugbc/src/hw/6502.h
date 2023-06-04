@@ -164,6 +164,7 @@ void cpu6502_store_nbit( Environment * _environment, char *_source, int _n, int 
 void cpu6502_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6502_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size );
+void cpu6502_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size );
@@ -402,6 +403,8 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_mem_move( _environment, _source, _destination, _size ) cpu6502_mem_move( _environment, _source, _destination, _size )
 #define cpu_mem_move_16bit( _environment, _source, _destination, _size ) cpu6502_mem_move_16bit( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct( _environment, _source, _destination, _size ) cpu6502_mem_move_direct( _environment, _source, _destination, _size )
+#define cpu_mem_move_direct2( _environment, _source, _destination, _size ) cpu6502_mem_move_direct2( _environment, _source, _destination, _size )
+
 #define cpu_mem_move_size( _environment, _source, _destination, _size ) cpu6502_mem_move_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_size( _environment, _source, _destination, _size ) cpu6502_mem_move_direct_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_indirect_size( _environment, _source, _destination, _size ) cpu6502_mem_move_direct_indirect_size( _environment, _source, _destination, _size )
