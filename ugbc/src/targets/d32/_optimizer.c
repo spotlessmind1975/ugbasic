@@ -331,7 +331,9 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
             ++_environment->removedAssemblyLines;
         }
 
-        if ( strcmp( v2->str, "A7C1") || strcmp( v2->str, "FFDE") || strcmp( v2->str, "FFDF") ) {
+        if ( strcmp( v2->str, "$A7C1") && strcmp( v2->str, "$FFDE") && strcmp( v2->str, "$FFDF")
+            &&
+             strcmp( v4->str, "$A7C1") && strcmp( v4->str, "$FFDE") && strcmp( v4->str, "$FFDF")  ) {
             optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
             ++_environment->removedAssemblyLines;
         }
@@ -1102,7 +1104,7 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
             && ((strchr("DXYU", *REG->str)!=NULL  && v->size==2) || v->size==1) ) {
             v->offset = -2;
             v->flags |= NO_REMOVE;
-            optim(buf[0], "inlined", "\t%s #%s%s\n%s equ *-%d", op->str,
+            optim(buf[0], "inlined1", "\t%s #%s%s\n%s equ *-%d", op->str,
                 v->init==NULL ? "*" : v->init,
                 v->init==NULL ? (v->size==2 ? "" : "&255") : "",
                 var->str, v->size);
@@ -1115,7 +1117,7 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
             optim(buf[0], "direct-page2", "\t%s [%s+$%04x]", op->str, var->str, DIRECT_PAGE);
         } else if(v->offset == -1 && strstr(var->str,"+$")==NULL) {
             v->offset = -2;
-            optim(buf[0], "inlined", "\t%s >%s\n%s equ *-2", op->str,
+            optim(buf[0], "inlined2", "\t%s >%s\n%s equ *-2", op->str,
                 v->init==NULL ? var->str : v->init, var->str);
             }            
         }
@@ -1136,7 +1138,7 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
             optim(buf[0], "direct-page4", "%s equ $%02x", var->str, v->offset);
             ++num_dp;
         } else if(v->offset == -2) {
-            optim(buf[0], "inlined", NULL);
+            optim(buf[0], "inlined3", NULL);
             ++_environment->removedAssemblyLines;
             ++num_inlined;
          }            
