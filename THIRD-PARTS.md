@@ -4,6 +4,8 @@ ugBASIC contains algorithms, software and graphics produced
 by third parts, as follows. Please refer to the following
 conditions if you wish to reproduce or reuse this software.
 
+[Z80FLOAT](https://github.com/Zeda/z80float), source code copyright 2018 Zeda A.K. Thomas.
+
 [ROUTINE TO READ JOYSTICK ON SC-3000/SG-1000](https://github.com/siriokds/SC-3000-Keyboard-support/blob/main/SC3000_SG1000_KeybJoy.asm)
 
 Source code originally published by Saverio Russo on [this repository](https://github.com/siriokds/SC-3000-Keyboard-support), and it has been used with his permission. For any uses other than integration with ugBASIC, please consult the author.
