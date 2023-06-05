@@ -5314,7 +5314,7 @@ void z80_float_fast_from_double_to_int_array( Environment * _environment, double
 
     while( ( fractional != 1.0 ) && ( steps < mantissa_bits ) ) {
 
-        printf("%f %d %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1] );
+        // printf("%f %d %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1] );
 
         right[1] = right[1] << 1;
         right[0] = right[0] << 1;
@@ -5362,7 +5362,7 @@ void z80_float_fast_from_double_to_int_array( Environment * _environment, double
 
             while( left == 0 ) {
 
-                printf("exp = %d left = %2.2x right = %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1] );
+                // printf("exp = %d left = %2.2x right = %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1] );
 
                 if ( ! right[0] && ! right[1] && ! right[2] ) {
                     left = 0x1;
@@ -5389,13 +5389,13 @@ void z80_float_fast_from_double_to_int_array( Environment * _environment, double
             
         }
 
-        printf("exp = %d left = %2.2x right = %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1] );
+        // printf("exp = %d left = %2.2x right = %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1] );
 
     } else {
 
         while( left ) {
 
-            printf("left = %8.8x right = %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1] );
+            // printf("left = %8.8x right = %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1] );
 
             if ( ( right[0] & 0x01 ) ) {
                 right[1] = right[1] | 0x100;
@@ -5431,7 +5431,7 @@ void z80_float_fast_from_double_to_int_array( Environment * _environment, double
 
     exp += 63;
 
-    printf("exp = %2.2x\n", exp );
+    // printf("exp = %2.2x\n", exp );
 
     // Step 6: Convert the Biased Exponent to Unsigned Binary
     // The biased exponent value from the previous step must be converted into unsigned binary, using the usual process.
@@ -5441,7 +5441,7 @@ void z80_float_fast_from_double_to_int_array( Environment * _environment, double
 
     exp = exp & 0xff;
 
-    printf("exp = %2.2x\n", exp );
+    // printf("exp = %2.2x\n", exp );
 
     // Step 7: Determine the Final Bits for the Mantissa
     // After step 4, there are a bunch of bits after the normalized decimal point. These bits will become the 
@@ -5466,7 +5466,7 @@ void z80_float_fast_from_double_to_int_array( Environment * _environment, double
     _result[1] = ( right[0] );
     _result[2] = ( right[1] );
 
-    printf( "%2.2x %2.2x %2.2x\n", _result[0], _result[1], _result[2] );
+    // printf( "%2.2x %2.2x %2.2x\n", _result[0], _result[1], _result[2] );
 
 }
 
@@ -5531,7 +5531,7 @@ void z80_float_single_from_double_to_int_array( Environment * _environment, doub
 
     while( ( fractional != 1.0 ) && ( steps < mantissa_bits ) ) {
 
-        printf("%f %d %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+        // printf("%f %d %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
         right[2] = right[2] << 1;
         right[1] = right[1] << 1;
@@ -5584,7 +5584,7 @@ void z80_float_single_from_double_to_int_array( Environment * _environment, doub
 
             while( left == 0 ) {
 
-                printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+                // printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
                 if ( right[0] & 0x40 ) {
                     left = 0x1;
@@ -5612,13 +5612,13 @@ void z80_float_single_from_double_to_int_array( Environment * _environment, doub
 
         }
 
-        printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+        // printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
     } else {
 
         while( left ) {
 
-            printf("left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+            // printf("left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
             if ( ( right[0] & 0x01 ) ) {
                 right[1] = right[1] | 0x100;
@@ -5628,7 +5628,7 @@ void z80_float_single_from_double_to_int_array( Environment * _environment, doub
             }
             right[0] = right[0] >> 1;
             right[1] = right[1] >> 1;
-            right[2] = right[2] >> 1;
+            // right[2] = right[2] >> 1;
             if ( left & 0x1 ) {
                 right[0] = right[0] | 0x40;
             }
@@ -5663,7 +5663,7 @@ void z80_float_single_from_double_to_int_array( Environment * _environment, doub
 
     exp += 127;
 
-    printf("exp = %2.2x\n", exp );
+    // printf("exp = %2.2x\n", exp );
 
     // Step 6: Convert the Biased Exponent to Unsigned Binary
     // The biased exponent value from the previous step must be converted into unsigned binary, using the usual process.
@@ -5673,7 +5673,7 @@ void z80_float_single_from_double_to_int_array( Environment * _environment, doub
 
     exp = exp & 0xff;
 
-    printf("exp = %2.2x\n", exp );
+    // printf("exp = %2.2x\n", exp );
 
     // Step 7: Determine the Final Bits for the Mantissa
     // After step 4, there are a bunch of bits after the normalized decimal point. These bits will become the 
@@ -5699,7 +5699,7 @@ void z80_float_single_from_double_to_int_array( Environment * _environment, doub
     _result[1] = ( right[1] );
     _result[0] = ( right[2] );
 
-    printf( "%2.2x %2.2x %2.2x %2.2x\n", _result[0], _result[1], _result[2], _result[3] );
+    // printf( "%2.2x %2.2x %2.2x %2.2x\n", _result[0], _result[1], _result[2], _result[3] );
 
 }
 
