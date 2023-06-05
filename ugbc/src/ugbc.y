@@ -85,7 +85,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
-%token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS 
+%token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -4274,65 +4274,73 @@ blit_definition_define_expression :
       }
     ;
 
+image_or_images : 
+    IMAGE | IMAGES
+    ;
+
+bitmap_or_bitmaps : 
+    BITMAP | BITMAPS
+    ;
+
 blit_definition_expression:
     blit_definition_define_expression
-    |  IMAGE blit_sources AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+    |  image_or_images blit_sources AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
         $9 = $9 | FLAG_WITH_PALETTE;
         blit_image( _environment, $8, $4, $6, NULL, NULL, $9 );
         gr_locate( _environment, $4, $6 );
     }
-    |  IMAGE blit_sources FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+    |  image_or_images blit_sources FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
         $11 = $11 | FLAG_WITH_PALETTE;
         blit_image( _environment, $10, $6, $8, $4, NULL, $11 );
         gr_locate( _environment, $6, $8 );
     }
-    |  IMAGE blit_sources SEQUENCE expr FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+    |  image_or_images blit_sources SEQUENCE expr FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
         $13 = $13 | FLAG_WITH_PALETTE;
         blit_image( _environment, $12, $8, $10, $6, $4, $13 );
         gr_locate( _environment, $8, $10 );
     }
-    | IMAGE blit_sources WITH Identifier blit_image_flags {
+    | image_or_images blit_sources WITH Identifier blit_image_flags {
         $5 = $5 | FLAG_WITH_PALETTE;
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         blit_image( _environment, $4, implicitX->name, implicitY->name, NULL, NULL, $5 );
     }
-    | IMAGE blit_sources FRAME expr WITH Identifier blit_image_flags {
+    | image_or_images blit_sources FRAME expr WITH Identifier blit_image_flags {
         $7 = $7 | FLAG_WITH_PALETTE;
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         blit_image( _environment, $6, implicitX->name, implicitY->name, $4, NULL, $7 );
     }
-    | IMAGE blit_sources SEQUENCE expr FRAME expr WITH Identifier blit_image_flags {
+    | image_or_images blit_sources SEQUENCE expr FRAME expr WITH Identifier blit_image_flags {
         $9 = $9 | FLAG_WITH_PALETTE;
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         blit_image( _environment, $8, implicitX->name, implicitY->name, $6, $4, $9 );
     }
     |
-      BITMAP blit_sources AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+      bitmap_or_bitmaps blit_sources AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
         blit_image( _environment, $8, $4, $6, NULL, NULL, $9 );
         gr_locate( _environment, $4, $6 );
     }
-    | BITMAP blit_sources FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+    | bitmap_or_bitmaps blit_sources FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
         blit_image( _environment, $10, $6, $8, $4, NULL, $11 );
         gr_locate( _environment, $6, $8 );
     }
-    | BITMAP blit_sources SEQUENCE expr FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+    | bitmap_or_bitmaps blit_sources SEQUENCE expr FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
         blit_image( _environment, $12, $8, $10, $6, $4, $13 );
         gr_locate( _environment, $8, $10 );
     }
-    | BITMAP blit_sources WITH Identifier blit_image_flags {
+    | bitmap_or_bitmaps blit_sources WITH Identifier blit_image_flags {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         blit_image( _environment, $4, implicitX->name, implicitY->name, NULL, NULL, $5 );
     }
-    | BITMAP blit_sources FRAME expr WITH Identifier blit_image_flags {
+    | bitmap_or_bitmaps blit_sources FRAME expr WITH Identifier blit_image_flags {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         blit_image( _environment, $6, implicitX->name, implicitY->name, $4, NULL, $7 );
     }
-    | BITMAP blit_sources SEQUENCE expr FRAME expr WITH Identifier blit_image_flags {
+    | bitmap_or_bitmaps blit_sources SEQUENCE expr FRAME expr WITH Identifier blit_image_flags {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         blit_image( _environment, $8, implicitX->name, implicitY->name, $6, $4, $9 );
