@@ -1111,6 +1111,15 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 2 );
+            paletteColorCount = 2;
+        }
+
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
@@ -1123,6 +1132,14 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 2 );
+            paletteColorCount = 2;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 2 ) {
@@ -1259,6 +1276,13 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 4 );
+            paletteColorCount = 4;
+        }
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
@@ -1271,6 +1295,14 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 4 );
+            paletteColorCount = 4;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 4 ) {
@@ -1442,6 +1474,15 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 16 );
+            paletteColorCount = 16;
+        }
+
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
@@ -1450,12 +1491,20 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
         RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         
         newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
-
+        
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 16 );
+            paletteColorCount = 16;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 16 ) {
