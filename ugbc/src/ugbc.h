@@ -3405,6 +3405,8 @@ void                    out_var( Environment * _environment, char * _port, char 
 
 RGBi *                  palette_match( RGBi * _source, int _source_size, RGBi * _system, int _system_size );
 RGBi *                  palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, int _palette2_size, int * _size );
+RGBi *                  palette_promote_color_as_background( int _index, RGBi * _source, int _source_size );
+RGBi *                  palette_promote_color_as_foreground( int _index, RGBi * _source, int _source_size, int _max_size );
 RGBi *                  palette_remove_duplicates( RGBi * _source, int _source_size, int * _unique_size );
 RGBi *                  palette_shift( RGBi * _source, int _source_size, int _offset );
 void                    paper( Environment * _environment, char * _paper );

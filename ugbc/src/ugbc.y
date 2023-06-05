@@ -85,7 +85,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
-%token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS
+%token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -127,6 +127,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> blit_image_flags blit_image_flags1 blit_image_flag
 %type <integer> const_color_enumeration
 %type <integer> using_transparency
+%type <integer> using_opacity
 %type <integer> using_background
 %type <integer> memory_video
 %type <integer> sprite_flag sprite_flags sprite_flags1
@@ -463,6 +464,9 @@ const_color_enumeration:
       }
       | LIGHT RED {
           $$ = COLOR_LIGHT_RED;
+      }
+      | LIGHT WHITE {
+          $$ = COLOR_LIGHT_WHITE;
       }
       | DARK GREY {
           $$ = COLOR_DARK_GREY;
@@ -1135,13 +1139,24 @@ sequence_load_flags1 :
 
 using_transparency :
     {
-        $$ = -1;    
+        $$ = 0x00;
     } 
     | TRANSPARENCY {
-        $$ = COLOR_BLACK;
+        $$ = 0x0f0000 | COLOR_BLACK;
     }
     | TRANSPARENCY const_color_enumeration {
-        $$ = $2;
+        $$ = 0x0f0000 | $2;
+    };
+
+using_opacity :
+    {
+        $$ = 0x00;
+    } 
+    | OPACITY {
+        $$ = 0xf00000 | ( COLOR_BLACK << 8 );
+    }
+    | OPACITY const_color_enumeration {
+        $$ = 0xf00000 | ( $2 << 8 );
     };
 
 using_background :
@@ -2359,29 +2374,29 @@ exponential:
     | LOAD MUSIC OP String AS String CP on_bank {
         $$ = music_load( _environment, $4, $6, $8 )->name;
       }
-    | load_sequence OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_background on_bank {
-        $$ = sequence_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $10, $12, $14, $15, $16, $17 )->name;
+    | load_sequence OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {
+        $$ = sequence_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $10, $12, $14, $15+$16, $17, $18 )->name;
       }
-    | load_sequence OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_background on_bank {        
-        $$ = sequence_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13, $14, $15 )->name;
+    | load_sequence OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {        
+        $$ = sequence_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 )->name;
       }
-    | load_images OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background on_bank {        
-        $$ = images_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13, $14, $15 )->name;
+    | load_images OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_opacity using_background on_bank {        
+        $$ = images_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 )->name;
       }
-    | load_images OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background on_bank {
-        $$ = images_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $10, $12, $14, $15, $16, $17 )->name;
+    | load_images OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_opacity using_background on_bank {
+        $$ = images_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $10, $12, $14, $15+$16, $17, $18 )->name;
       }
-    | load_image OP String CP image_load_flags  using_transparency using_background on_bank {
-        $$ = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6, $7, $8 )->name;
+    | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank {
+        $$ = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
       }
-    | load_image OP String AS String CP image_load_flags  using_transparency using_background on_bank {
-        $$ = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8, $9, $10 )->name;
+    | load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank {
+        $$ = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 )->name;
       }
-    | load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_background on_bank {
-        $$ = image_load( _environment, $3, NULL, $5, $7, $8, $9, $10 )->name;
+    | load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank {
+        $$ = image_load( _environment, $3, NULL, $5, $7, $8+$9, $10, $11 )->name;
       }
-    | load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background on_bank {
-        $$ = image_load( _environment, $3, $5, $7, $9, $10, $11, $12 )->name;
+    | load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank {
+        $$ = image_load( _environment, $3, $5, $7, $9, $10+$11, $12, $13 )->name;
       }
     | LOAD TILE OP String CP tile_load_flags {
         $$ = tile_load( _environment, $4, $6, NULL, -1 )->name;
@@ -4160,7 +4175,10 @@ blit_binary_op:
     ;
 
 blit_operand :
-    SOURCE const_factor {
+    SOURCE {
+        $$ = 1;
+    }
+    | SOURCE Integer {
         $$ = $2;
     }
     | DESTINATION {

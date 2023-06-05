@@ -7506,6 +7506,83 @@ RGBi * palette_remove_duplicates( RGBi * _source, int _source_size, int * _uniqu
 }
 
 /**
+ * @brief Promote an index color in a palette
+ * 
+ * @param _index Source palette index
+ * @param _source Source palette to check
+ * @param _source_size Size of the source palette
+ * @param _unique_size Size of the unique palette
+ * @return RGBi* Palette without duplications
+ */
+RGBi * palette_promote_color_as_background( int _index, RGBi * _source, int _source_size ) {
+
+    RGBi * reorderedPalette = malloc_palette( _source_size );
+
+    int i, j;
+
+    for ( i=0; i<_source_size; ++i ) {
+        rgbi_move( &_source[i], &reorderedPalette[i] );
+    }
+
+    for ( i=0; i<_source_size; ++i ) {
+        if ( _source[i].hardwareIndex == _index ) {
+            break;
+        }
+    }
+
+    if ( i <_source_size ) {
+        RGBi tmp;
+        rgbi_move( &reorderedPalette[i], &tmp );
+        rgbi_move( &reorderedPalette[0], &reorderedPalette[i] );
+        rgbi_move( &tmp, &reorderedPalette[0] );
+    }
+
+    return reorderedPalette;
+
+}
+
+/**
+ * @brief Promote an index color in a palette
+ * 
+ * @param _index Source palette index
+ * @param _source Source palette to check
+ * @param _source_size Size of the source palette
+ * @param _unique_size Size of the unique palette
+ * @return RGBi* Palette without duplications
+ */
+RGBi * palette_promote_color_as_foreground( int _index, RGBi * _source, int _source_size, int _max_size ) {
+
+    RGBi * reorderedPalette = malloc_palette( _max_size );
+
+    int i, j;
+
+    for ( i=0; i<_source_size; ++i ) {
+        rgbi_move( &_source[i], &reorderedPalette[i] );
+    }
+    for ( i=_source_size; i<_max_size; ++i ) {
+        rgbi_move( &_source[0], &reorderedPalette[i] );
+        reorderedPalette[i].index = 0xff;
+        reorderedPalette[i].hardwareIndex = 0xff;
+    }
+
+    for ( i=0; i<_source_size; ++i ) {
+        if ( _source[i].hardwareIndex == _index ) {
+            break;
+        }
+    }
+
+    if ( i <_source_size ) {
+        RGBi tmp;
+        rgbi_move( &reorderedPalette[i], &tmp );
+        rgbi_move( &reorderedPalette[(_max_size-1)], &reorderedPalette[i] );
+        rgbi_move( &tmp, &reorderedPalette[(_max_size-1)] );
+    }
+
+    return reorderedPalette;
+
+}
+
+/**
  * @brief Shift colors in palette
  * 
  * @param _source Source palette to shift
