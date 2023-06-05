@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      INTERNAL VARIABLES FOR AY-3-8910 HARDWARE                  *
+;*                      INTERNAL VARIABLES FOR AY-3-8910 HARDWARE              *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
