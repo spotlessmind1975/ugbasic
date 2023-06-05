@@ -1,8 +1,33 @@
-; z80float is a floating point library targeting the Z80 processor. While this
-; project is tested on a TI-84+, the code should be generic enough to run on any
-; Z80 CPU with very little modification (mostly defining scrap RAM locations).
-;
-; adapted by Marco Spedaletti
+; /*****************************************************************************
+;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+;  *****************************************************************************
+;  * Copyright 2023 Marco Spedaletti (asimov@mclink.it)
+;  * Inspired from modules/z80float, copyright 2018 Zeda A.K. Thomas
+;  *
+;  * Licensed under the Apache License, Version 2.0 (the "License");
+;  * you may not use this file except in compliance with the License.
+;  * You may obtain a copy of the License at
+;  *
+;  * http://www.apache.org/licenses/LICENSE-2.0
+;  *
+;  * Unless required by applicable law or agreed to in writing, software
+;  * distributed under the License is distributed on an "AS IS" BASIS,
+;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+;  * See the License for the specific language governing permissions and
+;  * limitations under the License.
+;  *----------------------------------------------------------------------------
+;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+;  *
+;  * http://www.apache.org/licenses/LICENSE-2.0
+;  *
+;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+;  * il software distribuito nei termini della Licenza è distribuito
+;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+;  * implicite. Consultare la Licenza per il testo specifico che regola le
+;  * autorizzazioni e le limitazioni previste dalla medesima.
+;  ****************************************************************************/
 
 FPSINGLE_MULU8_DIVPOW2:
 	CALL FPPUSHPOP
@@ -23,7 +48,6 @@ FPSINGLE_MULU8_DIVPOW2:
 	JR Z, FPSINGLE_MULU8_DIVPOW2_ZERO
 	INC A
 	JR Z, FPSINGLE_MULU8_DIVPOW2_INFNAN
-	; CHECK IF WE ARE MULTIPLYING BY 0!
 	INC C
 	DEC C
 	JR Z, FPSINGLE_MULU8_DIVPOW2_ZERO
@@ -31,24 +55,20 @@ FPSINGLE_MULU8_DIVPOW2:
 	POP HL	;
 	PUSH AF
 
-	;EXTEND THE SIGN OF L INTO H
 	LD A, L
 	ADD A, A
 	SBC A, A
 	LD H, A
 	PUSH HL
 
-	; B IS SHIFTED OVER BY 2; WE STILL NEED TO SHIFT A 1 BACK IN
 	SCF
 	RR B
 	CALL FP_C_TIMES_BDE	;CAHL
 	LD B, A
-	POP DE	;DE IS HOW MUCH TO ADD TO THE EXPONENT
-	POP AF	; A IS THE CURRENT EXPONENT, CARRY IS SIGN
-	PUSH AF ; SAVE CARRY
+	POP DE
+	POP AF
+	PUSH AF
 
-;CBHL
-	;NEED TO ADD E+7 TO THE EXPONENT, AND SHIFT CBHL UP
 	ADD A, E
 	JR NC, $+3
 	INC D
@@ -85,7 +105,6 @@ FPSINGLE_MULU8_DIVPOW2_INFNAN:
 FPSINGLE_MULU8_DIVPOW2_ZERO:
 	POP DE
 FPSINGLE_MULU8_DIVPOW2_RETURN:
-; SIGN IS IN CARRY, A IS THE EXPONENT, (B/2)DE IS THE SIGNIFICAND
 	RRA
 	RR B
 	POP HL

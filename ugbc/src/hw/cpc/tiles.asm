@@ -29,19 +29,11 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          TILES ROUTINE FOR TMS9918                          *
+;*                            TILES ROUTINE FOR CPC                            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-; TILEA = A
-; TILEX = ..
-; TILEY = ..
-; TILET = B
-; TILEW = D
-; TILEH = E
-; >> TILEX2
 
 PUTTILE:
     RET
