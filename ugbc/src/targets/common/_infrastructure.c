@@ -1953,8 +1953,6 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
 
     Variable * target = variable_retrieve( _environment, _destination );
 
-fprintf( stderr, "%s %d == %s %d\n", source->name, source->type, target->name, target->type );
-
     if ( source->type != target->type ) {
         CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
     }
