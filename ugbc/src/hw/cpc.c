@@ -343,11 +343,11 @@ void cpc_background_color_semivars( Environment * _environment, int _index, char
 
     outline1("%sbackgroundcolor:", label );
     outline1("LD A, $%2.2x", ( _index & 0x0f ));
-    outline0("LD IXH, a");
+    outline0("LD IXH, A");
     outline1("LD A, (%s)", _background_color);
-    outline0("LD IXL, a");
+    outline0("LD IXL, A");
     outline0("LD A, 1");
-    outline0("LD IYL, a");
+    outline0("LD IYL, A");
     outline0("CALL CPCUPDATEPALETTE");
 
 }
