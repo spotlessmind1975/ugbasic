@@ -2506,12 +2506,13 @@ void variable_swap( Environment * _environment, char * _source, char * _dest ) {
             break;
         case 0:
             switch( source->type ) {
-                case VT_FLOAT:
+                case VT_FLOAT: {
                     Variable * temp = variable_temporary( _environment, VT_FLOAT, "(temp)" );
                     cpu_move_nbit( _environment, VT_FLOAT_BITWIDTH( source->precision ), source->realName, temp->realName );
                     cpu_move_nbit( _environment, VT_FLOAT_BITWIDTH( source->precision ), target->realName, source->realName );
                     cpu_move_nbit( _environment, VT_FLOAT_BITWIDTH( source->precision ), temp->realName, target->realName );
                     break; 
+                }
                 default:
                     CRITICAL_SWAP_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
             }
@@ -3308,7 +3309,7 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                     break;
                 case VT_FLOAT:
                     switch( source->type ) {
-                        case VT_FLOAT:
+                        case VT_FLOAT: {
                             MAKE_LABEL
                             if ( source->precision != target->precision ) {
                                 CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);                            
@@ -3332,7 +3333,8 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             cpu_store_8bit( _environment, result->realName, 0 );
                             cpu_jump( _environment, doneLabel );
                             cpu_label( _environment, doneLabel );
-                            break; 
+                            break;
+                        } 
                         default:
                             CRITICAL_CANNOT_COMPARE( _source, DATATYPE_AS_STRING[source->type]);
                     }
@@ -3857,7 +3859,7 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                     break;
                 case VT_FLOAT:
                     switch( source->type ) {
-                        case VT_FLOAT:
+                        case VT_FLOAT: {
                             MAKE_LABEL
                             if ( source->precision != target->precision ) {
                                 CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);                            
@@ -3885,6 +3887,7 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             cpu_jump( _environment, doneLabel );
                             cpu_label( _environment, doneLabel );
                             break; 
+                        }
                         default:
                             CRITICAL_CANNOT_COMPARE( _source, DATATYPE_AS_STRING[source->type]);
                     }
