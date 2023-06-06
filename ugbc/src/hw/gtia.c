@@ -38,33 +38,33 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-        { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },        
-        { 0xff, 0xff, 0xff, 0xff, 0x0f, "WHITE" },
-        { 0x88, 0x00, 0x00, 0xff, 0x27, "RED" },
-        { 0xaa, 0xff, 0xe6, 0xff, 3, "CYAN" },
-        { 0xcc, 0x44, 0xcc, 0xff, 0x44, "VIOLET" },
-        { 0x00, 0xcc, 0x55, 0xff, 0xa2, "GREEN" },
-        { 0x00, 0x00, 0xaa, 0xff, 0x62, "BLUE" },
-        { 0xee, 0xee, 0x77, 0xff, 0xda, "YELLOW" },
-        { 0xa1, 0x68, 0x3c, 0xff, 0x2a, "ORANGE" },
-        { 0xdd, 0x88, 0x65, 0xff, 0x14, "BROWN" },
-        { 0xff, 0x77, 0x77, 0xff, 0x2f,"LIGHT RED" },
-        { 0x33, 0x33, 0x33, 0xff, 0x04, "DARK GREY" },
-        { 0x77, 0x77, 0x77, 0xff, 0x08, "GREY" },
-        { 0xaa, 0xff, 0x66, 0xff, 0xa8, "LIGHT GREEN" },
-        { 0x00, 0x88, 0xff, 0xff, 0x68, "LIGHT BLUE" },
-        { 0xbb, 0xbb, 0xbb, 0xff, 0x0b, "LIGHT GREY" },
-        { 0xf9, 0x84, 0xe5, 0xff, 0x1e, "MAGENTA" },
-        { 0xdc, 0xd0, 0xff, 0xff, 0x55, "LAVENDER" },
-        { 0xFF, 0xd7, 0x00, 0xff, 0xd6, "GOLD" },
-        { 0x40, 0xe0, 0xd0, 0xff, 0x78, "TURQUOISE" },
-        { 0xdc, 0xca, 0x98, 0xff, 0x65, "TAN" },
-        { 0x9a, 0xcd, 0x32, 0xff, 0xaa, "YELLOW GREEN" },
-        { 0x4b, 0x53, 0x20, 0xff, 0xa6, "OLIVE GREEN" },
-        { 0xff, 0xc0, 0xcb, 0xff, 0x3a, "PINK" },
-        { 0xff, 0xcb, 0xa4, 0xff, 0x38, "PEACH" },
-        { 0x00, 0xff, 0xff, 0xff, 0x6a, "CYAN" },
-        { 0x00, 0x00, 0x80, 0xff, 0x60, "DARK BLUE" }
+        { 0x00, 0x00, 0x00, 0xff, 0, "BLACK", 0 },        
+        { 0xff, 0xff, 0xff, 0xff, 0x0f, "WHITE", 0x0f },
+        { 0x88, 0x00, 0x00, 0xff, 0x27, "RED", 0x27 },
+        { 0xaa, 0xff, 0xe6, 0xff, 3, "CYAN", 3 },
+        { 0xcc, 0x44, 0xcc, 0xff, 0x44, "VIOLET", 0x44 },
+        { 0x00, 0xcc, 0x55, 0xff, 0xa2, "GREEN", 0xa2 },
+        { 0x00, 0x00, 0xaa, 0xff, 0x62, "BLUE", 0x62 },
+        { 0xee, 0xee, 0x77, 0xff, 0xda, "YELLOW", 0xda },
+        { 0xa1, 0x68, 0x3c, 0xff, 0x2a, "ORANGE", 0x2a },
+        { 0xdd, 0x88, 0x65, 0xff, 0x14, "BROWN", 0x14 },
+        { 0xff, 0x77, 0x77, 0xff, 0x2f,"LIGHT RED", 0x2f },
+        { 0x33, 0x33, 0x33, 0xff, 0x04, "DARK GREY", 0x04 },
+        { 0x77, 0x77, 0x77, 0xff, 0x08, "GREY", 0x08 },
+        { 0xaa, 0xff, 0x66, 0xff, 0xa8, "LIGHT GREEN", 0xa8 },
+        { 0x00, 0x88, 0xff, 0xff, 0x68, "LIGHT BLUE", 0x68 },
+        { 0xbb, 0xbb, 0xbb, 0xff, 0x0b, "LIGHT GREY", 0x0b },
+        { 0xf9, 0x84, 0xe5, 0xff, 0x1e, "MAGENTA", 0x1e },
+        { 0xdc, 0xd0, 0xff, 0xff, 0x55, "LAVENDER", 0x55 },
+        { 0xFF, 0xd7, 0x00, 0xff, 0xd6, "GOLD", 0xd6 },
+        { 0x40, 0xe0, 0xd0, 0xff, 0x78, "TURQUOISE", 0x78 },
+        { 0xdc, 0xca, 0x98, 0xff, 0x65, "TAN", 0x65 },
+        { 0x9a, 0xcd, 0x32, 0xff, 0xaa, "YELLOW GREEN", 0xaa },
+        { 0x4b, 0x53, 0x20, 0xff, 0xa6, "OLIVE GREEN", 0xa6 },
+        { 0xff, 0xc0, 0xcb, 0xff, 0x3a, "PINK", 0x3a },
+        { 0xff, 0xcb, 0xa4, 0xff, 0x38, "PEACH", 0x38 },
+        { 0x00, 0xff, 0xff, 0xff, 0x6a, "CYAN", 0x6a },
+        { 0x00, 0x00, 0x80, 0xff, 0x60, "DARK BLUE", 0x60 }
 };
 
 static RGBi * commonPalette;
@@ -1719,6 +1719,15 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 2 );
+            paletteColorCount = 2;
+        }
+
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
@@ -1731,6 +1740,14 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, mergedCommonPalette );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, mergedCommonPalette, 2 );
+            mergedCommonPalette = 2;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 2 ) {
@@ -1871,6 +1888,15 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 4 );
+            paletteColorCount = 4;
+        }
+
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
@@ -1883,6 +1909,14 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, mergedCommonPalette );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, mergedCommonPalette, 4 );
+            mergedCommonPalette = 4;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 4 ) {
