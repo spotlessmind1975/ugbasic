@@ -4181,7 +4181,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     break;
                 case VT_FLOAT:
                     switch( source->type ) {
-                        case VT_FLOAT:
+                        case VT_FLOAT: {
                             MAKE_LABEL
                             if ( source->precision != target->precision ) {
                                 CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);                            
@@ -4209,6 +4209,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_jump( _environment, doneLabel );
                             cpu_label( _environment, doneLabel );
                             break; 
+                        }
                         default:
                             CRITICAL_CANNOT_COMPARE( _source, DATATYPE_AS_STRING[source->type]);
                     }
