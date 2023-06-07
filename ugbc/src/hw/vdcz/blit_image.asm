@@ -47,12 +47,17 @@
 ; - Put image on bitmap
 ; ----------------------------------------------------------------------------
 
+BLITIMAGEBLITTING:
+    LD HL, (BLITIMAGEBLITTINGADDR)
+	JP (HL)
+
 BLITIMAGE:
 
     LD A, (CURRENTTILEMODE)
     CP 1
     RET Z
 
+    LD HL, (BLITTMPPTR)
     LD C, (HL)
     INC HL
     LD A, (HL)
@@ -60,6 +65,13 @@ BLITIMAGE:
     INC HL
     LD B, (HL)
     INC HL
+    LD (BLITTMPPTR), HL
+
+    LD HL, (BLITTMPPTR2)
+    INC HL
+    INC HL
+    INC HL
+    LD (BLITTMPPTR2), HL
 
     DEC IY
     PUSH IY
@@ -104,7 +116,9 @@ BLITIMAGE1L2:
 
     PUSH BC
 BLITIMAGE1L1:
+    PUSH HL
     ; SOURCE
+    LD HL, (BLITTMPPTR)
     LD A, (HL)
     LD B, A
 
@@ -112,34 +126,28 @@ BLITIMAGE1L1:
     CALL VDCZGETCHAR
     LD IYL, A
 
-    DI
-    EXX
-    EI
-
-    ; MASK
+    LD HL, (BLITTMPPTR2)
     LD A, (HL)
     LD IYH, A
 
-    PUSH DE
-
-    DI
-    EXX
-    EI
-
-    POP IX
-    PUSH HL
-    PUSH IX
     POP HL
 
+    PUSH HL
     CALL BLITIMAGEBLITTING
-
     POP HL
 
     ; Draw them
     CALL VDCZPUTCHAR
 
     INC DE
+
+    LD HL, (BLITTMPPTR)
     INC HL
+    LD (BLITTMPPTR), HL
+
+    LD HL, (BLITTMPPTR2)
+    INC HL
+    LD (BLITTMPPTR2), HL
 
     DEC C
     JP NZ, BLITIMAGE1L1
@@ -183,6 +191,7 @@ BLITIMAGE1DONEROW2:
     CMP $2
     JR NZ, BLITIMAGEC1DONE
 
+    LD HL, (BLITTMPPTR)
     LD A, (HL)
     LD IXL, A
     LD A, 26
