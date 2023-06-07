@@ -7470,6 +7470,35 @@ RGBi * palette_match( RGBi * _source, int _source_size, RGBi * _system, int _sys
 
 }
 
+RGBi * palette_match_hardware_index( RGBi * _source, int _source_size, RGBi * _system, int _system_size ) {
+
+    RGBi * matchedPalette = malloc_palette( _source_size );
+
+    int i, j, k;
+
+    for ( i=0; i<_source_size; ++i ) {
+
+        unsigned int minDistance = 0xffff;
+
+        for( j=0; j<_system_size; ++j ) {
+
+            unsigned int distance = rgbi_distance( &_source[i], &_system[j] );
+
+            if ( distance < minDistance ) {
+                rgbi_move( &_source[i], &matchedPalette[i] );
+                matchedPalette[i].index = _system[j].index;
+                matchedPalette[i].hardwareIndex = _system[j].hardwareIndex;
+                minDistance = distance;
+            }
+
+        }
+
+    }
+
+    return matchedPalette;
+
+}
+
 /**
  * @brief Remove duplicates from a palette
  * 
@@ -7486,6 +7515,10 @@ RGBi * palette_remove_duplicates( RGBi * _source, int _source_size, int * _uniqu
     int i, j;
 
     for ( i=0; i<_source_size; ++i ) {
+
+        if ( _source[i].hardwareIndex == 0xff ) {
+            break;
+        }
 
         for( j=0; j<*_unique_size; ++j ) {
 
@@ -7635,6 +7668,7 @@ RGBi * palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, in
     int i, j, k;
 
     for ( i=0; i<_palette1_size; ++i ) {
+        if ( _palette1[i].hardwareIndex == 0xff ) continue;
         if ( _palette1[i].alpha < 255 ) {
             rgbi_move( &_palette1[i], &mergedPalette[*_size] );
             ++*_size;
@@ -7642,6 +7676,7 @@ RGBi * palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, in
     }
 
     for ( i=0; i<_palette2_size; ++i ) {
+        if ( _palette2[i].hardwareIndex == 0xff ) continue;
         if ( _palette2[i].alpha < 255 ) {
             rgbi_move( &_palette2[i], &mergedPalette[*_size] );
             ++*_size;
@@ -7649,6 +7684,7 @@ RGBi * palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, in
     }
 
     for ( i=0; i<_palette1_size; ++i ) {
+        if ( _palette1[i].hardwareIndex == 0xff ) continue;
         if ( _palette1[i].alpha < 255 ) continue;
         for( j=0; j<*_size; ++j ) {
             if ( rgbi_equals_rgb( &_palette1[i], &mergedPalette[j] ) ) {
@@ -7662,6 +7698,7 @@ RGBi * palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, in
     }
 
     for ( i=0; i<_palette2_size; ++i ) {
+        if ( _palette2[i].hardwareIndex == 0xff ) continue;
         if ( _palette2[i].alpha < 255 ) continue;
         for( j=0; j<*_size; ++j ) {
             if ( rgbi_equals_rgb( &_palette2[i], &mergedPalette[j] ) ) {
