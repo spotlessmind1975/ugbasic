@@ -258,38 +258,48 @@ BLITIMAGE0CPCA:
     LD HL, (BLITTMPPTR)
 
 BLITIMAGE0CPC:
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
+
+    CALL BLITIMAGEPIXEL
+    CALL BLITIMAGEPIXEL
+    CALL BLITIMAGEPIXEL
+    CALL BLITIMAGEPIXEL
+    CALL BLITIMAGEPIXEL
+    CALL BLITIMAGEPIXEL
+    CALL BLITIMAGEPIXEL
+    CALL BLITIMAGEPIXEL
+
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
     
     LD (BLITTMPPTR), HL
 
