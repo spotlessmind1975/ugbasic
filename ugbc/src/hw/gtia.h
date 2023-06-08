@@ -60,6 +60,7 @@
 #define COLOR_PEACH       			0x38
 #define COLOR_CYAN					0x6a
 #define COLOR_DARK_BLUE				0x60
+#define COLOR_LIGHT_WHITE			COLOR_WHITE
 
 #define DEFAULT_PEN_COLOR           COLOR_WHITE
 #define DEFAULT_PAPER_COLOR         COLOR_BLACK

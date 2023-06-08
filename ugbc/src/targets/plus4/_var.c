@@ -83,6 +83,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: .res 4", variable->realName);
                     }
                     break;
+                case VT_FLOAT:
+                    if ( variable->memoryArea && !variable->bankAssigned ) {
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: .res 4", variable->realName);
+                    }
+                    break;
                 case VT_STRING:
                     if ( variable->memoryArea ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -222,6 +229,22 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SDWORD:
             outline1(" .dword $%4.4x", ( _variable->value & 0xffff ) );
             break;
+        case VT_FLOAT: {
+            int bytes = VT_FLOAT_BITWIDTH( _variable->precision ) >> 3;
+            int * data = malloc( bytes * sizeof( int ) );
+            switch( _variable->precision ) {
+                case FT_FAST:
+                    cpu_float_fast_from_double_to_int_array( _environment, _variable->valueFloating, data );
+                    break;
+                case FT_SINGLE:
+                    cpu_float_single_from_double_to_int_array( _environment, _variable->valueFloating, data );
+                    break;
+            }
+            for( int i=0; i<bytes; ++i ) {
+                outline1(" .byte $%2.2x", (unsigned char)( ( data[i] ) & 0xff ) );
+            }
+            break;
+        }
         case VT_STRING:
             if ( _variable->printable ) {
                 int c = strlen( _variable->valueString );

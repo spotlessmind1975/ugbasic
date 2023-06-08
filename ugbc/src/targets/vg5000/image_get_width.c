@@ -59,7 +59,7 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     outline1("LD (%s), A", result->realName );
     outline0("INC HL" );
     outline0("LD A, (HL)" );
-    outline1("LD (%s+1), A", result->realName );
+    outline1("LD (%s), A", address_displacement(_environment, result->realName, "1") );
 
     return result;
 

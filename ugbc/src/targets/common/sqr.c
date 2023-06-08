@@ -79,9 +79,11 @@ Variable * sqroot( Environment * _environment, char * _value ) {
             // }
             cpu_sqroot( _environment, value->realName, result->realName );
             break;
-        case 8:
-            CRITICAL_SQR_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
+        case 8: {
+            Variable * value16 = variable_cast( _environment, value->name, VT_WORD );
+            cpu_sqroot( _environment, value16->realName, result->realName );
             break;
+        }
         case 0:
             CRITICAL_SGN_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
             break;

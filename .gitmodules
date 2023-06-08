@@ -1,12 +1,27 @@
-[submodule "modules/z88dk"]
-	path = modules/z88dk
-	url = https://github.com/z88dk/z88dk.git
-[submodule "modules/cc65"]
-	path = modules/cc65
-	url = https://github.com/cc65/cc65
-[submodule "modules/asm6809"]
-	path = modules/asm6809
-	url = https://github.com/mwenge/asm6809.git
 [submodule "modules/toolshed"]
 	path = modules/toolshed
 	url = https://github.com/spotlessmind1975/toolshed.git
+[submodule "modules/bison"]
+	path = modules/bison
+	url = https://github.com/spotlessmind1975/bison
+[submodule "modules/flex"]
+	path = modules/flex
+	url = https://github.com/spotlessmind1975/flex
+[submodule "modules/fp09"]
+	path = modules/fp09
+	url = https://github.com/spotlessmind1975/fp09.git
+[submodule "modules/6502"]
+	path = modules/6502
+	url = https://github.com/spotlessmind1975/6502.git
+[submodule "modules/z80float"]
+	path = modules/z80float
+	url = https://github.com/spotlessmind1975/z80float.git
+[submodule "modules/asm6809"]
+	path = modules/asm6809
+	url = https://github.com/spotlessmind1975/asm6809.git
+[submodule "modules/cc65"]
+	path = modules/cc65
+	url = https://github.com/spotlessmind1975/cc65.git
+[submodule "modules/z88dk"]
+	path = modules/z88dk
+	url = https://github.com/spotlessmind1975/z88dk.git

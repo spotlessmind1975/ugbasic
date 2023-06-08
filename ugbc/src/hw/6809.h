@@ -33,6 +33,24 @@
 
 #include "../ugbc.h"
 
+#define VT_FLOAT_BITWIDTH( p ) \
+        ( \
+            VT_BW_40BIT( p, FT_FAST ) + \
+            VT_BW_40BIT( p, FT_SINGLE ) \
+        )
+
+#define VT_FLOAT_NORMALIZED_BITWIDTH( p ) \
+        ( \
+            VT_BW_64BIT( p, FT_FAST ) + \
+            VT_BW_64BIT( p, FT_SINGLE ) \
+        )
+
+#define VT_FLOAT_NORMALIZED_POW2_WIDTH( p ) \
+        ( \
+            VT_POW2_3( p, FT_FAST ) + \
+            VT_POW2_3( p, FT_SINGLE ) \
+        )
+
 void cpu6809_beq( Environment * _environment, char * _label );
 void cpu6809_bneq( Environment * _environment, char * _label );
 void cpu6809_busy_wait( Environment * _environment, char * _timing );
@@ -132,21 +150,24 @@ void cpu6809_move_16bit( Environment * _environment, char *_source, char *_desti
 void cpu6809_addressof_16bit( Environment * _environment, char *_source, char *_destination );
 void cpu6809_move_32bit( Environment * _environment, char *_source, char *_destination );
 void cpu6809_move_8bit( Environment * _environment, char *_source, char *_destination );
+void cpu6809_move_nbit( Environment * _environment, int _n, char *_source, char *_destination );
 void cpu6809_peek( Environment * _environment, char * _address, char * _target );
 void cpu6809_poke( Environment * _environment, char * _address, char * _value );
 void cpu6809_random( Environment * _environment, char * _entropy );
 void cpu6809_random_16bit( Environment * _environment, char * _entropy, char * _result );
 void cpu6809_random_32bit( Environment * _environment, char * _entropy, char * _result );
 void cpu6809_random_8bit( Environment * _environment, char * _entropy, char * _result );
+void cpu6809_store_8bit( Environment * _environment, char *_source, int _value );
 void cpu6809_store_16bit( Environment * _environment, char *_source, int _value );
 void cpu6809_store_32bit( Environment * _environment, char *_source, int _value );
-void cpu6809_store_8bit( Environment * _environment, char *_source, int _value );
+void cpu6809_store_nbit( Environment * _environment, char *_source, int _n, int _value[] );
 void cpu6809_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6809_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6809_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6809_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6809_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6809_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size );
+void cpu6809_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6809_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
 void cpu6809_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char *_result, int _equal );
 void cpu6809_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
@@ -166,6 +187,8 @@ void cpu6809_move_16bit_indirect( Environment * _environment, char *_source, cha
 void cpu6809_move_16bit_indirect2( Environment * _environment, char * _value, char *_source );
 void cpu6809_move_32bit_indirect( Environment * _environment, char *_source, char * _value );
 void cpu6809_move_32bit_indirect2( Environment * _environment, char * _value, char *_source );
+void cpu6809_move_nbit_indirect( Environment * _environment, int _n, char *_source, char * _value );
+void cpu6809_move_nbit_indirect2( Environment * _environment, int _n, char * _value, char *_source );
 void cpu6809_bit_check( Environment * _environment, char * _value, int _position, char *_result, int _bitwidth );
 void cpu6809_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth );
 void cpu6809_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _Signed );
@@ -198,6 +221,8 @@ void cpu6809_dstring_vars( Environment * _environment );
 void cpu6809_set_callback( Environment * _environment, char * _callback, char * _label );
 void cpu6809_out( Environment * _environment, char * _port, char * _value );
 void cpu6809_in( Environment * _environment, char * _port, char * _value );
+void cpu6809_out_direct( Environment * _environment, char * _port, char * _value );
+void cpu6809_in_direct( Environment * _environment, char * _port, char * _value );
 void cpu6809_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size );
 
 void cpu6809_protothread_vars( Environment * _environment );
@@ -221,6 +246,48 @@ char*cpu6809_blit_register_name( Environment * _environment, int _register );
 int  cpu6809_blit_alloc_register( Environment * _environment );
 void cpu6809_blit_free_register( Environment * _environment, int _register );
 void cpu6809_blit_finalize( Environment * _environment );
+
+// FAST FP (24 bit)
+
+void cpu6809_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] );
+void cpu6809_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size );
+void cpu6809_float_fast_from_16( Environment * _environment, char * _value, char * _result, int _signed );
+void cpu6809_float_fast_from_8( Environment * _environment, char * _value, char * _result, int _signed );
+void cpu6809_float_fast_to_16( Environment * _environment, char * _value, char * _result, int _signed );
+void cpu6809_float_fast_to_8( Environment * _environment, char * _value, char * _result, int _signed );
+void cpu6809_float_fast_add( Environment * _environment, char * _x, char * _y, char * _result );
+void cpu6809_float_fast_sub( Environment * _environment, char * _x, char * _y, char * _result );
+void cpu6809_float_fast_mul( Environment * _environment, char * _x, char * _y, char * _result );
+void cpu6809_float_fast_div( Environment * _environment, char * _x, char * _y, char * _result );
+void cpu6809_float_fast_cmp( Environment * _environment, char * _x, char * _y, char * _result );
+void cpu6809_float_fast_sin( Environment * _environment, char * _angle, char * _result );
+void cpu6809_float_fast_cos( Environment * _environment, char * _angle, char * _result );
+void cpu6809_float_fast_tan( Environment * _environment, char * _angle, char * _result );
+
+// SINGLE FP (32 bit) IEEE-754
+
+void cpu6809_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] );
+void cpu6809_float_single_to_string( Environment * _environment, char * _x, char * _string, char * _string_size );
+void cpu6809_float_single_from_16( Environment * _environment, char * _value, char * _result, int _signed );
+void cpu6809_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed );
+void cpu6809_float_single_to_16( Environment * _environment, char * _value, char * _result, int _signed );
+void cpu6809_float_single_to_8( Environment * _environment, char * _value, char * _result, int _signed );
+void cpu6809_float_single_add( Environment * _environment, char * _x, char * _y, char * _result );
+void cpu6809_float_single_sub( Environment * _environment, char * _x, char * _y, char * _result );
+void cpu6809_float_single_mul( Environment * _environment, char * _x, char * _y, char * _result );
+void cpu6809_float_single_div( Environment * _environment, char * _x, char * _y, char * _result );
+void cpu6809_float_single_cmp( Environment * _environment, char * _x, char * _y, char * _result );
+void cpu6809_float_single_sin( Environment * _environment, char * _angle, char * _result );
+void cpu6809_float_single_cos( Environment * _environment, char * _angle, char * _result );
+void cpu6809_float_single_tan( Environment * _environment, char * _angle, char * _result );
+
+void cpu6809_f32add( char * _x, char * _y, char * _result );
+void cpu6809_f32div( char * _x, char * _y, char * _result );
+void cpu6809_f32exp( char * _x, char * _result );
+void cpu6809_f32ln( char * _x, char * _result );
+void cpu6809_f32log10( char * _x, char * _result );
+void cpu6809_f32mul( char * _x, char * _y, char * _result );
+void cpu6809_f32sub( char * _x, char * _y, char * _result );
 
 #define cpu_beq( _environment,  _label  ) cpu6809_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6809_beq( _environment,  _label  )
@@ -322,21 +389,25 @@ void cpu6809_blit_finalize( Environment * _environment );
 #define cpu_addressof_16bit( _environment, _source, _destination  ) cpu6809_addressof_16bit( _environment, _source, _destination  )
 #define cpu_move_32bit( _environment, _source, _destination  ) cpu6809_move_32bit( _environment, _source, _destination  )
 #define cpu_move_8bit( _environment, _source, _destination  ) cpu6809_move_8bit( _environment, _source, _destination  )
+#define cpu_move_nbit( _environment, _n, _source, _destination  ) cpu6809_move_nbit( _environment, _n, _source, _destination )
 #define cpu_peek( _environment,  _address,  _target  ) cpu6809_peek( _environment,  _address,  _target  )
 #define cpu_poke( _environment,  _address,  _value  ) cpu6809_poke( _environment,  _address,  _value  )
 #define cpu_random( _environment,  _entropy  ) cpu6809_random( _environment,  _entropy  )
 #define cpu_random_16bit( _environment,  _entropy,  _result  ) cpu6809_random_16bit( _environment,  _entropy,  _result  )
 #define cpu_random_32bit( _environment,  _entropy,  _result  ) cpu6809_random_32bit( _environment,  _entropy,  _result  )
 #define cpu_random_8bit( _environment,  _entropy,  _result  ) cpu6809_random_8bit( _environment,  _entropy,  _result  )
+#define cpu_store_8bit( _environment, _source, _value  ) cpu6809_store_8bit( _environment, _source, _value  )
 #define cpu_store_16bit( _environment, _source, _value  ) cpu6809_store_16bit( _environment, _source, _value  )
 #define cpu_store_32bit( _environment, _source, _value  ) cpu6809_store_32bit( _environment, _source, _value  )
-#define cpu_store_8bit( _environment, _source, _value  ) cpu6809_store_8bit( _environment, _source, _value  )
+#define cpu_store_nbit( _environment, _source, _n, _value  ) cpu6809_store_nbit( _environment, _source, _n, _value  )
 #define cpu_mem_move( _environment, _source, _destination, _size ) cpu6809_mem_move( _environment, _source, _destination, _size )
 #define cpu_mem_move_16bit( _environment, _source, _destination, _size ) cpu6809_mem_move_16bit( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct( _environment, _source, _destination, _size ) cpu6809_mem_move_direct( _environment, _source, _destination, _size )
 #define cpu_mem_move_size( _environment, _source, _destination, _size ) cpu6809_mem_move_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_size( _environment, _source, _destination, _size ) cpu6809_mem_move_direct_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_indirect_size( _environment, _source, _destination, _size ) cpu6809_mem_move_direct_indirect_size( _environment, _source, _destination, _size )
+#define cpu_mem_move_direct2( E_environment, _source, _destination, _size ) cpu6809_mem_move_direct2( _environment, _source, _destination, _size )
+
 #define cpu_compare_memory( _environment, _source, _destination, _size, _result, _equal ) cpu6809_compare_memory( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_compare_memory_size( _environment, _source, _destination, _size, _result, _equal ) cpu6809_compare_memory_size( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_less_than_memory( _environment, _source, _destination, _size, _result, _equal ) cpu6809_less_than_memory( _environment, _source, _destination, _size, _result, _equal )
@@ -356,6 +427,8 @@ void cpu6809_blit_finalize( Environment * _environment );
 #define cpu_move_16bit_indirect2_8bit( _environment, _value, _offset, _source ) cpu6809_move_16bit_indirect2_8bit( _environment, _value, _offset, _source )
 #define cpu_move_32bit_indirect( _environment, _source, _value ) cpu6809_move_32bit_indirect( _environment, _source, _value )
 #define cpu_move_32bit_indirect2( _environment, _value, _source ) cpu6809_move_32bit_indirect2( _environment, _value, _source )
+#define cpu_move_nbit_indirect( _environment, _n, _source, _value ) cpu6809_move_nbit_indirect( _environment, _n, _source, _value )
+#define cpu_move_nbit_indirect2( _environment, _n, _value, _source ) cpu6809_move_nbit_indirect2( _environment, _n, _value, _source )
 #define cpu_bit_check( _environment, _value, _position, _result, _bitwidth ) cpu6809_bit_check( _environment, _value, _position, _result, _bitwidth )
 #define cpu_number_to_string( _environment, _number, _string, _string_size, _bits, _signed ) cpu6809_number_to_string( _environment, _number, _string, _string_size, _bits, _signed )
 #define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) cpu6809_bits_to_string( _environment, _number, _string, _string_size, _bits )
@@ -380,6 +453,8 @@ void cpu6809_blit_finalize( Environment * _environment );
 #define cpu_set_callback( _environment, _callback, _label ) cpu6809_set_callback( _environment, _callback, _label )
 #define cpu_in( _environment, _port, _value ) cpu6809_in( _environment, _port, _value )
 #define cpu_out( _environment, _port, _value ) cpu6809_out( _environment, _port, _value )
+#define cpu_in_direct( _environment, _port, _value ) cpu6809_in_direct( _environment, _port, _value )
+#define cpu_out_direct( _environment, _port, _value ) cpu6809_out_direct( _environment, _port, _value )
 #define cpu_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size ) cpu6809_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size );
 
 extern char * src_hw_chipset_mob_asm;
@@ -416,6 +491,48 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_blit_alloc_register( _environment ) cpu6809_blit_alloc_register( _environment )
 #define cpu_blit_free_register( _environment, _register ) cpu6809_blit_free_register( _environment, _register )
 #define cpu_blit_finalize( _environment ) cpu6809_blit_finalize( _environment )
+
+#define cpu_float_fast_from_double_to_int_array( _environment, _value, _result ) cpu6809_float_fast_from_double_to_int_array( _environment, _value, _result )
+#define cpu_float_single_from_double_to_int_array( _environment, _value, _result ) cpu6809_float_single_from_double_to_int_array( _environment, _value, _result )
+
+#define cpu_float_fast_to_string( _environment, _x, _string, _string_size ) cpu6809_float_fast_to_string( _environment, _x, _string, _string_size ) 
+#define cpu_float_single_to_string( _environment, _x, _string, _string_size ) cpu6809_float_single_to_string( _environment, _x, _string, _string_size ) 
+
+#define cpu_float_fast_from_16( _environment, _value, _result, _signed ) cpu6809_float_fast_from_16( _environment, _value, _result, _signed ) 
+#define cpu_float_single_from_16( _environment, _value, _result, _signed ) cpu6809_float_single_from_16( _environment, _value, _result, _signed ) 
+
+#define cpu_float_fast_from_8( _environment, _value, _result, _signed ) cpu6809_float_fast_from_8( _environment, _value, _result, _signed ) 
+#define cpu_float_single_from_8( _environment, _value, _result, _signed ) cpu6809_float_single_from_8( _environment, _value, _result, _signed ) 
+
+#define cpu_float_fast_to_16( _environment, _value, _result, _signed ) cpu6809_float_fast_to_16( _environment, _value, _result, _signed ) 
+#define cpu_float_single_to_16( _environment, _value, _result, _signed ) cpu6809_float_single_to_16( _environment, _value, _result, _signed ) 
+
+#define cpu_float_fast_to_8( _environment, _value, _result, _signed ) cpu6809_float_fast_to_8( _environment, _value, _result, _signed ) 
+#define cpu_float_single_to_8( _environment, _value, _result, _signed ) cpu6809_float_single_to_8( _environment, _value, _result, _signed ) 
+
+#define cpu_float_fast_add( _environment, _source, _destination, _result ) cpu6809_float_fast_add( _environment, _source, _destination, _result ) 
+#define cpu_float_single_add( _environment, _source, _destination, _result ) cpu6809_float_single_add( _environment, _source, _destination, _result ) 
+
+#define cpu_float_fast_sub( _environment, _source, _destination, _result ) cpu6809_float_fast_sub( _environment, _source, _destination, _result ) 
+#define cpu_float_single_sub( _environment, _source, _destination, _result ) cpu6809_float_single_sub( _environment, _source, _destination, _result ) 
+
+#define cpu_float_fast_mul( _environment, _source, _destination, _result ) cpu6809_float_fast_mul( _environment, _source, _destination, _result ) 
+#define cpu_float_single_mul( _environment, _source, _destination, _result ) cpu6809_float_single_mul( _environment, _source, _destination, _result ) 
+
+#define cpu_float_fast_div( _environment, _source, _destination, _result ) cpu6809_float_fast_div( _environment, _source, _destination, _result ) 
+#define cpu_float_single_div( _environment, _source, _destination, _result ) cpu6809_float_single_div( _environment, _source, _destination, _result ) 
+
+#define cpu_float_fast_cmp( _environment, _source, _destination, _result ) cpu6809_float_fast_cmp( _environment, _source, _destination, _result ) 
+#define cpu_float_single_cmp( _environment, _source, _destination, _result ) cpu6809_float_single_cmp( _environment, _source, _destination, _result ) 
+
+#define cpu_float_fast_sin( _environment, _angle, _result ) cpu6809_float_fast_sin( _environment, _angle, _result ) 
+#define cpu_float_single_sin( _environment, _angle, _result ) cpu6809_float_single_sin( _environment, _angle, _result ) 
+
+#define cpu_float_fast_cos( _environment, _angle, _result ) cpu6809_float_fast_cos( _environment, _angle, _result ) 
+#define cpu_float_single_cos( _environment, _angle, _result ) cpu6809_float_single_cos( _environment, _angle, _result ) 
+
+#define cpu_float_fast_tan( _environment, _angle, _result ) cpu6809_float_fast_tan( _environment, _angle, _result ) 
+#define cpu_float_single_tan( _environment, _angle, _result ) cpu6809_float_single_tan( _environment, _angle, _result ) 
 
 #define     CPU_BIG_ENDIAN      1
 

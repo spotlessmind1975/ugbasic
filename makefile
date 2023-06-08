@@ -50,6 +50,9 @@ endif
 ifeq ($(target),c128)
   output=prg
 endif
+ifeq ($(target),c128z)
+  output=prg
+endif
 ifeq ($(target),c64)
   output=prg
 endif
@@ -131,6 +134,7 @@ APPMAKE = ./modules/z88dk/src/appmake/z88dk-appmake$(EXESUFFIX)
 #------------------------------------------------ 
 ASM6809 = ./modules/asm6809/src/asm6809$(EXESUFFIX)
 DECB = ./modules/toolshed/build/unix/decb/decb$(EXESUFFIX)
+COCODECB = ./coco_decb.sh
 
 #------------------------------------------------ 
 # Examples
@@ -360,7 +364,7 @@ generated/atarixl/exeso/%.xex: $(subst /generated/exeso/,/examples/,$(@:.xex=.ba
 
 #------------------------------------------------ 
 # c128:
-#    COMMODORE 128 (8502)
+#    COMMODORE 128 (8510)
 #------------------------------------------------ 
 # 
 toolchain.c128: cc65
@@ -374,6 +378,27 @@ generated/c128/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 
 generated/c128/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
 	@ugbc/exe/ugbc.c128 $(OPTIONS) -o $@ -O prg $(subst generated/c128/exeso/,examples/,$(@:.prg=.bas))
+
+#------------------------------------------------ 
+# c128z:
+#    COMMODORE 128 (Z80)
+#------------------------------------------------ 
+# 
+toolchain.c128z: z88dk
+
+generated/c128z/asm/%.asm:
+	@ugbc/exe/ugbc.c128z $(OPTIONS) $(subst generated/c128z/asm/,examples/,$(@:.asm=.bas)) $@ 
+
+generated/c128z/exe/%.prg:
+	@$(Z80ASM) -D__c128z__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@mv $(subst /exe/,/asm/,$(@:.prg=.sym)) $(subst /exe/,/asm/,$(@:.prg=.osym))
+	@php sym2c128z.php $(subst /exe/,/asm/,$(@:.prg=.osym)) >$(subst /exe/,/asm/,$(@:.prg=.sym))
+	@rm -f $(subst /exe/,/asm/,$(@:.prg=.o))
+	@mv $(subst /exe/,/asm/,$(@:.prg=.bin)) $@
+	@rm -f $(@:.prg=.bin) $(@:.prg=_*.bin) $(@:.prg=.) $(@:.prg=_*.)
+
+generated/c128z/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
+	@ugbc/exe/ugbc.c128z $(OPTIONS) -d -D $(@:.prg=.info) -o $@ -O prg $(subst generated/c128z/exeso/,examples/,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # c64:
@@ -431,7 +456,7 @@ generated/coleco/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas
 toolchain.cpc: z88dk
 
 generated/cpc/asm/%.asm:
-	ugbc/exe/ugbc.cpc $(OPTIONS) $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
+	@ugbc/exe/ugbc.cpc $(OPTIONS) $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
 
 generated/cpc/exe/%.dsk:
 	@$(Z80ASM) -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
@@ -439,11 +464,11 @@ generated/cpc/exe/%.dsk:
 	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
 	@mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.)
-	@$(APPMAKE) +cpc --org 4608 --exec 4608 --disk -b $(@:.dsk=.) -o $(dir $@)main.
+	@$(APPMAKE) +cpc --org 256 --exec 256 --disk -b $(@:.dsk=.) -o $(dir $@)main.
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
-	ugbc/exe/ugbc.cpc $(OPTIONS) -d -D $(@:.dsk=.info) -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
+	@ugbc/exe/ugbc.cpc $(OPTIONS) -d -D $(@:.dsk=.info) -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
 
 #------------------------------------------------ 
 # coco:
@@ -457,8 +482,7 @@ generated/coco/asm/%.asm: compiler
 
 generated/coco/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
-	@$(DECB) dskini $(@)
-	@$(DECB) copy -2 $(@:.dsk=.bin) $(@),$(shell echo $(generated/coco/exe/,,$(@:.dsk=.bin)) | tr '[:lower:]' '[:upper:]')
+	@$(COCODECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/coco/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) $(OPTIONS) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))

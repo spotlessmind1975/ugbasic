@@ -101,7 +101,7 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    outline1("LD A, (%s+1)", x->realName );
+    outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
     outline0("CP 0");
     outline1("JR NZ, %s", label );
     outline1("LD A, (%s)", x->realName );

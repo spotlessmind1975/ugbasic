@@ -34,3 +34,25 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ; this code is migrated inside VIC-II
+
+CPUMEMMOVE16:
+    LDY #$0
+CPUMEMMOVE16Y:
+    LDA (TMPPTR), Y
+    STA (TMPPTR2), Y
+    INC TMPPTR
+    BNE CPUMEMMOVE16YL1
+    INC TMPPTR+1
+CPUMEMMOVE16YL1:
+    INC TMPPTR2
+    BNE CPUMEMMOVE16YL2
+    INC TMPPTR2+1
+CPUMEMMOVE16YL2:
+    DEC MATHPTR0
+    BNE CPUMEMMOVE16YL3
+    INC MATHPTR1+1
+CPUMEMMOVE16YL3:
+    LDA MATHPTR0
+    ORA MATHPTR1
+    BNE CPUMEMMOVE16Y
+    RTS

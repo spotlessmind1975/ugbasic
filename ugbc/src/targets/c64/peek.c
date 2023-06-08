@@ -58,7 +58,7 @@ Retrieve a byte from memory, and returns it.
 @italian
 Recupera un byte dalla memoria e restituiscilo.
 
-@syntax = PEEK( [expressiio] )
+@syntax = PEEK( [expression] )
 
 @example memory = PEEK( location )
 

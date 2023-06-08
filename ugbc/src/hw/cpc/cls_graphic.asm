@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      CLEAR SCREEN ROUTINE FOR TMS9918 (graphic mode)        *
+;*                      CLEAR SCREEN ROUTINE FOR CPC                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *

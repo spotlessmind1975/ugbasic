@@ -983,7 +983,7 @@ void tms9918_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     outline0("LD D, A");
     outline1("LD A, (%s)", x->realName );
     outline0("LD E, A");
-    outline1("LD A, (%s+1)", x->realName );
+    outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
     outline0("LD IXH, A");
     outline0("LD A, 1");
     if ( ! _environment->hasGameLoop ) {
@@ -2214,13 +2214,13 @@ void tms9918_move_tiles( Environment * _environment, char * _tile, char * _x, ch
     outline0("LD (TILEX), A" );
     outline1("LD A, (%s)", y->realName );
     outline0("LD (TILEY), A" );
-    outline1("LD A, (%s+1)", tile->realName );
+    outline1("LD A, (%s)", address_displacement(_environment, tile->realName, "1") );
     outline0("LD (TILEW), A" );
     outline0("LD (TILEW2), A" );
-    outline1("LD A, (%s+2)", tile->realName );
+    outline1("LD A, (%s)", address_displacement(_environment, tile->realName, "2") );
     outline0("LD (TILEH), A" );
     outline0("LD (TILEH2), A" );
-    outline1("LD A, (%s+3)", tile->realName );
+    outline1("LD A, (%s)", address_displacement(_environment, tile->realName, "3") );
     outline0("LD (TILEA), A" );
 
     if ( ! _environment->hasGameLoop ) {
@@ -2242,13 +2242,13 @@ void tms9918_put_tiles( Environment * _environment, char * _tile, char * _x, cha
     outline0("LD (TILEX), A" );
     outline1("LD A, (%s)", _y );
     outline0("LD (TILEY), A" );
-    outline1("LD A, (%s+1)", _tile );
+    outline1("LD A, (%s)", address_displacement(_environment, _tile, "1") );
     outline0("LD (TILEW), A" );
     if ( _w ) {
         outline1("LD A, (%s)", _w );
     }
     outline0("LD (TILEW2), A" );
-    outline1("LD A, (%s+2)", _tile );
+    outline1("LD A, (%s)", address_displacement(_environment, _tile, "2") );
     outline0("LD (TILEH), A" );
     if ( _h ) {
         outline1("LD A, (%s)", _h );

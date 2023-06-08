@@ -46,7 +46,7 @@ void pc128op_xpen( Environment * _environment, char * _destination ) {
     MAKE_LABEL
 
     outline0("LDA $FF60");    
-    outline1("STA %s+1", _destination);
+    outline1("STA %s", address_displacement(_environment, _destination, "1"));
     outline0("LDA #0");
     outline1("STA %s", _destination);
 
@@ -57,7 +57,7 @@ void pc128op_ypen( Environment * _environment, char * _destination ) {
     MAKE_LABEL
 
     outline0("LDA $FF61");    
-    outline1("STA %s+1", _destination);
+    outline1("STA %s", address_displacement(_environment, _destination, "1"));
     outline0("LDA #0");
     outline1("STA %s", _destination);
    

@@ -100,7 +100,7 @@ void colormap_at_var( Environment * _environment, char * _address ) {
 
     // variable_store( _environment, colormapAddress->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x8400 ) );
 
-    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s", address_displacement(_environment, address->realName, "1") );
 
     ted_colormap_at( _environment, addressString );
 

@@ -62,6 +62,7 @@
     #define COLOR_OLIVE_GREEN       	COLOR_GREEN
     #define COLOR_PINK       			COLOR_LIGHT_RED
     #define COLOR_PEACH       			COLOR_PINK
+    #define COLOR_LIGHT_WHITE			COLOR_WHITE
     #define COLOR_COUNT                 16
 
 #elif defined(__mo5__)
@@ -100,6 +101,7 @@
     #define COLOR_PINK       			COLOR_LIGHT_RED
     #define COLOR_PEACH       			COLOR_PINK
     #define COLOR_MAGENTA       		COLOR_LIGHT_MAGENTA
+    #define COLOR_LIGHT_WHITE			COLOR_WHITE
 
     #define COLOR_COUNT                 16
 
@@ -213,6 +215,8 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
 void ef936x_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 Variable * ef936x_new_image( Environment * _environment, int _width, int _height, int _mode );
 void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette );
+
+void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
 
 void ef936x_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
 void ef936x_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );

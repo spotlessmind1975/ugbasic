@@ -34,7 +34,7 @@ CFLAGS=-O3 -fomit-frame-pointer
 LFLAGS=
 LIBS=-lm
 
-.PHONY: paths clean all
+.PHONY: paths clean all bison flex
 
 all: paths compiler
 
@@ -50,6 +50,67 @@ ifeq ($(OS),Windows_NT)
   LFLAGS += -static
 else
   EXESUFFIX = 
+endif
+
+#-----------------------------------------------------------------------------
+#--- MAKEFILE's VARIABLES
+#-----------------------------------------------------------------------------
+
+#------------------------------------------------ 
+# BISON
+#------------------------------------------------ 
+ifeq ($(OS),Windows_NT)
+BISON = bison
+else
+BISON = ./../modules/bison/src/bison$(EXESUFFIX)
+endif
+
+#------------------------------------------------ 
+# FLEX
+#------------------------------------------------ 
+ifeq ($(OS),Windows_NT)
+FLEX = flex
+else
+FLEX = ./../modules/flex/src/flex$(EXESUFFIX)
+endif
+
+#------------------------------------------------ 
+# bison:
+#    General-purpose parser generator
+#------------------------------------------------ 
+# 
+# Bison is a general-purpose parser generator that converts an annotated 
+# context-free grammar into a deterministic LR or generalized LR (GLR) 
+# parser employing LALR(1) parser tables.
+#
+ifeq ($(OS),Windows_NT)
+
+else
+$(BISON): $(dir $(BISON))../src/*.c $(dir $(BISON))../src/*.h \
+			$(dir $(BISON))../src/*.c $(dir $(BISON))../src/*.h
+	mkdir -p $(realpath $(dir $(BISON)))/share
+	cd $(dir $(BISON)..).. && ./configure --disable-yacc --prefix=$(realpath $(dir $(BISON)))/share && make install
+
+bison: paths $(BISON)
+endif
+
+#------------------------------------------------ 
+# flex:
+#    Fast lexical analyzer generator
+#------------------------------------------------ 
+# 
+# Flex (fast lexical analyzer generator) is a free and open-source 
+# software that generates lexical analyzers (also known as "scanners" 
+# or "lexers").
+#
+ifeq ($(OS),Windows_NT)
+
+else
+$(FLEX): $(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h \
+			$(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h
+	cd $(dir $(FLEX)..).. && touch * && ./configure && make
+
+flex: paths $(FLEX)
 endif
 
 # ----------------------------------------------------------------------------
@@ -78,6 +139,18 @@ src-generated/font_complete.c:
 FONTS := src-generated/font_standard.c \
 			src-generated/font_semigraphic.c \
 			src-generated/font_complete.c
+
+# ----------------------------------------------------------------------------
+# PROLOGUE / EPILOGUE FOR BINARY ON COCO
+# ----------------------------------------------------------------------------
+
+src-generated/coco_header.c:
+	@xxd -i $(subst src-generated/coco_,data/coco/,$(@:.c=.bin)) >$@
+
+src-generated/coco_footer.c:
+	@xxd -i $(subst src-generated/coco_,data/coco/,$(@:.c=.bin)) >$@
+
+COCO := src-generated/coco_header.c src-generated/coco_footer.c
 
 # ----------------------------------------------------------------------------
 # Components and chipsets
@@ -164,7 +237,7 @@ SOURCES_VIC1 := $(subst src/hw/vic1/,src-generated/vic1_,$(MODULES_VIC1:.asm=.c)
 src-generated/vic1_%.c: $(MODULES_VIC1)
 	@xxd -i $(subst src-generated/vic1_,src/hw/vic1/,$(@:.c=.asm)) >$@
 
-# MOS Technology VIC-II
+# MOS Technology VIC-II (under MOS 6510/8510)
 
 MODULES_VIC2 := $(wildcard src/hw/vic2/*.asm)
 SOURCES_VIC2 := $(subst src/hw/vic2/,src-generated/vic2_,$(MODULES_VIC2:.asm=.c)) $(FONTS)
@@ -172,13 +245,45 @@ SOURCES_VIC2 := $(subst src/hw/vic2/,src-generated/vic2_,$(MODULES_VIC2:.asm=.c)
 src-generated/vic2_%.c: $(MODULES_VIC2)
 	@xxd -i $(subst src-generated/vic2_,src/hw/vic2/,$(@:.c=.asm)) >$@
 
-# MOS Technology SID
+# MOS Technology VIC-II (under ZILOG Z80)
+
+MODULES_VIC2Z := $(wildcard src/hw/vic2z/*.asm)
+SOURCES_VIC2Z := $(subst src/hw/vic2z/,src-generated/vic2z_,$(MODULES_VIC2Z:.asm=.c)) $(FONTS)
+
+src-generated/vic2z_%.c: $(MODULES_VIC2Z)
+	@xxd -i $(subst src-generated/vic2z_,src/hw/vic2z/,$(@:.c=.asm)) >$@
+
+# MOS Technology SID (under MOS 6510/8510)
 
 MODULES_SID := $(wildcard src/hw/sid/*.asm)
 SOURCES_SID := $(subst src/hw/sid/,src-generated/sid_,$(MODULES_SID:.asm=.c))
 
 src-generated/sid_%.c: $(MODULES_SID)
 	@xxd -i $(subst src-generated/sid_,src/hw/sid/,$(@:.c=.asm)) >$@
+
+# MOS Technology SID (under ZILOG Z80)
+
+MODULES_SIDZ := $(wildcard src/hw/sidz/*.asm)
+SOURCES_SIDZ := $(subst src/hw/sidz/,src-generated/sidz_,$(MODULES_SIDZ:.asm=.c))
+
+src-generated/sidz_%.c: $(MODULES_SIDZ)
+	@xxd -i $(subst src-generated/sidz_,src/hw/sidz/,$(@:.c=.asm)) >$@
+
+# MOS Technology VDC (under MOS 6502/6510)
+
+MODULES_VDC := $(wildcard src/hw/vdc/*.asm)
+SOURCES_VDC := $(subst src/hw/vdc/,src-generated/vdc_,$(MODULES_VDC:.asm=.c))
+
+src-generated/vdc_%.c: $(MODULES_VDC)
+	@xxd -i $(subst src-generated/vdc_,src/hw/vdc/,$(@:.c=.asm)) >$@
+
+# MOS Technology VDC (under ZILOG Z80)
+
+MODULES_VDCZ := $(wildcard src/hw/vdcz/*.asm)
+SOURCES_VDCZ := $(subst src/hw/vdcz/,src-generated/vdcz_,$(MODULES_VDCZ:.asm=.c))
+
+src-generated/vdcz_%.c: $(MODULES_VDCZ)
+	@xxd -i $(subst src-generated/vdcz_,src/hw/vdcz/,$(@:.c=.asm)) >$@
 
 # MOS Technology TED
 
@@ -260,7 +365,7 @@ src-generated/modules_coleco.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76
 	@grep "src" src-generated/modules_coleco.c | awk -f modules.awk >src-generated/modules_coleco.h
 	@grep "data" src-generated/modules_coleco.c | awk -f modules.awk >>src-generated/modules_coleco.h
 
-# Commodore 128
+# Commodore 128 (8510 native)
 
 MODULES_C128 := $(wildcard src/hw/c128/*.asm)
 SOURCES_C128 := $(subst src/hw/c128/,src-generated/c128_,$(MODULES_C128:.asm=.c))
@@ -268,10 +373,23 @@ SOURCES_C128 := $(subst src/hw/c128/,src-generated/c128_,$(MODULES_C128:.asm=.c)
 src-generated/c128_%.c: $(MODULES_C128)
 	@xxd -i $(subst src-generated/c128_,src/hw/c128/,$(@:.c=.asm)) >$@
 
-src-generated/modules_c128.c: $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_SID)
-	@cat $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_SID) >src-generated/modules_c128.c
+src-generated/modules_c128.c: $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_VDC) $(SOURCES_SID)
+	@cat $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_VDC) $(SOURCES_SID) >src-generated/modules_c128.c
 	@grep "src" src-generated/modules_c128.c | awk -f modules.awk >src-generated/modules_c128.h
 	@grep "data" src-generated/modules_c128.c | awk -f modules.awk >>src-generated/modules_c128.h
+
+# Commodore 128 (Z80 native)
+
+MODULES_C128Z := $(wildcard src/hw/c128z/*.asm)
+SOURCES_C128Z := $(subst src/hw/c128z/,src-generated/c128z_,$(MODULES_C128Z:.asm=.c))
+
+src-generated/c128z_%.c: $(MODULES_C128Z)
+	@xxd -i $(subst src-generated/c128z_,src/hw/c128z/,$(@:.c=.asm)) >$@
+
+src-generated/modules_c128z.c: $(SOURCES_Z80) $(SOURCES_C128Z) $(SOURCES_VIC2Z) $(SOURCES_VDCZ) $(SOURCES_SIDZ)
+	@cat $(SOURCES_Z80) $(SOURCES_C128Z) $(SOURCES_VIC2Z) $(SOURCES_VDCZ) $(SOURCES_SIDZ) >src-generated/modules_c128z.c
+	@grep "src" src-generated/modules_c128z.c | awk -f modules.awk >src-generated/modules_c128z.h
+	@grep "data" src-generated/modules_c128z.c | awk -f modules.awk >>src-generated/modules_c128z.h
 
 # Commodore 64
 
@@ -320,8 +438,8 @@ SOURCES_COCO := $(subst src/hw/coco/,src-generated/coco_,$(MODULES_COCO:.asm=.c)
 src-generated/coco_%.c: $(MODULES_COCO)
 	@xxd -i $(subst src-generated/coco_,src/hw/coco/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO)
-	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) >src-generated/modules_coco.c
+src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(COCO)
+	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(COCO) >src-generated/modules_coco.c
 	@grep "src" src-generated/modules_coco.c | awk -f modules.awk >src-generated/modules_coco.h
 	@grep "data" src-generated/modules_coco.c | awk -f modules.awk >>src-generated/modules_coco.h
 
@@ -457,17 +575,17 @@ src-generated/modules_zx.c: $(SOURCES_Z80) $(SOURCES_ZX)
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 
-src-generated/ugbc.yy.c: src/ugbc.lex src/ugbc.y
-	@flex ${FLEX_OPTIONS} --outfile=src-generated/ugbc.yy.c src/ugbc.lex
+src-generated/ugbc.yy.c: flex src/ugbc.lex src/ugbc.y
+	@$(FLEX) ${FLEX_OPTIONS} --outfile=src-generated/ugbc.yy.c src/ugbc.lex
 
-src-generated/ugbc.tab.c: src/ugbc.lex src/ugbc.y
-	@bison ${BISON_OPTIONS} --file-prefix=src-generated/ugbc src/ugbc.y
+src-generated/ugbc.tab.c: bison src/ugbc.lex src/ugbc.y
+	@$(BISON) ${BISON_OPTIONS} --file-prefix=src-generated/ugbc src/ugbc.y
 
-src-generated/ugbc.embed.yy.c: src/ugbc.embed.lex src/ugbc.embed.y
-	@flex ${FLEX_OPTIONS} --prefix=embed --outfile=src-generated/ugbc.embed.yy.c src/ugbc.embed.lex
+src-generated/ugbc.embed.yy.c: flex src/ugbc.embed.lex src/ugbc.embed.y
+	@$(FLEX) ${FLEX_OPTIONS} --prefix=embed --outfile=src-generated/ugbc.embed.yy.c src/ugbc.embed.lex
 
-src-generated/ugbc.embed.tab.c: src/ugbc.embed.lex src/ugbc.embed.y
-	@bison ${BISON_OPTIONS} -p embed --file-prefix=src-generated/ugbc.embed src/ugbc.embed.y
+src-generated/ugbc.embed.tab.c: bison src/ugbc.embed.lex src/ugbc.embed.y
+	@$(BISON) ${BISON_OPTIONS} -p embed --file-prefix=src-generated/ugbc.embed src/ugbc.embed.y
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------

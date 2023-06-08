@@ -35,12 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; PLOTX    = $F7 ; $F8  -> E
-; PLOTY    = $F9        -> D
-; PLOTM    = $FB        -> B
-; PLOTOMA  = $FD
-; PLOTAMA  = $FC
-
 PLOT:
 
     PUSH AF

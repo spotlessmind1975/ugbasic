@@ -66,6 +66,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SDWORD:
                     outline1("%s: defs 4", variable->realName);
                     break;
+                case VT_FLOAT:
+                    if ( variable->memoryArea ) {
+                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline2("%s: defs %d", variable->realName, 1 << VT_FLOAT_NORMALIZED_POW2_WIDTH( variable->arrayPrecision) );
+                    }
+                    break;
                 case VT_STRING:
                     if ( variable->printable ) {
                         int c = strlen( variable->valueString );

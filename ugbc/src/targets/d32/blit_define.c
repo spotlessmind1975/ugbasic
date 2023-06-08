@@ -90,7 +90,7 @@ static void blit_define_bltu( Environment * _environment, int _op, char * _a, ch
     } else if ( _op == ( 1 << _environment->currentModeBW ) + 1 ) {
         outline0("; bltu C = !A (not)");
         outline1("LDA %s", _a );
-        outline0("EORA $ff");
+        outline0("EORA #$ff");
         outline1("STA %s", _c );
     } else if ( _op == ( 1 << _environment->currentModeBW ) ) {
         outline0("; bltu C = A (copy)");

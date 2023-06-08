@@ -40,43 +40,43 @@
 #if defined(__pc128op__)
 
     static RGBi SYSTEM_PALETTE[] = {
-            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },        
-            { 0xff, 0xff, 0xff, 0xff, 1, "WHITE" },
-            { 0x88, 0x00, 0x00, 0xff, 2, "RED" },
-            { 0xaa, 0xff, 0xe6, 0xff, 3, "CYAN" },
-            { 0xcc, 0x44, 0xcc, 0xff, 4, "VIOLET" },
-            { 0x00, 0xcc, 0x55, 0xff, 5, "GREEN" },
-            { 0x00, 0x00, 0xaa, 0xff, 6, "BLUE" },
-            { 0xee, 0xee, 0x77, 0xff, 7, "YELLOW" },
-            { 0xa1, 0x68, 0x3c, 0xff, 8, "ORANGE" },
-            { 0xdd, 0x88, 0x65, 0xff, 9, "BROWN" },
-            { 0xff, 0x77, 0x77, 0xff, 10, "LIGHT RED" },
-            { 0x33, 0x33, 0x33, 0xff, 11, "DARK GREY" },
-            { 0x77, 0x77, 0x77, 0xff, 12, "GREY" },
-            { 0xaa, 0xff, 0x66, 0xff, 13, "LIGHT GREEN" },
-            { 0x00, 0x88, 0xff, 0xff, 14, "LIGHT BLUE" },
-            { 0xbb, 0xbb, 0xbb, 0xff, 15, "LIGHT GREY" }
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK", 0 },        
+            { 0xff, 0xff, 0xff, 0xff, 1, "WHITE", 1 },
+            { 0x88, 0x00, 0x00, 0xff, 2, "RED", 2 },
+            { 0xaa, 0xff, 0xe6, 0xff, 3, "CYAN", 3 },
+            { 0xcc, 0x44, 0xcc, 0xff, 4, "VIOLET", 4 },
+            { 0x00, 0xcc, 0x55, 0xff, 5, "GREEN", 5 },
+            { 0x00, 0x00, 0xaa, 0xff, 6, "BLUE", 6 },
+            { 0xee, 0xee, 0x77, 0xff, 7, "YELLOW", 7 },
+            { 0xa1, 0x68, 0x3c, 0xff, 8, "ORANGE", 8 },
+            { 0xdd, 0x88, 0x65, 0xff, 9, "BROWN", 9 },
+            { 0xff, 0x77, 0x77, 0xff, 10, "LIGHT RED", 10 },
+            { 0x33, 0x33, 0x33, 0xff, 11, "DARK GREY", 11 },
+            { 0x77, 0x77, 0x77, 0xff, 12, "GREY", 12 },
+            { 0xaa, 0xff, 0x66, 0xff, 13, "LIGHT GREEN", 13 },
+            { 0x00, 0x88, 0xff, 0xff, 14, "LIGHT BLUE", 14 },
+            { 0xbb, 0xbb, 0xbb, 0xff, 15, "LIGHT GREY", 15 }
     };
 
 #elif defined(__mo5__)
 
     static RGBi SYSTEM_PALETTE[] = {
-            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },        
-            { 0x88, 0x00, 0x00, 0xff, 1, "RED" },
-            { 0x00, 0xcc, 0x55, 0xff, 2, "GREEN" },
-            { 0xee, 0xee, 0x77, 0xff, 3, "YELLOW" },
-            { 0x00, 0x00, 0xaa, 0xff, 4, "BLUE" },
-            { 0xcc, 0x44, 0xcc, 0xff, 5, "VIOLET" },
-            { 0xaa, 0xff, 0xe6, 0xff, 6, "CYAN" },
-            { 0xff, 0xff, 0xff, 0xff, 7, "WHITE" },
-            { 0x77, 0x77, 0x77, 0xff, 8, "GREY" },
-            { 0xff, 0x77, 0x77, 0xff, 9, "OLD ROSE" },
-            { 0xaa, 0xff, 0x66, 0xff, 10, "LIGHT GREEN" },
-            { 0xdd, 0x88, 0x65, 0xff, 11, "SAND" },
-            { 0x00, 0x88, 0xff, 0xff, 12, "SKY BLUE" },
-            { 0xec, 0x54, 0xe4, 0xff, 13, "LIGHT MAGENTA" },
-            { 0xee, 0xff, 0xff, 0xff, 14, "CYAN" },
-            { 0xa1, 0x68, 0x3c, 0xff, 15, "ORANGE" }
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK", 0 },        
+            { 0x88, 0x00, 0x00, 0xff, 1, "RED", 1 },
+            { 0x00, 0xcc, 0x55, 0xff, 2, "GREEN", 2 },
+            { 0xee, 0xee, 0x77, 0xff, 3, "YELLOW", 3 },
+            { 0x00, 0x00, 0xaa, 0xff, 4, "BLUE", 4 },
+            { 0xcc, 0x44, 0xcc, 0xff, 5, "VIOLET", 5 },
+            { 0xaa, 0xff, 0xe6, 0xff, 6, "CYAN", 6 },
+            { 0xff, 0xff, 0xff, 0xff, 7, "WHITE", 7 },
+            { 0x77, 0x77, 0x77, 0xff, 8, "GREY", 8 },
+            { 0xff, 0x77, 0x77, 0xff, 9, "OLD ROSE", 9 },
+            { 0xaa, 0xff, 0x66, 0xff, 10, "LIGHT GREEN", 10 },
+            { 0xdd, 0x88, 0x65, 0xff, 11, "SAND", 11 },
+            { 0x00, 0x88, 0xff, 0xff, 12, "SKY BLUE", 12 },
+            { 0xec, 0x54, 0xe4, 0xff, 13, "LIGHT MAGENTA", 13 },
+            { 0xee, 0xff, 0xff, 0xff, 14, "CYAN", 14 },
+            { 0xa1, 0x68, 0x3c, 0xff, 15, "ORANGE", 15 }
         };
 
 #endif
@@ -914,18 +914,37 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
     if ( ! commonPalette ) {
 
+        commonPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 2 );
+            paletteColorCount = 2;
+        }
+
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
     } else {
 
+        commonPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         RGBi * newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, mergedCommonPalette );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, mergedCommonPalette, 16 );
+            mergedCommonPalette = 2;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 2 ) {
@@ -1056,8 +1075,16 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     if ( ! commonPalette ) {
 
-        commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+        commonPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
         commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 4 );
+            paletteColorCount = 4;
+        }        
         if ( paletteColorCount < 4 ) {
            ++paletteColorCount; 
         }
@@ -1066,12 +1093,21 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     } else {
 
-        RGBi * newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+        RGBi * newPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, mergedCommonPalette );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, mergedCommonPalette, 16 );
+            mergedCommonPalette = 4;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 4 ) {
@@ -1251,8 +1287,18 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
     if ( ! commonPalette ) {
 
-        commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+        commonPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
         commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
+        
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 16 );
+            paletteColorCount = 4;
+        }
+
         if ( paletteColorCount < 4 ) {
            ++paletteColorCount; 
         }
@@ -1261,12 +1307,21 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
     } else {
 
-        RGBi * newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+        RGBi * newPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, mergedCommonPalette );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, mergedCommonPalette, 16 );
+            mergedCommonPalette = 4;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 4 ) {
@@ -1407,8 +1462,19 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
     if ( ! commonPalette ) {
 
-        commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+        commonPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
         commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 16 );
+            paletteColorCount = 16;
+        }
+
         if ( paletteColorCount < 16 ) {
            ++paletteColorCount; 
         }
@@ -1417,12 +1483,24 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
     } else {
 
-        RGBi * newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+        RGBi * newPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+
+        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
+
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, mergedCommonPalette );
+        }
+
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, mergedCommonPalette, 16 );
+            mergedCommonPalette = 16;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 16 ) {
@@ -1701,6 +1779,53 @@ Variable * ef936x_get_raster_line( Environment * _environment ) {
 
     return result;
     
+}
+
+void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline0("LDY #$0" );
+    if ( _sequence ) {
+        outline0("LEAY 3,y" );
+        if ( strlen(_sequence) == 0 ) {
+        } else {
+            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
+            outline1("LDB %s", _sequence );
+            outline0("LDA #0" );
+            outline0("LEAX D, X" );
+            outline0("LEAX D, X" );
+            outline0("LDD ,X" );
+            outline0("LEAY D, Y" );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LEAY 3,y" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    }
+
+    outline1("STY %s", _offset );
+
 }
 
 static void ef936x_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {

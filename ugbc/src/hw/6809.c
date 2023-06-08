@@ -34,6 +34,7 @@
 
 #include "../ugbc.h"
 #include <time.h>
+#include <math.h>
 
 /****************************************************************************
  * CODE SECTION
@@ -1350,7 +1351,7 @@ void cpu6809_math_double_16bit( Environment * _environment, char *_source, char 
             outline0("ROLA");
             outline1("STD %s", _other);
         } else {
-            outline1("LSL %s+1", _source);
+            outline1("LSL %s", address_displacement(_environment, _source, "1"));
             outline1("ROL %s",   _source);
         }
 
@@ -1385,7 +1386,7 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline1("LDA %s", _source );
             outline0("ANDA #$80" );
             outline1("BEQ %spos1", label );
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("EORA #$FF" );
             outline0("STA <MATHPTR1" );
             outline1("LDA %s", _source );
@@ -1403,7 +1404,7 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline1("LDA %s", _destination );
             outline0("ANDA #$80" );
             outline1("BEQ %spos2", label );
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("EORA #$FF" );
             outline0("STA <MATHPTR3" );
             outline1("LDA %s", _destination );
@@ -1431,7 +1432,7 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
         outline0("LDA <MATHPTR1" );
         outline0("LDB <MATHPTR3" );
         outline0("MUL" );
-        outline1("STD %s+2", _other );
+        outline1("STD %s", address_displacement(_environment, _other, "2") );
 
         outline0("LDA <MATHPTR1" );
         outline0("LDB <MATHPTR2" );
@@ -1445,11 +1446,11 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
         outline0("TFR X, D" );
 
-        outline1("ADDB %s+2", _other );
-        outline1("STB %s+2", _other );
+        outline1("ADDB %s", address_displacement(_environment, _other, "2") );
+        outline1("STB %s", address_displacement(_environment, _other, "2") );
 
-        outline1("ADDA %s+1", _other );
-        outline1("STA %s+1", _other );
+        outline1("ADDA %s", address_displacement(_environment, _other, "1") );
+        outline1("STA %s", address_displacement(_environment, _other, "1") );
 
         if ( _signed ) {
             outline0("LDA <TMPPTR" );
@@ -1458,24 +1459,24 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline1("LDA %s", _other );
             outline0("EORA #$FF" );
             outline1("STA %s", _other );
-            outline1("LDA %s+1", _other );
+            outline1("LDA %s", address_displacement(_environment, _other, "1") );
             outline0("EORA #$FF" );
-            outline1("STA %s+1", _other );
-            outline1("LDA %s+2", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
+            outline1("LDA %s", address_displacement(_environment, _other, "2") );
             outline0("EORA #$FF" );
-            outline1("STA %s+2", _other );
-            outline1("LDA %s+3", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "2") );
+            outline1("LDA %s", address_displacement(_environment, _other, "3") );
             outline0("EORA #$FF" );
-            outline1("STA %s+3", _other );
-            outline1("LDA %s+3", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "3") );
+            outline1("LDA %s", address_displacement(_environment, _other, "3") );
             outline0("ADDA #1" );
-            outline1("STA %s+3", _other );
-            outline1("LDA %s+2", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "3") );
+            outline1("LDA %s", address_displacement(_environment, _other, "2") );
             outline0("ADDA #0" );
-            outline1("STA %s+2", _other );
-            outline1("LDA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "2") );
+            outline1("LDA %s", address_displacement(_environment, _other, "1") );
             outline0("ADDA #0" );
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outline1("LDA %s", _other );
             outline0("ADDA #0" );
             outline1("STA %s", _other );
@@ -1494,7 +1495,7 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
         }
 
         outline1("STX %s", _other );
-        outline1("STD %s+2", _other );
+        outline1("STD %s", address_displacement(_environment, _other, "2") );
 
     done( )
 
@@ -1520,7 +1521,7 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outline1("LDA %s", _source );
             outline0("EORA #$ff" );
             outline0("STA <MATHPTR0" );
-            outline1("LDA %s+1", _source );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("EORA #$ff" );
             outline0("STA <MATHPTR1" );
             outline0("ANDCC #$FE" );
@@ -1534,14 +1535,14 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outline1("JMP %ssecond2", label );
 
             outhead1("%ssecond2", label );
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("ANDA #$80" );
             outline1("BEQ %sthird", label );
             outline0("ANDCC #$FE" );
             outline1("LDA %s", _destination );
             outline0("EORA #$ff" );
             outline0("STA <MATHPTR2" );
-            outline1("LDA %s+1", _destination );
+            outline1("LDA %s", address_displacement(_environment, _destination, "1") );
             outline0("EORA #$ff" );
             outline0("STA <MATHPTR3" );
             outline0("ANDCC #$FE" );
@@ -1590,9 +1591,9 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outline1("LDA %s", _other );
             outline0("EORA #$ff" );
             outline1("STA %s", _other );
-            outline1("LDA %s+1", _other );
+            outline1("LDA %s", address_displacement(_environment, _other, "1") );
             outline0("EORA #$ff" );
-            outline1("STA %s+1", _other );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
             outline0("ANDCC #$FE" );
             outline1("LDD %s", _other );
             outline0("ADDD #1" );
@@ -1848,8 +1849,8 @@ void cpu6809_move_32bit( Environment * _environment, char *_source, char *_desti
 
         outline1("LDD %s", _source );
         outline1("STD %s", _destination );
-        outline1("LDD %s+2", _source );
-        outline1("STD %s+2", _destination );
+        outline1("LDD %s", address_displacement(_environment, _source, "2") );
+        outline1("STD %s", address_displacement(_environment, _destination, "2") );
 
     no_embedded( cpu_move_32bit );
 
@@ -1870,7 +1871,7 @@ void cpu6809_store_32bit( Environment * _environment, char *_destination, int _v
         outline1("STD %s", _destination );
         if((( _value >> 16 ) & 0xffff) != ( _value & 0xffff ))
         outline1("LDD #$%4.4x", ( _value & 0xffff ) );
-        outline1("STD %s+2", _destination );
+        outline1("STD %s", address_displacement(_environment, _destination, "2") );
 
     no_embedded( cpu_store_32bit );
 
@@ -1897,8 +1898,8 @@ void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_de
 
         MAKE_LABEL
 
-        char sourceEffective[MAX_TEMPORARY_STORAGE]; sprintf(sourceEffective, "%s+2", _source );
-        char destinationEffective[MAX_TEMPORARY_STORAGE]; sprintf(destinationEffective, "%s+2", _source );
+        char sourceEffective[MAX_TEMPORARY_STORAGE]; sprintf(sourceEffective, "%s", address_displacement(_environment, _source, "2") );
+        char destinationEffective[MAX_TEMPORARY_STORAGE]; sprintf(destinationEffective, "%s", address_displacement(_environment, _source, "2") );
 
         if ( _positive ) {
 
@@ -1948,7 +1949,7 @@ void cpu6809_compare_and_branch_32bit_const( Environment * _environment, char *_
         } else {
             B(EQ, label);
         }
-        outline1("LDX %s+2", _source);
+        outline1("LDX %s", address_displacement(_environment, _source, "2"));
         outline1("CMPX #$%4.4x", ( _destination & 0xffff ) );
         if ( _positive ) {
             B(EQ, _label);
@@ -1980,8 +1981,8 @@ void cpu6809_less_than_32bit( Environment * _environment, char *_source, char *_
         outline1("LDX %s", _source);
         outline1("CMPX %s", _destination);
         outline1("BNE %shigh", label);
-        outline1("LDX %s+2", _source);
-        outline1("CMPX %s+2", _destination);
+        outline1("LDX %s", address_displacement(_environment, _source, "2"));
+        outline1("CMPX %s", address_displacement(_environment, _destination, "2"));
         outhead1("%shigh", label );
 
         if ( _signed ) {
@@ -2016,7 +2017,7 @@ void cpu6809_less_than_32bit_const( Environment * _environment, char *_source, i
         outline1("LDX %s", _source);
         outline1("CMPX #$%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
         outline1("BNE %shigh", label);
-        outline1("LDX %s+2", _source);
+        outline1("LDX %s", address_displacement(_environment, _source, "2"));
         outline1("CMPX  #$%4.4x", ( _destination & 0xffff ) );
         outhead1("%shigh", label );
 
@@ -2061,8 +2062,8 @@ void cpu6809_greater_than_32bit( Environment * _environment, char *_source, char
         outline1("LDX %s", _source);
         outline1("CMPX %s", _destination);
         outline1("BNE %shigh", label);
-        outline1("LDX %s+2", _source);
-        outline1("CMPX %s+2", _destination);
+        outline1("LDX %s", address_displacement(_environment, _source, "2"));
+        outline1("CMPX %s", address_displacement(_environment, _destination, "2"));
         outhead1("%shigh", label );
 
         if ( _signed ) {
@@ -2101,11 +2102,11 @@ void cpu6809_math_add_32bit( Environment * _environment, char *_source, char *_d
 
         MAKE_LABEL
 
-        outline1("LDD %s+2", _source);
+        outline1("LDD %s", address_displacement(_environment, _source, "2"));
         outline1("LDX #%s", _destination);
         outline0("ADDD 2,X");
         if ( _other ) {
-            outline1("STD %s+2", _other);
+            outline1("STD %s", address_displacement(_environment, _other, "2"));
         } else {
             outline0("STD 2,X");
         }
@@ -2124,10 +2125,10 @@ void cpu6809_math_add_32bit_const( Environment * _environment, char *_source, in
 
         MAKE_LABEL
 
-        outline1("LDD %s+2", _source);
+        outline1("LDD %s", address_displacement(_environment, _source, "2"));
         outline1("LDX #$%4.4x", ( _destination & 0xffff ) );
         outline0("LEAX D,X");
-        outline1("STD %s+2", _other);
+        outline1("STD %s", address_displacement(_environment, _other, "2"));
         outline1("LDD %s", _source);
         outline1("LDX #$%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
         outline0("LEAX D,X");
@@ -2149,18 +2150,18 @@ void cpu6809_math_double_32bit( Environment * _environment, char *_source, char 
     inline( cpu_math_double_32bit )
 
         if(_other) {
-            outline1("LDD %s+2", _source);
+            outline1("LDD %s", address_displacement(_environment, _source, "2"));
             outline0("LSLB");
             outline0("ROLA");
-            outline1("STD %s+2", _other);
+            outline1("STD %s", address_displacement(_environment, _other, "2"));
             outline1("LDD %s", _source);
             outline0("ROLB");
             outline0("ROLA");
             outline1("STD %s", _other);
         } else {
-            outline1("LSL %s+3", _source);
-            outline1("ROL %s+2", _source);
-            outline1("ROL %s+1", _source);
+            outline1("LSL %s", address_displacement(_environment, _source, "3"));
+            outline1("ROL %s", address_displacement(_environment, _source, "2"));
+            outline1("ROL %s", address_displacement(_environment, _source, "1"));
             outline1("ROL %s",   _source);
         }
 
@@ -2180,11 +2181,11 @@ void cpu6809_math_sub_32bit( Environment * _environment, char *_source, char *_d
 
     inline( cpu_math_sub_32bit )
 
-        outline1("LDD %s+2", _source);
+        outline1("LDD %s", address_displacement(_environment, _source, "2"));
         outline1("LDX #%s", _destination);
         outline0("SUBD 2,X");
         if ( _other ) {
-            outline1("STD %s+2", _other);
+            outline1("STD %s", address_displacement(_environment, _other, "2"));
         } else {
             outline0("STD 2,X");
         }
@@ -2240,7 +2241,7 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
             outline0("ANDA #$80");
             outline1("BEQ %spos", label );
 
-            outline1("LDD %s+2", _source );
+            outline1("LDD %s", address_displacement(_environment, _source, "2") );
             outline0("ANDCC #$FE" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
@@ -2263,7 +2264,7 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
             outhead1("%spos", label );
             outline1("LDD %s", _source );
             outline0("STD <MATHPTR0" );
-            outline1("LDD %s+2", _source );
+            outline1("LDD %s", address_displacement(_environment, _source, "2") );
             outline0("STD <MATHPTR2" );
 
             outhead1("%sdone", label );
@@ -2296,7 +2297,7 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
             outline0("ANDCC #$FE" );
             outline0("LDD <MATHPTR2" );
             outline0("ADDD #1" );
-            outline1("STD %s+2", _source );
+            outline1("STD %s", address_displacement(_environment, _source, "2") );
             outline0("LDD <MATHPTR0" );
             outline0("ADDD #0" );
             outline1("STD %s", _source );
@@ -2305,11 +2306,11 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
 
             outhead1("%spos2", label );
             outline0("LDD <MATHPTR3" );
-            outline1("STD %s+3", _source );
+            outline1("STD %s", address_displacement(_environment, _source, "3") );
             outline0("LDD <MATHPTR2" );
-            outline1("STD %s+2", _source );
+            outline1("STD %s", address_displacement(_environment, _source, "2") );
             outline0("LDD <MATHPTR1" );
-            outline1("STD %s+1", _source );
+            outline1("STD %s", address_displacement(_environment, _source, "1") );
             outline0("LDD <MATHPTR0" );
             outline1("STD %s", _source );
             outhead1("%sdone2", label );
@@ -2318,7 +2319,7 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
 
             outline1("LDD %s", _source );
             outline0("STD <MATHPTR0" );
-            outline1("LDD %s+2", _source );
+            outline1("LDD %s", address_displacement(_environment, _source, "2") );
             outline0("STD <MATHPTR2" );
 
             outhead1("%sdone", label );
@@ -2335,7 +2336,7 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
             outline1("BNE %sloop", label );
 
             outline0("LDD <MATHPTR2" );
-            outline1("STD %s+2", _source );
+            outline1("STD %s", address_displacement(_environment, _source, "2") );
             outline0("LDD <MATHPTR0" );
             outline1("STD %s", _source );
 
@@ -2364,7 +2365,7 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
             outline0("ANDA #$80");
             outline1("BEQ %spos", label );
 
-            outline1("LDD %s+2", _source );
+            outline1("LDD %s", address_displacement(_environment, _source, "2") );
             outline0("ANDCC #$FE" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
@@ -2387,7 +2388,7 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
             outhead1("%spos", label );
             outline1("LDD %s", _source );
             outline0("STD <MATHPTR0" );
-            outline1("LDD %s+2", _source );
+            outline1("LDD %s", address_displacement(_environment, _source, "2") );
             outline0("STD <MATHPTR2" );
 
             outhead1("%sdone", label );
@@ -2420,7 +2421,7 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
             outline0("ANDCC #$FE" );
             outline0("LDD <MATHPTR2" );
             outline0("ADDD #1" );
-            outline1("STD %s+2", _source );
+            outline1("STD %s", address_displacement(_environment, _source, "2") );
             outline0("LDD <MATHPTR0" );
             outline0("ADDD #0" );
             outline1("STD %s", _source );
@@ -2429,11 +2430,11 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
 
             outhead1("%spos2", label );
             outline0("LDD <MATHPTR3" );
-            outline1("STD %s+3", _source );
+            outline1("STD %s", address_displacement(_environment, _source, "3") );
             outline0("LDD <MATHPTR2" );
-            outline1("STD %s+2", _source );
+            outline1("STD %s", address_displacement(_environment, _source, "2") );
             outline0("LDD <MATHPTR1" );
-            outline1("STD %s+1", _source );
+            outline1("STD %s", address_displacement(_environment, _source, "1") );
             outline0("LDD <MATHPTR0" );
             outline1("STD %s", _source );
             outhead1("%sdone2", label );
@@ -2442,7 +2443,7 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
 
             outline1("LDD %s", _source );
             outline0("STD <MATHPTR0" );
-            outline1("LDD %s+2", _source );
+            outline1("LDD %s", address_displacement(_environment, _source, "2") );
             outline0("STD <MATHPTR2" );
 
             outhead1("%sdone", label );
@@ -2459,7 +2460,7 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
             outline1("BNE %sloop", label );
 
             outline0("LDD <MATHPTR2" );
-            outline1("STD %s+2", _source );
+            outline1("STD %s", address_displacement(_environment, _source, "2") );
             outline0("LDD <MATHPTR0" );
             outline1("STD %s", _source );
 
@@ -2654,7 +2655,7 @@ void cpu6809_random_32bit( Environment * _environment, char * _entropy, char * _
         outline0("LDD CPURANDOM_SEED");
         outline1("STD %s", _result );
         outline0("LDD CPURANDOM_SEED+2");
-        outline1("STD %s+2", _result );
+        outline1("STD %s", address_displacement(_environment, _result, "2") );
     }
 
 }
@@ -2667,7 +2668,7 @@ void cpu6809_limit_16bit( Environment * _environment, char * _variable, int _val
 
         outline0( "LDA #$0" );
         outline1( "STA %s", _variable );
-        outline1( "LDA %s+1", _variable );
+        outline1( "LDA %s", address_displacement(_environment, _variable, "1") );
         outline1( "CMPA #$%2.2x", _value );
         outline1( "BCC %s", label );
         outline1( "SUBA #$%2.2x", _value );
@@ -2733,7 +2734,7 @@ void cpu6809_and_16bit( Environment * _environment, char * _left, char * _right,
 
         outline1("LDD %s", _right );
         outline1("ANDA %s", _left );
-        outline1("ANDB %s+1", _left );
+        outline1("ANDB %s", address_displacement(_environment, _left, "1") );
         outline1("STD %s", _result);
 
     no_embedded( cpu_and_16bit )
@@ -2748,12 +2749,12 @@ void cpu6809_and_32bit( Environment * _environment, char * _left, char * _right,
 
         outline1("LDD %s", _left );
         outline1("ANDA %s", _right );
-        outline1("ANDB %s+1", _right );
+        outline1("ANDB %s", address_displacement(_environment, _right, "1") );
         outline1("STD %s", _result);
-        outline1("LDD %s+2", _left );
-        outline1("ANDA %s+2", _right );
-        outline1("ANDB %s+3", _right );
-        outline1("STD %s+2", _result);
+        outline1("LDD %s", address_displacement(_environment, _left, "2") );
+        outline1("ANDA %s", address_displacement(_environment, _right, "2") );
+        outline1("ANDB %s", address_displacement(_environment, _right, "3") );
+        outline1("STD %s", address_displacement(_environment, _result, "2"));
 
     no_embedded( cpu_and_16bit )
 
@@ -2798,7 +2799,7 @@ void cpu6809_or_16bit( Environment * _environment, char * _left, char * _right, 
 
         outline1("LDD %s", _left );
         outline1("ORA %s", _right );
-        outline1("ORB %s+1", _right );
+        outline1("ORB %s", address_displacement(_environment, _right, "1") );
         outline1("STD %s", _result);
 
     no_embedded( cpu_or_16bit )
@@ -2813,12 +2814,12 @@ void cpu6809_or_32bit( Environment * _environment, char * _left, char * _right, 
 
         outline1("LDD %s", _left );
         outline1("ORA %s", _right );
-        outline1("ORB %s+1", _right );
+        outline1("ORB %s", address_displacement(_environment, _right, "1") );
         outline1("STD %s", _result);
-        outline1("LDD %s+2", _left );
-        outline1("ORA %s+2", _right );
-        outline1("ORB %s+3", _right );
-        outline1("STD %s+2", _result);
+        outline1("LDD %s", address_displacement(_environment, _left, "2") );
+        outline1("ORA %s", address_displacement(_environment, _right, "2") );
+        outline1("ORB %s", address_displacement(_environment, _right, "3") );
+        outline1("STD %s", address_displacement(_environment, _result, "2"));
 
     no_embedded( cpu_or_32bit )
 
@@ -2846,7 +2847,7 @@ void cpu6809_xor_16bit( Environment * _environment, char * _left, char * _right,
 
         outline1("LDD %s", _left );
         outline1("EORA %s", _right );
-        outline1("EORB %s+1", _right );
+        outline1("EORB %s", address_displacement(_environment, _right, "1") );
         outline1("STD %s", _result);
 
     no_embedded( cpu_xor_16bit )
@@ -2861,12 +2862,12 @@ void cpu6809_xor_32bit( Environment * _environment, char * _left, char * _right,
 
         outline1("LDD %s", _left );
         outline1("EORA %s", _right );
-        outline1("EORB %s+1", _right );
+        outline1("EORB %s", address_displacement(_environment, _right, "1") );
         outline1("STD %s", _result);
-        outline1("LDD %s+2", _left );
-        outline1("EORA %s+2", _right );
-        outline1("EORB %s+3", _right );
-        outline1("STD %s+2", _result);
+        outline1("LDD %s", address_displacement(_environment, _left, "2") );
+        outline1("EORA %s", address_displacement(_environment, _right, "2") );
+        outline1("EORB %s", address_displacement(_environment, _right, "3") );
+        outline1("STD %s", address_displacement(_environment, _result, "2"));
 
     no_embedded( cpu_xor_32bit )
 
@@ -2913,10 +2914,10 @@ void cpu6809_swap_32bit( Environment * _environment, char * _left, char * _right
         outline1("STD %s", _left );
         outline1("STU %s", _right );
 
-        outline1("LDD %s+2", _right );
-        outline1("LDU %s+2", _left );
-        outline1("STD %s+2", _left );
-        outline1("STU %s+2", _right );
+        outline1("LDD %s", address_displacement(_environment, _right, "2") );
+        outline1("LDU %s", address_displacement(_environment, _left, "2") );
+        outline1("STD %s", address_displacement(_environment, _left, "2") );
+        outline1("STU %s", address_displacement(_environment, _right, "2") );
 
     no_embedded( cpu_swap_32bit )
 
@@ -2967,10 +2968,10 @@ void cpu6809_not_32bit( Environment * _environment, char * _value, char * _resul
         outline0("COMA" );
         outline0("COMB" );
         outline1("STD %s", _result );
-        outline1("LDD %s+2", _value );
+        outline1("LDD %s", address_displacement(_environment, _value, "2") );
         outline0("COMA" );
         outline0("COMB" );
-        outline1("STD %s+2", _result );
+        outline1("STD %s", address_displacement(_environment, _result, "2") );
 
     no_embedded( cpu_not_32bit )
 
@@ -3006,7 +3007,7 @@ void cpu6809_inc_16bit( Environment * _environment, char * _variable ) {
         MAKE_LABEL
 
         // 10 cycles 255 times out of 256 and 17 one out of 256
-        outline1("INC %s+1", _variable);
+        outline1("INC %s", address_displacement(_environment, _variable, "1"));
         outline1("BNE %s", label);
         outline1("INC %s", _variable);
         outhead1("%s", label)
@@ -3019,9 +3020,9 @@ void cpu6809_inc_32bit( Environment * _environment, char * _variable ) {
 
     inline( cpu_inc_32bit )
 
-        // outline1("LDD %s+2", _variable );
+        // outline1("LDD %s", address_displacement(_environment, _variable, "2") );
         // outline0("ADDD #1" );
-        // outline1("STD %s+2", _variable );
+        // outline1("STD %s", address_displacement(_environment, _variable, "2") );
         // outline1("LDD %s", _variable );
         // outline0("ADCB #0" );
         // outline0("ADCA #0" );
@@ -3029,11 +3030,11 @@ void cpu6809_inc_32bit( Environment * _environment, char * _variable ) {
 
         MAKE_LABEL
 
-        outline1("INC %s+3", _variable);
+        outline1("INC %s", address_displacement(_environment, _variable, "3"));
         outline1("BNE %s", label);
-        outline1("INC %s+2", _variable);
+        outline1("INC %s", address_displacement(_environment, _variable, "2"));
         outline1("BNE %s", label);
-        outline1("INC %s+1", _variable);
+        outline1("INC %s", address_displacement(_environment, _variable, "1"));
         outline1("BNE %s", label);
         outline1("INC %s", _variable);
         outhead1("%s", label)
@@ -3181,6 +3182,37 @@ void cpu6809_mem_move_direct( Environment * _environment, char *_source, char *_
         outline1("LDB %s", _size );
         outline0("TFR D, U" );
         outline1("LDY #%s", _source );
+        outline1("LDX #%s", _destination );
+        outline0("JSR CPUMEMMOVE" );
+
+    done( )
+
+}
+
+void cpu6809_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+
+    inline( cpu_mem_move )
+
+        MAKE_LABEL
+
+        outline1("LDU %s", _size );
+        outline0("CMPU #$0" );
+        outline1("BEQ %sdone", label );
+
+        outline1("LDY %s", _source );
+        outline1("LDX #%s", _destination );
+
+        outhead1("%s", label );
+        outline0("LDA ,Y+" );
+        outline0("STA ,X+" );
+        outline0("LEAU -1, U" );
+        outline0("CMPU #$0" );
+        outline1("BNE %s", label );
+
+    embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm )
+
+        outline1("LDU %s", _size );
+        outline1("LDY %s", _source );
         outline1("LDX #%s", _destination );
         outline0("JSR CPUMEMMOVE" );
 
@@ -3902,7 +3934,7 @@ void cpu6809_move_32bit_indirect( Environment * _environment, char *_source, cha
         outline0("LDD ,X");
         outline1("STD %s", _source );
         outline0("LDD 2,X");
-        outline1("STD %s+2", _source );
+        outline1("STD %s", address_displacement(_environment, _source, "2") );
 
     no_embedded( cpu_move_32bit_indirect )
 
@@ -3918,7 +3950,7 @@ void cpu6809_move_32bit_indirect2( Environment * _environment, char * _value, ch
         outline0("LDD ,X");
         outline1("STD %s", _source );
         outline0("LDD 2,X");
-        outline1("STD %s+2", _source );
+        outline1("STD %s", address_displacement(_environment, _source, "2") );
 
     no_embedded( cpu_move_32bit_indirect2 )
 
@@ -4104,7 +4136,7 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
                 outline1("LDB %s", _value);
                 break;
             case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
-                outline1("LDB %s+1", _value);
+                outline1("LDB %s", address_displacement(_environment, _value, "1"));
                 break;
             case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8:
                 outline2("LDB %s+%d", _value, ( _bitwidth / 8 ) - 2 );
@@ -4149,7 +4181,7 @@ void cpu6809_bit_check_extended( Environment * _environment, char * _value, char
         if(_bitwidth>16) {
             outline0("CMPA #16");
             outline1("BLO %seval", label);
-            outline1("LDB %s+1", _value);
+            outline1("LDB %s", address_displacement(_environment, _value, "1"));
             outline0("CMPA #24");
             outline1("BLO %seval", label);
             outline1("LDB %s", _value);
@@ -4179,7 +4211,7 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
 
     switch( _bits ) {
         case 32:
-			outline1("LDD %s+2", _number );
+			outline1("LDD %s", address_displacement(_environment, _number, "2") );
             outline0("STD <MATHPTR2");
             outline1("LDD %s", _number );
             outline0("STD <MATHPTR0");
@@ -4238,7 +4270,7 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
         case 32:
             outline1("LDD %s", _number );
             outline0("STD <MATHPTR0" );
-            outline1("LDD %s+2", _number );
+            outline1("LDD %s", address_displacement(_environment, _number, "2") );
             outline0("STD <MATHPTR2" );
             outline0("LDB #32" );
             outline1("STB %s", _string_size );
@@ -4424,14 +4456,14 @@ void cpu6809_complement2_32bit( Environment * _environment, char * _source, char
     outline0( "COMB");
     outline1( "STD %s", out );
     
-    outline1( "LDD %s+2", _source );
+    outline1( "LDD %s", address_displacement(_environment, _source, "2") );
     outline0( "NEGA" );
     outline0( "NEGB" );
     outline0( "SBCA #0" );
-    outline1( "STD %s+2", out );
+    outline1( "STD %s", address_displacement(_environment, out, "2") );
     
     outline1( "BNE %s", label);
-    outline1( "INC %s+1", out);
+    outline1( "INC %s", address_displacement(_environment, out, "1"));
     outline1( "BNE %s", label);
     outline1( "INC %s", out);
     outhead1( "%s", label);
@@ -4714,6 +4746,15 @@ void cpu6809_in( Environment * _environment, char * _port, char * _value ) {
     
 }
 
+void cpu6809_out_direct( Environment * _environment, char * _port, char * _value ) {
+
+}
+
+void cpu6809_in_direct( Environment * _environment, char * _port, char * _value ) {
+    
+}
+
+
 void cpu6809_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size ) {
     
     MAKE_LABEL
@@ -4832,6 +4873,807 @@ void cpu6809_blit_free_register(  Environment * _environment, int _register ) {
     }
 
     CRITICAL_BLIT_INVALID_FREE_REGISTER( _environment->blit.name, _register );
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to store n bit
+ * 
+ * @param _environment Current calling environment
+ * @param _destination Destination of store
+ * @param _n bits to store (>32)
+ * @param _value[] Value to store (segmented in 32 bit each)
+ */
+void cpu6809_store_nbit( Environment * _environment, char *_destination, int _n, int _value[] ) {
+
+    int i = 0;
+    while( _n ) {
+        char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf( destinationAddress, "%s+%d", _destination, i*4 );
+        if ( _n <= 32 ) {
+            switch( _n ) {
+                case 1: case 2: case 3: case 4:
+                case 5: case 6: case 7: case 8:
+                    cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4] & (0xff>>(8-_n)) ) );
+                    break;
+                case 9: case 10: case 11: case 12:
+                case 13: case 14: case 15: case 16:
+                    cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4] & (0xff>>(16-_n)) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4+1] & (0xff) ) );
+                    break;
+                case 17: case 18: case 19: case 20:
+                case 21: case 22: case 23: case 24:
+                    cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4] & (0xff>>(24-_n)) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4+1] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4+2] & (0xff) ) );
+                    break;
+                case 25: case 26: case 27: case 28:
+                case 29: case 30: case 31: case 32:
+                default:
+                    cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4] & (0xff>>(32-_n)) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4+1] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4+2] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+                    cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4+3] & (0xff) ) );
+                    break;
+            }
+            _n = 0;
+        } else {
+            cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4] & (0xff) ) );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+            cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4+1] & (0xff) ) );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+            cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4+2] & (0xff) ) );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+            cpu6809_store_8bit( _environment, destinationAddress, ( _value[i*4+3] & (0xff) ) );
+            _n -= 32;
+        }
+        ++i;
+    }
+
+
+}
+
+/**
+ * @brief <i>CPU cpu6809</i>: emit code to store n bit
+ * 
+ * @param _environment Current calling environment
+ * @param _destination Destination of store
+ * @param _n bits to store (>32)
+ * @param _value[] Value to store (segmented in 32 bit each)
+ */
+void cpu6809_move_nbit( Environment * _environment, int _n, char * _source, char *_destination ) {
+
+    int i = 0;
+    while( _n ) {
+        char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf( sourceAddress, "%s+%d", _source, i*4 );
+        char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf( destinationAddress, "%s+%d", _destination, i*4 );
+        if ( _n <= 32 ) {
+            switch( _n ) {
+                case 1: case 2: case 3: case 4:
+                case 5: case 6: case 7: case 8:
+                    cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+                case 9: case 10: case 11: case 12:
+                case 13: case 14: case 15: case 16:
+                    cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+                case 17: case 18: case 19: case 20:
+                case 21: case 22: case 23: case 24:
+                    cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+                case 25: case 26: case 27: case 28:
+                case 29: case 30: case 31: case 32:
+                default:
+                    cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+                    cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+            }
+            _n = 0;
+        } else {
+            cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+            cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+            cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+            cpu6809_move_8bit( _environment, sourceAddress, destinationAddress );
+            _n -= 32;
+        }
+        ++i;
+    }
+
+}
+
+void cpu6809_move_nbit_indirect( Environment * _environment, int _n, char *_source, char * _value ) {
+
+    outline1("LDX %s", _value);
+
+    char step[MAX_TEMPORARY_STORAGE];
+    char step1[MAX_TEMPORARY_STORAGE];
+    char step2[MAX_TEMPORARY_STORAGE];
+    char step3[MAX_TEMPORARY_STORAGE];
+
+    int stepIndex = 0;
+    while( _n ) {
+        sprintf( step, "%d", stepIndex );
+        sprintf( step1, "%d", stepIndex+1 );
+        sprintf( step2, "%d", stepIndex+2 );
+        sprintf( step3, "%d", stepIndex+3 );
+        if ( _n >= 32 ) {
+            outline1("LDD %s", address_displacement(_environment, _source, step) );
+            outline1("STD %d,X", stepIndex);
+            outline1("LDD %s", address_displacement(_environment, _source, step2) );
+            outline1("STD %d,X", stepIndex+2);
+            stepIndex += 4;
+            _n -= 32;
+            break;
+        } else {
+            switch( _n ) {
+                case 32: case 31: case 30: case 29:
+                case 28: case 27: case 26: case 25:
+                    outline1("LDD %s", address_displacement(_environment, _source, step) );
+                    outline1("STD %d,X", stepIndex);
+                    outline1("LDD %s", address_displacement(_environment, _source, step2) );
+                    outline1("STD %d,X", stepIndex+2);
+                    break;
+                case 24: case 23: case 22: case 21:
+                case 20: case 19: case 18: case 17:
+                    outline1("LDD %s", address_displacement(_environment, _source, step) );
+                    outline1("STD %d,X", stepIndex);
+                    outline1("LDA %s", address_displacement(_environment, _source, step2) );
+                    outline1("STA %d,X", stepIndex+2);
+                    break;
+                case 16: case 15: case 14: case 13:
+                case 12: case 11: case 10: case 9:
+                    outline1("LDD %s", address_displacement(_environment, _source, step) );
+                    outline1("STD %d,X", stepIndex);
+                    break;
+                case 8: case 7: case 6: case 5:
+                case 4: case 3: case 2: case 1:
+                    outline1("LDA %s", address_displacement(_environment, _source, step) );
+                    outline1("STA %d,X", stepIndex);
+                    break;
+            }
+            _n = 0;
+        }
+    }
+
+}
+
+void cpu6809_move_nbit_indirect2( Environment * _environment, int _n, char * _value, char *_source ) {
+
+    outline1("LDX %s", _value);
+
+    char step[MAX_TEMPORARY_STORAGE];
+    char step1[MAX_TEMPORARY_STORAGE];
+    char step2[MAX_TEMPORARY_STORAGE];
+    char step3[MAX_TEMPORARY_STORAGE];
+
+    int stepIndex = 0;
+    while( _n ) {
+        sprintf( step, "%d", stepIndex );
+        sprintf( step1, "%d", stepIndex+1 );
+        sprintf( step2, "%d", stepIndex+2 );
+        sprintf( step3, "%d", stepIndex+3 );
+        if ( _n >= 32 ) {
+            outline1("LDD %d,X", stepIndex);
+            outline1("STD %s", address_displacement(_environment, _source, step) );
+            outline1("LDD %d,X", stepIndex+2);
+            outline1("STD %s", address_displacement(_environment, _source, step2) );
+            stepIndex += 4;
+            _n -= 32;
+            break;
+        } else {
+            switch( _n ) {
+                case 32: case 31: case 30: case 29:
+                case 28: case 27: case 26: case 25:
+                    outline1("LDD %d,X", stepIndex);
+                    outline1("STD %s", address_displacement(_environment, _source, step) );
+                    outline1("LDD %d,X", stepIndex+2);
+                    outline1("STD %s", address_displacement(_environment, _source, step2) );
+                    break;
+                case 24: case 23: case 22: case 21:
+                case 20: case 19: case 18: case 17:
+                    outline1("LDD %d,X", stepIndex);
+                    outline1("STD %s", address_displacement(_environment, _source, step) );
+                    outline1("LDA %d,X", stepIndex+2);
+                    outline1("STA %s", address_displacement(_environment, _source, step2) );
+                    break;
+                case 16: case 15: case 14: case 13:
+                case 12: case 11: case 10: case 9:
+                    outline1("LDD %d,X", stepIndex);
+                    outline1("STD %s", address_displacement(_environment, _source, step) );
+                    break;
+                case 8: case 7: case 6: case 5:
+                case 4: case 3: case 2: case 1:
+                    outline1("LDA %d,X", stepIndex);
+                    outline1("STA %s", address_displacement(_environment, _source, step) );
+                    break;
+            }
+            _n = 0;
+        }
+    }
+
+}
+
+
+
+//
+//                  [0]      [1]      [2]      [3]      [4]      [5]      [6]      [7]      [8]      [9]
+// SINGLE	(40)  	eeeeeeee smmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm
+//
+
+void cpu6809_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
+    cpu6809_float_single_from_double_to_int_array( _environment, _value, _result );
+}
+
+void cpu6809_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
+    
+    double value = 0.0;
+    double integral = 0.0;
+    double fractional = 0.0;
+    int sign = 0;
+    int left = 0;
+    int right[4];
+    int steps = 0;
+    int exp = 0;
+    int mantissa_bits = 32;
+
+    memset( &right[0], 0, sizeof( int ) * 4 );
+
+    // Step 1: Determine Sign
+    // If the number is positive, then the sign bit will be 0. If the number is negative, then the sign bit 
+    // will be 1. For the number zero, both positive and negative zero are possible, and these are considered 
+    // different values (a quirk of using sign bits).
+
+    if ( _value >= 0 ) {
+        sign = 0;
+    } else {
+        sign = 1;
+    }
+
+    value = fabs( _value );
+
+    // Step 2: Convert the Integral Portion to Unsigned Binary
+    // Convert the integral portion of the floating-point value to unsigned binary (not two's complement). 
+    // The integral portion is the part of the number before the decimal point. For example, if the 
+    // number to convert is -0.75, then 0 is the integral portion, and it's unsigned binary representation 
+    // is simply 0. As another example, if the number to convert is 127.99, then the integral portion would 
+    // be 127, and it's unsigned binary representation is 1111111.
+
+    fractional = modf(value, &integral);
+
+    left = (unsigned int) integral;
+
+    // Step 3: Convert the Fractional Portion to Binary
+    // The fractional portion of the number must also be converted to binary, though the conversion process 
+    // is much different from what you're used to. The algorithm you'll used is based on performing repeated 
+    // multiplications by 2, and then checking if the result is >= 1.0. If the result is >= 1.0, then a 1 is 
+    // recorded for the binary fractional component, and the leading 1 is chopped of the result. If the 
+    // result is < 1.0, then a 0 is recorded for the binary fractional component, and the result is kept 
+    // as-is. The recorded builds are built-up left-to-right. The result keeps getting chained along in this 
+    // way until one of the following is true:
+    //  - The result is exactly 1.0
+    //  - 23 iterations of this process have occurred; i.e. the final converted binary value holds 23 bits
+    // With the first possible terminating condition (the result is exactly 1.0), this means that the fractional 
+    // component has been represented without any loss of precision. With the second possible terminating 
+    // condition (23 iterations have passed), this means that we ran out of bits in the final result, which 
+    // can never exceed 23. In this case, precision loss occurs (an unfortunate consequence of using a finite
+    // number of bits).
+
+    while( ( fractional != 1.0 ) && ( steps < mantissa_bits ) ) {
+
+        printf("%f %d %2.2x %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], (unsigned char) right[3] );
+
+        right[3] = right[3] << 1;
+        right[2] = right[2] << 1;
+        right[1] = right[1] << 1;
+        right[0] = right[0] << 1;
+        if ( ( right[3] & 0x100 )  ) {
+            right[2] = right[2] | 0x1;
+        }
+        if ( ( right[2] & 0x100 )  ) {
+            right[1] = right[1] | 0x1;
+        }
+        if ( ( right[1] & 0x100 )  ) {
+            right[0] = right[0] | 0x1;
+        }
+        right[3] = right[3] & 0xff;
+        right[2] = right[2] & 0xff;
+        right[1] = right[1] & 0xff;
+        right[0] = right[0] & 0x7f;
+
+        fractional = fractional * 2;
+
+        if ( fractional >= 1.0 ) {
+            right[3] |= 1;
+            fractional = modf(fractional, &integral);
+        }
+
+        ++steps;
+
+    }
+
+    // Step 4: Normalize the Value via Adjusting the Exponent
+    // A trick to encode an extra bit is to make it so that the binary scientific representation is always 
+    // of the form 1.XXXX * 2YYYY. That is, a 1 always leads, so there is no need to explicitly encode it. 
+    // In order to encode this properly, we need to move the decimal point to a position where it is 
+    // immediately after the first 1, and then record exactly how we moved it. To see this in action, consider 
+    // again the example of 0.75, which is encoded in binary as such (not IEEE-754 notation):
+    // 0.11
+    // In order to make the decimal point be after the first 1, we will need to move it one position to the right, like so:
+    // 1.1
+    // Most importantly, we need to record that we moved the decimal point by one position to the right. 
+    // Moves to the right result in negative exponents, and moves to the left result in positive exponents. 
+    // In this case, because we moved the decimal point one position to the right, the recorded exponent should be -1.
+    // As another example, consider the following binary floating point representation (again, not IEEE-754):
+    // 1111111.11100
+    // In this case, we need to move the decimal point six positions to the left to make this begin with a single 1, like so:
+    // 1.11111111100
+    // Because this moves six positions to the left, the recorded exponent should be 6.
+
+    int mantissa_high_bit = 0x80000000 >> ( 32 - mantissa_bits);
+    int mantissa_mask = 0xffffffff >> ( 32 - mantissa_bits);
+
+    if ( left == 0 ) {
+
+        if ( value != 0 ) {
+
+            while( left == 0 ) {
+
+                printf("b) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+
+                if ( ! right[0] && ! right[1] && ! right[2] && ! right[3] ) {
+                    left = 0x1;
+                }
+
+                if ( right[0] & 0x40 ) {
+                    left = 0x1;
+                }
+
+                right[0] = right[0] << 1;
+                right[1] = right[1] << 1;
+                right[2] = right[2] << 1;
+                right[3] = right[3] << 1;
+                if ( ( right[1] & 0x100 )) {
+                    right[0] = right[0] | 0x1;
+                }
+                if ( ( right[2] & 0x100 )) {
+                    right[1] = right[1] | 0x1;
+                }
+                if ( ( right[3] & 0x100 )) {
+                    right[2] = right[2] | 0x1;
+                }
+                right[0] = right[0] & 0x7f;
+                right[1] = right[1] & 0xff;
+                right[2] = right[2] & 0xff;
+                right[3] = right[3] & 0xff;
+
+                --exp;
+            }
+
+            ++exp;
+
+        } else {
+
+            exp = -128;
+
+        }
+
+        printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], (unsigned char) right[3]  );
+
+    } else {
+
+        while( left ) {
+
+            printf("a) left = %8.8x right = %2.2x %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], (unsigned char) right[3] );
+
+            if ( ( right[0] & 0x01 ) ) {
+                right[1] = right[1] | 0x100;
+            }
+            if ( ( right[1] & 0x01 ) ) {
+                right[2] = right[2] | 0x100;
+            }
+            if ( ( right[2] & 0x01 ) ) {
+                right[3] = right[3] | 0x100;
+            }
+            right[0] = right[0] >> 1;
+            right[1] = right[1] >> 1;
+            right[2] = right[2] >> 1;
+            right[3] = right[3] >> 1;
+            if ( left & 0x1 ) {
+                right[0] = right[0] | 0x40;
+            }
+            left = left >> 1;
+            ++exp;
+        }
+        // --exp;
+        left = 1;
+        right[3] = right[3] << 1;
+        right[2] = right[2] << 1;
+        right[1] = right[1] << 1;
+        right[0] = right[0] << 1;
+        if ( right[3] & 0x100 ) {
+            right[2] = right[2] | 0x01;
+        }
+        if ( right[2] & 0x100 ) {
+            right[1] = right[1] | 0x01;
+        }
+        if ( right[1] & 0x100 ) {
+            right[0] = right[0] | 0x01;
+        }
+        right[3] = right[3] & 0xff;
+        right[2] = right[2] & 0xff;
+        right[1] = right[1] & 0xff;
+        right[0] = right[0] & 0x7f;
+        
+    }
+
+    // Step 5: Add Bias to the Exponent
+    // Internally, IEEE-754 values store their exponents in an unsigned representation, which may seem odd considering that 
+    // the exponent can be negative. Negative exponents are accomodated by using a biased representation, wherein a 
+    // pre-set number is always subtracted from the given unsigned number. Because the given unsigned number may be less 
+    // than this number, this allows for negative values to be effectively encoded without resorting to two's complement. 
+    // Specifically, for the binary32 representation, the number 127 will be subtracted from anything encoded in the 
+    // exponent field of the IEEE-754 number. As such, in this step, we need to add 127 to the normalized exponent value 
+    // from the previous step.
+
+    exp += 127;
+
+    printf("exp = %2.2x\n", exp );
+
+    // Step 6: Convert the Biased Exponent to Unsigned Binary
+    // The biased exponent value from the previous step must be converted into unsigned binary, using the usual process.
+    // The result must be exactly 8 bits. It should not be possible to need more than 8 bits. If fewer than 8 bits are 
+    // needed in this conversion process, then leading zeros must be added to the front of the result to produce an 
+    // 8-bit value.
+
+    exp = exp & 0xff;
+
+    printf("exp = %2.2x\n", exp );
+
+    // Step 7: Determine the Final Bits for the Mantissa
+    // After step 4, there are a bunch of bits after the normalized decimal point. These bits will become the 
+    // mantissa (note that we ignore the bits to the left of the decimal point - normalization allows us to do this, 
+    // because it should always be just a 1). We need exactly 23 mantissa bits. If less than 23 mantissa bits follow the 
+    // decimal point, and the algorithm in step 3 ended with a result that wasn't 1.0, then follow the algorithm in step 3 
+    // until we can fill enough bits. If that's still not enough (eventually reaching 1.0 before we had enough bits, or 
+    // perhaps it had ended with 1.0 already), then the right side can be padded with zeros until 23 bits is reached.
+    // If there are more than 23 bits after the decimal point in step 4, then these extra bits are simply cutoff from the 
+    // right. For example, if we had 26 bits to the right of the decimal point, then the last three would need to be cutoff 
+    // to get us to 23 bits. Note that in this case we will necessarily lose some precision.
+
+    if ( _value == 0.0f ) {
+        exp = 0;
+    }
+
+    // Step 8: Put it All Together
+    // The sign bit from step 1 will be the first bit of the final result. The next 8 bits will be from the exponent from 
+    // step 6. The last 23 bits will be from the mantissa from step 7. The result will be a 32-bit number encoded in 
+    // IEEE-754 binary32 format, assuming no mistakes were made in the process.
+
+    //                  [0]      [1]      [2]      [3]      [4]      [5]      [6]      [7]      [8]      [9]
+    // SINGLE	(32)  	seeeeeee emmmmmmm mmmmmmmm mmmmmmmm
+
+    _result[0] = exp & 0xff;
+    _result[1] = ( sign << 7 ) | ( right[0] & 0x7f );
+    _result[2] = ( right[1] );
+    _result[3] = ( right[2] );
+    _result[4] = ( right[3] );
+
+    printf( "\n| %f = %2.2x %2.2x %2.2x %2.2x %2.2x\n\n", _value, _result[0], _result[1], _result[2], _result[3], _result[4] );
+
+}
+
+void cpu6809_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
+    cpu6809_float_single_to_string( _environment, _x, _string, _string_size );
+}
+
+void cpu6809_float_single_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
+
+    MAKE_LABEL
+
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s",_x );
+    outline0( "JSR FPLOD" );
+
+    outline1( "LDY %s", _string );
+
+    outline0( "JSR FPSCIENT" );
+
+    outline0( "TFR Y, D" );
+    outline1( "SUBD %s", _string );
+    outline1( "STB %s", _string_size );
+
+}
+
+void cpu6809_float_fast_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu6809_float_single_from_8( _environment, _value, _result, _signed );
+}
+
+void cpu6809_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "CLRA" );
+    outline1( "LDB %s", _value );
+    outline0( "LDU #FPSPAREA" );
+
+    if ( _signed ) {
+        outline0( "JSR INT2FP" );
+    } else {
+        outline0( "JSR UNINT2FP" );
+    }
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
+
+}
+
+void cpu6809_float_fast_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu6809_float_single_from_16( _environment, _value, _result, _signed );
+}
+
+void cpu6809_float_single_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline1( "LDD %s", _value );
+    outline0( "LDU #FPSPAREA" );
+
+    if ( _signed ) {
+        outline0( "JSR INT2FP" );
+    } else {
+        outline0( "JSR UNINT2FP" );
+    }
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
+
+}
+
+void cpu6809_float_fast_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu6809_float_single_to_8( _environment, _value, _result, _signed );
+}
+
+void cpu6809_float_single_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _value );
+    outline0( "JSR FPLOD" );
+
+    if ( _signed ) {
+        outline0( "JSR FP2INT" );
+    } else {
+        outline0( "JSR FP2UINT" );
+    }
+    outline1( "STB %s", _result );
+
+}
+
+void cpu6809_float_fast_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu6809_float_single_to_16( _environment, _value, _result, _signed );
+}
+
+void cpu6809_float_single_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _value );
+    outline0( "JSR FPLOD" );
+
+    if ( _signed ) {
+        outline0( "JSR FP2INT" );
+    } else {
+        outline0( "JSR FP2UINT" );
+    }
+    outline1( "STD %s", _result );
+
+}
+
+void cpu6809_float_fast_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu6809_float_single_sub( _environment, _x, _y, _result );
+}
+
+void cpu6809_float_single_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _x );
+    outline0( "JSR FPLOD" );
+    outline1( "LDX #%s", _y );
+    outline0( "JSR FPLOD" );
+
+    outline0( "JSR FPSUB" );
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
+
+}
+
+void cpu6809_float_fast_add( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu6809_float_single_add( _environment, _x, _y, _result );
+}
+
+void cpu6809_float_single_add( Environment * _environment, char * _x, char * _y, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _x );
+    outline0( "JSR FPLOD" );
+    outline1( "LDX #%s", _y );
+    outline0( "JSR FPLOD" );
+
+    outline0( "JSR FPADD" );
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
+
+}
+
+void cpu6809_float_fast_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu6809_float_single_cmp( _environment, _x, _y, _result );
+}
+
+void cpu6809_float_single_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
+    
+    MAKE_LABEL
+
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _x );
+    outline0( "JSR FPLOD" );
+    outline1( "LDX #%s", _y );
+    outline0( "JSR FPLOD" );
+
+    outline0( "JSR FPCMP" );
+
+    outline1( "BEQ %sequal", label );
+    outline1( "BCS %sless", label );
+    outline0( "LDA #$1" );
+    outline1( "STA %s", _result );
+    outline1( "JMP %sdone", label );
+    outhead1( "%sequal", label );
+    outline0( "LDA #$0" );
+    outline1( "STA %s", _result );
+    outline1( "JMP %sdone", label );
+    outhead1( "%sless", label );
+    outline0( "LDA #$ff" );
+    outline1( "STA %s", _result );
+    outline1( "JMP %sdone", label );
+    outhead1( "%sdone", label );
+
+}
+
+void cpu6809_float_fast_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu6809_float_single_mul( _environment, _x, _y, _result );
+}
+
+void cpu6809_float_single_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _x );
+    outline0( "JSR FPLOD" );
+    outline1( "LDX #%s", _y );
+    outline0( "JSR FPLOD" );
+
+    outline0( "JSR FPMUL" );
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
+
+}
+
+void cpu6809_float_fast_div( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu6809_float_single_div( _environment, _x, _y, _result );
+}
+
+void cpu6809_float_single_div( Environment * _environment, char * _x, char * _y, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _x );
+    outline0( "JSR FPLOD" );
+    outline1( "LDX #%s", _y );
+    outline0( "JSR FPLOD" );
+
+    outline0( "JSR FPDIV" );
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
+
+}
+
+void cpu6809_float_fast_sin( Environment * _environment, char * _angle, char * _result ) {
+    cpu6809_float_single_sin( _environment, _angle, _result );
+}
+
+void cpu6809_float_single_sin( Environment * _environment, char * _angle, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _angle );
+    outline0( "JSR FPLOD" );
+
+    outline0( "JSR FPSIN" );
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
+
+}
+
+void cpu6809_float_fast_cos( Environment * _environment, char * _angle, char * _result ) {
+    cpu6809_float_single_cos( _environment, _angle, _result );
+}
+
+void cpu6809_float_single_cos( Environment * _environment, char * _angle, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _angle );
+    outline0( "JSR FPLOD" );
+
+    outline0( "JSR FPCOS" );
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
+
+}
+
+void cpu6809_float_fast_tan( Environment * _environment, char * _angle, char * _result ) {
+    cpu6809_float_single_tan( _environment, _angle, _result );
+}
+
+void cpu6809_float_single_tan( Environment * _environment, char * _angle, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _angle );
+    outline0( "JSR FPLOD" );
+
+    outline0( "JSR FPTAN" );
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
 
 }
 

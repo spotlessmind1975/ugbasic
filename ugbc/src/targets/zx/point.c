@@ -60,7 +60,7 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
     Variable * y = variable_retrieve( _environment, _y );
     Variable * x = variable_retrieve( _environment, _x );
 
-    outline1("LD A,(%s+1)", x->realName );
+    outline1("LD A,(%s)", address_displacement(_environment, x->realName, "1") );
     outline0("CP 0" );
     outline0("JR NZ, clip%s" );
 

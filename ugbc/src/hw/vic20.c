@@ -49,7 +49,7 @@ void vic20_xpen( Environment * _environment, char * _destination ) {
     // outline1("STA %s", _destination);
     // outline1("BCC %s", label );
     // outline0("LDA #1");    
-    // outline1("STA _%s+1", _destination);
+    // outline1("STA _%s", address_displacement(_environment, _destination, "1"));
     // outhead1("%s:", label );
 
 }
@@ -61,7 +61,7 @@ void vic20_ypen( Environment * _environment, char * _destination ) {
     // outline0("LDA $d014");
     // outline1("STA %s", _destination);    
     // outline0("LDA #0");
-    // outline1("STA %s+1", _destination);    
+    // outline1("STA %s", address_displacement(_environment, _destination, "1"));    
    
 }
 

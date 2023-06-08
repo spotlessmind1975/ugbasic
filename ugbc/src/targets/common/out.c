@@ -60,6 +60,7 @@ dall'hardware sottostante. Se non fosse consentito, l'istruzione non farà nulla
 
 @example OUT &HBC00, 0
 
+@target c128z
 @target coleco
 @target cpc
 @target msx1

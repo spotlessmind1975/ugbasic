@@ -58,17 +58,22 @@
 void begin_for_mt_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step ) {
 
     Variable * index = variable_retrieve( _environment, _index );
+
+    if ( index->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( index->name );
+    }
+
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
     Variable * step = variable_retrieve( _environment, _step );
 
-    Variable * toResident = variable_resident( _environment, to->type, "(resident to)" );
+    Variable * toResident = variable_resident( _environment, to->arrayType, "(resident to)" );
     variable_move_naked( _environment, to->name, toResident->name );
 
-    Variable * stepResident = variable_resident( _environment, step->type, "(resident step)" );
-    variable_move_naked( _environment, step->name, stepResident->name );
+    Variable * stepResident = variable_resident( _environment, index->arrayType, "(resident step)" );
+    variable_move( _environment, step->name, stepResident->name );
 
-    Variable * zero = variable_resident( _environment, VT_WORD, "(zero)" );
+    Variable * zero = variable_resident( _environment, index->arrayType, "(zero)" );
     variable_store( _environment, zero->name, 0 );
 
     MAKE_LABEL

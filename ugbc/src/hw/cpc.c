@@ -343,11 +343,11 @@ void cpc_background_color_semivars( Environment * _environment, int _index, char
 
     outline1("%sbackgroundcolor:", label );
     outline1("LD A, $%2.2x", ( _index & 0x0f ));
-    outline0("LD IXH, a");
+    outline0("LD IXH, A");
     outline1("LD A, (%s)", _background_color);
-    outline0("LD IXL, a");
+    outline0("LD IXL, A");
     outline0("LD A, 1");
-    outline0("LD IYL, a");
+    outline0("LD IYL, A");
     outline0("CALL CPCUPDATEPALETTE");
 
 }
@@ -670,7 +670,7 @@ void cpc_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     outline1("LD A, (%s)", x->realName );
     outline0("LD E, A");
     if ( VT_BITWIDTH( x->type ) > 8 ) {
-        outline1("LD A, (%s+1)", x->realName );
+        outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
     } else {
         outline0("LD A, 0" );
     }
@@ -695,7 +695,7 @@ void cpc_point( Environment * _environment, char *_x, char *_y, char * _result )
     outline1("LD A, (%s)", x->realName );
     outline0("LD E, A");
     if ( VT_BITWIDTH( x->type ) > 8 ) {
-        outline1("LD A, (%s+1)", x->realName );
+        outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
     } else {
         outline0("LD A, 0" );
     }
@@ -1008,6 +1008,9 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "EVERYTIMING", VT_BYTE, 0 );
     variable_global( _environment, "EVERYTIMING" );
 
+    variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
+    variable_global( _environment, "FPSCRAP" );
+
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
 
     font_descriptors_init( _environment, 0 );
@@ -1108,6 +1111,15 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 2 );
+            paletteColorCount = 2;
+        }
+
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
@@ -1120,6 +1132,14 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 2 );
+            paletteColorCount = 2;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 2 ) {
@@ -1256,6 +1276,13 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 4 );
+            paletteColorCount = 4;
+        }
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
@@ -1268,6 +1295,14 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 4 );
+            paletteColorCount = 4;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 4 ) {
@@ -1439,6 +1474,15 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 16 );
+            paletteColorCount = 16;
+        }
+
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
@@ -1447,12 +1491,20 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
         RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         
         newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
-
+        
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 16 );
+            paletteColorCount = 16;
+        }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
         if ( lastUsedSlotInCommonPalette > 16 ) {
@@ -1698,7 +1750,7 @@ void cpc_put_image( Environment * _environment, char * _image, char * _x, char *
     }
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );
-    outline1("LD A, (%s+1)", _x );
+    outline1("LD A, (%s)", address_displacement(_environment, _x, "1") );
     outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
@@ -1827,7 +1879,7 @@ void cpc_blit_image( Environment * _environment, char * _sources[], int _source_
 
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );
-    outline1("LD A, (%s+1)", _x );
+    outline1("LD A, (%s)", address_displacement(_environment, _x, "1") );
     outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
@@ -1886,7 +1938,7 @@ void cpc_get_image( Environment * _environment, char * _image, char * _x, char *
     outline1("LD HL, %s", _image );
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );
-    outline1("LD A, (%s+1)", _x );
+    outline1("LD A, (%s)", address_displacement(_environment, _x, "1") );
     outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
@@ -1964,13 +2016,13 @@ void cpc_move_tiles( Environment * _environment, char * _tile, char * _x, char *
     outline0("LD (TILEX), A" );
     outline1("LD A, (%s)", y->realName );
     outline0("LD (TILEY), A" );
-    outline1("LD A, (%s+1)", tile->realName );
+    outline1("LD A, (%s)", address_displacement(_environment, tile->realName, "1") );
     outline0("LD (TILEW), A" );
     outline0("LD (TILEW2), A" );
-    outline1("LD A, (%s+2)", tile->realName );
+    outline1("LD A, (%s)", address_displacement(_environment, tile->realName, "2") );
     outline0("LD (TILEH), A" );
     outline0("LD (TILEH2), A" );
-    outline1("LD A, (%s+3)", tile->realName );
+    outline1("LD A, (%s)", address_displacement(_environment, tile->realName, "3") );
     outline0("LD (TILEA), A" );
 
     outline0("CALL MOVETILE");
@@ -1988,13 +2040,13 @@ void cpc_put_tiles( Environment * _environment, char * _tile, char * _x, char * 
     outline0("LD (TILEX), A" );
     outline1("LD A, (%s)", _y );
     outline0("LD (TILEY), A" );
-    outline1("LD A, (%s+1)", _tile );
+    outline1("LD A, (%s)", address_displacement(_environment, _tile, "1") );
     outline0("LD (TILEW), A" );
     if ( _w ) {
         outline1("LD A, (%s)", _w );
     }
     outline0("LD (TILEW2), A" );
-    outline1("LD A, (%s+2)", _tile );
+    outline1("LD A, (%s)", address_displacement(_environment, _tile, "2") );
     outline0("LD (TILEH), A" );
     if ( _h ) {
         outline1("LD A, (%s)", _h );

@@ -50,9 +50,9 @@ Variable * get_timer( Environment * _environment ) {
 
     char resultAddress[MAX_TEMPORARY_STORAGE]; 
     cpu_move_8bit( _environment, "$A2", result->realName );
-    sprintf(resultAddress, "%s+1", result->realName );
+    sprintf(resultAddress, "%s", address_displacement(_environment, result->realName, "1") );
     cpu_move_8bit( _environment, "$A1", resultAddress );
-    // sprintf(resultAddress, "%s+2", result->realName );
+    // sprintf(resultAddress, "%s", address_displacement(_environment, result->realName, "2") );
     // cpu_move_8bit( _environment, "$A2", resultAddress );
     
     return result;
@@ -71,7 +71,7 @@ void set_timer( Environment * _environment, char * _value ) {
 
     char valueAddress[MAX_TEMPORARY_STORAGE]; 
     cpu_move_8bit( _environment, value->realName, "$A2" );
-    sprintf(valueAddress, "%s+1", value->realName );
+    sprintf(valueAddress, "%s", address_displacement(_environment, value->realName, "1") );
     cpu_move_8bit( _environment, valueAddress, "$A1" );
     cpu_move_8bit( _environment, "#0", "$A0" );
         

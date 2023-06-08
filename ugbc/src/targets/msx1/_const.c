@@ -44,12 +44,18 @@ void const_emit( Environment * _environment, char * _name ) {
 
     if ( c ) {
             if ( !c->imported ) {
-                if ( c->valueString ) {
-                    // outline2("%s = \"%s\"", c->realName, c->valueString)
-                } else {
-                    outline2("%s = $%4.4x", c->realName, c->value);
+                switch( c->type ) {
+                    case CT_INTEGER:
+                        outline2("%s = $%4.4x", c->realName, c->value);
+                        break;
+                    case CT_FLOAT: {
+                        CRITICAL_CANNOT_EMIT_FLOAT_CONST(_name);
+                        break;
+                    }
+                    case CT_STRING:
+                        // outline2("%s = \"%s\"", c->realName, c->valueString)
+                        break;
                 }
-
             }
     } else {
         CRITICAL( "Trying to emit an undefined constant");

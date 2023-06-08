@@ -61,6 +61,7 @@
 #define COLOR_OLIVE_GREEN       	COLOR_GREEN
 #define COLOR_PINK       			COLOR_LIGHT_RED
 #define COLOR_PEACH       			COLOR_PINK
+#define COLOR_LIGHT_WHITE			COLOR_WHITE
 #define COLOR_COUNT                 8
 
 #define DEFAULT_PEN_COLOR           COLOR_WHITE

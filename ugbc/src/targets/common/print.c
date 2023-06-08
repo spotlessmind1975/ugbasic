@@ -127,6 +127,32 @@ void print( Environment * _environment, char * _value, int _new_line ) {
             }
             case 0:
                 switch( value->type ) {
+                    case VT_FLOAT: {
+                        Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary for PRINT)");
+                        Variable * size = variable_temporary( _environment, VT_BYTE, "(temporary for PRINT)");
+                        Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
+
+                        variable_store_string( _environment, tmp->name, "                              " );
+
+                        cpu_dswrite( _environment, tmp->realName );
+
+                        cpu_dsdescriptor( _environment, tmp->realName, address->realName, size->realName );
+
+                        switch( value->precision ) {
+                            case FT_FAST:
+                                cpu_float_fast_to_string( _environment, value->realName, address->realName, size->realName );
+                                break;
+                            case FT_SINGLE:
+                                cpu_float_single_to_string( _environment, value->realName, address->realName, size->realName );
+                                break;
+                        }
+
+                        cpu_dsresize( _environment, tmp->realName, size->realName );
+
+                        value = tmp;
+
+                        break;
+                    }
                     case VT_IMAGE: {
                         char bufferName[MAX_TEMPORARY_STORAGE];
                         sprintf(bufferName, "@image(%s)", value->name);

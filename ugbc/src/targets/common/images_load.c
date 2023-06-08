@@ -224,35 +224,35 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
 
     if ( _bank_expansion && _environment->expansionBanks ) {
 
-        // Try to compress the result of image conversion.
-        // This means that the buffer will be compressed using MSC1
-        // algorithm, up to 32 frequent sequences. The original size of
-        // the buffer will be considered as "uncompressed" size.
-        MSC1Compressor * compressor = msc1_create( 32 );
-        final->uncompressedSize = final->size;
-        MemoryBlock * output = msc1_compress( compressor, final->valueBuffer, final->uncompressedSize, &final->size );
+        // // Try to compress the result of image conversion.
+        // // This means that the buffer will be compressed using MSC1
+        // // algorithm, up to 32 frequent sequences. The original size of
+        // // the buffer will be considered as "uncompressed" size.
+        // MSC1Compressor * compressor = msc1_create( 32 );
+        // final->uncompressedSize = final->size;
+        // MemoryBlock * output = msc1_compress( compressor, final->valueBuffer, final->uncompressedSize, &final->size );
 
-        int temporary;
-        MemoryBlock * outputCheck = msc1_uncompress( compressor, output, final->size, &temporary );
-        if ( memcmp( outputCheck, final->valueBuffer, final->uncompressedSize ) != 0 ) {
-            CRITICAL("Compression failed");
-        }
-        msc1_free( compressor );
-        // printf( "%s: %d bytes -> %d bytes\n", _filename, final->uncompressedSize, final->size );
-        // If the compressed memory is greater than the original
-        // size, we discard the compression and we will continue as
-        // usual.
-        if ( final->uncompressedSize < final->size ) {
-            final->size = final->uncompressedSize;
-            final->uncompressedSize = 0;
-            free( output );
-        } 
-        // Otherwise, we can safely replace the original data
-        // buffer with the compressed one.
-        else {
-            free( final->valueBuffer );
-            final->valueBuffer = output;
-        }
+        // int temporary;
+        // MemoryBlock * outputCheck = msc1_uncompress( compressor, output, final->size, &temporary );
+        // if ( memcmp( outputCheck, final->valueBuffer, final->uncompressedSize ) != 0 ) {
+        //     CRITICAL("Compression failed");
+        // }
+        // msc1_free( compressor );
+        // // printf( "%s: %d bytes -> %d bytes\n", _filename, final->uncompressedSize, final->size );
+        // // If the compressed memory is greater than the original
+        // // size, we discard the compression and we will continue as
+        // // usual.
+        // if ( final->uncompressedSize < final->size ) {
+        //     final->size = final->uncompressedSize;
+        //     final->uncompressedSize = 0;
+        //     free( output );
+        // } 
+        // // Otherwise, we can safely replace the original data
+        // // buffer with the compressed one.
+        // else {
+        //     free( final->valueBuffer );
+        //     final->valueBuffer = output;
+        // }
 
         Bank * bank = _environment->expansionBanks;
 
@@ -282,11 +282,11 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         // memory. If uncompressed size is zero, it means that
         // the memory block is not compressed -- so we can use the
         // size as well.
-        int realSize = final->uncompressedSize;
-        if ( realSize == 0 ) realSize = final->size;
+        // int realSize = final->uncompressedSize;
+        // if ( realSize == 0 ) realSize = final->size;
 
-        if ( _environment->maxExpansionBankSize[_bank_expansion] < realSize ) {
-            _environment->maxExpansionBankSize[_bank_expansion] = realSize;
+        if ( _environment->maxExpansionBankSize[_bank_expansion] < final->frameSize ) {
+            _environment->maxExpansionBankSize[_bank_expansion] = final->frameSize;
         }
 
     } else if ( _flags & FLAG_COMPRESSED ) {
