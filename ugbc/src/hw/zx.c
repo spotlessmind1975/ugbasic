@@ -36,14 +36,14 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-        { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },        
-        { 0x00, 0x00, 0xff, 0xff, 1, "BLUE" },
-        { 0x88, 0x00, 0x00, 0xff, 2, "RED" },
-        { 0xff, 0x00, 0xff, 0xff, 3, "MAGENTA" },
-        { 0x00, 0xcc, 0x00, 0xff, 4, "GREEN" },
-        { 0xaa, 0xff, 0xe6, 0xff, 5, "CYAN" },
-        { 0xee, 0xee, 0x77, 0xff, 6, "YELLOW" },
-        { 0xff, 0xff, 0xff, 0xff, 7, "WHITE" }
+        { 0x00, 0x00, 0x00, 0xff, 0, "BLACK", 0 },        
+        { 0x00, 0x00, 0xff, 0xff, 1, "BLUE", 1 },
+        { 0x88, 0x00, 0x00, 0xff, 2, "RED", 2 },
+        { 0xff, 0x00, 0xff, 0xff, 3, "MAGENTA", 3 },
+        { 0x00, 0xcc, 0x00, 0xff, 4, "GREEN", 4 },
+        { 0xaa, 0xff, 0xe6, 0xff, 5, "CYAN", 5 },
+        { 0xee, 0xee, 0x77, 0xff, 6, "YELLOW", 6 },
+        { 0xff, 0xff, 0xff, 0xff, 7, "WHITE", 7 }
 };
 
 static RGBi * commonPalette;
@@ -407,6 +407,15 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
     commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
     commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+
+    if ( _transparent_color & 0x0f0000 ) {
+        commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+    }
+    if ( _transparent_color & 0xf00000 ) {
+        commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 8 );
+        paletteColorCount = 8;
+    }
+
     lastUsedSlotInCommonPalette = paletteColorCount;
     adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
@@ -478,11 +487,11 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                     colorIndex = 0;
 
                     int minDistance = 9999;
-                    for( int i=0; i<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++i ) {
-                        int distance = rgbi_distance(&SYSTEM_PALETTE[i], &rgb );
+                    for( int i=0; i<paletteColorCount; ++i ) {
+                        int distance = rgbi_distance(&commonPalette[i], &rgb );
                         if ( distance < minDistance ) {
                             minDistance = distance;
-                            colorIndex = SYSTEM_PALETTE[i].index;
+                            colorIndex = commonPalette[i].index;
                         }
                     }
 
@@ -494,28 +503,42 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
                 _source -= 8 * ( _depth );
 
+
                 int colorBackgroundMax = 0;
                 colorBackground[image_x>>3] = 0;
                 int colorForegroundMax = 0;
                 colorForeground[image_x>>3] = 0;
 
-                for( int xx = 0; xx<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++xx ) {
-                    if ( colorIndexCount[xx] > colorBackgroundMax ) {
-                        colorBackground[image_x>>3] = xx;
-                        colorBackgroundMax = colorIndexCount[xx];
-                    };
+                if ( _transparent_color & 0x0f0000 ) {
+                    colorBackground[image_x>>3] = ( _transparent_color & 0xff );
+                } else {
+                    for( int xx = 0; xx<paletteColorCount; ++xx ) {
+                        if ( colorIndexCount[xx] > colorBackgroundMax ) {
+                            colorBackground[image_x>>3] = xx;
+                            colorBackgroundMax = colorIndexCount[xx];
+                        };
+                    }
+
+                    colorIndexCount[colorBackground[image_x>>3]] = 0;
+                    
+                }
+                if ( _transparent_color & 0xf00000 ) {
+                    colorForeground[image_x>>3] = ( _transparent_color & 0xff00 ) >> 8;
+                } else {
+                    for( int xx = 0; xx<paletteColorCount; ++xx ) {
+                        if ( colorIndexCount[xx] > colorForegroundMax ) {
+                            colorForeground[image_x>>3] = xx;
+                            colorForegroundMax = colorIndexCount[xx];
+                        };
+                    }
+
+                    colorIndexCount[colorForeground[image_x>>3]] = 0;
+
                 }
 
-                colorIndexCount[colorBackground[image_x>>3]] = 0;
-
-                for( int xx = 0; xx<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++xx ) {
-                    if ( colorIndexCount[xx] > colorForegroundMax ) {
-                        colorForeground[image_x>>3] = xx;
-                        colorForegroundMax = colorIndexCount[xx];
-                    };
+                if ( colorForeground[image_x>>3] == colorBackground[image_x>>3] ) {
+                    colorForeground[image_x>>3] = ( colorBackground[image_x>>3] == 0 ) ? 7 : 0;
                 }
-
-                colorIndexCount[colorForeground[image_x>>3]] = 0;
 
             }
 
@@ -546,27 +569,21 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                     }
                 }
 
-                // printf("%d", i );
+                int offset = ( image_y * _frame_width>>3 ) + (image_x>>3);
+                int bitmask = 1 << ( 7 - xx );
 
-                // Calculate the relative tile
-                tile_y = (image_y >> 3);
-                tile_x = ((image_x+xx) >> 3);
-                
-                // Calculate the offset starting from the tile surface area
-                // and the bit to set.
-                offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
-                bitmask = 1 << ( 7 - ((image_x+xx) & 0x7) );
-
-                if ( colorIndex != colorBackground[image_x>>3] ) {
+                if ( colorIndex == colorForeground[image_x>>3] ) {
                     adilinepixel(colorForeground[image_x>>3]);
                     *( buffer + offset + 2) |= bitmask;
+                    //printf("*" );
                 } else {
                     adilinepixel(colorBackground[image_x>>3]);
                     *( buffer + offset + 2) &= ~bitmask;
+                    //printf(" ");
                 }
 
-                offset = tile_y * ( _frame_width >> 3 ) + tile_x;
-                *( buffer + 2 + ( ( _frame_width >> 3 ) * _height ) + offset ) = ( colorBackground[image_x>>3] << 3 ) | ( colorForeground[image_x>>3] ); 
+                offset = ( ( image_y >> 3 ) * _frame_width>>3 ) + (image_x>>3);
+                *( buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = ( colorBackground[image_x>>3] << 3 ) | ( colorForeground[image_x>>3] ); 
 
                 _source += _depth;
 
@@ -576,9 +593,12 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
         _source += _depth * ( _width - _frame_width );
 
-        // printf("\n" );
+        //printf("\n" );
 
     }
+
+    //printf("\n" );
+    //printf("\n" );
 
     adilineendbitmap();
 
@@ -815,11 +835,9 @@ void zx_blit_image( Environment * _environment, char * _sources[], int _source_c
     outline0("EI");
 
     outline1("LD A, (%s)", _x );
-    outline0("LD E, A" );
-    outline1("LD A, (%s)", address_displacement(_environment, _x, "1") );
-    outline0("LD IXL, A" );
+    outline0("LD (IMAGEX), A" );
     outline1("LD A, (%s)", _y );
-    outline0("LD D, A" );
+    outline0("LD (IMAGEY), A" );
     outline1("LD A, $%2.2x", (_flags & 0Xff) );
     outline0("LD (IMAGEF), A" );
     outline1("LD A, $%2.2x", ((_flags>>8) & 0Xff) );

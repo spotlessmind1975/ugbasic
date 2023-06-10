@@ -79,6 +79,8 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "IMAGEX" );    
     variable_import( _environment, "IMAGEY", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEY" );    
+    variable_import( _environment, "IMAGEY2", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEY2" );    
     variable_import( _environment, "IMAGEW", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEW" );    
     variable_import( _environment, "IMAGEH", VT_BYTE, 0 );
