@@ -40,6 +40,9 @@ REM background using the raster operator of OR. Because any value
 REM ORed with 0 is unchanged, the background is unaffected and the 
 REM black areas are filled with the actual sprite image.
 
-BLIT bop2 AS ( ( ( INVERSE ( THRESHOLD SOURCE 2 ) ) AND ( SOURCE 1 ) ) OR ( DESTINATION ) )
+BLIT bop2 AS ( ( ( INVERSE ( SOURCE 2 ) ) AND ( SOURCE 1 ) ) OR ( DESTINATION ) )
 BLIT IMAGES sprite, mask AT x+10,y+10 WITH bop2
+
+
+
 
