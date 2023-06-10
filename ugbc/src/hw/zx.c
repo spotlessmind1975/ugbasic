@@ -455,6 +455,8 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
     int * colorBackground = malloc( ( _frame_width >> 3 ) * sizeof( int ) );
     int * colorForeground = malloc( ( _frame_width >> 3 ) * sizeof( int ) );
 
+    int step = 0;
+
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
 
@@ -536,10 +538,6 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
                 }
 
-                if ( colorForeground[image_x>>3] == colorBackground[image_x>>3] ) {
-                    colorForeground[image_x>>3] = ( colorBackground[image_x>>3] == 0 ) ? 7 : 0;
-                }
-
             }
 
             for( xx = 0; xx < 8; ++xx ) {
@@ -561,18 +559,18 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 colorIndex = 0;
 
                 int minDistance = 9999;
-                for( int i=0; i<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++i ) {
-                    int distance = rgbi_distance(&SYSTEM_PALETTE[i], &rgb );
+                for( int i=0; i<paletteColorCount; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
-                        colorIndex = SYSTEM_PALETTE[i].index;
+                        colorIndex = commonPalette[i].index;
                     }
                 }
 
                 int offset = ( image_y * _frame_width>>3 ) + (image_x>>3);
                 int bitmask = 1 << ( 7 - xx );
 
-                if ( colorIndex == colorForeground[image_x>>3] ) {
+                if ( colorIndex != colorBackground[image_x>>3] ) {
                     adilinepixel(colorForeground[image_x>>3]);
                     *( buffer + offset + 2) |= bitmask;
                     //printf("*" );
@@ -584,6 +582,11 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
                 offset = ( ( image_y >> 3 ) * _frame_width>>3 ) + (image_x>>3);
                 *( buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = ( colorBackground[image_x>>3] << 3 ) | ( colorForeground[image_x>>3] ); 
+                
+                // if ( ! *( buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) ) {
+                //     ++step;
+                // }
+                // *( buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = (step&0xff);
 
                 _source += _depth;
 
