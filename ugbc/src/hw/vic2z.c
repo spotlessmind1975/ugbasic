@@ -168,6 +168,10 @@ static void vic2z_image_converter_tile( Environment * _environment, char * _sour
         }
     }
 
+    if ( colorForeground == colorBackground ) {
+        colorForeground = ( colorBackground == 0 ) ? 1 : 0;
+    }
+
     source = _source;
 
     for (int y=0; y<8; ++y) {

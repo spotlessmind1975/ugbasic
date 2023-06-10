@@ -46,6 +46,9 @@ BLITIMAGE:
     
     DI
 
+    LD A, (IMAGEY)
+    LD (IMAGEY2), A
+
 ;     LD A, (CURRENTMODE)
 ;     ; BITMAP_MODE_STANDARD
 ;     CP 0
@@ -73,22 +76,33 @@ BLITIMAGE1:
     SRL A
     LD (IMAGEH), A
     LD (IMAGEH2), A
-    ADD HL, 1
+    ;ADD HL, 1
 
     PUSH HL
 
-    LD A, (IMAGEX)
-    AND $7
-    LD B, A
-    LD A, $8
-    SUB B
-    LD B, A
-    LD E, 1
-BLITIMAGE0A:
-    DEC B
-    JR Z,BLITIMAGE0B
-    SLA E
-    JMP BLITIMAGE0A
+    DI
+    EXX
+    EI
+
+    ADD HL, 2
+
+    DI
+    EXX
+    EI
+
+    ; LD A, (IMAGEX)
+    ; AND $7
+    ; LD B, A
+    ; LD A, $8
+    ; SUB B
+    ; LD B, A
+    ; LD E, 1
+; BLITIMAGE0A:
+;     DEC B
+;     JR Z,BLITIMAGE0B
+;     SLA E
+;     JMP BLITIMAGE0A
+
 BLITIMAGE0B:
     LD A, (IMAGEY)
     LD B, A
@@ -123,24 +137,79 @@ BLITIMAGE0B:
     POP DE
     POP HL
 
-    LD A, (IMAGEY)
-    LD IXL, A
+    ; LD A, (IMAGEY)
+    ; LD IXL, A
 
     LD A, (IMAGEH)
     LD C, A
     SLA C
     SLA C
     SLA C
+    INC C
     LD A, (IMAGEW)
     SRL A
     SRL A
     SRL A
     LD B, A
+    INC B
 BLITIMAGE0CP:
+
+    PUSH BC
+    
+    ; SOURCE
     LD A, (HL)
+    LD B, A
+
+    ; DESTINATION
+    LD A, (DE)
+    LD IYL, A
+
+    PUSH IY
+
+    DI
+    EXX
+    EI
+
+    POP IY
+
+    ; MASK
+    LD A, (HL)
+    LD IYH, A
+
+    PUSH DE
+    PUSH IY
+
+    DI
+    EXX
+    EI
+
+    POP IY
+    POP IX
+    PUSH HL
+    PUSH IX
+    POP HL
+
+    CALL BLITIMAGEBLITTING
+
+    POP HL
+
     LD (DE), A
+
     INC HL
     INC DE
+
+    DI
+    EXX
+    EI
+
+    INC HL
+
+    DI
+    EXX
+    EI
+
+    POP BC
+
     DEC B
     JR NZ, BLITIMAGE0CP
     LD A, (IMAGEW)
@@ -152,9 +221,13 @@ BLITIMAGE0CP:
     PUSH BC
     PUSH HL
     
-    INC IXL
-    LD A, IXL
+    ; INC IXL
+    ; LD A, IXL
+    LD A, (IMAGEY)
     LD B, A
+    INC B
+    LD A, B
+    LD (IMAGEY), A
     LD A, (IMAGEX)
     LD C, A
 
@@ -193,6 +266,9 @@ BLITIMAGE0CP:
 
     ;;;;
 
+    LD A, (IMAGEY2)
+    LD (IMAGEY), A
+
     PUSH HL
 
     LD A,(IMAGEX)
@@ -228,12 +304,16 @@ BLITIMAGE0CP:
 
     LD A, (IMAGEH)
     LD C, A
+    INC C
     LD A, (IMAGEW)
     SRL A
     SRL A
     SRL A
     LD B, A
+
 BLITIMAGE00CP:
+
+    PUSH BC
 
     ; SOURCE
     LD A, (HL)
@@ -243,20 +323,26 @@ BLITIMAGE00CP:
     LD A, (DE)
     LD IYL, A
 
+    PUSH IY
+
     DI
     EXX
     EI
+
+    POP IY
 
     ; MASK
     LD A, (HL)
     LD IYH, A
 
     PUSH DE
+    PUSH IY
 
     DI
     EXX
     EI
 
+    POP IY
     POP IX
     PUSH HL
     PUSH IX
@@ -268,9 +354,21 @@ BLITIMAGE00CP:
 
     LD (DE), A
 
-
     INC HL
     INC DE
+
+    DI
+    EXX
+    EI
+
+    INC HL
+
+    DI
+    EXX
+    EI
+
+    POP BC
+
     DEC B
     JR NZ, BLITIMAGE00CP
 
@@ -287,6 +385,7 @@ BLITIMAGE00CP:
     PUSH HL
     LD HL, DE
     ADD HL, 32
+    AND A
     SBC HL, BC
     LD DE, HL
     POP HL

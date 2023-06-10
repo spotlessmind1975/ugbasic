@@ -301,6 +301,10 @@ static void vdcz_image_converter_tile( Environment * _environment, char * _sourc
         }
     }
 
+    if ( colorForeground == colorBackground ) {
+        colorForeground = ( colorBackground == 0 ) ? 1 : 0;
+    }
+
     *( _dest ) = ( colorForeground << 4 ) | colorBackground ;
 
 }

@@ -168,6 +168,10 @@ static void vdc_image_converter_tile( Environment * _environment, char * _source
         }
     }
 
+    if ( colorForeground == colorBackground ) {
+        colorForeground = ( colorBackground == 0 ) ? 1 : 0;
+    }
+
     source = _source;
 
     for (int y=0; y<8; ++y) {

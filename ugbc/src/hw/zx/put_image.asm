@@ -70,22 +70,22 @@ PUTIMAGE1:
     SRL A
     LD (IMAGEH), A
     LD (IMAGEH2), A
-    ADD HL, 1
+    ;ADD HL, 1
 
     PUSH HL
 
-    LD A, (IMAGEX)
-    AND $7
-    LD B, A
-    LD A, $8
-    SUB B
-    LD B, A
-    LD E, 1
-PUTIMAGE0A:
-    DEC B
-    JR Z,PUTIMAGE0B
-    SLA E
-    JMP PUTIMAGE0A
+;     LD A, (IMAGEX)
+;     AND $7
+;     LD B, A
+;     LD A, $8
+;     SUB B
+;     LD B, A
+;     LD E, 1
+; PUTIMAGE0A:
+;     DEC B
+;     JR Z,PUTIMAGE0B
+;     SLA E
+;     JMP PUTIMAGE0A
 PUTIMAGE0B:
     LD A, (IMAGEY)
     LD B, A
@@ -128,11 +128,13 @@ PUTIMAGE0B:
     SLA C
     SLA C
     SLA C
+    INC C
     LD A, (IMAGEW)
     SRL A
     SRL A
     SRL A
     LD B, A
+    INC B
 PUTIMAGE0CP:
     LD A, (HL)
     LD (DE), A
@@ -225,6 +227,7 @@ PUTIMAGE0CP:
 
     LD A, (IMAGEH)
     LD C, A
+    INC C
     LD A, (IMAGEW)
     SRL A
     SRL A
@@ -251,6 +254,7 @@ PUTIMAGE00CP:
     PUSH HL
     LD HL, DE
     ADD HL, 32
+    AND A
     SBC HL, BC
     LD DE, HL
     POP HL

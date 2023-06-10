@@ -159,6 +159,10 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
             };
         }
 
+        if ( colorForeground[y] == colorBackground[y] ) {
+            colorForeground[y] = ( colorBackground[y] == 0 ) ? 1 : 0;
+        }
+
         source += _depth * ( _source_width - 8 );
 
     }

@@ -146,6 +146,10 @@ static void ef9345_image_converter_tile( char * _source, char * _dest, int _widt
             };
         }
 
+        if ( colorForeground[y] == colorBackground[y] ) {
+            colorForeground[y] = ( colorBackground[y] == 0 ) ? 1 : 0;
+        }
+
         source += _depth * ( _source_width - 8 );
 
     }

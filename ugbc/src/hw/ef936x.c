@@ -1222,6 +1222,10 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 };
             }
 
+            if ( colorForeground == colorBackground ) {
+                colorForeground = ( colorBackground == 0 ) ? 1 : 0;
+            }
+
             for( int xx = 0; xx<8; ++xx ) {
                 offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
                 bitmask = 1 << ( 7 - ((image_x+xx) & 0x7) );
