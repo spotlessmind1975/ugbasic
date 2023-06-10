@@ -62,7 +62,7 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
 
     outline1("LD A,(%s)", address_displacement(_environment, x->realName, "1") );
     outline0("CP 0" );
-    outline0("JR NZ, clip%s" );
+    outline1("JR NZ, clip%s", label );
 
     outline1("LD A,(%s)", x->realName );
     outline0("LD L, A" );
@@ -89,9 +89,9 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
     outline0("ADD HL, DE" );
     outline0("LD A, (HL)");
     outline0("AND $40");
-    outline1("JR Z, %s", label);
+    outline1("JR Z, clip%s", label);
     outline0("LD A, $10");
-    outhead1("%s:", label);
+    outhead1("clip%s:", label);
     outline0("LD B, A");
     outline0("LD A, (HL)");
     outline0("AND $7");

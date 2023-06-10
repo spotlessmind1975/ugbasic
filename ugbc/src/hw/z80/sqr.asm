@@ -86,7 +86,7 @@ SQROOT3:            ;/
 
   LD E, A        ; 4
   SBC HL, DE     ; 15
-  JR C,S QROOT2      ;\
+  JR C,SQROOT2      ;\
   OR 20H        ; | BRANCH 1: 23CC
   DEFB 254        ; |   <-- START OF `CP *` WHICH IS 7CC TO SKIP THE NEXT BYTE.
 SQROOT2:            ; | BRANCH 2: 21CC

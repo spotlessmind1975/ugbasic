@@ -341,6 +341,9 @@ void zx_initialization( Environment * _environment ) {
     variable_import( _environment, "BLITTMPPTR2", VT_ADDRESS, 0 );
     variable_global( _environment, "BLITTMPPTR2" );
 
+    variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
+    variable_global( _environment, "FPSCRAP" );
+    
     _environment->currentRgbConverterFunction = rgbConverterFunction;
 
     _environment->screenWidth = 256;
