@@ -76,7 +76,7 @@ BLITIMAGE1:
     SRL A
     LD (IMAGEH), A
     LD (IMAGEH2), A
-    ;ADD HL, 1
+    ADD HL, 1
 
     PUSH HL
 
@@ -145,13 +145,11 @@ BLITIMAGE0B:
     SLA C
     SLA C
     SLA C
-    INC C
     LD A, (IMAGEW)
     SRL A
     SRL A
     SRL A
     LD B, A
-    INC B
 BLITIMAGE0CP:
 
     PUSH BC
@@ -304,7 +302,7 @@ BLITIMAGE0CP:
 
     LD A, (IMAGEH)
     LD C, A
-    INC C
+    ; INC C
     LD A, (IMAGEW)
     SRL A
     SRL A
