@@ -114,6 +114,12 @@ ma con nomi diversi.
 </usermanual> */
 Variable * sequence_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
 
+    Variable * final = variable_temporary( _environment, VT_SEQUENCE, 0 );
+
+    if ( _environment->emptyProcedure ) {
+        return final;
+    }
+
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD SEQUENCE");
     }
@@ -200,7 +206,6 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
             ptr += result[i]->size;
         }
     }
-    Variable * final = variable_temporary( _environment, VT_SEQUENCE, 0 );
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
     final->frameSize = result[0]->size;
     final->frameCount = wc;
