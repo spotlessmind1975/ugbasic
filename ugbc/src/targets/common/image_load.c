@@ -116,7 +116,7 @@ ma con nomi diversi.
 </usermanual> */
 Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
 
-    Variable * result = new_image( _environment, 8, 8, _mode );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
 
     if ( _environment->emptyProcedure ) {
         return result;
