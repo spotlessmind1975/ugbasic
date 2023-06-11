@@ -10,7 +10,7 @@ REM Questo esempio mostra come provare le collisioni.
 
 BITMAP ENABLE (16)
 
-spriteImage = LOAD IMAGE("examples/sprite.png")
+spriteImage = LOAD IMAGE("sprite.png")
 
 sprite1 = SPRITE(spriteImage)
 sprite2 = SPRITE(spriteImage)

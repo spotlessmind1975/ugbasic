@@ -10,7 +10,7 @@ REM Questo esempio mostra come caricare una immagine su una espansione.
 
 BITMAP ENABLE
 
-checkers := LOAD IMAGE("examples/checkers2.png" ) BANKED
+checkers := LOAD IMAGE("checkers2.png" ) BANKED
 
 PUT IMAGE checkers AT 0, 0
 

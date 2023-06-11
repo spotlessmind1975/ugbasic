@@ -16,7 +16,7 @@ REM
 BITMAP ENABLE(16)
 CLS
 COLOR BORDER BLACK
-themill := LOAD IMAGE("examples/themill.png")
+themill := LOAD IMAGE("themill.png")
 PUT IMAGE themill AT 0, 0
 
 

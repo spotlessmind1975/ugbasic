@@ -10,7 +10,7 @@ REM Questo esempio mostra come caricare le immagini su una espansione.
 
 BITMAP ENABLE (16)
 
-bat := LOAD IMAGES("examples/bat.png" ) FRAME SIZE (32,32) BANKED
+bat := LOAD IMAGES("bat.png" ) FRAME SIZE (32,32) BANKED
 
 DO
     PUT IMAGE bat FRAME frame AT 0,0

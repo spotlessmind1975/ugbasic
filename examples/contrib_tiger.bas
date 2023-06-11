@@ -15,7 +15,7 @@ REM
 BITMAP ENABLE(320,200,32)
 CLS
 COLOR BORDER BLACK
-tiger := LOAD IMAGE("examples/tiger128x128x4.png") BANKED
+tiger := LOAD IMAGE("tiger128x128x4.png") BANKED
 PUT IMAGE tiger AT 0, 0
 
 

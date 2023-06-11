@@ -14,7 +14,7 @@ REM @exclude coleco
 
 SCREEN #0
 
-car = LOAD IMAGE("examples/car.png" )
+car = LOAD IMAGE("car.png" )
 
 PUT IMAGE car AT 0, 0
 

@@ -17,7 +17,7 @@ PRINT
 PRINT "print raw:"
 PRINT #"0123456789\|!£$%&/()=?^ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz"
 
-a := LOAD("examples/printable.txt")
+a := LOAD("printable.txt")
 
 PRINT
 

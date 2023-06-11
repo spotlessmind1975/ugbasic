@@ -9,6 +9,6 @@ REM
 REM Questo piccolo esempio vi mostrerà come suonare un file IMF.
 REM
 
-    music := LOAD MUSIC("examples/example.mid")
+    music := LOAD MUSIC("example.mid")
 
     MUSIC music

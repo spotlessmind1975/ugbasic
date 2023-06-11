@@ -9,7 +9,7 @@ REM
 REM Questo piccolo esempio mostra come stampare a video un file.
 REM
 
-b := LOAD("examples/test2.txt")
+b := LOAD("test2.txt")
 
 PRINT BUFFER b
 

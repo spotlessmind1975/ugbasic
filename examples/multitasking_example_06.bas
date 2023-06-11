@@ -15,7 +15,7 @@ REM sullo schermo.
 BITMAP ENABLE (16)
 CLS BLACK
 
-bat := LOAD IMAGES("examples/bat.png" ) FRAME SIZE (32,32)
+bat := LOAD IMAGES("bat.png" ) FRAME SIZE (32,32)
 
 CONST POSITIVE batCount = 4
 

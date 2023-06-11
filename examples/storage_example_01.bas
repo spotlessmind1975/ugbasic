@@ -11,10 +11,10 @@ REM Questo esempio mostra come caricare un file al momento dell'esecuzione,
 REM comparato al caricamento al momento della compilazione.
 
 STORAGE "DISCHETTO" AS "DISK1"
-    FILE "examples/test.txt" AS "TEST"
+    FILE "test.txt" AS "TEST"
 ENDSTORAGE
 
-textCompileTime := LOAD("examples/test.txt")
+textCompileTime := LOAD("test.txt")
 textCompileTimeAsString = (STRING) textCompileTime
 textRunTimeAsString = DLOAD("TEST")
 

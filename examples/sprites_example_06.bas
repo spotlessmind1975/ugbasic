@@ -10,8 +10,8 @@ REM Questo esempio mostra come verificare una collisione con sprite monocolori.
 
 BITMAP ENABLE (2)
 
-ballImage = LOAD IMAGE("examples/sprite_ball.png")
-basketImage = LOAD IMAGE("examples/sprite_basket.png")
+ballImage = LOAD IMAGE("sprite_ball.png")
+basketImage = LOAD IMAGE("sprite_basket.png")
 
 ball = SPRITE(ballImage)
 basket = SPRITE(basketImage)

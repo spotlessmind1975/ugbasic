@@ -12,8 +12,8 @@ REM Questo piccolo esempio mostra come viene gestito l'aliasing, cioè
 REM quando viene chiesto di caricare lo stesso file (viene caricata una sola copia).
 REM
 
-b = LOAD("examples/test.txt")
-c = LOAD("examples/test.txt")
+b = LOAD("test.txt")
+c = LOAD("test.txt")
 
 PRINT "b = ";b;" (";SIZE(b);" bytes)"
 PRINT "c = ";c;" (";SIZE(c);" bytes)"

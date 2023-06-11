@@ -16,7 +16,7 @@ BITMAP ENABLE (2)
 
 CLS
 
-eye = LOAD IMAGE("examples/eye2.png" )
+eye = LOAD IMAGE("eye2.png" )
 
 PUT IMAGE eye AT 0, 0
 

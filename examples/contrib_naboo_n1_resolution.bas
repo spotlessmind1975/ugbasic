@@ -29,7 +29,7 @@ RESOLUTION 300,200
 
 CLS
 
-DIM data() = LOAD "examples/contrib_naboo_n1.txt" AS TEXT READONLY
+DIM data() = LOAD "contrib_naboo_n1.txt" AS TEXT READONLY
 
 DIM pos AS INTEGER = 0
 

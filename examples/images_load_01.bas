@@ -11,7 +11,7 @@ REM
 
 BITMAP ENABLE
 
-airplane = LOAD IMAGE("examples/air_attack_airplane.png")
+airplane = LOAD IMAGE("air_attack_airplane.png")
 
 PRINT airplane
 

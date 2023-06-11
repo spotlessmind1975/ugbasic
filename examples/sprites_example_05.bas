@@ -14,7 +14,7 @@ REM colori indipendenti.
 
 BITMAP ENABLE (16)
 
-spriteImageColor := LOAD IMAGE("examples/sprite_color.png")
+spriteImageColor := LOAD IMAGE("sprite_color.png")
 
 spriteColor = CSPRITE(spriteImageColor)
 

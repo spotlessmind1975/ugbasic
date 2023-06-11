@@ -17,9 +17,9 @@ BITMAP ENABLE(16)
 
 CLS BLACK
 
-mask := LOAD IMAGE("examples/blit_mask.png") EXACT TRANSPARENCY BLACK OPACITY LIGHT WHITE
-background := LOAD IMAGE("examples/blit_background.png")
-sprite := LOAD IMAGE("examples/blit_sprite.png")
+mask := LOAD IMAGE("blit_mask.png") EXACT TRANSPARENCY BLACK OPACITY LIGHT WHITE
+background := LOAD IMAGE("blit_background.png")
+sprite := LOAD IMAGE("blit_sprite.png")
 
 CONST x = ( SCREEN WIDTH - IMAGE WIDTH(background) ) \ #2
 CONST y = ( SCREEN HEIGHT - IMAGE HEIGHT(background) ) \ #2

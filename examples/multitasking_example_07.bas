@@ -15,8 +15,8 @@ REM e ragazzi che corrono sullo schermo.
 BITMAP ENABLE (16)
 CLS BLACK
 
-boy := LOAD IMAGES("examples/boy.png" ) FRAME SIZE (32,32)
-bat := LOAD IMAGES("examples/bat.png" ) FRAME SIZE (32,32)
+boy := LOAD IMAGES("boy.png" ) FRAME SIZE (32,32)
+bat := LOAD IMAGES("bat.png" ) FRAME SIZE (32,32)
 
 CONST POSITIVE batCount = 4
 

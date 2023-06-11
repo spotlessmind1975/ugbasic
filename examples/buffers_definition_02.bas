@@ -9,7 +9,7 @@ REM
 REM Questo piccolo esempio mostra la sintassi per caricare un file in un buffer.
 REM
 
-b = LOAD("examples/test.txt")
+b = LOAD("test.txt")
 
 PRINT "b = ";b;" (";SIZE(b);" bytes)"
 

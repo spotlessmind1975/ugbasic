@@ -10,7 +10,7 @@ REM Questo esempio mostra come caricare una immagine su una espansione.
 
 BITMAP ENABLE (2)
 
-eye := LOAD IMAGE("examples/checkers2.png" )
+eye := LOAD IMAGE("checkers2.png" )
 
 PUT IMAGE eye AT 0, 0
 

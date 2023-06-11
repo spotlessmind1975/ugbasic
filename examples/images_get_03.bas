@@ -17,7 +17,7 @@ REM
         RGB(0,0,255),RGB(255,0,255),RGB(0,255,255),RGB(255,255,255), _
         RGB(187,187,187),RGB(221,119,119),RGB(119,221,119)
     '
-    tile1 := LOAD IMAGE("examples/drop.png")
+    tile1 := LOAD IMAGE("drop.png")
     '
     DOUBLE BUFFER ON
     '

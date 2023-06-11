@@ -21,7 +21,7 @@ REM
 BITMAP ENABLE (16)
 CLS
 
-sequence := LOAD SEQUENCE("examples/sequence.png" ) FRAME SIZE (16,16)
+sequence := LOAD SEQUENCE("sequence.png" ) FRAME SIZE (16,16)
 
 PUT IMAGE sequence SEQUENCE 1 FRAME 0 AT 0,0
 
