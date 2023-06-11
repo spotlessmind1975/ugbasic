@@ -116,10 +116,16 @@ ma con nomi diversi.
 </usermanual> */
 Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
 
+    Variable * result = new_image( _environment, 8, 8, _mode );
+
+    if ( _environment->emptyProcedure ) {
+        return result;
+    }
+
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD IMAGE");
     }
-    
+
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
     if ( _alias ) {
@@ -157,7 +163,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         _flags |= FLAG_TRANSPARENCY;
     }
     
-    Variable * result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
+    result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
     
     result->originalBitmap = source;
     result->originalWidth = width;
