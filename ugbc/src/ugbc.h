@@ -2898,11 +2898,15 @@ char * basename( char * _path );
     } else if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) { \
         sprintf(executableName, "%s", "cc65\\bin\\cl65.exe" ); \
     } else if( access( "modules\\cc65\\bin\\cl65.exe", F_OK ) == 0 ) { \
-        sprintf(executableName, "%s", "modules\\cc65\\bin\\cl65.exe" ); \
+        sprintf(executableName, "%s", "cc65\\bin\\cl65.exe" ); \
+    } else if( access( "..\\modules\\cc65\\bin\\cl65.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "..\\modules\\cc65\\bin\\cl65.exe" ); \
     } else if( access( "cc65/bin/cl65", F_OK ) == 0 ) { \
         sprintf(executableName, "%s", "cc65/bin/cl65" ); \
     } else if( access( "modules//cc65/bin/cl65", F_OK ) == 0 ) { \
         sprintf(executableName, "%s", "modules/cc65/bin/cl65" ); \
+    } else if( access( "../modules//cc65/bin/cl65", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "../modules/cc65/bin/cl65" ); \
     } else { \
         sprintf(executableName, "%s", "cl65" ); \
     }
@@ -2933,9 +2937,13 @@ char * basename( char * _path );
     if ( _environment->compilerFileName ) { \
         sprintf( executableName, "%s", _environment->compilerFileName ); \
     } else if( access( "modules\\z88dk\\src\\z80asm\\z88dk-z80asm.exe", F_OK ) == 0 ) { \
-        sprintf(executableName, "%s", "modules\\z88dk\\src\\z80asm\\z88dk-z80asm.exe" ); \
+        sprintf(executableName, "%s", "..\\modules\\z88dk\\src\\z80asm\\z88dk-z80asm.exe" ); \
+    } else if( access( "..\\modules\\z88dk\\src\\z80asm\\z88dk-z80asm.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "..\\modules\\z88dk\\src\\z80asm\\z88dk-z80asm.exe" ); \
     } else if( access( "modules/z88dk/src/z80asm/z88dk-z80asm", F_OK ) == 0 ) { \
-        sprintf(executableName, "%s", "modules/z88dk/src/z80asm/z88dk-z80asm" ); \
+        sprintf(executableName, "%s", "../modules/z88dk/src/z80asm/z88dk-z80asm" ); \
+    } else if( access( "../modules/z88dk/src/z80asm/z88dk-z80asm", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "../modules/z88dk/src/z80asm/z88dk-z80asm" ); \
     } else { \
         sprintf(executableName, "%s", "z88dk-z80asm" ); \
     }
@@ -2972,9 +2980,13 @@ char * basename( char * _path );
     if ( _environment->appMakerFileName ) { \
         sprintf( executableName, "%s", _environment->appMakerFileName ); \
     } else if( access( "modules\\z88dk\\src\\appmake\\z88dk-appmake.exe", F_OK ) == 0 ) { \
-        sprintf(executableName, "%s", "modules\\z88dk\\src\\appmake\\z88dk-appmake.exe" ); \
+        sprintf(executableName, "%s", "..\\modules\\z88dk\\src\\appmake\\z88dk-appmake.exe" ); \
+    } else if( access( ".\\modules\\z88dk\\src\\appmake\\z88dk-appmake.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "..\\modules\\z88dk\\src\\appmake\\z88dk-appmake.exe" ); \
     } else if( access( "modules/z88dk/src/appmake/z88dk-appmake", F_OK ) == 0 ) { \
-        sprintf(executableName, "%s", "modules/z88dk/src/appmake/z88dk-appmake" ); \
+        sprintf(executableName, "%s", "../modules/z88dk/src/appmake/z88dk-appmake" ); \
+    } else if( access( "../modules/z88dk/src/appmake/z88dk-appmake", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "../modules/z88dk/src/appmake/z88dk-appmake" ); \
     } else { \
         sprintf(executableName, "%s", "z88dk-appmake" ); \
     }
@@ -2984,8 +2996,12 @@ char * basename( char * _path );
         sprintf(executableName, "%s", _environment->compilerFileName ); \
     } else if( access( "modules\\asm6809\\src\\asm6809.exe", F_OK ) == 0 ) { \
         sprintf(executableName, "%s", "modules\\asm6809\\src\\asm6809.exe" ); \
+    } else if( access( "..\\modules\\asm6809\\src\\asm6809.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "..\\modules\\asm6809\\src\\asm6809.exe" ); \
     } else if( access( "modules/asm6809/src/asm6809", F_OK ) == 0 ) { \
         sprintf(executableName, "%s", "modules/asm6809/src/asm6809" ); \
+    } else if( access( "../modules/asm6809/src/asm6809", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "../modules/asm6809/src/asm6809" ); \
     } else if( access( "asm6809\\bin\\asm6809.exe", F_OK ) == 0 ) { \
         sprintf(executableName, "%s", "asm6809\\bin\\asm6809.exe" ); \
     } else { \
