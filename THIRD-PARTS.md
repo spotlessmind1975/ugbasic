@@ -6,6 +6,10 @@ conditions if you wish to reproduce or reuse this software.
 
 [Z80FLOAT](https://github.com/Zeda/z80float), source code copyright 2018 Zeda A.K. Thomas.
 
+[FLOATING POINT ROUTINES FOR THE 6809](https://lennartb.home.xs4all.nl/m6809.html)
+
+[BASIC FLOATING POINT ROUTINES FOR 6502 MICROPROCESSOR](http://www.6502.org/source/floats/wozfp1.txt), source code by R. Rankin and S. Wozniak
+
 [ROUTINE TO READ JOYSTICK ON SC-3000/SG-1000](https://github.com/siriokds/SC-3000-Keyboard-support/blob/main/SC3000_SG1000_KeybJoy.asm)
 
 Source code originally published by Saverio Russo on [this repository](https://github.com/siriokds/SC-3000-Keyboard-support), and it has been used with his permission. For any uses other than integration with ugBASIC, please consult the author.
