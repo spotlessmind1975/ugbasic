@@ -38,7 +38,6 @@
 TEXTADDRESS         fdb     $0400
 BITMAPADDRESS       fdb     $0c00
 COLORMAPADDRESS     fdb     $a000
-MOBADDRESS          fdb     $a000
 CURRENTMODE         fcb     $2
 CURRENTTILEMODE     fcb     1
 EVERYSTATUS        fcb     0

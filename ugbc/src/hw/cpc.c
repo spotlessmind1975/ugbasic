@@ -867,9 +867,6 @@ void cpc_text( Environment * _environment, char * _text, char * _text_size ) {
 
 void cpc_initialization( Environment * _environment ) {
 
-    src_hw_chipset_mob_asm = src_hw_cpc_mob_asm;
-    src_hw_chipset_mob_asm_len = src_hw_cpc_mob_asm_len;
-
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 160 );
     variable_global( _environment, "CURRENTWIDTH" );
     variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 200  );

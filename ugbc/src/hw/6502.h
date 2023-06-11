@@ -210,12 +210,6 @@ void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index 
 void cpu6502_complement2_8bit( Environment * _environment, char * _source, char * _destination );
 void cpu6502_complement2_16bit( Environment * _environment, char * _source, char * _destination );
 void cpu6502_complement2_32bit( Environment * _environment, char * _source, char * _destination );
-void cpu6502_mobinit( Environment * _environment, char * _index, char *_x, char *_y, char *_draw);
-void cpu6502_mobshow( Environment * _environment, char * _index );
-void cpu6502_mobhide( Environment * _environment, char * _index );
-void cpu6502_mobat( Environment * _environment, char * _index, char *_x, char *_y );
-void cpu6502_mobrender( Environment * _environment, int _on_vbl );
-void cpu6502_mobcount( Environment * _environment, char * _index );
 void cpu6502_sqroot( Environment * _environment, char * _number, char * _result );
 void cpu6502_dstring_vars( Environment * _environment );
 void cpu6502_set_callback( Environment * _environment, char * _callback, char * _label );
@@ -457,16 +451,7 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_out_direct( _environment, _port, _value ) cpu6502_out_direct( _environment, _port, _value )
 #define cpu_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size ) cpu6502_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size );
 
-extern char * src_hw_chipset_mob_asm;
-extern unsigned int src_hw_chipset_mob_asm_len;
-
-#define cpu_mobinit( _environment, _index, _x, _y, _draw ) cpu6502_mobinit( _environment, _index, _x, _y, _draw )
-#define cpu_mobshow( _environment, _index ) cpu6502_mobshow( _environment, _index )
-#define cpu_mobhide( _environment, _index ) cpu6502_mobhide( _environment, _index )
-#define cpu_mobat( _environment, _index, _x, _y ) cpu6502_mobat( _environment, _index, _x, _y )
-#define cpu_mobrender( _environment, _on_vbl ) cpu6502_mobrender( _environment, _on_vbl )
 #define cpu_sqroot( _environment, _number, _result ) cpu6502_sqroot( _environment, _number, _result )
-#define cpu_mobcount( _environment, _index ) cpu6502_mobcount( _environment, _index )
 
 #define cpu_dstring_vars( _environment ) cpu6502_dstring_vars( _environment )
 #define cpu_protothread_vars( _environment ) cpu6502_protothread_vars( _environment )

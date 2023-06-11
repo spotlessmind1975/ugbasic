@@ -298,8 +298,8 @@ typedef enum _VariableType {
     /** Strings (dynamic) */
     VT_DSTRING = 13,
 
-    /** MOBs (Movable OBjects) */
-    VT_MOB = 14,
+    /** MOBs (Movable OBjects) -- deprecated! */
+    // VT_MOB = 14,
 
     /** IMAGE (static picture) */
     VT_IMAGE = 15,
@@ -1145,11 +1145,6 @@ typedef struct _Embedded {
     int cpu_complement2_8bit;
     int cpu_complement2_16bit;
     int cpu_complement2_32bit;
-    int cpu_mobinit;
-    int cpu_mobshow;
-    int cpu_mobhide;
-    int cpu_mobat;
-    int cpu_mobrender;
     int cpu_sqroot;
     int cpu_is_negative;
     int cpu_msc1_uncompress;
@@ -1235,8 +1230,6 @@ typedef struct _Deployed {
     int putimage;
     int getimage;
     int blitimage;
-    int mob;
-    int mobcs;
     int protothread;
     int tiles;
     int font;
@@ -3359,11 +3352,6 @@ Variable *              minimum( Environment * _environment, char * _source, cha
 void                    mmove_memory_memory( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mmove_memory_video( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mmove_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
-void                    mob_at( Environment * _environment, char * _index, char * _x, char * _y );
-void                    mob_hide( Environment * _environment, char * _index );
-Variable *              mob_init( Environment * _environment, char * _image, char * _x, char * _y );
-void                    mob_render( Environment * _environment, int _on_vbl );
-void                    mob_show( Environment * _environment, char * _index );
 void                    move_tile( Environment * _environment, char * _tile, char * _x, char * _y );
 Variable *              music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 void                    music_var( Environment * _environment, char * _music );

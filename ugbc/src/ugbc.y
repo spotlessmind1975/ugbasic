@@ -64,7 +64,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
-%token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
+%token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
@@ -2927,16 +2927,6 @@ exponential:
     | CSPRITE OP expr OP_COMMA expr sprite_flags CP {
         $$ = csprite_init( _environment, $3, $5, $6 )->name;
     }
-    | MOB OP expr CP {
-        $$ = mob_init( _environment, $3, NULL, NULL )->name;
-    }
-    | MOB OP expr OP_COMMA VISIBLE CP {
-        $$ = mob_init( _environment, $3, NULL, NULL )->name;
-        mob_show( _environment, $$ );
-    }
-    | MOB OP expr OP_COMMA HIDDEN CP {
-        $$ = mob_init( _environment, $3, NULL, NULL )->name;
-    }
     | RASTER LINE {
         $$ = get_raster_line( _environment )->name;
     }
@@ -3994,57 +3984,6 @@ ellipse_definition_expression:
 
 ellipse_definition:
     ellipse_definition_expression;
-
-mob_definition_expression:
-     SHOW expr {
-        mob_show( _environment, $2 );
-    }
-    | HIDE expr {
-        mob_hide( _environment, $2 );
-    }
-    | RENDER {
-        mob_render( _environment, 0 );
-    }
-    | RENDER ON VBL {
-        mob_render( _environment, 1 );
-    }
-    | Identifier OP_COMMA expr AT optional_x OP_COMMA optional_y VISIBLE {
-        Variable * var = mob_init( _environment, $3, $5, $7 );
-        variable_move_naked( _environment, $1, var->name );
-        mob_show( _environment, $1 );
-        gr_locate( _environment, $5, $7 );
-    }
-    | Identifier OP_COMMA expr AT optional_x OP_COMMA optional_y HIDDEN {
-        Variable * var = mob_init( _environment, $3, $5, $7 );
-        variable_move_naked( _environment, $1, var->name );
-        mob_hide( _environment, $1 );
-    }
-    | Identifier OP_COMMA expr AT optional_x OP_COMMA optional_y {
-        Variable * var = mob_init( _environment, $3, $5, $7 );
-        variable_move_naked( _environment, $1, var->name );
-        gr_locate( _environment, $5, $7 );
-    }
-    | Identifier OP_COMMA expr {
-        Variable * var = mob_init( _environment, $3, NULL, NULL );
-        variable_move_naked( _environment, $1, var->name );
-    }
-    | Identifier OP_COMMA expr VISIBLE {
-        Variable * var = mob_init( _environment, $3, NULL, NULL );
-        variable_move_naked( _environment, $1, var->name );
-        mob_show( _environment, $1 );
-    }
-    | Identifier OP_COMMA expr HIDDEN {
-        Variable * var = mob_init( _environment, $3, NULL, NULL );
-        variable_move_naked( _environment, $1, var->name );
-    }
-    | Identifier AT optional_x OP_COMMA optional_y {
-        mob_at( _environment, $1, $3, $5 );
-        gr_locate( _environment, $3, $5 );
-    }
-    ;
-
-mob_definition:
-    mob_definition_expression;
 
 get_definition_expression:
       IMAGE Identifier FROM optional_x OP_COMMA optional_y  {
@@ -6343,7 +6282,6 @@ statement2:
   | BLIT blit_definition
   | MOVE move_definition
   | GET get_definition
-  | MOB mob_definition
   | BOX box_definition
   | BAR bar_definition
   | POLYLINE polyline_definition
@@ -7678,11 +7616,6 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_complement2_8bit );
                         parse_embedded( p, cpu_complement2_16bit );
                         parse_embedded( p, cpu_complement2_32bit );
-                        parse_embedded( p, cpu_mobinit );
-                        parse_embedded( p, cpu_mobshow );
-                        parse_embedded( p, cpu_mobhide );
-                        parse_embedded( p, cpu_mobat );
-                        parse_embedded( p, cpu_mobrender );
                         parse_embedded( p, cpu_sqroot );
 
                         p = strtok(NULL, ",");
@@ -7933,11 +7866,6 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_complement2_8bit );
         stats_embedded( cpu_complement2_16bit );
         stats_embedded( cpu_complement2_32bit );
-        stats_embedded( cpu_mobinit );
-        stats_embedded( cpu_mobshow );
-        stats_embedded( cpu_mobhide );
-        stats_embedded( cpu_mobat );
-        stats_embedded( cpu_mobrender );
         stats_embedded( cpu_sqroot );
     }
 

@@ -118,7 +118,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_TILE:
                 case VT_TILESET:
                 case VT_SPRITE:
-                case VT_MOB:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {

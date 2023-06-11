@@ -1378,8 +1378,6 @@ void tms9918_initialization( Environment * _environment ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm );
     deploy( tms9918startup, src_hw_tms9918_startup_asm );
-    src_hw_chipset_mob_asm = src_hw_tms9918_mob_asm;
-    src_hw_chipset_mob_asm_len = src_hw_tms9918_mob_asm_len;
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
     variable_global( _environment, "CURRENTWIDTH" );

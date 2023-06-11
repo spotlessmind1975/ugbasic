@@ -667,8 +667,6 @@ void ef936x_initialization( Environment * _environment ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( ef936xstartup, src_hw_ef936x_startup_asm );
-    // src_hw_chipset_mob_asm = src_hw_ef936x_mob_asm;
-    // src_hw_chipset_mob_asm_len = src_hw_ef936x_mob_asm_len;
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );

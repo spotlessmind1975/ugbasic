@@ -2358,8 +2358,6 @@ void vdcz_initialization( Environment * _environment ) {
 
     deploy( vdczvars, src_hw_vdcz_vars_asm );
     deploy( vdczstartup, src_hw_vdcz_startup_asm );
-    src_hw_chipset_mob_asm = src_hw_vdcz_mob_asm;
-    src_hw_chipset_mob_asm_len = src_hw_vdcz_mob_asm_len;
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
     variable_global( _environment, "CURRENTWIDTH" );

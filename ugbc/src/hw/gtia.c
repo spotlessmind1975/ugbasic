@@ -1436,8 +1436,6 @@ void gtia_initialization( Environment * _environment ) {
     
     deploy( gtiavars, src_hw_gtia_vars_asm );
     deploy( gtiastartup, src_hw_gtia_startup_asm );
-    src_hw_chipset_mob_asm = src_hw_gtia_mob_asm;
-    src_hw_chipset_mob_asm_len = src_hw_gtia_mob_asm_len;
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 320 );
     variable_global( _environment, "CURRENTWIDTH" );

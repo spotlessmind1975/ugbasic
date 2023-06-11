@@ -1569,8 +1569,6 @@ void vic2_initialization( Environment * _environment ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm );
     deploy( vic2startup, src_hw_vic2_startup_asm );
-    src_hw_chipset_mob_asm = src_hw_vic2_mob_asm;
-    src_hw_chipset_mob_asm_len = src_hw_vic2_mob_asm_len;
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );

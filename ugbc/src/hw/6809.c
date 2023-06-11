@@ -4470,46 +4470,6 @@ void cpu6809_complement2_32bit( Environment * _environment, char * _source, char
 
 }
 
-char * src_hw_chipset_mob_asm;
-unsigned int src_hw_chipset_mob_asm_len;
-
-void cpu6809_mobinit( Environment * _environment, char * _index, char *_x, char *_y,  char *_draw) {
-
-    deploy( mob, src_hw_6809_mob_asm );
-    // deploy( mobcs, src_hw_chipset_mob_asm );
-    
-}
-
-void cpu6809_mobshow( Environment * _environment, char * _index ) {
-
-    // TODO: implementation
-
-}
-
-void cpu6809_mobhide( Environment * _environment, char * _index ) {
-
-    // TODO: implementation
-
-}
-
-void cpu6809_mobat( Environment * _environment, char * _index, char *_x, char *_y ) {
-
-    // TODO: implementation
-
-}
-
-void cpu6809_mobrender( Environment * _environment, int _on_vbl ) {
-
-    // TODO: implementation
-
-}
-
-void cpu6809_mobcount( Environment * _environment, char * _index) {
-
-    // TODO: implementation
-
-}
-
 void cpu6809_sqroot( Environment * _environment, char * _number, char * _result ) {
 
     deploy( sqr, src_hw_6809_sqr_asm );

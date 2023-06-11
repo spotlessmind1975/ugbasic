@@ -946,8 +946,6 @@ void c6847_initialization( Environment * _environment ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm );
     deploy( c6847startup, src_hw_6847_startup_asm );
-    // src_hw_chipset_mob_asm = src_hw_6847_mob_asm;
-    // src_hw_chipset_mob_asm_len = src_hw_6847_mob_asm_len;
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );

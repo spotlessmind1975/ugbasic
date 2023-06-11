@@ -54,7 +54,6 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
             switch( variable->type ) {
                 case VT_STRING:
                 case VT_DSTRING:
-                case VT_MOB:
                 case VT_SPRITE:
                 case VT_TILESET:
                 case VT_TILES:

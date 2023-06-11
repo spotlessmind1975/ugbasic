@@ -4572,38 +4572,6 @@ void z80_complement2_32bit( Environment * _environment, char * _source, char * _
     }
 }
 
-
-char * src_hw_chipset_mob_asm;
-unsigned int src_hw_chipset_mob_asm_len;
-
-void z80_mobinit( Environment * _environment, char * _index, char *_x, char *_y,  char *_draw) {
-
-
-}
-
-void z80_mobshow( Environment * _environment, char * _index ) {
-
-}
-
-void z80_mobhide( Environment * _environment, char * _index ) {
-
-}
-
-void z80_mobat( Environment * _environment, char * _index, char *_x, char *_y ) {
-
-}
-
-void z80_mobrender( Environment * _environment, int _on_vbl ) {
-
-}
-
-void z80_mobcount( Environment * _environment, char * _index) {
-
-    deploy( mob, src_hw_z80_mob_asm );
-    // deploy( mobcs, src_hw_chipset_mob_asm );
-
-}
-
 void z80_sqroot( Environment * _environment, char * _number, char * _result ) {
 
     deploy( sqr, src_hw_z80_sqr_asm );

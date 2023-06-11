@@ -1236,8 +1236,6 @@ void ted_initialization( Environment * _environment ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
     deploy( tedstartup, src_hw_ted_startup_asm );
-    src_hw_chipset_mob_asm = src_hw_ted_mob_asm;
-    src_hw_chipset_mob_asm_len = src_hw_ted_mob_asm_len;
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );

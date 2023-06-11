@@ -70,8 +70,6 @@ istruzioni al momento della compilazione.
 
 @example starshipWidth = IMAGE WIDTH( LOAD IMAGE("starship.png") )
 
-@usedInExample mobs_example_01.bas
-
 @target all
 </usermanual> */
 Variable * image_get_width( Environment * _environment, char * _image ) {

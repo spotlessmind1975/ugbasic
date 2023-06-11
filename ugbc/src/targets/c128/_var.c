@@ -117,7 +117,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_TILE:
                 case VT_TILESET:
                 case VT_SPRITE:
-                case VT_MOB:
                     if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
@@ -263,7 +262,6 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SPRITE:
         case VT_TILE:
         case VT_TILESET:
-        case VT_MOB:
             outline0("   .byte 0" );
             break;
         case VT_TILES:

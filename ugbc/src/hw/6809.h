@@ -210,12 +210,6 @@ void cpu6809_dsalloc_size( Environment * _environment, int _size, char * _index 
 void cpu6809_complement2_8bit( Environment * _environment, char * _source, char * _destination );
 void cpu6809_complement2_16bit( Environment * _environment, char * _source, char * _destination );
 void cpu6809_complement2_32bit( Environment * _environment, char * _source, char * _destination );
-void cpu6809_mobinit( Environment * _environment, char * _index, char *_x, char *_y, char *_draw);
-void cpu6809_mobshow( Environment * _environment, char * _index );
-void cpu6809_mobhide( Environment * _environment, char * _index );
-void cpu6809_mobat( Environment * _environment, char * _index, char *_x, char *_y );
-void cpu6809_mobrender( Environment * _environment, int _on_vbl );
-void cpu6809_mobcount( Environment * _environment, char * _index);
 void cpu6809_sqroot( Environment * _environment, char * _number, char * _result );
 void cpu6809_dstring_vars( Environment * _environment );
 void cpu6809_set_callback( Environment * _environment, char * _callback, char * _label );
@@ -457,15 +451,6 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_out_direct( _environment, _port, _value ) cpu6809_out_direct( _environment, _port, _value )
 #define cpu_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size ) cpu6809_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size );
 
-extern char * src_hw_chipset_mob_asm;
-extern unsigned int src_hw_chipset_mob_asm_len;
-
-#define cpu_mobinit( _environment, _index, _x, _y, _draw ) cpu6809_mobinit( _environment, _index, _x, _y, _draw )
-#define cpu_mobshow( _environment, _index ) cpu6809_mobshow( _environment, _index )
-#define cpu_mobhide( _environment, _index ) cpu6809_mobhide( _environment, _index )
-#define cpu_mobat( _environment, _index, _x, _y ) cpu6809_mobat( _environment, _index, _x, _y )
-#define cpu_mobrender( _environment, _on_vbl ) cpu6809_mobrender( _environment, _on_vbl )
-#define cpu_mobcount( _environment, _index ) cpu6809_mobcount( _environment, _index )
 #define cpu_sqroot( _environment, _number, _result ) cpu6809_sqroot( _environment, _number, _result )
 
 #define cpu_dstring_vars( _environment ) cpu6809_dstring_vars( _environment )

@@ -722,8 +722,6 @@ void ef9345_initialization( Environment * _environment ) {
 
     deploy( ef9345vars, src_hw_ef9345_vars_asm );
     deploy( ef9345startup, src_hw_ef9345_startup_asm );
-    // src_hw_chipset_mob_asm = src_hw_ef9345_mob_asm;
-    // src_hw_chipset_mob_asm_len = src_hw_ef9345_mob_asm_len;
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
     variable_global( _environment, "CURRENTWIDTH" );

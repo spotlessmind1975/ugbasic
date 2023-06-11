@@ -70,8 +70,6 @@ istruzioni al momento della compilazione.
 
 @example starshipHeight = IMAGE HEIGHT( LOAD IMAGE("starship.png") )
 
-@usedInExample mobs_example_01.bas
-
 @target all
 </usermanual> */
 Variable * image_get_height( Environment * _environment, char * _image ) {

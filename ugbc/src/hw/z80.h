@@ -213,12 +213,6 @@ void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char
 void z80_complement2_8bit( Environment * _environment, char * _source, char * _destination );
 void z80_complement2_16bit( Environment * _environment, char * _source, char * _destination );
 void z80_complement2_32bit( Environment * _environment, char * _source, char * _destination );
-void z80_mobinit( Environment * _environment, char * _index, char *_x, char *_y, char *_draw);
-void z80_mobshow( Environment * _environment, char * _index );
-void z80_mobhide( Environment * _environment, char * _index );
-void z80_mobat( Environment * _environment, char * _index, char *_x, char *_y );
-void z80_mobrender( Environment * _environment, int _on_vbl );
-void z80_mobcount( Environment * _environment, char * _index);
 void z80_sqroot( Environment * _environment, char * _number, char * _result );
 void z80_dstring_vars( Environment * _environment );
 void z80_out( Environment * _environment, char * _port, char * _value );
@@ -460,15 +454,6 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_out_direct( _environment, _port, _value ) z80_out_direct( _environment, _port, _value )
 #define cpu_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size ) z80_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size );
 
-extern char * src_hw_chipset_mob_asm;
-extern unsigned int src_hw_chipset_mob_asm_len;
-
-#define cpu_mobinit( _environment, _index, _x, _y, _draw ) z80_mobinit( _environment, _index, _x, _y, _draw )
-#define cpu_mobshow( _environment, _index ) z80_mobshow( _environment, _index )
-#define cpu_mobhide( _environment, _index ) z80_mobhide( _environment, _index )
-#define cpu_mobat( _environment, _index, _x, _y ) z80_mobat( _environment, _index, _x, _y )
-#define cpu_mobrender( _environment, _on_vbl ) z80_mobrender( _environment, _on_vbl )
-#define cpu_mobcount( _environment, _index ) z80_mobcount( _environment, _index )
 #define cpu_sqroot( _environment, _number, _result ) z80_sqroot( _environment, _number, _result )
 #define cpu_dstring_vars( _environment ) z80_dstring_vars( _environment )
 
