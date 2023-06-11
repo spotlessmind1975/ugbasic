@@ -3265,7 +3265,7 @@ void cpu6502_random_16bit( Environment * _environment, char * _entropy, char * _
             outline0("LDA CPURANDOM_SEED" );
             outline1("STA %s", _result );
             outline0("LDA CPURANDOM_SEED+1" );
-            outline1("STA %ss", address_displacement(_environment, _result, "1") );
+            outline1("STA %s", address_displacement(_environment, _result, "1") );
         }
 
     no_embedded( cpu_random_8bit );
@@ -3285,7 +3285,7 @@ void cpu6502_random_32bit( Environment * _environment, char * _entropy, char * _
             outline0("LDA CPURANDOM_SEED" );
             outline1("STA %s", _result );
             outline0("LDA CPURANDOM_SEED+1" );
-            outline1("STA %ss", address_displacement(_environment, _result, "1") );
+            outline1("STA %s", address_displacement(_environment, _result, "1") );
             outline0("LDA CPURANDOM_SEED+2" );
             outline1("STA %s", address_displacement(_environment, _result, "2") );
             outline0("LDA CPURANDOM_SEED+3" );
@@ -3377,7 +3377,7 @@ void cpu6502_and_16bit( Environment * _environment, char * _left, char * _right,
         outline1("STA %s", _result);
         outline1("LDA %s", address_displacement(_environment, _left, "1") );
         outline1("AND %s", address_displacement(_environment, _right, "1") );
-        outline1("STA %ss", address_displacement(_environment, _result, "1"));
+        outline1("STA %s", address_displacement(_environment, _result, "1"));
 
     no_embedded( cpu_and_16bit )
 
@@ -3394,7 +3394,7 @@ void cpu6502_and_32bit( Environment * _environment, char * _left, char * _right,
         outline1("STA %s", _result);
         outline1("LDA %s", address_displacement(_environment, _left, "1") );
         outline1("AND %s", address_displacement(_environment, _right, "1") );
-        outline1("STA %ss", address_displacement(_environment, _result, "1"));
+        outline1("STA %s", address_displacement(_environment, _result, "1"));
         outline1("LDA %s", address_displacement(_environment, _left, "2") );
         outline1("AND %s", address_displacement(_environment, _right, "2") );
         outline1("STA %s", address_displacement(_environment, _result, "2"));
@@ -3455,7 +3455,7 @@ void cpu6502_or_16bit( Environment * _environment, char * _left, char * _right, 
         outline1("STA %s", _result);
         outline1("LDA %s", address_displacement(_environment, _left, "1") );
         outline1("ORA %s", address_displacement(_environment, _right, "1") );
-        outline1("STA %ss", address_displacement(_environment, _result, "1"));
+        outline1("STA %s", address_displacement(_environment, _result, "1"));
 
     no_embedded( cpu_or_16bit )
 
@@ -3472,7 +3472,7 @@ void cpu6502_or_32bit( Environment * _environment, char * _left, char * _right, 
         outline1("STA %s", _result);
         outline1("LDA %s", address_displacement(_environment, _left, "1") );
         outline1("ORA %s", address_displacement(_environment, _right, "1") );
-        outline1("STA %ss", address_displacement(_environment, _result, "1"));
+        outline1("STA %s", address_displacement(_environment, _result, "1"));
         outline1("LDA %s", address_displacement(_environment, _left, "2") );
         outline1("ORA %s", address_displacement(_environment, _right, "2") );
         outline1("STA %s", address_displacement(_environment, _result, "2"));
@@ -3509,7 +3509,7 @@ void cpu6502_xor_16bit( Environment * _environment, char * _left, char * _right,
         outline1("STA %s", _result);
         outline1("LDA %s", address_displacement(_environment, _left, "1") );
         outline1("EOR %s", address_displacement(_environment, _right, "1") );
-        outline1("STA %ss", address_displacement(_environment, _result, "1"));
+        outline1("STA %s", address_displacement(_environment, _result, "1"));
 
     no_embedded( cpu_xor_16bit )
 
@@ -3526,7 +3526,7 @@ void cpu6502_xor_32bit( Environment * _environment, char * _left, char * _right,
         outline1("STA %s", _result);
         outline1("LDA %s", address_displacement(_environment, _left, "1") );
         outline1("EOR %s", address_displacement(_environment, _right, "1") );
-        outline1("STA %ss", address_displacement(_environment, _result, "1"));
+        outline1("STA %s", address_displacement(_environment, _result, "1"));
         outline1("LDA %s", address_displacement(_environment, _left, "2") );
         outline1("EOR %s", address_displacement(_environment, _right, "2") );
         outline1("STA %s", address_displacement(_environment, _result, "2"));
@@ -3656,7 +3656,7 @@ void cpu6502_not_16bit( Environment * _environment, char * _value, char * _resul
         outline1("STA %s", _result );
         outline1("LDA %s", address_displacement(_environment, _value, "1") );
         outline0("EOR #$FF" );
-        outline1("STA %ss", address_displacement(_environment, _result, "1") );
+        outline1("STA %s", address_displacement(_environment, _result, "1") );
 
     no_embedded( cpu_not_16bit )
 
@@ -3673,7 +3673,7 @@ void cpu6502_not_32bit( Environment * _environment, char * _value, char * _resul
         outline1("STA %s", _result );
         outline1("LDA %s", address_displacement(_environment, _value, "1") );
         outline0("EOR #$FF" );
-        outline1("STA %ss", address_displacement(_environment, _result, "1") );
+        outline1("STA %s", address_displacement(_environment, _result, "1") );
         outline1("LDA %s", address_displacement(_environment, _value, "2") );
         outline0("EOR #$FF" );
         outline1("STA %s", address_displacement(_environment, _result, "2") );
@@ -4814,7 +4814,7 @@ void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, 
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
         if ( _result ) {
-            outline1("LDA %ss", address_displacement(_environment, _result, "1") );
+            outline1("LDA %s", address_displacement(_environment, _result, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _result );
             outline0("STA TMPPTR2" );
@@ -4850,7 +4850,7 @@ void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, 
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
         if ( _result ) {
-            outline1("LDA %ss", address_displacement(_environment, _result, "1") );
+            outline1("LDA %s", address_displacement(_environment, _result, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _result );
             outline0("STA TMPPTR2" );
@@ -4877,7 +4877,7 @@ void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, 
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
         if ( _result ) {
-            outline1("LDA %ss", address_displacement(_environment, _result, "1") );
+            outline1("LDA %s", address_displacement(_environment, _result, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _result );
             outline0("STA TMPPTR2" );
@@ -4913,7 +4913,7 @@ void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, 
         outline1("LDA %s", _source );
         outline0("STA TMPPTR" );
         if ( _result ) {
-            outline1("LDA %ss", address_displacement(_environment, _result, "1") );
+            outline1("LDA %s", address_displacement(_environment, _result, "1") );
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _result );
             outline0("STA TMPPTR2" );
@@ -6205,7 +6205,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     left = (unsigned int) integral;
 
-    printf("left = %d\n", left );
+    // printf("left = %d\n", left );
 
     // Step 3: Convert the Fractional Portion to Binary
     // The fractional portion of the number must also be converted to binary, though the conversion process 
@@ -6225,7 +6225,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     while( ( fractional != 1.0 ) && ( steps < mantissa_bits ) ) {
 
-        printf("%f %d %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+        // printf("%f %d %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
         right[2] = right[2] << 1;
         right[1] = right[1] << 1;
@@ -6278,7 +6278,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
             while( left == 0 ) {
 
-                printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+                // printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
                 if ( ! right[0] && ! right[1] && ! right[2] ) {
                     left = 0x1;
@@ -6310,13 +6310,13 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         }
 
-        printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+        // printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
     } else {
 
         while( left ) {
 
-            printf("left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+            // printf("left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
             if ( ( right[0] & 0x01 ) ) {
                 right[1] = right[1] | 0x100;
@@ -6361,7 +6361,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     exp += 128;
 
-    printf("exp = %2.2x\n", exp );
+    // printf("exp = %2.2x\n", exp );
 
     // Step 6: Convert the Biased Exponent to Unsigned Binary
     // The biased exponent value from the previous step must be converted into unsigned binary, using the usual process.
@@ -6371,7 +6371,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     exp = exp & 0xff;
 
-    printf("exp = %2.2x\n", exp );
+    // printf("exp = %2.2x\n", exp );
 
     // Step 7: Determine the Final Bits for the Mantissa
     // After step 4, there are a bunch of bits after the normalized decimal point. These bits will become the 
@@ -6397,7 +6397,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
     _result[2] = ( right[1] );
     _result[3] = ( right[2] );
 
-    printf( "%f = %2.2x %2.2x %2.2x %2.2x\n", _value, _result[0], _result[1], _result[2], _result[3] );
+    // printf( "%f = %2.2x %2.2x %2.2x %2.2x\n", _value, _result[0], _result[1], _result[2], _result[3] );
 
 }
 
