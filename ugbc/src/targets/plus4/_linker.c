@@ -55,7 +55,7 @@ void linker_setup( Environment * _environment ) {
     cfghead0("MEMORY {");
     cfgline0("ZP:       file = \"\", start = $0002,  size = $001A,      define = yes;");
     cfgline0("LOADADDR: file = %O, start = %S - 2, size = $0002;");
-    cfgline0("MAIN:     file = %O, start = %S,     size = $57FF - %S;");
+    cfgline0("MAIN:     file = %O, start = %S,     size = $DFFF - %S;"); // 5700
     MemoryArea * actual = _environment->memoryAreas;
     while( actual ) {
         if ( actual->type == MAT_RAM  ) {
