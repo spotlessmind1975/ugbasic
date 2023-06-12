@@ -661,7 +661,7 @@ generated/sg1000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas
 toolchain.vg5000: z88dk
 
 generated/vg5000/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.vg5000 $(OPTIONS) ../$(subst generated/vg5000/asm/,,$(@:.asm=.bas)) ../$@ 
+	@cd examples && ../ugbc/exe/ugbc.vg5000 $(OPTIONS) $(subst generated/vg5000/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/vg5000/exe/%.bin: compiler
 	@$(Z80ASM) -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
