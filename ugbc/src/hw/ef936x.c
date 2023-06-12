@@ -1065,7 +1065,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
     
     int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    if (paletteColorCount > 4) {
+    if (paletteColorCount > 16) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
 
@@ -1081,9 +1081,9 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
         }
         if ( _transparent_color & 0xf00000 ) {
             commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 4 );
-            paletteColorCount = 4;
+            paletteColorCount = 16;
         }        
-        if ( paletteColorCount < 4 ) {
+        if ( paletteColorCount < 16 ) {
            ++paletteColorCount; 
         }
         lastUsedSlotInCommonPalette = paletteColorCount;
@@ -1104,7 +1104,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
         }
         if ( _transparent_color & 0xf00000 ) {
             commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, mergedCommonPalette, 16 );
-            mergedCommonPalette = 4;
+            mergedCommonPalette = 16;
         }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
