@@ -13,19 +13,24 @@ REM 32KB disponibili sul computer TRS-80 Color Computer ("coco" target). E'
 REM uno slideshow "in memoria", con ben quattro fotogrammi ad alta risoluzione.
 REM 
 
-BITMAP ENABLE
+PROCEDURE example ON COCO
 
-COLOR #0, #5
+	BITMAP ENABLE
+	
+	COLOR #0, #5
+	
+	p1 := LOAD IMAGE("bttf_frame_01.png")
+	p2 := LOAD IMAGE("bttf_frame_02.png")
+	p3 := LOAD IMAGE("bttf_frame_03.png")
+	p4 := LOAD IMAGE("bttf_frame_04.png")
+	
+	PUT IMAGE p1 AT 0,0:WAIT KEY
+	PUT IMAGE p2 AT 0,0:WAIT KEY
+	PUT IMAGE p3 AT 0,0:WAIT KEY
+	PUT IMAGE p4 AT 0,0:WAIT KEY
+	
+END PROC
 
-p1 := LOAD IMAGE("bttf_frame_01.png")
-p2 := LOAD IMAGE("bttf_frame_02.png")
-p3 := LOAD IMAGE("bttf_frame_03.png")
-p4 := LOAD IMAGE("bttf_frame_04.png")
-
-PUT IMAGE p1 AT 0,0:WAIT KEY
-PUT IMAGE p2 AT 0,0:WAIT KEY
-PUT IMAGE p3 AT 0,0:WAIT KEY
-PUT IMAGE p4 AT 0,0:WAIT KEY
-
-
-
+CALL example
+	
+	
