@@ -721,6 +721,11 @@ void ef936x_initialization( Environment * _environment ) {
     variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
     variable_global( _environment, "ORIGINY" );
 
+    variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONX" );
+    variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONY" );
+
     // ef936x_cls( _environment );
 
     _environment->fontWidth = 8;
