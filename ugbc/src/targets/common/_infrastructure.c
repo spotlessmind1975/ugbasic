@@ -7858,12 +7858,20 @@ char * address_displacement( Environment * _environment, char * _address, char *
     char addressed[MAX_TEMPORARY_STORAGE];
 
     if ( ! strchr( _address, '+' ) ) {
-        sprintf( addressed, "%s+%d", _address, atoi(_displacement) );
+        if ( atoi(_displacement) ) {
+            sprintf( addressed, "%s+%d", _address, atoi(_displacement) );
+        } else {
+            sprintf( addressed, "%s", _address );
+        }
     } else {
         char * duplicated = strdup( _address );
         char * p = strtok( duplicated, "+");
         char * q = strtok ( NULL, "+" );
-        sprintf( addressed, "%s+%d", p, atoi(q) + atoi(_displacement) );
+        if ( atoi(q) + atoi(_displacement) ) {
+            sprintf( addressed, "%s+%d", p, atoi(q) + atoi(_displacement) );
+        } else {
+            sprintf( addressed, "%s", p );
+        }
     }
 
     return strdup( addressed );
