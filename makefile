@@ -545,7 +545,7 @@ generated/mo5/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
 	@cd examples && ../ugbc/exe/ugbc.mo5 $(OPTIONS) -o ../$@ -O bin $(subst generated/mo5/exeso/,,$(@:.bin=.bas))
 
 generated/mo5/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.k7=.bas))
-	@ugbc/exe/ugbc.mo5 $(OPTIONS) -o $@ -O k7 $(subst generated/mo5/exeso/,examples/,$(@:.k7=.bas))
+	@cd examples && ../ugbc/exe/ugbc.mo5 $(OPTIONS) -o ../$@ -O k7 $(subst generated/mo5/exeso/,,$(@:.k7=.bas))
 
 #------------------------------------------------ 
 # msx1:
