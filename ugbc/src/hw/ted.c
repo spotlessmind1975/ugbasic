@@ -1737,8 +1737,6 @@ void ted_blit_image( Environment * _environment, char * _sources[], int _source_
         outline0( "STA BLITTMPPTR2+1" );
     }
 
-    outhead1("blitimage%s:", label);
-
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
     outline1("LDA %s", address_displacement(_environment, _x, "1") );
