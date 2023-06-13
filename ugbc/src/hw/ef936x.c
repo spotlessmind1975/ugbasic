@@ -1113,8 +1113,8 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
         }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
-        if ( lastUsedSlotInCommonPalette > 4 ) {
-            lastUsedSlotInCommonPalette = 4;
+        if ( lastUsedSlotInCommonPalette > 16 ) {
+            lastUsedSlotInCommonPalette = 16;
         }
         adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
