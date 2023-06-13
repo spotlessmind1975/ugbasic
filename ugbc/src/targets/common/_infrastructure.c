@@ -5654,13 +5654,13 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
     if ( array->arrayDimensions == 1 && array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( array->arrayType ) == 8 ) {
 
-        Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] );
+        Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
 
         cpu_move_8bit_indirect2_8bit( _environment, array->realName, index->realName, result->realName );
 
     } else if ( array->arrayDimensions == 1 && array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( array->arrayType ) == 16 ) {
 
-        Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] );
+        Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
 
         cpu_move_16bit_indirect2_8bit( _environment, array->realName, index->realName, result->realName );
 
