@@ -377,9 +377,9 @@ void cpu6502_fill_direct( Environment * _environment, char * _address, char * _b
     inline( cpu_fill )
 
         // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA <#%s", _address);
+        outline1("LDA #>%s", _address);
         outline0("STA TMPPTR");
-        outline1("LDA >#%s", _address);
+        outline1("LDA #<%s", _address);
         outline0("STA TMPPTR+1");
 
         outline1("LDA %s", _pattern);
@@ -395,9 +395,9 @@ void cpu6502_fill_direct( Environment * _environment, char * _address, char * _b
 
     embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
 
-        outline1("LDA #<%s", _address);
-        outline0("STA TMPPTR");
         outline1("LDA #>%s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA #<%s", _address);
         outline0("STA TMPPTR+1");
         outline1("LDX %s", _bytes );
         outline1("LDA %s", _pattern);
