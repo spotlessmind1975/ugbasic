@@ -1183,7 +1183,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                         int distance = rgbi_distance(&commonPalette[i], &rgb );
                         if ( distance < minDistance ) {
                             minDistance = distance;
-                            colorIndexes[xx] = i;
+                            colorIndexes[xx] = commonPalette[i].hardwareIndex;
                         }
                     }
                 }
