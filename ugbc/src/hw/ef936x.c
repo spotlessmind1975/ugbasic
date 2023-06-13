@@ -1164,9 +1164,9 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 rgb.green = *(_source + 1);
                 rgb.blue = *(_source + 2);
                 if ( _depth > 3 ) {
-                    rgb.alpha = 255;
-                } else {
                     rgb.alpha = *(_source + 3);
+                } else {
+                    rgb.alpha = 255;
                 }
                 if ( rgb.alpha == 0 ) {
                     rgb.red = 0;
