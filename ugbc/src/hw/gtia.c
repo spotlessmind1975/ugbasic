@@ -279,6 +279,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 240 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 240 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 40;
             _environment->screenHeight = 24;
@@ -331,6 +332,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 480 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 480 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 80;
             _environment->screenHeight = 48;
@@ -380,6 +382,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 960 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 960 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 80;
             _environment->screenHeight = 48;
@@ -429,6 +432,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 1920 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 1920 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 160;
             _environment->screenHeight = 96;
@@ -480,6 +484,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 3840 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 3840 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 160;
             _environment->screenHeight = 96;
@@ -538,6 +543,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 7680 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 7680 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 320;
             _environment->screenHeight = 192;
@@ -600,6 +606,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 3840 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 3840 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 160;
             _environment->screenHeight = 192;
@@ -650,6 +657,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 7680 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 7680 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 160;
             _environment->screenHeight = 192;
@@ -704,6 +712,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 960 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 960 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 40 * _environment->fontWidth;
             _environment->screenHeight = 24 * _environment->fontHeight;
@@ -758,6 +767,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 480 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 480 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 20 * _environment->fontWidth;
             _environment->screenHeight = 24 * _environment->fontHeight;
@@ -805,6 +815,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 240 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 240 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 20 * _environment->fontWidth;
             _environment->screenHeight = 12 * _environment->fontHeight;
@@ -854,6 +865,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 760 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 760 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 40 * _environment->fontWidth;
             _environment->screenHeight = 24 * _environment->fontHeight;
@@ -906,6 +918,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 960 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 960 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 20 * _environment->fontWidth;
             _environment->screenHeight = 24 * _environment->fontHeight;
@@ -953,6 +966,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             if ( _environment->frameBufferStart > ( 0xbfff - 480 ) ) {
                 _environment->frameBufferStart = ( 0xbfff - 480 );
             }
+            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
             _environment->screenWidth = 20 * _environment->fontWidth;
             _environment->screenHeight = 24 * _environment->fontHeight;
@@ -1515,7 +1529,7 @@ void gtia_initialization( Environment * _environment ) {
     _environment->currentTileMode = 1;
 
     _environment->currentRgbConverterFunction = rgbConverterFunction;
-    _environment->frameBufferStart = 0xbfff;
+    _environment->frameBufferStart = 0xbf00; // 256 byte boundary alignment
 
     gtia_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
