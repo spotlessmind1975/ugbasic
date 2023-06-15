@@ -143,7 +143,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     char * lookedFilename = image_load_asserts( _environment, _filename );
 
     FILE * lookedFileHandle = fopen( lookedFilename, "rb" );
-    fseek( lookedFileHandle, 0, SEEK_SET );
+    fseek( lookedFileHandle, 0, SEEK_END );
     long fileSize = ftell( lookedFileHandle );
     fclose( lookedFileHandle );
 
