@@ -96,7 +96,7 @@ BANKLOADL1
     BEQ BANKLOADL2
     STA $A7E5
 
-    PSHS D,Y,X
+    PSHS D,Y,X,U
     LDX #$6000
 
     LDA #1
@@ -144,7 +144,7 @@ BANKLOADL1END
     LDA #0
     SWI
     FCB   $22
-    PULS D,Y,X
+    PULS D,Y,X,U
 BANKLOADL2
     INCB
     CMPB #6
