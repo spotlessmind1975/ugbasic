@@ -144,7 +144,12 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
 
     char * lookedFilename = image_load_asserts( _environment, _filename );
 
-    adiline2("LI:%s:%s", _filename, lookedFilename );
+    FILE * lookedFileHandle = fopen( lookedFilename, "rb" );
+    fseek( lookedFileHandle, 0, SEEK_SET );
+    long fileSize = ftell( lookedFileHandle );
+    fclose( lookedFileHandle );
+
+    adiline3("LI:%s:%s:%lx", _filename, lookedFilename, fileSize );
 
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
 
