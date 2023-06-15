@@ -2527,6 +2527,12 @@ int embed_scan_string (const char *);
             fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
     }
 
+#define adiline6(s,a,b,c,d,e,f) \
+    if ( ((Environment *)_environment)->additionalInfoFile ) { \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, s, a, b, c, d, e, f ); \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
+    }
+
 #define adilinepalette(s,c,p) \
     if ( ((Environment *)_environment)->additionalInfoFile ) { \
             fprintf( ((Environment *)_environment)->additionalInfoFile, s, c ); \

@@ -149,8 +149,6 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     long fileSize = ftell( lookedFileHandle );
     fclose( lookedFileHandle );
 
-    adiline3("LI:%s:%s:%lx", _filename, lookedFilename, fileSize );
-
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
 
     if ( !source ) {
@@ -169,7 +167,9 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     }
     
     result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
-    
+
+    adiline4("LI:%s:%s:%lx:%x", _filename, lookedFilename, fileSize, result->size );
+
     result->originalBitmap = source;
     result->originalWidth = width;
     result->originalHeight = height;
