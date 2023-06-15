@@ -142,8 +142,6 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
 
     char * lookedFilename = image_load_asserts( _environment, _filename );
 
-    char * lookedFilename = image_load_asserts( _environment, _filename );
-
     FILE * lookedFileHandle = fopen( lookedFilename, "rb" );
     fseek( lookedFileHandle, 0, SEEK_SET );
     long fileSize = ftell( lookedFileHandle );
