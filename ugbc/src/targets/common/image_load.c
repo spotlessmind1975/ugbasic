@@ -165,10 +165,12 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     if ( _transparent_color != -1 ) {
         _flags |= FLAG_TRANSPARENCY;
     }
-    
-    result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
 
     adiline4("LI:%s:%s:%lx:%x", _filename, lookedFilename, fileSize, result->size );
+
+    result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
+
+    adiline1("LI2:%x", result->size );
 
     result->originalBitmap = source;
     result->originalWidth = width;

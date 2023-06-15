@@ -172,6 +172,8 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
     i = 0;
     di = 1;
 
+    adiline5("LS:%s:%s:%2.2x:%2.2x:%lx", _filename, lookedFilename, realFramesCount, wc, fileSize );
+
     if( _flags & FLAG_FLIP_X ) {
         source = image_flip_x( _environment, source, width, height, depth );
     }
@@ -194,7 +196,7 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
 
     bufferSize += 3;
 
-    adiline6("LS:%s:%s:%2.2x:%2.2x:%lx:%x", _filename, lookedFilename, realFramesCount, wc, fileSize, bufferSize );
+    adiline1("LS2:%x", bufferSize );
 
     char * buffer = malloc( bufferSize );
     char * ptr = buffer;
