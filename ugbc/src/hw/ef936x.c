@@ -1009,12 +1009,17 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
             }
 
             int colorIndex = 0;
+            int firstIndex = 0;
+            if ( _transparent_color & 0x0f0000 ) {
+                firstIndex = 1;
+            }
 
             if ( rgb.alpha < 255 ) {
-
+                colorIndex = 0;
             } else {
                 unsigned int minDistance = 0xffff;
-                for( i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                for( i=firstIndex; i<lastUsedSlotInCommonPalette; ++i ) {
+                    if ( commonPalette[i].alpha < 255 ) continue;
                     unsigned int distance = rgbi_distance(&commonPalette[i], &rgb);
                     if ( minDistance > distance ) {
                         minDistance = distance;
@@ -1174,12 +1179,17 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                     rgb.blue = 0;
                 }
 
+                int firstIndex = 0;
+                if ( _transparent_color & 0x0f0000 ) {
+                    firstIndex = 1;
+                }
+
                 if ( rgb.alpha < 255 ) {
                     colorIndexes[xx] = 0;
-                    trans = 1;
                 } else {
                     int minDistance = 9999;
-                    for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                    for( int i=firstIndex; i<lastUsedSlotInCommonPalette; ++i ) {
+                    if ( commonPalette[i].alpha < 255 ) continue;
                         int distance = rgbi_distance(&commonPalette[i], &rgb );
                         if ( distance < minDistance ) {
                             minDistance = distance;
@@ -1390,13 +1400,18 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
             unsigned int minDistance = 0xffff;
             int colorIndex = 0;
+            int firstIndex = 0;
+            if ( _transparent_color & 0x0f0000 ) {
+                firstIndex = 1;
+            }
 
             colorIndex = 0;
 
             if ( rgb.alpha < 255 ) {
 
             } else {
-                for( i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                for( i=firstIndex; i<lastUsedSlotInCommonPalette; ++i ) {
+                    if ( commonPalette[i].alpha < 255 ) continue;
                     unsigned int distance = rgbi_distance(&commonPalette[i], &rgb);
                     if ( minDistance > distance ) {
                         minDistance = distance;
@@ -1569,13 +1584,18 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
             int minDistance = 0xffff;
             int colorIndex = 0;
+            int firstIndex = 0;
+            if ( _transparent_color & 0x0f0000 ) {
+                firstIndex = 1;
+            }
 
             colorIndex = 0;
 
             if ( rgb.alpha < 255 ) {
 
             } else {
-                for( i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                for( i=firstIndex; i<lastUsedSlotInCommonPalette; ++i ) {
+                    if ( commonPalette[i].alpha < 255 ) continue;
                     int distance = rgbi_distance(&commonPalette[i], &rgb);
                     if ( minDistance > distance ) {
                         minDistance = distance;
