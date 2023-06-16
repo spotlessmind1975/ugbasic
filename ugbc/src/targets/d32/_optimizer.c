@@ -503,14 +503,14 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         optim(buf[2], NULL, "\tSTX %s", v1->str);
     }
 
-    if ( po_buf_match(buf[0], " STD *", v1)
-    &&   po_buf_match(buf[1], " LDD *", v2)
-    &&   po_buf_match(buf[2], " ADDD *", v3)
-    &&  po_buf_strcmp(v1,v3)==0) {
-        // if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
-        optim(buf[1], RULE "(STD*,LDD+,ADD*)->(STD*,ADD+)", NULL);
-        optim(buf[2], NULL, "\tADDD %s", v2->str);
-    }
+    // if ( po_buf_match(buf[0], " STD *", v1)
+    // &&   po_buf_match(buf[1], " LDD *", v2)
+    // &&   po_buf_match(buf[2], " ADDD *", v3)
+    // &&  po_buf_strcmp(v1,v3)==0) {
+    //     // if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
+    //     optim(buf[1], RULE "(STD*,LDD+,ADD*)->(STD*,ADD+)", NULL);
+    //     optim(buf[2], NULL, "\tADDD %s", v2->str);
+    // }
 
     if ( po_buf_match(buf[0], " STB *", v1)
     &&   po_buf_match(buf[1], " LDB *", v2)
