@@ -7584,8 +7584,10 @@ RGBi * palette_promote_color_as_foreground( int _index, RGBi * _source, int _sou
     if ( i <_source_size ) {
         RGBi tmp;
         rgbi_move( &reorderedPalette[i], &tmp );
-        rgbi_move( &reorderedPalette[(_max_size-1)], &reorderedPalette[i] );
+        // Force duplication of color to manage opacity of black.
+        // rgbi_move( &reorderedPalette[(_max_size-1)], &reorderedPalette[i] );
         rgbi_move( &tmp, &reorderedPalette[(_max_size-1)] );
+        reorderedPalette[(_max_size-1)].alpha = 0xff;
     }
 
     return reorderedPalette;
@@ -7614,9 +7616,9 @@ RGBi * palette_shift( RGBi * _source, int _source_size, int _offset ) {
     unsigned char * source = (unsigned char *)_source;
 
     if ( _offset > 0 ) {
-        memcpy( dest + ( _offset * sizeof( RGBi ) ), source, _source_size * sizeof( RGBi ) );
+        memmove( dest + ( _offset * sizeof( RGBi ) ), source, _source_size * sizeof( RGBi ) );
     } else if ( _offset < 0 ) {
-        memcpy( shiftedPalette, _source - ( _offset * sizeof( RGBi ) ), _source_size * sizeof( RGBi ) );
+        memmove( shiftedPalette, _source - ( _offset * sizeof( RGBi ) ), _source_size * sizeof( RGBi ) );
    }
 
     return shiftedPalette;
@@ -7668,7 +7670,7 @@ RGBi * palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, in
         if ( _palette1[i].hardwareIndex == 0xff ) continue;
         if ( _palette1[i].alpha < 255 ) continue;
         for( j=0; j<*_size; ++j ) {
-            if ( rgbi_equals_rgb( &_palette1[i], &mergedPalette[j] ) ) {
+            if ( rgbi_equals_rgba( &_palette1[i], &mergedPalette[j] ) ) {
                 break;
             }
         }
@@ -7682,7 +7684,7 @@ RGBi * palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, in
         if ( _palette2[i].hardwareIndex == 0xff ) continue;
         if ( _palette2[i].alpha < 255 ) continue;
         for( j=0; j<*_size; ++j ) {
-            if ( rgbi_equals_rgb( &_palette2[i], &mergedPalette[j] ) ) {
+            if ( rgbi_equals_rgba( &_palette2[i], &mergedPalette[j] ) ) {
                 break;
             }
         }
