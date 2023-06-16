@@ -44,7 +44,7 @@
 #define KEY_7						0x0c
 #define KEY_8						0x1c
 #define KEY_9						0x2c
-#define KEY_A						0x5a
+#define KEY_A						0x56
 #define KEY_ASTERISK				0x58
 #define KEY_AT						0x30
 #define KEY_B						0x44
