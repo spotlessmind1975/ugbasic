@@ -1648,7 +1648,7 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
     deploy( putimage, src_hw_ef936x_put_image_asm );
 
     outline1("LDA #$%2.2x", ( _flags & FLAG_TRANSPARENCY ) );
-    outline0("STA <IMAGET" );
+    outline0("STA <IMAGEF" );
     outline1("LDY #%s", _image );
     if ( _sequence ) {
         outline0("LEAY 3,y" );
@@ -1694,7 +1694,7 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
     outline1("LDD %s", _y );
     outline0("STD <IMAGEY" );
     outline1("LDA #$%2.2x", ( _flags & FLAG_DOUBLE_Y ) );
-    outline0("STA <IMAGEF" );
+    outline0("STA <IMAGET" );
 
     outline0("JSR PUTIMAGE");
     
