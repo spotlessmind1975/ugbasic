@@ -7651,8 +7651,16 @@ RGBi * palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, in
     for ( i=0; i<_palette2_size; ++i ) {
         if ( _palette2[i].hardwareIndex == 0xff ) continue;
         if ( _palette2[i].alpha < 255 ) {
-            rgbi_move( &_palette2[i], &mergedPalette[*_size] );
-            ++*_size;
+            int k = 0;
+            for( int k=0; k<*_size; ++k ) {
+                if ( rgbi_equals_rgba( &mergedPalette[k], &_palette2[i] ) ) {
+                    break;
+                }
+            }
+            if ( k >= *_size ) {
+                rgbi_move( &_palette2[i], &mergedPalette[*_size] );
+                ++*_size;
+            }
         }
     }
 
