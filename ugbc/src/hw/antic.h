@@ -130,14 +130,14 @@ load memory scan (LMS)
                                     *_list++ = ((unsigned char)( 0x20 | _n ));
 
 #define     DLI_LMS( _list, _n, _addr )      \
-                                    *_list++ = ((unsigned char)( /*0x30 |*/ 0x40 | _n )); \
-                                    *_list++ = ((unsigned char)( _addr & 0xff )); \
-                                    *_list++ = ((unsigned char)( _addr >> 8 ));
+                                    *_list++ = ((unsigned char)( /*0x30 |*/ 0x40 | ( _n ) )); \
+                                    *_list++ = ((unsigned char)( ( _addr ) & 0xff )); \
+                                    *_list++ = ((unsigned char)( ( _addr ) >> 8 ));
 
 #define     DLI_LMS_VHSCROLL( _list, _n, _addr )      \
-                                    *_list++ = ((unsigned char)( 0x20 | 0x40 | _n )); \
-                                    *_list++ = ((unsigned char)( _addr & 0xff )); \
-                                    *_list++ = ((unsigned char)( _addr >> 8 ));
+                                    *_list++ = ((unsigned char)( 0x20 | 0x40 | ( _n ) )); \
+                                    *_list++ = ((unsigned char)( ( _addr ) & 0xff )); \
+                                    *_list++ = ((unsigned char)( ( _addr ) >> 8 ));
 
 #define     DLI_IRQ( _list, _n )    \
                                     *_list++ = ((unsigned char)( /*0x10 |*/ 0x80 | _n ));

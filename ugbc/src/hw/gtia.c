@@ -248,6 +248,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     int currentHeight = 0;
     int scanline = 0;
     int dliListStartOffset;
+    int screenMemoryAddress2 = 0;
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     
@@ -568,7 +569,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
                 DLI_MODE_VHSCROLL( dliListCurrent, 15 );
             }
 
-            DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart + 40 * 96 );
+            screenMemoryAddress2 = _environment->frameBufferStart + 4096;
+
+            _environment->frameBufferStart2 = screenMemoryAddress2;
+            
+            DLI_LMS_VHSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
 
             screenMemoryOffset2 = dliListCurrent - dliListStart - 2;
 
@@ -1036,10 +1041,10 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     if ( _screen_mode->bitmap ) {
         outline0("CLC" );
         outline1("LDA #<%s", dli->realName );
-        outline1("ADC #%d", ( screenMemoryOffset & 0xff ) );
+        outline1("ADC #$%2.2x", ( screenMemoryOffset & 0xff ) );
         outline0("STA TMPPTR" );
         outline1("LDA #>%s", dli->realName );
-        outline1("ADC #%d", ( ( screenMemoryOffset >> 8 ) & 0xff ) );
+        outline1("ADC #$%2.2x", ( ( screenMemoryOffset >> 8 ) & 0xff ) );
         outline0("STA TMPPTR+1" );
         outline0("LDY #0" );
 
@@ -1052,30 +1057,28 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         if ( screenMemoryOffset2 ) {
             outline0("CLC" );
             outline1("LDA #<%s", dli->realName );
-            outline1("ADC #%d", ( screenMemoryOffset2 & 0xff ) );
+            outline1("ADC #$%2.2x", ( screenMemoryOffset2 & 0xff ) );
             outline0("STA TMPPTR" );
             outline1("LDA #>%s", dli->realName );
-            outline1("ADC #%d", ( ( screenMemoryOffset2 >> 8 ) & 0xff ) );
+            outline1("ADC #$%2.2x", ( ( screenMemoryOffset2 >> 8 ) & 0xff ) );
             outline0("STA TMPPTR+1" );
             outline0("LDY #0" );
 
             outline0("CLC" );
-            outline0("LDA BITMAPADDRESS" );
-            outline1("ADC %d", ( currentHeight/2 ) * scanline );
+            outline1("LDA #$%2.2x", ( screenMemoryAddress2 & 0xff ) );
             outline0("STA (TMPPTR),Y" );
             outline0("INY" );
-            outline0("LDA BITMAPADDRESS+1" );
-            outline1("ADC %d", ( currentHeight/2 ) * scanline );
+            outline1("LDA #$%2.2x", ( screenMemoryAddress2 >> 8 ) & 0xff );
             outline0("STA (TMPPTR),Y" );
 
         }
     } else {
         outline0("CLC" );
         outline1("LDA #<%s", dli->realName );
-        outline1("ADC #%d", ( screenMemoryOffset & 0xff ) );
+        outline1("ADC #$%2.2x", ( screenMemoryOffset & 0xff ) );
         outline0("STA TMPPTR" );
         outline1("LDA #>%s", dli->realName );
-        outline1("ADC #%d", ( ( screenMemoryOffset >> 8 ) & 0xff ) );
+        outline1("ADC #$%2.2x", ( ( screenMemoryOffset >> 8 ) & 0xff ) );
         outline0("STA TMPPTR+1" );
         outline0("LDY #0" );
 
@@ -1089,10 +1092,10 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     outline0("CLC" );
     outline1("LDA #<%s", dli->realName );
-    outline1("ADC #%d", ( dliListStartOffset & 0xff ) );
+    outline1("ADC #$%2.2x", ( dliListStartOffset & 0xff ) );
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", dli->realName );
-    outline1("ADC #%d", ( ( dliListStartOffset >> 8 ) & 0xff ) );
+    outline1("ADC #$%2.2x", ( ( dliListStartOffset >> 8 ) & 0xff ) );
     outline0("STA TMPPTR+1" );
     outline0("LDY #0" );
 
@@ -1471,7 +1474,7 @@ void gtia_initialization( Environment * _environment ) {
 #endif
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC13, 1, 160, 96, 4, 8, 8, "Graphics 7 (ANTIC D or 13)"  );
 #ifdef __atarixl__
-    //SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 160, 192, 1, 8, 8, "Graphics 8 (ANTIC F or 15)"  );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 320, 192, 1, 8, 8, "Graphics 8 (ANTIC F or 15)"  );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 160, 192, 2, 8, 8, "Antic C (Graphics 14-XL computers only)"  );
 #endif
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC8, 1, 40, 24, 4, 8, 8, "Graphics 3 (ANTIC 8)" );

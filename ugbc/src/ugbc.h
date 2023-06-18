@@ -2012,7 +2012,12 @@ typedef struct _Environment {
      * Starting address of frame buffer
      */
     int frameBufferStart;
-    
+
+    /*
+     * Starting address of auxiliary frame buffer
+     */
+    int frameBufferStart2;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

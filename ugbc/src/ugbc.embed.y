@@ -413,6 +413,9 @@ embed2:
         if ( strcmp( $3, "frameBufferStart" ) == 0 ) {
             outline2( "%s=$%4.4x", $5, ((struct _Environment *)_environment)->frameBufferStart );
         }
+        if ( strcmp( $3, "frameBufferStart2" ) == 0 ) {
+            outline2( "%s=$%4.4x", $5, ((struct _Environment *)_environment)->frameBufferStart2 );
+        }
         ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }
   | OP_AT MACRO Identifier 

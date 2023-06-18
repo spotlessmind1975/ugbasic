@@ -691,18 +691,16 @@ PLOTANTIC13PENX:
 
 PLOTANTIC15:
 
-    LDA _PEN
-    AND #$F0
+    LDA #$00
     CMP $2C6
     BEQ PLOTANTIC15B1
-@INLINE PALETTEPRESERVE2C6 [_PEN], [#$0]
+@INLINE PALETTEPRESERVE2C6 [#$0], [#$0]
 
 PLOTANTIC15B1:
-    LDA _PEN
-    AND #$0F
+    LDA #$0f
     CMP $2C5
     BEQ PLOTANTIC15B2
-@INLINE PALETTEPRESERVE2C5 [_PEN], [#$0]
+@INLINE PALETTEPRESERVE2C5 [#$f], [#$0]
 
 PLOTANTIC15B2:
     LDA #<PLOTORBIT21
@@ -756,11 +754,11 @@ PLOTANTIC15PEN:
     CLC
 
     TXA
-    ADC PLOT6VBASELO,Y          ;table of $9C40 row base addresses
+    ADC PLOT6XVBASELO,Y          ;table of $9C40 row base addresses
     STA PLOTDEST               ;= cell address
 
     LDA #0
-    ADC PLOT6VBASEHI,Y          ;do the high byte
+    ADC PLOT6XVBASEHI,Y          ;do the high byte
     STA PLOTDEST+1
     
     JMP PLOTGENERIC

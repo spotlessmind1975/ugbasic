@@ -946,11 +946,11 @@ MOBSAVE15:
     CLC
 
     TXA
-    ADC PLOT6VBASELO,Y          ;table of $9C40 row base addresses
+    ADC PLOT6XVBASELO,Y          ;table of $9C40 row base addresses
     STA PLOTDEST               ;= cell address
 
     LDA #0
-    ADC PLOT6VBASEHI,Y          ;do the high byte
+    ADC PLOT6XVBASEHI,Y          ;do the high byte
     STA PLOTDEST+1
 
     JMP MOBSAVECOMMON
@@ -1260,11 +1260,11 @@ MOBRESTORE15:
     CLC
 
     TXA
-    ADC PLOT6VBASELO,Y          ;table of $9C40 row base addresses
+    ADC PLOT6XVBASELO,Y          ;table of $9C40 row base addresses
     STA PLOTDEST               ;= cell address
 
     LDA #0
-    ADC PLOT6VBASEHI,Y          ;do the high byte
+    ADC PLOT6XVBASEHI,Y          ;do the high byte
     STA PLOTDEST+1
 
     JMP MOBRESTORECOMMON
