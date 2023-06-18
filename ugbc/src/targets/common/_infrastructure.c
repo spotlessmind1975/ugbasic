@@ -1665,6 +1665,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             break;
                     }
+                    break;
                 case 16:
                     switch( source->type ) {
                         case VT_FLOAT:
@@ -1683,6 +1684,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             break;
                     }
+                    break;
                 case 8:
                     switch( source->type ) {
                         case VT_FLOAT:
