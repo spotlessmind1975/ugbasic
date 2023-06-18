@@ -6168,9 +6168,9 @@ void z80_float_single_to_16( Environment * _environment, char * _value, char * _
 
     outline1( "LD HL, %s", _value );
     if ( _signed ) {
-        outline0( "CALL FPSINGLETOS16");
+        outline0( "CALL FPSINGLETO16S");
     } else {
-        outline0( "CALL FPSINGLETOU16");
+        outline0( "CALL FPSINGLETO16U");
     }
     outline1( "LD (%s), HL", _result );
 
@@ -6182,9 +6182,9 @@ void z80_float_single_to_8( Environment * _environment, char * _value, char * _r
 
     outline1( "LD HL, %s", _value );
     if ( _signed ) {
-        outline0( "CALL FPSINGLETOS8");
+        outline0( "CALL FPSINGLETO8S");
     } else {
-        outline0( "CALL FPSINGLETOU8");
+        outline0( "CALL FPSINGLETO8U");
     }
     outline1( "LD (%s), A", _result );
 
