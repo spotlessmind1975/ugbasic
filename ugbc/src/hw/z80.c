@@ -3899,7 +3899,7 @@ void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, cha
         outline0("CP 0" );
         outline0("PUSH AF");
         outline1("JR Z,%spositive", label);
-        z80_complement2_32bit( _environment, _source, NULL );
+        z80_complement2_16bit( _environment, _source, NULL );
         outhead1("%spositive:", label);
         outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
         outline0("AND $80");
