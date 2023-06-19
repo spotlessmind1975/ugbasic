@@ -2679,6 +2679,7 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
     Variable * remainder = NULL;
     Variable * realTarget = NULL;
     Variable * realSource = NULL;
+
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             switch( VT_BITWIDTH( target->type ) ) {
@@ -3095,14 +3096,8 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
     Variable * target = variable_retrieve( _environment, _destination );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        if ( VT_SIGNED( source->type ) ) {
-            target = variable_cast( _environment, _destination, source->type );
-        } else {
-            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
-            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
-        }
-    } else {
-        target = variable_cast( _environment, _destination, source->type );
+        source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
+        target = variable_cast( _environment, _destination, VT_SIGN( target->type ) );
     }
 
     MAKE_LABEL
@@ -3658,13 +3653,15 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
         if ( VT_SIGNED( source->type ) ) {
-            target = variable_cast( _environment, _destination, source->type );
+            source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+            target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
         } else {
-            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
-            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+            source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+            target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
         }
     } else {
-        target = variable_cast( _environment, _destination, source->type );
+        source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+        target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
     }
 
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
@@ -3939,13 +3936,15 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
         if ( VT_SIGNED( source->type ) ) {
-            target = variable_cast( _environment, _destination, source->type );
+            source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+            target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
         } else {
-            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
-            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+            source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+            target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
         }
     } else {
-        target = variable_cast( _environment, _destination, source->type );
+        source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+        target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
     }
 
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
