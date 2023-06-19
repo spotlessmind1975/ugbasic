@@ -2363,8 +2363,22 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
             cpu_string_sub( _environment, address->realName, size->realName, address2->realName, size2->realName, address3->realName, size3->realName );
             cpu_dsresize( _environment, result->realName, size3->realName );
     } else {
-        Variable * target = variable_cast( _environment, _dest, source->type );
-        result = variable_temporary( _environment, source->type, "(result of subtracting)" );
+
+        if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
+            result = variable_temporary( _environment, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ), "(result of subtracting)" );
+            if ( VT_SIGNED( source->type ) ) {
+                source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+                target = variable_cast( _environment, _dest, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+            } else {
+                source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+                target = variable_cast( _environment, _dest, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+            }
+        } else {
+            source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+            target = variable_cast( _environment, _dest, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+            result = variable_temporary( _environment, VT_MAX_BITWIDTH_TYPE( source->type, target->type ), "(result of subtracting)" );
+        }
+
         switch( VT_BITWIDTH( source->type ) ) {
             case 32:
                 cpu_math_sub_32bit( _environment, source->realName, target->realName, result->realName );
