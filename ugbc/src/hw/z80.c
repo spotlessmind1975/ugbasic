@@ -3894,7 +3894,7 @@ void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, cha
 
     if ( _signed ) {
 
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
         outline0("AND $80");
         outline0("CP 0" );
         outline0("PUSH AF");
