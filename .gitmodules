@@ -25,3 +25,6 @@
 [submodule "modules/z88dk"]
 	path = modules/z88dk
 	url = https://github.com/spotlessmind1975/z88dk.git
+[submodule "modules/libxml2"]
+	path = modules/libxml2
+	url = https://github.com/spotlessmind1975/libxml2.git
