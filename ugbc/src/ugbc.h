@@ -2241,6 +2241,9 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_CAST_FLOAT_PRECISION( v1, v2 ) CRITICAL3("E0176 - Cannot cast types since float precision mismatch", v1, v2 );
 #define CRITICAL_SWAP_UNSUPPORTED( v, t ) CRITICAL3("E177 - Swap unsupported for variable of given datatype", v, t );
 #define CRITICAL_CANNOT_EMIT_FLOAT_CONST( v ) CRITICAL2("E178 - cannot emit floating point constants", v );
+#define CRITICAL_TILESET_LOAD_UNKNOWN_FORMAT( v ) CRITICAL2("E179 - unknown tileset format", v );
+#define CRITICAL_TILESET_LOAD_MISSING_IMAGE( v ) CRITICAL2("E180 - missing image from tileset", v );
+#define CRITICAL_RESOURCE_LOAD_MISSING_FILE(f) CRITICAL2("E181 - missing file in loading resource", f );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3314,7 +3317,6 @@ char *                  image_cut( Environment * _environment, char * _source, i
 char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height, int _depth );
 char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height, int _depth );
 Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
-char *                  image_load_asserts( Environment * _environment, char * _filename );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
 void                    image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
@@ -3468,6 +3470,7 @@ void                    raster_at( Environment * _environment, char * _label, in
 void                    raster_at_var( Environment * _environment, char * _label, char * _position );
 void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
+char *                  resource_load_asserts( Environment * _environment, char * _filename );
 Variable *              respawn_procedure( Environment * _environment, char * _name );
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
@@ -3576,6 +3579,7 @@ Variable *              tile_load( Environment * _environment, char * _filename,
 Variable *              tiles_load( Environment * _environment, char * _filename, int _flags, char * _tileset, int _index );
 void                    tiles_at( Environment * _environment, int _address );
 void                    tiles_at_var( Environment * _environment, char * _address );
+Variable *              tileset_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 
 //----------------------------------------------------------------------------
 // *u*
