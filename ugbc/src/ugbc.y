@@ -1989,6 +1989,7 @@ load_image  : LOAD IMAGE | IMAGE LOAD;
 load_images : LOAD IMAGES | IMAGES LOAD;
 load_sequence : LOAD SEQUENCE | SEQUENCE LOAD;
 load_tileset  : LOAD TILESET | TILESET LOAD;
+load_tilemap  : LOAD TILEMAP | TILEMAP LOAD;
 
 exponential:
     Identifier {
@@ -2388,14 +2389,12 @@ exponential:
     | load_images OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_opacity using_background on_bank {
         $$ = images_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $10, $12, $14, $15+$16, $17, $18 )->name;
       }
-
     | load_tileset OP String CP images_load_flags using_transparency using_opacity using_background on_bank {
         $$ = tileset_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
       }
     | load_tileset OP String AS String CP images_load_flags  using_transparency using_opacity using_background on_bank {
         $$ = tileset_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 )->name;
       }
-
     | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank {
         $$ = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
       }

@@ -1,5 +1,5 @@
-#ifndef __TSX__
-#define __TSX__
+#ifndef __TMX__
+#define __TMX__
 
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
@@ -35,43 +35,55 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-typedef struct _TsxImage {
+typedef enum _TmxOrientation {
+ 
+    TMX_ORTHOGONAL = 1,
+    TMX_ISOMETRIC = 2,
+    TMX_STAGGERED = 3,
+    TMS_HEXAGONAL = 4
+ 
+} TmxOrientation;
 
-    char                *   source;
+typedef enum _TmxRenderOrder {
+ 
+    TMX_RIGHT_DOWN = 1,
+    TMX_RIGHT_UP = 2,
+    TMX_LEFT_DOWN = 3,
+    TMX_LEFT_UP = 4
+ 
+} TmxOrientation;
+
+typedef struct _TmxLayer {
+
+    int                     id;
+    char                *   name;
     int                     width;
     int                     height;
 
-} TsxImage;
+    int                 *   data;
 
-typedef struct _TsxTile {
+    struct _TsmxLayer    *   next;
 
-    int                     id;
-    char                *   type;
-    double                  probability;
+}
 
-    struct _TsxTile     *   next;
+typedef struct _TmxMap {
 
-} TsxTile;
-
-typedef struct _TsxTileset {
-
-    char                *   version;
-    char                *   tiledversion;
-    char                *   name;
+    TmxOrientation          orientation;
+    TmxOrientation          renderorder;
+    int                     width;
+    int                     height;
     int                     tilewidth;
     int                     tileheight;
-    int                     tilecount;
-    int                     columns;
-    int                     firstgid;
+    int                     infinite;
+    int                     nextlayerid;
+    int                     nextobjectid;
 
-    struct _TsxImage *      image;
+    struct _TmxTileset  *   tilesets;
 
-    struct _TsxTile *       tiles;
-    
-    struct _TsxTileset *    next;
+    struct _TmxLayer    *   layers;
 
-} TsxTileset;
+} TmxMap;
 
-TsxTileset * tsx_load( char * _filename );
+TmxMap * tmx_load( char * _filename );
 
 #endif

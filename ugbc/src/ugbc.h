@@ -52,6 +52,7 @@
 #include <unistd.h>
 
 #include "libs/tsx.h"
+#include "libs/tmx.h"
 
 /****************************************************************************
  * DECLARATIONS AND DEFINITIONS SECTION 
@@ -309,7 +310,7 @@ typedef enum _VariableType {
     /** THREAD ID */
     VT_THREAD = 16,
 
-    /** IMAGES (static pictures) + optional tile map attached */
+    /** IMAGES (static pictures) + optional tile set attached */
     VT_IMAGES = 17,
 
     /** CHAR (printable character) */
@@ -337,7 +338,10 @@ typedef enum _VariableType {
     VT_BLIT = 25,
 
     /** FLOAT (floating point) */
-    VT_FLOAT = 26
+    VT_FLOAT = 26,
+
+    /** TILEMAP */
+    VT_TILEMAP = 27
 
 } VariableType;
 
@@ -750,6 +754,9 @@ typedef struct _Variable {
 
     /** If VT_IMAGES, this is the original tsx' tileset attached (if used) */
     TsxTileset * originalTileset;
+
+    /** If VT_TILEMAP, this is the original tmx' tileset attached (if used) */
+    TmxMap * originalTilemap;
 
     /** 
      * This flag mark if this variable is read only (1) or not (0); 

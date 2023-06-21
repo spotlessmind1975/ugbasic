@@ -8,12 +8,29 @@
         "."
     ],
     "fileStates": {
+        "kenney-large-town.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 342.3333333333333,
+                "y": 60.99999999999997
+            }
+        },
+        "kenney-tiny-town.tmx": {
+            "scale": 5.05875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 68.49518161601186,
+                "y": 80.15814183345688
+            }
+        },
         "kenney-tiny-town.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 4
         }
     },
     "last.imagePath": "Z:/ugbasic",
+    "map.fixedSize": false,
     "map.height": 10,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
@@ -24,6 +41,7 @@
     ],
     "project": "example.tiled-project",
     "recentFiles": [
+        "kenney-large-town.tmx",
         "kenney-tiny-town.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
