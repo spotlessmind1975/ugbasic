@@ -137,7 +137,7 @@ ifeq ($(OS),Windows_NT)
 
 else
 $(LIBXML2): 
-	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --enable-static=yes --enable-shared=yes && make
+	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --with-zlib=no --enable-static=yes --enable-shared=yes && make
 
 libxml2: paths $(LIBXML2)
 endif
