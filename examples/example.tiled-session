@@ -1,0 +1,24 @@
+{
+    "activeFile": "kenney-tiny-town.tsx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "kenney-tiny-town.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "Z:/ugbasic",
+    "openFiles": [
+        "kenney-tiny-town.tsx"
+    ],
+    "project": "example.tiled-project",
+    "recentFiles": [
+        "kenney-tiny-town.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
