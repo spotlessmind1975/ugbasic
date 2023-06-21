@@ -128,7 +128,7 @@ Variable * tile_load( Environment * _environment, char * _filename, int _flags, 
     int height = 0;
     int depth = 0;
 
-    char * lookedFilename = image_load_asserts( _environment, _filename );
+    char * lookedFilename = resource_load_asserts( _environment, _filename );
 
     adiline2("LT:%s:%s", _filename, lookedFilename );
 

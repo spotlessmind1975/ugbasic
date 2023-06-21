@@ -6365,7 +6365,7 @@ void image_converter_asserts_free_height( Environment * _environment, int _width
 
 }
 
-char * image_load_asserts( Environment * _environment, char * _filename ) {
+char * resource_load_asserts( Environment * _environment, char * _filename ) {
 
     char * lookedFilename = malloc(MAX_TEMPORARY_STORAGE);
     char lookedExtension[MAX_TEMPORARY_STORAGE];
@@ -6437,7 +6437,7 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
         file = fopen( lookedFilename, "rb" );
 
         if ( !file ) {
-            CRITICAL_IMAGE_LOAD_MISSING_FILE( lookedFilename );
+            CRITICAL_RESOURCE_LOAD_MISSING_FILE( lookedFilename );
         }
     }
 

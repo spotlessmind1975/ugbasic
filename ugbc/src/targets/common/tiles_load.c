@@ -129,7 +129,7 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
 
     // printf( "Allocating tiles (%s)\n", _filename );
 
-    char * lookedFilename = image_load_asserts( _environment, _filename );
+    char * lookedFilename = resource_load_asserts( _environment, _filename );
 
     adiline2("LTS:%s:%s", _filename, lookedFilename );
 
