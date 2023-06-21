@@ -517,7 +517,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 if ( _transparent_color & 0x0f0000 ) {
                     colorBackground[image_x>>3] = ( _transparent_color & 0xff );
                 } else {
-                    for( int xx = 0; xx<paletteColorCount; ++xx ) {
+                    for( int xx = 0; xx<16; ++xx ) {
                         if ( colorIndexCount[xx] > colorBackgroundMax ) {
                             colorBackground[image_x>>3] = xx;
                             colorBackgroundMax = colorIndexCount[xx];
@@ -530,7 +530,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 if ( _transparent_color & 0xf00000 ) {
                     colorForeground[image_x>>3] = ( _transparent_color & 0xff00 ) >> 8;
                 } else {
-                    for( int xx = 0; xx<paletteColorCount; ++xx ) {
+                    for( int xx = 0; xx<16; ++xx ) {
                         if ( colorIndexCount[xx] > colorForegroundMax ) {
                             colorForeground[image_x>>3] = xx;
                             colorForegroundMax = colorIndexCount[xx];
@@ -576,11 +576,9 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 if ( colorIndex != colorBackground[image_x>>3] ) {
                     adilinepixel(colorForeground[image_x>>3]);
                     *( buffer + offset + 2) |= bitmask;
-                    //printf("*" );
                 } else {
                     adilinepixel(colorBackground[image_x>>3]);
                     *( buffer + offset + 2) &= ~bitmask;
-                    //printf(" ");
                 }
 
                 offset = ( ( image_y >> 3 ) * _frame_width>>3 ) + (image_x>>3);
@@ -599,12 +597,12 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
         _source += _depth * ( _width - _frame_width );
 
-        //printf("\n" );
+        // printf("\n" );
 
     }
 
-    //printf("\n" );
-    //printf("\n" );
+    // printf("\n" );
+    // printf("\n" );
 
     adilineendbitmap();
 
