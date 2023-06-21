@@ -1,14 +1,24 @@
 {
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
     "activeFile": "kenney-tiny-town.tsx",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
         "kenney-tiny-town.tsx": {
             "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInEditor": 4
         }
     },
     "last.imagePath": "Z:/ugbasic",
+    "map.height": 10,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 8,
     "openFiles": [
         "kenney-tiny-town.tsx"
     ],

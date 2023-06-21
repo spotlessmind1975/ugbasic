@@ -141,6 +141,8 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
 
     TsxTileset * tileset = tsx_load( lookedFilename );
 
+    final->originalTileset = tileset;
+    
     if ( !tileset ) {
         CRITICAL_TILESET_LOAD_UNKNOWN_FORMAT( _filename );
     }
@@ -154,8 +156,6 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
     int bufferSize = 0;
 
     TsxImage * tsxImage = tileset->image;
-
-printf("%s\n", tsxImage->source );
 
     lookedFilename = resource_load_asserts( _environment, tsxImage->source );
 

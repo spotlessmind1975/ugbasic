@@ -43,6 +43,16 @@ typedef struct _TsxImage {
 
 } TsxImage;
 
+typedef struct _TsxTile {
+
+    int                     id;
+    char                *   type;
+    double                  probability;
+
+    struct _TsxTile     *   next;
+
+} TsxTile;
+
 typedef struct _TsxTileset {
 
     char                *   version;
@@ -55,6 +65,8 @@ typedef struct _TsxTileset {
 
     struct _TsxImage *      image;
 
+    struct _TsxTile *       tiles;
+    
 } TsxTileset;
 
 TsxTileset * tsx_load( char * _filename );

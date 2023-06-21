@@ -1825,6 +1825,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_IMAGES:
                             switch( target->type ) {
                                 case VT_IMAGES:
+                                    target->originalTileset = source->originalTileset;
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
@@ -2033,6 +2034,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     target->originalHeight = source->originalHeight;
                     target->originalDepth = source->originalDepth;
                     target->originalColors = source->originalColors;
+                    target->originalTileset = source->originalTileset;
                     target->bankAssigned = source->bankAssigned;
                     target->residentAssigned = source->residentAssigned;
                     target->uncompressedSize = source->uncompressedSize;
@@ -2041,7 +2043,17 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                         target->variableUniqueId = source->variableUniqueId;
                     }
                     memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
-                case VT_IMAGES:
+                case VT_IMAGES: {
+                    target->originalTileset = source->originalTileset;
+                    if ( target->size == 0 ) {
+                        target->size = source->size;
+                    }
+                    if ( source->size > target->size ) {
+                        CRITICAL_BUFFER_SIZE_MISMATCH(_source, _destination);
+                    }
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                    break;
+                }
                 case VT_SEQUENCE:
                 case VT_MUSIC:
                 case VT_ARRAY:
@@ -7903,3 +7915,73 @@ char * address_displacement( Environment * _environment, char * _address, char *
 
 }
 
+Variable * calculate_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description ) {
+
+    Variable * frame = variable_temporary( _environment, VT_BYTE, "(frame)");
+
+    if ( !_tileset ) {
+        CRITICAL_PUT_IMAGE_NAMED_TILE_MISSING_TILESET( _images );
+    }
+
+    if ( !_tileset->tiles ) {
+        CRITICAL_PUT_IMAGE_NAMED_TILE_MISSING_TILES_FROM_TILESET( _description );
+    }
+
+    TsxTile * collectedTiles = NULL;
+    TsxTile * actual = _tileset->tiles;
+
+    while( actual ) {
+        
+        if ( strcmp( actual->type, _description ) == 0 ) {
+
+            TsxTile * duplicatedTile = malloc( sizeof( TsxTile ) );
+            memcpy( duplicatedTile, actual, sizeof( TsxTile ) );
+            duplicatedTile->next = NULL;
+            if ( collectedTiles ) {
+                duplicatedTile->next = collectedTiles;
+                collectedTiles = duplicatedTile;
+            } else {
+                collectedTiles = duplicatedTile;
+            }
+        }
+        actual = actual->next;
+    }
+
+    if ( !collectedTiles ) {
+        CRITICAL_PUT_IMAGE_NAMED_TILE_NOT_FOUND( _description );
+    }
+
+    double totalProbability = 0.0f;
+
+    actual = collectedTiles;
+
+    while( actual ) {
+        totalProbability += actual->probability;
+        actual->probability = totalProbability;
+        actual = actual->next;
+    }
+    
+    if ( totalProbability <= 0 ) {
+        CRITICAL_PUT_IMAGE_NAMED_TILE_INVALID_PROBABILITY( _description );
+    }
+
+    float r = ( (float) rand() ) / ( (float) (RAND_MAX/totalProbability) );
+
+    totalProbability = 0.0f;
+
+    actual = collectedTiles;
+
+    while( actual ) {
+        if ( r < actual->probability ) {
+            break;
+        }
+        actual = actual->next;
+    }
+
+    if ( actual ) {
+        variable_store(_environment, frame->name, actual->id );
+    } else {
+        variable_store(_environment, frame->name, collectedTiles->id );
+    }
+
+}

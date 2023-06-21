@@ -4019,6 +4019,13 @@ put_definition_expression:
         put_image( _environment, $2, $6, $8, $4, NULL, $9 );
         gr_locate( _environment, $6, $8 );
     }
+    |  IMAGE expr FRAME OP_HASH Identifier AT optional_x OP_COMMA optional_y put_image_flags {
+        $10 = $10 | FLAG_WITH_PALETTE;
+        Variable * images = variable_retrieve( _environment, $2 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
+        put_image( _environment, $2, $7, $9, calculatedFrame->name, NULL, $10 );
+        gr_locate( _environment, $7, $9 );
+    }
     |  IMAGE expr SEQUENCE expr FRAME expr AT optional_x OP_COMMA optional_y put_image_flags {
         $11 = $11 | FLAG_WITH_PALETTE;
         put_image( _environment, $2, $8, $10, $6, $4, $11 );
@@ -4036,6 +4043,14 @@ put_definition_expression:
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         put_image( _environment, $2, implicitX->name, implicitY->name, $4, NULL, $5 );
     }
+    | IMAGE expr FRAME OP_HASH Identifier put_image_flags {
+        $6 = $6 | FLAG_WITH_PALETTE;
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        Variable * images = variable_retrieve( _environment, $2 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
+        put_image( _environment, $2, implicitX->name, implicitY->name, calculatedFrame->name, NULL, $6 );
+    }
     | IMAGE expr SEQUENCE expr FRAME expr put_image_flags {
         $7 = $7 | FLAG_WITH_PALETTE;
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
@@ -4051,6 +4066,12 @@ put_definition_expression:
         put_image( _environment, $2, $6, $8, $4, NULL, $9 );
         gr_locate( _environment, $6, $8 );
     }
+    | BITMAP expr FRAME OP_HASH Identifier AT optional_x OP_COMMA optional_y put_image_flags {
+        Variable * images = variable_retrieve( _environment, $2 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
+        put_image( _environment, $2, $7, $9, calculatedFrame->name, NULL, $10 );
+        gr_locate( _environment, $7, $9 );
+    }
     | BITMAP expr SEQUENCE expr FRAME expr AT optional_x OP_COMMA optional_y put_image_flags {
         put_image( _environment, $2, $8, $10, $6, $4, $11 );
         gr_locate( _environment, $8, $10 );
@@ -4064,6 +4085,13 @@ put_definition_expression:
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         put_image( _environment, $2, implicitX->name, implicitY->name, $4, NULL, $5 );
+    }
+    | BITMAP expr FRAME OP_HASH Identifier put_image_flags {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        Variable * images = variable_retrieve( _environment, $2 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
+        put_image( _environment, $2, implicitX->name, implicitY->name, calculatedFrame->name, NULL, $6 );
     }
     | BITMAP expr SEQUENCE expr FRAME expr put_image_flags {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
@@ -6922,6 +6950,7 @@ statement2:
         var->originalHeight = expr->originalHeight;
         var->originalDepth = expr->originalDepth;
         var->originalColors = expr->originalColors;
+        var->originalTileset = expr->originalTileset;
         var->bankAssigned = expr->bankAssigned;
         var->residentAssigned = expr->residentAssigned;
         var->uncompressedSize = expr->uncompressedSize;

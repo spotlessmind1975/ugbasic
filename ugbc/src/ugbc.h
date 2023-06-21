@@ -51,6 +51,8 @@
 #include <limits.h>
 #include <unistd.h>
 
+#include "libs/tsx.h"
+
 /****************************************************************************
  * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
@@ -307,7 +309,7 @@ typedef enum _VariableType {
     /** THREAD ID */
     VT_THREAD = 16,
 
-    /** IMAGES (static pictures) */
+    /** IMAGES (static pictures) + optional tile map attached */
     VT_IMAGES = 17,
 
     /** CHAR (printable character) */
@@ -745,6 +747,9 @@ typedef struct _Variable {
 
     /** Unique ID assigned to this variable (is banked) */
     int variableUniqueId;
+
+    /** If VT_IMAGES, this is the original tsx' tileset attached (if used) */
+    TsxTileset * originalTileset;
 
     /** 
      * This flag mark if this variable is read only (1) or not (0); 
@@ -2244,6 +2249,10 @@ typedef struct _Environment {
 #define CRITICAL_TILESET_LOAD_UNKNOWN_FORMAT( v ) CRITICAL2("E179 - unknown tileset format", v );
 #define CRITICAL_TILESET_LOAD_MISSING_IMAGE( v ) CRITICAL2("E180 - missing image from tileset", v );
 #define CRITICAL_RESOURCE_LOAD_MISSING_FILE(f) CRITICAL2("E181 - missing file in loading resource", f );
+#define CRITICAL_PUT_IMAGE_NAMED_TILE_MISSING_TILESET( v ) CRITICAL2("E182 - missing tileset from images", v );
+#define CRITICAL_PUT_IMAGE_NAMED_TILE_MISSING_TILES_FROM_TILESET( v ) CRITICAL2("E183 - missing tiles' definition on tileset", v );
+#define CRITICAL_PUT_IMAGE_NAMED_TILE_NOT_FOUND( v ) CRITICAL2("E184 - tile not found in tileset", v );
+#define CRITICAL_PUT_IMAGE_NAMED_TILE_INVALID_PROBABILITY( v ) CRITICAL2("E185 - invalid probability for tile selection", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3188,6 +3197,7 @@ int                     calculate_nearest_tile( TileDescriptor * _tile, TileDesc
 int                     calculate_exact_tile( TileDescriptor * _tile, TileDescriptors * _tiles );
 int                     calculate_tile_affinity( TileDescriptor * _first, TileDescriptor * _second );
 TileDescriptor *        calculate_tile_descriptor( TileData * _tileData );
+Variable *              calculate_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
 void                    call_procedure( Environment * _environment, char * _name );
 void                    case_else( Environment * _environment );
 void                    case_equals( Environment * _environment, int _value );
