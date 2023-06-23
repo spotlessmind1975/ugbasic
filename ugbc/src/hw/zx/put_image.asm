@@ -206,6 +206,7 @@ PUTIMAGE0CP:
     LD DE,HL
 
     LD A,(IMAGEY)
+    AND $f8
     LD L,A
     LD A,0
     LD H,A
