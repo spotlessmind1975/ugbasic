@@ -406,6 +406,12 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
 
+    int avoidColorRecalculation = 0;
+
+    if (paletteColorCount<=2) {
+        avoidColorRecalculation = 1;
+    }
+
     int i, j, k;
 
     commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
@@ -470,77 +476,80 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
             if ( ( image_y & 0x7 ) == 0 ) {
 
-                int colorIndexCount[16];
-                memset( colorIndexCount, 0, 16 * sizeof(int) );
+                if ( ( !avoidColorRecalculation ) ||
+                     ( avoidColorRecalculation && ( image_y == 0 ) ) ) {
+                
+                    int colorIndexCount[16];
+                    memset( colorIndexCount, 0, 16 * sizeof(int) );
 
-                for( xx = 0; xx < 8; ++xx ) {
-                    // Take the color of the pixel
-                    rgb.red = *_source;
-                    rgb.green = *(_source + 1);
-                    rgb.blue = *(_source + 2);
-                    if ( _depth > 3 ) {
-                        rgb.alpha = *(_source + 3);
-                    } else {
-                        rgb.alpha = 255;
-                    }
-                    if ( rgb.alpha == 0 ) {
-                        rgb.red = 0;
-                        rgb.green = 0;
-                        rgb.blue = 0;
-                    }
-
-                    colorIndex = 0;
-
-                    int minDistance = 9999;
-                    for( int i=0; i<paletteColorCount; ++i ) {
-                        int distance = rgbi_distance(&commonPalette[i], &rgb );
-                        if ( distance < minDistance ) {
-                            minDistance = distance;
-                            colorIndex = commonPalette[i].index;
+                    for( xx = 0; xx < 8; ++xx ) {
+                        // Take the color of the pixel
+                        rgb.red = *_source;
+                        rgb.green = *(_source + 1);
+                        rgb.blue = *(_source + 2);
+                        if ( _depth > 3 ) {
+                            rgb.alpha = *(_source + 3);
+                        } else {
+                            rgb.alpha = 255;
                         }
+                        if ( rgb.alpha == 0 ) {
+                            rgb.red = 0;
+                            rgb.green = 0;
+                            rgb.blue = 0;
+                        }
+
+                        colorIndex = 0;
+
+                        int minDistance = 9999;
+                        for( int i=0; i<paletteColorCount; ++i ) {
+                            int distance = rgbi_distance(&commonPalette[i], &rgb );
+                            if ( distance < minDistance ) {
+                                minDistance = distance;
+                                colorIndex = commonPalette[i].index;
+                            }
+                        }
+
+                        ++colorIndexCount[colorIndex];
+
+                        _source += _depth;
+
                     }
 
-                    ++colorIndexCount[colorIndex];
+                    _source -= 8 * ( _depth );
 
-                    _source += _depth;
+                    int colorBackgroundMax = 0;
+                    colorBackground[image_x>>3] = 0;
+                    int colorForegroundMax = 0;
+                    colorForeground[image_x>>3] = 0;
 
-                }
+                    if ( _transparent_color & 0x0f0000 ) {
+                        colorBackground[image_x>>3] = ( _transparent_color & 0xff );
+                    } else {
+                        for( int xx = 0; xx<16; ++xx ) {
+                            if ( colorIndexCount[xx] > colorBackgroundMax ) {
+                                colorBackground[image_x>>3] = xx;
+                                colorBackgroundMax = colorIndexCount[xx];
+                            };
+                        }
 
-                _source -= 8 * ( _depth );
+                        colorIndexCount[colorBackground[image_x>>3]] = 0;
+                        
+                    }
+                    if ( _transparent_color & 0xf00000 ) {
+                        colorForeground[image_x>>3] = ( _transparent_color & 0xff00 ) >> 8;
+                    } else {
+                        for( int xx = 0; xx<16; ++xx ) {
+                            if ( colorIndexCount[xx] > colorForegroundMax ) {
+                                colorForeground[image_x>>3] = xx;
+                                colorForegroundMax = colorIndexCount[xx];
+                            };
+                        }
 
+                        colorIndexCount[colorForeground[image_x>>3]] = 0;
 
-                int colorBackgroundMax = 0;
-                colorBackground[image_x>>3] = 0;
-                int colorForegroundMax = 0;
-                colorForeground[image_x>>3] = 0;
-
-                if ( _transparent_color & 0x0f0000 ) {
-                    colorBackground[image_x>>3] = ( _transparent_color & 0xff );
-                } else {
-                    for( int xx = 0; xx<16; ++xx ) {
-                        if ( colorIndexCount[xx] > colorBackgroundMax ) {
-                            colorBackground[image_x>>3] = xx;
-                            colorBackgroundMax = colorIndexCount[xx];
-                        };
                     }
 
-                    colorIndexCount[colorBackground[image_x>>3]] = 0;
-                    
-                }
-                if ( _transparent_color & 0xf00000 ) {
-                    colorForeground[image_x>>3] = ( _transparent_color & 0xff00 ) >> 8;
-                } else {
-                    for( int xx = 0; xx<16; ++xx ) {
-                        if ( colorIndexCount[xx] > colorForegroundMax ) {
-                            colorForeground[image_x>>3] = xx;
-                            colorForegroundMax = colorIndexCount[xx];
-                        };
-                    }
-
-                    colorIndexCount[colorForeground[image_x>>3]] = 0;
-
-                }
-
+                }   
             }
 
             for( xx = 0; xx < 8; ++xx ) {
