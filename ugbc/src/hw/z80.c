@@ -6017,12 +6017,14 @@ void z80_float_fast_cos( Environment * _environment, char * _angle, char * _resu
 
     MAKE_LABEL
 
+    deploy( fp_mul16, src_hw_z80_fp_mul16_asm );
     deploy( fp_fast_add, src_hw_z80_fp_fast_add_asm );
     deploy( fp_fast_sub, src_hw_z80_fp_fast_sub_asm );
     deploy( fp_fast_mod1, src_hw_z80_fp_fast_mod1_asm );
     deploy( fp_fast_mul, src_hw_z80_fp_fast_mul_asm );
     deploy( fp_fast_sqr, src_hw_z80_fp_fast_sqr_asm );
-    deploy( fp_fast_cos, src_hw_z80_fp_fast_cos_asm );
+    deploy( fp_fast_sin, src_hw_z80_fp_fast_cos_asm );
+    deploy( fp_fast_cos, src_hw_z80_fp_fast_sin_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+2" ) );
     outline0( "LD L, A" );
@@ -6334,6 +6336,9 @@ void z80_float_single_cos( Environment * _environment, char * _angle, char * _re
 
     MAKE_LABEL
 
+    deploy( fp_mul24_stack_based, src_hw_z80_fp_mul24_stack_based_asm );
+    deploy( fp_mov4, src_hw_z80_fp_mov4_asm );
+    deploy( fp_c_times_bde, src_hw_z80_fp_c_times_bde_asm );
     deploy( fp_single_vars, src_hw_z80_fp_single_vars_asm );
     deploy( fp_single_sin, src_hw_z80_fp_single_sin_asm );
     deploy( fp_single_cos, src_hw_z80_fp_single_cos_asm );

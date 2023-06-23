@@ -28,6 +28,30 @@
 # * autorizzazioni e le limitazioni previste dalla medesima.
 # ****************************************************************************/
 
+FLEX_OPTIONS=--8bit 
+BISON_OPTIONS=--locations -d -Wcounterexamples
+CFLAGS=-O3 -fomit-frame-pointer
+LFLAGS=
+LIBS=-lm
+
+.PHONY: paths clean all bison flex
+
+all: paths compiler
+
+test: paths-test tester
+
+#-----------------------------------------------------------------------------
+#--- MAKEFILE's ENVIRONMENT
+#-----------------------------------------------------------------------------
+
+ifeq ($(OS),Windows_NT)
+  EXESUFFIX = .exe
+  CFLAGS += -D_WIN32 -static
+  LFLAGS += -static
+else
+  EXESUFFIX = 
+endif
+
 #-----------------------------------------------------------------------------
 #--- MAKEFILE's VARIABLES
 #-----------------------------------------------------------------------------
@@ -48,41 +72,6 @@ ifeq ($(OS),Windows_NT)
 FLEX = flex
 else
 FLEX = ./../modules/flex/src/flex$(EXESUFFIX)
-endif
-
-#------------------------------------------------ 
-# LIBXML2
-#------------------------------------------------ 
-ifeq ($(OS),Windows_NT)
-LIBXML2 = ../modules/libxml2/.libs/libxml2.lib
-LIBXML2PATH = ../modules/libxml2
-else
-LIBXML2 = ../modules/libxml2/.libs/libxml2.a
-LIBXML2PATH = ../modules/libxml2
-endif
-
-FLEX_OPTIONS=--8bit 
-BISON_OPTIONS=--locations -d -Wcounterexamples
-CFLAGS=-O3 -fomit-frame-pointer -I$(LIBXML2PATH)/include
-LFLAGS=
-LIBS=-lm $(LIBXML2)
-
-.PHONY: paths clean all bison flex libxml2
-
-all: paths libxml2 compiler
-
-test: paths-test tester
-
-#-----------------------------------------------------------------------------
-#--- MAKEFILE's ENVIRONMENT
-#-----------------------------------------------------------------------------
-
-ifeq ($(OS),Windows_NT)
-  EXESUFFIX = .exe
-  CFLAGS += -D_WIN32 -static
-  LFLAGS += -static
-else
-  EXESUFFIX = 
 endif
 
 #------------------------------------------------ 
@@ -649,7 +638,7 @@ paths:
 paths-test:
 	@mkdir -p exe-test
 
-compiler: $(LIBXML2) $(OBJS)
+compiler: $(OBJS)
 	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target)$(EXESUFFIX) $(LIBS)
 	
 objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c

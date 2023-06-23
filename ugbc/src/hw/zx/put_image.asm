@@ -190,6 +190,11 @@ PUTIMAGE0CP:
 
     ;;;;
 
+    LD A, (IMAGET)
+    AND $2
+    CMP $0
+    JP Z, PUTDONE
+
     PUSH HL
 
     LD A,(IMAGEX)
@@ -206,6 +211,7 @@ PUTIMAGE0CP:
     LD DE,HL
 
     LD A,(IMAGEY)
+    AND $f8
     LD L,A
     LD A,0
     LD H,A
@@ -266,6 +272,8 @@ PUTIMAGE00CP:
     LD B, A
     DEC C
     JR NZ, PUTIMAGE00CP
+
+PUTDONE:
 
     EI
 

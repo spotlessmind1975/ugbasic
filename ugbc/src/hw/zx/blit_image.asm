@@ -264,6 +264,11 @@ BLITIMAGE0CP:
 
     ;;;;
 
+    LD A, (IMAGET)
+    AND $2
+    CMP $0
+    JP Z, BLITDONE
+
     LD A, (IMAGEY2)
     LD (IMAGEY), A
 
@@ -283,6 +288,7 @@ BLITIMAGE0CP:
     LD DE,HL
 
     LD A,(IMAGEY)
+    AND $f8
     LD L,A
     LD A,0
     LD H,A
@@ -397,6 +403,8 @@ BLITIMAGE00CP:
     LD B, A
     DEC C
     JR NZ, BLITIMAGE00CP
+
+BLITDONE:
 
     EI
 
