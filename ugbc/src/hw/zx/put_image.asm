@@ -192,7 +192,7 @@ PUTIMAGE0CP:
 
     LD A, (IMAGET)
     AND $2
-    CMP $2
+    CMP $0
     JP Z, PUTDONE
 
     PUSH HL
