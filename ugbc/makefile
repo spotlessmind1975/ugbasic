@@ -28,11 +28,21 @@
 # * autorizzazioni e le limitazioni previste dalla medesima.
 # ****************************************************************************/
 
+#-----------------------------------------------------------------------------
+#--- MAKEFILE's ENVIRONMENT
+#-----------------------------------------------------------------------------
+
+ifeq ($(OS),Windows_NT)
+else
+LIBXML2=../modules/libxml2/.libs/libxml2.a
+LIBXML2PATH=../modules/libxml2
+endif
+
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d -Wcounterexamples
-CFLAGS=-O3 -fomit-frame-pointer
+CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include
 LFLAGS=
-LIBS=-lm
+LIBS=-lm $(LIBXML2)
 
 .PHONY: paths clean all bison flex
 
