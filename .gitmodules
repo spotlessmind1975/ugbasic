@@ -4,9 +4,11 @@
 [submodule "modules/bison"]
 	path = modules/bison
 	url = https://github.com/spotlessmind1975/bison
+	ignore = all
 [submodule "modules/flex"]
 	path = modules/flex
 	url = https://github.com/spotlessmind1975/flex
+	ignore = all
 [submodule "modules/fp09"]
 	path = modules/fp09
 	url = https://github.com/spotlessmind1975/fp09.git
@@ -25,3 +27,4 @@
 [submodule "modules/z88dk"]
 	path = modules/z88dk
 	url = https://github.com/spotlessmind1975/z88dk.git
+	ignore = all
