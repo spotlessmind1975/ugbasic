@@ -65,9 +65,9 @@ PUTIMAGE1:
     LD (IMAGEW), A
     ADD HL, 1
     LD A, (HL)
-    SRL A
-    SRL A
-    SRL A
+    ; SRL A
+    ; SRL A
+    ; SRL A
     LD (IMAGEH), A
     LD (IMAGEH2), A
     ADD HL, 1
@@ -125,9 +125,9 @@ PUTIMAGE0B:
 
     LD A, (IMAGEH)
     LD C, A
-    SLA C
-    SLA C
-    SLA C
+    ; SLA C
+    ; SLA C
+    ; SLA C
     LD A, (IMAGEW)
     SRL A
     SRL A

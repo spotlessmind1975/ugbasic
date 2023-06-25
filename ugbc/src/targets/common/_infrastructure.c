@@ -7803,8 +7803,15 @@ Variable * origin_resolution_relative_transform_x( Environment * _environment, c
     }
 
     if ( ((struct _Environment *)_environment)->resolutionUsed ) {
+        Variable * xFloat = variable_cast( _environment, x->name, VT_FLOAT );
+        Variable * currentWidthFloat = variable_cast( _environment, "CURRENTWIDTH", VT_FLOAT );
+        Variable * resolutionFloat = variable_cast( _environment, "RESOLUTIONX", VT_FLOAT );
+
+        Variable * mul = variable_mul( _environment, xFloat->name, currentWidthFloat->name );
+        Variable * div = variable_div( _environment, mul->name, resolutionFloat->name, NULL );
+        // outline0("; move ---");
         variable_move( _environment, 
-            variable_div( _environment, variable_mul( _environment, x->name, "CURRENTWIDTH" )->name, "RESOLUTIONX", NULL )->name, 
+            div->name, 
             result->name 
         );
     } else {
@@ -7844,8 +7851,15 @@ Variable * origin_resolution_relative_transform_y( Environment * _environment, c
     }
 
     if ( ((struct _Environment *)_environment)->resolutionUsed ) {
+        Variable * yFloat = variable_cast( _environment, y->name, VT_FLOAT );
+        Variable * currentHeightFloat = variable_cast( _environment, "CURRENTHEIGHT", VT_FLOAT );
+        Variable * resolutionFloat = variable_cast( _environment, "RESOLUTIONY", VT_FLOAT );
+
+        Variable * mul = variable_mul( _environment, yFloat->name, currentHeightFloat->name );
+        Variable * div = variable_div( _environment, mul->name, resolutionFloat->name, NULL );
+
         variable_move( _environment, 
-            variable_div( _environment, variable_mul( _environment, y->name, "CURRENTHEIGHT" )->name, "RESOLUTIONY", NULL )->name, 
+            div->name, 
             result->name 
         );
     } else {

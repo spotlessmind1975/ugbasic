@@ -117,7 +117,8 @@ void z80_peek( Environment * _environment, char * _address, char * _target ) {
 void z80_poke( Environment * _environment, char * _address, char * _source ) {
 
     outline1("LD A, (%s)", _source);
-    outline1("LD (%s), A", _address);
+    outline1("LD HL, (%s)", _address);
+    outline0("LD (HL), A");
 
 }
 
