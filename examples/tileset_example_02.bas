@@ -25,9 +25,18 @@ BITMAP ENABLE(16)
 
 tileset := LOAD TILESET("kenney-tiny-town.tsx")
 
-PUT IMAGE tileset FRAME #grass AT 0,0
-PUT IMAGE tileset FRAME #grass AT 16,0
-PUT IMAGE tileset FRAME #grass AT 32,0
+x = (POSITION) 0
+y = (POSITION) 0
+
+FOR i=0 TO 32
+	PUT IMAGE tileset FRAME i AT x,y
+	x = x + 16
+	IF ( x + 16 ) > ( SCREEN WIDTH ) THEN
+		x = 0
+		y = y + 16
+	ENDIF
+NEXT
+
 
 
 

@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "kenney-tiny-town.tsx",
+    "activeFile": "kenney-tiny-town.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -20,8 +20,8 @@
             "scale": 5.05875,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 68.49518161601186,
-                "y": 80.15814183345688
+                "x": 68.09982703236966,
+                "y": 79.96046454163577
             }
         },
         "kenney-tiny-town.tsx": {
@@ -37,12 +37,14 @@
     "map.tileWidth": 16,
     "map.width": 8,
     "openFiles": [
-        "kenney-tiny-town.tsx"
+        "kenney-tiny-town.tsx",
+        "kenney-tiny-town.tmx"
     ],
     "project": "example.tiled-project",
     "recentFiles": [
-        "kenney-large-town.tmx",
-        "kenney-tiny-town.tsx"
+        "kenney-tiny-town.tsx",
+        "kenney-tiny-town.tmx",
+        "kenney-large-town.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
