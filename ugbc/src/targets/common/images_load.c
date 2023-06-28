@@ -226,6 +226,8 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         ptr += result[i]->size;
     }
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
+    final->frameWidth = _frame_width;
+    final->frameHeight = _frame_height;
     final->frameSize = result[0]->size;
     final->frameCount = realFramesCount;
 

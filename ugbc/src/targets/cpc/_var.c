@@ -165,6 +165,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         }
                     }
                     break;
+                case VT_TILEMAP:
                 case VT_ARRAY: {
                     // outhead0("section data_user");
                     if ( variable->valueBuffer ) {

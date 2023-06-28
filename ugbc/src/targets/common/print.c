@@ -203,6 +203,16 @@ void print( Environment * _environment, char * _value, int _new_line ) {
 
                         break;
                     }
+                    case VT_TILEMAP: {
+                        char bufferName[MAX_TEMPORARY_STORAGE];
+                        sprintf(bufferName, "@tilemap(%s)", value->name);
+                        Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
+                        variable_store_string( _environment, tmp->name, bufferName );
+
+                        value = tmp;
+
+                        break;
+                    }
                     case VT_TILES: {
                         char bufferName[MAX_TEMPORARY_STORAGE];
                         sprintf(bufferName, "@tiles(%s)", value->name);

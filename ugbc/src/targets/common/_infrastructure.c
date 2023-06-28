@@ -1785,6 +1785,22 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     break;
                             }
                             break;
+                        case VT_TILEMAP:
+                            switch( target->type ) {
+                                case VT_TILEMAP: {
+                                    if ( source->size != target->size ) {
+                                        CRITICAL_CANNOT_CAST_TILEMAP_SIZE( target->name );
+                                    }
+                                    target->mapWidth = source->mapWidth;
+                                    target->mapHeight = source->mapHeight;
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                                    break;
+                                }
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    break;
+                            }
+                            break;
                         case VT_TILES:
                             switch( target->type ) {
                                 case VT_TILES: {
@@ -1825,6 +1841,8 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_IMAGES:
                             switch( target->type ) {
                                 case VT_IMAGES:
+                                    target->frameWidth = source->frameWidth;
+                                    target->frameHeight = source->frameHeight;
                                     target->originalTileset = source->originalTileset;
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
@@ -1843,6 +1861,8 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_SEQUENCE:
                             switch( target->type ) {
                                 case VT_SEQUENCE:
+                                    target->frameWidth = source->frameWidth;
+                                    target->frameHeight = source->frameHeight;
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
@@ -2014,6 +2034,22 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                             break;
                     }
                     break;
+                case VT_TILEMAP:
+                    switch( target->type ) {
+                        case VT_TILEMAP: {
+                            if ( source->size != target->size ) {
+                                CRITICAL_CANNOT_CAST_TILEMAP_SIZE( target->name );
+                            }
+                            target->mapWidth = source->mapWidth;
+                            target->mapHeight = source->mapHeight;
+                            cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                            break;
+                        }
+                        default:
+                            CRITICAL_MOVE_NAKED_UNSUPPORTED( DATATYPE_AS_STRING[target->type]);
+                            break;
+                    }
+                    break;
                 case VT_TILES:
                     switch( target->type ) {
                         case VT_TILES: {
@@ -2044,6 +2080,8 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     }
                     memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
                 case VT_IMAGES: {
+                    target->frameWidth = source->frameWidth;
+                    target->frameHeight = source->frameHeight;
                     target->originalTileset = source->originalTileset;
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -7997,5 +8035,62 @@ Variable * calculate_frame_by_type( Environment * _environment, TsxTileset * _ti
     } else {
         variable_store(_environment, frame->name, collectedTiles->id );
     }
+
+}
+
+Variable * variable_direct_assign( Environment * _environment, char * _var, char * _expr ) {
+
+    Variable * expr = variable_retrieve( _environment, _expr );
+    Variable * var;
+    if ( variable_exists( _environment, _var ) ) {
+        var = variable_retrieve( _environment, _var );
+    } else {
+        if ( !((struct _Environment *)_environment)->optionExplicit ) {
+            var = variable_define( _environment, _var, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
+        } else {
+            CRITICAL_VARIABLE_UNDEFINED( _var );
+        }
+    }
+    var->value = expr->value;
+    if ( expr->valueString ) {
+        var->valueString = strdup( expr->valueString );
+    }
+    var->valueFloating = expr->valueFloating;
+    var->size = expr->size;
+    if ( expr->valueBuffer ) {
+        var->valueBuffer = malloc( expr->size );
+        memcpy( var->valueBuffer, expr->valueBuffer, expr->size );
+    }
+    var->absoluteAddress = expr->absoluteAddress;
+    var->bank = expr->bank;
+    var->originalBitmap = expr->originalBitmap;
+    var->originalWidth = expr->originalWidth;
+    var->originalHeight = expr->originalHeight;
+    var->frameWidth = expr->frameWidth;
+    var->frameHeight = expr->frameHeight;
+    var->mapWidth = expr->mapWidth;
+    var->mapHeight = expr->mapHeight;
+    var->originalDepth = expr->originalDepth;
+    var->originalColors = expr->originalColors;
+    var->originalTileset = expr->originalTileset;
+    var->tileset = expr->tileset;
+    var->bankAssigned = expr->bankAssigned;
+    var->residentAssigned = expr->residentAssigned;
+    var->uncompressedSize = expr->uncompressedSize;
+    if ( var->bankAssigned ) {
+        var->absoluteAddress = expr->absoluteAddress;
+        var->variableUniqueId = expr->variableUniqueId;
+    }
+    memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
+    var->memoryArea = expr->memoryArea;
+    var->arrayDimensions = expr->arrayDimensions;
+    memcpy( var->arrayDimensionsEach, expr->arrayDimensionsEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );
+    var->arrayType = expr->arrayType;
+    var->arrayPrecision = expr->arrayPrecision;
+    var->frameSize = expr->frameSize;
+    var->frameCount = expr->frameCount;
+    expr->assigned = 1;
+
+    return var;
 
 }

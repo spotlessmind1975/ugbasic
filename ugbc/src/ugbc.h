@@ -740,6 +740,16 @@ typedef struct _Variable {
     /** Original bitmap nr. colors (if IMAGE/IMAGES) */
     int originalColors;
 
+    int mapWidth;
+
+    int mapHeight;
+
+    int frameWidth;
+
+    int frameHeight;
+
+    int firstGid;
+    
     /** Original bitmap palette (if IMAGE/IMAGES) */
     RGBi originalPalette[MAX_PALETTE];
 
@@ -754,6 +764,8 @@ typedef struct _Variable {
 
     /** If VT_IMAGES, this is the original tsx' tileset attached (if used) */
     TsxTileset * originalTileset;
+
+    struct _Variable * tileset;
 
     /** If VT_TILEMAP, this is the original tmx' tileset attached (if used) */
     TmxMap * originalTilemap;
@@ -1242,6 +1254,7 @@ typedef struct _Deployed {
     int raster;
     int putimage;
     int getimage;
+    int puttilemap;
     int blitimage;
     int protothread;
     int tiles;
@@ -2260,6 +2273,13 @@ typedef struct _Environment {
 #define CRITICAL_PUT_IMAGE_NAMED_TILE_MISSING_TILES_FROM_TILESET( v ) CRITICAL2("E183 - missing tiles' definition on tileset", v );
 #define CRITICAL_PUT_IMAGE_NAMED_TILE_NOT_FOUND( v ) CRITICAL2("E184 - tile not found in tileset", v );
 #define CRITICAL_PUT_IMAGE_NAMED_TILE_INVALID_PROBABILITY( v ) CRITICAL2("E185 - invalid probability for tile selection", v );
+#define CRITICAL_TILEMAP_LOAD_UNKNOWN_FORMAT( v ) CRITICAL2("E186 - unknown tilemap format", v );
+#define CRITICAL_TILEMAP_LOAD_MISSING_LAYER( v ) CRITICAL2("E187 - missing layer from tilemap", v );
+#define CRITICAL_TILEMAP_LOAD_MISSING_TILESET( v ) CRITICAL2("E188 - missing tileset from tilemap", v );
+#define CRITICAL_TILEMAP_LOAD_ONLY_ONE_TILESET( v ) CRITICAL2("E189 - only one tileset is supported for each tilemap", v );
+#define CRITICAL_CANNOT_PUT_TILEMAP_FOR_NON_TILEMAP( v ) CRITICAL2("E190 - cannot PUT TILEMAP without a tile map", v );
+#define CRITICAL_CANNOT_CAST_TILEMAP_SIZE( v ) CRITICAL2("E191 - cannot cast TILEMAP since sizes are different", v );
+#define CRITICAL_TILEMAP_LOAD_ONLY_ONE_LAYER( v ) CRITICAL2("E192 - only one layer is supported for each tilemap", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3470,6 +3490,7 @@ void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
 void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags );
 void                    put_tile( Environment * _environment, char * _tile, char * _x, char * _y, char * _w, char * _h );
+void                    put_tilemap( Environment * _environment, char * _tilemap, int _flags );
 
 //----------------------------------------------------------------------------
 // *Q*
@@ -3596,6 +3617,7 @@ Variable *              tile_load( Environment * _environment, char * _filename,
 Variable *              tiles_load( Environment * _environment, char * _filename, int _flags, char * _tileset, int _index );
 void                    tiles_at( Environment * _environment, int _address );
 void                    tiles_at_var( Environment * _environment, char * _address );
+Variable *              tilemap_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              tileset_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 
 //----------------------------------------------------------------------------
@@ -3634,6 +3656,7 @@ Variable *              variable_decrement_mt( Environment * _environment, char 
 Variable *              variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable *              variable_define_no_init( Environment * _environment, char * _name, VariableType _type );
 int                     variable_delete( Environment * _environment, char * _name );
+Variable *              variable_direct_assign( Environment * _environment, char * _var, char * _expr );
 Variable *              variable_div( Environment * _environment, char * _source, char * _dest, char * _remainder );
 Variable *              variable_div2_const( Environment * _environment, char * _source, int _bits );
 void                    variable_global( Environment * _environment, char * _pattern );

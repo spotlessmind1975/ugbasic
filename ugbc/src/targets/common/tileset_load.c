@@ -240,6 +240,9 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
         ptr += result[i]->size;
     }
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
+    final->frameWidth = tileset->tilewidth;
+    final->frameHeight = tileset->tileheight;
+    final->firstGid = tileset->firstgid;
     final->frameSize = result[0]->size;
     final->frameCount = realFramesCount;
 

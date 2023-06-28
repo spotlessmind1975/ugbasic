@@ -2395,6 +2395,11 @@ exponential:
     | load_tileset OP String AS String CP images_load_flags  using_transparency using_opacity using_background on_bank {
         $$ = tileset_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 )->name;
       }
+
+    | load_tilemap OP String CP images_load_flags using_transparency using_opacity using_background on_bank {
+        $$ = tilemap_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
+      }
+
     | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank {
         $$ = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
       }
@@ -4100,6 +4105,10 @@ put_definition_expression:
     | TILE expr AT optional_x OP_COMMA optional_y {
         put_tile( _environment, $2, $4, $6, NULL, NULL );
     }
+    | TILEMAP expr put_image_flags {
+        $3 = $3 | FLAG_WITH_PALETTE;
+        put_tilemap( _environment, $2, $3 );
+    }
     ;
 
 put_definition:
@@ -4775,6 +4784,9 @@ datatype :
     }
     | TILESET {
         $$ = VT_TILESET;
+    }
+    | TILEMAP {
+        $$ = VT_TILEMAP;
     }
     | BUFFER {
         $$ = VT_BUFFER;
@@ -6921,51 +6933,7 @@ statement2:
         variable_store( _environment, $1, $4 );
   }
   | Identifier OP_ASSIGN_DIRECT expr  {
-        Variable * expr = variable_retrieve( _environment, $3 );
-        Variable * var;
-        if ( variable_exists( _environment, $1 ) ) {
-            var = variable_retrieve( _environment, $1 );
-        } else {
-            if ( !((struct _Environment *)_environment)->optionExplicit ) {
-                var = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
-            } else {
-                CRITICAL_VARIABLE_UNDEFINED( $1 );
-            }
-        }
-        var->value = expr->value;
-        if ( expr->valueString ) {
-            var->valueString = strdup( expr->valueString );
-        }
-        var->valueFloating = expr->valueFloating;
-        var->size = expr->size;
-        if ( expr->valueBuffer ) {
-            var->valueBuffer = malloc( expr->size );
-            memcpy( var->valueBuffer, expr->valueBuffer, expr->size );
-        }
-        var->absoluteAddress = expr->absoluteAddress;
-        var->bank = expr->bank;
-        var->originalBitmap = expr->originalBitmap;
-        var->originalWidth = expr->originalWidth;
-        var->originalHeight = expr->originalHeight;
-        var->originalDepth = expr->originalDepth;
-        var->originalColors = expr->originalColors;
-        var->originalTileset = expr->originalTileset;
-        var->bankAssigned = expr->bankAssigned;
-        var->residentAssigned = expr->residentAssigned;
-        var->uncompressedSize = expr->uncompressedSize;
-        if ( var->bankAssigned ) {
-            var->absoluteAddress = expr->absoluteAddress;
-            var->variableUniqueId = expr->variableUniqueId;
-        }
-        memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
-        var->memoryArea = expr->memoryArea;
-        var->arrayDimensions = expr->arrayDimensions;
-        memcpy( var->arrayDimensionsEach, expr->arrayDimensionsEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );
-        var->arrayType = expr->arrayType;
-        var->arrayPrecision = expr->arrayPrecision;
-        var->frameSize = expr->frameSize;
-        var->frameCount = expr->frameCount;
-        expr->assigned = 1;
+        variable_direct_assign( _environment, $1, $3 )->name;
   }
   | ARRAY Identifier {
       

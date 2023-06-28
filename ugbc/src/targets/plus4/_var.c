@@ -179,6 +179,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         }
                     }
                     break;
+                case VT_TILEMAP:
                 case VT_ARRAY: {
                     if ( ! variable->memoryArea && variable->valueBuffer ) {
                         out1("%s: .byte ", variable->realName);
@@ -291,6 +292,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 outline1(" .res %d", _variable->size);
             }
             break;
+        case VT_TILEMAP:
         case VT_ARRAY: {
             if ( _variable->valueBuffer ) {
                 out0("    .byte ");
