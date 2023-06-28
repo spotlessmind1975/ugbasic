@@ -32,6 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
+#include "tsx.h"
 #include "tmx.h"
 
 #include <stdio.h>
@@ -53,8 +54,8 @@ TmxMap * tmx_load( char * _filename ) {
     if ( ! doc )
         return result;
 
-    result = malloc( sizeof( TsxMap ) );
-    memset( result, 0, sizeof ( TsxMap ) );
+    result = malloc( sizeof( TmxMap ) );
+    memset( result, 0, sizeof ( TmxMap ) );
 
     xmlNode *root_element = NULL;
     xmlNode *cur_node = NULL;
@@ -117,7 +118,8 @@ TmxMap * tmx_load( char * _filename ) {
 
                     if ( strcmp( child->name, "tileset" ) == 0 ) {
 
-                        char * source, int firstgid;
+                        char * source;
+                        int firstgid;
 
                         struct _xmlAttr * properties = child->properties;
                         while( properties ) {
@@ -125,7 +127,7 @@ TmxMap * tmx_load( char * _filename ) {
                                 xmlChar* value = xmlNodeListGetString(child->doc, properties->children, 1);
                                 if ( strcmp( properties->name, "source") == 0 ) {
                                     source = strdup( value );
-                                } if ( strcmp( properties->name, "width") == 0 ) {
+                                } if ( strcmp( properties->name, "firstgid") == 0 ) {
                                     firstgid = atoi( value );
                                 }
                                 xmlFree(value); 
@@ -133,14 +135,15 @@ TmxMap * tmx_load( char * _filename ) {
                             properties = properties->next;
                         }
 
-                        TsxTileset * tileset = tsx_load(_environment, source );
+                        TsxTileset * tileset = tsx_load( source );
 
+                        tileset->source = source;
                         tileset->firstgid = firstgid;
 
-                        if ( ! map->tilesets ) {
-                            map->tilesets = tileset;
+                        if ( ! result->tilesets ) {
+                            result->tilesets = tileset;
                         } else {
-                            TsxTileset * actual = map->tilesets;
+                            TsxTileset * actual = result->tilesets;
                             while( actual->next )  {
                                 actual = actual->next;
                             }
@@ -150,14 +153,14 @@ TmxMap * tmx_load( char * _filename ) {
                     } else if ( strcmp( child->name, "layer" ) == 0 ) {
 
                         TmxLayer * layer = malloc( sizeof( TmxLayer ) );
-                        memset( layer, 0, sizeof( TmsLayer ) );
+                        memset( layer, 0, sizeof( TmxLayer ) );
 
                         struct _xmlAttr * properties = child->properties;
                         while( properties ) {
                             if ( properties->type == XML_ATTRIBUTE_NODE ) {
                                 xmlChar* value = xmlNodeListGetString(child->doc, properties->children, 1);
                                 if ( strcmp( properties->name, "name") == 0 ) {
-                                    layer->name = strdup( name );
+                                    layer->name = strdup( value );
                                 } if ( strcmp( properties->name, "width") == 0 ) {
                                     layer->width = atoi( value );
                                 } if ( strcmp( properties->name, "height") == 0 ) {
@@ -170,20 +173,22 @@ TmxMap * tmx_load( char * _filename ) {
                             properties = properties->next;
                         }
 
-                        xmlNode * child = cur_node->children;
-                        while( child ) {
-                            if ( strcmp( child->name, "data" ) == 0 ) {
+                        xmlNode * rechild = child->children;
+                        while( rechild ) {
+
+                            if ( strcmp( rechild->name, "data" ) == 0 ) {
 
                                 layer->data = malloc( layer->width * layer->height * sizeof( int ) );
                                 memset( layer->data, 0, layer->width * layer->height * sizeof( int ) );
 
-                                char * content = (char*)xmlNodeGetContent( child->children );
+                                char * content = (char*)xmlNodeGetContent( rechild->children );
+
                                 int step = 0;
                                 
                                 while( *content ) {
                                     
-                                    char valueString[MAX_TEMPORARY_STORAGE];
-                                    memset( valueString, 0, MAX_TEMPORARY_STORAGE );
+                                    char valueString[32];
+                                    memset( valueString, 0, 32 );
                                     int p=0, j=0;
 
                                     while( *content ) {
@@ -211,14 +216,14 @@ TmxMap * tmx_load( char * _filename ) {
 
                             }
 
-                            child = child->next;
+                            rechild = rechild->next;
 
                         }
 
-                        if ( ! map->layers ) {
-                            map->layers = layer;
+                        if ( ! result->layers ) {
+                            result->layers = layer;
                         } else {
-                            TmxLayer * actual = map->layers;
+                            TmxLayer * actual = result->layers;
                             while( actual->next )  {
                                 actual = actual->next;
                             }

@@ -58,6 +58,7 @@ typedef struct _TsxTileset {
     char                *   version;
     char                *   tiledversion;
     char                *   name;
+    char                *   source;
     int                     tilewidth;
     int                     tileheight;
     int                     tilecount;

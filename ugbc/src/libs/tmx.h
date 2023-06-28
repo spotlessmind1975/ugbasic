@@ -35,12 +35,14 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
+#include "tsx.h"
+
 typedef enum _TmxOrientation {
  
     TMX_ORTHOGONAL = 1,
     TMX_ISOMETRIC = 2,
     TMX_STAGGERED = 3,
-    TMS_HEXAGONAL = 4
+    TMX_HEXAGONAL = 4
  
 } TmxOrientation;
 
@@ -51,7 +53,7 @@ typedef enum _TmxRenderOrder {
     TMX_LEFT_DOWN = 3,
     TMX_LEFT_UP = 4
  
-} TmxOrientation;
+} TmxRenderOrder;
 
 typedef struct _TmxLayer {
 
@@ -62,12 +64,14 @@ typedef struct _TmxLayer {
 
     int                 *   data;
 
-    struct _TsmxLayer    *   next;
+    struct _TmxLayer    *   next;
 
-}
+} TmxLayer;
 
 typedef struct _TmxMap {
 
+    char                *   version;
+    char                *   tiledversion;
     TmxOrientation          orientation;
     TmxOrientation          renderorder;
     int                     width;
@@ -78,7 +82,7 @@ typedef struct _TmxMap {
     int                     nextlayerid;
     int                     nextobjectid;
 
-    struct _TmxTileset  *   tilesets;
+    struct _TsxTileset  *   tilesets;
 
     struct _TmxLayer    *   layers;
 
