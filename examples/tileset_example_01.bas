@@ -21,8 +21,12 @@ REM https://kenney.nl/
 
 BITMAP ENABLE(16)
 
+CLS
+
 tileset := LOAD TILESET("kenney-tiny-town.tsx")
 
-PUT IMAGE tileset FRAME 0 AT 0,0
+PUT IMAGE tileset FRAME 29 AT 0,0
+
+
 
 

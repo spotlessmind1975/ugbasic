@@ -28,7 +28,22 @@ CLS
 tileset := LOAD TILESET("kenney-tiny-town.tsx")
 
 FOR y = 0 TO 8
-	FOR x = 0 TO 8
-		PUT IMAGE tileset FRAME #grass AT x*16,y*16
-	NEXT
+	y2 = y*16
+	x = 0
+	PUT IMAGE tileset FRAME #grass AT x,y2
+	ADD x, 16
+	PUT IMAGE tileset FRAME #grass AT x,y2
+	ADD x, 16
+	PUT IMAGE tileset FRAME #grass AT x,y2
+	ADD x, 16
+	PUT IMAGE tileset FRAME #grass AT x,y2
+	ADD x, 16
+	PUT IMAGE tileset FRAME #grass AT x,y2
+	ADD x, 16
+	PUT IMAGE tileset FRAME #grass AT x,y2
+	ADD x, 16
+	PUT IMAGE tileset FRAME #grass AT x,y2
+	ADD x, 16
+	PUT IMAGE tileset FRAME #grass AT x,y2
 NEXT
+

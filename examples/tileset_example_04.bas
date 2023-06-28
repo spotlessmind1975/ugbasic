@@ -29,6 +29,8 @@ tileset := LOAD TILESET("kenney-tiny-town.tsx")
 
 FOR y = 0 TO 8
 	FOR x = 0 TO 8
-		PUT IMAGE tileset FRAME #grass AT x*16,y*16
+		tile = TILE( tileset, #grass )
+		PUT IMAGE tileset FRAME tile AT x*16,y*16
 	NEXT
 NEXT
+
