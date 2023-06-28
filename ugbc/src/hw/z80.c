@@ -1273,6 +1273,7 @@ void z80_math_add_16bit( Environment * _environment, char *_source, char *_desti
 
 void z80_math_add_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
+    outline0("AND $0");
     outline1("LD HL, (%s)", _source );
     outline1("LD DE, $%4.4x", ( _destination & 0xffff ) );
     outline0("ADC HL, DE" );
@@ -1282,6 +1283,7 @@ void z80_math_add_16bit_const( Environment * _environment, char *_source, int _d
 
 void z80_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
+    outline0("AND $0");
     outline1("LD HL, (%s)", _source );
     outline1("LD DE, %s", _destination );
     outline0("ADD HL, DE" );

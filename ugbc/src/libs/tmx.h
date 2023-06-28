@@ -51,7 +51,7 @@ typedef enum _TmxRenderOrder {
     TMX_LEFT_DOWN = 3,
     TMX_LEFT_UP = 4
  
-} TmxRenderOrder;
+} TmxOrientation;
 
 typedef struct _TmxLayer {
 
@@ -64,7 +64,7 @@ typedef struct _TmxLayer {
 
     struct _TsmxLayer    *   next;
 
-} TmxLayer;
+}
 
 typedef struct _TmxMap {
 
