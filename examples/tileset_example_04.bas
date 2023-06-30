@@ -23,14 +23,5 @@ REM https://kenney.nl/
 
 BITMAP ENABLE(16)
 
-CLS
 
-tileset := LOAD TILESET("kenney-tiny-town.tsx")
-
-FOR y = 0 TO 8
-	FOR x = 0 TO 8
-		tile = TILE( tileset, #grass )
-		PUT IMAGE tileset FRAME tile AT x*16,y*16
-	NEXT
-NEXT
 
