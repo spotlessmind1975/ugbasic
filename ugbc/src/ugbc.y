@@ -86,7 +86,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
-%token ALL BUT VG5000 CLASS
+%token ALL BUT VG5000 CLASS PROBABILITY
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2833,6 +2833,9 @@ exponential:
     }
     | TILE CLASS OP expr OP_COMMA const_expr CP {
         $$ = tile_class( _environment, $4, $6 )->name;
+    }
+    | TILE PROBABILITY OP expr OP_COMMA const_expr CP {
+        $$ = tile_probability( _environment, $4, $6 )->name;
     }
     | TILE BELONG OP expr OP_COMMA expr CP {
         $$ = tile_belong( _environment, $4, $6 )->name;

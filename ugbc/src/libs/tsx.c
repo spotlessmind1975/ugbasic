@@ -194,6 +194,8 @@ TsxTileset * tsx_load( char * _filename ) {
                         TsxTile * tile = malloc( sizeof( TsxTile ) );
                         memset( tile, 0, sizeof ( TsxTile ) );
 
+                        tile->probability = 1.0f;
+
                         struct _xmlAttr * properties = child->properties;
                         while( properties ) {
                             if ( properties->type == XML_ATTRIBUTE_NODE ) {

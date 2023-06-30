@@ -9,5 +9,5 @@
  <image source="kenney-tiny-town-tilemap.png" width="192" height="176"/>
  <tile id="0" type="grass"/>
  <tile id="1" type="grass" probability="0.25"/>
- <tile id="29" type="mushroom"/>
+ <tile id="29" type="mushroom" probability="0.5"/>
 </tileset>

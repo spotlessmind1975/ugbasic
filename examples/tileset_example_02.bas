@@ -30,5 +30,6 @@ tileset := LOAD TILESET("kenney-tiny-town.tsx")
 class = TILE CLASS( tileset, 29 )
 larghezza = TILE WIDTH( tileset )
 altezza = TILE HEIGHT( tileset )
+probabilita = TILE PROBABILITY( tileset, 29 )
 
-PRINT class;" (" ; larghezza ; "x" ; altezza ; " pixel)"
+PRINT class;" (" ; larghezza ; "x" ; altezza ; " pixel) % = "; probabilita

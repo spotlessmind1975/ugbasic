@@ -2284,6 +2284,8 @@ typedef struct _Environment {
 #define CRITICAL_TILE_CLASS_INVALID_ID( v ) CRITICAL2i("E194 - invalid tile id on TILE CLASS", v );
 #define CRITICAL_TILE_WIDTH_NO_TILESET( v ) CRITICAL2("E195 - cannot call TILE WIDTH on something that is not a TILESET", v );
 #define CRITICAL_TILE_HEIGHT_NO_TILESET( v ) CRITICAL2("E196 - cannot call TILE HEIGHT on something that is not a TILESET", v );
+#define CRITICAL_TILE_PROBABILITY_NO_TILESET( v ) CRITICAL2("E197 - cannot call TILE PROBABILITY on something that is not a TILESET", v );
+#define CRITICAL_TILE_PROBABILITY_INVALID_ID( v ) CRITICAL2i("E198 - invalid tile id on TILE PROBABILITY", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3618,6 +3620,7 @@ Variable *              tile_class( Environment * _environment, char * _tileset,
 Variable *              tile_get_first( Environment * _environment, char * _tile );
 Variable *              tile_get_height( Environment * _environment, char * _tile );
 Variable *              tile_get_width( Environment * _environment, char * _tile );
+Variable *              tile_probability( Environment * _environment, char * _tileset, int _id );
 Variable *              tileset_tile_get_height( Environment * _environment, char * _tileset );
 Variable *              tileset_tile_get_width( Environment * _environment, char * _tileset );
 Variable *              tile_load( Environment * _environment, char * _filename, int _flags, char * _tileset, int _index );
