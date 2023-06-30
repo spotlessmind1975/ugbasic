@@ -45,23 +45,6 @@
  * @param _image Image to measure.
  * @return The height of the image, in pixels
  */
-/* <usermanual>
-@keyword TILE HEIGHT
-
-@english
-This function allows you to obtain the height of a given ''TILE'' or a given
-set of ''TILES''. The height is expressed in tiles.
-
-@italian
-Questa funzione permette di ottenere l'altezza della tile (''TILE'') 
-o delle tiles (''TILES'') date, espressa in tiles. 
-
-@syntax = TILE HEIGHT([tile])
-
-@example starshipHeight = TILE HEIGHT( LOAD TILE("starship.png") )
-
-@target atari
-</usermanual> */
 Variable * tile_get_height( Environment * _environment, char * _tile ) {
 
     Variable * tile = variable_retrieve( _environment, _tile );

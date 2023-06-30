@@ -38,27 +38,49 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 /**
- * @brief Emit code for <strong>TILE WIDTH(...)</strong>
+ * @brief Return the height of a TILE on a TILESET
  * 
  * @param _environment Current calling environment
- * @param _image Image to measure.
- * @return The height of the image, in pixels
+ * @param _tileset tileset
  */
-Variable * tile_get_width( Environment * _environment, char * _tile ) {
+/* <usermanual>
+@keyword TILE HEIGHT
 
-    Variable * tile = variable_retrieve( _environment, _tile );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(tile width)" );
+@english
+This function allows you to obtain the height of a given ''TILE'' or a given
+set of ''TILES''. The width is expressed in tiles. If the parameter is a
+``TILESET``, this is the height of a single tile.
 
-    if ( tile->type == VT_TILE ) {
-        cpu_store_8bit( _environment, result->realName, 1 );
-    } else if ( tile->type == VT_TILES ) {
-        outline1("LD A, (%s+1)", tile->realName );
-        outline1("LD (%s), A", result->realName );
-    } else {
-        CRITICAL_NOT_TILE( _tile );
+@italian
+Questa funzione permette di ottenere l'altezza della tile (''TILE'') 
+o delle tiles (''TILES'') date, espressa in tiles. Se il parametro è un
+''TILESET'', questa sarà l'altezza di una singola tessera.
+
+@syntax = TILE HEIGHT([tile])
+@syntax = TILE HEIGHT([tileset])
+
+@example starshipHeight = TILE HEIGHT( LOAD TILE("starship.png") )
+@example singleTileHeight = TILE HEIGHT(LOAD TILESET("tileset.tsx"))
+
+@target all
+</usermanual> */
+Variable * tileset_tile_get_height( Environment * _environment, char * _tileset ) {
+
+    Variable * tileset = NULL;
+
+    tileset = variable_retrieve( _environment, _tileset );
+    if ( tileset->type != VT_IMAGES || tileset->originalTileset == NULL ) {
+        CRITICAL_TILE_HEIGHT_NO_TILESET( _tileset );
     }
 
-    return result;
+    Variable * height = variable_temporary( _environment, VT_BYTE, "(class)");
+
+    variable_store( _environment, height->name, tileset->frameHeight );
+
+    return height;
 
 }
+

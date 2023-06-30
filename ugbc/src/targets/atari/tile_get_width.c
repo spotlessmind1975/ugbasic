@@ -45,23 +45,6 @@
  * @param _image Image to measure.
  * @return The height of the image, in pixels
  */
-/* <usermanual>
-@keyword TILE WIDTH
-
-@english
-This function allows you to obtain the width of a given ''TILE'' or a given
-set of ''TILES''. The width is expressed in tiles.
-
-@italian
-Questa funzione permette di ottenere la larghezza della tile (''TILE'') 
-o delle tiles (''TILES'') date, espressa in tiles. 
-
-@syntax = TILE WIDTH([tile])
-
-@example starshipHeight = TILE WIDTH( LOAD TILE("starship.png") )
-
-@target atari
-</usermanual> */
 Variable * tile_get_width( Environment * _environment, char * _tile ) {
 
     Variable * tile = variable_retrieve( _environment, _tile );

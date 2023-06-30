@@ -45,11 +45,6 @@
  * @param _image Image to measure.
  * @return The height of the image, in pixels
  */
-/* <usermanual>
-@keyword TILE WIDTH
-
-@target msx1
-</usermanual> */
 Variable * tile_get_width( Environment * _environment, char * _tile ) {
 
     Variable * tile = variable_retrieve( _environment, _tile );

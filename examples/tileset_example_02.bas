@@ -28,5 +28,7 @@ CLS
 tileset := LOAD TILESET("kenney-tiny-town.tsx")
 
 class = TILE CLASS( tileset, 29 )
+larghezza = TILE WIDTH( tileset )
+altezza = TILE HEIGHT( tileset )
 
-PRINT class
+PRINT class;" (" ; larghezza ; "x" ; altezza ; " pixel)"

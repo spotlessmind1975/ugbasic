@@ -38,27 +38,49 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 /**
- * @brief Emit code for <strong>TILE WIDTH(...)</strong>
+ * @brief Return the width of a TILE on a TILESET
  * 
  * @param _environment Current calling environment
- * @param _image Image to measure.
- * @return The height of the image, in pixels
+ * @param _tileset tileset
  */
-Variable * tile_get_width( Environment * _environment, char * _tile ) {
+/* <usermanual>
+@keyword TILE WIDTH
 
-    Variable * tile = variable_retrieve( _environment, _tile );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(tile width)" );
+@english
+This function allows you to obtain the width of a given ''TILE'' or a given
+set of ''TILES''. The width is expressed in tiles. If the parameter is a
+``TILESET``, this is the width of a single tile.
 
-    if ( tile->type == VT_TILE ) {
-        cpu_store_8bit( _environment, result->realName, 1 );
-    } else if ( tile->type == VT_TILES ) {
-        outline1("LD A, (%s+1)", tile->realName );
-        outline1("LD (%s), A", result->realName );
-    } else {
-        CRITICAL_NOT_TILE( _tile );
+@italian
+Questa funzione permette di ottenere la larghezza della tile (''TILE'') 
+o delle tiles (''TILES'') date, espressa in tiles. Se il parametro è un
+''TILESET'', questa sarà la larghezza di una singola tessera.
+
+@syntax = TILE WIDTH([tile])
+@syntax = TILE WIDTH([tileset])
+
+@example starshipWidth = TILE WIDTH( LOAD TILE("starship.png") )
+@example singleTileWidth = TILE WIDTH(LOAD TILESET("tileset.tsx"))
+
+@target all
+</usermanual> */
+Variable * tileset_tile_get_width( Environment * _environment, char * _tileset ) {
+
+    Variable * tileset = NULL;
+
+    tileset = variable_retrieve( _environment, _tileset );
+    if ( tileset->type != VT_IMAGES || tileset->originalTileset == NULL ) {
+        CRITICAL_TILE_WIDTH_NO_TILESET( _tileset );
     }
 
-    return result;
+    Variable * width = variable_temporary( _environment, VT_BYTE, "(class)");
+
+    variable_store( _environment, width->name, tileset->frameWidth );
+
+    return width;
 
 }
+

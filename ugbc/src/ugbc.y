@@ -605,6 +605,14 @@ const_factor:
       | TILES WIDTH {
           $$ = ((Environment *)_environment)->screenTilesWidth;
       }
+      | TILE WIDTH OP expr CP {
+          Variable * v = variable_retrieve( _environment, $4 );
+          if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
+              $$ = v->frameWidth;
+          } else {
+             CRITICAL_TILE_WIDTH_NO_TILESET( $4 );
+          }
+      }
       | SCREEN COLUMNS {
           $$ = ((Environment *)_environment)->screenTilesWidth;
       }
@@ -707,6 +715,14 @@ const_factor:
       }
       | TILES HEIGHT {
           $$ = ((Environment *)_environment)->screenTilesHeight;
+      }
+      | TILE HEIGHT OP expr CP {
+          Variable * v = variable_retrieve( _environment, $4 );
+          if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
+              $$ = v->frameHeight;
+          } else {
+             CRITICAL_TILE_HEIGHT_NO_TILESET( $4 );
+          }
       }
       | SCREEN ROWS {
           $$ = ((Environment *)_environment)->screenTilesHeight;
@@ -2827,11 +2843,13 @@ exponential:
     | TILES FIRST OP expr CP {
         $$ = tile_get_first( _environment, $4 )->name;
     }
-    | TILES WIDTH OP expr CP {
-        $$ = tile_get_width( _environment, $4 )->name;
-    }
     | TILE WIDTH OP expr CP {
-        $$ = tile_get_width( _environment, $4 )->name;
+        Variable * v = variable_retrieve( _environment, $4 );
+        if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
+            $$ = tileset_tile_get_width( _environment, $4 )->name;
+        } else {
+            $$ = tile_get_width( _environment, $4 )->name;
+        }
     }
     | IMAGE WIDTH OP expr CP {
         $$ = image_get_width( _environment, $4 )->name;
@@ -2855,11 +2873,13 @@ exponential:
         $$ = variable_temporary( _environment, VT_POSITION, "(FONT HEIGHT)" )->name;
         variable_store( _environment, $$, ((struct _Environment *)_environment)->fontHeight );
     }
-    | TILES HEIGHT OP expr CP {
-        $$ = tile_get_height( _environment, $4 )->name;
-    }
     | TILE HEIGHT OP expr CP {
-        $$ = tile_get_height( _environment, $4 )->name;
+        Variable * v = variable_retrieve( _environment, $4 );
+        if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
+            $$ = tileset_tile_get_height( _environment, $4 )->name;
+        } else {
+            $$ = tile_get_height( _environment, $4 )->name;
+        }
     }
     | IMAGE HEIGHT OP expr CP {
         $$ = image_get_height( _environment, $4 )->name;
