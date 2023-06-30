@@ -44,12 +44,12 @@ static RGBi SYSTEM_PALETTE[] = {
         { 0x00, 0xff, 0x00, 0xff, 3, "LIGHT_GREEN" },
         { 0x00, 0x00, 0x80, 0xff, 4, "DARK_BLUE" },
         { 0x00, 0x00, 0xff, 0xff, 5, "LIGHT_BLUE" },
-        { 0x80, 0x00, 0x00, 0xff, 6, "DARK_RED" },
+        { 0x3f, 0x26, 0x31, 0xff, 6, "DARK_RED" },
         { 0x00, 0xff, 0xff, 0xff, 7, "CYAN" },
         { 0x80, 0x00, 0x00, 0xff, 8, "RED" },
-        { 0xff, 0x00, 0x00, 0xff, 9, "LIGHT_RED" },
-        { 0xff, 0xff, 0x20, 0xff, 10, "DARK_YELLOW" },
-        { 0xff, 0xff, 0xee, 0xff, 11, "LIGHT_YELLOW" },
+        { 0xff, 0x30, 0x30, 0xff, 9, "LIGHT_RED" },
+        { 0xbd, 0x6c, 0x4a, 0xff, 10, "DARK_YELLOW" },
+        { 0xeb, 0xa6, 0x6e, 0xff, 11, "LIGHT_YELLOW" },
         { 0x00, 0x40, 0x00, 0xff, 12, "DARK_GREEN" },
         { 0xaa, 0x00, 0xaa, 0xff, 13, "MAGENTA" },
         { 0xaa, 0xaa, 0xaa, 0xff, 14, "GRAY" },
@@ -125,7 +125,7 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
             if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
+                rgb.alpha = *(source + 3);
             } else {
                 rgb.alpha = 255;
             }
@@ -142,6 +142,8 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
             source += _depth;
 
         }
+
+        // printf( "\n" );
 
         for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
             if ( colorIndexesCount[xx] > colorBackgroundMax ) {
@@ -180,7 +182,7 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
             if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
+                rgb.alpha = *(source + 3);
             } else {
                 rgb.alpha = 255;
             }
@@ -197,24 +199,24 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
             if ( systemRgb->index != colorBackground[y] ) {
                 adilinepixel(colorForeground[y]);
                 *( _dest + y ) |= bitmask;
-                //printf("*");
+                // printf("%1.1x", colorForeground[y]);
             } else {
                 adilinepixel(colorBackground[y]);
                 *( _dest + y ) &= ~bitmask;
-                //printf(" ");
+                // printf("%1.1x", colorBackground[y]);
             }
 
             source += _depth;
 
         }
         
-        //printf("\n");
+        // printf("\n");
 
         source += _depth * ( _source_width - 8 );
 
     }
 
-    //printf("\n\n");
+    // printf("\n\n----\n\n");
 
     for( int i=0; i<8; ++i ) {
         *( _dest + 8 + i ) = ( colorForeground[i] << 4 ) | colorBackground[i] ;
