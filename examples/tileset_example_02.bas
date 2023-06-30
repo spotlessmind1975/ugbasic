@@ -27,9 +27,16 @@ CLS
 
 tileset := LOAD TILESET("kenney-tiny-town.tsx")
 
-class = TILE CLASS( tileset, 29 )
+classe = TILE CLASS( tileset, 29 )
 larghezza = TILE WIDTH( tileset )
 altezza = TILE HEIGHT( tileset )
 probabilita = TILE PROBABILITY( tileset, 29 )
 
-PRINT class;" (" ; larghezza ; "x" ; altezza ; " pixel) % = "; probabilita
+PRINT classe;" (" ; larghezza ; "x" ; altezza ; " pixel) % = "; probabilita
+
+FOR i = 0 TO 10
+	PUT IMAGE tileset TILE 29 AT 16*i, 32
+NEXT
+
+
+
