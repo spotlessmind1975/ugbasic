@@ -38,22 +38,22 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-        { 0x00, 0x00, 0x00, 0xff, 0, "TRANSPARENT" },
-        { 0x00, 0x00, 0x00, 0xff, 1, "BLACK" },
-        { 0x00, 0x80, 0x00, 0xff, 2, "GREEN" },
-        { 0x00, 0xff, 0x00, 0xff, 3, "LIGHT_GREEN" },
-        { 0x00, 0x00, 0x80, 0xff, 4, "DARK_BLUE" },
-        { 0x00, 0x00, 0xff, 0xff, 5, "LIGHT_BLUE" },
-        { 0x3f, 0x26, 0x31, 0xff, 6, "DARK_RED" },
-        { 0x00, 0xff, 0xff, 0xff, 7, "CYAN" },
-        { 0x80, 0x00, 0x00, 0xff, 8, "RED" },
-        { 0xff, 0x30, 0x30, 0xff, 9, "LIGHT_RED" },
-        { 0xbd, 0x6c, 0x4a, 0xff, 10, "DARK_YELLOW" },
-        { 0xeb, 0xa6, 0x6e, 0xff, 11, "LIGHT_YELLOW" },
-        { 0x00, 0x40, 0x00, 0xff, 12, "DARK_GREEN" },
-        { 0xaa, 0x00, 0xaa, 0xff, 13, "MAGENTA" },
-        { 0xaa, 0xaa, 0xaa, 0xff, 14, "GRAY" },
-        { 0xff, 0xff, 0xff, 0xff, 15, "WHITE" }
+        {    0,    0,    0, 0xff, 0, "TRANSPARENT" },
+        {    0,    0,    0, 0xff, 1, "BLACK" },
+        {   81,  202,   92, 0xff, 2, "GREEN" },
+        {  133,  223,  141, 0xff, 3, "LIGHT_GREEN" },
+        {  107,  103,  240, 0xff, 4, "DARK_BLUE" },
+        {  146,  136,  255, 0xff, 5, "LIGHT_BLUE" },
+        {  212,  100,  113, 0xff, 6, "DARK_RED" },
+        {  102,  219,  239, 0xff, 7, "CYAN" },
+        {  230,  118,  130, 0xff, 8, "RED" },
+        {  255,  151,  164, 0xff, 9, "LIGHT_RED" },
+        {  215,  207,   97, 0xff, 10, "DARK_YELLOW" },
+        {  230,  222,  112, 0xff, 11, "LIGHT_YELLOW" },
+        {   74,  177,   81, 0xff, 12, "DARK_GREEN" },
+        {  200,  121,  198, 0xff, 13, "MAGENTA" },
+        {  204,  204,  204, 0xff, 14, "GRAY" },
+        {  255,  255,  255, 0xff, 15, "WHITE" }
 };
 
 static RGBi * commonPalette;
