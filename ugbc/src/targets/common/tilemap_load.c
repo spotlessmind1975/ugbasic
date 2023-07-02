@@ -125,19 +125,34 @@ Variable * tilemap_load( Environment * _environment, char * _filename, char * _a
     TmxLayer * layer = tilemap->layers;
 
     while( layer ) {
-        if ( final->valueBuffer ) {
-            CRITICAL_TILEMAP_LOAD_ONLY_ONE_LAYER( _filename );
-        }
+        // if ( final->valueBuffer ) {
+        //     CRITICAL_TILEMAP_LOAD_ONLY_ONE_LAYER( _filename );
+        // }
         int size = layer->width * layer->height;
-        char * mapData = malloc( size );
+        char * mapData = NULL;
+        if ( final->valueBuffer ) {
+            if ( final->size != size ) {
+                CRITICAL_TILEMAP_LOAD_ONLY_SAME_SIZE_LAYER( _filename );
+            }
+            mapData = realloc( final->valueBuffer, final->size + size );
+            final->valueBuffer = mapData;
+            mapData += final->size;
+        } else {
+            mapData = malloc( size );
+            final->valueBuffer = mapData;
+        }
         memset( mapData, 0, size );
         for(int i=0; i<size; ++i ) {
-            mapData[i] = ((unsigned char)layer->data[i]) - (final->tileset->firstGid);
+            if ( layer->data[i] >= final->tileset->firstGid ) {
+                mapData[i] = ((unsigned char)layer->data[i]) - (final->tileset->firstGid);
+            } else {
+                mapData[i] = 0xff;
+            }
         }
-        final->valueBuffer = mapData;        
-        final->size = size;
+        final->size += size;
         final->mapWidth = layer->width;
         final->mapHeight = layer->height;
+        ++final->mapLayers;
         layer = layer->next;
     }
 

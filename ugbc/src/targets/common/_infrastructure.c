@@ -1793,6 +1793,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     }
                                     target->mapWidth = source->mapWidth;
                                     target->mapHeight = source->mapHeight;
+                                    target->mapLayers = source->mapLayers;
                                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
                                     break;
                                 }
@@ -2042,6 +2043,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                             }
                             target->mapWidth = source->mapWidth;
                             target->mapHeight = source->mapHeight;
+                            target->mapLayers = source->mapLayers;
                             cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
                             break;
                         }
@@ -8076,6 +8078,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     var->frameHeight = expr->frameHeight;
     var->mapWidth = expr->mapWidth;
     var->mapHeight = expr->mapHeight;
+    var->mapLayers = expr->mapLayers;
     var->originalDepth = expr->originalDepth;
     var->originalColors = expr->originalColors;
     var->originalTileset = expr->originalTileset;

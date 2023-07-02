@@ -744,6 +744,8 @@ typedef struct _Variable {
 
     int mapHeight;
 
+    int mapLayers;
+
     int frameWidth;
 
     int frameHeight;
@@ -2289,6 +2291,7 @@ typedef struct _Environment {
 #define CRITICAL_TILE_PROBABILITY_INVALID_ID( v ) CRITICAL2i("E198 - invalid tile id on TILE PROBABILITY", v );
 #define CRITICAL_TILEMAP_WIDTH_NO_TILEMAP( v ) CRITICAL2("E199 - cannot call TILEMAP WIDTH on something that is not a TILEMAP", v );
 #define CRITICAL_TILEMAP_HEIGHT_NO_TILEMAP( v ) CRITICAL2("E200 - cannot call TILEMAP HEIGHT on something that is not a TILEMAP", v );
+#define CRITICAL_TILEMAP_LOAD_ONLY_SAME_SIZE_LAYER( v ) CRITICAL2("E201 - cannot use tile maps with layers of different size", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3499,7 +3502,7 @@ void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
 void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags );
 void                    put_tile( Environment * _environment, char * _tile, char * _x, char * _y, char * _w, char * _h );
-void                    put_tilemap( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy );
+void                    put_tilemap( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer );
 
 //----------------------------------------------------------------------------
 // *Q*

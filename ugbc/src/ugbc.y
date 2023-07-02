@@ -86,7 +86,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
-%token ALL BUT VG5000 CLASS PROBABILITY
+%token ALL BUT VG5000 CLASS PROBABILITY LAYER
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -4203,11 +4203,19 @@ put_definition_expression:
     }
     | TILEMAP expr put_image_flags {
         $3 = $3 | FLAG_WITH_PALETTE;
-        put_tilemap( _environment, $2, $3, NULL, NULL );
+        put_tilemap( _environment, $2, $3, NULL, NULL, NULL );
+    }
+    | TILEMAP expr LAYER expr put_image_flags {
+        $5 = $5 | FLAG_WITH_PALETTE;
+        put_tilemap( _environment, $2, $5, NULL, NULL, $4 );
     }
     | TILEMAP expr FROM expr OP_COMMA expr put_image_flags {
         $7 = $7 | FLAG_WITH_PALETTE;
-        put_tilemap( _environment, $2, $7, $4, $6 );
+        put_tilemap( _environment, $2, $7, $4, $6, NULL );
+    }
+    | TILEMAP expr LAYER expr FROM expr OP_COMMA expr put_image_flags {
+        $9 = $9 | FLAG_WITH_PALETTE;
+        put_tilemap( _environment, $2, $9, $6, $8, $4 );
     }
     ;
 
