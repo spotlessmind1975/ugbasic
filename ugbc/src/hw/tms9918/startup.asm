@@ -328,6 +328,25 @@ VDPWRITELOOP:
         EI
         RET
 
+VDPWRITEOPT:
+        DI
+        CALL    VDPWRITEADDR
+VDPWRITEOPTLOOP:
+        ; LD      A, (HL)
+        PUSH    BC
+        LD      A, C
+        LD      BC, (VDPDATAPORTWRITE)
+        LD      B, A
+        OTIR
+        POP     BC
+        ; INC     HL
+        ; DEC     BC
+        ; LD      A, B
+        ; OR      C
+        ; JP      NZ, VDPWRITELOOP
+        EI
+        RET
+
 VDPWRITE8:
         DI
         CALL    VDPWRITEADDR
