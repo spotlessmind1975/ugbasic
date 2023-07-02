@@ -20,8 +20,8 @@
             "scale": 5.05875,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 68.09982703236966,
-                "y": 79.96046454163577
+                "x": 67.90214974054855,
+                "y": 79.76278724981469
             }
         },
         "kenney-tiny-town.tsx": {
@@ -30,12 +30,12 @@
         }
     },
     "last.imagePath": "Z:/ugbasic",
-    "map.fixedSize": false,
-    "map.height": 10,
+    "map.fixedSize": true,
+    "map.height": 32,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
-    "map.width": 8,
+    "map.width": 32,
     "openFiles": [
         "kenney-tiny-town.tsx",
         "kenney-tiny-town.tmx"
