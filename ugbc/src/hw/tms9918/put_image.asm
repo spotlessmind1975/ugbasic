@@ -141,40 +141,47 @@ PUTIMAGE2:
 PUTIMAGE0CPA:
     PUSH BC
 PUTIMAGE0CP:
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    LD A, (HL)
-    CALL VDPOUTCHAR
-    INC DE
-    INC HL
-    DEC C
-    JR NZ, PUTIMAGE0CP
+    PUSH BC
+    LD B, 0
+    SLA C
+    SLA C
+    SLA C
+    CALL VDPWRITE
+    POP BC
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; LD A, (HL)
+    ; CALL VDPOUTCHAR
+    ; INC DE
+    ; INC HL
+    ; DEC C
+    ; JR NZ, PUTIMAGE0CP
     POP BC
     PUSH HL
     PUSH BC
@@ -190,15 +197,15 @@ PUTIMAGE0CP:
     ADC HL, DE
     ADC HL, DE
     ADC HL, DE
-    LD B, 0
-    SBC HL, BC
-    SBC HL, BC
-    SBC HL, BC
-    SBC HL, BC
-    SBC HL, BC
-    SBC HL, BC
-    SBC HL, BC
-    SBC HL, BC
+    ; LD B, 0
+    ; SBC HL, BC
+    ; SBC HL, BC
+    ; SBC HL, BC
+    ; SBC HL, BC
+    ; SBC HL, BC
+    ; SBC HL, BC
+    ; SBC HL, BC
+    ; SBC HL, BC
     LD DE, HL
     POP BC
     POP HL
