@@ -186,16 +186,18 @@ PUTIMAGE0CP:
     PUSH HL
     PUSH BC
     LD HL, DE 
-    LD D, 0
-    LD A, (CURRENTTILESWIDTH)
-    LD E, A
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
+    ; LD D, 0
+    ; LD A, (CURRENTTILESWIDTH)
+    ; LD E, A
+    ; ADC HL, DE
+    ; ADC HL, DE
+    ; ADC HL, DE
+    ; ADC HL, DE
+    ; ADC HL, DE
+    ; ADC HL, DE
+    ; ADC HL, DE
+    ; ADC HL, DE
+    LD DE, (CURRENTTILESWIDTHX8)
     ADC HL, DE
     ; LD B, 0
     ; SBC HL, BC
