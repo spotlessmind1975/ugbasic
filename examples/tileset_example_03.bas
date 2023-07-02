@@ -25,25 +25,7 @@ BITMAP ENABLE(16)
 
 CLS
 
-tileset := LOAD TILESET("kenney-tiny-town.tsx")
+tilemap := LOAD TILEMAP("kenney-tiny-town.tmx")
 
-FOR y = 0 TO 8
-	y2 = y*16
-	x = 0
-	PUT IMAGE tileset FRAME #grass AT x,y2
-	ADD x, 16
-	PUT IMAGE tileset FRAME #grass AT x,y2
-	ADD x, 16
-	PUT IMAGE tileset FRAME #grass AT x,y2
-	ADD x, 16
-	PUT IMAGE tileset FRAME #grass AT x,y2
-	ADD x, 16
-	PUT IMAGE tileset FRAME #grass AT x,y2
-	ADD x, 16
-	PUT IMAGE tileset FRAME #grass AT x,y2
-	ADD x, 16
-	PUT IMAGE tileset FRAME #grass AT x,y2
-	ADD x, 16
-	PUT IMAGE tileset FRAME #grass AT x,y2
-NEXT
+PUT TILEMAP tilemap
 
