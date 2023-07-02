@@ -182,6 +182,7 @@ void cpu6502_flip( Environment * _environment, char * _source, char * _size, cha
 void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char * _value );
 void cpu6502_move_8bit_indirect2( Environment * _environment, char * _value, char *_source );
 void cpu6502_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source );
+void cpu6502_move_8bit_indirect2_16bit( Environment * _environment, char * _value, char * _offset, char *_source );
 void cpu6502_move_16bit_indirect( Environment * _environment, char *_source, char * _value );
 void cpu6502_move_16bit_indirect2( Environment * _environment, char * _value, char *_source );
 void cpu6502_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char *_source, char * _index );
@@ -416,6 +417,7 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_move_8bit_indirect( _environment, _source, _value ) cpu6502_move_8bit_indirect( _environment, _source, _value )
 #define cpu_move_8bit_indirect2( _environment, _value, _source ) cpu6502_move_8bit_indirect2( _environment, _value, _source )
 #define cpu_move_8bit_indirect2_8bit( _environment, _value, _offset, _source ) cpu6502_move_8bit_indirect2_8bit( _environment, _value, _offset, _source )
+#define cpu_move_8bit_indirect2_16bit( _environment, _value, _offset, _source ) cpu6502_move_8bit_indirect2_16bit( _environment, _value, _offset, _source )
 #define cpu_move_16bit_indirect( _environment, _source, _value ) cpu6502_move_16bit_indirect( _environment, _source, _value )
 #define cpu_move_16bit_indirect2( _environment, _value, _source ) cpu6502_move_16bit_indirect2( _environment, _value, _source )
 #define cpu_move_16bit_indirect2_8bit( _environment, _value, _index, _source ) cpu6502_move_16bit_indirect2_8bit( _environment, _value, _index, _source )

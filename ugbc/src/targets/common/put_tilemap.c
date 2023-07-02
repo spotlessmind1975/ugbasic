@@ -78,7 +78,13 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags ) {
     int screenWidthAsTiles = ( _environment->screenWidth / tileset->frameWidth );
     int deltaFrame = tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0;
 
-    Variable * index = variable_temporary( _environment, VT_BYTE, "(index)" );
+    Variable * index = NULL;
+
+    if ( size > 255 ) {
+        index = variable_temporary( _environment, VT_WORD, "(index)" );
+    } else {
+        index = variable_temporary( _environment, VT_BYTE, "(index)" );
+    }
 
     variable_store( _environment, index->name, 0 );
 
@@ -98,23 +104,31 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags ) {
     variable_store( _environment, x->name, 0 );
     variable_store( _environment, fx->name, 0 );
     cpu_label( _environment, labelLoopX );
-    cpu_move_8bit_indirect2_8bit( _environment, tilemap->realName, index->realName, frame->realName );
+    if ( size > 255 ) {
+        cpu_move_8bit_indirect2_16bit( _environment, tilemap->realName, index->realName, frame->realName );
+        cpu_inc_16bit( _environment, index->realName );
+    } else {
+        cpu_move_8bit_indirect2_8bit( _environment, tilemap->realName, index->realName, frame->realName );
+        cpu_inc( _environment, index->realName );
+    }
     put_image( _environment, tileset->name, x->name, y->name, frame->name, NULL,  _flags );
-    cpu_inc( _environment, index->realName );
     cpu_inc( _environment, fx->realName );
     variable_add_inplace( _environment, x->name, tileset->frameWidth );
     Variable * check = variable_less_than_const( _environment, fx->name, tilemap->mapWidth, 0 );
     cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x0, labelExitX, 1 );
-    check = variable_less_than_const( _environment, x->name, _environment->screenWidth, 0 );
+    outline0("; --- variable_less_than_const");
+    check = variable_less_than_const( _environment, x->name, ( _environment->screenWidth - tileset->frameWidth), 1 );
+    outline0("; --- --- variable_less_than_const");
     cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0xff, labelLoopX, 1 );
+    outline0("; --- --- --- variable_less_than_const");
     cpu_label( _environment, labelExitX );
     if ( deltaFrame ) {
-        variable_add_inplace( _environment, frame->name, deltaFrame );
+        variable_add_inplace( _environment, index->name, deltaFrame );
     }
     variable_add_inplace( _environment, y->name, tileset->frameHeight );
     check = variable_less_than_const( _environment, index->name, size, 0 );
     cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x00, labelExit, 1 );
-    check = variable_less_than_const( _environment, y->name, _environment->screenHeight, 0 );
+    check = variable_less_than_const( _environment, y->name, (_environment->screenHeight - tileset->frameHeight ), 0 );
     cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0xff, labelLoopY, 1 );
     cpu_label( _environment, labelExit );
 

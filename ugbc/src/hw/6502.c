@@ -4802,6 +4802,25 @@ void cpu6502_move_8bit_indirect2_8bit( Environment * _environment, char * _value
 
 }
 
+void cpu6502_move_8bit_indirect2_16bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
+
+    inline( cpu_move_8bit_indirect2_16bit )
+
+        outline0("CLC");
+        outline1("LDA #<%s", _value);
+        outline1("ADC %s", address_displacement( _environment, _offset, "0" ) );
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _value);
+        outline1("ADC %s", address_displacement( _environment, _offset, "1" ) );
+        outline0("STA TMPPTR+1");
+        outline0("LDY #0" );
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", _source);
+
+    no_embedded( cpu_move_8bit_indirect2_16bit )
+
+}
+
 void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
     MAKE_LABEL

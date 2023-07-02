@@ -1142,6 +1142,7 @@ typedef struct _Embedded {
     int cpu_move_8bit_indirect;
     int cpu_move_8bit_indirect2;
     int cpu_move_8bit_indirect2_8bit;
+    int cpu_move_8bit_indirect2_16bit;
     int cpu_move_16bit_indirect;
     int cpu_move_16bit_indirect2;
     int cpu_move_16bit_indirect2_8bit;

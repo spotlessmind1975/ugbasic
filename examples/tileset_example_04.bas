@@ -23,5 +23,11 @@ REM https://kenney.nl/
 
 BITMAP ENABLE(16)
 
+CLS
+
+tilemap := LOAD TILEMAP("kenney-tiny-town-large.tmx")
+
+PUT TILEMAP tilemap
+
 
 
