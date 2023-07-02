@@ -48,13 +48,14 @@ OLDNMIISVC2
     fdb $0
 
 ISVCIRQ
+    PSHS CC
     PSHS D
     PSHS X
     LDD #0
     STD $00e3
     STA $FFDE
     TFR S, X
-    LEAX +14,X
+    LEAX +15,X
     LDD ,X
     STD OLDISVC2
     LDD #ISVCIRQ2
@@ -64,6 +65,7 @@ ISVCIRQ
     JMP [OLDISVC]
 ISVCIRQ2
     STA $FFDF
+    PULS CC
     JMP [OLDISVC2]
 
 NMIISVCIRQ
