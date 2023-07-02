@@ -605,6 +605,14 @@ const_factor:
       | TILES WIDTH {
           $$ = ((Environment *)_environment)->screenTilesWidth;
       }
+      | TILEMAP WIDTH OP expr CP {
+          Variable * v = variable_retrieve( _environment, $4 );
+          if ( v->type == VT_TILEMAP ) {
+              $$ = v->mapWidth;
+          } else {
+             CRITICAL_TILEMAP_WIDTH_NO_TILEMAP( $4 );
+          }
+      }
       | TILE WIDTH OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
           if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
@@ -715,6 +723,14 @@ const_factor:
       }
       | TILES HEIGHT {
           $$ = ((Environment *)_environment)->screenTilesHeight;
+      }
+      | TILEMAP HEIGHT OP expr CP {
+          Variable * v = variable_retrieve( _environment, $4 );
+          if ( v->type == VT_TILEMAP ) {
+              $$ = v->mapHeight;
+          } else {
+             CRITICAL_TILEMAP_HEIGHT_NO_TILEMAP( $4 );
+          }
       }
       | TILE HEIGHT OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
@@ -2846,6 +2862,9 @@ exponential:
     | TILES FIRST OP expr CP {
         $$ = tile_get_first( _environment, $4 )->name;
     }
+    | TILEMAP WIDTH OP expr CP {
+        $$ = tilemap_get_width( _environment, $4 )->name;
+    }
     | TILE WIDTH OP expr CP {
         Variable * v = variable_retrieve( _environment, $4 );
         if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
@@ -2875,6 +2894,9 @@ exponential:
     | FONT HEIGHT {
         $$ = variable_temporary( _environment, VT_POSITION, "(FONT HEIGHT)" )->name;
         variable_store( _environment, $$, ((struct _Environment *)_environment)->fontHeight );
+    }
+    | TILEMAP HEIGHT OP expr CP {
+        $$ = tilemap_get_height( _environment, $4 )->name;
     }
     | TILE HEIGHT OP expr CP {
         Variable * v = variable_retrieve( _environment, $4 );

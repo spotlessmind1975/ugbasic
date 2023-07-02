@@ -27,7 +27,11 @@ CLS
 
 tilemap := LOAD TILEMAP("kenney-tiny-town-large.tmx")
 
-PUT TILEMAP tilemap FROM 2, 1
+FOR x = 0 TO TILEMAP WIDTH(tilemap)-1
+	PUT TILEMAP tilemap FROM x, 1
+	WAIT KEY
+NEXT
+
 
 
 
