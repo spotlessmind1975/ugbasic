@@ -62,11 +62,21 @@ extern char DATATYPE_AS_STRING[][16];
 @target all
 </usermanual> */
 
-void put_tilemap( Environment * _environment, char * _tilemap, int _flags ) {
+void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy ) {
 
     MAKE_LABEL
 
     Variable * tilemap = variable_retrieve( _environment, _tilemap );
+    Variable * dx = NULL;
+    Variable * dy = NULL;
+
+    if ( _dx ) {
+        dx = variable_retrieve( _environment, _dx );
+    }
+    
+    if ( _dy ) {
+        dy = variable_retrieve( _environment, _dy );
+    }
 
     if ( tilemap->type != VT_TILEMAP ) {
         CRITICAL_CANNOT_PUT_TILEMAP_FOR_NON_TILEMAP( _tilemap );
@@ -87,6 +97,13 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags ) {
     }
 
     variable_store( _environment, index->name, 0 );
+
+    if ( dx && dy ) {
+        Variable * mapWidth = variable_temporary( _environment, VT_BYTE, "(map width)");
+        variable_store( _environment, mapWidth->name, tilemap->mapWidth );
+        index = variable_add( _environment, index->name, variable_mul( _environment, dy->name, mapWidth->name )->name );
+        index = variable_add( _environment, index->name, dx->name );
+    }
 
     Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
     Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );

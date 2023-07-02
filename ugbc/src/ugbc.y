@@ -4181,7 +4181,11 @@ put_definition_expression:
     }
     | TILEMAP expr put_image_flags {
         $3 = $3 | FLAG_WITH_PALETTE;
-        put_tilemap( _environment, $2, $3 );
+        put_tilemap( _environment, $2, $3, NULL, NULL );
+    }
+    | TILEMAP expr FROM expr OP_COMMA expr put_image_flags {
+        $7 = $7 | FLAG_WITH_PALETTE;
+        put_tilemap( _environment, $2, $7, $4, $6 );
     }
     ;
 
