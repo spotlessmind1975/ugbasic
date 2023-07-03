@@ -35,12 +35,25 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+; PUT an IMAGE on the screen.
+;
+; input:
+;       IXL:E           -> x
+;       D               -> y
+;       HL              -> start of bitmap data
+;       IMAGET + IMAGEF ->  various flags       
 PUTIMAGE:
+
+    ; Skip if in TILE MODE
 
     LD A, (CURRENTTILEMODE)
     CP 1
     RET Z
 
+    ; Retrieve the width (in pixel) and height (in pixel),
+    ;   IXH:C -> WIDTH
+    ;   B -> HEIGHT
+    
     LD C, (HL)
     INC HL
     LD A, (HL)
@@ -49,9 +62,13 @@ PUTIMAGE:
     LD B, (HL)
     INC HL
 
+    ; Decrement the y position in order to calculate
+    ; correctly the position on the first loop.
     DEC D
-    PUSH DE
 
+    ; Dispatch the execution to the proper
+    ; function.
+    PUSH DE
     LD A, (CURRENTMODE)
     CP 0
     JP Z, PUTIMAGE0
@@ -64,37 +81,53 @@ PUTIMAGE:
     POP DE
     RET
 
+    ; ------------------------------------------------------------------------
+    ; --- MODE 0 & 3
+    ; ------------------------------------------------------------------------
+
 PUTIMAGE0:
 PUTIMAGE3:
+
+    ; Halves the width of the image to draw, since each byte keep two pixels.
 
     SRL C
 
 PUTIMAGE0L2:
 
+    ; Move ahead of one row.
+
     POP DE
-
     INC D
-
     PUSH DE
+
+    ; Recalculate the starting position on the video buffer.
 
     PUSH HL
     CALL CPCVIDEOPOS
     LD DE, HL
     POP HL
 
+    ; Row copy loop.
+
     PUSH BC
 PUTIMAGE0L1:
+
+    ; Manage the "WITH TRANSPARENCY" flag.
     LD A, (IMAGEF)
     AND $20
     CP $20
     JP Z, PUTIMAGE0L1T
 
-    ; Calculate new pixels
+    ; Copy the bitmap data from the memory to the video.
+    ; This is a direct copy.
     LD A, (HL)
-    ; Draw them
     LD (DE),A
 
+    ; Jump to the end of the loop.
     JP PUTIMAGE0L1T0
+
+    ; Copy the bitmap data from the memory to the video.
+    ; This is a copy that support the transparency.
 
 PUTIMAGE0L1T:
     PUSH IX
@@ -126,27 +159,31 @@ PUTIMAGE0L1T3:
     LD A, (HL)
     AND IXH
     ORA B
-    ; Draw them
     LD (DE),A
     POP BC
     POP IX
 
 PUTIMAGE0L1T0:
+
+    ; This is the end of the row copy loop.
+    ; Move to the next source and destination byte.
+
     INC DE
     INC HL
 
+    ; Decrement the number of byte to copy.
+    ; Repeat until finished.
+
     DEC C
     JR NZ, PUTIMAGE0L1
-    ; LD A, IXH
-    ; CP $0
-    ; JR Z, PUTIMAGE0DONEROW
-    ; DEC IXH
-    ; LD A, $FF
-    ; LD C, A
-    ; JP PUTIMAGE0L1
+
 PUTIMAGE0DONEROW:
+
+    ; The copy of the row has been completed.
+    
     POP BC
 
+    ; Check (and manage) if a "DOUBLE" flag has been requested.
     LD A, (IMAGEF)
     AND $41
     CP $41
@@ -157,6 +194,8 @@ PUTIMAGE0DONEROW:
     OR $01
     LD (IMAGEF), A
 
+    ; Move back of width pixels, to repeat the line for
+    ; the DOUBLE flag support.
     PUSH DE
     LD A, C
     LD E, A
@@ -165,34 +204,52 @@ PUTIMAGE0DONEROW:
     AND A
     SBC HL, DE
     POP DE
-    JP PUTIMAGE0L2
+    JP PUTIMAGE0L2 ; Repeat the row copy.
 
+    ; Disable if a "DOUBLE" flag has been requested.
 PUTIMAGE0DONEROW2:
     LD A, (IMAGEF)
     AND $FE
     LD (IMAGEF), A
 
+    ; Decrement the number of rows last to copy.
     DEC B
+
+    ; Repeat the copy for the next row.
     JP NZ, PUTIMAGE0L2
-    
+
+    ; Prepare to store the palette (16 colors)
     LD A, 16
     LD B, A
     LD A, 0
     LD C, A
 
+    ; Check if "WITH TRANSPARENCY" flag has been selected,
+    ; so that the first index of the palette
+    ; should not be changed.
     LD A, (IMAGEF)
     AND $20
     CP $20
     JR NZ, PUTIMAGE0DONEROWL1
 
+    ; Skip the first color index
+
     INC HL
     INC C
 
 PUTIMAGE0DONEROWL1:
+
+    ; Check if "BITMAP" flag has been selected,
+    ; so that the palette should not be touched
+
     LD A, (IMAGET)
     AND $2
     CMP $2
     JR NZ, PUTIMAGEC0DONE
+
+PUTIMAGE0DONEROWL1L:
+
+    ; Loop to update the 16 colors of the palette.
 
     LD A, (HL)
     LD IXL, A
@@ -203,15 +260,22 @@ PUTIMAGE0DONEROWL1:
     INC C
     LD A, C
     CP 16
-    JR NZ, PUTIMAGE0DONEROWL1
+    JR NZ, PUTIMAGE0DONEROWL1L
 
 PUTIMAGEC0DONE:
 
-    POP DE
+    ; The PUT IMAGE has finished!
 
+    POP DE
     JP PUTIMAGEDONE
 
+    ; ------------------------------------------------------------------------
+    ; --- MODE 1
+    ; ------------------------------------------------------------------------
+
 PUTIMAGE1:
+
+    ; Subdivide the width of the image to draw, since each byte keep four pixels.
 
     PUSH BC
     LD A, IXH
@@ -228,30 +292,40 @@ PUTIMAGE1:
     
 PUTIMAGE1L2:
 
+    ; Move ahead of one row.
+
     POP DE
-
     INC D
-
     PUSH DE
+
+    ; Recalculate the starting position on the video buffer.
 
     PUSH HL
     CALL CPCVIDEOPOS
     LD DE, HL
     POP HL
 
+    ; Row copy loop.
+
     PUSH BC
 PUTIMAGE1L1:
+
+    ; Manage the "WITH TRANSPARENCY" flag.
     LD A, (IMAGEF)
     AND $20
     CP $20
     JP Z, PUTIMAGE1L1T
 
-    ; Calculate new pixels
+    ; Copy the bitmap data from the memory to the video.
+    ; This is a direct copy.
     LD A, (HL)
-    ; Draw them
     LD (DE),A
 
+    ; Jump to the end of the loop.
     JP PUTIMAGE1L1T0
+
+    ; Copy the bitmap data from the memory to the video.
+    ; This is a copy that support the transparency.
 
 PUTIMAGE1L1T:
     PUSH IX
@@ -299,27 +373,42 @@ PUTIMAGE1L1T5:
     LD A, (HL)
     AND IXH
     ORA B
-    ; Draw them
     LD (DE),A
     POP BC
     POP IX
 
 PUTIMAGE1L1T0:
+
+    ; This is the end of the row copy loop.
+    ; Move to the next source and destination byte.
+
     INC DE
     INC HL
 
+    ; Decrement the number of byte to copy.
+    ; Repeat until finished.
+
     DEC C
     JP NZ, PUTIMAGE1L1
-    LD A, IXH
-    CP $0
-    JR Z, PUTIMAGE1DONEROW
+
+    ; TODO: actually, up to 255 pixels images width are supported.
+    ; TODO: this is the point where to change the behaviour.
+
+    ; LD A, IXH
+    ; CP $0
+    ; JR Z, PUTIMAGE1DONEROW
     ; DEC IXH
     ; LD A, $FF
     ; LD C, A
     ; JP PUTIMAGE1L1
+
 PUTIMAGE1DONEROW:
+
+    ; The copy of the row has been completed.
+
     POP BC
 
+    ; Check (and manage) if a "DOUBLE" flag has been requested.
     LD A, (IMAGEF)
     AND $41
     CP $41
@@ -330,6 +419,8 @@ PUTIMAGE1DONEROW:
     OR $01
     LD (IMAGEF), A
 
+    ; Move back of width pixels, to repeat the line for
+    ; the DOUBLE flag support.
     PUSH DE
     LD A, C
     LD E, A
@@ -338,20 +429,29 @@ PUTIMAGE1DONEROW:
     AND A
     SBC HL, DE
     POP DE
-    JP PUTIMAGE0L2
+    JP PUTIMAGE0L2 ; Repeat the row copy.
 
+    ; Disable if a "DOUBLE" flag has been requested.
 PUTIMAGE1DONEROW2:
     LD A, (IMAGEF)
     AND $FE
     LD (IMAGEF), A
 
+    ; Decrement the number of rows last to copy.
     DEC B
+
+    ; Repeat the copy for the next row.
     JP NZ, PUTIMAGE1L2
     
+    ; Check if "WITH TRANSPARENCY" flag has been selected,
+    ; so that the first index of the palette
+    ; should not be changed.
     LD A, (IMAGEF)
     AND $20
     CP $20
     JP Z, PUTIMAGE1DONEROW2T
+
+    ; Update the first color index
 
     LD A, (HL)
     LD IXL, A
@@ -361,29 +461,37 @@ PUTIMAGE1DONEROW2:
 
 PUTIMAGE1DONEROW2T:
 
+    ; Check if "BITMAP" flag has been selected,
+    ; so that the palette should not be touched
+
     LD A, (IMAGET)
     AND $2
     CMP $2
     JR NZ, PUTIMAGEC1DONE
 
-    INC HL
+    ; Skip the first index since we already changed it.
 
+    ; Update color #1
+
+    INC HL
     LD A, (HL)
     LD IXL, A
     LD IXH, 1
     LD IYL, 1
     CALL CPCUPDATEPALETTE
 
-    INC HL
+    ; Update color #2
 
+    INC HL
     LD A, (HL)
     LD IXL, A
     LD IXH, 2
     LD IYL, 1
     CALL CPCUPDATEPALETTE
 
-    INC HL
+    ; Update color #3
 
+    INC HL
     LD A, (HL)
     LD IXL, A
     LD IXH, 3
@@ -392,11 +500,18 @@ PUTIMAGE1DONEROW2T:
 
 PUTIMAGEC1DONE:
 
-    POP DE
+    ; The PUT IMAGE has finished!
 
+    POP DE
     JP PUTIMAGEDONE
 
+    ; ------------------------------------------------------------------------
+    ; --- MODE 2
+    ; ------------------------------------------------------------------------
+
 PUTIMAGE2:
+
+    ; Subdivide the width of the image to draw, since each byte keep eight pixels.
 
     PUSH BC
     LD A, IXH
@@ -413,30 +528,41 @@ PUTIMAGE2:
 
 PUTIMAGE2L2:
 
+    ; Move ahead of one row.
+
     POP DE
-
     INC D
-
     PUSH DE
+
+    ; Recalculate the starting position on the video buffer.
 
     PUSH HL
     CALL CPCVIDEOPOS
     LD DE, HL
     POP HL
 
+    ; Row copy loop.
+
     PUSH BC
 PUTIMAGE2L1:
+
+    ; Manage the "WITH TRANSPARENCY" flag.
     LD A, (IMAGEF)
     AND $20
     CP $20
     JP Z, PUTIMAGE2L1T
 
-    ; Calculate new pixels
+    ; Copy the bitmap data from the memory to the video.
+    ; This is a direct copy.
+    
     LD A, (HL)
-    ; Draw them
     LD (DE),A
 
+    ; Jump to the end of the loop.
     JP PUTIMAGE2L1T0
+
+    ; Copy the bitmap data from the memory to the video.
+    ; This is a copy that support the transparency.
 
 PUTIMAGE2L1T:
     PUSH IX
@@ -522,11 +648,22 @@ PUTIMAGE2L1T9:
     POP IX
 
 PUTIMAGE2L1T0:
+
+    ; This is the end of the row copy loop.
+    ; Move to the next source and destination byte.
+
     INC DE
     INC HL
 
+    ; Decrement the number of byte to copy.
+    ; Repeat until finished.
+
     DEC C
     JP NZ, PUTIMAGE2L1
+
+    ; TODO: actually, up to 255 pixels images width are supported.
+    ; TODO: this is the point where to change the behaviour.
+
     ; LD A, IXH
     ; CP $0
     ; JR Z, PUTIMAGE2DONEROW
@@ -534,9 +671,14 @@ PUTIMAGE2L1T0:
     ; LD A, $FF
     ; LD C, A
     ; JP PUTIMAGE2L1
+
 PUTIMAGE2DONEROW:
+
+    ; The copy of the row has been completed.
+
     POP BC
 
+    ; Check (and manage) if a "DOUBLE" flag has been requested.
     LD A, (IMAGEF)
     AND $41
     CP $41
@@ -547,34 +689,47 @@ PUTIMAGE2DONEROW:
     OR $01
     LD (IMAGEF), A
 
+    ; Move back of width pixels, to repeat the line for
+    ; the DOUBLE flag support.
+
     PUSH DE
     LD A, C
     LD E, A
     LD A, 0
     LD D, A
-
     AND A
     SBC HL, DE
     POP DE
-    JP PUTIMAGE0L2
+    JP PUTIMAGE0L2 ; Repeat the row copy.
 
+    ; Disable if a "DOUBLE" flag has been requested.
 PUTIMAGE2DONEROW2:
     LD A, (IMAGEF)
     AND $FE
     LD (IMAGEF), A
 
+    ; Decrement the number of rows last to copy.
     DEC B
+
+    ; Repeat the copy for the next row.
     JP NZ, PUTIMAGE2L2
 
+    ; Check if "WITH TRANSPARENCY" flag has been selected,
+    ; so that the first index of the palette
+    ; should not be changed.
     LD A, (IMAGET)
     AND $2
     CMP $2
     JR NZ, PUTIMAGEC2DONE
 
+    ; Check if "BITMAP" flag has been selected,
+    ; so that the palette should not be touched
     LD A, (IMAGEF)
     AND $20
     CP $20
     JP Z, PUTIMAGE2DONEROW2T
+
+    ; Update the first color index
 
     LD A, (HL)
     LD IXL, A
@@ -583,8 +738,10 @@ PUTIMAGE2DONEROW2:
     CALL CPCUPDATEPALETTE
 
 PUTIMAGE2DONEROW2T:
-    INC HL
 
+    ; Update the second color index
+
+    INC HL
     LD A, (HL)
     LD IXL, A
     LD IXH, 1
@@ -592,8 +749,10 @@ PUTIMAGE2DONEROW2T:
     CALL CPCUPDATEPALETTE
 
 PUTIMAGEC2DONE:
-    POP DE
 
+    ; The PUT IMAGE has finished!
+
+    POP DE
     JP PUTIMAGEDONE
 
 PUTIMAGEDONE:
