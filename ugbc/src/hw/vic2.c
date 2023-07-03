@@ -312,7 +312,7 @@ static void vic2_image_converter_tile_multicolor( Environment * _environment, ch
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
             if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
+                rgb.alpha = *(source + 3);
             } else {
                 rgb.alpha = 255;
             }
@@ -393,7 +393,7 @@ static void vic2_image_converter_tile_multicolor( Environment * _environment, ch
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
             if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
+                rgb.alpha = *(source + 3);
             } else {
                 rgb.alpha = 255;
             }
