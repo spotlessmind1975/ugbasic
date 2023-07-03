@@ -2430,7 +2430,7 @@ Variable * vic2z_sprite_converter( Environment * _environment, char * _source, i
 
 }
 
-void vic2z_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+void vic2z_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags, char * _clip_x, char * _clip_y ) {
 
     deploy( vic2zvars, src_hw_vic2z_vars_asm);
     deploy( vic2zvarsGraphic, src_hw_vic2z_vars_graphic_asm );

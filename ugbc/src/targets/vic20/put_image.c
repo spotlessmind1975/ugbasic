@@ -53,7 +53,7 @@ extern char DATATYPE_AS_STRING[][16];
 /* <usermanual>
 @keyword PUT IMAGE
 </usermanual> */
-void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
+void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags, char * _clip_x, char * _clip_y ) {
 
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
@@ -71,27 +71,27 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
         case VT_SEQUENCE:
            if ( !sequence ) {
                 if ( !frame ) {
-                    vic1_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
+                    vic1_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
                 } else {
-                    vic1_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                    vic1_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
                 }
             } else {
                 if ( !frame ) {
-                    vic1_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                    vic1_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
                 } else {
-                    vic1_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                    vic1_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
                 }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                vic1_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
+                vic1_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags, _clip_x, _clip_y );
             } else {
-                vic1_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                vic1_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags, _clip_x, _clip_y );
             }
             break;
         case VT_IMAGE:
-            vic1_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
+            vic1_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags, _clip_x, _clip_y );
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

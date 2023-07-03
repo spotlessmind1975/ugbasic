@@ -1989,7 +1989,7 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
 
 }
 
-void tms9918_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+void tms9918_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags, char * _clip_x, char * _clip_y ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
