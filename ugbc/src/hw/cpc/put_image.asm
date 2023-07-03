@@ -62,154 +62,6 @@ PUTIMAGE:
     LD B, (HL)
     INC HL
 
-    ; Calculate the effective width to draw, if the x position is
-    ; next to the right border of the screen or is on the left of
-    ; the left border.
-
-    ; If x < 0 the must check for the left border, otherwise
-    ; for the right border.
-
-    LD A, IXL
-    AND $80
-    CP $80
-    JR Z, PUTIMAGELEFTBORDER
-
-PUTIMAGERIGHTBORDER:
-
-    ; Save registers.
-
-    PUSH DE
-    PUSH HL
-    PUSH BC
-
-    ; Check for the right border
-    ;                                                  x     w
-    ;                                                  |------------|
-    ; |-----------------------------------------------------|
-    ;                    CURRENT WIDTH
-    ;
-    ; w' = MIN ( ( CURRENT WIDTH - x ) , w )
-    ; 
-    LD HL, (CURRENTWIDTH)
-    LD A, IXL
-    LD D, A
-    SBC HL, DE  ; HL: ( CURRENT WIDTH - x )
-
-    ; Finish execution if x > CURRENT WIDTH
-    JP C, PUTIMAGERIGHTBORDERDONE
-
-    ; Check if the width is lesser than the calculated,
-    ; and in that case we have to use the original one.
-    PUSH HL
-    LD A, IXH
-    LD B, A
-    SBC HL, BC  ; HL: ( HL - w )
-    JR NC, PUTIMAGERIGHTBORDEROW
-    POP HL
-
-    ; We move in the IYL register the effective width
-    ; to copy. The original width will be in IXL:C.
-    ; Moreover, we move in IYH the offset.
-    LD A, L
-    LD IYL, A
-    LD A, 0
-    LD IYH, A
-
-    ; Restore the registers.
-    POP BC
-    POP HL
-    POP DE
-
-    JP PUTMAGEMODESELECT
-
-PUTIMAGERIGHTBORDEROW:
-    POP HL
-    ; We move in the IYL register the original width
-    ; to copy. The original width will be in IXL:C.
-    LD A, C
-    LD IYL, A
-
-    ; Restore the registers.
-    POP BC
-    POP HL
-    POP DE
-
-    JP PUTMAGEMODESELECT
-
-PUTIMAGERIGHTBORDERDONE:
-    POP BC
-    POP HL
-    POP DE
-    RET    
-
-PUTIMAGELEFTBORDER:
-
-    ; Save registers.
-
-    PUSH DE
-    PUSH HL
-    PUSH BC
-
-    ; Check for the left border
-    ;        x     w
-    ;        |------------|
-    ;             |-----------------------------------------------------|
-    ;                    
-    ;
-    ; w' = MIN( w, w+x )
-    ; 
-    LD HL, BC
-    LD A, IXL
-    LD D, A
-    ADD HL, DE  ; HL: ( w + x )
-
-    ; Finish execution if < 0
-    JP C, PUTIMAGELEFTBORDERDONE
-
-    ; We move in the IYL register the effective width
-    ; to copy. The original width will be in IXL:C.
-    ; Moreover, we move in IYH the offset.
-    LD A, L
-    LD IYL, A
-
-    PUSH HL
-    PUSH DE
-    LD DE, HL
-    LD HL, BC
-    SBC HL, DE
-    LD A, L
-    LD IYH, A
-    POP DE
-    POP HL
-
-    ; Restore the registers.
-    POP BC
-    POP HL
-    POP DE
-
-    JP PUTMAGEMODESELECT
-
-PUTIMAGELEFTBORDERROW:
-    ; We move in the IYL register the original width
-    ; to copy. The original width will be in IXL:C.
-    LD A, C
-    LD IYL, A
-
-    ; Restore the registers.
-    POP BC
-    POP HL
-    POP DE
-
-    JP PUTMAGEMODESELECT
-
-PUTIMAGELEFTBORDERDONE:
-    POP BC
-    POP HL
-    POP DE
-    RET    
-
-PUTMAGEMODESELECT:
-
     ; Decrement the y position in order to calculate
     ; correctly the position on the first loop.
     DEC D
@@ -236,28 +88,9 @@ PUTMAGEMODESELECT:
 PUTIMAGE0:
 PUTIMAGE3:
 
-    ; Retrieve the effective bytes to copy.
-
-    ; LD A, IYL
-    ; LD C, A
-    
-    ; Move ahead of offset byte
-    
-    PUSH DE
-    LD A, IYH
-    LD E, A
-    LD A, 0
-    LD D, A
-    ADC HL, DE
-    POP DE
-
     ; Halves the width of the image to draw, since each byte keep two pixels.
 
     SRL C
-
-    LD A, IYL
-    SRL A
-    LD IYL, A
 
 PUTIMAGE0L2:
 
@@ -276,7 +109,6 @@ PUTIMAGE0L2:
 
     ; Row copy loop.
 
-    PUSH IY
     PUSH BC
 PUTIMAGE0L1:
 
@@ -342,7 +174,7 @@ PUTIMAGE0L1T0:
     ; Decrement the number of byte to copy.
     ; Repeat until finished.
 
-    DEC IYL
+    DEC C
     JR NZ, PUTIMAGE0L1
 
 PUTIMAGE0DONEROW:
@@ -350,7 +182,6 @@ PUTIMAGE0DONEROW:
     ; The copy of the row has been completed.
     
     POP BC
-    POP IY
 
     ; Check (and manage) if a "DOUBLE" flag has been requested.
     LD A, (IMAGEF)
@@ -366,7 +197,7 @@ PUTIMAGE0DONEROW:
     ; Move back of width pixels, to repeat the line for
     ; the DOUBLE flag support.
     PUSH DE
-    LD A, IYL
+    LD A, C
     LD E, A
     LD A, 0
     LD D, A
@@ -380,17 +211,6 @@ PUTIMAGE0DONEROW2:
     LD A, (IMAGEF)
     AND $FE
     LD (IMAGEF), A
-
-    ; Move ahead of C - IYL bytes.
-
-    PUSH DE
-    LD A, C
-    SUB A, IYL
-    LD E, A
-    LD A, 0
-    LD D, A
-    ADC HL, DE
-    POP DE
 
     ; Decrement the number of rows last to copy.
     DEC B
@@ -455,21 +275,6 @@ PUTIMAGEC0DONE:
 
 PUTIMAGE1:
 
-    ; Retrieve the effective bytes to copy.
-
-    ; LD A, IYL
-    ; LD C, A
-    
-    ; Move ahead of offset byte
-    
-    PUSH DE
-    LD A, IYH
-    LD E, A
-    LD A, 0
-    LD D, A
-    ADC HL, DE
-    POP DE
-
     ; Subdivide the width of the image to draw, since each byte keep four pixels.
 
     PUSH BC
@@ -484,21 +289,6 @@ PUTIMAGE1:
     LD A, C
     POP BC
     LD C, A
-
-    PUSH BC
-    LD A, 0
-    LD B, A
-    LD A, IYL
-    LD C, A
-    SRL B
-    RR C
-    SRL B
-    RR C
-    SRL B
-    RR C
-    LD A, C
-    POP BC
-    LD IYL, A
     
 PUTIMAGE1L2:
 
@@ -517,7 +307,6 @@ PUTIMAGE1L2:
 
     ; Row copy loop.
 
-    PUSH IY
     PUSH BC
 PUTIMAGE1L1:
 
@@ -599,7 +388,7 @@ PUTIMAGE1L1T0:
     ; Decrement the number of byte to copy.
     ; Repeat until finished.
 
-    DEC IYL
+    DEC C
     JP NZ, PUTIMAGE1L1
 
     ; TODO: actually, up to 255 pixels images width are supported.
@@ -618,7 +407,6 @@ PUTIMAGE1DONEROW:
     ; The copy of the row has been completed.
 
     POP BC
-    POP IY
 
     ; Check (and manage) if a "DOUBLE" flag has been requested.
     LD A, (IMAGEF)
@@ -634,7 +422,7 @@ PUTIMAGE1DONEROW:
     ; Move back of width pixels, to repeat the line for
     ; the DOUBLE flag support.
     PUSH DE
-    LD A, IYL
+    LD A, C
     LD E, A
     LD A, 0
     LD D, A
@@ -648,17 +436,6 @@ PUTIMAGE1DONEROW2:
     LD A, (IMAGEF)
     AND $FE
     LD (IMAGEF), A
-
-    ; Move ahead of C - IYL bytes.
-
-    PUSH DE
-    LD A, C
-    SUB A, IYL
-    LD E, A
-    LD A, 0
-    LD D, A
-    ADC HL, DE
-    POP DE
 
     ; Decrement the number of rows last to copy.
     DEC B
@@ -734,21 +511,6 @@ PUTIMAGEC1DONE:
 
 PUTIMAGE2:
 
-    ; Retrieve the effective bytes to copy.
-
-    ; LD A, IYL
-    ; LD C, A
-    
-    ; Move ahead of offset byte
-    
-    PUSH DE
-    LD A, IYH
-    LD E, A
-    LD A, 0
-    LD D, A
-    ADC HL, DE
-    POP DE
-
     ; Subdivide the width of the image to draw, since each byte keep eight pixels.
 
     PUSH BC
@@ -763,21 +525,6 @@ PUTIMAGE2:
     LD A, C
     POP BC
     LD C, A
-
-    PUSH BC
-    LD A, 0
-    LD B, A
-    LD A, IYL
-    LD C, A
-    SRL B
-    RR C
-    SRL B
-    RR C
-    SRL B
-    RR C
-    LD A, C
-    POP BC
-    LD IYL, A
 
 PUTIMAGE2L2:
 
@@ -796,7 +543,6 @@ PUTIMAGE2L2:
 
     ; Row copy loop.
 
-    PUSH IY
     PUSH BC
 PUTIMAGE2L1:
 
@@ -912,7 +658,7 @@ PUTIMAGE2L1T0:
     ; Decrement the number of byte to copy.
     ; Repeat until finished.
 
-    DEC IYL
+    DEC C
     JP NZ, PUTIMAGE2L1
 
     ; TODO: actually, up to 255 pixels images width are supported.
@@ -931,8 +677,7 @@ PUTIMAGE2DONEROW:
     ; The copy of the row has been completed.
 
     POP BC
-    POP IY
-    
+
     ; Check (and manage) if a "DOUBLE" flag has been requested.
     LD A, (IMAGEF)
     AND $41
@@ -948,7 +693,7 @@ PUTIMAGE2DONEROW:
     ; the DOUBLE flag support.
 
     PUSH DE
-    LD A, IYL
+    LD A, C
     LD E, A
     LD A, 0
     LD D, A
@@ -965,17 +710,6 @@ PUTIMAGE2DONEROW2:
 
     ; Decrement the number of rows last to copy.
     DEC B
-
-    ; Move ahead of C - IYL bytes.
-
-    PUSH DE
-    LD A, C
-    SUB A, IYL
-    LD E, A
-    LD A, 0
-    LD D, A
-    ADC HL, DE
-    POP DE
 
     ; Repeat the copy for the next row.
     JP NZ, PUTIMAGE2L2
