@@ -1662,19 +1662,14 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 
 }
 
-void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+static void ef936x_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm);
-    deploy( putimage, src_hw_ef936x_put_image_asm );
-
-    outline1("LDA #$%2.2x", ( _flags & FLAG_TRANSPARENCY ) );
-    outline0("STA <IMAGEF" );
-    outline1("LDY #%s", _image );
+    outline1("LDY #%s", _source );
     if ( _sequence ) {
         outline0("LEAY 3,y" );
         if ( strlen(_sequence) == 0 ) {
         } else {
-            outline1("LDX #OFFSETS%4.4x", _frame_size * _frame_count );
+            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
             outline1("LDB %s", _sequence );
             outline0("LDA #0" );
             outline0("LEAX D, X" );
@@ -1709,6 +1704,23 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
             }
         }
     }
+
+    if ( _register ) {
+        outline1("STY %s", _register );
+    }
+
+}
+
+void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+
+    deploy( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy( putimage, src_hw_ef936x_put_image_asm );
+
+    outline1("LDA #$%2.2x", ( _flags & FLAG_TRANSPARENCY ) );
+    outline0("STA <IMAGEF" );
+
+    ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+
     outline1("LDD %s", _x );
     outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
@@ -1852,53 +1864,6 @@ void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * 
     }
 
     outline1("STY %s", _offset );
-
-}
-
-static void ef936x_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
-
-    outline1("LDY #%s", _source );
-    if ( _sequence ) {
-        outline0("LEAY 3,y" );
-        if ( strlen(_sequence) == 0 ) {
-        } else {
-            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
-            outline1("LDB %s", _sequence );
-            outline0("LDA #0" );
-            outline0("LEAX D, X" );
-            outline0("LEAX D, X" );
-            outline0("LDD ,X" );
-            outline0("LEAY D, Y" );
-        }
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
-            } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
-                outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
-            }
-        }
-    } else {
-        if ( _frame ) {
-            outline0("LEAY 3,y" );
-            if ( strlen(_frame) == 0 ) {
-            } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
-                outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
-            }
-        }
-    }
-
-    outline1("STY %s", _register );
 
 }
 

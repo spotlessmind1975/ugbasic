@@ -643,96 +643,6 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
 
 }
 
-void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
-
-    // currently unused
-    (void)!_flags;
-
-    MAKE_LABEL
-
-    deploy( vars, src_hw_zx_vars_asm);
-    deploy( putimage, src_hw_zx_put_image_asm );
-
-    outline1("LD HL, %s", _image );
-    if ( _sequence ) {
-
-        outline0("INC HL" );
-        outline0("INC HL" );
-        outline0("INC HL" );
-        if ( strlen(_sequence) == 0 ) {
-
-        } else {
-
-            outline1("LD DE, OFFSETS%4.4x", _frame_size * _frame_count );
-            outline1("LD A, (%s)", _sequence );
-            outline0("CMP 0" );
-            outline1("JR Z, %sdone", label );
-            outhead1("%sloop:", label );
-            outline0("INC DE" );
-            outline0("DEC B" );
-            outline0("CMP 0" );
-            outline1("JR NZ, %sloop", label );
-            outline0("ADD HL, DE" );
-            outhead1("%sdone:", label );
-        }
-
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-
-                outline1("LD DE, OFFSETS%4.4x", _frame_size );
-                outline1("LD A, (%s)", _frame );
-                outline0("CMP 0" );
-                outline1("JR Z, %s2done", label );
-                outhead1("%s2loop:", label );
-                outline0("INC DE" );
-                outline0("DEC B" );
-                outline0("CMP 0" );
-                outline1("JR NZ, %s2loop", label );
-                outline0("ADD HL, DE" );
-                outhead1("%s2done:", label );
-            }
-
-        }
-
-    } else {
-
-        if ( _frame ) {
-            outline0("INC HL" );
-            outline0("INC HL" );
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-
-                outline1("LD DE, OFFSETS%4.4x", _frame_size );
-                outline1("LD A, (%s)", _frame );
-                outline0("CMP 0" );
-                outline1("JR Z, %sdone", label );
-                outhead1("%sloop:", label );
-                outline0("INC DE" );
-                outline0("DEC B" );
-                outline0("CMP 0" );
-                outline1("JR NZ, %sloop", label );
-                outline0("ADD HL, DE" );
-                outhead1("%sdone:", label );
-            }
-
-        }
-
-    }
-    outline1("LD A, (%s)", _x );
-    outline0("LD (IMAGEX), A" );
-    outline1("LD A, (%s)", _y );
-    outline0("LD (IMAGEY), A" );
-    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
-    outline0("LD (IMAGEF), A" );
-    outline1("LD A, $%2.2x", ( (_flags>>8) & 0xff ) );
-    outline0("LD (IMAGET), A" );
-
-    outline0("CALL PUTIMAGE");
-
-}
 
 static void zx_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
@@ -810,6 +720,31 @@ static void zx_load_image_address_to_register( Environment * _environment, char 
         }
 
     }
+
+}
+
+void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+
+    // currently unused
+    (void)!_flags;
+
+    MAKE_LABEL
+
+    deploy( vars, src_hw_zx_vars_asm);
+    deploy( putimage, src_hw_zx_put_image_asm );
+
+    zx_load_image_address_to_register( _environment, "HL", _image, _sequence, _frame, _frame_size, _frame_count );
+
+    outline1("LD A, (%s)", _x );
+    outline0("LD (IMAGEX), A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD (IMAGEY), A" );
+    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
+    outline0("LD (IMAGEF), A" );
+    outline1("LD A, $%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("LD (IMAGET), A" );
+
+    outline0("CALL PUTIMAGE");
 
 }
 

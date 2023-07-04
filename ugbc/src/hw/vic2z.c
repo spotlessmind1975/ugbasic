@@ -2624,7 +2624,7 @@ static void vic2z_load_image_address_to_register( Environment * _environment, ch
                 outline0("ASL" );
                 outline0("TAY" );
                 outline1("LDA %s", _register );
-                outline0("ADC (NATHPTR0), Y" );
+                outline0("ADC (MATHPTR0), Y" );
                 outline1("STA %s", _register );
                 outline0("INY" );
                 outline1("LDA %s+1", _register );

@@ -1661,105 +1661,6 @@ Variable * cpc_image_converter( Environment * _environment, char * _data, int _w
 
 }
 
-void cpc_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
-
-    deploy( cpcvars, src_hw_cpc_vars_asm);
-    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
-    deploy( putimage, src_hw_cpc_put_image_asm );
-
-    MAKE_LABEL
-
-    outhead1("putimage%s:", label);
-    outline1("LD HL, %s", _image );
-    if ( _sequence ) {
-
-        outline0("LD DE, $0003" );
-        outline0("ADD HL, DE" );
-        if ( strlen(_sequence) == 0 ) {
-
-        } else {
-            outline0("PUSH HL" );
-            outline1("LD A, (%s)", _sequence );
-            outline0("LD L, A" );
-            outline0("LD H, 0" );
-            outline0("ADD HL, HL" );
-            outline0("LD DE, HL" );
-            outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
-            outline0("ADD HL, DE" );
-            outline0("LD A, (HL)" );
-            outline0("LD E, A" );
-            outline0("INC HL" );
-            outline0("LD A, (HL)" );
-            outline0("LD D, A" );
-            outline0("POP HL" );
-            outline0("ADD HL, DE" );
-        }
-
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-                outline0("PUSH HL" );
-                outline1("LD A, (%s)", _frame );
-                outline0("LD L, A" );
-                outline0("LD H, 0" );
-                outline0("ADD HL, HL" );
-                outline0("LD DE, HL" );
-                outline1("LD HL, OFFSETS%4.4x", _frame_size );
-                outline0("ADD HL, DE" );
-                outline0("LD A, (HL)" );
-                outline0("LD E, A" );
-                outline0("INC HL" );
-                outline0("LD A, (HL)" );
-                outline0("LD D, A" );
-                outline0("POP HL" );
-                outline0("ADD HL, DE" );
-            }
-        }
-
-    } else {
-
-        if ( _frame ) {
-            outline0("LD DE, $0003" );
-            outline0("ADD HL, DE" );
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-                outline0("PUSH HL" );
-                outline1("LD A, (%s)", _frame );
-                outline0("LD L, A" );
-                outline0("LD H, 0" );
-                outline0("ADD HL, HL" );
-                outline0("LD DE, HL" );
-                outline1("LD HL, OFFSETS%4.4x", _frame_size );
-                outline0("ADD HL, DE" );
-                outline0("LD A, (HL)" );
-                outline0("LD E, A" );
-                outline0("INC HL" );
-                outline0("LD A, (HL)" );
-                outline0("LD D, A" );
-                outline0("POP HL" );
-                outline0("ADD HL, DE" );
-            }
-        }
-
-
-    }
-    outline1("LD A, (%s)", _x );
-    outline0("LD E, A" );
-    outline1("LD A, (%s)", address_displacement(_environment, _x, "1") );
-    outline0("LD IXL, A" );
-    outline1("LD A, (%s)", _y );
-    outline0("LD D, A" );
-    outline1("LD A, $%2.2x", (_flags & 0Xff) );
-    outline0("LD (IMAGEF), A" );
-    outline1("LD A, $%2.2x", ((_flags>>8) & 0Xff) );
-    outline0("LD (IMAGET), A" );
-
-    outline0("CALL PUTIMAGE");
-
-}
-
 static void cpc_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     outline2("LD %s, %s", _register, _source );
@@ -1836,6 +1737,31 @@ static void cpc_load_image_address_to_register( Environment * _environment, char
         }
 
     }
+
+}
+
+void cpc_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+
+    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+    deploy( putimage, src_hw_cpc_put_image_asm );
+
+    MAKE_LABEL
+
+    cpc_load_image_address_to_register( _environment, "HL", _image, _sequence, _frame, _frame_size, _frame_count );
+
+    outline1("LD A, (%s)", _x );
+    outline0("LD E, A" );
+    outline1("LD A, (%s)", address_displacement(_environment, _x, "1") );
+    outline0("LD IXL, A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD D, A" );
+    outline1("LD A, $%2.2x", (_flags & 0Xff) );
+    outline0("LD (IMAGEF), A" );
+    outline1("LD A, $%2.2x", ((_flags>>8) & 0Xff) );
+    outline0("LD (IMAGET), A" );
+
+    outline0("CALL PUTIMAGE");
 
 }
 
