@@ -2904,5 +2904,9 @@ Variable * vic2z_get_raster_line( Environment * _environment ) {
     
 }
 
+void vic2z_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
+
+}
+
 
 #endif

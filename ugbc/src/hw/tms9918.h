@@ -212,4 +212,6 @@ void tms9918_move_memory_video( Environment * _environment, char * _from, char *
 void tms9918_move_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
 void tms9918_move_video_video( Environment * _environment, char * _from, char * _to, char * _size );
 
+void tms9918_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
+
 #endif

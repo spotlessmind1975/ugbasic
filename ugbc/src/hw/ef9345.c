@@ -1120,4 +1120,8 @@ void ef9345_colors_vars( Environment * _environment, char * _foreground_color, c
 
 }
 
+void ef9345_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
+
+}
+
 #endif

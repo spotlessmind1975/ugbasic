@@ -1911,4 +1911,8 @@ void ef936x_blit_image( Environment * _environment, char * _sources[], int _sour
     
 }
 
+void ef936x_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
+
+}
+
 #endif

@@ -2030,6 +2030,36 @@ typedef struct _Environment {
     int resolutionY;
 
     /*
+     * slice image starting X
+     */
+    char * sliceImageX;
+
+    /*
+     * slice image starting y
+     */
+    char * sliceImageY;
+
+    /*
+     * slice image width
+     */
+    char * sliceImageWidth;
+
+    /*
+     * slice image height
+     */
+    char * sliceImageHeight;
+
+    /*
+     * slice image at x
+     */
+    char * sliceImageAtX;
+
+    /*
+     * slice image at y
+     */
+    char * sliceImageAtY;
+
+    /*
      * Used for deferred writing of assembly file.
      */
     char *deferredEmbedded[MAX_TEMPORARY_STORAGE];
@@ -2292,6 +2322,8 @@ typedef struct _Environment {
 #define CRITICAL_TILEMAP_WIDTH_NO_TILEMAP( v ) CRITICAL2("E199 - cannot call TILEMAP WIDTH on something that is not a TILEMAP", v );
 #define CRITICAL_TILEMAP_HEIGHT_NO_TILEMAP( v ) CRITICAL2("E200 - cannot call TILEMAP HEIGHT on something that is not a TILEMAP", v );
 #define CRITICAL_TILEMAP_LOAD_ONLY_SAME_SIZE_LAYER( v ) CRITICAL2("E201 - cannot use tile maps with layers of different size", v );
+#define CRITICAL_TILESET_OF_INVALID_TILEMAP( v ) CRITICAL2("E202 - cannot use TILESET OF on something that is not a TILEMAP", v );
+#define CRITICAL_TILEMAP_INDEX_INVALID_TILEMAP( v ) CRITICAL2("E203 - cannot use TILEMAP INDEX on something that is not a TILEMAP", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3562,6 +3594,7 @@ Variable *              sequence_load( Environment * _environment, char * _filen
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 void                    shoot( Environment * _environment, int _channels );
+void                    slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _destination );
 void                    sound( Environment * _environment, int _freq, int _duration, int _channels );
 void                    sound_vars( Environment * _environment, char * _freq, char * _duration, char * _channels );
 void                    sound_off( Environment * _environment, int _channels );
@@ -3635,8 +3668,10 @@ Variable *              tile_load( Environment * _environment, char * _filename,
 Variable *              tiles_load( Environment * _environment, char * _filename, int _flags, char * _tileset, int _index );
 void                    tiles_at( Environment * _environment, int _address );
 void                    tiles_at_var( Environment * _environment, char * _address );
+Variable *              tilemap_index_vars( Environment * _environment, char * _tilemap, char * _column, char * _row, char * _layer );
 Variable *              tilemap_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              tileset_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
+Variable *              tileset_of_vars( Environment * _environment, char * _tilemap );
 
 //----------------------------------------------------------------------------
 // *u*

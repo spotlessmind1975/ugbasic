@@ -203,4 +203,6 @@ void ted_stop_vars( Environment * _environment, char * _channel );
 
 void ted_music( Environment * _environment, char * _music, int _size );
 
+void ted_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
+
 #endif

@@ -214,4 +214,6 @@ void vdc_move_tiles( Environment * _environment, char * _image, char * _x, char 
 void vdc_use_tileset( Environment * _environment, char * _tileset );
 void vdc_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
 
+void vdc_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
+
 #endif

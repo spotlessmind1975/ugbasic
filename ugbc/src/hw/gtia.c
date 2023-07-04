@@ -2303,7 +2303,6 @@ static void gtia_load_image_address_to_register( Environment * _environment, cha
 
 }
 
-
 void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
@@ -2581,6 +2580,10 @@ Variable * gtia_get_raster_line( Environment * _environment ) {
 
     return result;
     
+}
+
+void gtia_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
+
 }
 
 #endif

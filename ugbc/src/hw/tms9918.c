@@ -2299,4 +2299,8 @@ void tms9918_colors_vars( Environment * _environment, char * _foreground_color, 
 
 }
 
+void tms9918_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
+
+}
+
 #endif

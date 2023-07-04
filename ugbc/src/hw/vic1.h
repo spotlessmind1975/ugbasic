@@ -202,4 +202,6 @@ void vic1_stop_vars( Environment * _environment, char * _channel );
 
 void vic1_music( Environment * _environment, char * _music, int _size );
 
+void vic1_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
+
 #endif
