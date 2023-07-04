@@ -1482,7 +1482,7 @@ void c6847_blit_image( Environment * _environment, char * _sources[], int _sourc
     
 }
 
-void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags, char * _clip_x, char * _clip_y ) {
+void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( putimage, src_hw_6847_put_image_asm );

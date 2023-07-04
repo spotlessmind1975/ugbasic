@@ -53,7 +53,7 @@ extern char DATATYPE_AS_STRING[][16];
 /* <usermanual>
 @keyword PUT IMAGE
 </usermanual> */
-void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags, char * _clip_x, char * _clip_y ) ) {
+void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
 
     MAKE_LABEL
 
@@ -115,20 +115,20 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 variable_store( _environment, address->name, image->absoluteAddress );
                 variable_add_inplace_vars( _environment, address->name, offset->name );
                 bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
-                ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, image->frameSize, 0, _flags, _clip_x, _clip_y );
+                ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, image->frameSize, 0, _flags );
 
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        ef936x_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -170,13 +170,13 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 variable_store( _environment, address->name, image->absoluteAddress );
                 variable_add_inplace_vars( _environment, address->name, offset->name );
                 bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
-                ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, image->frameSize, 0, _flags, _clip_x, _clip_y );
+                ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
                 if ( !frame ) {
-                    ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags, _clip_x, _clip_y );
+                    ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    ef936x_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags, _clip_x, _clip_y );
+                    ef936x_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
@@ -201,9 +201,9 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
-                ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, 0, 0, _flags, _clip_x, _clip_y );
+                ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
             } else {
-                ef936x_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags, _clip_x, _clip_y );
+                ef936x_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
             }
             break;
         default:

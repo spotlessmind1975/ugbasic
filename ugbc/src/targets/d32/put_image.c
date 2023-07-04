@@ -53,7 +53,7 @@ extern char DATATYPE_AS_STRING[][16];
 /* <usermanual>
 @keyword PUT IMAGE
 </usermanual> */
-void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags, char * _clip_x, char * _clip_y ) {
+void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
 
     MAKE_LABEL
     
@@ -93,29 +93,29 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        c6847_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        c6847_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        c6847_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        c6847_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        c6847_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        c6847_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        c6847_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        c6847_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        c6847_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        c6847_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        c6847_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        c6847_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        c6847_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        c6847_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        c6847_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags, _clip_x, _clip_y );
+                        c6847_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -142,15 +142,15 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 cpu_label( _environment, alreadyLoadedLabel );
 
                 if ( !frame ) {
-                    c6847_put_image( _environment, bankWindowName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags, _clip_x, _clip_y );
+                    c6847_put_image( _environment, bankWindowName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    c6847_put_image( _environment, bankWindowName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags, _clip_x, _clip_y );
+                    c6847_put_image( _environment, bankWindowName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             } else {
                 if ( !frame ) {
-                    c6847_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags, _clip_x, _clip_y );
+                    c6847_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    c6847_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags, _clip_x, _clip_y );
+                    c6847_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
@@ -175,9 +175,9 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
-                c6847_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, 0, 0, _flags, _clip_x, _clip_y );
+                c6847_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
             } else {
-                c6847_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags, _clip_x, _clip_y );
+                c6847_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
             }
             break;
         default:

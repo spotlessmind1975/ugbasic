@@ -29,3 +29,9 @@ tilemap := LOAD TILEMAP("kenney-tiny-town-2layers.tmx")
 
 PUT TILEMAP tilemap
 
+
+
+
+
+
+

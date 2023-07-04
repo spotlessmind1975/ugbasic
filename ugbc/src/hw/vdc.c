@@ -1010,7 +1010,7 @@ Variable * vdc_sprite_converter( Environment * _environment, char * _source, int
 
 }
 
-void vdc_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags, char * _clip_x, char * _clip_y ) {
+void vdc_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( vdcvars, src_hw_vdc_vars_asm);
     deploy( vdcvarsGraphic, src_hw_vdc_vars_graphic_asm );

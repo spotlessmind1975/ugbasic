@@ -147,7 +147,7 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
             cpu_inc( _environment, index->realName );
         }
         cpu_compare_and_branch_8bit_const(  _environment, frame->realName, 0xff, labelExitFrame, 1 );
-        put_image( _environment, tileset->name, x->name, y->name, frame->name, NULL,  _flags, NULL, NULL );
+        put_image( _environment, tileset->name, x->name, y->name, frame->name, NULL,  _flags );
         cpu_label( _environment, labelExitFrame );
         cpu_inc( _environment, fx->realName );
         variable_add_inplace( _environment, x->name, tileset->frameWidth );
