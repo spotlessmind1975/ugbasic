@@ -51,6 +51,8 @@
             VT_POW2_2( p, FT_SINGLE ) \
         )
 
+void z80_init( Environment * _environment );
+
 void z80_beq( Environment * _environment, char * _label );
 void z80_bneq( Environment * _environment, char * _label );
 void z80_busy_wait( Environment * _environment, char * _timing );

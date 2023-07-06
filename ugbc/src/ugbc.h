@@ -1344,6 +1344,8 @@ typedef struct _Deployed {
     int fp_single_mulu8_divpow2;
     int fp_single_geomean;
     
+    int duff;
+
 } Deployed;
 
 typedef struct _DString {

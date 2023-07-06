@@ -42,6 +42,36 @@
 
 #if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__vg5000__) || defined(__c128z__)
 
+void z80_init( Environment * _environment ) {
+
+    char duffDevice[38] = {
+        // +00
+        0x18, 0x00, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
+        // +08
+        0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
+        // +16
+        0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
+        // +24
+        0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
+        // +32
+        0xED, 0xA0, 0xEA, 0x00, 0x00, 0xC9
+    };
+
+    variable_import( _environment, "DUFFDEVICEL0", VT_BUFFER, 36 );
+    variable_global( _environment, "DUFFDEVICEL0" );
+    variable_import( _environment, "DUFFDEVICEL1", VT_ADDRESS, 0 );
+    variable_global( _environment, "DUFFDEVICEL1" );
+
+    variable_store_buffer( _environment, "DUFFDEVICEL0", duffDevice, sizeof( duffDevice ), 0 );
+    
+    outline0( "LD HL, DUFFDEVICEL0");
+    outline0( "LD DE, 35");
+    outline0( "ADC HL, DE");
+    outline0( "LD DE, DUFFDEVICEL0");
+    outline0( "LD (HL), DE");
+
+}
+
 /**
  * @brief <i>Z80</i>: emit code to make long conditional jump
  * 
@@ -2864,83 +2894,65 @@ void z80_dec_16bit( Environment * _environment, char * _variable ) {
 
 void z80_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    MAKE_LABEL
+    deploy( duff, src_hw_z80_duff_asm );
 
     outline1("LD HL, (%s)", _source);
     outline1("LD DE, (%s)", _destination);
     outline1("LD A, (%s)", _size);
-    outline0("CP 0");
-    outline1("JR Z, %sdone", label);
     outline0("LD C, A");
     outline0("LD B, 0");
-    outline0("LDIR");
-    outhead1("%sdone:", label);
+    outline0("CALL DUFFDEVICE");
 
 }
 
 void z80_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    MAKE_LABEL
+    deploy( duff, src_hw_z80_duff_asm );
 
     outline1("LD HL, (%s)", _source);
     outline1("LD DE, (%s)", _destination);
-    outline1("LD A, (%s)", _size);
-    outline0("CP 0");
-    outline1("JR NZ, %sgo", label);
-    outline1("LD A, (%s)", address_displacement(_environment, _size, "1"));
-    outline0("CP 0");
-    outline1("JR NZ, %sgo", label);
-    outline1("JR %sdone", label);
-    outhead1("%sgo:", label);
-    outline1("LD A, (%s)", _size);
-    outline0("LD C, A");
-    outline1("LD A, (%s)", address_displacement(_environment, _size, "1"));
-    outline0("LD B, C");
-    outline0("LDIR");
-    outhead1("%sdone:", label);
+    outline1("LD BC, (%s)", _size);
+    outline0("CALL DUFFDEVICE");
 
 }
 
 void z80_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    MAKE_LABEL
+    deploy( duff, src_hw_z80_duff_asm );
 
     outline1("LD HL, %s", _source);
     outline1("LD DE, %s", _destination);
     outline1("LD A, (%s)", _size);
-    outline0("CP 0");
-    outline1("JR Z, %sdone", label);
     outline0("LD C, A");
     outline0("LD B, 0");
-    outline0("LDIR");
-    outhead1("%sdone:", label);
+    outline0("CALL DUFFDEVICE");
 
 }
 
 void z80_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    MAKE_LABEL
+    deploy( duff, src_hw_z80_duff_asm );
 
     outline1("LD HL, (%s)", _source);
     outline1("LD DE, %s", _destination);
     outline1("LD BC, (%s)", _size);
-    outline0("LD A, B");
-    outline0("OR C");
-    outline1("JR Z, %sdone", label);
-    outline0("LDIR");
-    outhead1("%sdone:", label);
+    outline0("CALL DUFFDEVICE");
 
 }
 
 void z80_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size > 0 ) {
+
+        deploy( duff, src_hw_z80_duff_asm );
+
         outline1("LD HL, (%s)", _source);
         outline1("LD DE, (%s)", _destination);
         outline1("LD A, $%2.2x", ( _size & 0xff ) );
         outline0("LD C, A");
         outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
-        outline0("LDIR");
+        outline0("CALL DUFFDEVICE");
+
     }
 
 }
@@ -2948,12 +2960,15 @@ void z80_mem_move_size( Environment * _environment, char *_source, char *_destin
 void z80_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size > 0 ) {
+
+        deploy( duff, src_hw_z80_duff_asm );
+
         outline1("LD HL, %s", _source);
         outline1("LD DE, %s", _destination);
         outline1("LD A, $%2.2x", ( _size & 0xff ) );
         outline0("LD C, A");
         outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
-        outline0("LDIR");
+        outline0("CALL DUFFDEVICE");
     }
 
 }
@@ -2961,12 +2976,15 @@ void z80_mem_move_direct_size( Environment * _environment, char *_source, char *
 void z80_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size ) {
+
+        deploy( duff, src_hw_z80_duff_asm );
+
         outline1("LD HL, %s", _source);
         outline1("LD DE, (%s)", _destination);
         outline1("LD A, $%2.2x", ( _size & 0xff ) );
         outline0("LD C, A");
         outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
-        outline0("LDIR");
+        outline0("CALL DUFFDEVICE");
     }
 
 }
