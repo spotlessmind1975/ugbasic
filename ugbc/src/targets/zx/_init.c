@@ -64,6 +64,8 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
+    z80_init( _environment );
+
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 

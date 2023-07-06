@@ -65,6 +65,8 @@ void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
+    z80_init( _environment );
+
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
     variable_import( _environment, "EVERYCOUNTER", VT_WORD, 0 );

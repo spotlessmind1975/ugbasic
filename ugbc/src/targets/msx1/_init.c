@@ -64,6 +64,8 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
+    z80_init( _environment );
+
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
     for(int i=0; i<BANK_COUNT; ++i) {
