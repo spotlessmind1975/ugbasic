@@ -65,6 +65,8 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
+    cpu6502_init( _environment );
+
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xff00 );
 
