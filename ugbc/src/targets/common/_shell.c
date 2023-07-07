@@ -70,15 +70,22 @@ void shell_injection( Environment * _environment ) {
         print( _environment, prompt->name, 1 );
 
         input( _environment, command->name );
+        outline0("; print");
+        print( _environment, command->name, 1 );
 
+        outline0("; lowered");
         loweredCommand = variable_string_lower( _environment, command->name );
 
+        outline0("; compare");
         result = variable_compare( _environment, loweredCommand->name, commandRun->name );
 
+        outline0("; compare and branch");
         cpu_compare_and_branch_8bit_const( _environment, result->realName, 0xff, "PROGSTART", 1 );
 
+        outline0("; compare2");
         result = variable_compare( _environment, loweredCommand->name, commandList->name );
 
+        outline0("; compare and branch2");
         cpu_compare_and_branch_8bit_const( _environment, result->realName, 0xff, "PROGLIST", 1 );
 
         print( _environment, syntaxError->name, 1 );

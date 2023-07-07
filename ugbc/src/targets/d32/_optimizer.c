@@ -879,6 +879,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "^_TRtmp"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
     if(po_buf_match(name, "_SHELL"))  return 0;
+    if(po_buf_match(name, "DUFFDEVICE"))  return 0;
 
     if(name->str[0]=='_')      return 1;
     if(po_buf_match(name, "CLIP"))    return 1;
@@ -1355,26 +1356,26 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
 
-    if ( _environment->peepholeOptimizationLimit > 0 ) {
-        POBuffer buf[LOOK_AHEAD];
-        int i;
+    // if ( _environment->peepholeOptimizationLimit > 0 ) {
+    //     POBuffer buf[LOOK_AHEAD];
+    //     int i;
 
-        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_new(0);
+    //     for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_new(0);
 
-        int optimization_limit_count = _environment->peepholeOptimizationLimit;
+    //     int optimization_limit_count = _environment->peepholeOptimizationLimit;
 
-        do {
-            while(optim_pass(_environment, buf, PEEPHOLE)&&optimization_limit_count) {
-                --optimization_limit_count;
-            };
-            optim_pass(_environment, buf, DEADVARS);
-        } while(change&&optimization_limit_count);
-        optim_pass(_environment, buf, RELOCATION1);
-        optim_pass(_environment, buf, RELOCATION2);
+    //     do {
+    //         while(optim_pass(_environment, buf, PEEPHOLE)&&optimization_limit_count) {
+    //             --optimization_limit_count;
+    //         };
+    //         optim_pass(_environment, buf, DEADVARS);
+    //     } while(change&&optimization_limit_count);
+    //     optim_pass(_environment, buf, RELOCATION1);
+    //     optim_pass(_environment, buf, RELOCATION2);
 
-        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_del(buf[i]);
-        TMP_BUF_CLR;
-    }
+    //     for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_del(buf[i]);
+    //     TMP_BUF_CLR;
+    // }
     
 }
 

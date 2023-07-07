@@ -61,6 +61,8 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
+    cpu6809_init( _environment );
+
     int i=0;
 
     for(i=0; i<BANK_COUNT; ++i) {

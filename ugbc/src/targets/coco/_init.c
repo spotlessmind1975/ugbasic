@@ -61,6 +61,8 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
+    cpu6809_init( _environment );
+
     for(int i=0; i<BANK_COUNT; ++i) {
         Bank * bank = malloc( sizeof( Bank ) );
         bank->address = 0x0;
