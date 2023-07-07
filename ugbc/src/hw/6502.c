@@ -42,6 +42,10 @@
 
 #if defined(__c64__) || defined(__plus4__) || defined(__atari__) || defined(__atarixl__) || defined(__vic20__) || defined(__c128__)
 
+void cpu6502_init( Environment * _environment ) {
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to make long conditional jump
  * 
@@ -3803,11 +3807,12 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
 
     embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
 
+        deploy( duff, src_hw_6502_duff_asm );
+        
         outline1("LDX %s", _size );
-        outline1("BEQ %sdone", label );
         outline0("STX MATHPTR0" );
         outline0("LDX #$0" );
-        outline0("STX MATHPTR0+1" );
+        outline0("STX MATHPTR1" );
         outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
@@ -3816,8 +3821,7 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _destination );
         outline0("STA TMPPTR2" );
-        outline0("JSR CPUMEMMOVE" );
-        outhead1("%sdone:", label );
+        outline0("JSR DUFFDEVICE" );
 
     done()
 
@@ -3833,16 +3837,12 @@ void cpu6502_mem_move_16bit( Environment * _environment, char *_source, char *_d
 
     embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
 
-        outline1("LDX %s", _size );
-        outline1("BNE %sgo", label );
-        outline1("LDX %s", address_displacement(_environment, _size, "1") );
-        outline1("BNE %sgo", label );
-        outline1("JMP %sdone", label );
+        deploy( duff, src_hw_6502_duff_asm );
 
-        outhead1("%sgo:", label );
+        outline1("LDX %s", _size );
         outline0("STX MATHPTR0" );
         outline1("LDX %s", address_displacement(_environment, _size, "1") );
-        outline0("STX MATHPTR0+1" );
+        outline0("STX MATHPTR1" );
         outline1("LDA %s", address_displacement(_environment, _source, "1") );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
@@ -3851,8 +3851,7 @@ void cpu6502_mem_move_16bit( Environment * _environment, char *_source, char *_d
         outline0("STA TMPPTR2+1" );
         outline1("LDA %s", _destination );
         outline0("STA TMPPTR2" );
-        outline0("JSR CPUMEMMOVE" );
-        outhead1("%sdone:", label );
+        outline0("JSR DUFFDEVICE" );
 
     done()
 
@@ -3885,11 +3884,12 @@ void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_
 
     embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
 
+        deploy( duff, src_hw_6502_duff_asm );
+
         outline1("LDX %s", _size );
-        outline1("BEQ %sdone", label );
         outline0("STX MATHPTR0" );
         outline0("LDX #$0" );
-        outline0("STX MATHPTR0+1" );
+        outline0("STX MATHPTR1" );
         outline1("LDA #>%s", _source );
         outline0("STA TMPPTR+1" );
         outline1("LDA #<%s", _source );
@@ -3898,8 +3898,7 @@ void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_
         outline0("STA TMPPTR2+1" );
         outline1("LDA #<%s", _destination );
         outline0("STA TMPPTR2" );
-        outline0("JSR CPUMEMMOVE" );
-        outhead1("%sdone:", label );
+        outline0("JSR DUFFDEVICE" );
 
     done()
 
@@ -3948,12 +3947,12 @@ void cpu6502_mem_move_direct2( Environment * _environment, char *_source, char *
 
     embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
 
+        deploy( duff, src_hw_6502_duff_asm );
+
         outline1("LDA %s+1", _size );
         outline0("STA MATHPTR1" );
         outline1("LDA %s", _size );
         outline0("STA MATHPTR0" );
-        outline0("ORA MATHPTR1" );
-        outline1("BEQ %sdone", label );
         outline1("LDA %s+1", _source );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
@@ -3962,8 +3961,7 @@ void cpu6502_mem_move_direct2( Environment * _environment, char *_source, char *
         outline0("STA TMPPTR2+1" );
         outline1("LDA #<%s", _destination );
         outline0("STA TMPPTR2" );
-        outline0("JSR CPUMEMMOVE16" );
-        outhead1("%sdone:", label );
+        outline0("JSR DUFFDEVICE" );
 
     done()
 
@@ -3995,10 +3993,12 @@ void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_de
 
         embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
 
+            deploy( duff, src_hw_6502_duff_asm );
+
             outline1("LDX #$%2.2X", (_size & 0xff ) );
             outline0("STX MATHPTR0" );
             outline1("LDX #$%2.2X", ( _size >> 8 ) & 0xff );
-            outline0("STX MATHPTR0+1" );
+            outline0("STX MATHPTR1" );
             outline1("LDA %s", address_displacement(_environment, _source, "1") );
             outline0("STA TMPPTR+1" );
             outline1("LDA %s", _source );
@@ -4007,7 +4007,7 @@ void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_de
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _destination );
             outline0("STA TMPPTR2" );
-            outline0("JSR CPUMEMMOVE" );
+            outline0("JSR DUFFDEVICE" );
 
         done()
     }
@@ -4089,10 +4089,12 @@ void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, ch
 
         embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
 
+            deploy( duff, src_hw_6502_duff_asm );
+
             outline1("LDX #$%2.2X", (_size & 0xff ) );
             outline0("STX MATHPTR0" );
             outline1("LDX #$%2.2X", ( _size >> 8 ) & 0xff );
-            outline0("STX MATHPTR0+1" );
+            outline0("STX MATHPTR1" );
             outline1("LDA #>(%s)", _source );
             outline0("STA TMPPTR+1" );
             outline1("LDA #<(%s)", _source );
@@ -4101,7 +4103,7 @@ void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, ch
             outline0("STA TMPPTR2+1" );
             outline1("LDA #<(%s)", _destination );
             outline0("STA TMPPTR2" );
-            outline0("JSR CPUMEMMOVE" );
+            outline0("JSR DUFFDEVICE" );
 
         done()
 
@@ -4184,6 +4186,8 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
 
         embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
 
+            deploy( duff, src_hw_6502_duff_asm );
+
             outline1("LDX #$%2.2X", (_size & 0xff ) );
             outline0("STX MATHPTR0" );
             outline1("LDX #$%2.2X", ( _size >> 8 ) & 0xff );
@@ -4196,7 +4200,7 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
             outline0("STA TMPPTR2+1" );
             outline1("LDA %s", _destination );
             outline0("STA TMPPTR2" );
-            outline0("JSR CPUMEMMOVE" );
+            outline0("JSR DUFFDEVICE" );
 
         done()
 

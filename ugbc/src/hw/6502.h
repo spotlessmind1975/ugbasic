@@ -51,6 +51,8 @@
             VT_POW2_2( p, FT_SINGLE ) \
         )
 
+void cpu6502_init( Environment * _environment );
+
 void cpu6502_beq( Environment * _environment, char * _label );
 void cpu6502_bneq( Environment * _environment, char * _label );
 void cpu6502_busy_wait( Environment * _environment, char * _timing );
