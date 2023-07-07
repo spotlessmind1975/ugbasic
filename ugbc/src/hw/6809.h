@@ -51,6 +51,8 @@
             VT_POW2_3( p, FT_SINGLE ) \
         )
 
+void cpu6809_init( Environment * _environment );
+
 void cpu6809_beq( Environment * _environment, char * _label );
 void cpu6809_bneq( Environment * _environment, char * _label );
 void cpu6809_busy_wait( Environment * _environment, char * _timing );
