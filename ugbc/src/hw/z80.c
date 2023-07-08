@@ -62,6 +62,8 @@ void z80_init( Environment * _environment ) {
     variable_import( _environment, "DUFFDEVICEL1", VT_ADDRESS, 0 );
     variable_global( _environment, "DUFFDEVICEL1" );
 
+    variable_retrieve( _environment, "DUFFDEVICEL0" )->readonly = 0;
+
     variable_store_buffer( _environment, "DUFFDEVICEL0", duffDevice, sizeof( duffDevice ), 0 );
     
     outline0( "LD HL, DUFFDEVICEL0");
