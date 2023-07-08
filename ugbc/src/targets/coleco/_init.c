@@ -65,8 +65,6 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
-    z80_init( _environment );
-
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
     _environment->dstring.count = 16;
@@ -153,6 +151,9 @@ void target_initialization( Environment * _environment ) {
 
     outline0("CALL VARINIT2");
     outline0("CALL VARINIT");
+
+    z80_init( _environment );
+
     outline0("CALL PROTOTHREADINIT" );
 
     setup_text_variables( _environment );
