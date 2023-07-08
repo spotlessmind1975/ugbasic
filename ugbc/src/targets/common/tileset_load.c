@@ -363,6 +363,8 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
         const_define_numeric( _environment, _alias, UNIQUE_RESOURCE_ID );
     }
 
+    final->readonly = 1;
+
     return final;
 
 }

@@ -349,7 +349,9 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     if ( _alias ) {
         const_define_numeric( _environment, _alias, UNIQUE_RESOURCE_ID );
     }
-    
+
+    final->readonly = 1;
+
     return final;
 
 }

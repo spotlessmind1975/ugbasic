@@ -337,6 +337,8 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
         const_define_numeric( _environment, _alias, UNIQUE_RESOURCE_ID );
     }
     
+    final->readonly = 1;
+
     return final;
 
 }

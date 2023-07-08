@@ -8098,6 +8098,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     var->arrayPrecision = expr->arrayPrecision;
     var->frameSize = expr->frameSize;
     var->frameCount = expr->frameCount;
+    var->readonly = expr->readonly;
     expr->assigned = 1;
 
     return var;

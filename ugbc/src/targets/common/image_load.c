@@ -336,7 +336,9 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     if ( _alias ) {
         const_define_numeric( _environment, _alias, UNIQUE_RESOURCE_ID );
     }
-    
+
+    result->readonly = 1;
+        
     return result;
 
 }
