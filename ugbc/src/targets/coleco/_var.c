@@ -143,6 +143,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_MUSIC:
                 case VT_BUFFER:
                     if ( ! variable->absoluteAddress ) {
+                        if ( variable->readonly ) {
+
+                        } else {
+                            outhead0("section data_user");
+                        }
                         if ( variable->valueBuffer ) {
                             if ( variable->printable ) {
                                 char * string = malloc( variable->size + 1 );
@@ -163,8 +168,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 outline1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
                         } else {
-                            outhead0("section data_user");
                             outline2("%s: defs %d", variable->realName, variable->size);
+                        }
+                        if ( variable->readonly ) {
+
+                        } else {
                             outhead0("section code_user");
                         }
                     } else {
