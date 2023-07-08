@@ -68,7 +68,18 @@ void target_initialization( Environment * _environment ) {
 
     _environment->dstring.count = 16;
     _environment->dstring.space = 128;
-    
+
+    variable_import( _environment, "PPIKEYBOARD", VT_BYTE, 0 );
+    variable_global( _environment, "PPIKEYBOARD" );   
+
+    variable_import( _environment, "VDP60HZ", VT_BYTE, 0 );
+    variable_global( _environment, "VDP60HZ" );   
+
+    variable_import( _environment, "IRQVECTOR", VT_BUFFER, 3 );
+    variable_global( _environment, "IRQVECTOR" );   
+    variable_import( _environment, "IRQVECTORREADY", VT_BYTE, 0 );
+    variable_global( _environment, "IRQVECTORREADY" );   
+
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
@@ -107,17 +118,6 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "SC3000TIMER", VT_WORD, 0 );
     variable_global( _environment, "SC3000TIMER" );   
-
-    variable_import( _environment, "PPIKEYBOARD", VT_BYTE, 0 );
-    variable_global( _environment, "PPIKEYBOARD" );   
-
-    variable_import( _environment, "VDP60HZ", VT_BYTE, 0 );
-    variable_global( _environment, "VDP60HZ" );   
-
-    variable_import( _environment, "IRQVECTOR", VT_BUFFER, 3 );
-    variable_global( _environment, "IRQVECTOR" );   
-    variable_import( _environment, "IRQVECTORREADY", VT_BYTE, 0 );
-    variable_global( _environment, "IRQVECTORREADY" );   
 
     variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
     variable_global( _environment, "FPSCRAP" );
