@@ -2044,26 +2044,6 @@ typedef struct _Environment {
     char * sliceImageY;
 
     /*
-     * slice image width
-     */
-    char * sliceImageWidth;
-
-    /*
-     * slice image height
-     */
-    char * sliceImageHeight;
-
-    /*
-     * slice image at x
-     */
-    char * sliceImageAtX;
-
-    /*
-     * slice image at y
-     */
-    char * sliceImageAtY;
-
-    /*
      * Used for deferred writing of assembly file.
      */
     char *deferredEmbedded[MAX_TEMPORARY_STORAGE];
