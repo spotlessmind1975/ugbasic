@@ -1259,6 +1259,8 @@ typedef struct _Deployed {
     int getimage;
     int puttilemap;
     int blitimage;
+    int sliceimagecopy;
+    int sliceimageextract;
     int protothread;
     int tiles;
     int font;
@@ -2326,6 +2328,8 @@ typedef struct _Environment {
 #define CRITICAL_TILEMAP_LOAD_ONLY_SAME_SIZE_LAYER( v ) CRITICAL2("E201 - cannot use tile maps with layers of different size", v );
 #define CRITICAL_TILESET_OF_INVALID_TILEMAP( v ) CRITICAL2("E202 - cannot use TILESET OF on something that is not a TILEMAP", v );
 #define CRITICAL_TILEMAP_INDEX_INVALID_TILEMAP( v ) CRITICAL2("E203 - cannot use TILEMAP INDEX on something that is not a TILEMAP", v );
+#define CRITICAL_SLICE_IMAGE_UNSUPPORTED( v, t ) CRITICAL3("E204 - SLICE IMAGE unsupported for given datatype", v, t );
+#define CRITICAL_SLICE_IMAGE_UNSUPPORTED_COMBINATION( ) CRITICAL("E205 - SLICE IMAGE cannot optimize the call in this combination" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

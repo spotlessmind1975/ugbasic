@@ -4071,30 +4071,30 @@ get_definition_expression:
 get_definition:
     get_definition_expression;
 
-slice_options:
-    OP expr OP_COMMA expr OP_COMMA expr OP_COMMA expr AT expr OP_COMMA expr CP {
+slice_source_options: {
+        ((struct _Environment *)_environment)->sliceImageX = NULL;
+        ((struct _Environment *)_environment)->sliceImageY = NULL;
+    }
+    |
+    FROM expr OP_COMMA expr {
         ((struct _Environment *)_environment)->sliceImageX = $2;
         ((struct _Environment *)_environment)->sliceImageY = $4;
-        ((struct _Environment *)_environment)->sliceImageWidth = $6;
-        ((struct _Environment *)_environment)->sliceImageHeight = $8;
-        ((struct _Environment *)_environment)->sliceImageAtX = $10;
-        ((struct _Environment *)_environment)->sliceImageAtY = $12;
     };
 
 slice_definition_expression:
-      IMAGE expr WITH slice_options TO Identifier {
-        slice_image( _environment, $2, NULL, NULL, $6 );
+      IMAGE expr slice_source_options TO Identifier {
+        slice_image( _environment, $2, NULL, NULL, $5 );
     }
-    | IMAGE expr frame expr WITH slice_options TO Identifier {
-        slice_image( _environment, $2, $4, NULL, $8 );
+    | IMAGE expr frame expr slice_source_options TO Identifier {
+        slice_image( _environment, $2, $4, NULL, $7 );
     }
-    | IMAGE expr frame OP_HASH Identifier WITH slice_options TO Identifier {
+    | IMAGE expr frame OP_HASH Identifier slice_source_options TO Identifier {
         Variable * images = variable_retrieve( _environment, $2 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
-        slice_image( _environment, $2, calculatedFrame->name, NULL, $9 );
+        slice_image( _environment, $2, calculatedFrame->name, NULL, $8 );
     }
-    | IMAGE expr SEQUENCE expr frame expr WITH slice_options TO Identifier {
-        slice_image( _environment, $2, $6, $6, $10 );
+    | IMAGE expr SEQUENCE expr frame expr slice_source_options TO Identifier {
+        slice_image( _environment, $2, $6, $6, $9 );
     }
     ;
 
