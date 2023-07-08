@@ -284,8 +284,6 @@ PUTIMAGE1:
     RR C
     SRL B
     RR C
-    SRL B
-    RR C
     LD A, C
     POP BC
     LD C, A
