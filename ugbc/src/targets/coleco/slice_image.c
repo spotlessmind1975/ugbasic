@@ -55,5 +55,55 @@ extern char DATATYPE_AS_STRING[][16];
 
 </usermanual> */
 void slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _destination ) {
+
+    Variable * image = variable_retrieve( _environment, _image );
+    Variable * destination = variable_retrieve( _environment, _destination );
+    Variable * frame = NULL;
+    if ( _frame) {
+        frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+    }
+    Variable * sequence = NULL;
+    if ( _sequence) {
+        sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+    }
+
+    Tms9918SliceImageFunction tms9918_slice_image = NULL;;
+    if ( 
+            ! _environment->sliceImageX && ! _environment->sliceImageY
+            ) {
+        tms9918_slice_image = tms9918_slice_image_copy;
+    } else {
+        tms9918_slice_image = tms9918_slice_image_extract;
+    }
+
+    switch( image->type ) {
+        case VT_SEQUENCE:
+            if ( !sequence ) {
+                if ( !frame ) {
+                    tms9918_slice_image( _environment, image->realName, "", "", image->frameSize, image->frameCount, destination->realName );
+                } else {
+                    tms9918_slice_image( _environment, image->realName, frame->realName, "", image->frameSize, image->frameCount, destination->realName );
+                }
+            } else {
+                if ( !frame ) {
+                    tms9918_slice_image( _environment, image->realName, "", sequence->realName, image->frameSize, image->frameCount, destination->realName );
+                } else {
+                    tms9918_slice_image( _environment, image->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, destination->realName );
+                }
+            }
+            break;
+        case VT_IMAGES:
+            if ( !frame ) {
+                tms9918_slice_image( _environment, image->realName, "", NULL, image->frameSize, 0, destination->realName );
+            } else {
+                tms9918_slice_image( _environment, image->realName, frame->realName, NULL, image->frameSize, 0, destination->realName );
+            }
+            break;
+        case VT_IMAGE:
+            tms9918_slice_image( _environment, image->realName, NULL, NULL, 0, 0, destination->realName );
+            break;
+        default:
+            CRITICAL_SLICE_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
+    }
     
 }

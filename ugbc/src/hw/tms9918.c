@@ -1538,6 +1538,13 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "VBLFLAG", VT_BYTE, 0 );
     variable_global( _environment, "VBLFLAG" ); 
 
+    variable_import( _environment, "SLICEX", VT_POSITION, 0 );
+    variable_global( _environment, "SLICEX" );
+    variable_import( _environment, "SLICEY", VT_POSITION, 0 );
+    variable_global( _environment, "SLICEY" );
+    variable_import( _environment, "SLICEDTARGET", VT_POSITION, 0 );
+    variable_global( _environment, "SLICEDTARGET" );
+
     tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
     font_descriptors_init( _environment, 0 );
@@ -2300,6 +2307,46 @@ void tms9918_colors_vars( Environment * _environment, char * _foreground_color, 
 }
 
 void tms9918_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
+
+}
+
+void tms9918_slice_image_copy( Environment * _environment, char * _image,  char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
+
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm);
+    deploy( duff, src_hw_z80_duff_asm );
+    deploy( sliceimagecopy, src_hw_tms9918_slice_image_copy_asm );
+
+    MAKE_LABEL
+
+    tms9918_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+
+    outline1( "LD DE, %s", _destination );
+
+    outline0("CALL SLICEIMAGECOPY");
+
+}
+
+void tms9918_slice_image_extract( Environment * _environment, char * _image,  char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
+
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm);
+    deploy( duff, src_hw_z80_duff_asm );
+    deploy( sliceimageextract, src_hw_tms9918_slice_image_extract_asm );
+
+    MAKE_LABEL
+
+    tms9918_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+
+    Variable * sliceImageX = variable_retrieve( _environment, _environment->sliceImageX );
+    Variable * sliceImageY = variable_retrieve( _environment, _environment->sliceImageY );
+    outline1( "LD DE, (%s)", sliceImageX->realName );
+    outline0( "LD (SLICEX), DE" );
+    outline1( "LD DE, (%s)", sliceImageY->realName );
+    outline0( "LD (SLICEY), DE" );
+    outline1( "LD DE, %s", _destination );
+
+    outline0("CALL SLICEIMAGEEXT");
 
 }
 
