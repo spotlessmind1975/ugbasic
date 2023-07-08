@@ -69,19 +69,11 @@ void slice_image( Environment * _environment, char * _image, char * _frame, char
 
     CpcSliceImageFunction cpc_slice_image = NULL;;
     if ( 
-            ! _environment->sliceImageX && ! _environment->sliceImageY && 
-            ! _environment->sliceImageWidth && ! _environment->sliceImageHeight && 
-            ! _environment->sliceImageAtX && ! _environment->sliceImageAtY
+            ! _environment->sliceImageX && ! _environment->sliceImageY
             ) {
         cpc_slice_image = cpc_slice_image_copy;
-    } else if (
-            _environment->sliceImageX && _environment->sliceImageY && 
-            ! _environment->sliceImageWidth && ! _environment->sliceImageHeight && 
-            ! _environment->sliceImageAtX && ! _environment->sliceImageAtY
-            ) {
-        cpc_slice_image = cpc_slice_image_extract;
     } else {
-        CRITICAL_SLICE_IMAGE_UNSUPPORTED_COMBINATION( );
+        cpc_slice_image = cpc_slice_image_extract;
     }
 
     switch( image->type ) {
