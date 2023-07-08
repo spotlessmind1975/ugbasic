@@ -36,7 +36,6 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 DUFFDEVICE:
-    PUSH AF
     LD A, B
     OR C
     RET Z
@@ -48,5 +47,4 @@ DUFFDEVICE:
     LD (DUFFDEVICEL0+1), A
     CALL DUFFDEVICEL0
 
-    POP AF
     RET
