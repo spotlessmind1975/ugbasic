@@ -47,6 +47,7 @@ void input( Environment * _environment, char * _variable ) {
     Variable * result = variable_retrieve_or_define( _environment, _variable, VT_WORD, 0 );
 
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
+    char skipColorChangeLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipColorChangeLabel, "%sskipcc", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
     char backspaceLabel[MAX_TEMPORARY_STORAGE]; sprintf(backspaceLabel, "%sbackspace", label );
 
@@ -57,6 +58,7 @@ void input( Environment * _environment, char * _variable ) {
     Variable * comma = variable_temporary( _environment, VT_CHAR, "(comma)" );
     Variable * space = variable_temporary( _environment, VT_CHAR, "(space)" );
     Variable * underscore = variable_temporary( _environment, VT_CHAR, "(underscore)" );
+    Variable * underscoreTimer = variable_temporary( _environment, VT_BYTE, "(underscore timer)" );
     Variable * backspace = variable_temporary( _environment, VT_CHAR, "(backspace)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size max)" );
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
@@ -72,6 +74,7 @@ void input( Environment * _environment, char * _variable ) {
     cpu_store_8bit( _environment, comma->realName, _environment->inputConfig.separator == 0 ? INPUT_DEFAULT_SEPARATOR : _environment->inputConfig.separator );
     cpu_store_8bit( _environment, size->realName, _environment->inputConfig.size == 0 ? INPUT_DEFAULT_SIZE : _environment->inputConfig.size );
     cpu_store_8bit( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor );
+    cpu_store_8bit( _environment, underscoreTimer->realName, 143 );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     cpu_dsfree( _environment, temporary->realName );
@@ -79,6 +82,18 @@ void input( Environment * _environment, char * _variable ) {
     cpu_dsdescriptor( _environment, temporary->realName, address->realName, pressed->realName );
 
     cpu_label( _environment, repeatLabel );
+
+    // It would be advisable to implement a cursor as similar as possible to the system one 
+    // for the COCO target. The cursor blink routine is disassembled in Color BASIC Unravelled ... 
+    // there's a frame countdown timer ... something like 11-12 frames the color gets switched 
+    // to the next one ... and the characters drawn are 128, then 144, then 160, then 176, 
+    // and wrapping around to 128 after drawing character 240:
+
+    cpu_dec( _environment, underscoreTimer->realName );
+    cpu_compare_and_branch_8bit_const( _environment, underscoreTimer->realName, 0, skipColorChangeLabel, 0 );
+    add_complex( _environment, underscore->name, 16, 143, 224 );
+    cpu_store_8bit( _environment, underscoreTimer->realName, 128 );
+    cpu_label( _environment, skipColorChangeLabel );
 
     print( _environment, underscore->name, 0 );
     cmove_direct( _environment, -1, 0 );

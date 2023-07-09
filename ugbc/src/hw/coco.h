@@ -143,7 +143,7 @@
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
-#define INPUT_DEFAULT_CURSOR        0x60
+#define INPUT_DEFAULT_CURSOR        143
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
