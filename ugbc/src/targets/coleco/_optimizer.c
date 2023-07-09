@@ -364,7 +364,8 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     // ; -> save 1 byte and 17 T-states
 	if( 
         po_buf_match( buf[0], " CALL *", v1 ) &&
-        po_buf_match( buf[1], " RET" )
+        po_buf_match( buf[1], " RET" ) &&
+        !po_buf_match( buf[1], " RET *", v2 )
     ) {
 		optim( buf[0], RULE "(CALL+RET)->(JP)", "\tJP %s", v1->str );
 		optim( buf[1], NULL, NULL );
