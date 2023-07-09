@@ -756,7 +756,9 @@ const_factor:
           if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
               CRITICAL_NOT_IMAGE( v->name );
           }
-          
+          if ( !v->valueBuffer ) {
+              CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+          }          
           #ifdef CPU_BIG_ENDIAN
             if ( IMAGE_HEIGHT_SIZE == 1 ) {
                 $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET];
