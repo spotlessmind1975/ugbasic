@@ -70,7 +70,36 @@ void target_initialization( Environment * _environment ) {
 
     _environment->dstring.count = 16;
     _environment->dstring.space = 128;
-    
+
+    variable_import( _environment, "PPIKEYBOARD", VT_BYTE, 0 );
+    variable_global( _environment, "PPIKEYBOARD" );   
+
+    variable_import( _environment, "VDP60HZ", VT_BYTE, 0 );
+    variable_global( _environment, "VDP60HZ" );   
+
+    variable_import( _environment, "IRQVECTOR", VT_BUFFER, 3 );
+    variable_global( _environment, "IRQVECTOR" );   
+    variable_import( _environment, "IRQVECTORREADY", VT_BYTE, 0 );
+    variable_global( _environment, "IRQVECTORREADY" );   
+
+    variable_import( _environment, "KEYBD_BUFFER", VT_BUFFER, 32 );
+    variable_global( _environment, "KEYBD_BUFFER" );   
+    variable_import( _environment, "KEYBD_PUTPNT", VT_BUFFER, 2 );
+    variable_global( _environment, "KEYBD_PUTPNT" );   
+    variable_import( _environment, "KEYBD_GETPNT", VT_BUFFER, 2 );
+    variable_global( _environment, "KEYBD_GETPNT" );   
+
+    variable_import( _environment, "KEYBOARD_INPUT_BUFFER", VT_BUFFER, 12 );
+    variable_global( _environment, "KEYBOARD_INPUT_BUFFER" );   
+    variable_import( _environment, "KEYBOARD_LAST_CHAR", VT_BUFFER, 2 );
+    variable_global( _environment, "KEYBOARD_LAST_CHAR" );   
+    variable_import( _environment, "KEYBOARD_TYPEMATIC_CNT", VT_BUFFER, 2 );
+    variable_global( _environment, "KEYBOARD_TYPEMATIC_CNT" );   
+    variable_import( _environment, "KEYBOARD_DIFF_CHAR", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARD_DIFF_CHAR" );   
+    variable_import( _environment, "KEYBOARD_INT_COUNTER", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARD_INT_COUNTER" );   
+
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
@@ -110,17 +139,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "SC3000TIMER", VT_WORD, 0 );
     variable_global( _environment, "SC3000TIMER" );   
 
-    variable_import( _environment, "PPIKEYBOARD", VT_BYTE, 0 );
-    variable_global( _environment, "PPIKEYBOARD" );   
-
-    variable_import( _environment, "VDP60HZ", VT_BYTE, 0 );
-    variable_global( _environment, "VDP60HZ" );   
-
-    variable_import( _environment, "IRQVECTOR", VT_BUFFER, 3 );
-    variable_global( _environment, "IRQVECTOR" );   
-    variable_import( _environment, "IRQVECTORREADY", VT_BYTE, 0 );
-    variable_global( _environment, "IRQVECTORREADY" );   
-
     variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
     variable_global( _environment, "FPSCRAP" );
     
@@ -147,8 +165,8 @@ void target_initialization( Environment * _environment ) {
     tms9918_initialization( _environment );
     sn76489_initialization( _environment );
 
-    outline0("call	CheckIf60Hz");
-    outline0("ld		(VDP60HZ),a				; save it, 00/01 = 50/60 Hz		");
+    // outline0("call	CheckIf60Hz");
+    // outline0("ld		(VDP60HZ),a				; save it, 00/01 = 50/60 Hz		");
 
     z80_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
 

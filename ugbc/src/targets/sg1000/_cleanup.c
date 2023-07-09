@@ -55,9 +55,9 @@ void target_finalization( Environment * _environment ) {
     outhead0("VARINIT2:");
 
     outhead0("if (LASTVAR) < ( 2048 - 128 )"); 
-    outline0("LD HL, CODEEND");
-    outline0("LD DE, $C000");
-    outline0("LD BC, LASTVAR - $C000 + 1" );
+    outline0("LD HL, CODEEND+6");
+    outline0("LD DE, $C006");
+    outline0("LD BC, LASTVAR - $C000 + 1 - 6" );
     outline0("LDIR" );
     outhead0("endif"); 
     outline0("RET");

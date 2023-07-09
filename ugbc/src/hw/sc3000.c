@@ -53,11 +53,29 @@ static RGBi SYSTEM_PALETTE[] = {
 #ifdef __sc3000__
 
 void sc3000_inkey( Environment * _environment, char * _pressed, char * _key ) {
-
   
+    deploy( scancode, src_hw_sc3000_scancode_asm );
+
+    sc3000_scancode( _environment, _pressed, _key );
+
 }
 
 void sc3000_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+
+    MAKE_LABEL
+
+    deploy( scancode, src_hw_sc3000_scancode_asm );
+
+    outline0("LD A, 0");
+    outline1("LD (%s), A", _pressed);
+    outline1("LD (%s), A", _scancode);
+    outline0("CALL SCANCODE");
+    outline0("CP 0");
+    outline1("JR Z, %snokey", label);
+    outline1("LD (%s), A", _pressed);
+    outline0("LD A, B");
+    outline1("LD (%s), A", _scancode);
+    outhead1("%snokey:", label);
 
 }
 
