@@ -628,6 +628,7 @@ generated/sc3000/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
+	@rm $(@:.rom=_data_user.bin) $(@:.rom=_code_user.bin)
 
 generated/sc3000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
 	@cd examples && ../ugbc/exe/ugbc.sc3000 $(OPTIONS) -o ../$@ -O rom $(subst generated/sc3000/exeso/,,$(@:.rom=.bas))
