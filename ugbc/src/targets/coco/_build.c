@@ -111,7 +111,7 @@ void target_linkage( Environment * _environment ) {
 
         }
 
-        int programExeSize = 5 + standardSize + 5;
+        int programExeSize = 5 + standardSize + data_coco_footer_bin_len;
 
         char * programExe = malloc( programExeSize );
         memset( programExe, 0, programExeSize );
@@ -124,22 +124,29 @@ void target_linkage( Environment * _environment ) {
         programExe[2] = standardSize & 0xff;
         memcpy( &programExe[standardSize + 5], &data_coco_footer_bin[0], data_coco_footer_bin_len );
 
-        int programBlockSize = 5 + blockSize + 5;
-        char * programBlocks = malloc( programBlockSize * blocks );
-        memset( &programBlocks[0], 0, programBlockSize * blocks );
+        char * programBlocks = NULL;
+        int programBlockSize = 0;
 
-        for( int block; block < blocks; ++block ) {
+        if ( blocks ) {
 
-            memcpy( &programBlocks[block * programBlockSize], &data_coco_header_bin[0], data_coco_header_bin_len );
+            programBlockSize = 5 + blockSize + data_coco_footer_bin_len;
+            programBlocks = malloc( programBlockSize * blocks );
+            memset( &programBlocks[0], 0, programBlockSize * blocks );
 
-            if ( block < ( blocks - 1 ) ) {
-                (void)!fread( &programBlocks[block * programBlockSize + data_coco_header_bin_len], 1, blockSize, fh );
-                memcpy( &programBlocks[block * programBlockSize + data_coco_header_bin_len + blockSize], &data_coco_footer_bin[0], data_coco_footer_bin_len );
-            } else {
-                (void)!fread( &programBlocks[block * programBlockSize + data_coco_header_bin_len], 1, remainSize + 5, fh );
-                programBlocks[block * programBlockSize + 1] = ( remainSize + 5 ) >> 8;
-                programBlocks[block * programBlockSize + 2] = ( remainSize + 5 ) & 0xff;
-                memcpy( &programBlocks[block * programBlockSize + data_coco_header_bin_len + remainSize + 5], &data_coco_footer_bin[0], data_coco_footer_bin_len );
+            for( int block; block < blocks; ++block ) {
+
+                memcpy( &programBlocks[block * programBlockSize], &data_coco_header_bin[0], data_coco_header_bin_len );
+
+                if ( block < ( blocks - 1 ) ) {
+                    (void)!fread( &programBlocks[block * programBlockSize + data_coco_header_bin_len], 1, blockSize, fh );
+                    memcpy( &programBlocks[block * programBlockSize + data_coco_header_bin_len + blockSize], &data_coco_footer_bin[0], data_coco_footer_bin_len );
+                } else {
+                    (void)!fread( &programBlocks[block * programBlockSize + data_coco_header_bin_len], 1, remainSize + 5, fh );
+                    programBlocks[block * programBlockSize + 1] = ( remainSize + 5 ) >> 8;
+                    programBlocks[block * programBlockSize + 2] = ( remainSize + 5 ) & 0xff;
+                    memcpy( &programBlocks[block * programBlockSize + data_coco_header_bin_len + remainSize + 5], &data_coco_footer_bin[0], data_coco_footer_bin_len );
+                }
+
             }
 
         }
@@ -183,22 +190,23 @@ void target_linkage( Environment * _environment ) {
 
         strcat( loaderBas, "90EXEC 3584: PRINT \"...\";: LOADM\"PROGRAM.EXE\": PRINT \"...\": EXEC\n");
 
-        char tempFileName[MAX_TEMPORARY_STORAGE];
-        sprintf( tempFileName, "loader.bas" );
+        char basFileName[MAX_TEMPORARY_STORAGE];
+        sprintf( basFileName, "loader.bas" );
         
-        fh = fopen( tempFileName, "wb" );
+        fh = fopen( basFileName, "wb" );
         fwrite( loaderBas, 1, strlen(loaderBas), fh );
         fclose( fh );
         
         sprintf( commandLine, "\"%s\" copy -0 -t \"%s\" \"%s,LOADER.BAS\"",
             executableName, 
-            tempFileName, 
+            basFileName, 
             originalFileName );
         if ( system_call( _environment,  commandLine ) ) {
             printf("The compilation of assembly program failed.\n\n"); 
             printf("Please use option '-I' to install chain tool.\n\n");
         };
 
+        char tempFileName[MAX_TEMPORARY_STORAGE];
         sprintf( tempFileName, "program.exe" );
 
         fh = fopen( tempFileName, "wb" );
@@ -236,6 +244,7 @@ void target_linkage( Environment * _environment ) {
 
         BUILD_SAFE_REMOVE( _environment, binaryName );
         BUILD_SAFE_REMOVE( _environment, tempFileName );
+        BUILD_SAFE_REMOVE( _environment, basFileName );
     
     }
 
