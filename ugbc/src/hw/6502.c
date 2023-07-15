@@ -3167,8 +3167,16 @@ void cpu6502_call_indirect( Environment * _environment, char * _value ) {
 
         cpu6502_jump( _environment, label );
         cpu6502_label( _environment, indirectLabel );
-        outline1( "JMP (%s)", _value );
+        // We must use self-modifying code in order to avoid
+        // a 6502/6510 bug when using indirect addressing.
+        outline0( "JMP $0000" );
         cpu6502_label( _environment, label );
+        outline0( "PHA" );
+        outline1( "LDA %s", _value );
+        outline1( "STA %s", address_displacement( _environment, indirectLabel, "1" ) );
+        outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
+        outline1( "STA %s", address_displacement( _environment, indirectLabel, "2" ) );
+        outline0( "PLA" );
         cpu6502_call( _environment, indirectLabel );
 
     no_embedded( cpu_call_indirect )
