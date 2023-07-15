@@ -343,7 +343,10 @@ void zx_initialization( Environment * _environment ) {
 
     variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
     variable_global( _environment, "FPSCRAP" );
-    
+
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0 );
+    variable_global( _environment, "TEXTADDRESS" );
+
     _environment->currentRgbConverterFunction = rgbConverterFunction;
 
     _environment->screenWidth = 256;
