@@ -622,26 +622,30 @@ const_factor:
           $$ = ((Environment *)_environment)->fontWidth;
       }
       | IMAGE WIDTH OP expr CP {
-          Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
-              CRITICAL_NOT_IMAGE( v->name );
-          }
-          if ( !v->valueBuffer ) {
-              CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-          }
-          #ifdef CPU_BIG_ENDIAN
-            if ( IMAGE_WIDTH_SIZE == 1 ) {
-                $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET];
-            } else {
-                $$ = 256*v->valueBuffer[IMAGE_WIDTH_OFFSET] + v->valueBuffer[IMAGE_WIDTH_OFFSET+1];
+          if ( !((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
+                CRITICAL_NOT_IMAGE( v->name );
             }
-          #else
-            if ( IMAGE_WIDTH_SIZE == 1 ) {
-                $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET];
-            } else {
-                $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET] + 256 * v->valueBuffer[IMAGE_WIDTH_OFFSET+1];
+            if ( !v->valueBuffer ) {
+                CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
             }
-          #endif
+            #ifdef CPU_BIG_ENDIAN
+                if ( IMAGE_WIDTH_SIZE == 1 ) {
+                    $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET];
+                } else {
+                    $$ = 256*v->valueBuffer[IMAGE_WIDTH_OFFSET] + v->valueBuffer[IMAGE_WIDTH_OFFSET+1];
+                }
+            #else
+                if ( IMAGE_WIDTH_SIZE == 1 ) {
+                    $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET];
+                } else {
+                    $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET] + 256 * v->valueBuffer[IMAGE_WIDTH_OFFSET+1];
+                }
+            #endif
+          } else {
+            $$ = 0;
+          }
       }
       | FRAMES OP expr CP {
           $$ = frames( _environment, $3 );
@@ -725,24 +729,30 @@ const_factor:
           $$ = ((Environment *)_environment)->fontHeight;
       }
       | IMAGE HEIGHT OP expr CP {
-          Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
-              CRITICAL_NOT_IMAGE( v->name );
+          if ( ! ((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
+                CRITICAL_NOT_IMAGE( v->name );
+            }
+            if ( !v->valueBuffer ) {
+                CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+            }          
+            #ifdef CPU_BIG_ENDIAN
+                if ( IMAGE_HEIGHT_SIZE == 1 ) {
+                    $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET];
+                } else {
+                    $$ = 256*v->valueBuffer[IMAGE_HEIGHT_OFFSET] + v->valueBuffer[IMAGE_HEIGHT_OFFSET+1];
+                }
+            #else
+                if ( IMAGE_HEIGHT_SIZE == 1 ) {
+                    $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET];
+                } else {
+                    $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET] + 256 * v->valueBuffer[IMAGE_HEIGHT_OFFSET+1];
+                }
+            #endif
+          } else {
+            $$ = 0;
           }
-          
-          #ifdef CPU_BIG_ENDIAN
-            if ( IMAGE_HEIGHT_SIZE == 1 ) {
-                $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET];
-            } else {
-                $$ = 256*v->valueBuffer[IMAGE_HEIGHT_OFFSET] + v->valueBuffer[IMAGE_HEIGHT_OFFSET+1];
-            }
-          #else
-            if ( IMAGE_HEIGHT_SIZE == 1 ) {
-                $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET];
-            } else {
-                $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET] + 256 * v->valueBuffer[IMAGE_HEIGHT_OFFSET+1];
-            }
-          #endif
       }
       | UBOUND OP Identifier CP {
           Variable * array = variable_retrieve( _environment, $3 );
@@ -2618,11 +2628,21 @@ exponential:
     | MIN OP expr OP_COMMA expr CP {
         $$ = minimum( _environment, $3, $5 )->name;
     }
-    | PARAM OP Identifier CP {
-        $$ = param_procedure( _environment, $3 )->name;
+    | PARAM OP Identifier on_targets CP  {
+        if ( $4 ) {
+            $$ = param_procedure( _environment, $3 )->name;
+        } else {
+            Variable * var = variable_temporary( _environment, VT_WORD, "(temp)" );
+            $$ = var->name;
+        }
     }
-    | PARAM OP_DOLLAR OP Identifier CP {
-        $$ = param_procedure( _environment, $4 )->name;
+    | PARAM OP_DOLLAR OP Identifier on_targets CP  {
+        if ( $5 ) {
+            $$ = param_procedure( _environment, $4 )->name;
+        } else {
+            Variable * var = variable_temporary( _environment, VT_WORD, "(temp)" );
+            $$ = var->name;
+        }
     }
     | Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
@@ -7379,7 +7399,7 @@ program :
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.14";
+char version[MAX_TEMPORARY_STORAGE] = "1.14.1";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
