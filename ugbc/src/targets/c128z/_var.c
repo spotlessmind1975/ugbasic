@@ -70,6 +70,15 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: defs 2", variable->realName);
                     }
                     break;
+                case VT_FLOAT:
+                    if ( variable->memoryArea ) {
+                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead0("section data_user");
+                        outline2("%s: defs %d", variable->realName, 1 << VT_FLOAT_NORMALIZED_POW2_WIDTH( variable->arrayPrecision) );
+                        outhead0("section code_user");
+                    }
+                    break;
                 case VT_DWORD:
                 case VT_SDWORD:
                     if ( variable->memoryArea ) {
