@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM AUDIO GENERATION SOUND SAMPLE (1)
 REM
 REM This small example will emit a two tones alarm.
@@ -9,6 +9,8 @@ REM
 REM Questo piccolo esempio emetterà un allarme a due frequenze.
 REM
 
+	CLS
+	
     DO
         SOUND #440,#1000
         SOUND #880,#1000
