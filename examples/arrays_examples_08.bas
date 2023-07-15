@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM ARRAY MANAGEMENT VARIOUS (1)
 REM
 REM This small example will test the fix for bug#225.
