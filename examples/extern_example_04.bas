@@ -14,6 +14,8 @@ REM macchina esterno, caricato a sistema da un file binario.
 REM La routine esterna riceverà il parametro da un registro
 REM specifico e restituirà il risultato su un registro specifico.
 
+	CLS
+	
 	executable := LOAD("executable_increment.bin")
 	address = VARPTR(executable)
 	x = 0

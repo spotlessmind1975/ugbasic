@@ -9,6 +9,8 @@ REM
 REM Questo piccolo esempio spiega come invocare codice
 REM macchina esterno, già presente sul sistema.
 
+	CLS
+
 	SYS #49152
 	
 	address = 49152

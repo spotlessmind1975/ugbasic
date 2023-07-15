@@ -8,6 +8,8 @@ REM ESPANSIONE DI MEMORIA INDIRIZZI E BANCHI
 REM
 REM Questo esempio cambierà il banco selezionato.
 
+    CLS
+    
     PRINT BANK()
     BANK #3
     PRINT BANK()

@@ -22,6 +22,8 @@ REM ''COLOR BORDER'', utilizzando il valore intero assegnato alla variabile
 REM ''colorIIndex''.
 REM
 
+CLS
+
 PROCEDURE changeBorderColor
 
    SHARED colorIndex

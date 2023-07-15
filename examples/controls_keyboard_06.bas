@@ -10,6 +10,8 @@ REM
 REM Questo esempio rimarrà in attesa in un loop infinito (''DO...LOOP''),
 REM aspettando la pressione di un tasto specifico (F1 oppure A).
 
+    CLS
+
     DO
         IF KEY STATE(KEY F1) THEN : PRINT "F1!" : ENDIF
         IF KEY STATE(KEY A) THEN : PRINT "A!" : ENDIF

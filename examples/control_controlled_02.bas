@@ -19,6 +19,8 @@ REM inoltre il funzionamento dello scrolling automatico, quando si raggiunge
 REM con l'uso del comando ''PRINT'' la fine dello schermo.
 REM
 
+    CLS
+
     i = 0 : j = 0
     FOR i = 1 TO 100
         FOR j = 1 TO 5

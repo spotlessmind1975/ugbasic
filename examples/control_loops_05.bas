@@ -26,6 +26,8 @@ REM un singolo byte, utilizzando una sintassi chiamata "cast esplicito"
 REM (''(8BIT)'').
 REM
 
+    CLS
+
     DO
         x = (8BIT) 10
         REPEAT

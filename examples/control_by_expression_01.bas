@@ -17,6 +17,8 @@ REM ''times''. Questo esempio mostra inoltre il funzionamento dello scrolling
 REM automatico, quando si raggiunge con l'uso del comando ''PRINT'' la fine dello schermo.
 REM
 
+CLS
+
   times = 1
 start:
   ON times GOTO first, second, third

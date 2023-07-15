@@ -10,6 +10,8 @@ REM
 REM Questo piccolo esempio spiega come invocare codice
 REM macchina esterno, caricato a sistema da un file binario.
 
+	CLS
+
 	executable := LOAD("executable_nop.bin")
 
 	address = VARPTR(executable)

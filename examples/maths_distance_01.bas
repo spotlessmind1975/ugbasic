@@ -10,4 +10,6 @@ REM
 REM Questo esempio mostra come calcolare rapidamente la distanza
 REM tra due punti
 
+    CLS
+    
     PRINT "DISTANCE(0,0 TO 4, 4) = ";DISTANCE(0,0 TO 4, 4)

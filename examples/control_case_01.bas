@@ -9,6 +9,8 @@ REM
 REM Questo esempio mostra come usare il comando ''SELECT CASE''.
 REM
 
+CLS
+
 INPUT "digit a number between 0 and 5: ";number
 
 SELECT CASE number

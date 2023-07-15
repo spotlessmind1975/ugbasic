@@ -16,6 +16,8 @@ REM dell'istruzione ''CLEAR KEY'', che svuota il buffer di tastiera.
 REM Inoltre, si utiliza la funzione ''INPUT$()'' per recuperare
 REM i 10 caratteri.
 
+   CLS
+   
    CLEAR KEY
    PRINT "PLEASE TYPE IN TEN CHARACTERS"
    v=INPUT$(10)

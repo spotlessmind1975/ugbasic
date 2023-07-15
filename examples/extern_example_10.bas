@@ -7,6 +7,7 @@ REM INTEGRAZIONE CODICE ESTERNO ASSEMBLY INLINEA
 REM
 REM Questo piccolo esempio spiega come include codice ASM in linea.
 
+CLS
 
 ON CPU6502 ASM LDA #$42
 ON CPU6809 ASM LDA #$42

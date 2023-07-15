@@ -11,7 +11,9 @@ REM esterne affinché siano chiamate come procedure tradizionali
 REM all'interno di ugBASIC.
 
 DECLARE PROC test AT 49142
-	
+
+	CLS
+		
 	CALL test
 	PROC test
 	test[]

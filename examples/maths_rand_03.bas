@@ -8,6 +8,8 @@ REM ROUTINE DI MATEMATICA CON VALORI CASUALI (3)
 REM
 REM Questo esempio mostrerà che la sequenza di numeri casuali è non ripetitiva.
 
+    CLS
+    
     DO
         PRINT RND(100);" ";
     LOOP

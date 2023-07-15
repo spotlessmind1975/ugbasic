@@ -11,6 +11,8 @@ REM Questo piccolo esempio utilizza le istruzioni ''FOR...NEXT''
 REM per stampare i primi 100 numeri (da 1 a 100).
 REM
 
+    CLS
+
     i = 0
     FOR i = 1 TO 100
         PRINT i;" ";

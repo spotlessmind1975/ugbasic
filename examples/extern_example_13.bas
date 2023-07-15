@@ -17,6 +17,8 @@ REM a un processore specifico.
 
 DECLARE FUNCTION seriale AT $c000 ( valore AS BYTE ON STACK(BYTE) ) RETURN STACK(BYTE) AS BYTE ON CPU6502
 
+	CLS
+	
 	seriale[42] ON CPU6502
 	
 	PRINT PARAM(seriale)

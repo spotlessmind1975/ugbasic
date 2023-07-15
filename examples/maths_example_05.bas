@@ -8,4 +8,6 @@ REM ROUTINE DI MATEMATICA CON NUMERI RELATIVI (1)
 REM
 REM Questo esempio mostrerà alcuni calcoli usando i numeri relativi.
 
+    CLS
+    
     PRINT "1 + (8 * -1) = ";1 + (8 * -1)  

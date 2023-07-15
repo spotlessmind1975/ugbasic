@@ -14,6 +14,8 @@ REM macchina esterno, caricato a sistema da un file binario.
 REM La routine esterna riceverà parametri dallo stack
 REM e restituirà il risultato sempre sullo stack.
 
+	CLS
+	
 	executable := LOAD("executable_sum_stack.bin")
 	
 	address = VARPTR(executable)

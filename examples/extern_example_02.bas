@@ -11,6 +11,8 @@ REM Questo piccolo esempio spiega come invocare codice
 REM macchina esterno, già presente sul sistema, passando
 REM un parametro in uno dei registri (A).
 
+	CLS
+
 	SYS #49152 WITH REG(A)=#10
 	 
 	address = 49152

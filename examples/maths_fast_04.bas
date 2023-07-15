@@ -12,6 +12,8 @@ REM Questo esempio mostrerà l'uso di operatori interi veloci, con l'uso dell'is
 REM Tali istruzioni funzioneranno senza l'uso di risultati intermedi, al fine di fornire il massimo 
 REM rendimento nel prodotto di valori. 
 
+   CLS
+   
    a = 42
    b = 10
    DIV a, b

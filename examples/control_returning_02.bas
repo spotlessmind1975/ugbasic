@@ -23,6 +23,8 @@ REM Per attendere un determinato periodo di tempo verrà utilizzato il comando '
 REM l'unità di tempo ''MS'' (millisecondi).
 REM
 
+    CLS
+
     x = 0
 start:
     GOSUB incrementX

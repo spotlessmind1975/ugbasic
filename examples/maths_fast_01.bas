@@ -13,6 +13,8 @@ REM Questo esempio mostrerà l'uso di operatori interi veloci, con l'uso delle i
 REM e ''DEC''. Tali istruzioni funzioneranno senza l'uso di risultati intermedi, al fine di fornire 
 REM il massimo rendimento nell'incremento o decremento di valori. Il risultato sarà stampato sullo schermo.
 
+   CLS
+   
    v=41
    PRINT "INC ";v;" = ";
    INC v

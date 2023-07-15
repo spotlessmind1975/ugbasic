@@ -13,6 +13,8 @@ REM stamperà un asterisko lampeggiante. Ogni simbolo durerà 1000 millisecondi
 REM sullo schermo.
 REM
 
+    CLS
+
 label: 
     HOME: PRINT "*"
     WAIT 1000 MS

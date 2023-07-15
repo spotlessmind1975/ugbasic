@@ -16,6 +16,8 @@ REM a un processore specifico.
 
 DECLARE PROCEDURE seriale AT $c000 ( valore AS BYTE ON STACK(BYTE) ) ON CPU6502
 
+	CLS
+	
 	CALL seriale[42] ON CPU6502
 	PROC seriale[42] ON CPU6502
 	seriale[42] ON CPU6502

@@ -12,6 +12,8 @@ REM per implementare un loop senza fine, che cambia il colore del bordo in modo
 REM deterministico.
 REM
 
+   CLS
+
      x = 0
      y = 0
   start:

@@ -23,6 +23,8 @@ REM viene modificato utilizzando l'istruzione ''COLOR BORDER'', utilizzando
 REM la somma delle variabili ''x'' e ''y''.
 REM
 
+   CLS
+
    x = 0
    y = 0
 start:

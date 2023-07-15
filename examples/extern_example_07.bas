@@ -15,6 +15,8 @@ REM in una locazione specifica.
 REM La routine esterna riceverà il parametro da un registro
 REM specifico e restituirà il risultato su un registro specifico.
 
+CLS
+
 executable = LOAD("executable_increment.bin", 49152)
 address = VARPTR(executable)
 x = 0

@@ -8,5 +8,7 @@ REM ROUTINE DI MATEMATICA CON L'USO DI ESPRESSIONI (1)
 REM
 REM Questo esempio mostra un esempio di calcolo matematico, con l'uso dell'operatore somma (''+'').
 
+    CLS
+
     PRINT "(2+2) = ";(2+2)
     HALT

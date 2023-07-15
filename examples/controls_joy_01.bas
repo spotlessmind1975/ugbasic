@@ -15,6 +15,8 @@ REM funziona lo scrolling verticale automatico, quando si raggiunge  con l'uso d
 REM ''PRINT'' la fine dello schermo.
 REM
 
+    CLS
+
     DO
         j=JOY(0)
         PRINT BIN$(j,5),j
