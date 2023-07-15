@@ -161,4 +161,6 @@ void vg5000_joy( Environment * _environment, int _port, char * _result );
 void vg5000_joy_vars( Environment * _environment, char * _port, char * _result );
 int convertbintok7(Environment * _environment);
 
+void vg5000_sys_call( Environment * _environment, int _destination );
+
 #endif

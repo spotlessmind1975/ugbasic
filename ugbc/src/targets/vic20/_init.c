@@ -106,6 +106,9 @@ void target_initialization( Environment * _environment ) {
 
     vic1_initialization( _environment );
 
+    deploy( startup, src_hw_vic20_startup_asm);
+    cpu_call( _environment, "VIC20STARTUP" );
+
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
     }

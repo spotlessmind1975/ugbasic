@@ -222,4 +222,16 @@ void c128_clear_key( Environment * _environment ) {
    
 }
 
+void c128_sys_call( Environment * _environment, int _destination ) {
+
+    outline0("PHA");
+    outline1("LDA #$%2.2x", (_destination & 0xff ) );
+    outline0("STA SYSCALL0+1");
+    outline1("LDA #$%2.2x", ((_destination>>8) & 0xff ) );
+    outline0("STA SYSCALL0+2");
+    outline0("PLA");
+    outline0("JSR SYSCALL");
+
+}
+
 #endif

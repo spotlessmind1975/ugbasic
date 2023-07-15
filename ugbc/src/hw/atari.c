@@ -198,4 +198,10 @@ void atari_clear_key( Environment * _environment ) {
    
 }
 
+void atari_sys_call( Environment * _environment, int _destination ) {
+
+    outline1("JSR $%4.4x", _destination);
+
+}
+
 #endif

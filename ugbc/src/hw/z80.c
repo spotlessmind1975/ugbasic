@@ -2278,6 +2278,581 @@ void z80_call( Environment * _environment, char * _label ) {
 
 }
 
+void z80_call_indirect( Environment * _environment, char * _value ) {
+
+    MAKE_LABEL
+
+    char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
+
+    outline1( "LD HL, (%s)", _value )
+    z80_jump( _environment, label );
+    z80_label( _environment, indirectLabel );
+    outline0( "JP (HL)" );
+    z80_label( _environment, label );
+    z80_call( _environment, indirectLabel );
+
+}
+
+int z80_register_decode( Environment * _environment, char * _register ) {
+
+    Z80Register result = REGISTER_NONE;
+
+    if ( !_environment->emptyProcedure ) {
+
+        if ( strcmp( _register, "A" ) == 0 ) {
+            result = REGISTER_A;
+        } else if ( strcmp( _register, "B" ) == 0 ) {
+            result = REGISTER_B;
+        } else if ( strcmp( _register, "C" ) == 0 ) {
+            result = REGISTER_C;
+        } else if ( strcmp( _register, "D" ) == 0 ) {
+            result = REGISTER_D;
+        } else if ( strcmp( _register, "E" ) == 0 ) {
+            result = REGISTER_E;
+        } else if ( strcmp( _register, "H" ) == 0 ) {
+            result = REGISTER_H;
+        } else if ( strcmp( _register, "L" ) == 0 ) {
+            result = REGISTER_L;
+        } else if ( strcmp( _register, "F" ) == 0 ) {
+            if ( !_environment->emptyProcedure ) {
+                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
+            }
+            // result = REGISTER_F;
+        } else if ( strcmp( _register, "I" ) == 0 ) {
+            if ( !_environment->emptyProcedure ) {
+                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
+            }
+            // result = REGISTER_I;
+        } else if ( strcmp( _register, "R" ) == 0 ) {
+            if ( !_environment->emptyProcedure ) {
+                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
+            }
+            // result = REGISTER_R;
+        } else if ( strcmp( _register, "SP" ) == 0 ) {
+            if ( !_environment->emptyProcedure ) {
+                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
+            }
+            // result = REGISTER_SP;
+        } else if ( strcmp( _register, "PC" ) == 0 ) {
+            if ( !_environment->emptyProcedure ) {
+                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
+            }
+            // result = REGISTER_PC;
+        } else if ( strcmp( _register, "IX" ) == 0 ) {
+            result = REGISTER_IX;
+        } else if ( strcmp( _register, "IY" ) == 0 ) {
+            result = REGISTER_IY;
+        } else if ( strcmp( _register, "AF" ) == 0 ) {
+            if ( !_environment->emptyProcedure ) {
+                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
+            }
+            // result = REGISTER_AF;
+        } else if ( strcmp( _register, "BC" ) == 0 ) {
+            result = REGISTER_BC;
+        } else if ( strcmp( _register, "DE" ) == 0 ) {
+            result = REGISTER_DE;
+        } else if ( strcmp( _register, "HL" ) == 0 ) {
+            result = REGISTER_HL;
+        } else if ( strcmp( _register, "IXL" ) == 0 ) {
+            result = REGISTER_IXL;
+        } else if ( strcmp( _register, "IXH" ) == 0 ) {
+            result = REGISTER_IXH;
+        } else if ( strcmp( _register, "IYL" ) == 0 ) {
+            result = REGISTER_IYL;
+        } else if ( strcmp( _register, "IYH" ) == 0 ) {
+            result = REGISTER_IYH;
+        } else if ( strcmp( _register, "CARRY" ) == 0 ) {
+            result = REGISTER_CARRY;
+        } else if ( strcmp( _register, "ZERO" ) == 0 ) {
+            result = REGISTER_ZERO;
+        } else if ( strcmp( _register, "HLA" ) == 0 ) {
+            result = REGISTER_HLA;
+        } else {
+
+        }
+
+    }
+
+    return (int)result;
+
+}
+
+void z80_set_asmio( Environment * _environment, int _asmio, int _value ) {
+
+    if ( IS_REGISTER( _asmio ) ) {
+
+        MAKE_LABEL
+
+        Z80Register reg = (Z80Register) _asmio;
+
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+            case REGISTER_F:
+            case REGISTER_I:
+            case REGISTER_R:
+            case REGISTER_SP:
+            case REGISTER_PC:
+            case REGISTER_AF:
+                break;
+            case REGISTER_A:
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_B:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "LD B, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_C:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "LD C, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_D:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "LD D, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_E:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "LD E, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_H:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "LD H, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_L:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "LD L, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IX:
+                outline1( "LD IX, $%4.4x", (unsigned short)(_value & 0xffff) );
+                break;
+            case REGISTER_IY:
+                outline1( "LD IY, $%4.4x", (unsigned short)(_value & 0xffff) );
+                break;
+            case REGISTER_BC:
+                outline0( "PUSH HL" );
+                outline1( "LD HL, $%4.4x", (unsigned short)(_value & 0xffff) );
+                outline0( "LD BC, HL" );
+                outline0( "POP HL" );
+                break;
+            case REGISTER_DE:
+                outline0( "PUSH HL" );
+                outline1( "LD HL, $%4.4x", (unsigned short)(_value & 0xffff) );
+                outline0( "LD DE, HL" );
+                outline0( "POP HL" );
+                break;
+            case REGISTER_HL:
+                outline1( "LD HL, $%4.4x", (unsigned short)(_value & 0xffff) );
+                break;
+            case REGISTER_IXL:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "LD IXL, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IXH:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "LD IXH, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IYL:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "LD IYL, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IYH:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "LD IYH, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_CARRY:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "CP 0" );
+                outline1( "JR Z, %snoc", label );
+                outline0( "LD A, $1" );
+                outline0( "SRL A" );
+                outline1( "JP %sdone", label );
+                outhead1( "%snoc:", label );
+                outline0( "SRL A" );
+                outhead1( "%sdone:", label );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_ZERO:
+                outline0( "PUSH AF" );
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "CP 0" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_HLA:
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline1( "LD HL, $%4.4x", (unsigned char)((_value >> 8 ) & 0xffff ) );
+                break;
+        }
+
+    } else {
+
+        Z80Stack stk = (Z80Stack) _asmio;
+
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "PUSH A" );
+                break;
+            case STACK_WORD:
+                outline1( "LD HL, $%4.4x", (unsigned short)(_value & 0xffff) );
+                outline0( "PUSH HL" );
+                break;
+            case STACK_DWORD:
+                outline1( "LD HL, $%4.4x", (unsigned short)(_value & 0xffff) );
+                outline0( "PUSH HL" );
+                outline1( "LD HL, $%4.4x", (unsigned short)((_value>>16) & 0xffff) );
+                outline0( "PUSH HL" );
+                break;
+        }
+
+    }
+
+}
+
+void z80_set_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
+
+    if ( IS_REGISTER( _asmio ) ) {
+
+        MAKE_LABEL
+
+        Z80Register reg = (Z80Register) _asmio;
+
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+            case REGISTER_F:
+            case REGISTER_I:
+            case REGISTER_R:
+            case REGISTER_SP:
+            case REGISTER_PC:
+            case REGISTER_AF:
+                break;
+            case REGISTER_A:
+                outline1( "LD A, (%s)", _value );
+                break;
+            case REGISTER_B:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "LD B, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_C:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "LD C, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_D:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "LD D, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_E:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "LD E, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_H:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "LD H, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_L:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "LD L, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IX:
+                outline1( "LD IX, (%s)", _value );
+                break;
+            case REGISTER_IY:
+                outline1( "LD IY, (%s)", _value );
+                break;
+            case REGISTER_BC:
+                outline0( "PUSH HL" );
+                outline1( "LD HL, (%s)", _value );
+                outline0( "LD BC, HL" );
+                outline0( "POP HL" );
+                break;
+            case REGISTER_DE:
+                outline0( "PUSH HL" );
+                outline1( "LD HL, (%s)", _value );
+                outline0( "LD DE, HL" );
+                outline0( "POP HL" );
+                break;
+            case REGISTER_HL:
+                outline1( "LD HL, (%s)", _value );
+                break;
+            case REGISTER_IXL:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "LD IXL, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IXH:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "LD IXH, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IYL:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "LD IYL, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IYH:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "LD IYH, A" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_CARRY:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "CP 0" );
+                outline1( "JR Z, %snoc", label );
+                outline0( "LD A, $1" );
+                outline0( "SRL A" );
+                outline1( "JP %sdone", label );
+                outhead1( "%snoc:", label );
+                outline0( "SRL A" );
+                outhead1( "%sdone:", label );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_ZERO:
+                outline0( "PUSH AF" );
+                outline1( "LD A, (%s)", _value );
+                outline0( "CP 0" );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_HLA:
+                outline1( "LD A, (%s)", address_displacement( _environment, _value, "2" ) );
+                outline0( "LD H, A" );
+                outline1( "LD A, (%s)", address_displacement( _environment, _value, "1" ) );
+                outline0( "LD L, A" );
+                outline1( "LD A, (%s)", _value );
+                break;
+        }
+
+    } else {
+
+        Z80Stack stk = (Z80Stack) _asmio;
+
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline1( "LD A, (%s)", _value );
+                outline0( "PUSH A" );
+                break;
+            case STACK_WORD:
+                outline1( "LD HL, (%s)", _value );
+                outline0( "PUSH HL" );
+                break;
+            case STACK_DWORD:
+                outline1( "LD HL, (%s)", address_displacement( _environment, _value, "0" ) );
+                outline0( "PUSH HL" );
+                outline1( "LD HL, (%s)", address_displacement( _environment, _value, "2" ) );
+                outline0( "PUSH HL" );
+                break;
+        }
+
+    }
+
+}
+
+void z80_get_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
+
+    if ( IS_REGISTER( _asmio ) ) {
+
+        MAKE_LABEL
+
+        Z80Register reg = (Z80Register) _asmio;
+
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+            case REGISTER_F:
+            case REGISTER_I:
+            case REGISTER_R:
+            case REGISTER_SP:
+            case REGISTER_PC:
+            case REGISTER_AF:
+                break;
+            case REGISTER_A:
+                outline1( "LD (%s), A", _value );
+                break;
+            case REGISTER_B:
+                outline0( "PUSH AF" );
+                outline0( "LD A, B" );
+                outline1( "LD (%s), A", _value );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_C:
+                outline0( "PUSH AF" );
+                outline0( "LD A, C" );
+                outline1( "LD (%s), A", _value );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_D:
+                outline0( "PUSH AF" );
+                outline0( "LD A, D" );
+                outline1( "LD (%s), A", _value );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_E:
+                outline0( "PUSH AF" );
+                outline0( "LD A, E" );
+                outline1( "LD (%s), A", _value );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_H:
+                outline0( "PUSH AF" );
+                outline0( "LD A, H" );
+                outline1( "LD (%s), A", _value );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_L:
+                outline0( "PUSH AF" );
+                outline0( "LD A, L" );
+                outline1( "LD (%s), A", _value );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IX:
+                outline1( "LD (%s), IX", _value );
+                break;
+            case REGISTER_IY:
+                outline1( "LD (%s), IY", _value );
+                break;
+            case REGISTER_BC:
+                outline0( "PUSH HL" );
+                outline0( "LD HL, BC" );
+                outline1( "LD (%s), HL", _value );
+                outline0( "POP HL" );
+                break;
+            case REGISTER_DE:
+                outline0( "PUSH HL" );
+                outline0( "LD HL, DE" );
+                outline1( "LD (%s), HL", _value );
+                outline0( "POP HL" );
+                break;
+            case REGISTER_HL:
+                outline1( "LD (%s), HL", _value );
+                break;
+            case REGISTER_IXL:
+                outline0( "PUSH AF" );
+                outline0( "LD A, IXL" );
+                outline1( "LD (%s), A", _value );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IXH:
+                outline0( "PUSH AF" );
+                outline0( "LD A, IXH" );
+                outline1( "LD (%s), A", _value );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IYL:
+                outline0( "PUSH AF" );
+                outline0( "LD A, IYL" );
+                outline1( "LD (%s), A", _value );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_IYH:
+                outline0( "PUSH AF" );
+                outline0( "LD A, IYH" );
+                outline1( "LD (%s), A", _value );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_CARRY:
+                outline0( "PUSH AF" );
+                outline1( "JR NC, %snoc", label );
+                outline0( "LD A, $1" );
+                outline1( "LD (%s), A", _value );
+                outline1( "JP %sdone", label );
+                outhead1( "%snoc:", label );
+                outline0( "LD A, $0" );
+                outline1( "LD (%s), A", _value );
+                outhead1( "%sdone:", label );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_ZERO:
+                outline0( "PUSH AF" );
+                outline1( "JR NZ, %snoz", label );
+                outline0( "LD A, $1" );
+                outline1( "LD (%s), A", _value );
+                outline1( "JP %sdone", label );
+                outhead1( "%snoz:", label );
+                outline0( "LD A, $0" );
+                outline1( "LD (%s), A", _value );
+                outhead1( "%sdone:", label );
+                outline0( "POP AF" );
+                break;
+            case REGISTER_HLA:
+                outline1( "LD (%s), A", _value );
+                outline0( "LD A, L" );
+                outline1( "LD (%s), A", address_displacement( _environment, _value, "1" ) );
+                outline0( "LD A, H" );
+                outline1( "LD (%s), A", address_displacement( _environment, _value, "2" ) );
+                break;
+        }
+
+    } else {
+
+        Z80Stack stk = (Z80Stack) _asmio;
+
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline0( "POP AF" );
+                outline1( "LD (%s), A", _value );
+                break;
+            case STACK_WORD:
+                outline0( "POP HL" );
+                outline1( "LD (%s), HL", _value );
+                break;
+            case STACK_DWORD:
+                outline0( "POP HL" );
+                outline1( "LD (%s), HL", address_displacement( _environment, _value, "0" ) );
+                outline0( "POP HL" );
+                outline1( "LD (%s), HL", address_displacement( _environment, _value, "2" ) );
+                break;
+        }
+
+    }
+
+}
+
 void z80_return( Environment * _environment ) {
 
     outline0("RET" );

@@ -82,6 +82,10 @@ Questa parola chiave invoca una funzione.
 </usermanual> */
 void call_procedure( Environment * _environment, char * _name ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
     Procedure * procedure = _environment->procedures;
 
     while( procedure ) {
@@ -99,22 +103,71 @@ void call_procedure( Environment * _environment, char * _name ) {
         CRITICAL_PARALLEL_PROCEDURE_CANNOT_BE_CALLED(_name);
     }
 
-    if ( _environment->parameters != procedure->parameters ) {
-        CRITICAL_PROCEDURE_PARAMETERS_MISMATCH(_name, procedure->parameters, _environment->parameters );
+    if ( procedure->declared ) {
+
+        int realParametersCount = 0;
+        if ( procedure->parameters ) {
+            for( int i=0; i<procedure->parameters; ++i ) {
+                if ( procedure->parametersTypeEach[i] != -1 ) {
+                    ++realParametersCount;
+                    if ( _environment->parametersEach[i] ) {
+                        Variable * var = variable_retrieve( _environment, _environment->parametersEach[i] );
+                        cpu_set_asmio_indirect( _environment, procedure->parametersAsmioEach[i], var->realName );
+                    } else {
+                        cpu_set_asmio( _environment, procedure->parametersAsmioEach[i], _environment->parametersValueEach[i] );
+                    }
+                } else {
+                    cpu_set_asmio( _environment, procedure->parametersAsmioEach[i], procedure->parametersValueEach[i] );
+                }
+            }
+        }
+
+        if ( _environment->parameters != realParametersCount ) {
+            CRITICAL_PROCEDURE_PARAMETERS_MISMATCH(_name, realParametersCount, _environment->parameters );
+        }
+
+        if ( procedure->system ) {
+            sys_call( _environment, procedure->address );
+        } else {
+            char address[MAX_TEMPORARY_STORAGE]; sprintf( address, "$%4.4x", procedure->address );
+            cpu_call( _environment, address );
+        }
+
+        if ( procedure->returns ) {
+            for( int i=0; i<procedure->returns; ++i ) {
+                Variable * var;
+                if ( procedure->returnsEach[i] ) {
+                    var = variable_retrieve_or_define( _environment, _environment->parametersEach[i], procedure->returnsTypeEach[i], 0 );
+                } else {
+                    char paramName[MAX_TEMPORARY_STORAGE]; sprintf(paramName,"%s__PARAM", procedure->name );
+                    var = variable_define( _environment, paramName, procedure->returnsTypeEach[i], 0 );
+                }
+                cpu_get_asmio_indirect( _environment, procedure->returnsAsmioEach[i], var->realName );
+                break;
+            }
+        } 
+
+    } else {
+
+        if ( _environment->parameters != procedure->parameters ) {
+            CRITICAL_PROCEDURE_PARAMETERS_MISMATCH(_name, procedure->parameters, _environment->parameters );
+        }
+
+        int i=0;
+        for( i=0; i<procedure->parameters; ++i ) {
+            char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", procedure->name, procedure->parametersEach[i] );
+            Variable * parameter = variable_retrieve_or_define( _environment, parameterName, procedure->parametersTypeEach[i], 0 );
+            Variable * value = variable_retrieve( _environment, _environment->parametersEach[i] );
+            variable_move( _environment, value->name, parameter->name );
+        }
+        _environment->parameters = 0;
+
+        char procedureLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureLabel, "%s", _name );
+
+        cpu_call( _environment, procedureLabel );
+
     }
 
-    int i=0;
-    for( i=0; i<procedure->parameters; ++i ) {
-        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", procedure->name, procedure->parametersEach[i] );
-        Variable * parameter = variable_retrieve_or_define( _environment, parameterName, procedure->parametersTypeEach[i], 0 );
-        Variable * value = variable_retrieve( _environment, _environment->parametersEach[i] );
-        variable_move( _environment, value->name, parameter->name );
-    }
-    _environment->parameters = 0;
-
-    char procedureLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureLabel, "%s", _name );
-
-    cpu_call( _environment, procedureLabel );
     
 }
 

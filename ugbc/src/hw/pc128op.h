@@ -168,4 +168,6 @@ int pc128op_convertbintok7_original(Environment * _environment);
 void pc128op_joystick_semivars( Environment * _environment, char * _joystick, char * _result );
 void pc128op_joystick( Environment * _environment, int _joystick, char * _result );
 
+void pc128op_sys_call( Environment * _environment, int _destination );
+
 #endif

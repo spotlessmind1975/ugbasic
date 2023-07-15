@@ -71,6 +71,11 @@ La funzione ''PARAM'' recupera il risultato di un'espressione in un'istruzione '
 </usermanual> */
 Variable * param_procedure( Environment * _environment, char * _name ) {
 
+    if ( _environment->emptyProcedure ) {
+        Variable * param = variable_temporary( _environment, VT_WORD, "(temp)" );
+        return param;
+    }
+
     Procedure * procedure = _environment->procedures;
 
     while( procedure ) {

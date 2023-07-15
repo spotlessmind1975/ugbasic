@@ -89,6 +89,8 @@ IRQSVC2:
 
 C64STARTUP:
 
+    SEI
+
     LDA #<NMISVC
     STA $FFFA
     LDA #>NMISVC
@@ -104,8 +106,20 @@ C64STARTUP:
     LDA #>IRQSVC2
     STA $0315
 
-    ; DISABLE BASIC ROM & KERNAL ROM
+SYSCALLDONE:
+    PHA
     LDA #$35
     STA $01
-
+    PLA
+    CLI
+    
     RTS
+SYSCALL:
+    SEI
+    PHA
+    LDA #$37
+    STA $01
+    PLA
+SYSCALL0:
+    JSR $0000
+    JMP SYSCALLDONE

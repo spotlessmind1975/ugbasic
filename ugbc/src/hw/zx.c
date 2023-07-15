@@ -1038,4 +1038,11 @@ Variable * zx_get_raster_line( Environment * _environment ) {
     
 }
 
+
+void zx_sys_call( Environment * _environment, int _destination ) {
+
+    outline1("CALL $%4.4x", _destination );
+
+}
+
 #endif

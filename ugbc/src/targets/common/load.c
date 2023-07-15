@@ -111,7 +111,9 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
         
     check_if_filename_is_valid( _environment,  _filename );
 
-    FILE * file = fopen( _filename, "rb" );
+    char * lookedFilename = image_load_asserts( _environment, _filename );
+
+    FILE * file = fopen( lookedFilename, "rb" );
 
     if ( !file ) {
         CRITICAL_LOAD_MISSING_FILE( _filename );

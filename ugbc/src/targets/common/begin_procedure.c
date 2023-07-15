@@ -112,6 +112,8 @@ void begin_procedure( Environment * _environment, char * _name ) {
     }
 
     Procedure * procedure = malloc( sizeof( Procedure ) );
+    memset(procedure, 0, sizeof( Procedure ) );
+
     procedure->name = strdup( _name );
     
     int i = 0;

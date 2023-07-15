@@ -90,6 +90,11 @@ void cpu6502_halt( Environment * _environment );
 void cpu6502_end( Environment * _environment );
 void cpu6502_jump( Environment * _environment, char * _label );
 void cpu6502_call( Environment * _environment, char * _label );
+void cpu6502_call_indirect( Environment * _environment, char * _value );
+void cpu6502_set_asmio( Environment * _environment, int _asmio, int _value );
+void cpu6502_set_asmio_indirect( Environment * _environment, int _asmio, char * _value );
+void cpu6502_get_asmio_indirect( Environment * _environment, int _asmio, char * _value );
+int cpu6502_register_decode( Environment * _environment, char * _register );
 void cpu6502_pop( Environment * _environment );
 void cpu6502_return( Environment * _environment );
 void cpu6502_label( Environment * _environment, char * _label );
@@ -322,6 +327,11 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_end( _environment  ) cpu6502_end( _environment  )
 #define cpu_jump( _environment,  _label  ) cpu6502_jump( _environment,  _label  )
 #define cpu_call( _environment,  _label  ) cpu6502_call( _environment,  _label  )
+#define cpu_call_indirect( _environment,  _value ) cpu6502_call_indirect( _environment, _value )
+#define cpu_set_asmio( _environment, _asmio, _value ) cpu6502_set_asmio( _environment, _asmio, _value )
+#define cpu_set_asmio_indirect( _environment, _asmio, _value ) cpu6502_set_asmio_indirect( _environment, _asmio, _value )
+#define cpu_get_asmio_indirect( _environment, _asmio, _value ) cpu6502_get_asmio_indirect( _environment, _asmio, _value )
+#define cpu_register_decode( _environment,  _value ) cpu6502_register_decode( _environment, _value )
 #define cpu_return( _environment  ) cpu6502_return( _environment )
 #define cpu_pop( _environment  ) cpu6502_pop( _environment )
 #define cpu_label( _environment,  _label  ) cpu6502_label( _environment,  _label  )
@@ -520,5 +530,39 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_float_single_tan( _environment, _angle, _result ) cpu6502_float_single_tan( _environment, _angle, _result ) 
 
 #define     CPU_LITTLE_ENDIAN      1
+#define     REGISTER_BASE          0x1000
+#define     REGISTER_PAGE_ZERO     0x100
+#define     REGISTER_PAGE_ZERO2    0x200
+#define     IS_REGISTER(x)         ((x & REGISTER_BASE) == REGISTER_BASE)
+#define     IS_PAGE_ZERO(x)        ((x & REGISTER_PAGE_ZERO) == REGISTER_PAGE_ZERO)
+#define     IS_PAGE_ZERO2(x)       ((x & REGISTER_PAGE_ZERO2) == REGISTER_PAGE_ZERO2)
+
+typedef enum _CPU6502Register {
+
+    REGISTER_NONE   =   REGISTER_BASE | 0,
+
+    REGISTER_PC     =   REGISTER_BASE | 1,
+    REGISTER_S      =   REGISTER_BASE | 2,
+    REGISTER_A      =   REGISTER_BASE | 3,
+    REGISTER_X      =   REGISTER_BASE | 4,
+    REGISTER_Y      =   REGISTER_BASE | 5,
+    REGISTER_XY     =   REGISTER_BASE | 6,
+    REGISTER_YX     =   REGISTER_BASE | 7,
+    REGISTER_AXY    =   REGISTER_BASE | 8,
+    
+    REGISTER_CARRY  =   REGISTER_BASE | 9,
+    REGISTER_ZERO   =   REGISTER_BASE | 10
+
+} CPU6502Register;
+
+typedef enum _CPU6502Stack {
+
+    STACK_NONE      =   0,
+    
+    STACK_BYTE      =   1,
+    STACK_WORD      =   2,
+    STACK_DWORD     =   3
+
+} CPU6502Stack;
 
 #endif

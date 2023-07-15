@@ -670,8 +670,8 @@ generated/vg5000/exe/%.bin: compiler
 generated/vg5000/exe/%.k7:
 	@cd examples && ../ugbc/exe/ugbc.vg5000 $(OPTIONS) -o ../$@ -L generated/vg5000/asm/output.listing $(subst generated/vg5000/exe/,,$(@:.k7=.bas))
 
-generated/vg5000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@cd examples && ../ugbc/exe/ugbc.vg5000 $(OPTIONS) -o ../$@ -O rom $(subst generated/vg5000/exeso/,,$(@:.rom=.bas))
+generated/vg5000/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
+	@cd examples && ../ugbc/exe/ugbc.vg5000 $(OPTIONS) -o ../$@ -O rom $(subst generated/vg5000/exeso/,,$(@:.k7=.bas))
 
 #------------------------------------------------ 
 # vic20:

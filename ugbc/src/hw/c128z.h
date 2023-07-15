@@ -163,4 +163,6 @@ void c128z_joy_vars( Environment * _environment, char * _port, char * _value );
 void c128z_initialization( Environment * _environment );
 void c128z_finalization( Environment * _environment );
 
+void c128z_sys_call( Environment * _environment, int _destination );
+
 #endif

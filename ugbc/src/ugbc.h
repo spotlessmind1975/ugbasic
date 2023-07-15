@@ -775,12 +775,57 @@ typedef struct _Procedure {
     /**
      * Parameters definition
      */
+    int parametersAsmioEach[MAX_PARAMETERS];
+
+    /**
+     * Parameters definition
+     */
+    int parametersValueEach[MAX_PARAMETERS];
+
+    /**
+     * Parameters definition
+     */
     VariableType parametersTypeEach[MAX_PARAMETERS];
 
     /**
      * Is a protothread?
      */
     int protothread;
+
+    /**
+     * Is declared?
+     */
+    int declared;
+
+    /**
+     * Is system?
+     */
+    int system;
+
+    /**
+     * Address
+     */
+    int address;
+
+    /**
+     * Temporary storage for (cpu) return definition
+     */
+    int returns;
+    
+    /**
+     * Temporary storage for (cpu) return
+     */
+    char * returnsEach[MAX_PARAMETERS];
+
+    /**
+     * Temporary storage for (cpu) asmio return
+     */
+    int returnsAsmioEach[MAX_PARAMETERS];
+
+    /**
+     * Temporary storage for (cpu) asmio definition
+     */
+    VariableType returnsTypeEach[MAX_PARAMETERS];
 
     /** Link to the next procedure (NULL if this is the last one) */
     struct _Procedure * next;
@@ -1031,6 +1076,7 @@ typedef struct _Embedded {
     int cpu_end;
     int cpu_jump;
     int cpu_call;
+    int cpu_call_indirect;
     int cpu_return;
     int cpu_pop;
     int cpu_label;
@@ -1794,6 +1840,11 @@ typedef struct _Environment {
     char * procedureName;
 
     /**
+     * Temporary storage for address
+     */
+    int address;
+
+    /**
      * Temporary storage for parameters definition
      */
     int parameters;
@@ -1804,9 +1855,39 @@ typedef struct _Environment {
     char * parametersEach[MAX_PARAMETERS];
 
     /**
+     * Temporary storage for (cpu) asmio
+     */
+    int parametersAsmioEach[MAX_PARAMETERS];
+
+    /**
      * Temporary storage for parameters definition
      */
     VariableType parametersTypeEach[MAX_PARAMETERS];
+
+    /**
+     * Temporary storage for (cpu) direct value
+     */
+    int parametersValueEach[MAX_PARAMETERS];
+
+    /**
+     * Temporary storage for (cpu) return definition
+     */
+    int returns;
+
+    /**
+     * Temporary storage for (cpu) return
+     */
+    char * returnsEach[MAX_PARAMETERS];
+
+    /**
+     * Temporary storage for (cpu) asmio return
+     */
+    int returnsAsmioEach[MAX_PARAMETERS];
+
+    /**
+     * Temporary storage for (cpu) asmio definition
+     */
+    VariableType returnsTypeEach[MAX_PARAMETERS];
 
     /**
      * Temporary storage for protothread definition
@@ -2241,6 +2322,10 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_CAST_FLOAT_PRECISION( v1, v2 ) CRITICAL3("E0176 - Cannot cast types since float precision mismatch", v1, v2 );
 #define CRITICAL_SWAP_UNSUPPORTED( v, t ) CRITICAL3("E177 - Swap unsupported for variable of given datatype", v, t );
 #define CRITICAL_CANNOT_EMIT_FLOAT_CONST( v ) CRITICAL2("E178 - cannot emit floating point constants", v );
+#define CRITICAL_UNKNOWN_CPU_REGISTER( ) CRITICAL("E179 - unknown register");
+#define CRITICAL_UNSETTABLE_CPU_REGISTER( v ) CRITICAL2("E180 - CPU register cannot be used", v );
+#define CRITICAL_UNKNOWN_CPU_STACK( v ) CRITICAL2("E181 - unknown stack size", v );
+#define CRITICAL_DECLARE_PROC_NESTED_UNSUPPORTED( v ) CRITICAL2("E182 - cannot nest DECLARE PROC/FUNCTION inside a PROC", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3227,6 +3312,7 @@ Variable *              csprite_init( Environment * _environment, char * _image,
 // *D*
 //----------------------------------------------------------------------------
 
+void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 Variable *              dload( Environment * _environment, char * _target_name );
 void                    double_buffer( Environment * _environment, int _enabled );
@@ -3540,12 +3626,16 @@ void                    sprite_multicolor_var( Environment * _environment, char 
 void                    sprite_at( Environment * _environment, int _sprite, int _x, int _y );
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 Variable *              sqroot( Environment * _environment, char * _value );
+void                    sys( Environment * _environment, int _address );
+void                    sys_var( Environment * _environment, char * _address );
+void                    sys_call( Environment * _environment, int _address );
 int                     system_call( Environment * _environment, char * _command );
 int                     system_remove_safe( Environment * _environment, char * _filename );
 
 //----------------------------------------------------------------------------
 // *T*
 //----------------------------------------------------------------------------
+
 
 void                    text_at( Environment * _environment, char * _x, char * _y, char * _text );
 void                    text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper );

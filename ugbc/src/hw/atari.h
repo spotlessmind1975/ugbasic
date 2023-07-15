@@ -148,4 +148,6 @@ void atari_scanshift( Environment * _environment, char * _shifts );
 void atari_keyshift( Environment * _environment, char * _shifts );
 void atari_clear_key( Environment * _environment );
 
+void atari_sys_call( Environment * _environment, int _destination );
+
 #endif

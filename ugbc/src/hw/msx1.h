@@ -160,4 +160,6 @@ void msx1_follow_irq( Environment * _environment );
 void msx1_joy( Environment * _environment, int _port, char * _result );
 void msx1_joy_vars( Environment * _environment, char * _port, char * _result );
 
+void msx1_sys_call( Environment * _environment, int _destination );
+
 #endif

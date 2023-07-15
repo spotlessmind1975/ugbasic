@@ -168,4 +168,6 @@ int mo5_convertbintok7_original(Environment * _environment);
 void mo5_joystick_semivars( Environment * _environment, int _joystick, char * _result );
 void mo5_joystick_vars( Environment * _environment, char * _joystick, char * _result );
 
+void mo5_sys_call( Environment * _environment, int _destination );
+
 #endif

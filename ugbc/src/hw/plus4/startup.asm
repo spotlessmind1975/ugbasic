@@ -132,4 +132,16 @@ PLUS4STARTUP:
     STA $FFFF
     CLI
 
+SYSCALLDONE:
+    LDA #$42
+    STA $FF3F
+    CLI
+    
     RTS
+SYSCALL:
+    SEI
+    LDA #$42
+    STA $FF3E
+SYSCALL0:
+    JSR $0000
+    JMP SYSCALLDONE

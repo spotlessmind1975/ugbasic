@@ -258,10 +258,10 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 // RAM Configuration	&7f	Write Only	0	-	-	-	-	-	-	-
 #define CPC_GA_MASK( mask, value ) \
                             outline0( "LD B, $7F" ) \
-                            outline0( "IN C, (C)" ); \
-                            outline0( "LD A, C" ); \
+                            outline0( "LD A, (GAVALUE)" ); \
                             outline1( "AND A, $%2.2x", (unsigned char) ~( (unsigned char) mask & 0xff ) ); \
                             outline1( "OR A, $%2.2x", (unsigned char) ( (unsigned char) value & 0xff ) ); \
+                            outline0( "LD (GAVALUE), A" ); \
                             outline0( "LD C, A" ); \
                             outline0( "OUT (C), C" );
 
@@ -361,5 +361,7 @@ void cpc_tile_at( Environment * _environment, char * _x, char * _y, char *_resul
 void cpc_move_memory_video( Environment * _environment, char * _from, char * _to, char * _size );
 void cpc_move_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
 void cpc_move_video_video( Environment * _environment, char * _from, char * _to, char * _size );
+
+void cpc_sys_call( Environment * _environment, int _destination );
 
 #endif

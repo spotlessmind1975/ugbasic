@@ -215,6 +215,19 @@ void c128z_joy( Environment * _environment, int _port, char * _value ) {
 
 }
 
+void c128z_sys_call( Environment * _environment, int _destination ) {
+
+    outline0("PUSH HL" );
+    outline0("LD HL, SYSCALL0" );
+    outline0("INC HL" );
+    outline1("LD (HL), $%2.2x", (_destination & 0xff ) );
+    outline0("INC HL" );
+    outline1("LD (HL), $%2.2x", ((_destination>>8) & 0xff ) );
+    outline0("POP HL" );
+    outline0("CALL SYSCALL");
+
+}
+
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/

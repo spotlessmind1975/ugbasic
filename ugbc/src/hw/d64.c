@@ -255,4 +255,15 @@ void d64_follow_irq( Environment * _environment ) {
     outline0("RTS" );
     
 }
+
+void d64_sys_call( Environment * _environment, int _destination ) {
+
+    outline0("PSHS D");
+    outline1("LDD #$%4.4x", _destination );
+    outline0("STD SYSCALL0+1");
+    outline0("PULS D");
+    outline0("JSR SYSCALL");
+
+}
+
 #endif

@@ -46,7 +46,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
     Variable * variable = _first;
 
     while( variable ) {
-
         if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) ) {
             switch( variable->type ) {
                 case VT_CHAR:

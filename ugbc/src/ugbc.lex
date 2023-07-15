@@ -18,16 +18,99 @@ extern int yylinenostacked[];
 extern int yycolnostacked[];
 extern int yyposnostacked[];
 extern int stacked;
+extern char * asmSnippet;
+extern char * importPath;
+
+#if defined(__atari__) 
+    char targetName[] = "atari";
+#elif defined(__atarixl__) 
+    char targetName[] = "atarixl";
+#elif defined(__c64__)
+    char targetName[] = "c64";
+#elif defined(__plus4__)
+    char targetName[] = "plus4";
+#elif defined(__zx__)
+    char targetName[] = "zx";
+#elif defined(__coco__)
+    char targetName[] = "coco";
+#elif defined(__d32__)
+    char targetName[] = "d32";
+#elif defined(__d64__)
+    char targetName[] = "d64";
+#elif defined(__pc128op__)
+    char targetName[] = "pc128op";
+#elif defined(__mo5__)
+    char targetName[] = "mo5";
+#elif defined(__vic20__)
+    char targetName[] = "vic20";
+#elif defined(__msx1__)
+    char targetName[] = "msx1";
+#elif defined(__coleco__)
+    char targetName[] = "coleco";
+#elif defined(__sc3000__)
+    char targetName[] = "sc3000";
+#elif defined(__sg1000__)
+    char targetName[] = "sg1000";
+#elif defined(__cpc__)
+    char targetName[] = "cpc";
+#elif defined(__c128__)
+    char targetName[] = "c128";
+#elif defined(__c128z__)
+    char targetName[] = "c128z";
+#elif defined(__vg5000__)
+    char targetName[] = "vg5000";
+#endif
 
 int yyconcatlineno;
 
 %}
 
 %x incl
+%x impt
+%x asm
 
 
 %%
 
+"IMPORT DECLARES"        BEGIN(impt);
+<impt>[ \t\n\r]*     { /* eat the white spaces */
+    char * importDeclaresFilename = malloc(1024);
+    if ( importPath ) {
+        sprintf(importDeclaresFilename, "%s/%s.bas", importPath, targetName);
+    } else {
+        sprintf(importDeclaresFilename, "../../imports/%s.bas", targetName);
+        if( access( importDeclaresFilename, F_OK ) != 0 ) {
+            sprintf(importDeclaresFilename, "../imports/%s.bas", targetName);
+        }        
+        if( access( importDeclaresFilename, F_OK ) != 0 ) {
+            sprintf(importDeclaresFilename, "imports/%s.bas", targetName);
+        }
+        if( access( importDeclaresFilename, F_OK ) != 0 ) {
+            fprintf(stderr, "Missing import file %s\n", importDeclaresFilename );
+            exit(1);
+        }
+    }
+    yyin = fopen( importDeclaresFilename, "rt" );
+    if ( ! yyin ) {
+        fprintf(stderr, "Missing import file %s\n", importDeclaresFilename );
+        exit(1);
+    }
+    yylinenostacked[stacked] = yylineno;
+    yycolnostacked[stacked] = yycolno;
+    yyposnostacked[stacked] = yyposno;
+    ++stacked;
+    if ( stacked == 256 ) {
+        fprintf(stderr, "Maximum number of stacked include files reached (256).\n" );
+        exit(1);
+    }
+    filenamestacked[stacked] = strdup( yytext );
+    yylineno = 1;
+    yyconcatlineno = 0;
+    yycolno = 0;
+    yyposno = 0;
+    yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
+    BEGIN(INITIAL);
+}
 INCLUDE             BEGIN(incl);
 <incl>[ \t]*        /* eat the whitespace */
 <incl>[^ \t\n\r]+     { /* got the include file name */
@@ -65,6 +148,12 @@ INCLUDE             BEGIN(incl);
         yyterminate();
     }
 }
+
+"ASM"[^\n\r\x0a\x0d]+ { ++yylineno; yycolno = 0; yylval.string = strdup( yytext + 3 ); RETURN(AsmSnippet,1); }
+"BEGIN ASM" { BEGIN(asm); asmSnippet = strdup(""); }
+<asm>"END ASM" { ++yylineno; yycolno = 0; BEGIN(INITIAL); yylval.string = strdup( asmSnippet ); RETURN(AsmSnippet,1); }
+<asm>[^\n\r\x0a\x0d]+ { ++yylineno; yycolno = 0; int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcpy( tmp, asmSnippet ); strcat( tmp, yytext ); strcat( tmp, "\n" ); asmSnippet = tmp; } 
+<asm>[\n\r\x0a\x0d]+ { } 
 
 "#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
 "#["[a-fA-F0-9]+ { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
@@ -137,6 +226,8 @@ AS { RETURN(AS,1); }
 As { RETURN(AS,1); }
 ASC { RETURN(ASC,1); }
 Ax { RETURN(ASC,1); }
+ASM { RETURN(ASM,1); }
+Asm { RETURN(ASM,1); }
 ATMOSPHERE { RETURN(ATMOSPHERE,1); }
 Atm { RETURN(ATMOSPHERE,1); }
 ASTERISK { RETURN(ASTERISK,1); }
@@ -308,6 +399,8 @@ Cpy { RETURN(COPY,1); }
 COUNT { RETURN(COUNT,1); }
 C% { RETURN(COUNT,1); }
 CPC { RETURN(CPC,1); }
+CPU6502 { RETURN(CPU6502,1); }
+CPU6809 { RETURN(CPU6809,1); }
 CRIGHT { RETURN(CRIGHT,1); }
 Crg { RETURN(CRIGHT,1); }
 CRSR { RETURN(CRSR,1); }
@@ -330,6 +423,8 @@ Da { RETURN(DATA,1); }
 DEBUG { RETURN(DEBUG,1); }
 DEC { RETURN(OP_DEC,1); }
 Dc { RETURN(OP_DEC,1); }
+DECLARE { RETURN(DECLARE,1); }
+Dec { RETURN(DECLARE,1); }
 DEFAULT { RETURN(DEFAULT,1); }
 Dft { RETURN(DEFAULT,1); }
 DEFINE { RETURN(DEFINE,1); }
@@ -409,6 +504,8 @@ EQUAL { RETURN(EQUAL,1); }
 Eq { RETURN(EQUAL,1); }
 EXACT { RETURN(EXACT,1); }
 E! { RETURN(EXACT,1); }
+EXEC { RETURN(EXEC,1); }
+E# { RETURN(EXEC,1); }
 EXIT { RETURN(EXIT,1); }
 Ex { RETURN(EXIT,1); }
 EXPAND { RETURN(EXPAND,1); }
@@ -793,6 +890,8 @@ Ron { RETURN(READONLY,1); }
 RECORDER { RETURN(RECORDER,1); }
 RED { RETURN(RED,1); }
 Re { RETURN(RED,1); }
+REGISTER { RETURN(REGISTER,1); }
+Rr { RETURN(REGISTER,1); }
 REED { RETURN(REED,1); }
 RELATIVE { RETURN(RELATIVE,1); }
 Rel { RETURN(RELATIVE,1); }
@@ -897,6 +996,8 @@ SPRITE { RETURN(SPRITE,1); }
 Spr { RETURN(SPRITE,1); }
 SQUARE { RETURN(SQUARE,1); }
 SQR { RETURN(SQR,1); }
+STACK { RETURN(STACK,1); }
+Stk { RETURN(STACK,1); }
 STANDARD { RETURN(STANDARD,1); }
 Std { RETURN(STANDARD,1); }
 STATE { RETURN(STATE,1); }
@@ -920,6 +1021,10 @@ SWEEP { RETURN(SWEEP,1); }
 SYNTH { RETURN(SYNTH,1); }
 SYNTHBRASS { RETURN(SYNTHBRASS,1); }
 SYNTHSTRINGS { RETURN(SYNTHSTRINGS,1); }
+SYS { RETURN(SYS,1); }
+Sy { RETURN(SYS,1); }
+SYSTEM { RETURN(SYSTEM,1); }
+Sys { RETURN(SYSTEM,1); }
 T { RETURN(T,1); }
 TAB { RETURN(TAB,1); }
 Tb { RETURN(TAB,1); }
@@ -1083,6 +1188,7 @@ YPEN { RETURN(YPEN,1); }
 Yp { RETURN(YPEN,1); }
 Z { RETURN(Z,1); }
 ZX { RETURN(ZX,1); }
+CPUZ80 { RETURN(CPUZ80,1); }
 
 "REM"[^\x0a]* { RETURN(Remark,1);  }
 "'"[^\x0a]* { RETURN(Remark,1);  }
@@ -1100,6 +1206,10 @@ ZX { RETURN(ZX,1); }
 [ \t]+ { yycolno = (yycolno + yyleng); yyposno = (yyposno + yyleng); }
 
 [a-z\_][A-Za-z0-9\_]* { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
+
+REG\([A-Z][A-Z]*\) { yylval.string = strdup(yytext+4); yylval.string[strlen(yylval.string)-1] = 0; RETURN(Register,1);  }
+REG\([0-9]+\) { yylval.string = strdup(yytext+4); yylval.string[strlen(yylval.string)-1] = 0; RETURN(Register,1);  }
+REG\([0-9]+,[0-9]+\) { yylval.string = strdup(yytext+4); yylval.string[strlen(yylval.string)-1] = 0; RETURN(Register,1);  }
 
 . { yycolno++; yyposno++; return(yytext[0]); }
 
