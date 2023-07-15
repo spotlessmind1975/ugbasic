@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM BUFFERS MANAGEMENT LITERAL DEFINITION (1)
 REM
 REM This small example will show the basic syntax to define a buffer.
@@ -11,6 +11,8 @@ REM Questo piccolo esempiomostra la sintassi base per definire un buffer.
 REM Un buffer è un'area di memoria definita staticamente e usata "così com'è".
 REM
 
+CLS
+
 b = #[48454c4c4f]
 c = #[574f524c440a]
 
@@ -19,3 +21,4 @@ PRINT "c = ";c
 PRINT (STRING)b;" ";(STRING)c
 
 HALT
+
