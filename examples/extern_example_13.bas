@@ -21,6 +21,7 @@ DECLARE FUNCTION seriale AT $c000 ( valore AS BYTE ON STACK(BYTE) ) RETURN STACK
 	
 	seriale[42] ON CPU6502
 	
-	PRINT PARAM(seriale)
+	PRINT PARAM(seriale ON CPU6502) 
 	
+
 
