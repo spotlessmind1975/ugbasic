@@ -47,8 +47,8 @@ XCURS:      .BYTE    0
 YCURS:      .BYTE    0
 EMPTYTILE:  .BYTE   32
 KBDCHAR:      .BYTE   0
-KBDRATE:      .BYTE   8
-KBDDELAY:      .BYTE   8
+KBDRATE:      .BYTE   16
+KBDDELAY:      .BYTE   64
 
 KBDRATEC:      .BYTE   16
 KBDDELAYC:      .BYTE   64
