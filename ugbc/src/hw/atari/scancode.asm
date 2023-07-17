@@ -36,14 +36,31 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 SCANCODE:
-    LDY $02F2
+    LDY $02FC
     CPY #$FF
     BEQ SCANCODENO
-
     LDX #$FF
-    STX $02F2
-    RTS
+    STX $02FC
 
+    CPY KBDCHAR
+    BNE SCANCODEDIFF
+
+    LDA KBDDELAYC
+    BEQ SCANCODEDIFF
+
+    DEC KBDDELAYC
+    BNE SCANCODEDELAYED
+    JMP SCANCDENODELAY
+
+SCANCODEDIFF:
+    STY KBDCHAR
+    LDA KBDDELAY
+    LDA KBDDELAYC
+    LDA KBDRATE
+    LDA KBDRATEC
+SCANCDENODELAY:
+    LDX #$FF
+    RTS
 
 INKEY:
     JSR SCANCODE
@@ -57,17 +74,14 @@ INKEY:
     BEQ INKEYNO
 
     LDX #$FF
-    STX $02F2
+    STX $02FC
     RTS
 
 SCANCODENO:
-INKEYNO:
     LDA #$0
-    TAX
     STA KBDCHAR
-    LDA KBDRATE
-    STA KBDRATEC
-    LDA KBDDELAY
-    STA KBDDELAYC
+SCANCODEDELAYED:
     LDY #$0
+INKEYNO:
+    LDX #$0
     RTS
