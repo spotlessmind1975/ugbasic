@@ -46,6 +46,12 @@ TABCOUNT:   .BYTE    4
 XCURS:      .BYTE    0
 YCURS:      .BYTE    0
 EMPTYTILE:  .BYTE   32
+KBDCHAR:      .BYTE   0
+KBDRATE:      .BYTE   8
+KBDDELAY:      .BYTE   8
+
+KBDRATEC:      .BYTE   16
+KBDDELAYC:      .BYTE   64
 
 TMPPTR = $22    ; $23
 TMPPTR2 = $24    ; $25
