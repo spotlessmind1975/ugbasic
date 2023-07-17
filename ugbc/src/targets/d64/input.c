@@ -40,11 +40,11 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-void input( Environment * _environment, char * _variable ) {
+void input( Environment * _environment, char * _variable, VariableType _default_type ) {
 
     MAKE_LABEL
     
-    Variable * result = variable_retrieve_or_define( _environment, _variable, VT_WORD, 0 );
+    Variable * result = variable_retrieve_or_define( _environment, _variable, _default_type, 0 );
 
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );

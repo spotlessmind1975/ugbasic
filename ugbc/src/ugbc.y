@@ -89,7 +89,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
-%token ALL BUT VG5000 SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM STACK DECLARE SYSTEM
+%token ALL BUT VG5000 SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM STACK DECLARE SYSTEM KEYBOARD RATE DELAY
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5885,14 +5885,24 @@ vscroll_definition :
 
 input_definition2 :
       Identifier {
-        input( _environment, $1 );
+        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+        print_newline( _environment );
+      }
+    | Identifier OP_DOLLAR {
+        input( _environment, $1, VT_DSTRING );
         print_newline( _environment );
       }
     | Identifier OP_SEMICOLON {
-        input( _environment, $1 );
+        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+      }
+    | Identifier OP_DOLLAR OP_SEMICOLON {
+        input( _environment, $1, VT_DSTRING );
       }
     | Identifier {
-        input( _environment, $1 );
+        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+      } OP_COMMA input_definition2
+    | Identifier OP_DOLLAR {
+        input( _environment, $1, VT_DSTRING );
       } OP_COMMA input_definition2
     ;
 
@@ -5901,7 +5911,7 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
         print_newline( _environment );
     }
     | String OP_SEMICOLON Identifier OP_DOLLAR {
@@ -5909,34 +5919,34 @@ input_definition :
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
         print_newline( _environment );
     }
     | String OP_SEMICOLON Identifier OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }
     | String OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
     }
     | String OP_SEMICOLON Identifier OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }  input_definition2
     | String OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
     }  input_definition2
     | input_definition2
     | RawString OP_SEMICOLON Identifier {
@@ -5944,7 +5954,7 @@ input_definition :
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
         print_newline( _environment );
     }
     | RawString OP_SEMICOLON Identifier OP_DOLLAR {
@@ -5953,7 +5963,7 @@ input_definition :
         string->printable = 1;
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
         print_newline( _environment );
     }
     | RawString OP_SEMICOLON Identifier OP_SEMICOLON {
@@ -5961,7 +5971,7 @@ input_definition :
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }
     | RawString OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
@@ -5969,14 +5979,14 @@ input_definition :
         string->printable = 1;
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
     }
     | RawString OP_SEMICOLON Identifier OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }  input_definition2
     | RawString OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
@@ -5984,7 +5994,7 @@ input_definition :
         string->printable = 1;
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
     }  input_definition2
   ;
 
@@ -6064,6 +6074,18 @@ define_definition :
         }
         ((struct _Environment *)_environment)->inputConfig.cursor = $3;
     }    
+    | INPUT RATE const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_INPUT_RATE( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.rate = $3;
+    }
+    | INPUT DELAY const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_INPUT_DELAY( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.delay = $3;
+    }
     | SCREEN MODE UNIQUE {
         ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 1;
     }    
@@ -6082,6 +6104,18 @@ define_definition :
         ((struct _Environment *)_environment)->vestigialConfig.palettePreserve = 0;
     }    
     | BLIT blit_definition_define_expression
+    | KEYBOARD RATE const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_INPUT_RATE( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.rate = $3;
+    }
+    | KEYBOARD DELAY const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_INPUT_DELAY( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.delay = $3;
+    }
     ;
 
 system : {

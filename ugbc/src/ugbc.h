@@ -1382,6 +1382,8 @@ typedef struct _InputConfig {
     char separator;
     int size;
     char cursor;
+    char rate;
+    char delay;
 
 } InputConfig;
 
@@ -2326,6 +2328,8 @@ typedef struct _Environment {
 #define CRITICAL_UNSETTABLE_CPU_REGISTER( v ) CRITICAL2("E180 - CPU register cannot be used", v );
 #define CRITICAL_UNKNOWN_CPU_STACK( v ) CRITICAL2("E181 - unknown stack size", v );
 #define CRITICAL_DECLARE_PROC_NESTED_UNSUPPORTED( v ) CRITICAL2("E182 - cannot nest DECLARE PROC/FUNCTION inside a PROC", v );
+#define CRITICAL_INVALID_INPUT_RATE( v ) CRITICAL2i("E183 - invalid value for INPUT/KEYBOARD RATE", v );
+#define CRITICAL_INVALID_INPUT_DELAY( v ) CRITICAL2i("E184 - invalid value for INPUT/KEYBOARD DELAY", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3416,7 +3420,7 @@ Variable *              images_load( Environment * _environment, char * _filenam
 Variable *              in_var( Environment * _environment, char * _port );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
-void                    input( Environment * _environment, char * _variable );
+void                    input( Environment * _environment, char * _variable, VariableType _default_type );
 Variable *              input_string( Environment * _environment, char * _size );
 void                    instrument( Environment * _environment, int _instrument, int _channels );
 void                    instrument_semi_var( Environment * _environment, int _instrument, char * _channels );

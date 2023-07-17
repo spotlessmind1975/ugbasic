@@ -69,7 +69,7 @@ void shell_injection( Environment * _environment ) {
 
         print( _environment, prompt->name, 1 );
 
-        input( _environment, command->name );
+        input( _environment, command->name, VT_DSTRING );
 
         loweredCommand = variable_string_lower( _environment, command->name );
 
