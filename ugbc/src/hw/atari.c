@@ -64,52 +64,28 @@ void atari_ypen( Environment * _environment, char * _destination ) {
 }
 
 void atari_inkey( Environment * _environment, char * _pressed, char * _key ) {
+
     MAKE_LABEL
 
-    outline0("LDA #$0");
-    outline1("STA %s", _pressed );
-    outline0("LDA #$0");
+    deploy( scancode, src_hw_atari_scancode_asm);
+
+    outline0("JSR INKEY");
+
+    outline1("STX %s", _pressed );
     outline1("STA %s", _key );
 
-    outline0("LDY $02F2");
-    outline0("CPY #$FF");
-    outline1("BEQ %snokey", label );
-
-    outline0("LDA #<KEYCODE2ATASCII");
-    outline0("STA TMPPTR");
-    outline0("LDA #>KEYCODE2ATASCII");
-    outline0("STA TMPPTR+1");
-    outline0("LDA (TMPPTR),Y" );
-    outline1("BEQ %snokey", label );
-
-    outline1("STA %s", _key );
-    outline0("LDA #$FF");
-    outline1("STA %s", _pressed );
-    outline0("STA $02F2" );
-
-    outhead1("%snokey:", label );
-   
 }
 
 void atari_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
 
     MAKE_LABEL
 
-    outline0("LDA #$0");
-    outline1("STA %s", _pressed );
-    outline0("LDA #$0");
-    outline1("STA %s", _scancode );
+    deploy( scancode, src_hw_atari_scancode_asm);
 
-    outline0("LDA $02FC" );
-    outline0("CMP #$FF");
-    outline1("BEQ %snokey", label );
+    outline0("JSR SCANCODE");
 
-    outline1("STA %s", _scancode );
-    outline0("LDA #$FF");
-    outline1("STA %s", _pressed );
-    outline0("STA $02FC" );
-
-    outhead1("%snokey:", label );
+    outline1("STX %s", _pressed );
+    outline1("STY %s", _scancode );
 
 }
 
