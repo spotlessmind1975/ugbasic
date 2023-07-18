@@ -46,6 +46,7 @@ TABCOUNT            fcb     4
 XCURS               fcb     0
 YCURS               fcb     0
 EMPTYTILE           fcb     32
+KBDRATE             fcb     16
 
 TMPPTR equ $10    ; $23
 TMPPTR2 equ $12    ; $25
