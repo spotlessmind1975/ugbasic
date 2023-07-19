@@ -85,4 +85,4 @@ SCANCODEMATRIX
     fcb 'E','M','U',8,'5','-',$D8,$E8     ; // ?? $FC, .., LEFT, UNUSED, UNUSED
     fcb 'F','N','V',$FD,'6','.',$D9,$E9     ; // RIGHT $FD, UNUSED, UNUSED
 SCANCODEMATRIXE
-    fcb '7','O','W',' ','7','/',$F0,$FE     ; // UNUSED, SHIFT
+    fcb 'G','O','W',' ','G','/',$F0,$FE     ; // UNUSED, SHIFT
