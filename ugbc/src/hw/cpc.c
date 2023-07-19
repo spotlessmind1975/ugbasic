@@ -94,16 +94,16 @@ void cpc_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("LD B, A");
     outline0("LD A, 1");
     outline1("LD (%s), A", _pressed);
-    outhead1("%srelease:", label);
-    outline0("PUSH BC");
-    outline0("CALL INKEY");
-    outline0("POP BC");
-    outline0("CP B");
-    outline1("JR Z, %sequal", label);
-    outline1("JP %sdone", label);
-    outhead1("%sequal:", label);
-    outline0("NOP");
-    outline1("JP %srelease", label);
+    // outhead1("%srelease:", label);
+    // outline0("PUSH BC");
+    // outline0("CALL INKEY");
+    // outline0("POP BC");
+    // outline0("CP B");
+    // outline1("JR Z, %sequal", label);
+    // outline1("JP %sdone", label);
+    // outhead1("%sequal:", label);
+    // outline0("NOP");
+    // outline1("JP %srelease", label);
     outhead1("%sdone:", label);
 
 }

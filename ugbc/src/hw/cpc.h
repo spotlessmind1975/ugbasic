@@ -133,6 +133,8 @@
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x60
+#define INPUT_DEFAULT_RATE          16
+#define INPUT_DEFAULT_DELAY         16
 
 #define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
 

@@ -97,6 +97,17 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "IRQVECTORREADY", VT_BYTE, 0 );
     variable_global( _environment, "IRQVECTORREADY" );   
 
+    variable_import( _environment, "KBDCHAR", VT_BYTE, 0 );
+    variable_global( _environment, "KBDCHAR" );
+    variable_import( _environment, "KBDRATE", VT_BYTE, 16 );
+    variable_global( _environment, "KBDRATE" );
+    variable_import( _environment, "KBDDELAY", VT_BYTE, 16 );
+    variable_global( _environment, "KBDDELAY" );
+    variable_import( _environment, "KBDRATEC", VT_BYTE, 16 );
+    variable_global( _environment, "KBDRATEC" );
+    variable_import( _environment, "KBDDELAYC", VT_BYTE, 16 );
+    variable_global( _environment, "KBDDELAYC" );
+
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
