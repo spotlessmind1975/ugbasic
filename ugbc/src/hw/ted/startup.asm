@@ -65,35 +65,35 @@ TEDISRSVC2:
 TEDISRSVC:
     JSR TEDISRSVC2
     JSR MUSICPLAYER
-    PHA
-    LDA $FF09
-    STA $FF09
-    PLA
-    JMP $FCBE
+    ; PHA
+    ; LDA $FF09
+    ; STA $FF09
+    ; PLA
+     JMP $CE0E
 
 TEDSTARTUP:
 
-    ; SET_VIDEO( DEFAULT_VIDEO )
-    ; LDA $FF12
-    ; AND #%00000011
-    ; ORA #%00011000
-    ; STA $FF12
+    ; ; SET_VIDEO( DEFAULT_VIDEO )
+    ; ; LDA $FF12
+    ; ; AND #%00000011
+    ; ; ORA #%00011000
+    ; ; STA $FF12
     LDA #$EC
     STA $FF14
-    ; LDA $FF14
-    ; AND #%00000111
-    ; LDA #%11110000
-    ; STA $FF14
-    ; LDA $FF13
-    ; AND #%00000011
-    ; LDA #%11010100
-    ; STA $FF13
+    ; ; LDA $FF14
+    ; ; AND #%00000111
+    ; ; LDA #%11110000
+    ; ; STA $FF14
+    ; ; LDA $FF13
+    ; ; AND #%00000011
+    ; ; LDA #%11010100
+    ; ; STA $FF13
     
-    ; SET_BACKGROUND_COLOR( BLACK )
+    ; ; SET_BACKGROUND_COLOR( BLACK )
     LDA #$0
     STA $FF15
 
-    ; SET STARTUP CURSOR POSITION    
+    ; ; SET STARTUP CURSOR POSITION    
     LDA #0
     STA $64
     LDA #0
