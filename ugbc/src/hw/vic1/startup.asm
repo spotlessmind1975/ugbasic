@@ -215,10 +215,12 @@ VIC1STARTUP:
     STA $900F
 
     ; Lowercase font
+@IF descriptors
     LDA $9005
     AND #$F0
     ORA #$0E
     STA $9005
+@ENDIF
 
     LDA #$0
     STA XCURSYS

@@ -330,6 +330,12 @@ const_factor:
       | Identifier {
         if ( strcmp( $1, "currentMode" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->currentMode;
+        } else if ( strcmp( $1, "descriptors" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->descriptors ) {
+                $$ = 1;
+            } else {
+                $$ = 0;
+            }
         } else {
             $$ = 0;
         }
