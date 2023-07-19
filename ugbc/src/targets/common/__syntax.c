@@ -1577,3 +1577,60 @@ L'indice non è il codice ASCII ma lo screen code.
 
 @target all
 </usermanual> */
+/* <usermanual>
+@keyword DEFINE KEYBOARD RATE
+
+@english
+This command allows you to define the speed with which the characters will be 
+received by the input system on repetition, with the INPUT or INKEY command. The speed depends
+on the target, with a minimum value of 0 (maximum speed) to a maximum value of 
+254 (minimum speed).
+
+@italian
+Questo comando permette di definire la velocità con la quale i caratteri saranno 
+recepiti dal sistema di input in ripetizione, con il comando INPUT oppure INKEY. La velocità 
+dipende dal target, con un valore minimo di 0 (massima velocità) a un valore 
+massimo di 254 (minima velocità).
+
+@syntax DEFINE KEYBOARD RATE [rate]
+
+@example DEFINE KEYBOARD RATE 123
+
+@target atari
+@target atarixl
+@target c128
+@target c128z
+@target coco
+@target cpc
+@target d32
+@target d64
+@target mo5
+@target msx1
+@target pc128op
+</usermanual> */
+/* <usermanual>
+@keyword DEFINE KEYBOARD DELAY
+
+@english
+This command allows you to define the delay to wait before the characters will be 
+repeated by the input system, with the INPUT or INKEY command. The delay depends
+on the target, with a minimum value of 1 (no delay) to a maximum value of 
+255 (maximum delay).
+
+@italian
+Questo comando permette di definire il ritardo che il sistema attenderà
+prima di iniziare la ripetizione dei caratteri  dal sistema di input, con il 
+comando INPUT oppure INKEY. Il ritardo dipende dal target, con un valore minimo 
+di 0 (nessun ritardo) a un valore massimo di 255 (massimo ritardo).
+
+@syntax DEFINE KEYBOARD DELAY [delay]
+
+@example DEFINE KEYBOARD DELAY 50
+
+@target atari
+@target atarixl
+@target c128
+@target c128z
+@target cpc
+@target msx1
+</usermanual> */
