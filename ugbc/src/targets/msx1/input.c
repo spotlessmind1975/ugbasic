@@ -72,6 +72,8 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     cpu_store_8bit( _environment, comma->realName, _environment->inputConfig.separator == 0 ? INPUT_DEFAULT_SEPARATOR : _environment->inputConfig.separator );
     cpu_store_8bit( _environment, size->realName, _environment->inputConfig.size == 0 ? INPUT_DEFAULT_SIZE : _environment->inputConfig.size );
     cpu_store_8bit( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor );
+    cpu_store_8bit( _environment, "KBDRATE", 255 - ( _environment->inputConfig.rate == 0 ? INPUT_DEFAULT_RATE : _environment->inputConfig.rate ) );
+    cpu_store_8bit( _environment, "KBDDELAY", _environment->inputConfig.delay == 0 ? INPUT_DEFAULT_DELAY : _environment->inputConfig.delay );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     cpu_dsfree( _environment, temporary->realName );
