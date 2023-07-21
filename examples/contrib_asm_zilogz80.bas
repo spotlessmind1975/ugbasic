@@ -26,6 +26,8 @@ PRINT x;" + "; y; " = ";
 
 BEGIN ASM
 
+	AND A
+	
 	LD HL, (_x)
 	LD DE, (_y)
 	
@@ -36,6 +38,7 @@ BEGIN ASM
 END ASM
 
 PRINT z
+
 
 
 
