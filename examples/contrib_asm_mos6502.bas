@@ -18,7 +18,9 @@ REM
 
 CLS
 
-x = 10: y = 40: z = 0
+DIM x AS INTEGER, y AS INTEGER, z AS INTEGER
+
+x = 150: y = 110: z = 0
 
 PRINT x;" + "; y; " = ";
 
@@ -37,6 +39,8 @@ BEGIN ASM
 END ASM
 
 PRINT z
+
+
 
 
 

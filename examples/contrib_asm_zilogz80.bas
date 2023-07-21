@@ -16,6 +16,8 @@ REM tutte le caratteristiche del BASIC. Questo programma mostra come
 REM si opera una somma a 16 bit (2 x 8 bit) con il processore ZILOG Z80.
 REM 
 
+DIM x AS INTEGER, y AS INTEGER, z AS INTEGER
+
 CLS
 
 x = 10: y = 40: z = 0
@@ -34,5 +36,6 @@ BEGIN ASM
 END ASM
 
 PRINT z
+
 
 
