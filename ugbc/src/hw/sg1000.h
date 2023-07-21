@@ -160,4 +160,6 @@ void sg1000_clear_key( Environment * _environment );
 void sg1000_irq_at( Environment * _environment, char * _label );
 void sg1000_follow_irq( Environment * _environment );
 
+void sg1000_sys_call( Environment * _environment, int _destination );
+
 #endif

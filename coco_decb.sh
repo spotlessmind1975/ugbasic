@@ -82,3 +82,6 @@ do
     extension=`printf %03d $block`
     $DECB copy -2 "generated/coco/exe/program.$extension" $DISKOUT,PROGRAM.$extension
 done
+
+rm generated/coco/exe/loader.bas
+rm generated/coco/exe/program.*

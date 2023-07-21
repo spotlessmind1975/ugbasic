@@ -21,6 +21,8 @@ REM ''YELLOW'' e ''BLACK''. Per attendere un determinato periodo di tempo verrà
 REM utilizzato il comando ''WAIT'', con l'unità di tempo ''MS'' (millisecondi).
 REM
 
+    CLS
+
 start:
     GOSUB yellowBorder
     WAIT 1000 MS

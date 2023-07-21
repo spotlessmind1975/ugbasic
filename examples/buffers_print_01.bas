@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM BUFFERS MANAGEMENT PRINT FROM FILE (1)
 REM
 REM This small example will show how to print a file.
@@ -9,8 +9,11 @@ REM
 REM Questo piccolo esempio mostra come stampare a video un file.
 REM
 
+CLS
+
 b := LOAD("test2.txt")
 
 PRINT BUFFER b
 
 HALT
+

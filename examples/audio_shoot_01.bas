@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM AUDIO GENERATION SHOOT!
 REM
 REM This small example will show how to generate a very simple
@@ -10,6 +10,8 @@ REM
 REM Questo piccolo esempio mostra come generare un semplice effetto audio,
 REM che non interrompe l'esecuzione del programma.
 REM
+
+	CLS
 
     SHOOT
     WAIT 1000 MS

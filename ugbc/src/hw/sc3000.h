@@ -160,4 +160,6 @@ void sc3000_clear_key( Environment * _environment );
 void sc3000_irq_at( Environment * _environment, char * _label );
 void sc3000_follow_irq( Environment * _environment );
 
+void sc3000_sys_call( Environment * _environment, int _destination );
+
 #endif

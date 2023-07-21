@@ -173,4 +173,6 @@ void coleco_follow_irq( Environment * _environment );
 void coleco_joy( Environment * _environment, int _port, char * _value );
 void coleco_joy_vars( Environment * _environment, char * _port, char * _value );
 
+void coleco_sys_call( Environment * _environment, int _destination );
+
 #endif

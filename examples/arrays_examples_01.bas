@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM ARRAY MANAGEMENT ACCESSING (1)
 REM
 REM This small example will show the basic syntax to define an array and to
@@ -13,6 +13,8 @@ REM
 REM @exclude coleco
 REM @exclude sc3000
 
+	CLS
+	
     DIM artist$(2), title$(2), year(2), price(2)
 
     artist$(0)="Cindy Lauper"
@@ -29,3 +31,4 @@ REM @exclude sc3000
     PRINT title$(1) 
     PRINT year(1)
     PRINT price(1)
+

@@ -122,8 +122,8 @@ void antic_initialization( Environment * _environment ) {
     deploy_deferred( anticvars, src_hw_antic_vars_asm );
     deploy( anticstartup, src_hw_antic_startup_asm );
 
-    variable_import( _environment, "DLI", VT_BUFFER, 256 );
-    variable_global( _environment, "DLI" );
+    // variable_import( _environment, "DLI", VT_BUFFER, 256 );
+    // variable_global( _environment, "DLI" );
 
     outline0("JSR ANTICSTARTUP");
 

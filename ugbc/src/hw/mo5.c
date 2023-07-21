@@ -97,7 +97,7 @@ void mo5_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline1("BNE %sdifferent", label );
     outline0("INC $011f" );
     outline0("LDB $011f" );
-    outline0("CMPB #$7f" );
+    outline0("CMPB KBDRATE" );
     outline1("BEQ %sascii", label );
     outline0("LDA #0" );
     outline1("STA %s", _pressed );
@@ -232,6 +232,16 @@ void mo5_joystick_semivars( Environment * _environment, int _joystick, char * _r
 }
 
 void mo5_joystick_vars( Environment * _environment, char * _joystick, char * _result ) {
+
+}
+
+void mo5_sys_call( Environment * _environment, int _destination ) {
+
+    outline0("PSHS D");
+    outline1("LDD #$%4.4x", _destination );
+    outline0("STD SYSCALL0+1");
+    outline0("PULS D");
+    outline0("JSR SYSCALL");
 
 }
 

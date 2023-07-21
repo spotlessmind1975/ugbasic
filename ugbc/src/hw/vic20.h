@@ -144,4 +144,6 @@ void vic20_scanshift( Environment * _environment, char * _shifts );
 void vic20_keyshift( Environment * _environment, char * _shifts );
 void vic20_clear_key( Environment * _environment );
 
+void vic20_sys_call( Environment * _environment, int _destination );
+
 #endif

@@ -12,6 +12,8 @@ REM e moltiplicazione (''*'').
 REM
 REM @exclude coleco
 
+    CLS
+    
     a = 3^5
     b = 3*3*3*3*3
     PRINT "3^5 = ";a

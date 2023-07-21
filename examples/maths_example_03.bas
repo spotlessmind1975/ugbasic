@@ -12,6 +12,8 @@ REM Questo esempio mostrerà l'applicazione della priorità associativa. Poiché
 REM ha una priorità maggiore rispetto alla somma (''+''), e poiché le parentesi (''(...)'') cambiano la 
 REM priorità di applicazione, il risultato della due espressioni sarà diverso.
 
+    CLS
+    
     PRINT "(2+2*2) = ";(2+2*2)
     PRINT "((2+2)*2) = ";((2+2)*2)
     

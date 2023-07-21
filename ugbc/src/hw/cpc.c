@@ -94,16 +94,16 @@ void cpc_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("LD B, A");
     outline0("LD A, 1");
     outline1("LD (%s), A", _pressed);
-    outhead1("%srelease:", label);
-    outline0("PUSH BC");
-    outline0("CALL INKEY");
-    outline0("POP BC");
-    outline0("CP B");
-    outline1("JR Z, %sequal", label);
-    outline1("JP %sdone", label);
-    outhead1("%sequal:", label);
-    outline0("NOP");
-    outline1("JP %srelease", label);
+    // outhead1("%srelease:", label);
+    // outline0("PUSH BC");
+    // outline0("CALL INKEY");
+    // outline0("POP BC");
+    // outline0("CP B");
+    // outline1("JR Z, %sequal", label);
+    // outline1("JP %sdone", label);
+    // outhead1("%sequal:", label);
+    // outline0("NOP");
+    // outline1("JP %srelease", label);
     outhead1("%sdone:", label);
 
 }
@@ -521,7 +521,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             _environment->currentModeBW = 4;
-            CPC_GA_MASK( 0xc3, 0x80 );
+            CPC_GA_MASK( 0xc2, 0x80 );
             break;
         // "Mode 1" 320×200 pixels with 4 colors
         case BITMAP_MODE_GRAPHIC1:
@@ -532,7 +532,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-            CPC_GA_MASK( 0xc3, 0x81 );
+            CPC_GA_MASK( 0xc2, 0x81 );
             break;
         // "Mode 2" 640×200 pixels with 2 colors
         case BITMAP_MODE_GRAPHIC2:
@@ -543,7 +543,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-            CPC_GA_MASK( 0xc3, 0x82 );
+            CPC_GA_MASK( 0xc2, 0x82 );
             break;
         // "Mode 3" 160×200 pixels with 4 colors (2bpp) (this is not an official mode, but rather a side-effect of the hardware)
         case BITMAP_MODE_GRAPHIC3:
@@ -554,7 +554,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-            CPC_GA_MASK( 0xc3, 0x83 );
+            CPC_GA_MASK( 0xc2, 0x83 );
             break;
     }
 
@@ -1014,6 +1014,8 @@ void cpc_initialization( Environment * _environment ) {
     variable_global( _environment, "SLICEY" );
     variable_import( _environment, "SLICEDTARGET", VT_POSITION, 0 );
     variable_global( _environment, "SLICEDTARGET" );
+    variable_import( _environment, "GAVALUE", VT_BYTE, 0xfc );
+    variable_global( _environment, "GAVALUE" );
 
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
 
@@ -2074,6 +2076,19 @@ void cpc_slice_image_extract( Environment * _environment, char * _image,  char *
     outline1( "LD DE, %s", _destination );
 
     outline0("CALL SLICEIMAGEEXT");
+
+}
+
+void cpc_sys_call( Environment * _environment, int _destination ) {
+
+    outline0("PUSH HL" );
+    outline0("LD HL, SYSCALL0" );
+    outline0("INC HL" );
+    outline1("LD (HL), $%2.2x", (_destination & 0xff ) );
+    outline0("INC HL" );
+    outline1("LD (HL), $%2.2x", ((_destination>>8) & 0xff ) );
+    outline0("POP HL" );
+    outline0("CALL SYSCALL");
 
 }
 

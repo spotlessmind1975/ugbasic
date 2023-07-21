@@ -17,6 +17,9 @@ int yylinenostacked[256];
 int yycolnostacked[256];
 int yyposnostacked[256];
 int stacked = 0;
+char * importPath;
+
+char * asmSnippet = NULL;
 
 int yywrap() { return 1; }
  
@@ -86,7 +89,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
-%token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX
+%token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
+%token STACK DECLARE SYSTEM KEYBOARD RATE DELAY
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -101,6 +105,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token <string> BufferDefinition
 %token <string> RawString
 %token <floating> Float
+%token <string> Register
+%token <string> AsmSnippet
 
 %type <string> expr term modula factor exponential expr_math expr_math2
 %type <integer> const_expr const_term const_modula const_factor const_expr_math const_expr_math2
@@ -142,6 +148,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> blit_unary_op blit_binary_op blit_operand
 %type <integer> blit_expression blit_compounded
 %type <integer> precision 
+%type <integer> asmio
+%type <integer> system
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -633,26 +641,30 @@ const_factor:
           $$ = ((Environment *)_environment)->fontWidth;
       }
       | IMAGE WIDTH OP expr CP {
-          Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
-              CRITICAL_NOT_IMAGE( v->name );
-          }
-          if ( !v->valueBuffer ) {
-              CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-          }
-          #ifdef CPU_BIG_ENDIAN
-            if ( IMAGE_WIDTH_SIZE == 1 ) {
-                $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET];
-            } else {
-                $$ = 256*v->valueBuffer[IMAGE_WIDTH_OFFSET] + v->valueBuffer[IMAGE_WIDTH_OFFSET+1];
+          if ( !((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
+                CRITICAL_NOT_IMAGE( v->name );
             }
-          #else
-            if ( IMAGE_WIDTH_SIZE == 1 ) {
-                $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET];
-            } else {
-                $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET] + 256 * v->valueBuffer[IMAGE_WIDTH_OFFSET+1];
+            if ( !v->valueBuffer ) {
+                CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
             }
-          #endif
+            #ifdef CPU_BIG_ENDIAN
+                if ( IMAGE_WIDTH_SIZE == 1 ) {
+                    $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET];
+                } else {
+                    $$ = 256*v->valueBuffer[IMAGE_WIDTH_OFFSET] + v->valueBuffer[IMAGE_WIDTH_OFFSET+1];
+                }
+            #else
+                if ( IMAGE_WIDTH_SIZE == 1 ) {
+                    $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET];
+                } else {
+                    $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET] + 256 * v->valueBuffer[IMAGE_WIDTH_OFFSET+1];
+                }
+            #endif
+          } else {
+            $$ = 0;
+          }
       }
       | FRAMES OP expr CP {
           $$ = frames( _environment, $3 );
@@ -752,26 +764,30 @@ const_factor:
           $$ = ((Environment *)_environment)->fontHeight;
       }
       | IMAGE HEIGHT OP expr CP {
-          Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
-              CRITICAL_NOT_IMAGE( v->name );
+          if ( ! ((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
+                CRITICAL_NOT_IMAGE( v->name );
+            }
+            if ( !v->valueBuffer ) {
+                CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+            }          
+            #ifdef CPU_BIG_ENDIAN
+                if ( IMAGE_HEIGHT_SIZE == 1 ) {
+                    $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET];
+                } else {
+                    $$ = 256*v->valueBuffer[IMAGE_HEIGHT_OFFSET] + v->valueBuffer[IMAGE_HEIGHT_OFFSET+1];
+                }
+            #else
+                if ( IMAGE_HEIGHT_SIZE == 1 ) {
+                    $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET];
+                } else {
+                    $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET] + 256 * v->valueBuffer[IMAGE_HEIGHT_OFFSET+1];
+                }
+            #endif
+          } else {
+            $$ = 0;
           }
-          if ( !v->valueBuffer ) {
-              CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-          }          
-          #ifdef CPU_BIG_ENDIAN
-            if ( IMAGE_HEIGHT_SIZE == 1 ) {
-                $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET];
-            } else {
-                $$ = 256*v->valueBuffer[IMAGE_HEIGHT_OFFSET] + v->valueBuffer[IMAGE_HEIGHT_OFFSET+1];
-            }
-          #else
-            if ( IMAGE_HEIGHT_SIZE == 1 ) {
-                $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET];
-            } else {
-                $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET] + 256 * v->valueBuffer[IMAGE_HEIGHT_OFFSET+1];
-            }
-          #endif
       }
       | UBOUND OP Identifier CP {
           Variable * array = variable_retrieve( _environment, $3 );
@@ -2669,11 +2685,21 @@ exponential:
     | MIN OP expr OP_COMMA expr CP {
         $$ = minimum( _environment, $3, $5 )->name;
     }
-    | PARAM OP Identifier CP {
-        $$ = param_procedure( _environment, $3 )->name;
+    | PARAM OP Identifier on_targets CP  {
+        if ( $4 ) {
+            $$ = param_procedure( _environment, $3 )->name;
+        } else {
+            Variable * var = variable_temporary( _environment, VT_WORD, "(temp)" );
+            $$ = var->name;
+        }
     }
-    | PARAM OP_DOLLAR OP Identifier CP {
-        $$ = param_procedure( _environment, $4 )->name;
+    | PARAM OP_DOLLAR OP Identifier on_targets CP  {
+        if ( $5 ) {
+            $$ = param_procedure( _environment, $4 )->name;
+        } else {
+            Variable * var = variable_temporary( _environment, VT_WORD, "(temp)" );
+            $$ = var->name;
+        }
     }
     | Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
@@ -5516,6 +5542,117 @@ values :
     }
     ;
 
+asmio : 
+    Register {
+        $$ = cpu_register_decode( _environment, $1 );
+    }
+    | STACK OP BYTE CP {
+        $$ = (int)STACK_BYTE;
+    }
+    | STACK OP WORD CP {
+        $$ = (int)STACK_WORD;
+    }
+    | STACK OP DWORD CP {
+        $$ = (int)STACK_DWORD;
+    }
+    ;
+
+values_asmios :
+      asmio OP_ASSIGN expr {
+          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $3 );
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | asmio OP_ASSIGN expr OP_COMMA values_asmios {
+          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $3 );
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | asmio OP_ASSIGN OP_HASH const_expr {
+          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $4;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | asmio OP_ASSIGN OP_HASH const_expr OP_COMMA values_asmios {
+          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $4;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    ;
+
+parameters_asmios :
+      Identifier as_datatype ON asmio {
+          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier as_datatype ON asmio {
+          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ++((struct _Environment *)_environment)->parameters;
+    } OP_COMMA parameters_asmios
+    | OP_HASH const_expr ON asmio {
+          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = -1;
+          ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $2;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | OP_HASH const_expr ON asmio  {
+          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = -1;
+          ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $2;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+          ++((struct _Environment *)_environment)->parameters;
+    } OP_COMMA parameters_asmios
+    | OUT Identifier as_datatype ON asmio {
+          ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $5;
+          ((struct _Environment *)_environment)->returnsTypeEach[((struct _Environment *)_environment)->returns] = $3;
+          ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $2 );
+          ++((struct _Environment *)_environment)->returns;
+    }
+    | OUT Identifier as_datatype ON asmio {
+          ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $5;
+          ((struct _Environment *)_environment)->returnsTypeEach[((struct _Environment *)_environment)->returns] = $3;
+          ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $2 );
+          ++((struct _Environment *)_environment)->returns;
+    } OP_COMMA parameters_asmios
+
+    ;
+
+return_parameter_asmios2 : 
+    asmio as_datatype {
+          ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $1;
+          ((struct _Environment *)_environment)->returnsTypeEach[((struct _Environment *)_environment)->returns] = $2;
+          ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = NULL;
+          ++((struct _Environment *)_environment)->returns;
+    }
+    ;
+
+return_parameter_asmios : 
+    | RETURN return_parameter_asmios2;
+    ;
+
+return_values_asmios2 : 
+    Identifier OP_ASSIGN asmio {
+          ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $3;
+          ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $1 );
+          ++((struct _Environment *)_environment)->returns;
+    }
+    | Identifier OP_ASSIGN asmio OP_COMMA return_values_asmios2 {
+          ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $3;
+          ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $1 );
+          ++((struct _Environment *)_environment)->returns;
+    }
+    ;
+
+return_values_asmios : 
+    | RETURN return_values_asmios2;
+    ;
+
 print_buffer_definition :
     expr {
         print_buffer( _environment, $1, 1, 1 );
@@ -5898,14 +6035,24 @@ vscroll_definition :
 
 input_definition2 :
       Identifier {
-        input( _environment, $1 );
+        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+        print_newline( _environment );
+      }
+    | Identifier OP_DOLLAR {
+        input( _environment, $1, VT_DSTRING );
         print_newline( _environment );
       }
     | Identifier OP_SEMICOLON {
-        input( _environment, $1 );
+        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+      }
+    | Identifier OP_DOLLAR OP_SEMICOLON {
+        input( _environment, $1, VT_DSTRING );
       }
     | Identifier {
-        input( _environment, $1 );
+        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+      } OP_COMMA input_definition2
+    | Identifier OP_DOLLAR {
+        input( _environment, $1, VT_DSTRING );
       } OP_COMMA input_definition2
     ;
 
@@ -5914,7 +6061,7 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
         print_newline( _environment );
     }
     | String OP_SEMICOLON Identifier OP_DOLLAR {
@@ -5922,34 +6069,34 @@ input_definition :
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
         print_newline( _environment );
     }
     | String OP_SEMICOLON Identifier OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }
     | String OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
     }
     | String OP_SEMICOLON Identifier OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }  input_definition2
     | String OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
     }  input_definition2
     | input_definition2
     | RawString OP_SEMICOLON Identifier {
@@ -5957,7 +6104,7 @@ input_definition :
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
         print_newline( _environment );
     }
     | RawString OP_SEMICOLON Identifier OP_DOLLAR {
@@ -5966,7 +6113,7 @@ input_definition :
         string->printable = 1;
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
         print_newline( _environment );
     }
     | RawString OP_SEMICOLON Identifier OP_SEMICOLON {
@@ -5974,7 +6121,7 @@ input_definition :
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }
     | RawString OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
@@ -5982,14 +6129,14 @@ input_definition :
         string->printable = 1;
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
     }
     | RawString OP_SEMICOLON Identifier OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }  input_definition2
     | RawString OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
@@ -5997,7 +6144,7 @@ input_definition :
         string->printable = 1;
         print( _environment, string->name, 0 );
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name );
+        input( _environment, var->name, VT_DSTRING );
     }  input_definition2
   ;
 
@@ -6077,6 +6224,18 @@ define_definition :
         }
         ((struct _Environment *)_environment)->inputConfig.cursor = $3;
     }    
+    | INPUT RATE const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_INPUT_RATE( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.rate = $3;
+    }
+    | INPUT DELAY const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_INPUT_DELAY( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.delay = $3;
+    }
     | SCREEN MODE UNIQUE {
         ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 1;
     }    
@@ -6095,14 +6254,95 @@ define_definition :
         ((struct _Environment *)_environment)->vestigialConfig.palettePreserve = 0;
     }    
     | BLIT blit_definition_define_expression
+    | KEYBOARD RATE const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_INPUT_RATE( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.rate = $3;
+    }
+    | KEYBOARD DELAY const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_INPUT_DELAY( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.delay = $3;
+    }
     ;
+
+system : {
+        $$ = 0;
+    }
+    | SYSTEM {
+        $$ = 1;
+    };
+
+procedure : 
+    PROCEDURE | PROC;
+
+declare_definition :
+  system procedure Identifier AT const_expr on_targets {
+      ((struct _Environment *)_environment)->parameters = 0;
+      ((struct _Environment *)_environment)->returns = 0;
+      if ( $6 ) {
+           declare_procedure( _environment, $3, $5, $1 );
+      }
+  }
+  | system procedure Identifier AT const_expr {
+      ((struct _Environment *)_environment)->parameters = 0;
+      ((struct _Environment *)_environment)->returns = 0;
+    } OP parameters_asmios CP on_targets {
+      if ( $10 ) {
+           declare_procedure( _environment, $3, $5, $1 );
+      }
+  }
+  | system FUNCTION Identifier AT const_expr {
+      ((struct _Environment *)_environment)->parameters = 0;
+      ((struct _Environment *)_environment)->returns = 0;
+  } return_parameter_asmios on_targets {
+      if ( $8 ) {
+           declare_procedure( _environment, $3, $5, $1 );
+      }
+  }
+  | system FUNCTION Identifier AT const_expr {
+      ((struct _Environment *)_environment)->parameters = 0;
+      ((struct _Environment *)_environment)->returns = 0;
+    } OP parameters_asmios CP return_parameter_asmios on_targets {
+      if ( $11 ) {
+           declare_procedure( _environment, $3, $5, $1 );
+      }
+  }
+  ;
 
 define_definitions :
       define_definition
     | define_definition OP_COMMA define_definitions;
 
 target : 
-    ATARI {
+    CPUZ80 {
+        #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+            defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    | CPU6809 {
+        #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
+            defined(__pc128op__) || defined(__mo5__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    | CPU6502 {
+        #if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
+            defined(__c128__) || defined(__plus4__) || defined(__vic20__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    | ATARI {
         #ifdef __atari__
             $$ = 1;
         #else
@@ -6410,6 +6650,35 @@ tile_definition :
     LOAD String TO Integer tile_load_flags {
         tile_load( _environment, $2, $5, NULL, $4 );
     };
+
+sys_definition :
+    expr on_targets {
+        if ( $2 ) {
+            sys_var( _environment, $1 );
+        }
+    }
+    | OP_HASH const_expr on_targets {
+        if ( $3 ) {
+            sys( _environment, $2 );
+        }
+    }
+    | expr WITH {
+      ((struct _Environment *)_environment)->parameters = 0;
+      ((struct _Environment *)_environment)->returns = 0;
+    } values_asmios return_values_asmios on_targets {
+        if ( $6 ) {
+            sys_var( _environment, $1 );
+        }
+    }
+    | OP_HASH const_expr WITH {
+      ((struct _Environment *)_environment)->parameters = 0;
+      ((struct _Environment *)_environment)->returns = 0;
+    } values_asmios return_values_asmios on_targets {
+        if ( $7 ) {
+            sys( _environment, $2 );
+        }
+    }
+    ;
 
 statement2:
     BANK bank_definition
@@ -6739,32 +7008,51 @@ statement2:
       ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $2 );
   }
-  | CALL Identifier {
-      ((struct _Environment *)_environment)->parameters = 0;
-      call_procedure( _environment, $2 );
+  | EXEC sys_definition
+  | SYS sys_definition
+  | on_targets AsmSnippet {
+    if ( $1 ) {
+        outline1("%s", $2 );
+    }
+  }
+  | CALL Identifier on_targets {
+      if ( $3 ) {
+        ((struct _Environment *)_environment)->parameters = 0;
+        call_procedure( _environment, $2 );
+      }
   }
   | Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
-    } values CSP {
-      call_procedure( _environment, $1 );
+    } values CSP on_targets {
+      if ( $6 ) {
+          call_procedure( _environment, $1 );
+      }
   }
-  | Identifier OSP CSP {
-      ((struct _Environment *)_environment)->parameters = 0;
-      call_procedure( _environment, $1 );
+  | Identifier OSP CSP on_targets {
+      if ( $4) {
+         ((struct _Environment *)_environment)->parameters = 0;
+         call_procedure( _environment, $1 );
+      }
   }
   | PROC Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
-    } values CSP {
-      call_procedure( _environment, $2 );
+    } values CSP on_targets {
+        if ( $7 ) {
+          call_procedure( _environment, $2 );
+        }
   }
   | CALL Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
-    } values CSP {
-      call_procedure( _environment, $2 );
+    } values CSP on_targets {
+        if ( $7 ) {
+          call_procedure( _environment, $2 );
+        }
   }
-  | CALL Identifier OSP CSP {
-      ((struct _Environment *)_environment)->parameters = 0;
-      call_procedure( _environment, $2 );
+  | CALL Identifier OSP CSP on_targets {
+      if ( $5 ) {
+          ((struct _Environment *)_environment)->parameters = 0;
+          call_procedure( _environment, $2 );
+      }
   }
   | SPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
@@ -6886,6 +7174,7 @@ statement2:
   | ENDSTORAGE {
         end_storage( _environment );
   }
+  | DECLARE declare_definition
   | DEFINE define_definitions
   | OPTION option_definitions
   | ORIGIN origin_definitions
@@ -7252,7 +7541,7 @@ program :
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.14";
+char version[MAX_TEMPORARY_STORAGE] = "1.14.1";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
@@ -7469,7 +7758,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "a:b:e:c:Wo:Ie:l:EO:dD:L:C:VA:T:1p:G:X:P:q:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "a:b:e:c:Wo:Ie:l:EO:dD:L:C:VA:T:1p:G:X:P:q:i:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -7508,6 +7797,9 @@ int main( int _argc, char *_argv[] ) {
                     if( access( _environment->appMakerFileName, F_OK ) != 0 ) {
                         CRITICAL("App maker no found.");
                     }
+                    break;
+                case 'i':
+                    importPath = strdup(optarg);
                     break;
                 case 'T':
                     _environment->temporaryPath = strdup(optarg);

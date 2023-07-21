@@ -35,14 +35,14 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-SYSIRQADDR: 
-    .word   $0
+SYSIRQADDR:     .WORD   $0
 
-    ; ...
-    ; ; **** Gestore IRQ personalizzato
+;     ; ...
+;     ; ; **** Gestore IRQ personalizzato
 
 IRQWRAPPER:
 
+    PHP
     PHA
     TXA
     PHA
@@ -87,6 +87,9 @@ IRQWRAPPEREND2:
     PLA
     TAX
     PLA
+    PLP
+
+    CLI
 
     RTI
 
@@ -132,4 +135,16 @@ PLUS4STARTUP:
     STA $FFFF
     CLI
 
+SYSCALLDONE:
+    ; LDA #$42
+    ; STA $FF3F
+    ; CLI
+    
     RTS
+SYSCALL:
+    SEI
+    LDA #$42
+    STA $FF3E
+SYSCALL0:
+    JSR $0000
+    JMP SYSCALLDONE

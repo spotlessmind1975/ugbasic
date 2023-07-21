@@ -11,6 +11,8 @@ REM Questo esempio leggerà lo status del primo joystick. Quindi ne decodificher
 REM di alcune direzioni, sfruttando le varie sintassi disponibili.
 REM
 
+   CLS
+
    left = BIT( JOY(0), LEFT )
    PRINT "LEFT IS: ";left
    

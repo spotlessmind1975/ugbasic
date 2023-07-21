@@ -8,6 +8,8 @@ REM ROUTINE DI MATEMATICA CON L'USO DI ABS (1)
 REM
 REM Questo esempio calcolerà e mostrerà sullo schermo il valore assoluto di un numero dato.
 
+  CLS
+  
   PRINT "the absolute value of -1 is ";ABS(-1)
   PRINT "the absolute value of 1 is ";ABS(1)
 

@@ -15,6 +15,8 @@ REM questo significa che il banco non è raggiungibile direttamente
 REM con un accesso ma solo tramite le primitive messe a disposizione 
 REM da ugBASIC.
 
+    CLS
+    
     FOR i=0 TO BANK COUNT
         IF i = BANK() THEN
             PRINT "*";

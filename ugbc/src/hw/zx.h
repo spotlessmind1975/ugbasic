@@ -39,9 +39,9 @@
 #define COLOR_CYAN					5
 #define COLOR_VIOLET				2 /* alias */
 #define COLOR_GREEN					4
-#define COLOR_BLUE					3  /* alias */
+#define COLOR_BLUE					1  /* alias */
 #define COLOR_YELLOW				6
-#define COLOR_ORANGE				2 /* alias */
+#define COLOR_ORANGE				10 /* alias */
 #define COLOR_BROWN					2 /* alias */
 #define COLOR_LIGHT_RED				10 /* alias */
 #define COLOR_DARK_GREY				0 /* alias */
@@ -51,8 +51,8 @@
 #define COLOR_LIGHT_GREY			15 /* alias */
 #define COLOR_DARK_BLUE				3 /* alias */
 #define COLOR_MAGENTA				3
-#define COLOR_PURPLE				2 /* alias */
-#define COLOR_LAVENDER       		2 /* alias */
+#define COLOR_PURPLE				3 /* alias */
+#define COLOR_LAVENDER       		3 /* alias */
 #define COLOR_GOLD       			6 /* alias */
 #define COLOR_TURQUOISE       		5 /* alias */
 #define COLOR_TAN       		    5 /* alias */
@@ -252,5 +252,6 @@ void zx_use_tileset( Environment * _environment, char * _tileset );
 void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
 
 void zx_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
+void zx_sys_call( Environment * _environment, int _destination );
 
 #endif

@@ -343,7 +343,10 @@ void zx_initialization( Environment * _environment ) {
 
     variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
     variable_global( _environment, "FPSCRAP" );
-    
+
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0 );
+    variable_global( _environment, "TEXTADDRESS" );
+
     _environment->currentRgbConverterFunction = rgbConverterFunction;
 
     _environment->screenWidth = 256;
@@ -974,6 +977,12 @@ Variable * zx_get_raster_line( Environment * _environment ) {
 }
 
 void zx_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
+
+}
+
+void zx_sys_call( Environment * _environment, int _destination ) {
+
+    outline1("CALL $%4.4x", _destination );
 
 }
 

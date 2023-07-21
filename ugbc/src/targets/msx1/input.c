@@ -40,11 +40,11 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-void input( Environment * _environment, char * _variable ) {
+void input( Environment * _environment, char * _variable, VariableType _default_type ) {
 
     MAKE_LABEL
     
-    Variable * result = variable_retrieve_or_define( _environment, _variable, VT_WORD, 0 );
+    Variable * result = variable_retrieve_or_define( _environment, _variable, _default_type, 0 );
 
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
@@ -72,6 +72,8 @@ void input( Environment * _environment, char * _variable ) {
     cpu_store_8bit( _environment, comma->realName, _environment->inputConfig.separator == 0 ? INPUT_DEFAULT_SEPARATOR : _environment->inputConfig.separator );
     cpu_store_8bit( _environment, size->realName, _environment->inputConfig.size == 0 ? INPUT_DEFAULT_SIZE : _environment->inputConfig.size );
     cpu_store_8bit( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor );
+    cpu_store_8bit( _environment, "KBDRATE", 255 - ( _environment->inputConfig.rate == 0 ? INPUT_DEFAULT_RATE : _environment->inputConfig.rate ) );
+    cpu_store_8bit( _environment, "KBDDELAY", _environment->inputConfig.delay == 0 ? INPUT_DEFAULT_DELAY : _environment->inputConfig.delay );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     cpu_dsfree( _environment, temporary->realName );

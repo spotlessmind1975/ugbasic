@@ -316,6 +316,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     }
 	if ( po_buf_match( buf[0], " ST* *", v1, v2 )
     &&   po_buf_match( buf[1], " LD* *", v3, v4 )
+    &&   !po_buf_match( buf[2], " PSHS *", v3 )
     &&  po_buf_strcmp(v1, v3)==0
     &&  po_buf_strcmp(v2, v4)==0) {
         if(0 && unsafe && po_buf_match(v2, "_Ttmp") && !po_buf_match(buf[2], "*SR ") && !(*v1->str=='D' && po_buf_match(buf[2], " IF "))) {

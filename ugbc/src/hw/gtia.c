@@ -250,6 +250,9 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     int dliListStartOffset;
     int screenMemoryAddress2 = 0;
 
+    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
+    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+
     deploy( gtiavars, src_hw_gtia_vars_asm );
     
     outline1( "; enabling mode %d", _screen_mode->id );
@@ -1105,8 +1108,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     outline1("LDA #>%s", dli->realName );
     outline0("STA (TMPPTR),Y" );
 
-    cpu_store_8bit( _environment, "_PEN", 0x10 );
-    cpu_store_8bit( _environment, "_PAPER", 0x00 );
+    cpu6502_mem_move_direct_size( _environment, dli->realName, "DLI", dli->size );
 
     outline0("SEI" );
     outline1("LDA #<%s", dli->realName );
@@ -1145,8 +1147,8 @@ void gtia_tilemap_enable( Environment * _environment, int _width, int _height, i
     if ( mode ) {
         gtia_screen_mode_enable( _environment, mode );
 
-        cpu_store_8bit( _environment, "_PEN", 0x01 );
-        cpu_store_8bit( _environment, "_PAPER", 0x00 );
+        cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
+        cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
         cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );

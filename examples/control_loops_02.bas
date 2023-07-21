@@ -26,6 +26,8 @@ REM e ''RED''. Per attendere un determinato periodo di tempo verrà utilizzato i
 REM comando ''WAIT'', con l'unità di tempo ''MS '' (millisecondi).
 REM
 
+   CLS
+
    DO
       COLOR BORDER YELLOW
       HOME: PRINT "YELLOW"

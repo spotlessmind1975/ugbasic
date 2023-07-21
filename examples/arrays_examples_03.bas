@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM ARRAY MANAGEMENT ACCESSING (2)
 REM
 REM This small example will show the basic syntax to define an array and to
@@ -12,6 +12,8 @@ REM accedervi.
 REM
 REM @exclude coleco
 
+	CLS
+	
     CONST a = 6
     CONST b = 7
     CONST c = ( a*b ) / 2
@@ -39,3 +41,4 @@ END PROCEDURE
         NEXT
         PRINT
     NEXT    
+

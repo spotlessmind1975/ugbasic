@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM BUFFERS MANAGEMENT LOADING FROM FILE (2)
 REM
 REM This small example will show the management of "aliasing",
@@ -12,6 +12,8 @@ REM Questo piccolo esempio mostra come viene gestito l'aliasing, cioè
 REM quando viene chiesto di caricare lo stesso file (viene caricata una sola copia).
 REM
 
+CLS
+
 b = LOAD("test.txt")
 c = LOAD("test.txt")
 
@@ -19,3 +21,4 @@ PRINT "b = ";b;" (";SIZE(b);" bytes)"
 PRINT "c = ";c;" (";SIZE(c);" bytes)"
 
 HALT
+

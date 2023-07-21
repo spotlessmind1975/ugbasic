@@ -140,4 +140,6 @@ void plus4_scanshift( Environment * _environment, char * _shifts );
 void plus4_keyshift( Environment * _environment, char * _shifts );
 void plus4_clear_key( Environment * _environment );
 
+void plus4_sys_call( Environment * _environment, int _destination );
+
 #endif

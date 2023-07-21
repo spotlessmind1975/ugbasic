@@ -186,4 +186,11 @@ void msx1_follow_irq( Environment * _environment ) {
     outline0("RET" );
 
 }
+
+void msx1_sys_call( Environment * _environment, int _destination ) {
+
+    outline1("CALL $%4.4x", _destination );
+
+}
+
 #endif

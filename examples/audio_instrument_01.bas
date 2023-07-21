@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM AUDIO GENERATION USE INSTRUMENTS
 REM
 REM This small example will show how to use instruments.
@@ -8,6 +8,8 @@ REM AUDIO E MUSICA USARE GLI STRUMENTI
 REM
 REM Questo piccolo esempio vi mostrerà come usare gli strumenti
 REM
+
+	CLS
 
     INSTRUMENT XYLOPHONE ON 1
     INSTRUMENT HARPSICHORD ON 2
@@ -20,3 +22,4 @@ REM
         p = RND(108)
         PLAY p, 3 ON v
     LOOP
+

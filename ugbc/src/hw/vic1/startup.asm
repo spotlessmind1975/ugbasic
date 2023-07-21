@@ -211,14 +211,16 @@ VIC1STARTUP:
     ; ; bits 0-2 select border color
     ; ; bit 3 selects inverted or normal mode
 
-    LDA #$00
+    LDA #$08
     STA $900F
 
     ; Lowercase font
+@IF descriptors
     LDA $9005
     AND #$F0
     ORA #$0E
     STA $9005
+@ENDIF
 
     LDA #$0
     STA XCURSYS

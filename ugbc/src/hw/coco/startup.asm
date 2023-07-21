@@ -47,9 +47,14 @@ OLDNMIISVC
 OLDNMIISVC2
     fdb $0
 
+OLDCC
+    fcb $0
+
 ISVCIRQ
     PSHS CC
     PSHS D
+    TFR CC, A
+    STA OLDCC
     PSHS X
     LDD #0
     STD $00e3
@@ -65,7 +70,10 @@ ISVCIRQ
     JMP [OLDISVC]
 ISVCIRQ2
     STA $FFDF
-    PULS CC
+    PSHS D
+    LDA OLDCC
+    TFR A, CC
+    PULS D
     JMP [OLDISVC2]
 
 NMIISVCIRQ
@@ -103,6 +111,13 @@ COCOSTARTUP
 
     LDA #0
     STA $011f
-    
+
+SYSCALLDONE
+    STA $FFDF
     RTS
+SYSCALL
+    STA $FFDE
+SYSCALL0
+    JSR $0000
+    BRA SYSCALLDONE
     

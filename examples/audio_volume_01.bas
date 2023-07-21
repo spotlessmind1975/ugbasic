@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM AUDIO GENERATION VOLUME CONTROL
 REM
 REM This small example will show how to manage the volume.
@@ -9,8 +9,10 @@ REM
 REM Questo piccolo esempio vi mostrerà come gestire il volume.
 REM
 
-  FOR level=VOLUME MIN TO VOLUME MAX
-      VOLUME level
-      BELL NOTE C4
-      WAIT 500 MS
-  NEXT
+	CLS
+
+	FOR level=VOLUME MIN TO VOLUME MAX
+    	VOLUME level
+      	BELL NOTE C4
+      	WAIT 500 MS
+  	NEXT

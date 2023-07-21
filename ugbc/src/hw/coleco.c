@@ -175,4 +175,11 @@ void coleco_joy( Environment * _environment, int _port, char * _value ) {
     outline1("LD (%s), A", _value );
 
 }
+
+void coleco_sys_call( Environment * _environment, int _destination ) {
+
+    outline1("CALL $%4.4x", _destination );
+
+}
+
 #endif

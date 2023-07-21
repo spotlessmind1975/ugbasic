@@ -90,6 +90,11 @@ void z80_halt( Environment * _environment );
 void z80_end( Environment * _environment );
 void z80_jump( Environment * _environment, char * _label );
 void z80_call( Environment * _environment, char * _label );
+void z80_call_indirect( Environment * _environment, char * _value );
+void z80_set_asmio( Environment * _environment, int _asmio, int _value );
+void z80_set_asmio_indirect( Environment * _environment, int _asmio, char * _value );
+void z80_get_asmio_indirect( Environment * _environment, int _asmio, char * _value );
+int z80_register_decode( Environment * _environment, char * _register );
 void z80_return( Environment * _environment );
 void z80_pop( Environment * _environment );
 void z80_label( Environment * _environment, char * _label );
@@ -327,6 +332,11 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_end( _environment  ) z80_end( _environment  )
 #define cpu_jump( _environment,  _label  ) z80_jump( _environment,  _label  )
 #define cpu_call( _environment,  _label  ) z80_call( _environment,  _label  )
+#define cpu_call_indirect( _environment,  _value  ) z80_call_indirect( _environment,  _value  )
+#define cpu_set_asmio( _environment, _asmio, _value ) z80_set_asmio( _environment, _asmio, _value )
+#define cpu_set_asmio_indirect( _environment, _asmio, _value ) z80_set_asmio_indirect( _environment, _asmio, _value )
+#define cpu_get_asmio_indirect( _environment, _asmio, _value ) z80_get_asmio_indirect( _environment, _asmio, _value )
+#define cpu_register_decode( _environment, _register ) z80_register_decode( _environment, _register )
 #define cpu_return( _environment ) z80_return( _environment  )
 #define cpu_pop( _environment ) z80_pop( _environment  )
 #define cpu_label( _environment,  _label  ) z80_label( _environment,  _label  )
@@ -538,5 +548,49 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_float_single_tan( _environment, _value, _result ) z80_float_single_tan( _environment, _value, _result ) 
 
 #define     CPU_LITTLE_ENDIAN      1
+#define     REGISTER_BASE           0x1000
+#define     IS_REGISTER(x)          ((x & REGISTER_BASE) == REGISTER_BASE)
+
+typedef enum _Z80Register {
+
+    REGISTER_NONE   =   REGISTER_BASE | 0,
+
+    REGISTER_A      =   REGISTER_BASE | 1,
+    REGISTER_B      =   REGISTER_BASE | 2,
+    REGISTER_C      =   REGISTER_BASE | 3,
+    REGISTER_D      =   REGISTER_BASE | 4,
+    REGISTER_E      =   REGISTER_BASE | 5,
+    REGISTER_H      =   REGISTER_BASE | 6, 
+    REGISTER_L      =   REGISTER_BASE | 7, 
+    REGISTER_F      =   REGISTER_BASE | 8, 
+    REGISTER_I      =   REGISTER_BASE | 9, 
+    REGISTER_R      =   REGISTER_BASE | 10,
+    REGISTER_SP     =   REGISTER_BASE | 11,
+    REGISTER_PC     =   REGISTER_BASE | 12,
+    REGISTER_IX     =   REGISTER_BASE | 13,
+    REGISTER_IY     =   REGISTER_BASE | 14,
+    REGISTER_AF     =   REGISTER_BASE | 15,
+    REGISTER_BC     =   REGISTER_BASE | 16,
+    REGISTER_DE     =   REGISTER_BASE | 17,
+    REGISTER_HL     =   REGISTER_BASE | 18,
+    REGISTER_IXL    =   REGISTER_BASE | 19,
+    REGISTER_IXH    =   REGISTER_BASE | 20,
+    REGISTER_IYL    =   REGISTER_BASE | 21,
+    REGISTER_IYH    =   REGISTER_BASE | 22,
+    REGISTER_HLA    =   REGISTER_BASE | 23,
+
+    REGISTER_CARRY  =   REGISTER_BASE | 24,
+    REGISTER_ZERO  =   REGISTER_BASE | 25
+
+} Z80Register;
+
+typedef enum _Z80Stack {
+
+    STACK_NONE      =   0,
+    STACK_BYTE      =   1,
+    STACK_WORD      =   2,
+    STACK_DWORD     =   3
+
+} Z80Stack;
 
 #endif

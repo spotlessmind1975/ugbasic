@@ -22,6 +22,8 @@ REM ''COLOR BORDER'', utilizzando il valore intero assegnato alla variabile
 REM ''colorIIndex''.
 REM
 
+   CLS
+
    colorIndex = 0
 
    EVERY 50 TICKS GOSUB changeBorderColor

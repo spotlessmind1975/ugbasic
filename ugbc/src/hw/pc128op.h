@@ -144,6 +144,7 @@
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x60
+#define INPUT_DEFAULT_RATE          16
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
@@ -167,5 +168,7 @@ int convertbintok7(Environment * _environment);
 int pc128op_convertbintok7_original(Environment * _environment);
 void pc128op_joystick_semivars( Environment * _environment, char * _joystick, char * _result );
 void pc128op_joystick( Environment * _environment, int _joystick, char * _result );
+
+void pc128op_sys_call( Environment * _environment, int _destination );
 
 #endif

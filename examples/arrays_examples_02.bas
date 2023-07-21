@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM ARRAY MANAGEMENT ACCESSING (1)
 REM
 REM This small example will show the basic syntax to define an array and to
@@ -13,6 +13,8 @@ REM
 REM @exclude coleco
 REM @exclude sc3000
 
+	CLS
+
     CONST elements = 100
 
     DIM vector(elements)
@@ -20,3 +22,4 @@ REM @exclude sc3000
     vector(42) = 100
 
     PRINT "vector(42) = ";vector(42)
+

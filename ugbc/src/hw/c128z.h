@@ -133,6 +133,8 @@
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x60
+#define INPUT_DEFAULT_RATE          16
+#define INPUT_DEFAULT_DELAY         64
 
 #define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
 
@@ -162,5 +164,7 @@ void c128z_joy_vars( Environment * _environment, char * _port, char * _value );
 
 void c128z_initialization( Environment * _environment );
 void c128z_finalization( Environment * _environment );
+
+void c128z_sys_call( Environment * _environment, int _destination );
 
 #endif

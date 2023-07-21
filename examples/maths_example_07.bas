@@ -8,5 +8,7 @@ REM ROUTINE DI MATEMATICA DA DECIMALE A ESADECIMALE
 REM
 REM Questo esempio mostra come convertire i numeri decimali in numeri esadecimali.
 
+    CLS
+    
     PRINT "$42 = ";HEX$($42)
     PRINT "$5642 = ";HEX$($5642)

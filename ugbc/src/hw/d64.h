@@ -144,6 +144,7 @@
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x60
+#define INPUT_DEFAULT_RATE          16
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
@@ -163,5 +164,7 @@ void d64_clear_key( Environment * _environment );
 void d64_busy_wait( Environment * _environment, char * _timing );
 void d64_irq_at( Environment * _environment, char * _label );
 void d64_follow_irq( Environment * _environment );
+
+void d64_sys_call( Environment * _environment, int _destination );
 
 #endif

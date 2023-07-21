@@ -14,6 +14,8 @@ REM che genera un numero casuale compreso tra 0 e il valore dato come argomento.
 REM verrà applicata alla larghezza e all'altezza dello schermo correnti, in modo da stampare una stringa
 REM sullo schermo in una posizione casuale.
 
+   CLS
+   
    DO 
       x = RND(SCREEN WIDTH - 1): REM you can use "RANDOM WIDTH" as an alternative
       y = RND(SCREEN HEIGHT - 1): REM you can use "RANDOM HEIGHT" as an alternative

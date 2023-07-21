@@ -8,6 +8,8 @@ REM ESPANSIONE DI MEMORIA COPIARE A/DA ESPANSIONE
 REM
 REM Questo esempio mostra come copiare dati da o verso un banco di espansione.
 
+    CLS
+    
     VAR x AS WORD = 12345
     VAR y AS WORD = 54321
 

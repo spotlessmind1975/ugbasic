@@ -133,6 +133,8 @@
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x60
+#define INPUT_DEFAULT_RATE          16
+#define INPUT_DEFAULT_DELAY         16
 
 #define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
 
@@ -258,10 +260,10 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 // RAM Configuration	&7f	Write Only	0	-	-	-	-	-	-	-
 #define CPC_GA_MASK( mask, value ) \
                             outline0( "LD B, $7F" ) \
-                            outline0( "IN C, (C)" ); \
-                            outline0( "LD A, C" ); \
+                            outline0( "LD A, (GAVALUE)" ); \
                             outline1( "AND A, $%2.2x", (unsigned char) ~( (unsigned char) mask & 0xff ) ); \
                             outline1( "OR A, $%2.2x", (unsigned char) ( (unsigned char) value & 0xff ) ); \
+                            outline0( "LD (GAVALUE), A" ); \
                             outline0( "LD C, A" ); \
                             outline0( "OUT (C), C" );
 
@@ -366,5 +368,6 @@ typedef void (*CpcSliceImageFunction)(Environment *, char *, char *, char *, int
 
 void cpc_slice_image_copy( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
 void cpc_slice_image_extract( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
+void cpc_sys_call( Environment * _environment, int _destination );
 
 #endif

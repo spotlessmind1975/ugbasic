@@ -13,6 +13,8 @@ REM è stato premuto utilizzando la funzione ''INKEY$''. Se è stato premuto un 
 REM programma stamperà il messaggio ''"YOU PRESSED A KEY!"''.
 REM
 
+    CLS
+
     DO
         k = INKEY$
         IF k <> "" THEN 

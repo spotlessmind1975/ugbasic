@@ -35,6 +35,8 @@
 #include "../ugbc.h"
 
 #include <math.h>
+#include <stddef.h>
+#include <ctype.h>
 
 /****************************************************************************
  * CODE SECTION
@@ -3157,6 +3159,393 @@ void cpu6502_call( Environment * _environment, char * _label ) {
     no_embedded( cpu_call )
 
 }
+
+void cpu6502_call_indirect( Environment * _environment, char * _value ) {
+
+
+    inline( cpu_call_indirect )
+
+        MAKE_LABEL
+
+        char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
+
+        cpu6502_jump( _environment, label );
+        cpu6502_label( _environment, indirectLabel );
+        // We must use self-modifying code in order to avoid
+        // a 6502/6510 bug when using indirect addressing.
+        outline0( "JMP $0000" );
+        cpu6502_label( _environment, label );
+        outline0( "PHA" );
+        outline1( "LDA %s", _value );
+        outline1( "STA %s", address_displacement( _environment, indirectLabel, "1" ) );
+        outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
+        outline1( "STA %s", address_displacement( _environment, indirectLabel, "2" ) );
+        outline0( "PLA" );
+        cpu6502_call( _environment, indirectLabel );
+
+    no_embedded( cpu_call_indirect )
+
+}
+
+int cpu6502_register_decode( Environment * _environment, char * _register ) {
+
+    CPU6502Register result = REGISTER_NONE;
+
+    if ( !_environment->emptyProcedure ) {
+
+        if ( strcmp( _register, "PC" ) == 0 ) {
+            if ( !_environment->emptyProcedure ) {
+                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
+            }
+            result = REGISTER_PC;
+        } else if ( strcmp( _register, "S" ) == 0 ) {
+            if ( !_environment->emptyProcedure ) {
+                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
+            }
+            result = REGISTER_S;
+        } else if ( strcmp( _register, "A" ) == 0 ) {
+            result = REGISTER_A;
+        } else if ( strcmp( _register, "X" ) == 0 ) {
+            result = REGISTER_X;
+        } else if ( strcmp( _register, "Y" ) == 0 ) {
+            result = REGISTER_Y;
+        } else if ( strcmp( _register, "XY" ) == 0 ) {
+            result = REGISTER_XY;
+        } else if ( strcmp( _register, "YX" ) == 0 ) {
+            result = REGISTER_XY;
+        } else if ( strcmp( _register, "CARRY" ) == 0 ) {
+            result = REGISTER_CARRY;
+        } else {
+            int i, c;
+            char * comma = strchr( _register, ',' );
+            if ( !comma ) {
+                for( i=0, c=strlen(_register); i<c; ++i ) {
+                    if ( !isdigit( _register[i] ) )
+                        break;
+                }
+                if ( i >= c ) {
+                    return (int)REGISTER_PAGE_ZERO | ( atoi( _register ) & 0xff );
+                }
+            } else {
+                *comma = 0;
+                for( i=0, c=strlen(_register); i<c; ++i ) {
+                    if ( !isdigit( _register[i] ) )
+                        break;
+                }
+                if ( i >= c ) {
+                    return (int)REGISTER_PAGE_ZERO2 | ( atoi( _register ) & 0xff );
+                }
+            }
+        }
+
+    }
+    
+    return (int)result;
+
+}
+
+void cpu6502_set_asmio( Environment * _environment, int _asmio, int _value ) {
+
+    if ( IS_REGISTER( _asmio ) ) {
+
+        CPU6502Register reg = (CPU6502Register) _asmio;
+
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+            case REGISTER_PC:
+            case REGISTER_S:
+                break;
+            case REGISTER_A:
+                outline1( "LDA #$%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_X:
+                outline1( "LDX #$%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_Y:
+                outline1( "LDY #$%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_XY:
+                outline1( "LDY #$%2.2x", (unsigned char)(_value & 0xff ) );
+                outline1( "LDX #$%2.2x", (unsigned char)((_value>>8) & 0xff ) );
+                break;
+            case REGISTER_YX:
+                outline1( "LDX #$%2.2x", (unsigned char)(_value & 0xff ) );
+                outline1( "LDY #$%2.2x", (unsigned char)((_value>>8) & 0xff ) );
+                break;
+            case REGISTER_AXY:
+                outline1( "LDY #$%2.2x", (unsigned char)(_value & 0xff ) );
+                outline1( "LDX #$%2.2x", (unsigned char)((_value>>8) & 0xff ) );
+                outline1( "LDA #$%2.2x", (unsigned char)((_value>>16) & 0xff ) );
+                break;
+            case REGISTER_CARRY:
+                if ( _value ) {
+                    outline0( "SEC" );
+                } else {
+                    outline0( "CLC" );
+                }
+                break;
+            case REGISTER_ZERO:
+                if ( _value ) {
+                    outline0( "LDA #1" );
+                } else {
+                    outline0( "LDA #0" );
+                }
+                break;
+        }
+
+    } else if ( IS_PAGE_ZERO( _asmio ) ) {
+
+        outline1( "LDA #$%2.2x", (unsigned char)(_value & 0xff ) );
+        outline1( "STA #$%2.2x", (unsigned char)(_asmio & 0xff ) );
+
+    } else if ( IS_PAGE_ZERO2( _asmio ) ) {
+
+        outline1( "LDA #$%2.2x", (unsigned char)(_value & 0xff ) );
+        outline1( "STA #$%2.2x", (unsigned char)(_asmio & 0xff ) );
+        outline1( "LDA #$%2.2x", (unsigned char)((_value>>8) & 0xff ) );
+        outline1( "STA #$%2.2x", (unsigned char)((_asmio+1) & 0xff ) );
+
+    } else {
+
+        CPU6502Stack stk = (CPU6502Stack) _asmio;
+
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline1( "LDA #$%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "PHA" );
+                break;
+            case STACK_WORD:
+                outline1( "LDA #$%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "PHA" );
+                outline1( "LDA #$%2.2x", (unsigned char)(( _value >> 8 ) & 0xff ) );
+                outline0( "PHA" );
+                break;
+            case STACK_DWORD:
+                outline1( "LDA #$%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "PHA" );
+                outline1( "LDA #$%2.2x", (unsigned char)(( _value >> 8 ) & 0xff ) );
+                outline0( "PHA" );
+                outline1( "LDA #$%2.2x", (unsigned char)(( _value >> 16 ) & 0xff ) );
+                outline0( "PHA" );
+                outline1( "LDA #$%2.2x", (unsigned char)(( _value >> 24 ) & 0xff ) );
+                outline0( "PHA" );
+                break;
+        }
+
+    }
+
+}
+
+void cpu6502_set_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
+
+    if ( IS_REGISTER( _asmio ) ) {
+
+        MAKE_LABEL
+
+        CPU6502Register reg = (CPU6502Register) _asmio;
+
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+            case REGISTER_PC:
+            case REGISTER_S:
+                break;
+            case REGISTER_A:
+                outline1( "LDA %s", _value );
+                break;
+            case REGISTER_X:
+                outline1( "LDX %s", _value );
+                break;
+            case REGISTER_Y:
+                outline1( "LDY %s", _value );
+                break;
+            case REGISTER_XY:
+                outline1( "LDY %s", _value );
+                outline1( "LDX %s", address_displacement( _environment, _value, "1" ) );
+                break;
+            case REGISTER_YX:
+                outline1( "LDX %s", _value );
+                outline1( "LDY %s", address_displacement( _environment, _value, "1" ) );
+                break;
+            case REGISTER_AXY:
+                outline1( "LDY %s", _value );
+                outline1( "LDX %s", address_displacement( _environment, _value, "1" ) );
+                outline1( "LDA %s", address_displacement( _environment, _value, "2" ) );
+                break;
+            case REGISTER_CARRY:
+                outline0( "PHA");
+                outline1( "LDA %s", _value );
+                outline1( "BEQ %szero", label );
+                outline0( "SEC" );
+                outline1( "JMP %sdone", label );
+                outhead1( "%szero:", label );
+                outline0( "CLC" );
+                outhead1( "%sdone:", label );
+                outline0( "PLA");
+                break;
+            case REGISTER_ZERO:
+                outline1( "LDA %s", _value );
+                break;
+        }
+
+    } else if ( IS_PAGE_ZERO( _asmio ) ) {
+
+        outline1( "LDA %s", _value );
+        outline1( "STA #$%2.2x", (unsigned char)(_asmio & 0xff ) );
+
+    } else if ( IS_PAGE_ZERO2( _asmio ) ) {
+
+        outline1( "LDA %s", _value );
+        outline1( "STA #$%2.2x", (unsigned char)(_asmio & 0xff ) );
+        outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
+        outline1( "STA #$%2.2x", (unsigned char)((_asmio+1) & 0xff ) );
+
+    } else {
+
+        CPU6502Stack stk = (CPU6502Stack) _asmio;
+
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline1( "LDA %s", address_displacement(_environment, _value, "0") );
+                outline0( "PHA" );
+                break;
+            case STACK_WORD:
+                outline1( "LDA %s", address_displacement(_environment, _value, "0") );
+                outline0( "PHA" );
+                outline1( "LDA %s", address_displacement(_environment, _value, "1") );
+                outline0( "PHA" );
+                break;
+            case STACK_DWORD:
+                outline1( "LDA %s", address_displacement(_environment, _value, "0") );
+                outline0( "PHA" );
+                outline1( "LDA %s", address_displacement(_environment, _value, "1") );
+                outline0( "PHA" );
+                outline1( "LDA %s", address_displacement(_environment, _value, "2") );
+                outline0( "PHA" );
+                outline1( "LDA %s", address_displacement(_environment, _value, "3") );
+                outline0( "PHA" );
+                break;
+        }
+
+    }
+
+}
+
+void cpu6502_get_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
+
+    if ( IS_REGISTER( _asmio ) ) {
+
+        MAKE_LABEL
+
+        CPU6502Register reg = (CPU6502Register) _asmio;
+
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+            case REGISTER_PC:
+            case REGISTER_S:
+                break;
+            case REGISTER_A:
+                outline1( "STA %s", _value );
+                break;
+            case REGISTER_X:
+                outline1( "STX %s", _value );
+                break;
+            case REGISTER_Y:
+                outline1( "STY %s", _value );
+                break;
+            case REGISTER_XY:
+                outline1( "STY %s", _value );
+                outline1( "STX %s", address_displacement( _environment, _value, "1" ) );
+                break;
+            case REGISTER_YX:
+                outline1( "STX %s", _value );
+                outline1( "STY %s", address_displacement( _environment, _value, "1" ) );
+                break;
+            case REGISTER_AXY:
+                outline1( "STY %s", _value );
+                outline1( "STX %s", address_displacement( _environment, _value, "1" ) );
+                outline1( "STA %s", address_displacement( _environment, _value, "2" ) );
+                break;
+            case REGISTER_CARRY:
+                outline0( "PHA" );
+                outline1( "BCS %sset", label );
+                outline0( "LDA #$0" );
+                outline1( "STA %s", _value );
+                outline1( "JMP %sdone", label );
+                outhead1( "%sset:", label );
+                outhead1( "%sdone:", label );
+                outline0( "LDA #$1" );
+                outline1( "STA %s", _value );
+                outline0( "PLA" );
+                break;
+            case REGISTER_ZERO:
+                outline0( "PHA" );
+                outline1( "BEQ %sset", label );
+                outline0( "LDA #$0" );
+                outline1( "STA %s", _value );
+                outline1( "JMP %sdone", label );
+                outhead1( "%sset:", label );
+                outhead1( "%sdone:", label );
+                outline0( "LDA #$1" );
+                outline1( "STA %s", _value );
+                outline0( "PLA" );
+                break;
+        }
+
+    } else if ( IS_PAGE_ZERO( _asmio ) ) {
+
+        outline1( "LDA #$%2.2x", (unsigned char)(_asmio & 0xff ) );
+        outline1( "STA %s", _value );
+
+    } else if ( IS_PAGE_ZERO2( _asmio ) ) {
+
+        outline1( "LDA #$%2.2x", (unsigned char)(_asmio & 0xff ) );
+        outline1( "STA %s", _value );
+        outline1( "LDA #$%2.2x", (unsigned char)((_asmio+1) & 0xff ) );
+        outline1( "STA %s", address_displacement( _environment, _value, "1" ) );
+
+    } else {
+
+        CPU6502Stack stk = (CPU6502Stack) _asmio;
+
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline0( "PLA" );
+                outline1( "STA %s", address_displacement(_environment, _value, "0") );
+                break;
+            case STACK_WORD:
+                outline0( "PLA" );
+                outline1( "STA %s", address_displacement(_environment, _value, "1") );
+                outline0( "PLA" );
+                outline1( "STA %s", address_displacement(_environment, _value, "0") );
+                break;
+            case STACK_DWORD:
+                outline0( "PLA" );
+                outline1( "STA %s", address_displacement(_environment, _value, "3") );
+                outline0( "PLA" );
+                outline1( "STA %s", address_displacement(_environment, _value, "2") );
+                outline0( "PLA" );
+                outline1( "STA %s", address_displacement(_environment, _value, "1") );
+                outline0( "PLA" );
+                outline1( "STA %s", address_displacement(_environment, _value, "0") );
+                break;
+        }
+
+    }
+
+}
+
 
 void cpu6502_return( Environment * _environment ) {
 

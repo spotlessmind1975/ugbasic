@@ -2545,6 +2545,261 @@ void cpu6809_call( Environment * _environment, char * _label ) {
 
 }
 
+void cpu6809_call_indirect( Environment * _environment, char * _value ) {
+
+    inline( cpu_call_indirect )
+
+        MAKE_LABEL
+
+        char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
+
+        cpu6809_jump( _environment, label );
+        cpu6809_label( _environment, indirectLabel );
+        outline1( "JMP [%s]", _value );
+        cpu6809_label( _environment, label );
+        cpu6809_call( _environment, indirectLabel );
+
+    no_embedded( cpu_call_indirect )
+
+}
+
+int cpu6809_register_decode( Environment * _environment, char * _register ) {
+
+    CPU6809Register result = REGISTER_NONE;
+
+    if ( !_environment->emptyProcedure ) {
+
+        if ( strcmp( _register, "A" ) == 0 ) {
+            result = REGISTER_A;
+        } else if ( strcmp( _register, "B" ) == 0 ) {
+            result = REGISTER_B;
+        } else if ( strcmp( _register, "CC" ) == 0 ) {
+            if ( !_environment->emptyProcedure ) {
+                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
+            }
+            result = REGISTER_CC;
+        } else if ( strcmp( _register, "DP" ) == 0 ) {
+            if ( !_environment->emptyProcedure ) {
+                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
+            }
+            result = REGISTER_DP;
+        } else if ( strcmp( _register, "X" ) == 0 ) {
+            result = REGISTER_X;
+        } else if ( strcmp( _register, "Y" ) == 0 ) {
+            result = REGISTER_Y;
+        } else if ( strcmp( _register, "U" ) == 0 ) {
+            result = REGISTER_U;
+        } else if ( strcmp( _register, "S" ) == 0 ) {
+            result = REGISTER_S;
+        } else if ( strcmp( _register, "PC" ) == 0 ) {
+            if ( !_environment->emptyProcedure ) {
+                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
+            }
+            result = REGISTER_PC;
+        } else if ( strcmp( _register, "D" ) == 0 ) {
+            result = REGISTER_D;
+        } else {
+
+        }
+
+    }
+
+    return (int)result;
+
+}
+
+void cpu6809_set_asmio( Environment * _environment, int _asmio, int _value ) {
+
+    if ( IS_REGISTER( _asmio ) ) {
+
+        CPU6809Register reg = (CPU6809Register) _asmio;
+
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+            case REGISTER_CC:
+            case REGISTER_DP:
+                break;
+            case REGISTER_A:
+                outline1( "LDA #$%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_B:
+                outline1( "LDB #$%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_X:
+                outline1( "LDX #$%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            case REGISTER_Y:
+                outline1( "LDY #$%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            case REGISTER_U:
+                outline1( "LDU #$%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            case REGISTER_S:
+                outline1( "LDS #$%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            case REGISTER_D:
+                outline1( "LDD #$%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            default:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+        }
+
+    } else {
+
+        CPU6809Stack stk = (CPU6809Stack) _asmio;
+
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline1( "LDA %2.2x", _value );
+                outline0( "PSHS A" );
+                break;
+            case STACK_WORD:
+                outline1( "LDD %4.4x", _value );
+                outline0( "PSHS D" );
+                break;
+            case STACK_DWORD:
+                outline1( "LDD %4.4x", ( _value & 0xffff ) );
+                outline0( "PSHS D" );
+                outline1( "LDD %4.4x", ( (_value >> 16 ) & 0xffff ) );
+                outline0( "PSHS D" );
+                break;
+        }
+
+    }
+
+}
+
+void cpu6809_set_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
+
+    if ( IS_REGISTER( _asmio ) ) {
+
+        CPU6809Register reg = (CPU6809Register) _asmio;
+
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+            case REGISTER_CC:
+            case REGISTER_DP:
+                break;
+            case REGISTER_A:
+                outline1( "LDA %s", _value );
+                break;
+            case REGISTER_B:
+                outline1( "LDB %s", _value );
+                break;
+            case REGISTER_X:
+                outline1( "LDX %s", _value );
+                break;
+            case REGISTER_Y:
+                outline1( "LDY %s", _value );
+                break;
+            case REGISTER_U:
+                outline1( "LDU %s", _value );
+                break;
+            case REGISTER_S:
+                outline1( "LDS %s", _value );
+                break;
+            case REGISTER_D:
+                outline1( "LDD %s", _value );
+                break;
+        }
+
+    } else {
+
+        CPU6809Stack stk = (CPU6809Stack) _asmio;
+
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline1( "LDA %s", address_displacement(_environment, _value, "0") );
+                outline0( "PSHS A" );
+                break;
+            case STACK_WORD:
+                outline1( "LDD %s", address_displacement(_environment, _value, "0") );
+                outline0( "PSHS D" );
+                break;
+            case STACK_DWORD:
+                outline1( "LDD %s", address_displacement(_environment, _value, "0") );
+                outline0( "PSHS D" );
+                outline1( "LDD %s", address_displacement(_environment, _value, "2") );
+                outline0( "PSHS D" );
+                break;
+        }
+
+    }
+
+}
+
+void cpu6809_get_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
+
+    if ( IS_REGISTER( _asmio ) ) {
+
+        CPU6809Register reg = (CPU6809Register) _asmio;
+
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+            case REGISTER_CC:
+            case REGISTER_DP:
+                break;
+            case REGISTER_A:
+                outline1( "STA %s", _value );
+                break;
+            case REGISTER_B:
+                outline1( "STB %s", _value );
+                break;
+            case REGISTER_X:
+                outline1( "STX %s", _value );
+                break;
+            case REGISTER_Y:
+                outline1( "STY %s", _value );
+                break;
+            case REGISTER_U:
+                outline1( "STU %s", _value );
+                break;
+            case REGISTER_S:
+                outline1( "STS %s", _value );
+                break;
+            case REGISTER_D:
+                outline1( "STD %s", _value );
+                break;
+        }
+
+    } else {
+
+        CPU6809Stack stk = (CPU6809Stack) _asmio;
+
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline0( "PULS A" );
+                outline1( "STA %s", address_displacement(_environment, _value, "0") );
+                break;
+            case STACK_WORD:
+                outline0( "PULS D" );
+                outline1( "STD %s", address_displacement(_environment, _value, "0") );
+                break;
+            case STACK_DWORD:
+                outline0( "PULS D" );
+                outline1( "STD %s", address_displacement(_environment, _value, "0") );
+                outline0( "PULS D" );
+                outline1( "STD %s", address_displacement(_environment, _value, "2") );
+                break;
+        }
+
+    }
+
+}
+
 void cpu6809_return( Environment * _environment ) {
 
     inline( cpu_return )

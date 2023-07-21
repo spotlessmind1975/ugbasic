@@ -112,9 +112,12 @@ C128STARTUP:
     LDA #>IRQSVC2
     STA $0315
 
+SYSCALLDONE:
+    PHA
     ; ; DISABLE BASIC ROM & KERNAL ROM
     LDA #%00111110
     STA $FF00
+    PLA
     ; LDA $FF06
     ; AND #$FC
     ; ORA #$03
@@ -125,3 +128,12 @@ C128STARTUP:
     CLI
 
     RTS
+SYSCALL:
+    SEI
+    PHA
+    LDA #$0
+    STA $FF00
+    PLA
+SYSCALL0:
+    JSR $0000
+    JMP SYSCALLDONE

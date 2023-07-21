@@ -114,6 +114,8 @@
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        185
+#define INPUT_DEFAULT_RATE          96
+#define INPUT_DEFAULT_DELAY         128
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
@@ -136,5 +138,7 @@ void c128_key_pressed( Environment * _environment, char *_scancode, char * _resu
 void c128_scanshift( Environment * _environment, char * _shifts );
 void c128_keyshift( Environment * _environment, char * _shifts );
 void c128_clear_key( Environment * _environment );
+
+void c128_sys_call( Environment * _environment, int _destination );
 
 #endif

@@ -134,4 +134,11 @@ void sc3000_follow_irq( Environment * _environment ) {
     outline0("RET" );
 
 }
+
+void sc3000_sys_call( Environment * _environment, int _destination ) {
+
+    outline1("CALL $%4.4x", _destination );
+
+}
+
 #endif

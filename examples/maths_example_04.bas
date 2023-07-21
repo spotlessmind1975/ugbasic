@@ -14,6 +14,8 @@ REM calcolato per primo, il risultato della due espressioni sarà diverso.
 REM
 REM @exclude coleco
 
+    CLS
+    
     PRINT "(10+2*5) = ";(10+2*5)
     PRINT "(10+2*5-8/4 ) = ";(10+2*5-8/4)
     PRINT "(10+2*5-8/4+5^2 ) = ";(10+2*5-8/4+5^2)

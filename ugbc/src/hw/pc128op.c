@@ -262,4 +262,14 @@ void pc128op_joystick( Environment * _environment, int _joystick, char * _result
 
 }
 
+void pc128op_sys_call( Environment * _environment, int _destination ) {
+
+    outline0("PSHS D");
+    outline1("LDD #$%4.4x", _destination );
+    outline0("STD SYSCALL0+1");
+    outline0("PULS D");
+    outline0("JSR SYSCALL");
+
+}
+
 #endif

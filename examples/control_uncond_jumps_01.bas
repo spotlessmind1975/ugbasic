@@ -15,6 +15,8 @@ REM usando l'istruzione ''COLOR BORDER'', usando le costanti ''YELLOW'' e ''BLAC
 REM determinato periodo di tempo verrà utilizzato il comando ''WAIT'', con l'unità di tempo ''MS'' (millisecondi).
 REM
 
+    CLS
+
 label: 
     COLOR BORDER YELLOW
     HOME: PRINT "YELLOW"

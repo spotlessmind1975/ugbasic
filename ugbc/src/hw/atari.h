@@ -131,6 +131,8 @@
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0xd7
+#define INPUT_DEFAULT_RATE          16
+#define INPUT_DEFAULT_DELAY         64
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
@@ -147,5 +149,7 @@ void atari_key_pressed( Environment * _environment, char *_scancode, char * _res
 void atari_scanshift( Environment * _environment, char * _shifts );
 void atari_keyshift( Environment * _environment, char * _shifts );
 void atari_clear_key( Environment * _environment );
+
+void atari_sys_call( Environment * _environment, int _destination );
 
 #endif

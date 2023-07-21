@@ -13,6 +13,8 @@ REM del primo joystick. Le varie direzioni saranno decodificate utilizzando
 REM le varie funzioni specifiche (''JLEFT'', ''JRIGHT'', ''JUP'', ''JDOWN'', ''JFIRE'').
 REM
 
+   CLS
+
    DO
       IF JLEFT(0) THEN : PRINT "WEST" : ENDIF
       IF JRIGHT(0) THEN : PRINT "EAST" : ENDIF
