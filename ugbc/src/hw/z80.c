@@ -6476,6 +6476,7 @@ void z80_float_fast_sub( Environment * _environment, char * _x, char * _y, char 
 
 void z80_float_fast_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    deploy( fp_mul16, src_hw_z80_fp_mul16_asm );
     deploy( fp_fast_mul, src_hw_z80_fp_fast_mul_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
@@ -6564,6 +6565,7 @@ void z80_float_fast_sin( Environment * _environment, char * _angle, char * _resu
 
     MAKE_LABEL
 
+    deploy( fp_mul16, src_hw_z80_fp_mul16_asm );
     deploy( fp_fast_add, src_hw_z80_fp_fast_add_asm );
     deploy( fp_fast_sub, src_hw_z80_fp_fast_sub_asm );
     deploy( fp_fast_mod1, src_hw_z80_fp_fast_mod1_asm );
@@ -6647,6 +6649,7 @@ void z80_float_fast_sqr( Environment * _environment, char * _value, char * _resu
 
     MAKE_LABEL
 
+    deploy( fp_mul16, src_hw_z80_fp_mul16_asm );
     deploy( fp_fast_mul, src_hw_z80_fp_fast_mul_asm );
     deploy( fp_fast_sqr, src_hw_z80_fp_fast_sqr_asm );
 
