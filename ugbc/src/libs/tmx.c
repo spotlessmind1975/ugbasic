@@ -143,7 +143,7 @@ TmxMap * tmx_load( char * _filename ) {
                             *(separator+1) = 0;
                             strcpy( filenameWithPath, filename );
                         }
-                        strcat( filenameWithPath, _filename );
+                        strcat( filenameWithPath, source );
 
                         TsxTileset * tileset = tsx_load( filenameWithPath );
 
