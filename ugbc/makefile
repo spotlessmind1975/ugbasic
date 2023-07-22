@@ -134,15 +134,10 @@ endif
 # It is also the basis for the libxslt library which 
 # processes XSLT-1.0 stylesheets.
 #
-ifeq ($(OS),Windows_NT)
 $(LIBXML2): 
-	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && make
-else
-$(LIBXML2): 
-	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --with-zlib=no --enable-static=yes --enable-shared=no && make
+	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && make
 
 libxml2: paths $(LIBXML2)
-endif
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
