@@ -136,8 +136,8 @@ TmxMap * tmx_load( char * _filename ) {
                         }
 
                         char * filename = strdup( _filename );
-                        char * filenameWithPath = malloc( MAX_TEMPORARY_STORAGE );
-                        memset( filenameWithPath, 0, MAX_TEMPORARY_STORAGE );
+                        char * filenameWithPath = malloc( 1024 );
+                        memset( filenameWithPath, 0, 1024 );
                         char * separator = strrchr( filename, '/' );
                         if ( separator ) {
                             *(separator+1) = 0;
