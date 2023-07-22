@@ -120,7 +120,7 @@ Variable * tilemap_load( Environment * _environment, char * _filename, char * _a
         char * tilesetFileName = strdup( lookedFilename );
         char * tilesetFileNameWithPath = malloc( MAX_TEMPORARY_STORAGE );
         memset( tilesetFileNameWithPath, 0, MAX_TEMPORARY_STORAGE );
-        char * separator = strrchr( tilesetFileName, PATH_SEPARATOR );
+        char * separator = strrchr( tilesetFileName, '/' );
         if ( separator ) {
             *(separator+1) = 0;
             strcpy( tilesetFileNameWithPath, tilesetFileName );
