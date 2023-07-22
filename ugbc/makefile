@@ -133,7 +133,8 @@ endif
 # processes XSLT-1.0 stylesheets.
 #
 ifeq ($(OS),Windows_NT)
-
+$(LIBXML2): 
+	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --with-zlib=no --enable-static=yes --enable-shared=yes && make
 else
 $(LIBXML2): 
 	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --with-zlib=no --enable-static=yes --enable-shared=yes && make
