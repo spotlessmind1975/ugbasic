@@ -24,7 +24,7 @@ x = 10: y = 40: z = 0
 
 PRINT x;" + "; y; " = ";
 
-BEGIN ASM
+ON CPU6809 BEGIN ASM
 
 	LDD _x
 	ADDD _y

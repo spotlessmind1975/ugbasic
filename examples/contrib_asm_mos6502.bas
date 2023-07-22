@@ -24,7 +24,7 @@ x = 150: y = 110: z = 0
 
 PRINT x;" + "; y; " = ";
 
-BEGIN ASM
+ON CPU6502 BEGIN ASM
 
 	CLC
 	

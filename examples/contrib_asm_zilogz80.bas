@@ -24,7 +24,7 @@ x = 10: y = 40: z = 0
 
 PRINT x;" + "; y; " = ";
 
-BEGIN ASM
+ON CPUZ80 BEGIN ASM
 
 	AND A
 	
