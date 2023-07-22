@@ -127,7 +127,7 @@ CL65 = ./modules/cc65/bin/cl65$(EXESUFFIX)
 # CPU ZILOG Z80
 #------------------------------------------------ 
 Z80ASM = ./modules/z88dk/src/z80asm/z88dk-z80asm$(EXESUFFIX)
-APPMAKE = ./modules/z88dk/src/appmake/z88dk-appmake$(EXESUFFIX)
+Z80APPMAKE = ./modules/z88dk/src/appmake/z88dk-appmake$(EXESUFFIX)
 
 #------------------------------------------------ 
 # CPU MOTOROLA 6809
@@ -213,7 +213,7 @@ paths:
 	@mkdir -p generated/$(target)/exeso
 	@mkdir -p $(dir $(CL65))
 	@mkdir -p $(dir $(Z80ASM))
-	@mkdir -p $(dir $(APPMAKE))
+	@mkdir -p $(dir $(Z80APPMAKE))
 	@mkdir -p $(dir $(ASM6809))
 
 #------------------------------------------------ 
@@ -287,10 +287,10 @@ cc65: paths $(CL65)
 # z88dk is the only C and assembler development kit that comes ready 
 # out-of-the-box to create programs for over 100 z80-family machines.
 #
-$(Z80ASM): $(dir $(Z80ASM))src/c/*.c $(dir $(Z80ASM))src/c/*.h $(dir $(Z80ASM))src/cpp/*.cpp $(dir $(Z80ASM))src/cpp/*.h
+$(Z80ASM): 
 	cd $(dir $(Z80ASM)) && make
 
-$(Z80APPMAKE): $(dir $(Z80APPMAKE))src/c/*.c $(dir $(Z80APPMAKE))src/c/*.h $(dir $(Z80APPMAKE))src/cpp/*.cpp $(dir $(Z80APPMAKE))src/cpp/*.h
+$(Z80APPMAKE): 
 	cd $(dir $(Z80APPMAKE)) && make
 
 z88dk: paths $(Z80ASM) $(Z80APPMAKE)
@@ -442,7 +442,7 @@ generated/coleco/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
 	@rm $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin)
-	@$(APPMAKE) +msxrom -b $(@:.rom=.bin) 2>/dev/null
+	@$(Z80APPMAKE) +msxrom -b $(@:.rom=.bin) 2>/dev/null
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/coleco/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
@@ -464,7 +464,7 @@ generated/cpc/exe/%.dsk:
 	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
 	@mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.)
-	@$(APPMAKE) +cpc --org 256 --exec 256 --disk -b $(@:.dsk=.) -o $(dir $@)main.
+	@$(Z80APPMAKE) +cpc --org 256 --exec 256 --disk -b $(@:.dsk=.) -o $(dir $@)main.
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
@@ -566,7 +566,7 @@ generated/msx1/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
 	@rm $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin)
-	@$(APPMAKE) +msxrom -b $(@:.rom=.bin) 2>/dev/null
+	@$(Z80APPMAKE) +msxrom -b $(@:.rom=.bin) 2>/dev/null
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/msx1/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
@@ -705,7 +705,7 @@ generated/zx/exe/%.tap:
 	@mv $(subst /exe/,/asm/,$(@:.tap=.lis)) $(@:.tap=.lis)
 	@rm -f $(subst /exe/,/asm/,$(@:.tap=.o))
 	@mv $(subst /exe/,/asm/,$(@:.tap=.bin)) $(@:.tap=.bin)
-	@$(APPMAKE) +zx --org 32768 -b $(@:.tap=.bin)
+	@$(Z80APPMAKE) +zx --org 32768 -b $(@:.tap=.bin)
 	@rm -f $(@:.tap=.bin) $(@:.tap=_*.bin)
 
 generated/zx/exeso/%.tap: $(subst /generated/exeso/,/examples/,$(@:.tap=.bas))
