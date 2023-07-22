@@ -135,7 +135,7 @@ endif
 # processes XSLT-1.0 stylesheets.
 #
 $(LIBXML2): 
-	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && make
+	cd $(LIBXML2PATH) && ./autogen.sh --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && ./configure --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && make
 
 libxml2: paths $(LIBXML2)
 
