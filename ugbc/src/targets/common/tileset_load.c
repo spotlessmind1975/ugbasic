@@ -157,7 +157,7 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
 
     TsxImage * tsxImage = tileset->image;
 
-    char * filename = strdup( filename );
+    char * filename = strdup( _filename );
     char * filenameWithPath = malloc( 1024 );
     memset( filenameWithPath, 0, 1024 );
     char * separator = strrchr( filename, '/' );
