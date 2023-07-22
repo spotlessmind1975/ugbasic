@@ -117,7 +117,16 @@ Variable * tilemap_load( Environment * _environment, char * _filename, char * _a
         }
         char name[MAX_TEMPORARY_STORAGE]; sprintf( name, "%stileset", label );        
         final->tileset = variable_define( _environment, name, VT_IMAGES, 0 );
-        variable_direct_assign( _environment, final->tileset->name, tileset_load( _environment, tileset->source, NULL, _mode, _flags, _transparent_color, _background_color, _bank_expansion )->name );
+        char * tilesetFileName = strdup( lookedFilename );
+        char * tilesetFileNameWithPath = malloc( MAX_TEMPORARY_STORAGE );
+        memset( tilesetFileNameWithPath, 0, MAX_TEMPORARY_STORAGE );
+        char * separator = strrchr( tilesetFileName, PATH_SEPARATOR );
+        if ( separator ) {
+            *(separator+1) = 0;
+            strcpy( tilesetFileNameWithPath, tilesetFileName );
+        }
+        strcat( tilesetFileNameWithPath, tileset->source );
+        variable_direct_assign( _environment, final->tileset->name, tileset_load( _environment, tilesetFileNameWithPath, NULL, _mode, _flags, _transparent_color, _background_color, _bank_expansion )->name );
         final->tileset->firstGid = tileset->firstgid;
         tileset = tileset->next;
     }
