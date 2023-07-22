@@ -157,7 +157,17 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
 
     TsxImage * tsxImage = tileset->image;
 
-    lookedFilename = resource_load_asserts( _environment, tsxImage->source );
+    char * filename = strdup( tsxImage->source );
+    char * filenameWithPath = malloc( 1024 );
+    memset( filenameWithPath, 0, 1024 );
+    char * separator = strrchr( filename, '/' );
+    if ( separator ) {
+        *(separator+1) = 0;
+        strcpy( filenameWithPath, filename );
+    }
+    strcat( filenameWithPath, tsxImage->source );
+
+    lookedFilename = resource_load_asserts( _environment, filenameWithPath );
 
     FILE * lookedFileHandle = fopen( lookedFilename, "rb" );
     fseek( lookedFileHandle, 0, SEEK_END );
