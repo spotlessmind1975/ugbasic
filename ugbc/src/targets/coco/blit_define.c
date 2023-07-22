@@ -250,11 +250,12 @@ void blit_define_begin_compound( Environment * _environment, char * _name ) {
     if ( variable_exists( _environment, _name ) ) {
         CRITICAL_BLIT_ALREADY_DEFINED( _name );   
     }
-    variable_define( _environment, _name, VT_BLIT, 0 );
+    Variable * var = variable_define( _environment, _name, VT_BLIT, 0 );
     
     memset( &_environment->blit, 0, sizeof( Blit ) );
 
-    _environment->blit.name = strdup( _name );
+    _environment->blit.name = strdup( var->name );
+    _environment->blit.realName = strdup( var->realName );
 
     cpu_jump( _environment, skipLabel );
     cpu_label( _environment, blitLabel );

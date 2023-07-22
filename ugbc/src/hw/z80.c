@@ -5557,7 +5557,7 @@ int z80_blit_alloc_register(  Environment * _environment ) {
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( ! isRegisterUsed ) {
             outline1( "LD A, %s", &Z80_BLIT_REGISTER[reg][0] );
-            outline2( "LD (_%sbs+$%2.2x), A",  _environment->blit.name, location );
+            outline2( "LD (%sbs+$%2.2x), A",  _environment->blit.realName, location );
             _environment->blit.freeRegisters |= registerMask;
             // printf( "z80_blit_alloc_register() -> %4.4x $%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
             return ( ( reg << 8 ) | location );
@@ -5588,7 +5588,7 @@ void z80_blit_free_register(  Environment * _environment, int _register ) {
         int registerMask = 0x10 << ( ( _register >> 8 ) & 0xff );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( isRegisterUsed ) {
-            outline2( "LD A, (_%sbs+$%2.2x)",  _environment->blit.name, location );
+            outline2( "LD A, (%sbs+$%2.2x)",  _environment->blit.realName, location );
             outline1( "LD %s, A", &Z80_BLIT_REGISTER[reg][0] );
             _environment->blit.freeRegisters &= ~registerMask;
             return;

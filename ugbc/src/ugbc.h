@@ -1494,6 +1494,7 @@ extern int yyposno;
 typedef struct _Blit {
 
     char * name;
+    char * realName;
     int freeRegisters;
     int usedMemory;
     int sourceCount;
