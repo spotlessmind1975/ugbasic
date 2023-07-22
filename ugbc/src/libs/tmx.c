@@ -135,7 +135,17 @@ TmxMap * tmx_load( char * _filename ) {
                             properties = properties->next;
                         }
 
-                        TsxTileset * tileset = tsx_load( source );
+                        char * filename = strdup( _filename );
+                        char * filenameWithPath = malloc( MAX_TEMPORARY_STORAGE );
+                        memset( filenameWithPath, 0, MAX_TEMPORARY_STORAGE );
+                        char * separator = strrchr( filename, '/' );
+                        if ( separator ) {
+                            *(separator+1) = 0;
+                            strcpy( filenameWithPath, filename );
+                        }
+                        strcat( filenameWithPath, _filename );
+
+                        TsxTileset * tileset = tsx_load( filenameWithPath );
 
                         tileset->source = source;
                         tileset->firstgid = firstgid;
