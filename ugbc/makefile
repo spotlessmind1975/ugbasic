@@ -33,6 +33,8 @@
 #-----------------------------------------------------------------------------
 
 ifeq ($(OS),Windows_NT)
+LIBXML2=../modules/libxml2/.libs/libxml2.a
+LIBXML2PATH=../modules/libxml2
 else
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
