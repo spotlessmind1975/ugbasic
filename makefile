@@ -287,10 +287,10 @@ cc65: paths $(CL65)
 # z88dk is the only C and assembler development kit that comes ready 
 # out-of-the-box to create programs for over 100 z80-family machines.
 #
-$(Z80ASM): $(dir $(Z80ASM))src/c/*.c $(dir $(Z80ASM))src/c/*.h $(dir $(Z80ASM))src/cpp/*.cpp $(dir $(Z80ASM))src/cpp/*.h
+$(Z80ASM): 
 	cd $(dir $(Z80ASM)) && make
 
-$(Z80APPMAKE): $(dir $(Z80APPMAKE))src/c/*.c $(dir $(Z80APPMAKE))src/c/*.h $(dir $(Z80APPMAKE))src/cpp/*.cpp $(dir $(Z80APPMAKE))src/cpp/*.h
+$(Z80APPMAKE): 
 	cd $(dir $(Z80APPMAKE)) && make
 
 z88dk: paths $(Z80ASM) $(Z80APPMAKE)
