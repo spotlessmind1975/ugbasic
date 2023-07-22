@@ -42,7 +42,7 @@ endif
 
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d -Wcounterexamples
-CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include
+CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC
 LFLAGS=
 LIBS=-lm $(LIBXML2)
 
@@ -136,10 +136,10 @@ endif
 #
 ifeq ($(OS),Windows_NT)
 $(LIBXML2): 
-	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --with-python=no --with-zlib=no --enable-static=yes --enable-shared=yes && make
+	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && make
 else
 $(LIBXML2): 
-	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --with-zlib=no --enable-static=yes --enable-shared=yes && make
+	cd $(LIBXML2PATH) && ./autogen.sh && ./configure --with-zlib=no --enable-static=yes --enable-shared=no && make
 
 libxml2: paths $(LIBXML2)
 endif
@@ -652,7 +652,7 @@ paths-test:
 	@mkdir -p exe-test
 
 compiler: $(LIBXML2) $(OBJS)
-	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target)$(EXESUFFIX) $(LIBS)
+	$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target)$(EXESUFFIX) $(LIBS)
 	
 objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 	@mkdir -p $(dir $@)
