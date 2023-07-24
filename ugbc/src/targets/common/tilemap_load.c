@@ -125,8 +125,8 @@ Variable * tilemap_load( Environment * _environment, char * _filename, char * _a
             *(separator+1) = 0;
             strcpy( tilesetFileNameWithPath, tilesetFileName );
         }
-        lookedFilename = resource_load_asserts( _environment, tilesetFileNameWithPath );
         strcat( tilesetFileNameWithPath, tileset->source );
+        lookedFilename = resource_load_asserts( _environment, tilesetFileNameWithPath );
         variable_direct_assign( _environment, final->tileset->name, tileset_load( _environment, lookedFilename, NULL, _mode, _flags, _transparent_color, _background_color, _bank_expansion )->name );
         final->tileset->firstGid = tileset->firstgid;
         tileset = tileset->next;
