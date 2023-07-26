@@ -2630,6 +2630,8 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
             outhead1("%s_1b:", label);
             outline1("LDA %s", _source);
             outline1("CMP %s", _destination );
+            outline1("BCC %s", label);
+            outline1("BCS %s_0", label);
             if ( _equal ) {
                 outline1("BEQ %s", label);
             }
