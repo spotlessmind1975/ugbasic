@@ -230,8 +230,6 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
         }
     }
 
-    stbi_image_free(source);
-
     bufferSize += 3;
 
     adiline1("LIS2:%x", bufferSize );
@@ -250,6 +248,11 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
         ptr += result[i]->size;
     }
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
+    final->originalBitmap = source;
+    final->originalWidth = width;
+    final->originalHeight = height;
+    final->originalDepth = depth;
+    final->originalColors = palette_extract( _environment, final->originalBitmap, final->originalWidth, final->originalHeight, final->originalDepth, _flags, final->originalPalette );
     final->frameWidth = tileset->tilewidth;
     final->frameHeight = tileset->tileheight;
     final->firstGid = tileset->firstgid;
@@ -259,6 +262,8 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
     for(i=0; i<realFramesCount; ++i ) {
         variable_temporary_remove( _environment, result[i]->name );
     }
+
+    // stbi_image_free(source);
 
     if ( _bank_expansion && _environment->expansionBanks ) {
 

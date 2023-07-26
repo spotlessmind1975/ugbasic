@@ -1341,7 +1341,6 @@ void vic2_sprite_expand_vertical( Environment * _environment, char * _sprite ) {
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
     deploy( sprite, src_hw_vic2_sprites_asm );
-    
     outline1("LDY %s", sprite->realName );
     outline0("JSR SPRITEEXPAND" );
 
@@ -1382,6 +1381,8 @@ void vic2_sprite_compress_horizontal( Environment * _environment, char * _sprite
 
 void vic2_sprite_multicolor( Environment * _environment, char * _sprite ) {
 
+    _environment->bitmaskNeeded = 1;
+
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
     deploy( sprite, src_hw_vic2_sprites_asm );
@@ -1393,6 +1394,8 @@ void vic2_sprite_multicolor( Environment * _environment, char * _sprite ) {
 
 void vic2_sprite_monocolor( Environment * _environment, char * _sprite ) {
 
+    _environment->bitmaskNeeded = 1;
+
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
     deploy( sprite, src_hw_vic2_sprites_asm );
@@ -1403,6 +1406,8 @@ void vic2_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void vic2_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+    _environment->bitmaskNeeded = 1;
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
@@ -2184,7 +2189,9 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */ );
+    int colorUsed = vic2_palette_extract( _environment, _source, _width, _height, _depth, _flags, &palette[0] );
+
+//    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */ );
 
     if ( ! _color ) {
 
@@ -2205,31 +2212,31 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
     int i, j, k;
 
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-            if (distance < minDistance) {
-                // printf(" candidated...\n" );
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-    }
+    // for( i=0; i<colorUsed; ++i ) {
+    //     int minDistance = 0xffff;
+    //     int colorIndex = 0;
+    //     for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+    //         int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+    //         // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+    //         if (distance < minDistance) {
+    //             // printf(" candidated...\n" );
+    //             for( k=0; k<i; ++k ) {
+    //                 if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+    //                     // printf(" ...used!\n" );
+    //                     break;
+    //                 }
+    //             }
+    //             if ( k>=i ) {
+    //                 // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+    //                 minDistance = distance;
+    //                 colorIndex = j;
+    //             }
+    //         }
+    //     }
+    //     palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+    //     strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+    //     // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+    // }
 
     if ( _flags & SPRITE_FLAG_MULTICOLOR ) {
 
@@ -2351,14 +2358,34 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
             } else {
 
                 if ( ! _color ) {
-                    for( i=0; i<colorUsed; ++i ) {
-                        // printf( "%d) %2.2x%2.2x%2.2x == %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue, rgb.red, rgb.green, rgb.blue );
-                        if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
-                            break;
+                    int minDistance = 0xffff;
+                    RGBi * color = NULL;
+                    int i = 0;
+                    for( int k=0; k<colorUsed; ++k ) {
+                        int distance = rgbi_distance( &palette[k], &rgb );
+                        if ( distance < minDistance ) {
+                            minDistance = distance;
+                            color = &palette[k];
+                            i = k;
                         }
                     }
+                    // for( i=0; i<colorUsed; ++i ) {
+                    //     // printf( "%d) %2.2x%2.2x%2.2x == %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue, rgb.red, rgb.green, rgb.blue );
+                    //     if ( rgbi_equals_rgba( &palette[i], color ) ) {
+                    //         break;
+                    //     }
+                    // }
                 } else {
-                    if ( rgbi_equals_rgba( _color, &rgb ) ) {
+                    int minDistance = 0xffff;
+                    RGBi * color = NULL;
+                    for( int k=0; k<colorUsed; ++k ) {
+                        int distance = rgbi_distance( &palette[k], &rgb );
+                        if ( distance < minDistance ) {
+                            minDistance = distance;
+                            color = &palette[k];
+                        }
+                    }
+                    if ( rgbi_equals_rgba( _color, color ) ) {
                         i = 1;
                     } else {
                         i = 0;
@@ -2399,12 +2426,12 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
             }
 
-            _source += 3;
+            _source += _depth;
 
         }
 
         // printf("\n");
-        _source += 3 * ( _width - image_x );
+        _source += _depth * ( _width - image_x );
 
         // printf("\n" );
 
@@ -2819,6 +2846,20 @@ Variable * vic2_get_raster_line( Environment * _environment ) {
 }
 
 void vic2_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
+
+}
+
+int vic2_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette ) {
+
+    int paletteColorCount = rgbi_extract_palette(_environment, _data, _width, _height, _depth, _palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    memcpy( _palette, palette_match( _palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) ), paletteColorCount * sizeof( RGBi ) );
+
+    int uniquePaletteCount = 0;
+
+    memcpy( _palette, palette_remove_duplicates( _palette, paletteColorCount, &uniquePaletteCount ), paletteColorCount * sizeof( RGBi ) );
+
+    return uniquePaletteCount;
 
 }
 

@@ -2666,4 +2666,18 @@ void ted_slice_image( Environment * _environment, char * _image, char * _frame, 
 
 }
 
+int ted_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RBG * _palette ) {
+
+    int paletteColorCount = rgbi_extract_palette(_environment, _data, _width, _height, _depth, _palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    memcpy( _palette, palette_match( _palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) ), paletteColorCount * sizeof( RGBi ) );
+
+    int uniquePaletteCount = 0;
+
+    memcpy( _palette, palette_remove_duplicates( _palette, paletteColorCount, &uniquePaletteCount ), paletteColorCount * sizeof( RGBi ) );
+
+    return uniquePaletteCount;
+
+}
+
 #endif

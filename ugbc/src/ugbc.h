@@ -2400,6 +2400,7 @@ typedef struct _Environment {
 #define CRITICAL_DECLARE_PROC_NESTED_UNSUPPORTED( v ) CRITICAL2("E209 - cannot nest DECLARE PROC/FUNCTION inside a PROC", v );
 #define CRITICAL_INVALID_INPUT_RATE( v ) CRITICAL2i("E210 - invalid value for INPUT/KEYBOARD RATE", v );
 #define CRITICAL_INVALID_INPUT_DELAY( v ) CRITICAL2i("E211 - invalid value for INPUT/KEYBOARD DELAY", v );
+#define CRITICAL_IMAGE_EXTRACT_ON_NOT_IMAGES( v )  CRITICAL2("E212 - calling IMAGE on something that is not IMAGES / SEQUENCE", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3478,6 +3479,8 @@ Variable *              image_load( Environment * _environment, char * _filename
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
 void                    image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
+Variable *              image_extract( Environment * _environment, char * _images, int _frame, int * _sequence );
+char *                  image_extract_subimage( Environment * _environment, char * _source, int _width, int _height, int _frame_width, int _frame_height, int _x, int _y, int _depth );
 Variable *              image_get_height( Environment * _environment, char * _image );
 Variable *              image_get_width( Environment * _environment, char * _image );
 char *                  image_enlarge_right( Environment * _environment, char * _source, int _width, int _height, int _delta );
@@ -3579,6 +3582,7 @@ void                    out_var( Environment * _environment, char * _port, char 
 // *P*
 //----------------------------------------------------------------------------
 
+int                     palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 RGBi *                  palette_match( RGBi * _source, int _source_size, RGBi * _system, int _system_size );
 RGBi *                  palette_match_hardware_index( RGBi * _source, int _source_size, RGBi * _system, int _system_size );
 RGBi *                  palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, int _palette2_size, int * _size );

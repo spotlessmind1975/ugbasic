@@ -161,6 +161,8 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         CRITICAL_IMAGES_LOAD_INVALID_FRAME_HEIGHT( _frame_height );
     }
 
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_STANDARD );
+
     int wc = ( width / _frame_width );
     int hc = ( height / _frame_height );
     int a = 1;
@@ -226,6 +228,11 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         ptr += result[i]->size;
     }
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
+    final->originalBitmap = source;
+    final->originalWidth = width;
+    final->originalHeight = height;
+    final->originalDepth = depth;
+    final->originalColors = palette_extract( _environment, final->originalBitmap, final->originalWidth, final->originalHeight, final->originalDepth, _flags, final->originalPalette );
     final->frameWidth = _frame_width;
     final->frameHeight = _frame_height;
     final->frameSize = result[0]->size;
@@ -235,7 +242,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         variable_temporary_remove( _environment, result[i]->name );
     }
 
-    stbi_image_free(source);
+    // stbi_image_free(source);
 
     if ( _bank_expansion && _environment->expansionBanks ) {
 

@@ -7025,6 +7025,26 @@ char * image_enlarge_bottom( Environment * _environment, char * _source, int _wi
 
 }
 
+char * image_extract_subimage( Environment * _environment, char * _source, int _width, int _height, int _frame_width, int _frame_height, int _x, int _y, int _depth ) {
+
+    char * destination = malloc( _frame_width * _frame_height * _depth );
+    memset( destination, 0, _frame_width * _frame_height * _depth );
+
+    char * source = _source + _frame_height * _width * _y * _depth + _frame_width * _x * _depth;
+
+    char * originalDestination = destination;
+
+    while( _frame_height ) {
+        memcpy( destination, source, _frame_width * _depth );
+        source += _width * _depth;
+        destination += _frame_width * _depth;
+        --_frame_height;
+    }
+ 
+    return originalDestination;
+
+}
+
 int rgbi_equals_rgb( RGBi * _first, RGBi * _second ) {
     return _first->red == _second->red && _first->green == _second->green && _first->blue == _second->blue;
 }
@@ -7129,7 +7149,7 @@ int rgbi_extract_palette( Environment * _environment, unsigned char* _source, in
             }
             rgb.count = 0;
 
-            // printf("%2.2x%2.2x%2.2x %2.2x\n", rgb.red, rgb.blue, rgb.green, rgb.alpha );
+            // printf("%2.2x%2.2x%2.2x%2.2x ", rgb.red, rgb.blue, rgb.green, rgb.alpha );
 
             for (i = 0; i < usedPalette; ++i) {
                 if (rgbi_equals_rgba( &_palette[i], &rgb )) {
@@ -7138,20 +7158,23 @@ int rgbi_extract_palette( Environment * _environment, unsigned char* _source, in
             }
 
             if (i >= usedPalette) {
-                // printf( "added\n");
-                // printf( "_palette[%d] vs %d\n", usedPalette, _palette_size);
+                //printf( "added\n");
+                //printf( "_palette[%d] vs %d\n", usedPalette, _palette_size);
                 rgbi_move( &rgb, &_palette[usedPalette] );
                 ++usedPalette;
                 if (usedPalette >= (_palette_size-1)) {
-                    // printf( " done!");
+                    //printf( " done!");
                     break;
                 }
+                //printf( "%2.2x", i );
             } else {
                 // printf( "increment (%2.2x)\n", _palette[i].alpha);
                 ++_palette[i].count;
+                //printf( "%2.2x", i );
             }
             source += _depth;
         }
+        //printf("\n");
         if (usedPalette > (_palette_size-1)) {
             break;
         }
@@ -7563,21 +7586,30 @@ RGBi * palette_remove_duplicates( RGBi * _source, int _source_size, int * _uniqu
     for ( i=0; i<_source_size; ++i ) {
 
         if ( _source[i].hardwareIndex == 0xff ) {
+            // printf( "%d skipped\n", i );
             break;
         }
 
         for( j=0; j<*_unique_size; ++j ) {
 
             if ( rgbi_equals_rgba( &_source[i], &uniquePalette[j] ) ) {
+                // printf( "%d == %d\n", i, j );
+                // printf( "rgbi_equals_rgb(a, b) : \n");
+                // printf( " a.red (%2.2x) == b.red (%2.2x), a.green (%2.2x) == b.green (%2.2x), a.blue (%2.2x) == b.blue (%2.2x)\n\n",
+                //     _source[i].red, uniquePalette[j].red,
+                //     _source[i].green, uniquePalette[j].green,
+                //     _source[i].blue, uniquePalette[j].blue
+                //     );
                 break;
             }
 
         }
 
         if ( j >= *_unique_size ) {
+            // printf( "%d > %d\n", i, j );
             rgbi_move( &_source[i], &uniquePalette[*_unique_size]);
             ++*_unique_size;
-            if ( *_unique_size == _source_size ) {
+            if ( *_unique_size > _source_size ) {
                 break;
             }
         }

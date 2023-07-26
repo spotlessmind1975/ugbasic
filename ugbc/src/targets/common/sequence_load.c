@@ -215,6 +215,11 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
         }
     }
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
+    final->originalBitmap = source;
+    final->originalWidth = width;
+    final->originalHeight = height;
+    final->originalDepth = depth;
+    final->originalColors = palette_extract( _environment, final->originalBitmap, final->originalWidth, final->originalHeight, final->originalDepth, _flags, final->originalPalette );
     final->frameSize = result[0]->size;
     final->frameCount = wc;
 
@@ -222,7 +227,7 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
         variable_temporary_remove( _environment, result[i]->name );
     }
 
-    stbi_image_free(source);
+    // stbi_image_free(source);
 
     if ( _bank_expansion && _environment->expansionBanks ) {
 

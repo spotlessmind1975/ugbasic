@@ -3028,6 +3028,13 @@ exponential:
     | CSPRITE OP expr OP_COMMA expr sprite_flags CP {
         $$ = csprite_init( _environment, $3, $5, $6 )->name;
     }
+    | IMAGE OP expr FRAME const_expr CP {
+        $$ = image_extract( _environment, $3, $5, NULL )->name;
+    }
+    | IMAGE OP expr SEQUENCE const_expr FRAME const_expr CP {
+        int sequence = $5;
+        $$ = image_extract( _environment, $3, $7, &sequence )->name;
+    }
     | RASTER LINE {
         $$ = get_raster_line( _environment )->name;
     }
