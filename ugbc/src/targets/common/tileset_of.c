@@ -60,11 +60,16 @@ Variable * tileset_of_vars( Environment * _environment, char * _tilemap ) {
     Variable * tilemap = NULL;
 
     tilemap = variable_retrieve( _environment, _tilemap );
+    
     if ( tilemap->type != VT_TILEMAP ) {
         CRITICAL_TILESET_OF_INVALID_TILEMAP( _tilemap );
     }
 
     Variable * tileset = variable_retrieve( _environment, tilemap->tileset->name );
+    
+    if ( tilemap->originalTilemap ) {
+        tileset->originalTileset = tilemap->originalTilemap->tilesets;
+    }
 
     return tileset;
 
