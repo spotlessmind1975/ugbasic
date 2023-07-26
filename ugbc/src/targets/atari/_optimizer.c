@@ -467,44 +467,44 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 // 6: 000DD5r 1  AD rr rr     	LDA _printScore_Ttmp16
 // 7: 000DD8r 1  85 A8        	STA YCURSYS
 
-	if( 
-            po_buf_match( buf[0], " LDA *", v1 ) && 
-            po_buf_match( buf[1], " STA *", v2 ) &&
-            po_buf_match( buf[2], " LDA *", v3 ) && 
-            po_buf_match( buf[3], " STA *", v4 ) &&
-            ( strcmp( v2->str, v3->str ) == 0 ) &&
-            ( strstr( v2->str,"_Ttmp" ) != NULL )
-    ) {
+	// if( 
+    //         po_buf_match( buf[0], " LDA *", v1 ) && 
+    //         po_buf_match( buf[1], " STA *", v2 ) &&
+    //         po_buf_match( buf[2], " LDA *", v3 ) && 
+    //         po_buf_match( buf[3], " STA *", v4 ) &&
+    //         ( strcmp( v2->str, v3->str ) == 0 ) &&
+    //         ( strstr( v2->str,"_Ttmp" ) != NULL )
+    // ) {
 
-            // printf( "*******************\n" );
-            // printf( "v2 = %s, v3 = %s\n", v2->str, v3->str );
-            // printf( "-------------------\n" );
-            // printf(" %s\n", buf[0]->str );
-            // printf(" %s\n", buf[1]->str );
-            // printf(" %s\n", buf[2]->str );
-            // printf(" %s\n", buf[3]->str );
-            // printf(" -> \n" );
-            // printf(" %s\n", buf[0]->str );
-            // printf(" %s\n", buf[3]->str );
-            // printf( "-------------------\n" );
+    //         // printf( "*******************\n" );
+    //         // printf( "v2 = %s, v3 = %s\n", v2->str, v3->str );
+    //         // printf( "-------------------\n" );
+    //         // printf(" %s\n", buf[0]->str );
+    //         // printf(" %s\n", buf[1]->str );
+    //         // printf(" %s\n", buf[2]->str );
+    //         // printf(" %s\n", buf[3]->str );
+    //         // printf(" -> \n" );
+    //         // printf(" %s\n", buf[0]->str );
+    //         // printf(" %s\n", buf[3]->str );
+    //         // printf( "-------------------\n" );
 
-		optim( buf[1], RULE "(LDA x, STA v1, LDA v1, STA v2)->(..., LDA x, STA v2)", NULL );
-		optim( buf[2], RULE "(LDA x, STA v1, LDA v1, STA v2)->(..., LDA x, STA v2)", NULL );
-        ++_environment->removedAssemblyLines;
-        ++_environment->removedAssemblyLines;
+	// 	optim( buf[1], RULE "(LDA x, STA v1, LDA v1, STA v2)->(..., LDA x, STA v2)", NULL );
+	// 	optim( buf[2], RULE "(LDA x, STA v1, LDA v1, STA v2)->(..., LDA x, STA v2)", NULL );
+    //     ++_environment->removedAssemblyLines;
+    //     ++_environment->removedAssemblyLines;
 
-            // printf( "-------------------\n" );
-            // printf(" %s\n", buf[0]->str );
-            // printf(" %s\n", buf[1]->str );
-            // printf(" %s\n", buf[2]->str );
-            // printf(" %s\n", buf[3]->str );
-            // printf(" -> \n" );
-            // printf(" %s\n", buf[0]->str );
-            // printf(" %s\n", buf[3]->str );
-            // printf( "-------------------\n" );
-            // printf( "*******************\n\n" );
+    //         // printf( "-------------------\n" );
+    //         // printf(" %s\n", buf[0]->str );
+    //         // printf(" %s\n", buf[1]->str );
+    //         // printf(" %s\n", buf[2]->str );
+    //         // printf(" %s\n", buf[3]->str );
+    //         // printf(" -> \n" );
+    //         // printf(" %s\n", buf[0]->str );
+    //         // printf(" %s\n", buf[3]->str );
+    //         // printf( "-------------------\n" );
+    //         // printf( "*******************\n\n" );
 
-    }
+    // }
 
 	// if( 
     //         po_buf_match( buf[0], " LDA *", v1 ) && 
