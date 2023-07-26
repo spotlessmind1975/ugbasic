@@ -1342,7 +1342,7 @@ void vic2_sprite_expand_vertical( Environment * _environment, char * _sprite ) {
 
     deploy( sprite, src_hw_vic2_sprites_asm );
     outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITEEXPAND" );
+    outline0("JSR SPRITEEXPANDY" );
 
 }
 
@@ -1353,7 +1353,7 @@ void vic2_sprite_expand_horizontal( Environment * _environment, char * _sprite )
     deploy( sprite, src_hw_vic2_sprites_asm );
     
     outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITEEXPAND" );
+    outline0("JSR SPRITEEXPANDX" );
 
 }
 
@@ -1364,7 +1364,7 @@ void vic2_sprite_compress_vertical( Environment * _environment, char * _sprite )
     deploy( sprite, src_hw_vic2_sprites_asm );
     
     outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITECOMPRESS" );
+    outline0("JSR SPRITECOMPRESSY" );
 
 }
 
@@ -1375,7 +1375,7 @@ void vic2_sprite_compress_horizontal( Environment * _environment, char * _sprite
     deploy( sprite, src_hw_vic2_sprites_asm );
     
     outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITECOMPRESS" );
+    outline0("JSR SPRITECOMPRESSX" );
 
 }
 
