@@ -3430,6 +3430,7 @@ void                    exit_procedure( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
+int                     find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
 void                    font_descriptors_init( Environment * _environment, int _embedded_present );
 int                     frames( Environment * _environment, char * _image );
 Variable *              fp_cos( Environment * _environment, char * _angle );

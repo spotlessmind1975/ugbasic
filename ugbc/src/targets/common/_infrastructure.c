@@ -8078,6 +8078,31 @@ Variable * calculate_frame_by_type( Environment * _environment, TsxTileset * _ti
 
 }
 
+int find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description ) {
+
+    if ( !_tileset ) {
+        CRITICAL_PUT_IMAGE_NAMED_TILE_MISSING_TILESET( _images );
+    }
+
+    if ( !_tileset->tiles ) {
+        CRITICAL_PUT_IMAGE_NAMED_TILE_MISSING_TILES_FROM_TILESET( _description );
+    }
+
+    TsxTile * collectedTiles = NULL;
+    TsxTile * actual = _tileset->tiles;
+
+    while( actual ) {
+        
+        if ( strcmp( actual->type, _description ) == 0 ) {
+            return actual->id;
+        }
+        actual = actual->next;
+    }
+
+    CRITICAL_PUT_IMAGE_NAMED_TILE_NOT_FOUND( _description );
+
+}
+
 Variable * variable_direct_assign( Environment * _environment, char * _var, char * _expr ) {
 
     Variable * expr = variable_retrieve( _environment, _expr );
@@ -8114,6 +8139,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     var->originalDepth = expr->originalDepth;
     var->originalColors = expr->originalColors;
     var->originalTileset = expr->originalTileset;
+    var->originalTilemap = expr->originalTilemap;
     var->tileset = expr->tileset;
     var->bankAssigned = expr->bankAssigned;
     var->residentAssigned = expr->residentAssigned;
