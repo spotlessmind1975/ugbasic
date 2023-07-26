@@ -2400,7 +2400,9 @@ typedef struct _Environment {
 #define CRITICAL_DECLARE_PROC_NESTED_UNSUPPORTED( v ) CRITICAL2("E209 - cannot nest DECLARE PROC/FUNCTION inside a PROC", v );
 #define CRITICAL_INVALID_INPUT_RATE( v ) CRITICAL2i("E210 - invalid value for INPUT/KEYBOARD RATE", v );
 #define CRITICAL_INVALID_INPUT_DELAY( v ) CRITICAL2i("E211 - invalid value for INPUT/KEYBOARD DELAY", v );
-#define CRITICAL_IMAGE_EXTRACT_ON_NOT_IMAGES( v )  CRITICAL2("E212 - calling IMAGE on something that is not IMAGES / SEQUENCE", v );
+#define CRITICAL_IMAGE_EXTRACT_ON_NOT_IMAGES( v ) CRITICAL2("E212 - calling IMAGE on something that is not IMAGES / SEQUENCE", v );
+#define CRITICAL_TILE_ID_ON_NOT_TILESET( v ) CRITICAL2("E213 - using TILE ID on something that is not a TILESET", v ); 
+#define CRITICAL_TILE_ID_MISSING_ORIGINAL_TILESET( v ) CRITICAL2("E214 - missing Tiled informations", v ); 
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3736,6 +3738,7 @@ void                    text_vscroll( Environment * _environment );
 void                    text_vscroll_screen( Environment * _environment, int _direction );
 void                    textmap_at( Environment * _environment, int _address );
 void                    textmap_at_var( Environment * _environment, char * _address );
+Variable *              tilemap_at( Environment * _environment, char * _tilemap, char * _x, char * _y );
 void                    tilemap_disable( Environment * _environment );
 void                    tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 Variable *              tile_at( Environment * _environment, char * _x, char * _y );
