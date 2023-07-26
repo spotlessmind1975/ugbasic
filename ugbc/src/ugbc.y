@@ -90,7 +90,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
-%token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED
+%token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -852,6 +852,10 @@ const_factor:
           } else {
               $$ = c->value;
           }
+      }
+      | TILE ID OP expr OP_COMMA Identifier CP {
+        Variable * tileset = variable_retrieve( _environment, $4 );
+        $$ = find_frame_by_type( _environment, tileset->originalTileset, $4, $6 );
       }
       | const_color_enumeration
       | const_key_scancode_definition
@@ -2948,6 +2952,9 @@ exponential:
     | IMAGE HEIGHT OP expr CP {
         $$ = image_get_height( _environment, $4 )->name;
     }
+    | TILEMAP Identifier AT OP expr OP_COMMA expr CP {
+        $$ = tilemap_at( _environment, $2, $5, $7 )->name;
+    }
     | VOLUME MIN {
         $$ = variable_temporary( _environment, VT_WORD, "(volume min)" )->name;
         variable_store( _environment, $$, 0 );
@@ -3739,7 +3746,7 @@ sprite_definition:
     direct_integer {
         ((Environment *)_environment)->currentSpriteNumber = $1;
     } sprite_definition_simple
-  | expr {
+  | Identifier {
         ((Environment *)_environment)->currentSprite = strdup($1);
     } sprite_definition_expression;
 
@@ -4099,11 +4106,11 @@ ellipse_definition:
     ellipse_definition_expression;
 
 get_definition_expression:
-      IMAGE Identifier FROM optional_x OP_COMMA optional_y  {
+      IMAGE expr FROM optional_x OP_COMMA optional_y  {
         get_image( _environment, $2, $4, $6, 1 );
         gr_locate( _environment, $4, $6 );
     }
-    | BITMAP Identifier FROM optional_x OP_COMMA optional_y  {
+    | BITMAP expr FROM optional_x OP_COMMA optional_y  {
         get_image( _environment, $2, $4, $6, 0 );
         gr_locate( _environment, $4, $6 );
     };
@@ -4234,19 +4241,19 @@ put_definition_expression:
     | TILE expr AT optional_x OP_COMMA optional_y {
         put_tile( _environment, $2, $4, $6, NULL, NULL );
     }
-    | TILEMAP expr put_image_flags {
+    | TILEMAP Identifier put_image_flags {
         $3 = $3 | FLAG_WITH_PALETTE;
         put_tilemap( _environment, $2, $3, NULL, NULL, NULL );
     }
-    | TILEMAP expr LAYER expr put_image_flags {
+    | TILEMAP Identifier LAYER expr put_image_flags {
         $5 = $5 | FLAG_WITH_PALETTE;
         put_tilemap( _environment, $2, $5, NULL, NULL, $4 );
     }
-    | TILEMAP expr FROM expr OP_COMMA expr put_image_flags {
+    | TILEMAP Identifier FROM expr OP_COMMA expr put_image_flags {
         $7 = $7 | FLAG_WITH_PALETTE;
         put_tilemap( _environment, $2, $7, $4, $6, NULL );
     }
-    | TILEMAP expr LAYER expr FROM expr OP_COMMA expr put_image_flags {
+    | TILEMAP Identifier LAYER expr FROM expr OP_COMMA expr put_image_flags {
         $9 = $9 | FLAG_WITH_PALETTE;
         put_tilemap( _environment, $2, $9, $6, $8, $4 );
     }
@@ -4313,10 +4320,10 @@ blit_operand :
     ;
 
 blit_sources :
-    expr {
+    Identifier {
         ((struct _Environment *)_environment)->blit.sources[((struct _Environment *)_environment)->blit.sourceCount++] = strdup( $1 );
     }
-    | expr {
+    | Identifier {
         ((struct _Environment *)_environment)->blit.sources[((struct _Environment *)_environment)->blit.sourceCount++] = strdup( $1 );
     } OP_COMMA blit_sources
     ;
