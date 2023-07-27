@@ -106,6 +106,8 @@ Variable * image_extract( Environment * _environment, char * _images, int _frame
     result->originalHeight = images->frameHeight;
     result->originalDepth = images->originalDepth;
     result->originalColors = palette_extract( _environment, result->originalBitmap, result->originalWidth, result->originalHeight, result->originalDepth, 0 /* flags */, result->originalPalette );
+    
+    result->readonly = 1;
 
     // printf( "After image extract = %d colors\n", result->originalColors );
 
