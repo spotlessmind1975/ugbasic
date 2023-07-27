@@ -78,10 +78,11 @@ Variable * tilemap_at( Environment * _environment, char * _tilemap, char * _x, c
     Variable * width = variable_temporary( _environment, VT_BYTE, "(height)" );
     variable_store( _environment, width->name, tilemap->mapWidth );
 
-    x = variable_retrieve_or_define( _environment, _x, VT_WORD, 0 );
-    y = variable_retrieve_or_define( _environment, _y, VT_WORD, 0 );
+    x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
+    y = variable_retrieve_or_define( _environment, _y, VT_BYTE, 0 );
 
-    Variable * offset = variable_add( _environment, variable_mul( _environment, width->name, y->name )->name, x->name );
+    Variable * mul = variable_mul( _environment, width->name, y->name );
+    Variable * offset = variable_add( _environment, mul->name, x->name );
 
     cpu_move_8bit_indirect2_16bit( _environment, tilemap->realName, offset->realName, frame->realName );
 
