@@ -96,8 +96,9 @@
 #define TILEMAP_MODE_GRAPHIC1       1           // Graphics I Mode
 #define BITMAP_MODE_GRAPHIC2        2           // Graphics II Mode
 #define BITMAP_MODE_MULTICOLOR      3           // Multicolor Mode
+#define BITMAP_MODE_STANDARD        BITMAP_MODE_GRAPHIC2
 
-#define BITMAP_MODE_DEFAULT     BITMAP_MODE_GRAPHIC2
+#define BITMAP_MODE_DEFAULT         BITMAP_MODE_GRAPHIC2
 
 #define SPRITE_COUNT                32
 #define SPRITE_WIDTH                8
