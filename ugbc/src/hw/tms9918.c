@@ -1723,33 +1723,43 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */);
+    int colorUsed = tms9918_palette_extract( _environment, _source, _width, _height, _depth, 0 /* flags */, &palette[0] );
+
+    if ( ! _color ) {
+
+        if (colorUsed > 2) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+
+    }
+
+    // int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */);
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
 
-    int i, j, k;
+    // int i, j, k;
 
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            if (distance < minDistance) {
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-    }
+    // for( i=0; i<colorUsed; ++i ) {
+    //     int minDistance = 0xffff;
+    //     int colorIndex = 0;
+    //     for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+    //         int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+    //         if (distance < minDistance) {
+    //             for( k=0; k<i; ++k ) {
+    //                 if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+    //                     break;
+    //                 }
+    //             }
+    //             if ( k>=i ) {
+    //                 minDistance = distance;
+    //                 colorIndex = j;
+    //             }
+    //         }
+    //     }
+    //     palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+    //     strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+    // }
 
     memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
@@ -1767,16 +1777,18 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
     // Position of the pixel, in terms of offset and bitmask
     int offset, bitmask;
 
+    int i = 0;
+
     // Color of the pixel to convert
     RGBi rgb;
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _height; ++image_y) {
-        if ( image_y == 8 ) {
+        if ( image_y == 16 ) {
             break;
         }
         for (image_x = 0; image_x < _width; ++image_x) {
-            if ( image_x == 8 ) {
+            if ( image_x == 16 ) {
                 break;
             }
 
@@ -1795,37 +1807,72 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
             offset = (image_y * ( _width>>3 ) ) + (image_x >> 3);
-
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-
-            if ( rgbi_equals_rgba( _color, &rgb ) ) {
-                i = 1;
-            } else {
+            
+            if ( rgb.alpha < 255 ) {
                 i = 0;
+            } else {
+
+                if ( ! _color ) {
+                    int minDistance = 0xffff;
+                    RGBi * color = NULL;
+                    int i = 0;
+                    for( int k=0; k<colorUsed; ++k ) {
+                        int distance = rgbi_distance( &palette[k], &rgb );
+                        if ( distance < minDistance ) {
+                            minDistance = distance;
+                            color = &palette[k];
+                            i = k;
+                        }
+                    }
+                    // for( i=0; i<colorUsed; ++i ) {
+                    //     // printf( "%d) %2.2x%2.2x%2.2x == %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue, rgb.red, rgb.green, rgb.blue );
+                    //     if ( rgbi_equals_rgba( &palette[i], color ) ) {
+                    //         break;
+                    //     }
+                    // }
+                } else {
+                    int minDistance = 0xffff;
+                    RGBi * color = NULL;
+                    for( int k=0; k<colorUsed; ++k ) {
+                        int distance = rgbi_distance( &palette[k], &rgb );
+                        if ( distance < minDistance ) {
+                            minDistance = distance;
+                            color = &palette[k];
+                        }
+                    }
+                    if ( rgbi_equals_rgba( _color, color ) ) {
+                        i = 1;
+                    } else {
+                        i = 0;
+                    }
+                }
+
             }
 
-            colorIndex = i;
+            int colorIndex = i;
 
             if ( _environment->debugImageLoad ) {
-                printf( "%1.1x", ( palette[colorIndex].index & 0x0f ) );
+                printf( "%1.1x", colorIndex == 0 ? 0 : _color->index );
             }
 
             bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
             *(buffer + 2 + offset) |= bitmask;
 
-            _source += 3;
+            _source += _depth;
 
         }
 
-        _source += 3 * ( _width - image_x );
+        _source += _depth * ( _width - image_x );
 
         if ( _environment->debugImageLoad ) {
             printf("\n" );
         }
     }
 
-    *(buffer + 2 + ( ( _width >> 3 ) * _height )) = _color->index | ( _color->index << 4 );
+    // printf("\n" );
+    // printf("\n" );
+
+    *(buffer + 2 + ( ( _width >> 3 ) * _height )) = 0 | ( _color->index << 4 );
 
     if ( _environment->debugImageLoad ) {
         printf("\n" );
@@ -1848,6 +1895,8 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
     
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
  
+    result->readonly = 1;
+
     return result;
 
 }
