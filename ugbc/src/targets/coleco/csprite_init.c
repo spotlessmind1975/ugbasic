@@ -81,8 +81,17 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
         cpu_inc( _environment, spriteCount->realName );
     }
 
-    cpu_store_8bit( _environment, index->realName, ( image->originalColors - 1 ) << 5 );
+    cpu_store_8bit( _environment, index->realName, ( image->originalColors - 1 ) << 4 );
+    
     cpu_math_add_8bit( _environment, index->realName, startIndex->realName, index->realName );
+
+    if ( _sprite ) {
+
+    } else {
+
+        variable_move_naked( _environment, spriteCount->name, "SPRITECOUNT" );
+
+    }
 
     return index;
 
