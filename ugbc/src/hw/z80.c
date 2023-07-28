@@ -535,6 +535,7 @@ void z80_less_than_8bit( Environment * _environment, char *_source, char *_desti
 
     } else {
 
+        outline0("; z80_less_than_8bit");
         outline1("LD A, (%s)", _destination);
         outline0("LD B, A");
         outline1("LD A, (%s)", _source);
@@ -1111,6 +1112,11 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
         outline0("XOR D" );
         outline1("JP M,%scmpgte2", label );
         outline0("SBC HL, DE" );
+        if ( _equal ) {
+            outline1("JR Z,%scmpgte3", label );
+        } else {
+            outline1("JR Z,%scmpgte1", label );
+        }
         outline1("JR NC,%scmpgte3", label );
         outhead1("%scmpgte1:", label ); 
         outline0("LD A, 0");
