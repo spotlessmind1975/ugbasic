@@ -69,6 +69,8 @@ SPRITEDATAFROMNMI2:
     LD DE, HL
     POP HL
     LD A, B
+    SLA A
+    SLA A
     CALL VDPOUTCHAR
 
     PUSH HL
@@ -78,14 +80,13 @@ SPRITEDATAFROMNMI2:
     SLA E
     SLA E
     SLA E
+    SLA E
+    SLA E
     ADD HL, DE
     LD DE, HL
     POP HL
-    INC HL
-    INC HL
-    INC HL
     PUSH B
-    LD B, 8
+    LD B, 32
 SPRITEDATAL1:
     LD A, (HL)
     CALL VDPOUTCHAR
@@ -107,25 +108,25 @@ SPRITEDATAL1:
     LD DE, HL
     POP HL
 
-    PUSH B
-    LD B, 8
+    ; PUSH B
+    ; LD B, 8
 SPRITEDATAL1C:
     LD A, (HL)
-    AND $F0
-    CP 0
-    JR Z, SPRITEDATAL1C2
-    SRA A
-    SRA A
-    SRA A
-    SRA A
     AND $0F
+    ; CP 0
+    ; JR Z, SPRITEDATAL1C2
+    ; SRA A
+    ; SRA A
+    ; SRA A
+    ; SRA A
+    ; AND $0F
     CALL VDPOUTCHAR
     JP SPRITEDATAL1C3
-SPRITEDATAL1C2:
-    INC HL
-    DJNZ SPRITEDATAL1C
+; SPRITEDATAL1C2:
+;     INC HL
+;     DJNZ SPRITEDATAL1C
 SPRITEDATAL1C3:
-    POP B
+    ; POP B
 
     JP SPRITEDATADONE
 
@@ -378,18 +379,17 @@ SPRITEDECODEB:
     LD A, 0
     LD C, A
     LD A, B
-    CP $20
+    CP $0F
     JR C, SPRITEDECODEB0
     LD A, B
-    AND $E0
-    SRL A
+    AND $F0
     SRL A
     SRL A
     SRL A
     SRL A
     LD C, A
     LD A, B
-    AND $1F
+    AND $0F
     LD B, A
 SPRITEDECODEB0:
     RET
