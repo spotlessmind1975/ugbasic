@@ -473,7 +473,7 @@ TMS9918STARTUPL1:
 
         LD A, VDP_R1
         LD E, A
-        LD A, $e0
+        LD A, $e2
         CALL VDPSETREG
 
         LD A, $C3
