@@ -659,9 +659,9 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             //  8 + = M1 x 1 = 8
             //      = M2 x 0 = 0
             //      = Reserved Bit (must be set to O)
-            //      = Selects Size 0 sprites (8x8 pixels)
+            //      = Selects Size 1 sprites (16x16 pixels)
             //      = Selects no magnification
-            WVDP_R1( 0xb0 );
+            WVDP_R1( 0xb2 );
 
             // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
             // range of its contents is from O-F. The contents of the register form the upper four bits of
@@ -695,7 +695,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             outline0("CALL TMS9918AUDCCHAR01");
             outline0("CALL TMS9918SPRITEINIT");
 
-            WVDP_R1( 0xf0 );
+            WVDP_R1( 0xf2 );
 
             break;
         case TILEMAP_MODE_GRAPHIC1:
@@ -717,9 +717,9 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             //  8 + = M1 x 0 = 0
             //      = M2 x 0 = 0
             //      = Reserved Bit (must be set to O)
-            //      = Selects Size 0 sprites (8x8 pixels)
+            //      = Selects Size 1 sprites (16x16 pixels)
             //      = Selects no magnification
-            WVDP_R1( 0xa0 );
+            WVDP_R1( 0xa2 );
 
             // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
             // range of its contents is from O-F. The contents of the register form the upper four bits of
@@ -773,7 +773,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             outline0("CALL TMS9918AUDCCHAR01");
             outline0("CALL TMS9918SPRITEINIT");
 
-            WVDP_R1( 0xe0 );
+            WVDP_R1( 0xe2 );
 
             break;
         case BITMAP_MODE_GRAPHIC2:
@@ -796,7 +796,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             //  8 + = M1 x 0 = 0
             //      = M2 x 0 = 0
             //      = Reserved Bit (must be set to O)
-            //      = Selects Size 0 sprites (8x8 pixels)
+            //      = Selects Size 1 sprites (16x16 pixels)
             //      = Selects no magnification
             WVDP_R1( 0x80 );
 
@@ -852,7 +852,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             outline0("CALL TMS9918AUDCCHAR23");
             outline0("CALL TMS9918SPRITEINIT");
 
-            WVDP_R1( 0xe0 );
+            WVDP_R1( 0xe2 );
 
             break;
     }
@@ -1763,7 +1763,7 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
     memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
-    int bufferSize = ( ( _width >> 3 ) * _height ) + 3;
+    int bufferSize = ( ( _width >> 3 ) * _height ) + 1;
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1806,7 +1806,10 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = (image_y * ( _width>>3 ) ) + (image_x >> 3);
+            offset = image_y * ( _width >> 4 ) + ( ( image_x & 0x07 ) >> 3 );
+            if ( image_x > 7 ) {
+                offset += 16;
+            }
             
             if ( rgb.alpha < 255 ) {
                 i = 0;
@@ -1872,7 +1875,7 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
     // printf("\n" );
     // printf("\n" );
 
-    *(buffer + 2 + ( ( _width >> 3 ) * _height )) = 0 | ( _color->index << 4 );
+    *(buffer + ( ( _width >> 3 ) * _height )) = _color->index;
 
     if ( _environment->debugImageLoad ) {
         printf("\n" );
