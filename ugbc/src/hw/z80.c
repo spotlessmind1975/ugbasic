@@ -644,7 +644,6 @@ void z80_math_add_8bit( Environment * _environment, char *_source, char *_destin
 
     outline0("LD B, 0" );
     outline1("LD A, (%s)", _source );
-    outline0("ADD A, B" );
     outline0("LD B, A" );
     outline1("LD A, (%s)", _destination );
     outline0("ADD A, B" );
