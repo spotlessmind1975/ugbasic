@@ -1799,10 +1799,12 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
         outline0("LD B, A");
         outline1("LD A, (%s)", _destination);
         outline0("CP B");
-        outline1("JR C, %s", label);
         if ( _equal ) {
+            outline1("JR Z, %s_ok", label);
+        } else {
             outline1("JR Z, %s", label);
         }
+        outline1("JR C, %s", label);
         outhead1("%s_ok:", label);
         outline0("LD A, $ff");
         if ( _other ) {
