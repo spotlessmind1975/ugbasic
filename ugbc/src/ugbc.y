@@ -150,6 +150,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> precision 
 %type <integer> asmio
 %type <integer> system
+%type <integer> padding_tile
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -4151,6 +4152,14 @@ slice_definition_expression:
 slice_definition:
     slice_definition_expression;
 
+padding_tile:
+    {
+        $$ = 0;
+    }
+    | PAD const_expr {
+        $$ = $2;
+    };
+
 put_definition_expression:
       IMAGE expr AT optional_x OP_COMMA optional_y put_image_flags {
         $7 = $7 | FLAG_WITH_PALETTE;
@@ -4244,21 +4253,21 @@ put_definition_expression:
     | TILE expr AT optional_x OP_COMMA optional_y {
         put_tile( _environment, $2, $4, $6, NULL, NULL );
     }
-    | TILEMAP Identifier put_image_flags {
-        $3 = $3 | FLAG_WITH_PALETTE;
-        put_tilemap( _environment, $2, $3, NULL, NULL, NULL );
+    | TILEMAP Identifier padding_tile put_image_flags {
+        $4 = $4 | FLAG_WITH_PALETTE;
+        put_tilemap( _environment, $2, $4, NULL, NULL, NULL, $3 );
     }
-    | TILEMAP Identifier LAYER expr put_image_flags {
-        $5 = $5 | FLAG_WITH_PALETTE;
-        put_tilemap( _environment, $2, $5, NULL, NULL, $4 );
+    | TILEMAP Identifier padding_tile LAYER expr put_image_flags {
+        $6 = $6 | FLAG_WITH_PALETTE;
+        put_tilemap( _environment, $2, $6, NULL, NULL, $5, $3 );
     }
-    | TILEMAP Identifier FROM expr OP_COMMA expr put_image_flags {
-        $7 = $7 | FLAG_WITH_PALETTE;
-        put_tilemap( _environment, $2, $7, $4, $6, NULL );
+    | TILEMAP Identifier padding_tile FROM expr OP_COMMA expr put_image_flags {
+        $8 = $8 | FLAG_WITH_PALETTE;
+        put_tilemap( _environment, $2, $8, $5, $7, NULL, $3 );
     }
-    | TILEMAP Identifier LAYER expr FROM expr OP_COMMA expr put_image_flags {
-        $9 = $9 | FLAG_WITH_PALETTE;
-        put_tilemap( _environment, $2, $9, $6, $8, $4 );
+    | TILEMAP Identifier padding_tile LAYER expr FROM expr OP_COMMA expr put_image_flags {
+        $10 = $10 | FLAG_WITH_PALETTE;
+        put_tilemap( _environment, $2, $10, $7, $9, $5, $3 );
     }
     ;
 
