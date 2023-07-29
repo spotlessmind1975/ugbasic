@@ -62,7 +62,7 @@ extern char DATATYPE_AS_STRING[][16];
 @target all
 </usermanual> */
 
-void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer ) {
+void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer, int _padding_tile ) {
 
     MAKE_LABEL
 
@@ -122,7 +122,7 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
     Variable * padding2 = variable_temporary( _environment, VT_BYTE, "(padding2)" );
     Variable * padFrame = variable_temporary( _environment, VT_BYTE, "(pad frame)" );
 
-    variable_store( _environment, padFrame->name, 1 );
+    variable_store( _environment, padFrame->name, _padding_tile );
 
     for( int layerIndex = 0; layerIndex < tilemap->mapLayers; ++layerIndex ) {
 
