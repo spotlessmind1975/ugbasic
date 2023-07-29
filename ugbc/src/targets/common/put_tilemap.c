@@ -119,6 +119,7 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
     Variable * fx = variable_temporary( _environment, VT_BYTE, "(fx)" );
     Variable * frame = variable_temporary( _environment, VT_BYTE, "(frame)" );
     Variable * padding = variable_temporary( _environment, VT_BYTE, "(padding)" );
+    Variable * padding2 = variable_temporary( _environment, VT_BYTE, "(padding2)" );
     Variable * padFrame = variable_temporary( _environment, VT_BYTE, "(pad frame)" );
 
     variable_store( _environment, padFrame->name, 1 );
@@ -139,9 +140,13 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
         char labelExitX[MAX_TEMPORARY_STORAGE]; sprintf( labelExitX, "%sex%4.4x", label, layerIndex );
         char labelExitX2[MAX_TEMPORARY_STORAGE]; sprintf( labelExitX2, "%sexx%4.4x", label, layerIndex );
         char labelPadding[MAX_TEMPORARY_STORAGE]; sprintf( labelPadding, "%spad%4.4x", label, layerIndex );
+        char labelPadding2[MAX_TEMPORARY_STORAGE]; sprintf( labelPadding2, "%spady%4.4x", label, layerIndex );
         char labelDonePutImage[MAX_TEMPORARY_STORAGE]; sprintf( labelDonePutImage, "%sdop%4.4x", label, layerIndex );
         char labelExitFrame[MAX_TEMPORARY_STORAGE]; sprintf( labelExitFrame, "%sfr%4.4x", label, layerIndex );
         char labelSkipFxCheck[MAX_TEMPORARY_STORAGE]; sprintf( labelSkipFxCheck, "%sskipx%4.4x", label, layerIndex );
+        char labelSkipIndexCheck[MAX_TEMPORARY_STORAGE]; sprintf( labelSkipIndexCheck, "%sskipy%4.4x", label, layerIndex );
+
+        variable_store( _environment, padding2->name, 0 );
 
         cpu_label( _environment, labelLoopY );
         variable_store( _environment, x->name, 0 );
@@ -157,6 +162,7 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
             cpu_inc( _environment, index->realName );
         }
         cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelPadding, 1 );
+        cpu_compare_and_branch_8bit_const(  _environment, padding2->realName, 1, labelPadding, 1 );
         cpu_compare_and_branch_8bit_const(  _environment, frame->realName, 0xff, labelExitFrame, 1 );
         put_image( _environment, tileset->name, x->name, y->name, frame->name, NULL,  _flags );
         cpu_jump( _environment, labelDonePutImage );
@@ -183,9 +189,14 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
         }
         variable_add_inplace( _environment, y->name, tileset->frameHeight );
         check = variable_less_than_const( _environment, index->name, tilemap->size, 0 );
-        cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x00, labelExit, 1 );
+        cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x00, labelPadding2, 1 );
+        cpu_label( _environment, labelSkipIndexCheck );
         check = variable_less_than_const( _environment, y->name, (_environment->screenHeight - tileset->frameHeight ), 0 );
         cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0xff, labelLoopY, 1 );
+        cpu_jump( _environment, labelExit );
+        cpu_label( _environment, labelPadding2 );
+        variable_store( _environment, padding2->name, 1 );
+        cpu_jump( _environment, labelSkipIndexCheck );
         cpu_label( _environment, labelExit );
 
         if ( _layer ) {
