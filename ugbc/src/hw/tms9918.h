@@ -56,6 +56,7 @@
 #define WVDP_RSPRITEP( v )      WVDP( VDP_RSPRITEP, v )
 #define WVDP_RCOLOR( v )        WVDP( VDP_RCOLOR, v )
 
+#define COLOR_TRANSPARENT			0x00
 #define COLOR_BLACK					0x01
 #define COLOR_WHITE					0x0f
 #define COLOR_RED					0x08
@@ -108,8 +109,10 @@
 #define SPRITE_X_MAX                264
 #define SPRITE_Y_MAX                200
 
-#define SCREEN_BORDER_X             -1
-#define SCREEN_BORDER_Y             -5
+#define SCREEN_SPRITE_RATIO         100
+
+#define SCREEN_BORDER_X             0
+#define SCREEN_BORDER_Y             0
 
 #define SPRITE_FLAG_MULTICOLOR          0x0010
 #define SPRITE_FLAG_MONOCOLOR           0x0000
