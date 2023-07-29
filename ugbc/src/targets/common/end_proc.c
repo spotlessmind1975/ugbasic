@@ -66,6 +66,10 @@ dalla chiamata, se la chiamata è stata fatta nel contesto di una espressione.
 </usermanual> */
 void end_procedure( Environment * _environment, char * _value ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
     if ( ! _environment->procedureName ) {
         CRITICAL_PROCEDURE_NOT_OPENED();
     }
