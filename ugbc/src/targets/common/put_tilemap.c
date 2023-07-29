@@ -121,7 +121,7 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
     Variable * padding = variable_temporary( _environment, VT_BYTE, "(padding)" );
     Variable * padFrame = variable_temporary( _environment, VT_BYTE, "(pad frame)" );
 
-    variable_store( _environment, padFrame->name, 0 );
+    variable_store( _environment, padFrame->name, 1 );
 
     for( int layerIndex = 0; layerIndex < tilemap->mapLayers; ++layerIndex ) {
 
@@ -149,7 +149,6 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
         variable_move( _environment, dx->name, fx->name );
         variable_store( _environment, padding->name, 0 );
         cpu_label( _environment, labelLoopX );
-        cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelPadding, 1 );
         if ( tilemap->size > 255 ) {
             cpu_move_8bit_indirect2_16bit( _environment, tilemap->realName, index->realName, frame->realName );
             cpu_inc_16bit( _environment, index->realName );
@@ -157,6 +156,7 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
             cpu_move_8bit_indirect2_8bit( _environment, tilemap->realName, index->realName, frame->realName );
             cpu_inc( _environment, index->realName );
         }
+        cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelPadding, 1 );
         cpu_compare_and_branch_8bit_const(  _environment, frame->realName, 0xff, labelExitFrame, 1 );
         put_image( _environment, tileset->name, x->name, y->name, frame->name, NULL,  _flags );
         cpu_jump( _environment, labelDonePutImage );
@@ -167,15 +167,15 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
         cpu_inc( _environment, fx->realName );
         variable_add_inplace( _environment, x->name, tileset->frameWidth );
         cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelSkipFxCheck, 1 );
-        Variable * check = variable_less_than_const( _environment, fx->name, tilemap->mapWidth, 1 );
+        Variable * check = variable_less_than_const( _environment, fx->name, tilemap->mapWidth, 0 );
         cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x0, labelExitX, 1 );
         cpu_label( _environment, labelSkipFxCheck );
-        check = variable_less_than_const( _environment, x->name, ( _environment->screenWidth - tileset->frameWidth), 1 );
+        check = variable_less_than_const( _environment, x->name, ( _environment->screenWidth - tileset->frameWidth), 0 );
         cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0xff, labelLoopX, 1 );
         cpu_jump( _environment, labelExitX2 );
         cpu_label( _environment, labelExitX );
         variable_store( _environment, padding->name, 1 );
-        cpu_jump( _environment, labelLoopX );
+        cpu_jump( _environment, labelSkipFxCheck );
         cpu_label( _environment, labelExitX2 );
         variable_store( _environment, padding->name, 0 );
         if ( deltaFrameRow ) {
