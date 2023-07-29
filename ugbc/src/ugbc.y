@@ -6822,15 +6822,15 @@ statement2:
   | parallel_optional PROCEDURE Identifier on_targets {
         ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->protothread = $1;
-        begin_procedure( _environment, $3 );
         ((struct _Environment *)_environment)->emptyProcedure = !$4;
+        begin_procedure( _environment, $3 );
   }
   | parallel_optional PROCEDURE Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->protothread = $1;
     } OSP parameters CSP on_targets {
-      begin_procedure( _environment, $3 );
       ((struct _Environment *)_environment)->emptyProcedure = !$8;
+      begin_procedure( _environment, $3 );
   }
   | SHARED parameters_expr {
       shared( _environment );
@@ -6839,16 +6839,16 @@ statement2:
       global( _environment );
   }
   | END PROC {
-      ((struct _Environment *)_environment)->emptyProcedure = 0;
       end_procedure( _environment, NULL );
+      ((struct _Environment *)_environment)->emptyProcedure = 0;
   }
   | END PROCEDURE {
-      ((struct _Environment *)_environment)->emptyProcedure = 0;
       end_procedure( _environment, NULL );
+      ((struct _Environment *)_environment)->emptyProcedure = 0;
   }
   | END PROC OSP expr CSP {
-      ((struct _Environment *)_environment)->emptyProcedure = 0;
       end_procedure( _environment, $4 );
+      ((struct _Environment *)_environment)->emptyProcedure = 0;
   }
   | FOR Identifier OP_ASSIGN expr TO expr STEP expr {
       begin_for_step( _environment, $2, $4, $6, $8 );  
