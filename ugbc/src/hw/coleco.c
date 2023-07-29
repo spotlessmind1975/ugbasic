@@ -103,10 +103,10 @@ void coleco_key_pressed( Environment * _environment, char *_scancode, char * _re
     cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
     cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
     cpu_store_8bit( _environment, _result, 0xff );
-    cpu_return( _environment );
+    cpu_jump( _environment, label );
     cpu_label( _environment, nokeyLabel );
     cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_return( _environment );
+    cpu_label( _environment, label );
 
 }
 
