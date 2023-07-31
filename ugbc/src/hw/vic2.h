@@ -108,7 +108,6 @@
 #define BITMAP_MODE_PRS            34
 
 #define BITMAP_MODE_DEFAULT     BITMAP_MODE_STANDARD
-#define BITMAP_MODE_STANDARD    BITMAP_MODE_DEFAULT
 
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        40 x 25 x 16
 #define TILEMAP_MODE_MULTICOLOR     1           // Multicolor Character Mode      40 x 25 x 16
