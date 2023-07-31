@@ -218,6 +218,7 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 #define BITMAP_MODE_GRAPHIC3        3           // "Mode 3" 160×200 pixels with 4 colors (2bpp) (this is not an official mode, but rather a side-effect of the hardware)
 
 #define BITMAP_MODE_DEFAULT     BITMAP_MODE_GRAPHIC2
+#define BITMAP_MODE_STANDARD    BITMAP_MODE_DEFAULT
 
 #define SPRITE_COUNT                0
 #define SPRITE_WIDTH                0
