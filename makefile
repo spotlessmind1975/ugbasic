@@ -104,10 +104,20 @@ endif
 #--- MAKEFILE's ENVIRONMENT
 #-----------------------------------------------------------------------------
 
+# Check if the compilation is for a BETA version or not.
+# In this case, the ".beta" suffix will be added to the executable.
+ifeq (,$(wildcard BETA))
+  BETASUFFIX =
+else
+  BETASUFFIX = .beta
+endif
+
 ifeq ($(OS),Windows_NT)
   EXESUFFIX = .exe
+  UGBCEXESUFFIX = $(BETASUFFIX).exe
 else
-  EXESUFFIX = 
+  EXESUFFIX =
+  UGBCEXESUFFIX = $(BETASUFFIX)
 endif
 
 ifndef debug
@@ -334,14 +344,14 @@ decb: paths $(DECB)
 toolchain.atari: cc65
 
 generated/atari/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.atari $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/atari/asm/,,$(@:.asm=.bas)) ../$@
+	@cd examples && ../ugbc/exe/ugbc.atari$(UGBCEXESUFFIX) $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/atari/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/atari/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@$(CL65) -Ln $(@:.xex=.lbl) --listing $(@:.xex=.lst) -g -o $@ --mapfile $(@:.xex=.map) -t atari -C $(subst /exe/,/cfg/,$(@:.xex=.cfg)) $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@rm -f $(@:.xex=.o)
 
 generated/atari/exeso/%.xex: $(subst /generated/exeso/,/examples/,$(@:.xex=.bas))
-	@cd examples && ../ugbc/exe/ugbc.atari $(OPTIONS) -o ../$@ -O xex $(subst generated/atari/exeso/,,$(@:.xex=.bas))
+	@cd examples && ../ugbc/exe/ugbc.atari$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O xex $(subst generated/atari/exeso/,,$(@:.xex=.bas))
 
 #------------------------------------------------ 
 # atarixl:
@@ -353,14 +363,14 @@ generated/atari/exeso/%.xex: $(subst /generated/exeso/,/examples/,$(@:.xex=.bas)
 toolchain.atarixl: cc65
 
 generated/atarixl/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.atarixl $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/atarixl/asm/,,$(@:.asm=.bas)) ../$@
+	@cd examples && ../ugbc/exe/ugbc.atarixl$(UGBCEXESUFFIX) $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/atarixl/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/atarixl/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@$(CL65) -Ln $(@:.xex=.lbl) --listing $(@:.xex=.lst) -g -o $@ --mapfile $(@:.xex=.map) -t atari -D __atarixl__ -C $(subst /exe/,/cfg/,$(@:.xex=.cfg)) $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@rm -f $(@:.xex=.o)
 
 generated/atarixl/exeso/%.xex: $(subst /generated/exeso/,/examples/,$(@:.xex=.bas))
-	@cd examples && ../ugbc/exe/ugbc.atarixl $(OPTIONS) -o ../$@ -O xex $(subst generated/atarixl/exeso/,,$(@:.xex=.bas))
+	@cd examples && ../ugbc/exe/ugbc.atarixl$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O xex $(subst generated/atarixl/exeso/,,$(@:.xex=.bas))
 
 #------------------------------------------------ 
 # c128:
@@ -370,14 +380,14 @@ generated/atarixl/exeso/%.xex: $(subst /generated/exeso/,/examples/,$(@:.xex=.ba
 toolchain.c128: cc65
 
 generated/c128/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.c128 $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c128/asm/,,$(@:.asm=.bas)) ../$@
+	cd examples && ../ugbc/exe/ugbc.c128$(UGBCEXESUFFIX) $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c128/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/c128/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t c128 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/c128/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	@cd examples && ../ugbc/exe/ugbc.c128 $(OPTIONS) -o ../$@ -O prg $(subst generated/c128/exeso/,,$(@:.prg=.bas))
+	cd examples && ../ugbc/exe/ugbc.c128$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/c128/exeso/,,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # c128z:
@@ -387,7 +397,7 @@ generated/c128/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
 toolchain.c128z: z88dk
 
 generated/c128z/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.c128z $(OPTIONS) $(subst generated/c128z/asm/,,$(@:.asm=.bas)) ../$@ 
+	@cd examples && ../ugbc/exe/ugbc.c128z$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/c128z/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/c128z/exe/%.prg:
 	@$(Z80ASM) -D__c128z__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.prg=.asm))
@@ -398,7 +408,7 @@ generated/c128z/exe/%.prg:
 	@rm -f $(@:.prg=.bin) $(@:.prg=_*.bin) $(@:.prg=.) $(@:.prg=_*.)
 
 generated/c128z/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	@cd examples && ../ugbc/exe/ugbc.c128z $(OPTIONS) -d -D ../$(@:.prg=.info) -o ../$@ -O prg $(subst generated/c128z/exeso/,,$(@:.prg=.bas))
+	@cd examples && ../ugbc/exe/ugbc.c128z$(UGBCEXESUFFIX) $(OPTIONS) -d -D ../$(@:.prg=.info) -o ../$@ -O prg $(subst generated/c128z/exeso/,,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # c64:
@@ -408,20 +418,20 @@ generated/c128z/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas)
 toolchain.c64: cc65
 
 generated/c64/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.c64 $(OPTIONS) -L ../$(@:.asm=.listing) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,,$(@:.asm=.bas)) ../$@
+	@cd examples && ../ugbc/exe/ugbc.c64$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.asm=.listing) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/c64/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t c64 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/c64/exe/%.d64:
-	@cd examples && ../ugbc/exe/ugbc.c64 $(OPTIONS) -o ../$@ -O d64 $(subst generated/c64/exe/,,$(@:.d64=.bas))
+	@cd examples && ../ugbc/exe/ugbc.c64$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O d64 $(subst generated/c64/exe/,,$(@:.d64=.bas))
 
 generated/c64/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	@cd examples && ../ugbc/exe/ugbc.c64 $(OPTIONS) -o ../$@ -O prg $(subst generated/c64/exeso/,,$(@:.prg=.bas))
+	@cd examples && ../ugbc/exe/ugbc.c64$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/c64/exeso/,,$(@:.prg=.bas))
 
 generated/c64/exeso/%.d64: $(subst /generated/exeso/,/examples/,$(@:.d64=.bas))
-	@cd examples && ../ugbc/exe/ugbc.c64 $(OPTIONS) -o ../$@ -O d64 $(subst generated/c64/exeso/,,$(@:.d64=.bas))
+	@cd examples && ../ugbc/exe/ugbc.c64$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O d64 $(subst generated/c64/exeso/,,$(@:.d64=.bas))
 
 #------------------------------------------------ 
 # coleco:
@@ -431,7 +441,7 @@ generated/c64/exeso/%.d64: $(subst /generated/exeso/,/examples/,$(@:.d64=.bas))
 toolchain.coleco: z88dk
 
 generated/coleco/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.coleco $(OPTIONS) $(subst generated/coleco/asm/,,$(@:.asm=.bas)) ../$@ 
+	@cd examples && ../ugbc/exe/ugbc.coleco$(UGBCEXESUFFIX) -d $(OPTIONS) $(subst generated/coleco/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/coleco/exe/%.rom:
 	@$(Z80ASM) -D__coleco__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
@@ -446,7 +456,7 @@ generated/coleco/exe/%.rom:
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/coleco/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@cd examples && ../ugbc/exe/ugbc.coleco $(OPTIONS) -o ../$@ -O rom $(subst generated/coleco/exeso/,,$(@:.rom=.bas))
+	@cd examples && ../ugbc/exe/ugbc.coleco$(UGBCEXESUFFIX) -d $(OPTIONS) -o ../$@ -O rom $(subst generated/coleco/exeso/,,$(@:.rom=.bas))
 
 #------------------------------------------------ 
 # cpc:
@@ -456,7 +466,7 @@ generated/coleco/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas
 toolchain.cpc: z88dk
 
 generated/cpc/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.cpc $(OPTIONS) $(subst generated/cpc/asm/,,$(@:.asm=.bas)) ../$@ 
+	@cd examples && ../ugbc/exe/ugbc.cpc$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/cpc/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/cpc/exe/%.dsk:
 	@$(Z80ASM) -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
@@ -468,7 +478,7 @@ generated/cpc/exe/%.dsk:
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
-	@cd examples && ../ugbc/exe/ugbc.cpc $(OPTIONS) -d -D ../$(@:.dsk=.info) -o ../$@ -O dsk $(subst generated/cpc/exeso/,,$(@:.dsk=.bas))
+	@cd examples && ../ugbc/exe/ugbc.cpc$(UGBCEXESUFFIX) $(OPTIONS) -d -D ../$(@:.dsk=.info) -o ../$@ -O dsk $(subst generated/cpc/exeso/,,$(@:.dsk=.bas))
 
 #------------------------------------------------ 
 # coco:
@@ -478,7 +488,7 @@ generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
 toolchain.coco: asm6809 decb
 
 generated/coco/asm/%.asm: compiler
-	@cd examples && ../ugbc/exe/ugbc.coco $(OPTIONS) $(subst generated/coco/asm/,,$(@:.asm=.bas)) ../$@
+	@cd examples && ../ugbc/exe/ugbc.coco$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/coco/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/coco/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
@@ -488,10 +498,10 @@ generated/coco/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) $(OPTIONS) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/coco/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
-	@cd examples && ../ugbc/exe/ugbc.coco $(OPTIONS) -o ../$@ -O dsk $(subst generated/coco/exeso/,,$(@:.dsk=.bas))
+	@cd examples && ../ugbc/exe/ugbc.coco$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O dsk $(subst generated/coco/exeso/,,$(@:.dsk=.bas))
 
 generated/coco/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	@cd examples && ../ugbc/exe/ugbc.coco $(OPTIONS) -o ../$@ -O bin $(subst generated/coco/exeso/,,$(@:.bin=.bas))
+	@cd examples && ../ugbc/exe/ugbc.coco$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/coco/exeso/,,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # d32:
@@ -501,13 +511,13 @@ generated/coco/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
 toolchain.d32: asm6809
 
 generated/d32/asm/%.asm: compiler
-	@cd examples && ../ugbc/exe/ugbc.d32 $(OPTIONS) $(subst generated/d32/asm/,,$(@:.asm=.bas)) ../$@
+	@cd examples && ../ugbc/exe/ugbc.d32$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/d32/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/d32/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/d32/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	@cd examples && ../ugbc/exe/ugbc.d32 $(OPTIONS) -o ../$@ -O bin $(subst generated/d32/exeso/,,$(@:.bin=.bas))
+	@cd examples && ../ugbc/exe/ugbc.d32$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/d32/exeso/,,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # d64:
@@ -517,13 +527,13 @@ generated/d32/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
 toolchain.d64: asm6809
 
 generated/d64/asm/%.asm: compiler
-	@cd examples && ../ugbc/exe/ugbc.d64 $(OPTIONS) $(subst generated/d64/asm/,,$(@:.asm=.bas)) ../$@
+	@cd examples && ../ugbc/exe/ugbc.d64$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/d64/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/d64/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	@cd examples && ../ugbc/exe/ugbc.d64 $(OPTIONS) -o ../$@ -l ../$(@:.bin=.lis) -O bin $(subst generated/d64/exeso/,,$(@:.bin=.bas))
+	@cd examples && ../ugbc/exe/ugbc.d64$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -l ../$(@:.bin=.lis) -O bin $(subst generated/d64/exeso/,,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # mo5:
@@ -533,19 +543,19 @@ generated/d64/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
 toolchain.mo5: asm6809
 
 generated/mo5/asm/%.asm: compiler
-	@cd examples && ../ugbc/exe/ugbc.mo5 $(OPTIONS) $(subst generated/mo5/asm/,,$(@:.asm=.bas)) ../$@
+	@cd examples && ../ugbc/exe/ugbc.mo5$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/mo5/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/mo5/exe/%.k7: compiler
-	@cd examples && ../ugbc/exe/ugbc.mo5 $(OPTIONS) $(subst generated/mo5/exe/,,$(@:.k7=.bas)) -o ../$@
+	@cd examples && ../ugbc/exe/ugbc.mo5$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/mo5/exe/,,$(@:.k7=.bas)) -o ../$@
 
 generated/mo5/exe/%.bin: compiler
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/mo5/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	@cd examples && ../ugbc/exe/ugbc.mo5 $(OPTIONS) -o ../$@ -O bin $(subst generated/mo5/exeso/,,$(@:.bin=.bas))
+	@cd examples && ../ugbc/exe/ugbc.mo5$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/mo5/exeso/,,$(@:.bin=.bas))
 
 generated/mo5/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.k7=.bas))
-	@cd examples && ../ugbc/exe/ugbc.mo5 $(OPTIONS) -o ../$@ -O k7 $(subst generated/mo5/exeso/,,$(@:.k7=.bas))
+	@cd examples && ../ugbc/exe/ugbc.mo5$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O k7 $(subst generated/mo5/exeso/,,$(@:.k7=.bas))
 
 #------------------------------------------------ 
 # msx1:
@@ -555,7 +565,7 @@ generated/mo5/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.k7=.bas))
 toolchain.msx1: z88dk
 
 generated/msx1/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.msx1 $(OPTIONS) $(subst generated/msx1/asm/,,$(@:.asm=.bas)) ../$@ 
+	@cd examples && ../ugbc/exe/ugbc.msx1$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/msx1/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/msx1/exe/%.rom:
 	@$(Z80ASM) -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
@@ -570,7 +580,7 @@ generated/msx1/exe/%.rom:
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/msx1/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@cd examples && ../ugbc/exe/ugbc.msx1 $(OPTIONS) -D ../$(@:.rom=.info) -o ../$@ -O rom $(subst generated/msx1/exeso/,,$(@:.rom=.bas))
+	@cd examples && ../ugbc/exe/ugbc.msx1$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.rom=.info) -o ../$@ -O rom $(subst generated/msx1/exeso/,,$(@:.rom=.bas))
 
 #------------------------------------------------ 
 # pc128:
@@ -580,19 +590,19 @@ generated/msx1/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
 toolchain.pc128op: asm6809
 
 generated/pc128op/asm/%.asm: compiler
-	@cd examples && ../ugbc/exe/ugbc.pc128op $(OPTIONS) -L ../$(@:.k7=.lis) $(subst generated/pc128op/asm/,,$(@:.asm=.bas)) ../$@
+	@cd examples && ../ugbc/exe/ugbc.pc128op$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.k7=.lis) $(subst generated/pc128op/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/pc128op/exe/%.k7: compiler
-	@cd examples && ../ugbc/exe/ugbc.pc128op $(OPTIONS) -L ../$(@:.k7=.lis) $(subst generated/pc128op/exe/,,$(@:.k7=.bas)) -o ../$@
+	@cd examples && ../ugbc/exe/ugbc.pc128op$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.k7=.lis) $(subst generated/pc128op/exe/,,$(@:.k7=.bas)) -o ../$@
 
 generated/pc128op/exe/%.bin: compiler
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/pc128op/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	@cd examples && ../ugbc/exe/ugbc.pc128op $(OPTIONS) -o ../$@ -O bin $(subst generated/pc128op/exeso/,,$(@:.bin=.bas))
+	@cd examples && ../ugbc/exe/ugbc.pc128op$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/pc128op/exeso/,,$(@:.bin=.bas))
 
 generated/pc128op/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.k7=.bas))
-	@cd examples && ../ugbc/exe/ugbc.pc128op $(OPTIONS) -o ../$@ -O k7 $(subst generated/pc128op/exeso/,,$(@:.k7=.bas))
+	@cd examples && ../ugbc/exe/ugbc.pc128op$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O k7 $(subst generated/pc128op/exeso/,,$(@:.k7=.bas))
 
 #------------------------------------------------ 
 # plus4:
@@ -602,14 +612,14 @@ generated/pc128op/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.k7=.bas)
 toolchain.plus4: cc65
 
 generated/plus4/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.plus4 $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/plus4/asm/,,$(@:.asm=.bas)) ../$@
+	@cd examples && ../ugbc/exe/ugbc.plus4$(UGBCEXESUFFIX) $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/plus4/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/plus4/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -u __EXEHDR__ -t plus4 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/plus4/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	@cd examples && ../ugbc/exe/ugbc.plus4 $(OPTIONS) -o ../$@ -O prg $(subst generated/plus4/exeso/,,$(@:.prg=.bas))
+	@cd examples && ../ugbc/exe/ugbc.plus4$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/plus4/exeso/,,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # sc3000:
@@ -619,7 +629,7 @@ generated/plus4/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas)
 toolchain.sc3000: z88dk
 
 generated/sc3000/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.sc3000 $(OPTIONS) $(subst generated/sc3000/asm/,,$(@:.asm=.bas)) ../$@ 
+	@cd examples && ../ugbc/exe/ugbc.sc3000$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/sc3000/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/sc3000/exe/%.rom:
 	@$(Z80ASM) -D__sc3000__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
@@ -631,7 +641,7 @@ generated/sc3000/exe/%.rom:
 	@rm $(@:.rom=_data_user.bin) $(@:.rom=_code_user.bin)
 
 generated/sc3000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@cd examples && ../ugbc/exe/ugbc.sc3000 $(OPTIONS) -o ../$@ -O rom $(subst generated/sc3000/exeso/,,$(@:.rom=.bas))
+	@cd examples && ../ugbc/exe/ugbc.sc3000$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O rom $(subst generated/sc3000/exeso/,,$(@:.rom=.bas))
 
 #------------------------------------------------ 
 # sg1000:
@@ -641,7 +651,7 @@ generated/sc3000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas
 toolchain.sg1000: z88dk
 
 generated/sg1000/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.sg1000 $(OPTIONS) $(subst generated/sg1000/asm/,,$(@:.asm=.bas)) ../$@ 
+	@cd examples && ../ugbc/exe/ugbc.sg1000$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/sg1000/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/sg1000/exe/%.rom:
 	@$(Z80ASM) -D__sg1000__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
@@ -652,7 +662,7 @@ generated/sg1000/exe/%.rom:
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
 
 generated/sg1000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@cd examples && ../ugbc/exe/ugbc.sg1000 $(OPTIONS) -o ../$@ -O rom $(subst generated/sg1000/exeso/,,$(@:.rom=.bas))
+	@cd examples && ../ugbc/exe/ugbc.sg1000$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O rom $(subst generated/sg1000/exeso/,,$(@:.rom=.bas))
 
 #------------------------------------------------ 
 # vg5000:
@@ -662,16 +672,16 @@ generated/sg1000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas
 toolchain.vg5000: z88dk
 
 generated/vg5000/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.vg5000 $(OPTIONS) $(subst generated/vg5000/asm/,,$(@:.asm=.bas)) ../$@ 
+	@cd examples && ../ugbc/exe/ugbc.vg5000$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/vg5000/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/vg5000/exe/%.bin: compiler
 	@$(Z80ASM) -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
 
 generated/vg5000/exe/%.k7:
-	@cd examples && ../ugbc/exe/ugbc.vg5000 $(OPTIONS) -o ../$@ -L generated/vg5000/asm/output.listing $(subst generated/vg5000/exe/,,$(@:.k7=.bas))
+	@cd examples && ../ugbc/exe/ugbc.vg5000$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -L generated/vg5000/asm/output.listing $(subst generated/vg5000/exe/,,$(@:.k7=.bas))
 
 generated/vg5000/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@cd examples && ../ugbc/exe/ugbc.vg5000 $(OPTIONS) -o ../$@ -O rom $(subst generated/vg5000/exeso/,,$(@:.k7=.bas))
+	@cd examples && ../ugbc/exe/ugbc.vg5000$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O rom $(subst generated/vg5000/exeso/,,$(@:.k7=.bas))
 
 #------------------------------------------------ 
 # vic20:
@@ -681,14 +691,14 @@ generated/vg5000/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas)
 toolchain.vic20: cc65
 
 generated/vic20/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.vic20 $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/vic20/asm/,,$(@:.asm=.bas)) ../$@
+	@cd examples && ../ugbc/exe/ugbc.vic20$(UGBCEXESUFFIX) $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/vic20/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/vic20/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t vic20 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/vic20/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	@cd examples && ../ugbc/exe/ugbc.vic20 $(OPTIONS) -o ../$@ -O prg $(subst generated/vic20/exeso/,,$(@:.prg=.bas))
+	@cd examples && ../ugbc/exe/ugbc.vic20$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/vic20/exeso/,,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # zx:
@@ -698,7 +708,7 @@ generated/vic20/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas)
 toolchain.zx: z88dk
 
 generated/zx/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.zx $(OPTIONS) $(subst generated/zx/asm/,,$(@:.asm=.bas)) ../$@ 
+	@cd examples && ../ugbc/exe/ugbc.zx$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/zx/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/zx/exe/%.tap:
 	@$(Z80ASM) -l -b $(subst /exe/,/asm/,$(@:.tap=.asm))
@@ -709,4 +719,4 @@ generated/zx/exe/%.tap:
 	@rm -f $(@:.tap=.bin) $(@:.tap=_*.bin)
 
 generated/zx/exeso/%.tap: $(subst /generated/exeso/,/examples/,$(@:.tap=.bas))
-	@cd examples && ../ugbc/exe/ugbc.zx $(OPTIONS) -o ../$@ -L ../$(@:.tap=.lst) -O tap $(subst generated/zx/exeso/,,$(@:.tap=.bas))
+	@cd examples && ../ugbc/exe/ugbc.zx$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -L ../$(@:.tap=.lst) -O tap $(subst generated/zx/exeso/,,$(@:.tap=.bas))
