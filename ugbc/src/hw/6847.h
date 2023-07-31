@@ -282,5 +282,6 @@ void c6847_move_tiles( Environment * _environment, char * _image, char * _x, cha
 void c6847_use_tileset( Environment * _environment, char * _tileset );
 void c6847_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
 void c6847_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
+int c6847_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 
 #endif

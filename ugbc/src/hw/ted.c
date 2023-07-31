@@ -2666,7 +2666,7 @@ void ted_slice_image( Environment * _environment, char * _image, char * _frame, 
 
 }
 
-int ted_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RBG * _palette ) {
+int ted_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette ) {
 
     int paletteColorCount = rgbi_extract_palette(_environment, _data, _width, _height, _depth, _palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 

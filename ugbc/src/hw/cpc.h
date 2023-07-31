@@ -371,5 +371,6 @@ typedef void (*CpcSliceImageFunction)(Environment *, char *, char *, char *, int
 void cpc_slice_image_copy( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
 void cpc_slice_image_extract( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
 void cpc_sys_call( Environment * _environment, int _destination );
+int cpc_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 
 #endif
