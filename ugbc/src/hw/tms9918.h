@@ -100,6 +100,7 @@
 #define BITMAP_MODE_STANDARD        BITMAP_MODE_GRAPHIC2
 
 #define BITMAP_MODE_DEFAULT         BITMAP_MODE_GRAPHIC2
+#define BITMAP_MODE_STANDARD        BITMAP_MODE_DEFAULT
 
 #define SPRITE_COUNT                32
 #define SPRITE_WIDTH                8
@@ -110,7 +111,6 @@
 #define SPRITE_Y_MAX                200
 
 #define SCREEN_SPRITE_RATIO         100
-
 #define SCREEN_BORDER_X             0
 #define SCREEN_BORDER_Y             0
 

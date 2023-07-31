@@ -90,6 +90,7 @@
 #define BITMAP_MODE_RESOLUTION6     14      // Resolution Graphics 6	256 × 192	1 + Black	6144
 
 #define BITMAP_MODE_DEFAULT     BITMAP_MODE_RESOLUTION6
+#define BITMAP_MODE_STANDARD    BITMAP_MODE_DEFAULT
 
 #define SPRITE_COUNT                0
 #define SPRITE_WIDTH                0
@@ -99,6 +100,7 @@
 #define SPRITE_X_MAX                0
 #define SPRITE_Y_MAX                0
 
+#define SCREEN_SPRITE_RATIO         100
 #define SCREEN_BORDER_X             0
 #define SCREEN_BORDER_Y             0
 

@@ -185,6 +185,7 @@
 #define TILEMAP_MODE_ANTIC5         5       // 20x24, 4 color
 
 #define BITMAP_MODE_DEFAULT     BITMAP_MODE_ANTIC11
+#define BITMAP_MODE_STANDARD    BITMAP_MODE_DEFAULT
 
 #define COLOR_COUNT         255
 
@@ -204,6 +205,7 @@
 #define SPRITE_X_MAX                0
 #define SPRITE_Y_MAX                0
 
+#define SCREEN_SPRITE_RATIO         100
 #define SCREEN_BORDER_X             0
 #define SCREEN_BORDER_Y             0
 

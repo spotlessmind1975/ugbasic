@@ -108,6 +108,7 @@
 #define BITMAP_MODE_PRS            34
 
 #define BITMAP_MODE_DEFAULT     BITMAP_MODE_STANDARD
+#define BITMAP_MODE_STANDARD    BITMAP_MODE_DEFAULT
 
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        40 x 25 x 16
 #define TILEMAP_MODE_MULTICOLOR     1           // Multicolor Character Mode      40 x 25 x 16
@@ -121,6 +122,7 @@
 #define SPRITE_X_MAX                366
 #define SPRITE_Y_MAX                255
 
+#define SCREEN_SPRITE_RATIO         100
 #define SCREEN_BORDER_X             23
 #define SCREEN_BORDER_Y             50
 
