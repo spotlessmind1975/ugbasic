@@ -80,7 +80,6 @@
 #define BITMAP_MODE_MULTICOLOR_INT  6           // Interlaced Multicolor Mode   640 x 352 x 16
 
 #define BITMAP_MODE_DEFAULT     BITMAP_MODE_STANDARD
-#define BITMAP_MODE_STANDARD    BITMAP_MODE_DEFAULT
 
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode      80 x 25 x 16
 
