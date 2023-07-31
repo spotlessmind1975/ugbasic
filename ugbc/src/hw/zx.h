@@ -252,5 +252,6 @@ void zx_use_tileset( Environment * _environment, char * _tileset );
 void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
 
 void zx_sys_call( Environment * _environment, int _destination );
+int zx_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 
 #endif

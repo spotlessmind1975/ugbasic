@@ -365,5 +365,6 @@ void cpc_move_video_memory( Environment * _environment, char * _from, char * _to
 void cpc_move_video_video( Environment * _environment, char * _from, char * _to, char * _size );
 
 void cpc_sys_call( Environment * _environment, int _destination );
+int cpc_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 
 #endif
