@@ -63,6 +63,7 @@ ifeq (,$(wildcard ../BETA))
   BETASUFFIX =
 else
   BETASUFFIX = .beta
+  CFLAGS += -D__BETA__
 endif
 
 ifeq ($(OS),Windows_NT)

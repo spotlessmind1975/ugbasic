@@ -90,7 +90,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
-%token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO
+%token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -640,6 +640,14 @@ const_factor:
       }
       | FONT WIDTH {
           $$ = ((Environment *)_environment)->fontWidth;
+      
+      }
+      | BETA {
+#ifdef __BETA__
+         $$ = 1;
+#else
+         $$ = 0;
+#endif
       }
       | IMAGE WIDTH OP expr CP {
           if ( !((Environment *)_environment)->emptyProcedure ) {
@@ -2377,7 +2385,16 @@ exponential:
       }      
     | OP IMAGES CP BufferDefinition { 
         $$ = parse_buffer_definition( _environment, $4, VT_IMAGES )->name;
-      }      
+      }   
+    | BETA {
+#ifdef __BETA__
+         int beta = 1;
+#else
+         int beta = 0;
+#endif
+        $$ = variable_temporary( _environment, VT_BYTE, "(BETA value)" )->name;
+        variable_store( _environment, $$, beta );
+    }
     | PI {
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
         variable_store_float( _environment, pi->name, M_PI );
