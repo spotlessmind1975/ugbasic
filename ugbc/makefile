@@ -44,12 +44,23 @@ test: paths-test tester
 #--- MAKEFILE's ENVIRONMENT
 #-----------------------------------------------------------------------------
 
+# Check if the compilation is for a BETA version or not.
+# In this case, the ".beta" suffix will be added to the executable.
+
+ifeq (,$(wildcard ../BETA))
+  BETASUFFIX =
+else
+  BETASUFFIX = .beta
+endif
+
 ifeq ($(OS),Windows_NT)
   EXESUFFIX = .exe
+  UGBCEXESUFFIX = $(BETASUFFIX).exe
   CFLAGS += -D_WIN32 -static
   LFLAGS += -static
 else
   EXESUFFIX = 
+  UGBCEXESUFFIX = $(BETASUFFIX)
 endif
 
 #-----------------------------------------------------------------------------
@@ -621,14 +632,14 @@ paths-test:
 	@mkdir -p exe-test
 
 compiler: $(OBJS)
-	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target)$(EXESUFFIX) $(LIBS)
-	
+	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target)$(UGBCEXESUFFIX) $(LIBS)
+
 objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
 
 tester: $(SOURCESTEST)
-	@$(CC) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target)$(EXESUFFIX) -lm
+	@$(CC) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target)$(UGBCEXESUFFIX) -lm
 
 clean:
 	@rm -rf objs.$(target)/*
