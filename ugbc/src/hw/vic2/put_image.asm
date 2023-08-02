@@ -110,6 +110,7 @@ PUTIMAGE02C:
     ;y/8 is y-cell table index
     ;-------------------------
     LDA IMAGEY
+    STA MATHPTR4
     LSR                         ;/ 2
     LSR                         ;/ 4
     LSR                         ;/ 8
@@ -215,10 +216,33 @@ PUTIMAGE0L1N:
     CMP #$FF
     BEQ PUTIMAGE0C
 
+    INC IMAGEY
+    LDA IMAGEY
+    CMP CURRENTHEIGHT
+    BEQ PUTIMAGE0CA
+
     LDA IMAGEW
     TAY
     DEY
     JMP PUTIMAGE0L1
+
+PUTIMAGE0CA:
+
+    LDA MATHPTR4
+    STA IMAGEY
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    DEC IMAGEH
+    LDA IMAGEH
+    CMP #$FF
+    BNE PUTIMAGE0CA
 
 PUTIMAGE0C:
     LDA MATHPTR2
@@ -273,15 +297,18 @@ PUTIMAGE02L2N0:
 
 PUTIMAGE02L2N:
 
-
-
-
-
     DEC IMAGEH
     BNE PUTIMAGE0EX
     JMP PUTIMAGE0E
 
 PUTIMAGE0EX:
+
+    INC IMAGEY
+    CMP CURRENTHEIGHT
+    BNE PUTRIMAGE0EX2
+    JMP PUTIMAGE0EA
+
+PUTRIMAGE0EX2:
     CLC
     LDA TMPPTR
     ADC IMAGEW
@@ -377,6 +404,7 @@ PUTIMAGE016L2N:
     JMP PUTIMAGE016L2
 
 PUTIMAGE0E:
+PUTIMAGE0EA:
     RTS
 
 @ENDIF
@@ -419,6 +447,7 @@ PUTIMAGE2:
     ;y/8 is y-cell table index
     ;-------------------------
     LDA IMAGEY
+    STA MATHPTR4
     LSR                         ;/ 2
     LSR                         ;/ 4
     LSR                         ;/ 8
@@ -664,8 +693,28 @@ PUTIMAGE2L1N:
     DEC IMAGEH
     BEQ PUTIMAGE2C
 
+    INC IMAGEY
+    CMP CURRENTHEIGHT
+    BEQ PUTIMAGE2CA
+
     LDY #0
     JMP PUTIMAGE2L1
+
+PUTIMAGE2CA:
+
+    LDA MATHPTR4
+    STA IMAGEY
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC IMAGEW+1
+    STA TMPPTR+1
+
+    DEC IMAGEH
+    BNE PUTIMAGE2CA
 
 PUTIMAGE2C:
 
@@ -728,6 +777,10 @@ PUTIMAGE2L2N:
     DEC IMAGEH
     BEQ PUTIMAGE2E
 
+    INC IMAGEY
+    CMP CURRENTHEIGHT
+    BEQ PUTIMAGE2EA
+
     CLC
     LDA TMPPTR
     ADC IMAGEW
@@ -749,6 +802,7 @@ PUTIMAGE2L2N:
     DEY
     JMP PUTIMAGE2L2
 
+PUTIMAGE2EA:
 PUTIMAGE2E:
     RTS
 
@@ -786,6 +840,7 @@ PUTIMAGE3:
     ;y/8 is y-cell table index
     ;-------------------------
     LDA IMAGEY
+    STA MATHPTR4
     LSR                         ;/ 2
     LSR                         ;/ 4
     LSR                         ;/ 8
@@ -1087,11 +1142,36 @@ PUTIMAGE3L1F:
     DEC IMAGEH
     BEQ PUTIMAGE3C
 
+    INC IMAGEY
+    CMP CURRENTHEIGHT
+    BEQ PUTIMAGE3CA
+
     LDA IMAGEW
     ASL
     TAY
     DEY
     JMP PUTIMAGE3L1
+
+PUTIMAGE3CA:
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    DEC IMAGEH
+    BEQ PUTIMAGE3C
 
 PUTIMAGE3C:
 
@@ -1177,10 +1257,31 @@ PUTIMAGE3L2N:
     DEC IMAGEH
     BEQ PUTIMAGE3C2
 
+    INC IMAGEY
+    CMP CURRENTHEIGHT
+    BEQ PUTIMAGE3C2A
+
     LDA IMAGEW
     TAY
     DEY
     JMP PUTIMAGE3L2
+
+PUTIMAGE3C2A:
+
+    LDA MATHPTR4
+    STA IMAGEY
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    DEC IMAGEH
+    BNE PUTIMAGE3C2A
+
 PUTIMAGE3C2:
 
     LDA IMAGEH2
@@ -1258,10 +1359,27 @@ PUTIMAGE3C2L2N:
     DEC IMAGEH
     BEQ PUTIMAGE3E
 
+    INC IMAGEY
+    CMP CURRENTHEIGHT
+    BEQ PUTIMAGE3EA
+
     LDA IMAGEW
     TAY
     DEY
     JMP PUTIMAGE3C2L2
+
+PUTIMAGE3EA:
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    DEC IMAGEH
+    BNE PUTIMAGE3EA
 
 PUTIMAGE3E:
 

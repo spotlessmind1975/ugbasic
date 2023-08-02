@@ -62,6 +62,10 @@ PUTIMAGE:
     LD B, (HL)
     INC HL
 
+    ; Save IMAGEY
+    LD A, D
+    LD (IMAGEY), A
+
     ; Decrement the y position in order to calculate
     ; correctly the position on the first loop.
     DEC D
@@ -212,12 +216,37 @@ PUTIMAGE0DONEROW2:
     AND $FE
     LD (IMAGEF), A
 
+    ; Increment the vertical position
+    PUSH BC
+    LD A, (IMAGEY)
+    ADD $1
+    LD (IMAGEY), A
+    LD B, A
+    LD A, (CURRENTHEIGHT)
+    CP B
+    POP BC
+    JR Z, PUTIMAGE0L2A
+
     ; Decrement the number of rows last to copy.
     DEC B
 
     ; Repeat the copy for the next row.
     JP NZ, PUTIMAGE0L2
 
+    JP PUTIMAGE0L2AX
+
+PUTIMAGE0L2A:
+
+    PUSH DE
+    LD A, C
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    POP DE
+    DEC B
+    JP NZ, PUTIMAGE0L2A
+
+PUTIMAGE0L2AX:
     ; Prepare to store the palette (16 colors)
     LD A, 16
     LD B, A
@@ -435,12 +464,38 @@ PUTIMAGE1DONEROW2:
     AND $FE
     LD (IMAGEF), A
 
+    ; Increment the vertical position
+    PUSH BC
+    LD A, (IMAGEY)
+    ADD $1
+    LD (IMAGEY), A
+    LD B, A
+    LD A, (CURRENTHEIGHT)
+    CP B
+    POP BC
+    JR Z, PUTIMAGE1L2A
+
     ; Decrement the number of rows last to copy.
     DEC B
 
     ; Repeat the copy for the next row.
     JP NZ, PUTIMAGE1L2
-    
+
+    JP PUTIMAGE1L2AX
+
+PUTIMAGE1L2A:
+
+    PUSH DE
+    LD A, C
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    POP DE
+    DEC B
+    JP NZ, PUTIMAGE1L2A
+
+PUTIMAGE1L2AX:
+
     ; Check if "WITH TRANSPARENCY" flag has been selected,
     ; so that the first index of the palette
     ; should not be changed.
@@ -706,11 +761,37 @@ PUTIMAGE2DONEROW2:
     AND $FE
     LD (IMAGEF), A
 
+    ; Increment the vertical position
+    PUSH BC
+    LD A, (IMAGEY)
+    ADD $1
+    LD (IMAGEY), A
+    LD B, A
+    LD A, (CURRENTHEIGHT)
+    CP B
+    POP BC
+    JR Z, PUTIMAGE2L2A
+
     ; Decrement the number of rows last to copy.
     DEC B
 
     ; Repeat the copy for the next row.
     JP NZ, PUTIMAGE2L2
+
+    JP PUTIMAGE2L2X
+
+PUTIMAGE2L2A:
+
+    PUSH DE
+    LD A, C
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    POP DE
+    DEC B
+    JP NZ, PUTIMAGE2L2A
+
+PUTIMAGE2L2X:
 
     ; Check if "WITH TRANSPARENCY" flag has been selected,
     ; so that the first index of the palette

@@ -150,6 +150,11 @@ PUTIMAGE0CP:
     PUSH HL
     
     INC IXL
+
+    LD A, (CURRENTHEIGHT)
+    CP IXL
+    JR Z, PUTDONEY
+
     LD A, IXL
     LD B, A
     LD A, (IMAGEX)
@@ -188,7 +193,21 @@ PUTIMAGE0CP:
     DEC C
     JR NZ, PUTIMAGE0CP
 
+    JP PUTDONEYY
     ;;;;
+
+PUTDONEY:
+
+    PUSH HL
+    POP DE
+    POP HL
+
+    POP BC
+
+PUTDONEYY:
+
+    LD A, (IMAGEY)
+    LD IXL, A
 
     LD A, (IMAGET)
     AND $2
@@ -270,6 +289,12 @@ PUTIMAGE00CP:
     SRL A
     SRL A
     LD B, A
+
+    INC IXL
+    LD A, (CURRENTHEIGHT)
+    CP IXL
+    JR Z, PUTDONE
+
     DEC C
     JR NZ, PUTIMAGE00CP
 

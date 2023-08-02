@@ -1523,6 +1523,9 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "IMAGET", VT_BYTE, 0 );
     variable_global( _environment, "IMAGET" );
 
+    variable_import( _environment, "IMAGEY", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEY" );
+
     variable_import( _environment, "BLITIMAGEBLITTINGADDR", VT_ADDRESS, 0 );
     variable_global( _environment, "BLITIMAGEBLITTINGADDR" );
     variable_import( _environment, "BLITTMPPTR", VT_ADDRESS, 0 );
