@@ -191,7 +191,7 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
         check = variable_less_than_const( _environment, index->name, tilemap->size, 0 );
         cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x00, labelPadding2, 1 );
         cpu_label( _environment, labelSkipIndexCheck );
-        check = variable_less_than_const( _environment, y->name, (_environment->screenHeight - tileset->frameHeight ), 0 );
+        check = variable_less_than_const( _environment, y->name, (_environment->screenHeight ), 0 );
         cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0xff, labelLoopY, 1 );
         cpu_jump( _environment, labelExit );
         cpu_label( _environment, labelPadding2 );
