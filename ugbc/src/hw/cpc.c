@@ -1008,6 +1008,9 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
     variable_global( _environment, "FPSCRAP" );
 
+    variable_import( _environment, "IMAGEY", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEY" );
+
     variable_import( _environment, "SLICEX", VT_POSITION, 0 );
     variable_global( _environment, "SLICEX" );
     variable_import( _environment, "SLICEY", VT_POSITION, 0 );
