@@ -65,8 +65,6 @@ void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
-    z80_init( _environment );
-
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
     variable_import( _environment, "EVERYCOUNTER", VT_WORD, 0 );
@@ -128,6 +126,8 @@ void target_initialization( Environment * _environment ) {
     deploy_inplace( startup, src_hw_c128z_startup_asm);
 
     outhead0("CODESTART:")
+
+    z80_init( _environment );
 
     // outline0("CALL VARINIT2");
     outline0("CALL VARINIT");
