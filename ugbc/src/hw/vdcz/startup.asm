@@ -163,23 +163,27 @@ VDCZGETDISPLAYDSTART:
 ;   - DE : address
 ;   - A : value
 VDCZPUTCHAR:
+    PUSH IY
     PUSH DE
     POP IY
     CALL VDCZSETADDR
     LD IXH, 31
     LD IXL, A
     CALL VDCZWRITE
+    POP IY
     RET
 
 ; Reading from this RAM:
 ;   - DE : address
 ;   - A : value
 VDCZGETCHAR:
+    PUSH IY
     PUSH DE
     POP IY
     CALL VDCZSETADDR
     LD IXH, 31
     CALL VDCZREAD
+    POP IY
     RET
 
 VDCZSTARTUP:
