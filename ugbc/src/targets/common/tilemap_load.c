@@ -117,6 +117,7 @@ Variable * tilemap_load( Environment * _environment, char * _filename, char * _a
         }
         char name[MAX_TEMPORARY_STORAGE]; sprintf( name, "%stileset", label );        
         final->tileset = variable_define( _environment, name, VT_IMAGES, 0 );
+        variable_global( _environment, name );
         char * tilesetFileName = strdup( lookedFilename );
         char * tilesetFileNameWithPath = malloc( MAX_TEMPORARY_STORAGE );
         memset( tilesetFileNameWithPath, 0, MAX_TEMPORARY_STORAGE );
