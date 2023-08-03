@@ -60,7 +60,7 @@ ISVCIRQ
     STA $FFDE
     TFR S, X
     LEAX +14,X
-    LDD ,X
+    LDD 1,X
     STD OLDISVC2
     LDD #ISVCIRQ2
     STD ,X
@@ -69,6 +69,7 @@ ISVCIRQ
     JMP [OLDISVC]
 ISVCIRQ2
     STA $FFDF
+    PULS CC
     PSHS D
     LDA OLDCC
     TFR A, CC
