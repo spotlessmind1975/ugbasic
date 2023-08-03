@@ -535,7 +535,6 @@ void z80_less_than_8bit( Environment * _environment, char *_source, char *_desti
 
     } else {
 
-        outline0("; z80_less_than_8bit");
         outline1("LD A, (%s)", _destination);
         outline0("LD B, A");
         outline1("LD A, (%s)", _source);
@@ -4382,8 +4381,6 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
         outline1("JR NZ, %srepositive3", label );
         z80_complement2_32bit( _environment, _other, NULL );
         outhead1("%srepositive3:", label);
-
-        outline0("; z80_math_div_32bit_to_16bit ----^")
 
     } else {
 
