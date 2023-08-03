@@ -75,7 +75,11 @@ JIFFYDAY:
 	RTS
 
 NMISVC:
-    BIT $DC0D
+    PHA
+    LDA #$7F
+    STA $DC0D
+    LDA $DC0D
+    PLA
     RTI
 
 IRQSVC:
@@ -84,7 +88,11 @@ IRQSVC:
     JMP ($0314)    
 
 IRQSVC2:
-    BIT $DC0D
+    PHA
+    LDA #$7F
+    STA $DC0D
+    LDA $DC0D
+    PLA
     RTI
 
 C64STARTUP:
