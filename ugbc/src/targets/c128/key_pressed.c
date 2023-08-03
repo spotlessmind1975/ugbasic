@@ -55,7 +55,7 @@ Variable * key_pressed( Environment * _environment, int _scancode ) {
 Variable * key_pressed_var( Environment * _environment, char * _scancode ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY PRESSED)");
-    Variable * scancode = variable_temporary( _environment, VT_BYTE, "(result of scancode)");
+    Variable * scancode = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0xff);
 
     c128_key_pressed( _environment, scancode->realName, result->realName );
 
