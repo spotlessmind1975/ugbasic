@@ -36,27 +36,28 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 JOYSTICK
-    LDA #$A7CC
-    CMPA #0
-    BEQ JOYSTICK0
+;     LDA #$A7CC
+;     CMPA #0
+;     BEQ JOYSTICK0
     
-JOYSTICK1
-    LDA #$40
-    LSRB
-    LSRB
-    LSRB
-    LSRB
+; JOYSTICK1
+;     LDA #$40
+;     LSRB
+;     LSRB
+;     LSRB
+;     LSRB
     
-JOYSTICK0
-    ANDB #$0F
-    ADDA #$40
-    ANDA #$A7CD
-    CMPA #$0
-    BEQ JOYNOFIRE
-    TFR B, A
-    ORA #$10
-    RTS
+; JOYSTICK0
+;     ANDB #$0F
+;     ADDA #$40
+;     ANDA #$A7CD
+;     CMPA #$0
+;     BEQ JOYNOFIRE
+;     TFR B, A
+;     ORA #$10
+;     RTS
 
-JOYNOFIRE
-    TFR B, A
+; JOYNOFIRE
+;     TFR B, A
+    LDA #$0
     RTS
