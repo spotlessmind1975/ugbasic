@@ -53,6 +53,16 @@ in machine language, starting from the indicated address. It must be noted that
 this jump is intended as a return: any assembly instruction that returns from 
 execution will continue the execution of the program from the next ugBASIC line.
 
+Moreover, it is possible to communicate with the machine code. This is made 
+possible by indicating, at the same time as the call, the population of specific 
+input registers and the recovery of values from specific output registers.
+
+The extended syntax allow the specification of ''r1'', ''r2'', .. as the various 
+processor registers, ''v1'', ''v2'', .. are the values passed in the various 
+registers and ''x1'', ''x2'', .. are the variables that will receive the 
+execution result from the various registers. Since the registers are different 
+from CPU to CPU, it can be useful to add  the ''ON'' target specification.
+
 @italian
 Questo comando permette di iniziare l'esecuzione di una subroutine, scritta 
 direttamente in linguaggio macchina, a partire dall'indirizzo indicato. Bisogna 
@@ -60,10 +70,22 @@ fare attenzione che tale salto si intende con ritorno: una eventuale istruzione
 assembly che fa ritornare dall'esecuzione farà continuare l'esecuzione del 
 programma dalla riga ugBASIC successiva.
 
+Inoltre è possibile comunicare con il codice macchina. Ciò è reso possibile 
+indicando, contestualmente alla chiamata, il popolamento di specifici registri 
+di ingresso ed il recupero dei valori da specifici registri di uscita.
+
+La sintassi estesa permette di specificare ''r1'', ''r2'', .. come i vari 
+registri del processore, ''v1'', ''v2'', .. sono i valori passati nei vari 
+registri e ''x1'', ''x2'', .. sono le variabili che riceveranno l'esito 
+dell'esecuzione dai vari registri. Poiché i registri sono diversi da CPU a CPU, 
+può essere utile aggiungere la specifica del target ''ON''.
+
 @syntax SYS [address]
+@syntax SYS [address] WITH REG(r1)=v1 { , REG(r2)=v2 { , ... } } ... { RETURN x1=REG(r1), { x2=REG(r2), ...} } { [ON target1 {, target2 {, ... } ] }
 
 @example SYS #49142
 @example SYS indirizzo
+@example SYS indirizzo WITH REG(A)=42 RETURN y=REG(B) ON CPUZ80
 
 @usedInExample extern_example_01.bas
 

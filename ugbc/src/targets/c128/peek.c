@@ -49,22 +49,6 @@
  * @param _location Expression with the location to read from.
  * @return Variable* Temporary variable with the content of the location (1 byte).
  */
-/* <usermanual>
-@keyword PEEK
-
-@english
-Retrieve a byte from memory, and returns it.
-
-@italian
-Recupera un byte dalla memoria e restituiscilo.
-
-@syntax = PEEK( [expressiio] )
-
-@example memory = PEEK( location )
-
-@target c128
-
-</usermanual> */
 Variable * peek_var( Environment * _environment, char * _location ) {
 
     outline1("; PEEK(%s)", _location);

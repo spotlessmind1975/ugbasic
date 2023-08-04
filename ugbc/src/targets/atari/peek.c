@@ -49,10 +49,6 @@
  * @param _location Expression with the location to read from.
  * @return Variable* Temporary variable with the content of the location (1 byte).
  */
-/* <usermanual>
-@keyword PEEK
-@target atari
-</usermanual> */
 Variable * peek_var( Environment * _environment, char * _location ) {
 
     outline1("; PEEK(%s)", _location);
