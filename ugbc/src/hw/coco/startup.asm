@@ -54,7 +54,11 @@ ISVCIRQ
     PSHS CC
     PSHS D
     TFR CC, A
+    ANDA #$EF
     STA OLDCC
+    LDD COCOTIMER
+    ADDD #$1
+    STD COCOTIMER
     PSHS X
     LDD #0
     STD $00e3
@@ -70,7 +74,7 @@ ISVCIRQ
     JMP [OLDISVC]
 ISVCIRQ2
     STA $FFDF
-    PULS CC
+    ; PULS CC
     PSHS D
     LDA OLDCC
     TFR A, CC
@@ -80,6 +84,9 @@ ISVCIRQ2
 NMIISVCIRQ
     PSHS D
     PSHS X
+    LDD COCOTIMER
+    ADDD #$1
+    STD COCOTIMER
     LDD #0
     STD $00e3
     STA $FFDE

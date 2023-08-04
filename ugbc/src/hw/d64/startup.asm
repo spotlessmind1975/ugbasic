@@ -40,6 +40,9 @@ OLDISVC
 
 ISVCIRQ
     PSHS D
+    LDD DRGTIMER
+    ADDD #$1
+    STD DRGTIMER
     LDD #0
     STD $00e3
     PULS D
