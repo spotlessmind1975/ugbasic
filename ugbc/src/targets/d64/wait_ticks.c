@@ -74,6 +74,12 @@ void wait_ticks_var( Environment * _environment, char * _timing ) {
 
     Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
     
-    d64_busy_wait( _environment, timing->realName );
+    outline0("LDD DRGTIMER");
+    outline0("STD DRGTIMER2");
+    outhead1("%s", label);
+    outline0("LDD DRGTIMER");
+    outline0("SUBD DRGTIMER2");
+    outline1("CMPD %s", timing->realName );
+    outline1("BNE %s", label );
 
 }

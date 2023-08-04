@@ -48,6 +48,9 @@ YCURS               fcb     0
 EMPTYTILE           fcb     $60
 KBDRATE             fcb     16
 
+DRGTIMER            fcd     $0
+DRGTIMER2           fcd     $0
+
 TMPPTR equ $10    ; $23
 TMPPTR2 equ $12    ; $25
 
