@@ -38,22 +38,22 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-        { 0x00, 0x00, 0x00, 0xff, 0, "TRANSPARENT" },
-        { 0x00, 0x00, 0x00, 0xff, 1, "BLACK" },
-        { 0x00, 0x80, 0x00, 0xff, 2, "GREEN" },
-        { 0x00, 0xff, 0x00, 0xff, 3, "LIGHT_GREEN" },
-        { 0x00, 0x00, 0x80, 0xff, 4, "DARK_BLUE" },
-        { 0x00, 0x00, 0xff, 0xff, 5, "LIGHT_BLUE" },
-        { 0x80, 0x00, 0x00, 0xff, 6, "DARK_RED" },
-        { 0x00, 0xff, 0xff, 0xff, 7, "CYAN" },
-        { 0x80, 0x00, 0x00, 0xff, 8, "RED" },
-        { 0xff, 0x00, 0x00, 0xff, 9, "LIGHT_RED" },
-        { 0xff, 0xff, 0x20, 0xff, 10, "DARK_YELLOW" },
-        { 0xff, 0xff, 0xee, 0xff, 11, "LIGHT_YELLOW" },
-        { 0x00, 0x40, 0x00, 0xff, 12, "DARK_GREEN" },
-        { 0xaa, 0x00, 0xaa, 0xff, 13, "MAGENTA" },
-        { 0xaa, 0xaa, 0xaa, 0xff, 14, "GRAY" },
-        { 0xff, 0xff, 0xff, 0xff, 15, "WHITE" }
+        {    0,    0,    0, 0xff, 0, "TRANSPARENT" },
+        {    0,    0,    0, 0xff, 1, "BLACK" },
+        {   81,  202,   92, 0xff, 2, "GREEN" },
+        {  133,  223,  141, 0xff, 3, "LIGHT_GREEN" },
+        {  107,  103,  240, 0xff, 4, "DARK_BLUE" },
+        {  146,  136,  255, 0xff, 5, "LIGHT_BLUE" },
+        {  212,  100,  113, 0xff, 6, "DARK_RED" },
+        {  102,  219,  239, 0xff, 7, "CYAN" },
+        {  230,  118,  130, 0xff, 8, "RED" },
+        {  255,  151,  164, 0xff, 9, "LIGHT_RED" },
+        {  215,  207,   97, 0xff, 10, "DARK_YELLOW" },
+        {  230,  222,  112, 0xff, 11, "LIGHT_YELLOW" },
+        {   74,  177,   81, 0xff, 12, "DARK_GREEN" },
+        {  200,  121,  198, 0xff, 13, "MAGENTA" },
+        {  204,  204,  204, 0xff, 14, "GRAY" },
+        {  255,  255,  255, 0xff, 15, "WHITE" }
 };
 
 static RGBi * commonPalette;
@@ -125,7 +125,7 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
             if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
+                rgb.alpha = *(source + 3);
             } else {
                 rgb.alpha = 255;
             }
@@ -180,7 +180,7 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
             if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
+                rgb.alpha = *(source + 3);
             } else {
                 rgb.alpha = 255;
             }
@@ -197,24 +197,24 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
             if ( systemRgb->index != colorBackground[y] ) {
                 adilinepixel(colorForeground[y]);
                 *( _dest + y ) |= bitmask;
-                //printf("*");
+                // printf("%1.1x", colorForeground[y]);
             } else {
                 adilinepixel(colorBackground[y]);
                 *( _dest + y ) &= ~bitmask;
-                //printf(" ");
+                // printf("%1.1x", colorBackground[y]);
             }
 
             source += _depth;
 
         }
         
-        //printf("\n");
+        // printf("\n");
 
         source += _depth * ( _source_width - 8 );
 
     }
 
-    //printf("\n\n");
+    // printf("\n\n----\n\n");
 
     for( int i=0; i<8; ++i ) {
         *( _dest + 8 + i ) = ( colorForeground[i] << 4 ) | colorBackground[i] ;
@@ -2411,6 +2411,20 @@ void tms9918_colors_vars( Environment * _environment, char * _foreground_color, 
 //         outline0("CALL WAIT_VDP_HOOK" );
 //     }
 // #endif
+
+}
+
+int tms9918_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette ) {
+
+    int paletteColorCount = rgbi_extract_palette(_environment, _data, _width, _height, _depth, _palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    memcpy( _palette, palette_match( _palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) ), paletteColorCount * sizeof( RGBi ) );
+
+    int uniquePaletteCount = 0;
+
+    memcpy( _palette, palette_remove_duplicates( _palette, paletteColorCount, &uniquePaletteCount ), paletteColorCount * sizeof( RGBi ) );
+
+    return uniquePaletteCount;
 
 }
 
