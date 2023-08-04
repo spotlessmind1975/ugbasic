@@ -79,7 +79,7 @@ void wait_ticks_var( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
-    Variable * timing = variable_retrieve( _environment, _timing );
+    Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
     
     outline1("LD HL, (%s)", timing->realName);
     outhead1("%srepeat:", label);
