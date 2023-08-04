@@ -127,8 +127,6 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("CODESTART:")
 
-    z80_init( _environment );
-
     // outline0("CALL VARINIT2");
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
