@@ -1634,3 +1634,19 @@ di 0 (nessun ritardo) a un valore massimo di 255 (massimo ritardo).
 @target cpc
 @target msx1
 </usermanual> */
+/* <usermanual>
+@keyword PEEK
+
+@english
+Retrieve a byte from memory, and returns it.
+
+@italian
+Recupera un byte dalla memoria e lo restituisce.
+
+@syntax = PEEK( [expression] )
+
+@example memory = PEEK( location )
+
+@target all
+
+</usermanual> */
