@@ -216,4 +216,6 @@ void tms9918_move_memory_video( Environment * _environment, char * _from, char *
 void tms9918_move_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
 void tms9918_move_video_video( Environment * _environment, char * _from, char * _to, char * _size );
 
+int tms9918_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
+
 #endif
