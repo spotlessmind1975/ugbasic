@@ -693,8 +693,11 @@ const_factor:
       | VOLUME MAX {
           $$ = 255;
       }
-      | SCREEN SPRITE RATIO {
-          $$ = SCREEN_SPRITE_RATIO;
+      | SCREEN SPRITE RATIO X {
+          $$ = SCREEN_SPRITE_RATIO_X;
+      }
+      | SCREEN SPRITE RATIO Y {
+          $$ = SCREEN_SPRITE_RATIO_Y;
       }
       | SPRITE HEIGHT {
           if ( SPRITE_HEIGHT < 0 ) {

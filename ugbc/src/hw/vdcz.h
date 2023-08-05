@@ -91,7 +91,8 @@
 #define SPRITE_X_MAX                366
 #define SPRITE_Y_MAX                255
 
-#define SCREEN_SPRITE_RATIO         100
+#define SCREEN_SPRITE_RATIO_X       100
+#define SCREEN_SPRITE_RATIO_Y       100
 #define SCREEN_BORDER_X             23
 #define SCREEN_BORDER_Y             50
 
