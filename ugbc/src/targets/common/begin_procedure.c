@@ -107,14 +107,14 @@ un parametro, i parametri devono essere separate da virgole.
 </usermanual> */
 void begin_procedure( Environment * _environment, char * _name ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
     if ( _environment->procedureName ) {
         CRITICAL_PROCEDURE_NESTED_UNSUPPORTED(_name);
     }
 
-    if ( _environment->emptyProcedure ) {
-        return;
-    }
-    
     Procedure * procedure = malloc( sizeof( Procedure ) );
     memset(procedure, 0, sizeof( Procedure ) );
 

@@ -62,6 +62,10 @@
 </usermanual> */
 void declare_procedure( Environment * _environment, char * _name, int _address, int _system ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+    
     if ( _environment->procedureName ) {
         CRITICAL_DECLARE_PROC_NESTED_UNSUPPORTED(_name);
     }
