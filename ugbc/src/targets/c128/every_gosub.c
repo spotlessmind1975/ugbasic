@@ -109,6 +109,12 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     
     cpu_di( _environment );
 
+    outline0("PHA");
+    outline0("TXA");
+    outline0("PHA");
+    outline0("TYA");
+    outline0("PHA");
+
     cpu_bveq( _environment, _environment->everyStatus->realName, endOfEveryRoutineLabel );
 
     variable_decrement( _environment, _environment->everyCounter->name );
@@ -121,6 +127,12 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
 
     cpu_label( _environment, endOfEveryRoutineLabel );
 
+    outline0("PLA");
+    outline0("TAY");
+    outline0("PLA");
+    outline0("TAX");
+    outline0("PLA");
+    
     cpu_ei( _environment );
 
     vic2_next_raster( _environment );
