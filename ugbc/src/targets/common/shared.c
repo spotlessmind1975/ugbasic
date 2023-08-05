@@ -86,6 +86,10 @@ essere utilizzate con questa tecnica.
 </usermanual> */
 void shared( Environment * _environment ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+    
     if ( !_environment->procedureName ) {
         CRITICAL_SHARED_ONLY_IN_PROCEDURES();
     }
