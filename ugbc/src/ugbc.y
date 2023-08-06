@@ -4791,11 +4791,15 @@ on_definition:
     } on_gosub_definition;
 
 every_definition :
-      expr TICKS GOSUB Identifier {
+      expr TICKS GOSUB Identifier on_targets {
+        if ( $5 ) {
           every_ticks_gosub( _environment, $1, $4 );
+        }
     }
-    | expr TICKS CALL Identifier {
+    | expr TICKS CALL Identifier on_targets {
+        if ( $5 ) {
           every_ticks_call( _environment, $1, $4 );
+        }
     }
     | ON {
           every_on( _environment );
