@@ -84,6 +84,8 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
+    variable_import( _environment, "EVERYCOUNTER", VT_BYTE, 0 );
+    variable_global( _environment, "EVERYCOUNTER" );
 
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "BITMAPADDRESS" );

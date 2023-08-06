@@ -54,7 +54,7 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _label
     _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
     _environment->everyStatus->locked = 1;
 
-    _environment->everyCounter = variable_temporary( _environment, timing->type, "(every counter)");
+    _environment->everyCounter = variable_retrieve( _environment, "EVERYCOUNTER");
     _environment->everyCounter->locked = 1;
     _environment->everyTiming = timing;
     _environment->everyTiming->locked = 1;
