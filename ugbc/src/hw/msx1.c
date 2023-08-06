@@ -167,7 +167,7 @@ void msx1_irq_at( Environment * _environment, char * _label ) {
     // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
 
     outline0("DI" );
-    outline0("LD A, 0xc3" );
+    outline0("LD A, $c3" );
     outline0("LD ($FD9F), A" );
     outline1("LD HL, %s", _label );
     outline0("LD ($FDA0), HL" );
