@@ -104,10 +104,10 @@
 #define KEY_UP						0x62
 #define KEY_UP_ARROW				0x62
 #define KEY_V						0x54
-#define KEY_W						0x60
+#define KEY_W						0x4a
 #define KEY_X						0x50
 #define KEY_Y						0x0a
-#define KEY_Z						0x4a
+#define KEY_Z						0x60
 #define KEY_BACKSLASH                0x00
 #define KEY_SQUARE_OPEN              0x00
 #define KEY_SQUARE_CLOSED            0x00
