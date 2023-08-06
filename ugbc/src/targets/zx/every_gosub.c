@@ -47,6 +47,49 @@
  */
 void every_ticks_gosub( Environment * _environment, char * _timing, char * _label ) {
 
-    outline2("; EVERY %s TICKS GOSUB %s (ignored)", _timing, _label );
+    Variable * timing = variable_retrieve( _environment, _timing );
+
+    Variable * zero = variable_temporary( _environment, timing->type, "(zero)" );
+    variable_store( _environment, zero->name, 0 );
+
+    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
+    _environment->everyStatus->locked = 1;
+
+    _environment->everyCounter = variable_retrieve( _environment, "EVERYCOUNTER");
+    _environment->everyCounter->locked = 1;
+    _environment->everyTiming = timing;
+    _environment->everyTiming->locked = 1;
+
+    variable_move( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
+
+    char skipEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipEveryRoutineLabel, "setg%d", UNIQUE_ID );
+    char everyRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(everyRoutineLabel, "etg%d", UNIQUE_ID );
+    char endOfEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(endOfEveryRoutineLabel, "eetg%d", UNIQUE_ID );
+    
+    cpu_jump( _environment, skipEveryRoutineLabel );
+    
+    cpu_label( _environment, everyRoutineLabel );
+    
+    outline0("PUSH AF");
+
+    cpu_bveq( _environment, _environment->everyStatus->realName, endOfEveryRoutineLabel );
+
+    variable_decrement( _environment, _environment->everyCounter->name );
+
+    cpu_bvneq( _environment, variable_compare_not( _environment, _environment->everyCounter->name, zero->name )->realName, endOfEveryRoutineLabel );
+
+    cpu_call( _environment, _label );
+
+    variable_move( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
+
+    cpu_label( _environment, endOfEveryRoutineLabel );
+
+    outline0("POP AF");
+
+    zx_follow_irq( _environment );
+
+    cpu_label( _environment, skipEveryRoutineLabel );
+
+    zx_irq_at( _environment, everyRoutineLabel );
 
 }
