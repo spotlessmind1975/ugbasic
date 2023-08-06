@@ -45,4 +45,9 @@
  */
 void every_off( Environment * _environment ) {
    
+    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
+    _environment->everyStatus->locked = 1;
+
+    variable_store( _environment, _environment->everyStatus->name, 0x00 );
+
 }

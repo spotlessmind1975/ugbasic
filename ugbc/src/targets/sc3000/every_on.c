@@ -44,5 +44,10 @@
  * @param _environment Current calling environment
  */
 void every_on( Environment * _environment ) {
-   
+
+    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
+    _environment->everyStatus->locked = 1;
+
+    variable_store( _environment, _environment->everyStatus->name, 0xff );
+  
 }

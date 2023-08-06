@@ -130,7 +130,6 @@ void sc3000_follow_irq( Environment * _environment ) {
     // outline1("LD HL, (%s)", irq->realName );
     // outline0("JP (HL)" );
     
-    outline0("EI" );
     outline0("RET" );
 
 }
