@@ -41,8 +41,6 @@
 
 PUTIMAGE:
     
-    DI
-
 ;     LD A, (CURRENTMODE)
 ;     ; BITMAP_MODE_STANDARD
 ;     CP 0
@@ -88,8 +86,10 @@ PUTIMAGE1:
 ;     JMP PUTIMAGE0A
 PUTIMAGE0B:
     LD A, (IMAGEY)
+    AND $F8
     LD B, A
     LD A, (IMAGEX)
+    AND $F8
     LD C, A
 
     LD A,B
@@ -121,6 +121,7 @@ PUTIMAGE0B:
     POP HL
 
     LD A, (IMAGEY)
+    AND $F8
     LD IXL, A
 
     LD A, (IMAGEH)
@@ -158,6 +159,7 @@ PUTIMAGE0CP:
     LD A, IXL
     LD B, A
     LD A, (IMAGEX)
+    AND $F8
     LD C, A
 
     LD A,B
@@ -207,6 +209,7 @@ PUTDONEY:
 PUTDONEYY:
 
     LD A, (IMAGEY)
+    AND $F8
     LD IXL, A
 
     LD A, (IMAGET)
@@ -217,6 +220,7 @@ PUTDONEYY:
     PUSH HL
 
     LD A,(IMAGEX)
+    AND $F8
     LD L,A
     LD A,0
     LD H,A
@@ -249,6 +253,9 @@ PUTDONEYY:
     POP HL
 
     LD A, (IMAGEH)
+    SRL A
+    SRL A
+    SRL A
     LD C, A
     ; INC C
     LD A, (IMAGEW)
@@ -299,8 +306,6 @@ PUTIMAGE00CP:
     JR NZ, PUTIMAGE00CP
 
 PUTDONE:
-
-    EI
 
     RET
 
