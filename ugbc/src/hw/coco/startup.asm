@@ -71,7 +71,7 @@ OLDCC
 
 ISVCIRQ
     ; JSR IRQSVC
-    PSHS CC
+    ; PSHS CC
     PSHS D
     TFR CC, A
     ANDA #$EF
@@ -85,7 +85,7 @@ ISVCIRQ
     STA $FFDE
     TFR S, X
     LEAX +14,X
-    LDD 1,X
+    LDD ,X
     STD OLDISVC2
     LDD #ISVCIRQ2
     STD ,X
@@ -95,7 +95,7 @@ ISVCIRQ
 ISVCIRQ2
     STA $FFDF
     ; PULS CC
-    PULS A
+    ; PULS A
     PSHS D
     LDA OLDCC
     TFR A, CC
