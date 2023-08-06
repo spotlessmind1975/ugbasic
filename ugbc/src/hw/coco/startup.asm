@@ -70,7 +70,7 @@ OLDCC
     fcb $0
 
 ISVCIRQ
-    ; JSR IRQSVC
+    JSR IRQSVC
     ; PSHS CC
     PSHS D
     TFR CC, A
