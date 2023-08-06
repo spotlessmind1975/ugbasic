@@ -75,6 +75,12 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     
     cpu_label( _environment, everyRoutineLabel );
     
+    outline0("PHA");
+    outline0("TXA");
+    outline0("PHA");
+    outline0("TYA");
+    outline0("PHA");
+
     outline0("LDA #1");
     outline0("STA ANTICVBL");
         
@@ -92,6 +98,12 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
 
     cpu_label( _environment, endOfEveryRoutineLabel );
 
+    outline0("PLA");
+    outline0("TAY");
+    outline0("PLA");
+    outline0("TAX");
+    outline0("PLA");
+    
     cpu_ei( _environment );
 
     antic_next_raster( _environment );
