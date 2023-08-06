@@ -98,7 +98,7 @@ void atari_key_pressed( Environment * _environment, char *_scancode, char * _res
     
     Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
 
-    atari_scancode( _environment, temp->realName, _result );
+    cpu_move_8bit( _environment, "$02FC", temp->realName );
     cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
     cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
     cpu_store_8bit( _environment, _result, 0xff );
