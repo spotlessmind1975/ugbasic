@@ -35,6 +35,25 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+IRQSVC
+    PSHS D
+    PSHS X
+    PSHS Y
+    PSHS U
+    PSHS DP
+    PSHS CC
+IRQSVC2
+    NOP
+    NOP
+    NOP
+    PULS CC
+    PULS DP
+    PULS U
+    PULS Y
+    PULS X
+    PULS D
+    RTS
+    
 OLDISVC
     fdb $0
 
@@ -51,6 +70,8 @@ OLDCC
     fcb $0
 
 ISVCIRQ
+    ; JSR IRQSVC
+    PSHS CC
     PSHS D
     TFR CC, A
     ANDA #$EF
@@ -74,6 +95,7 @@ ISVCIRQ
 ISVCIRQ2
     STA $FFDF
     ; PULS CC
+    PULS A
     PSHS D
     LDA OLDCC
     TFR A, CC
