@@ -35,15 +35,15 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TILEX = $92
-TILEY = $93
-TILET = $94
-TILEW = $95
-TILEH = $96
-TILEX2 = $97
-TILEA = $98
-TILEW2 = $99
-TILEH2 = $9A
+TILEX = $60
+TILEY = $61
+TILET = $62
+TILEW = $63
+TILEH = $64
+TILEX2 = $65
+TILEA = $66
+TILEW2 = $67
+TILEH2 = $68
 
 ; ----------------------------------------------------------------------------
 ; - Put tile on tilemap

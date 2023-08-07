@@ -35,10 +35,10 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTPTR = $20
-TEXTSIZE = $24
-TABSTODRAW = $36
-SCREENCODE = $2E
+TEXTPTR = $0B
+TEXTSIZE = $0F
+TABSTODRAW = $5D
+SCREENCODE = $20
 
 TEXTATDECODE:
     CMP #32

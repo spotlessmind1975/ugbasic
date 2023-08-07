@@ -35,9 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PLOTDEST = $28 ; $29
-PLOTCDEST= $26 ; $27
-PLOTC2DEST= $24 ; $25
+PLOTDEST = $1A ; $1B
+PLOTCDEST= $18 ; $19
+PLOTC2DEST= $16 ; $17
 
 TILEMAPVISIBLE:     .byte 0
 
@@ -70,20 +70,20 @@ YSCROLLPOS:         .byte 4
 XSCROLL:            .byte 0
 YSCROLL:            .byte 0
 
-IMAGEX = $34
-IMAGEY = $36
-IMAGEW = $32 ; $33
-IMAGEH = $39
-IMAGEH2 = $31
-IMAGET = $30
-IMAGEF = $38
+IMAGEX = $54; $55
+IMAGEY = $56; $57
+IMAGEW = $59 ; $5A
+IMAGEH = $53
+IMAGEH2 = $52
+IMAGET = $51
+IMAGEF = $58
 
-BLITTMPPTR = $FE ; $FF
-BLITTMPPTR2 = $FC ; $FD
-BLITS0 = $FA ; $FB
-BLITS1 = $F8 ; $F9
-BLITS2 = $F6 ; $F7
-BLITR0 = $F4 ; $F5
-BLITR1 = $F2 ; $F3
-BLITR2 = $F0 ; $F1
-BLITR3 = $EE ; $EF
+BLITTMPPTR = $B8 ; $B9
+BLITTMPPTR2 = $B6 ; $B7
+BLITS0 = $A8 ; $A9
+BLITS1 = $AA ; $AB
+BLITS2 = $AC ; $AD
+BLITR0 = $AE ; $AF
+BLITR1 = $B0 ; $B1
+BLITR2 = $B2 ; $B3
+BLITR3 = $B4 ; $B5
