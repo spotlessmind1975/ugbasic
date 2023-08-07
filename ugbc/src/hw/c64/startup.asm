@@ -131,3 +131,38 @@ SYSCALL:
 SYSCALL0:
     JSR $0000
     JMP SYSCALLDONE
+
+SAVEPAGE0:
+    LDA #$00
+    STA $FE
+    LDA #$02
+    STA $FF
+    LDA #$00
+    STA $FC
+    LDA #$00
+    STA $FD
+    LDY #0
+SAVEPAGE0Y:
+    LDA ($FC), Y
+    STA ($FE), Y
+    INY
+    BNE SAVEPAGE0Y
+    RTS
+
+RESTOREPAGE0:
+    LDA #$00
+    STA $FE
+    LDA #$00
+    STA $FF
+    LDA #$00
+    STA $FC
+    LDA #$02
+    STA $FD
+    LDY #0
+RESTOREPAGE0Y:
+    LDA ($FC), Y
+    STA ($FE), Y
+    INY
+    BNE RESTOREPAGE0Y
+    RTS
+
