@@ -121,7 +121,11 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
 
     cpu_bvneq( _environment, variable_compare_not( _environment, _environment->everyCounter->name, zero->name )->realName, endOfEveryRoutineLabel );
 
+    outline0("JSR SAVEPAGE0");
+
     cpu_call( _environment, _label );
+
+    outline0("JSR RESTOREPAGE0");
 
     variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
 
