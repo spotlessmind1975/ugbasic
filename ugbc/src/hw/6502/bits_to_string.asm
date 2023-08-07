@@ -96,7 +96,7 @@
 ;
 ;ATOMIC CONSTANTS
 ;
-_zpage_  =$C0                  ;start of ZP storage
+_zpage_  =$69                  ;start of ZP storage
 ;
 ;	------------------------------------------
 ;	Modify the above to suit your application.

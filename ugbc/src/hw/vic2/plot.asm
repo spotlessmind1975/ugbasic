@@ -15,11 +15,11 @@
 ; @thirdparts satpro on lemon64.com
 ;--------------------------------------------------------------------
 
-PLOTX    = $F7 ; $F8
-PLOTY    = $F9
-PLOTM    = $FB
-PLOTOMA  = $FD
-PLOTAMA  = $FC
+PLOTX    = $BA ; $BB
+PLOTY    = $BC ; $BD
+PLOTM    = $BE
+PLOTOMA  = $C0
+PLOTAMA  = $BF
 
 ;--------------
 

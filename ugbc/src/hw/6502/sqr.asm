@@ -19,13 +19,13 @@
 ; @thirdparts Lee Davison                                       *                                                                             *
 
 
-Numberl		= $F0		; number to find square root of low byte
+Numberl		= $98		; number to find square root of low byte
 Numberh		= Numberl+1	; number to find square root of high byte
-Reml		= $F2		; remainder low byte
+Reml		= Numberh+1		; remainder low byte
 Remh		= Reml+1	; remainder high byte
-templ		= $F4		; temp partial low byte
+templ		= Remh+1		; temp partial low byte
 temph		= templ+1	; temp partial high byte
-Root		= $F6		; square root
+Root		= temph+1		; square root
 
 SQROOT:
 	LDA	#$00		; clear A
