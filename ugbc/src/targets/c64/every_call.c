@@ -81,7 +81,11 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _label
 
     cpu_bvneq( _environment, variable_compare_not( _environment, _environment->everyCounter->name, zero->name )->realName, endOfEveryRoutineLabel );
 
+    outline0("JSR SAVEPAGE0");
+
     call_procedure( _environment, _label );
+
+    outline0("JSR RESTOREPAGE0");
 
     variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
 
