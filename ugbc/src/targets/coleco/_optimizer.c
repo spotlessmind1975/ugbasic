@@ -75,6 +75,8 @@
 
 #include "../../ugbc.h"
 #include <stdarg.h>
+#include <stdlib.h>
+#include <ctype.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -190,6 +192,17 @@ static int isZero(char *s) {
 static int _isZero(POBuffer buf) {
     return buf!=NULL && isZero(buf->str);
 }
+static int isNumber(char *s) {
+    for( int i=0, c=strlen(s); i<c; ++i ) {
+        if ( !isdigit( s[i] ) ) {
+            return 0;
+        }
+    }
+    return 1;
+}
+static int _isNumber(POBuffer buf) {
+    return buf!=NULL && isNumber(buf->str);
+}
 
 /* perform basic peephole optimization with a length-4 look-ahead */
 static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
@@ -211,7 +224,7 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     // ;or
     //  sub a    ;disadvantages: changes flags
     // ; -> save 1 byte and 3 T-states    
-	if( po_buf_match( buf[0], " LD *, 0", v1) && strchr( "A", _toUpper(*v1->str) ) != NULL ) {
+	if( po_buf_match( buf[0], " LD *, *", v1, v2) && strchr( "A", _toUpper(*v1->str) ) && _isNumber( v2 ) && atoi( v2->str ) == 0 ) {
 		optim( buf[0], RULE "(LD A, 0)->(XOR A)", "\tXOR %c", _toUpper(*v1->str) );
     }
 
@@ -387,6 +400,7 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
 
 	if( 
         po_buf_match( buf[0], " LD A, *", v1 ) &&
+        !po_buf_match( buf[1], " CALL *", v2 ) &&
         po_buf_match( buf[2], " LD A, *", v3 ) &&
         po_buf_strcmp( v1, v3 ) == 0
     ) {
