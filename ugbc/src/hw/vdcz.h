@@ -83,9 +83,9 @@
 
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode      80 x 25 x 16
 
-#define SPRITE_COUNT                8
-#define SPRITE_WIDTH                24
-#define SPRITE_HEIGHT               21
+#define SPRITE_COUNT                0
+#define SPRITE_WIDTH                0
+#define SPRITE_HEIGHT               0
 #define SPRITE_X_MIN                0
 #define SPRITE_Y_MIN                0
 #define SPRITE_X_MAX                366
@@ -93,8 +93,8 @@
 
 #define SCREEN_SPRITE_RATIO_X       100
 #define SCREEN_SPRITE_RATIO_Y       100
-#define SCREEN_BORDER_X             23
-#define SCREEN_BORDER_Y             50
+#define SCREEN_BORDER_X             0
+#define SCREEN_BORDER_Y             0
 
 #define SPRITE_FLAG_MULTICOLOR          0x0010
 #define SPRITE_FLAG_MONOCOLOR           0x0000
