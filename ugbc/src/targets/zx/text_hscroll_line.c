@@ -55,7 +55,7 @@ void text_hscroll_line( Environment * _environment, int _direction ) {
         outline1("LD HL, (%s)", bitmapAddress->realName );
         outline0("LD DE, 32");
         outhead0("lib_text_hscroll_line_ypos:");
-        outline0("ADC HL, DE");
+        outline0("ADD HL, DE");
         outline0("DEC B");
         outline0("JP NZ,lib_text_hscroll_line_ypos");
         outline0("LD DE, HL");

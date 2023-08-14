@@ -128,7 +128,7 @@ SCANCODEPRECISE:
     LD A, E
     AND $07
     LD E, A
-	ADC HL, DE
+	ADD HL, DE
 	LD A, (HL)
 	LD B, A
     POP DE
@@ -139,7 +139,7 @@ SCANCODEPRECISE:
     RR E
     SRL D
     RR E
-    ADC HL, DE
+    ADD HL, DE
     AND B
 	CP B
     RET

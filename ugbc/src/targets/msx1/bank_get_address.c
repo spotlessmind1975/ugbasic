@@ -91,7 +91,7 @@ Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
 
     outhead1("%sbga:", label );
     outline1("LD DE, $%4.4x", BANK_SIZE );
-    outline0("ADC HL, DE" );
+    outline0("ADD HL, DE" );
     outline0("DEC A" );
     outline1("JR NZ, %sbga", label );
 

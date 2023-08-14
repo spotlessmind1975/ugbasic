@@ -962,7 +962,7 @@ void ay8910_set_note_vars( Environment * _environment, char * _channels, char * 
     outline0("LD D, A");
     outline0("SLA E");
     outline0("RL D");
-    outline0("ADC HL, DE");
+    outline0("ADD HL, DE");
     outline0("LD A, (HL)");
     outline0("LD E, A");
     outline0("INC HL");

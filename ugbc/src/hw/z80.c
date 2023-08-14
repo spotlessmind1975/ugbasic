@@ -68,8 +68,7 @@ void z80_init( Environment * _environment ) {
     
     outline0( "LD HL, DUFFDEVICEL0");
     outline0( "LD DE, 35");
-    outline0( "AND $0");
-    outline0( "ADC HL, DE");
+    outline0( "ADD HL, DE");
     outline0( "LD DE, DUFFDEVICEL0");
     outline0( "LD (HL), DE");
 
@@ -1315,10 +1314,9 @@ void z80_math_add_16bit( Environment * _environment, char *_source, char *_desti
 
 void z80_math_add_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
-    outline0("AND $0");
     outline1("LD HL, (%s)", _source );
     outline1("LD DE, $%4.4x", ( _destination & 0xffff ) );
-    outline0("ADC HL, DE" );
+    outline0("ADD HL, DE" );
     outline1("LD (%s), HL", _other );
 
 }

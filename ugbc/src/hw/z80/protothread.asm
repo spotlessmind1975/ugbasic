@@ -92,7 +92,7 @@ PROTOTHREADREGAT:
     LD D, 0
     LD E, A
     AND A
-    ADC HL, DE
+    ADD HL, DE
     POP DE
     LD A, E
     LD (HL), A
@@ -155,7 +155,7 @@ PROTOTHREADUNREG:
     LD D, 0
     LD E, A
     AND A
-    ADC HL, DE
+    ADD HL, DE
     LD DE, PROTOTHREADVOID
     LD A, E
     LD (HL), A
@@ -172,7 +172,7 @@ PROTOTHREADSAVE:
     LD D, 0
     LD E, A
     AND A
-    ADC HL, DE
+    ADD HL, DE
     POP AF
     LD (HL), A
     RET
@@ -185,7 +185,7 @@ PROTOTHREADRESTORE:
     LD D, 0
     LD E, A
     AND A
-    ADC HL, DE
+    ADD HL, DE
     POP AF
     LD A, (HL)
     RET
@@ -198,7 +198,7 @@ PROTOTHREADSETSTATE:
     LD D, 0
     LD E, A
     AND A
-    ADC HL, DE
+    ADD HL, DE
     POP AF
     LD (HL), A
     RET
@@ -211,7 +211,7 @@ PROTOTHREADGETSTATE:
     LD D, 0
     LD E, A
     AND A
-    ADC HL, DE
+    ADD HL, DE
     POP AF
     LD A, (HL)
     RET

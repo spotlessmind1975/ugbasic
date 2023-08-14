@@ -744,7 +744,7 @@ MUSICNOTEON:
     RL B
     LD DE, BC
     LD HL, (SN76489TMPPTR2)
-    ADC HL, DE
+    ADD HL, DE
     LD A, (HL)
     LD E, A
     INC HL
@@ -775,7 +775,7 @@ MUSICREADNEXTBYTE2:
     LD H, A
     LD A, (SN76489TMPOFS)
     LD L, A
-    ADC HL, DE
+    ADD HL, DE
     INC A
     LD (SN76489TMPOFS), A
     LD A, (HL)

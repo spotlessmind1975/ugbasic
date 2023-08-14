@@ -237,7 +237,7 @@ PUTIMAGE0CPAA:
 
     LD HL, DE 
     LD DE, (CURRENTTILESWIDTHX8)
-    ADC HL, DE
+    ADD HL, DE
     LD DE, HL
 
     POP HL
@@ -300,14 +300,14 @@ PUTIMAGE0CPC:
     LD D, 0
     LD A, (CURRENTTILESWIDTH)
     LD E, A
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
     LD B, 0
     SBC HL, BC
     SBC HL, BC

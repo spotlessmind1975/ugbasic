@@ -665,7 +665,7 @@ MUSICNOTEON:
     RL B
     LD DE, BC
     LD HL, (AY8910TMPPTR2)
-    ADC HL, DE
+    ADD HL, DE
     LD A, (HL)
     LD E, A
     INC HL
@@ -696,7 +696,7 @@ MUSICREADNEXTBYTE2:
     LD H, A
     LD A, (AY8910TMPOFS)
     LD L, A
-    ADC HL, DE
+    ADD HL, DE
     INC A
     LD (AY8910TMPOFS), A
     LD A, (HL)
