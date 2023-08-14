@@ -337,7 +337,11 @@ VDPWRITEOPTLOOP:
         LD      A, C
         LD      BC, (VDPDATAPORTWRITE)
         LD      B, A
-        OTIR
+
+VDPWRITEOPTLOOP2:
+        OUTI
+        JP NZ, VDPWRITEOPTLOOP2
+
         POP     BC
         ; INC     HL
         ; DEC     BC
