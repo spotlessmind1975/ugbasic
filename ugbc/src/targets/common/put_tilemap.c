@@ -154,7 +154,6 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
         variable_move( _environment, dx->name, fx->name );
         variable_store( _environment, padding->name, 0 );
         cpu_label( _environment, labelLoopX );
-        cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelPadding, 1 );
         if ( tilemap->size > 255 ) {
             cpu_move_8bit_indirect2_16bit( _environment, tilemap->realName, index->realName, frame->realName );
             cpu_inc_16bit( _environment, index->realName );
@@ -162,6 +161,7 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
             cpu_move_8bit_indirect2_8bit( _environment, tilemap->realName, index->realName, frame->realName );
             cpu_inc( _environment, index->realName );
         }
+        cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelPadding, 1 );
         cpu_compare_and_branch_8bit_const(  _environment, padding2->realName, 1, labelPadding, 1 );
         cpu_compare_and_branch_8bit_const(  _environment, frame->realName, 0xff, labelExitFrame, 1 );
         put_image( _environment, tileset->name, x->name, y->name, frame->name, NULL,  _flags );
