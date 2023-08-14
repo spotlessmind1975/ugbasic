@@ -38,7 +38,7 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-        // {    0,    0,    0, 0xff, 0, "TRANSPARENT" },
+        // {    0,    0,    0, 0x00, 0, "TRANSPARENT" },
         {    0,    0,    0, 0xff, 1, "BLACK" },
         {   81,  202,   92, 0xff, 2, "GREEN" },
         {  133,  223,  141, 0xff, 3, "LIGHT_GREEN" },
@@ -161,8 +161,8 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
             };
         }
 
-        if ( colorForeground[y] == colorBackground[y] ) {
-            colorForeground[y] = ( colorBackground[y] == 0 ) ? 1 : 0;
+        if ( colorForeground[y] == 0 ) {
+            colorForeground[y] = colorBackground[y];
         }
 
         source += _depth * ( _source_width - 8 );
