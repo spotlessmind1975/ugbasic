@@ -201,7 +201,7 @@ PUTIMAGE0CP:
     ; ADC HL, DE
     ; ADC HL, DE
     LD DE, (CURRENTTILESWIDTHX8)
-    ADC HL, DE
+    ADD HL, DE
     ; LD B, 0
     ; SBC HL, BC
     ; SBC HL, BC
