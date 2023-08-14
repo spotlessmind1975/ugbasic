@@ -35,6 +35,22 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+VDPLOCK:
+        DI
+        PUSH AF
+        LD A, 1
+        LD (VDPINUSE), A
+        POP AF
+        RET
+
+VDPUNLOCK:
+        PUSH AF
+        LD A, 0
+        LD (VDPINUSE), A
+        POP AF
+        EI
+        RET
+
 ; if __coleco__
 
 ; WAIT_VDP_HOOK:
@@ -291,31 +307,31 @@ VDPREADADDR:
         RET
 
 VDPSETREG:
-        DI
+        CALL VDPLOCK
         CALL    VDPSETREGI
-        EI
+        CALL VDPUNLOCK
         RET
 
 VDPOUTCHAR:
-        DI
+        CALL VDPLOCK
         PUSH AF
         CALL    VDPWRITEADDR
         POP AF
         CALL    VDPRAMOUT
-        EI
+        CALL VDPUNLOCK
         RET
 
 VDPINCHAR:
-        DI
+        CALL VDPLOCK
         PUSH AF
         CALL    VDPREADADDR
         POP AF
         CALL    VDPRAMIN
-        EI
+        CALL VDPUNLOCK
         RET
 
 VDPWRITE:
-        DI
+        CALL VDPLOCK
         CALL    VDPWRITEADDR
 VDPWRITELOOP:
         LD      A, (HL)
@@ -325,11 +341,14 @@ VDPWRITELOOP:
         LD      A, B
         OR      C
         JP      NZ, VDPWRITELOOP
-        EI
+        CALL VDPUNLOCK
         RET
 
 VDPWRITEOPT:
-        DI
+	; CALL VDPREGIN
+        ; AND $80
+        ; JR Z, VDPWRITEOPT
+        CALL VDPLOCK
         CALL    VDPWRITEADDR
 VDPWRITEOPTLOOP:
         ; LD      A, (HL)
@@ -348,11 +367,11 @@ VDPWRITEOPTLOOP2:
         ; LD      A, B
         ; OR      C
         ; JP      NZ, VDPWRITELOOP
-        EI
+        CALL VDPUNLOCK
         RET
 
 VDPWRITE8:
-        DI
+        CALL VDPLOCK
         CALL    VDPWRITEADDR
 VDPWRITE8LOOP:
         LD      A, (HL)
@@ -362,20 +381,20 @@ VDPWRITE8LOOP:
         LD      A, B
         OR      C
         JP      NZ, VDPWRITE8LOOP
-        EI
+        CALL VDPUNLOCK
         RET
 
 VDPREAD:
-        DI
+        CALL VDPLOCK
         CALL    VDPREADADDR
         CALL    VDPRAMIN
         LD      H, A
         LD      L, A
-        EI
+        CALL VDPUNLOCK
         RET
 
 VDPFILL:
-        DI
+        CALL VDPLOCK
         PUSH    AF
         CALL    VDPWRITEADDR
         POP     AF
@@ -384,11 +403,11 @@ VDPFILLLOOP:
         DEC     C
         JP      NZ, VDPFILLLOOP
         DJNZ    VDPFILLLOOP
-        EI
+        CALL VDPUNLOCK
         RET
 
 VDPFILL8:
-        DI
+        CALL VDPLOCK
         PUSH    AF
         CALL    VDPWRITEADDR
         POP     AF
@@ -396,11 +415,11 @@ VDPFILLLOOP8:
         CALL    VDPRAMOUT8
         DEC     C
         JP      NZ, VDPFILLLOOP8
-        EI
+        CALL VDPUNLOCK
         RET
 
 VDPFILLA:
-        DI
+        CALL VDPLOCK
         PUSH    AF
         CALL    VDPWRITEADDR
         POP     AF
@@ -410,7 +429,7 @@ VDPFILLALOOP:
         INC     A
         JP      NZ, VDPFILLALOOP
         DJNZ    VDPFILLALOOP
-        EI
+        CALL VDPUNLOCK
         RET
 
 VDP_R0              EQU 80H
@@ -439,7 +458,7 @@ TMS9918STARTUPL1:
         JR NZ, TMS9918STARTUPL1
 
 
-        DI
+        CALL VDPLOCK
         LD A, VDP_R0
         LD E, A
         LD A, $00
@@ -521,7 +540,7 @@ TMS9918STARTUPL1:
         LD A, D
         LD (HL), A
 
-        EI
+        CALL VDPUNLOCK
 
         RET
 

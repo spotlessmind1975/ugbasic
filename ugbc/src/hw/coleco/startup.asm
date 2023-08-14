@@ -66,6 +66,8 @@ jp NMI
 
 NMI:
 	PUSH	AF
+    LD A, (VDPINUSE)
+    JR NZ, NMI2
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
@@ -98,6 +100,7 @@ IRQVECTORSKIP:
 	POP	DE
 	POP	BC
     IN A, ($bf)
+NMI2:
 	POP	AF
 	RETN
 
