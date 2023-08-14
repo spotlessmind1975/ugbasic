@@ -68,6 +68,7 @@ void z80_init( Environment * _environment ) {
     
     outline0( "LD HL, DUFFDEVICEL0");
     outline0( "LD DE, 35");
+    outline0( "AND $0");
     outline0( "ADC HL, DE");
     outline0( "LD DE, DUFFDEVICEL0");
     outline0( "LD (HL), DE");
