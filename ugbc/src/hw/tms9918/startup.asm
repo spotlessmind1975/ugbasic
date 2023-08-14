@@ -47,6 +47,7 @@ VDPUNLOCK:
         PUSH AF
         LD A, 0
         LD (VDPINUSE), A
+        IN A, ($bf)
         POP AF
         EI
         RET

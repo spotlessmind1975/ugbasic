@@ -67,7 +67,8 @@ jp NMI
 NMI:
 	PUSH	AF
     LD A, (VDPINUSE)
-    JR NZ, NMI2
+    CP 1
+    JR Z, NMI2
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
