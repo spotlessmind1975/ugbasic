@@ -44,10 +44,9 @@
  * @param _environment Current calling environment
  */
 void every_off( Environment * _environment ) {
-
-    if ( ! _environment->everyStatus ) {
-        CRITICAL_EVERY_OFF_WITHOUT_EVERY();
-    }
+   
+    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
+    _environment->everyStatus->locked = 1;
 
     variable_store( _environment, _environment->everyStatus->name, 0x0 );
 
