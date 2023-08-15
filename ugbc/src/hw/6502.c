@@ -2580,6 +2580,22 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
 
     inline( cpu_less_than_32bit )
 
+        if ( _equal ) {
+
+            cpu6502_compare_32bit( _environment, _source, _destination, _other,  1 );
+
+            if ( _other ) {
+                outline1("LDA %s", _other);
+            } else {
+                outline1("LDA %s", _destination);
+            }
+
+            outline1("BEQ %sless", label );
+            outline1("JMP %sdone", label );
+            outhead1("%sless:", label );
+
+        }
+
         if ( _signed ) {
             outline1("LDA %s", _source);
             outline1("CMP %s", _destination);
@@ -2593,11 +2609,8 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
             outline0("EOR #$80" );
             outhead1("%sv0:", label );
             outline1("BMI %smi", label );
-            if ( _equal ) {
-                outline1("BEQ %smi", label );
-            }
             outhead1("%spl:", label );
-            outline0("LDA #$FF" );
+            outline0("LDA #$00" );
             if ( _other ) {
                 outline1("STA %s", _other);
             } else {
@@ -2605,7 +2618,7 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
             }
             outline1("JMP %sen", label );
             outhead1("%smi:", label );
-            outline0("LDA #$00" );
+            outline0("LDA #$FF" );
             if ( _other ) {
                 outline1("STA %s", _other);
             } else {
@@ -2636,9 +2649,6 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
             outline1("CMP %s", _destination );
             outline1("BCC %s", label);
             outline1("BCS %s_0", label);
-            if ( _equal ) {
-                outline1("BEQ %s", label);
-            }
             outhead1("%s_0:", label);
             outline0("LDA #0" );
             if ( _other ) {
@@ -2655,6 +2665,12 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
                 outline1("STA %s", _destination);
             }
             outhead1("%s_2:", label);
+        }
+
+        if ( _equal ) {
+
+            outhead1("%sdone:", label );
+
         }
 
     no_embedded( cpu_less_than_32bit )
