@@ -8094,8 +8094,10 @@ int find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char 
 
     while( actual ) {
         
-        if ( strcmp( actual->type, _description ) == 0 ) {
-            return actual->id;
+        if ( actual->type ) {
+            if ( strcmp( actual->type, _description ) == 0 ) {
+                return actual->id;
+            }
         }
         actual = actual->next;
     }
