@@ -41,7 +41,6 @@ VBL:
 VBL2:
     LDA ANTICVBL
     BEQ VBL2
-    LDA #0
-    STA VBL
+VBL3:
     RTS
 
