@@ -1847,21 +1847,27 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
             offset = (image_y *( _frame_width >> 3 ) ) + (image_x >> 3 );
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
-            if ( i == 1 ) {
+            if ( colorIndex == 1 ) {
                 *( buffer + offset + 3) |= bitmask;
+                // printf( "%1.1x", commonPalette[1].index );
             } else {
                 *( buffer + offset + 3) &= ~bitmask;
+                // printf( "%1.1x", commonPalette[0].index );
             }
 
-            _source += 3;
+            _source += _depth;
 
         }
+
+        // printf( "\n" );
 
         _source += ( _width - _frame_width ) * _depth;
 
         // printf("\n" );
 
     }
+
+    // printf( "\n\n\n" );
 
     adilineendbitmap();
 
