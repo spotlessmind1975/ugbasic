@@ -40,6 +40,16 @@
 ; ----------------------------------------------------------------------------
 
 GETIMAGE:
+    LDA IMAGEY
+    CMP CURRENTHEIGHT
+    BCC GETIMAGEHY
+    RTS
+GETIMAGEHY:
+    LDA IMAGEX
+    CMP CURRENTWIDTH
+    BCC GETIMAGEHX
+    RTS
+GETIMAGEHX:
 
 @IF !vestigialConfig.screenModeUnique
 
