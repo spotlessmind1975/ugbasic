@@ -2669,9 +2669,10 @@ void gtia_scroll( Environment * _environment, int _dx, int _dy ) {
 
 Variable * gtia_get_raster_line( Environment * _environment ) {
 
-    Variable * result = variable_temporary( _environment, VT_WORD, "(raster line)" );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(raster line)" );
 
-    variable_store( _environment, result->name, 0 );
+    cpu_move_8bit( _environment, "$D40B", result->realName );
+    variable_mul2_const( _environment, result->name, 1 );
 
     return result;
     
