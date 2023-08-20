@@ -1858,6 +1858,7 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
                     int minDistance = 0xffff;
                     RGBi * color = NULL;
                     for( int k=0; k<colorUsed; ++k ) {
+                        if ( palette[k].alpha < 255 ) continue;
                         int distance = rgbi_distance( &palette[k], &rgb );
                         if ( distance < minDistance ) {
                             minDistance = distance;
