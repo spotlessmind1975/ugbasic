@@ -3007,6 +3007,14 @@ exponential:
             variable_store( _environment, $$, SPRITE_WIDTH );
         }
     }
+    | SCREEN SPRITE RATIO X {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN SPRITE RATIO X)" )->name;
+        variable_store( _environment, $$, SCREEN_SPRITE_RATIO_X );
+    }
+    | SCREEN SPRITE RATIO Y {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN SPRITE RATIO y)" )->name;
+        variable_store( _environment, $$, SCREEN_SPRITE_RATIO_Y );
+    }
     | SCREEN BORDER X {
         $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN BORDER X)" )->name;
         variable_store( _environment, $$, SCREEN_BORDER_X );
