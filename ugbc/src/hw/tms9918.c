@@ -38,7 +38,7 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-        // {    0,    0,    0, 0x00, 0, "TRANSPARENT" },
+        {    0,    0,    0, 0x00, 0, "TRANSPARENT" },
         {    0,    0,    0, 0xff, 1, "BLACK" },
         {   81,  202,   92, 0xff, 2, "GREEN" },
         {  133,  223,  141, 0xff, 3, "LIGHT_GREEN" },
@@ -69,9 +69,20 @@ RGBi * tms9918_image_nearest_system_color( RGBi * _color ) {
     int colorIndex = 0;
     for (int j = 0; j < COLOR_COUNT; ++j) {
         int distance = rgbi_distance(&SYSTEM_PALETTE[j], _color);
-        if (distance < minDistance) {
-            minDistance = distance;
-            colorIndex = j;
+        if ( _color->alpha < 255 ) {
+            if ( rgbi_equals_rgb( &SYSTEM_PALETTE[j], _color ) ) {
+                minDistance = 0;
+                distance = 0;
+                colorIndex = j;
+            }
+        } else {
+            if ( SYSTEM_PALETTE[j].alpha < 255 ) {
+                continue;
+            }
+            if (distance < minDistance) {
+                minDistance = distance;
+                colorIndex = j;
+            }
         }
     }
 
@@ -1656,6 +1667,11 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
     if (paletteColorCount > 16) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
+
+    // printf("X PALETTE (%dx%d):\n", _frame_width, _frame_height );
+    // for( int i=0; i<paletteColorCount; ++i ) {
+    //     printf("  (%2.2d) = %2.2x%2.2x%2.2x%2.2x (%s)\n", i, palette[i].alpha, palette[i].red, palette[i].green, palette[i].blue, palette[i].description );
+    // }
 
     int i, j, k;
 

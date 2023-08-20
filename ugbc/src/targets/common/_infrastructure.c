@@ -7524,14 +7524,21 @@ RGBi * palette_match( RGBi * _source, int _source_size, RGBi * _system, int _sys
         unsigned int minDistance = 0xffff;
 
         for( j=0; j<_system_size; ++j ) {
-
-            unsigned int distance = rgbi_distance( &_source[i], &_system[j] );
-
-            if ( distance < minDistance ) {
-                rgbi_move( &_system[j], &matchedPalette[i] );
-                minDistance = distance;
+            if ( _source[i].alpha < 255 ) {
+                if ( rgbi_equals_rgb( &_source[i], &_system[j] ) && _system[j].alpha == 0 ) {
+                    minDistance = 0;
+                    rgbi_move( &_system[j], &matchedPalette[i] );
+                }
+            } else {
+                if ( _system[j].alpha < 255 ) {
+                    continue;
+                }
+                unsigned int distance = rgbi_distance( &_source[i], &_system[j] );
+                if ( distance < minDistance ) {
+                    rgbi_move( &_system[j], &matchedPalette[i] );
+                    minDistance = distance;
+                }
             }
-
         }
 
     }
