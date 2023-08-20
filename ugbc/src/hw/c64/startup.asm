@@ -76,8 +76,6 @@ JIFFYDAY:
 
 NMISVC:
     PHA
-    LDA #$7F
-    STA $DC0D
     LDA $DC0D
     PLA
     RTI
@@ -89,8 +87,6 @@ IRQSVC:
 
 IRQSVC2:
     PHA
-    LDA #$7F
-    STA $DC0D
     LDA $DC0D
     PLA
     RTI
