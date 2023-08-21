@@ -82,12 +82,10 @@ endif
 #------------------------------------------------ 
 ifeq ($(OS),Windows_NT)
 FLEX = flex
-else
-ifeq ($(FLEX_VERSION),"flex 2.6.4")
+else ifeq ($(FLEX_VERSION),"flex 2.6.4")
 FLEX = flex$(EXESUFFIX)
 else
 FLEX = ./../modules/flex/src/flex$(EXESUFFIX)
-endif
 endif
 
 #------------------------------------------------ 
@@ -121,15 +119,14 @@ endif
 #
 ifeq ($(OS),Windows_NT)
 
-else
-ifeq ($(FLEX_VERSION),"flex 2.6.4")
+else ifeq ($(FLEX_VERSION),"flex 2.6.4")
+
 else
 $(FLEX): $(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h \
 			$(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h
 	cd $(dir $(FLEX)..).. && touch * && ./configure && make
 
 flex: paths $(FLEX)
-endif
 endif
 
 # ----------------------------------------------------------------------------
