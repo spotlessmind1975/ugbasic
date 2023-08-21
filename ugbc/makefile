@@ -28,6 +28,7 @@
 # * autorizzazioni e le limitazioni previste dalla medesima.
 # ****************************************************************************/
 
+FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d -Wcounterexamples
 CFLAGS=-O3 -fomit-frame-pointer
@@ -82,7 +83,11 @@ endif
 ifeq ($(OS),Windows_NT)
 FLEX = flex
 else
+ifeq ($(FLEX_VERSION),"2.6.4")
+FLEX = flex$(EXESUFFIX)
+else
 FLEX = ./../modules/flex/src/flex$(EXESUFFIX)
+endif
 endif
 
 #------------------------------------------------ 
@@ -117,11 +122,14 @@ endif
 ifeq ($(OS),Windows_NT)
 
 else
+ifeq ($(FLEX_VERSION),"2.6.4")
+else
 $(FLEX): $(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h \
 			$(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h
 	cd $(dir $(FLEX)..).. && touch * && ./configure && make
 
 flex: paths $(FLEX)
+endif
 endif
 
 # ----------------------------------------------------------------------------
