@@ -40,6 +40,7 @@ LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
 endif
 
+FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d -Wcounterexamples
 CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC
@@ -94,6 +95,8 @@ endif
 #------------------------------------------------ 
 ifeq ($(OS),Windows_NT)
 FLEX = flex
+else ifeq ($(FLEX_VERSION),flex 2.6.4)
+FLEX = flex$(EXESUFFIX)
 else
 FLEX = ./../modules/flex/src/flex$(EXESUFFIX)
 endif
@@ -128,6 +131,8 @@ endif
 # or "lexers").
 #
 ifeq ($(OS),Windows_NT)
+
+else ifeq ($(FLEX_VERSION),flex 2.6.4)
 
 else
 $(FLEX): $(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h \

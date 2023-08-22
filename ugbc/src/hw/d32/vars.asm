@@ -50,6 +50,7 @@ KBDRATE             fcb     16
 
 DRGTIMER            fdb     $0
 DRGTIMER2           fdb     $0
+TICKSPERSECOND      fcb     $0
 
 TMPPTR equ $10    ; $23
 TMPPTR2 equ $12    ; $25

@@ -3452,6 +3452,7 @@ Variable *              get_pen( Environment * _environment, char * _color );
 Variable *              get_raster_line( Environment * _environment );
 Variable *              get_tab( Environment * _environment );
 char *                  get_temporary_filename( Environment * _environment );
+Variable *              get_ticks_per_second( Environment * _environment );
 Variable *              get_timer( Environment * _environment );
 void                    global( Environment * _environment );
 void                    gosub_label( Environment * _environment, char * _label );

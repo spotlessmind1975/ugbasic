@@ -59,7 +59,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN MOD ADD MIN MAX SGN
 %token SIGNED ABS RND COLORS COLOURS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
-%token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT USE
+%token SHARED MILLISECOND MILLISECONDS TICK TICKS GLOBAL PARAM PRINT DEFAULT USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
 %token CENTER CENTRE TAB SET CUP CDOWN CLEFT CRIGHT CLINE XCURS YCURS MEMORIZE REMEMBER
 %token HSCROLL VSCROLL TEXTADDRESS JOY BIN BIT COUNT JOYCOUNT FIRE JUP JDOWN JLEFT JRIGHT JFIRE
@@ -90,7 +90,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
-%token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA
+%token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -298,6 +298,9 @@ const_instrument :
     GUNSHOT { $$ = IMF_INSTRUMENT_GUNSHOT; };
 
 frame : FRAME | TILE;
+
+ticks :
+    TICK | TICKS;
 
 note :
     C {
@@ -3023,6 +3026,9 @@ exponential:
         $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN BORDER Y)" )->name;
         variable_store( _environment, $$, SCREEN_BORDER_Y );
     }
+    | ticks PER SECOND {
+        $$ = get_ticks_per_second( _environment )->name;
+    }
     | SPRITE X MIN {
         $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MIN)" )->name;
         variable_store( _environment, $$, SPRITE_X_MIN );
@@ -3543,7 +3549,7 @@ wait_definition_simple:
       direct_integer CYCLES parallel_optional {
       wait_cycles( _environment, $1, $3 );
     }
-    | direct_integer TICKS {
+    | direct_integer ticks {
       wait_ticks( _environment, $1 );
     }
     | direct_integer parallel_optional {
@@ -3619,7 +3625,7 @@ wait_definition_expression:
       expr CYCLES parallel_optional {
       wait_cycles_var( _environment, $1, $3 );
     }
-    | expr TICKS {
+    | expr ticks {
       wait_ticks_var( _environment, $1 );
     }
     | expr milliseconds {
@@ -4799,12 +4805,12 @@ on_definition:
     } on_gosub_definition;
 
 every_definition :
-      expr TICKS GOSUB Identifier on_targets {
+      expr ticks GOSUB Identifier on_targets {
         if ( $5 ) {
           every_ticks_gosub( _environment, $1, $4 );
         }
     }
-    | expr TICKS CALL Identifier on_targets {
+    | expr ticks CALL Identifier on_targets {
         if ( $5 ) {
           every_ticks_call( _environment, $1, $4 );
         }

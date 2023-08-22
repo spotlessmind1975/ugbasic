@@ -29,33 +29,28 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                           STARTUP ROUTINE ON VIC20                          *
+;*                           STARTUP ROUTINE ON ATARI                          *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-VIC20STARTUP:
+ATARISTARTUP:
 
-    LDA $EDE4
-    CMP #$05
-    BEQ VIC20NTSC
+    LDA $D014
+    AND #$0E
+    CMP #$0E
+    BEQ ATARINTSC
 
-VIC20PAL:
-    LDA #60
-    STA TICKSPERSECOND
-    JMP VIC20STARTUPDONE
-
-VIC20NTSC:
+ATARIPAL:
     LDA #50
     STA TICKSPERSECOND
-    JMP VIC20STARTUPDONE    
+    JMP ATARISTARTUPDONE
 
-SYSCALLDONE:
-    CLI
+ATARINTSC:
+    LDA #60
+    STA TICKSPERSECOND
+    JMP ATARISTARTUPDONE
+
+ATARISTARTUPDONE:
     RTS
-SYSCALL:
-    SEI
-SYSCALL0:
-    JSR $0000
-    JMP SYSCALLDONE
