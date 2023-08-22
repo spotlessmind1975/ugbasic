@@ -5,12 +5,14 @@ build () {
     echo -n $1
     echo -n ": "
 
-    make target=$1 clean compiler >/dev/null 2>/dev/null
+    make target=$1 compiler >/dev/null 2>/dev/null
 
     status=$?
     [ $status -eq 0 ] && echo "built" || echo "ERROR"
 
 }
+
+make clean
 
 build atari 
 build atarixl
