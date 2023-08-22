@@ -48,6 +48,9 @@ ZXSTARTUP:
     IM 2
     EI
 
+    LD A, 60
+    LD (TICKSPERSECOND), A
+
     LD A, 0
     LD ($5C08), A
     RET

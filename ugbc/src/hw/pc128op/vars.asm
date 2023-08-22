@@ -47,6 +47,7 @@ XCURS               fcb     0
 YCURS               fcb     0
 EMPTYTILE           fcb     $60
 KBDRATE             fcb     16
+TICKSPERSECOND      fcb     $0
 
 TMPPTR equ $10    ; $23
 TMPPTR2 equ $12    ; $25

@@ -46,6 +46,7 @@ TABCOUNT:   .BYTE    4
 XCURS:      .BYTE    0
 YCURS:      .BYTE    0
 EMPTYTILE:  .BYTE   32
+TICKSPERSECOND: .BYTE   0
 
 TMPPTR = $22    ; $23
 TMPPTR2 = $24    ; $25
