@@ -362,6 +362,7 @@ typedef enum _VariableType {
 #define FONT_SCHEMA_STANDARD            1
 #define FONT_SCHEMA_SEMIGRAPHIC         2
 #define FONT_SCHEMA_COMPLETE            3
+#define FONT_SCHEMA_ALPHA               4
 #define FONT_DEFAULT_SCHEMA             FONT_SCHEMA_EMBEDDED
 
 #define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
@@ -2367,42 +2368,49 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_CAST_FLOAT_PRECISION( v1, v2 ) CRITICAL3("E0176 - Cannot cast types since float precision mismatch", v1, v2 );
 #define CRITICAL_SWAP_UNSUPPORTED( v, t ) CRITICAL3("E177 - Swap unsupported for variable of given datatype", v, t );
 #define CRITICAL_CANNOT_EMIT_FLOAT_CONST( v ) CRITICAL2("E178 - cannot emit floating point constants", v );
-#define CRITICAL_TILESET_LOAD_UNKNOWN_FORMAT( v ) CRITICAL2("E179 - unknown tileset format", v );
-#define CRITICAL_TILESET_LOAD_MISSING_IMAGE( v ) CRITICAL2("E180 - missing image from tileset", v );
-#define CRITICAL_RESOURCE_LOAD_MISSING_FILE(f) CRITICAL2("E181 - missing file in loading resource", f );
-#define CRITICAL_PUT_IMAGE_NAMED_TILE_MISSING_TILESET( v ) CRITICAL2("E182 - missing tileset from images", v );
-#define CRITICAL_PUT_IMAGE_NAMED_TILE_MISSING_TILES_FROM_TILESET( v ) CRITICAL2("E183 - missing tiles' definition on tileset", v );
-#define CRITICAL_PUT_IMAGE_NAMED_TILE_NOT_FOUND( v ) CRITICAL2("E184 - tile not found in tileset", v );
-#define CRITICAL_PUT_IMAGE_NAMED_TILE_INVALID_PROBABILITY( v ) CRITICAL2("E185 - invalid probability for tile selection", v );
-#define CRITICAL_TILEMAP_LOAD_UNKNOWN_FORMAT( v ) CRITICAL2("E186 - unknown tilemap format", v );
-#define CRITICAL_TILEMAP_LOAD_MISSING_LAYER( v ) CRITICAL2("E187 - missing layer from tilemap", v );
-#define CRITICAL_TILEMAP_LOAD_MISSING_TILESET( v ) CRITICAL2("E188 - missing tileset from tilemap", v );
-#define CRITICAL_TILEMAP_LOAD_ONLY_ONE_TILESET( v ) CRITICAL2("E189 - only one tileset is supported for each tilemap", v );
-#define CRITICAL_CANNOT_PUT_TILEMAP_FOR_NON_TILEMAP( v ) CRITICAL2("E190 - cannot PUT TILEMAP without a tile map", v );
-#define CRITICAL_CANNOT_CAST_TILEMAP_SIZE( v ) CRITICAL2("E191 - cannot cast TILEMAP since sizes are different", v );
-#define CRITICAL_TILEMAP_LOAD_ONLY_ONE_LAYER( v ) CRITICAL2("E192 - only one layer is supported for each tilemap", v );
-#define CRITICAL_TILE_CLASS_NO_TILESET( v ) CRITICAL2("E193 - cannot call TILE CLASS on something that is not a TILESET", v );
-#define CRITICAL_TILE_CLASS_INVALID_ID( v ) CRITICAL2i("E194 - invalid tile id on TILE CLASS", v );
-#define CRITICAL_TILE_WIDTH_NO_TILESET( v ) CRITICAL2("E195 - cannot call TILE WIDTH on something that is not a TILESET", v );
-#define CRITICAL_TILE_HEIGHT_NO_TILESET( v ) CRITICAL2("E196 - cannot call TILE HEIGHT on something that is not a TILESET", v );
-#define CRITICAL_TILE_PROBABILITY_NO_TILESET( v ) CRITICAL2("E197 - cannot call TILE PROBABILITY on something that is not a TILESET", v );
-#define CRITICAL_TILE_PROBABILITY_INVALID_ID( v ) CRITICAL2i("E198 - invalid tile id on TILE PROBABILITY", v );
-#define CRITICAL_TILEMAP_WIDTH_NO_TILEMAP( v ) CRITICAL2("E199 - cannot call TILEMAP WIDTH on something that is not a TILEMAP", v );
-#define CRITICAL_TILEMAP_HEIGHT_NO_TILEMAP( v ) CRITICAL2("E200 - cannot call TILEMAP HEIGHT on something that is not a TILEMAP", v );
-#define CRITICAL_TILEMAP_LOAD_ONLY_SAME_SIZE_LAYER( v ) CRITICAL2("E201 - cannot use tile maps with layers of different size", v );
-#define CRITICAL_TILESET_OF_INVALID_TILEMAP( v ) CRITICAL2("E202 - cannot use TILESET OF on something that is not a TILEMAP", v );
-#define CRITICAL_TILEMAP_INDEX_INVALID_TILEMAP( v ) CRITICAL2("E203 - cannot use TILEMAP INDEX on something that is not a TILEMAP", v );
-#define CRITICAL_SLICE_IMAGE_UNSUPPORTED( v, t ) CRITICAL3("E204 - SLICE IMAGE unsupported for given datatype", v, t );
-#define CRITICAL_SLICE_IMAGE_UNSUPPORTED_COMBINATION( ) CRITICAL("E205 - SLICE IMAGE cannot optimize the call in this combination" );
-#define CRITICAL_UNKNOWN_CPU_REGISTER( ) CRITICAL("E206 - unknown register");
-#define CRITICAL_UNSETTABLE_CPU_REGISTER( v ) CRITICAL2("E207 - CPU register cannot be used", v );
-#define CRITICAL_UNKNOWN_CPU_STACK( v ) CRITICAL2("E208 - unknown stack size", v );
-#define CRITICAL_DECLARE_PROC_NESTED_UNSUPPORTED( v ) CRITICAL2("E209 - cannot nest DECLARE PROC/FUNCTION inside a PROC", v );
-#define CRITICAL_INVALID_INPUT_RATE( v ) CRITICAL2i("E210 - invalid value for INPUT/KEYBOARD RATE", v );
-#define CRITICAL_INVALID_INPUT_DELAY( v ) CRITICAL2i("E211 - invalid value for INPUT/KEYBOARD DELAY", v );
-#define CRITICAL_IMAGE_EXTRACT_ON_NOT_IMAGES( v ) CRITICAL2("E212 - calling IMAGE on something that is not IMAGES / SEQUENCE", v );
-#define CRITICAL_TILE_ID_ON_NOT_TILESET( v ) CRITICAL2("E213 - using TILE ID on something that is not a TILESET", v ); 
-#define CRITICAL_TILE_ID_MISSING_ORIGINAL_TILESET( v ) CRITICAL2("E214 - missing Tiled informations", v ); 
+#define CRITICAL_UNKNOWN_CPU_REGISTER( ) CRITICAL("E179 - unknown register");
+#define CRITICAL_UNSETTABLE_CPU_REGISTER( v ) CRITICAL2("E180 - CPU register cannot be used", v );
+#define CRITICAL_UNKNOWN_CPU_STACK( v ) CRITICAL2("E181 - unknown stack size", v );
+#define CRITICAL_DECLARE_PROC_NESTED_UNSUPPORTED( v ) CRITICAL2("E182 - cannot nest DECLARE PROC/FUNCTION inside a PROC", v );
+#define CRITICAL_INVALID_INPUT_RATE( v ) CRITICAL2i("E183 - invalid value for INPUT/KEYBOARD RATE", v );
+#define CRITICAL_INVALID_INPUT_DELAY( v ) CRITICAL2i("E184 - invalid value for INPUT/KEYBOARD DELAY", v );
+#define CRITICAL_ARRAY_ASSIGN_DATATYPE_NOT_SUPPORTED( v ) CRITICAL2("E185 - cannot instantiate an array of this kind with direct assignment", v );
+#define CRITICAL_TILESET_LOAD_UNKNOWN_FORMAT( v ) CRITICAL2("E186 - unknown tileset format", v );
+#define CRITICAL_TILESET_LOAD_MISSING_IMAGE( v ) CRITICAL2("E187 - missing image from tileset", v );
+#define CRITICAL_RESOURCE_LOAD_MISSING_FILE(f) CRITICAL2("E188 - missing file in loading resource", f );
+#define CRITICAL_PUT_IMAGE_NAMED_TILE_MISSING_TILESET( v ) CRITICAL2("E189 - missing tileset from images", v );
+#define CRITICAL_PUT_IMAGE_NAMED_TILE_MISSING_TILES_FROM_TILESET( v ) CRITICAL2("E190 - missing tiles' definition on tileset", v );
+#define CRITICAL_PUT_IMAGE_NAMED_TILE_NOT_FOUND( v ) CRITICAL2("E191 - tile not found in tileset", v );
+#define CRITICAL_PUT_IMAGE_NAMED_TILE_INVALID_PROBABILITY( v ) CRITICAL2("E192 - invalid probability for tile selection", v );
+#define CRITICAL_TILEMAP_LOAD_UNKNOWN_FORMAT( v ) CRITICAL2("E193 - unknown tilemap format", v );
+#define CRITICAL_TILEMAP_LOAD_MISSING_LAYER( v ) CRITICAL2("E194 - missing layer from tilemap", v );
+#define CRITICAL_TILEMAP_LOAD_MISSING_TILESET( v ) CRITICAL2("E195 - missing tileset from tilemap", v );
+#define CRITICAL_TILEMAP_LOAD_ONLY_ONE_TILESET( v ) CRITICAL2("E196 - only one tileset is supported for each tilemap", v );
+#define CRITICAL_CANNOT_PUT_TILEMAP_FOR_NON_TILEMAP( v ) CRITICAL2("E197 - cannot PUT TILEMAP without a tile map", v );
+#define CRITICAL_CANNOT_CAST_TILEMAP_SIZE( v ) CRITICAL2("E198 - cannot cast TILEMAP since sizes are different", v );
+#define CRITICAL_TILEMAP_LOAD_ONLY_ONE_LAYER( v ) CRITICAL2("E199 - only one layer is supported for each tilemap", v );
+#define CRITICAL_TILE_CLASS_NO_TILESET( v ) CRITICAL2("E200 - cannot call TILE CLASS on something that is not a TILESET", v );
+#define CRITICAL_TILE_CLASS_INVALID_ID( v ) CRITICAL2i("E201 - invalid tile id on TILE CLASS", v );
+#define CRITICAL_TILE_WIDTH_NO_TILESET( v ) CRITICAL2("E202 - cannot call TILE WIDTH on something that is not a TILESET", v );
+#define CRITICAL_TILE_HEIGHT_NO_TILESET( v ) CRITICAL2("E203 - cannot call TILE HEIGHT on something that is not a TILESET", v );
+#define CRITICAL_TILE_PROBABILITY_NO_TILESET( v ) CRITICAL2("E204 - cannot call TILE PROBABILITY on something that is not a TILESET", v );
+#define CRITICAL_TILE_PROBABILITY_INVALID_ID( v ) CRITICAL2i("E205 - invalid tile id on TILE PROBABILITY", v );
+#define CRITICAL_TILEMAP_WIDTH_NO_TILEMAP( v ) CRITICAL2("E206 - cannot call TILEMAP WIDTH on something that is not a TILEMAP", v );
+#define CRITICAL_TILEMAP_HEIGHT_NO_TILEMAP( v ) CRITICAL2("E207 - cannot call TILEMAP HEIGHT on something that is not a TILEMAP", v );
+#define CRITICAL_TILEMAP_LOAD_ONLY_SAME_SIZE_LAYER( v ) CRITICAL2("E208 - cannot use tile maps with layers of different size", v );
+#define CRITICAL_TILESET_OF_INVALID_TILEMAP( v ) CRITICAL2("E209 - cannot use TILESET OF on something that is not a TILEMAP", v );
+#define CRITICAL_TILEMAP_INDEX_INVALID_TILEMAP( v ) CRITICAL2("E210 - cannot use TILEMAP INDEX on something that is not a TILEMAP", v );
+#define CRITICAL_SLICE_IMAGE_UNSUPPORTED( v, t ) CRITICAL3("E211 - SLICE IMAGE unsupported for given datatype", v, t );
+#define CRITICAL_SLICE_IMAGE_UNSUPPORTED_COMBINATION( ) CRITICAL("E212 - SLICE IMAGE cannot optimize the call in this combination" );
+#define CRITICAL_UNKNOWN_CPU_REGISTER( ) CRITICAL("E213 - unknown register");
+#define CRITICAL_UNSETTABLE_CPU_REGISTER( v ) CRITICAL2("E214 - CPU register cannot be used", v );
+#define CRITICAL_UNKNOWN_CPU_STACK( v ) CRITICAL2("E215 - unknown stack size", v );
+#define CRITICAL_DECLARE_PROC_NESTED_UNSUPPORTED( v ) CRITICAL2("E216 - cannot nest DECLARE PROC/FUNCTION inside a PROC", v );
+#define CRITICAL_INVALID_INPUT_RATE( v ) CRITICAL2i("E217 - invalid value for INPUT/KEYBOARD RATE", v );
+#define CRITICAL_INVALID_INPUT_DELAY( v ) CRITICAL2i("E218 - invalid value for INPUT/KEYBOARD DELAY", v );
+#define CRITICAL_IMAGE_EXTRACT_ON_NOT_IMAGES( v ) CRITICAL2("E219 - calling IMAGE on something that is not IMAGES / SEQUENCE", v );
+#define CRITICAL_TILE_ID_ON_NOT_TILESET( v ) CRITICAL2("E220 - using TILE ID on something that is not a TILESET", v ); 
+#define CRITICAL_TILE_ID_MISSING_ORIGINAL_TILESET( v ) CRITICAL2("E221 - missing Tiled informations", v ); 
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

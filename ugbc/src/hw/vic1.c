@@ -1223,7 +1223,7 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
                     bitmask = 1 << ( 7 - (image_x & 0x7) );
 
                     if (colorUsed == 2 ) {
-                        if ( colorIndex ) {
+                        if ( colorIndex == 0 ) {
                             tileData.data[offset] &= ~bitmask;
                             // printf("%1.1x", colorIndex );
                         } else {
@@ -1233,19 +1233,19 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
                     } else {
                         if ( colorIndex ) {
                             mostFrequentColor[colorIndex]++;
-                            tileData.data[offset] &= ~bitmask;
+                            tileData.data[offset] |= bitmask;
                             // printf("%1.1x", colorIndex );
                         } else {
-                            tileData.data[offset] |= bitmask;
+                            tileData.data[offset] &= ~bitmask;
                             // printf("%1.1x", colorIndex );
                         }
                     }
 
-                    source += 3;
+                    source += _depth;
 
                 }
 
-                source += 3 * ( _width - 8 );
+                source += _depth * ( _width - 8 );
 
                 // printf("\n" );
 
@@ -1256,18 +1256,18 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
             TileDescriptor * t = calculate_tile_descriptor( &tileData );
 
             if ( ! _environment->descriptors ) {
-                _environment->descriptors = precalculate_tile_descriptors_for_font( data_font_standard_bin, data_font_standard_bin_len / 8 );
+                _environment->descriptors = precalculate_tile_descriptors_for_font( data_font_alpha_bin, data_font_standard_bin_len / 8 );
                 _environment->descriptors->first = 0;
-                _environment->descriptors->firstFree = ( (data_font_standard_bin_len / 8) - 1 );
+                _environment->descriptors->firstFree = ( (data_font_alpha_bin_len / 8) );
                 _environment->descriptors->lastFree = 255;
-                _environment->descriptors->count = 255;
+                _environment->descriptors->count = _environment->descriptors->firstFree;
             }
             
             int tile = calculate_exact_tile( t, _environment->descriptors );
 
             if ( tile == -1 ) {
-                if ( _environment->descriptors->count < 128 ) {
-                    tile = 0x5e + (_environment->descriptors->count++);
+                if ( _environment->descriptors->count < 256 ) {
+                    tile = (_environment->descriptors->count++);
                     _environment->descriptors->descriptor[tile] = t; 
                     memcpy( &_environment->descriptors->data[tile], &tileData, sizeof( TileData ) ); 
                 } else {
