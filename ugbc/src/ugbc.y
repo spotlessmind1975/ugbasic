@@ -111,6 +111,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> expr term modula factor exponential expr_math expr_math2
 %type <integer> const_expr const_term const_modula const_factor const_expr_math const_expr_math2
 %type <string> const_expr_string
+%type <floating> const_expr_floating
 %type <integer> direct_integer
 %type <string> random_definition_simple random_definition
 %type <string> color_enumeration
@@ -347,6 +348,19 @@ const_note :
         $$ = ( $1 + 1 ) + ( $3 * 12 );
     }
     ;
+
+const_expr_floating :
+    Float {
+        $$ = $1;
+    }
+    | IF OP const_expr OP_COMMA const_expr_floating OP_COMMA const_expr_floating CP {
+        if ( $3 ) {
+            $$ = $5;
+        } else {
+            $$ = $7;
+        }
+      };
+
 
 const_expr_string :
     String {
@@ -4790,11 +4804,26 @@ datatype :
 
 const_array_definition :
     const_expr {
-        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        Variable * currentArray = ((struct _Environment *)_environment)->currentArray;
         Constant * first = currentArray->arrayInitialization;
         Constant * c = malloc( sizeof( Constant ) );
         memset( c, 0, sizeof( Constant ) );
         c->value = $1;
+        if ( first ) {
+            while( first->next ) {
+                first = first->next;
+            }
+            first->next = c;
+        } else {
+            currentArray->arrayInitialization = c;
+        }        
+    }
+    | const_expr_floating {
+        Variable * currentArray = ((struct _Environment *)_environment)->currentArray;
+        Constant * first = currentArray->arrayInitialization;
+        Constant * c = malloc( sizeof( Constant ) );
+        memset( c, 0, sizeof( Constant ) );
+        c->valueFloating = $1;
         if ( first ) {
             while( first->next ) {
                 first = first->next;
@@ -5092,6 +5121,9 @@ array_assign:
     | OP_ASSIGN {
         Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
         currentArray->arrayInitialization = NULL;
+        if ( VT_BITWIDTH( currentArray->arrayType ) == 0 && currentArray->arrayType != VT_FLOAT ) {
+            CRITICAL_ARRAY_ASSIGN_DATATYPE_NOT_SUPPORTED( currentArray->name );
+        }
     } OP_HASH OGP const_array_definitions CGP {
         Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
         if ( currentArray->size < 0 ) {
@@ -5101,7 +5133,11 @@ array_assign:
                 first = first->next;
                 ++size;
             }
-            currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
+            if ( currentArray->arrayType == VT_FLOAT ) {
+                currentArray->size = ( size * ( VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 ) );
+            } else {
+                currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
+            }
             currentArray->arrayDimensionsEach[0] = size;
         }
         char * buffer = malloc( currentArray->size ), * ptr = buffer;
@@ -5137,6 +5173,23 @@ array_assign:
                     #endif
                     ptr += 4;
                     break;
+                default: {
+                    int result[16];
+                    if ( currentArray->arrayType == VT_FLOAT ) {
+                        switch( currentArray->arrayPrecision ) {
+                            case FT_FAST:
+                                cpu_float_fast_from_double_to_int_array( _environment, initializationValues->valueFloating, result );
+                                break;
+                            case FT_SINGLE:
+                                cpu_float_single_from_double_to_int_array( _environment, initializationValues->valueFloating, result );
+                                break;
+                        }
+
+                        memcpy( ptr, &result, VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 );
+                    }
+                    ptr += ( VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 );
+                    break;
+                }
             }
             initializationValues = initializationValues->next;
         }

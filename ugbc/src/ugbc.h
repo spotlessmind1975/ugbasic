@@ -2331,6 +2331,7 @@ typedef struct _Environment {
 #define CRITICAL_DECLARE_PROC_NESTED_UNSUPPORTED( v ) CRITICAL2("E182 - cannot nest DECLARE PROC/FUNCTION inside a PROC", v );
 #define CRITICAL_INVALID_INPUT_RATE( v ) CRITICAL2i("E183 - invalid value for INPUT/KEYBOARD RATE", v );
 #define CRITICAL_INVALID_INPUT_DELAY( v ) CRITICAL2i("E184 - invalid value for INPUT/KEYBOARD DELAY", v );
+#define CRITICAL_ARRAY_ASSIGN_DATATYPE_NOT_SUPPORTED( v ) CRITICAL2("E185 - cannot instantiate an array of this kind with direct assignment", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
