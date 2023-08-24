@@ -2070,11 +2070,11 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
             TileDescriptor * t = calculate_tile_descriptor( &tileData );
 
             if ( ! _environment->descriptors ) {
-                _environment->descriptors = precalculate_tile_descriptors_for_font( data_font_standard_bin, data_font_standard_bin_len / 8 );
+                _environment->descriptors = precalculate_tile_descriptors_for_font( data_font_alpha_bin, data_font_alpha_bin_len / 8 );
                 _environment->descriptors->first = 0;
-                _environment->descriptors->firstFree = ( (data_font_standard_bin_len / 8) - 1 );
+                _environment->descriptors->firstFree = ( (data_font_alpha_bin_len / 8) );
                 _environment->descriptors->lastFree = 255;
-                _environment->descriptors->count = 255;
+                _environment->descriptors->count = _environment->descriptors->firstFree;
             }
 
             int tile = calculate_exact_tile( t, _environment->descriptors );
