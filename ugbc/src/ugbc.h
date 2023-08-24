@@ -356,6 +356,7 @@ typedef enum _VariableType {
 #define FONT_SCHEMA_STANDARD            1
 #define FONT_SCHEMA_SEMIGRAPHIC         2
 #define FONT_SCHEMA_COMPLETE            3
+#define FONT_SCHEMA_ALPHA               4
 #define FONT_DEFAULT_SCHEMA             FONT_SCHEMA_EMBEDDED
 
 #define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
