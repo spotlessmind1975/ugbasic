@@ -7599,7 +7599,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\tTo generate an assembly starting from basic source:\n" );
     printf("\t\t%s source.bas source.asm\n\n", _argv[0] );
     printf("To generate directly an executable:\n" );
-    printf("\t\t%s -O %s source.bas -o source.%s\n\n", _argv[0], defaultExtension, defaultExtension );
+    printf("\t\t%s -O %s -o source.%s source.bas\n\n", _argv[0], defaultExtension, defaultExtension );
 
     exit(EXIT_FAILURE);
 }
