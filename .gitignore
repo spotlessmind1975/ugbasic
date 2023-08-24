@@ -11,3 +11,7 @@ tests/
 core
 vgcore*
 ugbc/objs*
+10liner.sym
+10liner.vb
+nightly_build.sh
+
