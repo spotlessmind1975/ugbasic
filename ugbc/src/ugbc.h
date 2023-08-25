@@ -3162,7 +3162,6 @@ char * basename( char * _path );
     };
 
 void setup_embedded( Environment *_environment );
-void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
 void shell_injection( Environment * _environment );
