@@ -75,7 +75,7 @@ void wait_while_condition( Environment * _environment, char * _condition ) {
 
     Variable * expression = variable_retrieve_or_define( _environment, _condition, VT_BYTE, 0 );
 
-    cpu_bvneq( _environment, expression->realName, protothreadLabel );
+    cpu_bveq( _environment, expression->realName, protothreadLabel );
 
     cpu_protothread_save( _environment, "PROTOTHREADCT", ( _environment->protothreadStep - 1 ) );
     cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_WAITING );
