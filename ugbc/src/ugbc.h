@@ -2402,15 +2402,9 @@ typedef struct _Environment {
 #define CRITICAL_TILEMAP_INDEX_INVALID_TILEMAP( v ) CRITICAL2("E210 - cannot use TILEMAP INDEX on something that is not a TILEMAP", v );
 #define CRITICAL_SLICE_IMAGE_UNSUPPORTED( v, t ) CRITICAL3("E211 - SLICE IMAGE unsupported for given datatype", v, t );
 #define CRITICAL_SLICE_IMAGE_UNSUPPORTED_COMBINATION( ) CRITICAL("E212 - SLICE IMAGE cannot optimize the call in this combination" );
-#define CRITICAL_UNKNOWN_CPU_REGISTER( ) CRITICAL("E213 - unknown register");
-#define CRITICAL_UNSETTABLE_CPU_REGISTER( v ) CRITICAL2("E214 - CPU register cannot be used", v );
-#define CRITICAL_UNKNOWN_CPU_STACK( v ) CRITICAL2("E215 - unknown stack size", v );
-#define CRITICAL_DECLARE_PROC_NESTED_UNSUPPORTED( v ) CRITICAL2("E216 - cannot nest DECLARE PROC/FUNCTION inside a PROC", v );
-#define CRITICAL_INVALID_INPUT_RATE( v ) CRITICAL2i("E217 - invalid value for INPUT/KEYBOARD RATE", v );
-#define CRITICAL_INVALID_INPUT_DELAY( v ) CRITICAL2i("E218 - invalid value for INPUT/KEYBOARD DELAY", v );
-#define CRITICAL_IMAGE_EXTRACT_ON_NOT_IMAGES( v ) CRITICAL2("E219 - calling IMAGE on something that is not IMAGES / SEQUENCE", v );
-#define CRITICAL_TILE_ID_ON_NOT_TILESET( v ) CRITICAL2("E220 - using TILE ID on something that is not a TILESET", v ); 
-#define CRITICAL_TILE_ID_MISSING_ORIGINAL_TILESET( v ) CRITICAL2("E221 - missing Tiled informations", v ); 
+#define CRITICAL_IMAGE_EXTRACT_ON_NOT_IMAGES( v ) CRITICAL2("E213 - calling IMAGE on something that is not IMAGES / SEQUENCE", v );
+#define CRITICAL_TILE_ID_ON_NOT_TILESET( v ) CRITICAL2("E214 - using TILE ID on something that is not a TILESET", v ); 
+#define CRITICAL_TILE_ID_MISSING_ORIGINAL_TILESET( v ) CRITICAL2("E215 - missing Tiled informations", v ); 
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
