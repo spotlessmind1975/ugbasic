@@ -149,13 +149,13 @@ PARALLEL PROCEDURE printLyrics
 				CENTER "Than I'll ever know";
 			CASE 26
 				CENTER "And I think to myself";
-			CASE 31
+			CASE 27
 				CENTER "What a wonderful world";
-			CASE 36
+			CASE 28
 				CENTER "Yes, I think to myself";
-			CASE 40
+			CASE 30
 				CENTER "What a wonderful world";
-			CASE 44
+			CASE 32
 				CENTER "Ooh, yes...";
 		ENDSELECT
 		
