@@ -60,6 +60,22 @@ static RGBi SYSTEM_PALETTE[] = {
  * CODE SECTION
  ****************************************************************************/
 
+RGBi * vic1_image_nearest_system_color( RGBi * _color ) {
+
+    unsigned int minDistance = 0xffff;
+    int colorIndex = 0;
+    for (int j = 0; j < COLOR_COUNT; ++j) {
+        int distance = rgbi_distance(&SYSTEM_PALETTE[j], _color);
+        if (distance < minDistance) {
+            minDistance = distance;
+            colorIndex = j;
+        }
+    }
+
+    return &SYSTEM_PALETTE[colorIndex];
+
+}
+
 /**
  * @brief <i>VIC</i>: emit code to check for collision
  * 
@@ -678,7 +694,7 @@ void vic1_text( Environment * _environment, char * _text, char * _text_size ) {
 void vic1_initialization( Environment * _environment ) {
 
     deploy( vic1vars, src_hw_vic1_vars_asm );
-    deploy( vic1startup, src_hw_vic1_startup_asm );
+    deploy_deferred( vic1startup, src_hw_vic1_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
@@ -815,7 +831,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
    switch( _mode ) {
 
         case BITMAP_MODE_STANDARD:
-            return ( _width >> 3 ) * ( _height );
+            return 3 + ( _width >> 3 ) * ( _height );
             break;
         case TILEMAP_MODE_STANDARD:
             break;
@@ -999,7 +1015,7 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
 
     memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
-    int bufferSize = 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 1;
+    int bufferSize = 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 1;
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1101,6 +1117,207 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
 
 }
 
+
+/////////////////////////////////////////////////////////////////////////
+
+/**
+ * This method can be used to convert 
+ *     8x8 RGB (3 bytes) pixel (_source) [8x8x3 = 192 bytes]
+ * into 
+ *     8x8 bitmap (1 bit) pixel + 1 (byte) [8x1 + 1 = 9 bytes]
+ *       foreground and background color (_dest)
+ * 
+ * Since the 8x8 pixel area belong to a larger picture,
+ * this function will need the picture _width in order
+ * to move to the next line to analyze.
+ */
+static void vic1_image_converter_tile( Environment * _environment, char * _source, char * _dest, int _width, int _depth, int _source_width ) {
+
+    int colorIndexesCount[COLOR_COUNT];
+    memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
+    int trans = 0;
+
+    char * source = _source;
+
+    // Clear the box and colors
+    memset( _dest, 0, 9 );
+
+    // Loop for all the box surface
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            // Take the color of the pixel
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+
+            if ( rgb.alpha < 255 ) {
+                trans = 1;
+            } else {
+                RGBi *systemRgb = vic1_image_nearest_system_color( &rgb );
+                ++colorIndexesCount[systemRgb->index];
+            }
+
+            source += _depth;
+
+        }
+
+        source += _depth * ( _source_width - 8 );
+
+    }
+
+    int colorBackground = 0;
+    int colorBackgroundMax = 0;
+    int colorForeground = 0;
+    int colorForegroundMax = 0;
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorBackgroundMax ) {
+            colorBackground = xx;
+            colorBackgroundMax = colorIndexesCount[xx];
+        };
+    }
+
+    colorIndexesCount[colorBackground] = 0;
+
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorForegroundMax ) {
+            colorForeground = xx;
+            colorForegroundMax = colorIndexesCount[xx];
+        };
+    }
+
+    if ( trans ) {
+        if ( colorForeground == 0 ) {
+            colorForeground = colorBackground; 
+            colorBackground = 0;
+        } else {
+            colorBackground = 0;
+        }
+    }
+
+    if ( colorForeground == colorBackground ) {
+        colorForeground = ( colorBackground == 0 ) ? 1 : 0;
+    }
+
+    source = _source;
+
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+
+            RGBi *systemRgb = vic1_image_nearest_system_color( &rgb );
+
+            char bitmask = 1 << ( 7 - ((x) & 0x7) );
+
+            if ( rgb.alpha < 255 ) {
+                *( _dest + y ) &= ~bitmask;
+                adilinepixel(colorBackground);
+            } else {
+                if ( systemRgb->index != colorBackground ) {
+                    adilinepixel(colorForeground);
+                    *( _dest + y ) |= bitmask;
+                    // printf("*");
+                } else {
+                   adilinepixel(colorBackground);
+                     *( _dest + y ) &= ~bitmask;
+                    // printf(" ");
+                }
+            }
+
+            source += _depth;
+
+        }
+
+        source += _depth * ( _source_width - 8 );
+
+    }
+
+    *( _dest + 8 ) = ( colorForeground << 4 ) | colorBackground ;
+
+}
+
+/**
+ * This method can be used to convert 
+ *     WxH RGB (3/4 bytes) pixel (_source) [WxHx3/4 bytes]
+ * into 
+ *     WxH bitmap (1 bit) pixel + (W/8xH + W/8xH/8) (bytes)
+ *       foreground and background color (_dest)
+ * 
+ * Since the WXH pixel area could belong to a larger picture,
+ * this function will need the picture _source_width in order
+ * to move to the next line to analyze.
+ */
+static void vic1_image_converter_tiles( Environment * _environment, char * _source, char * _dest, int _width, int _height, int _depth, int _source_width ) {
+
+    int bitmapSize = ( _width>>3 ) * _height;
+    int colormapSize = ( _width>>3 ) * (_height>>3);
+
+    memset( _dest, 0, bitmapSize + colormapSize );
+
+    adilinebeginbitmap("BMD2");
+
+    for( int y=0; y<_height; y+=8 ) {
+        for( int x=0; x<_width; x+=8 ) {
+
+            char * source = _source + ( ( y * _source_width ) + x ) * _depth;
+            char tile[9];
+
+            vic1_image_converter_tile( _environment, source, tile, _width, _depth, _source_width );
+
+            int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
+            // x = 8, y = 8
+            // offset = ((8 >> 3) * 8 * (16>>3) ) + ((8>>3) * 8) + ((8) & 7)
+            // offset = (1 * 8 * 2 ) + (1 * 8)
+            // offset = 16 + 8 = 24
+
+            char * destBitmap = _dest + offset;
+            char * destColormap = _dest + bitmapSize + ( ( ( y >> 3 ) * ( _width >> 3 ) ) + ( x >> 3 ) );
+            for( int i=0; i<8; ++i ) {
+                *destBitmap = tile[i];
+                ++destBitmap;
+            }
+            // printf("tile at %d,%d color = %2.2x\n", x, y, tile[8] );
+            *destColormap = tile[8];            
+        }
+    }
+
+    adilineendbitmap();
+
+}
+
+////////////////////////////////////////////////////////////////////////
+
 static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
@@ -1145,7 +1362,7 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
     int bufferSize;
     
     if ( colorUsed == 2 ) {
-        bufferSize = 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + 1;
+        bufferSize = 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + 2;
     } else {
         bufferSize = 3 + 2* ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
     } 
@@ -1178,78 +1395,21 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
 
     int cx=0,cy=0;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // commonTileDescriptors = precalculate_tile_descriptors_for_font( data_fontvic1_bin );
 
     for( cy=0; cy<(_frame_height >> 3);++cy) {
         for( cx=0; cx<(_frame_width >> 3);++cx) {
 
-            char *source = _source + ( ( cy * 8 * _width ) + cx * 8 ) * 3;
+            char *source = _source + ( ( cy * 8 * _width ) + cx * 8 ) * _depth;
+            char convertedTile[9];
+
+            vic1_image_converter_tile( _environment, source, convertedTile, _width, _depth, _width );
 
             TileData tileData;
             memset(&tileData,0,sizeof(TileData));
-
-            int mostFrequentColor[16];
-            memset(&mostFrequentColor[0],0,sizeof(int)*16);
-
-            int colorIndex = 0;
-
-            // Loop for all the source surface.
-            for (image_y = 0; image_y < 8; ++image_y) {
-                for (image_x = 0; image_x < 8; ++image_x) {
-
-                    // Take the color of the pixel
-                    rgb.red = *source;
-                    rgb.green = *(source + 1);
-                    rgb.blue = *(source + 2);
-
-                    int minDistance = 9999;
-                    for( int i=0; i<colorUsed; ++i ) {
-                        int distance = rgbi_distance(&palette[i], &rgb );
-                        if ( distance < minDistance ) {
-                            minDistance = distance;
-                            colorIndex = palette[i].index;
-                        }
-                    }
-
-                    // printf("%d", i );
-
-                    // Calculate the relative tile
-                    
-                    // Calculate the offset starting from the tile surface area
-                    // and the bit to set.
-                    offset = (image_y & 0x07);
-                    bitmask = 1 << ( 7 - (image_x & 0x7) );
-
-                    if (colorUsed == 2 ) {
-                        if ( colorIndex == 0 ) {
-                            tileData.data[offset] &= ~bitmask;
-                            // printf("%1.1x", colorIndex );
-                        } else {
-                            tileData.data[offset] |= bitmask;
-                            // printf("%1.1x", colorIndex );
-                        }
-                    } else {
-                        if ( colorIndex ) {
-                            mostFrequentColor[colorIndex]++;
-                            tileData.data[offset] |= bitmask;
-                            // printf("%1.1x", colorIndex );
-                        } else {
-                            tileData.data[offset] &= ~bitmask;
-                            // printf("%1.1x", colorIndex );
-                        }
-                    }
-
-                    source += _depth;
-
-                }
-
-                source += _depth * ( _width - 8 );
-
-                // printf("\n" );
-
-            }
+            memcpy(&tileData.data[0], convertedTile, 8 );
 
             // printf("\n" );
             
@@ -1280,16 +1440,8 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
 
             *(buffer + 3 + (cy * ( _frame_width >> 3 ) ) + cx ) = tile;
             if ( colorUsed > 2 ) {
-                int mostFrequentColorIndex = 1;
-                int mostFrequentColorCount = 0;
-                for(i=0;i<colorUsed;++i) {
-                    if ( mostFrequentColorCount < mostFrequentColor[palette[i].index] ) {
-                        mostFrequentColorCount = mostFrequentColor[palette[i].index];
-                        mostFrequentColorIndex = palette[i].index;
-                    }
-                }
                 // printf( "c = %1.1x\n", mostFrequentColorIndex );
-                *(buffer + 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + (cy * ( _frame_width >> 3 ) ) + cx ) = ( ( mostFrequentColorIndex & 0x07 ) );
+                *(buffer + 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + (cy * ( _frame_width >> 3 ) ) + cx ) = ( convertedTile[8] >> 4 ) & 0x7;
             }
 
             // printf("\ntile: %2.2x\n", tile );
@@ -1299,7 +1451,10 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
     }
 
     if ( colorUsed <= 2 ) {
-        *(buffer + 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) ) = palette[0].index == 0 ? palette[1].index : palette[0].index;
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) ) = palette[1].index;
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + 1 ) = ( palette[0].index << 4 );
+    } else {
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + ( (_frame_height >> 3 ) * ( _frame_width >> 3 ) ) ) = ( palette[0].index << 4 ) & 0xf0;
     }
     // printf("----\n");
 
@@ -1696,7 +1851,7 @@ static unsigned int SOUND_FREQUENCIES[] = {
 void vic1_start( Environment * _environment, int _channels ) {
 
     deploy( vic1vars, src_hw_vic1_vars_asm );
-    deploy( vic1startup, src_hw_vic1_startup_asm );
+    deploy_deferred( vic1startup, src_hw_vic1_startup_asm );
 
     if ( _channels & 0x01 ) {
         outline0("JSR VIC1START0");

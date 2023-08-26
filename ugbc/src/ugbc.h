@@ -3112,7 +3112,8 @@ char * basename( char * _path );
         _environment->asmFileName ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
-        printf("Please use option '-I' to install chain tool.\n\n"); \
+        printf("Please check if %s is correctly installed.\n\n", executableName); \
+        printf("For more info, please visit: https://ugbasic.iwashere.eu/install.\n\n"); \
     };
 
 #define BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_Z80ASM( _environment, executableName ) \
@@ -3146,7 +3147,8 @@ char * basename( char * _path );
         _environment->asmFileName ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
-        printf("Please use option '-I' to install chain tool.\n\n"); \
+        printf("Please check if %s is correctly installed.\n\n", executableName); \
+        printf("For more info, please visit: https://ugbasic.iwashere.eu/install.\n\n"); \
         return; \
     }; \
     if ( _environment->listingFileName ) { \
@@ -3208,7 +3210,8 @@ char * basename( char * _path );
         _environment->asmFileName ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
-        printf("Please use option '-I' to install chain tool.\n\n"); \
+        printf("Please check if %s is correctly installed.\n\n", executableName); \
+        printf("For more informations, please visit: https://ugbasic.iwashere.eu/install.\n\n"); \
     };
 
 #define BUILD_TOOLCHAIN_DECB_GET_EXECUTABLE( _environment, executableName ) \
@@ -3228,7 +3231,8 @@ char * basename( char * _path );
         _environment->exeFileName ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
-        printf("Please use option '-I' to install chain tool.\n\n"); \
+        printf("Please check if %s is correctly installed.\n\n", executableName); \
+        printf("For more informations, please visit: https://ugbasic.iwashere.eu/install.\n\n"); \
     }; \
     sprintf( commandLine, "\"%s\" copy -2 \"%s\" \"%s,%s\"", \
         executableName, \
@@ -3237,11 +3241,11 @@ char * basename( char * _path );
         strtoupper( basename( binaryFileName ) ) ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
-        printf("Please use option '-I' to install chain tool.\n\n"); \
+        printf("Please check if %s is correctly installed.\n\n", executableName); \
+        printf("For more informations, please visit: https://ugbasic.iwashere.eu/install.\n\n"); \
     };
 
 void setup_embedded( Environment *_environment );
-void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
 void shell_injection( Environment * _environment );
