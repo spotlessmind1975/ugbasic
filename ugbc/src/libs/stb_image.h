@@ -7869,3 +7869,6 @@ ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ------------------------------------------------------------------------------
 */
+
+STBIDEF int stbi_is_animated_gif( char const * filename );
+STBIDEF unsigned char *stbi_xload(char const *filename, int *x, int *y, int *frames);

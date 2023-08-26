@@ -1,11 +1,9 @@
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
- *****************************************************************************
  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -147,7 +145,19 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     long fileSize = ftell( lookedFileHandle );
     fclose( lookedFileHandle );
 
-    unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
+    int frames = 0;
+    unsigned char * source;
+    int layout_mode = 0;
+
+    if ( stbi_is_animated_gif( lookedFilename ) ) {
+        source = stbi_xload(lookedFilename, &width, &height, &frames);
+        depth = 4;
+        layout_mode = 1;
+    } else {
+        source = stbi_load(lookedFilename, &width, &height, &depth, 0);
+        frames = 0;
+        layout_mode = 0;
+    }
 
     if ( !source ) {
         CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _filename );
@@ -161,51 +171,107 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         CRITICAL_IMAGES_LOAD_INVALID_FRAME_HEIGHT( _frame_height );
     }
 
-    int wc = ( width / _frame_width );
-    int hc = ( height / _frame_height );
-    int a = 1;
-
-    Variable * result[MAX_TEMPORARY_STORAGE];
-    int i,di,x=0,y=0,z=0;
     int bufferSize = 0;
+    int realFramesCount;
+    int i;
+    Variable * result[MAX_TEMPORARY_STORAGE];
 
-    if( _flags & FLAG_ROLL_X ) {
-        a = (_frame_width - 1);
-    }
+    if ( layout_mode == 0 ) {
 
-    int realFramesCount = (a*hc*wc);
-    i = 0;
-    di = 1;
+        int wc = ( width / _frame_width );
+        int hc = ( height / _frame_height );
+        int a = 1;
+        frames = wc*hc;
 
-    adiline5("LIS:%s:%s:%2.2x:%2.2x:%lx", _filename, lookedFilename, realFramesCount, wc, fileSize );
+        int i,di,x=0,y=0,z=0;
 
-    if( _flags & FLAG_FLIP_X ) {
-        source = image_flip_x( _environment, source, width, height, depth );
-    }
-    if( _flags & FLAG_FLIP_Y ) {
-        source = image_flip_y( _environment, source, width, height, depth );
-    }
-
-    if ( _transparent_color != -1 ) {
-        _flags |= FLAG_TRANSPARENCY;
-    }
-
-    int base = ( 3*width*height ) - 6;
-    for( z=0; z<a; ++z ) {
-        for( y=0; y<height; y+=_frame_height ) {
-            for( x=0; x<width; x+=_frame_width ) {
-                result[i] = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
-                bufferSize += result[i]->size;
-                i += di;
-            }
-        }
         if( _flags & FLAG_ROLL_X ) {
-            if ( _flags & FLAG_FLIP_X ) {
-                source = image_roll_x_left( _environment, source, width, height );
-            } else {
-                source = image_roll_x_right( _environment, source, width, height );
+            a = (_frame_width - 1);
+        }
+
+        realFramesCount = (a*hc*wc);
+        i = 0;
+        di = 1;
+
+        adiline5("LIS:%s:%s:%2.2x:%2.2x:%lx", _filename, lookedFilename, realFramesCount, wc, fileSize );
+
+        if( _flags & FLAG_FLIP_X ) {
+            source = image_flip_x( _environment, source, width, height, depth );
+        }
+        if( _flags & FLAG_FLIP_Y ) {
+            source = image_flip_y( _environment, source, width, height, depth );
+        }
+
+        if ( _transparent_color != -1 ) {
+            _flags |= FLAG_TRANSPARENCY;
+        }
+
+        for( z=0; z<a; ++z ) {
+            for( y=0; y<height; y+=_frame_height ) {
+                for( x=0; x<width; x+=_frame_width ) {
+                    result[i] = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
+                    bufferSize += result[i]->size;
+                    i += di;
+                }
+            }
+            if( _flags & FLAG_ROLL_X ) {
+                if ( _flags & FLAG_FLIP_X ) {
+                    source = image_roll_x_left( _environment, source, width, height );
+                } else {
+                    source = image_roll_x_right( _environment, source, width, height );
+                }
             }
         }
+
+    } else {
+
+        int z;
+
+        // if( _flags & FLAG_ROLL_X ) {
+        //     a = (_frame_width - 1);
+        // }
+
+        realFramesCount = frames;
+        i = 0;
+        
+        adiline5("LIS:%s:%s:%2.2x:%2.2x:%lx", _filename, lookedFilename, realFramesCount, realFramesCount, fileSize );
+
+        // if( _flags & FLAG_FLIP_X ) {
+        //     source = image_flip_x( _environment, source, width, height, depth );
+        // }
+        // if( _flags & FLAG_FLIP_Y ) {
+        //     source = image_flip_y( _environment, source, width, height, depth );
+        // }
+
+        if ( _transparent_color != -1 ) {
+            _flags |= FLAG_TRANSPARENCY;
+        }
+
+        for( z=0; z<frames; ++z ) {
+            // for( y=0; y<height; y+=_frame_height ) {
+            //     for( x=0; x<width; x+=_frame_width ) {
+                    result[i] = image_converter( _environment, source, width, height, depth, 0, 0, _frame_width, _frame_height, _mode, _transparent_color, _flags );
+                    bufferSize += result[i]->size;
+                    ++i;
+                    source += (width*height*depth)+2;
+            //     }
+            // }
+            // if( _flags & FLAG_ROLL_X ) {
+            //     if ( _flags & FLAG_FLIP_X ) {
+            //         source = image_roll_x_left( _environment, source, width, height );
+            //     } else {
+            //         source = image_roll_x_right( _environment, source, width, height );
+            //     }
+            // }
+        }
+
+        // Number of frames is returned through frames parameter.
+        // The delay for each frame is a 2 bytes little endian unsigned integer.
+        // All frames are given in RGBA format.
+        // All frames have the same width and height returned through x, y parameters.
+        // A single image buffer (with no delay info) is returned for non-gif files and for gifs that have 1 frame.
+        // The loading skips an y-flip check stb_image does.
+
     }
 
     bufferSize += 3;
@@ -214,7 +280,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
 
     char * buffer = malloc( bufferSize );
     char * ptr = buffer;
-    ptr[0] = wc*hc;
+    ptr[0] = frames;
     ptr[1] = ( _frame_width & 0xff );
     ptr[2] = ( _frame_width >> 8 ) & 0xff;
 
@@ -233,7 +299,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         variable_temporary_remove( _environment, result[i]->name );
     }
 
-    stbi_image_free(source);
+    // stbi_image_free(source);
 
     if ( _bank_expansion && _environment->expansionBanks ) {
 

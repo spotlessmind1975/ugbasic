@@ -33,7 +33,6 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
-#define STB_IMAGE_IMPLEMENTATION
 #include "../../libs/stb_image.h"
 #include "../../libs/msc1.h"
 
