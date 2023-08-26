@@ -92,6 +92,7 @@ IRQVECTORSKIP:
     POP DE
     POP BC
     POP AF
+    JP $0038
     EI
     RET
 

@@ -102,7 +102,7 @@ void end_procedure( Environment * _environment, char * _value ) {
         cpu_protothread_get_state( _environment, "PROTOTHREADCT", status->realName );
 
         cpu_compare_and_branch_8bit_const( _environment, status->realName, PROTOTHREAD_STATUS_ENDED, procedureEndedLabel, 1 );
-        cpu_compare_and_branch_8bit_const( _environment, status->realName, PROTOTHREAD_STATUS_WAITING, protothreadLabelWaiting, 1 );
+        // cpu_compare_and_branch_8bit_const( _environment, status->realName, PROTOTHREAD_STATUS_WAITING, protothreadLabelWaiting, 1 );
 
         if ( _environment->protothreadStep > 1 ) {
             outline0("; start end proc with parallel");
