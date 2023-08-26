@@ -117,9 +117,13 @@ void vic1_hit( Environment * _environment, char * _sprite_mask, char * _result )
  */
 void vic1_border_color( Environment * _environment, char * _border_color ) {
 
+    outline0("LDA $900F" );
+    outline0("AND #$F8" );
+    outline0("STA $900F");
     outline1("LDA %s", _border_color );
     outline0("AND #$07" );
-    outline0("STA $900F");
+    outline0("ORA $900F" );
+    outline0("STA $900F" );
 
 }
 
