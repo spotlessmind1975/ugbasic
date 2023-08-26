@@ -555,12 +555,16 @@ MUSICPLAYERL1B:
     CPX #$0
     BNE MUSICPLAYERL1X
 
+MUSICPLAYERL1BD0:
     ; Let's stop the play!
     LDA #$0
     STA VIC1MUSICREADY
     STA VIC1TMPPTR
     STA VIC1TMPPTR+1
     STA VIC1JIFFIES
+    LDA #$FF
+    JSR VIC1STOP
+    
     RTS
 
 ; This is the entry point to decode the instruction
