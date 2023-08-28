@@ -1092,4 +1092,16 @@ void zx_follow_irq( Environment * _environment ) {
 
 }
 
+void zx_hscroll_line( Environment * _environment, int _direction ) {
+
+    deploy( textHScrollLine, src_hw_zx_hscroll_asm);
+
+    outline0("LD A, (YCURSYS)" );
+    outline0("LD B, A" );
+    outline1("LD A, $%2.2x", ( _direction & 0xff ) );
+
+    outline0("CALL HSCROLLLINE");
+
+}
+
 #endif

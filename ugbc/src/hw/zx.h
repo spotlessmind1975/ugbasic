@@ -256,5 +256,6 @@ void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _resul
 
 void zx_sys_call( Environment * _environment, int _destination );
 int zx_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
+void zx_hscroll_line( Environment * _environment, int _direction );
 
 #endif
