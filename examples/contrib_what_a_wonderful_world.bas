@@ -45,7 +45,7 @@ CLS WHITE
 
 soundtrack := LOAD MUSIC("what_a_wonderful_world.mid")
 
-earth := LOAD IMAGES("earth_128x128_2colors.gif") FRAME SIZE(128,128)
+earth := LOAD IMAGES("earth_128x128_2colors.gif") FRAME SIZE AUTO
 
 POSITIVE CONST centerX = ( SCREEN WIDTH - 128 ) \ #2
 POSITIVE CONST frameMax = FRAMES(earth) - 1
@@ -169,5 +169,6 @@ SPAWN rotatingEarth
 SPAWN printLyrics
 
 DO: RUN PARALLEL: LOOP
+
 
 

@@ -42,6 +42,7 @@ TEXTAT:
     LD D, A
 TEXTATL:
     LD A, (HL)
+    DEC C
     INC HL
     CP 14
     JP C, TEXTATCC
@@ -125,21 +126,25 @@ TEXTATPEN:
     LD A, 0
 TEXTATPEN2:    
     INC HL
+    DEC C
     LD (_PEN), A
     JMP TEXTATNEXTCOL
 
 TEXTATPAPER:
     LD A, (HL)
     INC HL
+    DEC C
     LD (_PAPER), A
     JMP TEXTATNEXTCOL
 
 TEXTATAT:
     LD A, (HL)
     INC HL
+    DEC C
     LD E, A   
     LD A, (HL)
     INC HL
+    DEC C
     LD D, A
     CP 24
     JP C, TEXTATAT2
@@ -157,10 +162,12 @@ TEXTATAT2:
 TEXTATCMOVE:
     LD A, (HL)
     INC HL
+    DEC C
     ADD A, E
     LD E, A
     LD A, (HL)
     INC HL
+    DEC C
     ADD A, D
     LD D, A
     CP 24
@@ -182,6 +189,7 @@ TEXTATLF:
     JMP TEXTATNEXTCOLCHK
 
 TEXTATNEXTCOL:
+    INC C
     DEC C
     JP NZ, TEXTATL
     LD A, D

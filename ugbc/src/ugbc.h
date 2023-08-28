@@ -2145,6 +2145,17 @@ typedef struct _Environment {
      */
     int frameBufferStart2;
 
+
+    /**
+     * 
+     */
+    int frameWidth;
+
+    /**
+     * 
+     */
+    int frameHeight;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -2405,6 +2416,7 @@ typedef struct _Environment {
 #define CRITICAL_IMAGE_EXTRACT_ON_NOT_IMAGES( v ) CRITICAL2("E213 - calling IMAGE on something that is not IMAGES / SEQUENCE", v );
 #define CRITICAL_TILE_ID_ON_NOT_TILESET( v ) CRITICAL2("E214 - using TILE ID on something that is not a TILESET", v ); 
 #define CRITICAL_TILE_ID_MISSING_ORIGINAL_TILESET( v ) CRITICAL2("E215 - missing Tiled informations", v ); 
+#define CRITICAL_IMAGES_LOAD_INVALID_AUTO_WITHOUT_GIF( v ) CRITICAL2("E216 - cannot use implicit FRAME SIZE without an animated GIF", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

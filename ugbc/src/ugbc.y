@@ -90,7 +90,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
-%token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND
+%token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2078,6 +2078,15 @@ load_images : LOAD IMAGES | IMAGES LOAD;
 load_sequence : LOAD SEQUENCE | SEQUENCE LOAD;
 load_tileset  : LOAD TILESET | TILESET LOAD;
 load_tilemap  : LOAD TILEMAP | TILEMAP LOAD;
+frame_size : 
+    FRAME SIZE OP const_expr OP_COMMA const_expr CP {
+        ((struct _Environment *)_environment)->frameWidth = $4;
+        ((struct _Environment *)_environment)->frameHeight = $6;
+    } 
+    | FRAME SIZE AUTO {
+        ((struct _Environment *)_environment)->frameWidth = -1;
+        ((struct _Environment *)_environment)->frameHeight = -1;
+    };
 
 exponential:
     Identifier {
@@ -2480,11 +2489,11 @@ exponential:
     | load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {        
         $$ = sequence_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 )->name;
       }
-    | load_images OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_opacity using_background on_bank {        
-        $$ = images_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 )->name;
+    | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank {        
+        $$ = images_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $7+$8, $9, $10 )->name;
       }
-    | load_images OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = images_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $10, $12, $14, $15+$16, $17, $18 )->name;
+    | load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank {
+        $$ = images_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $9+$10, $11, $12 )->name;
       }
     | load_tileset OP String CP images_load_flags using_transparency using_opacity using_background on_bank {
         $$ = tileset_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;

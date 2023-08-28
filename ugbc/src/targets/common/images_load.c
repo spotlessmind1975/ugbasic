@@ -154,9 +154,20 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         depth = 4;
         layout_mode = 1;
     } else {
+        if ( _frame_height < 0 || _frame_width < 0 ) {
+            CRITICAL_IMAGES_LOAD_INVALID_AUTO_WITHOUT_GIF( _filename );            
+        }
         source = stbi_load(lookedFilename, &width, &height, &depth, 0);
         frames = 0;
         layout_mode = 0;
+    }
+
+    if ( _frame_width < 0 ) {
+        _frame_width = width;
+    }
+
+    if ( _frame_height < 0 ) {
+        _frame_height = height;
     }
 
     if ( !source ) {
