@@ -3807,7 +3807,7 @@ sprite_definition:
     direct_integer {
         ((Environment *)_environment)->currentSpriteNumber = $1;
     } sprite_definition_simple
-  | Identifier {
+  | expr {
         ((Environment *)_environment)->currentSprite = strdup($1);
     } sprite_definition_expression;
 
