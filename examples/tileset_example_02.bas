@@ -1,5 +1,5 @@
 ﻿REM @english
-REM TILESET SUPPORT USE BY NAME
+REM TILESET SUPPORT TILE PROPERTIES
 REM
 REM This example shows how to load and use a named tiles from tileset 
 REM created with a standard tool like "Tiled". The tiles can be indexed
@@ -10,7 +10,7 @@ REM https://www.mapeditor.org/
 REM https://kenney.nl/
 REM
 REM @italian
-REM GESTIONE DEI TILESET USO NOMINALE
+REM GESTIONE DEI TILESET PROPRIETA DEI TILE
 REM
 REM Questo esempio mostra come si caricano e si utilizzano le tile
 REM nominali di un tileset creato con un tool standard come "Tiled".
