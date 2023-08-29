@@ -1,5 +1,5 @@
 ﻿REM @english
-REM TILESET SUPPORT BASIC LOADING
+REM TILESET SUPPORT BASIC USAGE
 REM
 REM This example shows how to load and use a tileset created
 REM with a standard tool like "Tiled". Tileset courtesy of Kenney.
@@ -9,7 +9,7 @@ REM https://www.mapeditor.org/
 REM https://kenney.nl/
 REM
 REM @italian
-REM GESTIONE DEI TILESET CARICAMENTO
+REM GESTIONE DEI TILESET USO DI BASE
 REM
 REM Questo esempio mostra come si carica e si utilizza un
 REM tileset creato con un tool standard come "Tiled".
