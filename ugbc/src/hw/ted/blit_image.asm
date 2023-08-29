@@ -35,10 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-BLITIMAGEBLITADDR:  .WORD $0
-
+BLITIMAGEBLITADDR:
 BLITIMAGEBLIT:
-    JMP  (BLITIMAGEBLITADDR) 
+    JMP $0000
 
 ; ----------------------------------------------------------------------------
 ; - Put image on bitmap

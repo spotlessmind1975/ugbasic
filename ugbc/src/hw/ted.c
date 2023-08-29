@@ -1631,9 +1631,9 @@ void ted_blit_image( Environment * _environment, char * _sources[], int _source_
     outhead1("blitimage%s:", label);
 
     outline1("LDA #<%s", _blit );
-    outline0("STA BLITIMAGEBLITADDR" );
-    outline1("LDA #>%s", _blit );
     outline0("STA BLITIMAGEBLITADDR+1" );
+    outline1("LDA #>%s", _blit );
+    outline0("STA BLITIMAGEBLITADDR+2" );
 
     if ( _source_count > 0 ) {
         ted_load_image_address_to_register( _environment, "BLITTMPPTR", _sources[0], _sequence, _frame, _frame_size, _frame_count );
