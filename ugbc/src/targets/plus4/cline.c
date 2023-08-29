@@ -113,8 +113,10 @@ void cline( Environment * _environment, char * _characters ) {
         outhead0("lib_cline_skip:" );
 
         outline0("LDA CHARACTERS");
-        outline0("BEQ lib_cline_entire_line");
+        outline0("BEQ lib_cline_entire_linex");
+        outline0("JMP lib_cline_entire_line");
 
+        outhead0("lib_cline_entire_linex:" );
         outline0("CLC"); // x
         outline0("LDA CLINEX"); // x
         outline0("ADC COPYOFTEXTADDRESS");
@@ -142,13 +144,17 @@ void cline( Environment * _environment, char * _characters ) {
         outline0("INC CLINEX"); // x
         outline0("LDA CLINEX"); // x
         outline0("CMP #40"); // x
-        outline0("BNE lib_cline_next"); // x
+        outline0("BEQ lib_cline_nextx"); // x
+        outline0("JMP lib_cline_next"); // x
+        outline0("lib_cline_nextx:");
         outline0("LDA #0"); // x
         outline0("STA CLINEX"); // x
         outline0("INC CLINEY"); // y
         outline0("LDA CLINEY"); // y
         outline0("CMP #24"); // h
-        outline0("BNE lib_cline_next"); // x
+        outline0("BEQ lib_cline_nextxx"); // x
+        outline0("JMP lib_cline_next"); // x
+        outhead0("lib_cline_nextxx:");
 
         text_vscroll_screen( _environment, -1 );
 
@@ -169,10 +175,12 @@ void cline( Environment * _environment, char * _characters ) {
         outline0("SBC #0");
         outline0("STA COPYOFCOLORMAPADDRESS+1");
  
-        outline0("lib_cline_next:");
+        outhead0("lib_cline_next:");
         outline0("INY");
         outline0("DEX");
-        outline0("BNE lib_cline_increment_x");
+        outline0("BEQ lib_cline_increment_xx");
+        outline0("JMP lib_cline_increment_x");
+        outhead0("lib_cline_increment_xx:");
         outline0("RTS");
 
         outhead0("lib_cline_entire_line:");
