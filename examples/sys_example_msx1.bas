@@ -44,7 +44,7 @@ PROCEDURE example ON MSX1
 
 END PROC
 
-example[]
+example[] ON MSX1
 
 
 

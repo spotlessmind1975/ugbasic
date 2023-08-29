@@ -44,6 +44,6 @@ PROCEDURE example ON ATARI, ATARIXL
 
 END PROC
 
-example[]
+example[] ON ATARI, ATARIXL
 
 

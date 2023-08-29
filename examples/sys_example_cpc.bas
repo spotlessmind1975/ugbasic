@@ -44,6 +44,6 @@ PROCEDURE example ON CPC
 
 END PROC
 
-example[]
+example[] ON CPC
 
 

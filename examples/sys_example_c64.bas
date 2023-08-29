@@ -48,6 +48,6 @@ PROCEDURE example ON C64
 	
 END PROC
 
-example[]
+example[] ON C64
 
 

@@ -48,7 +48,7 @@ PROCEDURE example ON VIC20
 	
 END PROC
 
-example[]
+example[] ON VIC20
 
 
 

@@ -48,7 +48,7 @@ PROCEDURE example ON C128
 	
 END PROC
 
-example[]
+example[] ON C128
 
 
 
