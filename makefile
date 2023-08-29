@@ -441,7 +441,7 @@ generated/c64/exeso/%.d64: $(subst /generated/exeso/,/examples/,$(@:.d64=.bas))
 toolchain.coleco: z88dk
 
 generated/coleco/asm/%.asm:
-	@cd examples && ../ugbc/exe/ugbc.coleco$(UGBCEXESUFFIX) -d $(OPTIONS) $(subst generated/coleco/asm/,,$(@:.asm=.bas)) ../$@ 
+	@cd examples && ../ugbc/exe/ugbc.coleco$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/coleco/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/coleco/exe/%.rom:
 	@$(Z80ASM) -D__coleco__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
@@ -456,7 +456,7 @@ generated/coleco/exe/%.rom:
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/coleco/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@cd examples && ../ugbc/exe/ugbc.coleco$(UGBCEXESUFFIX) -d $(OPTIONS) -o ../$@ -O rom $(subst generated/coleco/exeso/,,$(@:.rom=.bas))
+	@cd examples && ../ugbc/exe/ugbc.coleco$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O rom $(subst generated/coleco/exeso/,,$(@:.rom=.bas))
 
 #------------------------------------------------ 
 # cpc:
