@@ -227,6 +227,10 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
     }
 
     if ( a > 1 ) {
+        if ( ( ( width >> 3 ) * ( height >> 3 ) * a )  > 0xffff ) {
+            CRITICAL_TILES_LOAD_IMAGE_TOO_BIG( _filename );
+        }
+
         offsetting_size_count( _environment, ( width >> 3 ) * ( height >> 3 ), a );
         index->originalWidth = width;
         index->originalHeight = height;

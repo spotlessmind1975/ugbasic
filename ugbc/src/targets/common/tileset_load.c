@@ -240,6 +240,10 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
     ptr[1] = ( tileset->tilewidth & 0xff );
     ptr[2] = ( tileset->tilewidth >> 8 ) & 0xff;
 
+    if ( ( result[0]->size * realFramesCount ) > 0xffff ) {
+        CRITICAL_TILESET_LOAD_IMAGE_TOO_BIG( _filename );
+    }
+
     offsetting_size_count( _environment, result[0]->size, realFramesCount );
 
     ptr += 3;

@@ -2417,6 +2417,11 @@ typedef struct _Environment {
 #define CRITICAL_TILE_ID_ON_NOT_TILESET( v ) CRITICAL2("E214 - using TILE ID on something that is not a TILESET", v ); 
 #define CRITICAL_TILE_ID_MISSING_ORIGINAL_TILESET( v ) CRITICAL2("E215 - missing Tiled informations", v ); 
 #define CRITICAL_IMAGES_LOAD_INVALID_AUTO_WITHOUT_GIF( v ) CRITICAL2("E216 - cannot use implicit FRAME SIZE without an animated GIF", v );
+#define CRITICAL_IMAGES_LOAD_IMAGE_TOO_BIG( v ) CRITICAL2("E217 - IMAGES cannot be loaded since is too big", v );
+#define CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( v ) CRITICAL2("E218 - SEQUENCE cannot be loaded since is too big", v );
+#define CRITICAL_TILES_LOAD_IMAGE_TOO_BIG( v ) CRITICAL2("E218 - TILES cannot be loaded since is too big", v );
+#define CRITICAL_TILESET_LOAD_IMAGE_TOO_BIG( v ) CRITICAL2("E219 - TILESET cannot be loaded since is too big", v );
+
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

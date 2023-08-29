@@ -204,7 +204,16 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
     ptr[1] = _frame_width;
     ptr[2] = hc;
 
+    if ( ( result[0]->size * wc ) > 0xffff ) {
+        CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _filename );
+    }
+
     offsetting_size_count( _environment, result[0]->size, wc );
+
+    if ( ( wc*result[0]->size ) > 0xffff ) {
+        CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _filename );
+    }
+
     offsetting_size_count( _environment, wc*result[0]->size, hc );
 
     ptr += 3;

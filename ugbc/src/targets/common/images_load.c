@@ -297,6 +297,10 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     ptr[1] = ( _frame_width & 0xff );
     ptr[2] = ( _frame_width >> 8 ) & 0xff;
 
+    if ( ( result[0]->size * realFramesCount ) > 0xffff ) {
+        CRITICAL_IMAGES_LOAD_IMAGE_TOO_BIG( _filename );
+    }
+
     offsetting_size_count( _environment, result[0]->size, realFramesCount );
 
     ptr += 3;
