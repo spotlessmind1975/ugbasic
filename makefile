@@ -380,14 +380,14 @@ generated/atarixl/exeso/%.xex: $(subst /generated/exeso/,/examples/,$(@:.xex=.ba
 toolchain.c128: cc65
 
 generated/c128/asm/%.asm:
-	cd examples && ../ugbc/exe/ugbc.c128$(UGBCEXESUFFIX) $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c128/asm/,,$(@:.asm=.bas)) ../$@
+	@cd examples && ../ugbc/exe/ugbc.c128$(UGBCEXESUFFIX) $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c128/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/c128/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t c128 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/c128/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	cd examples && ../ugbc/exe/ugbc.c128$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/c128/exeso/,,$(@:.prg=.bas))
+	@cd examples && ../ugbc/exe/ugbc.c128$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/c128/exeso/,,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # c128z:
