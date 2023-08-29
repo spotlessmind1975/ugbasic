@@ -151,7 +151,9 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
         cpu_label( _environment, labelLoopY );
         variable_store( _environment, x->name, 0 );
         variable_store( _environment, fx->name, 0 );
-        variable_move( _environment, dx->name, fx->name );
+        if ( dx ) {
+            variable_move( _environment, dx->name, fx->name );
+        }
         variable_store( _environment, padding->name, 0 );
         cpu_label( _environment, labelLoopX );
         if ( tilemap->size > 255 ) {
