@@ -104,12 +104,15 @@ endif
 #--- MAKEFILE's ENVIRONMENT
 #-----------------------------------------------------------------------------
 
+BETA=$(shell git status | grep beta)
+
 # Check if the compilation is for a BETA version or not.
 # In this case, the ".beta" suffix will be added to the executable.
-ifeq (,$(wildcard BETA))
+ifeq ($(BETA),)
   BETASUFFIX =
 else
   BETASUFFIX = .beta
+  CFLAGS += -D__BETA__
 endif
 
 ifeq ($(OS),Windows_NT)

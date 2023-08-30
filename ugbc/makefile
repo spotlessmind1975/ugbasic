@@ -46,6 +46,7 @@ BISON_OPTIONS=--locations -d -Wcounterexamples
 CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC
 LFLAGS=
 LIBS=-lm $(LIBXML2)
+BETA=$(shell git status | grep beta)
 
 .PHONY: paths clean all bison flex
 
@@ -60,7 +61,7 @@ test: paths-test tester
 # Check if the compilation is for a BETA version or not.
 # In this case, the ".beta" suffix will be added to the executable.
 
-ifeq (,$(wildcard ../BETA))
+ifeq ($(BETA),)
   BETASUFFIX =
 else
   BETASUFFIX = .beta
