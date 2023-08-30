@@ -1,4 +1,15 @@
-REM Starfield, by S.Devulder for ugBasic
+REM @english
+REM OTHER CONTRIBUTIONS STAFIELD
+REM
+REM This example shows a simple starfield by S.Devulder for ugBasic
+REM 
+REM @italian
+REM VARI ALTRI CONTRIBUTI CAMPO STELLATO
+REM
+REM This example shows a simple starfield by S.Devulder for ugBasic
+REM
+
+REM Starfield, 
 
 CONST numr  =  1000 : REM num of random position in pool 
 CONST nums  =    20 : REM number of stars in starfield
