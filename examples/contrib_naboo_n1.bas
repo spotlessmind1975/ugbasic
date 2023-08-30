@@ -21,25 +21,31 @@ REM Per ulteriori informazioni, fare clic qui:
 REM http://patsos.de/New_Weblog/?p=671
 REM
 
-BITMAP ENABLE(320,200)
+PROCEDURE example ON ALL BUT VIC20
 
-CLS
+	BITMAP ENABLE(320,200)
 
-DIM data() = LOAD "contrib_naboo_n1.txt" AS TEXT READONLY
+	CLS
 
-DIM pos AS INTEGER = 0
+	DIM data() = LOAD "contrib_naboo_n1.txt" AS TEXT READONLY
 
-DO
-	mode = data(pos): x = data(pos+1): y = data(pos+2)
-	SELECT CASE mode
-		CASE #0
-			PLOT x, y
-		CASE #1
-			LINE TO x, y
-		CASE ELSE
-			HALT
-	ENDSELECT
-	
-	INC pos : INC pos : INC pos
-	
-LOOP
+	DIM pos AS INTEGER = 0
+
+	DO
+		mode = data(pos): x = data(pos+1): y = data(pos+2)
+		SELECT CASE mode
+			CASE #0
+				PLOT x, y
+			CASE #1
+				LINE TO x, y
+			CASE ELSE
+				HALT
+		ENDSELECT
+		
+		INC pos : INC pos : INC pos
+		
+	LOOP
+
+END PROC
+
+example[] ON ALL BUT VIC20

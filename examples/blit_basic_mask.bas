@@ -47,7 +47,7 @@ PROCEDURE example ON ALL BUT VIC20, VG5000
 	
 END PROC
 
-CALL example
+CALL example ON ALL BUT VIC20, VG5000
 	
 	
 	
