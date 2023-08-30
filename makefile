@@ -478,7 +478,7 @@ generated/cpc/exe/%.dsk:
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
-	@cd examples && ../ugbc/exe/ugbc.cpc$(UGBCEXESUFFIX) $(OPTIONS) -d -D ../$(@:.dsk=.info) -o ../$@ -O dsk $(subst generated/cpc/exeso/,,$(@:.dsk=.bas))
+	@cd examples && ../ugbc/exe/ugbc.cpc$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.dsk=.info) -o ../$@ -O dsk $(subst generated/cpc/exeso/,,$(@:.dsk=.bas))
 
 #------------------------------------------------ 
 # coco:
