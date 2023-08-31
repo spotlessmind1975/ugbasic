@@ -62,6 +62,10 @@ void end_for( Environment * _environment ) {
         CRITICAL_NEXT_WITHOUT_FOR();
     }
 
+    if (  _environment->conditionals) {
+        CRITICAL_NEXT_WITHOUT_FOR();
+    }
+
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
