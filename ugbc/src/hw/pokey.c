@@ -131,6 +131,17 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
     if ( ( c & 0x08 ) ) \
         outline0("JSR POKEYPROGFREQ3" );
 
+#define     PROGRAM_DURATION( c, d ) \
+    outline1("LDX #$%2.2x", ( d & 0xff ) ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR POKEYSETDURATION0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR POKEYSETDURATION1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR POKEYSETDURATION2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("JSR POKEYSETDURATION3" );
+
 #define     PROGRAM_PITCH_V( c, f ) \
     outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
     outline1("LDX %s", f ); \
@@ -541,6 +552,15 @@ void pokey_set_pitch( Environment * _environment, int _channels, int _pitch ) {
 
 }
 
+void pokey_set_duration( Environment * _environment, int _channels, int _duration ) {
+
+    deploy( pokeyvars, src_hw_pokey_vars_asm );
+    deploy( pokeystartup, src_hw_pokey_startup_asm );
+
+    PROGRAM_DURATION( _channels, _duration );
+
+}
+
 void pokey_set_note( Environment * _environment, int _channels, int _note ) {
 
     pokey_set_pitch( _environment, _channels, SOUND_FREQUENCIES[_note] );
@@ -828,6 +848,22 @@ void pokey_set_pitch_vars( Environment * _environment, char * _channels, char * 
     outline1("LDY %s", address_displacement(_environment, _pitch, "1") );
 
     outline0("JSR POKEYPROGFREQ");
+
+}
+
+void pokey_set_duration_vars( Environment * _environment, char * _channels, char * _duration ) {
+
+    deploy( pokeyvars, src_hw_pokey_vars_asm );
+    deploy( pokeystartup, src_hw_pokey_startup_asm );
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$f" );
+    }
+    outline1("LDX %s", _duration );
+
+    outline0("JSR POKEYSETDURATION");
 
 }
 
