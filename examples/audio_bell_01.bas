@@ -11,7 +11,9 @@ REM
 
 CLS
 
-FOR f=0 TO 107
-	BELL f
-	WAIT (f/10+1)*1000 MS
- NEXT
+BELL 128
+
+' FOR f=0 TO 107
+' 	BELL f
+' 	WAIT (f/10+1)*1000 MS
+'  NEXT

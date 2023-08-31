@@ -12,6 +12,11 @@ REM Un uso classico del blitting è il rendering di sprite trasparenti
 REM su uno sfondo. In questo esempio vengono utilizzate un'immagine 
 REM di sfondo, uno sprite e una maschera a 1 bit.
 REM
+REM @include atari
+
+
+REM Note that this example will be executed everywhere 
+REM BUT Commodore VIC-20 and Philips VG5000.
 
 PROCEDURE example ON ALL BUT VIC20, VG5000
 
