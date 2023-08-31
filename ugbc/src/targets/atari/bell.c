@@ -70,6 +70,7 @@ void bell( Environment * _environment, int _note, int _channels ) {
     pokey_start( _environment, _channels );
     pokey_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
     pokey_set_note( _environment, _channels, _note );
+    pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
 
 }
 
