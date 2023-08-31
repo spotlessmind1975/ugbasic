@@ -2423,6 +2423,11 @@ typedef struct _Environment {
 #define CRITICAL_TILESET_LOAD_IMAGE_TOO_BIG( v ) CRITICAL2("E219 - TILESET cannot be loaded since is too big", v );
 #define CRITICAL_IF_WITHOUT_ENDIF( ) CRITICAL("E220 - IF without ENDIF" );
 #define CRITICAL_SELECT_CASE_WITHOUT_ENDSELECT( ) CRITICAL("E221 - SELECT CASE without ENDSELECT" );
+#define CRITICAL_DO_WITHOUT_LOOP( ) CRITICAL("E222 - DO without LOOP" );
+#define CRITICAL_WHILE_WITHOUT_WEND( ) CRITICAL("E223 - WHILE without WEND" );
+#define CRITICAL_REPEAT_WITHOUT_UNTIL( ) CRITICAL("E224 - REPEAT without UNTIL" );
+#define CRITICAL_FOR_WITHOUT_NEXT( ) CRITICAL("E225 - FOR without NEXT" );
+#define CRITICAL_BEGIN_GAMELOOP_WITHOUT_END_GAMELOOP( ) CRITICAL("E226 - BEGIN GAMELOOP without END GAMELOOP" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

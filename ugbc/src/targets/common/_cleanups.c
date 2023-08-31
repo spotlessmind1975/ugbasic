@@ -78,6 +78,23 @@ void end_compilation( Environment * _environment ) {
 
     }
 
+    if ( _environment->loops ) {
+
+        switch( _environment->loops->type ) {
+            case LT_DO:
+                CRITICAL_DO_WITHOUT_LOOP( );
+            case LT_WHILE:
+                CRITICAL_WHILE_WITHOUT_WEND( );
+            case LT_REPEAT:
+                CRITICAL_REPEAT_WITHOUT_UNTIL( );
+            case LT_FOR:
+            case LT_FOR_MT:
+                CRITICAL_FOR_WITHOUT_NEXT( );
+            case LT_GAMELOOP:
+                CRITICAL_BEGIN_GAMELOOP_WITHOUT_END_GAMELOOP( );
+        }
+
+    }
 
     int j=0;
     for( j=0; j<MAX_TEMPORARY_STORAGE; ++j ) {
