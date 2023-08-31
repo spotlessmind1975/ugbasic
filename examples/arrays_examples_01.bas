@@ -2,16 +2,17 @@
 REM ARRAY MANAGEMENT ACCESSING (1)
 REM
 REM This small example will show the basic syntax to define an array and to
-REM accessing it.
+REM accessing it. Note how arrays in ugBASIC start at zero. So if we dimension 
+REM an array with the number 2 we mean an array of two elements: element 0 and element 1.
 REM 
 REM @italian
 REM GESTIONE DEGLI ARRAY ACCESSO (1)
 REM
 REM Questo piccolo esempio mostra la sintassi base per definire un array e per
-REM accedervi.
+REM accedervi. Da notare come gli array, in ugBASIC, partono da zero. Quindi se dimensioniamo 
+REM un array con il numero 2 stiamo intendendo un array di due elementi: l'elemento 0 e l'elemento 1.
 REM
-REM @exclude coleco
-REM @exclude sc3000
+REM @include atari
 
 	CLS
 	
@@ -31,4 +32,5 @@ REM @exclude sc3000
     PRINT title$(1) 
     PRINT year(1)
     PRINT price(1)
+
 

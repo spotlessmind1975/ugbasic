@@ -1,14 +1,20 @@
 ﻿REM @english
-REM ARRAY MANAGEMENT ACCESSING (3)
+REM ARRAY MANAGEMENT ACCESSING (4)
 REM
 REM This small example will show how to change just a single element
+REM of the array. This program shows both how to define a 
+REM two-dimensional array and how to access the start and end elements 
 REM of the array.
 REM 
 REM @italian
-REM GESTIONE DEGLI ARRAY ACCESSO (2)
+REM GESTIONE DEGLI ARRAY ACCESSO (4)
 REM
-REM Questo piccolo esempio mostra come cambiare un singolo elemento dell'array.
+REM Questo piccolo esempio mostra come cambiare un singolo elemento 
+REM dell'array. Questo programma mostra sia come definire un array 
+REM bidimensionale che come accedere agli elementi iniziali e finali 
+REM della matrice.
 REM
+REM @include atari
 
 CLS
 
