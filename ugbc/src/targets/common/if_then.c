@@ -95,8 +95,6 @@ verrà eseguito il codice seguente (fino a ''ENDIF'').
 </usermanual> */
 void if_then( Environment * _environment, char * _expression ) {
 
-    
-
     MAKE_LABEL
 
     Variable * expression = variable_retrieve_or_define( _environment, _expression, VT_BYTE, 0 );

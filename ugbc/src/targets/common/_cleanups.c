@@ -67,6 +67,18 @@ void end_compilation( Environment * _environment ) {
 
     halt( _environment );
 
+    if ( _environment->conditionals ) {
+
+        switch( _environment->conditionals->type ) {
+            case CT_IF:
+                CRITICAL_IF_WITHOUT_ENDIF( );
+            case CT_SELECT_CASE:
+                CRITICAL_SELECT_CASE_WITHOUT_ENDSELECT( );
+        }
+
+    }
+
+
     int j=0;
     for( j=0; j<MAX_TEMPORARY_STORAGE; ++j ) {
         if ( _environment->deferredEmbedded[j] ) {

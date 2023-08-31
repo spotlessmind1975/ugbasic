@@ -2421,7 +2421,8 @@ typedef struct _Environment {
 #define CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( v ) CRITICAL2("E218 - SEQUENCE cannot be loaded since is too big", v );
 #define CRITICAL_TILES_LOAD_IMAGE_TOO_BIG( v ) CRITICAL2("E218 - TILES cannot be loaded since is too big", v );
 #define CRITICAL_TILESET_LOAD_IMAGE_TOO_BIG( v ) CRITICAL2("E219 - TILESET cannot be loaded since is too big", v );
-
+#define CRITICAL_IF_WITHOUT_ENDIF( ) CRITICAL("E220 - IF without ENDIF" );
+#define CRITICAL_SELECT_CASE_WITHOUT_ENDSELECT( ) CRITICAL("E221 - SELECT CASE without ENDSELECT" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
