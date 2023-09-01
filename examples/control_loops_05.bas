@@ -1,5 +1,5 @@
 REM @english
-REM FLOW CONTROL BY LOOPS (5)
+REM FLOW CONTROL MIXED DO..LOOP AND REPEAT..UNTIL
 REM
 REM This small example will use the ''DO...LOOP'' keywords to implement
 REM an endless loop, and the ''REPEAT...UNTIL'' keywords to implement a
@@ -12,7 +12,7 @@ REM Finally, the initial value will be represented by a single byte,
 REM by using a syntax called "explicit cast" (''(8BIT)'').
 REM 
 REM @italian
-REM CONTROLLO DI FLUSSO CON LOOP (5)
+REM CONTROLLO DI FLUSSO MESCOLANDO DO..LOOP E REPEAT..UNTIL
 REM
 REM Questo piccolo esempio utilizzerà le parole chiave ''DO...LOOP'' per 
 REM implementare un ciclo infinito e le parole chiave ''REPEAT...UNTIL'' per 
@@ -21,10 +21,11 @@ REM mentre ''x'' è maggiore di zero. Per ogni ciclo interno, verrà stampato
 REM il numero. Quindi ci aspettiamo di ottenere un flusso infinito di numeri 
 REM da 10 a 1. Questo esempio mostra anche come funziona lo scorrimento 
 REM automatico, quando si raggiunge la fine della schermata con l'uso del 
-REM comando ''STAMPA''. Infine, il valore iniziale sarà rappresentato da 
+REM comando ''PRINT''. Infine, il valore iniziale sarà rappresentato da 
 REM un singolo byte, utilizzando una sintassi chiamata "cast esplicito"
 REM (''(8BIT)'').
 REM
+REM @include atari
 
     CLS
 

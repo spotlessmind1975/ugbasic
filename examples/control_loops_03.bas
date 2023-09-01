@@ -1,5 +1,5 @@
 REM @english
-REM FLOW CONTROL BY LOOPS (3)
+REM FLOW CONTROL EXITING FROM NESTED LOOP
 REM
 REM This small example will use the ''DO...LOOP'' keywords to implement
 REM an endless loop, and the command ''EXIT n'' to break ''n'' loops. The outer
@@ -13,7 +13,7 @@ REM time the ''WAIT'' command will be used, with the ''MS'' (milliseconds)
 REM unit of time.
 REM 
 REM @italian
-REM CONTROLLO DI FLUSSO CON LOOP (3)
+REM CONTROLLO DI FLUSSO USCIRE DA UN LOOP INNESTATO
 REM
 REM Questo piccolo esempio utilizzerà le parole chiave ''DO...LOOP'' per implementare 
 REM un ciclo infinito e il comando ''EXIT n'' per interrompere ''n'' cicli. Il ciclo 
@@ -25,6 +25,7 @@ REM l'istruzione ''COLOR BORDER'', utilizzando le costanti predefinite ''YELLOW'
 REM ''BLACK'', ''RED'', ''GREEN''. Per attendere un determinato periodo di tempo 
 REM verrà utilizzato il comando ''WAIT'', con l'unità di tempo ''MS'' (millisecondi).
 REM
+REM @include atari
 
    CLS
 

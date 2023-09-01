@@ -1,5 +1,5 @@
 REM @english
-REM FLOW CONTROL BY LOOPS (1)
+REM FLOW CONTROL USING DO..LOOP
 REM
 REM This small example will use the ''DO...LOOP'' keywords to implement
 REM an endless loop. The loop will change, at each half of second, the
@@ -10,7 +10,7 @@ REM time the ''WAIT'' command will be used, with the ''MS'' (milliseconds)
 REM unit of time.
 REM 
 REM @italian
-REM CONTROLLO DI FLUSSO CON LOOP (1)
+REM CONTROLLO DI FLUSSO USANDO DO..LOOP
 REM
 REM Questo piccolo esempio utilizzerà le parole chiave ''DO...LOOP'' per 
 REM implementare un ciclo infinito. Il ciclo cambierà, ogni mezzo secondo, 
@@ -20,6 +20,7 @@ REM le costanti predefinite ''YELLOW'' e ''BLACK''. Per attendere un
 REM determinato periodo di tempo verrà utilizzato il comando ''WAIT'', 
 REM con l'unità di tempo ''MS'' (millisecondi).
 REM
+REM @include atari
 
    CLS
 

@@ -14,8 +14,6 @@ REM (c) [[https://www.deviantart.com/oliverlindau|oliverlindau]] su Deviant Art.
 REM
 
 BITMAP ENABLE(16)
-CLS
-COLOR BORDER BLACK
 themill := LOAD IMAGE("themill.png")
 PUT IMAGE themill AT 0, 0
 
