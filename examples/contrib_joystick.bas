@@ -1,16 +1,34 @@
+REM @english
+REM OTHER CONTRIBUTIONS JOYSTICK PRIZE TRIBUTE
+REM
+REM This example represents a tribute to the Facebook group Retroprogramming Italia, 
+REM following the victory in the "FORZA 4 Challenge".
+REM 
+REM @italian
+REM VARI ALTRI CONTRIBUTI SPEED TEST DI IF
+REM
+REM Questo esempio rappresenta un tributo al gruppo Facebook Retroprogramming Italia, 
+REM a seguito della vittoria nella "FORZA 4 Challenge". 
+REM
+REM @include atari
+
 BITMAP ENABLE(16)
 CLS BLACK
 COLOR BORDER BLACK
 INK WHITE
 
-CONST w = SCREEN TILES WIDTH - 5
-CONST h2 = IF(SCREEN TILES HEIGHT>24,2,1)
+CONST w = SCREEN COLUMNS - 5
+CONST h2 = IF(SCREEN ROWS > 24, 2, 1)
+CONST hc = SCREEN ROWS / 2
 
-joystick = LOAD IMAGE("joystick4.png")
+joystick := LOAD IMAGE("joystick4.png")
 
-LOCATE 0,10: CENTER "A TUTTO IL GRUPPO DI"
-LOCATE 0,12: CENTER "RetroProgramming Italia"
-LOCATE 0,14: CENTER "RP Italia (A division of RetroCampus)"
+LOCATE 0,hc - 2: CENTER "A TUTTO IL GRUPPO DI"
+LOCATE 0, hc - 1: CENTER "RetroProgramming"
+LOCATE 0, hc: CENTER "Italia"
+LOCATE 0,hc + 1: CENTER "RP Italia"
+LOCATE 0,hc + 3: CENTER "A division of"
+LOCATE 0,hc + 4: CENTER "RetroCampus"
 
 WAIT KEY
 
