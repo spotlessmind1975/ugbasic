@@ -15,8 +15,6 @@ REM a large number of times, selecting the vertex at random at each iteration, o
 REM (but not always) produces a fractal shape. Using a regular triangle and the factor 1/2, 
 REM it will result in a Sierpinski triangle.
 REM
-REM This source was adapted from the original published on [[https://www.facebook.com/groups/retroprogramming/posts/879754189371504/|Sierpinski Challenge]] on **RetroProgramming Italia - RP Italia**.
-REM 
 REM @italian
 REM VARI ALTRI CONTRIBUTI SIERPINSKI CHALLENGE (adattato)
 REM
@@ -35,7 +33,7 @@ REM volte, selezionando il vertice a caso ad ogni iterazione, spesso (ma non
 REM sempre) si produce una forma frattale. Utilizzando un triangolo regolare e 
 REM il fattore 1/2 si otterrà un triangolo di Sierpinski.
 REM
-REM Questo è il sorgente pubblicato e adattato, tratto da [[https://www.facebook.com/groups/retroprogramming/posts/879754189371504/|Sierpinski Challenge]] su **RetroProgramming Italia - RP Italia**.
+REM @url https://www.facebook.com/groups/retroprogramming/posts/879754189371504/
 REM
 
 10 t=TI: REM POKE 53280,15

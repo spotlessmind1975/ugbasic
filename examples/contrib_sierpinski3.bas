@@ -15,8 +15,6 @@ REM a large number of times, selecting the vertex at random at each iteration, o
 REM (but not always) produces a fractal shape. Using a regular triangle and the factor 1/2, 
 REM it will result in a Sierpinski triangle.
 REM
-REM This source joined the [[https://www.facebook.com/groups/retroprogramming/posts/879754189371504/|Sierpinski Challenge]] on **RetroProgramming Italia - RP Italia**.
-REM 
 REM @italian
 REM VARI ALTRI CONTRIBUTI SIERPINSKI CHALLENGE (final)
 REM
@@ -35,8 +33,8 @@ REM volte, selezionando il vertice a caso ad ogni iterazione, spesso (ma non
 REM sempre) si produce una forma frattale. Utilizzando un triangolo regolare e 
 REM il fattore 1/2 si otterrà un triangolo di Sierpinski.
 REM
-REM Il sorgente partecipa alla [[https://www.facebook.com/groups/retroprogramming/posts/879754189371504/|Sierpinski Challenge]] su **RetroProgramming Italia - RP Italia**.
-REM
+REM @url https://www.facebook.com/groups/retroprogramming/posts/879754189371504/
+REM @include atari
 
 ' ============================================================================
 ' INITIALIZATION / INIZIALIZZAZIONE
@@ -210,13 +208,14 @@ CONST limit = 10000
 ' man mano che sarà disegnato il triangolo. Il valore iniziale coincide con il 
 ' vertice superiore.
 '
-x = #x1 : y = #y1
+x = #x1 AS POSITION
+y = #y1 AS POSITION
 
 ' This variable keeps the number of points drawn so far.
 '
 ' Questa variabile mantiene il numero di punti disegnati fino a questo momento.
 '
-n = 0
+n = #0 AS INTEGER
 
 ' Starting from this point we start the loop to draw the triangle. 
 ' It is a loop that will be repeated for the total number of points 
@@ -294,5 +293,5 @@ UNTIL n = limit
 ' a schermo. L'arrotondamento è al secondo.
 te = TI - t
 HOME
-PRINT "time = ";(te/60);" sec"
+PRINT "time = ";(te/TICKS PER SECOND);" sec"
 PRINT "points = ";limit

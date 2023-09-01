@@ -33,6 +33,7 @@ REM volte, selezionando il vertice a caso ad ogni iterazione, spesso (ma non
 REM sempre) si produce una forma frattale. Utilizzando un triangolo regolare e 
 REM il fattore 1/2 si otterrà un triangolo di Sierpinski.
 REM
+REM @include atari
 
 ' ============================================================================
 ' INITIALIZATION
@@ -64,10 +65,11 @@ CONST limit = 10000
 ' ============================================================================
 
 ' Initialize the coordinates.
-x=#x1:y=#y1
+x=#x1 AS POSITION
+y=#y1 AS POSITION
 
 ' Initialize the counter.
-n=0
+n=#0 AS INTEGER
 
 ' Repeat the cycle up to (limit) points.
 REPEAT
@@ -101,5 +103,5 @@ te=TI-t
 
 HOME
 ' Print the stats
-PRINT "time = ";(te/60);" sec"
-PRINT "points = ";n
+PRINT "time = ";(te/TICKS PER SECOND);" sec"
+PRINT "points = ";n%
