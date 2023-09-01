@@ -7439,7 +7439,7 @@ statement2:
             }
         }
 
-        if ( variable->type != $2 ) {
+        if ( VT_UNSIGN( variable->type ) != VT_UNSIGN( $2 ) ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[variable->type], DATATYPE_AS_STRING[$2] );
         }
 
