@@ -83,12 +83,16 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
 
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
-    Variable * step = variable_resident( _environment, VT_MAX_BITWIDTH_TYPE( from->type, to->type ), "(step 1)" );
+    Variable * step = variable_resident( _environment, VT_SIGN( VT_MAX_BITWIDTH_TYPE( from->type, to->type ) ), "(step 1)" );
 
     if ( variable_exists( _environment, _index ) ) {
         index = variable_retrieve( _environment, _index );
     } else {
-        index = variable_retrieve_or_define( _environment, _index, VT_MAX_BITWIDTH_TYPE( from->type, to->type ), 0 );
+        if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) || VT_SIGNED( step->type ) ) {
+            index = variable_retrieve_or_define( _environment, _index, VT_SIGN( VT_MAX_BITWIDTH_TYPE( from->type, to->type ) ), 0 );
+        } else {
+            index = variable_retrieve_or_define( _environment, _index, VT_MAX_BITWIDTH_TYPE( from->type, to->type ), 0 );
+        }
     }
 
     Variable * toResident = variable_resident( _environment, index->type, "(resident to)" );
