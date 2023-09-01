@@ -2,7 +2,7 @@ REM @english
 REM OTHER CONTRIBUTIONS MAZE GENERATOR
 REM
 REM Generation of random mazes via backtracking. This program is a port of the example 
-REM written in XC = BASIC 3.1 by JJ Flash, with the addition of a "mouse" that moves 
+REM written in XC=BASIC 3.1 by JJ Flash, with the addition of a "mouse" that moves 
 REM inside the maze in search of the "cheese".
 REM 
 REM @italian
