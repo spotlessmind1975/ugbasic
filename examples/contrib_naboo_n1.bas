@@ -6,9 +6,6 @@ REM (Scalable Vector Graphics) into sequential files. The file is stored on the 
 REM system, then loaded and used by ugBASIC to initialize the array. This example will render
 REM a "Naboo N1 Starfighter".
 REM
-REM For more information please click here:
-REM http://patsos.de/New_Weblog/?p=671
-REM 
 REM @italian
 REM VARI ALTRI CONTRIBUTI CACCIA STELLARE NABOO
 REM
@@ -17,8 +14,7 @@ REM da Blender Freestyle SVG (Scalable Vector Graphics) in file sequenziali. Il 
 REM memorizzato sul file system host, quindi caricato e utilizzato da ugBASIC per inizializzare 
 REM l'array. Questo esempio renderizza "Naboo N1 Starfighter".
 REM 
-REM Per ulteriori informazioni, fare clic qui: 
-REM http://patsos.de/New_Weblog/?p=671
+REM @url http://patsos.de/New_Weblog/?p=671
 REM
 
 PROCEDURE example ON ALL BUT VIC20
