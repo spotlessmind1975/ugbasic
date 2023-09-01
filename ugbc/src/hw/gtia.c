@@ -1111,9 +1111,9 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu6502_mem_move_direct_size( _environment, dli->realName, "DLI", dli->size );
 
     outline0("SEI" );
-    outline1("LDA #<%s", dli->realName );
+    outline0("LDA #<DLI" );
     outline0("STA $230" );
-    outline1("LDA #>%s", dli->realName );
+    outline0("LDA #>DLI" );
     outline0("STA $231" );
     outline0("CLI" );
 
