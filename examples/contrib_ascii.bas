@@ -1,30 +1,33 @@
 REM @english
 REM OTHER CONTRIBUTIONS PRINTABLE CHARACTERS
 REM
-REM This small example will show the (printable) CHARACTERS TABLE on the screen.
+REM This small example will show the (printable) ASCII CHARACTERS TABLE on the screen.
 REM 
 REM @italian
 REM VARI ALTRI CONTRIBUTI CARATTERI STAMPABILI
 REM
 REM Questo piccolo esempio mostra la tabella dei codici ASCII (stampabili) sullo schermo.
 REM
+REM @include atari
 
-PRINT "print ascii:"
-PRINT "0123456789\|!£$%&/()=?^ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz"
+    CLS
 
-PRINT
+    PRINT "print ascii:"
+    PRINT "0123456789\|!£$%&/()=?^ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz"
 
-PRINT "print raw:"
-PRINT #"0123456789\|!£$%&/()=?^ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz"
+    PRINT
 
-a := LOAD("printable.txt")
+    PRINT "print raw:"
+    PRINT #"0123456789\|!£$%&/()=?^ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz"
 
-PRINT
+    a := LOAD("printable.txt")
 
-PRINT "print buffer:"
-PRINT BUFFER a
+    PRINT
 
-PRINT
+    PRINT "print buffer:"
+    PRINT BUFFER a
 
-PRINT "print raw:"
-PRINT BUFFER RAW a
+    PRINT
+
+    PRINT "print raw:"
+    PRINT BUFFER RAW a
