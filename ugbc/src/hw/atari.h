@@ -130,7 +130,7 @@
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
-#define INPUT_DEFAULT_CURSOR        0xd7
+#define INPUT_DEFAULT_CURSOR        128+32
 #define INPUT_DEFAULT_RATE          16
 #define INPUT_DEFAULT_DELAY         64
 
