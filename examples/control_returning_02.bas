@@ -1,5 +1,5 @@
 REM @english
-REM FLOW CONTROL WITH RETURNING (2)
+REM FLOW CONTROL USING GOSUB..RETURN (2)
 REM 
 REM This example will show the use of ''GOSUB...RETURN'' keywords. The main code
 REM will change the border color. Each color will last for half second on the screen. 
@@ -11,7 +11,7 @@ REM ''COLOR BORDER'' instruction. To wait for a specific amount of time the ''WA
 REM used, with the ''MS'' (milliseconds) unit of time.
 REM 
 REM @italian
-REM CONTROLLO DI FLUSSO CON RITORNO (2)
+REM CONTROLLO DI FLUSSO USANDO GOSUB..RETURN (2)
 REM
 REM Questo esempio mostrerà l'uso delle parole chiave ''GOSUB...RETURN''. Il codice principale 
 REM cambierà il colore del bordo. Ogni colore durerà per mezzo secondo sullo schermo. La variabile con il 
@@ -22,6 +22,7 @@ REM Il colore del bordo viene modificato utilizzando l'istruzione ''COLOR BORDER
 REM Per attendere un determinato periodo di tempo verrà utilizzato il comando ''WAIT'', con 
 REM l'unità di tempo ''MS'' (millisecondi).
 REM
+REM @include atari
 
     CLS
 

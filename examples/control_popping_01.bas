@@ -1,5 +1,5 @@
 REM @english
-REM FLOW CONTROL WITH POPPING
+REM FLOW CONTROL POPPING FROM GOSUB
 REM
 REM This example will use the ''POP'' keyword, to demonstrate
 REM the fact that the program can exit from a ''GOSUB'' call without
@@ -22,6 +22,7 @@ REM il flusso di esecuzione chiamerà l'istruzione ''POP''. Il colore del bordo
 REM viene modificato utilizzando l'istruzione ''COLOR BORDER'', utilizzando 
 REM la somma delle variabili ''x'' e ''y''.
 REM
+REM @include atari
 
    CLS
 
