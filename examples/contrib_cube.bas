@@ -7,6 +7,7 @@ REM hasn't been optimized in the slightest. There are large possibilities for op
 REM
 REM @italian
 REM VARI ALTRI CONTRIBUTI ROTAZIONE 3D DI UN CUBO
+REM
 REM Questo piccolo esempio mostra come si può disegnare un cubo rotante in BASIC su vari home computer a 8 bit, 
 REM Mutilizzando lo stesso sorgente BASIC. Nonostante il fatto che la rotazione sembri abbastanza veloce, il
 REM tutto non è stato minimamente ottimizzato. Vi sono larghe possibiità di ottimizzazione del codice.

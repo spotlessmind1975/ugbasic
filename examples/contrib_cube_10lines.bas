@@ -6,6 +6,7 @@ REM drawn in BASIC on various 8-bit home computers, using the same source.
 REM
 REM @italian
 REM VARI ALTRI CONTRIBUTI ROTAZIONE 3D DI UN CUBO
+REM
 REM Questo piccolo esempio è la versione "10 lines" dell'esempio del cubo rotante. Questo esempio 
 REM può essere disegnato in BASIC su vari computer domestici a 8 bit, utilizzando la stessa 
 REM sorgente.

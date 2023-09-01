@@ -2,14 +2,15 @@
 REM OTHER CONTRIBUTIONS 3D ROTATING CUBE (2)
 REM
 REM This small example shows how a rotating cube can be drawn in BASIC on various 8-bit home computers, 
-REM using the same source. Despite the fact that the rotation seems quite fast, the whole thing 
-REM hasn't been optimized in the slightest. There are large possibilities for optimization of the code. 
+REM using the same source. A little optimization has been done on clearing only the bitmap occupied by
+REM the cube.
 REM
 REM @italian
 REM VARI ALTRI CONTRIBUTI ROTAZIONE 3D DI UN CUBO (2)
+REM 
 REM Questo piccolo esempio mostra come si può disegnare un cubo rotante in BASIC su vari home computer a 8 bit, 
-REM Mutilizzando lo stesso sorgente BASIC. Nonostante il fatto che la rotazione sembri abbastanza veloce, il
-REM tutto non è stato minimamente ottimizzato. Vi sono larghe possibiità di ottimizzazione del codice.
+REM Mutilizzando lo stesso sorgente BASIC. È stata effettuata una piccola ottimizzazione sulla cancellazione 
+REM solo della bitmap occupata dal cubo.
 REM
 REM @include atari
 
