@@ -8,6 +8,8 @@ REM @italian
 REM PRIMITIVE DI GRAFICA CON L'USO DI BOX
 REM
 REM Questo esempio disegnerà due rettangoli.
+REM
+REM @include atari
 
     BITMAP ENABLE(16)
     CLS

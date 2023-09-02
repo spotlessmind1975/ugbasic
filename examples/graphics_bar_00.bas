@@ -1,18 +1,25 @@
 REM @english
-REM GRAPHICS PRIMITIVES USING BAR (1)
+REM GRAPHICS PRIMITIVES DRAWING BARS (PEDESTRIAN CROSSING)
 REM
-REM This example will draw two red bars.
+REM This example will draw a pedestrian crossing.
 REM
 REM @italian
-REM PRIMITIVE DI GRAFICA CON L'USO DI BAR (1)
+REM PRIMITIVE DI GRAFICA DISEGNARE BARRE (STRISCE PEDONALI)
 REM
-REM Questo esempio disegnerà due barre rosse.
+REM Questo esempio disegnerà delle strisce pedonali.
+REM
+REM @include atari
 
-    BITMAP ENABLE(16)
+    BITMAP ENABLE(2)
+    
     CLS
-    BAR 0,0 TO SCREEN WIDTH / 10, SCREEN HEIGHT / 10
-    INK YELLOW
-    BAR 0,0 TO (SCREEN WIDTH-1), (SCREEN HEIGHT-1)
-    INK RED
-    BAR 2 * (SCREEN WIDTH/10), 2*(SCREEN HEIGHT/10) TO _
-        (SCREEN WIDTH-1), (SCREEN HEIGHT-1)
+
+    POSITIVE CONST barWidth = SCREEN WIDTH / 10
+    POSITIVE CONST barSpacing = SCREEN WIDTH / 5
+
+    FOR i=0 TO SCREEN WIDTH STEP barSpacing
+
+        INK WHITE
+        BAR i,0 TO i + barWidth, SCREEN HEIGHT - 1
+
+    NEXT
