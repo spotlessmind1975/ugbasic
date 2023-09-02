@@ -114,6 +114,8 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
         Variable * stepx = variable_temporary( _environment, VT_POSITION, "(stepx)");
         Variable * stepy = variable_temporary( _environment, VT_POSITION, "(stepy)");
 
+        variable_store( _environment, bit->name, 0 );
+
         variable_move( _environment, x0->name, x->name );
         variable_move( _environment, y0->name, y->name );
 
