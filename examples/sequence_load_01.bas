@@ -1,5 +1,5 @@
 REM @english
-REM STATIC IMAGES SEQUENCE LOADING (1)
+REM STATIC IMAGES SEQUENCE LOADING AND DISPLAY OF A FRAME
 REM
 REM This small example will show how to load sequence from a single image.
 REM The basic syntax is to give a "frame size" of each frame inside the
@@ -17,11 +17,12 @@ REM In questo modo, l'insieme dei frame verrà preso per generare un tipo
 REM di dati SEQUENCE. Nota che questo tipo di dato può essere usato anche 
 REM come IMAGE, il che significa usare il primo fotogramma.
 REM
+REM @include atari
 
-BITMAP ENABLE (16)
-CLS
+    BITMAP ENABLE (16)
+    CLS
 
-sequence := LOAD SEQUENCE("sequence.png" ) FRAME SIZE (16,16)
+    sequence := LOAD SEQUENCE("sequence.png" ) FRAME SIZE (16,16)
 
-PUT IMAGE sequence SEQUENCE 1 FRAME 0 AT 0,0
+    PUT IMAGE sequence SEQUENCE 1 FRAME 0 AT 0,0
 
