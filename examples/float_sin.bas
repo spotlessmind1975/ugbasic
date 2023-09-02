@@ -1,13 +1,16 @@
 ﻿REM @english
-REM FLOATING POINT SINE FUNCTION
+REM FLOATING POINT USING SINE FUNCTION
 REM
-REM This small example will show how to use the SIN function.
+REM This small example will show how to use the ''SIN'' function. Note that
+REM we require to use the single precision for floating points.
 REM 
 REM @italian
-REM NUMERI VIRGOLA MOBILE FUNZIONE SENO
+REM NUMERI VIRGOLA MOBILE USARE LA FUNZIONE SENO
 REM
-REM Questo piccolo esempio mostrerà come usare la funzione SIN.
+REM Questo piccolo esempio mostrerà come usare la funzione ''SIN''. Da notare
+REM che stiamo richiedendo di utilizzare la precisione singola.
 REM
+REM @include atari
 
 DEFINE FLOAT PRECISION SINGLE
 
