@@ -1,13 +1,13 @@
 
 REM @english
-REM GRAPHICS PRIMITIVES DRAWING BOXES
+REM GRAPHICS PRIMITIVES DRAWING (COLORED) BOXES
 REM
-REM This example will draw three boxes.
+REM This example will draw three boxes, one yellow, one red and one green.
 REM
 REM @italian
-REM PRIMITIVE DI GRAFICA CON L'USO DI BOX
+REM PRIMITIVE DI GRAFICA CON L'USO DI BOX (COLORATI)
 REM
-REM Questo esempio disegnerà tre rettangoli.
+REM Questo esempio disegnerà tre rettangoli: uno giallo, uno rosso e uno verde.
 REM
 REM @include atari
 
@@ -20,15 +20,8 @@ REM @include atari
     INK YELLOW
     BOX 0,0 TO boxWidth, boxHeight
 
-    LOCATE 3,5: PRINT "OK 1"
-
     INK RED
-pippero:
     BOX 16,16 TO 16+boxWidth, 16+boxHeight
-
-    LOCATE 3,5: PRINT "OK 2"
 
     INK GREEN
     BOX 32,32 TO 32+boxWidth, 32+boxHeight
-
-    LOCATE 3,5: PRINT "OK 3"
