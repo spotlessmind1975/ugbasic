@@ -9,18 +9,24 @@ REM
 REM Questo esempio cambierà il banco selezionato.
 
     CLS
-    
-    PRINT BANK()
-    BANK #3
-    PRINT BANK()
 
-    FOR i=0 TO BANK COUNT
-        IF i = BANK() THEN
-            PRINT "*";
-        ELSE
-            PRINT " ";
-        ENDIF
-        PRINT BANK ADDRESS(i);" size = "; BANK SIZE(i)
-    NEXT
+    IF BANK COUNT = 0 THEN
+        PRINT "Sorry, this target "
+        PRINT "  does not have any memory bank"
+    ELSE
 
-    PRINT "* = actual bank selected"
+        PRINT "CURRENT BANK #: "; BANK()
+        PRINT "SELECT BANK #3": BANK #3
+        PRINT "CURRENT BANK #: "; BANK()
+
+        FOR i=0 TO BANK COUNT - 1
+            IF i = BANK() THEN
+                PRINT "*";
+            ELSE
+                PRINT " ";
+            ENDIF
+            PRINT "AT ";BANK ADDRESS(i);" ("; BANK SIZE(i);" bytes)"
+        NEXT
+
+        PRINT "* = actual bank selected"
+    ENDIF

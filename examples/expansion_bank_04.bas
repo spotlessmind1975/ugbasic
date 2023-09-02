@@ -8,12 +8,17 @@ REM ESPANSIONE DI MEMORIA CARICARE UNA IMMAGINE NELL'ESPANSIONE
 REM
 REM Questo esempio mostra come caricare una immagine su una espansione.
 
-BITMAP ENABLE
+    IF BANK COUNT = 0 THEN
+        PRINT "Sorry, this target "
+        PRINT "  does not have any memory bank"
+    ELSE
 
-CLS
+        BITMAP ENABLE
 
-checkers := LOAD IMAGE("checkers2.png" ) BANKED
+        CLS
 
-PUT IMAGE checkers AT 0, 0
+        checkers := LOAD IMAGE("checkers2.png" ) BANKED
 
-HALT
+        PUT IMAGE checkers AT 0, 0
+
+    ENDIF

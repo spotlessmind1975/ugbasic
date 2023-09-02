@@ -11,18 +11,18 @@ REM Questo piccolo esempio mostra come limitare la generazione del
 REM codice delle librerie quando si utilizza il double buffering
 REM e la modalità di schermo unica.
 REM
+REM @include atari
 
-DEFINE SCREEN MODE UNIQUE
-DEFINE DOUBLE BUFFER OFF
+    DEFINE SCREEN MODE UNIQUE
+    DEFINE DOUBLE BUFFER OFF
 
-BITMAP ENABLE (16)
+    BITMAP ENABLE (16)
 
-CLS
+    CLS
 
-airplane1 := LOAD IMAGE("air_attack_airplane.png")
-airplane2 := LOAD IMAGE("air_attack_airplane.png" AS "airplanef") FLIP X
+    airplane1 := LOAD IMAGE("air_attack_airplane.png")
+    airplane2 := LOAD IMAGE("air_attack_airplane.png" AS "airplanef") FLIP X
 
-PUT IMAGE airplane1 AT 0,0
-PUT IMAGE airplane2 AT 16,16
+    PUT IMAGE airplane1 AT 0,0
+    PUT IMAGE airplane2 AT 16,16
 
-HALT

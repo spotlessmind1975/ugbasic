@@ -10,17 +10,17 @@ REM
 REM Questo piccolo esempio mostra come limitare la generazione del
 REM codice delle librerie quando si utilizza il double buffering.
 REM
+REM @include atari
 
-DEFINE DOUBLE BUFFER ON
+    DEFINE DOUBLE BUFFER ON
 
-BITMAP ENABLE (16)
+    BITMAP ENABLE (16)
 
-CLS
+    CLS
 
-airplane1 := LOAD IMAGE("air_attack_airplane.png")
-airplane2 := LOAD IMAGE("air_attack_airplane.png" AS "airplanef") FLIP X
+    airplane1 := LOAD IMAGE("air_attack_airplane.png")
+    airplane2 := LOAD IMAGE("air_attack_airplane.png" AS "airplanef") FLIP X
 
-PUT IMAGE airplane1 AT 0,0
-PUT IMAGE airplane2 AT 16,16
+    PUT IMAGE airplane1 AT 0,0
+    PUT IMAGE airplane2 AT 16,16
 
-HALT
