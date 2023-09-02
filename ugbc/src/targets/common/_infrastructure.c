@@ -2137,26 +2137,52 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
         source = variable_cast( _environment, _source, VT_DSTRING );
     }
 
-    Variable * target = variable_cast( _environment, _destination, source->type );
+    Variable * target = variable_retrieve( _environment, _destination );
+    if ( target->type == VT_STRING ) {
+        target = variable_cast( _environment, _destination, VT_DSTRING );
+    }
     if ( ! target ) {
         CRITICAL_VARIABLE(_destination);
     }
 
-    Variable * result = variable_temporary( _environment, source->type, "(result of adding)" );
+    if ( source->type == VT_STRING ) {
+
+    } else {
+
+        if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
+            source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+            target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+        } else {
+            if ( VT_SIGNED( source->type ) || VT_SIGNED( target->type ) ) {
+                source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+                target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+            } else {
+                source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+                target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+            }
+        }
+
+    }
+
+    Variable * result;
 
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of sum)" );
             cpu_math_add_32bit( _environment, source->realName, target->realName, result->realName );
             break;
         case 16:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_SWORD, "(result of sum)" );
             cpu_math_add_16bit( _environment, source->realName, target->realName, result->realName );
             break;
         case 8:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(result of sum)" );
             cpu_math_add_8bit( _environment, source->realName, target->realName, result->realName );
             break;
         case 0:
             switch( source->type ) {
                 case VT_DSTRING:  {
+                    result = variable_temporary( _environment, VT_DSTRING, "(result of sum)" );
                     Variable * address1 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING1)");
                     Variable * size1 = variable_temporary( _environment, VT_BYTE, "(size of DSTRING1)");
                     Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING2)");
@@ -2175,6 +2201,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                     break;
                 }
                 case VT_STRING: {
+                    result = variable_temporary( _environment, VT_DSTRING, "(result of sum)" );
                     Variable * address1 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING1)");
                     Variable * size1 = variable_temporary( _environment, VT_BYTE, "(size of DSTRING1)");
                     Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING2)");
@@ -2193,6 +2220,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                     break;
                 }
                 case VT_FLOAT:
+                    result = variable_temporary( _environment, VT_FLOAT, "(result of sum)" );
                     switch( target->precision ) {
                         case FT_FAST: {
                             cpu_float_fast_add( _environment, source->realName, target->realName, result->realName );
@@ -2212,6 +2240,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                 }
             }
     }
+    
     return result;
 }
 
