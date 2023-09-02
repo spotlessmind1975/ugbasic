@@ -174,7 +174,6 @@ void gtia_background_color_get_vars( Environment * _environment, char * _index, 
     outline0("AND #$07");
     outline0("TAX");
     outline0("LDA $02C5,X")
-    outline0("AND #$0f" );
     outline1("STA %s", _background_color );
 
 }
