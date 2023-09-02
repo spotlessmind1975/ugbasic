@@ -582,6 +582,20 @@ const_factor:
       | COLOURS {
           $$ = ((Environment *)_environment)->screenColors;
       }
+      | MIN OP const_expr OP_COMMA const_expr CP {
+          if ( $3 < $5 ) {
+            $$ = $3;
+          } else {
+            $$ = $5;
+          }
+      }
+      | MAX OP const_expr OP_COMMA const_expr CP {
+          if ( $3 > $5 ) {
+            $$ = $3;
+          } else {
+            $$ = $5;
+          }
+      }
       | SCREEN COLORS {
           $$ = ((Environment *)_environment)->screenColors;
       }
