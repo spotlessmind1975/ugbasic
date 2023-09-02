@@ -1,5 +1,5 @@
 REM @english
-REM MATHEMATIC ROUTINES WITH FAST OPERATORS (2)
+REM MATHEMATIC ROUTINES FAST OPERATIONS (USING ADD)
 REM
 REM This example will show the use of fast integer operators, with the use of ''ADD'' instruction. 
 REM Those instructions will operate without the use of intermediate results, in order
@@ -17,6 +17,8 @@ REM rendimento nell'aggiunta di valori. In questo particolare esempio, ''ADD'' v
 REM una forma di "loop controllato". Quindi un ciclo che dovrebbe interrompersi quando una data 
 REM variabile raggiunge un particolare valore continuerà per sempre, poiché ''ADD'' limiterà il
 REM valore della variabile tra un intervallo che è nel limite del ciclo.
+REM
+REM @include atari
 
    CLS
    
@@ -26,5 +28,3 @@ REM valore della variabile tra un intervallo che è nel limite del ciclo.
       ADD v,1,1 TO 42
       PRINT v;" ";
    UNTIL v == 43
-
-   HALT

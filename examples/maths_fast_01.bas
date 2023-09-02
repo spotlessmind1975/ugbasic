@@ -1,5 +1,5 @@
 REM @english
-REM MATHEMATIC ROUTINES WITH FAST OPERATORS (1)
+REM MATHEMATIC ROUTINES FAST OPERATIONS (USING INC/DEC)
 REM
 REM This example will show the use of fast integer operators, with the use of ''INC'' and ''DEC''
 REM instructions. Those instructions will operate without the use of intermediate results, in order
@@ -12,6 +12,8 @@ REM
 REM Questo esempio mostrerà l'uso di operatori interi veloci, con l'uso delle istruzioni ''INC''
 REM e ''DEC''. Tali istruzioni funzioneranno senza l'uso di risultati intermedi, al fine di fornire 
 REM il massimo rendimento nell'incremento o decremento di valori. Il risultato sarà stampato sullo schermo.
+REM
+REM @include atari
 
    CLS
    
@@ -24,5 +26,3 @@ REM il massimo rendimento nell'incremento o decremento di valori. Il risultato s
    PRINT "DEC ";v;" = ";
    DEC v
    PRINT v
-
-   HALT
