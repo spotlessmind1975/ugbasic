@@ -2249,7 +2249,7 @@ static void gtia_load_image_address_to_register( Environment * _environment, cha
             outline1("STA %s", _register );
             outline0("INY" );
             outline1("LDA %s", address_displacement(_environment, _register, "1") );
-            outline0("ADC (MATHPTR0+1), Y" );
+            outline0("ADC (MATHPTR0), Y" );
             outline1("STA %s", address_displacement(_environment, _register, "1") );
         }
 
