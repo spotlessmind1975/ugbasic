@@ -1,5 +1,5 @@
 REM @english
-REM MATHEMATIC ROUTINES WITH ASSOCIATIVE PRIORITY (1)
+REM MATHEMATIC ROUTINES ASSOCIATIVE PRIORITY (SUMS AND PRODUCTS)
 REM
 REM This example will show the application of associative priority. Since multiplication (''*'') has
 REM a greater priority in respect of sum (''+''), and since the parentesys (''(...)'') change the
@@ -11,10 +11,11 @@ REM
 REM Questo esempio mostrerà l'applicazione della priorità associativa. Poiché la moltiplicazione (''*'') 
 REM ha una priorità maggiore rispetto alla somma (''+''), e poiché le parentesi (''(...)'') cambiano la 
 REM priorità di applicazione, il risultato della due espressioni sarà diverso.
+REM
+REM @include atari
 
     CLS
     
-    PRINT "(2+2*2) = ";(2+2*2)
+    PRINT "(2+2*2)   = ";(2+2*2)
     PRINT "((2+2)*2) = ";((2+2)*2)
     
-    HALT

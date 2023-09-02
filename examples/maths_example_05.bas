@@ -1,5 +1,5 @@
 REM @english
-REM MATHEMATIC ROUTINES WITH RELATIVE NUMBERS (1)
+REM MATHEMATIC ROUTINES USING RELATIVE NUMBERS
 REM
 REM This example will show some calculation using relative numbers.
 REM

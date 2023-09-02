@@ -1,5 +1,5 @@
 REM @english
-REM MATHEMATIC ROUTINES DOING EXPRESSIONS (2)
+REM MATHEMATIC ROUTINES POWER AND MULTIPLICATRE OPERANDS (USING ^ AND *)
 REM
 REM This example will show an example of matematical calculation, using the power (''^'') 
 REM and multiplication (''*'') operator.
@@ -10,13 +10,12 @@ REM
 REM Questo esempio mostra un esempio di calcolo matematico, con l'uso dell'operatore elevamento a potenza (''^'')
 REM e moltiplicazione (''*'').
 REM
-REM @exclude coleco
+REM @include atari
 
     CLS
     
     a = 3^5
     b = 3*3*3*3*3
-    PRINT "3^5 = ";a
-    PRINT "3*3*3*3*3 = ";b
 
-    HALT
+    PRINT "      3^5 = ";a
+    PRINT "3*3*3*3*3 = ";b
