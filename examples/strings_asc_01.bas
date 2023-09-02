@@ -1,5 +1,5 @@
 REM @english
-REM STRING MANIPULATION ASCII VALUE (USING ASC)
+REM STRING MANIPULATION ASCII VALUE (USING ASC())
 REM
 REM This example shows how ''ASC'' function works. It converts the given
 REM parameter (''"0"'') into ASCII code, and print it on the screen.
@@ -13,6 +13,6 @@ REM e lo stampa sullo schermo.
 REM
 REM @include atari
 
-  PRINT "0 = ";ASC("0");" ASCII CODE"
+  CLS
 
-  HALT
+  PRINT "0 = ";ASC("0");" ASCII CODE"

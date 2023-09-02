@@ -1,5 +1,5 @@
 REM @english
-REM STRING MANIPULATION AND EXTRACTION (2)
+REM STRING MANIPULATION REPLACING A SUBSTRING (USING LEFT())
 REM
 REM This example shows how to inject a string into another string, starting from
 REM the beginning and arriving to a specific position. The function used is ''LEFT''.
@@ -9,11 +9,13 @@ REM MANIPOLAZIONE DI STRIGHE ED ESTRAZIONE (2)
 REM
 REM Questo esempio mostra come si inietta una stringa in un'altra stringa, iniziando
 REM dal principio ed arrivando a una posizione specifica. La funzione utilizzata è ''LEFT''.
+REM
+REM @include atari
 
-  a$ = "******* COMPILER"
+    CLS
 
-  LEFT$( a$, 7 ) = "UGBASIC"
+    a$ = "******* COMPILER"
 
-  PRINT "a$ = ";a$
+    LEFT$( a$, 7 ) = "UGBASIC"
 
-  HALT
+    PRINT "a$ = ";a$

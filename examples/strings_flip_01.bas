@@ -1,5 +1,5 @@
 REM @english
-REM STRING MANIPULATION WITH FLIPPING (1)
+REM STRING MANIPULATION FLIPPING STRINGS
 REM
 REM This example print out an inverted (flipped) string.
 REM
@@ -7,7 +7,9 @@ REM @italian
 REM MANIPOLAZIONE DI STRIGHE CON L'USO DI FLIP (1)
 REM
 REM Questo esempio stampa una stringa i cui caratteri sono stati invertiti (rovesciati) tra loro.
+REM
+REM @include atari
 
-  PRINT "FLIP(ugBASIC) = ";FLIP$("ugBASIC")
-  
-  HALT
+    CLS
+
+    PRINT "FLIP(ugBASIC) = ";FLIP$("ugBASIC")

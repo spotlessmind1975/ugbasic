@@ -1,5 +1,5 @@
 REM @english
-REM STRING MANIPULATION AND SEARCHING INSIDE (2)
+REM STRING MANIPULATION SEARCH INSIDE A STRING FROM A POSITION (USING INSTR())
 REM
 REM This example shows how to look for a string inside another string, by using
 REM the function ''INSTR'' and giving a starting position. Moreover, it return 
@@ -13,9 +13,11 @@ REM Questo esempio mostra come effettuare una ricerca di una stringa all'interno
 REM stringa, usando la funzione ''INSTR'' a indicando una posizione di partenza. Inoltre, 
 REM restituisce la posizione iniziale della stringa all'interno dell'altra SUCCESSIVA
 REM alla posizione data, oppure 0 se tale posizione non esiste.
+REM
+REM @include atari
 
+    CLS
+    
     PRINT "INSTR(ugBASIC,ugBASIC,2) = ";INSTR( "ugBASIC", "ugBASIC", 2)
     PRINT "INSTR(ugBASIC,A,3) = ";INSTR( "ugBASIC", "A", 3)
     PRINT "INSTR(ugBASIC,A,5) = ";INSTR( "ugBASIC", "A", 5)
-
-    HALT
