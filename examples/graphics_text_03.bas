@@ -1,5 +1,5 @@
 REM @english
-REM GRAPHICS PRIMITIVES SCREEN AND TEXT COORDINATES (2)
+REM GRAPHICS PRIMITIVES TEXT COORDINATES (USING X/Y TEXT)
 REM
 REM This example will show how to pass from screen to text coordinates and viceversa.
 REM
@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA COORDINATE DI SCHERMO E DI TESTO (2)
 REM
 REM Questo esempio mostrerà come passare dalle coordinate schermo a quelle testuali, e viceversa.
 REM
-REM @exclude coleco
+REM @include atari
 
     BITMAP ENABLE (160,200,16)
     CLS

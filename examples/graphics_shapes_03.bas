@@ -1,5 +1,5 @@
 REM @english
-REM GRAPHICS PRIMITIVES DRAWING SHAPES (3)
+REM GRAPHICS PRIMITIVES DRAWING RANDOM ELLIPSES
 REM
 REM This example will draw random ellipses on the screen.
 REM
@@ -7,6 +7,8 @@ REM @italian
 REM PRIMITIVE DI GRAFICA CON DISEGNO DI FORME (3)
 REM
 REM Questo esempio disegnerà ellissi casuali sullo schermo.
+REM
+REM @include atari
 
     BITMAP ENABLE
     CLS
@@ -24,8 +26,8 @@ REM Questo esempio disegnerà ellissi casuali sullo schermo.
     r2=(POSITION)0
     DO
         INK RND(SCREEN COLORS)
-        x=RND(w)
-        y=RND(h)
+        x=RND(w-1)
+        y=RND(h-1)
         r1=2: REM RND(d)+1
         r2=8: REM RND(d)+1
         ELLIPSE x,y,r1,r2

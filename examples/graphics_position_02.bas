@@ -1,5 +1,5 @@
 REM @english
-REM GRAPHICS PRIMITIVES USIGN POSITION (2)
+REM GRAPHICS PRIMITIVES POSITIONING (USING XGR AND YGR)
 REM
 REM This example will show how to obtain current graphic position,
 REM using the ''XGR'' and ''YGR'' variables.
@@ -10,11 +10,9 @@ REM
 REM Questo esempio mostra come ricavare la posizione grafica corrente,
 REM utilizzando le variabili ''XGR'' e ''YGR''.
 REM
-REM @exclude coleco
+REM @include atari
 
     BITMAP ENABLE
     CLS
-    CIRCLE 100,100,50
+    CIRCLE SCREEN WIDTH / 2, SCREEN HEIGHT / 2, 42
     PRINT XGR,YGR
-
-    HALT

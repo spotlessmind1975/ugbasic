@@ -1,5 +1,5 @@
 REM @english
-REM GRAPHICS PRIMITIVES USIGN POSITION (1)
+REM GRAPHICS PRIMITIVES POSITIONING (USING GR LOCATE)
 REM
 REM This example will use the ''GR LOCATE'' command to move the graphical
 REM cursor in a specific position. By omitting the coordinates, the command
@@ -11,6 +11,8 @@ REM
 REM Questo esempio userà il comando ''GR LOCATE'' per spostare il cursore grafico
 REM in una posizione specifica. Omettendo le coordinate, il comando
 REM ''CIRCLE'' disegnerà un cerchio con il centro nelle coordinate date.
+REM
+REM @include atari
 
     BITMAP ENABLE
     CLS
@@ -23,5 +25,3 @@ REM ''CIRCLE'' disegnerà un cerchio con il centro nelle coordinate date.
         GR LOCATE x,y+r
         CIRCLE ,,r
     NEXT
-
-    HALT

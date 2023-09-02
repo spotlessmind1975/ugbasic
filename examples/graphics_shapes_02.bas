@@ -1,5 +1,5 @@
 REM @english
-REM GRAPHICS PRIMITIVES DRAWING SHAPES (2)
+REM GRAPHICS PRIMITIVES DRAWING RANDOM CIRCLES
 REM
 REM This example will draw random circles on the screen.
 REM
@@ -7,6 +7,8 @@ REM @italian
 REM PRIMITIVE DI GRAFICA CON DISEGNO DI FORME (2)
 REM
 REM Questo esempio disegnerà cerchi casuali sullo schermo.
+REM
+REM @include atari
 
     BITMAP ENABLE
     CLS
