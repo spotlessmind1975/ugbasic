@@ -7,6 +7,8 @@ REM @italian
 REM ROUTINE DI MATEMATICA CON NUMERI RELATIVI (1)
 REM
 REM Questo esempio mostra come rappresentare i numeri esadecimali.
+REM
+REM @include atari
 
     CLS
     

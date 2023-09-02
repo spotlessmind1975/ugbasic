@@ -7,6 +7,8 @@ REM @italian
 REM ROUTINE DI MATEMATICA OPERAZIONI CON SEGNO
 REM
 REM Questo esempio mostrerà alcuni calcoli con numeri con il segno.
+REM
+REM @include atari
 
     CLS
     

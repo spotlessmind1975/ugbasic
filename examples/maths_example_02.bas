@@ -1,5 +1,5 @@
 REM @english
-REM MATHEMATIC ROUTINES POWER AND MULTIPLICATRE OPERANDS (USING ^ AND *)
+REM MATHEMATIC ROUTINES POWER AND MULTIPLICATIVE OPERANDS (USING ^ AND *)
 REM
 REM This example will show an example of matematical calculation, using the power (''^'') 
 REM and multiplication (''*'') operator.
