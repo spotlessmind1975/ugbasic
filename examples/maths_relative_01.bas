@@ -1,5 +1,5 @@
 REM @english
-REM MATHEMATIC ROUTINES USING MAX
+REM MATHEMATIC ROUTINES MAXIMUM VALUE (USING MAX)
 REM
 REM This example will show the behaviour of ''MAX'' operator in a couple of situations: when
 REM integers are compared and when strings are.
@@ -9,6 +9,8 @@ REM ROUTINE DI MATEMATICA CON L'USO DI MAX
 REM
 REM Questo esempio mostrerà il comportamento dell'operatore ''MAX'' in un paio di situazioni:
 REM quando gli interi sono confrontati e quando lo sono le stringhe.
+REM
+REM @include atari
 
   CLS
   
