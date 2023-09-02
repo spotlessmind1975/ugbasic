@@ -1,11 +1,11 @@
 REM @english
-REM GRAPHICS PRIMITIVES SCREEN COLORING
+REM GRAPHICS PRIMITIVES COLORING (USING COLOR)
 REM
 REM This example will show how to change the color of the index 0,
 REM that is normally the background.
 REM
 REM @italian
-REM PRIMITIVE DI GRAFICA COLORAZIONE DELLO SCHERMO
+REM PRIMITIVE DI GRAFICA COLORAZIONE (USANDO COLOR)
 REM
 REM Questo esempio mostra come cambiare il colore dell'indice 0,
 REM che normalmente è lo sfondo

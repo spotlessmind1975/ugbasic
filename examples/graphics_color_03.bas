@@ -1,14 +1,16 @@
 REM @english
-REM GRAPHICS PRIMITIVES WHICH SHADE FOR COLOR?
+REM GRAPHICS PRIMITIVES COLORING (USING COLOR())
 REM
 REM This example will show how to show the shades configured
 REM by default for each color.
 REM
 REM @italian
-REM PRIMITIVE DI GRAFICA COLORAZIONE DELLO SCHERMO
+REM PRIMITIVE DI GRAFICA COLORAZIONE (USANDO COLOR())
 REM
 REM Questo esempio mostra come mostrare le sfumature configurate,
 REM per default, per ogni colore.
+REM
+REM @include atari
 
     BITMAP ENABLE(16)
     CLS BLACK
