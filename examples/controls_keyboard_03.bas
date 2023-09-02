@@ -13,8 +13,6 @@ REM Questo esempio eseguirà un ciclo infinito (''DO...LOOP'') con un ciclo inte
 REM che attende la pressione di un tasto. Alla pressione del tasto il codice verificherà se la 
 REM chiave ha o meno un codice ASCII e stamperà il fatto. Inoltre, per ogni tasto premuto, viene 
 REM ristampato lo scan code.
-REM
-REM @include atari
 
     CLS
     

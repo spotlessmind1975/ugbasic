@@ -22,6 +22,7 @@ REM @include atari
    
    CLEAR KEY
    PRINT "PLEASE TYPE IN TEN CHARACTERS"
+   PRINT
    v=INPUT$(10)
    PRINT "YOU TYPED: ";v
    

@@ -11,8 +11,7 @@ REM
 REM @include atari
 
     CLS
-
     PRINT "PLEASE PRESS A KEY"
     WAIT KEY
     PRINT "THANK YOU!"
-    HALT
+    

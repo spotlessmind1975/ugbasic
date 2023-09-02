@@ -11,8 +11,6 @@ REM
 REM Questo esempio eseguirà un ciclo infinito (''DO...LOOP'') nel quale si attenderà la
 REM pressione di un qualsiasi tasto shift sulla tastiera. Se ciò dovesse accadere,
 REM il relativo valore sarà stampato sullo schermo.
-REM
-REM @include atari
 
     CLS
 

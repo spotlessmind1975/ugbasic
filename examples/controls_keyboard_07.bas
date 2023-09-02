@@ -17,8 +17,6 @@ REM un loop infinito (''DO...LOOP'') per continuare ad aggiornare
 REM il bitmask sullo schermo, usando la funzione ''BIN$''. Questo esempio
 REM mostra anche come posizionare l'output sullo schermo, su una posizione specifica,
 REM utilizzando i comandi ''LOCATE'' e ''CENTRE'' keywords.
-REM
-REM @include atari
 
     CLS
     

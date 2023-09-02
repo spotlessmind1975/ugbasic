@@ -17,8 +17,6 @@ REM che controlla per l'accensione di uno specifico bit. Il secondo
 REM usa le istruzioni ''BIT...OF'', che è un sinonimo della funzione precedente.
 REM infine, si mostra l'utilizzo delle condizioni ''HAS BIT'' e ''IS'',
 REM che controllano per un bitmask specifico.
-REM
-REM @include atari
 
     CLS
 
