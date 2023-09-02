@@ -1,28 +1,65 @@
 REM @english
-REM I/O CONTROL WITH JOYSTICK (2)
+REM I/O CONTROL JOYSTICK READ (BIT DECODING)
 REM
 REM This example will read the joystick status for the first joystick. Then it will decode some
 REM values by using the various syntaxes available.
 REM
 REM @italian
-REM CONTROLLI DI I/O CON IL JOYSTICK (2)
+REM CONTROLLI DI I/O LETTURA JOYSTICK (DECODIFICA BIT)
 REM
 REM Questo esempio leggerà lo status del primo joystick. Quindi ne decodificherà il valore
 REM di alcune direzioni, sfruttando le varie sintassi disponibili.
 REM
+REM @include atari
 
    CLS
 
-   left = BIT( JOY(0), LEFT )
-   PRINT "LEFT IS: ";left
-   
-   up = BIT UP OF JOY(0)
-   PRINT "UP IS: ";up
+   HOME
 
-   IF JOY(0) HAS BIT UP THEN : PRINT "UP" : ENDIF
-   IF JOY(0) IS UP THEN : PRINT "UP" : ENDIF
+   PRINT "  o  "
+   PRINT "o-+-o"
+   PRINT "  o  "
+   PRINT "====="
+   PRINT " JOY "
 
-   IF JOY(0) HAS NOT BIT UP THEN : PRINT "NOT UP" : ENDIF
-   IF JOY(0) IS NOT UP THEN : PRINT "NOT UP" : ENDIF
+   DO
 
-   HALT
+      left = BIT( JOY(0), LEFT )
+      LOCATE 0, 6: PRINT "LEFT IS: ";left
+      
+      up = BIT UP OF JOY(0)
+      LOCATE 0, 6: PRINT "UP IS: ";up
+
+      IF JOY(0) HAS BIT UP THEN
+         LOCATE 2, 0
+         PRINT "*"
+      ELSE
+         LOCATE 3, 0
+         PRINT "o"
+      ENDIF
+
+      IF JOY(0) HAS BIT DOWN THEN
+         LOCATE 3, 2
+         PRINT "*"
+      ELSE
+         LOCATE 3, 0
+         PRINT "o"
+      ENDIF
+
+      IF JOY(0) HAS BIT LEFT THEN
+         LOCATE 0, 1
+         PRINT "*"
+      ELSE
+         LOCATE 0, 1
+         PRINT "o"
+      ENDIF
+
+      IF JOY(0) HAS BIT RIGHT THEN
+         LOCATE 5, 1
+         PRINT "*"
+      ELSE
+         LOCATE 5, 1
+         PRINT "o"
+      ENDIF
+
+   LOOP

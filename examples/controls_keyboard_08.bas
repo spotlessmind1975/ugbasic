@@ -1,12 +1,14 @@
 REM @english
-REM I/O CONTROL WITH KEYBOARD (8)
+REM I/O CONTROL WAIT FOR A KEY
 REM
 REM This example will wait the press of a key.
 REM
 REM @italian
-REM CONTROLLI DI I/O CON LA TASTIERA (8)
+REM CONTROLLI DI I/O IN ATTESA DI UN TASTO
 REM
 REM Questo esempio attende la pressione di un tasto.
+REM
+REM @include atari
 
     CLS
 

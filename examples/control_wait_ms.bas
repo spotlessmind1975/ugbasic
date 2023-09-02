@@ -9,9 +9,10 @@ REM @italian
 REM CONTROLLO DI FLUSSO CON ATTESA INCONDIZIONATA
 REM
 REM Questo esempio mostrerà l'uso della parola chiave ''WAIT...MS''. Il codice principale 
-REM stamperà un asterisko lampeggiante. Ogni simbolo durerà 1000 millisecondi
+REM stamperà un asterisco lampeggiante. Ogni simbolo durerà 1000 millisecondi
 REM sullo schermo.
 REM
+REM @include atari
 
     CLS
 
