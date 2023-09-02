@@ -7,6 +7,8 @@ REM @italian
 REM PRIMITIVE DI GRAFICA CON L'USO DI BOX E PATTERN
 REM
 REM Questo esempio disegnerà due segmenti rossi.
+REM
+REM @include atari
 
     BITMAP ENABLE
     CLS
