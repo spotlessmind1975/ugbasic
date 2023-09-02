@@ -1,5 +1,5 @@
 REM @english
-REM GRAPHICS PRIMITIVES USING POINT (1)
+REM GRAPHICS PRIMITIVES USING GET PIXEL COLOR (POINT)
 REM
 REM This example will draw a single pixel at the center of the screen.
 REM The color of that pixel will be read using the ''POINT'' function,

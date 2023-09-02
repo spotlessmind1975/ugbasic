@@ -1,5 +1,5 @@
 REM @english
-REM GRAPHICS PRIMITIVES USING PLOT (2)
+REM GRAPHICS PRIMITIVES FILL PLOTTING
 REM
 REM This example will fill the entire bitmap screen, from top left to bottom right,
 REM with the white color. It will enable the first bitmap mode available (in order 
@@ -15,6 +15,8 @@ REM a destra, con il colore bianco. Abiliterà la prima modalità bitmap disponi
 REM (in modo da avere una migliore risoluzione) utilizzando il comando 
 REM ''BITMAP ENABLE''. Quindi, cancellerà lo schermo con il colore nero. Infine, 
 REM eseguirà un ciclo controllato (''FOR...NEXT'') che disegnerà tutti i pixel.
+REM
+REM @include atari
 
   BITMAP ENABLE
   CLS BLACK

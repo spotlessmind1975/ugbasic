@@ -1,5 +1,5 @@
 REM @english
-REM GRAPHICS PRIMITIVES USING PLOT (1)
+REM GRAPHICS PRIMITIVES RANDOM PLOTTING
 REM
 REM This example will fill the entire screen with random points. It will enable
 REM the first bitmap mode available (in order to have better resolution) by
@@ -15,12 +15,25 @@ REM prima modalità bitmap disponibile (in modo da avere una migliore risoluzion
 REM utilizzando il comando ''BITMAP ENABLE''. Quindi, cancellerà lo schermo con il
 REM colore nero. Infine, eseguirà un ciclo infinito (''DO...LOOP'') che disegnerà 
 REM una serie di punti casuali sullo schermo.
+REM
+REM @include atari
 
    BITMAP ENABLE(16)
    CLS BLACK
    DO
       x = RND(SCREEN WIDTH-1)
       y = RND(SCREEN HEIGHT-1)
-      c = RND(SCREEN COLORS-1)
+      SELECT CASE RND(SCREEN COLORS-1)
+         CASE 0
+            c = WHITE
+         CASE 1
+            c = RED
+         CASE 2
+            c = BLUE
+         CASE 3
+            c = GREEN
+         CASE ELSE
+            c = YELLOW
+      ENDSELECT
       PLOT x, y, c
    LOOP
