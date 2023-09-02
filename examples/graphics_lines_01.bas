@@ -1,5 +1,5 @@
 REM @english
-REM GRAPHICS PRIMITIVES USING DRAW (1)
+REM GRAPHICS PRIMITIVES DRAWING LINES
 REM
 REM This example will draw two red segments.
 REM
@@ -7,11 +7,15 @@ REM @italian
 REM PRIMITIVE DI GRAFICA CON L'USO DI DRAW (1)
 REM
 REM Questo esempio disegnerà due segmenti rossi.
+REM
+REM @include atari
 
    BITMAP ENABLE
-   CLS
-   INK RED
-   DRAW 50,50 TO 250,150
-   DRAW TO 275,175
 
-   HALT
+   CLS
+
+   INK RED
+   DRAW 0,0 TO SCREEN WIDTH - 1, SCREEN HEIGHT - 1
+
+   INK YELLOW
+   DRAW TO SCREEN WIDTH / 2, SCREEN HEIGHT / 4
