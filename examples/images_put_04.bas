@@ -1,3 +1,13 @@
+REM @english
+REM STATIC IMAGES DISPLAY AN (Y DOUBLED) RED TOKEN (USING PUT IMAGE)
+REM
+REM This small example will show how to load and draw a PNG image on a colored bitmap screen.
+REM 
+REM @italian
+REM GESTIONE DELLE IMMAGINI DISEGNO (2)
+REM
+REM Questo piccolo esempio mostra come caricare una piccola PNG e disegnarla sulla bitmap colorata.
+
     BITMAP ENABLE (4)
     CLS
 
