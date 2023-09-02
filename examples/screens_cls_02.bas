@@ -1,5 +1,5 @@
 REM @english
-REM SCREEN MANIPULATION USING CLS (2)
+REM SCREEN MANIPULATION CLEARING SCREEN (USING CLS) (2)
 REM
 REM This example shows how to clear the screen using the ''CLS'' command.
 REM First of all, the program will ask for a bitmap screen of 320x200 pixel
@@ -14,9 +14,10 @@ REM Questo esempio mostra come cancellare lo schermo usando il comando ''CLS''. 
 REM il programma richiederà uno schermo bitmap di 320x200 pixel di risoluzione a 16 colori,
 REM utilizzando il comando ''BITMAP ENABLE''. Successivamente, impostiamo il colore di sfondo 
 REM su rosso utilizzando il comando ''PAPER'' e puliamo lo schermo con un colore bianco (''WHITE''). 
+REM
+REM @include atari
 
     BITMAP ENABLE (320,200,16)
+
     PAPER RED
     CLS WHITE
-
-    HALT

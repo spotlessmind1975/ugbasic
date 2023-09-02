@@ -1,5 +1,5 @@
 REM @english
-REM USER-DEFINED PROCEDURES WITH PARAMETERS (1)
+REM USER-DEFINED PROCEDURES RETURN VALUE (USING PARAM$())
 REM
 REM This example will demonstrate how to define procedures with
 REM one or more parameters. Parameters are a way to give informations
@@ -20,7 +20,11 @@ REM Ce ne sono diversi. I parametri vanno comunque considerati come variabili
 REM locali che vengono alimentate dal chiamante. Il valore restituito deve essere
 REM considerato come un valore che potrebbe essere utilizzato dal chiamante. 
 REM L'esempio implementerà una procedura che unisce tre stringhe tutte insieme.
+REM
+REM @include atari
 
+    CLS
+    
     PROCEDURE joinString[a$,b$,c$ ]
         PRINT "joinString called with:"
         PRINT " a$ = ";a$

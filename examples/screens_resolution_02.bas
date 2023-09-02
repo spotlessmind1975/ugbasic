@@ -1,5 +1,5 @@
 REM @english
-REM SCREEN MANIPULATION CHANGING RESOLUTION (2)
+REM SCREEN MANIPULATION CHECK RESOLUTION
 REM
 REM This example shows how to use the various ''BITMAP'' and ''TILEMAP''
 REM resolutions. After each command, the screen will be configured at the
@@ -22,7 +22,7 @@ REM Larghezza e altezza sono misurate in pixel (se modalità ''BITMAP'') o in ti
 REM (se modalità ''TILEMAP''). I colori sono sempre individuali, ovvero il numero 
 REM massimo di colori diversi consentiti.
 REM
-REM @exclude coleco
+REM @include atari
 
      BITMAP ENABLE (320,200)
      CLS
@@ -41,5 +41,3 @@ REM @exclude coleco
      h = SCREEN HEIGHT
      c = COLOR COUNT
      PRINT "tilemap of ";w;"x";h;" tiles (";c;" colors)"
-
-     HALT

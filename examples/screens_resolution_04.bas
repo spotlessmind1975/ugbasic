@@ -1,5 +1,5 @@
 REM @english
-REM SCREEN MANIPULATION BEST BITMAP
+REM SCREEN MANIPULATION BEST RESOLUTION (TILEMAP MODE)
 REM
 REM This example shows the best bitmap mode's characteristics.
 REM
@@ -8,7 +8,7 @@ REM MANIPOLAZIONE DI SCHERMI CAMBIARE RISOLUZIONE (2)
 REM
 REM Questo esempio mostra la miglior risoluzione BITMAP disponibile. 
 REM
-REM @exclude coleco
+REM @include atari
 
      TILEMAP ENABLE
      CLS BLACK: PEN WHITE

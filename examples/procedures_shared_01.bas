@@ -1,5 +1,5 @@
 REM @english
-REM USER-DEFINED PROCEDURES WITH SHARED VARIABLES (1)
+REM USER-DEFINED PROCEDURES USING SHARED VARIABLES
 REM
 REM This example will show how the shared variables works. First of all, we
 REM will declare 2 local variables (''a'' AND ''b'') by using the ''SHARED'' keyword. 
@@ -16,6 +16,10 @@ REM ''SHARED''. Quindi, assegniamo un valore al di fuori di ciascuna procedura.
 REM La procedura viene quindi chiamata, e il risultato è che 
 REM il valore originale è stato modificato dall'esecuzione della procedura, 
 REM poiché tali variabili sono condivise (globali). 
+REM
+REM @include atari
+
+   CLS
 
    PROCEDURE example
       SHARED a,b

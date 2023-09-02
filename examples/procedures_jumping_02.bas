@@ -1,5 +1,5 @@
 REM @english
-REM USER-DEFINED PROCEDURES WITH POPPING (1)
+REM USER-DEFINED PROCEDURES EXITING FROM A PROCEDURE
 REM
 REM This small example will show a way to exit from a procedure,
 REM when executing it. The trick is done by using the instruction
@@ -15,7 +15,12 @@ REM quando si è in esecuzione all'interno della stessa. Il trucco è
 REM di usare l'istruzione ''POP PROC''. Questa istruzione interromperà
 REM la procedura corrente, e il programma continuerà l'esecuzione dal punto
 REM in cui la procedura è stata chiamata.
+REM
+REM @include atari
 
+
+   CLS
+   
    PROCEDURE escape
       FOR prison = 1 TO 1000000000
          IF prison == 10 THEN : POP PROC : ENDIF

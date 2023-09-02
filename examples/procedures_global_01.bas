@@ -1,5 +1,5 @@
 REM @english
-REM USER-DEFINED PROCEDURES WITH GLOBAL VARIABLES (1)
+REM USER-DEFINED PROCEDURES USING GLOBAL VARIABLES
 REM
 REM This example will show how the global variables works. First of all, we
 REM will define 2 global variables (''a'' AND ''b'') by using the ''GLOBAL'' keyword. 
@@ -16,26 +16,28 @@ REM 'GLOBAL''. Quindi, assegniamo un valore al di fuori di ciascuna procedura.
 REM Quindi le due procedure vengono definite e chiamate. Il risultato è che 
 REM il valore originale è stato modificato ad ogni esecuzione della procedura, 
 REM poiché tali variabili sono globali. 
+REM
+REM @include atari
+
+   CLS
 
    GLOBAL a, b
    
    a = 6
    b = 9
    
-   PROCEDURE test1
+   PROCEDURE testProcedure1
       a = a + 1
       b = b + 1
    END PROC
    
-   PROCEDURE test2
+   PROCEDURE testProcedure2
       a = a + b
       b = b + a
    END PROC
 
-   test1[]
-   test2[]
+   testProcedure1[]
+   testProcedure2[]
    
-   PRINT "a = ";a
-   PRINT "b = ";b
-
-   HALT
+   PRINT "a = ";a; " (should be 17)"
+   PRINT "b = ";b; " (should be 27)"

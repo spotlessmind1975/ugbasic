@@ -1,5 +1,5 @@
 REM @english
-REM USER-DEFINED PROCEDURES WITH PARAMETERS (4)
+REM USER-DEFINED PROCEDURES CALL WITH SINGLE PARAMETER
 REM
 REM This example will demonstrate how to define procedures with
 REM one or more parameters. Parameters are a way to give informations
@@ -22,8 +22,10 @@ REM considerato come un valore che potrebbe essere utilizzato dal chiamante.
 REM L'esempio implementerà una procedura che stampa il parametro, prefisso
 REM dalla stringa ''"HELLO"''.
 REM
-REM @exclude coleco
+REM @include atari
 
+   CLS
+   
    PROCEDURE hello [name$]
       PRINT "HELLO " + name$
    END PROC

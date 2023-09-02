@@ -1,31 +1,30 @@
 REM @english
-REM MULTI TASKING FOR DUMMIES (4)
+REM MULTI TASKING ACCESSING VARIABLES (IMPLICIT)
 REM
-REM This example will show how to use a separate variable for each task.
+REM This example will show how to use a separate variable for each task. This is the implicit
+REM way to access, using the ''[...]'' operator.
 REM
 REM @italian
 REM USARE IL MULTITASKING CON UN ESEMPIO (4)
 REM
-REM Questo esempio mostrerà come usare variabili separate per ogni task.
+REM Questo esempio mostrerà come usare variabili separate per ogni task. Questo è l'approccio
+REM implicito per accedere, usando l'operatore ''[...]''.
 REM
-REM @exclude coleco
+REM @include atari
 
     DIM x WITH 0 (3)
     GLOBAL x
 
-    PARALLEL PROCEDURE example
+    PARALLEL PROCEDURE accessing
         DO
             [x] = [x] + 1
             PRINT [x];" ";
         LOOP
     END PROC
 
-    SPAWN example
-    SPAWN example
-    SPAWN example
+    SPAWN accessing
+    SPAWN accessing
+    SPAWN accessing
 
-    DO
-            RUN PARALLEL
-    LOOP
-
-    HALT
+    CLS
+    

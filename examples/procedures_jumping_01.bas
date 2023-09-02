@@ -1,5 +1,5 @@
 REM @english
-REM USER-DEFINED PROCEDURES WITH FLOW CONTROL (1)
+REM USER-DEFINED PROCEDURES CALL A PROCEDURE (USING ON...PROC)
 REM
 REM This small example will use the ''ON...PROC'' keywords to implement
 REM a endless loop, printing the digits "1", "2" and "3". The current
@@ -16,8 +16,10 @@ REM "3". Il numero da stampare sarà quello memorizzato nella variabile
 REM ''times''. Questo esempio mostra inoltre il funzionamento dello scrolling
 REM automatico, quando si raggiunge con l'uso del comando ''PRINT'' la fine dello schermo.
 REM
-REM @exclude coleco
+REM @include atari
 
+    CLS
+   
     PROCEDURE first
         PRINT 1;" ";
     END PROC

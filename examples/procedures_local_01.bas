@@ -1,5 +1,5 @@
 REM @english
-REM USER-DEFINED PROCEDURES WITH LOCAL VARIABLES (1)
+REM USER-DEFINED PROCEDURES USING LOCAL VARIABLES (1)
 REM
 REM This example will demonstrate that the variables, inside the procedures,
 REM are always "local". It means that their value will be setted each time
@@ -17,7 +17,11 @@ REM si entra nella procedura. Inoltre, quando la procedura termina, il loro valo
 REM andrà perduto. Quindi questo programma dimostrerà che, anche se viene svolto
 REM un incremento della variabile ''a'' per ogni esecuzione, il valore effettivo
 REM rimarrà sempre il medesimo. 
+REM
+REM @include atari
 
+   CLS
+   
    PROCEDURE plus
       a = a + 1
       PRINT "a (local) after plus = ";a
