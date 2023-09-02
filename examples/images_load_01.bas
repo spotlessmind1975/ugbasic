@@ -1,18 +1,18 @@
 REM @english
-REM STATIC IMAGES LOADING (1)
+REM STATIC IMAGES LOADING IMAGE ( USING PRINT )
 REM
-REM This small example will show how to load a PNG image file as a static IMAGE.
+REM This small example will show how to load a PNG image file as a static ''IMAGE''.
 REM 
 REM @italian
 REM GESTIONE DELLE IMMAGINI CARICAMENTO (1)
 REM
 REM Questo piccolo esempio mostra come caricare una piccola PNG come immagine statica.
 REM
+REM @include atari
 
-BITMAP ENABLE
+    BITMAP ENABLE
+    CLS
 
-airplane = LOAD IMAGE("air_attack_airplane.png")
+    airplane = LOAD IMAGE("air_attack_airplane.png")
 
-PRINT airplane
-
-HALT
+    PRINT airplane

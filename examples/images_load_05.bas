@@ -1,5 +1,5 @@
 REM @english
-REM STATIC IMAGES MULTIPLE IMAGES LOADING (1)
+REM STATIC IMAGES LOAD AND DISPLAY ONE FRAME IMAGE
 REM
 REM This small example will show how to load images from a single image.
 REM The basic syntax is to give a "frame size" of each frame inside the
@@ -17,12 +17,13 @@ REM In questo modo, l'insieme dei frame verrà preso per generare un tipo
 REM di dati IMAGES. Nota che questo tipo di dato può essere usato anche 
 REM come IMMAGINE, il che significa usare il primo fotogramma.
 REM
+REM @include atari
 
-BITMAP ENABLE (16)
-CLS
+    BITMAP ENABLE (16)
+    CLS
 
-bat := LOAD IMAGES("bat.png" ) FRAME SIZE (32,32)
+    bat := LOAD IMAGES("bat.png" ) FRAME SIZE (32,32)
 
-PUT IMAGE bat AT 0,0
+    PUT IMAGE bat AT 0,0
 
 

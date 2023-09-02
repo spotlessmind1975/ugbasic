@@ -1,5 +1,5 @@
 REM @english
-REM STATIC IMAGES CAPTURE (3)
+REM STATIC IMAGES IMAGE CAPURE (USING GET IMAGE AND PALETTE)
 REM
 REM This example will show how to capture an image from
 REM the screen after putting it. It answers to bug #367.
@@ -10,6 +10,7 @@ REM
 REM Questo piccolo esempio mostra come catturare una immagine
 REM dallo schermo dopo averla disegnata. Risponde al bug #367.
 REM
+REM @include atari
 
     BITMAP ENABLE (160,200,16)
     'Palette

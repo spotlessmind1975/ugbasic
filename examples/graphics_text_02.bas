@@ -1,12 +1,12 @@
 REM @english
 REM GRAPHICS PRIMITIVES DRAWING AROUND TEXT
 REM
-REM This example will show how to pass from screen to text coordinates and viceversa.
+REM This example will show how to draw around a text.
 REM
 REM @italian
 REM PRIMITIVE DI GRAFICA COORDINATE DI SCHERMO E DI TESTO (2)
 REM
-REM Questo esempio mostrerà come passare dalle coordinate schermo a quelle testuali, e viceversa.
+REM Questo esempio mostrerà come disegnare intorno a un testo.
 REM
 REM @include atari
 
