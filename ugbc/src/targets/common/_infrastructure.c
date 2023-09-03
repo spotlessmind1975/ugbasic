@@ -4595,20 +4595,21 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
             if ( _len ) {
                 len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
                 cpu_move_8bit( _environment, len->realName, copyofLen->realName );
-                Variable * temp = variable_temporary( _environment, VT_BYTE, "(checker)");
-                cpu_move_8bit( _environment, copyofLen->realName, temp->realName );
-                cpu_math_add_8bit( _environment, position->realName, temp->realName, temp->realName );
-                cpu_greater_than_8bit( _environment, temp->realName, size->realName, temp->realName, 0, 0 );
-
-                char unlimitedLenLabel[MAX_TEMPORARY_STORAGE]; sprintf( unlimitedLenLabel, "%sunlim", label );
-                cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, unlimitedLenLabel, 1 );
-                cpu_move_8bit( _environment, size->realName, temp->realName );
-                cpu_math_sub_8bit( _environment, temp->realName, position->realName, copyofLen->realName );
-                cpu_inc( _environment, copyofLen->realName );
-                cpu_label( _environment, unlimitedLenLabel );
             } else {
                 cpu_move_8bit( _environment, size->realName, copyofLen->realName );
             }
+
+            Variable * temp = variable_temporary( _environment, VT_BYTE, "(checker)");
+            cpu_move_8bit( _environment, copyofLen->realName, temp->realName );
+            cpu_math_add_8bit( _environment, position->realName, temp->realName, temp->realName );
+            cpu_greater_than_8bit( _environment, temp->realName, size->realName, temp->realName, 0, 0 );
+
+            char unlimitedLenLabel[MAX_TEMPORARY_STORAGE]; sprintf( unlimitedLenLabel, "%sunlim", label );
+            cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, unlimitedLenLabel, 1 );
+            cpu_move_8bit( _environment, size->realName, temp->realName );
+            cpu_math_sub_8bit( _environment, temp->realName, position->realName, copyofLen->realName );
+            cpu_inc( _environment, copyofLen->realName );
+            cpu_label( _environment, unlimitedLenLabel );
 
             cpu_greater_than_8bit( _environment, position->realName, size->realName, size2->realName, 0, 0 );
             cpu_compare_and_branch_8bit_const( _environment, size2->realName, (unsigned char) 0xff, emptyResultLabel, 1 );
