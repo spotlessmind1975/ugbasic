@@ -1,4 +1,4 @@
-﻿REM EXTERNAL INTEGRATION SYSTEM CALLS (ON ATARI 400/800)
+﻿REM EXTERNAL INTEGRATION SYSTEM CALLS (ON ATARI XL/XE)
 REM 
 REM This small example explains how to invoke Amstrad CPC system 
 REM functionalities. Please note that this is only an example, 
@@ -10,7 +10,7 @@ REM The file is located in the "/imports" folder, and is
 REM downloaded automatically by the IDE from version 1.14.1 onwards.
 REM 
 REM @italian
-REM INTEGRAZIONE CODICE ESTERNO CHIAMATE DI SISTEMA (SU ATARI 400/800)
+REM INTEGRAZIONE CODICE ESTERNO CHIAMATE DI SISTEMA (SU ATARI XL/XE)
 REM
 REM Questo piccolo esempio spiega come richiamare funzionalità 
 REM di sistema del Commodore 64. Si fa presente che questo è 

@@ -15,7 +15,7 @@ REM
 REM @include atari
 
     CLS
-    
+
     PRINT "MID(ugBASIC,1) = ";MID("ugBASIC",1)
     PRINT "MID(ugBASIC,2) = ";MID("ugBASIC",2)
     PRINT "MID(ugBASIC,3) = ";MID("ugBASIC",3)
