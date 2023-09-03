@@ -1,5 +1,5 @@
 REM @english
-REM TEXTS OUTPUT WITH POSITIONING (3)
+REM TEXTS OUTPUT TEXT POSITIONING (USING CMOVE)
 REM
 REM This example shows the use of ''CMOVE'' command to set the next
 REM output position by using a relative measure (offset from current position). 
@@ -14,8 +14,11 @@ REM posizione per il successivo output sullo schermo, con l'utilizzo di misure
 REM relative (scostamenti rispetto alla posizione corrente). Se una delle componenti
 REM delle coordinate è omessa, questo significa che l'offset corrispondente è pari a
 REM zero, quindi rimane sulla medesima posizione.
-  
+REM
+REM @include atari
+
    CLS
+
    PRINT "ICELAND"
 
    CMOVE 5,5
@@ -26,5 +29,3 @@ REM zero, quindi rimane sulla medesima posizione.
 
    CMOVE 10,14
    PRINT "FRANCE"
-
-   HALT

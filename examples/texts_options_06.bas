@@ -1,5 +1,5 @@
 REM @english
-REM TEXTS OUTPUT WITH WRITING MODE (1)
+REM TEXTS OUTPUT CHANGE WRITING MODE (USING WRITING)
 REM
 REM This example shows the various combination allowed when using the ''WRITING'' command,
 REM and its effects in terms on graphical effects. Note that the text output will be the
@@ -11,6 +11,8 @@ REM
 REM Questo esempio mostra le varie combinazioni permette quando si utilizza il comando ''WRITING''
 REM e i loro effetti in termini di resa grafica. Da notare che il testo di output sarà lo stesso
 REM per ogni chiamata, mentre la resa differirà in base al valore attuale di ''WRITING''.
+
+    CLS
 
     t$ = PEN$(YELLOW)+"YELLOW ON "+PAPER$(BLUE)+" BLUE"
 
@@ -103,5 +105,3 @@ REM per ogni chiamata, mentre la resa differirà in base al valore attuale di ''
     WRITING IGNORE, PEN
     PRINT t$
     WAIT 500 MS
-
-    HALT

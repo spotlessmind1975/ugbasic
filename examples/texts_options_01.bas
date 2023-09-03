@@ -1,5 +1,5 @@
 REM @english
-REM TEXTS OUTPUT WITH PEN COLORS (1)
+REM TEXTS OUTPUT DISPLAY ALL PEN COLORS (USING PEN)
 REM
 REM This example shows the entire collection of colors that can be used as a pen
 REM to color texts. Thanks to the variable ''PEN COLORS'', it is possible to iterate
@@ -14,9 +14,10 @@ REM per colorare i testi. Grazie alla variabile ''PEN COLORS'' è possibile iter
 REM colore (0) all'ultimo e disegnare un testo con uno specifico indice di colore, utilizzando 
 REM il comando ''PEN''.
 
+   CLS
+
    FOR index=0 TO PEN COLORS - 1
       PEN index
       PRINT "PEN NUMBER ";index
    NEXT 
 
-   HALT

@@ -1,5 +1,5 @@
 REM @english
-REM TEXTS OUTPUT WITH PAPER COLORS (1)
+REM TEXTS OUTPUT DISPLAY ALL PAPER COLORS (USING PAPER)
 REM
 REM This example shows the entire collection of colors that can be used as paper
 REM to color backgrounds. Thanks to the variable ''PAPER COLORS'', it is possible to iterate
@@ -14,11 +14,11 @@ REM per colorare i testi. Grazie alla variabile ''PAPER COLORS'' è possibile it
 REM colore (0) all'ultimo e disegnare un testo sopra uno specifico indice di colore, utilizzando 
 REM il comando ''PAPER''.
 
+   CLS
+
    PEN DEFAULT PEN
    
-   FOR index = 0 TO PAPER COLORS
+   FOR index = 0 TO PAPER COLORS-1
       PAPER index
       PRINT "PAPER NUMBER ";index;SPACE(23)
    NEXT
-
-   HALT

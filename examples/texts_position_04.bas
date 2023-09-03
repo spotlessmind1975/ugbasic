@@ -1,5 +1,5 @@
 REM @english
-REM TEXTS OUTPUT WITH POSITIONING (4)
+REM TEXTS OUTPUT TEXT POSITIONING (USING CMOVE$())
 REM
 REM This example shows the use of ''CMOVE'' function. The function will generate
 REM a special sequence that will move the cursor to a position that is relative
@@ -13,7 +13,9 @@ REM Questo esempio mostra l'uso della funzione ''CMOVE''. La funzione genererà
 REM una sequenza speciale che sposterà il cursore in una posizione relativa a 
 REM quella corrente. Il vantaggio di questo metodo è che quello di poter memorizzare 
 REM un movimento specifico all'interno di una stringa, e riprodurlo incorporandone il testo.
+REM
+REM @include atari
+
+    CLS
 
     PRINT CMOVE$(10,10);"CMOVE(10,10)"
-
-    HALT
