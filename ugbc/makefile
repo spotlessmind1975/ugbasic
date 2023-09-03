@@ -46,7 +46,7 @@ BISON_OPTIONS=--locations -d -Wcounterexamples
 CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC
 LFLAGS=
 LIBS=-lm $(LIBXML2)
-BETA=$(shell git status | grep beta)
+BETA=$(shell cat ../.git/HEAD | grep beta)
 
 .PHONY: paths clean all bison flex
 
