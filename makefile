@@ -104,7 +104,7 @@ endif
 #--- MAKEFILE's ENVIRONMENT
 #-----------------------------------------------------------------------------
 
-BETA=$(shell git status | grep beta)
+BETA=$(shell cat .git/HEAD | grep beta)
 
 # Check if the compilation is for a BETA version or not.
 # In this case, the ".beta" suffix will be added to the executable.
@@ -157,7 +157,7 @@ COCODECB = ./coco_decb.sh
 ifdef 10liner
 EXAMPLES := $(wildcard examples/*_10lines.bas)
 else
-EXAMPLES := $(wildcard examples/*.bas)
+EXAMPLES := $(wildcard examples/t*.bas)
 endif
 
 # List of assembled files of examples
