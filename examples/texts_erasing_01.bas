@@ -1,5 +1,5 @@
 REM @english
-REM TEXTS OUTPUT WITH ERASING (1)
+REM TEXTS OUTPUT ERASING TEXT (USING CLINE)
 REM
 REM This example shows how to remove a part of a line and an entire line by using the ''CLINE'' command.
 REM
@@ -7,14 +7,16 @@ REM @italian
 REM STAMPA DI TESTI CON CANCELLAZIONE (1)
 REM
 REM Questo esempio mostra come cancellare parte di una riga e una riga intera, usando l'istruzione ''CLINE''.
+REM
+REM @include atari
 
   CLS
   
   LOCATE 0,1
-  PRINT "TESTING TESTING TESTING";
+  PRINT "THIS LINE WILL BE ERASED";
 
   LOCATE 0,3
-  PRINT "TESTING TESTING TESTING";
+  PRINT "THE WORD WILL BE ERASED";
 
   CMOVE -7,
   CLINE 7
@@ -22,4 +24,3 @@ REM Questo esempio mostra come cancellare parte di una riga e una riga intera, u
   LOCATE 0,1
   CLINE
   
-  HALT

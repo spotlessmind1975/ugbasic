@@ -1,5 +1,5 @@
 REM @english
-REM TEXTS OUTPUT WITH SCROLLING (1)
+REM TEXTS OUTPUT HORIZONTAL SCROLLING (USING HSCROLL)
 REM
 REM This example shows how to scroll a line and a screen horizontally: the program
 REM clear the current screen, then locate to the position 10,10 and print ''"HELLO WORLD!"''.
@@ -13,6 +13,8 @@ REM Questo esempio mostra come effettuare lo scorrimento orizzontale, di una lin
 REM schermo. Prima di tutto, il programma cancella lo schermo, si posiziona alla posizione 10,10 e
 REM stampa la stringa ''"HELLO WORLD!''". Dopo di che, inizia a scorrere prima la linea scritta
 REM a sinistra, poi a destra. Quindi fa la stessa cosa con l'intero schermo, prima a sinistra e poi a destra.
+REM
+REM @include atari
 
     CLS
     LOCATE 10,10
@@ -33,5 +35,3 @@ REM a sinistra, poi a destra. Quindi fa la stessa cosa con l'intero schermo, pri
     WAIT 1000 MS
     HSCROLL SCREEN RIGHT
     WAIT 1000 MS
-
-    HALT

@@ -1,5 +1,5 @@
 REM @english
-REM TEXTS OUTPUT WITH SCROLLING (1)
+REM TEXTS OUTPUT VERTICAL SCROLL (USING VSCROLL)
 REM
 REM This example shows how to scroll a screen vertically: the program
 REM clear the current screen, then locate to the position 10,10 and print ''"HELLO WORLD!"''.
@@ -12,6 +12,8 @@ REM Questo esempio mostra come effettuare lo scorrimento verticale di un intero 
 REM Prima di tutto, il programma cancella lo schermo, si posiziona alla posizione 10,10 e
 REM stampa la stringa ''"HELLO WORLD!''". Dopo di che, inizia a scorrere una riga verso l'alto
 REM e, successivamente, tre righe verso il basso.
+REM
+REM @include atari
 
     CLS
 
@@ -28,5 +30,3 @@ REM e, successivamente, tre righe verso il basso.
     VSCROLL SCREEN DOWN
     VSCROLL SCREEN DOWN
     WAIT 1000 MS
-
-    HALT
