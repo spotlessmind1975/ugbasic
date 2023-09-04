@@ -4,10 +4,6 @@ REM
 REM This example shows how to load and use a tileset created
 REM with a standard tool like "Tiled". Tileset courtesy of Kenney.
 REM
-REM For more informations:
-REM https://www.mapeditor.org/
-REM https://kenney.nl/
-REM
 REM @italian
 REM GESTIONE DEI TILESET USO DI BASE
 REM
@@ -15,17 +11,18 @@ REM Questo esempio mostra come si carica e si utilizza un
 REM tileset creato con un tool standard come "Tiled".
 REM Il tileset courtesy of Kenney.
 REM
-REM Per maggiori informazioni:
-REM https://www.mapeditor.org/
-REM https://kenney.nl/
+REM @url https://www.mapeditor.org/
+REM @url https://kenney.nl/
+REM
+REM @include atari
 
-BITMAP ENABLE(16)
+    BITMAP ENABLE(16)
 
-CLS
+    CLS
 
-tileset := LOAD TILESET("kenney-tiny-town.tsx")
+    tileset := LOAD TILESET("kenney-tiny-town.tsx")
 
-PUT IMAGE tileset FRAME 29 AT 0,0
+    PUT IMAGE tileset FRAME 29 AT 0,0
 
 
 

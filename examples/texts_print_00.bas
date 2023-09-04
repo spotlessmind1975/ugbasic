@@ -10,4 +10,6 @@ REM Questo esempio mostra l'uso di ''PRINT''.
 REM
 REM @include atari
 
+   CLS
+
    PRINT "hello world"
