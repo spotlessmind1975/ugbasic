@@ -16,7 +16,7 @@ REM (in modo da avere una migliore risoluzione) utilizzando il comando
 REM ''BITMAP ENABLE''. Quindi, cancellerà lo schermo con il colore nero. Infine, 
 REM eseguirà un ciclo controllato (''FOR...NEXT'') che disegnerà tutti i pixel.
 REM
-REM @include atari
+REM @include atari,atarixl
 
   BITMAP ENABLE (4)
   CLS BLACK

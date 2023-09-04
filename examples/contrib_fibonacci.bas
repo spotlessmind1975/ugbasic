@@ -14,7 +14,7 @@ REM classico. La sequenza Fibonacci è definita dalle seguenti regole: i primi d
 REM 1 e 1; ciascun valore successivo è calcolato sommando i due valori che lo precedono. Il sorgente
 REM limita la ricerca a un massimo di un valore pari a 5.000.
 REM
-REM @include atari
+REM @include atari,atarixl
 
 10 CLS : HOME : max% = 5000
 20 x% = 1 : y% = 1

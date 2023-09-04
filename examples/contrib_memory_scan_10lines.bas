@@ -18,7 +18,7 @@ REM istruzione MMOVE.
 REM 
 REM @url https://github.com/JJFlash-IT/XCB3_Examples/blob/main/RAM_Scan_XCB/xcb-ramscan.bas
 REM
-REM @include atari
+REM @include atari,atarixl
 
 0IkWht:Cl:DO:Mmv w TO VdTxaSz(ScRws-1)*ScCms:Lc0,(ScRws-1):?w;"    ";
 1j=Jy(0):k=Scc:IF(jHASBtLf)OR(k=KyA)Th:w=w-1:Ei:IF(jHASBtRg)OR(k=KyS)Th:w=w+1:Ei

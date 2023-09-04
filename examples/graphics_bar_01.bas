@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA DISEGNARE BARRE (DUE BARRE ROSSE)
 REM
 REM Questo esempio disegnerà due barre rosse.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     BITMAP ENABLE(16)
     CLS

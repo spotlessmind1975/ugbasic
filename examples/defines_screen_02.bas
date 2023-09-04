@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostra come limitare la generazione del
 REM codice delle librerie quando si utilizza il double buffering.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     DEFINE DOUBLE BUFFER ON
 

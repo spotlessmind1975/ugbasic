@@ -16,7 +16,7 @@ REM si entra nella procedura. Inoltre, quando la procedura termina, il loro valo
 REM andrà perduto e il loro valore è diverso da quello di variabili già definite
 REM a livello globale, anche se hanno lo stesso nome. 
 REM
-REM @include atari
+REM @include atari,atarixl
 
    CLS
    

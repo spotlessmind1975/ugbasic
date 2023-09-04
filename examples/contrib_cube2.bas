@@ -12,7 +12,7 @@ REM Questo piccolo esempio mostra come si può disegnare un cubo rotante in BASI
 REM Mutilizzando lo stesso sorgente BASIC. È stata effettuata una piccola ottimizzazione sulla cancellazione 
 REM solo della bitmap occupata dal cubo.
 REM
-REM @include atari
+REM @include atari,atarixl
 
 BITMAP ENABLE(16) : CLS BLACK
 DIM t AS BYTE : DIM z AS BYTE

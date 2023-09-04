@@ -17,7 +17,7 @@ REM a un processore specifico. Da notare che
 REM questo codice non funzionerà dato che non c'è codice assembly
 REM in quella posizione.
 REM
-REM @include atari
+REM @include atari,atarixl
 
 DECLARE FUNCTION seriale AT $c000 ( valore AS BYTE ON STACK(BYTE) ) RETURN STACK(BYTE) AS BYTE ON CPU6502
 

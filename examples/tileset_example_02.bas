@@ -16,7 +16,7 @@ REM
 REM @url https://www.mapeditor.org/
 REM @url https://kenney.nl/
 REM
-REM @include atari
+REM @include atari,atarixl
 
 	BITMAP ENABLE(16)
 

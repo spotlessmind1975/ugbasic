@@ -17,7 +17,7 @@ REM In questo modo, l'insieme dei frame verrà preso per generare un tipo
 REM di dati SEQUENCE. Nota che questo tipo di dato può essere usato anche 
 REM come IMAGE, il che significa usare il primo fotogramma.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     BITMAP ENABLE (16)
     CLS

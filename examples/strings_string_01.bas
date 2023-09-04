@@ -8,7 +8,7 @@ REM MANIPOLAZIONE DI STRIGHE CON CONVERSIONE DA NUMERI (1)
 REM
 REM Questo esempio mostra come creare una stringa con ripetizioni.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     CLS
 

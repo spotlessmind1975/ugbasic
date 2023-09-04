@@ -13,7 +13,7 @@ REM macchina esterno, già presente sul sistema. Da notare che
 REM questo codice non funzionerà dato che non c'è codice assembly
 REM in quella posizione
 REM
-REM @include atari
+REM @include atari,atarixl
 
 	CLS
 

@@ -21,7 +21,7 @@ REM locali che vengono alimentate dal chiamante. Il valore restituito deve esser
 REM considerato come un valore che potrebbe essere utilizzato dal chiamante. 
 REM L'esempio implementerà una procedura che unisce tre stringhe tutte insieme.
 REM
-REM @include atari
+REM @include atari,atarixl
 
    CLS
    

@@ -9,7 +9,7 @@ REM
 REM Questo esempio mostra come aggiungere uno specifico numero di spazi all'interno
 REM di una stringa.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     CLS
     

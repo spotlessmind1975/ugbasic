@@ -8,7 +8,7 @@ REM ROUTINE DI MATEMATICA DA DECIMALE A ESADECIMALE
 REM
 REM Questo esempio mostra come convertire i numeri decimali in numeri esadecimali.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     CLS
     

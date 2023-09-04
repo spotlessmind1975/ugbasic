@@ -16,7 +16,7 @@ REM Da notare che la parola chiave BUFFER addizionale è necessaria,
 REM per spiegare a ugBASIC che si vuole la stampa del contenuto del buffer
 REM e non del tipo della variabile.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     CLS
 

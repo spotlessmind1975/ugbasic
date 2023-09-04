@@ -15,7 +15,7 @@ REM Da notare che, per ogni target, sarà caricato
 REM un eseguibile assemblato con opcode NOP e un ritorno
 REM dalla chiamata.
 REM
-REM @include atari
+REM @include atari,atarixl
 
 	CLS
 

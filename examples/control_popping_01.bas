@@ -22,7 +22,7 @@ REM il flusso di esecuzione chiamerà l'istruzione ''POP''. Il colore del bordo
 REM viene modificato utilizzando l'istruzione ''COLOR BORDER'', utilizzando 
 REM la somma delle variabili ''x'' e ''y''.
 REM
-REM @include atari
+REM @include atari,atarixl
 
    CLS
 

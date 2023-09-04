@@ -17,7 +17,7 @@ REM Quindi le due procedure vengono definite e chiamate. Il risultato è che
 REM il valore originale è stato modificato ad ogni esecuzione della procedura, 
 REM poiché tali variabili sono globali. 
 REM
-REM @include atari
+REM @include atari,atarixl
 
    CLS
 

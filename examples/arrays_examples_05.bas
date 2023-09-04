@@ -12,7 +12,7 @@ REM Questo piccolo esempio mostra come inizializzare ogni elemento di
 REM un array, al momento della compilazione. Questo riduce l'ingombro
 REM in termini di tempo e spazio.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     CLS
 

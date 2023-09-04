@@ -13,7 +13,7 @@ REM Prima di tutto, il programma cancella lo schermo, si posiziona alla posizion
 REM stampa la stringa ''"HELLO WORLD!''". Dopo di che, inizia a scorrere una riga verso l'alto
 REM e, successivamente, tre righe verso il basso.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     CLS
 

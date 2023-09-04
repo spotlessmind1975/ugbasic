@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostrerà come usare variabili separate per ogni task. Questo è l'approccio
 REM implicito per accedere, usando l'operatore ''[...]''.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     DIM x WITH 0 (3)
     GLOBAL x

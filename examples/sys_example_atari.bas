@@ -22,7 +22,7 @@ REM prima riga (''IMPORT DECLARES''). Il file si trova nella cartella
 REM "/imports" folder, e viene scaricato automaticamente dall'IDE 
 REM a partire dalla versione 1.14.1 in poi.
 REM
-REM @include atari
+REM @include atari,atarixl
 
 IMPORT DECLARES
 

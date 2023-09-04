@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA CON L'USO DI BOX E PATTERN
 REM
 REM Questo esempio disegnerà due box con dei semplici pattern.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     BITMAP ENABLE
 

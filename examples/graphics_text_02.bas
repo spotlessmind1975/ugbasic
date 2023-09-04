@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA COORDINATE DI SCHERMO E DI TESTO (2)
 REM
 REM Questo esempio mostrerà come disegnare intorno a un testo.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     BITMAP ENABLE (160,200,16)
     CLS

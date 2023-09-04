@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostra come mostrare le sfumature configurate,
 REM per default, per ogni colore.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     BITMAP ENABLE(16)
     CLS BLACK

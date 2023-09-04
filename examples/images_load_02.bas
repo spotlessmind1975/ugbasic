@@ -8,7 +8,7 @@ REM GESTIONE DELLE IMMAGINI CARICAMENTO (2)
 REM
 REM Questo piccolo esempio mostra come caricare una piccola PNG come immagine multicolore statica.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     BITMAP ENABLE (16)
     CLS

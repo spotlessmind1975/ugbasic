@@ -11,7 +11,7 @@ REM Questo piccolo esempio mostra come limitare la generazione del
 REM codice delle librerie quando si utilizza il double buffering
 REM e la modalità di schermo unica.
 REM
-REM @include atari
+REM @include atari,atarixl
 
     DEFINE SCREEN MODE UNIQUE
     DEFINE DOUBLE BUFFER OFF
