@@ -1,5 +1,5 @@
 REM @english
-REM TEXTS OUTPUT WITH POSITIONING (10)
+REM TEXTS OUTPUT GET TEXT POSITION (USING MEMORIZE/REMEMBER)
 REM
 REM This example shows the use of ''XCURS'' and ''YCURS'' function.
 REM
@@ -23,4 +23,3 @@ REM in una stringa per spostare il cursore in basso di 1 carattere.
   REMEMBER
   
   PRINT " > REMEMBERED 2"
-  HALT

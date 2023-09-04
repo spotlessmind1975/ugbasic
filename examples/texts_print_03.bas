@@ -1,5 +1,5 @@
 REM @english
-REM TEXTS OUTPUT ON MULTICOLOR BITMAP (1)
+REM TEXTS OUTPUT CHANGE KIND OF PRINT
 REM
 REM This example will show the effect of printing on monocolor bitmap and multicolor bitmap.
 REM
@@ -20,4 +20,4 @@ REM Questo esempio mostrerà gli effetti di stampare sulle bitmap monocromatiche
   INK RED
   PRINT "lores printing"
 
-  HALT
+  

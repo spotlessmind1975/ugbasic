@@ -1,5 +1,5 @@
 REM @english
-REM TEXTS OUTPUT WITH POSITIONING (10)
+REM TEXTS OUTPUT PRINT (WITH OPERATORS)
 REM
 REM This example shows the use of ''CDOWN'' function. The function will generate
 REM a special sequence that will move the cursor to an absoute position. The
@@ -11,6 +11,10 @@ REM STAMPA DI TESTI CON POSIZIONAMENTO (10)
 REM
 REM Questo esempio mostra l'uso di ''CDOWN'', che incorpora un comando
 REM in una stringa per spostare il cursore in basso di 1 carattere.
+REM
+REM @include atari
+
+    CLS
 
     PRINT "FOLLOW";"ON"
     PRINT "NEXT","TAB"
@@ -19,5 +23,4 @@ REM in una stringa per spostare il cursore in basso di 1 carattere.
     PRINT "UG";
     PRINT "BAS",
     PRINT "IC"
-    HALT
     
