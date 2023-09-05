@@ -9,11 +9,9 @@ REM
 REM Questo piccolo esempio emetterà un suono simile a una campana.
 REM
 
-CLS
+    CLS
 
-BELL 128
-
-' FOR f=0 TO 107
-' 	BELL f
-' 	WAIT (f/10+1)*1000 MS
-'  NEXT
+    FOR f=0 TO 107
+        BELL f
+        WAIT (f/10+1)*1000 MS
+    NEXT
