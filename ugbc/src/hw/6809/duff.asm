@@ -62,9 +62,9 @@ DUFFDEVICELX
     ; 2
     STB DUFFDELTA
     ; 8
-    LDB #8
+    ; LDB #7
     ; 8 - 2 = 6
-    SUBB DUFFDELTA
+    ; SUBB DUFFDELTA
     ; 6
     LDA #4
     ; 6 * 4 = 24
