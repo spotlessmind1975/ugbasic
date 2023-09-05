@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostra la sintassi per caricare un file in un buffer.
 REM Il file è caricato al momento della compilazione, e incluso nell'eseguibile.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
     CLS
 
