@@ -1010,6 +1010,16 @@ void c6847_initialization( Environment * _environment ) {
     variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
     variable_global( _environment, "RESOLUTIONY" );
 
+    _environment->fontWidth = 8;
+    _environment->fontHeight = 8;
+    _environment->screenTilesWidth = 32;
+    _environment->screenTilesHeight = 16;
+    _environment->screenTiles = 128;
+    _environment->screenWidth = _environment->screenTilesWidth*_environment->fontWidth;
+    _environment->screenHeight = _environment->screenTilesHeight*_environment->fontHeight;
+    _environment->screenShades = 4;
+    _environment->screenColors = 4;
+
     c6847_cls( _environment );
 
 }
