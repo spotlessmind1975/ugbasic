@@ -35,4 +35,3 @@ REM @include atari,atarixl,c128
    PRINT "a = ";a
    PRINT "b = ";b
 
-   HALT

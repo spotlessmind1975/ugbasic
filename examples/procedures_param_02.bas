@@ -36,5 +36,4 @@ REM @include atari,atarixl,c128
     joinString["ONE","TWO","THREE"]
 
     PRINT "joinString[ONE,TWO,THREE] = ";PARAM$(joinString)
-    
-    HALT
+ 

@@ -37,4 +37,4 @@ REM @include atari,atarixl,c128
 
    PRINT "joinString[ONE,TWO,THREE] = ";result
 
-   HALT
+  

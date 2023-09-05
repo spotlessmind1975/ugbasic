@@ -31,5 +31,3 @@ END PROC
    EVERY ( TICKS PER SECOND ) TICKS CALL changeText
 
    EVERY ON
-
-   HALT

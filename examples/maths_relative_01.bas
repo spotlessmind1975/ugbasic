@@ -17,4 +17,3 @@ REM @include atari,atarixl,c128
   PRINT "MAX(99,1) = ";MAX(99,1)
   PRINT "MAX(UGBASIC,AAAA) = ";MAX("UGBASIC","AAAA")
   
-  HALT

@@ -16,4 +16,4 @@ REM @include atari,atarixl,c128
 
  PRINT "MIN(99,1) = ";MIN(99,1)
  PRINT "MIN(UGBASIC,AAAA) = ";MIN("UGBASIC","AAAA")
- HALT
+ 

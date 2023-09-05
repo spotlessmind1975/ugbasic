@@ -33,5 +33,3 @@ REM @include atari,atarixl,c128
    hello ["WORLD"]
 
    hello ["NICE TO MEET YOU!"]
-
-   HALT

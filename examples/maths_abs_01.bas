@@ -14,5 +14,3 @@ REM @include atari,atarixl,c128
   
   PRINT "the absolute value of -1 is ";ABS(-1)
   PRINT "the absolute value of 1 is ";ABS(1)
-
-  HALT

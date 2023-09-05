@@ -30,5 +30,3 @@ REM @include atari,atarixl,c128
    escape[]
 
    PRINT "I AM FREE!"
-
-   HALT

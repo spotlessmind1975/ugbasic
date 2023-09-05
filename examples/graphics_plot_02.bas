@@ -29,4 +29,4 @@ REM @include atari,atarixl,c128
       PLOT x,y,WHITE
     NEXT
   NEXT
-  HALT
+  

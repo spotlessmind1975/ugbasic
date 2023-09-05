@@ -31,5 +31,3 @@ REM @include atari,atarixl,c128
    plus[]
    plus[]
    plus[]
-
-   HALT

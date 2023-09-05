@@ -37,5 +37,3 @@ REM @include atari,atarixl,c128
    twins [6,9]
 
    triplets ["XENON","YAK","ZYGOTE"]
-
-   HALT

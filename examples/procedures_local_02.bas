@@ -32,5 +32,3 @@ REM @include atari,atarixl,c128
    PRINT "b (global) = ";b
 
    example[]
-
-   HALT
