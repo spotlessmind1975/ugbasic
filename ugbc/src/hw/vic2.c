@@ -2480,7 +2480,7 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline1("LDA #<OFFSETS%4.4x", _frame_size * _frame_count );
             outline0("STA MATHPTR0" );
             outline1("LDA #>OFFSETS%4.4x", _frame_size * _frame_count );
-            outline0("STA MATHPTR0+1" );
+            outline0("STA MATHPTR1" );
             outline0("CLC" );
             outline1("LDA %s", _sequence );
             outline0("ASL" );
@@ -2490,7 +2490,7 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline1("STA %s", _register );
             outline0("INY" );
             outline1("LDA %s", address_displacement(_environment, _register, "1") );
-            outline0("ADC (MATHPTR0+1), Y" );
+            outline0("ADC (MATHPTR0), Y" );
             outline1("STA %s", address_displacement(_environment, _register, "1") );
         }
 
@@ -2501,7 +2501,7 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
                 outline1("LDA #<OFFSETS%4.4x", _frame_size );
                 outline0("STA MATHPTR0" );
                 outline1("LDA #>OFFSETS%4.4x", _frame_size );
-                outline0("STA MATHPTR0+1" );
+                outline0("STA MATHPTR1" );
                 outline0("CLC" );
                 outline1("LDA %s", _frame );
                 outline0("ASL" );
