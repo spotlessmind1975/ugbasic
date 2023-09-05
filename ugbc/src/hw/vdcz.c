@@ -2049,6 +2049,9 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
+    _environment->screenShades = 16;
+    _environment->screenColors = 2;
+
 }
 
 void vdcz_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
