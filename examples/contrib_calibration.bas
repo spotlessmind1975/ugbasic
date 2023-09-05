@@ -17,7 +17,7 @@ REM di 10 secondi esatti. Come valore aggiunto, questo codice sorgente
 REM spiega come rilevare se il computer sta funzionando in PAL
 REM oppure in NTSC.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
 CLS BLACK
 

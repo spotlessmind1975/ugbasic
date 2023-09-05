@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostra come catturare una immagine
 REM dallo schermo dopo averla disegnata. Risponde al bug #367.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
     BITMAP ENABLE (160,200,16)
     'Palette

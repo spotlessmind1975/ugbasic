@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostra come catturare una immagine
 REM dallo schermo, per essere disegnata su un'altra parte dello schermo.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
     BITMAP ENABLE (16)
     CLS

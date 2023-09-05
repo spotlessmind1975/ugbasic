@@ -14,7 +14,7 @@ REM di RetroProgramming Italia.
 REM
 REM @url https://www.facebook.com/groups/retroprogramming/posts/793835291296728/|RetroProgramming%20Italia
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
 CLS
 

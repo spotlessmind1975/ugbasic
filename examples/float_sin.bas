@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostrerà come usare la funzione ''SIN''. Da notare
 REM che stiamo richiedendo di utilizzare la precisione singola.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
 DEFINE FLOAT PRECISION SINGLE
 

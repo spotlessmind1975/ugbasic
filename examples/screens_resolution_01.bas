@@ -22,7 +22,7 @@ REM Larghezza e altezza sono misurate in pixel (se modalità ''BITMAP'') o in ti
 REM (se modalità ''TILEMAP''). I colori sono sempre individuali, ovvero il numero 
 REM massimo di colori diversi consentiti.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
   BITMAP ENABLE (320,200,16)
   BITMAP ENABLE (320,,4)

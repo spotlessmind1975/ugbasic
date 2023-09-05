@@ -12,7 +12,7 @@ REM Questo esempio mostra come si estrare una stringa da un'altra stringa, inizi
 REM da una posizione specifica e per un certo numero di caratteri. La funzione utilizzata è ''MID''.
 REM In modo analogo, la stessa funzione può essere usata per iniettare una stringa.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
     CLS
 

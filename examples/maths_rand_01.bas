@@ -14,7 +14,7 @@ REM che genera un numero casuale compreso tra 0 e il valore dato come argomento.
 REM verrà applicata alla larghezza e all'altezza dello schermo correnti, in modo da stampare una stringa
 REM sullo schermo in una posizione casuale.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
    CLS
    

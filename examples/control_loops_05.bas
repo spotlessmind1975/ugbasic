@@ -25,7 +25,7 @@ REM comando ''PRINT''. Infine, il valore iniziale sarà rappresentato da
 REM un singolo byte, utilizzando una sintassi chiamata "cast esplicito"
 REM (''(8BIT)'').
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
     CLS
 

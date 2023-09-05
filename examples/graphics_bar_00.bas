@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA DISEGNARE BARRE (STRISCE PEDONALI)
 REM
 REM Questo esempio disegnerà delle strisce pedonali.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
     BITMAP ENABLE(2)
     

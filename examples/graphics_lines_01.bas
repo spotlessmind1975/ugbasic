@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA CON L'USO DI DRAW (1)
 REM
 REM Questo esempio disegnerà due segmenti rossi.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
    BITMAP ENABLE
 

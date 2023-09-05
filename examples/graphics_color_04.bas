@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA USARE LA PALETTE
 REM
 REM Questo esempio mostra come usare il comando del impostare la palette delle sfumature.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
     BITMAP ENABLE(16)
     CLS BLACK

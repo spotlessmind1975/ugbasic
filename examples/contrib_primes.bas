@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio estrarrà i numeri primi fra 2 e 400.
 REM L'algoritmo è abbastanza semplice e, di conseguenza, molto lento.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
 CLS
 

@@ -22,7 +22,7 @@ REM Il colore del bordo viene modificato utilizzando l'istruzione ''COLOR BORDER
 REM Per attendere un determinato periodo di tempo verrà utilizzato il comando ''WAIT'', con 
 REM l'unità di tempo ''MS'' (millisecondi).
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
     CLS
 

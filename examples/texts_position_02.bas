@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostra l'uso del comando ''HOME'' per reimpostare la posizione della
 REM successiva operazione di output sullo schermo.  
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
   CLS
 

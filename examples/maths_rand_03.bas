@@ -8,7 +8,7 @@ REM ROUTINE DI MATEMATICA CON VALORI CASUALI (3)
 REM
 REM Questo esempio mostrerà che la sequenza di numeri casuali è non ripetitiva.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
     CLS
     

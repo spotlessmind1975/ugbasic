@@ -14,7 +14,7 @@ REM accedervi. In questo caso stiamo definendo un array la cui dimensione è
 REM definita per mezzo di una costante. Le costanti non occupano spazio, e 
 REM rendono più leggibile il sorgente.
 REM
-REM @include atari,atarixl,c128
+REM @include atari,atarixl,c128,c64
 
     CLS
 
