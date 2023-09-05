@@ -8,7 +8,7 @@ REM ROUTINE DI MATEMATICA CON L'USO DI SGN
 REM
 REM Questo esempio mostrerà il comportamento della funzione ''SGN''.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     CLS
     
@@ -16,4 +16,3 @@ REM @include atari,atarixl
     PRINT "SGN(-42) = ";SGN(-42)
     PRINT "SGN(0) = ";SGN(0)
     
-    HALT

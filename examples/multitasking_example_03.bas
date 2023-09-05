@@ -11,7 +11,7 @@ REM Questo esempio mostrerà come usare variabili separate per ogni task. Questa
 REM esplicita per accedere, che usa la variabile di sistema ''TASK'' come "indice" in un 
 REM vettore dedicato.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     DIM x WITH 0 (3)
     GLOBAL x

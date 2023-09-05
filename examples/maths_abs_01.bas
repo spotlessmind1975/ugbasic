@@ -8,7 +8,7 @@ REM ROUTINE DI MATEMATICA CON L'USO DI ABS (1)
 REM
 REM Questo esempio calcolerà e mostrerà sullo schermo il valore assoluto di un numero dato.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
   CLS
   

@@ -12,12 +12,10 @@ REM Questo piccolo esempio mostra come sia semplice caricare una intera
 REM bitmap e mostrarla sullo schermo. L'immagine del [[https://www.deviantart.com/oliverlindau/art/The-Mill-670453724|"Mulino"]] è
 REM (c) [[https://www.deviantart.com/oliverlindau|oliverlindau]] su Deviant Art.
 REM
+REM @include c128
 
-BITMAP ENABLE(16)
-themill := LOAD IMAGE("themill.png")
-PUT IMAGE themill AT 0, 0
+    BITMAP ENABLE(16)
 
+    themill := LOAD IMAGE("themill.png")
 
-
-
-
+    PUT IMAGE themill AT 0, 0

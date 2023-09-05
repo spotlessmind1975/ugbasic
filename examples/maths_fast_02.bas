@@ -18,7 +18,7 @@ REM una forma di "loop controllato". Quindi un ciclo che dovrebbe interrompersi 
 REM variabile raggiunge un particolare valore continuerà per sempre, poiché ''ADD'' limiterà il
 REM valore della variabile tra un intervallo che è nel limite del ciclo.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
    CLS
    

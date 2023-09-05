@@ -8,7 +8,7 @@ REM ROUTINE DI MATEMATICA CON L'USO DI ESPRESSIONI (1)
 REM
 REM Questo esempio mostra un esempio di calcolo matematico, con l'uso dell'operatore somma (''+'').
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     CLS
 

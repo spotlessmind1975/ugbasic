@@ -11,12 +11,12 @@ REM Questo esempio mostra quanto riesce a comprimere l'algoritmo MSC1,
 REM quando si trova ad avere a che fare con una immagine in stile 
 REM anime (cartoon).
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
-BITMAP ENABLE(320,200,32)
+    BITMAP ENABLE(2)
 
-CLS
+    CLS
 
-tiger := LOAD IMAGE("tiger128x128x4.png") BANKED
+    tiger := LOAD IMAGE("tiger128x128x4.png") 
 
-PUT IMAGE tiger AT 0, 0
+    PUT IMAGE tiger AT 0, 0
