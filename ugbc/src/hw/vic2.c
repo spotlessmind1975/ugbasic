@@ -1654,6 +1654,7 @@ void vic2_initialization( Environment * _environment ) {
 
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
+    _environment->screenColors = 16;
 
     outline0("JSR VIC2FINALIZATION");
 
