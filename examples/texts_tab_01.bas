@@ -8,7 +8,7 @@ REM STAMPA DI TESTI USANDO TABULAZIONI (1)
 REM
 REM Questo esempio mostrerà l'effetto di usare le "virgole" per la stampa.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
    CLS
    FOR i=1 TO 200

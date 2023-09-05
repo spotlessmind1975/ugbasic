@@ -8,6 +8,8 @@ REM STAMPA DI TESTI CON POSIZIONAMENTO (10)
 REM
 REM Questo esempio mostra l'uso di ''XCURS'' oppure ''YCURS'', che incorpora un comando
 REM in una stringa per spostare il cursore in basso di 1 carattere.
+REM
+REM @include c128
 
   CLS
   LOCATE 10,10
