@@ -134,6 +134,9 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_label( _environment, finishedLabel );
 
+    print( _environment, space->name, 0 );
+    cmove_direct( _environment, -1, 0 );
+
     cpu_dsresize( _environment, temporary->realName, offset->realName );
 
     switch( VT_BITWIDTH( result->type ) ) {
