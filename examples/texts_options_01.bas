@@ -13,6 +13,8 @@ REM Questo esempio mostra l'intera collezione di colori che può essere utilizza
 REM per colorare i testi. Grazie alla variabile ''PEN COLORS'' è possibile iterare dal primo 
 REM colore (0) all'ultimo e disegnare un testo con uno specifico indice di colore, utilizzando 
 REM il comando ''PEN''.
+REM
+REM @include c128
 
    CLS
 

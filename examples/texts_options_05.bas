@@ -7,6 +7,8 @@ REM @italian
 REM STAMPA DI TESTI CON COLORI (1)
 REM
 REM Questo esempio mostra come cambiare il testo e i color di backround durante la stampa.
+REM
+REM @include c128
 
     CLS
 

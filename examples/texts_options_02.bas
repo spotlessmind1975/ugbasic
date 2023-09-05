@@ -13,6 +13,8 @@ REM Questo esempio mostra come utilizzare i colori della penna all'interno
 REM delle stringhe. In altre parole, è possibile incorporare un numero 
 REM arbitrario di comandi ''PEN'' all'interno di una stringa. Quando 
 REM la stringa viene stampata, il colore della penna verrà modificato di conseguenza.
+REM
+REM @include c128
 
     CLS
 

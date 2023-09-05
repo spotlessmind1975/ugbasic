@@ -12,7 +12,7 @@ REM Questo esempio mostra come effettuare una ricerca di una stringa all'interno
 REM stringa, usando la funzione ''INSTR''. Inoltre, restituisce la posizione iniziale
 REM della stringa all'interno dell'altra, oppure 0 se tale posizione non esiste.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     CLS
 
