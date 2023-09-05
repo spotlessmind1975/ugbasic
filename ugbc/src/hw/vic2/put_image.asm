@@ -440,12 +440,19 @@ PUTIMAGE4:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) )
 
 PUTIMAGE2:
+
+    ; Extract width and height of the image. 
+    ; Width (in pixel)
+
     LDY #0
     LDA (TMPPTR),Y
     STA IMAGEW
     LDY #1
     LDA (TMPPTR),Y
     STA IMAGEW+1
+
+    ; Height (in "tiles" of 8 pixels)
+
     LDY #2
     LDA (TMPPTR),Y
     LSR
@@ -453,6 +460,8 @@ PUTIMAGE2:
     LSR
     STA IMAGEH
     STA IMAGEH2
+
+    ; Move ahead of 3 bytes, where the bitmap data begins.
 
     CLC
     LDA TMPPTR
@@ -506,21 +515,36 @@ PUTIMAGE2:
     LDA #0
     ADC PLOTCVBASEHI,Y          ;do the high byte
     STA PLOTCDEST+1
+   
+    ; Arrived here, we have the following address updated:
+    ;
+    ;  - PLOTDEST start address of video bitmap
+    ;  - PLOTCDEST start address of color map for color 1
+    ;
 
-    TYA
-    ADC IMAGEH
-    
-    ; LDA #200
-    ; JSR PUTIMAGEWAITLINE
-    
+    ; The first loop go from zero to IMAGEW
+    ; Note that IMAGEW could be > 256: this
+    ; case will be threated after this one.
+
     LDY #0
 PUTIMAGE2L1:
     LDA (TMPPTR),Y
+
+    ; At the beginning of each byte copy, we are going to
+    ; check if a transparency effect has been requested.
+    ; If bit 5 of IMAGEF is set, a transparency is requested.
+
     LDA IMAGEF
     AND #32
     CMP #32
     BEQ PUTIMAGE2L1DEFX
     JMP PUTIMAGE2L1DEF
+
+    ; PUT IMAGE with transparency
+    ; Load the byte about the bitmap data and draw on the
+    ; screen at the given position. Before storing it, you
+    ; have to check if a transparency mask has to be applied.
+    ; 00 = transparency, any other combination = opaque
 PUTIMAGE2L1DEFX:
     LDA #0
     STA MATHPTR5
@@ -608,18 +632,38 @@ PUTIMAGE2L1P8:
     AND MATHPTR5
     ORA MATHPTR6
     JMP PUTIMAGE2L1FINAL
+
+    ; PUT IMAGE without transparency.
+    ; Simply load the bitmap data "as is".
 PUTIMAGE2L1DEF:
     LDA (TMPPTR),Y
+
 PUTIMAGE2L1FINAL:
+
+    ; Now store the bitmap data on the video bitmap.
+
     STA (PLOTDEST),Y
+
+    ; Increment the offset. Note that Y starts from 0 (zero)
+    ; upto the IMAGEW.
+
     INY
     CPY IMAGEW
     BEQ PUTIMAGE2L1X
     JMP PUTIMAGE2L1
+
+    ; Now we must understand if we are in the > 256 case.
+    ; The case is that the high byte is non zero.
 PUTIMAGE2L1X:
 
     LDA IMAGEW+1
-    BEQ PUTIMAGE2L1XX
+    BNE PUTIMAGE2L1XX2
+    JMP PUTIMAGE2L1XX
+
+PUTIMAGE2L1XX2:
+
+    ; We must draw an image greater than 256 pixels.
+    ; So move forward on the memory and video bitmap.
 
     CLC
     LDA TMPPTR
@@ -639,10 +683,131 @@ PUTIMAGE2L1X:
 
     LDY #0
 PUTIMAGE2L1B:
-    LDA (TMPPTR), Y
+
+    ; At the beginning of each byte copy, we are going to
+    ; check if a transparency effect has been requested.
+    ; If bit 5 of IMAGEF is set, a transparency is requested.
+
+    LDA IMAGEF
+    AND #32
+    CMP #32
+    BEQ PUTIMAGE2L1BDEFX
+    JMP PUTIMAGE2L1BDEF
+
+    ; PUT IMAGE with transparency
+    ; Load the byte about the bitmap data and draw on the
+    ; screen at the given position. Before storing it, you
+    ; have to check if a transparency mask has to be applied.
+    ; 0 = transparency, 1 = opaque
+PUTIMAGE2L1BDEFX:
+    LDA #0
+    STA MATHPTR5
+    LDA (TMPPTR),Y
+    AND #$80
+    ; -> 00 00 00 00
+    BEQ PUTIMAGE2L1BP1
+    LDA MATHPTR5
+    ORA #$80
+    STA MATHPTR5
+PUTIMAGE2L1BP1:
+    LDA (TMPPTR),Y
+    ; 00 01 10 00
+    AND #$40
+    ; -> 00 01 00 00
+    BEQ PUTIMAGE2L1BP2
+    LDA MATHPTR5
+    ORA #$40
+    ; MATH PTR = 00 11 00 00
+    STA MATHPTR5
+PUTIMAGE2L1BP2:
+    LDA (TMPPTR),Y
+    ; 00 01 10 00
+    AND #$20
+    ; -> 00 00 10 00
+    BEQ PUTIMAGE2L1BP3
+    LDA MATHPTR5
+    ORA #$20
+    ; -> 00 11 11 00
+    STA MATHPTR5
+PUTIMAGE2L1BP3:
+    LDA (TMPPTR),Y
+    AND #$10
+    BEQ PUTIMAGE2L1BP4
+    LDA MATHPTR5
+    ORA #$10
+    STA MATHPTR5
+PUTIMAGE2L1BP4:
+    LDA (TMPPTR),Y
+    AND #$08
+    ; -> 00 00 00 00
+    BEQ PUTIMAGE2L1BP5
+    LDA MATHPTR5
+    ORA #$08
+    STA MATHPTR5
+PUTIMAGE2L1BP5:
+    LDA (TMPPTR),Y
+    ; 00 01 10 00
+    AND #$04
+    ; -> 00 01 00 00
+    BEQ PUTIMAGE2L1BP6
+    LDA MATHPTR5
+    ORA #$04
+    ; MATH PTR = 00 11 00 00
+    STA MATHPTR5
+PUTIMAGE2L1BP6:
+    LDA (TMPPTR),Y
+    ; 00 01 10 00
+    AND #$02
+    ; -> 00 00 10 00
+    BEQ PUTIMAGE2L1BP7
+    LDA MATHPTR5
+    ORA #$02
+    ; -> 00 11 11 00
+    STA MATHPTR5
+PUTIMAGE2L1BP7:
+    LDA (TMPPTR),Y
+    AND #$01
+    BEQ PUTIMAGE2L1BP8
+    LDA MATHPTR5
+    ORA #$01
+    STA MATHPTR5
+PUTIMAGE2L1BP8:
+    LDA MATHPTR5
+    ; 00 11 11 00
+    EOR #$FF
+    ; 11 00 00 11
+    STA MATHPTR6
+    LDA (PLOTDEST),Y
+    ; 00 00 00 00
+    AND MATHPTR6
+    STA MATHPTR6
+    ; 00 00 00 00
+    LDA (TMPPTR),Y
+    AND MATHPTR5
+    ORA MATHPTR6
+    JMP PUTIMAGE2L1BFINAL
+
+    ; PUT IMAGE without transparency.
+    ; Simply load the bitmap data "as is".
+PUTIMAGE2L1BDEF:
+    LDA (TMPPTR),Y
+
+PUTIMAGE2L1BFINAL:
+
+    ; Now store the bitmap data on the video bitmap.
+
     STA (PLOTDEST),Y
+
+    ; Loop until all bytes are written.
+
     INY
-    BNE PUTIMAGE2L1B
+    BEQ PUTIMAGE2L1BX
+    JMP PUTIMAGE2L1B
+
+PUTIMAGE2L1BX:
+
+    ; Move back the pointer to the start
+    ; of the drawed line.
 
     SEC
     LDA TMPPTR
@@ -661,16 +826,31 @@ PUTIMAGE2L1B:
     STA PLOTDEST+1
 
 PUTIMAGE2L1XX:
+
+    ; If the bit 6 of IMAGEF flag is set, a DOUBLE
+    ; effect has been required. So we have to copy
+    ; another time the very same line.
+    ; If not, we can go ahead.
+
     LDA IMAGEF
     AND #64
     BEQ PUTIMAGE2L1N
+
+    ; If bit 1 of IMAGEF flag is set, the DOUBLE
+    ; effect has been already applied. So we can
+    ; go ahead.
 
     LDA IMAGEF
     AND #1
     BNE PUTIMAGE2L1N0
 
+    ; Enable both bits 6 and 1, so DOUBLE effect is
+    ; taking place.
+
     ORA #65
     STA IMAGEF
+
+    ; Move ahead to the next line.
 
     CLC
     LDA PLOTDEST
@@ -680,19 +860,27 @@ PUTIMAGE2L1XX:
     ADC #0
     STA PLOTDEST+1
 
+    ; Reload and restart!
+
     LDY #0
     JMP PUTIMAGE2L1
 
+    ; If we reach this line, it means that
+    ; DOUBLE effect has been executed. So,
+    ; we can disable any related flag.
+
 PUTIMAGE2L1N0:
+
     LDA IMAGEF
     AND #$FE
     STA IMAGEF
 
+    ; If we reach this line, no DOUBLE
+    ; effect has been required.
+
 PUTIMAGE2L1N:
 
-
-
-
+    ; Move ahead in the data.
 
     CLC
     LDA TMPPTR
@@ -702,6 +890,8 @@ PUTIMAGE2L1N:
     ADC IMAGEW+1
     STA TMPPTR+1
 
+    ; Move ahead in the video map.
+
     CLC
     LDA PLOTDEST
     ADC CURRENTWIDTH
@@ -710,8 +900,18 @@ PUTIMAGE2L1N:
     ADC CURRENTWIDTH+1
     STA PLOTDEST+1
 
+    ; There are lines to draw? If not, we move to the next
+    ; color map to draw.
+    
     DEC IMAGEH
     BEQ PUTIMAGE2C
+
+    ; Move to the next
+    
+    ; There is at least one line to draw. So, we must
+    ; move down of 8 lines (since we can draw 8 lines
+    ; at a time...) and we must check if we are inside
+    ; the limits of the video.
 
     INC IMAGEY
     INC IMAGEY
@@ -726,13 +926,19 @@ PUTIMAGE2L1N:
     BEQ PUTIMAGE2CA
     BCS PUTIMAGE2CA
 
+    ; Reload the width and repeat the drawing.
+
     LDY #0
     JMP PUTIMAGE2L1
 
+    ; If we reached this line, it means that the PUT IMAGE
+    ; was unable to draw the entire image on the screen,
+    ; since the ordinate value was too far low.
+
 PUTIMAGE2CA:
 
-    LDA MATHPTR4
-    STA IMAGEY
+    ; Now we must go ahead, in order to access to the
+    ; colormap data.
 
     CLC
     LDA TMPPTR
@@ -742,13 +948,27 @@ PUTIMAGE2CA:
     ADC IMAGEW+1
     STA TMPPTR+1
 
+    ; Are still lines to draw?
+
     DEC IMAGEH
     BNE PUTIMAGE2CA
 
+   ; Starting from this line, we are drawing the second
+   ; color map, the map for 11 bitmap.
+
 PUTIMAGE2C:
 
+    ; Restore the IMAGEY
+    LDA MATHPTR4
+    STA IMAGEY
+
+    ; First of all, we reset the IMAGEH (in bytes), that could be
+    ; destroyed by a previous elaboration.
+    
     LDA IMAGEH2
     STA IMAGEH
+
+    ; Then reset the width, and restart.
     LDA IMAGEW+1
     TAX
     LDA IMAGEW
