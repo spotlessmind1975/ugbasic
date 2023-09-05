@@ -756,8 +756,8 @@ void vic1_initialization( Environment * _environment ) {
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 22;
     _environment->screenTilesHeight = 23;
-    _environment->screenWidth = _environment->screenTilesWidth * 8;
-    _environment->screenHeight = _environment->screenTilesHeight * 8;
+    _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+    _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
     _environment->screenColors = 16;
 
     font_descriptors_init( _environment, 1 );
