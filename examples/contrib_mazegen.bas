@@ -12,6 +12,7 @@ REM Generazione di labirinti casuali tramite backtracking. Questo programma ? un
 REM dall'esempio scritto in XC=BASIC 3.1 da parte di JJ Flash, con l'aggiunta di un 
 REM "topolino" che si muove all'interno del labirinto in cerca del "formaggio".
 REM
+REM @include c128
 
 DEFINE DEFAULT TYPE SIGNED WORD
 

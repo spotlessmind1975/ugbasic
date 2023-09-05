@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostra la sintassi base per definire un buffer.
 REM Un buffer è un'area di memoria definita staticamente e usata "così com'è".
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     CLS
 

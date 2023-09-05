@@ -8,11 +8,11 @@ REM VARI ALTRI CONTRIBUTI TIMERS!
 REM
 REM Questo piccolo esempio mostra come funziona la variabile ''TI''.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
-TI = 0
-CLS
-DO
-    HOME
-    PRINT "TI = ";TI;" (";(TI/TICKS PER SECOND);" secs)"
-LOOP
+    TI = 0
+    CLS
+    DO
+        HOME
+        PRINT "TI = ";TI;" (";(TI/TICKS PER SECOND);" secs)"
+    LOOP

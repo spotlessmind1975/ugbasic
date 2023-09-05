@@ -8,7 +8,7 @@ REM VARI ALTRI CONTRIBUTI CARATTERI STAMPABILI
 REM
 REM Questo piccolo esempio mostra la tabella dei codici ASCII (stampabili) sullo schermo.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     CLS
 

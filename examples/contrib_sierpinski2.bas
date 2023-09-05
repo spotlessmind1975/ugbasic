@@ -33,7 +33,7 @@ REM volte, selezionando il vertice a caso ad ogni iterazione, spesso (ma non
 REM sempre) si produce una forma frattale. Utilizzando un triangolo regolare e 
 REM il fattore 1/2 si otterrà un triangolo di Sierpinski.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
 ' ============================================================================
 ' INITIALIZATION

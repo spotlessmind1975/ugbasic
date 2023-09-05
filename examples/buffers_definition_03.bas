@@ -12,7 +12,7 @@ REM Questo piccolo esempio mostra come viene gestito l'aliasing, cioè
 REM quando viene chiesto di caricare lo stesso file (viene caricata una sola copia,
 REM dato che il nome del file è lo stesso).
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     CLS
 

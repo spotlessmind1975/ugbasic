@@ -11,7 +11,7 @@ REM Questo piccolo esempio è la versione "10 lines" dell'esempio del cubo rotan
 REM può essere disegnato in BASIC su vari computer domestici a 8 bit, utilizzando la stessa 
 REM sorgente.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
 1BmEn(16):ClBl:Dit As8BIT:Diz As8BIT:Dip As8BIT(5),q As8BIT(5),x As8BIT(5),y As8BIT(5):Dia As8BIT=20:Dib As8BIT=20
 2Dic As8BIT=70:Did As8BIT=45:Die As8BIT:Dif As8BIT:f=(b^2)/(a^2):e=c:bg:=NwIm(64,72):GeImbg Fm0,0:Foz=1Toa Stp2

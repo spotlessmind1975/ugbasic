@@ -14,7 +14,7 @@ REM di RetroProgramming Italia.
 REM
 REM @url https://www.linkedin.com/pulse/ottimizzazione-del-codice-massimo-sanna/|"Ottimizzazione%20del%20codice"
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
 4 CLS
 5 REM inizializzo limite massimo e array di flag 
