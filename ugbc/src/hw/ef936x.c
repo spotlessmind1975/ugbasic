@@ -730,11 +730,15 @@ void ef936x_initialization( Environment * _environment ) {
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
-    _environment->screenWidth = 320;
-    _environment->screenHeight = 200;
     _environment->screenTilesWidth = 40;
     _environment->screenTilesHeight = 25;
+    _environment->screenTiles = 255;
+    _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+    _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
+    _environment->screenShades = 16;
     _environment->screenColors = 16;
+    _environment->currentModeBW = 1;
+    _environment->currentRgbConverterFunction = rgbConverterFunction;
 
     cpu_store_16bit( _environment, "CLIPX1", 0 );
     cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
