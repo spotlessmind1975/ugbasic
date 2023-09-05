@@ -1,5 +1,5 @@
 REM @english
-REM EXPANSION MANAGEMENT LIST OF BANKS AVAILABLE
+REM EXPANSION MANAGEMENT LIST OF AVAILABLE BANKS
 REM
 REM This example prints the starting addresses and the size 
 REM of all available memory banks. If the address is 0, this 
@@ -14,6 +14,8 @@ REM di tutti i banchi di memoria disponibili. Se l'indirizzo vale 0,
 REM questo significa che il banco non è raggiungibile direttamente
 REM con un accesso ma solo tramite le primitive messe a disposizione 
 REM da ugBASIC.
+REM
+REM @include c128
 
     CLS
     
@@ -27,11 +29,11 @@ REM da ugBASIC.
     ELSE
         FOR i=0 TO BANK COUNT - 1
             IF i = BANK() THEN
-                PRINT "* ";
+                PRINT "*";
             ELSE
-                PRINT "  ";
+                PRINT " ";
             ENDIF
-            PRINT "AT ";BANK ADDRESS(i);" ("; BANK SIZE(i);" bytes)"
+            PRINT i;") AT ";BANK ADDRESS(i);" ("; BANK SIZE(i);" bytes)"
         NEXT
 
         PRINT

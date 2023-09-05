@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA USANDO I COMANDI PEN, PAPER E LOCATE
 REM
 REM Questo esempio stamperà stringhe di colore casuale sullo schermo.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     BITMAP ENABLE(16)
     CLS

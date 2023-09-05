@@ -13,6 +13,7 @@ REM Questo esempio leggerà lo status del primo joystick. Quindi ne decodificher
 REM in una stringa binaria, e lo mostrerà sullo schermo. Questo esempio inoltre mostra come
 REM funziona lo scrolling verticale automatico, quando si raggiunge  con l'uso del comando 
 REM ''PRINT'' la fine dello schermo.
+REM
 
     CLS
 
@@ -27,6 +28,7 @@ i = 0
         j=JOY(0)
         LOCATE 2, 3
         PRINT BIN$(j,5)
-        PRINT i
+        LOCATE 2, 5
+        PRINT "T: ";i
         INC i
     LOOP

@@ -12,7 +12,7 @@ REM Questo esempio mostrerà l'uso della parola chiave ''WAIT...MS''. Il codice 
 REM stamperà un asterisco lampeggiante. Ogni simbolo durerà 1000 millisecondi
 REM sullo schermo.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     CLS
 

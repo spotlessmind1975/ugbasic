@@ -16,9 +16,9 @@ REM "3". Il numero da stampare sarà quello memorizzato nella variabile
 REM ''times''. Questo esempio mostra inoltre il funzionamento dello scrolling
 REM automatico, quando si raggiunge con l'uso del comando ''PRINT'' la fine dello schermo.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
-CLS
+  CLS
 
   times = 1
 start:

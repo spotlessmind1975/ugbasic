@@ -11,6 +11,8 @@ REM
 REM Questo esempio disegnerà un singolo pixel al centro dello schermo.
 REM Il colore di quel pixel sarà letto usando la funzione ''POINT'',
 REM e l'indice sarà stampato sullo schermo.
+REM
+REM @include c128
 
     BITMAP ENABLE
     CLS RED

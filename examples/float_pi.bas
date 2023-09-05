@@ -8,7 +8,7 @@ REM NUMERI VIRGOLA MOBILE COSTRANTE PI-GREDO
 REM
 REM Questo piccolo esempio stamperà la costante del PI greco sullo schermo.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
 	CLS
 	

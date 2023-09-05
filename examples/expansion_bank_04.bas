@@ -7,6 +7,8 @@ REM @italian
 REM ESPANSIONE DI MEMORIA CARICARE UNA IMMAGINE NELL'ESPANSIONE
 REM
 REM Questo esempio mostra come caricare una immagine su una espansione.
+REM
+REM @include c128
 
     IF BANK COUNT = 0 THEN
         PRINT "Sorry, this target "

@@ -7,6 +7,8 @@ REM @italian
 REM ESPANSIONE DI MEMORIA INDIRIZZI E BANCHI
 REM
 REM Questo esempio cambierà il banco selezionato.
+REM
+REM @include c128
 
     CLS
 
@@ -16,8 +18,12 @@ REM Questo esempio cambierà il banco selezionato.
     ELSE
 
         PRINT "CURRENT BANK #: "; BANK()
-        PRINT "SELECT BANK #3": BANK #3
+        PRINT
+        PRINT "SELECT BANK #";(BANK COUNT - 1)
+        PRINT
+        BANK #(BANK COUNT - 1)
         PRINT "CURRENT BANK #: "; BANK()
+        PRINT
 
         FOR i=0 TO BANK COUNT - 1
             IF i = BANK() THEN
@@ -25,7 +31,7 @@ REM Questo esempio cambierà il banco selezionato.
             ELSE
                 PRINT " ";
             ENDIF
-            PRINT "AT ";BANK ADDRESS(i);" ("; BANK SIZE(i);" bytes)"
+            PRINT i;") AT ";BANK ADDRESS(i);" ("; BANK SIZE(i);" bytes)"
         NEXT
 
         PRINT "* = actual bank selected"

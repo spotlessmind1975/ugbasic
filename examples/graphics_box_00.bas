@@ -9,7 +9,7 @@ REM PRIMITIVE DI GRAFICA CON L'USO DI BOX (COLORATI)
 REM
 REM Questo esempio disegnerà tre rettangoli: uno giallo, uno rosso e uno verde.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     BITMAP ENABLE(16)
     CLS

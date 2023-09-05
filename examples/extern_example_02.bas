@@ -15,7 +15,7 @@ REM un parametro in uno dei registri (A). Da notare che
 REM questo codice non funzionerà dato che non c'è codice assembly
 REM in quella posizione
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
 	CLS
 

@@ -11,7 +11,7 @@ REM Questo piccolo esempio utilizza le istruzioni ''IF...THEN...ELSE...ENDIF''
 REM per implementare un loop senza fine, che cambia il colore del bordo in modo
 REM deterministico.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
    CLS
 

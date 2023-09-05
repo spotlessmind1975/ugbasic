@@ -8,7 +8,7 @@ REM CONTROLLI DI I/O IN ATTESA DI UN TASTO
 REM
 REM Questo esempio attende la pressione di un tasto.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     CLS
     PRINT "PLEASE PRESS A KEY"

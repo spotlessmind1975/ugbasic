@@ -7,7 +7,7 @@ REM INTEGRAZIONE CODICE ESTERNO ASSEMBLY INLINEA
 REM
 REM Questo piccolo esempio spiega come include codice ASM in linea.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
     CLS
 

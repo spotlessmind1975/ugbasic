@@ -10,7 +10,7 @@ REM
 REM Questo esempio utilizzerà le parole chiave ''EVERY...GOSUB'' per cambiare, 
 REM ogni ''TICKS PER SECOND' ticks, il testo sullo schermo.
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,c128
 
    CLS
 
