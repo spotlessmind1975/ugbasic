@@ -859,6 +859,15 @@ void ef9345_initialization( Environment * _environment ) {
     
     font_descriptors_init( _environment, 0 );
     
+
+    _environment->fontWidth = 8;
+    _environment->fontHeight = 10;
+    _environment->screenTilesWidth = 40;
+    _environment->screenTilesHeight = 21;
+    _environment->screenTiles = 127;
+    _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+    _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
+    _environment->screenColors = 8;
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
 
