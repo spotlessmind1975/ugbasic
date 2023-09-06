@@ -9,7 +9,7 @@ REM
 REM Questo piccolo esempio mostra come caricare una immagine reale.
 REM @url https://pixabay.com/it/users/danielhannah-8058574/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=4997724|Daniel Hannah]] da [[https://pixabay.com/it/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=4997724
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
     BITMAP ENABLE (16)
     CLS

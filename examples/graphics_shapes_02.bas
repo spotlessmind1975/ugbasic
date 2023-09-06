@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA CON DISEGNO DI FORME (2)
 REM
 REM Questo esempio disegnerà cerchi casuali sullo schermo.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
     BITMAP ENABLE
     CLS

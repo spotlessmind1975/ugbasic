@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA DISEGNARE CON IL CLIPPING
 REM
 REM Questo esempio mostra l'effetto dell'utilizzo del comando ''CLIP''.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
     BITMAP ENABLE
     CLS BLACK
