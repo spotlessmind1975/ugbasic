@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostrerà come usare la funzione ''COS''. Da notare
 REM che stiamo richiedendo di utilizzare la precisione singola.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
 DEFINE FLOAT PRECISION SINGLE
 
