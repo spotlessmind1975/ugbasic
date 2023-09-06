@@ -41,7 +41,7 @@
 
 DUFFDEVICE
 
-    ; First of all, we avoid to do anything if the memory to copy is equa
+    ; First of all, we avoid to do anything if the memory to copy is equal
     ; to zero. It means that nothing is needed to do, so move to the end
     ; of the routine.
 
@@ -73,6 +73,13 @@ DUFFDEVICE
     LDA , Y+
     STA , X+
     PULS D
+
+    ; Again, we avoid to do anything if the memory to copy is equal
+    ; to zero. It means that nothing is needed to do more, so move 
+    ; to the end of the routine.
+
+    CMPD #0
+    LBEQ DUFFDEVICEDONE
 
     ; We reach this point having the original size halved. So now we
     ; have to "unroll" the copy. Unrolling is a process that try to
