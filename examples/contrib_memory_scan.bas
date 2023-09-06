@@ -18,35 +18,35 @@ REM istruzione MMOVE.
 REM 
 REM @url https://github.com/JJFlash-IT/XCB3_Examples/blob/main/RAM_Scan_XCB/xcb-ramscan.bas
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
-VAR wSourceAddress AS ADDRESS = 0
+	VAR wSourceAddress AS ADDRESS = 0
 
-INK WHITE
+	INK WHITE
 
-CLS
+	CLS
 
-DO
+	DO
 
-	MMOVE wSourceAddress TO VIDEO TEXTADDRESS SIZE ( SCREEN ROWS - 1 ) * SCREEN COLUMNS
-	
-	LOCATE 0, (SCREEN ROWS - 1)
-	PRINT wSourceAddress; "    ";
+		MMOVE wSourceAddress TO VIDEO TEXTADDRESS SIZE ( SCREEN ROWS - 1 ) * SCREEN COLUMNS
+		
+		LOCATE 0, (SCREEN ROWS - 1)
+		PRINT wSourceAddress; "    ";
 
-	joy = JOY(0): kbd = SCANCODE
-	IF ( joy HAS BIT LEFT ) OR ( kbd = KEY A ) THEN 
-		wSourceAddress = wSourceAddress - 1
-	ENDIF
-	IF ( joy HAS BIT RIGHT ) OR ( kbd = KEY S ) THEN
-		wSourceAddress = wSourceAddress + 1
-	ENDIF
-	IF ( joy HAS BIT UP ) OR ( kbd = KEY W ) THEN
-		wSourceAddress = wSourceAddress - 80
-	ENDIF
-	IF ( joy HAS BIT DOWN ) OR ( kbd = KEY Z ) THEN
-		wSourceAddress = wSourceAddress + 80
-	ENDIF
-	
-LOOP
+		joy = JOY(0): kbd = SCANCODE
+		IF ( joy HAS BIT LEFT ) OR ( kbd = KEY A ) THEN 
+			wSourceAddress = wSourceAddress - 1
+		ENDIF
+		IF ( joy HAS BIT RIGHT ) OR ( kbd = KEY S ) THEN
+			wSourceAddress = wSourceAddress + 1
+		ENDIF
+		IF ( joy HAS BIT UP ) OR ( kbd = KEY W ) THEN
+			wSourceAddress = wSourceAddress - 80
+		ENDIF
+		IF ( joy HAS BIT DOWN ) OR ( kbd = KEY Z ) THEN
+			wSourceAddress = wSourceAddress + 80
+		ENDIF
+		
+	LOOP
 
 

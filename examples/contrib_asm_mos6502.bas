@@ -17,29 +17,29 @@ REM si opera una somma a 16 bit (2 x 8 bit) con il processore MOS 6502.
 REM 
 REM @include atari,atarixl,c128,c64
 
-CLS
+	CLS
 
-DIM x AS INTEGER, y AS INTEGER, z AS INTEGER
+	DIM x AS INTEGER, y AS INTEGER, z AS INTEGER
 
-x = 150: y = 110: z = 0
+	x = 150: y = 110: z = 0
 
-PRINT x;" + "; y; " = ";
+	PRINT x;" + "; y; " = ";
 
-ON CPU6502 BEGIN ASM
+	ON CPU6502 BEGIN ASM
 
-	CLC
-	
-	LDA _x
-	ADC _y
-	STA _z
-	
-	LDA _x+1
-	ADC _y+1
-	STA _z+1
-	
-END ASM
+		CLC
+		
+		LDA _x
+		ADC _y
+		STA _z
+		
+		LDA _x+1
+		ADC _y+1
+		STA _z+1
+		
+	END ASM
 
-PRINT z
+	PRINT z
 
 
 

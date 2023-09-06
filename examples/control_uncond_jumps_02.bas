@@ -14,7 +14,7 @@ REM del bordo (giallo e nero). Ogni colore durerà 100 millisecondi sullo scherm
 REM usando l'istruzione ''COLOR BORDER'', usando le costanti ''YELLOW'' e ''BLACK''. Per attendere un 
 REM determinato periodo di tempo verrà utilizzato il comando ''WAIT'', con l'unità di tempo ''MS'' (millisecondi).
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
 120 COLOR BORDER YELLOW
 125 HOME: PRINT "YELLOW"

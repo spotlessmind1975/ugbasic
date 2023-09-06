@@ -20,7 +20,7 @@ REM utilizzando l'istruzione ''COLOR BORDER'', utilizzando le costanti predefini
 REM ''YELLOW'' e ''BLACK''. Per attendere un determinato periodo di tempo verrà 
 REM utilizzato il comando ''WAIT'', con l'unità di tempo ''MS'' (millisecondi).
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
     CLS
 

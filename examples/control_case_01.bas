@@ -8,7 +8,7 @@ REM CONTROLLO DI FLUSSO CON SELEZIONE MULTIPLA
 REM
 REM Questo esempio mostra come usare il comando ''SELECT CASE''.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
     CLS
 

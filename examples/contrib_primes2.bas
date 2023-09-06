@@ -14,11 +14,9 @@ REM di RetroProgramming Italia.
 REM
 REM @url https://www.facebook.com/groups/retroprogramming/posts/793835291296728/|RetroProgramming%20Italia
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
-CLS
-
-10 c%=400:t=TI:m%=0:b%=2:PRINT" 2", " 3", " 5", " 7", 
+10 CLS:c%=400:t=TI:m%=0:b%=2:PRINT" 2", " 3", " 5", " 7", 
 20 FOR i=11 TO c% STEP 2
 30 FOR j=5 TO SQR(i) STEP 6
 40 IF ( i MOD j == 0 ) OR ( i MOD (j+2) == 0 ) THEN : GOTO 70 : ENDIF

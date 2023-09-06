@@ -16,7 +16,7 @@ REM dell'istruzione ''CLEAR KEY'', che svuota il buffer di tastiera.
 REM Inoltre, si utiliza la funzione ''INPUT$()'' per recuperare
 REM i 10 caratteri.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
    CLS
    

@@ -17,57 +17,57 @@ REM di 10 secondi esatti. Come valore aggiunto, questo codice sorgente
 REM spiega come rilevare se il computer sta funzionando in PAL
 REM oppure in NTSC.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
-CLS BLACK
+	CLS BLACK
 
-INK WHITE
+	INK WHITE
 
-PRINT "HARDWARE DETECTED: ";
+	PRINT "HARDWARE DETECTED: ";
 
-IF TICKS PER SECOND = 50 THEN
-	PRINT "PAL (50 Hz)"
-ELSE
-	PRINT "NTSC (60 Hz)"
-ENDIF
+	IF TICKS PER SECOND = 50 THEN
+		PRINT "PAL (50 Hz)"
+	ELSE
+		PRINT "NTSC (60 Hz)"
+	ENDIF
 
-PRINT 
+	PRINT 
 
-PRINT "10 SECS -> ";
+	PRINT "10 SECS -> ";
 
-DIM s AS BYTE = 0
-DIM t AS INTEGER = 0
-DIM dt AS INTEGER = 0
+	DIM s AS BYTE = 0
+	DIM t AS INTEGER = 0
+	DIM dt AS INTEGER = 0
 
-DO
-	t = TIMER
+	DO
+		t = TIMER
 
-	WHILE ( TIMER - t ) < TICKS PER SECOND
+		WHILE ( TIMER - t ) < TICKS PER SECOND
+
+			LOCATE 11 + s, 2
+
+			dt = TIMER - t
+			
+			IF dt = 0 THEN
+				PRINT ".";
+			ELSEIF dt = ( TICKS PER SECOND / 4 ) THEN
+				PRINT " ";
+			ELSEIF dt = ( ( 2 * TICKS PER SECOND ) / 4 ) THEN
+				PRINT ".";
+			ELSEIF dt = ( ( 3 * TICKS PER SECOND ) / 4 ) THEN
+				PRINT " ";
+			ENDIF
+
+		WEND
 		
 		LOCATE 11 + s, 2
-
-		dt = TIMER - t
+		PRINT "*";
 		
-		IF dt = 0 THEN
-			PRINT ".";
-		ELSEIF dt = ( TICKS PER SECOND / 4 ) THEN
-			PRINT " ";
-		ELSEIF dt = ( ( 2 * TICKS PER SECOND ) / 4 ) THEN
-			PRINT ".";
-		ELSEIF dt = ( ( 3 * TICKS PER SECOND ) / 4 ) THEN
-			PRINT " ";
-		ENDIF
+		INC s
+		
+		EXIT IF s = 10
+		
+	LOOP
 
-	WEND
-	
-	LOCATE 11 + s, 2
-	PRINT "*";
-	
-	INC s
-	
-	EXIT IF s = 10
-	
-LOOP
-
-PRINT " (elapsed)"
+	PRINT " (elapsed)"
 

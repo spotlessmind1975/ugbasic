@@ -10,20 +10,20 @@ REM
 REM Questo piccolo esempio estrarrà i numeri primi fra 2 e 400.
 REM L'algoritmo è abbastanza semplice e, di conseguenza, molto lento.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
-CLS
+    CLS
 
-FOR n=2 TO 400
-    trov% = 0
-    FOR d=2 TO n-1
-        prime% = n MOD d
-        IF prime% == 0 THEN
-            trov% = 1
-            d% = n
+    FOR n=2 TO 400
+        trov% = 0
+        FOR d=2 TO n-1
+            prime% = n MOD d
+            IF prime% == 0 THEN
+                trov% = 1
+                d% = n
+            ENDIF
+        NEXT
+        IF trov% == 0 THEN
+            PRINT n;" ";
         ENDIF
     NEXT
-    IF trov% == 0 THEN
-        PRINT n;" ";
-    ENDIF
-NEXT
