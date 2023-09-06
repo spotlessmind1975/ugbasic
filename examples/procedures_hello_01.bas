@@ -12,7 +12,7 @@ REM Questo esempio mostra come definire una procedura utrente. La definizione,
 REM di per sé, non significa che la procedura sarà eseguita. Infatti, il risultato
 REM di questo esempio è... nulla! 
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
    CLS
    
