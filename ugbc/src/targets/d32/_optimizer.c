@@ -332,7 +332,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
             ++_environment->removedAssemblyLines;
         }
 
-        if ( strcmp( v2->str, "$A7C1") && strcmp( v2->str, "$FFDE") && strcmp( v2->str, "$FFDF")
+        if ( !po_buf_match(v2, "_Ttmp") && strcmp( v2->str, "$A7C1") && strcmp( v2->str, "$FFDE") && strcmp( v2->str, "$FFDF")
             &&
              strcmp( v4->str, "$A7C1") && strcmp( v4->str, "$FFDE") && strcmp( v4->str, "$FFDF")  ) {
             optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
