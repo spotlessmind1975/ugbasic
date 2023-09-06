@@ -149,9 +149,9 @@ INCLUDE             BEGIN(incl);
     }
 }
 
-"ASM"[^\n\r\x0a\x0d]+ { ++yylineno; yycolno = 0; yylval.string = strdup( yytext + 3 ); RETURN(AsmSnippet,1); }
-"BEGIN ASM" { BEGIN(asm); asmSnippet = strdup(""); }
-<asm>"END ASM" { ++yylineno; yycolno = 0; BEGIN(INITIAL); yylval.string = strdup( asmSnippet ); RETURN(AsmSnippet,1); }
+[\t ]*"ASM"[^\n\r\x0a\x0d]+ { ++yylineno; yycolno = 0; yylval.string = strdup( yytext + 3 ); RETURN(AsmSnippet,1); }
+[\t ]*"BEGIN ASM" { BEGIN(asm); asmSnippet = strdup(""); }
+<asm>[\t ]*"END ASM" { ++yylineno; yycolno = 0; BEGIN(INITIAL); yylval.string = strdup( asmSnippet ); RETURN(AsmSnippet,1); }
 <asm>[^\n\r\x0a\x0d]+ { ++yylineno; yycolno = 0; int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcpy( tmp, asmSnippet ); strcat( tmp, yytext ); strcat( tmp, "\n" ); asmSnippet = tmp; } 
 <asm>[\n\r\x0a\x0d]+ { } 
 
