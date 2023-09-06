@@ -12,7 +12,7 @@ REM Questo esempio mostrerà l'uso di operatori interi veloci, con l'uso dell'is
 REM Tali istruzioni funzioneranno senza l'uso di risultati intermedi, al fine di fornire il massimo 
 REM rendimento nel prodotto di valori. 
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
    CLS
    

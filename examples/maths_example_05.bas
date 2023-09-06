@@ -8,7 +8,7 @@ REM ROUTINE DI MATEMATICA CON NUMERI RELATIVI (1)
 REM
 REM Questo esempio mostrerà alcuni calcoli usando i numeri relativi.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
     CLS
     

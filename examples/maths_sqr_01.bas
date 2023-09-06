@@ -8,7 +8,7 @@ REM ROUTINE DI MATEMATICA CON L'USO DI SQR
 REM
 REM Questo esempio mostrerà il comportamento della funzione ''SQR''.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
     CLS
     

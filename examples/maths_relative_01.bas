@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostrerà il comportamento dell'operatore ''MAX'' in un paio di situazioni:
 REM quando gli interi sono confrontati e quando lo sono le stringhe.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
   CLS
   

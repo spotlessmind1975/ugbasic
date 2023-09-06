@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostra come calcolare rapidamente la distanza
 REM tra due punti
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
     CLS
     
