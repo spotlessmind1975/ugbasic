@@ -14,7 +14,7 @@ REM macchina esterno, caricato a sistema da un file binario.
 REM La routine esterna riceverà parametri dallo stack
 REM e restituirà il risultato sempre sullo stack.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
 	CLS
 	

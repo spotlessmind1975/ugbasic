@@ -16,7 +16,7 @@ REM La routine esterna incrementerà il valore ricevuto,
 REM lo riceverà come parametro da un registro
 REM specifico e restituirà il risultato su un registro specifico.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
 	CLS
 	

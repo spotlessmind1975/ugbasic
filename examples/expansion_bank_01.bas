@@ -15,7 +15,7 @@ REM questo significa che il banco non è raggiungibile direttamente
 REM con un accesso ma solo tramite le primitive messe a disposizione 
 REM da ugBASIC.
 REM
-REM @include c128
+REM @include c128,coco
 
     CLS
     
