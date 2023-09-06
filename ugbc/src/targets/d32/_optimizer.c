@@ -1043,7 +1043,7 @@ static void vars_prepare_relocation(void) {
                 ++vars.page0_max;
             if ( vars.page0_max == 0xd8 )
                 ++vars.page0_max;
-            if ( vars.page0_max == 0xe4 )
+            while ( vars.page0_max < 0xf0 )
                 ++vars.page0_max;
 
             v->offset = vars.page0_max;
