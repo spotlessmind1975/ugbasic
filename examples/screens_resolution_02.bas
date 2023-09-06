@@ -22,7 +22,7 @@ REM Larghezza e altezza sono misurate in pixel (se modalità ''BITMAP'') o in ti
 REM (se modalità ''TILEMAP''). I colori sono sempre individuali, ovvero il numero 
 REM massimo di colori diversi consentiti.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
      BITMAP ENABLE (320,200)
      CLS
@@ -37,7 +37,7 @@ REM @include atari,atarixl,c128,c64
 
      TILEMAP ENABLE
      CLS
-     w = SCREEN WIDTH
-     h = SCREEN HEIGHT
+     w = SCREEN COLUMNS
+     h = SCREEN ROWS
      c = COLOR COUNT
      PRINT "tilemap of ";w;"x";h;" tiles (";c;" colors)"
