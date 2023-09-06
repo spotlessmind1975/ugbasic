@@ -16,12 +16,12 @@ REM @include atari,atarixl,c128,c64,coco
 
     CLS
 
-    ' PRINT "MID(ugBASIC,1) = ";MID("ugBASIC",1)
-    ' PRINT "MID(ugBASIC,2) = ";MID("ugBASIC",2)
-    ' PRINT "MID(ugBASIC,3) = ";MID("ugBASIC",3)
-    ' PRINT "MID(ugBASIC,4) = ";MID("ugBASIC",4)
-    ' PRINT "MID(ugBASIC,5) = ";MID("ugBASIC",5)
-    ' PRINT "MID(ugBASIC,6) = ";MID("ugBASIC",6)
+    PRINT "MID(ugBASIC,1) = ";MID("ugBASIC",1)
+    PRINT "MID(ugBASIC,2) = ";MID("ugBASIC",2)
+    PRINT "MID(ugBASIC,3) = ";MID("ugBASIC",3)
+    PRINT "MID(ugBASIC,4) = ";MID("ugBASIC",4)
+    PRINT "MID(ugBASIC,5) = ";MID("ugBASIC",5)
+    PRINT "MID(ugBASIC,6) = ";MID("ugBASIC",6)
 
     a = "ugBASIC"
 

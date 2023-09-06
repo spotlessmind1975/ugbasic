@@ -13,7 +13,7 @@ REM Prima di tutto, il programma cancella lo schermo, si posiziona alla posizion
 REM stampa la stringa ''"HELLO WORLD!''". Dopo di che, inizia a scorrere una riga verso l'alto
 REM e, successivamente, tre righe verso il basso.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
     CLS
 
@@ -23,9 +23,9 @@ REM @include atari,atarixl,c128,c64
     LOCATE 10,10
     PRINT "HELLO WORLD!";
 
-    LOCATE 10,10
-    VSCROLL SCREEN UP
-    WAIT 1000 MS
+    ' LOCATE 10,10
+    ' VSCROLL SCREEN UP
+    ' WAIT 1000 MS
     VSCROLL SCREEN DOWN
     VSCROLL SCREEN DOWN
     VSCROLL SCREEN DOWN

@@ -14,7 +14,7 @@ REM schermo. Prima di tutto, il programma cancella lo schermo, si posiziona alla
 REM stampa la stringa ''"HELLO WORLD!''". Dopo di che, inizia a scorrere prima la linea scritta
 REM a sinistra, poi a destra. Quindi fa la stessa cosa con l'intero schermo, prima a sinistra e poi a destra.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,coco
 
     CLS
     LOCATE 10,10
