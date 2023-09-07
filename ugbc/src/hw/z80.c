@@ -70,6 +70,8 @@ void z80_init( Environment * _environment ) {
     outline0( "LD DE, 35");
     outline0( "ADD HL, DE");
     outline0( "LD DE, DUFFDEVICEL0");
+    outline0( "INC DE");
+    outline0( "INC DE");
     outline0( "LD (HL), DE");
 
 }
@@ -5117,7 +5119,6 @@ void z80_move_8bit_indirect_with_offset2( Environment * _environment, char *_sou
 void z80_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "LD A, (%s)", _source );
     outline0( "XOR $FF" );
-    outline0( "INC A" );        
     if ( _destination ) {
         outline1( "LD (%s), A", _destination );        
     } else {
