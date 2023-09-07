@@ -194,7 +194,9 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
     if ( _alias ) {
         const_define_numeric( _environment, _alias, UNIQUE_ID );
     }
-    
+
+    result->readonly = 1;
+
     return result;
 
 }
