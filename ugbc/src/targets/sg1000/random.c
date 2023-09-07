@@ -68,19 +68,18 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
 
     Variable * result = variable_temporary( _environment, _type, "(random value)" );
 
-    switch(_type) {
-        case VT_BYTE:
-        case VT_COLOR:
+    switch( VT_BITWIDTH( _type ) ) {
+        case 8:
             z80_random_8bit( _environment, "SG1000TIMER", result->realName );
             break;
-        case VT_WORD:
-        case VT_POSITION:
-        case VT_ADDRESS:
+        case 16:
             z80_random_16bit( _environment, "SG1000TIMER", result->realName );
             break;
-        case VT_DWORD:
+        case 32:
             z80_random_32bit( _environment, "SG1000TIMER", result->realName );
             break;
+        default:
+            CRITICAL_CANNOT_GENERATE_RANDOM( );            
     }
 
     return result;
