@@ -1846,6 +1846,11 @@ typedef struct _Environment {
     char * arrayIndexesEach[MAX_NESTED_ARRAYS][MAX_ARRAY_DIMENSIONS];
 
     /**
+     * Temporary storage for array access (using constants)
+     */
+    int arrayIndexesDirectEach[MAX_NESTED_ARRAYS][MAX_ARRAY_DIMENSIONS];
+
+    /**
      * Temporary storage for current array
      */
     Variable * currentArray;
