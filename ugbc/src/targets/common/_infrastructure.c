@@ -4384,6 +4384,7 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
     Variable * string = variable_retrieve( _environment, _string );
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
     Variable * expression = variable_cast( _environment, _expression, VT_DSTRING );
+
     switch( string->type ) {
         case VT_STRING: {            
             CRITICAL_LEFT_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
@@ -4394,6 +4395,7 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of left)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of left)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of left)" );
+            cpu_dswrite( _environment, string->realName );
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
             cpu_dsdescriptor( _environment, expression->realName, address2->realName, size2->realName );
             cpu_mem_move( _environment, address2->realName, address->realName, position->realName );
@@ -4518,6 +4520,7 @@ void variable_string_right_assign( Environment * _environment, char * _string, c
 
     switch( string->type ) {
         case VT_DSTRING: {            
+            cpu_dswrite( _environment, string->realName );
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
             cpu_dsdescriptor( _environment, expression->realName, address2->realName, size2->realName );
             cpu_move_8bit( _environment, size->realName, size2->realName );
@@ -4723,6 +4726,7 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
 
+            cpu_dswrite( _environment, string->realName );
             cpu_dsdescriptor( _environment, string->realName, address2->realName, size2->realName );
             cpu_dsdescriptor( _environment, expression->realName, address->realName, size->realName );
 
