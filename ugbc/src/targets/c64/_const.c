@@ -53,7 +53,7 @@ void const_emit( Environment * _environment, char * _name ) {
                         break;
                     }
                     case CT_STRING:
-                        outline2(".DEFINE %s \"%s\"", c->realName, c->valueString)
+                        outline2(".DEFINE %s \"%s\"", c->realName, c->valueString->value);
                         break;
                 }
             }

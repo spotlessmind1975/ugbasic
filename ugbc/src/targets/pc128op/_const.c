@@ -53,7 +53,7 @@ void const_emit( Environment * _environment, char * _name ) {
                         break;
                     }
                     case CT_STRING:
-                        outhead2("%s equ \"%s\"", c->realName, c->valueString)
+                        outhead2("%s equ \"%s\"", c->realName, c->valueString->value)
                         break;
                 } 
             }

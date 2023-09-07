@@ -1244,11 +1244,11 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
     switch( destination->type ) {
         case VT_STRING: {
             if ( !_environment->emptyProcedure ) {
-                destination->valueString = strdup( unescape_string( _environment, _value, 0 ) );
-                destination->size = strlen( destination->valueString ) + 1;
+                destination->valueString = string_reserve( _environment, _value );
+                destination->size = strlen( destination->valueString->value ) + 1;
                 memory_area_assign( _environment->memoryAreas, destination );
             } else {
-                destination->valueString = strdup( "" );
+                destination->valueString = string_reserve( _environment, "" );
             }
             break;
         }
@@ -6376,7 +6376,7 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
         if ( ! c->valueString ) {
             CRITICAL_CONSTANT_REDEFINED_DIFFERENT_TYPE( _name );
         }
-        if ( strcmp( c->valueString , _value ) != 0 ) {
+        if ( strcmp( c->valueString->value , _value ) != 0 ) {
             CRITICAL_CONSTANT_REDEFINED_DIFFERENT_VALUE( _name );
         }
     } else {
@@ -6384,7 +6384,7 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
         memset( c, 0, sizeof( Constant ) );
         c->name = strdup( _name );
         c->realName = malloc( strlen( _name ) + strlen( c->name ) + 2 ); strcpy( c->realName, "_" ); strcat( c->realName, c->name );
-        c->valueString = strdup( _value );
+        c->valueString = string_reserve( _environment, _value );
         c->type = CT_STRING;
         Constant * constLast = _environment->constants;
         if ( constLast ) {
@@ -8181,9 +8181,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
         }
     }
     var->value = expr->value;
-    if ( expr->valueString ) {
-        var->valueString = strdup( expr->valueString );
-    }
+    var->valueString = expr->valueString;
     var->valueFloating = expr->valueFloating;
     var->size = expr->size;
     if ( expr->valueBuffer ) {
@@ -8224,5 +8222,25 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     expr->assigned = 1;
 
     return var;
+
+}
+
+StaticString * string_reserve( Environment * _environment, char * _value ) {
+
+    StaticString * current = _environment->strings;
+
+    while ( current ) {
+        if ( strcmp( current->value, _value ) == 0 ) {
+            return current;
+        }
+        current = current->next;
+    }
+
+    current = malloc( sizeof( StaticString ) );
+    memset( current, 0, sizeof( StaticString ) );
+
+    current->value = strdup( unescape_string( _environment, _value, 0 ) );
+
+    return current;
 
 }

@@ -238,6 +238,19 @@ typedef enum _GammaCorrection {
 } GammaCorrection;
 
 /**
+ * @brief Structure of a single (static) string
+ */
+typedef struct _StaticString {
+
+    /** String */
+    char * value;
+
+    /** Link to the next string (NULL if this is the last one) */
+    struct _StaticString * next;
+
+} StaticString;
+
+/**
  * @brief Structure to store color components (red, green and blue)
  * 
  * This structure stores the color components (red, blue and green) 
@@ -555,9 +568,9 @@ typedef struct _Constant {
     int value;
 
     /** 
-     * The initial (string) value of the variable, as given by last (re)definition.
+     * The pointer to the constant string.
      */
-    char * valueString;
+    StaticString * valueString;
 
     /** 
      * The initial (floating) value of the variable, as given by last (re)definition.
@@ -645,9 +658,9 @@ typedef struct _Variable {
     int value;
 
     /** 
-     * The static string's valu, as given by last (re)definition.
+     * The pointer to the constant string.
      */
-    char * valueString;
+    StaticString * valueString;
 
     /** 
      * The static floating's value, as given by last (re)definition.
@@ -1753,6 +1766,11 @@ typedef struct _Environment {
      * List of loaded files
      */
     LoadedFile * loadedFiles;
+
+    /**
+     * List of strings
+     */
+    StaticString * strings;
 
     /**
      * This flag marks if the program has opened a "game loop".
@@ -3746,6 +3764,7 @@ void                    sprite_multicolor_var( Environment * _environment, char 
 void                    sprite_at( Environment * _environment, int _sprite, int _x, int _y );
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 Variable *              sqroot( Environment * _environment, char * _value );
+StaticString *          string_reserve( Environment * _environment, char * _value );
 void                    sys( Environment * _environment, int _address );
 void                    sys_var( Environment * _environment, char * _address );
 void                    sys_call( Environment * _environment, int _address );

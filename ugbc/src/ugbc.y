@@ -863,7 +863,7 @@ const_factor:
           if ( c->type != CT_STRING ) {
               CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $3 );
           }
-          $$ = strlen( c->valueString );
+          $$ = strlen( c->valueString->value );
       }
       | LEN OP String CP {
           $$ = strlen( $3 );
@@ -2178,7 +2178,7 @@ exponential:
         if ( c ) {
             if ( c->type == CT_STRING ) {
                 $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
-                variable_store_string( _environment, $$, c->valueString );
+                variable_store_string( _environment, $$, c->valueString->value );
             } else {
                 if ( c->type == CT_FLOAT ) {
                     $$ = variable_temporary( _environment, VT_FLOAT, "(constant)" )->name;
@@ -2238,7 +2238,7 @@ exponential:
                 CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $1 );
             }
             $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
-            variable_store_string( _environment, $$, c->valueString );
+            variable_store_string( _environment, $$, c->valueString->value );
         } else {
             $$ = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
         }

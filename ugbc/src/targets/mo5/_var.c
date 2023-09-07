@@ -99,22 +99,22 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         if ( variable->printable ) {
-                            int c = strlen( variable->valueString );
+                            int c = strlen( variable->valueString->value );
                             out2("%s fcb %d,", variable->realName, c);
                             int i=0;
                             for (i=0; i<(c-1); ++i ) {
                                 if ( ( ( i + 1 ) % 16 ) == 0 ) {
-                                    outline1("$%2.2x", (unsigned char)variable->valueString[i]);
+                                    outline1("$%2.2x", (unsigned char)variable->valueString->value[i]);
                                     out0("   fcb ");
                                 } else {
-                                    out1("$%2.2x,", (unsigned char)variable->valueString[i]);
+                                    out1("$%2.2x,", (unsigned char)variable->valueString->value[i]);
                                 }
                             }
-                            outline1("$%2.2x", (unsigned char)variable->valueString[(c-1)]);                        
+                            outline1("$%2.2x", (unsigned char)variable->valueString->value[(c-1)]);                        
                         } else {
-                            outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
-                            if ( strlen( variable->valueString ) > 0 ) {
-                                outhead1("   fcc %s", escape_newlines( variable->valueString ) );
+                            outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString->value) );
+                            if ( strlen( variable->valueStrin->valueg ) > 0 ) {
+                                outhead1("   fcc %s", escape_newlines( variable->valueString->value ) );
                             } 
                         }
                     }   

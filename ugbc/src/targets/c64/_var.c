@@ -99,11 +99,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             out2("%s: .byte %d,", variable->realName, c);
                             int i=0;
                             for (i=0; i<(c-1); ++i ) {
-                                out1("$%2.2x,", (unsigned char)variable->valueString[i]);
+                                out1("$%2.2x,", (unsigned char)variable->valueString->value[i]);
                             }
-                            outline1("$%2.2x", (unsigned char)variable->valueString[(c-1)]);                        
+                            outline1("$%2.2x", (unsigned char)variable->valueString->value[(c-1)]);                        
                         } else {
-                            outline3("%s: .byte %d,%s", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
+                            outline3("%s: .byte %d,%s", variable->realName, (int)strlen(variable->valueString->value), escape_newlines( variable->valueString->value ) );
                         }
                     }
                     break;
@@ -248,15 +248,15 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         }
         case VT_STRING:
             if ( _variable->printable ) {
-                int c = strlen( _variable->valueString );
+                int c = strlen( _variable->valueString->value );
                 out1("   .byte %d,", c);
                 int i=0;
                 for (i=0; i<(c-1); ++i ) {
-                    out1("$%2.2x,", (unsigned char)_variable->valueString[i]);
+                    out1("$%2.2x,", (unsigned char)_variable->valueString->value[i]);
                 }
-                outline1("$%2.2x", (unsigned char)_variable->valueString[(c-1)]);                        
+                outline1("$%2.2x", (unsigned char)_variable->valueString->value[(c-1)]);                        
             } else {
-                outline2("   .byte %d,%s", (int)strlen(_variable->valueString), escape_newlines( _variable->valueString ) );
+                outline2("   .byte %d,%s", (int)strlen(_variable->valueString->value), escape_newlines( _variable->valueString->value ) );
             }
             break;
         case VT_DSTRING:

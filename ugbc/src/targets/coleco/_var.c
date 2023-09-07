@@ -95,15 +95,15 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_STRING:
                     if ( variable->printable ) {
-                        int c = strlen( variable->valueString );
+                        int c = strlen( variable->valueString->value );
                         out2("%s: db %d,", variable->realName, c);
                         int i=0;
                         for (i=0; i<(c-1); ++i ) {
-                            out1("$%2.2x,", (unsigned char)variable->valueString[i]);
+                            out1("$%2.2x,", (unsigned char)variable->valueString->value[i]);
                         }
-                        outline1("$%2.2x", (unsigned char)variable->valueString[(c-1)]);                        
+                        outline1("$%2.2x", (unsigned char)variable->valueString->value[(c-1)]);                        
                     } else {
-                        outline3("%s: db %d,%s", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
+                        outline3("%s: db %d,%s", variable->realName, (int)strlen(variable->valueString->value), escape_newlines( variable->valueString->value ) );
                     }
                     break;
                 case VT_DSTRING:
@@ -259,13 +259,13 @@ void variable_cleanup( Environment * _environment ) {
     Constant * c = _environment->constants;
     while( c ) {
         if ( c->valueString ) {
-            int len = strlen( c->valueString );
+            int len = strlen( c->valueString->value );
             out2("%s: db %d,", c->realName, len);
             int i=0;
             for (i=0; i<(len-1); ++i ) {
-                out1("$%2.2x,", (unsigned char)c->valueString[i]);
+                out1("$%2.2x,", (unsigned char)c->valueString->value[i]);
             }
-            outline1("$%2.2x", (unsigned char)c->valueString[(len-1)]);
+            outline1("$%2.2x", (unsigned char)c->valueString->value[(len-1)]);
         }
         c = c->next;
     }
