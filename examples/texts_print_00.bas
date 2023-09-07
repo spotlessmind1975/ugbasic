@@ -8,7 +8,7 @@ REM STAMPA DI TESTI CON UN SINGOLO PRINT
 REM
 REM Questo esempio mostra l'uso di ''PRINT''.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
    CLS
 

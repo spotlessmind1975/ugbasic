@@ -12,7 +12,7 @@ REM Questo esempio mostra l'uso della variabile speciale ''TAB$'', che sposta
 REM il cursore al prossimo segno di tabulazione. Usando il comando ''SET TAB''
 REM è possibile modificare la posizione dei tabs.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
     CLS
 

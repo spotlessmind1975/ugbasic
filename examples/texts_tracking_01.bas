@@ -8,7 +8,7 @@ REM STAMPA DI TESTI CON POSIZIONAMENTO (10)
 REM
 REM Questo esempio mostra l'uso di ''XCURS'' oppure ''YCURS''.
 REM
-REM @include c128,coco
+REM @include c128,coco,coleco
 
     CLS
     LOCATE 5, 10
