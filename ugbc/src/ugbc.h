@@ -2428,6 +2428,7 @@ typedef struct _Environment {
 #define CRITICAL_REPEAT_WITHOUT_UNTIL( ) CRITICAL("E224 - REPEAT without UNTIL" );
 #define CRITICAL_FOR_WITHOUT_NEXT( ) CRITICAL("E225 - FOR without NEXT" );
 #define CRITICAL_BEGIN_GAMELOOP_WITHOUT_END_GAMELOOP( ) CRITICAL("E226 - BEGIN GAMELOOP without END GAMELOOP" );
+#define CRITICAL_CANNOT_GENERATE_RANDOM( ) CRITICAL("E227 - cannot generate random number with this parameter" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
