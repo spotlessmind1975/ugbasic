@@ -18,7 +18,7 @@ REM dopo di che stamperà 2, 4, 6, 8, 10; e così via. Questo esempio mostra
 REM inoltre il funzionamento dello scrolling automatico, quando si raggiunge 
 REM con l'uso del comando ''PRINT'' la fine dello schermo.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
     CLS
 

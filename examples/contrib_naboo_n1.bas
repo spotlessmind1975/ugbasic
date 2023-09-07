@@ -16,7 +16,7 @@ REM l'array. Questo esempio renderizza "Naboo N1 Starfighter".
 REM 
 REM @url http://patsos.de/New_Weblog/?p=671
 REM
-REM @include c128
+REM @include c128,coleco
 
 	PROCEDURE example ON ALL BUT VIC20
 

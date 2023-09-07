@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostra un esempio di calcolo matematico, con l'uso dell'operatore elevamento a potenza (''^'')
 REM e moltiplicazione (''*'').
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
     CLS
     

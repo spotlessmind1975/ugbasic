@@ -34,7 +34,7 @@ REM sempre) si produce una forma frattale. Utilizzando un triangolo regolare e
 REM il fattore 1/2 si otterrà un triangolo di Sierpinski.
 REM
 REM @url https://www.facebook.com/groups/retroprogramming/posts/879754189371504/
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
 ' ============================================================================
 ' INITIALIZATION / INIZIALIZZAZIONE
@@ -166,7 +166,7 @@ DIM xx AS BYTE(256) = # { _
 		x2, x3, x1, x2, x3, x1, x2, x3, x1, x2, x3, x1, x2, x3, x1, x2, _
 		x3, x1, x2, x3, x1, x2, x3, x1, x2, x3, x1, x2, x3, x1, x2, x3, _
 		x1, x2, x3, x1, x2, x3, x1, x2, x3, x1, x2, x3, x1, x2, x3, x1  _
-	}
+	} READONLY
 
 ' See above / Si veda sopra.
 '
@@ -187,7 +187,7 @@ DIM yy AS BYTE(256) = # { _
 		y2, y3, y1, y2, y3, y1, y2, y3, y1, y2, y3, y1, y2, y3, y1, y2, _
 		y3, y1, y2, y3, y1, y2, y3, y1, y2, y3, y1, y2, y3, y1, y2, y3, _
 		y1, y2, y3, y1, y2, y3, y1, y2, y3, y1, y2, y3, y1, y2, y3, y1  _
-	}
+	} READONLY
 
 ' We set the number of points to draw, at most. The challenge includes 10,000 points. 
 ' The greater the number of points, the more defined the triangles will be.

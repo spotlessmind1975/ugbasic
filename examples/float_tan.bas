@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostrerà come usare la funzione ''TAN''. Da notare
 REM che stiamo richiedendo di utilizzare la precisione singola.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
 DEFINE FLOAT PRECISION SINGLE
 

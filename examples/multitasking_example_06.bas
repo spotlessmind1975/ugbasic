@@ -12,7 +12,7 @@ REM Questo esempio mostrerà come usare il multitasking per
 REM realizzare una semplice animazione di vari pipistrelli
 REM sullo schermo.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
     BITMAP ENABLE (16)
     CLS BLACK

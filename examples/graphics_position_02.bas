@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostra come ricavare la posizione grafica corrente,
 REM utilizzando le variabili ''XGR'' e ''YGR''.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
     BITMAP ENABLE
     CLS

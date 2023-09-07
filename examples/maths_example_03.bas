@@ -12,7 +12,7 @@ REM Questo esempio mostrerà l'applicazione della priorità associativa. Poiché
 REM ha una priorità maggiore rispetto alla somma (''+''), e poiché le parentesi (''(...)'') cambiano la 
 REM priorità di applicazione, il risultato della due espressioni sarà diverso.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
     CLS
     

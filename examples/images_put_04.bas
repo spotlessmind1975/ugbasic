@@ -8,7 +8,7 @@ REM GESTIONE DELLE IMMAGINI DISEGNO (2)
 REM
 REM Questo piccolo esempio mostra come caricare una piccola PNG e disegnarla sulla bitmap colorata.
 REM
-REM @include c128
+REM @include c128,coleco
 
     BITMAP ENABLE (4)
     CLS
