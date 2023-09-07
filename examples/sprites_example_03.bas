@@ -15,7 +15,7 @@ REM le performance sui sistemi che sono vincolati al vertical blank.
 
 BITMAP ENABLE (2)
 
-CONST spriteCount = IF(SPRITE COUNT>0,SPRITE COUNT,16)
+CONST spriteCount = 8
 
 DEFINE TASK COUNT spriteCount
 

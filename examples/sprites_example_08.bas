@@ -7,6 +7,8 @@ REM @italian
 REM GESTIONE DEGLI SPRITE TESTARE LE COLLISIONI
 REM
 REM Questo esempio mostra come provare le collisioni.
+REM
+REM @include coleco
 
 BITMAP ENABLE (16)
 

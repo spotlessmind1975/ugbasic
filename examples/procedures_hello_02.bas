@@ -14,7 +14,7 @@ REM di per sé, non significa che la procedura sarà eseguita. Infatti, chiamere
 REM subito la procedura appena l'abbiamo definita. Il risultato è la stringa 
 REM ''"HELLO I AM A PROCEDURE!"'' sullo schermo.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
    CLS
    

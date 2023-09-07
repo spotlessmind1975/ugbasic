@@ -8,7 +8,7 @@ REM MANIPOLAZIONE DI STRIGHE CON L'USO DI FLIP (1)
 REM
 REM Questo esempio stampa una stringa i cui caratteri sono stati invertiti (rovesciati) tra loro.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
     CLS
 

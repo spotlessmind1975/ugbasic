@@ -10,10 +10,12 @@ REM
 REM Questo esempio mostra come muovere gli sprite usando la feature
 REM del multitasking, assegnando quindi una routine di movimento
 REM per ogni sprite.
+REM
+REM @include coleco
 
 BITMAP ENABLE (2)
 
-CONST spriteCount = IF(SPRITE COUNT>0,SPRITE COUNT,16)
+CONST spriteCount = 8
 
 DEFINE TASK COUNT spriteCount
 

@@ -8,7 +8,7 @@ REM MANIPOLAZIONE DI STRIGHE CON CONVERSIONE IN NUMERI (1)
 REM
 REM Questo esempio mostra come convertire una stringa in un numero, usando la funzione ''VAL''.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
     CLS
 

@@ -11,6 +11,8 @@ REM
 REM Questo esempio mostra come creare in automatico uno sprite multicolore,
 REM per avere più di un colore. Puoi avere sprite con fino a SPRITE COUNT
 REM colori indipendenti.
+REM
+REM @include coleco
 
 BITMAP ENABLE (16)
 

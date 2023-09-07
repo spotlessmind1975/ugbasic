@@ -8,7 +8,7 @@ REM MANIPOLAZIONE DI STRIGHE CON L'USO DI CHR (1)
 REM
 REM Questo esempio stampa un breve elenco di caratteri stampabili.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,coleco
 
     CLS
 
