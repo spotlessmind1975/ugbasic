@@ -1881,7 +1881,7 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
             }
 
             bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
-            *(buffer + 2 + offset) |= bitmask;
+            *(buffer + offset) |= bitmask;
 
             _source += _depth;
 
