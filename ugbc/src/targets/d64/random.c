@@ -78,6 +78,8 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
         case 32:
             cpu6809_random_32bit( _environment, "$0113", result->realName );
             break;
+        default:
+            CRITICAL_CANNOT_GENERATE_RANDOM( );
     }
 
     return result;
