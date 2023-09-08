@@ -51,6 +51,7 @@ Variable * inkey( Environment * _environment ) {
 
     variable_store_string(_environment, result->name, resultString );
 
+    cpu_dswrite( _environment, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, pressed->realName );
 
     MAKE_LABEL
