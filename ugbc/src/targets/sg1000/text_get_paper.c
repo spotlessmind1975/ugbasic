@@ -54,8 +54,6 @@ Variable * get_paper( Environment * _environment, char * _color ) {
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
     cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
 
-    variable_store_string(_environment, result->name, resultString );
-
     cpu_move_8bit_indirect_with_offset(_environment, color->realName, address->realName, 1 );
         
     return result;
