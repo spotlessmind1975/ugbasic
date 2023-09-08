@@ -94,17 +94,18 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        if ( variable->printable ) {
-                            int c = strlen( variable->valueString );
-                            out2("%s: .byte %d,", variable->realName, c);
-                            int i=0;
-                            for (i=0; i<(c-1); ++i ) {
-                                out1("$%2.2x,", (unsigned char)variable->valueString->value[i]);
-                            }
-                            outline1("$%2.2x", (unsigned char)variable->valueString->value[(c-1)]);                        
-                        } else {
-                            outline3("%s: .byte %d,%s", variable->realName, (int)strlen(variable->valueString->value), escape_newlines( variable->valueString->value ) );
-                        }
+                        // if ( variable->printable ) {
+                        //     int c = strlen( variable->valueString );
+                        //     out2("%s: .byte %d,", variable->realName, c);
+                        //     int i=0;
+                        //     for (i=0; i<(c-1); ++i ) {
+                        //         out1("$%2.2x,", (unsigned char)variable->valueString->value[i]);
+                        //     }
+                        //     outline1("$%2.2x", (unsigned char)variable->valueString->value[(c-1)]);                        
+                        // } else {
+                        //     outline3("%s: .byte %d,%s", variable->realName, (int)strlen(variable->valueString->value), escape_newlines( variable->valueString->value ) );
+                        // }
+                        outline2("%s = cstring%d", variable->realName, variable->valueString->id );
                     }
                     break;
                 case VT_DSTRING:
@@ -459,5 +460,10 @@ void variable_cleanup( Environment * _environment ) {
 
     variable_on_memory_init( _environment, 0 );
 
+    StaticString * staticStrings = _environment->strings;
+    while( staticStrings ) {
+        outline3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
+        staticStrings = staticStrings->next;
+    }
 
 }
