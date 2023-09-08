@@ -43,7 +43,9 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _label
     _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
     _environment->everyCounter = variable_retrieve( _environment, "EVERYCOUNTER");
     _environment->everyTiming =  variable_retrieve( _environment, "EVERYTIMING");
+    Variable * timing =  variable_retrieve_or_define( _environment, _timing, VT_BYTE, 0);
 
+    variable_move_naked( _environment, timing->name, _environment->everyTiming->name );
     variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
 
     cpc_irq_at( _environment, _label );
