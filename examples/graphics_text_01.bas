@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA COORDINATE DI SCHERMO E DI TESTO (1)
 REM
 REM Questo esempio mostrerà come passare dalle coordinate schermo a quelle testuali, e viceversa.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,coleco,cpc
 
     BITMAP ENABLE (160,200,16)
     CLS

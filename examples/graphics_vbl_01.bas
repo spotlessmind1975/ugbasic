@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA SINCRONIZZAZIONE CON IL VERTICAL BLANK (1)
 REM
 REM Questo esempio mostra come sincronizzarsi, programmaticamente, con il vertical blank.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,cpc
 
     BITMAP ENABLE(16)
     CLS
