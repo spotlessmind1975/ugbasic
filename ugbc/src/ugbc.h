@@ -242,6 +242,9 @@ typedef enum _GammaCorrection {
  */
 typedef struct _StaticString {
 
+    /** unique id */
+    int id;
+
     /** String */
     char * value;
 
