@@ -8,7 +8,7 @@ REM USARE LE PROCEDURE CON VARIABILI GLOBALI (2)
 REM
 REM Questo esempio mostrerà come definire le variabili globali usando le "wildcard". 
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,coleco,cpc
 
     CLS
    

@@ -12,7 +12,7 @@ REM Questo esempio mostrerà come richiamare un'attività all'interno di
 REM un'altra attività e come attendere la fine dell'esecuzione della seconda 
 REM attività prima di continuare. Questa è una forma molto semplice di sincronismo.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,coleco,cpc
 
     GLOBAL t
 

@@ -22,7 +22,7 @@ REM considerato come un valore che potrebbe essere utilizzato dal chiamante.
 REM L'esempio implementerà procedure che stampano la somma di variabili di tipo 
 REM diverso, come interi e stringhe.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,coleco,cpc
 
    CLS
    
