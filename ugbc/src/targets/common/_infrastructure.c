@@ -1246,7 +1246,7 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
             if ( !_environment->emptyProcedure ) {
                 destination->valueString = string_reserve( _environment, _value );
                 destination->size = strlen( destination->valueString->value ) + 1;
-                memory_area_assign( _environment->memoryAreas, destination );
+                // memory_area_assign( _environment->memoryAreas, destination );
             } else {
                 destination->valueString = string_reserve( _environment, "" );
             }
