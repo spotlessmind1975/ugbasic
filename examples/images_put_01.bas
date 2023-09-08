@@ -8,7 +8,7 @@ REM GESTIONE DELLE IMMAGINI DISEGNO (1)
 REM
 REM Questo piccolo esempio mostra come caricare una piccola PNG e disegnarla sulla bitmap.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,coleco,cpc
 
     BITMAP ENABLE (2)
 

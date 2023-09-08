@@ -17,7 +17,7 @@ REM In questo modo, l'insieme dei frame verrà preso per generare un tipo
 REM di dati IMAGES. Nota che questo tipo di dato può essere usato anche 
 REM come IMMAGINE, il che significa usare il primo fotogramma.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,coleco,cpc
 
     BITMAP ENABLE (16)
     CLS
