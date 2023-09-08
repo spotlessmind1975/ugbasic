@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA CON L'USO DI DRAW (2)
 REM
 REM Questo esempio disegnerà segmenti casuali sullo schermo.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
   BITMAP ENABLE(16)
   CLS

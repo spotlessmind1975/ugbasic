@@ -18,7 +18,7 @@ REM per garantire the l'immagine sia disegnata all'interno di uno "schermo virtu
 REM 
 REM @url http://patsos.de/New_Weblog/?p=671
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco
 
 	BITMAP ENABLE(320,200)
 

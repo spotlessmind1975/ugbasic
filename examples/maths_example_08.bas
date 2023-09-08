@@ -8,7 +8,7 @@ REM ROUTINE DI MATEMATICA OPERAZIONI CON SEGNO
 REM
 REM Questo esempio mostrerà alcuni calcoli con numeri con il segno.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
     CLS
     

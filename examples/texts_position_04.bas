@@ -14,7 +14,7 @@ REM una sequenza speciale che sposterà il cursore in una posizione relativa a
 REM quella corrente. Il vantaggio di questo metodo è che quello di poter memorizzare 
 REM un movimento specifico all'interno di una stringa, e riprodurlo incorporandone il testo.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
     CLS
 

@@ -12,7 +12,7 @@ REM Questo esempio mostra come si estrare una stringa da un'altra stringa, inizi
 REM dalla fine ed arrivando a una posizione specifica. La funzione utilizzata è ''RIGHT''.
 REM In modo analogo, la stessa funzione può essere usata per iniettare una stringa.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
     CLS
 

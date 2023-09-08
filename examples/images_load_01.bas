@@ -8,7 +8,7 @@ REM GESTIONE DELLE IMMAGINI CARICAMENTO (1)
 REM
 REM Questo piccolo esempio mostra come caricare una piccola PNG come immagine statica.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
     BITMAP ENABLE
     CLS

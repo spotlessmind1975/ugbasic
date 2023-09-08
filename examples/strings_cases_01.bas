@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostra come convertire stringhe da minuscolo a maiuscolo,
 REM e viceversa, usando le funzioni ''LOWER'' e ''UPPER''.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
     CLS
     

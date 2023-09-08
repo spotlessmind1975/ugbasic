@@ -8,7 +8,7 @@ REM ESPANSIONE DI MEMORIA COPIARE A/DA ESPANSIONE
 REM
 REM Questo esempio mostra come copiare dati da o verso un banco di espansione.
 REM
-REM @include c128,coco
+REM @include c128,coco,d32,d64
 
     IF BANK COUNT = 0 THEN
         PRINT "Sorry, this target "

@@ -8,7 +8,7 @@ REM MANIPOLAZIONE DI STRIGHE DIFFERENZA TRA STRINGHE
 REM
 REM Questo esempio mostra come funziona la differenza tra stringhe.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
     CLS
 

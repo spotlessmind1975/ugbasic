@@ -15,7 +15,7 @@ REM di inserire codice assembly in linea. Accedendo, chiaramente, a
 REM tutte le caratteristiche del BASIC. Questo programma mostra come 
 REM si opera una somma a 16 bit (2 x 8 bit) con il processore MOTOROLA 6809.
 REM 
-REM @include coco
+REM @include coco,d32,d64
 
 	DIM x AS INTEGER, y AS INTEGER, z AS INTEGER
 

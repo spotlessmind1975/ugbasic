@@ -16,7 +16,7 @@ REM di usare l'istruzione ''POP PROC''. Questa istruzione interromperà
 REM la procedura corrente, e il programma continuerà l'esecuzione dal punto
 REM in cui la procedura è stata chiamata.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
    CLS
    

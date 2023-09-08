@@ -12,7 +12,7 @@ REM Questo esempio mostrerà l'applicazione della priorità associativa. Poiché
 REM divisione (''/'') hanno maggiore priorità rispetto alla somma (''+''), e l'esponenziale (''^'') è sempre 
 REM calcolato per primo, il risultato della due espressioni sarà diverso.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
     CLS
     

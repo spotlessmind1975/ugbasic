@@ -14,7 +14,7 @@ REM che attende la pressione di un tasto. Alla pressione del tasto il codice ver
 REM chiave ha o meno un codice ASCII e stamperà il fatto. Inoltre, per ogni tasto premuto, viene 
 REM ristampato lo scan code.
 REM
-REM @include coco
+REM @include coco,d32,d64
 
     CLS
     

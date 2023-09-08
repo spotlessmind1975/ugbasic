@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA COLORAZIONE (USANDO INK)
 REM
 REM Questo esempio mostra l'effetto dell'utilizzo del comando ''INK''.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
     BITMAP ENABLE
     CLS

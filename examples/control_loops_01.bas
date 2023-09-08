@@ -20,7 +20,7 @@ REM le costanti predefinite ''YELLOW'' e ''BLACK''. Per attendere un
 REM determinato periodo di tempo verrà utilizzato il comando ''WAIT'', 
 REM con l'unità di tempo ''MS'' (millisecondi).
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
    CLS
 

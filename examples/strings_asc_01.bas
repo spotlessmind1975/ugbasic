@@ -11,7 +11,7 @@ REM Questo esempio mostra come funziona ''ASC''. Questa funzione converte
 REM il parametro dato (la stringa ''"0"'') nel valore ASCII corrispondente,
 REM e lo stampa sullo schermo.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
   CLS
 

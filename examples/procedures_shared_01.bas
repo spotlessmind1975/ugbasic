@@ -17,7 +17,7 @@ REM La procedura viene quindi chiamata, e il risultato è che
 REM il valore originale è stato modificato dall'esecuzione della procedura, 
 REM poiché tali variabili sono condivise (globali). 
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
    CLS
 

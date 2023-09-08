@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostra come limitare la generazione del
 REM codice delle librerie alla modalità selezionata.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco
 
     DEFINE SCREEN MODE UNIQUE
 

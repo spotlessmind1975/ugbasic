@@ -12,7 +12,7 @@ REM Questo esempio eseguirà un loop senza fine (''DO...LOOP'') per leggere lo s
 REM del primo joystick. Le varie direzioni saranno decodificate utilizzando
 REM le varie funzioni specifiche (''JLEFT'', ''JRIGHT'', ''JUP'', ''JDOWN'', ''JFIRE'').
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
    CLS
 

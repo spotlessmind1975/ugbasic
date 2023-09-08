@@ -8,7 +8,7 @@ REM ESPANSIONE DI MEMORIA INDIRIZZI E BANCHI
 REM
 REM Questo esempio cambierà il banco selezionato.
 REM
-REM @include c128,coco
+REM @include c128,coco,d32,d64
 
     CLS
 

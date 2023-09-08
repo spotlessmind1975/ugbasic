@@ -11,7 +11,7 @@ REM Questo esempio mostra quanto riesce a comprimere l'algoritmo MSC1,
 REM quando si trova ad avere a che fare con una immagine in stile 
 REM anime (cartoon).
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
     BITMAP ENABLE(4)
 

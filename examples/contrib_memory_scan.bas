@@ -18,7 +18,7 @@ REM istruzione MMOVE.
 REM 
 REM @url https://github.com/JJFlash-IT/XCB3_Examples/blob/main/RAM_Scan_XCB/xcb-ramscan.bas
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,d32,d64
 
 	VAR wSourceAddress AS ADDRESS = 0
 

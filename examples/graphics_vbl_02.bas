@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA SINCRONIZZAZIONE CON IL VERTICAL BLANK (2)
 REM
 REM Questo esempio mostra come sincronizzarsi con il vertical blank usando i game loop.
 REM
-REM @include atari,atarixl,c128,c64,coco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,cpc
 
     BITMAP ENABLE(16)
     CLS

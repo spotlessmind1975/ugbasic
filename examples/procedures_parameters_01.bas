@@ -22,7 +22,7 @@ REM considerato come un valore che potrebbe essere utilizzato dal chiamante.
 REM L'esempio implementerà una procedura che stampa il parametro, prefisso
 REM dalla stringa ''"HELLO"''.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
    CLS
    

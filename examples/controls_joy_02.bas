@@ -10,7 +10,7 @@ REM
 REM Questo esempio leggerà lo status del primo joystick. Quindi ne decodificherà il valore
 REM di alcune direzioni, sfruttando le varie sintassi disponibili, e lo rappresenterà sullo schermo.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
    CLS
 

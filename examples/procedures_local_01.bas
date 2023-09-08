@@ -18,7 +18,7 @@ REM andrà perduto. Quindi questo programma dimostrerà che, anche se viene svol
 REM un incremento della variabile ''a'' per ogni esecuzione, il valore effettivo
 REM rimarrà sempre il medesimo. 
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
 
    CLS
    
