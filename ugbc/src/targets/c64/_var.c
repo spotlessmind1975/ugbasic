@@ -248,17 +248,18 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             break;
         }
         case VT_STRING:
-            if ( _variable->printable ) {
-                int c = strlen( _variable->valueString->value );
-                out1("   .byte %d,", c);
-                int i=0;
-                for (i=0; i<(c-1); ++i ) {
-                    out1("$%2.2x,", (unsigned char)_variable->valueString->value[i]);
-                }
-                outline1("$%2.2x", (unsigned char)_variable->valueString->value[(c-1)]);                        
-            } else {
-                outline2("   .byte %d,%s", (int)strlen(_variable->valueString->value), escape_newlines( _variable->valueString->value ) );
-            }
+            // if ( _variable->printable ) {
+            //     int c = strlen( _variable->valueString->value );
+            //     out1("   .byte %d,", c);
+            //     int i=0;
+            //     for (i=0; i<(c-1); ++i ) {
+            //         out1("$%2.2x,", (unsigned char)_variable->valueString->value[i]);
+            //     }
+            //     outline1("$%2.2x", (unsigned char)_variable->valueString->value[(c-1)]);                        
+            // } else {
+            //     outline2("   .byte %d,%s", (int)strlen(_variable->valueString->value), escape_newlines( _variable->valueString->value ) );
+            // }
+            outline2("%s = cstring%d", _variable->realName, _variable->valueString->id );
             break;
         case VT_DSTRING:
         case VT_SPRITE:
