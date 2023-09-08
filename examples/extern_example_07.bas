@@ -15,7 +15,7 @@ REM in una locazione specifica.
 REM La routine esterna riceverà il parametro da un registro
 REM specifico e restituirà il risultato su un registro specifico.
 REM
-REM @include atari,atarixl,c128,c64
+REM @include atari,atarixl,c128,c64,cpc
 
 	CLS
 

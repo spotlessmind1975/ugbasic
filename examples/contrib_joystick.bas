@@ -10,7 +10,7 @@ REM
 REM Questo esempio rappresenta un tributo al gruppo Facebook Retroprogramming Italia, 
 REM a seguito della vittoria nella "FORZA 4 Challenge". 
 REM
-REM @include atari,atarixl
+REM @include atari,atarixl,cpc
 
     BITMAP ENABLE(16)
     CLS BLACK

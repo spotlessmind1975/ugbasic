@@ -10,7 +10,7 @@ REM
 REM Questo esempio utilizzerà le parole chiave ''EVERY...CALL'' per cambiare, 
 REM ogni ''TICKS PER SECOND' ticks, il testo sullo schermo.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,coleco,cpc
 
    CLS
 

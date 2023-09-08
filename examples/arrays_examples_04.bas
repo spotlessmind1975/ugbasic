@@ -14,7 +14,7 @@ REM dell'array. Questo programma mostra sia come definire un array
 REM bidimensionale che come accedere agli elementi iniziali e finali 
 REM della matrice.
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,coleco,cpc
 
     CLS
 
@@ -25,13 +25,13 @@ REM @include atari,atarixl,c128,c64,coco,coleco
     PRINT "array(0,6) = ";array(0,6)
     PRINT "array(5,6) = ";array(5,6)
 
-    array(0,0) = 1
+    array(#5,#6) = 42
 
     PRINT
 
     PRINT "array(0,0) = ";array(0,0)
     PRINT "array(5,0) = ";array(5,0)
     PRINT "array(0,6) = ";array(0,6)
-    PRINT "array(5,6) = ";array(5,6)
+    PRINT "array(5,6) = ";array(#5,#6)
 
 

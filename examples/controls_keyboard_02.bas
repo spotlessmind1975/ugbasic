@@ -12,7 +12,7 @@ REM Questo esempio eseguirà un ciclo infinito (''DO...LOOP'') che controllerà 
 REM stato premuto utilizzando la funzione ''INKEY$''. Se è stato premuto un tasto, il programma 
 REM stamperà il valore ASCII del tasto premuto.
 REM
-REM @include atari,atarixl,c128,c64,coco
+REM @include atari,atarixl,c128,c64,coco,cpc
 
     CLS
     

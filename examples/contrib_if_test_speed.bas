@@ -11,7 +11,7 @@ REM Questo esempio ha lo scopo di illustrare la velocità con cui vengono esegui
 REM logici all'interno degli IF. Quale soluzione è la più veloce?
 REM
 REM @url https://www.facebook.com/groups/2057165187928233/posts/3451955151782556/
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,coleco,cpc
 
 	CLS
 

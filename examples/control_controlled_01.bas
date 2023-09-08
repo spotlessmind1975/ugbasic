@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio utilizza le istruzioni ''FOR...NEXT''
 REM per stampare i primi 100 numeri (da 1 a 100).
 REM
-REM @include atari,atarixl,c128,c64,coco,coleco
+REM @include atari,atarixl,c128,c64,coco,coleco,cpc
 
     CLS
 
