@@ -1763,11 +1763,11 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     // bits in the character pattern or bitmap. The correspondence
     // between bit values and colors is as shown in Table 8-5.
 
-    // outline0("LD A, $1a");
-    // outline0("LD IXH, A");
-    // outline0("LD A, $%2.2x", 0x00 );
-    // outline0("LD IXL, A");
-    // outline0("CALL VDCZWRITE");
+    outline0("LD A, $1a");
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", 0xf0 );
+    outline0("LD IXL, A");
+    outline0("CALL VDCZWRITE");
 
     /////////////////////////////////////////////////////////////////
     // -- [ $1b ] --
