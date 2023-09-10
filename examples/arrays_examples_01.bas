@@ -12,7 +12,7 @@ REM Questo piccolo esempio mostra la sintassi base per definire un array e per
 REM accedervi. Da notare come gli array, in ugBASIC, partono da zero. Quindi se dimensioniamo 
 REM un array con il numero 2 stiamo intendendo un array di due elementi: l'elemento 0 e l'elemento 1.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc,vic20,zx
 
 	CLS
 	

@@ -8,7 +8,7 @@ REM VARI ALTRI CONTRIBUTI LIGHT!
 REM
 REM Questo piccolo esempio disegna una immagine sullo schermo.
 REM
-REM @include atari,atarixl,coleco,sg1000,sc3000,cpc
+REM @include atari,atarixl,coleco,sg1000,sc3000,cpc,zx
 
     BITMAP ENABLE(16)
 

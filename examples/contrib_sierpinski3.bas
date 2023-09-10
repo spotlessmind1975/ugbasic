@@ -34,7 +34,7 @@ REM sempre) si produce una forma frattale. Utilizzando un triangolo regolare e
 REM il fattore 1/2 si otterrà un triangolo di Sierpinski.
 REM
 REM @url https://www.facebook.com/groups/retroprogramming/posts/879754189371504/
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc,zx
 
 ' ============================================================================
 ' INITIALIZATION / INIZIALIZZAZIONE

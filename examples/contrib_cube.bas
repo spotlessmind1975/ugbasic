@@ -12,7 +12,7 @@ REM Questo piccolo esempio mostra come si può disegnare un cubo rotante in BASI
 REM Mutilizzando lo stesso sorgente BASIC. Nonostante il fatto che la rotazione sembri abbastanza veloce, il
 REM tutto non è stato minimamente ottimizzato. Vi sono larghe possibiità di ottimizzazione del codice.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,cpc,zx
  
 	BITMAP ENABLE(16) : CLS BLACK
 

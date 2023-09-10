@@ -8,7 +8,7 @@ REM VARI ALTRI CONTRIBUTI TIMERS!
 REM
 REM Questo piccolo esempio mostra come funziona la variabile ''TI''.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc,vic20,zx
 
     TI = 0
     CLS

@@ -15,7 +15,7 @@ REM di inserire codice assembly in linea. Accedendo, chiaramente, a
 REM tutte le caratteristiche del BASIC. Questo programma mostra come 
 REM si opera una somma a 16 bit (2 x 8 bit) con il processore ZILOG Z80.
 REM 
-REM @include coleco,sg1000,sc3000,cpc
+REM @include coleco,sg1000,sc3000,cpc,zx
 
 	DIM x AS INTEGER, y AS INTEGER, z AS INTEGER
 

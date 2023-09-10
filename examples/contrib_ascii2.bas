@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostra la tabella dei codici ASCII (stampabili) sullo schermo.
 REM Il buffer carwicato sarà compresso con l'algoritmo MSC1, per risparmiare spazio.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc,vic20,zx
 
     CLS
     

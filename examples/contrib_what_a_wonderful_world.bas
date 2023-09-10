@@ -32,6 +32,7 @@ REM
 REM - Louis Armstrong (August 4, 1901 -- July 6, 1971), 
 REM   chiamato anche Satchmo o Pops
 REM
+REM @include vic20
 
 DEFINE STRING SPACE 512
 DEFINE STRING COUNT 64
