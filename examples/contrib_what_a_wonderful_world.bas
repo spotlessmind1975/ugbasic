@@ -168,9 +168,3 @@ END PROC
 
 SPAWN rotatingEarth
 SPAWN printLyrics
-
-DO: RUN PARALLEL: LOOP
-
-
-
-
