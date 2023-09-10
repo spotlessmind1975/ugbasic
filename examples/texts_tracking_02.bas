@@ -9,7 +9,7 @@ REM
 REM Questo esempio mostra l'uso di ''XCURS'' oppure ''YCURS'', che incorpora un comando
 REM in una stringa per spostare il cursore in basso di 1 carattere.
 REM
-REM @include c128,coco,d32,d64,coleco,cpc
+REM @include c128,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
   CLS
   LOCATE 10,10

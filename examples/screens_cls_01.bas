@@ -21,7 +21,7 @@ REM Quindi aspettiamo 2 secondi e riattiviamo la modalità ''TILEMAP''. Quindi c
 REM sfondo in giallo (''YELLOW'') e, dopo aver impostato la tessera vuota su quella con il numero
 REM 48 (lo "0"), ripuliamo lo schermo.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     BITMAP ENABLE (320,200,16)
     

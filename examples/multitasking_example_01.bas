@@ -14,7 +14,7 @@ REM primo stamperà la stringa "first", mentre il secondo stamperà "second".
 REM Poiché le due attività sono in esecuzione contemporaneamente sul processore, 
 REM le due stringhe vengono stampate alternativamente.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     PARALLEL PROCEDURE printFirst
         DO

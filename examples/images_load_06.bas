@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostrerà come caricare e animare un set di immagini 
 REM a partire da una immagine singola, con tutti i fotogrammi.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     BITMAP ENABLE (16)
     CLS

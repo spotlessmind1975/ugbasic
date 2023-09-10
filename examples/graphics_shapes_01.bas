@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA CON DISEGNO DI FORME (1)
 REM
 REM Questo esempio disegnerà un pentacolo, utilizzando i comandi ''CIRCLE'' e ''POLYLINE''.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     BITMAP ENABLE
     CLS

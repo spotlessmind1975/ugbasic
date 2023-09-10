@@ -13,7 +13,7 @@ REM con cui può essere richiamata. E' possibile richiamarla usando direttamente
 REM o usando le parole chiave ''PROC'' oppure ''CALL. Tutti questi modi sono,
 REM in un certo qual modo, equivalenti.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
    CLS
    

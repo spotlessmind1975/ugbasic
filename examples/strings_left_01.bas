@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostra come si estrare una stringa da un'altra stringa, iniziando
 REM dal principio ed arrivando a una posizione specifica. La funzione utilizzata è ''LEFT''.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     CLS
 

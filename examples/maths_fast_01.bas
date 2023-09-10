@@ -13,7 +13,7 @@ REM Questo esempio mostrerà l'uso di operatori interi veloci, con l'uso delle i
 REM e ''DEC''. Tali istruzioni funzioneranno senza l'uso di risultati intermedi, al fine di fornire 
 REM il massimo rendimento nell'incremento o decremento di valori. Il risultato sarà stampato sullo schermo.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
    CLS
    

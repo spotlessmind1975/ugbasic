@@ -14,7 +14,7 @@ REM in una stringa binaria, e lo mostrerà sullo schermo. Questo esempio inoltre
 REM funziona lo scrolling verticale automatico, quando si raggiunge  con l'uso del comando 
 REM ''PRINT'' la fine dello schermo.
 REM
-REM @include coleco,cpc
+REM @include coleco,sg1000,sc3000,cpc
 
     CLS
 

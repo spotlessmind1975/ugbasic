@@ -8,7 +8,7 @@ REM GESTIONE DEGLI SPRITE COLLISIONI (1)
 REM
 REM Questo esempio mostra come verificare una collisione con sprite monocolori.
 REM
-REM @include coleco
+REM @include coleco,sg1000,sc3000
 
 BITMAP ENABLE (2)
 

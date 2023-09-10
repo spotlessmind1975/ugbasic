@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostra come si conta il numero di caratteri che compongono
 REM una singola stringa, utilizzando la funzione ''LEN''.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     CLS
 

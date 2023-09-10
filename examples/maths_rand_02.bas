@@ -14,7 +14,7 @@ REM che genera un numero casuale compreso tra 0 e il valore dato come argomento.
 REM verrà applicata a un numero costante, per mostrare la variabilità casuale dell'output quando viene
 REM richiamata prima l'istruzione ''RANDOMIZE''.
 REM
-REM @include atari,atarixl,c128,c64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coleco,sg1000,sc3000,cpc
 
     CLS
     

@@ -10,7 +10,7 @@ REM
 REM Questo esempio rimarrà in attesa in un loop infinito (''DO...LOOP''),
 REM aspettando la pressione di un tasto specifico (A oppure B).
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,cpc,sc3000
 
     CLS
 

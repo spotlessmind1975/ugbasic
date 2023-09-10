@@ -11,7 +11,7 @@ REM Questo esempio mostra come muovere gli sprite usando la feature
 REM del multitasking, assegnando quindi una routine di movimento
 REM per ogni sprite.
 REM
-REM @include coleco
+REM @include coleco,sg1000,sc3000
 
 BITMAP ENABLE (2)
 

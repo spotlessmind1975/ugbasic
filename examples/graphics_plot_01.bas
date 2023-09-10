@@ -16,7 +16,7 @@ REM utilizzando il comando ''BITMAP ENABLE''. Quindi, cancellerà lo schermo con
 REM colore nero. Infine, eseguirà un ciclo infinito (''DO...LOOP'') che disegnerà 
 REM una serie di punti casuali sullo schermo.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
    BITMAP ENABLE(16)
    CLS BLACK

@@ -8,7 +8,7 @@ REM STAMPA DI TESTI CON POSIZIONAMENTO (7)
 REM
 REM Questo esempio mostra l'uso delle istruzioni ''LOCATE'' e ''CMOVE''.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     CLS
 

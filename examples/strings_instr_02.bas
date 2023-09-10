@@ -14,7 +14,7 @@ REM stringa, usando la funzione ''INSTR'' a indicando una posizione di partenza.
 REM restituisce la posizione iniziale della stringa all'interno dell'altra SUCCESSIVA
 REM alla posizione data, oppure 0 se tale posizione non esiste.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     CLS
     

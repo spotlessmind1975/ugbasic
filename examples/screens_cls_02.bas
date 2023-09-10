@@ -15,7 +15,7 @@ REM il programma richiederà uno schermo bitmap di 320x200 pixel di risoluzione 
 REM utilizzando il comando ''BITMAP ENABLE''. Successivamente, impostiamo il colore di sfondo 
 REM su rosso utilizzando il comando ''PAPER'' e puliamo lo schermo con un colore bianco (''WHITE''). 
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     BITMAP ENABLE (320,200,16)
 

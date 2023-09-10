@@ -14,7 +14,7 @@ REM (c) oliverlindau on Deviant Art.
 REM
 REM @url https://www.deviantart.com/oliverlindau/art/The-Mill-670453724
 REM
-REM @include c128,c64,coleco,cpc
+REM @include c128,c64,coleco,sg1000,sc3000,cpc
 
     BITMAP ENABLE(16)
 

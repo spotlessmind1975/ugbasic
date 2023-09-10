@@ -10,7 +10,7 @@ REM Questo esempio disegnerà, separatamente, i quattro angoli di un quadrato.
 REM
 REM @url https://www.facebook.com/groups/28618623481/posts/10159544654308482/
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     BITMAP ENABLE (16)
 

@@ -12,7 +12,7 @@ REM Questo esempio eseguirà un ciclo infinito (''DO...LOOP'') che controllerà 
 REM è stato premuto utilizzando la funzione ''INKEY$''. Se è stato premuto un tasto, il 
 REM programma stamperà il messaggio ''"YOU PRESSED A KEY!"''.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,cpc,sc3000
 
     CLS
 

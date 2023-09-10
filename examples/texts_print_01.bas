@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostra l'uso di ''CDOWN'', che incorpora un comando
 REM in una stringa per spostare il cursore in basso di 1 carattere.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
    TILEMAP ENABLE
 

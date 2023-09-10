@@ -15,7 +15,7 @@ REM dimensioni, inizializzato con una costante (3). Inoltre, si mostra come
 REM permettere l'accesso ad un array sul programma principale da parte di una 
 REM procedura parametrica.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     CLS
 	

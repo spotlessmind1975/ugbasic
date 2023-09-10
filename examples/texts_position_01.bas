@@ -12,7 +12,7 @@ REM Questo esempio mostra l'uso del comando ''LOCATE'' per sapostare la posizion
 REM avverrà il successivo output sullo schermo. Quando si omettono i parametri del comando,
 REM questo implica che quella specifica componente delle coordinate rimarrà inalterata.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,cpc
+REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
     CLS
 
