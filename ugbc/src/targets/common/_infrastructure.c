@@ -1393,6 +1393,226 @@ Variable * variable_store_array( Environment * _environment, char * _destination
     return destination;
 }
 
+static void variable_move_32bit_32bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    // 32 BIT (unsigned) -> 32 BIT (signed), warning downcast!
+    if ( !VT_SIGN( _source->type ) && VT_SIGN( _target->type ) ) {
+        WARNING_BITWIDTH( _source->name, _target->name );
+    }
+
+    // We move 32 bit to 32 bit blindly, nothing we can do
+    // to avoid sign precision lost (but warning message above).
+    cpu_move_32bit( _environment, _source->realName, _target->realName );
+
+}
+
+static void variable_move_32bit_16bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    // 32 BIT (signed/unsigned) -> 16 BIT (signed/unsigned), warning downcast!
+    WARNING_BITWIDTH( _source->name, _target->name );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "2") );
+            cpu_move_16bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+    #endif
+
+}
+
+static void variable_move_32bit_8bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    WARNING_DOWNCAST( _source->name, _target->name );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif
+
+}
+
+static void variable_move_16bit_32bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+
+#ifdef CPU_BIG_ENDIAN
+    {
+        char targetRealName[MAX_TEMPORARY_STORAGE];
+        
+        sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
+        cpu_move_16bit( _environment, _source->realName, targetRealName );
+
+        if ( VT_SIGNED( _source->type ) ) {
+            cpu_is_negative( _environment, _source->realName, sign->realName );
+        } else {
+            variable_store( _environment, sign->name, 0 );
+        }
+        
+        sprintf( targetRealName, "%s", _target->realName );
+        cpu_move_8bit( _environment, sign->realName, targetRealName );
+        sprintf( targetRealName, "(%s)", address_displacement(_environment, _target->realName, "1") );
+        cpu_move_8bit( _environment, sign->realName, targetRealName );
+    }
+#else
+    {
+        char sourceRealName[MAX_TEMPORARY_STORAGE];
+        sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
+
+        char targetRealName[MAX_TEMPORARY_STORAGE];
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+        
+        if ( VT_SIGNED( _source->type ) ) {
+            cpu_is_negative( _environment, sourceRealName, sign->realName );
+        } else {
+            variable_store( _environment, sign->name, 0 );
+        }
+        
+        sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
+        cpu_move_8bit( _environment, sign->realName, targetRealName );
+        sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
+        cpu_move_8bit( _environment, sign->realName, targetRealName );
+    }
+#endif
+
+}
+
+static void variable_move_16bit_16bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    cpu_move_16bit( _environment, _source->realName, _target->realName );
+
+}
+
+static void variable_move_16bit_8bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    // 16 BIT (signed/unsigned) -> 8 BIT (signed/unsigned), warning downcast!
+    WARNING_DOWNCAST( _source->name, _target->name );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+
+        // if ( VT_SIGN( source->type ) ) {
+
+        //     if ( VT_SIGN( target->type ) ) {
+
+        //     } else {
+
+        //     }
+
+        // } else {
+
+        //     if ( VT_SIGN( target->type ) ) {
+
+        //     } else {
+
+        //     }
+
+        // }
+
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif
+
+}
+
+static void variable_move_8bit_32bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE];
+            sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+            
+            if ( VT_SIGNED( source->type ) ) {
+                cpu_is_negative( _environment, _source->realName, sign->realName );
+            } else {
+                variable_store( _environment, sign->name, 0 );
+            }
+            
+            sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
+            cpu_move_8bit( _environment, sign->realName, targetRealName );
+            sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+            cpu_move_8bit( _environment, sign->realName, targetRealName );
+            sprintf( targetRealName, "%s", _target->realName );
+            cpu_move_8bit( _environment, sign->realName, targetRealName );
+        }
+    #else
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE];
+            sprintf( targetRealName, "%s", _target->realName );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+            
+            if ( VT_SIGNED( _source->type ) ) {
+                cpu_is_negative( _environment, _source->realName, sign->realName );
+            } else {
+                variable_store( _environment, sign->name, 0 );
+            }
+            
+            sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+            cpu_move_8bit( _environment, sign->realName, targetRealName );
+            sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
+            cpu_move_8bit( _environment, sign->realName, targetRealName );
+            sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
+            cpu_move_8bit( _environment, sign->realName, targetRealName );
+        }
+    #endif
+
+}
+
+static void variable_move_8bit_16bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE];
+            sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+            
+            if ( VT_SIGNED( _source->type ) ) {
+                cpu_is_negative( _environment, _source->realName, sign->realName );
+            } else {
+                variable_store( _environment, sign->name, 0 );
+            }
+            
+            sprintf( targetRealName, "%s", _target->realName );
+            cpu_move_8bit( _environment, sign->realName, targetRealName );
+        }
+    #else
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE];
+            sprintf( targetRealName, "%s", _target->realName );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+            
+            if ( VT_SIGNED( _source->type ) ) {
+                cpu_is_negative( _environment, _source->realName, sign->realName );
+            } else {
+                variable_store( _environment, sign->name, 0 );
+            }
+            
+            sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+            cpu_move_8bit( _environment, sign->realName, targetRealName );
+        }
+    #endif
+
+}
+
+static void variable_move_8bit_8bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    cpu_move_8bit( _environment, _source->realName, _target->realName );
+
+}
+
 /**
  * @brief Store the value of a variable inside another variable by converting it
  * 
@@ -1417,34 +1637,36 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
     Variable * target = variable_retrieve( _environment, _destination );
 
     switch( VT_BITWIDTH( source->type ) ) {
+
+        //////////////////////////////////////////////////////////////////////////////
+        //// FROM 32 BIT TO ....
+        //////////////////////////////////////////////////////////////////////////////
+
         case 32:
+
             switch( VT_BITWIDTH( target->type ) ) {
+
+                // 32 BIT -> 32 BIT
                 case 32:
-                    cpu_move_32bit( _environment, source->realName, target->realName );
+
+                    variable_move_32bit_32bit( _environment, source, target );
+
                     break;
+
                 case 16:
-                    WARNING_BITWIDTH( _source, _destination );
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, source->realName, "2") );
-                            cpu_move_16bit( _environment, sourceRealName, target->realName );
-                        }
-                    #else
-                        cpu_move_16bit( _environment, source->realName, target->realName );
-                    #endif
+
+                    variable_move_32bit_16bit( _environment, source, target );
+
                     break;
+
                 case 8:
-                    WARNING_DOWNCAST( _source, target->name );
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, source->realName, "3") );
-                            cpu_move_8bit( _environment, sourceRealName, target->realName );
-                        }
-                    #else
-                        cpu_move_8bit( _environment, source->realName, target->realName );
-                    #endif
+
+                    variable_move_32bit_8bit( _environment, source, target );
+
                     break;
+
                 case 0:
+
                     switch( target->type ) {
                         case VT_TILE:
                             WARNING_DOWNCAST( _source, target->name );
@@ -1465,63 +1687,29 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                     break;
             }
             break;
+
         case 16:
+
             switch( VT_BITWIDTH( target->type ) ) {
+
                 case 32:
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char targetRealName[MAX_TEMPORARY_STORAGE];
-                            
-							sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "2") );
-                            cpu_move_16bit( _environment, source->realName, targetRealName );
 
-							if ( VT_SIGNED( source->type ) ) {
-								cpu_is_negative( _environment, source->realName, sign->realName );
-							} else {
-								variable_store( _environment, sign->name, 0 );
-							}
-							
-                            sprintf( targetRealName, "%s", target->realName );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                            sprintf( targetRealName, "(%s)", address_displacement(_environment, target->realName, "1") );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                        }
-                    #else
-                        {
-                            char sourceRealName[MAX_TEMPORARY_STORAGE];
-							sprintf( sourceRealName, "%s", address_displacement(_environment, source->realName, "1") );
+                    variable_move_16bit_32bit( _environment, source, target );
 
-                            char targetRealName[MAX_TEMPORARY_STORAGE];
-                            cpu_move_16bit( _environment, source->realName, target->realName );
-							
-							if ( VT_SIGNED( source->type ) ) {
-								cpu_is_negative( _environment, sourceRealName, sign->realName );
-							} else {
-								variable_store( _environment, sign->name, 0 );
-							}
-                            
-							sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "3") );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                            sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "2") );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                        }
-                    #endif
                     break;
                 case 16:
-                    cpu_move_16bit( _environment, source->realName, target->realName );
+
+                    variable_move_16bit_16bit( _environment, source, target );
+
                     break;
                 case 8:
-                    WARNING_DOWNCAST( _source, target->name );
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, source->realName, "1") );
-                            cpu_move_8bit( _environment, sourceRealName, target->realName );
-                        }
-                    #else
-                        cpu_move_8bit( _environment, source->realName, target->realName );
-                    #endif
+
+                    variable_move_16bit_8bit( _environment, source, target );
+
                     break;
+
                 case 0:
+
                     switch( target->type ) {
                         case VT_TILE:
                             WARNING_DOWNCAST( _source, target->name );
@@ -1549,88 +1737,35 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         default:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                     }
+
                     break;
+
             }
+
             break;
+
         case 8:
+
             switch( VT_BITWIDTH( target->type ) ) {
+
                 case 32:
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char targetRealName[MAX_TEMPORARY_STORAGE];
-                            sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "3") );
-                            cpu_move_8bit( _environment, source->realName, targetRealName );
-							
-							if ( VT_SIGNED( source->type ) ) {
-								cpu_is_negative( _environment, source->realName, sign->realName );
-							} else {
-								variable_store( _environment, sign->name, 0 );
-							}
-                            
-							sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "2") );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                            sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "1") );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                            sprintf( targetRealName, "%s", target->realName );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                        }
-                    #else
-                        {
-                            char targetRealName[MAX_TEMPORARY_STORAGE];
-                            sprintf( targetRealName, "%s", target->realName );
-                            cpu_move_8bit( _environment, source->realName, targetRealName );
-							
-							if ( VT_SIGNED( source->type ) ) {
-								cpu_is_negative( _environment, source->realName, sign->realName );
-							} else {
-								variable_store( _environment, sign->name, 0 );
-							}
-                            
-							sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "1") );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                            sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "2") );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                            sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "3") );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                        }
-                    #endif
+
+                    variable_move_8bit_32bit( _environment, source, target );
+
                     break;
+
                 case 16:
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char targetRealName[MAX_TEMPORARY_STORAGE];
-                            sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "1") );
-                            cpu_move_8bit( _environment, source->realName, targetRealName );
-							
-							if ( VT_SIGNED( source->type ) ) {
-								cpu_is_negative( _environment, source->realName, sign->realName );
-							} else {
-								variable_store( _environment, sign->name, 0 );
-							}
-                            
-							sprintf( targetRealName, "%s", target->realName );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                        }
-                    #else
-                        {
-                            char targetRealName[MAX_TEMPORARY_STORAGE];
-                            sprintf( targetRealName, "%s", target->realName );
-                            cpu_move_8bit( _environment, source->realName, targetRealName );
-							
-							if ( VT_SIGNED( source->type ) ) {
-								cpu_is_negative( _environment, source->realName, sign->realName );
-							} else {
-								variable_store( _environment, sign->name, 0 );
-							}
-                            
-							sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "1") );
-                            cpu_move_8bit( _environment, sign->realName, targetRealName );
-                        }
-                    #endif
+
+                    variable_move_8bit_16bit( _environment, source, target );
+
                     break;
+
                 case 8:
-                    cpu_move_8bit( _environment, source->realName, target->realName );
+
+                    variable_move_8bit_8bit( _environment, source, target );
+
                     break;
+
                 case 0:
                     switch( target->type ) {
                         case VT_TILE:
@@ -1651,10 +1786,15 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         default:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                     }
+
                     break;
+
             }
+
             break;
+
         case 0:
+
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
                     switch( source->type ) {
