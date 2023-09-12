@@ -163,8 +163,16 @@ libxml2: paths $(LIBXML2)
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 
+ifeq ($(OS),Windows_NT)
+ifeq ($(debug),1)
+CFLAGS += -D_DEBUG -fno-inline -fno-omit-frame-pointer -static-libgcc -static-libstdc++ -gdwarf-2
+endif
+endif
+
+ifneq ($(OS),Windows_NT)
 ifeq ($(debug),1)
 CFLAGS += -D_DEBUG -g
+endif
 endif
 
 # ----------------------------------------------------------------------------
