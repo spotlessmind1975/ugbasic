@@ -146,7 +146,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     fclose( lookedFileHandle );
 
     int frames = 0;
-    unsigned char * source;
+    unsigned char * originalSource, * source;
     int layout_mode = 0;
 
     if ( stbi_is_animated_gif( lookedFilename ) ) {
@@ -161,6 +161,8 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         frames = 0;
         layout_mode = 0;
     }
+
+    originalSource = source;
 
     if ( _frame_width < 0 ) {
         _frame_width = width;
@@ -309,7 +311,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         ptr += result[i]->size;
     }
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
-    final->originalBitmap = source;
+    final->originalBitmap = originalSource;
     final->originalWidth = width;
     final->originalHeight = height;
     final->originalDepth = depth;
