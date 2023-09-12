@@ -110,7 +110,7 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coleco,cpc,d32,d64,mo5,msx1,pc128
     '
     ' -100500 = 11111111111111100111011101101100 -> 00011000100010010100 -> 10010100
     b = -100500
-    PRINT "byte(-100500) = "; b; " (exp ";"108";" )"
+    PRINT "byte(-100500) = "; b; " (exp ";"148";" )"
 
     ' source overflow [with unsigned dword] -> destination approximation
 
@@ -253,10 +253,10 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coleco,cpc,d32,d64,mo5,msx1,pc128
     dw = -100500
     PRINT "signed dword(-100500) = "; dw; " (exp ";"-100500";" )"
 
-    ' source underflow [with unsigned dword] -> destination underflow
+    ' source underflow [with unsigned dword] -> destination approximation
 
     dw = 10020000
-    PRINT "signed dword(10020000) = "; sw; " (exp ";"10020000";" )"
+    PRINT "signed dword(10020000) = "; sw; " (exp ";"25760";" )"
 
     ' ******************************************************************
     ' ******************************************************************
