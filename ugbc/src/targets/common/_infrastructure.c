@@ -1809,7 +1809,7 @@ static void variable_move_16bit_32bit( Environment * _environment, Variable * _s
             cpu_complement2_16bit( _environment, _source->realName, tmp->realName );
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _target->realName, "2") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
                     cpu_move_16bit( _environment, tmp->realName, targetRealName );
                 }
             #else
@@ -1824,7 +1824,7 @@ static void variable_move_16bit_32bit( Environment * _environment, Variable * _s
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "2") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf(targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
                     cpu_move_16bit( _environment, _source->realName, targetRealName );
                 }
             #else
@@ -1866,7 +1866,7 @@ static void variable_move_16bit_32bit( Environment * _environment, Variable * _s
             cpu_complement2_16bit( _environment, _source->realName, tmp->realName );
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _target->realName, "2") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
                     cpu_move_16bit( _environment, tmp->realName, targetRealName );
                 }
             #else
@@ -1880,7 +1880,7 @@ static void variable_move_16bit_32bit( Environment * _environment, Variable * _s
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "2") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, tmp->realName, "2") );
                     cpu_move_16bit( _environment, _source->realName, targetRealName );
                 }
             #else
@@ -1909,7 +1909,7 @@ static void variable_move_16bit_32bit( Environment * _environment, Variable * _s
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "2") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
                     cpu_move_16bit( _environment, _source->realName, targetRealName );
                 }
             #else
@@ -1932,7 +1932,7 @@ static void variable_move_16bit_32bit( Environment * _environment, Variable * _s
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "2") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
                     cpu_move_16bit( _environment, _source->realName, targetRealName );
                 }
             #else
@@ -2216,7 +2216,7 @@ static void variable_move_8bit_32bit( Environment * _environment, Variable * _so
             cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _target->realName, "3") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
                     cpu_move_8bit( _environment, tmp->realName, targetRealName );
                 }
             #else
@@ -2231,7 +2231,7 @@ static void variable_move_8bit_32bit( Environment * _environment, Variable * _so
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "3") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
                     cpu_move_8bit( _environment, _source->realName, targetRealName );
                 }
             #else
@@ -2265,8 +2265,8 @@ static void variable_move_8bit_32bit( Environment * _environment, Variable * _so
             cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "3") );
-                    cpu_move_8bit( _environment, _source->realName, targetRealName );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
+                    cpu_move_8bit( _environment, tmp->realName, targetRealName );
                 }
             #else
                 cpu_move_8bit( _environment, tmp->realName, _target->realName );
@@ -2279,7 +2279,7 @@ static void variable_move_8bit_32bit( Environment * _environment, Variable * _so
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "3") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
                     cpu_move_8bit( _environment, _source->realName, targetRealName );
                 }
             #else
@@ -2308,7 +2308,7 @@ static void variable_move_8bit_32bit( Environment * _environment, Variable * _so
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "3") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
                     cpu_move_8bit( _environment, _source->realName, targetRealName );
                 }
             #else
@@ -2331,7 +2331,7 @@ static void variable_move_8bit_32bit( Environment * _environment, Variable * _so
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "3") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
                     cpu_move_8bit( _environment, _source->realName, targetRealName );
                 }
             #else
@@ -2382,7 +2382,7 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
             cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
                     cpu_move_8bit( _environment, tmp->realName, targetRealName );
                 }
             #else
@@ -2397,7 +2397,7 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "1") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
                     cpu_move_8bit( _environment, _source->realName, targetRealName );
                 }
             #else
@@ -2431,7 +2431,7 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
             cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
                     cpu_move_8bit( _environment, tmp->realName, targetRealName );
                 }
             #else
@@ -2445,7 +2445,7 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "1") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
                     cpu_move_8bit( _environment, _source->realName, targetRealName );
                 }
             #else
@@ -2474,7 +2474,7 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "1") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
                     cpu_move_8bit( _environment, _source->realName, targetRealName );
                 }
             #else
@@ -2497,7 +2497,7 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "1") );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
                     cpu_move_8bit( _environment, _source->realName, targetRealName );
                 }
             #else
