@@ -67,6 +67,11 @@ void end_for( Environment * _environment ) {
 
     if ( loop->type == LT_FOR ) {
         variable_add_inplace_vars( _environment, loop->index->name, loop->step->name );
+
+        if ( !VT_SIGNED( loop->index->type ) ) {
+            variable_compare_and_branch_const( _environment, loop->index->name, 0, endFor, 1 );
+        }
+
     } else {
         ++((struct _Environment *)_environment)->arrayNestedIndex;
         memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
