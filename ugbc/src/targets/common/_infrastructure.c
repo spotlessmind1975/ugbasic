@@ -1695,6 +1695,8 @@ static void variable_move_32bit_8bit( Environment * _environment, Variable * _so
 
             MAKE_LABEL
 
+            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
             // Generic algorithm:
 
             cpu_store_8bit( _environment, _target->realName, 0 );
@@ -1709,20 +1711,36 @@ static void variable_move_32bit_8bit( Environment * _environment, Variable * _so
             #endif
             cpu_bveq( _environment, sign->realName, label );
 
+            //  - negative? -> put value of zero!
+
+            Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(tmp)" );
+
+            cpu_complement2_32bit( _environment, _source->realName, tmp->realName );
+            #ifdef CPU_BIG_ENDIAN
+                {
+                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "3") );
+                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
+                }
+            #else
+                cpu_move_8bit( _environment, tmp->realName, _target->realName );
+            #endif
+
+            cpu_jump( _environment, doneLabel );
+
             //  - positive? -> copy lower 16 bits
+
+            cpu_label( _environment, label );
 
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "2") );
+                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
                     cpu_move_8bit( _environment, sourceRealName, _target->realName );
                 }
             #else
                 cpu_move_8bit( _environment, _source->realName, _target->realName );
             #endif
 
-            //  - negative? -> put value of zero!
-
-            cpu_label( _environment, label );
+            cpu_label( _environment, doneLabel );
 
         }
 
