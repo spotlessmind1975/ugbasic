@@ -113,8 +113,8 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
         memset( used, 0xff, iNum * sizeof( int ) );
 
         // int channel = 0;
-        int * lastNoteOnChannel = malloc( iNum * sizeof( int ) );
-        memset( lastNoteOnChannel, 0, iNum * sizeof( int ) );
+        int * lastNoteOnChannel = malloc( MAX_AUDIO_CHANNELS * sizeof( int ) );
+        memset( lastNoteOnChannel, 0, MAX_AUDIO_CHANNELS * sizeof( int ) );
 
         // Used channels
         int usedChannel[MAX_AUDIO_CHANNELS];
