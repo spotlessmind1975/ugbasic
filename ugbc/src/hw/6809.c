@@ -1120,7 +1120,7 @@ void cpu6809_math_and_const_8bit( Environment * _environment, char *_source, int
     inline( cpu_math_and_const_8bit )
 
         outline1("LDB %s", _source);
-        outline1("ANDB %2.2x", _mask);
+        outline1("ANDB #$%2.2x", _mask);
         outline1("STB %s", _source);
 
     no_embedded( cpu_math_and_const_8bit )
