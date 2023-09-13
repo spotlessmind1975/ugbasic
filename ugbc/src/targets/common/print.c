@@ -125,6 +125,38 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                 
                 break;
             }
+            case 1: {
+                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary for PRINT)");
+                Variable * size = variable_temporary( _environment, VT_BYTE, "(temporary for PRINT)");
+                Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
+                Variable * bcheck = variable_temporary( _environment, VT_BYTE, "(temporary for PRINT)");
+                Variable * zero = variable_temporary( _environment, VT_BYTE, "(temporary for PRINT)");
+                Variable * one = variable_temporary( _environment, VT_BYTE, "(temporary for PRINT)");
+
+                cpu_store_8bit( _environment, zero->realName, '0' );
+                cpu_store_8bit( _environment, one->realName, '1' );
+
+                variable_store_string( _environment, tmp->name, " " );
+                cpu_dswrite( _environment, tmp->realName );
+                cpu_dsdescriptor( _environment, tmp->realName, address->realName, size->realName );
+
+                MAKE_LABEL
+
+                char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+                outline0(" ; printing bit..." );
+                cpu_bit_check( _environment, value->realName, value->bitPosition, bcheck->realName, 8 );
+                cpu_compare_and_branch_8bit_const( _environment, bcheck->realName, 0, label, 1 );
+                cpu_move_8bit_indirect( _environment, one->realName, address->realName );
+                cpu_jump( _environment, doneLabel );
+                cpu_label( _environment, label );
+                cpu6502_move_8bit_indirect( _environment, zero->realName, address->realName );
+                cpu_label( _environment, doneLabel );
+
+                value = tmp;
+                
+                break;
+            }
             case 0:
                 switch( value->type ) {
                     case VT_FLOAT: {

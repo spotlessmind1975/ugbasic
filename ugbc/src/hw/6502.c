@@ -5548,14 +5548,16 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
                 break;
         }
         outline0("AND TMPPTR" );
-        outline1("BEQ %szero", label);
-        outhead1("%sone:", label)
-        outline0("LDA #$ff");
-        outline1("JMP %send", label );
-        outhead1("%szero:", label)
-        outline0("LDA #$0");
-        outhead1("%send:", label)
-        outline1("STA %s", _result);
+        if ( _result) {
+            outline1("BEQ %szero", label);
+            outhead1("%sone:", label)
+            outline0("LDA #$ff");
+            outline1("JMP %send", label );
+            outhead1("%szero:", label)
+            outline0("LDA #$0");
+            outhead1("%send:", label)
+            outline1("STA %s", _result);
+        }
 
     no_embedded( cpu_bit_check )
 
@@ -5617,6 +5619,38 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
         outline1("STA %s", _result);
 
     no_embedded( cpu_bit_check_extended )
+
+}
+
+void cpu6502_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
+
+    MAKE_LABEL
+
+    inline( cpu_bit_inplace )
+
+        if ( _bit ) {
+            outline1("LDA %s", _value );
+            if ( *_bit ) {
+                outline1("ORA #$%2.2x", (unsigned char)( 1 << _position ) );
+            } else {
+                outline1("AND #$%2.2x", (unsigned char)(~( 1 << _position )) );
+            }
+            outline1("STA %s", _value );
+
+        } else {
+            outline1("BEQ %szero", label );
+            outline1("LDA %s", _value );
+            outline1("ORA #$%2.2x", (unsigned char)( 1 << _position ) );
+            outline1("STA %s", _value );
+            outline1("JMP %sdone", label );
+            outhead1("%szero:", label );
+            outline1("LDA %s", _value );
+            outline1("AND #$%2.2x", (unsigned char)(~( 1 << _position )) );
+            outline1("STA %s", _value );
+            outhead1("%sdone:", label );
+        }
+
+    no_embedded( cpu_bit_inplace )
 
 }
 

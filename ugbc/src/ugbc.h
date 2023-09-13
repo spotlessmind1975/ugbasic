@@ -357,7 +357,10 @@ typedef enum _VariableType {
     VT_FLOAT = 26,
 
     /** TILEMAP */
-    VT_TILEMAP = 27
+    VT_TILEMAP = 27,
+
+    /** BIT */
+    VT_BIT = 28
 
 } VariableType;
 
@@ -381,6 +384,7 @@ typedef enum _VariableType {
 #define FONT_SCHEMA_ALPHA               4
 #define FONT_DEFAULT_SCHEMA             FONT_SCHEMA_EMBEDDED
 
+#define VT_BW_1BIT( t, v )              ( ( (t) == (v) ) ? 1 : 0 )
 #define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
 #define VT_BW_16BIT( t, v )             ( ( (t) == (v) ) ? 16 : 0 )
 #define VT_BW_24BIT( t, v )             ( ( (t) == (v) ) ? 24 : 0 )
@@ -391,7 +395,7 @@ typedef enum _VariableType {
 #define VT_BW_128BIT( t, v )             ( ( (t) == (v) ) ? 128 : 0 )
 
 #define VT_BITWIDTH( t ) \
-        ( VT_BW_8BIT( t, VT_CHAR ) + VT_BW_8BIT( t, VT_BYTE ) + VT_BW_8BIT( t, VT_SBYTE ) + VT_BW_8BIT( t, VT_COLOR ) + VT_BW_8BIT( t, VT_THREAD ) + \
+        ( VT_BW_1BIT( t, VT_BIT ) + VT_BW_8BIT( t, VT_CHAR ) + VT_BW_8BIT( t, VT_BYTE ) + VT_BW_8BIT( t, VT_SBYTE ) + VT_BW_8BIT( t, VT_COLOR ) + VT_BW_8BIT( t, VT_THREAD ) + \
         VT_BW_16BIT( t, VT_WORD ) + VT_BW_16BIT( t, VT_SWORD ) + VT_BW_16BIT( t, VT_ADDRESS ) + VT_BW_16BIT( t, VT_POSITION ) + \
         VT_BW_32BIT( t, VT_DWORD ) + VT_BW_32BIT( t, VT_SDWORD ) )
 
@@ -669,6 +673,16 @@ typedef struct _Variable {
      * The static floating's value, as given by last (re)definition.
      */
     double valueFloating;
+
+    /**
+     * Position of the bit inside the byte.
+     */
+    int bitPosition;
+
+    /**
+     * Position of the byte inside the (generic) bitstream.
+     */
+    int bitByte;
 
     /** 
      * The static buffer's value, as given by last (re)definition.
@@ -1214,6 +1228,7 @@ typedef struct _Embedded {
     int cpu_move_32bit_indirect;
     int cpu_move_32bit_indirect2;
     int cpu_bit_check;
+    int cpu_bit_inplace;
     int cpu_number_to_string;
     int cpu_move_8bit_indirect_with_offset;
     int cpu_bits_to_string;
@@ -2181,6 +2196,16 @@ typedef struct _Environment {
      * 
      */
     int frameHeight;
+
+    /**
+     * Position of the next bit allocable.
+     */
+    int bitPosition;
+
+    /**
+     * Position of the next byte allocable.
+     */
+    int bitByte;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */

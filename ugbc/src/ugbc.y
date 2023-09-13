@@ -1375,7 +1375,10 @@ sprite_flags :
     };
 
 random_definition_simple:
-      BYTE {
+      BIT {
+        $$ = random_value( _environment, VT_BIT )->name;
+    }
+    | BYTE {
         $$ = random_value( _environment, VT_BYTE )->name;
     }
     | WORD {
@@ -2276,6 +2279,10 @@ exponential:
         variable_store_string( _environment, variable->name, $1 );
         variable->printable = 1;
         $$ = variable->name;
+      }
+    | OP BIT CP Integer { 
+        $$ = variable_temporary( _environment, VT_BIT, "(BIT value)" )->name;
+        variable_store( _environment, $$, $4 );
       }
     | OP BYTE CP Integer { 
         $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
@@ -4955,7 +4962,10 @@ dimensions :
     ;
 
 datatype : 
-    BYTE {
+    BIT {
+        $$ = VT_BIT;
+    }
+    | BYTE {
         $$ = VT_BYTE;
     }
     | SIGNED BYTE {
