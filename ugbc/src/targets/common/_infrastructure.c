@@ -4027,11 +4027,8 @@ void variable_swap( Environment * _environment, char * _source, char * _dest ) {
             break;
         case 1: {
             Variable * b = variable_temporary( _environment, VT_BIT, "(swap)") ;
-            outline0(";variable_move(source,b)");
             variable_move( _environment, source->name, b->name );
-            outline0(";variable_move(target,source)");
             variable_move( _environment, target->name, source->name );
-            outline0(";variable_move(b,target)");
             variable_move( _environment, b->name, target->name );
             break;
         }
@@ -4081,8 +4078,6 @@ Variable * variable_complement_const( Environment * _environment, char * _destin
             cpu_math_complement_const_8bit( _environment, destination->realName, _value );
             break;
         case 1:
-            CRITICAL_COMPLEMENT_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type]);
-            break;
         case 0:
             CRITICAL_COMPLEMENT_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type]);
      }
@@ -4627,7 +4622,26 @@ void variable_compare_and_branch_const( Environment * _environment, char *_sourc
         case 8:
             cpu_compare_and_branch_8bit_const( _environment, source->realName, _destination,  _name, _positive );
             break;
-        case 1:
+        case 1: {
+            Variable * bcheck = variable_temporary( _environment, VT_BYTE, "(bcheck)" );
+            if ( _positive ) {
+                if ( _destination ) {
+                    cpu_bit_check( _environment, source->realName, source->bitPosition, bcheck->realName, 8 );
+                    cpu_compare_and_branch_8bit_const( _environment, bcheck->realName, 0xff, _name, 1 );
+                } else {
+                    cpu_bit_check( _environment, source->realName, source->bitPosition, bcheck->realName, 8 );
+                    cpu_compare_and_branch_8bit_const( _environment, bcheck->realName, 0, _name, 1 );
+                }
+            } else {
+                if ( _destination ) {
+                    cpu_bit_check( _environment, source->realName, source->bitPosition, bcheck->realName, 8 );
+                    cpu_compare_and_branch_8bit_const( _environment, bcheck->realName, 0, _name, 1 );
+                } else {
+                    cpu_bit_check( _environment, source->realName, source->bitPosition, bcheck->realName, 8 );
+                    cpu_compare_and_branch_8bit_const( _environment, bcheck->realName, 0xff, _name, 1 );
+                }
+            }
+        }
         case 0:
             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[source->type]);
     }
@@ -4690,7 +4704,20 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                         cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
                     #endif
                     break;
-                case 1:
+                case 1: {
+                    WARNING_BITWIDTH( _source, _destination );
+                    Variable * converted = variable_temporary( _environment, VT_BYTE, "(byte)" );
+                    variable_move_1bit_8bit( _environment, target, converted );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, source->realName, "3") );
+                            cpu_compare_8bit( _environment, sourceRealName, converted->realName, result->realName, 1 );
+                        }
+                    #else
+                        cpu_compare_8bit( _environment, source->realName, converted->realName, result->realName, 1 );
+                    #endif
+                    break;
+                }
                 case 0:
                     // @todo direct comparing 32bit ==/!= VT_FLOAT to be supported?
                     CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
@@ -4723,7 +4750,20 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                         cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
                     #endif
                     break;
-                case 1:
+                case 1: {
+                    WARNING_BITWIDTH( _source, _destination );
+                    Variable * converted = variable_temporary( _environment, VT_BYTE, "(byte)" );
+                    variable_move_1bit_8bit( _environment, target, converted );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, source->realName, "1") );
+                            cpu_compare_8bit( _environment, sourceRealName, target->realName, result->realName, 1 );
+                        }
+                    #else                      
+                        cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    #endif
+                    break;
+                }
                 case 0:
                     // @todo direct comparing 16bit ==/!= VT_FLOAT to be supported?
                     CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
@@ -4756,14 +4796,60 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                 case 8:
                     cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
                     break;
-                case 1:
+                case 1: {
+                    WARNING_BITWIDTH( _source, _destination );
+                    Variable * converted = variable_temporary( _environment, VT_BYTE, "(byte)" );
+                    variable_move_1bit_8bit( _environment, target, converted );
+                    cpu_compare_8bit( _environment, source->realName, converted->realName, result->realName, 1 );
+                    break;
+                }
                 case 0:
                     // @todo direct comparing 8bit ==/!= VT_FLOAT to be supported?
                     CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
             }
             break;
-        case 1:
-            CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
+        case 1: {
+            Variable * converted = variable_temporary( _environment, VT_BYTE, "(byte)" );
+            variable_move_1bit_8bit( _environment, source, converted );
+            switch( VT_BITWIDTH( target->type ) ) {
+                case 32:
+                    WARNING_BITWIDTH( _source, _destination );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "3") );
+                            cpu_compare_8bit( _environment, converted->realName, targetRealName, result->realName, 1 );
+                        }
+                    #else                      
+                        cpu_compare_8bit( _environment, converted->realName, target->realName, result->realName, 1 );
+                    #endif
+                    break;
+                case 16:
+                    WARNING_BITWIDTH( _source, _destination );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "1") );
+                            cpu_compare_8bit( _environment, converted->realName, targetRealName, result->realName, 1 );
+                        }
+                    #else                      
+                        cpu_compare_8bit( _environment, converted->realName, target->realName, result->realName, 1 );
+                    #endif
+                    break;
+                case 8:
+                    cpu_compare_8bit( _environment, converted->realName, target->realName, result->realName, 1 );
+                    break;
+                case 1: {
+                    WARNING_BITWIDTH( _source, _destination );
+                    Variable * converted2 = variable_temporary( _environment, VT_BYTE, "(byte)" );
+                    variable_move_1bit_8bit( _environment, target, converted2 );
+                    cpu_compare_8bit( _environment, converted->realName, converted2->realName, result->realName, 1 );
+                    break;
+                }
+                case 0:
+                    // @todo direct comparing 8bit ==/!= VT_FLOAT to be supported?
+                    CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
+            }
+            break;        
+        }
         case 0:
             switch( source->type ) {
                 case VT_STRING:
