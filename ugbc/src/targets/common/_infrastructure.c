@@ -754,6 +754,8 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     if ( var ) {
 
         if ( 
+            ( VT_BITWIDTH( var->type ) != 1 ) 
+            && 
             ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) ) 
             && 
             ( ( VT_BITWIDTH( _type ) > 0 ) || ( _type == VT_FLOAT ) ) 
@@ -2818,8 +2820,10 @@ static void variable_move_1bit_1bit( Environment * _environment, Variable * _sou
 
     // 1 BIT -> 1 BIT
 
+    outline0( "; 1->1 bit");
     cpu_bit_check( _environment, _source->realName, _source->bitPosition, NULL, 8 );
 
+    outline0( "; inplace 1 bit");
     cpu_bit_inplace_8bit( _environment, _target->realName, _target->bitPosition, NULL );
 
 }
@@ -4004,11 +4008,13 @@ void variable_sub_inplace( Environment * _environment, char * _source, char * _d
  * @param _destination Destination variable's name
  */
 void variable_swap( Environment * _environment, char * _source, char * _dest ) {
+    
     Variable * source = variable_retrieve_or_define( _environment, _source, _environment->defaultVariableType, 0 );
     Variable * target = variable_retrieve_or_define( _environment, _dest, _environment->defaultVariableType, 0 );
     if ( VT_BITWIDTH( source->type ) != VT_BITWIDTH( target->type ) ) {
         CRITICAL_SWAP_DIFFERENT_BITWIDTH(target->name);
     }
+
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             cpu_swap_32bit( _environment, source->realName, target->realName );
@@ -4019,9 +4025,16 @@ void variable_swap( Environment * _environment, char * _source, char * _dest ) {
         case 8:
             cpu_swap_8bit( _environment, source->realName, target->realName );
             break;
-        case 1:
-            CRITICAL_SWAP_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+        case 1: {
+            Variable * b = variable_temporary( _environment, VT_BIT, "(swap)") ;
+            outline0(";variable_move(source,b)");
+            variable_move( _environment, source->name, b->name );
+            outline0(";variable_move(target,source)");
+            variable_move( _environment, target->name, source->name );
+            outline0(";variable_move(b,target)");
+            variable_move( _environment, b->name, target->name );
             break;
+        }
         case 0:
             switch( source->type ) {
                 case VT_FLOAT: {
