@@ -12,7 +12,7 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coleco,cpc,d32,d64,mo5,msx1,pc128
 REM @version beta
 
     CLS
-    
+
     POSITIVE CONST bit0 = 0
     POSITIVE CONST bit1 = 1
 
@@ -26,34 +26,34 @@ REM @version beta
     DIM d0 AS WORD = 0
     DIM d1 AS WORD = $ffffffff
 
-    PRINT "(bit 0) = ";
+    PRINT "(bit 0) = "
 
     IF b0 = u0 THEN
-        PRINT "(byte 0) ";
+        PRINT "  (byte 0) "
     ENDIF
 
     IF b0 = w0 THEN
-        PRINT "(word 0) ";
+        PRINT "  (word 0) "
     ENDIF
 
     IF b0 = d0 THEN
-        PRINT "(dword 0) ";
+        PRINT "  (dword 0) "
     ENDIF
 
     PRINT
 
-    PRINT "(bit 1) = ";
+    PRINT "(bit 1) = "
 
     IF b1 = u1 THEN
-        PRINT "(byte $ff) ";
+        PRINT " (byte $ff) "
     ENDIF
 
     IF b1 = w1 THEN
-        PRINT "(word $ffff) ";
+        PRINT " (word $ffff) "
     ENDIF
 
     IF b1 = d1 THEN
-        PRINT "(dword $ffffffff) ";
+        PRINT " (dword $fffffff) "
     ENDIF
 
     PRINT
