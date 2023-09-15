@@ -825,6 +825,7 @@ void variable_reset( Environment * _environment ) {
     }    
 }
 
+// @bit2: ok
 Variable * variable_array_type( Environment * _environment, char *_name, VariableType _type ) {
 
     if (_environment->constants) {
@@ -844,7 +845,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     for( i=0; i<var->arrayDimensions; ++i ) {
         size *= var->arrayDimensionsEach[i];
     }
-    if ( VT_BITWIDTH( var->arrayType ) > 0 ) {
+    if ( VT_BITWIDTH( var->arrayType ) > 1 ) {
         size *= ( VT_BITWIDTH( var->arrayType ) >> 3 );
     } else if ( var->arrayType == VT_DSTRING ) {
         size *= 1;
@@ -862,9 +863,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         }
         var->bitByte = _environment->bitByte;
         var->bitPosition = _environment->bitPosition;
-        if ( size == 0 ) {
-            size = 1;
-        }
+        ++size;
         _environment->bitByte += size;
         _environment->bitPosition = 0;
     } else if ( var->arrayType == VT_FLOAT ) {
@@ -873,6 +872,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         CRITICAL_DATATYPE_UNSUPPORTED("array(1a)", DATATYPE_AS_STRING[var->arrayType]);
     }
     var->size = size;
+    
 }
 
 /**
@@ -1416,6 +1416,7 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
     return destination;
 }
 
+// @bit2: ok
 Variable * variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at ) {
     Variable * destination = variable_retrieve( _environment, _destination );
     switch( destination->type ) {
@@ -4409,6 +4410,7 @@ Variable * variable_increment_array( Environment * _environment, char * _source 
  * @param _source Source variable's name
  * @return Variable* The source variable
  */
+// @bit2: ok
 void variable_store_mt( Environment * _environment, char * _source, unsigned int _value ) {
 
     ++((struct _Environment *)_environment)->arrayNestedIndex;
@@ -4433,6 +4435,7 @@ void variable_store_mt( Environment * _environment, char * _source, unsigned int
  * @param _source Source variable's name
  * @return Variable* The source variable
  */
+// @bit2: ok
 Variable * variable_move_from_mt( Environment * _environment, char * _source, char * _destination ) {
 
     ++((struct _Environment *)_environment)->arrayNestedIndex;
@@ -4456,6 +4459,7 @@ Variable * variable_move_from_mt( Environment * _environment, char * _source, ch
     
 }
 
+// @bit2: ok
 Variable * variable_move_to_mt( Environment * _environment, char * _source, char * _destination ) {
 
     Variable * source = variable_retrieve( _environment, _source );
@@ -4641,6 +4645,7 @@ void variable_compare_and_branch_const( Environment * _environment, char *_sourc
                     cpu_compare_and_branch_8bit_const( _environment, bcheck->realName, 0xff, _name, 1 );
                 }
             }
+            break;
         }
         case 0:
             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[source->type]);
@@ -7100,6 +7105,7 @@ Variable * variable_string_len( Environment * _environment, char * _string  ) {
     
 }
 
+// @bit2: ok
 static Variable * calculate_offset_in_array( Environment * _environment, char * _array ) {
 
     Variable * array = variable_retrieve( _environment, _array );
@@ -7147,6 +7153,80 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 
 }
 
+// @bit2: ok
+void variable_store_array_const_bit( Environment * _environment, Variable * _array, int _value  ) {
+
+    Variable * offset = calculate_offset_in_array( _environment, _array->name );
+    Variable * position = variable_temporary( _environment, VT_WORD, "(position)");
+    variable_move_naked( _environment, offset->name, position->name );
+
+    variable_and_const( _environment, position->name, 7 );
+
+    offset = variable_div2_const( _environment, offset->name, 3 );
+
+    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, position->realName, &_value );
+    
+}
+
+void variable_store_array_const_byte( Environment * _environment, Variable * _array, int _value  ) {
+
+    MAKE_LABEL;
+
+    // @bit2: ok
+    Variable * offset = calculate_offset_in_array( _environment, _array->name );
+
+    switch( _array->arrayType ) {
+        case VT_FLOAT:
+        case VT_STRING:
+            CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[_array->arrayType]);
+         case VT_TILE:
+         case VT_TILESET:
+         case VT_SPRITE:
+         case VT_DSTRING:
+            offset = variable_mul2_const( _environment, offset->name, 0 );
+            break;
+         case VT_TILES:
+            offset = variable_mul2_const( _environment, offset->name, 2 );
+            break;
+         default:
+            offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( _array->arrayType ) >> 3 ) - 1 );
+            break;
+    }
+
+    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+    switch( _array->arrayType ) {
+        case VT_FLOAT:
+            CRITICAL_DATATYPE_UNSUPPORTED("array(3x)", DATATYPE_AS_STRING[_array->arrayType]);
+            break;
+        case VT_TILES:
+            cpu_store_32bit( _environment, offset->realName, _value );
+            break;
+        case VT_TILE:
+        case VT_TILESET:
+        case VT_SPRITE:
+            cpu_store_8bit( _environment, offset->realName, _value );
+            break;
+        default:
+            switch( VT_BITWIDTH( _array->arrayType ) ) {
+                case 32:
+                    cpu_store_32bit( _environment, offset->realName, _value );
+                    break;
+                case 16:
+                    cpu_store_16bit( _environment, offset->realName, _value );
+                    break;
+                case 8:
+                    cpu_store_8bit( _environment, offset->realName, _value );
+                    break;
+                case 0:
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(3x)", DATATYPE_AS_STRING[_array->arrayType]);
+            }
+            break;
+    }
+}
+
 void variable_store_array_const( Environment * _environment, char * _array, int _value  ) {
 
     MAKE_LABEL;
@@ -7162,12 +7242,59 @@ void variable_store_array_const( Environment * _environment, char * _array, int 
         array->arrayType = VT_WORD;
     }
 
-    Variable * offset = calculate_offset_in_array( _environment, _array);
+    if ( array->arrayType != VT_BIT ) {
+        variable_store_array_const_byte( _environment, array, _value  );
+    } else {
+        variable_store_array_const_bit( _environment, array, _value  );
+    }
 
-    switch( array->arrayType ) {
+}
+
+// @bit2: ok
+void variable_move_array_bit( Environment * _environment, Variable * _array, Variable * _value  ) {
+
+    Variable * offset = calculate_offset_in_array( _environment, _array->name );
+    Variable * position = variable_temporary( _environment, VT_WORD, "(position)");
+    variable_move_naked( _environment, offset->name, position->name );
+
+    variable_and_const( _environment, position->name, 7 );
+
+    offset = variable_div2_const( _environment, offset->name, 3 );
+
+    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+    MAKE_LABEL
+
+    char zeroLabel[MAX_TEMPORARY_STORAGE]; sprintf( zeroLabel,  "%szero", label );
+    int value = 0;
+
+    variable_compare_and_branch_const( _environment, _value->name, 0, zeroLabel, 1 );
+
+    value = 1;
+    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, position->realName, &value );
+    cpu_jump( _environment, label );
+
+    cpu_label( _environment, zeroLabel );
+    value = 0;
+    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, position->realName, &value );
+
+    cpu_label( _environment, label );
+
+}
+
+void variable_move_array_byte( Environment * _environment, Variable * _array, Variable * _value ) {
+
+    MAKE_LABEL;
+
+    // @bit2: ok
+    Variable * offset = calculate_offset_in_array( _environment, _array->name );
+
+    switch( _array->arrayType ) {
         case VT_FLOAT:
+            offset = variable_mul2_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( _array->arrayPrecision ) );
+            break;
         case VT_STRING:
-            CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[array->arrayType]);
+            CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[_array->arrayType]);
          case VT_TILE:
          case VT_TILESET:
          case VT_SPRITE:
@@ -7178,37 +7305,38 @@ void variable_store_array_const( Environment * _environment, char * _array, int 
             offset = variable_mul2_const( _environment, offset->name, 2 );
             break;
          default:
-            offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
+            offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( _array->arrayType ) >> 3 ) - 1 );
             break;
     }
 
-    cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-    switch( array->arrayType ) {
+    switch( _array->arrayType ) {
         case VT_FLOAT:
-            CRITICAL_DATATYPE_UNSUPPORTED("array(3x)", DATATYPE_AS_STRING[array->arrayType]);
+            cpu_move_nbit_indirect( _environment, VT_FLOAT_BITWIDTH( _array->arrayPrecision ), _value->realName, offset->realName );
             break;
         case VT_TILES:
-            cpu_store_32bit( _environment, offset->realName, _value );
+            cpu_move_32bit_indirect( _environment, _value->realName, offset->realName );
             break;
         case VT_TILE:
         case VT_TILESET:
         case VT_SPRITE:
-            cpu_store_8bit( _environment, offset->realName, _value );
+            cpu_move_8bit_indirect( _environment, _value->realName, offset->realName );
             break;
         default:
-            switch( VT_BITWIDTH( array->arrayType ) ) {
+            switch( VT_BITWIDTH( _array->arrayType ) ) {
                 case 32:
-                    cpu_store_32bit( _environment, offset->realName, _value );
+                    cpu_move_32bit_indirect( _environment, _value->realName, offset->realName );
                     break;
                 case 16:
-                    cpu_store_16bit( _environment, offset->realName, _value );
+                    cpu_move_16bit_indirect( _environment, _value->realName, offset->realName );
                     break;
                 case 8:
-                    cpu_store_8bit( _environment, offset->realName, _value );
+                    cpu_move_8bit_indirect( _environment, _value->realName, offset->realName );
                     break;
+                case 1:
                 case 0:
-                    CRITICAL_DATATYPE_UNSUPPORTED("array(3x)", DATATYPE_AS_STRING[array->arrayType]);
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
             }
             break;
     }
@@ -7219,6 +7347,7 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
     MAKE_LABEL;
 
     Variable * array = variable_retrieve( _environment, _array );
+    Variable * value = variable_cast( _environment, _value, array->arrayType );
 
     if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
         CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
@@ -7229,61 +7358,12 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
         array->arrayType = VT_WORD;
     }
 
-    Variable * offset = calculate_offset_in_array( _environment, _array);
-
-    switch( array->arrayType ) {
-        case VT_FLOAT:
-            offset = variable_mul2_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( array->arrayPrecision ) );
-            break;
-        case VT_STRING:
-            CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[array->arrayType]);
-         case VT_TILE:
-         case VT_TILESET:
-         case VT_SPRITE:
-         case VT_DSTRING:
-            offset = variable_mul2_const( _environment, offset->name, 0 );
-            break;
-         case VT_TILES:
-            offset = variable_mul2_const( _environment, offset->name, 2 );
-            break;
-         default:
-            offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
-            break;
+    if ( array->arrayType != VT_BIT ) {
+        variable_move_array_byte( _environment, array, value  );
+    } else {
+        variable_move_array_bit( _environment, array, value  );
     }
 
-    cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
-
-    Variable * value = variable_cast( _environment, _value, array->arrayType );
-
-    switch( array->arrayType ) {
-        case VT_FLOAT:
-            cpu_move_nbit_indirect( _environment, VT_FLOAT_BITWIDTH( array->arrayPrecision ), value->realName, offset->realName );
-            break;
-        case VT_TILES:
-            cpu_move_32bit_indirect( _environment, value->realName, offset->realName );
-            break;
-        case VT_TILE:
-        case VT_TILESET:
-        case VT_SPRITE:
-            cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
-            break;
-        default:
-            switch( VT_BITWIDTH( array->arrayType ) ) {
-                case 32:
-                    cpu_move_32bit_indirect( _environment, value->realName, offset->realName );
-                    break;
-                case 16:
-                    cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
-                    break;
-                case 8:
-                    cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
-                    break;
-                case 1:
-                case 0:
-                    CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[array->arrayType]);
-            }
-            break;
-    }
 }
 
 void variable_move_array_string( Environment * _environment, char * _array, char * _string  ) {
@@ -7295,6 +7375,7 @@ void variable_move_array_string( Environment * _environment, char * _array, char
         CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
     }
 
+    // @bit2: ok
     Variable * offset = calculate_offset_in_array( _environment, _array);
     
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
@@ -7330,48 +7411,65 @@ void variable_move_array_string( Environment * _environment, char * _array, char
 
 }
 
-Variable * variable_move_from_array( Environment * _environment, char * _array ) {
+// @bit2: ok
+Variable * variable_move_from_array_bit( Environment * _environment, Variable * _array ) {
+
+    Variable * tmp = variable_temporary( _environment, VT_BYTE, "(element from array)" );
+    Variable * result = variable_temporary( _environment, VT_BIT, "(element from array)" );
+
+    Variable * offset = calculate_offset_in_array( _environment, _array->name );
+    Variable * position = variable_temporary( _environment, VT_WORD, "(position)");
+    variable_move_naked( _environment, offset->name, position->name );
+
+    variable_and_const( _environment, position->name, 7 );
+
+    offset = variable_div2_const( _environment, offset->name, 3 );
+
+    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+    cpu_move_8bit_indirect2( _environment, offset->realName, tmp->realName );
 
     MAKE_LABEL
+ 
+    cpu_bit_check_extended( _environment, tmp->realName, position->realName, NULL, 8 );
 
-    Variable * array = variable_retrieve( _environment, _array );
+    cpu_bit_inplace_8bit( _environment, result->realName, result->bitPosition, NULL );
 
-    if ( array->type != VT_ARRAY ) {
-        CRITICAL_NOT_ARRAY( _array );
-    }
+    return result;
 
-    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
-        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
-    }
+}
 
-    Variable * result = variable_temporary( _environment, array->arrayType, "(element from array)" );
+Variable * variable_move_from_array_byte( Environment * _environment, Variable * _array ) {
 
-    if ( array->arrayDimensions == 1 && array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
+    Variable * result = variable_temporary( _environment, _array->arrayType, "(element from array)" );
+
+    if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
 
         Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
 
-        cpu_move_8bit_indirect2_8bit( _environment, array->realName, index->realName, result->realName );
+        cpu_move_8bit_indirect2_8bit( _environment, _array->realName, index->realName, result->realName );
 
-    } else if ( array->arrayDimensions == 1 && array->arrayDimensionsEach[0] <= 65535 && VT_BITWIDTH( array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
+    } else if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 65535 && VT_BITWIDTH( _array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
 
         Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_WORD, 0 );
 
-        cpu_move_8bit_indirect2_16bit( _environment, array->realName, index->realName, result->realName );
+        cpu_move_8bit_indirect2_16bit( _environment, _array->realName, index->realName, result->realName );
 
-    } else if ( array->arrayDimensions == 1 && array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( array->arrayType ) == 16 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
+    } else if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 16 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
 
         Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
 
-        cpu_move_16bit_indirect2_8bit( _environment, array->realName, index->realName, result->realName );
+        cpu_move_16bit_indirect2_8bit( _environment, _array->realName, index->realName, result->realName );
 
     } else {
 
-        Variable * offset = calculate_offset_in_array( _environment, _array);
+        // @bit2: ok
+        Variable * offset = calculate_offset_in_array( _environment, _array->name);
 
-        switch( array->arrayType ) {
+        switch( _array->arrayType ) {
             case VT_STRING: {
 
-                CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[array->arrayType]);
+                CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[_array->arrayType]);
 
                 break;
             }
@@ -7379,7 +7477,7 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
                 offset = variable_mul2_const( _environment, offset->name, 2 );
 
-                cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+                cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
                 cpu_move_32bit_indirect2( _environment, offset->realName, result->realName );
 
@@ -7392,7 +7490,7 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
                 offset = variable_mul2_const( _environment, offset->name, 0 );
 
-                cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+                cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
                 cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
 
@@ -7401,9 +7499,9 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
             }
             case VT_DSTRING: {
 
-                cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+                cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-                Variable * dstring = variable_temporary( _environment, array->arrayType, "(array element)");
+                Variable * dstring = variable_temporary( _environment, _array->arrayType, "(array element)");
 
                 cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
 
@@ -7423,11 +7521,11 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
             case VT_FLOAT: {
 
-                offset = variable_mul2_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( array->arrayPrecision) );
+                offset = variable_mul2_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( _array->arrayPrecision) );
 
-                cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+                cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-                cpu_move_nbit_indirect2( _environment, VT_FLOAT_BITWIDTH( array->arrayPrecision ), offset->realName, result->realName );
+                cpu_move_nbit_indirect2( _environment, VT_FLOAT_BITWIDTH( _array->arrayPrecision ), offset->realName, result->realName );
 
                 break;
 
@@ -7435,12 +7533,12 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
             default: {
 
-                if ( array->arrayType == 0 ) {
-                    WARNING_USE_OF_UNDEFINED_ARRAY( array->name );
-                    array->arrayType = VT_WORD;
+                if ( _array->arrayType == 0 ) {
+                    WARNING_USE_OF_UNDEFINED_ARRAY( _array->name );
+                    _array->arrayType = VT_WORD;
                 }
         
-                switch( VT_BITWIDTH( array->arrayType ) ) {
+                switch( VT_BITWIDTH( _array->arrayType ) ) {
                     case 32:
                         offset = variable_mul2_const( _environment, offset->name, 2 );
                         break;
@@ -7450,15 +7548,15 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
                     case 8:
                         break;
                     case 1:
-                        CRITICAL_DATATYPE_UNSUPPORTED("array(4a)", DATATYPE_AS_STRING[array->arrayType]);
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(4a)", DATATYPE_AS_STRING[_array->arrayType]);
                         break;
                     case 0:
-                        CRITICAL_DATATYPE_UNSUPPORTED("array(4a)", DATATYPE_AS_STRING[array->arrayType]);
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(4a)", DATATYPE_AS_STRING[_array->arrayType]);
                 }
 
-                cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+                cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-                switch( VT_BITWIDTH( array->arrayType ) ) {
+                switch( VT_BITWIDTH( _array->arrayType ) ) {
                     case 32:
                         cpu_move_32bit_indirect2( _environment, offset->realName, result->realName );
                         break;
@@ -7469,15 +7567,40 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
                         cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
                         break;
                     case 1:
-                        CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[_array->arrayType]);
                     case 0:
-                        CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[_array->arrayType]);
                 }
 
             }
 
         }
 
+    }
+
+    return result;
+
+}
+
+Variable * variable_move_from_array( Environment * _environment, char * _array ) {
+
+    MAKE_LABEL
+
+    Variable * array = variable_retrieve( _environment, _array );
+    Variable * result = NULL;
+
+    if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( _array );
+    }
+
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
+    }
+
+    if ( array->arrayType != VT_BIT ) {
+        result = variable_move_from_array_byte( _environment, array );
+    } else {
+        result = variable_move_from_array_bit( _environment, array );
     }
 
     return result;
@@ -9529,7 +9652,6 @@ Variable * origin_resolution_relative_transform_x( Environment * _environment, c
 
         Variable * mul = variable_mul( _environment, xFloat->name, currentWidthFloat->name );
         Variable * div = variable_div( _environment, mul->name, resolutionFloat->name, NULL );
-        // outline0("; move ---");
         variable_move( _environment, 
             div->name, 
             result->name 
