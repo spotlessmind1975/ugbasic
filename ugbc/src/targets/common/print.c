@@ -150,7 +150,7 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                 cpu_move_8bit_indirect( _environment, one->realName, address->realName );
                 cpu_jump( _environment, doneLabel );
                 cpu_label( _environment, label );
-                cpu6502_move_8bit_indirect( _environment, zero->realName, address->realName );
+                cpu_move_8bit_indirect( _environment, zero->realName, address->realName );
                 cpu_label( _environment, doneLabel );
 
                 value = tmp;
