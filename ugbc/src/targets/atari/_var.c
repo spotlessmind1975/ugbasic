@@ -348,37 +348,8 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
         variable = variable->next;
 
     }
-    
+
     outline0("   .res 1");
-
-    // variable = _first;
-
-    // while( variable ) {
-
-    //     if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
-
-    //         if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
-    //             fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
-    //         }
-
-    //         switch( variable->type ) {
-    //             case VT_ARRAY:
-    //                 if ( variable->arrayType == VT_BIT ) {
-    //                     if ( variable->memoryArea ) {
-    //                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
-    //                     } else {
-    //                         outline1("%s:", variable->realName);
-    //                     }
-    //                     outline1("   .res %d", variable->size );
-    //                 }
-    //                 break;
-    //         }
-
-    //     }
-
-    //     variable = variable->next;
-
-    // }
 
 }
 
