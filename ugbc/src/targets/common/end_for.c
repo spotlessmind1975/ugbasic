@@ -73,9 +73,7 @@ void end_for( Environment * _environment ) {
         }
 
     } else {
-        ++((struct _Environment *)_environment)->arrayNestedIndex;
-        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+        parser_array_init( _environment );
         ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
         ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
         Variable * array = variable_retrieve( _environment, loop->index->name );
@@ -83,13 +81,11 @@ void end_for( Environment * _environment ) {
             CRITICAL_NOT_ARRAY( loop->index->name );
         }
         Variable * value = variable_move_from_array( _environment, loop->index->name );
-        --((struct _Environment *)_environment)->arrayNestedIndex;
+        parser_array_cleanup( _environment );
 
         variable_add_inplace_vars( _environment, value->name, loop->step->name );
 
-        ++((struct _Environment *)_environment)->arrayNestedIndex;
-        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+        parser_array_init( _environment );
         ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
         ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
         array = variable_retrieve( _environment, loop->index->name );
@@ -97,7 +93,7 @@ void end_for( Environment * _environment ) {
             CRITICAL_NOT_ARRAY( loop->index->name );
         }
         variable_move_array( _environment, loop->index->name, value->name );
-        --((struct _Environment *)_environment)->arrayNestedIndex;
+        parser_array_cleanup( _environment );
 
     }
 

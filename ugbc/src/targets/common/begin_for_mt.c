@@ -70,9 +70,7 @@ void begin_for_mt( Environment * _environment, char * _index, char * _from, char
     loop->to->locked = 1;
     _environment->loops = loop;
 
-    ++((struct _Environment *)_environment)->arrayNestedIndex;
-    memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-    ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    parser_array_init( _environment );    
     ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
     ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
     Variable * array = variable_retrieve( _environment, index->name );
@@ -80,16 +78,14 @@ void begin_for_mt( Environment * _environment, char * _index, char * _from, char
         CRITICAL_NOT_ARRAY( index->name );
     }
     variable_move_array( _environment, index->name, from->name );
-    --((struct _Environment *)_environment)->arrayNestedIndex;
+    parser_array_cleanup( _environment );
         
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
     cpu_label( _environment, beginFor );
 
-    ++((struct _Environment *)_environment)->arrayNestedIndex;
-    memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-    ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    parser_array_init( _environment );
     ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
     ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
     array = variable_retrieve_or_define( _environment, index->name, VT_ARRAY, 0 );
@@ -97,7 +93,7 @@ void begin_for_mt( Environment * _environment, char * _index, char * _from, char
         CRITICAL_NOT_ARRAY( index->name );
     }
     Variable * value = variable_move_from_array( _environment, index->name );
-    --((struct _Environment *)_environment)->arrayNestedIndex;
+    parser_array_cleanup( _environment );
 
     Variable * isLastStep = variable_greater_than( _environment, value->name, loop->to->name, 0 );
 
