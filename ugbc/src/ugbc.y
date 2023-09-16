@@ -2143,8 +2143,7 @@ exponential:
     }
     | OSP Identifier CSP {
         parser_array_init( _environment );
-        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * array = variable_retrieve_or_define( _environment, $2, VT_ARRAY, 0 );
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
@@ -2154,9 +2153,7 @@ exponential:
     }
     | OSP Identifier OP_DOLLAR CSP {
         parser_array_init( _environment );
-        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
-        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * array = variable_retrieve_or_define( _environment, $2, VT_ARRAY, 0 );
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
@@ -5610,22 +5607,16 @@ fill_definitions :
 
 indexes :
       expr {
-          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( $1 );
-          ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        parser_array_index_symbolic( _environment, $1 );
     }
     | expr OP_COMMA indexes {
-          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( $1 );
-          ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        parser_array_index_symbolic( _environment, $1 );
     }
     | OP_HASH const_expr {
-          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = NULL;
-          ((struct _Environment *)_environment)->arrayIndexesDirectEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = $2;
-          ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        parser_array_index_numeric( _environment, $2 );
     }
     | OP_HASH const_expr OP_COMMA indexes {
-          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = NULL;
-          ((struct _Environment *)_environment)->arrayIndexesDirectEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = $2;
-          ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        parser_array_index_numeric( _environment, $2 );
     }
     ;
 
@@ -7563,8 +7554,7 @@ statement2:
         parser_array_init( _environment );
     }
       OP_ASSIGN expr {
-        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * expr = variable_retrieve( _environment, $6 );
         Variable * array = variable_retrieve( _environment, $2 );
         if ( array->type != VT_ARRAY ) {
@@ -7576,8 +7566,7 @@ statement2:
   | OSP Identifier OP_DOLLAR CSP {
         parser_array_init( _environment );
     } OP_ASSIGN expr {
-        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * x = variable_retrieve( _environment, $7 );
         Variable * a = variable_retrieve( _environment, $2 );
         if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
@@ -7595,9 +7584,7 @@ statement2:
   | OSP Identifier CSP {
         parser_array_init( _environment );
     } datatype OP_ASSIGN expr {
-        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
-
+        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * x = variable_retrieve( _environment, $7 );
         Variable * a = variable_retrieve( _environment, $2 );
         if ( x->type != $5 ) {

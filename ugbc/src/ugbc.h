@@ -3367,6 +3367,8 @@ int po_buf_strcmp(POBuffer _s, POBuffer _t);
 //----------------------------------------------------------------------------
 
 void parser_array_init( Environment * _environment );
+void parser_array_index_symbolic( Environment * _environment, char * _index );
+void parser_array_index_numeric( Environment * _environment, int _index );
 void parser_array_cleanup( Environment * _environment );
 
 //----------------------------------------------------------------------------

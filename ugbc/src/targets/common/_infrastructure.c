@@ -3816,8 +3816,7 @@ void variable_add_inplace_array( Environment * _environment, char * _source, cha
 void variable_add_inplace_mt( Environment * _environment, char * _source, char * _destination ) {
 
     parser_array_init( _environment );
-    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
     if ( array->type != VT_ARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
@@ -3828,8 +3827,7 @@ void variable_add_inplace_mt( Environment * _environment, char * _source, char *
     variable_add_inplace_vars( _environment, value->name, _destination );
 
     parser_array_init( _environment );    
-    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     array = variable_retrieve( _environment, _source );
     if ( array->type != VT_ARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
@@ -4407,10 +4405,8 @@ Variable * variable_increment_array( Environment * _environment, char * _source 
 // @bit2: ok
 void variable_store_mt( Environment * _environment, char * _source, unsigned int _value ) {
 
-    parser_array_init( _environment );
-    
-    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    parser_array_init( _environment );    
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
     if ( array->type != VT_ARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
@@ -4431,8 +4427,7 @@ void variable_store_mt( Environment * _environment, char * _source, unsigned int
 Variable * variable_move_from_mt( Environment * _environment, char * _source, char * _destination ) {
 
     parser_array_init( _environment );
-    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
     if ( array->type != VT_ARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
@@ -4454,8 +4449,7 @@ Variable * variable_move_to_mt( Environment * _environment, char * _source, char
     Variable * source = variable_retrieve( _environment, _source );
 
     parser_array_init( _environment );
-    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _destination );
     if ( array->type != VT_ARRAY ) {
         CRITICAL_NOT_ARRAY( _destination );
@@ -4477,8 +4471,7 @@ Variable * variable_move_to_mt( Environment * _environment, char * _source, char
 Variable * variable_increment_mt( Environment * _environment, char * _source ) {
 
     parser_array_init( _environment );    
-    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
     if ( array->type != VT_ARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
@@ -4489,8 +4482,7 @@ Variable * variable_increment_mt( Environment * _environment, char * _source ) {
     variable_increment( _environment, value->name );
 
     parser_array_init( _environment );    
-    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     array = variable_retrieve( _environment, _source );
     if ( array->type != VT_ARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
@@ -4562,8 +4554,7 @@ Variable * variable_decrement_array( Environment * _environment, char * _source 
 Variable * variable_decrement_mt( Environment * _environment, char * _source ) {
 
     parser_array_init( _environment );
-    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
     if ( array->type != VT_ARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
@@ -4573,9 +4564,8 @@ Variable * variable_decrement_mt( Environment * _environment, char * _source ) {
 
     variable_decrement( _environment, value->name );
 
-    ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
-    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    parser_array_init( _environment );
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     array = variable_retrieve( _environment, _source );
     if ( array->type != VT_ARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
@@ -9946,5 +9936,21 @@ void parser_array_init( Environment * _environment ) {
 void parser_array_cleanup( Environment * _environment ) {
 
     -- ((struct _Environment *)_environment)->arrayNestedIndex;
+
+}
+
+void parser_array_index_symbolic( Environment * _environment, char * _index ) {
+
+    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( _index );
+    ((struct _Environment *)_environment)->arrayIndexesDirectEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = 0;
+    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+
+}
+
+void parser_array_index_numeric( Environment * _environment, int _index ) {
+
+    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = NULL;
+    ((struct _Environment *)_environment)->arrayIndexesDirectEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = _index;
+    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
 
 }

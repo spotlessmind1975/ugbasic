@@ -137,8 +137,7 @@ void add_complex_vars( Environment * _environment, char * _variable, char * _exp
 void add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
 
     parser_array_init( _environment );
-    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _variable );
     if ( array->type != VT_ARRAY ) {
         CRITICAL_NOT_ARRAY( _variable );
@@ -149,8 +148,7 @@ void add_complex_mt( Environment * _environment, char * _variable, char * _expre
     add_complex_vars( _environment, value->name, _expression, _limit_lower, _limit_upper );
 
     parser_array_init( _environment );
-    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
-    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     array = variable_retrieve( _environment, _variable );
     if ( array->type != VT_ARRAY ) {
         CRITICAL_NOT_ARRAY( _variable );
