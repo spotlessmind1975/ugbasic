@@ -64,8 +64,6 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
-    z80_init( _environment );
-
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
     variable_import( _environment, "EVERYCOUNTER", VT_WORD, 0 );
@@ -111,6 +109,8 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "ZXTIMER" );    
 
     outhead0("org 32768");
+
+    z80_init( _environment );
 
     deploy( startup, src_hw_zx_startup_asm);
     outline0("CALL ZXSTARTUP");
