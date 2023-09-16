@@ -2235,24 +2235,7 @@ exponential:
         }
       }
     | Integer { 
-        if ( $1 < 0 ) {
-            if ( (-$1) > (0x7fff) ) {
-                $$ = variable_temporary( _environment, VT_SDWORD, "(integer dword value)" )->name;
-            } else if ( (-$1) > (0x7f) ) {
-                $$ = variable_temporary( _environment, VT_SWORD, "(integer word value)" )->name;
-            } else {
-                $$ = variable_temporary( _environment, VT_SBYTE, "(integer byte value)" )->name;
-            }
-        } else {
-            if ( $1 > (0xffff) ) {
-                $$ = variable_temporary( _environment, VT_DWORD, "(integer dword value)" )->name;
-            } else if ( $1 > (0xff) ) {
-                $$ = variable_temporary( _environment, VT_WORD, "(integer word value)" )->name;
-            } else {
-                $$ = variable_temporary( _environment, VT_BYTE, "(integer byte value)" )->name;
-            }
-        }
-        variable_store( _environment, $$, $1 );
+        $$ = parser_adapted_numeric( _environment, $1 )->name;
       }
     | Float { 
         $$ = variable_temporary( _environment, VT_FLOAT, "(float))" )->name;

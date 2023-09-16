@@ -3372,6 +3372,12 @@ void parser_array_index_numeric( Environment * _environment, int _index );
 void parser_array_cleanup( Environment * _environment );
 
 //----------------------------------------------------------------------------
+// Other
+//----------------------------------------------------------------------------
+
+Variable * parser_adapted_numeric( Environment * _environment, int _number );
+
+//----------------------------------------------------------------------------
 // Common accessibile functions used by language and parser
 //----------------------------------------------------------------------------
 

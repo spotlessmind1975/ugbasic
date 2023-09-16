@@ -9954,3 +9954,31 @@ void parser_array_index_numeric( Environment * _environment, int _index ) {
     ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
 
 }
+
+Variable * parser_adapted_numeric( Environment * _environment, int _number ) {
+
+    Variable * number;
+
+    if ( _number < 0 ) {
+        if ( (-_number) > (0x7fff) ) {
+            number = variable_temporary( _environment, VT_SDWORD, "(integer dword value)" );
+        } else if ( (-_number) > (0x7f) ) {
+            number = variable_temporary( _environment, VT_SWORD, "(integer word value)" );
+        } else {
+            number = variable_temporary( _environment, VT_SBYTE, "(integer byte value)" );
+        }
+    } else {
+        if ( _number > (0xffff) ) {
+            number = variable_temporary( _environment, VT_DWORD, "(integer dword value)" );
+        } else if ( _number > (0xff) ) {
+            number = variable_temporary( _environment, VT_WORD, "(integer word value)" );
+        } else {
+            number = variable_temporary( _environment, VT_BYTE, "(integer byte value)" );
+        }
+    }
+    
+    variable_store( _environment, number->name, _number );
+    
+    return number;
+
+}
