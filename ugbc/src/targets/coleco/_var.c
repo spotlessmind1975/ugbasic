@@ -228,6 +228,47 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
 }
 
+static void variable_cleanup_entry_bit( Environment * _environment, Variable * _first ) {
+
+    Variable * variable = _first;
+
+    int bitCount = 0;
+
+    outhead0("section data_user");
+    while( variable ) {
+
+        if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
+
+            if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
+                fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
+            }
+
+            switch( variable->type ) {
+                case VT_BIT:
+                    if ( variable->memoryArea ) {
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s:", variable->realName);
+                    }
+                    ++bitCount;
+                    if ( bitCount == 8 ) {
+                        outline0("   defs 1");
+                    }        
+                    break;
+            }
+
+        }
+
+        variable = variable->next;
+
+    }
+
+    outline0("   defs 1");
+    outhead0("section code_user");
+
+}
+
+
 /**
  * @brief Emit source and configuration lines for variables
  * 
@@ -277,6 +318,7 @@ void variable_cleanup( Environment * _environment ) {
             if ( actual->type == BT_VARIABLES ) {
                 Variable * variable = _environment->variables;
                 variable_cleanup_entry( _environment, variable );
+                variable_cleanup_entry_bit( _environment, variable );
             } else if ( actual->type == BT_TEMPORARY ) {
                 if ( _environment->bitmaskNeeded ) {
                     outhead0("BITMASK: defm $01,$02,$04,$08,$10,$20,$40,$80");
@@ -289,11 +331,13 @@ void variable_cleanup( Environment * _environment ) {
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
                     variable_cleanup_entry( _environment, variable );
+                    variable_cleanup_entry_bit( _environment, variable );
                 } 
 
                 Variable * variable = _environment->tempResidentVariables;
 
                 variable_cleanup_entry( _environment, variable );
+                variable_cleanup_entry_bit( _environment, variable );
 
             } else {
 
