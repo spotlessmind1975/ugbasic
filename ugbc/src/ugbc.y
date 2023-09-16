@@ -2175,8 +2175,10 @@ exponential:
                     $$ = variable_temporary( _environment, VT_FLOAT, "(constant)" )->name;
                     variable_store_float( _environment, $$, c->valueFloating );
                 } else {
-                    $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(constant)" )->name;
+                    Variable * number = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(constant)" );
+                    $$ = number->name;
                     variable_store( _environment, $$, c->value );
+                    number->initializedByConstant = 1;
                 }
             }
         } else {
@@ -2206,8 +2208,10 @@ exponential:
                         variable_store( _environment, $$, (int)c->valueFloating );
                     }
                 } else {
-                    $$ = variable_temporary( _environment, $2, "(constant)" )->name;
+                    Variable * number = variable_temporary( _environment, $2, "(constant)" );
+                    $$ = number->name;
                     variable_store( _environment, $$, c->value );
+                    number->initializedByConstant = 1;
                 }
             }
         } else {
@@ -2256,61 +2260,49 @@ exponential:
         variable_store( _environment, $$, $4 );
       }
     | OP BYTE CP Integer { 
-        $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_BYTE, $4 )->name;
       }
     | OP BYTE CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_BYTE, $4 )->name;
       }
     | OP BYTE CP Float { 
-        $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
-        variable_store( _environment, $$, (int)$4 );
+        $$ = parser_casted_numeric( _environment, VT_BYTE, (int)$4 )->name;
       }
     | OP BYTE CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_BYTE )->name;
       }
     | OP SIGNED BYTE CP Integer { 
-        $$ = variable_temporary( _environment, VT_SBYTE, "(signed BYTE value)" )->name;
-        variable_store( _environment, $$, $5 );
+        $$ = parser_casted_numeric( _environment, VT_SBYTE, $5 )->name;
       }
     | OP SIGNED BYTE CP Float { 
-        $$ = variable_temporary( _environment, VT_SBYTE, "(signed BYTE value)" )->name;
-        variable_store( _environment, $$, (int)$5 );
+        $$ = parser_casted_numeric( _environment, VT_SBYTE, (int)$5 )->name;
       }
     | OP SIGNED BYTE CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_SBYTE, "(signed BYTE value)" )->name;
-        variable_store( _environment, $$, $5 );
+        $$ = parser_casted_numeric( _environment, VT_SBYTE, $5 )->name;
       }
     | OP SIGNED BYTE CP OP expr CP { 
         $$ = variable_cast( _environment, $6, VT_SBYTE )->name;
       }
     | OP WORD CP Integer { 
-        $$ = variable_temporary( _environment, VT_WORD, "(WORD value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_WORD, $4 )->name;
       }
     | OP WORD CP Float { 
-        $$ = variable_temporary( _environment, VT_WORD, "(WORD value)" )->name;
-        variable_store( _environment, $$, (int)$4 );
+        $$ = parser_casted_numeric( _environment, VT_WORD, (int)$4 )->name;
       }
     | OP WORD CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_WORD, "(WORD value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_WORD, $4 )->name;
       }
     | OP WORD CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_WORD )->name;
       }
     | OP SIGNED WORD CP Integer { 
-        $$ = variable_temporary( _environment, VT_SWORD, "(signed WORD value)" )->name;
-        variable_store( _environment, $$, $5 );
+        $$ = parser_casted_numeric( _environment, VT_SWORD, $5 )->name;
     }
     | OP SIGNED WORD CP Float { 
-        $$ = variable_temporary( _environment, VT_SWORD, "(signed WORD value)" )->name;
-        variable_store( _environment, $$, (int)$5 );
+        $$ = parser_casted_numeric( _environment, VT_SWORD, (int)$5 )->name;
     }
     | OP SIGNED WORD CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_SWORD, "(signed WORD value)" )->name;
-        variable_store( _environment, $$, $5 );
+        $$ = parser_casted_numeric( _environment, VT_SWORD, $5 )->name;
       }
     | OP SIGNED WORD CP OP expr CP { 
         $$ = variable_cast( _environment, $6, VT_SWORD )->name;
@@ -2319,80 +2311,65 @@ exponential:
         $$ = variable_cast( _environment, $5, VT_FLOAT )->name;
       }
     | OP DWORD CP Integer { 
-        $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_DWORD, $4 )->name;
       }
     | OP DWORD CP Float { 
-        $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
-        variable_store( _environment, $$, (int)$4 );
+        $$ = parser_casted_numeric( _environment, VT_DWORD, (int)$4 )->name;
       }
     | OP DWORD CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_DWORD, $4 )->name;
       }
     | OP DWORD CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_DWORD )->name;
       }
     | OP SIGNED DWORD CP Integer { 
-        $$ = variable_temporary( _environment, VT_SDWORD, "(SDWORD value)" )->name;
-        variable_store( _environment, $$, $5 );
+        $$ = parser_casted_numeric( _environment, VT_SDWORD, $5 )->name;
       }
     | OP SIGNED DWORD CP Float { 
-        $$ = variable_temporary( _environment, VT_SDWORD, "(SDWORD value)" )->name;
-        variable_store( _environment, $$, (int)$5 );
+        $$ = parser_casted_numeric( _environment, VT_SDWORD, (int)$5 )->name;
       }
     | OP SIGNED DWORD CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_SDWORD, "(SDWORD value)" )->name;
-        variable_store( _environment, $$, $5 );
+        $$ = parser_casted_numeric( _environment, VT_SDWORD, $5 )->name;
       }
     | OP FLOAT CP Float { 
         $$ = variable_temporary( _environment, VT_FLOAT, "(float)" )->name;
-        variable_store( _environment, $$, $4 );
+        variable_store_float( _environment, $$, $4 );
     }
     | OP SIGNED DWORD CP OP expr CP { 
         $$ = variable_cast( _environment, $6, VT_SDWORD )->name;
       }
     | OP POSITION CP Integer { 
-        $$ = variable_temporary( _environment, VT_POSITION, "(POSITION value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_POSITION, $4 )->name;
       }
     | OP POSITION CP Float { 
-        $$ = variable_temporary( _environment, VT_POSITION, "(POSITION value)" )->name;
-        variable_store( _environment, $$, (int)$4 );
+        $$ = parser_casted_numeric( _environment, VT_POSITION, (int)$4 )->name;
       }
     | OP POSITION CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_POSITION, "(POSITION value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_POSITION, $4 )->name;
       }
     | OP POSITION CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_POSITION )->name;
       }
     | OP COLOR CP Integer { 
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name;
       }
     | OP COLOR CP Float { 
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
-        variable_store( _environment, $$, (int)$4 );
+        $$ = parser_casted_numeric( _environment, VT_COLOR, (int)$4 )->name;
       }
     | OP COLOR CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name;
       }
     | OP COLOR CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_COLOR )->name;
       }
     | OP COLOUR CP Integer { 
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name;
       }
     | OP COLOUR CP Float { 
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
-        variable_store( _environment, $$, (int)$4 );
+        $$ = parser_casted_numeric( _environment, VT_COLOR, (int)$4 )->name;
       }
     | OP COLOUR CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
-        variable_store( _environment, $$, $4 );
+        $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name;
       }
     | OP COLOUR CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_COLOR )->name;
@@ -5590,10 +5567,20 @@ fill_definitions :
 
 indexes :
       expr {
-        parser_array_index_symbolic( _environment, $1 );
+        Variable * expr = variable_retrieve( _environment, $1 );
+        if ( expr->initializedByConstant ) {
+            parser_array_index_numeric( _environment, expr->value );
+        } else {
+            parser_array_index_symbolic( _environment, $1 );
+        }
     }
     | expr OP_COMMA indexes {
-        parser_array_index_symbolic( _environment, $1 );
+        Variable * expr = variable_retrieve( _environment, $1 );
+        if ( expr->initializedByConstant ) {
+            parser_array_index_numeric( _environment, expr->value );
+        } else {
+            parser_array_index_symbolic( _environment, $1 );
+        }
     }
     | OP_HASH const_expr {
         parser_array_index_numeric( _environment, $2 );

@@ -1099,7 +1099,57 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
 
     variable_move( _environment, source->name, target->name );
 
+    if ( source->initializedByConstant && VT_BITWIDTH( source->type ) > 1 && VT_BITWIDTH( target->type ) > 1 ) {
+        
+        target->initializedByConstant = source->initializedByConstant;
+
+        switch( VT_BITWIDTH( source->type ) ) {
+            case 32:
+                switch( VT_BITWIDTH( target->type ) ) {
+                    case 32:
+                        target->value = source->value;
+                        break;
+                    case 16:
+                        target->value = ( source->value & 0xffff );
+                        break;
+                    case 8:
+                        target->value = ( source->value & 0xff );
+                        break;
+                    default:            
+                        target->initializedByConstant = 0;
+                }
+                break;
+            case 16:
+                switch( VT_BITWIDTH( target->type ) ) {
+                    case 32:
+                    case 16:
+                        target->value = source->value;
+                        break;
+                    case 8:
+                        target->value = ( source->value & 0xff );
+                        break;
+                    default:            
+                        target->initializedByConstant = 0;
+                }
+                break;
+            case 8:
+                switch( VT_BITWIDTH( target->type ) ) {
+                    case 32:
+                    case 16:
+                    case 8:
+                        target->value = source->value;
+                        break;
+                    default:            
+                        target->initializedByConstant = 0;
+                }
+                break;
+            default:            
+                target->initializedByConstant = 0;
+        }
+    }
+
     return target;
+
 }
 
 /**
@@ -1120,6 +1170,8 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
 Variable * variable_store( Environment * _environment, char * _destination, unsigned int _value ) {
     
     Variable * destination = variable_retrieve( _environment, _destination );
+
+    destination->value = _value;
 
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
@@ -9978,7 +10030,21 @@ Variable * parser_adapted_numeric( Environment * _environment, int _number ) {
     }
     
     variable_store( _environment, number->name, _number );
+
+    number->initializedByConstant = 1;
     
     return number;
 
+}
+
+Variable * parser_casted_numeric( Environment * _environment, VariableType _type, int _number ) {
+    
+    Variable * number = variable_temporary( _environment, _type, "(CASTED value)" );
+
+    variable_store( _environment, number->name, _number );
+
+    number->initializedByConstant = 1;
+
+    return number;
+    
 }

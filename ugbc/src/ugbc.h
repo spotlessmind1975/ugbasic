@@ -665,6 +665,12 @@ typedef struct _Variable {
     int value;
 
     /** 
+     * If this variable has been initialized by a numeric value,
+     * this flag will be setted.
+     */
+    int initializedByConstant;
+
+    /** 
      * The pointer to the constant string.
      */
     StaticString * valueString;
@@ -3376,6 +3382,7 @@ void parser_array_cleanup( Environment * _environment );
 //----------------------------------------------------------------------------
 
 Variable * parser_adapted_numeric( Environment * _environment, int _number );
+Variable * parser_casted_numeric( Environment * _environment, VariableType _type, int _number );
 
 //----------------------------------------------------------------------------
 // Common accessibile functions used by language and parser
