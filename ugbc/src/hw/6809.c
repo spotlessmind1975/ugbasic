@@ -4441,10 +4441,12 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
             }
         }
         outline1("ANDB #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
-        outline1("BEQ %send", label);
-        outline0("LDB #$ff");
-        outhead1("%send", label)
-        outline1("STB %s", _result);
+        if ( _result ) {
+            outline1("BEQ %send", label);
+            outline0("LDB #$ff");
+            outhead1("%send", label)
+            outline1("STB %s", _result);
+        }
 
     no_embedded( cpu_bit_check )
 
@@ -4488,12 +4490,133 @@ void cpu6809_bit_check_extended( Environment * _environment, char * _value, char
         outline0("ANDA #7");
         outline0("ANDB A,X");
         
-        outline1("BEQ %send", label);
-        outline0("LDB #$ff");
-        outhead1("%send", label)
-        outline1("STB %s", _result);
+        if ( _result ) {
+            outline1("BEQ %send", label);
+            outline0("LDB #$ff");
+            outhead1("%send", label)
+            outline1("STB %s", _result);
+        }
         
     no_embedded( cpu_bit_check_extended )
+
+}
+
+void cpu6809_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
+
+    MAKE_LABEL
+
+    inline( cpu_bit_inplace )
+
+        if ( _bit ) {
+            outline1("LDA %s", _value );
+            if ( *_bit ) {
+                outline1("ORA #$%2.2x", (unsigned char)( 1 << _position ) );
+            } else {
+                outline1("ANDA #$%2.2x", (unsigned char)(~( 1 << _position )) );
+            }
+            outline1("STA %s", _value );
+
+        } else {
+            outline1("BEQ %szero", label );
+            outline1("LDA %s", _value );
+            outline1("ORA #$%2.2x", (unsigned char)( 1 << _position ) );
+            outline1("STA %s", _value );
+            outline1("JMP %sdone", label );
+            outhead1("%szero", label );
+            outline1("LDA %s", _value );
+            outline1("ANDA #$%2.2x", (unsigned char)(~( 1 << _position )) );
+            outline1("STA %s", _value );
+            outhead1("%sdone", label );
+        }
+
+    no_embedded( cpu_bit_inplace )
+
+}
+
+void cpu6809_bit_inplace_8bit_extended( Environment * _environment, char * _value, char * _position, int * _bit ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    MAKE_LABEL
+
+    inline( cpu_bit_inplace )
+
+        if ( _bit ) {
+            if ( *_bit ) {
+                outline1("LDB %s", _position);
+                outline0("LDX #BITMASK");
+                outline1("LDA %s", _value );
+                outline0("ORA B, X");
+            } else {
+                outline1("LDB %s", _position);
+                outline0("LDX #BITMASKN");
+                outline1("LDA %s", _value );
+                outline0("ANDA B, X");
+            }
+            outline1("STA %s", _value );
+
+        } else {
+            outline1("BEQ %szero", label );
+            outline1("LDB %s", _position);
+            outline0("LDX #BITMASK");
+            outline1("LDA %s", _value );
+            outline0("ORA B, X");
+            outline1("STA %s", _value );
+            outline1("JMP %sdone", label );
+            outhead1("%szero", label );
+            outline1("LDB %s", _position);
+            outline0("LDX #BITMASKN");
+            outline1("LDA %s", _value );
+            outline0("ANDA B, X");
+            outline1("STA %s", _value );
+            outhead1("%sdone", label );
+        }
+
+    no_embedded( cpu_bit_inplace )
+
+}
+
+void cpu6809_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, int * _bit ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    MAKE_LABEL
+
+    inline( cpu_bit_inplace )
+
+        outline1("LDY %s", _address);
+
+        if ( _bit ) {
+            if ( *_bit ) {
+                outline1("LDB %s", _position);
+                outline0("LDX #BITMASK");
+                outline0("LDA , Y" );
+                outline0("ORA B, X");
+            } else {
+                outline1("LDB %s", _position);
+                outline0("LDX #BITMASKN");
+                outline0("LDA , Y" );
+                outline0("ANDA B, X");
+            }
+            outline0("STA , Y");
+        } else {
+            outline1("BEQ %szero", label );
+            outline1("LDB %s", _position);
+            outline0("LDX #BITMASK");
+            outline0("LDA , Y" );
+            outline0("ORA B, X");
+            outline0("STA , Y");
+            outline1("JMP %sdone", label );
+            outhead1("%szero", label );
+            outline1("LDB %s", _position);
+            outline0("LDX #BITMASKN");
+            outline0("LDA , Y" );
+            outline0("ANDA B, X");
+            outline0("STA , Y");
+            outhead1("%sdone", label );
+        }
+
+    no_embedded( cpu_bit_inplace )
 
 }
 

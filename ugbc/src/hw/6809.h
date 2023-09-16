@@ -199,6 +199,9 @@ void cpu6809_move_nbit_indirect( Environment * _environment, int _n, char *_sour
 void cpu6809_move_nbit_indirect2( Environment * _environment, int _n, char * _value, char *_source );
 void cpu6809_bit_check( Environment * _environment, char * _value, int _position, char *_result, int _bitwidth );
 void cpu6809_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth );
+void cpu6809_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit );
+void cpu6809_bit_inplace_8bit_extended( Environment * _environment, char * _value, char * _position, int * _bit );
+void cpu6809_bit_inplace_8bit_extended_indirect( Environment * _environment, char * address, char * _position, int * _bit );
 void cpu6809_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _Signed );
 void cpu6809_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
 void cpu6809_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
@@ -438,6 +441,9 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_move_nbit_indirect( _environment, _n, _source, _value ) cpu6809_move_nbit_indirect( _environment, _n, _source, _value )
 #define cpu_move_nbit_indirect2( _environment, _n, _value, _source ) cpu6809_move_nbit_indirect2( _environment, _n, _value, _source )
 #define cpu_bit_check( _environment, _value, _position, _result, _bitwidth ) cpu6809_bit_check( _environment, _value, _position, _result, _bitwidth )
+#define cpu_bit_inplace_8bit( _environment, _value, _position, _bit ) cpu6809_bit_inplace_8bit( _environment, _value, _position, _bit );
+#define cpu_bit_inplace_8bit_extended( _environment, _value, _position, _bit ) cpu6809_bit_inplace_8bit_extended( _environment, _value, _position, _bit );
+#define cpu_bit_inplace_8bit_extended_indirect( _environment, _address, _position, _bit ) cpu6809_bit_inplace_8bit_extended_indirect( _environment, _address, _position, _bit );
 #define cpu_number_to_string( _environment, _number, _string, _string_size, _bits, _signed ) cpu6809_number_to_string( _environment, _number, _string, _string_size, _bits, _signed )
 #define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) cpu6809_bits_to_string( _environment, _number, _string, _string_size, _bits )
 #define cpu_hex_to_string( _environment, _number, _string, _string_size, _bits ) cpu6809_hex_to_string( _environment, _number, _string, _string_size, _bits )

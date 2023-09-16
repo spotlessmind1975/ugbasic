@@ -7157,8 +7157,8 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 void variable_store_array_const_bit( Environment * _environment, Variable * _array, int _value  ) {
 
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
-    Variable * position = variable_temporary( _environment, VT_WORD, "(position)");
-    variable_move_naked( _environment, offset->name, position->name );
+    Variable * position = variable_temporary( _environment, VT_BYTE, "(position)");
+    variable_move( _environment, offset->name, position->name );
 
     variable_and_const( _environment, position->name, 7 );
 
@@ -7254,8 +7254,8 @@ void variable_store_array_const( Environment * _environment, char * _array, int 
 void variable_move_array_bit( Environment * _environment, Variable * _array, Variable * _value  ) {
 
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
-    Variable * position = variable_temporary( _environment, VT_WORD, "(position)");
-    variable_move_naked( _environment, offset->name, position->name );
+    Variable * position = variable_temporary( _environment, VT_BYTE, "(position)");
+    variable_move( _environment, offset->name, position->name );
 
     variable_and_const( _environment, position->name, 7 );
 
@@ -7418,8 +7418,8 @@ Variable * variable_move_from_array_bit( Environment * _environment, Variable * 
     Variable * result = variable_temporary( _environment, VT_BIT, "(element from array)" );
 
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
-    Variable * position = variable_temporary( _environment, VT_WORD, "(position)");
-    variable_move_naked( _environment, offset->name, position->name );
+    Variable * position = variable_temporary( _environment, VT_BYTE, "(position)");
+    variable_move( _environment, offset->name, position->name );
 
     variable_and_const( _environment, position->name, 7 );
 
