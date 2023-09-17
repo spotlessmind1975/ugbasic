@@ -880,7 +880,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // Let's enable monocolor graphics!
             outline0("LDA $D011" );
-            outline0("ORA #%00100000");
+            outline0("AND #%11111000");
+            outline0("ORA #%00100011");
             outline0("STA $D011" );
             outline0("LDA $D016" );
             outline0("AND #%11101111");
@@ -912,7 +913,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // Let's enable multicolor graphics!
             outline0("LDA $D011" );
-            outline0("ORA #%00100000");
+            outline0("AND #%11111000");
+            outline0("ORA #%00100011");
             outline0("STA $D011" );
             outline0("LDA $D016" );
             outline0("ORA #%00010000");
@@ -936,7 +938,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 0;
             // Let's disable graphics!
             outline0("LDA $D011" );
-            outline0("AND #%11011111");
+            outline0("AND #%11011000");
+            outline0("ORA #%00100011");
             outline0("STA $D011" );
             outline0("LDA $D016" );
             outline0("AND #%11101111");
@@ -965,7 +968,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 0;
             // Let's disable graphics!
             outline0("LDA $D011" );
-            outline0("AND #%11011111");
+            outline0("AND #%11011000");
+            outline0("ORA #%00100011");
             outline0("STA $D011" );
             outline0("LDA $D016" );
             outline0("ORA #%00010000");
@@ -994,7 +998,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // Let's disable graphics!
             outline0("LDA $D011" );
             outline0("AND #%11011111");
-            outline0("ORA #%01000000");
+            outline0("ORA #%01000011");
             outline0("STA $D011" );
             outline0("LDA $D016" );
             outline0("AND #%11101111");
