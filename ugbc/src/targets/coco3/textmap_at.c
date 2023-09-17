@@ -70,7 +70,7 @@ void textmap_at( Environment * _environment, int _address ) {
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 10 ) );
 
-    c6847_textmap_at( _environment, addressString );
+    gime_textmap_at( _environment, addressString );
 
 }
 
@@ -103,6 +103,6 @@ void textmap_at_var( Environment * _environment, char * _address ) {
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s", address->realName );
 
-    c6847_textmap_at( _environment, addressString );
+    gime_textmap_at( _environment, addressString );
 
 }

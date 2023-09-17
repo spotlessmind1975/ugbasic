@@ -51,7 +51,7 @@
 </usermanual> */
 void tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
 
-    c6847_tilemap_enable( _environment, _width, _height, _colors, _tile_width, _tile_height );
+    gime_tilemap_enable( _environment, _width, _height, _colors, _tile_width, _tile_height );
 
 }
 

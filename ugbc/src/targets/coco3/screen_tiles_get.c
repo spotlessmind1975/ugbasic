@@ -44,7 +44,7 @@ Variable * screen_tiles_get( Environment * _environment ) {
 
     MAKE_LABEL
     
-    c6847_tiles_get( _environment, tiles->realName );
+    gime_tiles_get( _environment, tiles->realName );
    
     return tiles;
 

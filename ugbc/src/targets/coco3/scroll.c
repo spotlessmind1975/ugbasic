@@ -40,6 +40,6 @@
 
 void scroll( Environment * _environment, int _dx, int _dy ) {
 
-    c6847_scroll( _environment, _dx, _dy );
+    gime_scroll( _environment, _dx, _dy );
     
 }

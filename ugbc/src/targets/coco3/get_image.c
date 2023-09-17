@@ -61,7 +61,7 @@ void get_image( Environment * _environment, char * _image, char * _x, char * _y,
 
     switch( image->type ) {
         case VT_IMAGE:
-            c6847_get_image( _environment, image->realName, x->realName, y->realName, _palette );
+            gime_get_image( _environment, image->realName, x->realName, y->realName, _palette );
             break;
         default:
             CRITICAL_GET_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

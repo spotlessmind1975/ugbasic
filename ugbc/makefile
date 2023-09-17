@@ -256,6 +256,14 @@ SOURCES_EF936X := $(subst src/hw/ef936x/,src-generated/ef936x_,$(MODULES_EF936X:
 src-generated/ef936x_%.c: $(MODULES_EF936X)
 	@xxd -i $(subst src-generated/ef936x_,src/hw/ef936x/,$(@:.c=.asm)) >$@
 
+# ASIC VLSI GIME
+
+MODULES_GIME := $(wildcard src/hw/gime/*.asm)
+SOURCES_GIME := $(subst src/hw/gime/,src-generated/gime_,$(MODULES_GIME:.asm=.c)) $(FONTS)
+
+src-generated/gime_%.c: $(MODULES_GIME)
+	@xxd -i $(subst src-generated/gime_,src/hw/gime/,$(@:.c=.asm)) >$@
+
 # MOS Technology 6502/6510
 
 MODULES_6502 := $(wildcard src/hw/6502/*.asm)
@@ -519,8 +527,8 @@ SOURCES_COCO3 := $(subst src/hw/coco3/,src-generated/coco3_,$(MODULES_COCO3:.asm
 src-generated/coco3_%.c: $(MODULES_COCO3)
 	@xxd -i $(subst src-generated/coco3_,src/hw/coco3/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coco3.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO3) $(COCO3)
-	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO3) $(COCO3) >src-generated/modules_coco3.c
+src-generated/modules_coco3.c: $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_COCO3) $(COCO3)
+	@cat $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_COCO3) $(COCO3) >src-generated/modules_coco3.c
 	@grep "src" src-generated/modules_coco3.c | awk -f modules.awk >src-generated/modules_coco3.h
 	@grep "data" src-generated/modules_coco3.c | awk -f modules.awk >>src-generated/modules_coco3.h
 

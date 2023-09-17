@@ -40,6 +40,6 @@
 
 void text_hscroll_screen( Environment * _environment, int _direction ) {
     
-    c6847_hscroll_screen( _environment, _direction );
+    gime_hscroll_screen( _environment, _direction );
 
 }

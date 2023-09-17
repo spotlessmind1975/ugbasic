@@ -44,7 +44,7 @@ Variable * screen_tiles_get_height( Environment * _environment ) {
 
     MAKE_LABEL
     
-    c6847_tiles_get_height( _environment, height->realName );
+    gime_tiles_get_height( _environment, height->realName );
    
     return height;
 

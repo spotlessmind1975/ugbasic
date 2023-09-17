@@ -62,6 +62,6 @@ void text_encoded( Environment * _environment, char * _text, char * _pen, char *
 
     MAKE_LABEL
 
-    c6847_text( _environment, address->realName, size->realName );
+    gime_text( _environment, address->realName, size->realName );
 
 }

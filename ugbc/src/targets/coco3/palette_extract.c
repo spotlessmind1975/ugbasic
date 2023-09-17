@@ -40,6 +40,6 @@
 
 int palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette ) {
 
-    return c6847_palette_extract( _environment, _data, _width, _height, _depth, _flags, _palette );
+    return gime_palette_extract( _environment, _data, _width, _height, _depth, _flags, _palette );
 
 }

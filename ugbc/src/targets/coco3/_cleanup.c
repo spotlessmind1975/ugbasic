@@ -40,7 +40,7 @@
 
 void target_finalization( Environment * _environment ) {
 
-    c6847_finalization( _environment );
+    gime_finalization( _environment );
 
 }
 

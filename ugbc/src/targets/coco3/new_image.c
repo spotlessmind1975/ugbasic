@@ -53,7 +53,7 @@
 </usermanual> */
 Variable * new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    Variable * result = c6847_new_image( _environment, _width, _height, _mode );
+    Variable * result = gime_new_image( _environment, _width, _height, _mode );
 
     return result;
 

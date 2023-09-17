@@ -61,7 +61,7 @@ void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
 
     char displacementString[MAX_TEMPORARY_STORAGE]; sprintf( displacementString, "#$%2.2x", _displacement );
 
-    c6847_horizontal_scroll( _environment, displacementString );
+    gime_horizontal_scroll( _environment, displacementString );
 
 }
 
@@ -86,6 +86,6 @@ void screen_horizontal_scroll_var( Environment * _environment, char * _displacem
 
     Variable * displacement = variable_retrieve( _environment, _displacement );
 
-    c6847_horizontal_scroll( _environment, _displacement );
+    gime_horizontal_scroll( _environment, _displacement );
 
 }

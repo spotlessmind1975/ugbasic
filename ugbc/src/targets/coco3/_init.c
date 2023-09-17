@@ -113,7 +113,7 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    c6847_initialization( _environment );
+    gime_initialization( _environment );
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );

@@ -68,7 +68,7 @@ void bitmap_at( Environment * _environment, int _address ) {
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 10 ) );
 
-    c6847_bitmap_at( _environment, addressString );
+    gime_bitmap_at( _environment, addressString );
 
 }
 
@@ -100,6 +100,6 @@ void bitmap_at_var( Environment * _environment, char * _address ) {
 
     variable_move_naked( _environment, address->name, bitmapAddress->name );
 
-    c6847_bitmap_at( _environment, address->realName );
+    gime_bitmap_at( _environment, address->realName );
 
 }

@@ -52,6 +52,6 @@
 </usermanual> */
 void bitmap_disable( Environment * _environment ) {
 
-    c6847_bitmap_disable( _environment );
+    gime_bitmap_disable( _environment );
 
 }

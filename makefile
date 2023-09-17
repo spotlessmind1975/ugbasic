@@ -160,7 +160,7 @@ COCODECB = ./coco_decb.sh
 ifdef 10liner
 EXAMPLES := $(wildcard examples/*_10lines.bas)
 else
-EXAMPLES := $(wildcard examples/*.bas)
+EXAMPLES := $(wildcard examples/texts_print_*.bas)
 endif
 
 # List of assembled files of examples

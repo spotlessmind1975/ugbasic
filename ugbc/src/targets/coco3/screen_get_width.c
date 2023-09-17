@@ -44,7 +44,7 @@ Variable * screen_get_width( Environment * _environment ) {
 
     MAKE_LABEL
     
-    c6847_get_width( _environment, width->realName );
+    gime_get_width( _environment, width->realName );
 
     return width;
 

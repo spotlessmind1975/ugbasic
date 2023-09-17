@@ -44,7 +44,7 @@ Variable * screen_get_height( Environment * _environment ) {
 
     MAKE_LABEL
     
-    c6847_get_height( _environment, height->realName );
+    gime_get_height( _environment, height->realName );
    
     return height;
 

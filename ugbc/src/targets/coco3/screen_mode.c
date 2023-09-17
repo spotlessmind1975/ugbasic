@@ -55,7 +55,7 @@ void screen_mode( Environment * _environment, int _mode ) {
 
     if ( mode ) {
            
-        c6847_screen_mode_enable( _environment, mode );    
+        gime_screen_mode_enable( _environment, mode );    
 
         _environment->currentMode = mode->id;
         _environment->currentTileMode = 0;

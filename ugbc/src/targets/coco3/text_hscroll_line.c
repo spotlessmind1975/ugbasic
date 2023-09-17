@@ -40,6 +40,6 @@
 
 void text_hscroll_line( Environment * _environment, int _direction ) {
 
-    c6847_hscroll_line( _environment, _direction );
+    gime_hscroll_line( _environment, _direction );
 
 }

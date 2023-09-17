@@ -54,6 +54,6 @@ void back( Environment * _environment, char * _color ) {
                     
     paper( _environment, _color );
 
-    c6847_cls( _environment );
+    gime_cls( _environment );
 
 }
