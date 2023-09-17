@@ -90,7 +90,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
-%token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO
+%token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -6449,7 +6449,7 @@ target :
     }
     | CPU6809 {
         #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
-            defined(__pc128op__) || defined(__mo5__)
+            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__)
             $$ = 1;
         #else
             $$ = 0;
@@ -6577,6 +6577,30 @@ target :
     |
     COCO {
         #if defined(__coco__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    COCO1 {
+        #if defined(__coco__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    COCO2 {
+        #if defined(__coco__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    COCO3 {
+        #if defined(__coco3__)
             $$ = 1;
         #else
             $$ = 0;
@@ -7684,6 +7708,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "Philips VG5000";
 #elif __coco__
     char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer";
+#elif __coco3__
+    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer 3";
 #endif
 
     printf("--------------------------------------------------\n");
@@ -7742,6 +7768,10 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                tap - tape file\n" );
     #define defaultExtension "tap"
 #elif __coco__
+    printf("\t                bin - COCO binary file\n" );
+    printf("\t                dsk - COCO disk basic\n" );
+    #define defaultExtension "bin"
+#elif __coco3__
     printf("\t                bin - COCO binary file\n" );
     printf("\t                dsk - COCO disk basic\n" );
     #define defaultExtension "bin"
@@ -7829,6 +7859,8 @@ int main( int _argc, char *_argv[] ) {
 #elif __zx__
     _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
 #elif __coco__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+#elif __coco3__
     _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
 #elif __d32__
     _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;

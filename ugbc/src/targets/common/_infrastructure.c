@@ -8257,6 +8257,8 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/vg5000" );
 #elif __coco__
     strcat( lookedFilename, "/coco" );
+#elif __coco3__
+    strcat( lookedFilename, "/coco3" );
 #endif
 
     if ( strlen( lookedExtension ) ) {

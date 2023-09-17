@@ -31,7 +31,7 @@
 .PHONY: paths toolchain compiler clean all built so
 
 ifndef target
-$(error missing 'target' (valid values: atari atarixl c128 c128z c64 coco coleco cpc d32 d64 mo5 msx1 pc128op plus4 sc3000 sg1000 vg5000 vic20 zx))
+$(error missing 'target' (valid values: atari atarixl c128 c128z c64 coco coco3 coleco cpc d32 d64 mo5 msx1 pc128op plus4 sc3000 sg1000 vg5000 vic20 zx))
 endif
 
 ifdef 10liner
@@ -57,6 +57,9 @@ ifeq ($(target),c64)
   output=prg
 endif
 ifeq ($(target),coco)
+  output=dsk
+endif
+ifeq ($(target),coco3)
   output=dsk
 endif
 ifeq ($(target),coleco)
@@ -505,6 +508,29 @@ generated/coco/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
 
 generated/coco/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
 	@cd examples && ../ugbc/exe/ugbc.coco$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/coco/exeso/,,$(@:.bin=.bas))
+
+#------------------------------------------------ 
+# coco3:
+#    TRS-80 Color Computer (6809)
+#------------------------------------------------ 
+# 
+toolchain.coco3: asm6809 decb
+
+generated/coco3/asm/%.asm: compiler
+	@cd examples && ../ugbc/exe/ugbc.coco3$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/coco3/asm/,,$(@:.asm=.bas)) ../$@
+
+generated/coco3/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@$(COCODECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
+
+generated/coco3/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@$(ASM6809) $(OPTIONS) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
+
+generated/coco3/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
+	@cd examples && ../ugbc/exe/ugbc.coco3$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O dsk $(subst generated/coco3/exeso/,,$(@:.dsk=.bas))
+
+generated/coco3/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
+	@cd examples && ../ugbc/exe/ugbc.coco3$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/coco3/exeso/,,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # d32:

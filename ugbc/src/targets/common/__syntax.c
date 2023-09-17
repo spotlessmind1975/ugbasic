@@ -1601,6 +1601,7 @@ massimo di 254 (minima velocità).
 @target c128
 @target c128z
 @target coco
+@target coco3
 @target cpc
 @target d32
 @target d64

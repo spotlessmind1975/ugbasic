@@ -4051,6 +4051,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/6809.h"
     #include "hw/6847.h"
     #include "hw/coco.h"
+#elif __coco3__ 
+    #include "../src-generated/modules_coco3.h"
+    #include "hw/6809.h"
+    #include "hw/6847.h"
+    #include "hw/coco3.h"
 #elif __d32__ 
     #include "../src-generated/modules_d32.h"
     #include "hw/6809.h"

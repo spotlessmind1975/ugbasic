@@ -34,6 +34,8 @@ extern char * importPath;
     char targetName[] = "zx";
 #elif defined(__coco__)
     char targetName[] = "coco";
+#elif defined(__coco3__)
+    char targetName[] = "coco3";
 #elif defined(__d32__)
     char targetName[] = "d32";
 #elif defined(__d64__)
@@ -367,6 +369,12 @@ CMOVE { RETURN(CMOVE,1); }
 Cm { RETURN(CMOVE,1); }
 COCO { RETURN(COCO,1); }
 Cc { RETURN(COCO,1); }
+COCO1 { RETURN(COCO1,1); }
+Cc1 { RETURN(COCO1,1); }
+COCO2 { RETURN(COCO2,1); }
+Cc2 { RETURN(COCO2,1); }
+COCO3 { RETURN(COCO3,1); }
+Cc3 { RETURN(COCO3,1); }
 CODE { RETURN(CODE,1); }
 Co { RETURN(CODE,1); }
 COLLISION { RETURN(COLLISION,1); }

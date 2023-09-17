@@ -197,7 +197,7 @@ FONTS := src-generated/font_standard.c \
 			src-generated/font_alpha.c
 
 # ----------------------------------------------------------------------------
-# PROLOGUE / EPILOGUE FOR BINARY ON COCO
+# PROLOGUE / EPILOGUE FOR BINARY ON COCO (1 + 2)
 # ----------------------------------------------------------------------------
 
 src-generated/coco_header.c:
@@ -207,6 +207,18 @@ src-generated/coco_footer.c:
 	@xxd -i $(subst src-generated/coco_,data/coco/,$(@:.c=.bin)) >$@
 
 COCO := src-generated/coco_header.c src-generated/coco_footer.c
+
+# ----------------------------------------------------------------------------
+# PROLOGUE / EPILOGUE FOR BINARY ON COCO3
+# ----------------------------------------------------------------------------
+
+src-generated/coco3_header.c:
+	@xxd -i $(subst src-generated/coco3_,data/coco3/,$(@:.c=.bin)) >$@
+
+src-generated/coco3_footer.c:
+	@xxd -i $(subst src-generated/coco3_,data/coco3/,$(@:.c=.bin)) >$@
+
+COCO3 := src-generated/coco3_header.c src-generated/coco3_footer.c
 
 # ----------------------------------------------------------------------------
 # Components and chipsets
@@ -486,7 +498,7 @@ src-generated/modules_plus4.c: $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED)
 	@grep "src" src-generated/modules_plus4.c | awk -f modules.awk >src-generated/modules_plus4.h
 	@grep "data" src-generated/modules_plus4.c | awk -f modules.awk >>src-generated/modules_plus4.h
 
-# TRS-80 Color Computer
+# TRS-80 Color Computer 1 and 2
 
 MODULES_COCO := $(wildcard src/hw/coco/*.asm)
 SOURCES_COCO := $(subst src/hw/coco/,src-generated/coco_,$(MODULES_COCO:.asm=.c))
@@ -498,6 +510,19 @@ src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(
 	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(COCO) >src-generated/modules_coco.c
 	@grep "src" src-generated/modules_coco.c | awk -f modules.awk >src-generated/modules_coco.h
 	@grep "data" src-generated/modules_coco.c | awk -f modules.awk >>src-generated/modules_coco.h
+
+# TRS-80 Color Computer 3
+
+MODULES_COCO3 := $(wildcard src/hw/coco3/*.asm)
+SOURCES_COCO3 := $(subst src/hw/coco3/,src-generated/coco3_,$(MODULES_COCO3:.asm=.c))
+
+src-generated/coco3_%.c: $(MODULES_COCO3)
+	@xxd -i $(subst src-generated/coco3_,src/hw/coco3/,$(@:.c=.asm)) >$@
+
+src-generated/modules_coco3.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO3) $(COCO3)
+	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO3) $(COCO3) >src-generated/modules_coco3.c
+	@grep "src" src-generated/modules_coco3.c | awk -f modules.awk >src-generated/modules_coco3.h
+	@grep "data" src-generated/modules_coco3.c | awk -f modules.awk >>src-generated/modules_coco3.h
 
 # Dragon 32
 
@@ -667,7 +692,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_coco.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c src-test/tester_c128.c
+SOURCESTEST += src-generated/modules_$(target).c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_coco.c src-test/tester_coco3.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c src-test/tester_c128.c
 
 paths:
 	@mkdir -p src-generated

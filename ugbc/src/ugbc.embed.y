@@ -78,7 +78,7 @@ char *str_replace( char *orig, char *rep, char *with ) {
 %token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT OP_LT OP_LTE OP_GT OP_GTE OP_COMMA OP_TAB OP_PIPE
 %token IF ELSE ELSEIF ENDIF EMIT AS NewLine
 %token ATARI ATARIXL C128 C128Z C64 VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5 CPC COCO
-%token MACRO ENDMACRO INLINE
+%token COCO1 COCO2 COCO3 MACRO ENDMACRO INLINE
 
 %token <string> Identifier
 %token <string> Content
@@ -193,6 +193,30 @@ target :
     |
     COCO {
         #if defined(__coco__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    COCO1 {
+        #if defined(__coco__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    COCO2 {
+        #if defined(__coco__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    COCO3 {
+        #if defined(__coco3__)
             $$ = 1;
         #else
             $$ = 0;
