@@ -1203,7 +1203,6 @@ void gime_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( gimevars, src_hw_gime_vars_asm);
 
-    // deploy( vScrollText, src_hw_6847_vscroll_text_asm );
     deploy( textEncodedAt, src_hw_gime_text_at_asm );
 
     outline1("LDY %s", _text);
@@ -1212,7 +1211,8 @@ void gime_text( Environment * _environment, char * _text, char * _text_size ) {
     outline0("STA TEXTSIZE" );
 
     if ( _environment->currentMode < 0x10 ) {
-        // deploy( clsText, src_hw_6847_cls_text_asm );
+        deploy( clsText, src_hw_gime_cls_text_asm );
+        deploy( vScrollText, src_hw_gime_vscroll_text_asm );
         deploy( textEncodedAtText, src_hw_gime_text_at_text_asm );
         outline0("JSR TEXTATTILEMODE");
     } else {
@@ -1373,9 +1373,27 @@ void gime_finalization( Environment * _environment ) {
 
 void gime_hscroll_line( Environment * _environment, int _direction ) {
 
+    deploy( textHScroll, src_hw_gime_hscroll_text_asm );
+
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
+    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+    outline0("STA DIRECTION" );
+    outline1("LDA %s", y->realName );
+    outline0("STA CLINEY");
+
+    outline0("JSR HSCROLLLT");    
+
+
 }
 
 void gime_hscroll_screen( Environment * _environment, int _direction ) {
+
+    deploy( textHScroll, src_hw_gime_hscroll_text_asm );
+
+    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+    outline0("STA DIRECTION" );
+
+    outline0("JSR HSCROLLST");    
 
 }
 

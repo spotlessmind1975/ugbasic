@@ -36,6 +36,11 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLT
+    LDA CURRENTTILEMODE
+    BNE VSCROLLTX
+    RTS
+
+VSCROLLTX
     PSHS A,B,X,Y,U
     LDA DIRECTION
     CMPA #0
