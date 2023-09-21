@@ -198,7 +198,7 @@ void coco3_clear_key( Environment * _environment ) {
     outline0("STA ,X");
 
     outline0("LDA #$0");
-    outline0("sta $87");
+    outline0("STA $87");
 
 }
 

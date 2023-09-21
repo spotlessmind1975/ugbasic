@@ -151,6 +151,7 @@ Z80APPMAKE = ./modules/z88dk/src/appmake/z88dk-appmake$(EXESUFFIX)
 ASM6809 = ./modules/asm6809/src/asm6809$(EXESUFFIX)
 DECB = ./modules/toolshed/build/unix/decb/decb$(EXESUFFIX)
 COCODECB = ./coco_decb.sh
+COCO3DECB = ./coco3_decb.sh
 
 #------------------------------------------------ 
 # Examples
@@ -521,7 +522,7 @@ generated/coco3/asm/%.asm: compiler
 
 generated/coco3/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
-	@$(COCODECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
+	@$(COCO3DECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/coco3/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) $(OPTIONS) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))

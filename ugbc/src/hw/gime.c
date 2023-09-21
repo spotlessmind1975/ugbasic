@@ -209,9 +209,62 @@ void gime_bank_select( Environment * _environment, int _bank ) {
 
 }
 
+#define GIME_MODE( _graphics, _linesize ) \
+    outline1( "LDA #$%2.2x", ( ( _graphics & 0x01 ) << 7 ) | ( _linesize & 0x03 ) ); \
+    outline0( "STA GIMEVIDM" );
+
+#define GIME_TEXT( )       GIME_MODE( 0, 3 )
+#define GIME_GRAPH( )      GIME_MODE( 1, 0 )
+
+#define GIME_24ROWS         0
+#define GIME_25ROWS         1
+#define GIME_UNUSED         2
+#define GIME_28ROWS         3
+
+#define GIME_HRES_32COLS    0    // or 2 is equal!
+#define GIME_CRES_32COLS    1    // or 3 is equal!
+
+#define GIME_HRES_40COLS    1    // or 3 is equal!
+#define GIME_CRES_40COLS    1    // or 3 is equal!
+
+#define GIME_HRES_64COLS    4    // or 6 is equal!
+#define GIME_CRES_64COLS    1    // or 3 is equal!
+
+#define GIME_HRES_80COLS    5    // or 7 is equal!
+#define GIME_CRES_80COLS    1    // or 3 is equal!
+
+#define GIME_2COLORS         0
+#define GIME_4COLORS         1
+#define GIME_16COLORS        2
+#define GIME_32COLORS        3  // unused!!
+
+#define GIME_128PIXELS       0
+#define GIME_160PIXELS       1
+#define GIME_256PIXELS       2
+#define GIME_320PIXELS       3
+#define GIME_512PIXELS       4
+#define GIME_640PIXELS       5
+#define GIME_1024PIXELS      6
+#define GIME_1280PIXELS      7
+
+#define GIME_RESOLUTION( _hres, _cres,  _vres ) \
+    outline1( "LDA #$%2.2x", ( ( _vres & 0x03 ) << 5 ) | ( ( _hres & 0x07 ) << 2 ) | ( ( _cres & 0x03 ) ) ); \
+    outline0( "STA GIMEVIDR" );
+
+#define GIME_ADDRESS( _address ) \
+    outline1( "LDD #$%4.4x", ( _address >> 3 ) ); \
+    outline0( "STA GIMEVOFF1" ); \
+    outline0( "STB GIMEVOFF0" ); \
+    outline0( "CLR GIMEHOFF" );
+
+#define GIME_128K( )  GIME_ADDRESS( 0x60000 )
+#define GIME_512K( )  GIME_ADDRESS( 0x00000 )
+
 int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     // deploy( gimevars, src_hw_6847_vars_asm );
+
+    GIME_128K( );
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
@@ -219,18 +272,736 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     _environment->screenTiles = 128;
     switch( _screen_mode->id ) {
 
-        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
-            _environment->screenWidth = 40*8;
-            _environment->screenHeight = 25*8;
+        case TILEMAP_MODE_32X24:
+            
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_32COLS, GIME_CRES_32COLS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 16;
+            break;
+
+        case TILEMAP_MODE_32X25:
+            
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_32COLS, GIME_CRES_32COLS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 16;
+            break;
+
+        case TILEMAP_MODE_32X28:
+
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_32COLS, GIME_CRES_32COLS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 16;
+            break;
+
+        case TILEMAP_MODE_40X24:
+
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_40COLS, GIME_CRES_40COLS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 16;
+            break;
+
+        case TILEMAP_MODE_40X25:
+
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_40COLS, GIME_CRES_40COLS, GIME_25ROWS )
+
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
             _environment->screenColors = 16;
+            break;
 
+        case TILEMAP_MODE_40X28:
+
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_40COLS, GIME_CRES_40COLS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 16;
+            break;
+
+        case TILEMAP_MODE_64X24:
+
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_64COLS, GIME_CRES_64COLS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 64;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 16;
+            break;
+
+        case TILEMAP_MODE_64X25:
+
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_64COLS, GIME_CRES_64COLS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 64;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 16;
+            break;
+
+        case TILEMAP_MODE_64X28:
+
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_64COLS, GIME_CRES_64COLS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 64;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 16;
+            break;
+
+        case TILEMAP_MODE_80X24:
+
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_80COLS, GIME_CRES_80COLS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 16;
+            break;
+
+        case TILEMAP_MODE_80X25:
+
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_80COLS, GIME_CRES_80COLS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 16;
+            break;
+
+        case TILEMAP_MODE_80X28:
+
+            GIME_TEXT()
+            GIME_RESOLUTION( GIME_HRES_80COLS, GIME_CRES_80COLS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 16;
+            break;
+
+        //////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
+
+        case BITMAP_MODE_128x192x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_128PIXELS, GIME_2COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 16;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_128x200x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_128PIXELS, GIME_2COLORS, GIME_25ROWS )
+            
+            _environment->screenTilesWidth = 16;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_128x225x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_128PIXELS, GIME_2COLORS, GIME_28ROWS )
+            
+            _environment->screenTilesWidth = 16;
+            _environment->screenTilesHeight = 29;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_64x192x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_128PIXELS, GIME_4COLORS, GIME_24ROWS )
+            
+            _environment->screenTilesWidth = 8;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_64x200x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_128PIXELS, GIME_4COLORS, GIME_25ROWS )
+            
+            _environment->screenTilesWidth = 8;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_64x225x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_128PIXELS, GIME_4COLORS, GIME_28ROWS )
+            
+            _environment->screenTilesWidth = 8;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_160x192x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_160PIXELS, GIME_2COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 20;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_160x200x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_160PIXELS, GIME_2COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 20;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_160x225x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_160PIXELS, GIME_2COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 20;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_80x192x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_160PIXELS, GIME_4COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 10;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_80x200x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_160PIXELS, GIME_4COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 10;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_80x225x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_160PIXELS, GIME_4COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 10;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_256x192x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_256PIXELS, GIME_2COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_256x200x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_256PIXELS, GIME_2COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_256x225x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_256PIXELS, GIME_2COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_128x192x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_256PIXELS, GIME_4COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 16;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_128x200x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_256PIXELS, GIME_4COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 16;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_128x225x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_256PIXELS, GIME_4COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 16;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_64x192x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_256PIXELS, GIME_16COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 8;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_64x200x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_256PIXELS, GIME_16COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 8;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_64x225x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_256PIXELS, GIME_16COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 8;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_320x192x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_320PIXELS, GIME_2COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_320x200x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_320PIXELS, GIME_2COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_320x225x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_320PIXELS, GIME_2COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_160x192x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_320PIXELS, GIME_4COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 20;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_160x200x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_320PIXELS, GIME_4COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 20;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_160x225x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_320PIXELS, GIME_4COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 20;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_80x192x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_320PIXELS, GIME_16COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 10;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_80x200x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_320PIXELS, GIME_16COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 10;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_80x225x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_320PIXELS, GIME_16COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 10;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_512x192x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_512PIXELS, GIME_2COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 64;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_512x200x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_512PIXELS, GIME_2COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 64;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_512x225x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_512PIXELS, GIME_2COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 64;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_256x192x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_512PIXELS, GIME_4COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_256x200x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_512PIXELS, GIME_4COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_256x225x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_512PIXELS, GIME_4COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_128x192x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_512PIXELS, GIME_16COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 16;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_128x200x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_512PIXELS, GIME_16COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 16;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_128x225x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_512PIXELS, GIME_16COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 16;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_640x192x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_640PIXELS, GIME_2COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_640x200x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_640PIXELS, GIME_2COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_640x225x2:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_640PIXELS, GIME_2COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 2;
+            break;
+
+        case BITMAP_MODE_320x192x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_640PIXELS, GIME_4COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_320x200x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_640PIXELS, GIME_4COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_320x225x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_640PIXELS, GIME_4COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_160x192x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_640PIXELS, GIME_16COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 20;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_160x200x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_640PIXELS, GIME_16COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 20;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_160x225x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_640PIXELS, GIME_16COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 20;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_512x192x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1024PIXELS, GIME_4COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 64;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_512x200x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1024PIXELS, GIME_4COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 64;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_512x225x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1024PIXELS, GIME_4COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 64;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_256x192x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1024PIXELS, GIME_16COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_256x200x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1024PIXELS, GIME_16COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_256x225x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1024PIXELS, GIME_16COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_640x192x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1280PIXELS, GIME_4COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_640x200x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1280PIXELS, GIME_4COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_640x225x4:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1280PIXELS, GIME_4COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 4;
+            break;
+
+        case BITMAP_MODE_320x192x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1280PIXELS, GIME_16COLORS, GIME_24ROWS )
+
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 24;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_320x200x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1280PIXELS, GIME_16COLORS, GIME_25ROWS )
+
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 25;
+            _environment->screenColors = 16;
+            break;
+
+        case BITMAP_MODE_320x225x16:
+
+            GIME_GRAPH()
+            GIME_RESOLUTION( GIME_1280PIXELS, GIME_16COLORS, GIME_28ROWS )
+
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 28;
+            _environment->screenColors = 16;
             break;
 
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
+
+    _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+    _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
 
     cpu_store_16bit( _environment, "ORIGINX", 0 );
     cpu_store_16bit( _environment, "ORIGINY", 0 );
@@ -403,13 +1174,52 @@ void gime_tiles_get_height( Environment * _environment, char *_result ) {
 
 void gime_cls( Environment * _environment ) {
 
+    deploy( gimevars, src_hw_gime_vars_asm);
+
+    if ( _environment->currentMode < 0x10 ) {
+        // deploy( clsText, src_hw_6847_cls_text_asm );
+        deploy( clsText, src_hw_gime_cls_text_asm );
+        outline0("JSR CLST");
+    } else {
+        // deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
+        // deploy( textEncodedAtGraphic, src_hw_6847_text_at_graphic_asm );
+        // outline0("JSR TEXTATBITMAPMODE");
+    }
+
 }
 
 void gime_scroll_text( Environment * _environment, int _direction ) {
 
+    deploy( vScrollText, src_hw_gime_vscroll_text_asm );
+
+    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+    outline0("STA DIRECTION" );
+
+    outline0("JSR VSCROLLT");
+
 }
 
 void gime_text( Environment * _environment, char * _text, char * _text_size ) {
+
+    deploy( gimevars, src_hw_gime_vars_asm);
+
+    // deploy( vScrollText, src_hw_6847_vscroll_text_asm );
+    deploy( textEncodedAt, src_hw_gime_text_at_asm );
+
+    outline1("LDY %s", _text);
+    outline0("STY TEXTPTR" );
+    outline1("LDA %s", _text_size);
+    outline0("STA TEXTSIZE" );
+
+    if ( _environment->currentMode < 0x10 ) {
+        // deploy( clsText, src_hw_6847_cls_text_asm );
+        deploy( textEncodedAtText, src_hw_gime_text_at_text_asm );
+        outline0("JSR TEXTATTILEMODE");
+    } else {
+        // deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
+        // deploy( textEncodedAtGraphic, src_hw_6847_text_at_graphic_asm );
+        // outline0("JSR TEXTATBITMAPMODE");
+    }
 
 }
 
@@ -438,7 +1248,79 @@ void gime_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_INTERNAL, 0, 32, 16, 2, 8, 8, "Alphanumeric Internal");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_40X25, 0, 40, 25, 16, 8, 8, "Alphanumeric 40 columns x 25 rows");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_32X24, 0, 32, 24, 16, 8, 8, "Alphanumeric 32 columns x 24 rows");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_32X25, 0, 32, 25, 16, 8, 8, "Alphanumeric 32 columns x 25 rows");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_32X28, 0, 32, 28, 16, 8, 8, "Alphanumeric 32 columns x 28 rows");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_40X24, 0, 40, 24, 16, 8, 8, "Alphanumeric 40 columns x 24 rows");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_40X28, 0, 40, 28, 16, 8, 8, "Alphanumeric 40 columns x 28 rows");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_64X24, 0, 64, 24, 16, 8, 8, "Alphanumeric 64 columns x 24 rows");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_64X25, 0, 64, 25, 16, 8, 8, "Alphanumeric 64 columns x 25 rows");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_64X28, 0, 64, 28, 16, 8, 8, "Alphanumeric 64 columns x 28 rows");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_80X24, 0, 80, 24, 16, 8, 8, "Alphanumeric 80 columns x 24 rows");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_80X25, 0, 80, 25, 16, 8, 8, "Alphanumeric 80 columns x 25 rows");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_80X28, 0, 80, 28, 16, 8, 8, "Alphanumeric 80 columns x 28 rows");
+
+    SCREEN_MODE_DEFINE( BITMAP_MODE_128x192x2, 1, 128, 192, 2, 8, 8, "Graphic 128x192x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_128x200x2, 1, 128, 200, 2, 8, 8, "Graphic 128x200x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_128x225x2, 1, 128, 225, 2, 8, 8, "Graphic 128x225x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_64x192x4, 1, 64, 192, 4, 8, 8, "Graphic 64x192x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_64x200x4, 1, 64, 200, 4, 8, 8, "Graphic 64x200x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_64x225x4, 1, 64, 225, 4, 8, 8, "Graphic 64x225x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_160x192x2, 1, 160, 192, 2, 8, 8, "Graphic 160x192x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_160x200x2, 1, 160, 200, 2, 8, 8, "Graphic 160x200x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_160x225x2, 1, 160, 225, 2, 8, 8, "Graphic 160x225x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_80x192x4, 1, 80, 192, 4, 8, 8, "Graphic 80x192x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_80x200x4, 1, 80, 200, 4, 8, 8, "Graphic 80x200x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_80x225x4, 1, 80, 225, 4, 8, 8, "Graphic 80x225x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_256x192x2, 1, 256, 192, 2, 8, 8, "Graphic 256x192x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_256x200x2, 1, 256, 200, 2, 8, 8, "Graphic 256x200x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_256x225x2, 1, 256, 225, 2, 8, 8, "Graphic 256x225x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_128x192x4, 1, 128, 192, 4, 8, 8, "Graphic 128x192x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_128x200x4, 1, 128, 200, 4, 8, 8, "Graphic 128x200x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_128x225x4, 1, 128, 225, 4, 8, 8, "Graphic 128x225x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_64x192x16, 1, 64, 192, 16, 8, 8, "Graphic 64x192x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_64x200x16, 1, 64, 200, 16, 8, 8, "Graphic 64x200x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_64x225x16, 1, 64, 225, 16, 8, 8, "Graphic 64x225x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x192x2, 1, 320, 192, 2, 8, 8, "Graphic 320x192x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x2, 1, 320, 200, 2, 8, 8, "Graphic 320x200x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x225x2, 1, 320, 225, 2, 8, 8, "Graphic 320x225x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_160x192x4, 1, 160, 192, 4, 8, 8, "Graphic 160x192x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_160x200x4, 1, 160, 200, 4, 8, 8, "Graphic 160x200x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_160x225x4, 1, 160, 225, 4, 8, 8, "Graphic 160x225x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_80x192x16, 1, 80, 192, 16, 8, 8, "Graphic 80x192x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_80x200x16, 1, 80, 200, 16, 8, 8, "Graphic 80x200x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_80x225x16, 1, 80, 225, 16, 8, 8, "Graphic 80x225x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_512x192x2, 1, 512, 192, 2, 8, 8, "Graphic 512x192x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_512x200x2, 1, 512, 200, 2, 8, 8, "Graphic 512x200x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_512x225x2, 1, 512, 225, 2, 8, 8, "Graphic 512x225x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_256x192x4, 1, 256, 192, 4, 8, 8, "Graphic 256x192x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_256x200x4, 1, 256, 200, 4, 8, 8, "Graphic 256x200x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_256x225x4, 1, 256, 225, 4, 8, 8, "Graphic 256x225x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_128x192x16, 1, 128, 192, 16, 8, 8, "Graphic 128x192x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_128x200x16, 1, 128, 200, 16, 8, 8, "Graphic 128x200x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_128x225x16, 1, 128, 225, 16, 8, 8, "Graphic 128x225x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_640x192x2, 1, 640, 192, 2, 8, 8, "Graphic 640x192x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_640x200x2, 1, 640, 200, 2, 8, 8, "Graphic 640x200x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_640x225x2, 1, 640, 225, 2, 8, 8, "Graphic 640x225x2");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x192x4, 1, 320, 192, 4, 8, 8, "Graphic 320x192x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x4, 1, 320, 200, 4, 8, 8, "Graphic 320x200x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x225x4, 1, 320, 225, 4, 8, 8, "Graphic 320x225x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_160x192x16, 1, 160, 192, 16, 8, 8, "Graphic 160x192x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_160x200x16, 1, 160, 200, 16, 8, 8, "Graphic 160x200x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_160x225x16, 1, 160, 225, 16, 8, 8, "Graphic 160x225x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_512x192x4, 1, 512, 192, 4, 8, 8, "Graphic 512x192x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_512x200x4, 1, 512, 200, 4, 8, 8, "Graphic 512x200x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_512x225x4, 1, 512, 225, 4, 8, 8, "Graphic 512x225x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_256x192x16, 1, 256, 192, 16, 8, 8, "Graphic 256x192x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_256x200x16, 1, 256, 200, 16, 8, 8, "Graphic 256x200x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_256x225x16, 1, 256, 225, 16, 8, 8, "Graphic 256x225x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_640x192x4, 1, 640, 192, 4, 8, 8, "Graphic 640x192x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_640x200x4, 1, 640, 200, 4, 8, 8, "Graphic 640x200x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_640x225x4, 1, 640, 225, 4, 8, 8, "Graphic 640x225x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x192x16, 1, 320, 192, 16, 8, 8, "Graphic 320x192x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x16, 1, 320, 200, 16, 8, 8, "Graphic 320x200x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x225x16, 1, 320, 225, 16, 8, 8, "Graphic 320x225x16");
 
     outline0("JSR GIMESTARTUP");
 
@@ -471,13 +1353,15 @@ void gime_initialization( Environment * _environment ) {
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
-    _environment->screenTilesWidth = 32;
-    _environment->screenTilesHeight = 16;
+    _environment->screenTilesWidth = 40;
+    _environment->screenTilesHeight = 25;
     _environment->screenTiles = 128;
     _environment->screenWidth = _environment->screenTilesWidth*_environment->fontWidth;
     _environment->screenHeight = _environment->screenTilesHeight*_environment->fontHeight;
-    _environment->screenShades = 4;
-    _environment->screenColors = 4;
+    _environment->screenShades = 16;
+    _environment->screenColors = 16;
+
+    gime_tilemap_enable( _environment, 40, 25, 16, 8, 8 );
 
     gime_cls( _environment );
 
@@ -505,10 +1389,10 @@ void gime_cline( Environment * _environment, char * _characters ) {
 
 static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
-    switch( _mode ) {
-        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
-            break;
-    }
+    // switch( _mode ) {
+    //     case TILEMAP_MODE_40X25:         // Alphanumeric Internal	32 × 16	2	512
+    //         break;
+    // }
 
     return 0;
 
@@ -516,10 +1400,10 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
 Variable * gime_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
-    switch( _mode ) {
-        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
-            break;
-    }
+    // switch( _mode ) {
+    //     case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+    //         break;
+    // }
 
     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 

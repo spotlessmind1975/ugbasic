@@ -29,73 +29,112 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      INTERNAL VARIABLES FOR TRS-80 COLOR COMPUTER 3         *
+;*                          VERTICAL SCROLL ON GIME                            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTADDRESS         fdb     $C000
-BITMAPADDRESS       fdb     $8000
-COLORMAPADDRESS     fdb     $0000
-CURRENTMODE         fcb     $0
-CURRENTTILEMODE     fcb     1
-EVERYSTATUS        fcb     0
+VSCROLLT
+    PSHS A,B,X,Y,U
+    LDA DIRECTION
+    CMPA #0
+    BGT VSCROLLTDOWN
 
-TABCOUNT            fcb     4
-XCURS               fcb     0
-YCURS               fcb     0
-EMPTYTILE           fcb     32
-KBDRATE             fcb     16
+VSCROLLTUP
+    LDA CURRENTTILESWIDTH
+    LDX TEXTADDRESS
+    LDY TEXTADDRESS
+    LEAY A, Y
+    LEAY A, Y
 
-COCO3TIMER           fdb     $0
-COCO3TIMER2           fdb     $0
-TICKSPERSECOND       fcb     $0
+    LDA CURRENTTILESWIDTH
+    LDB CURRENTTILESHEIGHT
+    MUL
+    LSLB
+    ROLA
+    TFR D, U
+    LDA #0
+    LDB CURRENTTILESWIDTH
+    NEGA
+    NEGB
+    SBCA #0
+    LEAU D, U
+    LEAU D, U
 
-TMPPTR equ $10    ; $23
-TMPPTR2 equ $12    ; $25
+VSCROLLTUPYSCR1
+    LDA ,Y+
+    STA ,X+
+    LEAU -1, U
+    CMPU #0
+    BNE VSCROLLTUPYSCR1
 
-MATHPTR0 equ $14
-MATHPTR1 equ $15
-MATHPTR2 equ $16
-MATHPTR3 equ $17
-MATHPTR4 equ $18
-MATHPTR5 equ $19
-MATHPTR6 equ $20
-MATHPTR7 equ $21
-MATHPTR8 equ $22
-MATHPTRB0 equ $23
-MATHPTRB1 equ $24
-MATHPTRB2 equ $25
-MATHPTRB3 equ $26
-MATHPTRB4 equ $27
-MATHPTRB5 equ $28
-MATHPTRB6 equ $29
-MATHPTRB7 equ $2a
-MATHPTRB8 equ $2b
+    LDA #0
+    LDB CURRENTTILESWIDTH
+    TFR D, U
+    LDA EMPTYTILE
+    LDB _PEN
+    LSLB
+    LSLB
+    LSLB
+    ORB _PAPER
+VSCROLLTUPYSCR2
+    STD ,X
+    LEAX 2,X
+    LEAU -1, U
+    CMPU #0
+    BNE VSCROLLTUPYSCR2
 
-DSSTATUS equ $3b
-DSSIZE equ $3c
-DSADDRLO equ $3d
-DSADDRHI equ $3e
-DSBANKLO equ $3f
-DSBANKHI equ $40
+    JMP VSCROLLTE
 
-COPYOFTEXTADDRESS equ $41
-COPYOFBITMAPADDRESS equ $43
-COPYOFCOLORMAPADDRESS equ $45
-COPYOFTEXTADDRESS2 equ $47
-COPYOFCOLORMAPADDRESS2 equ $49
+VSCROLLTDOWN
+    LDA CURRENTTILESWIDTH
+    LDB CURRENTTILESHEIGHT
+    MUL
+    LSLB
+    ROLA
+    TFR D, U
 
-DIRECTION equ $4a
-PATTERN equ $4a
-CHARACTERS equ $4a
-CLINEX equ $4b
-CLINEY equ $4c
+    LDX TEXTADDRESS
+    LDY TEXTADDRESS
+    LEAY D, Y
 
-BITSTOCONVERT equ $4a
+    LDA #0
+    LDB CURRENTTILESWIDTH
+    NEGA
+    NEGB
+    ADDD #1
+    LEAU D, U
+    TFR U, D
 
-XCURSYS equ $D3
-YCURSYS equ $D6
+    LEAX D, X
+    LEAX D, X
 
-BANKSHADOW fcb  0
+VSCROLLTDOWNSCR1
+    LDA ,-Y
+    STA ,-X
+    LEAU -1, U
+    CMPU #0
+    BNE VSCROLLTDOWNSCR1
+
+    LDA #0
+    LDB CURRENTTILESWIDTH
+    TFR D, U
+    LDA EMPTYTILE
+    LDB _PEN
+    LSLB
+    LSLB
+    LSLB
+    ORB _PAPER
+VSCROLLTDOWNSCR2
+    STD ,X
+    LEAX -2, X
+    LEAU -1, U
+    CMPU #0
+    BNE VSCROLLTDOWNSCR2
+
+    JMP VSCROLLTE
+
+VSCROLLTE
+    PULS A,B,X,Y,U
+    RTS
