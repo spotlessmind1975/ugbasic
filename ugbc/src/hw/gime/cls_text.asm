@@ -57,6 +57,7 @@ CLSTX
 
 CLSTX0
     STD ,X+
+    LEAX 1, X
     LEAU -1, U
     CMPU #0
     BNE CLSTX0

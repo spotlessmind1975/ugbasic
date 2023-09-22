@@ -103,22 +103,25 @@ VSCROLLTDOWN
     LDX TEXTADDRESS
     LDY TEXTADDRESS
     LEAY D, Y
+    LEAX D, X
 
     LDA #0
     LDB CURRENTTILESWIDTH
+    LSLB
+    ROLA
     NEGA
     NEGB
-    ADDD #1
+    SBCA #0
+    LEAY D, Y
+    ADDD #2
     LEAU D, U
-    TFR U, D
-
-    LEAX D, X
-    LEAX D, X
 
 VSCROLLTDOWNSCR1
-    LDA ,-Y
-    STA ,-X
-    LEAU -1, U
+    LDD ,Y
+    STD ,X
+    LEAX -2, X
+    LEAY -2, Y
+    LEAU -2, U
     CMPU #0
     BNE VSCROLLTDOWNSCR1
 
@@ -132,8 +135,8 @@ VSCROLLTDOWNSCR1
     LSLB
     ORB _PAPER
 VSCROLLTDOWNSCR2
-    STD ,X
-    LEAX -2, X
+    STD , Y
+    LEAY 2, Y
     LEAU -1, U
     CMPU #0
     BNE VSCROLLTDOWNSCR2
