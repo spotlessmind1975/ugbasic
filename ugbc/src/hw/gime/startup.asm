@@ -90,3 +90,167 @@ GIMESTARTUP
     STA   GIMEMMU6
 
     RTS
+
+; Look for a specific (pen) color into the palette.
+;   input: B = color to look for
+;   output: A = index of ink, $FF if not found
+GIMELOOKFORPALETTEPEN
+	PSHS X
+	LDA #0
+	LDX #PALETTEPEN
+GIMELOOKFORPALETTEPENL1
+	CMPB A, X
+	BEQ GIMELOOKFORPALETTEPEND
+	INCA
+	CMPA #8
+	BNE GIMELOOKFORPALETTEPENL1
+	LDA #$FF
+GIMELOOKFORPALETTEPEND
+	PULS X
+	RTS
+
+; Look for a specific (paper) color into the palette.
+;   input: B = color to look for
+;   output: A = index of ink, $FF if not found
+GIMELOOKFORPALETTEPAPER
+	PSHS X
+	LDA #0
+	LDX #PALETTEPAPER
+GIMELOOKFORPALETTEPAPERL1
+	CMPB A, X
+	BEQ GIMELOOKFORPALETTEPAPERD
+	INCA
+	CMPA #8
+	BNE GIMELOOKFORPALETTEPAPERL1
+	LDA #$FF
+GIMELOOKFORPALETTEPAPERD
+	PULS X
+	RTS
+
+; Insert a specific color into the (pen) palette.
+;   input: B = color to insert
+;   output: A = index of ink allocated
+GIMEINSERTPALETTEPEN
+	PSHS X
+    CMPB #$FF
+    BEQ GIMEINSERTPALETTEPENDONE
+	LDA PALETTEPENUNUSED
+	INCA
+	CMPA #8
+	BNE GIMEINSERTPALETTEPENUNDER
+	LDA #0
+GIMEINSERTPALETTEPENUNDER
+	STA PALETTEPENUNUSED
+	LDX #PALETTEPEN
+	STB A,X
+	LDX #$FFB0
+	STB A,X
+GIMEINSERTPALETTEPENDONE
+	PULS X
+    RTS
+
+; Insert a specific color into the (paper) palette.
+;   input: B = color to insert
+;   output: A = index of ink allocated
+GIMEINSERTPALETTEPAPER
+	PSHS X
+    CMPB #$FF
+    BEQ GIMEINSERTPALETTEPAPERDONE
+	LDA PALETTEPAPERUNUSED
+	INCA
+	CMPA #8
+	BNE GIMEINSERTPALETTEPAPERUNDER
+	LDA #0
+GIMEINSERTPALETTEPAPERUNDER
+	STA PALETTEPAPERUNUSED
+	LDX #PALETTEPAPER
+	STB A,X
+	LDX #$FFB8
+	STB A,X
+GIMEINSERTPALETTEPAPERDONE
+	PULS X
+    RTS
+
+; Update a specific color into the (pen) palette.
+;   input: 
+;           A = index of ink to update
+;           B = color to update
+GIMEUPDATEPALETTEPEN
+	PSHS X
+	CMPB #$FF
+	BEQ GIMEUPDATEPALETTEPENDONE
+	LDX #PALETTEPEN
+	STB A,X
+	LDX #$FFB0
+	STB A,X
+GIMEUPDATEPALETTEPENDONE
+	PULS X
+	RTS
+
+; Update a specific color into the (paper) palette.
+;   input: 
+;           A = index of ink to update
+;           B = color to update
+GIMEUPDATEPALETTEPAPER
+	PSHS X
+	CMPB #$FF
+	BEQ GIMEUPDATEPALETTEPAPERDONE
+	LDX #PALETTEPAPER
+	STB A,X
+	LDX #$FFB8
+	STB A,X
+GIMEUPDATEPALETTEPAPERDONE
+	PULS X
+	RTS
+
+; Get a specific color from the (pen) palette.
+;   input: 
+;           A = index of ink
+;   output: 
+;           B = color
+GIMEGETPALETTEPEN
+	PSHS X
+	LDX #PALETTEPEN
+	LDB A,X
+	PULS X
+	RTS
+
+; Get a specific color from the (paper) palette.
+;   input: 
+;           A = index of ink
+;   output: 
+;           B = color
+GIMEGETPALETTEPAPER
+	PSHS X
+	LDX #PALETTEPAPER
+	LDB A,X
+	PULS X
+	RTS
+
+; Look for a specific color into the (pen) palette and, if missing,
+; insert it into palette.
+;   input: 
+;           B = color to look for / insert
+;   output: 
+;           A = index of ink
+GIMESELECTPALETTEPEN
+    JSR GIMELOOKFORPALETTEPEN
+    CMPA #$FF
+	BNE GIMESELECTPALETTEPENDONE
+    JSR GIMEINSERTPALETTEPEN
+GIMESELECTPALETTEPENDONE
+    RTS
+
+; Look for a specific color into the (paper) palette and, if missing,
+; insert it into palette.
+;   input: 
+;           B = color to look for / insert
+;   output: 
+;           A = index of ink
+GIMESELECTPALETTEPAPER
+    JSR GIMELOOKFORPALETTEPAPER
+    CMPA #$FF
+	BNE GIMESELECTPALETTEPAPERDONE
+    JSR GIMEINSERTPALETTEPAPER
+GIMESELECTPALETTEPAPERDONE
+    RTS

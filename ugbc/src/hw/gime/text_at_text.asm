@@ -115,11 +115,15 @@ TEXTATGO
 
     ; Prepare the color
 
-    LDA _PEN
-    ANDA #$07
+    LDB _PEN
+    JSR GIMESELECTPALETTEPEN
     LSLA
     LSLA
     LSLA
+    STA MATHPTR0
+    LDB _PAPER
+    JSR GIMESELECTPALETTEPAPER
+    ORA MATHPTR0
     STA MATHPTR0
 
     ; Load the starting address of the video ram
@@ -236,7 +240,7 @@ TEXTATCC
 
     ; CMOVE -> move the cursor to a relative position
     CMPA #03
-    BEQ TEXTATCMOVEPREPARE
+    LBEQ TEXTATCMOVEPREPARE
 
     ; AT -> move the cursor to an absolute position
     CMPA #04
@@ -302,10 +306,15 @@ TEXTATPEN
     LDA #$0
 TEXTATPEN2
     STA _PEN
-    ANDA #$07
+    LDA MATHPTR0
+    ANDA #$C7
+    STA MATHPTR0
+    LDB _PEN
+    JSR GIMESELECTPALETTEPEN
     LSLA
     LSLA
     LSLA
+    ORA MATHPTR0
     STA MATHPTR0
 
     ; Move to the next character to print.
@@ -340,8 +349,19 @@ TEXTATPAPER
     DECB
 
     ; Save the paper.
-
+    ; A parameter of $FF means $00.
+    CMPA #$FF
+    BNE TEXTATPAPER2
+    LDA #$0
+TEXTATPAPER2
     STA _PAPER
+    LDA MATHPTR0
+    ANDA #$F8
+    STA MATHPTR0
+    LDB _PAPER
+    JSR GIMESELECTPALETTEPAPER
+    ORA MATHPTR0
+    STA MATHPTR0
 
     ; Move to the next character to print.
 
@@ -481,6 +501,12 @@ TEXTATSP0
 
     STA , X+
 
+    ; Check if WRITING allows to change the pen+paper color.
+    ; In such case, we are going to copy the color directly.
+    LDA TEXTWW
+    CMPA #$3
+    BEQ TEXTATSP0C
+
     ; Check if WRITING allows to change the pen color.
 
     LDA TEXTWW
@@ -491,7 +517,10 @@ TEXTATSP0
 
     LDA , X
     ANDA #$C7
-    ORA MATHPTR0
+    STA , X
+    LDA MATHPTR0
+    ANDA #$F8
+    ORA , X
     STA , X
     
 TEXTATCNOPEN
@@ -506,8 +535,10 @@ TEXTATCNOPEN
     
     LDA , X
     ANDA #$F8
-    ORA _PAPER
-    ANDA #$07
+    STA , X
+    LDA MATHPTR0
+    ANDA #$C7
+    ORA , X
     STA , X
     
 TEXTATCNOPAPER
@@ -516,6 +547,16 @@ TEXTATCNOPAPER
 
     ; Move the current cursor position ahead by one position.
 
+    JMP TEXTATINCX
+
+    ; If the program reach this point, it means that must copy
+    ; the color directly to the screen RAM.
+
+TEXTATSP0C
+
+    LDA MATHPTR0
+    STA , X
+    LEAX 1, X
     JMP TEXTATINCX
 
     ; If the program reach this point, it means that must skip

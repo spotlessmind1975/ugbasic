@@ -82,3 +82,9 @@ BLITR0 EQU $57
 BLITR1 EQU $58
 BLITR2 EQU $59
 BLITR3 EQU $60
+
+PALETTEPEN                 rzb 8
+PALETTEPENUNUSED           fcb 0
+
+PALETTEPAPER               rzb 8
+PALETTEPAPERUNUSED         fcb 0

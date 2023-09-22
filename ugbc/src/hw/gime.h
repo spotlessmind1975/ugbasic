@@ -33,43 +33,57 @@
 
 #include "../ugbc.h"
 
-#define COLOR_BLACK					0
-#define COLOR_GREEN					COLOR_BLACK
-#define COLOR_YELLOW				1
-#define COLOR_BLUE					2
-#define COLOR_RED					3
-#define COLOR_WHITE					COLOR_YELLOW
-#define COLOR_CYAN					COLOR_BLUE
-#define COLOR_MAGENTA				COLOR_BLUE
-#define COLOR_ORANGE				COLOR_BLUE
+#define RGB2GIME( r, g, b )     ( ( (r/64) & 0x02 ) << (5-1) ) | ( ( (g/64) & 0x02 ) << (4-1) ) | ( ( (b/64) & 0x02 ) << (3-1) ) | ( ( (r/64) & 0x01 ) << 2 ) | ( ( (g/64) & 0x01 ) << 1 ) | ( ( (b/64) & 0x01 ) )
 
-#define COLOR_VIOLET				COLOR_MAGENTA
-#define COLOR_BROWN					COLOR_ORANGE
-#define COLOR_LIGHT_RED				COLOR_ORANGE
+#define COLOR_BLACK					RGB2GIME( 0x00, 0x00, 0x00 )
+#define COLOR_BLUE					RGB2GIME( 0x00, 0x00, 0x80 )
+#define COLOR_LIGHT_BLUE			RGB2GIME( 0x00, 0x00, 0xff )
+#define COLOR_RED					RGB2GIME( 0x80, 0x00, 0x00 )
+#define COLOR_MAGENTA				RGB2GIME( 0x80, 0x00, 0x80 )
+#define COLOR_MAUVE 				RGB2GIME( 0x80, 0x40, 0x80 )
+#define COLOR_LIGHT_RED				RGB2GIME( 0xff, 0x00, 0x00 )
+#define COLOR_PURPLE				RGB2GIME( 0x80, 0x00, 0x80 )
+#define COLOR_LIGHT_MAGENTA			RGB2GIME( 0xff, 0x00, 0xff )
+#define COLOR_GREEN					RGB2GIME( 0x00, 0x80, 0x00 ) 
+#define COLOR_CYAN					RGB2GIME( 0x00, 0x80, 0x80 ) 
+#define COLOR_DARK_CYAN				RGB2GIME( 0x00, 0x40, 0x40 ) 
+#define COLOR_YELLOW				RGB2GIME( 0x80, 0x80, 0x00 ) 
+#define COLOR_WHITE					RGB2GIME( 0x80, 0x80, 0x80 ) 
+#define COLOR_PASTEL_BLUE			RGB2GIME( 0xa7, 0xc7, 0xe7 ) 
+#define COLOR_ORANGE				RGB2GIME( 0xff, 0xa5, 0x00 ) 
+#define COLOR_PINK       			RGB2GIME( 0xff, 0xc0, 0xcb ) 
+#define COLOR_PASTEL_MAGENTA		RGB2GIME( 0xff, 0x00, 0xff )
+#define COLOR_LIGHT_GREEN			RGB2GIME( 0x00, 0xf0, 0x00 )
+#define COLOR_SEA_GREEN			    RGB2GIME( 0x00, 0xf0, 0x20 )
+#define COLOR_LIGHT_CYAN		    RGB2GIME( 0x00, 0xff, 0xff ) 
+
+#define COLOR_LIME      		    RGB2GIME( 0xcc, 0xff, 0x00 ) 
+#define COLOR_PASTEL_GREEN    	    COLOR_LIGHT_GREEN
+#define COLOR_PASTEL_CYAN    	    COLOR_LIGHT_CYAN
+#define COLOR_LIGHT_YELLOW    	    RGB2GIME( 0xf0, 0xf0, 0x00 ) 
+#define COLOR_PASTEL_YELLOW   	    COLOR_LIGHT_YELLOW
+#define COLOR_LIGHT_WHITE   	    RGB2GIME( 0xff, 0xff, 0xff ) 
+
+#define COLOR_VIOLET				COLOR_PURPLE
+#define COLOR_BROWN					COLOR_RED
 #define COLOR_DARK_GREY				COLOR_BLACK
-#define COLOR_GREY					COLOR_WHITE
-#define COLOR_LIGHT_GREEN			COLOR_GREEN
-#define COLOR_LIGHT_BLUE			COLOR_BLUE
+#define COLOR_GREY					COLOR_BLACK
 #define COLOR_LIGHT_GREY			COLOR_WHITE
 #define COLOR_DARK_BLUE				COLOR_BLUE
-#define COLOR_PURPLE				COLOR_VIOLET
 #define COLOR_LAVENDER       		COLOR_VIOLET
 #define COLOR_GOLD       			COLOR_YELLOW
 #define COLOR_TURQUOISE       		COLOR_LIGHT_BLUE
 #define COLOR_TAN       		    COLOR_BROWN
 #define COLOR_YELLOW_GREEN       	COLOR_YELLOW
-#define COLOR_OLIVE_GREEN       	COLOR_GREEN
-#define COLOR_PINK       			COLOR_LIGHT_RED
+#define COLOR_OLIVE_GREEN       	COLOR_PASTEL_GREEN
 #define COLOR_PEACH       			COLOR_PINK
-#define COLOR_LIGHT_WHITE			COLOR_WHITE
+#define COLOR_COUNT                 64
 
 #define DEFAULT_PEN_COLOR           COLOR_WHITE
 #define DEFAULT_PAPER_COLOR         COLOR_BLACK
 
-#define COLOR_COUNT                 4
-
-#define TEXT_COLUMNS_COUNT          32
-#define TEXT_ROWS_COUNT             16
+#define TEXT_COLUMNS_COUNT          40
+#define TEXT_ROWS_COUNT             25
 
 #define TILEMAP_MODE_32X24           0      // Alphanumeric 32 columns x 24 rows
 #define TILEMAP_MODE_32X25           1      // Alphanumeric 32 columns x 25 rows
