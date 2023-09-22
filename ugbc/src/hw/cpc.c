@@ -917,9 +917,9 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
     variable_global( _environment, "RESOLUTIONY" );
 
-    variable_import( _environment, "XCURSYS", VT_BYTE, 0 );
+    variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
     variable_global( _environment, "XCURSYS" );
-    variable_import( _environment, "YCURSYS", VT_BYTE, 0 );
+    variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
     variable_global( _environment, "YCURSYS" );
     variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
     variable_global( _environment, "TABCOUNT" );
