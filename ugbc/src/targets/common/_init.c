@@ -60,9 +60,9 @@ void begin_compilation( Environment * _environment ) {
 
 void setup_text_variables( Environment * _environment ) {
 
-    variable_import( _environment, "XCURSYS", VT_BYTE, 0 );
+    variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
     variable_global( _environment, "XCURSYS" );
-    variable_import( _environment, "YCURSYS", VT_BYTE, 0 );
+    variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
     variable_global( _environment, "YCURSYS" );
     variable_define( _environment, "PEN", VT_COLOR, DEFAULT_PEN_COLOR );
     variable_global( _environment, "PEN" );
@@ -79,9 +79,9 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "TAB", VT_STRING, 0 );
     variable_store_string( _environment, "TAB", "\t");
     variable_global( _environment, "TAB" );
-    variable_define( _environment, "windowMX", VT_BYTE, 0 );
+    variable_define( _environment, "windowMX", VT_SBYTE, 0 );
     variable_global( _environment, "windowMX" );
-    variable_define( _environment, "windowMY", VT_BYTE, 0 );                
+    variable_define( _environment, "windowMY", VT_SBYTE, 0 );                
     variable_global( _environment, "windowMY" );
     variable_import( _environment, "PROTOTHREADCT", VT_BYTE, 0 );
     variable_global( _environment, "PROTOTHREADCT" );
