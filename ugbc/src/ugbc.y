@@ -985,6 +985,12 @@ modula:
         }
         $$ = variable_mul2_const( _environment, $1, $3 )->name;
     } 
+    | modula OP_MULTIPLICATION2 Integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_MULTIPLICATOR2( $3 );
+        }
+        $$ = variable_mul2_const( _environment, $1, $3 )->name;
+    } 
     | modula OP_DIVISION factor {
         $$ = variable_div( _environment, $1, $3, NULL )->name;
     } 
