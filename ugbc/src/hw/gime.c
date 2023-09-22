@@ -1403,6 +1403,22 @@ void gime_back( Environment * _environment ) {
 
 void gime_cline( Environment * _environment, char * _characters ) {
 
+    deploy( textCline, src_hw_gime_cline_asm );
+    Variable * x = variable_retrieve( _environment, "XCURSYS" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
+
+    if ( _characters ) {
+        outline1("LDA %s", _characters);
+    } else {
+        outline0("LDA #0");
+    }
+    outline0("STA CHARACTERS");
+    outline1("LDA %s", x->realName );
+    outline0("STA CLINEX" );
+    outline1("LDA %s", y->realName );
+    outline0("STA CLINEY");
+    outline0("JSR CLINE");
+
 }
 
 static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
