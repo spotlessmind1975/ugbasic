@@ -120,11 +120,11 @@ TEXTATGO
     LSLA
     LSLA
     LSLA
-    STA MATHPTR0
+    STA -42, S
     LDB _PAPER
     JSR GIMESELECTPALETTEPAPER
-    ORA MATHPTR0
-    STA MATHPTR0
+    ORA -42, S
+    STA -42, S
 
     ; Load the starting address of the video ram
     ; in a specific location, as a copy. This makes
@@ -307,16 +307,16 @@ TEXTATPEN
 TEXTATPEN2
     PSHS D
     STA _PEN
-    LDA MATHPTR0
+    LDA -42, S
     ANDA #$C7
-    STA MATHPTR0
+    STA -42, S
     LDB _PEN
     JSR GIMESELECTPALETTEPEN
     LSLA
     LSLA
     LSLA
-    ORA MATHPTR0
-    STA MATHPTR0
+    ORA -42, S
+    STA -42, S
     PULS D
 
     ; Move to the next character to print.
@@ -358,13 +358,13 @@ TEXTATPAPER
 TEXTATPAPER2
     PSHS D
     STA _PAPER
-    LDA MATHPTR0
+    LDA -42, S
     ANDA #$F8
-    STA MATHPTR0
+    STA -42, S
     LDB _PAPER
     JSR GIMESELECTPALETTEPAPER
-    ORA MATHPTR0
-    STA MATHPTR0
+    ORA -42, S
+    STA -42, S
     PULS D
 
     ; Move to the next character to print.
@@ -427,9 +427,10 @@ TEXTATCMOVE
     ; Update the address by delta.
 
     LDA CLINEX
-    LDX COPYOFTEXTADDRESS
+    ;LDX COPYOFTEXTADDRESS
     LEAX A, X
-    STX COPYOFTEXTADDRESS
+    LEAX A, X
+    ;STX COPYOFTEXTADDRESS
 
 TEXTATCMOVESKIPX
 
@@ -459,15 +460,31 @@ TEXTATCMOVESKIPX
     ; Update the address by delta.
 
     PSHS D
-    LDB YCURSYS
+    LDA CLINEY
+    ANDA #$80
+    CMPA #$80
+    BEQ TEXTATCMOVELOOPYM
     LDA CURRENTTILESWIDTH
-    LDX COPYOFTEXTADDRESS
-TEXTATCMOVELOOPY
-    ANDCC #$FE
-    LEAX A, X
-    DECB
-    BNE TEXTATCMOVELOOPY
-    STX COPYOFTEXTADDRESS
+    LDB CLINEY
+    MUL
+    LSLB
+    ROLA
+    LEAX D, X
+    JMP TEXTATCMOVELOOPY0
+TEXTATCMOVELOOPYM
+    LDA CURRENTTILESWIDTH
+    LDB CLINEY
+    NEGB
+    MUL
+    LSLB
+    ROLA
+    NEGA
+    NEGB
+    SBCA #0
+    LEAX D, X
+    JMP TEXTATCMOVELOOPY0
+TEXTATCMOVELOOPY0
+    ; STX COPYOFTEXTADDRESS
     PULS D
 
 TEXTATCMOVESKIPY
@@ -485,6 +502,7 @@ TEXTATAT
     ; the current position.
 
     LDA , Y+
+    DECB
     ANDCC #$01
     SUBA XCURSYS
     STA CLINEX
@@ -493,6 +511,7 @@ TEXTATAT
     ; the current position.
 
     LDA , Y+
+    DECB
     ANDCC #$01
     SUBA YCURSYS
     STA CLINEY
@@ -524,7 +543,7 @@ TEXTATSP0
     LDA , X
     ANDA #$C7
     STA , X
-    LDA MATHPTR0
+    LDA -42, S
     ANDA #$F8
     ORA , X
     STA , X
@@ -542,7 +561,7 @@ TEXTATCNOPEN
     LDA , X
     ANDA #$F8
     STA , X
-    LDA MATHPTR0
+    LDA -42, S
     ANDA #$C7
     ORA , X
     STA , X
@@ -560,7 +579,7 @@ TEXTATCNOPAPER
 
 TEXTATSP0C
 
-    LDA MATHPTR0
+    LDA -42, S
     STA , X
     LEAX 1, X
     JMP TEXTATINCX

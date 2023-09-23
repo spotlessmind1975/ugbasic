@@ -88,6 +88,8 @@ GIMESTARTUP
 
     LDA   #$30
     STA   GIMEMMU6
+    INCA
+    STA   GIMEMMU7
 
     RTS
 

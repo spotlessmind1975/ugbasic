@@ -1176,8 +1176,7 @@ void gime_cls( Environment * _environment ) {
 
     deploy( gimevars, src_hw_gime_vars_asm);
 
-    if ( _environment->currentMode < 0x10 ) {
-        // deploy( clsText, src_hw_6847_cls_text_asm );
+    if ( _environment->currentTileMode ) {
         deploy( clsText, src_hw_gime_cls_text_asm );
         outline0("JSR CLST");
     } else {
