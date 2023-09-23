@@ -262,7 +262,7 @@ void gime_bank_select( Environment * _environment, int _bank ) {
 
 int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    // deploy( gimevars, src_hw_6847_vars_asm );
+    // deploy( gimevars, src_hw_gime_vars_asm );
 
     GIME_128K( );
 
@@ -1012,6 +1012,21 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );
+
+    int bpp = 1;
+    switch( _environment->screenColors ) {
+        case 2:
+            cpu_store_16bit( _environment, "CURRENTFRAMESIZE", ( ( _environment->screenWidth / 8 ) * _environment->screenHeight ) );
+            break;
+        case 4:
+            cpu_store_16bit( _environment, "CURRENTFRAMESIZE", ( ( _environment->screenWidth / 4 ) * _environment->screenHeight ) );
+            break;
+        case 16:
+        default:
+            cpu_store_16bit( _environment, "CURRENTFRAMESIZE", ( ( _environment->screenWidth / 2 ) * _environment->screenHeight ) );
+            break;
+    }
 
 }
 
@@ -1070,13 +1085,56 @@ void gime_textmap_at( Environment * _environment, char * _address ) {
 
 void gime_point_at_int( Environment * _environment, int _x, int _y ) {
 
+    deploy( gimevars, src_hw_gime_vars_asm );
+    deploy( plot, src_hw_gime_plot_asm );
+    
+    outline1("LDX %4.4x", (_x & 0xffff ) );
+    outline0("STX PLOTX");
+    outline1("LDD %4.4x", ( _y & 0xffff ) );
+    outline0("STD PLOTY");
+    outline0("LDA #1");
+    outline0("STA PLOTM");
+    outline0("JSR PLOT");
+    
+
 }
 
 void gime_point_at_vars( Environment * _environment, char *_x, char *_y ) {
 
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+
+    deploy( gimevars, src_hw_gime_vars_asm );
+    deploy( plot, src_hw_gime_plot_asm );
+    
+    outline1("LDX %s", x->realName );
+    outline0("STX PLOTX");
+    outline1("LDD %s", y->realName );
+    outline0("STD PLOTY");
+    outline0("LDA #1");
+    outline0("STA PLOTM");
+    outline0("JSR PLOT");
+
 }
 
 void gime_point( Environment * _environment, char *_x, char *_y, char * _result ) {
+
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * result = variable_retrieve_or_define( _environment, _result, VT_BYTE, 0 );
+
+    deploy( gimevars, src_hw_gime_vars_asm );
+    deploy( plot, src_hw_gime_plot_asm );
+    
+    outline1("LDD %s", x->realName );
+    outline0("STD PLOTX");
+    outline1("LDD %s", y->realName );
+    outline0("STD PLOTY");
+    outline0("LDA #3");
+    outline0("STA PLOTM");
+    outline0("JSR PLOT");
+    outline0("LDA PLOTM");
+    outline1("STA %s", result->realName );    
 
 }
 
@@ -1154,21 +1212,36 @@ void gime_horizontal_scroll( Environment * _environment, char * _displacement ) 
 
 void gime_get_width( Environment * _environment, char *_result ) {
 
+    outline0("LDX CURRENTWIDTH" );
+    outline1("STX %s", _result );
+
 }
 
 void gime_tiles_get( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILES" );
+    outline1("STA %s", _result );
 
 }
 
 void gime_tiles_get_width( Environment * _environment, char *_result ) {
 
+    outline0("LDA CURRENTTILESWIDTH" );
+    outline1("STA %s", _result );
+
 }
 
 void gime_get_height( Environment * _environment, char *_result ) {
 
+    outline0("LDX CURRENTHEIGHT" );
+    outline1("STX %s", _result );
+
 }
 
 void gime_tiles_get_height( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILESHEIGHT" );
+    outline1("STA %s", _result );
 
 }
 
@@ -1180,9 +1253,8 @@ void gime_cls( Environment * _environment ) {
         deploy( clsText, src_hw_gime_cls_text_asm );
         outline0("JSR CLST");
     } else {
-        // deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
-        // deploy( textEncodedAtGraphic, src_hw_6847_text_at_graphic_asm );
-        // outline0("JSR TEXTATBITMAPMODE");
+        deploy( clsGraphic, src_hw_gime_cls_graphic_asm );
+        outline0("JSR CLSG");
     }
 
 }
@@ -1215,8 +1287,8 @@ void gime_text( Environment * _environment, char * _text, char * _text_size ) {
         deploy( textEncodedAtText, src_hw_gime_text_at_text_asm );
         outline0("JSR TEXTATTILEMODE");
     } else {
-        // deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
-        // deploy( textEncodedAtGraphic, src_hw_6847_text_at_graphic_asm );
+        // deploy( clsGraphic, src_hw_gime_cls_graphic_asm );
+        // deploy( textEncodedAtGraphic, src_hw_gime_text_at_graphic_asm );
         // outline0("JSR TEXTATBITMAPMODE");
     }
 
@@ -1246,6 +1318,8 @@ void gime_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTWIDTH" );
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
+    variable_import( _environment, "PALETTELIMIT", VT_BYTE, 0 );
+    variable_global( _environment, "PALETTELIMIT" );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_40X25, 0, 40, 25, 16, 8, 8, "Alphanumeric 40 columns x 25 rows");
     SCREEN_MODE_DEFINE( TILEMAP_MODE_32X24, 0, 32, 24, 16, 8, 8, "Alphanumeric 32 columns x 24 rows");
@@ -1260,6 +1334,7 @@ void gime_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( TILEMAP_MODE_80X25, 0, 80, 25, 16, 8, 8, "Alphanumeric 80 columns x 25 rows");
     SCREEN_MODE_DEFINE( TILEMAP_MODE_80X28, 0, 80, 28, 16, 8, 8, "Alphanumeric 80 columns x 28 rows");
 
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x16, 1, 320, 200, 16, 8, 8, "Graphic 320x200x16");
     SCREEN_MODE_DEFINE( BITMAP_MODE_128x192x2, 1, 128, 192, 2, 8, 8, "Graphic 128x192x2");
     SCREEN_MODE_DEFINE( BITMAP_MODE_128x200x2, 1, 128, 200, 2, 8, 8, "Graphic 128x200x2");
     SCREEN_MODE_DEFINE( BITMAP_MODE_128x225x2, 1, 128, 225, 2, 8, 8, "Graphic 128x225x2");
@@ -1318,7 +1393,6 @@ void gime_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( BITMAP_MODE_640x200x4, 1, 640, 200, 4, 8, 8, "Graphic 640x200x4");
     SCREEN_MODE_DEFINE( BITMAP_MODE_640x225x4, 1, 640, 225, 4, 8, 8, "Graphic 640x225x4");
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x192x16, 1, 320, 192, 16, 8, 8, "Graphic 320x192x16");
-    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x16, 1, 320, 200, 16, 8, 8, "Graphic 320x200x16");
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x225x16, 1, 320, 225, 16, 8, 8, "Graphic 320x225x16");
 
     outline0("JSR GIMESTARTUP");

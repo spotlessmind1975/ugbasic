@@ -85,79 +85,115 @@
 #define TEXT_COLUMNS_COUNT          40
 #define TEXT_ROWS_COUNT             25
 
-#define TILEMAP_MODE_32X24           0      // Alphanumeric 32 columns x 24 rows
-#define TILEMAP_MODE_32X25           1      // Alphanumeric 32 columns x 25 rows
-#define TILEMAP_MODE_32X28           2      // Alphanumeric 32 columns x 28 rows
-#define TILEMAP_MODE_40X24           3      // Alphanumeric 40 columns x 24 rows
-#define TILEMAP_MODE_40X25           4      // Alphanumeric 40 columns x 25 rows
-#define TILEMAP_MODE_40X28           5      // Alphanumeric 40 columns x 28 rows
-#define TILEMAP_MODE_64X24           6      // Alphanumeric 64 columns x 24 rows
-#define TILEMAP_MODE_64X25           7      // Alphanumeric 64 columns x 25 rows
-#define TILEMAP_MODE_64X28           8      // Alphanumeric 64 columns x 28 rows
-#define TILEMAP_MODE_80X24           9      // Alphanumeric 80 columns x 24 rows
-#define TILEMAP_MODE_80X25          10      // Alphanumeric 80 columns x 25 rows
-#define TILEMAP_MODE_80X28          11      // Alphanumeric 80 columns x 28 rows
+#define TILEMAP_MODE( x )       (0x00 | ( x & 0x0f ) )
+#define BITMAP2_MODE( x )       (0x40 | ( x & 0x1f ) )
+#define BITMAP4_MODE( x )       (0x60 | ( x & 0x1f ) )
+#define BITMAP16_MODE( x )       (0xe0 | ( x & 0x1f ) )
 
-#define BITMAP_MODE_128x192x2       0x10    // Graphic 128x192x2
-#define BITMAP_MODE_128x200x2       0x11    // Graphic 128x200x2
-#define BITMAP_MODE_128x225x2       0x12    // Graphic 128x225x2
-#define BITMAP_MODE_64x192x4        0x13    // Graphic 64x192x4
-#define BITMAP_MODE_64x200x4        0x14    // Graphic 64x200x4
-#define BITMAP_MODE_64x225x4        0x15    // Graphic 64x225x4
-#define BITMAP_MODE_160x192x2       0x16    // Graphic 160x192x2
-#define BITMAP_MODE_160x200x2       0x17    // Graphic 160x200x2
-#define BITMAP_MODE_160x225x2       0x18    // Graphic 160x225x2
-#define BITMAP_MODE_80x192x4        0x19    // Graphic 80x192x4
-#define BITMAP_MODE_80x200x4        0x1a    // Graphic 80x200x4
-#define BITMAP_MODE_80x225x4        0x1b    // Graphic 80x225x4
-#define BITMAP_MODE_256x192x2       0x1c    // Graphic 256x192x2
-#define BITMAP_MODE_256x200x2       0x1d    // Graphic 256x200x2
-#define BITMAP_MODE_256x225x2       0x1e    // Graphic 256x225x2
-#define BITMAP_MODE_128x192x4       0x1f    // Graphic 128x192x4
-#define BITMAP_MODE_128x200x4       0x20    // Graphic 128x200x4
-#define BITMAP_MODE_128x225x4       0x21    // Graphic 128x225x4
-#define BITMAP_MODE_64x192x16       0x22    // Graphic 64x192x16
-#define BITMAP_MODE_64x200x16       0x23    // Graphic 64x200x16
-#define BITMAP_MODE_64x225x16       0x24    // Graphic 64x225x16
-#define BITMAP_MODE_320x192x2       0x25    // Graphic 320x192x2
-#define BITMAP_MODE_320x200x2       0x26    // Graphic 320x200x2
-#define BITMAP_MODE_320x225x2       0x27    // Graphic 320x225x2
-#define BITMAP_MODE_160x192x4       0x28    // Graphic 160x192x4
-#define BITMAP_MODE_160x200x4       0x29    // Graphic 160x200x4
-#define BITMAP_MODE_160x225x4       0x2a    // Graphic 160x225x4
-#define BITMAP_MODE_80x192x16       0x2b    // Graphic 80x192x16
-#define BITMAP_MODE_80x200x16       0x2c    // Graphic 80x200x16
-#define BITMAP_MODE_80x225x16       0x2d    // Graphic 80x225x16
-#define BITMAP_MODE_512x192x2       0x2e    // Graphic 512x192x2
-#define BITMAP_MODE_512x200x2       0x2f    // Graphic 512x200x2
-#define BITMAP_MODE_512x225x2       0x30    // Graphic 512x225x2
-#define BITMAP_MODE_256x192x4       0x31    // Graphic 256x192x4
-#define BITMAP_MODE_256x200x4       0x32    // Graphic 256x200x4
-#define BITMAP_MODE_256x225x4       0x33    // Graphic 256x225x4
-#define BITMAP_MODE_128x192x16      0x34    // Graphic 128x192x16
-#define BITMAP_MODE_128x200x16      0x35    // Graphic 128x200x16
-#define BITMAP_MODE_128x225x16      0x36    // Graphic 128x225x16
-#define BITMAP_MODE_640x192x2       0x37    // Graphic 640x192x2
-#define BITMAP_MODE_640x200x2       0x38    // Graphic 640x200x2
-#define BITMAP_MODE_640x225x2       0x39    // Graphic 640x225x2
-#define BITMAP_MODE_320x192x4       0x3a    // Graphic 320x192x4
-#define BITMAP_MODE_320x200x4       0x3b    // Graphic 320x200x4
-#define BITMAP_MODE_320x225x4       0x3c    // Graphic 320x225x4
-#define BITMAP_MODE_160x192x16      0x3d    // Graphic 160x192x16
-#define BITMAP_MODE_160x200x16      0x3f    // Graphic 160x200x16
-#define BITMAP_MODE_160x225x16      0x40    // Graphic 160x225x16
-#define BITMAP_MODE_512x192x4       0x41    // Graphic 512x192x4
-#define BITMAP_MODE_512x200x4       0x42    // Graphic 512x200x4
-#define BITMAP_MODE_512x225x4       0x43    // Graphic 512x225x4
-#define BITMAP_MODE_256x192x16      0x44    // Graphic 256x192x16
-#define BITMAP_MODE_256x200x16      0x45    // Graphic 256x200x16
-#define BITMAP_MODE_256x225x16      0x46    // Graphic 256x225x16
-#define BITMAP_MODE_640x192x4       0x47    // Graphic 640x192x4
-#define BITMAP_MODE_640x200x4       0x48    // Graphic 640x200x4
-#define BITMAP_MODE_640x225x4       0x49    // Graphic 640x225x4
-#define BITMAP_MODE_320x192x16      0x4a    // Graphic 320x192x16
-#define BITMAP_MODE_320x200x16      0x4b    // Graphic 320x200x16
-#define BITMAP_MODE_320x225x16      0x4c    // Graphic 320x225x16
+// 12 -> 4 bit (0..15)
+// 0000 xxxx
+
+#define TILEMAP_MODE_32X24      TILEMAP_MODE( 0 )       // Alphanumeric 32 columns x 24 rows
+#define TILEMAP_MODE_32X25      TILEMAP_MODE( 1 )       // Alphanumeric 32 columns x 25 rows
+#define TILEMAP_MODE_32X28      TILEMAP_MODE( 2 )       // Alphanumeric 32 columns x 28 rows
+#define TILEMAP_MODE_40X24      TILEMAP_MODE( 3 )       // Alphanumeric 40 columns x 24 rows
+#define TILEMAP_MODE_40X25      TILEMAP_MODE( 4 )       // Alphanumeric 40 columns x 25 rows
+#define TILEMAP_MODE_40X28      TILEMAP_MODE( 5 )       // Alphanumeric 40 columns x 28 rows
+#define TILEMAP_MODE_64X24      TILEMAP_MODE( 6 )       // Alphanumeric 64 columns x 24 rows
+#define TILEMAP_MODE_64X25      TILEMAP_MODE( 7 )       // Alphanumeric 64 columns x 25 rows
+#define TILEMAP_MODE_64X28      TILEMAP_MODE( 8 )       // Alphanumeric 64 columns x 28 rows
+#define TILEMAP_MODE_80X24      TILEMAP_MODE( 9 )       // Alphanumeric 80 columns x 24 rows
+#define TILEMAP_MODE_80X25      TILEMAP_MODE( 10 )      // Alphanumeric 80 columns x 25 rows
+#define TILEMAP_MODE_80X28      TILEMAP_MODE( 11 )      // Alphanumeric 80 columns x 28 rows
+
+// 18 -> 5 bit (0..32)
+// 010y yyyy
+
+#define BITMAP_MODE_128x192x2       BITMAP2_MODE( 0 )   // Graphic 128x192x2
+#define BITMAP_MODE_128x200x2       BITMAP2_MODE( 1 )   // Graphic 128x200x2
+#define BITMAP_MODE_128x225x2       BITMAP2_MODE( 2 )   // Graphic 128x225x2
+
+#define BITMAP_MODE_160x192x2       BITMAP2_MODE( 3 )   // Graphic 160x192x2
+#define BITMAP_MODE_160x200x2       BITMAP2_MODE( 4 )   // Graphic 160x200x2
+#define BITMAP_MODE_160x225x2       BITMAP2_MODE( 5 )   // Graphic 160x225x2
+
+#define BITMAP_MODE_256x192x2       BITMAP2_MODE( 6 )   // Graphic 256x192x2
+#define BITMAP_MODE_256x200x2       BITMAP2_MODE( 7 )   // Graphic 256x200x2
+#define BITMAP_MODE_256x225x2       BITMAP2_MODE( 8 )   // Graphic 256x225x2
+
+#define BITMAP_MODE_320x192x2       BITMAP2_MODE( 9 )   // Graphic 320x192x2
+#define BITMAP_MODE_320x200x2       BITMAP2_MODE( 10 )  // Graphic 320x200x2
+#define BITMAP_MODE_320x225x2       BITMAP2_MODE( 11 )  // Graphic 320x225x2
+
+#define BITMAP_MODE_512x192x2       BITMAP2_MODE( 12 )  // Graphic 512x192x2
+#define BITMAP_MODE_512x200x2       BITMAP2_MODE( 13 )  // Graphic 512x200x2
+#define BITMAP_MODE_512x225x2       BITMAP2_MODE( 14 )  // Graphic 512x225x2
+
+#define BITMAP_MODE_640x192x2       BITMAP2_MODE( 15 )  // Graphic 640x192x2
+#define BITMAP_MODE_640x200x2       BITMAP2_MODE( 16 )  // Graphic 640x200x2
+#define BITMAP_MODE_640x225x2       BITMAP2_MODE( 17 )  // Graphic 640x225x2
+
+// 24 -> 5 bit (0..32)
+// 011y yyyy
+
+#define BITMAP_MODE_64x192x4        BITMAP4_MODE( 0 )   // Graphic 64x192x4
+#define BITMAP_MODE_64x200x4        BITMAP4_MODE( 1 )   // Graphic 64x200x4
+#define BITMAP_MODE_64x225x4        BITMAP4_MODE( 2 )   // Graphic 64x225x4
+
+#define BITMAP_MODE_80x192x4        BITMAP4_MODE( 3 )   // Graphic 80x192x4
+#define BITMAP_MODE_80x200x4        BITMAP4_MODE( 4 )   // Graphic 80x200x4
+#define BITMAP_MODE_80x225x4        BITMAP4_MODE( 5 )   // Graphic 80x225x4
+
+#define BITMAP_MODE_128x192x4       BITMAP4_MODE( 6 )   // Graphic 128x192x4
+#define BITMAP_MODE_128x200x4       BITMAP4_MODE( 7 )   // Graphic 128x200x4
+#define BITMAP_MODE_128x225x4       BITMAP4_MODE( 8 )   // Graphic 128x225x4
+
+#define BITMAP_MODE_160x192x4       BITMAP4_MODE( 9 )   // Graphic 160x192x4
+#define BITMAP_MODE_160x200x4       BITMAP4_MODE( 10 )  // Graphic 160x200x4
+#define BITMAP_MODE_160x225x4       BITMAP4_MODE( 11 )  // Graphic 160x225x4
+
+#define BITMAP_MODE_256x192x4       BITMAP4_MODE( 12 )  // Graphic 256x192x4
+#define BITMAP_MODE_256x200x4       BITMAP4_MODE( 13 )  // Graphic 256x200x4
+#define BITMAP_MODE_256x225x4       BITMAP4_MODE( 14 )  // Graphic 256x225x4
+
+#define BITMAP_MODE_320x192x4       BITMAP4_MODE( 15 )  // Graphic 320x192x4
+#define BITMAP_MODE_320x200x4       BITMAP4_MODE( 16 )  // Graphic 320x200x4
+#define BITMAP_MODE_320x225x4       BITMAP4_MODE( 17 )  // Graphic 320x225x4
+
+#define BITMAP_MODE_512x192x4       BITMAP4_MODE( 18 )  // Graphic 512x192x4
+#define BITMAP_MODE_512x200x4       BITMAP4_MODE( 19 )  // Graphic 512x200x4
+#define BITMAP_MODE_512x225x4       BITMAP4_MODE( 20 )  // Graphic 512x225x4
+
+#define BITMAP_MODE_640x192x4       BITMAP4_MODE( 21 )  // Graphic 640x192x4
+#define BITMAP_MODE_640x200x4       BITMAP4_MODE( 22 )  // Graphic 640x200x4
+#define BITMAP_MODE_640x225x4       BITMAP4_MODE( 23 )  // Graphic 640x225x4
+
+// 18 -> 5 bit (0..32)
+// 111y yyyy
+
+#define BITMAP_MODE_64x192x16       BITMAP16_MODE( 0 )  // Graphic 64x192x16
+#define BITMAP_MODE_64x200x16       BITMAP16_MODE( 1 )  // Graphic 64x200x16
+#define BITMAP_MODE_64x225x16       BITMAP16_MODE( 2 )  // Graphic 64x225x16
+
+#define BITMAP_MODE_80x192x16       BITMAP16_MODE( 3 )  // Graphic 80x192x16
+#define BITMAP_MODE_80x200x16       BITMAP16_MODE( 4 )  // Graphic 80x200x16
+#define BITMAP_MODE_80x225x16       BITMAP16_MODE( 5 )  // Graphic 80x225x16
+
+#define BITMAP_MODE_128x192x16      BITMAP16_MODE( 6 )  // Graphic 128x192x16
+#define BITMAP_MODE_128x200x16      BITMAP16_MODE( 7 )  // Graphic 128x200x16
+#define BITMAP_MODE_128x225x16      BITMAP16_MODE( 8 )  // Graphic 128x225x16
+
+#define BITMAP_MODE_160x192x16      BITMAP16_MODE( 9 )   // Graphic 160x192x16
+#define BITMAP_MODE_160x200x16      BITMAP16_MODE( 10 )  // Graphic 160x200x16
+#define BITMAP_MODE_160x225x16      BITMAP16_MODE( 11 )  // Graphic 160x225x16
+
+#define BITMAP_MODE_256x192x16      BITMAP16_MODE( 12 )  // Graphic 256x192x16
+#define BITMAP_MODE_256x200x16      BITMAP16_MODE( 13 )  // Graphic 256x200x16
+#define BITMAP_MODE_256x225x16      BITMAP16_MODE( 14 )  // Graphic 256x225x16
+
+#define BITMAP_MODE_320x192x16      BITMAP16_MODE( 15 )  // Graphic 320x192x16
+#define BITMAP_MODE_320x200x16      BITMAP16_MODE( 16 )  // Graphic 320x200x16
+#define BITMAP_MODE_320x225x16      BITMAP16_MODE( 17 )  // Graphic 320x225x16
 
 #define BITMAP_MODE_DEFAULT     BITMAP_MODE_128x192x2
 #define BITMAP_MODE_STANDARD    BITMAP_MODE_DEFAULT
