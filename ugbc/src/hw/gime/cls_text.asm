@@ -41,6 +41,7 @@ CLST
     RTS
 
 CLSTX
+    PSHS A,B,X,Y,U
     LDB _PEN
     JSR GIMESELECTPALETTEPEN
     LSLA
@@ -69,4 +70,5 @@ CLSTX0
     LEAU -1, U
     CMPU #0
     BNE CLSTX0
+    PULS A,B,X,Y,U
     RTS
