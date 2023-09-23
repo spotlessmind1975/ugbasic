@@ -57,10 +57,10 @@ void screen_mode( Environment * _environment, int _mode ) {
         vic1_screen_mode_enable( _environment, mode );    
 
         _environment->currentMode = mode->id;
-        _environment->currentTileMode = 0;
+        _environment->currentTileMode = mode->bitmap ? 0 : 1;
 
-        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-        cpu_store_8bit( _environment, "CURRENTTILEMODE", 0 );
+        cpu_store_8bit( _environment, "CURRENTMODE", _environment->currentMode );
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", _environment->currentTileMode );
 
     } else {
         WARNING_SCREEN_MODE( _mode );
