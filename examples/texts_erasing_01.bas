@@ -8,7 +8,7 @@ REM STAMPA DI TESTI CON CANCELLAZIONE (1)
 REM
 REM Questo esempio mostra come cancellare parte di una riga e una riga intera, usando l'istruzione ''CLINE''.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000
+REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000
 
   CLS
   

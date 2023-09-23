@@ -14,7 +14,7 @@ REM per colorare i testi. Grazie alla variabile ''PEN COLORS'' è possibile iter
 REM colore (0) all'ultimo e disegnare un testo con uno specifico indice di colore, utilizzando 
 REM il comando ''PEN''.
 REM
-REM @include c128
+REM @include c128,coco3
 
    CLS
 

@@ -14,7 +14,7 @@ REM per colorare i testi. Grazie alla variabile ''PAPER COLORS'' è possibile it
 REM colore (0) all'ultimo e disegnare un testo sopra uno specifico indice di colore, utilizzando 
 REM il comando ''PAPER''.
 REM
-REM @include c128
+REM @include c128,coco3
 
    CLS
 

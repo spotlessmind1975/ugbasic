@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostra l'uso della funzione ''AT'' e del comando ''LOCATE''.
 REM Questo esempio disegnerà l'hi score,
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
+REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
   CLS
 

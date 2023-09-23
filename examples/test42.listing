@@ -1,0 +1,1297 @@
+C:/Users/mario/AppData/Roaming/UGBASIC-IDE/temp/bhoajessceffbhb.asm:
+     1  0000  216301            	LD HL, DUFFDEVICEL0
+     2  0003  112300            	LD DE, 35
+     3  0006  19                	ADD HL, DE
+     4  0007  116301            	LD DE, DUFFDEVICEL0
+     5  000a  13                	INC DE
+     6  000b  13                	INC DE
+     7  000c  7323722b          	LD (HL), DE
+     8                          ORG $100
+     9  0010  c3e000            	jp startup_after
+    10                          ; /*****************************************************************************
+    11                          ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+    12                          ;  *****************************************************************************
+    13                          ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+    14                          ;  *
+    15                          ;  * Licensed under the Apache License, Version 2.0 (the "License
+    16                          ;  * you may not use this file except in compliance with the License.
+    17                          ;  * You may obtain a copy of the License at
+    18                          ;  *
+    19                          ;  * http://www.apache.org/licenses/LICENSE-2.0
+    20                          ;  *
+    21                          ;  * Unless required by applicable law or agreed to in writing, software
+    22                          ;  * distributed under the License is distributed on an "AS IS" BASIS,
+    23                          ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    24                          ;  * See the License for the specific language governing permissions and
+    25                          ;  * limitations under the License.
+    26                          ;  *----------------------------------------------------------------------------
+    27                          ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+    28                          ;  * (la "Licenza è proibito usare questo file se non in conformità alla
+    29                          ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+    30                          ;  *
+    31                          ;  * http://www.apache.org/licenses/LICENSE-2.0
+    32                          ;  *
+    33                          ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+    34                          ;  * il software distribuito nei termini della Licenza è distribuito
+    35                          ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+    36                          ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+    37                          ;  * autorizzazioni e le limitazioni previste dalla medesima.
+    38                          ;  ****************************************************************************/
+    39                          ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    40                          ;*                                                                             *
+    41                          ;*                      STARTUP ROUTINE FOR CPC                             *
+    42                          ;*                                                                             *
+    43                          ;*                             by Marco Spedaletti                             *
+    44                          ;*                                                                             *
+    45                          ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    46                          PALETTE:
+    47  0013  040a130c          	DB      4,  10,  19,  12
+    48  0017  0b14150d          	DB     11,  20,  21,  13
+    49  001b  061e1f07          	DB      6,  30,  31,   7
+    50  001f  12190a07          	DB      18, 25,  10,   7
+    51                          PALETTEUNUSED:
+    52  0023  00                	DB $00
+    53                          SETHWPALETTE:
+    54  0024  c5                	PUSH BC
+    55  0025  f5                	PUSH AF
+    56  0026  01007f            	LD BC, $7F00
+    57  0029  dd7c              	LD A, IXH
+    58  002b  4f                	LD C, A
+    59  002c  ed49              	OUT (C), C
+    60  002e  dd7d              	LD A, IXL
+    61  0030  f640              	OR A, $40
+    62  0032  ed79              	OUT (C), A
+    63  0034  f1                	POP AF
+    64  0035  c1                	POP BC
+    65  0036  c9                	RET
+    66                          IRQTIMERVOID:
+    67  0037  c9                	RET
+    68                          CPCISVC:
+    69  0038  f5                	PUSH	AF
+    70  0039  c5                	PUSH	BC
+    71  003a  d5                	PUSH	DE
+    72  003b  e5                	PUSH	HL
+    73  003c  dde5              	PUSH	IX
+    74  003e  fde5              	PUSH	IY
+    75  0040  08                	EX	AF,AF'
+    76  0041  f5                	PUSH	AF
+    77  0042  d9                	EXX
+    78  0043  c5                	PUSH	BC
+    79  0044  d5                	PUSH	DE
+    80  0045  e5                	PUSH	HL
+    81  0046  3ada01            	LD A, (CPCTIMER2)
+    82  0049  3d                	DEC A
+    83  004a  32da01            	LD (CPCTIMER2), A
+    84  004d  fe00              	CP 0
+    85  004f  202d              	JR NZ,IRQVECTORSKIP
+    86  0051  3e06              	LD A,6
+    87  0053  32da01            	LD (CPCTIMER2), A
+    88  0056  2a9c01            	LD HL,(CPCTIMER)
+    89  0059  23                	INC HL
+    90  005a  229c01            	LD (CPCTIMER),HL
+    91  005d  cda40b            	CALL MUSICPLAYER
+    92  0060  3adb01            	LD A, (EVERYCOUNTER)
+    93  0063  fe00              	CP 0
+    94  0065  2807              	JR Z, IRQTIMERADDR2
+    95  0067  3d                	DEC A
+    96  0068  32db01            	LD (EVERYCOUNTER), A
+    97  006b  c37e00            	JP IRQVECTORSKIP
+    98                          IRQTIMERADDR2:
+    99  006e  3a8b01            	LD A, (EVERYSTATUS)
+   100  0071  fe00              	CP 0
+   101  0073  2809              	JR Z, IRQVECTORSKIP
+   102  0075  3adc01            	LD A, (EVERYTIMING)
+   103  0078  32db01            	LD (EVERYCOUNTER), A
+   104                          IRQTIMERADDR:
+   105  007b  cd3700            	CALL IRQTIMERVOID
+   106                          IRQVECTORSKIP:
+   107  007e  e1                	POP	HL
+   108  007f  d1                	POP	DE
+   109  0080  c1                	POP	BC
+   110  0081  d9                	EXX
+   111  0082  f1                	POP	AF
+   112  0083  08                	EX	AF,AF'
+   113  0084  fde1              	POP	IY
+   114  0086  dde1              	POP	IX
+   115  0088  e1                	POP	HL
+   116  0089  d1                	POP	DE
+   117  008a  c1                	POP	BC
+   118  008b  f1                	POP	AF
+   119  008c  fb                	EI
+   120  008d  c9                	RET
+   121                          CPCSTARTUP:
+   122  008e  3e32              	LD A, 50
+   123  0090  32a201            	LD (TICKSPERSECOND), A
+   124                          
+   125                          SYSCALLDONE:
+   126  0093  f3                	DI
+   127  0094  d9                	EXX
+   128  0095  067f              	LD B, $7F
+   129  0097  3af401            	LD A, (GAVALUE)
+   130  009a  f60c              	OR A, $0C
+   131  009c  32f401            	LD (GAVALUE), A
+   132  009f  4f                	LD C, A
+   133  00a0  ed49              	OUT (C), C
+   134  00a2  d9                	EXX
+   135  00a3  fb                	EI
+   136  00a4  c9                	RET
+   137                          SYSCALL:
+   138  00a5  f3                	DI
+   139  00a6  d9                	EXX
+   140  00a7  067f              	LD B, $7F
+   141  00a9  3af401            	LD A, (GAVALUE)
+   142  00ac  e6f7              	AND A, $F7
+   143  00ae  32f401            	LD (GAVALUE), A
+   144  00b1  4f                	LD C, A
+   145  00b2  ed49              	OUT (C), C
+   146  00b4  d9                	EXX
+   147  00b5  fb                	EI
+   148  00b6  f3                	DI
+   149                          SYSCALL0:
+   150  00b7  cd0000            	CALL $0000
+   151  00ba  fb                	EI
+   152  00bb  c39300            	JP SYSCALLDONE
+   153                          CPCVIDEOSTARTUP:
+   154  00be  f3                	DI
+   155  00bf  3ec3              	LD A, $C3
+   156  00c1  323800            	LD ($0038), A
+   157  00c4  213800            	LD HL, CPCISVC
+   158  00c7  223900            	LD ($0039), HL
+   159  00ca  fb                	EI
+   160  00cb  211300            	LD HL, PALETTE
+   161                          ; peephole(1): r228 (LD A, 0)->(XOR A)
+   162                          ;	LD A, 0
+   163  00ce  af                	XOR A
+   164  00cf  01000f            	LD BC, $0F00
+   165                          CPCVIDEOSTARTUPL1:
+   166  00d2  79                	LD A, C
+   167  00d3  dd67              	LD IXH, A
+   168  00d5  7e                	LD A, (HL)
+   169  00d6  dd6f              	LD IXL, A
+   170  00d8  cd2400            	CALL SETHWPALETTE
+   171  00db  23                	INC HL
+   172  00dc  0c                	INC C
+   173                          ; peephole(1): r397 (DEC B+JR NZ)->(DJNZ)
+   174                          ;	DEC B
+   175  00dd  10f3              	DJNZ CPCVIDEOSTARTUPL1
+   176                          ;	JR NZ, CPCVIDEOSTARTUPL1
+   177  00df  c9                	RET
+   178                          startup_after:
+   179                          CODESTART:
+   180  00e0  3100c0            	LD SP, $C000
+   181  00e3  cd0502            	CALL VARINIT
+   182  00e6  cda50b            	CALL PROTOTHREADINIT
+   183  00e9  cdbe00            	CALL CPCVIDEOSTARTUP
+   184  00ec  3e00              	LD A, $00
+   185                          ; peephole(3): unread
+   186                          ;	LD (_PEN), A
+   187  00ee  3e14              	LD A, $14
+   188                          ; peephole(3): unread
+   189                          ;	LD (_PAPER), A
+   190  00f0  067f              	LD B, $7F
+   191  00f2  3af401            	LD A, (GAVALUE)
+   192  00f5  e63d              	AND A, $3d
+   193  00f7  f682              	OR A, $82
+   194  00f9  32f401            	LD (GAVALUE), A
+   195  00fc  4f                	LD C, A
+   196  00fd  ed49              	OUT (C), C
+   197  00ff  3e00              	LD A, $00
+   198                          ; peephole(3): unread
+   199                          ;	LD (CLIPX1), A
+   200                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   201                          ;	LD A, $00
+   202                          ; peephole(3): unread
+   203                          ;	LD (CLIPX1+1), A
+   204  0101  3e7f              	LD A, $7f
+   205                          ; peephole(3): unread
+   206                          ;	LD (CLIPX2), A
+   207  0103  3e02              	LD A, $02
+   208                          ; peephole(3): unread
+   209                          ;	LD (CLIPX2+1), A
+   210  0105  3e00              	LD A, $00
+   211                          ; peephole(3): unread
+   212                          ;	LD (CLIPY1), A
+   213                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   214                          ;	LD A, $00
+   215                          ; peephole(3): unread
+   216                          ;	LD (CLIPY1+1), A
+   217  0107  3ec7              	LD A, $c7
+   218                          ; peephole(3): unread
+   219                          ;	LD (CLIPY2), A
+   220                          ; peephole(4): r407 (LD A, *; LD A, *)->(LD, A)
+   221                          ;	LD A, $00
+   222                          ; peephole(3): unread
+   223                          ;	LD (CLIPY2+1), A
+   224                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   225                          ;	LD A, $00
+   226  0109  32af01            	LD (ORIGINX), A
+   227  010c  3e00              	LD A, $00
+   228  010e  32b001            	LD (ORIGINX+1), A
+   229                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   230                          ;	LD A, $00
+   231  0111  32b101            	LD (ORIGINY), A
+   232  0114  3e00              	LD A, $00
+   233  0116  32b201            	LD (ORIGINY+1), A
+   234  0119  3e80              	LD A, $80
+   235  011b  32a801            	LD (CURRENTWIDTH), A
+   236  011e  3e02              	LD A, $02
+   237  0120  32a901            	LD (CURRENTWIDTH+1), A
+   238  0123  3ec8              	LD A, $c8
+   239  0125  32aa01            	LD (CURRENTHEIGHT), A
+   240  0128  3e00              	LD A, $00
+   241  012a  32ab01            	LD (CURRENTHEIGHT+1), A
+   242  012d  3aa801            	LD A, (CURRENTWIDTH)
+   243  0130  32b301            	LD (RESOLUTIONX), A
+   244  0133  3aa901            	LD A, (CURRENTWIDTH+1)
+   245  0136  32b401            	LD (RESOLUTIONX+1), A
+   246  0139  3aaa01            	LD A, (CURRENTHEIGHT)
+   247  013c  32b501            	LD (RESOLUTIONY), A
+   248  013f  3aab01            	LD A, (CURRENTHEIGHT+1)
+   249  0142  32b601            	LD (RESOLUTIONY+1), A
+   250  0145  3eff              	LD A, $ff
+   251                          ; peephole(3): unread
+   252                          ;	LD (CURRENTTILES), A
+   253  0147  3e50              	LD A, $50
+   254                          ; peephole(3): unread
+   255                          ;	LD (CURRENTTILESWIDTH), A
+   256  0149  3e19              	LD A, $19
+   257                          ; peephole(3): unread
+   258                          ;	LD (CURRENTTILESHEIGHT), A
+   259  014b  3e08              	LD A, $08
+   260                          ; peephole(3): unread
+   261                          ;	LD (FONTWIDTH), A
+   262                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   263                          ;	LD A, $08
+   264                          ; peephole(3): unread
+   265                          ;	LD (FONTHEIGHT), A
+   266  014d  3e02              	LD A, $02
+   267  014f  32ac01            	LD (PALETTELIMIT), A
+   268  0152  cda30b            	call AY8910STARTUP
+   269  0155  cd8e00            	CALL CPCSTARTUP
+   270                          	; L:0
+   271                          	; P:208
+   272                          	; L:1
+   273                          	_moltiplicatore = $0008
+   274                          	; P:1
+   275                          	; L:2
+   276  0158  3e2a              	LD A, $2a
+   277  015a  320402            	LD (_Ttmp1), A
+   278                          	 ; variable_move_8bit_8bit
+   279                          	 ; 8 BIT (unsigned) -> 8 BIT (unsigned)
+   280  015d  3a0402            	LD A, (_Ttmp1)
+   281                          ; peephole(3): unread
+   282                          ;	LD (_x), A
+   283                          	; P:4
+   284                          	; L:3
+   285                          	; P:0
+   286                          	; L:4
+   287                          	; P:0
+   288                          	; L:5
+   289                          	; P:0
+   290                          	; L:6
+   291                          	; P:0
+   292                          	; L:7
+   293                          	; P:0
+   294                          	; L:8
+   295                          	; P:0
+   296                          	; L:9
+   297                          	; P:0
+   298                          	; L:10
+   299                          	; P:0
+   300                          	; L:11
+   301                          	; P:0
+   302                          	; L:12
+   303                          	; P:0
+   304                          _label3:
+   305  0160  c36001            	jp _label3
+   306  0163  1800eda0eda0eda0  DUFFDEVICEL0: db 24,0,237,160,237,160,237,160,237,160,237,160,237,160,237,160,237,160,237,160,237,160,237,160,237,160,237,160,237,160,237,160,237,160,234,0,0,	201
+              eda0eda0eda0eda0  
+              eda0eda0eda0eda0  
+              eda0eda0eda0eda0  
+              eda0ea0000c9      
+   307  0189  0000              	DUFFDEVICEL1: defs 2
+   308  018b  00                	EVERYSTATUS: defs 1
+   309  018c  0000              	BITMAPADDRESS: defs 2
+   310  018e  0000              	COLORMAPADDRESS: defs 2
+   311                          ; peephole(3): unread
+   312                          ;	TEXTADDRESS: defs 2
+   313  0190  0000              	TILESADDRESS: defs 2
+   314  0192  00                	EMPTYTILE: db 0
+   315  0193  00                	USING: defs 1
+   316  0194  0000              	COPYOFBITMAPADDRESS: defs 2
+   317  0196  0000              	COPYOFCOLORMAPADDRESS: defs 2
+   318  0198  0000              	COPYOFTEXTADDRESS: defs 2
+   319  019a  0000              	COPYOFTILESADDRESS: defs 2
+   320  019c  0000              	CPCTIMER: defs 2
+   321  019e  000000            	IRQVECTOR: defs 3
+   322  01a1  00                	IRQVECTORREADY: defs 1
+   323  01a2  00                	TICKSPERSECOND: defs 1
+   324  01a3  00                	KBDCHAR: defs 1
+   325  01a4  00                	KBDRATE: defs 1
+   326  01a5  00                	KBDDELAY: defs 1
+   327  01a6  00                	KBDRATEC: defs 1
+   328  01a7  00                	KBDDELAYC: defs 1
+   329  01a8  0000              	CURRENTWIDTH: defs 2
+   330  01aa  0000              	CURRENTHEIGHT: defs 2
+   331                          ; peephole(3): unread
+   332                          ;	CURRENTTILES: defs 1
+   333                          ; peephole(3): unread
+   334                          ;	CURRENTTILESWIDTH: defs 1
+   335                          ; peephole(3): unread
+   336                          ;	CURRENTTILESHEIGHT: defs 1
+   337                          ; peephole(3): unread
+   338                          ;	FONTWIDTH: defs 1
+   339                          ; peephole(3): unread
+   340                          ;	FONTHEIGHT: defs 1
+   341  01ac  00                	PALETTELIMIT: defs 1
+   342                          ; peephole(3): unread
+   343                          ;	XGR: defs 2
+   344                          ; peephole(3): unread
+   345                          ;	YGR: defs 2
+   346  01ad  0000              	LINE: defs 2
+   347                          ; peephole(3): unread
+   348                          ;	CLIPX1: defs 2
+   349                          ; peephole(3): unread
+   350                          ;	CLIPX2: defs 2
+   351                          ; peephole(3): unread
+   352                          ;	CLIPY1: defs 2
+   353                          ; peephole(3): unread
+   354                          ;	CLIPY2: defs 2
+   355  01af  0000              	ORIGINX: defs 2
+   356  01b1  0000              	ORIGINY: defs 2
+   357  01b3  0000              	RESOLUTIONX: defs 2
+   358  01b5  0000              	RESOLUTIONY: defs 2
+   359                          ; peephole(3): unread
+   360                          ;	XCURSYS: defs 1
+   361                          ; peephole(3): unread
+   362                          ;	YCURSYS: defs 1
+   363  01b7  00                	TABCOUNT: defs 1
+   364  01b8  00                	CLINEX: defs 1
+   365  01b9  00                	CLINEY: defs 1
+   366  01ba  00                	TABSTODRAW: defs 1
+   367                          ; peephole(3): unread
+   368                          ;	CURRENTMODE: defs 1
+   369                          ; peephole(3): unread
+   370                          ;	CURRENTTILEMODE: defs 1
+   371  01bb  00                	SPRITECOUNT: db 0
+   372                          	SPRITEXY: defs 0
+   373  01bc  00                	TILEX: defs 1
+   374  01bd  00                	TILEY: defs 1
+   375  01be  00                	TILEX2: defs 1
+   376  01bf  00                	TILET: defs 1
+   377  01c0  00                	TILEW: defs 1
+   378  01c1  00                	TILEH: defs 1
+   379  01c2  00                	TILEW2: defs 1
+   380  01c3  00                	TILEH2: defs 1
+   381  01c4  00                	TILEA: defs 1
+   382  01c5  0000              	TILEO: defs 2
+   383  01c7  00                	XSCROLLPOS: defs 1
+   384  01c8  00                	YSCROLLPOS: defs 1
+   385  01c9  00                	XSCROLL: defs 1
+   386  01ca  00                	YSCROLL: defs 1
+   387  01cb  00                	DIRECTION: defs 1
+   388  01cc  000000            	ONSCROLLUP: defs 3
+   389  01cf  000000            	ONSCROLLDOWN: defs 3
+   390  01d2  000000            	ONSCROLLLEFT: defs 3
+   391  01d5  000000            	ONSCROLLRIGHT: defs 3
+   392  01d8  00                	IMAGEF: defs 1
+   393  01d9  00                	IMAGET: defs 1
+   394  01da  00                	CPCTIMER2: defs 1
+   395  01db  00                	EVERYCOUNTER: defs 1
+   396  01dc  00                	EVERYTIMING: defs 1
+   397  01dd  0000000000000000  	FPSCRAP: defs 16
+              0000000000000000  
+   398  01ed  00                	IMAGEY: defs 1
+   399  01ee  0000              	SLICEX: defs 2
+   400  01f0  0000              	SLICEY: defs 2
+   401  01f2  0000              	SLICEDTARGET: defs 2
+   402  01f4  00                	GAVALUE: defs 1
+   403  01f5  00                	AY8910MUSICREADY: defs 1
+   404  01f6  00                	AY8910BLOCKS: defs 1
+   405  01f7  00                	AY8910LASTBLOCK: defs 1
+   406  01f8  0000              	AY8910TMPPTR2: defs 2
+   407  01fa  0000              	AY8910TMPPTR: defs 2
+   408  01fc  00                	AY8910TMPOFS: defs 1
+   409  01fd  00                	AY8910TMPLEN: defs 1
+   410  01fe  00                	AY8910JIFFIES: defs 1
+   411                          ; peephole(3): unread
+   412                          ;	_PEN: defs 1
+   413                          ; peephole(3): unread
+   414                          ;	_PAPER: defs 1
+   415                          ; peephole(3): unread
+   416                          ;	_windowE: defs 1
+   417                          ; peephole(3): unread
+   418                          ;	_windowS: defs 1
+   419                          ; peephole(3): unread
+   420                          ;	_windowW: defs 1
+   421                          ; peephole(3): unread
+   422                          ;	TEXTWW: defs 1
+   423                          	_TAB: EQU cstring0
+   424                          ; peephole(3): unread
+   425                          ;	_windowMX: defs 1
+   426                          ; peephole(3): unread
+   427                          ;	_windowMY: defs 1
+   428  01ff  00                	PROTOTHREADCT: defs 1
+   429  0200  00000000          	CPURANDOM_SEED: defs 4
+   430                          ; peephole(3): unread
+   431                          ;	_x: defs 1
+   432  0204  00                	_Ttmp1: defs 1
+   433                          ; peephole(3): unread
+   434                          ;	_Ttmp2: defs 1
+   435                          VARINIT:
+   436  0205  3e00              	LD A, $00
+   437  0207  328901            	LD (DUFFDEVICEL1), A
+   438                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   439                          ;	LD A, $00
+   440  020a  328a01            	LD (DUFFDEVICEL1+1), A
+   441  020d  3e00              	LD A, $00
+   442  020f  328b01            	LD (EVERYSTATUS), A
+   443                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   444                          ;	LD A, $00
+   445  0212  328c01            	LD (BITMAPADDRESS), A
+   446  0215  3ec0              	LD A, $c0
+   447  0217  328d01            	LD (BITMAPADDRESS+1), A
+   448  021a  3e00              	LD A, $00
+   449  021c  328e01            	LD (COLORMAPADDRESS), A
+   450  021f  3ec0              	LD A, $c0
+   451  0221  328f01            	LD (COLORMAPADDRESS+1), A
+   452  0224  3e00              	LD A, $00
+   453                          ; peephole(3): unread
+   454                          ;	LD (TEXTADDRESS), A
+   455  0226  3ec0              	LD A, $c0
+   456                          ; peephole(3): unread
+   457                          ;	LD (TEXTADDRESS+1), A
+   458                          ; peephole(4): r407 (LD A, *; LD A, *)->(LD, A)
+   459                          ;	LD A, $00
+   460  0228  329001            	LD (TILESADDRESS), A
+   461                          ; peephole(5): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   462                          ;	LD A, $c0
+   463  022b  329101            	LD (TILESADDRESS+1), A
+   464  022e  3e20              	LD A, $20
+   465  0230  329201            	LD (EMPTYTILE), A
+   466  0233  3e00              	LD A, $00
+   467  0235  329301            	LD (USING), A
+   468                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   469                          ;	LD A, $00
+   470  0238  329401            	LD (COPYOFBITMAPADDRESS), A
+   471  023b  3ec0              	LD A, $c0
+   472  023d  329501            	LD (COPYOFBITMAPADDRESS+1), A
+   473  0240  3e00              	LD A, $00
+   474  0242  329601            	LD (COPYOFCOLORMAPADDRESS), A
+   475  0245  3ec0              	LD A, $c0
+   476  0247  329701            	LD (COPYOFCOLORMAPADDRESS+1), A
+   477  024a  3e00              	LD A, $00
+   478  024c  329801            	LD (COPYOFTEXTADDRESS), A
+   479  024f  3ec0              	LD A, $c0
+   480  0251  329901            	LD (COPYOFTEXTADDRESS+1), A
+   481  0254  3e00              	LD A, $00
+   482  0256  329a01            	LD (COPYOFTILESADDRESS), A
+   483  0259  3ec0              	LD A, $c0
+   484  025b  329b01            	LD (COPYOFTILESADDRESS+1), A
+   485  025e  3e00              	LD A, $00
+   486  0260  329c01            	LD (CPCTIMER), A
+   487                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   488                          ;	LD A, $00
+   489  0263  329d01            	LD (CPCTIMER+1), A
+   490  0266  3e00              	LD A, $00
+   491  0268  32a101            	LD (IRQVECTORREADY), A
+   492                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   493                          ;	LD A, $00
+   494  026b  32a201            	LD (TICKSPERSECOND), A
+   495  026e  3e00              	LD A, $00
+   496  0270  32a301            	LD (KBDCHAR), A
+   497  0273  3e10              	LD A, $10
+   498  0275  32a401            	LD (KBDRATE), A
+   499                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   500                          ;	LD A, $10
+   501  0278  32a501            	LD (KBDDELAY), A
+   502  027b  3e10              	LD A, $10
+   503  027d  32a601            	LD (KBDRATEC), A
+   504                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   505                          ;	LD A, $10
+   506  0280  32a701            	LD (KBDDELAYC), A
+   507  0283  3ea0              	LD A, $a0
+   508  0285  32a801            	LD (CURRENTWIDTH), A
+   509  0288  3e00              	LD A, $00
+   510  028a  32a901            	LD (CURRENTWIDTH+1), A
+   511  028d  3ec8              	LD A, $c8
+   512  028f  32aa01            	LD (CURRENTHEIGHT), A
+   513  0292  3e00              	LD A, $00
+   514  0294  32ab01            	LD (CURRENTHEIGHT+1), A
+   515  0297  3eff              	LD A, $ff
+   516                          ; peephole(3): unread
+   517                          ;	LD (CURRENTTILES), A
+   518  0299  3e14              	LD A, $14
+   519                          ; peephole(3): unread
+   520                          ;	LD (CURRENTTILESWIDTH), A
+   521  029b  3e19              	LD A, $19
+   522                          ; peephole(3): unread
+   523                          ;	LD (CURRENTTILESHEIGHT), A
+   524  029d  3e08              	LD A, $08
+   525                          ; peephole(3): unread
+   526                          ;	LD (FONTWIDTH), A
+   527                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   528                          ;	LD A, $08
+   529                          ; peephole(3): unread
+   530                          ;	LD (FONTHEIGHT), A
+   531  029f  3e10              	LD A, $10
+   532  02a1  32ac01            	LD (PALETTELIMIT), A
+   533  02a4  3e00              	LD A, $00
+   534                          ; peephole(3): unread
+   535                          ;	LD (XGR), A
+   536                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   537                          ;	LD A, $00
+   538                          ; peephole(3): unread
+   539                          ;	LD (XGR+1), A
+   540  02a6  3e00              	LD A, $00
+   541                          ; peephole(3): unread
+   542                          ;	LD (YGR), A
+   543                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   544                          ;	LD A, $00
+   545                          ; peephole(3): unread
+   546                          ;	LD (YGR+1), A
+   547  02a8  3eff              	LD A, $ff
+   548  02aa  32ad01            	LD (LINE), A
+   549                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   550                          ;	LD A, $ff
+   551  02ad  32ae01            	LD (LINE+1), A
+   552  02b0  3e00              	LD A, $00
+   553                          ; peephole(3): unread
+   554                          ;	LD (CLIPX1), A
+   555                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   556                          ;	LD A, $00
+   557                          ; peephole(3): unread
+   558                          ;	LD (CLIPX1+1), A
+   559  02b2  3eff              	LD A, $ff
+   560                          ; peephole(3): unread
+   561                          ;	LD (CLIPX2), A
+   562                          ; peephole(4): r407 (LD A, *; LD A, *)->(LD, A)
+   563                          ;	LD A, $00
+   564                          ; peephole(3): unread
+   565                          ;	LD (CLIPX2+1), A
+   566                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   567                          ;	LD A, $00
+   568                          ; peephole(3): unread
+   569                          ;	LD (CLIPY1), A
+   570                          ; peephole(5): r407 (LD A, *; LD A, *)->(LD, A)
+   571                          ;	LD A, $00
+   572                          ; peephole(3): unread
+   573                          ;	LD (CLIPY1+1), A
+   574  02b4  3ebf              	LD A, $bf
+   575                          ; peephole(3): unread
+   576                          ;	LD (CLIPY2), A
+   577                          ; peephole(4): r407 (LD A, *; LD A, *)->(LD, A)
+   578                          ;	LD A, $00
+   579                          ; peephole(3): unread
+   580                          ;	LD (CLIPY2+1), A
+   581                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   582                          ;	LD A, $00
+   583  02b6  32af01            	LD (ORIGINX), A
+   584  02b9  3e00              	LD A, $00
+   585  02bb  32b001            	LD (ORIGINX+1), A
+   586                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   587                          ;	LD A, $00
+   588  02be  32b101            	LD (ORIGINY), A
+   589  02c1  3e00              	LD A, $00
+   590  02c3  32b201            	LD (ORIGINY+1), A
+   591                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   592                          ;	LD A, $00
+   593  02c6  32b301            	LD (RESOLUTIONX), A
+   594  02c9  3e00              	LD A, $00
+   595  02cb  32b401            	LD (RESOLUTIONX+1), A
+   596                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   597                          ;	LD A, $00
+   598  02ce  32b501            	LD (RESOLUTIONY), A
+   599  02d1  3e00              	LD A, $00
+   600  02d3  32b601            	LD (RESOLUTIONY+1), A
+   601                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   602                          ;	LD A, $00
+   603                          ; peephole(3): unread
+   604                          ;	LD (XCURSYS), A
+   605                          ; peephole(4): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   606                          ;	LD A, $00
+   607                          ; peephole(3): unread
+   608                          ;	LD (YCURSYS), A
+   609  02d6  3e04              	LD A, $04
+   610  02d8  32b701            	LD (TABCOUNT), A
+   611  02db  3e00              	LD A, $00
+   612  02dd  32b801            	LD (CLINEX), A
+   613                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   614                          ;	LD A, $00
+   615  02e0  32b901            	LD (CLINEY), A
+   616  02e3  3e00              	LD A, $00
+   617  02e5  32ba01            	LD (TABSTODRAW), A
+   618  02e8  3e02              	LD A, $02
+   619                          ; peephole(3): unread
+   620                          ;	LD (CURRENTMODE), A
+   621  02ea  3e01              	LD A, $01
+   622                          ; peephole(3): unread
+   623                          ;	LD (CURRENTTILEMODE), A
+   624  02ec  3e00              	LD A, $00
+   625  02ee  32bc01            	LD (TILEX), A
+   626                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   627                          ;	LD A, $00
+   628  02f1  32bd01            	LD (TILEY), A
+   629  02f4  3e00              	LD A, $00
+   630  02f6  32be01            	LD (TILEX2), A
+   631                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   632                          ;	LD A, $00
+   633  02f9  32bf01            	LD (TILET), A
+   634  02fc  3e00              	LD A, $00
+   635  02fe  32c001            	LD (TILEW), A
+   636                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   637                          ;	LD A, $00
+   638  0301  32c101            	LD (TILEH), A
+   639  0304  3e00              	LD A, $00
+   640  0306  32c201            	LD (TILEW2), A
+   641                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   642                          ;	LD A, $00
+   643  0309  32c301            	LD (TILEH2), A
+   644  030c  3e00              	LD A, $00
+   645  030e  32c401            	LD (TILEA), A
+   646                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   647                          ;	LD A, $00
+   648  0311  32c501            	LD (TILEO), A
+   649  0314  3e00              	LD A, $00
+   650  0316  32c601            	LD (TILEO+1), A
+   651                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   652                          ;	LD A, $00
+   653  0319  32c701            	LD (XSCROLLPOS), A
+   654  031c  3e00              	LD A, $00
+   655  031e  32c801            	LD (YSCROLLPOS), A
+   656                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   657                          ;	LD A, $00
+   658  0321  32c901            	LD (XSCROLL), A
+   659  0324  3e00              	LD A, $00
+   660  0326  32ca01            	LD (YSCROLL), A
+   661                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   662                          ;	LD A, $00
+   663  0329  32cb01            	LD (DIRECTION), A
+   664  032c  3e00              	LD A, $00
+   665  032e  32d801            	LD (IMAGEF), A
+   666                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   667                          ;	LD A, $00
+   668  0331  32d901            	LD (IMAGET), A
+   669  0334  3e06              	LD A, $06
+   670  0336  32da01            	LD (CPCTIMER2), A
+   671  0339  3e00              	LD A, $00
+   672  033b  32db01            	LD (EVERYCOUNTER), A
+   673                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   674                          ;	LD A, $00
+   675  033e  32dc01            	LD (EVERYTIMING), A
+   676  0341  3e00              	LD A, $00
+   677  0343  32ed01            	LD (IMAGEY), A
+   678                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   679                          ;	LD A, $00
+   680  0346  32ee01            	LD (SLICEX), A
+   681  0349  3e00              	LD A, $00
+   682  034b  32ef01            	LD (SLICEX+1), A
+   683                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   684                          ;	LD A, $00
+   685  034e  32f001            	LD (SLICEY), A
+   686  0351  3e00              	LD A, $00
+   687  0353  32f101            	LD (SLICEY+1), A
+   688                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   689                          ;	LD A, $00
+   690  0356  32f201            	LD (SLICEDTARGET), A
+   691  0359  3e00              	LD A, $00
+   692  035b  32f301            	LD (SLICEDTARGET+1), A
+   693  035e  3efc              	LD A, $fc
+   694  0360  32f401            	LD (GAVALUE), A
+   695  0363  3e00              	LD A, $00
+   696  0365  32f501            	LD (AY8910MUSICREADY), A
+   697                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   698                          ;	LD A, $00
+   699  0368  32f601            	LD (AY8910BLOCKS), A
+   700  036b  3e00              	LD A, $00
+   701  036d  32f701            	LD (AY8910LASTBLOCK), A
+   702                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   703                          ;	LD A, $00
+   704  0370  32f801            	LD (AY8910TMPPTR2), A
+   705  0373  3e00              	LD A, $00
+   706  0375  32f901            	LD (AY8910TMPPTR2+1), A
+   707                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   708                          ;	LD A, $00
+   709  0378  32fa01            	LD (AY8910TMPPTR), A
+   710  037b  3e00              	LD A, $00
+   711  037d  32fb01            	LD (AY8910TMPPTR+1), A
+   712                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   713                          ;	LD A, $00
+   714  0380  32fc01            	LD (AY8910TMPOFS), A
+   715  0383  3e00              	LD A, $00
+   716  0385  32fd01            	LD (AY8910TMPLEN), A
+   717                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   718                          ;	LD A, $00
+   719  0388  32fe01            	LD (AY8910JIFFIES), A
+   720  038b  3e00              	LD A, $00
+   721                          ; peephole(3): unread
+   722                          ;	LD (_PEN), A
+   723  038d  3e14              	LD A, $14
+   724                          ; peephole(3): unread
+   725                          ;	LD (_PAPER), A
+   726                          ; peephole(4): r407 (LD A, *; LD A, *)->(LD, A)
+   727                          ;	LD A, $00
+   728                          ; peephole(3): unread
+   729                          ;	LD (_windowE), A
+   730                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   731                          ;	LD A, $00
+   732                          ; peephole(3): unread
+   733                          ;	LD (_windowS), A
+   734                          ; peephole(5): r407 (LD A, *; LD A, *)->(LD, A)
+   735                          ;	LD A, $00
+   736                          ; peephole(3): unread
+   737                          ;	LD (_windowW), A
+   738  038f  3e03              	LD A, $03
+   739                          ; peephole(3): unread
+   740                          ;	LD (TEXTWW), A
+   741                          ; peephole(4): r407 (LD A, *; LD A, *)->(LD, A)
+   742                          ;	LD A, $00
+   743                          ; peephole(3): unread
+   744                          ;	LD (_windowMX), A
+   745                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   746                          ;	LD A, $00
+   747                          ; peephole(3): unread
+   748                          ;	LD (_windowMY), A
+   749  0391  3e00              	LD A, $00
+   750  0393  32ff01            	LD (PROTOTHREADCT), A
+   751  0396  3eff              	LD A, $ff
+   752  0398  320002            	LD (CPURANDOM_SEED), A
+   753                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   754                          ;	LD A, $ff
+   755  039b  320102            	LD (CPURANDOM_SEED+1), A
+   756  039e  3eff              	LD A, $ff
+   757  03a0  320202            	LD (CPURANDOM_SEED+2), A
+   758                          ; peephole(1): r250 (LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)
+   759                          ;	LD A, $ff
+   760  03a3  320302            	LD (CPURANDOM_SEED+3), A
+   761  03a6  3e00              	LD A, $00
+   762                          ; peephole(3): unread
+   763                          ;	LD (_x), A
+   764  03a8  c9                	RET
+   765  03a9  0109              	cstring0: db 1, $09
+   766                          UDCCHAR:
+   767                          	; $00
+   768  03ab  3c666e6e60623c00  DEFB $3c,$66,$6e,$6e,$60,$62,$3c,	$00
+   769                          	; $01
+   770  03b3  00003c063e663e00  DEFB $00,$00,$3c,$06,$3e,$66,$3e,	$00
+   771                          	; $02
+   772  03bb  0060607c66667c00  DEFB $00,$60,$60,$7c,$66,$66,$7c,	$00
+   773                          	; $03
+   774  03c3  00003c6060603c00  DEFB $00,$00,$3c,$60,$60,$60,$3c,	$00
+   775                          	; $04
+   776  03cb  0006063e66663e00  DEFB $00,$06,$06,$3e,$66,$66,$3e,	$00
+   777                          	; $05
+   778  03d3  00003c667e603c00  DEFB $00,$00,$3c,$66,$7e,$60,$3c,	$00
+   779                          	; $06
+   780  03db  000e183e18181800  DEFB $00,$0e,$18,$3e,$18,$18,$18,	$00
+   781                          	; $07
+   782  03e3  00003e66663e067c  DEFB $00,$00,$3e,$66,$66,$3e,$06,	$7c
+   783                          	; $08
+   784  03eb  0060607c66666600  DEFB $00,$60,$60,$7c,$66,$66,$66,	$00
+   785                          	; $09
+   786  03f3  0018003818183c00  DEFB $00,$18,$00,$38,$18,$18,$3c,	$00
+   787                          	; $0a
+   788  03fb  000600060606063c  DEFB $00,$06,$00,$06,$06,$06,$06,	$3c
+   789                          	; $0b
+   790  0403  0060606c786c6600  DEFB $00,$60,$60,$6c,$78,$6c,$66,	$00
+   791                          	; $0c
+   792  040b  0038181818183c00  DEFB $00,$38,$18,$18,$18,$18,$3c,	$00
+   793                          	; $0d
+   794  0413  0000667f7f6b6300  DEFB $00,$00,$66,$7f,$7f,$6b,$63,	$00
+   795                          	; $0e
+   796  041b  00007c6666666600  DEFB $00,$00,$7c,$66,$66,$66,$66,	$00
+   797                          	; $0f
+   798  0423  00003c6666663c00  DEFB $00,$00,$3c,$66,$66,$66,$3c,	$00
+   799                          	; $10
+   800  042b  00007c66667c6060  DEFB $00,$00,$7c,$66,$66,$7c,$60,	$60
+   801                          	; $11
+   802  0433  00003e66663e0606  DEFB $00,$00,$3e,$66,$66,$3e,$06,	$06
+   803                          	; $12
+   804  043b  00007c6660606000  DEFB $00,$00,$7c,$66,$60,$60,$60,	$00
+   805                          	; $13
+   806  0443  00003e603c067c00  DEFB $00,$00,$3e,$60,$3c,$06,$7c,	$00
+   807                          	; $14
+   808  044b  00187e1818180e00  DEFB $00,$18,$7e,$18,$18,$18,$0e,	$00
+   809                          	; $15
+   810  0453  0000666666663e00  DEFB $00,$00,$66,$66,$66,$66,$3e,	$00
+   811                          	; $16
+   812  045b  00006666663c1800  DEFB $00,$00,$66,$66,$66,$3c,$18,	$00
+   813                          	; $17
+   814  0463  0000636b7f3e3600  DEFB $00,$00,$63,$6b,$7f,$3e,$36,	$00
+   815                          	; $18
+   816  046b  0000663c183c6600  DEFB $00,$00,$66,$3c,$18,$3c,$66,	$00
+   817                          	; $19
+   818  0473  00006666663e0c78  DEFB $00,$00,$66,$66,$66,$3e,$0c,	$78
+   819                          	; $1a
+   820  047b  00007e0c18307e00  DEFB $00,$00,$7e,$0c,$18,$30,$7e,	$00
+   821                          	; $1b
+   822  0483  3c30303030303c00  DEFB $3c,$30,$30,$30,$30,$30,$3c,	$00
+   823                          	; $1c
+   824  048b  0c12307c3062fc00  DEFB $0c,$12,$30,$7c,$30,$62,$fc,	$00
+   825                          	; $1d
+   826  0493  3c0c0c0c0c0c3c00  DEFB $3c,$0c,$0c,$0c,$0c,$0c,$3c,	$00
+   827                          	; $1e
+   828  049b  00183c7e18181818  DEFB $00,$18,$3c,$7e,$18,$18,$18,	$18
+   829                          	; $1f
+   830  04a3  0010307f7f301000  DEFB $00,$10,$30,$7f,$7f,$30,$10,	$00
+   831                          	; $20
+   832  04ab  0000000000000000  DEFB $00,$00,$00,$00,$00,$00,$00,	$00
+   833                          	; $21
+   834  04b3  1818181800001800  DEFB $18,$18,$18,$18,$00,$00,$18,	$00
+   835                          	; $22
+   836  04bb  6666660000000000  DEFB $66,$66,$66,$00,$00,$00,$00,	$00
+   837                          	; $23
+   838  04c3  6666ff66ff666600  DEFB $66,$66,$ff,$66,$ff,$66,$66,	$00
+   839                          	; $24
+   840  04cb  183e603c067c1800  DEFB $18,$3e,$60,$3c,$06,$7c,$18,	$00
+   841                          	; $25
+   842  04d3  62660c1830664600  DEFB $62,$66,$0c,$18,$30,$66,$46,	$00
+   843                          	; $26
+   844  04db  3c663c3867663f00  DEFB $3c,$66,$3c,$38,$67,$66,$3f,	$00
+   845                          	; $27
+   846  04e3  060c180000000000  DEFB $06,$0c,$18,$00,$00,$00,$00,	$00
+   847                          	; $28
+   848  04eb  0c18303030180c00  DEFB $0c,$18,$30,$30,$30,$18,$0c,	$00
+   849                          	; $29
+   850  04f3  30180c0c0c183000  DEFB $30,$18,$0c,$0c,$0c,$18,$30,	$00
+   851                          	; $2a
+   852  04fb  00663cff3c660000  DEFB $00,$66,$3c,$ff,$3c,$66,$00,	$00
+   853                          	; $2b
+   854  0503  0018187e18180000  DEFB $00,$18,$18,$7e,$18,$18,$00,	$00
+   855                          	; $2c
+   856  050b  0000000000181830  DEFB $00,$00,$00,$00,$00,$18,$18,	$30
+   857                          	; $2d
+   858  0513  0000007e00000000  DEFB $00,$00,$00,$7e,$00,$00,$00,	$00
+   859                          	; $2e
+   860  051b  0000000000181800  DEFB $00,$00,$00,$00,$00,$18,$18,	$00
+   861                          	; $2f
+   862  0523  0003060c18306000  DEFB $00,$03,$06,$0c,$18,$30,$60,	$00
+   863                          	; $30
+   864  052b  3c666e7666663c00  DEFB $3c,$66,$6e,$76,$66,$66,$3c,	$00
+   865                          	; $31
+   866  0533  1818381818187e00  DEFB $18,$18,$38,$18,$18,$18,$7e,	$00
+   867                          	; $32
+   868  053b  3c66060c30607e00  DEFB $3c,$66,$06,$0c,$30,$60,$7e,	$00
+   869                          	; $33
+   870  0543  3c66061c06663c00  DEFB $3c,$66,$06,$1c,$06,$66,$3c,	$00
+   871                          	; $34
+   872  054b  060e1e667f060600  DEFB $06,$0e,$1e,$66,$7f,$06,$06,	$00
+   873                          	; $35
+   874  0553  7e607c0606663c00  DEFB $7e,$60,$7c,$06,$06,$66,$3c,	$00
+   875                          	; $36
+   876  055b  3c66607c66663c00  DEFB $3c,$66,$60,$7c,$66,$66,$3c,	$00
+   877                          	; $37
+   878  0563  7e660c1818181800  DEFB $7e,$66,$0c,$18,$18,$18,$18,	$00
+   879                          	; $38
+   880  056b  3c66663c66663c00  DEFB $3c,$66,$66,$3c,$66,$66,$3c,	$00
+   881                          	; $39
+   882  0573  3c66663e06663c00  DEFB $3c,$66,$66,$3e,$06,$66,$3c,	$00
+   883                          	; $3a
+   884  057b  0000180000180000  DEFB $00,$00,$18,$00,$00,$18,$00,	$00
+   885                          	; $3b
+   886  0583  0000180000181830  DEFB $00,$00,$18,$00,$00,$18,$18,	$30
+   887                          	; $3c
+   888  058b  0e18306030180e00  DEFB $0e,$18,$30,$60,$30,$18,$0e,	$00
+   889                          	; $3d
+   890  0593  00007e007e000000  DEFB $00,$00,$7e,$00,$7e,$00,$00,	$00
+   891                          	; $3e
+   892  059b  70180c060c187000  DEFB $70,$18,$0c,$06,$0c,$18,$70,	$00
+   893                          	; $3f
+   894  05a3  3c66060c18001800  DEFB $3c,$66,$06,$0c,$18,$00,$18,	$00
+   895                          	; $40
+   896  05ab  000000ffff000000  DEFB $00,$00,$00,$ff,$ff,$00,$00,	$00
+   897                          	; $41
+   898  05b3  183c667e66666600  DEFB $18,$3c,$66,$7e,$66,$66,$66,	$00
+   899                          	; $42
+   900  05bb  7c66667c66667c00  DEFB $7c,$66,$66,$7c,$66,$66,$7c,	$00
+   901                          	; $43
+   902  05c3  3c66606060663c00  DEFB $3c,$66,$60,$60,$60,$66,$3c,	$00
+   903                          	; $44
+   904  05cb  786c6666666c7800  DEFB $78,$6c,$66,$66,$66,$6c,$78,	$00
+   905                          	; $45
+   906  05d3  7e60607860607e00  DEFB $7e,$60,$60,$78,$60,$60,$7e,	$00
+   907                          	; $46
+   908  05db  7e60607860606000  DEFB $7e,$60,$60,$78,$60,$60,$60,	$00
+   909                          	; $47
+   910  05e3  3c66606e66663c00  DEFB $3c,$66,$60,$6e,$66,$66,$3c,	$00
+   911                          	; $48
+   912  05eb  6666667e66666600  DEFB $66,$66,$66,$7e,$66,$66,$66,	$00
+   913                          	; $49
+   914  05f3  3c18181818183c00  DEFB $3c,$18,$18,$18,$18,$18,$3c,	$00
+   915                          	; $4a
+   916  05fb  1e0c0c0c0c6c3800  DEFB $1e,$0c,$0c,$0c,$0c,$6c,$38,	$00
+   917                          	; $4b
+   918  0603  666c7870786c6600  DEFB $66,$6c,$78,$70,$78,$6c,$66,	$00
+   919                          	; $4c
+   920  060b  6060606060607e00  DEFB $60,$60,$60,$60,$60,$60,$7e,	$00
+   921                          	; $4d
+   922  0613  63777f6b63636300  DEFB $63,$77,$7f,$6b,$63,$63,$63,	$00
+   923                          	; $4e
+   924  061b  66767e7e6e666600  DEFB $66,$76,$7e,$7e,$6e,$66,$66,	$00
+   925                          	; $4f
+   926  0623  3c66666666663c00  DEFB $3c,$66,$66,$66,$66,$66,$3c,	$00
+   927                          	; $50
+   928  062b  7c66667c60606000  DEFB $7c,$66,$66,$7c,$60,$60,$60,	$00
+   929                          	; $51
+   930  0633  3c666666663c0e00  DEFB $3c,$66,$66,$66,$66,$3c,$0e,	$00
+   931                          	; $52
+   932  063b  7c66667c786c6600  DEFB $7c,$66,$66,$7c,$78,$6c,$66,	$00
+   933                          	; $53
+   934  0643  3c66603c06663c00  DEFB $3c,$66,$60,$3c,$06,$66,$3c,	$00
+   935                          	; $54
+   936  064b  7e18181818181800  DEFB $7e,$18,$18,$18,$18,$18,$18,	$00
+   937                          	; $55
+   938  0653  6666666666663c00  DEFB $66,$66,$66,$66,$66,$66,$3c,	$00
+   939                          	; $56
+   940  065b  66666666663c1800  DEFB $66,$66,$66,$66,$66,$3c,$18,	$00
+   941                          	; $57
+   942  0663  6363636b7f776300  DEFB $63,$63,$63,$6b,$7f,$77,$63,	$00
+   943                          	; $58
+   944  066b  66663c183c666600  DEFB $66,$66,$3c,$18,$3c,$66,$66,	$00
+   945                          	; $59
+   946  0673  6666663c18181800  DEFB $66,$66,$66,$3c,$18,$18,$18,	$00
+   947                          	; $5a
+   948  067b  7e060c1830607e00  DEFB $7e,$06,$0c,$18,$30,$60,$7e,	$00
+   949                          	; $5b
+   950  0683  181818ffff181818  DEFB $18,$18,$18,$ff,$ff,$18,$18,	$18
+   951                          	; $5c
+   952  068b  c0c03030c0c03030  DEFB $c0,$c0,$30,$30,$c0,$c0,$30,	$30
+   953                          	; $5d
+   954  0693  1818181818181818  DEFB $18,$18,$18,$18,$18,$18,$18,	$18
+   955                          	; $5e
+   956  069b  3333cccc3333cccc  DEFB $33,$33,$cc,$cc,$33,$33,$cc,	$cc
+   957                          	; $5f
+   958  06a3  3399cc663399cc66  DEFB $33,$99,$cc,$66,$33,$99,$cc,	$66
+   959                          	; $60
+   960  06ab  0000000000000000  DEFB $00,$00,$00,$00,$00,$00,$00,	$00
+   961                          	; $61
+   962  06b3  f0f0f0f0f0f0f0f0  DEFB $f0,$f0,$f0,$f0,$f0,$f0,$f0,	$f0
+   963                          	; $62
+   964  06bb  00000000ffffffff  DEFB $00,$00,$00,$00,$ff,$ff,$ff,	$ff
+   965                          	; $63
+   966  06c3  ff00000000000000  DEFB $ff,$00,$00,$00,$00,$00,$00,	$00
+   967                          	; $64
+   968  06cb  00000000000000ff  DEFB $00,$00,$00,$00,$00,$00,$00,	$ff
+   969                          	; $65
+   970  06d3  c0c0c0c0c0c0c0c0  DEFB $c0,$c0,$c0,$c0,$c0,$c0,$c0,	$c0
+   971                          	; $66
+   972  06db  cccc3333cccc3333  DEFB $cc,$cc,$33,$33,$cc,$cc,$33,	$33
+   973                          	; $67
+   974  06e3  0303030303030303  DEFB $03,$03,$03,$03,$03,$03,$03,	$03
+   975                          	; $68
+   976  06eb  00000000cccc3333  DEFB $00,$00,$00,$00,$cc,$cc,$33,	$33
+   977                          	; $69
+   978  06f3  cc993366cc993366  DEFB $cc,$99,$33,$66,$cc,$99,$33,	$66
+   979                          	; $6a
+   980  06fb  0303030303030303  DEFB $03,$03,$03,$03,$03,$03,$03,	$03
+   981                          	; $6b
+   982  0703  1818181f1f181818  DEFB $18,$18,$18,$1f,$1f,$18,$18,	$18
+   983                          	; $6c
+   984  070b  000000000f0f0f0f  DEFB $00,$00,$00,$00,$0f,$0f,$0f,	$0f
+   985                          	; $6d
+   986  0713  1818181f1f000000  DEFB $18,$18,$18,$1f,$1f,$00,$00,	$00
+   987                          	; $6e
+   988  071b  000000f8f8181818  DEFB $00,$00,$00,$f8,$f8,$18,$18,	$18
+   989                          	; $6f
+   990  0723  000000000000ffff  DEFB $00,$00,$00,$00,$00,$00,$ff,	$ff
+   991                          	; $70
+   992  072b  0000001f1f181818  DEFB $00,$00,$00,$1f,$1f,$18,$18,	$18
+   993                          	; $71
+   994  0733  181818ffff000000  DEFB $18,$18,$18,$ff,$ff,$00,$00,	$00
+   995                          	; $72
+   996  073b  000000ffff181818  DEFB $00,$00,$00,$ff,$ff,$18,$18,	$18
+   997                          	; $73
+   998  0743  181818f8f8181818  DEFB $18,$18,$18,$f8,$f8,$18,$18,	$18
+   999                          	; $74
+  1000  074b  c0c0c0c0c0c0c0c0  DEFB $c0,$c0,$c0,$c0,$c0,$c0,$c0,	$c0
+  1001                          	; $75
+  1002  0753  e0e0e0e0e0e0e0e0  DEFB $e0,$e0,$e0,$e0,$e0,$e0,$e0,	$e0
+  1003                          	; $76
+  1004  075b  0707070707070707  DEFB $07,$07,$07,$07,$07,$07,$07,	$07
+  1005                          	; $77
+  1006  0763  ffff000000000000  DEFB $ff,$ff,$00,$00,$00,$00,$00,	$00
+  1007                          	; $78
+  1008  076b  ffffff0000000000  DEFB $ff,$ff,$ff,$00,$00,$00,$00,	$00
+  1009                          	; $79
+  1010  0773  0000000000ffffff  DEFB $00,$00,$00,$00,$00,$ff,$ff,	$ff
+  1011                          	; $7a
+  1012  077b  0103066c78706000  DEFB $01,$03,$06,$6c,$78,$70,$60,	$00
+  1013                          	; $7b
+  1014  0783  00000000f0f0f0f0  DEFB $00,$00,$00,$00,$f0,$f0,$f0,	$f0
+  1015                          	; $7c
+  1016  078b  0f0f0f0f00000000  DEFB $0f,$0f,$0f,$0f,$00,$00,$00,	$00
+  1017                          	; $7d
+  1018  0793  181818f8f8000000  DEFB $18,$18,$18,$f8,$f8,$00,$00,	$00
+  1019                          	; $7e
+  1020  079b  f0f0f0f000000000  DEFB $f0,$f0,$f0,$f0,$00,$00,$00,	$00
+  1021                          	; $7f
+  1022  07a3  f0f0f0f00f0f0f0f  DEFB $f0,$f0,$f0,$f0,$0f,$0f,$0f,	$0f
+  1023                          	; $80
+  1024  07ab  c39991919f99c3ff  DEFB $c3,$99,$91,$91,$9f,$99,$c3,	$ff
+  1025                          	; $81
+  1026  07b3  ffffc3f9c199c1ff  DEFB $ff,$ff,$c3,$f9,$c1,$99,$c1,	$ff
+  1027                          	; $82
+  1028  07bb  ff9f9f83999983ff  DEFB $ff,$9f,$9f,$83,$99,$99,$83,	$ff
+  1029                          	; $83
+  1030  07c3  ffffc39f9f9fc3ff  DEFB $ff,$ff,$c3,$9f,$9f,$9f,$c3,	$ff
+  1031                          	; $84
+  1032  07cb  fff9f9c19999c1ff  DEFB $ff,$f9,$f9,$c1,$99,$99,$c1,	$ff
+  1033                          	; $85
+  1034  07d3  ffffc399819fc3ff  DEFB $ff,$ff,$c3,$99,$81,$9f,$c3,	$ff
+  1035                          	; $86
+  1036  07db  fff1e7c1e7e7e7ff  DEFB $ff,$f1,$e7,$c1,$e7,$e7,$e7,	$ff
+  1037                          	; $87
+  1038  07e3  ffffc19999c1f983  DEFB $ff,$ff,$c1,$99,$99,$c1,$f9,	$83
+  1039                          	; $88
+  1040  07eb  ff9f9f83999999ff  DEFB $ff,$9f,$9f,$83,$99,$99,$99,	$ff
+  1041                          	; $89
+  1042  07f3  ffe7ffc7e7e7c3ff  DEFB $ff,$e7,$ff,$c7,$e7,$e7,$c3,	$ff
+  1043                          	; $8a
+  1044  07fb  fff9fff9f9f9f9c3  DEFB $ff,$f9,$ff,$f9,$f9,$f9,$f9,	$c3
+  1045                          	; $8b
+  1046  0803  ff9f9f93879399ff  DEFB $ff,$9f,$9f,$93,$87,$93,$99,	$ff
+  1047                          	; $8c
+  1048  080b  ffc7e7e7e7e7c3ff  DEFB $ff,$c7,$e7,$e7,$e7,$e7,$c3,	$ff
+  1049                          	; $8d
+  1050  0813  ffff998080949cff  DEFB $ff,$ff,$99,$80,$80,$94,$9c,	$ff
+  1051                          	; $8e
+  1052  081b  ffff8399999999ff  DEFB $ff,$ff,$83,$99,$99,$99,$99,	$ff
+  1053                          	; $8f
+  1054  0823  ffffc3999999c3ff  DEFB $ff,$ff,$c3,$99,$99,$99,$c3,	$ff
+  1055                          	; $90
+  1056  082b  ffff839999839f9f  DEFB $ff,$ff,$83,$99,$99,$83,$9f,	$9f
+  1057                          	; $91
+  1058  0833  ffffc19999c1f9f9  DEFB $ff,$ff,$c1,$99,$99,$c1,$f9,	$f9
+  1059                          	; $92
+  1060  083b  ffff83999f9f9fff  DEFB $ff,$ff,$83,$99,$9f,$9f,$9f,	$ff
+  1061                          	; $93
+  1062  0843  ffffc19fc3f983ff  DEFB $ff,$ff,$c1,$9f,$c3,$f9,$83,	$ff
+  1063                          	; $94
+  1064  084b  ffe781e7e7e7f1ff  DEFB $ff,$e7,$81,$e7,$e7,$e7,$f1,	$ff
+  1065                          	; $95
+  1066  0853  ffff99999999c1ff  DEFB $ff,$ff,$99,$99,$99,$99,$c1,	$ff
+  1067                          	; $96
+  1068  085b  ffff999999c3e7ff  DEFB $ff,$ff,$99,$99,$99,$c3,$e7,	$ff
+  1069                          	; $97
+  1070  0863  ffff9c9480c1c9ff  DEFB $ff,$ff,$9c,$94,$80,$c1,$c9,	$ff
+  1071                          	; $98
+  1072  086b  ffff99c3e7c399ff  DEFB $ff,$ff,$99,$c3,$e7,$c3,$99,	$ff
+  1073                          	; $99
+  1074  0873  ffff999999c1f387  DEFB $ff,$ff,$99,$99,$99,$c1,$f3,	$87
+  1075                          	; $9a
+  1076  087b  ffff81f3e7cf81ff  DEFB $ff,$ff,$81,$f3,$e7,$cf,$81,	$ff
+  1077                          	; $9b
+  1078  0883  c3cfcfcfcfcfc3ff  DEFB $c3,$cf,$cf,$cf,$cf,$cf,$c3,	$ff
+  1079                          	; $9c
+  1080  088b  f3edcf83cf9d03ff  DEFB $f3,$ed,$cf,$83,$cf,$9d,$03,	$ff
+  1081                          	; $9d
+  1082  0893  c3f3f3f3f3f3c3ff  DEFB $c3,$f3,$f3,$f3,$f3,$f3,$c3,	$ff
+  1083                          	; $9e
+  1084  089b  ffe7c381e7e7e7e7  DEFB $ff,$e7,$c3,$81,$e7,$e7,$e7,	$e7
+  1085                          	; $9f
+  1086  08a3  ffefcf8080cfefff  DEFB $ff,$ef,$cf,$80,$80,$cf,$ef,	$ff
+  1087                          	; $a0
+  1088  08ab  ffffffffffffffff  DEFB $ff,$ff,$ff,$ff,$ff,$ff,$ff,	$ff
+  1089                          	; $a1
+  1090  08b3  e7e7e7e7ffffe7ff  DEFB $e7,$e7,$e7,$e7,$ff,$ff,$e7,	$ff
+  1091                          	; $a2
+  1092  08bb  999999ffffffffff  DEFB $99,$99,$99,$ff,$ff,$ff,$ff,	$ff
+  1093                          	; $a3
+  1094  08c3  99990099009999ff  DEFB $99,$99,$00,$99,$00,$99,$99,	$ff
+  1095                          	; $a4
+  1096  08cb  e7c19fc3f983e7ff  DEFB $e7,$c1,$9f,$c3,$f9,$83,$e7,	$ff
+  1097                          	; $a5
+  1098  08d3  9d99f3e7cf99b9ff  DEFB $9d,$99,$f3,$e7,$cf,$99,$b9,	$ff
+  1099                          	; $a6
+  1100  08db  c399c3c79899c0ff  DEFB $c3,$99,$c3,$c7,$98,$99,$c0,	$ff
+  1101                          	; $a7
+  1102  08e3  f9f3e7ffffffffff  DEFB $f9,$f3,$e7,$ff,$ff,$ff,$ff,	$ff
+  1103                          	; $a8
+  1104  08eb  f3e7cfcfcfe7f3ff  DEFB $f3,$e7,$cf,$cf,$cf,$e7,$f3,	$ff
+  1105                          	; $a9
+  1106  08f3  cfe7f3f3f3e7cfff  DEFB $cf,$e7,$f3,$f3,$f3,$e7,$cf,	$ff
+  1107                          	; $aa
+  1108  08fb  ff99c300c399ffff  DEFB $ff,$99,$c3,$00,$c3,$99,$ff,	$ff
+  1109                          	; $ab
+  1110  0903  ffe7e781e7e7ffff  DEFB $ff,$e7,$e7,$81,$e7,$e7,$ff,	$ff
+  1111                          	; $ac
+  1112  090b  ffffffffffe7e7cf  DEFB $ff,$ff,$ff,$ff,$ff,$e7,$e7,	$cf
+  1113                          	; $ad
+  1114  0913  ffffff81ffffffff  DEFB $ff,$ff,$ff,$81,$ff,$ff,$ff,	$ff
+  1115                          	; $ae
+  1116  091b  ffffffffffe7e7ff  DEFB $ff,$ff,$ff,$ff,$ff,$e7,$e7,	$ff
+  1117                          	; $af
+  1118  0923  fffcf9f3e7cf9fff  DEFB $ff,$fc,$f9,$f3,$e7,$cf,$9f,	$ff
+  1119                          	; $b0
+  1120  092b  c39991899999c3ff  DEFB $c3,$99,$91,$89,$99,$99,$c3,	$ff
+  1121                          	; $b1
+  1122  0933  e7e7c7e7e7e781ff  DEFB $e7,$e7,$c7,$e7,$e7,$e7,$81,	$ff
+  1123                          	; $b2
+  1124  093b  c399f9f3cf9f81ff  DEFB $c3,$99,$f9,$f3,$cf,$9f,$81,	$ff
+  1125                          	; $b3
+  1126  0943  c399f9e3f999c3ff  DEFB $c3,$99,$f9,$e3,$f9,$99,$c3,	$ff
+  1127                          	; $b4
+  1128  094b  f9f1e19980f9f9ff  DEFB $f9,$f1,$e1,$99,$80,$f9,$f9,	$ff
+  1129                          	; $b5
+  1130  0953  819f83f9f999c3ff  DEFB $81,$9f,$83,$f9,$f9,$99,$c3,	$ff
+  1131                          	; $b6
+  1132  095b  c3999f839999c3ff  DEFB $c3,$99,$9f,$83,$99,$99,$c3,	$ff
+  1133                          	; $b7
+  1134  0963  8199f3e7e7e7e7ff  DEFB $81,$99,$f3,$e7,$e7,$e7,$e7,	$ff
+  1135                          	; $b8
+  1136  096b  c39999c39999c3ff  DEFB $c3,$99,$99,$c3,$99,$99,$c3,	$ff
+  1137                          	; $b9
+  1138  0973  c39999c1f999c3ff  DEFB $c3,$99,$99,$c1,$f9,$99,$c3,	$ff
+  1139                          	; $ba
+  1140  097b  ffffe7ffffe7ffff  DEFB $ff,$ff,$e7,$ff,$ff,$e7,$ff,	$ff
+  1141                          	; $bb
+  1142  0983  ffffe7ffffe7e7cf  DEFB $ff,$ff,$e7,$ff,$ff,$e7,$e7,	$cf
+  1143                          	; $bc
+  1144  098b  f1e7cf9fcfe7f1ff  DEFB $f1,$e7,$cf,$9f,$cf,$e7,$f1,	$ff
+  1145                          	; $bd
+  1146  0993  ffff81ff81ffffff  DEFB $ff,$ff,$81,$ff,$81,$ff,$ff,	$ff
+  1147                          	; $be
+  1148  099b  8fe7f3f9f3e78fff  DEFB $8f,$e7,$f3,$f9,$f3,$e7,$8f,	$ff
+  1149                          	; $bf
+  1150  09a3  c399f9f3e7ffe7ff  DEFB $c3,$99,$f9,$f3,$e7,$ff,$e7,	$ff
+  1151                          	; $c0
+  1152  09ab  ffffff0000ffffff  DEFB $ff,$ff,$ff,$00,$00,$ff,$ff,	$ff
+  1153                          	; $c1
+  1154  09b3  e7c39981999999ff  DEFB $e7,$c3,$99,$81,$99,$99,$99,	$ff
+  1155                          	; $c2
+  1156  09bb  83999983999983ff  DEFB $83,$99,$99,$83,$99,$99,$83,	$ff
+  1157                          	; $c3
+  1158  09c3  c3999f9f9f99c3ff  DEFB $c3,$99,$9f,$9f,$9f,$99,$c3,	$ff
+  1159                          	; $c4
+  1160  09cb  87939999999387ff  DEFB $87,$93,$99,$99,$99,$93,$87,	$ff
+  1161                          	; $c5
+  1162  09d3  819f9f879f9f81ff  DEFB $81,$9f,$9f,$87,$9f,$9f,$81,	$ff
+  1163                          	; $c6
+  1164  09db  819f9f879f9f9fff  DEFB $81,$9f,$9f,$87,$9f,$9f,$9f,	$ff
+  1165                          	; $c7
+  1166  09e3  c3999f919999c3ff  DEFB $c3,$99,$9f,$91,$99,$99,$c3,	$ff
+  1167                          	; $c8
+  1168  09eb  99999981999999ff  DEFB $99,$99,$99,$81,$99,$99,$99,	$ff
+  1169                          	; $c9
+  1170  09f3  c3e7e7e7e7e7c3ff  DEFB $c3,$e7,$e7,$e7,$e7,$e7,$c3,	$ff
+  1171                          	; $ca
+  1172  09fb  e1f3f3f3f393c7ff  DEFB $e1,$f3,$f3,$f3,$f3,$93,$c7,	$ff
+  1173                          	; $cb
+  1174  0a03  9993878f879399ff  DEFB $99,$93,$87,$8f,$87,$93,$99,	$ff
+  1175                          	; $cc
+  1176  0a0b  9f9f9f9f9f9f81ff  DEFB $9f,$9f,$9f,$9f,$9f,$9f,$81,	$ff
+  1177                          	; $cd
+  1178  0a13  9c8880949c9c9cff  DEFB $9c,$88,$80,$94,$9c,$9c,$9c,	$ff
+  1179                          	; $ce
+  1180  0a1b  99898181919999ff  DEFB $99,$89,$81,$81,$91,$99,$99,	$ff
+  1181                          	; $cf
+  1182  0a23  c39999999999c3ff  DEFB $c3,$99,$99,$99,$99,$99,$c3,	$ff
+  1183                          	; $d0
+  1184  0a2b  839999839f9f9fff  DEFB $83,$99,$99,$83,$9f,$9f,$9f,	$ff
+  1185                          	; $d1
+  1186  0a33  c399999999c3f1ff  DEFB $c3,$99,$99,$99,$99,$c3,$f1,	$ff
+  1187                          	; $d2
+  1188  0a3b  83999983879399ff  DEFB $83,$99,$99,$83,$87,$93,$99,	$ff
+  1189                          	; $d3
+  1190  0a43  c3999fc3f999c3ff  DEFB $c3,$99,$9f,$c3,$f9,$99,$c3,	$ff
+  1191                          	; $d4
+  1192  0a4b  81e7e7e7e7e7e7ff  DEFB $81,$e7,$e7,$e7,$e7,$e7,$e7,	$ff
+  1193                          	; $d5
+  1194  0a53  999999999999c3ff  DEFB $99,$99,$99,$99,$99,$99,$c3,	$ff
+  1195                          	; $d6
+  1196  0a5b  9999999999c3e7ff  DEFB $99,$99,$99,$99,$99,$c3,$e7,	$ff
+  1197                          	; $d7
+  1198  0a63  9c9c9c9480889cff  DEFB $9c,$9c,$9c,$94,$80,$88,$9c,	$ff
+  1199                          	; $d8
+  1200  0a6b  9999c3e7c39999ff  DEFB $99,$99,$c3,$e7,$c3,$99,$99,	$ff
+  1201                          	; $d9
+  1202  0a73  999999c3e7e7e7ff  DEFB $99,$99,$99,$c3,$e7,$e7,$e7,	$ff
+  1203                          	; $da
+  1204  0a7b  81f9f3e7cf9f81ff  DEFB $81,$f9,$f3,$e7,$cf,$9f,$81,	$ff
+  1205                          	; $db
+  1206  0a83  e7e7e70000e7e7e7  DEFB $e7,$e7,$e7,$00,$00,$e7,$e7,	$e7
+  1207                          	; $dc
+  1208  0a8b  3f3fcfcf3f3fcfcf  DEFB $3f,$3f,$cf,$cf,$3f,$3f,$cf,	$cf
+  1209                          	; $dd
+  1210  0a93  e7e7e7e7e7e7e7e7  DEFB $e7,$e7,$e7,$e7,$e7,$e7,$e7,	$e7
+  1211                          	; $de
+  1212  0a9b  cccc3333cccc3333  DEFB $cc,$cc,$33,$33,$cc,$cc,$33,	$33
+  1213                          	; $df
+  1214  0aa3  cc663399cc663399  DEFB $cc,$66,$33,$99,$cc,$66,$33,	$99
+  1215                          	; $e0
+  1216  0aab  ffffffffffffffff  DEFB $ff,$ff,$ff,$ff,$ff,$ff,$ff,	$ff
+  1217                          	; $e1
+  1218  0ab3  0f0f0f0f0f0f0f0f  DEFB $0f,$0f,$0f,$0f,$0f,$0f,$0f,	$0f
+  1219                          	; $e2
+  1220  0abb  ffffffff00000000  DEFB $ff,$ff,$ff,$ff,$00,$00,$00,	$00
+  1221                          	; $e3
+  1222  0ac3  00ffffffffffffff  DEFB $00,$ff,$ff,$ff,$ff,$ff,$ff,	$ff
+  1223                          	; $e4
+  1224  0acb  ffffffffffffff00  DEFB $ff,$ff,$ff,$ff,$ff,$ff,$ff,	$00
+  1225                          	; $e5
+  1226  0ad3  3f3f3f3f3f3f3f3f  DEFB $3f,$3f,$3f,$3f,$3f,$3f,$3f,	$3f
+  1227                          	; $e6
+  1228  0adb  3333cccc3333cccc  DEFB $33,$33,$cc,$cc,$33,$33,$cc,	$cc
+  1229                          	; $e7
+  1230  0ae3  fcfcfcfcfcfcfcfc  DEFB $fc,$fc,$fc,$fc,$fc,$fc,$fc,	$fc
+  1231                          	; $e8
+  1232  0aeb  ffffffff3333cccc  DEFB $ff,$ff,$ff,$ff,$33,$33,$cc,	$cc
+  1233                          	; $e9
+  1234  0af3  3366cc993366cc99  DEFB $33,$66,$cc,$99,$33,$66,$cc,	$99
+  1235                          	; $ea
+  1236  0afb  fcfcfcfcfcfcfcfc  DEFB $fc,$fc,$fc,$fc,$fc,$fc,$fc,	$fc
+  1237                          	; $eb
+  1238  0b03  e7e7e7e0e0e7e7e7  DEFB $e7,$e7,$e7,$e0,$e0,$e7,$e7,	$e7
+  1239                          	; $ec
+  1240  0b0b  fffffffff0f0f0f0  DEFB $ff,$ff,$ff,$ff,$f0,$f0,$f0,	$f0
+  1241                          	; $ed
+  1242  0b13  e7e7e7e0e0ffffff  DEFB $e7,$e7,$e7,$e0,$e0,$ff,$ff,	$ff
+  1243                          	; $ee
+  1244  0b1b  ffffff0707e7e7e7  DEFB $ff,$ff,$ff,$07,$07,$e7,$e7,	$e7
+  1245                          	; $ef
+  1246  0b23  ffffffffffff0000  DEFB $ff,$ff,$ff,$ff,$ff,$ff,$00,	$00
+  1247                          	; $f0
+  1248  0b2b  ffffffe0e0e7e7e7  DEFB $ff,$ff,$ff,$e0,$e0,$e7,$e7,	$e7
+  1249                          	; $f1
+  1250  0b33  e7e7e70000ffffff  DEFB $e7,$e7,$e7,$00,$00,$ff,$ff,	$ff
+  1251                          	; $f2
+  1252  0b3b  ffffff0000e7e7e7  DEFB $ff,$ff,$ff,$00,$00,$e7,$e7,	$e7
+  1253                          	; $f3
+  1254  0b43  e7e7e70707e7e7e7  DEFB $e7,$e7,$e7,$07,$07,$e7,$e7,	$e7
+  1255                          	; $f4
+  1256  0b4b  3f3f3f3f3f3f3f3f  DEFB $3f,$3f,$3f,$3f,$3f,$3f,$3f,	$3f
+  1257                          	; $f5
+  1258  0b53  1f1f1f1f1f1f1f1f  DEFB $1f,$1f,$1f,$1f,$1f,$1f,$1f,	$1f
+  1259                          	; $f6
+  1260  0b5b  f8f8f8f8f8f8f8f8  DEFB $f8,$f8,$f8,$f8,$f8,$f8,$f8,	$f8
+  1261                          	; $f7
+  1262  0b63  0000ffffffffffff  DEFB $00,$00,$ff,$ff,$ff,$ff,$ff,	$ff
+  1263                          	; $f8
+  1264  0b6b  000000ffffffffff  DEFB $00,$00,$00,$ff,$ff,$ff,$ff,	$ff
+  1265                          	; $f9
+  1266  0b73  ffffffffff000000  DEFB $ff,$ff,$ff,$ff,$ff,$00,$00,	$00
+  1267                          	; $fa
+  1268  0b7b  fefcf993878f9fff  DEFB $fe,$fc,$f9,$93,$87,$8f,$9f,	$ff
+  1269                          	; $fb
+  1270  0b83  ffffffff0f0f0f0f  DEFB $ff,$ff,$ff,$ff,$0f,$0f,$0f,	$0f
+  1271                          	; $fc
+  1272  0b8b  f0f0f0f0ffffffff  DEFB $f0,$f0,$f0,$f0,$ff,$ff,$ff,	$ff
+  1273                          	; $fd
+  1274  0b93  e7e7e70707ffffff  DEFB $e7,$e7,$e7,$07,$07,$ff,$ff,	$ff
+  1275                          	; $fe
+  1276  0b9b  0f0f0f0fffffffff  DEFB $0f,$0f,$0f,$0f,$ff,$ff,$ff,	$ff
+  1277                          AY8910STARTUP:
+  1278  0ba3  c9                	RET
+  1279                          MUSICPLAYER:
+  1280  0ba4  c9                	RET
+  1281                          PROTOTHREADINIT:
+  1282  0ba5  c9                	RET
+  1283                          ; peephole: pass 1, 49 changes.
+  1284                          ; peephole: pass 2, 0 change.
+  1285                          ; peephole: pass 3, 26 vars removed.
+  1286                          ; peephole: pass 4, 7 changes.
+  1287                          ; peephole: pass 5, 3 changes.
+  1288                          ; peephole: pass 6, 0 change.
+  1289                          ; peephole: pass 7, 0 var removed.
+  1290                          ; peephole: pass 8, 0 var moved to dp, 0 var inlined.
+  1291                          

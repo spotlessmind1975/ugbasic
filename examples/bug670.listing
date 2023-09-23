@@ -1,0 +1,3198 @@
+2A00                          ORG $2A00
+2A00  7E2C03                  JMP CODESTART
+2A03  0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 IRQSTACK rzb 512
+2C03                  CODESTART
+2C03  10CE2A03                LDS #IRQSTACK
+2C07  B7FFDF                  STA $FFDF
+                              IF (((128+vars_after-(*+2))|(127-vars_after+(*+2)))&0x8000)
+                              JMP vars_after
+                              ELSE
+2C0A  200E                    BRA vars_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS,
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ;*                                                                             *
+                      ;*                      INTERNAL VARIABLES FOR TRS-80 COLOR COMPUTER           *
+                      ;*                                                                             *
+                      ;*                             by Marco Spedaletti                             *
+                      ;*                                                                             *
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ; peephole(7): inlined3
+                      ;TEXTADDRESS         fdb     $0400
+2C0C  0C00            BITMAPADDRESS       fdb     $0c00
+2C0E  A000            COLORMAPADDRESS     fdb     $a000
+                      ; peephole(7): inlined3
+                      ;CURRENTMODE         fcb     $2
+                      ; peephole(4): unread2
+                      ;CURRENTTILEMODE     fcb     1
+2C10  00              EVERYSTATUS        fcb     0
+2C11  04              TABCOUNT            fcb     4
+                      ; peephole(4): unread2
+                      ;XCURS               fcb     0
+                      ; peephole(4): unread2
+                      ;YCURS               fcb     0
+2C12  20              EMPTYTILE           fcb     32
+2C13  10              KBDRATE             fcb     16
+2C14  0000            COCOTIMER           fdb     $0
+2C16  0000            COCOTIMER2           fdb     $0
+2C18  00              TICKSPERSECOND       fcb     $0
+0010                  TMPPTR equ $10    ; $23
+0012                  TMPPTR2 equ $12    ; $25
+0014                  MATHPTR0 equ $14
+0015                  MATHPTR1 equ $15
+0016                  MATHPTR2 equ $16
+0017                  MATHPTR3 equ $17
+0018                  MATHPTR4 equ $18
+0019                  MATHPTR5 equ $19
+0020                  MATHPTR6 equ $20
+0021                  MATHPTR7 equ $21
+0022                  MATHPTR8 equ $22
+0023                  MATHPTRB0 equ $23
+0024                  MATHPTRB1 equ $24
+0025                  MATHPTRB2 equ $25
+0026                  MATHPTRB3 equ $26
+0027                  MATHPTRB4 equ $27
+0028                  MATHPTRB5 equ $28
+0029                  MATHPTRB6 equ $29
+002A                  MATHPTRB7 equ $2a
+002B                  MATHPTRB8 equ $2b
+003B                  DSSTATUS equ $3b
+003C                  DSSIZE equ $3c
+003D                  DSADDRLO equ $3d
+003E                  DSADDRHI equ $3e
+003F                  DSBANKLO equ $3f
+0040                  DSBANKHI equ $40
+0041                  COPYOFTEXTADDRESS equ $41
+0043                  COPYOFBITMAPADDRESS equ $43
+0045                  COPYOFCOLORMAPADDRESS equ $45
+0047                  COPYOFTEXTADDRESS2 equ $47
+0049                  COPYOFCOLORMAPADDRESS2 equ $49
+004A                  DIRECTION equ $4a
+004A                  PATTERN equ $4a
+004A                  CHARACTERS equ $4a
+004B                  CLINEX equ $4b
+004C                  CLINEY equ $4c
+004A                  BITSTOCONVERT equ $4a
+00D3                  XCURSYS equ $D3
+00D6                  YCURSYS equ $D6
+2C19  00              BANKSHADOW fcb  0
+2C1A                  vars_after
+                              IF (((128+startup_after-(*+2))|(127-startup_after+(*+2)))&0x8000)
+2C1A  7E2D09                  JMP startup_after
+                              ELSE
+                              BRA startup_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS,
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ;*                                                                             *
+                      ;*                          STARTUP ROUTINE ON TRS-80 COLOR COMPUTER           *
+                      ;*                                                                             *
+                      ;*                             by Marco Spedaletti                             *
+                      ;*                                                                             *
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+2C1D                  IRQSVC
+2C1D  3406                    PSHS D
+2C1F  3410                    PSHS X
+2C21  3420                    PSHS Y
+2C23  3440                    PSHS U
+2C25  3408                    PSHS DP
+2C27  3401                    PSHS CC
+2C29                  IRQSVC2
+2C29  12                      NOP
+2C2A  12                      NOP
+2C2B  12                      NOP
+2C2C  3501                    PULS CC
+2C2E  3508                    PULS DP
+2C30  3540                    PULS U
+2C32  3520                    PULS Y
+2C34  3510                    PULS X
+2C36  3506                    PULS D
+2C38  39                      RTS
+                              
+2C39                  OLDISVC
+2C39  0000                    fdb $0
+2C3B                  OLDISVC2
+2C3B  0000                    fdb $0
+2C3D                  OLDNMIISVC
+2C3D  0000                    fdb $0
+2C3F                  OLDNMIISVC2
+2C3F  0000                    fdb $0
+2C41                  OLDCC
+2C41  00                      fcb $0
+2C42                  ISVCIRQ
+2C42  BD2C1D                  JSR IRQSVC
+                          ; PSHS CC
+2C45  3406                    PSHS D
+2C47  1FA8                    TFR CC, A
+2C49  84EF                    ANDA #$EF
+2C4B  B72C41                  STA OLDCC
+2C4E  FC2C14                  LDD COCOTIMER
+2C51  C30001                  ADDD #$1
+2C54  FD2C14                  STD COCOTIMER
+2C57  3410                    PSHS X
+2C59  CC0000                  LDD #0
+2C5C  FD00E3                  STD $00e3
+2C5F  B7FFDE                  STA $FFDE
+2C62  1F41                    TFR S,X 
+2C64  300E                    LEAX +14,X
+2C66  EC84                    LDD ,X
+2C68  FD2C3B                  STD OLDISVC2
+2C6B  CC2C78                  LDD #ISVCIRQ2
+2C6E  ED84                    STD ,X
+2C70  3510                    PULS X
+2C72  3506                    PULS D
+2C74  6E9F2C39                JMP [OLDISVC]
+2C78                  ISVCIRQ2
+2C78  B7FFDF                  STA $FFDF
+                          ; PULS CC
+                          ; PULS A
+2C7B  3406                    PSHS D
+2C7D  B62C41                  LDA OLDCC
+2C80  1F8A                    TFR A, CC
+2C82  3506                    PULS D
+2C84  6E9F2C3B                JMP [OLDISVC2]
+2C88                  NMIISVCIRQ
+2C88  3406                    PSHS D
+2C8A  3410                    PSHS X
+2C8C  FC2C14                  LDD COCOTIMER
+2C8F  C30001                  ADDD #$1
+2C92  FD2C14                  STD COCOTIMER
+2C95  CC0000                  LDD #0
+2C98  FD00E3                  STD $00e3
+2C9B  B7FFDE                  STA $FFDE
+2C9E  1F41                    TFR S,X 
+2CA0  300E                    LEAX +14,X
+2CA2  EC84                    LDD ,X
+2CA4  FD2C3F                  STD OLDNMIISVC2
+2CA7  CC2CB4                  LDD #NMIISVCIRQ2
+2CAA  ED84                    STD ,X
+2CAC  3510                    PULS X
+2CAE  3506                    PULS D
+2CB0  6E9F2C3D                JMP [OLDNMIISVC]
+2CB4                  NMIISVCIRQ2
+2CB4  B7FFDF                  STA $FFDF
+2CB7  6E9F2C3F                JMP [OLDNMIISVC2]
+2CBB                  COCOSTARTUP
+2CBB  FC010D                  LDD $010D
+2CBE  FD2C39                  STD OLDISVC
+2CC1  CC2C42                  LDD #ISVCIRQ
+2CC4  FD010D                  STD $010D
+2CC7  FC010A                  LDD $010A
+2CCA  FD2C3D                  STD OLDNMIISVC
+2CCD  CC2C88                  LDD #NMIISVCIRQ
+2CD0  FD010A                  STD $010A
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDA #0
+2CD3  4F                      CLRA
+2CD4  B7011F                  STA $011f
+2CD7  CC0000                  LDD #$0
+2CDA                  COCOSTARTUPL1
+2CDA  F30001                  ADDD 1
+2CDD  FD0014                  STD MATHPTR0
+2CE0  10833100                CMPD #$3100
+2CE4  26F4                    BNE COCOSTARTUPL1
+2CE6  B62C15                  LDA COCOTIMER+1
+2CE9  8105                    CMPA #5
+2CEB  2E08                    BGT COCONTSC
+2CED                  COCOPAL
+2CED  8632                    LDA #50
+2CEF  B72C18                  STA TICKSPERSECOND
+2CF2  7E2CFD                  JMP COCOSTARTUPDONE
+2CF5                  COCONTSC
+2CF5  863C                    LDA #60
+2CF7  B72C18                  STA TICKSPERSECOND
+2CFA  7E2CFD                  JMP COCOSTARTUPDONE
+2CFD                  COCOSTARTUPDONE
+2CFD                  SYSCALLDONE
+2CFD  B7FFDF                  STA $FFDF
+2D00  39                      RTS
+2D01                  SYSCALL
+2D01  B7FFDE                  STA $FFDE
+2D04                  SYSCALL0
+2D04  BD0000                  JSR $0000
+2D07  20F4                    BRA SYSCALLDONE
+                              
+2D09                  startup_after
+2D09  BD2CBB                  JSR COCOSTARTUP
+                              IF (((128+c6847vars_after-(*+2))|(127-c6847vars_after+(*+2)))&0x8000)
+                              JMP c6847vars_after
+                              ELSE
+2D0C  200E                    BRA c6847vars_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS,
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ;*                                                                             *
+                      ;*                       INTERNAL VARIABLES FOR 6847 HARDWARE                  *
+                      ;*                                                                             *
+                      ;*                             by Marco Spedaletti                             *
+                      ;*                                                                             *
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+000B                  PLOTDEST equ $0b ; $29
+000D                  PLOTCDEST equ $0d ; $27
+000F                  PLOTC2DEST equ $0f ; $25
+                      ; peephole(4): unread2
+                      ;XGR    fdb 0
+                      ; peephole(4): unread2
+                      ;YGR    fdb 0
+2D0E  FFFF            LINE   fcb $ff, $ff
+2D10  0000            ORIGINX    fdb 0
+2D12  0000            ORIGINY    fdb 0
+2D14  0000            RESOLUTIONX    fdb 0
+2D16  0000            RESOLUTIONY    fdb 0
+                      ; peephole(4): unread2
+                      ;CLIPX1    fdb 0
+                      ; peephole(4): unread2
+                      ;CLIPY1    fdb 0
+                      ; peephole(4): unread2
+                      ;CLIPX2    fdb 319
+                      ; peephole(4): unread2
+                      ;CLIPY2    fdb 199
+                      ; peephole(4): unread2
+                      ;LASTCOLOR fcb 0
+2D18  0020            CURRENTWIDTH      fdb 32
+2D1A  0010            CURRENTHEIGHT      fdb 16
+                      ; peephole(7): inlined3
+                      ;CURRENTTILESWIDTH      fcb 32
+                      ; peephole(7): inlined3
+                      ;CURRENTTILESHEIGHT      fcb 16
+                      ; peephole(4): unread2
+                      ;CURRENTTILES            fcb 128
+                      ; peephole(7): inlined3
+                      ;CURRENTFRAMESIZE   fdb 32*16
+                      ; peephole(4): unread2
+                      ;CURRENTSL          fcb 32
+                      ; peephole(7): inlined3
+                      ;TEXTWW      fcb 3
+                      ; peephole(4): unread2
+                      ;FONTWIDTH       fcb 8
+                      ; peephole(4): unread2
+                      ;FONTHEIGHT      fcb 8
+0041                  IMAGEX EQU $41 ; $42
+0043                  IMAGEY EQU $43 ; $44
+0045                  IMAGEW EQU $45
+0046                  IMAGEH EQU $46
+0047                  IMAGEH2 EQU $47
+0048                  IMAGET EQU $48
+0049                  IMAGEF EQU $49
+0050                  BLITTMPPTR EQU $50 ; $51
+0052                  BLITTMPPTR2 EQU $52 ; $53
+0054                  BLITS0 EQU $54
+0055                  BLITS1 EQU $55
+0056                  BLITS2 EQU $56
+0057                  BLITR0 EQU $57
+0058                  BLITR1 EQU $58
+0059                  BLITR2 EQU $59
+0060                  BLITR3 EQU $60
+                      ; ------------------------------------------------------------------------------
+                      ; BITMAP MODE (MODE #2)
+                      ; ------------------------------------------------------------------------------
+                      ; PLOTVBASELO
+                      ;     fcb <($A000+(0*320)),<($A000+(1*320)),<($A000+(2*320)),<($A000+(3*320))
+                      ;     fcb <($A000+(4*320)),<($A000+(5*320)),<($A000+(6*320)),<($A000+(7*320))
+                      ;     fcb <($A000+(8*320)),<($A000+(9*320)),<($A000+(10*320)),<($A000+(11*320))
+                      ;     fcb <($A000+(12*320)),<($A000+(13*320)),<($A000+(14*320)),<($A000+(15*320))
+                      ;     fcb <($A000+(16*320)),<($A000+(17*320)),<($A000+(18*320)),<($A000+(19*320))
+                      ;     fcb <($A000+(20*320)),<($A000+(21*320)),<($A000+(22*320)),<($A000+(23*320))
+                      ;     fcb <($A000+(24*320))
+                      ; PLOTVBASEHI
+                      ;     fcb >($A000+(0*320)),>($A000+(1*320)),>($A000+(2*320)),>($A000+(3*320))
+                      ;     fcb >($A000+(4*320)),>($A000+(5*320)),>($A000+(6*320)),>($A000+(7*320))
+                      ;     fcb >($A000+(8*320)),>($A000+(9*320)),>($A000+(10*320)),>($A000+(11*320))
+                      ;     fcb >($A000+(12*320)),>($A000+(13*320)),>($A000+(14*320)),>($A000+(15*320))
+                      ;     fcb >($A000+(16*320)),>($A000+(17*320)),>($A000+(18*320)),>($A000+(19*320))
+                      ;     fcb >($A000+(20*320)),>($A000+(21*320)),>($A000+(22*320)),>($A000+(23*320))
+                      ;     fcb >($A000+(24*320))
+                      ; PLOT8LO
+                      ;     fcb <(0*8),<(1*8),<(2*8),<(3*8),<(4*8),<(5*8),<(6*8),<(7*8),<(8*8),<(9*8)
+                      ;     fcb <(10*8),<(11*8),<(12*8),<(13*8),<(14*8),<(15*8),<(16*8),<(17*8),<(18*8),<(19*8)
+                      ;     fcb <(20*8),<(21*8),<(22*8),<(23*8),<(24*8),<(25*8),<(26*8),<(27*8),<(28*8),<(29*8)
+                      ;     fcb <(30*8),<(31*8),<(32*8),<(33*8),<(34*8),<(35*8),<(36*8),<(37*8),<(38*8),<(39*8)
+                      ; PLOT8HI
+                      ;     fcb >(0*8),>(1*8),>(2*8),>(3*8),>(4*8),>(5*8),>(6*8),>(7*8),>(8*8),>(9*8)
+                      ;     fcb >(10*8),>(11*8),>(12*8),>(13*8),>(14*8),>(15*8),>(16*8),>(17*8),>(18*8),>(19*8)
+                      ;     fcb >(20*8),>(21*8),>(22*8),>(23*8),>(24*8),>(25*8),>(26*8),>(27*8),>(28*8),>(29*8)
+                      ;     fcb >(30*8),>(31*8),>(32*8),>(33*8),>(34*8),>(35*8),>(36*8),>(37*8),>(38*8),>(39*8)
+                      ; PLOTCVBASELO
+                      ;     fcb <($8400+(0*40)),<($8400+(1*40)),<($8400+(2*40)),<($8400+(3*40))
+                      ;     fcb <($8400+(4*40)),<($8400+(5*40)),<($8400+(6*40)),<($8400+(7*40))
+                      ;     fcb <($8400+(8*40)),<($8400+(9*40)),<($8400+(10*40)),<($8400+(11*40))
+                      ;     fcb <($8400+(12*40)),<($8400+(13*40)),<($8400+(14*40)),<($8400+(15*40))
+                      ;     fcb <($8400+(16*40)),<($8400+(17*40)),<($8400+(18*40)),<($8400+(19*40))
+                      ;     fcb <($8400+(20*40)),<($8400+(21*40)),<($8400+(22*40)),<($8400+(23*40))
+                      ;     fcb <($8400+(24*40))
+                      ; PLOTCVBASEHI
+                      ;     fcb >($8400+(0*40)),>($8400+(1*40)),>($8400+(2*40)),>($8400+(3*40))
+                      ;     fcb >($8400+(4*40)),>($8400+(5*40)),>($8400+(6*40)),>($8400+(7*40))
+                      ;     fcb >($8400+(8*40)),>($8400+(9*40)),>($8400+(10*40)),>($8400+(11*40))
+                      ;     fcb >($8400+(12*40)),>($8400+(13*40)),>($8400+(14*40)),>($8400+(15*40))
+                      ;     fcb >($8400+(16*40)),>($8400+(17*40)),>($8400+(18*40)),>($8400+(19*40))
+                      ;     fcb >($8400+(20*40)),>($8400+(21*40)),>($8400+(22*40)),>($8400+(23*40))
+                      ;     fcb >($8400+(24*40))
+                      ; PLOTC2VBASELO
+                      ;     fcb <($D800+(0*40)),<($D800+(1*40)),<($D800+(2*40)),<($D800+(3*40))
+                      ;     fcb <($D800+(4*40)),<($D800+(5*40)),<($D800+(6*40)),<($D800+(7*40))
+                      ;     fcb <($D800+(8*40)),<($D800+(9*40)),<($D800+(10*40)),<($D800+(11*40))
+                      ;     fcb <($D800+(12*40)),<($D800+(13*40)),<($D800+(14*40)),<($D800+(15*40))
+                      ;     fcb <($D800+(16*40)),<($D800+(17*40)),<($D800+(18*40)),<($D800+(19*40))
+                      ;     fcb <($D800+(20*40)),<($D800+(21*40)),<($D800+(22*40)),<($D800+(23*40))
+                      ;     fcb <($D800+(24*40))
+                      ; PLOTC2VBASEHI
+                      ;     fcb >($D800+(0*40)),>($D800+(1*40)),>($D800+(2*40)),>($D800+(3*40))
+                      ;     fcb >($D800+(4*40)),>($D800+(5*40)),>($D800+(6*40)),>($D800+(7*40))
+                      ;     fcb >($D800+(8*40)),>($D800+(9*40)),>($D800+(10*40)),>($D800+(11*40))
+                      ;     fcb >($D800+(12*40)),>($D800+(13*40)),>($D800+(14*40)),>($D800+(15*40))
+                      ;     fcb >($D800+(16*40)),>($D800+(17*40)),>($D800+(18*40)),>($D800+(19*40))
+                      ;     fcb >($D800+(20*40)),>($D800+(21*40)),>($D800+(22*40)),>($D800+(23*40))
+                      ;     fcb >($D800+(24*40))
+                      ; ------------------------------------------------------------------------------
+                      ; MULTICOLOR MODE (MODE #3)
+                      ; ------------------------------------------------------------------------------
+                      ; PLOT4LO
+                      ;     fcb <(0*4),<(1*4),<(2*4),<(3*4),<(4*4),<(5*4),<(6*4),<(7*4),<(8*4),<(9*4)
+                      ;     fcb <(10*4),<(11*4),<(12*4),<(13*4),<(14*4),<(15*4),<(16*4),<(17*4),<(18*4),<(19*4)
+                      ;     fcb <(20*4),<(21*4),<(22*4),<(23*4),<(24*4),<(25*4),<(26*4),<(27*4),<(28*4),<(29*4)
+                      ;     fcb <(30*4),<(31*4),<(32*4),<(33*4),<(34*4),<(35*4),<(36*4),<(37*4),<(38*4),<(39*4)
+                      ;     fcb <(40*4),<(41*4),<(42*4),<(43*4),<(44*4),<(45*4),<(46*4),<(47*4),<(48*4),<(49*4)
+                      ;     fcb <(50*4),<(51*4),<(52*4),<(53*4),<(54*4),<(55*4),<(56*4),<(57*4),<(58*4),<(59*4)
+                      ;     fcb <(60*4),<(61*4),<(62*4),<(63*4),<(64*4),<(65*4),<(66*4),<(67*4),<(68*4),<(69*4)
+                      ;     fcb <(70*4),<(71*4),<(72*4),<(73*4),<(74*4),<(75*4),<(76*4),<(77*4),<(78*4),<(79*4)
+                      ; PLOT4HI
+                      ;     fcb >(0*4),>(1*4),>(2*4),>(3*4),>(4*4),>(5*4),>(6*4),>(7*4),>(8*4),>(9*4)
+                      ;     fcb >(10*4),>(11*4),>(12*4),>(13*4),>(14*4),>(15*4),>(16*4),>(17*4),>(18*4),>(19*4)
+                      ;     fcb >(20*4),>(21*4),>(22*4),>(23*4),>(24*4),>(25*4),>(26*4),>(27*4),>(28*4),>(29*4)
+                      ;     fcb >(30*4),>(31*4),>(32*4),>(33*4),>(34*4),>(35*4),>(36*4),>(37*4),>(38*4),>(39*4)
+                      ;     fcb >(40*4),>(41*4),>(42*4),>(43*4),>(44*4),>(45*4),>(46*4),>(47*4),>(48*4),>(49*4)
+                      ;     fcb >(50*4),>(51*4),>(52*4),>(53*4),>(54*4),>(55*4),>(56*4),>(57*4),>(58*4),>(59*4)
+                      ;     fcb >(60*4),>(61*4),>(62*4),>(63*4),>(64*4),>(65*4),>(66*4),>(67*4),>(68*4),>(69*4)
+                      ;     fcb >(70*4),>(71*4),>(72*4),>(73*4),>(74*4),>(75*4),>(76*4),>(77*4),>(78*4),>(79*4)
+2D1C                  c6847vars_after
+                              IF (((128+c6847startup_after-(*+2))|(127-c6847startup_after+(*+2)))&0x8000)
+                              JMP c6847startup_after
+                              ELSE
+2D1C  202B                    BRA c6847startup_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS,
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ;*                                                                             *
+                      ;*                            STARTUP ROUTINE FOR 6847                         *
+                      ;*                                                                             *
+                      ;*                             by Marco Spedaletti                             *
+                      ;*                                                                             *
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+2D1E                  CPUMEMMOVE
+2D1E  11830000                CMPU #0
+2D22  270C                    BEQ CPUMEMMOVEDONE
+2D24                  CPUMEMMOVEL1
+2D24  A6A0                    LDA ,Y+
+2D26  A780                    STA ,X+
+2D28  335F                    LEAU -1,U
+2D2A  11830000                CMPU #$0
+2D2E  26F4                    BNE CPUMEMMOVEL1
+2D30                  CPUMEMMOVEDONE
+2D30  39                      RTS
+                              
+2D31                  C6847STARTUP
+                          ; (4) Default screen mode is semigraphic-4
+2D31  B7FFC0                  STA $FFC0
+2D34  B7FFC2                  STA $FFC2
+2D37  B7FFC4                  STA $FFC4
+2D3A  B6FF22                  LDA $FF22
+2D3D  847F                    ANDA #$7F
+2D3F  B7FF22                  STA $FF22  
+2D42  B60003                  LDA $03
+2D45  B7FF98                  STA $FF98
+2D48  39                      RTS
+2D49                  c6847startup_after
+2D49  BD2D31                  JSR C6847STARTUP
+                              IF (((128+clsText_after-(*+2))|(127-clsText_after+(*+2)))&0x8000)
+                              JMP clsText_after
+                              ELSE
+2D4C  2046                    BRA clsText_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS,
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ;*                                                                             *
+                      ;*                       CLEAR SCREEN ROUTINE FOR 6847                         *
+                      ;*                                                                             *
+                      ;*                             by Marco Spedaletti                             *
+                      ;*                                                                             *
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+2D4E                  CLST
+                      ; peephole(7): inlined1
+                      ;       LDA CURRENTMODE
+2D4E  8602                    LDA #$2
+2D4F                  CURRENTMODE equ *-1
+                      ; peephole(1): r436 (LOAD/STORE,CMP#0)->(LOAD/STORE)
+                      ;    CMPA #0
+2D50  2603                    BNE CLS0X
+2D52  7E2D80                  JMP CLS0
+2D55                  CLS0X
+2D55  8101                    CMPA #1
+2D57  2603                    BNE CLS1X
+2D59  7E2D80                  JMP CLS1
+2D5C                  CLS1X
+2D5C  8102                    CMPA #2
+2D5E  2603                    BNE CLS2X
+2D60  7E2D80                  JMP CLS2
+2D63                  CLS2X
+2D63  8103                    CMPA #3
+2D65  2603                    BNE CLS3X
+2D67  7E2D80                  JMP CLS3
+2D6A                  CLS3X
+2D6A  8104                    CMPA #4
+2D6C  2603                    BNE CLS4X
+2D6E  7E2D80                  JMP CLS4
+2D71                  CLS4X
+2D71  8105                    CMPA #5
+2D73  2603                    BNE CLS5X
+2D75  7E2D80                  JMP CLS5
+2D78                  CLS5X
+2D78  8106                    CMPA #6
+2D7A  2603                    BNE CLS6X
+2D7C  7E2D80                  JMP CLS6
+2D7F                  CLS6X
+2D7F  39                      RTS
+2D80                  CLS0
+2D80                  CLS1
+2D80                  CLS2
+2D80                  CLS3
+2D80                  CLS4
+2D80                  CLS5
+2D80                  CLS6
+2D80                  CLST2
+                      ; peephole(7): inlined1
+                      ;       LDY TEXTADDRESS
+2D80  108E0400                LDY #$0400
+2D82                  TEXTADDRESS equ *-2
+                      ; peephole(7): inlined1
+                      ;       LDX CURRENTFRAMESIZE
+2D84  8E0200                  LDX #32*16
+2D85                  CURRENTFRAMESIZE equ *-2
+2D87  B62C12                  LDA EMPTYTILE
+2D8A                  CLST3
+2D8A  A7A0                    STA ,Y +
+2D8C  301F                    LEAX -1,X 
+2D8E  8C0000                  CMPX #0
+2D91  26F7                    BNE CLST3
+2D93  39                      RTS
+2D94                  clsText_after
+2D94  BD2D4E                  JSR CLST
+                              IF (((128+VARINIT-(*+2))|(127-VARINIT+(*+2)))&0x8000)
+2D97  BD3781                  JSR VARINIT
+                              ELSE
+                              BSR VARINIT
+                              ENDIF
+                              ; L:0
+                              ; P:326
+                              ; L:1
+                              ; P:0
+                              ; L:2
+                              ; P:0
+                              ; L:3
+2D9A                  _label1
+                      ; peephole(7): inlined1
+                      ;       LDD _finished
+2D9A  CC0000                  LDD #1-1
+2D9B                  _finished equ *-2
+2D9D  43                      COMA
+2D9E  53                      COMB
+                      ; peephole(4): unread1
+                      ;       STD _Ttmp2
+                      ; peephole(1): r487 (STD,LDB+1)->()
+                      ;       LDB _Ttmp2+1
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp3
+2D9F  D7F1                    STB <_Ttmp3
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp3
+2DA1  D6F1                    LDB <_Ttmp3
+                              IF (((128+_label1bis-(*+2))|(127-_label1bis+(*+2)))&0x8000)
+2DA3  102709C9                LBEQ _label1bis
+                              ELSE
+                              BEQ _label1bis
+                              ENDIF
+                              ; P:13
+                              ; L:4
+2DA7  F6379A                  LDB _Tstr5
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp3
+2DAA  D7F1                    STB <_Ttmp3
+2DAC  CC379A                  LDD #_Tstr5
+                      ; peephole(7): direct-page1
+                      ;       STD _Ttmp8
+2DAF  DDF2                    STD <_Ttmp8
+                      ; peephole(7): direct-page1
+                      ;       INC _Ttmp8+1
+2DB1  0CF3                    INC <_Ttmp8+1
+2DB3  2602                    BNE _label9
+                      ; peephole(7): direct-page1
+                      ;       INC _Ttmp8
+2DB5  0CF2                    INC <_Ttmp8
+2DB7                  _label9
+                              IF (((128+vScrollText_after-(*+2))|(127-vScrollText_after+(*+2)))&0x8000)
+2DB7  7E2E7F                  JMP vScrollText_after
+                              ELSE
+                              BRA vScrollText_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS,
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ;*                                                                             *
+                      ;*                          VERTICAL SCROLL ON 6847                            *
+                      ;*                                                                             *
+                      ;*                             by Marco Spedaletti                             *
+                      ;*                                                                             *
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+2DBA                  VSCROLLT
+2DBA  B62D4F                  LDA CURRENTMODE
+2DBD  8102                    CMPA #2
+2DBF  2203                    BHI VSCROLLTX
+2DC1  7E2DC5                  JMP VSCROLLTT
+2DC4                  VSCROLLTX
+2DC4  39                      RTS
+2DC5                  VSCROLLTT
+2DC5  3476                    PSHS A,B,X,Y,U
+2DC7  B6004A                  LDA DIRECTION
+                      ; peephole(1): r436 (LOAD/STORE,CMP#0)->(LOAD/STORE)
+                      ;    CMPA #0
+2DCA  2E5E                    BGT VSCROLLTDOWN
+2DCC                  VSCROLLTUP
+2DCC  BE2D82                  LDX TEXTADDRESS
+2DCF  10BE2D82                LDY TEXTADDRESS
+2DD3  31A820                  LEAY 32,Y 
+2DD6                  VSCROLLTUPYSCR
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDB #0
+2DD6  5F                      CLRB
+2DD7                  VSCROLLTUPYSCR1
+2DD7  A6A5                    LDA B,Y
+2DD9  A785                    STA B,X
+2DDB  5C                      INCB
+2DDC  C17F                    CMPB #$7F
+2DDE  26F7                    BNE VSCROLLTUPYSCR1
+2DE0  30887F                  LEAX 127,X 
+2DE3  31A87F                  LEAY 127,Y 
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDB #0
+2DE6  5F                      CLRB
+2DE7                  VSCROLLTUPYSCR2
+2DE7  A6A5                    LDA B,Y
+2DE9  A785                    STA B,X
+2DEB  5C                      INCB
+2DEC  C17F                    CMPB #$7F
+2DEE  26F7                    BNE VSCROLLTUPYSCR2
+2DF0  30887F                  LEAX 127,X 
+2DF3  31A87F                  LEAY 127,Y 
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDB #0
+2DF6  5F                      CLRB
+2DF7                  VSCROLLTUPYSCR3
+2DF7  A6A5                    LDA B,Y
+2DF9  A785                    STA B,X
+2DFB  5C                      INCB
+2DFC  C17F                    CMPB #$7F
+2DFE  26F7                    BNE VSCROLLTUPYSCR3
+2E00  30887F                  LEAX 127,X 
+2E03  31A87F                  LEAY 127,Y 
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDB #0
+2E06  5F                      CLRB
+2E07                  VSCROLLTUPYSCR4
+2E07  A6A5                    LDA B,Y
+2E09  A785                    STA B,X
+2E0B  5C                      INCB
+2E0C  C163                    CMPB #$63
+2E0E  26F7                    BNE VSCROLLTUPYSCR4
+2E10  30887F                  LEAX 127,X 
+2E13  31A87F                  LEAY 127,Y 
+2E16  3088E4                  LEAX -28,X 
+2E19  31A8E4                  LEAY -28,Y 
+2E1C  B62C12                  LDA EMPTYTILE
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDB #0
+2E1F  5F                      CLRB
+2E20                  VSCROLLTUPREFILL
+2E20  A785                    STA B,X
+2E22  5C                      INCB
+2E23  C120                    CMPB #32
+2E25  26F9                    BNE VSCROLLTUPREFILL
+2E27  7E2E7C                  JMP VSCROLLTE
+2E2A                  VSCROLLTDOWN
+2E2A  BE2D82                  LDX TEXTADDRESS
+2E2D  10BE2D82                LDY TEXTADDRESS
+2E31  31A820                  LEAY 32,Y 
+2E34  30887F                  LEAX 127,X 
+2E37  30887F                  LEAX 127,X 
+2E3A  31A87F                  LEAY 127,Y 
+2E3D  31A87F                  LEAY 127,Y 
+2E40  30887F                  LEAX 127,X 
+2E43  30887F                  LEAX 127,X 
+2E46  31A87F                  LEAY 127,Y 
+2E49  31A87F                  LEAY 127,Y 
+2E4C  C67F                    LDB #$7F
+2E4E                  VSCROLLTDOWNYS31
+2E4E  A685                    LDA B,X
+2E50  A7A5                    STA B,Y
+2E52  5A                      DECB
+2E53  C100                    CMPB #0
+2E55  26F7                    BNE VSCROLLTDOWNYS31
+2E57  308881                  LEAX -127,X 
+2E5A  31A881                  LEAY -127,Y 
+2E5D  C67F                    LDB #$7F
+2E5F                  VSCROLLTDOWNYS32
+2E5F  A685                    LDA B,X
+2E61  A7A5                    STA B,Y
+2E63  5A                      DECB
+2E64  C100                    CMPB #0
+2E66  26F7                    BNE VSCROLLTDOWNYS32
+2E68  308881                  LEAX -127,X 
+2E6B  31A881                  LEAY -127,Y 
+2E6E  B62C12                  LDA EMPTYTILE
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDB #0
+2E71  5F                      CLRB
+2E72                  VSCROLLTDOWNREFILL
+2E72  A785                    STA B,X
+2E74  5C                      INCB
+2E75  C120                    CMPB #32
+2E77  26F9                    BNE VSCROLLTDOWNREFILL
+2E79  7E2E7C                  JMP VSCROLLTE
+2E7C                  VSCROLLTE
+2E7C  3576                    PULS A,B,X,Y,U
+2E7E  39                      RTS
+2E7F                  vScrollText_after
+                              IF (((128+textEncodedAt_after-(*+2))|(127-textEncodedAt_after+(*+2)))&0x8000)
+                              JMP textEncodedAt_after
+                              ELSE
+2E7F  202A                    BRA textEncodedAt_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http//www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo
+                      ;  *
+                      ;  * http//www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ;*                                                                             *
+                      ;*                      TEXT AT GIVEN POSITION ON 6847                         *
+                      ;*                                                                             *
+                      ;*                             by Marco Spedaletti                             *
+                      ;*                                                                             *
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+0001                  TEXTPTR equ $01
+0003                  TEXTSIZE equ $03
+0004                  TABSTODRAW equ $04
+0008                  SCREENCODE equ $08
+2E81                  TEXTATDECODE
+2E81  811F                    CMPA #$1F
+2E83  2206                    BHI TEXTATDECODEX1F
+2E85  B60020                  LDA 32
+2E88  7E2EA7                  JMP TEXTATDECODE0
+2E8B                  TEXTATDECODEX1F
+2E8B  8140                    CMPA #$40
+2E8D  2403                    BHS TEXTATDECODEX39
+                          ; ADDA #$40
+2E8F  7E2EA7                  JMP TEXTATDECODE0
+2E92                  TEXTATDECODEX39
+2E92  815F                    CMPA #$5F
+2E94  2205                    BHI TEXTATDECODEX5A
+2E96  8040                    SUBA #$40
+2E98  7E2EA7                  JMP TEXTATDECODE0
+2E9B                  TEXTATDECODEX5A
+2E9B  817F                    CMPA #$7F
+2E9D  2205                    BHI TEXTATDECODEX7F
+2E9F  8060                    SUBA #$60
+2EA1  7E2EA7                  JMP TEXTATDECODE0
+2EA4                  TEXTATDECODEX7F
+                          ; LDA #$60
+2EA4  7E2EA7                  JMP TEXTATDECODE0
+2EA7                  TEXTATDECODE0
+2EA7  B70008                  STA SCREENCODE
+2EAA  39                      RTS
+2EAB                  textEncodedAt_after
+                      ; peephole(7): direct-page1
+                      ;       LDY _Ttmp8
+2EAB  109EF2                  LDY <_Ttmp8
+2EAE  10BF0001                STY TEXTPTR
+                      ; peephole(7): direct-page1
+                      ;       LDA _Ttmp3
+2EB2  96F1                    LDA <_Ttmp3
+2EB4  B70003                  STA TEXTSIZE
+                              IF (((128+textEncodedAtText_after-(*+2))|(127-textEncodedAtText_after+(*+2)))&0x8000)
+2EB7  7E30E8                  JMP textEncodedAtText_after
+                              ELSE
+                              BRA textEncodedAtText_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http//www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo
+                      ;  *
+                      ;  * http//www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ;*                                                                             *
+                      ;*                      TEXT AT GIVEN POSITION ON 6847                         *
+                      ;*                                                                             *
+                      ;*                             by Marco Spedaletti                             *
+                      ;*                                                                             *
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+2EBA                  TEXTATTILEMODE
+2EBA  B60003                  LDA TEXTSIZE
+2EBD  2601                    BNE TEXTATGO
+2EBF  39                      RTS
+2EC0                  TEXTATGO
+2EC0  10BE2D82                LDY TEXTADDRESS
+2EC4  10BF0041                STY COPYOFTEXTADDRESS
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDA #0
+2EC8  4F                      CLRA
+2EC9  B70004                  STA TABSTODRAW
+2ECC  10BE0001                LDY TEXTPTR
+2ED0  B62D4F                  LDA CURRENTMODE
+                      ; peephole(1): r436 (LOAD/STORE,CMP#0)->(LOAD/STORE)
+                      ;    CMPA #0
+2ED3  2603                    BNE TEXTAT0X
+2ED5  7E2F65                  JMP TEXTAT0
+2ED8                  TEXTAT0X
+2ED8  8101                    CMPA #1
+2EDA  2603                    BNE TEXTAT1X
+2EDC  7E2F65                  JMP TEXTAT1
+2EDF                  TEXTAT1X
+2EDF  8102                    CMPA #2
+2EE1  2603                    BNE TEXTAT2X
+2EE3  7E2F65                  JMP TEXTAT2
+2EE6                  TEXTAT2X
+2EE6  8103                    CMPA #3
+2EE8  2603                    BNE TEXTAT3X
+2EEA  7E2F65                  JMP TEXTAT3
+2EED                  TEXTAT3X
+2EED  8104                    CMPA #4
+2EEF  2603                    BNE TEXTAT4X
+2EF1  7E2F65                  JMP TEXTAT4
+2EF4                  TEXTAT4X
+2EF4  8105                    CMPA #5
+2EF6  2603                    BNE TEXTAT5X
+2EF8  7E2F65                  JMP TEXTAT5
+2EFB                  TEXTAT5X
+2EFB  8106                    CMPA #6
+2EFD  2603                    BNE TEXTAT6X
+2EFF  7E2F65                  JMP TEXTAT6
+2F02                  TEXTAT6X
+2F02  39                      RTS
+2F03                  CALCPOS
+2F03  B62D4F                  LDA CURRENTMODE
+                      ; peephole(1): r436 (LOAD/STORE,CMP#0)->(LOAD/STORE)
+                      ;    CMPA #0
+2F06  2604                    BNE CALCPOS0X
+2F08  BD2F3D                  JSR CALCPOS0
+2F0B  39                      RTS
+2F0C                  CALCPOS0X
+2F0C  8101                    CMPA #1
+2F0E  2604                    BNE CALCPOS1X
+2F10  BD2F3D                  JSR CALCPOS1
+2F13  39                      RTS
+2F14                  CALCPOS1X
+2F14  8102                    CMPA #2
+2F16  2604                    BNE CALCPOS2X
+2F18  BD2F3D                  JSR CALCPOS2
+2F1B  39                      RTS
+2F1C                  CALCPOS2X
+2F1C  8103                    CMPA #3
+2F1E  2604                    BNE CALCPOS3X
+2F20  BD2F3D                  JSR CALCPOS3
+2F23  39                      RTS
+2F24                  CALCPOS3X
+2F24  8104                    CMPA #4
+2F26  2604                    BNE CALCPOS4X
+2F28  BD2F3D                  JSR CALCPOS4
+2F2B  39                      RTS
+2F2C                  CALCPOS4X
+2F2C  8105                    CMPA #5
+2F2E  2604                    BNE CALCPOS5X
+2F30  BD2F3D                  JSR CALCPOS5
+2F33  39                      RTS
+2F34                  CALCPOS5X
+2F34  8106                    CMPA #6
+2F36  2604                    BNE CALCPOS6X
+2F38  BD2F3D                  JSR CALCPOS6
+2F3B  39                      RTS
+2F3C                  CALCPOS6X
+2F3C  39                      RTS
+2F3D                  CALCPOS0
+2F3D                  CALCPOS1
+2F3D                  CALCPOS2
+2F3D                  CALCPOS3
+2F3D                  CALCPOS4
+2F3D                  CALCPOS5
+2F3D                  CALCPOS6
+2F3D  BE2D82                  LDX TEXTADDRESS
+2F40  BF0041                  STX COPYOFTEXTADDRESS
+2F43  F600D6                  LDB YCURSYS
+2F46  270E                    BEQ CALCPOSSKIP
+2F48                  CALCPOSLOOP1
+2F48  1CFE                    ANDCC #$FE
+2F4A  BE0041                  LDX COPYOFTEXTADDRESS
+2F4D  308820                  LEAX 32,X 
+2F50  BF0041                  STX COPYOFTEXTADDRESS
+2F53  5A                      DECB
+2F54  26F2                    BNE CALCPOSLOOP1
+2F56                  CALCPOSSKIP
+2F56  1CFE                    ANDCC #$FE
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDA #0
+2F58  4F                      CLRA
+2F59  F600D3                  LDB XCURSYS
+2F5C  F30041                  ADDD COPYOFTEXTADDRESS
+2F5F  FD0041                  STD COPYOFTEXTADDRESS
+                      ; peephole(1): r477 (STD*,LDX*)->(STD*,TDX)
+                      ;    LDX COPYOFTEXTADDRESS
+2F62  1F01                    TFR D,X
+2F64  39                      RTS
+2F65                  TEXTAT0
+2F65                  TEXTAT1
+2F65                  TEXTAT2
+2F65                  TEXTAT3
+2F65                  TEXTAT4
+2F65                  TEXTAT5
+2F65                  TEXTAT6
+2F65  BD2F3D                  JSR CALCPOS0
+2F68  F60003                  LDB TEXTSIZE
+2F6B                  TEXTATLOOP2
+2F6B  B60004                  LDA TABSTODRAW
+2F6E  2703                    BEQ TEXTATNSKIPTAB
+2F70  7E309A                  JMP TEXTATSKIPTAB
+2F73                  TEXTATNSKIPTAB
+2F73  A6A4                    LDA ,Y
+2F75  811F                    CMPA #31
+2F77  2203                    BHI TEXTATXCC
+2F79  7E2FA3                  JMP TEXTATCC
+2F7C                  TEXTATXCC
+2F7C  BD2E81                  JSR TEXTATDECODE
+2F7F  7E308A                  JMP TEXTATSP0
+2F82                  TEXTATTAB
+2F82  B600D3                  LDA XCURSYS
+2F85                  TEXTATTAB2
+2F85  B12C11                  CMPA TABCOUNT
+2F88  2508                    BLO TEXTATTAB3
+2F8A  1C01                    ANDCC #$01
+2F8C  B02C11                  SUBA TABCOUNT
+2F8F  7E2F85                  JMP TEXTATTAB2
+2F92                  TEXTATTAB3
+2F92  B70010                  STA TMPPTR
+2F95  B62C11                  LDA TABCOUNT
+2F98  1C01                    ANDCC #$01
+2F9A  B00010                  SUBA TMPPTR
+2F9D  B70004                  STA TABSTODRAW
+2FA0  7E30D7                  JMP TEXTATNEXT
+2FA3                  TEXTATCC
+2FA3  810D                    CMPA #13
+2FA5  272B                    BEQ TEXTATLF
+2FA7  810A                    CMPA #10
+2FA9  2727                    BEQ TEXTATLF
+2FAB  8109                    CMPA #09
+2FAD  27D3                    BEQ TEXTATTAB
+2FAF  8101                    CMPA #01
+2FB1  272D                    BEQ TEXTATPEN
+2FB3  8102                    CMPA #02
+2FB5  2742                    BEQ TEXTATPAPER
+2FB7  8103                    CMPA #03
+2FB9  2756                    BEQ TEXTATCMOVEPREPARE
+2FBB  8104                    CMPA #04
+2FBD  2710                    BEQ TEXTATXAT
+2FBF  8105                    CMPA #05
+2FC1  2703                    BEQ TEXTATCLS
+2FC3  7E30D7                  JMP TEXTATNEXT
+2FC6                  TEXTATCLS
+2FC6  3121                    LEAY 1,Y
+2FC8  5A                      DECB
+2FC9  BD2D4E                  JSR CLST
+2FCC  7E30D7                  JMP TEXTATNEXT
+2FCF                  TEXTATXAT
+2FCF  7E306D                  JMP TEXTATAT
+2FD2                  TEXTATLF
+                      ; peephole(7): inlined1
+                      ;       LDA CURRENTTILESWIDTH
+2FD2  8620                    LDA #32
+2FD3                  CURRENTTILESWIDTH equ *-1
+2FD4  B000D3                  SUBA XCURSYS
+2FD7  8001                    SUBA #1
+2FD9  3086                    LEAX A,X
+2FDB  3121                    LEAY 1,Y
+2FDD  7E30AD                  JMP TEXTATNEXT2
+2FE0                  TEXTATPEN
+2FE0  3121                    LEAY 1,Y
+2FE2  5A                      DECB
+                      ; peephole(7): inlined1
+                      ;       LDA TEXTWW
+2FE3  8603                    LDA #3
+2FE4                  TEXTWW equ *-1
+2FE5  8402                    ANDA #$2
+2FE7  270A                    BEQ TEXTATPENDISABLED
+2FE9  A6A4                    LDA ,Y 
+2FEB  81FF                    CMPA #$FF
+2FED  2601                    BNE TEXTATPEN2
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDA #$0
+2FEF  4F                      CLRA
+2FF0                  TEXTATPEN2
+2FF0  B73096                  STA _PEN
+2FF3                  TEXTATPENDISABLED
+2FF3  3121                    LEAY 1,Y
+2FF5  5A                      DECB
+2FF6  7E30D7                  JMP TEXTATNEXT
+2FF9                  TEXTATPAPER
+2FF9  3121                    LEAY 1,Y
+2FFB  5A                      DECB
+2FFC  B62FE4                  LDA TEXTWW
+2FFF  8401                    ANDA #$1
+3001  2708                    BEQ TEXTATPAPERDISABLED
+3003  A6A4                    LDA ,Y 
+3005  B7D021                  STA $d021
+3008  B7D020                  STA $d020
+300B                  TEXTATPAPERDISABLED
+300B  3121                    LEAY 1,Y
+300D  5A                      DECB
+300E  7E30D7                  JMP TEXTATNEXT
+3011                  TEXTATCMOVEPREPARE
+3011  3121                    LEAY 1,Y
+3013  5A                      DECB
+3014  A6A4                    LDA ,Y 
+3016  B7004B                  STA CLINEX
+3019  3121                    LEAY 1,Y
+301B  5A                      DECB
+301C  A6A4                    LDA ,Y 
+301E  B7004C                  STA CLINEY
+3021                  TEXTATCMOVE
+3021  1CFE                    ANDCC #$FE
+3023  B6004B                  LDA CLINEX
+3026  BB00D3                  ADDA XCURSYS
+3029  8100                    CMPA #$0
+302B  2D13                    BLT TEXTATCMOVESKIPX
+302D  B12D19                  CMPA CURRENTWIDTH+1
+3030  2C0E                    BGE TEXTATCMOVESKIPX
+3032  B700D3                  STA XCURSYS
+3035  B6004B                  LDA CLINEX
+3038  BE0041                  LDX COPYOFTEXTADDRESS
+303B  3086                    LEAX A,X 
+303D  BF0041                  STX COPYOFTEXTADDRESS
+3040                  TEXTATCMOVESKIPX
+3040  1CFE                    ANDCC #$FE
+3042  B6004C                  LDA CLINEY
+3045  BB00D6                  ADDA YCURSYS
+3048  8100                    CMPA #$0
+304A  2D1B                    BLT TEXTATCMOVESKIPY
+304C  B12D1B                  CMPA CURRENTHEIGHT+1
+304F  2C16                    BGE TEXTATCMOVESKIPY
+3051  B700D6                  STA YCURSYS
+3054  B62D19                  LDA CURRENTWIDTH+1
+3057  F600D6                  LDB YCURSYS
+305A                  TEXTATCMOVELOOPY
+305A  1CFE                    ANDCC #$FE
+305C  BE0041                  LDX COPYOFTEXTADDRESS
+305F  3086                    LEAX A,X 
+3061  BF0041                  STX COPYOFTEXTADDRESS
+3064  5A                      DECB
+3065  26F3                    BNE TEXTATCMOVELOOPY
+3067                  TEXTATCMOVESKIPY
+3067  3121                    LEAY 1,Y
+3069  5A                      DECB
+306A  7E30D7                  JMP TEXTATNEXT
+306D                  TEXTATAT
+306D  3121                    LEAY 1,Y
+306F  5A                      DECB
+3070  A6A4                    LDA ,Y 
+3072  1C01                    ANDCC #$01
+3074  B000D3                  SUBA XCURSYS
+3077  B7004B                  STA CLINEX
+307A  3121                    LEAY 1,Y
+307C  5A                      DECB
+307D  A6A4                    LDA ,Y 
+307F  1C01                    ANDCC #$01
+3081  B000D6                  SUBA YCURSYS
+3084  B7004C                  STA CLINEY
+3087  7E3021                  JMP TEXTATCMOVE
+308A                  TEXTATSP0
+308A  A784                    STA ,X 
+308C  3121                    LEAY 1,Y 
+308E  B62FE4                  LDA TEXTWW
+3091  8402                    ANDA #$2
+3093  2702                    BEQ TEXTATCNOPEN
+                      ; peephole(7): inlined1
+                      ;       LDA _PEN
+3095  8600                    LDA #1-1
+3096                  _PEN equ *-1
+                          ; STA (COPYOFCOLORMAPADDRESS),Y
+3097                  TEXTATCNOPEN
+3097  7E30A0                  JMP TEXTATINCX
+309A                  TEXTATSKIPTAB
+309A  7A0004                  DEC TABSTODRAW
+309D  7E30A0                  JMP TEXTATINCX
+30A0                  TEXTATINCX
+30A0  7C00D3                  INC XCURSYS
+30A3  B600D3                  LDA XCURSYS
+30A6  8120                    CMPA #32
+30A8  2703                    BEQ TEXTATNEXT2
+30AA  7E30D7                  JMP TEXTATNEXT
+30AD                  TEXTATNEXT2
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDA #0
+30AD  4F                      CLRA
+30AE  B700D3                  STA XCURSYS
+30B1  7C00D6                  INC YCURSYS
+30B4  BF0041                  STX COPYOFTEXTADDRESS
+30B7  B600D6                  LDA YCURSYS
+30BA  8110                    CMPA #16
+30BC  2703                    BEQ TEXTATNEXT3
+30BE  7E30D7                  JMP TEXTATNEXT
+30C1                  TEXTATNEXT3
+30C1  86FE                    LDA #$FE
+30C3  B7004A                  STA DIRECTION
+30C6  BD2DBA                  JSR VSCROLLT
+30C9  7A00D6                  DEC YCURSYS
+30CC  1C01                    ANDCC #$01
+30CE  BE0041                  LDX COPYOFTEXTADDRESS
+30D1  3088E0                  LEAX -32,X 
+30D4  BF0041                  STX COPYOFTEXTADDRESS
+30D7                  TEXTATNEXT
+30D7  B60004                  LDA TABSTODRAW
+30DA  2703                    BEQ TEXTATXLOOP2
+30DC  7E2F6B                  JMP TEXTATLOOP2
+30DF                  TEXTATXLOOP2
+30DF  3001                    LEAX 1,X 
+30E1  5A                      DECB
+30E2  2703                    BEQ TEXTATEND
+30E4  7E2F6B                  JMP TEXTATLOOP2
+30E7                  TEXTATEND
+                              
+30E7  39                      RTS
+30E8                  textEncodedAtText_after
+30E8  BD2EBA                  JSR TEXTATTILEMODE
+                              ; P:470
+                              ; L:5
+                      ; peephole(1): r803 (LDB#,STB,CLRA)->(LDD#,STB)
+                      ;       LDB #$0d
+30EB  CC000D                  LDD #$000d
+                      ; peephole(7): direct-page1
+                      ;       STA _Ttmp3
+30EE  97F1                    STA <_Ttmp3
+30F0  F733E9                  STB _Ttmp13
+                      ;       CLRA
+30F3  C608                    LDB #$08
+                      ; peephole(7): direct-page1
+                      ;       STA _Ttmp21
+30F5  97FA                    STA <_Ttmp21
+30F7  F733C9                  STB _Ttmp17
+                      ; peephole(1): r803 (LDB#,STB,CLRA)->(LDD#,STB)
+                      ;       LDB #$20
+                      ; peephole(2): r745 [A=0](LDD#00xx)->(LDB#xx)
+                      ;       LDD #$0020
+30FA  C620                    LDB #$20
+30FC  F73772                  STB _Ttmp15
+                      ;       CLRA
+30FF  C62C                    LDB #$2c
+3101  F733D8                  STB _Ttmp14
+3104  C620                    LDB #$20
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp18
+3106  D7F7                    STB <_Ttmp18
+3108  C68F                    LDB #$8f
+310A  F73773                  STB _Ttmp16
+310D  C68F                    LDB #$8f
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp4
+310F  D7F9                    STB <_Ttmp4
+3111  C601                    LDB #$01
+3113  F72C13                  STB KBDRATE
+                              IF (((128+dstring_after-(*+2))|(127-dstring_after+(*+2)))&0x8000)
+3116  7E3218                  JMP dstring_after
+                              ELSE
+                              BRA dstring_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS,
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ;*                                                                             *
+                      ;*                DINAMYC STRING MANAGEMENT WITH GARBAGE COLLECTION            *
+                      ;*                                                                             *
+                      ;*                             by Marco Spedaletti                             *
+                      ;*                                                                             *
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ; DSDEFINE(Y) -> B
+3119                  DSDEFINE
+3119  8D4F                    BSR   DSFINDFREE
+311B  8D62                    BSR   DSDESCRIPTOR
+311D  A6A0                    LDA   ,Y+
+311F  A784                    STA ,X 
+3121  10AF01                  STY 1,X 
+3124  86C0                    LDA #$C0
+3126  A703                    STA 3,X 
+3128  39                      RTS
+3129                  OUT_OF_MEMORY
+3129  20FE                    BRA   OUT_OF_MEMORY
+                      ; DSFREE(B)
+312B                  DSFREE
+312B  8D52                    BSR   DSDESCRIPTOR
+312D  4F                      CLRA
+312E  A703                    STA 3,X 
+3130  A784                    STA ,X 
+3132  39                      RTS
+                      ; DSWRITE(B)
+3133                  DSWRITE
+3133  8D4A                    BSR   DSDESCRIPTOR
+3135  A603                    LDA 3,X 
+3137  2A23                    BPL   DSWRITED
+3139  847F                    ANDA #$7F
+313B  A703                    STA 3,X 
+313D  A684                    LDA ,X 
+313F  8D46                    BSR   DSCHECKFREE
+3141                  DSWRITEOK
+3141  10AE01                  LDY 1,X 
+3144  3420                    PSHS Y
+3146  BD31F0                  JSR   DSUSINGALLOC
+3149  3520                    PULS Y
+314B  EE01                    LDU 1,X 
+314D                  DSCOPY
+314D  A684                    LDA ,X 
+                              
+314F                  DSWRITECOPY
+314F  270B                    BEQ DSWRITED
+3151  3404                    PSHS B
+3153                  DSWRITECOPYL
+3153  E6A0                    LDB   ,Y+
+3155  E7C0                    STB   ,U+
+3157  4A                      DECA
+3158  26F9                    BNE DSWRITECOPYL 
+315A  3584                    PULS  B,PC
+315C                  DSWRITED
+315C  39                      RTS
+                      ; DSRESIZE(B,A)
+315D                  DSRESIZE
+315D  8D20                    BSR   DSDESCRIPTOR
+315F  A784                    STA ,X 
+                      ; peephole(1): r436 (LOAD/STORE,CMP#0)->(LOAD/STORE)
+                      ;    CMPA #$0
+3161  2606                    BNE DSRESIZEDONE
+3163  A603                    LDA 3,X
+3165  8A80                    ORA #$80
+3167  A703                    STA 3,X
+3169                  DSRESIZEDONE
+3169  39                      RTS
+                      ; DSFINDFREE() -> B
+316A                  DSFINDFREE
+316A  3402                    PSHS  A
+316C  C601                    LDB   #1; // fix denote 0 as "unused slot"
+316E                  DSFINDFREEL
+316E  8D0F                    BSR   DSDESCRIPTOR
+3170  A603                    LDA   3,X
+3172  8440                    ANDA  #$40
+3174  2707                    BEQ   DSFINDFREEN
+3176  5C                      INCB
+3177  C120                    CMPB  #MAXSTRINGS
+3179  26F3                    BNE   DSFINDFREEL
+317B  20AC                    BRA   OUT_OF_MEMORY   
+317D                  DSFINDFREEN
+317D  3582                    PULS  A,PC
+                      ; DSDESCRIPTOR(B) -> X
+317F                  DSDESCRIPTOR
+317F  8E37AE                  LDX   #DESCRIPTORS
+3182  3A                      ABX
+3183  3A                      ABX
+3184  3A                      ABX
+3185  3A                      ABX
+3186  39                      RTS
+                      ; DSCHECKFREE()
+3187                  DSCHECKFREE
+3187  3406                    PSHS  A,B
+3189  B73192                  STA   DSCHECKFREE2x
+318C                  DSCHECKFREE2
+318C  FC3C2E                  LDD   FREE_STRING
+3192                  DSCHECKFREE2x SET *+3
+318F  10830000                CMPD  #$0000
+3193  2C04                    BGE   DSCHECKFREEOK
+3195                  DSCHECKFREEKO
+3195  8D04                    BSR   DSGC
+3197  20F3                    BRA   DSCHECKFREE2
+3199                  DSCHECKFREEOK
+3199  3586                    PULS  A,B,PC
+                      ; DSGC()
+319B                  DSGC
+319B  3410                    PSHS X
+319D  CC01FF                  LDD #(max_free_string-1)
+31A0  FD3C2E                  STD FREE_STRING
+31A3  B63217                  LDA USING
+31A6  2605                    BNE   DSGW
+31A8  CE3A2E                  LDU #TEMPORARY
+31AB  2003                    BRA   BSGCLOOP0
+31AD                  DSGW
+31AD  CE382E                  LDU #WORKING
+31B0                  BSGCLOOP0
+31B0  C601                    LDB #1
+31B2                  DSGCLOOP
+31B2  3406                    PSHS A,B
+31B4  8DC9                    BSR   DSDESCRIPTOR
+31B6  A603                    LDA 3,X 
+31B8  2B1A                    BMI   DSGCLOOP2
+31BA  8440                    ANDA #$40
+31BC  2714                    BEQ DSGCLOOP1
+31BE  A684                    LDA ,X 
+                      ; peephole(1): r436 (LOAD/STORE,CMP#0)->(LOAD/STORE)
+                      ;    CMPA #$0
+31C0  2712                    BEQ DSGCLOOP3
+31C2  10AE01                  LDY 1,X 
+31C5  A684                    LDA ,X 
+31C7  8D27                    BSR   DSUSINGALLOC
+31C9  EE01                    LDU 1,X 
+31CB  A684                    LDA ,X 
+31CD  17FF7F                  LBSR  DSWRITECOPY
+31D0  2002                    BRA   DSGCLOOP3
+31D2                  DSGCLOOP1
+                      ;    CLRA       (A already = 0 here)
+31D2  A784                    STA ,X 
+                      ;    BRA   DSGCLOOP3
+31D4                  DSGCLOOP2
+                          ; LDA #0
+                          ; STA , X
+31D4                  DSGCLOOP3
+31D4  3506                    PULS A,B
+31D6  5C                      INCB
+31D7  C120                    CMPB #MAXSTRINGS
+31D9  26D7                    BNE DSGCLOOP
+31DB                  DSGCEND
+31DB  733217                  COM   USING
+31DE  3590                    PULS  X,PC
+                      ;OUT_OF_MEMORY2
+                      ;    SYNC
+                      ;    BRA OUT_OF_MEMORY
+                      ; DSALLOC(A) -> B
+31E0                  DSALLOC
+31E0  3402                    PSHS A
+31E2  8D86                    BSR   DSFINDFREE
+31E4  8D99                    BSR   DSDESCRIPTOR
+31E6  A603                    LDA 3,X 
+31E8  8A40                    ORA   #$40
+31EA  A703                    STA   3,X
+31EC  3502                    PULS A
+31EE  8D97                    BSR   DSCHECKFREE
+31F0                  DSALLOCOK
+31F0                  DSUSINGALLOC
+31F0  8D18                    BSR   DSUSING
+                      ;    BRA   DSMALLOC
+                      ; DSMALLOC(U,A,B)
+31F2                  DSMALLOC
+31F2  3440                    PSHS  U
+31F4  8D89                    BSR   DSDESCRIPTOR
+31F6  A784                    STA ,X 
+31F8  3406                    PSHS  D
+31FA  FC3C2E                  LDD FREE_STRING
+31FD  E0E4                    SUBB  ,S
+31FF  8200                    SBCA  #0
+3201  FD3C2E                  STD   FREE_STRING
+3204  E362                    ADDD  2,S
+3206  ED01                    STD   1,X
+                              
+3208  35C6                    PULS  U,D,PC
+                      ; DSUSING() -> U
+320A                  DSUSING
+320A  7D3217                  TST   USING
+320D  2704                    BEQ DSUSINGW
+320F  CE3A2E                  LDU #TEMPORARY
+3212  39                      RTS
+3213                  DSUSINGW
+3213  CE382E                  LDU #WORKING
+3216  39                      RTS
+3217                  USING 
+3217  00                      FCB   0
+                              
+3218                  dstring_after
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp12
+3218  D6FB                    LDB <_Ttmp12
+321A  BD312B                  JSR DSFREE
+                      ; peephole(7): direct-page1
+                      ;       LDA _Ttmp18
+321D  96F7                    LDA <_Ttmp18
+321F  BD31E0                  JSR DSALLOC
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp12
+3222  D7FB                    STB <_Ttmp12
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp12
+3224  D6FB                    LDB <_Ttmp12
+3226  BD317F                  JSR DSDESCRIPTOR
+3229  EC01                    LDD 1,X 
+                      ; peephole(7): direct-page1
+                      ;       STD _Ttmp8
+322B  DDF2                    STD <_Ttmp8
+322D  A684                    LDA ,X 
+                      ; peephole(7): direct-page1
+                      ;       STA _Ttmp19
+322F  97F0                    STA <_Ttmp19
+3231                  _label11repeat
+                      ; peephole(7): direct-page1
+                      ;       DEC _Ttmp4
+3231  0AF9                    DEC <_Ttmp4
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp4
+3233  D6F9                    LDB <_Ttmp4
+                      ; peephole(1): r436 (LOAD/STORE,CMP#0)->(LOAD/STORE)
+                      ;       CMPB #$00
+                              IF (((128+_label11skipcc-(*+2))|(127-_label11skipcc+(*+2)))&0x8000)
+                              LBNE _label11skipcc
+                              ELSE
+3235  2638                    BNE _label11skipcc
+                              ENDIF
+3237  F63773                  LDB _Ttmp16
+323A  CB10                    ADDB #$10
+323C  F73773                  STB _Ttmp16
+323F  5F                      CLRB
+3240  B63773                  LDA _Ttmp16
+3243  818F                    CMPA #$008f
+3245  2401                    BHS _label25
+3247  5A                      DECB
+3248                  _label25
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp24
+3248  D7F8                    STB <_Ttmp24
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp24
+324A  D6F8                    LDB <_Ttmp24
+                              IF (((128+_label22g-(*+2))|(127-_label22g+(*+2)))&0x8000)
+                              LBEQ _label22g
+                              ELSE
+324C  2707                    BEQ _label22g
+                              ENDIF
+324E  C6E0                    LDB #$e0
+3250  F73773                  STB _Ttmp16
+                              IF (((128+_label22e-(*+2))|(127-_label22e+(*+2)))&0x8000)
+                              JMP _label22e
+                              ELSE
+3253  2016                    BRA _label22e
+                              ENDIF
+3255                  _label22g
+3255  5F                      CLRB
+3256  B63773                  LDA _Ttmp16
+3259  81E0                    CMPA #$00e0
+325B  2201                    BHI _label28
+325D  5A                      DECB
+325E                  _label28
+325E  F73775                  STB _Ttmp27
+3261  F63775                  LDB _Ttmp27
+                              IF (((128+_label22e-(*+2))|(127-_label22e+(*+2)))&0x8000)
+                              LBNE _label22e
+                              ELSE
+3264  2605                    BNE _label22e
+                              ENDIF
+3266  C68F                    LDB #$8f
+3268  F73773                  STB _Ttmp16
+326B                  _label22e
+326B  C680                    LDB #$80
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp4
+326D  D7F9                    STB <_Ttmp4
+326F                  _label11skipcc
+326F  CC3773                  LDD #_Ttmp16
+3272  FD3776                  STD _Ttmp30
+3275  C601                    LDB #$01
+3277  F73778                  STB _Ttmp31
+327A  10BE3776                LDY _Ttmp30
+327E  10BF0001                STY TEXTPTR
+3282  B63778                  LDA _Ttmp31
+3285  B70003                  STA TEXTSIZE
+3288  BD2EBA                  JSR TEXTATTILEMODE
+328B  4F                      CLRA
+328C  B73298                  STA _Ttmp33
+328F  C6FF                    LDB #$ffffffff
+                      ; peephole(4): unread1
+                      ;       STB _Ttmp34
+                      ; peephole(1): r526 (STB*,LDB+,ORB/ANDB/EORB/ADDB*)->(STB*,ORB/ANDB/EORB/ADDB+)
+                      ;       LDB XCURSYS
+                      ;       ADDB _Ttmp34
+3291  FB00D3                  ADDB XCURSYS
+3294  F700D3                  STB XCURSYS
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp33
+3297  C600                    LDB #1-1
+3298                  _Ttmp33 equ *-1
+3299  F73779                  STB _Ttmp37
+329C  F63779                  LDB _Ttmp37
+329F  C47F                    ANDB #$7f
+32A1  F73779                  STB _Ttmp37
+32A4  5F                      CLRB
+32A5  B600D3                  LDA XCURSYS
+32A8  B13779                  CMPA _Ttmp37
+32AB  2C01                    BGE _label40
+32AD  5A                      DECB
+32AE                  _label40
+32AE  F732B2                  STB _Ttmp39
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp39
+32B1  C600                    LDB #1-1
+32B2                  _Ttmp39 equ *-1
+                              IF (((128+_label35g-(*+2))|(127-_label35g+(*+2)))&0x8000)
+                              LBEQ _label35g
+                              ELSE
+32B3  270A                    BEQ _label35g
+                              ENDIF
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+32B5  F62FD3                  LDB CURRENTTILESWIDTH
+                      ; peephole(2): r422 (STORE*,?,STORE*)->(?,STORE*)
+                      ;       STB XCURSYS
+                      ; peephole(1): r338 (STORE*,LOAD*)->(STORE*)
+                      ;       LDB XCURSYS
+32B8  C47F                    ANDB #$7f
+32BA  F700D3                  STB XCURSYS
+                              IF (((128+_label35e-(*+2))|(127-_label35e+(*+2)))&0x8000)
+                              JMP _label35e
+                              ELSE
+32BD  2027                    BRA _label35e
+                              ENDIF
+32BF                  _label35g
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+32BF  F62FD3                  LDB CURRENTTILESWIDTH
+32C2  F7377A                  STB _Ttmp43
+32C5  F6377A                  LDB _Ttmp43
+32C8  C47F                    ANDB #$7f
+32CA  F7377A                  STB _Ttmp43
+32CD  5F                      CLRB
+32CE  B600D3                  LDA XCURSYS
+32D1  B1377A                  CMPA _Ttmp43
+32D4  2F01                    BLE _label46
+32D6  5A                      DECB
+32D7                  _label46
+32D7  F732DB                  STB _Ttmp45
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp45
+32DA  C600                    LDB #1-1
+32DB                  _Ttmp45 equ *-1
+                              IF (((128+_label35e-(*+2))|(127-_label35e+(*+2)))&0x8000)
+                              LBEQ _label35e
+                              ELSE
+32DC  2708                    BEQ _label35e
+                              ENDIF
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+32DE  F63298                  LDB _Ttmp33
+                      ; peephole(2): r422 (STORE*,?,STORE*)->(?,STORE*)
+                      ;       STB XCURSYS
+                      ; peephole(1): r338 (STORE*,LOAD*)->(STORE*)
+                      ;       LDB XCURSYS
+32E1  C47F                    ANDB #$7f
+32E3  F700D3                  STB XCURSYS
+32E6                  _label35e
+                              IF (((128+scancode_after-(*+2))|(127-scancode_after+(*+2)))&0x8000)
+32E6  7E3368                  JMP scancode_after
+                              ELSE
+                              BRA scancode_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS,
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ;*                                                                             *
+                      ;*                      KEYBOARD MATRIX DETECTION ON TRS-80 COLOR COMPUTER     *
+                      ;*                                                                             *
+                      ;*                             by Marco Spedaletti                             *
+                      ;*                                                                             *
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+32E9                  SCANCODE
+                          ; CLR $FF01
+                          ; CLR $FF00
+                          ; CLR $FF03
+32E9  86FF                    LDA #$FF
+32EB  B7FF02                  STA $FF02
+32EE  8E3328                  LDX #SCANCODEMATRIX
+32F1  86FE                    LDA #$FE
+32F3                  SCANCODE0
+32F3  B7FF02                  STA $FF02
+32F6  F6FF00                  LDB $FF00
+                      ; peephole(1): r359 (EOR#$FF)->(COM)
+                      ;    EORB #$FF
+32F9  53                      COMB
+32FA  C47F                    ANDB #$7F
+32FC  C100                    CMPB #$0
+32FE  271C                    BEQ SCANCODENEXT
+3300  1F98                    TFR B, A
+3302                  SCANCODENEXT2A
+3302  1F89                    TFR A, B
+3304  8401                    ANDA #1
+3306  8101                    CMPA #1
+3308  2605                    BNE SCANCODENEXT2
+330A  A684                    LDA ,X 
+330C  7E3327                  JMP SCANCODEE
+330F                  SCANCODENEXT2
+330F  1F98                    TFR B, A
+3311  44                      LSRA
+3312  3001                    LEAX 1,X 
+3314  8100                    CMPA #0
+3316  26EA                    BNE SCANCODENEXT2A
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDA #0
+3318  4F                      CLRA
+3319  7E3327                  JMP SCANCODEE
+331C                  SCANCODENEXT
+331C  1A01                    ORCC #$01
+331E  49                      ROLA
+331F  3008                    LEAX 8,X 
+3321  8C3360                  CMPX #SCANCODEMATRIXE
+3324  23CD                    BLS SCANCODE0
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;    LDA #0
+3326  4F                      CLRA
+3327                  SCANCODEE
+3327  39                      RTS
+3328                  SCANCODEMATRIX
+3328  4048505830380DE3         fcb '@','H','P','X','0','8',$0d,$E3     ; // UNUSED
+3330  414951593139F9E4         fcb 'A','I','Q','Y','1','9',$F9,$E4     ; // CLR, UNUSED
+3338  424A525A323AD5E5         fcb 'B','J','R','Z','2',':',$D5,$E5     ; // BRK, UNUSED
+3340  434B53FA333BD6E6         fcb 'C','K','S',$FA,'3',';',$D6,$E6     ; // UP $FA, UNUSED, UNUSED
+3348  444C54FB342CD7E7         fcb 'D','L','T',$FB,'4',',',$D7,$E7     ; // DOWN $FB, UNUSED, UNUSED
+3350  454D5508352DD8E8         fcb 'E','M','U',8,'5','-',$D8,$E8     ; // ?? $FC, .., LEFT, UNUSED, UNUSED
+3358  464E56FD362ED9E9         fcb 'F','N','V',$FD,'6','.',$D9,$E9     ; // RIGHT $FD, UNUSED, UNUSED
+3360                  SCANCODEMATRIXE
+3360  474F5720372FF0FE         fcb 'G','O','W',' ','7','/',$F0,$FE     ; // UNUSED, SHIFT
+3368                  scancode_after
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;       LDA #0
+3368  4F                      CLRA
+                      ; peephole(7): direct-page1
+                      ;       STA _Ttmp19
+3369  97F0                    STA <_Ttmp19
+336B  B73774                  STA _Ttmp20
+336E  BD32E9                  JSR SCANCODE
+3371  8100                    CMPA #0
+3373  2707                    BEQ _label49nokey
+3375  B73774                  STA _Ttmp20
+3378  86FF                    LDA #$FF
+                      ; peephole(7): direct-page1
+                      ;       STA _Ttmp19
+337A  97F0                    STA <_Ttmp19
+337C                  _label49nokey
+                      ; peephole(7): direct-page1
+                      ;       LDA _Ttmp19
+337C  96F0                    LDA <_Ttmp19
+                      ; peephole(1): r436 (LOAD/STORE,CMP#0)->(LOAD/STORE)
+                      ;       CMPA #0
+337E  2733                    BEQ _label48skip
+3380  B63774                  LDA _Ttmp20
+3383  8480                    ANDA #$80
+3385  8100                    CMPA #0
+3387  2619                    BNE _label48noascii
+3389  B63774                  LDA _Ttmp20
+338C  B1011D                  CMPA $011d
+338F  2618                    BNE _label48different
+3391  7A011F                  DEC $011f
+3394  F6011F                  LDB $011f
+3397  F12C13                  CMPB KBDRATE
+339A  2710                    BEQ _label48ascii
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;       LDA #0
+339C  4F                      CLRA
+                      ; peephole(7): direct-page1
+                      ;       STA _Ttmp19
+339D  97F0                    STA <_Ttmp19
+339F  7E33B7                  JMP _label48done
+33A2                  _label48noascii
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;       LDA #0
+33A2  4F                      CLRA
+33A3  B73774                  STA _Ttmp20
+33A6  7E33B7                  JMP _label48done
+33A9                  _label48different
+33A9  B7011D                  STA $011d
+33AC                  _label48ascii
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;       LDB #0
+33AC  5F                      CLRB
+33AD  F7011F                  STB $011f
+33B0  7E33B7                  JMP _label48done
+33B3                  _label48skip
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;       LDA #0
+33B3  4F                      CLRA
+33B4  B7011D                  STA $011d
+33B7                  _label48done
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp19
+33B7  D6F0                    LDB <_Ttmp19
+                              IF (((128+_label11repeat-(*+2))|(127-_label11repeat+(*+2)))&0x8000)
+33B9  1027FE74                LBEQ _label11repeat
+                              ELSE
+                              BEQ _label11repeat
+                              ENDIF
+33BD  F63774                  LDB _Ttmp20
+                              IF (((128+_label11repeat-(*+2))|(127-_label11repeat+(*+2)))&0x8000)
+33C0  1027FE6D                LBEQ _label11repeat
+                              ELSE
+                              BEQ _label11repeat
+                              ENDIF
+33C4  5F                      CLRB
+33C5  B63774                  LDA _Ttmp20
+                      ; peephole(7): inlined1
+                      ;       CMPA _Ttmp17
+33C8  8100                    CMPA #1-1
+33C9                  _Ttmp17 equ *-1
+33CA  2601                    BNE _label50
+33CC  5A                      DECB
+33CD                  _label50
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp19
+33CD  D7F0                    STB <_Ttmp19
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp19
+33CF  D6F0                    LDB <_Ttmp19
+                              IF (((128+_label11backspace-(*+2))|(127-_label11backspace+(*+2)))&0x8000)
+                              LBNE _label11backspace
+                              ELSE
+33D1  265A                    BNE _label11backspace
+                              ENDIF
+33D3  5F                      CLRB
+33D4  B63774                  LDA _Ttmp20
+                      ; peephole(7): inlined1
+                      ;       CMPA _Ttmp14
+33D7  8100                    CMPA #1-1
+33D8                  _Ttmp14 equ *-1
+33D9  2601                    BNE _label51
+33DB  5A                      DECB
+33DC                  _label51
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp19
+33DC  D7F0                    STB <_Ttmp19
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp19
+33DE  D6F0                    LDB <_Ttmp19
+                              IF (((128+_label11finished-(*+2))|(127-_label11finished+(*+2)))&0x8000)
+33E0  1026013A                LBNE _label11finished
+                              ELSE
+                              BNE _label11finished
+                              ENDIF
+33E4  5F                      CLRB
+33E5  B63774                  LDA _Ttmp20
+                      ; peephole(7): inlined1
+                      ;       CMPA _Ttmp13
+33E8  8100                    CMPA #1-1
+33E9                  _Ttmp13 equ *-1
+33EA  2601                    BNE _label52
+33EC  5A                      DECB
+33ED                  _label52
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp19
+33ED  D7F0                    STB <_Ttmp19
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp19
+33EF  D6F0                    LDB <_Ttmp19
+                              IF (((128+_label11finished-(*+2))|(127-_label11finished+(*+2)))&0x8000)
+33F1  10260129                LBNE _label11finished
+                              ELSE
+                              BNE _label11finished
+                              ENDIF
+33F5  CC3774                  LDD #_Ttmp20
+                      ; peephole(7): direct-page1
+                      ;       STD _Ttmp54
+33F8  DDF4                    STD <_Ttmp54
+33FA  C601                    LDB #$01
+33FC  F73407                  STB _Ttmp55
+                      ; peephole(7): direct-page1
+                      ;       LDY _Ttmp54
+33FF  109EF4                  LDY <_Ttmp54
+3402  10BF0001                STY TEXTPTR
+                      ; peephole(7): inlined1
+                      ;       LDA _Ttmp55
+3406  8600                    LDA #1-1
+3407                  _Ttmp55 equ *-1
+3408  B70003                  STA TEXTSIZE
+340B  BD2EBA                  JSR TEXTATTILEMODE
+340E  B63774                  LDA _Ttmp20
+                      ; peephole(7): direct-page1
+                      ;       LDX _Ttmp8
+3411  9EF2                    LDX <_Ttmp8
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp3
+3413  D6F1                    LDB <_Ttmp3
+3415  3A                      ABX
+3416  A784                    STA ,X
+                      ; peephole(7): direct-page1
+                      ;       INC _Ttmp3
+3418  0CF1                    INC <_Ttmp3
+341A  5F                      CLRB
+                      ; peephole(7): direct-page1
+                      ;       LDA _Ttmp3
+341B  96F1                    LDA <_Ttmp3
+                      ; peephole(7): direct-page1
+                      ;       CMPA _Ttmp18
+341D  91F7                    CMPA <_Ttmp18
+341F  2601                    BNE _label58
+3421  5A                      DECB
+3422                  _label58
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp19
+3422  D7F0                    STB <_Ttmp19
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp19
+3424  D6F0                    LDB <_Ttmp19
+                              IF (((128+_label11repeat-(*+2))|(127-_label11repeat+(*+2)))&0x8000)
+3426  1027FE07                LBEQ _label11repeat
+                              ELSE
+                              BEQ _label11repeat
+                              ENDIF
+                              IF (((128+_label11finished-(*+2))|(127-_label11finished+(*+2)))&0x8000)
+342A  7E351E                  JMP _label11finished
+                              ELSE
+                              BRA _label11finished
+                              ENDIF
+342D                  _label11backspace
+342D  5F                      CLRB
+                      ; peephole(7): direct-page1
+                      ;       LDA _Ttmp3
+342E  96F1                    LDA <_Ttmp3
+                      ; peephole(7): direct-page1
+                      ;       CMPA _Ttmp21
+3430  91FA                    CMPA <_Ttmp21
+3432  2601                    BNE _label59
+3434  5A                      DECB
+3435                  _label59
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp19
+3435  D7F0                    STB <_Ttmp19
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp19
+3437  D6F0                    LDB <_Ttmp19
+                              IF (((128+_label11repeat-(*+2))|(127-_label11repeat+(*+2)))&0x8000)
+3439  1026FDF4                LBNE _label11repeat
+                              ELSE
+                              BNE _label11repeat
+                              ENDIF
+                      ; peephole(7): direct-page1
+                      ;       DEC _Ttmp3
+343D  0AF1                    DEC <_Ttmp3
+343F  CC3772                  LDD #_Ttmp15
+3442  FD377B                  STD _Ttmp61
+3445  C601                    LDB #$01
+3447  F73453                  STB _Ttmp62
+344A  10BE377B                LDY _Ttmp61
+344E  10BF0001                STY TEXTPTR
+                      ; peephole(7): inlined1
+                      ;       LDA _Ttmp62
+3452  8600                    LDA #1-1
+3453                  _Ttmp62 equ *-1
+3454  B70003                  STA TEXTSIZE
+3457  BD2EBA                  JSR TEXTATTILEMODE
+345A  4F                      CLRA
+345B  B73467                  STA _Ttmp64
+345E  C6FE                    LDB #$fffffffe
+                      ; peephole(4): unread1
+                      ;       STB _Ttmp65
+                      ; peephole(1): r526 (STB*,LDB+,ORB/ANDB/EORB/ADDB*)->(STB*,ORB/ANDB/EORB/ADDB+)
+                      ;       LDB XCURSYS
+                      ;       ADDB _Ttmp65
+3460  FB00D3                  ADDB XCURSYS
+3463  F700D3                  STB XCURSYS
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp64
+3466  C600                    LDB #1-1
+3467                  _Ttmp64 equ *-1
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp68
+3468  D7FF                    STB <_Ttmp68
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp68
+346A  D6FF                    LDB <_Ttmp68
+346C  C47F                    ANDB #$7f
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp68
+346E  D7FF                    STB <_Ttmp68
+3470  5F                      CLRB
+3471  B600D3                  LDA XCURSYS
+                      ; peephole(7): direct-page1
+                      ;       CMPA _Ttmp68
+3474  91FF                    CMPA <_Ttmp68
+3476  2C01                    BGE _label71
+3478  5A                      DECB
+3479                  _label71
+3479  F7347D                  STB _Ttmp70
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp70
+347C  C600                    LDB #1-1
+347D                  _Ttmp70 equ *-1
+                              IF (((128+_label66g-(*+2))|(127-_label66g+(*+2)))&0x8000)
+                              LBEQ _label66g
+                              ELSE
+347E  270A                    BEQ _label66g
+                              ENDIF
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+3480  F62FD3                  LDB CURRENTTILESWIDTH
+                      ; peephole(2): r422 (STORE*,?,STORE*)->(?,STORE*)
+                      ;       STB XCURSYS
+                      ; peephole(1): r338 (STORE*,LOAD*)->(STORE*)
+                      ;       LDB XCURSYS
+3483  C47F                    ANDB #$7f
+3485  F700D3                  STB XCURSYS
+                              IF (((128+_label66e-(*+2))|(127-_label66e+(*+2)))&0x8000)
+                              JMP _label66e
+                              ELSE
+3488  2023                    BRA _label66e
+                              ENDIF
+348A                  _label66g
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+348A  F62FD3                  LDB CURRENTTILESWIDTH
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp74
+348D  D7FE                    STB <_Ttmp74
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp74
+348F  D6FE                    LDB <_Ttmp74
+3491  C47F                    ANDB #$7f
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp74
+3493  D7FE                    STB <_Ttmp74
+3495  5F                      CLRB
+3496  B600D3                  LDA XCURSYS
+                      ; peephole(7): direct-page1
+                      ;       CMPA _Ttmp74
+3499  91FE                    CMPA <_Ttmp74
+349B  2F01                    BLE _label77
+349D  5A                      DECB
+349E                  _label77
+349E  F734A2                  STB _Ttmp76
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp76
+34A1  C600                    LDB #1-1
+34A2                  _Ttmp76 equ *-1
+                              IF (((128+_label66e-(*+2))|(127-_label66e+(*+2)))&0x8000)
+                              LBEQ _label66e
+                              ELSE
+34A3  2708                    BEQ _label66e
+                              ENDIF
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+34A5  F63467                  LDB _Ttmp64
+                      ; peephole(2): r422 (STORE*,?,STORE*)->(?,STORE*)
+                      ;       STB XCURSYS
+                      ; peephole(1): r338 (STORE*,LOAD*)->(STORE*)
+                      ;       LDB XCURSYS
+34A8  C47F                    ANDB #$7f
+34AA  F700D3                  STB XCURSYS
+34AD                  _label66e
+34AD  CC3772                  LDD #_Ttmp15
+34B0  FD34BA                  STD _Ttmp80
+34B3  C601                    LDB #$01
+34B5  F734C1                  STB _Ttmp81
+                      ; peephole(7): inlined1
+                      ;       LDY _Ttmp80
+34B8  108E0000                LDY #1-1
+34BA                  _Ttmp80 equ *-2
+34BC  10BF0001                STY TEXTPTR
+                      ; peephole(7): inlined1
+                      ;       LDA _Ttmp81
+34C0  8600                    LDA #1-1
+34C1                  _Ttmp81 equ *-1
+34C2  B70003                  STA TEXTSIZE
+34C5  BD2EBA                  JSR TEXTATTILEMODE
+34C8  4F                      CLRA
+34C9  B734D5                  STA _Ttmp83
+34CC  C6FF                    LDB #$ffffffff
+                      ; peephole(4): unread1
+                      ;       STB _Ttmp84
+                      ; peephole(1): r526 (STB*,LDB+,ORB/ANDB/EORB/ADDB*)->(STB*,ORB/ANDB/EORB/ADDB+)
+                      ;       LDB XCURSYS
+                      ;       ADDB _Ttmp84
+34CE  FB00D3                  ADDB XCURSYS
+34D1  F700D3                  STB XCURSYS
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp83
+34D4  C600                    LDB #1-1
+34D5                  _Ttmp83 equ *-1
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp87
+34D6  D7FD                    STB <_Ttmp87
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp87
+34D8  D6FD                    LDB <_Ttmp87
+34DA  C47F                    ANDB #$7f
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp87
+34DC  D7FD                    STB <_Ttmp87
+34DE  5F                      CLRB
+34DF  B600D3                  LDA XCURSYS
+                      ; peephole(7): direct-page1
+                      ;       CMPA _Ttmp87
+34E2  91FD                    CMPA <_Ttmp87
+34E4  2C01                    BGE _label90
+34E6  5A                      DECB
+34E7                  _label90
+34E7  F734EB                  STB _Ttmp89
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp89
+34EA  C600                    LDB #1-1
+34EB                  _Ttmp89 equ *-1
+                              IF (((128+_label85g-(*+2))|(127-_label85g+(*+2)))&0x8000)
+                              LBEQ _label85g
+                              ELSE
+34EC  270A                    BEQ _label85g
+                              ENDIF
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+34EE  F62FD3                  LDB CURRENTTILESWIDTH
+                      ; peephole(2): r422 (STORE*,?,STORE*)->(?,STORE*)
+                      ;       STB XCURSYS
+                      ; peephole(1): r338 (STORE*,LOAD*)->(STORE*)
+                      ;       LDB XCURSYS
+34F1  C47F                    ANDB #$7f
+34F3  F700D3                  STB XCURSYS
+                              IF (((128+_label85e-(*+2))|(127-_label85e+(*+2)))&0x8000)
+                              JMP _label85e
+                              ELSE
+34F6  2023                    BRA _label85e
+                              ENDIF
+34F8                  _label85g
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+34F8  F62FD3                  LDB CURRENTTILESWIDTH
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp93
+34FB  D7FC                    STB <_Ttmp93
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp93
+34FD  D6FC                    LDB <_Ttmp93
+34FF  C47F                    ANDB #$7f
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp93
+3501  D7FC                    STB <_Ttmp93
+3503  5F                      CLRB
+3504  B600D3                  LDA XCURSYS
+                      ; peephole(7): direct-page1
+                      ;       CMPA _Ttmp93
+3507  91FC                    CMPA <_Ttmp93
+3509  2F01                    BLE _label96
+350B  5A                      DECB
+350C                  _label96
+350C  F73510                  STB _Ttmp95
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp95
+350F  C600                    LDB #1-1
+3510                  _Ttmp95 equ *-1
+                              IF (((128+_label85e-(*+2))|(127-_label85e+(*+2)))&0x8000)
+                              LBEQ _label85e
+                              ELSE
+3511  2708                    BEQ _label85e
+                              ENDIF
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+3513  F634D5                  LDB _Ttmp83
+                      ; peephole(2): r422 (STORE*,?,STORE*)->(?,STORE*)
+                      ;       STB XCURSYS
+                      ; peephole(1): r338 (STORE*,LOAD*)->(STORE*)
+                      ;       LDB XCURSYS
+3516  C47F                    ANDB #$7f
+3518  F700D3                  STB XCURSYS
+351B                  _label85e
+                              IF (((128+_label11repeat-(*+2))|(127-_label11repeat+(*+2)))&0x8000)
+351B  7E3231                  JMP _label11repeat
+                              ELSE
+                              BRA _label11repeat
+                              ENDIF
+351E                  _label11finished
+351E  CC3772                  LDD #_Ttmp15
+3521  FD352B                  STD _Ttmp99
+3524  C601                    LDB #$01
+3526  F73532                  STB _Ttmp100
+                      ; peephole(7): inlined1
+                      ;       LDY _Ttmp99
+3529  108E0000                LDY #1-1
+352B                  _Ttmp99 equ *-2
+352D  10BF0001                STY TEXTPTR
+                      ; peephole(7): inlined1
+                      ;       LDA _Ttmp100
+3531  8600                    LDA #1-1
+3532                  _Ttmp100 equ *-1
+3533  B70003                  STA TEXTSIZE
+3536  BD2EBA                  JSR TEXTATTILEMODE
+3539  4F                      CLRA
+353A  B73546                  STA _Ttmp102
+353D  C6FF                    LDB #$ffffffff
+                      ; peephole(4): unread1
+                      ;       STB _Ttmp103
+                      ; peephole(1): r526 (STB*,LDB+,ORB/ANDB/EORB/ADDB*)->(STB*,ORB/ANDB/EORB/ADDB+)
+                      ;       LDB XCURSYS
+                      ;       ADDB _Ttmp103
+353F  FB00D3                  ADDB XCURSYS
+3542  F700D3                  STB XCURSYS
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp102
+3545  C600                    LDB #1-1
+3546                  _Ttmp102 equ *-1
+3547  F7377D                  STB _Ttmp106
+354A  F6377D                  LDB _Ttmp106
+354D  C47F                    ANDB #$7f
+354F  F7377D                  STB _Ttmp106
+3552  5F                      CLRB
+3553  B600D3                  LDA XCURSYS
+3556  B1377D                  CMPA _Ttmp106
+3559  2C01                    BGE _label109
+355B  5A                      DECB
+355C                  _label109
+355C  F73560                  STB _Ttmp108
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp108
+355F  C600                    LDB #1-1
+3560                  _Ttmp108 equ *-1
+                              IF (((128+_label104g-(*+2))|(127-_label104g+(*+2)))&0x8000)
+                              LBEQ _label104g
+                              ELSE
+3561  270A                    BEQ _label104g
+                              ENDIF
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+3563  F62FD3                  LDB CURRENTTILESWIDTH
+                      ; peephole(2): r422 (STORE*,?,STORE*)->(?,STORE*)
+                      ;       STB XCURSYS
+                      ; peephole(1): r338 (STORE*,LOAD*)->(STORE*)
+                      ;       LDB XCURSYS
+3566  C47F                    ANDB #$7f
+3568  F700D3                  STB XCURSYS
+                              IF (((128+_label104e-(*+2))|(127-_label104e+(*+2)))&0x8000)
+                              JMP _label104e
+                              ELSE
+356B  2027                    BRA _label104e
+                              ENDIF
+356D                  _label104g
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+356D  F62FD3                  LDB CURRENTTILESWIDTH
+3570  F7377E                  STB _Ttmp112
+3573  F6377E                  LDB _Ttmp112
+3576  C47F                    ANDB #$7f
+3578  F7377E                  STB _Ttmp112
+357B  5F                      CLRB
+357C  B600D3                  LDA XCURSYS
+357F  B1377E                  CMPA _Ttmp112
+3582  2F01                    BLE _label115
+3584  5A                      DECB
+3585                  _label115
+3585  F73589                  STB _Ttmp114
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp114
+3588  C600                    LDB #1-1
+3589                  _Ttmp114 equ *-1
+                              IF (((128+_label104e-(*+2))|(127-_label104e+(*+2)))&0x8000)
+                              LBEQ _label104e
+                              ELSE
+358A  2708                    BEQ _label104e
+                              ENDIF
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+358C  F63546                  LDB _Ttmp102
+                      ; peephole(2): r422 (STORE*,?,STORE*)->(?,STORE*)
+                      ;       STB XCURSYS
+                      ; peephole(1): r338 (STORE*,LOAD*)->(STORE*)
+                      ;       LDB XCURSYS
+358F  C47F                    ANDB #$7f
+3591  F700D3                  STB XCURSYS
+3594                  _label104e
+                      ; peephole(7): direct-page1
+                      ;       LDA _Ttmp3
+3594  96F1                    LDA <_Ttmp3
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp12
+3596  D6FB                    LDB <_Ttmp12
+3598  BD315D                  JSR DSRESIZE
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp12
+359B  D6FB                    LDB <_Ttmp12
+359D  BD317F                  JSR DSDESCRIPTOR
+35A0  EC01                    LDD 1,X 
+35A2  FD365B                  STD _Ttmp117
+35A5  A684                    LDA ,X 
+35A7  B735B0                  STA _Ttmp118
+                      ; peephole(7): inlined1
+                      ;       LDB _sentence
+35AA  C600                    LDB #1-1
+35AB                  _sentence equ *-1
+35AC  BD312B                  JSR DSFREE
+                      ; peephole(7): inlined1
+                      ;       LDA _Ttmp118
+35AF  8600                    LDA #1-1
+35B0                  _Ttmp118 equ *-1
+35B1  BD31E0                  JSR DSALLOC
+35B4  F735AB                  STB _sentence
+                      ; peephole(1): r338 (STORE*,LOAD*)->(STORE*)
+                      ;       LDB _sentence
+35B7  BD317F                  JSR DSDESCRIPTOR
+35BA  EC01                    LDD 1,X 
+35BC  FD365E                  STD _Ttmp119
+35BF  A684                    LDA ,X 
+                      ; peephole(4): unread1
+                      ;       STA _Ttmp120
+                              IF (((128+duff_after-(*+2))|(127-duff_after+(*+2)))&0x8000)
+35C1  7E3653                  JMP duff_after
+                              ELSE
+                              BRA duff_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS,
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      ;*                                                                             *
+                      ;*                               DUFF'S DEVICE                                 *
+                      ;*                                                                             *
+                      ;*                             by Marco Spedaletti                             *
+                      ;*                                                                             *
+                      ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                      
+                          ; This is a special device that should transform the memory movement into
+                          ; an optimized one. This is done by using some tricks and automodification
+                          ; assembly code.
+                      
+35C4                  DUFFDEVICE
+                      
+                          ; First of all, we avoid to do anything if the memory to copy is equal
+                          ; to zero. It means that nothing is needed to do, so move to the end
+                          ; of the routine.
+                      
+35C4  10830000                CMPD #0
+35C8  10270085                LBEQ DUFFDEVICEDONE
+                      
+                          ; Then, we disable, at startup, the 16 byte copy loop, by assigning
+                          ; a couple of "NOP" (opcode $12) at the place of the branching.
+                      
+35CC  CE1212                  LDU #$1212
+35CF  FF3636                  STU DUFFDEVICEL0C
+                      
+                          ; So, we must manage the fact that the size is odd: in this case,
+                          ; the first byte will be copied directly. This is done by dividing
+                          ; the size by 2 and taking apart the carry bit.
+                      
+35D2  44                      LSRA
+35D3  56                      RORB
+                      
+                          ; CARRY CLEAR (BCC) -> Size was even
+                          ; CARRY SET   (BCS) -> Size was odd
+                      
+35D4  2410                    BCC DUFFDEVICELX
+                      
+                          ; The size was odd, so copy the first byte and move ahead
+                          ; source (Y) and destination (X) address.
+                      
+35D6  3406                    PSHS D
+35D8  A6A0                    LDA ,Y +
+35DA  A780                    STA ,X +
+35DC  3506                    PULS D
+                      
+                          ; Again, we avoid to do anything if the memory to copy is equal
+                          ; to zero. It means that nothing is needed to do more, so move 
+                          ; to the end of the routine.
+                      
+35DE  10830000                CMPD #0
+35E2  1027006B                LBEQ DUFFDEVICEDONE
+                      
+                          ; We reach this point having the original size halved. So now we
+                          ; have to "unroll" the copy. Unrolling is a process that try to
+                          ; transform a "generic" size copy in a "modulus" size copy.
+                          ; We use a modulus of 16 bytes (using a 2 byte register for 8 times).
+                          ; If the size is multiple of 16 bytes, the process is complete as
+                          ; described. Otherwise, we are going to calculate the "rest" 
+                          ; (modulus) of the copy. In order to make the process efficient, 
+                          ; we will first calculate the remaining part (the "modulus", in fact) 
+                          ; and then we will proceed to copy the rest as quickly as possible,
+                          ;  which will be a multiple of 16 bytes,
+                      
+35E6                  DUFFDEVICELX
+                      
+                          ; Let's put up some numbers (we consider only even sizes):
+                          ;
+                          ; - (original) size:  2    (16 byte) blocks: 0     (rest) block size:  2 bytes
+                          ; - "             ":  4    "              ": 0     "               ":  4 bytes
+                          ; - "             ":  6    "              ": 0     "               ":  6 bytes
+                          ; - "             ":  8    "              ": 0     "               ":  8 bytes
+                          ; - "             ": 10    "              ": 0     "               ": 10 bytes
+                          ; - "             ": 12    "              ": 0     "               ": 12 bytes
+                          ; - "             ": 14    "              ": 0     "               ": 14 bytes
+                          ; - "             ": 16    "              ": 1     "               ":  0 bytes
+                          ; - "             ": 18    "              ": 1     "               ":  2 bytes
+                          ; - ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ...
+                          ; - ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ...
+                          ; - ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ...
+                          ;
+                          ; In D register we have the original size (divided by 2). So we have to 
+                          ; calculate, first of all, the size of the rest block size.
+                          ;
+                          ; RBS = ( 2 * D ) MOD 16 = ( 2 * D ) MOD ( 2 * 8 ) = D MOD 8 = B AND #$7
+                              
+                          ; So we save the (halved) size to copy.
+                      
+35E6  3406                    PSHS D
+                      
+                          ; and calculate the block size.
+                      
+35E8  C407                    ANDB #7
+35EA  58                      LSLB
+                      
+                          ; If it is zero, it means that no (rest) block size has to be managed.
+                      
+35EB  2718                    BEQ DUFFDEVICELXNR
+                      
+                          ; Othewise, we have to replace the standard block size (16 bytes) with
+                          ; the rest block size. This is done by automodification technique.
+                      
+35ED  F7362B                  STB DUFFDEVICEL0A + 2
+35F0  F7362E                  STB DUFFDEVICEL0B + 2
+                      
+                          ; Moreover, we must replace the subtraction terms for the loop counter.
+                          ; Again, this is done by automodification technique. Note that the
+                          ; loop counter thinks in terms of "2 bytes" so we must store the
+                          ; half of the block size.
+                      
+35F3  54                      LSRB
+35F4  F73631                  STB DUFFDEVICEL0D + 2
+                      
+                          ; Finally, we must calculate the address (offset) of the first command 
+                          ; needed to copy the memory from source to destination. In order to 
+                          ; understand which is the offset, we must take in count of this
+                          ; numbers:
+                          ;
+                          ; - (original) size:  2    (rest) block size:  2 bytes  offset:     28
+                          ; - "             ":  4    "               ":  4 bytes              24
+                          ; - "             ":  6    "               ":  6 bytes              20
+                          ; - "             ":  8    "               ":  8 bytes              16
+                          ; - "             ": 10    "               ": 10 bytes              12
+                          ; - "             ": 12    "               ": 12 bytes              08
+                          ; - "             ": 14    "               ": 14 bytes              04
+                          ;
+                          ; 00: LDU 14, Y
+                          ; 02: STU 14, X
+                          ; 04: LDU 12, Y
+                          ; 06: STU 12, X
+                          ; .....
+                          ; 24: LDU 2, Y
+                          ; 26: STU 2, X
+                          ; 28: LDU , Y
+                          ; 30: STU , X
+                          ;
+                          ; The formula is 32 - 4 * ( rest block size / 2 ) = 32 - 4 * B
+                      
+35F7  8604                    LDA #4
+35F9  3D                      MUL
+35FA  F73652                  STB DUFFDELTA
+35FD  C620                    LDB #32
+35FF  F03652                  SUBB DUFFDELTA
+3602  F73608                  STB DUFFDEVICEL0+1
+                      
+                          ; If we reach this point, nothing has to be customized since the
+                          ; memory to copy is multiple of 16 bytes.
+                      
+3605                  DUFFDEVICELXNR
+                              
+                          ; Restore the (halved) size to copy.
+                      
+3605  3506                    PULS D
+                      
+                          ; Move to the first command of the unrolled loop.
+                          ; This address could be different if (rest) block size.
+                      
+3607                  DUFFDEVICEL0
+3607  2000                    BRA DUFFDEVICEL1
+                      
+                          ; This is the unrolled loop to copy 16 bytes at each round.
+                          ; If the memory to copy is not multiple of 16 bytes, the
+                          ; first time we will jump "inside" the loop, in order to copy
+                          ; only a part of the block (< 16 bytes).
+                      
+3609                  DUFFDEVICEL1
+3609  EE2E                    LDU 14,Y 
+360B  EF0E                    STU 14,X 
+360D  EE2C                    LDU 12,Y 
+360F  EF0C                    STU 12,X 
+3611  EE2A                    LDU 10,Y 
+3613  EF0A                    STU 10,X 
+3615  EE28                    LDU 8,Y 
+3617  EF08                    STU 8,X 
+3619  EE26                    LDU 6,Y 
+361B  EF06                    STU 6,X 
+361D  EE24                    LDU 4,Y 
+361F  EF04                    STU 4,X 
+3621  EE22                    LDU 2,Y 
+3623  EF02                    STU 2,X 
+3625  EEA4                    LDU ,Y 
+3627  EF84                    STU ,X 
+                      
+                          ; Move the destination address ahead of the *actual*
+                          ; block size. Normally it is 16 but not in the first
+                          ; block copied, that is equal to the (rest) block size.
+                      
+3629                  DUFFDEVICEL0A
+3629  308810                  LEAX 16,X 
+                      
+                          ; Move the source address ahead of the *actual*
+                          ; block size. Normally it is 16 but not in the first
+                          ; block copied, that is equal to the (rest) block size.
+                      
+362C                  DUFFDEVICEL0B
+362C  31A810                  LEAY 16,Y
+                      
+                          ; Decrement the counter of the size of the block. Normally
+                          ; it is 8 (2x8 = 16 bytes) but it could be lesser in case
+                          ; of the first loop for a movement that is not multiple
+                          ; of 16 bytes.
+                      
+362F                  DUFFDEVICEL0D
+362F  830008                  SUBD #$8
+                      
+                          ; Finally, if D <= 0 we can exit the copy process.
+                          ; Actually, we could just check for D = 0 but I am not
+                          ; sure that the algorithm is corrected.
+                      
+3632  2B1D                    BMI DUFFDEVICEDONE
+3634  271B                    BEQ DUFFDEVICEDONE
+                      
+                          ; We can reach this point in two different moments: 
+                          ; on the first run of the loop, or the n-th one.
+                          ; If this is the first time we reach this label,
+                          ; the BRA DUFFDEVICEL1 has been replaced by NOP NOP:
+                          ; this means that the execution will continue to the
+                          ; following istructions. Otherwise, this will move
+                          ; to the next round.
+                      
+3636                  DUFFDEVICEL0C
+3636  20D1                    BRA DUFFDEVICEL1
+                      
+                          ; If we reached this line, we have copied the very
+                          ; first block, that could be smaller than 16 bytes.
+                          ; At this point, we must replace the block size 
+                          ; with the standard block size (16 bytes)
+                          ; This is done by automodification technique.
+                              
+3638  3406                    PSHS D
+                      
+                          ; Replace the displacement for each loop.
+                      
+363A  C610                    LDB #16
+363C  F7362B                  STB DUFFDEVICEL0A+2
+363F  F7362E                  STB DUFFDEVICEL0B+2
+                      
+                          ; Replace the decrement for each loop.
+                      
+3642  C608                    LDB #8
+3644  F73631                  STB DUFFDEVICEL0D+2
+                      
+                          ; Replace the NOPs with a jump to the first
+                          ; instruction of the unrolled loop.
+                      
+3647  CC20D1                  LDD #$20D1
+364A  FD3636                  STD DUFFDEVICEL0C
+                      
+364D  3506                    PULS D
+                      
+                          ; Finally, jump to the first instruction
+                          ; of the unrolled loop.
+                      
+364F  20B8                    BRA DUFFDEVICEL1
+                      
+3651                  DUFFDEVICEDONE
+3651  39                      RTS
+                      
+3652                  DUFFDELTA
+3652  00                      FCB $0
+3653                  duff_after
+                              IF (((128+cpu_mem_move_after-(*+2))|(127-cpu_mem_move_after+(*+2)))&0x8000)
+                              JMP cpu_mem_move_after
+                              ELSE
+3653  2000                    BRA cpu_mem_move_after
+                              ENDIF
+                      ; /*****************************************************************************
+                      ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+                      ;  *****************************************************************************
+                      ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+                      ;  *
+                      ;  * Licensed under the Apache License, Version 2.0 (the "License");
+                      ;  * you may not use this file except in compliance with the License.
+                      ;  * You may obtain a copy of the License at
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Unless required by applicable law or agreed to in writing, software
+                      ;  * distributed under the License is distributed on an "AS IS" BASIS,
+                      ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                      ;  * See the License for the specific language governing permissions and
+                      ;  * limitations under the License.
+                      ;  *----------------------------------------------------------------------------
+                      ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+                      ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+                      ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+                      ;  *
+                      ;  * http://www.apache.org/licenses/LICENSE-2.0
+                      ;  *
+                      ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+                      ;  * il software distribuito nei termini della Licenza è distribuito
+                      ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+                      ;  * implicite. Consultare la Licenza per il testo specifico che regola le
+                      ;  * autorizzazioni e le limitazioni previste dalla medesima.
+                      ;  ****************************************************************************/
+                      ; CPUMEMMOVE
+                      ;     CMPU #0
+                      ;     BEQ CPUMEMMOVEDONE
+                      ; CPUMEMMOVEL1
+                      ;     LDA ,Y+
+                      ;     STA ,X+
+                      ;     LEAU -1,U
+                      ;     CMPU #$0
+                      ;     BNE CPUMEMMOVEL1
+                      ; CPUMEMMOVEDONE
+                      ;     RTS
+3655                  cpu_mem_move_after
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;       LDA #0
+3655  4F                      CLRA
+3656  F635B0                  LDB _Ttmp118
+                      ; peephole(7): inlined1
+                      ;       LDY _Ttmp117
+3659  108E0000                LDY #1-1
+365B                  _Ttmp117 equ *-2
+                      ; peephole(7): inlined1
+                      ;       LDX _Ttmp119
+365D  8E0000                  LDX #1-1
+365E                  _Ttmp119 equ *-2
+3660  BD35C4                  JSR DUFFDEVICE
+3663  4F                      CLRA
+3664  B700D3                  STA XCURSYS
+3667  7C00D6                  INC YCURSYS
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+                      ; peephole(7): inlined1
+                      ;       LDB CURRENTTILESHEIGHT
+366A  C610                    LDB #16
+366B                  CURRENTTILESHEIGHT equ *-1
+366C  F7377F                  STB _Ttmp123
+366F  F6377F                  LDB _Ttmp123
+3672  C47F                    ANDB #$7f
+3674  F7377F                  STB _Ttmp123
+3677  5F                      CLRB
+3678  B600D6                  LDA YCURSYS
+367B  B1377F                  CMPA _Ttmp123
+367E  2D01                    BLT _label126
+3680  5A                      DECB
+3681                  _label126
+3681  F73685                  STB _Ttmp125
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp125
+3684  C600                    LDB #1-1
+3685                  _Ttmp125 equ *-1
+                              IF (((128+_label121scroll-(*+2))|(127-_label121scroll+(*+2)))&0x8000)
+                              LBNE _label121scroll
+                              ELSE
+3686  2602                    BNE _label121scroll
+                              ENDIF
+                              IF (((128+_label121end-(*+2))|(127-_label121end+(*+2)))&0x8000)
+                              JMP _label121end
+                              ELSE
+3688  2011                    BRA _label121end
+                              ENDIF
+368A                  _label121scroll
+368A  86FF                    LDA #$ff
+368C  B7004A                  STA DIRECTION
+368F  BD2DBA                  JSR VSCROLLT
+3692  F6366B                  LDB CURRENTTILESHEIGHT
+3695  F700D6                  STB YCURSYS
+3698  7A00D6                  DEC YCURSYS
+369B                  _label121end
+                              ; P:877
+                              ; L:6
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp129
+369B  C600                    LDB #1-1
+369C                  _Ttmp129 equ *-1
+369D  BD312B                  JSR DSFREE
+36A0  108E378C                LDY #_Tstr127
+36A4  BD3119                  JSR DSDEFINE
+36A7  F7369C                  STB _Ttmp129
+                      ; peephole(7): inlined1
+                      ;       LDB _Ttmp130
+36AA  C600                    LDB #1-1
+36AB                  _Ttmp130 equ *-1
+36AC  BD312B                  JSR DSFREE
+36AF  108E378C                LDY #_Tstr127
+36B3  BD3119                  JSR DSDEFINE
+36B6  F736AB                  STB _Ttmp130
+36B9  F636AB                  LDB _Ttmp130
+36BC  BD317F                  JSR DSDESCRIPTOR
+36BF  EC01                    LDD 1,X 
+                      ; peephole(7): direct-page1
+                      ;       STD _Ttmp8
+36C1  DDF2                    STD <_Ttmp8
+36C3  A684                    LDA ,X 
+                      ; peephole(7): direct-page1
+                      ;       STA _Ttmp18
+36C5  97F7                    STA <_Ttmp18
+36C7  F635AB                  LDB _sentence
+36CA  BD317F                  JSR DSDESCRIPTOR
+36CD  EC01                    LDD 1,X 
+36CF  FD3776                  STD _Ttmp30
+36D2  A684                    LDA ,X 
+                      ; peephole(7): direct-page1
+                      ;       STA _Ttmp19
+36D4  97F0                    STA <_Ttmp19
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp18
+36D6  D6F7                    LDB <_Ttmp18
+                      ; peephole(7): direct-page1
+                      ;       ADDB _Ttmp19
+36D8  DBF0                    ADDB <_Ttmp19
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp21
+36DA  D7FA                    STB <_Ttmp21
+36DC  F63780                  LDB _Ttmp131
+36DF  BD312B                  JSR DSFREE
+                      ; peephole(7): direct-page1
+                      ;       LDA _Ttmp21
+36E2  96FA                    LDA <_Ttmp21
+36E4  BD31E0                  JSR DSALLOC
+36E7  F73780                  STB _Ttmp131
+36EA  F63780                  LDB _Ttmp131
+36ED  BD317F                  JSR DSDESCRIPTOR
+36F0  EC01                    LDD 1,X 
+                      ; peephole(7): direct-page1
+                      ;       STD _Ttmp54
+36F2  DDF4                    STD <_Ttmp54
+36F4  A684                    LDA ,X 
+                      ; peephole(7): direct-page1
+                      ;       STA _Ttmp21
+36F6  97FA                    STA <_Ttmp21
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;       LDA #0
+36F8  4F                      CLRA
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp18
+36F9  D6F7                    LDB <_Ttmp18
+                      ; peephole(7): direct-page1
+                      ;       LDY _Ttmp8
+36FB  109EF2                  LDY <_Ttmp8
+                      ; peephole(7): direct-page1
+                      ;       LDX _Ttmp54
+36FE  9EF4                    LDX <_Ttmp54
+3700  BD35C4                  JSR DUFFDEVICE
+                      ; peephole(7): direct-page1
+                      ;       LDX _Ttmp54
+3703  9EF4                    LDX <_Ttmp54
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp18
+3705  D6F7                    LDB <_Ttmp18
+3707  3A                      ABX
+                      ; peephole(7): direct-page1
+                      ;       STX _Ttmp54
+3708  9FF4                    STX <_Ttmp54
+                      ; peephole(1): r354 (LOAD#0)->(CLEAR)
+                      ;       LDA #0
+370A  4F                      CLRA
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp19
+370B  D6F0                    LDB <_Ttmp19
+370D  10BE3776                LDY _Ttmp30
+                      ; peephole(7): direct-page1
+                      ;       LDX _Ttmp54
+3711  9EF4                    LDX <_Ttmp54
+3713  BD35C4                  JSR DUFFDEVICE
+3716  F63780                  LDB _Ttmp131
+3719  BD317F                  JSR DSDESCRIPTOR
+371C  EC01                    LDD 1,X 
+371E  FD377B                  STD _Ttmp61
+3721  A684                    LDA ,X 
+3723  B73778                  STA _Ttmp31
+3726  10BE377B                LDY _Ttmp61
+372A  10BF0001                STY TEXTPTR
+372E  B63778                  LDA _Ttmp31
+3731  B70003                  STA TEXTSIZE
+3734  BD2EBA                  JSR TEXTATTILEMODE
+3737  4F                      CLRA
+3738  B700D3                  STA XCURSYS
+373B  7C00D6                  INC YCURSYS
+                               ; variable_move_8bit_8bit
+                               ; 8 BIT (unsigned) -> 8 BIT (signed)
+373E  F6366B                  LDB CURRENTTILESHEIGHT
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp24
+3741  D7F8                    STB <_Ttmp24
+                      ; peephole(7): direct-page1
+                      ;       LDB _Ttmp24
+3743  D6F8                    LDB <_Ttmp24
+3745  C47F                    ANDB #$7f
+                      ; peephole(7): direct-page1
+                      ;       STB _Ttmp24
+3747  D7F8                    STB <_Ttmp24
+3749  5F                      CLRB
+374A  B600D6                  LDA YCURSYS
+                      ; peephole(7): direct-page1
+                      ;       CMPA _Ttmp24
+374D  91F8                    CMPA <_Ttmp24
+374F  2D01                    BLT _label136
+3751  5A                      DECB
+3752                  _label136
+3752  F73775                  STB _Ttmp27
+3755  F63775                  LDB _Ttmp27
+                              IF (((128+_label134scroll-(*+2))|(127-_label134scroll+(*+2)))&0x8000)
+                              LBNE _label134scroll
+                              ELSE
+3758  2602                    BNE _label134scroll
+                              ENDIF
+                              IF (((128+_label134end-(*+2))|(127-_label134end+(*+2)))&0x8000)
+                              JMP _label134end
+                              ELSE
+375A  2011                    BRA _label134end
+                              ENDIF
+375C                  _label134scroll
+375C  86FF                    LDA #$ff
+375E  B7004A                  STA DIRECTION
+3761  BD2DBA                  JSR VSCROLLT
+3764  F6366B                  LDB CURRENTTILESHEIGHT
+3767  F700D6                  STB YCURSYS
+376A  7A00D6                  DEC YCURSYS
+376D                  _label134end
+                              ; P:95
+                              ; L:7
+                              IF (((128+_label1-(*+2))|(127-_label1+(*+2)))&0x8000)
+376D  7E2D9A                  JMP _label1
+                              ELSE
+                              BRA _label1
+                              ENDIF
+3770                  _label1bis
+                              ; P:6
+                              ; L:8
+                              ; P:0
+                              ; L:9
+                              ; P:0
+                              ; L:10
+                              ; P:0
+3770                  _label137
+                              IF (((128+_label137-(*+2))|(127-_label137+(*+2)))&0x8000)
+                              JMP _label137
+                              ELSE
+3770  20FE                    BRA _label137
+                              ENDIF
+                      ; peephole(7): inlined3
+                      ;_PEN rzb 1
+                      ; peephole(4): unread2
+                      ;_PAPER rzb 1
+                      ; peephole(4): unread2
+                      ;_windowE rzb 1
+                      ; peephole(4): unread2
+                      ;_windowS rzb 1
+                      ; peephole(4): unread2
+                      ;_windowW rzb 1
+37AC                  _TAB equ cstring0
+                      ; peephole(4): unread2
+                      ;_windowMX rzb 1
+                      ; peephole(4): unread2
+                      ;_windowMY rzb 1
+                      ; peephole(7): inlined3
+                      ;_finished rzb 2
+                      ; peephole(7): inlined3
+                      ;_sentence rzb 1
+0200                  max_free_string equ $0200
+                      ; peephole(4): unread2
+                      ;_Ttmp2 rzb 2
+                      ; peephole(7): direct-page4
+                      ;_Ttmp3 rzb 1
+00F1                  _Ttmp3 equ $f1
+                      ; peephole(7): direct-page4
+                      ;_Ttmp4 rzb 1
+00F9                  _Ttmp4 equ $f9
+379A                  _Tstr5 equ cstring6
+                      ; peephole(7): direct-page4
+                      ;_Ttmp8 rzb 2
+00F2                  _Ttmp8 equ $f2
+                      ; peephole(7): direct-page4
+                      ;_Ttmp12 rzb 1
+00FB                  _Ttmp12 equ $fb
+                      ; peephole(7): inlined3
+                      ;_Ttmp13 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp14 rzb 1
+3772  00              _Ttmp15 rzb 1
+3773  00              _Ttmp16 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp17 rzb 1
+                      ; peephole(7): direct-page4
+                      ;_Ttmp18 rzb 1
+00F7                  _Ttmp18 equ $f7
+                      ; peephole(7): direct-page4
+                      ;_Ttmp19 rzb 1
+00F0                  _Ttmp19 equ $f0
+3774  00              _Ttmp20 rzb 1
+                      ; peephole(7): direct-page4
+                      ;_Ttmp21 rzb 1
+00FA                  _Ttmp21 equ $fa
+                      ; peephole(7): direct-page4
+                      ;_Ttmp24 rzb 1
+00F8                  _Ttmp24 equ $f8
+3775  00              _Ttmp27 rzb 1
+3776  0000            _Ttmp30 rzb 2
+3778  00              _Ttmp31 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp33 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp34 rzb 1
+3779  00              _Ttmp37 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp38 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp39 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp41 rzb 1
+377A  00              _Ttmp43 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp44 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp45 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp47 rzb 1
+                      ; peephole(7): direct-page4
+                      ;_Ttmp54 rzb 2
+00F4                  _Ttmp54 equ $f4
+                      ; peephole(7): inlined3
+                      ;_Ttmp55 rzb 1
+377B  0000            _Ttmp61 rzb 2
+                      ; peephole(7): inlined3
+                      ;_Ttmp62 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp64 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp65 rzb 1
+                      ; peephole(7): direct-page4
+                      ;_Ttmp68 rzb 1
+00FF                  _Ttmp68 equ $ff
+                      ; peephole(4): unread2
+                      ;_Ttmp69 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp70 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp72 rzb 1
+                      ; peephole(7): direct-page4
+                      ;_Ttmp74 rzb 1
+00FE                  _Ttmp74 equ $fe
+                      ; peephole(4): unread2
+                      ;_Ttmp75 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp76 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp78 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp80 rzb 2
+                      ; peephole(7): inlined3
+                      ;_Ttmp81 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp83 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp84 rzb 1
+                      ; peephole(7): direct-page4
+                      ;_Ttmp87 rzb 1
+00FD                  _Ttmp87 equ $fd
+                      ; peephole(4): unread2
+                      ;_Ttmp88 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp89 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp91 rzb 1
+                      ; peephole(7): direct-page4
+                      ;_Ttmp93 rzb 1
+00FC                  _Ttmp93 equ $fc
+                      ; peephole(4): unread2
+                      ;_Ttmp94 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp95 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp97 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp99 rzb 2
+                      ; peephole(7): inlined3
+                      ;_Ttmp100 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp102 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp103 rzb 1
+377D  00              _Ttmp106 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp107 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp108 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp110 rzb 1
+377E  00              _Ttmp112 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp113 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp114 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp116 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp117 rzb 2
+                      ; peephole(7): inlined3
+                      ;_Ttmp118 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp119 rzb 2
+                      ; peephole(4): unread2
+                      ;_Ttmp120 rzb 1
+377F  00              _Ttmp123 rzb 1
+                      ; peephole(4): unread2
+                      ;_Ttmp124 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp125 rzb 1
+378C                  _Tstr127 equ cstring128
+                      ; peephole(7): inlined3
+                      ;_Ttmp129 rzb 1
+                      ; peephole(7): inlined3
+                      ;_Ttmp130 rzb 1
+3780  00              _Ttmp131 rzb 1
+3781                  VARINIT
+                      ; peephole(1): r803 (LDB#,STB,CLRA)->(LDD#,STB)
+                      ;       LDB #$01
+3781  CC0001                  LDD #$0001
+                      ; peephole(4): unread1
+                      ;       STA _PAPER
+                      ; peephole(4): unread1
+                      ;       STA _windowE
+                      ; peephole(1): r736 [A=0](CLRA)->()
+                      ;       CLRA
+                      ; peephole(4): unread1
+                      ;       STA _windowS
+                      ; peephole(1): r736 [A=0](CLRA)->()
+                      ;       CLRA
+                      ; peephole(4): unread1
+                      ;       STA _windowW
+                      ; peephole(1): r736 [A=0](CLRA)->()
+                      ;       CLRA
+                      ; peephole(4): unread1
+                      ;       STA _windowMX
+                      ; peephole(1): r736 [A=0](CLRA)->()
+                      ;       CLRA
+                      ; peephole(4): unread1
+                      ;       STA _windowMY
+                      ; peephole(1): r745 [A=0](LDD#00xx)->(LDB#xx)
+                      ;       LDD #$0000
+                      ; peephole(2): r354 (LOAD#0)->(CLEAR)
+                      ;       LDB #$00
+3784  F73096                  STB _PEN
+                      ;       CLRA
+                      ; peephole(2): r736 [A=0](CLRA)->()
+                      ;       CLRA
+3787  5F                      CLRB
+3788  FD2D9B                  STD _finished
+378B  39                      RTS
+378C  0D              cstring128 fcb 13
+378D  596F7520456E74657265643A20         fcc "You Entered: "
+379A  11              cstring6 fcb 17
+379B  456E74657220736F6D6520746578743A20         fcc "Enter some text: "
+37AC  01              cstring0 fcb 1
+37AD  09                      fcc $09
+0020                  MAXSTRINGS                    equ 32
+37AE  0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 DESCRIPTORS                   rzb 128
+382E  0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 WORKING                       rzb 512
+3A2E  0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 TEMPORARY                     rzb 512
+3C2E  0200            FREE_STRING                   fdb 512
+                      ; peephole: pass 1, 60 changes.
+                      ; peephole: pass 2, 11 changes.
+                      ; peephole: pass 3, 0 change.
+                      ; peephole: pass 4, 43 vars removed.
+                      ; peephole: pass 5, 0 change.
+                      ; peephole: pass 6, 0 var removed.
+                      ; peephole: pass 7, 13 vars moved to dp, 36 vars inlined.

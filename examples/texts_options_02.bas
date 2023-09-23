@@ -14,7 +14,7 @@ REM delle stringhe. In altre parole, è possibile incorporare un numero
 REM arbitrario di comandi ''PEN'' all'interno di una stringa. Quando 
 REM la stringa viene stampata, il colore della penna verrà modificato di conseguenza.
 REM
-REM @include c128
+REM @include c128,coco3
 
     CLS
 
