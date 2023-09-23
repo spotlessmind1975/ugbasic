@@ -13,8 +13,7 @@ REM Si tratta di un tipo di dato che memorizza solo il valore 0 oppure il
 REM valore 1. Questo esempio mostra come definire una variabile bit e come 
 REM accedervi.
 REM
-REM @include atari,atarixl,c128,c128z,c64,coco,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,vic20,zx
-REM @version beta
+REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,vic20,zx
 
     CLS
     
