@@ -211,10 +211,11 @@ void gime_bank_select( Environment * _environment, int _bank ) {
 
 #define GIME_MODE( _graphics, _linesize ) \
     outline1( "LDA #$%2.2x", ( ( _graphics & 0x01 ) << 7 ) | ( _linesize & 0x03 ) ); \
-    outline0( "STA GIMEVIDM" );
+    outline0( "STA GIMEVIDM" ); \
+    outline0( "STA GIMEVIDMSHADOW" );
 
 #define GIME_TEXT( )       GIME_MODE( 0, 3 )
-#define GIME_GRAPH( )      GIME_MODE( 1, 0 )
+#define GIME_GRAPH( )      GIME_MODE( 1, 1 )
 
 #define GIME_24ROWS         0
 #define GIME_25ROWS         1
@@ -1003,6 +1004,21 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
     _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
 
+    int currentFrameSize;
+
+    switch( _environment->screenColors ) {
+        case 2:
+            currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight );
+            break;
+        case 4:
+            currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight ) * 2;
+            break;
+        case 16:
+        default:
+            currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight ) * 4;
+            break;
+    }
+
     cpu_store_16bit( _environment, "ORIGINX", 0 );
     cpu_store_16bit( _environment, "ORIGINY", 0 );
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
@@ -1013,20 +1029,7 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );
-
-    int bpp = 1;
-    switch( _environment->screenColors ) {
-        case 2:
-            cpu_store_16bit( _environment, "CURRENTFRAMESIZE", ( ( _environment->screenWidth / 8 ) * _environment->screenHeight ) );
-            break;
-        case 4:
-            cpu_store_16bit( _environment, "CURRENTFRAMESIZE", ( ( _environment->screenWidth / 4 ) * _environment->screenHeight ) );
-            break;
-        case 16:
-        default:
-            cpu_store_16bit( _environment, "CURRENTFRAMESIZE", ( ( _environment->screenWidth / 2 ) * _environment->screenHeight ) );
-            break;
-    }
+    cpu_store_16bit( _environment, "CURRENTFRAMESIZE", currentFrameSize );
 
 }
 

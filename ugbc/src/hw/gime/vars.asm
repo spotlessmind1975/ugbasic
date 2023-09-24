@@ -89,3 +89,4 @@ PALETTEPEN                 fcb $00, $12, $00, $3f, $00, $12, $00, $26
 PALETTEPENUNUSED           fcb 0
 PALETTEPAPERUNUSED         fcb 0
 PALETTELIMIT               fcb 0
+GIMEVIDMSHADOW             fcb 0
