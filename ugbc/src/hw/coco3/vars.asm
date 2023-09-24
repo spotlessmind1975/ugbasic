@@ -35,8 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTADDRESS         fdb     $c000
-BITMAPADDRESS       fdb     $c000
+TEXTADDRESS         fdb     $e000
+BITMAPADDRESS       fdb     $e000
 COLORMAPADDRESS     fdb     $0000
 CURRENTMODE         fcb     $0
 CURRENTTILEMODE     fcb     1

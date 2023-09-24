@@ -1023,11 +1023,11 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         currentFrameSize =  _environment->screenTilesWidth * _environment->screenTilesHeight * 2;
     }
 
-    // if ( currentFrameSize <= 0x2000 ) {
-    //     cpu_store_8bit( _environment, "GIMEMMUSTART", 3 );
-    //     cpu_store_16bit( _environment, "BITMAPADDRESS", 0xe000 );
-    //     cpu_store_16bit( _environment, "TEXTADDRESS", 0xe000 );
-    // } else 
+    if ( currentFrameSize <= 0x2000 ) {
+        cpu_store_8bit( _environment, "GIMEMMUSTART", 3 );
+        cpu_store_16bit( _environment, "BITMAPADDRESS", 0xe000 );
+        cpu_store_16bit( _environment, "TEXTADDRESS", 0xe000 );
+    } else 
     if ( currentFrameSize <= 0x4000 ) {
         cpu_store_8bit( _environment, "GIMEMMUSTART", 2 );
         cpu_store_16bit( _environment, "BITMAPADDRESS", 0xc000 );
