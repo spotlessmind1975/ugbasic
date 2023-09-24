@@ -70,6 +70,58 @@ GIMEMMUD   equ   $FFAD
 GIMEMMUE   equ   $FFAE
 GIMEMMUF   equ   $FFAF
 
+    ; +-----------+
+    ; | GIMEMMU4 | ----> #$30
+    ; +-----------+
+    ; | GIMEMMU5 | ----> #$30/#$31
+    ; +-----------+
+    ; | GIMEMMU6 | ----> #$30/#$31/#$32
+    ; +-----------+
+    ; | GIMEMMU7 | ----> #$30/#$31/#$32/#$33
+    ; +-----------+
+
+GIMERAM
+    ANDCC #$FE
+    LDA GIMEMMUSTART
+    LDX #GIMEMMU4
+    LEAX A, X
+    LDA #$30
+    LDB GIMEMMUSTART
+ISVCIRQGRAPHL2
+    STA ,X
+	LEAX 1, X
+    INCA
+    INCB
+    CMPB #4
+    BNE ISVCIRQGRAPHL2
+	RTS
+
+
+    ; +-----------+
+    ; | GIMEMMU4 | ----> #$3C
+    ; +-----------+
+    ; | GIMEMMU5 | ----> #$3D
+    ; +-----------+
+    ; | GIMEMMU6 | ----> #$3E
+    ; +-----------+
+    ; | GIMEMMU7 | ----> #$3F
+    ; +-----------+
+
+GIMEROM
+    ANDCC #$FE
+    LDA GIMEMMUSTART
+    LDX #GIMEMMU4
+    LEAX A, X
+    ADDA #$3C
+    LDB GIMEMMUSTART
+ISVCIRQGRAPHL1
+    STA ,X
+	LEAX 1, X
+    INCA
+    INCB
+    CMPB #4
+    BNE ISVCIRQGRAPHL1
+
 GIMESTARTUP
 
 	LDA   #%01001100
@@ -86,6 +138,8 @@ GIMESTARTUP
 	STA   GIMEVOFF1
 	CLR   GIMEVOFF0
 	CLR   GIMEHOFF
+
+    JSR GIMERAM
 
     ; LDA   #$30
     ; STA   GIMEMMU6

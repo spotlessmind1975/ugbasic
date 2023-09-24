@@ -90,3 +90,4 @@ PALETTEPENUNUSED           fcb 0
 PALETTEPAPERUNUSED         fcb 0
 PALETTELIMIT               fcb 0
 GIMEVIDMSHADOW             fcb 0
+GIMEMMUSTART               fcb 3
