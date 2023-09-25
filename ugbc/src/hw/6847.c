@@ -1010,6 +1010,8 @@ void c6847_initialization( Environment * _environment ) {
     variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
     variable_global( _environment, "RESOLUTIONY" );
 
+    font_descriptors_init( _environment, 0 );
+
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 32;
