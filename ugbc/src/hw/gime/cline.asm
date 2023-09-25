@@ -47,11 +47,11 @@ CLINET
     LSLA
     LSLA
     LSLA
-    STA -42, S
+    STA PLOTC
     LDB _PAPER
     JSR GIMESELECTPALETTEPAPER
-    ORA -42, S
-    STA -42, S
+    ORA PLOTC
+    STA PLOTC
     
     LDX TEXTADDRESS
 
@@ -79,7 +79,7 @@ CLINESKIP
 CLINEINCX
     
     LDA EMPTYTILE
-    LDB -42, S
+    LDB PLOTC
 
     STD ,X
     LEAX 2, X    
@@ -103,7 +103,7 @@ CLINEENTIRE
 CLINEINC2X
 
     LDA EMPTYTILE
-    LDB -42, S
+    LDB PLOTC
 
     STD , X
     LEAX 2, X

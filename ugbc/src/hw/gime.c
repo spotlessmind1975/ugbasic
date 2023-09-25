@@ -1316,9 +1316,9 @@ void gime_text( Environment * _environment, char * _text, char * _text_size ) {
         deploy( textEncodedAtText, src_hw_gime_text_at_text_asm );
         outline0("JSR TEXTATTILEMODE");
     } else {
-        // deploy( clsGraphic, src_hw_gime_cls_graphic_asm );
-        // deploy( textEncodedAtGraphic, src_hw_gime_text_at_graphic_asm );
-        // outline0("JSR TEXTATBITMAPMODE");
+        deploy( clsGraphic, src_hw_gime_cls_graphic_asm );
+        deploy( textEncodedAtGraphic, src_hw_gime_text_at_graphic_asm );
+        outline0("JSR TEXTATBITMAPMODE");
     }
 
 }
@@ -1466,6 +1466,8 @@ void gime_initialization( Environment * _environment ) {
     _environment->screenColors = 16;
 
     gime_tilemap_enable( _environment, 40, 25, 16, 8, 8 );
+
+    font_descriptors_init( _environment, 0 );
 
     gime_cls( _environment );
 

@@ -120,11 +120,11 @@ TEXTATGO
     LSLA
     LSLA
     LSLA
-    STA -42, S
+    STA PLOTC
     LDB _PAPER
     JSR GIMESELECTPALETTEPAPER
-    ORA -42, S
-    STA -42, S
+    ORA PLOTC
+    STA PLOTC
 
     ; Load the starting address of the video ram
     ; in a specific location, as a copy. This makes
@@ -307,16 +307,16 @@ TEXTATPEN
 TEXTATPEN2
     PSHS D
     STA _PEN
-    LDA -42, S
+    LDA PLOTC
     ANDA #$C7
-    STA -42, S
+    STA PLOTC
     LDB _PEN
     JSR GIMESELECTPALETTEPEN
     LSLA
     LSLA
     LSLA
-    ORA -42, S
-    STA -42, S
+    ORA PLOTC
+    STA PLOTC
     PULS D
 
     ; Move to the next character to print.
@@ -358,13 +358,13 @@ TEXTATPAPER
 TEXTATPAPER2
     PSHS D
     STA _PAPER
-    LDA -42, S
+    LDA PLOTC
     ANDA #$F8
-    STA -42, S
+    STA PLOTC
     LDB _PAPER
     JSR GIMESELECTPALETTEPAPER
-    ORA -42, S
-    STA -42, S
+    ORA PLOTC
+    STA PLOTC
     PULS D
 
     ; Move to the next character to print.
@@ -543,7 +543,7 @@ TEXTATSP0
     LDA , X
     ANDA #$C7
     STA , X
-    LDA -42, S
+    LDA PLOTC
     ANDA #$F8
     ORA , X
     STA , X
@@ -561,7 +561,7 @@ TEXTATCNOPEN
     LDA , X
     ANDA #$F8
     STA , X
-    LDA -42, S
+    LDA PLOTC
     ANDA #$C7
     ORA , X
     STA , X
@@ -579,7 +579,7 @@ TEXTATCNOPAPER
 
 TEXTATSP0C
 
-    LDA -42, S
+    LDA PLOTC
     STA , X
     LEAX 1, X
     JMP TEXTATINCX

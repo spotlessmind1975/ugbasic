@@ -45,7 +45,7 @@ CLSGX
 
     LDB _PAPER
     JSR GIMESELECTPALETTE
-    STA -42, S
+    STA PLOTC
 
     LDA CURRENTMODE
     ANDA #$E0
@@ -58,53 +58,53 @@ CLSGX
     RTS
 
 CLSGB16
-    LDA -42, S
+    LDA PLOTC
     LSLA
     LSLA
     LSLA
     LSLA
-    ORA -42, S
-    STA -42, S
+    ORA PLOTC
+    STA PLOTC
     JMP CLSGGO
 
 CLSGB4
-    LDA -42, S
+    LDA PLOTC
     LSLA
     LSLA
-    ORA -42, S
+    ORA PLOTC
     LSLA
     LSLA
-    ORA -42, S
+    ORA PLOTC
     LSLA
     LSLA
-    ORA -42, S
-    STA -42, S
+    ORA PLOTC
+    STA PLOTC
     JMP CLSGGO
 
 CLSGB2
-    LDA -42, S
+    LDA PLOTC
     LSLA
-    ORA -42, S
+    ORA PLOTC
     LSLA
-    ORA -42, S
+    ORA PLOTC
     LSLA
-    ORA -42, S
+    ORA PLOTC
     LSLA
-    ORA -42, S
+    ORA PLOTC
     LSLA
-    ORA -42, S
+    ORA PLOTC
     LSLA
-    ORA -42, S
+    ORA PLOTC
     LSLA
-    ORA -42, S
-    STA -42, S
+    ORA PLOTC
+    STA PLOTC
     JMP CLSGGO
 
 CLSGGO
     LDU CURRENTFRAMESIZE
     LDX BITMAPADDRESS
 
-    LDA -42, S
+    LDA PLOTC
 
 CLSGX0
     STA ,X+

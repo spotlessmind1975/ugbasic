@@ -35,8 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PLOTX   EQU $41 ; $42
-PLOTY   EQU $43
 PLOTM   EQU $45
 PLOTOMA EQU $46
 PLOTAMA EQU $47
@@ -72,9 +70,9 @@ PLOTMODE
 
     LDB _PEN
     JSR GIMESELECTPALETTE
-    STA -42, S
+    STA PLOTC
 
-    LDX BITMAPADDRESS
+    JSR GIMECALCPOSBM
 
     LDA CURRENTMODE
     ANDA #$E0
@@ -88,47 +86,6 @@ PLOTMODE
 
 PLOTB16
 
-    LDA CURRENTMODE
-    ANDA #$1F
-    CMPA #2
-    BLE PLOTB16X64
-    CMPA #5
-    BLE PLOTB16X80
-    CMPA #8
-    BLE PLOTB16X128
-    CMPA #11
-    BLE PLOTB16X160
-    CMPA #14
-    BLE PLOTB16X256
-    JMP PLOTB16X320
-PLOTB16X64
-    LDA #32
-    JMP PLOTB16OFFSET
-PLOTB16X80
-    LDA #40
-    JMP PLOTB16OFFSET
-PLOTB16X128
-    LDA #64
-    JMP PLOTB16OFFSET
-PLOTB16X160
-    LDA #80
-    JMP PLOTB16OFFSET
-PLOTB16X256
-    LDA #128
-    JMP PLOTB16OFFSET
-PLOTB16X320
-    LDA #160
-    JMP PLOTB16OFFSET
-PLOTB16OFFSET
-    LDB PLOTY+1
-    MUL
-    LEAX D, X
-
-    LDD PLOTX
-    LSRA
-    RORB
-    LEAX D, X
-
     LDU #PLOTANDBIT8
     LDD PLOTX
     ANDB #$1
@@ -141,76 +98,23 @@ PLOTB16OFFSET
 
     CMPB #$1
     BEQ PLOTB16SKIP
-    LDA -42, S
+    LDA PLOTC
     LSLA
     LSLA
     LSLA
     LSLA
     JMP PLOTB16SKIPE
 PLOTB16SKIP
-    LDA -42, S
+    LDA PLOTC
 PLOTB16SKIPE
-    STA -42, S
+    STA PLOTC
 
     JMP PLOTCOMMON
 
 PLOTB4
 
-    LDA CURRENTMODE
-    ANDA #$1F
-    CMPA #2
-    BLE PLOTB4X64
-    CMPA #5
-    BLE PLOTB4X80
-    CMPA #8
-    BLE PLOTB4X128
-    CMPA #11
-    BLE PLOTB4X160
-    CMPA #14
-    BLE PLOTB4X256
-    CMPA #17
-    BLE PLOTB4X320
-    CMPA #20
-    BLE PLOTB4X512
-    JMP PLOTB4X640
-PLOTB4X64
-    LDA #16
-    JMP PLOTB4OFFSET
-PLOTB4X80
-    LDA #20
-    JMP PLOTB4OFFSET
-PLOTB4X128
-    LDA #32
-    JMP PLOTB4OFFSET
-PLOTB4X160
-    LDA #40
-    JMP PLOTB4OFFSET
-PLOTB4X256
-    LDA #64
-    JMP PLOTB4OFFSET
-PLOTB4X320
-    LDA #80
-    JMP PLOTB4OFFSET
-PLOTB4X512
-    LDA #128
-    JMP PLOTB4OFFSET
-PLOTB4X640
-    LDA #160
-    JMP PLOTB4OFFSET
-PLOTB4OFFSET
-    LDB PLOTY+1
-    MUL
-    LEAX D, X
-
     LDD PLOTX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LEAX D, X
-
-    LDD PLOTX
-    LDA -42, S
+    LDA PLOTC
     LSLA
     LSLA
     LSLA
@@ -234,7 +138,7 @@ PLOTB4OFFSET
     LSRA
     LSRA
 PLOTB4SKIPE
-    STA -42, S
+    STA PLOTC
 
     LDU #PLOTANDBIT4
     LEAU B, U
@@ -243,63 +147,18 @@ PLOTB4SKIPE
 
 PLOTB2
 
-    LDA CURRENTMODE
-    ANDA #$1F
-    CMPA #2
-    BLE PLOTB2X128
-    CMPA #5
-    BLE PLOTB2X160
-    CMPA #8
-    BLE PLOTB2X256
-    CMPA #11
-    BLE PLOTB2X320
-    CMPA #14
-    BLE PLOTB2X512
-    JMP PLOTB2X640
-PLOTB2X128
-    LDA #16
-    JMP PLOTB2OFFSET
-PLOTB2X160
-    LDA #20
-    JMP PLOTB2OFFSET
-PLOTB2X256
-    LDA #32
-    JMP PLOTB2OFFSET
-PLOTB2X320
-    LDA #30
-    JMP PLOTB2OFFSET
-PLOTB2X512
-    LDA #64
-    JMP PLOTB2OFFSET
-PLOTB2X640
-    LDA #80
-    JMP PLOTB2OFFSET
-PLOTB2OFFSET
-    LDB PLOTY+1
-    MUL
-    LEAX D, X
-
-    LDD PLOTX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LEAX D, X
-
-    LDA -42, S
+    LDA PLOTC
     BEQ PLOTB2SKIPE
     LDY #PLOTORBIT
     LDB PLOTX+1
     ANDB #$07
     LDA B, Y
-    STA -42, S
+    STA PLOTC
     JMP PLOTB2SFINAL
 
 PLOTB2SKIPE
     LDA #0
-    STA -42, S
+    STA PLOTC
         
 PLOTB2SFINAL
     LDU #PLOTANDBIT
@@ -321,7 +180,7 @@ PLOTCOMMON
     CMPA #2
     BEQ PLOTG                  ;if = 2 then branch to get the point (0/1)
     CMPA #3
-    BEQ PLOTC                  ;if = 3 then branch to get the color index (0...15)
+    BEQ PLOTCL                  ;if = 3 then branch to get the color index (0...15)
     JMP PLOTP
 
 PLOTD
@@ -331,7 +190,7 @@ PLOTD
 
     LDA , X           ;get row with point in it
     ANDA , U
-    ORA -42, S
+    ORA PLOTC
     ; ORA , Y               ;isolate AND set the point
     STA , X           ;write back to $A000
     JMP PLOTP                  ;skip the erase-point section
@@ -359,7 +218,7 @@ PLOTG0
     STA PLOTM
     JMP PLOTP            
 
-PLOTC                          
+PLOTCL                          
     LDA , X           ;get row with point in it
     STA PLOTM
     JMP PLOTP

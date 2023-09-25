@@ -354,4 +354,17 @@ void variable_cleanup( Environment * _environment ) {
         staticStrings = staticStrings->next;
     }
 
+    if ( _environment->descriptors ) {
+        outhead0("UDCCHAR" );
+        int i=0,j=0;
+        for(i=_environment->descriptors->first;i<(_environment->descriptors->first+_environment->descriptors->count);++i) {
+            outline1("; $%2.2x ", i);
+            out0("   fcb " );
+            for(j=0;j<7;++j) {
+                out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+            }
+            outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+        }
+    }
+    
 }
