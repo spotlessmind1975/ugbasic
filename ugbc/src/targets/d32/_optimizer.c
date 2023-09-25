@@ -394,6 +394,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
     if ( po_buf_match(buf[0], " ST* *", NULL, v1)
     &&   po_buf_match(buf[1], " LD* *", NULL, v2)
+    &&  !po_buf_match(buf[0], " ST* *,*", NULL, v3, v4)
     &&  ( !strchr(v1->str,'+') && !strchr(v2->str,'+') )
     && po_buf_strcmp(v1, v2)!=0
     && po_buf_strcmp(buf[0],buf[2])==0 ) {
@@ -418,6 +419,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     &&   !isBranch(buf[1]) && po_buf_match(buf[1], " * *", NULL, v2) && po_buf_strcmp(v1, v2)!=0
 	&&  strchr(buf[0]->str,'+')==NULL
 	&&  strchr(buf[1]->str,'+')==NULL
+    && !po_buf_match(buf[0], " ST* *,*", NULL, v3, v4)
     && po_buf_strcmp(buf[2], buf[0])==0) {
         optim(buf[0], RULE "(STORE*,?,STORE*)->(?,STORE*)", NULL);
         ++_environment->removedAssemblyLines;
