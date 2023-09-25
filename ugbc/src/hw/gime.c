@@ -1054,6 +1054,7 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );
     cpu_store_16bit( _environment, "CURRENTFRAMESIZE", currentFrameSize );
 
+    cpu_call( _environment, "GIMERESETPALETTE" );
     cpu_call( _environment, "GIMERAM" );
 
 }

@@ -129,16 +129,28 @@ PLOTB16OFFSET
     RORB
     LEAX D, X
 
-    LDY #PLOTORBIT80
-    LDB -42, S
-    ANDB #$01
-    LEAY B, Y
-    LDB PLOTX+1
-    ANDB #$01
-    LEAY B, Y
-
     LDU #PLOTANDBIT8
+    LDD PLOTX
+    ANDB #$1
     LEAU B, U
+
+    ; LDY #PLOTORBIT8
+    ; LDD PLOTX
+    ; ANDB #$1
+    ; LEAU B, Y
+
+    CMPB #$1
+    BEQ PLOTB16SKIP
+    LDA -42, S
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    JMP PLOTB16SKIPE
+PLOTB16SKIP
+    LDA -42, S
+PLOTB16SKIPE
+    STA -42, S
 
     JMP PLOTCOMMON
 
@@ -188,7 +200,7 @@ PLOTB4X640
 PLOTB4OFFSET
     LDB PLOTY+1
     MUL
-    LEAX B, X
+    LEAX D, X
 
     LDD PLOTX
     LSRA
@@ -197,15 +209,32 @@ PLOTB4OFFSET
     RORB
     LEAX D, X
 
-    LDY #PLOTORBIT40
-    LDB -42, S
+    LDD PLOTX
+    LDA -42, S
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     ANDB #$03
-    LSLB
-    LSLB
-    LEAY B, Y
-    LDB PLOTX+1
-    ANDB #$03
-    LEAY B, Y
+    BEQ PLOTB4SKIPE
+    LSRA
+    LSRA
+    DECB
+    BEQ PLOTB4SKIPE
+    LSRA
+    LSRA
+    DECB
+    BEQ PLOTB4SKIPE
+    LSRA
+    LSRA
+    DECB
+    BEQ PLOTB4SKIPE
+    LSRA
+    LSRA
+PLOTB4SKIPE
+    STA -42, S
 
     LDU #PLOTANDBIT4
     LEAU B, U
@@ -248,7 +277,7 @@ PLOTB2X640
 PLOTB2OFFSET
     LDB PLOTY+1
     MUL
-    LEAX B, X
+    LEAX D, X
 
     LDD PLOTX
     LSRA
@@ -259,11 +288,20 @@ PLOTB2OFFSET
     RORB
     LEAX D, X
 
+    LDA -42, S
+    BEQ PLOTB2SKIPE
     LDY #PLOTORBIT
     LDB PLOTX+1
     ANDB #$07
-    LEAY B, Y
+    LDA B, Y
+    STA -42, S
+    JMP PLOTB2SFINAL
 
+PLOTB2SKIPE
+    LDA #0
+    STA -42, S
+        
+PLOTB2SFINAL
     LDU #PLOTANDBIT
     LEAU B, U
 
@@ -293,7 +331,8 @@ PLOTD
 
     LDA , X           ;get row with point in it
     ANDA , U
-    ORA , Y               ;isolate AND set the point
+    ORA -42, S
+    ; ORA , Y               ;isolate AND set the point
     STA , X           ;write back to $A000
     JMP PLOTP                  ;skip the erase-point section
 
@@ -373,16 +412,12 @@ PLOTORBIT43
     fcb %00000011
 
 PLOTANDBIT4
-    fcb %00111111
-    fcb %11001111
-    fcb %11110011
     fcb %11111100
+    fcb %11110011
+    fcb %11001111
+    fcb %00111111
 
-PLOTORBIT80
-    fcb %00001111
-    fcb %11110000
-
-PLOTORBIT81
+PLOTORBIT8
     fcb %11110000
     fcb %00001111
 
