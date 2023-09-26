@@ -69,7 +69,7 @@ TEXTATBMDRAWCHAR
 
 TEXTATBMDRAWCHARB16
     LDA CURRENTTILESWIDTH
-    LDB #4
+    LDB #2
     MUL
 
     LDU #8
@@ -164,6 +164,7 @@ TEXTATBMDRAWCHARB16L1D0
     BNE TEXTATBMDRAWCHARB16L1D
     PULS D, U
 
+    LEAX B, X
     LEAX B, X
     LEAU -1, U
     CMPU #0
@@ -307,8 +308,6 @@ TEXTATBMLOOP2
     ; decrement the size of the string.
 
     LDA ,Y+
-    JSR TEXTATDECODE
-    LDA SCREENCODE
     DECB
 
     ; All characters from 0 to 31 are special, so we mu9t
