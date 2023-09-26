@@ -55,10 +55,6 @@ void color( Environment * _environment, int _index, int _shade ) {
     sprintf( indexAsString, "#$%2.2x", _index );
     sprintf( shadeAsString, "#$%2.2x", _shade );
 
-    if ( _index == 0 ) {
-        gime_border_color( _environment, shadeAsString );
-    }
-
     gime_background_color( _environment, indexAsString, shadeAsString );
 
 }
