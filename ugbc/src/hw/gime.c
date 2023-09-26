@@ -89,6 +89,9 @@ void gime_hit( Environment * _environment, char * _sprite_mask, char * _result )
  */
 void gime_border_color( Environment * _environment, char * _border_color ) {
 
+    outline1("LDA %s", _border_color );
+    outline0("STA GIMEBRDR" );
+
 }
 
 /**
@@ -102,6 +105,10 @@ void gime_border_color( Environment * _environment, char * _border_color ) {
  * @param _background_color Background color to use
  */
 void gime_background_color( Environment * _environment, char * _index, char * _background_color ) {
+
+    outline1( "LDA %s", _index );
+    outline1( "LDB %s", _background_color );
+    outline0( "JSR GIMEUPDATEPALETTE" );
 
 }
 
@@ -1464,6 +1471,8 @@ void gime_initialization( Environment * _environment ) {
     _environment->screenHeight = _environment->screenTilesHeight*_environment->fontHeight;
     _environment->screenShades = 16;
     _environment->screenColors = 16;
+
+    _environment->fontConfig.schema = FONT_SCHEMA_ASCII;
 
     gime_tilemap_enable( _environment, 40, 25, 16, 8, 8 );
 
