@@ -9759,6 +9759,10 @@ void font_descriptors_init( Environment * _environment, int _embedded_present ) 
             data = data_font_alpha_bin;
             dataSize = data_font_alpha_bin_len / 8;
             break;
+        case FONT_SCHEMA_ASCII:
+            data = data_font_ascii_bin;
+            dataSize = data_font_ascii_bin_len / 8;
+            break;
     }
 
     if ( data ) {
