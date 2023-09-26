@@ -191,10 +191,14 @@ src-generated/font_complete.c:
 src-generated/font_alpha.c:
 	@xxd -i $(subst src-generated/font_,data/font/,$(@:.c=.bin)) >$@
 
+src-generated/font_ascii.c:
+	@xxd -i $(subst src-generated/font_,data/font/,$(@:.c=.bin)) >$@
+
 FONTS := src-generated/font_standard.c \
 			src-generated/font_semigraphic.c \
 			src-generated/font_complete.c \
-			src-generated/font_alpha.c
+			src-generated/font_alpha.c \
+			src-generated/font_ascii.c
 
 # ----------------------------------------------------------------------------
 # PROLOGUE / EPILOGUE FOR BINARY ON COCO (1 + 2)
