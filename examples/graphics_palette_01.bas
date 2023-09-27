@@ -8,7 +8,7 @@ REM PRIMITIVE DI GRAFICA USANDO LA PALETTE
 REM
 REM Questo esempio mostra come usare il comando PALETTE.
 REM
-REM @include cpc
+REM @include cpc,coco3
 
     BITMAP ENABLE(320,200,16)
     PALETTE RGB(0,0,0),RGB(255,0,0),RGB(0,255,0),RGB(0,0,255)

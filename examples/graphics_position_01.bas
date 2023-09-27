@@ -12,9 +12,9 @@ REM Questo esempio userà il comando ''GR LOCATE'' per spostare il cursore grafi
 REM in una posizione specifica. Omettendo le coordinate, il comando
 REM ''CIRCLE'' disegnerà un cerchio con il centro nelle coordinate date.
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
+REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
-    BITMAP ENABLE
+    BITMAP ENABLE(16)
     CLS
 
     x= (POSITION)150

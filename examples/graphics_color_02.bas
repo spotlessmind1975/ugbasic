@@ -10,7 +10,7 @@ REM
 REM Questo esempio mostra come cambiare il colore dell'indice 0,
 REM che normalmente è lo sfondo
 REM
-REM @include c128,cpc
+REM @include c128,cpc,coco3
 
     BITMAP ENABLE(16)
     CLS BLACK
