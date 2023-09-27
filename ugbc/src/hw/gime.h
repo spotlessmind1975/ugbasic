@@ -234,6 +234,7 @@ void gime_finalization( Environment * _environment );
 
 void gime_back( Environment * _environment );
 void gime_background_color( Environment * _environment, char * _index, char * _background_color );
+void gime_background_color_get_vars( Environment * _environment, char * _index, char * _background_color );
 void gime_border_color( Environment * _environment, char * _border_color );
 void gime_collision( Environment * _environment, char * _sprite_mask, char * _result );
 void gime_hit( Environment * _environment, char * _sprite_mask, char * _result );

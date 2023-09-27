@@ -94,6 +94,14 @@ void gime_border_color( Environment * _environment, char * _border_color ) {
 
 }
 
+void gime_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
+    
+    outline1( "LDA %s", _index );
+    outline0( "JSR GIMEGETPALETTE" );
+    outline1( "STB %s", _background_color );
+
+}
+
 /**
  * @brief <i>VIC-II</i>: emit code to change background color
  * 
