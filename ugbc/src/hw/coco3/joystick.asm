@@ -35,139 +35,213 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PORT        EQU     DIRECTION
+;*********************************************************************
+;* Title: JOY.ASM
+;*********************************************************************
+;* Author: R. Allen Murphey
+;*
+;* Description: CoCo DAC Joystick input
+;*
+;* Assembler: lwasm 1.4.2
+;* lwasm -o JOY.BIN JOY.ASM
+;*   decb dskinit JOY.DSK
+;* OR
+;*   decb kill JOY.DSK,JOY.BIN
+;* decb copy JOY.BIN JOY.DSK,JOY.BIN -2
+;* LOADM"JOY":EXEC
+;*
+;* Revision History:
+;* Rev #     Date      Who     Comments
+;* -----  -----------  ------  ---------------------------------------
+;* 00     2020         RAM     Initial test code
+;*********************************************************************
 
-IO		equ		$ff00		; IO page on Dragon
+PIA0AD     equ   $FF00
+PIA0AC     equ   $FF01
+PIA0BD     equ   $FF02
+PIA0BC     equ   $FF03
 
-DPPIA0DA	EQU		$00		; Side A Data/DDR
-DPPIA0CRA	EQU		$01		; Side A Control.
-DPPIA0DB	EQU		$02		; Side B Data/DDR
-DPPIA0CRB	EQU		$03		; Side B Control.
+PIA1AD     equ   $FF20
+PIA1AC     equ   $FF21
+PIA1BD     equ   $FF22
+PIA1BC     equ   $FF23
 
-PIA0DA		EQU		DPPIA0DA+IO	; Side A Data/DDR
-PIA0CRA		EQU		DPPIA0CRA+IO	; Side A Control.
-PIA0DB		EQU		DPPIA0DB+IO	; Side A Data/DDR
-PIA0CRB		EQU		DPPIA0CRB+IO	; Side A Control.
-
-DPPIA1DA	EQU		$20		; Side A Data/DDR
-DPPIA1CRA	EQU		$21		; Side A Control.
-DPPIA1DB	EQU		$22		; Side B Data/DDR
-DPPIA1CRB	EQU		$23		; Side B Control.
-
-PIA1DA		EQU		DPPIA1DA+IO	; Side A Data/DDR
-PIA1CRA		EQU		DPPIA1CRA+IO	; Side A Control.
-PIA1DB		EQU		DPPIA1DB+IO	; Side A Data/DDR
-PIA1CRB		EQU		DPPIA1CRB+IO	; Side A Control.
-
-TEMPJOYSTICK       
-    fcb 0, 0, 0, 0
-
-SELJOYSTICK
-LBD41   
-    LDU     #PIA0CRA		; point U at PIAs
-    BSR     LBD46
-LBD46   
-    LDA     ,U			; get the control register
-    ANDA    #$F7			; mask out current bit
-    RORB				; get bit 0 of B into carry
-    BCC     LBD4F			; carry clear, skip on, bit is zero
-    ORA     #$08			; set bit in control register
-LBD4F
-    STA     ,U++			; save it back and select side B control
-    RTS
+TRLBIT     rmb   1
 
 JOYSTICK
-LBD52   
-    LEAS    -3,S			; make room on stack for temporary values
-    LDX     #TEMPJOYSTICK
-    LDB     #$03			; get values for 3+1 joystick axies
-	
-LBD59   
-    LDA     #$0A			; 10 retries to get a stable value
-    STD     1,S			; store joystic axis number and try number on stack
-    JSR     SELJOYSTICK 		; select the joystick to read
-
-; A is a shift counter, how many bits to convert and will be  $40 (6 bits).
-; B contains a value equal to 1/2 the current trial difference, initially $80 (2.5V).
-LBD5F   
-    LDD     #$4080			
-LBD62   
-    STA     ,S			; store shift counter on stack	
-    STB     PIA1DA			; send value to D/A converter
-    TST     PIA0DA			; read result value, comparito output in bit 7
-    BMI     LBD70			; branch if comparitor output is high
-	
-    SUBB    ,S			; subtract half the current trial difference
-    BRA     LBD72			; branch ahead
-
-LBD70
-    ADDB    ,S			; add half the current trial difference
-LBD72
-    LSRA				; shift it right once
-    CMPA    #$01			; have all the shifts been done?
-    BNE     LBD62			; no go get next bit
-        
-    LSRB				; move data from top 6 bits of B
-    LSRB				; to bottom 6 bits of B
-    CMPB    -1,X			; is this value equal to last try?
-    BEQ     LBD81			; yes, go save the value
-        
-	DEC     1,S			; else decrement the retry counter
-    BNE     LBD5F			; branch if we havn't tried 10 times
-	
-; if you get here you have failed to read the same value twice after 10 times.
-; as a result we just fall through and use the last read value
-	
-LBD81
-    STB     ,X			; save the digitized value
-    LEAX    1, X
-    LDB     2,S			; get the current joystick axis number
-    DECB				; decrement
-    BPL     LBD59			; loop if still have axies to read
-
-    LDX #TEMPJOYSTICK
-    LDB PORT
-    LSLB
-    LDA B,X
-
+    LDA PORT
     CMPA #0
-    BEQ JOYSTICKUP
-    CMPA #63
-    BEQ JOYSTICKDOWN
-    JMP JOYSTICKHZ
-
-JOYSTICKUP
-    LDA #$01
-    STA DIRECTION
-    JMP JOYSTICKHZ
-
-JOYSTICKDOWN
-    LDA #$02
-    STA DIRECTION
-    JMP JOYSTICKHZ
-
-JOYSTICKHZ
-    INCB
-    LDA B,X
-    CMPA #63
-    BEQ JOYSTICKRIGHT
-    CMPA #0
-    BEQ JOYSTICKLEFT
-    JMP JOYSTICKDONE
-
-JOYSTICKLEFT
-    LDA DIRECTION
-    ORA #$04
-    STA DIRECTION
-    JMP JOYSTICKDONE
-
-JOYSTICKRIGHT
-    LDA DIRECTION
-    ORA #$08
-    STA DIRECTION
-    JMP JOYSTICKDONE
-
-JOYSTICKDONE
-    LEAS    3,S
+    BEQ JOYSTICK0
+    CMPA #1
+    BEQ JOYSTICK1
+    CLR DIRECTION
     RTS
 
+JOYSTICK0
+    JSR SOUNDOFF
+    JSR MUX1AOFF
+    JSR MUX2BOFF
+    JSR ADC0
+    CMPA #0
+    BGT JOYSTICK0UP
+    BLT JOYSTICK0DOWN
+    JMP JOYSTICK0B
+
+JOYSTICK0UP
+    LDA #1
+    STA DIRECTION
+    JMP JOYSTICK0B
+
+JOYSTICK0DOWN
+    LDA #2
+    STA DIRECTION
+    JMP JOYSTICK0B
+
+JOYSTICK0B
+    JSR MUX1AON
+    JSR MUX2BOFF
+    JSR ADC0
+    CMPA #0
+    BGT JOYSTICK0LEFT
+    BLT JOYSTICK0RIGHT
+    JMP JOYSTICK0D
+
+JOYSTICK0LEFT
+    LDA #4
+    ORA DIRECTION
+    STA DIRECTION
+    JMP JOYSTICK0D
+
+JOYSTICK0RIGHT
+    LDA #8
+    ORA DIRECTION
+    STA DIRECTION
+    JMP JOYSTICK0D
+
+JOYSTICK0D
+    LDA #$FF
+    STA PIA0BD
+    LDA PIA0AD
+    ANDA #$0a
+    LSLA
+    LSLA
+    LSLA
+    ORA DIRECTION
+    STA DIRECTION
+    RTS
+
+; ---
+
+JOYSTICK1
+    JSR SOUNDOFF
+    JSR MUX1AOFF
+    JSR MUX2BON
+    JSR ADC0
+    CMPA #0
+    BGT JOYSTICK1UP
+    BLT JOYSTICK1DOWN
+    JMP JOYSTICK1B
+
+JOYSTICK1UP
+    LDA #1
+    STA DIRECTION
+    JMP JOYSTICK1B
+
+JOYSTICK1DOWN
+    LDA #2
+    STA DIRECTION
+    JMP JOYSTICK1B
+
+JOYSTICK1B
+    JSR MUX1AON
+    JSR MUX2BON
+    JSR ADC0
+    CMPA #0
+    BGT JOYSTICK1LEFT
+    BLT JOYSTICK1RIGHT
+    JMP JOYSTICK1D
+
+JOYSTICK1LEFT
+    LDA #4
+    ORA DIRECTION
+    STA DIRECTION
+    JMP JOYSTICK1D
+
+JOYSTICK1RIGHT
+    LDA #8
+    ORA DIRECTION
+    STA DIRECTION
+    JMP JOYSTICK1D
+
+JOYSTICK1D
+    LDA #$FF
+    STA PIA0BD
+    LDA PIA0AD
+    ANDA #$05
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    ORA DIRECTION
+    STA DIRECTION
+    RTS
+
+;*********************************************************************
+;* ADC Successive Approximation Search
+;* from Musical Applications of Microprocessors pages 262-269
+;* by Hal Chamberlin, (c) 1985 Hayden Books
+;* 6502 Successive Approximation Figure 7-31 page 264
+;* Adapted and modified for 6809 / Color Computer by R. Allen Murphey
+;* Originally from https://exileinparadise.com/tandy_color_computer:joystick
+;*********************************************************************
+
+ADC0
+    LDA #$20
+    STA TRLBIT
+    CLRA
+ADC1
+    ORA TRLBIT
+    LSLA
+    LSLA
+    ORA #%00000010
+    STA PIA1AD
+    ANDA #%11111101
+    LSRA
+    LSRA
+    LDB PIA0AD
+    BMI ADC2
+    EORA TRLBIT
+ADC2
+    LSR TRLBIT
+    BCC ADC1
+    RTS
+
+SOUNDOFF
+    LDA PIA1BC
+    ANDA #%11110111
+    STA PIA1BC
+    RTS
+
+MUX1AOFF
+    LDA PIA0AC
+    ANDA #%11110111
+    STA PIA0AC
+    RTS
+
+MUX1AON
+    LDA PIA0AC
+    ORA #%00001000
+    STA PIA0AC
+    RTS
+
+MUX2BOFF
+    LDA PIA0BC
+    ANDA #%11110111
+    STA PIA0BC
+    RTS
+
+MUX2BON
+    LDA PIA0BC
+    ORA #%00001000
+    STA PIA0BC
+    RTS
