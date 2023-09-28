@@ -79,6 +79,7 @@ JOYSTICK
 
 JOYSTICK0
     JSR SOUNDOFF
+    ; Axis 0 is left-right / X axis of left stick.
     JSR MUX1AOFF
     JSR MUX2BOFF
     JSR ADC0
@@ -98,6 +99,7 @@ JOYSTICK0DOWN
     JMP JOYSTICK0B
 
 JOYSTICK0B
+    ; Axis 1 is up-down / Y axis of left stick
     JSR MUX1AON
     JSR MUX2BOFF
     JSR ADC0
@@ -130,10 +132,9 @@ JOYSTICK0D
     STA DIRECTION
     RTS
 
-; ---
-
 JOYSTICK1
     JSR SOUNDOFF
+    ; Axis 2 is left-right / X axis of right stick
     JSR MUX1AOFF
     JSR MUX2BON
     JSR ADC0
