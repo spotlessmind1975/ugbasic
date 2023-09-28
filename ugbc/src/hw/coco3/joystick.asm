@@ -35,27 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-;*********************************************************************
-;* Title: JOY.ASM
-;*********************************************************************
-;* Author: R. Allen Murphey
-;*
-;* Description: CoCo DAC Joystick input
-;*
-;* Assembler: lwasm 1.4.2
-;* lwasm -o JOY.BIN JOY.ASM
-;*   decb dskinit JOY.DSK
-;* OR
-;*   decb kill JOY.DSK,JOY.BIN
-;* decb copy JOY.BIN JOY.DSK,JOY.BIN -2
-;* LOADM"JOY":EXEC
-;*
-;* Revision History:
-;* Rev #     Date      Who     Comments
-;* -----  -----------  ------  ---------------------------------------
-;* 00     2020         RAM     Initial test code
-;*********************************************************************
-
 PIA0AD     equ   $FF00
 PIA0AC     equ   $FF01
 PIA0BD     equ   $FF02
@@ -83,18 +62,24 @@ JOYSTICK0
     JSR MUX1AOFF
     JSR MUX2BOFF
     JSR ADC0
-    CMPA #0
-    BGT JOYSTICK0UP
-    BLT JOYSTICK0DOWN
+
+    ; yes, I tend to divide the stick into "9 zones" - a center and 8 direction areas 
+    ; around the center.; X or Y < 20 and X or Y > 44 or there abouts gives you a center 
+    ; with slop and a zone at each edge that triggers the digital directions
+
+    CMPA #44
+    BGT JOYSTICK0RIGHT
+    CMPA #20
+    BLT JOYSTICK0LEFT
     JMP JOYSTICK0B
 
-JOYSTICK0UP
-    LDA #1
+JOYSTICK0RIGHT
+    LDA #8
     STA DIRECTION
     JMP JOYSTICK0B
 
-JOYSTICK0DOWN
-    LDA #2
+JOYSTICK0LEFT
+    LDA #4
     STA DIRECTION
     JMP JOYSTICK0B
 
@@ -103,19 +88,20 @@ JOYSTICK0B
     JSR MUX1AON
     JSR MUX2BOFF
     JSR ADC0
-    CMPA #0
-    BGT JOYSTICK0LEFT
-    BLT JOYSTICK0RIGHT
+    CMPA #44
+    BGT JOYSTICK0DOWN
+    CMPA #20
+    BLT JOYSTICK0UP
     JMP JOYSTICK0D
 
-JOYSTICK0LEFT
-    LDA #4
+JOYSTICK0DOWN
+    LDA #1
     ORA DIRECTION
     STA DIRECTION
     JMP JOYSTICK0D
 
-JOYSTICK0RIGHT
-    LDA #8
+JOYSTICK0UP
+    LDA #2
     ORA DIRECTION
     STA DIRECTION
     JMP JOYSTICK0D
@@ -124,7 +110,8 @@ JOYSTICK0D
     LDA #$FF
     STA PIA0BD
     LDA PIA0AD
-    ANDA #$0a
+    ANDA #$05
+    LSLA
     LSLA
     LSLA
     LSLA
@@ -138,38 +125,48 @@ JOYSTICK1
     JSR MUX1AOFF
     JSR MUX2BON
     JSR ADC0
-    CMPA #0
-    BGT JOYSTICK1UP
-    BLT JOYSTICK1DOWN
+
+    ; yes, I tend to divide the stick into "9 zones" - a center and 8 direction areas 
+    ; around the center.; X or Y < 20 and X or Y > 44 or there abouts gives you a center 
+    ; with slop and a zone at each edge that triggers the digital directions
+
+    CMPA #44
+    BGT JOYSTICK1RIGHT
+    CMPA #20
+    BLT JOYSTICK1LEFT
     JMP JOYSTICK1B
 
-JOYSTICK1UP
-    LDA #1
+JOYSTICK1RIGHT
+    LDA #8
     STA DIRECTION
     JMP JOYSTICK1B
 
-JOYSTICK1DOWN
-    LDA #2
+JOYSTICK1LEFT
+    LDA #4
     STA DIRECTION
     JMP JOYSTICK1B
 
 JOYSTICK1B
+    ; Axis 3 is up-down / Y axis of right stick
     JSR MUX1AON
     JSR MUX2BON
     JSR ADC0
-    CMPA #0
-    BGT JOYSTICK1LEFT
-    BLT JOYSTICK1RIGHT
+
+    CMPA #44
+    BGT JOYSTICK1DOWN
+
+    CMPA #20
+    BLT JOYSTICK1UP
     JMP JOYSTICK1D
 
-JOYSTICK1LEFT
-    LDA #4
+JOYSTICK1DOWN
+    LDA #2
     ORA DIRECTION
     STA DIRECTION
     JMP JOYSTICK1D
 
-JOYSTICK1RIGHT
-    LDA #8
+JOYSTICK1UP
+    LDA #1
     ORA DIRECTION
     STA DIRECTION
     JMP JOYSTICK1D
@@ -178,8 +175,8 @@ JOYSTICK1D
     LDA #$FF
     STA PIA0BD
     LDA PIA0AD
-    ANDA #$05
-    LSLA
+    NEGA
+    ANDA #$0a
     LSLA
     LSLA
     LSLA
