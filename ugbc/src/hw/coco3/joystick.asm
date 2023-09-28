@@ -31,7 +31,7 @@
 ;*                                                                             *
 ;*               JOYSTICK MOVEMENT DETECTION ON TRS-80 COLOR COMPUTER 3        *
 ;*                                                                             *
-;* Based on code by R. Allen Murphey                                           *
+;* Based on code by R. Allen "Exile In Paradise" Murphey.                      *
 ;* Originally from https://exileinparadise.com/tandy_color_computer:joystick   *
 ;* Adapted to emulate a digital joystick                                       *
 ;*                                                                             *
