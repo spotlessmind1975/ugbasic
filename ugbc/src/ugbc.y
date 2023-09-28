@@ -2707,7 +2707,7 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(BITMAP)" )->name;
         variable_store( _environment, $$, BITMAP_NATIVE );
     }
-    | POINT OP optional_expr OP_COMMA optional_expr CP {
+    | POINT OP optional_x OP_COMMA optional_y CP {
         $$ = point( _environment, $3, $5 )->name;
     }
     | MAX OP expr OP_COMMA expr CP {
