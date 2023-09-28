@@ -110,6 +110,7 @@ JOYSTICK0D
     LDA #$FF
     STA PIA0BD
     LDA PIA0AD
+    COMA
     ANDA #$05
     LSLA
     LSLA
@@ -175,7 +176,7 @@ JOYSTICK1D
     LDA #$FF
     STA PIA0BD
     LDA PIA0AD
-    NEGA
+    COMA
     ANDA #$0a
     LSLA
     LSLA
