@@ -38,7 +38,70 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-    { 0x00, 0xcc, 0x55, 0xff, 0, "GREEN" }
+        { 0x00, 0x00, 0x00, 0xff, 0x00, "BLACK", 0x00 },
+        { 0x00, 0x00, 0x55, 0xff, 0x00, "COLOR", 0x01 },
+        { 0x00, 0x00, 0xaa, 0xff, 0x00, "BLUE", 0x02 },
+        { 0x00, 0x00, 0xff, 0xff, 0x00, "LIGHT BLUE", 0x03 },
+        { 0x00, 0x55, 0x00, 0xff, 0x00, "COLOR", 0x04 },
+        { 0x00, 0x55, 0x55, 0xff, 0x00, "DARK CYAN", 0x05 },
+        { 0x00, 0x55, 0xaa, 0xff, 0x00, "COLOR", 0x06 },
+        { 0x00, 0x55, 0xff, 0xff, 0x00, "COLOR", 0x07 },
+        { 0x00, 0xaa, 0x00, 0xff, 0x00, "GREEN", 0x08 },
+        { 0x00, 0xaa, 0x55, 0xff, 0x00, "COLOR", 0x09 },
+        { 0x00, 0xaa, 0xaa, 0xff, 0x00, "CYAN", 0x0a },
+        { 0x00, 0xaa, 0xff, 0xff, 0x00, "COLOR", 0x0b },
+        { 0x00, 0xff, 0x00, 0xff, 0x00, "LIGHT GREEN", 0x0c },
+        { 0x00, 0xff, 0x55, 0xff, 0x00, "COLOR", 0x0d },
+        { 0x00, 0xff, 0xaa, 0xff, 0x00, "COLOR", 0x0e },
+        { 0x00, 0xff, 0xff, 0xff, 0x00, "LIGHT CYAN", 0x0f },
+        { 0x55, 0x00, 0x00, 0xff, 0x00, "COLOR", 0x10 },
+        { 0x55, 0x00, 0x55, 0xff, 0x00, "PURPLE", 0x11 },
+        { 0x55, 0x00, 0xaa, 0xff, 0x00, "COLOR", 0x12 },
+        { 0x55, 0x00, 0xff, 0xff, 0x00, "COLOR", 0x13 },
+        { 0x55, 0x55, 0x00, 0xff, 0x00, "COLOR", 0x14 },
+        { 0x55, 0x55, 0x55, 0xff, 0x00, "COLOR", 0x15 },
+        { 0x55, 0x55, 0xaa, 0xff, 0x00, "COLOR", 0x16 },
+        { 0x55, 0x55, 0xff, 0xff, 0x00, "COLOR", 0x17 },
+        { 0x55, 0xaa, 0x00, 0xff, 0x00, "COLOR", 0x18 },
+        { 0x55, 0xaa, 0x55, 0xff, 0x00, "COLOR", 0x19 },
+        { 0x55, 0xaa, 0xaa, 0xff, 0x00, "COLOR", 0x1a },
+        { 0x55, 0xaa, 0xff, 0xff, 0x00, "PASTEL BLUE", 0x1b },
+        { 0x55, 0xff, 0x00, 0xff, 0x00, "COLOR", 0x1c },
+        { 0x55, 0xff, 0x55, 0xff, 0x00, "COLOR", 0x1d },
+        { 0x55, 0xff, 0xaa, 0xff, 0x00, "COLOR", 0x1e },
+        { 0x55, 0xff, 0xff, 0xff, 0x00, "COLOR", 0x1f },
+        { 0xaa, 0x00, 0x00, 0xff, 0x00, "RED", 0x20 },
+        { 0xaa, 0x00, 0x55, 0xff, 0x00, "COLOR", 0x21 },
+        { 0xaa, 0x00, 0xaa, 0xff, 0x00, "MAGENTA", 0x22 },
+        { 0xaa, 0x00, 0xff, 0xff, 0x00, "COLOR", 0x23 },
+        { 0xaa, 0x55, 0x00, 0xff, 0x00, "COLOR", 0x24 },
+        { 0xaa, 0x55, 0x55, 0xff, 0x00, "COLOR", 0x25 },
+        { 0xaa, 0x55, 0xaa, 0xff, 0x00, "MAUVE", 0x26 },
+        { 0xaa, 0x55, 0xff, 0xff, 0x00, "COLOR", 0x27 },
+        { 0xaa, 0xaa, 0x00, 0xff, 0x00, "YELLOW", 0x28 },
+        { 0xaa, 0xaa, 0x55, 0xff, 0x00, "COLOR", 0x29 },
+        { 0xaa, 0xaa, 0xaa, 0xff, 0x00, "WHITE", 0x2a },
+        { 0xaa, 0xaa, 0xff, 0xff, 0x00, "COLOR", 0x2b },
+        { 0xaa, 0xff, 0x00, 0xff, 0x00, "COLOR", 0x2c },
+        { 0xaa, 0xff, 0x55, 0xff, 0x00, "COLOR", 0x2d },
+        { 0xaa, 0xff, 0xaa, 0xff, 0x00, "COLOR", 0x2e },
+        { 0xaa, 0xff, 0xff, 0xff, 0x00, "COLOR", 0x2f },
+        { 0xff, 0x00, 0x00, 0xff, 0x00, "LIGHT RED", 0x30 },
+        { 0xff, 0x00, 0x55, 0xff, 0x00, "COLOR", 0x31 },
+        { 0xff, 0x00, 0xaa, 0xff, 0x00, "COLOR", 0x32 },
+        { 0xff, 0x00, 0xff, 0xff, 0x00, "LIGHT MAGENTA", 0x33 },
+        { 0xff, 0x55, 0x00, 0xff, 0x00, "ORANGE", 0x34 },
+        { 0xff, 0x55, 0x55, 0xff, 0x00, "PINK", 0x35 },
+        { 0xff, 0x55, 0xaa, 0xff, 0x00, "COLOR", 0x36 },
+        { 0xff, 0x55, 0xff, 0xff, 0x00, "COLOR", 0x37 },
+        { 0xff, 0xaa, 0x00, 0xff, 0x00, "COLOR", 0x38 },
+        { 0xff, 0xaa, 0x55, 0xff, 0x00, "COLOR", 0x39 },
+        { 0xff, 0xaa, 0xaa, 0xff, 0x00, "COLOR", 0x3a },
+        { 0xff, 0xaa, 0xff, 0xff, 0x00, "COLOR", 0x3b },
+        { 0xff, 0xff, 0x00, 0xff, 0x00, "COLOR", 0x3c },
+        { 0xff, 0xff, 0x55, 0xff, 0x00, "COLOR", 0x3d },
+        { 0xff, 0xff, 0xaa, 0xff, 0x00, "COLOR", 0x3e },
+        { 0xff, 0xff, 0xff, 0xff, 0x00, "COLOR", 0x3f }
 };
 
 static RGBi * commonPalette;
@@ -1546,25 +1609,710 @@ void gime_cline( Environment * _environment, char * _characters ) {
 
 static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
-    // switch( _mode ) {
-    //     case TILEMAP_MODE_40X25:         // Alphanumeric Internal	32 × 16	2	512
-    //         break;
-    // }
+    switch( _mode ) {
+
+        case BITMAP_MODE_128x192x2:
+        case BITMAP_MODE_128x200x2:
+        case BITMAP_MODE_128x225x2:
+        case BITMAP_MODE_160x192x2:
+        case BITMAP_MODE_160x200x2:
+        case BITMAP_MODE_160x225x2:
+        case BITMAP_MODE_256x192x2:
+        case BITMAP_MODE_256x200x2:
+        case BITMAP_MODE_256x225x2:
+        case BITMAP_MODE_320x192x2:
+        case BITMAP_MODE_320x200x2:
+        case BITMAP_MODE_320x225x2:
+        case BITMAP_MODE_512x192x2:
+        case BITMAP_MODE_512x200x2:
+        case BITMAP_MODE_512x225x2:
+        case BITMAP_MODE_640x192x2:
+        case BITMAP_MODE_640x200x2:
+        case BITMAP_MODE_640x225x2:
+
+            return 3 + ( ( _width >> 3 ) * _height ) + 2;
+
+        case BITMAP_MODE_64x192x4:
+        case BITMAP_MODE_64x200x4:
+        case BITMAP_MODE_64x225x4:
+        case BITMAP_MODE_80x192x4:
+        case BITMAP_MODE_80x200x4:
+        case BITMAP_MODE_80x225x4:
+        case BITMAP_MODE_128x192x4:
+        case BITMAP_MODE_128x200x4:
+        case BITMAP_MODE_128x225x4:
+        case BITMAP_MODE_160x192x4:
+        case BITMAP_MODE_160x200x4:
+        case BITMAP_MODE_160x225x4:
+        case BITMAP_MODE_256x192x4:
+        case BITMAP_MODE_256x200x4:
+        case BITMAP_MODE_256x225x4:
+        case BITMAP_MODE_320x192x4:
+        case BITMAP_MODE_320x200x4:
+        case BITMAP_MODE_320x225x4:
+        case BITMAP_MODE_512x192x4:
+        case BITMAP_MODE_512x200x4:
+        case BITMAP_MODE_512x225x4:
+        case BITMAP_MODE_640x192x4:
+        case BITMAP_MODE_640x200x4:
+        case BITMAP_MODE_640x225x4:
+
+            return 3 + ( ( _width >> 2 ) * _height ) + 4;
+
+        case BITMAP_MODE_64x192x16:
+        case BITMAP_MODE_64x200x16:
+        case BITMAP_MODE_64x225x16:
+        case BITMAP_MODE_80x192x16:
+        case BITMAP_MODE_80x200x16:
+        case BITMAP_MODE_80x225x16:
+        case BITMAP_MODE_128x192x16:
+        case BITMAP_MODE_128x200x16:
+        case BITMAP_MODE_128x225x16:
+        case BITMAP_MODE_160x192x16:
+        case BITMAP_MODE_160x200x16:
+        case BITMAP_MODE_160x225x16:
+        case BITMAP_MODE_256x192x16:
+        case BITMAP_MODE_256x200x16:
+        case BITMAP_MODE_256x225x16:
+        case BITMAP_MODE_320x192x16:
+        case BITMAP_MODE_320x200x16:
+        case BITMAP_MODE_320x225x16:
+
+            return 3 + ( ( _width >> 1 ) * _height ) + 16;
+                    
+    }
 
     return 0;
 
 }
 
-Variable * gime_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
+static Variable * gime_image_converter_bitmap_mode_hires( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    // switch( _mode ) {
-    //     case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
-    //         break;
-    // }
+    // ignored on bitmap mode
+    (void)!_transparent_color;
+
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    if (paletteColorCount > 2) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
+
+    int i, j, k;
+
+    if ( ! commonPalette ) {
+
+        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 2 );
+            paletteColorCount = 2;
+        }
+
+        lastUsedSlotInCommonPalette = paletteColorCount;
+        adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    } else {
+
+        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
+        adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
+
+        int mergedCommonPalette = 0;
+
+        commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 2 );
+            paletteColorCount = 2;
+        }
+
+        lastUsedSlotInCommonPalette = mergedCommonPalette;
+        if ( lastUsedSlotInCommonPalette > 2 ) {
+            lastUsedSlotInCommonPalette = 2;
+        }
+        adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
+
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
+
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_128x192x2 );
+
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_128x192x2 );
+
+    adilinebeginbitmap("BMD");
+
+    char * buffer = malloc ( bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, bitmask;
+
+    int colorIndex;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = ( _frame_width >> 8 ) & 0xff;
+    *(buffer+1) = (_frame_width & 0xff);
+    *(buffer+2) = _frame_height;
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+                int minDistance = 9999;
+                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = i;
+                    }
+                }
+            }
+
+            adilinepixel(colorIndex);
+
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = (image_y *( _frame_width >> 3 ) ) + (image_x >> 3 );
+            bitmask = 1 << ( 7 - (image_x & 0x7) );
+
+            if ( colorIndex == 1 ) {
+                *( buffer + offset + 3) |= bitmask;
+            } else {
+                *( buffer + offset + 3) &= ~bitmask;
+            }
+
+            _source += _depth;
+
+        }
+
+        _source += ( _width - _frame_width ) * _depth;
+
+    }
+
+    adilineendbitmap();
+
+    int hwIndex;
+
+    if ( lastUsedSlotInCommonPalette > 1 ) {
+        hwIndex = commonPalette[1].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = hwIndex;
+
+    if ( lastUsedSlotInCommonPalette > 1 ) {
+        hwIndex = commonPalette[0].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = hwIndex;
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
+static Variable * gime_image_converter_multicolor_mode_midres( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    if (paletteColorCount > 4) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
+
+    int i, j, k;
+
+    if ( ! commonPalette ) {
+
+        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 4 );
+            paletteColorCount = 4;
+        }
+        lastUsedSlotInCommonPalette = paletteColorCount;
+        adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    } else {
+
+        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
+        adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
+
+        int mergedCommonPalette = 0;
+
+        commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 4 );
+            paletteColorCount = 4;
+        }
+
+        lastUsedSlotInCommonPalette = mergedCommonPalette;
+        if ( lastUsedSlotInCommonPalette > 4 ) {
+            lastUsedSlotInCommonPalette = 4;
+        }
+        adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
+
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
+
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_320x200x4 );
+    
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_320x200x4 );
+
+    adilinebeginbitmap("BMD");
+
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = (_frame_width >> 8 ) & 0xff;
+    *(buffer+1) = (_frame_width & 0xff);
+    *(buffer+2) = _frame_height;
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = (image_y * ( _frame_width >> 2 ) ) + (image_x>>2);
+
+            int colorIndex = 0;
+
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+                int minDistance = 9999;
+                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = i;
+                    }
+                }
+            }
+
+            if ( _environment->debugImageLoad ) {
+                printf("%1.1x", colorIndex );
+            }
+            
+            adilinepixel(colorIndex);
+
+            bitmask = ( ( colorIndex & 0x1 ) ) << (3 - ((image_x & 0x3)));
+            bitmask |= ( ( ( colorIndex & 0x2 ) ) << 3 ) << (3 - ((image_x & 0x3)));
+
+            *(buffer + 3 + offset) |= bitmask;
+
+            _source += _depth;
+
+        }
+
+        _source += ( _width - _frame_width ) * _depth;
+
+        if ( _environment->debugImageLoad ) {
+            printf("\n" );
+        }
+    }
+
+    adilineendbitmap();
+
+    if ( _environment->debugImageLoad ) {
+        printf("\n" );
+    
+        printf("PALETTE:\n" );
+        if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
+            printf("  background  (00) = %2.2x (%s)\n", commonPalette[0].hardwareIndex, commonPalette[0].description );
+        } else {
+            printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", commonPalette[0].index, commonPalette[0].description );
+        }
+        printf("  pen         (01) = %2.2x (%s)\n", commonPalette[1].hardwareIndex, commonPalette[1].description );
+        printf("  pen         (10) = %2.2x (%s)\n", commonPalette[2].hardwareIndex, commonPalette[2].description );
+        printf("  pen         (11) = %2.2x (%s)\n", commonPalette[3].hardwareIndex, commonPalette[3].description );
+        printf("\n" );
+        printf("\n" );
+    }
+
+    int hwIndex = 0;
+    if ( lastUsedSlotInCommonPalette > 0 ) {
+        hwIndex = commonPalette[0].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) )= hwIndex;
+
+    if ( lastUsedSlotInCommonPalette > 1 ) {
+        hwIndex = commonPalette[1].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = hwIndex;
+
+    if ( lastUsedSlotInCommonPalette > 2 ) {
+        hwIndex = commonPalette[2].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = hwIndex;
+
+    if ( lastUsedSlotInCommonPalette > 3 ) {
+        hwIndex = commonPalette[3].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 3 ) = hwIndex;
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
+static Variable * gime_image_converter_multicolor_mode_lores( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    if (paletteColorCount > 16) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
+
+    int i, j, k;
+
+    if ( ! commonPalette ) {
+
+        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 16 );
+            paletteColorCount = 16;
+        }
+
+        lastUsedSlotInCommonPalette = paletteColorCount;
+        adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    } else {
+
+        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        
+        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
+        
+        adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
+
+        int mergedCommonPalette = 0;
+
+        commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        if ( _transparent_color & 0x0f0000 ) {
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+        }
+        if ( _transparent_color & 0xf00000 ) {
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 16 );
+            paletteColorCount = 16;
+        }
+
+        lastUsedSlotInCommonPalette = mergedCommonPalette;
+        if ( lastUsedSlotInCommonPalette > 16 ) {
+            lastUsedSlotInCommonPalette = 16;
+        }
+        adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
+
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
+
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_320x200x16 );
+    
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_320x200x16 );
+
+    adilinebeginbitmap("BMD");
+
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = (_frame_width >> 8 ) & 0xff;
+    *(buffer+1) = (_frame_width & 0xff);
+    *(buffer+2) = _frame_height;
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = (image_y * ( _frame_width >> 1 ) ) + (image_x>>1);
+
+            int colorIndex = 0;
+
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+                int minDistance = 9999;
+                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = i;
+                    }
+                }
+            }
+
+            if ( _environment->debugImageLoad ) {
+                printf("%1.1x", colorIndex );
+            }
+
+            adilinepixel(colorIndex);
+            
+            bitmask = ( ( colorIndex & 0x8 ) >> 3 ) << (1 - ((image_x & 0x1)));
+            bitmask |= ( ( ( colorIndex & 0x2 ) ) << 1 ) << (1 - ((image_x & 0x1)));
+            bitmask |= ( ( ( colorIndex & 0x4 ) ) << 2 ) << (1 - ((image_x & 0x1)));
+            bitmask |= ( ( ( colorIndex & 0x1 ) ) << 6 ) << (1 - ((image_x & 0x1)));
+
+            *(buffer + 3 + offset) |= bitmask;
+
+            _source += _depth;
+
+        }
+
+        _source += ( _width - _frame_width ) * _depth;
+
+        if ( _environment->debugImageLoad ) {
+            printf("\n" );
+        }
+    }
+
+    adilineendbitmap();
+
+    if ( _environment->debugImageLoad ) {
+        printf("\n" );
+    
+        printf("PALETTE:\n" );
+        if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
+            printf("  background  (0000) = %2.2x (%s)\n", commonPalette[0].hardwareIndex, commonPalette[0].description );
+        } else {
+            printf("  background  (0000) = %2.2x (%s) [currently ignored since it can be overlayed]\n", commonPalette[0].index, commonPalette[0].description );
+        }
+        for(int i=1;i<lastUsedSlotInCommonPalette;++i) {
+            printf("  pen         (%d) = %2.2x (%s)\n", i, commonPalette[i].hardwareIndex, commonPalette[i].description );
+        }
+        printf("\n" );
+        printf("\n" );
+    }
+
+    for( int i=0; i<16; ++i ) {
+        int hwIndex = 0xff;
+        if ( lastUsedSlotInCommonPalette > ( i ) ) {
+            hwIndex = commonPalette[i].hardwareIndex;    
+        }
+        *(buffer + 3 + ( ( _frame_width >> 1 ) * _frame_height ) + i ) = hwIndex;
+    }
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
+Variable * gime_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
-    return gime_new_image( _environment, 8, 8, BITMAP_MODE_DEFAULT );
+    switch( _mode ) {
+
+        case BITMAP_MODE_128x192x2:
+        case BITMAP_MODE_128x200x2:
+        case BITMAP_MODE_128x225x2:
+        case BITMAP_MODE_160x192x2:
+        case BITMAP_MODE_160x200x2:
+        case BITMAP_MODE_160x225x2:
+        case BITMAP_MODE_256x192x2:
+        case BITMAP_MODE_256x200x2:
+        case BITMAP_MODE_256x225x2:
+        case BITMAP_MODE_320x192x2:
+        case BITMAP_MODE_320x200x2:
+        case BITMAP_MODE_320x225x2:
+        case BITMAP_MODE_512x192x2:
+        case BITMAP_MODE_512x200x2:
+        case BITMAP_MODE_512x225x2:
+        case BITMAP_MODE_640x192x2:
+        case BITMAP_MODE_640x200x2:
+        case BITMAP_MODE_640x225x2:
+
+            return gime_image_converter_bitmap_mode_hires( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+                    
+        case BITMAP_MODE_64x192x4:
+        case BITMAP_MODE_64x200x4:
+        case BITMAP_MODE_64x225x4:
+        case BITMAP_MODE_80x192x4:
+        case BITMAP_MODE_80x200x4:
+        case BITMAP_MODE_80x225x4:
+        case BITMAP_MODE_128x192x4:
+        case BITMAP_MODE_128x200x4:
+        case BITMAP_MODE_128x225x4:
+        case BITMAP_MODE_160x192x4:
+        case BITMAP_MODE_160x200x4:
+        case BITMAP_MODE_160x225x4:
+        case BITMAP_MODE_256x192x4:
+        case BITMAP_MODE_256x200x4:
+        case BITMAP_MODE_256x225x4:
+        case BITMAP_MODE_320x192x4:
+        case BITMAP_MODE_320x200x4:
+        case BITMAP_MODE_320x225x4:
+        case BITMAP_MODE_512x192x4:
+        case BITMAP_MODE_512x200x4:
+        case BITMAP_MODE_512x225x4:
+        case BITMAP_MODE_640x192x4:
+        case BITMAP_MODE_640x200x4:
+        case BITMAP_MODE_640x225x4:
+
+            return gime_image_converter_multicolor_mode_midres( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        case BITMAP_MODE_64x192x16:
+        case BITMAP_MODE_64x200x16:
+        case BITMAP_MODE_64x225x16:
+        case BITMAP_MODE_80x192x16:
+        case BITMAP_MODE_80x200x16:
+        case BITMAP_MODE_80x225x16:
+        case BITMAP_MODE_128x192x16:
+        case BITMAP_MODE_128x200x16:
+        case BITMAP_MODE_128x225x16:
+        case BITMAP_MODE_160x192x16:
+        case BITMAP_MODE_160x200x16:
+        case BITMAP_MODE_160x225x16:
+        case BITMAP_MODE_256x192x16:
+        case BITMAP_MODE_256x200x16:
+        case BITMAP_MODE_256x225x16:
+        case BITMAP_MODE_320x192x16:
+        case BITMAP_MODE_320x200x16:
+        case BITMAP_MODE_320x225x16:
+
+            return gime_image_converter_multicolor_mode_lores( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    }
+
+    return gime_new_image( _environment, 8, 8, _mode );
 
 }
 
@@ -1578,6 +2326,61 @@ void gime_blit_image( Environment * _environment, char * _sources[], int _source
 
 void gime_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
     
+    deploy( gimevars, src_hw_gime_vars_asm);
+    deploy( putimage, src_hw_gime_put_image_asm );
+
+    outline1("LDY #%s", _image );
+    if ( _sequence ) {
+        outline0("LEAY 3,y" );
+        if ( strlen(_sequence) == 0 ) {
+        } else {
+            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
+            outline1("LDB %s", _sequence );
+            outline0("LDA #0" );
+            outline0("LEAX D, X" );
+            outline0("LEAX D, X" );
+            outline0("LDD ,X" );
+            outline0("LEAY D, Y" );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LEAY 3,y" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    }
+    outline1("LDD %s", _x );
+    outline0("STD IMAGEX" );
+    outline1("LDD %s", _y );
+    outline0("STD IMAGEY" );
+
+    outline1("LDA #$%2.2x", ( _flags & 0xff ) );
+    outline0("STA <IMAGEF" );
+    outline1("LDA #$%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("STA <IMAGET" );
+
+    outline0("JSR PUTIMAGE");
+
 }
 
 Variable * gime_new_image( Environment * _environment, int _width, int _height, int _mode ) {
