@@ -823,7 +823,7 @@ static struct {
         int size;
         int nb_rd;
         int nb_wr;
-        int offset; /* 0=unchanged, >0 offset to page 0; -1 = candidate for inlining, -2 = inlined */
+        int offset; /* 0=unchanged, >0 offset to page 0; -1 = candidate for inlining, -2 = inlined, -3 = in ram */
         char *init;
     } *tab;
     int capacity;
@@ -952,7 +952,9 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     if( po_buf_match(buf[0], " * *",   tmp, arg)
     ||  po_buf_match(buf[0], " * [*]", tmp, arg) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
-        v->offset = -1; /* candidate for inlining */
+        if ( v->offset != -3 ) {
+            v->offset = -1; /* candidate for inlining */
+        }
     }
 
     if( po_buf_match( buf[0], "* rzb *", tmp, arg) && vars_ok(tmp)) {
@@ -971,6 +973,16 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         struct var *v = vars_get(tmp);
         v->size = 2;
         v->init = strdup(arg->str);
+    }
+
+    /* variable in RAMs are not eligibile to inlining */
+    if( po_buf_match(buf[0], "* equ $*", tmp, arg) ) {
+        struct var *v = vars_get(tmp);
+        if ( v ) {
+            if ( v->offset == -1 ) {
+                v->offset = -3;
+            }
+        }
     }
 
     /* heurstic to find the max used index in direct-page */

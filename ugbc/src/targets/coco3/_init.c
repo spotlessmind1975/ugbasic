@@ -63,6 +63,8 @@ void target_initialization( Environment * _environment ) {
 
     cpu6809_init( _environment );
 
+    MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xff00 );
+
     for(int i=0; i<BANK_COUNT; ++i) {
         Bank * bank = malloc( sizeof( Bank ) );
         bank->address = 0x0;
