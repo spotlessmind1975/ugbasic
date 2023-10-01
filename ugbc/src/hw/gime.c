@@ -288,7 +288,9 @@ void gime_bank_select( Environment * _environment, int _bank ) {
 }
 
 #define GIME_MODE( _graphics, _linesize ) \
-    outline1( "LDA #$%2.2x", ( ( _graphics & 0x01 ) << 7 ) | ( _linesize & 0x03 ) ); \
+    outline0( "LDA GIMEVIDM" ); \
+    outline0( "ANDA #$8" ); \
+    outline1( "ORA #$%2.2x", ( ( _graphics & 0x01 ) << 7 ) | ( _linesize & 0x03 ) ); \
     outline0( "STA GIMEVIDM" ); \
     outline0( "STA GIMEVIDMSHADOW" );
 
