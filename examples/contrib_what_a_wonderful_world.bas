@@ -46,16 +46,14 @@ CLS WHITE
 
 soundtrack := LOAD MUSIC("what_a_wonderful_world.mid")
 
-earth := LOAD IMAGES("earth_128x128_2colors.gif") FRAME SIZE AUTO
-
-POSITIVE CONST centerX = ( SCREEN WIDTH - 128 ) \ #2
-POSITIVE CONST frameMax = FRAMES(earth) - 1
-
 MUSIC soundtrack
 
-PARALLEL PROCEDURE rotatingEarth
+PARALLEL PROCEDURE rotatingEarth ON VIC20
 
-	SHARED earth
+	earth := LOAD IMAGES("earth_128x128_2colors.gif") FRAME SIZE AUTO
+
+	POSITIVE CONST centerX = ( SCREEN WIDTH - 128 ) \ #2
+	POSITIVE CONST frameMax = FRAMES(earth) - 1
 	
 	DIM frame AS BYTE
 	DIM t AS WORD
@@ -77,7 +75,7 @@ PARALLEL PROCEDURE rotatingEarth
 
 END PROC
 
-PARALLEL PROCEDURE printLyrics
+PARALLEL PROCEDURE printLyrics ON VIC20
 
 	DIM line AS BYTE
 	DIM t AS WORD
@@ -166,5 +164,5 @@ PARALLEL PROCEDURE printLyrics
 
 END PROC
 
-SPAWN rotatingEarth
-SPAWN printLyrics
+SPAWN rotatingEarth ON VIC20
+SPAWN printLyrics ON VIC20
