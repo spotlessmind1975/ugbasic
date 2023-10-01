@@ -2404,8 +2404,9 @@ Variable * gime_new_image( Environment * _environment, int _width, int _height, 
     char * buffer = malloc ( size );
     memset( buffer, 0, size );
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = (_width >> 8 );
+    *(buffer+1) = (_width & 0xff );
+    *(buffer+2) = _height;
 
     result->valueBuffer = buffer;
     result->size = size;
@@ -2415,6 +2416,19 @@ Variable * gime_new_image( Environment * _environment, int _width, int _height, 
 }
 
 void gime_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
+
+    deploy( gimevars, src_hw_gime_vars_asm);
+    deploy( getimage, src_hw_gime_get_image_asm );
+
+    outline1("LDY #%s", _image );
+    outline1("LDD %s", _x );
+    outline0("STD IMAGEX" );
+    outline1("LDD %s", _y );
+    outline0("STD IMAGEY" );
+    outline1("LDA $%2.2x", _palette );
+    outline0("STA IMAGET");
+
+    outline0("JSR GETIMAGE");
 
 }
 
