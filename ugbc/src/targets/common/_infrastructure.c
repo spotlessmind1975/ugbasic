@@ -7445,6 +7445,10 @@ Variable * variable_mod( Environment * _environment, char * _source, char * _des
 }
 
 void const_define_numeric( Environment * _environment, char * _name, int _value ) {
+    
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
 
     if (variable_exists( _environment, _name )) {
         CRITICAL_VARIABLE_ALREADY_DEFINED_AS_CONSTANT( _name );
@@ -7486,6 +7490,10 @@ void const_define_numeric( Environment * _environment, char * _name, int _value 
 }
 
 void const_define_string( Environment * _environment, char * _name, char * _value ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
 
     if (variable_exists( _environment, _name )) {
         CRITICAL_VARIABLE_ALREADY_DEFINED_AS_CONSTANT( _name );
