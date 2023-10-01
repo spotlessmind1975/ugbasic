@@ -201,10 +201,11 @@ PUTIMAGEDEFFINAL
     ORA #65
     STA IMAGEF
 
-    CLRA
-    CLRB
-    SUBD IMAGEW
-    LEAX D, Y
+    LDD IMAGEW
+    NEGA
+    NEGB
+    SBCA #0
+    LEAY D, Y
 
     CLRA
     LDB CURRENTSL
