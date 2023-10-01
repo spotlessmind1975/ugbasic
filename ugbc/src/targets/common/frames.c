@@ -108,6 +108,10 @@ Alias per ''FRAMES''.
 </usermanual> */
 int frames( Environment * _environment, char * _image ) {
 
+    if ( _environment->emptyProcedure ) {
+        return 0xffff;
+    }
+
     Variable * v = variable_retrieve( _environment, _image );
     switch( v->type ) {
         case VT_SEQUENCE:
