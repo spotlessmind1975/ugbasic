@@ -7201,25 +7201,35 @@ statement2:
           call_procedure( _environment, $2 );
       }
   }
-  | SPAWN Identifier {
-      ((struct _Environment *)_environment)->parameters = 0;
-      spawn_procedure( _environment, $2, 0 );
+  | SPAWN Identifier on_targets {
+      if ( $3 ) {
+        ((struct _Environment *)_environment)->parameters = 0;
+        spawn_procedure( _environment, $2, 0 );
+      }
   }
-  | SPAWN Identifier OSP {
+  | SPAWN Identifier OSP on_targets {
       ((struct _Environment *)_environment)->parameters = 0;
     } values CSP {
-      spawn_procedure( _environment, $2, 0 );
+      if ( $4 ) {
+          spawn_procedure( _environment, $2, 0 );
+      }
   }
-  | SPAWN Identifier OSP CSP {
+  | SPAWN Identifier OSP CSP on_targets {
       ((struct _Environment *)_environment)->parameters = 0;
-      spawn_procedure( _environment, $2, 0 );
+      if ( $5 ) {
+          spawn_procedure( _environment, $2, 0 );
+      }
   }
-  | RESPAWN expr {
+  | RESPAWN expr on_targets {
       ((struct _Environment *)_environment)->parameters = 0;
-      respawn_procedure( _environment, $2 );
+      if ( $3 ) {
+          respawn_procedure( _environment, $2 );
+      }
   }
-  | KILL expr {
-      kill_procedure( _environment, $2 );
+  | KILL expr on_targets {
+      if ( $3 ) {
+          kill_procedure( _environment, $2 );
+      }
   }
   | YIELD {
       yield( _environment );
