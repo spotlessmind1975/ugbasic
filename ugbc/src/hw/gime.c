@@ -101,7 +101,7 @@ static RGBi SYSTEM_PALETTE[] = {
         { 0xff, 0xff, 0x00, 0xff, 0x00, "COLOR", 0x3c },
         { 0xff, 0xff, 0x55, 0xff, 0x00, "COLOR", 0x3d },
         { 0xff, 0xff, 0xaa, 0xff, 0x00, "COLOR", 0x3e },
-        { 0xff, 0xff, 0xff, 0xff, 0x00, "COLOR", 0x3f }
+        { 0xff, 0xff, 0xff, 0xff, 0x00, "LIGHT WHITE", 0x3f }
 };
 
 static RGBi * commonPalette;
@@ -1131,6 +1131,17 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );
     cpu_store_16bit( _environment, "CURRENTFRAMESIZE", currentFrameSize );
+    switch( _environment->screenColors ) {
+        case 2:
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->screenTilesWidth );
+            break;
+        case 4:
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->screenTilesWidth * 2 );
+            break;
+        case 16:
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->screenTilesWidth * 4 );
+            break;
+    }
 
     cpu_call( _environment, "GIMERESETPALETTE" );
     cpu_call( _environment, "GIMERAM" );
@@ -1444,6 +1455,9 @@ void gime_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( TILEMAP_MODE_80X28, 0, 80, 28, 16, 8, 8, "Alphanumeric 80 columns x 28 rows");
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x16, 1, 320, 200, 16, 8, 8, "Graphic 320x200x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x4, 1, 320, 200, 4, 8, 8, "Graphic 320x200x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x2, 1, 320, 200, 2, 8, 8, "Graphic 320x200x2");
+
     SCREEN_MODE_DEFINE( BITMAP_MODE_128x192x2, 1, 128, 192, 2, 8, 8, "Graphic 128x192x2");
     SCREEN_MODE_DEFINE( BITMAP_MODE_128x200x2, 1, 128, 200, 2, 8, 8, "Graphic 128x200x2");
     SCREEN_MODE_DEFINE( BITMAP_MODE_128x225x2, 1, 128, 225, 2, 8, 8, "Graphic 128x225x2");
@@ -1466,7 +1480,6 @@ void gime_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( BITMAP_MODE_64x200x16, 1, 64, 200, 16, 8, 8, "Graphic 64x200x16");
     SCREEN_MODE_DEFINE( BITMAP_MODE_64x225x16, 1, 64, 225, 16, 8, 8, "Graphic 64x225x16");
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x192x2, 1, 320, 192, 2, 8, 8, "Graphic 320x192x2");
-    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x2, 1, 320, 200, 2, 8, 8, "Graphic 320x200x2");
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x225x2, 1, 320, 225, 2, 8, 8, "Graphic 320x225x2");
     SCREEN_MODE_DEFINE( BITMAP_MODE_160x192x4, 1, 160, 192, 4, 8, 8, "Graphic 160x192x4");
     SCREEN_MODE_DEFINE( BITMAP_MODE_160x200x4, 1, 160, 200, 4, 8, 8, "Graphic 160x200x4");
@@ -1487,7 +1500,6 @@ void gime_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( BITMAP_MODE_640x200x2, 1, 640, 200, 2, 8, 8, "Graphic 640x200x2");
     SCREEN_MODE_DEFINE( BITMAP_MODE_640x225x2, 1, 640, 225, 2, 8, 8, "Graphic 640x225x2");
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x192x4, 1, 320, 192, 4, 8, 8, "Graphic 320x192x4");
-    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x4, 1, 320, 200, 4, 8, 8, "Graphic 320x200x4");
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x225x4, 1, 320, 225, 4, 8, 8, "Graphic 320x225x4");
     SCREEN_MODE_DEFINE( BITMAP_MODE_160x192x16, 1, 160, 192, 16, 8, 8, "Graphic 160x192x16");
     SCREEN_MODE_DEFINE( BITMAP_MODE_160x200x16, 1, 160, 200, 16, 8, 8, "Graphic 160x200x16");
@@ -1983,8 +1995,7 @@ static Variable * gime_image_converter_multicolor_mode_midres( Environment * _en
             
             adilinepixel(colorIndex);
 
-            bitmask = ( ( colorIndex & 0x1 ) ) << (3 - ((image_x & 0x3)));
-            bitmask |= ( ( ( colorIndex & 0x2 ) ) << 3 ) << (3 - ((image_x & 0x3)));
+            bitmask = ( ( colorIndex & 0x3 ) ) << ((3 - ((image_x & 0x3)))*2);
 
             *(buffer + 3 + offset) |= bitmask;
 
@@ -2030,14 +2041,14 @@ static Variable * gime_image_converter_multicolor_mode_midres( Environment * _en
     } else {
         hwIndex = 0xff;
     }
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = hwIndex;
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = hwIndex;
 
     if ( lastUsedSlotInCommonPalette > 2 ) {
         hwIndex = commonPalette[2].hardwareIndex;
     } else {
         hwIndex = 0xff;
     }
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = hwIndex;
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = hwIndex;
 
     if ( lastUsedSlotInCommonPalette > 3 ) {
         hwIndex = commonPalette[3].hardwareIndex;
@@ -2185,10 +2196,7 @@ static Variable * gime_image_converter_multicolor_mode_lores( Environment * _env
 
             adilinepixel(colorIndex);
             
-            bitmask = ( ( colorIndex & 0x8 ) >> 3 ) << (1 - ((image_x & 0x1)));
-            bitmask |= ( ( ( colorIndex & 0x2 ) ) << 1 ) << (1 - ((image_x & 0x1)));
-            bitmask |= ( ( ( colorIndex & 0x4 ) ) << 2 ) << (1 - ((image_x & 0x1)));
-            bitmask |= ( ( ( colorIndex & 0x1 ) ) << 6 ) << (1 - ((image_x & 0x1)));
+            bitmask = ( ( colorIndex & 0xF ) ) << (4 - ((image_x & 0x1)*4));
 
             *(buffer + 3 + offset) |= bitmask;
 
