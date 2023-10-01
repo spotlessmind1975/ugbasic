@@ -171,34 +171,46 @@ void z80_poke( Environment * _environment, char * _address, char * _source ) {
  */
 void z80_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
 
-    MAKE_LABEL
+    inline( cpu_fill_blocks )
 
-    outline1("LD A, (%s)", _pattern);
-    outline1("LD HL, (%s)", _address);
-    outline0("LD (HL),A")
-    outline0("LD E,L");
-    outline0("LD D,H");
-    outline0("INC DE");
-    outline0("LD (DE),A")
-    outline0("LD C,0");
-    outline1("LD A, (%s)", _blocks);
-    outline0("CP 0");
-    outline1("JR Z, %sdone", label);
-    outline0("DEC A");
-    outline0("LD B,A");
-    outline0("LDIR");
+        MAKE_LABEL
 
-    outline1("LD A, (%s)", _pattern);
-    outline0("LD (HL),A")
-    outline0("LD E,L");
-    outline0("LD D,H");
-    outline0("INC DE");
-    outline0("LD (DE),A")
-    outline0("LD C,255");
-    outline0("LD A,0");
-    outline0("LD B,A");
-    outline0("LDIR");
-    outhead1("%sdone:", label);
+        outline1("LD A, (%s)", _pattern);
+        outline1("LD HL, (%s)", _address);
+        outline0("LD (HL),A")
+        outline0("LD E,L");
+        outline0("LD D,H");
+        outline0("INC DE");
+        outline0("LD (DE),A")
+        outline0("LD C,0");
+        outline1("LD A, (%s)", _blocks);
+        outline0("CP 0");
+        outline1("JR Z, %sdone", label);
+        outline0("DEC A");
+        outline0("LD B,A");
+        outline0("LDIR");
+
+        outline1("LD A, (%s)", _pattern);
+        outline0("LD (HL),A")
+        outline0("LD E,L");
+        outline0("LD D,H");
+        outline0("INC DE");
+        outline0("LD (DE),A")
+        outline0("LD C,255");
+        outline0("LD A,0");
+        outline0("LD B,A");
+        outline0("LDIR");
+        outhead1("%sdone:", label);
+
+    embedded( cpu_fill_blocks, src_hw_z80_cpu_fill_blocks_asm );
+
+        outline1("LD A, (%s)", _blocks);
+        outline0("LD B, A");
+        outline1("LD A, (%s)", _pattern);
+        outline1("LD HL, (%s)", _address);
+        outline0("CALL CPUFILLBLOCKS");
+
+    done(  )
 
 }
 
