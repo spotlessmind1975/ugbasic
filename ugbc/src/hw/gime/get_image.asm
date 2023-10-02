@@ -105,6 +105,13 @@ GETIMAGEGOSX
     ; The GET IMAGE primitive must have control if it is necessary to bank 
     ; in the RAM and, if necessary, to differentiate the drawing logic.
 
+    PSHS D
+    LDA IMAGEW
+    LDB IMAGEH
+    MUL
+    TFR D, U
+    PULS D
+    
     JSR GIMEBANKISNEEDED
     CMPA #0
     BEQ GETIMAGEGOSXNOBANK

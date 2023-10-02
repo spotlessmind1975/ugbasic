@@ -117,9 +117,13 @@ GIMEBANKRESTORE
 ; switch between video and memory RAM ad each
 ; read / write cycle.
 ;    Input: Y = address to check
+;           U = size to check
 ;    Output: A = 1 switch is needed
 
 GIMEBANKISNEEDED
+    PSHS Y, D
+    TFR U, D
+    LEAY D, Y
     LDA GIMEMMUSTART
     BEQ GIMEBANKISNEEDED0
     CMPA #1
@@ -130,6 +134,7 @@ GIMEBANKISNEEDED
     BEQ GIMEBANKISNEEDED3
 GIMEBANKISNEEDEDN
     LDA #0
+    PULS Y, D
     RTS
 GIMEBANKISNEEDED0
     CMPY #$5FFF
@@ -149,6 +154,7 @@ GIMEBANKISNEEDED3
     JMP GIMEBANKISNEEDEDN
 GIMEBANKISNEEDEDY
     LDA #1
+    PULS Y, D
     RTS
 
 ; This routine is needed to switch to video RAM.
