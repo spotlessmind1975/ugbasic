@@ -111,6 +111,12 @@ int lastUsedSlotInCommonPalette = 0;
  * CODE SECTION
  ****************************************************************************/
 
+static int rgbConverterFunction( int _red, int _green, int _blue ) {
+
+    return RGB2GIME( _red, _green, _blue );
+
+}
+
 /**
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
@@ -1083,6 +1089,7 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
     _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
+    _environment->currentRgbConverterFunction = rgbConverterFunction;
 
     int currentFrameSize;
 
