@@ -70,64 +70,119 @@ GIMEMMUD   equ   $FFAD
 GIMEMMUE   equ   $FFAE
 GIMEMMUF   equ   $FFAF
 
-    ; +-----------+
-    ; | GIMEMMU4 | ----> #$30
-    ; +-----------+
-    ; | GIMEMMU5 | ----> #$30/#$31
-    ; +-----------+
-    ; | GIMEMMU6 | ----> #$30/#$31/#$32
-    ; +-----------+
-    ; | GIMEMMU7 | ----> #$30/#$31/#$32/#$33
-    ; +-----------+
+; This routine is needed to setup the video RAM
+; segments at screen mode change. It is setup
+; on the TASK 1. The TASK 0 is left for 
+; standard ROM / RAM
 
 GIMERAM
 	PSHS D, X
     ANDCC #$FE
     LDA GIMEMMUSTART
-    LDX #GIMEMMU3
+    LDX #GIMEMMUB
     LEAX A, X
     LDA #$30
     LDB GIMEMMUSTART
-ISVCIRQGRAPHL2
+GIMERAML2
     STA ,X
 	LEAX 1, X
     INCA
     INCB
     CMPB #4
-    BNE ISVCIRQGRAPHL2
+    BNE GIMERAML2
 	PULS D, X
 	RTS
 
+; This routine is needed to save the current
+; state of TASK bank selection (TASK 0 / TASK1).
 
-    ; +-----------+
-    ; | GIMEMMU4 | ----> #$3C
-    ; +-----------+
-    ; | GIMEMMU5 | ----> #$3D
-    ; +-----------+
-    ; | GIMEMMU6 | ----> #$3E
-    ; +-----------+
-    ; | GIMEMMU7 | ----> #$3F
-    ; +-----------+
+GIMEBANKSAVE
+    PSHS D
+    LDA GIMEINIT1
+    STA GIMEINIT1SHADOW
+    PULS D
+    RTS
+
+; This routine is needed to restore the
+; state of TASK bank selection (TASK 0 / TASK1).
+
+GIMEBANKRESTORE
+    PSHS D
+    LDA GIMEINIT1SHADOW
+    STA GIMEINIT1
+    PULS D
+    RTS
+
+; This routine will give back the need of
+; switch between video and memory RAM ad each
+; read / write cycle.
+;    Input: Y = address to check
+;    Output: A = 1 switch is needed
+
+GIMEBANKISNEEDED
+    LDA GIMEMMUSTART
+    BEQ GIMEBANKISNEEDED0
+    CMPA #1
+    BEQ GIMEBANKISNEEDED1
+    CMPA #2
+    BEQ GIMEBANKISNEEDED2
+    CMPA #3
+    BEQ GIMEBANKISNEEDED3
+GIMEBANKISNEEDEDN
+    LDA #0
+    RTS
+GIMEBANKISNEEDED0
+    CMPY #$5FFF
+    BGT GIMEBANKISNEEDEDY
+    JMP GIMEBANKISNEEDEDN
+GIMEBANKISNEEDED1
+    CMPY #$7FFF
+    BGT GIMEBANKISNEEDEDY
+    JMP GIMEBANKISNEEDEDN
+GIMEBANKISNEEDED2
+    CMPY #$9FFF
+    BGT GIMEBANKISNEEDEDY
+    JMP GIMEBANKISNEEDEDN
+GIMEBANKISNEEDED3
+    CMPY #$bFFF
+    BGT GIMEBANKISNEEDEDY
+    JMP GIMEBANKISNEEDEDN
+GIMEBANKISNEEDEDY
+    LDA #1
+    RTS
+
+; This routine is needed to switch to video RAM.
+
+GIMEBANKVIDEO
+    PSHS D
+    LDA GIMEINIT1
+    ORA #$1
+    STA GIMEINIT1
+    PULS D
+    RTS
+
+; This routine is needed to setup the standard
+; RAM / ROM segment. It actually does nothing
+; since we preserve the default configuration.
 
 GIMEROM
-	PSHS D, X
-    ANDCC #$FE
-    LDA GIMEMMUSTART
-    LDX #GIMEMMU3
-    LEAX A, X
-    ADDA #$3B
-    LDB GIMEMMUSTART
-ISVCIRQGRAPHL1
-    STA ,X
-	LEAX 1, X
-    INCA
-    INCB
-    CMPB #4
-    BNE ISVCIRQGRAPHL1
-	PULS D, X
 	RTS
 
+; This routine is needed to switch to ROM/RAM.
+
+GIMEBANKROM
+    PSHS D
+    LDA GIMEINIT1
+    ORA #$1
+    STA GIMEINIT1
+    PULS D
+    RTS
+
+; This is the startup routine.
+
 GIMESTARTUP
+
+    ; Standard initialization
 
 	LDA   #%01001100
 	STA   GIMEINIT0
@@ -147,13 +202,15 @@ GIMESTARTUP
 	CLR   GIMEVOFF0
 	CLR   GIMEHOFF
 
+    ; Reset the palette.
+
 	JSR GIMERESETPALETTE
+
+    ; Setup the video RAM segments.
     JSR GIMERAM
 
-    ; LDA   #$30
-    ; STA   GIMEMMU6
-    ; INCA
-    ; STA   GIMEMMU7
+    ; Turn on ROM/RAM
+    JSR GIMEBANKROM
 
     RTS
 

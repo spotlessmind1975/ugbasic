@@ -43,6 +43,12 @@ CLSG
 CLSGX
     PSHS A,B,X,Y,U
 
+    ; The CLS command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
     LDB _PAPER
     JSR GIMESELECTPALETTE
     STA PLOTC
@@ -111,5 +117,12 @@ CLSGX0
     LEAU -1, U
     CMPU #0
     BNE CLSGX0
+
+    ; The CLS command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKROM
+
     PULS A,B,X,Y,U
     RTS

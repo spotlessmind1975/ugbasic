@@ -1124,8 +1124,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         cpu_store_16bit( _environment, "TEXTADDRESS", 0x8000 );
     } else {
         cpu_store_8bit( _environment, "GIMEMMUSTART", 0 );
-        cpu_store_16bit( _environment, "BITMAPADDRESS", 0x4000 );
-        cpu_store_16bit( _environment, "TEXTADDRESS", 0x4000 );
+        cpu_store_16bit( _environment, "BITMAPADDRESS", 0x6000 );
+        cpu_store_16bit( _environment, "TEXTADDRESS", 0x6000 );
     }
 
     cpu_store_16bit( _environment, "ORIGINX", 0 );

@@ -188,23 +188,28 @@ PLOTD
     ;set point
     ;---------
 
+    JSR GIMEBANKVIDEO
     LDA , X           ;get row with point in it
     ANDA , U
     ORA PLOTC
     ; ORA , Y               ;isolate AND set the point
     STA , X           ;write back to $A000
+    JSR GIMEBANKROM
     JMP PLOTP                  ;skip the erase-point section
 
     ;-----------
     ;erase point
     ;-----------
 PLOTE                          ;handled same way as setting a point
+    JSR GIMEBANKVIDEO
     LDA , X           ;get row with point in it
     ANDA , U
     STA , X           ;write back to $A000
+    JSR GIMEBANKROM
     JMP PLOTP                  ;skip the erase-point section
 
 PLOTG      
+    JSR GIMEBANKVIDEO
     LDA , X           ;get row with point in it
     ANDA , U
     CMPA #0
@@ -212,15 +217,19 @@ PLOTG
 PLOTG1
     LDA #$ff
     STA PLOTM
+    JSR GIMEBANKROM
     JMP PLOTP
 PLOTG0
     LDA #$0
     STA PLOTM
+    JSR GIMEBANKROM
     JMP PLOTP            
 
 PLOTCL                          
+    JSR GIMEBANKVIDEO
     LDA , X           ;get row with point in it
     STA PLOTM
+    JSR GIMEBANKROM
     JMP PLOTP
 
 PLOTP

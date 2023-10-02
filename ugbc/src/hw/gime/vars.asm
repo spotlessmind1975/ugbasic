@@ -97,3 +97,4 @@ PALETTEPAPERUNUSED         fcb 0
 PALETTELIMIT               fcb 0
 GIMEVIDMSHADOW             fcb 0
 GIMEMMUSTART               fcb 3
+GIMEINIT1SHADOW            fcb 0
