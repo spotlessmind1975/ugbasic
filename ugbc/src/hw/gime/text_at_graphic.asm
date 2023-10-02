@@ -38,6 +38,11 @@
 TEXTATBMDRAWCHAR
     PSHS D, X, Y, U, CC
 
+    ; The PRINT primitive should have control if it is necessary to bank 
+    ; in the RAM and, if necessary, to differentiate the drawing logic.
+    ; However, since the font is probably in the screen segment,
+    ; there is no reason to differentiate.
+
     LDB #$08
     MUL
     ADDD #UDCCHAR
@@ -74,7 +79,9 @@ TEXTATBMDRAWCHARB16
 
     LDU #8
 TEXTATBMDRAWCHARB16L1
+    JSR GIMEBANKROM
     LDA , Y+
+    JSR GIMEBANKVIDEO
 
     LEAX 3, X
 
@@ -170,6 +177,8 @@ TEXTATBMDRAWCHARB16L1D0
     CMPU #0
     LBNE TEXTATBMDRAWCHARB16L1
 
+    JSR GIMEBANKROM
+
     PULS D, X, Y, U, CC
     RTS
 
@@ -180,7 +189,9 @@ TEXTATBMDRAWCHARB4
 
     LDU #8
 TEXTATBMDRAWCHARB4L1
+    JSR GIMEBANKROM
     LDA , Y+
+    JSR GIMEBANKVIDEO
 
     LEAX 1, X
 
@@ -227,6 +238,8 @@ TEXTATBMDRAWCHARB4L10C
     CMPU #0
     BNE TEXTATBMDRAWCHARB4L1
 
+    JSR GIMEBANKROM
+
     PULS D, X, Y, U, CC
     RTS
 
@@ -237,12 +250,17 @@ TEXTATBMDRAWCHARB2
 
     LDU #8
 TEXTATBMDRAWCHARB2L1
+    JSR GIMEBANKROM
     LDA , Y+
+    JSR GIMEBANKVIDEO
     STA , X
     LEAU -1, U
     LEAX B, X
     CMPU #0
     BNE TEXTATBMDRAWCHARB2L1
+
+    JSR GIMEBANKROM
+
     PULS D, X, Y, U, CC
     RTS
 

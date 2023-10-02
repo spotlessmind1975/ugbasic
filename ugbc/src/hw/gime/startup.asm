@@ -173,7 +173,7 @@ GIMEROM
 GIMEBANKROM
     PSHS D
     LDA GIMEINIT1
-    ORA #$1
+    ANDA #$FE
     STA GIMEINIT1
     PULS D
     RTS
@@ -201,6 +201,24 @@ GIMESTARTUP
 	STA   GIMEVOFF1
 	CLR   GIMEVOFF0
 	CLR   GIMEHOFF
+
+    LDX #GIMEMMU8
+    LDA #$38
+    STA ,X+
+    INCA
+    STA ,X+
+    INCA
+    STA ,X+
+    INCA
+    STA ,X+
+    INCA
+    STA ,X+
+    INCA
+    STA ,X+
+    INCA
+    STA ,X+
+    INCA
+    STA ,X+
 
     ; Reset the palette.
 

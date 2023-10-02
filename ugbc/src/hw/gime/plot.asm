@@ -66,6 +66,12 @@ PLOTCLIP5
 
 PLOTMODE
 
+    ; The PLOT command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
     LDB _PEN
     JSR GIMESELECTPALETTE
     STA PLOTC
@@ -80,6 +86,13 @@ PLOTMODE
     BEQ PLOTB4
     CMPA #$40
     LBEQ PLOTB2
+
+    ; The PLOT command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKROM
+
     RTS
 
 PLOTB16
@@ -88,11 +101,6 @@ PLOTB16
     LDD PLOTX
     ANDB #$1
     LEAU B, U
-
-    ; LDY #PLOTORBIT8
-    ; LDD PLOTX
-    ; ANDB #$1
-    ; LEAU B, Y
 
     CMPB #$1
     BEQ PLOTB16SKIP
@@ -188,28 +196,24 @@ PLOTD
     ;set point
     ;---------
 
-    JSR GIMEBANKVIDEO
     LDA , X           ;get row with point in it
     ANDA , U
     ORA PLOTC
     ; ORA , Y               ;isolate AND set the point
     STA , X           ;write back to $A000
-    JSR GIMEBANKROM
+
     JMP PLOTP                  ;skip the erase-point section
 
     ;-----------
     ;erase point
     ;-----------
 PLOTE                          ;handled same way as setting a point
-    JSR GIMEBANKVIDEO
     LDA , X           ;get row with point in it
     ANDA , U
     STA , X           ;write back to $A000
-    JSR GIMEBANKROM
     JMP PLOTP                  ;skip the erase-point section
 
 PLOTG      
-    JSR GIMEBANKVIDEO
     LDA , X           ;get row with point in it
     ANDA , U
     CMPA #0
@@ -217,22 +221,25 @@ PLOTG
 PLOTG1
     LDA #$ff
     STA PLOTM
-    JSR GIMEBANKROM
     JMP PLOTP
 PLOTG0
     LDA #$0
     STA PLOTM
-    JSR GIMEBANKROM
     JMP PLOTP            
 
 PLOTCL                          
-    JSR GIMEBANKVIDEO
     LDA , X           ;get row with point in it
     STA PLOTM
-    JSR GIMEBANKROM
     JMP PLOTP
 
 PLOTP
+
+    ; The PLOT command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKROM
+    
     RTS
 
 PLOTORBIT

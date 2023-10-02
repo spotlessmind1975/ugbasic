@@ -161,6 +161,12 @@ TEXTATLOOP2
     ; A register, offseted by Y. Move ahead of one character and
     ; decrement the size of the string.
 
+    ; The PRINT primitive should have control if it is necessary to bank 
+    ; in the RAM and, if necessary, to differentiate the drawing logic.
+    ; However, since the font is probably in the screen segment,
+    ; there is no reason to differentiate.
+
+    JSR GIMEBANKROM
     LDA ,Y+
     DECB
 
@@ -524,6 +530,7 @@ TEXTATAT
 
 TEXTATSP0
 
+    JSR GIMEBANKVIDEO
     STA , X+
 
     ; Check if WRITING allows to change the pen+paper color.
@@ -675,4 +682,6 @@ TEXTATNEXT
     CMPB #0
     LBNE TEXTATLOOP2
     
+    JSR GIMEBANKROM
+
     RTS

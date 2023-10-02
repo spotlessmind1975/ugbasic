@@ -102,9 +102,21 @@ GETIMAGEGOSX
     
     LEAY 3,Y
 
+    ; The GET IMAGE primitive must have control if it is necessary to bank 
+    ; in the RAM and, if necessary, to differentiate the drawing logic.
+
+    JSR GIMEBANKISNEEDED
+    CMPA #0
+    BEQ GETIMAGEGOSXNOBANK
+
+    ; This is the banked logic.
+
+GETIMAGEGOSXBANKED
     LDU IMAGEW
 GETIMAGEL1    
+    JSR GIMEBANKVIDEO
     LDA , X+
+    JSR GIMEBANKROM
     STA , Y+
     LEAU -1, U
     CMPU #0
@@ -131,5 +143,42 @@ GETIMAGECOMMONEL1
     INCA
     CMPA PALETTELIMIT
     BNE GETIMAGECOMMONEL1
+    RTS
+
+    ; This is the "not banked" logic.
+
+GETIMAGEGOSXNOBANK
+    JSR GIMEBANKVIDEO
+    LDU IMAGEW
+GETIMAGEL1NOBANK    
+    LDA , X+
+    STA , Y+
+    LEAU -1, U
+    CMPU #0
+    LBNE GETIMAGEL1NOBANK
+    
+    CLRA
+    LDB CURRENTSL
+    SUBD IMAGEW
+    LEAX D, X
+
+    DEC IMAGEH
+    LDB IMAGEH
+    CMPB #0
+    BEQ GETIMAGECOMMONENOBANK
+
+    LDU IMAGEW
+    JMP GETIMAGEL1
+
+GETIMAGECOMMONENOBANK
+    JSR GIMEBANKROM
+    LDA #0
+GETIMAGECOMMONEL1NOBANK
+    JSR GIMEGETPALETTE
+    STB , Y+
+    INCA
+    CMPA PALETTELIMIT
+    BNE GETIMAGECOMMONEL1NOBANK
+
     RTS
 
