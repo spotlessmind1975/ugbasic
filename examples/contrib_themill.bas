@@ -18,6 +18,8 @@ REM @include c128,c64,coleco,sg1000,sc3000,cpc
 
     BITMAP ENABLE(16)
 
+    CLS
+
     themill := LOAD IMAGE("themill.png")
 
     PUT IMAGE themill AT 0, 0
