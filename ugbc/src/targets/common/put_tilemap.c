@@ -66,8 +66,6 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
 
     MAKE_LABEL
 
-    outline0("; put_tilemap" );
-
     Variable * tilemap = variable_retrieve( _environment, _tilemap );
     Variable * dx = NULL;
     Variable * dy = NULL;
@@ -105,7 +103,12 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
         index = variable_temporary( _environment, VT_BYTE, "(index)" );
     }
 
+    // Starting index from 0 (zero).
+
     variable_store( _environment, index->name, 0 );
+
+    // If a starting point has been given, we must increase the
+    // index to match the first tile to draw.
 
     if ( dx && dy ) {
         Variable * mapWidth = variable_temporary( _environment, VT_BYTE, "(map width)");
@@ -122,15 +125,23 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
     Variable * padding2 = variable_temporary( _environment, VT_BYTE, "(padding2)" );
     Variable * padFrame = variable_temporary( _environment, VT_BYTE, "(pad frame)" );
 
+    // Set up the padding tile.
+
     variable_store( _environment, padFrame->name, _padding_tile );
 
+    // For each layer (actually, a normal map has just one layer).
+
     for( int layerIndex = 0; layerIndex < tilemap->mapLayers; ++layerIndex ) {
+
+        // If a specific layer is selected, we must point to that layer.
 
         if ( _layer ) {
             Variable * sizeSize = variable_temporary( _environment, VT_WORD, "(size)");
             variable_store( _environment, sizeSize->name, size );
             index = variable_add( _environment, index->name, variable_mul( _environment, layer->name, sizeSize->name )->name );
         }
+
+        // Let's start from the start of the screen.
 
         variable_store( _environment, y->name, 0 );
 
@@ -146,18 +157,52 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
         char labelSkipFxCheck[MAX_TEMPORARY_STORAGE]; sprintf( labelSkipFxCheck, "%sskipx%4.4x", label, layerIndex );
         char labelSkipIndexCheck[MAX_TEMPORARY_STORAGE]; sprintf( labelSkipIndexCheck, "%sskipy%4.4x", label, layerIndex );
 
+        // Disable vertical padding.
+
         variable_store( _environment, padding2->name, 0 );
 
+        // --------------------------------------------------------------------------
+        // Y loop
+        // --------------------------------------------------------------------------
+
         cpu_label( _environment, labelLoopY );
+
+        // Let's start from the left from the screen.
+
         variable_store( _environment, x->name, 0 );
+
+        // Set the count of frames drawed on the horizontal
+        // line to zero (0).
+
         variable_store( _environment, fx->name, 0 );
+
+        // If a delta position is given, the count of horizontal frames
+        // drawed must be increased by delta position.
+
         if ( dx ) {
             variable_move( _environment, dx->name, fx->name );
         }
+
+        // Disable horizontal padding.
+
         variable_store( _environment, padding->name, 0 );
+
+        // --------------------------------------------------------------------------
+        // Begin X loop
+        // --------------------------------------------------------------------------
+
         cpu_label( _environment, labelLoopX );
+
+        // If the horizontal padding is enabled, we must skip to draw the padding tile.
+
         cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelPadding, 1 );
+
+        // If the vertical padding is enabled, we must skip to draw the padding tile.
+
         cpu_compare_and_branch_8bit_const(  _environment, padding2->realName, 1, labelPadding, 1 );
+
+        // Take the tile from the map and increase the index.
+
         if ( tilemap->size > 255 ) {
             cpu_move_8bit_indirect2_16bit( _environment, tilemap->realName, index->realName, frame->realName );
             cpu_inc_16bit( _environment, index->realName );
@@ -165,40 +210,104 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
             cpu_move_8bit_indirect2_8bit( _environment, tilemap->realName, index->realName, frame->realName );
             cpu_inc( _environment, index->realName );
         }
+
+        // In case the frame read from the map is 0xff, it means that that specific
+        // frame has not to be drawn, so we exit from this frame drawing.
+
         cpu_compare_and_branch_8bit_const(  _environment, frame->realName, 0xff, labelExitFrame, 1 );
+
+        // --- DRAW TILE --
+
         put_image( _environment, tileset->name, x->name, y->name, frame->name, NULL,  _flags );
         cpu_jump( _environment, labelDonePutImage );
+
+        // --- DRAW PADDING TILE --
+
         cpu_label( _environment, labelPadding );
         put_image( _environment, tileset->name, x->name, y->name, padFrame->name, NULL,  _flags );
-        cpu_label( _environment, labelDonePutImage );
-        cpu_label( _environment, labelExitFrame );
+
+        // From here and ahead, we drawed the tile so we must calculate the
+        // next conditions and actions to do. We arrive here both if we drawed
+        // a TILE, a PADDING TILE or if we skipped the drawing.
+
+        cpu_label( _environment, labelDonePutImage ); cpu_label( _environment, labelExitFrame );
+
+        // Increase the horizontal frames drawed count.
+
         cpu_inc( _environment, fx->realName );
+
+        // Increase the next X position to draw to.
+
         variable_add_inplace( _environment, x->name, tileset->frameWidth );
+
+        // If the horizontal padding is enabled, we must move to the skip fx check,
+        // since the horizontal padding is enabled by reaching the horizontal limit.
+
         cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelSkipFxCheck, 1 );
+
+        // We must check if the horizontal limit is reached. In this case, we must
+        // enable horizontal padding by moving to the specific routine.
+
         Variable * check = variable_less_than_const( _environment, fx->name, tilemap->mapWidth, 0 );
         cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x0, labelExitX, 1 );
+
+        // Both if the horizontal limit has been reached or not, we must check if the
+        // screen limit has been reached. If the screen limit has not been reached,
+        // we must repeat the X loop. Otherwise, we exit from the X loop.
+
         cpu_label( _environment, labelSkipFxCheck );
         check = variable_less_than_const( _environment, x->name, ( _environment->screenWidth), 0 );
         cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0xff, labelLoopX, 1 );
         cpu_jump( _environment, labelExitX2 );
+
+        // --- ENABLE HORIZONTAL PADDING ---
         cpu_label( _environment, labelExitX );
         variable_store( _environment, padding->name, 1 );
         cpu_jump( _environment, labelSkipFxCheck );
+
+        // --------------------------------------------------------------------------
+        // End X loop
+        // --------------------------------------------------------------------------
+
         cpu_label( _environment, labelExitX2 );
+
+        // Disable horizontal padding.
+
         variable_store( _environment, padding->name, 0 );
+
+        // If the screen is narrower than the map, we must move ahead the
+        // index by the calculated delta frame row.
+
         if ( deltaFrameRow > 0 ) {
             variable_add_inplace( _environment, index->name, deltaFrameRow );
         }
+
+        // Move to the next row to draw.
+
         variable_add_inplace( _environment, y->name, tileset->frameHeight );
+
+        // If we reach the limit of ther map size, we enable the vertical padding.
+        
         check = variable_less_than_const( _environment, index->name, tilemap->size, 0 );
         cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x00, labelPadding2, 1 );
+
+        // Both if the vertical padding is enabled or not, we must check if the
+        // screen vertical limit has been reached. If not, we repeat the Y loop.
+
         cpu_label( _environment, labelSkipIndexCheck );
         check = variable_less_than_const( _environment, y->name, (_environment->screenHeight ), 0 );
         cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0xff, labelLoopY, 1 );
         cpu_jump( _environment, labelExit );
+
+        // --- ENABLE VERTICAL PADDING ---
         cpu_label( _environment, labelPadding2 );
         variable_store( _environment, padding2->name, 1 );
         cpu_jump( _environment, labelSkipIndexCheck );
+
+        // --------------------------------------------------------------------------
+        // End Y loop
+        // --------------------------------------------------------------------------
+
         cpu_label( _environment, labelExit );
 
         if ( _layer ) {
