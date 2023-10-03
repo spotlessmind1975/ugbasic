@@ -1181,7 +1181,7 @@ sono inclusi, mentre una parentesi tonda si intende che gli estremi sono esclusi
 
 @english
 The ''DIM'' command allows you to define a vector or a multidimensional array of values, 
-and to initialize this array with the values ​​we prefer.
+and to initialize this array with the preferred values.
 
 The simplest syntax is that which defines a vector of a single dimension: in this case, 
 it is sufficient to indicate the number of elements in parentheses. With the keyword 
@@ -1216,20 +1216,28 @@ elemento, con lo stesso tipo di dato con cui è stata creata la matrice
 (con la sintassi ''# { ... }''), oppure descrivendo l'area di memoria che 
 occuperà la matrice, byte per byte (con la sintassi ''#[...]'').
 
-@syntax DIM [identifier] {AS [datatype]} ( [dimension1] {, [dimension2], ... } )
-@syntax DIM [identifier] {AS [datatype]} ( [dimension1] {, [dimension2], ... } ) = # [...bytes...]
-@syntax DIM [identifier] {AS [datatype]} ( [dimension1] {, [dimension2], ... } ) = # { { value1, value2, ... }, ... }
-@syntax DIM [identifier] {AS [datatype]} WITH [value] ( [dimension1] {, [dimension2], ... } )
+@syntax DIM id [AS type] ( d1 [, d2 [ , ... ] ] )
+@syntax DIM id [AS type] ( d1 [, d2 [ , ... ] ] ) = #[hex]
+@syntax DIM id [AS type] ( d1 [, d2 [ , ... ] ] ) = #{v1, v2, ... }
+@syntax DIM id [AS type] WITH v ( d1 [, d2 [ , ... ] ] )
 
 @example DIM x(42)
 @example DIM values AS DWORD(20,20)
 @example DIM y AS BYTE(8) = #[ff80ff80ff80ff80]
-@example DIM z AS BYTE(8) = #{ 255, 128, 255, 128, 255, 128, 255, 128 }
+@example DIM z AS BYTE(8) = _
+@example              #{ 255, 128, 255, 128, 255, 128, 255, 128 }
 @example DIM scores WITH 0 (2)
 
+@usedInExample arrays_examples_01.bas
+@usedInExample arrays_examples_02.bas
+@usedInExample arrays_examples_03.bas
+@usedInExample arrays_examples_04.bas
+@usedInExample arrays_examples_05.bas
 @usedInExample contrib_sierpinski.bas
 @usedInExample contrib_sierpinski2.bas
 @usedInExample contrib_sierpinski3.bas
+
+@seeAlso VAR
 
 @target all
 </usermanual> */

@@ -62,11 +62,12 @@ in un numero positivo. Restituisce un valore assoluto di un numero intero o
 frazionario, non tenendo in alcuna considerazione il fatto che quel numero 
 sia positivo o negativo, in altre parole, ignorando il suo segno.
 
-@syntax ABS([expression])
+@syntax =ABS(expression)
 
 @example x = ABS(-1)
 
 @usedInExample maths_abs_01.bas
+@usedInExample contrib_if_test_speed.bas
 
 @target all
 </usermanual> */
