@@ -148,8 +148,8 @@
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
-#define BANK_COUNT          1
-#define BANK_SIZE           4096
+#define BANK_COUNT          0x2f
+#define BANK_SIZE           8192
 
 #define MAX_AUDIO_CHANNELS  1
 

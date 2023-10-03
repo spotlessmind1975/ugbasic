@@ -70,6 +70,23 @@ GIMEMMUD   equ   $FFAD
 GIMEMMUE   equ   $FFAE
 GIMEMMUF   equ   $FFAF
 
+; This routine is needed to implement the BANK command.
+; It changes the $c000 address mapping on TASK 0.
+
+GIMEBANKSHADOWCHANGE
+    PSHS D
+    LDA BANKSHADOW
+    CMPA #$2F
+    BGT GIMEBANKSHADOWCHANGERESET
+    STA GIMEMMU6
+    PULS D
+    RTS
+GIMEBANKSHADOWCHANGERESET
+    LDA #$3E
+    STA GIMEMMU6
+    PULS D
+    RTS
+
 ; This routine is needed to setup the video RAM
 ; segments at screen mode change. It is setup
 ; on the TASK 1. The TASK 0 is left for 

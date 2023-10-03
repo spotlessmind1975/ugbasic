@@ -50,7 +50,7 @@ Variable * bank_get_count( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(bank count)" );
 
-    variable_move( _environment, "GIMEBANKCOUNT", result->name );
+    variable_store( _environment, result->name, BANK_COUNT );
 
     return result;
     
