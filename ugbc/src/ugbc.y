@@ -905,9 +905,6 @@ const_factor:
       }
       | const_color_enumeration
       | const_key_scancode_definition
-      | BANK COUNT {
-          $$ = BANK_COUNT;
-      }
       ;
 
 expr : 
@@ -2583,8 +2580,7 @@ exponential:
         $$ = variable_string_right( _environment, $3, $5 )->name;
     }
     | BANK COUNT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(bank count)" )->name;
-        variable_store( _environment, $$, BANK_COUNT );
+        $$ = bank_get_count( _environment )->name;
     }
     | VARPTR OP Identifier CP {
         $$ = varptr( _environment, $3 )->name;

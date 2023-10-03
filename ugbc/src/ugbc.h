@@ -372,7 +372,7 @@ typedef enum _VariableType {
 #define MAX_TILESETS                    256
 #define MAX_NESTED_ARRAYS               16
 #define MAX_PROCEDURES                  4096
-#define MAX_RESIDENT_SHAREDS            16
+#define MAX_RESIDENT_SHAREDS            128
 #define PROTOTHREAD_DEFAULT_COUNT       16
 #define DSTRING_DEFAULT_COUNT           255
 #define DSTRING_DEFAULT_SPACE           1024
@@ -3413,6 +3413,7 @@ Variable *              bank_get_address( Environment * _environment, int _bank 
 Variable *              bank_get_address_var( Environment * _environment, char * _bank );
 Variable *              bank_get_size( Environment * _environment, int _bank );
 Variable *              bank_get_size_var( Environment * _environment, char * _bank );
+Variable *              bank_get_count( Environment * _environment );
 void                    bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size );
 void                    bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );

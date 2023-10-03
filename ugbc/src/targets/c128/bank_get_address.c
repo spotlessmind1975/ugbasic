@@ -51,7 +51,7 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
 
-    int address = 0xebff + ( BANK_SIZE * ( _bank - 1 ) );
+    int address = 0xc000 + ( BANK_SIZE * ( _bank - 1 ) );
 
     outline1("LDA #$%2.2x", ( address & 0xff ) );
     outline1("STA %s", result->realName );
