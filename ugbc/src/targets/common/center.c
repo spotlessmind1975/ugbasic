@@ -91,8 +91,6 @@ void center( Environment * _environment, char * _string, int _newline ) {
 
     MAKE_LABEL
     
-    setup_text_variables( _environment );
-
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     Variable * string = variable_retrieve( _environment, _string );
     Variable * currentWidth = variable_retrieve( _environment, "CURRENTTILESWIDTH");
