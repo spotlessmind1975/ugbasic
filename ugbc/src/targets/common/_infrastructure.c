@@ -2711,20 +2711,14 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
  */
 static void variable_move_8bit_8bit( Environment * _environment, Variable * _source, Variable * _target ) {
 
-    outline0(" ; variable_move_8bit_8bit" );
-
     if ( VT_SIGNED( _source->type ) ) {
 
         if ( VT_SIGNED( _target->type ) ) {
-
-            outline0(" ; 8 BIT (signed) -> 8 BIT (signed)" );
 
             // 8 BIT (signed) -> 8 BIT (signed)
             cpu_move_8bit( _environment, _source->realName, _target->realName );
 
         } else {
-
-            outline0(" ; 8 BIT (signed) -> 8 BIT (unsigned)" );
 
             MAKE_LABEL
 
@@ -2749,8 +2743,6 @@ static void variable_move_8bit_8bit( Environment * _environment, Variable * _sou
 
         if ( VT_SIGNED( _target->type ) ) {
 
-            outline0(" ; 8 BIT (unsigned) -> 8 BIT (signed)" );
-
             // 8 BIT (unsigned) -> 8 BIT (signed)
 
             // Generic algorithm: copy source on target and discard the sign bit.
@@ -2758,8 +2750,6 @@ static void variable_move_8bit_8bit( Environment * _environment, Variable * _sou
             cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
 
         } else {
-
-            outline0(" ; 8 BIT (unsigned) -> 8 BIT (unsigned)" );
 
             // 32 BIT (unsigned) -> 32 BIT (unsigned)
             cpu_move_8bit( _environment, _source->realName, _target->realName );
@@ -2873,10 +2863,7 @@ static void variable_move_1bit_1bit( Environment * _environment, Variable * _sou
 
     // 1 BIT -> 1 BIT
 
-    outline0( "; 1->1 bit");
     cpu_bit_check( _environment, _source->realName, _source->bitPosition, NULL, 8 );
-
-    outline0( "; inplace 1 bit");
     cpu_bit_inplace_8bit( _environment, _target->realName, _target->bitPosition, NULL );
 
 }

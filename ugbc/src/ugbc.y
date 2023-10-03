@@ -7518,11 +7518,11 @@ statement2:
         parser_array_init( _environment );
     }
       OP indexes CP OP_ASSIGN expr {
-        Variable * expr = variable_retrieve( _environment, $7 );
         Variable * array = variable_retrieve( _environment, $1 );
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
+        Variable * expr = variable_retrieve_or_define( _environment, $7, array->arrayType, 0 );
         variable_move_array( _environment, $1, expr->name );
         parser_array_cleanup( _environment );
   }
@@ -7565,11 +7565,11 @@ statement2:
     }
       OP_ASSIGN expr {
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-        Variable * expr = variable_retrieve( _environment, $6 );
         Variable * array = variable_retrieve( _environment, $2 );
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
+        Variable * expr = variable_retrieve_or_define( _environment, $6, array->arrayType, 0 );
         variable_move_array( _environment, $2, expr->name );
         parser_array_cleanup( _environment );
   }
