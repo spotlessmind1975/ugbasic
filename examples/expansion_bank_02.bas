@@ -8,7 +8,7 @@ REM ESPANSIONE DI MEMORIA INDIRIZZI E BANCHI
 REM
 REM Questo esempio cambierà il banco selezionato.
 REM
-REM @include c128,coco,d32,d64
+REM @include c128,coco,coco3,d32,d64
 
     CLS
 
@@ -21,7 +21,7 @@ REM @include c128,coco,d32,d64
         PRINT
         PRINT "SELECT BANK #";(BANK COUNT - 1)
         PRINT
-        BANK #(BANK COUNT - 1)
+        BANK (BANK COUNT - 1)
         PRINT "CURRENT BANK #: "; BANK()
         PRINT
 

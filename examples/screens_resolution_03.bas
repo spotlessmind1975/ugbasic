@@ -8,7 +8,7 @@ REM MANIPOLAZIONE DI SCHERMI CAMBIARE RISOLUZIONE (2)
 REM
 REM Questo esempio mostra la miglior risoluzione BITMAP disponibile. 
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,cpc
+REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc
 
      BITMAP ENABLE
      CLS BLACK: PEN WHITE
