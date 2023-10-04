@@ -118,7 +118,6 @@ PUTIMAGEGOSX
 
     ; This is the banked logic.
 
-BANKED
     LDU IMAGEW
 PUTIMAGEL1
     LDA IMAGEF
