@@ -1222,6 +1222,7 @@ void gtia_point( Environment * _environment, char *_x, char *_y, char * _result 
     Variable * result = variable_retrieve( _environment, _result );
 
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy( gtiapreproc, src_hw_gtia__preproc_asm );
     deploy( plot, src_hw_gtia_plot_asm );
     
     outline1("LDA %s", x->realName );
