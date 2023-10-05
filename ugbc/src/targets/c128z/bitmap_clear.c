@@ -66,10 +66,12 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
     Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
     Variable * pattern = variable_temporary( _environment, VT_BYTE, "(pattern)");
+    Variable * blocks = variable_temporary( _environment, VT_BYTE, "(blocks)" );
 
+    variable_store( _environment, blocks->name, 24 );
     variable_store( _environment, pattern->name, _pattern );
 
-    z80_fill_blocks( _environment, bitmapAddress->realName, "24", pattern->realName );
+    z80_fill_blocks( _environment, bitmapAddress->realName, blocks->realName, pattern->realName );
 
 }
 
@@ -95,8 +97,11 @@ void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
 
     // Safety check -- expression must exists (it should be always true)
     Variable * pattern = variable_retrieve( _environment, _pattern );
+    Variable * blocks = variable_temporary( _environment, VT_BYTE, "(blocks)" );
 
-    z80_fill_blocks( _environment, bitmapAddress->realName, "24", pattern->realName );
+    variable_store( _environment, blocks->name, 24 );
+
+    z80_fill_blocks( _environment, bitmapAddress->realName, blocks->realName, pattern->realName );
 
 }
 
