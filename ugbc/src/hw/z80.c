@@ -92,13 +92,17 @@ void z80_init( Environment * _environment ) {
  */
 void z80_beq( Environment * _environment, char * _label ) {
 
-    MAKE_LABEL
+    inline( cpu_beq )
 
-    outline1("JP Z, %s", label);
-    outline1("JMP %sb2", label);
-    outhead1("%s:", label);
-    outline1("JMP %s", _label);
-    outhead1("%sb2:", label);
+        MAKE_LABEL
+
+        outline1("JP Z, %s", label);
+        outline1("JMP %sb2", label);
+        outhead1("%s:", label);
+        outline1("JMP %s", _label);
+        outhead1("%sb2:", label);
+
+    no_embedded( cpu_beq )
 
 }
 
@@ -110,29 +114,41 @@ void z80_beq( Environment * _environment, char * _label ) {
  */
 void z80_bneq( Environment * _environment, char * _label ) {
 
-    MAKE_LABEL
+    inline( cpu_bneq )
 
-    outline1("JP NZ, %s", label);
-    outline1("JMP %sb2", label);
-    outhead1("%s:", label);
-    outline1("JMP %s", _label);
-    outhead1("%sb2:", label);
+        MAKE_LABEL
+
+        outline1("JP NZ, %s", label);
+        outline1("JMP %sb2", label);
+        outhead1("%s:", label);
+        outline1("JMP %s", _label);
+        outhead1("%sb2:", label);
+
+    no_embedded( cpu_bneq )
 
 }
 
 void z80_bveq( Environment * _environment, char * _value, char * _label ) {
 
-    outline1("LD A, (%s)", _value);
-    outline0("CP 0");
-    z80_beq( _environment, _label );
+    inline( cpu_bveq )
+
+        outline1("LD A, (%s)", _value);
+        outline0("CP 0");
+        z80_beq( _environment, _label );
+
+    no_embedded( cpu_bneq )
 
 }
 
 void z80_bvneq( Environment * _environment, char * _value, char * _label ) {
 
-    outline1("LD A, (%s)", _value);
-    outline0("CP 0");
-    z80_bneq( _environment, _label );
+    inline( cpu_bvneq )
+
+        outline1("LD A, (%s)", _value);
+        outline0("CP 0");
+        z80_bneq( _environment, _label );
+
+    no_embedded( cpu_bvneq )
 
 }
 
@@ -142,17 +158,25 @@ void z80_label( Environment * _environment, char * _label ) {
 
 void z80_peek( Environment * _environment, char * _address, char * _target ) {
 
-    outline1("LD HL, (%s)", _address);
-    outline0("LD A, (HL)");
-    outline1("LD (%s), A", _target);
+    inline( cpu_peek )
+
+        outline1("LD HL, (%s)", _address);
+        outline0("LD A, (HL)");
+        outline1("LD (%s), A", _target);
+
+    no_embedded( cpu_peek )
 
 }
 
 void z80_poke( Environment * _environment, char * _address, char * _source ) {
 
-    outline1("LD A, (%s)", _source);
-    outline1("LD HL, (%s)", _address);
-    outline0("LD (HL), A");
+    inline( cpu_poke )
+
+        outline1("LD A, (%s)", _source);
+        outline1("LD HL, (%s)", _address);
+        outline0("LD (HL), A");
+
+    no_embedded( cpu_poke )
 
 }
 
@@ -515,8 +539,12 @@ void z80_fill_direct_size_value( Environment * _environment, char * _address, in
  */
 void z80_move_8bit( Environment * _environment, char *_source, char *_destination ) {
     
-    outline1("LD A, (%s)", _source);
-    outline1("LD (%s), A", _destination);
+    inline( cpu_move_8bit )
+
+        outline1("LD A, (%s)", _source);
+        outline1("LD (%s), A", _destination);
+
+    no_embedded( cpu_move_8bit )
 
 }
 
@@ -529,17 +557,25 @@ void z80_move_8bit( Environment * _environment, char *_source, char *_destinatio
  */
 void z80_store_8bit( Environment * _environment, char *_destination, int _value ) {
 
-    outline1("LD A, $%2.2x", ( _value & 0xff ) );
-    outline1("LD (%s), A", _destination);
+    inline( cpu_store_8bit )
+
+        outline1("LD A, $%2.2x", ( _value & 0xff ) );
+        outline1("LD (%s), A", _destination);
+
+    no_embedded( cpu_store_8bit )
 
 }
 
 void z80_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
-    outline1("LD DE, %s", _destination);
-    outline1("ADD DE, $%2.2x", ( _offset & 0xff ) );
-    outline1("LD A, $%2.2x", ( _value & 0xff ) );
-    outline0("LD (DE), A");
+    inline( cpu_store_8bit_with_offset )
+
+        outline1("LD DE, %s", _destination);
+        outline1("ADD DE, $%2.2x", ( _offset & 0xff ) );
+        outline1("LD A, $%2.2x", ( _value & 0xff ) );
+        outline0("LD (DE), A");
+
+    no_embedded( cpu_store_8bit_with_offset )
 
 }
 
@@ -556,26 +592,30 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
 
     MAKE_LABEL
 
-    outline1("LD A, (%s)", _source);
-    outline0("LD B, A");
-    outline1("LD A, (%s)", _destination);
-    outline0("CP B");
-    outline1("JP NZ, %s", label);
-    outline1("LD A, $%2.2x", 0xff*_positive);
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outline1("JMP %sb2", label);
-    outhead1("%s:", label);
-    outline1("LD A, $%2.2x", 0xff*(1-_positive));
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outhead1("%sb2:", label);
+    inline( cpu_compare_8bit )
+
+        outline1("LD A, (%s)", _source);
+        outline0("LD B, A");
+        outline1("LD A, (%s)", _destination);
+        outline0("CP B");
+        outline1("JP NZ, %s", label);
+        outline1("LD A, $%2.2x", 0xff*_positive);
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outline1("JMP %sb2", label);
+        outhead1("%s:", label);
+        outline1("LD A, $%2.2x", 0xff*(1-_positive));
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outhead1("%sb2:", label);
+
+    no_embedded( cpu_compare_8bit )
 
 }
 
@@ -724,48 +764,80 @@ void z80_less_than_8bit_const( Environment * _environment, char *_source, int _d
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    inline( cpu_less_than_8bit )
 
-        outline1("LD A, $%2.2x", ( _destination & 0xff ) );
-        outline0("LD B, A");
-        outline1("LD A, (%s)", _source);
-        outline0("SUB A, B");
-        if ( _equal ) {
-            outline1("JP  Z,%strue", label);
+        if ( _signed ) {
+
+            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            outline0("SUB A, B");
+            if ( _equal ) {
+                outline1("JP  Z,%strue", label);
+            }
+            outline1("JP PO,%snoxor", label);
+            outline0("XOR $80");
+            outhead1("%snoxor:", label);
+            outline1("JP M,%strue", label);
+            outline1("JP PE,%sfalse", label);
+            outhead1("%sfalse:", label);
+            outline0("LD A, 0");
+            outline1("LD (%s), A", _other);
+            outline1("JMP %sb2", label);
+            outhead1("%strue:", label);
+            outline0("LD A, $ff");
+            outline1("LD (%s), A", _other);
+            outhead1("%sb2:", label);
+
+        } else {
+
+            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            outline0("CP B");
+            outline1("JR C, %s", label);
+            if ( _equal ) {
+                outline1("JR Z, %s", label);
+            }
+            outline0("LD A, 0");
+            outline1("LD (%s), A", _other);
+            outline1("JMP %sb2", label);
+            outhead1("%s:", label);
+            outline0("LD A, $ff");
+            outline1("LD (%s), A", _other);
+            outhead1("%sb2:", label);
+
         }
-        outline1("JP PO,%snoxor", label);
-        outline0("XOR $80");
-        outhead1("%snoxor:", label);
-        outline1("JP M,%strue", label);
-        outline1("JP PE,%sfalse", label);
-        outhead1("%sfalse:", label);
-        outline0("LD A, 0");
-        outline1("LD (%s), A", _other);
-        outline1("JMP %sb2", label);
-        outhead1("%strue:", label);
-        outline0("LD A, $ff");
-        outline1("LD (%s), A", _other);
-        outhead1("%sb2:", label);
 
-    } else {
+    embedded( cpu_less_than_8bit, src_hw_z80_cpu_less_than_8bit_asm );
 
-        outline1("LD A, $%2.2x", ( _destination & 0xff ) );
-        outline0("LD B, A");
-        outline1("LD A, (%s)", _source);
-        outline0("CP B");
-        outline1("JR C, %s", label);
-        if ( _equal ) {
-            outline1("JR Z, %s", label);
+        if ( _signed ) {
+
+            outline1("LD A, %2.2x", _destination);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE8S");
+            } else {
+                outline0("CALL CPULT8S");
+            }
+            outline1("LD (%s), A", _other);
+
+        } else {
+
+            outline1("LD A, $%2.2x", _destination);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE8U");
+            } else {
+                outline0("CALL CPULT8U");
+            }
+            outline1("LD (%s), A", _other);
+
         }
-        outline0("LD A, 0");
-        outline1("LD (%s), A", _other);
-        outline1("JMP %sb2", label);
-        outhead1("%s:", label);
-        outline0("LD A, $ff");
-        outline1("LD (%s), A", _other);
-        outhead1("%sb2:", label);
 
-    }
+    done(  )
 
 }
 
@@ -806,28 +878,36 @@ void z80_greater_than_8bit_const( Environment * _environment, char *_source, int
  */
 void z80_math_add_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    outline0("LD B, 0" );
-    outline1("LD A, (%s)", _source );
-    outline0("LD B, A" );
-    outline1("LD A, (%s)", _destination );
-    outline0("ADD A, B" );
-    if ( _other ) {
-        outline1("LD (%s), A", _other );
-    } else {
-        outline1("LD (%s), A", _destination );
-    }
+    inline( cpu_math_add_8bit )
+
+        outline0("LD B, 0" );
+        outline1("LD A, (%s)", _source );
+        outline0("LD B, A" );
+        outline1("LD A, (%s)", _destination );
+        outline0("ADD A, B" );
+        if ( _other ) {
+            outline1("LD (%s), A", _other );
+        } else {
+            outline1("LD (%s), A", _destination );
+        }
+
+    no_embedded( cpu_math_add_8bit )
 
 }
 
 void z80_math_add_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
-    outline0("LD B, 0" );
-    outline1("LD A, (%s)", _source );
-    outline0("ADD A, B" );
-    outline0("LD B, A" );
-    outline1("LD A, $%2.2x", ( _destination & 0xff ) );
-    outline0("ADD A, B" );
-    outline1("LD (%s), A", _other );
+    inline( cpu_math_add_8bit )
+
+        outline0("LD B, 0" );
+        outline1("LD A, (%s)", _source );
+        outline0("ADD A, B" );
+        outline0("LD B, A" );
+        outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+        outline0("ADD A, B" );
+        outline1("LD (%s), A", _other );
+
+    no_embedded( cpu_math_add_8bit )
 
 }
 
@@ -841,17 +921,21 @@ void z80_math_add_8bit_const( Environment * _environment, char *_source, int _de
  */
 void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    outline0("LD B, 0" );
-    outline1("LD A, (%s)", _destination );
-    outline0("SUB A, B" );
-    outline0("LD B, A" );
-    outline1("LD A, (%s)", _source );
-    outline0("SUB A,B" );
-    if ( _other ) {
-        outline1("LD (%s), A", _other );
-    } else {
-        outline1("LD (%s), A", _destination );
-    }
+    inline( cpu_math_sub_8bit )
+
+        outline0("LD B, 0" );
+        outline1("LD A, (%s)", _destination );
+        outline0("SUB A, B" );
+        outline0("LD B, A" );
+        outline1("LD A, (%s)", _source );
+        outline0("SUB A,B" );
+        if ( _other ) {
+            outline1("LD (%s), A", _other );
+        } else {
+            outline1("LD (%s), A", _destination );
+        }
+
+    no_embedded( cpu_math_add_8bit )
 
 }
 
@@ -864,25 +948,30 @@ void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destin
  */
 void z80_math_double_8bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
-    if ( _signed ) {
+    inline( cpu_math_double_8bit )
 
-        outline1("LD A, (%s)", _source );
-        outline0("ADD A, A" );
-        if ( _other ) {
-            outline1("LD (%s), A", _other );
+        if ( _signed ) {
+
+            outline1("LD A, (%s)", _source );
+            outline0("ADD A, A" );
+            if ( _other ) {
+                outline1("LD (%s), A", _other );
+            } else {
+                outline1("LD (%s), A", _source );
+            }
+
         } else {
-            outline1("LD (%s), A", _source );
+            outline1("LD A, (%s)", _source );
+            outline0("ADD A, A" );
+            if ( _other ) {
+                outline1("LD (%s), A", _other );
+            } else {
+                outline1("LD (%s), A", _source );
+            }
         }
 
-    } else {
-        outline1("LD A, (%s)", _source );
-        outline0("ADD A, A" );
-        if ( _other ) {
-            outline1("LD (%s), A", _other );
-        } else {
-            outline1("LD (%s), A", _source );
-        }
-    }
+    no_embedded( cpu_math_double_8bit )
+
 }
 
 /**
@@ -894,43 +983,47 @@ void z80_math_double_8bit( Environment * _environment, char *_source, char *_oth
  */
 void z80_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    MAKE_LABEL
+    inline( cpu_math_div2_8bit )
 
-    if ( _signed ) {
-        outline1("LD A, (%s)", _source );
-        outline0("AND $80" );
-        outline0("CP 0" );
-        outline0("PUSH AF" );
-        outline1("JR Z,%spos", label );
-        outline1("LD A, (%s)", _source );
-        outline0("XOR $FF" );
-        outline0("ADC $1" );
-        outline1("JMP %spos2", label );
-        outhead1("%spos:", label );
-        outline1("LD A, (%s)", _source );
-        outhead1("%spos2:", label );
-        while( _steps ) {
-            outline0("SRA A" );
-            --_steps;
+        MAKE_LABEL
+
+        if ( _signed ) {
+            outline1("LD A, (%s)", _source );
+            outline0("AND $80" );
+            outline0("CP 0" );
+            outline0("PUSH AF" );
+            outline1("JR Z,%spos", label );
+            outline1("LD A, (%s)", _source );
+            outline0("XOR $FF" );
+            outline0("ADC $1" );
+            outline1("JMP %spos2", label );
+            outhead1("%spos:", label );
+            outline1("LD A, (%s)", _source );
+            outhead1("%spos2:", label );
+            while( _steps ) {
+                outline0("SRA A" );
+                --_steps;
+            }
+            outline1("LD (%s), A", _source );
+            outline0("POP AF" );
+            outline0("AND $80" );
+            outline0("CP 0" );
+            outline1("JR Z,%spos3", label );
+            outline1("LD A, (%s)", _source );
+            outline0("XOR $FF" );
+            outline0("ADC $1" );
+            outline1("LD (%s), A", _source );
+            outhead1("%spos3:", label );
+        } else {
+            outline1("LD A, (%s)", _source );
+            while( _steps ) {
+                outline0("SRA A" );
+                --_steps;
+            }
+            outline1("LD (%s), A", _source );
         }
-        outline1("LD (%s), A", _source );
-        outline0("POP AF" );
-        outline0("AND $80" );
-        outline0("CP 0" );
-        outline1("JR Z,%spos3", label );
-        outline1("LD A, (%s)", _source );
-        outline0("XOR $FF" );
-        outline0("ADC $1" );
-        outline1("LD (%s), A", _source );
-        outhead1("%spos3:", label );
-    } else {
-        outline1("LD A, (%s)", _source );
-        while( _steps ) {
-            outline0("SRA A" );
-            --_steps;
-        }
-        outline1("LD (%s), A", _source );
-    }
+
+    no_embedded( cpu_math_div2_8bit )
 
 }
 
@@ -1070,36 +1163,40 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
  */
 void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    MAKE_LABEL
+    inline( cpu_math_div2_const_8bit )
 
-    if ( _signed ) {
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
-        outline0("AND $80" );
-        outline0("PUSH AF" );
-        outline1("JR Z, %spos", label );
-        z80_complement2_16bit( _environment, _source, _source );
-        outline1("JMP %spos2", label );
-        outhead1("%spos:", label );
-        outhead1("%spos2:", label );
-        outline1("LD A, (%s)", _source );
-        while( _steps ) {
-            outline0("SRA A" );
-            --_steps;
+        MAKE_LABEL
+
+        if ( _signed ) {
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
+            outline0("AND $80" );
+            outline0("PUSH AF" );
+            outline1("JR Z, %spos", label );
+            z80_complement2_16bit( _environment, _source, _source );
+            outline1("JMP %spos2", label );
+            outhead1("%spos:", label );
+            outhead1("%spos2:", label );
+            outline1("LD A, (%s)", _source );
+            while( _steps ) {
+                outline0("SRA A" );
+                --_steps;
+            }
+            outline1("LD (%s), A", _source );
+            outline0("POP AF" );
+            outline0("AND $80" );
+            outline1("JR Z, %sdone", label );
+            z80_complement2_16bit( _environment, _source, _source );
+            outhead1("%sdone:", label );
+        } else {
+            outline1("LD A, (%s)", _source );
+            while( _steps ) {
+                outline0("SRA A" );
+                --_steps;
+            }
+            outline1("LD (%s), A", _source );
         }
-        outline1("LD (%s), A", _source );
-        outline0("POP AF" );
-        outline0("AND $80" );
-        outline1("JR Z, %sdone", label );
-        z80_complement2_16bit( _environment, _source, _source );
-        outhead1("%sdone:", label );
-    } else {
-        outline1("LD A, (%s)", _source );
-        while( _steps ) {
-            outline0("SRA A" );
-            --_steps;
-        }
-        outline1("LD (%s), A", _source );
-    }
+
+    no_embedded( cpu_math_div2_const_8bit )
 
 }
 
@@ -1112,29 +1209,33 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
  */
 void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    if ( _signed ) {
-        outline1("LD A, (%s)", _source );
-        outline0("AND $80" );
-        outline0("PUSH AF" );
-        outline1("LD A, (%s)", _source );
-        outline0("AND $7F" );
-        while( _steps ) {
-            outline0("SLA A" );
-            --_steps;
-        }
-        outline0("LD B, A" );
-        outline0("POP AF" );
-        outline0("OR A, B" );
-        outline1("LD (%s), A", _source );
+    inline( cpu_math_mul2_const_8bit )
 
-    } else {
-        outline1("LD A, (%s)", _source );
-        while( _steps ) {
-            outline0("SLA A" );
-            --_steps;
+        if ( _signed ) {
+            outline1("LD A, (%s)", _source );
+            outline0("AND $80" );
+            outline0("PUSH AF" );
+            outline1("LD A, (%s)", _source );
+            outline0("AND $7F" );
+            while( _steps ) {
+                outline0("SLA A" );
+                --_steps;
+            }
+            outline0("LD B, A" );
+            outline0("POP AF" );
+            outline0("OR A, B" );
+            outline1("LD (%s), A", _source );
+
+        } else {
+            outline1("LD A, (%s)", _source );
+            while( _steps ) {
+                outline0("SLA A" );
+                --_steps;
+            }
+            outline1("LD (%s), A", _source );
         }
-        outline1("LD (%s), A", _source );
-    }
+
+    no_embedded( cpu_math_mul2_const_8bit )
 
 }
 
@@ -1147,11 +1248,15 @@ void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _s
  */
 void z80_math_complement_const_8bit( Environment * _environment, char *_source, int _value ) {
 
-    outline1("LD A, (%s)", _source );
-    outline0("LD B, A" );
-    outline1("LD A, $%2.2x", ( _value & 0xff ) );
-    outline0("SUB A, B" );
-    outline1("LD (%s), A", _source );
+    inline( cpu_math_complement_const_8bit )
+
+        outline1("LD A, (%s)", _source );
+        outline0("LD B, A" );
+        outline1("LD A, $%2.2x", ( _value & 0xff ) );
+        outline0("SUB A, B" );
+        outline1("LD (%s), A", _source );
+
+    no_embedded( cpu_math_complement_const_8bit )
 
 }
 
@@ -1164,9 +1269,13 @@ void z80_math_complement_const_8bit( Environment * _environment, char *_source, 
  */
 void z80_math_and_const_8bit( Environment * _environment, char *_source, int _mask ) {
 
-    outline1("LD A, (%s)", _source );
-    outline1("AND $%2.2x", _mask );
-    outline1("LD (%s), A", _source );
+    inline( cpu_math_and_const_8bit )
+
+        outline1("LD A, (%s)", _source );
+        outline1("AND $%2.2x", _mask );
+        outline1("LD (%s), A", _source );
+
+    no_embedded( cpu_math_and_const_8bit )
 
 }
 
@@ -1183,17 +1292,25 @@ void z80_math_and_const_8bit( Environment * _environment, char *_source, int _ma
  */
 void z80_move_16bit( Environment * _environment, char *_source, char *_destination ) {
     
-    outline1("LD A, (%s)", _source );
-    outline1("LD (%s), A", _destination );
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
-    outline1("LD (%s), A", address_displacement(_environment, _destination, "1") );
+    inline( cpu_move_16bit )
+
+        outline1("LD A, (%s)", _source );
+        outline1("LD (%s), A", _destination );
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
+        outline1("LD (%s), A", address_displacement(_environment, _destination, "1") );
+
+    no_embedded( cpu_move_16bit )
 
 }
 
 void z80_addressof_16bit( Environment * _environment, char *_source, char *_destination ) {
     
-    outline1("LD HL, %s", _source );
-    outline1("LD (%s), HL", _destination );
+    inline( cpu_addressof_16bit )
+
+        outline1("LD HL, %s", _source );
+        outline1("LD (%s), HL", _destination );
+
+    no_embedded( cpu_addressof_16bit )
 
 }
 
@@ -1206,10 +1323,14 @@ void z80_addressof_16bit( Environment * _environment, char *_source, char *_dest
  */
 void z80_store_16bit( Environment * _environment, char *_destination, int _value ) {
 
-    outline1("LD A, $%2.2x", _value & 0xff );
-    outline1("LD (%s), A", _destination );
-    outline1("LD A, $%2.2x", ( ( _value >> 8 ) & 0xff ) );
-    outline1("LD (%s), A", address_displacement(_environment, _destination, "1") );
+    inline( cpu_store_16bit )
+
+        outline1("LD A, $%2.2x", _value & 0xff );
+        outline1("LD (%s), A", _destination );
+        outline1("LD A, $%2.2x", ( ( _value >> 8 ) & 0xff ) );
+        outline1("LD (%s), A", address_displacement(_environment, _destination, "1") );
+
+    no_embedded( cpu_store_16bit )
 
 }
 
@@ -1225,31 +1346,35 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
 
     MAKE_LABEL
 
-    outline1("LD A, (%s)", _source);
-    outline0("LD B, A");
-    outline1("LD A, (%s)", _destination);
-    outline0("CP B");
-    outline1("JP NZ, %s", label);
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-    outline0("LD B, A");
-    outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
-    outline0("CP B");
-    outline1("JP NZ, %s", label);
-    outline1("LD A, $%2.2x", 0xff*_positive);
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outline1("JMP %sb2", label);
-    outhead1("%s:", label);
-    outline1("LD A, $%2.2x", 0xff*(1-_positive));
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outhead1("%sb2:", label);
+    inline( cpu_compare_16bit )
+
+        outline1("LD A, (%s)", _source);
+        outline0("LD B, A");
+        outline1("LD A, (%s)", _destination);
+        outline0("CP B");
+        outline1("JP NZ, %s", label);
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
+        outline0("LD B, A");
+        outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
+        outline0("CP B");
+        outline1("JP NZ, %s", label);
+        outline1("LD A, $%2.2x", 0xff*_positive);
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outline1("JMP %sb2", label);
+        outhead1("%s:", label);
+        outline1("LD A, $%2.2x", 0xff*(1-_positive));
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outhead1("%sb2:", label);
+
+    no_embedded( cpu_compare_16bit )
 
 }
 
@@ -1532,33 +1657,45 @@ void z80_greater_than_16bit_const( Environment * _environment, char *_source, in
  */
 void z80_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    outline1("LD HL, (%s)", _source );
-    outline1("LD DE, (%s)", _destination );
-    outline0("ADD HL, DE" );
-    if ( _other ) {
-        outline1("LD (%s), HL", _other );
-    } else {
-        outline1("LD (%s), HL", _destination );
-    }
+    inline( cpu_math_add_16bit )
+
+        outline1("LD HL, (%s)", _source );
+        outline1("LD DE, (%s)", _destination );
+        outline0("ADD HL, DE" );
+        if ( _other ) {
+            outline1("LD (%s), HL", _other );
+        } else {
+            outline1("LD (%s), HL", _destination );
+        }
+
+    no_embedded( cpu_math_add_16bit )
 
 }
 
 void z80_math_add_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
-    outline1("LD HL, (%s)", _source );
-    outline1("LD DE, $%4.4x", ( _destination & 0xffff ) );
-    outline0("ADD HL, DE" );
-    outline1("LD (%s), HL", _other );
+    inline( cpu_math_add_16bit )
+
+        outline1("LD HL, (%s)", _source );
+        outline1("LD DE, $%4.4x", ( _destination & 0xffff ) );
+        outline0("ADD HL, DE" );
+        outline1("LD (%s), HL", _other );
+
+    no_embedded( cpu_math_add_16bit )
 
 }
 
 void z80_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    outline0("AND $0");
-    outline1("LD HL, (%s)", _source );
-    outline1("LD DE, %s", _destination );
-    outline0("ADD HL, DE" );
-    outline1("LD (%s), HL", _other );
+    inline( cpu_math_add_16bit_with_16bit )
+
+        outline0("AND $0");
+        outline1("LD HL, (%s)", _source );
+        outline1("LD DE, %s", _destination );
+        outline0("ADD HL, DE" );
+        outline1("LD (%s), HL", _other );
+
+    no_embedded( cpu_math_add_16bit_with_16bit )
 
 }
 
@@ -1571,14 +1708,18 @@ void z80_math_add_16bit_with_16bit( Environment * _environment, char *_source, c
  */
 void z80_math_double_16bit( Environment * _environment, char *_source, char *_other, int _signed ) {
     
-    outline1("LD DE, (%s)", _source );
-    outline0("SLA E" );
-    outline0("RL D" );
-    if ( _other ) {
-        outline1("LD (%s), DE", _other );
-    } else {
-        outline1("LD (%s), DE", _source );
-    }
+    inline( cpu_math_double_16bit )
+
+        outline1("LD DE, (%s)", _source );
+        outline0("SLA E" );
+        outline0("RL D" );
+        if ( _other ) {
+            outline1("LD (%s), DE", _other );
+        } else {
+            outline1("LD (%s), DE", _source );
+        }
+
+    no_embedded( cpu_math_double_16bit )
 
 }
 
@@ -1717,15 +1858,19 @@ void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
  */
 void z80_math_sub_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    outline1("LD HL, (%s)", _source );
-    outline1("LD DE, (%s)", _destination );
-    outline0("AND A" );
-    outline0("SBC HL, DE" );
-    if ( _other ) {
-        outline1("LD (%s), HL", _other );
-    } else {
-        outline1("LD (%s), HL", _destination );
-    }
+    inline( cpu_math_sub_16bit )
+
+        outline1("LD HL, (%s)", _source );
+        outline1("LD DE, (%s)", _destination );
+        outline0("AND A" );
+        outline0("SBC HL, DE" );
+        if ( _other ) {
+            outline1("LD (%s), HL", _other );
+        } else {
+            outline1("LD (%s), HL", _destination );
+        }
+
+    no_embedded( cpu_math_sub_16bit )
 
 }
 
@@ -1738,17 +1883,21 @@ void z80_math_sub_16bit( Environment * _environment, char *_source, char *_desti
  */
 void z80_math_complement_const_16bit( Environment * _environment, char *_source, int _value ) {
 
-    outline1("LD HL, $%4.4x", _value );
-    outline1("LD DE, (%s)", _source );
-    outline0("LD A, E" );
-    outline0("XOR $FF" );
-    outline0("LD E, A" );
-    outline0("LD A, D" );
-    outline0("XOR $FF" );
-    outline0("LD D, A" );
-    outline0("INC DE" );
-    outline0("ADD HL, DE" );
-    outline1("LD (%s), HL", _source );
+    inline( cpu_math_complement_const_16bit )
+
+        outline1("LD HL, $%4.4x", _value );
+        outline1("LD DE, (%s)", _source );
+        outline0("LD A, E" );
+        outline0("XOR $FF" );
+        outline0("LD E, A" );
+        outline0("LD A, D" );
+        outline0("XOR $FF" );
+        outline0("LD D, A" );
+        outline0("INC DE" );
+        outline0("ADD HL, DE" );
+        outline1("LD (%s), HL", _source );
+
+    no_embedded( cpu_math_complement_const_16bit )
 
 }
 
@@ -1761,39 +1910,43 @@ void z80_math_complement_const_16bit( Environment * _environment, char *_source,
  */
 void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    MAKE_LABEL
+    inline( cpu_math_div2_const_16bit )
 
-    if ( _signed ) {
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
-        outline0("AND $80" );
-        outline0("PUSH AF" );
-        outline1("JR Z, %spos", label );
-        z80_complement2_16bit( _environment, _source, _source );
-        outline1("JMP %spos2", label );
-        outhead1("%spos:", label );
-        outhead1("%spos2:", label );
-        outline1("LD HL, (%s)", _source );
-        while( _steps ) {
-            outline0("SRA H" );
-            outline0("RR L" );
-            --_steps;
+        MAKE_LABEL
+
+        if ( _signed ) {
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
+            outline0("AND $80" );
+            outline0("PUSH AF" );
+            outline1("JR Z, %spos", label );
+            z80_complement2_16bit( _environment, _source, _source );
+            outline1("JMP %spos2", label );
+            outhead1("%spos:", label );
+            outhead1("%spos2:", label );
+            outline1("LD HL, (%s)", _source );
+            while( _steps ) {
+                outline0("SRA H" );
+                outline0("RR L" );
+                --_steps;
+            }
+            outline1("LD (%s), HL", _source );
+            outline0("POP AF" );
+            outline0("AND $80" );
+            outline1("JR Z, %sdone", label );
+            z80_complement2_16bit( _environment, _source, _source );
+            outhead1("%sdone:", label );
+        } else {
+            outline1("LD HL, (%s)", _source );
+            while( _steps ) {
+                outline0("SRA H" );
+                outline0("RR L" );
+                --_steps;
+            }
+            outline1("LD (%s), HL", _source );
+            
         }
-        outline1("LD (%s), HL", _source );
-        outline0("POP AF" );
-        outline0("AND $80" );
-        outline1("JR Z, %sdone", label );
-        z80_complement2_16bit( _environment, _source, _source );
-        outhead1("%sdone:", label );
-    } else {
-        outline1("LD HL, (%s)", _source );
-        while( _steps ) {
-            outline0("SRA H" );
-            outline0("RR L" );
-            --_steps;
-        }
-        outline1("LD (%s), HL", _source );
-        
-    }
+
+    no_embedded( cpu_math_div2_const_16bit )
 
 }
 
@@ -1806,38 +1959,42 @@ void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _
  */
 void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    MAKE_LABEL
+    inline( cpu_math_mul2_const_16bit )
 
-    if ( _signed ) {
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
-        outline0("AND $80" );
-        outline0("PUSH AF" );
-        outline1("JR Z, %spos", label );
-        z80_complement2_16bit( _environment, _source, _source );
-        outline1("JMP %spos2", label );
-        outhead1("%spos:", label );
-        outhead1("%spos2:", label );
-        outline1("LD HL, (%s)", _source );
-        while( _steps ) {
-            outline0("SLA L" );
-            outline0("RL H" );
-            --_steps;
+        MAKE_LABEL
+
+        if ( _signed ) {
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
+            outline0("AND $80" );
+            outline0("PUSH AF" );
+            outline1("JR Z, %spos", label );
+            z80_complement2_16bit( _environment, _source, _source );
+            outline1("JMP %spos2", label );
+            outhead1("%spos:", label );
+            outhead1("%spos2:", label );
+            outline1("LD HL, (%s)", _source );
+            while( _steps ) {
+                outline0("SLA L" );
+                outline0("RL H" );
+                --_steps;
+            }
+            outline1("LD (%s), HL", _source );
+            outline0("POP AF" );
+            outline0("AND $80" );
+            outline1("JR Z, %sdone", label );
+            z80_complement2_16bit( _environment, _source, _source );
+            outhead1("%sdone:", label );
+        } else {
+            outline1("LD HL, (%s)", _source );
+            while( _steps ) {
+                outline0("SLA L" );
+                outline0("RL H" );
+                --_steps;
+            }
+            outline1("LD (%s), HL", _source );
         }
-        outline1("LD (%s), HL", _source );
-        outline0("POP AF" );
-        outline0("AND $80" );
-        outline1("JR Z, %sdone", label );
-        z80_complement2_16bit( _environment, _source, _source );
-        outhead1("%sdone:", label );
-    } else {
-        outline1("LD HL, (%s)", _source );
-        while( _steps ) {
-            outline0("SLA L" );
-            outline0("RL H" );
-            --_steps;
-        }
-        outline1("LD (%s), HL", _source );
-    }
+
+    no_embedded( cpu_math_mul2_const_16bit )
 
 }
 
