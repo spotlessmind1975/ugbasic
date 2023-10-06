@@ -1950,122 +1950,160 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    inline( cpu_less_than_32bit )
 
-        outline1("LD IX, %s", _source);
-        outline1("LD IY, %s", _destination);
-        outline0("LD B, (IX+3)");
-        outline0("LD A, B");
-        outline0("AND $80");
-        outline1("JR NZ,%sNEGM1", label);
-        outline0("BIT 7, (IY+3)");
-        outline1("JR NZ,%sdone", label);
-        outline0("LD A, B");
-        outline0("CP (IY+3)");
-        outline1("JR NZ,%sdone", label);
-        outline0("LD A, (IX+2)");
-        outline0("CP (IY+2)");
-        outline1("JR NZ,%sdone", label);
-        outline0("LD A, (IX+1)");
-        outline0("CP (IY+1)");
-        outline1("JR NZ,%sdone", label);
-        outline0("LD A, (IX)");
-        outline0("CP (IY)");
-        outline1("JMP %sdone", label);
-        outhead1("%sNEGM1:", label);
-        outline0("XOR (IY+3)");
-        outline0("RLA");
-        outline1("JR C,%sdone", label);
-        outline0("LD A, B");
-        outline0("CP (IY+3)");
-        outline1("JR NZ,%sdone", label);
-        outline0("LD A, (IX+2)");
-        outline0("CP (IY+2)");
-        outline1("JR NZ,%sdone", label);
-        outline0("LD A, (IX+1)");
-        outline0("CP (IY+1)");
-        outline1("JR NZ,%sdone", label);
-        outline0("LD A, (IX)");
-        outline0("CP (IY)");
-        outline1("JMP %sdone", label);
-        outhead1("%sdone:", label);
-        if ( _equal ) {
-            outline1("JR Z,%smi", label);
-        }
-        outline1("JR C,%smi", label);
-        outhead1("%spl:", label);
-        outline0("LD A, 0");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
-        } else {
-            outline1("LD (%s), A", _destination);
-        }
-        outline1("JMP %sdone2", label);
-        outhead1("%smi:", label);
-        outline0("LD A, $ff");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
-        } else {
-            outline1("LD (%s), A", _destination);
-        }
-        outline1("JMP %sdone2", label);
-        outhead1("%sdone2:", label);
+        if ( _signed ) {
 
-    } else {
+            outline1("LD IX, %s", _source);
+            outline1("LD IY, %s", _destination);
+            outline0("LD B, (IX+3)");
+            outline0("LD A, B");
+            outline0("AND $80");
+            outline1("JR NZ,%sNEGM1", label);
+            outline0("BIT 7, (IY+3)");
+            outline1("JR NZ,%sdone", label);
+            outline0("LD A, B");
+            outline0("CP (IY+3)");
+            outline1("JR NZ,%sdone", label);
+            outline0("LD A, (IX+2)");
+            outline0("CP (IY+2)");
+            outline1("JR NZ,%sdone", label);
+            outline0("LD A, (IX+1)");
+            outline0("CP (IY+1)");
+            outline1("JR NZ,%sdone", label);
+            outline0("LD A, (IX)");
+            outline0("CP (IY)");
+            outline1("JMP %sdone", label);
+            outhead1("%sNEGM1:", label);
+            outline0("XOR (IY+3)");
+            outline0("RLA");
+            outline1("JR C,%sdone", label);
+            outline0("LD A, B");
+            outline0("CP (IY+3)");
+            outline1("JR NZ,%sdone", label);
+            outline0("LD A, (IX+2)");
+            outline0("CP (IY+2)");
+            outline1("JR NZ,%sdone", label);
+            outline0("LD A, (IX+1)");
+            outline0("CP (IY+1)");
+            outline1("JR NZ,%sdone", label);
+            outline0("LD A, (IX)");
+            outline0("CP (IY)");
+            outline1("JMP %sdone", label);
+            outhead1("%sdone:", label);
+            if ( _equal ) {
+                outline1("JR Z,%smi", label);
+            }
+            outline1("JR C,%smi", label);
+            outhead1("%spl:", label);
+            outline0("LD A, 0");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outline1("JMP %sdone2", label);
+            outhead1("%smi:", label);
+            outline0("LD A, $ff");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outline1("JMP %sdone2", label);
+            outhead1("%sdone2:", label);
 
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
-        outline0("LD B, A");
-        outline1("LD A, (%s)", address_displacement(_environment, _destination, "3"));
-        outline0("CP B");
-        outline1("JR Z, %s_2", label);
-        outline1("JR C, %s", label);
-        outline1("JR %s_ok", label);
-        outhead1("%s_2:", label);
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
-        outline0("LD B, A");
-        outline1("LD A, (%s)", address_displacement(_environment, _destination, "2"));
-        outline0("CP B");
-        outline1("JR Z, %s_1", label);
-        outline1("JR C, %s", label);
-        outline1("JR %s_ok", label);
-        outhead1("%s_1:", label);
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-        outline0("LD B, A");
-        outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
-        outline0("CP B");
-        outline1("JR Z, %s_0", label);
-        outline1("JR C, %s", label);
-        outline1("JR %s_ok", label);
-        outhead1("%s_0:", label);
-        outline1("LD A, (%s)", _source);
-        outline0("LD B, A");
-        outline1("LD A, (%s)", _destination);
-        outline0("CP B");
-        if ( _equal ) {
-            outline1("JR Z, %s_ok", label);
         } else {
-            outline1("JR Z, %s", label);
-        }
-        outline1("JR C, %s", label);
-        outhead1("%s_ok:", label);
-        outline0("LD A, $ff");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
-        } else {
-            outline1("LD (%s), A", _destination);
-        }
-        outline1("JMP %s_xx", label);
-        outhead1("%s:", label);
-        outline0("LD A, $0");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
-        } else {
-            outline1("LD (%s), A", _destination);
-        }
-        outhead1("%s_xx:", label);
 
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
+            outline0("LD B, A");
+            outline1("LD A, (%s)", address_displacement(_environment, _destination, "3"));
+            outline0("CP B");
+            outline1("JR Z, %s_2", label);
+            outline1("JR C, %s", label);
+            outline1("JR %s_ok", label);
+            outhead1("%s_2:", label);
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
+            outline0("LD B, A");
+            outline1("LD A, (%s)", address_displacement(_environment, _destination, "2"));
+            outline0("CP B");
+            outline1("JR Z, %s_1", label);
+            outline1("JR C, %s", label);
+            outline1("JR %s_ok", label);
+            outhead1("%s_1:", label);
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
+            outline0("LD B, A");
+            outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
+            outline0("CP B");
+            outline1("JR Z, %s_0", label);
+            outline1("JR C, %s", label);
+            outline1("JR %s_ok", label);
+            outhead1("%s_0:", label);
+            outline1("LD A, (%s)", _source);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _destination);
+            outline0("CP B");
+            if ( _equal ) {
+                outline1("JR Z, %s_ok", label);
+            } else {
+                outline1("JR Z, %s", label);
+            }
+            outline1("JR C, %s", label);
+            outhead1("%s_ok:", label);
+            outline0("LD A, $ff");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outline1("JMP %s_xx", label);
+            outhead1("%s:", label);
+            outline0("LD A, $0");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outhead1("%s_xx:", label);
 
-    }
+        }
+
+    embedded( cpu_less_than_32bit, src_hw_z80_cpu_less_than_32bit_asm );
+
+        if ( _signed ) {
+
+            outline1("LD IY, %s", _destination);
+            outline1("LD IX, %s", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE32S");
+            } else {
+                outline0("CALL CPULT32S");
+            }
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+
+        } else {
+
+            outline1("LD IY, %s", _destination);
+            outline1("LD IX, %s", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE32U");
+            } else {
+                outline0("CALL CPULT32U");
+            }
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+
+        }
+
+    done(  )
+
 
 }
 
@@ -2073,111 +2111,155 @@ void z80_less_than_32bit_const( Environment * _environment, char *_source, int _
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    inline( cpu_less_than_32bit )
 
-        // outline1("LD IX, %s", _source);
-        // outline1("LD IY, %s", _destination);
-        // outline0("LD B, (IX+3)");
-        // outline0("LD A, B");
-        // outline0("AND $80");
-        // outline1("JR NZ,%sNEGM1", label);
-        // outline0("BIT 7, (IY+3)");
-        // outline1("JR NZ,%sdone", label);
-        // outline0("LD A, B");
-        // outline0("CP (IY+3)");
-        // outline1("JR NZ,%sdone", label);
-        // outline0("LD A, (IX+2)");
-        // outline0("CP (IY+2)");
-        // outline1("JR NZ,%sdone", label);
-        // outline0("LD A, (IX+1)");
-        // outline0("CP (IY+1)");
-        // outline1("JR NZ,%sdone", label);
-        // outline0("LD A, (IX)");
-        // outline0("CP (IY)");
-        // outline1("JMP %sdone", label);
-        // outhead1("%sNEGM1:", label);
-        // outline0("XOR (IY+3)");
-        // outline0("RLA");
-        // outline1("JR C,%sdone", label);
-        // outline0("LD A, B");
-        // outline0("CP (IY+3)");
-        // outline1("JR NZ,%sdone", label);
-        // outline0("LD A, (IX+2)");
-        // outline0("CP (IY+2)");
-        // outline1("JR NZ,%sdone", label);
-        // outline0("LD A, (IX+1)");
-        // outline0("CP (IY+1)");
-        // outline1("JR NZ,%sdone", label);
-        // outline0("LD A, (IX)");
-        // outline0("CP (IY)");
-        // outline1("JMP %sdone", label);
-        // outhead1("%sdone:", label);
-        // if ( _equal ) {
-        //     outline1("JR Z,%smi", label);
-        // }
-        // outline1("JR C,%smi", label);
-        // outhead1("%spl:", label);
-        // outline0("LD A, 0");
-        // if ( _other ) {
-        //     outline1("LD (%s), A", _other);
-        // } else {
-        //     outline1("LD (%s), A", _destination);
-        // }
-        // outline1("JMP %sdone2", label);
-        // outhead1("%smi:", label);
-        // outline0("LD A, $ff");
-        // if ( _other ) {
-        //     outline1("LD (%s), A", _other);
-        // } else {
-        //     outline1("LD (%s), A", _destination);
-        // }
-        // outline1("JMP %sdone2", label);
-        // outhead1("%sdone2:", label);
+        if ( _signed ) {
 
-    } else {
+            // outline1("LD IX, %s", _source);
+            // outline1("LD IY, %s", _destination);
+            // outline0("LD B, (IX+3)");
+            // outline0("LD A, B");
+            // outline0("AND $80");
+            // outline1("JR NZ,%sNEGM1", label);
+            // outline0("BIT 7, (IY+3)");
+            // outline1("JR NZ,%sdone", label);
+            // outline0("LD A, B");
+            // outline0("CP (IY+3)");
+            // outline1("JR NZ,%sdone", label);
+            // outline0("LD A, (IX+2)");
+            // outline0("CP (IY+2)");
+            // outline1("JR NZ,%sdone", label);
+            // outline0("LD A, (IX+1)");
+            // outline0("CP (IY+1)");
+            // outline1("JR NZ,%sdone", label);
+            // outline0("LD A, (IX)");
+            // outline0("CP (IY)");
+            // outline1("JMP %sdone", label);
+            // outhead1("%sNEGM1:", label);
+            // outline0("XOR (IY+3)");
+            // outline0("RLA");
+            // outline1("JR C,%sdone", label);
+            // outline0("LD A, B");
+            // outline0("CP (IY+3)");
+            // outline1("JR NZ,%sdone", label);
+            // outline0("LD A, (IX+2)");
+            // outline0("CP (IY+2)");
+            // outline1("JR NZ,%sdone", label);
+            // outline0("LD A, (IX+1)");
+            // outline0("CP (IY+1)");
+            // outline1("JR NZ,%sdone", label);
+            // outline0("LD A, (IX)");
+            // outline0("CP (IY)");
+            // outline1("JMP %sdone", label);
+            // outhead1("%sdone:", label);
+            // if ( _equal ) {
+            //     outline1("JR Z,%smi", label);
+            // }
+            // outline1("JR C,%smi", label);
+            // outhead1("%spl:", label);
+            // outline0("LD A, 0");
+            // if ( _other ) {
+            //     outline1("LD (%s), A", _other);
+            // } else {
+            //     outline1("LD (%s), A", _destination);
+            // }
+            // outline1("JMP %sdone2", label);
+            // outhead1("%smi:", label);
+            // outline0("LD A, $ff");
+            // if ( _other ) {
+            //     outline1("LD (%s), A", _other);
+            // } else {
+            //     outline1("LD (%s), A", _destination);
+            // }
+            // outline1("JMP %sdone2", label);
+            // outhead1("%sdone2:", label);
 
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
-        outline0("LD B, A");
-        outline1("LD A, $%2.2x", ( ( _destination >> 24 ) && 0xff ) );
-        outline0("CP B");
-        outline1("JR Z, %s_2", label);
-        outline1("JR C, %s", label);
-        outline1("JR %s_ok", label);
-        outhead1("%s_2:", label);
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
-        outline0("LD B, A");
-        outline1("LD A, $%2.2x", ( ( _destination >> 16 ) && 0xff ) );
-        outline0("CP B");
-        outline1("JR Z, %s_1", label);
-        outline1("JR C, %s", label);
-        outline1("JR %s_ok", label);
-        outhead1("%s_1:", label);
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-        outline0("LD B, A");
-        outline1("LD A, $%2.2x", ( ( _destination >> 8 ) && 0xff ) );
-        outline0("CP B");
-        outline1("JR Z, %s_0", label);
-        outline1("JR C, %s", label);
-        outline1("JR %s_ok", label);
-        outhead1("%s_0:", label);
-        outline1("LD A, (%s)", _source);
-        outline0("LD B, A");
-        outline1("LD A, $%2.2x", ( _destination && 0xff ) );
-        outline0("CP B");
-        outline1("JR C, %s", label);
-        if ( _equal ) {
-            outline1("JR Z, %s", label);
+        } else {
+
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
+            outline0("LD B, A");
+            outline1("LD A, $%2.2x", ( ( _destination >> 24 ) && 0xff ) );
+            outline0("CP B");
+            outline1("JR Z, %s_2", label);
+            outline1("JR C, %s", label);
+            outline1("JR %s_ok", label);
+            outhead1("%s_2:", label);
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
+            outline0("LD B, A");
+            outline1("LD A, $%2.2x", ( ( _destination >> 16 ) && 0xff ) );
+            outline0("CP B");
+            outline1("JR Z, %s_1", label);
+            outline1("JR C, %s", label);
+            outline1("JR %s_ok", label);
+            outhead1("%s_1:", label);
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
+            outline0("LD B, A");
+            outline1("LD A, $%2.2x", ( ( _destination >> 8 ) && 0xff ) );
+            outline0("CP B");
+            outline1("JR Z, %s_0", label);
+            outline1("JR C, %s", label);
+            outline1("JR %s_ok", label);
+            outhead1("%s_0:", label);
+            outline1("LD A, (%s)", _source);
+            outline0("LD B, A");
+            outline1("LD A, $%2.2x", ( _destination && 0xff ) );
+            outline0("CP B");
+            outline1("JR C, %s", label);
+            if ( _equal ) {
+                outline1("JR Z, %s", label);
+            }
+            outhead1("%s_ok:", label);
+            outline0("LD A, $ff");
+            outline1("LD (%s), A", _other);
+            outline1("JMP %s_xx", label);
+            outhead1("%s:", label);
+            outline0("LD A, $0");
+            outline1("LD (%s), A", _other);
+            outhead1("%s_xx:", label);
+
         }
-        outhead1("%s_ok:", label);
-        outline0("LD A, $ff");
-        outline1("LD (%s), A", _other);
-        outline1("JMP %s_xx", label);
-        outhead1("%s:", label);
-        outline0("LD A, $0");
-        outline1("LD (%s), A", _other);
-        outhead1("%s_xx:", label);
 
-    }
+    embedded( cpu_less_than_32bit, src_hw_z80_cpu_less_than_32bit_asm );
+
+        if ( _signed ) {
+
+            outline1("LD DE, $%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
+            outline0("PUSH DE" );
+            outline1("LD DE, $%4.4x", ( _destination & 0xffff ) );
+            outline0("PUSH DE" );
+            outline0("LD DE, SP" );
+            outline0("LD IY, DE" );
+            outline1("LD IX, %s", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE32S");
+            } else {
+                outline0("CALL CPULT32S");
+            }
+            outline1("LD (%s), A", _other);
+            outline0("POP DE" );
+            outline0("POP DE" );
+
+        } else {
+
+            outline1("LD DE, $%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
+            outline0("PUSH DE" );
+            outline1("LD DE, $%4.4x", ( _destination & 0xffff ) );
+            outline0("PUSH DE" );
+            outline0("LD DE, SP" );
+            outline0("LD IY, DE" );
+            outline1("LD IX, %s", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE32U");
+            } else {
+                outline0("CALL CPULT32U");
+            }
+            outline1("LD (%s), A", _other);
+            outline0("POP DE" );
+            outline0("POP DE" );
+            
+        }
+
+    done(  )
 
 }
 
