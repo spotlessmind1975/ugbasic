@@ -35,87 +35,107 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; IXL * IYL -> HL (signed)
-CPUMUL8B8T16S:
-    XOR A, B
+; IX x IY -> BC:HL
+CPUMUL16B16T32S:
+    LD A, IXH
     AND $80
     LD B, A
-    PUSH B
-
-    LD A, IXL
+    LD A, IYH
     AND $80
-    CP 0
-    JR Z, CPUMUL8B8T16SPOS
+    XOR A, B
+    PUSH AF
+
+    LD A, IXH
+    AND $80
+    JR Z, CPUMUL16B16T32SPOS 
+
     LD A, IXL
     XOR $FF
-    INC A
-    JMP CPUMUL8B8T16S1
+    LD IXL, A
+    
+    LD A, IXH
+    XOR $FF
+    LD IXH, A
+    INC IX
 
-CPUMUL8B8T16SPOS:
-    LD A, IXL
-
-CPUMUL8B8T16S1:
-    LD H, A
-
-    LD A, IYL
+CPUMUL16B16T32SPOS:
+    LD A, IYH
     AND $80
-    CP 0
-    JR Z, CPUMUL8B8T16SPOS2
+    JR Z, CPUMUL16B16T32SPOS2
+
     LD A, IYL
     XOR $FF
-    INC A
-    JP CPUMUL8B8T16SDONE2
+    LD IYL, A
+    
+    LD A, IYH
+    XOR $FF
+    LD IYH, A
+    INC IX
 
-CPUMUL8B8T16SPOS2:
-    LD A, IYL
-
-CPUMUL8B8T16SDONE2:
+CPUMUL16B16T32SPOS2:
+    LD BC, IX
+    LD DE, IY
+    LD A, C
+    LD C, B
+    LD HL, 0
+    LD B, 16
+CPUMUL16B16T32SL:
+    ADD HL, HL
+    RLA
+    RL C
+    JR NC, CPUMUL16B16T32SB2
+    ADD HL, DE
+    ADC A, 0
+    JP NC, CPUMUL16B16T32SB2
+    INC C
+CPUMUL16B16T32SB2:            
+    DJNZ CPUMUL16B16T32SL
+    LD B, C
     LD C, A
 
-    LD E, A
-    LD D, 0
-    LD L, D
-    LD B, 8
+    POP AF
+    JR Z, CPUMUL16B16T32SREPOS
 
-CPUMUL8B8T16SL:
-    ADD HL, HL
-    JR NC, CPUMUL8B8T16SB2
-    ADD HL, DE
-CPUMUL8B8T16SB2:
-    DJNZ CPUMUL8B8T16SL
-
-    POP B
     LD A, B
-    AND $80
-    CP 0
-    JR Z, CPUMUL8B8T16SNC
+    XOR $FF
+    LD B, A
+
+    LD A, C
+    XOR $FF
+    LD C, A
+
+    LD A, H
+    XOR $FF
+    LD H, A
 
     LD A, L
     XOR $FF
     LD L, A
     
-    LD A, H
-    XOR $FF
-    LD H, A
     INC HL
+    JR NC, CPUMUL16B16T32SREPOS
+    INC BC
 
-CPUMUL8B8T16SNC:            
+CPUMUL16B16T32SREPOS:
     RET
 
-CPUMUL8B8T16U:
-    LD A, IXL
-    LD H, A
-    LD A, IYL
-    LD E, A
-
-    LD D, 0
-    LD L, D
-    LD B, 8
-
-CPUMUL8B8T16UL:
+; BC x DE -> BC:HL
+CPUMUL16B16T32U:
+    LD A, C
+    LD C, B
+    LD HL, 0
+    LD B, 16
+CPUMUL16B16T32UL:
     ADD HL, HL
-    JR NC, CPUMUL8B8T16UB2
+    RLA
+    RL C
+    JR NC, CPUMUL16B16T32ULB2
     ADD HL, DE
-CPUMUL8B8T16UB2:
-    DJNZ CPUMUL8B8T16UL
+    ADC A, 0
+    JP NC, CPUMUL16B16T32ULB2
+    INC C
+CPUMUL16B16T32ULB2:
+    DJNZ CPUMUL16B16T32UL
+    LD B, C
+    LD C, A
     RET

@@ -1043,7 +1043,7 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
             outline0("LD IYL, A");
             outline1("LD A, (%s)", _source);
             outline0("LD IXL, A");
-            outline0("CALL CPUMNUL8B8T16S");
+            outline0("CALL CPUMUL8B8T16S");
             outline1("LD (%s), HL", _other);
 
         } else {
@@ -1052,7 +1052,7 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
             outline0("LD IYL, A");
             outline1("LD A, (%s)", _source);
             outline0("LD IXL, A");
-            outline0("CALL CPUMNUL8B8T16U");
+            outline0("CALL CPUMUL8B8T16U");
             outline1("LD (%s), HL", _other);
 
         }
@@ -1594,92 +1594,116 @@ void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    inline( cpu_math_mul_16bit_to_32bit )
 
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-        outline0("AND $80");
-        outline0("LD B, A");
-        outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
-        outline0("AND $80");
-        outline0("XOR A, B");
-        outline0("PUSH AF");
+        if ( _signed ) {
 
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-        outline0("AND $80");
-        outline0("PUSH AF");
-        outline1("JR Z,%spositive", label);
-        z80_complement2_16bit( _environment, _source, NULL );
-        outhead1("%spositive:", label);
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
+            outline0("AND $80");
+            outline0("LD B, A");
+            outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
+            outline0("AND $80");
+            outline0("XOR A, B");
+            outline0("PUSH AF");
 
-        outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
-        outline0("AND $80");
-        outline0("PUSH AF");
-        outline1("JR Z,%spositive2", label);
-        z80_complement2_16bit( _environment, _destination, NULL );
-        outhead1("%spositive2:", label);
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
+            outline0("AND $80");
+            outline0("PUSH AF");
+            outline1("JR Z,%spositive", label);
+            z80_complement2_16bit( _environment, _source, NULL );
+            outhead1("%spositive:", label);
 
-        outline1("LD BC, (%s)", _source );
-        outline1("LD DE, (%s)", _destination );
-        outline0("LD A, C" );
-        outline0("LD C, B" );
-        outline0("LD HL, 0" );
-        outline0("LD B, 16" );
-        outhead1("%s:", label );
-        outline0("ADD HL, HL" );
-        outline0("RLA " );
-        outline0("RL C" );
-        outline1("JR NC,%sb2", label );
-        outline0("ADD HL, DE" );
-        outline0("ADC A, 0" );
-        outline1("JP NC,%sb2", label );
-        outline0("INC C" );
-        outhead1("%sb2:", label );
-        outline1("DJNZ %s", label );
-        outline0("LD B, C" );
-        outline0("LD C, A" );
-        outline1("LD (%s), HL", _other );
-        outline1("LD (%s), BC", address_displacement( _environment, _other, "2" ) );
+            outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
+            outline0("AND $80");
+            outline0("PUSH AF");
+            outline1("JR Z,%spositive2", label);
+            z80_complement2_16bit( _environment, _destination, NULL );
+            outhead1("%spositive2:", label);
 
-        outline0("POP AF" );
-        outline1("JR Z, %srepositive", label );
-        z80_complement2_16bit( _environment, _destination, NULL );
-        outhead1("%srepositive:", label);
+            outline1("LD BC, (%s)", _source );
+            outline1("LD DE, (%s)", _destination );
+            outline0("LD A, C" );
+            outline0("LD C, B" );
+            outline0("LD HL, 0" );
+            outline0("LD B, 16" );
+            outhead1("%s:", label );
+            outline0("ADD HL, HL" );
+            outline0("RLA " );
+            outline0("RL C" );
+            outline1("JR NC,%sb2", label );
+            outline0("ADD HL, DE" );
+            outline0("ADC A, 0" );
+            outline1("JP NC,%sb2", label );
+            outline0("INC C" );
+            outhead1("%sb2:", label );
+            outline1("DJNZ %s", label );
+            outline0("LD B, C" );
+            outline0("LD C, A" );
+            outline1("LD (%s), HL", _other );
+            outline1("LD (%s), BC", address_displacement( _environment, _other, "2" ) );
 
-        outline0("POP AF" );
-        outline1("JR Z, %srepositive2", label );
-        z80_complement2_16bit( _environment, _source, NULL );
-        outhead1("%srepositive2:", label);
+            outline0("POP AF" );
+            outline1("JR Z, %srepositive", label );
+            z80_complement2_16bit( _environment, _destination, NULL );
+            outhead1("%srepositive:", label);
 
-        outline0("POP AF" );
-        outline1("JR Z, %srepositive3", label );
-        z80_complement2_32bit( _environment, _other, NULL );
-        outhead1("%srepositive3:", label);
+            outline0("POP AF" );
+            outline1("JR Z, %srepositive2", label );
+            z80_complement2_16bit( _environment, _source, NULL );
+            outhead1("%srepositive2:", label);
 
-    } else {
+            outline0("POP AF" );
+            outline1("JR Z, %srepositive3", label );
+            z80_complement2_32bit( _environment, _other, NULL );
+            outhead1("%srepositive3:", label);
 
-        outline1("LD BC, (%s)", _source );
-        outline1("LD DE, (%s)", _destination );
-        outline0("LD A, C" );
-        outline0("LD C, B" );
-        outline0("LD HL, 0" );
-        outline0("LD B, 16" );
-        outhead1("%s:", label );
-        outline0("ADD HL, HL" );
-        outline0("RLA " );
-        outline0("RL C" );
-        outline1("JR NC,%sb2", label );
-        outline0("ADD HL, DE" );
-        outline0("ADC A, 0" );
-        outline1("JP NC,%sb2", label );
-        outline0("INC C" );
-        outhead1("%sb2:", label );
-        outline1("DJNZ %s", label );
-        outline0("LD B, C" );
-        outline0("LD C, A" );
-        outline1("LD (%s), HL", _other );
-        outline1("LD (%s), BC", address_displacement( _environment, _other, "2" ) );
+        } else {
 
-    }
+            outline1("LD BC, (%s)", _source );
+            outline1("LD DE, (%s)", _destination );
+            outline0("LD A, C" );
+            outline0("LD C, B" );
+            outline0("LD HL, 0" );
+            outline0("LD B, 16" );
+            outhead1("%s:", label );
+            outline0("ADD HL, HL" );
+            outline0("RLA " );
+            outline0("RL C" );
+            outline1("JR NC,%sb2", label );
+            outline0("ADD HL, DE" );
+            outline0("ADC A, 0" );
+            outline1("JP NC,%sb2", label );
+            outline0("INC C" );
+            outhead1("%sb2:", label );
+            outline1("DJNZ %s", label );
+            outline0("LD B, C" );
+            outline0("LD C, A" );
+            outline1("LD (%s), HL", _other );
+            outline1("LD (%s), BC", address_displacement( _environment, _other, "2" ) );
+
+        }
+
+    embedded( cpu_math_mul_16bit_to_32bit, src_hw_z80_cpu_math_mul_16bit_to_32bit_asm );
+
+        if ( _signed ) {
+
+            outline1("LD IX, (%s)", _source );
+            outline1("LD IY, (%s)", _destination );
+            outline0("CALL CPUMUL16B16T32S")
+            outline1("LD (%s), HL", _other );
+            outline1("LD (%s), BC", address_displacement( _environment, _other, "2" ) );
+
+        } else {
+
+            outline1("LD BC, (%s)", _source );
+            outline1("LD DE, (%s)", _destination );
+            outline0("CALL CPUMUL16B16T32U")
+            outline1("LD (%s), HL", _other );
+            outline1("LD (%s), BC", address_displacement( _environment, _other, "2" ) );
+
+        }
+
+    done(  )
 
 }
 
