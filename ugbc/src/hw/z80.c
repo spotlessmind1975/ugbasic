@@ -594,16 +594,15 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
 
     inline( cpu_compare_8bit )
 
+        outline1("LD HL, %s", _destination);
         outline1("LD A, (%s)", _source);
-        outline0("LD B, A");
-        outline1("LD A, (%s)", _destination);
-        outline0("CP B");
+        outline0("CP (HL)");
         outline1("JP NZ, %s", label);
         outline1("LD A, $%2.2x", 0xff*_positive);
         if ( _other ) {
             outline1("LD (%s), A", _other);
         } else {
-            outline1("LD (%s), A", _destination);
+            outline0("LD (HL), A");
         }
         outline1("JMP %sb2", label);
         outhead1("%s:", label);
@@ -611,7 +610,7 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
         if ( _other ) {
             outline1("LD (%s), A", _other);
         } else {
-            outline1("LD (%s), A", _destination);
+            outline0("LD (HL), A");
         }
         outhead1("%sb2:", label);
 
@@ -2055,14 +2054,10 @@ void z80_store_32bit( Environment * _environment, char *_destination, int _value
 
     inline( cpu_store_32bit )
 
-        outline1("LD A, $%2.2x", ( _value & 0xff ) );
-        outline1("LD (%s), A", _destination );
-        outline1("LD A, $%2.2x", ( ( _value >> 8 ) & 0xff ) );
-        outline1("LD (%s), A", address_displacement(_environment, _destination, "1") );
-        outline1("LD A, $%2.2x", ( ( _value >> 16 ) & 0xff ) );
-        outline1("LD (%s), A", address_displacement(_environment, _destination, "2") );
-        outline1("LD A, $%2.2x", ( ( _value >> 24 ) & 0xff ) );
-        outline1("LD (%s), A", address_displacement(_environment, _destination, "3") );
+        outline1("LD HL, $%4.4x", ( _value & 0xffff ) );
+        outline1("LD (%s), HL", _destination );
+        outline1("LD HL, $%2.2x", ( ( _value >> 16 ) & 0xffff ) );
+        outline1("LD (%s), HL", address_displacement(_environment, _destination, "2") );
 
     no_embedded( cpu_move_32bit )
 
