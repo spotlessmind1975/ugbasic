@@ -1267,77 +1267,114 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    inline( cpu_less_than_16bit )
 
-        outline1("LD HL, (%s)", _destination);
-        outline1("LD DE, (%s)", _source);
-        outline0("LD A, H" );
-        outline0("XOR D" );
-        outline1("JP M,%scmpgte2", label );
-        outline0("SBC HL, DE" );
-        if ( _equal ) {
-            outline1("JR Z,%scmpgte3", label );
-        } else {
-            outline1("JR Z,%scmpgte1", label );
-        }
-        outline1("JR NC,%scmpgte3", label );
-        outhead1("%scmpgte1:", label ); 
-        outline0("LD A, 0");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
-        } else {
-            outline1("LD (%s), A", _destination);
-        }
-        outline1("JMP %send", label );
-        outhead1("%scmpgte2:", label ); 
-        outline0("BIT 7,D" );
-        outline1("JR Z, %scmpgte1", label );
-        outhead1("%scmpgte3:", label ); 
-        outline0("LD A, $ff");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
-        } else {
-            outline1("LD (%s), A", _destination);
-        }
-        outhead1("%send:", label ); 
-        
-    } else {
+        if ( _signed ) {
 
-        outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
-        outline0("LD B, A");
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-        outline0("CP B");
-        outline1("JR Z, %sl2", label);
-        outline1("JR C, %s", label);
-        outline1("JR %s_0", label);
-        outhead1("%sl2:", label);
-        outline1("LD A, (%s)", _destination);
-        outline0("LD B, A");
-        outline1("LD A, (%s)", _source);
-        outline0("CP B");
-        outline1("JR C, %s", label);
-        if ( _equal ) {
-            outline1("JR Z, %s", label);
-        }
-        outhead1("%s_0:", label);
-        outline0("LD A, 0");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
+            outline1("LD HL, (%s)", _destination);
+            outline1("LD DE, (%s)", _source);
+            outline0("LD A, H" );
+            outline0("XOR D" );
+            outline1("JP M,%scmpgte2", label );
+            outline0("SBC HL, DE" );
+            if ( _equal ) {
+                outline1("JR Z,%scmpgte3", label );
+            } else {
+                outline1("JR Z,%scmpgte1", label );
+            }
+            outline1("JR NC,%scmpgte3", label );
+            outhead1("%scmpgte1:", label ); 
+            outline0("LD A, 0");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outline1("JMP %send", label );
+            outhead1("%scmpgte2:", label ); 
+            outline0("BIT 7,D" );
+            outline1("JR Z, %scmpgte1", label );
+            outhead1("%scmpgte3:", label ); 
+            outline0("LD A, $ff");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outhead1("%send:", label ); 
+            
         } else {
-            outline1("LD (%s), A", _destination);
+
+            outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
+            outline0("LD B, A");
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
+            outline0("CP B");
+            outline1("JR Z, %sl2", label);
+            outline1("JR C, %s", label);
+            outline1("JR %s_0", label);
+            outhead1("%sl2:", label);
+            outline1("LD A, (%s)", _destination);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            outline0("CP B");
+            outline1("JR C, %s", label);
+            if ( _equal ) {
+                outline1("JR Z, %s", label);
+            }
+            outhead1("%s_0:", label);
+            outline0("LD A, 0");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outline1("JMP %sb2", label);
+            outhead1("%s:", label);
+            outline0("LD A, $ff");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outhead1("%sb2:", label);
+
         }
-        outline1("JMP %sb2", label);
-        outhead1("%s:", label);
-        outline0("LD A, $ff");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
+
+    embedded( cpu_less_than_16bit, src_hw_z80_cpu_less_than_16bit_asm );
+
+        if ( _signed ) {
+
+            outline1("LD HL, (%s)", _destination);
+            outline1("LD DE, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE16S");
+            } else {
+                outline0("CALL CPULT16S");
+            }
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+
         } else {
-            outline1("LD (%s), A", _destination);
+
+            outline1("LD HL, (%s)", _destination);
+            outline1("LD DE, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE16U");
+            } else {
+                outline0("CALL CPULT16U");
+            }
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+
         }
-        outhead1("%sb2:", label);
 
-
-    }
+    done(  )
 
 }
 
@@ -1345,61 +1382,90 @@ void z80_less_than_16bit_const( Environment * _environment, char *_source, int _
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    inline( cpu_less_than_16bit )
 
-        outline1("LD HL, $%4.4x", ( _destination & 0xffff ) );
-        outline1("LD DE, (%s)", _source);
-        outline0("LD A, H" );
-        outline0("XOR D" );
-        outline1("JP M,%scmpgte2", label );
-        outline0("SBC HL, DE" );
-        if ( _equal ) {
-            outline1("JR Z,%scmpgte3", label );
+        if ( _signed ) {
+
+            outline1("LD HL, $%4.4x", ( _destination & 0xffff ) );
+            outline1("LD DE, (%s)", _source);
+            outline0("LD A, H" );
+            outline0("XOR D" );
+            outline1("JP M,%scmpgte2", label );
+            outline0("SBC HL, DE" );
+            if ( _equal ) {
+                outline1("JR Z,%scmpgte3", label );
+            } else {
+                outline1("JR Z,%scmpgte1", label );
+            }        
+            outline1("JR NC,%scmpgte3", label );
+            outhead1("%scmpgte1:", label ); 
+            outline0("LD A, 0");
+            outline1("LD (%s), A", _other);
+            outline1("JMP %send", label );
+            outhead1("%scmpgte2:", label ); 
+            outline0("BIT 7,D" );
+            outline1("JR Z, %scmpgte1", label );
+            outhead1("%scmpgte3:", label ); 
+            outline0("LD A, $ff");
+            outline1("LD (%s), A", _other);
+            outhead1("%send:", label ); 
+            
         } else {
-            outline1("JR Z,%scmpgte1", label );
-        }        
-        outline1("JR NC,%scmpgte3", label );
-        outhead1("%scmpgte1:", label ); 
-        outline0("LD A, 0");
-        outline1("LD (%s), A", _other);
-        outline1("JMP %send", label );
-        outhead1("%scmpgte2:", label ); 
-        outline0("BIT 7,D" );
-        outline1("JR Z, %scmpgte1", label );
-        outhead1("%scmpgte3:", label ); 
-        outline0("LD A, $ff");
-        outline1("LD (%s), A", _other);
-        outhead1("%send:", label ); 
-        
-    } else {
 
-        outline1("LD A, $%2.2x", ( ( _destination >> 8 ) & 0xff ) );
-        outline0("LD B, A");
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-        outline0("CP B");
-        outline1("JR Z, %sl2", label);
-        outline1("JR C, %s", label);
-        outline1("JR %s_0", label);
-        outhead1("%sl2:", label);
-        outline1("LD A, $%2.2x", ( _destination & 0xff ) );
-        outline0("LD B, A");
-        outline1("LD A, (%s)", _source);
-        outline0("CP B");
-        outline1("JR C, %s", label);
-        if ( _equal ) {
-            outline1("JR Z, %s", label);
+            outline1("LD A, $%2.2x", ( ( _destination >> 8 ) & 0xff ) );
+            outline0("LD B, A");
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
+            outline0("CP B");
+            outline1("JR Z, %sl2", label);
+            outline1("JR C, %s", label);
+            outline1("JR %s_0", label);
+            outhead1("%sl2:", label);
+            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            outline0("CP B");
+            outline1("JR C, %s", label);
+            if ( _equal ) {
+                outline1("JR Z, %s", label);
+            }
+            outhead1("%s_0:", label);
+            outline0("LD A, 0");
+            outline1("LD (%s), A", _other);
+            outline1("JMP %sb2", label);
+            outhead1("%s:", label);
+            outline0("LD A, $ff");
+            outline1("LD (%s), A", _other);
+            outhead1("%sb2:", label);
+
         }
-        outhead1("%s_0:", label);
-        outline0("LD A, 0");
-        outline1("LD (%s), A", _other);
-        outline1("JMP %sb2", label);
-        outhead1("%s:", label);
-        outline0("LD A, $ff");
-        outline1("LD (%s), A", _other);
-        outhead1("%sb2:", label);
 
+    embedded( cpu_less_than_16bit, src_hw_z80_cpu_less_than_16bit_asm );
 
-    }
+        if ( _signed ) {
+
+            outline1("LD HL, $%4.4x", ( _destination & 0Xffff ) );
+            outline1("LD DE, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE16S");
+            } else {
+                outline0("CALL CPULT16S");
+            }
+            outline1("LD (%s), A", _other);
+
+        } else {
+
+            outline1("LD HL, $%4.4x", ( _destination & 0Xffff ) );
+            outline1("LD DE, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE16U");
+            } else {
+                outline0("CALL CPULT16U");
+            }
+            outline1("LD (%s), A", _other);
+
+        }
+
+    done(  )
 
 }
 
