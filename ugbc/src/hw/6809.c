@@ -167,6 +167,33 @@ static void cpu6809_greater_than( Environment * _environment, char *_source, cha
     outline1("STB %s", _other ? _other : _destination );
 }
 
+static void cpu6809_greater_than_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed, int _bits ) {
+    char REG = _bits==16 ? 'X' : 'A';
+
+    MAKE_LABEL
+
+    outline0("CLRB");
+    outline2("LD%c %s",  REG, _source);
+    outline2("CMP%c #$%4.4x", REG, _destination);
+    if ( _signed ) {
+        if ( _equal ) {
+            outline1("BLT %s", label);
+        } else {
+            outline1("BLE %s", label);
+        }
+    } else {
+        if ( _equal ) {
+            outline1("BLO %s", label);
+        } else {
+            outline1("BLS %s", label);
+        }
+    }
+
+    outline0("DECB");
+    outhead1("%s", label );
+    outline1("STB %s", _other );
+}
+
 /**
  * @brief <i>CPU 6809</i>: emit code to make long conditional jump
  *
@@ -708,6 +735,16 @@ void cpu6809_greater_than_8bit( Environment * _environment, char *_source, char 
     inline( cpu_greater_than_8bit )
 
         cpu6809_greater_than(_environment, _source, _destination, _other, _equal, _signed, 8);
+
+    no_embedded( cpu_greater_than_8bit )
+
+}
+
+void cpu6809_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_greater_than_8bit )
+
+        cpu6809_greater_than_const(_environment, _source, _destination, _other, _equal, _signed, 8);
 
     no_embedded( cpu_greater_than_8bit )
 
@@ -1269,6 +1306,17 @@ void cpu6809_greater_than_16bit( Environment * _environment, char *_source, char
     no_embedded( cpu_greater_than_16bit )
 
 }
+
+void cpu6809_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_greater_than_16bit )
+
+        cpu6809_greater_than_const( _environment, _source, _destination,  _other, _equal, _signed, 16 );
+
+    no_embedded( cpu_greater_than_16bit )
+
+}
+
 
 /**
  * @brief <i>CPU 6809</i>: emit code to add two 16 bit values
@@ -2087,6 +2135,42 @@ void cpu6809_greater_than_32bit( Environment * _environment, char *_source, char
         outline0("DECB");
         outhead1("%sdone", label );
         outline1("STB %s", _other ? _other : _destination );
+
+    no_embedded( cpu_greater_than_32bit )
+
+}
+
+void cpu6809_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_greater_than_32bit )
+
+        MAKE_LABEL
+
+        outline0("CLRB");
+        outline1("LDX %s", _source);
+        outline1("CMPX #$%4.4x", ( _destination >> 16 ) & 0xffff );
+        outline1("BNE %shigh", label);
+        outline1("LDX %s", address_displacement(_environment, _source, "2"));
+        outline1("CMPX #$%4.4x", ( _destination & 0xffff ) );
+        outhead1("%shigh", label );
+
+        if ( _signed ) {
+            if ( _equal ) {
+                outline1("BLT %sdone", label);
+            } else {
+                outline1("BLE %sdone", label);
+            }
+        } else {
+            if ( _equal ) {
+                outline1("BLO %sdone", label);
+            } else {
+                outline1("BLS %sdone", label);
+            }
+        }
+
+        outline0("DECB");
+        outhead1("%sdone", label );
+        outline1("STB %s", _other );
 
     no_embedded( cpu_greater_than_32bit )
 
