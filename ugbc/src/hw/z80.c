@@ -812,7 +812,7 @@ void z80_less_than_8bit_const( Environment * _environment, char *_source, int _d
 
         if ( _signed ) {
 
-            outline1("LD A, %2.2x", _destination);
+            outline1("LD A, $%2.2x", _destination);
             outline0("LD B, A");
             outline1("LD A, (%s)", _source);
             if ( _equal ) {
@@ -1941,7 +1941,28 @@ void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _
             
         }
 
-    no_embedded( cpu_math_div2_const_16bit )
+    embedded( cpu_math_div2_const_16bit, src_hw_z80_cpu_math_div2_const_16bit_asm )
+
+        if ( _signed ) {
+            if ( _steps ) {
+                outline1("LD HL, (%s)", _source );
+                outline1("LD A, $%2.2x", _steps );
+                outline0("LD C, A" );
+                outline0("CALL CPUDIV2CONST16S" );
+                outline1("LD (%s), HL", _source );
+            }
+        } else {
+            if ( _steps ) {
+                outline1("LD HL, (%s)", _source );
+                outline1("LD A, $%2.2x", _steps );
+                outline0("LD C, A" );
+                outline0("CALL CPUDIV2CONST16U" );
+                outline1("LD (%s), HL", _source );
+            }
+            
+        }
+
+    done( )
 
 }
 
@@ -2074,7 +2095,7 @@ void z80_store_32bit( Environment * _environment, char *_destination, int _value
  */
 void z80_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
-    inline( cpu_store_32bit )
+    inline( cpu_compare_32bit )
 
         MAKE_LABEL
 
@@ -2114,7 +2135,7 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
         }
         outhead1("%s_2:", label);
 
-    no_embedded( cpu_store_32bit )
+    no_embedded( cpu_compare_32bit )
 
 }
 
@@ -5631,7 +5652,7 @@ void z80_hex_to_string( Environment * _environment, char * _number, char * _stri
 
     embedded( cpu_hex_to_string, src_hw_z80_cpu_hex_to_string_asm );
 
-        outline1("LD A, %2.2x", _bits);
+        outline1("LD A, $%2.2x", _bits);
         outline0("LD IXL, A");
 
         switch( _bits ) {
