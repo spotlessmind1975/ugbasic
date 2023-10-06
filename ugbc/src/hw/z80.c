@@ -1294,10 +1294,8 @@ void z80_move_16bit( Environment * _environment, char *_source, char *_destinati
     
     inline( cpu_move_16bit )
 
-        outline1("LD A, (%s)", _source );
-        outline1("LD (%s), A", _destination );
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
-        outline1("LD (%s), A", address_displacement(_environment, _destination, "1") );
+        outline1("LD HL, (%s)", _source );
+        outline1("LD (%s), HL", _destination );
 
     no_embedded( cpu_move_16bit )
 
@@ -1325,10 +1323,8 @@ void z80_store_16bit( Environment * _environment, char *_destination, int _value
 
     inline( cpu_store_16bit )
 
-        outline1("LD A, $%2.2x", _value & 0xff );
-        outline1("LD (%s), A", _destination );
-        outline1("LD A, $%2.2x", ( ( _value >> 8 ) & 0xff ) );
-        outline1("LD (%s), A", address_displacement(_environment, _destination, "1") );
+        outline1("LD HL, $%4.4x", _value & 0xffff );
+        outline1("LD (%s), HL", _destination );
 
     no_embedded( cpu_store_16bit )
 
@@ -2007,12 +2003,16 @@ void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _
  */
 void z80_math_and_const_16bit( Environment * _environment, char *_source, int _mask ) {
 
-    outline1("LD A, (%s)", _source );
-    outline1("AND $%2.2x", ( _mask & 0xff ) );
-    outline1("LD (%s), A", _source );
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
-    outline1("AND $%2.2x", ( ( _mask >> 8 ) & 0xff ) );
-    outline1("LD (%s), A", address_displacement(_environment, _source, "1") );
+    inline( cpu_math_and_const_16bit )
+
+        outline1("LD A, (%s)", _source );
+        outline1("AND $%2.2x", ( _mask & 0xff ) );
+        outline1("LD (%s), A", _source );
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
+        outline1("AND $%2.2x", ( ( _mask >> 8 ) & 0xff ) );
+        outline1("LD (%s), A", address_displacement(_environment, _source, "1") );
+
+    no_embedded( cpu_math_and_const_16bit )
 
 }
 
@@ -2029,14 +2029,18 @@ void z80_math_and_const_16bit( Environment * _environment, char *_source, int _m
  */
 void z80_move_32bit( Environment * _environment, char *_source, char *_destination ) {
 
-    outline1("LD A, (%s)", _source );
-    outline1("LD (%s), A", _destination );
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
-    outline1("LD (%s), A", address_displacement(_environment, _destination, "1") );
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "2") );
-    outline1("LD (%s), A", address_displacement(_environment, _destination, "2") );
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
-    outline1("LD (%s), A", address_displacement(_environment, _destination, "3") );
+    inline( cpu_move_32bit )
+
+        outline1("LD A, (%s)", _source );
+        outline1("LD (%s), A", _destination );
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
+        outline1("LD (%s), A", address_displacement(_environment, _destination, "1") );
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "2") );
+        outline1("LD (%s), A", address_displacement(_environment, _destination, "2") );
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
+        outline1("LD (%s), A", address_displacement(_environment, _destination, "3") );
+
+    no_embedded( cpu_move_32bit )
 
 }
 
@@ -2049,14 +2053,18 @@ void z80_move_32bit( Environment * _environment, char *_source, char *_destinati
  */
 void z80_store_32bit( Environment * _environment, char *_destination, int _value ) {
 
-    outline1("LD A, $%2.2x", ( _value & 0xff ) );
-    outline1("LD (%s), A", _destination );
-    outline1("LD A, $%2.2x", ( ( _value >> 8 ) & 0xff ) );
-    outline1("LD (%s), A", address_displacement(_environment, _destination, "1") );
-    outline1("LD A, $%2.2x", ( ( _value >> 16 ) & 0xff ) );
-    outline1("LD (%s), A", address_displacement(_environment, _destination, "2") );
-    outline1("LD A, $%2.2x", ( ( _value >> 24 ) & 0xff ) );
-    outline1("LD (%s), A", address_displacement(_environment, _destination, "3") );
+    inline( cpu_store_32bit )
+
+        outline1("LD A, $%2.2x", ( _value & 0xff ) );
+        outline1("LD (%s), A", _destination );
+        outline1("LD A, $%2.2x", ( ( _value >> 8 ) & 0xff ) );
+        outline1("LD (%s), A", address_displacement(_environment, _destination, "1") );
+        outline1("LD A, $%2.2x", ( ( _value >> 16 ) & 0xff ) );
+        outline1("LD (%s), A", address_displacement(_environment, _destination, "2") );
+        outline1("LD A, $%2.2x", ( ( _value >> 24 ) & 0xff ) );
+        outline1("LD (%s), A", address_displacement(_environment, _destination, "3") );
+
+    no_embedded( cpu_move_32bit )
 
 }
 
@@ -2071,43 +2079,47 @@ void z80_store_32bit( Environment * _environment, char *_destination, int _value
  */
 void z80_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
-    MAKE_LABEL
+    inline( cpu_store_32bit )
 
-    outline1("LD A, (%s)", _source);
-    outline0("LD B, A");
-    outline1("LD A, (%s)", _destination);
-    outline0("CP B");
-    outline1("JP NZ, %s", label);
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-    outline0("LD B, A");
-    outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
-    outline0("CP B");
-    outline1("JP NZ, %s", label);
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
-    outline0("LD B, A");
-    outline1("LD A, (%s)", address_displacement(_environment, _destination, "2"));
-    outline0("CP B");
-    outline1("JP NZ, %s", label);
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
-    outline0("LD B, A");
-    outline1("LD A, (%s)", address_displacement(_environment, _destination, "3"));
-    outline0("CP B");
-    outline1("JP NZ, %s", label);
-    outline1("LD A, $%2.2x", 0xff*_positive);
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outline1("JMP %s_2", label);
-    outhead1("%s:", label);
-    outline1("LD A, $%2.2x", 0xff*(1-_positive));
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outhead1("%s_2:", label);
+        MAKE_LABEL
+
+        outline1("LD A, (%s)", _source);
+        outline0("LD B, A");
+        outline1("LD A, (%s)", _destination);
+        outline0("CP B");
+        outline1("JP NZ, %s", label);
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
+        outline0("LD B, A");
+        outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
+        outline0("CP B");
+        outline1("JP NZ, %s", label);
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
+        outline0("LD B, A");
+        outline1("LD A, (%s)", address_displacement(_environment, _destination, "2"));
+        outline0("CP B");
+        outline1("JP NZ, %s", label);
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
+        outline0("LD B, A");
+        outline1("LD A, (%s)", address_displacement(_environment, _destination, "3"));
+        outline0("CP B");
+        outline1("JP NZ, %s", label);
+        outline1("LD A, $%2.2x", 0xff*_positive);
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outline1("JMP %s_2", label);
+        outhead1("%s:", label);
+        outline1("LD A, $%2.2x", 0xff*(1-_positive));
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outhead1("%s_2:", label);
+
+    no_embedded( cpu_store_32bit )
 
 }
 
@@ -2507,43 +2519,51 @@ void z80_greater_than_32bit_const( Environment * _environment, char *_source, in
  */
 void z80_math_add_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    outline1("LD HL, (%s)", _source );
-    outline1("LD DE, (%s)", _destination );
-    outline0("EXX" );
-    outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
-    outline1("LD DE, (%s)", address_displacement(_environment, _destination, "2") );
-    outline0("EXX" );
-    outline0("ADD HL, DE" );
-    outline0("EXX" );
-    outline0("ADC HL, DE" );
-    outline0("EXX" );
-    if ( _other ) {
-        outline1("LD (%s), HL", _other );
+    inline( cpu_math_add_32bit )
+
+        outline1("LD HL, (%s)", _source );
+        outline1("LD DE, (%s)", _destination );
         outline0("EXX" );
-        outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
-    } else {
-        outline1("LD (%s), HL", _destination );
+        outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
+        outline1("LD DE, (%s)", address_displacement(_environment, _destination, "2") );
         outline0("EXX" );
-        outline1("LD (%s), HL", address_displacement( _environment, _destination, "2" ) );
-    }
+        outline0("ADD HL, DE" );
+        outline0("EXX" );
+        outline0("ADC HL, DE" );
+        outline0("EXX" );
+        if ( _other ) {
+            outline1("LD (%s), HL", _other );
+            outline0("EXX" );
+            outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
+        } else {
+            outline1("LD (%s), HL", _destination );
+            outline0("EXX" );
+            outline1("LD (%s), HL", address_displacement( _environment, _destination, "2" ) );
+        }
+
+    no_embedded( cpu_math_add_32bit )
 
 }
 
 void z80_math_add_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
-    outline1("LD HL, (%s)", _source );
-    outline1("LD DE, $%4.4x", ( _destination & 0xffff ) );
-    outline0("EXX" );
-    outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
-    outline1("LD DE, $%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
-    outline0("EXX" );
-    outline0("ADD HL, DE" );
-    outline0("EXX" );
-    outline0("ADC HL, DE" );
-    outline0("EXX" );
-    outline1("LD (%s), HL", _other );
-    outline0("EXX" );
-    outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
+    inline( cpu_math_add_32bit_const )
+
+        outline1("LD HL, (%s)", _source );
+        outline1("LD DE, $%4.4x", ( _destination & 0xffff ) );
+        outline0("EXX" );
+        outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
+        outline1("LD DE, $%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
+        outline0("EXX" );
+        outline0("ADD HL, DE" );
+        outline0("EXX" );
+        outline0("ADC HL, DE" );
+        outline0("EXX" );
+        outline1("LD (%s), HL", _other );
+        outline0("EXX" );
+        outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
+
+    no_embedded( cpu_math_add_32bit_const )
 
 }
 
@@ -2557,11 +2577,15 @@ void z80_math_add_32bit_const( Environment * _environment, char *_source, int _d
  */
 void z80_math_double_32bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
-    if ( _other ) {
-        z80_math_add_32bit( _environment, _source, _source, _other );
-    } else {
-        z80_math_add_32bit( _environment, _source, _source, _source );
-    }
+    inline( cpu_math_double_32bit )
+
+        if ( _other ) {
+            z80_math_add_32bit( _environment, _source, _source, _other );
+        } else {
+            z80_math_add_32bit( _environment, _source, _source, _source );
+        }
+
+    no_embedded( cpu_math_double_32bit )
 
 }
 
@@ -2575,48 +2599,52 @@ void z80_math_double_32bit( Environment * _environment, char *_source, char *_ot
  */
 void z80_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    MAKE_LABEL
+    inline( cpu_math_sub_32bit )
 
-    outline1("LD HL, (%s)", _source );
-    outline1("LD DE, (%s)", _destination );
-    outline0("LD A, E" );
-    outline0("XOR $FF" );
-    outline0("LD E, A" );
-    outline0("LD A, D" );
-    outline0("XOR $FF" );
-    outline0("LD D, A" );
-    outline0("INC DE" );
-    outline0("LD A, D" );
-    outline0("OR E" );
-    outline0("PUSH AF" );
-    outline0("EXX" );
-    outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
-    outline1("LD DE, (%s)", address_displacement(_environment, _destination, "2") );
-    outline0("LD A, E" );
-    outline0("XOR $FF" );
-    outline0("LD E, A" );
-    outline0("LD A, D" );
-    outline0("XOR $FF" );
-    outline0("LD D, A" );
-    outline0("POP AF" );
-    outline0("CP 0" );
-    outline1("JR NZ, %snoincde", label );
-    outline0("INC DE" );
-    outline1("%snoincde:", label );
-    outline0("EXX" );
-    outline0("ADD HL, DE" );
-    outline0("EXX" );
-    outline0("ADC HL, DE" );
-    outline0("EXX" );
-    if ( _other ) {
-        outline1("LD (%s), HL", _other );
+        MAKE_LABEL
+
+        outline1("LD HL, (%s)", _source );
+        outline1("LD DE, (%s)", _destination );
+        outline0("LD A, E" );
+        outline0("XOR $FF" );
+        outline0("LD E, A" );
+        outline0("LD A, D" );
+        outline0("XOR $FF" );
+        outline0("LD D, A" );
+        outline0("INC DE" );
+        outline0("LD A, D" );
+        outline0("OR E" );
+        outline0("PUSH AF" );
         outline0("EXX" );
-        outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
-    } else {
-        outline1("LD (%s), HL", _destination );
+        outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
+        outline1("LD DE, (%s)", address_displacement(_environment, _destination, "2") );
+        outline0("LD A, E" );
+        outline0("XOR $FF" );
+        outline0("LD E, A" );
+        outline0("LD A, D" );
+        outline0("XOR $FF" );
+        outline0("LD D, A" );
+        outline0("POP AF" );
+        outline0("CP 0" );
+        outline1("JR NZ, %snoincde", label );
+        outline0("INC DE" );
+        outline1("%snoincde:", label );
         outline0("EXX" );
-        outline1("LD (%s), HL", address_displacement( _environment, _destination, "2" ) );
-    }
+        outline0("ADD HL, DE" );
+        outline0("EXX" );
+        outline0("ADC HL, DE" );
+        outline0("EXX" );
+        if ( _other ) {
+            outline1("LD (%s), HL", _other );
+            outline0("EXX" );
+            outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
+        } else {
+            outline1("LD (%s), HL", _destination );
+            outline0("EXX" );
+            outline1("LD (%s), HL", address_displacement( _environment, _destination, "2" ) );
+        }
+
+    no_embedded( cpu_math_sub_32bit )
 
 }
 
@@ -2629,33 +2657,37 @@ void z80_math_sub_32bit( Environment * _environment, char *_source, char *_desti
  */
 void z80_math_complement_const_32bit( Environment * _environment, char *_source, int _value ) {
 
-    outline1("LD HL, $%4.4x", ( _value & 0xffff ) );
-    outline1("LD DE, (%s)", _source );
-    outline0("LD A, E" );
-    outline0("XOR $FF" );
-    outline0("LD E, A" );
-    outline0("LD A, D" );
-    outline0("XOR $FF" );
-    outline0("LD D, A" );
-    outline0("INC DE" );
-    outline0("EXX" );
-    outline1("LD HL, $%4.4x", ( ( _value >> 16 ) & 0xffff ) );
-    outline1("LD DE, (%s)", address_displacement(_environment, _source, "2") );
-    outline0("LD A, E" );
-    outline0("XOR $FF" );
-    outline0("LD E, A" );
-    outline0("LD A, D" );
-    outline0("XOR $FF" );
-    outline0("LD D, A" );
-    outline0("INC DE" );
-    outline0("EXX" );
-    outline0("ADD HL, DE" );
-    outline0("EXX" );
-    outline0("ADC HL, DE" );
-    outline0("EXX" );
-    outline1("LD (%s), HL", _source );
-    outline0("EXX" );
-    outline1("LD (%s), HL", address_displacement( _environment, _source, "2" ) );
+    inline( cpu_math_complement_const_32bit )
+
+        outline1("LD HL, $%4.4x", ( _value & 0xffff ) );
+        outline1("LD DE, (%s)", _source );
+        outline0("LD A, E" );
+        outline0("XOR $FF" );
+        outline0("LD E, A" );
+        outline0("LD A, D" );
+        outline0("XOR $FF" );
+        outline0("LD D, A" );
+        outline0("INC DE" );
+        outline0("EXX" );
+        outline1("LD HL, $%4.4x", ( ( _value >> 16 ) & 0xffff ) );
+        outline1("LD DE, (%s)", address_displacement(_environment, _source, "2") );
+        outline0("LD A, E" );
+        outline0("XOR $FF" );
+        outline0("LD E, A" );
+        outline0("LD A, D" );
+        outline0("XOR $FF" );
+        outline0("LD D, A" );
+        outline0("INC DE" );
+        outline0("EXX" );
+        outline0("ADD HL, DE" );
+        outline0("EXX" );
+        outline0("ADC HL, DE" );
+        outline0("EXX" );
+        outline1("LD (%s), HL", _source );
+        outline0("EXX" );
+        outline1("LD (%s), HL", address_displacement( _environment, _source, "2" ) );
+
+    no_embedded( cpu_math_complement_const_32bit )
 
 }
 
@@ -2668,47 +2700,52 @@ void z80_math_complement_const_32bit( Environment * _environment, char *_source,
  */
 void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    MAKE_LABEL
+    inline( cpu_math_div2_const_32bit )
 
-    if ( _signed ) {
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
-        outline0("AND $80" );
-        outline0("CP 0" );
-        outline0("PUSH AF" );
-        outline1("JR Z, %spos", label );
-        z80_complement2_32bit( _environment, _source, _source );
-        outline1("JMP %spos2", label );
-        outhead1("%spos:", label );
-        outhead1("%spos2:", label );
-        outline1("LD DE, (%s)", _source );
-        outline1("LD BC, (%s)", address_displacement(_environment, _source, "2") );
-        while( _steps ) {
-            outline0("SRA B" );
-            outline0("RR C" );
-            outline0("RR D" );
-            outline0("RR E" );
-            --_steps;
+        MAKE_LABEL
+
+        if ( _signed ) {
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
+            outline0("AND $80" );
+            outline0("CP 0" );
+            outline0("PUSH AF" );
+            outline1("JR Z, %spos", label );
+            z80_complement2_32bit( _environment, _source, _source );
+            outline1("JMP %spos2", label );
+            outhead1("%spos:", label );
+            outhead1("%spos2:", label );
+            outline1("LD DE, (%s)", _source );
+            outline1("LD BC, (%s)", address_displacement(_environment, _source, "2") );
+            while( _steps ) {
+                outline0("SRA B" );
+                outline0("RR C" );
+                outline0("RR D" );
+                outline0("RR E" );
+                --_steps;
+            }
+            outline1("LD (%s),DE", _source );
+            outline1("LD (%s),BC", address_displacement( _environment, _source, "2" ) );
+            outline0("POP AF" );
+            outline0("AND $80" );
+            outline0("CP 0" );
+            outline1("JR Z, %sdone", label );
+            z80_complement2_32bit( _environment, _source, _source );
+            outhead1("%sdone:", label );
+        } else {
+            outline1("LD DE, (%s)", _source );
+            outline1("LD BC, (%s)", address_displacement(_environment, _source, "2") );
+            while( _steps ) {
+                outline0("SRA B" );
+                outline0("RR C" );
+                outline0("RR D" );
+                outline0("RR E" );
+                --_steps;
+            }
+            outline1("LD (%s), DE", _source );
+            outline1("LD (%s), BC", address_displacement( _environment, _source, "2" ) );    
         }
-        outline1("LD (%s),DE", _source );
-        outline1("LD (%s),BC", address_displacement( _environment, _source, "2" ) );
-        outline0("POP AF" );
-        outline0("AND $80" );
-        outline0("CP 0" );
-        outline1("JR Z, %sdone", label );
-        z80_complement2_32bit( _environment, _source, _source );
-        outhead1("%sdone:", label );
-    } else {
-        outline1("LD DE, (%s)", _source );
-        outline1("LD BC, (%s)", address_displacement(_environment, _source, "2") );
-        while( _steps ) {
-            outline0("SRA B" );
-            outline0("RR C" );
-            outline0("RR D" );
-            outline0("RR E" );
-            --_steps;
-        }
-        outline1("LD (%s), DE", _source );
-        outline1("LD (%s), BC", address_displacement( _environment, _source, "2" ) );    }
+
+    no_embedded( cpu_math_div2_const_32bit )
 
 }
 
@@ -2722,49 +2759,53 @@ void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _
  */
 void z80_math_mul2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    MAKE_LABEL
+    inline( cpu_math_mul2_const_32bit )
 
-    if ( _signed ) {
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
-        outline0("AND $80" );
-        outline0("CP 0" );
-        outline0("PUSH AF" );
-        outline1("JR Z, %spos", label );
-        z80_complement2_32bit( _environment, _source, _source );
-        outline1("JMP %spos2", label );
-        outhead1("%spos:", label );
-        outhead1("%spos2:", label );
-        outline1("LD HL, (%s)", _source );
-        outline1("LD DE, (%s)", address_displacement(_environment, _source, "2") );
-        while( _steps ) {
-            outline0("SLA L" );
-            outline0("RL H" );
-            outline0("RL E" );
-            outline0("RL D" );
-            --_steps;
-        }
-        outline1("LD (%s), HL", _source );
-        outline1("LD (%s), DE", address_displacement( _environment, _source, "2" ) );
-        outline0("POP AF" );
-        outline0("AND $80" );
-        outline0("CP 0" );
-        outline1("JR Z, %sdone", label );
-        z80_complement2_32bit( _environment, _source, _source );
-        outhead1("%sdone:", label );
-    } else {
-        outline1("LD HL, (%s)", _source );
-        outline1("LD DE, (%s)", address_displacement(_environment, _source, "2") );
-        while( _steps ) {
-            outline0("SLA L" );
-            outline0("RL H" );
-            outline0("RL D" );
-            outline0("RL E" );
-            --_steps;
-        }
-        outline1("LD (%s), HL", _source );
-        outline1("LD (%s), DE", address_displacement( _environment, _source, "2" ) );
-    }
+        MAKE_LABEL
 
+        if ( _signed ) {
+            outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
+            outline0("AND $80" );
+            outline0("CP 0" );
+            outline0("PUSH AF" );
+            outline1("JR Z, %spos", label );
+            z80_complement2_32bit( _environment, _source, _source );
+            outline1("JMP %spos2", label );
+            outhead1("%spos:", label );
+            outhead1("%spos2:", label );
+            outline1("LD HL, (%s)", _source );
+            outline1("LD DE, (%s)", address_displacement(_environment, _source, "2") );
+            while( _steps ) {
+                outline0("SLA L" );
+                outline0("RL H" );
+                outline0("RL E" );
+                outline0("RL D" );
+                --_steps;
+            }
+            outline1("LD (%s), HL", _source );
+            outline1("LD (%s), DE", address_displacement( _environment, _source, "2" ) );
+            outline0("POP AF" );
+            outline0("AND $80" );
+            outline0("CP 0" );
+            outline1("JR Z, %sdone", label );
+            z80_complement2_32bit( _environment, _source, _source );
+            outhead1("%sdone:", label );
+        } else {
+            outline1("LD HL, (%s)", _source );
+            outline1("LD DE, (%s)", address_displacement(_environment, _source, "2") );
+            while( _steps ) {
+                outline0("SLA L" );
+                outline0("RL H" );
+                outline0("RL D" );
+                outline0("RL E" );
+                --_steps;
+            }
+            outline1("LD (%s), HL", _source );
+            outline1("LD (%s), DE", address_displacement( _environment, _source, "2" ) );
+        }
+
+    no_embedded( cpu_math_mul2_const_32bit )
+    
 }
 
 /**
@@ -2777,18 +2818,22 @@ void z80_math_mul2_const_32bit( Environment * _environment, char *_source, int _
  */
 void z80_math_and_const_32bit( Environment * _environment, char *_source, int _mask ) {
 
-    outline1("LD A, (%s)", _source );
-    outline1("AND $%2.2x", ( _mask & 0xff ) );
-    outline1("LD (%s), A", _source );
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
-    outline1("AND $%2.2x", ( ( _mask >> 8 ) & 0xff ) );
-    outline1("LD (%s), A", address_displacement(_environment, _source, "1") );
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "2") );
-    outline1("AND $%2.2x", ( ( _mask >> 16 ) & 0xff ) );
-    outline1("LD (%s), A", address_displacement(_environment, _source, "2") );
-    outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
-    outline1("AND $%2.2x", ( ( _mask >> 24 ) & 0xff ) );
-    outline1("LD (%s), A", address_displacement(_environment, _source, "3") );
+    inline( cpu_math_and_const_32bit )
+
+        outline1("LD A, (%s)", _source );
+        outline1("AND $%2.2x", ( _mask & 0xff ) );
+        outline1("LD (%s), A", _source );
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
+        outline1("AND $%2.2x", ( ( _mask >> 8 ) & 0xff ) );
+        outline1("LD (%s), A", address_displacement(_environment, _source, "1") );
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "2") );
+        outline1("AND $%2.2x", ( ( _mask >> 16 ) & 0xff ) );
+        outline1("LD (%s), A", address_displacement(_environment, _source, "2") );
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
+        outline1("AND $%2.2x", ( ( _mask >> 24 ) & 0xff ) );
+        outline1("LD (%s), A", address_displacement(_environment, _source, "3") );
+
+    no_embedded( cpu_math_and_const_32bit )
 
 }
 
@@ -2799,15 +2844,19 @@ void z80_math_and_const_32bit( Environment * _environment, char *_source, int _m
  */
 void z80_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte ) {
 
-    outline1("LD A, (%s)", _hi_nibble );
-    outline0("SLA A" );
-    outline0("SLA A" );
-    outline0("SLA A" );
-    outline0("SLA A" );
-    outline0("LD B, A" );
-    outline1("LD A, (%s)", _low_nibble );
-    outline0("OR A, B" );
-    outline1("LD (%s), A", _byte );
+    inline( cpu_combine_nibbles )
+
+        outline1("LD A, (%s)", _hi_nibble );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("LD B, A" );
+        outline1("LD A, (%s)", _low_nibble );
+        outline0("OR A, B" );
+        outline1("LD (%s), A", _byte );
+
+    no_embedded( cpu_combine_nibbles )
 
 }
 
