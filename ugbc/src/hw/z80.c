@@ -619,64 +619,104 @@ void z80_less_than_8bit( Environment * _environment, char *_source, char *_desti
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    inline( cpu_less_than_8bit )
 
-        outline1("LD A, (%s)", _destination);
-        outline0("LD B, A");
-        outline1("LD A, (%s)", _source);
-        outline0("SUB A, B");
-        if ( _equal ) {
-            outline1("JP  Z,%strue", label);
-        }
-        outline1("JP PO,%snoxor", label);
-        outline0("XOR $80");
-        outhead1("%snoxor:", label);
-        outline1("JP M,%strue", label);
-        outline1("JP PE,%sfalse", label);
-        outhead1("%sfalse:", label);
-        outline0("LD A, 0");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
-        } else {
-            outline1("LD (%s), A", _destination);
-        }
-        outline1("JMP %sb2", label);
-        outhead1("%strue:", label);
-        outline0("LD A, $ff");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
-        } else {
-            outline1("LD (%s), A", _destination);
-        }
-        outhead1("%sb2:", label);
+        if ( _signed ) {
 
-    } else {
+            outline1("LD A, (%s)", _destination);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            outline0("SUB A, B");
+            if ( _equal ) {
+                outline1("JP  Z,%strue", label);
+            }
+            outline1("JP PO,%snoxor", label);
+            outline0("XOR $80");
+            outhead1("%snoxor:", label);
+            outline1("JP M,%strue", label);
+            outline1("JP PE,%sfalse", label);
+            outhead1("%sfalse:", label);
+            outline0("LD A, 0");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outline1("JMP %sb2", label);
+            outhead1("%strue:", label);
+            outline0("LD A, $ff");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outhead1("%sb2:", label);
 
-        outline1("LD A, (%s)", _destination);
-        outline0("LD B, A");
-        outline1("LD A, (%s)", _source);
-        outline0("CP B");
-        outline1("JR C, %s", label);
-        if ( _equal ) {
-            outline1("JR Z, %s", label);
-        }
-        outline0("LD A, 0");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
         } else {
-            outline1("LD (%s), A", _destination);
-        }
-        outline1("JMP %sb2", label);
-        outhead1("%s:", label);
-        outline0("LD A, $ff");
-        if ( _other ) {
-            outline1("LD (%s), A", _other);
-        } else {
-            outline1("LD (%s), A", _destination);
-        }
-        outhead1("%sb2:", label);
 
-    }
+            outline1("LD A, (%s)", _destination);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            outline0("CP B");
+            outline1("JR C, %s", label);
+            if ( _equal ) {
+                outline1("JR Z, %s", label);
+            }
+            outline0("LD A, 0");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outline1("JMP %sb2", label);
+            outhead1("%s:", label);
+            outline0("LD A, $ff");
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+            outhead1("%sb2:", label);
+
+        }
+
+    embedded( cpu_less_than_8bit, src_hw_z80_cpu_less_than_8bit_asm );
+
+        if ( _signed ) {
+
+            outline1("LD A, (%s)", _destination);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE8S");
+            } else {
+                outline0("CALL CPULT8S");
+            }
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+
+        } else {
+
+            outline1("LD A, (%s)", _destination);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE8U");
+            } else {
+                outline0("CALL CPULT8U");
+            }
+            if ( _other ) {
+                outline1("LD (%s), A", _other);
+            } else {
+                outline1("LD (%s), A", _destination);
+            }
+
+        }
+
+    done(  )
 
 }
 
