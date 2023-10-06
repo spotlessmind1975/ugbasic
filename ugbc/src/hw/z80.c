@@ -253,7 +253,7 @@ void z80_fill( Environment * _environment, char * _address, char * _bytes, char 
     embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
 
         outline1("LD A, (%s)", _bytes);
-        outline0("LD c, A");
+        outline0("LD C, A");
         outline1("LD A, (%s)", _pattern);
         outline1("LD HL, (%s)", _address);
         outline0("CALL CPUFILL");
@@ -278,21 +278,33 @@ void z80_fill_size( Environment * _environment, char * _address, int _bytes, cha
 
     MAKE_LABEL
 
-    outline1("LD A, (%s)", _pattern);
-    outline1("LD HL, (%s)", _address);
-    outline0("LD (HL),A")
-    outline0("LD E,L");
-    outline0("LD D,H");
-    outline0("INC DE");
-    outline0("LD (DE),A")
-    outline1("LD A,$%2.2x", _bytes);
-    outline1("JR Z, %sdone", label);
-    outline0("DEC A");
-    outline0("LD C,A");
-    outline0("LD A,0");
-    outline0("LD B,A");
-    outline0("LDIR");
-    outhead1("%sdone:", label);
+    inline( cpu_fill )
+
+        outline1("LD A, (%s)", _pattern);
+        outline1("LD HL, (%s)", _address);
+        outline0("LD (HL),A")
+        outline0("LD E,L");
+        outline0("LD D,H");
+        outline0("INC DE");
+        outline0("LD (DE),A")
+        outline1("LD A,$%2.2x", _bytes);
+        outline1("JR Z, %sdone", label);
+        outline0("DEC A");
+        outline0("LD C,A");
+        outline0("LD A,0");
+        outline0("LD B,A");
+        outline0("LDIR");
+        outhead1("%sdone:", label);
+
+    embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
+
+        outline1("LD A, $%2.2x", _bytes);
+        outline0("LD C, A");
+        outline1("LD A, (%s)", _pattern);
+        outline1("LD HL, (%s)", _address);
+        outline0("CALL CPUFILL");
+
+    done(  )
 
 }
 
@@ -312,23 +324,35 @@ void z80_fill_size( Environment * _environment, char * _address, int _bytes, cha
 void z80_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
     MAKE_LABEL
-    
-    outline1("LD A,$%2.2x", _pattern);
-    outline1("LD HL, (%s)", _address);
-    outline0("LD (HL),A")
-    outline0("LD E,L");
-    outline0("LD D,H");
-    outline0("INC DE");
-    outline0("LD (DE),A")
-    outline1("LD A,$%2.2x", _bytes);
-    outline0("CP 0");
-    outline1("JR Z, %sdone", label);
-    outline0("DEC A");
-    outline0("LD C,A");
-    outline0("LD A,0");
-    outline0("LD B,A");
-    outline0("LDIR");
-    outhead1("%sdone:", label);
+
+    inline( cpu_fill )
+
+        outline1("LD A, $%2.2x", _pattern);
+        outline1("LD HL, (%s)", _address);
+        outline0("LD (HL),A")
+        outline0("LD E,L");
+        outline0("LD D,H");
+        outline0("INC DE");
+        outline0("LD (DE),A")
+        outline1("LD A, $%2.2x", _bytes);
+        outline0("CP 0");
+        outline1("JR Z, %sdone", label);
+        outline0("DEC A");
+        outline0("LD C,A");
+        outline0("LD A,0");
+        outline0("LD B,A");
+        outline0("LDIR");
+        outhead1("%sdone:", label);
+
+    embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
+
+        outline1("LD A, $%2.2x", _bytes);
+        outline0("LD C, A");
+        outline1("LD A, $%2.2x", _pattern);
+        outline1("LD HL, (%s)", _address);
+        outline0("CALL CPUFILL");
+
+    done(  )
 
 }
 
@@ -349,22 +373,34 @@ void z80_fill_direct( Environment * _environment, char * _address, char * _bytes
 
     MAKE_LABEL
 
-    outline1("LD A, (%s)", _pattern);
-    outline1("LD HL, %s", _address);
-    outline0("LD (HL),A")
-    outline0("LD E,L");
-    outline0("LD D,H");
-    outline0("INC DE");
-    outline0("LD (DE),A")
-    outline1("LD A, (%s)", _bytes);
-    outline0("CP 0");
-    outline1("JR Z, %sdone", label);
-    outline0("DEC A");
-    outline0("LD C,A");
-    outline0("LD A,0");
-    outline0("LD B,A");
-    outline0("LDIR");
-    outhead1("%sdone:", label);
+    inline( cpu_fill )
+
+        outline1("LD A, (%s)", _pattern);
+        outline1("LD HL, %s", _address);
+        outline0("LD (HL),A")
+        outline0("LD E,L");
+        outline0("LD D,H");
+        outline0("INC DE");
+        outline0("LD (DE),A")
+        outline1("LD A, (%s)", _bytes);
+        outline0("CP 0");
+        outline1("JR Z, %sdone", label);
+        outline0("DEC A");
+        outline0("LD C,A");
+        outline0("LD A,0");
+        outline0("LD B,A");
+        outline0("LDIR");
+        outhead1("%sdone:", label);
+
+    embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
+
+        outline1("LD A, (%s)", _bytes);
+        outline0("LD c, A");
+        outline1("LD A, (%s)", _pattern);
+        outline1("LD HL, %s", _address);
+        outline0("CALL CPUFILL");
+
+    done(  )
 
 }
 
