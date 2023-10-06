@@ -789,6 +789,13 @@ void z80_greater_than_8bit( Environment * _environment, char *_source, char *_de
 
 }
 
+void z80_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    z80_less_than_8bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+    z80_not_8bit( _environment, _other, _other );
+
+}
+
 /**
  * @brief <i>Z80</i>: emit code to add two 8 bit values
  * 
@@ -1413,6 +1420,13 @@ void z80_greater_than_16bit( Environment * _environment, char *_source, char *_d
     } else {
         z80_not_8bit( _environment, _destination, _destination );
     }
+
+}
+
+void z80_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    z80_less_than_16bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+    z80_not_8bit( _environment, _other, _other );
 
 }
 
@@ -2118,6 +2132,13 @@ void z80_greater_than_32bit( Environment * _environment, char *_source, char *_d
     } else {
         z80_not_8bit( _environment, _destination, _destination );
     }
+
+}
+
+void z80_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    z80_less_than_32bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+    z80_not_8bit( _environment, _other, _other );
 
 }
 

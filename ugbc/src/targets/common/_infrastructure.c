@@ -5884,6 +5884,30 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
     return result;
 }
 
+Variable * variable_greater_than_const( Environment * _environment, char * _source, int _destination, int _equal ) {
+
+    MAKE_LABEL
+
+    Variable * source = variable_retrieve( _environment, _source );
+
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_greater_than_32bit_const( _environment, source->realName, _destination, result->realName, _equal, VT_SIGNED( source->type ) );
+            break;
+        case 16:
+            cpu_greater_than_16bit_const( _environment, source->realName, _destination, result->realName, _equal, VT_SIGNED( source->type ) );
+            break;
+        case 8:
+            cpu_greater_than_8bit_const( _environment, source->realName, _destination, result->realName, _equal, VT_SIGNED( source->type ) );
+            break;
+        default:
+            CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], "(const integer)" );
+            break;
+    }
+    return result;
+}
+
 /**
  * @brief Emit code for <b>= LEFT( ..., ... )</b>
  * 

@@ -952,6 +952,12 @@ expr_math :
     | expr_math2 OP_GTE expr_math {
         $$ = variable_greater_than( _environment, $1, $3, 1 )->name;
     }
+    | expr_math2 OP_GT OP_HASH const_expr_math2 {
+        $$ = variable_greater_than_const( _environment, $1, $4, 0 )->name;
+    }
+    | expr_math2 OP_GTE OP_HASH const_expr_math2 {
+        $$ = variable_greater_than_const( _environment, $1, $4, 1 )->name;
+    }
     ;
 
 expr_math2: 
