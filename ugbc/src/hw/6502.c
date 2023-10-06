@@ -759,6 +759,17 @@ void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char 
 
 }
 
+void cpu6502_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_greater_than_8bit )
+
+        cpu6502_less_than_8bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+        cpu6502_not_8bit( _environment, _other, _other );
+
+    no_embedded( cpu_greater_than_8bit )
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to add two 8 bit values
  * 
@@ -1582,6 +1593,17 @@ void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char
         } else {
             cpu6502_not_8bit( _environment, _destination, _destination );
         }
+
+    no_embedded( cpu_greater_than_16bit )
+
+}
+
+void cpu6502_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_greater_than_16bit )
+
+        cpu6502_less_than_16bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+        cpu6502_not_8bit( _environment, _other, _other );
 
     no_embedded( cpu_greater_than_16bit )
 
@@ -2765,6 +2787,17 @@ void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char
         } else {
             cpu6502_not_8bit( _environment, _destination, _destination );
         }
+
+    no_embedded( cpu_greater_than_32bit )
+
+}
+
+void cpu6502_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_greater_than_32bit )
+
+        cpu6502_less_than_32bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+        cpu6502_not_8bit( _environment, _other, _other );
 
     no_embedded( cpu_greater_than_32bit )
 
