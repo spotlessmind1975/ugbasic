@@ -274,7 +274,7 @@ BLITIMAGE0CP:
 
     PUSH HL
 
-    LD A,(IMAGEX)
+    LD A, (IMAGEX)
     LD L,A
     LD A,0
     LD H,A
@@ -287,7 +287,7 @@ BLITIMAGE0CP:
     RR L
     LD DE,HL
 
-    LD A,(IMAGEY)
+    LD A, (IMAGEY)
     AND $f8
     LD L,A
     LD A,0

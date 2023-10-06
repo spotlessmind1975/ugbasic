@@ -60,11 +60,11 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
     Variable * y = variable_retrieve( _environment, _y );
     Variable * x = variable_retrieve( _environment, _x );
 
-    outline1("LD A,(%s)", address_displacement(_environment, x->realName, "1") );
+    outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
     outline0("CP 0" );
     outline1("JR NZ, clip%s", label );
 
-    outline1("LD A,(%s)", x->realName );
+    outline1("LD A, (%s)", x->realName );
     outline0("LD L, A" );
     outline0("LD A, 0" );
     outline0("LD H, A" );
@@ -76,7 +76,7 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
     outline0("RR L" );
     outline0("LD DE,HL");
 
-    outline1("LD A,(%s)", y->realName );
+    outline1("LD A, (%s)", y->realName );
     outline0("LD L, A" );
     outline0("LD A, 0" );
     outline0("LD H, A" );

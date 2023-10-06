@@ -298,13 +298,13 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     // }
 
     // // ;Instead of
-    // //     ld a,(var)
+    // //     ld A, (var)
     // //     inc a
     // //     ld (var),a
     // // ;try this	;Note: if hl is not tied up, use indirection:
     // //     ld hl,var
     // //     inc (hl)
-    // //     ld a,(hl) ;if you don't need (hl) in a, delete this line
+    // //     ld A, (hl) ;if you don't need (hl) in a, delete this line
     // // ; -> save 2 bytes and 2 T-states
 	// if( match( buf[0], " LD A, (*)", v1) && 
     //     match( buf[1], " INC A") &&

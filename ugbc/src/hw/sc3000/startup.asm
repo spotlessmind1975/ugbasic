@@ -66,12 +66,12 @@ KEYB_NotDetected    = 0xFF
 ; returns 1 in a and clears z flag if vdp is 60Hz
 ; size: 27 bytes
 CheckIf60Hz:
-		in      a,(vdp_control)
+		in      A, (vdp_control)
 		nop
 		nop
 		nop
 vdpSync:
-		in      a,(vdp_control)
+		in      A, (vdp_control)
 		and     $80
 		jr      z,vdpSync
 		
@@ -82,7 +82,7 @@ vdpLoop:
 		or      l
 		jr      nz,vdpLoop
 		
-		in      a,(vdp_control)
+		in      A, (vdp_control)
 		rlca
 		and     1
 		ret

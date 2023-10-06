@@ -219,7 +219,7 @@ PUTDONEYY:
 
     PUSH HL
 
-    LD A,(IMAGEX)
+    LD A, (IMAGEX)
     AND $F8
     LD L,A
     LD A,0
@@ -233,7 +233,7 @@ PUTDONEYY:
     RR L
     LD DE,HL
 
-    LD A,(IMAGEY)
+    LD A, (IMAGEY)
     AND $f8
     LD L,A
     LD A,0
