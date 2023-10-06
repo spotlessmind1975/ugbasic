@@ -1369,7 +1369,19 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
         }
         outhead1("%sb2:", label);
 
-    no_embedded( cpu_compare_16bit )
+    embedded( cpu_compare_16bit, src_hw_z80_cpu_compare_16bit_asm )
+
+        outline1("LD HL, %s", _source);
+        outline1("LD DE, %s", _destination);
+        outline1("LD IX, $%4.4x", ( (0xff*_positive) << 8 ) | ( 0xff*(1-_positive)) );
+        outline0("CALL CPUCOMPARE16");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+
+    done( )
 
 }
 
@@ -2135,8 +2147,20 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
         }
         outhead1("%s_2:", label);
 
-    no_embedded( cpu_compare_32bit )
+    embedded( cpu_compare_32bit, src_hw_z80_cpu_compare_32bit_asm )
 
+        outline1("LD HL, %s", _source);
+        outline1("LD DE, %s", _destination);
+        outline1("LD IX, $%4.4x", ( (0xff*_positive) << 8 ) | ( 0xff*(1-_positive)) );
+        outline0("CALL CPUCOMPARE32");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+
+    done( )
+    
 }
 
 /**
