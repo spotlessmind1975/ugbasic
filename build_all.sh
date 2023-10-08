@@ -33,3 +33,4 @@ build vic20
 build zx
 build coco
 build c128z
+build coco3
