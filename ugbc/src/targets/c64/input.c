@@ -40,6 +40,66 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
+/**
+ * @brief Emit code for <strong>INPUT...</strong> instruction
+ * 
+ * @param _environment Current calling environment
+ * @param _variable Variable where to store the input
+ * @param _default_type Type of variable to input
+ */
+
+/* <usermanual>
+@keyword INPUT
+
+@english
+
+The ''INPUT'' provides a standard way of entering information into one or more variables. 
+There are two possible formats for this instruction. 
+
+The first require that the programmer enters a list of variables directly as a list. 
+Each variable must be separated by a comma. A question mark will be automatically displayed 
+at the current cursor position.
+
+The second needs a string as the first parameter. The string will be used as a prompt 
+before entering information. When a semicolon ('';'') is used after the text output to
+the user, a question mark (''?'') is added to the output. When a comma ('','') 
+is used, no question mark is added.
+
+When you execute one of these commands, ugBASIC will wait to enter the required
+information from the keyboard. Each variable must be matched by a single value from the user. 
+These values must be of the same type as the original variables, and they should
+be separated by commas.
+
+If a string is specified (e.g., ''name$''), anything the user 
+enters before pressing the 'return' key will be accepted. If a numeric variable 
+(e.g., 'age') is specified, the user must enter a number. If any non-numeric key 
+is entered, the value 0 will be returned.
+
+The optional semi-colon '';'' at the end the variables list specifies that the 
+text cursor will not be affected by the ''INPUT'' instruction, and it will retain its 
+original position after the data has been entered, instead of moving to the next line,
+following the enter key.
+
+Note that the separator character can be changed by using the ''DEFINE INPUT SEPARATOR''
+command, by giving the ASCII code value to use instead of the default (comma). Moreover,
+the size of the input buffer can be changed using the ''DEFINE INPUT SIZE'' instruction.
+Finally, the character used as cursor can be changed using the ''DEFINE INPUT CURSOR'' 
+instruction.
+
+@italian
+
+@syntax INPUT [var1] [, var2 [, ..]] [;]
+@syntax INPUT [prompt] ; [var1] [, var2 [, ..]] [;]
+@syntax INPUT [prompt] , [var1] [, var2 [, ..]] [;]
+
+@example INPUT age
+@example INPUT "what is your name"; name$
+@example INPUT "digit a number [0-9]:", number
+
+@usedInExample control_case_01.bas
+@target all
+@verified
+</usermanual> */
 void input( Environment * _environment, char * _variable, VariableType _default_type ) {
 
     MAKE_LABEL

@@ -75,6 +75,27 @@ that each character uses only one column.
 
 @italian
 
+L'istruzione ''PRINT'' visualizza le informazioni sullo schermo, a partire dalla posizione attuale del 
+cursore. Un elemento o un elenco di elementi può seguire il comando. Se un elemento viene omesso, viene 
+stampata una riga vuota. L'elenco di elementi può essere costituito da qualsiasi gruppo di stringhe, 
+variabili o costanti. Ogni elemento dell'elenco deve essere separato da un punto e virgola '';'' o da una 
+virgola '',''. Un punto e virgola stampa i dati immediatamente dopo il valore precedente, mentre una virgola 
+sposta prima il cursore alla posizione ''TAB'' successiva sullo schermo.
+
+Normalmente il cursore sarà portato verso il basso di una singola riga dopo ciascuna istruzione ''PRINT''. 
+Questo può essere evitato aggiungendo un separatore dopo la stampa. Come prima, un punto e virgola manterrà 
+la posizione del cursore dopo l'operazione e una virgola posizionerà il cursore al punto ''TAB'' successivo 
+prima di procedere.
+
+Tutti i dati stampati sullo schermo vengono formattati utilizzando il formattatore specifico per i numeri 
+e "così come sono" per le stringhe, mentre i dati complessi verranno stampati con una stringa di descrizione 
+univoca. Per i dati numerici, i numeri sono sempre tradotti nel sistema decimale. Non viene scritto nulla 
+se il parametro viene omesso.
+
+Poiché l'istruzione ''PRINT'' stampa con caratteri a spaziatura fissa, esiste una correlazione tra il 
+numero di caratteri stampati e il numero di colonne occupate da tali caratteri. Ciò garantisce che ogni 
+carattere utilizzi solo una colonna.
+
 @syntax PRINT [expr] [; [expr] [; ...] ... ]
 @syntax PRINT [expr] [, [expr] [, ...] ... ]
 
