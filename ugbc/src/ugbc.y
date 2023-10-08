@@ -7330,10 +7330,12 @@ statement2:
   }
   | WRITING writing_definition
   | OSP Identifier OP_COLON CSP {
-      cpu_label( _environment, $2 );
+    label_define_named( _environment, $2 );
+    cpu_label( _environment, $2 );
   } 
   | Identifier OP_COLON {
-      cpu_label( _environment, $1 );
+    label_define_named( _environment, $1 );
+    cpu_label( _environment, $1 );
   } 
   | LOAD String OP_COMMA Integer on_bank load_flags {
     load( _environment, $2, NULL, $4, $5, $6 );
@@ -7748,6 +7750,7 @@ statements_no_linenumbers:
 
 statements_with_linenumbers:
       Integer {
+        label_define_numeric( _environment, $1 );
         char lineNumber[MAX_TEMPORARY_STORAGE];
         sprintf(lineNumber, "_linenumber%d", $1 );
         cpu_label( _environment, lineNumber);

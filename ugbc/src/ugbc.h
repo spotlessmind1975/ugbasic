@@ -585,6 +585,22 @@ typedef struct _Constant {
 
 } Constant;
 
+/**
+ * @brief Structure of a single label
+ */
+typedef struct _Label {
+
+    /** Name of the label (if not numeri) */
+    char * name;
+
+    /** Line numberf (if numeric) */
+    int number;
+
+    /** Link to the next constant (NULL if this is the last one) */
+    struct _Label * next;
+
+} Label;
+
 typedef enum _FloatTypePrecision {
 
     FT_FAST = 0,        // fast = 24 bit
@@ -1725,6 +1741,11 @@ typedef struct _Environment {
     Storage * currentStorage;
 
     /**
+     * List of labels.
+     */
+    Label * labels;
+
+    /**
      * List of temporary (but not reusable) variables.
      */
     Variable * tempResidentVariables;
@@ -2455,6 +2476,9 @@ typedef struct _Environment {
 #define CRITICAL_FOR_WITHOUT_NEXT( ) CRITICAL("E225 - FOR without NEXT" );
 #define CRITICAL_BEGIN_GAMELOOP_WITHOUT_END_GAMELOOP( ) CRITICAL("E226 - BEGIN GAMELOOP without END GAMELOOP" );
 #define CRITICAL_CANNOT_GENERATE_RANDOM( ) CRITICAL("E227 - cannot generate random number with this parameter" );
+#define CRITICAL_LINE_NUMBER_ALREADY_DEFINED( n ) CRITICAL2i("E228 - line number already defined", n );
+#define CRITICAL_LABEL_ALREADY_DEFINED( n ) CRITICAL2("E229 - label already defined", n );
+
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3583,6 +3607,10 @@ void                    kill_procedure( Environment * _environment, char * _hand
 // *L*
 //----------------------------------------------------------------------------
 
+void                    label_define_numeric( Environment * _environment, int _label );
+void                    label_define_named( Environment * _environment, char * _label );
+int                     label_exists_named( Environment * _environment, char * _label );
+int                     label_exists_numeric( Environment * _environment, int _label );
 Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion, int _flags );
 void                    locate( Environment * _environment, char * _x, char * _y );
 void                    loop( Environment * _environment, char *_label );
