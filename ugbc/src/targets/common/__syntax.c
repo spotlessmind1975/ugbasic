@@ -1699,4 +1699,5 @@ da commentare.
 @example PRINT "ok": REM I am printing ok
 
 @target all
+@verified
 </usermanual> */

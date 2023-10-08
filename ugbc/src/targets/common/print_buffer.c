@@ -48,7 +48,7 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _new_line 1 if a new line must be added at the end
  */
 /* <usermanual>
-@keyword PRINT
+@keyword PRINT BUFFER
 
 @english
 A specific variant of ''PRINT'' can be used to print large amount of text.

@@ -51,51 +51,42 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword PRINT
 
 @english
-The ''PRINT'' instruction can be used to print on the screen, starting from 
-the current cursor position, and they may include the characters in 
-any group of variables or constants. ''PRINT'' statements can occupy 
-their own lines, but if more than one element to be printed is written 
-as a single line of your program, each element must be separated from the
-next by either a semi-colon character ('';'') or a comma (''.''). 
 
-An element to be printed can be a string, a variable or a constant, 
-and is placed inside a pair of quotation marks (''"''). A semi-colon 
-('';'') is used to print elements immediately after one another while
-a comma ('','') moves the cursor to the next "tab" position on the screen.
+The ''PRINT'' instruction displays information on the screen, starting from the current
+cursor position. An item or a list of items can follow the command. If any item is omitted, 
+a blank line is printed. The list of items can consist of any group of strings, variables or constants.
+Each element in the list must be separated by either a semi-colon '';'' or a comma '',''.
+A semi-colon prints the data immediately after the previous value, whereas a comma first
+moves the cursor to the next ''TAB'' position on the screen.
 
-A tab is an automatic marker that sets up a location for printing, 
-and is often used to lay out columns of figures, or to make indentations 
-in text. Normally, the cursor is advanced downwards by one line after every
-''PRINT'' command, but by using the semi-colon or comma, the rule can be changed.
+Normally the cursor will be advanced downwards by a single line after each ''PRINT''
+instruction. This can be suppressed by adding a separator after the print. As before, a semicolon
+will preserve the cursor position after the operation, and a comma will place the
+cursor to the next ''TAB'' stop before proceeding.
+
+All data printed to the screen is formatted by using the specific formatter for numbers,
+and "as is" for strings, while complex data will be printed out with an unique decription string.
+ For the numeric data, the numbers are always translated into decimal system. Nothing is written 
+ if parameter is omitted. 
+
+Because the ''PRINT'' instruction prints with mono-spaced characters, there is a  correlation between
+the number of characters printed and the number of columns those characters occupy. This ensures 
+that each character uses only one column.
 
 @italian
-L'istruzione ''PRINT'' può essere utilizzata per stampare sullo schermo, 
-a partire dalla posizione corrente del cursore, e si possono includere caratteri 
-in qualsiasi gruppo di variabili o costanti. Le istruzioni ''PRINT'' possono occupare
-righe separate, ma se si vuore che più di un elemento da stampare sia stampato
-come una singola riga, ogni elemento dovrà essere separato dal successivo da un 
-punto e virgola (''; '') oppure da una virgola (' '.' ').
 
-Un elemento da stampare può essere una stringa, una variabile o una costante e 
-viene inserito tra virgolette (''"''). Il punto e virgola ('';'') viene utilizzato
-per stampare elementi immediatamente uno dopo l'altro mentre una virgola ('','') 
-sposta il cursore alla posizione di "tabulazione" successiva sullo schermo.
-
-Una tabulazione è un indicatore automatico che imposta una posizione per la stampa
-e viene spesso utilizzato per disporre colonne di cifre o per creare rientri nel 
-testo. Normalmente, il cursore viene fatto avanzare verso il basso di una riga 
-dopo ogni comando ''PRINT'', ma utilizzando il punto e virgola o la virgola,
-la regola può essere modificata.
-
-@syntax PRINT [expression]{;|,[expression]|;[expression]} ...
+@syntax PRINT [expr] [; [expr] [; ...] ... ]
+@syntax PRINT [expr] [, [expr] [, ...] ... ]
 
 @example PRINT "HELLO WORLD!"
-@example PRINT (A + B);" IS A SUM!";
+@example PRINT (a + b);" IS A SUM!";
 
 @usedInExample texts_print_01.bas
 @usedInExample texts_print_02.bas
 
+@abbreviation ?
 @target all
+@verified
 </usermanual> */
 void print( Environment * _environment, char * _value, int _new_line ) {
 
