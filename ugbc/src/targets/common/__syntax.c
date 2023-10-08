@@ -1701,3 +1701,30 @@ da commentare.
 @target all
 @verified
 </usermanual> */
+
+/* <usermanual>
+@keyword labels
+
+@english
+
+In ugBASIC it is possible to indicate the position within a program with the use of 
+so-called "labels". The labels can be represented in the BASIC standard, i.e. with numeric 
+labels, or with alphanumeric labels, and are used to jump within specific positions of the program.
+
+@italian
+
+In ugBASIC è possibile indicare la posizione all'interno di un programma con l'utilizzo delle cosiddette
+"etichette". Le etichette possono essere rappresentate nello standard BASIC, ovvero con etichette numeriche,
+oppure con etichetta alfanumeriche, e servono per saltare all'interno di specifiche posizioni del programma.
+
+@syntax number instruction
+@syntax label: instruction
+@syntax [label:] instruction
+
+@example 100 PRINT "oK!": GOTO 100
+@example begin: PRINT "OK!" : GOTO begin
+@example [begin:] PRINT "OK!" : GOTO begin
+
+@target all
+@verified
+</usermanual> */
