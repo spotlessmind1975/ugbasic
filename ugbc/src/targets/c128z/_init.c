@@ -58,6 +58,12 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_lowercase = 1;
     _environment->embedded.cpu_hex_to_string = 1;
     _environment->embedded.cpu_string_sub = 1;
+    _environment->embedded.cpu_less_than_8bit = 1;
+    _environment->embedded.cpu_less_than_16bit = 1;
+    _environment->embedded.cpu_less_than_32bit = 1;
+    _environment->embedded.cpu_math_div2_const_16bit = 1;
+    _environment->embedded.cpu_compare_16bit = 1;
+    _environment->embedded.cpu_compare_32bit = 1;
 
 }
 
