@@ -695,6 +695,12 @@ void vic1_text( Environment * _environment, char * _text, char * _text_size ) {
 
 }
 
+/* <usermanual>
+@keyword RGB
+
+@target vic20
+</usermanual> */
+
 void vic1_initialization( Environment * _environment ) {
 
     deploy( vic1vars, src_hw_vic1_vars_asm );

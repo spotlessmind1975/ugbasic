@@ -1575,6 +1575,13 @@ void vic2_text( Environment * _environment, char * _text, char * _text_size ) {
 
 }
 
+/* <usermanual>
+@keyword RGB
+
+@target c64
+@target c128
+</usermanual> */
+
 void vic2_initialization( Environment * _environment ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm );

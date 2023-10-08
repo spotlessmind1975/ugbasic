@@ -1765,3 +1765,31 @@ per evitare di considerare ''label'' come una istruzione.
 @target all
 @verified
 </usermanual> */
+
+/* <usermanual>
+@keyword RGB
+
+@english
+
+The ''RGB'' function allows you to obtain the equivalent value of a color, given its red, green and blue 
+components. The value of this function, where it is supported by the target, can be used in place of a 
+nominal color. Where it is not defined, it always returns a value of zero, which may (or may not) correspond 
+to a valid color.
+
+@italian
+
+La funzione ''RGB'' consente di ottenere il valore equivalente di un colore, date le sue componenti secondo
+rosso, verde e blu. Il valore di questa funzione, laddove è supportata dal target, può essere utilizzata al
+posto di un colore nominale. Laddove non è definita, restituisce sempre un valore di zero, che può (o meno)
+corrispondere a un colore valido.
+
+@syntax = RGB( red, green, blue )
+
+@example red = RGB( 255, 0, 0 )
+
+@usedInExample graphics_color_04.bas
+@usedInExample graphics_palette_01.bas
+@usedInExample images_get_03.bas
+
+@verified
+</usermanual> */
