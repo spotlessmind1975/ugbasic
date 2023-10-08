@@ -1658,3 +1658,45 @@ Recupera un byte dalla memoria e lo restituisce.
 @target all
 
 </usermanual> */
+
+/* <usermanual>
+@keyword REM
+
+@english
+The ''REM'' keyword is used to include explanatory remarks in the source code of a program.
+In the text of any comment you want to include, that is optional, a space is required 
+between the ''REM'' keyword and comment.
+
+You can put a ''REM'' statement alone on a line, or you can put it on a line following 
+another statement . The ''REM'' statement must be the last statement on the line. If it follows 
+another statement, the ''REM'' must be separated from that statement by a colon ('':'').
+
+You can use a single quotation mark (') instead of ''REM''. This is true whether your comment follows
+another statement on the same line or sits alone on a line. However, you cannot continue a 
+''REM'' statement by using a line-continuation sequence (''_''). This means that, for a multiple-line 
+comment, you need to use as many ''REM''s statements as the lines you comment.
+
+@italian
+La parola chiave ''REM'' viene utilizzata per includere commenti esplicativi nel codice sorgente di 
+un programma. Nel testo di qualsiasi commento che si desidera includere, e che è facoltativo, è 
+richiesto uno spazio tra la parola chiave ''REM'' e il commento.
+
+E' possibile introdurree un'istruzione ''REM'' da sola su una riga, oppure su una riga dopo un'altra 
+istruzione. L'istruzione ''REM'' deve essere l'ultima istruzione sulla riga. Se segue un'altra istruzione, 
+il ''REM'' deve essere separato da quell'istruzione con i due punti ('':'').
+
+È possibile utilizzare un'apice (') invece di ''REM''. Questo è vero sia che il commento segua un'altra 
+istruzione sulla stessa riga o che si trovi da solo su una riga. Tuttavia, non è possibile continuare 
+un'istruzione ''REM'' utilizzando la sequenza di continuazione della riga (''_''). Ciò significa che, 
+per un commento su più righe, è necessario utilizzare tante istruzioni ''REM' quante sono le righe 
+da commentare.
+
+@syntax REM [comment]
+@syntax ' [comment]
+
+@example REM this is a comment
+@example ' and this is a comment
+@example PRINT "ok": REM I am printing ok
+
+@target all
+</usermanual> */
