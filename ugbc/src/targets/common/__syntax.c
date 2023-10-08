@@ -2,26 +2,38 @@
 @keyword IF
 
 @english
-The ''IF'' function allows you to evaluate whether a certain expression is ''TRUE'' or ''FALSE''. 
-Depending on that check, the function will return the second (if ''TRUE'') or third (if ''FALSE'') 
-argument. This function evaluates the expression at compile time: it follows that the return 
-value does not change at runtime. This function is particularly useful for carrying out a
-conditional evaluation of constants which, otherwise, would require evaluation at runtime, 
-wasting time and occupying useless space.
+
+The ''IF'' function allows you to evaluate whether a certain expression is ''TRUE'' (not 0) or ''FALSE''. 
+(0). Depending on that check, the function will return the second (if ''TRUE'') or third (if ''FALSE'') 
+argument. 
+
+This function evaluates the expression at compile time: it follows that the return 
+value does not change at runtime. There are three versions of this function, one for each 
+type of value that can be returned. There is a version that returns integers, one for 
+floating point numbers, and one for strings.
+
+This function is particularly useful for carrying out a conditional evaluation of constants which, 
+otherwise, would require evaluation at runtime, wasting time and occupying useless space.
 
 @italian
 La funzione IF consente di valutare se una certa espressione è vera o falsa. A seconda di 
 tale controllo, la funzione restituirà il secondo argomento (se vero) o il terzo (se falso). 
-Questa funzione valuta l'espressione la momento della compilazione: ne consegue che il valore
-restituito non cambia in fase di runtime. Questa funzione è particolarmente utile per 
-effettuare una valorizzazione condizionata di costanti che, altrimenti, richiederebbero una
-valutazione a runtime, con perdita di tempo e occupazione di spazio inutile.
 
-@syntax = IF ([condition], [expression], [expression] )
+Questa funzione valuta l'espressione la momento della compilazione: ne consegue che il valore
+restituito non cambia in fase di runtime. Esistono tre versioni di questa funzione, una per 
+ogni tipo di valore che può essere restituito. Esiste la versione che restituisce numeri interi, 
+una per i numeri in virgola mobile e una per le stringhe.
+
+Questa funzione è particolarmente utile per effettuare una valorizzazione condizionata di costanti 
+che, altrimenti, richiederebbero una valutazione a runtime, con perdita di tempo e occupazione 
+di spazio inutile.
+
+@syntax = IF (exp, valueTrue, valueFalse )
 
 @example pictureToUse = IF(SCREEN WIDTH > 160, "large.png", "small.png" )
 
 @target all
+@version
 </usermanual> */
 
 /* <usermanual>
@@ -1703,7 +1715,7 @@ da commentare.
 </usermanual> */
 
 /* <usermanual>
-@keyword labels
+@keyword defining labels
 
 @english
 
@@ -1724,6 +1736,31 @@ oppure con etichetta alfanumeriche, e servono per saltare all'interno di specifi
 @example 100 PRINT "oK!": GOTO 100
 @example begin: PRINT "OK!" : GOTO begin
 @example [begin:] PRINT "OK!" : GOTO begin
+
+@usedInExample contrib_cube_10lines.bas
+
+@target all
+@verified
+</usermanual> */
+
+/* <usermanual>
+@keyword separating instructions
+
+@english
+
+In ugBASIC, the instructions are separated using a colon character ('':''). Since this character
+is used also as a suffix for a label, you have to use the ''[label:]'' variant, to avoid to
+consider ''label'' as a instruction.
+
+@italian
+
+In ugBASIC, le istruzioni sono separate utilizzando i due punti ('':''). Poiché questo carattere 
+viene utilizzato anche come suffisso per un'etichetta, è necessario utilizzare la variante ''[label:]'',
+per evitare di considerare ''label'' come una istruzione.
+
+@syntax instruction1 : instruction2 : ...
+
+@example PRINT : CLS : PRINT
 
 @target all
 @verified
