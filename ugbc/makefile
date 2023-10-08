@@ -116,8 +116,8 @@ ifeq ($(OS),Windows_NT)
 else
 $(BISON): $(dir $(BISON))../src/*.c $(dir $(BISON))../src/*.h \
 			$(dir $(BISON))../src/*.c $(dir $(BISON))../src/*.h
-	mkdir -p $(realpath $(dir $(BISON)))/share
-	cd $(dir $(BISON)..).. && ./configure --disable-yacc --prefix=$(realpath $(dir $(BISON)))/share && make install
+	@mkdir -p $(realpath $(dir $(BISON)))/share
+	@cd $(dir $(BISON)..).. && ./configure --disable-yacc --prefix=$(realpath $(dir $(BISON)))/share && make install
 
 bison: paths $(BISON)
 endif
@@ -138,7 +138,7 @@ else ifeq ($(FLEX_VERSION),flex 2.6.4)
 else
 $(FLEX): $(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h \
 			$(dir $(FLEX))../src/*.c $(dir $(FLEX))../src/*.h
-	cd $(dir $(FLEX)..).. && touch * && ./configure && make
+	@cd $(dir $(FLEX)..).. && touch * && ./configure && make
 
 flex: paths $(FLEX)
 endif
@@ -153,7 +153,7 @@ endif
 # processes XSLT-1.0 stylesheets.
 #
 $(LIBXML2): 
-	cd $(LIBXML2PATH) && ./autogen.sh --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && ./configure --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && make
+	@cd $(LIBXML2PATH) && ./autogen.sh --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && ./configure --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && make
 
 libxml2: paths $(LIBXML2)
 
