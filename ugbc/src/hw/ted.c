@@ -1232,6 +1232,12 @@ void ted_text( Environment * _environment, char * _text, char * _text_size ) {
 
 }
 
+/* <usermanual>
+@keyword RGB
+
+@target plus4
+</usermanual> */
+
 void ted_initialization( Environment * _environment ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );

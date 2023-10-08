@@ -8061,6 +8061,74 @@ Variable * variable_mod( Environment * _environment, char * _source, char * _des
     return remainder;
 }
 
+int label_exists_numeric( Environment * _environment, int _label ) {
+
+    Label * actual = _environment->labels;
+    while( actual ) {
+        if ( !actual->name && actual->number == _label ) {
+            return 1;
+        }
+        actual = actual->next;
+    }
+    return 0;
+
+}
+
+int label_exists_named( Environment * _environment, char * _label ) {
+
+    Label * actual = _environment->labels;
+    while( actual ) {
+        if ( actual->name && !strcmp( actual->name, _label ) ) {
+            return 1;
+        }
+        actual = actual->next;
+    }
+    return 0;
+
+}
+
+void label_define_numeric( Environment * _environment, int _label ) {
+    
+    if (label_exists_numeric( _environment, _label )) {
+        CRITICAL_LINE_NUMBER_ALREADY_DEFINED( _label );
+    }
+
+    Label * label = malloc( sizeof( Label ) );
+    memset( label, 0, sizeof( Label ) );
+    label->number = _label;
+    Label * last = _environment->labels;
+    if ( last ) {
+        while( last->next ) {
+            last = last->next;
+        }
+        last->next = label;
+    } else {
+        _environment->labels = label;
+    }
+
+}
+
+void label_define_named( Environment * _environment, char * _label ) {
+    
+    if (label_exists_named( _environment, _label )) {
+        CRITICAL_LABEL_ALREADY_DEFINED( _label );
+    }
+
+    Label * label = malloc( sizeof( Label ) );
+    memset( label, 0, sizeof( Label ) );
+    label->name = strdup( _label );
+    Label * last = _environment->labels;
+    if ( last ) {
+        while( last->next ) {
+            last = last->next;
+        }
+        last->next = label;
+    } else {
+        _environment->labels = label;
+    }
+
+}
+
 void const_define_numeric( Environment * _environment, char * _name, int _value ) {
     
     if ( _environment->emptyProcedure ) {

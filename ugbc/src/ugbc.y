@@ -152,6 +152,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> asmio
 %type <integer> system
 %type <integer> padding_tile
+%type <integer> op_comma_or_semicolon
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -6161,7 +6162,7 @@ vscroll_definition :
         text_vscroll_screen( _environment, 1 );
     }
     ;
-
+    
 input_definition2 :
       Identifier {
         input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
@@ -6185,93 +6186,161 @@ input_definition2 :
       } OP_COMMA input_definition2
     ;
 
+op_comma_or_semicolon : 
+    OP_COMMA {
+        $$ = 0;
+    }
+    | OP_SEMICOLON {
+        $$ = 1;
+    };
+
 input_definition :
-      String OP_SEMICOLON Identifier {
+      String op_comma_or_semicolon Identifier {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         print( _environment, string->name, 0 );
         input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
         print_newline( _environment );
     }
-    | String OP_SEMICOLON Identifier OP_DOLLAR {
+    | String op_comma_or_semicolon Identifier OP_DOLLAR {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
         input( _environment, var->name, VT_DSTRING );
         print_newline( _environment );
     }
-    | String OP_SEMICOLON Identifier OP_SEMICOLON {
+    | String op_comma_or_semicolon Identifier OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }
-    | String OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
+    | String op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
         input( _environment, var->name, VT_DSTRING );
     }
-    | String OP_SEMICOLON Identifier OP_SEMICOLON {
+    | String op_comma_or_semicolon Identifier OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }  input_definition2
-    | String OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
+    | String op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
         input( _environment, var->name, VT_DSTRING );
     }  input_definition2
     | input_definition2
-    | RawString OP_SEMICOLON Identifier {
+    | RawString op_comma_or_semicolon Identifier {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
         print_newline( _environment );
     }
-    | RawString OP_SEMICOLON Identifier OP_DOLLAR {
+    | RawString op_comma_or_semicolon Identifier OP_DOLLAR {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
         input( _environment, var->name, VT_DSTRING );
         print_newline( _environment );
     }
-    | RawString OP_SEMICOLON Identifier OP_SEMICOLON {
+    | RawString op_comma_or_semicolon Identifier OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }
-    | RawString OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
+    | RawString op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
         input( _environment, var->name, VT_DSTRING );
     }
-    | RawString OP_SEMICOLON Identifier OP_SEMICOLON {
+    | RawString op_comma_or_semicolon Identifier OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
     }  input_definition2
-    | RawString OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
+    | RawString op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
         print( _environment, string->name, 0 );
+        if ( $2 == 1 ) {
+            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
+            variable_store_string( _environment, qm->name, "?" );
+            print( _environment, qm->name, 0 );
+        }
         Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
         input( _environment, var->name, VT_DSTRING );
     }  input_definition2
@@ -7250,10 +7319,12 @@ statement2:
   }
   | WRITING writing_definition
   | OSP Identifier OP_COLON CSP {
-      cpu_label( _environment, $2 );
+    label_define_named( _environment, $2 );
+    cpu_label( _environment, $2 );
   } 
   | Identifier OP_COLON {
-      cpu_label( _environment, $1 );
+    label_define_named( _environment, $1 );
+    cpu_label( _environment, $1 );
   } 
   | LOAD String OP_COMMA Integer on_bank load_flags {
     load( _environment, $2, NULL, $4, $5, $6 );
@@ -7646,6 +7717,7 @@ statements_no_linenumbers:
 
 statements_with_linenumbers:
       Integer {
+        label_define_numeric( _environment, $1 );
         char lineNumber[MAX_TEMPORARY_STORAGE];
         sprintf(lineNumber, "_linenumber%d", $1 );
         cpu_label( _environment, lineNumber);

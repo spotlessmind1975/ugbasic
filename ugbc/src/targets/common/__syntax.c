@@ -2,26 +2,38 @@
 @keyword IF
 
 @english
-The ''IF'' function allows you to evaluate whether a certain expression is ''TRUE'' or ''FALSE''. 
-Depending on that check, the function will return the second (if ''TRUE'') or third (if ''FALSE'') 
-argument. This function evaluates the expression at compile time: it follows that the return 
-value does not change at runtime. This function is particularly useful for carrying out a
-conditional evaluation of constants which, otherwise, would require evaluation at runtime, 
-wasting time and occupying useless space.
+
+The ''IF'' function allows you to evaluate whether a certain expression is ''TRUE'' (not 0) or ''FALSE''. 
+(0). Depending on that check, the function will return the second (if ''TRUE'') or third (if ''FALSE'') 
+argument. 
+
+This function evaluates the expression at compile time: it follows that the return 
+value does not change at runtime. There are three versions of this function, one for each 
+type of value that can be returned. There is a version that returns integers, one for 
+floating point numbers, and one for strings.
+
+This function is particularly useful for carrying out a conditional evaluation of constants which, 
+otherwise, would require evaluation at runtime, wasting time and occupying useless space.
 
 @italian
 La funzione IF consente di valutare se una certa espressione è vera o falsa. A seconda di 
 tale controllo, la funzione restituirà il secondo argomento (se vero) o il terzo (se falso). 
-Questa funzione valuta l'espressione la momento della compilazione: ne consegue che il valore
-restituito non cambia in fase di runtime. Questa funzione è particolarmente utile per 
-effettuare una valorizzazione condizionata di costanti che, altrimenti, richiederebbero una
-valutazione a runtime, con perdita di tempo e occupazione di spazio inutile.
 
-@syntax = IF ([condition], [expression], [expression] )
+Questa funzione valuta l'espressione la momento della compilazione: ne consegue che il valore
+restituito non cambia in fase di runtime. Esistono tre versioni di questa funzione, una per 
+ogni tipo di valore che può essere restituito. Esiste la versione che restituisce numeri interi, 
+una per i numeri in virgola mobile e una per le stringhe.
+
+Questa funzione è particolarmente utile per effettuare una valorizzazione condizionata di costanti 
+che, altrimenti, richiederebbero una valutazione a runtime, con perdita di tempo e occupazione 
+di spazio inutile.
+
+@syntax = IF (exp, valueTrue, valueFalse )
 
 @example pictureToUse = IF(SCREEN WIDTH > 160, "large.png", "small.png" )
 
 @target all
+@version
 </usermanual> */
 
 /* <usermanual>
@@ -1658,4 +1670,127 @@ Recupera un byte dalla memoria e lo restituisce.
 
 @target all
 
+</usermanual> */
+
+/* <usermanual>
+@keyword REM
+
+@english
+The ''REM'' keyword is used to include explanatory remarks in the source code of a program.
+In the text of any comment you want to include, that is optional, a space is required 
+between the ''REM'' keyword and comment.
+
+You can put a ''REM'' statement alone on a line, or you can put it on a line following 
+another statement . The ''REM'' statement must be the last statement on the line. If it follows 
+another statement, the ''REM'' must be separated from that statement by a colon ('':'').
+
+You can use a single quotation mark (') instead of ''REM''. This is true whether your comment follows
+another statement on the same line or sits alone on a line. However, you cannot continue a 
+''REM'' statement by using a line-continuation sequence (''_''). This means that, for a multiple-line 
+comment, you need to use as many ''REM''s statements as the lines you comment.
+
+@italian
+La parola chiave ''REM'' viene utilizzata per includere commenti esplicativi nel codice sorgente di 
+un programma. Nel testo di qualsiasi commento che si desidera includere, e che è facoltativo, è 
+richiesto uno spazio tra la parola chiave ''REM'' e il commento.
+
+E' possibile introdurree un'istruzione ''REM'' da sola su una riga, oppure su una riga dopo un'altra 
+istruzione. L'istruzione ''REM'' deve essere l'ultima istruzione sulla riga. Se segue un'altra istruzione, 
+il ''REM'' deve essere separato da quell'istruzione con i due punti ('':'').
+
+È possibile utilizzare un'apice (') invece di ''REM''. Questo è vero sia che il commento segua un'altra 
+istruzione sulla stessa riga o che si trovi da solo su una riga. Tuttavia, non è possibile continuare 
+un'istruzione ''REM'' utilizzando la sequenza di continuazione della riga (''_''). Ciò significa che, 
+per un commento su più righe, è necessario utilizzare tante istruzioni ''REM' quante sono le righe 
+da commentare.
+
+@syntax REM [comment]
+@syntax ' [comment]
+
+@example REM this is a comment
+@example ' and this is a comment
+@example PRINT "ok": REM I am printing ok
+
+@target all
+@verified
+</usermanual> */
+
+/* <usermanual>
+@keyword defining labels
+
+@english
+
+In ugBASIC it is possible to indicate the position within a program with the use of 
+so-called "labels". The labels can be represented in the BASIC standard, i.e. with numeric 
+labels, or with alphanumeric labels, and are used to jump within specific positions of the program.
+
+@italian
+
+In ugBASIC è possibile indicare la posizione all'interno di un programma con l'utilizzo delle cosiddette
+"etichette". Le etichette possono essere rappresentate nello standard BASIC, ovvero con etichette numeriche,
+oppure con etichetta alfanumeriche, e servono per saltare all'interno di specifiche posizioni del programma.
+
+@syntax number instruction
+@syntax label: instruction
+@syntax [label:] instruction
+
+@example 100 PRINT "oK!": GOTO 100
+@example begin: PRINT "OK!" : GOTO begin
+@example [begin:] PRINT "OK!" : GOTO begin
+
+@usedInExample contrib_cube_10lines.bas
+
+@target all
+@verified
+</usermanual> */
+
+/* <usermanual>
+@keyword separating instructions
+
+@english
+
+In ugBASIC, the instructions are separated using a colon character ('':''). Since this character
+is used also as a suffix for a label, you have to use the ''[label:]'' variant, to avoid to
+consider ''label'' as a instruction.
+
+@italian
+
+In ugBASIC, le istruzioni sono separate utilizzando i due punti ('':''). Poiché questo carattere 
+viene utilizzato anche come suffisso per un'etichetta, è necessario utilizzare la variante ''[label:]'',
+per evitare di considerare ''label'' come una istruzione.
+
+@syntax instruction1 : instruction2 : ...
+
+@example PRINT : CLS : PRINT
+
+@target all
+@verified
+</usermanual> */
+
+/* <usermanual>
+@keyword RGB
+
+@english
+
+The ''RGB'' function allows you to obtain the equivalent value of a color, given its red, green and blue 
+components. The value of this function, where it is supported by the target, can be used in place of a 
+nominal color. Where it is not defined, it always returns a value of zero, which may (or may not) correspond 
+to a valid color.
+
+@italian
+
+La funzione ''RGB'' consente di ottenere il valore equivalente di un colore, date le sue componenti secondo
+rosso, verde e blu. Il valore di questa funzione, laddove è supportata dal target, può essere utilizzata al
+posto di un colore nominale. Laddove non è definita, restituisce sempre un valore di zero, che può (o meno)
+corrispondere a un colore valido.
+
+@syntax = RGB( red, green, blue )
+
+@example red = RGB( 255, 0, 0 )
+
+@usedInExample graphics_color_04.bas
+@usedInExample graphics_palette_01.bas
+@usedInExample images_get_03.bas
+
+@verified
 </usermanual> */
