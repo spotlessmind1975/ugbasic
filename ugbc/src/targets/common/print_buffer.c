@@ -51,9 +51,59 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword PRINT BUFFER
 
 @english
-A specific variant of ''PRINT'' can be used to print large amount of text.
+
+This is a specific variant of ''PRINT'' that can be used to print large amount of text.
 The ''PRINT BUFFER'' instruction does not have the limits of ''PRINT'' strings,
-and is able to print any file that have been loaded.
+and is able to print any file that have been loaded. An item or a list of items 
+can follow the command. The list of items can consist of any group of buffers.
+Each element in the list must be separated by either a semi-colon '';'' or a comma '',''.
+A semi-colon prints the data immediately after the previous value, whereas a comma first
+moves the cursor to the next ''TAB'' position on the screen.
+
+Normally the cursor will be advanced downwards by a single line after each ''PRINT BUFFER''
+instruction. This can be suppressed by adding a separator after the print. As before, a semicolon
+will preserve the cursor position after the operation, and a comma will place the
+cursor to the next ''TAB'' stop before proceeding.
+
+Finally, it is possible to omit the native conversion of the buffer storage system, if you want 
+to print "as is". In that case you need to use the ''RAW'' keyword.
+
+@italian
+
+Questa è una variante specifica di ''PRINT'' che può essere utilizzata per stampare grandi 
+quantità di testo. L'istruzione ''PRINT BUFFER'' non ha i limiti delle stringhe ''PRINT'', 
+ed è in grado di stampare qualsiasi file che sono stati caricati. Un elemento o un elenco di 
+elementi può seguire il comando. L'elenco di elementi può essere costituito da qualsiasi 
+gruppo di buffer. Ogni elemento nell'elenco deve essere separato da un punto e virgola '';''
+o da una virgola '',''. Un punto e virgola stampa i dati immediatamente dopo il valore 
+precedente, mentre una virgola sposta prima il cursore alla posizione ''TAB'' successiva 
+sullo schermo.
+
+Normalmente il cursore verrà avanzato verso il basso di una singola riga dopo ciascuna 
+istruzione ''PRINT BUFFER''. Questo può essere eliminato aggiungendo un separatore dopo 
+la stampa. Come prima, un punto e virgola manterrà la posizione del cursore dopo l'operazione 
+e una virgola posizionerà il cursore al successivo punto "TAB" prima di procedere.
+
+Infine, è possibile omettere la conversione nativa del sistema di stoccaggio del buffer, 
+laddove si voglia stampare "as is". In tal caso è necessario utilizzare la parola chiave ''RAW''.
+
+@syntax PRINT BUFFER buf1 [; [buf2] [; ...] ... ]
+@syntax PRINT BUFFER RAW buf1 [; [buf2] [; ...] ... ]
+
+@example PRINT BUFFER description
+@example PRINT BUFFER RAW descriptionRaw
+
+@usedInExample buffers_print_01.bas
+@usedInExample contrib_ascii.bas
+@usedInExample contrib_ascii2.bas
+
+@target all
+@verified
+
+@keyword PRINT BUFFER
+
+@english
+
 
 @italian
 Esiste anche una specifica variante di ''PRINT'' , che può essere utilizzata per

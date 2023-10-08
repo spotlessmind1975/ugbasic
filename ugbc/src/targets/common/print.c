@@ -105,7 +105,6 @@ carattere utilizzi solo una colonna.
 @usedInExample texts_print_01.bas
 @usedInExample texts_print_02.bas
 
-@abbreviation ?
 @target all
 @verified
 </usermanual> */
