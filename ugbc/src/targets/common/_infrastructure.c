@@ -7195,24 +7195,24 @@ int pattern_match(char *_pattern, char * _value)
 @keyword BIN
 
 @english
-This function converts a number into a string of bits, from the most significant
+This function converts a number into a string of bits ("0" and "1"), from the most significant
 to the least significant. It is also possible to indicate the number of digits 
 to be represented. If this parameter is omitted, the minimum number of digits 
 for that data format (8, 16 or 32 digits) will be used.
 
 @italian
-Questa funzione converte un numero in una stringa di bit, dal più significativo 
+Questa funzione converte un numero in una stringa di bit ("0" e "1"), dal più significativo 
 al meno significativo. E' possibile indicare anche il numero di cifre da 
 rappresentare. Se questo parametro viene omesso, sarà utilizzato il numero di 
 cifre minimo per quel formato di dati (8, 16 o 32 cifre).
 
-@syntax = BIN( [value] )
-@syntax = BIN( [value], [digits] )
+@syntax = BIN( value [, digits] )
 
 @example x = BIN(42)
 @example z = BIN(42, 5)
 
 @target all
+@verified
  </usermanual> */
 Variable * variable_bin( Environment * _environment, char * _value, char * _digits ) {
 
