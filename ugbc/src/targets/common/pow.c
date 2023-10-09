@@ -57,21 +57,29 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword POW
 
 @english
-The function raise a number to a given power. 
-It can be also represented using the ''^'' (circumflex) character as exponential symbol.
+The ''POW'' function raises a number to the power of another number. The result is a number raised to
+the power of exponent. It can be also represented using the ''^'' (circumflex) character as exponential 
+symbol. The type of the result is big enough to maintain the next size of the operands. The exponent 
+value must be integer and positive. When more than one exponent is executed in a single expression, 
+the ^ operator is evaluated as it is encountered from left to right.
 
 @italian
-La funzione eleva un numero a una data potenza.
-Può essere espresso anche usando il simbolo ''^'' (accento circonflesso).
+La funzione ''POW'' eleva un numero alla potenza di un altro numero. Il risultato è un numero elevato 
+alla potenza dell'esponente. Può anche essere rappresentato utilizzando il carattere ''^'' (accento 
+circonflesso) come simbolo esponenziale. Il tipo del risultato è abbastanza grande da mantenere la 
+dimensione successiva degli operandi. Il valore dell'esponente deve essere intero e positivo. 
+Quando viene eseguito più di un esponente in una singola espressione, l'operatore ^ viene valutato 
+così come viene incontrato da sinistra a destra.
 
-@syntax POW([base],[exponent])
-@syntax [base]^[exponent]
+@syntax = POW( base, exponent )
+@syntax = base ^ exponent
 
 @example pitagora = POW(a,2) + b^2 + POW(c,2)
 
 @usedInExample maths_example_01.bas
 
 @target all
+@verified
 </usermanual> */
 
 Variable * powering( Environment * _environment, char * _base, char * _exponential ) {
