@@ -55,7 +55,7 @@ extern char DATATYPE_AS_STRING[][16];
 @english
 
 The ''MIN'' function allows you to identify the smaller of two values. If both terms 
-are (numeric) constant, the evaluation is carried out at the time of compilation. Otherwise, the 
+are (numeric) constants, the evaluation is carried out at the time of compilation. Otherwise, the 
 value is calculated at runtime. 
 
 Where the data types are not identical, ugBASIC "promotes" the second term to the type 
@@ -65,7 +65,7 @@ promoted types. In particular, static strings are always promoted to dynamic str
 
 @italian
 La funzione ''MIN'' consente di identificare il minore tra due valori. Se entrambi i termini 
-sono costanti (numerici), la valutazione viene effettuata al momento della compilazione. 
+sono costanti (numeriche), la valutazione viene effettuata al momento della compilazione. 
 Altrimenti, il valore viene calcolato in fase di esecuzione.
 
 Laddove i tipi di dati non sono identici, ugBASIC "promuove" il secondo termine al tipo del

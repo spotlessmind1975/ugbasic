@@ -52,37 +52,47 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword MAX
 
 @english
-The function ''MAX'' compares two expressions and returns the largest. 
-It can be used with any type of expressions, but they cannot be compared 
-if they are mixed.
+
+The ''MAX'' function allows you to identify the greater of two values. If both terms 
+are (numeric) constants, the evaluation is carried out at the time of compilation. Otherwise, the 
+value is calculated at runtime. 
+
+Where the data types are not identical, ugBASIC "promotes" the second term to the type 
+of the first term. If the conversion is not possible, a specific error will be issued. 
+The comparison of heterogeneous types is, in effect, a comparison of implicitly 
+promoted types. In particular, static strings are always promoted to dynamic strings.
 
 @italian
-La funzione "MAX" confronta due espressioni e restituisce la più grande.
-Può essere utilizzata con qualsiasi tipo di espressione, ma non possono 
-essere confrontati tipi diversi tra loro.
+La funzione ''MAX'' consente di identificare il maggiore tra due valori. Se entrambi i termini 
+sono costanti (numeriche), la valutazione viene effettuata al momento della compilazione. 
+Altrimenti, il valore viene calcolato in fase di esecuzione.
 
-@syntax MAX([expression],[expression])
+Laddove i tipi di dati non sono identici, ugBASIC "promuove" il secondo termine al tipo del
+primo termine. Se la conversione non è possibile, verrà emesso un errore specifico. Il 
+confronto tra tipi eterogenei è, in effetti, un confronto tra tipi promossi implicitamente. 
+In particolare, le stringhe statiche vengono sempre promosse a stringhe dinamiche.
+
+@syntax = MAX(#const1,#const2)
+@syntax = MAX(val1,val2)
+@syntax = MAX(string1,string2)
 
 @example result = MAX( a, b )
 
-@usedInExample maths_relatives_01.bas
+@usedInExample maths_relative_01.bas
 
 @target all
+@verified
 </usermanual> */
 Variable * maximum( Environment * _environment, char * _source, char * _destination ) {
+    
     Variable * source = variable_retrieve( _environment, _source );
+    Variable * target = variable_retrieve( _environment, _destination );
 
-    Variable * target = variable_cast( _environment, _destination, source->type );
-    if ( ! target ) {
-        CRITICAL_VARIABLE(_destination);
+    if ( source->type == VT_STRING ) {
+        source = variable_cast( _environment, _source, VT_DSTRING );
     }
-
-    if ( target->type != source->type ) {
-        if ( source->type == VT_STRING ) {
-            source = variable_cast( _environment, _source, VT_DSTRING );
-        } else {
-            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-        }
+    if ( target->type == VT_STRING ) {
+        target = variable_cast( _environment, _destination, VT_DSTRING );
     }
 
     Variable * result = variable_temporary( _environment, source->type, "(result of MAX)");
