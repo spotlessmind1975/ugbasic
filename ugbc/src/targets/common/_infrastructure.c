@@ -5778,33 +5778,57 @@ void variable_string_right_assign( Environment * _environment, char * _string, c
  * @return Variable* Result of text extraction
  */
 /* <usermanual>
-@keyword MID
+@keyword MID (function)
 
 @english
-This function returns characters from the middle of a string, with the first 
-number specified in brackets setting the offset from the start of the string 
-and the second number setting how many characters are to be fetched. 
-If the number of characters to be fetched is omitted from your instruction, 
-then the characters will be read right up to the end of the string being examined.
-A second usage of this function is to replace the middle number of characters.
+
+The ''MID'' function returns a (dynamic) string containing a specified number 
+of characters from a string. It has three parameters.
+
+The first parameter is the string expression from which characters are returned. 
+If string is empty, an empty string is returned.
+
+The second parameter is the character position in string at which the part to 
+be taken begins. If start is greater than the number of characters in string, 
+''MID'' returns a zero-length string (""). 
+
+The third parameter is optional, and gives the number of characters to return. 
+If omitted or if there are fewer than length characters in the text (including 
+the character at start), all characters from the start position to the end of the
+string are returned.
 
 @italian
-Questa funzione restituisce caratteri dalla metà di una stringa, con il primo 
-numero specificato tra parentesi che imposta l'offset dall'inizio della stringa 
-e il secondo numero che imposta quanti caratteri devono essere recuperati.
-Se il numero di caratteri da recuperare viene omesso dall'istruzione, 
-i caratteri verranno letti fino alla fine della stringa in esame. Un secondo 
-utilizzo di questa funzione è sostituire il numero medio di caratteri.
 
-@syntax = MID( [text], [position] { , [length] } )
+La funzione ''MID'' restituisce una stringa (dinamica) contenente un numero 
+specificato di caratteri da una stringa. Ha tre parametri.
 
-@example x = MID( "TEST", 2, 2 )
-@usedInExample strings_mid_01.bas
+Il primo parametro è l'espressione stringa da cui vengono restituiti i 
+caratteri. Se la stringa è vuota, viene restituita una stringa vuota.
 
+Il secondo parametro è la posizione del carattere nella stringa in cui inizia
+la parte da riprendere. Se tale parametro è maggiore del numero di caratteri 
+nella stringa, ''MID'' restituisce una stringa di lunghezza zero ("").
+
+Il terzo parametro è facoltativo e fornisce il numero di caratteri da 
+restituire. Se omesso o se nel testo sono presenti meno caratteri della 
+lunghezza (incluso il carattere iniziale), vengono restituiti tutti i 
+caratteri dalla posizione iniziale alla fine della stringa.
+
+@syntax = RIGHT( text, position )
+
+@example x = RIGHT( "TEST", 2 )
+
+@usedInExample strings_right_01.bas
+
+@seeAlso LEFT (function)
 @seeAlso LEFT
+@seeAlso MID
+@seeAlso RIGHT (function)
 @seeAlso RIGHT
+@seeAlso LEN
 
 @target all
+@verified
  </usermanual> */
 Variable * variable_string_mid( Environment * _environment, char * _string, char * _position, char * _len ) {
     Variable * string = variable_retrieve( _environment, _string );
