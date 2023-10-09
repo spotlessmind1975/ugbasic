@@ -61,9 +61,9 @@ appartiene all'insieme dei tiles che compongono un ''TILES''. In generale, i ''T
 sono formati da più tile semplici e, quando vengono disegnati, occupano effettivamente 
 più tile. Questo comando consente di effettuare distinzioni.
 
-@syntax = TILE [tile] BELONG TO [tiles]
+@syntax = TILE tile BELONG TO tiles
 
-@example = tile BELONG TO multitiles
+@example = TILE tile BELONG TO multitiles
 
 @target all
 </usermanual> */
