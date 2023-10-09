@@ -5429,32 +5429,58 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
  * @return Variable* Result of text extraction
  */
 /* <usermanual>
-@keyword LEFT
+@keyword LEFT (function)
 
 @english
-This function reads the specified number of characters from a source string, 
-starting from the left-hand side, and copies them into a destination string,
-that is returned. The first type of usage of this function creates a new 
-destination string from the chosen number of characters of the source string.
-The second usage is to replace the leftmost number of characters:
+
+The ''LEFT'' function returns a (dynamic) string containing a specified 
+number of characters, from the left side of a given string. The function 
+has two parameters. 
+
+The first parameter is the string expression from which the 
+leftmost characters are returned. If string is empty, an empty string is
+returned. 
+
+The second parameter is a numeric expression, indicating how 
+many characters to return. If 0, an empty string (''""'') is returned. 
+On the other hand, if greater than or equal to the number of characters 
+in string, the entire string is returned, untouched. 
+
+To determine the number of characters in string, you should use 
+the ''LEN'' function.
 
 @italian
-Questa funzione legge il numero di caratteri specificato da una stringa di origine, 
-a partire dall'inizio, e li copia in una stringa di destinazione, che viene 
-restituita. Il primo tipo di utilizzo di questa funzione crea una nuova stringa 
-di destinazione dal numero di caratteri scelto della stringa di origine. 
-Il secondo utilizzo è sostituire il numero di caratteri più a sinistra:
 
-@syntax = LEFT( [text], [position] )
+La funzione ''LEFT'' restituisce una stringa (dinamica) contenente un 
+numero specificato di caratteri, dal lato sinistro di una determinata 
+stringa. La funzione ha due parametri.
+
+Il primo parametro è l'espressione stringa da cui vengono restituiti 
+i caratteri più a sinistra. Se la stringa è vuota, viene restituita 
+una stringa vuota.
+
+Il secondo parametro è un'espressione numerica, che indica quanti 
+caratteri restituire. Se 0, viene restituita una stringa vuota (''""''). 
+D'altra parte, se maggiore o uguale al numero di caratteri nella stringa, 
+viene restituita l'intera stringa, intatta.
+
+Per determinare il numero di caratteri in una stringa, è necessario 
+utilizzare la funzione ''LEN''.
+
+@syntax = LEFT( text, position )
 
 @example x = LEFT( "TEST", 2 )
-@usedInExample strings_left_01.bas
-@usedInExample strings_left_02.bas
 
+@usedInExample strings_left_01.bas
+
+@seeAlso RIGHT (function)
 @seeAlso RIGHT
+@seeAlso MID (function)
 @seeAlso MID
+@seeAlso LEN
 
 @target all
+@verified
  </usermanual> */
 Variable * variable_string_left( Environment * _environment, char * _string, char * _position ) {
     Variable * string = variable_retrieve( _environment, _string );
@@ -5502,11 +5528,54 @@ Variable * variable_string_left( Environment * _environment, char * _string, cha
 /* <usermanual>
 @keyword LEFT
 
-@syntax LEFT( [text], [position] ) = [expression]
+@english
 
-@example LEFT( "TEST", 2 ) = "PA"
+The ''LEFT'' command replaces the leftmost characters in the 
+destination string with the equivalent characters from the given
+strings. The command has two parameters. 
+
+The first parameter is the string expression to change. 
+
+The second parameter is a numeric expression, indicating how 
+many characters to return. If 0, an empty string (''""'') is returned. 
+On the other hand, if greater than or equal to the number of characters 
+in string, the entire string is returned, untouched. 
+
+To determine the number of characters in string, you should use 
+the ''LEN'' function.
+
+@italian
+
+La funzione ''LEFT'' restituisce una stringa (dinamica) contenente un 
+numero specificato di caratteri, dal lato sinistro di una determinata 
+stringa. La funzione ha due parametri.
+
+Il primo parametro è l'espressione stringa da cui vengono restituiti 
+i caratteri più a sinistra. Se la stringa è vuota, viene restituita 
+una stringa vuota.
+
+Il secondo parametro è un'espressione numerica, che indica quanti 
+caratteri restituire. Se 0, viene restituita una stringa vuota (''""''). 
+D'altra parte, se maggiore o uguale al numero di caratteri nella stringa, 
+viene restituita l'intera stringa, intatta.
+
+Per determinare il numero di caratteri in una stringa, è necessario 
+utilizzare la funzione ''LEN''.
+
+@syntax = LEFT( text, position )
+
+@example x = LEFT( "TEST", 2 )
+
+@usedInExample strings_left_01.bas
+
+@seeAlso RIGHT (function)
+@seeAlso RIGHT
+@seeAlso MID (function)
+@seeAlso MID
+@seeAlso LEN
 
 @target all
+@verified
  </usermanual> */
 void variable_string_left_assign( Environment * _environment, char * _string, char * _position, char * _expression ) {
     Variable * string = variable_retrieve( _environment, _string );
@@ -5523,9 +5592,17 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of left)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of left)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of left)" );
+
             cpu_dswrite( _environment, string->realName );
+
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+
             cpu_dsdescriptor( _environment, expression->realName, address2->realName, size2->realName );
+
+            cpu_less_than_8bit( _environment, size2->realName, position->realName, tmp->realName, 0 );
+
+            cpu_compare_and_branch_8bit_const( _environment, tmp->realName, 0xff, label, 1 );
+
             cpu_mem_move( _environment, address2->realName, address->realName, position->realName );
             break;
         }
