@@ -48,26 +48,32 @@
 @keyword BANK ADDRESS
 
 @english
-This function returns the address of the shared memory area for 
-the bank, that is the memory area reachable by the CPU and on 
-which it is "mapped" to the main memory. 
 
-If you want to copy data from the bank or to the bank, this is 
+The ''BANK ADDRESS'' function returns the resident memory address of 
+the shared memory area for the bank, that is the memory area reachable
+by the CPU and on which it is "mapped" to the main memory. 
+
+If you want to copy data from any expanded bank or to the expanded bank, this is 
 the starting address.
 
 @italian
+
 Questa funzione restituisce l'indirizzo della zona di memoria 
-condivisa per il banco, ovvero la zona di memoria raggiungibile 
-dalla CPU e sulla quale viene "mappata" sulla memoria centrale. 
+condivisa per il banco di memoria, ovvero la zona di memoria raggiungibile 
+dalla CPU e sulla quale viene "mappata" la memoria estesa sulla memoria centrale. 
 
-Se si vuole copiare un dato dal banco o verso il banco, questo 
-è l'indirizzo di partenza.
+Se si vuole copiare un dato dal banco di memoria estesa o verso il banco di
+memoria estesa, questo è l'indirizzo di partenza.
 
-@syntax = BANK ADDRESS(#[bank])
+@syntax = BANK ADDRESS( #bank )
 
-@example = BANK ADDRESS(2)
+@example = BANK ADDRESS( 2 )
+
+@usedInExample expansion_bank_01.bas
+@usedInExample expansion_bank_02.bas
 
 @target pc128op
+@verified
 </usermanual> */
 Variable * bank_get_address( Environment * _environment, int _bank ) {
 
@@ -92,11 +98,7 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
  */
 /* <usermanual>
 @keyword BANK ADDRESS
-
-@syntax = BANK ADDRESS([bank])
-
-@example = BANK ADDRESS(banco)
-
+@syntax = BANK ADDRESS( bank )
 @target pc128op
 </usermanual> */
 Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
