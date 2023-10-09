@@ -24,7 +24,7 @@ REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
 	tileset := LOAD TILESET("kenney-tiny-town.tsx")
 
-	classe = TILE CLASS( tileset, 29 )
+	classe = TILE CLASS( tileset, TILE ID( tileset, mushroom ) )
 	larghezza = TILE WIDTH( tileset )
 	altezza = TILE HEIGHT( tileset )
 	probabilita = TILE PROBABILITY( tileset, 29 )

@@ -2274,8 +2274,8 @@ typedef struct _Environment {
 #define UNIQUE_RESOURCE_ID   ((struct _Environment *)_environment)->uniqueResourceId++
 #define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
 
-#define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL( s ) fprintf(stderr, "%s:%d CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL2( s, v ) fprintf(stderr, "%s:%d CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", __FILE__,__LINE__,  ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "%s %d CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", __FILE__, __LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -2512,7 +2512,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_GENERATE_RANDOM( ) CRITICAL("E227 - cannot generate random number with this parameter" );
 #define CRITICAL_LINE_NUMBER_ALREADY_DEFINED( n ) CRITICAL2i("E228 - line number already defined", n );
 #define CRITICAL_LABEL_ALREADY_DEFINED( n ) CRITICAL2("E229 - label already defined", n );
-
+#define CRITICAL_TILE_ID_NO_TILESET( v ) CRITICAL2("E230 - cannot call TILE ID on something that is not a TILESET", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3893,6 +3893,7 @@ Variable *              tile_class( Environment * _environment, char * _tileset,
 Variable *              tile_get_first( Environment * _environment, char * _tile );
 Variable *              tile_get_height( Environment * _environment, char * _tile );
 Variable *              tile_get_width( Environment * _environment, char * _tile );
+int                     tile_id( Environment * _environment, char * _tileset, char * _id );
 Variable *              tile_probability( Environment * _environment, char * _tileset, int _id );
 Variable *              tilemap_get_height( Environment * _environment, char * _tilemap );
 Variable *              tilemap_get_width( Environment * _environment, char * _tilemap );

@@ -51,21 +51,39 @@
 
 @english
 
-The ''NEW IMAGE'' command allows you to define a memory area where the images
-taken with the ''GET IMAGE'' command can be stored. The dimensions can be set 
-at the time of compilation.
+The ''NEW IMAGE'' command allows you to define a memory area where you can 
+store an image coming from the screen (with the ''GET IMAGE'' command), or 
+from another graphic resource. 
+
+The area must be defined by (constant) width and (constant) height, expressed in pixels. The actual size, 
+in terms of bytes of RAM, will depend on the graphics mode selected at the time. 
+
+If it is not possible to define an image in that screen mode, a specific error will be issued.
 
 @italian
 
-Il comando ''NEW IMAGE'' permette di definire un'area di memoria dove 
-potranno essere memorizzate le immagini acquisite con il comando ''GET IMAGE''.
-Le dimensioni sono impostabili al momento della compilazione.
+Il comando ''NEW IMAGE'' permette di definire un'area di memoria dove poter 
+memorizzare una immagine proveniente dallo schermo (con il comando ''GET IMAGE''), 
+oppure da un'altra risorsa grafica. 
 
-@syntax = NEW IMAGE([width]{,[height]})
+L'area deve essere definita per mezzo della larghezza (costante) e dell'altezza (costante), espressa in pixel. 
+
+La dimensione effettiva, in termini di bytes in memoria, dipenderà dalla modalità grafica 
+selezionata in quel momento. Se non è possibile definire una immagine in quella modalità, 
+sarà emesso uno specifico errore.
+
+@syntax = NEW IMAGE( #width, #height )
 
 @example background = NEW IMAGE(32,32)
 
+@usedInExample contrib_cube.bas
+@usedInExample contrib_cube2.bas
+@usedInExample images_get_01.bas
+@usedInExample images_get_02.bas
+@usedInExample images_get_03.bas
+
 @target all
+@verified
 </usermanual> */
 Variable * new_image( Environment * _environment, int _width, int _height, int _mode ) {
 

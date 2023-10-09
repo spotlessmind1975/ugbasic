@@ -54,22 +54,27 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword DISTANCE
 
 @english
-The ''DISTANCE'' function calculates the geometric distance between two points 
-on the screen. The distance is calculated with the application of the 
-Pythagorean theorem, the result of which is however returned with the integer part.
+
+The ''DISTANCE'' function calculates the geometric distance between two points. 
+The distance is calculated with the application of the Pythagorean theorem, 
+the result of which is however returned with the nnly integer part. If any 
+component is omitted, the last screen position is used, instead.
 
 @italian
-La funzione ''DISTANCE'' calcola la distanza geometrica tra due punti dello schermo. 
-La distanza viene calcolata con l'applicazione del teorema di pitagora, il cui 
-risultato viene comunque restituito con la parte intera.
+La funzione ''DISTANCE'' calcola la distanza geometrica tra due punti. 
+La distanza viene calcolata con l'applicazione del teorema di Pitagora, il cui 
+risultato viene comunque restituito con la sola parte intera. Se viene omessa
+una qualsiasi delle componenti, viene usata quella corrispondente all'ultima
+position dello schermo.
 
-@syntax DISTANCE({[x1]},{[y1]} TO {[x2]},{[y2]})
+@syntax = DISTANCE( [x1], [y1] TO [x2], [y2] )
 
 @example result = DISTANCE( x1, y1 TO x2, y2 )
 
 @usedInExample maths_distance_01.bas
 
 @target all
+@verified
 </usermanual> */
 Variable * distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 ) {
 

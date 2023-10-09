@@ -901,8 +901,7 @@ const_factor:
           }
       }
       | TILE ID OP expr OP_COMMA Identifier CP {
-        Variable * tileset = variable_retrieve( _environment, $4 );
-        $$ = find_frame_by_type( _environment, tileset->originalTileset, $4, $6 );
+        $$ = tile_id( _environment, $4, $6 );
       }
       | const_color_enumeration
       | const_key_scancode_definition
