@@ -6064,14 +6064,16 @@ ma è possibile specificare un numero (facoltativo) di caratteri dall'inizio del
 cercata. La posizione di inizio ricerca opzionale può variare da uno al massimo
 numero di caratteri nella stringa da cercare.
 
-@syntax = INSTR( [text], [searched] {, [start] } )
+@syntax = INSTR( text, searched [, start] )
 
 @example x = INSTR( "ugBASIC", "A" )
 @example x = INSTR( "ugBASIC", "A", 2 )
+
 @usedInExample strings_instr_01.bas
 @usedInExample strings_instr_02.bas
 
 @target all
+@verified
  </usermanual> */
 Variable * variable_string_instr( Environment * _environment, char * _search, char * _searched, char * _start ) {
     Variable * search = variable_retrieve( _environment, _search );
