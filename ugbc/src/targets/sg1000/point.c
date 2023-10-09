@@ -39,7 +39,7 @@
  ****************************************************************************/
 
 /* <usermanual>
-@keyword POINT
+@keyword POINT (function)
 
 @target sg1000
  </usermanual> */

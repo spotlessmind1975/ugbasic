@@ -49,21 +49,7 @@
  * @return Variable* Color at the given coordinates 
  */
 /* <usermanual>
-@keyword POINT
-
-@english
-This function allows you to get the color presents a certain 
-coordinate of the screen.
-
-@italian
-Questa funzione permette di ottenere il colore presenta una certa 
-coordinata dello schermo.
-
-@syntax = POINT( [x], [y] )
-
-@example c = POINT (42, 42)
-
-@usedInExample graphics_plot_03.bas
+@keyword POINT (function)
 
 @target c64
  </usermanual> */
