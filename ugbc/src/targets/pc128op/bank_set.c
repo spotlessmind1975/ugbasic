@@ -47,16 +47,21 @@
 @keyword BANK
 
 @english
-As command, it change the current bank selected.
+
+The ''BANK'' command can be used to change the number of the current
+bank, as mapped in the expanded memory.
 
 @italian
-Come comando, cambia il banco attualmente selezionato.
 
-@syntax BANK #[bank]
+Il comando ''BANK'' può essere utilizzato per modificare il numero del 
+banco corrente, come mappato nella memoria espansa.
+
+@syntax BANK #bank
 
 @example BANK #1
 
 @target pc128op
+@verified
 </usermanual> */
 void bank_set( Environment * _environment, int _bank ) {
 
@@ -78,7 +83,7 @@ void bank_set( Environment * _environment, int _bank ) {
 /* <usermanual>
 @keyword BANK
 
-@syntax BANK [bank]
+@syntax BANK bank
 
 @example BANK banco
 

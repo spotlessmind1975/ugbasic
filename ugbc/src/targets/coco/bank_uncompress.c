@@ -47,26 +47,6 @@
  */
 /* <usermanual>
 @keyword BANK UNCOMPRESS
-
-@english
-This instruction can be used to uncompress a stream from an 
-out-of-memory bank in main memory. You must therefore indicate 
-one of the available banks, the memory address from which you 
-want to uncompress (the $0000 implies the beginning of the bank), 
-and finally the destination address, which will be the RAM memory.
-
-@italian
-Questa istruzione può essere utilizzata per decomprimere uno stream
-di bytes da un banco fuori memoria nella memoria centrale.
-Si deve quindi indicare uno dei banchi disponibili, l'indirizzo
-di memoria dal quale si vuole decomprimere (lo $0000 implica l'inizio
-del banco), ed infine l'indirizzo di destinazione, che sarà la memoria RAM.
-
-@syntax BANK UNCOMPRESS [bank] FROM [address1] TO [address2]
-
-@example BANK UNCOMPRESS 1 FROM $0100 TO $2000
-
-@target pc128op
 </usermanual> */
 void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
 

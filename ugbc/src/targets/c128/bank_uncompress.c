@@ -76,7 +76,6 @@ void bank_uncompress_semi_var( Environment * _environment, int _bank, int _addre
  */
 /* <usermanual>
 @keyword BANK UNCOMPRESS
-@target c128
 </usermanual> */
 void bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 ) {
 
