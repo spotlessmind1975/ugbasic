@@ -46,6 +46,7 @@
  */
 /* <usermanual>
 @keyword BANK ADDRESS
+@target c128
 </usermanual> */
 Variable * bank_get_address( Environment * _environment, int _bank ) {
 

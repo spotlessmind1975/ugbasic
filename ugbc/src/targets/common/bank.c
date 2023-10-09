@@ -71,6 +71,7 @@ extern char BANK_TYPE_AS_STRING[][16];
 @keyword BANK
 
 @english
+
 Define a bank of memory named [identifier], starting from [address] 
 of type [bankType]. Optionally, fill the bank of memory with static 
 data coming from [filename].

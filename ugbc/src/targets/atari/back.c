@@ -48,7 +48,7 @@
 @keyword COLOR BACK
 
 @target atari
-
+@verified
 </usermanual> */
 void back( Environment * _environment, char * _color ) {
 

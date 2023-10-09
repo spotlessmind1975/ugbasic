@@ -48,6 +48,7 @@
  */
 /* <usermanual>
 @keyword BANK WRITE
+@target c128
 </usermanual> */
 void bank_write_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 

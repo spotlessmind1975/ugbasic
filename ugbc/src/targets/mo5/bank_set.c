@@ -45,18 +45,6 @@
  */
 /* <usermanual>
 @keyword BANK
-
-@english
-As command, it change the current bank selected.
-
-@italian
-Come comando, cambia il banco attualmente selezionato.
-
-@syntax BANK #[bank]
-
-@example BANK #1
-
-@target pc128op
 </usermanual> */
 void bank_set( Environment * _environment, int _bank ) {
 
@@ -77,12 +65,6 @@ void bank_set( Environment * _environment, int _bank ) {
  */
 /* <usermanual>
 @keyword BANK
-
-@syntax BANK [bank]
-
-@example BANK banco
-
-@target pc128op
 </usermanual> */
 void bank_set_var( Environment * _environment, char * _bank ) {
 

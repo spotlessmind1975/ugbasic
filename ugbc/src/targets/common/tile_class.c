@@ -49,21 +49,26 @@
 @keyword TILE CLASS
 
 @english
+
 This function allows you to know the class to which a certain tile belongs. 
 Note that this information is available only at the time of compilation: 
 therefore, the parameter with the tile identifier must be a constant.
 
 @italian
+
 Questa funzione permette di conoscere la classe a cui appartiene un determinato 
 tile. Da notare che questa è una informazione disponibile unicamente al momento 
 della compilazione: pertanto, il parametro con l'identificativo del tile dovrà 
 essere una costante.
 
-@syntax = TILE CLASS([tileset], [id])
+@syntax = TILE CLASS(tileset, id)
 
 @example tileClass = TILE CLASS(tileset, 29)
 
+@usedInExample tileset_example_02.bas
+
 @target all
+@verified
 </usermanual> */
 Variable * tile_class( Environment * _environment, char * _tileset, int _id ) {
 

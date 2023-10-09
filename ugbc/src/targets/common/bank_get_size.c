@@ -48,7 +48,8 @@
 @keyword BANK SIZE
 
 @english
-This function returns the size of the shared memory area for 
+
+The ''BANK SIZE'' returns the size of the shared memory area for 
 the bank, that is the memory area reachable by the CPU and on 
 which it is "mapped" to the main memory. 
 
@@ -56,18 +57,19 @@ If you want to copy data from the bank or to the bank, this is
 the maximum size to copy.
 
 @italian
-Questa funzione restituisce la dimensione della zona di memoria 
+La funzione ''BANK SIZE'' restituisce la dimensione della zona di memoria 
 condivisa per il banco, ovvero la zona di memoria raggiungibile 
 dalla CPU e sulla quale viene "mappata" sulla memoria centrale. 
 
 Se si vuole copiare un dato dal banco o verso il banco, questa 
 è la dimensione massima.
 
-@syntax = BANK SIZE(#[bank])
+@syntax = BANK SIZE(#bank)
 
 @example = BANK SIZE(#2)
 
 @target pc128op
+@verified
 </usermanual> */
 Variable * bank_get_size( Environment * _environment, int _bank ) {
 
@@ -92,11 +94,11 @@ Variable * bank_get_size( Environment * _environment, int _bank ) {
 /* <usermanual>
 @keyword BANK SIZE
 
-@syntax = BANK SIZE([bank])
+@syntax = BANK SIZE(bank)
 
 @example = BANK SIZE(banco)
 
-@target all
+@target pc128op
 </usermanual> */
 Variable * bank_get_size_var( Environment * _environment, char * _bank ) {
 

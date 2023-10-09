@@ -49,21 +49,26 @@
 @keyword TILE PROBABILITY
 
 @english
+
 This function allows you to know the probability to which a certain tile will be
 produced. Note that this information is available only at the time of compilation: 
 therefore, the parameter with the tile identifier must be a constant.
 
 @italian
+
 Questa funzione permette di conoscere la probabilità a cui appartiene un determinato 
 tile. Da notare che questa è una informazione disponibile unicamente al momento 
 della compilazione: pertanto, il parametro con l'identificativo del tile dovrà 
 essere una costante.
 
-@syntax = TILE PROBABILITY([tileset], [id])
+@syntax = TILE PROBABILITY( tileset, id )
 
 @example tileProbability = TILE PROBABILITY(tileset, 29)
 
+@usedInExample tileset_example_02.bas
+
 @target all
+@verified
 </usermanual> */
 Variable * tile_probability( Environment * _environment, char * _tileset, int _id ) {
 

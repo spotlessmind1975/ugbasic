@@ -39,7 +39,7 @@
  ****************************************************************************/
 
 /* <usermanual>
-@keyword POINT
+@keyword POINT (function)
 
 @target sc3000
  </usermanual> */

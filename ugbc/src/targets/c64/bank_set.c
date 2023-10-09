@@ -45,6 +45,7 @@
  */
 /* <usermanual>
 @keyword BANK
+@target c64
 </usermanual> */
 void bank_set( Environment * _environment, int _bank ) {
 

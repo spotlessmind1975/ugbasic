@@ -45,6 +45,7 @@
  */
 /* <usermanual>
 @keyword BANK
+@target c128
 </usermanual> */
 Variable * bank_get( Environment * _environment ) {
 

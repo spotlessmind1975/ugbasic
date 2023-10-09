@@ -6552,14 +6552,16 @@ ma è possibile specificare un numero (facoltativo) di caratteri dall'inizio del
 cercata. La posizione di inizio ricerca opzionale può variare da uno al massimo
 numero di caratteri nella stringa da cercare.
 
-@syntax = INSTR( [text], [searched] {, [start] } )
+@syntax = INSTR( text, searched [, start] )
 
 @example x = INSTR( "ugBASIC", "A" )
 @example x = INSTR( "ugBASIC", "A", 2 )
+
 @usedInExample strings_instr_01.bas
 @usedInExample strings_instr_02.bas
 
 @target all
+@verified
  </usermanual> */
 Variable * variable_string_instr( Environment * _environment, char * _search, char * _searched, char * _start ) {
     Variable * search = variable_retrieve( _environment, _search );
@@ -6942,24 +6944,26 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
  * @return Variable* Result of production
  */
 /* <usermanual>
-@keyword STRING
+@keyword STRING (function)
 
 @english
-This function can be used to create 
-a new string filled with the required number of copies of the first 
-character from an existing string.
+This function can be used to create  a new string filled with the 
+required number of copies of the first character from an existing 
+string.
 
 @italian
 Questa funzione può essere utilizzata per creare
 una nuova stringa riempita con tante copie della prima lettera
 della stringa in ingresso.
 
-@syntax = STRING( [text], [number] )
+@syntax = STRING( text, repetitions )
 
 @example x = STRING( "A", 42 )
+
 @usedInExample strings_string_01.bas
 
 @target all
+@verified
  </usermanual> */
 Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  ) {
 
@@ -7807,24 +7811,24 @@ int pattern_match(char *_pattern, char * _value)
 @keyword BIN
 
 @english
-This function converts a number into a string of bits, from the most significant
+This function converts a number into a string of bits ("0" and "1"), from the most significant
 to the least significant. It is also possible to indicate the number of digits 
 to be represented. If this parameter is omitted, the minimum number of digits 
 for that data format (8, 16 or 32 digits) will be used.
 
 @italian
-Questa funzione converte un numero in una stringa di bit, dal più significativo 
+Questa funzione converte un numero in una stringa di bit ("0" e "1"), dal più significativo 
 al meno significativo. E' possibile indicare anche il numero di cifre da 
 rappresentare. Se questo parametro viene omesso, sarà utilizzato il numero di 
 cifre minimo per quel formato di dati (8, 16 o 32 cifre).
 
-@syntax = BIN( [value] )
-@syntax = BIN( [value], [digits] )
+@syntax = BIN( value [, digits] )
 
 @example x = BIN(42)
 @example z = BIN(42, 5)
 
 @target all
+@verified
  </usermanual> */
 Variable * variable_bin( Environment * _environment, char * _value, char * _digits ) {
 
