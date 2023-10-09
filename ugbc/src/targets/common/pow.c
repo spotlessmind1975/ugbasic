@@ -68,7 +68,7 @@ La funzione ''POW'' eleva un numero alla potenza di un altro numero. Il risultat
 alla potenza dell'esponente. Può anche essere rappresentato utilizzando il carattere ''^'' (accento 
 circonflesso) come simbolo esponenziale. Il tipo del risultato è abbastanza grande da mantenere la 
 dimensione successiva degli operandi. Il valore dell'esponente deve essere intero e positivo. 
-Quando viene eseguito più di un esponente in una singola espressione, l'operatore ^ viene valutato 
+Quando viene eseguito più di un esponente in una singola espressione, l'operatore ''^'' viene valutato 
 così come viene incontrato da sinistra a destra.
 
 @syntax = POW( base, exponent )
