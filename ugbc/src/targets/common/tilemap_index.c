@@ -44,21 +44,51 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword TILEMAP INDEX
 
 @english
-This command allows you to obtain the index of the TILEMAP, with a given
-layer, column and row.
+
+The ''TILEMAP INDEX'' allows you to know the identifier of the tile located 
+in correspondence with the given set of coordinates. In particular, given a 
+tile map as parameter, you can know what the tile is at the x, y position and, 
+if present and given, at the given layer.
 
 @italian
-Questo comando permette di ricavare l'indice della TILEMAP, per un dato
-layer, colonna e riga
 
-@syntax = TILEMAP INDEX( [column], [row] )
-@syntax = TILEMAP INDEX( [column], [row], [layer] )
+L'istruzione ''TILEMAP INDEX'' consente di conoscere l'identificativo della 
+tile che si trova in corrispondenza del set di coordinate date. In particolare, 
+data una mappa di tiles come parametro, si può conoscere quale sia il tile alla 
+posizione x, y e, se presente, al layer dato. 
+
+@syntax = TILEMAP INDEX( column, row [, layer] )
 
 @example index = TILEMAP INDEX( 0, 0 )
 @example index = TILEMAP INDEX( 0, 0, 1 )
 
+@seeAlso TILEMAP TILE AT
+
 @target all
+@verified
 </usermanual> */
+/* <usermanual>
+@keyword TILEMAP TILE AT
+
+@english
+
+Alias for ''TILEMAP INDEX''.
+
+@italian
+
+Alias per ''TILEMAP INDEX''.
+
+@syntax = TILEMAP TILE AT( column, row [, layer] )
+
+@example index = TILEMAP TILE AT( 0, 0 )
+@example index = TILEMAP TILE AT( 0, 0, 1 )
+
+@seeAlso TILEMAP INDEX
+
+@target all
+@verified
+</usermanual> */
+
 Variable * tilemap_index_vars( Environment * _environment, char * _tilemap, char * _column, char * _row, char * _layer  ) {
 
     MAKE_LABEL
