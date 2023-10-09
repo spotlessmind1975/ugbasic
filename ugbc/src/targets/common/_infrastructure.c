@@ -5613,7 +5613,7 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
 }
 
 /**
- * @brief Emit code for <b>= RIGHT( ..., ... )</b>
+ * @brief Emit code for <b>= LEFT( ..., ... )</b>
  * 
  * @param _environment Current calling environment
  * @param _string String to extract text from
@@ -5621,31 +5621,58 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
  * @return Variable* Result of text extraction
  */
 /* <usermanual>
-@keyword RIGHT
+@keyword RIGHT (function)
 
 @english
-This function reads the specified number of characters from a source string, 
-starting from the right-hand side, and it copies them into a destination string,
-that is returned. The first type of usage of this function creates a new 
-destination string from the chosen number of characters of the source string.
-The second usage is to replace the rightmost number of characters:
+
+The ''RIGHT'' function returns a (dynamic) string containing a specified 
+number of characters, from the right side of a given string. The function 
+has two parameters. 
+
+The first parameter is the string expression from which the 
+rightmost characters are returned. If string is empty, an empty string is
+returned. 
+
+The second parameter is a numeric expression, indicating how 
+many characters to return. If 0, an empty string (''""'') is returned. 
+On the other hand, if greater than or equal to the number of characters 
+in string, the entire string is returned, untouched. 
+
+To determine the number of characters in string, you should use 
+the ''LEN'' function.
 
 @italian
-Questa funzione legge il numero di caratteri specificato da una stringa di origine, 
-a partire dalla fine, e li copia in una stringa di destinazione, che viene 
-restituita. Il primo tipo di utilizzo di questa funzione crea una nuova stringa 
-di destinazione dal numero di caratteri scelto della stringa di origine. 
-Il secondo utilizzo è sostituire il numero di caratteri più a destra.
 
-@syntax = RIGHT( [text], [position] )
+La funzione ''RIGHT'' restituisce una stringa (dinamica) contenente un 
+numero specificato di caratteri, dal lato destro di una determinata 
+stringa. La funzione ha due parametri.
+
+Il primo parametro è l'espressione stringa da cui vengono restituiti 
+i caratteri più a destra. Se la stringa è vuota, viene restituita 
+una stringa vuota.
+
+Il secondo parametro è un'espressione numerica, che indica quanti 
+caratteri restituire. Se 0, viene restituita una stringa vuota (''""''). 
+D'altra parte, se maggiore o uguale al numero di caratteri nella stringa, 
+viene restituita l'intera stringa, intatta.
+
+Per determinare il numero di caratteri in una stringa, è necessario 
+utilizzare la funzione ''LEN''.
+
+@syntax = RIGHT( text, position )
 
 @example x = RIGHT( "TEST", 2 )
+
 @usedInExample strings_right_01.bas
 
-@seeAlso LEFT 
+@seeAlso LEFT (function)
+@seeAlso LEFT
+@seeAlso MID (function)
 @seeAlso MID
+@seeAlso LEN
 
 @target all
+@verified
  </usermanual> */
 Variable * variable_string_right( Environment * _environment, char * _string, char * _position ) {
     Variable * string = variable_retrieve( _environment, _string );
