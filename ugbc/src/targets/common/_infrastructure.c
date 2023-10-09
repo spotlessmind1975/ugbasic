@@ -6454,24 +6454,26 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
  * @return Variable* Result of production
  */
 /* <usermanual>
-@keyword STRING
+@keyword STRING (function)
 
 @english
-This function can be used to create 
-a new string filled with the required number of copies of the first 
-character from an existing string.
+This function can be used to create  a new string filled with the 
+required number of copies of the first character from an existing 
+string.
 
 @italian
 Questa funzione può essere utilizzata per creare
 una nuova stringa riempita con tante copie della prima lettera
 della stringa in ingresso.
 
-@syntax = STRING( [text], [number] )
+@syntax = STRING( text, repetitions )
 
 @example x = STRING( "A", 42 )
+
 @usedInExample strings_string_01.bas
 
 @target all
+@verified
  </usermanual> */
 Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  ) {
 
