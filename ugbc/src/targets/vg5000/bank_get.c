@@ -44,7 +44,7 @@
  * @return Current number of the bank selected
  */
 /* <usermanual>
-@keyword BANK
+@keyword BANK (function)
 </usermanual> */
 Variable * bank_get( Environment * _environment ) {
 

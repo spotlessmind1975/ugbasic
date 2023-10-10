@@ -44,7 +44,7 @@
  * @return Current number of the bank selected
  */
 /* <usermanual>
-@keyword BANK
+@keyword BANK (function)
 
 @english
 This function returns the index of the currently used (expansion) bank.
@@ -67,7 +67,7 @@ da ''BANK ADDRESS(bank)'' ed è lunga ''BANK SIZE(bank)'' bytes.
 
 @syntax = BANK()
 
-@example = BANK()
+@example currentBank = BANK()
 
 @target pc128op
 </usermanual> */

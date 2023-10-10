@@ -68,44 +68,50 @@ extern char BANK_TYPE_AS_STRING[][16];
  * @return Bank* 
  */
 /* <usermanual>
-@keyword BANK
+@keyword BANK...AT
 
 @english
 
-Define a bank of memory named [identifier], starting from [address] 
-of type [bankType]. Optionally, fill the bank of memory with static 
-data coming from [filename].
+Define a bank of memory named "identifier", starting from "address" 
+and of type "bankType". Optionally, fill the bank of memory with static 
+data coming from a specific "filename".
 
-Available [bankType]:
+Available "bankType":
 
     * ''CODE'' executable code (binary)
+
     * ''VARIABLES'' program's variables
+
     * ''TEMPORARY'' temporary variables
+
     * ''DATA'' unspecified data
 
-If [identifier] is missing, the bank will have an unique name.
-If [bankType] is missing, the default type is DATA.
-If [filename] is missing, the default is a simply memory reservation.
+If "identifier" is missing, the bank will have an unique name.
+If "bankType" is missing, the default type is ''DATA''.
+If "filename" is missing, the default is a simply memory reservation.
 
 @italian
-Definisce un banco di memoria di nome [identifier], che inizia
-all'indirizzo [address] e del tipo [bankType]. In opzione, è possibile
+
+Definisce un banco di memoria di nome "identifier", che inizia
+all'indirizzo "address" e del tipo "bankType". In opzione, è possibile
 riempire tale banco con dei dati statici che provengano dal file
-[filename].
+"filename".
 
 I tipi di banco sono:
 
     * ''CODE'' codice eseguibile (binario)
+
     * ''VARIABLES'' variabili del programma
+
     * ''TEMPORARY'' variabili temporanee
+
     * ''DATA'' dati non meglio specificati
 
-Se [identifier] manca, al banco sarà assegnato un nome univoco.
-Se non viene indicato il [bankType], quello di default è DATA.
-Se manca il [filename] allora il banco non sarà preriempito.
+Se "identifier" manca, al banco sarà assegnato un nome univoco.
+Se non viene indicato il "bankType", quello di default è ''DATA''.
+Se manca il "filename" allora il banco non sarà preriempito.
 
-@syntax BANK { [identifier] } AT # [address] { AS [bankType]} { WITH [filename] }
-@syntax BANK { [bankType] } { [identifier] } AT # [address] { WITH [filename] }
+@syntax BANK [identifier] AT #address [ AS bankType ] [ WITH filename ]
 
 @example BANK VARIABLES AT $c000
 

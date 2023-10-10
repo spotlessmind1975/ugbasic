@@ -45,6 +45,33 @@
  */
 /* <usermanual>
 @keyword BANK COUNT
+
+@english
+This function returns the number of (expansion) banks available.
+If the computer has more memory areas than the 
+normally addressable one, this function returns the number of banks. 
+Each bank is a Sharing space with a "window" of memory that starts at ''BANK ADDRESS 
+(bank)'' and is ''BANK SIZE (bank)'' bytes long.
+
+@italian
+Questa funzione restituisce il numero di banchi (di espansione) disponibili. 
+Se il computer ha più aree di memoria di quelle normalmente indirizzabili, questa 
+funzione restituisce il numero di banchi. Ogni banco è uno spazio di condivisione con 
+una "finestra" di memoria che inizia da "BANK ADDRESS" ed è lunga "BANK SIZE" in byte.
+
+@syntax = BANK COUNT
+
+@example IF BANK COUNT > 0 THEN 
+@example    PRINT "there are banks!"
+@example ENDIF
+
+@usedInExample expansion_bank_01.bas
+@usedInExample expansion_bank_02.bas
+@usedInExample expansion_bank_03.bas
+@usedInExample expansion_bank_04.bas
+@usedInExample expansion_bank_05.bas
+
+@target atari
 </usermanual> */
 Variable * bank_get_count( Environment * _environment ) {
 

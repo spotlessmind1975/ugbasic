@@ -50,19 +50,6 @@
 /* <usermanual>
 @keyword BELL
 
-@english
-This command makes the computer emit a bell-like sound. It is possible to indicate 
-on which voices the system should emit the sound. If omitted, it will be issued on all.
-
-@italian
-Questo comando fa emettere al computer un suono tipo campana. E' possibile indicare su 
-quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
-
-@syntax BELL #[note] {ON #[channels]}
-
-@example BELL #42
-@example BELL #42 ON #%001
-
 @target coleco
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {
@@ -84,12 +71,6 @@ void bell( Environment * _environment, int _note, int _channels ) {
  */
 /* <usermanual>
 @keyword BELL
-
-@syntax BELL [note] {ON [channels]}
-
-@example SOUND laDiesis
-@example SOUND solMaggiore, breve
-@example SOUND solMaggiore, lunga ON primaVoce
 
 @target coleco
 </usermanual> */

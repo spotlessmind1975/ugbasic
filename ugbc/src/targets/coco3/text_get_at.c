@@ -45,12 +45,6 @@
  * @param _x Column to locate to
  * @param _y Row to locate to
  */
-/* <usermanual>
-@keyword AT$
-
-@target d64
-</usermanual> */
-
 Variable * get_at( Environment * _environment, char * _x, char * _y ) {
     
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );

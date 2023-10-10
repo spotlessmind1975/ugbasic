@@ -66,7 +66,7 @@ Se si vuole copiare un dato dal banco o verso il banco, questa
 
 @syntax = BANK SIZE(#bank)
 
-@example = BANK SIZE(#2)
+@example PRINT BANK SIZE(#2)
 
 @target pc128op
 @verified
@@ -96,7 +96,7 @@ Variable * bank_get_size( Environment * _environment, int _bank ) {
 
 @syntax = BANK SIZE(bank)
 
-@example = BANK SIZE(banco)
+@example y = BANK SIZE(banco)
 
 @target pc128op
 </usermanual> */
