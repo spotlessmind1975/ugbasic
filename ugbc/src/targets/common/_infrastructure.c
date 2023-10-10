@@ -6087,10 +6087,6 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
 
             cpu_dsdescriptor( _environment, expression->realName, address2->realName, size2->realName );
 
-            cpu_less_than_8bit( _environment, size2->realName, position->realName, tmp->realName, 0 );
-
-            cpu_compare_and_branch_8bit_const( _environment, tmp->realName, 0xff, label, 1 );
-
             cpu_mem_move( _environment, address2->realName, address->realName, position->realName );
             break;
         }
