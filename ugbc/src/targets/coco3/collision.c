@@ -75,10 +75,6 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
  */
 /* <usermanual>
 @keyword COLLISION
-
-@syntax = COLLISION([expression])
-
-@example = COLLISION(newValue+1)
 </usermanual> */
 Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
 

@@ -56,16 +56,16 @@
 
 @english
 Verify if a sprite has had a collision with another sprite. The result 
-(0 = no collision, 1 = collision occurred) is returned as result.
+(0 = no collision, <>0 = collision occurred) is returned as result.
 
 @italian
 Verifica se uno sprite ha avuto una collisione con un altro sprite. Il risultato
-(0 = nessuna collisione, 1 = si è verificata una collisione) viene restituito
+(0 = nessuna collisione, <> 0 = si è verificata una collisione) viene restituito
 come risultato.
 
-@syntax = COLLISION(# [integer] )
+@syntax = COLLISION(#sprite)
 
-@example = COLLISION(#1)
+@example x = COLLISION(#1)
 
 @target c128
 </usermanual> */
@@ -106,9 +106,9 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
 /* <usermanual>
 @keyword COLLISION
 
-@syntax = COLLISION([expression])
+@syntax = COLLISION(expression)
 
-@example = COLLISION(newValue+1)
+@example x = COLLISION(newValue+1)
 </usermanual> */
 Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
 

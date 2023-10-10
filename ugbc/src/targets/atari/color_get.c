@@ -45,7 +45,7 @@
  * @return Shade of the common color to set
  */
 /* <usermanual>
-@keyword COLOR
+@keyword COLOR (function)
 
 @english
 This function allows you to obtain the shade associated with the color 
@@ -55,9 +55,9 @@ corresponding to the given index.
 Questa funzione permette di ottenere la sfumatura associata al colore 
 corrispondente all'indice dato.
 
-@syntax = COLOR( [index] )
+@syntax = COLOR(index)
 
-@example = COLOR(0)
+@example c = COLOR(0)
 
 @target atari
 </usermanual> */
