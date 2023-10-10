@@ -63,12 +63,6 @@ void boom( Environment * _environment, int _channels ) {
  */
 /* <usermanual>
 @keyword BOOM
-
-@syntax BOOM {ON [channel]}
-
-@example BOOM
-@example BOOM ON primoCanale
-
 @target vg5000
 </usermanual> */
 void boom_var( Environment * _environment, char * _channels ) {

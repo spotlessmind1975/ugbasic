@@ -59,7 +59,7 @@ Questa istruzione consente di verificare se una determinata modalità dello
 schermo è disponibile o meno. Se lo è, l'istruzione restituirà il valore ''TRUE''.
 In caso contrario, l'istruzione restituirà ''FALSE''.
 
-@syntax = CAN SCREEN [mode]
+@syntax = CAN SCREEN mode
 
 @example IF CAN SCREEN 2 THEN : PRINT "mode 2 is available": ENDIF
 

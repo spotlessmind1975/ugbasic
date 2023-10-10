@@ -72,7 +72,7 @@ colore vengono mantenute invariate.
 Notare che la bitmap deve essere abilitata almeno una volta con 
 l'istruzione ''BITMAP ENABLE''.
 
-@syntax BITMAP CLEAR WITH # [integer]
+@syntax BITMAP CLEAR WITH #value
 
 @example BITMAP CLEAR WITH #$42
 
@@ -107,7 +107,7 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
 /* <usermanual>
 @keyword BITMAP CLEAR
 
-@syntax BITMAP CLEAR WITH [expression]
+@syntax BITMAP CLEAR WITH expression
 
 @example BITMAP CLEAR WITH newValue
 </usermanual> */

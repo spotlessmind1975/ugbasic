@@ -48,12 +48,35 @@
 @keyword CALL
 
 @english
-This keyword will invoke a procedure. 
+
+The ''CALL'' keyword Transfers control to a routine. The first parameter is the
+procedure to call. The procedure can be called using a list of variables or 
+expressions representing arguments passed to the procedure when it is called. 
+Multiple arguments are separated by commas. If you include prameters, you must 
+enclose it in parentheses.
+
+You can use the CALL keyword when calling a procedure. For most procedure calls, it is 
+not necessary to use this keyword. Typically you use the CALL keyword when the called 
+expression does not begin with an identifier. 
+
+If the procedure returns a value, the calling statement deletes it.
 
 @italian
-Questa parola chiave invoca una funzione.
+La parola chiave ''CALL'' Trasferisce il controllo a una routine. Il primo 
+parametro è la procedura da chiamare. La procedura può essere chiamata utilizzando 
+un elenco di variabili o espressioni che rappresentano gli argomenti passati alla 
+procedura quando viene chiamata. Più argomenti sono separati da virgole. Se si includono 
+parametri, vanno racchiusi tra parentesi.
 
-@syntax CALL [name][{[parameter],{[parameter],....}}]
+È possibile utilizzare la parola chiave ''CALL'' quando si richiama una procedura. 
+Per la maggior parte delle chiamate di procedura non è necessario utilizzare questa
+parola chiave. In genere si utilizza la parola chiave ''CALL'' quando si chiama
+l'espressione non inizia con un identificatore.
+
+Se la procedura restituisce un valore, l'istruzione chiamante lo elimina.
+
+@syntax CALL name
+@syntax CALL name[par1 [,par 2 [, ....]]]
 
 @example CALL factorial(42)
 
@@ -73,7 +96,7 @@ Questa parola chiave invoca una funzione.
 
 @syntax PROC [name][{[parameter],{[parameter],....}}]
 
-@example PROC factorial(42)
+@example PROC factorial[42]
 
 @usedInExample procedures_param_01.bas
 @usedInExample procedures_param_02.bas

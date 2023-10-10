@@ -67,7 +67,7 @@ Imposta l'indirizzo di partenza, in memoria, per la bitmap. Il parametro
 di input viene decodificato e declinato in base ai limiti hardware. 
 Quindi non èdetto che sia impostato esattamente l'indirizzo specificato.
 
-@syntax BITMAP AT # [integer]
+@syntax BITMAP AT #addr
 
 @example BITMAP AT #$0000
 
@@ -107,7 +107,7 @@ void bitmap_at( Environment * _environment, int _address ) {
 /* <usermanual>
 @keyword BITMAP AT
 
-@syntax BITMAP AT [expression]
+@syntax BITMAP AT expression
 
 @example BITMAP AT newAddress
 </usermanual> */

@@ -57,22 +57,6 @@
 /* <usermanual>
 @keyword BITMAP AT
 
-@english
-Set the starting address, in memory, for the bitmap. The input parameter 
-is decoded and declined according to the hardware limits. So it is not 
-said that exactly the  given address is set.
-
-@italian
-Imposta l'indirizzo di partenza, in memoria, per la bitmap. Il parametro 
-di input viene decodificato e declinato in base ai limiti hardware. 
-Quindi non èdetto che sia impostato esattamente l'indirizzo specificato.
-
-@syntax BITMAP AT # [integer]
-
-@example BITMAP AT #$0000
-
-@seeAlso BITMAP ENABLE
-
 @target c64
 </usermanual> */
 void bitmap_at( Environment * _environment, int _address ) {
@@ -106,10 +90,6 @@ void bitmap_at( Environment * _environment, int _address ) {
  */
 /* <usermanual>
 @keyword BITMAP AT
-
-@syntax BITMAP AT [expression]
-
-@example BITMAP AT newAddress
 </usermanual> */
 void bitmap_at_var( Environment * _environment, char * _address ) {
 

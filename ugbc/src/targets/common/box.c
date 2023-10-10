@@ -69,10 +69,8 @@ Se il colore viene omesso sarà utilizzato l'ultimo colore selezionato con il co
 oppure ''PEN'. Infine, lo stile della linea di default è pieno ma può essere impostata una 
 bitmask di 16 bit con il comando ''SET LINE''.
 
-@syntax BOX { [x1] },{ [y1] } TO { [x2] },{ [x2] },{ [c] } 
-@syntax BOX { [x1] },{ [x1] } TO { [x1] },{ [x1] } 
-@syntax BOX TO { [x1] },{ [x1] },{ [c] } 
-@syntax BOX TO { [x1] },{ [x1] } 
+@syntax BOX [x1], [y1] TO [x2], [x2] [, c ]
+@syntax BOX TO [x2], [Y2] [, c ]
 
 @example BOX 10,10 TO 100,100,WHITE
 @example BOX TO 100,100
