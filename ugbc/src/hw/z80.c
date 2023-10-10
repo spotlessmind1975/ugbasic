@@ -1195,7 +1195,21 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
             outline1("LD (%s), A", _source );
         }
 
-    no_embedded( cpu_math_div2_const_8bit )
+    embedded( cpu_math_div2_const_8bit, src_hw_z80_cpu_math_div2_const_8bit_asm );
+
+        outline1("LD A, (%s)", _source);
+        outline0("LD B, A");
+        outline1("LD A, $%2.2x", _steps);
+        outline0("LD C, A");
+        if ( _signed ) {
+            outline0("CALL CPUDIV2CONST8S");
+        } else {
+            outline0("CALL CPUDIV2CONST8U");
+        }
+        outline0("LD A, B");
+        outline1("LD (%s), A", _source);
+
+    done( )
 
 }
 
@@ -1234,7 +1248,21 @@ void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _s
             outline1("LD (%s), A", _source );
         }
 
-    no_embedded( cpu_math_mul2_const_8bit )
+    embedded( cpu_math_mul2_const_8bit, src_hw_z80_cpu_math_mul2_const_8bit_asm );
+
+        outline1("LD A, (%s)", _source);
+        outline0("LD B, A");
+        outline1("LD A, $%2.2x", _steps);
+        outline0("LD C, A");
+        if ( _signed ) {
+            outline0("CALL CPUMUL2CONST8S");
+        } else {
+            outline0("CALL CPUMUL2CONST8U");
+        }
+        outline0("LD A, B");
+        outline1("LD (%s), A", _source);
+
+    done( )
 
 }
 
