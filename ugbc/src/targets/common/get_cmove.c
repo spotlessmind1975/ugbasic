@@ -46,7 +46,7 @@
  * @param _y Row to locate to
  */
 /* <usermanual>
-@keyword CMOVE$
+@keyword CMOVE (function)
 
 @english
 The ''CMOVE$'' function can be used to print something relative to the current 
@@ -56,7 +56,7 @@ cursor position.
 La funzione ''CMOVE''" può essere utilizzata per stampare qualcosa relativo 
 alla posizione corrente del cursore.
 
-@syntax = CMOVE$([x],[y])
+@syntax = CMOVE$( x, y )
 
 @example PRINT CMOVE$(10,10)
 

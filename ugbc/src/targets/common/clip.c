@@ -53,8 +53,8 @@
 @english
 The ''CLIP'' instruction allows you to delimit the area in which the graphics 
 are actually drawn. In general, the area corresponds to the entire surface 
-of the screen ''(0,0)-(SCREEN WIDTH,SCREEN HEIGHT)''. However, it is possible 
-to limit the drawing to a sub area, to ensure that the area outside this crop
+of the screen ''(0,0)-(SCREEN WIDTH-1,SCREEN HEIGHT-1)''. However, it is possible 
+to limit the drawing to a sub area, to ensure that the area outside this crop 
 area is not altered or modified. 
 
 The area is bounded by the coordinate ''(x1, y1)'' to the coordinate ''(x2, y2)''. 
@@ -69,7 +69,7 @@ venga alterata o modificata. L'area viene delimitata dalla coordinata ''(x1,y1)'
 alla coordinata ''(x2,y2)''. Se una delle componenti viene omessa, sarà 
 utilizzato il valore attuale. 
 
-@syntax CLIP { [x1] },{ [y1] } TO { [x2] },{ [x2] } 
+@syntax CLIP [x1],[y1] TO [x2], [x2]
 
 @example CLIP 42,42 TO 84,84
 @usedInExample graphics_clip_01.bas

@@ -84,9 +84,10 @@ correnti del cursore. Come "LOCATE", una delle coordinate può essere omessa, pu
 sia posizionata correttamente. Una tecnica aggiuntiva consiste nell'utilizzare valori negativi 
 e offset positivi.
 
-@syntax CMOVE {[dx]},{[dy]}
+@syntax CMOVE [dx], [dy]
 
 @example CMOVE -1, -1
+@example CMOVE 4,
 
 @usedInExample texts_position_03.bas
 @usedInExample texts_position_04.bas

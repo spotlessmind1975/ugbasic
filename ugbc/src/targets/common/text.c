@@ -177,7 +177,7 @@ verso il basso di una singola riga.
 </usermanual> */
 
 /* <usermanual>
-@keyword CDOWN$
+@keyword CDOWN (function)
 
 @english
 The effect of summoning up the special control character ''CDOWN$'' is exactly the 
@@ -230,7 +230,7 @@ verso l'alto di una singola riga.
 </usermanual> */
 
 /* <usermanual>
-@keyword CUP$
+@keyword CUP (function)
 
 @english
 The effect of summoning up the special control character ''CUP$'' is exactly the 
@@ -283,7 +283,7 @@ verso destra di un singolo carattere.
 </usermanual> */
 
 /* <usermanual>
-@keyword CRIGHT$
+@keyword CRIGHT (function)
 
 @english
 The effect of summoning up the special control character ''CRIGHT$'' is exactly the 
@@ -335,7 +335,7 @@ verso sinistra di un singolo carattere.
 </usermanual> */
 
 /* <usermanual>
-@keyword CLEFT$
+@keyword CLEFT (function)
 
 @english
 The effect of summoning up the special control character ''CLEFT$'' is exactly the 

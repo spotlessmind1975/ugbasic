@@ -7119,9 +7119,9 @@ Questa funzione crea una stringa che contiene un singolo carattere, generato da 
 codice ASCII. Da notare che, a seconda dell'hardware, solo alcuni caratteri sono 
 stampabili sullo schermo. Altri sono usati internamente come codici di controllo.
 
-@syntax = CHR( [ascii] )
+@syntax = CHR(value)
 
-@example x = CHR( 65 )
+@example x = CHR(65)
 @usedInExample strings_chr_01.bas
 
 @target all
