@@ -73,7 +73,7 @@ equivalenti. Quando questi altri parametri sono inclusi, il comando ''ADD v, a, 
   IF v<b THEN v=t: ENDIF
   IF v>t THEN v=b: ENDIF
 
-@syntax ADD [variable],[expression]{,[lower] TO [upper]}
+@syntax ADD var, expr [, lower TO upper]
 
 @example ADD x,42,1 TO 100
 @example ADD y,10

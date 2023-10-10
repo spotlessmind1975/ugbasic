@@ -45,6 +45,7 @@
  */
 /* <usermanual>
 @keyword BANK COUNT
+@target coco3
 </usermanual> */
 Variable * bank_get_count( Environment * _environment ) {
 

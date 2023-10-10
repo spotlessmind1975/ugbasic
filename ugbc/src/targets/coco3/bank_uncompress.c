@@ -62,8 +62,6 @@ Si deve quindi indicare uno dei banchi disponibili, l'indirizzo
 di memoria dal quale si vuole decomprimere (lo $0000 implica l'inizio
 del banco), ed infine l'indirizzo di destinazione, che sarà la memoria RAM.
 
-@syntax BANK UNCOMPRESS [bank] FROM [address1] TO [address2]
-
 @example BANK UNCOMPRESS 1 FROM $0100 TO $2000
 
 @target pc128op

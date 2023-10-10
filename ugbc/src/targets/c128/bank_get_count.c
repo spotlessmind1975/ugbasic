@@ -45,6 +45,7 @@
  */
 /* <usermanual>
 @keyword BANK COUNT
+@target c128
 </usermanual> */
 Variable * bank_get_count( Environment * _environment ) {
 

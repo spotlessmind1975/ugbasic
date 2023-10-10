@@ -45,11 +45,6 @@
  * @param _x Column to locate to
  * @param _y Row to locate to
  */
-/* <usermanual>
-@keyword AT$
-
-@target pc128op
-</usermanual> */
 
 Variable * get_at( Environment * _environment, char * _x, char * _y ) {
     

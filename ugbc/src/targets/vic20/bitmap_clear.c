@@ -55,29 +55,6 @@
  */
 /* <usermanual>
 @keyword BITMAP CLEAR
-
-@english
-Fill the bitmap with a certain pattern (by default is ZERO, used to indicate
-the blank screen). The filled part is exclusively that linked to the bitmap, 
-so the color information is kept unchanged.
-
-Note that bitmap must be enabled at least once with instruction ''BITMAP ENABLE''.
-
-@italian
-Riempi la bitmap con un determinato motivo (per impostazione predefinita è
-ZERO, utilizzato per indicare lo schermo vuoto). La parte riempita è 
-esclusivamente quella legata alla bitmap, quindi le informazioni sul 
-colore vengono mantenute invariate.
-
-Notare che la bitmap deve essere abilitata almeno una volta con 
-l'istruzione ''BITMAP ENABLE''.
-
-@syntax BITMAP CLEAR WITH # [integer]
-
-@example BITMAP CLEAR WITH #$42
-
-@seeAlso BITMAP ENABLE
-
 @target vic20
 </usermanual> */
 void bitmap_clear_with( Environment * _environment, int _pattern ) {
@@ -106,10 +83,6 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
  */
 /* <usermanual>
 @keyword BITMAP CLEAR
-
-@syntax BITMAP CLEAR WITH [expression]
-
-@example BITMAP CLEAR WITH newValue
 </usermanual> */
 void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
 
@@ -137,10 +110,6 @@ void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
  */
 /* <usermanual>
 @keyword BITMAP CLEAR
-
-@syntax BITMAP CLEAR
-
-@example BITMAP CLEAR
 </usermanual> */
 void bitmap_clear( Environment * _environment ) {
 

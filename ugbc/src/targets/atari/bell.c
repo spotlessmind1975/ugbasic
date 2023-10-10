@@ -58,7 +58,7 @@ on which voices the system should emit the sound. If omitted, it will be issued 
 Questo comando fa emettere al computer un suono tipo campana. E' possibile indicare su 
 quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
 
-@syntax BELL #[note] {ON #[channels]}
+@syntax BELL #note [ON #channels]
 
 @example BELL #42
 @example BELL #42 ON #%001
@@ -86,7 +86,7 @@ void bell( Environment * _environment, int _note, int _channels ) {
 /* <usermanual>
 @keyword BELL
 
-@syntax BELL [note] {ON [channels]}
+@syntax BELL note [ON channels]
 
 @example SOUND laDiesis
 @example SOUND solMaggiore, breve

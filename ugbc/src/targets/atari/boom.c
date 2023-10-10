@@ -57,7 +57,8 @@ on which voices the system should emit the sound. If omitted, it will be issued 
 Questo comando fa emettere al computer un suono simile a una esplosione. E' possibile
 indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
 
-@syntax BOOM {ON #[channel]}
+@syntax BOOM [ON #channel]
+@syntax BOOM [ON channel]
 
 @example BOOM
 @example BOOM ON %001
@@ -82,11 +83,6 @@ void boom( Environment * _environment, int _channels ) {
  */
 /* <usermanual>
 @keyword BOOM
-
-@syntax BOOM {ON [channel]}
-
-@example BOOM
-@example BOOM ON primoCanale
 
 @target atari
 </usermanual> */

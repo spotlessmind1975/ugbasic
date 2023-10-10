@@ -7166,14 +7166,16 @@ Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
 
 @english
 This function returns the internal ASCII code of the first character
-in a string.
+in a string. If the string is empty, the value returned will be 0.
 
 @italian
 Questa funzione ritorna il codice ASCII del primo carattere di una stringa.
+Se la stringa è vuota, il valore restituito sarà zero (0).
 
-@syntax = ASC( [text] )
+@syntax = ASC( string )
 
 @example x = ASC( "UGBASIC" )
+
 @usedInExample strings_asc_01.bas
 
 @target all
@@ -7204,6 +7206,7 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
             CRITICAL_ASC_UNSUPPORTED( _char, DATATYPE_AS_STRING[character->type]);
     }
 
+    cpu_store_8bit( _environment, result->realName, 0 );
     cpu_compare_and_branch_8bit_const( _environment, size->realName, 0, label, 1 );
     cpu_move_8bit_indirect2( _environment, address->realName, result->realName );
 

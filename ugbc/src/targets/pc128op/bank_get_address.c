@@ -67,7 +67,7 @@ memoria estesa, questo è l'indirizzo di partenza.
 
 @syntax = BANK ADDRESS( #bank )
 
-@example = BANK ADDRESS( 2 )
+@example POKE BANK ADDRESS( 2 ), 42
 
 @usedInExample expansion_bank_01.bas
 @usedInExample expansion_bank_02.bas

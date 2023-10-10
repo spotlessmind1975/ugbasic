@@ -69,12 +69,10 @@ Se il colore viene omesso sarà utilizzato l'ultimo colore selezionato con il co
 oppure ''PEN'. Infine, lo stile della linea di default è pieno ma può essere impostata una 
 bitmask di 16 bit con il comando ''SET LINE''.
 
-@syntax BAR { [x1] },{ [y1] } TO { [x2] },{ [x2] },{ [c] } 
-@syntax BAR { [x1] },{ [x1] } TO { [x1] },{ [x1] } 
-@syntax BAR TO { [x1] },{ [x1] },{ [c] } 
-@syntax BAR TO { [x1] },{ [x1] } 
+@syntax BAR [x1], [y1] TO [x2], [x2] [, c ]
+@syntax BAR TO [x2], [y2] [, c ]
 
-@example BARX 10,10 TO 100,100,WHITE
+@example BAR 10,10 TO 100,100,WHITE
 @example BAR TO 100,100
 @example BAR ,10 TO ,100
 

@@ -45,11 +45,11 @@
  * @param _x Column to locate to
  * @param _y Row to locate to
  */
-/* <usermanual>
+ /* <usermanual>
 @keyword AT$
 
 @english
-The ''AT$'' can be used to change the position of the text cursor directly from 
+The ''AT$'' can be used to change the position of the text cursor directly from
 inside a character string. This is ideal for positioning text once and for all
 on screen, no matter what happens in the program, because the text cursor can
 be set during the program's initialisation phase. 
@@ -68,7 +68,7 @@ La stringa restituita assume il formato standard. Quindi ogni volta che
 questa stringa viene stampata, il cursore del testo verrà spostato sulle 
 coordinate testo x e y.
 
-@syntax = AT$([x],[y])
+@syntax = AT$( x , y )
 
 @example PRINT AT$(10,10)
 
@@ -76,9 +76,8 @@ coordinate testo x e y.
 @usedInExample texts_position_06.bas
 
 @seeAlso LOCATE
-@target all
+@target atari
 </usermanual> */
-
 Variable * get_at( Environment * _environment, char * _x, char * _y ) {
     
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );

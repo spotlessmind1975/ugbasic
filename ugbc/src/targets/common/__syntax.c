@@ -874,10 +874,10 @@ simbolo del dollaro (''$''), per indicare che si vuole accedere a una variabile 
 tipo stringa. In tal caso, un ulteriore controllo di tipo sarà svolto in sede di 
 compilazione, per evitare di far riferimento a una variabile di tipo numerico.
 
-@syntax ... = [variable]([index1]{, [index2] {, ...}})
-@syntax [variable]([index1]{, [index2] {, ...}}) = ...
-@syntax ... = [variable]$([index1]{, [index2] {, ...}})
-@syntax [variable]$([index1]{, [index2] {, ...}}) = ...
+@syntax ... = var( o1 [, i2 [, ...] ] )
+@syntax var( o1 [, i2 [, ...] ] ) = expr
+@syntax ... = var$( o1 [, i2 [, ...] ] )
+@syntax var$( o1 [, i2 [, ...] ] ) = expr$
 
 @example readElement = a(42,3)
 @example b(1,1) = 42

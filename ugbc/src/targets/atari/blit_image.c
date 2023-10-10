@@ -52,6 +52,44 @@ extern char DATATYPE_AS_STRING[][16];
  */
 /* <usermanual>
 @keyword BLIT IMAGE
+
+@english
+
+The “BLITTING” is a data operation used in computer graphics in which several bitmaps 
+are combined into one using a boolean (or mathematical) function. The operation involves
+at least two bitmaps: a “source” (or “foreground”) and a “destination” (or “background”), 
+and other fields, called “masks” or something like that. The result may be written to a 
+final bitmap, though often it replaces the “destination” field.
+
+To draw, the BLIT IMAGE(S) command will be used. The syntax of this command will be 
+identical to that of ''PUT IMAGE'' (therefore with management of images and sequences), 
+with two main differences. The first is the ability to indicate multiple images 
+(separated from each other by a comma) and the second is to be able to indicate 
+which blitting operation you want to use.
+
+@italian
+Il “BLITTING” è un'operazione di dati utilizzata nella computer grafica in cui diverse 
+bitmap vengono combinate in una utilizzando una funzione booleana (o matematica). 
+L'operazione coinvolge almeno due bitmap: una “sorgente” (o “primo piano”) e una 
+“destinazione” (o “sfondo”), e altri campi, chiamati “maschere” o qualcosa del genere. 
+Il risultato può essere scritto su una bitmap finale, anche se spesso sostituisce il 
+campo “destinazione”.
+
+Per disegnare, verrà utilizzato il comando BLIT IMAGE(S). La sintassi di questo comando 
+sarà identica a quella di ''PUT IMAGE'' (quindi con gestione di immagini e sequenze), 
+con due differenze principali. La prima è la possibilità di indicare più immagini 
+(separate tra loro da una virgola) e la seconda è quella di poter indicare quale operazione
+di blitting si vuole utilizzare.
+
+@syntax BLIT IMAGE img1, img2, ... AT [x], [y] WITH blit
+@syntax BLIT IMAGE img1, img2, ... FRAME frame AT [x], [y] WITH blit
+@syntax BLIT IMAGE img1, img2, ... SEQUENCE seq FRAME frame AT [x], [y] WITH blit
+
+@example BLIT bop1 AS ( ( SOURCE ) AND ( DESTINATION ) )
+
+@usedInExample blit_basic_mask.bas
+
+@target all
 </usermanual> */
 void blit_image( Environment * _environment, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
 

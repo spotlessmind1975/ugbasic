@@ -94,12 +94,13 @@ Per cambiare risoluzione e colori, puoi usare le sintassi ''([width],[height],[c
 o ''([colors])'' dopo il comando ''BITMAP ENABLE''. Quindi, omettendo un parametro, significa che non è 
 importante impostarlo.
 
-@syntax BITMAP ENABLE { ([width],[height]{,[colors]}) }
-@syntax BITMAP ENABLE { ([colors]) }
+@syntax BITMAP ENABLE ( width, height [, colors ] )
+@syntax BITMAP ENABLE ( colors )
 
 @example BITMAP ENABLE
 @example BITMAP ENABLE (320,200,16)
 @example BITMAP ENABLE (160,200,2)
+
 @usedInExample screens_resolution_01.bas
 
 @seeAlso BITMAP DISABLE

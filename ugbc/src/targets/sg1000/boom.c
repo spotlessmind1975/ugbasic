@@ -48,20 +48,6 @@
  */
 /* <usermanual>
 @keyword BOOM
-
-@english
-This command makes the computer emit an explosion-like sound. It is possible to indicate 
-on which voices the system should emit the sound. If omitted, it will be issued on all.
-
-@italian
-Questo comando fa emettere al computer un suono simile a una esplosione. E' possibile
-indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
-
-@syntax BOOM {ON #[channel]}
-
-@example BOOM
-@example BOOM ON %001
-
 @target sg1000
 </usermanual> */
 void boom( Environment * _environment, int _channels ) {
@@ -82,12 +68,6 @@ void boom( Environment * _environment, int _channels ) {
  */
 /* <usermanual>
 @keyword BOOM
-
-@syntax BOOM {ON [channel]}
-
-@example BOOM
-@example BOOM ON primoCanale
-
 @target sg1000
 </usermanual> */
 void boom_var( Environment * _environment, char * _channels ) {
