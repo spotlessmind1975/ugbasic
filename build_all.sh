@@ -12,7 +12,7 @@ build () {
 
 }
 
-make clean
+make target=atari clean
 
 build atari 
 build atarixl
