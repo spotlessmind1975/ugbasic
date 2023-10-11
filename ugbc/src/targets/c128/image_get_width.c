@@ -66,7 +66,7 @@ che viene richiamata quando il valore viene utilizzato per inizializzare una
 costante. In tal caso, il valore è quello desunto dall'ispezione delle 
 istruzioni al momento della compilazione.
 
-@syntax = IMAGE WIDTH([image])
+@syntax = IMAGE WIDTH(image)
 
 @example starshipWidth = IMAGE WIDTH( LOAD IMAGE("starship.png") )
 

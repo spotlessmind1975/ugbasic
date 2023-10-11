@@ -44,12 +44,6 @@
  * @param _environment Current calling environment
  * @param _color Color to use for the pen
  */
-/* <usermanual>
-@keyword PEN
-
-@target zx
-</usermanual> */
-
 void pen( Environment * _environment, char * _color ) {
 
     Variable * pen = variable_retrieve( _environment, "PEN" );

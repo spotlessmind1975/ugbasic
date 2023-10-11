@@ -4383,9 +4383,9 @@ This is much more efficient than using the standard syntax ''v = v + 1''.
 Il comando ''INC'' permette di incrementare di uno una variabile. 
 Tale operazione è assai più efficiente che utilizzare la sintassi standard ''v = v + 1''.
 
-@syntax INC [variable]
+@syntax INC var
 
-@example INC v
+@example INC score
 
 @usedInExample contrib_sierpinski3.bas
 
@@ -6651,9 +6651,10 @@ This function converts the characters in a string into lower case (capital) lett
 @italian
 Questa funzione converte i caratteri presenti in una stringa in lettere minuscole.
 
-@syntax = LOWER( [text] )
+@syntax = LOWER( text )
 
 @example x = LOWER( "ugBASIC" )
+
 @usedInExample strings_cases_01.bas
 
 @target all
@@ -6884,9 +6885,11 @@ This function converts a number into hexadecimal.
 @italian
 Questa funzione converte un numero in formato esadecimale.
 
-@syntax = HEX( [number] )
+@syntax = HEX(number)
+@syntax = HEX(variable)
 
 @example x = HEX( 42 )
+@example PRINT HEX( y )
 
 @target all
  </usermanual> */
@@ -7047,17 +7050,18 @@ Variable * variable_string_space( Environment * _environment, char * _repetition
  * @return Variable* Result of flip
  */
 /* <usermanual>
-@keyword FLIP
+@keyword FLIP (function)
 
 @english
-This function will flip a given string, reversing the order of letters.
+The ''FLIP'' function  simply reverses the order of the characters held in the parameter.
 
 @italian
-Questa funzione inverte l'ordine delle lettere della stringa data in ingresso.
+La funzione ''FLIP'' inverte semplicemente l'ordine dei caratteri contenuti nel parametro.
 
-@syntax = FLIP( [string] )
+@syntax = FLIP( string )
 
 @example x = FLIP( "test" )
+
 @usedInExample strings_flip_01.bas
 
 @target all
@@ -7231,7 +7235,7 @@ This function returns the number of characters stored in a string.
 @italian
 Questa funzione restituisce il numero di caratteri memorizzato in una stringa.
 
-@syntax = LEN( [text] )
+@syntax = LEN( text )
 
 @example x = LEN( "TEST" )
 

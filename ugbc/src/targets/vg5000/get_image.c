@@ -52,18 +52,6 @@ extern char DATATYPE_AS_STRING[][16];
  */
 /* <usermanual>
 @keyword GET IMAGE
-
-@english
-This function get an image from a specific position on the screen.
-
-@italian
-Questa funzione recupera una immagine da una specifica posizione dello schermo.
-
-@syntax GET IMAGE [identifier] FROM [x], [y]
-
-@example GET IMAGE airplane FROM 10,10
-
-@target all
 </usermanual> */
 void get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 

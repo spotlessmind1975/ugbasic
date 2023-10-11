@@ -46,10 +46,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword FOR...NEXT
-</usermanual> */
-
 void end_for( Environment * _environment ) {
 
     Loop * loop = _environment->loops;

@@ -52,21 +52,10 @@
 @keyword LOAD TILESET
 
 @english
+
 The ''LOAD TILESET'' command allows you to load a tileset with the "Tiled TSX"
 file format. Offset and other parameters will be calculated automatically
 on the base of the file content.
-
-The command support a set of modern image format, like:
-
-  * JPEG baseline & progressive
-  * PNG 1/2/4/8/16-bit-per-channel
-  * TGA
-  * BMP (non-1bpp, non-RLE)
-  * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
-  * GIF
-  * HDR (radiance rgbE format)
-  * PIC (Softimage PIC)
-  * PNM (PPM and PGM binary only)
 
 The image will be converted into a way that can be efficiently drawn
 on the screen. It could be converted into indexed palette, and can be
@@ -80,18 +69,6 @@ the ''AS'' syntax, which allows you to load the same file several times but with
 Il comando ''LOAD TILESET'' permette di caricare un tileset con il formato file "Tiled TSX". 
 L'offset e altri parametri verranno calcolati automaticamente sulla base del contenuto del file.
 
-Il comando supporta una serie di formati moderni:
-
-  * JPEG baseline & progressive
-  * PNG 1/2/4/8/16-bit-per-canale
-  * TGA
-  * BMP (non-1bpp, non-RLE)
-  * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
-  * GIF
-  * HDR (formato radiance rgbE)
-  * PIC (Softimage PIC)
-  * PNM (solo formato binario PPM e PGM)
-
 L'immagine verrà convertita in un modo che possa essere disegnata in modo efficiente
 sullo schermo. Potrebbe essere convertita in una tavolozza indicizzata, e potrebbe essere
 anche ridimensionata.
@@ -101,8 +78,8 @@ Dal momento in cui è possibile caricare un solo file dello stesso tipo alla vol
 esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
 ma con nomi diversi.
 
-@syntax = LOAD TILESET([filename])
-@syntax = LOAD TILESET([filename] AS [alias])
+@syntax = LOAD TILESET( filename )
+@syntax = LOAD TILESET( filename AS alias )
 
 @example x = LOAD TILESET("dungeon.tsx")
 @example x = LOAD TILESET("dungeon.tsx" AS "dungeon")

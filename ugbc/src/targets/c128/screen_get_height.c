@@ -85,12 +85,34 @@ Da notare che può essere abbreviato anche con l'istruzione ''HEIGHT''.
 @keyword HEIGHT
 
 @english
-Alias for ''SCREEN HEIGHT''.
+This function allows you to obtain the height of the current screen, expressed in pixels. 
+The height depends on the currently selected graphics mode, and can change at runtime.
+
+There is also a compile-level function for this keyword, which is called when the value 
+is used to initialize a constant. In this case, the value is that taken from inspecting 
+the instructions at the time of compilation.
+
+It can also be abbreviated to the statement ''HEIGHT''.
 
 @italian
-Alias per ''SCREEN HEIGHT''.
+Questa funzione permette di ottenere l'altezza dello schermo corrente, 
+espressa in pixel. L'altezza dipende dall'attuale modalità grafica 
+selezionata, e può cambiare in sede di esecuzione.
 
-@seeAlso SCREEN HEIGHT
+Di questa parola chiave esiste anche una funzione a livello di compilazione, 
+che viene richiamata quando il valore viene utilizzato per inizializzare una 
+costante. In tal caso, il valore è quello desunto dall'ispezione delle 
+istruzioni al momento della compilazione.
+
+Da notare che può essere abbreviato anche con l'istruzione ''HEIGHT''. 
+
+@syntax = HEIGHT
+
+@example currentWidth = HEIGHT
+
+@usedInExample graphics_plot_01.bas
+@usedInExample graphics_plot_02.bas
+@usedInExample graphics_plot_03.bas
 
 @target all
 </usermanual> */

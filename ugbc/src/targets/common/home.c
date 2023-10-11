@@ -47,11 +47,11 @@
 @keyword HOME
 
 @english
-The ''HOME'' command moves the text cursor back to the top left-hand corner
+The ''HOME'' command moves the text cursor back to the top left-hand corner 
 of the screen in a hurry.
 
 @italian
-Il comando "HOME" riporta il cursore del testo nell'angolo in alto a sinistra
+Il comando "HOME" riporta il cursore del testo nell'angolo in alto a sinistra 
 dello schermo in fretta.
 
 @syntax HOME

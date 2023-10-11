@@ -60,8 +60,8 @@ Questo comando permette di selezionare uno tra gli strumenti disponibili.
 Si possono impostare strumenti per tutte le voci, o per un insieme di voci 
 particolari. 
 
-@syntax INSTRUMENT #[instrument] {ON #[channels]}
-@syntax INSTRUMENT [symbolic name] {ON #[channels]}
+@syntax INSTRUMENT #instrument [ON #channels]
+@syntax INSTRUMENT name [ON #channels]
 
 @example INSTRUMENT #42 ON %001
 @example INSTRUMENT SHAMISEN
@@ -87,11 +87,6 @@ void instrument( Environment * _environment, int _instrument, int _channels ) {
  */
 /* <usermanual>
 @keyword INSTRUMENT
-
-@syntax INSTRUMENT #[instrument] {ON [channels]}
-
-@example INSTRUMENT FIDDLE ON primaVoce
-
 @target atari
 </usermanual> */
 void instrument_semi_var( Environment * _environment, int _instrument, char * _channels ) {

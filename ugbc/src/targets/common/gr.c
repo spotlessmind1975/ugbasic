@@ -56,7 +56,7 @@ If the component is omitted, the current one will remain.
 Questo comando permette di impostare le coordinate ''(x,y)'' per le prossime operazioni 
 grafiche. Se la componente viene omessa, rimarrà quella attuale. 
 
-@syntax GR LOCATE { [x] },{ [y] }
+@syntax GR LOCATE [x], [y]
 
 @example GR LOCATE 100,10
 @usedInExample graphics_clip_01.bas

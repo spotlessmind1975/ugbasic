@@ -57,15 +57,6 @@
 </usermanual> */
 /* <usermanual>
 @keyword HIT
-
-@english
-Alias for ''COLLISION''.
-
-@italian
-Alias per ''COLLISION''.
-
-@seeAlso HIT
-
 @target c64
 </usermanual> */
 Variable * collision_to( Environment * _environment, int _sprite ) {

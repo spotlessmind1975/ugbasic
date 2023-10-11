@@ -47,9 +47,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword IF...THEN...ELSE...ENDIF
-</usermanual> */
 void end_if_then( Environment * _environment ) {
 
     Conditional * conditional = _environment->conditionals;

@@ -49,14 +49,14 @@
 @keyword IN
 
 @english
-This command allows you to receive a byte from an I/O port, provided that the underlying hardware 
+This function allows you to receive a byte from an I/O port, provided that the underlying hardware 
 allows it. If it wasn't allowed, the statement will do nothing.
 
 @italian
 Questo comando permette di ricevere un byte a una porta di I/O, sempre che ciò sia consentito 
 dall'hardware sottostante. Se non fosse consentito, l'istruzione non farà nulla. 
 
-@syntax = IN( [port] )
+@syntax = IN(port)
 
 @example x = IN( &HBC00 )
 

@@ -62,7 +62,7 @@ Effettua un salto incondizionato a un'etichetta, definita in precedenza o
 successivamente. Quando si incontrerà il comando ''RETURN'', l'esecuzione
 continuerà all'istruzione successiva a qeusta.
 
-@syntax GOSUB [label]
+@syntax GOSUB label
 
 @example GOSUB leggiTasti
 
@@ -93,7 +93,7 @@ void gosub_label( Environment * _environment, char * _label ) {
 /* <usermanual>
 @keyword GOSUB
 
-@syntax GOSUB [number]
+@syntax GOSUB number
 
 @example GOSUB 42
 

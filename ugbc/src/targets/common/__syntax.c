@@ -112,7 +112,7 @@ prima di usarlo. Questo può essere inefficiente. Pertanto è possibile indicare
 di riferirsi effettivamente al valore. Per questo motivo questo operatore funziona solo 
 se utilizzato con un valore costante (es: un intero) o con il nome di una costante.
 
-@syntax = # [constant]
+@syntax = #constant
 
 @example fontSize = #constantSize
 @example fontSize = #42
@@ -1552,13 +1552,21 @@ a font.
 The command support a set of modern image format, like:
 
   * JPEG baseline & progressive
+
   * PNG 1/2/4/8/16-bit-per-channel
+
   * TGA
+
   * BMP (non-1bpp, non-RLE)
+
   * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
+
   * GIF
+
   * HDR (radiance rgbE format)
+
   * PIC (Softimage PIC)
+
   * PNM (PPM and PGM binary only)
 
 The image will be converted into a way that can be efficiently drawn
@@ -1574,15 +1582,23 @@ in una serie di caratteri (font).
 Il comando supporta una serie di formati moderni:
 
   * JPEG baseline & progressive
-  * PNG 1/2/4/8/16-bit-per-canale
-  * TGA
-  * BMP (non-1bpp, non-RLE)
-  * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
-  * GIF
-  * HDR (formato radiance rgbE)
-  * PIC (Softimage PIC)
-  * PNM (solo formato binario PPM e PGM)
 
+  * PNG 1/2/4/8/16-bit-per-canale
+
+  * TGA
+
+  * BMP (non-1bpp, non-RLE)
+
+  * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
+
+  * GIF
+
+  * HDR (formato radiance rgbE)
+
+  * PIC (Softimage PIC)
+
+  * PNM (solo formato binario PPM e PGM)
+  
 L'immagine verrà convertita in un modo che possa essere disegnata in modo efficiente
 sullo schermo. Potrebbe essere convertita in una tavolozza indicizzata, e potrebbe essere
 anche ridimensionata.
@@ -1590,7 +1606,7 @@ anche ridimensionata.
 E' inoltre possibile indicare l'indice da cui iniziare a caricare i vari caratteri. 
 L'indice non è il codice ASCII ma lo screen code.
 
-@syntax FONT LOAD [filename] TO [index]
+@syntax FONT LOAD filename [TO index]
 
 @example FONT LOAD "digit0.png" TO 48
 

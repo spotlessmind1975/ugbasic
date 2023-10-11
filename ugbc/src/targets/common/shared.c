@@ -74,7 +74,8 @@ successivo", e il carattere ''?''" significa "abbinalo a qualsiasi
 carattere singolo nel nome della variabile". Solo le stringhe possono 
 essere utilizzate con questa tecnica.
 
-@syntax SHARED [expression]{, [expression]{,[expression], ...}}
+@syntax SHARED var1[, var2[, ...] ]
+@syntax SHARED "string1"[, "string2"[, ...] ]
 
 @example SHARED test
 @example SHARED "a*", b, "*c"

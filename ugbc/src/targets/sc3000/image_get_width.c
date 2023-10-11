@@ -44,11 +44,7 @@
  * @param _environment Current calling environment
  * @param Image to measure.
  */
-/* <usermanual>
-@keyword IMAGE WIDTH
 
-@target all
-</usermanual> */
 Variable * image_get_width( Environment * _environment, char * _image ) {
 
     Variable * image = variable_retrieve( _environment, _image );

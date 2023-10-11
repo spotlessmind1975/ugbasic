@@ -54,16 +54,24 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword GET IMAGE
 
 @english
-This function get an image from a specific position on the screen.
+
+The ''GET IMAGE'' instruction copies a portion of the screen into an image in memory,
+which must be defined in advance. The dimensions of the image to be captured are 
+defined by the variable where the image will be stored. The image is also captured 
+with color components.
 
 @italian
-Questa funzione recupera una immagine da una specifica posizione dello schermo.
+L'istruzione ''GET IMAGE'' copia una porzione dello schermo in un'immagine in memoria, 
+che deve essere definita in anticipo. Le dimensioni dell'immagine da catturare sono 
+definite dalla variabile dove l'immagine sarà memorizzata. L'immagine viene catturata 
+anche con le componenti colore.
 
-@syntax GET IMAGE [identifier] FROM [x], [y]
+@syntax GET IMAGE var FROM [x], [y]
 
-@example GET IMAGE airplane FROM 10,10
+@example background = NEW IMAGE(16, 16)
+@example GET IMAGE background FROM 0, 0
 
-@target all
+@target msx1
 </usermanual> */
 void get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 

@@ -45,9 +45,6 @@
  * @param _color 
  * @return Variable* 
  */
-/* <usermanual>
-@keyword PEN$
-</usermanual> */
 Variable * get_pen( Environment * _environment, char * _color ) {
 
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );

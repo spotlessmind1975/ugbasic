@@ -53,21 +53,6 @@
  */
 /* <usermanual>
 @keyword HIT
-
-@english
-Verify if a sprite has had a collision with a tile. The result 
-(0 = no collision, 1 = collision occurred) is returned as result.
-
-@italian
-Verifica se uno sprite ha avuto una collisione con un tile. Il risultato
-(0 = nessuna collisione, 1 = si è verificata una collisione) viene restituito
-come risultato.
-
-@syntax = HIT( # [integer] )
-
-@example IF HIT( #1 ) THEN POINT AT (100,100): ENDIF
-
-@target vic20
 </usermanual> */
 Variable * hit_to( Environment * _environment, int _sprite ) {
 
@@ -96,10 +81,6 @@ Variable * hit_to( Environment * _environment, int _sprite ) {
  */
 /* <usermanual>
 @keyword HIT
-
-@syntax = HIT([expression])
-
-@example IF HIT(startship) THEN HALT: ENDIF
 </usermanual> */
 Variable * hit_to_vars( Environment * _environment, char * _sprite ) {
 
