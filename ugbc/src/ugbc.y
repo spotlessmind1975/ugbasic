@@ -7142,7 +7142,13 @@ statement2:
   | EXIT PROC {
       exit_procedure( _environment );
   }
+  | EXIT PROCEDURE {
+      exit_procedure( _environment );
+  }
   | POP PROC {
+      exit_procedure( _environment );
+  }
+  | POP PROCEDURE {
       exit_procedure( _environment );
   }
   | EXIT PROC IF expr {

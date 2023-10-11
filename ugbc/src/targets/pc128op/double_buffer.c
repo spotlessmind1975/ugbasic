@@ -46,6 +46,7 @@
  */
 /* <usermanual>
 @keyword DOUBLE BUFFER
+@target pc128op
 </usermanual> */
 void double_buffer( Environment * _environment, int _enabled ) {
 

@@ -70,10 +70,10 @@ in base a delle condizioni: tale istruzione uscirà
 Può essere fornito un numero opzionale per specificare il numero di loop
 da cui uscire, altrimenti verrà interrotto solo il loop più interno.
 
-@syntax EXIT IF [expression]{, [number] }
-@syntax EXIT [number] IF [expression]
+@syntax EXIT IF expression[, levels]
+@syntax EXIT levels IF expression
 
-@example EXIT IF lifes == 0, 2
+@example EXIT IF lifes = 0, 2
 @example EXIT 2 IF lifes
 
 @usedInExample control_loops_02.bas

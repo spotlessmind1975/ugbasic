@@ -4222,8 +4222,7 @@ dividendo come variabile dove sarà memorizzato il risultato. In opzione,
 è possibile indicare una variabile dove memorizzare il resto dell'operazione 
 di divisione.
 
-@syntax DIV [variable],[divisor]
-@syntax DIV [variable],[divisor],[remainder]
+@syntax DIV var, divisor[, remainder]
 
 @example DIV a,2
 @example DIV a,3,q

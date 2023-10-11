@@ -52,7 +52,7 @@
 @keyword DRAW
 
 @english
-This instruction draws aline on the screen, starting from the coordinates ''(x1, y1)''
+This instruction draws a line on the screen, starting from the coordinates ''(x1, y1)''
 to arrive at the coordinates ''(x2, y2)'', using the color ''c''. The start or the final
 coordinates can be omitted: in this case, ugBASIC will draw, respectively, starting from 
 the last drawn position and arriving at the last drawn position. If the color is 
@@ -69,14 +69,49 @@ Se il colore viene omesso sarà utilizzato l'ultimo colore selezionato con il co
 oppure ''PEN'. Infine, lo stile della linea di default è pieno ma può essere impostata una 
 bitmask di 16 bit con il comando ''SET LINE''.
 
-@syntax DRAW { [x1] },{ [y1] } TO { [x2] },{ [x2] },{ [c] } 
-@syntax DRAW { [x1] },{ [x1] } TO { [x1] },{ [x1] } 
-@syntax DRAW TO { [x1] },{ [x1] },{ [c] } 
-@syntax DRAW TO { [x1] },{ [x1] } 
+@syntax DRAW [x1], [y1] TO [x2],[x2][, c]
+@syntax DRAW TO [x2], [x2][, c]
 
 @example DRAW 10,10 TO 100,100,WHITE
 @example DRAW TO 100,100
 @example DRAW ,10 TO ,100
+
+@usedInExample graphics_color_01.bas
+@usedInExample graphics_lines_01.bas
+@usedInExample graphics_shapes_01.bas
+@usedInExample graphics_shapes_02.bas
+@usedInExample graphics_shapes_03.bas
+
+@target all
+</usermanual> */
+/* <usermanual>
+@keyword LINE
+
+@english
+This instruction draws a line on the screen, starting from the coordinates ''(x1, y1)''
+to arrive at the coordinates ''(x2, y2)'', using the color ''c''. The start or the final
+coordinates can be omitted: in this case, ugBASIC will draw, respectively, starting from 
+the last drawn position and arriving at the last drawn position. If the color is 
+omitted, the last color selected with the ''INK'' or ''PEN'' command will be used. 
+Finally, the default line style is full but a 16 bit bitmask can be set with the ''SET LINE''
+command.
+
+@italian
+Questa istruzione disegna un segmento di linea sullo schermo, a partire dalle coordinate ''(x1,y1)''
+per arrivare alle coordinate ''(x2,y2)'', utilizzando il colore ''c''. Le coordinate di inizio o
+quelle di fine possono essere omesse: in tal caso, ugBASIC disegnerà, rispettivamente, 
+ùa partire dall'ultima posizione disegnata arrivando all'ultima posizione disegnata. 
+Se il colore viene omesso sarà utilizzato l'ultimo colore selezionato con il comando ''INK'' 
+oppure ''PEN'. Infine, lo stile della linea di default è pieno ma può essere impostata una 
+bitmask di 16 bit con il comando ''SET LINE''.
+
+@syntax LINE [x1], [y1] TO [x2], [x2][, c]
+@syntax LINE TO [x2], [x2][, c]
+
+@example LINE 10,10 TO 100,100,WHITE
+@example LINE TO 100,100
+@example LINE ,10 TO ,100
+
 @usedInExample graphics_color_01.bas
 @usedInExample graphics_lines_01.bas
 @usedInExample graphics_shapes_01.bas

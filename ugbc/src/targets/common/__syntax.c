@@ -965,8 +965,8 @@ altro genera sempre una variabile temporanea, ragion per cui non è possibile mo
 direttamente il valore originale. Questo meccanismo, quindi, ha il solo scopo di garantire 
 che le conversioni avvengano sempre correttamente.
 
-@syntax ... = ( [type] ) [number]
-@syntax ... = ( [type] ) ( ... )
+@syntax ... = ( type ) #value
+@syntax ... = ( type ) (expression)
 
 @example y = (POSITION) 42
 @example x = 42: y = (POSITION) ( x )
@@ -1170,15 +1170,14 @@ nella costante. Tale intervallo viene definito con una modalità analoga agli in
 in matematica: usando la parentesi quadra si intende che gli estremi (minimo, massimo) 
 sono inclusi, mentre una parentesi tonda si intende che gli estremi sono esclusi.
 
-@syntax CONST [identifier] = [constant value]
-@syntax CONST POSITIVE [identifier] = [constant value]
-@syntax CONST [identifier] IN ([min],[max]) = [constant value]
-@syntax CONST [identifier] IN [[min],[max]) = [constant value]
-@syntax CONST [identifier] IN ([min],[max]] = [constant value]
-@syntax CONST [identifier] IN [[min],[max]] = [constant value]
+@syntax [POSITIVE] CONST identifier = value
+@syntax CONST identifier IN (min,max) = value
+@syntax CONST identifier IN [min,max) = value
+@syntax CONST identifier IN (min,max] = value
+@syntax CONST identifier IN [min,max] = value
 
 @example CONST x = 42
-@example CONST POSITIVE y = -42: ' this raises an error!
+@example POSITIVE CONST y = -42: ' this raises an error!
 @example CONST width IN (0,320] = 128
 
 @usedInExample contrib_sierpinski.bas
@@ -1612,7 +1611,7 @@ recepiti dal sistema di input in ripetizione, con il comando INPUT oppure INKEY.
 dipende dal target, con un valore minimo di 0 (massima velocità) a un valore 
 massimo di 254 (minima velocità).
 
-@syntax DEFINE KEYBOARD RATE [rate]
+@syntax DEFINE KEYBOARD RATE value
 
 @example DEFINE KEYBOARD RATE 123
 
@@ -1644,7 +1643,7 @@ prima di iniziare la ripetizione dei caratteri  dal sistema di input, con il
 comando INPUT oppure INKEY. Il ritardo dipende dal target, con un valore minimo 
 di 0 (nessun ritardo) a un valore massimo di 255 (massimo ritardo).
 
-@syntax DEFINE KEYBOARD DELAY [delay]
+@syntax DEFINE KEYBOARD DELAY value
 
 @example DEFINE KEYBOARD DELAY 50
 

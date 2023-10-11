@@ -45,14 +45,7 @@
  */
 /* <usermanual>
 @keyword EVERY OFF
-
-@english
-
-@italian
-
-@syntax EVERY OFF
-
-@example EVERY OFF
+@target vic20
 </usermanual> */
 void every_off( Environment * _environment ) {
   

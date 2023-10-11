@@ -45,6 +45,7 @@
  */
 /* <usermanual>
 @keyword EVERY OFF
+@target pc128op
 </usermanual> */
 void every_off( Environment * _environment ) {
    

@@ -49,6 +49,7 @@
  */
 /* <usermanual>
 @keyword EVERY...GOSUB
+@target atari
 </usermanual> */
 void every_ticks_gosub( Environment * _environment, char * _timing, char * _label ) {
 

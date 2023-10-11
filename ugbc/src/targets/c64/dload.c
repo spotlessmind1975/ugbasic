@@ -45,31 +45,6 @@
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer
  */
-/* <usermanual>
-@keyword DLOAD
-
-@english
-The ''DLOAD'' command allows you to load a file, present on the target file system, 
-directly into memory as a string. The string destination is required because 
-the file size cannot be known in advance. It follows that, at the moment, 
-it is possible to upload files with a maximum size of 128/256 characters, 
-depending on the target.
-
-@italian
-Il comando ''DLOAD'' permette di caricare un file, presente sul file system target, 
-direttamente in memoria come stringa. La destinazione stringa è necessaria perché 
-non è possibile conoscere, in anticipo, la dimensione del file. Ne consegue che, 
-al momento, è possibile caricare file di dimensioni massime pari a 128/256 
-caratteri, a seconda del target.
-
-@syntax = DLOAD([filename])
-
-@example testo = LOAD("aiuto.txt")
-
-@usedInExample storage_example_01.bas
-
-@target c64
-</usermanual> */
 Variable * dload( Environment * _environment, char * _target_name ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
