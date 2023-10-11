@@ -88,9 +88,9 @@ instruction.
 
 @italian
 
-@syntax INPUT [var1] [, var2 [, ..]] [;]
-@syntax INPUT [prompt] ; [var1] [, var2 [, ..]] [;]
-@syntax INPUT [prompt] , [var1] [, var2 [, ..]] [;]
+@syntax INPUT var1 [, var2 [, ..]] [;]
+@syntax INPUT [prompt;] [var1] [, var2 [, ..]] [;]
+@syntax INPUT [prompt,] [var1] [, var2 [, ..]] [;]
 
 @example INPUT age
 @example INPUT "what is your name"; name$

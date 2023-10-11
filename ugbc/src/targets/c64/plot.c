@@ -50,30 +50,6 @@
  */
 /* <usermanual>
 @keyword PLOT
-
-@english
-The ''PLOT'' instruction allows you to draw a point on the screen, at 
-the ''(x, y)'' coordinate and with any color. If the color is not 
-provided, the default color is the one set with the last ''INK'' / ''PEN'' command.
-
-It is possible to omit one or both coordinates, and ugBASIC will use the last one used, 
-which is stored in the ''XGR'' and ''YGR'' variables.
-
-@italian
-L'istruzione ''PLOT'' consente di disegnare un punto sullo schermo, alla 
-coordinata ''(x,y)'' e con l'eventuale colore. Se il colore non viene fornito, 
-il colore di default è quello impostato con l'ultimo comando ''INK'' / ''PEN''.
-
-E' possibile omettere una o entrambe le coordinate, e ugBASIC utilizzerà l'ultima 
-usata, che viene stoccata nelle variabili ''XGR'' e ''YGR''.
-
-@syntax PLOT [x], [y] {, [color]}
-
-@example PLOT 42, 42
-@example PLOT 100, 100, RED
-
-@usedInExample contrib_sierpinski3.bas
-
 @target c64
  </usermanual> */
 

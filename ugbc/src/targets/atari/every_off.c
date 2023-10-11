@@ -45,6 +45,24 @@
  */
 /* <usermanual>
 @keyword EVERY OFF
+
+@english
+
+''EVERY OFF'' statement interrupt system used by the ''EVERY'' commands. It's automatically 
+executed at the start of periodic procedure.
+
+@italian
+
+Sistema di interruzione dell'istruzione ''EVERY OFF'' utilizzato dai comandi ''EVERY''. 
+Viene eseguito automaticamente all'avvio della procedura periodica.
+
+@syntax EVERY OFF
+
+@example EVERY OFF
+
+@seeAlso EVERY
+@seeAlso EVERY ON
+@target atari
 </usermanual> */
 void every_off( Environment * _environment ) {
    

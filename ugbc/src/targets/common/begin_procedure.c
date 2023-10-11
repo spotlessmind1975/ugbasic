@@ -86,14 +86,14 @@ chiamata di procedura. Questo sistema funziona altrettanto bene con
 costanti e variabili, ma anche array. Se è necessario immettere più di 
 un parametro, i parametri devono essere separate da virgole.
 
-@syntax PROCEDURE [name] [ [parameter] {, [parameter { [, ...]]]}}]
+@syntax PROCEDURE name[ par1[, par2[, ... ]]] ]
 @syntax  ...
-@syntax END PROC{ [expression] }
+@syntax END PROC[ expression ]
 
-@example PROCEDURE test
-@example    DEBUG "HELLO WORLD!"
+@example PROCEDURE test[ a, b ]
+@example    DEBUG "HELLO WORLD! "; (a+b)
 @example END PROC
-@example &nbsp;
+@example 
 @example PROCEDURE sumOf( x, y )
 @example END PROC[x+y]
 

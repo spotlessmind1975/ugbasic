@@ -85,7 +85,7 @@ di blitting si vuole utilizzare.
 @syntax BLIT IMAGE img1, img2, ... FRAME frame AT [x], [y] WITH blit
 @syntax BLIT IMAGE img1, img2, ... SEQUENCE seq FRAME frame AT [x], [y] WITH blit
 
-@example BLIT bop1 AS ( ( SOURCE ) AND ( DESTINATION ) )
+@example BLIT IMAGE test AT 0, 0 WITH bop
 
 @usedInExample blit_basic_mask.bas
 

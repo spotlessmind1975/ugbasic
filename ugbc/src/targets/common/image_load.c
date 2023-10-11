@@ -51,29 +51,37 @@
 @keyword LOAD IMAGE
 
 @english
-The ''LOAD IMAGE'' command allows you to load an image and to convert it into
-an ''IMAGE''. The second parameter is the mode to use to convert
-the given data (by default, it is equal to current mode)
+The ''LOAD IMAGE'' command allows you to load an image and to convert it into 
+an ''IMAGE''. The second parameter is the mode to use to convert 
+the given data (by default, it is equal to current mode) 
 
 The command support a set of modern image format, like:
 
   * JPEG baseline & progressive
+
   * PNG 1/2/4/8/16-bit-per-channel
+
   * TGA
+
   * BMP (non-1bpp, non-RLE)
+
   * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
+
   * GIF
+
   * HDR (radiance rgbE format)
+
   * PIC (Softimage PIC)
+
   * PNM (PPM and PGM binary only)
 
-The image will be converted into a way that can be efficiently drawn
-on the screen. It could be converted into indexed palette, and can be
+The image will be converted into a way that can be efficiently drawn 
+on the screen. It could be converted into indexed palette, and can be 
 rescaled as well.
 
 Since it is possible to load only one file of the same type at a time, it is necessary 
-to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also
-the ''AS'' syntax, which allows you to load the same file several times but with different names.
+to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also 
+the ''AS'' syntax, which allows you to load the same file several times but with different names. 
 
 @italian
 Il comando ''LOAD IMAGE'' permette di caricare un file immagine, e di convertirlo
@@ -83,13 +91,21 @@ per convertire il dato (per default, è il modo corrente).
 Il comando supporta una serie di formati moderni:
 
   * JPEG baseline & progressive
+
   * PNG 1/2/4/8/16-bit-per-canale
+
   * TGA
+
   * BMP (non-1bpp, non-RLE)
+
   * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
+
   * GIF
+
   * HDR (formato radiance rgbE)
+
   * PIC (Softimage PIC)
+
   * PNM (solo formato binario PPM e PGM)
 
 L'immagine verrà convertita in un modo che possa essere disegnata in modo efficiente
@@ -101,8 +117,8 @@ Dal momento in cui è possibile caricare un solo file dello stesso tipo alla vol
 esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
 ma con nomi diversi.
 
-@syntax = LOAD IMAGE([filename]{,[mode]})
-@syntax = LOAD IMAGE([filename] AS [alias]{,[mode]})
+@syntax = LOAD IMAGE( filename[,mode] )
+@syntax = LOAD IMAGE( filename AS alias[,mode] )
 
 @example starship = LOAD IMAGE("starship.png")
 @example starship2 = LOAD IMAGE("starship.png" AS "starship2")

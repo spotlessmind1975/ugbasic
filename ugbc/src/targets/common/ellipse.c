@@ -67,8 +67,7 @@ l'ascissa e/o l'ordinata viene omessa, sarà utilizzata l'ultima posizione grafi
 disegnata. In più, anche il colore può essere omesso e, nel caso, sarà utilizzato 
 l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
 
-@syntax ELLIPSE { [x] },{ [y] },[rx],[ry],[c] 
-@syntax ELLIPSE { [x] },{ [y] },[rx],[ry] 
+@syntax ELLIPSE [x],[y],[rx],[ry][, c] 
 
 @example ELLIPSE 100,100,42,21
 @example ELLIPSE ,,10,20,RED

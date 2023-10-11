@@ -49,29 +49,37 @@
 @keyword LOAD IMAGES
 
 @english
-The ''LOAD IMAGES'' command allows you to load an image and to convert
-in an array of images. Each image will be of ''[w]x[h]'' pixels. Offset
-will be calculated automatically on the base of the original image.
+The ''LOAD IMAGES'' command allows you to load an image and to convert 
+in an array of images. Each image will be of ''[w]x[h]'' pixels. Offset 
+will be calculated automatically on the base of the original image. 
 
 The command support a set of modern image format, like:
 
   * JPEG baseline & progressive
+
   * PNG 1/2/4/8/16-bit-per-channel
+
   * TGA
+
   * BMP (non-1bpp, non-RLE)
+
   * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
+
   * GIF
+
   * HDR (radiance rgbE format)
+
   * PIC (Softimage PIC)
+
   * PNM (PPM and PGM binary only)
 
-The image will be converted into a way that can be efficiently drawn
-on the screen. It could be converted into indexed palette, and can be
-rescaled as well.
+The image will be converted into a way that can be efficiently drawn 
+on the screen. It could be converted into indexed palette, and can be 
+rescaled as well. 
 
 Since it is possible to load only one file of the same type at a time, it is necessary 
-to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also
-the ''AS'' syntax, which allows you to load the same file several times but with different names.
+to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also 
+the ''AS'' syntax, which allows you to load the same file several times but with different names. 
 
 @italian
 Il comando ''LOAD IMAGES'' permette di caricare un'immagine e di convertirla
@@ -81,13 +89,21 @@ di ogni fotogramma è calcolato automaticamente sulla base dell'immagine origina
 Il comando supporta una serie di formati moderni:
 
   * JPEG baseline & progressive
+
   * PNG 1/2/4/8/16-bit-per-canale
+
   * TGA
+
   * BMP (non-1bpp, non-RLE)
+
   * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
+
   * GIF
+
   * HDR (formato radiance rgbE)
+
   * PIC (Softimage PIC)
+
   * PNM (solo formato binario PPM e PGM)
 
 L'immagine verrà convertita in un modo che possa essere disegnata in modo efficiente
@@ -99,8 +115,8 @@ Dal momento in cui è possibile caricare un solo file dello stesso tipo alla vol
 esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
 ma con nomi diversi.
 
-@syntax = LOAD IMAGES([filename]) FRAME SIZE ([w],[h])
-@syntax = LOAD IMAGES([filename] AS [alias]) FRAME SIZE ([w],[h])
+@syntax = LOAD IMAGES(filename) FRAME SIZE (w,h)
+@syntax = LOAD IMAGES(filename AS alias) FRAME SIZE (w,h)
 
 @example starship = LOAD IMAGES("starship.png") FRAME SIZE (8,8)
 @example alienAt11 = LOAD IMAGES("alien.png") FRAME SIZE (16,16)

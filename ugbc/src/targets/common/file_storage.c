@@ -44,27 +44,6 @@
  * @param _environment Current calling environment
  * @param _name Name of the storage
  */
-/* <usermanual>
-@keyword FILE...AS...
-
-@english
-This command can be used to move a file from the development computer 
-to mass storage. The movement will take place exclusively in the mass 
-memory generation phase.
-
-@italian
-Questo comando può essere utilizzato per spostare un file dal computer 
-di sviluppo nella memoria di massa. Lo spostamento avverrà esclusivamente 
-in fase di generazione della memoria di massa.
-
-@syntax FILE [source] AS [target]
-
-@example FILE "file/on/host/file.txt" AS "TEST"
-
-@usedInExample storage_example_01.bas
-
-@target c64
-</usermanual> */
 void file_storage( Environment * _environment, char * _source_name, char * _target_name ) {
 
     if ( !_environment->currentStorage ) {

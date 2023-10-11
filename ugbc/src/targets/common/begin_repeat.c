@@ -63,10 +63,9 @@ come quello di fine. Questo comando fornisce un modo conveniente per ripetere un
 di istruzioni per tutto il tempo nel quale una particolare condizione è falsa. La condizione è
 controllata di nuovo ad ogni ciclo, fino a quando non è più vera.
 
-@syntax REPEAT : ... : UNTIL [expression] 
-@syntax REPEAT
-@syntax   ...
-@syntax UNTIL [expression]
+@syntax REPEAT 
+@syntax     ...
+@syntax UNTIL expression 
 
 @example REPEAT : score = score + 1 : UNTIL NOT alive
 

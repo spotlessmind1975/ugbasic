@@ -4222,8 +4222,7 @@ dividendo come variabile dove sarà memorizzato il risultato. In opzione,
 è possibile indicare una variabile dove memorizzare il resto dell'operazione 
 di divisione.
 
-@syntax DIV [variable],[divisor]
-@syntax DIV [variable],[divisor],[remainder]
+@syntax DIV var, divisor[, remainder]
 
 @example DIV a,2
 @example DIV a,3,q
@@ -4384,9 +4383,9 @@ This is much more efficient than using the standard syntax ''v = v + 1''.
 Il comando ''INC'' permette di incrementare di uno una variabile. 
 Tale operazione è assai più efficiente che utilizzare la sintassi standard ''v = v + 1''.
 
-@syntax INC [variable]
+@syntax INC var
 
-@example INC v
+@example INC score
 
 @usedInExample contrib_sierpinski3.bas
 
@@ -6298,11 +6297,11 @@ restituire. Se omesso o se nel testo sono presenti meno caratteri della
 lunghezza (incluso il carattere iniziale), vengono restituiti tutti i 
 caratteri dalla posizione iniziale alla fine della stringa.
 
-@syntax = RIGHT( text, position )
+@syntax = MID( text, position )
 
-@example x = RIGHT( "TEST", 2 )
+@example x = MID( "TEST", 2 )
 
-@usedInExample strings_right_01.bas
+@usedInExample strings_mid_01.bas
 
 @seeAlso LEFT (function)
 @seeAlso LEFT
@@ -6439,11 +6438,53 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
 /* <usermanual>
 @keyword MID
 
-@syntax MID( [text], [position] { , [length] } ) = [expression]
+@english
 
-@example MID( "TEST", 2, 2 ) = "xx"
+The ''MID'' statement allows to change a (dynamic) string containing a specified number 
+of characters from a string. It has three parameters.
+
+The first parameter is the string expression to modify. 
+
+The second parameter is the character position in string at which the part to 
+be taken begins. If start is greater than the number of characters in string, 
+''MID'' replace at the end of the string. 
+
+The third parameter is optional, and gives the number of characters to replace. 
+If omitted or if there are fewer than length characters in the text (including 
+the character at start), all characters from the start position to the end of the
+string are replaced.
+
+@italian
+
+L'istruzione ''MID'' consente di modificare una stringa (dinamica) contenente 
+un numero specificato di caratteri da una stringa. Ha tre parametri.
+
+Il primo parametro è l'espressione stringa da modificare.
+
+Il secondo parametro è la posizione del carattere nella stringa in cui inizia 
+la parte da riprendere. Se inizio è maggiore del numero di caratteri nella stringa, 
+''MID'' sostituisce alla fine della stringa.
+
+Il terzo parametro è facoltativo e fornisce il numero di caratteri da sostituire. 
+Se omesso o se nel testo sono presenti meno caratteri della lunghezza (incluso il
+carattere iniziale), tutti i caratteri dalla posizione iniziale alla fine della 
+stringa vengono sostituiti.
+
+@syntax MID( text, position[, len] ) = value
+
+@example  a$ = "PUNTO": MID( a$, 1, 3 ) = "PON": PRINT a$: REM prints "PONTO"
+
+@usedInExample strings_mid_01.bas
+
+@seeAlso LEFT (function)
+@seeAlso LEFT
+@seeAlso MID (function)
+@seeAlso RIGHT (function)
+@seeAlso RIGHT
+@seeAlso LEN
 
 @target all
+@verified
  </usermanual> */
 void variable_string_mid_assign( Environment * _environment, char * _string, char * _position, char * _len, char * _expression ) {
     Variable * string = variable_retrieve( _environment, _string );
@@ -6652,9 +6693,10 @@ This function converts the characters in a string into lower case (capital) lett
 @italian
 Questa funzione converte i caratteri presenti in una stringa in lettere minuscole.
 
-@syntax = LOWER( [text] )
+@syntax = LOWER( text )
 
 @example x = LOWER( "ugBASIC" )
+
 @usedInExample strings_cases_01.bas
 
 @target all
@@ -6885,9 +6927,11 @@ This function converts a number into hexadecimal.
 @italian
 Questa funzione converte un numero in formato esadecimale.
 
-@syntax = HEX( [number] )
+@syntax = HEX(number)
+@syntax = HEX(variable)
 
 @example x = HEX( 42 )
+@example PRINT HEX( y )
 
 @target all
  </usermanual> */
@@ -7048,17 +7092,18 @@ Variable * variable_string_space( Environment * _environment, char * _repetition
  * @return Variable* Result of flip
  */
 /* <usermanual>
-@keyword FLIP
+@keyword FLIP (function)
 
 @english
-This function will flip a given string, reversing the order of letters.
+The ''FLIP'' function  simply reverses the order of the characters held in the parameter.
 
 @italian
-Questa funzione inverte l'ordine delle lettere della stringa data in ingresso.
+La funzione ''FLIP'' inverte semplicemente l'ordine dei caratteri contenuti nel parametro.
 
-@syntax = FLIP( [string] )
+@syntax = FLIP( string )
 
 @example x = FLIP( "test" )
+
 @usedInExample strings_flip_01.bas
 
 @target all
@@ -7119,9 +7164,9 @@ Questa funzione crea una stringa che contiene un singolo carattere, generato da 
 codice ASCII. Da notare che, a seconda dell'hardware, solo alcuni caratteri sono 
 stampabili sullo schermo. Altri sono usati internamente come codici di controllo.
 
-@syntax = CHR( [ascii] )
+@syntax = CHR(value)
 
-@example x = CHR( 65 )
+@example x = CHR(65)
 @usedInExample strings_chr_01.bas
 
 @target all
@@ -7232,7 +7277,7 @@ This function returns the number of characters stored in a string.
 @italian
 Questa funzione restituisce il numero di caratteri memorizzato in una stringa.
 
-@syntax = LEN( [text] )
+@syntax = LEN( text )
 
 @example x = LEN( "TEST" )
 

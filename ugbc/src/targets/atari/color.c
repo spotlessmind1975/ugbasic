@@ -67,7 +67,7 @@ E' possibile impostare il numero direttamente su un valore compreso tra 0 e
 ''SCREEN SHADES''. Tipicamente, però, utilizziamo la funzione ''RGB'' che ci permette 
 di mescolare il gradiente ricavandolo dalla somma di tre semplici componenti.
 
-@syntax COLOR [index], [shade]
+@syntax COLOR index, shade
 
 @example COLOR 0, $fff
 

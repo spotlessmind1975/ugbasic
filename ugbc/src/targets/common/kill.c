@@ -48,12 +48,13 @@
 @keyword KILL
 
 @english
-This keyword will kill a (parallel) procedure. 
+This keyword will ''KILL'' a (parallel) procedure. 
 
 @italian
 Questa parola chiave termina una procedura (parallela).
 
-@syntax KILL [param]
+@syntax KILL value
+@syntax KILL expression
 
 @example KILL handleThread
 

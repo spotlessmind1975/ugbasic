@@ -45,32 +45,6 @@
  * @param _color 
  * @return Variable* 
  */
-/* <usermanual>
-@keyword PAPER$
-
-@english
-The ''PEN$'' function returns a special control sequence that changes
-the paper colour inside a string. This means that, whenever the string is 
-printed on the screen, the pre-set paper colour is automatically assigned 
-to it. The format of the string returned by ''PAPER$'' is not specific 
-for the target. 
-
-@italian
-La funzione ''PAPER$'' restituisce una speciale sequenza di controllo 
-che cambia il colore dello sfondo all'interno di una stringa. 
-Ciò significa che, ogni volta che la stringa viene stampata 
-sullo schermo, le viene automaticamente assegnato il colore 
-dello sfondo preimpostato. Il formato della stringa restituita da
-''PAPER$'' non è specifico per l'hardware
-
-@syntax = PAPER$([expression])
-
-@example PRINT PAPER$(WHITE)
-
-@UsedInExample texts_options_02.bas
-
-@target all
-</usermanual> */
 Variable * get_paper( Environment * _environment, char * _color ) {
     
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );

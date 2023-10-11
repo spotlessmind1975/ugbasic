@@ -112,7 +112,7 @@ prima di usarlo. Questo può essere inefficiente. Pertanto è possibile indicare
 di riferirsi effettivamente al valore. Per questo motivo questo operatore funziona solo 
 se utilizzato con un valore costante (es: un intero) o con il nome di una costante.
 
-@syntax = # [constant]
+@syntax = #constant
 
 @example fontSize = #constantSize
 @example fontSize = #42
@@ -921,10 +921,10 @@ simbolo del dollaro (''$''), per indicare che si vuole accedere a una variabile 
 tipo stringa. In tal caso, un ulteriore controllo di tipo sarà svolto in sede di 
 compilazione, per evitare di far riferimento a una variabile di tipo numerico.
 
-@syntax ... = [ [variable] ]
-@syntax [ [variable] ] = ...
-@syntax ... = [ [variable]$ ]
-@syntax [ [variable]$ ] = ...
+@syntax = [variable]
+@syntax [variable] = expression
+@syntax = [variable$]
+@syntax [variable$] = expression
 
 @example PUT IMAGE token AT [x],[y]
 @example [x] = [x] + 1
@@ -965,8 +965,8 @@ altro genera sempre una variabile temporanea, ragion per cui non è possibile mo
 direttamente il valore originale. Questo meccanismo, quindi, ha il solo scopo di garantire 
 che le conversioni avvengano sempre correttamente.
 
-@syntax ... = ( [type] ) [number]
-@syntax ... = ( [type] ) ( ... )
+@syntax ... = ( type ) #value
+@syntax ... = ( type ) (expression)
 
 @example y = (POSITION) 42
 @example x = 42: y = (POSITION) ( x )
@@ -1170,15 +1170,14 @@ nella costante. Tale intervallo viene definito con una modalità analoga agli in
 in matematica: usando la parentesi quadra si intende che gli estremi (minimo, massimo) 
 sono inclusi, mentre una parentesi tonda si intende che gli estremi sono esclusi.
 
-@syntax CONST [identifier] = [constant value]
-@syntax CONST POSITIVE [identifier] = [constant value]
-@syntax CONST [identifier] IN ([min],[max]) = [constant value]
-@syntax CONST [identifier] IN [[min],[max]) = [constant value]
-@syntax CONST [identifier] IN ([min],[max]] = [constant value]
-@syntax CONST [identifier] IN [[min],[max]] = [constant value]
+@syntax [POSITIVE] CONST identifier = value
+@syntax CONST identifier IN (min,max) = value
+@syntax CONST identifier IN [min,max) = value
+@syntax CONST identifier IN (min,max] = value
+@syntax CONST identifier IN [min,max] = value
 
 @example CONST x = 42
-@example CONST POSITIVE y = -42: ' this raises an error!
+@example POSITIVE CONST y = -42: ' this raises an error!
 @example CONST width IN (0,320] = 128
 
 @usedInExample contrib_sierpinski.bas
@@ -1482,7 +1481,8 @@ Il programmatore potrebbe digitare in modo errato un nome di variabile in una
 o più posizioni, il che causerebbe risultati imprevisti durante l'esecuzione 
 del programma.
 
-@syntax OPTION EXPLICT {[ON|OFF]}
+@syntax OPTION EXPLICT [ON]
+@syntax OPTION EXPLICT OFF
 
 @example OPTION EXPLICIT ON
 
@@ -1507,7 +1507,8 @@ Y è orientato verso l'alto (''UP'') oppure verso il basso (''DOWN'').
 Se non utilizzato, il sistema di riferimento per default viene posto in alto a 
 sinistra con l'asse delle Y verso il basso. 
 
-@syntax ORIGIN [x], [y] {UP|DOWN}
+@syntax ORIGIN x, y UP
+@syntax ORIGIN x, y [DOWN]
 
 @example ORIGIN 100, 100 UP
 
@@ -1536,7 +1537,7 @@ vicino. Di default, la risoluzione virtuale sarà impostata uguale alla risoluzi
 ''BITMAP ENABLE''. Quindi, dopo ''RESOLUTION'', le istruzioni grafiche utilizzeranno 
 questa risoluzione virtuale.
 
-@syntax RESOLUTION [x], [y]
+@syntax RESOLUTION width, height
 
 @example RESOLUTION 100, 100
 
@@ -1553,13 +1554,21 @@ a font.
 The command support a set of modern image format, like:
 
   * JPEG baseline & progressive
+
   * PNG 1/2/4/8/16-bit-per-channel
+
   * TGA
+
   * BMP (non-1bpp, non-RLE)
+
   * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
+
   * GIF
+
   * HDR (radiance rgbE format)
+
   * PIC (Softimage PIC)
+
   * PNM (PPM and PGM binary only)
 
 The image will be converted into a way that can be efficiently drawn
@@ -1575,15 +1584,23 @@ in una serie di caratteri (font).
 Il comando supporta una serie di formati moderni:
 
   * JPEG baseline & progressive
-  * PNG 1/2/4/8/16-bit-per-canale
-  * TGA
-  * BMP (non-1bpp, non-RLE)
-  * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
-  * GIF
-  * HDR (formato radiance rgbE)
-  * PIC (Softimage PIC)
-  * PNM (solo formato binario PPM e PGM)
 
+  * PNG 1/2/4/8/16-bit-per-canale
+
+  * TGA
+
+  * BMP (non-1bpp, non-RLE)
+
+  * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
+
+  * GIF
+
+  * HDR (formato radiance rgbE)
+
+  * PIC (Softimage PIC)
+
+  * PNM (solo formato binario PPM e PGM)
+  
 L'immagine verrà convertita in un modo che possa essere disegnata in modo efficiente
 sullo schermo. Potrebbe essere convertita in una tavolozza indicizzata, e potrebbe essere
 anche ridimensionata.
@@ -1591,7 +1608,7 @@ anche ridimensionata.
 E' inoltre possibile indicare l'indice da cui iniziare a caricare i vari caratteri. 
 L'indice non è il codice ASCII ma lo screen code.
 
-@syntax FONT LOAD [filename] TO [index]
+@syntax FONT LOAD filename [TO index]
 
 @example FONT LOAD "digit0.png" TO 48
 
@@ -1612,7 +1629,7 @@ recepiti dal sistema di input in ripetizione, con il comando INPUT oppure INKEY.
 dipende dal target, con un valore minimo di 0 (massima velocità) a un valore 
 massimo di 254 (minima velocità).
 
-@syntax DEFINE KEYBOARD RATE [rate]
+@syntax DEFINE KEYBOARD RATE value
 
 @example DEFINE KEYBOARD RATE 123
 
@@ -1644,7 +1661,7 @@ prima di iniziare la ripetizione dei caratteri  dal sistema di input, con il
 comando INPUT oppure INKEY. Il ritardo dipende dal target, con un valore minimo 
 di 0 (nessun ritardo) a un valore massimo di 255 (massimo ritardo).
 
-@syntax DEFINE KEYBOARD DELAY [delay]
+@syntax DEFINE KEYBOARD DELAY value
 
 @example DEFINE KEYBOARD DELAY 50
 
@@ -1654,22 +1671,6 @@ di 0 (nessun ritardo) a un valore massimo di 255 (massimo ritardo).
 @target c128z
 @target cpc
 @target msx1
-</usermanual> */
-/* <usermanual>
-@keyword PEEK
-
-@english
-Retrieve a byte from memory, and returns it.
-
-@italian
-Recupera un byte dalla memoria e lo restituisce.
-
-@syntax = PEEK( [expression] )
-
-@example memory = PEEK( location )
-
-@target all
-
 </usermanual> */
 
 /* <usermanual>

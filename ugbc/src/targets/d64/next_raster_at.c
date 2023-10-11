@@ -52,8 +52,6 @@
  */
 /* <usermanual>
 @keyword NEXT RASTER AT
-
-@target d64
 </usermanual> */
 void next_raster_at_with( Environment * _environment, int _position, char * _label ) {
 

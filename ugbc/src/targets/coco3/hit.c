@@ -53,8 +53,6 @@
  */
 /* <usermanual>
 @keyword HIT
-
-@target coco3
 </usermanual> */
 Variable * hit_to( Environment * _environment, int _sprite ) {
 

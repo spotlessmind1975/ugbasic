@@ -64,8 +64,8 @@ suppletiva nel programma compilato. Questo comando è inteso per tutti quei coma
 che hanno bisogno di una immagine per poter funzionare, ma si vuole sfruttare una 
 risorsa grafica già caricata e ottimizzata.
 
-@syntax = IMAGE( [images] FRAME [x] )
-@syntax = IMAGE( [sequence] SEQUENCE [x] FRAME [y] )
+@syntax = IMAGE( resource FRAME num )
+@syntax = IMAGE( resource SEQUENCE seq FRAME num )
 
 @example starship = IMAGE( LOAD IMAGES(("tiles.png") FRAME 1 )
 @example starship = IMAGE( LOAD SEQUENCE(("tiles.png") SEQUENCE 1 FRAME 2 )

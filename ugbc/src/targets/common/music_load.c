@@ -50,10 +50,19 @@
 
 @english
 
+The ''LOAD MUSIC'' command allows you to load a music file from the file system 
+of the host system and use it, as music, directly in the program. Loading occurs 
+at compile time: there is no access to the target system's file system. If multiple 
+uploads are made to the same file, a single buffer will still be generated. 
+
+Since it is possible to upload only one file of the same type at a time, it is necessary 
+to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also 
+the ''AS'' syntax, which allows you to load the same file several times but with different names. 
+
 @italian
 
-@syntax = LOAD MUSIC([filename])
-@syntax = LOAD MUSIC([filename] AS [alias])
+@syntax = LOAD MUSIC( filename )
+@syntax = LOAD MUSIC( filename AS alias )
 
 @example fugue = LOAD MUSIC("fugue.imf")
 @example fugueAnotherCopy = LOAD MUSIC("fugue.imf" as "fugue2")

@@ -45,6 +45,7 @@
  */
 /* <usermanual>
 @keyword EVERY OFF
+@target d64
 </usermanual> */
 void every_off( Environment * _environment ) {
    

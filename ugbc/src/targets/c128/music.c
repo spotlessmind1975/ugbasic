@@ -51,9 +51,30 @@
 
 @english
 
+The ''MUSIC'' command starts a piece of music from the music variable. This
+music will be played independently of your program, without affecting it in the
+slightest.
+
+Normally, it's possible to store several complete arrangements.
+Each composition is assigned its own individual music variable. 
+
+The music system is intelligent, and will automatically suspend your music for the
+duration of any subsequent sound effects on the current channel. When the sound has
+finished, your tune will be restarted from its previous position.
+
 @italian
 
-@syntax MUSIC [music]
+Il comando ''MUSIC'' avvia un brano musicale dalla variabile music. Questa musica 
+verrà riprodotta indipendentemente dal tuo programma, senza influenzarlo minimamente.
+
+Normalmente è possibile memorizzare diversi arrangiamenti completi. Ad ogni composizione 
+viene assegnata la propria variabile musicale individuale.
+
+Il sistema musicale è intelligente e sospenderà automaticamente la musica per la 
+durata di eventuali effetti sonori successivi sul canale corrente. Una volta terminato 
+il suono, la melodia verrà riavviata dalla posizione precedente.
+
+@syntax MUSIC music
 
 @example MUSIC fugue
 

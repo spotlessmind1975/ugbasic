@@ -68,7 +68,7 @@ dal comando ''VOICES''/''CHANNELS''). Poi è possibile omettere la durata, e in 
 continuerà ad essere suonato mentre viene eseguita l'istruzione successiva. La durata è
 espressa in millisecondi.
 
-@syntax PLAY #[note] {, #[duration] {ON #[channels]}}
+@syntax PLAY #note[, #duration] [ON #channels]
 
 @example PLAY #32
 @example PLAY #24, #250
@@ -100,7 +100,7 @@ void play( Environment * _environment, int _note, int _delay, int _channels ) {
 /* <usermanual>
 @keyword PLAY
 
-@syntax PLAY [note] {, [duration] {ON [channels]}}
+@syntax PLAY note[, duration] [ON channels]
 
 @example PLAY laDiesis
 @example PLAY solMaggiore, breve

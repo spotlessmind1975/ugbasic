@@ -45,10 +45,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword RANDOMIZE
-@target atari
-</usermanual> */
 void randomize( Environment * _environment, char * _ext_seed ) {
 
     Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );

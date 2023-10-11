@@ -52,7 +52,7 @@ Change the border color.
 @italian
 Modifica il colore del bordo (dello schermo).
 
-@syntax COLOR BORDER # [integer]
+@syntax COLOR BORDER #value
 
 @example COLOR BORDER #$1
 @usedInExample control_uncond_jumps_01.bas
@@ -82,7 +82,7 @@ void color_border( Environment * _environment, int _color ) {
 /* <usermanual>
 @keyword COLOR BORDER
 
-@syntax COLOR BORDER [expression]
+@syntax COLOR BORDER expr
 
 @example COLOR BORDER BLACK
 </usermanual> */

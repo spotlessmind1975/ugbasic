@@ -56,7 +56,7 @@
  * @param _expression Expression with the true / false condition
  */
 /* <usermanual>
-@keyword IF...THEN...ELSE...ENDIF
+@keyword IF...THEN...ELSE...ELSEIF...ENDIF
 
 @english
 Implement a conditional jump. This implementation assumes that
@@ -74,8 +74,19 @@ salta direttamente all'istruzione che segue il corrispondente
 ''ENDIF'' (oppure ''ELSE'', se presente). In caso contrario, 
 verrà eseguito il codice seguente (fino a ''ENDIF'').
 
-@syntax IF [ expression ] THEN : ... : { ELSE : ... : } ENDIF
-@syntax IF [ expression ] THEN : ... : { ELSEIF : ... : { ELSEIF : ... : } } ELSE : ... : ENDIF
+@syntax IF expression THEN
+@syntax    ...
+@syntax ELSE
+@syntax    ...
+@syntax ENDIF
+@syntax IF expression THEN
+@syntax    ...
+@syntax ELSEIF expression2 THEN
+@syntax    ...
+@syntax    ...
+@syntax ELSE
+@syntax    ...
+@syntax ENDIF
 
 @example IF ( x == 42 ) THEN : x = 0 : ELSE : x = 1 : ENDIF
 @example IF ( x == 42 ) THEN : x = 0 : ELSE IF y == 0 THEN : y = 42 : ELSE : x = 1 : ENDIF

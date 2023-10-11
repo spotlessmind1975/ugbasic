@@ -67,7 +67,7 @@ Imposta l'indirizzo di partenza, in memoria, per la mappa dei colori. Il paramet
 viene decodificato e declinato in base ai limiti hardware. Quindi non è detto
 che sia impostato esattamente l'indirizzo specificato. 
 
-@syntax COLORMAP AT # [integer]
+@syntax COLORMAP AT #address
 
 @example COLORMAP AT #$B800
 
@@ -106,7 +106,7 @@ void colormap_at( Environment * _environment, int _address ) {
 /* <usermanual>
 @keyword COLORMAP AT
 
-@syntax COLORMAP AT [expression]
+@syntax COLORMAP AT address
 
 @example COLORMAP AT newAddress
 </usermanual> */

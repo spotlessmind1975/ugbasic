@@ -53,9 +53,15 @@ extern char DATATYPE_AS_STRING[][16];
 
 @english
 
+The command ''PUT TILEMAP'' can be used to draw a map on the screen. Note how the same map draws the
+same way on different screens. The map is however within the available screen size. If the 
+map is bigger than the screen, the comamnd only draws a part of the map. To scroll the map you 
+can use the ''FROM'' parameter with the offsets (in terms of tiles) starting from which the map will 
+have to be drawn on the screen.
+
 @italian
 
-@syntax PUT TILEMAP [tilemap]
+@syntax PUT TILEMAP resource [ FROM x, y ]
 
 @example PUT TILEMAP map
 

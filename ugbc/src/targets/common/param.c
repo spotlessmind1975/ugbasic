@@ -49,17 +49,17 @@
 @keyword PARAM
 
 @english
-The PARAM function takes the result of an expression in an ''END PROC'' statement
+The PARAM function takes the result of an expression in an ''END PROC'' / ''END PROCEDURE'' statement
 (or from a ''RETURN'' statement), and returns it. If the variable you are interested 
 in is a string variable, the ''$'' character can be used (but it is not mandatory). 
 
 @italian
-La funzione ''PARAM'' recupera il risultato di un'espressione in un'istruzione ''END PROC''
+La funzione ''PARAM'' recupera il risultato di un'espressione in un'istruzione ''END PROC'' / ''END PROCEDURE''
 (o da un'istruzione ''RETURN'') e la restituisce. Se la variabile di interesse
 è una stringa, è possibile utilizzare il carattere ''$'' (ma non è obbligatorio).
 
-@syntax = PARAM([name])
-@syntax = PARAM$([name])
+@syntax = PARAM(name)
+@syntax = PARAM$(name)
 
 @example CALL factorial
 @example x = PARAM(factorial)

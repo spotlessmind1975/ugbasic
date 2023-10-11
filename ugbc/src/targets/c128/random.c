@@ -65,40 +65,13 @@ This function allows you to calculate a random number, in the range
 that can be represented by the type of data indicated as a parameter,
 or as data type conversion.
 
-The supported data types are as follows:
-
-^ DATA TYPE       ^ MINIMUM         ^ MAXIMUM         ^
-| ''BYTE''        | 0               | 255             |
-| ''SIGNED BYTE'' | -127            | 127             |
-| ''COLOR''       | 0               | ''COLOR COUNT'' |
-| ''WORD''        | 0               | 65.535          |
-| ''SIGNED WORD'' | -32.767         | 32.767          |
-| ''ADDRESS''     | 0               | 65.535          |
-| ''POSITION''    | 0               | 65.535          |
-| ''DWORD''       | 0               | 4.294.967.295   |
-| ''SIGNED DWORD''| -2.147.483.647  | 2.147.483.647   |
-
 @italian
 Questa funzione permette di calcolare un numero casuale, compreso tra 0 e 
 il massimo numero rappresentabile dal tipo di dato indicato come parametro,
 or come conversione di tipo.
 
-I tipi di dato supportati sono:
-
-^ DATA TYPE       ^ MINIMUM         ^ MAXIMUM         ^
-| ''BYTE''        | 0               | 255             |
-| ''SIGNED BYTE'' | -127            | 127             |
-| ''COLOR''       | 0               | ''COLOR COUNT'' |
-| ''WORD''        | 0               | 65.535          |
-| ''SIGNED WORD'' | -32.767         | 32.767          |
-| ''ADDRESS''     | 0               | 65.535          |
-| ''POSITION''    | 0               | 65.535          |
-| ''DWORD''       | 0               | 4.294.967.295   |
-| ''SIGNED DWORD''| -2.147.483.647  | 2.147.483.647   |
-
-
-@syntax = RANDOM [datatype]
-@syntax = ([datatype]) RANDOM
+@syntax = RANDOM type
+@syntax = (type) RANDOM
 
 @example randomScore = RANDOM BYTE
 @example randomColor = (COLOR) RANDOM

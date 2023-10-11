@@ -82,12 +82,32 @@ riga successiva.
 @keyword CENTER
 
 @english
-Alias for ''CENTER''.
+
+The ''CENTER'' (or ''CENTRE'') command can be used to position text in the 
+CENTER of the current line, and to save you the effort of calculating the text 
+coordinates in order to achieve this. The CENTER command takes a string, a variable
+or a string expression, and it prints it in the middle of the line currently occupied 
+by the cursor. If the statement is followed by a semicolon, the cursor 
+will remain on the same line. Otherwise, it will move to the next line.
 
 @italian
-Alias per ''CENTRE''.
+Il comando ''CENTER'' (o ''CENTRE'') può essere utilizzato per posizionare
+il testo al centro della linea corrente dello schermo e per risparmiare lo sforzo di 
+calcolare le coordinate del testo per ottenere ciò. Il comando ''CENTER''
+prende una stringa di caratteri e la stampa al centro della riga 
+attualmente occupata dal cursore. Se l'istruzione è seguita dal punto e virgola, 
+il cursore rimarrà sulla medesima riga. Altrimenti, si sposterà nella 
+riga successiva.
 
-@seeAlso CENTRE
+@syntax CENTER expression [;]
+
+@example CENTER "HELLO!"
+@example CENTER "HELLO!";
+
+@usedInExample texts_position_07.bas
+@usedInExample contrib_joystick.bas
+@usedInExample contrib_What_a_wonderful_world.bas
+@usedInExample screens_resolution_02.bas
 
 @target all
 @verified

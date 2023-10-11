@@ -56,7 +56,7 @@ allows it. If it wasn't allowed, the statement will do nothing.
 Questo comando permette di inviare un byte a una porta di I/O, sempre che ciò sia consentito 
 dall'hardware sottostante. Se non fosse consentito, l'istruzione non farà nulla. 
 
-@syntax OUT [port], [value]
+@syntax OUT port, value
 
 @example OUT &HBC00, 0
 

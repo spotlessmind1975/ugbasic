@@ -45,9 +45,7 @@
  */
 /* <usermanual>
 @keyword EVERY OFF
-
 @target plus4
-
 </usermanual> */
 void every_off( Environment * _environment ) {
    

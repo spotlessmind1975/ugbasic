@@ -54,11 +54,6 @@
  * @param _y Ordinate of the point
  * @throw EXIT_FAILURE "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE"
  */
-/* <usermanual>
-@keyword POINT AT
-
-@target zx
-</usermanual> */
 void point_at( Environment * _environment, int _x, int _y ) {
 
     outline2("; POINT AT (%d,%d)", _x, _y);

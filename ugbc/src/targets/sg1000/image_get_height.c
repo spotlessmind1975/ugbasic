@@ -44,22 +44,7 @@
  * @param _environment Current calling environment
  * @param Image to measure.
  */
-/* <usermanual>
-@keyword IMAGE HEIGHT
 
-@english
-The ''IMAGE HEIGHT'' function will allow you to obtain the height of an
-image (in pixels).
-
-@italian
-La funzione ''IMAGE HEIGHT'' permette di ottenere l'altezza di una immagine (in pixel).
-
-@syntax = IMAGE HEIGHT([image])
-
-@example starshipHeight = IMAGE HEIGHT( LOAD IMAGE("starship.png") )
-
-@target all
-</usermanual> */
 Variable * image_get_height( Environment * _environment, char * _image ) {
 
     Variable * image = variable_retrieve( _environment, _image );

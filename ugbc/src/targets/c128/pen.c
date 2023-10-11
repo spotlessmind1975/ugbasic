@@ -62,10 +62,11 @@ L'impostazione predefinita del colore della penna è il numero di indice
 da una delle scelte fino a "PEN COLORS", a seconda della modalità 
 grafica corrente.
 
-@syntax PEN [expression]
+@syntax PEN value
+@syntax PEN expression
 
 @example PEN 4
-@example PEN (esempio)
+@example PEN esempio
 
 @UsedInExample texts_options_01.bas
 @UsedInExample texts_options_02.bas

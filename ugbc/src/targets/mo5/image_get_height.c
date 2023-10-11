@@ -44,11 +44,6 @@
  * @param _environment Current calling environment
  * @param Image to measure.
  */
-/* <usermanual>
-@keyword IMAGE HEIGHT
-
-@target all
-</usermanual> */
 Variable * image_get_height( Environment * _environment, char * _image ) {
 
     Variable * image = variable_retrieve( _environment, _image );

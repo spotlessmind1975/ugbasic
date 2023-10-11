@@ -45,7 +45,7 @@
  * @return Shade of the common color to set
  */
 /* <usermanual>
-@keyword COLOR
+@keyword COLOR (function)
 
 @target plus4
 </usermanual> */

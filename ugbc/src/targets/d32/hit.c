@@ -53,8 +53,6 @@
  */
 /* <usermanual>
 @keyword HIT
-
-@target d32
 </usermanual> */
 Variable * hit_to( Environment * _environment, int _sprite ) {
 

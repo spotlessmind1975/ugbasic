@@ -54,7 +54,7 @@ Store a byte to memory.
 @italian
 Memorizza un byte nella memoria.
 
-@syntax POKE [address], [value]
+@syntax POKE address, value
 
 @example POKE 32768, 2
 

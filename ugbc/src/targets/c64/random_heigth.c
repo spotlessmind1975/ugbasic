@@ -42,21 +42,6 @@
  * @param _environment Current calling environment
  * @return Variable* The random value calculated
  */
-/* <usermanual>
-@keyword RANDOM HEIGHT
-
-@english
-Calculate a random height.
-
-@italian
-Calcola un valore di altezza casuale.
-
-@syntax = RANDOM HEIGHT
-
-@example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
-
-@target c64
-</usermanual> */
 Variable * random_height( Environment * _environment ) {
 
     Variable * result = random_value( _environment, VT_POSITION );

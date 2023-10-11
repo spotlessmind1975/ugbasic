@@ -66,9 +66,10 @@ Dopo essere entrati nella procedura, il sistema disabilita la chiamata
 periodica. Ciò significa che, per richiamare questa funzione in modo continuo,
 è necessario invocare il comando ''EVERY ON'' prima dell'istruzione ''RETURN'' finale.
 
-@syntax EVERY [timing] TICKS CALL [identifier]
+@syntax EVERY value TICKS CALL identifier
 
 @example EVERY 50 TICKS CALL changeBorderColor
+
 @usedInExample control_periodic_02.bas
 
 @target coleco

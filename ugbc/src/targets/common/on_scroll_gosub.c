@@ -48,7 +48,7 @@
  * @param _expression Expression with the true / false condition
  */
 /* <usermanual>
-@keyword ON SCROLL..GOSUB
+@keyword ON SCROLL...GOSUB
 
 @english
 This command is used to force a unconditional jump with returning to a pre-defined position 
@@ -59,7 +59,10 @@ Questo comando viene utilizzato per forzare un salto incondizionato a una
 posizione predefinita (con ritorno), laddove lo schermo sia fatto scorrere
 da una intera riga o colonna.
 
-@syntax ON SCROLL {UP ROW|DOWN ROW|LEFT COLUMN|RIGHT COLUMN} GOSUB [label]
+@syntax ON SCROLL UP ROW GOSUB label
+@syntax ON SCROLL DOWN ROW GOSUB label
+@syntax ON SCROLL LEFT COLUMN GOSUB label
+@syntax ON SCROLL RIGHT COLUMN GOSUB label
 
 @example ON SCROLL UP ROW GOSUB scrolledAway
 

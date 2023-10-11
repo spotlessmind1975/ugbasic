@@ -78,7 +78,8 @@ successivo", e il carattere ''?''" significa "abbinalo a qualsiasi
 carattere singolo nel nome della variabile". Solo le stringhe possono 
 essere utilizzate con questa tecnica.
 
-@syntax GLOBAL [expression]{, [expression]{,[expression], ...}}
+@syntax GLOBAL var1[, var2[, ...] ]
+@syntax GLOBAL "string1"[, "string2"[, ...] ]
 
 @example GLOBAL test
 @example GLOBAL "a*", b, "*c"

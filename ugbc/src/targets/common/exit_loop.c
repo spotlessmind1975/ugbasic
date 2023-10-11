@@ -68,8 +68,9 @@ Se usato da solo, ''EXIT'' uscità solo dal loop più interno.
 Includendo un numero dopo ''EXIT'', si uscirà da quel numero di 
 cicli annidati.
 
-@syntax EXIT { [number] }
+@syntax EXIT [number]
 
+@example EXIT
 @example EXIT 2
 
 @usedInExample control_loops_02.bas

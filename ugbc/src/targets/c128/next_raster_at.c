@@ -64,7 +64,7 @@ ed esegui il codice in corrispondenza dell'etichetta data. Nel
 frattempo, l'esecuzione del codice principale riprenderà da dove 
 era stata interrotta.
 
-@syntax NEXT RASTER AT # [integer] WITH [label]
+@syntax NEXT RASTER AT #line WITH label
 
 @example NEXT RASTER AT #$42 WITH myRasterRoutine
 
@@ -96,7 +96,7 @@ void next_raster_at_with( Environment * _environment, int _position, char * _lab
 /* <usermanual>
 @keyword NEXT RASTER AT
 
-@syntax NEXT RASTER AT [expression] WITH [label]
+@syntax NEXT RASTER AT expression WITH label
 
 @example NEXT RASTER AT newRaterLine WITH myRasterRoutine
 </usermanual> */

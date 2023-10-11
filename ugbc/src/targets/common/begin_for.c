@@ -60,6 +60,11 @@ instructions for a specific number of times, governed by an index which
 counts the number of times the loop is repeated. Once inside the loop, 
 this index can be read by the program as if it is a normal variable.
 
+Normally, the index counter is increased by 1 unit at every turn of a 
+''FOR...NEXT'' loop. When the current value exceeds that of the last 
+number specified, the loop is terminated. ''STEP'' is used to 
+change the size of increase in the index value.
+
 @italian
 Questa istruzione implementa un ciclo con un numero di ripetizioni indicato
 esplicitamente. Ogni istruzione ''FOR'' deve essere abbinata a una singola
@@ -69,9 +74,20 @@ un numero specifico di volte, governato da un indice che conta il numero
 di volte che il ciclo viene ripetuto. Una volta all'interno del ciclo,
 questo indice può essere letto dal programma come se fosse una normale variabile.
 
-@syntax FOR [identifier] = [expression] TO [expression] : ... : NEXT
+Normalmente, il contatore dell'indice viene incrementato di uno ad ogni 
+ciclo. Quando il valore attuale supera quello dell'ultimo numero specificato, 
+il ciclo si intende terminato. L'istruzione ''STEP'' può essere sfruttata
+per modificare la dimensione dell'incremento del valore dell'indice.
 
-@example i = 0 : FOR i = 1 to 100: PRINT i : NEXT
+@syntax FOR var = start TO end [ STEP increment ]
+@syntax    ...
+@syntax NEXT
+
+@example i = 0
+@example FOR i = 1 to 100 STEP 2
+@example    PRINT i
+@example NEXT
+
 @usedInExample control_controlled_01.bas
 @usedInExample control_controlled_02.bas
 

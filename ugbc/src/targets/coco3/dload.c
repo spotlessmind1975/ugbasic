@@ -45,9 +45,6 @@
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer
  */
-/* <usermanual>
-@keyword DLOAD
-</usermanual> */
 Variable * dload( Environment * _environment, char * _target_name ) {
 
     if ( _environment->tenLinerRulesEnforced ) {

@@ -64,8 +64,7 @@ l'ascissa e/o l'ordinata viene omessa, sarà utilizzata l'ultima posizione grafi
 disegnata. In più, anche il colore può essere omesso e, nel caso, sarà utilizzato 
 l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
 
-@syntax CIRCLE { [x] },{ [y] },[r],[c] 
-@syntax CIRCLE { [x] },{ [y] },[r] 
+@syntax CIRCLE [x], [y], r[, c]
 
 @example CIRCLE 100,100,42
 @example CIRCLE ,,21,RED

@@ -47,9 +47,6 @@
  * @param _environment Current calling environment
  * @param _expression Expression with the true / false condition
  */
-/* <usermanual>
-@keyword IF...THEN...ELSE...ENDIF
-</usermanual> */
 void else_if_then_label( Environment * _environment ) {
 
     Conditional * conditional = _environment->conditionals;
@@ -80,9 +77,6 @@ void else_if_then_label( Environment * _environment ) {
  * @param _environment Current calling environment
  * @param _expression Expression with the true / false condition
  */
-/* <usermanual>
-@keyword IF...THEN...ELSE...ENDIF
-</usermanual> */
 void else_if_then( Environment * _environment, char * _expression ) {
 
     

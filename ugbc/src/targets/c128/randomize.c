@@ -54,7 +54,7 @@ Initialize the random seed.
 @italian
 Inizializza il seme casuale.
 
-@syntax RANDOMIZE {[seed]}
+@syntax RANDOMIZE seed
 
 @example RANDOMIZE
 

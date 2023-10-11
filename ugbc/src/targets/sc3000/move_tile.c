@@ -51,7 +51,7 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _y Ordinate of the point
  */
 /* <usermanual>
-@keyword MOVE TILE
+keyword MOVE TILE
 </usermanual> */
 void move_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 

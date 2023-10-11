@@ -98,7 +98,7 @@ fatta scorrere verso il basso.
 La schermata corrente viene automaticamente trattata come una finestra, quindi non c'è
 bisogno di "aprirne" una.
 
-@syntax LOCATE {[x]},{[y]}
+@syntax LOCATE [x],[y]
 
 @example LOCATE 15,0
 @example LOCATE ,20

@@ -62,7 +62,7 @@ un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
 modalità grafica in uso, esattamente come ''PEN''. Il colore
 predefinito è ''DEFAULT PAPER''.
 
-@syntax PAPER [expression]
+@syntax PAPER expression
 
 @example PAPER 4
 @example PAPER (esempio)

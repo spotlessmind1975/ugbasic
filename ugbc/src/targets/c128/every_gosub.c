@@ -75,7 +75,7 @@ Dopo essere entrati nella subroutine, il sistema disabilita la chiamata
 periodica. Ciò significa che, per richiamare questa funzione in modo continuo,
 è necessario invocare il comando ''EVERY ON'' prima dell'istruzione ''RETURN'' finale.
 
-@syntax EVERY [timing] TICKS GOSUB [identifier]
+@syntax EVERY value TICKS GOSUB identifier
 
 @example EVERY 50 TICKS GOSUB changeBorderColor
 @usedInExample control_periodic_01.bas

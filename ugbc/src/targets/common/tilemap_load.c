@@ -53,9 +53,15 @@
 
 @english
 
+The ''LOAD TILEMAP'' command allow to load a TILEMAP datatype that will represent a map
+of those drawn by means of Tiled. 
+
 @italian
 
-@syntax = LOAD TILEMAP([filename])
+Il comando ''LOAD TILEMAP'' permette di caricare un tipo di dati TILEMAP che rappresenterà 
+una mappa di quelle disegnate tramite Tiled.
+
+@syntax = LOAD TILEMAP(filename)
 
 @example x = LOAD TILEMAP("dungeon.tmx")
 

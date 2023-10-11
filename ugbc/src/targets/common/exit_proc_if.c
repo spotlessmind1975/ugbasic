@@ -59,9 +59,32 @@ Questa istruzione forza il programma ad abbandonare una procedura
 in base a delle condizioni: tale istruzione uscirà
 (''EXIT'') solo se (''IF'') il risultato viene valutato come vero.
 
-@syntax EXIT PROC IF [expression]
+@syntax EXIT PROC IF expression
 
-@example EXIT PROC IF lifes == 0
+@example EXIT PROC IF lifes = 0
+
+@usedInExample control_loops_02.bas
+@usedInExample control_loops_03.bas
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword EXIT PROCEDURE IF
+
+@english
+The instruction forces the program to leave a procedure under a specific 
+set of conditions. The ''EXIT'' will only be performed ''IF'' the
+result is found to true. 
+
+@italian
+Questa istruzione forza il programma ad abbandonare una procedura
+in base a delle condizioni: tale istruzione uscirà
+(''EXIT'') solo se (''IF'') il risultato viene valutato come vero.
+
+@syntax EXIT PROCEDURE IF expression
+
+@example EXIT PROCEDURE IF lifes = 0
 
 @usedInExample control_loops_02.bas
 @usedInExample control_loops_03.bas

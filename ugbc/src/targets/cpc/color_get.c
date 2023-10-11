@@ -45,7 +45,7 @@
  * @return Shade of the common color to set
  */
 /* <usermanual>
-@keyword COLOR
+@keyword COLOR (function)
 
 </usermanual> */
 Variable * color_get_vars( Environment * _environment, char * _index ) {

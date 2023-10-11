@@ -59,7 +59,7 @@ subsequently defined, with the syntax of the labels.
 Esegue un salto incondizionato a un'etichetta, definita in precedenza o
 successivamente.
 
-@syntax GOTO [label]
+@syntax GOTO label
 
 @example GOTO nuovaEtichetta
 @usedInExample control_uncond_jumps_01.bas
@@ -92,7 +92,7 @@ void goto_label( Environment * _environment, char * _label ) {
 /* <usermanual>
 @keyword GOTO
 
-@syntax GOTO [number]
+@syntax GOTO number
 
 @example GOTO 42
 </usermanual> */

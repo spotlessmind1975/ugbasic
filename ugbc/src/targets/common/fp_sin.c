@@ -71,7 +71,7 @@ Le funzioni sinusoidali sono comunemente utilizzate per modellare fenomeni perio
 onde sonore e luminose, la posizione e la velocità degli oscillatori armonici, l'intensità 
 della luce solare e la durata del giorno e le variazioni di temperatura media durante tutto l'anno.
 
-@syntax = SIN([angle])
+@syntax = SIN(angle)
 
 @example x = SIN(PI/2)
 

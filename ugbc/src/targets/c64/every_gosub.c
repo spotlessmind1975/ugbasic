@@ -50,36 +50,6 @@
 /* <usermanual>
 @keyword EVERY...GOSUB
 
-@english
-Define the call of a sub-routine at regular intervals, without 
-interfering with the main program. You must specifying the length of time 
-between every call, measured in TICKS. 
-
-Note that the subroutine execution 
-time should be less than the interval time, or the main program timings 
-will be affected. After a subroutine has been entered, the 
-''EVERY'' system is automatically disabled. This means that, 
-in order to call this feature continuously, an ''EVERY ON'' command 
-must be inserted into a subroutine before the final RETURN statement.
-
-@italian
-Definisce una chiamata a una sottoprogramma a intervalli regolari, senza
-interferire con il programma principale. È necessario specificare il
-periodo di tempo tra ogni chiamata, misurata in TICKS.
-
-Si fa notare che la durata dell'esecuzione della subroutine dovrebbe essere 
-inferiore al tempo dell'intervallo indicato, altrimenti le temporizzazioni 
-del programma principale ne risentiranno. 
-
-Dopo essere entrati nella subroutine, il sistema disabilita la chiamata
-periodica. Ciò significa che, per richiamare questa funzione in modo continuo,
-è necessario invocare il comando ''EVERY ON'' prima dell'istruzione ''RETURN'' finale.
-
-@syntax EVERY [timing] TICKS GOSUB [identifier]
-
-@example EVERY 50 TICKS GOSUB changeBorderColor
-@usedInExample control_periodic_01.bas
-
 @target c64
 </usermanual> */
 void every_ticks_gosub( Environment * _environment, char * _timing, char * _label ) {

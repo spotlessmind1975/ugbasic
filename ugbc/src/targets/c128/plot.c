@@ -67,7 +67,7 @@ il colore di default è quello impostato con l'ultimo comando ''INK'' / ''PEN''.
 E' possibile omettere una o entrambe le coordinate, e ugBASIC utilizzerà l'ultima 
 usata, che viene stoccata nelle variabili ''XGR'' e ''YGR''.
 
-@syntax PLOT [x], [y] {, [color]}
+@syntax PLOT [x], [y][, color
 
 @example PLOT 42, 42
 @example PLOT 100, 100, RED

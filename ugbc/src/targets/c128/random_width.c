@@ -59,7 +59,7 @@ Calcola un valore di larghezza casuale.
 
 @example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
 
-@target c128
+@target all
 </usermanual> */
 Variable * random_width( Environment * _environment ) {
  

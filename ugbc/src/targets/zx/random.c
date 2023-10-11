@@ -57,11 +57,6 @@
  * @param _type Type of random number to generate
  * @return Variable* The random value calculated
  */
-/* <usermanual>
-@keyword RANDOM
-
-@target zx
-</usermanual> */
 Variable * random_value( Environment * _environment, VariableType _type ) {
 
     Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );

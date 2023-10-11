@@ -45,32 +45,6 @@
  * @param _color 
  * @return Variable* 
  */
-/* <usermanual>
-@keyword PEN$
-
-@english
-The ''PEN$'' function returns a special control sequence that changes
-the pen colour inside a string. This means that, whenever the string is 
-printed on the screen, the pre-set pen colour is automatically assigned 
-to it. The format of the string returned by ''PEN$'' is not specific 
-for the target. 
-
-@italian
-La funzione ''PEN$'' restituisce una speciale sequenza di controllo 
-che cambia il colore della penna all'interno di una stringa. 
-Ciò significa che, ogni volta che la stringa viene stampata 
-sullo schermo, le viene automaticamente assegnato il colore 
-della penna preimpostato. Il formato della stringa restituita da
-''PEN$'' non è specifico per l'hardware
-
-@syntax = PEN$([expression])
-
-@example PRINT PEN$(BLACK)
-
-@UsedInExample texts_options_02.bas
-
-@target all
-</usermanual> */
 Variable * get_pen( Environment * _environment, char * _color ) {
     
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );

@@ -46,29 +46,7 @@
  */
 /* <usermanual>
 @keyword COLOR BACK
-
-@english
-Fills the screen with the indicated color. The modified color is the background color,
-which is set as if the ''PAPER'' command had been issued. Depending on the active mode 
-(''TILEMAP'' or ''BITMAP'') the behavior of the filling can be different, depending 
-on the target computer.
-
-@italian
-Riempie lo schermo con il colore indicato. Il colore modificato è quello di sfondo, che
-viene impostato come se si fosse dato il comando ''PAPER''. A seconda della modalità attiva
-(''TILEMAP'' o ''BITMAP'') il comportamento del riempimento può essere diverso, 
-a seconda del computer target.
-
-@syntax COLOR BACK [color]
-
-@example COLOR BACK RED
-@example COLOR BACK WHITE
-
-@seeAlso COLOR BACKGROUND
-@usedInExample graphics_color_01.bas
-
 @target vic20
-
 </usermanual> */
 void back( Environment * _environment, char * _color ) {
 

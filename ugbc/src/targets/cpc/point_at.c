@@ -54,11 +54,6 @@
  * @param _y Ordinate of the point
  * @throw EXIT_FAILURE "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE"
  */
-/* <usermanual>
-@keyword POINT AT
-
-@target cpc
-</usermanual> */
 void point_at( Environment * _environment, int _x, int _y ) {
 
     cpc_point_at_int( _environment, _x, _y );

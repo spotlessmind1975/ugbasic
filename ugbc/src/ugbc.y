@@ -7142,7 +7142,13 @@ statement2:
   | EXIT PROC {
       exit_procedure( _environment );
   }
+  | EXIT PROCEDURE {
+      exit_procedure( _environment );
+  }
   | POP PROC {
+      exit_procedure( _environment );
+  }
+  | POP PROCEDURE {
       exit_procedure( _environment );
   }
   | EXIT PROC IF expr {
@@ -7215,6 +7221,10 @@ statement2:
       ((struct _Environment *)_environment)->emptyProcedure = 0;
   }
   | END PROC OSP expr CSP {
+      end_procedure( _environment, $4 );
+      ((struct _Environment *)_environment)->emptyProcedure = 0;
+  }
+  | END PROCEDURE OSP expr CSP {
       end_procedure( _environment, $4 );
       ((struct _Environment *)_environment)->emptyProcedure = 0;
   }

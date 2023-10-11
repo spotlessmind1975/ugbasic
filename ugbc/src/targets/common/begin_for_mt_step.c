@@ -48,11 +48,6 @@
  */
 /* <usermanual>
 @keyword FOR...NEXT
-
-@syntax FOR [[identifier]] = [expression] TO [expression] { STEP [expression] } : ... : NEXT
-
-@example FOR [arr] = 1 to 100 STEP 2: PRINT [arr] : NEXT
-
 @target all
 </usermanual> */
 void begin_for_mt_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step ) {

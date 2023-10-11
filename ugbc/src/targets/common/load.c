@@ -52,14 +52,14 @@
 The ''LOAD'' command allows you to load a generic binary file from the file system 
 of the host system and use it, as a buffer, directly in the program. Loading occurs 
 at compile time: there is no access to the target system's file system. If multiple 
-uploads are made to the same file, a single buffer will still be generated.
+uploads are made to the same file, a single buffer will still be generated. 
 
-An absolute starting address can be given: in that case, files will be loaded starting
-from that position instead of the first free position available.
+An absolute starting address can be given: in that case, files will be loaded starting 
+from that position instead of the first free position available. 
 
 Since it is possible to upload only one file of the same type at a time, it is necessary 
-to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also
-the ''AS'' syntax, which allows you to load the same file several times but with different names.
+to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also 
+the ''AS'' syntax, which allows you to load the same file several times but with different names. 
 
 @italian
 Il comando ''LOAD'' permette di caricare un generico file binario dal filesystem del sistema 
@@ -75,8 +75,8 @@ Dal momento in cui è possibile caricare un solo file dello stesso tipo alla vol
 esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
 ma con nomi diversi.
 
-@syntax = LOAD([filename]{,[at]})
-@syntax = LOAD([filename] AS [alias]{,[at]})
+@syntax = LOAD( filename[,address] )
+@syntax = LOAD( filename AS alias[,address] )
 
 @example testo = LOAD("aiuto.txt")
 @example testoRipetuto = LOAD("aiuto.txt" AS "aiuto1")

@@ -59,7 +59,7 @@ viene impostato come se si fosse dato il comando ''PAPER''. A seconda della moda
 (''TILEMAP'' o ''BITMAP'') il comportamento del riempimento può essere diverso, 
 a seconda del computer target.
 
-@syntax COLOR BACK [color]
+@syntax COLOR BACK color
 
 @example COLOR BACK RED
 @example COLOR BACK WHITE

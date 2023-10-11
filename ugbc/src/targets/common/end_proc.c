@@ -59,7 +59,6 @@ della procedura. Il valore va indicato tra parentesi quadre.
 Il valore sarà, quindi, copiato nella variable ''PARAM'' e restituito 
 dalla chiamata, se la chiamata è stata fatta nel contesto di una espressione.
 
-@example &nbsp;
 @example PROCEDURE hundred
 @example END PROC[100]
 
