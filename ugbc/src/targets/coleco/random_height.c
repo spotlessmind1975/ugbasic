@@ -46,11 +46,6 @@
  * @param _environment Current calling environment
  * @return Variable* The random value calculated
  */
-/* <usermanual>
-@keyword RANDOM HEIGHT
-
-@target coleco
-</usermanual> */
 Variable * random_height( Environment * _environment ) {
 
     Variable * result = random_value( _environment, VT_POSITION );

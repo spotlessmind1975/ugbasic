@@ -45,21 +45,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword RANDOMIZE
-
-@english
-Initialize the random seed.
-
-@italian
-Inizializza il seme casuale.
-
-@syntax RANDOMIZE {[seed]}
-
-@example RANDOMIZE
-
-@target c64
-</usermanual> */
 void randomize( Environment * _environment, char * _ext_seed ) {
 
     Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );

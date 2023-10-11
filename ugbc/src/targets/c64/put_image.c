@@ -67,9 +67,9 @@ Il programmatore può disegnare sullo schermo una singola immagine
 un frame di una posa di una sequenza di immagini (''SEQUENCES''). 
 In tutti i casi la sintassi cambia leggermente.
 
-@syntax PUT IMAGE [image] AT [x],[y]
-@syntax PUT IMAGE [image] FRAME [frame] AT [x],[y]
-@syntax PUT IMAGE [image] SEQUENCE [sequence] FRAME [frame] AT [x],[y]
+@syntax PUT IMAGE resource AT [x],[y]
+@syntax PUT IMAGE resource FRAME frame AT [x],[y]
+@syntax PUT IMAGE resource SEQUENCE sequence FRAME frame AT [x],[y]
 
 @example PUT IMAGE airplane AT 10,10
 

@@ -55,7 +55,7 @@ Calcola un valore di altezza casuale.
 
 @example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
 
-@target c128
+@target all
 </usermanual> */
 Variable * random_height( Environment * _environment ) {
 

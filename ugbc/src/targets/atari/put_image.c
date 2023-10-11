@@ -50,9 +50,6 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-/* <usermanual>
-@keyword PUT IMAGE
-</usermanual> */
 void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
 
     Variable * image = variable_retrieve( _environment, _image );

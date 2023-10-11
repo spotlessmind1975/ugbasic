@@ -46,11 +46,6 @@
  * @param _environment Current calling environment
  * @return Variable* The random value calculated
  */
-/* <usermanual>
-@keyword RANDOM WIDTH
-
-@target plus4
-</usermanual> */
 Variable * random_width( Environment * _environment ) {
  
     Variable * result1 = random_value( _environment, VT_POSITION );

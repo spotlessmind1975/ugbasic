@@ -45,11 +45,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword RANDOMIZE
-
-@target msx1
-</usermanual> */
 void randomize( Environment * _environment, char * _other_seed ) {
 
     Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );

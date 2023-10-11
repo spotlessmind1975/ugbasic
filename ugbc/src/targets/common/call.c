@@ -94,7 +94,7 @@ This keyword will invoke a procedure.
 @italian
 Questa parola chiave invoca una funzione.
 
-@syntax PROC [name][{[parameter],{[parameter],....}}]
+@syntax PROC name [(par1[, par2[, ... ]])]
 
 @example PROC factorial[42]
 
