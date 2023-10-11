@@ -62,7 +62,7 @@ Erase the entire color map, using a foreground and a background color.
 Cancella l'intera mappa dei colori, utilizzando un colore di primo piano 
 e uno di sfondo.
 
-@syntax COLORMAP CLEAR WITH # [integer] ON # [integer]
+@syntax COLORMAP CLEAR WITH #fore ON #back
 
 @example COLORMAP CLEAR WITH #$0 ON #$1
 
@@ -99,7 +99,7 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 /* <usermanual>
 @keyword COLORMAP CLEAR
 
-@syntax COLORMAP CLEAR WITH [expression] ON [expression]
+@syntax COLORMAP CLEAR WITH fore ON back
 
 @example COLORMAP CLEAR WITH YELLOW ON RED
 </usermanual> */

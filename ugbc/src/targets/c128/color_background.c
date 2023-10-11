@@ -54,7 +54,7 @@ Change the background color among those available.
 @italian
 Modifica il colore dello sfondo tra quelli disponibili.
 
-@syntax COLOR BACKGROUND # [integer] TO # [integer]
+@syntax COLOR BACKGROUND #integer TO #integer
 
 @example COLOR BACKGROUND #$1 TO #$2
 
@@ -79,7 +79,7 @@ void color_background( Environment * _environment, int _index, int _background_c
 /* <usermanual>
 @keyword COLOR BACKGROUND
 
-@syntax COLOR BACKGROUND [expression] TO [expression]
+@syntax COLOR BACKGROUND expr TO expr
 
 @example COLOR BACKGROUND newIndex TO BLACK
 </usermanual> */

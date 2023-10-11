@@ -46,17 +46,6 @@
  */
 /* <usermanual>
 @keyword COLOR SPRITE
-
-@english
-Change the sprite color among those available.
-
-@italian
-Modifica il colore comune dello sprite tra quelli disponibili.
-
-@syntax COLOR SPRITE # [integer] TO # [integer]
-
-@example COLOR SPRITE #$1 TO #$2
-
 @target c64
 </usermanual> */
 void color_sprite( Environment * _environment, int _index, int _common_color ) {
@@ -80,10 +69,6 @@ void color_sprite( Environment * _environment, int _index, int _common_color ) {
  */
 /* <usermanual>
 @keyword COLOR SPRITE
-
-@syntax COLOR SPRITE [expression] TO [expression]
-
-@example COLOR SPRITE mySprite TO YELLOW
 </usermanual> */
 void color_sprite_vars( Environment * _environment, char * _index, char * _common_color ) {
 

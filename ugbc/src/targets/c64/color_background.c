@@ -47,17 +47,6 @@
  */
 /* <usermanual>
 @keyword COLOR BACKGROUND
-
-@english
-Change the background color among those available.
-
-@italian
-Modifica il colore dello sfondo tra quelli disponibili.
-
-@syntax COLOR BACKGROUND # [integer] TO # [integer]
-
-@example COLOR BACKGROUND #$1 TO #$2
-
 @target c64
 </usermanual> */
 void color_background( Environment * _environment, int _index, int _background_color ) {
@@ -78,10 +67,6 @@ void color_background( Environment * _environment, int _index, int _background_c
  */
 /* <usermanual>
 @keyword COLOR BACKGROUND
-
-@syntax COLOR BACKGROUND [expression] TO [expression]
-
-@example COLOR BACKGROUND newIndex TO BLACK
 </usermanual> */
 void color_background_vars( Environment * _environment, char * _index, char * _background_color ) {
 

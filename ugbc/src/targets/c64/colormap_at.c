@@ -56,23 +56,6 @@
  */
 /* <usermanual>
 @keyword COLORMAP AT
-
-@english
-Set the starting address, in memory, for the colormap. The input parameter 
-is decoded and declined according to the hardware limits. So it is not said 
-that exactly the given address is set.
-
-@italian
-Imposta l'indirizzo di partenza, in memoria, per la mappa dei colori. Il parametro di input
-viene decodificato e declinato in base ai limiti hardware. Quindi non è detto
-che sia impostato esattamente l'indirizzo specificato. 
-
-@syntax COLORMAP AT # [integer]
-
-@example COLORMAP AT #$B800
-
-@seeAlso BITMAP ENABLE
-
 @target c64
 </usermanual> */
 void colormap_at( Environment * _environment, int _address ) {
@@ -105,10 +88,6 @@ void colormap_at( Environment * _environment, int _address ) {
  */
 /* <usermanual>
 @keyword COLORMAP AT
-
-@syntax COLORMAP AT [expression]
-
-@example COLORMAP AT newAddress
 </usermanual> */
 void colormap_at_var( Environment * _environment, char * _address ) {
 

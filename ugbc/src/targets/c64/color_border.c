@@ -45,19 +45,6 @@
  */
 /* <usermanual>
 @keyword COLOR BORDER
-
-@english
-Change the border color.
-
-@italian
-Modifica il colore del bordo (dello schermo).
-
-@syntax COLOR BORDER # [integer]
-
-@example COLOR BORDER #$1
-@usedInExample control_uncond_jumps_01.bas
-@usedInExample control_uncond_jumps_02.bas
-
 @target c64
 </usermanual> */
 void color_border( Environment * _environment, int _color ) {
@@ -81,10 +68,6 @@ void color_border( Environment * _environment, int _color ) {
  */
 /* <usermanual>
 @keyword COLOR BORDER
-
-@syntax COLOR BORDER [expression]
-
-@example COLOR BORDER BLACK
 </usermanual> */
 void color_border_var( Environment * _environment, char * _color ) {
 

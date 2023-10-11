@@ -53,7 +53,7 @@ Change the sprite color among those available.
 @italian
 Modifica il colore comune dello sprite tra quelli disponibili.
 
-@syntax COLOR SPRITE # [integer] TO # [integer]
+@syntax COLOR SPRITE #index TO #color
 
 @example COLOR SPRITE #$1 TO #$2
 
@@ -81,7 +81,7 @@ void color_sprite( Environment * _environment, int _index, int _common_color ) {
 /* <usermanual>
 @keyword COLOR SPRITE
 
-@syntax COLOR SPRITE [expression] TO [expression]
+@syntax COLOR SPRITE index TO color
 
 @example COLOR SPRITE mySprite TO YELLOW
 </usermanual> */

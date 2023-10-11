@@ -54,20 +54,6 @@
  */
 /* <usermanual>
 @keyword COLORMAP CLEAR
-
-@english
-Erase the entire color map, using a foreground and a background color.
-
-@italian
-Cancella l'intera mappa dei colori, utilizzando un colore di primo piano 
-e uno di sfondo.
-
-@syntax COLORMAP CLEAR WITH # [integer] ON # [integer]
-
-@example COLORMAP CLEAR WITH #$0 ON #$1
-
-@seeAlso BITMAP ENABLE
-
 @target vic20
 </usermanual> */
 void colormap_clear_with( Environment * _environment, int _foreground, int _background ) {
@@ -98,10 +84,6 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
  */
 /* <usermanual>
 @keyword COLORMAP CLEAR
-
-@syntax COLORMAP CLEAR WITH [expression] ON [expression]
-
-@example COLORMAP CLEAR WITH YELLOW ON RED
 </usermanual> */
 void colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background ) {
 
@@ -135,10 +117,6 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
  */
 /* <usermanual>
 @keyword COLORMAP CLEAR
-
-@syntax COLORMAP CLEAR
-
-@example COLORMAP CLEAR
 </usermanual> */
 void colormap_clear( Environment * _environment ) {
 
