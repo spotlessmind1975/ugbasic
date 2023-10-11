@@ -1481,7 +1481,8 @@ Il programmatore potrebbe digitare in modo errato un nome di variabile in una
 o più posizioni, il che causerebbe risultati imprevisti durante l'esecuzione 
 del programma.
 
-@syntax OPTION EXPLICT {[ON|OFF]}
+@syntax OPTION EXPLICT [ON]
+@syntax OPTION EXPLICT OFF
 
 @example OPTION EXPLICIT ON
 
@@ -1506,7 +1507,8 @@ Y è orientato verso l'alto (''UP'') oppure verso il basso (''DOWN'').
 Se non utilizzato, il sistema di riferimento per default viene posto in alto a 
 sinistra con l'asse delle Y verso il basso. 
 
-@syntax ORIGIN [x], [y] {UP|DOWN}
+@syntax ORIGIN x, y UP
+@syntax ORIGIN x, y [DOWN]
 
 @example ORIGIN 100, 100 UP
 
@@ -1535,7 +1537,7 @@ vicino. Di default, la risoluzione virtuale sarà impostata uguale alla risoluzi
 ''BITMAP ENABLE''. Quindi, dopo ''RESOLUTION'', le istruzioni grafiche utilizzeranno 
 questa risoluzione virtuale.
 
-@syntax RESOLUTION [x], [y]
+@syntax RESOLUTION width, height
 
 @example RESOLUTION 100, 100
 
@@ -1669,22 +1671,6 @@ di 0 (nessun ritardo) a un valore massimo di 255 (massimo ritardo).
 @target c128z
 @target cpc
 @target msx1
-</usermanual> */
-/* <usermanual>
-@keyword PEEK
-
-@english
-Retrieve a byte from memory, and returns it.
-
-@italian
-Recupera un byte dalla memoria e lo restituisce.
-
-@syntax = PEEK( [expression] )
-
-@example memory = PEEK( location )
-
-@target all
-
 </usermanual> */
 
 /* <usermanual>

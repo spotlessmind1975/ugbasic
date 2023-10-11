@@ -60,6 +60,25 @@ Questa parola chiave fa uscire da una procedura.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword POP PROCEDURE
+
+@english
+This keyword will exit from a procedure. 
+
+@italian
+Questa parola chiave fa uscire da una procedura.
+
+@syntax POP PROCEDURE
+
+@example POP PROCEDURE
+
+@usedInExample procedures_jumping_02.bas
+
+@target all
+</usermanual> */
+
 /* <usermanual>
 @keyword EXIT PROC
 
@@ -77,6 +96,25 @@ Questa parola chiave fa uscire da una procedura.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword EXIT PROCEDURE
+
+@english
+This keyword will exit from a procedure. 
+
+@italian
+Questa parola chiave fa uscire da una procedura.
+
+@syntax EXIT PROCEDURE
+
+@example EXIT PROCEDURE
+
+@usedInExample procedures_jumping_02.bas
+
+@target all
+</usermanual> */
+
 void exit_procedure( Environment * _environment ) {
 
     cpu_return( _environment );

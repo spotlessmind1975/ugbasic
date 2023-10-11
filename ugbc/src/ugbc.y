@@ -7224,6 +7224,10 @@ statement2:
       end_procedure( _environment, $4 );
       ((struct _Environment *)_environment)->emptyProcedure = 0;
   }
+  | END PROCEDURE OSP expr CSP {
+      end_procedure( _environment, $4 );
+      ((struct _Environment *)_environment)->emptyProcedure = 0;
+  }
   | FOR Identifier OP_ASSIGN expr TO expr STEP expr {
       begin_for_step( _environment, $2, $4, $6, $8 );  
   }

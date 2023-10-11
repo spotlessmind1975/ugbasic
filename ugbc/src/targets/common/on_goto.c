@@ -69,7 +69,7 @@ Per funzionare correttamente, l'espressione deve avere un valore compreso
 tra 1 e il numero di destinazioni. Se l'espressione ha un valore di 0 o
 maggiore della destinazione più alta possibile, non sarà eseguito alcun salto.
 
-@syntax ON [expression] GOTO [label1] {, [label2] {, [label3], ... }}
+@syntax ON expression GOTO label1[, label2[, ... ] ]
 
 @example ON level GOTO level1, level2, level3
 @usedInExample control_by_expression_02.bas
@@ -77,8 +77,6 @@ maggiore della destinazione più alta possibile, non sarà eseguito alcun salto.
 @target all
 </usermanual> */
 void on_goto( Environment * _environment, char * _expression ) {
-
-    
 
     MAKE_LABEL
 

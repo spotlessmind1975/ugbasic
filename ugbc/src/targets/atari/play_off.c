@@ -55,7 +55,7 @@ This command allows you to stop the play on all channels or specific channels.
 @italian
 Questo comando permette di interrompere il suono su tutti i canali o su canali specifici.
 
-@syntax PLAY OFF {ON #channels}
+@syntax PLAY OFF [ON #channels]
 
 @example PLAY OFF
 @example PLAY OFF ON #%001
@@ -79,7 +79,7 @@ void play_off( Environment * _environment, int _channels ) {
 /* <usermanual>
 @keyword PLAY OFF
 
-@syntax PLAY OFF {ON [channels]}
+@syntax PLAY OFF [ON channels]
 
 @example PLAY OFF
 @example PLAY OFF ON primaVoce

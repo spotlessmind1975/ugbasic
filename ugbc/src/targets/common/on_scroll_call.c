@@ -48,10 +48,10 @@
  * @param _expression Expression with the true / false condition
  */
 /* <usermanual>
-@keyword ON SCROLL..CALL
+@keyword ON SCROLL...CALL
 
 @english
-This command is used to force a procedure call
+This command is used to force a procedure call 
 when the screen is scrolled down by an entire row or column. 
 
 @italian
@@ -59,7 +59,10 @@ Questo comando viene utilizzato per forzare la chiamata
 a una procedura, laddove lo schermo sia fatto scorrere
 da una intera riga o colonna.
 
-@syntax ON SCROLL {UP ROW|DOWN ROW|LEFT COLUMN|RIGHT COLUMN} CALL [label]
+@syntax ON SCROLL UP ROW CALL label
+@syntax ON SCROLL DOWN ROW CALL label
+@syntax ON SCROLL LEFT COLUMN CALL label
+@syntax ON SCROLL RIGHT COLUMN CALL label
 
 @example ON SCROLL UP ROW CALL scrolledAway
 

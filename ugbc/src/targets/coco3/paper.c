@@ -44,11 +44,6 @@
  * @param _environment Current calling environment
  * @param _color Color to use for the paper
  */
-/* <usermanual>
-@keyword PAPER
-
-@target coco3
-</usermanual> */
 void paper( Environment * _environment, char * _color ) {
 
     Variable * paper = variable_retrieve_or_define( _environment, "PAPER", VT_COLOR, COLOR_BLACK );

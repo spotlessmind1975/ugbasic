@@ -38,11 +38,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/* <usermanual>
-@keyword POINT
-
-@target coco3
- </usermanual> */
 Variable * point( Environment * _environment, char * _x, char * _y ) {
 
     Variable * result = variable_temporary( _environment, VT_COLOR, "(point's result)");

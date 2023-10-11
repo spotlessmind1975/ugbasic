@@ -58,11 +58,11 @@ Retrieve a byte from memory, and returns it.
 @italian
 Recupera un byte dalla memoria e restituiscilo.
 
-@syntax = PEEK( [expression] )
+@syntax = PEEK(address)
 
-@example memory = PEEK( location )
+@example memory = PEEK(49152)
 
-@target c64
+@target all
 
 </usermanual> */
 Variable * peek_var( Environment * _environment, char * _location ) {

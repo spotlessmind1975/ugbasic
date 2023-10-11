@@ -46,10 +46,10 @@
  * @return Variable* 
  */
 /* <usermanual>
-@keyword PAPER$
+@keyword PAPER (function)
 
 @english
-The ''PEN$'' function returns a special control sequence that changes
+The ''PAPER$'' function returns a special control sequence that changes
 the paper colour inside a string. This means that, whenever the string is 
 printed on the screen, the pre-set paper colour is automatically assigned 
 to it. The format of the string returned by ''PAPER$'' is not specific 
@@ -63,7 +63,7 @@ sullo schermo, le viene automaticamente assegnato il colore
 dello sfondo preimpostato. Il formato della stringa restituita da
 ''PAPER$'' non è specifico per l'hardware
 
-@syntax = PAPER$([expression])
+@syntax = PAPER$(expression)
 
 @example PRINT PAPER$(WHITE)
 

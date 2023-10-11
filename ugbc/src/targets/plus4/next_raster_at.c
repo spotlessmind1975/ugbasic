@@ -52,8 +52,6 @@
  */
 /* <usermanual>
 @keyword NEXT RASTER AT
-
-@target plus4
 </usermanual> */
 void next_raster_at_with( Environment * _environment, int _position, char * _label ) {
     
@@ -80,8 +78,6 @@ void next_raster_at_with( Environment * _environment, int _position, char * _lab
  */
 /* <usermanual>
 @keyword NEXT RASTER AT
-
-@target plus4
 </usermanual> */
 void next_raster_at_with_var( Environment * _environment, char * _position, char * _label ) {
 

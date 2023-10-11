@@ -52,23 +52,6 @@
  */
 /* <usermanual>
 @keyword NEXT RASTER AT
-
-@english
-Wait for the next raster at a specific, new, raster position
-and to execute the code at the given label. Meanwhile, the 
-execution of the main code will resume where it left off.
-
-@italian
-Attendi il raster successivo in una nuova posizione raster specifica
-ed esegui il codice in corrispondenza dell'etichetta data. Nel 
-frattempo, l'esecuzione del codice principale riprenderà da dove 
-era stata interrotta.
-
-@syntax NEXT RASTER AT # [integer] WITH [label]
-
-@example NEXT RASTER AT #$42 WITH myRasterRoutine
-
-@target vic20
 </usermanual> */
 void next_raster_at_with( Environment * _environment, int _position, char * _label ) {
     
@@ -95,10 +78,6 @@ void next_raster_at_with( Environment * _environment, int _position, char * _lab
  */
 /* <usermanual>
 @keyword NEXT RASTER AT
-
-@syntax NEXT RASTER AT [expression] WITH [label]
-
-@example NEXT RASTER AT newRaterLine WITH myRasterRoutine
 </usermanual> */
 void next_raster_at_with_var( Environment * _environment, char * _position, char * _label ) {
 

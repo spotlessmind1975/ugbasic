@@ -55,17 +55,25 @@
 @keyword POINT AT
 
 @english
-Draws a pixel on the screen in bitmap mode on given coordinates. 
+The ''POINT AT'' instruction allows you to draw a point on the screen, at 
+the ''(x, y)'' coordinate. The color is the default color, the one set with 
+the last ''INK'' / ''PEN'' command.
 
 @italian
-Disegna un pixel sullo schermo in modalità bitmap su coordinate date.
+L'istruzione ''POINT AT'' permette di tracciare un punto sullo schermo, a
+la coordinata ''(x, y)''. Il colore è quello predefinito, quello impostato con
+l'ultimo comando ''INK'' / ''PEN''.
 
-@syntax POINT AT (# [integer], # [integer])
+@syntax POINT AT(#x, #y)
+@syntax POINT AT(x, y)
 
-@example POINT AT (#42,#42)
+@example POINT AT (42, 42)
+@example POINT AT (100, 100)
+@example POINT AT (x+1,y+1)
 
 @target c128
-</usermanual> */
+ </usermanual> */
+
 void point_at( Environment * _environment, int _x, int _y ) {
 
     outline2("; POINT AT (%d,%d)", _x, _y);
@@ -92,13 +100,6 @@ void point_at( Environment * _environment, int _x, int _y ) {
  * @param _y Expression with the ordinate of the point
  * @throw EXIT_FAILURE "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE"
  */
-/* <usermanual>
-@keyword POINT AT
-
-@syntax POINT AT ([expression],[expression])
-
-@example POINT AT (x+1,y+1)
-</usermanual> */
 void point_at_vars( Environment * _environment, char * _x, char * _y ) {
 
     outline2("; POINT AT (%s,%s)", _x, _y);
