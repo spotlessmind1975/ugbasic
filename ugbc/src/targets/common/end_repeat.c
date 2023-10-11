@@ -46,9 +46,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword REPEAT...UNTIL
-</usermanual> */
 void end_repeat( Environment * _environment, char * _expression ) {
 
     Loop * loop = _environment->loops;
