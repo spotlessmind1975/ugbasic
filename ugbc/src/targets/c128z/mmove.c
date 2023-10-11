@@ -80,7 +80,7 @@ RAM eventualmente dedicata alla GPU. In questo caso prende il nome di VRAM.
 
 Non è possibile copiare aree sovrapposte o due aree video.
 
-@syntax MMOVE {VIDEO} [address] TO {VIDEO} [address] SIZE [size]
+@syntax MMOVE [VIDEO] address TO [VIDEO] address SIZE size
 
 @example MMOVE $0000 TO $C000 SIZE 1024
 @example MMOVE VIDEO $1800 TO $C000 SIZE 960

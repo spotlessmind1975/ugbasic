@@ -921,10 +921,10 @@ simbolo del dollaro (''$''), per indicare che si vuole accedere a una variabile 
 tipo stringa. In tal caso, un ulteriore controllo di tipo sarà svolto in sede di 
 compilazione, per evitare di far riferimento a una variabile di tipo numerico.
 
-@syntax ... = [ [variable] ]
-@syntax [ [variable] ] = ...
-@syntax ... = [ [variable]$ ]
-@syntax [ [variable]$ ] = ...
+@syntax = [variable]
+@syntax [variable] = expression
+@syntax = [variable$]
+@syntax [variable$] = expression
 
 @example PUT IMAGE token AT [x],[y]
 @example [x] = [x] + 1

@@ -6297,11 +6297,11 @@ restituire. Se omesso o se nel testo sono presenti meno caratteri della
 lunghezza (incluso il carattere iniziale), vengono restituiti tutti i 
 caratteri dalla posizione iniziale alla fine della stringa.
 
-@syntax = RIGHT( text, position )
+@syntax = MID( text, position )
 
-@example x = RIGHT( "TEST", 2 )
+@example x = MID( "TEST", 2 )
 
-@usedInExample strings_right_01.bas
+@usedInExample strings_mid_01.bas
 
 @seeAlso LEFT (function)
 @seeAlso LEFT
@@ -6438,11 +6438,53 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
 /* <usermanual>
 @keyword MID
 
-@syntax MID( [text], [position] { , [length] } ) = [expression]
+@english
 
-@example MID( "TEST", 2, 2 ) = "xx"
+The ''MID'' statement allows to change a (dynamic) string containing a specified number 
+of characters from a string. It has three parameters.
+
+The first parameter is the string expression to modify. 
+
+The second parameter is the character position in string at which the part to 
+be taken begins. If start is greater than the number of characters in string, 
+''MID'' replace at the end of the string. 
+
+The third parameter is optional, and gives the number of characters to replace. 
+If omitted or if there are fewer than length characters in the text (including 
+the character at start), all characters from the start position to the end of the
+string are replaced.
+
+@italian
+
+L'istruzione ''MID'' consente di modificare una stringa (dinamica) contenente 
+un numero specificato di caratteri da una stringa. Ha tre parametri.
+
+Il primo parametro è l'espressione stringa da modificare.
+
+Il secondo parametro è la posizione del carattere nella stringa in cui inizia 
+la parte da riprendere. Se inizio è maggiore del numero di caratteri nella stringa, 
+''MID'' sostituisce alla fine della stringa.
+
+Il terzo parametro è facoltativo e fornisce il numero di caratteri da sostituire. 
+Se omesso o se nel testo sono presenti meno caratteri della lunghezza (incluso il
+carattere iniziale), tutti i caratteri dalla posizione iniziale alla fine della 
+stringa vengono sostituiti.
+
+@syntax MID( text, position[, len] ) = value
+
+@example  a$ = "PUNTO": MID( a$, 1, 3 ) = "PON": PRINT a$: REM prints "PONTO"
+
+@usedInExample strings_mid_01.bas
+
+@seeAlso LEFT (function)
+@seeAlso LEFT
+@seeAlso MID (function)
+@seeAlso RIGHT (function)
+@seeAlso RIGHT
+@seeAlso LEN
 
 @target all
+@verified
  </usermanual> */
 void variable_string_mid_assign( Environment * _environment, char * _string, char * _position, char * _len, char * _expression ) {
     Variable * string = variable_retrieve( _environment, _string );

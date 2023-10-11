@@ -49,14 +49,6 @@
 /* <usermanual>
 @keyword MUSIC
 
-@english
-
-@italian
-
-@syntax MUSIC [music]
-
-@example MUSIC fugue
-
 @target atari
 </usermanual> */
 void music_var( Environment * _environment, char * _music ) {
