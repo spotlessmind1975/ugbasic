@@ -22,7 +22,9 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
 
         'RESOLUTION 320,200
 
-		CLS
+		CLS WHITE
+
+		INK BLACK
 
 		DIM data() = LOAD "spock.csv" AS TEXT READONLY
 
