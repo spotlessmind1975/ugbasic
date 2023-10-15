@@ -31,10 +31,10 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
 		DO
 		 	x1 = data(pos)  : y1 = data(pos+1) 
 		 	x2 = data(pos+2): y2 = data(pos+3) 
-         	IF x1 = 999 THEN
-         	   HALT
-         	ENDIF
-         	LINE x1, y1 TO x2, y2
+		 	IF x1 = 999 THEN
+		 		HALT
+		 	ENDIF
+		 	LINE x1, y1 TO x2, y2
 		 	INC pos : INC pos : INC pos : INC pos
 		LOOP
 
