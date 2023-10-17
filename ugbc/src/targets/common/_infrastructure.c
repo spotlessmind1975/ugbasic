@@ -7340,7 +7340,7 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
             for( j=0; j<i; ++j ) {
                 baseValue *= array->arrayDimensionsEach[array->arrayDimensions-j-1];
             }
-            if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] == NULL ) {
+            if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] == NULL ) {
                 variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] * baseValue );
             } else {
                 Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
@@ -7650,23 +7650,14 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
     Variable * result = variable_temporary( _environment, _array->arrayType, "(element from array)" );
 
     if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
-
         Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
-
         cpu_move_8bit_indirect2_8bit( _environment, _array->realName, index->realName, result->realName );
-
     } else if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 65535 && VT_BITWIDTH( _array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
-
         Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_WORD, 0 );
-
         cpu_move_8bit_indirect2_16bit( _environment, _array->realName, index->realName, result->realName );
-
     } else if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 16 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
-
         Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
-
         cpu_move_16bit_indirect2_8bit( _environment, _array->realName, index->realName, result->realName );
-
     } else {
 
         // @bit2: ok
