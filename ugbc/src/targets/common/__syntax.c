@@ -1795,3 +1795,39 @@ corrispondere a un colore valido.
 
 @verified
 </usermanual> */
+/* <usermanual>
+@keyword DEFINE STRING SPACE
+
+@english
+
+With the ''DEFINE STRING SPACE'' instruction it is possible to define the space 
+dedicated to dynamic strings.
+
+@italian
+Con l'istruzione DEFINE STRING SPACE è possibile definire lo spazio dedicato 
+alle stringe dinamiche.
+
+@syntax DEFINE STRING SPACE bytes
+
+@example DEFINE STRING SPACE 512
+
+@target all
+</usermanual> */
+/* <usermanual>
+@keyword DEFINE STRING COUNT
+
+@english
+
+With the ''DEFINE STRING COUNT'' instruction it is possible to define the number 
+of concurrent dynamic strings allowed.
+
+@italian
+Con l'istruzione DEFINE STRING COUNT è possibile definire il massimo numero
+di stringe dinamiche concorrenti consentite.
+
+@syntax DEFINE STRING COUNT strings
+
+@example DEFINE STRING COUNT 64
+
+@target all
+</usermanual> */
