@@ -48,6 +48,8 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
     char skipColorChangeLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipColorChangeLabel, "%sskipcc", label );
+    char skipColorChangeLabel2[MAX_TEMPORARY_STORAGE]; sprintf(skipColorChangeLabel2, "%sskipcc2", label );
+    char skipColorChangeLabel3[MAX_TEMPORARY_STORAGE]; sprintf(skipColorChangeLabel3, "%sskipcc3", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
     char backspaceLabel[MAX_TEMPORARY_STORAGE]; sprintf(backspaceLabel, "%sbackspace", label );
 
@@ -93,8 +95,13 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_dec( _environment, underscoreTimer->realName );
     cpu_compare_and_branch_8bit_const( _environment, underscoreTimer->realName, 0, skipColorChangeLabel, 0 );
-    add_complex( _environment, underscore->name, 16, 143, 224 );
-    cpu_store_8bit( _environment, underscoreTimer->realName, 128 );
+    cpu_store_8bit( _environment, underscoreTimer->realName, 32 );
+    cpu_compare_and_branch_8bit_const( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor, skipColorChangeLabel2, 1 );
+    cpu_label( _environment, skipColorChangeLabel3 );
+    cpu_store_8bit( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor );
+    cpu_jump( _environment, skipColorChangeLabel );
+    cpu_label( _environment, skipColorChangeLabel2 );
+    cpu_store_8bit( _environment, underscore->realName, 32 );
     cpu_label( _environment, skipColorChangeLabel );
 
     print( _environment, underscore->name, 0 );
