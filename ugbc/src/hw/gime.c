@@ -345,7 +345,7 @@ void gime_bank_select( Environment * _environment, int _bank ) {
     outline0( "CLR GIMEHOFF" );
 
 #define GIME_128K( )  GIME_ADDRESS( 0x60000 )
-#define GIME_512K( )  GIME_ADDRESS( 0x00000 )
+#define GIME_512K( )  GIME_\( 0x00000 )
 
 int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
@@ -1112,18 +1112,27 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     if ( currentFrameSize <= 0x2000 ) {
         cpu_store_8bit( _environment, "GIMEMMUSTART", 3 );
+        cpu_store_8bit( _environment, "GIMEMMUCOUNT", 4 );
         cpu_store_16bit( _environment, "BITMAPADDRESS", 0xc000 );
         cpu_store_16bit( _environment, "TEXTADDRESS", 0xc000 );
     } else if ( currentFrameSize <= 0x4000 ) {
         cpu_store_8bit( _environment, "GIMEMMUSTART", 2 );
+        cpu_store_8bit( _environment, "GIMEMMUCOUNT", 4 );
         cpu_store_16bit( _environment, "BITMAPADDRESS", 0xa000 );
         cpu_store_16bit( _environment, "TEXTADDRESS", 0xa000 );
     } else if ( currentFrameSize <= 0x6000 ) {
         cpu_store_8bit( _environment, "GIMEMMUSTART", 1 );
+        cpu_store_8bit( _environment, "GIMEMMUCOUNT", 4 );
         cpu_store_16bit( _environment, "BITMAPADDRESS", 0x8000 );
         cpu_store_16bit( _environment, "TEXTADDRESS", 0x8000 );
+    } else if ( currentFrameSize <= 0x8000 ) {
+        cpu_store_8bit( _environment, "GIMEMMUSTART", 0 );
+        cpu_store_8bit( _environment, "GIMEMMUCOUNT", 4 );
+        cpu_store_16bit( _environment, "BITMAPADDRESS", 0x6000 );
+        cpu_store_16bit( _environment, "TEXTADDRESS", 0x6000 );
     } else {
         cpu_store_8bit( _environment, "GIMEMMUSTART", 0 );
+        cpu_store_8bit( _environment, "GIMEMMUCOUNT", 5 );
         cpu_store_16bit( _environment, "BITMAPADDRESS", 0x6000 );
         cpu_store_16bit( _environment, "TEXTADDRESS", 0x6000 );
     }
@@ -1448,6 +1457,8 @@ void gime_initialization( Environment * _environment ) {
     variable_global( _environment, "PALETTELIMIT" );
     variable_import( _environment, "GIMEMMUSTART", VT_BYTE, 2 );
     variable_global( _environment, "GIMEMMUSTART" );
+    variable_import( _environment, "GIMEMMUCOUNT", VT_BYTE, 0 );
+    variable_global( _environment, "GIMEMMUCOUNT" );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_40X25, 0, 40, 25, 16, 8, 8, "Alphanumeric 40 columns x 25 rows");
     SCREEN_MODE_DEFINE( TILEMAP_MODE_32X24, 0, 32, 24, 16, 8, 8, "Alphanumeric 32 columns x 24 rows");
