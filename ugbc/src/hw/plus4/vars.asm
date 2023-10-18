@@ -114,3 +114,5 @@ ZZ   = E+4
 T    = ZZ+4
 SEXP = T+4
 INT  = SEXP+4
+
+DATAPTR:     .WORD $0
