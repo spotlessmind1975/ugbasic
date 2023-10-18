@@ -145,6 +145,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "KBDDELAYC", VT_BYTE, 64 );
     variable_global( _environment, "KBDDELAYC" );
 
+    variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
+    variable_global( _environment, "DATAPTR" );
+
     for( int i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
             
