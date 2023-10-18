@@ -1410,20 +1410,19 @@ void cpu6502_compare_and_branch_16bit_const( Environment * _environment, char *_
 
         outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline1("CMP #$%2.2x", ( _destination >> 8 ) & 0xff );
-        if ( _positive ) {
-            outline1("BNE %s", label);
-        } else {
-            outline1("BEQ %s", label);
-        }
+        outline1("BNE %s", label);
         outline1("LDA %s", _source);
         outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+        outline1("BNE %s", label);
         if ( _positive ) {
-            outline1("BNE %s", label);
+            outline1("JMP %s", _label);
+            outhead1("%s:", label);
         } else {
-            outline1("BEQ %s", label);
+            outline1("JMP %snot", label);
+            outhead1("%s:", label);
+            outline1("JMP %s", _label);
+            outhead1("%snot:", label);
         }
-        outline1("JMP %s", _label);
-        outhead1("%s:", label);
 
     no_embedded( cpu_compare_and_branch_16bit_const )
 
@@ -2554,34 +2553,25 @@ void cpu6502_compare_and_branch_32bit_const( Environment * _environment, char *_
 
         outline1("LDA %s", address_displacement(_environment, _source, "3"));
         outline1("CMP #$%2.2x", ( _destination >> 24 ) & 0xff );
-        if ( _positive ) {
-            outline1("BNE %s", label);
-        } else {
-            outline1("BEQ %s", label);
-        }
+        outline1("BNE %s", label);
         outline1("LDA %s", address_displacement(_environment, _source, "2"));
         outline1("CMP #$%2.2x", ( _destination >> 16 ) & 0xff );
-        if ( _positive ) {
-            outline1("BNE %s", label);
-        } else {
-            outline1("BEQ %s", label);
-        }
+        outline1("BNE %s", label);
         outline1("LDA %s", address_displacement(_environment, _source, "1"));
         outline1("CMP #$%2.2x", ( _destination >> 8 ) & 0xff );
-        if ( _positive ) {
-            outline1("BNE %s", label);
-        } else {
-            outline1("BEQ %s", label);
-        }
+        outline1("BNE %s", label);
         outline1("LDA %s", _source);
         outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+        outline1("BNE %s", label);
         if ( _positive ) {
-            outline1("BNE %s", label);
+            outline1("JMP %s", _label);
+            outhead1("%s:", label);
         } else {
-            outline1("BEQ %s", label);
+            outline1("JMP %snot", label);
+            outhead1("%s:", label);
+            outline1("JMP %s", _label);
+            outhead1("%snot:", label);
         }
-        outline1("JMP %s", _label);
-        outhead1("%s:", label);
 
     no_embedded( cpu_compare_and_branch_32bit_const )
 
