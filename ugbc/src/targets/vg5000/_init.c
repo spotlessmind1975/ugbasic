@@ -118,6 +118,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "ISRSVC2", VT_BUFFER, 3 );
     variable_global( _environment, "ISRSVC2" );
 
+    variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
+    variable_global( _environment, "DATAPTR" );
+
     variable_import( _environment, "BANKSHADOW", VT_BYTE, 0 );
 
     for( int i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
