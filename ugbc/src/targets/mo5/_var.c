@@ -338,6 +338,18 @@ void variable_cleanup( Environment * _environment ) {
 
     variable_on_memory_init( _environment, 0 );
 
+    DataSegment * dataSegment = _environment->dataSegment;
+    while( dataSegment ) {
+        int i=0;
+        out1("%s fcb ", dataSegment->realName );
+        for( i=0; i<(dataSegment->size-1); ++i ) {
+            out1("$%2.2x,", dataSegment->dataBuffer[i] );
+        }
+        out1("$%2.2x", dataSegment->dataBuffer[i] );
+        outline0("");
+        dataSegment = dataSegment->next;
+    }
+
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
         outhead2("cstring%d fcb %d", staticStrings->id, (int)strlen(staticStrings->value) );
