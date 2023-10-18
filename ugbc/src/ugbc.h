@@ -1559,6 +1559,17 @@ typedef struct _Blit {
 
 } Blit;
 
+typedef struct _DataSegment {
+    
+    char * name;
+    char * realName;
+    char * dataBuffer;
+    int size;
+
+    struct _DataSegment * next;
+
+} DataSegment;
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -1768,6 +1779,16 @@ typedef struct _Environment {
      * List of labels.
      */
     Label * labels;
+
+    /**
+     * List of dataSegments.
+     */
+    DataSegment * dataSegment;
+
+    /**
+     * Last label defined
+     */
+    char * lastDefinedLabel;
 
     /**
      * List of temporary (but not reusable) variables.
@@ -2513,6 +2534,8 @@ typedef struct _Environment {
 #define CRITICAL_LINE_NUMBER_ALREADY_DEFINED( n ) CRITICAL2i("E228 - line number already defined", n );
 #define CRITICAL_LABEL_ALREADY_DEFINED( n ) CRITICAL2("E229 - label already defined", n );
 #define CRITICAL_TILE_ID_NO_TILESET( v ) CRITICAL2("E230 - cannot call TILE ID on something that is not a TILESET", v );
+#define CRITICAL_READ_WITHOUT_DATA( v ) CRITICAL2("E231 - READ without DATA", v );
+#define CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( v ) CRITICAL2("E232 - READ not supported for this kind of variable", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3529,6 +3552,12 @@ Variable *              csprite_init( Environment * _environment, char * _image,
 // *D*
 //----------------------------------------------------------------------------
 
+void                    data_numeric( Environment * _environment, int _value );
+void                    data_floating( Environment * _environment, double _value );
+DataSegment *           data_segment_define( Environment * _environment, char * _name );
+DataSegment *           data_segment_find( Environment * _environment, char * _name );
+DataSegment *           data_segment_define_or_retrieve( Environment * _environment, char * _name );
+void                    data_string( Environment * _environment, char * _value );
 void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 Variable *              dload( Environment * _environment, char * _target_name );
@@ -3778,6 +3807,7 @@ Variable *              random_width( Environment * _environment );
 void                    randomize( Environment * _environment, char * _seed );
 void                    raster_at( Environment * _environment, char * _label, int _position );
 void                    raster_at_var( Environment * _environment, char * _label, char * _position );
+void                    read_data( Environment * _environment, char * _variable );
 void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
 char *                  resource_load_asserts( Environment * _environment, char * _filename );
@@ -4006,6 +4036,7 @@ Variable *              variable_sub( Environment * _environment, char * _source
 void                    variable_sub_inplace( Environment * _environment, char * _source, char * _dest );
 void                    variable_swap( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
+VariableType            variable_type_from_numeric_value( Environment * _environment, int _number );
 Variable *              variable_resident( Environment * _environment, VariableType _type, char * _meaning );
 Variable *              variable_xor( Environment * _environment, char * _left, char * _right );
 Variable *              varptr( Environment * _environment, char * _identifier );

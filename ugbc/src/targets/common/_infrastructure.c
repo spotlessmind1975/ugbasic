@@ -10267,27 +10267,34 @@ void parser_array_index_numeric( Environment * _environment, int _index ) {
 
 }
 
-Variable * parser_adapted_numeric( Environment * _environment, int _number ) {
-
-    Variable * number;
+VariableType variable_type_from_numeric_value( Environment * _environment, int _number ) {
 
     if ( _number < 0 ) {
         if ( (-_number) > (0x7fff) ) {
-            number = variable_temporary( _environment, VT_SDWORD, "(integer dword value)" );
+            return VT_SDWORD;
         } else if ( (-_number) > (0x7f) ) {
-            number = variable_temporary( _environment, VT_SWORD, "(integer word value)" );
+            return VT_SWORD;
         } else {
-            number = variable_temporary( _environment, VT_SBYTE, "(integer byte value)" );
+            return VT_SBYTE;
         }
     } else {
         if ( _number > (0xffff) ) {
-            number = variable_temporary( _environment, VT_DWORD, "(integer dword value)" );
+            return VT_DWORD;
         } else if ( _number > (0xff) ) {
-            number = variable_temporary( _environment, VT_WORD, "(integer word value)" );
+            return VT_WORD;
         } else {
-            number = variable_temporary( _environment, VT_BYTE, "(integer byte value)" );
+            return VT_BYTE;
         }
     }
+    
+}
+
+Variable * parser_adapted_numeric( Environment * _environment, int _number ) {
+
+    Variable * number;
+    VariableType type = variable_type_from_numeric_value( _environment, _number );
+
+    number = variable_temporary( _environment, type, "(value)" );
     
     variable_store( _environment, number->name, _number );
 
@@ -10307,4 +10314,53 @@ Variable * parser_casted_numeric( Environment * _environment, VariableType _type
 
     return number;
     
+}
+
+DataSegment * data_segment_define( Environment * _environment, char * _name ) {
+
+    DataSegment * data = malloc( sizeof( DataSegment ) );
+    memset( data, 0, sizeof( DataSegment ) );
+    data->name = strdup( _name );
+    data->realName = malloc( strlen( _name ) + 6 ); 
+    strcpy( data->realName, "DATA_" ); 
+    strcat( data->realName, data->name );
+
+    if ( ! _environment->dataSegment ) {
+        _environment->dataSegment = data;
+    } else {
+        DataSegment * first = _environment->dataSegment;
+        while( first->next ) {
+            first = first->next;
+        }
+        first->next = data;
+    }
+
+    return data;
+
+}
+
+DataSegment * data_segment_find( Environment * _environment, char * _name ) {
+
+    DataSegment * first = _environment->dataSegment;
+    while( first ) {
+        if ( strcmp( first->name, _name ) == 0 ) {
+            return first;
+        }
+        first = first->next;
+    }
+
+    return NULL;    
+
+}
+
+DataSegment * data_segment_define_or_retrieve( Environment * _environment, char * _name ) {
+
+    DataSegment * data = data_segment_find( _environment, _name );
+
+    if ( !data ) {
+        data = data_segment_define( _environment, _name );
+    }
+
+    return data;    
+
 }

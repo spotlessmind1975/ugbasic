@@ -6193,6 +6193,15 @@ op_comma_or_semicolon :
         $$ = 1;
     };
 
+read_definition :
+      Identifier {
+        read_data( _environment, $1 );
+    }
+    | Identifier {
+        read_data( _environment, $1 );
+    } OP_COMMA read_definition
+    ;
+
 input_definition :
       String op_comma_or_semicolon Identifier {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
@@ -6901,6 +6910,23 @@ sys_definition :
     }
     ;
 
+data_definition_single :
+    const_expr {
+        data_numeric( _environment, $1 );
+    }
+    | const_expr_floating {
+        data_floating( _environment, $1 );
+    }
+    | const_expr_string {
+        data_string( _environment, $1 );
+    };
+
+data_definition :
+    data_definition_single
+    | data_definition_single OP_COMMA data_definition
+    ;
+
+
 statement2:
     BANK bank_definition
   | RASTER raster_definition
@@ -6965,6 +6991,8 @@ statement2:
   }
   | SWAP swap_definition
   | OUT out_definition
+  | DATA data_definition
+  | READ read_definition
   | PRINT print_definition
   | PRINT BUFFER print_buffer_definition
   | PRINT BUFFER RAW print_buffer_raw_definition
@@ -7330,10 +7358,12 @@ statement2:
   | OSP Identifier OP_COLON CSP {
     label_define_named( _environment, $2 );
     cpu_label( _environment, $2 );
+    ((Environment *)_environment)->lastDefinedLabel = strdup( $2 );
   } 
   | Identifier OP_COLON {
     label_define_named( _environment, $1 );
     cpu_label( _environment, $1 );
+    ((Environment *)_environment)->lastDefinedLabel = strdup( $1 );
   } 
   | LOAD String OP_COMMA Integer on_bank load_flags {
     load( _environment, $2, NULL, $4, $5, $6 );
@@ -7730,6 +7760,7 @@ statements_with_linenumbers:
         char lineNumber[MAX_TEMPORARY_STORAGE];
         sprintf(lineNumber, "_linenumber%d", $1 );
         cpu_label( _environment, lineNumber);
+        ((Environment *)_environment)->lastDefinedLabel = strdup( lineNumber );
     } statements_no_linenumbers { 
         ((Environment *)_environment)->yylineno = yylineno;
     };
