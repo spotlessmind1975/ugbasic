@@ -80,6 +80,8 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "TEXTADDRESS" );    
     variable_import( _environment, "EMPTYTILE", VT_TILE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
+    variable_import( _environment, "DATAPTR", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "DATAPTR" );
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x8000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x8100, NULL );
