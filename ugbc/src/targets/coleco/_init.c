@@ -128,7 +128,10 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
     variable_global( _environment, "FPSCRAP" );
-    
+
+    variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
+    variable_global( _environment, "DATAPTR" );
+
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
