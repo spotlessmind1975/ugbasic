@@ -99,3 +99,5 @@ XCURSYS equ $D3
 YCURSYS equ $D6
 
 BANKSHADOW fcb  0
+
+DATAPTR fdb  0
