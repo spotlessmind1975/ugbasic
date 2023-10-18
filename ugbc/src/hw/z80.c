@@ -1433,8 +1433,16 @@ void z80_compare_and_branch_16bit_const( Environment * _environment, char *_sour
         outline1("JP NZ, %s", label);
         outline1("LD A, (%s)", _source);
         outline1("CP $%2.2x", ( _destination & 0xff ) );
-        outline1("JP Z, %s", _label);
-        outhead1("%s:", label );
+        outline1("JP NZ, %s", label);
+        if ( _positive ) {
+            outline1("JP %s", _label);
+            outhead1("%s:", label );
+        } else {
+            outline1("JP %snot", label);
+            outhead1("%s:", label );
+            outline1("JP %s", _label);
+            outhead1("%snot:", label );
+        }
 
     no_embedded( cpu_compare_and_branch_16bit_const )
 
@@ -2217,8 +2225,17 @@ void z80_compare_and_branch_32bit_const( Environment * _environment, char *_sour
         outline1("JP NZ, %s", label);
         outline1("LD A, (%s)", _source);
         outline1("CP $%2.2x", ( _destination & 0xff ) );
-        outline1("JP Z, %s", _label);
-        outhead1("%s:", label );
+        outline1("JP NZ, %s", label);
+
+        if ( _positive ) {
+            outline1("JP %s", _label);
+            outhead1("%s:", label );
+        } else {
+            outline1("JP %snot", label);
+            outhead1("%s:", label );
+            outline1("JP %s", _label);
+            outhead1("%snot:", label );
+        }
 
     no_embedded( cpu_compare_and_branch_32bit_const )
 
