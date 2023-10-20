@@ -124,7 +124,7 @@
 #define KEY_RET                      0x0d
 #define KEY_INS                      0x00
 #define KEY_DEL                      0xf9
-#define KEY_LEFT                     0xfc
+#define KEY_LEFT                     0x08
 #define KEY_UP                       0xfa
 #define KEY_DOWN                     0xfb
 #define KEY_RIGHT                    0xfd
