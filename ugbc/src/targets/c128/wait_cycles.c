@@ -59,7 +59,7 @@ Impiega la CPU in una attesa. Il tempo può essere espresso
 come numero di cicli CPU (''CYCLES''), numero di 50th/seconds (''TICKS''),
 o millisecondi (''MILLISECONDS'' oppure ''MS'').
 
-@syntax WAIT [delay] [CYCLES|TICKS|MILLISECONDS]
+@syntax WAIT delay CYCLES|TICKS|MILLISECONDS
 
 @example WAIT #42 CYCLES
 @usedInExample control_uncond_jumps_01.bas

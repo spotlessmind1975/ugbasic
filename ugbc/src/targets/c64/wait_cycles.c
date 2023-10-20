@@ -49,25 +49,7 @@
 /* <usermanual>
 @keyword WAIT
 
-@english
-Engages the CPU in a wait. The timing can be given as
-number of CPU cycles (''CYCLES''), number of 50th/seconds (''TICKS'')
-or milliseconds (''MILLISECONDS'' or ''MS'').
-
-@italian
-Impiega la CPU in una attesa. Il tempo può essere espresso
-come numero di cicli CPU (''CYCLES''), numero di 50th/seconds (''TICKS''),
-o millisecondi (''MILLISECONDS'' oppure ''MS'').
-
-@syntax WAIT [delay] [CYCLES|TICKS|MILLISECONDS]
-
-@example WAIT #42 CYCLES
-@usedInExample control_uncond_jumps_01.bas
-@usedInExample control_uncond_jumps_02.bas
-@usedInExample control_returning_01.bas
-@usedInExample control_returning_02.bas
-
-@target c64
+@target plus4
 </usermanual> */
 void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
