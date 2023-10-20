@@ -66,12 +66,6 @@ HSCROLLST
 HSCROLLSTX
     PSHS A,B,X,Y,U
 
-    ; The HSCROLL command do not need to switch from one bank to another 
-    ; during video RAM operation. This routine can simply bank in video 
-    ; memory at the beginning of execution and bank out at the end.
-
-    JSR GIMEBANKVIDEO
-
     LDB _PEN
     JSR GIMESELECTPALETTEPEN
     LSLA
@@ -90,6 +84,12 @@ HSCROLLSTX
     LDA DIRECTION
     CMPA #0
     BGT HSCROLLSTRIGHT
+
+    ; The HSCROLL command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
 
 HSCROLLSTLEFT
     LDA #0
@@ -130,6 +130,13 @@ HSCROLLSINGLELINERIGHTL2
     RTS
 
 HSCROLLSTRIGHT
+
+    ; The HSCROLL command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
     LDA #0
     LDB CURRENTTILESHEIGHT
     TFR D, U
@@ -161,12 +168,6 @@ HSCROLLLT
 HSCROLLLTX
     PSHS A,B,X,Y,U
 
-    ; The HSCROLL command do not need to switch from one bank to another 
-    ; during video RAM operation. This routine can simply bank in video 
-    ; memory at the beginning of execution and bank out at the end.
-
-    JSR GIMEBANKVIDEO
-
     LDB _PEN
     JSR GIMESELECTPALETTEPEN
     LSLA
@@ -193,6 +194,12 @@ HSCROLLLTX
     BGT HSCROLLTTRIGHT
 
 HSCROLLTLEFT
+    ; The HSCROLL command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
     JSR HSCROLLSINGLELINELEFT
 
     ; The HSCROLL command do not need to switch from one bank to another 
@@ -205,6 +212,13 @@ HSCROLLTLEFT
     RTS    
 
 HSCROLLTTRIGHT
+
+    ; The HSCROLL command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
     JSR HSCROLLSINGLELINERIGHT
 
     ; The HSCROLL command do not need to switch from one bank to another 

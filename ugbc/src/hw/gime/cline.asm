@@ -42,12 +42,6 @@ CLINE
 
 CLINET
 
-    ; The CLINE command do not need to switch from one bank to another 
-    ; during video RAM operation. This routine can simply bank in video 
-    ; memory at the beginning of execution and bank out at the end.
-
-    JSR GIMEBANKVIDEO
-
     LDB _PEN
     JSR GIMESELECTPALETTEPEN
     LSLA
@@ -87,8 +81,21 @@ CLINEINCX
     LDA EMPTYTILE
     LDB PLOTC
 
+    ; The CLINE command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
     STD ,X
     LEAX 2, X    
+
+    ; The CLINE command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKROM
+
     INC CLINEX
     LEAU -1, U
     CMPU #0
@@ -98,12 +105,6 @@ CLINEINCX
     BNE CLINEINCX
      
 CLINEDONE
-
-    ; The CLINE command do not need to switch from one bank to another 
-    ; during video RAM operation. This routine can simply bank in video 
-    ; memory at the beginning of execution and bank out at the end.
-
-    JSR GIMEBANKROM
 
     RTS
 
@@ -118,17 +119,24 @@ CLINEINC2X
     LDA EMPTYTILE
     LDB PLOTC
 
+    ; The CLINE command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
     STD , X
     LEAX 2, X
-    INC CLINEX
-    LDB CLINEX
-    CMPB CURRENTTILESWIDTH
-    BNE CLINEINC2X
 
     ; The CLINE command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 
     ; memory at the beginning of execution and bank out at the end.
 
     JSR GIMEBANKROM
+
+    INC CLINEX
+    LDB CLINEX
+    CMPB CURRENTTILESWIDTH
+    BNE CLINEINC2X
 
     RTS

@@ -568,7 +568,7 @@ const_factor:
           $$ = 0x0;
       }
       | TRUE {
-          $$ = 0xffffffff;
+          $$ = 0xff;
       }
       | RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
           if ( ((Environment *)_environment)->currentRgbConverterFunction ) {
@@ -2769,7 +2769,7 @@ exponential:
         $$ = absolute( _environment, $3 )->name;
     }
     | TRUE {
-        $$ = variable_temporary( _environment, VT_BYTE, "(true)" )->name;
+        $$ = variable_temporary( _environment, VT_SBYTE, "(true)" )->name;
         variable_store( _environment, $$, 255 );
     }
     | FALSE {
