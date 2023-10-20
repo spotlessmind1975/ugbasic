@@ -43,12 +43,6 @@ VSCROLLT
 VSCROLLTX
     PSHS A,B,X,Y,U
 
-    ; The VSCROLL command do not need to switch from one bank to another 
-    ; during video RAM operation. This routine can simply bank in video 
-    ; memory at the beginning of execution and bank out at the end.
-
-    JSR GIMEBANKVIDEO
-
     LDB _PEN
     JSR GIMESELECTPALETTEPEN
     LSLA
@@ -85,6 +79,12 @@ VSCROLLTUP
     LEAU D, U
     LEAU D, U
 
+    ; The VSCROLL command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
 VSCROLLTUPYSCR1
     LDA ,Y+
     STA ,X+
@@ -92,12 +92,24 @@ VSCROLLTUPYSCR1
     CMPU #0
     BNE VSCROLLTUPYSCR1
 
+    ; The VSCROLL command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKROM
+
     LDA #0
     LDB CURRENTTILESWIDTH
     TFR D, U
 
     LDA EMPTYTILE
     LDB PLOTC
+
+    ; The VSCROLL command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
 
 VSCROLLTUPYSCR2
     STD ,X
@@ -132,6 +144,12 @@ VSCROLLTDOWN
     ADDD #2
     LEAU D, U
 
+    ; The VSCROLL command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
 VSCROLLTDOWNSCR1
     LDD ,Y
     STD ,X
@@ -145,9 +163,21 @@ VSCROLLTDOWNSCR1
     LDB CURRENTTILESWIDTH
     TFR D, U
 
+    ; The VSCROLL command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKROM
+    
     LDA EMPTYTILE
     LDB PLOTC
 
+    ; The VSCROLL command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+    
 VSCROLLTDOWNSCR2
     STD , Y
     LEAY 2, Y
