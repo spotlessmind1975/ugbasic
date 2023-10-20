@@ -2033,6 +2033,11 @@ typedef struct _Environment {
     int protothreadStep;
     
     /**
+     * 
+     */
+    VariableType dataDataType;
+
+    /**
      * Screen width in pixels (statically determined)
      */
     int screenWidth;

@@ -40,7 +40,13 @@
 
 void data_numeric( Environment * _environment, int _value ) {
 
-    VariableType type = variable_type_from_numeric_value( _environment, _value );
+    VariableType type;
+
+    if ( _environment->dataDataType ) {
+        type = _environment->dataDataType;
+    } else {
+        type = variable_type_from_numeric_value( _environment, _value );
+    }
 
     int bytes = VT_BITWIDTH( type ) >> 3;
 

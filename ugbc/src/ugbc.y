@@ -6921,9 +6921,15 @@ data_definition_single :
         data_string( _environment, $1 );
     };
 
-data_definition :
+data_definition_data :
     data_definition_single
     | data_definition_single OP_COMMA data_definition
+    ;
+
+data_definition :
+    as_datatype {
+        ((struct _Environment *)_environment)->dataDataType = $1;
+    } data_definition_data
     ;
 
 
