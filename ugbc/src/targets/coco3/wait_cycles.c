@@ -48,6 +48,7 @@
  */
 /* <usermanual>
 @keyword WAIT
+@target coco3
 </usermanual> */
 void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 

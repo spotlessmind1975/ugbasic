@@ -48,6 +48,7 @@
  */
 /* <usermanual>
 @keyword WAIT
+@target coco
 </usermanual> */
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
