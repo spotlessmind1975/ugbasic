@@ -66,12 +66,6 @@ PLOTCLIP5
 
 PLOTMODE
 
-    ; The PLOT command do not need to switch from one bank to another 
-    ; during video RAM operation. This routine can simply bank in video 
-    ; memory at the beginning of execution and bank out at the end.
-
-    JSR GIMEBANKVIDEO
-
     LDB _PEN
     JSR GIMESELECTPALETTE
     STA PLOTC
@@ -86,12 +80,6 @@ PLOTMODE
     BEQ PLOTB4
     CMPA #$40
     LBEQ PLOTB2
-
-    ; The PLOT command do not need to switch from one bank to another 
-    ; during video RAM operation. This routine can simply bank in video 
-    ; memory at the beginning of execution and bank out at the end.
-
-    JSR GIMEBANKROM
 
     RTS
 
@@ -196,6 +184,12 @@ PLOTD
     ;set point
     ;---------
 
+    ; The PLOT command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
     LDA , X           ;get row with point in it
     ANDA , U
     ORA PLOTC
@@ -208,28 +202,54 @@ PLOTD
     ;erase point
     ;-----------
 PLOTE                          ;handled same way as setting a point
+
+    ; The PLOT command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
     LDA , X           ;get row with point in it
     ANDA , U
     STA , X           ;write back to $A000
+
     JMP PLOTP                  ;skip the erase-point section
 
 PLOTG      
+
+    ; The PLOT command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
     LDA , X           ;get row with point in it
     ANDA , U
     CMPA #0
+
     BEQ PLOTG0
 PLOTG1
     LDA #$ff
     STA PLOTM
+
     JMP PLOTP
 PLOTG0
     LDA #$0
     STA PLOTM
+
     JMP PLOTP            
 
 PLOTCL                          
+
+    ; The PLOT command do not need to switch from one bank to another 
+    ; during video RAM operation. This routine can simply bank in video 
+    ; memory at the beginning of execution and bank out at the end.
+
+    JSR GIMEBANKVIDEO
+
     LDA , X           ;get row with point in it
     STA PLOTM
+
     JMP PLOTP
 
 PLOTP
