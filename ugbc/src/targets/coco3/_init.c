@@ -102,9 +102,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "FREE_STRING", VT_WORD, DSTRING_DEFAULT_SPACE );
     variable_global( _environment, "FREE_STRING" );    
 
-    outline0("ORG $2A00");
-    outline0("JMP CODESTART");
-    outhead0("IRQSTACK rzb 512");
+    // outline0("ORG $2A00");
+    // outline0("JMP CODESTART");
+    // outhead0("IRQSTACK rzb 512");
     outhead0("CODESTART");
     outline0("LDS #IRQSTACK");
     outline0("STA $FFDF");

@@ -152,9 +152,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_BLIT:
                     break;                
-                case VT_IMAGE:
-                case VT_IMAGES:
-                case VT_SEQUENCE:
                 case VT_MUSIC:
                 case VT_BUFFER:
                     if ( ! variable->absoluteAddress ) {
@@ -259,6 +256,73 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
     }
 
     outline0("   fcb 0");
+
+}
+
+static void variable_cleanup_entry_image( Environment * _environment, Variable * _first ) {
+
+    Variable * variable = _first;
+
+    while( variable ) {
+
+        if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
+
+            if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
+                fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
+            }
+
+            switch( variable->type ) {
+                case VT_IMAGE:
+                case VT_IMAGES:
+                case VT_SEQUENCE:
+                    if ( ! variable->absoluteAddress ) {
+                        if ( variable->valueBuffer ) {
+                            if ( variable->printable ) {
+                                char * string = malloc( variable->size + 1 );
+                                memset( string, 0, variable->size );
+                                memcpy( string, variable->valueBuffer, variable->size );
+                                outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
+                            } else {
+                                out1("%s fcb ", variable->realName);
+                                int i=0;
+                                for (i=0; i<(variable->size-1); ++i ) {
+                                    if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                        outline1("%d", variable->valueBuffer[i]);
+                                        out0("   fcb ");
+                                    } else {
+                                        out1("%d,", variable->valueBuffer[i]);
+                                    }
+                                }
+                                outhead1("%d", variable->valueBuffer[(variable->size-1)]);
+                            }
+                        } else {
+                            outhead2("%s rzb %d", variable->realName, variable->size);
+                        }
+                    } else {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                        if ( variable->valueBuffer ) {
+                            if ( variable->printable ) {
+                                char * string = malloc( variable->size + 1 );
+                                memset( string, 0, variable->size );
+                                memcpy( string, variable->valueBuffer, variable->size );
+                                outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
+                            } else {
+                                out1("%scopy fcb ", variable->realName);
+                                int i=0;
+                                for (i=0; i<(variable->size-1); ++i ) {
+                                    out1("%d,", variable->valueBuffer[i]);
+                                }
+                                outhead1("%d", variable->valueBuffer[(variable->size-1)]);
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        
+        variable = variable->next;
+
+    }
 
 }
 
@@ -367,6 +431,44 @@ void variable_cleanup( Environment * _environment ) {
         staticStrings = staticStrings->next;
     }
 
+    ////////////////////
+
+    buffered_push_output( );
+
+    outline0("ORG $2A00");
+    outline0("JMP CODESTART");
+    outhead0("IRQSTACK rzb 512");
+
+    for(i=0; i<BANK_TYPE_COUNT; ++i) {
+        Bank * actual = _environment->banks[i];
+        while( actual ) {
+            if ( actual->type == BT_VARIABLES ) {
+                // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
+                // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+                // outhead1(".segment \"%s\"", actual->name);
+                Variable * variable = _environment->variables;
+
+                variable_cleanup_entry_image( _environment, variable );
+
+            } else if ( actual->type == BT_TEMPORARY ) {
+                for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
+                    Variable * variable = _environment->tempVariables[j];
+                    variable_cleanup_entry_image( _environment, variable );
+                } 
+                
+                Variable * variable = _environment->tempResidentVariables;
+                variable_cleanup_entry_image( _environment, variable );
+
+            } else if ( actual->type == BT_STRINGS ) {
+                // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
+                // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+            } else {
+
+            }
+           actual = actual->next;
+        }
+    }    
+
     if ( _environment->descriptors ) {
         outhead0("UDCCHAR" );
         int i=0,j=0;
@@ -379,5 +481,7 @@ void variable_cleanup( Environment * _environment ) {
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
     }
-    
+
+    buffered_prepend_output( );
+
 }
