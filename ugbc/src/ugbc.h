@@ -1450,7 +1450,6 @@ typedef struct _Deployed {
     int fp_single_geomean;
     
     int duff;
-    int read_data;
 
 } Deployed;
 
