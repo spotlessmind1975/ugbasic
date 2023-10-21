@@ -6945,7 +6945,42 @@ data_definition_single :
 
 data_definition_data :
     data_definition_single
-    | data_definition_single OP_COMMA data_definition
+    | data_definition_single OP_COMMA data_definition_data
+    | LOAD String AS TEXT {
+
+        FILE * handle = fopen( $2, "rt" );
+        if ( ! handle ) {
+            CRITICAL_DATA_LOAD_TEXT_NOT_FOUND( $2 );
+        }
+
+        while( !feof( handle ) ) {
+
+            char valueString[MAX_TEMPORARY_STORAGE];
+            memset( valueString, 0, MAX_TEMPORARY_STORAGE );
+            int p=0, j=0;
+
+            while( !feof( handle ) ) {
+                char c = fgetc(handle);
+                if ( j == 0 ) {
+                    if ( (c < '0') || (c > '9') ) {
+                        continue;
+                    }
+                    j = 1;
+                } else {
+                    if ( (c < '0') || (c > '9') ) {
+                        break;
+                    }
+                }
+                valueString[p] = c;
+                ++p;
+            }
+
+            data_numeric( _environment, atoi( valueString ) );
+
+        }
+
+        fclose( handle );
+    }
     ;
 
 data_definition :
@@ -6954,9 +6989,7 @@ data_definition :
     } data_definition_data
     | as_datatype_mandatory {
         ((struct _Environment *)_environment)->dataDataType = $1;
-    } data_definition_data
-    ;
-
+    } data_definition_data;
 
 statement2:
     BANK bank_definition

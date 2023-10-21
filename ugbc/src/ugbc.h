@@ -2543,6 +2543,7 @@ typedef struct _Environment {
 #define CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( v ) CRITICAL2("E232 - READ not supported for this kind of variable", v );
 #define CRITICAL_RESTORE_WITHOUT_DATA( v ) CRITICAL2("E233 - RESTORE without DATA", v );
 #define CRITICAL_READ_END_WITHOUT_DATA( ) CRITICAL("E234 - READ END without DATA" );
+#define CRITICAL_DATA_LOAD_TEXT_NOT_FOUND( v ) CRITICAL2("E235 - cannot find file to load DATA in", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
