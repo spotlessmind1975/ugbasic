@@ -2541,6 +2541,9 @@ exponential:
     | DISTANCE OP optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y CP {
         $$ = distance( _environment, $3, $5, $7, $9 )->name;
     }
+    | READ END {
+        $$ = read_end( _environment )->name;
+      }
     | PEEK OP expr CP {
         $$ = peek_var( _environment, $3 )->name;
       }
@@ -4040,6 +4043,10 @@ var_definition_complex:
     | var_definition_simple OP_COMMA var_definition_complex;
 
 restore_definition:
+    {
+      restore_label( _environment, NULL );
+    }
+    |
     Identifier {
       restore_label( _environment, $1 );
     }

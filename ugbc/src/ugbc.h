@@ -2542,6 +2542,7 @@ typedef struct _Environment {
 #define CRITICAL_READ_WITHOUT_DATA( v ) CRITICAL2("E231 - READ without DATA", v );
 #define CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( v ) CRITICAL2("E232 - READ not supported for this kind of variable", v );
 #define CRITICAL_RESTORE_WITHOUT_DATA( v ) CRITICAL2("E233 - RESTORE without DATA", v );
+#define CRITICAL_READ_END_WITHOUT_DATA( ) CRITICAL("E234 - READ END without DATA" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3813,6 +3814,7 @@ Variable *              random_width( Environment * _environment );
 void                    randomize( Environment * _environment, char * _seed );
 void                    raster_at( Environment * _environment, char * _label, int _position );
 void                    raster_at_var( Environment * _environment, char * _label, char * _position );
+Variable *              read_end( Environment * _environment );
 void                    read_data( Environment * _environment, char * _variable );
 void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
