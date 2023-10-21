@@ -133,9 +133,9 @@ void end_compilation( Environment * _environment ) {
                 line = strtok( NULL, "\x0a" );
             }
             free( _environment->deferredEmbedded[j] );
-            fwrite( parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile );
+            buffered_fwrite( parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile );
             free( parsed );
-            fputs( "\n", ((Environment *)_environment)->asmFile );
+            buffered_fputs( "\n", ((Environment *)_environment)->asmFile );
         }
     }
 

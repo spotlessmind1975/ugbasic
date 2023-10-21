@@ -36,6 +36,8 @@
 #include <math.h>
 #include <ctype.h>
 #include <errno.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -10363,4 +10365,19 @@ DataSegment * data_segment_define_or_retrieve( Environment * _environment, char 
 
     return data;    
 
+}
+
+void buffered_fprintf( FILE * _stream, const char * _format, ... ) {
+    va_list args;
+    va_start( args, _format );
+    vfprintf( _stream, _format, args );
+    va_end( args );
+}
+
+int buffered_fputs( const char * _string, FILE * _stream ) {
+    fputs( _string, _stream );
+}
+
+size_t buffered_fwrite( void * _data, size_t _size, size_t _count, FILE * _stream ) {
+    fwrite( _data, _size, _count, _stream );
 }

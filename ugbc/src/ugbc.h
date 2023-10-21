@@ -2558,17 +2558,21 @@ typedef struct _Environment {
 
 int assemblyLineIsAComment( char * _buffer );
 
+int buffered_fputs(const char * _string, FILE * _stream);
+void buffered_fprintf(FILE * _stream, const char * _format, ...);
+size_t buffered_fwrite( void * _data, size_t _size, size_t _count, FILE * _stream);
+
 #define outline0n(n,s,r)     \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->asmFile); \
         if ( ((Environment *)_environment)->emptyProcedure ) { \
-            fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
-        fputs(s,((Environment *)_environment)->asmFile); \
+        buffered_fputs(s,((Environment *)_environment)->asmFile); \
         if ( r ) { \
-            fputs("\n", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->asmFile); \
             if ( ! ((Environment *)_environment)->emptyProcedure ) { \
                 ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
             } \
@@ -2579,13 +2583,13 @@ int assemblyLineIsAComment( char * _buffer );
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->asmFile); \
         if ( ((Environment *)_environment)->emptyProcedure ) { \
-            fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
         fprintf(((Environment *)_environment)->asmFile, s, a); \
         if ( r ) { \
-            fputs("\n", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->asmFile); \
             if ( ! ((Environment *)_environment)->emptyProcedure ) { \
                 ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
             } \
@@ -2596,13 +2600,13 @@ int assemblyLineIsAComment( char * _buffer );
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->asmFile); \
         if ( ((Environment *)_environment)->emptyProcedure ) { \
             fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b); \
         if ( r ) { \
-            fputs("\n", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->asmFile); \
             if ( ! ((Environment *)_environment)->emptyProcedure ) { \
                 ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
             } \
@@ -2613,13 +2617,13 @@ int assemblyLineIsAComment( char * _buffer );
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->asmFile); \
         if ( ((Environment *)_environment)->emptyProcedure ) { \
-            fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b, c); \
         if ( r ) { \
-            fputs("\n", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->asmFile); \
             if ( ! ((Environment *)_environment)->emptyProcedure ) { \
                 ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
             } \
@@ -2630,13 +2634,13 @@ int assemblyLineIsAComment( char * _buffer );
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->asmFile); \
         if ( ((Environment *)_environment)->emptyProcedure ) { \
-            fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b, c, d); \
         if ( r ) { \
-            fputs("\n", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->asmFile); \
             if ( ! ((Environment *)_environment)->emptyProcedure ) { \
                 ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
             } \
@@ -2647,13 +2651,13 @@ int assemblyLineIsAComment( char * _buffer );
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->asmFile); \
         if ( ((Environment *)_environment)->emptyProcedure ) { \
-            fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b, c, d, e); \
         if ( r ) { \
-            fputs("\n", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->asmFile); \
             if ( ! ((Environment *)_environment)->emptyProcedure ) { \
                 ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
             } \
@@ -2664,60 +2668,60 @@ int assemblyLineIsAComment( char * _buffer );
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->configurationFile); \
-        fputs(s,((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->configurationFile); \
+        buffered_fputs(s,((Environment *)_environment)->configurationFile); \
         if ( r ) \
-            fputs("\n", ((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline1n(n,s,a,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a); \
         if ( r ) \
-            fputs("\n", ((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline2n(n,s,a,b,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a, b); \
         if ( r ) \
-            fputs("\n", ((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline3n(n,s,a,b,c,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a, b, c); \
         if ( r ) \
-            fputs("\n", ((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline4n(n,s,a,b,c,d,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a, b, c, d); \
         if ( r ) \
-            fputs("\n", ((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline5n(n,s,a,b,c,d,e,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a, b, c, d, e); \
         if ( r ) \
-            fputs("\n", ((Environment *)_environment)->configurationFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define outfile0(f)     \
@@ -2727,12 +2731,12 @@ int assemblyLineIsAComment( char * _buffer );
             char line[MAX_TEMPORARY_STORAGE]; \
             while( ! feof( fh ) ) { \
                 if ( fgets( line, MAX_TEMPORARY_STORAGE, fh ) ) { \
-                    fputs( line, ((Environment *)_environment)->asmFile); \
+                    buffered_fputs( line, ((Environment *)_environment)->asmFile); \
                     ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1; \
                 } \
             } \
             fclose( fh ); \
-            fputs("\n", ((Environment *)_environment)->asmFile); \
+            buffered_fputs("\n", ((Environment *)_environment)->asmFile); \
         } else { \
             CRITICAL2("Unable to include ugbasic system file", f ); \
         } \
@@ -2779,9 +2783,9 @@ int embed_scan_string (const char *);
             line = strtok( NULL, "\x0a" ); \
         } \
         free( tmp ); \
-        fwrite( parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile ); \
+        buffered_fwrite( parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile ); \
         free( parsed ); \
-        fputs( "\n", ((Environment *)_environment)->asmFile ); \
+        buffered_fputs( "\n", ((Environment *)_environment)->asmFile ); \
     }
 
 #define outembeddeddef0(e) \
