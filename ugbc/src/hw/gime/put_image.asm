@@ -106,7 +106,7 @@ PUTIMAGEGOSX
     ; in the RAM and, if necessary, to differentiate the drawing logic.
 
     PSHS D
-    LDA IMAGEW
+    LDA IMAGEW+1
     LDB IMAGEH
     MUL
     TFR D, U
@@ -417,7 +417,7 @@ PUTIMAGEL1NNOBANK
     DEC IMAGEH
     LDB IMAGEH
     CMPB #0
-    BGT PUTIMAGECOMMONENOBANK
+    BLE PUTIMAGECOMMONENOBANK
 
     LDU IMAGEW
     JMP PUTIMAGEL1NOBANK
