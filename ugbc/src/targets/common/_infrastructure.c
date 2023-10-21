@@ -10367,17 +10367,18 @@ DataSegment * data_segment_define_or_retrieve( Environment * _environment, char 
 
 }
 
-char * bufferOutput = NULL;
-int bufferOutputSize = 0;
+int currentBufferOutput = 0;
+char * bufferOutput[16];
+int bufferOutputSize[16];
 
 static void buffered_realloc( const char * _ptr, int _size ) {
-    if ( bufferOutput ) {
-        bufferOutput = realloc( bufferOutput, bufferOutputSize + _size );
+    if ( bufferOutput[currentBufferOutput] ) {
+        bufferOutput[currentBufferOutput] = realloc( bufferOutput[currentBufferOutput], bufferOutputSize[currentBufferOutput] + _size );
     } else {
-        bufferOutput = malloc( _size );
+        bufferOutput[currentBufferOutput] = malloc( _size );
     }
-    memcpy( bufferOutput + bufferOutputSize, _ptr , _size );
-    bufferOutputSize += _size;
+    memcpy( bufferOutput[currentBufferOutput] + bufferOutputSize[currentBufferOutput], _ptr , _size );
+    bufferOutputSize[currentBufferOutput] += _size;
 }
 
 void buffered_fprintf( FILE * _stream, const char * _format, ... ) {
@@ -10400,6 +10401,26 @@ size_t buffered_fwrite( void * _data, size_t _size, size_t _count, FILE * _strea
     buffered_realloc( _data, _size * _count );
 }
 
+void buffered_push_output( ) {
+    ++currentBufferOutput;
+}
+
+void buffered_pop_output( ) {
+    bufferOutput[currentBufferOutput] = NULL;
+    bufferOutputSize[currentBufferOutput] = 0;
+    --currentBufferOutput;
+}
+
+void buffered_prepend_output( ) {
+    char * p = malloc( bufferOutputSize[currentBufferOutput-1] + bufferOutputSize[currentBufferOutput] );
+    memset( p, 0, bufferOutputSize[currentBufferOutput-1] + bufferOutputSize[currentBufferOutput] );
+    memcpy( p, bufferOutput[currentBufferOutput], bufferOutputSize[currentBufferOutput] );
+    memcpy( p + bufferOutputSize[currentBufferOutput], bufferOutput[currentBufferOutput-1], bufferOutputSize[currentBufferOutput-1] );
+    bufferOutput[currentBufferOutput-1] = p;
+    bufferOutputSize[currentBufferOutput-1] = bufferOutputSize[currentBufferOutput-1] + bufferOutputSize[currentBufferOutput];
+    buffered_pop_output( );
+}
+
 void buffered_output( FILE * _stream ) {
-    fwrite( bufferOutput, 1, bufferOutputSize, _stream );
+    fwrite( bufferOutput[currentBufferOutput], 1, bufferOutputSize[currentBufferOutput], _stream );
 }

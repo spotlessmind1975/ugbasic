@@ -2561,7 +2561,10 @@ int assemblyLineIsAComment( char * _buffer );
 int buffered_fputs(const char * _string, FILE * _stream);
 void buffered_fprintf(FILE * _stream, const char * _format, ...);
 size_t buffered_fwrite( void * _data, size_t _size, size_t _count, FILE * _stream);
+void buffered_push_output( );
 void buffered_output( FILE * _stream );
+void buffered_prepend_output( );
+void buffered_pop_output( );
 
 #define outline0n(n,s,r)     \
     { \
