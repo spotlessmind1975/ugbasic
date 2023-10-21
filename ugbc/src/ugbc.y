@@ -91,6 +91,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
+%token RESTORE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -118,7 +119,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> writing_mode_definition writing_part_definition
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
 %type <integer> const_key_scancode_definition const_key_scancode_alphadigit const_key_scancode_function_digit
-%type <integer> datatype as_datatype as_datatype_suffix
+%type <integer> datatype as_datatype as_datatype_mandatory as_datatype_suffix
 %type <integer> halted
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y
@@ -3980,13 +3981,16 @@ screen_definition:
     screen_definition_simple
   | screen_definition_expression;
 
+as_datatype_mandatory : 
+    AS datatype {
+        $$ = $2;
+    };
+
 as_datatype : 
     {
         $$ = ((struct _Environment *)_environment)->defaultVariableType;
     }
-    | AS datatype {
-        $$ = $2;
-    };
+    | as_datatype_mandatory;
 
 as_datatype_suffix :
       OP_AT {
@@ -4034,6 +4038,17 @@ var_definition_simple:
 var_definition_complex:
     var_definition_simple
     | var_definition_simple OP_COMMA var_definition_complex;
+
+restore_definition:
+    Identifier {
+      restore_label( _environment, $1 );
+    }
+    | Integer {
+        char lineNumber[MAX_TEMPORARY_STORAGE];
+        sprintf(lineNumber, "_linenumber%d", $1 );
+        restore_label( _environment, lineNumber );
+  }
+  ;
 
 goto_definition:
     Identifier {
@@ -6927,7 +6942,10 @@ data_definition_data :
     ;
 
 data_definition :
-    as_datatype {
+    {
+        ((struct _Environment *)_environment)->dataDataType = 0;
+    } data_definition_data
+    | as_datatype_mandatory {
         ((struct _Environment *)_environment)->dataDataType = $1;
     } data_definition_data
     ;
@@ -6999,6 +7017,7 @@ statement2:
   | OUT out_definition
   | DATA data_definition
   | READ read_definition
+  | RESTORE restore_definition
   | PRINT print_definition
   | PRINT BUFFER print_buffer_definition
   | PRINT BUFFER RAW print_buffer_raw_definition

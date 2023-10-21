@@ -2300,10 +2300,10 @@ typedef struct _Environment {
 #define UNIQUE_RESOURCE_ID   ((struct _Environment *)_environment)->uniqueResourceId++
 #define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
 
-#define CRITICAL( s ) fprintf(stderr, "%s:%d CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL2( s, v ) fprintf(stderr, "%s:%d CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", __FILE__,__LINE__,  ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n",  ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL3( s, v1, v2 ) fprintf(stderr, "%s %d CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", __FILE__, __LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL4si( s, v, d1, d2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL_UNIMPLEMENTED( v ) CRITICAL2("E000 - Internal method not implemented:", v );
@@ -2541,6 +2541,7 @@ typedef struct _Environment {
 #define CRITICAL_TILE_ID_NO_TILESET( v ) CRITICAL2("E230 - cannot call TILE ID on something that is not a TILESET", v );
 #define CRITICAL_READ_WITHOUT_DATA( v ) CRITICAL2("E231 - READ without DATA", v );
 #define CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( v ) CRITICAL2("E232 - READ not supported for this kind of variable", v );
+#define CRITICAL_RESTORE_WITHOUT_DATA( v ) CRITICAL2("E233 - RESTORE without DATA", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3817,6 +3818,7 @@ void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
 char *                  resource_load_asserts( Environment * _environment, char * _filename );
 Variable *              respawn_procedure( Environment * _environment, char * _name );
+void                    restore_label( Environment * _environment, char * _label );
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
 int                     rgbi_equals_rgb( RGBi * _first, RGBi * _second );

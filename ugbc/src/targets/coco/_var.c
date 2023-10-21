@@ -350,12 +350,13 @@ void variable_cleanup( Environment * _environment ) {
         int i=0;
         out1("%s fcb ", dataSegment->realName );
         for( i=0; i<(dataSegment->size-1); ++i ) {
-            out1("$%2.2x,", dataSegment->dataBuffer[i] );
+            out1("$%2.2x,", (unsigned char)(dataSegment->dataBuffer[i]&0xff) );
         }
-        out1("$%2.2x", dataSegment->dataBuffer[i] );
+        out1("$%2.2x", (unsigned char)(dataSegment->dataBuffer[i]&0xff) );
         outline0("");
         dataSegment = dataSegment->next;
     }
+    outhead0("DATAPTRE:");
 
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {

@@ -38,14 +38,79 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit code for <strong>READ</strong> instruction
+ * 
+ * @param _environment Current calling environment
+ * @param _variable Variable to store to
+ */
+/* <usermanual>
+@keyword READ
+
+@english
+
+The ''READ'' is used for reading constant values from ''DATA'' lines into the
+given variables. This command is able to read more constants at once with a 
+variable list separated by commas.
+
+If using the wrong type of variable (for example read a character string into a
+numerical variable like float or integer), the variable will be untouched.
+Such behavior can be prevented by generally using a variable of the same type
+like the ''DATA AS'' used.
+
+With a value that falls outside the expected range of a ''READ'' variable, 
+e.g. the value is outside the range of an integer, ugBASIC will implicitly
+convert it, with a precision lost. If more constants are read than values
+exist in ''DATA'' lines, the extra read will be ignored.
+
+A succeeding ''READ'' searches for the first ''DATA'' statement where the
+''DATA'' read pointer is adjusted to.
+
+@italian
+
+Il comando ''READ'' viene utilizzato per leggere valori costanti dalle righe ''DATA'' 
+nelle variabili indicate. Questo comando è in grado di leggere più costanti 
+contemporaneamente con un elenco di variabili separate da virgole.
+
+Se si utilizza il tipo sbagliato di variabile (ad esempio leggere una stringa di caratteri
+in una variabile numerica come float o intero), la variabile non verrà modificata. 
+Tale comportamento può essere evitato utilizzando generalmente una variabile dello stesso 
+tipo di quello indicato nel ''DATA AS''.
+
+Con un valore che non rientra nell'intervallo previsto di una variabile ''READ'', 
+ad es. il valore non è compreso nell'intervallo di un numero intero, ugBASIC lo convertirà
+implicitamente, perdendo precisione. Se vengono lette più costanti rispetto ai valori presenti
+nelle righe ''DATA'', la lettura extra verrà ignorata.
+
+Un ''READ'' successivo cerca la prima istruzione ''DATA'' su cui è regolato il puntatore di
+lettura di ''DATA''.
+
+@syntax READ var
+
+@example READ nextStep
+
+@usedInExample data_example_01.bas
+@usedInExample data_example_02.bas
+@usedInExample data_example_03.bas
+
+@target all
+@verified
+</usermanual> */
 void read_data( Environment * _environment, char * _variable ) {
 
     MAKE_LABEL
 
     char typeMismatchDuringReadLabel[MAX_TEMPORARY_STORAGE]; sprintf( typeMismatchDuringReadLabel, "%stm", label );
+    char doneReadLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneReadLabel, "%sdone", label );
+    char completeReadLabel[MAX_TEMPORARY_STORAGE]; sprintf( completeReadLabel, "%scm", label );
+    char byteReadLabel[MAX_TEMPORARY_STORAGE]; sprintf( byteReadLabel, "%sby", label );
+    char wordReadLabel[MAX_TEMPORARY_STORAGE]; sprintf( wordReadLabel, "%swo", label );
+    char dwordReadLabel[MAX_TEMPORARY_STORAGE]; sprintf( dwordReadLabel, "%sdw", label );
+    char stringReadLabel[MAX_TEMPORARY_STORAGE]; sprintf( stringReadLabel, "%sst", label );
 
-    Variable * variable = variable_retrieve( _environment, _variable );
+    Variable * variable = variable_retrieve_or_define( _environment, _variable, VT_WORD, 0 );
     Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
+    Variable * dataptre = variable_temporary( _environment, VT_ADDRESS, "(dataptre)" );
     Variable * datatype = variable_temporary( _environment, VT_BYTE, "(type)" );
 
     cpu_compare_and_branch_16bit_const( _environment, dataptr->realName, 0, label, 0 );
@@ -57,6 +122,10 @@ void read_data( Environment * _environment, char * _variable ) {
     cpu_addressof_16bit( _environment, _environment->dataSegment->realName, dataptr->realName );
 
     cpu_label( _environment, label );
+
+    cpu_addressof_16bit( _environment, "DATAPTRE", dataptre->realName );
+    cpu_compare_16bit( _environment, dataptr->realName, dataptre->realName, datatype->realName, 1 );
+    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, 0xff, doneReadLabel, 1 );
 
     cpu_move_8bit_indirect2( _environment, dataptr->realName, datatype->realName );
 
@@ -106,7 +175,71 @@ void read_data( Environment * _environment, char * _variable ) {
             break;
     }
 
+    cpu_jump( _environment, doneReadLabel );
+
     cpu_label( _environment, typeMismatchDuringReadLabel );
+
+    Variable * data = variable_temporary( _environment, VT_SIGNED( variable->type ) ? VT_SDWORD : VT_DWORD, "(data)" );
+
+    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_BYTE, byteReadLabel, 1 );
+    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_SBYTE, byteReadLabel, 1 );
+
+    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_WORD, wordReadLabel, 1 );
+    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_SWORD, wordReadLabel, 1 );
+
+    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_DWORD, dwordReadLabel, 1 );
+    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_SDWORD, dwordReadLabel, 1 );
+
+    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_STRING, stringReadLabel, 1 );
+
+    cpu_jump( _environment, doneReadLabel );
+
+    cpu_label( _environment, dwordReadLabel );
+
+    cpu_inc_16bit( _environment, dataptr->realName );
+    cpu_move_32bit_indirect2( _environment, dataptr->realName, data->realName );
+    cpu_inc_16bit( _environment, dataptr->realName );
+    cpu_inc_16bit( _environment, dataptr->realName );
+    cpu_inc_16bit( _environment, dataptr->realName );
+    cpu_inc_16bit( _environment, dataptr->realName );
+
+    cpu_jump( _environment, completeReadLabel );
+
+    cpu_label( _environment, wordReadLabel );
+
+    cpu_inc_16bit( _environment, dataptr->realName );
+    cpu_move_16bit_indirect2( _environment, dataptr->realName, data->realName );
+    cpu_inc_16bit( _environment, dataptr->realName );
+    cpu_inc_16bit( _environment, dataptr->realName );
+
+    cpu_jump( _environment, completeReadLabel );
+
+    cpu_label( _environment, byteReadLabel );
+
+    cpu_inc_16bit( _environment, dataptr->realName );
+    cpu_move_8bit_indirect2( _environment, dataptr->realName, data->realName );
+    cpu_inc_16bit( _environment, dataptr->realName );
+
+    cpu_jump( _environment, completeReadLabel );
+
+    cpu_label( _environment, stringReadLabel );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
+    cpu_inc_16bit( _environment, dataptr->realName );
+    cpu_move_8bit_indirect2( _environment, dataptr->realName, size->realName );
+    cpu_inc_16bit( _environment, dataptr->realName );
+    cpu_dsfree( _environment, variable->realName );
+    cpu_dsalloc( _environment, size->realName, variable->realName );
+    cpu_dsdescriptor( _environment, variable->realName, address->realName, size->realName );
+    cpu_mem_move( _environment, dataptr->realName, address->realName, size->realName );
+    cpu_math_add_16bit( _environment, dataptr->realName, size->realName, NULL );
+    cpu_jump( _environment, doneReadLabel );
+
+    cpu_label( _environment, completeReadLabel );
+
+    variable_move( _environment, data->name, variable->name );
+
+    cpu_label( _environment, doneReadLabel );
 
 }
 
