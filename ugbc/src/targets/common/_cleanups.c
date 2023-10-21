@@ -156,6 +156,8 @@ void end_compilation( Environment * _environment ) {
         fclose(_environment->debuggerLabelsFile);
     }
     
+    buffered_output( _environment->asmFile );
+    
     fclose(_environment->asmFile);
 
 }

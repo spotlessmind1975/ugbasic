@@ -10367,17 +10367,39 @@ DataSegment * data_segment_define_or_retrieve( Environment * _environment, char 
 
 }
 
+char * bufferOutput = NULL;
+int bufferOutputSize = 0;
+
+static void buffered_realloc( const char * _ptr, int _size ) {
+    if ( bufferOutput ) {
+        bufferOutput = realloc( bufferOutput, bufferOutputSize + _size );
+    } else {
+        bufferOutput = malloc( _size );
+    }
+    memcpy( bufferOutput + bufferOutputSize, _ptr , _size );
+    bufferOutputSize += _size;
+}
+
 void buffered_fprintf( FILE * _stream, const char * _format, ... ) {
+    char temporaryBuffer[ MAX_TEMPORARY_STORAGE * 16 ];
     va_list args;
     va_start( args, _format );
-    vfprintf( _stream, _format, args );
+    // vfprintf( _stream, _format, args );
+    vsprintf( temporaryBuffer, _format, args );
+    buffered_realloc( temporaryBuffer, strlen( temporaryBuffer ) );
     va_end( args );
 }
 
 int buffered_fputs( const char * _string, FILE * _stream ) {
-    fputs( _string, _stream );
+    // fputs( _string, _stream );
+    buffered_realloc( _string, strlen( _string ) );
 }
 
 size_t buffered_fwrite( void * _data, size_t _size, size_t _count, FILE * _stream ) {
-    fwrite( _data, _size, _count, _stream );
+    // fwrite( _data, _size, _count, _stream );
+    buffered_realloc( _data, _size * _count );
+}
+
+void buffered_output( FILE * _stream ) {
+    fwrite( bufferOutput, 1, bufferOutputSize, _stream );
 }

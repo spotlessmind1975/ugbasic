@@ -61,12 +61,20 @@ Questa parola chiave sospende il thread corrente mentre la condizione è true.
 </usermanual> */
 void wait_while( Environment * _environment ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
     yield( _environment );
     
 }
 
 void wait_while_condition( Environment * _environment, char * _condition ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+    
     _environment->anyProtothread = 1;
 
     MAKE_LABEL
