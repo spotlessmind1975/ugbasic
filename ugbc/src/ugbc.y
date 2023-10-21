@@ -91,7 +91,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
-%token RESTORE
+%token RESTORE SAFE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -6216,11 +6216,17 @@ op_comma_or_semicolon :
     };
 
 read_definition :
-      Identifier {
-        read_data( _environment, $1 );
+     SAFE Identifier {
+        read_data( _environment, $2, 1 );
     }
     | Identifier {
-        read_data( _environment, $1 );
+        read_data( _environment, $1, 0 );
+    }
+    | SAFE Identifier {
+        read_data( _environment, $2, 1 );
+    } OP_COMMA read_definition
+    | Identifier {
+        read_data( _environment, $1, 0 );
     } OP_COMMA read_definition
     ;
 

@@ -65,6 +65,7 @@ che il prossimo comando ''READ'' ignorerà la lettura.
 @example ENDIF
 
 @usedInExample data_example_04.bas
+@usedInExample data_example_05.bas
 
 @target all
 @verified

@@ -121,6 +121,7 @@ Le righe ''DATA'' possono essere sparse nell'intero codice del programma.
 @usedInExample data_example_01.bas
 @usedInExample data_example_02.bas
 @usedInExample data_example_03.bas
+@usedInExample data_example_05.bas
 
 @target all
 @verified

@@ -1450,6 +1450,7 @@ typedef struct _Deployed {
     int fp_single_geomean;
     
     int duff;
+    int read_data;
 
 } Deployed;
 
@@ -3816,7 +3817,7 @@ void                    randomize( Environment * _environment, char * _seed );
 void                    raster_at( Environment * _environment, char * _label, int _position );
 void                    raster_at_var( Environment * _environment, char * _label, char * _position );
 Variable *              read_end( Environment * _environment );
-void                    read_data( Environment * _environment, char * _variable );
+void                    read_data( Environment * _environment, char * _variable, int _safe );
 void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
 char *                  resource_load_asserts( Environment * _environment, char * _filename );
