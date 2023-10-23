@@ -743,9 +743,9 @@ static void optim_zAB(Environment * _environment, POBuffer buf[LOOK_AHEAD], int 
         } else if ( po_buf_match(buf[0], " LDA #$01")) {
             optim( buf[0], RULE "[A=0](LDA#1)->(INCA)", "\tINCA");
             *zA = 0;
-        } else if ( chkLDD( buf[0], "00--", v1)) {
-            optim(buf[0], RULE "[A=0](LDD#00xx)->(LDB#xx)", "\tLDB #$%c%c", v1->str[2], v1->str[3]);
-            *zB = 0;
+        // } else if ( chkLDD( buf[0], "00--", v1)) {
+        //     optim(buf[0], RULE "[A=0](LDD#00xx)->(LDB#xx)", "\tLDB #$%c%c", v1->str[2], v1->str[3]);
+        //     *zB = 0;
         } else if (po_buf_match( buf[0], " TFR A,B")) {
             optim( buf[0], RULE "[A=0](TAB)->(CLRB)", "\tCLRB");
             *zB = 1;
