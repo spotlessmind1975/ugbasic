@@ -48,7 +48,7 @@ YCURS:      .BYTE    0
 EMPTYTILE:  .BYTE   32
 TICKSPERSECOND: .BYTE   0
 
-TMPPTR = $ce    ; $cf
+TMPPTR = $22    ; $23
 TMPPTR2 = $cc    ; $cd
 
 OVFLO  = $26             ; overflow byte for the accumulator when it is shifted left or multiplied by ten.
