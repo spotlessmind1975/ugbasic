@@ -49,7 +49,7 @@ EMPTYTILE:  .BYTE   32
 TICKSPERSECOND: .BYTE   0
 
 TMPPTR = $22    ; $23
-TMPPTR2 = $cc    ; $cd
+TMPPTR2 = $24    ; $25
 
 OVFLO  = $26             ; overflow byte for the accumulator when it is shifted left or multiplied by ten.
 MSB    = OVFLO+1         ; most-significant byte of the accumulator.
