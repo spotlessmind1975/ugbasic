@@ -51,7 +51,7 @@ TICKSPERSECOND: .BYTE   0
 TMPPTR = $ce    ; $cf
 TMPPTR2 = $cc    ; $cd
 
-OVFLO  = $22             ; overflow byte for the accumulator when it is shifted left or multiplied by ten.
+OVFLO  = $26             ; overflow byte for the accumulator when it is shifted left or multiplied by ten.
 MSB    = OVFLO+1         ; most-significant byte of the accumulator.
 NMSB   = MSB+1           ; next-most-significant byte of the accumulator.
 NLSB   = NMSB+1          ; next-least-significant byte of the accumulator.
