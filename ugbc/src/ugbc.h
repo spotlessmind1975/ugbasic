@@ -1451,11 +1451,6 @@ typedef struct _Deployed {
     
     int duff;
 
-    int file_vars;
-    int file_open;
-    int file_write;
-    int file_close;
-
 } Deployed;
 
 typedef struct _DString {
@@ -2023,11 +2018,6 @@ typedef struct _Environment {
     VariableType returnsTypeEach[MAX_PARAMETERS];
 
     /**
-     * 
-     */
-    char * currentFileNumber;
-
-    /**
      * Temporary storage for protothread definition
      */
     int protothread;
@@ -2554,7 +2544,6 @@ typedef struct _Environment {
 #define CRITICAL_RESTORE_WITHOUT_DATA( v ) CRITICAL2("E233 - RESTORE without DATA", v );
 #define CRITICAL_READ_END_WITHOUT_DATA( ) CRITICAL("E234 - READ END without DATA" );
 #define CRITICAL_DATA_LOAD_TEXT_NOT_FOUND( v ) CRITICAL2("E235 - cannot find file to load DATA in", v );
-#define CRITICAL_FILE_OPEN_UNSUPPORTED_FILENAME( v ) CRITICAL2("E236 - unsupported type for filename in OPEN", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2683,40 +2672,40 @@ void buffered_pop_output( );
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->configurationFile); \
-        fputs(s,((Environment *)_environment)->configurationFile); \
+            puts("\t", ((Environment *)_environment)->configurationFile); \
+        buffered_fputs(s,((Environment *)_environment)->configurationFile); \
         if ( r ) \
-            fputs("\n", ((Environment *)_environment)->configurationFile); \
+            puts("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline1n(n,s,a,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->configurationFile); \
+            puts("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a); \
         if ( r ) \
-            fputs("\n", ((Environment *)_environment)->configurationFile); \
+            puts("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline2n(n,s,a,b,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->configurationFile); \
+            puts("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a, b); \
         if ( r ) \
-            fputs("\n", ((Environment *)_environment)->configurationFile); \
+            puts("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline3n(n,s,a,b,c,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->configurationFile); \
+            puts("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a, b, c); \
         if ( r ) \
-            fputs("\n", ((Environment *)_environment)->configurationFile); \
+            puts("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline4n(n,s,a,b,c,d,r)   \
@@ -2733,10 +2722,10 @@ void buffered_pop_output( );
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            fputs("\t", ((Environment *)_environment)->configurationFile); \
+            puts("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a, b, c, d, e); \
         if ( r ) \
-            fputs("\n", ((Environment *)_environment)->configurationFile); \
+            puts("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define outfile0(f)     \
@@ -3626,18 +3615,7 @@ void                    exit_procedure( Environment * _environment );
 // *F*
 //----------------------------------------------------------------------------
 
-void                    file_close( Environment * _environment, char * _number );
-void                    file_input( Environment * _environment, char * _number, char * _variable );
-void                    file_note( Environment * _environment, char * _number, char * _variable );
-void                    file_open( Environment * _environment, char * _filename, int _mode, char * _number );
-void                    file_point( Environment * _environment, char * _number, char * _position );
-void                    file_print( Environment * _environment, char * _number, char * _value, int _new_line );
-void                    file_print_string( Environment * _environment, char * _number, char * _string );
-void                    file_print_tab( Environment * _environment, char * _number, int _new_line );
-void                    file_print_newline( Environment * _environment, char * _number );
-void                    file_write( Environment * _environment, char * _number, char * _address, char * _size );
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
-void                    file_trap( Environment * _environment, char * _number, char * _label );
 int                     find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
 void                    font_descriptors_init( Environment * _environment, int _embedded_present );
 int                     frames( Environment * _environment, char * _image );

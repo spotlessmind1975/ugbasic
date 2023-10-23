@@ -91,7 +91,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
-%token RESTORE SAFE OPEN SEEK TRAP CLOSE PRINTHASH OUTPUT POINTHASH INPUTHASH
+%token RESTORE SAFE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -154,7 +154,6 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> system
 %type <integer> padding_tile
 %type <integer> op_comma_or_semicolon
-%type <integer> open_mode
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -2676,9 +2675,6 @@ exponential:
         Variable * value = variable_temporary( _environment, VT_WORD, "(lbound)" );
         variable_store( _environment, value->name, 0 );
         $$ = value->name;
-    }
-    | SEEK OP OP_HASH Identifier CP {
-
     }
     | LEN OP expr CP {
         $$ = variable_string_len( _environment, $3 )->name;
@@ -7001,106 +6997,6 @@ data_definition :
         ((struct _Environment *)_environment)->dataDataType = $1;
     } data_definition_data;
 
-open_mode :
-    INPUT {
-        $$ = 1;
-    }
-    | OUTPUT {
-        $$ = 2;
-    }
-    | RANDOM {
-        $$ = 3;
-    }
-    ;
-
-open_definition :
-    expr FOR open_mode AS expr {
-        file_open( _environment, $1, $3, $5 );
-    }
-    | expr FOR open_mode AS OP_HASH const_expr {
-        Variable * number = variable_temporary( _environment, VT_BYTE, "(number)" );
-        variable_store( _environment, number->name, $6 );
-        file_open( _environment, $1, $3, number->name );
-    };
-
-point_hash_definition :
-    expr OP_COMMA expr {
-        file_point( _environment, $1, $3 );
-    };
-
-print_hash_definition2 :
-    expr {
-        file_print( _environment, ((struct _Environment *)_environment)->currentFileNumber, $1, 1 );
-    }
-  | expr OP_COMMA {
-        file_print( _environment, ((struct _Environment *)_environment)->currentFileNumber, $1, 0 );
-        file_print_tab( _environment, ((struct _Environment *)_environment)->currentFileNumber, 0 );
-  }  print_hash_definition2
-  | expr OP_SEMICOLON {
-        file_print( _environment, ((struct _Environment *)_environment)->currentFileNumber, $1, 0 );
-  }  print_hash_definition2
-  ;
-
-print_hash_definition :
-    expr {
-        ((struct _Environment *)_environment)->currentFileNumber = strdup( $1 );
-    }
-  | expr OP_COMMA {
-        ((struct _Environment *)_environment)->currentFileNumber = strdup( $1 );
-        file_print_tab( _environment, $1, 0 );
-  }
-  | expr OP_COMMA {
-        ((struct _Environment *)_environment)->currentFileNumber = strdup( $1 );
-        file_print_tab( _environment, $1, 0 );
-  } print_hash_definition2
-  | expr OP_SEMICOLON {
-        ((struct _Environment *)_environment)->currentFileNumber = strdup( $1 );
-  }
-  | expr OP_SEMICOLON {
-        ((struct _Environment *)_environment)->currentFileNumber = strdup( $1 );
-  } print_hash_definition2
-  ;
-
-input_hash_definition2 :
-      Identifier {
-        file_input( _environment, ((struct _Environment *)_environment)->currentFileNumber, $1 );
-    }
-    | Identifier op_comma_or_semicolon {
-        file_input( _environment, ((struct _Environment *)_environment)->currentFileNumber, $1 );
-    }  input_hash_definition2
-  ;
-
-input_hash_definition :
-      expr op_comma_or_semicolon Identifier {
-        ((struct _Environment *)_environment)->currentFileNumber = strdup( $1 );
-        file_input( _environment, ((struct _Environment *)_environment)->currentFileNumber, $3 );
-    }
-    | expr op_comma_or_semicolon Identifier op_comma_or_semicolon {
-        ((struct _Environment *)_environment)->currentFileNumber = strdup( $1 );
-        file_input( _environment, ((struct _Environment *)_environment)->currentFileNumber, $3 );
-    }  input_hash_definition2
-  ;
-
-note_hash_definition :
-    expr OP_COMMA Identifier {
-        file_note( _environment, $1, $3 );
-    };
-
-trap_hash_definition :
-    expr OP_COMMA Identifier {
-        file_trap( _environment, $1, $3 );
-    };
-
-close_definition :
-    expr {
-        file_close( _environment, $1 );
-    }
-    | OP_HASH const_expr {
-        Variable * number = variable_temporary( _environment, VT_BYTE, "(number)" );
-        variable_store( _environment, number->name, $2 );
-        file_close( _environment, number->name );
-    };
-
 statement2:
     BANK bank_definition
   | RASTER raster_definition
@@ -7124,10 +7020,6 @@ statement2:
   | COLOURMAP colormap_definition
   | SCREEN screen_definition
   | POINT point_definition
-  | POINTHASH point_hash_definition
-  | SEEK OP_HASH point_hash_definition
-  | TRAP OP_HASH trap_hash_definition
-  | CLOSE close_definition
   | PLOT plot_definition
   | CIRCLE circle_definition
   | ELLIPSE ellipse_definition
@@ -7172,10 +7064,7 @@ statement2:
   | DATA data_definition
   | READ read_definition
   | RESTORE restore_definition
-  | OPEN open_definition
   | PRINT print_definition
-  | PRINTHASH print_hash_definition
-  | NOTE OP_HASH note_hash_definition
   | PRINT BUFFER print_buffer_definition
   | PRINT BUFFER RAW print_buffer_raw_definition
   | PRINT {
@@ -7185,7 +7074,6 @@ statement2:
       print( _environment, $2, 0 );
   }
   | INPUT input_definition
-  | INPUTHASH input_hash_definition
   | QM print_definition
   | QM {
       print_newline( _environment );
