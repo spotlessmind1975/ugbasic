@@ -51,6 +51,11 @@
 </usermanual> */
 void wait_vbl( Environment * _environment ) {
 
-    // TODO: implementation
+    MAKE_LABEL
     
+    outline0( "LDA $FF02" );
+    outhead1( "%s", label )
+    outline0( "LDA $FF03" );
+    outline1( "BPL %s", label );
+
 }

@@ -173,6 +173,10 @@ COCO3STARTUP
     LDA #0
     STA $011f
 
+    LDA $FF03
+    ORA #$01
+    STA $FF03
+
     LDD #$0
 COCO3STARTUPL1
     ADDD #$1
