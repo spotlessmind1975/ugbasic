@@ -9,18 +9,36 @@ REM
 REM Questo esempio mostra come usare il double buffering.
 REM
 
-    SCREEN #2
+    BITMAP ENABLE (320,200,16)
+
+    image := NEW IMAGE( 32, 32 )
+    BAR 0, 0 TO 32, 32, RED
+    GET IMAGE image FROM 0, 0
+
     DOUBLE BUFFER ON
     CLS BLACK
-    x1 = 0
-    y1 = 0
-    x2 = 100
-    y2 = 100
-    BEGIN GAMELOOP
-        DRAW x1, y1 TO x2, y2, BLACK
-        x1 = RND(( SCREEN WIDTH-1 ) \ #2)
-        y1 = RND(( SCREEN HEIGHT-1 ) \ #2)
-        x2 = x1 + RND(( SCREEN WIDTH-1 ) \ #2)
-        y2 = y1 + RND(( SCREEN WIDTH-1 ) \ #2)
-        DRAW x1, y1 TO x2, y2, WHITE
-    END GAMELOOP
+    SCREEN SWAP
+    CLS BLACK
+    SCREEN SWAP
+
+    DIM x AS POSITION, y AS POSITION
+    DIM dx AS POSITION, dy AS POSITION
+
+    x = 0: y = 0
+    dx = 1: dy = 1
+
+    DO
+        ADD x, dx
+        ADD y, dy
+
+        IF ( x > (SCREEN WIDTH-11) ) OR ( x < 1 ) THEN
+            dx = -dx
+        ENDIF
+        IF ( y > (SCREEN HEIGHT-11) ) OR ( y < 1 ) THEN
+            dy = -dy
+        ENDIF
+
+        PUT IMAGE image AT x, y
+        WAIT VBL
+        SCREEN SWAP
+    LOOP
