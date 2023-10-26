@@ -99,3 +99,5 @@ GIMEVIDMSHADOW             fcb 0
 GIMEMMUSTART               fcb 3
 GIMEMMUCOUNT               fcb 1
 GIMEINIT1SHADOW            fcb 0
+
+GIMESCREENCURRENT          fcb $0
