@@ -11,34 +11,20 @@ REM
 
     BITMAP ENABLE (320,200,16)
 
-    image := NEW IMAGE( 32, 32 )
-    BAR 0, 0 TO 32, 32, RED
-    GET IMAGE image FROM 0, 0
-
     DOUBLE BUFFER ON
-    CLS BLACK
+    CLS
     SCREEN SWAP
-    CLS BLACK
+    CLS
     SCREEN SWAP
 
-    DIM x AS POSITION, y AS POSITION
-    DIM dx AS POSITION, dy AS POSITION
-
-    x = 0: y = 0
-    dx = 1: dy = 1
+    anim := LOAD IMAGES("ponyo2.gif") FRAME SIZE AUTO
 
     DO
-        ADD x, dx
-        ADD y, dy
-
-        IF ( x > (SCREEN WIDTH-11) ) OR ( x < 1 ) THEN
-            dx = -dx
-        ENDIF
-        IF ( y > (SCREEN HEIGHT-11) ) OR ( y < 1 ) THEN
-            dy = -dy
-        ENDIF
-
-        PUT IMAGE image AT x, y
+        PUT IMAGE anim FRAME frame AT 0, 0
+        PUT IMAGE anim FRAME frame AT 32, 0
+        PUT IMAGE anim FRAME frame AT 0, 32
+        PUT IMAGE anim FRAME frame AT 32, 32
         WAIT VBL
         SCREEN SWAP
+        ADD frame, 1, 0 TO FRAMES(anim)-1
     LOOP
