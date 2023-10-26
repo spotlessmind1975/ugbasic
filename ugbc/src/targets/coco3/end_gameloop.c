@@ -82,6 +82,9 @@ void end_gameloop( Environment * _environment ) {
         if ( _environment->anyProtothread ) {
             run_parallel( _environment );
         }
+        if ( _environment->doubleBufferEnabled ) {
+            wait_vbl( _environment );
+        }
         cpu_jump( _environment, loop->label );
         unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
         cpu_label( _environment, newLabel );

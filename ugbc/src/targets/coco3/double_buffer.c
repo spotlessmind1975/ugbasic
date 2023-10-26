@@ -49,4 +49,22 @@
 </usermanual> */
 void double_buffer( Environment * _environment, int _enabled ) {
 
+    if ( _environment->doubleBufferEnabled != _enabled ) {
+
+        _environment->doubleBufferEnabled = _enabled;
+
+        if ( ! _environment->doubleBufferEnabled ) {
+            outline0( "LDA #$8" );
+            outline0( "STA GIMESCREENCURRENT" );
+            outline0( "LDD #$c000" );
+            outline0( "STD GIMEVOFF1" );
+        } else {
+            outline0( "LDA #$0" );
+            outline0( "STA GIMESCREENCURRENT" );
+            outline0( "LDD #$c000" );
+            outline0( "STD GIMEVOFF1" );
+        }
+
+    }
+
 }
