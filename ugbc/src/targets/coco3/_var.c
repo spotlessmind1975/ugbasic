@@ -437,7 +437,8 @@ void variable_cleanup( Environment * _environment ) {
 
     outline0("ORG $2A00");
     outline0("JMP CODESTART");
-    outhead0("IRQSTACK rzb 512");
+    outhead0("IRQSTACK0 rzb 512");
+    outhead0("IRQSTACK");
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
