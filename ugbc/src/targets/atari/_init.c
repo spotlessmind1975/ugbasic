@@ -112,7 +112,7 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    deploy( startup, src_hw_atari_startup_asm);
+    deploy_deferred( startup, src_hw_atari_startup_asm);
     cpu_call( _environment, "ATARISTARTUP" );
 
     antic_initialization( _environment );
