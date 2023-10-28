@@ -274,6 +274,10 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 void variable_cleanup( Environment * _environment ) {
     int i=0;
 
+    if ( _environment->dataSegment ) {
+        outhead1("DATAFIRSTSEGMENT EQU %s", _environment->dataSegment->realName );
+    }
+
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;
         while( actual ) {
@@ -342,10 +346,36 @@ void variable_cleanup( Environment * _environment ) {
     while( dataSegment ) {
         int i=0;
         out1("%s fcb ", dataSegment->realName );
-        for( i=0; i<(dataSegment->size-1); ++i ) {
-            out1("$%2.2x,", (unsigned char)(dataSegment->dataBuffer[i]&0xff) );
+        DataDataSegment * dataDataSegment = dataSegment->data;
+        while( dataDataSegment ) {
+            if ( dataSegment->type ) {
+                if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
+                    out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
+                    out1("\"%s\"", dataDataSegment->data );
+                } else {
+                    for( i=0; i<(dataDataSegment->size-1); ++i ) {
+                        out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                    }
+                    out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                }
+            } else {
+                if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
+                    out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
+                    out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
+                    out1("\"%s\"", dataDataSegment->data );
+                } else {
+                    out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
+                    for( i=0; i<(dataDataSegment->size-1); ++i ) {
+                        out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                    }
+                    out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                }
+            }
+            dataDataSegment = dataDataSegment->next;
+            if ( dataDataSegment ) {
+                out0(",");
+            }
         }
-        out1("$%2.2x", (unsigned char)(dataSegment->dataBuffer[i]&0xff) );
         outline0("");
         dataSegment = dataSegment->next;
     }
