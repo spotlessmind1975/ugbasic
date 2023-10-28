@@ -72,24 +72,20 @@ che il prossimo comando ''READ'' ignorerà la lettura.
 </usermanual> */
 Variable * read_end( Environment * _environment ) {
 
+    deploy( read_data_unsafe, src_hw_6502_read_data_unsafe_asm );
+
     MAKE_LABEL
 
-    Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
-    Variable * dataptre = variable_temporary( _environment, VT_ADDRESS, "(dataptre)" );
-    Variable * readEnd = variable_temporary( _environment, VT_BYTE, "(type)" );
+    Variable * readEnd = variable_temporary( _environment, VT_BYTE, "(flag)" );
 
-    cpu_compare_and_branch_16bit_const( _environment, dataptr->realName, 0, label, 0 );
-
-    if ( !_environment->dataSegment ) {
-        CRITICAL_READ_END_WITHOUT_DATA( );
-    }
-
-    cpu_addressof_16bit( _environment, _environment->dataSegment->realName, dataptr->realName );
-
-    cpu_label( _environment, label );
-
-    cpu_addressof_16bit( _environment, "DATAPTRE", dataptre->realName );
-    cpu_compare_16bit( _environment, dataptr->realName, dataptre->realName, readEnd->realName, 1 );
+    outline0("JSR READNUMERICEOD");
+    outline1("BNE %s", label);
+    outline0("LDA #$FF");
+    outline1("JMP %sdone", label);
+    outhead1("%s:", label);
+    outline0("LDA #$00");
+    outhead1("%sdone:", label);
+    outline1("STA %s", readEnd->realName);
 
     return readEnd;
 
