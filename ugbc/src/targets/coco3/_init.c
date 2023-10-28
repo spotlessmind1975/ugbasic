@@ -110,7 +110,7 @@ void target_initialization( Environment * _environment ) {
     outline0("STA $FFDF");
 
     deploy( vars, src_hw_coco3_vars_asm);
-    deploy( startup, src_hw_coco3_startup_asm);
+    deploy_deferred( startup, src_hw_coco3_startup_asm);
     bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
 
     outline0( "JSR COCO3STARTUP" );
