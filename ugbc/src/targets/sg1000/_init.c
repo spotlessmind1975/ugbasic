@@ -148,7 +148,7 @@ void target_initialization( Environment * _environment ) {
     outhead0("SECTION code_user");
 
     deploy_inplace(startup,src_hw_sg1000_startup_asm);
-    deploy_inplace(startup,src_hw_sg1000_startup2_asm);
+    deploy_deferred(startup,src_hw_sg1000_startup2_asm);
 
     outhead0("CODESTART:")
     

@@ -147,7 +147,7 @@ void target_initialization( Environment * _environment ) {
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
 
-    deploy( startup, src_hw_vg5000_startup_asm);
+    deploy_deferred( startup, src_hw_vg5000_startup_asm);
 
     outline0("CALL VG5000STARTUP" );
 

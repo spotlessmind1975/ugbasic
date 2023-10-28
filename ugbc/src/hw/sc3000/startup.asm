@@ -161,6 +161,11 @@ KEYB_INIT_AND_TEST:
 		ld		a, 7						; Set row 7 (joypad) as default
 		out		(sc_ppi_c), a
 
+@IF dataSegment
+    LD HL, DATAFIRSTSEGMENT
+    LD (DATAPTR), HL
+@ENDIF
+
 		jp CODESTART
 
 ; b = test value
