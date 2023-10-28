@@ -365,6 +365,10 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 void variable_cleanup( Environment * _environment ) {
     int i=0;
 
+    if ( _environment->dataSegment ) {
+        outline1("DATAFIRSTSEGMENT = %s", _environment->dataSegment->realName );
+    }
+
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;
         while( actual ) {
