@@ -136,7 +136,7 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    deploy( startup, src_hw_c128_startup_asm);
+    deploy_deferred( startup, src_hw_c128_startup_asm);
     cpu_call( _environment, "C128STARTUP" );
 
     vic2_initialization( _environment );
