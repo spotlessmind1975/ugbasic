@@ -136,4 +136,6 @@ KEYCODE2ATASCII: .BYTE 108,        106,        59,          0,          0,      
                  .BYTE 156,        64,         125,        157,        70,         72,         68,         0
                  .BYTE 71,         83,         65
 
-DATAPTR:     .WORD $0
+DATAPTR = $AA
+DATAPTRY:    .BYTE $0
+
