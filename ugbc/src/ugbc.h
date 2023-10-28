@@ -2672,60 +2672,60 @@ void buffered_pop_output( );
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            puts("\t", ((Environment *)_environment)->configurationFile); \
-        buffered_fputs(s,((Environment *)_environment)->configurationFile); \
+            fputs("\t", ((Environment *)_environment)->configurationFile); \
+        fputs(s,((Environment *)_environment)->configurationFile); \
         if ( r ) \
-            puts("\n", ((Environment *)_environment)->configurationFile); \
+            fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline1n(n,s,a,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            puts("\t", ((Environment *)_environment)->configurationFile); \
+            fputs("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a); \
         if ( r ) \
-            puts("\n", ((Environment *)_environment)->configurationFile); \
+            fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline2n(n,s,a,b,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            puts("\t", ((Environment *)_environment)->configurationFile); \
+            fputs("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a, b); \
         if ( r ) \
-            puts("\n", ((Environment *)_environment)->configurationFile); \
+            fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline3n(n,s,a,b,c,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            puts("\t", ((Environment *)_environment)->configurationFile); \
+            fputs("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a, b, c); \
         if ( r ) \
-            puts("\n", ((Environment *)_environment)->configurationFile); \
+            fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline4n(n,s,a,b,c,d,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            puts("\t", ((Environment *)_environment)->configurationFile); \
+            fputs("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a, b, c, d); \
         if ( r ) \
-            puts("\n", ((Environment *)_environment)->configurationFile); \
+            fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define cfgline5n(n,s,a,b,c,d,e,r)   \
     { \
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
-            puts("\t", ((Environment *)_environment)->configurationFile); \
+            fputs("\t", ((Environment *)_environment)->configurationFile); \
         fprintf(((Environment *)_environment)->configurationFile, s, a, b, c, d, e); \
         if ( r ) \
-            puts("\n", ((Environment *)_environment)->configurationFile); \
+            fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
 #define outfile0(f)     \
