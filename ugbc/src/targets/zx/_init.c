@@ -121,11 +121,12 @@ void target_initialization( Environment * _environment ) {
 
     z80_init( _environment );
 
-    deploy( startup, src_hw_zx_startup_asm);
+    deploy_deferred( startup, src_hw_zx_startup_asm);
     outline0("CALL ZXSTARTUP");
 
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
+    outline0("CALL ZXSTARTUP2" );
 
     setup_text_variables( _environment );
 

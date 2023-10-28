@@ -36,6 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ZXSTARTUP:
+
     DI
     LD HL, ZXIRQSVC
     LD IX, $FFF0
@@ -96,3 +97,12 @@ IRQVECTORSKIP:
     EI
     RET
 
+ZXSTARTUP2:
+
+@IF dataSegment
+    LD HL, DATAFIRSTSEGMENT
+    LD (DATAPTR), HL
+@ENDIF
+
+    RET
+    
