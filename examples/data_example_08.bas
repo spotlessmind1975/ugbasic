@@ -13,14 +13,16 @@ REM posizionate su linee differenti del progframma.
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,vic20,zx
 
+DIM a AS BYTE
+
 first:
-DATA 42, 21, 10
+DATA AS BYTE 42, 21, 10
 
 DO
-    READ SAFE a
+    READ a
     PRINT a;" ";
     EXIT IF a = 99
 LOOP
 
 second:
-DATA 1, 2, 3, 99
+DATA AS BYTE 1, 2, 3, 99

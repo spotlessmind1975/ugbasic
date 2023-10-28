@@ -12,10 +12,12 @@ REM In questo esempio usiamo la variante ''READ SAFE''.
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,vic20,zx
 
-DATA 42, 21, 10
+DIM a AS BYTE
+
+DATA AS BYTE 42, 21, 10
 
 DO
-    READ SAFE a
+    READ a
     PRINT a;" ";
     WAIT KEY
     IF READ END THEN
