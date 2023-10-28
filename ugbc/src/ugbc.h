@@ -1561,12 +1561,25 @@ typedef struct _Blit {
 
 } Blit;
 
+typedef struct _DataDataSegment {
+    
+    VariableType type;
+    FloatTypePrecision precision;
+    char * data;
+    int size;
+
+    struct _DataDataSegment * next;
+
+} DataDataSegment;
+
 typedef struct _DataSegment {
     
+    VariableType type;
+
     char * name;
     char * realName;
-    char * dataBuffer;
-    int size;
+
+    DataDataSegment * data;
 
     struct _DataSegment * next;
 
