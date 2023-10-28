@@ -166,6 +166,7 @@ void target_initialization( Environment * _environment ) {
     outhead0("SECTION code_user");
 
     deploy_inplace(startup,src_hw_sc3000_startup_asm);
+    deploy_deferred(startup,src_hw_sc3000_startup2_asm);
 
     outhead0("CODESTART:")
     
@@ -173,6 +174,7 @@ void target_initialization( Environment * _environment ) {
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
     outline0("CALL SC3000STARTUP");
+    outline0("CALL SC3000STARTUP2" );
 
     setup_text_variables( _environment );
     
