@@ -157,12 +157,14 @@ void target_initialization( Environment * _environment ) {
     outline0("DEFW CODESTART");
 
     deploy_inplace( startup, src_hw_coleco_startup_asm);
+    deploy_deferred( startup, src_hw_coleco_startup2_asm);
 
     outhead0("CODESTART:")
     outline0("LD SP, $73b8");
 
     outline0("CALL VARINIT2");
     outline0("CALL VARINIT");
+    outline0("CALL COLECOSTARTUP2");
 
     z80_init( _environment );
 
