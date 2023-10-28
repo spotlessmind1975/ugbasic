@@ -38,25 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void restore_label( Environment * _environment, char * _label ) {
+void restore_label_unsafe( Environment * _environment, char * _label ) {
 
-    DataSegment * data;
+    outline0( "LDY #$0" );
+    outline0( "STY DATAPTRY" );
 
-    if ( _label ) {
-        data = data_segment_define_or_retrieve( _environment, _label );
-    } else {
-        data = data_segment_define_or_retrieve( _environment, "DATA" );
-    }
-
-    if ( !data ) {
-        CRITICAL_RESTORE_WITHOUT_DATA( _label );
-    }
-
-    Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
-
-    cpu_addressof_16bit( _environment, data->realName, dataptr->realName );
-
-    restore_label_unsafe( _environment, _label );
-    
 }
 
