@@ -146,19 +146,26 @@ void data_numeric( Environment * _environment, int _value ) {
         data = data_segment_define_or_retrieve( _environment, "DATA" );
     }
 
-    if ( !data->dataBuffer ) {
-        data->dataBuffer = malloc( 1 + bytes );
-    } else {
-        data->dataBuffer = realloc( data->dataBuffer, data->size + 1 + bytes );
-    }
+    DataDataSegment * dataDataSegment = malloc( sizeof( DataDataSegment ) );
+    memset( dataDataSegment, 0, sizeof( DataDataSegment ) );
+    dataDataSegment->size = bytes;
+    dataDataSegment->data = malloc( bytes );
+    dataDataSegment->type = type;
+    memcpy( dataDataSegment->data, &_value, bytes );
 
-    if (  _environment->dataDataType ) {
-        memcpy( data->dataBuffer + data->size, &_value, bytes );
-        data->size += ( bytes );
+    DataDataSegment * final = data->data;
+
+    if ( final ) {
+        while( final->next ) {
+            final = final->next;
+        }
+        final->next = dataDataSegment;
     } else {
-        *(data->dataBuffer + data->size) = type;
-        memcpy( data->dataBuffer + data->size + 1, &_value, bytes );
-        data->size += ( 1 + bytes );
+        data->data = dataDataSegment;
+    }
+    
+    if (  _environment->dataDataType ) {
+        data->type = _environment->dataDataType;
     }
 
 }
@@ -186,18 +193,30 @@ void data_floating( Environment * _environment, double _value ) {
     int result[32];
     cpu_float_single_from_double_to_int_array( _environment, _value, result );
 
-    if ( !data->dataBuffer ) {
-        data->dataBuffer = malloc( 2 + bytes );
-    } else {
-        data->dataBuffer = realloc( data->dataBuffer, data->size + 2 + bytes );
+    DataDataSegment * dataDataSegment = malloc( sizeof( DataDataSegment ) );
+    memset( dataDataSegment, 0, sizeof( DataDataSegment ) );
+    dataDataSegment->size = bytes;
+    dataDataSegment->data = malloc( bytes );
+    dataDataSegment->type = type;
+    dataDataSegment->precision = _environment->floatType.precision;
+    for( int i=0; i<bytes; ++i ) {
+        dataDataSegment->data[i] = (char)(result[i] & 0xff );
     }
 
-    *(data->dataBuffer + data->size) = type;
-    *(data->dataBuffer + data->size + 1) = _environment->floatType.precision;
-    for( int i=0; i<bytes; ++i ) {
-        *(data->dataBuffer + data->size + 2 + i) = (char)(result[i] & 0xff );
+    DataDataSegment * final = data->data;
+
+    if ( final ) {
+        while( final->next ) {
+            final = final->next;
+        }
+        final->next = dataDataSegment;
+    } else {
+        data->data = dataDataSegment;
     }
-    data->size += ( 2 + bytes );
+    
+    if (  _environment->dataDataType ) {
+        data->type = _environment->dataDataType;
+    }
 
 }
 
@@ -221,15 +240,27 @@ void data_string( Environment * _environment, char * _value ) {
         data = data_segment_define_or_retrieve( _environment, "DATA" );
     }
 
-    if ( !data->dataBuffer ) {
-        data->dataBuffer = malloc( 2 + bytes );
-    } else {
-        data->dataBuffer = realloc( data->dataBuffer, data->size + 2 + bytes );
+    DataDataSegment * dataDataSegment = malloc( sizeof( DataDataSegment ) );
+    memset( dataDataSegment, 0, sizeof( DataDataSegment ) );
+    dataDataSegment->size = bytes;
+    dataDataSegment->data = malloc( bytes + 1 );
+    memset( dataDataSegment->data, 0, bytes + 1 );
+    dataDataSegment->type = type;
+    memcpy( dataDataSegment->data, _value, bytes );
+
+    if (  _environment->dataDataType ) {
+        data->type = _environment->dataDataType;
     }
 
-    *(data->dataBuffer + data->size) = type;
-    *(data->dataBuffer + data->size + 1) = bytes;
-    memcpy( data->dataBuffer + data->size + 2, _value, bytes );
-    data->size += ( 2 + bytes );
+    DataDataSegment * final = data->data;
+    
+    if ( final ) {
+        while( final->next ) {
+            final = final->next;
+        }
+        final->next = dataDataSegment;
+    } else {
+        data->data = dataDataSegment;
+    }
 
 }
