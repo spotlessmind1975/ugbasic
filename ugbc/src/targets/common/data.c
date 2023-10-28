@@ -151,7 +151,14 @@ void data_numeric( Environment * _environment, int _value ) {
     dataDataSegment->size = bytes;
     dataDataSegment->data = malloc( bytes );
     dataDataSegment->type = type;
+#if defined(CPU_BIG_ENDIAN)
+    char * value = (char *)&_value;
+    for( int i=0; i<bytes; ++i ) {
+        dataDataSegment->data[bytes-i-1] = value[i];
+    }
+#else
     memcpy( dataDataSegment->data, &_value, bytes );
+#endif
 
     DataDataSegment * final = data->data;
 

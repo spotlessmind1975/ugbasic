@@ -130,8 +130,6 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
 
     if ( variable->type != VT_DSTRING ) {
 
-        Variable * data = variable_temporary( _environment, VT_SIGNED( variable->type ) ? VT_SDWORD : VT_DWORD, "(data)" );
-
         cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_BYTE, byteReadLabel, 1 );
         cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_SBYTE, byteReadLabel, 1 );
 
@@ -147,29 +145,41 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
 
         cpu_label( _environment, dwordReadLabel );
 
+        Variable * data32 = variable_temporary( _environment, VT_SIGNED( variable->type ) ? VT_SDWORD : VT_DWORD, "(data)" );
+
         cpu_inc_16bit( _environment, dataptr->realName );
-        cpu_move_32bit_indirect2( _environment, dataptr->realName, data->realName );
+        cpu_move_32bit_indirect2( _environment, dataptr->realName, data32->realName );
         cpu_inc_16bit( _environment, dataptr->realName );
         cpu_inc_16bit( _environment, dataptr->realName );
         cpu_inc_16bit( _environment, dataptr->realName );
         cpu_inc_16bit( _environment, dataptr->realName );
+
+        variable_move( _environment, data32->name, variable->name );
 
         cpu_jump( _environment, completeReadLabel );
 
         cpu_label( _environment, wordReadLabel );
 
+        Variable * data16 = variable_temporary( _environment, VT_SIGNED( variable->type ) ? VT_SWORD : VT_WORD, "(data)" );
+
         cpu_inc_16bit( _environment, dataptr->realName );
-        cpu_move_16bit_indirect2( _environment, dataptr->realName, data->realName );
+        cpu_move_16bit_indirect2( _environment, dataptr->realName, data16->realName );
         cpu_inc_16bit( _environment, dataptr->realName );
         cpu_inc_16bit( _environment, dataptr->realName );
+
+        variable_move( _environment, data16->name, variable->name );
 
         cpu_jump( _environment, completeReadLabel );
 
         cpu_label( _environment, byteReadLabel );
 
+        Variable * data8 = variable_temporary( _environment, VT_SIGNED( variable->type ) ? VT_SBYTE : VT_BYTE, "(data)" );
+
         cpu_inc_16bit( _environment, dataptr->realName );
-        cpu_move_8bit_indirect2( _environment, dataptr->realName, data->realName );
+        cpu_move_8bit_indirect2( _environment, dataptr->realName, data8->realName );
         cpu_inc_16bit( _environment, dataptr->realName );
+
+        variable_move( _environment, data8->name, variable->name );
 
         cpu_jump( _environment, completeReadLabel );
 
@@ -187,8 +197,6 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
         cpu_jump( _environment, doneReadLabel );
 
         cpu_label( _environment, completeReadLabel );
-
-        variable_move( _environment, data->name, variable->name );
 
     }
 
