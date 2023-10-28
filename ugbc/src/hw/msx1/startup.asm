@@ -69,4 +69,9 @@ MSX1STARTUP:
     LD ($fd9f), A
     EI
 
+@IF dataSegment
+    LD HL, DATAFIRSTSEGMENT
+    LD (DATAPTR), HL
+@ENDIF
+
     RET
