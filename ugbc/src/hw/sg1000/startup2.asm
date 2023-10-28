@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      STARTUP ROUTINE FOR COLECO                             *
+;*                      STARTUP ROUTINE FOR SG1000                             *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -43,3 +43,10 @@ SG1000STARTUP2:
 @ENDIF
 
     RET
+
+SC3000STARTUP2:
+@IF dataSegment
+    LD HL, DATAFIRSTSEGMENT
+    LD (DATAPTR), HL
+@ENDIF
+	RET
