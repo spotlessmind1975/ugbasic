@@ -131,7 +131,7 @@ void target_initialization( Environment * _environment ) {
     // outhead0("ORG $7030");
     // outhead0("SECTION code_user");
 
-    deploy( startup, src_hw_cpc_startup_asm);
+    deploy_deferred( startup, src_hw_cpc_startup_asm);
 
     outhead0("CODESTART:")
     outline0("LD SP, $C000");
