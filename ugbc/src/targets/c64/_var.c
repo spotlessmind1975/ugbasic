@@ -366,6 +366,10 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 void variable_cleanup( Environment * _environment ) {
     int i=0;
 
+    if ( _environment->dataSegment ) {
+        outline1("DATAFIRSTSEGMENT = %s", _environment->dataSegment->realName );
+    }
+    
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;
         while( actual ) {
@@ -540,7 +544,7 @@ void variable_cleanup( Environment * _environment ) {
         dataSegment = dataSegment->next;
     }
     outhead0("DATAPTRE:");
-    
+
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
         outline3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
