@@ -55,6 +55,12 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
     Variable * dataptre = NULL;
     Variable * datatype = variable_temporary( _environment, VT_BYTE, "(type)" );
 
+    VariableType type = variable->type;
+
+    if ( type == VT_DSTRING ) {
+        type = VT_STRING;
+    }
+
     cpu_compare_and_branch_16bit_const( _environment, dataptr->realName, 0, label, 0 );
 
     if ( !_environment->dataSegment ) {
@@ -72,7 +78,7 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
 
     cpu_move_8bit_indirect2( _environment, dataptr->realName, datatype->realName );
 
-    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, variable->type, typeMismatchDuringReadLabel, 0 );
+    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, type, typeMismatchDuringReadLabel, 0 );
 
     switch( VT_BITWIDTH( variable->type ) ) {
         case 32:
@@ -99,7 +105,7 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
             break;
         case 0:
             switch( variable->type ) {
-                case VT_STRING: {
+                case VT_DSTRING: {
                     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
                     Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
                     cpu_inc_16bit( _environment, dataptr->realName );
@@ -109,7 +115,7 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
                     cpu_dsalloc( _environment, size->realName, variable->realName );
                     cpu_dsdescriptor( _environment, variable->realName, address->realName, size->realName );
                     cpu_mem_move( _environment, dataptr->realName, address->realName, size->realName );
-                    cpu_math_add_16bit( _environment, dataptr->realName, size->realName, NULL );
+                    cpu_math_add_16bit_with_8bit( _environment, dataptr->realName, size->realName, dataptr->realName );
                     break;
                 }
                 default:
@@ -122,71 +128,75 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
 
     cpu_label( _environment, typeMismatchDuringReadLabel );
 
-    Variable * data = variable_temporary( _environment, VT_SIGNED( variable->type ) ? VT_SDWORD : VT_DWORD, "(data)" );
+    if ( variable->type != VT_DSTRING ) {
 
-    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_BYTE, byteReadLabel, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_SBYTE, byteReadLabel, 1 );
+        Variable * data = variable_temporary( _environment, VT_SIGNED( variable->type ) ? VT_SDWORD : VT_DWORD, "(data)" );
 
-    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_WORD, wordReadLabel, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_SWORD, wordReadLabel, 1 );
+        cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_BYTE, byteReadLabel, 1 );
+        cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_SBYTE, byteReadLabel, 1 );
 
-    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_DWORD, dwordReadLabel, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_SDWORD, dwordReadLabel, 1 );
+        cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_WORD, wordReadLabel, 1 );
+        cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_SWORD, wordReadLabel, 1 );
 
-    cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_STRING, stringReadLabel, 1 );
+        cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_DWORD, dwordReadLabel, 1 );
+        cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_SDWORD, dwordReadLabel, 1 );
 
-    cpu_jump( _environment, doneReadLabel );
+        cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_STRING, stringReadLabel, 1 );
 
-    cpu_label( _environment, dwordReadLabel );
+        cpu_jump( _environment, doneReadLabel );
 
-    cpu_inc_16bit( _environment, dataptr->realName );
-    cpu_move_32bit_indirect2( _environment, dataptr->realName, data->realName );
-    cpu_inc_16bit( _environment, dataptr->realName );
-    cpu_inc_16bit( _environment, dataptr->realName );
-    cpu_inc_16bit( _environment, dataptr->realName );
-    cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_label( _environment, dwordReadLabel );
 
-    cpu_jump( _environment, completeReadLabel );
+        cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_move_32bit_indirect2( _environment, dataptr->realName, data->realName );
+        cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_inc_16bit( _environment, dataptr->realName );
 
-    cpu_label( _environment, wordReadLabel );
+        cpu_jump( _environment, completeReadLabel );
 
-    cpu_inc_16bit( _environment, dataptr->realName );
-    cpu_move_16bit_indirect2( _environment, dataptr->realName, data->realName );
-    cpu_inc_16bit( _environment, dataptr->realName );
-    cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_label( _environment, wordReadLabel );
 
-    cpu_jump( _environment, completeReadLabel );
+        cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_move_16bit_indirect2( _environment, dataptr->realName, data->realName );
+        cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_inc_16bit( _environment, dataptr->realName );
 
-    cpu_label( _environment, byteReadLabel );
+        cpu_jump( _environment, completeReadLabel );
 
-    cpu_inc_16bit( _environment, dataptr->realName );
-    cpu_move_8bit_indirect2( _environment, dataptr->realName, data->realName );
-    cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_label( _environment, byteReadLabel );
 
-    cpu_jump( _environment, completeReadLabel );
+        cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_move_8bit_indirect2( _environment, dataptr->realName, data->realName );
+        cpu_inc_16bit( _environment, dataptr->realName );
 
-    cpu_label( _environment, stringReadLabel );
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
-    cpu_inc_16bit( _environment, dataptr->realName );
-    cpu_move_8bit_indirect2( _environment, dataptr->realName, size->realName );
-    cpu_inc_16bit( _environment, dataptr->realName );
-    cpu_dsfree( _environment, variable->realName );
-    cpu_dsalloc( _environment, size->realName, variable->realName );
-    cpu_dsdescriptor( _environment, variable->realName, address->realName, size->realName );
-    cpu_mem_move( _environment, dataptr->realName, address->realName, size->realName );
-    cpu_math_add_16bit( _environment, dataptr->realName, size->realName, NULL );
-    cpu_jump( _environment, doneReadLabel );
+        cpu_jump( _environment, completeReadLabel );
 
-    cpu_label( _environment, completeReadLabel );
+        cpu_label( _environment, stringReadLabel );
+        Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+        Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
+        cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_move_8bit_indirect2( _environment, dataptr->realName, size->realName );
+        cpu_inc_16bit( _environment, dataptr->realName );
+        cpu_dsfree( _environment, variable->realName );
+        cpu_dsalloc( _environment, size->realName, variable->realName );
+        cpu_dsdescriptor( _environment, variable->realName, address->realName, size->realName );
+        cpu_mem_move( _environment, dataptr->realName, address->realName, size->realName );
+        cpu_math_add_16bit_with_8bit( _environment, dataptr->realName, size->realName, dataptr->realName );
+        cpu_jump( _environment, doneReadLabel );
 
-    variable_move( _environment, data->name, variable->name );
+        cpu_label( _environment, completeReadLabel );
+
+        variable_move( _environment, data->name, variable->name );
+
+    }
 
     cpu_label( _environment, doneReadLabel );
 
 }
 
-static void read_data_unsafe( Environment * _environment, char * _variable ) {
+static void read_data_unsafe_common( Environment * _environment, char * _variable ) {
 
     MAKE_LABEL
 
@@ -197,61 +207,7 @@ static void read_data_unsafe( Environment * _environment, char * _variable ) {
         variable = variable_define( _environment, _variable, _environment->defaultVariableType, 0 );
     }
 
-    Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
-
-    cpu_compare_and_branch_16bit_const( _environment, dataptr->realName, 0, label, 0 );
-
-    if ( !_environment->dataSegment ) {
-        CRITICAL_READ_WITHOUT_DATA( _variable );
-    }
-
-    cpu_addressof_16bit( _environment, _environment->dataSegment->realName, dataptr->realName );
-
-    cpu_label( _environment, label );
-
-    switch( VT_BITWIDTH( variable->type ) ) {
-        case 32:
-            cpu_inc_16bit( _environment, dataptr->realName );
-            cpu_move_32bit_indirect2( _environment, dataptr->realName, variable->realName );
-            cpu_inc_16bit( _environment, dataptr->realName );
-            cpu_inc_16bit( _environment, dataptr->realName );
-            cpu_inc_16bit( _environment, dataptr->realName );
-            cpu_inc_16bit( _environment, dataptr->realName );
-            break;
-        case 16:
-            cpu_inc_16bit( _environment, dataptr->realName );
-            cpu_move_16bit_indirect2( _environment, dataptr->realName, variable->realName );
-            cpu_inc_16bit( _environment, dataptr->realName );
-            cpu_inc_16bit( _environment, dataptr->realName );
-            break;
-        case 8:
-            cpu_inc_16bit( _environment, dataptr->realName );
-            cpu_move_8bit_indirect2( _environment, dataptr->realName, variable->realName );
-            cpu_inc_16bit( _environment, dataptr->realName );
-            break;
-        case 1:
-            CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable );
-            break;
-        case 0:
-            switch( variable->type ) {
-                case VT_STRING: {
-                    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
-                    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
-                    cpu_inc_16bit( _environment, dataptr->realName );
-                    cpu_move_8bit_indirect2( _environment, dataptr->realName, size->realName );
-                    cpu_inc_16bit( _environment, dataptr->realName );
-                    cpu_dsfree( _environment, variable->realName );
-                    cpu_dsalloc( _environment, size->realName, variable->realName );
-                    cpu_dsdescriptor( _environment, variable->realName, address->realName, size->realName );
-                    cpu_mem_move( _environment, dataptr->realName, address->realName, size->realName );
-                    cpu_math_add_16bit( _environment, dataptr->realName, size->realName, NULL );
-                    break;
-                }
-                default:
-                    CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable );
-            }
-            break;
-    }
+    read_data_unsafe( _environment, _variable );
 
 }
 
@@ -324,7 +280,7 @@ void read_data( Environment * _environment, char * _variable, int _safe ) {
     if ( _safe ) {
         read_data_safe( _environment, _variable );
     } else {
-        read_data_unsafe( _environment, _variable );
+        read_data_unsafe_common( _environment, _variable );
     }
 
 }
