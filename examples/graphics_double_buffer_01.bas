@@ -9,12 +9,12 @@ REM
 REM Questo esempio mostra come usare il double buffering.
 REM
 
-    BITMAP ENABLE (320,200,16)
+    BITMAP ENABLE (160,200,16)
 
     DOUBLE BUFFER ON
-    CLS
+    CLS BLACK
     SCREEN SWAP
-    CLS
+    CLS BLACK
     SCREEN SWAP
 
     anim := LOAD IMAGES("ponyo2.gif") FRAME SIZE AUTO
