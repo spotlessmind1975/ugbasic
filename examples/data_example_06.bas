@@ -18,7 +18,7 @@ DIM x AS STRING
 DO
     READ SAFE x
     PRINT x
-    WAIT KEY
+    WAIT KEY OR FIRE
     IF READ END THEN
         HALT
     ENDIF

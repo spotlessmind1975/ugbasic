@@ -18,7 +18,7 @@ DIM x1 AS POSITION, y1 AS POSITION, x2 AS POSITION, y2 AS POSITION
 DO
     READ x1, y1, x2, y2
     PRINT x1;" ";y1;" ";x2;" ";y2
-    WAIT KEY
+    WAIT KEY OR FIRE
     IF READ END THEN
         HALT
     ENDIF

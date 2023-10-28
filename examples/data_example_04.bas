@@ -17,7 +17,7 @@ DATA 42, 21, 10
 DO
     READ SAFE a
     PRINT a;" ";
-    WAIT KEY
+    WAIT KEY OR FIRE
     IF READ END THEN
         PRINT " end"
         RESTORE
