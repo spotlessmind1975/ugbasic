@@ -1451,6 +1451,8 @@ typedef struct _Deployed {
     
     int duff;
 
+    int read_data_unsafe;
+
 } Deployed;
 
 typedef struct _DString {
@@ -3824,12 +3826,15 @@ void                    randomize( Environment * _environment, char * _seed );
 void                    raster_at( Environment * _environment, char * _label, int _position );
 void                    raster_at_var( Environment * _environment, char * _label, char * _position );
 Variable *              read_end( Environment * _environment );
+Variable *              read_end_unsafe( Environment * _environment );
 void                    read_data( Environment * _environment, char * _variable, int _safe );
+void                    read_data_unsafe( Environment * _environment, char * _variable );
 void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
 char *                  resource_load_asserts( Environment * _environment, char * _filename );
 Variable *              respawn_procedure( Environment * _environment, char * _name );
 void                    restore_label( Environment * _environment, char * _label );
+void                    restore_label_unsafe( Environment * _environment, char * _label );
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
 int                     rgbi_equals_rgb( RGBi * _first, RGBi * _second );
