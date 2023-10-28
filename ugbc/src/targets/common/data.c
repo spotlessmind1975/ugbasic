@@ -152,9 +152,14 @@ void data_numeric( Environment * _environment, int _value ) {
         data->dataBuffer = realloc( data->dataBuffer, data->size + 1 + bytes );
     }
 
-    *(data->dataBuffer + data->size) = type;
-    memcpy( data->dataBuffer + data->size + 1, &_value, bytes );
-    data->size += ( 1 + bytes );
+    if (  _environment->dataDataType ) {
+        memcpy( data->dataBuffer + data->size, &_value, bytes );
+        data->size += ( bytes );
+    } else {
+        *(data->dataBuffer + data->size) = type;
+        memcpy( data->dataBuffer + data->size + 1, &_value, bytes );
+        data->size += ( 1 + bytes );
+    }
 
 }
 
@@ -224,7 +229,7 @@ void data_string( Environment * _environment, char * _value ) {
 
     *(data->dataBuffer + data->size) = type;
     *(data->dataBuffer + data->size + 1) = bytes;
-    memcpy( data->dataBuffer + data->size + 1, _value, bytes );
+    memcpy( data->dataBuffer + data->size + 2, _value, bytes );
     data->size += ( 2 + bytes );
 
 }
