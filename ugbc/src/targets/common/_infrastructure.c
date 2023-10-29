@@ -5008,6 +5008,46 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
  * @throw EXIT_FAILURE "Destination variable does not cast"
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
+Variable * variable_compare_const( Environment * _environment, char * _source, int _destination ) {
+    Variable * source = variable_retrieve( _environment, _source );
+
+    MAKE_LABEL
+
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_compare_32bit_const( _environment, source->realName, _destination, result->realName, 1 );
+            break;
+        case 16:
+            cpu_compare_16bit_const( _environment, source->realName, _destination, result->realName, 1 );
+            break;
+        case 8:
+            cpu_compare_8bit_const( _environment, source->realName, _destination, result->realName, 1 );
+            break;
+        case 1: 
+        case 0: 
+            CRITICAL_CANNOT_COMPARE_CONST(DATATYPE_AS_STRING[source->type]);
+            break;        
+    }
+    return result;
+}
+
+/**
+ * @brief Compare two variable and return the result of comparation
+ * 
+ * This function allows you to compare the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination variable's name
+ * @return Variable* The product of source and destination variable
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
 Variable * variable_compare_not( Environment * _environment, char * _source, char * _destination ) {
     return variable_not( _environment, variable_compare( _environment, _source, _destination)->name );
 }
