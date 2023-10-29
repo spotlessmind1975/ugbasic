@@ -130,11 +130,6 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
         Variable * y1 = variable_define( _environment, "draw__y1", VT_POSITION, 0 );
         Variable * c = variable_define( _environment, "draw__c", VT_COLOR, 0 );
 
-        Variable * zero = variable_temporary( _environment, VT_POSITION, "(0)" );
-        variable_store( _environment, zero->name, 0 );
-        Variable * sixteen = variable_temporary( _environment, VT_BYTE, "(16)" );
-        variable_store( _environment, sixteen->name, 16 );
-        
         Variable * pattern = variable_retrieve( _environment, "LINE" );
         Variable * bit = variable_temporary( _environment, VT_BYTE, "(bit)" );
         Variable * fraction = variable_temporary( _environment, VT_POSITION, "(fraction)");
@@ -158,15 +153,15 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
         
         variable_move( _environment, variable_sub( _environment, y1->name, y0->name )->name, dy->name );
 
-        if_then( _environment, variable_less_than( _environment, dy->name, zero->name, 0 )->name );
-            variable_move( _environment, variable_sub( _environment, zero->name, dy->name )->name, dy->name );
+        if_then( _environment, variable_less_than_const( _environment, dy->name, 0, 0 )->name );
+            variable_move( _environment, variable_complement_const( _environment, dy->name, 0 )->name, dy->name );
             variable_store( _environment, stepy->name, -1 );
         else_if_then_label( _environment );
         else_if_then( _environment, NULL );
         variable_store( _environment, stepy->name, 1 );
         end_if_then( _environment );
-        if_then( _environment, variable_less_than( _environment, dx->name, zero->name, 0 )->name );
-            variable_move( _environment, variable_sub( _environment, zero->name, dx->name )->name, dx->name );
+        if_then( _environment, variable_less_than_const( _environment, dx->name, 0, 0 )->name );
+            variable_move( _environment, variable_complement_const( _environment, dx->name, 0 )->name, dx->name );
             variable_store( _environment, stepx->name, -1 );
         else_if_then_label( _environment );
         else_if_then( _environment, NULL );
@@ -180,7 +175,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
             plot( _environment, x->name, y->name, c->name );
         end_if_then( _environment );
         variable_increment( _environment, bit->name );
-        if_then( _environment, variable_compare( _environment, bit->name, sixteen->name )->name );
+        if_then( _environment, variable_compare_const( _environment, bit->name, 16 )->name );
             variable_store( _environment, bit->name, 0 );
         end_if_then( _environment );
         if_then( _environment, variable_greater_than( _environment, dx2->name, dy2->name, 0 )->name );
@@ -188,7 +183,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
             begin_while( _environment );
             begin_while_condition( _environment, variable_compare_not( _environment, x->name, x1->name )->name );
                 variable_move( _environment, variable_add( _environment, x->name, stepx->name )->name, x->name );
-                if_then( _environment, variable_greater_than( _environment, fraction->name, zero->name, 1 )->name );
+                if_then( _environment, variable_greater_than_const( _environment, fraction->name, 0, 1 )->name );
                     variable_move( _environment, variable_add( _environment, y->name, stepy->name )->name, y->name );
                     variable_move( _environment, variable_sub( _environment, fraction->name, dx2->name )->name, fraction->name );
                 end_if_then( _environment );
@@ -197,7 +192,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
                     plot( _environment, x->name, y->name, c->name );
                 end_if_then( _environment );
                 variable_increment( _environment, bit->name );
-                if_then( _environment, variable_compare( _environment, bit->name, sixteen->name )->name );
+                if_then( _environment, variable_compare_const( _environment, bit->name, 16 )->name );
                     variable_store( _environment, bit->name, 0 );
                 end_if_then( _environment );
             end_while( _environment );
@@ -206,7 +201,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
             variable_move( _environment, variable_sub( _environment, dx2->name, dy->name)->name, fraction->name);
             begin_while( _environment );
             begin_while_condition( _environment, variable_compare_not( _environment, y->name, y1->name )->name );
-                if_then( _environment, variable_greater_than( _environment, fraction->name, zero->name, 1 )->name );
+                if_then( _environment, variable_greater_than_const( _environment, fraction->name, 0, 1 )->name );
                     variable_move( _environment, variable_add( _environment, x->name, stepx->name )->name, x->name );
                     variable_move( _environment, variable_sub( _environment, fraction->name, dy2->name )->name, fraction->name );
                 end_if_then( _environment );
@@ -216,7 +211,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
                     plot( _environment, x->name, y->name, c->name );
                 end_if_then( _environment );
                 variable_increment( _environment, bit->name );
-                if_then( _environment, variable_compare( _environment, bit->name, sixteen->name )->name );
+                if_then( _environment, variable_compare_const( _environment, bit->name, 16 )->name );
                     variable_store( _environment, bit->name, 0 );
                 end_if_then( _environment );
             end_while( _environment );
