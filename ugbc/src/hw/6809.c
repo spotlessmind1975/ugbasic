@@ -84,6 +84,29 @@ static void cpu6809_compare( Environment * _environment, char *_source, char *_d
     outhead1("%s", label );
     outline1("STB %s", _other ? _other : _destination );
 }
+
+/* Helper for 8/16 bits comparison */
+static void cpu6809_compare_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive, int _bits) {
+    char REG = _bits==16 ? 'X' : 'A';
+
+    MAKE_LABEL
+
+    outline0("CLRB");
+    outline2("LD%c %s",  REG, _source);
+    outline2("CMP%c #$%2.2x", REG, _destination);
+
+    if(_positive) {
+        outline1("BNE %s", label);
+        outline0("DECB");
+    } else {
+        outline1("BEQ %s", label);
+        outline0("DECB");
+    }
+
+    outhead1("%s", label );
+    outline1("STB %s", _other ? _other : _destination );
+}
+
 static void cpu6809_less_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits) {
     char REG = _bits==16 ? 'X' : 'A';
 
@@ -667,6 +690,26 @@ void cpu6809_compare_8bit( Environment * _environment, char *_source, char *_des
 
 }
 
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values
+ *
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _positive Invert meaning of comparison
+ */
+void cpu6809_compare_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
+
+    inline( cpu_compare_8bit )
+
+        cpu6809_compare_const(_environment,_source, _destination, _other, _positive, 8);
+
+    no_embedded( cpu_compare_8bit )
+
+}
+
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values and jump if they are equal/different
  * 
@@ -1229,6 +1272,25 @@ void cpu6809_compare_16bit( Environment * _environment, char *_source, char *_de
     inline( cpu_compare_16bit )
 
         cpu6809_compare( _environment, _source, _destination, _other, _positive, 16 );
+
+    no_embedded( cpu_compare_16bit )
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to compare two 16 bit values
+ *
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _positive Invert meaning of comparison
+ */
+void cpu6809_compare_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
+
+    inline( cpu_compare_16bit )
+
+        cpu6809_compare_const( _environment, _source, _destination, _other, _positive, 16 );
 
     no_embedded( cpu_compare_16bit )
 
@@ -1970,6 +2032,49 @@ void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_de
             outline1("BNE %sdone", label );
 
             cpu6809_compare_16bit( _environment, sourceEffective, destinationEffective, _other, _positive );
+
+        }
+
+        outhead1("%sdone", label );
+
+    no_embedded( cpu_compare_32bit )
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to compare two 32 bit values
+ *
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _positive Meaning of comparison
+ */
+void cpu6809_compare_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
+
+    inline( cpu_compare_32bit )
+
+        MAKE_LABEL
+
+        char sourceEffective[MAX_TEMPORARY_STORAGE]; sprintf(sourceEffective, "%s", address_displacement(_environment, _source, "2") );
+
+        if ( _positive ) {
+
+            cpu6809_compare_16bit_const( _environment, _source, (_destination & 0xffff ), _other, _positive );
+
+            outline1("LDB %s", _other );
+            outline1("BEQ %sdone", label );
+
+            cpu6809_compare_16bit_const( _environment, sourceEffective, ((_destination>>16)&0xffff), _other, _positive );
+
+        } else {
+
+            cpu6809_compare_16bit_const( _environment, _source, (_destination&0xffff), _other, _positive );
+
+            outline1("LDB %s", _other );
+            outline1("BNE %sdone", label );
+
+            cpu6809_compare_16bit_const( _environment, sourceEffective, ((_destination>>16)&0xffff), _other, _positive );
 
         }
 

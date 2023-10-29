@@ -60,8 +60,11 @@ void cpu6809_bveq( Environment * _environment, char * _value, char * _label );
 void cpu6809_bvneq( Environment * _environment, char * _value, char * _label );
 void cpu6809_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte );
 void cpu6809_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void cpu6809_compare_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void cpu6809_compare_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6809_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void cpu6809_compare_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6809_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6809_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6809_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
@@ -304,8 +307,11 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_bvneq( _environment,  _value,  _label  ) cpu6809_bvneq( _environment,  _value,  _label  )
 #define cpu_combine_nibbles( _environment,  _low_nibble,  _hi_nibble,  _byte  ) cpu6809_combine_nibbles( _environment,  _low_nibble,  _hi_nibble,  _byte  )
 #define cpu_compare_16bit( _environment, _source, _destination, _name, _positive ) cpu6809_compare_16bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_16bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_16bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_32bit( _environment, _source, _destination, _name, _positive ) cpu6809_compare_32bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_32bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_32bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_8bit( _environment, _source, _destination, _name, _positive ) cpu6809_compare_8bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_8bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_8bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive )
