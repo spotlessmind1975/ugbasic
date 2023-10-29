@@ -47,6 +47,8 @@ PLOT:
 
     CLC
 
+@IF optionClip
+
     LDA PLOTY
     CMP CLIPY2
     BCC PLOTCLIP2
@@ -82,6 +84,8 @@ PLOTCLIP4B:
     BEQ PLOTCLIP5
     JMP PLOTP
 PLOTCLIP5:
+
+@ENDIF
 
 PLOTMODE:
 

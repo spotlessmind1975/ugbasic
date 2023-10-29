@@ -1744,6 +1744,11 @@ typedef struct _Environment {
      */
     int optionExplicit;
 
+    /*
+     * Graphical operation has to be clipped?
+     */
+    int optionClip;
+
     Blit blit;
 
     /* --------------------------------------------------------------------- */

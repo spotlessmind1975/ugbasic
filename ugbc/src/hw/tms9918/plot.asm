@@ -72,6 +72,8 @@ PLOTNMI2:
     CP 1
     RET Z
 
+@IF optionClip
+
     LD A, (CLIPY2)
     LD B, A
     LD A, D
@@ -114,6 +116,8 @@ PLOTCLIP4B:
     JR Z, PLOTCLIP5
     JP PLOTP
 PLOTCLIP5:
+
+@ENDIF
 
 PLOTMODE:
     LD A, (CURRENTMODE)

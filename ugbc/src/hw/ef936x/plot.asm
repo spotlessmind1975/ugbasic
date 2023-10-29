@@ -51,6 +51,8 @@ PLOTP
 ; output B result if A=2 or 3
 PLOT
 
+@IF optionClip
+
     CMPX CLIPX2
     BGT PLOTP
     CMPX CLIPX1   ; check if plotting out of clipped area
@@ -60,6 +62,8 @@ PLOT
     BGT PLOTP
     CMPU CLIPY1
     BLT PLOTP
+
+@ENDIF
 
     STX <PLOTX
     STU <PLOTY

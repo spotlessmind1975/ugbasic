@@ -49,6 +49,8 @@ PLOT:
     CP 1
     JP Z, PLOTP2
 
+@IF optionClip
+
     LD A, (CLIPY2+1)
     LD B, A
     LD A, IYH
@@ -119,6 +121,8 @@ PLOTCLIP42:
     JR NC, PLOTCLIP5
     JR Z, PLOTCLIP5
     JP PLOTP
+
+@ENDIF
 
 PLOTCLIP5:
 PLOTMODE:

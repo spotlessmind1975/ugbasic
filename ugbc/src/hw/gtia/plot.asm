@@ -47,6 +47,8 @@ PLOT:
 
     CLC
 
+@IF optionClip
+
     LDA PLOTY
     CMP CLIPY2
     BCC PLOT2
@@ -82,6 +84,8 @@ PLOT4B:
     BEQ PLOT5
     JMP PLOTP
 PLOT5:
+
+@ENDIF
 
 @IF !vestigialConfig.screenModeUnique 
 

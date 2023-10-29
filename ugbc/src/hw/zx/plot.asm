@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 PLOT:
+
+@IF optionClip
+
     LD A, (CLIPX1)
     LD B, A
     LD A, (CLIPX2)
@@ -58,6 +61,9 @@ PLOTNOCLIPPED:
     JR Z, PLOTNOCLIPPED2
     JR NC, PLOTCLIPPED
 PLOTNOCLIPPED2: 
+
+@ENDIF
+
     LD A, H
     AND $7
     LD B, A
