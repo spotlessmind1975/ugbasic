@@ -104,7 +104,7 @@ static void cpu6809_compare_const( Environment * _environment, char *_source, in
     }
 
     outhead1("%s", label );
-    outline1("STB %s", _other ? _other : _destination );
+    outline1("STB %s", _other );
 }
 
 static void cpu6809_less_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits) {
