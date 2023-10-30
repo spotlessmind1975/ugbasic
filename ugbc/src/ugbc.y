@@ -91,7 +91,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
-%token RESTORE SAFE
+%token RESTORE SAFE PAGE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -645,6 +645,18 @@ const_factor:
       }
       | SCREEN TILES WIDTH {
           $$ = ((Environment *)_environment)->screenTilesWidth;
+      }
+      | PAGE "0" {
+          $$ = DOUBLE_BUFFER_PAGE_0;
+      }
+      | PAGE "1" {
+          $$ = DOUBLE_BUFFER_PAGE_1;
+      }
+      | PAGE "A" {
+          $$ = DOUBLE_BUFFER_PAGE_0;
+      }
+      | PAGE "B" {
+          $$ = DOUBLE_BUFFER_PAGE_1;
       }
       | TILES WIDTH {
           $$ = ((Environment *)_environment)->screenTilesWidth;
@@ -2988,6 +3000,9 @@ exponential:
     | TILEMAP Identifier AT OP expr OP_COMMA expr CP {
         $$ = tilemap_at( _environment, $2, $5, $7 )->name;
     }
+    | SCREEN PAGE {
+        $$ = screen_page( _environment )->name;
+    }
     | VOLUME MIN {
         $$ = variable_temporary( _environment, VT_WORD, "(volume min)" )->name;
         variable_store( _environment, $$, 0 );
@@ -3078,6 +3093,22 @@ exponential:
     }
     | CSPRITE OP expr OP_COMMA expr sprite_flags CP {
         $$ = csprite_init( _environment, $3, $5, $6 )->name;
+    }
+    | PAGE "0" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 0)" )->name;
+        variable_store( _environment, $$, DOUBLE_BUFFER_PAGE_0 );
+    }
+    | PAGE "1" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 1)" )->name;
+        variable_store( _environment, $$, DOUBLE_BUFFER_PAGE_1 );
+    }
+    | PAGE "A" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 0)" )->name;
+        variable_store( _environment, $$, DOUBLE_BUFFER_PAGE_0 );
+    }
+    | PAGE "B" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 1)" )->name;
+        variable_store( _environment, $$, DOUBLE_BUFFER_PAGE_1 );
     }
     | IMAGE OP expr frame const_expr CP {
         $$ = image_extract( _environment, $3, $5, NULL )->name;

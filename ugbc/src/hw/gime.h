@@ -198,6 +198,9 @@
 #define BITMAP_MODE_DEFAULT     BITMAP_MODE_128x192x2
 #define BITMAP_MODE_STANDARD    BITMAP_MODE_DEFAULT
 
+#define DOUBLE_BUFFER_PAGE_0        0
+#define DOUBLE_BUFFER_PAGE_1        8
+
 #define SPRITE_COUNT                0
 #define SPRITE_WIDTH                0
 #define SPRITE_HEIGHT               0
