@@ -49,6 +49,9 @@
 </usermanual> */
 void double_buffer( Environment * _environment, int _enabled ) {
 
+    outhead0("; double buffer");
+    outhead0("doublebuffer");
+
     if ( _environment->doubleBufferEnabled != _enabled ) {
 
         _environment->doubleBufferEnabled = _enabled;
@@ -58,11 +61,13 @@ void double_buffer( Environment * _environment, int _enabled ) {
             outline0( "STA GIMESCREENCURRENT" );
             outline0( "LDD #$c000" );
             outline0( "STD GIMEVOFF1" );
+            outline0( "JSR GIMERAM" );
         } else {
             outline0( "LDA #$0" );
             outline0( "STA GIMESCREENCURRENT" );
             outline0( "LDD #$c000" );
             outline0( "STD GIMEVOFF1" );
+            outline0( "JSR GIMERAM" );
         }
 
     }
