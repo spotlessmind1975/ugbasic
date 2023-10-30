@@ -26,9 +26,16 @@ REM
             PUT IMAGE anim FRAME frame AT 32, 0
             PUT IMAGE anim FRAME frame AT 0, 32
             PUT IMAGE anim FRAME frame AT 32, 32
+            ADD frame, 1, 0 TO FRAMES(anim)-1
+            LOCATE 0, 10
+            PEN COLOR(1)
+            IF SCREEN PAGE = PAGE A THEN
+                PRINT "PAGE A"
+            ELSE
+                PRINT "PAGE  B"
+            ENDIF
             WAIT VBL
             SCREEN SWAP
-            ADD frame, 1, 0 TO FRAMES(anim)-1
         LOOP
 
     END PROC
