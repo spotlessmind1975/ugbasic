@@ -46,6 +46,12 @@ else
 EXAMPLESDIR=examples
 endif
 
+ifdef example
+EXAMPLESFILEMASK=$(example)
+else
+EXAMPLESFILEMASK=*.bas
+endif
+
 ifndef output
 ifeq ($(target),atari)
   output=xex
@@ -167,7 +173,7 @@ COCO3DECB = ./coco3_decb.sh
 ifdef 10liner
 EXAMPLES := $(wildcard $(EXAMPLESDIR)/*_10lines.bas)
 else
-EXAMPLES := $(wildcard $(EXAMPLESDIR)/data_*.bas)
+EXAMPLES := $(wildcard $(EXAMPLESDIR)/$(EXAMPLESFILEMASK))
 endif
 
 # List of assembled files of examples
