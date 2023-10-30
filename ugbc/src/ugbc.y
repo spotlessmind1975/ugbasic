@@ -3102,11 +3102,11 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 1)" )->name;
         variable_store( _environment, $$, DOUBLE_BUFFER_PAGE_1 );
     }
-    | PAGE "A" {
+    | PAGE A {
         $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 0)" )->name;
         variable_store( _environment, $$, DOUBLE_BUFFER_PAGE_0 );
     }
-    | PAGE "B" {
+    | PAGE B {
         $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 1)" )->name;
         variable_store( _environment, $$, DOUBLE_BUFFER_PAGE_1 );
     }
