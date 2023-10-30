@@ -1749,6 +1749,11 @@ typedef struct _Environment {
      */
     int optionClip;
 
+    /*
+     * Read operation has to be safe?
+     */
+    int optionReadSafe;
+
     Blit blit;
 
     /* --------------------------------------------------------------------- */

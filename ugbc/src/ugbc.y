@@ -145,7 +145,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> const_instrument
 %type <integer> release
 %type <integer> readonly_optional
-%type <integer> option_explicit origin_direction relative_option option_clip
+%type <integer> option_explicit origin_direction relative_option option_clip option_read
 %type <integer> font_schema
 %type <integer> blit_unary_op blit_binary_op blit_operand
 %type <integer> blit_expression blit_compounded
@@ -6219,14 +6219,20 @@ read_definition :
      SAFE Identifier {
         read_data( _environment, $2, 1 );
     }
+    | FAST Identifier {
+        read_data( _environment, $2, 0 );
+    }
     | Identifier {
-        read_data( _environment, $1, 0 );
+        read_data( _environment, $1, ((struct _Environment *)_environment)->optionReadSafe );
     }
     | SAFE Identifier {
         read_data( _environment, $2, 1 );
     } OP_COMMA read_definition
+    | FAST Identifier {
+        read_data( _environment, $2, 0 );
+    } OP_COMMA read_definition
     | Identifier {
-        read_data( _environment, $1, 0 );
+        read_data( _environment, $1, ((struct _Environment *)_environment)->optionReadSafe );
     } OP_COMMA read_definition
     ;
 
@@ -6876,11 +6882,24 @@ option_clip :
         $$ = 0;
     };
 
+option_read : 
+    SAFE {
+        $$ = 1;
+    }
+    | FAST {
+        $$ = 0;
+    }
+    | {
+        $$ = 1;
+    };
 
 option_definitions :
     EXPLICIT option_explicit {
         ((struct _Environment *)_environment)->optionExplicit = $2;
     }
+    | READ option_read {
+        ((struct _Environment *)_environment)->optionReadSafe = $2;
+    };
     | CLIP option_clip {
         ((struct _Environment *)_environment)->optionClip = $2;
     };
@@ -8057,6 +8076,7 @@ int main( int _argc, char *_argv[] ) {
     setup_embedded( _environment );
 
     _environment->optionClip = 1;
+    _environment->optionReadSafe = 1;
     _environment->warningsEnabled = 0;
 
     _environment->defaultVariableType = VT_WORD;

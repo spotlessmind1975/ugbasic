@@ -17,7 +17,7 @@ first:
 DATA 42, 21, 10
 
 DO
-    READ SAFE a
+    READ a
     PRINT a;" ";
     EXIT IF a = 99
 LOOP

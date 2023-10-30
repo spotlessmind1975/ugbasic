@@ -12,6 +12,8 @@ REM ''READ'' e ''DATA''.
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,vic20,zx
 
+OPTION READ FAST
+
 DATA AS WORD 10, 100, 1000, 99
 
 DO

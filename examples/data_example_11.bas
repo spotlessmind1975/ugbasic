@@ -12,6 +12,8 @@ REM In questo esempio usiamo la variante ''READ SAFE''.
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,vic20,zx
 
+OPTION READ FAST
+
 DATA AS POSITION LOAD "spock.csv" AS TEXT
 
 DIM x1 AS POSITION, y1 AS POSITION, x2 AS POSITION, y2 AS POSITION
