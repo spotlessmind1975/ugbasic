@@ -9,22 +9,29 @@ REM
 REM Questo esempio mostra come usare il double buffering.
 REM
 
-    BITMAP ENABLE (160,200,16)
+    PROCEDURE example ON COCO3
 
-    DOUBLE BUFFER ON
-    CLS BLACK
-    SCREEN SWAP
-    CLS BLACK
-    SCREEN SWAP
+        BITMAP ENABLE (160,200,16)
 
-    anim := LOAD IMAGES("ponyo2.gif") FRAME SIZE AUTO
-
-    DO
-        PUT IMAGE anim FRAME frame AT 0, 0
-        PUT IMAGE anim FRAME frame AT 32, 0
-        PUT IMAGE anim FRAME frame AT 0, 32
-        PUT IMAGE anim FRAME frame AT 32, 32
-        WAIT VBL
+        DOUBLE BUFFER ON
+        CLS BLACK
         SCREEN SWAP
-        ADD frame, 1, 0 TO FRAMES(anim)-1
-    LOOP
+        CLS BLACK
+        SCREEN SWAP
+
+        anim := LOAD IMAGES("ponyo2.gif") FRAME SIZE AUTO
+
+        DO
+            PUT IMAGE anim FRAME frame AT 0, 0
+            PUT IMAGE anim FRAME frame AT 32, 0
+            PUT IMAGE anim FRAME frame AT 0, 32
+            PUT IMAGE anim FRAME frame AT 32, 32
+            WAIT VBL
+            SCREEN SWAP
+            ADD frame, 1, 0 TO FRAMES(anim)-1
+        LOOP
+
+    END PROC
+
+    example[] ON COCO3
+    
