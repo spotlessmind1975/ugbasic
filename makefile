@@ -167,7 +167,7 @@ COCO3DECB = ./coco3_decb.sh
 ifdef 10liner
 EXAMPLES := $(wildcard $(EXAMPLESDIR)/*_10lines.bas)
 else
-EXAMPLES := $(wildcard $(EXAMPLESDIR)/data_*.bas)
+EXAMPLES := $(wildcard $(EXAMPLESDIR)/*.bas)
 endif
 
 # List of assembled files of examples
