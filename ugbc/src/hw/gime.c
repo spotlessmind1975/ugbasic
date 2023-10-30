@@ -1460,6 +1460,9 @@ void gime_initialization( Environment * _environment ) {
     variable_import( _environment, "GIMEMMUCOUNT", VT_BYTE, 0 );
     variable_global( _environment, "GIMEMMUCOUNT" );
 
+    variable_import( _environment, "GIMESCREENCURRENT", VT_BYTE, 8 );
+    variable_global( _environment, "GIMESCREENCURRENT" );
+
     SCREEN_MODE_DEFINE( TILEMAP_MODE_40X25, 0, 40, 25, 16, 8, 8, "Alphanumeric 40 columns x 25 rows");
     SCREEN_MODE_DEFINE( TILEMAP_MODE_32X24, 0, 32, 24, 16, 8, 8, "Alphanumeric 32 columns x 24 rows");
     SCREEN_MODE_DEFINE( TILEMAP_MODE_32X25, 0, 32, 25, 16, 8, 8, "Alphanumeric 32 columns x 25 rows");
