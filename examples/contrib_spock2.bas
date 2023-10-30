@@ -16,6 +16,8 @@ REM @url https://www.facebook.com/groups/2057165187928233/posts/3494341764210561
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,zx
 
+	OPTION READ FAST
+
 	PROCEDURE example ON ALL BUT VIC20
 
 		BITMAP ENABLE(320,200)
