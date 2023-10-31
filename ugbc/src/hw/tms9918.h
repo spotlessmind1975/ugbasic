@@ -126,6 +126,9 @@
 #define IMAGE_HEIGHT_SIZE               1
 #define IMAGE_HEIGHT_OFFSET             2
 
+#define DOUBLE_BUFFER_PAGE_0        0
+#define DOUBLE_BUFFER_PAGE_1        1
+
 // #define TILES_PADDING           8
 
 int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );

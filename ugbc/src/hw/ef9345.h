@@ -100,6 +100,9 @@
 #define IMAGE_HEIGHT_SIZE               1
 #define IMAGE_HEIGHT_OFFSET             2
 
+#define DOUBLE_BUFFER_PAGE_0        0
+#define DOUBLE_BUFFER_PAGE_1        1
+
 int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void ef9345_initialization( Environment * _environment );

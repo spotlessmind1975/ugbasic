@@ -103,6 +103,9 @@
 #define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
 #define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
 
+#define DOUBLE_BUFFER_PAGE_0        0
+#define DOUBLE_BUFFER_PAGE_1        1
+
 int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void vdcz_initialization( Environment * _environment );

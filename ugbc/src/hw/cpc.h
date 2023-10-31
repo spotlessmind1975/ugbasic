@@ -246,6 +246,9 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 #define IMAGE_HEIGHT_SIZE               1
 #define IMAGE_HEIGHT_OFFSET             2
 
+#define DOUBLE_BUFFER_PAGE_0        0
+#define DOUBLE_BUFFER_PAGE_1        1
+
 #define MAX_AUDIO_CHANNELS  3
 
 // IN r,(C)/OUT (C),r instructions: Bits b15-b8 come from the B register, 
