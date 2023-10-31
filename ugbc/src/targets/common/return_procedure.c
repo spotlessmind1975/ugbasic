@@ -78,8 +78,13 @@ espressione come il risultato della chiamata.
 </usermanual> */
 void return_procedure( Environment * _environment, char * _value ) {
     char paramName[MAX_TEMPORARY_STORAGE]; sprintf(paramName,"%s__PARAM", _environment->procedureName );
+    Variable * param = NULL;
     Variable * value = variable_retrieve_or_define( _environment, _value, _environment->defaultVariableType, 0 );
-    Variable * param = variable_define( _environment, paramName, value->type, 0 );
+    if ( variable_exists( _environment, paramName ) ) {
+        param = variable_retrieve( _environment, paramName );
+    } else {
+        param = variable_define( _environment, paramName, value->type, 0 );
+    }
     variable_move( _environment, value->name, param->name );
     cpu_return( _environment );
 }
