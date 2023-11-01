@@ -137,7 +137,7 @@ void target_initialization( Environment * _environment ) {
     outline0("LD SP, $C000");
 
     // outline0("CALL VARINIT2");
-    outline0("CALL VARINIT");
+    cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
 
     cpc_initialization( _environment );

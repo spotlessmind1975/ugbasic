@@ -212,7 +212,7 @@ void target_initialization( Environment * _environment ) {
 	outline0("CALL $0024");
 
     outline0("CALL VARINIT2");
-    outline0("CALL VARINIT");
+    cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
 
     z80_init( _environment );

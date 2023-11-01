@@ -7062,6 +7062,16 @@ data_definition :
         ((struct _Environment *)_environment)->dataDataType = $1;
     } data_definition_data;
 
+clear_definition : 
+    const_expr {
+        if ( $1 <= 0 ) {
+            CRITICAL_INVALID_STRING_SPACE( $1 );
+        }
+        ((struct _Environment *)_environment)->dstring.space = $1;
+        clear( _environment );
+    }
+    ;
+
 statement2:
     BANK bank_definition
   | RASTER raster_definition
@@ -7129,6 +7139,7 @@ statement2:
   | DATA data_definition
   | READ read_definition
   | RESTORE restore_definition
+  | CLEAR clear_definition
   | PRINT print_definition
   | PRINT BUFFER print_buffer_definition
   | PRINT BUFFER RAW print_buffer_raw_definition

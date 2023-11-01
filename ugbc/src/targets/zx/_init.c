@@ -124,7 +124,7 @@ void target_initialization( Environment * _environment ) {
     deploy_deferred( startup, src_hw_zx_startup_asm);
     outline0("CALL ZXSTARTUP");
 
-    outline0("CALL VARINIT");
+    cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
     outline0("CALL ZXSTARTUP2" );
 

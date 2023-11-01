@@ -3570,6 +3570,7 @@ void                    case_equals_label( Environment * _environment );
 void                    center( Environment * _environment, char * _string, int _newline );
 int                     check_if_filename_is_valid( Environment * _environment,  char * _filename );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
+void                    clear( Environment * _environment );
 Variable *              clear_key( Environment * _environment );
 void                    cline( Environment * _environment, char * _characters );
 void                    clip( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );

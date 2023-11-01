@@ -153,7 +153,7 @@ void target_initialization( Environment * _environment ) {
     outhead0("CODESTART:")
     
     outline0("CALL VARINIT2");
-    outline0("CALL VARINIT");
+    cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
     outline0("CALL SG1000STARTUP");
     outline0("CALL SG1000STARTUP2");

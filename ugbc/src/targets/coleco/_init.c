@@ -163,7 +163,7 @@ void target_initialization( Environment * _environment ) {
     outline0("LD SP, $73b8");
 
     outline0("CALL VARINIT2");
-    outline0("CALL VARINIT");
+    cpu_call( _environment, "VARINIT" );
     outline0("CALL COLECOSTARTUP2");
 
     z80_init( _environment );
