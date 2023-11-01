@@ -63,10 +63,6 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
 
     cpu_compare_and_branch_16bit_const( _environment, dataptr->realName, 0, label, 0 );
 
-    if ( !_environment->dataSegment ) {
-        CRITICAL_READ_WITHOUT_DATA( _variable );
-    }
-
     cpu_addressof_16bit( _environment, _environment->dataSegment->realName, dataptr->realName );
 
     cpu_label( _environment, label );
@@ -284,6 +280,8 @@ lettura di ''DATA''.
 @verified
 </usermanual> */
 void read_data( Environment * _environment, char * _variable, int _safe ) {
+
+    _environment->readDataUsed = 1;
 
     if ( _safe ) {
         read_data_safe( _environment, _variable );

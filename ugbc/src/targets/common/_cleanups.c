@@ -96,6 +96,12 @@ void end_compilation( Environment * _environment ) {
 
     }
 
+    if ( _environment->readDataUsed ) {
+        if ( !_environment->dataSegment ) {
+            CRITICAL_READ_WITHOUT_DATA( );
+        }
+    }
+    
     int j=0;
     for( j=0; j<MAX_TEMPORARY_STORAGE; ++j ) {
         if ( _environment->deferredEmbedded[j] ) {
