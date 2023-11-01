@@ -7368,6 +7368,9 @@ statement2:
   | NEXT {
       end_for( _environment );
   }
+  | NEXT Identifier {
+      end_for( _environment );
+  }
   | parallel_optional PROCEDURE Identifier on_targets {
         ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->protothread = $1;
