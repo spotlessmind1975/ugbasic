@@ -3976,7 +3976,9 @@ colormap_definition:
   | colormap_definition_expression;
 
 screen_definition_simple:
-    direct_integer {   
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+      screen_type_color_set( _environment, $2, $5 );
+  } |  direct_integer {   
       screen_mode( _environment, $1 );
   }
   | ON {   
@@ -7140,8 +7142,8 @@ clear_definition :
     ;
 
 pmode_definition :
-    const_expr OP_COMMA const_expr {
-        pmode( _environment, $1, $3 );
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        pmode( _environment, $2, $5 );
     };
 
 statement2:
