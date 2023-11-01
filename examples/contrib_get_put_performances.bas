@@ -35,7 +35,7 @@ PRINT
 PRINT "PRESS ";PEN(RED);"ANY KEY";PEN(WHITE);" TO BEGIN TESTING"
 PRINT
 WAIT KEY
-PRINT PEN(WHITE);"--- STARTING TEST ---"
+PRINT PEN(RED);"--- STARTING TEST ---"
 PRINT
 
 background := NEW IMAGE(#width, #height)
@@ -49,7 +49,7 @@ DO
     EXIT IF TIMER > timeLimit
 LOOP
 
-PRINT "--- ENDING TEST ---"
+PRINT PEN(RED);"--- ENDING TEST ---";PEN(WHITE)
 PRINT
 
 DIM fps AS FLOAT, frames AS FLOAT, time AS FLOAT
@@ -60,6 +60,6 @@ pixels = 32 * 32
 fps = frames / time
 pxs = ( pixels * frames ) / time
 
-PRINT PEN(WHITE);" FRAMES/S:"; PEN(YELLOW); fps
-PRINT PEN(WHITE);" PIXELS/S:"; PEN(YELLOW); pxs
+PRINT " FRAMES/S:", fps
+PRINT " PIXELS/S:", pxs
 
