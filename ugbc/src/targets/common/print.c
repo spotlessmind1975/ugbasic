@@ -73,6 +73,12 @@ Because the ''PRINT'' instruction prints with mono-spaced characters, there is a
 the number of characters printed and the number of columns those characters occupy. This ensures 
 that each character uses only one column.
 
+It is also possible to put the output to a specific location. The ''PRINT @'' command is used 
+to place output at a specified place on the screen. For this purpose the screen is divided 
+into a ''SCREEN COLUMNS'' x ''SCREEN ROWS'' grid, giving a certain amount of positions. 
+The expression after the ''@'' can be a number, a variable or an arithmetic expression, as
+long as the value is between ''0'' and ''((SCREEN COLUMNS*SCREEN ROWS)-1)''.
+
 @italian
 
 L'istruzione ''PRINT'' visualizza le informazioni sullo schermo, a partire dalla posizione attuale del 
@@ -96,14 +102,23 @@ Poiché l'istruzione ''PRINT'' stampa con caratteri a spaziatura fissa, esiste u
 numero di caratteri stampati e il numero di colonne occupate da tali caratteri. Ciò garantisce che ogni 
 carattere utilizzi solo una colonna.
 
+È anche possibile collocare l'output in una posizione specifica. Il comando ''PRINT @'' viene utilizzato 
+per posizionare l'output in un punto specificato sullo schermo. A questo scopo lo schermo è diviso 
+in una griglia ''SCREEN COLUMNS'' x ''SCREEN ROWS'', fornendo un certo numero di posizioni. 
+L'espressione dopo ''@'' può essere un numero, una variabile o un'espressione aritmetica, purché il 
+valore sia compreso tra ''0'' e ''((SCREEN COLUMNS*SCREEN ROWS)-1)''.
+
 @syntax PRINT [expr] [; [expr] [; ...] ... ]
 @syntax PRINT [expr] [, [expr] [, ...] ... ]
+@syntax PRINT @expr, [, [expr] [, ...] ... ]
 
 @example PRINT "HELLO WORLD!"
 @example PRINT (a + b);" IS A SUM!";
+@example PRINT @100, "HELLO WORLD!"
 
 @usedInExample texts_print_01.bas
 @usedInExample texts_print_02.bas
+@usedInExample texts_print_04.bas
 
 @target all
 @verified
