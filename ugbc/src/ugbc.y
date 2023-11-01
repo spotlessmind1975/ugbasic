@@ -5877,7 +5877,19 @@ print_buffer_raw_definition :
   ;
 
 print_definition :
-    expr {
+    OP_AT expr {
+        Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
+        Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
+        Variable * y = variable_div( _environment, p->name, screen_tiles_get_height( _environment )->name, x->name );
+        locate( _environment, x->name, y->name );
+    }
+  | OP_AT expr {
+        Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
+        Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
+        Variable * y = variable_div( _environment, p->name, screen_tiles_get_height( _environment )->name, x->name );
+        locate( _environment, x->name, y->name );
+    } OP_COMMA print_definition
+  | expr {
         print( _environment, $1, 1 );
     }
   | expr OP_COMMA {
