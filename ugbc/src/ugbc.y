@@ -6271,7 +6271,26 @@ read_definition_single :
         }
         Variable * read = variable_temporary( _environment, a->arrayType, "(temp for array)" );
         read_data( _environment, read->name, $1 );
-        variable_move_array( _environment, $2, read->name );
+        if ( a->arrayType == VT_DSTRING ) {
+            variable_move_array_string( _environment, $2, read->name );
+        } else {
+            variable_move_array( _environment, $2, read->name );
+        }
+        parser_array_cleanup( _environment );
+    }
+    | read_safeness Identifier OP_DOLLAR {
+        parser_array_init( _environment );
+    } OP indexes CP {
+        Variable * a = variable_retrieve( _environment, $2 );
+        if ( a->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $2 );
+        }
+        if ( a->arrayType != VT_DSTRING ) {
+            CRITICAL_DATATYPE_MISMATCH( a->name, $2 );
+        }
+        Variable * read = variable_temporary( _environment, VT_DSTRING, "(temp for array)" );
+        read_data( _environment, read->name, $1 );
+        variable_move_array_string( _environment, $2, read->name );
         parser_array_cleanup( _environment );
     };
 
