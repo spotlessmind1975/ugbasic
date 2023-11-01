@@ -5837,7 +5837,19 @@ return_values_asmios :
     ;
 
 print_buffer_definition :
-    expr {
+    OP_AT expr {
+        Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
+        Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
+        Variable * y = variable_div( _environment, p->name, screen_tiles_get_height( _environment )->name, x->name );
+        locate( _environment, x->name, y->name );
+    }
+  | OP_AT expr {
+        Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
+        Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
+        Variable * y = variable_div( _environment, p->name, screen_tiles_get_height( _environment )->name, x->name );
+        locate( _environment, x->name, y->name );
+    } OP_COMMA print_buffer_raw_definition
+  | expr {
         print_buffer( _environment, $1, 1, 1 );
     }
   | expr OP_COMMA {
@@ -5857,7 +5869,19 @@ print_buffer_definition :
   ;
 
 print_buffer_raw_definition :
-    expr {
+    OP_AT expr {
+        Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
+        Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
+        Variable * y = variable_div( _environment, p->name, screen_tiles_get_height( _environment )->name, x->name );
+        locate( _environment, x->name, y->name );
+    }
+  | OP_AT expr {
+        Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
+        Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
+        Variable * y = variable_div( _environment, p->name, screen_tiles_get_height( _environment )->name, x->name );
+        locate( _environment, x->name, y->name );
+    } OP_COMMA print_buffer_raw_definition
+  | expr {
         print_buffer( _environment, $1, 1, 0 );
     }
   | expr OP_COMMA {
