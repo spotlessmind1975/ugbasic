@@ -3900,6 +3900,7 @@ Variable *              screen_get_width( Environment * _environment );
 void                    screen_horizontal_scroll( Environment * _environment, int _displacement );
 void                    screen_horizontal_scroll_var( Environment * _environment, char * _displacement );
 void                    screen_mode( Environment * _environment, int _mode );
+void                    screen_type_color_set( Environment * _environment, int _type, int _color_set );
 void                    screen_off( Environment * _environment );
 void                    screen_on( Environment * _environment );
 void                    screen_rows( Environment * _environment, int _rows );

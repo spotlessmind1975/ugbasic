@@ -67,3 +67,12 @@ void screen_mode( Environment * _environment, int _mode ) {
     }
 }
 
+void screen_type_color_set( Environment * _environment, int _type, int _color_set ) {
+
+    if ( _type == 0 ) {
+        tilemap_enable( _environment, 0, 0, 0, 0, 0 );
+    } else {
+        bitmap_enable( _environment, 0, 0, 0 );
+    }
+
+}
