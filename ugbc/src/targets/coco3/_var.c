@@ -470,6 +470,10 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("IRQSTACK0 rzb 512");
     outhead0("IRQSTACK");
 
+    deploy_inplace( irq, src_hw_coco3_irq_asm);
+    deploy_inplace_preferred( putimage, src_hw_gime_put_image_asm );
+    deploy_inplace_preferred( getimage, src_hw_gime_get_image_asm );
+
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {

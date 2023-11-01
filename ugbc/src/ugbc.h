@@ -1452,6 +1452,7 @@ typedef struct _Deployed {
     int duff;
 
     int read_data_unsafe;
+    int irq;
 
 } Deployed;
 
@@ -2951,6 +2952,9 @@ int embed_scan_string (const char *);
             _environment->deployed.s = 1; \
         }
 
+#define deploy_preferred(s,e)  \
+        _environment->deployed.s = 1; \
+
 #define deploy_deferred(s,e)  \
         if ( ! _environment->deployed.s ) { \
             outembeddeddef0(e); \
@@ -2960,6 +2964,12 @@ int embed_scan_string (const char *);
 #define deploy_inplace(s,e)  \
         if ( ! _environment->deployed.s ) { \
             outembedded0(e); \
+        }
+
+#define deploy_inplace_preferred(s,e)  \
+        if ( _environment->deployed.s ) { \
+            _environment->deployed.s = 0; \
+            deploy_inplace(s,e); \
         }
 
 #define deploy_with_vars(s,e,v)  \
