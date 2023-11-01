@@ -3835,6 +3835,7 @@ void                    play_vars( Environment * _environment, char * _note, cha
 void                    play_off( Environment * _environment, int _channels );
 void                    play_off_var( Environment * _environment, char * _channels );
 void                    plot( Environment * _environment, char * _x, char * _y, char *_c );
+void                    pmode( Environment * _environment, int _mode, int _start_page );
 Variable *              point( Environment * _environment, char * _x, char * _y );
 void                    point_at( Environment * _environment, int _x, int _y );
 void                    point_at_vars( Environment * _environment, char * _x, char * _y );
