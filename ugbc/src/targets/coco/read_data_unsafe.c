@@ -72,12 +72,6 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
 
         Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
 
-        cpu_compare_and_branch_16bit_const( _environment, dataptr->realName, 0, label, 0 );
-
-        cpu_addressof_16bit( _environment, _environment->dataSegment->realName, dataptr->realName );
-
-        cpu_label( _environment, label );
-
         switch( VT_BITWIDTH( variable->type ) ) {
             case 32:
                 cpu_inc_16bit( _environment, dataptr->realName );

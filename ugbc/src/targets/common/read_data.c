@@ -61,12 +61,6 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
         type = VT_STRING;
     }
 
-    cpu_compare_and_branch_16bit_const( _environment, dataptr->realName, 0, label, 0 );
-
-    cpu_addressof_16bit( _environment, _environment->dataSegment->realName, dataptr->realName );
-
-    cpu_label( _environment, label );
-
     dataptre = variable_temporary( _environment, VT_ADDRESS, "(dataptre)" );
     cpu_addressof_16bit( _environment, "DATAPTRE", dataptre->realName );
     cpu_compare_16bit( _environment, dataptr->realName, dataptre->realName, datatype->realName, 1 );
