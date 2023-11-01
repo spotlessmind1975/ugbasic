@@ -38,6 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 void read_data_unsafe( Environment * _environment, char * _variable ) {
 
     Variable * variable;
@@ -106,7 +108,7 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
                 cpu_inc_16bit( _environment, dataptr->realName );
                 break;
             case 1:
-                CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable );
+                CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable, DATATYPE_AS_STRING[variable->type] );
                 break;
             case 0:
                 switch( variable->type ) {
@@ -124,7 +126,7 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
                         break;
                     }
                     default:
-                        CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable );
+                        CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable, DATATYPE_AS_STRING[variable->type] );
                 }
                 break;
         }

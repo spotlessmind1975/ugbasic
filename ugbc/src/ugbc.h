@@ -2571,7 +2571,7 @@ typedef struct _Environment {
 #define CRITICAL_LABEL_ALREADY_DEFINED( n ) CRITICAL2("E229 - label already defined", n );
 #define CRITICAL_TILE_ID_NO_TILESET( v ) CRITICAL2("E230 - cannot call TILE ID on something that is not a TILESET", v );
 #define CRITICAL_READ_WITHOUT_DATA( v ) CRITICAL("E231 - READ without DATA" );
-#define CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( v ) CRITICAL2("E232 - READ not supported for this kind of variable", v );
+#define CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( v, t ) CRITICAL3("E232 - READ not supported for this kind of variable", v, t );
 #define CRITICAL_RESTORE_WITHOUT_DATA( v ) CRITICAL2("E233 - RESTORE without DATA", v );
 #define CRITICAL_READ_END_WITHOUT_DATA( ) CRITICAL("E234 - READ END without DATA" );
 #define CRITICAL_DATA_LOAD_TEXT_NOT_FOUND( v ) CRITICAL2("E235 - cannot find file to load DATA in", v );

@@ -154,6 +154,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> system
 %type <integer> padding_tile
 %type <integer> op_comma_or_semicolon
+%type <integer> read_safeness
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -6246,26 +6247,37 @@ op_comma_or_semicolon :
         $$ = 1;
     };
 
+read_safeness :
+    SAFE {
+        $$ = 1;
+    }
+    | FAST {
+        $$ = 0;
+    }
+    | {
+        $$ = ((struct _Environment *)_environment)->optionReadSafe;
+    };
+
+read_definition_single :
+     read_safeness Identifier {
+        read_data( _environment, $2, $1 );
+    }
+    | read_safeness Identifier {
+        parser_array_init( _environment );
+    } OP indexes CP {
+        Variable * a = variable_retrieve( _environment, $2 );
+        if ( a->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $2 );
+        }
+        Variable * read = variable_temporary( _environment, a->arrayType, "(temp for array)" );
+        read_data( _environment, read->name, $1 );
+        variable_move_array( _environment, $2, read->name );
+        parser_array_cleanup( _environment );
+    };
+
 read_definition :
-     SAFE Identifier {
-        read_data( _environment, $2, 1 );
-    }
-    | FAST Identifier {
-        read_data( _environment, $2, 0 );
-    }
-    | Identifier {
-        read_data( _environment, $1, ((struct _Environment *)_environment)->optionReadSafe );
-    }
-    | SAFE Identifier {
-        read_data( _environment, $2, 1 );
-    } OP_COMMA read_definition
-    | FAST Identifier {
-        read_data( _environment, $2, 0 );
-    } OP_COMMA read_definition
-    | Identifier {
-        read_data( _environment, $1, ((struct _Environment *)_environment)->optionReadSafe );
-    } OP_COMMA read_definition
-    ;
+    read_definition_single
+    | read_definition_single OP_COMMA read_definition;
 
 input_definition :
       String op_comma_or_semicolon Identifier {

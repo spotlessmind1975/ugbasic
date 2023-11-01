@@ -38,6 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 static void read_data_safe( Environment * _environment, char * _variable ) {
 
     MAKE_LABEL
@@ -91,7 +93,7 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
             cpu_inc_16bit( _environment, dataptr->realName );
             break;
         case 1:
-            CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable );
+            CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable, DATATYPE_AS_STRING[variable->type] );
             break;
         case 0:
             switch( variable->type ) {
@@ -109,7 +111,7 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
                     break;
                 }
                 default:
-                    CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable );
+                    CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable, DATATYPE_AS_STRING[variable->type] );
             }
             break;
     }
