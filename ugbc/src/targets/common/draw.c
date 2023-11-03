@@ -60,6 +60,15 @@ omitted, the last color selected with the ''INK'' or ''PEN'' command will be use
 Finally, the default line style is full but a 16 bit bitmask can be set with the ''SET LINE''
 command.
 
+On the other syntax, you can select the ''mode'' that can be ''PSET'' or ''PRESET''. If 
+''PSET'' is used the line is drawn in the current foreground colour. If ''PRESET'', the 
+line is drawn in the background colour.
+
+The last, if used, it is either ''B'' or ''BF''. If ''B'', a rectangle is
+drawn instead of a line, the upper corner of the rectangle will be x1, y1, and
+the lower right corner x2, y2. If ''BF'' is used, the rectangle is drawn and filled
+with the current foreground colour.
+
 @italian
 Questa istruzione disegna un segmento di linea sullo schermo, a partire dalle coordinate ''(x1,y1)''
 per arrivare alle coordinate ''(x2,y2)'', utilizzando il colore ''c''. Le coordinate di inizio o
@@ -69,8 +78,17 @@ Se il colore viene omesso sarà utilizzato l'ultimo colore selezionato con il co
 oppure ''PEN'. Infine, lo stile della linea di default è pieno ma può essere impostata una 
 bitmask di 16 bit con il comando ''SET LINE''.
 
-@syntax DRAW [x1], [y1] TO [x2],[x2][, c]
-@syntax DRAW TO [x2], [x2][, c]
+Dall'altra sintassi è possibile selezionare la ''mode'' (modalità) che può essere ''PSET'' o ''PRESET''. 
+Se si utilizza ''PSET'' la linea viene disegnata nel colore di primo piano corrente. Se ''PRESET'', 
+la linea viene disegnata con il colore di sfondo.
+
+L'ultimo, se utilizzato, è ''B'' o ''BF''. Se ''B'' viene disegnato un rettangolo invece di
+una linea, l'angolo superiore del rettangolo sarà x1, y1 e l'angolo inferiore destro x2, y2. 
+Se si utilizza ''BF'', il rettangolo viene disegnato e riempito.
+
+@syntax DRAW [x1], [y1] TO x2, y2[, c]
+@syntax DRAW TO x2, y2[, c]
+@syntax DRAW (x1,y1) − (x2,y2)[,mode][,B|,BF]
 
 @example DRAW 10,10 TO 100,100,WHITE
 @example DRAW TO 100,100
@@ -105,12 +123,12 @@ Se il colore viene omesso sarà utilizzato l'ultimo colore selezionato con il co
 oppure ''PEN'. Infine, lo stile della linea di default è pieno ma può essere impostata una 
 bitmask di 16 bit con il comando ''SET LINE''.
 
-@syntax LINE [x1], [y1] TO [x2], [x2][, c]
-@syntax LINE TO [x2], [x2][, c]
+@syntax LINE [x1], [y1] TO x2, y2[, c]
+@syntax LINE TO x2, y2[, c]
+@syntax LINE (x1,y1) − (x2,y2)[,mode]
 
 @example LINE 10,10 TO 100,100,WHITE
 @example LINE TO 100,100
-@example LINE ,10 TO ,100
 
 @usedInExample graphics_color_01.bas
 @usedInExample graphics_lines_01.bas

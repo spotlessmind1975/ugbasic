@@ -91,7 +91,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
-%token RESTORE SAFE PAGE PMODE PCLS
+%token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -155,6 +155,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> padding_tile
 %type <integer> op_comma_or_semicolon
 %type <integer> read_safeness
+%type <integer> line_mode box_mode
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -4641,8 +4642,56 @@ move_definition_expression:
 move_definition:
     move_definition_expression;
 
+line_mode : 
+    {
+        $$ = 0;
+    }
+    | PSET {
+        $$ = 0;
+    }
+    | PRESET {
+        $$ = 1;
+    };
+
+box_mode : 
+    {
+        $$ = 0;
+    }
+    | B {
+        $$ = 1;
+    }
+    | BF {
+        $$ = 2;
+    };
+
 draw_definition_expression:
-    optional_x_or_string {
+    OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP {
+        draw( _environment, $2, $4, $8, $10, NULL );
+        gr_locate( _environment, $8, $10 );
+    }
+    | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode {
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+        gr_locate( _environment, $8, $10 );
+    }
+    | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode OP_COMMA box_mode {
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        switch( $15 ) {
+            case 0:
+                draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+            case 1:
+                box( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+            case 2:
+                bar( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+        }
+        gr_locate( _environment, $8, $10 );
+    }
+    | optional_x_or_string {
         draw_string( _environment, $1 );
     }
     | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
