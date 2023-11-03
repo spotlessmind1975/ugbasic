@@ -54,15 +54,20 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword GET IMAGE
 @target mo5
 </usermanual> */
-void get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
+void get_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, int _palette ) {
 
     Variable * image = variable_retrieve( _environment, _image );
-    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
-    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+
+    if ( _x2 && _y2 ) {
+        get_image_overwrite_size( _environment, _image, _x1, _y1, _x2, _y2 );
+    }
 
     switch( image->type ) {
         case VT_IMAGE:
-            ef936x_get_image( _environment, image->realName, x->realName, y->realName, _palette );
+        case VT_ARRAY:
+            gtia_get_image( _environment, image->realName, x1->realName, y1->realName, _palette );
             break;
         default:
             CRITICAL_GET_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

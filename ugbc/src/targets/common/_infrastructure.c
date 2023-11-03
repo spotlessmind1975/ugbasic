@@ -10464,3 +10464,21 @@ void buffered_prepend_output( ) {
 void buffered_output( FILE * _stream ) {
     fwrite( bufferOutput[currentBufferOutput], 1, bufferOutputSize[currentBufferOutput], _stream );
 }
+
+void get_image_overwrite_size( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2 ) {
+
+    Variable * image = variable_retrieve( _environment, _image );
+    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+
+    Variable * x2 = variable_retrieve_or_define( _environment, _x2, VT_POSITION, 0 );
+    Variable * y2 = variable_retrieve_or_define( _environment, _y2, VT_POSITION, 0 );
+    Variable * width = absolute( _environment, variable_sub( _environment, x2->name, x1->name )->name );
+    Variable * height = absolute( _environment, variable_sub( _environment, y2->name, y1->name )->name );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    cpu_move_16bit( _environment, width->realName, image->realName );
+    cpu_addressof_16bit( _environment, image->realName, address->realName );
+    cpu_math_add_16bit_const(  _environment, address->realName, 2, address->realName );
+    cpu_move_8bit_indirect( _environment, height->realName, address->realName );
+
+}
