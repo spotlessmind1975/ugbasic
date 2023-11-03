@@ -122,7 +122,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> datatype as_datatype as_datatype_mandatory as_datatype_suffix
 %type <integer> halted
 %type <integer> optional_integer
-%type <string> optional_expr optional_x optional_y
+%type <string> optional_expr optional_x optional_y optional_x_or_string
 %type <integer> target targets
 %type <integer> parallel_optional
 %type <integer> on_targets
@@ -4135,6 +4135,25 @@ relative_option:
         $$ = 1;
     };
 
+optional_x_or_string:
+    RELATIVE expr {
+        $$ = origin_resolution_relative_transform_x( _environment, $2, 1 )->name;
+    }
+    |
+    expr {
+        Variable * t = variable_retrieve( _environment, $1 );
+        if ( ( t->type == VT_STRING ) || ( t->type == VT_DSTRING ) ) {
+            $$ = $1;
+        } else {
+            $$ = origin_resolution_relative_transform_x( _environment, $1, 0 )->name;
+        }
+    }
+    |
+    {
+        $$ = origin_resolution_relative_transform_x( _environment, NULL, 0 )->name;
+    }
+    ;
+
 optional_x:
     relative_option expr {
         $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name;
@@ -4615,11 +4634,14 @@ move_definition:
     move_definition_expression;
 
 draw_definition_expression:
-      optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    optional_x_or_string {
+        draw_string( _environment, $1 );
+    }
+    | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         draw( _environment, $1, $3, $5, $7, $9 );
         gr_locate( _environment, $5, $7 );
     }
-    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+    | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
         draw( _environment, $1, $3, $5, $7, NULL );
         gr_locate( _environment, $5, $7 );
     }

@@ -1453,6 +1453,7 @@ typedef struct _Deployed {
 
     int read_data_unsafe;
     int irq;
+    int draw_string;
 
 } Deployed;
 
@@ -2576,6 +2577,7 @@ typedef struct _Environment {
 #define CRITICAL_READ_END_WITHOUT_DATA( ) CRITICAL("E234 - READ END without DATA" );
 #define CRITICAL_DATA_LOAD_TEXT_NOT_FOUND( v ) CRITICAL2("E235 - cannot find file to load DATA in", v );
 #define CRITICAL_CANNOT_COMPARE_CONST( t ) CRITICAL2("E236 - Cannot compare type with a constant", t );
+#define CRITICAL_CANNOT_USE_DRAW_WITHOUT_STRING( t ) CRITICAL2("E237 - DRAW need a string with drawing commands", t );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3623,6 +3625,7 @@ void                    double_buffer( Environment * _environment, int _enabled 
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
 void                    draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color );
+void                    draw_string( Environment * _environment, char * _string );
 void                    dstring_cleanup( Environment * _Environment );
 
 //----------------------------------------------------------------------------
