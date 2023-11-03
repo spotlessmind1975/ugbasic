@@ -67,6 +67,7 @@ definite dalla variabile dove l'immagine sarà memorizzata. L'immagine viene cat
 anche con le componenti colore.
 
 @syntax GET IMAGE var FROM [x], [y]
+@syntax GET (x1,y1) − (x2,y2), var[, G]
 
 @example background = NEW IMAGE(16, 16)
 @example GET IMAGE background FROM 0, 0

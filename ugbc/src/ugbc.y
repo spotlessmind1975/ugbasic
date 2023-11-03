@@ -4221,7 +4221,15 @@ ellipse_definition:
     ellipse_definition_expression;
 
 get_definition_expression:
-      IMAGE expr FROM optional_x OP_COMMA optional_y  {
+    OP optional_x OP_COMMA optional_y CP OP_MINUS OP optional_x OP_COMMA optional_y CP OP_COMMA expr {
+        get_image( _environment, $13, $2, $4, 0 );
+        gr_locate( _environment, $2, $4 );
+    }
+    | OP optional_x OP_COMMA optional_y CP OP_MINUS OP optional_x OP_COMMA optional_y CP OP_COMMA expr OP_COMMA "G" {
+        get_image( _environment, $13, $2, $4, 1 );
+        gr_locate( _environment, $2, $4 );
+    }
+    | IMAGE expr FROM optional_x OP_COMMA optional_y  {
         get_image( _environment, $2, $4, $6, 1 );
         gr_locate( _environment, $4, $6 );
     }
