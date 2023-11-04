@@ -621,6 +621,26 @@ void cpu6502_compare_8bit_const( Environment * _environment, char *_source, int 
 
 }
 
+void cpu6502_compare_and_branch_8bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
+
+    MAKE_LABEL
+
+    inline( cpu_compare_and_branch_8bit )
+
+        outline1("LDA %s", _source);
+        outline1("CMP %s", _destination);
+        if ( _positive ) {
+            outline1("BNE %s", label);
+        } else {
+            outline1("BEQ %s", label);
+        }
+        outline1("JMP %s", _label);
+        outhead1("%s:", label);
+
+    no_embedded( cpu_compare_and_branch_8bit )
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values and jump if they are equal/different
  * 
