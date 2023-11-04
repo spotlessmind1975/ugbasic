@@ -2259,7 +2259,7 @@ static void variable_move_16bit_8bit( Environment * _environment, Variable * _so
 
             // Generic algorithm:
 
-            cpu_store_16bit( _environment, _target->realName, 0 );
+            cpu_store_8bit( _environment, _target->realName, 0 );
             #ifdef CPU_BIG_ENDIAN
                 {
                 cpu_is_negative( _environment, _source->realName, sign->realName );
