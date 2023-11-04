@@ -63,7 +63,7 @@ void get_image( Environment * _environment, char * _image, char * _x1, char * _y
     switch( image->type ) {
         case VT_IMAGE:
         case VT_ARRAY:
-            gtia_get_image( _environment, image->realName, x1->realName, y1->realName, _palette );
+            vdcz_get_image( _environment, image->realName, x1->realName, y1->realName, _palette );
             break;
         default:
             CRITICAL_GET_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
