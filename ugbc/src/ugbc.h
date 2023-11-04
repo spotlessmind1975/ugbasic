@@ -1131,6 +1131,7 @@ typedef struct _Embedded {
     int cpu_compare_16bit;
     int cpu_compare_32bit;
     int cpu_compare_8bit;
+    int cpu_compare_and_branch_8bit;
     int cpu_compare_and_branch_16bit_const;
     int cpu_compare_and_branch_32bit_const;
     int cpu_compare_and_branch_8bit_const;
