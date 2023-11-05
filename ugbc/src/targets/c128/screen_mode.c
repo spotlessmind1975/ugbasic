@@ -73,7 +73,7 @@ void screen_type_color_set( Environment * _environment, int _type, int _color_se
     if ( _type == 0 ) {
         tilemap_enable( _environment, 0, 0, 0, 0, 0 );
     } else {
-        bitmap_enable( _environment, 0, 0, 0, 0, 0 );
+        bitmap_enable( _environment, 0, 0, 0 );
     }
 
 }
