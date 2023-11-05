@@ -222,22 +222,69 @@ PLOTE:                          ;handled same way as setting a point
     POP DE
     JMP PLOTP2
 
-PLOTG:      
+PLOTG:    
+    LD A, C
+    XOR $FF
+    LD C, A
     PUSH DE
     LD DE, HL
     CALL VDPINCHAR
     POP DE
     AND C
-    CP 0
+    CP $0
     JR Z, PLOTG0
 PLOTG1:
     LD A, $ff
-    JMP PLOTP2
+    JP PLOTP2
 PLOTG0:
     LD A, $0
+    JP PLOTP2
+
+PLOTC:
+    CALL PLOTG
+    CP $0
+    JR Z, PLOTC0
+
+PLOTC1:
+
+    DI
+
+    EXX
+
+    PUSH DE
+    LD DE, HL
+    CALL VDPINCHAR
+    POP DE
+
+    AND $F0
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+
+    EXX
+
+    EI
+
     JMP PLOTP2
 
-PLOTC:                          
+PLOTC0:
+
+    DI
+
+    EXX
+
+    PUSH DE
+    LD DE, HL
+    CALL VDPINCHAR
+    POP DE
+
+    AND $0F
+
+    EXX
+
+    EI
+
     JMP PLOTP2
 
 PLOTP:
@@ -246,5 +293,7 @@ PLOTP2:
     JP PLOTDONE
 
 PLOTDONE:
+    PUSH AF
     CALL VDPREGIN
+    POP AF
     RET
