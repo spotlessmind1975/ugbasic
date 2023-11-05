@@ -40,6 +40,9 @@ PLOTY   EQU $43
 PLOTM   EQU $45
 PLOTOMA EQU $46
 PLOTAMA EQU $47
+PLOTNB  EQU $48
+PLOTNC  EQU $49
+PLOTND  EQU $50
 
 ;--------------
 
@@ -183,6 +186,9 @@ PLOT6
 ; four dot-clocks by three scan lines.
 PLOT7
 
+    LDA #2
+    STA PLOTNB
+
     LDX BITMAPADDRESS
     LDD PLOTY
     LSLB
@@ -215,6 +221,11 @@ PLOT7
     LDU #PLOTANDBIT4
     LEAU B, U
 
+    STB PLOTND
+    LDA #3
+    SUBA PLOTND
+    STA PLOTND
+
     JMP PLOTCOMMON
 
 ; The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
@@ -223,6 +234,10 @@ PLOT7
 ; color set select pin. A 1K x 8 display memory is required. Each 
 ; pixel equals two dotclocks by three scan lines.
 PLOT8
+
+    LDA #1
+    STA PLOTNB
+
     LDX BITMAPADDRESS
     LDD PLOTY
     LSLB
@@ -252,6 +267,11 @@ PLOT8
     LDU #PLOTANDBIT
     LEAU B, U
 
+    STB PLOTND
+    LDA #7
+    SUBA PLOTND
+    STA PLOTND
+
     JMP PLOTCOMMON
 
 ; The 128 x 64 Color Graphics mode generates a display matrix 128 
@@ -259,6 +279,9 @@ PLOT8
 ; colors. A 2K x 8 display memory is required. Each pixel equals
 ; two dot-clocks by three scan lines.
 PLOT9
+
+    LDA #2
+    STA PLOTNB
 
     LDX BITMAPADDRESS
     LDD PLOTY
@@ -293,6 +316,11 @@ PLOT9
 
     LDU #PLOTANDBIT4
     LEAU B, U
+
+    STB PLOTND
+    LDA #3
+    SUBA PLOTND
+    STA PLOTND
 
     JMP PLOTCOMMON
 
@@ -303,6 +331,9 @@ PLOT9
 ; is required. Each pixel equals two dot-clocks by two scan lines.
 PLOT10
 
+    LDA #1
+    STA PLOTNB
+
     LDX BITMAPADDRESS
     LDD PLOTY
     LSLB
@@ -332,6 +363,11 @@ PLOT10
     LDU #PLOTANDBIT
     LEAU B, U
 
+    STB PLOTND
+    LDA #7
+    SUBA PLOTND
+    STA PLOTND
+
     JMP PLOTCOMMON
 
 ; The 128 x 96 Color Graphics mode generates a display 128 elements 
@@ -339,6 +375,9 @@ PLOT10
 ; A 3K x 8 display memory is required. Each pixel equals two 
 ; dot-clocks by two scan lines.
 PLOT11
+
+    LDA #2
+    STA PLOTNB
 
     LDX BITMAPADDRESS
     LDD PLOTY
@@ -373,6 +412,11 @@ PLOT11
 
     LDU #PLOTANDBIT4
     LEAU B, U
+
+    STB PLOTND
+    LDA #3
+    SUBA PLOTND
+    STA PLOTND
 
     JMP PLOTCOMMON
 
@@ -383,6 +427,9 @@ PLOT11
 ; equals two dot-clocks by one scan line.
 PLOT12
 
+    LDA #1
+    STA PLOTNB
+
     LDX BITMAPADDRESS
     LDD PLOTY
     LSLB
@@ -412,6 +459,11 @@ PLOT12
     LDU #PLOTANDBIT
     LEAU B, U
 
+    STB PLOTND
+    LDA #7
+    SUBA PLOTND
+    STA PLOTND
+
     JMP PLOTCOMMON
 
 ;  The 128 x 192 Color Graphics mode generates a display 128 elements 
@@ -419,6 +471,9 @@ PLOT12
 ;  A 6K x 8 display memory is required. Each pixel equals two dot-clocks 
 ;  by one scan line.
 PLOT13
+
+    LDA #2
+    STA PLOTNB
 
     LDX BITMAPADDRESS
     LDD PLOTY
@@ -454,6 +509,11 @@ PLOT13
     LDU #PLOTANDBIT4
     LEAU B, U
 
+    STB PLOTND
+    LDA #3
+    SUBA PLOTND
+    STA PLOTND
+
     JMP PLOTCOMMON
 
 ; The 256 x 192 Graphics mode generates a display 256 elements wide by 
@@ -462,6 +522,9 @@ PLOT13
 ; A 6K x 8 display memory is required. Each pixel equals one 
 ; dot-clock by one scan line.
 PLOT14
+
+    LDA #1
+    STA PLOTNB
 
     LDX BITMAPADDRESS
     LDD PLOTY
@@ -493,6 +556,11 @@ PLOT14
 
     LDU #PLOTANDBIT
     LEAU B, U
+
+    STB PLOTND
+    LDA #7
+    SUBA PLOTND
+    STA PLOTND
 
     JMP PLOTCOMMON
 
@@ -535,23 +603,34 @@ PLOTE                          ;handled same way as setting a point
     STA , X           ;write back to $A000
     JMP PLOTP                  ;skip the erase-point section
 
-PLOTG      
+PLOTC
+    LDA , U
+    ANDCC #$FE
+    COMA
+    STA PLOTNC
     LDA , X           ;get row with point in it
-    ANDA , U
-    CMPA #0
-    BEQ PLOTG0
-PLOTG1
-    LDA #$ff
-    STA PLOTM
-    JMP PLOTP
-PLOTG0
-    LDA #$0
+    ANDA PLOTNC
+    STA PLOTNC
+    LDB PLOTND
+PLOTCL1
+    CMPB #0
+    BEQ PLOTCE
+    LDA PLOTNB
+    CMPA #1
+    BEQ PLOTC1
+    LSR PLOTNC
+PLOTC1
+    LSR PLOTNC
+    DECB
+    JMP PLOTCL1
+PLOTCE
+    LDA PLOTNC
     STA PLOTM
     JMP PLOTP            
 
-PLOTC                          
-    LDA , X           ;get row with point in it
-    STA PLOTM
+PLOTG
+    JSR PLOTC
+    LDA PLOTM
     JMP PLOTP
 
 PLOTP
