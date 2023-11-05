@@ -1197,7 +1197,7 @@ void vic2_pset_vars( Environment * _environment, char *_x, char *_y ) {
 
 }
 
-void vic2_point( Environment * _environment, char *_x, char *_y, char * _result ) {
+void vic2_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result ) {
 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );

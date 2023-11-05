@@ -165,7 +165,7 @@ void ted_tiles_get_height( Environment * _environment, char * _result );
 
 void ted_pset_int( Environment * _environment, int _x, int _y );
 void ted_pset_vars( Environment * _environment, char *_x, char *_y );
-void ted_point( Environment * _environment, char *_x, char *_y, char * _result );
+void ted_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void ted_cls( Environment * _environment );
 void ted_scroll_text( Environment * _environment, int _direction );
 void ted_hscroll_line( Environment * _environment, int _direction );

@@ -163,7 +163,7 @@ void vic1_tiles_get_height( Environment * _environment, char * _result );
 
 void vic1_pset_int( Environment * _environment, int _x, int _y );
 void vic1_pset_vars( Environment * _environment, char *_x, char *_y );
-void vic1_point( Environment * _environment, char *_x, char *_y, char * _result );
+void vic1_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void vic1_cls( Environment * _environment );
 void vic1_scroll_text( Environment * _environment, int _direction );
 void vic1_hscroll_line( Environment * _environment, int _direction );

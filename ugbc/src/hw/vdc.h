@@ -194,7 +194,7 @@ void vdc_tiles_get_height( Environment * _environment, char * _result );
 
 void vdc_pset_int( Environment * _environment, int _x, int _y );
 void vdc_pset_vars( Environment * _environment, char *_x, char *_y );
-void vdc_point( Environment * _environment, char *_x, char *_y, char * _result );
+void vdc_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void vdc_cls( Environment * _environment );
 void vdc_scroll_text( Environment * _environment, int _direction );
 void vdc_hscroll_line( Environment * _environment, int _direction );

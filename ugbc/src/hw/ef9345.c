@@ -577,7 +577,7 @@ void ef9345_pset_vars( Environment * _environment, char *_x, char *_y ) {
 
 }
 
-void ef9345_point( Environment * _environment, char *_x, char *_y, char * _result ) {
+void ef9345_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result ) {
 
 }
 

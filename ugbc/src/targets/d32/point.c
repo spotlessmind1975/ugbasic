@@ -47,7 +47,7 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
 
     Variable * result = variable_temporary( _environment, VT_COLOR, "(point's result)");
 
-    c6847_point( _environment, _x, _y, result->name );
+    c6847_pget_color_vars( _environment, _x, _y, result->name );
 
     return result;
 

@@ -1252,7 +1252,7 @@ void gime_pset_vars( Environment * _environment, char *_x, char *_y ) {
 
 }
 
-void gime_point( Environment * _environment, char *_x, char *_y, char * _result ) {
+void gime_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result ) {
 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
