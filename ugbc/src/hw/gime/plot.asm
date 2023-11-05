@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 PLOTM   EQU $46
+PLOTNB  EQU $48
+PLOTNC  EQU $49
+PLOTND  EQU $50
 
 ;--------------
 
@@ -90,6 +93,9 @@ PLOTMODE
 
 PLOTB16
 
+    LDA #4
+    STA PLOTNB
+
     LDU #PLOTANDBIT8
     LDD PLOTX
     ANDB #$1
@@ -108,9 +114,17 @@ PLOTB16SKIP
 PLOTB16SKIPE
     STA PLOTC
 
+    STB PLOTND
+    LDA #1
+    SUBA PLOTND
+    STA PLOTND
+
     JMP PLOTCOMMON
 
 PLOTB4
+
+    LDA #2
+    STA PLOTNB
 
     LDD PLOTX
     LDA PLOTC
@@ -144,9 +158,17 @@ PLOTB4SKIPE
     LDU #PLOTANDBIT4
     LEAU B, U
 
+    STB PLOTND
+    LDA #3
+    SUBA PLOTND
+    STA PLOTND
+
     JMP PLOTCOMMON
 
 PLOTB2
+
+    LDA #1
+    STA PLOTNB
 
     LDA PLOTC
     BEQ PLOTB2SKIPE
@@ -165,6 +187,11 @@ PLOTB2SFINAL
     LDU #PLOTANDBIT
     LEAU B, U
 
+    STB PLOTND
+    LDA #7
+    SUBA PLOTND
+    STA PLOTND
+
     JMP PLOTCOMMON
 
 PLOTCOMMON
@@ -179,9 +206,9 @@ PLOTCOMMON
     CMPA #1
     BEQ PLOTD                  ;if = 1 then branch to draw the point
     CMPA #2
-    BEQ PLOTG                  ;if = 2 then branch to get the point (0/1)
+    BEQ PLOTCL                 ;if = 2 then branch to get the point (0/1)
     CMPA #3
-    BEQ PLOTCL                  ;if = 3 then branch to get the color index (0...15)
+    BEQ PLOTG                  ;if = 3 then branch to get the color index (0...15)
     JMP PLOTP
 
 PLOTD
@@ -220,7 +247,7 @@ PLOTE                          ;handled same way as setting a point
 
     JMP PLOTP                  ;skip the erase-point section
 
-PLOTG      
+PLOTCL
 
     ; The PLOT command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 
@@ -228,32 +255,42 @@ PLOTG
 
     JSR GIMEBANKVIDEO
 
+    LDA , U
+    ANDCC #$FE
+    COMA
+    STA PLOTNC
     LDA , X           ;get row with point in it
-    ANDA , U
-    CMPA #0
-
-    BEQ PLOTG0
-PLOTG1
-    LDA #$ff
+    ANDA PLOTNC
+    STA PLOTNC
+    LDB PLOTND
+PLOTCL1
+    CMPB #0
+    BEQ PLOTCE
+    LDA PLOTNB
+    CMPA #2
+    BEQ PLOTC2
+    CMPA #1
+    BEQ PLOTC1
+    LSR PLOTNC
+    LSR PLOTNC
+PLOTC2
+    LSR PLOTNC
+PLOTC1
+    LSR PLOTNC
+    DECB
+    JMP PLOTCL1
+PLOTCE
+    LDA PLOTNC
     STA PLOTM
-
-    JMP PLOTP
-PLOTG0
-    LDA #$0
-    STA PLOTM
-
     JMP PLOTP            
 
-PLOTCL                          
+PLOTG                  
 
-    ; The PLOT command do not need to switch from one bank to another 
-    ; during video RAM operation. This routine can simply bank in video 
-    ; memory at the beginning of execution and bank out at the end.
+    JSR PLOTCL
 
-    JSR GIMEBANKVIDEO
-
-    LDA , X           ;get row with point in it
-    STA PLOTM
+    LDA PLOTM
+    JSR GIMEGETPALETTE
+    STB PLOTM
 
     JMP PLOTP
 
