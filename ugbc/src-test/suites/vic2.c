@@ -532,7 +532,7 @@ int test_vic2_background_color_tester( TestEnvironment * _te ) {
 
 //============================================================================
 
-void test_vic2_point_at_vars_payload( TestEnvironment * _te ) {
+void test_vic2_pset_vars_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
@@ -552,13 +552,13 @@ void test_vic2_point_at_vars_payload( TestEnvironment * _te ) {
 
     vic2_bitmap_enable( e, 0, 0, 0 );
     pen( e, c->name );
-    vic2_point_at_vars( e, x->name, y->name );
+    vic2_pset_vars( e, x->name, y->name );
     variable_store( e, x->name, 9 );
-    vic2_point_at_vars( e, x->name, y->name );
+    vic2_pset_vars( e, x->name, y->name );
 
 }
 
-int test_vic2_point_at_vars_tester( TestEnvironment * _te ) {
+int test_vic2_pset_vars_tester( TestEnvironment * _te ) {
 
     if ( ( _te->debug.inspections[0].memory[0] ) != 0x80 ) {
         printf( "Failed pixel 1 = %2.2x\n", _te->debug.inspections[0].memory[0] );
@@ -586,7 +586,7 @@ int test_vic2_point_at_vars_tester( TestEnvironment * _te ) {
 
 //============================================================================
 
-void test_vic2_point_at_vars_payloadB( TestEnvironment * _te ) {
+void test_vic2_pset_vars_payloadB( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
@@ -609,12 +609,12 @@ void test_vic2_point_at_vars_payloadB( TestEnvironment * _te ) {
     int i;
     for( i=0; i<16; ++i ) {
         variable_store( e, x->name, i );
-        vic2_point_at_vars( e, x->name, y->name );
+        vic2_pset_vars( e, x->name, y->name );
     }
 
 }
 
-int test_vic2_point_at_vars_testerB( TestEnvironment * _te ) {
+int test_vic2_pset_vars_testerB( TestEnvironment * _te ) {
 
     if ( ( _te->debug.inspections[0].memory[0] ) != 0xff ) {
         printf( "Failed pixel 1 = %2.2x\n", _te->debug.inspections[0].memory[0] );
@@ -642,7 +642,7 @@ int test_vic2_point_at_vars_testerB( TestEnvironment * _te ) {
 
 //============================================================================
 
-void test_vic2_point_at_vars_payloadC( TestEnvironment * _te ) {
+void test_vic2_pset_vars_payloadC( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
@@ -670,13 +670,13 @@ void test_vic2_point_at_vars_payloadC( TestEnvironment * _te ) {
     begin_for( e, y->name, zero->name, screenHeight->name );
         begin_for( e, x->name, zero->name, screenWidth->name );
             pen( e, white->name );
-            vic2_point_at_vars( e, x->name, y->name );
+            vic2_pset_vars( e, x->name, y->name );
         end_for( e );
     end_for( e );
 
 }
 
-int test_vic2_point_at_vars_testerC( TestEnvironment * _te ) {
+int test_vic2_pset_vars_testerC( TestEnvironment * _te ) {
 
     int i=0;
     
@@ -700,7 +700,7 @@ int test_vic2_point_at_vars_testerC( TestEnvironment * _te ) {
 
 //============================================================================
 
-void test_vic2_point_at_vars_payloadD( TestEnvironment * _te ) {
+void test_vic2_pset_vars_payloadD( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
@@ -723,12 +723,12 @@ void test_vic2_point_at_vars_payloadD( TestEnvironment * _te ) {
     int i;
     for( i=312; i<320; ++i ) {
         variable_store( e, x->name, i );
-        vic2_point_at_vars( e, x->name, y->name );
+        vic2_pset_vars( e, x->name, y->name );
     }
 
 }
 
-int test_vic2_point_at_vars_testerD( TestEnvironment * _te ) {
+int test_vic2_pset_vars_testerD( TestEnvironment * _te ) {
 
     if ( ( _te->debug.inspections[0].memory[0] ) != 0xff ) {
         printf( "Failed pixel 1 = %2.2x\n", _te->debug.inspections[0].memory[0] );
@@ -766,8 +766,8 @@ void test_vic2_point_payload( TestEnvironment * _te ) {
 
     vic2_bitmap_enable( e, 0, 0, 0 );
     pen( e, c->name );
-    vic2_point_at_vars( e, x->name, y->name );
-    vic2_point( e, x->name, y->name, result->name );
+    vic2_pset_vars( e, x->name, y->name );
+    vic2_pget_color_vars( e, x->name, y->name, result->name );
 
     _te->trackedVariables[0] = result;
 
@@ -897,12 +897,12 @@ void test_vic2( ) {
     create_test( "vic2_cls2", &test_vic2_cls2_payload, &test_vic2_cls2_tester );
     create_test( "vic2_cls3", &test_vic2_cls3_payload, &test_vic2_cls3_tester );
     create_test( "vic2_background_color", &test_vic2_background_color_payload, &test_vic2_background_color_tester );
-    create_test( "vic2_point_at_vars", &test_vic2_point_at_vars_payload, &test_vic2_point_at_vars_tester );
+    create_test( "vic2_pset_vars", &test_vic2_pset_vars_payload, &test_vic2_pset_vars_tester );
     create_test( "vic2_point", &test_vic2_point_payload, &test_vic2_point_tester );
 
-    create_test( "vic2_point_at_vars B", &test_vic2_point_at_vars_payloadB, &test_vic2_point_at_vars_testerB );
-    create_test( "vic2_point_at_vars C", &test_vic2_point_at_vars_payloadC, &test_vic2_point_at_vars_testerC );
-    create_test( "vic2_point_at_vars D", &test_vic2_point_at_vars_payloadD, &test_vic2_point_at_vars_testerD );
+    create_test( "vic2_pset_vars B", &test_vic2_pset_vars_payloadB, &test_vic2_pset_vars_testerB );
+    create_test( "vic2_pset_vars C", &test_vic2_pset_vars_payloadC, &test_vic2_pset_vars_testerC );
+    create_test( "vic2_pset_vars D", &test_vic2_pset_vars_payloadD, &test_vic2_pset_vars_testerD );
 
 }
 
