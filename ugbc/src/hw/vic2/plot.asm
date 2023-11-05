@@ -256,6 +256,14 @@ PLOT3:
     AND #%00000111             ;3 lowest bits = (0-7)
     TAY                        ;put into index register
 
+    LDY PLOTM
+    CPY #3
+    BNE PLOT3XXX
+    JMP PLOT3GET
+    CPY #3
+    BNE PLOT3XXX
+    JMP PLOT3GETC
+PLOT3XXX:
     LDY #0
     LDA (PLOTCDEST),Y
     LSR
@@ -332,6 +340,8 @@ PLOT3C3:
     JMP PLOT3PEN
 
 PLOT3PEN:
+PLOT3GET:
+PLOT3GETC:
 
     ;---------------------------------
     ;get in-cell offset to point (0-7)
@@ -444,12 +454,16 @@ PLOTG0:
     STA PLOTM
     JMP PLOTP            
 
-PLOTC:                          
-    LDY #0
+PLOTC:
     LDA CURRENTMODE
     CMP #$3
     BEQ PLOTC3
 
+    JSR PLOTG
+    LDA PLOTM
+    BEQ PLOTC2X
+
+PLOTC2:
     LDA (PLOTCDEST),y          ;get row with point in it
     LSR A
     LSR A
@@ -458,11 +472,17 @@ PLOTC:
     STA PLOTM
     JMP PLOTCE
 
+PLOTC2X:
+    LDA (PLOTCDEST),y          ;get row with point in it
+    AND #$0F
+    STA PLOTM
+    JMP PLOTCE
+
 PLOTC3:
     LDA PLOTX                  ;get PLOTX offset from cell topleft
     AND #%00000011             ;2 lowest bits = (0-4)
     TAX                        ;put into index register
-    LDA (PLOTDEST),y            
+    LDA (PLOTDEST), Y
     AND PLOTOMA
 PLOTC3L1:
     CPX #0
