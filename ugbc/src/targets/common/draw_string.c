@@ -455,9 +455,6 @@ void draw_string( Environment * _environment, char * _string ) {
             cpu_label( _environment, upCommandLabel );
             cpu_label( _environment, downCommandLabel );
 
-            cpu_compare_and_branch_8bit_const( _environment, scale->realName, 1, leftCommandLabel, 1 );
-            cpu_compare_and_branch_8bit_const( _environment, scale->realName, 3, rightCommandLabel, 1 );
-
             cpu_call( _environment, readParameterLabel );
 
             // If we arrived here, it means that we are able to read and decode
@@ -474,7 +471,8 @@ void draw_string( Environment * _environment, char * _string ) {
             variable_move( _environment, origin_resolution_relative_transform_y( _environment, NULL, 0 )->name, y->name );
             variable_move( _environment, origin_resolution_relative_transform_y( _environment, dy->name, 0 )->name, dy->name );
 
-            variable_move( _environment, variable_div( _environment, variable_mul( _environment, dy->name, scale->name )->name, four->name, NULL )->name, ds->name );
+            variable_move( _environment, variable_mul( _environment, dy->name, scale->name )->name, dy->name );
+            variable_move( _environment, variable_div( _environment, dy->name, four->name, NULL )->name, ds->name );
 
             cpu_compare_and_branch_8bit( _environment, command->realName, drawDCommandLetter->realName, down2CommandLabel, 1 );
 
@@ -499,9 +497,6 @@ void draw_string( Environment * _environment, char * _string ) {
             cpu_label( _environment, leftCommandLabel );
             cpu_label( _environment, rightCommandLabel );
 
-            cpu_compare_and_branch_8bit_const( _environment, scale->realName, 0, upCommandLabel, 1 );
-            cpu_compare_and_branch_8bit_const( _environment, scale->realName, 2, downCommandLabel, 1 );
-
             cpu_call( _environment, readParameterLabel );
 
             // If we arrived here, it means that we are able to read and decode
@@ -518,7 +513,8 @@ void draw_string( Environment * _environment, char * _string ) {
             variable_move( _environment, origin_resolution_relative_transform_x( _environment, NULL, 0 )->name, x->name );
             variable_move( _environment, origin_resolution_relative_transform_x( _environment, dx->name, 0 )->name, dx->name );
 
-            variable_move( _environment, variable_div( _environment, variable_mul( _environment, dx->name, scale->name )->name, four->name, NULL )->name, ds->name );
+            variable_move( _environment, variable_mul( _environment, dx->name, scale->name )->name, dx->name );
+            variable_move( _environment, variable_div( _environment, dx->name, four->name, NULL )->name, ds->name );
 
             cpu_compare_and_branch_8bit( _environment, command->realName, drawRCommandLetter->realName, right2CommandLabel, 1 );
 
@@ -557,7 +553,8 @@ void draw_string( Environment * _environment, char * _string ) {
             variable_move( _environment, origin_resolution_relative_transform_y( _environment, NULL, 0 )->name, y->name );
             variable_move( _environment, origin_resolution_relative_transform_x( _environment, dx->name, 0 )->name, dx->name );
 
-            variable_move( _environment, variable_div( _environment, variable_mul( _environment, dx->name, scale->name )->name, four->name, NULL )->name, ds->name );
+            variable_move( _environment, variable_mul( _environment, dx->name, scale->name )->name, dx->name );
+            variable_move( _environment, variable_div( _environment, dx->name, four->name, NULL )->name, ds->name );
 
             cpu_compare_and_branch_8bit( _environment, command->realName, drawECommandLetter->realName, angle45CommandLabel, 1 );
 
@@ -655,6 +652,10 @@ void draw_string( Environment * _environment, char * _string ) {
             cpu_inc( _environment, size->realName );
             cpu_dec_16bit( _environment, address->realName );
             cpu_jump( _environment, doneCommandLabel );
+
+            cpu_store_16bit( _environment, dx->realName, 0 );
+            cpu_store_16bit( _environment, dy->realName, 0 );
+            cpu_store_16bit( _environment, ds->realName, 0 );
 
             // Move to the next character of the drawing commands string.
             cpu_label( _environment, doneCommandLabel );
