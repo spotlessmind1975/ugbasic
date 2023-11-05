@@ -139,9 +139,9 @@ PLOTMODE:
     CP 1
     JP Z, PLOTD                  ;if = 1 then branch to draw the point
     CP 2
-    JP Z, PLOTG                  ;if = 2 then branch to get the point (0/1)
+    JP Z, PLOTC                  ;if = 2 then branch to get the point (0/1)
     CP 3
-    JP Z, PLOTC                  ;if = 3 then branch to get the color index (0...15)
+    JP Z, PLOTG                  ;if = 3 then branch to get the color index (0...15)
     JP PLOTP2
 
 PLOTD:
@@ -198,7 +198,39 @@ PLOTE:
     JP PLOTDONE
 
 PLOTC:
+    LD DE, HL
+    CALL VDCZGETCHAR
+    AND C
+    JR Z, PLOTC0
+
+PLOTC1:
+    LD A, $FF
+    JR PLOTDONE
+
+PLOTC0:
+    LD A, $00
+    JR PLOTDONE
+
 PLOTG:
+    CALL PLOTC
+    CMP $00
+    JR Z, PLOTG0
+
+PLOTG1:
+    LD A, 26
+    LD IXH, A
+    CALL VDCZREAD
+    SRA A
+    SRA A
+    SRA A
+    SRA A
+    JR PLOTDONE
+
+PLOTG0:
+    LD A, 26
+    LD IXH, A
+    CALL VDCZREAD
+    AND $0F
     JR PLOTDONE
 
 PLOTP2:
