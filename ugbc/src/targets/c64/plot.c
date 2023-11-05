@@ -59,6 +59,6 @@ void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
         pen( _environment, _c );
     }
 
-    vic2_point_at_vars( _environment, _x, _y );
+    vic2_pset_vars( _environment, _x, _y );
 
 }

@@ -272,8 +272,8 @@ void gtia_tiles_get_width( Environment * _environment, char * _result );
 void gtia_get_height( Environment * _environment, char * _result );
 void gtia_tiles_get_height( Environment * _environment, char * _result );
 
-void gtia_point_at_int( Environment * _environment, int _x, int _y );
-void gtia_point_at_vars( Environment * _environment, char *_x, char *_y );
+void gtia_pset_int( Environment * _environment, int _x, int _y );
+void gtia_pset_vars( Environment * _environment, char *_x, char *_y );
 void gtia_point( Environment * _environment, char *_x, char *_y, char * _result );
 void gtia_cls( Environment * _environment );
 void gtia_scroll_text( Environment * _environment, int _direction );

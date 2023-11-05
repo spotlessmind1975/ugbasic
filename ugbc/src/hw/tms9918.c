@@ -967,7 +967,7 @@ void tms9918_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void tms9918_point_at_int( Environment * _environment, int _x, int _y ) {
+void tms9918_pset_int( Environment * _environment, int _x, int _y ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
@@ -988,7 +988,7 @@ void tms9918_point_at_int( Environment * _environment, int _x, int _y ) {
 
 }
 
-void tms9918_point_at_vars( Environment * _environment, char *_x, char *_y ) {
+void tms9918_pset_vars( Environment * _environment, char *_x, char *_y ) {
 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );

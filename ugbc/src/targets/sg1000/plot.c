@@ -57,6 +57,6 @@ void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
         _y = variable_retrieve( _environment, "YGR" )->name;
     }
 
-    tms9918_point_at_vars( _environment, _x, _y );
+    tms9918_pset_vars( _environment, _x, _y );
 
 }

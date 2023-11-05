@@ -38,25 +38,52 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit ASM code for <b>PAIN</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _address Expression with the location to write to.
+ * @param _value Expression to write.
+ */
 /* <usermanual>
-@keyword PLOT
+@keyword PAINT
 
-@target d32
- </usermanual> */
-void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
+@english
 
-    if ( _c ) {
-        pen( _environment, _c );
-    }
+The ''PAINT'' command is used in high resolution graphics modes, to fill a 
+shape with a specified colour.
 
-    if ( !_x ) {
-        _x = variable_retrieve( _environment, "XGR" )->name;
-    }
+The ''x,y'' are the co−ordinates of the point where the painting is to start.
+''c'' is the colour code of the colours to be used to paint. It must be 
+between ''0'' and ''COLOR COUNT'' and be one of the available colour set 
+for the working mode. If omitted, the current foreground colour is used.
+''b'' is the colour code of the border at which painting is to stop. 
+It must also be between ''0'' and ''8'', the painting will continue 
+over a border of any other colour. If omitted, the current 
+foreground colour is used.
 
-    if ( !_y ) {
-        _y = variable_retrieve( _environment, "YGR" )->name;
-    }
+@italian
 
-    c6847_pset_vars( _environment, _x, _y );
+Il comando ''PAINT'' viene utilizzato nelle modalità grafiche ad alta 
+risoluzione, per riempire una forma con un colore specificato.
+
+Le ''x,y'' sono le coordinate del punto in cui deve iniziare il 
+dipinto. ''c'' è il codice colore dei colori da utilizzare per
+dipingere. Deve essere compreso tra ''0'' e ''COLOR COUNT'' ed essere 
+uno dei set di colori disponibili per la modalità di lavoro. 
+Se omesso, viene utilizzato il colore di primo piano corrente. 
+''b'' è il codice colore del bordo in cui si deve fermare il riempimento. 
+Deve essere compreso anche tra ''0'' e ''8'', il dipinto proseguirà 
+su un bordo di qualsiasi altro colore. Se omesso, viene utilizzato 
+il colore di primo piano corrente.
+
+@syntax PAINT (x,y)[, c[, b]]
+
+@example PAINT(100,100),RED
+
+@target all
+
+</usermanual> */
+void paint_var( Environment * _environment, char * _x, char * _y, char * _c, char *_b ) {
 
 }

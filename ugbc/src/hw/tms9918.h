@@ -188,8 +188,8 @@ void tms9918_tiles_get_width( Environment * _environment, char * _result );
 void tms9918_get_height( Environment * _environment, char * _result );
 void tms9918_tiles_get_height( Environment * _environment, char * _result );
 
-void tms9918_point_at_int( Environment * _environment, int _x, int _y );
-void tms9918_point_at_vars( Environment * _environment, char *_x, char *_y );
+void tms9918_pset_int( Environment * _environment, int _x, int _y );
+void tms9918_pset_vars( Environment * _environment, char *_x, char *_y );
 void tms9918_point( Environment * _environment, char *_x, char *_y, char * _result );
 void tms9918_cls( Environment * _environment );
 void tms9918_scroll_text( Environment * _environment, int _direction );

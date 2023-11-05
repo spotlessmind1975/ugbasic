@@ -2113,7 +2113,7 @@ void vdcz_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void vdcz_point_at_int( Environment * _environment, int _x, int _y ) {
+void vdcz_pset_int( Environment * _environment, int _x, int _y ) {
 
     deploy( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
@@ -2132,7 +2132,7 @@ void vdcz_point_at_int( Environment * _environment, int _x, int _y ) {
 
 }
 
-void vdcz_point_at_vars( Environment * _environment, char *_x, char *_y ) {
+void vdcz_pset_vars( Environment * _environment, char *_x, char *_y ) {
 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );

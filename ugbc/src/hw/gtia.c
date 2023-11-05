@@ -1172,7 +1172,7 @@ void gtia_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void gtia_point_at_int( Environment * _environment, int _x, int _y ) {
+void gtia_pset_int( Environment * _environment, int _x, int _y ) {
 
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( gtiapreproc, src_hw_gtia__preproc_asm );
@@ -1190,7 +1190,7 @@ void gtia_point_at_int( Environment * _environment, int _x, int _y ) {
 
 }
 
-void gtia_point_at_vars( Environment * _environment, char *_x, char *_y ) {
+void gtia_pset_vars( Environment * _environment, char *_x, char *_y ) {
 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );

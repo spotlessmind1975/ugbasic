@@ -478,7 +478,7 @@ void ef936x_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void ef936x_point_at_int( Environment * _environment, int _x, int _y ) {
+void ef936x_pset_int( Environment * _environment, int _x, int _y ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
@@ -489,7 +489,7 @@ void ef936x_point_at_int( Environment * _environment, int _x, int _y ) {
     outline0("JSR PLOT");  
 }
 
-void ef936x_point_at_vars( Environment * _environment, char *_x, char *_y ) {
+void ef936x_pset_vars( Environment * _environment, char *_x, char *_y ) {
 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );

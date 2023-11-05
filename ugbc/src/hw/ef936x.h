@@ -203,8 +203,8 @@ void ef936x_tiles_get_width( Environment * _environment, char * _result );
 void ef936x_get_height( Environment * _environment, char * _result );
 void ef936x_tiles_get_height( Environment * _environment, char * _result );
 
-void ef936x_point_at_int( Environment * _environment, int _x, int _y );
-void ef936x_point_at_vars( Environment * _environment, char *_x, char *_y );
+void ef936x_pset_int( Environment * _environment, int _x, int _y );
+void ef936x_pset_vars( Environment * _environment, char *_x, char *_y );
 void ef936x_point( Environment * _environment, char *_x, char *_y, char * _result );
 void ef936x_cls( Environment * _environment );
 void ef936x_scroll_text( Environment * _environment, int _direction );

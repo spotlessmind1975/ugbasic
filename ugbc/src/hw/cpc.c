@@ -639,7 +639,7 @@ void cpc_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void cpc_point_at_int( Environment * _environment, int _x, int _y ) {
+void cpc_pset_int( Environment * _environment, int _x, int _y ) {
 
     deploy( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
@@ -656,7 +656,7 @@ void cpc_point_at_int( Environment * _environment, int _x, int _y ) {
 
 }
 
-void cpc_point_at_vars( Environment * _environment, char *_x, char *_y ) {
+void cpc_pset_vars( Environment * _environment, char *_x, char *_y ) {
 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );

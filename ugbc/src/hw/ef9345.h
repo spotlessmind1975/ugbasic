@@ -160,8 +160,8 @@ void ef9345_tiles_get_width( Environment * _environment, char * _result );
 void ef9345_get_height( Environment * _environment, char * _result );
 void ef9345_tiles_get_height( Environment * _environment, char * _result );
 
-void ef9345_point_at_int( Environment * _environment, int _x, int _y );
-void ef9345_point_at_vars( Environment * _environment, char *_x, char *_y );
+void ef9345_pset_int( Environment * _environment, int _x, int _y );
+void ef9345_pset_vars( Environment * _environment, char *_x, char *_y );
 void ef9345_point( Environment * _environment, char *_x, char *_y, char * _result );
 void ef9345_cls( Environment * _environment );
 void ef9345_scroll_text( Environment * _environment, int _direction );

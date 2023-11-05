@@ -927,7 +927,7 @@ void ted_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void ted_point_at_int( Environment * _environment, int _x, int _y ) {
+void ted_pset_int( Environment * _environment, int _x, int _y ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
@@ -945,7 +945,7 @@ void ted_point_at_int( Environment * _environment, int _x, int _y ) {
 
 }
 
-void ted_point_at_vars( Environment * _environment, char *_x, char *_y ) {
+void ted_pset_vars( Environment * _environment, char *_x, char *_y ) {
 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
