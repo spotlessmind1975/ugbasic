@@ -1476,6 +1476,32 @@ void cpu6502_compare_16bit_const( Environment * _environment, char *_source, int
 
 }
 
+void cpu6502_compare_and_branch_16bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
+
+    MAKE_LABEL
+
+    inline( cpu_compare_and_branch_16bit )
+
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
+        outline1("CMP %s", address_displacement(_environment, _destination, "1"));
+        outline1("BNE %s", label);
+        outline1("LDA %s", _source);
+        outline1("CMP %s", _destination);
+        outline1("BNE %s", label);
+        if ( _positive ) {
+            outline1("JMP %s", _label);
+            outhead1("%s:", label);
+        } else {
+            outline1("JMP %snot", label);
+            outhead1("%s:", label);
+            outline1("JMP %s", _label);
+            outhead1("%snot:", label);
+        }
+
+    no_embedded( cpu_compare_and_branch_16bit )
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to compare two 16 bit values and jump if they are equal/different
  * 
