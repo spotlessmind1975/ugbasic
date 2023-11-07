@@ -85,6 +85,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
     char resultFalseLabel[MAX_TEMPORARY_STORAGE]; sprintf( resultFalseLabel, "%sresultfalse", label );
     char loopPaintLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopPaintLabel, "%sloop", label );
     char endPaintLabel[MAX_TEMPORARY_STORAGE]; sprintf( endPaintLabel, "%send", label );
+    char forceDequePaintLabel[MAX_TEMPORARY_STORAGE]; sprintf( forceDequePaintLabel, "%sdeque", label );
     char skip1PaintLabel[MAX_TEMPORARY_STORAGE]; sprintf( skip1PaintLabel, "%sskip1", label );
     char skip2PaintLabel[MAX_TEMPORARY_STORAGE]; sprintf( skip2PaintLabel, "%sskip2", label );
     char skip3PaintLabel[MAX_TEMPORARY_STORAGE]; sprintf( skip3PaintLabel, "%sskip3", label );
@@ -186,11 +187,14 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
             Variable * posY = variable_temporary( _environment, VT_POSITION, "(y)" );
 
             Variable * queue = variable_define( _environment, "PAINTQUEUE", VT_BUFFER, 0 );
-            variable_resize_buffer( _environment, queue->name, 800 );
+            variable_resize_buffer( _environment, queue->name, 2048 );
             Variable * queuePtrStart = variable_define( _environment, "PAINTQUEUEPTRSTART", VT_ADDRESS, 0 );
             Variable * queuePtr = variable_define( _environment, "PAINTQUEUEPTR", VT_ADDRESS, 0 );
+            Variable * queuePtrEnd = variable_define( _environment, "PAINTQUEUEPTREND", VT_ADDRESS, 0 );
             cpu_addressof_16bit( _environment, queue->realName, queuePtrStart->realName );
             cpu_addressof_16bit( _environment, queue->realName, queuePtr->realName );
+            cpu_addressof_16bit( _environment, queue->realName, queuePtrEnd->realName );
+            cpu_math_add_16bit_const( _environment, queuePtrEnd->realName, 2048, queuePtrEnd->realName );
 
             variable_move( _environment, paintX->name, x->name );
             variable_move( _environment, paintY->name, y->name );
@@ -214,8 +218,8 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
             // ------------------------------[ BEGIN FLOOD FILL LOOP ]
             cpu_label( _environment, loopPaintLabel );
 
-                wait_key( _environment );
-                
+                cpu_label( _environment, forceDequePaintLabel );
+
                 // While the queue is not empty i.e. the
                 // whole component having prevC color
                 // is not colored with newC color
@@ -246,6 +250,10 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
                 // Color with newC
                 // if valid and enqueue
                 plot( _environment, x->name, y->name, paintC->name );
+                variable_move( _environment, 
+                    variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
+                    isValid->name );
+                cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0xff, forceDequePaintLabel, 1 );
                 // p.first = posX + 1;
                 cpu_move_16bit_indirect( _environment, x->realName, queuePtr->realName );
                 cpu_inc_16bit( _environment, queuePtr->realName );
@@ -269,6 +277,10 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
                 // Color with newC
                 // if valid and enqueue
                 plot( _environment, x->name, y->name, paintC->name );
+                variable_move( _environment, 
+                    variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
+                    isValid->name );
+                cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0xff, forceDequePaintLabel, 1 );                
                 // p.first = posX + 1;
                 cpu_move_16bit_indirect( _environment, x->realName, queuePtr->realName );
                 cpu_inc_16bit( _environment, queuePtr->realName );
@@ -292,6 +304,10 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
                 // Color with newC
                 // if valid and enqueue
                 plot( _environment, x->name, y->name, paintC->name );
+                variable_move( _environment, 
+                    variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
+                    isValid->name );
+                cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0xff, forceDequePaintLabel, 1 );
                 // p.first = posX + 1;
                 cpu_move_16bit_indirect( _environment, x->realName, queuePtr->realName );
                 cpu_inc_16bit( _environment, queuePtr->realName );
@@ -315,6 +331,10 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
                 // Color with newC
                 // if valid and enqueue
                 plot( _environment, x->name, y->name, paintC->name );
+                variable_move( _environment, 
+                    variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
+                    isValid->name );
+                cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0xff, forceDequePaintLabel, 1 );
                 // p.first = posX + 1;
                 cpu_move_16bit_indirect( _environment, x->realName, queuePtr->realName );
                 cpu_inc_16bit( _environment, queuePtr->realName );
