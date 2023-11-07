@@ -6,7 +6,7 @@ REM
 REM @italian
 REM PRIMITIVE DI GRAFICA CON L'USO DI BOX E PATTERN
 REM
-REM Questo esempio disegnerà "UG" utilizzando le istruzioni di disegno
+REM Questo esempio disegnerà utilizzando le istruzioni di disegno
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
