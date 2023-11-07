@@ -3828,7 +3828,7 @@ void                    out_var( Environment * _environment, char * _port, char 
 // *P*
 //----------------------------------------------------------------------------
 
-void                    paint_vars( Environment * _environment, char * _x, char * _y, char * _c );
+void                    paint_vars( Environment * _environment, char * _x, char * _y, char * _c, char * _b );
 int                     palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 RGBi *                  palette_match( RGBi * _source, int _source_size, RGBi * _system, int _system_size );
 RGBi *                  palette_match_hardware_index( RGBi * _source, int _source_size, RGBi * _system, int _system_size );

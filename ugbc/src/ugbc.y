@@ -7227,11 +7227,15 @@ pmode_definition :
 
 paint_definition : 
     OP expr OP_COMMA expr CP {
-        paint_vars( _environment, $2, $4, NULL );
+        paint_vars( _environment, $2, $4, NULL, NULL );
     }
     | OP expr OP_COMMA expr CP OP_COMMA expr {
-        paint_vars( _environment, $2, $4, $7 );
-    };
+        paint_vars( _environment, $2, $4, $7, NULL );
+    }
+    | OP expr OP_COMMA expr CP OP_COMMA expr OP_COMMA expr {
+        paint_vars( _environment, $2, $4, $7, $9 );
+    }    
+    ;
 
 statement2:
     BANK bank_definition

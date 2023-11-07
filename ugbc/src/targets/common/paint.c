@@ -58,6 +58,11 @@ The ''x,y'' are the co−ordinates of the point where the painting is to start.
 between ''0'' and ''COLOR COUNT'' and be one of the available colour set 
 for the working mode. If omitted, the current foreground colour is used.
 
+The ''b'' parameter is the colour code of the border at which painting 
+is to stop. It must also be between 0 and 8, the painting will continue 
+over a border of any other colour. If omitted, the current foreground 
+colour is used.
+
 @italian
 
 Il comando ''PAINT'' viene utilizzato nelle modalità grafiche ad alta 
@@ -69,14 +74,19 @@ dipingere. Deve essere compreso tra ''0'' e ''COLOR COUNT'' ed essere
 uno dei set di colori disponibili per la modalità di lavoro. 
 Se omesso, viene utilizzato il colore corrente. 
 
-@syntax PAINT (x,y)[, c]
+Il parametro ''b'' è il codice colore del bordo in cui deve terminare 
+il painting. Inoltre deve essere compreso tra ''0'' e ''COLOR COUNT'', il riempimento 
+proseguirà su un bordo di qualsiasi altro colore. Se omesso, 
+viene utilizzato il colore di primo piano corrente.
+
+@syntax PAINT (x,y)[, c[, b]]
 
 @example PAINT(100,100),RED
 
 @target all
 
 </usermanual> */
-void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
+void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, char * _b ) {
 
     MAKE_LABEL
 
@@ -87,6 +97,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
     char popQueue[MAX_TEMPORARY_STORAGE]; sprintf( popQueue, "%spop", label );
     char popQueueDone[MAX_TEMPORARY_STORAGE]; sprintf( popQueueDone, "%spopd", label );
     char resultFalseLabel[MAX_TEMPORARY_STORAGE]; sprintf( resultFalseLabel, "%sresultfalse", label );
+    char resultTrueLabel[MAX_TEMPORARY_STORAGE]; sprintf( resultTrueLabel, "%sresulttrue", label );
     char loopPaintLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopPaintLabel, "%sloop", label );
     char endPaintLabel[MAX_TEMPORARY_STORAGE]; sprintf( endPaintLabel, "%send", label );
     char forceDequePaintLabel[MAX_TEMPORARY_STORAGE]; sprintf( forceDequePaintLabel, "%sdeque", label );
@@ -102,6 +113,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
         Variable * paintX = variable_define( _environment, "paint__x", VT_POSITION, 0 );
         Variable * paintY = variable_define( _environment, "paint__y", VT_POSITION, 0 );
         Variable * paintC = variable_define( _environment, "paint__c", VT_COLOR, 0 );
+        Variable * paintB = variable_define( _environment, "paint__b", VT_COLOR, 0 );
 
         Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
         Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
@@ -194,7 +206,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
                             isValid->name );
             variable_compare_and_branch_const( _environment, isValid->name, 0xff, resultFalseLabel, 1 );
 
-            //      || screen[x][y] == newC)
+            //      || screen[x][y] == newC
 
             variable_move( _environment, 
                             variable_compare( _environment, 
@@ -204,8 +216,21 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
                             isValid->name );
             variable_compare_and_branch_const( _environment, isValid->name, 0xff, resultFalseLabel, 1 );
 
+            //      || (newB > 0 ? screen[x][y] == newB ) )
+
+            variable_compare_and_branch_const( _environment, paintB->name, 0x0, resultTrueLabel, 1 );
+
+            variable_move( _environment, 
+                            variable_compare( _environment, 
+                                point( _environment, x->name, y->name )->name, 
+                                paintB->name
+                            )->name,
+                            isValid->name );
+            variable_compare_and_branch_const( _environment, isValid->name, 0xff, resultFalseLabel, 1 );
+
             //         return false;
 
+            cpu_label( _environment, resultTrueLabel );
             cpu_store_8bit( _environment, isValid->realName, 0xff );
             cpu_return( _environment );
 
@@ -402,10 +427,17 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c ) {
     Variable * px = variable_retrieve( _environment, "paint__x" );
     Variable * py = variable_retrieve( _environment, "paint__y" );
     Variable * pc = variable_retrieve( _environment, "paint__c" );
+    Variable * pb = variable_retrieve( _environment, "paint__b" );
 
     variable_move( _environment, x->name, px->name );
     variable_move( _environment, y->name, py->name );
     variable_move( _environment, c->name, pc->name );
+    if ( _b ) {
+        Variable * b = variable_retrieve( _environment, _b );
+        variable_move( _environment, b->name, pb->name );
+    } else {
+        variable_store( _environment, pb->name, 0 );
+    }
 
     cpu_call( _environment, "lib_paint" );
 
