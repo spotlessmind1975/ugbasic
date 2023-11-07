@@ -1505,6 +1505,32 @@ void z80_compare_16bit_const( Environment * _environment, char *_source, int _de
 
 }
 
+void z80_compare_and_branch_16bit( Environment * _environment, char *_source, char *_destination,  char *_label, int _positive ) {
+
+    inline( cpu_compare_and_branch_16bit )
+
+        MAKE_LABEL
+
+        outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
+        outline1("CP  (%s)", address_displacement(_environment, _destination, "1"));
+        outline1("JP NZ, %s", label);
+        outline1("LD A, (%s)", _source);
+        outline1("CP (%s)", _destination);
+        outline1("JP NZ, %s", label);
+        if ( _positive ) {
+            outline1("JP %s", _label);
+            outhead1("%s:", label );
+        } else {
+            outline1("JP %snot", label);
+            outhead1("%s:", label );
+            outline1("JP %s", _label);
+            outhead1("%snot:", label );
+        }
+
+    no_embedded( cpu_compare_and_branch_16bit )
+
+}
+
 /**
  * @brief <i>Z80</i>: emit code to compare two 16 bit values and jump if they are equal/different
  * 

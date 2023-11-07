@@ -71,6 +71,7 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
 void z80_compare_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void z80_compare_nbit( Environment * _environment, int _n, char *_source, char *_destination,  char *_name, int _positive );
 void z80_compare_and_branch_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void z80_compare_and_branch_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void z80_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void z80_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void z80_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
@@ -318,6 +319,7 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_compare_8bit_const( _environment, _source, _destination, _name, _positive ) z80_compare_8bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_nbit( _environment, _n, _source, _destination, _name, _positive ) z80_compare_nbit( _environment, _n, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_8bit( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_8bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_and_branch_16bit( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_16bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive )
