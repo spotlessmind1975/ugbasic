@@ -91,7 +91,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
-%token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF
+%token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -7225,6 +7225,14 @@ pmode_definition :
         pmode( _environment, $2, $5 );
     };
 
+paint_definition : 
+    OP expr OP_COMMA expr CP {
+        paint_vars( _environment, $2, $4, NULL );
+    }
+    | OP expr OP_COMMA expr CP OP_COMMA expr {
+        paint_vars( _environment, $2, $4, $7 );
+    };
+
 statement2:
     BANK bank_definition
   | RASTER raster_definition
@@ -7294,6 +7302,7 @@ statement2:
   | RESTORE restore_definition
   | CLEAR clear_definition
   | PMODE pmode_definition
+  | PAINT paint_definition
   | PRINT print_definition
   | PRINT BUFFER print_buffer_definition
   | PRINT BUFFER RAW print_buffer_raw_definition
