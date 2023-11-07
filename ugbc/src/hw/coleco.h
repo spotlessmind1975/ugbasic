@@ -157,6 +157,8 @@
 #define JOY_RIGHT           1
 #define JOY_FIRE            6
 
+#define DEFAULT_PAINT_BUCKET_SIZE   128
+
 #define BANK_COUNT          0
 #define BANK_SIZE           0
 

@@ -136,6 +136,8 @@
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
+#define DEFAULT_PAINT_BUCKET_SIZE   128
+
 #define BANK_COUNT          0
 #define BANK_SIZE           0
 
