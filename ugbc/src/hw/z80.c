@@ -650,19 +650,21 @@ void z80_compare_8bit_const( Environment * _environment, char *_source, int _des
 
 void z80_compare_and_branch_8bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
 
-    inline( cpu_compare_and_branch_8bit_const )
+    inline( cpu_compare_and_branch_8bit )
 
         MAKE_LABEL
 
+        outline1("LD A, (%s)", _destination);
+        outline0("LD B, A");
         outline1("LD A, (%s)", _source);
-        outline1("CP (%s)", _destination );
+        outline1("CP B", _destination );
         if ( _positive ) {
             outline1("JP Z, %s", _label);
         } else {
             outline1("JP NZ, %s", _label);
         }
 
-    no_embedded( cpu_compare_and_branch_8bit_const )
+    no_embedded( cpu_compare_and_branch_8bit )
 
 }
 
@@ -1512,10 +1514,14 @@ void z80_compare_and_branch_16bit( Environment * _environment, char *_source, ch
         MAKE_LABEL
 
         outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-        outline1("CP  (%s)", address_displacement(_environment, _destination, "1"));
+        outline0("LD B, A");
+        outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
+        outline0("CP B");
         outline1("JP NZ, %s", label);
         outline1("LD A, (%s)", _source);
-        outline1("CP (%s)", _destination);
+        outline0("LD B, A");
+        outline1("LD A, (%s)", _destination);
+        outline0("CP B");
         outline1("JP NZ, %s", label);
         if ( _positive ) {
             outline1("JP %s", _label);
