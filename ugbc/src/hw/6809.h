@@ -66,6 +66,7 @@ void cpu6809_compare_32bit_const( Environment * _environment, char *_source, int
 void cpu6809_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void cpu6809_compare_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6809_compare_and_branch_8bit( Environment * _environment, char *_source, char * _destination,  char *_name, int _positive );
+void cpu6809_compare_and_branch_16bit( Environment * _environment, char *_source, char * _destination,  char *_name, int _positive );
 void cpu6809_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6809_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6809_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
@@ -314,6 +315,7 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_compare_8bit( _environment, _source, _destination, _name, _positive ) cpu6809_compare_8bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_8bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_8bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_8bit( _environment, _source, _destination, _name, _positive ) cpu6809_compare_and_branch_8bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_and_branch_16bit( _environment, _source, _destination, _name, _positive ) cpu6809_compare_and_branch_16bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive )

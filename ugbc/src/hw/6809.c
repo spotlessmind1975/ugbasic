@@ -1312,6 +1312,23 @@ void cpu6809_compare_16bit_const( Environment * _environment, char *_source, int
 
 }
 
+void cpu6809_compare_and_branch_16bit( Environment * _environment, char *_source, char *_destination,  char *_label, int _positive ) {
+
+    inline( cpu_compare_and_branch_16bit )
+
+        outline1("LDX %s", _source);
+        outline1("CMPX %s", _destination);
+        if ( _positive ) {
+            B(EQ, _label);
+        } else {
+            B(NE, _label);
+        }
+
+    no_embedded( cpu_compare_and_branch_16bit )
+
+}
+
+
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values and jump if they are equal/different
  * 
