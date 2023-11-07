@@ -541,7 +541,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
     // very same type. This is allowed in BASIC programs.
 
     if ( var ) {
-        if ( var->type != _type ) {
+        if ( ( var->type != _type ) || ( var->type == VT_ARRAY && var->arrayType != _type ) ) {
             CRITICAL_VARIABLE_REDEFINED_DIFFERENT_TYPE( _name );
         } else {
             return var;
