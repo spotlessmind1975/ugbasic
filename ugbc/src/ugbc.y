@@ -7232,6 +7232,9 @@ paint_definition :
     | OP expr OP_COMMA expr CP OP_COMMA expr {
         paint_vars( _environment, $2, $4, $7, NULL );
     }
+    | OP expr OP_COMMA expr CP OP_COMMA OP_COMMA expr {
+        paint_vars( _environment, $2, $4, NULL, $8 );
+    }
     | OP expr OP_COMMA expr CP OP_COMMA expr OP_COMMA expr {
         paint_vars( _environment, $2, $4, $7, $9 );
     }    
