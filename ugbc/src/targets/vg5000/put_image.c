@@ -50,13 +50,13 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
+void put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
 
     MAKE_LABEL
     
     Variable * image = variable_retrieve( _environment, _image );
-    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
-    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -90,29 +90,29 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        ef9345_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
+                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef9345_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        ef9345_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef9345_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        ef9345_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
+                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef9345_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        ef9345_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef9345_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -139,19 +139,20 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 cpu_label( _environment, alreadyLoadedLabel );
 
                 if ( !frame ) {
-                    ef9345_put_image( _environment, bankWindowName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
+                    ef9345_put_image( _environment, bankWindowName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    ef9345_put_image( _environment, bankWindowName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    ef9345_put_image( _environment, bankWindowName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             } else {
                 if ( !frame ) {
-                    ef9345_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
+                    ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    ef9345_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
         case VT_IMAGE:
+        case VT_ARRAY:
             if ( image->residentAssigned ) {
 
                 char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
@@ -172,9 +173,9 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
-                ef9345_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
+                ef9345_put_image( _environment, bankWindowName, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
             } else {
-                ef9345_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
+                ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
             }
             break;
         default:

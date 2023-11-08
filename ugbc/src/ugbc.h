@@ -1761,6 +1761,14 @@ typedef struct _Environment {
 
     Blit blit;
 
+    /**
+     * Precalculated blits
+     */
+
+    char * blitAND;
+    char * blitOR;
+    char * blitNOT;
+     
     /* --------------------------------------------------------------------- */
     /* INTERNAL STRUCTURES                                                   */
     /* --------------------------------------------------------------------- */
@@ -2586,6 +2594,7 @@ typedef struct _Environment {
 #define CRITICAL_DATA_LOAD_TEXT_NOT_FOUND( v ) CRITICAL2("E235 - cannot find file to load DATA in", v );
 #define CRITICAL_CANNOT_COMPARE_CONST( t ) CRITICAL2("E236 - Cannot compare type with a constant", t );
 #define CRITICAL_CANNOT_USE_DRAW_WITHOUT_STRING( t ) CRITICAL2("E237 - DRAW need a string with drawing commands", t );
+#define CRITICAL_PUT_NOT_NOT_SUPPORTED( t ) CRITICAL2("E238 - PUT with NOT operator is not supported", t );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3861,7 +3870,7 @@ void                    print_buffer( Environment * _environment, char * _buffer
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
-void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags );
+void                    put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
 void                    put_tile( Environment * _environment, char * _tile, char * _x, char * _y, char * _w, char * _h );
 void                    put_tilemap( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer, int _padding_tile );
 

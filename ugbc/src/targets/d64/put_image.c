@@ -50,13 +50,13 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
+void put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
 
     MAKE_LABEL
     
     Variable * image = variable_retrieve( _environment, _image );
-    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
-    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -152,6 +152,7 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
             }
             break;
         case VT_IMAGE:
+        case VT_ARRAY:
             if ( image->residentAssigned ) {
 
                 char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
