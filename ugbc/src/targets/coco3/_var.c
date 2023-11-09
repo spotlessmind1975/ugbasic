@@ -471,7 +471,9 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("IRQSTACK");
 
     deploy_inplace( irq, src_hw_coco3_irq_asm);
+    deploy_inplace_preferred( gimestartup, src_hw_gime_startup_asm );
     deploy_inplace_preferred( putimage, src_hw_gime_put_image_asm );
+    deploy_inplace_preferred( getimage, src_hw_gime_get_image_asm );
     deploy_inplace_preferred( getimage, src_hw_gime_get_image_asm );
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
