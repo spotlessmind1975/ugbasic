@@ -1834,7 +1834,7 @@ static Variable * gime_image_converter_bitmap_mode_hires( Environment * _environ
                 colorIndex = 0;
             } else {
                 int minDistance = 9999;
-                for( int i=(_transparent_color & 0x0f0000)?1:0; i<lastUsedSlotInCommonPalette; ++i ) {
+                for( int i=(_transparent_color)?1:0; i<lastUsedSlotInCommonPalette; ++i ) {
                     int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
@@ -2002,7 +2002,7 @@ static Variable * gime_image_converter_multicolor_mode_midres( Environment * _en
                 colorIndex = 0;
             } else {
                 int minDistance = 9999;
-                for( int i=(_transparent_color & 0x0f0000)?1:0; i<lastUsedSlotInCommonPalette; ++i ) {
+                for( int i=(_transparent_color)?1:0; i<lastUsedSlotInCommonPalette; ++i ) {
                     int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
@@ -2203,7 +2203,7 @@ static Variable * gime_image_converter_multicolor_mode_lores( Environment * _env
                 colorIndex = 0;
             } else {
                 int minDistance = 9999;
-                for( int i=(_transparent_color & 0x0f0000)?1:0; i<lastUsedSlotInCommonPalette; ++i ) {
+                for( int i=(_transparent_color)?1:0; i<lastUsedSlotInCommonPalette; ++i ) {
                     int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;

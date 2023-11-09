@@ -1836,7 +1836,7 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
                 colorIndex = 0;
             } else {
                 int minDistance = 9999;
-                for( int i=(_transparent_color & 0x0f0000); i<lastUsedSlotInCommonPalette; ++i ) {
+                for( int i=(_transparent_color); i<lastUsedSlotInCommonPalette; ++i ) {
                     int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
@@ -2016,7 +2016,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
                 colorIndex = 0;
             } else {
                 int minDistance = 9999;
-                for( int i=(_transparent_color & 0x0f0000); i<lastUsedSlotInCommonPalette; ++i ) {
+                for( int i=(_transparent_color); i<lastUsedSlotInCommonPalette; ++i ) {
                     int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
