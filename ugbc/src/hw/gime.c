@@ -1432,7 +1432,7 @@ void gime_text( Environment * _environment, char * _text, char * _text_size ) {
 void gime_initialization( Environment * _environment ) {
 
     deploy( gimevars, src_hw_gime_vars_asm );
-    deploy( gimestartup, src_hw_gime_startup_asm );
+    deploy_preferred( gimestartup, src_hw_gime_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
@@ -1834,7 +1834,7 @@ static Variable * gime_image_converter_bitmap_mode_hires( Environment * _environ
                 colorIndex = 0;
             } else {
                 int minDistance = 9999;
-                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                for( int i=(_transparent_color & 0x0f0000)?1:0; i<lastUsedSlotInCommonPalette; ++i ) {
                     int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
@@ -2002,7 +2002,7 @@ static Variable * gime_image_converter_multicolor_mode_midres( Environment * _en
                 colorIndex = 0;
             } else {
                 int minDistance = 9999;
-                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                for( int i=(_transparent_color & 0x0f0000)?1:0; i<lastUsedSlotInCommonPalette; ++i ) {
                     int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
@@ -2203,7 +2203,7 @@ static Variable * gime_image_converter_multicolor_mode_lores( Environment * _env
                 colorIndex = 0;
             } else {
                 int minDistance = 9999;
-                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                for( int i=(_transparent_color & 0x0f0000)?1:0; i<lastUsedSlotInCommonPalette; ++i ) {
                     int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
