@@ -1764,11 +1764,11 @@ static Variable * gime_image_converter_bitmap_mode_hires( Environment * _environ
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
 
         if ( _transparent_color & 0x0f0000 ) {
-            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, mergedCommonPalette );
         }
         if ( _transparent_color & 0xf00000 ) {
-            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 2 );
-            paletteColorCount = 2;
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, mergedCommonPalette, 2 );
+            mergedCommonPalette = 2;
         }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
@@ -1927,11 +1927,11 @@ static Variable * gime_image_converter_multicolor_mode_midres( Environment * _en
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
 
         if ( _transparent_color & 0x0f0000 ) {
-            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, mergedCommonPalette );
         }
         if ( _transparent_color & 0xf00000 ) {
-            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 4 );
-            paletteColorCount = 4;
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, mergedCommonPalette, 4 );
+            mergedCommonPalette = 4;
         }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
@@ -2128,11 +2128,11 @@ static Variable * gime_image_converter_multicolor_mode_lores( Environment * _env
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
 
         if ( _transparent_color & 0x0f0000 ) {
-            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, mergedCommonPalette );
         }
         if ( _transparent_color & 0xf00000 ) {
-            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 16 );
-            paletteColorCount = 16;
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, mergedCommonPalette, 16 );
+            mergedCommonPalette = 16;
         }
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
