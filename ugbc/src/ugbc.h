@@ -1457,6 +1457,7 @@ typedef struct _Deployed {
     int irq;
     int draw_string;
     int paint;
+    int play_string;
 
 } Deployed;
 
@@ -2595,6 +2596,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_COMPARE_CONST( t ) CRITICAL2("E236 - Cannot compare type with a constant", t );
 #define CRITICAL_CANNOT_USE_DRAW_WITHOUT_STRING( t ) CRITICAL2("E237 - DRAW need a string with drawing commands", t );
 #define CRITICAL_PUT_NOT_NOT_SUPPORTED( t ) CRITICAL2("E238 - PUT with NOT operator is not supported", t );
+#define CRITICAL_CANNOT_USE_PLAY_WITHOUT_STRING( t ) CRITICAL2("E239 - PLAY need a string with playing commands", t );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3856,6 +3858,7 @@ void                    play( Environment * _environment, int _note, int _durati
 void                    play_vars( Environment * _environment, char * _note, char * _duration, char * _channels );
 void                    play_off( Environment * _environment, int _channels );
 void                    play_off_var( Environment * _environment, char * _channels );
+void                    play_string( Environment * _environment, char * _string );
 void                    plot( Environment * _environment, char * _x, char * _y, char *_c );
 void                    pmode( Environment * _environment, int _mode, int _start_page );
 Variable *              point( Environment * _environment, char * _x, char * _y );
