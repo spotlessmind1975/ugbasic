@@ -110,7 +110,6 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     Variable * deltaFrameRow = variable_temporary( _environment, VT_WORD, "(deltaFrameRow)");
     variable_store( _environment, deltaFrameRow->name, deltaFrameConst );
     int deltaFrameScreen = sizeConst - ( tilemap->mapWidth * screenHeightAsTiles );
-    int deltaFrameScreen = sizeConst - ( tilemap->mapWidth * screenHeightAsTiles );
 
     Variable * index = NULL;
 
