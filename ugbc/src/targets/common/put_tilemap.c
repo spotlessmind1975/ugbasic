@@ -103,23 +103,19 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     Variable * size = variable_temporary( _environment, VT_WORD, "(size)");
     variable_store( _environment, size->name, sizeConst );
     
-    int screenWidthAsTiles = ( _environment->screenWidth / tileset->frameWidth );
-    int screenHeightAsTiles = ( _environment->screenHeight / tileset->frameHeight );
+    int screenWidthAsTilesConst = ( _environment->screenWidth / tileset->frameWidth );
+    int screenHeightAsTilesConst = ( _environment->screenHeight / tileset->frameHeight );
     // int deltaFrameRow = tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0;
-    int deltaFrameConst = tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0;
+    int deltaFrameConst = tilemap->mapWidth > screenWidthAsTilesConst ? ( tilemap->mapWidth - screenWidthAsTilesConst ) : 0;
     Variable * deltaFrameRow = variable_temporary( _environment, VT_WORD, "(deltaFrameRow)");
     variable_store( _environment, deltaFrameRow->name, deltaFrameConst );
-    int deltaFrameScreenConst = sizeConst - ( tilemap->mapWidth * screenHeightAsTiles );
+    int deltaFrameScreenConst = sizeConst - ( tilemap->mapWidth * screenHeightAsTilesConst );
     Variable * deltaFrameScreen = variable_temporary( _environment, VT_WORD, "(deltaFrameScreen)");
     variable_store( _environment, deltaFrameScreen->name, deltaFrameScreenConst );
 
     Variable * index = NULL;
 
-    if ( tilemap->size > 255 ) {
-        index = variable_temporary( _environment, VT_WORD, "(index)" );
-    } else {
-        index = variable_temporary( _environment, VT_BYTE, "(index)" );
-    }
+    index = variable_temporary( _environment, VT_WORD, "(index)" );
 
     // Starting index from 0 (zero).
 
@@ -223,13 +219,8 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
         // Take the tile from the map and increase the index.
 
-        if ( tilemap->size > 255 ) {
-            cpu_move_8bit_indirect2_16bit( _environment, tilemap->realName, index->realName, frame->realName );
-            cpu_inc_16bit( _environment, index->realName );
-        } else {
-            cpu_move_8bit_indirect2_8bit( _environment, tilemap->realName, index->realName, frame->realName );
-            cpu_inc( _environment, index->realName );
-        }
+        cpu_move_8bit_indirect2_16bit( _environment, tilemap->realName, index->realName, frame->realName );
+        cpu_inc_16bit( _environment, index->realName );
 
         // In case the frame read from the map is 0xff, it means that that specific
         // frame has not to be drawn, so we exit from this frame drawing.
