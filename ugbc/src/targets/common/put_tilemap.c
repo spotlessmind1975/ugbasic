@@ -72,10 +72,6 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
     MAKE_LABEL
 
-    Variable * paddingTile = NULL;
-    if ( _padding_tile ) {
-        paddingTile = variable_retrieve( _environment, _padding_tile );
-    }
     Variable * tilemap = variable_retrieve( _environment, _tilemap );
     Variable * dx = NULL;
     Variable * dy = NULL;
@@ -144,9 +140,8 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     Variable * padding2 = variable_temporary( _environment, VT_BYTE, "(padding2)" );
     Variable * padFrame = variable_temporary( _environment, VT_BYTE, "(pad frame)" );
 
-    // Set up the padding tile.
-
-    if ( paddingTile ) {
+    if ( _padding_tile ) {
+        Variable * paddingTile = variable_retrieve( _environment, _padding_tile );
         variable_move( _environment, paddingTile->name, padFrame->name );
     }
 
