@@ -1722,12 +1722,13 @@ static void ef936x_load_image_address_to_register( Environment * _environment, c
 
 }
 
-void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( putimage, src_hw_ef936x_put_image_asm );
 
-    outline1("LDA #$%2.2x", ( _flags & FLAG_TRANSPARENCY ) );
+    outline1("LDA %s", _flags );
+    outline1("ANDA #$%2.2x", FLAG_TRANSPARENCY );
     outline0("STA <IMAGEF" );
 
     ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
@@ -1736,7 +1737,8 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
     outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
     outline0("STD <IMAGEY" );
-    outline1("LDA #$%2.2x", ( _flags & FLAG_DOUBLE_Y ) );
+    outline1("LDA %s", _flags );
+    outline1("ANDA #$%2.2x", FLAG_DOUBLE_Y );
     outline0("STA <IMAGET" );
 
     outline0("JSR PUTIMAGE");

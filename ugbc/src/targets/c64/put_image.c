@@ -79,13 +79,14 @@ In tutti i casi la sintassi cambia leggermente.
 
 @target all
 </usermanual> */
-void put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
+void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
     MAKE_LABEL
     
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+    Variable * flags = variable_retrieve_or_define( _environment, _flags, VT_WORD, 0 );
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -119,29 +120,29 @@ void put_image( Environment * _environment, char * _image, char * _x1, char * _y
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
                     }
                 } else {
                     if ( !frame ) {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     }
                 }
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
                     }
                 } else {
                     if ( !frame ) {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     }
                 }
             }
@@ -168,15 +169,15 @@ void put_image( Environment * _environment, char * _image, char * _x1, char * _y
                 cpu_label( _environment, alreadyLoadedLabel );
 
                 if ( !frame ) {
-                    vic2_put_image( _environment, bankWindowName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
+                    vic2_put_image( _environment, bankWindowName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
                 } else {
-                    vic2_put_image( _environment, bankWindowName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    vic2_put_image( _environment, bankWindowName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
                 }
             } else {
                 if ( !frame ) {
-                    vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
+                    vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
                 } else {
-                    vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
                 }
             }
             break;
@@ -202,9 +203,9 @@ void put_image( Environment * _environment, char * _image, char * _x1, char * _y
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
-                vic2_put_image( _environment, bankWindowName, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+                vic2_put_image( _environment, bankWindowName, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
             } else {
-                vic2_put_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+                vic2_put_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
             }
             break;
         default:

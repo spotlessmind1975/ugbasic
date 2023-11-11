@@ -2439,7 +2439,7 @@ void gime_blit_image( Environment * _environment, char * _sources[], int _source
 
 }
 
-void gime_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+void gime_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
     
     deploy( gimevars, src_hw_gime_vars_asm);
     deploy_preferred( putimage, src_hw_gime_put_image_asm );
@@ -2489,9 +2489,8 @@ void gime_put_image( Environment * _environment, char * _image, char * _x, char 
     outline1("LDD %s", _y );
     outline0("STD IMAGEY" );
 
-    outline1("LDA #$%2.2x", ( _flags & 0xff ) );
-    outline0("STA <IMAGEF" );
-    outline1("LDA #$%2.2x", ( (_flags>>8) & 0xff ) );
+    outline1("LDD %s", _flags );
+    outline0("STB <IMAGEF" );
     outline0("STA <IMAGET" );
 
     outline0("JSR PUTIMAGE");
