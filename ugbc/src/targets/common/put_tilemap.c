@@ -73,21 +73,13 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     MAKE_LABEL
 
     Variable * tilemap = variable_retrieve( _environment, _tilemap );
-    Variable * dx = NULL;
-    Variable * dy = NULL;
-    Variable * layer = NULL;
+    Variable * dx = variable_temporary( _environment, VT_BYTE, "(dx)");
+    Variable * dy = variable_temporary( _environment, VT_BYTE, "(dy)");
+    Variable * givenLayer = variable_temporary( _environment, VT_BYTE, "(layer)");
 
-    if ( _dx ) {
-        dx = variable_retrieve_or_define( _environment, _dx, VT_BYTE, 0 );
-    }
-    
-    if ( _dy ) {
-        dy = variable_retrieve_or_define( _environment, _dy, VT_BYTE, 0 );
-    }
-
-    if ( _layer ) {
-        layer = variable_retrieve( _environment, _layer );
-    }
+    variable_store( _environment, dx->name, 0 );
+    variable_store( _environment, dy->name, 0 );
+    variable_store( _environment, givenLayer->name, 0xff );
 
     if ( tilemap->type != VT_TILEMAP ) {
         CRITICAL_CANNOT_PUT_TILEMAP_FOR_NON_TILEMAP( _tilemap );
@@ -127,9 +119,23 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     // If a starting point has been given, we must increase the
     // index to match the first tile to draw.
 
-    if ( dx && dy ) {
-        index = variable_add( _environment, index->name, variable_mul( _environment, dy->name, mapWidth->name )->name );
-        index = variable_add( _environment, index->name, dx->name );
+    if ( _dx ) {
+        Variable * pdx = variable_retrieve_or_define( _environment, _dx, VT_BYTE, 0 );
+        variable_move( _environment, pdx->name, dx->name );
+    }
+    
+    if ( _dy ) {
+        Variable * pdy = variable_retrieve_or_define( _environment, _dy, VT_BYTE, 0 );
+        variable_move( _environment, pdy->name, dy->name );
+    }
+
+    index = variable_add( _environment, index->name, variable_mul( _environment, dy->name, mapWidth->name )->name );
+    index = variable_add( _environment, index->name, dx->name );
+
+    if ( _layer ) {
+        Variable * player = variable_retrieve_or_define( _environment, _layer, VT_BYTE, 0 );
+        variable_move( _environment, player->name, givenLayer->name );
+        variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, givenLayer->name, size->name )->name )->name, index->name );
     }
 
     Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
@@ -160,12 +166,6 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     cpu_compare_and_branch_8bit( _environment, layerIndex->realName, mapLayers->realName, labelNextLayers, 1 );
 
     // If a specific layer is selected, we must point to that layer.
-
-    if ( _layer ) {
-        // Variable * sizeSize = variable_temporary( _environment, VT_WORD, "(size)");
-        // variable_store( _environment, sizeSize->name, size );
-        variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, layer->name, size->name )->name )->name, index->name );
-    }
 
         // Let's start from the start of the screen.
 
@@ -331,9 +331,9 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
         cpu_label( _environment, labelExit );
 
-        if ( _layer ) {
-            cpu_jump( _environment, labelNextLayers );
-        }
+        cpu_compare_and_branch_8bit_const( _environment, givenLayer->realName, 0xff, labelNextLayers, 0 );
+
+        cpu_inc( _environment, layerIndex->realName );
 
         // if ( deltaFrameScreen ) {
             variable_add_inplace_vars( _environment, index->name, deltaFrameScreen->name );
