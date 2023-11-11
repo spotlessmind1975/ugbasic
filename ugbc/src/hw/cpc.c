@@ -1301,11 +1301,11 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
         if ( _transparent_color & 0x0f0000 ) {
-            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, mergedCommonPalette );
+            commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
         }
         if ( _transparent_color & 0xf00000 ) {
-            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, mergedCommonPalette, 4 );
-            mergedCommonPalette = 4;
+            commonPalette = palette_promote_color_as_foreground( ( _transparent_color >> 8 ) & 0xff, commonPalette, paletteColorCount, 4 );
+            paletteColorCount = 4;
         }
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
