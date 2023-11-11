@@ -144,7 +144,7 @@ void put_tilemap( Environment * _environment, char * _tilemap, int _flags, char 
         if ( _layer ) {
             Variable * sizeSize = variable_temporary( _environment, VT_WORD, "(size)");
             variable_store( _environment, sizeSize->name, size );
-            index = variable_add( _environment, index->name, variable_mul( _environment, layer->name, sizeSize->name )->name );
+            variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, layer->name, sizeSize->name )->name )->name, index->name );
         }
 
         // Let's start from the start of the screen.
