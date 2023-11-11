@@ -153,12 +153,16 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     // For each layer (actually, a normal map has just one layer).
 
     // for( int layerIndex = 0; layerIndex < tilemap->mapLayers; ++layerIndex ) {
-    char labelForLayers[MAX_TEMPORARY_STORAGE]; sprintf( labelForLayers, "%slayers", label );
+    char labelForLayers[MAX_TEMPORARY_STORAGE]; sprintf( labelForLayers, "%slayersf", label );
+    char labelNextLayers[MAX_TEMPORARY_STORAGE]; sprintf( labelNextLayers, "%slayersn", label );
     Variable * mapLayers = variable_temporary( _environment, VT_BYTE, "(mapLayers)" );
     variable_store( _environment, mapLayers->name, tilemap->mapLayers );
     Variable * layerIndex = variable_temporary( _environment, VT_BYTE, "(layerIndex)" );
     variable_store( _environment, layerIndex->name, 0 );
-    cpu_compare_and_branch_8bit( _environment, layerIndex->realName, mapLayers->realName, labelForLayers, 1 );
+
+    cpu_label( _environment, labelForLayers );
+
+    cpu_compare_and_branch_8bit( _environment, layerIndex->realName, mapLayers->realName, labelNextLayers, 1 );
 
     // If a specific layer is selected, we must point to that layer.
 
@@ -333,7 +337,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         cpu_label( _environment, labelExit );
 
         if ( _layer ) {
-            cpu_jump( _environment, labelForLayers );
+            cpu_jump( _environment, labelNextLayers );
         }
 
         // if ( deltaFrameScreen ) {
@@ -342,9 +346,10 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
         _flags = _flags | FLAG_TRANSPARENCY;
 
+        cpu_jump( _environment, labelForLayers );
     // }
 
-    cpu_label( _environment, labelForLayers );
+    cpu_label( _environment, labelNextLayers );
 
 }
 
