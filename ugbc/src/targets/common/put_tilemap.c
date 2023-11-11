@@ -109,7 +109,9 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     int deltaFrameConst = tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0;
     Variable * deltaFrameRow = variable_temporary( _environment, VT_WORD, "(deltaFrameRow)");
     variable_store( _environment, deltaFrameRow->name, deltaFrameConst );
-    int deltaFrameScreen = sizeConst - ( tilemap->mapWidth * screenHeightAsTiles );
+    int deltaFrameScreenConst = sizeConst - ( tilemap->mapWidth * screenHeightAsTiles );
+    Variable * deltaFrameScreen = variable_temporary( _environment, VT_WORD, "(deltaFrameScreen)");
+    variable_store( _environment, deltaFrameScreen->name, deltaFrameScreenConst );
 
     Variable * index = NULL;
 
@@ -331,9 +333,9 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         if ( _layer ) {
             break;
         }
-        if ( deltaFrameScreen ) {
-            variable_add_inplace( _environment, index->name, deltaFrameScreen );
-        }
+        // if ( deltaFrameScreen ) {
+            variable_add_inplace_vars( _environment, index->name, deltaFrameScreen->name );
+        // }
 
         _flags = _flags | FLAG_TRANSPARENCY;
 
