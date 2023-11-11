@@ -99,14 +99,16 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
     Variable * tileset = variable_retrieve( _environment, tilemap->tileset->name );
 
-    // int size = tilemap->mapWidth * tilemap->mapHeight;
+    int sizeConst = tilemap->mapWidth * tilemap->mapHeight;
     Variable * size = variable_temporary( _environment, VT_WORD, "(size)");
-    variable_store( _environment, size->name, tilemap->mapWidth * tilemap->mapHeight );
+    variable_store( _environment, size->name, sizeConst );
     
     int screenWidthAsTiles = ( _environment->screenWidth / tileset->frameWidth );
     int screenHeightAsTiles = ( _environment->screenHeight / tileset->frameHeight );
-    int deltaFrameRow = tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0;
-    int deltaFrameScreen = (tilemap->mapWidth * tilemap->mapHeight) - ( tilemap->mapWidth * screenHeightAsTiles );
+    // int deltaFrameRow = tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0;
+    Variable * deltaFrameRow = variable_temporary( _environment, VT_WORD, "(deltaFrameRow)");
+    variable_store( _environment, deltaFrameRow->name, tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0 );
+    int deltaFrameScreen = sizeConst - ( tilemap->mapWidth * screenHeightAsTiles );
 
     Variable * index = NULL;
 
@@ -293,9 +295,9 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         // If the screen is narrower than the map, we must move ahead the
         // index by the calculated delta frame row.
 
-        if ( deltaFrameRow > 0 ) {
-            variable_add_inplace( _environment, index->name, deltaFrameRow );
-        }
+        // if ( deltaFrameRow > 0 ) {
+            variable_add_inplace_vars( _environment, index->name, deltaFrameRow->name );
+        // }
 
         // Move to the next row to draw.
 
