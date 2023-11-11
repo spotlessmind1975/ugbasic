@@ -112,6 +112,8 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     int deltaFrameScreenConst = sizeConst - ( tilemap->mapWidth * screenHeightAsTilesConst );
     Variable * deltaFrameScreen = variable_temporary( _environment, VT_WORD, "(deltaFrameScreen)");
     variable_store( _environment, deltaFrameScreen->name, deltaFrameScreenConst );
+    Variable * mapWidth = variable_temporary( _environment, VT_BYTE, "(map width)");
+    variable_store( _environment, mapWidth->name, tilemap->mapWidth );
 
     Variable * index = NULL;
 
@@ -125,8 +127,6 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     // index to match the first tile to draw.
 
     if ( dx && dy ) {
-        Variable * mapWidth = variable_temporary( _environment, VT_BYTE, "(map width)");
-        variable_store( _environment, mapWidth->name, tilemap->mapWidth );
         index = variable_add( _environment, index->name, variable_mul( _environment, dy->name, mapWidth->name )->name );
         index = variable_add( _environment, index->name, dx->name );
     }
