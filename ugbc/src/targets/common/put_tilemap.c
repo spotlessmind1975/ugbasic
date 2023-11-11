@@ -99,11 +99,14 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
     Variable * tileset = variable_retrieve( _environment, tilemap->tileset->name );
 
-    int size = tilemap->mapWidth * tilemap->mapHeight;
+    // int size = tilemap->mapWidth * tilemap->mapHeight;
+    Variable * size = variable_temporary( _environment, VT_WORD, "(size)");
+    variable_store( _environment, size->name, tilemap->mapWidth * tilemap->mapHeight );
+    
     int screenWidthAsTiles = ( _environment->screenWidth / tileset->frameWidth );
     int screenHeightAsTiles = ( _environment->screenHeight / tileset->frameHeight );
     int deltaFrameRow = tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0;
-    int deltaFrameScreen = size - ( tilemap->mapWidth * screenHeightAsTiles );
+    int deltaFrameScreen = (tilemap->mapWidth * tilemap->mapHeight) - ( tilemap->mapWidth * screenHeightAsTiles );
 
     Variable * index = NULL;
 
@@ -148,9 +151,9 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         // If a specific layer is selected, we must point to that layer.
 
         if ( _layer ) {
-            Variable * sizeSize = variable_temporary( _environment, VT_WORD, "(size)");
-            variable_store( _environment, sizeSize->name, size );
-            variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, layer->name, sizeSize->name )->name )->name, index->name );
+            // Variable * sizeSize = variable_temporary( _environment, VT_WORD, "(size)");
+            // variable_store( _environment, sizeSize->name, size );
+            variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, layer->name, size->name )->name )->name, index->name );
         }
 
         // Let's start from the start of the screen.
