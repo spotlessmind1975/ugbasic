@@ -152,31 +152,37 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
     // For each layer (actually, a normal map has just one layer).
 
-    for( int layerIndex = 0; layerIndex < tilemap->mapLayers; ++layerIndex ) {
+    // for( int layerIndex = 0; layerIndex < tilemap->mapLayers; ++layerIndex ) {
+    char labelForLayers[MAX_TEMPORARY_STORAGE]; sprintf( labelForLayers, "%slayers", label );
+    Variable * mapLayers = variable_temporary( _environment, VT_BYTE, "(mapLayers)" );
+    variable_store( _environment, mapLayers->name, tilemap->mapLayers );
+    Variable * layerIndex = variable_temporary( _environment, VT_BYTE, "(layerIndex)" );
+    variable_store( _environment, layerIndex->name, 0 );
+    cpu_compare_and_branch_8bit( _environment, layerIndex->realName, mapLayers->realName, labelForLayers, 1 );
 
-        // If a specific layer is selected, we must point to that layer.
+    // If a specific layer is selected, we must point to that layer.
 
-        if ( _layer ) {
-            // Variable * sizeSize = variable_temporary( _environment, VT_WORD, "(size)");
-            // variable_store( _environment, sizeSize->name, size );
-            variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, layer->name, size->name )->name )->name, index->name );
-        }
+    if ( _layer ) {
+        // Variable * sizeSize = variable_temporary( _environment, VT_WORD, "(size)");
+        // variable_store( _environment, sizeSize->name, size );
+        variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, layer->name, size->name )->name )->name, index->name );
+    }
 
         // Let's start from the start of the screen.
 
         variable_store( _environment, y->name, 0 );
 
-        char labelLoopY[MAX_TEMPORARY_STORAGE]; sprintf( labelLoopY, "%sy%4.4x", label, layerIndex );
-        char labelLoopX[MAX_TEMPORARY_STORAGE]; sprintf( labelLoopX, "%sx%4.4x", label, layerIndex );
-        char labelExit[MAX_TEMPORARY_STORAGE]; sprintf( labelExit, "%se%4.4x", label, layerIndex );
-        char labelExitX[MAX_TEMPORARY_STORAGE]; sprintf( labelExitX, "%sex%4.4x", label, layerIndex );
-        char labelExitX2[MAX_TEMPORARY_STORAGE]; sprintf( labelExitX2, "%sexx%4.4x", label, layerIndex );
-        char labelPadding[MAX_TEMPORARY_STORAGE]; sprintf( labelPadding, "%spad%4.4x", label, layerIndex );
-        char labelPadding2[MAX_TEMPORARY_STORAGE]; sprintf( labelPadding2, "%spady%4.4x", label, layerIndex );
-        char labelDonePutImage[MAX_TEMPORARY_STORAGE]; sprintf( labelDonePutImage, "%sdop%4.4x", label, layerIndex );
-        char labelExitFrame[MAX_TEMPORARY_STORAGE]; sprintf( labelExitFrame, "%sfr%4.4x", label, layerIndex );
-        char labelSkipFxCheck[MAX_TEMPORARY_STORAGE]; sprintf( labelSkipFxCheck, "%sskipx%4.4x", label, layerIndex );
-        char labelSkipIndexCheck[MAX_TEMPORARY_STORAGE]; sprintf( labelSkipIndexCheck, "%sskipy%4.4x", label, layerIndex );
+        char labelLoopY[MAX_TEMPORARY_STORAGE]; sprintf( labelLoopY, "%sy", label );
+        char labelLoopX[MAX_TEMPORARY_STORAGE]; sprintf( labelLoopX, "%sx", label );
+        char labelExit[MAX_TEMPORARY_STORAGE]; sprintf( labelExit, "%se", label );
+        char labelExitX[MAX_TEMPORARY_STORAGE]; sprintf( labelExitX, "%sex", label );
+        char labelExitX2[MAX_TEMPORARY_STORAGE]; sprintf( labelExitX2, "%sexx", label );
+        char labelPadding[MAX_TEMPORARY_STORAGE]; sprintf( labelPadding, "%spad", label );
+        char labelPadding2[MAX_TEMPORARY_STORAGE]; sprintf( labelPadding2, "%spady", label );
+        char labelDonePutImage[MAX_TEMPORARY_STORAGE]; sprintf( labelDonePutImage, "%sdop", label );
+        char labelExitFrame[MAX_TEMPORARY_STORAGE]; sprintf( labelExitFrame, "%sfr", label );
+        char labelSkipFxCheck[MAX_TEMPORARY_STORAGE]; sprintf( labelSkipFxCheck, "%sskipx", label );
+        char labelSkipIndexCheck[MAX_TEMPORARY_STORAGE]; sprintf( labelSkipIndexCheck, "%sskipy", label );
 
         // Disable vertical padding.
 
@@ -327,15 +333,18 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         cpu_label( _environment, labelExit );
 
         if ( _layer ) {
-            break;
+            cpu_jump( _environment, labelForLayers );
         }
+
         // if ( deltaFrameScreen ) {
             variable_add_inplace_vars( _environment, index->name, deltaFrameScreen->name );
         // }
 
         _flags = _flags | FLAG_TRANSPARENCY;
 
-    }
+    // }
+
+    cpu_label( _environment, labelForLayers );
 
 }
 
