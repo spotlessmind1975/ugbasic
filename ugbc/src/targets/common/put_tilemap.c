@@ -72,6 +72,11 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
     MAKE_LABEL
 
+    Variable * flags = variable_temporary( _environment, VT_WORD, "(flags)" );
+    variable_store( _environment, flags->name, _flags );
+    Variable * transparency = variable_temporary( _environment, VT_WORD, "(flags)" );
+    variable_store( _environment, transparency->name, FLAG_TRANSPARENCY );
+
     Variable * tilemap = variable_retrieve( _environment, _tilemap );
     Variable * dx = variable_temporary( _environment, VT_BYTE, "(dx)");
     Variable * dy = variable_temporary( _environment, VT_BYTE, "(dy)");
@@ -237,13 +242,13 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
         // --- DRAW TILE --
 
-        put_image( _environment, tileset->name, x->name, y->name, NULL, NULL, frame->name, NULL,  _flags );
+        put_image_vars( _environment, tileset->name, x->name, y->name, NULL, NULL, frame->name, NULL,  flags->name );
         cpu_jump( _environment, labelDonePutImage );
 
         // --- DRAW PADDING TILE --
 
         cpu_label( _environment, labelPadding );
-        put_image( _environment, tileset->name, x->name, y->name, NULL, NULL, padFrame->name, NULL,  _flags );
+        put_image_vars( _environment, tileset->name, x->name, y->name, NULL, NULL, padFrame->name, NULL, flags->name );
 
         // From here and ahead, we drawed the tile so we must calculate the
         // next conditions and actions to do. We arrive here both if we drawed
@@ -337,7 +342,11 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
             variable_add_inplace_vars( _environment, index->name, deltaFrameScreen->name );
         // }
 
-        _flags = _flags | FLAG_TRANSPARENCY;
+        // _flags = _flags | FLAG_TRANSPARENCY;
+        variable_move( _environment, 
+                variable_or( _environment, flags->name, transparency->name )->name, 
+                flags->name
+            );
 
         cpu_jump( _environment, labelForLayers );
     // }
