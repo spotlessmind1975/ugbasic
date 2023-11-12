@@ -635,6 +635,40 @@ typedef struct _FloatType {
 
 } FloatType;
 
+typedef struct _OffsettingVariable {
+
+    /**
+     * Back referenced variable
+     */
+    struct _Variable * variable;
+    
+    /** Link to the next offsetting */
+    struct _OffsettingVariable * next;
+
+} OffsettingVariable;
+
+typedef struct _Offsetting {
+
+    /**
+     * Size of an element
+     */
+    int size;
+
+    /**
+     * Count of elements
+     */
+    int count;
+
+    /**
+     * Back referenced variable
+     */
+    OffsettingVariable * variables;
+
+    /** Link to the next offsetting */
+    struct _Offsetting * next;
+
+} Offsetting;
+
 /**
  * @brief Structure of a single variable
  */
@@ -840,6 +874,16 @@ typedef struct _Variable {
      */
     int readonly;
 
+    /**
+     * Linked offsetting for each frame
+     */
+    Offsetting * offsettingFrames;
+
+    /**
+     * Linked offsetting for each sequence
+     */
+    Offsetting * offsettingSequences;
+
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
 
@@ -919,23 +963,6 @@ typedef struct _Procedure {
     struct _Procedure * next;
 
 } Procedure;
-
-typedef struct _Offsetting {
-
-    /**
-     * Size of an element
-     */
-    int size;
-
-    /**
-     * Count of elements
-     */
-    int count;
-
-    /** Link to the next offsetting */
-    struct _Offsetting * next;
-
-} Offsetting;
 
 /**
  * @brief Types of conditional jumps supported.
@@ -3827,7 +3854,8 @@ Variable *              new_image( Environment * _environment, int _width, int _
 // *O*
 //----------------------------------------------------------------------------
 
-void                    offsetting_size_count( Environment * _environment, int _size, int _count );
+void                    offsetting_add_variable_reference( Environment * _environment, Offsetting * _first, Variable * _var );
+Offsetting *            offsetting_size_count( Environment * _environment, int _size, int _count );
 void                    on_gosub( Environment * _environment, char * _expression );
 void                    on_gosub_end( Environment * _environment );
 void                    on_gosub_index( Environment * _environment, char * _label );

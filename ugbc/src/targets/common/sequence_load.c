@@ -225,12 +225,14 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
     }
 
     final->offsettingFrames = offsetting_size_count( _environment, result[0]->size, wc );
+    offsetting_add_variable_reference( _environment, final->offsettingFrames, final );
 
     if ( ( wc*result[0]->size ) > 0xffff ) {
         CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _filename );
     }
 
     final->offsettingSequences = offsetting_size_count( _environment, wc*result[0]->size, hc );
+    offsetting_add_variable_reference( _environment, final->offsettingSequences, final );
 
     ptr += 3;
     for(int i=0;i<hc;++i) {

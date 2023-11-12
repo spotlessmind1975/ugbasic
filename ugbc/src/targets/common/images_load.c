@@ -320,6 +320,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     }
 
     final->offsettingFrames = offsetting_size_count( _environment, result[0]->size, realFramesCount );
+    offsetting_add_variable_reference( _environment, final->offsettingFrames, final );
 
     ptr += 3;
     for(i=0; i<realFramesCount; ++i ) {

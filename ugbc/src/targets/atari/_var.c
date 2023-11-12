@@ -383,6 +383,7 @@ void variable_cleanup( Environment * _environment ) {
             }
             actual = actual->next;
         }
+
     }
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {

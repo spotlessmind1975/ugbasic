@@ -270,6 +270,17 @@ Offsetting * offsetting_size_count( Environment * _environment, int _size, int _
 
 }
 
+void offsetting_add_variable_reference( Environment * _environment, Offsetting * _first, Variable * _var ) {
+
+    OffsettingVariable * offsettingVariable = malloc( sizeof( OffsettingVariable ) );
+    memset( offsettingVariable, 0, sizeof( OffsettingVariable ) );
+    offsettingVariable->variable = _var;
+
+    offsettingVariable->next = _first->variables;
+    _first->variables = offsettingVariable;
+
+}
+
 void variable_global( Environment * _environment, char * _pattern ) {
 
     Pattern * pattern = malloc( sizeof( Pattern ) ) ;
