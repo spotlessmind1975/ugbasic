@@ -55,6 +55,9 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
     MAKE_LABEL
     
     Variable * image = variable_retrieve( _environment, _image );
+    Resource resource;
+    resource.realName = image->realName;
+    resource.type = image->type;
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * flags = variable_retrieve_or_define( _environment, _flags, VT_WORD, 0 );
@@ -89,31 +92,35 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
+                Resource resource;
+                resource.realName = strdup( bankWindowName );
+                resource.type = VT_IMAGE;
+
                 if ( !sequence ) {
                     if ( !frame ) {
-                        gime_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
+                        gime_put_image( _environment, &resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        gime_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
+                        gime_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
                     }
                 } else {
                     if ( !frame ) {
-                        gime_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                        gime_put_image( _environment, &resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        gime_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                        gime_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     }
                 }
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        gime_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
+                        gime_put_image( _environment, &resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        gime_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
+                        gime_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
                     }
                 } else {
                     if ( !frame ) {
-                        gime_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                        gime_put_image( _environment, &resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        gime_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                        gime_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     }
                 }
             }
@@ -139,21 +146,26 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
+                Resource resource;
+                resource.realName = strdup( bankWindowName );
+                resource.type = VT_IMAGE;
+
                 if ( !frame ) {
-                    gime_put_image( _environment, bankWindowName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
+                    gime_put_image( _environment, &resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
                 } else {
-                    gime_put_image( _environment, bankWindowName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
+                    gime_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
                 }
             } else {
                 if ( !frame ) {
-                    gime_put_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
+                    gime_put_image( _environment, &resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
                 } else {
-                    gime_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
+                    gime_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
                 }
             }
             break;
         case VT_IMAGE:
         case VT_ARRAY:
+        case VT_ADDRESS:
             if ( image->residentAssigned ) {
 
                 char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
@@ -174,9 +186,13 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
-                gime_put_image( _environment, bankWindowName, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
+                Resource resource;
+                resource.realName = strdup( bankWindowName );
+                resource.type = VT_IMAGE;
+
+                gime_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
             } else {
-                gime_put_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
+                gime_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
             }
             break;
         default:
