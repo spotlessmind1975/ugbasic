@@ -1494,7 +1494,7 @@ void c6847_blit_image( Environment * _environment, char * _sources[], int _sourc
     
 }
 
-void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
+void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( putimage, src_hw_6847_put_image_asm );
@@ -1544,8 +1544,9 @@ void c6847_put_image( Environment * _environment, char * _image, char * _x, char
     outline1("LDD %s", _y );
     outline0("STD IMAGEY" );
 
-    outline1("LDD %s", _flags );
-    outline0("STB <IMAGEF" );
+    outline1("LDA #$%2.2x", ( _flags & 0xff ) );
+    outline0("STA <IMAGEF" );
+    outline1("LDA #$%2.2x", ( (_flags>>8) & 0xff ) );
     outline0("STA <IMAGET" );
 
     outline0("JSR PUTIMAGE");

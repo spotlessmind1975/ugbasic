@@ -50,12 +50,11 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1,  char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+void put_image( Environment * _environment, char * _image, char * _x1, char * _y1,  char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
 
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
-    Variable * flags = variable_retrieve_or_define( _environment, _flags, VT_WORD, 0 );
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -69,28 +68,28 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
-                    tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
+                    tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
                 } else {
-                    tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
+                    tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                 }
             } else {
                 if ( !frame ) {
-                    tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                    tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                 } else {
-                    tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                    tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                 }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
+                tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
             } else {
-                tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
+                tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
             }
             break;
         case VT_IMAGE:
         case VT_ARRAY:
-            tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
+            tms9918_put_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

@@ -2676,7 +2676,7 @@ static void vdcz_load_image_address_to_register( Environment * _environment, cha
 }
 
 
-void vdcz_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
+void vdcz_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
@@ -2685,14 +2685,15 @@ void vdcz_put_image( Environment * _environment, char * _image, char * _x, char 
     MAKE_LABEL
 
     outhead1("putimage%s:", label);
+    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
 
     vdcz_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
 
     outline1("LD DE, (%s)", _x );
     outline1("LD IY, (%s)", _y );
-    outline1("LD A, (%s)", _flags );
+    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
     outline0("LD (IMAGEF), A" );
-    outline1("LD A, (%s)", address_displacement( _environment, _flags, "1" ) );
+    outline1("LD A, $%2.2x", ( (_flags>>8) & 0xff ) );
     outline0("LD (IMAGET), A" );
 
     outline0("CALL PUTIMAGE");
