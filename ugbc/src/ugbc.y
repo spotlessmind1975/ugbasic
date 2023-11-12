@@ -152,7 +152,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> precision 
 %type <integer> asmio
 %type <integer> system
-%type <string> padding_tile
+%type <integer> padding_tile
 %type <integer> op_comma_or_semicolon
 %type <integer> read_safeness
 %type <integer> line_mode box_mode put_action
@@ -4274,9 +4274,9 @@ slice_definition:
 
 padding_tile:
     {
-        $$ = NULL;
+        $$ = 0;
     }
-    | PAD expr {
+    | PAD const_expr {
         $$ = $2;
     };
 
@@ -4446,19 +4446,19 @@ put_definition_expression:
     }
     | TILEMAP Identifier padding_tile put_image_flags {
         $4 = $4 | FLAG_WITH_PALETTE;
-        put_tilemap_vars( _environment, $2, $4, NULL, NULL, NULL, $3 );
+        put_tilemap( _environment, $2, $4, NULL, NULL, NULL, $3 );
     }
     | TILEMAP Identifier padding_tile LAYER expr put_image_flags {
         $6 = $6 | FLAG_WITH_PALETTE;
-        put_tilemap_vars( _environment, $2, $6, NULL, NULL, $5, $3 );
+        put_tilemap( _environment, $2, $6, NULL, NULL, $5, $3 );
     }
     | TILEMAP Identifier padding_tile FROM expr OP_COMMA expr put_image_flags {
         $8 = $8 | FLAG_WITH_PALETTE;
-        put_tilemap_vars( _environment, $2, $8, $5, $7, NULL, $3 );
+        put_tilemap( _environment, $2, $8, $5, $7, NULL, $3 );
     }
     | TILEMAP Identifier padding_tile LAYER expr FROM expr OP_COMMA expr put_image_flags {
         $10 = $10 | FLAG_WITH_PALETTE;
-        put_tilemap_vars( _environment, $2, $10, $7, $9, $5, $3 );
+        put_tilemap( _environment, $2, $10, $7, $9, $5, $3 );
     }
     ;
 

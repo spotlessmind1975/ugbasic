@@ -1597,7 +1597,7 @@ static void ted_load_image_address_to_register( Environment * _environment, char
 
 }
 
-void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
+void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( tedvars, src_hw_ted_vars_asm);
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
@@ -1613,9 +1613,9 @@ void ted_put_image( Environment * _environment, char * _image, char * _x, char *
     outline0("STA IMAGEY" );
     outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA IMAGEY+1" );
-    outline1("LDA %s", _flags );
+    outline1("LDA #$%2.2x", ( _flags & 0xff ) );
     outline0("STA IMAGEF" );
-    outline1("LDA %s", address_displacement(_environment, _flags, "1") );
+    outline1("LDA #$%2.2x", ( (_flags>>8) & 0xff ) );
     outline0("STA IMAGET" );
 
     outline0("JSR PUTIMAGE");

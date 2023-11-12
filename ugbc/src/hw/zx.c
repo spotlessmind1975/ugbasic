@@ -732,7 +732,7 @@ static void zx_load_image_address_to_register( Environment * _environment, char 
 
 }
 
-void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
+void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     // currently unused
     (void)!_flags;
@@ -748,9 +748,9 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
     outline0("LD (IMAGEX), A" );
     outline1("LD A, (%s)", _y );
     outline0("LD (IMAGEY), A" );
-    outline1("LD A, (%s)", _flags );
+    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
     outline0("LD (IMAGEF), A" );
-    outline1("LD A, (%s)", address_displacement( _environment, _flags, "1") );
+    outline1("LD A, $%2.2x", ( (_flags>>8) & 0xff ) );
     outline0("LD (IMAGET), A" );
 
     outline0("CALL PUTIMAGE");
