@@ -2225,12 +2225,19 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-static void gtia_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+static void gtia_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    outline1("LDA #<%s", _source );
-    outline1("STA %s", _register );
-    outline1("LDA #>%s", _source );
-    outline1("STA %s", address_displacement(_environment, _register, "1") );
+    if ( _source->isAddress ) {
+        outline1("LDA %s", _source->realName );
+        outline1("STA %s", _register );
+        outline1("LDA %s", address_displacement(_environment, _source->realName, "1") );
+        outline1("STA %s", address_displacement(_environment, _register, "1") );
+    } else {
+        outline1("LDA #<%s", _source->realName );
+        outline1("STA %s", _register );
+        outline1("LDA #>%s", _source->realName );
+        outline1("STA %s", address_displacement(_environment, _register, "1") );
+    }
 
     if ( _sequence ) {
 
@@ -2318,7 +2325,7 @@ static void gtia_load_image_address_to_register( Environment * _environment, cha
 
 }
 
-void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
+void gtia_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
@@ -2430,7 +2437,11 @@ void gtia_blit_image( Environment * _environment, char * _sources[], int _source
     outline0("STA BLITIMAGEBLITADDR+2" );
 
     if ( _source_count > 0 ) {
-        gtia_load_image_address_to_register( _environment, "BLITTMPPTR", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+        Resource resource;
+        resource.realName = strdup( _sources[0] );
+        resource.type = VT_IMAGE;
+        resource.isAddress = 0;
+        gtia_load_image_address_to_register( _environment, "BLITTMPPTR", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LDA #$0" );
         outline0( "STA BLITTMPPTR" );
@@ -2438,7 +2449,11 @@ void gtia_blit_image( Environment * _environment, char * _sources[], int _source
     }
 
     if ( _source_count > 1 ) {
-        gtia_load_image_address_to_register( _environment, "BLITTMPPTR2", _sources[1], _sequence, _frame, _frame_size, _frame_count );
+        Resource resource;
+        resource.realName = strdup( _sources[0] );
+        resource.type = VT_IMAGE;
+        resource.isAddress = 0;
+        gtia_load_image_address_to_register( _environment, "BLITTMPPTR2", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LDA #$0" );
         outline0( "STA BLITTMPPTR2" );

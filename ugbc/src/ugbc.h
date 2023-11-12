@@ -364,6 +364,14 @@ typedef enum _VariableType {
 
 } VariableType;
 
+typedef struct _Resource {
+
+    char        *   realName;
+    int             isAddress;
+    VariableType    type;
+
+} Resource;
+
 #define MAX_TEMPORARY_STORAGE           1024
 
 #define MAX_ARRAY_DIMENSIONS            256
@@ -3579,6 +3587,7 @@ void                    blit_image( Environment * _environment, char * _blit, ch
 void                    boom( Environment * _environment, int _channels );
 void                    boom_var( Environment * _environment, char * _channels );
 void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c );
+Resource *              build_resource_for_sequence( Environment * _environment, char * _image, char * _frame, char * _sequence );
 
 //----------------------------------------------------------------------------
 // *C*
