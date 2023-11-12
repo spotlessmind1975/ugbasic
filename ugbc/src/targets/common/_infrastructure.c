@@ -268,13 +268,16 @@ Offsetting * offsetting_size_count( Environment * _environment, int _size, int _
         }
     }
 
+    return actual;
+
 }
 
-void offsetting_add_variable_reference( Environment * _environment, Offsetting * _first, Variable * _var ) {
+void offsetting_add_variable_reference( Environment * _environment, Offsetting * _first, Variable * _var, int _sequence ) {
 
     OffsettingVariable * offsettingVariable = malloc( sizeof( OffsettingVariable ) );
     memset( offsettingVariable, 0, sizeof( OffsettingVariable ) );
     offsettingVariable->variable = _var;
+    offsettingVariable->sequence = _sequence;
 
     offsettingVariable->next = _first->variables;
     _first->variables = offsettingVariable;

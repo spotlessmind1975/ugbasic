@@ -381,6 +381,33 @@ void variable_cleanup( Environment * _environment ) {
                     outline0("");
                 }
             }
+            if ( actual->variables ) {
+                OffsettingVariable * actualVariable = actual->variables;
+                while( actualVariable ) {
+                    if ( actualVariable->sequence ) {
+                        outhead1("%soffsetsequence:", actualVariable->variable->realName );
+                    } else {
+                        outhead1("%soffsetframe:", actualVariable->variable->realName );
+                    }
+                    actualVariable = actualVariable->next;
+                }
+                outline1("LDA #<OFFSETS%4.4x", actual->size );
+                outline0("STA MATHPTR1" );
+                outline1("LDA #>OFFSETS%4.4x", actual->size );
+                outline0("STA MATHPTR1+1" );
+                outline0("CLC" );
+                outline0("LDA MATHPTR0" );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline0("LDA TMPPTR" );
+                outline0("ADC (MATHPTR1), Y" );
+                outline0("STA TMPPTR" );
+                outline0("INY" );
+                outline0("LDA TMPPTR+1" );
+                outline0("ADC (MATHPTR1), Y" );
+                outline0("STA TMPPTR+1" );
+                outline0("RTS" );
+            }
             actual = actual->next;
         }
 

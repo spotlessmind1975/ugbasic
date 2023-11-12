@@ -637,6 +637,8 @@ typedef struct _FloatType {
 
 typedef struct _OffsettingVariable {
 
+    int sequence;
+
     /**
      * Back referenced variable
      */
@@ -3854,7 +3856,7 @@ Variable *              new_image( Environment * _environment, int _width, int _
 // *O*
 //----------------------------------------------------------------------------
 
-void                    offsetting_add_variable_reference( Environment * _environment, Offsetting * _first, Variable * _var );
+void                    offsetting_add_variable_reference( Environment * _environment, Offsetting * _first, Variable * _var, int _sequence );
 Offsetting *            offsetting_size_count( Environment * _environment, int _size, int _count );
 void                    on_gosub( Environment * _environment, char * _expression );
 void                    on_gosub_end( Environment * _environment );
