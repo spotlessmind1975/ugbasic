@@ -135,6 +135,8 @@ Variable * tilemap_load( Environment * _environment, char * _filename, char * _a
         strcat( tilesetFileNameWithPath, tileset->source );
         lookedFilename = resource_load_asserts( _environment, tilesetFileNameWithPath );
         variable_direct_assign( _environment, final->tileset->name, tileset_load( _environment, lookedFilename, NULL, _mode, _flags, _transparent_color, _background_color, _bank_expansion )->name );
+        final->offsettingFrames = offsetting_size_count( _environment, final->tileset->frameSize, final->tileset->frameCount );
+        offsetting_add_variable_reference( _environment, final->offsettingFrames, final->tileset, 0 );
         final->tileset->firstGid = tileset->firstgid;
         tileset = tileset->next;
     }

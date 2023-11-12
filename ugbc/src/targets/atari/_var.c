@@ -385,9 +385,9 @@ void variable_cleanup( Environment * _environment ) {
                 OffsettingVariable * actualVariable = actual->variables;
                 while( actualVariable ) {
                     if ( actualVariable->sequence ) {
-                        outhead1("%soffsetsequence:", actualVariable->variable->realName );
+                        outhead1("%soffsetsequence:", actualVariable->variable->name );
                     } else {
-                        outhead1("%soffsetframe:", actualVariable->variable->realName );
+                        outhead1("%soffsetframe:", actualVariable->variable->name );
                     }
                     actualVariable = actualVariable->next;
                 }
