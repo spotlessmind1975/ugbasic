@@ -68,114 +68,15 @@ have to be drawn on the screen.
 @target all
 </usermanual> */
 
-void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer, char * _padding_tile ) {
+void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer, char * _pad_frame ) {
 
-    MAKE_LABEL
+    deploy_begin( put_tilemap );
 
-    Variable * flags = variable_temporary( _environment, VT_WORD, "(flags)" );
-    variable_store( _environment, flags->name, _flags );
-    Variable * transparency = variable_temporary( _environment, VT_WORD, "(flags)" );
-    variable_store( _environment, transparency->name, FLAG_TRANSPARENCY );
+        MAKE_LABEL
 
-    Variable * tilemap = variable_retrieve( _environment, _tilemap );
-    Variable * dx = variable_temporary( _environment, VT_BYTE, "(dx)");
-    Variable * dy = variable_temporary( _environment, VT_BYTE, "(dy)");
-    Variable * givenLayer = variable_temporary( _environment, VT_BYTE, "(layer)");
-
-    variable_store( _environment, dx->name, 0 );
-    variable_store( _environment, dy->name, 0 );
-    variable_store( _environment, givenLayer->name, 0xff );
-
-    if ( tilemap->type != VT_TILEMAP ) {
-        CRITICAL_CANNOT_PUT_TILEMAP_FOR_NON_TILEMAP( _tilemap );
-    }
-
-    Variable * tileset = variable_retrieve( _environment, tilemap->tileset->name );
-
-    int sizeConst = tilemap->mapWidth * tilemap->mapHeight;
-    Variable * size = variable_temporary( _environment, VT_WORD, "(size)");
-    variable_store( _environment, size->name, sizeConst );
-    
-    int screenWidthAsTilesConst = ( _environment->screenWidth / tileset->frameWidth );
-    int screenHeightAsTilesConst = ( _environment->screenHeight / tileset->frameHeight );
-    // int deltaFrameRow = tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0;
-    int deltaFrameConst = tilemap->mapWidth > screenWidthAsTilesConst ? ( tilemap->mapWidth - screenWidthAsTilesConst ) : 0;
-    Variable * deltaFrameRow = variable_temporary( _environment, VT_WORD, "(deltaFrameRow)");
-    variable_store( _environment, deltaFrameRow->name, deltaFrameConst );
-    int deltaFrameScreenConst = sizeConst - ( tilemap->mapWidth * screenHeightAsTilesConst );
-    Variable * deltaFrameScreen = variable_temporary( _environment, VT_WORD, "(deltaFrameScreen)");
-    variable_store( _environment, deltaFrameScreen->name, deltaFrameScreenConst );
-    Variable * mapWidth = variable_temporary( _environment, VT_BYTE, "(map width)");
-    variable_store( _environment, mapWidth->name, tilemap->mapWidth );
-
-    Variable * frameWidth = variable_temporary( _environment, VT_BYTE, "(frameWidth)");
-    variable_store( _environment, frameWidth->name, tileset->frameWidth );
-    Variable * frameHeight = variable_temporary( _environment, VT_BYTE, "(frameHeight)");
-    variable_store( _environment, frameHeight->name, tileset->frameHeight );
-    
-    Variable * index = NULL;
-
-    index = variable_temporary( _environment, VT_WORD, "(index)" );
-
-    // Starting index from 0 (zero).
-
-    variable_store( _environment, index->name, 0 );
-
-    // If a starting point has been given, we must increase the
-    // index to match the first tile to draw.
-
-    if ( _dx ) {
-        Variable * pdx = variable_retrieve_or_define( _environment, _dx, VT_BYTE, 0 );
-        variable_move( _environment, pdx->name, dx->name );
-    }
-    
-    if ( _dy ) {
-        Variable * pdy = variable_retrieve_or_define( _environment, _dy, VT_BYTE, 0 );
-        variable_move( _environment, pdy->name, dy->name );
-    }
-
-    index = variable_add( _environment, index->name, variable_mul( _environment, dy->name, mapWidth->name )->name );
-    index = variable_add( _environment, index->name, dx->name );
-
-    if ( _layer ) {
-        Variable * player = variable_retrieve_or_define( _environment, _layer, VT_BYTE, 0 );
-        variable_move( _environment, player->name, givenLayer->name );
-        variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, givenLayer->name, size->name )->name )->name, index->name );
-    }
-
-    Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
-    Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
-    Variable * fx = variable_temporary( _environment, VT_BYTE, "(fx)" );
-    Variable * frame = variable_temporary( _environment, VT_BYTE, "(frame)" );
-    Variable * padding = variable_temporary( _environment, VT_BYTE, "(padding)" );
-    Variable * padding2 = variable_temporary( _environment, VT_BYTE, "(padding2)" );
-    Variable * padFrame = variable_temporary( _environment, VT_BYTE, "(pad frame)" );
-
-    if ( _padding_tile ) {
-        Variable * paddingTile = variable_retrieve( _environment, _padding_tile );
-        variable_move( _environment, paddingTile->name, padFrame->name );
-    }
-
-    // For each layer (actually, a normal map has just one layer).
-
-    // for( int layerIndex = 0; layerIndex < tilemap->mapLayers; ++layerIndex ) {
-    char labelForLayers[MAX_TEMPORARY_STORAGE]; sprintf( labelForLayers, "%slayersf", label );
-    char labelNextLayers[MAX_TEMPORARY_STORAGE]; sprintf( labelNextLayers, "%slayersn", label );
-    Variable * mapLayers = variable_temporary( _environment, VT_BYTE, "(mapLayers)" );
-    variable_store( _environment, mapLayers->name, tilemap->mapLayers );
-    Variable * layerIndex = variable_temporary( _environment, VT_BYTE, "(layerIndex)" );
-    variable_store( _environment, layerIndex->name, 0 );
-
-    cpu_label( _environment, labelForLayers );
-
-    cpu_compare_and_branch_8bit( _environment, layerIndex->realName, mapLayers->realName, labelNextLayers, 1 );
-
-    // If a specific layer is selected, we must point to that layer.
-
-        // Let's start from the start of the screen.
-
-        variable_store( _environment, y->name, 0 );
-
+        // Labels
+        char labelForLayers[MAX_TEMPORARY_STORAGE]; sprintf( labelForLayers, "%slayersf", label );
+        char labelNextLayers[MAX_TEMPORARY_STORAGE]; sprintf( labelNextLayers, "%slayersn", label );
         char labelLoopY[MAX_TEMPORARY_STORAGE]; sprintf( labelLoopY, "%sy", label );
         char labelLoopX[MAX_TEMPORARY_STORAGE]; sprintf( labelLoopX, "%sx", label );
         char labelExit[MAX_TEMPORARY_STORAGE]; sprintf( labelExit, "%se", label );
@@ -188,170 +89,317 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         char labelSkipFxCheck[MAX_TEMPORARY_STORAGE]; sprintf( labelSkipFxCheck, "%sskipx", label );
         char labelSkipIndexCheck[MAX_TEMPORARY_STORAGE]; sprintf( labelSkipIndexCheck, "%sskipy", label );
 
-        // Disable vertical padding.
+        // Local constants
+        Variable * transparency = variable_temporary( _environment, VT_WORD, "(flags)" );
+        variable_store( _environment, transparency->name, FLAG_TRANSPARENCY );
 
-        variable_store( _environment, padding2->name, 0 );
+        // Parameters
+        Variable * tilemapAddress = variable_define( _environment, "puttilemap__tilemap", VT_ADDRESS, 0 );
+        Variable * tilesetAddress = variable_define( _environment, "puttilemap__tileset", VT_ADDRESS, 0 );
+        Variable * dx = variable_define( _environment, "puttilemap__dx", VT_BYTE, 0 );
+        Variable * dy = variable_define( _environment, "puttilemap__dy", VT_BYTE, 0 );
+        Variable * layer = variable_define( _environment, "puttilemap__layer", VT_BYTE, 0 );
+        Variable * flags = variable_define( _environment, "puttilemap__flags", VT_WORD, 0 );
+        Variable * size = variable_define( _environment, "puttilemap__size", VT_WORD, 0 );
+        Variable * deltaFrameRow = variable_define( _environment, "puttilemap__deltaFrameRow", VT_WORD, 0 );
+        Variable * deltaFrameScreen = variable_define( _environment, "puttilemap__deltaFrameScreen", VT_WORD, 0 );
+        Variable * mapWidth = variable_define( _environment, "puttilemap__mapWidth", VT_BYTE, 0 );
+        Variable * frameWidth = variable_define( _environment, "puttilemap__frameWidth", VT_BYTE, 0 );
+        Variable * frameHeight = variable_define( _environment, "puttilemap__frameHeight", VT_BYTE, 0 );
+        Variable * padFrame = variable_define( _environment, "puttilemap__padFrame", VT_BYTE, 0 );
+        Variable * mapLayers = variable_define( _environment, "puttilemap__mapLayers", VT_BYTE, 0 );
 
-        // --------------------------------------------------------------------------
-        // Y loop
-        // --------------------------------------------------------------------------
+        // Local variables
+        Variable * index = variable_temporary( _environment, VT_WORD, "(index)" );
+        Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
+        Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
+        Variable * fx = variable_temporary( _environment, VT_BYTE, "(fx)" );
+        Variable * frame = variable_temporary( _environment, VT_BYTE, "(frame)" );
+        Variable * padding = variable_temporary( _environment, VT_BYTE, "(padding)" );
+        Variable * padding2 = variable_temporary( _environment, VT_BYTE, "(padding2)" );
+        Variable * layerIndex = variable_temporary( _environment, VT_BYTE, "(layerIndex)" );
 
-        cpu_label( _environment, labelLoopY );
+        // Starting index from 0 (zero).
+        variable_store( _environment, index->name, 0 );
 
-        // Let's start from the left from the screen.
+        // Starting layer from 0 (zero).
+        variable_store( _environment, layerIndex->name, 0 );
 
-        variable_store( _environment, x->name, 0 );
+        // If a starting point has been given, we must increase the
+        // index to match the first tile to draw.
+        variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, dy->name, mapWidth->name )->name )->name, index->name );
+        variable_move( _environment, variable_add( _environment, index->name, dx->name )->name, index->name );
 
-        // Set the count of frames drawed on the horizontal
-        // line to zero (0).
+        // If a layer has been given, we must increate the index to match
+        // the first tile of the layer to draw.
+        variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, layer->name, size->name )->name )->name, index->name );
 
-        // variable_store( _environment, fx->name, 0 );
+        // *** Add index to the tile address
+        cpu_math_add_16bit( _environment, tilemapAddress->realName, index->realName, tilemapAddress->realName );
 
-        // If a delta position is given, the count of horizontal frames
-        // drawed must be increased by delta position.
+        // For each layer (actually, a normal map has just one layer).
+        // for( int layerIndex = 0; layerIndex < tilemap->mapLayers; ++layerIndex ) {
+        cpu_label( _environment, labelForLayers );
 
-        variable_move( _environment, dx->name, fx->name );
+            // If a specific layer is selected, we must point to that layer.
+            // Let's start from the start of the screen.
 
-        // Disable horizontal padding.
+            variable_store( _environment, y->name, 0 );
 
-        variable_store( _environment, padding->name, 0 );
+            // Disable vertical padding.
 
-        // --------------------------------------------------------------------------
-        // Begin X loop
-        // --------------------------------------------------------------------------
+            variable_store( _environment, padding2->name, 0 );
 
-        cpu_label( _environment, labelLoopX );
+            // --------------------------------------------------------------------------
+            // Y loop
+            // --------------------------------------------------------------------------
 
-        // If the horizontal padding is enabled, we must skip to draw the padding tile.
+            cpu_label( _environment, labelLoopY );
 
-        cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelPadding, 1 );
+            // Let's start from the left from the screen.
 
-        // If the vertical padding is enabled, we must skip to draw the padding tile.
+            variable_store( _environment, x->name, 0 );
 
-        cpu_compare_and_branch_8bit_const(  _environment, padding2->realName, 1, labelPadding, 1 );
+            // Set the count of frames drawed on the horizontal
+            // line to zero (0).
 
-        // Take the tile from the map and increase the index.
+            // variable_store( _environment, fx->name, 0 );
 
-        cpu_move_8bit_indirect2_16bit( _environment, tilemap->realName, index->realName, frame->realName );
-        cpu_inc_16bit( _environment, index->realName );
+            // If a delta position is given, the count of horizontal frames
+            // drawed must be increased by delta position.
 
-        // In case the frame read from the map is 0xff, it means that that specific
-        // frame has not to be drawn, so we exit from this frame drawing.
+            variable_move( _environment, dx->name, fx->name );
 
-        cpu_compare_and_branch_8bit_const(  _environment, frame->realName, 0xff, labelExitFrame, 1 );
+            // Disable horizontal padding.
 
-        // --- DRAW TILE --
+            variable_store( _environment, padding->name, 0 );
 
-        put_image_vars( _environment, tileset->name, x->name, y->name, NULL, NULL, frame->name, NULL,  flags->name );
-        cpu_jump( _environment, labelDonePutImage );
+            // --------------------------------------------------------------------------
+            // Begin X loop
+            // --------------------------------------------------------------------------
 
-        // --- DRAW PADDING TILE --
+            cpu_label( _environment, labelLoopX );
 
-        cpu_label( _environment, labelPadding );
-        put_image_vars( _environment, tileset->name, x->name, y->name, NULL, NULL, padFrame->name, NULL, flags->name );
+            // If the horizontal padding is enabled, we must skip to draw the padding tile.
 
-        // From here and ahead, we drawed the tile so we must calculate the
-        // next conditions and actions to do. We arrive here both if we drawed
-        // a TILE, a PADDING TILE or if we skipped the drawing.
+            cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelPadding, 1 );
 
-        cpu_label( _environment, labelDonePutImage ); cpu_label( _environment, labelExitFrame );
+            // If the vertical padding is enabled, we must skip to draw the padding tile.
 
-        // Increase the horizontal frames drawed count.
+            cpu_compare_and_branch_8bit_const(  _environment, padding2->realName, 1, labelPadding, 1 );
 
-        cpu_inc( _environment, fx->realName );
+            // Take the tile from the map and increase the index.
 
-        // Increase the next X position to draw to.
+            cpu_peek( _environment, tilemapAddress->realName, frame->realName );
+            cpu_inc_16bit( _environment, tilemapAddress->realName );
+            cpu_inc_16bit( _environment, index->realName );
 
-        variable_add_inplace_vars( _environment, x->name, frameWidth->name );
+            // In case the frame read from the map is 0xff, it means that that specific
+            // frame has not to be drawn, so we exit from this frame drawing.
 
-        // If the horizontal padding is enabled, we must move to the skip fx check,
-        // since the horizontal padding is enabled by reaching the horizontal limit.
+            cpu_compare_and_branch_8bit_const(  _environment, frame->realName, 0xff, labelExitFrame, 1 );
 
-        cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelSkipFxCheck, 1 );
+            // --- DRAW TILE --
 
-        // We must check if the horizontal limit is reached. In this case, we must
-        // enable horizontal padding by moving to the specific routine.
+            put_image_vars( _environment, tilesetAddress->name, x->name, y->name, NULL, NULL, frame->name, NULL,  flags->name );
+            cpu_jump( _environment, labelDonePutImage );
 
-        Variable * check = variable_less_than_const( _environment, fx->name, tilemap->mapWidth, 0 );
-        cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x0, labelExitX, 1 );
+            // --- DRAW PADDING TILE --
 
-        // Both if the horizontal limit has been reached or not, we must check if the
-        // screen limit has been reached. If the screen limit has not been reached,
-        // we must repeat the X loop. Otherwise, we exit from the X loop.
+            cpu_label( _environment, labelPadding );
+            put_image_vars( _environment, tilesetAddress->name, x->name, y->name, NULL, NULL, padFrame->name, NULL, flags->name );
 
-        cpu_label( _environment, labelSkipFxCheck );
-        check = variable_less_than_const( _environment, x->name, ( _environment->screenWidth), 0 );
-        cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0xff, labelLoopX, 1 );
-        cpu_jump( _environment, labelExitX2 );
+            // From here and ahead, we drawed the tile so we must calculate the
+            // next conditions and actions to do. We arrive here both if we drawed
+            // a TILE, a PADDING TILE or if we skipped the drawing.
 
-        // --- ENABLE HORIZONTAL PADDING ---
-        cpu_label( _environment, labelExitX );
-        variable_store( _environment, padding->name, 1 );
-        cpu_jump( _environment, labelSkipFxCheck );
+            cpu_label( _environment, labelDonePutImage ); cpu_label( _environment, labelExitFrame );
 
-        // --------------------------------------------------------------------------
-        // End X loop
-        // --------------------------------------------------------------------------
+            // Increase the horizontal frames drawed count.
 
-        cpu_label( _environment, labelExitX2 );
+            cpu_inc( _environment, fx->realName );
 
-        // Disable horizontal padding.
+            // Increase the next X position to draw to.
 
-        variable_store( _environment, padding->name, 0 );
+            variable_add_inplace_vars( _environment, x->name, frameWidth->name );
 
-        // If the screen is narrower than the map, we must move ahead the
-        // index by the calculated delta frame row.
+            // If the horizontal padding is enabled, we must move to the skip fx check,
+            // since the horizontal padding is enabled by reaching the horizontal limit.
 
-        // if ( deltaFrameRow > 0 ) {
-            variable_add_inplace_vars( _environment, index->name, deltaFrameRow->name );
+            cpu_compare_and_branch_8bit_const(  _environment, padding->realName, 1, labelSkipFxCheck, 1 );
+
+            // We must check if the horizontal limit is reached. In this case, we must
+            // enable horizontal padding by moving to the specific routine.
+
+            Variable * check = variable_less_than( _environment, fx->name, mapWidth->name, 0 );
+            cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x0, labelExitX, 1 );
+
+            // Both if the horizontal limit has been reached or not, we must check if the
+            // screen limit has been reached. If the screen limit has not been reached,
+            // we must repeat the X loop. Otherwise, we exit from the X loop.
+
+            cpu_label( _environment, labelSkipFxCheck );
+            check = variable_less_than_const( _environment, x->name, ( _environment->screenWidth), 0 );
+            cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0xff, labelLoopX, 1 );
+            cpu_jump( _environment, labelExitX2 );
+
+            // --- ENABLE HORIZONTAL PADDING ---
+            cpu_label( _environment, labelExitX );
+            variable_store( _environment, padding->name, 1 );
+            cpu_jump( _environment, labelSkipFxCheck );
+
+            // --------------------------------------------------------------------------
+            // End X loop
+            // --------------------------------------------------------------------------
+
+            cpu_label( _environment, labelExitX2 );
+
+            // Disable horizontal padding.
+
+            variable_store( _environment, padding->name, 0 );
+
+            // If the screen is narrower than the map, we must move ahead the
+            // index by the calculated delta frame row.
+
+            // if ( deltaFrameRow > 0 ) {
+                variable_add_inplace_vars( _environment, tilemapAddress->name, deltaFrameRow->name );
+                variable_add_inplace_vars( _environment, index->name, deltaFrameRow->name );
+            // }
+
+            // Move to the next row to draw.
+
+            variable_add_inplace_vars( _environment, y->name, frameHeight->name );
+
+            // If we reach the limit of ther map size, we enable the vertical padding.
+            
+            check = variable_less_than( _environment, index->name, size->name, 0 );
+            cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x00, labelPadding2, 1 );
+
+            // Both if the vertical padding is enabled or not, we must check if the
+            // screen vertical limit has been reached. If not, we repeat the Y loop.
+
+            cpu_label( _environment, labelSkipIndexCheck );
+            check = variable_less_than_const( _environment, y->name, (_environment->screenHeight ), 0 );
+            cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0xff, labelLoopY, 1 );
+            cpu_jump( _environment, labelExit );
+
+            // --- ENABLE VERTICAL PADDING ---
+            cpu_label( _environment, labelPadding2 );
+            variable_store( _environment, padding2->name, 1 );
+            cpu_jump( _environment, labelSkipIndexCheck );
+
+            // --------------------------------------------------------------------------
+            // End Y loop
+            // --------------------------------------------------------------------------
+
+            cpu_label( _environment, labelExit );
+
+            cpu_compare_and_branch_8bit_const( _environment, layer->realName, 0xff, labelNextLayers, 0 );
+
+            cpu_inc( _environment, layerIndex->realName );
+            cpu_compare_and_branch_8bit( _environment, layerIndex->realName, mapLayers->realName, labelNextLayers, 1 );
+
+            // if ( deltaFrameScreen ) {
+                variable_add_inplace_vars( _environment, tilemapAddress->name, deltaFrameScreen->name );
+                variable_add_inplace_vars( _environment, index->name, deltaFrameScreen->name );
+            // }
+
+            // _flags = _flags | FLAG_TRANSPARENCY;
+            variable_move( _environment, 
+                    variable_or( _environment, flags->name, transparency->name )->name, 
+                    flags->name
+                );
+
+            cpu_jump( _environment, labelForLayers );
         // }
 
-        // Move to the next row to draw.
+        cpu_label( _environment, labelNextLayers );
 
-        variable_add_inplace_vars( _environment, y->name, frameHeight->name );
-
-        // If we reach the limit of ther map size, we enable the vertical padding.
+        cpu_return( _environment );
         
-        check = variable_less_than_const( _environment, index->name, tilemap->size, 0 );
-        cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0x00, labelPadding2, 1 );
+    deploy_end( put_tilemap );
 
-        // Both if the vertical padding is enabled or not, we must check if the
-        // screen vertical limit has been reached. If not, we repeat the Y loop.
+    Variable * ptilemap = variable_retrieve( _environment, _tilemap );
+    if ( ptilemap->type != VT_TILEMAP ) {
+        CRITICAL_CANNOT_PUT_TILEMAP_FOR_NON_TILEMAP( _tilemap );
+    }
+    Variable * vtilemap = variable_retrieve( _environment, "puttilemap__tilemap" );
+    cpu_addressof_16bit( _environment, ptilemap->realName, vtilemap->realName );
 
-        cpu_label( _environment, labelSkipIndexCheck );
-        check = variable_less_than_const( _environment, y->name, (_environment->screenHeight ), 0 );
-        cpu_compare_and_branch_8bit_const(  _environment, check->realName, 0xff, labelLoopY, 1 );
-        cpu_jump( _environment, labelExit );
+    Variable * ptileset = variable_retrieve( _environment, ptilemap->tileset->name );
+    Variable * vtileset = variable_retrieve( _environment, "puttilemap__tileset" );
+    cpu_addressof_16bit( _environment, ptileset->realName, vtileset->realName );
 
-        // --- ENABLE VERTICAL PADDING ---
-        cpu_label( _environment, labelPadding2 );
-        variable_store( _environment, padding2->name, 1 );
-        cpu_jump( _environment, labelSkipIndexCheck );
+    Variable * vdx = variable_retrieve( _environment, "puttilemap__dx" );
+    if ( _dx ) {
+        Variable * pdx = variable_retrieve( _environment, _dx );
+        variable_move( _environment, pdx->name, vdx->name );
+    } else {
+        variable_store( _environment, vdx->name, 0 );
+    }
 
-        // --------------------------------------------------------------------------
-        // End Y loop
-        // --------------------------------------------------------------------------
+    Variable * vdy = variable_retrieve( _environment, "puttilemap__dy" );
+    if ( _dy ) {
+        Variable * pdy = variable_retrieve( _environment, _dy );
+        variable_move( _environment, pdy->name, vdy->name );
+    } else {
+        variable_store( _environment, vdy->name, 0 );
+    }
 
-        cpu_label( _environment, labelExit );
+    Variable * vlayer = variable_retrieve( _environment, "puttilemap__layer" );
+    if ( _layer ) {
+        Variable * player = variable_retrieve( _environment, _layer );
+        variable_move( _environment, player->name, vlayer->name );
+    } else {
+        variable_store( _environment, vlayer->name, 0x80 );
+    }
 
-        cpu_compare_and_branch_8bit_const( _environment, givenLayer->realName, 0xff, labelNextLayers, 0 );
+    Variable * vflags = variable_retrieve( _environment, "puttilemap__flags" );
+    variable_store( _environment, vflags->name, _flags );
 
-        cpu_inc( _environment, layerIndex->realName );
+    Variable * vpadFrame = variable_retrieve( _environment, "puttilemap__padFrame" );
+    if ( _pad_frame ) {
+        Variable * ppadFrame = variable_retrieve( _environment, _pad_frame );
+        variable_move( _environment, ppadFrame->name, vpadFrame->name );
+    } else {
+        variable_store( _environment, vpadFrame->name, 0 );
+    }
 
-        // if ( deltaFrameScreen ) {
-            variable_add_inplace_vars( _environment, index->name, deltaFrameScreen->name );
-        // }
+    int sizeConst = ptilemap->mapWidth * ptilemap->mapHeight;
+    Variable * vsize = variable_retrieve( _environment, "puttilemap__size" );
+    variable_store( _environment, vsize->name, sizeConst );
 
-        // _flags = _flags | FLAG_TRANSPARENCY;
-        variable_move( _environment, 
-                variable_or( _environment, flags->name, transparency->name )->name, 
-                flags->name
-            );
+    int screenWidthAsTilesConst = ( _environment->screenWidth / ptileset->frameWidth );
+    int screenHeightAsTilesConst = ( _environment->screenHeight / ptileset->frameHeight );
+    // int deltaFrameRow = tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0;
+    int deltaFrameConst = ptilemap->mapWidth > screenWidthAsTilesConst ? ( ptilemap->mapWidth - screenWidthAsTilesConst ) : 0;
+    Variable * vdeltaFrameRow = variable_retrieve( _environment, "puttilemap__deltaFrameRow" );
+    variable_store( _environment, vdeltaFrameRow->name, deltaFrameConst );
 
-        cpu_jump( _environment, labelForLayers );
-    // }
+    int deltaFrameScreenConst = sizeConst - ( ptilemap->mapWidth * screenHeightAsTilesConst );
+    Variable * vdeltaFrameScreen = variable_retrieve( _environment, "puttilemap__deltaFrameScreen" );
+    variable_store( _environment, vdeltaFrameScreen->name, deltaFrameScreenConst );
 
-    cpu_label( _environment, labelNextLayers );
+    Variable * vmapWidth = variable_retrieve( _environment, "puttilemap__mapWidth" );
+    variable_store( _environment, vmapWidth->name, ptilemap->mapWidth );
+
+    Variable * vframeWidth = variable_retrieve( _environment, "puttilemap__frameWidth" );
+    variable_store( _environment, vframeWidth->name, ptileset->frameWidth );
+
+    Variable * vframeHeight = variable_retrieve( _environment, "puttilemap__frameHeight" );
+    variable_store( _environment, vframeHeight->name, ptileset->frameHeight );
+
+    Variable * vmapLayers = variable_retrieve( _environment, "puttilemap__mapLayers" );
+    variable_store( _environment, vmapLayers->name, ptileset->frameHeight );
+
+    Variable * mapLayers = variable_temporary( _environment, VT_BYTE, "(mapLayers)" );
+    if ( _layer ) {
+        variable_store( _environment, mapLayers->name, 1 );
+    } else {
+        variable_store( _environment, mapLayers->name, ptilemap->mapLayers );
+    }
+
+    cpu_call( _environment, "lib_put_tilemap" );
 
 }
 
