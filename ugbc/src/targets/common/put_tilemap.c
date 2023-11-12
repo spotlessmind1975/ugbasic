@@ -320,7 +320,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
         cpu_label( _environment, "_puttilemap__tilesetoffsetframe" );
 
-        cpu6502_call_indirect( _environment, "_puttilemap__offsetFrameRoutine" );
+        cpu_call_indirect( _environment, "_puttilemap__offsetFrameRoutine" );
 
         cpu_return( _environment );
 
