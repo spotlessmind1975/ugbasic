@@ -252,7 +252,7 @@ static Offsetting * offsetting_by_size( Offsetting * _first, int _size ) {
     return actual;
 }
 
-void offsetting_size_count( Environment * _environment, int _size, int _count ) {
+Offsetting * offsetting_size_count( Environment * _environment, int _size, int _count ) {
 
     Offsetting * actual = offsetting_by_size( _environment->offsetting, _size );
     if ( ! actual ) {
@@ -10491,7 +10491,6 @@ Resource * build_resource_for_sequence( Environment * _environment, char * _imag
     Variable * image = variable_retrieve( _environment, _image );
     resource->realName = image->realName;
     resource->type = image->type;
-    resource->frameSize = image->frameSize;
 
     if ( resource->type == VT_ADDRESS ) {
         resource->isAddress = 1;

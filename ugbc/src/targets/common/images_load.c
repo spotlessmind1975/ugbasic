@@ -319,7 +319,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         CRITICAL_IMAGES_LOAD_IMAGE_TOO_BIG( _filename );
     }
 
-    offsetting_size_count( _environment, result[0]->size, realFramesCount );
+    final->offsettingFrames = offsetting_size_count( _environment, result[0]->size, realFramesCount );
 
     ptr += 3;
     for(i=0; i<realFramesCount; ++i ) {
