@@ -10482,3 +10482,28 @@ void get_image_overwrite_size( Environment * _environment, char * _image, char *
     cpu_move_8bit_indirect( _environment, height->realName, address->realName );
 
 }
+
+Resource * build_resource_for_sequence( Environment * _environment, char * _image, char * _frame, char * _sequence ) {
+
+    Resource * resource = malloc( sizeof( Resource ) );
+    memset( resource, 0, sizeof( Resource ) );
+
+    Variable * image = variable_retrieve( _environment, _image );
+    resource->realName = image->realName;
+    resource->type = image->type;
+    resource->frameSize = image->frameSize;
+
+    if ( resource->type == VT_ADDRESS ) {
+        resource->isAddress = 1;
+        if ( _sequence ) {
+            resource->type = VT_SEQUENCE;
+        } else if ( _frame ) {
+            resource->type = VT_IMAGES;
+        } else {
+            resource->type = VT_IMAGE;
+        }
+    }
+
+    return resource;
+
+}

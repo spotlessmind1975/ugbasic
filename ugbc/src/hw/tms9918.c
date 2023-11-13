@@ -2082,7 +2082,7 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
 
 }
 
-void tms9918_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+void tms9918_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
@@ -2091,7 +2091,6 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
     MAKE_LABEL
 
     outhead1("putimage%s:", label);
-    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
 
     tms9918_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
 
@@ -2099,9 +2098,9 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
     outline0("LD E, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
-    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
+    outline1("LD A, (%s)", _flags );
     outline0("LD (IMAGEF), A" );
-    outline1("LD A, $%2.2x", ( (_flags>>8) & 0xff ) );
+    outline1("LD A, (%s)", address_displacement(_environment, _flags, "1") );
     outline0("LD (IMAGET), A" );
 
     if ( ! _environment->hasGameLoop ) {
