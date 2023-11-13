@@ -298,6 +298,32 @@ void variable_cleanup( Environment * _environment ) {
                     outline0("");
                 }
             }
+            if ( actual->variables ) {
+                OffsettingVariable * actualVariable = actual->variables;
+                while( actualVariable ) {
+                    if ( actualVariable->sequence ) {
+                        outhead1("%soffsetsequence:", actualVariable->variable->name );
+                    } else {
+                        outhead1("%soffsetframe:", actualVariable->variable->name );
+                    }
+                    actualVariable = actualVariable->next;
+                }
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", actual->size );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("PUSH IX" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+                outline0("RET" );
+            }            
             actual = actual->next;
         }
     }
