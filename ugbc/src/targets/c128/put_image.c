@@ -55,6 +55,9 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
     MAKE_LABEL
     
     Variable * image = variable_retrieve( _environment, _image );
+
+    Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
+
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * flags = variable_retrieve_or_define( _environment, _flags, VT_WORD, 0 );
@@ -67,7 +70,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
     }
 
-    switch( image->type ) {
+    switch( resource->type ) {
         case VT_SEQUENCE:
             if ( image->residentAssigned ) {
                 
@@ -89,31 +92,35 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
+                Resource resource;
+                resource.realName = strdup( bankWindowName );
+                resource.isAddress = 0;
+
                 if ( !sequence ) {
                     if ( !frame ) {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
+                        vic2_put_image( _environment, &resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
+                        vic2_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
                     }
                 } else {
                     if ( !frame ) {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                        vic2_put_image( _environment, &resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                        vic2_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     }
                 }
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
+                        vic2_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
+                        vic2_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
                     }
                 } else {
                     if ( !frame ) {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                        vic2_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     } else {
-                        vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                        vic2_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
                     }
                 }
             }
@@ -139,16 +146,20 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
+                Resource resource;
+                resource.realName = strdup( bankWindowName );
+                resource.isAddress = 0;
+
                 if ( !frame ) {
-                    vic2_put_image( _environment, bankWindowName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
+                    vic2_put_image( _environment, &resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
                 } else {
-                    vic2_put_image( _environment, bankWindowName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
+                    vic2_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
                 }
             } else {
                 if ( !frame ) {
-                    vic2_put_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
+                    vic2_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
                 } else {
-                    vic2_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
+                    vic2_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
                 }
             }
             break;
@@ -174,9 +185,13 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
-                vic2_put_image( _environment, bankWindowName, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
+                Resource resource;
+                resource.realName = strdup( bankWindowName );
+                resource.isAddress = 0;
+
+                vic2_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
             } else {
-                vic2_put_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
+                vic2_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
             }
             break;
         default:
