@@ -52,9 +52,10 @@ extern char DATATYPE_AS_STRING[][16];
  */
 void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
-    MAKE_LABEL
-    
     Variable * image = variable_retrieve( _environment, _image );
+
+    Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
+
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * flags = variable_retrieve_or_define( _environment, _flags, VT_WORD, 0 );
@@ -67,120 +68,34 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
     }
 
-    switch( image->type ) {
+    switch( resource->type ) {
         case VT_SEQUENCE:
-            if ( image->residentAssigned ) {
-                
-                char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
-                sprintf(alreadyLoadedLabel, "%salready", label );
-
-                char bankWindowId[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
-
-                char bankWindowName[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
-
-                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                if ( image->uncompressedSize ) {
-                    cpu_msc1_uncompress_direct_direct( _environment, image->realName, bankWindowName );
+            if ( !sequence ) {
+                if ( !frame ) {
+                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
                 } else {
-                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
-                }
-                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
-                cpu_label( _environment, alreadyLoadedLabel );
-
-                if ( !sequence ) {
-                    if ( !frame ) {
-                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
-                    } else {
-                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
-                    }
-                } else {
-                    if ( !frame ) {
-                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
-                    } else {
-                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
-                    }
+                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
                 }
             } else {
-                if ( !sequence ) {
-                    if ( !frame ) {
-                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
-                    } else {
-                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
-                    }
+                if ( !frame ) {
+                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
                 } else {
-                    if ( !frame ) {
-                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
-                    } else {
-                        ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
-                    }
+                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
                 }
             }
             break;
         case VT_IMAGES:
-            if ( image->residentAssigned ) {
-                
-                char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
-                sprintf(alreadyLoadedLabel, "%salready", label );
-
-                char bankWindowId[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
-
-                char bankWindowName[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
-
-                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                if ( image->uncompressedSize ) {
-                    cpu_msc1_uncompress_direct_direct( _environment, image->realName,  bankWindowName );
-                } else {
-                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
-                }
-                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
-                cpu_label( _environment, alreadyLoadedLabel );
-
-                if ( !frame ) {
-                    ef9345_put_image( _environment, bankWindowName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
-                } else {
-                    ef9345_put_image( _environment, bankWindowName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
-                }
+            if ( !frame ) {
+                ef9345_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
             } else {
-                if ( !frame ) {
-                    ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
-                } else {
-                    ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
-                }
+                ef9345_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
             }
             break;
         case VT_IMAGE:
         case VT_ARRAY:
-            if ( image->residentAssigned ) {
-
-                char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
-                sprintf(alreadyLoadedLabel, "%salready", label );
-
-                char bankWindowId[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
-
-                char bankWindowName[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
-
-                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                if ( image->uncompressedSize ) {
-                    cpu_msc1_uncompress_direct_direct( _environment, image->realName, bankWindowName );
-                } else {
-                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
-                }
-                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
-                cpu_label( _environment, alreadyLoadedLabel );
-
-                ef9345_put_image( _environment, bankWindowName, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
-            } else {
-                ef9345_put_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
-            }
+            ef9345_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
-
 }
