@@ -1673,47 +1673,47 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 
 }
 
-static void ef936x_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+static void ef936x_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    outline1("LDY #%s", _source );
-    if ( _sequence ) {
-        outline0("LEAY 3,y" );
-        if ( strlen(_sequence) == 0 ) {
+    if ( !_sequence && !_frame ) {
+        if ( _source->isAddress ) {
+            outline1("LDY %s", _source->realName );
         } else {
-            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
-            outline1("LDB %s", _sequence );
-            outline0("LDA #0" );
-            outline0("LEAX D, X" );
-            outline0("LEAX D, X" );
-            outline0("LDD ,X" );
-            outline0("LEAY D, Y" );
-        }
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
-            } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
-                outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
-            }
+            outline1("LDY #%s", _source->realName );
         }
     } else {
-        if ( _frame ) {
+
+        if ( _source->isAddress ) {
+            outline1("LDY %s", _source->realName );
+        } else {
+            outline1("LDY #%s", _source->realName );
+        }
+
+        if ( _sequence ) {
             outline0("LEAY 3,y" );
-            if ( strlen(_frame) == 0 ) {
+            if ( strlen(_sequence) == 0 ) {
             } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
-                outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
+                outline1("LDB %s", _sequence );
+                outline1("JSR %soffsetsequence", _source->realName );
+            }
+            if ( _frame ) {
+                if ( strlen(_frame) == 0 ) {
+                } else {
+                    outline1("LDB %s", _frame );
+                    outline1("JSR %soffsetframe", _source->realName );
+                }
+            }
+        } else {
+            if ( _frame ) {
+                outline0("LEAY 3,y" );
+                if ( strlen(_frame) == 0 ) {
+                } else {
+                    outline1("LDB %s", _frame );
+                    outline1("JSR %soffsetframe", _source->realName );
+                }
             }
         }
+
     }
 
     if ( _register ) {
@@ -1722,7 +1722,7 @@ static void ef936x_load_image_address_to_register( Environment * _environment, c
 
 }
 
-void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
+void ef936x_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( putimage, src_hw_ef936x_put_image_asm );
@@ -1897,14 +1897,20 @@ void ef936x_blit_image( Environment * _environment, char * _sources[], int _sour
     outline0("STY BLITIMAGEBLITADDR" );
 
     if ( _source_count > 0 ) {
-        ef936x_load_image_address_to_register( _environment, "BLITTMPPTR", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+        Resource resource;
+        resource.realName = strdup( _sources[0] );
+        resource.type = VT_IMAGE;
+        ef936x_load_image_address_to_register( _environment, "BLITTMPPTR", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LDY #0" );
         outline0( "STY BLITTMPPTR" );
     }
 
     if ( _source_count > 1 ) {
-        ef936x_load_image_address_to_register( _environment, "BLITTMPPTR2", _sources[1], _sequence, _frame, _frame_size, _frame_count );
+        Resource resource;
+        resource.realName = strdup( _sources[1] );
+        resource.type = VT_IMAGE;
+        ef936x_load_image_address_to_register( _environment, "BLITTMPPTR2", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LDY #0" );
         outline0( "STY BLITTMPPTR2" );
