@@ -127,12 +127,13 @@ void target_initialization( Environment * _environment ) {
         exit(EXIT_FAILURE);
     }
 
-    outhead0(".segment \"BASIC\"");
-    outline0(".byte $01,$1c,$0b,$1c,$00,$00,$9e,$37,$31,$38,$31,$00,$00,$00" );
-    outhead0(".segment \"CODE\"");
-    outline0("NOP");
-    outline0("NOP");
-    deploy( vars, src_hw_c128_vars_asm);
+    // outhead0(".segment \"BASIC\"");
+    // outline0(".byte $01,$1c,$0b,$1c,$00,$00,$9e,$37,$31,$38,$31,$00,$00,$00" );
+    // outhead0(".segment \"CODE\"");
+    // outline0("NOP");
+    // outline0("NOP");
+    outhead0("CODESTART:");
+    deploy_preferred( vars, src_hw_c128_vars_asm);
 
     setup_text_variables( _environment );
 
