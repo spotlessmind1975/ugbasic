@@ -383,6 +383,33 @@ void variable_cleanup( Environment * _environment ) {
                     outline0("");
                 }
             }
+            if ( actual->variables ) {
+                OffsettingVariable * actualVariable = actual->variables;
+                while( actualVariable ) {
+                    if ( actualVariable->sequence ) {
+                        outhead1("%soffsetsequence:", actualVariable->variable->name );
+                    } else {
+                        outhead1("%soffsetframe:", actualVariable->variable->name );
+                    }
+                    actualVariable = actualVariable->next;
+                }
+                outline1("LDA #<OFFSETS%4.4x", actual->size );
+                outline0("STA MATHPTR1" );
+                outline1("LDA #>OFFSETS%4.4x", actual->size );
+                outline0("STA MATHPTR1+1" );
+                outline0("CLC" );
+                outline0("LDA MATHPTR0" );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline0("LDA TMPPTR" );
+                outline0("ADC (MATHPTR1), Y" );
+                outline0("STA TMPPTR" );
+                outline0("INY" );
+                outline0("LDA TMPPTR+1" );
+                outline0("ADC (MATHPTR1), Y" );
+                outline0("STA TMPPTR+1" );
+                outline0("RTS" );
+            }
             actual = actual->next;
         }
     }
@@ -503,7 +530,17 @@ void variable_cleanup( Environment * _environment ) {
 
     }    
 
-    outhead0(".segment \"CODE\"" );
+    buffered_push_output( );
+
+    outhead0(".segment \"BASIC\"");
+    outline0(".byte $01,$1c,$0b,$1c,$00,$00,$9e,$37,$31,$38,$31,$00,$00,$00" );
+    outhead0(".segment \"CODE\"");
+    outline0("NOP");
+    outline0("NOP");
+    outline0("JMP CODESTART")
+    deploy_inplace_preferred( vars, src_hw_c128_vars_asm);
+
+    // outhead0(".segment \"CODE\"" );
 
     variable_on_memory_init( _environment, 0 );
 

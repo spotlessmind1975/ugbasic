@@ -221,7 +221,8 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
         CRITICAL_TILESET_LOAD_IMAGE_TOO_BIG( _filename );
     }
 
-    offsetting_size_count( _environment, result[0]->size, realFramesCount );
+    final->offsettingFrames = offsetting_size_count( _environment, result[0]->size, realFramesCount );
+    offsetting_add_variable_reference( _environment, final->offsettingFrames, final, 0 );
 
     ptr += 3;
     for(i=0; i<realFramesCount; ++i ) {

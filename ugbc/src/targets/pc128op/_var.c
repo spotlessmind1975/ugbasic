@@ -296,6 +296,24 @@ void variable_cleanup( Environment * _environment ) {
                     outline0("");
                 }
             }
+            if ( actual->variables ) {
+                OffsettingVariable * actualVariable = actual->variables;
+                while( actualVariable ) {
+                    if ( actualVariable->sequence ) {
+                        outhead1("%soffsetsequence", actualVariable->variable->name );
+                    } else {
+                        outhead1("%soffsetframe", actualVariable->variable->name );
+                    }
+                    actualVariable = actualVariable->next;
+                }
+                outline1("LDX #OFFSETS%4.4x", actual->size );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+                outline0("RTS");
+            }
             actual = actual->next;
         }
     }

@@ -1951,83 +1951,61 @@ Variable * tms9918_image_converter( Environment * _environment, char * _data, in
 
 }
 
-static void tms9918_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+static void tms9918_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    outline1("LD HL, %s", _source );
-    if ( _sequence ) {
-
-        outline0("LD DE, $0003" );
-        outline0("ADD HL, DE" );
-        if ( strlen(_sequence) == 0 ) {
-
+    if ( !_sequence && !_frame ) {
+        if ( _source->isAddress ) {
+            outline1("LD HL, (%s)", _source->realName );
         } else {
-            outline0("PUSH HL" );
-            outline1("LD A, (%s)", _sequence );
-            outline0("LD L, A" );
-            outline0("LD H, 0" );
-            outline0("ADD HL, HL" );
-            outline0("LD DE, HL" );
-            outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
-            outline0("ADD HL, DE" );
-            outline0("LD A, (HL)" );
-            outline0("LD E, A" );
-            outline0("INC HL" );
-            outline0("LD A, (HL)" );
-            outline0("LD D, A" );
-            outline0("POP HL" );
-            outline0("ADD HL, DE" );
+            outline1("LD HL, %s", _source->realName );
         }
-
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-                outline0("PUSH HL" );
-                outline1("LD A, (%s)", _frame );
-                outline0("LD L, A" );
-                outline0("LD H, 0" );
-                outline0("ADD HL, HL" );
-                outline0("LD DE, HL" );
-                outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
-                outline0("ADD HL, DE" );
-                outline0("LD A, (HL)" );
-                outline0("LD E, A" );
-                outline0("INC HL" );
-                outline0("LD A, (HL)" );
-                outline0("LD D, A" );
-                outline0("POP HL" );
-                outline0("ADD HL, DE" );
-            }
-        }
-
     } else {
+        if ( _source->isAddress ) {
+            outline1("LD HL, (%s)", _source->realName );
+        } else {
+            outline1("LD HL, %s", _source->realName );
+        }
 
-        if ( _frame ) {
+        if ( _sequence ) {
             outline0("LD DE, $0003" );
             outline0("ADD HL, DE" );
-            if ( strlen(_frame) == 0 ) {
+            if ( strlen(_sequence) == 0 ) {
 
             } else {
+                outline1("LD A, (%s)", _sequence );
                 outline0("PUSH HL" );
-                outline1("LD A, (%s)", _frame );
-                outline0("LD L, A" );
-                outline0("LD H, 0" );
-                outline0("ADD HL, HL" );
-                outline0("LD DE, HL" );
-                outline1("LD HL, OFFSETS%4.4x", _frame_size );
-                outline0("ADD HL, DE" );
-                outline0("LD A, (HL)" );
-                outline0("LD E, A" );
-                outline0("INC HL" );
-                outline0("LD A, (HL)" );
-                outline0("LD D, A" );
-                outline0("POP HL" );
-                outline0("ADD HL, DE" );
+                outline0("POP IX" );
+                outline1("CALL %soffsetsequence", _source->realName );
             }
+            if ( _frame ) {
+                if ( strlen(_frame) == 0 ) {
+
+                } else {
+                    outline1("LD A, (%s)", _frame );
+                    outline0("PUSH HL" );
+                    outline0("POP IX" );
+                    outline1("CALL %soffsetframe", _source->realName );
+                }
+            }
+
+        } else {
+
+            if ( _frame ) {
+                outline0("LD DE, $0003" );
+                outline0("ADD HL, DE" );
+                if ( strlen(_frame) == 0 ) {
+
+                } else {
+                    outline0("PUSH HL" );
+                    outline0("POP IX" );
+                    outline1("LD A, (%s)", _frame );
+                    outline1("CALL %soffsetframe", _source->realName );
+                }
+            }
+
         }
 
     }
-
     if ( _register ) {
         outline1("LD (%s), HL", _register );
     }
@@ -2052,14 +2030,20 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
 
     outhead1("blitimage%s:", label);
     if ( _source_count > 0 ) {
-        tms9918_load_image_address_to_register( _environment, "BLITTMPPTR", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+        Resource resource;
+        resource.realName = strdup( _sources[0] );
+        resource.type = VT_IMAGE;
+        tms9918_load_image_address_to_register( _environment, "BLITTMPPTR", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LD HL, 0" );
         outline0( "LD (BLITTMPPTR), HL" );
     }
 
     if ( _source_count > 1 ) {
-        tms9918_load_image_address_to_register( _environment, "BLITTMPPTR2", _sources[1], _sequence, _frame, _frame_size, _frame_count );
+        Resource resource;
+        resource.realName = strdup( _sources[0] );
+        resource.type = VT_IMAGE;
+        tms9918_load_image_address_to_register( _environment, "BLITTMPPTR2", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LD HL, 0" );
         outline0( "LD (BLITTMPPTR2), HL" );
@@ -2082,7 +2066,7 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
 
 }
 
-void tms9918_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
+void tms9918_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
@@ -2400,7 +2384,10 @@ void tms9918_slice_image_copy( Environment * _environment, char * _image,  char 
 
     MAKE_LABEL
 
-    tms9918_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    Resource resource;
+    resource.realName = strdup( _image );
+    resource.type = VT_IMAGE;
+    tms9918_load_image_address_to_register( _environment, NULL, &resource, _sequence, _frame, _frame_size, _frame_count );
 
     outline1( "LD DE, %s", _destination );
 
@@ -2417,7 +2404,10 @@ void tms9918_slice_image_extract( Environment * _environment, char * _image,  ch
 
     MAKE_LABEL
 
-    tms9918_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    Resource resource;
+    resource.realName = strdup( _image );
+    resource.type = VT_IMAGE;
+    tms9918_load_image_address_to_register( _environment, NULL, &resource, _sequence, _frame, _frame_size, _frame_count );
 
     Variable * sliceImageX = variable_retrieve( _environment, _environment->sliceImageX );
     Variable * sliceImageY = variable_retrieve( _environment, _environment->sliceImageY );

@@ -252,7 +252,7 @@ static Offsetting * offsetting_by_size( Offsetting * _first, int _size ) {
     return actual;
 }
 
-void offsetting_size_count( Environment * _environment, int _size, int _count ) {
+Offsetting * offsetting_size_count( Environment * _environment, int _size, int _count ) {
 
     Offsetting * actual = offsetting_by_size( _environment->offsetting, _size );
     if ( ! actual ) {
@@ -267,6 +267,20 @@ void offsetting_size_count( Environment * _environment, int _size, int _count ) 
             actual->count = _count;
         }
     }
+
+    return actual;
+
+}
+
+void offsetting_add_variable_reference( Environment * _environment, Offsetting * _first, Variable * _var, int _sequence ) {
+
+    OffsettingVariable * offsettingVariable = malloc( sizeof( OffsettingVariable ) );
+    memset( offsettingVariable, 0, sizeof( OffsettingVariable ) );
+    offsettingVariable->variable = _var;
+    offsettingVariable->sequence = _sequence;
+
+    offsettingVariable->next = _first->variables;
+    _first->variables = offsettingVariable;
 
 }
 
@@ -10491,7 +10505,6 @@ Resource * build_resource_for_sequence( Environment * _environment, char * _imag
     Variable * image = variable_retrieve( _environment, _image );
     resource->realName = image->realName;
     resource->type = image->type;
-    resource->frameSize = image->frameSize;
 
     if ( resource->type == VT_ADDRESS ) {
         resource->isAddress = 1;

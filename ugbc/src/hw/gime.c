@@ -2357,24 +2357,14 @@ static void gime_load_image_address_to_register( Environment * _environment, cha
         outline0("LEAY 3,y" );
         if ( strlen(_sequence) == 0 ) {
         } else {
-            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
             outline1("LDB %s", _sequence );
-            outline0("LDA #0" );
-            outline0("LEAX D, X" );
-            outline0("LEAX D, X" );
-            outline0("LDD ,X" );
-            outline0("LEAY D, Y" );
+            outline1("JSR %soffsetframe", _source->realName );
         }
         if ( _frame ) {
             if ( strlen(_frame) == 0 ) {
             } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
+                outline1("JSR %soffsetframe", _source->realName );
             }
         }
     } else {
@@ -2382,13 +2372,8 @@ static void gime_load_image_address_to_register( Environment * _environment, cha
             outline0("LEAY 3,y" );
             if ( strlen(_frame) == 0 ) {
             } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
+                outline1("JSR %soffsetframe", _source->realName );
             }
         }
     }
@@ -2465,24 +2450,14 @@ void gime_put_image( Environment * _environment, Resource * _image, char * _x, c
         outline0("LEAY 3,y" );
         if ( strlen(_sequence) == 0 ) {
         } else {
-            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
             outline1("LDB %s", _sequence );
-            outline0("LDA #0" );
-            outline0("LEAX D, X" );
-            outline0("LEAX D, X" );
-            outline0("LDD ,X" );
-            outline0("LEAY D, Y" );
+            outline1("JSR %soffsetframe", _image->realName );
         }
         if ( _frame ) {
             if ( strlen(_frame) == 0 ) {
             } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
+                outline1("JSR %soffsetframe", _image->realName );
             }
         }
     } else {
@@ -2490,16 +2465,12 @@ void gime_put_image( Environment * _environment, Resource * _image, char * _x, c
             outline0("LEAY 3,y" );
             if ( strlen(_frame) == 0 ) {
             } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
+                outline1("JSR %soffsetframe", _image->realName );
             }
         }
     }
+
     outline1("LDD %s", _x );
     outline0("STD IMAGEX" );
     outline1("LDD %s", _y );

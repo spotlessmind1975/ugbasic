@@ -653,86 +653,68 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
 }
 
 
-static void zx_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+static void zx_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    outline2("LD %s, %s", _register, _source );
-    if ( _sequence ) {
-
-        outline0("LD DE, $0003" );
-        outline0("ADD HL, DE" );
-        if ( strlen(_sequence) == 0 ) {
-
+    if ( !_sequence && !_frame ) {
+        if ( _source->isAddress ) {
+            outline1("LD HL, (%s)", _source->realName );
         } else {
-            outline0("PUSH HL" );
-            outline1("LD A, (%s)", _sequence );
-            outline0("LD L, A" );
-            outline0("LD H, 0" );
-            outline0("ADD HL, HL" );
-            outline0("LD DE, HL" );
-            outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
-            outline0("ADD HL, DE" );
-            outline0("LD A, (HL)" );
-            outline0("LD E, A" );
-            outline0("INC HL" );
-            outline0("LD A, (HL)" );
-            outline0("LD D, A" );
-            outline0("POP HL" );
-            outline0("ADD HL, DE" );
+            outline1("LD HL, %s", _source->realName );
         }
-
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-                outline0("PUSH HL" );
-                outline1("LD A, (%s)", _frame );
-                outline0("LD L, A" );
-                outline0("LD H, 0" );
-                outline0("ADD HL, HL" );
-                outline0("LD DE, HL" );
-                outline1("LD HL, OFFSETS%4.4x", _frame_size );
-                outline0("ADD HL, DE" );
-                outline0("LD A, (HL)" );
-                outline0("LD E, A" );
-                outline0("INC HL" );
-                outline0("LD A, (HL)" );
-                outline0("LD D, A" );
-                outline0("POP HL" );
-                outline0("ADD HL, DE" );
-            }
-        }
-
     } else {
+        if ( _source->isAddress ) {
+            outline1("LD HL, (%s)", _source->realName );
+        } else {
+            outline1("LD HL, %s", _source->realName );
+        }
 
-        if ( _frame ) {
+        if ( _sequence ) {
             outline0("LD DE, $0003" );
             outline0("ADD HL, DE" );
-            if ( strlen(_frame) == 0 ) {
+            if ( strlen(_sequence) == 0 ) {
 
             } else {
+                outline1("LD A, (%s)", _sequence );
                 outline0("PUSH HL" );
-                outline1("LD A, (%s)", _frame );
-                outline0("LD L, A" );
-                outline0("LD H, 0" );
-                outline0("ADD HL, HL" );
-                outline0("LD DE, HL" );
-                outline1("LD HL, OFFSETS%4.4x", _frame_size );
-                outline0("ADD HL, DE" );
-                outline0("LD A, (HL)" );
-                outline0("LD E, A" );
-                outline0("INC HL" );
-                outline0("LD A, (HL)" );
-                outline0("LD D, A" );
-                outline0("POP HL" );
-                outline0("ADD HL, DE" );
+                outline0("POP IX" );
+                outline1("CALL %soffsetsequence", _source->realName );
             }
+            if ( _frame ) {
+                if ( strlen(_frame) == 0 ) {
+
+                } else {
+                    outline1("LD A, (%s)", _frame );
+                    outline0("PUSH HL" );
+                    outline0("POP IX" );
+                    outline1("CALL %soffsetframe", _source->realName );
+                }
+            }
+
+        } else {
+
+            if ( _frame ) {
+                outline0("LD DE, $0003" );
+                outline0("ADD HL, DE" );
+                if ( strlen(_frame) == 0 ) {
+
+                } else {
+                    outline0("PUSH HL" );
+                    outline0("POP IX" );
+                    outline1("LD A, (%s)", _frame );
+                    outline1("CALL %soffsetframe", _source->realName );
+                }
+            }
+
         }
 
+    }
+    if ( _register ) {
+        outline1("LD (%s), HL", _register );
     }
 
 }
 
-void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
+void zx_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
     // currently unused
     (void)!_flags;
@@ -742,7 +724,7 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
     deploy( vars, src_hw_zx_vars_asm);
     deploy( putimage, src_hw_zx_put_image_asm );
 
-    zx_load_image_address_to_register( _environment, "HL", _image, _sequence, _frame, _frame_size, _frame_count );
+    zx_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
 
     outline1("LD A, (%s)", _x );
     outline0("LD (IMAGEX), A" );
@@ -770,7 +752,10 @@ void zx_blit_image( Environment * _environment, char * _sources[], int _source_c
 
     outhead1("blitimage%s:", label);
     if ( _source_count > 0 ) {
-        zx_load_image_address_to_register( _environment, "HL", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+        Resource resource;
+        resource.realName = strdup( _sources[0] );
+        resource.type = VT_IMAGE;
+        zx_load_image_address_to_register( _environment, NULL, &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LD HL, 0" );
     }
@@ -780,7 +765,10 @@ void zx_blit_image( Environment * _environment, char * _sources[], int _source_c
     outline0("EI");
 
     if ( _source_count > 1 ) {
-        zx_load_image_address_to_register( _environment, "HL", _sources[1], _sequence, _frame, _frame_size, _frame_count );
+        Resource resource;
+        resource.realName = strdup( _sources[1] );
+        resource.type = VT_IMAGE;
+        zx_load_image_address_to_register( _environment, NULL, &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LD HL, 0" );
     }

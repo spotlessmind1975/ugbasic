@@ -1048,7 +1048,7 @@ Variable * ef9345_image_converter( Environment * _environment, char * _data, int
 
 }
 
-void ef9345_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
+void ef9345_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
 }
 

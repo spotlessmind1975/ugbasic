@@ -1504,100 +1504,97 @@ Variable * ted_image_converter( Environment * _environment, char * _data, int _w
 
 }
 
-static void ted_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+static void ted_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    outline1("LDA #<%s", _source );
-    outline1("STA %s", _register );
-    outline1("LDA #>%s", _source );
-    outline1("STA %s", address_displacement(_environment, _register, "1") );
+    if ( !_sequence && !_frame ) {
+        if ( _source->isAddress ) {
+            outline1("LDA %s", _source->realName );
+            outline1("STA %s", _register );
+            outline1("LDA %s", address_displacement(_environment, _source->realName, "1") );
+            outline1("STA %s", address_displacement(_environment, _register, "1") );
+        } else {
+            outline1("LDA #<%s", _source->realName );
+            outline1("STA %s", _register );
+            outline1("LDA #>%s", _source->realName );
+            outline1("STA %s", address_displacement(_environment, _register, "1") );
+        }
+    } else {
+        if ( _source->isAddress ) {
+            outline1("LDA %s", _source->realName );
+            outline0("STA TMPPTR" );
+            outline1("LDA %s", address_displacement(_environment, _source->realName, "1") );
+            outline0("STA TMPPTR+1" );
+        } else {
+            outline1("LDA #<%s", _source->realName );
+            outline0("STA TMPPTR" );
+            outline1("LDA #>%s", _source->realName );
+            outline0("STA TMPPTR+1" );
+        }
 
-    if ( _sequence ) {
+        if ( _sequence ) {
+            outline0("CLC" );
+            outline0("LDA TMPPTR" );
+            outline0("ADC #3" );
+            outline0("STA TMPPTR" );
+            outline0("LDA TMPPTR+1" );
+            outline0("ADC #0" );
+            outline0("STA  TMPPTR+1" );
 
-        outline0("CLC" );
-        outline1("LDA %s", _register );
-        outline0("ADC #3" );
-        outline1("STA %s", _register );
-        outline1("LDA %s", address_displacement(_environment, _register, "1") );
-        outline0("ADC #0" );
-        outline1("STA %s", address_displacement(_environment, _register, "1") );
-        if ( strlen(_sequence) == 0 ) {
+            if ( strlen(_sequence) == 0 ) {
+
+            } else {
+                outline1("LDA %s", _sequence );
+                outline0("STA MATHPTR0" );
+                outline1("JSR %soffsetsequence", _source->realName );
+            }
+            if ( _frame ) {
+                if ( strlen(_frame) == 0 ) {
+
+                } else {
+                    outline1("LDA %s", _frame );
+                    outline0("STA MATHPTR0" );
+                    outline1("JSR %soffsetframe", _source->realName );
+                }
+            }
 
         } else {
-            outline1("LDA #<OFFSETS%4.4x", _frame_size * _frame_count );
-            outline0("STA MATHPTR0" );
-            outline1("LDA #>OFFSETS%4.4x", _frame_size * _frame_count );
-            outline0("STA MATHPTR0+1" );
-            outline0("CLC" );
-            outline1("LDA %s", _sequence );
-            outline0("ASL" );
-            outline0("TAY" );
-            outline1("LDA %s", _register );
-            outline0("ADC (MATHPTR0), Y" );
-            outline1("STA %s", _register );
-            outline0("INY" );
-            outline1("LDA %s", address_displacement(_environment, _register, "1") );
-            outline0("ADC (MATHPTR0+1), Y" );
-            outline1("STA %s", address_displacement(_environment, _register, "1") );
+
+            if ( _frame ) {
+                outline0("CLC" );
+                outline0("LDA TMPPTR" );
+                outline0("ADC #3" );
+                outline0("STA TMPPTR" );
+                outline0("LDA TMPPTR+1" );
+                outline0("ADC #0" );
+                outline0("STA  TMPPTR+1" );
+                if ( strlen(_frame) == 0 ) {
+
+                } else {
+                    outline1("LDA %s", _frame );
+                    outline0("STA MATHPTR0" );
+                    outline1("JSR %soffsetframe", _source->realName );
+                }
+            }
+
         }
 
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-                outline1("LDA #<OFFSETS%4.4x", _frame_size );
-                outline0("STA MATHPTR0" );
-                outline1("LDA #>OFFSETS%4.4x", _frame_size );
-                outline0("STA MATHPTR0+1" );
-                outline0("CLC" );
-                outline1("LDA %s", _frame );
-                outline0("ASL" );
-                outline0("TAY" );
-                outline1("LDA %s", _register );
-                outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s", _register );
-                outline0("INY" );
-                outline1("LDA %s", address_displacement(_environment, _register, "1") );
-                outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s", address_displacement(_environment, _register, "1") );
-            }
-        }
-
-    } else {
-
-        if ( _frame ) {
-            outline0("CLC" );
-            outline1("LDA %s", _register );
-            outline0("ADC #3" );
+        if ( _source->isAddress ) {
+            outline0("LDA TMPPTR" );
             outline1("STA %s", _register );
-            outline1("LDA %s", address_displacement(_environment, _register, "1") );
-            outline0("ADC #0" );
+            outline0("LDA TMPPTR+1" );
             outline1("STA %s", address_displacement(_environment, _register, "1") );
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-                outline1("LDA #<OFFSETS%4.4x", _frame_size );
-                outline0("STA MATHPTR0" );
-                outline1("LDA #>OFFSETS%4.4x", _frame_size );
-                outline0("STA MATHPTR0+1" );
-                outline0("CLC" );
-                outline1("LDA %s", _frame );
-                outline0("ASL" );
-                outline0("TAY" );
-                outline1("LDA %s", _register );
-                outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s", _register );
-                outline0("INY" );
-                outline1("LDA %s", address_displacement(_environment, _register, "1") );
-                outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s", address_displacement(_environment, _register, "1") );
-            }
+        } else {
+            outline0("LDA TMPPTR" );
+            outline1("STA %s", _register );
+            outline0("LDA TMPPTR+1" );
+            outline1("STA %s", address_displacement(_environment, _register, "1") );
         }
 
     }
 
 }
 
-void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
+void ted_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
     deploy( tedvars, src_hw_ted_vars_asm);
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
@@ -1642,7 +1639,10 @@ void ted_blit_image( Environment * _environment, char * _sources[], int _source_
     outline0("STA BLITIMAGEBLITADDR+2" );
 
     if ( _source_count > 0 ) {
-        ted_load_image_address_to_register( _environment, "BLITTMPPTR", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+        Resource resource;
+        resource.realName = strdup( _sources[0] );
+        resource.type = VT_IMAGE;
+        ted_load_image_address_to_register( _environment, "BLITTMPPTR", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LDA #$0" );
         outline0( "STA BLITTMPPTR" );
@@ -1650,7 +1650,10 @@ void ted_blit_image( Environment * _environment, char * _sources[], int _source_
     }
 
     if ( _source_count > 1 ) {
-        ted_load_image_address_to_register( _environment, "BLITTMPPTR2", _sources[1], _sequence, _frame, _frame_size, _frame_count );
+        Resource resource;
+        resource.realName = strdup( _sources[0] );
+        resource.type = VT_IMAGE;
+        ted_load_image_address_to_register( _environment, "BLITTMPPTR2", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LDA #$0" );
         outline0( "STA BLITTMPPTR2" );

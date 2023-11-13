@@ -224,13 +224,15 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
         CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _filename );
     }
 
-    offsetting_size_count( _environment, result[0]->size, wc );
+    final->offsettingFrames = offsetting_size_count( _environment, result[0]->size, wc );
+    offsetting_add_variable_reference( _environment, final->offsettingFrames, final, 0 );
 
     if ( ( wc*result[0]->size ) > 0xffff ) {
         CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _filename );
     }
 
-    offsetting_size_count( _environment, wc*result[0]->size, hc );
+    final->offsettingSequences = offsetting_size_count( _environment, wc*result[0]->size, hc );
+    offsetting_add_variable_reference( _environment, final->offsettingSequences, final, 1 );
 
     ptr += 3;
     for(int i=0;i<hc;++i) {

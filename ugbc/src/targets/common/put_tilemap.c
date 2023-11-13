@@ -108,6 +108,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         Variable * frameHeight = variable_define( _environment, "puttilemap__frameHeight", VT_BYTE, 0 );
         Variable * padFrame = variable_define( _environment, "puttilemap__padFrame", VT_BYTE, 0 );
         Variable * mapLayers = variable_define( _environment, "puttilemap__mapLayers", VT_BYTE, 0 );
+        Variable * offsetFrameRoutine = variable_define( _environment, "puttilemap__offsetFrameRoutine", VT_ADDRESS, 0 );
 
         // Local variables
         Variable * index = variable_temporary( _environment, VT_WORD, "(index)" );
@@ -316,7 +317,13 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         cpu_label( _environment, labelNextLayers );
 
         cpu_return( _environment );
-        
+
+        cpu_label( _environment, "_puttilemap__tilesetoffsetframe" );
+
+        cpu_call_indirect( _environment, "_puttilemap__offsetFrameRoutine" );
+
+        cpu_return( _environment );
+
     deploy_end( put_tilemap );
 
     Variable * ptilemap = variable_retrieve( _environment, _tilemap );
@@ -399,6 +406,10 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         variable_store( _environment, mapLayers->name, ptilemap->mapLayers );
     }
 
+    char labelForTileOffsetFrame[MAX_TEMPORARY_STORAGE]; sprintf( labelForTileOffsetFrame, "%soffsetframe", ptilemap->tileset->name );
+    Variable * voffsetFrameRoutine = variable_retrieve( _environment, "puttilemap__offsetFrameRoutine" );
+    cpu_addressof_16bit( _environment, labelForTileOffsetFrame, voffsetFrameRoutine->realName );
+    
     cpu_call( _environment, "lib_put_tilemap" );
 
 }
