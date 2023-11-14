@@ -493,6 +493,8 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( putimage, src_hw_gime_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_gime_get_image_asm );
     deploy_inplace_preferred( getimage, src_hw_gime_get_image_asm );
+    deploy_inplace_preferred( clsGraphic, src_hw_gime_cls_graphic_asm );
+    deploy_inplace_preferred( clsText, src_hw_gime_cls_text_asm );
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];

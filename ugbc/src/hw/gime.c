@@ -1385,10 +1385,10 @@ void gime_cls( Environment * _environment ) {
     deploy( gimevars, src_hw_gime_vars_asm);
 
     if ( _environment->currentTileMode ) {
-        deploy( clsText, src_hw_gime_cls_text_asm );
+        deploy_preferred( clsText, src_hw_gime_cls_text_asm );
         outline0("JSR CLST");
     } else {
-        deploy( clsGraphic, src_hw_gime_cls_graphic_asm );
+        deploy_preferred( clsGraphic, src_hw_gime_cls_graphic_asm );
         outline0("JSR CLSG");
     }
 
