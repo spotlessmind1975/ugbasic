@@ -52,7 +52,7 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
     char dwordReadLabel[MAX_TEMPORARY_STORAGE]; sprintf( dwordReadLabel, "%sdw", label );
     char stringReadLabel[MAX_TEMPORARY_STORAGE]; sprintf( stringReadLabel, "%sst", label );
 
-    Variable * variable = variable_retrieve_or_define( _environment, _variable, VT_WORD, 0 );
+    Variable * variable = variable_retrieve( _environment, _variable );
     Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
     Variable * dataptre = NULL;
     Variable * datatype = variable_temporary( _environment, VT_BYTE, "(type)" );
