@@ -406,7 +406,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         variable_store( _environment, mapLayers->name, ptilemap->mapLayers );
     }
 
-    char labelForTileOffsetFrame[MAX_TEMPORARY_STORAGE]; sprintf( labelForTileOffsetFrame, "%soffsetframe", ptilemap->tileset->name );
+    char labelForTileOffsetFrame[MAX_TEMPORARY_STORAGE]; sprintf( labelForTileOffsetFrame, "%soffsetframe", ptilemap->tileset->realName );
     Variable * voffsetFrameRoutine = variable_retrieve( _environment, "puttilemap__offsetFrameRoutine" );
     cpu_addressof_16bit( _environment, labelForTileOffsetFrame, voffsetFrameRoutine->realName );
     

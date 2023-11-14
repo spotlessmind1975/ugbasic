@@ -10263,6 +10263,15 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     var->frameCount = expr->frameCount;
     var->readonly = expr->readonly;
     expr->assigned = 1;
+    var->offsettingFrames = expr->offsettingFrames;
+    if ( var->offsettingFrames ) {
+        offsetting_add_variable_reference( _environment, var->offsettingFrames, var, 0 );
+    }
+
+    var->offsettingSequences = expr->offsettingSequences;
+    if ( var->offsettingSequences ) {
+        offsetting_add_variable_reference( _environment, var->offsettingSequences, var, 1 );
+    }
 
     return var;
 
