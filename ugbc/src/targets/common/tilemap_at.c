@@ -51,23 +51,30 @@ extern char DATATYPE_AS_STRING[][16];
 
 @english
 This function allows to know which is the tile present in a tilemap, 
-given the coordinates of the tile itself.
+given the coordinates of the tile itself. If the tilemap has more than
+one layer, the first layer will be returned. If you need to retrieve the
+tile of a different level, you have to indicate the layer with the ''LAYER'' 
+keyword.
 
 @italian
 Questa funzione permette di conoscere quale sia il tile di una mappa, 
-date le coordinate del tile stesso.
+date le coordinate del tile stesso. Se la mappa ha più di un livello, 
+verrà restituito il primo livello. Se si deve recuperare il tile 
+di un livello diverso, si deve indicare con la parola chiave ''LAYER''.
 
-@syntax = TILEMAP map AT([x],[y])
+@syntax = TILEMAP [LAYER layer] map AT([x],[y])
 
 @example tile = TILEMAP map AT(0,0)
+@example tile = TILEMAP map LAYER 2 AT(0,0)
 
 @target all
 </usermanual> */
-Variable * tilemap_at( Environment * _environment, char * _tilemap, char * _x, char * _y ) {
+Variable * tilemap_at( Environment * _environment, char * _tilemap, char * _x, char * _y, char * _layer ) {
 
     Variable * tilemap = NULL;
     Variable * x = NULL;
     Variable * y = NULL;
+    Variable * layer = NULL;
     Variable * frame = variable_temporary( _environment, VT_BYTE, "(frame)" );
 
     tilemap = variable_retrieve( _environment, _tilemap );
@@ -75,15 +82,27 @@ Variable * tilemap_at( Environment * _environment, char * _tilemap, char * _x, c
         CRITICAL_TILEMAP_HEIGHT_NO_TILEMAP( _tilemap );
     }
 
-    Variable * width = variable_temporary( _environment, VT_BYTE, "(height)" );
+    Variable * width = variable_temporary( _environment, VT_BYTE, "(width)" );
     variable_store( _environment, width->name, tilemap->mapWidth );
+    Variable * height = NULL;
+    if ( _layer ) {
+        height = variable_temporary( _environment, VT_BYTE, "(height)" );
+        variable_store( _environment, height->name, tilemap->mapHeight );
+    }
 
     x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
     y = variable_retrieve_or_define( _environment, _y, VT_BYTE, 0 );
+    if ( _layer ) {
+        layer = variable_retrieve_or_define( _environment, _layer, VT_BYTE, 0 );
+    }
 
     Variable * mul = variable_mul( _environment, width->name, y->name );
     Variable * offset = variable_add( _environment, mul->name, x->name );
-
+    if ( layer ) {
+        Variable * mul2 = variable_mul( _environment, width->name, height->name );
+        Variable * mul3 = variable_mul( _environment, mul2->name, layer->name );
+        variable_move( _environment, variable_add( _environment, mul3->name, offset->name )->name, offset->name );
+    }
     cpu_move_8bit_indirect2_16bit( _environment, tilemap->realName, offset->realName, frame->realName );
 
     return frame;

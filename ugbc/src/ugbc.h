@@ -4046,7 +4046,7 @@ void                    text_vscroll( Environment * _environment );
 void                    text_vscroll_screen( Environment * _environment, int _direction );
 void                    textmap_at( Environment * _environment, int _address );
 void                    textmap_at_var( Environment * _environment, char * _address );
-Variable *              tilemap_at( Environment * _environment, char * _tilemap, char * _x, char * _y );
+Variable *              tilemap_at( Environment * _environment, char * _tilemap, char * _x, char * _y, char * _layer );
 void                    tilemap_disable( Environment * _environment );
 void                    tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 Variable *              tile_at( Environment * _environment, char * _x, char * _y );

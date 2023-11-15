@@ -3000,7 +3000,10 @@ exponential:
         $$ = image_get_height( _environment, $4 )->name;
     }
     | TILEMAP Identifier AT OP expr OP_COMMA expr CP {
-        $$ = tilemap_at( _environment, $2, $5, $7 )->name;
+        $$ = tilemap_at( _environment, $2, $5, $7, NULL )->name;
+    }
+    | TILEMAP Identifier LAYER expr AT OP expr OP_COMMA expr CP {
+        $$ = tilemap_at( _environment, $2, $7, $9, $4 )->name;
     }
     | SCREEN PAGE {
         $$ = screen_page( _environment )->name;
