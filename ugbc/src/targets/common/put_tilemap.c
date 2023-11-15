@@ -300,14 +300,12 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
             cpu_label( _environment, labelExit );
 
-            cpu_compare_and_branch_8bit_const( _environment, layer->realName, 0xff, labelNextLayers, 0 );
-
             cpu_inc( _environment, layerIndex->realName );
             cpu_compare_and_branch_8bit( _environment, layerIndex->realName, mapLayers->realName, labelNextLayers, 1 );
 
             // if ( deltaFrameScreen ) {
                 variable_add_inplace_vars( _environment, tilemapAddress->name, deltaFrameScreen->name );
-                variable_add_inplace_vars( _environment, index->name, deltaFrameScreen->name );
+                variable_store( _environment, index->name, 0 );
             // }
 
             // _flags = _flags | FLAG_TRANSPARENCY;
