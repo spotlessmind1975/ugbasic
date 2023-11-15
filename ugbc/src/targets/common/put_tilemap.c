@@ -136,6 +136,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, layer->name, size->name )->name )->name, index->name );
 
         // *** Add index to the tile address
+        outhead0("pippero");
         cpu_math_add_16bit( _environment, tilemapAddress->realName, index->realName, tilemapAddress->realName );
 
         // For each layer (actually, a normal map has just one layer).
@@ -208,6 +209,8 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
             // --- DRAW PADDING TILE --
 
             cpu_label( _environment, labelPadding );
+            cpu_compare_and_branch_8bit_const(  _environment, padFrame->realName, 0x00, labelDonePutImage, 1 );
+
             put_image_vars( _environment, tilesetAddress->name, x->name, y->name, NULL, NULL, padFrame->name, NULL, flags->name );
 
             // From here and ahead, we drawed the tile so we must calculate the
@@ -358,7 +361,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         Variable * player = variable_retrieve( _environment, _layer );
         variable_move( _environment, player->name, vlayer->name );
     } else {
-        variable_store( _environment, vlayer->name, 0x80 );
+        variable_store( _environment, vlayer->name, 0 );
     }
 
     Variable * vflags = variable_retrieve( _environment, "puttilemap__flags" );
