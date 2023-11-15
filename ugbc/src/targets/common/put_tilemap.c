@@ -136,8 +136,10 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         variable_move( _environment, variable_add( _environment, index->name, variable_mul( _environment, layer->name, size->name )->name )->name, index->name );
 
         // *** Add index to the tile address
-        outhead0("pippero");
         cpu_math_add_16bit( _environment, tilemapAddress->realName, index->realName, tilemapAddress->realName );
+
+        // Restore index to zero.
+        variable_store( _environment, index->name, 0 );
 
         // For each layer (actually, a normal map has just one layer).
         // for( int layerIndex = 0; layerIndex < tilemap->mapLayers; ++layerIndex ) {
@@ -400,13 +402,12 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     variable_store( _environment, vframeHeight->name, ptileset->frameHeight );
 
     Variable * vmapLayers = variable_retrieve( _environment, "puttilemap__mapLayers" );
-    variable_store( _environment, vmapLayers->name, ptileset->frameHeight );
+    variable_store( _environment, vmapLayers->name, ptilemap->mapLayers );
 
-    Variable * mapLayers = variable_temporary( _environment, VT_BYTE, "(mapLayers)" );
     if ( _layer ) {
-        variable_store( _environment, mapLayers->name, 1 );
+        variable_store( _environment, vmapLayers->name, 1 );
     } else {
-        variable_store( _environment, mapLayers->name, ptilemap->mapLayers );
+        variable_store( _environment, vmapLayers->name, ptilemap->mapLayers );
     }
 
     char labelForTileOffsetFrame[MAX_TEMPORARY_STORAGE]; sprintf( labelForTileOffsetFrame, "%soffsetframe", ptilemap->tileset->realName );
