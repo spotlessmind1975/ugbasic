@@ -61,7 +61,7 @@ have to be drawn on the screen.
 
 @italian
 
-@syntax PUT TILEMAP resource [ FROM x, y ]
+@syntax PUT TILEMAP resource [ LAYER layer ] [ FROM x, y ]
 
 @example PUT TILEMAP map
 
