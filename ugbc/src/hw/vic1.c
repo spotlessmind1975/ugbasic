@@ -80,7 +80,7 @@ RGBi * vic1_image_nearest_system_color( RGBi * _color ) {
  * @brief <i>VIC</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with another sprite. The result (0 = no collision, 1 = 
+ * had a collision with another sprite. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * 
  * @param _environment Current calling environment
@@ -95,7 +95,7 @@ void vic1_collision( Environment * _environment, char * _sprite_mask, char * _re
  * @brief <i>VIC</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with a tile. The result (0 = no collision, 1 = 
+ * had a collision with a tile. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * 
  * @param _environment Current calling environment

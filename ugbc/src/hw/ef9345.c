@@ -241,7 +241,7 @@ static void ef9345_image_converter_tiles( char * _source, char * _dest, int _wid
  * @brief <i>EF9345</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with another sprite. The result (0 = no collision, 1 = 
+ * had a collision with another sprite. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * 
  * @param _environment Current calling environment
@@ -256,7 +256,7 @@ Variable * ef9345_collision( Environment * _environment, char * _sprite ) {
  * @brief <i>EF9345</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with a tile. The result (0 = no collision, 1 = 
+ * had a collision with a tile. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * *
  * @param _environment Current calling environment

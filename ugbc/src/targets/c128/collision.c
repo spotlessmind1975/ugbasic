@@ -42,7 +42,7 @@
  * @brief Emit ASM code for <b>= COLLISION([int]x)</b>
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with another sprite. The result (0 = no collision, 1 = 
+ * had a collision with another sprite. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable. This function
  * is used when a direct integer is used.
  * 
@@ -55,13 +55,12 @@
 @keyword COLLISION
 
 @english
-Verify if a sprite has had a collision with another sprite. The result 
-(0 = no collision, <>0 = collision occurred) is returned as result.
+Verify if a sprite has had a collision with another sprite. If the sprite
+has collided, the function will return TRUE. Otherwise, it will return FALSE.
 
 @italian
-Verifica se uno sprite ha avuto una collisione con un altro sprite. Il risultato
-(0 = nessuna collisione, <> 0 = si è verificata una collisione) viene restituito
-come risultato.
+Verifica se uno sprite ha avuto una collisione con un altro sprite. In caso
+di collisione, viene restituito TRUE, altrimenti FALSE.
 
 @syntax = COLLISION(#sprite)
 
@@ -84,9 +83,9 @@ Alias per ''COLLISION''.
 </usermanual> */
 Variable * collision_to( Environment * _environment, int _sprite ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
-
-    return result;
+    Variable * sprite = variable_temporary( _environment, VT_BYTE, "(result)" );
+    variable_store( _environment, sprite->name, _sprite );
+    return vic2_collision( _environment, sprite->name );
 
 }
 
@@ -94,7 +93,7 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
  * @brief Emit ASM code for <b>= COLLISION([expression])</b>
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with another sprite. The result (0 = no collision, 1 = 
+ * had a collision with another sprite. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable. This function
  * is used when an expression is used.
  * 

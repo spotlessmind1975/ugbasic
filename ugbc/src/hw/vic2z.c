@@ -497,7 +497,7 @@ static void vic2z_image_converter_tiles_multicolor( Environment * _environment, 
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with another sprite. The result (0 = no collision, 1 = 
+ * had a collision with another sprite. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * 
  * @param _environment Current calling environment
@@ -506,21 +506,21 @@ static void vic2z_image_converter_tiles_multicolor( Environment * _environment, 
  */
 Variable * vic2z_collision( Environment * _environment, char * _sprite ) {
 
-    _environment->bitmaskNeeded = 1;
+    // _environment->bitmaskNeeded = 1;
 
-    deploy( sprite, src_hw_vic2z_sprites_asm );
+    // deploy( sprite, src_hw_vic2z_sprites_asm );
 
-    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(collision result)");
+    // Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
+    // Variable * result = variable_temporary( _environment, VT_BYTE, "(collision result)");
 
-    MAKE_LABEL
+    // MAKE_LABEL
 
-    outline1("LDA %s", sprite->realName);
-    outline0("STA MATHPTR3");
-    outline0("JSR SPRITECOL");
-    outline1("STA %s", result->realName);
+    // outline1("LDA %s", sprite->realName);
+    // outline0("STA MATHPTR3");
+    // outline0("JSR SPRITECOL");
+    // outline1("STA %s", result->realName);
 
-    return result;
+    // return result;
 
 }
 
@@ -528,7 +528,7 @@ Variable * vic2z_collision( Environment * _environment, char * _sprite ) {
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with a tile. The result (0 = no collision, 1 = 
+ * had a collision with a tile. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * *
  * @param _environment Current calling environment

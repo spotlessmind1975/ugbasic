@@ -111,7 +111,7 @@ static void rgbConverterFunctionInverse( int _value, unsigned char* _red, unsign
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with another sprite. The result (0 = no collision, 1 = 
+ * had a collision with another sprite. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * 
  * @param _environment Current calling environment
@@ -126,7 +126,7 @@ void ef936x_collision( Environment * _environment, char * _sprite_mask, char * _
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with a tile. The result (0 = no collision, 1 = 
+ * had a collision with a tile. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * 
  * @param _environment Current calling environment
