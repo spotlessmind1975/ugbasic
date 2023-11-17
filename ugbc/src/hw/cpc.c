@@ -224,7 +224,7 @@ void cpc_joy( Environment * _environment, int _port, char * _value ) {
  * @brief <i>cpc</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with another sprite. The result (0 = no collision, 1 = 
+ * had a collision with another sprite. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * 
  * @param _environment Current calling environment
@@ -233,8 +233,7 @@ void cpc_joy( Environment * _environment, int _port, char * _value ) {
  */
 Variable * cpc_collision( Environment * _environment, char * _sprite ) {
 
-    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(collision)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(collision)" );
 
     return result;
     
@@ -244,7 +243,7 @@ Variable * cpc_collision( Environment * _environment, char * _sprite ) {
  * @brief <i>cpc</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with a tile. The result (0 = no collision, 1 = 
+ * had a collision with a tile. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * *
  * @param _environment Current calling environment

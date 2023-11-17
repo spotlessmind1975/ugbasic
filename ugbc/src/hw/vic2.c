@@ -497,7 +497,7 @@ static void vic2_image_converter_tiles_multicolor( Environment * _environment, c
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with another sprite. The result (0 = no collision, 1 = 
+ * had a collision with another sprite. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * 
  * @param _environment Current calling environment
@@ -511,7 +511,7 @@ Variable * vic2_collision( Environment * _environment, char * _sprite ) {
     deploy( sprite, src_hw_vic2_sprites_asm );
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(collision result)");
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(collision result)");
 
     MAKE_LABEL
 
@@ -528,7 +528,7 @@ Variable * vic2_collision( Environment * _environment, char * _sprite ) {
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with a tile. The result (0 = no collision, 1 = 
+ * had a collision with a tile. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable.
  * *
  * @param _environment Current calling environment

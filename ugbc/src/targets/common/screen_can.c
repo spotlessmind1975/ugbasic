@@ -71,7 +71,7 @@ Variable * screen_can( Environment * _environment, int _mode ) {
 
     ScreenMode * mode = find_screen_mode_by_id( _environment, _mode );
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(can screen)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(can screen)" );
     
     if ( mode ) {
         cpu_store_8bit( _environment, result->realName, 0xff );

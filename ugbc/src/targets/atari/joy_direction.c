@@ -43,7 +43,7 @@ Variable * joy_direction( Environment * _environment, int _port, int _direction 
     MAKE_LABEL
 
     Variable * value = joy( _environment, _port );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of J*)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of J*)" );
 
     cpu_bit_check( _environment, value->realName, _direction, result->realName, VT_BITWIDTH( value->type ) );
 
@@ -56,7 +56,7 @@ Variable * joy_direction_semivars( Environment * _environment, char * _port, int
     MAKE_LABEL
 
     Variable * value = joy_vars( _environment, _port );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of J*)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of J*)" );
 
     cpu_bit_check( _environment, value->realName, _direction, result->realName, VT_BITWIDTH( value->type ) );
 

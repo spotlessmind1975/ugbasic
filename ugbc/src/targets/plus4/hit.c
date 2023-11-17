@@ -42,7 +42,7 @@
  * @brief Emit ASM code for <b>= HIT([int]x)</b>
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with a tile. The result (0 = no collision, 1 = 
+ * had a collision with a tile. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable. This function
  * is used when a direct integer is used.
  * 

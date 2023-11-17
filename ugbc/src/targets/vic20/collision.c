@@ -42,7 +42,7 @@
  * @brief Emit ASM code for <b>= COLLISION([int]x)</b>
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with another sprite. The result (0 = no collision, 1 = 
+ * had a collision with another sprite. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable. This function
  * is used when a direct integer is used.
  * 
@@ -64,7 +64,7 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
  * @brief Emit ASM code for <b>= COLLISION([expression])</b>
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
- * had a collision with another sprite. The result (0 = no collision, 1 = 
+ * had a collision with another sprite. The result (0 = no collision, 0xff = 
  * collision occurred) is returned in the output variable. This function
  * is used when an expression is used.
  * 
