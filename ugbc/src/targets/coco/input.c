@@ -48,6 +48,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
     char skipColorChangeLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipColorChangeLabel, "%sskipcc", label );
+    char graphicalCursor[MAX_TEMPORARY_STORAGE]; sprintf(graphicalCursor, "%sgrph", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
     char backspaceLabel[MAX_TEMPORARY_STORAGE]; sprintf(backspaceLabel, "%sbackspace", label );
 
@@ -85,6 +86,9 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_label( _environment, repeatLabel );
 
+    Variable * currentTileMode = variable_retrieve( _environment, "CURRENTTILEMODE" );
+    cpu_compare_and_branch_8bit_const( _environment, currentTileMode->realName, 0, graphicalCursor, 1 );
+
     // It would be advisable to implement a cursor as similar as possible to the system one 
     // for the COCO target. The cursor blink routine is disassembled in Color BASIC Unravelled ... 
     // there's a frame countdown timer ... something like 11-12 frames the color gets switched 
@@ -95,6 +99,14 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     cpu_compare_and_branch_8bit_const( _environment, underscoreTimer->realName, 0, skipColorChangeLabel, 0 );
     add_complex( _environment, underscore->name, 16, 143, 224 );
     cpu_store_8bit( _environment, underscoreTimer->realName, 128 );
+    cpu_jump( _environment, skipColorChangeLabel );
+
+    cpu_label( _environment, graphicalCursor );
+    cpu_dec( _environment, underscoreTimer->realName );
+    cpu_compare_and_branch_8bit_const( _environment, underscoreTimer->realName, 0, skipColorChangeLabel, 0 );
+    add_complex( _environment, underscore->name, 10, 32, 42 );
+    cpu_store_8bit( _environment, underscoreTimer->realName, 128 );
+
     cpu_label( _environment, skipColorChangeLabel );
 
     print( _environment, underscore->name, 0 );

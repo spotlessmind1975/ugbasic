@@ -594,10 +594,10 @@ generated/mo5/exe/%.bin: compiler
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/mo5/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.mo5$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/mo5/exeso/,,$(@:.bin=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.mo5$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.bin=.lis) -o ../$@ -O bin $(subst generated/mo5/exeso/,,$(@:.bin=.bas))
 
 generated/mo5/exeso/%.k7: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.k7=.bas))
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.mo5$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O k7 $(subst generated/mo5/exeso/,,$(@:.k7=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.mo5$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.k7=.lis) -o ../$@ -O k7 $(subst generated/mo5/exeso/,,$(@:.k7=.bas))
 
 #------------------------------------------------ 
 # msx1:
