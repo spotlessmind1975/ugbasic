@@ -967,7 +967,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             break;
         case TILEMAP_MODE_MULTICOLOR:
-            _environment->screenWidth = 320;
+            _environment->screenWidth = 160;
             _environment->screenHeight = 200;
             _environment->screenColors = 16;
             _environment->currentModeBW = 0;
@@ -1001,7 +1001,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             break;
         case TILEMAP_MODE_EXTENDED:
-            _environment->screenWidth = 320;
+            _environment->screenWidth = 160;
             _environment->screenHeight = 200;
             _environment->screenColors = 16;
             _environment->currentModeBW = 0;
@@ -2138,6 +2138,197 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
 
 }
 
+static Variable * vic2_image_converter_tilemap_mode_multicolor( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+    deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
+
+    RGBi palette[MAX_PALETTE];
+
+    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, (_flags & FLAG_EXACT) /* sorted */ );
+
+    commonPalette = palette_match( palette, colorUsed, SYSTEM_PALETTE, ( sizeof(SYSTEM_PALETTE) / sizeof(RGBi) ) / 2 );
+    commonPalette = palette_remove_duplicates( commonPalette, colorUsed, &colorUsed );
+    adilinepalette( "CPM1:%d", colorUsed, commonPalette );
+
+    adilinepalette( "CPMS:%ld", ( sizeof(SYSTEM_PALETTE) / sizeof(RGBi) ) / 2, SYSTEM_PALETTE );
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, commonPalette, colorUsed * sizeof( RGBi ) );
+
+    int bufferSize;
+    
+    bufferSize = 3 + 2* ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 2;
+
+    // printf("bufferSize = %d\n", bufferSize );
+
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+    *(buffer+2) = 0;
+
+    int cx=0,cy=0;
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
+
+    // commonTileDescriptors = precalculate_tile_descriptors_for_font( data_fontvic1_bin );
+
+    for( cy=0; cy<(_frame_height >> 3);++cy) {
+        for( cx=0; cx<(_frame_width >> 2);++cx) {
+
+            char *source = _source + ( ( cy * 8 * _width ) + cx * 4 ) * _depth;
+
+            TileData tileData;
+            memset(&tileData,0,sizeof(TileData));
+
+            int mostFrequentColor[16];
+            memset(&mostFrequentColor[0],0,sizeof(int)*16);
+
+            int colorIndex = 0;
+
+            // Loop for all the source surface.
+            for (image_y = 0; image_y < 8; ++image_y) {
+                for (image_x = 0; image_x < 4; ++image_x) {
+
+                    // Take the color of the pixel
+                    rgb.red = *source;
+                    rgb.green = *(source + 1);
+                    rgb.blue = *(source + 2);
+                    if ( _depth > 3 ) {
+                        rgb.alpha = *(_source + 3);
+                    } else {
+                        rgb.alpha = 255;
+                    }
+
+                    colorIndex = 0;
+                    if ( rgb.alpha < 255 ) {
+                        colorIndex = commonPalette[0].index;
+                    } else {
+
+                        int minDistance = 9999;
+                        for( int i=0; i<colorUsed; ++i ) {
+                            int distance = rgbi_distance(&commonPalette[i], &rgb );
+                            if ( distance < minDistance ) {
+                                minDistance = distance;
+                                colorIndex = commonPalette[i].index;
+                            }
+                        }
+
+                    }
+
+                    mostFrequentColor[colorIndex]++;
+
+                    // printf("%d", i );
+
+                    // Calculate the relative tile
+                    
+                    // Calculate the offset starting from the tile surface area
+                    // and the bit to set.
+                    offset = (image_y & 0x07);
+                    bitmask = 1 << ( 6 - (2*(image_x & 0x3)) );
+
+                    if ( colorIndex == 0 ) {
+                        tileData.data[offset] &= ~(3*bitmask);
+                    } else if ( colorIndex == commonPalette[1].index ) {
+                        tileData.data[offset] |= bitmask;
+                    } else if ( colorIndex == commonPalette[2].index ) {
+                        tileData.data[offset] |= 2*bitmask;
+                    } else {
+                        if ( !colorIndex ) {
+                            tileData.data[offset] &= ~(3*bitmask);
+                        } else {
+                            tileData.data[offset] |= (3*bitmask);
+                        }
+                    }
+                    // printf("%1.1x", colorIndex );
+
+                    source += _depth;
+
+                }
+
+                source += _depth * ( _width - 4 );
+
+                // printf("\n" );
+
+            }
+
+            // printf("\n" );
+            
+            TileDescriptor * t = calculate_tile_descriptor( &tileData );
+
+            if ( ! _environment->descriptors ) {
+                _environment->descriptors = precalculate_tile_descriptors_for_font( data_font_alpha_bin, data_font_alpha_bin_len / 8 );
+                _environment->descriptors->first = 0;
+                _environment->descriptors->firstFree = ( (data_font_alpha_bin_len / 8) );
+                _environment->descriptors->lastFree = 255;
+                _environment->descriptors->count = _environment->descriptors->firstFree;
+            }
+
+            int tile = calculate_exact_tile( t, _environment->descriptors );
+
+            if ( tile == -1 ) {
+                if ( _environment->descriptors->count < 256 ) {
+                    tile = (_environment->descriptors->count++);
+                    _environment->descriptors->descriptor[tile] = t; 
+                    memcpy( &_environment->descriptors->data[tile], &tileData, sizeof( TileData ) ); 
+                    // printf("*** tile = %d\n", tile );
+                } else {
+                    tile = calculate_nearest_tile( t, _environment->descriptors );
+                    // printf("--- tile = %d\n", tile );
+                }
+            } else {
+                // printf("    tile = %d\n", tile );
+            }
+
+            // printf("    colorUsed = %d\n", colorUsed );
+            int mostFrequentColorIndex = 1;
+            int mostFrequentColorCount = 0;
+            for(int i=3;i<colorUsed;++i) {
+                if ( mostFrequentColorCount < mostFrequentColor[commonPalette[i].index] ) {
+                    mostFrequentColorCount = mostFrequentColor[commonPalette[i].index];
+                    mostFrequentColorIndex = commonPalette[i].index;
+                }
+            }
+
+            *(buffer + 3 + (cy * ( _frame_width >> 3 ) ) + cx ) = tile;
+            *(buffer + 3 + ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + (cy * ( _frame_width >> 2 ) ) + cx ) = 0x8 | ( ( mostFrequentColorIndex & 0x03 ) );
+
+            // printf("\ntile: %2.2x\n", tile );
+
+        }
+        // printf("\n");
+    }
+
+    *(buffer + 3 + 2* ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) ) = commonPalette[0].index;
+    *(buffer + 3 + 2* ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 1 ) = commonPalette[1].index;
+    *(buffer + 3 + 2* ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 2 ) = commonPalette[2].index;
+
+    // printf("----\n");
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    // printf("----\n");
+
+    return result;
+
+}
+
 Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
@@ -2183,6 +2374,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
         case TILEMAP_MODE_STANDARD:
             return vic2_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
         case TILEMAP_MODE_MULTICOLOR:
+            return vic2_image_converter_tilemap_mode_multicolor( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
         case TILEMAP_MODE_EXTENDED:
             break;
     }
