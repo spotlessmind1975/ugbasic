@@ -75,6 +75,11 @@ PUTIMAGE4X:
 
 @ENDIF
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) )
 
 PUTIMAGE0:
@@ -225,14 +230,14 @@ PUTIMAGE0L1N:
     INC IMAGEY
     LDA IMAGEY
     CMP CURRENTHEIGHT
-    BEQ PUTIMAGE3CAX
-    BCS PUTIMAGE3CAX
-    JMP PUTIMAGE3CAY
+    BEQ PUTIMAGE0CAX
+    BCS PUTIMAGE0CAX
+    JMP PUTIMAGE0CAY
 
-PUTIMAGE3CAX:
+PUTIMAGE0CAX:
     JMP PUTIMAGE0CA
 
-PUTIMAGE3CAY:
+PUTIMAGE0CAY:
 
     LDA IMAGEW
     TAY
@@ -426,11 +431,272 @@ PUTIMAGE0E:
 PUTIMAGE0EA:
     RTS
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) )
+
+PUTIMAGE1:
+
+    LDY #2
+    LDA (TMPPTR),Y
+    STA MATHPTR2
+PUTIMAGE12C:
+    LDY #0
+    LDA (TMPPTR),Y
+    STA IMAGEW
+    LSR
+    LSR
+    LSR
+    STA IMAGEW
+    LDY #1
+    LDA (TMPPTR),Y
+    LSR
+    LSR
+    LSR
+    STA IMAGEH
+    STA IMAGEH2
+
+    CLC
+    LDA TMPPTR
+    ADC #3
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    ;-------------------------
+    ;calc Y-cell, divide by 8
+    ;y/8 is y-cell table index
+    ;-------------------------
+    LDA IMAGEY
+    STA MATHPTR4
+    LSR                         ;/ 2
+    LSR                         ;/ 4
+    LSR                         ;/ 8
+    TAY                         ;tbl_8,y index
+
+    CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 8
+    ;divide 2-byte PLOTX / 8
+    ;------------------------
+    LDA IMAGEX
+    ROR IMAGEX+1                ;rotate the high byte into carry flag
+    ROR                        ;lo byte / 2 (rotate C into low byte)
+    LSR                        ;lo byte / 4
+    LSR                        ;lo byte / 8
+    STA MATHPTR0               ;tbl_8,x index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    LDA PLOTCVBASELO,Y          ;table of $A000 row base addresses
+    ADC MATHPTR0               ;+ (8 * Xcell)
+    STA PLOTDEST               ;= cell address
+
+    LDA PLOTCVBASEHI,Y          ;do the high byte
+    ADC #0
+    STA PLOTDEST+1
+
+    LDA PLOTC2VBASELO,Y          ;table of $A000 row base addresses
+    ADC MATHPTR0               ;+ (8 * Xcell)
+    STA PLOTCDEST               ;= cell address
+
+    LDA PLOTC2VBASEHI,Y          ;do the high byte
+    ADC #0
+    STA PLOTCDEST+1
+
+    TYA
+    ADC IMAGEH
+    
+    LDA IMAGEW
+    TAY
+    DEY
+PUTIMAGE1L1:
+    LDA (TMPPTR),Y
+    STA (PLOTDEST),Y
+    DEY
+    CPY #255
+    BNE PUTIMAGE1L1
+
+    LDA IMAGEF
+    AND #64
+    BEQ PUTIMAGE1L1N
+
+    LDA IMAGEF
+    AND #1
+    BNE PUTIMAGE1L1N0
+
+    ORA #65
+    STA IMAGEF
+
+    CLC
+    LDA PLOTDEST
+    ADC CURRENTTILESWIDTH
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    ADC #0
+    STA PLOTDEST+1
+
+    LDA IMAGEW
+    TAY
+    DEY
+    JMP PUTIMAGE1L1
+
+PUTIMAGE1L1N0:
+    LDA IMAGEF
+    AND #$FE
+    STA IMAGEF
+
+PUTIMAGE1L1N:
+
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    CLC
+    LDA PLOTDEST
+    ADC CURRENTTILESWIDTH
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    ADC #$0
+    STA PLOTDEST+1
+
+    DEC IMAGEH
+    BEQ PUTIMAGE1C
+
+    INC IMAGEY
+    INC IMAGEY
+    INC IMAGEY
+    INC IMAGEY
+    INC IMAGEY
+    INC IMAGEY
+    INC IMAGEY
+    INC IMAGEY
+    LDA IMAGEY
+    CMP CURRENTHEIGHT
+    BEQ PUTIMAGE1CAX
+    BCS PUTIMAGE1CAX
+    JMP PUTIMAGE1CAY
+
+PUTIMAGE1CAX:
+    JMP PUTIMAGE1CA
+
+PUTIMAGE1CAY:
+
+    LDA IMAGEW
+    TAY
+    DEY
+    JMP PUTIMAGE1L1
+
+PUTIMAGE1CA:
+
+    LDA MATHPTR4
+    STA IMAGEY
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    DEC IMAGEH
+    LDA IMAGEH
+    CMP #$FF
+    BNE PUTIMAGE1CA
+
+PUTIMAGE1C:
+PUTIMAGE1C16:
+    LDA IMAGEH2
+    STA IMAGEH
+    LDA IMAGEW
+    TAY
+    DEY
+    LDA MATHPTR1
+PUTIMAGE116L2:
+    LDA (TMPPTR),Y
+    STA (PLOTCDEST),Y
+    DEY
+    CPY #255
+    BNE PUTIMAGE116L2
+
+    LDA IMAGEF
+    AND #64
+    BEQ PUTIMAGE116L2N
+
+    LDA IMAGEF
+    AND #1
+    BNE PUTIMAGE116L2N0
+
+    ORA #65
+    STA IMAGEF
+
+    CLC
+    LDA PLOTDEST
+    ADC CURRENTTILESWIDTH
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    ADC #0
+    STA PLOTDEST+1
+
+    LDA IMAGEW
+    TAY
+    DEY
+    JMP PUTIMAGE116L2
+
+PUTIMAGE116L2N0:
+    LDA IMAGEF
+    AND #$FE
+    STA IMAGEF
+
+PUTIMAGE116L2N:
+
+    DEC IMAGEH
+    BEQ PUTIMAGE1E
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    CLC
+    LDA PLOTCDEST
+    ADC #40
+    STA PLOTCDEST
+    LDA PLOTCDEST+1
+    ADC #0
+    STA PLOTCDEST+1
+
+    LDA IMAGEW
+    TAY
+    DEY
+    JMP PUTIMAGE116L2
+
+PUTIMAGE1E:
+PUTIMAGE1EA:
+    RTS
+
 @ENDIF
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) || ( currentMode == 4 ) )
 
-PUTIMAGE1:
 PUTIMAGE4:
     RTS
 
