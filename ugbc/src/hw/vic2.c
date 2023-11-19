@@ -1953,40 +1953,17 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */ );
+    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, (_flags & FLAG_EXACT) /* sorted */ );
+
+    commonPalette = palette_match( palette, colorUsed, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, colorUsed, &colorUsed );
+    adilinepalette( "CPM1:%d", colorUsed, commonPalette );
+
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-
-    int i, j, k;
-
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-            if (distance < minDistance) {
-                // printf(" candidated...\n" );
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-    }
-
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    memcpy( result->originalPalette, commonPalette, colorUsed * sizeof( RGBi ) );
 
     int bufferSize;
     
@@ -2056,19 +2033,21 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
                     }
 
                     if ( rgb.alpha < 255 ) {
-                        colorIndex = palette[0].index;
+                        colorIndex = commonPalette[0].index;
                     } else {
 
                         int minDistance = 9999;
                         for( int i=0; i<colorUsed; ++i ) {
-                            int distance = rgbi_distance(&palette[i], &rgb );
+                            int distance = rgbi_distance(&commonPalette[i], &rgb );
                             if ( distance < minDistance ) {
                                 minDistance = distance;
-                                colorIndex = palette[i].index;
+                                colorIndex = commonPalette[i].index;
                             }
                         }
 
                     }
+
+                    mostFrequentColor[colorIndex]++;
 
                     // printf("%d", i );
 
@@ -2079,23 +2058,12 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
                     offset = (image_y & 0x07);
                     bitmask = 1 << ( 7 - (image_x & 0x7) );
 
-                    if (colorUsed == 2 ) {
-                        if ( colorIndex ) {
-                            tileData.data[offset] &= ~bitmask;
-                            // printf("%1.1x", colorIndex );
-                        } else {
-                            tileData.data[offset] |= bitmask;
-                            // printf("%1.1x", colorIndex );
-                        }
+                    if ( !colorIndex ) {
+                        tileData.data[offset] &= ~bitmask;
+                        // printf("%1.1x", colorIndex );
                     } else {
-                        if ( colorIndex ) {
-                            mostFrequentColor[colorIndex]++;
-                            tileData.data[offset] &= ~bitmask;
-                            // printf("%1.1x", colorIndex );
-                        } else {
-                            tileData.data[offset] |= bitmask;
-                            // printf("%1.1x", colorIndex );
-                        }
+                        tileData.data[offset] |= bitmask;
+                        // printf("%1.1x", colorIndex );
                     }
 
                     source += _depth;
@@ -2127,26 +2095,27 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
                     tile = (_environment->descriptors->count++);
                     _environment->descriptors->descriptor[tile] = t; 
                     memcpy( &_environment->descriptors->data[tile], &tileData, sizeof( TileData ) ); 
-                    printf("*** tile = %d\n", tile );
+                    // printf("*** tile = %d\n", tile );
                 } else {
                     tile = calculate_nearest_tile( t, _environment->descriptors );
-                    printf("--- tile = %d\n", tile );
+                    // printf("--- tile = %d\n", tile );
                 }
             } else {
-                printf("    tile = %d\n", tile );
+                // printf("    tile = %d\n", tile );
+            }
+
+            // printf("    colorUsed = %d\n", colorUsed );
+            int mostFrequentColorIndex = 1;
+            int mostFrequentColorCount = 0;
+            for(int i=0;i<colorUsed;++i) {
+                if ( mostFrequentColorCount < mostFrequentColor[commonPalette[i].index] ) {
+                    mostFrequentColorCount = mostFrequentColor[commonPalette[i].index];
+                    mostFrequentColorIndex = commonPalette[i].index;
+                }
             }
 
             *(buffer + 3 + (cy * ( _frame_width >> 3 ) ) + cx ) = tile;
             if ( colorUsed > 2 ) {
-                int mostFrequentColorIndex = 1;
-                int mostFrequentColorCount = 0;
-                for(i=0;i<colorUsed;++i) {
-                    if ( mostFrequentColorCount < mostFrequentColor[palette[i].index] ) {
-                        mostFrequentColorCount = mostFrequentColor[palette[i].index];
-                        mostFrequentColorIndex = palette[i].index;
-                    }
-                }
-                // printf( "c = %1.1x\n", mostFrequentColorIndex );
                 *(buffer + 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + (cy * ( _frame_width >> 3 ) ) + cx ) = ( ( mostFrequentColorIndex & 0x07 ) );
             }
 
@@ -2157,7 +2126,7 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
     }
 
     if ( colorUsed <= 2 ) {
-        *(buffer + 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) ) = palette[0].index == 0 ? palette[1].index : palette[0].index;
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) ) = commonPalette[0].index == 0 ? commonPalette[1].index : commonPalette[0].index;
     }
     // printf("----\n");
 
