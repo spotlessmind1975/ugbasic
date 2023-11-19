@@ -36,7 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTATDECODE:
-    CP 122
+    CP 123
     JR NC, TEXTATDECODEX1F
     CP 97
     JR C, TEXTATDECODEX1F
