@@ -945,15 +945,15 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("AND #%11101111");
             outline0("STA $D016" );
 
-            // This fix is necessary to reset the lookup for rom character.
-            outline0("LDA $D018" );
-            outline0("AND #%11110000");
-            if ( _environment->fontConfig.schema || _environment->descriptors ) {
-                outline0("ORA #$09");
-            } else {
-                outline0("ORA #$07");
-            }
-            outline0("STA $D018" );
+            // // This fix is necessary to reset the lookup for rom character.
+            // outline0("LDA $D018" );
+            // outline0("AND #%11110000");
+            // if ( _environment->fontConfig.schema || _environment->descriptors ) {
+            //     outline0("ORA #$09");
+            // } else {
+            //     outline0("ORA #$07");
+            // }
+            // outline0("STA $D018" );
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
 
@@ -980,10 +980,15 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("ORA #%00010000");
             outline0("STA $D016" );
 
-            // This fix is necessary to reset the lookup for rom character.
-            outline0("LDA $D018" );
-            outline0("AND #%11110111");
-            outline0("STA $D018" );
+            // // This fix is necessary to reset the lookup for rom character.
+            // outline0("LDA $D018" );
+            // outline0("AND #%11110000");
+            // if ( _environment->fontConfig.schema || _environment->descriptors ) {
+            //     outline0("ORA #$09");
+            // } else {
+            //     outline0("ORA #$07");
+            // }
+            // outline0("STA $D018" );
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
 
@@ -1009,15 +1014,15 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("AND #%11101111");
             outline0("STA $D016" );
 
-            // This fix is necessary to reset the lookup for rom character.
-            outline0("LDA $D018" );
-            outline0("AND #%11110000");
-            if ( _environment->fontConfig.schema || _environment->descriptors ) {
-                outline0("ORA #$09");
-            } else {
-                outline0("ORA #$07");
-            }
-            outline0("STA $D018" );
+            // // This fix is necessary to reset the lookup for rom character.
+            // outline0("LDA $D018" );
+            // outline0("AND #%11110000");
+            // if ( _environment->fontConfig.schema || _environment->descriptors ) {
+            //     outline0("ORA #$09");
+            // } else {
+            //     outline0("ORA #$07");
+            // }
+            // outline0("STA $D018" );
             
             cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
 
@@ -1698,6 +1703,16 @@ void vic2_finalization( Environment * _environment ) {
         outline0("STA $D026" );
     }
 
+    // This fix is necessary to reset the lookup for rom character.
+    outline0("LDA $D018" );
+    outline0("AND #%11110000");
+    if ( _environment->fontConfig.schema || _environment->descriptors ) {
+        outline0("ORA #$09");
+    } else {
+        outline0("ORA #$07");
+    }
+    outline0("STA $D018" );
+
     outline0("RTS");
 
 }
@@ -2108,16 +2123,17 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
             int tile = calculate_exact_tile( t, _environment->descriptors );
 
             if ( tile == -1 ) {
-                if ( _environment->descriptors->count < 128 ) {
-                    tile = 0x5e + (_environment->descriptors->count++);
+                if ( _environment->descriptors->count < 256 ) {
+                    tile = (_environment->descriptors->count++);
                     _environment->descriptors->descriptor[tile] = t; 
                     memcpy( &_environment->descriptors->data[tile], &tileData, sizeof( TileData ) ); 
+                    printf("*** tile = %d\n", tile );
                 } else {
                     tile = calculate_nearest_tile( t, _environment->descriptors );
+                    printf("--- tile = %d\n", tile );
                 }
-                // printf("*** tile = %d\n", tile );
             } else {
-                // printf("    tile = %d\n", tile );
+                printf("    tile = %d\n", tile );
             }
 
             *(buffer + 3 + (cy * ( _frame_width >> 3 ) ) + cx ) = tile;
