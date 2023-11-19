@@ -8678,6 +8678,22 @@ TileDescriptor * calculate_tile_descriptor( TileData * _tileData ) {
 
     int i=0;
 
+    // printf( "+--------+\n" );
+    // for( i=0; i<8; ++i ) {
+    //     printf( "|" );
+    //     int j;
+    //     for( j=0; j<8; ++j ) {
+    //         if (  _tileData->data[i] & ( 1 << j ) ) {
+    //             printf( "*" );
+    //         } else {
+    //             printf( " " );
+    //         }
+    //     }
+    //     printf( "|\n" );
+    // }
+    // printf( "+--------+\n" );
+    // printf( "\n\n" );
+
     tileDescriptor->whiteArea = calculate_white_area( _tileData );
     for(i=0;i<8;++i) {
         tileDescriptor->horizontalEdges[i] = calculate_horizontal_edges( _tileData, i );
