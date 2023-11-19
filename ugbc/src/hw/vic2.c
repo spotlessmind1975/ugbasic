@@ -947,7 +947,12 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // This fix is necessary to reset the lookup for rom character.
             outline0("LDA $D018" );
-            outline0("AND #%11110111");
+            outline0("AND #%11110000");
+            if ( _environment->fontConfig.schema || _environment->descriptors ) {
+                outline0("ORA #$09");
+            } else {
+                outline0("ORA #$07");
+            }
             outline0("STA $D018" );
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
@@ -1006,7 +1011,12 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // This fix is necessary to reset the lookup for rom character.
             outline0("LDA $D018" );
-            outline0("AND #%11110111");
+            outline0("AND #%11110000");
+            if ( _environment->fontConfig.schema || _environment->descriptors ) {
+                outline0("ORA #$09");
+            } else {
+                outline0("ORA #$07");
+            }
             outline0("STA $D018" );
             
             cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
@@ -1585,7 +1595,7 @@ void vic2_text( Environment * _environment, char * _text, char * _text_size ) {
 void vic2_initialization( Environment * _environment ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm );
-    deploy( vic2startup, src_hw_vic2_startup_asm );
+    deploy_deferred( vic2startup, src_hw_vic2_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
