@@ -136,7 +136,7 @@ VIC2STARTUPL1:
 ;     ; SET_CHARSET(MR_TILESET_DEFAULT);
     LDA $d018
     AND #$f0
-@IF fontConfig.schema
+@IF fontConfig.schema || descriptors
     ORA #$09
 @ELSE
     ORA #$07
