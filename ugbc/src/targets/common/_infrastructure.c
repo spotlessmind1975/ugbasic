@@ -10350,21 +10350,31 @@ void parser_array_index_numeric( Environment * _environment, int _index ) {
 
 VariableType variable_type_from_numeric_value( Environment * _environment, int _number ) {
 
-    if ( _number < 0 ) {
-        if ( (-_number) > (0x7fff) ) {
+    if ( _environment->defaultUnsignedType ) {
+        if ( _number < 0 ) {
+            if ( (-_number) > (0x7fff) ) {
+                return VT_SDWORD;
+            } else if ( (-_number) > (0x7f) ) {
+                return VT_SWORD;
+            } else {
+                return VT_SBYTE;
+            }
+        } else {
+            if ( _number > (0xffff) ) {
+                return VT_DWORD;
+            } else if ( _number > (0x7f) ) {
+                return VT_WORD;
+            } else {
+                return VT_BYTE;
+            }
+        }
+    } else {
+        if ( abs(_number) > (0x7fff) ) {
             return VT_SDWORD;
-        } else if ( (-_number) > (0x7f) ) {
+        } else if ( abs(_number) > (0x7f) ) {
             return VT_SWORD;
         } else {
             return VT_SBYTE;
-        }
-    } else {
-        if ( _number > (0xffff) ) {
-            return VT_DWORD;
-        } else if ( _number > (0x7f) ) {
-            return VT_WORD;
-        } else {
-            return VT_BYTE;
         }
     }
     
