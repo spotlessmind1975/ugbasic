@@ -235,7 +235,7 @@ Per dichiarare una procedura o una funzione come sistema, utilizzare semplicemen
 @syntax DECLARE [SYSTEM] FUNCTION name AT address [ ( par1 [, par2 [, ... ] ] ) ] RETURN ret [ ON targets ]
 @syntax par : name AS type ON register
 @syntax par : name AS type ON STACK(width)
-@syntax ret : name AS type ON register | name AS type ON STACK(width)
+@syntax ret : register AS type | STACK(width) AS type
 @syntax width: BYTE | WORD | DWORD
 @syntax targets : name of targets, separated by comma (,)
 
