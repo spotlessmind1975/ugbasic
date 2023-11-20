@@ -10420,11 +10420,48 @@ DataSegment * data_segment_define( Environment * _environment, char * _name ) {
 
 }
 
+DataSegment * data_segment_define_numeric( Environment * _environment, int _number ) {
+
+    DataSegment * data = malloc( sizeof( DataSegment ) );
+    memset( data, 0, sizeof( DataSegment ) );
+    data->lineNumber = _number;
+    data->isNumeric = 1;
+    data->realName = malloc( MAX_TEMPORARY_STORAGE );
+    sprintf( data->realName, "DATA_%4.4x", _number );
+
+    if ( ! _environment->dataSegment ) {
+        _environment->dataSegment = data;
+    } else {
+        DataSegment * first = _environment->dataSegment;
+        while( first->next ) {
+            first = first->next;
+        }
+        first->next = data;
+    }
+
+    return data;
+
+}
+
 DataSegment * data_segment_find( Environment * _environment, char * _name ) {
 
     DataSegment * first = _environment->dataSegment;
     while( first ) {
-        if ( strcmp( first->name, _name ) == 0 ) {
+        if ( !first->isNumeric && strcmp( first->name, _name ) == 0 ) {
+            return first;
+        }
+        first = first->next;
+    }
+
+    return NULL;    
+
+}
+
+DataSegment * data_segment_find_numeric( Environment * _environment, int _number ) {
+
+    DataSegment * first = _environment->dataSegment;
+    while( first ) {
+        if ( first->isNumeric && first->lineNumber == _number ) {
             return first;
         }
         first = first->next;
@@ -10440,6 +10477,18 @@ DataSegment * data_segment_define_or_retrieve( Environment * _environment, char 
 
     if ( !data ) {
         data = data_segment_define( _environment, _name );
+    }
+
+    return data;    
+
+}
+
+DataSegment * data_segment_define_or_retrieve_numeric( Environment * _environment, int _number ) {
+
+    DataSegment * data = data_segment_find_numeric( _environment, _number );
+
+    if ( !data ) {
+        data = data_segment_define_numeric( _environment, _number );
     }
 
     return data;    

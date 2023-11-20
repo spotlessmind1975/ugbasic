@@ -260,8 +260,19 @@ void variable_cleanup( Environment * _environment ) {
     int i=0;
 
     if ( _environment->dataSegment ) {
-        outline1("DATAFIRSTSEGMENT EQU %s", _environment->dataSegment->realName );
-    }
+        outhead1("DATAFIRSTSEGMENT EQU %s", _environment->dataSegment->realName );
+        if ( _environment->readDataUsed && _environment->restoreDynamic ) {
+            outhead0("DATASEGMENTNUMERIC:" );
+            DataSegment * actual = _environment->dataSegment;
+            while( actual ) {
+                if ( actual->isNumeric ) {
+                    outline2( "dw $%4.4x, %s", actual->lineNumber, actual->realName );
+                }
+                actual = actual->next;
+            }
+            outline0( "dw $ffff, DATAPTRE" );
+        }
+    }  
 
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;

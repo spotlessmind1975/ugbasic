@@ -4085,14 +4085,9 @@ restore_definition:
       restore_label( _environment, NULL );
     }
     |
-    Identifier {
-      restore_label( _environment, $1 );
+    expr {
+        restore_label( _environment, $1 );  
     }
-    | Integer {
-        char lineNumber[MAX_TEMPORARY_STORAGE];
-        sprintf(lineNumber, "_linenumber%d", $1 );
-        restore_label( _environment, lineNumber );
-  }
   ;
 
 goto_definition:
@@ -7759,11 +7754,13 @@ statement2:
     label_define_named( _environment, $2 );
     cpu_label( _environment, $2 );
     ((Environment *)_environment)->lastDefinedLabel = strdup( $2 );
+    ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
   } 
   | Identifier OP_COLON {
     label_define_named( _environment, $1 );
     cpu_label( _environment, $1 );
     ((Environment *)_environment)->lastDefinedLabel = strdup( $1 );
+    ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
   } 
   | LOAD String OP_COMMA Integer on_bank load_flags {
     load( _environment, $2, NULL, $4, $5, $6 );
@@ -8161,6 +8158,8 @@ statements_with_linenumbers:
         sprintf(lineNumber, "_linenumber%d", $1 );
         cpu_label( _environment, lineNumber);
         ((Environment *)_environment)->lastDefinedLabel = strdup( lineNumber );
+        ((Environment *)_environment)->lastDefinedLabelIsNumeric = 1;
+        ((Environment *)_environment)->lastDefinedLabelNumeric = $1;
     } statements_no_linenumbers { 
         ((Environment *)_environment)->yylineno = yylineno;
     };

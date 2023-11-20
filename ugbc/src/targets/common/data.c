@@ -141,7 +141,11 @@ void data_numeric( Environment * _environment, int _value ) {
     DataSegment * data;
 
     if ( _environment->lastDefinedLabel ) {
-        data = data_segment_define_or_retrieve( _environment, _environment->lastDefinedLabel );
+        if ( _environment->lastDefinedLabelIsNumeric ) {
+            data = data_segment_define_or_retrieve_numeric( _environment, _environment->lastDefinedLabelNumeric );
+        } else {
+            data = data_segment_define_or_retrieve( _environment, _environment->lastDefinedLabel );
+        }
     } else {
         data = data_segment_define_or_retrieve( _environment, "DATA" );
     }
@@ -192,7 +196,11 @@ void data_floating( Environment * _environment, double _value ) {
     DataSegment * data;
 
     if ( _environment->lastDefinedLabel ) {
-        data = data_segment_define_or_retrieve( _environment, _environment->lastDefinedLabel );
+        if ( _environment->lastDefinedLabelIsNumeric ) {
+            data = data_segment_define_or_retrieve_numeric( _environment, _environment->lastDefinedLabelNumeric );
+        } else {
+            data = data_segment_define_or_retrieve( _environment, _environment->lastDefinedLabel );
+        }
     } else {
         data = data_segment_define_or_retrieve( _environment, "DATA" );
     }
@@ -242,7 +250,11 @@ void data_string( Environment * _environment, char * _value ) {
     DataSegment * data;
 
     if ( _environment->lastDefinedLabel ) {
-        data = data_segment_define_or_retrieve( _environment, _environment->lastDefinedLabel );
+        if ( _environment->lastDefinedLabelIsNumeric ) {
+            data = data_segment_define_or_retrieve_numeric( _environment, _environment->lastDefinedLabelNumeric );
+        } else {
+            data = data_segment_define_or_retrieve( _environment, _environment->lastDefinedLabel );
+        }
     } else {
         data = data_segment_define_or_retrieve( _environment, "DATA" );
     }

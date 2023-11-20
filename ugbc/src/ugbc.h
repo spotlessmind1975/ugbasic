@@ -1620,8 +1620,11 @@ typedef struct _DataSegment {
     
     VariableType type;
 
+    int isNumeric;
+
     char * name;
     char * realName;
+    int lineNumber;
 
     DataDataSegment * data;
 
@@ -1863,6 +1866,11 @@ typedef struct _Environment {
     DataSegment * dataSegment;
 
     /**
+     * If any dynamic RESTORE is used
+     */
+    int restoreDynamic;
+
+    /**
      * If any read was used
      */
     int readDataUsed;
@@ -1871,6 +1879,13 @@ typedef struct _Environment {
      * Last label defined
      */
     char * lastDefinedLabel;
+
+    int lastDefinedLabelNumeric;
+
+    /**
+     * Last label defined is numeric
+     */
+    int lastDefinedLabelIsNumeric;
 
     /**
      * List of temporary (but not reusable) variables.
@@ -2635,6 +2650,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_DRAW_WITHOUT_STRING( t ) CRITICAL2("E237 - DRAW need a string with drawing commands", t );
 #define CRITICAL_PUT_NOT_NOT_SUPPORTED( t ) CRITICAL2("E238 - PUT with NOT operator is not supported", t );
 #define CRITICAL_CANNOT_USE_PLAY_WITHOUT_STRING( t ) CRITICAL2("E239 - PLAY need a string with playing commands", t );
+#define CRITICAL_RESTORE_WITH_UNSUPPORTED_DATA_TYPE( t ) CRITICAL2("E240 - RESTORE with unsupported data type", t ); 
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3673,8 +3689,11 @@ Variable *              csprite_init( Environment * _environment, char * _image,
 void                    data_numeric( Environment * _environment, int _value );
 void                    data_floating( Environment * _environment, double _value );
 DataSegment *           data_segment_define( Environment * _environment, char * _name );
+DataSegment *           data_segment_define_numeric( Environment * _environment, int _number );
 DataSegment *           data_segment_find( Environment * _environment, char * _name );
+DataSegment *           data_segment_find_numeric( Environment * _environment, int _number );
 DataSegment *           data_segment_define_or_retrieve( Environment * _environment, char * _name );
+DataSegment *           data_segment_define_or_retrieve_numeric( Environment * _environment, int _number );
 void                    data_string( Environment * _environment, char * _value );
 void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );

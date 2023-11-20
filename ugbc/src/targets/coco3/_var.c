@@ -340,6 +340,17 @@ void variable_cleanup( Environment * _environment ) {
 
     if ( _environment->dataSegment ) {
         outhead1("DATAFIRSTSEGMENT EQU %s", _environment->dataSegment->realName );
+        if ( _environment->readDataUsed && _environment->restoreDynamic ) {
+            outhead0("DATASEGMENTNUMERIC" );
+            DataSegment * actual = _environment->dataSegment;
+            while( actual ) {
+                if ( actual->isNumeric ) {
+                    outline2( "fdb $%4.4x, %s", actual->lineNumber, actual->realName );
+                }
+                actual = actual->next;
+            }
+            outline0( "fdb $ffff, DATAPTRE" );
+        }
     }
     
     if ( _environment->offsetting ) {

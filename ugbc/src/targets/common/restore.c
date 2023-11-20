@@ -40,23 +40,69 @@
 
 void restore_label( Environment * _environment, char * _label ) {
 
-    DataSegment * data;
+    if ( !_label || label_exists_named( _environment, _label ) ) {
 
-    if ( _label ) {
-        data = data_segment_define_or_retrieve( _environment, _label );
+        DataSegment * data;
+
+        if ( _label ) {
+            data = data_segment_define_or_retrieve( _environment, _label );
+        } else {
+            data = data_segment_define_or_retrieve( _environment, "DATA" );
+        }
+
+        if ( !data ) {
+            CRITICAL_RESTORE_WITHOUT_DATA( _label );
+        }
+
+        Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
+
+        cpu_addressof_16bit( _environment, data->realName, dataptr->realName );
+
+        restore_label_unsafe( _environment, _label );
+
     } else {
-        data = data_segment_define_or_retrieve( _environment, "DATA" );
+
+        MAKE_LABEL
+
+        char searchDataSegmentLabel[MAX_TEMPORARY_STORAGE]; sprintf( searchDataSegmentLabel, "%ssearch", label );
+        char doneDataSegmentLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneDataSegmentLabel, "%sdone", label );
+
+        _environment->restoreDynamic = 1;
+
+        Variable * variable = variable_retrieve( _environment, _label );
+        Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
+        Variable * lineNumber = variable_temporary( _environment, VT_WORD, "(line number)");
+        Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)");
+
+        if ( VT_BITWIDTH( variable->type ) > 1 ) {
+
+            cpu_addressof_16bit( _environment, "DATASEGMENTNUMERIC", dataptr->realName );
+
+            cpu_label( _environment, searchDataSegmentLabel );
+
+                cpu_move_16bit_indirect2( _environment, dataptr->realName, lineNumber->realName );
+                cpu_inc_16bit( _environment, dataptr->realName );
+                cpu_inc_16bit( _environment, dataptr->realName );
+                cpu_move_16bit_indirect2( _environment, dataptr->realName, address->realName );
+                cpu_inc_16bit( _environment, dataptr->realName );
+                cpu_inc_16bit( _environment, dataptr->realName );
+                cpu_compare_and_branch_16bit( _environment, lineNumber->realName, variable->realName, doneDataSegmentLabel, 1 );
+                cpu_compare_and_branch_16bit_const( _environment, lineNumber->realName, 0xffff, doneDataSegmentLabel, 1 );
+
+            cpu_jump( _environment, searchDataSegmentLabel );
+
+            cpu_label( _environment, doneDataSegmentLabel );
+            
+            variable_move( _environment, address->name, dataptr->name );
+
+        } else {
+            CRITICAL_RESTORE_WITH_UNSUPPORTED_DATA_TYPE( _label );
+        }
+        
+        restore_label_unsafe( _environment, NULL );
+
     }
-
-    if ( !data ) {
-        CRITICAL_RESTORE_WITHOUT_DATA( _label );
-    }
-
-    Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
-
-    cpu_addressof_16bit( _environment, data->realName, dataptr->realName );
-
-    restore_label_unsafe( _environment, _label );
     
 }
+
 
