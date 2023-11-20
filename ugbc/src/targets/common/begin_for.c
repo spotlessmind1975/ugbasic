@@ -102,6 +102,10 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
 
     int maxType = VT_MAX_BITWIDTH_TYPE( from->type, to->type );
 
+    if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) ) {
+        maxType = VT_SIGN( maxType );
+    }
+
     Variable * step = variable_resident( _environment, maxType, "(step 1)" );
 
     if ( variable_exists( _environment, _index ) ) {
