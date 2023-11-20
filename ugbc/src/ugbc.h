@@ -2322,6 +2322,8 @@ typedef struct _Environment {
      */
     char * sliceImageY;
 
+    int defaultUnsignedType;
+
     /*
      * Used for deferred writing of assembly file.
      */
