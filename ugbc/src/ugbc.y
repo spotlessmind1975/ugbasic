@@ -91,7 +91,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
-%token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT
+%token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -6051,7 +6051,19 @@ print_buffer_raw_definition :
   ;
 
 print_definition :
-    OP_AT expr {
+    SPC OP expr CP {
+        spc( _environment, $3 );
+    }
+  | SPC OP expr CP {
+        spc( _environment, $3 );
+    } print_definition
+  | SPC OP expr CP {
+        spc( _environment, $3 );
+    } OP_COMMA print_definition
+  | SPC OP expr CP {
+        spc( _environment, $3 );
+    } OP_SEMICOLON print_definition
+  | OP_AT expr {
         Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
         Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
         Variable * y = variable_div( _environment, p->name, screen_tiles_get_height( _environment )->name, x->name );

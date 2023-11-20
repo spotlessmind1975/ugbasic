@@ -4011,6 +4011,7 @@ void                    sound_off( Environment * _environment, int _channels );
 void                    sound_off_var( Environment * _environment, char * _channels );
 Variable *              sign( Environment * _environment, char * _value );
 Variable *              spawn_procedure( Environment * _environment, char * _name , int _halted );
+void                    spc( Environment * _environment, char * _spaces );
 void                    sprite_color( Environment * _environment, int _sprite, int _color );
 void                    sprite_color_vars( Environment * _environment, char * _sprite, char * _color );
 void                    sprite_compress_horizontal( Environment * _environment, int _sprite );
