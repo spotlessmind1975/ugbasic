@@ -1655,4 +1655,52 @@ int c6847_palette_extract( Environment * _environment, char * _data, int _width,
     return uniquePaletteCount;
 
 }
+
+void c6847_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline0("LDY #$0" );
+    if ( _sequence ) {
+        outline0("LEAY 3,y" );
+        if ( strlen(_sequence) == 0 ) {
+        } else {
+            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
+            outline1("LDB %s", _sequence );
+            outline0("LDA #0" );
+            outline0("LEAX D, X" );
+            outline0("LEAX D, X" );
+            outline0("LDD ,X" );
+            outline0("LEAY D, Y" );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LEAY 3,y" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    }
+
+    outline1("STY %s", _offset );
+
+}
+
 #endif
