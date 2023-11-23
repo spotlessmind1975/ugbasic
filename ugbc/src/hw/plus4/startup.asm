@@ -35,8 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-SYSIRQADDR:     .WORD   $0
-
 ;     ; ...
 ;     ; ; **** Gestore IRQ personalizzato
 
@@ -70,7 +68,8 @@ IRQWRAPPER:
     LDA #$42
     STA $FF3E
 
-    JMP (SYSIRQADDR)
+SYSIRQADDR:
+    JMP $0000
 
 IRQWRAPPEREND:
 
@@ -138,9 +137,9 @@ PLUS4STARTUPDONE:
     SEI
 
     LDA $FFFE
-    STA SYSIRQADDR
-    LDA $FFFF
     STA SYSIRQADDR+1
+    LDA $FFFF
+    STA SYSIRQADDR+2
 
     LDA #$42
     STA $FF3F
