@@ -1417,12 +1417,12 @@ void gime_text( Environment * _environment, char * _text, char * _text_size ) {
     outline0("STA TEXTSIZE" );
 
     if ( _environment->currentMode < 0x10 ) {
-        deploy( clsText, src_hw_gime_cls_text_asm );
+        deploy_preferred( clsText, src_hw_gime_cls_text_asm );
         deploy( vScrollText, src_hw_gime_vscroll_text_asm );
         deploy( textEncodedAtText, src_hw_gime_text_at_text_asm );
         outline0("JSR TEXTATTILEMODE");
     } else {
-        deploy( clsGraphic, src_hw_gime_cls_graphic_asm );
+        deploy_preferred( clsGraphic, src_hw_gime_cls_graphic_asm );
         deploy( textEncodedAtGraphic, src_hw_gime_text_at_graphic_asm );
         outline0("JSR TEXTATBITMAPMODE");
     }
@@ -2387,7 +2387,7 @@ static void gime_load_image_address_to_register( Environment * _environment, cha
 void gime_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
     
     deploy( gimevars, src_hw_gime_vars_asm);
-    deploy( blitimage, src_hw_gime_blit_image_asm );
+    deploy_preferred( blitimage, src_hw_gime_blit_image_asm );
 
     if ( _source_count > 2 ) {
         CRITICAL_BLIT_TOO_MUCH_SOURCES( );
@@ -2573,6 +2573,53 @@ int gime_palette_extract( Environment * _environment, char * _data, int _width, 
     memcpy( _palette, palette_remove_duplicates( _palette, paletteColorCount, &uniquePaletteCount ), paletteColorCount * sizeof( RGBi ) );
 
     return uniquePaletteCount;
+
+}
+
+void gime_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline0("LDY #$0" );
+    if ( _sequence ) {
+        outline0("LEAY 3,y" );
+        if ( strlen(_sequence) == 0 ) {
+        } else {
+            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
+            outline1("LDB %s", _sequence );
+            outline0("LDA #0" );
+            outline0("LEAX D, X" );
+            outline0("LEAX D, X" );
+            outline0("LDD ,X" );
+            outline0("LEAY D, Y" );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LEAY 3,y" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    }
+
+    outline1("STY %s", _offset );
 
 }
 
