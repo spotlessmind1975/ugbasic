@@ -3054,6 +3054,7 @@ int embed_scan_string (const char *);
         if ( _environment->deployed.s ) { \
             _environment->deployed.s = 0; \
             deploy_inplace(s,e); \
+            _environment->deployed.s = 1; \
         }
 
 #define deploy_with_vars(s,e,v)  \
