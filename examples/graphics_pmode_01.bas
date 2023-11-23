@@ -10,5 +10,5 @@ REM Questo esempio mostra come usare il comando PMODE.
 REM
 REM @include coco
 
-    PMODE 1, 1
+    PMODE #1, #1
     CLS
