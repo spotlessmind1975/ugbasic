@@ -436,11 +436,13 @@ typedef struct _Resource {
 #define VT_SIGN( t ) \
             ( ( ! VT_SIGNED( t ) ) ? \
                 ( \
+                    ( ( (t) == (VT_BIT) ) ? VT_BIT : 0 ) + \
                     ( ( (t) == (VT_BYTE) ) ? VT_SBYTE : 0 ) + \
                     ( ( (t) == (VT_WORD) ) ? VT_SWORD : 0 ) + \
                     ( ( (t) == (VT_DWORD) ) ? VT_SDWORD : 0 ) + \
                     ( ( (t) == (VT_FLOAT) ) ? VT_FLOAT : 0 ) + \
                     ( ( (t) == (VT_POSITION) ) ? VT_POSITION : 0 ) + \
+                    ( ( (t) == (VT_ADDRESS) ) ? VT_ADDRESS : 0 ) + \
                     ( ( (t) == (VT_COLOR) ) ? VT_COLOR : 0 ) \
                 ) \
             : t )
