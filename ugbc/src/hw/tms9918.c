@@ -1905,7 +1905,11 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
     // printf("\n" );
     // printf("\n" );
 
-    *(buffer + ( ( _width >> 3 ) * _height )) = _color->index;
+    if ( _color ) {
+        *(buffer + ( ( _width >> 3 ) * _height )) = _color->index;
+    } else {
+        *(buffer + ( ( _width >> 3 ) * _height )) = palette[1].index;
+    }
 
     if ( _environment->debugImageLoad ) {
         printf("\n" );
@@ -2432,6 +2436,57 @@ int tms9918_palette_extract( Environment * _environment, char * _data, int _widt
     memcpy( _palette, palette_remove_duplicates( _palette, paletteColorCount, &uniquePaletteCount ), paletteColorCount * sizeof( RGBi ) );
 
     return uniquePaletteCount;
+
+}
+
+void tms9918_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    if ( !_sequence && !_frame ) {
+        outline0("LD HL, 0" );
+    } else {
+        outline0("LD HL, 0" );
+
+        if ( _sequence ) {
+            outline0("LD DE, $0003" );
+            outline0("ADD HL, DE" );
+            if ( strlen(_sequence) == 0 ) {
+
+            } else {
+                outline1("LD A, (%s)", _sequence );
+                outline0("PUSH HL" );
+                outline0("POP IX" );
+                outline1("CALL OFFSETS%4.4X", _frame_count * _frame_size );
+            }
+            if ( _frame ) {
+                if ( strlen(_frame) == 0 ) {
+
+                } else {
+                    outline1("LD A, (%s)", _frame );
+                    outline0("PUSH HL" );
+                    outline0("POP IX" );
+                    outline1("CALL OFFSETS%4.4X", _frame_size );
+                }
+            }
+
+        } else {
+
+            if ( _frame ) {
+                outline0("LD DE, $0003" );
+                outline0("ADD HL, DE" );
+                if ( strlen(_frame) == 0 ) {
+
+                } else {
+                    outline0("PUSH HL" );
+                    outline0("POP IX" );
+                    outline1("LD A, (%s)", _frame );
+                    outline1("CALL OFFSETS%4.4X", _frame_size );
+                }
+            }
+
+        }
+
+    }
+    outline1("LD (%s), HL", _offset );
 
 }
 
