@@ -1116,7 +1116,7 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
     POBuffer op  = TMP_BUF;
     
     /* direct page or inlined */
-   if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) ) {
+   if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) && strchr( var->str, '+' ) == NULL ) {
         struct var *v = vars_get(var);
         // fprintf( stderr, "   v->offset = %d\n", v->offset );
         if(v->offset > 0) {
