@@ -1094,6 +1094,24 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
         }
     }
 
+    if(po_buf_match( buf[0], " NEG *", var) && vars_ok(var)) {
+        struct var *v = vars_get(var);
+        if(v->nb_rd == 0 && v->offset!=-2) {
+            char *rep = NULL;
+            v->offset = 0;
+            if(po_buf_match(buf[1], " IF ") && po_buf_match(buf[2], " LB")) {
+                if(*op->str=='X') rep = "\tLEAX ,X";
+                else {
+                    static char tst[8];
+                    sprintf(tst, "\tTST%c", *op->str);
+                    rep = tst;
+                }
+            }
+            optim(buf[0], "unread1", rep != NULL ? "%s" : NULL, rep);
+            ++_environment->removedAssemblyLines;
+        }
+    }
+
     /* remove changed variables */
     if(po_buf_match( buf[0], "* rzb ", var)
     || po_buf_match( buf[0], "* fcb ", var)
