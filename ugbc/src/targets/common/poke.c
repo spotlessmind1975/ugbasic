@@ -65,8 +65,17 @@ void poke_var( Environment * _environment, char * _address, char * _value ) {
 
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0 );
 
-    Variable * value = variable_retrieve_or_define( _environment, _value, VT_BYTE, 0 );
+    Variable * realValue = variable_temporary( _environment, VT_BYTE, "(byte)" );
 
-    cpu_poke( _environment, address->realName, value->realName );
+    Variable * value = NULL;
+
+    if ( variable_exists( _environment, _value ) ) {
+        value = variable_retrieve( _environment, _value );
+    } else {
+        value = variable_temporary( _environment, VT_BYTE, "(byte)" );
+    }
+    cpu_move_8bit( _environment, value->realName, realValue->realName );
+
+    cpu_poke( _environment, address->realName, realValue->realName );
 
 }
