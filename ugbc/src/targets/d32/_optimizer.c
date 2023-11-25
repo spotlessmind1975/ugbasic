@@ -1150,16 +1150,16 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
         }            
     }
 
-    if(po_buf_match( buf[0], " * [*]", op, var) && vars_ok(var)) {
-        struct var *v = vars_get(var);
-        if(v->offset > 0) {
-            optim(buf[0], "direct-page2", "\t%s [%s+$%04x]", op->str, var->str, DIRECT_PAGE);
-        } else if(v->offset == -1 && strstr(var->str,"+$")==NULL) {
-            v->offset = -2;
-            optim(buf[0], "inlined2", "\t%s >%s\n%s equ *-2", op->str,
-                v->init==NULL ? var->str : v->init, var->str);
-            }            
-        }
+    // if(po_buf_match( buf[0], " * [*]", op, var) && vars_ok(var)) {
+    //     struct var *v = vars_get(var);
+    //     if(v->offset > 0) {
+    //         optim(buf[0], "direct-page2", "\t%s [%s+$%04x]", op->str, var->str, DIRECT_PAGE);
+    //     } else if(v->offset == -1 && strstr(var->str,"+$")==NULL) {
+    //         v->offset = -2;
+    //         optim(buf[0], "inlined2", "\t%s >%s\n%s equ *-2", op->str,
+    //             v->init==NULL ? var->str : v->init, var->str);
+    //         }            
+    //     }
 
     if(po_buf_match( buf[0], " * #*", op, var) && vars_ok(var) ) {
         struct var *v = vars_get(var);
