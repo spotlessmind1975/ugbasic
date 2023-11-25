@@ -2573,6 +2573,9 @@ exponential:
     | YGR {
         $$ = "YGR";
       }
+    | INT OP expr CP {
+        $$ = variable_int( _environment, $3 )->name;
+    }
     | IN OP expr CP {
         $$ = in_var( _environment, $3 )->name;
     }

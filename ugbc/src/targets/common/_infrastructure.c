@@ -10604,3 +10604,14 @@ Resource * build_resource_for_sequence( Environment * _environment, char * _imag
     return resource;
 
 }
+
+Variable * variable_int( Environment * _environment, char * _expression ) {
+
+    Variable * expression = variable_retrieve( _environment, _expression );
+    Variable * result = variable_temporary( _environment, VT_SWORD, "(result)" );
+
+    variable_move( _environment, expression->name, result->name );
+
+    return result;
+
+}

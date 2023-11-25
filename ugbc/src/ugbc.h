@@ -4143,6 +4143,7 @@ Variable *              variable_import( Environment * _environment, char * _nam
 Variable *              variable_increment( Environment * _environment, char * _source );
 Variable *              variable_increment_array( Environment * _environment, char * _source );
 Variable *              variable_increment_mt( Environment * _environment, char * _source );
+Variable *              variable_int( Environment * _environment, char * _expression );
 Variable *              variable_less_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable *              variable_less_than_const( Environment * _environment, char * _source, int _dest, int _equal );
 Variable *              variable_mod( Environment * _environment, char * _source, char * _destination );
