@@ -436,7 +436,6 @@ TEXTAT21:
     POP DE
     POP AF
     POP HL
-    POP AF
 
     JMP TEXTAT2X
 
