@@ -58,6 +58,8 @@ PC128IRQEMPTY
     RTI                   ;  by defaut do RTI
 
 PC128OPSTARTUP
+    LDD   PC128OPIRQO
+    BNE   PC128OPSTARTUPNOIRQ
     LDX   #$2061
     LDA   2,X             ; Is previous TIMERPT enable ?
     BEQ   PC128STARTUP2   ; no ==> keep default return code (RTI)
@@ -66,6 +68,7 @@ PC128OPSTARTUP
 PC128STARTUP2
     LDD   #PC128IRQ       ; install our own ISR
     STD   ,X
+PC128OPSTARTUPNOIRQ
     LDA   #PAGE0          ; any non-zero value will do, let's use the one that'll go to DP
     STA   2,X             ; enable the ISR
 

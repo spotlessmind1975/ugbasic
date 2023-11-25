@@ -85,6 +85,7 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "FREE_STRING" );    
 
     outline0("ORG $3000");
+    outhead0("CODESTART");
     outline0("LDS #$A000");
 
     deploy( vars, src_hw_mo5_vars_asm);

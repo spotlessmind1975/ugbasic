@@ -7392,6 +7392,9 @@ statement2:
   | NOP {
       outline0( "NOP" );
   }
+  | RUN {
+    run( _environment );
+  }
   | SWAP swap_definition
   | OUT out_definition
   | DATA data_definition

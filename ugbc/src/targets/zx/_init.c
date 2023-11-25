@@ -119,6 +119,8 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("org 32768");
 
+    outhead0("CODESTART:");
+
     z80_init( _environment );
 
     deploy_deferred( startup, src_hw_zx_startup_asm);

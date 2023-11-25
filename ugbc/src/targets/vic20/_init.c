@@ -105,6 +105,8 @@ void target_initialization( Environment * _environment ) {
     outline0(".byte $01, $12, $0B, $12, $00, $00, $9E, $38, $31, $39, $32, $00, $00, $00, $00");
     outhead0(".segment \"CODE\"");
 
+    outhead0("CODESTART:");
+
     deploy( vars, src_hw_vic20_vars_asm);
 
     setup_text_variables( _environment );

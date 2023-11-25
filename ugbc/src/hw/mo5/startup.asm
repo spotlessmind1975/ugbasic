@@ -58,6 +58,8 @@ MO5IRQEMPTY
     RTI                 ;  by defaut do RTI
 
 MO5STARTUP
+    LDD   MO5IRQO
+    BNE   MO5STARTUPNOIRQ
     LDX   #$2061
     LDA   2,X           ; Is previous TIMERPT enable ?
     BEQ   MO5STARTUP2   ; no ==> keep default return code (RTI)
@@ -67,6 +69,8 @@ MO5STARTUP2
     LDD   #MO5IRQ       ; install our own ISR
     STD   ,X
     
+MO5STARTUPNOIRQ
+
     LDA   #PAGE0        ; any non-zero value will do, let's use the one that'll go to DP
     STA   2,X           ; enable the ISR
 

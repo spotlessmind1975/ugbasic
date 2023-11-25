@@ -129,6 +129,9 @@ void target_initialization( Environment * _environment ) {
     outhead0(".segment \"CODE\"");
     outline0("NOP");
     outline0("NOP");
+
+    outhead0("CODESTART:");
+    
     deploy( vars, src_hw_c64_vars_asm);
 
     setup_text_variables( _environment );

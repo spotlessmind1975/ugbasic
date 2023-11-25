@@ -100,6 +100,8 @@ void target_initialization( Environment * _environment ) {
 
     outhead0(".segment \"CODE\"");
 
+    outhead0("CODESTART:");
+
     deploy( vars, src_hw_plus4_vars_asm);
     deploy_deferred( startup, src_hw_plus4_startup_asm);
 

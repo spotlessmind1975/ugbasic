@@ -3975,6 +3975,7 @@ int                     rgbi_extract_palette( Environment * _environment, unsign
 void                    rgbi_move( RGBi * _source, RGBi * _destination );
 int                     rgbi_distance( RGBi * _source, RGBi * _destination );
 Variable *              rnd( Environment * _environment, char * _value );
+void                    run( Environment * _environment );
 void                    run_parallel( Environment * _environment );
 
 //----------------------------------------------------------------------------

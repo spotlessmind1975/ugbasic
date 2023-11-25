@@ -101,6 +101,9 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "FREE_STRING" );    
 
     outline0("ORG $2800");
+
+    outhead0("CODESTART");
+
     outline0("LDS #$8000");
 
     deploy( vars, src_hw_d32_vars_asm);

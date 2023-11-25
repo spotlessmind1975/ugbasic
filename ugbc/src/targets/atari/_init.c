@@ -104,6 +104,8 @@ void target_initialization( Environment * _environment ) {
     outhead0(".segment \"CODE\"");
     outhead0(".proc MAINENTRY");
 
+    outhead0("CODESTART:");
+
     deploy( vars, src_hw_atari_vars_asm);
 
     bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
