@@ -7330,7 +7330,7 @@ paint_definition :
     }    
     ;
 
-statement2:
+statement2nc:
     BANK bank_definition
   | RASTER raster_definition
   | NEXT RASTER next_raster_definition
@@ -7521,6 +7521,11 @@ statement2:
   | IF expr THEN Integer {
       if_then( _environment, $2 );
       goto_number( _environment, $4 );
+      end_if_then( _environment );  
+  }
+  | IF expr THEN  {
+      if_then( _environment, $2 );
+  } statement2nc {
       end_if_then( _environment );  
   }
   | ELSE {
@@ -8143,8 +8148,12 @@ statement2:
         parser_array_cleanup( _environment );
   }
   | Remark
-  |
   ;
+
+statement2:
+    statement2nc
+    |
+    ;
 
 statement: 
     { 
