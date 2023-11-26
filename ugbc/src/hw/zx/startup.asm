@@ -38,6 +38,11 @@
 ZXSTARTUP:
 
     DI
+    LD A, 0
+    LD (IRQVECTOR), A
+    LD (IRQVECTOR+1), A
+    LD (IRQVECTORREADY), A
+
     LD HL, ZXIRQSVC
     LD IX, $FFF0
     LD (IX+$04), $C3
