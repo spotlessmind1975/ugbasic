@@ -7523,6 +7523,14 @@ statement2nc:
       goto_number( _environment, $4 );
       end_if_then( _environment );  
   }
+  | IF expr THEN Integer ELSE Integer {
+      if_then( _environment, $2 );
+      goto_number( _environment, $4 );
+      else_if_then_label( _environment );  
+      else_if_then( _environment, NULL );  
+      goto_number( _environment, $6 );
+      end_if_then( _environment );  
+  }
   | IF expr THEN  {
       if_then( _environment, $2 );
   } statement2nc {
