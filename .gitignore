@@ -17,5 +17,6 @@ nightly_build.sh
 nightly_build_all.sh
 upload_build.sh
 upload_build_beta.sh
+build_all_examples.sh
 BETA
 website/
