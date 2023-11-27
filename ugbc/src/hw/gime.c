@@ -1221,7 +1221,7 @@ void gime_textmap_at( Environment * _environment, char * _address ) {
 void gime_pset_int( Environment * _environment, int _x, int _y ) {
 
     deploy( gimevars, src_hw_gime_vars_asm );
-    deploy( plot, src_hw_gime_plot_asm );
+    deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDX %4.4x", (_x & 0xffff ) );
     outline0("STX PLOTX");
@@ -1240,7 +1240,7 @@ void gime_pset_vars( Environment * _environment, char *_x, char *_y ) {
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
     deploy( gimevars, src_hw_gime_vars_asm );
-    deploy( plot, src_hw_gime_plot_asm );
+    deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDX %s", x->realName );
     outline0("STX PLOTX");
@@ -1259,7 +1259,7 @@ void gime_pget_color_vars( Environment * _environment, char *_x, char *_y, char 
     Variable * result = variable_retrieve_or_define( _environment, _result, VT_BYTE, 0 );
 
     deploy( gimevars, src_hw_gime_vars_asm );
-    deploy( plot, src_hw_gime_plot_asm );
+    deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDD %s", x->realName );
     outline0("STD PLOTX");
@@ -1396,7 +1396,7 @@ void gime_cls( Environment * _environment ) {
 
 void gime_scroll_text( Environment * _environment, int _direction ) {
 
-    deploy( vScrollText, src_hw_gime_vscroll_text_asm );
+    deploy_preferred( vScrollText, src_hw_gime_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
@@ -1409,7 +1409,7 @@ void gime_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( gimevars, src_hw_gime_vars_asm);
 
-    deploy( textEncodedAt, src_hw_gime_text_at_asm );
+    deploy_preferred( textEncodedAt, src_hw_gime_text_at_asm );
 
     outline1("LDY %s", _text);
     outline0("STY TEXTPTR" );
@@ -1418,12 +1418,12 @@ void gime_text( Environment * _environment, char * _text, char * _text_size ) {
 
     if ( _environment->currentMode < 0x10 ) {
         deploy_preferred( clsText, src_hw_gime_cls_text_asm );
-        deploy( vScrollText, src_hw_gime_vscroll_text_asm );
-        deploy( textEncodedAtText, src_hw_gime_text_at_text_asm );
+        deploy_preferred( vScrollText, src_hw_gime_vscroll_text_asm );
+        deploy_preferred( textEncodedAtText, src_hw_gime_text_at_text_asm );
         outline0("JSR TEXTATTILEMODE");
     } else {
         deploy_preferred( clsGraphic, src_hw_gime_cls_graphic_asm );
-        deploy( textEncodedAtGraphic, src_hw_gime_text_at_graphic_asm );
+        deploy_preferred( textEncodedAtGraphic, src_hw_gime_text_at_graphic_asm );
         outline0("JSR TEXTATBITMAPMODE");
     }
 
