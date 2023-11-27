@@ -506,6 +506,11 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( clsGraphic, src_hw_gime_cls_graphic_asm );
     deploy_inplace_preferred( clsText, src_hw_gime_cls_text_asm );
     deploy_inplace_preferred( blitimage, src_hw_gime_blit_image_asm );
+    deploy_inplace_preferred( vScrollText, src_hw_gime_vscroll_text_asm );
+    deploy_inplace_preferred( textEncodedAt, src_hw_gime_text_at_asm );
+    deploy_inplace_preferred( textEncodedAtText, src_hw_gime_text_at_text_asm );
+    deploy_inplace_preferred( textEncodedAtGraphic, src_hw_gime_text_at_graphic_asm );
+    deploy_inplace_preferred( plot, src_hw_gime_plot_asm );
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
