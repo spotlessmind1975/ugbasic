@@ -349,7 +349,7 @@ void gime_bank_select( Environment * _environment, int _bank ) {
 
 int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    // deploy( gimevars, src_hw_gime_vars_asm );
+    // deploy_preferred( gimevars, src_hw_gime_vars_asm );
 
     GIME_128K( );
 
@@ -1220,7 +1220,7 @@ void gime_textmap_at( Environment * _environment, char * _address ) {
 
 void gime_pset_int( Environment * _environment, int _x, int _y ) {
 
-    deploy( gimevars, src_hw_gime_vars_asm );
+    deploy_preferred( gimevars, src_hw_gime_vars_asm );
     deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDX %4.4x", (_x & 0xffff ) );
@@ -1239,7 +1239,7 @@ void gime_pset_vars( Environment * _environment, char *_x, char *_y ) {
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    deploy( gimevars, src_hw_gime_vars_asm );
+    deploy_preferred( gimevars, src_hw_gime_vars_asm );
     deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDX %s", x->realName );
@@ -1258,7 +1258,7 @@ void gime_pget_color_vars( Environment * _environment, char *_x, char *_y, char 
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
     Variable * result = variable_retrieve_or_define( _environment, _result, VT_BYTE, 0 );
 
-    deploy( gimevars, src_hw_gime_vars_asm );
+    deploy_preferred( gimevars, src_hw_gime_vars_asm );
     deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDD %s", x->realName );
@@ -1382,7 +1382,7 @@ void gime_tiles_get_height( Environment * _environment, char *_result ) {
 
 void gime_cls( Environment * _environment ) {
 
-    deploy( gimevars, src_hw_gime_vars_asm);
+    deploy_preferred( gimevars, src_hw_gime_vars_asm);
 
     if ( _environment->currentTileMode ) {
         deploy_preferred( clsText, src_hw_gime_cls_text_asm );
@@ -1407,7 +1407,7 @@ void gime_scroll_text( Environment * _environment, int _direction ) {
 
 void gime_text( Environment * _environment, char * _text, char * _text_size ) {
 
-    deploy( gimevars, src_hw_gime_vars_asm);
+    deploy_preferred( gimevars, src_hw_gime_vars_asm);
 
     deploy_preferred( textEncodedAt, src_hw_gime_text_at_asm );
 
@@ -1431,7 +1431,7 @@ void gime_text( Environment * _environment, char * _text, char * _text_size ) {
 
 void gime_initialization( Environment * _environment ) {
 
-    deploy( gimevars, src_hw_gime_vars_asm );
+    deploy_preferred( gimevars, src_hw_gime_vars_asm );
     deploy_preferred( gimestartup, src_hw_gime_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
@@ -2386,7 +2386,7 @@ static void gime_load_image_address_to_register( Environment * _environment, cha
 
 void gime_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
     
-    deploy( gimevars, src_hw_gime_vars_asm);
+    deploy_preferred( gimevars, src_hw_gime_vars_asm);
     deploy_preferred( blitimage, src_hw_gime_blit_image_asm );
 
     if ( _source_count > 2 ) {
@@ -2438,7 +2438,7 @@ void gime_blit_image( Environment * _environment, char * _sources[], int _source
 
 void gime_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
     
-    deploy( gimevars, src_hw_gime_vars_asm);
+    deploy_preferred( gimevars, src_hw_gime_vars_asm);
     deploy_preferred( putimage, src_hw_gime_put_image_asm );
 
     if ( _image->isAddress ) {
@@ -2510,7 +2510,7 @@ Variable * gime_new_image( Environment * _environment, int _width, int _height, 
 
 void gime_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 
-    deploy( gimevars, src_hw_gime_vars_asm);
+    deploy_preferred( gimevars, src_hw_gime_vars_asm);
     deploy_preferred( getimage, src_hw_gime_get_image_asm );
 
     outline1("LDY #%s", _image );
