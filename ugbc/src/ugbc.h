@@ -2326,6 +2326,8 @@ typedef struct _Environment {
 
     int defaultUnsignedType;
 
+    int defaultNarrowType;
+
     /*
      * Used for deferred writing of assembly file.
      */

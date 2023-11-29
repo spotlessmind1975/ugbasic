@@ -91,7 +91,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
-%token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED
+%token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -7157,7 +7157,13 @@ option_read :
     };
 
 option_definitions :
-     TYPE SIGNED {
+     TYPE WIDE {
+        ((struct _Environment *)_environment)->defaultNarrowType = 0;
+    }
+    | TYPE NARROW {
+        ((struct _Environment *)_environment)->defaultNarrowType = 1;
+    }
+    | TYPE SIGNED {
         ((struct _Environment *)_environment)->defaultUnsignedType = 0;
     }
     | TYPE UNSIGNED {
@@ -8062,7 +8068,7 @@ statement2nc:
   }
   | Identifier {
         parser_array_init( _environment );
-    }
+    }    
       OP indexes CP OP_ASSIGN expr {
         Variable * array = variable_retrieve( _environment, $1 );
         if ( array->type != VT_ARRAY ) {
