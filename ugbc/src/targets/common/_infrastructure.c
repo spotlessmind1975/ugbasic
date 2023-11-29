@@ -2957,6 +2957,20 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                             #endif
                             break;
                         case VT_FLOAT:
+                            WARNING_DOWNCAST( _source, target->name );
+                            Variable * word = variable_temporary( _environment, VT_WORD, "(word)");
+                            variable_move( _environment, source->name, word->name );
+                            switch( target->precision ) {
+                                case FT_FAST:
+                                    cpu_float_fast_from_16( _environment, word->realName, target->realName, VT_SIGNED( source->type ) );
+                                    break;
+                                case FT_SINGLE:
+                                    cpu_float_single_from_16( _environment, word->realName, target->realName, VT_SIGNED( source->type ) );
+                                    break;
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                            }                            
+                            break;
                         default:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             break;
