@@ -1922,7 +1922,7 @@ static void variable_move_32bit_1bit( Environment * _environment, Variable * _so
 
     char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
 
-    cpu_compare_and_branch_32bit_const( _environment, _source->name, 0, label, 1 );
+    cpu_compare_and_branch_32bit_const( _environment, _source->realName, 0, label, 1 );
     
     int one = 1;
     cpu_bit_inplace_8bit( _environment, _target->realName, _target->bitPosition, &one );
@@ -2370,7 +2370,7 @@ static void variable_move_16bit_1bit( Environment * _environment, Variable * _so
 
     char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
 
-    cpu_compare_and_branch_16bit_const( _environment, _source->name, 0, label, 1 );
+    cpu_compare_and_branch_16bit_const( _environment, _source->realName, 0, label, 1 );
     
     int one = 1;
     cpu_bit_inplace_8bit( _environment, _target->realName, _target->bitPosition, &one );
