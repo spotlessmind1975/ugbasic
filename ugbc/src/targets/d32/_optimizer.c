@@ -1134,11 +1134,11 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
     POBuffer op  = TMP_BUF;
     
     /* direct page or inlined */
-   if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) && strchr( var->str, '+' ) == NULL ) {
+   if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) ) {
         struct var *v = vars_get(var);
         // fprintf( stderr, "   v->offset = %d\n", v->offset );
         if(v->offset > 0) {
-            optim(buf[0], "direct-page1", "\t%s <%s", op->str, var->str);
+            optim(buf[0], "direct-page1", "\t%s <(%s)", op->str, var->str);
         } else if(v->offset == -1 && chg_reg(buf[0], REG)
             && ((strchr("DXYU", *REG->str)!=NULL  && v->size==2) || v->size==1) ) {
             v->offset = -2;
