@@ -8420,7 +8420,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->optionReadSafe = 1;
     _environment->warningsEnabled = 0;
 
-    _environment->defaultVariableType = VT_WORD;
+    _environment->defaultVariableType = VT_SWORD;
 
     _environment->peepholeOptimizationLimit = 16;
 
