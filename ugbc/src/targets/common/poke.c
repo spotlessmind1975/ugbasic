@@ -74,7 +74,8 @@ void poke_var( Environment * _environment, char * _address, char * _value ) {
     } else {
         value = variable_temporary( _environment, VT_BYTE, "(byte)" );
     }
-    cpu_move_8bit( _environment, value->realName, realValue->realName );
+
+    variable_move( _environment, value->name, realValue->name );
 
     cpu_poke( _environment, address->realName, realValue->realName );
 
