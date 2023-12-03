@@ -8319,6 +8319,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-1           Include source code into the executable\n" );
     printf("\t             and an execution shell. It enforces other.\n" );
     printf("\t             10-liners rules.\n" );
+    printf("\t-s           Enforces sandbox running rules.\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-O <type>    Output file format for target:\n" );
 #if __atari__ 
@@ -8468,7 +8469,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "a:b:e:c:Wo:Ie:l:EO:dD:L:C:VA:T:1p:G:X:P:q:i:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "a:b:e:c:Wo:Ie:l:EO:dD:L:C:VA:T:1p:G:X:P:q:i:s")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -8591,6 +8592,9 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case '1':
                     _environment->tenLinerRulesEnforced = 1;
+                    break;
+                case 's':
+                    _environment->sandbox = 1;
                     break;
                 case 'e': {
                     char * p = strtok(optarg, ",");

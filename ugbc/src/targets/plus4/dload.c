@@ -51,6 +51,10 @@ Variable * dload( Environment * _environment, char * _target_name ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "DLOAD");
     }
 
+    if ( _environment->sandbox ) {
+        CRITICAL_SANDBOX_ENFORCED( "DLOAD");
+    }
+
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of DLOAD)");
 
     return result;

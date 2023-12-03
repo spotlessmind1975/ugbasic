@@ -140,6 +140,10 @@ Variable * tile_load( Environment * _environment, char * _filename, int _flags, 
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD TILE");
     }
     
+    if ( _environment->sandbox ) {
+        CRITICAL_SANDBOX_ENFORCED( "LOAD TITLE");
+    }
+
     int width = 0;
     int height = 0;
     int depth = 0;

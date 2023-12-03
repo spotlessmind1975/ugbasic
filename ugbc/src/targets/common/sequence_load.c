@@ -140,6 +140,10 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD SEQUENCE");
     }
 
+    if ( _environment->sandbox ) {
+        CRITICAL_SANDBOX_ENFORCED( "LOAD SEQUENCE");
+    }
+
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
     if ( _alias ) {
