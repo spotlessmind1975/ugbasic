@@ -141,6 +141,10 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD IMAGE");
     }
 
+    if ( _environment->sandbox ) {
+        CRITICAL_SANDBOX_ENFORCED( "LOAD IMAGE");
+    }
+
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
     if ( _alias ) {

@@ -95,7 +95,11 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
     }
 
     if ( _environment->tenLinerRulesEnforced ) {
-        CRITICAL_10_LINE_RULES_ENFORCED( "LOAD IMAGES");
+        CRITICAL_10_LINE_RULES_ENFORCED( "LOAD TILESET");
+    }
+
+    if ( _environment->sandbox ) {
+        CRITICAL_SANDBOX_ENFORCED( "LOAD TILESET");
     }
 
     LoadedFile * first = _environment->loadedFiles;

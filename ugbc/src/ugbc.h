@@ -2235,6 +2235,11 @@ typedef struct _Environment {
     int tenLinerRulesEnforced;
 
     /**
+     * Is running in sandbox?
+     */
+    int sandbox;
+
+    /**
      * Is double buffering enabled?
      */
     int doubleBufferEnabled;
@@ -2655,6 +2660,7 @@ typedef struct _Environment {
 #define CRITICAL_PUT_NOT_NOT_SUPPORTED( t ) CRITICAL2("E238 - PUT with NOT operator is not supported", t );
 #define CRITICAL_CANNOT_USE_PLAY_WITHOUT_STRING( t ) CRITICAL2("E239 - PLAY need a string with playing commands", t );
 #define CRITICAL_RESTORE_WITH_UNSUPPORTED_DATA_TYPE( t ) CRITICAL2("E240 - RESTORE with unsupported data type", t ); 
+#define CRITICAL_SANDBOX_ENFORCED( v ) CRITICAL2("E241 - this command is not allowed on sources for sandbox execution", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

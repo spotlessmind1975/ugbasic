@@ -81,6 +81,10 @@ Variable * tilemap_load( Environment * _environment, char * _filename, char * _a
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD TILEMAP");
     }
 
+    if ( _environment->sandbox ) {
+        CRITICAL_SANDBOX_ENFORCED( "LOAD TILEMAP");
+    }
+
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
     if ( _alias ) {
