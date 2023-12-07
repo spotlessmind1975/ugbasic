@@ -495,6 +495,7 @@ void variable_cleanup( Environment * _environment ) {
     buffered_push_output( );
 
     outline0("ORG $2A00");
+    outline0("STA $FFDF");
     outline0("JMP CODESTART");
     outhead0("IRQSTACK0 rzb 512");
     outhead0("IRQSTACK");
