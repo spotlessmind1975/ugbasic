@@ -726,7 +726,7 @@ void vic1_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 2, 8, 8, "Standard Character Mode" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 22, 23, 8, 8, 8, "Standard Character Mode" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 128, 64, 8, 8, 8, "Standard Bitmap Mode" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_EXTENDED, 1, 128, 128, 8, 8, 8, "Extended Bitmap Mode" );
 
@@ -1213,6 +1213,11 @@ static void vic1_image_converter_tile( Environment * _environment, char * _sourc
             colorForeground = xx;
             colorForegroundMax = colorIndexesCount[xx];
         };
+    }
+
+    if ( colorForeground == 0 ) {
+        colorForeground = colorBackground; 
+        colorBackground = 0;
     }
 
     if ( trans ) {
