@@ -225,13 +225,23 @@ PUTIMAGE0DONEROW2:
     LD A, (CURRENTHEIGHT)
     CP B
     POP BC
-    JR Z, PUTIMAGE0L2A
+    JR Z, PUTIMAGE0DONEROW2B
 
     ; Decrement the number of rows last to copy.
     DEC B
 
     ; Repeat the copy for the next row.
     JP NZ, PUTIMAGE0L2
+
+    JP PUTIMAGE0L2AX
+
+PUTIMAGE0DONEROW2B:
+
+    ; Before skipping, decrement the number of rows last to copy.
+    DEC B
+
+    ; Skip only if there are any rows.
+    JP NZ, PUTIMAGE0L2A
 
     JP PUTIMAGE0L2AX
 
@@ -473,13 +483,23 @@ PUTIMAGE1DONEROW2:
     LD A, (CURRENTHEIGHT)
     CP B
     POP BC
-    JR Z, PUTIMAGE1L2A
+    JR Z, PUTIMAGE1DONEROW2B
 
     ; Decrement the number of rows last to copy.
     DEC B
 
     ; Repeat the copy for the next row.
     JP NZ, PUTIMAGE1L2
+
+    JP PUTIMAGE1L2AX
+
+PUTIMAGE1DONEROW2B:
+
+    ; Before skipping, decrement the number of rows last to copy.
+    DEC B
+
+    ; Skip only if there are any rows.
+    JP NZ, PUTIMAGE1L2A
 
     JP PUTIMAGE1L2AX
 
@@ -770,13 +790,23 @@ PUTIMAGE2DONEROW2:
     LD A, (CURRENTHEIGHT)
     CP B
     POP BC
-    JR Z, PUTIMAGE2L2A
+    JR Z, PUTIMAGE2DONEROW2B
 
     ; Decrement the number of rows last to copy.
     DEC B
 
     ; Repeat the copy for the next row.
     JP NZ, PUTIMAGE2L2
+
+    JP PUTIMAGE2L2X
+
+PUTIMAGE2DONEROW2B:
+
+    ; Before skipping, decrement the number of rows last to copy.
+    DEC B
+
+    ; Skip if there are rows
+    JP NZ, PUTIMAGE2L2A
 
     JP PUTIMAGE2L2X
 
