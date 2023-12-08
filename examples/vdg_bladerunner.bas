@@ -5,6 +5,17 @@ REM This code will draw the opening title of the "Blade Runner" videogame,
 REM developed by Westwood Studios and published by Virgin Interactive 
 REM for Microsoft Windows, released on November 14, 1997. 
 REM
+REM This was one of the games that missed out on 8-bit platforms, due 
+REM in part to the remarkable software technology introduced, which made 
+REM use of voxel-based software renderings instead of hardware accelerator 
+REM cards.
+REM 
+REM With this example we try to outline an isomorphic way of writing 
+REM programs and designing graphic resources, so that it is easier to 
+REM port them from one platform to another. The aim, as always, is to 
+REM guarantee a comparable visual and gaming experience between systems, 
+REM without giving up the specificities of each.
+REM
 REM @italian
 REM ISPIRATI AI VIDEOGIOCHI TITOLI DI BLADE RUNNER
 REM 
@@ -12,6 +23,17 @@ REM Questo codice disegnerà il titolo di apertura del videogioco
 REM "Blade Runner", sviluppato da Westwood Studios e pubblicato 
 REM da Virgin Interactive per Microsoft Windows, uscito il 
 REM 14 novembre 1997.
+REM
+REM Questo è stato uno dei videogiochi che hanno mancato le piattaforme 
+REM a 8 bit, a causa anche della notevole tecnologia software introdotta, 
+REM che faceva uso dei rendering software basati sui voxel invece delle 
+REM schede acceleratrici hardware. 
+REM 
+REM Con questo esempio proviamo a tracciare un modo isomorfo di scrivere 
+REM programmi e disegnare risorse grafiche, affinché sia più facile 
+REM portarli da una piattaforma all'altra. Lo scopo, come sempre, è 
+REM garantire una esperienza visiva e di gioco paragonabile tra i sistemi,
+REM senza rinunciare alle specificità di ognuno.
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,msx1,sc3000,sg1000,vic20,zx
 
