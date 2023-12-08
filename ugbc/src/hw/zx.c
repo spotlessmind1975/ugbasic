@@ -61,7 +61,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
         case BITMAP_MODE_STANDARD:
         case TILEMAP_MODE_STANDARD:
-            return 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
+            return 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
 
     }
 
@@ -465,8 +465,9 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = ( _frame_width & 0xff );
+    *(buffer+1) = ( _frame_width >> 8 ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
@@ -593,14 +594,14 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
                 if ( colorIndex != colorBackground[image_x>>3] ) {
                     adilinepixel(colorForeground[image_x>>3]);
-                    *( buffer + offset + 2) |= bitmask;
+                    *( buffer + offset + 3) |= bitmask;
                 } else {
                     adilinepixel(colorBackground[image_x>>3]);
-                    *( buffer + offset + 2) &= ~bitmask;
+                    *( buffer + offset + 3) &= ~bitmask;
                 }
 
                 offset = ( ( image_y >> 3 ) * _frame_width>>3 ) + (image_x>>3);
-                *( buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = ( colorBackground[image_x>>3] << 3 ) | ( colorForeground[image_x>>3] ); 
+                *( buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = ( colorBackground[image_x>>3] << 3 ) | ( colorForeground[image_x>>3] ); 
                 
                 // if ( ! *( buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) ) {
                 //     ++step;
