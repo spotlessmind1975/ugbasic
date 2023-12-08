@@ -63,6 +63,9 @@ PUTIMAGE1:
     LD (IMAGEW), A
     ADD HL, 1
     LD A, (HL)
+    LD (IMAGEW+1), A
+    ADD HL, 1
+    LD A, (HL)
     ; SRL A
     ; SRL A
     ; SRL A
@@ -129,10 +132,15 @@ PUTIMAGE0B:
     ; SLA C
     ; SLA C
     ; SLA C
+    LD A, (IMAGEW+1)
+    LD B, A
     LD A, (IMAGEW)
-    SRL A
-    SRL A
-    SRL A
+    SRL B
+    RR A
+    SRL B
+    RR A
+    SRL B
+    RR A
     LD B, A
 PUTIMAGE0CP:
     LD A, (HL)
@@ -141,10 +149,15 @@ PUTIMAGE0CP:
     INC DE
     DEC B
     JR NZ, PUTIMAGE0CP
+    LD A, (IMAGEW+1)
+    LD B, A
     LD A, (IMAGEW)
-    SRL A
-    SRL A
-    SRL A
+    SRL B
+    RR A
+    SRL B
+    RR A
+    SRL B
+    RR A
     LD B, A
 
     PUSH BC
@@ -258,10 +271,15 @@ PUTDONEYY:
     SRL A
     LD C, A
     ; INC C
+    LD A, (IMAGEW+1)
+    LD B, A
     LD A, (IMAGEW)
-    SRL A
-    SRL A
-    SRL A
+    SRL B
+    RR A
+    SRL B
+    RR A
+    SRL B
+    RR A
     LD B, A
 PUTIMAGE00CP:
     LD A, (HL)
@@ -273,10 +291,15 @@ PUTIMAGE00CP:
 
     PUSH BC
 
+    LD A, (IMAGEW+1)
+    LD B, A
     LD A, (IMAGEW)
-    SRL A
-    SRL A
-    SRL A
+    SRL B
+    RR A
+    SRL B
+    RR A
+    SRL B
+    RR A
     LD C, A
     LD A, 0
     LD B, A
@@ -291,10 +314,15 @@ PUTIMAGE00CP:
 
     POP BC
 
+    LD A, (IMAGEW+1)
+    LD B, A
     LD A, (IMAGEW)
-    SRL A
-    SRL A
-    SRL A
+    SRL B
+    RR A
+    SRL B
+    RR A
+    SRL B
+    RR A
     LD B, A
 
     INC IXL
