@@ -47,11 +47,12 @@
 Variable * image_get_height( Environment * _environment, char * _image ) {
 
     Variable * image = variable_retrieve( _environment, _image );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(image height)" );
+    Variable * result = variable_temporary( _environment, VT_WORD, "(image height)" );
 
     outline1("LDY #%s", image->realName );
-    outline0("LDA 1,Y" );
-    outline1("STA %s", result->realName );
+    outline0("LDB 2,Y" );
+    outline0("CLRA" );
+    outline1("STD %s", result->realName );
 
     return result;
 
