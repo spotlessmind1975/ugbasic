@@ -61,6 +61,9 @@ GETIMAGE0:
     LD (IMAGEW), A
     ADD HL, 1
     LD A, (HL)
+    LD (IMAGEW+1), A
+    ADD HL, 1
+    LD A, (HL)
     SRL A
     SRL A
     SRL A
@@ -121,10 +124,15 @@ GETIMAGE0B:
     SLA C
     SLA C
     SLA C
+    LD A, (IMAGEW+1)
+    LD B, A
     LD A, (IMAGEW)
-    SRL A
-    SRL A
-    SRL A
+    SRL B
+    RR A
+    SRL B
+    RR A
+    SRL B
+    RR A
     LD B, A
 GETIMAGE0CP:
     LD A, (DE)
@@ -133,10 +141,15 @@ GETIMAGE0CP:
     INC DE
     DEC B
     JR NZ, GETIMAGE0CP
+    LD A, (IMAGEW+1)
+    LD B, A
     LD A, (IMAGEW)
-    SRL A
-    SRL A
-    SRL A
+    SRL B
+    RR A
+    SRL B
+    RR A
+    SRL B
+    RR A
     LD B, A
 
     PUSH BC
@@ -211,10 +224,15 @@ GETIMAGE0CP:
 
     LD A, (IMAGEH)
     LD C, A
+    LD A, (IMAGEW+1)
+    LD B, A
     LD A, (IMAGEW)
-    SRL A
-    SRL A
-    SRL A
+    SRL B
+    RR A
+    SRL B
+    RR A
+    SRL B
+    RR A
     LD B, A
 GETIMAGE00CP:
     LD A, (DE)
@@ -226,7 +244,7 @@ GETIMAGE00CP:
 
     PUSH BC
 
-    LD A, (IMAGEW)
+    LD A, (IMAGEW)   
     LD C, A
     LD A, 0
     LD B, A
@@ -236,11 +254,17 @@ GETIMAGE00CP:
 
     POP BC
 
-    LD A, (IMAGEW)
-    SRL A
-    SRL A
-    SRL A
+    LD A, (IMAGEW+1)
     LD B, A
+    LD A, (IMAGEW)
+    SRL B
+    RR A
+    SRL B
+    RR A
+    SRL B
+    RR A
+    LD B, A
+
     DEC C
     JR NZ, GETIMAGE00CP
 
