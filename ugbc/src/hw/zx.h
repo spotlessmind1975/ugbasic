@@ -212,10 +212,10 @@
 
 #define MAX_AUDIO_CHANNELS  1
 
-#define IMAGE_WIDTH_SIZE                1
+#define IMAGE_WIDTH_SIZE                2
 #define IMAGE_WIDTH_OFFSET              0
 #define IMAGE_HEIGHT_SIZE               1
-#define IMAGE_HEIGHT_OFFSET             1
+#define IMAGE_HEIGHT_OFFSET             2
 
 #define DOUBLE_BUFFER_PAGE_0        0
 #define DOUBLE_BUFFER_PAGE_1        1
