@@ -69,8 +69,6 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
-    z80_init( _environment );
-
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
@@ -135,6 +133,8 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("CODESTART:")
     outline0("LD SP, $C000");
+
+    z80_init( _environment );
 
     // outline0("CALL VARINIT2");
     cpu_call( _environment, "VARINIT" );
