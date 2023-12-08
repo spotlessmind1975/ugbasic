@@ -97,10 +97,10 @@
 #define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
 #define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
 
-#define IMAGE_WIDTH_SIZE                2
+#define IMAGE_WIDTH_SIZE                1
 #define IMAGE_WIDTH_OFFSET              0
 #define IMAGE_HEIGHT_SIZE               1
-#define IMAGE_HEIGHT_OFFSET             2
+#define IMAGE_HEIGHT_OFFSET             1
 
 #define DOUBLE_BUFFER_PAGE_0        0
 #define DOUBLE_BUFFER_PAGE_1        1
