@@ -2560,7 +2560,7 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
                 if ( ! _color ) {
                     int minDistance = 0xffff;
                     RGBi * color = NULL;
-                    int i = 0;
+                    i = 0;
                     for( int k=0; k<colorUsed; ++k ) {
                         int distance = rgbi_distance( &palette[k], &rgb );
                         if ( distance < minDistance ) {
@@ -2618,10 +2618,10 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
                 if ( i == 1 ) {
                     *( buffer + offset) |= bitmask;
-                    // printf("*");
+                    //printf("*");
                 } else {
                     *( buffer + offset) &= ~bitmask;
-                    // printf(" ");
+                    //printf(" ");
                 }
 
             }
