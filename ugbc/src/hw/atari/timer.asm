@@ -40,6 +40,12 @@ TIMERMANAGER:
     ; First of all, we have to save the actual state of registers
 
     PHA
+    LDA TIMERRUNNING
+    BEQ TIMERMANAGERGO
+    PLA
+    RTS
+
+TIMERMANAGERGO:
     TXA
     PHA
     TYA
@@ -48,9 +54,7 @@ TIMERMANAGER:
     ; Next, we update the ANTIC VBL flag.
     LDA #1
     STA ANTICVBL
-
-    ; Let's disable interrupts
-    SEI
+    STA TIMERRUNNING
 
     ; loop through every specific timer status
     ; looking to the specific bit in the TIMERSTATUS
@@ -184,14 +188,15 @@ TIMERMANAGERL2:
 
     ; Finally, restore the actual state of registers
 
+    LDA #0
+    STA TIMERRUNNING
+    
     PLA
     TAY
     PLA
     TAX
     PLA
 
-    CLI
-    
     RTS
 
 ; TIMERSETSTATUS(X,Y)
@@ -202,7 +207,6 @@ TIMERSETSTATUS:
 TIMERSETSTATUSL1:
     ASL
     DEX
-    CPX #$FF
     BNE TIMERSETSTATUSL1
 TIMERSETSTATUSDONE:
     CPY #$0
