@@ -139,3 +139,7 @@ KEYCODE2ATASCII: .BYTE 108,        106,        59,          0,          0,      
 DATAPTR = $AA
 DATAPTRY:    .BYTE $0
 
+TIMERSTATUS:    .BYTE   $0
+TIMERCOUNTER:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
+TIMERINIT:      .WORD   $0, $0, $0, $0, $0, $0, $0, $0
+TIMERADDRESS:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0

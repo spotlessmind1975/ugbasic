@@ -154,4 +154,10 @@ void atari_clear_key( Environment * _environment );
 
 void atari_sys_call( Environment * _environment, int _destination );
 
+void atari_timer_set_status_on( Environment * _environment, char * _timer );
+void atari_timer_set_status_off( Environment * _environment, char * _timer );
+void atari_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
+void atari_timer_set_init( Environment * _environment, char * _timer, char * _init );
+void atari_timer_set_address( Environment * _environment, char * _timer, char * _address );
+
 #endif

@@ -51,66 +51,18 @@
 @keyword EVERY...GOSUB
 @target atari
 </usermanual> */
-void every_ticks_gosub( Environment * _environment, char * _timing, char * _label ) {
+void every_ticks_gosub( Environment * _environment, char * _timing, char * _label, char * _timer ) {
 
     Variable * timing = variable_retrieve( _environment, _timing );
+    Variable * timer = NULL;
+    char * timerRealName = NULL;
+    if ( _timer ) {
+        timer = variable_retrieve( _environment, _timer );
+        timerRealName = timer->realName;
+    }
 
-    Variable * zero = variable_temporary( _environment, timing->type, "(zero)" );
-    variable_store( _environment, zero->name, 0 );
-
-    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
-    _environment->everyStatus->locked = 1;
-
-    _environment->everyCounter = variable_temporary( _environment, timing->type, "(every counter)");
-    _environment->everyCounter->locked = 1;
-    _environment->everyTiming = timing;
-    _environment->everyTiming->locked = 1;
-
-    variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
-
-    char skipEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipEveryRoutineLabel, "setg%d", UNIQUE_ID );
-    char everyRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(everyRoutineLabel, "etg%d", UNIQUE_ID );
-    char endOfEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(endOfEveryRoutineLabel, "eetg%d", UNIQUE_ID );
-    
-    cpu_jump( _environment, skipEveryRoutineLabel );
-    
-    cpu_label( _environment, everyRoutineLabel );
-    
-    outline0("PHA");
-    outline0("TXA");
-    outline0("PHA");
-    outline0("TYA");
-    outline0("PHA");
-
-    outline0("LDA #1");
-    outline0("STA ANTICVBL");
-        
-    cpu_di( _environment );
-
-    cpu_bveq( _environment, _environment->everyStatus->realName, endOfEveryRoutineLabel );
-
-    variable_decrement( _environment, _environment->everyCounter->name );
-
-    cpu_bvneq( _environment, variable_compare_not( _environment, _environment->everyCounter->name, zero->name )->realName, endOfEveryRoutineLabel );
-
-    cpu_call( _environment, _label );
-
-    variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
-
-    cpu_label( _environment, endOfEveryRoutineLabel );
-
-    outline0("PLA");
-    outline0("TAY");
-    outline0("PLA");
-    outline0("TAX");
-    outline0("PLA");
-    
-    cpu_ei( _environment );
-
-    antic_next_raster( _environment );
-
-    cpu_label( _environment, skipEveryRoutineLabel );
-
-    antic_raster_at( _environment, everyRoutineLabel, "#$1", "#$0" );
+    atari_timer_set_address( _environment, timerRealName, _label );
+    atari_timer_set_counter( _environment, timerRealName, NULL );
+    atari_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

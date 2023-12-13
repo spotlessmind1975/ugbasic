@@ -156,6 +156,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> op_comma_or_semicolon
 %type <integer> read_safeness
 %type <integer> line_mode box_mode put_action
+%type <string> timer_number timer_number_comma
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -5013,22 +5014,42 @@ on_definition:
         on_gosub( _environment, $1 );  
     } on_gosub_definition;
 
+timer_number_comma:
+    {
+        $$ = NULL;
+    }
+    | OP_COMMA expr {
+        $$ = $2;
+    };
+
+timer_number:
+    {
+        $$ = NULL;
+    }
+    | expr {
+        $$ = $1;
+    };
+
 every_definition :
-      expr ticks GOSUB Identifier on_targets {
-        if ( $5 ) {
-          every_ticks_gosub( _environment, $1, $4 );
+      expr ticks timer_number_comma GOSUB Identifier on_targets {
+        if ( $6 ) {
+          every_ticks_gosub( _environment, $1, $5, $3 );
         }
     }
-    | expr ticks CALL Identifier on_targets {
-        if ( $5 ) {
-          every_ticks_call( _environment, $1, $4 );
+    | expr ticks timer_number_comma CALL Identifier on_targets {
+        if ( $6 ) {
+          every_ticks_call( _environment, $1, $5, $3 );
         }
     }
-    | ON {
-          every_on( _environment );
+    | ON timer_number on_targets {
+        if ( $3 ) {
+          every_on( _environment, $2 );
+        }
     }
-    | OFF {
-          every_off( _environment );
+    | OFF timer_number on_targets {
+        if ( $3 ) {
+          every_off( _environment, $2 );
+        }
     };
 
 limits: 

@@ -1499,6 +1499,8 @@ typedef struct _Deployed {
     int play_string;
     int put_tilemap;
 
+    int timer;
+
 } Deployed;
 
 typedef struct _DString {
@@ -1966,20 +1968,20 @@ typedef struct _Environment {
      */
     Loop * loops;
 
-    /**
-     * "Every" status
-     */
-    Variable * everyStatus;
+    // /**
+    //  * "Every" status
+    //  */
+    // Variable * everyStatus;
 
-    /**
-     * "Every" counter
-     */
-    Variable * everyCounter;
+    // /**
+    //  * "Every" counter
+    //  */
+    // Variable * everyCounter;
 
-    /**
-     * "Every" timing
-     */
-    Variable * everyTiming;
+    // /**
+    //  * "Every" timing
+    //  */
+    // Variable * everyTiming;
 
     /**
      * Memory areas available for the specific platform
@@ -3737,10 +3739,10 @@ void                    end_storage( Environment * _environment );
 void                    end_while( Environment * _environment );
 char *                  escape_newlines( char * _string );
 void                    every_cleanup( Environment * _environment );
-void                    every_off( Environment * _environment );
-void                    every_on( Environment * _environment );
-void                    every_ticks_call( Environment * _environment, char * _timing, char * _label );
-void                    every_ticks_gosub( Environment * _environment, char * _timing, char * _label );
+void                    every_off( Environment * _environment, char * _timer );
+void                    every_on( Environment * _environment, char * _timer );
+void                    every_ticks_call( Environment * _environment, char * _timing, char * _label, char * _timer );
+void                    every_ticks_gosub( Environment * _environment, char * _timing, char * _label, char * _timer );
 void                    exit_loop( Environment * _environment, int _number );
 void                    exit_loop_if( Environment * _environment, char * _expression, int _number );
 void                    exit_proc_if( Environment * _environment, char * _expression, char * _value );
