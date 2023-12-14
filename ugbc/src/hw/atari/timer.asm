@@ -39,10 +39,12 @@ TIMERMANAGER:
 
     ; First of all, we have to save the actual state of registers
 
+    PHP
     PHA
     LDA TIMERRUNNING
     BEQ TIMERMANAGERGO
     PLA
+    PLP
     RTS
 
 TIMERMANAGERGO:
@@ -196,6 +198,7 @@ TIMERMANAGERL2:
     PLA
     TAX
     PLA
+    PLP
 
     RTS
 
