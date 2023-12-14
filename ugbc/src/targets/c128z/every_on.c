@@ -43,11 +43,15 @@
  * 
  * @param _environment Current calling environment
  */
-void every_on( Environment * _environment ) {
+void every_on( Environment * _environment, char * _timer ) {
 
-    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
-    _environment->everyStatus->locked = 1;
+    Variable * timer = NULL;
+    char * timerRealName = NULL;
+    if ( _timer ) {
+        timer = variable_retrieve( _environment, _timer );
+        timerRealName = timer->realName;
+    }
 
-    variable_store( _environment, _environment->everyStatus->name, 0xff );
+    c128z_timer_set_status_on( _environment, timerRealName );
 
 }

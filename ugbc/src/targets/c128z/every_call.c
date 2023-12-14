@@ -38,15 +38,19 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
+void every_ticks_call( Environment * _environment, char * _timing, char * _label, char * _timer ) {
 
-    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
-    _environment->everyCounter = variable_retrieve( _environment, "EVERYCOUNTER");
-    _environment->everyTiming =  variable_retrieve( _environment, "EVERYTIMING");
+    Variable * timing = variable_retrieve( _environment, _timing );
+    Variable * timer = NULL;
+    char * timerRealName = NULL;
+    if ( _timer ) {
+        timer = variable_retrieve( _environment, _timer );
+        timerRealName = timer->realName;
+    }
 
-    variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
-
-    c128z_irq_at( _environment, _label );
+    c128z_timer_set_address( _environment, timerRealName, _label );
+    c128z_timer_set_counter( _environment, timerRealName, NULL );
+    c128z_timer_set_init( _environment, timerRealName, timing->realName );
 
 }
 

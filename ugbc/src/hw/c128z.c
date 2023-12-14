@@ -232,4 +232,24 @@ void c128z_sys_call( Environment * _environment, int _destination ) {
  * CODE SECTION
  ****************************************************************************/
 
+void c128z_timer_set_status_on( Environment * _environment, char * _timer ) {
+    
+}
+
+void c128z_timer_set_status_off( Environment * _environment, char * _timer ) {
+
+}
+
+void c128z_timer_set_counter( Environment * _environment, char * _timer, char * _counter ) {
+
+}
+
+void c128z_timer_set_init( Environment * _environment, char * _timer, char * _init ) {
+
+}
+
+void c128z_timer_set_address( Environment * _environment, char * _timer, char * _address ) {
+
+}
+
 #endif
