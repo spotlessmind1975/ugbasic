@@ -91,7 +91,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
-%token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE
+%token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5052,6 +5052,20 @@ every_definition :
         }
     };
 
+after_definition :
+      expr ticks timer_number_comma GOSUB Identifier on_targets {
+        if ( $6 ) {
+          every_ticks_gosub( _environment, $1, $5, $3 );
+          every_on( _environment, $3 );
+        }
+    }
+    | expr ticks timer_number_comma CALL Identifier on_targets {
+        if ( $6 ) {
+          every_ticks_call( _environment, $1, $5, $3 );
+          every_on( _environment, $3 );
+        }
+    };
+
 limits: 
     {
         ((struct _Environment *)_environment)->upperLimit = NULL;
@@ -7868,6 +7882,7 @@ statement2nc:
   | GOTO goto_definition
   | GOSUB gosub_definition
   | EVERY every_definition
+  | AFTER after_definition
   | RETURN {
       return_label( _environment );
   }
