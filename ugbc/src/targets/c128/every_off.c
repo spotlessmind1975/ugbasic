@@ -47,11 +47,15 @@
 @keyword EVERY OFF
 @target c128
 </usermanual> */
-void every_off( Environment * _environment ) {
+void every_off( Environment * _environment, char * _timer ) {
    
-    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
-    _environment->everyStatus->locked = 1;
+    Variable * timer = NULL;
+    char * timerRealName = NULL;
+    if ( _timer ) {
+        timer = variable_retrieve( _environment, _timer );
+        timerRealName = timer->realName;
+    }
 
-    variable_store( _environment, _environment->everyStatus->name, 0x0 );
+    c128_timer_set_status_off( _environment, timerRealName );
 
 }
