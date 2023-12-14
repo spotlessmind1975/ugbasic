@@ -739,7 +739,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for(i=1; i<24; ++i ) {
+            for(i=1; i<20; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
                 DLI_MODE_VHSCROLL( dliListCurrent, 2 );
             }
@@ -1101,10 +1101,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     outline0("STA TMPPTR+1" );
     outline0("LDY #0" );
 
-    outline1("LDA #<%s", dli->realName );
+    // outline1("LDA #<%s", dli->realName );
+    outline0("LDA #<DLI" );
     outline0("STA (TMPPTR),Y" );
     outline0("INY" );
-    outline1("LDA #>%s", dli->realName );
+    // outline1("LDA #>%s", dli->realName );
+    outline0("LDA #>DLI" );
     outline0("STA (TMPPTR),Y" );
 
     cpu6502_mem_move_direct_size( _environment, dli->realName, "DLI", dli->size );
