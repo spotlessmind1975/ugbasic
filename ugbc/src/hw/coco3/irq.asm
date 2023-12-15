@@ -77,6 +77,8 @@ ISVCIRQ
     STA OLDCC
     PULS D
 
+    JSR TIMERMANAGER
+
     JSR IRQSVC
     ; PSHS CC
 
