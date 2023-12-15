@@ -288,4 +288,89 @@ void c64_sys_call( Environment * _environment, int _destination ) {
 
 }
 
+void c64_timer_set_status_on( Environment * _environment, char * _timer ) {
+    
+    deploy( timer, src_hw_c64_timer_asm);
+
+    if ( _timer ) {
+        outline1("LDX %s", _timer );
+    } else {
+        outline0("LDX #0" );
+    }
+    outline0("LDY #$1" );
+    outline0("JSR TIMERSETSTATUS" );
+
+}
+
+void c64_timer_set_status_off( Environment * _environment, char * _timer ) {
+
+    deploy( timer, src_hw_c64_timer_asm);
+
+    if ( _timer ) {
+        outline1("LDX %s", _timer );
+    } else {
+        outline0("LDX #0" );
+    }
+    outline0("LDY #$0" );
+    outline0("JSR TIMERSETSTATUS" );
+
+}
+
+void c64_timer_set_counter( Environment * _environment, char * _timer, char * _counter ) {
+
+    deploy( timer, src_hw_c64_timer_asm);
+
+    if ( _timer ) {
+        outline1("LDX %s", _timer );
+    } else {
+        outline0("LDX #0" );
+    }
+    if ( _counter ) {
+        outline1("LDA %s", _counter );
+    } else {
+        outline0("LDA #0" );
+    }
+    outline0("STA MATHPTR2");
+    if ( _counter ) {
+        outline1("LDA %s", address_displacement( _environment, _counter, "1" ) );
+    }
+    outline0("STA MATHPTR3");
+    outline0("JSR TIMERSETCOUNTER" );
+
+}
+
+void c64_timer_set_init( Environment * _environment, char * _timer, char * _init ) {
+
+    deploy( timer, src_hw_c64_timer_asm);
+
+    if ( _timer ) {
+        outline1("LDX %s", _timer );
+    } else {
+        outline0("LDX #0" );
+    }
+    outline1("LDA %s", _init );
+    outline0("STA MATHPTR2");
+    outline1("LDA %s", address_displacement( _environment, _init, "1" ) );
+    outline0("STA MATHPTR3");
+    outline0("JSR TIMERSETINIT" );
+
+}
+
+void c64_timer_set_address( Environment * _environment, char * _timer, char * _address ) {
+
+    deploy( timer, src_hw_c64_timer_asm);
+
+    if ( _timer ) {
+        outline1("LDX %s", _timer );
+    } else {
+        outline0("LDX #0" );
+    }
+    outline1("LDA #<%s", _address );
+    outline0("STA MATHPTR2");
+    outline1("LDA #>%s", _address );
+    outline0("STA MATHPTR3");
+    outline0("JSR TIMERSETADDRESS" );
+
+}
+
 #endif
