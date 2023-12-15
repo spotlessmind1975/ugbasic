@@ -59,7 +59,7 @@ void every_on( Environment * _environment, char * _timer ) {
     Variable * timer = NULL;
     char * timerRealName = NULL;
     if ( _timer ) {
-        timer = variable_retrieve( _environment, _timer );
+        timer = variable_retrieve_or_define( _environment, _timer, VT_BYTE, 0 );
         timerRealName = timer->realName;
     }
 

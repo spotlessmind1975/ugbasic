@@ -40,11 +40,11 @@
 
 void every_ticks_call( Environment * _environment, char * _timing, char * _label, char * _timer ) {
 
-    Variable * timing = variable_retrieve( _environment, _timing );
+    Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
     Variable * timer = NULL;
     char * timerRealName = NULL;
     if ( _timer ) {
-        timer = variable_retrieve( _environment, _timer );
+        timer = variable_retrieve_or_define( _environment, _timer, VT_BYTE, 0 );
         timerRealName = timer->realName;
     }
 
