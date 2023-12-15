@@ -45,16 +45,18 @@
  * @param _label Label to jump to when vertical raster reach the value given
  * @param _position The vertical position to wait for
  */
-void every_ticks_gosub( Environment * _environment, char * _timing, char * _label ) {
+void every_ticks_gosub( Environment * _environment, char * _timing, char * _label, char * _timer ) {
 
-    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
-    _environment->everyCounter = variable_retrieve( _environment, "EVERYCOUNTER");
-    _environment->everyTiming =  variable_retrieve( _environment, "EVERYTIMING");
-    Variable * timing =  variable_retrieve_or_define( _environment, _timing, VT_BYTE, 0);
+    Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
+    Variable * timer = NULL;
+    char * timerRealName = NULL;
+    if ( _timer ) {
+        timer = variable_retrieve_or_define( _environment, _timer, VT_BYTE, 0 );
+        timerRealName = timer->realName;
+    }
 
-    variable_move_naked( _environment, timing->name, _environment->everyTiming->name );
-    variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
-
-    cpc_irq_at( _environment, _label );
+    cpc_timer_set_address( _environment, timerRealName, _label );
+    cpc_timer_set_counter( _environment, timerRealName, NULL );
+    cpc_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

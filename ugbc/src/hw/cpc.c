@@ -2117,4 +2117,104 @@ int cpc_palette_extract( Environment * _environment, char * _data, int _width, i
 
 }
 
+void cpc_timer_set_status_on( Environment * _environment, char * _timer ) {
+    
+    deploy( timer, src_hw_cpc_timer_asm);
+
+    if ( _timer ) {
+        outline1("LD A, (%s)", _timer );
+        outline0("LD A, B" );
+    } else {
+        outline0("LD B, 0" );
+    }
+    outline0("LD A, 1" );
+    outline0("LD C, A" );
+    outline0("CALL TIMERSETSTATUS" );
+
+}
+
+void cpc_timer_set_status_off( Environment * _environment, char * _timer ) {
+
+    deploy( timer, src_hw_cpc_timer_asm);
+
+    if ( _timer ) {
+        outline1("LD A, (%s)", _timer );
+        outline0("LD A, B" );
+    } else {
+        outline0("LD B, 0" );
+    }
+    outline0("LD A, 0" );
+    outline0("LD C, A" );
+    outline0("CALL TIMERSETSTATUS" );
+
+
+}
+
+void cpc_timer_set_counter( Environment * _environment, char * _timer, char * _counter ) {
+
+    deploy( timer, src_hw_cpc_timer_asm);
+
+    if ( _counter ) {
+        outline1("LD A, (%s)", _counter );
+        outline0("LD IXL, A" );
+        outline1("LD A, (%s)", address_displacement( _environment, _counter, "1" ) );
+        outline0("LD IXH, A" );
+    } else {
+        outline0("LD IX, 0" );
+    }
+    if ( _timer ) {
+        outline1("LD A, (%s)", _timer );
+        outline0("LD B, A" );
+    } else {
+        outline0("LD B, 0" );
+    }
+    outline0("CALL TIMERSETCOUNTER" );
+
+}
+
+void cpc_timer_set_init( Environment * _environment, char * _timer, char * _init ) {
+
+    deploy( timer, src_hw_cpc_timer_asm);
+
+    if ( _init ) {
+        outline1("LD A, (%s)", _init );
+        outline0("LD IXL, A" );
+        outline1("LD A, (%s)", address_displacement( _environment, _init, "1" ) );
+        outline0("LD IXH, A" );
+    } else {
+        outline0("LD IX, 0" );
+    }
+    if ( _timer ) {
+        outline1("LD A, (%s)", _timer );
+        outline0("LD B, A" );
+    } else {
+        outline0("LD B, 0" );
+    }
+    outline0("CALL TIMERSETINIT" );
+
+}
+
+void cpc_timer_set_address( Environment * _environment, char * _timer, char * _address ) {
+
+    deploy( timer, src_hw_cpc_timer_asm);
+
+    if ( _address ) {
+        outline1("LD HL, %s", _address );
+        outline0("LD A, L" );
+        outline0("LD IXL, A" );
+        outline0("LD A, H" );
+        outline0("LD IXH, A" );
+    } else {
+        outline0("LD IX, 0" );
+    }
+    if ( _timer ) {
+        outline1("LD A, (%s)", _timer );
+        outline0("LD B, A" );
+    } else {
+        outline0("LD B, 0" );
+    }
+    outline0("CALL TIMERSETADDRESS" );
+
+}
+
 #endif
