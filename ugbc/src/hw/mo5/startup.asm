@@ -45,6 +45,7 @@ MO5TIMER  set *-2       ; (variable within code)
     STD   MO5TIMER      ; write result to TI variable
     LDA   #PAGE0        ; sets the direct page
     TFR   A,DP          ; for ugbc routines
+    JSR   TIMERMANAGER
     JMP   >MO5IRQDEF    ; jump to next ISR
 MO5IRQN   set *-2       ; (variable within code)
 
@@ -57,9 +58,13 @@ MO5IRQO   set *-2       ; (variable within code)
 MO5IRQEMPTY
     RTI                 ;  by defaut do RTI
 
+MO5IRQOINIT   fcb $0
+
 MO5STARTUP
-    LDD   MO5IRQO
+    LDA   MO5IRQOINIT
     BNE   MO5STARTUPNOIRQ
+    LDA   #1
+    STA   MO5IRQOINIT
     LDX   #$2061
     LDA   2,X           ; Is previous TIMERPT enable ?
     BEQ   MO5STARTUP2   ; no ==> keep default return code (RTI)

@@ -98,3 +98,9 @@ YCURSYS fcb 0
 BANKSHADOW      fcb     $00
 
 DATAPTR fdb  0
+
+TIMERRUNNING   fcb   $0
+TIMERSTATUS    fcb   $0
+TIMERCOUNTER   fdb   $0, $0, $0, $0, $0, $0, $0, $0
+TIMERINIT      fdb   $0, $0, $0, $0, $0, $0, $0, $0
+TIMERADDRESS   fdb   $0, $0, $0, $0, $0, $0, $0, $0
