@@ -169,4 +169,10 @@ void d64_follow_irq( Environment * _environment );
 
 void d64_sys_call( Environment * _environment, int _destination );
 
+void d64_timer_set_status_on( Environment * _environment, char * _timer );
+void d64_timer_set_status_off( Environment * _environment, char * _timer );
+void d64_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
+void d64_timer_set_init( Environment * _environment, char * _timer, char * _init );
+void d64_timer_set_address( Environment * _environment, char * _timer, char * _address );
+
 #endif

@@ -169,4 +169,10 @@ void d32_follow_irq( Environment * _environment );
 
 void d32_sys_call( Environment * _environment, int _destination );
 
+void d32_timer_set_status_on( Environment * _environment, char * _timer );
+void d32_timer_set_status_off( Environment * _environment, char * _timer );
+void d32_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
+void d32_timer_set_init( Environment * _environment, char * _timer, char * _init );
+void d32_timer_set_address( Environment * _environment, char * _timer, char * _address );
+
 #endif

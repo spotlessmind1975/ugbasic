@@ -49,9 +49,13 @@
 </usermanual> */
 void every_off( Environment * _environment ) {
    
-    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
-    _environment->everyStatus->locked = 1;
+    Variable * timer = NULL;
+    char * timerRealName = NULL;
+    if ( _timer ) {
+        timer = variable_retrieve_or_define( _environment, _timer, VT_BYTE, 0 );
+        timerRealName = timer->realName;
+    }
 
-    variable_store( _environment, _environment->everyStatus->name, 0x0 );
+    d64_timer_set_status_off( _environment, timerRealName );
 
 }
