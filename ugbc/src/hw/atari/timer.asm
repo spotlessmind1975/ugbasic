@@ -74,6 +74,10 @@ TIMERMANAGERL1:
     ; If the carry is cleared, move to the next timer. 
     BCC TIMERMANAGERL2
 
+    ; Disable the EVERY call for this timer.
+    LDY #0
+    JSR TIMERSETSTATUS
+
     PHA
 
     ; Retrieve the actual time counter, using the current
