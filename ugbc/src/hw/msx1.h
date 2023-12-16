@@ -166,4 +166,10 @@ void msx1_joy_vars( Environment * _environment, char * _port, char * _result );
 
 void msx1_sys_call( Environment * _environment, int _destination );
 
+void msx1_timer_set_status_on( Environment * _environment, char * _timer );
+void msx1_timer_set_status_off( Environment * _environment, char * _timer );
+void msx1_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
+void msx1_timer_set_init( Environment * _environment, char * _timer, char * _init );
+void msx1_timer_set_address( Environment * _environment, char * _timer, char * _address );
+
 #endif

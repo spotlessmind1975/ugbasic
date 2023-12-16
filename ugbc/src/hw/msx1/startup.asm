@@ -35,8 +35,38 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+CHECKIF60HZ:
+    IN A, ($bf)
+    NOP
+    NOP
+    NOP
+VDPSYNC:
+    IN A, ($bf)
+	AND $80
+	JR Z, VDPSYNC
+    LD HL, $0
+VDPLOOP:
+    INC HL
+    IN A, ($bf)
+    AND $80
+	JR Z, VDPLOOP
+VDPLOOPD:
+    LD A, L
+    CMP $32
+    JR NZ, VDPLOOPDQ1
+    LD A, H
+    CMP $17
+    JR NZ, VDPLOOPDQ1
+    LD A, 1
+    RET
+
+VDPLOOPDQ1:
+    LD A, 0
+    RET
+
 ISRSVC:
     CALL MUSICPLAYER
+    CALL TIMERMANAGER
     PUSH AF
     PUSH HL
     LD A, 1
@@ -49,6 +79,24 @@ ISRSVC:
     RET
 
 MSX1STARTUP:
+
+    CALL VDPLOCK
+    CALL CHECKIF60HZ
+    CMP 1
+    JR Z, MSX1NTSC
+
+MSX1PAL:
+    LD A, 50
+    LD (TICKSPERSECOND), A
+    JP MSX1STARTUPDONE
+
+MSX1NTSC:
+    LD A, 60
+    LD (TICKSPERSECOND), A
+    JP MSX1STARTUPDONE    
+
+MSX1STARTUPDONE:
+
     DI
 
     ; LD HL, ($fd9f+1)
