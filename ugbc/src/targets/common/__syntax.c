@@ -1831,3 +1831,92 @@ di stringe dinamiche concorrenti consentite.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword AFTER...CALL
+
+@english
+Define the call of a procedure after a specific amout of time, without 
+interfering with the main program. You must specifying the length of time 
+to wait, measured in TICKS. The ugBASIC branches to the 
+procedure after ''value''/''TICKS PER SECONDS'' seconds.
+
+There are 8 delay timers from 0 to 7 which can be specified with ''timer''. 
+If omitted ''timer'' defaults to 0. In the case of parallel task has 0 the 
+highest and 8 the lowest priority.
+
+With ''EVERY OFF'' and ''EVERY ON'' you can disable or enable the timed 
+calls. It is important to know or realise that 
+low-priority-procedures which occurs simultanously to higher-priority-procedures 
+are not lost. Their task remains or handled again after finishing the higher-prio interrupt.
+
+@italian
+Introduce la chiamata di una procedura dopo un certo tempo, senza interferire 
+con il programma principale. È necessario specificare l'intervallo di tempo da attendere, 
+misurato in ''TICKS''. Il compilatore ugBASIC passa alla procedura 
+dopo ''value''/''TICKS PER SECOND'' secondi.
+
+Vi sono 8 timer di ritardo da 0 a 7 che possono essere specificati con ''timer''. 
+Se omesso, il valore predefinito ''timer'' è 0. Nel caso di attività parallela, 
+0 ha la priorità più alta e 8 la priorità più bassa.
+
+Con ''EVERY OFF'' e ''EVERY ON'' è possibile disabilitare o abilitare le chiamate 
+temporizzate. È importante sapere o realizzare che le procedure a bassa priorità che si 
+verificano contemporaneamente alle procedure a priorità più alta non vanno perse. 
+Il loro compito rimane o viene gestito nuovamente dopo aver terminato 
+l'interruzione con priorità più alta.
+
+@syntax AFTER value[,timer] TICKS CALL identifier
+
+@example AFTER 50 TICKS CALL changeBorderColor
+@example AFTER 50,2 TICKS CALL changeBorderColor
+
+@usedInExample control_after_01.bas
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword AFTER...GOSUB
+
+@english
+Define the call of a subroutine after a specific time, without 
+interfering with the main program. You must specifying the length of time 
+to wait, measured in TICKS. The ugBASIC branches to the 
+subroutine after ''value''/''TICKS PER SECONDS'' seconds.
+
+There are 8 delay timers from 0 to 7 which can be specified with ''timer''. 
+If omitted ''timer'' defaults to 0. In the case of parallel task has 0 the 
+highest and 8 the lowest priority.
+
+With ''EVERY OFF'' and ''EVERY ON'' you can disable or enable the timed
+calls. It is important to know or realise that 
+low-priority-subroutines which occurs simultanously to higher-priority-subroutines 
+are not lost. Their task remains or handled again after finishing the higher-prio interrupt.
+
+@italian
+Introduce la chiamata di una subroutine dopo un certo tempo, senza interferire 
+con il programma principale. È necessario specificare il tempo da attendere, 
+misurato in ''TICKS''. Il compilatore ugBASIC passa alla subroutine 
+dopo ''value''/''TICKS PER SECOND'' secondi.
+
+Vi sono 8 timer di ritardo da 0 a 7 che possono essere specificati con ''timer''. 
+Se omesso, il valore predefinito ''timer'' è 0. Nel caso di attività parallela, 
+0 ha la priorità più alta e 8 la priorità più bassa.
+
+Con ''EVERY OFF'' e ''EVERY ON'' è possibile disabilitare o abilitare le chiamate 
+temporizzate. 
+È importante sapere o realizzare che le subroutine a bassa priorità che si 
+verificano contemporaneamente alle subroutine a priorità più alta non vanno perse. 
+Il loro compito rimane o viene gestito nuovamente dopo aver terminato 
+l'interruzione con priorità più alta.
+
+@syntax AFTER value[,timer] TICKS GOSUB label
+
+@example AFTER 50 TICKS GOSUB 100
+@example AFTER 50,2 TICKS GOSUB label
+
+@usedInExample control_after_02.bas
+
+@target all
+</usermanual> */
