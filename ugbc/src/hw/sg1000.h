@@ -164,4 +164,10 @@ void sg1000_follow_irq( Environment * _environment );
 
 void sg1000_sys_call( Environment * _environment, int _destination );
 
+void sg1000_timer_set_status_on( Environment * _environment, char * _timer );
+void sg1000_timer_set_status_off( Environment * _environment, char * _timer );
+void sg1000_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
+void sg1000_timer_set_init( Environment * _environment, char * _timer, char * _init );
+void sg1000_timer_set_address( Environment * _environment, char * _timer, char * _address );
+
 #endif

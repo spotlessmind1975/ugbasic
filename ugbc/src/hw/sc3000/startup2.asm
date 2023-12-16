@@ -35,11 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-SG1000STARTUP2:
-
+SC3000STARTUP2:
 @IF dataSegment
     LD HL, DATAFIRSTSEGMENT
     LD (DATAPTR), HL
 @ENDIF
-
-    RET
+	RET

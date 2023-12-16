@@ -106,10 +106,16 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "KEYBOARD_INT_COUNTER", VT_BYTE, 0 );
     variable_global( _environment, "KEYBOARD_INT_COUNTER" );   
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
-    variable_import( _environment, "EVERYCOUNTER", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYCOUNTER" );
+    variable_import( _environment, "TIMERRUNNING", VT_BYTE, 0 );
+    variable_global( _environment, "TIMERRUNNING" );
+    variable_import( _environment, "TIMERSTATUS", VT_BYTE, 0 );
+    variable_global( _environment, "TIMERSTATUS" );
+    variable_import( _environment, "TIMERCOUNTER", VT_BUFFER, 16 );
+    variable_global( _environment, "TIMERCOUNTER" );
+    variable_import( _environment, "TIMERINIT", VT_BUFFER, 16 );
+    variable_global( _environment, "TIMERINIT" );
+    variable_import( _environment, "TIMERADDRESS", VT_BUFFER, 16 );
+    variable_global( _environment, "TIMERADDRESS" );
 
     variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
     variable_global( _environment, "TICKSPERSECOND" );
@@ -165,7 +171,8 @@ void target_initialization( Environment * _environment ) {
     outhead0("ORG $C000");
     outhead0("SECTION code_user");
 
-    deploy_deferred(startup,src_hw_sc3000_startup_asm);
+    deploy_inplace(startup,src_hw_sc3000_startup_asm);
+    deploy_deferred(startup,src_hw_sc3000_startup2_asm);
 
     outhead0("CODESTART:")
     
