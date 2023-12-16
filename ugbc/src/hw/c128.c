@@ -236,7 +236,7 @@ void c128_sys_call( Environment * _environment, int _destination ) {
 
 void c128_timer_set_status_on( Environment * _environment, char * _timer ) {
     
-    deploy( timer, src_hw_c128_timer_asm);
+    deploy( timer, src_hw_6502_timer_asm);
 
     if ( _timer ) {
         outline1("LDX %s", _timer );
@@ -250,7 +250,7 @@ void c128_timer_set_status_on( Environment * _environment, char * _timer ) {
 
 void c128_timer_set_status_off( Environment * _environment, char * _timer ) {
 
-    deploy( timer, src_hw_c128_timer_asm);
+    deploy( timer, src_hw_6502_timer_asm);
 
     if ( _timer ) {
         outline1("LDX %s", _timer );
@@ -264,7 +264,7 @@ void c128_timer_set_status_off( Environment * _environment, char * _timer ) {
 
 void c128_timer_set_counter( Environment * _environment, char * _timer, char * _counter ) {
 
-    deploy( timer, src_hw_c128_timer_asm);
+    deploy( timer, src_hw_6502_timer_asm);
 
     if ( _timer ) {
         outline1("LDX %s", _timer );
@@ -287,7 +287,7 @@ void c128_timer_set_counter( Environment * _environment, char * _timer, char * _
 
 void c128_timer_set_init( Environment * _environment, char * _timer, char * _init ) {
 
-    deploy( timer, src_hw_c128_timer_asm);
+    deploy( timer, src_hw_6502_timer_asm);
 
     if ( _timer ) {
         outline1("LDX %s", _timer );
@@ -304,7 +304,7 @@ void c128_timer_set_init( Environment * _environment, char * _timer, char * _ini
 
 void c128_timer_set_address( Environment * _environment, char * _timer, char * _address ) {
 
-    deploy( timer, src_hw_c128_timer_asm);
+    deploy( timer, src_hw_6502_timer_asm);
 
     if ( _timer ) {
         outline1("LDX %s", _timer );

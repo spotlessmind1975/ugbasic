@@ -7371,6 +7371,14 @@ paint_definition :
     }    
     ;
 
+border_definition :
+    expr {
+
+    }
+    | expr OP_COMMA expr {
+
+    };
+    
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -7445,6 +7453,7 @@ statement2nc:
   | PMODE pmode_definition
   | PAINT paint_definition
   | PRINT print_definition
+  | BORDER border_definition
   | PRINT BUFFER print_buffer_definition
   | PRINT BUFFER RAW print_buffer_raw_definition
   | PRINT {

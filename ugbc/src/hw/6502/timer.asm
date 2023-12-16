@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                            TIMER ROUTINES ON C128                           *
+;*                            TIMER ROUTINES ON 6502                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -53,7 +53,9 @@ TIMERMANAGERGO:
     TYA
     PHA
 
+    ; Next, we update the ANTIC VBL flag.
     LDA #1
+    STA ANTICVBL
     STA TIMERRUNNING
 
     ; loop through every specific timer status
