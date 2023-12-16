@@ -43,6 +43,15 @@
  * 
  * @param _environment Current calling environment
  */
-void every_off( Environment * _environment ) {
+void every_off( Environment * _environment, char * _timer ) {
    
+    Variable * timer = NULL;
+    char * timerRealName = NULL;
+    if ( _timer ) {
+        timer = variable_retrieve_or_define( _environment, _timer, VT_BYTE, 0 );
+        timerRealName = timer->realName;
+    }
+
+    vg5000_timer_set_status_off( _environment, timerRealName );
+
 }

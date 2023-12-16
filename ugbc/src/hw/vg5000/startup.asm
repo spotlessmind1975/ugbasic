@@ -40,6 +40,7 @@ ISRSVC:
     INC SP
     INC SP
     INC SP
+    CALL TIMERMANAGER
     RET
 
 VG5000STARTUP:
@@ -56,6 +57,9 @@ VG5000STARTUP:
     LD A, $c3
     LD ($47e2), A
 
+    LD A, 50
+    LD (TICKSPERSECOND), A
+    
     EI
 
     RET
