@@ -1141,12 +1141,14 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
             optim(buf[0], "direct-page1", "\t%s <(%s)", op->str, var->str);
         } else if(v->offset == -1 && chg_reg(buf[0], REG)
             && ((strchr("DXYU", *REG->str)!=NULL  && v->size==2) || v->size==1) ) {
-            v->offset = -2;
-            v->flags |= NO_REMOVE;
-            optim(buf[0], "inlined1", "\t%s #%s%s\n%s equ *-%d", op->str,
-                v->init==NULL ? "*" : v->init,
-                v->init==NULL ? (v->size==2 ? "" : "&255") : "",
-                var->str, v->size);
+            if ( strstr( var->str, "+" ) == NULL ) {
+                v->offset = -2;
+                v->flags |= NO_REMOVE;
+                optim(buf[0], "inlined1", "\t%s #%s%s\n%s equ *-%d", op->str,
+                    v->init==NULL ? "*" : v->init,
+                    v->init==NULL ? (v->size==2 ? "" : "&255") : "",
+                    var->str, v->size);
+            }
         }            
     }
 
