@@ -101,7 +101,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
     switch( resource->type ) {
         case VT_SEQUENCE:
-            if ( image->residentAssigned ) {
+            if ( image->bankAssigned ) {
                 
                 char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
                 sprintf(alreadyLoadedLabel, "%salready", label );
@@ -112,32 +112,46 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
-                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                if ( image->uncompressedSize ) {
-                    cpu_msc1_uncompress_direct_direct( _environment, image->realName, bankWindowName );
+                // cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                // if ( image->uncompressedSize ) {
+                //     bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
+                // } else {
+                //     bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                // }
+                // cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                // cpu_label( _environment, alreadyLoadedLabel );
+
+                Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
+                variable_store( _environment, frameSize->name, image->frameSize );
+                Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
+                variable_store( _environment, bank->name, image->bankAssigned );
+                Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+
+                if ( !sequence ) {
+                    if ( !frame ) {
+                        vic2_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
+                    } else {
+                        vic2_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
+                    }
                 } else {
-                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                    if ( !frame ) {
+                        vic2_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
+                    } else {
+                        vic2_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
+                    }
                 }
-                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
-                cpu_label( _environment, alreadyLoadedLabel );
+
+                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                variable_store( _environment, address->name, image->absoluteAddress );
+                variable_add_inplace_vars( _environment, address->name, offset->name );
+                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                if ( !sequence ) {
-                    if ( !frame ) {
-                        vic2_put_image( _environment, &resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
-                    } else {
-                        vic2_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
-                    }
-                } else {
-                    if ( !frame ) {
-                        vic2_put_image( _environment, &resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
-                    } else {
-                        vic2_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
-                    }
-                }
+                vic2_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, flags->realName );
+
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
@@ -155,7 +169,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
             }
             break;
         case VT_IMAGES:
-            if ( image->residentAssigned ) {
+            if ( image->bankAssigned ) {
                 
                 char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
                 sprintf(alreadyLoadedLabel, "%salready", label );
@@ -166,24 +180,38 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
-                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                if ( image->uncompressedSize ) {
-                    cpu_msc1_uncompress_direct_direct( _environment, image->realName,  bankWindowName );
+                // cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                // if ( image->uncompressedSize ) {
+                //     bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
+                // } else {
+                //     bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                // }
+                // cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                // cpu_label( _environment, alreadyLoadedLabel );
+
+                Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
+                variable_store( _environment, frameSize->name, image->frameSize );
+                Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
+                variable_store( _environment, bank->name, image->bankAssigned );
+                Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+
+                if ( !frame ) {
+                    vic2_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                    vic2_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
                 }
-                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
-                cpu_label( _environment, alreadyLoadedLabel );
+
+                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                variable_store( _environment, address->name, image->absoluteAddress );
+                variable_add_inplace_vars( _environment, address->name, offset->name );
+                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                if ( !frame ) {
-                    vic2_put_image( _environment, &resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
-                } else {
-                    vic2_put_image( _environment, &resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
-                }
+                vic2_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, flags->realName );
+                
             } else {
                 if ( !frame ) {
                     vic2_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );

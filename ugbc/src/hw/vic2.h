@@ -221,5 +221,6 @@ void vic2_tile_at( Environment * _environment, char * _x, char * _y, char * _res
 
 void vic2_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
 int vic2_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
+void vic2_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
 
 #endif

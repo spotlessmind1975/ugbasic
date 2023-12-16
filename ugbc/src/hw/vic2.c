@@ -2775,6 +2775,98 @@ void vic2_put_image( Environment * _environment, Resource * _image, char * _x, c
 
 }
 
+void vic2_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline0("LDA #0");
+    outline1("STA %s", _offset );
+    outline1("STA %s", address_displacement(_environment, _offset, "1") );
+
+    if ( _sequence ) {
+
+        outline0("CLC" );
+        outline1("LDA %s", _offset );
+        outline0("ADC #3" );
+        outline1("STA %s", _offset );
+        outline1("LDA %s", address_displacement(_environment, _offset, "1") );
+        outline0("ADC #0" );
+        outline1("STA %s", address_displacement(_environment, _offset, "1") );
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline1("LDA #<OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("STA MATHPTR0" );
+            outline1("LDA #>OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("STA MATHPTR1" );
+            outline0("CLC" );
+            outline1("LDA %s", _sequence );
+            outline0("ASL" );
+            outline0("TAY" );
+            outline1("LDA %s", _offset );
+            outline0("ADC (MATHPTR0), Y" );
+            outline1("STA %s", _offset );
+            outline0("INY" );
+            outline1("LDA %s", address_displacement(_environment, _offset, "1") );
+            outline0("ADC (MATHPTR0), Y" );
+            outline1("STA %s", address_displacement(_environment, _offset, "1") );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline1("LDA %s", _offset );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", _offset );
+                outline0("INY" );
+                outline1("LDA %s", address_displacement(_environment, _offset, "1") );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", address_displacement(_environment, _offset, "1") );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("CLC" );
+            outline1("LDA %s", _offset );
+            outline0("ADC #3" );
+            outline1("STA %s", _offset );
+            outline1("LDA %s", address_displacement(_environment, _offset, "1") );
+            outline0("ADC #0" );
+            outline1("STA %s", address_displacement(_environment, _offset, "1") );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline1("LDA %s", _offset );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", _offset );
+                outline0("INY" );
+                outline1("LDA %s", address_displacement(_environment, _offset, "1") );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", address_displacement(_environment, _offset, "1") );
+            }
+        }
+
+    }
+
+}
+
 void vic2_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
