@@ -44,7 +44,7 @@
 @target d64
 </usermanual> */
 
-void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
+void every_ticks_call( Environment * _environment, char * _timing, char * _label, char * _timer ) {
 
     Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
     Variable * timer = NULL;

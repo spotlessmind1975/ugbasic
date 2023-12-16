@@ -48,7 +48,7 @@
 
 @example EVERY ON
 </usermanual> */
-void every_on( Environment * _environment ) {
+void every_on( Environment * _environment, char * _timer ) {
 
     Variable * timer = NULL;
     char * timerRealName = NULL;
