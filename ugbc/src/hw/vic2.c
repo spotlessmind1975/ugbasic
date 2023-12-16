@@ -2758,6 +2758,7 @@ void vic2_put_image( Environment * _environment, Resource * _image, char * _x, c
 
     vic2_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
 
+    outline0("SEI" );
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
     outline1("LDA %s", address_displacement(_environment, _x, "1") );
@@ -2772,6 +2773,7 @@ void vic2_put_image( Environment * _environment, Resource * _image, char * _x, c
     outline0("STA IMAGET" );
 
     outline0("JSR PUTIMAGE");
+    outline0("CLI" );
 
 }
 
