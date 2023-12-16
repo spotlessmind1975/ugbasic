@@ -49,11 +49,15 @@
 @target plus4
 
 </usermanual> */
-void every_on( Environment * _environment ) {
+void every_on( Environment * _environment, char * _timer ) {
    
-    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
-    _environment->everyStatus->locked = 1;
+    Variable * timer = NULL;
+    char * timerRealName = NULL;
+    if ( _timer ) {
+        timer = variable_retrieve_or_define( _environment, _timer, VT_BYTE, 0 );
+        timerRealName = timer->realName;
+    }
 
-    variable_store( _environment, _environment->everyStatus->name, 0xff );
+    plus4_timer_set_status_on( _environment, timerRealName );
 
 }
