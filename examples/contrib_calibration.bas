@@ -52,9 +52,9 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc,
 				PRINT ".";
 			ELSEIF dt = ( TICKS PER SECOND / 4 ) THEN
 				PRINT " ";
-			ELSEIF dt = ( ( 2 * TICKS PER SECOND ) / 4 ) THEN
+			ELSEIF dt = ( 2 * ( TICKS PER SECOND / 4 ) ) THEN
 				PRINT ".";
-			ELSEIF dt = ( ( 3 * TICKS PER SECOND ) / 4 ) THEN
+			ELSEIF dt = ( 3 * ( TICKS PER SECOND / 4 ) ) THEN
 				PRINT " ";
 			ENDIF
 

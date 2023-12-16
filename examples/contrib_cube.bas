@@ -19,7 +19,9 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc,zx
 	DIM t AS BYTE : DIM z AS BYTE
 	DIM p AS POSITION(5), q AS POSITION(5), x AS POSITION(5), y AS POSITION(5)
 
-	a=20 : b=20 : f=(b^2)/(a^2) : c=70 : d=45  : e=c
+	DIM aa AS INTEGER, bb AS INTEGER
+
+	a=20 : b=20 : aa = (a^2) : bb = (a^2): f=bb/aa : c=70 : d=45  : e=c
 
 	buf := NEW IMAGE(64,72)
 	GET IMAGE buf FROM 0,0
@@ -69,14 +71,3 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc,zx
 		NEXT
 		
 	NEXT
-
-
-
-
-
-
-
-
-
-
-
