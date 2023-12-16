@@ -194,7 +194,7 @@ void msx1_sys_call( Environment * _environment, int _destination ) {
 
 void msx1_timer_set_status_on( Environment * _environment, char * _timer ) {
     
-    deploy( timer, src_hw_msx1_timer_asm);
+    deploy( timer, src_hw_z80_timer_asm);
 
     if ( _timer ) {
         outline1("LD A, (%s)", _timer );
@@ -210,7 +210,7 @@ void msx1_timer_set_status_on( Environment * _environment, char * _timer ) {
 
 void msx1_timer_set_status_off( Environment * _environment, char * _timer ) {
 
-    deploy( timer, src_hw_msx1_timer_asm);
+    deploy( timer, src_hw_z80_timer_asm);
 
     if ( _timer ) {
         outline1("LD A, (%s)", _timer );
@@ -227,7 +227,7 @@ void msx1_timer_set_status_off( Environment * _environment, char * _timer ) {
 
 void msx1_timer_set_counter( Environment * _environment, char * _timer, char * _counter ) {
 
-    deploy( timer, src_hw_msx1_timer_asm);
+    deploy( timer, src_hw_z80_timer_asm);
 
     if ( _counter ) {
         outline1("LD A, (%s)", _counter );
@@ -249,7 +249,7 @@ void msx1_timer_set_counter( Environment * _environment, char * _timer, char * _
 
 void msx1_timer_set_init( Environment * _environment, char * _timer, char * _init ) {
 
-    deploy( timer, src_hw_msx1_timer_asm);
+    deploy( timer, src_hw_z80_timer_asm);
 
     if ( _init ) {
         outline1("LD A, (%s)", _init );
@@ -271,7 +271,7 @@ void msx1_timer_set_init( Environment * _environment, char * _timer, char * _ini
 
 void msx1_timer_set_address( Environment * _environment, char * _timer, char * _address ) {
 
-    deploy( timer, src_hw_msx1_timer_asm);
+    deploy( timer, src_hw_z80_timer_asm);
 
     if ( _address ) {
         outline1("LD HL, %s", _address );
