@@ -45,6 +45,7 @@ PC128TIMER  set *-2       ; (variable within code)
     STD   PC128TIMER      ; write result to TI variable
     LDA   #PAGE0          ; sets the direct page
     TFR   A,DP            ; for ugbc routines
+    JSR   TIMERMANAGER
     JMP   >PC128IRQDEF    ; jump to next ISR
 PC128IRQN   set *-2       ; (variable within code)
 
@@ -57,9 +58,13 @@ PC128IRQO   set *-2       ; (variable within code)
 PC128IRQEMPTY
     RTI                   ;  by defaut do RTI
 
+PC128OPIRQOINIT     fcb $0
+
 PC128OPSTARTUP
-    LDD   PC128OPIRQO
+    LDD   PC128OPIRQOINIT
     BNE   PC128OPSTARTUPNOIRQ
+    LDA   #1
+    STA   PC128OPIRQOINIT    
     LDX   #$2061
     LDA   2,X             ; Is previous TIMERPT enable ?
     BEQ   PC128STARTUP2   ; no ==> keep default return code (RTI)

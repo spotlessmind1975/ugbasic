@@ -272,4 +272,83 @@ void pc128op_sys_call( Environment * _environment, int _destination ) {
 
 }
 
+void pc128op_timer_set_status_on( Environment * _environment, char * _timer ) {
+    
+    deploy( timer, src_hw_pc128op_timer_asm);
+
+    if ( _timer ) {
+        outline1("LDB %s", _timer );
+    } else {
+        outline0("LDB #0" );
+    }
+    outline0("LDA #$1" );
+    outline0("STA MATHPTR0" );
+    outline0("JSR TIMERSETSTATUS" );
+
+}
+
+void pc128op_timer_set_status_off( Environment * _environment, char * _timer ) {
+
+    deploy( timer, src_hw_pc128op_timer_asm);
+
+    if ( _timer ) {
+        outline1("LDB %s", _timer );
+    } else {
+        outline0("LDB #0" );
+    }
+    outline0("LDA #$0" );
+    outline0("STA MATHPTR0" );
+    outline0("JSR TIMERSETSTATUS" );
+
+}
+
+void pc128op_timer_set_counter( Environment * _environment, char * _timer, char * _counter ) {
+
+    deploy( timer, src_hw_pc128op_timer_asm);
+
+    if ( _counter ) {
+        outline1("LDD %s", _counter );
+    } else {
+        outline0("LDD #0" );
+    }
+    outline0("STD MATHPTR2");
+    if ( _timer ) {
+        outline1("LDB %s", _timer );
+    } else {
+        outline0("LDB #0" );
+    }
+    outline0("JSR TIMERSETCOUNTER" );
+
+}
+
+void pc128op_timer_set_init( Environment * _environment, char * _timer, char * _init ) {
+
+    deploy( timer, src_hw_pc128op_timer_asm);
+
+    outline1("LDD %s", _init );
+    outline0("STD MATHPTR2");
+    if ( _timer ) {
+        outline1("LDB %s", _timer );
+    } else {
+        outline0("LDB #0" );
+    }
+    outline0("JSR TIMERSETINIT" );
+
+}
+
+void pc128op_timer_set_address( Environment * _environment, char * _timer, char * _address ) {
+
+    deploy( timer, src_hw_pc128op_timer_asm);
+
+    outline1("LDD #%s", _address );
+    outline0("STD MATHPTR2");
+    if ( _timer ) {
+        outline1("LDB %s", _timer );
+    } else {
+        outline0("LDB #0" );
+    }
+    outline0("JSR TIMERSETADDRESS" );
+
+}
+
 #endif
