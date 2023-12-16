@@ -55,7 +55,6 @@ TIMERMANAGERGO:
 
     ; Next, we update the ANTIC VBL flag.
     LDA #1
-    STA ANTICVBL
     STA TIMERRUNNING
 
     ; loop through every specific timer status
