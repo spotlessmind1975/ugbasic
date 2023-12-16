@@ -44,33 +44,51 @@
 @english
 Define the call of a procedure at regular intervals, without 
 interfering with the main program. You must specifying the length of time 
-between every call, measured in TICKS. 
+between every call, measured in TICKS. The ugBASIC branches to the 
+procedure EVERY ''value''/''TICKS PER SECONDS'' seconds.
 
 Note that the procedure execution 
 time should be less than the interval time, or the main program timings 
-will be affected. After a procedure has been entered, the 
-''EVERY'' system is automatically disabled. This means that, 
-in order to call this feature continuously, an ''EVERY ON'' command 
-must be inserted into a subroutine before the final RETURN statement.
+will be affected. 
+
+There are 8 delay timers from 0 to 7 which can be specified with ''timer''. 
+If omitted ''timer'' defaults to 0. In the case of parallel task has 0 the 
+highest and 8 the lowest priority.
+
+With ''EVERY OFF'' and ''EVERY ON'' you can disable or enable the timed 
+calls. Procedures run as long as the main loop / program runs, even the 
+main programm is paused. It is important to know or realise that 
+low-priority-procedures which occurs simultanously to higher-priority-procedures 
+are not lost. Their task remains or handled again after finishing the higher-prio interrupt.
 
 @italian
-Definisce una chiamata a una procedura a intervalli regolari, senza
-interferire con il programma principale. È necessario specificare il
-periodo di tempo tra ogni chiamata, misurata in TICKS.
+Introduce la chiamata di una procedura a intervalli regolari, senza interferire 
+con il programma principale. È necessario specificare l'intervallo di tempo tra
+ogni chiamata, misurato in ''TICKS''. Il compilatore ugBASIC passa alla procedura 
+ogni ''value''/''TICKS PER SECOND'' secondi.
 
-Si fa notare che la durata dell'esecuzione della procedura dovrebbe essere 
-inferiore al tempo dell'intervallo indicato, altrimenti le temporizzazioni 
-del programma principale ne risentiranno. 
+Si noti che il tempo di esecuzione della procedura dovrebbe essere inferiore al 
+tempo dell'intervallo, altrimenti i tempi del programma principale verranno influenzati. 
 
-Dopo essere entrati nella procedura, il sistema disabilita la chiamata
-periodica. Ciò significa che, per richiamare questa funzione in modo continuo,
-è necessario invocare il comando ''EVERY ON'' prima dell'istruzione ''RETURN'' finale.
+Vi sono 8 timer di ritardo da 0 a 7 che possono essere specificati con ''timer''. 
+Se omesso, il valore predefinito ''timer'' è 0. Nel caso di attività parallela, 
+0 ha la priorità più alta e 8 la priorità più bassa.
 
-@syntax EVERY value TICKS CALL identifier
+Con ''EVERY OFF'' e ''EVERY ON'' è possibile disabilitare o abilitare le chiamate 
+temporizzate. Le procedure vengono eseguite finché viene eseguito il 
+ciclo/programma principale, anche se il programma principale è in pausa. 
+È importante sapere o realizzare che le procedure a bassa priorità che si 
+verificano contemporaneamente alle procedure a priorità più alta non vanno perse. 
+Il loro compito rimane o viene gestito nuovamente dopo aver terminato 
+l'interruzione con priorità più alta.
+
+@syntax EVERY value[,timer] TICKS CALL identifier
 
 @example EVERY 50 TICKS CALL changeBorderColor
+@example EVERY 50,2 TICKS CALL changeBorderColor
 
 @usedInExample control_periodic_02.bas
+@usedInExample control_periodic_03.bas
 
 @target coleco
 </usermanual> */

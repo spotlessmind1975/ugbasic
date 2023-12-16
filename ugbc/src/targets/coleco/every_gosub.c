@@ -45,6 +45,61 @@
  * @param _label Label to jump to when vertical raster reach the value given
  * @param _position The vertical position to wait for
  */
+/* <usermanual>
+@keyword EVERY...GOSUB
+
+@english
+Define the call of a subroutine at regular intervals, without 
+interfering with the main program. You must specifying the length of time 
+between every call, measured in TICKS. The ugBASIC branches to the 
+subroutine EVERY ''value''/''TICKS PER SECONDS'' seconds.
+
+Note that the subroutine execution 
+time should be less than the interval time, or the main program timings 
+will be affected. 
+
+There are 8 delay timers from 0 to 7 which can be specified with ''timer''. 
+If omitted ''timer'' defaults to 0. In the case of parallel task has 0 the 
+highest and 8 the lowest priority.
+
+With ''EVERY OFF'' and ''EVERY ON'' you can disable or enable the timed
+calls. Subroutines run as long as the main loop / program runs, even the 
+main programm is paused. It is important to know or realise that 
+low-priority-subroutines which occurs simultanously to higher-priority-subroutines 
+are not lost. Their task remains or handled again after finishing the higher-prio interrupt.
+
+@italian
+Introduce la chiamata di una subroutine a intervalli regolari, senza interferire 
+con il programma principale. È necessario specificare l'intervallo di tempo tra
+ogni chiamata, misurato in ''TICKS''. Il compilatore ugBASIC passa alla subroutine 
+ogni ''value''/''TICKS PER SECOND'' secondi.
+
+Si noti che il tempo di esecuzione della subroutine dovrebbe essere inferiore al 
+tempo dell'intervallo, altrimenti i tempi del programma principale verranno influenzati. 
+
+Vi sono 8 timer di ritardo da 0 a 7 che possono essere specificati con ''timer''. 
+Se omesso, il valore predefinito ''timer'' è 0. Nel caso di attività parallela, 
+0 ha la priorità più alta e 8 la priorità più bassa.
+
+Con ''EVERY OFF'' e ''EVERY ON'' è possibile disabilitare o abilitare le chiamate 
+temporizzate. Le subroutine vengono eseguite finché viene eseguito il 
+ciclo/programma principale, anche se il programma principale è in pausa. 
+È importante sapere o realizzare che le subroutine a bassa priorità che si 
+verificano contemporaneamente alle subroutine a priorità più alta non vanno perse. 
+Il loro compito rimane o viene gestito nuovamente dopo aver terminato 
+l'interruzione con priorità più alta.
+
+@syntax EVERY value[,timer] TICKS GOSUB label
+
+@example EVERY 50 TICKS GOSUB 100
+@example EVERY 50,2 TICKS GOSUB label
+
+@usedInExample control_periodic_01.bas
+@usedInExample control_periodic_03.bas
+
+@target coleco
+</usermanual> */
+
 void every_ticks_gosub( Environment * _environment, char * _timing, char * _label, char * _timer ) {
 
     Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );

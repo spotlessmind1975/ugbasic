@@ -48,17 +48,18 @@
 
 @english
 
-''EVERY OFF'' statement interrupt system used by the ''EVERY'' commands. It's automatically 
-executed at the start of periodic procedure.
+''EVERY OFF'' statement interrupt system used by the ''EVERY'' commands. A ''timer''
+can be given as parameter. If omitted, ''timer'' is 0.
 
 @italian
 
 Sistema di interruzione dell'istruzione ''EVERY OFF'' utilizzato dai comandi ''EVERY''. 
-Viene eseguito automaticamente all'avvio della procedura periodica.
+Può essere indicato il ''timer'' di interesse. Se omesso, vale 0.
 
-@syntax EVERY OFF
+@syntax EVERY OFF [timer]
 
 @example EVERY OFF
+@example EVERY OFF 2
 
 @seeAlso EVERY
 @seeAlso EVERY ON

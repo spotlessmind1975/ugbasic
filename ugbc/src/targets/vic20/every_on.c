@@ -48,11 +48,22 @@
 
 @english
 
+''EVERY ON'' statement restart system used by the ''EVERY'' commands. A ''timer''
+can be given as parameter. If omitted, ''timer'' is 0.
+
 @italian
 
-@syntax EVERY ON
+Sistema di ripristino dell'istruzione ''EVERY'. 
+Può essere indicato il ''timer'' di interesse. Se omesso, vale 0.
+
+@syntax EVERY ON [timer]
 
 @example EVERY ON
+@example EVERY ON 1
+
+@seeAlso EVERY
+@seeAlso EVERY OFF
+@target atari
 </usermanual> */
 void every_on( Environment * _environment, char * _timer ) {
    
