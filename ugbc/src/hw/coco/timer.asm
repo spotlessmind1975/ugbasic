@@ -72,10 +72,6 @@ TIMERMANAGERL1
     ; If the carry is cleared, move to the next timer. 
     BCC TIMERMANAGERL2
 
-    ; Disable the EVERY call for this timer.
-    CLR MATHPTR0
-    JSR TIMERSETSTATUS
-
     PSHS D
     PSHS X
     PSHS Y

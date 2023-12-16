@@ -81,10 +81,6 @@ TIMERMANAGERL1:
     ; If the carry is cleared, move to the next timer. 
     JR NC, TIMERMANAGERL2
 
-    ; Disable the EVERY call for this timer.
-    LD C, 0
-    CALL TIMERSETSTATUS
-    
     PUSH AF
     PUSH DE
     PUSH HL
