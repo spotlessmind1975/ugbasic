@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                            TIMER ROUTINES ON VIC-20                         *
+;*                            TIMER ROUTINES ON ZX                             *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -39,40 +39,52 @@ TIMERMANAGER:
 
     ; First of all, we have to save the actual state of registers
 
-    PHP
-    PHA
-    LDA TIMERRUNNING
-    BEQ TIMERMANAGERGO
-    PLA
-    PLP
-    RTS
+	PUSH	AF
+    LD A, (TIMERRUNNING)
+    CP 0
+    JR Z, TIMERMANAGERGO
+    POP     AF
+    RET
 
 TIMERMANAGERGO:
-    TXA
-    PHA
-    TYA
-    PHA
 
-    LDA #1
-    STA TIMERRUNNING
+	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+	PUSH	IX
+	PUSH	IY
+	EX	AF,AF'
+	PUSH	AF
+	EXX
+	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+
+    LD A, 1
+    LD (TIMERRUNNING), A
 
     ; loop through every specific timer status
     ; looking to the specific bit in the TIMERSTATUS
     ; control word.
-    LDA TIMERSTATUS
+    LD A, (TIMERSTATUS)
 
     ; Up to 8 timers.
-    LDX #0
+    LD B, 0
+    PUSH AF
 
 TIMERMANAGERL1:
+    POP AF
 
     ; Move the first bit into the carry.
-    LSR
+    SRA A
 
     ; If the carry is cleared, move to the next timer. 
-    BCC TIMERMANAGERL2
+    JR NC, TIMERMANAGERL2
 
-    PHA
+    PUSH AF
+    PUSH DE
+    PUSH HL
+    PUSH BC
 
     ; Retrieve the actual time counter, using the current
     ; index (X-1). The Y will be the offset starting from
@@ -80,201 +92,263 @@ TIMERMANAGERL1:
     ;
     ;       TIMERCOUNTER + (X-1) * 2 -> Y = (X-1) * 2
     ;
-    TXA
-    ASL
-    TAY
+    LD A, B
+    SLA A
+    LD E, A
+    LD A, 0
+    LD D, A 
 
-    LDA #<TIMERCOUNTER
-    STA MATHPTR0
-    LDA #>TIMERCOUNTER
-    STA MATHPTR0+1
+    LD HL, TIMERCOUNTER 
+    ADD HL, DE
 
     ; Now we are going to check if the timer is not zero.
     ; If not zero, we must decrement the counter.
-    INY
-    LDA (MATHPTR0), Y
-    BNE TIMERMANAGERL2AH
-    DEY
-    LDA (MATHPTR0), Y
-    BNE TIMERMANAGERL2AL
+    INC HL
+    LD A, (HL)
+    CP 0
+    JR NZ, TIMERMANAGERL2AH
+    DEC HL
+    LD A, (HL)
+    CP 0
+    JR NZ, TIMERMANAGERL2AL
 
     ; Ok the counter is zero. So we must reset to the
     ; value we received previously, and call the routine.
 
-    LDA #<TIMERINIT
-    STA MATHPTR2
-    LDA #>TIMERINIT
-    STA MATHPTR2+1
-    LDA (MATHPTR2), Y
-    STA (MATHPTR0), Y
-    INY
-    LDA (MATHPTR2), Y
-    STA (MATHPTR0), Y
-    DEY
+    LD HL, TIMERINIT
+    ADD HL, DE
+    LD A, (HL)
+    LD IXL, A
+    INC HL
+    LD A, (HL)
+    LD IXH, A
+
+    LD HL, TIMERCOUNTER 
+    ADD HL, DE
+    LD A, IXL
+    LD (HL), A
+    INC HL
+    LD A, IXH
+    LD (HL), A
 
 TIMERMANAGERJMP2:
-    LDA #<TIMERADDRESS
-    STA MATHPTR2
-    LDA #>TIMERADDRESS
-    STA MATHPTR2+1
+    LD HL, TIMERADDRESS
+    ADD HL, DE
 
     ; Now we are going to check if the address
     ; to call is zero. In this case, we must
     ; avoid to jump to it.
-    INY
-    LDA (MATHPTR2), Y
-    BNE TIMERMANAGERJMP2AH
-    DEY
-    LDA (MATHPTR2), Y
-    BNE TIMERMANAGERJMP2AL
+    INC HL
+    LD A, (HL)
+    CP 0
+    JR NZ, TIMERMANAGERJMP2AH
+    DEC HL
+    LD A, (HL)
+    CP 0
+    JR NZ, TIMERMANAGERJMP2AL
 
-    JMP TIMERMANAGERL2AL
+    JP TIMERMANAGERL2AL
 
 TIMERMANAGERJMP:
-    JMP $0000
+    JP (HL)
 
 TIMERMANAGERJMP2AH:
-    DEY
 TIMERMANAGERJMP2AL:
-    LDA (MATHPTR2), Y
-    STA TIMERMANAGERJMP+1
-    INY
-    LDA (MATHPTR2), Y
-    STA TIMERMANAGERJMP+2
-    DEY
+    LD HL, TIMERADDRESS
+    ADD HL, DE
+    LD A, (HL)
+    LD IXL, A
+    INC HL
+    LD A, (HL)
+    LD IXH, A
 
-    PHA
-    TXA
-    PHA
-    TYA
-    PHA
+    PUSH AF
+    PUSH HL
+    PUSH DE
+    
+    LD A, IXL
+    LD L, A
+    LD A, IXH
+    LD H, A
 
-    JSR TIMERMANAGERJMP
+    CALL TIMERMANAGERJMP
 
-    PLA
-    TAY
-    PLA
-    TAX
-    PLA
+    POP DE
+    POP HL
+    POP AF
 
     ; If we reach this line, we are going to decrement the
     ; counter since it is not zero.
 TIMERMANAGERL2AH:
     ; Move to the LSB
-    DEY
 TIMERMANAGERL2AL:
     ; 16 bit decrement
-    LDA (MATHPTR0), Y
-    SEC
-    SBC #1
-    STA (MATHPTR0), Y
-    LDA (MATHPTR0), Y
-    CMP #$FF
-    BNE TIMERMANAGERL2ALD
-    INY
-    LDA (MATHPTR0), Y
-    SEC
-    SBC #1
-    STA (MATHPTR0), Y
+    LD HL, TIMERCOUNTER 
+    ADD HL, DE
+    PUSH DE
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+    DEC HL
+    DEC DE
+    LD A, E
+    LD (HL), A
+    INC HL
+    LD A, D
+    LD (HL), A
+    POP DE
 TIMERMANAGERL2ALD:
 
-    PLA
+    POP BC
+    POP HL
+    POP DE
+    POP AF
 
     ; If we reach this line, we are going to check the next timer.
 TIMERMANAGERL2:
-    INX
-    CPX #8
-    BNE TIMERMANAGERL1
 
+    INC B
+    PUSH AF
+    LD A, B
+    CP 8
+    JR NZ, TIMERMANAGERL1
+    POP AF
+    
     ; Finally, restore the actual state of registers
 
-    LDA #0
-    STA TIMERRUNNING
+    LD A, 0
+    LD (TIMERRUNNING), A
     
-    PLA
-    TAY
-    PLA
-    TAX
-    PLA
-    PLP
+	POP	HL
+	POP	DE
+	POP	BC
+	EXX
+	POP	AF
+	EX	AF,AF'
+	POP	IY
+	POP	IX
+	POP	HL
+	POP	DE
+	POP	BC
+	POP	AF
 
-    RTS
+    RET
 
-; TIMERSETSTATUS(X,Y)
+; TIMERSETSTATUS(B,C)
 TIMERSETSTATUS:
-    LDA #1
-    CPX #0
-    BEQ TIMERSETSTATUSDONE
+    LD A, B
+    CP 0
+    LD A, 1
+    JR Z, TIMERSETSTATUSDONE
 TIMERSETSTATUSL1:
-    ASL
-    DEX
-    BNE TIMERSETSTATUSL1
+    SLA A
+    DEC B
+    JR NZ, TIMERSETSTATUSL1
 TIMERSETSTATUSDONE:
-    CPY #$0
-    BEQ TIMERSETSTATUS0
+    PUSH AF
+    LD A, C
+    CP 0
+    JR Z, TIMERSETSTATUS0
 TIMERSETSTATUS1:
-    ORA TIMERSTATUS
-    STA TIMERSTATUS
-    RTS
+    LD A, (TIMERSTATUS)
+    LD B, A
+    POP AF
+    OR B
+    LD (TIMERSTATUS), A
+    RET
 TIMERSETSTATUS0:
-    EOR #$FF
-    AND TIMERSTATUS
-    STA TIMERSTATUS
-    RTS
+    LD A, (TIMERSTATUS)
+    LD B, A
+    POP AF
+    XOR $FF
+    AND B
+    LD (TIMERSTATUS), A
+    RET
 
-; TIMERSETCOUNTER(X,MATHPTR2:MATHPTR3)
+; TIMERSETCOUNTER(B,IX)
 TIMERSETCOUNTER:
-    LDA #<TIMERCOUNTER
-    STA MATHPTR0
-    LDA #>TIMERCOUNTER
-    STA MATHPTR0+1
+    PUSH AF
+    PUSH BC
+    PUSH IX
+    PUSH DE
 
-    TXA
-    ASL
-    TAY
+    LD A, B
+    SLA A
+    LD E, A
+    LD A, 0
+    LD D, A 
 
-    LDA MATHPTR2
-    STA (MATHPTR0),Y
-    INY
-    LDA MATHPTR3
-    STA (MATHPTR0),Y
+    LD HL, TIMERCOUNTER 
+    ADD HL, DE
+    LD A, IXL
+    LD (HL), A
+    INC HL
+    LD A, IXH
+    LD (HL), A
 
-    RTS
+    POP DE
+    POP IX
+    POP BC
+    POP AF
 
-; TIMERSETINIT(X,MATHPTR2:MATHPTR3)
+    RET
+
+; TIMERSETINIT(B,IX)
 TIMERSETINIT:
-    LDA #<TIMERINIT
-    STA MATHPTR0
-    LDA #>TIMERINIT
-    STA MATHPTR0+1
+    PUSH AF
+    PUSH BC
+    PUSH IX
+    PUSH DE
 
-    TXA
-    ASL
-    TAY
+    LD A, B
+    SLA A
+    LD E, A
+    LD A, 0
+    LD D, A 
 
-    LDA MATHPTR2
-    STA (MATHPTR0),Y
-    INY
-    LDA MATHPTR3
-    STA (MATHPTR0),Y
+    LD HL, TIMERINIT
+    ADD HL, DE
+    LD A, IXL
+    LD (HL), A
+    INC HL
+    LD A, IXH
+    LD (HL), A
 
-    RTS
+    POP DE
+    POP IX
+    POP BC
+    POP AF
 
-; TIMERSETADDRESS(X,MATHPTR2:MATHPTR3)
+    RET
+
+
+; TIMERSETADDRESS(B,IX)
 TIMERSETADDRESS:
-    LDA #<TIMERADDRESS
-    STA MATHPTR0
-    LDA #>TIMERADDRESS
-    STA MATHPTR0+1
+    PUSH AF
+    PUSH BC
+    PUSH IX
+    PUSH DE
 
-    TXA
-    ASL
-    TAY
+    LD A, B
+    SLA A
+    LD E, A
+    LD A, 0
+    LD D, A 
 
-    LDA MATHPTR2
-    STA (MATHPTR0),Y
-    INY
-    LDA MATHPTR3
-    STA (MATHPTR0),Y
+    LD HL, TIMERADDRESS
+    ADD HL, DE
+    LD A, IXL
+    LD (HL), A
+    INC HL
+    LD A, IXH
+    LD (HL), A
 
-    RTS
+    POP DE
+    POP IX
+    POP BC
+    POP AF
+
+    RET
+

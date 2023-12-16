@@ -266,4 +266,10 @@ void zx_sys_call( Environment * _environment, int _destination );
 int zx_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 void zx_hscroll_line( Environment * _environment, int _direction );
 
+void zx_timer_set_status_on( Environment * _environment, char * _timer );
+void zx_timer_set_status_off( Environment * _environment, char * _timer );
+void zx_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
+void zx_timer_set_init( Environment * _environment, char * _timer, char * _init );
+void zx_timer_set_address( Environment * _environment, char * _timer, char * _address );
+
 #endif

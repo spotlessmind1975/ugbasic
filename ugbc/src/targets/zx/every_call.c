@@ -42,52 +42,19 @@
 @keyword EVERY...CALL
 </usermanual> */
 
-void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
+void every_ticks_call( Environment * _environment, char * _timing, char * _label, char * _timer ) {
 
-    Variable * timing = variable_retrieve( _environment, _timing );
+    Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
+    Variable * timer = NULL;
+    char * timerRealName = NULL;
+    if ( _timer ) {
+        timer = variable_retrieve_or_define( _environment, _timer, VT_BYTE, 0 );
+        timerRealName = timer->realName;
+    }
 
-    Variable * zero = variable_temporary( _environment, timing->type, "(zero)" );
-    variable_store( _environment, zero->name, 0 );
-
-    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
-    _environment->everyStatus->locked = 1;
-
-    _environment->everyCounter = variable_retrieve( _environment, "EVERYCOUNTER");
-    _environment->everyCounter->locked = 1;
-    _environment->everyTiming = timing;
-    _environment->everyTiming->locked = 1;
-
-    variable_move( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
-
-    char skipEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipEveryRoutineLabel, "setg%d", UNIQUE_ID );
-    char everyRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(everyRoutineLabel, "etg%d", UNIQUE_ID );
-    char endOfEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(endOfEveryRoutineLabel, "eetg%d", UNIQUE_ID );
-    
-    cpu_jump( _environment, skipEveryRoutineLabel );
-    
-    cpu_label( _environment, everyRoutineLabel );
-    
-    outline0("PUSH AF");
-
-    cpu_bveq( _environment, _environment->everyStatus->realName, endOfEveryRoutineLabel );
-
-    variable_decrement( _environment, _environment->everyCounter->name );
-
-    cpu_bvneq( _environment, variable_compare_not( _environment, _environment->everyCounter->name, zero->name )->realName, endOfEveryRoutineLabel );
-
-    call_procedure( _environment, _label );
-
-    variable_move( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
-
-    cpu_label( _environment, endOfEveryRoutineLabel );
-
-    outline0("POP AF");
-    
-    zx_follow_irq( _environment );
-
-    cpu_label( _environment, skipEveryRoutineLabel );
-
-    zx_irq_at( _environment, everyRoutineLabel );
+    zx_timer_set_address( _environment, timerRealName, _label );
+    zx_timer_set_counter( _environment, timerRealName, NULL );
+    zx_timer_set_init( _environment, timerRealName, timing->realName );
 
 }
 

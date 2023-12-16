@@ -70,10 +70,16 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
-    variable_import( _environment, "EVERYCOUNTER", VT_WORD, 0 );
-    variable_global( _environment, "EVERYCOUNTER" );
+    variable_import( _environment, "TIMERRUNNING", VT_BYTE, 0 );
+    variable_global( _environment, "TIMERRUNNING" );
+    variable_import( _environment, "TIMERSTATUS", VT_BYTE, 0 );
+    variable_global( _environment, "TIMERSTATUS" );
+    variable_import( _environment, "TIMERCOUNTER", VT_BUFFER, 16 );
+    variable_global( _environment, "TIMERCOUNTER" );
+    variable_import( _environment, "TIMERINIT", VT_BUFFER, 16 );
+    variable_global( _environment, "TIMERINIT" );
+    variable_import( _environment, "TIMERADDRESS", VT_BUFFER, 16 );
+    variable_global( _environment, "TIMERADDRESS" );
 
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x4000 );
     variable_global( _environment, "BITMAPADDRESS" );
@@ -105,7 +111,7 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "IRQVECTORREADY", VT_BYTE, 0 );
     variable_global( _environment, "IRQVECTORREADY" );   
 
-    variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
+    variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 50 );
     variable_global( _environment, "TICKSPERSECOND" );
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
