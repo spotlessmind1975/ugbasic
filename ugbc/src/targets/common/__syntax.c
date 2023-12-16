@@ -1920,3 +1920,19 @@ l'interruzione con priorità più alta.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword BORDER
+
+@english
+Change the color of the border of the screen.
+
+@italian
+Questa istruzione cambia il colore del bordo.
+
+@syntax BORDER color
+
+@example BORDER YELLOW
+
+@target all
+</usermanual> */

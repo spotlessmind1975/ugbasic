@@ -7373,10 +7373,7 @@ paint_definition :
 
 border_definition :
     expr {
-
-    }
-    | expr OP_COMMA expr {
-
+        color_border_var( _environment, $1 );
     };
     
 statement2nc:
