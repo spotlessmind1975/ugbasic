@@ -135,3 +135,5 @@ TIMERCOUNTER:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERINIT:      .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERADDRESS:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 
+JOYSTICK0:      .BYTE   $0
+JOYSTICK1:      .BYTE   $0

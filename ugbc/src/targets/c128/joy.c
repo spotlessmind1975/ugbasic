@@ -45,30 +45,17 @@ Variable * joy_vars( Environment * _environment, char * _port ) {
     Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
+    deploy( joystick, src_hw_c128_joystick_asm );
+
     outline1("LDX %s", port->realName );
     outline1("BNE %sjoy2", label );
 
     outline1("%sjoy1:", label );
-    outline0("LDA #$7F" );
-    outline0("SEI" );
-    outline0("STA $DC00" );
-    outline0("LDA $DC01" );
-    outline0("CLI" );
-    outline0("AND #$1F" );
-    outline0("EOR #$1F" );
+    outline0("LDA JOYSTICK0" );
     outline1("JMP %sendjoy", label );
 
     outline1("%sjoy2:", label );
-    outline0("LDX #0" );
-    outline0("LDA #$E0" );
-    outline0("LDY #$FF" );
-    outline0("SEI" );
-    outline0("STA $DC02" );
-    outline0("LDA $DC00" );
-    outline0("STY $DC02" );
-    outline0("CLI" );
-    outline0("AND #$1F" );
-    outline0("EOR #$1F" );
+    outline0("LDA JOYSTICK1" );
     outhead1("%sendjoy:", label );
 
     outline1("STA %s", result->realName );
@@ -81,37 +68,22 @@ Variable * joy( Environment * _environment, int _port ) {
 
     MAKE_LABEL
 
+    deploy( joystick, src_hw_c128_joystick_asm );
+
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
     switch( _port ) {
 
         case 0:
-            outline0("LDA #$7F" );
-            outline0("SEI" );
-            outline0("STA $DC00" );
-            outline0("LDA $DC01" );
-            outline0("CLI" );
-            outline0("AND #$1F" );
-            outline0("EOR #$1F" );
-            outline1("JMP %sendjoy", label );
+            outline0("LDA JOYSTICK0" );
             break;
 
         case 1:
-            outline0("LDX #0" );
-            outline0("LDA #$E0" );
-            outline0("LDY #$FF" );
-            outline0("SEI" );
-            outline0("STA $DC02" );
-            outline0("LDA $DC00" );
-            outline0("STY $DC02" );
-            outline0("CLI" );
-            outline0("AND #$1F" );
-            outline0("EOR #$1F" );
+            outline0("LDA JOYSTICK1" );
             break;
 
     }
 
-    outhead1("%sendjoy:", label );
     outline1("STA %s", result->realName );
 
     return result;
