@@ -179,6 +179,7 @@ void vic1_put_image( Environment * _environment, Resource * _image, char * _x, c
 void vic1_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 void vic1_wait_vbl( Environment * _environment );
 Variable * vic1_new_image( Environment * _environment, int _width, int _height, int _mode );
+Variable * vic1_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
 void vic1_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette );
 
 void vic1_put_tile( Environment * _environment, char * _image, char * _x, char * _y );

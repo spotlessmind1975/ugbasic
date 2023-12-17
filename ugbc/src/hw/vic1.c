@@ -856,6 +856,22 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
 }
 
+static int calculate_images_size( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
+
+   switch( _mode ) {
+
+        case BITMAP_MODE_STANDARD:
+            return 3 + ( 3 + ( _width >> 3 ) * ( _height ) ) * _frames;
+            break;
+        case TILEMAP_MODE_STANDARD:
+            break;
+    }
+
+    return 0;
+
+}
+
+
 static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
@@ -1695,6 +1711,22 @@ Variable * vic1_new_image( Environment * _environment, int _width, int _height, 
     // }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
+
+    result->size = size;
+    
+    return result;
+}
+
+Variable * vic1_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
+
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
+    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+
+    // if ( ! size ) {
+    //     CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    // }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGES, "(new images)" );
 
     result->size = size;
     

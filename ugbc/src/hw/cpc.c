@@ -1113,6 +1113,28 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
 }
 
+static int calculate_images_size( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_GRAPHIC0:
+
+            return 3 + ( 3 + ( ( _width >> 1 ) * _height ) + 16 ) * _frames;
+
+        case BITMAP_MODE_GRAPHIC1:
+        case BITMAP_MODE_GRAPHIC3:
+
+            return 3 + ( 3 + ( ( _width >> 2 ) * _height ) + 4 ) * _frames;
+
+        case BITMAP_MODE_GRAPHIC2:
+
+            return 3 + ( 3 + ( ( _width >> 3 ) * _height ) + 2 ) * _frames;
+    }
+
+    return 0;
+
+}
+
 static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     // ignored on bitmap mode
@@ -1856,6 +1878,38 @@ Variable * cpc_new_image( Environment * _environment, int _width, int _height, i
     *(buffer) = ( _width & 0xff );
     *(buffer+1) = ( ( _width >> 8 ) & 0xff );
     *(buffer+2) = _height;
+
+    result->valueBuffer = buffer;
+    result->size = size;
+    
+    return result;
+
+}
+
+Variable * cpc_new_images( Environment * _environment, int _frame, int _width, int _height, int _mode ) {
+
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+
+    int size = calculate_images_size( _environment, _frame, _width, _height, _mode );
+    int frameSize = calculate_images_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGES, "(new images)" );
+
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _frames;
+    *(buffer+1) = ( _width & 0xff );
+    *(buffer+2) = ( _width >> 8 ) & 0xff;
+    for( int i=0; i<_frames; ++i ) {
+        *(buffer+3+(i*frameSize)) = ( _width & 0xff );
+        *(buffer+3+(i*frameSize)+1) = ( ( _width >> 8 ) & 0xff );
+        *(buffer+3+(i*frameSize)+2) = ( _height & 0xff );
+    }
 
     result->valueBuffer = buffer;
     result->size = size;

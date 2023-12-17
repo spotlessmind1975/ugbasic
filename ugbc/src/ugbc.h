@@ -2665,6 +2665,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_PLAY_WITHOUT_STRING( t ) CRITICAL2("E239 - PLAY need a string with playing commands", t );
 #define CRITICAL_RESTORE_WITH_UNSUPPORTED_DATA_TYPE( t ) CRITICAL2("E240 - RESTORE with unsupported data type", t ); 
 #define CRITICAL_SANDBOX_ENFORCED( v ) CRITICAL2("E241 - this command is not allowed on sources for sandbox execution", v );
+#define CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE(f) CRITICAL2i("E242 - NEW IMAGES unsupported for the given screen mode", f );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3885,6 +3886,7 @@ void                    next_raster( Environment * _environment );
 void                    next_raster_at_with( Environment * _environment, int _at, char * _with );
 void                    next_raster_at_with_var( Environment * _environment, char * _var, char * _with );
 Variable *              new_image( Environment * _environment, int _width, int _height, int _mode );
+Variable *              new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
 
 //----------------------------------------------------------------------------
 // *O*

@@ -2466,6 +2466,9 @@ exponential:
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
+    | NEW IMAGES OP const_expr OP const_expr OP_COMMA const_expr CP {        
+        $$ = new_images( _environment, $4, $6, $8, ((struct _Environment *)_environment)->currentMode )->name;
+      }
     | DLOAD OP expr CP {
         $$ = dload( _environment, $3 )->name;
       }

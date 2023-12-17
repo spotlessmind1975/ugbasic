@@ -1714,6 +1714,36 @@ Variable * ted_new_image( Environment * _environment, int _width, int _height, i
 
 }
 
+Variable * ted_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
+
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
+    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGES, "(new images)" );
+
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _frames;
+    *(buffer+1) = ( _width & 0xff );
+    *(buffer+2) = ( _width >> 8 ) & 0xff;
+    for( int i=0; i<_frames; ++i ) {
+        *(buffer+3+(i*frameSize)) = ( _width & 0xff );
+        *(buffer+3+(i*frameSize)+1) = ( ( _width >> 8 ) & 0xff );
+        *(buffer+3+(i*frameSize)+2) = ( _height & 0xff );
+    }
+
+    result->valueBuffer = buffer;
+    result->size = size;
+    
+    return result;
+
+}
+
 void ted_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 
     deploy( tedvars, src_hw_ted_vars_asm);

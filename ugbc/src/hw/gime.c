@@ -1720,6 +1720,85 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
 }
 
+static int calculate_images_size( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_128x192x2:
+        case BITMAP_MODE_128x200x2:
+        case BITMAP_MODE_128x225x2:
+        case BITMAP_MODE_160x192x2:
+        case BITMAP_MODE_160x200x2:
+        case BITMAP_MODE_160x225x2:
+        case BITMAP_MODE_256x192x2:
+        case BITMAP_MODE_256x200x2:
+        case BITMAP_MODE_256x225x2:
+        case BITMAP_MODE_320x192x2:
+        case BITMAP_MODE_320x200x2:
+        case BITMAP_MODE_320x225x2:
+        case BITMAP_MODE_512x192x2:
+        case BITMAP_MODE_512x200x2:
+        case BITMAP_MODE_512x225x2:
+        case BITMAP_MODE_640x192x2:
+        case BITMAP_MODE_640x200x2:
+        case BITMAP_MODE_640x225x2:
+
+            return 3 + ( 3 + ( ( _width >> 3 ) * _height ) + 2 ) * _frames;
+
+        case BITMAP_MODE_64x192x4:
+        case BITMAP_MODE_64x200x4:
+        case BITMAP_MODE_64x225x4:
+        case BITMAP_MODE_80x192x4:
+        case BITMAP_MODE_80x200x4:
+        case BITMAP_MODE_80x225x4:
+        case BITMAP_MODE_128x192x4:
+        case BITMAP_MODE_128x200x4:
+        case BITMAP_MODE_128x225x4:
+        case BITMAP_MODE_160x192x4:
+        case BITMAP_MODE_160x200x4:
+        case BITMAP_MODE_160x225x4:
+        case BITMAP_MODE_256x192x4:
+        case BITMAP_MODE_256x200x4:
+        case BITMAP_MODE_256x225x4:
+        case BITMAP_MODE_320x192x4:
+        case BITMAP_MODE_320x200x4:
+        case BITMAP_MODE_320x225x4:
+        case BITMAP_MODE_512x192x4:
+        case BITMAP_MODE_512x200x4:
+        case BITMAP_MODE_512x225x4:
+        case BITMAP_MODE_640x192x4:
+        case BITMAP_MODE_640x200x4:
+        case BITMAP_MODE_640x225x4:
+
+            return 3 + ( 3 + ( ( _width >> 2 ) * _height ) + 4 ) * _frames;
+
+        case BITMAP_MODE_64x192x16:
+        case BITMAP_MODE_64x200x16:
+        case BITMAP_MODE_64x225x16:
+        case BITMAP_MODE_80x192x16:
+        case BITMAP_MODE_80x200x16:
+        case BITMAP_MODE_80x225x16:
+        case BITMAP_MODE_128x192x16:
+        case BITMAP_MODE_128x200x16:
+        case BITMAP_MODE_128x225x16:
+        case BITMAP_MODE_160x192x16:
+        case BITMAP_MODE_160x200x16:
+        case BITMAP_MODE_160x225x16:
+        case BITMAP_MODE_256x192x16:
+        case BITMAP_MODE_256x200x16:
+        case BITMAP_MODE_256x225x16:
+        case BITMAP_MODE_320x192x16:
+        case BITMAP_MODE_320x200x16:
+        case BITMAP_MODE_320x225x16:
+
+            return 3 + ( 3 + ( ( _width >> 1 ) * _height ) + 16 ) * _frames;
+                    
+    }
+
+    return 0;
+
+}
+
 static Variable * gime_image_converter_bitmap_mode_hires( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     // ignored on bitmap mode
@@ -2500,6 +2579,36 @@ Variable * gime_new_image( Environment * _environment, int _width, int _height, 
     *(buffer) = (_width >> 8 );
     *(buffer+1) = (_width & 0xff );
     *(buffer+2) = _height;
+
+    result->valueBuffer = buffer;
+    result->size = size;
+    
+    return result;
+
+}
+
+Variable * gime_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
+
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
+    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGES, "(new images)" );
+
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _frames;
+    *(buffer+1) = ( _width & 0xff );
+    *(buffer+2) = ( _width >> 8 ) & 0xff;
+    for( int i=0; i<_frames; ++i ) {
+        *(buffer+3+(i*frameSize)) = ( _width & 0xff );
+        *(buffer+3+(i*frameSize)+1) = ( ( _width >> 8 ) & 0xff );
+        *(buffer+3+(i*frameSize)+2) = ( _height & 0xff );
+    }
 
     result->valueBuffer = buffer;
     result->size = size;

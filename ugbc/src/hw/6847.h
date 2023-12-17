@@ -278,6 +278,7 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
 void c6847_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );
 void c6847_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 Variable * c6847_new_image( Environment * _environment, int _width, int _height, int _mode );
+Variable * c6847_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
 void c6847_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette );
 
 void c6847_put_tile( Environment * _environment, char * _image, char * _x, char * _y );

@@ -288,6 +288,7 @@ void gtia_put_image( Environment * _environment, Resource * _image, char * _x, c
 void gtia_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 void gtia_wait_vbl( Environment * _environment );
 Variable * gtia_new_image( Environment * _environment, int _width, int _height, int _mode );
+Variable * gtia_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
 void gtia_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette );
 
 Variable * gtia_get_raster_line( Environment * _environment );

@@ -220,6 +220,7 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 void ef936x_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );
 void ef936x_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 Variable * ef936x_new_image( Environment * _environment, int _width, int _height, int _mode );
+Variable * ef936x_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
 void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette );
 
 void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
