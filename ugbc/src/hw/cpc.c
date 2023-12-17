@@ -1918,7 +1918,7 @@ Variable * cpc_new_images( Environment * _environment, int _frame, int _width, i
 
 }
 
-void cpc_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
+void cpc_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
     deploy( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
