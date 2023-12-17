@@ -2466,7 +2466,7 @@ exponential:
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
-    | NEW IMAGES OP const_expr OP const_expr OP_COMMA const_expr CP {        
+    | NEW IMAGES OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
         $$ = new_images( _environment, $4, $6, $8, ((struct _Environment *)_environment)->currentMode )->name;
       }
     | DLOAD OP expr CP {
@@ -5780,12 +5780,12 @@ dim_definition :
     | Identifier as_datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
-      } OP dimensions CP {
+      } OP dimensions CP as_datatype {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, $2 );
+        variable_array_type( _environment, $1, $2 ? $2 : $7 );
     } array_assign readonly_optional {
         Variable * array = variable_retrieve( _environment, $1 );
-        array->readonly = $9;
+        array->readonly = $10;
     }
     | Identifier as_datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
