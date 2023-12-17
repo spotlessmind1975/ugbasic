@@ -2617,7 +2617,7 @@ Variable * gime_new_images( Environment * _environment, int _frames, int _width,
 
 }
 
-void gime_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
+void gime_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
     deploy_preferred( gimevars, src_hw_gime_vars_asm);
     deploy_preferred( getimage, src_hw_gime_get_image_asm );

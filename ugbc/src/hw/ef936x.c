@@ -1691,6 +1691,51 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 
 }
 
+static void ef936x_load_image_address_to_y( Environment * _environment, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline1("LDY #%s", _source );
+    if ( _sequence ) {
+        outline0("LEAY 3,y" );
+        if ( strlen(_sequence) == 0 ) {
+        } else {
+            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
+            outline1("LDB %s", _sequence );
+            outline0("LDA #0" );
+            outline0("LEAX D, X" );
+            outline0("LEAX D, X" );
+            outline0("LDD ,X" );
+            outline0("LEAY D, Y" );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LEAY 3,y" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    }
+
+}
+
 static void ef936x_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     if ( !_sequence && !_frame ) {
@@ -1817,12 +1862,13 @@ Variable * ef936x_new_images( Environment * _environment, int _frames, int _widt
     
 }
 
-void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
+void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( getimage, src_hw_ef936x_get_image_asm );
 
-    outline1("LDY #%s", _image );
+    ef936x_load_image_address_to_y( _environment, _image, _sequence, _frame, _frame_size, _frame_count );
+
     outline1("LDD %s", _x );
     outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );

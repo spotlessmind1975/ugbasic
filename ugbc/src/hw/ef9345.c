@@ -1114,7 +1114,7 @@ Variable * ef9345_new_images( Environment * _environment, int _frames, int _widt
 
 }
 
-void ef9345_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
+void ef9345_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
 }
 
