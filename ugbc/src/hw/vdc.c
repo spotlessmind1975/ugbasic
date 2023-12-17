@@ -1042,7 +1042,7 @@ Variable * vdc_new_images( Environment * _environment, int _frames, int _width, 
 
 }
 
-void vdc_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
+void vdc_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
     deploy( vdcvars, src_hw_vdc_vars_asm);
     deploy( vdcvarsGraphic, src_hw_vdc_vars_graphic_asm );
