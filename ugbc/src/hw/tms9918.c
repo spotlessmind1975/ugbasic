@@ -2184,7 +2184,7 @@ Variable * tms9918_new_images( Environment * _environment, int _frames, int _wid
 
 }
 
-void tms9918_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
+void tms9918_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
