@@ -4236,21 +4236,38 @@ ellipse_definition:
 
 get_definition_expression:
     OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
-        get_image( _environment, $13, $2, $4, $8, $10, 0 );
+        get_image( _environment, $13, $2, $4, $8, $10, NULL, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     }
     | OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr OP_COMMA G {
-        get_image( _environment, $13, $2, $4, $8, $10, 1 );
+        get_image( _environment, $13, $2, $4, $8, $10, NULL, NULL, 1 );
         gr_locate( _environment, $2, $4 );
     }
     | IMAGE expr FROM optional_x OP_COMMA optional_y  {
-        get_image( _environment, $2, $4, $6, NULL, NULL, 1 );
+        get_image( _environment, $2, $4, $6, NULL, NULL, NULL, NULL, 1 );
         gr_locate( _environment, $4, $6 );
     }
+    | IMAGE expr frame expr FROM optional_x OP_COMMA optional_y  {
+        get_image( _environment, $2, $6, $8, NULL, NULL, $4, NULL, 1 );
+        gr_locate( _environment, $6, $8 );
+    }
+    | IMAGE expr SEQUENCE expr frame expr FROM optional_x OP_COMMA optional_y  {
+        get_image( _environment, $2, $8, $10, NULL, NULL, $6, $4, 1 );
+        gr_locate( _environment, $8, $10 );
+    }
     | BITMAP expr FROM optional_x OP_COMMA optional_y  {
-        get_image( _environment, $2, $4, $6, NULL, NULL, 0 );
+        get_image( _environment, $2, $4, $6, NULL, NULL, NULL, NULL, 0 );
         gr_locate( _environment, $4, $6 );
-    };
+    }
+    | BITMAP expr frame expr FROM optional_x OP_COMMA optional_y  {
+        get_image( _environment, $2, $6, $8, NULL, NULL, $4, NULL, 0 );
+        gr_locate( _environment, $6, $8 );
+    }
+    | BITMAP expr SEQUENCE expr frame expr FROM optional_x OP_COMMA optional_y  {
+        get_image( _environment, $2, $8, $10, NULL, NULL, $6, $4, 1 );
+        gr_locate( _environment, $8, $10 );
+    }    
+    ;
 
 get_definition:
     get_definition_expression;

@@ -50,7 +50,7 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-void get_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, int _palette ) {
+void get_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _palette ) {
 
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
@@ -60,13 +60,45 @@ void get_image( Environment * _environment, char * _image, char * _x1, char * _y
         get_image_overwrite_size( _environment, _image, _x1, _y1, _x2, _y2 );
     }
 
+    Variable * frame = NULL;
+    if ( _frame) {
+        frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+    }
+    Variable * sequence = NULL;
+    if ( _sequence) {
+        sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+    }
+
     switch( image->type ) {
+        case VT_SEQUENCE:
+            if ( !sequence ) {
+                if ( !frame ) {
+                    cpc_get_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _palette );
+                } else {
+                    cpc_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _palette );
+                }
+            } else {
+                if ( !frame ) {
+                    cpc_get_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _palette );
+                } else {
+                    cpc_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _palette );
+                }
+            }
+            break;
+        case VT_IMAGES:
+            if ( !frame ) {
+                cpc_get_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _palette );
+            } else {
+                cpc_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _palette );
+            }
+            break;
         case VT_IMAGE:
         case VT_ARRAY:
-            cpc_get_image( _environment, image->realName, x1->realName, y1->realName, _palette );
+            cpc_get_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _palette );
             break;
         default:
             CRITICAL_GET_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
+
 
 }
