@@ -126,8 +126,12 @@ BANKSHADOW: .BYTE 0
 DATAPTR = $AA
 DATAPTRY:    .BYTE $0
 
+TIMERP0 = $1E
+TIMERP1 = $1c
+
 TIMERRUNNING:   .BYTE   $0
 TIMERSTATUS:    .BYTE   $0
 TIMERCOUNTER:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERINIT:      .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERADDRESS:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
+
