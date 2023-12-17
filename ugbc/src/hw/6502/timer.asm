@@ -38,6 +38,7 @@
 TIMERMANAGER:
 
     ; First of all, we have to save the actual state of registers
+    ; Save register (A)
 
     PHP
     PHA
@@ -48,6 +49,19 @@ TIMERMANAGER:
     RTS
 
 TIMERMANAGERGO:
+
+    ; Save the pointer registers -- some routines inside the called
+    ; timers could change them and invalidate main program execution.
+    LDA TMPPTR
+    PHA
+    LDA TMPPTR+1
+    PHA
+    LDA TMPPTR2
+    PHA
+    LDA TMPPTR2+1
+    PHA
+
+    ; Save actual registers (X,Y)
     TXA
     PHA
     TYA
@@ -86,47 +100,47 @@ TIMERMANAGERL1:
     TAY
 
     LDA #<TIMERCOUNTER
-    STA MATHPTR0
+    STA TIMERP0
     LDA #>TIMERCOUNTER
-    STA MATHPTR0+1
+    STA TIMERP0+1
 
     ; Now we are going to check if the timer is not zero.
     ; If not zero, we must decrement the counter.
     INY
-    LDA (MATHPTR0), Y
+    LDA (TIMERP0), Y
     BNE TIMERMANAGERL2AH
     DEY
-    LDA (MATHPTR0), Y
+    LDA (TIMERP0), Y
     BNE TIMERMANAGERL2AL
 
     ; Ok the counter is zero. So we must reset to the
     ; value we received previously, and call the routine.
 
     LDA #<TIMERINIT
-    STA MATHPTR2
+    STA TIMERP1
     LDA #>TIMERINIT
-    STA MATHPTR2+1
-    LDA (MATHPTR2), Y
-    STA (MATHPTR0), Y
+    STA TIMERP1+1
+    LDA (TIMERP1), Y
+    STA (TIMERP0), Y
     INY
-    LDA (MATHPTR2), Y
-    STA (MATHPTR0), Y
+    LDA (TIMERP1), Y
+    STA (TIMERP0), Y
     DEY
 
 TIMERMANAGERJMP2:
     LDA #<TIMERADDRESS
-    STA MATHPTR2
+    STA TIMERP1
     LDA #>TIMERADDRESS
-    STA MATHPTR2+1
+    STA TIMERP1+1
 
     ; Now we are going to check if the address
     ; to call is zero. In this case, we must
     ; avoid to jump to it.
     INY
-    LDA (MATHPTR2), Y
+    LDA (TIMERP1), Y
     BNE TIMERMANAGERJMP2AH
     DEY
-    LDA (MATHPTR2), Y
+    LDA (TIMERP1), Y
     BNE TIMERMANAGERJMP2AL
 
     JMP TIMERMANAGERL2AL
@@ -137,10 +151,10 @@ TIMERMANAGERJMP:
 TIMERMANAGERJMP2AH:
     DEY
 TIMERMANAGERJMP2AL:
-    LDA (MATHPTR2), Y
+    LDA (TIMERP1), Y
     STA TIMERMANAGERJMP+1
     INY
-    LDA (MATHPTR2), Y
+    LDA (TIMERP1), Y
     STA TIMERMANAGERJMP+2
     DEY
 
@@ -165,18 +179,18 @@ TIMERMANAGERL2AH:
     DEY
 TIMERMANAGERL2AL:
     ; 16 bit decrement
-    LDA (MATHPTR0), Y
+    LDA (TIMERP0), Y
     SEC
     SBC #1
-    STA (MATHPTR0), Y
-    LDA (MATHPTR0), Y
+    STA (TIMERP0), Y
+    LDA (TIMERP0), Y
     CMP #$FF
     BNE TIMERMANAGERL2ALD
     INY
-    LDA (MATHPTR0), Y
+    LDA (TIMERP0), Y
     SEC
     SBC #1
-    STA (MATHPTR0), Y
+    STA (TIMERP0), Y
 TIMERMANAGERL2ALD:
 
     PLA
@@ -191,11 +205,24 @@ TIMERMANAGERL2:
 
     LDA #0
     STA TIMERRUNNING
-    
+
+    ; Restore registers (X, Y)
     PLA
     TAY
     PLA
     TAX
+
+    ; Restoer the pointer registers.
+    PLA 
+    STA TMPPTR2+1
+    PLA 
+    STA TMPPTR2
+    PLA 
+    STA TMPPTR+1
+    PLA 
+    STA TMPPTR
+
+    ; Restore register (A)
     PLA
     PLP
 
@@ -226,56 +253,56 @@ TIMERSETSTATUS0:
 ; TIMERSETCOUNTER(X,MATHPTR2:MATHPTR3)
 TIMERSETCOUNTER:
     LDA #<TIMERCOUNTER
-    STA MATHPTR0
+    STA TIMERP0
     LDA #>TIMERCOUNTER
-    STA MATHPTR0+1
+    STA TIMERP0+1
 
     TXA
     ASL
     TAY
 
     LDA MATHPTR2
-    STA (MATHPTR0),Y
+    STA (TIMERP0),Y
     INY
     LDA MATHPTR3
-    STA (MATHPTR0),Y
+    STA (TIMERP0),Y
 
     RTS
 
 ; TIMERSETINIT(X,MATHPTR2:MATHPTR3)
 TIMERSETINIT:
     LDA #<TIMERINIT
-    STA MATHPTR0
+    STA TIMERP0
     LDA #>TIMERINIT
-    STA MATHPTR0+1
+    STA TIMERP0+1
 
     TXA
     ASL
     TAY
 
     LDA MATHPTR2
-    STA (MATHPTR0),Y
+    STA (TIMERP0),Y
     INY
     LDA MATHPTR3
-    STA (MATHPTR0),Y
+    STA (TIMERP0),Y
 
     RTS
 
 ; TIMERSETADDRESS(X,MATHPTR2:MATHPTR3)
 TIMERSETADDRESS:
     LDA #<TIMERADDRESS
-    STA MATHPTR0
+    STA TIMERP0
     LDA #>TIMERADDRESS
-    STA MATHPTR0+1
+    STA TIMERP0+1
 
     TXA
     ASL
     TAY
 
     LDA MATHPTR2
-    STA (MATHPTR0),Y
+    STA (TIMERP0),Y
     INY
     LDA MATHPTR3
-    STA (MATHPTR0),Y
+    STA (TIMERP0),Y
 
     RTS
