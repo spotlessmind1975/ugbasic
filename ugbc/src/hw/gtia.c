@@ -2345,6 +2345,100 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
 
 }
 
+static void gtia_load_image_address_to_other_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline1("LDA #<%s", _source );
+    outline1("STA %s", _register );
+    outline1("LDA #>%s", _source );
+    outline1("STA %s", address_displacement(_environment, _register, "1") );
+
+    if ( _sequence ) {
+
+        outline0("CLC" );
+        outline1("LDA %s", _register );
+        outline0("ADC #3" );
+        outline1("STA %s", _register );
+        outline1("LDA %s", address_displacement(_environment, _register, "1") );
+        outline0("ADC #0" );
+        outline1("STA %s", address_displacement(_environment, _register, "1") );
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline1("LDA #<OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("STA MATHPTR0" );
+            outline1("LDA #>OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("STA MATHPTR0+1" );
+            outline0("CLC" );
+            outline1("LDA %s", _sequence );
+            outline0("ASL" );
+            outline0("TAY" );
+            outline1("LDA %s", _register );
+            outline0("ADC (MATHPTR0), Y" );
+            outline1("STA %s", _register );
+            outline0("INY" );
+            outline1("LDA %s", address_displacement(_environment, _register, "1") );
+            outline0("ADC (MATHPTR0), Y" );
+            outline1("STA %s", address_displacement(_environment, _register, "1") );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline1("LDA %s", _register );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", _register );
+                outline0("INY" );
+                outline1("LDA %s", address_displacement(_environment, _register, "1") );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", address_displacement(_environment, _register, "1") );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("CLC" );
+            outline1("LDA %s", _register );
+            outline0("ADC #3" );
+            outline1("STA %s", _register );
+            outline1("LDA %s", address_displacement(_environment, _register, "1") );
+            outline0("ADC #0" );
+            outline1("STA %s", address_displacement(_environment, _register, "1") );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline1("LDA %s", _register );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", _register );
+                outline0("INY" );
+                outline1("LDA %s", address_displacement(_environment, _register, "1") );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", address_displacement(_environment, _register, "1") );
+            }
+        }
+
+    }
+
+}
+
+
 static void gtia_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     if ( !_sequence && !_frame ) {
@@ -2700,17 +2794,14 @@ Variable * gtia_new_images( Environment * _environment, int _frames, int _width,
 
 }
 
-void gtia_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
+void gtia_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( getimage, src_hw_gtia_get_image_asm );
 
-    outline1("LDA #<%s", _image );
-    outline1("LDA #<%s", _image );
-    outline0("STA TMPPTR" );
-    outline1("LDA #>%s", _image );
-    outline0("STA TMPPTR+1" );
+    gtia_load_image_address_to_other_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
     outline1("LDA %s", address_displacement(_environment, _x, "1") );
