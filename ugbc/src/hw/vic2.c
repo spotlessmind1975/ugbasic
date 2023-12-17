@@ -3141,7 +3141,7 @@ Variable * vic2_new_images( Environment * _environment, int _frames, int _width,
 
 }
 
-void vic2_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
+void vic2_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
