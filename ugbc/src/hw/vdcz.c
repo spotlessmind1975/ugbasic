@@ -2589,6 +2589,89 @@ Variable * vdcz_sprite_converter( Environment * _environment, char * _source, in
 
 }
 
+static void vdcz_load_image_address_to_other_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline1("LD HL, %s", _source );
+    if ( _sequence ) {
+
+        outline0("LD DE, $0003" );
+        outline0("ADD HL, DE" );
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline0("PUSH HL" );
+            outline1("LD A, (%s)", _sequence );
+            outline0("LD L, A" );
+            outline0("LD H, 0" );
+            outline0("ADD HL, HL" );
+            outline0("LD DE, HL" );
+            outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("ADD HL, DE" );
+            outline0("LD A, (HL)" );
+            outline0("LD E, A" );
+            outline0("INC HL" );
+            outline0("LD A, (HL)" );
+            outline0("LD D, A" );
+            outline0("POP HL" );
+            outline0("ADD HL, DE" );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("LD DE, $0003" );
+            outline0("ADD HL, DE" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+    }
+
+    if ( _register ) {
+        outline1("LD (%s), HL", _register );
+    }
+
+}
+
 static void vdcz_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     if ( !_sequence && !_frame ) {
@@ -2754,7 +2837,8 @@ void vdcz_get_image( Environment * _environment, char * _image, char * _x, char 
 
     MAKE_LABEL
 
-    outline1("LD HL, %s", _image );
+    vdcz_load_image_address_to_other_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+
     outline1("LD DE, (%s)", _x );
     outline1("LD iy, (%s)", _y );
     outline1("LD A, $%2.2x", _palette );
