@@ -1991,6 +1991,7 @@ Variable * cpc_new_images( Environment * _environment, int _frame, int _width, i
     }
 
     result->valueBuffer = buffer;
+    result->frameSize = frameSize;
     result->size = size;
     
     return result;

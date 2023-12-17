@@ -1856,6 +1856,7 @@ Variable * ef936x_new_images( Environment * _environment, int _frames, int _widt
     }
 
     result->valueBuffer = buffer;
+    result->frameSize = frameSize;
     result->size = size;
     
     return result;

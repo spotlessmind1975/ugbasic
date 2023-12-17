@@ -938,6 +938,7 @@ Variable * zx_new_images( Environment * _environment, int _frames, int _width, i
     }
 
     result->valueBuffer = buffer;
+    result->frameSize = frameSize;
     result->size = size;
     
     return result;
