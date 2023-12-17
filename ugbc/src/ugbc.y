@@ -5782,7 +5782,7 @@ dim_definition :
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP as_datatype {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, $2 ? $2 : $7 );
+        variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
     } array_assign readonly_optional {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
