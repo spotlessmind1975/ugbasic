@@ -2709,6 +2709,99 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
 }
 
+static void vic2_load_image_address_to_other_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline1("LDA #<%s", _source );
+    outline1("STA %s", _register );
+    outline1("LDA #>%s", _source );
+    outline1("STA %s", address_displacement(_environment, _register, "1") );
+
+    if ( _sequence ) {
+
+        outline0("CLC" );
+        outline1("LDA %s", _register );
+        outline0("ADC #3" );
+        outline1("STA %s", _register );
+        outline1("LDA %s", address_displacement(_environment, _register, "1") );
+        outline0("ADC #0" );
+        outline1("STA %s", address_displacement(_environment, _register, "1") );
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline1("LDA #<OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("STA MATHPTR0" );
+            outline1("LDA #>OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("STA MATHPTR1" );
+            outline0("CLC" );
+            outline1("LDA %s", _sequence );
+            outline0("ASL" );
+            outline0("TAY" );
+            outline1("LDA %s", _register );
+            outline0("ADC (MATHPTR0), Y" );
+            outline1("STA %s", _register );
+            outline0("INY" );
+            outline1("LDA %s", address_displacement(_environment, _register, "1") );
+            outline0("ADC (MATHPTR0), Y" );
+            outline1("STA %s", address_displacement(_environment, _register, "1") );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline1("LDA %s", _register );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", _register );
+                outline0("INY" );
+                outline1("LDA %s", address_displacement(_environment, _register, "1") );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", address_displacement(_environment, _register, "1") );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("CLC" );
+            outline1("LDA %s", _register );
+            outline0("ADC #3" );
+            outline1("STA %s", _register );
+            outline1("LDA %s", address_displacement(_environment, _register, "1") );
+            outline0("ADC #0" );
+            outline1("STA %s", address_displacement(_environment, _register, "1") );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline1("LDA %s", _register );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", _register );
+                outline0("INY" );
+                outline1("LDA %s", address_displacement(_environment, _register, "1") );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", address_displacement(_environment, _register, "1") );
+            }
+        }
+
+    }
+
+}
+
 static void vic2_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     if ( !_sequence && !_frame ) {
@@ -3056,11 +3149,8 @@ void vic2_get_image( Environment * _environment, char * _image, char * _x, char 
 
     MAKE_LABEL
 
-    outhead1("getimage%s:", label);
-    outline1("LDA #<%s", _image );
-    outline0("STA TMPPTR" );
-    outline1("LDA #>%s", _image );
-    outline0("STA TMPPTR+1" );
+    vic2_load_image_address_to_other_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
     outline1("LDA %s", address_displacement(_environment, _x, "1") );
