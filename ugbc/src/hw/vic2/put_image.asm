@@ -2262,10 +2262,6 @@ PUTIMAGE3E:
 
     LDY #0
     LDA (TMPPTR),Y
-    LSR
-    LSR
-    LSR
-    LSR
     STA $D021
 
 PUTIMAGE3EFINAL:

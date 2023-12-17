@@ -498,6 +498,7 @@ GETIMAGE3E:
 
     LDY #0
     LDA $D021
+    AND #$0F
     STA (TMPPTR),Y
 
     RTS
