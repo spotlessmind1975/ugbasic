@@ -77,28 +77,28 @@ void get_image( Environment * _environment, char * _image, char * _x1, char * _y
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
-                    gime_get_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
+                    gime_get_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
                 } else {
-                    gime_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
+                    gime_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
                 }
             } else {
                 if ( !frame ) {
-                    gime_get_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                    gime_get_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
                 } else {
-                    gime_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                    gime_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
                 }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                gime_get_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
+                gime_get_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
             } else {
-                gime_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
+                gime_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
             }
             break;
         case VT_IMAGE:
         case VT_ARRAY:
-            gime_get_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
+            gime_get_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
             break;
         default:
             CRITICAL_GET_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

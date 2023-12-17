@@ -73,32 +73,32 @@ void get_image( Environment * _environment, char * _image, char * _x1, char * _y
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
     }
 
-    switch( resource->type ) {
+    switch( image->realName->type ) {
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
-                    ted_get_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _palette );
+                    ted_get_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _palette );
                 } else {
-                    ted_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _palette );
+                    ted_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _palette );
                 }
             } else {
                 if ( !frame ) {
-                    ted_get_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _palette );
+                    ted_get_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _palette );
                 } else {
-                    ted_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _palette );
+                    ted_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _palette );
                 }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                ted_get_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _palette );
+                ted_get_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _palette );
             } else {
-                ted_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _palette );
+                ted_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _palette );
             }
             break;
         case VT_IMAGE:
         case VT_ARRAY:
-            ted_get_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _palette );
+            ted_get_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, _palette );
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

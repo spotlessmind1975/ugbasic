@@ -77,28 +77,28 @@ void get_image( Environment * _environment, char * _image, char * _x1, char * _y
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
-                    ef936x_get_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _palette );
+                    ef936x_get_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _palette );
                 } else {
-                    ef936x_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _palette );
+                    ef936x_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _palette );
                 }
             } else {
                 if ( !frame ) {
-                    ef936x_get_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _palette );
+                    ef936x_get_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _palette );
                 } else {
-                    ef936x_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _palette );
+                    ef936x_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _palette );
                 }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                ef936x_get_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _palette );
+                ef936x_get_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _palette );
             } else {
-                ef936x_get_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _palette );
+                ef936x_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _palette );
             }
             break;
         case VT_IMAGE:
         case VT_ARRAY:
-            ef936x_get_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _palette );
+            ef936x_get_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, _palette );
             break;
         default:
             CRITICAL_GET_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
