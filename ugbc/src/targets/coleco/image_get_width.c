@@ -50,6 +50,16 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     Variable * result = variable_temporary( _environment, VT_WORD, "(image width)" );
 
     outline1("LD HL, %s", image->realName );
+    switch( image->type ) {
+        case VT_IMAGE:
+            break;
+        case VT_IMAGES:
+        case VT_SEQUENCE:
+            outline0("ADD HL, 3" );
+            break;
+        default:
+            CRITICAL_NOT_IMAGE( _image );
+    }
     outline0("LD A, (HL)" );
     outline1("LD (%s), A", result->realName );
     outline0("INC HL" );

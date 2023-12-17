@@ -53,7 +53,17 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", image->realName );
     outline0("STA TMPPTR+1" );
-    outline0("LDY #0" );
+    switch( image->type ) {
+        case VT_IMAGE:
+            outline0("LDY #0" );
+            break;
+        case VT_IMAGES:
+        case VT_SEQUENCE:
+            outline0("LDY #3" );
+            break;
+        default:
+            CRITICAL_NOT_IMAGE( _image );
+    }        
     outline0("LDA (TMPPTR),Y" );
     outline1("STA %s", result->realName );
     outline0("LDA #0" );

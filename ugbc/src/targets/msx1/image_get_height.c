@@ -50,7 +50,17 @@ Variable * image_get_height( Environment * _environment, char * _image ) {
     Variable * result = variable_temporary( _environment, VT_BYTE, "(image height)" );
 
     outline1("LD HL, %s", image->realName );
-    outline0("ADD HL, 2" );
+    switch( image->type ) {
+        case VT_IMAGE:
+            outline0("ADD HL, 2" );
+            break;
+        case VT_IMAGES:
+        case VT_SEQUENCE:
+            outline0("ADD HL, 5" );
+            break;
+        default:
+            CRITICAL_NOT_IMAGE( _image );
+    }    
     outline0("LD A, (HL)" );
     outline1("LD (%s), A", result->realName );
 
