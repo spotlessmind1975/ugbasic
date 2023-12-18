@@ -67,7 +67,7 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     }
     outline0("LDA (TMPPTR),Y" );
     outline1("STA %s", result->realName );
-    outline1("INY" );
+    outline0("INY" );
     outline0("LDA (TMPPTR),Y" );
     outline1("STA %s", address_displacement(_environment, result->realName, "1") );
 
