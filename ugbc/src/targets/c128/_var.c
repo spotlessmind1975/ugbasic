@@ -548,8 +548,12 @@ void variable_cleanup( Environment * _environment ) {
     outhead0(".segment \"CODE\"");
     outline0("NOP");
     outline0("NOP");
+    outline0("LDA #%00111110");
+    outline0("STA $FF00");
     outline0("JMP CODESTART")
     deploy_inplace_preferred( vars, src_hw_c128_vars_asm);
+    deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
+    deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
 
     // outhead0(".segment \"CODE\"" );
 

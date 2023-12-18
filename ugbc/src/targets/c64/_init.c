@@ -124,15 +124,15 @@ void target_initialization( Environment * _environment ) {
         exit(EXIT_FAILURE);
     }
 
-    outhead0(".segment \"BASIC\"");
-    outline0(".byte $01,$08,$0b,$08,$00,$00,$9e,$32,$30,$36,$31,$00,$00,$00" );
-    outhead0(".segment \"CODE\"");
-    outline0("NOP");
-    outline0("NOP");
+    // outhead0(".segment \"BASIC\"");
+    // outline0(".byte $01,$08,$0b,$08,$00,$00,$9e,$32,$30,$36,$31,$00,$00,$00" );
+    // outhead0(".segment \"CODE\"");
+    // outline0("NOP");
+    // outline0("NOP");
 
     outhead0("CODESTART:");
     
-    deploy( vars, src_hw_c64_vars_asm);
+    deploy_preferred( vars, src_hw_c64_vars_asm);
 
     setup_text_variables( _environment );
 

@@ -540,7 +540,19 @@ void variable_cleanup( Environment * _environment ) {
 
     }    
 
-    outhead0(".segment \"CODE\"" );
+    buffered_push_output( );
+
+    outhead0(".segment \"BASIC\"");
+    outline0(".byte $01,$08,$0b,$08,$00,$00,$9e,$32,$30,$36,$31,$00,$00,$00" );
+    outhead0(".segment \"CODE\"");
+    outline0("NOP");
+    outline0("NOP");
+    outline0("JMP CODESTART")
+    deploy_inplace_preferred( vars, src_hw_c64_vars_asm);
+    deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
+    deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
+
+    // outhead0(".segment \"CODE\"" );
 
     variable_on_memory_init( _environment, 0 );
 

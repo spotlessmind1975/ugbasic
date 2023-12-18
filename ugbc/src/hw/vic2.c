@@ -1599,8 +1599,8 @@ void vic2_text( Environment * _environment, char * _text, char * _text_size ) {
 
 void vic2_initialization( Environment * _environment ) {
 
-    deploy( vic2vars, src_hw_vic2_vars_asm );
-    deploy_deferred( vic2startup, src_hw_vic2_startup_asm );
+    deploy_preferred( vic2vars, src_hw_vic2_vars_asm );
+    deploy_preferred( vic2startup, src_hw_vic2_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
