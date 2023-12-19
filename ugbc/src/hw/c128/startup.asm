@@ -37,6 +37,7 @@
 
 
 JIFFYUPDATE:
+    PHP
     PHA
     TXA
     PHA
@@ -73,6 +74,7 @@ JIFFYDAY:
     PLA
     TAX
     PLA
+    PLP
 	RTS
 
 NMISVC:
@@ -83,14 +85,14 @@ NMISVC:
     RTI
 
 IRQSVC:
-    PHA
-    LDA #$1
-    STA $D019
-    PLA
     JSR JIFFYUPDATE
     JSR MUSICPLAYER
     JSR JOYSTICKMANAGER
     JSR TIMERMANAGER
+    PHA
+    LDA #$1
+    STA $D019
+    PLA
     JMP ($0314)    
 
 IRQSVC2:
