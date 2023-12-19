@@ -73,7 +73,7 @@ void get_image( Environment * _environment, char * _image, char * _x1, char * _y
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
     }
 
-    switch( image->realName->type ) {
+    switch( image->type ) {
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
