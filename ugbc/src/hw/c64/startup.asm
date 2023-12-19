@@ -36,6 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 JIFFYUPDATE:
+    PHP
     PHA
     TXA
     PHA
@@ -72,6 +73,7 @@ JIFFYDAY:
     PLA
     TAX
     PLA
+    PLP
 	RTS
 
 NMISVC:
