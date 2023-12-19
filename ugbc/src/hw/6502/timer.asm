@@ -60,6 +60,14 @@ TIMERMANAGERGO:
     PHA
     LDA TMPPTR2+1
     PHA
+    LDA PLOTDEST
+    PHA
+    LDA PLOTDEST+1
+    PHA
+    LDA PLOTCDEST
+    PHA
+    LDA PLOTCDEST+1
+    PHA
 
     ; Save actual registers (X,Y)
     TXA
@@ -172,6 +180,8 @@ TIMERMANAGERJMP2AL:
     TAX
     PLA
 
+    JMP TIMERMANAGERL2AL
+    
     ; If we reach this line, we are going to decrement the
     ; counter since it is not zero.
 TIMERMANAGERL2AH:
@@ -212,7 +222,15 @@ TIMERMANAGERL2:
     PLA
     TAX
 
-    ; Restoer the pointer registers.
+    ; Restore the pointer registers.
+    PLA 
+    STA PLOTCDEST+1
+    PLA 
+    STA PLOTCDEST
+    PLA 
+    STA PLOTDEST+1
+    PLA 
+    STA PLOTDEST
     PLA 
     STA TMPPTR2+1
     PLA 
