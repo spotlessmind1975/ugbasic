@@ -70,13 +70,13 @@ YSCROLLPOS:         .byte 4
 XSCROLL:            .byte 0
 YSCROLL:            .byte 0
 
-IMAGEX = $54; $55
-IMAGEY = $56; $57
-IMAGEW = $59 ; $5A
-IMAGEH = $53
-IMAGEH2 = $52
-IMAGET = $51
-IMAGEF = $58
+IMAGEX:             .word $0
+IMAGEY:             .word $0
+IMAGEW:             .word $0
+IMAGEH:             .word $0
+IMAGEH2:            .word $0
+IMAGET:             .byte $0
+IMAGEF:             .byte $0
 
 BLITTMPPTR = $B8 ; $B9
 BLITTMPPTR2 = $B6 ; $B7
