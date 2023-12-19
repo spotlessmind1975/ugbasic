@@ -103,4 +103,8 @@ void begin_loop( Environment * _environment ) {
 
     cpu_label( _environment, loop->label );
 
+    if ( _environment->procedureName && _environment->protothread ) {
+        yield( _environment );
+    }
+
 }
