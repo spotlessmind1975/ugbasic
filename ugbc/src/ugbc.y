@@ -5334,6 +5334,15 @@ array_assign:
             }
         }
     }
+    | WITH const_expr {
+        ((struct _Environment *)_environment)->currentArray->value = $2;
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
+    }
     | OP_ASSIGN BufferDefinition {
         int size = ( strlen( $2 ) - 3 ) / 2;
         if ( ((struct _Environment *)_environment)->currentArray->arrayDimensions > 1 ) {
