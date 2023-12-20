@@ -114,7 +114,7 @@ static void vic2_image_converter_tile( Environment * _environment, char * _sourc
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
             if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
+                rgb.alpha = *(source + 3);
             } else {
                 rgb.alpha = 255;
             }
@@ -185,7 +185,7 @@ static void vic2_image_converter_tile( Environment * _environment, char * _sourc
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
             if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
+                rgb.alpha = *(source + 3);
             } else {
                 rgb.alpha = 255;
             }
@@ -206,11 +206,9 @@ static void vic2_image_converter_tile( Environment * _environment, char * _sourc
                 if ( systemRgb->index != colorBackground ) {
                     adilinepixel(colorForeground);
                     *( _dest + y ) |= bitmask;
-                    // printf("*");
                 } else {
                    adilinepixel(colorBackground);
                      *( _dest + y ) &= ~bitmask;
-                    // printf(" ");
                 }
             }
 
@@ -1923,7 +1921,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
     *(buffer+1) = ( (_frame_width>>8) & 0xff );
     *(buffer+2) = _frame_height;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     vic2_image_converter_tiles( _environment, _source, buffer+3, _frame_width, _frame_height, _depth, _width );
 
