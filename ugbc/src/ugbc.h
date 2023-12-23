@@ -2666,6 +2666,7 @@ typedef struct _Environment {
 #define CRITICAL_RESTORE_WITH_UNSUPPORTED_DATA_TYPE( t ) CRITICAL2("E240 - RESTORE with unsupported data type", t ); 
 #define CRITICAL_SANDBOX_ENFORCED( v ) CRITICAL2("E241 - this command is not allowed on sources for sandbox execution", v );
 #define CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE(f) CRITICAL2i("E242 - NEW IMAGES unsupported for the given screen mode", f );
+#define CRITICAL_MIDI_OUT_OF_MEMORY(f) CRITICAL2("E243 - out of memory on MIDI conversion using LOAD MUSIC", f );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
