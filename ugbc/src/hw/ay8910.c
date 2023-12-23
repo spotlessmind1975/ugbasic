@@ -51,6 +51,8 @@ void ay8910_initialization( Environment * _environment ) {
 
     variable_import( _environment, "AY8910MUSICREADY", VT_BYTE, 0 );
     variable_global( _environment, "AY8910MUSICREADY" );
+    variable_import( _environment, "AY8910MUSICLOOP", VT_BYTE, 0 );
+    variable_global( _environment, "AY8910MUSICLOOP" );
     variable_import( _environment, "AY8910BLOCKS", VT_BYTE, 0 );
     variable_global( _environment, "AY8910BLOCKS" );
     variable_import( _environment, "AY8910LASTBLOCK", VT_BYTE, 0 );
@@ -1002,7 +1004,7 @@ void ay8910_music( Environment * _environment, char * _music, int _size, int _lo
     deploy( ay8910startup, src_hw_ay8910_startup_asm );
 
     // HL: music address, B: blocks, C: last block
-    outline1("DI");
+    outline0("DI");
     outline1("LD HL, %s", _music);
     outline1("LD A, $%2.2x", ( _size>>8 ) & 0xff);
     outline0("LD B, A");
@@ -1011,7 +1013,7 @@ void ay8910_music( Environment * _environment, char * _music, int _size, int _lo
     outline1("LD A, $%2.2x", _loop );
     outline0("LD (AY8910MUSICLOOP), A");
     outline0("CALL MUSICPLAYERRESET");
-    outline1("EI");
+    outline0("EI");
 
 }
 
