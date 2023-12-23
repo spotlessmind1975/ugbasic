@@ -527,6 +527,15 @@ PUTIMAGE1L2AX:
     ; Update the first color index
 
     LD A, (HL)
+
+    ; Check if the first index has $00 that means that
+    ; a transparent image must be renderized as not transparent:
+    ; this means that we must translate it to black.
+    CP $0
+    JR NZ, PUTIMAGE1L2AXY
+    LD A, $14
+
+PUTIMAGE1L2AXY:
     LD IXL, A
     LD IXH, 0
     LD IYL, 1
@@ -841,6 +850,15 @@ PUTIMAGE2L2X:
     ; Update the first color index
 
     LD A, (HL)
+
+    ; Check if the first index has $00 that means that
+    ; a transparent image must be renderized as not transparent:
+    ; this means that we must translate it to black.
+    CP $0
+    JR NZ, PUTIMAGE2L2AXY
+    LD A, $14
+
+PUTIMAGE2L2AXY:
     LD IXL, A
     LD IXH, 0
     LD IYL, 1
