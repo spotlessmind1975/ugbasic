@@ -906,29 +906,23 @@ void pokey_stop_vars( Environment * _environment, char * _channels ) {
 
 }
 
-void pokey_music( Environment * _environment, char * _music, int _size ) {
+void pokey_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
     deploy( pokeystartup, src_hw_pokey_startup_asm );
 
     outline0("SEI");
-    outline0("LDA #$0");
-    outline0("STA POKEYJIFFIES");
-    outline0("STA POKEYTMPOFS");
-    outline0("LDA #$1");
-    outline0("STA POKEYMUSICREADY");
     outline1("LDA #<%s", _music);
-    outline0("STA POKEYTMPPTR");
+    outline0("STA POKEYTMPPTR_BACKUP");
     outline1("LDA #>%s", _music);
-    outline0("STA POKEYTMPPTR+1");
+    outline0("STA POKEYTMPPTR_BACKUP+1");
     outline1("LDA #$%2.2x", ( _size>>8 ) & 0xff);
-    outline0("STA POKEYBLOCKS");
+    outline0("STA POKEYBLOCKS_BACKUP");
     outline1("LDA #$%2.2x", _size & 0xff );
-    outline0("STA POKEYLASTBLOCK");
-    if ( _size > 255 ) {
-        outline0("LDA #$ff");
-    }
-    outline0("STA POKEYTMPLEN");
+    outline0("STA POKEYLASTBLOCK_BACKUP");
+    outline1("LDA #$%2.2x", _loop);
+    outline0("STA POKEYMUSICLOOP");
+    outline0("JSR MUSICPLAYERRESET");
     outline0("CLI");
 
 }

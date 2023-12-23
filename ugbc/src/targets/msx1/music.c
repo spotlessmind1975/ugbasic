@@ -50,7 +50,7 @@
 @keyword MUSIC
 @target msx1
 </usermanual> */
-void music_var( Environment * _environment, char * _music ) {
+void music_var( Environment * _environment, char * _music, int _loop ) {
 
     Variable * music = variable_retrieve( _environment, _music );
 
@@ -59,7 +59,7 @@ void music_var( Environment * _environment, char * _music ) {
     }
 
     ay8910_start( _environment, 0xff );
-    ay8910_music( _environment, music->realName, music->size );
+    ay8910_music( _environment, music->realName, music->size, _loop );
 
 }
 

@@ -66,6 +66,13 @@ void ay8910_initialization( Environment * _environment ) {
     variable_import( _environment, "AY8910JIFFIES", VT_BYTE, 0 );
     variable_global( _environment, "AY8910JIFFIES" );
 
+    variable_import( _environment, "AY8910BLOCKS_BACKUP", VT_BYTE, 0 );
+    variable_global( _environment, "AY8910BLOCKS_BACKUP" );
+    variable_import( _environment, "AY8910LASTBLOCK_BACKUP", VT_BYTE, 0 );
+    variable_global( _environment, "AY8910LASTBLOCK_BACKUP" );
+    variable_import( _environment, "AY8910TMPPTR_BACKUP", VT_ADDRESS, 0 );
+    variable_global( _environment, "AY8910TMPPTR_BACKUP" );
+
     cpu_call( _environment, "AY8910STARTUP" );
 
 }
@@ -989,26 +996,22 @@ void ay8910_stop_vars( Environment * _environment, char * _channels ) {
 
 }
 
-void ay8910_music( Environment * _environment, char * _music, int _size ) {
+void ay8910_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
     deploy( ay8910vars, src_hw_ay8910_vars_asm );
     deploy( ay8910startup, src_hw_ay8910_startup_asm );
 
-    outline0("LD A, $0");
-    outline0("LD (AY8910JIFFIES), A");
-    outline0("LD (AY8910TMPOFS), A");
-    outline0("LD A, $1");
-    outline0("LD (AY8910MUSICREADY), A");
+    // HL: music address, B: blocks, C: last block
+    outline1("DI");
     outline1("LD HL, %s", _music);
-    outline0("LD (AY8910TMPPTR), HL");
     outline1("LD A, $%2.2x", ( _size>>8 ) & 0xff);
-    outline0("LD (AY8910BLOCKS), A");
+    outline0("LD B, A");
     outline1("LD A, $%2.2x", _size & 0xff );
-    outline0("LD (AY8910LASTBLOCK), A");
-    if ( _size > 255 ) {
-        outline0("LD A, $ff");
-    }
-    outline0("LD (AY8910TMPLEN), A");
+    outline0("LD C, A");
+    outline1("LD A, $%2.2x", _loop );
+    outline0("LD (AY8910MUSICLOOP), A");
+    outline0("CALL MUSICPLAYERRESET");
+    outline1("EI");
 
 }
 

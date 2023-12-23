@@ -173,7 +173,7 @@ void sidz_stop_vars( Environment * _environment, char * _channels ) {
 
 }
 
-void sidz_music( Environment * _environment, char * _music, int _size ) {
+void sidz_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
     deploy( sidvars, src_hw_sidz_vars_asm );
     deploy( sidstartup, src_hw_sidz_startup_asm );

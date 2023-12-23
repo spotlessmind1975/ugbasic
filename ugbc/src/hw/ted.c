@@ -2771,29 +2771,23 @@ void ted_stop_vars( Environment * _environment, char * _channels ) {
 
 }
 
-void ted_music( Environment * _environment, char * _music, int _size ) {
+void ted_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
     deploy( tedstartup, src_hw_ted_startup_asm );
 
     outline0("SEI");
-    outline0("LDA #$0");
-    outline0("STA TEDJIFFIES");
-    outline0("STA TEDTMPOFS");
-    outline0("LDA #$1");
-    outline0("STA TEDMUSICREADY");
     outline1("LDA #<%s", _music);
-    outline0("STA TEDTMPPTR");
+    outline0("STA TEDTMPPTR_BACKUP");
     outline1("LDA #>%s", _music);
-    outline0("STA TEDTMPPTR+1");
+    outline0("STA TEDTMPPTR_BACKUP+1");
     outline1("LDA #$%2.2x", ( _size>>8 ) & 0xff);
-    outline0("STA TEDBLOCKS");
+    outline0("STA TEDBLOCKS_BACKUP");
     outline1("LDA #$%2.2x", _size & 0xff );
-    outline0("STA TEDLASTBLOCK");
-    if ( _size > 255 ) {
-        outline0("LDA #$ff");
-    }
-    outline0("STA TEDTMPLEN");
+    outline0("STA TEDLASTBLOCK_BACKUP");
+    outline0("LDA #$%2.2x", _loop );
+    outline0("STA TEDMUSICLOOP");
+    outline0("JSR MUSICPLAYERRESET");
     outline0("CLI");
 
 }

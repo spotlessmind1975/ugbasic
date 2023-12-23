@@ -54,6 +54,6 @@ void sidz_set_pitch_vars( Environment * _environment, char * _channel, char * _p
 void sidz_set_note_vars( Environment * _environment, char * _channel, char * _note );
 void sidz_stop_vars( Environment * _environment, char * _channel );
 
-void sidz_music( Environment * _environment, char * _music, int _size );
+void sidz_music( Environment * _environment, char * _music, int _size, int _loop );
 
 #endif

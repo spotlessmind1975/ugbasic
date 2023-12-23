@@ -989,26 +989,21 @@ void sn76489_stop_vars( Environment * _environment, char * _channels ) {
 
 }
 
-void sn76489_music( Environment * _environment, char * _music, int _size ) {
+void sn76489_music( Environment * _environment, char * _music, int _size, _loop ) {
 
     deploy( sn76489vars, src_hw_sn76489_vars_asm );
     deploy( sn76489startup, src_hw_sn76489_startup_asm );
 
-    outline0("LD A, $0");
-    outline0("LD (SN76489JIFFIES), A");
-    outline0("LD (SN76489TMPOFS), A");
-    outline0("LD A, $1");
-    outline0("LD (SN76489MUSICREADY), A");
+    outline0("DI");
     outline1("LD HL, %s", _music);
-    outline0("LD (SN76489TMPPTR), HL");
     outline1("LD A, $%2.2x", ( _size>>8 ) & 0xff);
-    outline0("LD (SN76489BLOCKS), A");
+    outline0("LD B, A");
     outline1("LD A, $%2.2x", _size & 0xff );
-    outline0("LD (SN76489LASTBLOCK), A");
-    if ( _size > 255 ) {
-        outline0("LD A, $ff");
-    }
-    outline0("LD (SN76489TMPLEN), A");
+    outline0("LD C, A");
+    outline1("LD A, $%2.2x", _loop );
+    outline0("LD (SN76489MUSICLOOP), A");
+    outline0("CALL MUSICPLAYERRESET");
+    outline0("EI");
 
 }
 

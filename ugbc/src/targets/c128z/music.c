@@ -50,7 +50,7 @@
 @keyword MUSIC
 @target c128z
 </usermanual> */
-void music_var( Environment * _environment, char * _music ) {
+void music_var( Environment * _environment, char * _music, int _loop ) {
 
     Variable * music = variable_retrieve( _environment, _music );
 
@@ -59,7 +59,7 @@ void music_var( Environment * _environment, char * _music ) {
     }
 
     sidz_start( _environment, 0xff );
-    sidz_music( _environment, music->realName, music->size );
+    sidz_music( _environment, music->realName, music->size, _loop );
 
 }
 

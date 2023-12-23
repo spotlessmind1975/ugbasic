@@ -6290,7 +6290,13 @@ instrument_definition :
 
 music_definition_expression:
     expr {
-        music_var( _environment, $1 );
+        music_var( _environment, $1, 0 );
+    }
+    | LOOP expr {
+        music_var( _environment, $2, 1 );
+    }
+    | expr LOOP {
+        music_var( _environment, $1, 1 );
     };
 
 music_definition:

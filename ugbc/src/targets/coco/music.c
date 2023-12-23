@@ -49,7 +49,7 @@
 /* <usermanual>
 @keyword MUSIC
 </usermanual> */
-void music_var( Environment * _environment, char * _music ) {
+void music_var( Environment * _environment, char * _music, int _loop ) {
 
 }
 

@@ -2685,29 +2685,23 @@ void vic1_stop_vars( Environment * _environment, char * _channels ) {
 
 }
 
-void vic1_music( Environment * _environment, char * _music, int _size ) {
+void vic1_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
     deploy( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     outline0("SEI");
-    outline0("LDA #$0");
-    outline0("STA VIC1JIFFIES");
-    outline0("STA VIC1TMPOFS");
-    outline0("LDA #$1");
-    outline0("STA VIC1MUSICREADY");
     outline1("LDA #<%s", _music);
-    outline0("STA VIC1TMPPTR");
+    outline0("STA VIC1TMPPTR_BACKUP");
     outline1("LDA #>%s", _music);
-    outline0("STA VIC1TMPPTR+1");
+    outline0("STA VIC1TMPPTR_BACKUP+1");
     outline1("LDA #$%2.2x", ( _size>>8 ) & 0xff);
-    outline0("STA VIC1BLOCKS");
+    outline0("STA VIC1BLOCKS_BACKUP");
     outline1("LDA #$%2.2x", _size & 0xff );
-    outline0("STA VIC1LASTBLOCK");
-    if ( _size > 255 ) {
-        outline0("LDA #$ff");
-    }
-    outline0("STA VIC1TMPLEN");
+    outline0("STA VIC1LASTBLOCK_BACKUP");
+    outline0("LDA #$%2.2x", _loop);
+    outline0("STA VIC1MUSICLOOP");
+    outline0("JSR MUSICPLAYERRESET");
     outline0("CLI");
 
 }

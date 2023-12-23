@@ -56,6 +56,6 @@ void pokey_set_note_vars( Environment * _environment, char * _channel, char * _n
 void pokey_stop_vars( Environment * _environment, char * _channel );
 void pokey_set_duration_vars( Environment * _environment, char * _channel, char * _duration );
 
-void pokey_music( Environment * _environment, char * _music, int _size );
+void pokey_music( Environment * _environment, char * _music, int _size, int _loop );
 
 #endif

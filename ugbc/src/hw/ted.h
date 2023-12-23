@@ -207,7 +207,7 @@ void ted_set_pitch_vars( Environment * _environment, char * _channel, char * _pi
 void ted_set_note_vars( Environment * _environment, char * _channel, char * _note );
 void ted_stop_vars( Environment * _environment, char * _channel );
 
-void ted_music( Environment * _environment, char * _music, int _size );
+void ted_music( Environment * _environment, char * _music, int _size, int _loop );
 
 void ted_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
 int ted_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );

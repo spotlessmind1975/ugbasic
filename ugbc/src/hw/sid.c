@@ -795,29 +795,23 @@ void sid_stop_vars( Environment * _environment, char * _channels ) {
 
 }
 
-void sid_music( Environment * _environment, char * _music, int _size ) {
+void sid_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
     outline0("SEI");
-    outline0("LDA #$0");
-    outline0("STA SIDJIFFIES");
-    outline0("STA SIDTMPOFS");
-    outline0("LDA #$1");
-    outline0("STA SIDMUSICREADY");
     outline1("LDA #<%s", _music);
-    outline0("STA SIDTMPPTR");
+    outline0("STA SIDTMPPTR_BACKUP");
     outline1("LDA #>%s", _music);
-    outline0("STA SIDTMPPTR+1");
+    outline0("STA SIDTMPPTR_BACKUP+1");
     outline1("LDA #$%2.2x", ( _size>>8 ) & 0xff);
-    outline0("STA SIDBLOCKS");
+    outline0("STA SIDBLOCKS_BACKUP");
     outline1("LDA #$%2.2x", _size & 0xff );
-    outline0("STA SIDLASTBLOCK");
-    if ( _size > 255 ) {
-        outline0("LDA #$ff");
-    }
-    outline0("STA SIDTMPLEN");
+    outline0("STA SIDLASTBLOCK_BACKUP");
+    outline1("LDA #$%2.2x", _loop);
+    outline0("STA SIDMUSICLOOP");
+    outline0("JSR MUSICPLAYERRESET");
     outline0("CLI");
 
 }

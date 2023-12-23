@@ -54,6 +54,6 @@ void ay8910_set_pitch_vars( Environment * _environment, char * _channel, char * 
 void ay8910_set_note_vars( Environment * _environment, char * _channel, char * _note );
 void ay8910_stop_vars( Environment * _environment, char * _channel );
 
-void ay8910_music( Environment * _environment, char * _music, int _size );
+void ay8910_music( Environment * _environment, char * _music, int _size, int _loop );
 
 #endif

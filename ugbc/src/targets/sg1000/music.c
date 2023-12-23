@@ -50,7 +50,7 @@
 @keyword MUSIC
 @target sg1000
 </usermanual> */
-void music_var( Environment * _environment, char * _music ) {
+void music_var( Environment * _environment, char * _music, int _loop ) {
 
     Variable * music = variable_retrieve( _environment, _music );
 
@@ -59,7 +59,7 @@ void music_var( Environment * _environment, char * _music ) {
     }
 
     sn76489_start( _environment, 0xff );
-    sn76489_music( _environment, music->realName, music->size );
+    sn76489_music( _environment, music->realName, music->size, _loop );
 
 }
 

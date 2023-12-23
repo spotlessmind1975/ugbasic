@@ -80,7 +80,7 @@ il suono, la melodia verrà riavviata dalla posizione precedente.
 
 @target c128
 </usermanual> */
-void music_var( Environment * _environment, char * _music ) {
+void music_var( Environment * _environment, char * _music, int _loop ) {
 
     Variable * music = variable_retrieve( _environment, _music );
 
@@ -89,7 +89,7 @@ void music_var( Environment * _environment, char * _music ) {
     }
 
     sid_start( _environment, 0xff );
-    sid_music( _environment, music->realName, music->size );
+    sid_music( _environment, music->realName, music->size, _loop );
 
 }
 
