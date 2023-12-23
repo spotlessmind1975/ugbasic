@@ -889,9 +889,9 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "PALETTELIMIT", VT_BYTE, 16 );
     variable_global( _environment, "PALETTELIMIT" );
 
+    SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC1, 1, 320, 200, 4, 8, 8, "Graphic Mode 1" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 640, 200, 2, 8, 8, "Graphic Mode 2" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC0, 1, 160, 200, 16, 8, 8, "Graphic Mode 0" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC1, 1, 320, 200, 4, 8, 8, "Graphic Mode 1" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC3, 1, 160, 200, 4, 8, 8, "Graphic Mode 3" );
 
     outline0("CALL CPCVIDEOSTARTUP");
@@ -1965,12 +1965,12 @@ Variable * cpc_new_image( Environment * _environment, int _width, int _height, i
 
 }
 
-Variable * cpc_new_images( Environment * _environment, int _frame, int _width, int _height, int _mode ) {
+Variable * cpc_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
 
-    int size = calculate_images_size( _environment, _frame, _width, _height, _mode );
-    int frameSize = calculate_images_size( _environment, _width, _height, _mode );
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
+    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
