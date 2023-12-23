@@ -51,6 +51,8 @@ void sn76489_initialization( Environment * _environment ) {
 
     variable_import( _environment, "SN76489MUSICREADY", VT_BYTE, 0 );
     variable_global( _environment, "SN76489MUSICREADY" );
+    variable_import( _environment, "SN76489MUSICLOOP", VT_BYTE, 0 );
+    variable_global( _environment, "SN76489MUSICLOOP" );
     variable_import( _environment, "SN76489BLOCKS", VT_BYTE, 0 );
     variable_global( _environment, "SN76489BLOCKS" );
     variable_import( _environment, "SN76489LASTBLOCK", VT_BYTE, 0 );
@@ -65,6 +67,13 @@ void sn76489_initialization( Environment * _environment ) {
     variable_global( _environment, "SN76489TMPLEN" );
     variable_import( _environment, "SN76489JIFFIES", VT_BYTE, 0 );
     variable_global( _environment, "SN76489JIFFIES" );
+
+    variable_import( _environment, "SN76489BLOCKS_BACKUP", VT_BYTE, 0 );
+    variable_global( _environment, "SN76489BLOCKS_BACKUP" );
+    variable_import( _environment, "SN76489LASTBLOCK_BACKUP", VT_BYTE, 0 );
+    variable_global( _environment, "SN76489LASTBLOCK_BACKUP" );
+    variable_import( _environment, "SN76489TMPPTR_BACKUP", VT_ADDRESS, 0 );
+    variable_global( _environment, "SN76489TMPPTR_BACKUP" );
 
     cpu_call( _environment, "SN76489STARTUP" );
 
@@ -989,7 +998,7 @@ void sn76489_stop_vars( Environment * _environment, char * _channels ) {
 
 }
 
-void sn76489_music( Environment * _environment, char * _music, int _size, _loop ) {
+void sn76489_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
     deploy( sn76489vars, src_hw_sn76489_vars_asm );
     deploy( sn76489startup, src_hw_sn76489_startup_asm );
