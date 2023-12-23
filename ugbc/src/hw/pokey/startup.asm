@@ -575,10 +575,6 @@ MUSICREADNEXTBYTELE:
     LDA POKEYBLOCKS
     BEQ MUSICREADNEXTBYTEEND
 
-    ; Put the index to 0
-    LDY #$0
-    STY POKEYTMPOFS
-
     ; Increment the base address by 256
     INC POKEYTMPPTR+1
 
@@ -592,12 +588,22 @@ MUSICREADNEXTBYTELE:
     ; Remaining block is 256 bytes lenght.
     LDY #$FF
     STY POKEYTMPLEN
+
+    ; Put the index to 0
+    LDY #$0
+    STY POKEYTMPOFS
+
     JMP MUSICREADNEXTBYTE2
 
     ; Remaining block is <256 bytes lenght.
 MUSICPLAYERLE2:
     LDY POKEYLASTBLOCK
     STY POKEYTMPLEN
+
+    ; Put the index to 0
+    LDY #$0
+    STY POKEYTMPOFS
+
     JMP MUSICREADNEXTBYTE2
 
 MUSICREADNEXTBYTEEND:
