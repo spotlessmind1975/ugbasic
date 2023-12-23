@@ -78,8 +78,14 @@ GETIMAGE0L2:
     PUSH DE
 
     PUSH HL
+    PUSH IX
+    LD A, IYL
+    LD E, A
+    LD A, IYH
+    LD IXL, A
     CALL CPCVIDEOPOS
     LD DE, HL
+    POP IX
     POP HL
 
     PUSH BC
@@ -145,8 +151,14 @@ GETIMAGE1L2:
     PUSH DE
 
     PUSH HL
+    PUSH IX
+    LD A, IYL
+    LD E, A
+    LD A, IYH
+    LD IXL, A
     CALL CPCVIDEOPOS
     LD DE, HL
+    POP IX
     POP HL
 
     PUSH BC
@@ -225,8 +237,14 @@ GETIMAGE2L2:
     PUSH DE
 
     PUSH HL
+    PUSH IX
+    LD A, IYL
+    LD E, A
+    LD A, IYH
+    LD IXL, A
     CALL CPCVIDEOPOS
     LD DE, HL
+    POP IX
     POP HL
 
     PUSH BC

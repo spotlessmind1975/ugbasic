@@ -2009,9 +2009,9 @@ void cpc_get_image( Environment * _environment, char * _image, char * _x, char *
     cpc_load_image_address_to_hl( _environment, _image, _sequence, _frame, _frame_size, _frame_count );
 
     outline1("LD A, (%s)", _x );
-    outline0("LD E, A" );
+    outline0("LD IYL, A" );
     outline1("LD A, (%s)", address_displacement(_environment, _x, "1") );
-    outline0("LD IXL, A" );
+    outline0("LD IYH, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
     outline1("LD A, $%2.2x", _palette );
