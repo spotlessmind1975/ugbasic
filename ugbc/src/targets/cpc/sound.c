@@ -78,8 +78,20 @@ espressa in millisecondi.
 </usermanual> */
 void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 
+    //Registers 0 and 1 operate together to form channel A's final pitch. The eight least significant bits are sent
+    //to register 0 and the four most significant bits are sent to register 1. The output frequency is equal to the
+    //IC's incoming clock frequency divided by 16 and then further divided by the number written to the course and
+    //fine pitch registers, so the higher the number written to these, the lower the pitch. For example, if a 
+    //frequency of 1KHz was required and the IC's clock frequency was 1MHz, a total division rate of 1000 would
+    //be needed. The sound generator itself divides by 16 so the course and fine pitch registers must provide a 
+    //further division by 62.5 (due to the fact that 1000/16 is 62.5). A division rate of 62 or 63 will be
+    //accurate enough, since the registers can only store whole numbers. Therefore, 62 or 63 would be written
+    //to register 0 and 0 would be written to register 1.
+
+    int chipsetFrequency = ( 4000000 / _freq ) / 16;
+
     ay8910_start( _environment, _channels );
-    ay8910_set_frequency( _environment, _channels, _freq );
+    ay8910_set_frequency( _environment, _channels, chipsetFrequency );
     if ( _delay ) {
         wait_milliseconds( _environment, _delay );
     }
@@ -111,13 +123,29 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 void sound_vars( Environment * _environment, char * _freq, char * _delay, char * _channels ) {
 
     Variable * freq = variable_retrieve_or_define( _environment, _freq, VT_WORD, 440 );
+
+    Variable * cpuFrequency = variable_temporary( _environment, VT_DWORD, "(chipsetFrequency)" );
+    variable_store( _environment, cpuFrequency->name, 4000000 );
+    Variable * sixteen = variable_temporary( _environment, VT_WORD, "(16)" );
+    variable_store( _environment, sixteen->name, 16 );
+    
+    Variable * chipsetFrequency = variable_div( _environment, 
+                            variable_div( _environment,
+                                cpuFrequency->name,
+                                freq->name,
+                                NULL
+                            )->name,
+                            sixteen->name,
+                            NULL
+                            );
+
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         ay8910_start_var( _environment, channels->realName );
-        ay8910_set_frequency_vars( _environment, channels->realName, freq->realName );
+        ay8910_set_frequency_vars( _environment, channels->realName, chipsetFrequency->realName );
     } else {
         ay8910_start_var( _environment, NULL );
-        ay8910_set_frequency_vars( _environment, NULL, freq->realName );
+        ay8910_set_frequency_vars( _environment, NULL, chipsetFrequency->realName );
     }
     if ( _delay ) {
         wait_milliseconds_var( _environment, _delay );
