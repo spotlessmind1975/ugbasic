@@ -216,6 +216,10 @@ AY8910READ:
     PUSH BC
     PUSH AF
     
+    LD B, $f7
+    LD A, %10000010          ;8255 PPI Control
+    OUT (C),A               ;Port A output, Port B input, Port C output
+
     ; Setup register index on PPI port A
     LD B, $F4 
     OUT (C), C
@@ -702,6 +706,7 @@ MUSICNOTEON:
     SRL A
     SRL A
     SRL A
+    PUSH AF
     PUSH BC
     CALL MUSICREADNEXTBYTE
     LD A, $0
@@ -716,6 +721,7 @@ MUSICNOTEON:
     INC HL
     LD D, (HL)
     POP BC
+    POP AF
     CALL AY8910PROGFREQ
     RET
 
