@@ -3405,6 +3405,10 @@ exponential:
     | KEY key_scancode_definition {
         $$ = $2;
     }
+    | NOTE const_note {
+        $$ = variable_temporary( _environment, VT_BYTE, "(note)" )->name;
+        variable_store( _environment, $$, $2 );
+    }
     ;
 
 position:   POSITION | AT;
@@ -6380,14 +6384,8 @@ volume_definition :
     ;
 
 bell_definition_simple : 
-    NOTE const_note {
-        bell( _environment, $2, 0xffff );
-    }
     | OP_HASH const_expr {
         bell( _environment, $2, 0xffff );
-    }
-    | NOTE const_note ON OP_HASH const_expr {
-        bell( _environment, $2, $5 );
     }
     | OP_HASH const_expr ON OP_HASH const_expr {
         bell( _environment, $2, $5 );
