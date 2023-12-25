@@ -53,7 +53,7 @@
 </usermanual> */
 Variable * new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
-    Variable * result = ef936x_new_image( _environment, _frames, _width, _height, _mode );
+    Variable * result = ef936x_new_images( _environment, _frames, _width, _height, _mode );
 
     result->offsettingFrames = offsetting_size_count( _environment, result->frameSize, _frames );
     offsetting_add_variable_reference( _environment, result->offsettingFrames, result, 0 );
