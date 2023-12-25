@@ -1368,6 +1368,27 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
 }
 
+static int calculate_images_size( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case BITMAP_MODE_STANDARD:
+
+            return 3 + ( 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) ) ) * _frames;
+
+        case BITMAP_MODE_MULTICOLOR:
+
+            return 3 + ( 3 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 2 ) * _frames;
+
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    return 0;
+
+}
+
 static Variable * ted_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
@@ -1780,99 +1801,6 @@ void ted_wait_vbl( Environment * _environment ) {
     deploy( vbl, src_hw_ted_vbl_asm);
 
     outline0("JSR VBL");
-
-}
-
-static void ted_load_image_address_to_other_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
-
-    outline1("LDA #<%s", _source );
-    outline1("STA %s", _register );
-    outline1("LDA #>%s", _source );
-    outline1("STA %s", address_displacement(_environment, _register, "1") );
-
-    if ( _sequence ) {
-
-        outline0("CLC" );
-        outline1("LDA %s", _register );
-        outline0("ADC #3" );
-        outline1("STA %s", _register );
-        outline1("LDA %s", address_displacement(_environment, _register, "1") );
-        outline0("ADC #0" );
-        outline1("STA %s", address_displacement(_environment, _register, "1") );
-        if ( strlen(_sequence) == 0 ) {
-
-        } else {
-            outline1("LDA #<OFFSETS%4.4x", _frame_size * _frame_count );
-            outline0("STA MATHPTR0" );
-            outline1("LDA #>OFFSETS%4.4x", _frame_size * _frame_count );
-            outline0("STA MATHPTR0+1" );
-            outline0("CLC" );
-            outline1("LDA %s", _sequence );
-            outline0("ASL" );
-            outline0("TAY" );
-            outline1("LDA %s", _register );
-            outline0("ADC (MATHPTR0), Y" );
-            outline1("STA %s", _register );
-            outline0("INY" );
-            outline1("LDA %s", address_displacement(_environment, _register, "1") );
-            outline0("ADC (MATHPTR0+1), Y" );
-            outline1("STA %s", address_displacement(_environment, _register, "1") );
-        }
-
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-                outline1("LDA #<OFFSETS%4.4x", _frame_size );
-                outline0("STA MATHPTR0" );
-                outline1("LDA #>OFFSETS%4.4x", _frame_size );
-                outline0("STA MATHPTR0+1" );
-                outline0("CLC" );
-                outline1("LDA %s", _frame );
-                outline0("ASL" );
-                outline0("TAY" );
-                outline1("LDA %s", _register );
-                outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s", _register );
-                outline0("INY" );
-                outline1("LDA %s", address_displacement(_environment, _register, "1") );
-                outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s", address_displacement(_environment, _register, "1") );
-            }
-        }
-
-    } else {
-
-        if ( _frame ) {
-            outline0("CLC" );
-            outline1("LDA %s", _register );
-            outline0("ADC #3" );
-            outline1("STA %s", _register );
-            outline1("LDA %s", address_displacement(_environment, _register, "1") );
-            outline0("ADC #0" );
-            outline1("STA %s", address_displacement(_environment, _register, "1") );
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-                outline1("LDA #<OFFSETS%4.4x", _frame_size );
-                outline0("STA MATHPTR0" );
-                outline1("LDA #>OFFSETS%4.4x", _frame_size );
-                outline0("STA MATHPTR0+1" );
-                outline0("CLC" );
-                outline1("LDA %s", _frame );
-                outline0("ASL" );
-                outline0("TAY" );
-                outline1("LDA %s", _register );
-                outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s", _register );
-                outline0("INY" );
-                outline1("LDA %s", address_displacement(_environment, _register, "1") );
-                outline0("ADC (MATHPTR0), Y" );
-                outline1("STA %s", address_displacement(_environment, _register, "1") );
-            }
-        }
-
-    }
 
 }
 
