@@ -54,7 +54,7 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword GET IMAGE
 @target plus4
 </usermanual> */
-void get_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, int _palette ) {
+void get_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _palette ) {
 
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
@@ -73,7 +73,7 @@ void get_image( Environment * _environment, char * _image, char * _x1, char * _y
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
     }
 
-    switch( image->realName->type ) {
+    switch( image->type ) {
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
