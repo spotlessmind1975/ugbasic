@@ -2699,7 +2699,7 @@ void vic1_music( Environment * _environment, char * _music, int _size, int _loop
     outline0("STA VIC1BLOCKS_BACKUP");
     outline1("LDA #$%2.2x", _size & 0xff );
     outline0("STA VIC1LASTBLOCK_BACKUP");
-    outline0("LDA #$%2.2x", _loop);
+    outline1("LDA #$%2.2x", _loop);
     outline0("STA VIC1MUSICLOOP");
     outline0("JSR MUSICPLAYERRESET");
     outline0("CLI");
