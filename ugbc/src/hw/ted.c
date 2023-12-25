@@ -2806,7 +2806,7 @@ void ted_music( Environment * _environment, char * _music, int _size, int _loop 
     outline0("STA TEDBLOCKS_BACKUP");
     outline1("LDA #$%2.2x", _size & 0xff );
     outline0("STA TEDLASTBLOCK_BACKUP");
-    outline0("LDA #$%2.2x", _loop );
+    outline1("LDA #$%2.2x", _loop );
     outline0("STA TEDMUSICLOOP");
     outline0("JSR MUSICPLAYERRESET");
     outline0("CLI");
