@@ -35,34 +35,34 @@
 
 #define RGB2GIME( r, g, b )     ( ( (r/64) & 0x02 ) << (5-1) ) | ( ( (g/64) & 0x02 ) << (4-1) ) | ( ( (b/64) & 0x02 ) << (3-1) ) | ( ( (r/64) & 0x01 ) << 2 ) | ( ( (g/64) & 0x01 ) << 1 ) | ( ( (b/64) & 0x01 ) )
 
-#define COLOR_BLACK					RGB2GIME( 0x00, 0x00, 0x00 )
-#define COLOR_BLUE					RGB2GIME( 0x00, 0x00, 0x80 )
-#define COLOR_LIGHT_BLUE			RGB2GIME( 0x00, 0x00, 0xff )
-#define COLOR_RED					RGB2GIME( 0x80, 0x00, 0x00 )
-#define COLOR_MAGENTA				RGB2GIME( 0x80, 0x00, 0x80 )
-#define COLOR_MAUVE 				RGB2GIME( 0x80, 0x40, 0x80 )
-#define COLOR_LIGHT_RED				RGB2GIME( 0xff, 0x00, 0x00 )
-#define COLOR_PURPLE				RGB2GIME( 0x80, 0x00, 0x80 )
-#define COLOR_LIGHT_MAGENTA			RGB2GIME( 0xff, 0x00, 0xff )
-#define COLOR_GREEN					RGB2GIME( 0x00, 0x80, 0x00 ) 
-#define COLOR_CYAN					RGB2GIME( 0x00, 0x80, 0x80 ) 
-#define COLOR_DARK_CYAN				RGB2GIME( 0x00, 0x40, 0x40 ) 
-#define COLOR_YELLOW				RGB2GIME( 0x80, 0x80, 0x00 ) 
-#define COLOR_WHITE					RGB2GIME( 0x80, 0x80, 0x80 ) 
-#define COLOR_PASTEL_BLUE			RGB2GIME( 0xa7, 0xc7, 0xe7 ) 
-#define COLOR_ORANGE				RGB2GIME( 0xff, 0xa5, 0x00 ) 
-#define COLOR_PINK       			RGB2GIME( 0xff, 0xc0, 0xcb ) 
+#define COLOR_BLACK					0x00
+#define COLOR_BLUE					0x08
+#define COLOR_LIGHT_BLUE			0x09
+#define COLOR_RED					0x20
+#define COLOR_MAGENTA				0x28
+#define COLOR_MAUVE 				0x2a
+#define COLOR_LIGHT_RED				0x24
+#define COLOR_PURPLE				0x05
+#define COLOR_LIGHT_MAGENTA			0x2d
+#define COLOR_GREEN					0x10
+#define COLOR_CYAN					0x18
+#define COLOR_DARK_CYAN				0x03
+#define COLOR_YELLOW				0x30
+#define COLOR_WHITE					0x38
+#define COLOR_PASTEL_BLUE			0x1d
+#define COLOR_ORANGE				0x26
+#define COLOR_PINK       			0x27
 #define COLOR_PASTEL_MAGENTA		RGB2GIME( 0xff, 0x00, 0xff )
-#define COLOR_LIGHT_GREEN			RGB2GIME( 0x00, 0xf0, 0x00 )
+#define COLOR_LIGHT_GREEN			0x12
 #define COLOR_SEA_GREEN			    RGB2GIME( 0x00, 0xf0, 0x20 )
-#define COLOR_LIGHT_CYAN		    RGB2GIME( 0x00, 0xff, 0xff ) 
+#define COLOR_LIGHT_CYAN		    0x1b
 
 #define COLOR_LIME      		    RGB2GIME( 0xcc, 0xff, 0x00 ) 
 #define COLOR_PASTEL_GREEN    	    COLOR_LIGHT_GREEN
 #define COLOR_PASTEL_CYAN    	    COLOR_LIGHT_CYAN
 #define COLOR_LIGHT_YELLOW    	    RGB2GIME( 0xf0, 0xf0, 0x00 ) 
 #define COLOR_PASTEL_YELLOW   	    COLOR_LIGHT_YELLOW
-#define COLOR_LIGHT_WHITE   	    RGB2GIME( 0xff, 0xff, 0xff ) 
+#define COLOR_LIGHT_WHITE   	    0x3f
 
 #define COLOR_VIOLET				COLOR_PURPLE
 #define COLOR_BROWN					COLOR_RED
