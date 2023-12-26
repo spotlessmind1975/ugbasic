@@ -1158,6 +1158,8 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     int i, j, k;
 
+    SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[_environment->paletteSelected][0];
+
     commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi) );
     commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
     lastUsedSlotInCommonPalette = paletteColorCount;
@@ -1290,6 +1292,8 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
     }
 
     int i, j, k;
+
+    SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[_environment->paletteSelected][0];
 
     commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi) );
     commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
@@ -1743,6 +1747,8 @@ void c6847_slice_image( Environment * _environment, char * _image, char * _frame
 int c6847_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette ) {
 
     int paletteColorCount = rgbi_extract_palette(_environment, _data, _width, _height, _depth, _palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[_environment->paletteSelected][0];
 
     memcpy( _palette, palette_match( _palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) ), paletteColorCount * sizeof( RGBi ) );
 

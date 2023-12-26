@@ -57,6 +57,11 @@ void color( Environment * _environment, int _index, int _shade ) {
 
     if ( _index == 0 ) {
         c6847_border_color( _environment, shadeAsString );
+        if ( _shade > 0 ) {
+            _environment->paletteSelected = 1;
+        } else {
+            _environment->paletteSelected = 0;
+        }
     }
 
     c6847_background_color( _environment, indexAsString, shadeAsString );
