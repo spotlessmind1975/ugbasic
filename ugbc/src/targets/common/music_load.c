@@ -412,6 +412,18 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
         first = first->next;
     }
 
+    // Reinitialize all parameters for MIDI>IMF decoding.
+    imfStreamPos = 0;
+    numMidiTracks = 0;
+    finishedTrack = NULL;
+    usedTrack = NULL;
+    lastNoteOnChannel = NULL;
+    memset( usedChannel, 0, MAX_AUDIO_CHANNELS * sizeof( int ) );
+    lastProgramOnMIDITrack = NULL;
+    memset( lastProgramOnChannel, 0, MAX_AUDIO_CHANNELS * sizeof( int ) );
+    tempo = 81;
+    imfBuffer = NULL;
+
     Variable * result = variable_temporary( _environment, VT_MUSIC, "(buffer)" );
 
     int size = 0;
