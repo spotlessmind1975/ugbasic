@@ -38,7 +38,7 @@
 ; TMPPTR : filename; MATHPTR0: filename size
 ; MATHPTR1: 1 if address is NULL; 0 if address is not NULL
 ; TMPPTR2: address
-C64DLOAD:
+C128DLOAD:
 
     ; SETNAM. Set file name parameters.
     ; Input: A = File name length; X/Y = Pointer to file name.
@@ -52,12 +52,12 @@ C64DLOAD:
     LDA #$02
     STA MATHPTR2+1
     LDY #0
-C64DLOADL1:
+C128DLOADL1:
     LDA (TMPPTR), Y
     STA (MATHPTR2), Y
     INY
     CPY MATHPTR0
-    BNE C64DLOADL1
+    BNE C128DLOADL1
     PLA
 
     PHA
@@ -79,9 +79,9 @@ C64DLOADL1:
 
     LDA #$01
     LDX $BA       ; last used device number
-    BNE C64DLOADSKIP
+    BNE C128DLOADSKIP
     LDX #$08      ; default to device 8
-C64DLOADSKIP:
+C128DLOADSKIP:
     LDY MATHPTR1      ; not $01 means: load to address stored in file
     PHA
     LDA #$BA
@@ -92,12 +92,12 @@ C64DLOADSKIP:
     JSR SYSCALL
 
     LDY MATHPTR1
-    BNE C64DLOADSKIP2
+    BNE C128DLOADSKIP2
 
     LDX TMPPTR2
     LDY TMPPTR2+1
 
-C64DLOADSKIP2:
+C128DLOADSKIP2:
     ; LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
     ; Input: A: 0 = Load, 1-255 = Verify; X/Y = Load address (if secondary address = 0).
     ; Output: Carry: 0 = No errors, 1 = Error; A = KERNAL error code (if Carry = 1); X/Y = Address of last byte loaded/verified (if Carry = 0).
@@ -113,9 +113,9 @@ C64DLOADSKIP2:
     LDA #$00      ; $00 means: load to memory (not verify)
     JSR SYSCALL
 
-    BCS C64DLOADERROR ; if carry set, a load error has happened
+    BCS C128DLOADERROR ; if carry set, a load error has happened
     RTS
-C64DLOADERROR:
+C128DLOADERROR:
     ; Accumulator contains BASIC error code
     STA DLOADERROR
     RTS

@@ -367,7 +367,7 @@ void c128_dload( Environment * _environment, char * _filename, char * _offset, c
 
     }
 
-    outline0("JSR C64DLOAD");
+    outline0("JSR C128DLOAD");
 
 }
 
