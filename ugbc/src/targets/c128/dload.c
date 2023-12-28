@@ -45,7 +45,7 @@
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer
  */
-Variable * dload( Environment * _environment, char * _target_name ) {
+void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "DLOAD");
@@ -55,8 +55,6 @@ Variable * dload( Environment * _environment, char * _target_name ) {
         CRITICAL_SANDBOX_ENFORCED( "DLOAD");
     }
 
-    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of DLOAD)");
-
-    return result;
+    c128_dload( _environment, _filename, _offset, _address, _size );
 
 }

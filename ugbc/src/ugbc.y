@@ -157,6 +157,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> read_safeness
 %type <integer> line_mode box_mode put_action
 %type <string> timer_number timer_number_comma
+%type <string> dload_from_offset dload_to_address dload_size_size
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -2469,9 +2470,6 @@ exponential:
     | NEW IMAGES OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
         $$ = new_images( _environment, $4, $6, $8, ((struct _Environment *)_environment)->currentMode )->name;
       }
-    | DLOAD OP expr CP {
-        $$ = dload( _environment, $3 )->name;
-      }
     | LOAD OP String CP on_bank load_flags {
         $$ = load( _environment, $3, NULL, 0, $5, $6 )->name;
       }
@@ -2977,6 +2975,10 @@ exponential:
         } else {
             $$ = tile_get_width( _environment, $4 )->name;
         }
+    }
+    | DLOAD ERROR {
+        $$ = variable_temporary( _environment, VT_BYTE, "(DLOAD ERROR)" )->name;
+        variable_move( _environment, "DLOADERROR", $$ );
     }
     | IMAGE WIDTH OP expr CP {
         $$ = image_get_width( _environment, $4 )->name;
@@ -7416,7 +7418,39 @@ border_definition :
     expr {
         color_border_var( _environment, $1 );
     };
-    
+
+dload_from_offset :
+    {
+        $$ = NULL;
+    }
+    |
+    FROM expr {
+        $$ = $2;
+    };
+
+dload_to_address :
+    {
+        $$ = NULL;
+    }
+    |
+    TO expr {
+        $$ = $2;
+    };
+
+dload_size_size :
+    {
+        $$ = NULL;
+    }
+    |
+    SIZE expr {
+        $$ = $2;
+    };
+
+dload_definition :
+    expr dload_from_offset dload_to_address dload_size_size {
+        dload( _environment, $1, $2, $3, $4 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -7482,6 +7516,7 @@ statement2nc:
   | RUN {
     run( _environment );
   }
+  | DLOAD dload_definition
   | SWAP swap_definition
   | OUT out_definition
   | DATA data_definition

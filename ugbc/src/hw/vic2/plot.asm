@@ -15,7 +15,7 @@
 ; @thirdparts satpro on lemon64.com
 ;--------------------------------------------------------------------
 
-PLOTX    = $BA ; $BB
+PLOTX    = $C1 ; $C2
 PLOTY    = $BC ; $BD
 PLOTM    = $BE
 PLOTOMA  = $C0

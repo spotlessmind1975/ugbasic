@@ -95,6 +95,9 @@ void target_initialization( Environment * _environment ) {
         }
     }
 
+    variable_import( _environment, "DLOADERROR", VT_BYTE, 0 );
+    variable_global( _environment, "DLOADERROR" );
+
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 

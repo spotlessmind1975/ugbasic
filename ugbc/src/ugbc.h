@@ -1501,6 +1501,8 @@ typedef struct _Deployed {
 
     int timer;
 
+    int dload;
+
 } Deployed;
 
 typedef struct _DString {
@@ -3719,7 +3721,7 @@ DataSegment *           data_segment_define_or_retrieve_numeric( Environment * _
 void                    data_string( Environment * _environment, char * _value );
 void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
-Variable *              dload( Environment * _environment, char * _target_name );
+void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    double_buffer( Environment * _environment, int _enabled );
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
