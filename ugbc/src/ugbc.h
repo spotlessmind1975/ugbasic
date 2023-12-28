@@ -2674,6 +2674,7 @@ typedef struct _Environment {
 #define CRITICAL_SANDBOX_ENFORCED( v ) CRITICAL2("E241 - this command is not allowed on sources for sandbox execution", v );
 #define CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE(f) CRITICAL2i("E242 - NEW IMAGES unsupported for the given screen mode", f );
 #define CRITICAL_MIDI_OUT_OF_MEMORY(f) CRITICAL2("E243 - out of memory on MIDI conversion using LOAD MUSIC", f );
+#define CRITICAL_STRPTR_NOT_STRING(v, t) CRITICAL3("E244 - cannot use STRPTR on something that is not a string", v, t );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -4064,6 +4065,7 @@ void                    sprite_at( Environment * _environment, int _sprite, int 
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 Variable *              sqroot( Environment * _environment, char * _value );
 StaticString *          string_reserve( Environment * _environment, char * _value );
+Variable *              strptr( Environment * _environment, char * _name );
 void                    sys( Environment * _environment, int _address );
 void                    sys_var( Environment * _environment, char * _address );
 void                    sys_call( Environment * _environment, int _address );
