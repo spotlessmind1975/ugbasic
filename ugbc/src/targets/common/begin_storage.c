@@ -79,6 +79,7 @@ void begin_storage( Environment * _environment, char * _name, char * _file_name 
     }
 
     Storage * storage = malloc( sizeof( Storage ) );
+    memset( storage, 0, sizeof ( Storage ) );
     storage->name = strdup( _name );
     if ( _file_name ) {
         storage->fileName = strdup( _file_name );

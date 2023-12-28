@@ -51,6 +51,8 @@ void file_storage( Environment * _environment, char * _source_name, char * _targ
     }
 
     FileStorage * fileStorage = malloc( sizeof( FileStorage ) );
+    memset( fileStorage, 0, sizeof ( FileStorage ) );
+
     fileStorage->sourceName = strdup( _source_name );
     fileStorage->targetName = strdup( _target_name );
 
