@@ -55,15 +55,6 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
         CRITICAL_SANDBOX_ENFORCED( "DLOAD");
     }
 
-    Variable * target_name = variable_retrieve_or_define( _environment, _target_name, VT_DSTRING, 0 );
-    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of DLOAD)");
-
-    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, " " );
-
-    variable_store_string(_environment, result->name, resultString );
-
-    c64_dload( _environment, target_name->realName, result->realName );
-
-    return result;
+    c64_dload( _environment, _filename, _offset, _address, _size );
 
 }

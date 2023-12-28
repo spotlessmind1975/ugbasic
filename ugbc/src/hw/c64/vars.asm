@@ -128,3 +128,12 @@ TIMERSTATUS:    .BYTE   $0
 TIMERCOUNTER:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERINIT:      .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERADDRESS:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
+
+NMISVC_SYSTEM:      .WORD   $0
+IRQSVC_SYSTEM:      .WORD   $0
+IRQSVC2_SYSTEM:     .WORD   $0
+NMISVC_UGBASIC:     .WORD   $0
+IRQSVC_UGBASIC:     .WORD   $0
+IRQSVC2_UGBASIC:    .WORD   $0
+
+DLOADERROR:         .BYTE   $0

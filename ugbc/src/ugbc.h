@@ -1418,7 +1418,6 @@ typedef struct _Deployed {
     int ay8910startup;
     int sn76489vars;
     int sn76489startup;
-    int storage;
 
     int draw;
 

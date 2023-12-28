@@ -243,36 +243,53 @@ void c64_clear_key( Environment * _environment ) {
 
 void c64_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
-    // deploy( dload, src_hw_c64_dload_asm);
+    deploy( dload, src_hw_c64_dload_asm);
 
-    // MAKE_LABEL
+    MAKE_LABEL
     
-    // Variable * tnaddress = variable_temporary( _environment, VT_ADDRESS, "(address of target_name)");
-    // Variable * tnsize = variable_temporary( _environment, VT_BYTE, "(size of target_name)");
+    Variable * filename = variable_retrieve( _environment, _filename );
+    Variable * tnaddress = variable_temporary( _environment, VT_ADDRESS, "(address of target_name)");
+    Variable * tnsize = variable_temporary( _environment, VT_BYTE, "(size of target_name)");
 
-    // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of result)");
-    // Variable * size = variable_temporary( _environment, VT_BYTE, "(size of read)");
+    Variable * address = NULL;
+    if ( _address ) {
+        address = variable_retrieve( _environment, _address );
+    }
+    Variable * size = NULL;
+    if ( _size ) {
+        size = variable_retrieve( _environment, _size );
+    }
 
-    // cpu_dsdescriptor( _environment, _target_name, tnaddress->realName, tnsize->realName );
+    switch( filename->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, filename->realName, tnsize->realName );
+            cpu_addressof_16bit( _environment, filename->realName, tnaddress->realName );
+            cpu_inc_16bit( _environment, tnaddress->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, filename->realName, tnaddress->realName, tnsize->realName );
+            break;
+    }
 
-    // outline1("LDA %s", tnaddress->realName);
-    // outline0("STA TMPPTR");
-    // outline1("LDA %s", address_displacement(_environment, tnaddress->realName, "1"));
-    // outline0("STA TMPPTR+1");
-    // outline1("LDA %s", tnsize->realName);
-    // outline0("STA MATHPTR0");
-    // outline0("JSR C64STORAGELOADSIZE");
+    outline1("LDA %s", tnaddress->realName);
+    outline0("STA TMPPTR");
+    outline1("LDA %s", address_displacement(_environment, tnaddress->realName, "1"));
+    outline0("STA TMPPTR+1");
+    outline1("LDA %s", tnsize->realName);
+    outline0("STA MATHPTR0");
 
-    // cpu_dsfree( _environment, _result );
-    // cpu_dsalloc( _environment, "MATHPTR1", _result );
-    // cpu_dsdescriptor( _environment, _result, address->realName, size->realName );
+    if ( address ) {
 
-    // outline1("LDA %s", address->realName);
-    // outline0("STA TMPPTR2");
-    // outline1("LDA %s", address_displacement(_environment, address->realName, "1"));
-    // outline0("STA TMPPTR2+1");
+        outline1("LDA %s", address->realName);
+        outline0("STA TMPPTR2");
+        outline1("LDA %s", address_displacement(_environment, address->realName, "1"));
+        outline0("STA TMPPTR2+1");
+        outline0("LDA #0");
+        outline0("STA MATHPTR1");
 
-    // outline0("JSR C64STORAGELOAD");
+    }
+
+    outline0("JSR C64DLOAD");
 
 }
 
