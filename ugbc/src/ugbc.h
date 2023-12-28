@@ -4361,6 +4361,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/vic2.h"
     #include "hw/sid.h"
     #include "hw/c128.h"
+    #include "outputs/d64.h"
 #elif __c128z__
     #include "../src-generated/modules_c128z.h"
     #include "hw/z80.h"

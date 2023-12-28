@@ -40,15 +40,13 @@
 
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
-void target_linkage( Environment * _environment ) {
+void generate_prg( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
-
-    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_PRG)
 
     BUILD_TOOLCHAIN_CC65_GET_EXECUTABLE( _environment, executableName );
 
@@ -75,7 +73,7 @@ void target_linkage( Environment * _environment ) {
                 sprintf(executableName, "%s", "run6502" );
             }
 
-            sprintf( commandLine, "\"%s\" -X 0000 -R 1c0d -l 1bff \"%s\" -u \"%s\" -p \"%s\" %d",
+            sprintf( commandLine, "\"%s\" -X 0000 -R 080d -l 07ff \"%s\" -u \"%s\" -p \"%s\" %d",
                 executableName,
                 _environment->exeFileName,
                 _environment->listingFileName,
@@ -90,6 +88,115 @@ void target_linkage( Environment * _environment ) {
 
         }
     
+    }
+
+}
+
+void generate_d64( Environment * _environment ) {
+
+    FILE * prgHandle = fopen(_environment->exeFileName, "rb");
+    fseek( prgHandle, 0, SEEK_END );
+    int prgSize = ftell( prgHandle );
+    fseek( prgHandle, 0, SEEK_SET );
+    unsigned char * prgContent = malloc( prgSize );
+    (void)!fread( prgContent, prgSize, 1, prgHandle );
+    fclose( prgHandle );
+
+    remove(_environment->exeFileName);
+
+    Storage * storage = _environment->storage;
+
+    if ( !storage ) {
+        D64Handle * handle = d64_create( CBMDOS );
+        d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
+        d64_output( handle, _environment->exeFileName );
+        d64_free( handle );
+    } else {
+        int i=0;
+        while( storage ) {
+            printf( "storage: %p\n", storage );
+            D64Handle * handle = d64_create( CBMDOS );
+            if ( i == 0 ) {
+                d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
+            }
+            FileStorage * fileStorage = storage->files;
+            while( fileStorage ) {
+                printf( " fileStorage: %p\n", fileStorage );
+                FILE * file = fopen( fileStorage->sourceName, "rb" );
+                if ( !file ) {
+                    CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                }
+                fseek( file, 0, SEEK_END );
+                int size = ftell( file );
+                fseek( file, 0, SEEK_SET );
+                char * buffer;
+                if ( size > 255 ) {
+                    buffer = malloc( size + 3 );
+                    buffer[0] = 1;
+                    buffer[1] = (size & 0xff);
+                    buffer[2] = ((size>>8) & 0xff);
+                    (void)!fread( &buffer[3], size, 1, file );
+                    size += 3;
+                } else {
+                    buffer = malloc( size + 2 );
+                    buffer[0] = 0;
+                    buffer[1] = (size & 0xff);
+                    (void)!fread( &buffer[2], size, 1, file );
+                    size += 2;
+                }
+                fclose( file );
+                d64_write_file( handle, fileStorage->targetName, PRG, buffer, size );
+                fileStorage = fileStorage->next;
+            }
+            char buffer[MAX_TEMPORARY_STORAGE];
+            char filemask[MAX_TEMPORARY_STORAGE];
+            strcpy( filemask, _environment->exeFileName );
+            char * basePath = strrchr( filemask, PATH_SEPARATOR );
+            if ( basePath ) {
+                ++basePath;
+                *basePath = 0;
+                if ( storage->fileName ) {
+                    strcat( basePath, storage->fileName );
+                } else {
+                    strcat( basePath, "disk%d.d64" );
+                }
+            } else {
+                if ( storage->fileName ) {
+                    strcpy( filemask, storage->fileName );
+                } else {
+                    strcpy( filemask, "disk%d.d64" );
+                }
+            }
+            sprintf( buffer, filemask, i );
+            if ( !strstr( buffer, ".d64" ) ) {
+                strcat( buffer, ".d64" );
+            }
+            d64_output( handle, buffer );
+            d64_free( handle );
+            storage = storage->next;
+            ++i;
+        }        
+    }
+
+}
+
+/**
+ * @brief Convert c128's assembly to executable
+ * 
+ * @param _environment 
+ */
+void target_linkage( Environment * _environment ) {
+
+    switch( _environment->outputFileType ) {
+        case OUTPUT_FILE_TYPE_PRG:
+            generate_prg( _environment );
+            break;
+        case OUTPUT_FILE_TYPE_D64:
+            generate_prg( _environment );
+            generate_d64( _environment );
+            break;
+        default:
+            CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
 }

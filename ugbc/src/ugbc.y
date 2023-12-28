@@ -8452,6 +8452,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     #define defaultExtension "prg"
 #elif __c128__
     printf("\t                prg - program binary file\n" );
+    printf("\t                d64 - D64 disk image\n" );
     #define defaultExtension "prg"
 #elif __c128z__
     printf("\t                prg - program binary file\n" );
