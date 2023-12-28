@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM STORAGE MANAGEMENT LOADING A FILE
 REM
 REM This example shows how to load a file at runtime, comparing
@@ -10,17 +10,18 @@ REM
 REM Questo esempio mostra come caricare un file al momento dell'esecuzione,
 REM comparato al caricamento al momento della compilazione.
 
+CLS
+
 STORAGE "DISCHETTO" AS "DISK1"
-    FILE "test.txt" AS "TEST"
+    FILE "test.txt" AS "test"
 ENDSTORAGE
 
-textCompileTime := LOAD("test.txt")
-textCompileTimeAsString = (STRING) textCompileTime
-textRunTimeAsString = DLOAD("TEST")
+DIM textRuntime AS STRING
 
-IF textCompileTimeAsString <> textRunTimeAsString THEN
-    PRINT "TEST FAILED!"
-ELSE
-    PRINT "TEST OK!"
-ENDIF
+textRuntime = "                "
+
+DLOAD "test" TO STRPTR(textRuntime)
+
+INK WHITE
+PRINT textRuntime
 
