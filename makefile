@@ -150,6 +150,7 @@ endif
 # CPU MOS 6502/6510/7501/8501/8502
 #------------------------------------------------ 
 CL65 = ./modules/cc65/bin/cl65$(EXESUFFIX)
+DIR2ATR = ./modules/atarisio/tools/dir2atr$(EXESUFFIX)
 
 #------------------------------------------------ 
 # CPU ZILOG Z80
@@ -356,11 +357,23 @@ $(DECB): $(dir $(DECB))./*.o
 decb: paths $(DECB)
 
 #------------------------------------------------ 
+# dir2atr:
+#    TOOL FOR CREATING ATARI DISK IMAGES
+#------------------------------------------------ 
+# 
+# dir2atr from AtariSIO V0.30
+#
+$(DIR2ATR): $(dir $(DIR2ATR))./*.o
+	cd $(dir $(DIR2ATR)) && make dir2atr
+
+dir2atr: paths $(DIR2ATR)
+
+#------------------------------------------------ 
 # atari:
 #    ATARI 400/800 (6502)
 #------------------------------------------------ 
 # 
-toolchain.atari: cc65
+toolchain.atari: cc65 dir2atr
 
 generated/atari/asm/%.asm:
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.atari$(UGBCEXESUFFIX) $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/atari/asm/,,$(@:.asm=.bas)) ../$@
@@ -379,7 +392,7 @@ generated/atari/exeso/%.xex: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.xex
 #    ATARI XE VGS (6502)
 #------------------------------------------------ 
 # 
-toolchain.atarixl: cc65
+toolchain.atarixl: cc65 dir2atr
 
 generated/atarixl/asm/%.asm:
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.atarixl$(UGBCEXESUFFIX) $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/atarixl/asm/,,$(@:.asm=.bas)) ../$@
