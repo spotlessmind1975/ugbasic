@@ -76,7 +76,7 @@ il numero di bytes o l'indirizzo di partenza.
 
 @example DLOAD "test" TO finalAddress SIZE 16
 
-@target all
+@target atari
 
 </usermanual> */
 void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {

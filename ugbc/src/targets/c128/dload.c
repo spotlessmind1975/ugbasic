@@ -45,6 +45,12 @@
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer
  */
+ /* <usermanual>
+@keyword DLOAD
+
+@target c128
+
+</usermanual> */
 void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
@@ -62,7 +68,7 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
     if ( _size ) {
         WARNING_DLOAD_IGNORED_SIZE( _filename );
     }
-    
+
     c128_dload( _environment, _filename, _offset, _address, _size );
 
 }

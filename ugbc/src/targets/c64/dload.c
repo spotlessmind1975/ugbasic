@@ -45,7 +45,7 @@
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer
  */
-  /* <usermanual>
+/* <usermanual>
 @keyword DLOAD
 
 @english
@@ -58,8 +58,9 @@ the offset and the size.
 Sul target ''c64'' e ''c128'', non è possibile indicare
 l'offset e la dimensione del caricamento.
 
-</usermanual> */
+@target c64
 
+</usermanual> */
 void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
