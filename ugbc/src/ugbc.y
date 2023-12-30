@@ -8557,6 +8557,8 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->floatType.precision = FT_FAST;
 
+    _environment->temporaryPath = get_default_temporary_path( );
+
 #if defined(__atari__) 
     _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
 #elif defined(__atarixl__) 

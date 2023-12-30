@@ -39,6 +39,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifdef _WIN32
+    #include <fileapi.h>
+#endif
+
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
@@ -10665,3 +10669,45 @@ Variable * variable_int( Environment * _environment, char * _expression ) {
     return result;
 
 }
+
+char * get_default_temporary_path( ) {
+
+    char * result = NULL;
+
+    result = malloc( MAX_TEMPORARY_STORAGE );
+    memset( result, 0, MAX_TEMPORARY_STORAGE );
+
+#ifdef _WIN32
+
+    // Windows: The path reported by the Windows GetTempPath API function.
+
+    GetTempPathA( MAX_TEMPORARY_STORAGE, &result );
+
+#else
+
+    // ISO/IEC 9945 (POSIX): The path supplied by the first environment 
+    // variable found in the list TMPDIR, TMP, TEMP, TEMPDIR. If none of these are 
+    // found, "/tmp", or, if macro __ANDROID__ is defined, "/data/local/tmp"
+
+    char * tmp = getenv( "TMPDIR" );
+    if ( !tmp ) {
+        tmp = getenv( "TMP" );
+    }
+    if ( !tmp ) {
+        tmp = getenv( "TEMP" );
+    }
+    if ( !tmp ) {
+        tmp = getenv( "TEMPDIR" );
+    }
+    if ( !tmp ) {
+        tmp = strdup( "/tmp" );
+    }
+
+    result = strdup( tmp );
+
+#endif
+
+    return result;
+
+}
+
