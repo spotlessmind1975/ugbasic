@@ -135,20 +135,8 @@ void generate_d64( Environment * _environment ) {
                 int size = ftell( file );
                 fseek( file, 0, SEEK_SET );
                 char * buffer;
-                if ( size > 255 ) {
-                    buffer = malloc( size + 3 );
-                    buffer[0] = 1;
-                    buffer[1] = (size & 0xff);
-                    buffer[2] = ((size>>8) & 0xff);
-                    (void)!fread( &buffer[3], size, 1, file );
-                    size += 3;
-                } else {
-                    buffer = malloc( size + 2 );
-                    buffer[0] = 0;
-                    buffer[1] = (size & 0xff);
-                    (void)!fread( &buffer[2], size, 1, file );
-                    size += 2;
-                }
+                buffer = malloc( size );
+                (void)!fread( &buffer[0], size, 1, file );
                 fclose( file );
                 d64_write_file( handle, fileStorage->targetName, PRG, buffer, size );
                 fileStorage = fileStorage->next;
