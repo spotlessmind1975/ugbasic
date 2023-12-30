@@ -45,6 +45,40 @@
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer
  */
+ /* <usermanual>
+@keyword DLOAD
+
+@english
+Dynamically (at run-time) load a file from a mass storage. The DLOAD command 
+allows you to (dynamically) load a file from a mass device. The syntax allows 
+you to load a specific file (''filename'') starting from a specific ''offset'' 
+within the file, towards a specific ''address'' in memory for a certain 
+number of ''bytes''. Note that the behavior of this instruction strictly 
+depends on the target where it is executed. It follows that not all options 
+are necessarily available on every target.
+
+On the ''atari'' and ''atarixl'' target, it is not possible to omit
+the number of bytes and the starting address.
+
+@italian
+Il comando DLOAD permette di caricare (dinamicamente) un file da una periferica
+di massa. La sintassi permette di caricare un file specifico (''filename'') a 
+partire da uno specifico ''offset'' all'interno del file, verso uno specifico 
+indirizzo (''address'') in memoria per un certo numero di ''bytes''.
+Da notare che il comportamento di questa istruzione dipende strettamente 
+dal target dove viene eseguito. Ne consegue che non è detto che tutte 
+le opzioni siano disponibili.
+
+Sul target ''atari'' e ''atarixl'', non è possibile omettere 
+il numero di bytes o l'indirizzo di partenza.
+
+@syntax DLOAD filename [FROM offset] [TO address] [SIZE size]
+
+@example DLOAD "test" TO finalAddress SIZE 16
+
+@target all
+
+</usermanual> */
 void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
@@ -54,5 +88,15 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
     if ( _environment->sandbox ) {
         CRITICAL_SANDBOX_ENFORCED( "DLOAD");
     }
+
+    if ( ! _address ) {
+        CRITICAL_DLOAD_MISSING_ADDRESS( _filename );
+    }
+
+    if ( ! _size ) {
+        CRITICAL_DLOAD_MISSING_SIZE( _filename );
+    }
+
+    atari_dload( _environment, _filename, _offset, _address, _size );
 
 }

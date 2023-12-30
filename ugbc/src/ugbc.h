@@ -2680,6 +2680,8 @@ typedef struct _Environment {
 #define CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE(f) CRITICAL2i("E242 - NEW IMAGES unsupported for the given screen mode", f );
 #define CRITICAL_MIDI_OUT_OF_MEMORY(f) CRITICAL2("E243 - out of memory on MIDI conversion using LOAD MUSIC", f );
 #define CRITICAL_STRPTR_NOT_STRING(v, t) CRITICAL3("E244 - cannot use STRPTR on something that is not a string", v, t );
+#define CRITICAL_DLOAD_MISSING_ADDRESS(v) CRITICAL2("E245 - destination address for DLOAD is missing", v );
+#define CRITICAL_DLOAD_MISSING_SIZE(v) CRITICAL2("E246 - size for DLOAD is missing", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
