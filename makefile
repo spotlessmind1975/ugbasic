@@ -382,8 +382,14 @@ generated/atari/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@$(CL65) -Ln $(@:.xex=.lbl) --listing $(@:.xex=.lst) -g -o $@ --mapfile $(@:.xex=.map) -t atari -C $(subst /exe/,/cfg/,$(@:.xex=.cfg)) $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@rm -f $(@:.xex=.o)
 
-generated/atari/exeso/%.xex: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.xex=.bas))
+generated/atari/exe/%.atr: $(subst /generated/atari/exe/,/$(EXAMPLESDIR)/,$(@:.atr=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.atari$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O atr $(subst generated/atari/exe/,,$(@:.atr=.bas))
+
+generated/atari/exeso/%.xex: $(subst /generated/atari/exeso/,/$(EXAMPLESDIR)/,$(@:.xex=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.atari$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O xex $(subst generated/atari/exeso/,,$(@:.xex=.bas))
+
+generated/atari/exeso/%.atr: $(subst /generated/atari/exeso/,/$(EXAMPLESDIR)/,$(@:.atr=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.atari$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O atr $(subst generated/atari/exeso/,,$(@:.atr=.bas))
 
 #------------------------------------------------ 
 # atarixl:
