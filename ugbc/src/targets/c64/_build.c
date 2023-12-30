@@ -102,14 +102,21 @@ void generate_d64( Environment * _environment ) {
     (void)!fread( prgContent, prgSize, 1, prgHandle );
     fclose( prgHandle );
 
-    remove(_environment->exeFileName);
+    char d64FileName[MAX_TEMPORARY_STORAGE];
+    strcpy( d64FileName, _environment->exeFileName );
+    char * p = strstr( d64FileName, ".d64" );
+    if ( !p ) {
+        strcat( d64FileName, ".d64");
+    }
+    
+    remove(d64FileName);
 
     Storage * storage = _environment->storage;
 
     if ( !storage ) {
         D64Handle * handle = d64_create( CBMDOS );
         d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
-        d64_output( handle, _environment->exeFileName );
+        d64_output( handle, d64FileName );
         d64_free( handle );
     } else {
         int i=0;
@@ -148,7 +155,7 @@ void generate_d64( Environment * _environment ) {
             }
             char buffer[MAX_TEMPORARY_STORAGE];
             char filemask[MAX_TEMPORARY_STORAGE];
-            strcpy( filemask, _environment->exeFileName );
+            strcpy( filemask, d64FileName );
             char * basePath = strrchr( filemask, PATH_SEPARATOR );
             if ( basePath ) {
                 ++basePath;
