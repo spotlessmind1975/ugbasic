@@ -55,6 +55,14 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
         CRITICAL_SANDBOX_ENFORCED( "DLOAD");
     }
 
+    if ( _offset ) {
+        WARNING_DLOAD_IGNORED_OFFSET( _filename );
+    }
+
+    if ( _size ) {
+        WARNING_DLOAD_IGNORED_SIZE( _filename );
+    }
+    
     c128_dload( _environment, _filename, _offset, _address, _size );
 
 }

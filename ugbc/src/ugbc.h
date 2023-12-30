@@ -2693,6 +2693,8 @@ typedef struct _Environment {
 #define WARNING_USE_OF_UNDEFINED_ARRAY( v1 ) WARNING2("W004 - use of undefined array", v1 );
 #define WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE(f) WARNING2i("W005 - IMAGE converter unsupported for the given screen mode", f );
 #define WARNING_IMAGE_LOAD_EXACT_IGNORED( ) WARNING("W006 - Loading of the image will ignore EXACT flag" );
+#define WARNING_DLOAD_IGNORED_SIZE( f ) WARNING2("W007 - size for DLOAD is ignored", f );
+#define WARNING_DLOAD_IGNORED_OFFSET( f ) WARNING2("W008 - offset for DLOAD is ignored", f );
 
 int assemblyLineIsAComment( char * _buffer );
 
