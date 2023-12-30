@@ -3508,6 +3508,10 @@ char * basename( char * _path );
         sprintf(executableName, "%s", "modules\\toolshed\\build\\unix\\decb\\decb.exe" ); \
     } else if( access( "modules/toolshed/build/unix/decb/decb", F_OK ) == 0 ) { \
         sprintf(executableName, "%s", "modules/toolshed/build/unix/decb/decb" ); \
+    } else if( access( "..\\modules\\toolshed\\build\\unix\\decb\\decb.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "..\\modules\\toolshed\\build\\unix\\decb\\decb.exe" ); \
+    } else if( access( "../modules/toolshed/build/unix/decb/decb", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "../modules/toolshed/build/unix/decb/decb" ); \
     } else { \
         sprintf(executableName, "%s", "decb" ); \
     }
