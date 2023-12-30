@@ -8431,6 +8431,12 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-P <file>    Path to profile (-L needed)\n" );
     printf("\t-q <cycles>  Cycles for profiling (default: 1000000)\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
+#if defined(__coco__) || defined(__coco3__)
+    printf("\t-b <file>    Path to DECB image tool\n" );
+#endif
+#if defined(__atari__) || defined(__atarixl__)
+    printf("\t-t <file>    Path to DIR2ATR tool\n" );
+#endif
 #if defined(__pc128op__) || defined(__mo5__)
     printf("\t-G <type>    Type of gamma correction on PALETTE generation:\n" );
     printf("\t               none (0): no gamma correction\n" );
@@ -8445,9 +8451,11 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-O <type>    Output file format for target:\n" );
 #if __atari__ 
     printf("\t                xex - executable binary file\n" );
+    printf("\t                atr - ATR disk image\n" );
     #define defaultExtension "xex"
 #elif __atarixl__ 
     printf("\t                xex - executable binary file\n" );
+    printf("\t                atr - ATR disk image\n" );
     #define defaultExtension "xex"
 #elif __c64__
     printf("\t                prg - program binary file\n" );
@@ -8634,6 +8642,12 @@ int main( int _argc, char *_argv[] ) {
                 case 'i':
                     importPath = strdup(optarg);
                     break;
+                case 't':
+                    _environment->dir2atrFileName = strdup(optarg);
+                    if( access( _environment->dir2atrFileName, F_OK ) != 0 ) {
+                        CRITICAL("dir2atr tool not found.");
+                    }
+                    break;
                 case 'T':
                     _environment->temporaryPath = strdup(optarg);
                     break;
@@ -8671,6 +8685,8 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
                     } else if ( strcmp( optarg, "dsk") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+                    } else if ( strcmp( optarg, "atr") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_ATR;
                     } else {
                         CRITICAL2("Unknown output format", optarg);
                     }

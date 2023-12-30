@@ -99,7 +99,8 @@ char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
     "cas",
     "rom",
     "d64",
-    "dsk"
+    "dsk",
+    "atr"
 };
 
 void memory_area_assign( MemoryArea * _first, Variable * _variable ) {

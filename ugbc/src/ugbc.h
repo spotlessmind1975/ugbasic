@@ -198,7 +198,8 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_CAS = 6,
     OUTPUT_FILE_TYPE_ROM = 7,
     OUTPUT_FILE_TYPE_D64 = 8,
-    OUTPUT_FILE_TYPE_DSK = 9
+    OUTPUT_FILE_TYPE_DSK = 9,
+    OUTPUT_FILE_TYPE_ATR = 10
 
 } OutputFileType;
 
@@ -1705,6 +1706,11 @@ typedef struct _Environment {
      * Filename of decb
      */
     char * decbFileName;
+
+    /**
+     * Filename of dir2atr
+     */
+    char * dir2atrFileName;
 
     /**
      * Filename of additional information file
@@ -3520,6 +3526,36 @@ char * basename( char * _path );
         binaryFileName,  \
         _environment->exeFileName, \
         strtoupper( basename( binaryFileName ) ) ); \
+    if ( system_call( _environment,  commandLine ) ) { \
+        printf("The compilation of assembly program failed.\n\n"); \
+        printf("Please check if %s is correctly installed.\n\n", executableName); \
+        printf("For more informations, please visit: https://ugbasic.iwashere.eu/install.\n\n"); \
+    };
+
+#define BUILD_TOOLCHAIN_DIR2ATR_GET_EXECUTABLE( _environment, executableName ) { \
+    if ( _environment->dir2atrFileName ) { \
+        sprintf(executableName, "%s", _environment->dir2atrFileName ); \
+    } else if( access( "..\\modules\\atarisio\\tools\\dir2atr.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "..\\modules\\atarisio\\tools\\dir2atr.exe" ); \
+    } else if( access( "../modules/atarisio/tools/dir2atr", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "../modules/atarisio/tools/dir2atr" ); \
+    } else if( access( "modules\\atarisio\\tools\\dir2atr.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules\\atarisio\\tools\\dir2atr.exe" ); \
+    } else if( access( "modules/atarisio/tools/dir2atr", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules/atarisio/tools/dir2atr" ); \
+    } else { \
+        sprintf(executableName, "%s", "dir2atr" ); \
+    } \
+}
+
+#define BUILD_TOOLCHAIN_DIR2ATR( _environment, executableName, bootCodePath, contentPath, atrFileName, pipes ) \
+    sprintf( commandLine, "\"%s\" -S -p -B \"%s\" \"%s\" \"%s\" %s", \
+        executableName, \
+        bootCodePath, \
+        atrFileName, \
+        contentPath, \
+        pipes \
+         ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
         printf("Please check if %s is correctly installed.\n\n", executableName); \
