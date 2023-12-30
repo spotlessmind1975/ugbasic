@@ -163,7 +163,11 @@ void generate_atr( Environment * _environment ) {
     remove( bootCodeFilename );
 
     strcat( temporaryPath, "atr" );
+#ifdef _WIN32
+    mkdir( temporaryPath );
+#else
     mkdir( temporaryPath, 0777 );
+#endif
     strcat( temporaryPath, " " );
     temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
 

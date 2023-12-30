@@ -10681,7 +10681,7 @@ char * get_default_temporary_path( ) {
 
     // Windows: The path reported by the Windows GetTempPath API function.
 
-    GetTempPathA( MAX_TEMPORARY_STORAGE, &result );
+    GetTempPathA( MAX_TEMPORARY_STORAGE, result );
 
 #else
 
