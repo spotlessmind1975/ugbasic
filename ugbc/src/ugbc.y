@@ -8601,7 +8601,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "a:b:e:c:Wo:Ie:l:EO:dD:L:C:VA:T:1p:G:X:P:q:i:s")) != -1) {
+    while ((opt = getopt(_argc, _argv, "1a:A:b:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:st:T:VWX:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
