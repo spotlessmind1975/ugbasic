@@ -47,6 +47,8 @@ void cls( Environment * _environment, char * _paper ) {
 
     if ( _paper ) {
         paper( _environment, _paper );
+    } else {
+        paper( _environment, "PAPER" );
     }
 
     cpc_cls( _environment );
