@@ -34,6 +34,10 @@
 
 #include "../../ugbc.h"
 
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
@@ -41,6 +45,21 @@
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_linkage( Environment * _environment ) {
+
+    Storage * storage = _environment->storage;
+
+    char temporaryPath[MAX_TEMPORARY_STORAGE];
+    strcpy( temporaryPath, _environment->temporaryPath );
+    strcat( temporaryPath, " " );
+    temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
+    strcat( temporaryPath, "dsk" );
+#ifdef _WIN32
+    mkdir( temporaryPath );
+#else
+    mkdir( temporaryPath, 0777 );
+#endif
+    strcat( temporaryPath, " " );
+    temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
 
     char commandLine[2*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
@@ -140,56 +159,165 @@ void target_linkage( Environment * _environment ) {
 
     system_remove_safe( _environment, _environment->exeFileName );
 
-    strcpy( diskName, _environment->exeFileName );
-    p = strrchr( diskName, '/' );
-    if ( !p ) {
-        p = strrchr( diskName, '\\' );
-    }
-    if ( p ) {
-        strcpy( p+1, "main." );
+    char buffer[MAX_TEMPORARY_STORAGE];
+    if ( storage ) {
+        char filemask[MAX_TEMPORARY_STORAGE];
+        strcpy( filemask, _environment->exeFileName );
+        char * basePath = strrchr( filemask, PATH_SEPARATOR );
+        if ( basePath ) {
+            ++basePath;
+            *basePath = 0;
+            if ( storage->fileName ) {
+                strcat( basePath, storage->fileName );
+            } else {
+                strcat( basePath, "disk%d.dsk" );
+            }
+        } else {
+            if ( storage->fileName ) {
+                strcpy( filemask, storage->fileName );
+            } else {
+                strcpy( filemask, "disk%d.dsk" );
+            }
+        }
+        sprintf( diskName, filemask, 0 );
+        // if ( !strstr( diskName, ".dsk" ) ) {
+        //     strcat( diskName, ".dsk" );
+        // }
     } else {
-        strcpy( diskName, "main." );
+        strcpy( diskName, _environment->exeFileName );
+        if ( !strstr( diskName, ".dsk") ) {
+            strcat( diskName, ".dsk" );
+        }
     }
 
     TRACE1( "exeFileName = %s", _environment->exeFileName );
     TRACE1( "diskName    = %s", diskName );
 
-    sprintf( commandLine, "\"%s\" +cpc --org 256 --exec 256 --disk -b \"%s\" -o \"%s\" %s",
-        executableName,
-        binaryName,
-        diskName,
-        pipes );
+    if ( !storage ) {
 
-    if ( system_call( _environment,  commandLine ) ) {
-        printf("The compilation of assembly program failed.\n\n");
-        printf("Please use option '-I' to install chain tool.\n\n");
-        return;
-    }; 
+        sprintf( commandLine, "\"%s\" +cpc --org 256 --exec 256 --disk -b \"%s\" -o \"%s\" %s",
+            executableName,
+            binaryName,
+            diskName,
+            pipes );
 
-    system_remove_safe( _environment, diskName );
+        if ( system_call( _environment,  commandLine ) ) {
+            printf("The compilation of assembly program failed.\n\n");
+            printf("Please use option '-I' to install chain tool.\n\n");
+            return;
+        }; 
 
-    strcpy( diskName, _environment->asmFileName );
-    p = strrchr( diskName, '/' );
-    if ( !p ) {
-        p = strrchr( diskName, '\\' );
-    }
-    if ( p ) {
-        strcpy( p+1, "main.dsk" );
+        rename( diskName, _environment->exeFileName );
+
     } else {
-        strcpy( diskName, "main.dsk" );
+        int i=0;
+        char * additionalFiles = NULL;
+        while( storage ) {
+            additionalFiles = NULL;
+            FileStorage * fileStorage = storage->files;
+            while( fileStorage ) {
+                FILE * file = fopen( fileStorage->sourceName, "rb" );
+                if ( !file ) {
+                    CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                }
+                fseek( file, 0, SEEK_END );
+                int size = ftell( file );
+                fseek( file, 0, SEEK_SET );
+                char * buffer;
+                buffer = malloc( size );
+                (void)!fread( &buffer[0], size, 1, file );
+                fclose( file );
+                char dataFilename[8*MAX_TEMPORARY_STORAGE];
+                sprintf( dataFilename, "%s%s", temporaryPath, fileStorage->targetName );
+                FILE * fileOut = fopen( dataFilename, "wb" );
+                if ( fileOut ) {
+                    fwrite( buffer, 1, size, fileOut );
+                    fclose(fileOut );
+                }
+                if ( additionalFiles ) {
+                    additionalFiles = realloc( additionalFiles, strlen(additionalFiles) + strlen( dataFilename ) + 3 );
+                    strcat( additionalFiles, "," );
+                    strcat( additionalFiles, dataFilename );
+                } else {
+                    additionalFiles = strdup( dataFilename );
+                }
+                fileStorage = fileStorage->next;
+            }
+
+            sprintf( commandLine, "\"%s\" +cpc --afile %s --org 256 --exec 256 --disk -b \"%s\" -o \"%s\" %s",
+                executableName,
+                additionalFiles,
+                binaryName,
+                diskName,
+                pipes );
+
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The compilation of assembly program failed.\n\n");
+                printf("Please use option '-I' to install chain tool.\n\n");
+                return;
+            }; 
+
+            storage = storage->next;
+            ++i;
+
+            if ( storage ) {
+                char buffer[MAX_TEMPORARY_STORAGE];
+                char filemask[MAX_TEMPORARY_STORAGE];
+                strcpy( filemask, _environment->exeFileName );
+                char * basePath = strrchr( filemask, PATH_SEPARATOR );
+                if ( basePath ) {
+                    ++basePath;
+                    *basePath = 0;
+                    if ( storage->fileName ) {
+                        strcat( basePath, storage->fileName );
+                    } else {
+                        strcat( basePath, "disk%d.atr" );
+                    }
+                } else {
+                    if ( storage->fileName ) {
+                        strcpy( filemask, storage->fileName );
+                    } else {
+                        strcpy( filemask, "disk%d.atr" );
+                    }
+                }
+                sprintf( diskName, filemask, i );
+                if ( !strstr( diskName, ".atr" ) ) {
+                    strcat( diskName, ".atr" );
+                }
+
+            #ifdef _WIN32
+                sprintf( commandLine, "del %s*.* %s", temporaryPath, pipes );
+            #else
+                sprintf( commandLine, "rm %s* %s", temporaryPath, pipes );
+            #endif
+                // system_call( _environment, commandLine );
+
+            }
+
+        }
     }
 
-    rename( diskName, _environment->exeFileName );
+    // strcpy( diskName, _environment->asmFileName );
+    // p = strrchr( diskName, '/' );
+    // if ( !p ) {
+    //     p = strrchr( diskName, '\\' );
+    // }
+    // if ( p ) {
+    //     strcpy( p+1, "main.dsk" );
+    // } else {
+    //     strcpy( diskName, "main.dsk" );
+    // }
 
-    strcpy( binaryName, _environment->asmFileName );
-    p = strstr( binaryName, ".asm" );
-    if ( p ) {
-        strcpy( p, ".");
-    } else {
-        strcpy( binaryName, "main." );
-    }
+
+    // strcpy( binaryName, _environment->asmFileName );
+    // p = strstr( binaryName, ".asm" );
+    // if ( p ) {
+    //     strcpy( p, ".");
+    // } else {
+    //     strcpy( binaryName, "main." );
+    // }
  
-    system_remove_safe( _environment, binaryName );
+    // system_remove_safe( _environment, binaryName );
 
 }
 
