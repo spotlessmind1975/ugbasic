@@ -8698,7 +8698,7 @@ int main( int _argc, char *_argv[] ) {
                     if ( ! _environment->listingFileName ) {
                         char * p = malloc( strlen( _environment->additionalInfoFileName ) + MAX_TEMPORARY_STORAGE );
                         strcpy( p, _environment->additionalInfoFileName );
-                        char * q = strchr( p, '.' );
+                        char * q = strrchr( p, '.' );
                         if ( q ) {
                             strcpy( q, ".listing" );
                         } 
