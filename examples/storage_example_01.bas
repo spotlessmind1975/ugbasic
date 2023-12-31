@@ -13,15 +13,18 @@ REM comparato al caricamento al momento della compilazione.
 CLS
 
 STORAGE "DISCHETTO" AS "DISK1"
-    FILE "test.txt" AS "test"
+    FILE "test.txt" AS "test.dat"
 ENDSTORAGE
 
 DIM textRuntime AS STRING
 
 textRuntime = "                "
 
-DLOAD "test" TO STRPTR(textRuntime)
+DLOAD "test.dat" FROM 2 TO STRPTR(textRuntime) SIZE 16
 
 INK WHITE
+PRINT "ok"
 PRINT textRuntime
+
+
 
