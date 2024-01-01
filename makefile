@@ -157,6 +157,7 @@ DIR2ATR = ./modules/atarisio/tools/dir2atr$(EXESUFFIX)
 #------------------------------------------------ 
 Z80ASM = ./modules/z88dk/src/z80asm/z88dk-z80asm$(EXESUFFIX)
 Z80APPMAKE = ./modules/z88dk/src/appmake/z88dk-appmake$(EXESUFFIX)
+CPTODSK = ./modules/dsktools/bin/cptodsk$(EXESUFFIX)
 
 #------------------------------------------------ 
 # CPU MOTOROLA 6809
@@ -324,6 +325,16 @@ $(Z80APPMAKE):
 	cd $(dir $(Z80APPMAKE)) && make
 
 z88dk: paths $(Z80ASM) $(Z80APPMAKE)
+
+#------------------------------------------------ 
+# disktools:
+#    MSXDOS DISK IMAGE MANIPULATION
+#------------------------------------------------ 
+# 
+$(CPTODSK): 
+	cd $(dir $(CPTODSK))../src && make
+
+cptodsk: paths $(CPTODSK)
 
 #------------------------------------------------ 
 # asm6809:
@@ -630,7 +641,7 @@ generated/mo5/exeso/%.k7: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.k7=.ba
 #    MSX 1 (Z80)
 #------------------------------------------------ 
 # 
-toolchain.msx1: z88dk
+toolchain.msx1: z88dk cptodsk
 
 generated/msx1/asm/%.asm:
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.msx1$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/msx1/asm/,,$(@:.asm=.bas)) ../$@ 
@@ -647,8 +658,13 @@ generated/msx1/exe/%.rom:
 	@$(Z80APPMAKE) +msxrom -b $(@:.rom=.bin) 2>/dev/null
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
+generated/msx1/exe/%.dsk:
+
 generated/msx1/exeso/%.rom: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.rom=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.msx1$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.rom=.info) -o ../$@ -O rom $(subst generated/msx1/exeso/,,$(@:.rom=.bas))
+
+generated/msx1/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.msx1$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.dsk=.info) -o ../$@ -O dsk $(subst generated/msx1/exeso/,,$(@:.dsk=.bas))
 
 #------------------------------------------------ 
 # pc128:
