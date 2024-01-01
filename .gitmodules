@@ -28,9 +28,6 @@
 	path = modules/libxml2
 	url = https://github.com/spotlessmind1975/libxml2.git
 	ignore = all
-[submodule "modules/atarisio"]
-	path = modules/atarisio
-	url = https://github.com/spotlessmind1975/AtariSIO.git
 [submodule "modules/z88dk"]
 	path = modules/z88dk
 	url = https://github.com/spotlessmind1975/z88dk.git
