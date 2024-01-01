@@ -34,6 +34,10 @@
 
 #include "../../ugbc.h"
 
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
@@ -282,6 +286,21 @@ void generate_rom( Environment * _environment ) {
 
 void generate_dsk( Environment * _environment ) {
 
+    Storage * storage = _environment->storage;
+
+    char temporaryPath[MAX_TEMPORARY_STORAGE];
+    strcpy( temporaryPath, _environment->temporaryPath );
+    strcat( temporaryPath, " " );
+    temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
+    strcat( temporaryPath, "dsk" );
+#ifdef _WIN32
+    mkdir( temporaryPath );
+#else
+    mkdir( temporaryPath, 0777 );
+#endif
+    strcat( temporaryPath, " " );
+    temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
+
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[MAX_TEMPORARY_STORAGE];
@@ -342,16 +361,130 @@ void generate_dsk( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_DSKTOOLS_GET_EXECUTABLE( _environment, diskToolsExecutableName );
 
-    sprintf( commandLine, "\"%s\" \"%s\" \"%s\" %s",
-        diskToolsExecutableName,
-        _environment->exeFileName,
-        binaryName,
-        pipes );
-    if ( system_call( _environment,  commandLine ) ) {
-        printf("The compilation of assembly program failed.\n\n");
-        printf("Please use option '-I' to install chain tool.\n\n");
-        return;
-    }; 
+    if ( !storage ) {
+
+        sprintf( commandLine, "\"%s\" \"%s\" \"%s\" %s",
+            diskToolsExecutableName,
+            _environment->exeFileName,
+            binaryName,
+            pipes );
+        if ( system_call( _environment,  commandLine ) ) {
+            printf("The compilation of assembly program failed.\n\n");
+            printf("Please use option '-I' to install chain tool.\n\n");
+            return;
+        }; 
+        
+    } else {
+
+        char diskName[MAX_TEMPORARY_STORAGE];
+        char buffer[MAX_TEMPORARY_STORAGE];
+        char filemask[MAX_TEMPORARY_STORAGE];
+        strcpy( filemask, _environment->exeFileName );
+        char * basePath = find_last_path_separator( filemask );
+        if ( basePath ) {
+            ++basePath;
+            *basePath = 0;
+            if ( storage->fileName ) {
+                strcat( basePath, storage->fileName );
+            } else {
+                strcat( basePath, "disk%d.dsk" );
+            }
+        } else {
+            if ( storage->fileName ) {
+                strcpy( filemask, storage->fileName );
+            } else {
+                strcpy( filemask, "disk%d.dsk" );
+            }
+        }
+        sprintf( diskName, filemask, 0 );
+        if ( !strstr( diskName, ".dsk" ) ) {
+            strcat( diskName, ".dsk" );
+        }
+
+        int i=0;
+        char * additionalFiles = NULL;
+        while( storage ) {
+            additionalFiles = NULL;
+            FileStorage * fileStorage = storage->files;
+            while( fileStorage ) {
+                FILE * file = fopen( fileStorage->sourceName, "rb" );
+                if ( !file ) {
+                    CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                }
+                fseek( file, 0, SEEK_END );
+                int size = ftell( file );
+                fseek( file, 0, SEEK_SET );
+                char * buffer;
+                buffer = malloc( size );
+                (void)!fread( &buffer[0], size, 1, file );
+                fclose( file );
+                char dataFilename[8*MAX_TEMPORARY_STORAGE];
+                sprintf( dataFilename, "%s%s", temporaryPath, fileStorage->targetName );
+                FILE * fileOut = fopen( dataFilename, "wb" );
+                if ( fileOut ) {
+                    fwrite( buffer, 1, size, fileOut );
+                    fclose(fileOut );
+                }
+                if ( additionalFiles ) {
+                    additionalFiles = realloc( additionalFiles, strlen(additionalFiles) + strlen( dataFilename ) + 3 );
+                    strcat( additionalFiles, " " );
+                    strcat( additionalFiles, dataFilename );
+                } else {
+                    additionalFiles = strdup( dataFilename );
+                }
+                fileStorage = fileStorage->next;
+            }
+
+            sprintf( commandLine, "\"%s\" \"%s\" \"%s\" %s %s",
+                diskToolsExecutableName,
+                diskName,
+                binaryName,
+                additionalFiles,
+                pipes );
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The compilation of assembly program failed.\n\n");
+                printf("Please use option '-I' to install chain tool.\n\n");
+                return;
+            }; 
+
+            storage = storage->next;
+            ++i;
+
+            if ( storage ) {
+                strcpy( filemask, _environment->exeFileName );
+                char * basePath = find_last_path_separator( filemask );
+                if ( basePath ) {
+                    ++basePath;
+                    *basePath = 0;
+                    if ( storage->fileName ) {
+                        strcat( basePath, storage->fileName );
+                    } else {
+                        strcat( basePath, "disk%d.dsk" );
+                    }
+                } else {
+                    if ( storage->fileName ) {
+                        strcpy( filemask, storage->fileName );
+                    } else {
+                        strcpy( filemask, "disk%d.dsk" );
+                    }
+                }
+                sprintf( diskName, filemask, i );
+                if ( !strstr( diskName, ".dsk" ) ) {
+                    strcat( diskName, ".dsk" );
+                }
+
+            #ifdef _WIN32
+                sprintf( commandLine, "del %s*.* %s", temporaryPath, pipes );
+            #else
+                sprintf( commandLine, "rm %s* %s", temporaryPath, pipes );
+            #endif
+                // system_call( _environment, commandLine );
+
+            }
+
+        }
+
+    }
 
     remove( binaryName );
 
