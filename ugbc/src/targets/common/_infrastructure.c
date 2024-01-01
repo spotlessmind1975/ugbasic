@@ -10711,3 +10711,14 @@ char * get_default_temporary_path( ) {
 
 }
 
+char * find_last_path_separator( char * _path ) {
+    
+    char * basePath = strrchr( _path, '/' );
+
+    if ( !basePath ) {
+        basePath = strrchr( _path, '\\' );
+    }
+    
+    return basePath;
+
+}

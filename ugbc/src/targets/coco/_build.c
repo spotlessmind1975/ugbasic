@@ -192,7 +192,7 @@ void generate_dsk( Environment * _environment ) {
     if ( storage ) {
         char filemask[MAX_TEMPORARY_STORAGE];
         strcpy( filemask, _environment->exeFileName );
-        char * basePath = strrchr( filemask, PATH_SEPARATOR );
+        char * basePath = find_last_path_separator( filemask );
         if ( basePath ) {
             ++basePath;
             *basePath = 0;
@@ -351,7 +351,7 @@ void generate_dsk( Environment * _environment ) {
 
                 char filemask[MAX_TEMPORARY_STORAGE];
                 strcpy( filemask, _environment->exeFileName );
-                char * basePath = strrchr( filemask, PATH_SEPARATOR );
+                char * basePath = find_last_path_separator( filemask );
                 if ( basePath ) {
                     ++basePath;
                     *basePath = 0;

@@ -151,7 +151,7 @@ void generate_d64( Environment * _environment ) {
             char buffer[MAX_TEMPORARY_STORAGE];
             char filemask[MAX_TEMPORARY_STORAGE];
             strcpy( filemask, _environment->exeFileName );
-            char * basePath = strrchr( filemask, PATH_SEPARATOR );
+            char * basePath = find_last_path_separator( filemask );
             if ( basePath ) {
                 ++basePath;
                 *basePath = 0;

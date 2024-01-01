@@ -3616,6 +3616,7 @@ int po_buf_strcmp(POBuffer _s, POBuffer _t);
 #define TMP_BUF_CLR     tmp_buf_clr(__FILE__)
 
 char * get_default_temporary_path( );
+char * find_last_path_separator( char * _path );
 
 //----------------------------------------------------------------------------
 // Common functions used by parser only
