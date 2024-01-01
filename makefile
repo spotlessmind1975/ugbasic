@@ -512,14 +512,15 @@ toolchain.cpc: z88dk
 generated/cpc/asm/%.asm:
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cpc$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/cpc/asm/,,$(@:.asm=.bas)) ../$@ 
 
-# generated/cpc/exe/%.dsk:
-# 	@$(Z80ASM) -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
-# 	@mv $(subst /exe/,/asm/,$(@:.dsk=.sym)) $(subst /exe/,/asm/,$(@:.dsk=.osym))
-# 	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
-# 	@rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
-# 	@mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.)
-# 	@$(Z80APPMAKE) +cpc --org 256 --exec 256 --disk -b $(@:.dsk=.) -o $(dir $@)main.
-# 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
+generated/cpc/exe/%.dsk:
+	@$(Z80ASM) -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@mv $(subst /exe/,/asm/,$(@:.dsk=.sym)) $(subst /exe/,/asm/,$(@:.dsk=.osym))
+	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
+	@rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
+	@mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.)
+	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
+#	@$(Z80APPMAKE) +cpc --org 256 --exec 256 --disk -b $(@:.dsk=.) -o $(dir $@)main. 2>/dev/null
+#	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cpc$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.dsk=.info) -o ../$@ -O dsk $(subst generated/cpc/exeso/,,$(@:.dsk=.bas))
