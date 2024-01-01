@@ -35,3 +35,7 @@
 	path = modules/z88dk
 	url = https://github.com/spotlessmind1975/z88dk.git
 	branch = ugbasic
+[submodule "modules/dsktools"]
+	path = modules/dsktools
+	url = https://github.com/spotlessmind1975/dsktools.git
+	branch = ugbasic
