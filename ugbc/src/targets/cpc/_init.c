@@ -71,6 +71,9 @@ void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
+    variable_import( _environment, "DLOADERROR", VT_BYTE, 0 );
+    variable_global( _environment, "DLOADERROR" );
+
     variable_import( _environment, "TIMERRUNNING", VT_BYTE, 0 );
     variable_global( _environment, "TIMERRUNNING" );
     variable_import( _environment, "TIMERSTATUS", VT_BYTE, 0 );

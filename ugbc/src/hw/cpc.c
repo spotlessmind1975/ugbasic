@@ -2352,4 +2352,52 @@ void cpc_timer_set_address( Environment * _environment, char * _timer, char * _a
 
 }
 
+void cpc_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+
+    deploy( dload, src_hw_cpc_dload_asm );
+
+    MAKE_LABEL
+    
+    Variable * filename = variable_retrieve( _environment, _filename );
+    Variable * tnaddress = variable_temporary( _environment, VT_ADDRESS, "(address of target_name)");
+    Variable * tnsize = variable_temporary( _environment, VT_BYTE, "(size of target_name)");
+
+    Variable * address = NULL;
+    if ( _address ) {
+        address = variable_retrieve( _environment, _address );
+    }
+    Variable * size = NULL;
+    if ( _size ) {
+        size = variable_retrieve( _environment, _size );
+    }
+    Variable * offset = NULL;
+    if ( _offset ) {
+        offset = variable_retrieve( _environment, _offset );
+    }
+
+    switch( filename->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, filename->realName, tnsize->realName );
+            cpu_addressof_16bit( _environment, filename->realName, tnaddress->realName );
+            cpu_inc_16bit( _environment, tnaddress->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, filename->realName, tnaddress->realName, tnsize->realName );
+            break;
+    }
+
+    outline1("LD HL, (%s)", tnaddress->realName);
+    outline1("LD A, (%s)", tnsize->realName);
+    outline0("LD B, A");
+
+    if ( address ) {
+
+        outline1("LD DE, (%s)", address->realName);
+
+    }
+
+    outline0("CALL CPCDLOAD");
+
+}
+
 #endif
