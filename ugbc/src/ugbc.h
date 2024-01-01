@@ -2682,6 +2682,7 @@ typedef struct _Environment {
 #define CRITICAL_STRPTR_NOT_STRING(v, t) CRITICAL3("E244 - cannot use STRPTR on something that is not a string", v, t );
 #define CRITICAL_DLOAD_MISSING_ADDRESS(v) CRITICAL2("E245 - destination address for DLOAD is missing", v );
 #define CRITICAL_DLOAD_MISSING_SIZE(v) CRITICAL2("E246 - size for DLOAD is missing", v );
+#define CRITICAL_STORAGE_NOT_AVAILABLE() CRITICAL("E247 - the BEGIN STORAGE keyword is not available with this z88dk release" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3456,7 +3457,7 @@ char * basename( char * _path );
         sprintf( executableName, "%s", _environment->appMakerFileName ); \
     } else if( access( "modules\\z88dk\\src\\appmake\\z88dk-appmake.exe", F_OK ) == 0 ) { \
         sprintf(executableName, "%s", "..\\modules\\z88dk\\src\\appmake\\z88dk-appmake.exe" ); \
-    } else if( access( ".\\modules\\z88dk\\src\\appmake\\z88dk-appmake.exe", F_OK ) == 0 ) { \
+    } else if( access( "..\\modules\\z88dk\\src\\appmake\\z88dk-appmake.exe", F_OK ) == 0 ) { \
         sprintf(executableName, "%s", "..\\modules\\z88dk\\src\\appmake\\z88dk-appmake.exe" ); \
     } else if( access( "modules/z88dk/src/appmake/z88dk-appmake", F_OK ) == 0 ) { \
         sprintf(executableName, "%s", "../modules/z88dk/src/appmake/z88dk-appmake" ); \
