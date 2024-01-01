@@ -8437,6 +8437,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #if defined(__atari__) || defined(__atarixl__)
     printf("\t-t <file>    Path to DIR2ATR tool\n" );
 #endif
+#if defined(__msx1__)
+    printf("\t-t <file>    Path to DSKTOOLS tool\n" );
+#endif
 #if defined(__pc128op__) || defined(__mo5__)
     printf("\t-G <type>    Type of gamma correction on PALETTE generation:\n" );
     printf("\t               none (0): no gamma correction\n" );
@@ -8501,6 +8504,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     #define defaultExtension "prg"
 #elif __msx1__
     printf("\t                rom - cartridge ROM\n" );
+    printf("\t                dsk - DSK image\n" );
     #define defaultExtension "rom"
 #elif __coleco__
     printf("\t                rom - cartridge ROM\n" );
@@ -8645,10 +8649,18 @@ int main( int _argc, char *_argv[] ) {
                     importPath = strdup(optarg);
                     break;
                 case 't':
+#if defined(__atari__) || defined(__atarixl__)
                     _environment->dir2atrFileName = strdup(optarg);
                     if( access( _environment->dir2atrFileName, F_OK ) != 0 ) {
                         CRITICAL("dir2atr tool not found.");
                     }
+#endif
+#if defined(__msx1__)
+                    _environment->dsktoolsFileName = strdup(optarg);
+                    if( access( _environment->dsktoolsFileName, F_OK ) != 0 ) {
+                        CRITICAL("dsktools tool not found.");
+                    }
+#endif
                     break;
                 case 'T':
                     _environment->temporaryPath = strdup(optarg);

@@ -1713,6 +1713,11 @@ typedef struct _Environment {
     char * dir2atrFileName;
 
     /**
+     * Filename of dsktools
+     */
+    char * dsktoolsFileName;
+
+    /**
      * Filename of additional information file
      */
     char * additionalInfoFileName;
@@ -3554,6 +3559,22 @@ char * basename( char * _path );
         sprintf(executableName, "%s", "modules/atarisio/tools/dir2atr" ); \
     } else { \
         sprintf(executableName, "%s", "dir2atr" ); \
+    } \
+}
+
+#define BUILD_TOOLCHAIN_DSKTOOLS_GET_EXECUTABLE( _environment, executableName ) { \
+    if ( _environment->dsktoolsFileName ) { \
+        sprintf(executableName, "%s", _environment->dsktoolsFileName ); \
+    } else if( access( "..\\modules\\dsktools\\bin\\cptodsk.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "..\\ugbasic\\modules\\dsktools\\bin\\cptodsk.exe" ); \
+    } else if( access( "../modules/dsktools/bin/cptodsk", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "../modules/dsktools/bin/cptodsk" ); \
+    } else if( access( "modules\\dsktools\\bin\\cptodsk.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules\\dsktools\\bin\\cptodsk.exe" ); \
+    } else if( access( "modules/dsktools/bin/cptodsk", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules/dsktools/bin/cptodsk" ); \
+    } else { \
+        sprintf(executableName, "%s", "cptodsk" ); \
     } \
 }
 

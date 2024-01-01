@@ -40,14 +40,12 @@
 
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
-void target_linkage( Environment * _environment ) {
+void generate_bin( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
-
-    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_ROM)
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
 
@@ -135,6 +133,49 @@ void target_linkage( Environment * _environment ) {
     binaryFile = fopen( binaryName, "a+b" );
     fwrite( part, size, 1, binaryFile );
     fclose( binaryFile );
+
+    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
+
+    char pipes[256];
+
+    #ifdef _WIN32
+        strcpy( pipes, ">nul 2>nul");
+    #else
+        strcpy( pipes, ">/dev/null 2>/dev/null");
+    #endif
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        strcat( p, "_data_user.bin");
+    }
+    remove(binaryName);
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        strcat( p, "_code_user.bin");
+    }
+    remove(binaryName);
+
+}
+
+void generate_rom( Environment * _environment ) {
+
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
+    char executableName[MAX_TEMPORARY_STORAGE];
+    char binaryName[MAX_TEMPORARY_STORAGE];
+    char listingFileName[MAX_TEMPORARY_STORAGE];
+
+    char * p;
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *p = 0;
+        --p;
+        strcat( p, ".bin");
+    }
 
     BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
 
@@ -236,6 +277,100 @@ void target_linkage( Environment * _environment ) {
         strcat( p, "_code_user.bin");
     }
     remove(binaryName);
+
+}
+
+void generate_dsk( Environment * _environment ) {
+
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
+    char executableName[MAX_TEMPORARY_STORAGE];
+    char binaryName[MAX_TEMPORARY_STORAGE];
+    char binaryName2[MAX_TEMPORARY_STORAGE];
+    char listingFileName[MAX_TEMPORARY_STORAGE];
+    char diskToolsExecutableName[MAX_TEMPORARY_STORAGE];
+
+    char * p;
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *p = 0;
+        --p;
+        strcat( p, ".bin");
+    }
+
+    strcpy( binaryName2, _environment->asmFileName );
+    p = strstr( binaryName2, ".asm" );
+    if ( p ) {
+        *p = 0;
+        --p;
+        strcat( p, ".bi2");
+    }
+
+    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
+
+    char pipes[256];
+
+    #ifdef _WIN32
+        strcpy( pipes, ">nul 2>nul");
+    #else
+        strcpy( pipes, ">/dev/null 2>/dev/null");
+    #endif
+
+    sprintf( commandLine, "\"%s\" +msx -b \"%s\" -o \"%s\" --org 16384 %s",
+        executableName,
+        binaryName,
+        binaryName2,
+        pipes );
+    if ( system_call( _environment,  commandLine ) ) {
+        printf("The compilation of assembly program failed.\n\n");
+        printf("Please use option '-I' to install chain tool.\n\n");
+        return;
+    }; 
+
+    remove( binaryName );
+
+    strcpy( binaryName, _environment->exeFileName );
+    p = strstr( binaryName, ".dsk" );
+    if ( p ) {
+        *p = 0;
+        --p;
+        strcat( p, ".bin");
+    }
+
+    rename( binaryName2, binaryName );
+
+    BUILD_TOOLCHAIN_DSKTOOLS_GET_EXECUTABLE( _environment, diskToolsExecutableName );
+
+    sprintf( commandLine, "\"%s\" \"%s\" \"%s\" %s",
+        diskToolsExecutableName,
+        _environment->exeFileName,
+        binaryName,
+        pipes );
+    if ( system_call( _environment,  commandLine ) ) {
+        printf("The compilation of assembly program failed.\n\n");
+        printf("Please use option '-I' to install chain tool.\n\n");
+        return;
+    }; 
+
+    remove( binaryName );
+
+}
+
+void target_linkage( Environment * _environment ) {
+
+    switch( _environment->outputFileType ) {
+        case OUTPUT_FILE_TYPE_ROM:
+            generate_bin( _environment );
+            generate_rom( _environment );
+            break;
+        case OUTPUT_FILE_TYPE_DSK:
+            generate_bin( _environment );
+            generate_dsk( _environment );
+            break;
+        default:
+            CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
+    }
 
 }
 
