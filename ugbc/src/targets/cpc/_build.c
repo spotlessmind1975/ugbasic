@@ -44,7 +44,168 @@
 
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
-void target_linkage( Environment * _environment ) {
+// This version of target linkage should be used in presence of an unpatched
+// z88dk, like the one we have actually on 1.15.2 and below. Note that this
+// version is unable to manage STORAGE keyword -- so we must stop if this keyword
+// is used.
+void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
+
+    if ( _environment->storage ) {
+        CRITICAL_STORAGE_NOT_AVAILABLE();
+    }
+
+    char commandLine[2*MAX_TEMPORARY_STORAGE];
+    char executableName[MAX_TEMPORARY_STORAGE];
+    char binaryName[MAX_TEMPORARY_STORAGE];
+    char diskName[MAX_TEMPORARY_STORAGE];
+    char listingFileName[MAX_TEMPORARY_STORAGE];
+    char binaryName2[MAX_TEMPORARY_STORAGE];
+    
+    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_DSK)
+
+    BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
+
+    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_Z80ASM( _environment, executableName );
+
+    BUILD_TOOLCHAIN_Z88DK_GET_LISTING_FILE( _environment, listingFileName );
+
+    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "cpc", executableName, listingFileName );
+
+    char * p;
+
+    if ( _environment->listingFileName ) {
+        strcpy( binaryName, _environment->asmFileName );
+        p = strstr( binaryName, ".asm" );
+        if ( p ) {
+            *(p+1) = 'l';
+            *(p+2) = 'i';
+            *(p+3) = 's';
+            *(p+4) = 0;
+        }
+        TRACE2( "  renaming %s to %s", binaryName, _environment->listingFileName );
+        rename( binaryName, _environment->listingFileName );
+    }
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *(p+1) = 'o';
+        *(p+2) = 0;
+    }
+    system_remove_safe( _environment, binaryName );
+
+    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
+
+    char pipes[256];
+
+    #ifdef _WIN32
+        strcpy( pipes, ">nul 2>nul");
+    #else
+        strcpy( pipes, ">/dev/null 2>/dev/null");
+    #endif
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *(p+1) = 'b';
+        *(p+2) = 'i';
+        *(p+3) = 'n';
+        *(p+4) = 0;
+    }
+
+    strcpy( binaryName2, _environment->asmFileName );
+    p = strrchr( binaryName2, '/' );
+    if ( !p ) {
+        p = strrchr( binaryName2, '\\' );
+    }
+    if ( p ) {
+        strcpy( p+1, "main.bin" );
+    } else {
+        strcpy( binaryName2, "main.bin" );
+    }
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *(p+1) = 'b';
+        *(p+2) = 'i';
+        *(p+3) = 'n';
+        *(p+4) = 0;
+    }
+
+    system_remove_safe( _environment, binaryName2 );
+
+    TRACE2( "  renaming %s to %s", binaryName, binaryName2 );
+    
+    rename( binaryName, binaryName2 );
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strrchr( binaryName, '/' );
+    if ( !p ) {
+        p = strrchr( binaryName, '\\' );
+    }
+    if ( p ) {
+        strcpy( p+1, "main.bin" );
+    } else {
+        strcpy( binaryName, "main.bin" );
+    }
+
+    system_remove_safe( _environment, _environment->exeFileName );
+
+    strcpy( diskName, _environment->exeFileName );
+    p = strrchr( diskName, '/' );
+    if ( !p ) {
+        p = strrchr( diskName, '\\' );
+    }
+    if ( p ) {
+        strcpy( p+1, "main." );
+    } else {
+        strcpy( diskName, "main." );
+    }
+
+    TRACE1( "exeFileName = %s", _environment->exeFileName );
+    TRACE1( "diskName    = %s", diskName );
+
+    sprintf( commandLine, "\"%s\" +cpc --org 256 --exec 256 --disk -b \"%s\" -o \"%s\" %s",
+        executableName,
+        binaryName,
+        diskName,
+        pipes );
+
+    if ( system_call( _environment,  commandLine ) ) {
+        printf("The compilation of assembly program failed.\n\n");
+        printf("Please use option '-I' to install chain tool.\n\n");
+        return;
+    }; 
+
+    system_remove_safe( _environment, diskName );
+
+    strcpy( diskName, _environment->asmFileName );
+    p = strrchr( diskName, '/' );
+    if ( !p ) {
+        p = strrchr( diskName, '\\' );
+    }
+    if ( p ) {
+        strcpy( p+1, "main.dsk" );
+    } else {
+        strcpy( diskName, "main.dsk" );
+    }
+
+    rename( diskName, _environment->exeFileName );
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        strcpy( p, ".");
+    } else {
+        strcpy( binaryName, "main." );
+    }
+ 
+    system_remove_safe( _environment, binaryName );
+
+}
+
+void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
 
     Storage * storage = _environment->storage;
 
@@ -318,6 +479,37 @@ void target_linkage( Environment * _environment ) {
     // }
  
     // system_remove_safe( _environment, binaryName );
+
+}
+
+void target_linkage( Environment * _environment ) {
+
+    char commandLine[2*MAX_TEMPORARY_STORAGE];
+    char executableName[MAX_TEMPORARY_STORAGE];
+    char version[MAX_TEMPORARY_STORAGE];
+    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
+
+    char pipes[256];
+
+    #ifdef _WIN32
+        strcpy( pipes, "2>nul");
+    #else
+        strcpy( pipes, "2>/dev/null");
+    #endif
+
+    sprintf( commandLine, "\"%s\" +cpc %s", executableName, pipes );
+
+    FILE * fp = popen (commandLine, "r" );
+    if ( fp ) {
+        (void)!fgets( version, MAX_ARRAY_DIMENSIONS, fp );
+        pclose(fp);
+
+        if ( strstr( version, "bin2cpc-ugbasic") != NULL ) {
+            target_linkage_z88dk_appmake_patched( _environment );
+        } else {
+            target_linkage_z88dk_appmake_unpatched( _environment );
+        }
+    }
 
 }
 
