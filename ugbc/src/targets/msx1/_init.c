@@ -87,6 +87,9 @@ void target_initialization( Environment * _environment ) {
         _environment->maxExpansionBankSize[i+1] = 0;
     }
 
+    variable_import( _environment, "DLOADERR", VT_BYTE, 0 );
+    variable_global( _environment, "DLOADERR" );
+
     variable_import( _environment, "TIMERRUNNING", VT_BYTE, 0 );
     variable_global( _environment, "TIMERRUNNING" );
     variable_import( _environment, "TIMERSTATUS", VT_BYTE, 0 );
@@ -175,49 +178,60 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
     outhead0("SECTION code_user");
-    outhead0("ORG $4000");
+    if ( _environment->outputFileType == OUTPUT_FILE_TYPE_ROM ) {
+        outhead0("ORG $4000");
+    } else {
+        outhead0("ORG $8100");
+    }
     outhead0("SECTION data_user");
     outhead0("ORG $C000");
     outhead0("SECTION code_user");
 
-    // +0	ID	Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
-    // +2	INIT	Address of the routine to call to initialize a work area or I/O ports, or run a game, etc. The system calls the address from INIT of each ROM header during the MSX initialisation in that order.
-    // +4	STATEMENT	Runtime address of a program whose purpose is to add instructions to the MSX-Basic using CALL. STATEMENT is called by CALL instructions. It is ignored when 0000h. It is not called at MSX start up.
-    // +6	DEVICE	Execution address of a program used to control a device built into the cartridge. For example, a disk interface. It is not called at MSX start up.
-    // +8	TEXT	Pointer of the tokenizen Basic program contained in ROM. TEXT must be always an address more than 8000h and be specified in the header of the page 8000h-BFFFh. In other cases, it must always be 0000h under penalty of causing crash or bug.
-    // +10	Reserved	6 bytes reserved for future updates.
-    outline0("DEFB $41, $42");
-    outline0("DEFW CODESTART");
-    outline0("DEFW $0");
-    outline0("DEFW $0");
-    outline0("DEFW $0");
-    outline0("DEFW $0");
-    outline0("DEFW $0");
-    outline0("DEFW $0");
+    if ( _environment->outputFileType == OUTPUT_FILE_TYPE_ROM ) {
+        // +0	ID	Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
+        // +2	INIT	Address of the routine to call to initialize a work area or I/O ports, or run a game, etc. The system calls the address from INIT of each ROM header during the MSX initialisation in that order.
+        // +4	STATEMENT	Runtime address of a program whose purpose is to add instructions to the MSX-Basic using CALL. STATEMENT is called by CALL instructions. It is ignored when 0000h. It is not called at MSX start up.
+        // +6	DEVICE	Execution address of a program used to control a device built into the cartridge. For example, a disk interface. It is not called at MSX start up.
+        // +8	TEXT	Pointer of the tokenizen Basic program contained in ROM. TEXT must be always an address more than 8000h and be specified in the header of the page 8000h-BFFFh. In other cases, it must always be 0000h under penalty of causing crash or bug.
+        // +10	Reserved	6 bytes reserved for future updates.
+        outline0("DEFB $41, $42");
+        outline0("DEFW CODESTART");
+        outline0("DEFW $0");
+        outline0("DEFW $0");
+        outline0("DEFW $0");
+        outline0("DEFW $0");
+        outline0("DEFW $0");
+        outline0("DEFW $0");
 
-    outhead0("CODESTART:")
-    
-    outline0("CALL $0138");
-	outline0("RRCA");
-	outline0("RRCA");
-	outline0("AND 3");
-    outline0("LD C, A");
-    outline0("LD B, 0");
-	outline0("LD HL, $FCC1");
-	outline0("ADD HL, BC");
-	outline0("LD A, (HL)");
-    outline0("AND $80");
-    outline0("OR C");
-	outline0("LD C, A");
-	outline0("INC HL");
-	outline0("INC HL");
-	outline0("INC HL");
-	outline0("INC HL");
-	outline0("LD A, (HL)");    
-	outline0("AND $C" );
-	outline0("OR C");
-	outline0("LD H, $80");
-	outline0("CALL $0024");
+        outhead0("CODESTART:")
+        
+        outline0("CALL $0138");
+        outline0("RRCA");
+        outline0("RRCA");
+        outline0("AND 3");
+        outline0("LD C, A");
+        outline0("LD B, 0");
+        outline0("LD HL, $FCC1");
+        outline0("ADD HL, BC");
+        outline0("LD A, (HL)");
+        outline0("AND $80");
+        outline0("OR C");
+        outline0("LD C, A");
+        outline0("INC HL");
+        outline0("INC HL");
+        outline0("INC HL");
+        outline0("INC HL");
+        outline0("LD A, (HL)");    
+        outline0("AND $C" );
+        outline0("OR C");
+        outline0("LD H, $80");
+        outline0("CALL $0024");
+
+    } else {
+        outhead0("CODESTART:")
+        outline0("LD HL, $8000");
+        outline0("LD ($f23d), HL");
+    }
 
     outline0("CALL VARINIT2");
     cpu_call( _environment, "VARINIT" );

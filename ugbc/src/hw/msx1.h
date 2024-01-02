@@ -171,5 +171,6 @@ void msx1_timer_set_status_off( Environment * _environment, char * _timer );
 void msx1_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
 void msx1_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void msx1_timer_set_address( Environment * _environment, char * _timer, char * _address );
+void msx1_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 
 #endif

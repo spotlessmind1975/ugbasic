@@ -330,13 +330,15 @@ void generate_dsk( Environment * _environment ) {
 
     char pipes[256];
 
-    #ifdef _WIN32
-        strcpy( pipes, ">nul 2>nul");
-    #else
-        strcpy( pipes, ">/dev/null 2>/dev/null");
-    #endif
+    // #ifdef _WIN32
+    //     strcpy( pipes, ">nul 2>nul");
+    // #else
+    //     strcpy( pipes, ">/dev/null 2>/dev/null");
+    // #endif
 
-    sprintf( commandLine, "\"%s\" +msx -b \"%s\" -o \"%s\" --org 16384 %s",
+    strcpy( pipes, "" );
+
+    sprintf( commandLine, "\"%s\" +msx -b \"%s\" -o \"%s\" --org 33024 %s",
         executableName,
         binaryName,
         binaryName2,
@@ -356,6 +358,8 @@ void generate_dsk( Environment * _environment ) {
         --p;
         strcat( p, ".bin");
     }
+
+    printf( "%s -> %s\n\n", binaryName2, binaryName );
 
     rename( binaryName2, binaryName );
 
@@ -486,7 +490,7 @@ void generate_dsk( Environment * _environment ) {
 
     }
 
-    remove( binaryName );
+    // remove( binaryName );
 
 }
 
@@ -513,12 +517,12 @@ void target_cleanup( Environment * _environment ) {
 
         char binFileName[MAX_TEMPORARY_STORAGE];
 
-        strcpy( binFileName, _environment->exeFileName );
-        char * p = strrchr( binFileName, '.' );
-        memcpy( p, ".bin", 4 );
+        // strcpy( binFileName, _environment->exeFileName );
+        // char * p = strrchr( binFileName, '.' );
+        // memcpy( p, ".bin", 4 );
 
         remove( _environment->configurationFileName );
-        remove( binFileName );
+        // remove( binFileName );
         remove( _environment->asmFileName );
 
         if ( _environment->analysis && _environment->listingFileName ) {
