@@ -4396,6 +4396,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/6502.h"
     #include "hw/vic1.h"
     #include "hw/vic20.h"
+    #include "outputs/d64.h"
 #elif __msx1__
     #include "../src-generated/modules_msx1.h"
     #include "hw/z80.h"

@@ -8501,6 +8501,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     #define defaultExtension "k7"
 #elif __vic20__
     printf("\t                prg - program binary file\n" );
+    printf("\t                d64 - D64 disk image\n" );
     #define defaultExtension "prg"
 #elif __msx1__
     printf("\t                rom - cartridge ROM\n" );

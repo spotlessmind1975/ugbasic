@@ -40,15 +40,13 @@
 
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
-void target_linkage( Environment * _environment ) {
+void generate_prg( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
-
-    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_PRG)
 
     BUILD_TOOLCHAIN_CC65_GET_EXECUTABLE( _environment, executableName );
 
@@ -82,6 +80,108 @@ void target_linkage( Environment * _environment ) {
 
         }
     
+    }
+
+}
+
+void generate_d64( Environment * _environment ) {
+
+    FILE * prgHandle = fopen(_environment->exeFileName, "rb");
+    fseek( prgHandle, 0, SEEK_END );
+    int prgSize = ftell( prgHandle );
+    fseek( prgHandle, 0, SEEK_SET );
+    unsigned char * prgContent = malloc( prgSize );
+    (void)!fread( prgContent, prgSize, 1, prgHandle );
+    fclose( prgHandle );
+
+    char d64FileName[MAX_TEMPORARY_STORAGE];
+    strcpy( d64FileName, _environment->exeFileName );
+    char * p = strstr( d64FileName, ".d64" );
+    if ( !p ) {
+        strcat( d64FileName, ".d64");
+    }
+    
+    remove(d64FileName);
+
+    Storage * storage = _environment->storage;
+
+    if ( !storage ) {
+        D64Handle * handle = d64_create( CBMDOS );
+        d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
+        d64_output( handle, d64FileName );
+        d64_free( handle );
+    } else {
+        int i=0;
+        while( storage ) {
+            D64Handle * handle = d64_create( CBMDOS );
+            if ( i == 0 ) {
+                d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
+            }
+            FileStorage * fileStorage = storage->files;
+            while( fileStorage ) {
+                FILE * file = fopen( fileStorage->sourceName, "rb" );
+                if ( !file ) {
+                    CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                }
+                fseek( file, 0, SEEK_END );
+                int size = ftell( file );
+                fseek( file, 0, SEEK_SET );
+                char * buffer;
+                buffer = malloc( size );
+                (void)!fread( &buffer[0], size, 1, file );
+                fclose( file );
+                d64_write_file( handle, fileStorage->targetName, PRG, buffer, size );
+                fileStorage = fileStorage->next;
+            }
+            char buffer[MAX_TEMPORARY_STORAGE];
+            char filemask[MAX_TEMPORARY_STORAGE];
+            strcpy( filemask, d64FileName );
+            char * basePath = find_last_path_separator( filemask );
+            if ( basePath ) {
+                ++basePath;
+                *basePath = 0;
+                if ( storage->fileName ) {
+                    strcat( basePath, storage->fileName );
+                } else {
+                    strcat( basePath, "disk%d.d64" );
+                }
+            } else {
+                if ( storage->fileName ) {
+                    strcpy( filemask, storage->fileName );
+                } else {
+                    strcpy( filemask, "disk%d.d64" );
+                }
+            }
+            sprintf( buffer, filemask, i );
+            if ( !strstr( buffer, ".d64" ) ) {
+                strcat( buffer, ".d64" );
+            }
+            d64_output( handle, buffer );
+            d64_free( handle );
+            storage = storage->next;
+            ++i;
+        }        
+    }
+
+}
+
+/**
+ * @brief Convert C64's assembly to executable
+ * 
+ * @param _environment 
+ */
+void target_linkage( Environment * _environment ) {
+
+    switch( _environment->outputFileType ) {
+        case OUTPUT_FILE_TYPE_PRG:
+            generate_prg( _environment );
+            break;
+        case OUTPUT_FILE_TYPE_D64:
+            generate_prg( _environment );
+            generate_d64( _environment );
+            break;
+        default:
+            CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
 }
