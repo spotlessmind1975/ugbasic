@@ -659,6 +659,7 @@ generated/msx1/exe/%.rom:
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/msx1/exe/%.dsk:
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.msx1$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.dsk=.info) -o ../$@ -O dsk $(subst generated/msx1/exe/,,$(@:.dsk=.bas))
 
 generated/msx1/exeso/%.rom: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.rom=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.msx1$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.rom=.info) -o ../$@ -O rom $(subst generated/msx1/exeso/,,$(@:.rom=.bas))
@@ -781,8 +782,14 @@ generated/vic20/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t vic20 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
+generated/vic20/exe/%.d64: $(subst /generated/exe/,/$(EXAMPLESDIR)/,$(@:.d64=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.vic20$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O d64 $(subst generated/vic20/exe/,,$(@:.d64=.bas))
+
 generated/vic20/exeso/%.prg: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.prg=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.vic20$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/vic20/exeso/,,$(@:.prg=.bas))
+
+generated/vic20/exeso/%.d64: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.d64=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.vic20$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O d64 $(subst generated/vic20/exeso/,,$(@:.d64=.bas))
 
 #------------------------------------------------ 
 # zx:
