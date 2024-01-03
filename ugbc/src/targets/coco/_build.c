@@ -298,7 +298,7 @@ void generate_dsk( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
     };
 
-    remove( programExe );
+    // remove( tempFileName );
 
     for( block = 0; block < blocks; ++block ) {
 
@@ -318,7 +318,7 @@ void generate_dsk( Environment * _environment ) {
             printf("Please use option '-I' to install chain tool.\n\n");
         };
 
-        remove( tempFileName );
+        // remove( tempFileName );
 
     }
 
@@ -344,8 +344,6 @@ void generate_dsk( Environment * _environment ) {
 
             storage = storage->next;
             ++i;
-
-            printf( "storage = %p\n", storage );
 
             if ( storage ) {
 

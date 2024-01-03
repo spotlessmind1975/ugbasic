@@ -342,4 +342,45 @@ void coco_timer_set_address( Environment * _environment, char * _timer, char * _
 
 }
 
+void coco_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+
+    deploy( dload, src_hw_coco_dload_asm);
+
+    MAKE_LABEL
+    
+    Variable * filename = variable_retrieve( _environment, _filename );
+    Variable * tnaddress = variable_temporary( _environment, VT_ADDRESS, "(address of target_name)");
+    Variable * tnsize = variable_temporary( _environment, VT_BYTE, "(size of target_name)");
+
+    Variable * address = NULL;
+    if ( _address ) {
+        address = variable_retrieve( _environment, _address );
+    }
+
+    switch( filename->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, filename->realName, tnsize->realName );
+            cpu_addressof_16bit( _environment, filename->realName, tnaddress->realName );
+            cpu_inc_16bit( _environment, tnaddress->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, filename->realName, tnaddress->realName, tnsize->realName );
+            break;
+    }
+
+    outline1("LDB %s", tnsize->realName);
+    outline0("CLRA");
+    outline0("TFR D, U");
+    outline1("LDX %s", tnaddress->realName);
+
+    if ( address ) {
+
+        outline1("LDY %s", address->realName);
+
+    }
+
+    outline0("JSR COCODLOAD");
+
+}
+
 #endif
