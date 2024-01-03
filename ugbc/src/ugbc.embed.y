@@ -346,6 +346,12 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "deployed" ) == 0 ) {
+            if ( strcmp( $3, "dload" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.dload;
+            } else {
+                $$ = 0;
+            }
         } else {
             $$ = 0;
         }
