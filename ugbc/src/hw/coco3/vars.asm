@@ -117,4 +117,4 @@ COCO3DLOADERRORSTACK     fcb   $0, $0
 
 DLOADERROR      fcb  $0
 
-RAMENABLED      fcb  $0
+RAMENABLED      fcb  $1
