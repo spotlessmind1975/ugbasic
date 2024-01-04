@@ -7992,8 +7992,14 @@ statement2nc:
   | MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
+  | BEG STORAGE const_expr_string {
+        begin_storage( _environment, $3, NULL );
+  }
   | STORAGE const_expr_string {
         begin_storage( _environment, $2, NULL );
+  }
+  | BEG STORAGE const_expr_string AS const_expr_string {
+        begin_storage( _environment, $3, $5 );
   }
   | STORAGE const_expr_string AS const_expr_string {
         begin_storage( _environment, $2, $4 );
