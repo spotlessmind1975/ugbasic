@@ -180,7 +180,7 @@ void generate_atr( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
 #ifdef _WIN32
-    sprintf( commandLine, "del %s*.* %s", temporaryPath, pipes );
+    sprintf( commandLine, "del /f /q %s*.* %s", temporaryPath, pipes );
 #else
     sprintf( commandLine, "rm %s* %s", temporaryPath, pipes );
 #endif
@@ -283,7 +283,7 @@ void generate_atr( Environment * _environment ) {
             ++i;
 
         #ifdef _WIN32
-            sprintf( commandLine, "del %s*.* %s", temporaryPath, pipes );
+            sprintf( commandLine, "del /f /q %s*.* %s", temporaryPath, pipes );
         #else
             sprintf( commandLine, "rm %s* %s", temporaryPath, pipes );
         #endif
@@ -293,7 +293,7 @@ void generate_atr( Environment * _environment ) {
     }
 
 #ifdef _WIN32
-    sprintf( commandLine, "del %s*.* %s", temporaryPath, pipes );
+    sprintf( commandLine, "del /f /q %s*.* %s", temporaryPath, pipes );
 #else
     sprintf( commandLine, "rm %s* %s", temporaryPath, pipes );
 #endif
