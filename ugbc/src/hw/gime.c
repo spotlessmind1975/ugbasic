@@ -295,12 +295,12 @@ void gime_bank_select( Environment * _environment, int _bank ) {
 
 #define GIME_MODE( _graphics, _linesize ) \
     outline0( "LDA GIMEVIDM" ); \
-    outline0( "ANDA #$8" ); \
+    outline0( "ANDA #$78" ); \
     outline1( "ORA #$%2.2x", ( ( _graphics & 0x01 ) << 7 ) | ( _linesize & 0x03 ) ); \
     outline0( "STA GIMEVIDM" ); \
     outline0( "STA GIMEVIDMSHADOW" );
 
-#define GIME_TEXT( )       GIME_MODE( 0, 3 )
+#define GIME_TEXT( )       GIME_MODE( 0, 1 )
 #define GIME_GRAPH( )      GIME_MODE( 1, 1 )
 
 #define GIME_24ROWS         0
@@ -1110,17 +1110,19 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         currentFrameSize =  _environment->screenTilesWidth * _environment->screenTilesHeight * 2;
     }
 
-    if ( currentFrameSize <= 0x2000 ) {
-        cpu_store_8bit( _environment, "GIMEMMUSTART", 3 );
-        cpu_store_8bit( _environment, "GIMEMMUCOUNT", 1 );
-        cpu_store_16bit( _environment, "BITMAPADDRESS", 0xc000 );
-        cpu_store_16bit( _environment, "TEXTADDRESS", 0xc000 );
-    } else if ( currentFrameSize <= 0x4000 ) {
-        cpu_store_8bit( _environment, "GIMEMMUSTART", 2 );
-        cpu_store_8bit( _environment, "GIMEMMUCOUNT", 2 );
-        cpu_store_16bit( _environment, "BITMAPADDRESS", 0xa000 );
-        cpu_store_16bit( _environment, "TEXTADDRESS", 0xa000 );
-    } else if ( currentFrameSize <= 0x6000 ) {
+    // if ( currentFrameSize <= 0x2000 ) {
+    //     cpu_store_8bit( _environment, "GIMEMMUSTART", 3 );
+    //     cpu_store_8bit( _environment, "GIMEMMUCOUNT", 1 );
+    //     cpu_store_16bit( _environment, "BITMAPADDRESS", 0xc000 );
+    //     cpu_store_16bit( _environment, "TEXTADDRESS", 0xc000 );
+    // } else 
+    // if ( currentFrameSize <= 0x4000 ) {
+    //     cpu_store_8bit( _environment, "GIMEMMUSTART", 2 );
+    //     cpu_store_8bit( _environment, "GIMEMMUCOUNT", 2 );
+    //     cpu_store_16bit( _environment, "BITMAPADDRESS", 0xa000 );
+    //     cpu_store_16bit( _environment, "TEXTADDRESS", 0xa000 );
+    // } else 
+    if ( currentFrameSize <= 0x6000 ) {
         cpu_store_8bit( _environment, "GIMEMMUSTART", 1 );
         cpu_store_8bit( _environment, "GIMEMMUCOUNT", 3 );
         cpu_store_16bit( _environment, "BITMAPADDRESS", 0x8000 );
