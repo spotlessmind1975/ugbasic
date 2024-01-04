@@ -295,12 +295,12 @@ void gime_bank_select( Environment * _environment, int _bank ) {
 
 #define GIME_MODE( _graphics, _linesize ) \
     outline0( "LDA GIMEVIDM" ); \
-    outline0( "ANDA #$78" ); \
+    outline0( "ANDA #$8" ); \
     outline1( "ORA #$%2.2x", ( ( _graphics & 0x01 ) << 7 ) | ( _linesize & 0x03 ) ); \
     outline0( "STA GIMEVIDM" ); \
     outline0( "STA GIMEVIDMSHADOW" );
 
-#define GIME_TEXT( )       GIME_MODE( 0, 1 )
+#define GIME_TEXT( )       GIME_MODE( 0, 3 )
 #define GIME_GRAPH( )      GIME_MODE( 1, 1 )
 
 #define GIME_24ROWS         0
