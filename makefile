@@ -577,10 +577,10 @@ generated/coco3/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) $(OPTIONS) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/coco3/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco3$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O dsk $(subst generated/coco3/exeso/,,$(@:.dsk=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco3$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O dsk $(subst generated/coco3/exeso/,,$(@:.dsk=.bas))
 
 generated/coco3/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco3$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/coco3/exeso/,,$(@:.bin=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco3$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O bin $(subst generated/coco3/exeso/,,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # d32:
