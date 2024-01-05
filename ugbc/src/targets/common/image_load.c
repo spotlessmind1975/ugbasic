@@ -131,20 +131,29 @@ ma con nomi diversi.
 </usermanual> */
 Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
 
+    // First of all, we create a variable to store the image.
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
 
+    // If the LOAD IMAGE is inside an ignored procedure,
+    // we must avoid to do anything.
     if ( _environment->emptyProcedure ) {
         return result;
     }
 
+    // LOAD IMAGE cannot be used on 10 liner competition.
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD IMAGE");
     }
 
+    // LOAD IMAGE cannot be used inside sandbox.
     if ( _environment->sandbox ) {
         CRITICAL_SANDBOX_ENFORCED( "LOAD IMAGE");
     }
 
+    // If the image loaded has been already loaded previously,
+    // we must avoid to go ahead and return the very same
+    // variable. Note that this works also if the image
+    // has to be loaded from a mass storage.
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
     if ( _alias ) {
@@ -157,44 +166,65 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         first = first->next;
     }
 
+    // No we are going to load the image from the PC.
+    // Those variables will maintain the data of the original image.
     int width = 0;
     int height = 0;
     int depth = 0;
 
+    // We must load the target dependent version of the images.
     char * lookedFilename = resource_load_asserts( _environment, _filename );
 
+    // If present, we can calculate the effective size.
     FILE * lookedFileHandle = fopen( lookedFilename, "rb" );
     fseek( lookedFileHandle, 0, SEEK_END );
     long fileSize = ftell( lookedFileHandle );
     fclose( lookedFileHandle );
 
+    // Now we can decode the image using the external library.
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
 
+    // If we are unable to decode the iamge, we stop the compilation.
     if ( !source ) {
         CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _filename );
     }
 
+    // If the image has to be post processed, we do it:
+    //  - X FLIP
     if( _flags & FLAG_FLIP_X ) {
         source = image_flip_x( _environment, source, width, height, depth );
     }
+    //  - Y FLIP
     if( _flags & FLAG_FLIP_Y ) {
         source = image_flip_y( _environment, source, width, height, depth );
     }
 
+    // This is a workaround. In a previous release of ugBASIC, we must give
+    // the color index to be used as transparency. If given, we active the
+    // "FLAG TRANSPARENCY" during the conversion.
     if ( _transparent_color != -1 ) {
         _flags |= FLAG_TRANSPARENCY;
     }
 
+    // ADI INFO
     adiline4("LI:%s:%s:%lx:%x", _filename, lookedFilename, fileSize, result->size );
 
+    // Now we are able to convert the image from the original format to the
+    // custom format of the target. This is a time efficient mode to store
+    // the image, but not a space efficient (no compression is done).
+    // Space efficiency can be applied after, if a bank is present.
     result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
 
+    // ADI INFO
     adiline1("LI2:%x", result->size );
 
+    // We can now store the data of the image directly into the variable.
     result->originalBitmap = source;
     result->originalWidth = width;
     result->originalHeight = height;
     result->originalDepth = depth;
+
+    // If a bank expasion has been requested, and there is at least one bank...
     if ( _bank_expansion && _environment->expansionBanks ) {
 
         // Try to compress the result of image conversion.
@@ -205,41 +235,14 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         result->uncompressedSize = result->size;
         MemoryBlock * output = msc1_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
 
-        // printf("\n0000: " );
-        // for( int k=0; k<result->size; ++k ) {
-        //     printf( "%2.2x ", output[k] );
-        //     if ( ((k+1) % 8 == 0 ) ) {
-        //         printf("\n%4.4x: ", (k) );
-        //     };
-        // }
-
         int temporary;
         MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
-        // printf("\n0000: " );
-        // for( int k=0; k<result->uncompressedSize; ++k ) {
-        //     printf( "%2.2x ", result->valueBuffer[k] );
-        //     if ( ((k+1) % 8 == 0 ) ) {
-        //         printf("\n%4.4x: ", (k) );
-        //     };
-        // }
 
-        // printf("\n0000: " );
-        // for( int k=0; k<result->uncompressedSize; ++k ) {
-        //     if ( outputCheck[k] == result->valueBuffer[k] ) {
-        //         printf( "        " );
-        //     } else {
-        //         printf( "%2.2x [%2.2x] ", outputCheck[k], result->valueBuffer[k] );
-        //     }
-        //     if ( ((k+1) % 8 == 0 ) ) {
-        //         printf("\n%4.4x: ", (k) );
-        //     };
-        // }
         if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
             CRITICAL("Compression failed");
         }
         msc1_free( compressor );
 
-        // printf( "%s: %d bytes -> %d bytes\n", _filename, result->uncompressedSize, result->size );
         // If the compressed memory is greater than the original
         // size, we discard the compression and we will continue as
         // usual.
@@ -290,6 +293,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
             _environment->maxExpansionBankSize[_bank_expansion] = realSize;
         }
 
+    // We can compress also if COMPRESSED flag is used.
     } else if ( _flags & FLAG_COMPRESSED ) {
 
         // Try to compress the result of image conversion.
@@ -302,29 +306,11 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
 
         int temporary;
         MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
-        // printf("\n0000: " );
-        // for( int k=0; k<result->uncompressedSize; ++k ) {
-        //     printf( "%2.2x ", result->valueBuffer[k] );
-        //     if ( ((k+1) % 8 == 0 ) ) {
-        //         printf("\n%4.4x: ", (k) );
-        //     };
-        // }
-        // printf("\n0000: " );
-        // for( int k=0; k<result->uncompressedSize; ++k ) {
-        //     if ( outputCheck[k] == result->valueBuffer[k] ) {
-        //         printf( "        " );
-        //     } else {
-        //         printf( "%2.2x [%2.2x] ", outputCheck[k], result->valueBuffer[k] );
-        //     }
-        //     if ( ((k+1) % 8 == 0 ) ) {
-        //         printf("\n%4.4x: ", (k) );
-        //     };
-        // }
         if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
             CRITICAL("Compression failed");
         }
         msc1_free( compressor );
-        // printf( "%s: %d bytes -> %d bytes\n", _filename, result->uncompressedSize, result->size );
+
         // If the compressed memory is greater than the original
         // size, we discard the compression and we will continue as
         // usual.
@@ -346,6 +332,8 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
 
     // stbi_image_free(source);
 
+    // Finally, we store the image as already loaded, in order
+    // to avoid to load again and again and again...
     LoadedFile * loaded = malloc( sizeof( LoadedFile ) );
     loaded->next = first;
     loaded->variable = result;
@@ -356,6 +344,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         const_define_numeric( _environment, _alias, UNIQUE_RESOURCE_ID );
     }
 
+    // Loaded images are ALWAYS readonly!
     result->readonly = 1;
         
     return result;
