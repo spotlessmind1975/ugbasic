@@ -114,37 +114,34 @@ void generate_d64( Environment * _environment ) {
     } else {
         int i=0;
         while( storage ) {
-            printf( "storage: %p\n", storage );
             D64Handle * handle = d64_create( CBMDOS );
             if ( i == 0 ) {
                 d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
             }
             FileStorage * fileStorage = storage->files;
             while( fileStorage ) {
-                printf( " fileStorage: %p\n", fileStorage );
-                FILE * file = fopen( fileStorage->sourceName, "rb" );
-                if ( !file ) {
-                    CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
-                }
-                fseek( file, 0, SEEK_END );
-                int size = ftell( file );
-                fseek( file, 0, SEEK_SET );
+                int size;
                 char * buffer;
-                if ( size > 255 ) {
-                    buffer = malloc( size + 3 );
-                    buffer[0] = 1;
-                    buffer[1] = (size & 0xff);
-                    buffer[2] = ((size>>8) & 0xff);
-                    (void)!fread( &buffer[3], size, 1, file );
-                    size += 3;
+
+                if ( fileStorage->content && fileStorage->size ) {
+                    size = fileStorage->size + 2;
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
+                    memcpy( &buffer[2], fileStorage->content, fileStorage->size );
                 } else {
+                    FILE * file = fopen( fileStorage->sourceName, "rb" );
+                    if ( !file ) {
+                        CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                    }
+                    fseek( file, 0, SEEK_END );
+                    size = ftell( file );
+                    fseek( file, 0, SEEK_SET );
                     buffer = malloc( size + 2 );
-                    buffer[0] = 0;
-                    buffer[1] = (size & 0xff);
+                    memset( buffer, 0, size + 2 );
                     (void)!fread( &buffer[2], size, 1, file );
+                    fclose( file );
                     size += 2;
                 }
-                fclose( file );
                 d64_write_file( handle, fileStorage->targetName, PRG, buffer, size );
                 fileStorage = fileStorage->next;
             }
