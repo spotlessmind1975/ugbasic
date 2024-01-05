@@ -160,6 +160,12 @@ typedef struct _FileStorage {
     /** Size of the file */
     int size;
 
+    /** Variable (eventually) linked for automatic loading */
+    struct _Variable * variable;
+
+    /** Content of the file */
+    char * content;
+
     /** Link to the next file (NULL if this is the last one) */
     struct _FileStorage * next;
 
@@ -878,6 +884,12 @@ typedef struct _Variable {
      * read only variables could be stored into non writable memory.
      */
     int readonly;
+
+    /**
+     * This flag mark if a variable must be seen as a "memory placeholder"
+     * for a data stored into the mass storage.
+     */
+    int onStorage;
 
     /**
      * Linked offsetting for each frame
