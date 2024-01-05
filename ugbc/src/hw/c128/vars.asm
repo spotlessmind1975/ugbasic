@@ -146,3 +146,5 @@ IRQSVC_UGBASIC:     .WORD   $0
 IRQSVC2_UGBASIC:    .WORD   $0
 
 DLOADERROR:         .BYTE   $0
+
+OLDD018:            .BYTE   $0

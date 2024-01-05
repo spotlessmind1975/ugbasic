@@ -885,6 +885,9 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("AND #%11101111");
             outline0("STA $D016" );
 
+            outline0("LDA #$03" );
+            outline0("STA $D8" );
+
             cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
 
             cpu_store_8bit( _environment, "_PEN", 0X01 );
@@ -917,6 +920,9 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("LDA $D016" );
             outline0("ORA #%00010000");
             outline0("STA $D016" );
+
+            outline0("LDA #$01" );
+            outline0("STA $d8" );
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
 
@@ -1051,6 +1057,9 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
+    outline0( "LDA $D018" );
+    outline0( "STA OLDD018" );
+    
 }
 
 void vic2_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
