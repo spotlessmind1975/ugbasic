@@ -10288,6 +10288,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
             CRITICAL_VARIABLE_UNDEFINED( _var );
         }
     }
+
     var->value = expr->value;
     var->valueString = expr->valueString;
     var->valueFloating = expr->valueFloating;
@@ -10338,6 +10339,10 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     var->offsettingSequences = expr->offsettingSequences;
     if ( var->offsettingSequences ) {
         offsetting_add_variable_reference( _environment, var->offsettingSequences, var, 1 );
+    }
+
+    if ( expr->onStorage ) {
+        variable_move( _environment, expr->name, var->name );
     }
 
     return var;
@@ -10722,3 +10727,4 @@ char * find_last_path_separator( char * _path ) {
     return basePath;
 
 }
+
