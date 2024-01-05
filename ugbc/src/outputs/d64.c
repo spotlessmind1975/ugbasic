@@ -821,7 +821,7 @@ void d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType
 
             // Set the effective size on the "sector" field.
             sectorData->track = 0;
-            sectorData->sector = _size;
+            sectorData->sector = (_size + 1);
 
             // Copy the memory on the sector data.
             memcpy( &sectorData->data[0], buffer, _size );
