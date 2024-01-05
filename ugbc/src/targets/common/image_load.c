@@ -330,6 +330,70 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
 
     }
 
+    // Loaded images are ALWAYS readonly!
+    result->readonly = 1;
+
+    // If the original file has been stored into a storage,
+    // then we have to change something. Infact, the image
+    // has not to be deployed directly in the executable
+    // but only the space needed to storage the image.
+
+    Storage * storage = _environment->storage;
+    FileStorage * fileStorage = NULL;
+
+    while( storage ) {
+
+        fileStorage = storage->files;
+
+        while( fileStorage ) {
+
+            if ( strcmp( fileStorage->sourceName, _filename ) == 0 ) {
+                break;
+            }
+
+            fileStorage = fileStorage->next;
+
+        }
+
+        if ( fileStorage ) {
+            break;
+        }
+
+        storage = storage->next;
+
+    }
+
+    // If the file is stored into any storage memory...
+    if ( fileStorage ) {
+
+        // If the variable has not been already allocated...
+        if ( ! fileStorage->variable ) {
+            // Allocate the variable
+            fileStorage->variable = result;
+            // The image is on the storage, really.
+            result->onStorage = 1;
+            // The memory should not be read only.
+            result->readonly = 0;
+        }
+
+        fileStorage->content = result->valueBuffer;
+        fileStorage->size = result->size;
+
+        Variable * filename = variable_temporary( _environment, VT_STRING, "(filename)");
+        variable_store_string( _environment, filename->name, fileStorage->targetName );
+
+        // Retrieve the (runtime) address and size of the allocated space.
+        Variable * address = variable_temporary( _environment, VT_ADDRESS, "(word) ");
+        Variable * size = variable_temporary( _environment, VT_WORD, "(word) ");
+
+        cpu_addressof_16bit( _environment, fileStorage->variable->realName, address->realName  );
+        cpu_store_16bit( _environment, size->realName, fileStorage->size );
+
+        // Load the resource from the storage.
+        dload( _environment, filename->name, NULL, address->name, size->name );
+
+    }
+
     // stbi_image_free(source);
 
     // Finally, we store the image as already loaded, in order
@@ -344,9 +408,6 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         const_define_numeric( _environment, _alias, UNIQUE_RESOURCE_ID );
     }
 
-    // Loaded images are ALWAYS readonly!
-    result->readonly = 1;
-        
     return result;
 
 }
