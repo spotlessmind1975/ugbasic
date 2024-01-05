@@ -139,7 +139,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_MUSIC:
                 case VT_BUFFER:
                     if ( ! variable->absoluteAddress || variable->bankAssigned ) {
-                        if ( variable->valueBuffer ) {
+                        if ( variable->valueBuffer && ! variable->onStorage ) {
                             if ( variable->printable ) {
                                 char * string = malloc( variable->size + 1 );
                                 memset( string, 0, variable->size );
@@ -162,7 +162,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             outline2("%s: .res %d", variable->realName, variable->size);
                         }
                     } else {
-                        if ( ! variable->memoryArea && variable->valueBuffer && ! variable->bankAssigned ) {
+                        if ( ! variable->memoryArea && variable->valueBuffer && ! variable->onStorage && ! variable->bankAssigned ) {
                             outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                             if ( variable->printable ) {
                                 char * string = malloc( variable->size + 1 );
@@ -277,7 +277,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SEQUENCE:
         case VT_MUSIC:
         case VT_BUFFER:
-            if ( _variable->valueBuffer ) {
+            if ( _variable->valueBuffer && ! _variable->onStorage ) {
                 if ( _variable->printable ) {
                     char * string = malloc( _variable->size + 1 );
                     memset( string, 0, _variable->size );
@@ -598,6 +598,28 @@ void variable_cleanup( Environment * _environment ) {
     }
     outhead0("DATAPTRE:");
 
+    Storage * storage = _environment->storage;
+
+    while( storage ) {
+
+        FileStorage * fileStorage = storage->files;
+
+        while( fileStorage ) {
+
+            Variable * variable = fileStorage->variable;
+
+            if ( variable ) {
+                if ( variable->assigned ) {
+                    outline2("%s: .res %d", variable->realName, variable->size);
+                }
+            }
+
+            fileStorage = fileStorage->next;
+
+        }
+
+        storage = storage->next;
+    }
 
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
