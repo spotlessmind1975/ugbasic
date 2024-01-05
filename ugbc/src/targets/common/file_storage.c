@@ -80,7 +80,7 @@ void file_storage( Environment * _environment, char * _source_name, char * _targ
     memset( fileStorage, 0, sizeof ( FileStorage ) );
 
     fileStorage->sourceName = strdup( _source_name );
-    if ( _target ) {
+    if ( _target_name ) {
         fileStorage->targetName = strdup( _target_name );
     } else {
         fileStorage->targetName = basename( _source_name );
