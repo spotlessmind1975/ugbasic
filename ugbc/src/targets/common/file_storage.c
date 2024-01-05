@@ -44,6 +44,32 @@
  * @param _environment Current calling environment
  * @param _name Name of the storage
  */
+/* <usermanual>
+@keyword FILE
+
+@english
+The ''FILE'' command, inserted inside a ''BEGIN STORAGE'' - ''ENDSTORAGE'' block, 
+allows you to define the content of the mass storage element. The basic syntax requires 
+indicating the name of the ''source'' file that will be inserted into the medium. 
+If you don't want to use the same name, you can indicate an alias (''AS target'').
+
+@italian
+Il comando ''FILE'', inserite all'interno di un blocco ''BEGIN STORAGE'' - 
+''ENDSTORAGE'', permette di definire il contenuto dell'elemento di memorizzazione
+di massa. La sintassi di base prevede di indicare il nome del file sorgente che 
+sarà inserito nel supporto. Se non si vuole utilizzare lo stesso nome, è possibile 
+indicare un alias (''AS target'').
+
+@syntax FILE source [AS target]
+
+@example FILE "examples/data.dat"
+@example FILE "sprites.png" AS "sprites.dat"
+
+@usedInExample storage_example_01.bas
+
+@target all
+@verified
+</usermanual> */
 void file_storage( Environment * _environment, char * _source_name, char * _target_name ) {
 
     if ( !_environment->currentStorage ) {
@@ -54,7 +80,11 @@ void file_storage( Environment * _environment, char * _source_name, char * _targ
     memset( fileStorage, 0, sizeof ( FileStorage ) );
 
     fileStorage->sourceName = strdup( _source_name );
-    fileStorage->targetName = strdup( _target_name );
+    if ( _target ) {
+        fileStorage->targetName = strdup( _target_name );
+    } else {
+        fileStorage->targetName = basename( _source_name );
+    }
 
     FILE * file = fopen( _source_name, "rb" );
     if ( !file ) {

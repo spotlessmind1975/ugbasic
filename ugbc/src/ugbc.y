@@ -8004,6 +8004,9 @@ statement2nc:
   | STORAGE const_expr_string AS const_expr_string {
         begin_storage( _environment, $2, $4 );
   }
+  | FILEX const_expr_string {
+        file_storage( _environment, $2, NULL );
+  }
   | FILEX const_expr_string AS const_expr_string {
         file_storage( _environment, $2, $4 );
   }
