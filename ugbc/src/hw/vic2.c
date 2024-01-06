@@ -875,6 +875,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("AND #%11110111");
             outline0("ORA #%00001000" );
             outline0("STA $D018" );
+            outline0("STA $0A2D" );
 
             // Let's enable monocolor graphics!
             outline0("LDA $D011" );
@@ -885,7 +886,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("AND #%11101111");
             outline0("STA $D016" );
 
-            outline0("LDA #$03" );
+            outline0("LDA #$21" );
             outline0("STA $D8" );
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
@@ -911,6 +912,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("AND #%11110111");
             outline0("ORA #%00001000" );
             outline0("STA $D018" );
+            outline0("STA $0A2D" );
 
             // Let's enable multicolor graphics!
             outline0("LDA $D011" );
@@ -921,7 +923,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("ORA #%00010000");
             outline0("STA $D016" );
 
-            outline0("LDA #$01" );
+            outline0("LDA #$23" );
             outline0("STA $d8" );
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
@@ -948,6 +950,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("LDA $D016" );
             outline0("AND #%11101111");
             outline0("STA $D016" );
+            outline0("STA $0A2D" );
 
             // // This fix is necessary to reset the lookup for rom character.
             // outline0("LDA $D018" );
