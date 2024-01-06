@@ -598,28 +598,9 @@ void variable_cleanup( Environment * _environment ) {
     }
     outhead0("DATAPTRE:");
 
-    Storage * storage = _environment->storage;
-
-    while( storage ) {
-
-        FileStorage * fileStorage = storage->files;
-
-        while( fileStorage ) {
-
-            Variable * variable = fileStorage->variable;
-
-            if ( variable ) {
-                if ( variable->assigned ) {
-                    outline2("%s: .res %d", variable->realName, variable->size);
-                }
-            }
-
-            fileStorage = fileStorage->next;
-
-        }
-
-        storage = storage->next;
-    }
+    // if ( _environment->storageTransientMemoryArea && !_environment->storageTransientMemoryArea->assigned ) {
+    //     outline2("%s: .res %d", _environment->storageTransientMemoryArea->realName, _environment->storageTransientMemoryArea->size);
+    // }
 
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {

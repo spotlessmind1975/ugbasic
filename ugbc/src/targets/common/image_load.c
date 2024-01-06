@@ -337,62 +337,75 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     // then we have to change something. Infact, the image
     // has not to be deployed directly in the executable
     // but only the space needed to storage the image.
+    // Moreover, we must avoid to create multiple spaces:
+    // it will be enough to store the maximum size of every
+    // single image.
 
-    Storage * storage = _environment->storage;
-    FileStorage * fileStorage = NULL;
+    // Storage * storage = _environment->storage;
+    // FileStorage * fileStorage = NULL;
 
-    while( storage ) {
+    // while( storage ) {
 
-        fileStorage = storage->files;
+    //     fileStorage = storage->files;
 
-        while( fileStorage ) {
+    //     while( fileStorage ) {
 
-            if ( strcmp( fileStorage->sourceName, _filename ) == 0 ) {
-                break;
-            }
+    //         if ( strcmp( fileStorage->sourceName, _filename ) == 0 ) {
+    //             break;
+    //         }
 
-            fileStorage = fileStorage->next;
+    //         fileStorage = fileStorage->next;
 
-        }
+    //     }
 
-        if ( fileStorage ) {
-            break;
-        }
+    //     if ( fileStorage ) {
+    //         break;
+    //     }
 
-        storage = storage->next;
+    //     storage = storage->next;
 
-    }
+    // }
 
-    // If the file is stored into any storage memory...
-    if ( fileStorage ) {
+    // // If the file is stored into any storage memory...
+    // if ( fileStorage ) {
 
-        // If the variable has not been already allocated...
-        if ( ! fileStorage->variable ) {
-            // Allocate the variable
-            fileStorage->variable = result;
-            // The image is on the storage, really.
-            result->onStorage = 1;
-            // The memory should not be read only.
-            result->readonly = 0;
-        }
+    //     if ( ! _environment->storageTransientMemoryArea ) {
+    //         _environment->storageTransientMemoryArea = variable_temporary( _environment, VT_BUFFER, "(temporary)" );
+    //         variable_resize_buffer( _environment, _environment->storageTransientMemoryArea->name, result->size );
+    //     }
 
-        fileStorage->content = result->valueBuffer;
-        fileStorage->size = result->size;
+    //     // If the variable has not been already allocated...
+    //     if ( ! fileStorage->variable ) {
 
-        Variable * filename = variable_temporary( _environment, VT_STRING, "(filename)");
-        variable_store_string( _environment, filename->name, fileStorage->targetName );
+    //         // Allocate the variable
+    //         fileStorage->variable = _environment->storageTransientMemoryArea;
+    //         // The image is on the storage, really.
+    //         result->onStorage = 1;
+    //         // The memory should not be read only.
+    //         result->readonly = 0;
+    //     } else {
+    //         if ( fileStorage->variable->size < result->size ) {
+    //             variable_resize_buffer( _environment, _environment->storageTransientMemoryArea->name, result->size );
+    //         }
+    //     }
 
-        // Retrieve the (runtime) address and size of the allocated space.
-        Variable * address = variable_temporary( _environment, VT_ADDRESS, "(word) ");
-        Variable * size = variable_temporary( _environment, VT_WORD, "(word) ");
+    //     fileStorage->content = result->valueBuffer;
+    //     fileStorage->size = result->size;
 
-        cpu_addressof_16bit( _environment, fileStorage->variable->realName, address->realName  );
-        cpu_store_16bit( _environment, size->realName, fileStorage->size );
+    //     Variable * filename = variable_temporary( _environment, VT_STRING, "(filename)");
+    //     variable_store_string( _environment, filename->name, fileStorage->targetName );
 
-        // Load the resource from the storage.
-        dload( _environment, filename->name, NULL, address->name, size->name );
+    //     // Retrieve the (runtime) address and size of the allocated space.
+    //     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(word) ");
+    //     Variable * size = variable_temporary( _environment, VT_WORD, "(word) ");
 
-    }
+    //     cpu_addressof_16bit( _environment, _environment->storageTransientMemoryArea->realName, address->realName  );
+    //     cpu_store_16bit( _environment, size->realName, fileStorage->size );
+
+    //     // Load the resource from the storage.
+    //     dload( _environment, filename->name, NULL, address->name, size->name );
+
+    // }
 
     // stbi_image_free(source);
 

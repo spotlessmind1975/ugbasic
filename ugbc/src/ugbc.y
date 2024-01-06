@@ -8010,6 +8010,12 @@ statement2nc:
   | FILEX const_expr_string AS const_expr_string {
         file_storage( _environment, $2, $4 );
   }
+  | IMAGE const_expr_string {
+        image_storage( _environment, $2, NULL );
+  }
+  | IMAGE const_expr_string AS const_expr_string {
+        image_storage( _environment, $2, $4 );
+  }
   | ENDSTORAGE {
         end_storage( _environment );
   }

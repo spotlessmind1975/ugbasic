@@ -1873,6 +1873,11 @@ typedef struct _Environment {
 
     ScreenMode * screenModes;
 
+    // /**
+    //  * Largest variable used as transient memory area.
+    //  */
+    // Variable * storageTransientMemoryArea;
+
     /**
      * Set of storages
      */
@@ -1882,6 +1887,11 @@ typedef struct _Environment {
      * Current storage
      */
     Storage * currentStorage;
+
+    /**
+     * Current file storage
+     */
+    FileStorage * currentFileStorage;
 
     /**
      * List of labels.
@@ -3905,6 +3915,7 @@ RGBi *                  image_nearest_system_color( RGBi * _color );
 char *                  image_roll_x_left( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_x_right( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_y_down( Environment * _environment, char * _source, int _width, int _height );
+void                    image_storage( Environment * _environment, char * _source_name, char *_target_name );
 Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              in_var( Environment * _environment, char * _port );
 void                    ink( Environment * _environment, char * _expression );

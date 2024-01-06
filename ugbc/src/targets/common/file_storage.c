@@ -98,5 +98,6 @@ void file_storage( Environment * _environment, char * _source_name, char * _targ
 
     fileStorage->next = _environment->currentStorage->files;
     _environment->currentStorage->files = fileStorage;
+    _environment->currentFileStorage = fileStorage;
 
 }
