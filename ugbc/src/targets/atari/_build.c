@@ -232,17 +232,27 @@ void generate_atr( Environment * _environment ) {
         while( storage ) {
             FileStorage * fileStorage = storage->files;
             while( fileStorage ) {
-                FILE * file = fopen( fileStorage->sourceName, "rb" );
-                if ( !file ) {
-                    CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
-                }
-                fseek( file, 0, SEEK_END );
-                int size = ftell( file );
-                fseek( file, 0, SEEK_SET );
+                int size;
                 char * buffer;
-                buffer = malloc( size );
-                (void)!fread( &buffer[0], size, 1, file );
-                fclose( file );
+
+                if ( fileStorage->content && fileStorage->size ) {
+                    size = fileStorage->size + 2;
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
+                    memcpy( buffer, fileStorage->content, fileStorage->size );
+                } else {
+                    FILE * file = fopen( fileStorage->sourceName, "rb" );
+                    if ( !file ) {
+                        CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                    }
+                    fseek( file, 0, SEEK_END );
+                    size = ftell( file );
+                    fseek( file, 0, SEEK_SET );
+                    buffer = malloc( size + 2 );
+                    memset( buffer, 0, size + 2 );
+                    (void)!fread( buffer, size, 1, file );
+                    fclose( file );
+                }
                 char dataFilename[8*MAX_TEMPORARY_STORAGE];
                 sprintf( dataFilename, "%s%s", temporaryPath, fileStorage->targetName );
                 fileOut = fopen( dataFilename, "wb" );
