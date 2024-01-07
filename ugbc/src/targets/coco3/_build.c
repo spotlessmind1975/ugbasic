@@ -330,6 +330,34 @@ void generate_dsk( Environment * _environment ) {
         while( storage ) {
             FileStorage * fileStorage = storage->files;
             while( fileStorage ) {
+                int size;
+                char * buffer;
+
+                if ( fileStorage->content && fileStorage->size ) {
+                    size = fileStorage->size + 2;
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
+                    memcpy( buffer, fileStorage->content, fileStorage->size );
+                } else {
+                    FILE * file = fopen( fileStorage->sourceName, "rb" );
+                    if ( !file ) {
+                        CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                    }
+                    fseek( file, 0, SEEK_END );
+                    size = ftell( file );
+                    fseek( file, 0, SEEK_SET );
+                    buffer = malloc( size + 2 );
+                    memset( buffer, 0, size + 2 );
+                    (void)!fread( buffer, size, 1, file );
+                    fclose( file );
+                }
+                char dataFilename[MAX_TEMPORARY_STORAGE];
+                sprintf( dataFilename, "%s%s", temporaryPath, fileStorage->targetName );
+                FILE * fileOut = fopen( dataFilename, "wb" );
+                if ( fileOut ) {
+                    fwrite( buffer, 1, size, fileOut );
+                    fclose(fileOut );
+                }
                 sprintf( commandLine, "\"%s\" copy -1 -b \"%s\" \"%s,%s\"",
                     executableName, 
                     fileStorage->sourceName, 
