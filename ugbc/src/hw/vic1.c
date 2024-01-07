@@ -1730,6 +1730,7 @@ Variable * vic1_new_images( Environment * _environment, int _frames, int _width,
 
     result->size = size;
     result->frameSize = frameSize;
+    result->frameCount = _frames;
     
     return result;
 }

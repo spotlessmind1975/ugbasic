@@ -2790,6 +2790,7 @@ Variable * gtia_new_images( Environment * _environment, int _frames, int _width,
     result->valueBuffer = buffer;
     result->frameSize = frameSize;
     result->size = size;
+    result->frameCount = _frames;
 
     return result;
 
