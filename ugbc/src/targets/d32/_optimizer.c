@@ -1047,17 +1047,25 @@ static void vars_prepare_relocation(void) {
         && vars.page0_max + v->size <= 256
         ) {
             
+            if ( vars.page0_max == 0xd8 )
+                ++vars.page0_max;
             if ( vars.page0_max == 0xa3 )
                 ++vars.page0_max;
             if ( vars.page0_max == 0xd5 )
                 ++vars.page0_max;
             if ( vars.page0_max == 0xe3 )
                 ++vars.page0_max;
-            if ( vars.page0_max == 0xf6 )
-                ++vars.page0_max;
-            if ( vars.page0_max == 0xd8 )
+            if ( vars.page0_max == 0xef )
                 ++vars.page0_max;
             while ( vars.page0_max < 0xf0 )
+                ++vars.page0_max;
+            if ( vars.page0_max == 0xf0 )
+                ++vars.page0_max;
+            if ( vars.page0_max == 0xf1 )
+                ++vars.page0_max;
+            if ( vars.page0_max == 0xf2 )
+                ++vars.page0_max;
+            if ( vars.page0_max == 0xf6 )
                 ++vars.page0_max;
 
             v->offset = vars.page0_max;
