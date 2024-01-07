@@ -3601,7 +3601,10 @@ char * basename( char * _path );
 }
 
 #define BUILD_TOOLCHAIN_DIR2ATR( _environment, executableName, bootCodePath, contentPath, atrFileName, pipes ) \
-    sprintf( commandLine, "\"%s\" -S -p -B \"%s\" \"%s\" \"%s\\\" %s", \
+    if ( contentPath[strlen(contentPath)-1] == PATH_SEPARATOR ) { \
+        contentPath[strlen(contentPath)-1] = 0; \
+    } \
+    sprintf( commandLine, "\"%s\" -S -p -B \"%s\" \"%s\" \"%s\" %s", \
         executableName, \
         bootCodePath, \
         atrFileName, \
