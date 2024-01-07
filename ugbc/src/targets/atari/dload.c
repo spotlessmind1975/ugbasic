@@ -93,10 +93,6 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
         CRITICAL_DLOAD_MISSING_ADDRESS( _filename );
     }
 
-    if ( ! _size ) {
-        CRITICAL_DLOAD_MISSING_SIZE( _filename );
-    }
-
     atari_dload( _environment, _filename, _offset, _address, _size );
 
 }

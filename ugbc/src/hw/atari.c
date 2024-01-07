@@ -324,7 +324,7 @@ void atari_dload( Environment * _environment, char * _filename, char * _offset, 
 
     } else {
 
-        outline0("LDA #0");
+        outline0("LDA #$ff");
         outline0("STA MATHPTR4");
         outline0("STA MATHPTR5");
 
