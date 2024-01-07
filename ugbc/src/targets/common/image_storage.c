@@ -162,6 +162,6 @@ void image_storage( Environment * _environment, char * _source_name, char * _tar
     _environment->currentFileStorage->size = result->size;
     _environment->currentFileStorage->content = result->valueBuffer;
 
-    variable_delete( _environment, result->name );
+    variable_temporary_remove( _environment, result->name );
     
 }
