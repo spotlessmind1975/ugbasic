@@ -2829,6 +2829,14 @@ Variable * vdcz_new_images( Environment * _environment, int _frames, int _width,
 
 }
 
+Variable * vdcz_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    Variable * result = variable_temporary( _environment, VT_SEQUENCE, "(new sequence)" );
+
+    return result;
+
+}
+
 void vdcz_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
     deploy( vdczvars, src_hw_vdcz_vars_asm);

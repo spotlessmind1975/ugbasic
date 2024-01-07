@@ -212,6 +212,7 @@ void vdc_blit_image( Environment * _environment, char * _sources[], int _source_
 void vdc_wait_vbl( Environment * _environment );
 Variable * vdc_new_image( Environment * _environment, int _width, int _height, int _mode );
 Variable * vdc_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
+Variable * vdc_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode );
 void vdc_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette );
 
 void vdc_put_tile( Environment * _environment, char * _image, char * _x, char * _y );

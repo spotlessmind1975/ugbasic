@@ -917,6 +917,18 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
 
 }
 
+static int calculate_sequence_size( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case TILEMAP_MODE_STANDARD:
+            break;
+    }
+
+    return 0;
+
+}
+
 
 Variable * ef9345_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color ) {
 
@@ -1128,6 +1140,40 @@ Variable * ef9345_new_images( Environment * _environment, int _frames, int _widt
     return result;
 
 }
+
+Variable * ef9345_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
+    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGES, "(new images)" );
+
+    char * buffer = malloc ( size2 );
+    memset( buffer, 0, size2 );
+
+    *(buffer) = _frames;
+    *(buffer+1) = _width;
+    *(buffer+2) = _sequences;
+    for( int i=0; i<§(_frames*_sequences); ++i ) {
+        *(buffer+3+(i*frameSize)) = ( _width & 0xff );
+        *(buffer+3+(i*frameSize)+1) = ( ( _width >> 8 ) & 0xff );
+        *(buffer+3+(i*frameSize)+2) = ( _height & 0xff );
+    }
+
+    result->valueBuffer = buffer;
+    result->frameSize = frameSize;
+    result->size = size;
+    result->frameCount = _frames;
+
+    return result;
+
+}
+
 
 void ef9345_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 

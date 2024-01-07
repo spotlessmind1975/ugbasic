@@ -83,6 +83,20 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
 
 }
 
+static int calculate_sequence_size( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_STANDARD:
+        case TILEMAP_MODE_STANDARD:
+            return 3 + ( ( 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) ) ) * _frames ) * _sequences;
+
+    }
+
+    return 0;
+
+}
+
 void zx_color_border( Environment * _environment, char * _color ) {
 
     char port[MAX_TEMPORARY_STORAGE]; sprintf(port, "$%2.2x", PORT_COLOR_BORDER);
@@ -932,6 +946,41 @@ Variable * zx_new_images( Environment * _environment, int _frames, int _width, i
     *(buffer+1) = ( _width & 0xff );
     *(buffer+2) = ( _width >> 8 ) & 0xff;
     for( int i=0; i<_frames; ++i ) {
+        *(buffer+3+(i*frameSize)) = ( _width & 0xff );
+        *(buffer+3+(i*frameSize)+1) = ( ( _width >> 8 ) & 0xff );
+        *(buffer+3+(i*frameSize)+2) = ( _height & 0xff );
+    }
+
+    result->valueBuffer = buffer;
+    result->frameSize = frameSize;
+    result->size = size;
+    result->frameCount = _frames;
+    
+    return result;
+
+}
+
+Variable * zx_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    deploy( vars, src_hw_zx_vars_asm );
+
+    int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
+    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_SEQUENCE, "(new sequence)" );
+
+    char * buffer = malloc ( size2 );
+    memset( buffer, 0, size2 );
+
+    *(buffer) = _frames;
+    *(buffer+1) = _width;
+    *(buffer+2) = _sequences;
+    for( int i=0; i<(_frames*_sequences); ++i ) {
         *(buffer+3+(i*frameSize)) = ( _width & 0xff );
         *(buffer+3+(i*frameSize)+1) = ( ( _width >> 8 ) & 0xff );
         *(buffer+3+(i*frameSize)+2) = ( _height & 0xff );

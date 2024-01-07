@@ -361,6 +361,7 @@ void cpc_blit_image( Environment * _environment, char * _sources[], int _source_
 void cpc_wait_vbl( Environment * _environment );
 Variable * cpc_new_image( Environment * _environment, int _width, int _height, int _mode );
 Variable * cpc_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
+Variable * cpc_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode );
 void cpc_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette );
 
 void cpc_put_tile( Environment * _environment, char * _image, char * _x, char * _y );

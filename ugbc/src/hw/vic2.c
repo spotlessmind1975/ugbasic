@@ -1883,6 +1883,58 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
 
 }
 
+static int calculate_sequences_size( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_STANDARD:
+
+            return 3 + ( ( 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) ) ) * _frames ) * _sequences;
+
+        case BITMAP_MODE_MULTICOLOR:
+
+            return 3 + ( ( 3 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 1 ) * _frames ) * _sequences;
+
+        case BITMAP_MODE_AH:
+        case BITMAP_MODE_AIFLI:
+        case BITMAP_MODE_ASSLACE:
+        case BITMAP_MODE_ECI:
+        case BITMAP_MODE_IAFLI:
+        case BITMAP_MODE_IH:
+        case BITMAP_MODE_MRFLI:
+        case BITMAP_MODE_MUCSUFLI:
+        case BITMAP_MODE_MUCSUH:
+        case BITMAP_MODE_MUFLI:
+        case BITMAP_MODE_MUIFLI:
+        case BITMAP_MODE_NUFLI:
+        case BITMAP_MODE_NUIFLI:
+        case BITMAP_MODE_SH:
+        case BITMAP_MODE_SHFLI:
+        case BITMAP_MODE_SHI:
+        case BITMAP_MODE_SHIFLI:
+        case BITMAP_MODE_SHIFXL:
+        case BITMAP_MODE_UFLI:
+        case BITMAP_MODE_UIFLI:
+        case BITMAP_MODE_TRIFLI:
+        case BITMAP_MODE_XFLI:
+        case BITMAP_MODE_XIFLI:
+        case BITMAP_MODE_FLI:
+        case BITMAP_MODE_HCB:
+        case BITMAP_MODE_IFLI:
+        case BITMAP_MODE_MUCSU:
+        case BITMAP_MODE_MCI:
+        case BITMAP_MODE_MEGATEXT:
+        case BITMAP_MODE_PRS:
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    return 0;
+
+}
+
 static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
@@ -3147,6 +3199,41 @@ Variable * vic2_new_images( Environment * _environment, int _frames, int _width,
     result->valueBuffer = buffer;
     result->frameSize = frameSize;
     result->size = size;
+    result->frameCount = _frames;
+    
+    return result;
+
+}
+
+Variable * vic2_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
+
+    int size2 = calculate_sequences_size( _environment, _sequences, _frames, _width, _height, _mode );
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
+    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_SEQUENCE, "(new sequence)" );
+
+    char * buffer = malloc ( size2 );
+    memset( buffer, 0, size2 );
+
+    *(buffer) = _frames;
+    *(buffer+1) = _width;
+    *(buffer+2) = _sequences;
+    for( int i=0; i<(_frames * _sequences); ++i ) {
+        *(buffer+3+(i*frameSize)) = ( _width & 0xff );
+        *(buffer+3+(i*frameSize)+1) = ( ( _width >> 8 ) & 0xff );
+        *(buffer+3+(i*frameSize)+2) = ( _height & 0xff );
+    }
+
+    result->valueBuffer = buffer;
+    result->frameSize = frameSize;
+    result->size = size2;
     result->frameCount = _frames;
     
     return result;

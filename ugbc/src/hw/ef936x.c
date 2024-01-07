@@ -927,6 +927,25 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
 
 }
 
+static int calculate_sequence_size( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case BITMAP_MODE_40_COLUMN:
+            return 3 + ( ( 3 + 2 * ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;
+        case BITMAP_MODE_BITMAP_4:
+            return 3 + ( ( 3 + 2 * ( ( _width >> 3 ) * _height ) /*+ 8*/ ) * _frames ) * _sequences;
+        case BITMAP_MODE_80_COLUMN:
+        case BITMAP_MODE_BITMAP_16:
+            return 3 + ( ( 3 + 2 * ( ( _width >> 2 ) * _height ) /*+ 32*/ ) * _frames ) * _sequences;
+        case BITMAP_MODE_PAGE:
+            // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+            break;
+    }
+
+    return 0;
+
+}
+
 static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     // ignored on bitmap mode
@@ -1850,6 +1869,39 @@ Variable * ef936x_new_images( Environment * _environment, int _frames, int _widt
     *(buffer+1) = ( _width & 0xff );
     *(buffer+2) = ( _width >> 8 ) & 0xff;
     for( int i=0; i<_frames; ++i ) {
+        *(buffer+3+(i*frameSize)) = ( _width & 0xff );
+        *(buffer+3+(i*frameSize)+1) = ( ( _width >> 8 ) & 0xff );
+        *(buffer+3+(i*frameSize)+2) = ( _height & 0xff );
+    }
+
+    result->valueBuffer = buffer;
+    result->frameSize = frameSize;
+    result->size = size;
+    result->frameCount = _frames;
+
+    return result;
+    
+}
+
+Variable * ef936x_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
+    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_SEQUENCE, "(new sequence)" );
+
+    char * buffer = malloc ( size2 );
+    memset( buffer, 0, size2 );
+
+    *(buffer) = _frames;
+    *(buffer+1) = _width;
+    *(buffer+2) = _sequences;
+    for( int i=0; i<(_frames*_sequences); ++i ) {
         *(buffer+3+(i*frameSize)) = ( _width & 0xff );
         *(buffer+3+(i*frameSize)+1) = ( ( _width >> 8 ) & 0xff );
         *(buffer+3+(i*frameSize)+2) = ( _height & 0xff );

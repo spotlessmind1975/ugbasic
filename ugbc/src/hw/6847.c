@@ -1135,6 +1135,34 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
 
 }
 
+static int calculate_sequence_size( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+        case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+        case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+        case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+        case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+            break;
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+            return 3 + ( ( 2 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+            return 3 + ( ( 2 + ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;
+
+    }
+
+    return 0;
+
+}
+
 static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     // ignored on bitmap mode
@@ -1636,6 +1664,38 @@ Variable * c6847_new_images( Environment * _environment, int _frames, int _width
     *(buffer+1) = ( _width & 0xff );
     *(buffer+2) = ( _width >> 8 ) & 0xff;
     for( int i=0; i<_frames; ++i ) {
+        *(buffer+3+(i*frameSize)) = _width;
+        *(buffer+3+(i*frameSize)+1) = _height;
+    }
+
+    result->valueBuffer = buffer;
+    result->frameSize = frameSize;
+    result->size = size;
+    result->frameCount = _frames;
+    
+    return result;
+
+}
+
+Variable * c6847_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
+    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_SEQUENCE, "(new sequence)" );
+
+    char * buffer = malloc ( size2 );
+    memset( buffer, 0, size2 );
+
+    *(buffer) = _frames;
+    *(buffer+1) = _width;
+    *(buffer+2) = _sequences;
+    for( int i=0; i<(_frames * _sequences); ++i ) {
         *(buffer+3+(i*frameSize)) = _width;
         *(buffer+3+(i*frameSize)+1) = _height;
     }
