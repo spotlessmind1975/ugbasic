@@ -83,7 +83,7 @@ void sequence_storage( Environment * _environment, char * _source_name, char * _
     int height = 0;
     int depth = 0;
 
-    char * lookedFilename = resource_load_asserts( _environment, _filename );
+    char * lookedFilename = resource_load_asserts( _environment, _source_name );
 
     FILE * lookedFileHandle = fopen( lookedFilename, "rb" );
     fseek( lookedFileHandle, 0, SEEK_END );
@@ -93,7 +93,7 @@ void sequence_storage( Environment * _environment, char * _source_name, char * _
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
 
     if ( !source ) {
-        CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _filename );
+        CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _source_name );
     }
 
     if ( width % _frame_width ) {
@@ -114,8 +114,6 @@ void sequence_storage( Environment * _environment, char * _source_name, char * _
     int realFramesCount = (hc*wc);
     i = 0;
     di = 1;
-
-    adiline5("LS:%s:%s:%2.2x:%2.2x:%lx", _filename, lookedFilename, realFramesCount, wc, fileSize );
 
     if( _flags & FLAG_FLIP_X ) {
         source = image_flip_x( _environment, source, width, height, depth );
@@ -139,8 +137,6 @@ void sequence_storage( Environment * _environment, char * _source_name, char * _
 
     bufferSize += 3;
 
-    adiline1("LS2:%x", bufferSize );
-
     char * buffer = malloc( bufferSize );
     char * ptr = buffer;
     ptr[0] = wc*1;
@@ -148,14 +144,14 @@ void sequence_storage( Environment * _environment, char * _source_name, char * _
     ptr[2] = hc;
 
     if ( ( result[0]->size * wc ) > 0xffff ) {
-        CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _filename );
+        CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _source_name );
     }
 
     final->offsettingFrames = offsetting_size_count( _environment, result[0]->size, wc );
     offsetting_add_variable_reference( _environment, final->offsettingFrames, final, 0 );
 
     if ( ( wc*result[0]->size ) > 0xffff ) {
-        CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _filename );
+        CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _source_name );
     }
 
     final->offsettingSequences = offsetting_size_count( _environment, wc*result[0]->size, hc );
@@ -222,6 +218,6 @@ void sequence_storage( Environment * _environment, char * _source_name, char * _
     _environment->currentFileStorage->size = final->size;
     _environment->currentFileStorage->content = final->valueBuffer;
 
-    variable_delete( _environment, final->name );
+    variable_temporary_remove( _environment, final->name );
     
 }
