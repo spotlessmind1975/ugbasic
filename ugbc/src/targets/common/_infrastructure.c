@@ -8648,7 +8648,7 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
 }
 
 void variable_temporary_remove( Environment * _environment, char * _name ) {
-    
+
     Variable * varLast = NULL;
     if ( _environment->procedureName ) {
         varLast = _environment->tempVariables[_environment->currentProcedure];
@@ -8656,6 +8656,15 @@ void variable_temporary_remove( Environment * _environment, char * _name ) {
         varLast = _environment->tempVariables[0];
     }        
     if ( varLast ) {
+        if ( strcmp( varLast->name, _name ) == 0 ) {
+            if ( _environment->procedureName ) {
+                _environment->tempVariables[_environment->currentProcedure] = varLast->next;
+            } else {
+                _environment->tempVariables[0] = varLast->next;
+            }        
+            return;
+        }
+        
         Variable * previous = varLast;
         varLast = varLast->next;
         while( varLast ) {
