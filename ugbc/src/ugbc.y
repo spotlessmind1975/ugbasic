@@ -8010,11 +8010,17 @@ statement2nc:
   | FILEX const_expr_string AS const_expr_string {
         file_storage( _environment, $2, $4 );
   }
-  | IMAGE const_expr_string {
-        image_storage( _environment, $2, NULL );
+  | IMAGE const_expr_string image_load_flags  using_transparency using_opacity using_background on_bank {
+        image_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $3+$4, $5, $6 );
   }
-  | IMAGE const_expr_string AS const_expr_string {
-        image_storage( _environment, $2, $4 );
+  | IMAGE const_expr_string AS const_expr_string image_load_flags  using_transparency using_opacity using_background on_bank {
+        image_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
+  }
+  | IMAGES const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank {        
+        images_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $5+$6, $7, $8 );
+  }
+  | IMAGES const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank {
+        images_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $7+$8, $9, $10 );
   }
   | ENDSTORAGE {
         end_storage( _environment );

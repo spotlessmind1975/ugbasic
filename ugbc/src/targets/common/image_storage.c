@@ -34,6 +34,7 @@
 
 #include "../../ugbc.h"
 #include "../../libs/stb_image.h"
+#include "../../libs/msc1.h"
 
 /****************************************************************************
  * CODE SECTION 
@@ -72,7 +73,7 @@ lo stesso nome, è possibile indicare un alias (''AS target'').
 @target all
 @verified
 </usermanual> */
-void image_storage( Environment * _environment, char * _source_name, char * _target_name ) {
+void image_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
 
     file_storage( _environment, _source_name, _target_name );
 
@@ -99,11 +100,64 @@ void image_storage( Environment * _environment, char * _source_name, char * _tar
         CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _source_name );
     }
 
+    // If the image has to be post processed, we do it:
+    //  - X FLIP
+    if( _flags & FLAG_FLIP_X ) {
+        source = image_flip_x( _environment, source, width, height, depth );
+    }
+    //  - Y FLIP
+    if( _flags & FLAG_FLIP_Y ) {
+        source = image_flip_y( _environment, source, width, height, depth );
+    }
+
+    // This is a workaround. In a previous release of ugBASIC, we must give
+    // the color index to be used as transparency. If given, we active the
+    // "FLAG TRANSPARENCY" during the conversion.
+    if ( _transparent_color != -1 ) {
+        _flags |= FLAG_TRANSPARENCY;
+    }
+
     // Now we are able to convert the image from the original format to the
     // custom format of the target. This is a time efficient mode to store
     // the image, but not a space efficient (no compression is done).
     // Space efficiency can be applied after, if a bank is present.
-    Variable * result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _environment->currentMode, 0 /* _transparent_color */, 0 /* flags */ );
+    Variable * result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
+
+    if ( _flags & FLAG_COMPRESSED ) {
+
+        // Try to compress the result of image conversion.
+        // This means that the buffer will be compressed using MSC1
+        // algorithm, up to 32 frequent sequences. The original size of
+        // the buffer will be considered as "uncompressed" size.
+        MSC1Compressor * compressor = msc1_create( 32 );
+        result->uncompressedSize = result->size;
+        MemoryBlock * output = msc1_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
+
+        int temporary;
+        MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
+        if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
+            CRITICAL("Compression failed");
+        }
+        msc1_free( compressor );
+
+        // If the compressed memory is greater than the original
+        // size, we discard the compression and we will continue as
+        // usual.
+        if ( result->uncompressedSize < result->size ) {
+            result->size = result->uncompressedSize;
+            result->uncompressedSize = 0;
+            free( output );
+        } 
+        // Otherwise, we can safely replace the original data
+        // buffer with the compressed one.
+        else {
+            free( result->valueBuffer );
+            result->valueBuffer = output;
+        }
+        result->residentAssigned = 1;
+        _environment->maxExpansionBankSize[1] = BANK_SIZE;
+
+    }
 
     _environment->currentFileStorage->size = result->size;
     _environment->currentFileStorage->content = result->valueBuffer;
