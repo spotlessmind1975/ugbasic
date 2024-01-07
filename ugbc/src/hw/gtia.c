@@ -2940,7 +2940,7 @@ Variable * gtia_new_sequence( Environment * _environment, int _sequences, int _f
 
     result->valueBuffer = buffer;
     result->frameSize = frameSize;
-    result->size = size;
+    result->size = size2;
     result->frameCount = _frames;
 
     return result;
