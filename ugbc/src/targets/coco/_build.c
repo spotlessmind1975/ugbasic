@@ -94,6 +94,14 @@ void generate_bin( Environment * _environment ) {
 
 void generate_dsk( Environment * _environment ) {
 
+    char originalBinaryFile[MAX_TEMPORARY_STORAGE];
+
+    strcpy( originalBinaryFile, _environment->exeFileName );
+    char * p = strstr( originalBinaryFile, ".dsk" );
+    if ( p ) {
+        strcpy( p, ".bin" );
+    }
+
     Storage * storage = _environment->storage;
 
     char temporaryPath[MAX_TEMPORARY_STORAGE];
@@ -329,16 +337,46 @@ void generate_dsk( Environment * _environment ) {
         int i=0;
         while( storage ) {
             FileStorage * fileStorage = storage->files;
-            while( fileStorage ) {
+            while( fileStorage ) {                
+                int size;
+                char * buffer;
+
+                if ( fileStorage->content && fileStorage->size ) {
+                    size = fileStorage->size + 2;
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
+                    memcpy( buffer, fileStorage->content, fileStorage->size );
+                } else {
+                    FILE * file = fopen( fileStorage->sourceName, "rb" );
+                    if ( !file ) {
+                        CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                    }
+                    fseek( file, 0, SEEK_END );
+                    size = ftell( file );
+                    fseek( file, 0, SEEK_SET );
+                    buffer = malloc( size + 2 );
+                    memset( buffer, 0, size + 2 );
+                    (void)!fread( buffer, size, 1, file );
+                    fclose( file );
+                }
+                char dataFilename[MAX_TEMPORARY_STORAGE];
+                sprintf( dataFilename, "%s%s", temporaryPath, fileStorage->targetName );
+                FILE * fileOut = fopen( dataFilename, "wb" );
+                if ( fileOut ) {
+                    fwrite( buffer, 1, size, fileOut );
+                    fclose(fileOut );
+                }
                 sprintf( commandLine, "\"%s\" copy -1 -b \"%s\" \"%s,%s\"",
                     executableName, 
-                    fileStorage->sourceName, 
+                    dataFilename, 
                     _environment->exeFileName,
                     fileStorage->targetName );
                 if ( system_call( _environment,  commandLine ) ) {
                     printf("The compilation of assembly program failed.\n\n"); 
                     printf("Please use option '-I' to install chain tool.\n\n");
                 };
+
+                remove( dataFilename );
                 fileStorage = fileStorage->next;
             }
 
@@ -380,6 +418,8 @@ void generate_dsk( Environment * _environment ) {
         }
 
     }
+
+    remove( originalBinaryFile );
 
 }
 
