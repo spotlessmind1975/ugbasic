@@ -8022,6 +8022,13 @@ statement2nc:
   | IMAGES const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank {
         images_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $7+$8, $9, $10 );
   }
+  | SEQUENCE const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {
+        sequence_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 );
+  }
+  | SEQUENCE const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {        
+        sequence_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $6, $8, $10, $11+$12, $13, $14 );
+  }
+
   | ENDSTORAGE {
         end_storage( _environment );
   }
