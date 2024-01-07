@@ -344,7 +344,7 @@ void coco3_timer_set_address( Environment * _environment, char * _timer, char * 
 
 void coco3_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
-    deploy( dload, src_hw_coco3_dload_asm);
+    deploy_preferred( dload, src_hw_coco3_dload_asm);
 
     MAKE_LABEL
     

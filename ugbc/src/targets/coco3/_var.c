@@ -513,6 +513,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( textEncodedAtText, src_hw_gime_text_at_text_asm );
     deploy_inplace_preferred( textEncodedAtGraphic, src_hw_gime_text_at_graphic_asm );
     deploy_inplace_preferred( plot, src_hw_gime_plot_asm );
+    deploy_inplace_preferred( dload, src_hw_coco3_dload_asm);
     
     // Moved here for banking reasons.
     if ( ! _environment->deployed.timer ) {

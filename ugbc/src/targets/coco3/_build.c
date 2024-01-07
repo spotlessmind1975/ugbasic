@@ -346,8 +346,8 @@ void generate_dsk( Environment * _environment ) {
                     fseek( file, 0, SEEK_END );
                     size = ftell( file );
                     fseek( file, 0, SEEK_SET );
-                    buffer = malloc( size + 2 );
-                    memset( buffer, 0, size + 2 );
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
                     (void)!fread( buffer, size, 1, file );
                     fclose( file );
                 }
@@ -360,7 +360,7 @@ void generate_dsk( Environment * _environment ) {
                 }
                 sprintf( commandLine, "\"%s\" copy -1 -b \"%s\" \"%s,%s\"",
                     executableName, 
-                    fileStorage->sourceName, 
+                    dataFilename, 
                     _environment->exeFileName,
                     fileStorage->targetName );
                 if ( system_call( _environment,  commandLine ) ) {
