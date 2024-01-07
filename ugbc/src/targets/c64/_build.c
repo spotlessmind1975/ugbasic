@@ -127,17 +127,27 @@ void generate_d64( Environment * _environment ) {
             }
             FileStorage * fileStorage = storage->files;
             while( fileStorage ) {
-                FILE * file = fopen( fileStorage->sourceName, "rb" );
-                if ( !file ) {
-                    CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
-                }
-                fseek( file, 0, SEEK_END );
-                int size = ftell( file );
-                fseek( file, 0, SEEK_SET );
+                int size;
                 char * buffer;
-                buffer = malloc( size );
-                (void)!fread( &buffer[0], size, 1, file );
-                fclose( file );
+                if ( fileStorage->content && fileStorage->size ) {
+                    size = fileStorage->size + 2;
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
+                    memcpy( &buffer[2], fileStorage->content, fileStorage->size );
+                } else {
+                    FILE * file = fopen( fileStorage->sourceName, "rb" );
+                    if ( !file ) {
+                        CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                    }
+                    fseek( file, 0, SEEK_END );
+                    size = ftell( file );
+                    fseek( file, 0, SEEK_SET );
+                    buffer = malloc( size + 2 );
+                    memset( buffer, 0, size + 2 );
+                    (void)!fread( &buffer[2], size, 1, file );
+                    fclose( file );
+                    size += 2;
+                }
                 d64_write_file( handle, fileStorage->targetName, PRG, buffer, size );
                 fileStorage = fileStorage->next;
             }
