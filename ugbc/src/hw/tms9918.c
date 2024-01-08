@@ -2315,7 +2315,7 @@ Variable * tms9918_new_sequence( Environment * _environment, int _sequences, int
 
     result->valueBuffer = buffer;
     result->frameSize = frameSize;
-    result->size = size;
+    result->size = size2;
     result->frameCount = _frames;
 
     return result;

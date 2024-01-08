@@ -288,6 +288,14 @@ void generate_dsk( Environment * _environment ) {
 
     Storage * storage = _environment->storage;
 
+    char pipes[256];
+
+    #ifdef _WIN32
+        strcpy( pipes, ">nul 2>nul");
+    #else
+        strcpy( pipes, ">/dev/null 2>/dev/null");
+    #endif
+
     char temporaryPath[MAX_TEMPORARY_STORAGE];
     strcpy( temporaryPath, _environment->temporaryPath );
     strcat( temporaryPath, " " );
@@ -307,6 +315,13 @@ void generate_dsk( Environment * _environment ) {
     char binaryName2[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
     char diskToolsExecutableName[MAX_TEMPORARY_STORAGE];
+
+    #ifdef _WIN32
+        sprintf( commandLine, "del /f /q %s*.* %s", temporaryPath, pipes );
+    #else
+        sprintf( commandLine, "rm %s* %s", temporaryPath, pipes );
+    #endif
+        system_call( _environment, commandLine );
 
     char * p;
 
@@ -328,16 +343,6 @@ void generate_dsk( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
 
-    char pipes[256];
-
-    // #ifdef _WIN32
-    //     strcpy( pipes, ">nul 2>nul");
-    // #else
-    //     strcpy( pipes, ">/dev/null 2>/dev/null");
-    // #endif
-
-    strcpy( pipes, "" );
-
     sprintf( commandLine, "\"%s\" +msx -b \"%s\" -o \"%s\" --org 33024 %s",
         executableName,
         binaryName,
@@ -358,8 +363,6 @@ void generate_dsk( Environment * _environment ) {
         --p;
         strcat( p, ".bin");
     }
-
-    printf( "%s -> %s\n\n", binaryName2, binaryName );
 
     rename( binaryName2, binaryName );
 
@@ -411,18 +414,28 @@ void generate_dsk( Environment * _environment ) {
             additionalFiles = NULL;
             FileStorage * fileStorage = storage->files;
             while( fileStorage ) {
-                FILE * file = fopen( fileStorage->sourceName, "rb" );
-                if ( !file ) {
-                    CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
-                }
-                fseek( file, 0, SEEK_END );
-                int size = ftell( file );
-                fseek( file, 0, SEEK_SET );
+                int size;
                 char * buffer;
-                buffer = malloc( size );
-                (void)!fread( &buffer[0], size, 1, file );
-                fclose( file );
-                char dataFilename[8*MAX_TEMPORARY_STORAGE];
+
+                if ( fileStorage->content && fileStorage->size ) {
+                    size = fileStorage->size + 2;
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
+                    memcpy( buffer, fileStorage->content, fileStorage->size );
+                } else {
+                    FILE * file = fopen( fileStorage->sourceName, "rb" );
+                    if ( !file ) {
+                        CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                    }
+                    fseek( file, 0, SEEK_END );
+                    size = ftell( file );
+                    fseek( file, 0, SEEK_SET );
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
+                    (void)!fread( buffer, size, 1, file );
+                    fclose( file );
+                }
+                char dataFilename[MAX_TEMPORARY_STORAGE];
                 sprintf( dataFilename, "%s%s", temporaryPath, fileStorage->targetName );
                 FILE * fileOut = fopen( dataFilename, "wb" );
                 if ( fileOut ) {
@@ -482,7 +495,7 @@ void generate_dsk( Environment * _environment ) {
             #else
                 sprintf( commandLine, "rm %s* %s", temporaryPath, pipes );
             #endif
-                // system_call( _environment, commandLine );
+                system_call( _environment, commandLine );
 
             }
 
@@ -490,7 +503,7 @@ void generate_dsk( Environment * _environment ) {
 
     }
 
-    // remove( binaryName );
+    remove( binaryName );
 
 }
 
