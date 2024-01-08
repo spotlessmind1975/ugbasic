@@ -356,8 +356,9 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
 
     if ( !storage ) {
 
-        sprintf( commandLine, "\"%s\" +cpc --org 256 --exec 256 --disk -b \"%s\" -o \"%s\" %s",
+        sprintf( commandLine, "\"%s\" +cpc --org 256 --exec 256 --disk --blockname \"%s\" -b \"%s\" -o \"%s\" %s",
             executableName,
+            basename(binaryName),
             binaryName,
             diskName,
             pipes );
@@ -377,18 +378,28 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
             additionalFiles = NULL;
             FileStorage * fileStorage = storage->files;
             while( fileStorage ) {
-                FILE * file = fopen( fileStorage->sourceName, "rb" );
-                if ( !file ) {
-                    CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
-                }
-                fseek( file, 0, SEEK_END );
-                int size = ftell( file );
-                fseek( file, 0, SEEK_SET );
+                int size;
                 char * buffer;
-                buffer = malloc( size );
-                (void)!fread( &buffer[0], size, 1, file );
-                fclose( file );
-                char dataFilename[8*MAX_TEMPORARY_STORAGE];
+
+                if ( fileStorage->content && fileStorage->size ) {
+                    size = fileStorage->size + 2;
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
+                    memcpy( buffer, fileStorage->content, fileStorage->size );
+                } else {
+                    FILE * file = fopen( fileStorage->sourceName, "rb" );
+                    if ( !file ) {
+                        CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                    }
+                    fseek( file, 0, SEEK_END );
+                    size = ftell( file );
+                    fseek( file, 0, SEEK_SET );
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
+                    (void)!fread( buffer, size, 1, file );
+                    fclose( file );
+                }
+                char dataFilename[MAX_TEMPORARY_STORAGE];
                 sprintf( dataFilename, "%s%s", temporaryPath, fileStorage->targetName );
                 FILE * fileOut = fopen( dataFilename, "wb" );
                 if ( fileOut ) {
@@ -405,9 +416,10 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
                 fileStorage = fileStorage->next;
             }
 
-            sprintf( commandLine, "\"%s\" +cpc --afile %s --org 256 --exec 256 --disk -b \"%s\" -o \"%s\" %s",
+            sprintf( commandLine, "\"%s\" +cpc --afile %s --org 256 --exec 256 --disk --blockname \"%s\" -b \"%s\" -o \"%s\" %s",
                 executableName,
                 additionalFiles,
+                basename( binaryName ),
                 binaryName,
                 diskName,
                 pipes );

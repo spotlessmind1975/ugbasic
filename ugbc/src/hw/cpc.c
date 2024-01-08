@@ -1135,6 +1135,28 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
 
 }
 
+static int calculate_sequence_size( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_GRAPHIC0:
+
+            return 3 + ( ( 3 + ( ( _width >> 1 ) * _height ) + 16 ) * _frames ) * _sequences;
+
+        case BITMAP_MODE_GRAPHIC1:
+        case BITMAP_MODE_GRAPHIC3:
+
+            return 3 + ( ( 3 + ( ( _width >> 2 ) * _height ) + 4 ) * _frames ) * _sequences;
+
+        case BITMAP_MODE_GRAPHIC2:
+
+            return 3 + ( ( 3 + ( ( _width >> 3 ) * _height ) + 2 ) * _frames ) * _sequences;
+    }
+
+    return 0;
+
+}
+
 static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     // ignored on bitmap mode
@@ -2003,7 +2025,7 @@ Variable * cpc_new_sequence( Environment * _environment, int _sequences, int _fr
 
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
 
-    int size2 = calculate_sequence_size( _environment, _sequences _frames, _width, _height, _mode );
+    int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
     int frameSize = calculate_image_size( _environment, _width, _height, _mode );
 
@@ -2027,7 +2049,7 @@ Variable * cpc_new_sequence( Environment * _environment, int _sequences, int _fr
 
     result->valueBuffer = buffer;
     result->frameSize = frameSize;
-    result->size = size;
+    result->size = size2;
     result->frameCount = _frames;
 
     return result;

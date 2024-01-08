@@ -61,7 +61,7 @@ void target_finalization( Environment * _environment ) {
     // outhead0("endif"); 
     // outline0("RET");
 
-    // outhead0("CODEEND:");
+    outhead0("CODEEND:");
 
 }
 
