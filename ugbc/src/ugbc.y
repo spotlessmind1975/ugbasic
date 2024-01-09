@@ -8031,7 +8031,9 @@ statement2nc:
   | SEQUENCE const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {        
         sequence_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $6, $8, $10, $11+$12, $13, $14 );
   }
-
+  | MUSIC const_expr_string AS const_expr_string on_bank {
+        music_storage( _environment, $2, $4, $5 );
+  }
   | ENDSTORAGE {
         end_storage( _environment );
   }

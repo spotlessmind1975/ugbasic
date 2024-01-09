@@ -3980,6 +3980,8 @@ void                    mmove_memory_video( Environment * _environment, char * _
 void                    mmove_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
 void                    move_tile( Environment * _environment, char * _tile, char * _x, char * _y );
 Variable *              music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
+Variable *              music_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
+void                    music_storage( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 void                    music_var( Environment * _environment, char * _music, int _loop );
 
 //----------------------------------------------------------------------------
