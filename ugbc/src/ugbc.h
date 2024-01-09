@@ -3993,6 +3993,7 @@ void                    next_raster_at_with( Environment * _environment, int _at
 void                    next_raster_at_with_var( Environment * _environment, char * _var, char * _with );
 Variable *              new_image( Environment * _environment, int _width, int _height, int _mode );
 Variable *              new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
+Variable *              new_music( Environment * _environment, int _size );
 Variable *              new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode );
 
 //----------------------------------------------------------------------------

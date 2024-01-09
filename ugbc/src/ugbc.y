@@ -2473,6 +2473,9 @@ exponential:
     | NEW SEQUENCE OP const_expr OP_COMMA const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
         $$ = new_sequence( _environment, $4, $6, $8, $10, ((struct _Environment *)_environment)->currentMode )->name;
       }
+    | NEW MUSIC OP const_expr CP {        
+        $$ = new_music( _environment, $4 )->name;
+    }
     | LOAD OP String CP on_bank load_flags {
         $$ = load( _environment, $3, NULL, 0, $5, $6 )->name;
       }
