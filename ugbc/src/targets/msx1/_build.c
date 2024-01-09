@@ -418,7 +418,7 @@ void generate_dsk( Environment * _environment ) {
                 char * buffer;
 
                 if ( fileStorage->content && fileStorage->size ) {
-                    size = fileStorage->size + 2;
+                    size = fileStorage->size;
                     buffer = malloc( size );
                     memset( buffer, 0, size );
                     memcpy( buffer, fileStorage->content, fileStorage->size );
