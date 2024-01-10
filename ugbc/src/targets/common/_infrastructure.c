@@ -10737,3 +10737,40 @@ char * find_last_path_separator( char * _path ) {
 
 }
 
+void prepare_variable_storage( Environment * _environment, char * _name, Variable * _source ) {
+
+    Variable * v = NULL;
+    
+    if ( variable_exists( _environment, _name ) ) {
+        v = variable_retrieve( _environment, _name );
+        if ( v->type != _source->type ) {
+            CRITICAL_CANNOT_STORE_FILE_ON_VARIABLE_OF_DIFFERENT_TYPE( _name );
+        }
+    } else {
+        v = variable_define( _environment, _name,  _source->type, 0 );
+    }
+
+    int currentSize = v->size;
+    
+    variable_direct_assign( _environment, v->name, _source->name );
+
+    v->size = currentSize;
+
+    FileStorage * fileStorage = _environment->currentFileStorage;
+
+    if ( ! fileStorage ) {
+        CRITICAL_MISSING_FILE_STORAGE( _name );
+    }   
+
+    if ( v->size < fileStorage->size ) {
+        if ( v->valueBuffer ) {
+            v->valueBuffer = malloc( fileStorage->size );
+        } else {
+            v->valueBuffer = malloc( fileStorage->size );
+        }
+        v->size = fileStorage->size;
+        memset( v->valueBuffer, 0, v->size );
+    }
+
+}
+

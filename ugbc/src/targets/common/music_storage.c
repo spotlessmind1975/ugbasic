@@ -389,7 +389,7 @@ lo stesso nome, è possibile indicare un alias (''AS target'').
 
 @target all
 </usermanual> */
-void music_storage( Environment * _environment, char * _source_name, char * _target_name, int _bank_expansion ) {
+Variable * music_storage( Environment * _environment, char * _source_name, char * _target_name, int _bank_expansion ) {
 
     file_storage( _environment, _source_name, _target_name );
 
@@ -398,6 +398,6 @@ void music_storage( Environment * _environment, char * _source_name, char * _tar
     _environment->currentFileStorage->size = result->size;
     _environment->currentFileStorage->content = result->valueBuffer;
 
-    variable_temporary_remove( _environment, result->name );
+    return result;
 
 }

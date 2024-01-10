@@ -158,6 +158,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> line_mode box_mode put_action
 %type <string> timer_number timer_number_comma
 %type <string> dload_from_offset dload_to_address dload_size_size
+%type <string> to_variable
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -7460,6 +7461,14 @@ dload_definition :
         dload( _environment, $1, $2, $3, $4 );
     };
 
+to_variable : 
+    {
+        $$ = NULL;
+    }
+    | TO Identifier {
+        $$ = $2;
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -8016,26 +8025,54 @@ statement2nc:
   | FILEX const_expr_string AS const_expr_string {
         file_storage( _environment, $2, $4 );
   }
-  | IMAGE const_expr_string image_load_flags  using_transparency using_opacity using_background on_bank {
-        image_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $3+$4, $5, $6 );
+  | IMAGE const_expr_string image_load_flags using_transparency using_opacity using_background on_bank to_variable {
+        Variable * v = image_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $3+$4, $5, $6 );
+        if ( $8 ) {
+            prepare_variable_storage( _environment, $8, v );
+        } 
+        variable_temporary_remove( _environment, v->name );
   }
-  | IMAGE const_expr_string AS const_expr_string image_load_flags  using_transparency using_opacity using_background on_bank {
-        image_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
+  | IMAGE const_expr_string AS const_expr_string image_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+        Variable * v = image_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
+        if ( $10 ) {
+            prepare_variable_storage( _environment, $10, v );
+        }
+        variable_temporary_remove( _environment, v->name );
   }
-  | IMAGES const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank {        
-        images_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $5+$6, $7, $8 );
+  | IMAGES const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+        Variable * v = images_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $5+$6, $7, $8 );
+        if ( $9 ) {
+            prepare_variable_storage( _environment, $9, v );
+        }
+        variable_temporary_remove( _environment, v->name );
   }
-  | IMAGES const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank {
-        images_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $7+$8, $9, $10 );
+  | IMAGES const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+        Variable * v = images_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $7+$8, $9, $10 );
+        if ( $11 ) {
+            prepare_variable_storage( _environment, $11, v );
+        }
+        variable_temporary_remove( _environment, v->name );
   }
-  | SEQUENCE const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {
-        sequence_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 );
+  | SEQUENCE const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank to_variable{
+        Variable * v = sequence_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 );
+        if ( $17 ) {
+            prepare_variable_storage( _environment, $17, v );
+        }
+        variable_temporary_remove( _environment, v->name );
   }
-  | SEQUENCE const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {        
-        sequence_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $6, $8, $10, $11+$12, $13, $14 );
+  | SEQUENCE const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+        Variable * v = sequence_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $6, $8, $10, $11+$12, $13, $14 );
+        if ( $15 ) {
+            prepare_variable_storage( _environment, $15, v );
+        }
+        variable_temporary_remove( _environment, v->name );
   }
-  | MUSIC const_expr_string AS const_expr_string on_bank {
-        music_storage( _environment, $2, $4, $5 );
+  | MUSIC const_expr_string AS const_expr_string on_bank to_variable {
+        Variable * v = music_storage( _environment, $2, $4, $5 );
+        if ( $6 ) {
+            prepare_variable_storage( _environment, $6, v );
+        }
+        variable_temporary_remove( _environment, v->name );
   }
   | ENDSTORAGE {
         end_storage( _environment );

@@ -1338,6 +1338,7 @@ typedef struct _Deployed {
 
     int vbl;
     int joystick;
+    int keyboard;
     int sprite;
     int sqr;
     int back;
@@ -2710,6 +2711,8 @@ typedef struct _Environment {
 #define CRITICAL_DLOAD_MISSING_ADDRESS(v) CRITICAL2("E245 - destination address for DLOAD is missing", v );
 #define CRITICAL_DLOAD_MISSING_SIZE(v) CRITICAL2("E246 - size for DLOAD is missing", v );
 #define CRITICAL_STORAGE_NOT_AVAILABLE() CRITICAL("E247 - the BEGIN STORAGE keyword is not available with this z88dk release" );
+#define CRITICAL_CANNOT_STORE_FILE_ON_VARIABLE_OF_DIFFERENT_TYPE(v) CRITICAL("E248 - cannot store file on different type variable" );
+#define CRITICAL_MISSING_FILE_STORAGE(v) CRITICAL("E249 - missing file storage" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3918,8 +3921,8 @@ RGBi *                  image_nearest_system_color( RGBi * _color );
 char *                  image_roll_x_left( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_x_right( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_y_down( Environment * _environment, char * _source, int _width, int _height );
-void                    image_storage( Environment * _environment, char * _source_name, char *_target_name, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
-void                    images_storage( Environment * _environment, char * _source_name, char *_target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
+Variable *              image_storage( Environment * _environment, char * _source_name, char *_target_name, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
+Variable *              images_storage( Environment * _environment, char * _source_name, char *_target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              in_var( Environment * _environment, char * _port );
 void                    ink( Environment * _environment, char * _expression );
@@ -3981,7 +3984,7 @@ void                    mmove_video_memory( Environment * _environment, char * _
 void                    move_tile( Environment * _environment, char * _tile, char * _x, char * _y );
 Variable *              music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 Variable *              music_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
-void                    music_storage( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
+Variable *              music_storage( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 void                    music_var( Environment * _environment, char * _music, int _loop );
 
 //----------------------------------------------------------------------------
@@ -4052,6 +4055,7 @@ void                    poke_var( Environment * _environment, char * _address, c
 void                    pop( Environment * _environment );
 Variable *              powering( Environment * _environment, char * _source, char * _dest );
 TileDescriptors *       precalculate_tile_descriptors_for_font( char * _fontData, int _fontSize );
+void                    prepare_variable_storage( Environment * _environment, char * _name, Variable * _variable );
 void                    print( Environment * _environment, char * _text, int _new_line );
 void                    print_buffer( Environment * _environment, char * _buffer, int _new_line, int _printable );
 void                    print_newline( Environment * _environment );
@@ -4127,7 +4131,7 @@ void                    screen_vertical_scroll_var( Environment * _environment, 
 void                    scroll( Environment * _environment, int _dx, int _dy );
 void                    select_case( Environment * _environment, char * _expression );
 Variable *              sequence_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
-void                    sequence_storage( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
+Variable *              sequence_storage( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 void                    shoot( Environment * _environment, int _channels );

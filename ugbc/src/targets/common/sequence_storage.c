@@ -73,7 +73,7 @@ lo stesso nome, è possibile indicare un alias (''AS target'').
 @target all
 @verified
 </usermanual> */
-void sequence_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
+Variable * sequence_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
 
     file_storage( _environment, _source_name, _target_name );
 
@@ -218,6 +218,6 @@ void sequence_storage( Environment * _environment, char * _source_name, char * _
     _environment->currentFileStorage->size = final->size;
     _environment->currentFileStorage->content = final->valueBuffer;
 
-    variable_temporary_remove( _environment, final->name );
+    return final;
     
 }
