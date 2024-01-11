@@ -10772,5 +10772,7 @@ void prepare_variable_storage( Environment * _environment, char * _name, Variabl
         memset( v->valueBuffer, 0, v->size );
     }
 
+    v->onStorage = 1;
+
 }
 

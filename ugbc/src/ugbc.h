@@ -4221,6 +4221,7 @@ void                    tiles_at_var( Environment * _environment, char * _addres
 Variable *              tilemap_index_vars( Environment * _environment, char * _tilemap, char * _column, char * _row, char * _layer );
 Variable *              tilemap_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              tileset_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
+Variable *              tilemap_storage( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              tileset_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              tileset_of_vars( Environment * _environment, char * _tilemap );
 

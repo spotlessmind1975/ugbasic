@@ -2516,7 +2516,6 @@ exponential:
     | load_tilemap OP String CP images_load_flags using_transparency using_opacity using_background on_bank {
         $$ = tilemap_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
       }
-
     | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank {
         $$ = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
       }
@@ -8082,6 +8081,20 @@ statement2nc:
   }
   | TILESET const_expr_string AS const_expr_string images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
         Variable * v = tileset_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
+        if ( $10 ) {
+            prepare_variable_storage( _environment, $10, v );
+        }
+        variable_temporary_remove( _environment, v->name );
+  }
+  | TILEMAP const_expr_string images_load_flags using_transparency using_opacity using_background on_bank to_variable {
+        Variable * v = tilemap_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $4+$5, $6, $7 );
+        if ( $8 ) {
+            prepare_variable_storage( _environment, $8, v );
+        }
+        variable_temporary_remove( _environment, v->name );
+  }
+  | TILEMAP const_expr_string AS const_expr_string images_load_flags using_transparency using_opacity using_background on_bank to_variable {
+        Variable * v = tilemap_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
         if ( $10 ) {
             prepare_variable_storage( _environment, $10, v );
         }

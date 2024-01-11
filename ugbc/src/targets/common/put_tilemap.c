@@ -333,12 +333,24 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     if ( ptilemap->type != VT_TILEMAP ) {
         CRITICAL_CANNOT_PUT_TILEMAP_FOR_NON_TILEMAP( _tilemap );
     }
-    Variable * vtilemap = variable_retrieve( _environment, "puttilemap__tilemap" );
-    cpu_addressof_16bit( _environment, ptilemap->realName, vtilemap->realName );
 
-    Variable * ptileset = variable_retrieve( _environment, ptilemap->tileset->name );
+    Variable * vtilemap = variable_retrieve( _environment, "puttilemap__tilemap" );
+    if ( ptilemap->onStorage ) {
+        cpu_addressof_16bit( _environment, ptilemap->realName, vtilemap->realName );
+        cpu_math_add_16bit_const( _environment, vtilemap->realName, 15, vtilemap->realName );
+    } else {
+        cpu_addressof_16bit( _environment, ptilemap->realName, vtilemap->realName );
+    }
+
     Variable * vtileset = variable_retrieve( _environment, "puttilemap__tileset" );
-    cpu_addressof_16bit( _environment, ptileset->realName, vtileset->realName );
+    if ( ptilemap->onStorage ) {
+        cpu_addressof_16bit( _environment, ptilemap->realName, vtileset->realName );
+        cpu_peekw( _environment, vtileset->realName, vtileset->realName );
+        cpu_math_add_16bit( _environment, vtilemap->realName, vtileset->realName, vtileset->realName );
+    } else {
+        Variable * ptileset = variable_retrieve( _environment, ptilemap->tileset->name );
+        cpu_addressof_16bit( _environment, ptileset->realName, vtileset->realName );
+    }
 
     Variable * vdx = variable_retrieve( _environment, "puttilemap__dx" );
     if ( _dx ) {
@@ -375,42 +387,98 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         variable_store( _environment, vpadFrame->name, 0 );
     }
 
-    int sizeConst = ptilemap->mapWidth * ptilemap->mapHeight;
+    Variable * temporaryAddress = variable_temporary( _environment, VT_ADDRESS, "(temp)");
+
+    int sizeConst;
     Variable * vsize = variable_retrieve( _environment, "puttilemap__size" );
-    variable_store( _environment, vsize->name, sizeConst );
+    if ( ptilemap->onStorage ) {
+        cpu_addressof_16bit( _environment, ptilemap->realName, temporaryAddress->realName );
+        cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 5, temporaryAddress->realName );
+        cpu_peekw( _environment, temporaryAddress->realName, vsize->realName );
+    } else {
+        sizeConst = ptilemap->mapWidth * ptilemap->mapHeight;
+        variable_store( _environment, vsize->name, sizeConst );
+    }
 
-    int screenWidthAsTilesConst = ( _environment->screenWidth / ptileset->frameWidth );
-    int screenHeightAsTilesConst = ( _environment->screenHeight / ptileset->frameHeight );
-    // int deltaFrameRow = tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0;
-    int deltaFrameConst = ptilemap->mapWidth > screenWidthAsTilesConst ? ( ptilemap->mapWidth - screenWidthAsTilesConst ) : 0;
+    int screenWidthAsTilesConst = 0;
+    int screenHeightAsTilesConst = 0;
+    int deltaFrameConst = 0;
+
     Variable * vdeltaFrameRow = variable_retrieve( _environment, "puttilemap__deltaFrameRow" );
-    variable_store( _environment, vdeltaFrameRow->name, deltaFrameConst );
+    if ( ptilemap->onStorage ) {
+        cpu_addressof_16bit( _environment, ptilemap->realName, temporaryAddress->realName );
+        cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 4, temporaryAddress->realName );
+        cpu_peek( _environment, temporaryAddress->realName, vdeltaFrameRow->realName );
+    } else {
+        screenWidthAsTilesConst = ( _environment->screenWidth / ptilemap->tileset->frameWidth );
+        screenHeightAsTilesConst = ( _environment->screenHeight / ptilemap->tileset->frameHeight );
+        // int deltaFrameRow = tilemap->mapWidth > screenWidthAsTiles ? ( tilemap->mapWidth - screenWidthAsTiles ) : 0;
+        deltaFrameConst = ptilemap->mapWidth > screenWidthAsTilesConst ? ( ptilemap->mapWidth - screenWidthAsTilesConst ) : 0;
+        variable_store( _environment, vdeltaFrameRow->name, deltaFrameConst );
+    }
 
-    int deltaFrameScreenConst = sizeConst - ( ptilemap->mapWidth * screenHeightAsTilesConst );
     Variable * vdeltaFrameScreen = variable_retrieve( _environment, "puttilemap__deltaFrameScreen" );
-    variable_store( _environment, vdeltaFrameScreen->name, deltaFrameScreenConst );
+    if ( ptilemap->onStorage ) {
+        cpu_addressof_16bit( _environment, ptilemap->realName, temporaryAddress->realName );
+        cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 7, temporaryAddress->realName );
+        cpu_peekw( _environment, temporaryAddress->realName, vdeltaFrameScreen->realName );
+    } else {
+        int deltaFrameScreenConst = sizeConst - ( ptilemap->mapWidth * screenHeightAsTilesConst );
+        variable_store( _environment, vdeltaFrameScreen->name, deltaFrameScreenConst );
+    }
 
     Variable * vmapWidth = variable_retrieve( _environment, "puttilemap__mapWidth" );
-    variable_store( _environment, vmapWidth->name, ptilemap->mapWidth );
-
+    if ( ptilemap->onStorage ) {
+        cpu_addressof_16bit( _environment, ptilemap->realName, temporaryAddress->realName );
+        cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 10, temporaryAddress->realName );
+        cpu_peek( _environment, temporaryAddress->realName, vmapWidth->realName );
+    } else {
+        variable_store( _environment, vmapWidth->name, ptilemap->mapWidth );
+    }
+    
     Variable * vframeWidth = variable_retrieve( _environment, "puttilemap__frameWidth" );
-    variable_store( _environment, vframeWidth->name, ptileset->frameWidth );
+    if ( ptilemap->onStorage ) {
+        cpu_addressof_16bit( _environment, ptilemap->realName, temporaryAddress->realName );
+        cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 10, temporaryAddress->realName );
+        cpu_peek( _environment, temporaryAddress->realName, vframeWidth->realName );
+    } else {
+        variable_store( _environment, vframeWidth->name, ptilemap->tileset->frameWidth );
+    }
 
     Variable * vframeHeight = variable_retrieve( _environment, "puttilemap__frameHeight" );
-    variable_store( _environment, vframeHeight->name, ptileset->frameHeight );
+    if ( ptilemap->onStorage ) {
+        cpu_addressof_16bit( _environment, ptilemap->realName, temporaryAddress->realName );
+        cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 11, temporaryAddress->realName );
+        cpu_peek( _environment, temporaryAddress->realName, vframeHeight->realName );
+    } else {
+        variable_store( _environment, vframeHeight->name, ptilemap->tileset->frameHeight );
+    }
 
     Variable * vmapLayers = variable_retrieve( _environment, "puttilemap__mapLayers" );
-    variable_store( _environment, vmapLayers->name, ptilemap->mapLayers );
-
-    if ( _layer ) {
-        variable_store( _environment, vmapLayers->name, 1 );
+    if ( ptilemap->onStorage ) {
+        cpu_addressof_16bit( _environment, ptilemap->realName, temporaryAddress->realName );
+        cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 12, temporaryAddress->realName );
+        cpu_peek( _environment, temporaryAddress->realName, vmapLayers->realName );
     } else {
         variable_store( _environment, vmapLayers->name, ptilemap->mapLayers );
     }
+    
+    if ( _layer ) {
+        variable_store( _environment, vmapLayers->name, 1 );
+    } else {
+        // variable_store( _environment, vmapLayers->name, ptilemap->mapLayers );
+    }
 
-    char labelForTileOffsetFrame[MAX_TEMPORARY_STORAGE]; sprintf( labelForTileOffsetFrame, "%soffsetframe", ptilemap->tileset->realName );
     Variable * voffsetFrameRoutine = variable_retrieve( _environment, "puttilemap__offsetFrameRoutine" );
-    cpu_addressof_16bit( _environment, labelForTileOffsetFrame, voffsetFrameRoutine->realName );
+    if ( ptilemap->onStorage ) {
+        cpu_addressof_16bit( _environment, ptilemap->realName, temporaryAddress->realName );
+        cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 13, temporaryAddress->realName );
+        cpu_peekw( _environment, temporaryAddress->realName, temporaryAddress->realName );
+        cpu_address_table_call( _environment, "EXECOFFSETS", temporaryAddress->realName, voffsetFrameRoutine->realName );
+    } else {
+        char labelForTileOffsetFrame[MAX_TEMPORARY_STORAGE]; sprintf( labelForTileOffsetFrame, "%soffsetframe", ptilemap->tileset->realName );
+        cpu_addressof_16bit( _environment, labelForTileOffsetFrame, voffsetFrameRoutine->realName );
+    }
     
     cpu_call( _environment, "lib_put_tilemap" );
 
