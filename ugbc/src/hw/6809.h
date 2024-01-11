@@ -521,6 +521,10 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_blit_free_register( _environment, _register ) cpu6809_blit_free_register( _environment, _register )
 #define cpu_blit_finalize( _environment ) cpu6809_blit_finalize( _environment )
 
+#define cpu_address_table_build( _environment, _table, _values, _address, _count ) cpu6809_address_table_build( _environment, _table, _values, _address, _count )
+#define cpu_address_table_lookup( _environment, _table, _count ) cpu6809_address_table_lookup( _environment, _table, _count )
+#define cpu_address_table_call( _environment, _table, _value, _address ) cpu6809_address_table_call( _environment, _table,  _value, _address )
+
 #define cpu_float_fast_from_double_to_int_array( _environment, _value, _result ) cpu6809_float_fast_from_double_to_int_array( _environment, _value, _result )
 #define cpu_float_single_from_double_to_int_array( _environment, _value, _result ) cpu6809_float_single_from_double_to_int_array( _environment, _value, _result )
 

@@ -264,6 +264,10 @@ int  cpu6502_blit_alloc_register( Environment * _environment );
 void cpu6502_blit_free_register( Environment * _environment, int _register );
 void cpu6502_blit_finalize( Environment * _environment );
 
+void cpu6502_address_table_build( Environment * _environment, char * _table, int * _values, char *_address[], int _count );
+void cpu6502_address_table_lookup( Environment * _environment, char * _table, int _count );
+void cpu6502_address_table_call( Environment * _environment, char * _table, char * _value, char * _address );
+
 // FAST FP (24 bit)
 
 void cpu6502_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] );
@@ -520,6 +524,10 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_blit_alloc_register( _environment ) cpu6502_blit_alloc_register( _environment )
 #define cpu_blit_free_register( _environment, _register ) cpu6502_blit_free_register( _environment, _register )
 #define cpu_blit_finalize( _environment ) cpu6502_blit_finalize( _environment )
+
+#define cpu_address_table_build( _environment, _table, _values, _address, _count ) cpu6502_address_table_build( _environment, _table, _values, _address, _count )
+#define cpu_address_table_lookup( _environment, _table, _count ) cpu6502_address_table_lookup( _environment, _table, _count )
+#define cpu_address_table_call( _environment, _table, _value, _address ) cpu6502_address_table_call( _environment, _table,  _value, _address )
 
 #define cpu_float_fast_from_double_to_int_array( _environment, _value, _result ) cpu6502_float_fast_from_double_to_int_array( _environment, _value, _result )
 #define cpu_float_single_from_double_to_int_array( _environment, _value, _result ) cpu6502_float_single_from_double_to_int_array( _environment, _value, _result )

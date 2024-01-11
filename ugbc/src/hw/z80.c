@@ -8090,4 +8090,56 @@ void z80_float_single_mod1( Environment * _environment, char * _value, char * _r
 
 }
 
+void z80_address_table_build( Environment * _environment, char * _table, int * _values, char *_address[], int _count ) {
+
+    outhead1("%s:", _table );
+    for( int i=0; i<_count; ++i ) {
+        outline2("DEFW $%4.4x, %s", _values[i], _address[i] );
+    }
+
+}
+
+void cpu6809_lookup_address_table( Environment * _environment, char * _table, int _count ) {
+
+    outhead1("LOOKFOR%s:", _table );
+    if ( _count ) {
+        outline1("LD HL, %s", _table );
+        outline1("LD C, 0" );
+        outhead1("LOOKFOR%sL1:", _table );
+        outline0("LD A, (HL)" );
+        outline0("CP (DE)" );
+        outline1("JR NZ, LOOKFOR%sNEXT3", _table );
+        outline0("INC DE" );
+        outline0("INC HL" );
+        outline0("LD A, (HL)" );
+        outline0("CP (DE)" );
+        outline1("JR NZ, LOOKFOR%sNEXT2", _table );
+        outline0("INC HL" );
+        outline0("LD A, (HL)" );
+        outline0("LD E, A" );
+        outline0("INC HL" );
+        outline0("LD A, (HL)" );
+        outline0("LD D, A" );
+        outline0("RET" );
+        outhead1("LOOKFOR%sNEXT3:", _table );
+        outline0("INC HL" );
+        outhead1("LOOKFOR%sNEXT2:", _table );
+        outline0("INC HL" );
+        outline0("INC HL" );
+        outline0("INC C" );
+        outline0("LD A, C" );
+        outline1("CP #$%4.4x", (_count+1) );
+        outline1("JR NZ, LOOKFOR%sL1", _table );
+    }
+    outline0("RET" );
+
+}
+
+void cpu809_lookup_address_table_call( Environment * _environment, char * _table, char * _value, char * _address ) {
+
+    outline1("LD DE, (%s)", _value );
+    outline1("JSR LOOKFOR%s", _table );
+    outline1("LD (%s), DE", _address );
+
+}
 #endif

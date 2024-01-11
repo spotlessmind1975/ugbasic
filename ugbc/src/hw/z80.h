@@ -266,6 +266,9 @@ int  z80_blit_alloc_register( Environment * _environment );
 void z80_blit_free_register( Environment * _environment, int _register );
 void z80_blit_finalize( Environment * _environment );
 
+void z80_address_table_build( Environment * _environment, char * _table, int * _values, char *_address[], int _count );
+void z80_address_table_lookup( Environment * _environment, char * _table, int _count );
+void z80_address_table_call( Environment * _environment, char * _table, char * _value, char * _address );
 
 // FAST FP (24 bit)
 
@@ -521,6 +524,10 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_blit_alloc_register( _environment ) z80_blit_alloc_register( _environment )
 #define cpu_blit_free_register( _environment, _register ) z80_blit_free_register( _environment, _register )
 #define cpu_blit_finalize( _environment ) z80_blit_finalize( _environment )
+
+#define cpu_address_table_build( _environment, _table, _values, _address, _count ) z80_address_table_build( _environment, _table, _values, _address, _count )
+#define cpu_address_table_lookup( _environment, _table, _count ) z80_address_table_lookup( _environment, _table, _count )
+#define cpu_address_table_call( _environment, _table, _value, _address ) z80_address_table_call( _environment, _table,  _value, _address )
 
 #define cpu_float_fast_from_double_to_int_array( _environment, _value, _result ) z80_float_fast_from_double_to_int_array( _environment, _value, _result )
 #define cpu_float_single_from_double_to_int_array( _environment, _value, _result ) z80_float_single_from_double_to_int_array( _environment, _value, _result )

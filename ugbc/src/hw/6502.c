@@ -7581,4 +7581,63 @@ void cpu6502_float_single_tan( Environment * _environment, char * _angle, char *
 
 }
 
+void cpu6502_address_table_build( Environment * _environment, char * _table, int * _values, char *_address[], int _count ) {
+
+    outhead1("%s:", _table );
+    for( int i=0; i<_count; ++i ) {
+        outline2(".word $%4.4x, %s", _values[i], _address[i] );
+    }
+
+}
+
+void cpu6502_address_table_lookup( Environment * _environment, char * _table, int _count ) {
+
+    outhead1("LOOKFOR%s:", _table );
+    if ( _count ) {
+        outline1("LDA #<%s", _table );
+        outline0("STA MATHPTR2" );
+        outline1("LDA #>%s", _table );
+        outline0("STA MATHPTR2+1" );
+        outline0("LDY #0" );
+        outhead1("LOOKFOR%sL1:", _table );
+        outline0("LDA (MATHPTR2), Y" );
+        outline0("CMP MATHPTR0" );
+        outline1("BNE LOOKFOR%sNEXT3", _table );
+        outline0("INY" );
+        outline0("LDA (MATHPTR2), Y" );
+        outline0("CMP MATHPTR1" );
+        outline1("BNE LOOKFOR%sNEXT2", _table );
+        outline0("INY" );
+        outline0("LDA (MATHPTR2), Y" );
+        outline0("STA MATHPTR0" );
+        outline0("INY" );
+        outline0("LDA (MATHPTR2), Y" );
+        outline0("STA MATHPTR1" );
+        outline0("RTS" );
+        outhead1("LOOKFOR%sNEXT3:", _table );
+        outline0("INY" );
+        outhead1("LOOKFOR%sNEXT2:", _table );
+        outline0("INY" );
+        outline0("INY" );
+        outline1("CPY #$%2.2x", (_count+1) * 4 );
+        outline1("BNE LOOKFOR%sL1", _table );
+    }
+    outline0("RTS" );
+
+}
+
+void cpu6502_address_table_call( Environment * _environment, char * _table, char * _value, char * _address ) {
+
+    outline1("LDA %s", _value );
+    outline0("STA MATHPTR0" );
+    outline1("LDA %s", address_displacement( _environment, _value, "1" ) );
+    outline0("STA MATHPTR1" );
+    outline1("JSR LOOKFOR%s", _table );
+    outline0("LDA MATHPTR0" );
+    outline1("STA %s", _address );
+    outline0("LDA MATHPTR1" );
+    outline1("STA %s", address_displacement( _environment, _address, "1" ) );
+
+}
+
 #endif
