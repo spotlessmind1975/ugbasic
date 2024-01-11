@@ -165,6 +165,10 @@ void z80_addressof_16bit( Environment * _environment, char *_source, char *_dest
 void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char *_destination, int _offset );
 void z80_peek( Environment * _environment, char * _address, char * _target );
 void z80_poke( Environment * _environment, char * _address, char * _value );
+void z80_peekw( Environment * _environment, char * _address, char * _target );
+void z80_pokew( Environment * _environment, char * _address, char * _value );
+void z80_peekd( Environment * _environment, char * _address, char * _target );
+void z80_poked( Environment * _environment, char * _address, char * _value );
 void z80_port_out( Environment * _environment, char * _port, char * _value );
 void z80_random( Environment * _environment, char * _entropy );
 void z80_random_16bit( Environment * _environment, char * _entropy, char * _result );
@@ -413,6 +417,10 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_addressof_16bit( _environment, _source, _destination  ) z80_addressof_16bit( _environment, _source, _destination  )
 #define cpu_peek( _environment,  _address,  _target  ) z80_peek( _environment,  _address,  _target  )
 #define cpu_poke( _environment,  _address,  _value  ) z80_poke( _environment,  _address,  _value  )
+#define cpu_peekw( _environment,  _address,  _target  ) z80_peekw( _environment,  _address,  _target  )
+#define cpu_pokew( _environment,  _address,  _value  ) z80_pokew( _environment,  _address,  _value  )
+#define cpu_peekd( _environment,  _address,  _target  ) z80_peekd( _environment,  _address,  _target  )
+#define cpu_poked( _environment,  _address,  _value  ) z80_poked( _environment,  _address,  _value  )
 #define cpu_random( _environment,  _entropy  ) z80_random( _environment,  _entropy  )
 #define cpu_random_16bit( _environment,  _entropy,  _result  ) z80_random_16bit( _environment,  _entropy,  _result  )
 #define cpu_random_32bit( _environment,  _entropy,  _result  ) z80_random_32bit( _environment,  _entropy,  _result  )

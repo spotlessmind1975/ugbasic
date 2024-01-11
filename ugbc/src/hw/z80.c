@@ -180,6 +180,78 @@ void z80_poke( Environment * _environment, char * _address, char * _source ) {
 
 }
 
+void z80_peekw( Environment * _environment, char * _address, char * _target ) {
+
+    inline( cpu_peek )
+
+        outline1("LD HL, (%s)", _address);
+        outline0("LD A, (HL)");
+        outline1("LD (%s), A", _target);
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline1("LD (%s), A", address_displacement( _environment, _target, "1" ) );
+
+    no_embedded( cpu_peek )
+
+}
+
+void z80_pokew( Environment * _environment, char * _address, char * _source ) {
+
+    inline( cpu_poke )
+
+        outline1("LD A, (%s)", _source);
+        outline1("LD HL, (%s)", _address);
+        outline0("LD (HL), A");
+        outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
+        outline1("LD HL, (%s)", address_displacement( _environment, _address, "1" ) );
+        outline0("LD (HL), A");
+
+    no_embedded( cpu_poke )
+
+}
+
+void z80_peekd( Environment * _environment, char * _address, char * _target ) {
+
+    inline( cpu_peek )
+
+        outline1("LD HL, (%s)", _address);
+        outline0("LD A, (HL)");
+        outline1("LD (%s), A", _target);
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline1("LD (%s), A", address_displacement( _environment, _target, "1" ) );
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline1("LD (%s), A", address_displacement( _environment, _target, "2" ) );
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline1("LD (%s), A", address_displacement( _environment, _target, "3" ) );
+
+    no_embedded( cpu_peek )
+
+}
+
+void z80_poked( Environment * _environment, char * _address, char * _source ) {
+
+    inline( cpu_poke )
+
+        outline1("LD A, (%s)", _source);
+        outline1("LD HL, (%s)", _address);
+        outline0("LD (HL), A");
+        outline1("LD A, (%s)", address_displacement _environment, _source, "1" ) );
+        outline1("LD HL, (%s)", address_displacement _environment, _address, "1" )  );
+        outline0("LD (HL), A");
+        outline1("LD A, (%s)", address_displacement _environment, _source, "2" ) );
+        outline1("LD HL, (%s)", address_displacement _environment, _address, "2" )  );
+        outline0("LD (HL), A");
+        outline1("LD A, (%s)", address_displacement _environment, _source, "3" ) );
+        outline1("LD HL, (%s)", address_displacement _environment, _address, "3" )  );
+        outline0("LD (HL), A");
+
+    no_embedded( cpu_poke )
+
+}
+
 /**
  * @brief <i>Z80</i>: emit code to fill up a memory area
  * 

@@ -160,6 +160,94 @@ void cpu6502_poke( Environment * _environment, char * _address, char * _source )
 
 }
 
+void cpu6502_peekw( Environment * _environment, char * _address, char * _target ) {
+
+    inline( cpu_peek )
+
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s", address_displacement(_environment, _address, "1") );
+        outline0("STA TMPPTR+1");
+        outline0("LDY #0");
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", _target);
+        outline0("INY");
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", address_displacement( _environment, _target, "1" ) );
+
+    no_embedded( cpu_peek );
+
+}
+
+void cpu6502_pokew( Environment * _environment, char * _address, char * _source ) {
+
+    inline( cpu_poke )
+
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s", address_displacement(_environment, _address, "1") );
+        outline0("STA TMPPTR+1");
+        outline0("LDY #0");
+        outline1("LDA %s", _source);
+        outline0("STA (TMPPTR),Y");    
+        outline0("LDY #1");
+        outline1("LDA %s", address_displacement(_environment, _source, "1"));
+        outline0("STA (TMPPTR),Y");    
+
+    no_embedded( cpu_poke );
+
+}
+
+void cpu6502_peekd( Environment * _environment, char * _address, char * _target ) {
+
+    inline( cpu_peek )
+
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s", address_displacement(_environment, _address, "1") );
+        outline0("STA TMPPTR+1");
+        outline0("LDY #0");
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", _target);
+        outline0("INY");
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", address_displacement(_environment, _target, "1") );
+        outline0("INY");
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", address_displacement(_environment, _target, "2") );
+        outline0("INY");
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", address_displacement(_environment, _target, "3") );
+
+    no_embedded( cpu_peek );
+
+}
+
+void cpu6502_poked( Environment * _environment, char * _address, char * _source ) {
+
+    inline( cpu_poke )
+
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s", address_displacement(_environment, _address, "1") );
+        outline0("STA TMPPTR+1");
+        outline0("LDY #0");
+        outline1("LDA %s", _source);
+        outline0("STA (TMPPTR),Y");    
+        outline0("INY");
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
+        outline0("STA (TMPPTR),Y");    
+        outline0("INY");
+        outline1("LDA %s", address_displacement(_environment, _source, "2") );
+        outline0("STA (TMPPTR),Y");    
+        outline0("INY");
+        outline1("LDA %s", address_displacement(_environment, _source, "3") );
+        outline0("STA (TMPPTR),Y");    
+
+    no_embedded( cpu_poke );
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to fill up a memory area
  * 
