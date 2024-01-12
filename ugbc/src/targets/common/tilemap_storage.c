@@ -116,7 +116,7 @@ Variable * tilemap_storage( Environment * _environment, char * _source_name, cha
         strcat( tilesetFileNameWithPath, tileset->source );
         lookedFilename = resource_load_asserts( _environment, tilesetFileNameWithPath );
         Variable * tilesetVar = tileset_load( _environment, lookedFilename, NULL, _mode, _flags, _transparent_color, _background_color, _bank_expansion );
-        // final->tileset->firstGid = tileset->firstgid;
+        tilesetVar->firstGid = tileset->firstgid;
         // tileset = tileset->next;
     // }
 

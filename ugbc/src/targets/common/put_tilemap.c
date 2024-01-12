@@ -430,7 +430,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     Variable * vmapWidth = variable_retrieve( _environment, "puttilemap__mapWidth" );
     if ( ptilemap->onStorage ) {
         cpu_addressof_16bit( _environment, ptilemap->realName, temporaryAddress->realName );
-        cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 10, temporaryAddress->realName );
+        cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 9, temporaryAddress->realName );
         cpu_peek( _environment, temporaryAddress->realName, vmapWidth->realName );
     } else {
         variable_store( _environment, vmapWidth->name, ptilemap->mapWidth );
