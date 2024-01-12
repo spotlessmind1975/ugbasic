@@ -238,14 +238,14 @@ void z80_poked( Environment * _environment, char * _address, char * _source ) {
         outline1("LD A, (%s)", _source);
         outline1("LD HL, (%s)", _address);
         outline0("LD (HL), A");
-        outline1("LD A, (%s)", address_displacement _environment, _source, "1" ) );
-        outline1("LD HL, (%s)", address_displacement _environment, _address, "1" )  );
+        outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
+        outline1("LD HL, (%s)", address_displacement( _environment, _address, "1" )  );
         outline0("LD (HL), A");
-        outline1("LD A, (%s)", address_displacement _environment, _source, "2" ) );
-        outline1("LD HL, (%s)", address_displacement _environment, _address, "2" )  );
+        outline1("LD A, (%s)", address_displacement( _environment, _source, "2" ) );
+        outline1("LD HL, (%s)", address_displacement( _environment, _address, "2" )  );
         outline0("LD (HL), A");
-        outline1("LD A, (%s)", address_displacement _environment, _source, "3" ) );
-        outline1("LD HL, (%s)", address_displacement _environment, _address, "3" )  );
+        outline1("LD A, (%s)", address_displacement( _environment, _source, "3" ) );
+        outline1("LD HL, (%s)", address_displacement( _environment, _address, "3" )  );
         outline0("LD (HL), A");
 
     no_embedded( cpu_poke )
@@ -8099,20 +8099,24 @@ void z80_address_table_build( Environment * _environment, char * _table, int * _
 
 }
 
-void cpu6809_lookup_address_table( Environment * _environment, char * _table, int _count ) {
+void z80_address_table_lookup( Environment * _environment, char * _table, int _count ) {
 
     outhead1("LOOKFOR%s:", _table );
     if ( _count ) {
         outline1("LD HL, %s", _table );
-        outline1("LD C, 0" );
+        outline0("LD C, 0" );
         outhead1("LOOKFOR%sL1:", _table );
         outline0("LD A, (HL)" );
-        outline0("CP (DE)" );
+        outline0("LD B, A" );
+        outline0("LD A, (DE)" );
+        outline0("CP A" );
         outline1("JR NZ, LOOKFOR%sNEXT3", _table );
         outline0("INC DE" );
         outline0("INC HL" );
         outline0("LD A, (HL)" );
-        outline0("CP (DE)" );
+        outline0("LD B, A" );
+        outline0("LD A, (DE)" );
+        outline0("CP B" );
         outline1("JR NZ, LOOKFOR%sNEXT2", _table );
         outline0("INC HL" );
         outline0("LD A, (HL)" );
@@ -8128,17 +8132,17 @@ void cpu6809_lookup_address_table( Environment * _environment, char * _table, in
         outline0("INC HL" );
         outline0("INC C" );
         outline0("LD A, C" );
-        outline1("CP #$%4.4x", (_count+1) );
+        outline1("CP $%4.4x", (_count+1) );
         outline1("JR NZ, LOOKFOR%sL1", _table );
     }
     outline0("RET" );
 
 }
 
-void cpu809_lookup_address_table_call( Environment * _environment, char * _table, char * _value, char * _address ) {
+void z80_address_table_call( Environment * _environment, char * _table, char * _value, char * _address ) {
 
     outline1("LD DE, (%s)", _value );
-    outline1("JSR LOOKFOR%s", _table );
+    outline1("CALL LOOKFOR%s", _table );
     outline1("LD (%s), DE", _address );
 
 }
