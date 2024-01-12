@@ -3604,21 +3604,28 @@ char * basename( char * _path );
 }
 
 #define BUILD_TOOLCHAIN_DIR2ATR( _environment, executableName, bootCodePath, contentPath, atrFileName, pipes ) \
-    if ( contentPath[strlen(contentPath)-1] == PATH_SEPARATOR ) { \
-        contentPath[strlen(contentPath)-1] = 0; \
-    } \
-    sprintf( commandLine, "\"%s\" -S -p -B \"%s\" \"%s\" \"%s\" %s", \
-        executableName, \
-        bootCodePath, \
-        atrFileName, \
-        contentPath, \
-        pipes \
-         ); \
-    if ( system_call( _environment,  commandLine ) ) { \
-        printf("The compilation of assembly program failed.\n\n"); \
-        printf("Please check if %s is correctly installed.\n\n", executableName); \
-        printf("For more informations, please visit: https://ugbasic.iwashere.eu/install.\n\n"); \
-    };
+    { \
+        int pathSeparatorChanged = 0; \
+        if ( contentPath[strlen(contentPath)-1] == PATH_SEPARATOR ) { \
+            contentPath[strlen(contentPath)-1] = 0; \
+            pathSeparatorChanged = 1; \
+        } \
+        sprintf( commandLine, "\"%s\" -S -p -B \"%s\" \"%s\" \"%s\" %s", \
+            executableName, \
+            bootCodePath, \
+            atrFileName, \
+            contentPath, \
+            pipes \
+            ); \
+        if ( system_call( _environment,  commandLine ) ) { \
+            printf("The compilation of assembly program failed.\n\n"); \
+            printf("Please check if %s is correctly installed.\n\n", executableName); \
+            printf("For more informations, please visit: https://ugbasic.iwashere.eu/install.\n\n"); \
+        }; \
+        if ( pathSeparatorChanged ) { \
+            contentPath[strlen(contentPath)] = PATH_SEPARATOR; \
+        } \
+    }
 
 void setup_embedded( Environment *_environment );
 void begin_compilation( Environment * _environment );
