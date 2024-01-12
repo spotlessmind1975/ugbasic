@@ -278,8 +278,8 @@ void variable_cleanup( Environment * _environment ) {
                     }
                     actualVariable = actualVariable->next;
                 }
-                outhead1("fs%soffsetsequence:", actualVariable->variable->realName );
-                outhead1("fs%soffsetframe:", actualVariable->variable->realName );                
+                outhead1("fs%4.4xoffsetsequence:", actual->size );
+                outhead1("fs%4.4xoffsetframe:", actual->size );                
                 outline0("LD L, A" );
                 outline0("LD H, 0" );
                 outline0("ADD HL, HL" );

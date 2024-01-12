@@ -6334,28 +6334,28 @@ void cpu6809_address_table_build( Environment * _environment, char * _table, int
 
 }
 
-void cpu6809_lookup_address_table( Environment * _environment, char * _table, int _count ) {
+void cpu6809_address_table_lookup( Environment * _environment, char * _table, int _count ) {
 
     outhead1("LOOKFOR%s", _table );
     if ( _count ) {
         outline1("LDX #%s", _table );
-        outline1("LDU #0" );
+        outline0("LDU #0" );
         outhead1("LOOKFOR%sL1", _table );
         outline0("CMPD , X" );
-        outline1("BNE LOOKFOR%SNEXT4", _table );
+        outline1("BNE LOOKFOR%sNEXT4", _table );
         outline0("LDD 2, X" );
         outline0("RTS" );
-        outhead1("LOOKFOR%sNEXT4:", _table );
+        outhead1("LOOKFOR%sNEXT4", _table );
         outline0("LEAX 4, X" );
         outline0("LEAU 4, U" );
-        outline1("CPU #$%4.4x", (_count+1) * 4 );
+        outline1("CMPU #$%4.4x", (_count+1) * 4 );
         outline1("BNE LOOKFOR%sL1", _table );
     }
     outline0("RTS" );
 
 }
 
-void cpu809_lookup_address_table_call( Environment * _environment, char * _table, char * _value, char * _address ) {
+void cpu6809_address_table_call( Environment * _environment, char * _table, char * _value, char * _address ) {
 
     outline1("LDD %s", _value );
     outline1("JSR LOOKFOR%s", _table );

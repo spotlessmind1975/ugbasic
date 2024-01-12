@@ -264,6 +264,10 @@ int  cpu6809_blit_alloc_register( Environment * _environment );
 void cpu6809_blit_free_register( Environment * _environment, int _register );
 void cpu6809_blit_finalize( Environment * _environment );
 
+void cpu6809_address_table_build( Environment * _environment, char * _table, int * _values, char *_address[], int _count );
+void cpu6809_address_table_lookup( Environment * _environment, char * _table, int _count );
+void cpu6809_address_table_call( Environment * _environment, char * _table, char * _value, char * _address );
+
 // FAST FP (24 bit)
 
 void cpu6809_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] );

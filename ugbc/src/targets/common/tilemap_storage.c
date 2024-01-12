@@ -203,8 +203,13 @@ Variable * tilemap_storage( Environment * _environment, char * _source_name, cha
     int size = tilesetSize + tilemapSize + 15;
     char * data = malloc( tilesetSize + tilemapSize + 15 );
 
+#ifdef CPU_BIG_ENDIAN
+    data[1] = ( tilemapSize & 0xff );
+    data[0] = ( ( tilemapSize >> 8 ) & 0xff );
+#else
     data[0] = ( tilemapSize & 0xff );
     data[1] = ( ( tilemapSize >> 8 ) & 0xff );
+#endif
 
     printf( " tilemapSize = %d (%4.4x)\n", tilemapSize, tilemapSize );
 
@@ -220,13 +225,23 @@ Variable * tilemap_storage( Environment * _environment, char * _source_name, cha
 
     printf( " deltaFrameConst = %d (%2.2x)\n", deltaFrameConst, deltaFrameConst );
 
+#ifdef CPU_BIG_ENDIAN
+    data[6] = ( sizeConst & 0xff );
+    data[5] = ( ( sizeConst >> 8 ) & 0xff );
+#else
     data[5] = ( sizeConst & 0xff );
     data[6] = ( ( sizeConst >> 8 ) & 0xff );
+#endif
 
     printf( " sizeConst = %d (%2.2x)\n", sizeConst, sizeConst );
 
+#ifdef CPU_BIG_ENDIAN
+    data[8] = ( deltaFrameScreenConst & 0xff );
+    data[7] = ( ( deltaFrameScreenConst >> 8 ) & 0xff );
+#else
     data[7] = ( deltaFrameScreenConst & 0xff );
     data[8] = ( ( deltaFrameScreenConst >> 8 ) & 0xff );
+#endif
 
     printf( " deltaFrameScreenConst = %d (%2.2x)\n", deltaFrameScreenConst, deltaFrameScreenConst );
 
@@ -246,8 +261,13 @@ Variable * tilemap_storage( Environment * _environment, char * _source_name, cha
 
     printf( " mapLayers = %d (%2.2x)\n", mapLayers, mapLayers );
 
+#ifdef CPU_BIG_ENDIAN
+    data[14] = ( frameSize & 0xff );
+    data[13] = ( ( frameSize >> 8 ) & 0xff );
+#else
     data[13] = ( frameSize & 0xff );
     data[14] = ( ( frameSize >> 8 ) & 0xff );
+#endif
 
     printf( " frameSize = %d (%4.4x)\n", frameSize, frameSize );
 
