@@ -3456,9 +3456,9 @@ char * basename( char * _path );
 #define BUILD_TOOLCHAIN_Z88DK_GET_LISTING_FILE( _environment, listingFileName ) \
     (void) listingFileName; \
     if ( _environment->listingFileName ) { \
-        sprintf( listingFileName, "-l" ); /* -m -s -g */ \
+        sprintf( listingFileName, "-l -m -s -g" ); /* -m -s -g */ \
     } else { \
-        strcpy( listingFileName, "" ); \
+        strcpy( listingFileName, "-m -s -g" ); \
     }
 
 #define BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, target, executableName, listingFileName ) \

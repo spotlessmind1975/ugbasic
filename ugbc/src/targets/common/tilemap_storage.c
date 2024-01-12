@@ -277,6 +277,10 @@ Variable * tilemap_storage( Environment * _environment, char * _source_name, cha
     _environment->currentFileStorage->size = size;
     _environment->currentFileStorage->content = data;
 
+    printf( "size tileset = %d\n", tilesetSize );
+
+    printf( "size total = %d\n", size );
+
     variable_temporary_remove( _environment, tilesetVar->name );
 
     return final;

@@ -8108,14 +8108,13 @@ void z80_address_table_lookup( Environment * _environment, char * _table, int _c
         outhead1("LOOKFOR%sL1:", _table );
         outline0("LD A, (HL)" );
         outline0("LD B, A" );
-        outline0("LD A, (DE)" );
+        outline0("LD A, E" );
         outline0("CP A" );
         outline1("JR NZ, LOOKFOR%sNEXT3", _table );
-        outline0("INC DE" );
         outline0("INC HL" );
         outline0("LD A, (HL)" );
         outline0("LD B, A" );
-        outline0("LD A, (DE)" );
+        outline0("LD A, D" );
         outline0("CP B" );
         outline1("JR NZ, LOOKFOR%sNEXT2", _table );
         outline0("INC HL" );
