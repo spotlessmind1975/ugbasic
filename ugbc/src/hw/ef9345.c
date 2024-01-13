@@ -1159,7 +1159,7 @@ Variable * ef9345_new_sequence( Environment * _environment, int _sequences, int 
     *(buffer) = _frames;
     *(buffer+1) = _width;
     *(buffer+2) = _sequences;
-    for( int i=0; i<§(_frames*_sequences); ++i ) {
+    for( int i=0; i<(_frames*_sequences); ++i ) {
         *(buffer+3+(i*frameSize)) = ( _width & 0xff );
         *(buffer+3+(i*frameSize)+1) = ( ( _width >> 8 ) & 0xff );
         *(buffer+3+(i*frameSize)+2) = ( _height & 0xff );
