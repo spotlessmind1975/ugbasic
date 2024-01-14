@@ -149,3 +149,4 @@ TIMERINIT:      .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERADDRESS:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 
 DLOADERROR:     .BYTE   $0
+DSAVEERROR:     .BYTE   $0

@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                            DLOAD ROUTINE ON ATARI                           *
+;*                            DSAVE ROUTINE ON ATARI                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -38,14 +38,14 @@
 ; TMPPTR : filename; MATHPTR0: filename size
 ; TMPPTR2: address, MATHPTR4:MATHPTR5: size
 ; MATHPTR6:MATHPTR7: from
-ATARIDLOAD:
+ATARIDSAVE:
     STA $C042
     JSR ATARIPREPAREFILENAME
 
     LDX #$10
     LDA #IOCB_OPEN
     STA	ICCOM, X
-    LDA #$04
+    LDA #$08
     STA	ICAUX1, X
     LDA #<ATARIFILENAME
     STA ICBADRL, X
@@ -54,28 +54,27 @@ ATARIDLOAD:
     JSR CIOV
 
     CPY #127
-    BCC ATARIDLOADERRX
-    JMP ATARIDLOADERR
-ATARIDLOADERRX:
-
+    BCC ATARIDSAVEERRX
+    JMP ATARIDSAVEERR
+ATARIDSAVEERRX:
 
     LDA TMPPTR2
     ORA TMPPTR2+1
-    BNE ATARIDLOADDONEX
-    JMP ATARIDLOADDONE
-ATARIDLOADDONEX:
+    BNE ATARIDSAVEDONEX
+    JMP ATARIDSAVEDONE
+ATARIDSAVEDONEX:
 
     LDA MATHPTR4
     ORA MATHPTR5
-    BNE ATARIDLOADDONEX2
-    JMP ATARIDLOADDONE
-ATARIDLOADDONEX2:
+    BNE ATARIDSAVEDONEX2
+    JMP ATARIDSAVEDONE
 
+ATARIDSAVEDONEX2:
     LDA MATHPTR6
     ORA MATHPTR7
-    BEQ ATARIDLOADL1
+    BEQ ATARIDSAVEL1
 
-ATARIDLOADLSKIP:
+ATARIDSAVELSKIP:
 
     LDX #$10
     LDA #IOCB_GETCHR
@@ -92,18 +91,18 @@ ATARIDLOADLSKIP:
 
     DEC MATHPTR6
     CMP #$FF
-    BNE ATARIDLOADLSKIP0
+    BNE ATARIDSAVELSKIP0
     DEC MATHPTR7
-ATARIDLOADLSKIP0:
+ATARIDSAVELSKIP0:
 
     LDA MATHPTR6
     ORA MATHPTR7
-    BNE ATARIDLOADLSKIP
+    BNE ATARIDSAVELSKIP
 
-ATARIDLOADL1:
+ATARIDSAVEL1:
 
     LDX #$10
-    LDA #IOCB_GETCHR
+    LDA #IOCB_PUTCHR
     STA	ICCOM, X
     LDA TMPPTR2
     STA ICBADRL, X
@@ -116,34 +115,34 @@ ATARIDLOADL1:
     JSR CIOV
 
     CPY #1
-    BNE ATARIDLOADEOF
+    BNE ATARIDSAVEEOF
 
     INC TMPPTR2
-    BNE ATARIDLOADL11
+    BNE ATARIDSAVEL11
     INC TMPPTR2+1
-ATARIDLOADL11:
+ATARIDSAVEL11:
 
     DEC MATHPTR4
     CMP #$FF
-    BNE ATARIDLOADL10
+    BNE ATARIDSAVEL10
     DEC MATHPTR5
-ATARIDLOADL10:
+ATARIDSAVEL10:
 
     LDA MATHPTR4
     ORA MATHPTR5
-    BNE ATARIDLOADL1
+    BNE ATARIDSAVEL1
 
-ATARIDLOADEOF:
+ATARIDSAVEEOF:
     LDX #$10
     LDA #IOCB_CLOSE
     STA	ICCOM, X
     JSR CIOV
 
-ATARIDLOADDONE:
+ATARIDSAVEDONE:
     RTS
 
-ATARIDLOADERR:
+ATARIDSAVEERR:
     TYA
     SBC #127
-    STY DLOADERROR
+    STY DSAVEERROR
     RTS

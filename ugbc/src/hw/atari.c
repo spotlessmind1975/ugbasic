@@ -267,6 +267,7 @@ void atari_timer_set_address( Environment * _environment, char * _timer, char * 
 
 void atari_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
+    deploy( dcommon, src_hw_atari_dcommon_asm );
     deploy( dload, src_hw_atari_dload_asm );
 
     MAKE_LABEL
@@ -346,6 +347,91 @@ void atari_dload( Environment * _environment, char * _filename, char * _offset, 
     }
 
     outline0("JSR ATARIDLOAD");
+
+}
+
+void atari_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+
+    deploy( dcommon, src_hw_atari_dcommon_asm );
+    deploy( dsave, src_hw_atari_dsave_asm );
+
+    MAKE_LABEL
+    
+    Variable * filename = variable_retrieve( _environment, _filename );
+    Variable * tnaddress = variable_temporary( _environment, VT_ADDRESS, "(address of target_name)");
+    Variable * tnsize = variable_temporary( _environment, VT_BYTE, "(size of target_name)");
+
+    Variable * address = NULL;
+    if ( _address ) {
+        address = variable_retrieve( _environment, _address );
+    }
+    Variable * size = NULL;
+    if ( _size ) {
+        size = variable_retrieve( _environment, _size );
+    }
+    Variable * offset = NULL;
+    if ( _offset ) {
+        offset = variable_retrieve( _environment, _offset );
+    }
+
+    switch( filename->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, filename->realName, tnsize->realName );
+            cpu_addressof_16bit( _environment, filename->realName, tnaddress->realName );
+            cpu_inc_16bit( _environment, tnaddress->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, filename->realName, tnaddress->realName, tnsize->realName );
+            break;
+    }
+
+    outline1("LDA %s", tnaddress->realName);
+    outline0("STA TMPPTR");
+    outline1("LDA %s", address_displacement(_environment, tnaddress->realName, "1"));
+    outline0("STA TMPPTR+1");
+    outline1("LDA %s", tnsize->realName);
+    outline0("STA MATHPTR0");
+
+    if ( address ) {
+
+        outline1("LDA %s", address->realName);
+        outline0("STA TMPPTR2");
+        outline1("LDA %s", address_displacement(_environment, address->realName, "1"));
+        outline0("STA TMPPTR2+1");
+
+    }
+
+    if ( size ) {
+
+        outline1("LDA %s", size->realName);
+        outline0("STA MATHPTR4");
+        outline1("LDA %s", address_displacement(_environment, size->realName, "1"));
+        outline0("STA MATHPTR5");
+
+    } else {
+
+        outline0("LDA #$00");
+        outline0("STA MATHPTR4");
+        outline0("STA MATHPTR5");
+
+    }
+
+    if ( offset ) {
+
+        outline1("LDA %s", offset->realName);
+        outline0("STA MATHPTR6");
+        outline1("LDA %s", address_displacement(_environment, offset->realName, "1"));
+        outline0("STA MATHPTR7");
+
+    } else {
+
+        outline0("LDA #0");
+        outline0("STA MATHPTR6");
+        outline0("STA MATHPTR7");
+
+    }
+
+    outline0("JSR ATARIDSAVE");
 
 }
 
