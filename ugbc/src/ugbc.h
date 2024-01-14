@@ -4045,8 +4045,9 @@ RGBi *                  palette_shift( RGBi * _source, int _source_size, int _of
 void                    paper( Environment * _environment, char * _paper );
 Variable *              param_procedure( Environment * _environment, char * _name );
 Variable *              parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type );
-Variable *              peek( Environment * _environment, int _location );
 Variable *              peek_var( Environment * _environment, char * _location );
+Variable *              peekw_var( Environment * _environment, char * _location );
+Variable *              peekd_var( Environment * _environment, char * _location );
 void                    pen( Environment * _environment, char * _color );
 void                    play( Environment * _environment, int _note, int _duration, int _channels );
 void                    play_vars( Environment * _environment, char * _note, char * _duration, char * _channels );
@@ -4059,6 +4060,8 @@ Variable *              point( Environment * _environment, char * _x, char * _y 
 void                    point_at( Environment * _environment, int _x, int _y );
 void                    point_at_vars( Environment * _environment, char * _x, char * _y );
 void                    poke_var( Environment * _environment, char * _address, char * _value );
+void                    pokew_var( Environment * _environment, char * _address, char * _value );
+void                    poked_var( Environment * _environment, char * _address, char * _value );
 void                    pop( Environment * _environment );
 Variable *              powering( Environment * _environment, char * _source, char * _dest );
 TileDescriptors *       precalculate_tile_descriptors_for_font( char * _fontData, int _fontSize );

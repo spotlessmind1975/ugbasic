@@ -49,15 +49,82 @@
  * @param _location Expression with the location to read from.
  * @return Variable* Temporary variable with the content of the location (1 byte).
  */
-Variable * peek_var( Environment * _environment, char * _location ) {
+/* <usermanual>
+@keyword PEEK
 
-    outline1("; PEEK(%s)", _location);
+@english
+Retrieve a byte from memory.
+
+@italian
+Recupera un byte dalla memoria.
+
+@syntax = PEEK( address )
+
+@example x = PEEK(1024)
+
+@target all
+</usermanual> */
+Variable * peek_var( Environment * _environment, char * _location ) {
 
     Variable * location = variable_retrieve( _environment, _location );
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 
-    cpu6502_peek( _environment, location->realName, result->realName );
+    cpu_peek( _environment, location->realName, result->realName );
+
+    return result;
+
+}
+
+/* <usermanual>
+@keyword PEEKW
+
+@english
+Retrieve a word from memory.
+
+@italian
+Recupera due bytes (una word) dalla memoria.
+
+@syntax = PEEKW( address )
+
+@example x = PEEKW(1024)
+
+@target all
+</usermanual> */
+Variable * peekw_var( Environment * _environment, char * _location ) {
+
+    Variable * location = variable_retrieve( _environment, _location );
+
+    Variable * result = variable_temporary( _environment, VT_WORD, "(result)" );
+
+    cpu_peekw( _environment, location->realName, result->realName );
+
+    return result;
+
+}
+
+/* <usermanual>
+@keyword PEEKD
+
+@english
+Retrieve a double word from memory.
+
+@italian
+Recupera quattro bytes (una double word) dalla memoria.
+
+@syntax = PEEKD( address )
+
+@example x = PEEKD(1024)
+
+@target all
+</usermanual> */
+Variable * peekd_var( Environment * _environment, char * _location ) {
+
+    Variable * location = variable_retrieve( _environment, _location );
+
+    Variable * result = variable_temporary( _environment, VT_DWORD, "(result)" );
+
+    cpu_peekd( _environment, location->realName, result->realName );
 
     return result;
 
