@@ -1514,7 +1514,9 @@ typedef struct _Deployed {
 
     int timer;
 
+    int dcommon;
     int dload;
+    int dsave;
 
 } Deployed;
 
@@ -2713,6 +2715,8 @@ typedef struct _Environment {
 #define CRITICAL_STORAGE_NOT_AVAILABLE() CRITICAL("E247 - the BEGIN STORAGE keyword is not available with this z88dk release" );
 #define CRITICAL_CANNOT_STORE_FILE_ON_VARIABLE_OF_DIFFERENT_TYPE(v) CRITICAL("E248 - cannot store file on different type variable" );
 #define CRITICAL_MISSING_FILE_STORAGE(v) CRITICAL("E249 - missing file storage" );
+#define CRITICAL_DSAVE_MISSING_ADDRESS(v) CRITICAL2("E250 - source address for DSAVE is missing", v );
+#define CRITICAL_DSAVE_MISSING_SIZE(v) CRITICAL2("E251 - size for DSAVE is missing", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3831,6 +3835,7 @@ void                    draw( Environment * _environment, char * _x0, char * _y0
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
 void                    draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color );
 void                    draw_string( Environment * _environment, char * _string );
+void                    dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    dstring_cleanup( Environment * _Environment );
 
 //----------------------------------------------------------------------------

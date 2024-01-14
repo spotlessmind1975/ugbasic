@@ -92,7 +92,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
-%token POKEW PEEKW POKED PEEKD
+%token POKEW PEEKW POKED PEEKD DSAVE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -159,6 +159,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> line_mode box_mode put_action
 %type <string> timer_number timer_number_comma
 %type <string> dload_from_offset dload_to_address dload_size_size
+%type <string> dsave_to_offset dsave_from_address dsave_size_size
 %type <string> to_variable
 
 %right Integer String CP
@@ -2994,6 +2995,10 @@ exponential:
     | DLOAD ERROR {
         $$ = variable_temporary( _environment, VT_BYTE, "(DLOAD ERROR)" )->name;
         variable_move( _environment, "DLOADERROR", $$ );
+    }
+    | DSAVE ERROR {
+        $$ = variable_temporary( _environment, VT_BYTE, "(DSAVE ERROR)" )->name;
+        variable_move( _environment, "DSAVEERROR", $$ );
     }
     | IMAGE WIDTH OP expr CP {
         $$ = image_get_width( _environment, $4 )->name;
@@ -7444,6 +7449,38 @@ border_definition :
         color_border_var( _environment, $1 );
     };
 
+dsave_to_offset :
+    {
+        $$ = NULL;
+    }
+    |
+    TO expr {
+        $$ = $2;
+    };
+
+dsave_from_address :
+    {
+        $$ = NULL;
+    }
+    |
+    FROM expr {
+        $$ = $2;
+    };
+
+dsave_size_size :
+    {
+        $$ = NULL;
+    }
+    |
+    SIZE expr {
+        $$ = $2;
+    };
+
+dsave_definition :
+    expr dsave_to_offset dsave_from_address dsave_size_size {
+        dsave( _environment, $1, $2, $3, $4 );
+    };
+
 dload_from_offset :
     {
         $$ = NULL;
@@ -7552,6 +7589,7 @@ statement2nc:
     run( _environment );
   }
   | DLOAD dload_definition
+  | DSAVE dsave_definition
   | SWAP swap_definition
   | OUT out_definition
   | DATA data_definition
