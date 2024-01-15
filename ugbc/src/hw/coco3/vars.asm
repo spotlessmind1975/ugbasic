@@ -110,11 +110,12 @@ TIMERCOUNTER   fdb   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERINIT      fdb   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERADDRESS   fdb   $0, $0, $0, $0, $0, $0, $0, $0
 
-COCO3DLOADSAVEDERROR     fcb   $0, $0, $0
-COCO3DLOADDISKOPEN       fcb   $0, $0
-COCO3DLOADERRORHANDLER   fcb   $0, $0
-COCO3DLOADERRORSTACK     fcb   $0, $0
+COCO3DCOMMONSAVEDERROR     fcb   $0, $0, $0
+COCO3DCOMMONDISKOPEN       fcb   $0, $0
+COCO3DCOMMONERRORHANDLER   fcb   $0, $0
+COCO3DCOMMONERRORSTACK     fcb   $0, $0
 
 DLOADERROR      fcb  $0
+DSAVEERROR      fcb  $0
 
 RAMENABLED      fcb  $1

@@ -175,5 +175,6 @@ void coco3_timer_set_counter( Environment * _environment, char * _timer, char * 
 void coco3_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void coco3_timer_set_address( Environment * _environment, char * _timer, char * _address );
 void coco3_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
+void coco3_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 
 #endif
