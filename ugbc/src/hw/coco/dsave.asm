@@ -29,13 +29,13 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                            DLOAD ROUTINE ON COCO                            *
+;*                            DSAVE ROUTINE ON COCO                            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-COCODLOADFILEREAD
+COCODSAVEFILEWRITE
     ORCC #$50
     STA $FFDE
     CLR RAMENABLED
@@ -43,9 +43,8 @@ COCODLOADFILEREAD
     PSHS D,X,Y,U
     LDX #COCODCOMMONFILEIOERROR
     JSR COCODCOMMONERRORSETTRAP
-    JSR $A176
+    JSR $A282
     JSR COCODCOMMONERRORCLEARTRAP
-    STA ,S
     CLRA
 
     ORCC #$50
@@ -58,30 +57,30 @@ COCODLOADFILEREAD
 
 ; X : filename, U : size of filename
 ; Y : destination area
-COCODLOAD
+COCODSAVE
     PSHS Y
     LDY #$094C
     LDA #32
     LDB #11
-COCODLOADL1
+COCODSAVEL1
     STA B, Y
     DECB
-    BNE COCODLOADL1
+    BNE COCODSAVEL1
 
     LDB #0
-COCODLOADL2
+COCODSAVEL2
     LDA B, X
     STA B, Y
     INCB
     LEAU -1, U
     CMPA #'.'
-    BEQ COCODLOADL2E
+    BEQ COCODSAVEL2E
     CMPU #0
-    BEQ COCODLOADENDE
+    BEQ COCODSAVEENDE
     CMPB #8
-    BNE COCODLOADL2
+    BNE COCODSAVEL2
 
-COCODLOADL2E
+COCODSAVEL2E
     DECB
     LDA #$20
     STA B, Y
@@ -89,17 +88,17 @@ COCODLOADL2E
     LEAX B, X
     LEAY 8, Y
     LDB #0
-COCODLOADL3
+COCODSAVEL3
     LDA B, X
     STA B, Y
     INCB
     LEAU -1, U
     CMPU #0
-    BEQ COCODLOADENDE
+    BEQ COCODSAVEENDE
     CMPB #3
-    BNE COCODLOADL3
+    BNE COCODSAVEL3
 
-COCODLOADENDE
+COCODSAVEENDE
     LDB #$92
     LDX #$0926
     LDY #COCOFCB
@@ -110,26 +109,26 @@ COCODLOADENDE
     LDA #1
     STA $006F
     LDB #1
-    LDA #'I'
+    LDA #'O'
     JSR COCODCOMMONFILEOPEN
-    BCS COCODLOADERR
+    BCS COCODSAVEERR
 
-COCODLOADREADL1
+COCODSAVEREADL1
     LDA #1
     STA $006F
     LDB #1
-    JSR COCODLOADFILEREAD
+    JSR COCODSAVEFILEWRITE
     LDB $0070
-    BNE COCODLOADREADDONE
+    BNE COCODSAVEREADDONE
     STA , Y+
-    JMP COCODLOADREADL1
+    JMP COCODSAVEREADL1
 
-COCODLOADREADDONE
+COCODSAVEREADDONE
     LDA #1
     STA $006F
     LDB #1
     JSR COCODCOMMONFILECLOSE
 
-COCODLOADERR
-    STB DLOADERROR
+COCODSAVEERR
+    STB DSAVEERROR
     RTS
