@@ -89,6 +89,8 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "DLOADERR", VT_BYTE, 0 );
     variable_global( _environment, "DLOADERR" );
+    variable_import( _environment, "DSAVEERR", VT_BYTE, 0 );
+    variable_global( _environment, "DSAVEERR" );
 
     variable_import( _environment, "TIMERRUNNING", VT_BYTE, 0 );
     variable_global( _environment, "TIMERRUNNING" );

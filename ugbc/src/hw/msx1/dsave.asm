@@ -36,44 +36,50 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ; HL: filename, B: filename length
-; DE: address
-MSX1DLOAD:
+; DE: address, IX: size
+MSX1DSAVE:
+
+    PUSH DE
+
+    LD (MSXFILSIZ), IX
 
     CALL MSXCLEARFCB
     CALL MSXSETNAMEFCB
     LD A, $80
     LD (MSXFCB+MSXFCBS2), A
 
-    PUSH DE
-    LD C, _FOPEN
+    LD C, _FCREAT
     LD DE, MSXFCB
     CALL $f37d
-    LD DE, (MSXFCBFILSIZ)
-    LD (MSXFILSIZ), DE
     POP DE
 
     CP 0
-    JR NZ, MSX1DLOADERROR
+    JR NZ, MSX1DSAVEERROR
 
     LD A, $80
     LD (MSXFCB+MSXFCBS2), A
 
-MSX1DLOADL1:
+    LD BC, (MSXFILSIZ)
+
+MSX1DSAVEL1:
+
+    CALL MSXCOPYTODTA
 
     PUSH DE
-    LD C, _RDSEQ
+    LD C, _WRSEQ
     LD DE, MSXFCB
     CALL $f37d
     POP DE
 
+    LD BC, (MSXFILSIZ)
+    LD A, B
+    OR C
     CP 0
-    JR NZ, MSX1DLOADDONE
+    JR Z, MSX1DSAVEDONE
 
-    CALL MSXCOPYFROMDTA
+    JP MSX1DSAVEL1
 
-    JP MSX1DLOADL1
-
-MSX1DLOADDONE:
+MSX1DSAVEDONE:
 
     PUSH DE
     LD C, _FCLOSE
@@ -83,14 +89,14 @@ MSX1DLOADDONE:
 
     RET
 
-MSX1DLOADERROR:
-    LD (DLOADERR), A
+MSX1DSAVEERROR:
+    LD (DSAVEERR), A
 
-    PUSH DE
-    LD C, _FCLOSE
-    LD DE, MSXFCB
-    CALL $f37d
-    POP DE
+    ; PUSH DE
+    ; LD C, _FCLOSE
+    ; LD DE, MSXFCB
+    ; CALL $f37d
+    ; POP DE
 
     RET
 
