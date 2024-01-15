@@ -387,5 +387,6 @@ void cpc_timer_set_counter( Environment * _environment, char * _timer, char * _c
 void cpc_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void cpc_timer_set_address( Environment * _environment, char * _timer, char * _address );
 void cpc_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
+void cpc_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 
 #endif
