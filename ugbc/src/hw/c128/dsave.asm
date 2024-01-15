@@ -29,16 +29,15 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                            DLOAD ROUTINE ON C=128                           *
+;*                            DSAVE ROUTINE ON C=128                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ; TMPPTR : filename; MATHPTR0: filename size
-; MATHPTR1: 1 if address is NULL; 0 if address is not NULL
-; TMPPTR2: address
-C128DLOAD:
+; TMPPTR2: address;  MATHPTR4:MATHPTR5 : size
+C128DSAVE:
 
     ; SETNAM. Set file name parameters.
     ; Input: A = File name length; X/Y = Pointer to file name.
@@ -52,12 +51,12 @@ C128DLOAD:
     LDA #$02
     STA MATHPTR2+1
     LDY #0
-C128DLOADL1:
+C128DSAVEL1:
     LDA (TMPPTR), Y
     STA (MATHPTR2), Y
     INY
     CPY MATHPTR0
-    BNE C128DLOADL1
+    BNE C128DSAVEL1
     PLA
 
     PHA
@@ -79,9 +78,9 @@ C128DLOADL1:
 
     LDA #$01
     LDX $BA       ; last used device number
-    BNE C128DLOADSKIP
+    BNE C128DSAVESKIP
     LDX #$08      ; default to device 8
-C128DLOADSKIP:
+C128DSAVESKIP:
     LDY MATHPTR1      ; not $01 means: load to address stored in file
     PHA
     LDA #$BA
@@ -91,29 +90,62 @@ C128DLOADSKIP:
     PLA
     JSR SYSCALL
 
-    LDY MATHPTR1
-    BNE C128DLOADSKIP2
-
-    LDX TMPPTR2
-    LDY TMPPTR2+1
-
-C128DLOADSKIP2:
-    ; LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
-    ; Input: A: 0 = Load, 1-255 = Verify; X/Y = Load address (if secondary address = 0).
-    ; Output: Carry: 0 = No errors, 1 = Error; A = KERNAL error code (if Carry = 1); X/Y = Address of last byte loaded/verified (if Carry = 0).
-    ; Used registers: A, X, Y.
-    ; Real address: $F49E.
+C128DSAVESKIP2:
+    ; $FFD8 SAVEIO - Save memory to a device
+    ; Description: This routine saves a section of memory. Memory is saved from 
+    ;              an indirect address on page 0 specified by the accumulator to 
+    ;              the address stored in the X and Y registers. It is then sent 
+    ;              to a logical file on an input/output device. The SETLFS and 
+    ;              SETNAM routines must be used before calling this routine. 
+    ;              However, a file name is not required to SAVE to device 1 
+    ;              (the Datassette™ recorder). Any attempt to save to other devices 
+    ;              without using a file name results in an error.
 
     PHA
-    LDA #$D5
+    LDA #$D8
     STA SYSCALL0+1
     LDA #$FF
     STA SYSCALL0+2
     PLA
-    LDA #$00      ; $00 means: load to memory (not verify)
+
+    ; Load the X and Y registers with the low byte and high byte re- spectively of the location of the end of the save.
+
+    PHA
+    LDA #$00
+    STA MATHPTR2
+    LDA #$03
+    STA MATHPTR2+1
+    LDY #0
+C128DSAVEL1X:
+    LDA (TMPPTR2), Y
+    STA (MATHPTR2), Y
+    INY
+    CPY MATHPTR4
+    BNE C128DSAVEL1X
+    PLA
+
+    LDA #$00
+    STA TMPPTR2
+    LDA #$03
+    STA TMPPTR2+1
+
+    CLC
+    LDA TMPPTR2
+    ADC MATHPTR4
+    STA MATHPTR4
+    LDA TMPPTR2+1
+    ADC MATHPTR4+1
+    STA MATHPTR4+1
+    LDX MATHPTR4
+    LDY MATHPTR4+1
+
+    ; Load the accumulator with the single byte page zero offset to the pointer.
+    
+    LDA #TMPPTR2
+
     JSR SYSCALL
 
-    BCS C128DLOADERROR ; if carry set, a load error has happened
+    BCS C128DSAVEERROR ; if carry set, a load error has happened
 
     PHA
     LDA #$C3
@@ -123,11 +155,11 @@ C128DLOADSKIP2:
     PLA
     LDA #$01      ; $00 means: load to memory (not verify)
     JSR SYSCALL
-    
+
     RTS
-C128DLOADERROR:
+C128DSAVEERROR:
     ; Accumulator contains BASIC error code
-    STA DLOADERROR
+    STA DSAVEERROR
 
     PHA
     LDA #$C3

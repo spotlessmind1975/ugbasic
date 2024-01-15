@@ -139,6 +139,7 @@ void c64_scanshift( Environment * _environment, char * _shifts );
 void c64_keyshift( Environment * _environment, char * _shifts );
 void c64_clear_key( Environment * _environment );
 void c64_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
+void c64_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void c64_sys_call( Environment * _environment, int _destination );
 
 void c64_timer_set_status_on( Environment * _environment, char * _timer );
