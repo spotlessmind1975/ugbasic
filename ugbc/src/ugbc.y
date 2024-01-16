@@ -7893,11 +7893,11 @@ statement2nc:
   }
   | EXEC sys_definition
   | SYS sys_definition
-  | on_targets AsmSnippet {
+  | on_targets AsmSnippet on_targets {
     if ( ((struct _Environment *)_environment)->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED("ASM");
     }
-    if ( $1 ) {
+    if ( $1 || $3 ) {
         outline1("%s", $2 );
     }
   }
