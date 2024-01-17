@@ -1135,7 +1135,10 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
         commonPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
-        commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
+        if ( ( _transparent_color & 0x0f0000 ) || ( _transparent_color & 0xf00000 ) ) {
+            commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
+        }
+        
         if ( _transparent_color & 0x0f0000 ) {
             commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
         }
@@ -1356,7 +1359,9 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
         commonPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
-        commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
+        if ( ( _transparent_color & 0x0f0000 ) || ( _transparent_color & 0xf00000 ) ) {
+            commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
+        }
         
         if ( _transparent_color & 0x0f0000 ) {
             commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
@@ -1536,7 +1541,9 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
         commonPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
-        commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
+        if ( ( _transparent_color & 0x0f0000 ) || ( _transparent_color & 0xf00000 ) ) {
+            commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
+        }
 
         if ( _transparent_color & 0x0f0000 ) {
             commonPalette = palette_promote_color_as_background( _transparent_color & 0xff, commonPalette, paletteColorCount );
