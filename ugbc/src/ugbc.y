@@ -1143,7 +1143,8 @@ tile_load_flag :
     }
     | TRANSPARENT {
         $$ = FLAG_TRANSPARENCY;
-    };
+    }
+    ;
 
 put_image_flag :
     WITH TRANSPARENCY {
@@ -3995,6 +3996,17 @@ tiles_definition_expression:
 tiles_definition:
     tiles_definition_simple
   | tiles_definition_expression;
+
+font_definition_simple:
+    LOAD String tile_load_flags {
+        tiles_load( _environment, $2, $3 | FLAG_EXACT, NULL, -1 );
+    };
+  | LOAD String TO Integer tile_load_flags {
+        tiles_load( _environment, $2, $5 | FLAG_EXACT, NULL, $4 );
+    };
+
+font_definition:
+    font_definition_simple;
 
 colormap_definition_simple:
     AT direct_integer {
@@ -7539,7 +7551,7 @@ statement2nc:
   | TEXT text_definition
   | TILE tile_definition
   | TILES tiles_definition
-  | FONT tiles_definition
+  | FONT font_definition
   | COLORMAP colormap_definition
   | COLOURMAP colormap_definition
   | SCREEN screen_definition
