@@ -45,7 +45,7 @@
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer
  */
-void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+void dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "DLOAD");
@@ -53,6 +53,14 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
 
     if ( _environment->sandbox ) {
         CRITICAL_SANDBOX_ENFORCED( "DLOAD");
+    }
+
+    if ( ! _address ) {
+        CRITICAL_DSAVE_MISSING_ADDRESS( _filename );
+    }
+
+    if ( ! _size ) {
+        CRITICAL_DSAVE_MISSING_SIZE( _filename );
     }
 
 }

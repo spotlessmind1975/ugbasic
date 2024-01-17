@@ -55,8 +55,4 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
         CRITICAL_SANDBOX_ENFORCED( "DLOAD");
     }
 
-    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of DLOAD)");
-
-    return result;
-
 }
