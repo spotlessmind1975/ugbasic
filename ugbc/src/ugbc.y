@@ -92,7 +92,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
-%token POKEW PEEKW POKED PEEKD DSAVE
+%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -7533,6 +7533,14 @@ to_variable :
         $$ = $2;
     };
 
+defdgr_definition :
+    OP_DOLLAR OP expr CP OP_ASSIGN expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        defdgr_vars( _environment, $3, $6, $8, $10, $12, $14, $16, $18, $20 );
+    }
+    | OP expr CP OP_ASSIGN expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        defdgr_vars( _environment, $2, $5, $7, $9, $11, $13, $15, $17, $19 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -7564,6 +7572,7 @@ statement2nc:
   | DTILES draw_tile_definition
   | LINE draw_definition
   | PUT put_definition
+  | DEFDGR defdgr_definition
   | BLIT blit_definition
   | MOVE move_definition
   | GET get_definition
