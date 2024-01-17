@@ -369,6 +369,19 @@ void variable_cleanup( Environment * _environment ) {
         }
     }   
 
+    if ( _environment->descriptors ) {
+        outhead0("UDCCHAR" );
+        int i=0,j=0;
+        for(i=0;i<_environment->descriptors->count;++i) {
+            outline1("; $%2.2x ", i);
+            out0("  fcb " );
+            for(j=0;j<7;++j) {
+                out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[_environment->descriptors->first+i].data[j]) );
+            }
+            outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[_environment->descriptors->first+i].data[j]) );
+        }
+    }
+    
     variable_on_memory_init( _environment, 0 );
 
     DataSegment * dataSegment = _environment->dataSegment;

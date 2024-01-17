@@ -761,6 +761,8 @@ void ef936x_initialization( Environment * _environment ) {
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
+    font_descriptors_init( _environment, 0 );
+
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 4096;
 
