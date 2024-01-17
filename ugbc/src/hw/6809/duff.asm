@@ -54,6 +54,12 @@ DUFFDEVICE
     LDU #$1212
     STU DUFFDEVICEL0C
 
+    ; And we enable, at startup, the 16 byte copy loop, by assigning
+    ; a "BRA with offset 0" at the place of the branching.
+
+    LDU #$2000
+    STU DUFFDEVICEL0
+
     ; So, we must manage the fact that the size is odd: in this case,
     ; the first byte will be copied directly. This is done by dividing
     ; the size by 2 and taking apart the carry bit.
@@ -177,7 +183,7 @@ DUFFDEVICELX
     ; memory to copy is multiple of 16 bytes.
 
 DUFFDEVICELXNR
-    
+
     ; Restore the (halved) size to copy.
 
     PULS D
