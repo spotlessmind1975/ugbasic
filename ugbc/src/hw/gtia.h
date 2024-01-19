@@ -33,20 +33,48 @@
 
 #include "../ugbc.h"
 
+// COLOR = HUE * 16 + LUMINANCE
+
+// It is possible to get more colors in GR.8 than the one (and a half) that 
+// Atari says is possible by using a technique called artifacting. There is 
+// a small example of artifacting shown at location 710 ($2C6). See De Re Atari,
+// Your Atari 400/800, Creative Computing, June 1981, and COMPUTE!, May 1982.
+
+// Here are the 16 colors the Atari produces, along with their POKE values for
+// the color registers. The POKE values assume a luminance of zero. Add the 
+// luminance value to the numbers to brighten the color. The color registers 
+// ignore BIT 0; that's why there are no "odd" values for luminance, just even 
+// values.
+
+// Color             Value         Color             Value
+// Black           0,      0	   Medium blue     8,    128
+// Rust            1,     16       Dark blue       9,    144
+// Red-orange      2,     32       Blue-grey      10,    160
+// Dark orange     3,     48       Olive green    11,    176
+// Red             4,     64       Medium green   12,    192
+// Dk lavender     5,     80       Dark green     13,    208
+// Cobalt blue     6,     96       Orange-green   14,    224
+// Ultramarine     7,    112       Orange         15,    
+
 #define COLOR_BLACK					0x00
-#define COLOR_WHITE					0x0f
+#define COLOR_DARK_WHITE			0x08
+#define COLOR_WHITE					0x0d
+#define COLOR_LIGHT_WHITE			0x0f
+#define COLOR_DARK_RED      		0x40
 #define COLOR_RED					0x44
+#define COLOR_LIGHT_RED				0x48
 #define COLOR_VIOLET				0x64
+#define COLOR_DARK_GREEN			0xb0
 #define COLOR_GREEN					0xb6
+#define COLOR_LIGHT_GREEN			0xba
+#define COLOR_DARK_BLUE				0x70
 #define COLOR_BLUE					0x74
+#define COLOR_LIGHT_BLUE			0x7e
 #define COLOR_YELLOW				0x1f
 #define COLOR_ORANGE				0x29
 #define COLOR_BROWN					0x24
-#define COLOR_LIGHT_RED				0x48
 #define COLOR_DARK_GREY				0x04
 #define COLOR_GREY					0x08
-#define COLOR_LIGHT_GREEN			0xba
-#define COLOR_LIGHT_BLUE			0x76
 #define COLOR_LIGHT_GREY			0x0e
 #define COLOR_MAGENTA				0x6d
 #define COLOR_PURPLE				COLOR_VIOLET
@@ -59,8 +87,6 @@
 #define COLOR_PINK       			0x3c
 #define COLOR_PEACH       			0x3b
 #define COLOR_CYAN					0xae
-#define COLOR_DARK_BLUE				0x71
-#define COLOR_LIGHT_WHITE			COLOR_WHITE
 
 #define DEFAULT_PEN_COLOR           COLOR_WHITE
 #define DEFAULT_PAPER_COLOR         COLOR_BLACK
