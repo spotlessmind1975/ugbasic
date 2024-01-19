@@ -1690,7 +1690,7 @@ static void variable_move_32bit_16bit( Environment * _environment, Variable * _s
                 cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "3" ), sign->realName );
                 }
             #endif
-            cpu_bveq( _environment, sign->realName, label );
+            cpu_bvneq( _environment, sign->realName, label );
 
             //  - positive? -> copy lower 16 bits
 
