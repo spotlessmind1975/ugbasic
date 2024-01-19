@@ -164,24 +164,26 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 
 
 #define COLOR_BLACK					0x14
+#define COLOR_DARK_BLUE				0x04 // BLUE
 #define COLOR_BLUE					0x04
 #define COLOR_LIGHT_BLUE			0x15
+#define COLOR_DARK_RED				0x1c // RED
 #define COLOR_RED					0x1c
+#define COLOR_LIGHT_RED				0x0c
 #define COLOR_MAGENTA				0x18
 #define COLOR_MAUVE 				0x1d
-#define COLOR_LIGHT_RED				0x0c
 #define COLOR_PURPLE				0x05
 #define COLOR_LIGHT_MAGENTA			0x0d
+#define COLOR_DARK_GREEN			0x16 // GREEN
 #define COLOR_GREEN					0x16
+#define COLOR_LIGHT_GREEN			0x12
 #define COLOR_CYAN					0x06
 #define COLOR_DARK_CYAN				0x06
 #define COLOR_YELLOW				0x1e
-#define COLOR_WHITE					0x00
 #define COLOR_PASTEL_BLUE			0x1f
 #define COLOR_ORANGE				0x0e
 #define COLOR_PINK       			0x07
 #define COLOR_PASTEL_MAGENTA		0x0f
-#define COLOR_LIGHT_GREEN			0x12
 #define COLOR_SEA_GREEN			    0x02
 #define COLOR_LIGHT_CYAN		    0x13
 #define COLOR_LIME      		    0x1a
@@ -189,6 +191,8 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 #define COLOR_PASTEL_CYAN    	    0x1b
 #define COLOR_LIGHT_YELLOW    	    0x0a
 #define COLOR_PASTEL_YELLOW   	    0x03
+#define COLOR_DARK_WHITE			0x00 // WHITE
+#define COLOR_WHITE					0x00
 #define COLOR_LIGHT_WHITE   	    0x0b
 
 // 57h	Sky Blue	0 50 100	#0080FF	0/128/255
@@ -198,7 +202,6 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 #define COLOR_DARK_GREY				COLOR_BLACK
 #define COLOR_GREY					COLOR_BLACK
 #define COLOR_LIGHT_GREY			COLOR_WHITE
-#define COLOR_DARK_BLUE				COLOR_BLUE
 #define COLOR_LAVENDER       		COLOR_VIOLET
 #define COLOR_GOLD       			COLOR_YELLOW
 #define COLOR_TURQUOISE       		COLOR_LIGHT_BLUE
