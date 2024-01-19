@@ -58,22 +58,26 @@
 
 #define COLOR_TRANSPARENT			0x00
 #define COLOR_BLACK					0x01
+#define COLOR_DARK_WHITE			0x0e // GREY
 #define COLOR_WHITE					0x0f
+#define COLOR_LIGHT_WHITE			COLOR_WHITE
+#define COLOR_DARK_RED				0x06 // BROWN
 #define COLOR_RED					0x08
+#define COLOR_LIGHT_RED				0x09
 #define COLOR_CYAN					0x07
 #define COLOR_VIOLET				0x0d
+#define COLOR_DARK_GREEN			0x02 // GREEN
 #define COLOR_GREEN					0x02
+#define COLOR_LIGHT_GREEN			0x03
+#define COLOR_DARK_BLUE				0x04
 #define COLOR_BLUE					0x07
+#define COLOR_LIGHT_BLUE			0x05
 #define COLOR_YELLOW				0x0b
 #define COLOR_ORANGE				0x09
 #define COLOR_BROWN					0x06
-#define COLOR_LIGHT_RED				0x09
 #define COLOR_DARK_GREY				0x0e
 #define COLOR_GREY					0x0e
-#define COLOR_LIGHT_GREEN			0x03
-#define COLOR_LIGHT_BLUE			0x05
 #define COLOR_LIGHT_GREY			0x0e
-#define COLOR_DARK_BLUE				0x04
 #define COLOR_MAGENTA				0x0d
 #define COLOR_PURPLE				COLOR_VIOLET
 #define COLOR_LAVENDER       		COLOR_VIOLET
@@ -84,7 +88,6 @@
 #define COLOR_OLIVE_GREEN       	0x0c
 #define COLOR_PINK       			COLOR_LIGHT_RED
 #define COLOR_PEACH       			COLOR_PINK
-#define COLOR_LIGHT_WHITE			COLOR_WHITE
 #define COLOR_COUNT                 16
 
 #define DEFAULT_PEN_COLOR           COLOR_WHITE
