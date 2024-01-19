@@ -500,8 +500,14 @@ const_color_enumeration:
       | BROWN {
           $$ = COLOR_BROWN;
       }
+      | DARK RED {
+          $$ = COLOR_DARK_RED;
+      }
       | LIGHT RED {
           $$ = COLOR_LIGHT_RED;
+      }
+      | DARK WHITE {
+          $$ = COLOR_DARK_WHITE;
       }
       | LIGHT WHITE {
           $$ = COLOR_LIGHT_WHITE;
@@ -511,6 +517,9 @@ const_color_enumeration:
       }
       | GREY {
           $$ = COLOR_GREY;
+      }
+      | DARK GREEN {
+          $$ = COLOR_DARK_GREEN;
       }
       | LIGHT GREEN {
           $$ = COLOR_LIGHT_GREEN;
@@ -1474,6 +1483,14 @@ color_enumeration:
           $$ = variable_temporary( _environment, VT_COLOR, "(color WHITE)" )->name;
           variable_store( _environment, $$, COLOR_WHITE );
       }
+      | DARK WHITE {
+          $$ = variable_temporary( _environment, VT_COLOR, "(color DARK WHITE)" )->name;
+          variable_store( _environment, $$, COLOR_DARK_WHITE );
+      }
+      | LIGHT WHITE {
+          $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT WHITE)" )->name;
+          variable_store( _environment, $$, COLOR_LIGHT_WHITE );
+      }
       | RED {
           $$ = variable_temporary( _environment, VT_COLOR, "(color BLACK)" )->name;
           variable_store( _environment, $$, COLOR_RED );
@@ -1506,6 +1523,10 @@ color_enumeration:
           $$ = variable_temporary( _environment, VT_COLOR, "(color BROWN)" )->name;
           variable_store( _environment, $$, COLOR_BROWN );
       }
+      | DARK RED {
+          $$ = variable_temporary( _environment, VT_COLOR, "(color DARK RED)" )->name;
+          variable_store( _environment, $$, COLOR_DARK_RED );
+      }
       | LIGHT RED {
           $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT RED)" )->name;
           variable_store( _environment, $$, COLOR_LIGHT_RED );
@@ -1517,6 +1538,10 @@ color_enumeration:
       | GREY {
           $$ = variable_temporary( _environment, VT_COLOR, "(color GREY)" )->name;
           variable_store( _environment, $$, COLOR_GREY );
+      }
+      | DARK GREEN {
+          $$ = variable_temporary( _environment, VT_COLOR, "(color DARK GREEN)" )->name;
+          variable_store( _environment, $$, COLOR_DARK_GREEN );
       }
       | LIGHT GREEN {
           $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT GREEN)" )->name;
