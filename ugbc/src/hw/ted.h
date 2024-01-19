@@ -34,11 +34,15 @@
 #include "../ugbc.h"
 
 #define COLOR_BLACK					0
+#define COLOR_DARK_WHITE			12 // GREY
 #define COLOR_WHITE					1
+#define COLOR_DARK_RED				2 // RED
 #define COLOR_RED					2
 #define COLOR_CYAN					3
 #define COLOR_VIOLET				4
+#define COLOR_DARK_GREEN			5 // GREEN
 #define COLOR_GREEN					5
+#define COLOR_DARK_BLUE				6 // BLUE
 #define COLOR_BLUE					6
 #define COLOR_YELLOW				7
 #define COLOR_ORANGE				8
