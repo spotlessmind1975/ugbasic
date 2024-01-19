@@ -33,17 +33,30 @@
 
 #include "../ugbc.h"
 
+// RGB 543210
+// +-> RGBrgb
+// 
+// Bit 5 = High order Red R1     x
+// Bit 4 = High order Green G1   
+// Bit 3 = High order Blue B1    x
+// Bit 2 = Low order Red R0      x
+// Bit 1 = Low order Green G0    x
+// Bit 0 = Low order Blue B0     
+
 #define RGB2GIME( r, g, b )     ( ( (r/64) & 0x02 ) << (5-1) ) | ( ( (g/64) & 0x02 ) << (4-1) ) | ( ( (b/64) & 0x02 ) << (3-1) ) | ( ( (r/64) & 0x01 ) << 2 ) | ( ( (g/64) & 0x01 ) << 1 ) | ( ( (b/64) & 0x01 ) )
 
 #define COLOR_BLACK					0x00
 #define COLOR_BLUE					0x08
+#define COLOR_DARK_BLUE			    0x01
 #define COLOR_LIGHT_BLUE			0x09
+#define COLOR_DARK_RED				0x04
 #define COLOR_RED					0x20
 #define COLOR_MAGENTA				0x28
 #define COLOR_MAUVE 				0x2a
 #define COLOR_LIGHT_RED				0x24
 #define COLOR_PURPLE				0x05
 #define COLOR_LIGHT_MAGENTA			0x2d
+#define COLOR_DARK_GREEN			0x02
 #define COLOR_GREEN					0x10
 #define COLOR_CYAN					0x18
 #define COLOR_DARK_CYAN				0x03
@@ -51,31 +64,32 @@
 #define COLOR_WHITE					0x38
 #define COLOR_PASTEL_BLUE			0x1d
 #define COLOR_ORANGE				0x26
-#define COLOR_PINK       			0x27
+#define COLOR_PINK       			0x3c
 #define COLOR_PASTEL_MAGENTA		RGB2GIME( 0xff, 0x00, 0xff )
 #define COLOR_LIGHT_GREEN			0x12
 #define COLOR_SEA_GREEN			    RGB2GIME( 0x00, 0xf0, 0x20 )
 #define COLOR_LIGHT_CYAN		    0x1b
+#define COLOR_DARK_WHITE   	        0x07
+#define COLOR_LIGHT_WHITE   	    0x3f
+#define COLOR_DARK_GREY				0x00
+#define COLOR_GREY					0x07
+#define COLOR_LIGHT_GREY			0x38
+#define COLOR_TAN       		    0x31
+#define COLOR_TURQUOISE       		0x0b
+#define COLOR_YELLOW_GREEN       	0x32
+#define COLOR_BROWN					0x06
+#define COLOR_LAVENDER       		0x39
+#define COLOR_OLIVE_GREEN       	0x32
+#define COLOR_VIOLET				0x2d
 
 #define COLOR_LIME      		    RGB2GIME( 0xcc, 0xff, 0x00 ) 
 #define COLOR_PASTEL_GREEN    	    COLOR_LIGHT_GREEN
 #define COLOR_PASTEL_CYAN    	    COLOR_LIGHT_CYAN
 #define COLOR_LIGHT_YELLOW    	    RGB2GIME( 0xf0, 0xf0, 0x00 ) 
 #define COLOR_PASTEL_YELLOW   	    COLOR_LIGHT_YELLOW
-#define COLOR_LIGHT_WHITE   	    0x3f
 
-#define COLOR_VIOLET				COLOR_PURPLE
-#define COLOR_BROWN					COLOR_RED
-#define COLOR_DARK_GREY				COLOR_BLACK
-#define COLOR_GREY					COLOR_BLACK
-#define COLOR_LIGHT_GREY			COLOR_WHITE
-#define COLOR_DARK_BLUE				COLOR_BLUE
-#define COLOR_LAVENDER       		COLOR_VIOLET
+
 #define COLOR_GOLD       			COLOR_YELLOW
-#define COLOR_TURQUOISE       		COLOR_LIGHT_BLUE
-#define COLOR_TAN       		    COLOR_BROWN
-#define COLOR_YELLOW_GREEN       	COLOR_YELLOW
-#define COLOR_OLIVE_GREEN       	COLOR_PASTEL_GREEN
 #define COLOR_PEACH       			COLOR_PINK
 #define COLOR_COUNT                 64
 
