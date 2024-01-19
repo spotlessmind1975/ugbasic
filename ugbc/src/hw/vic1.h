@@ -35,9 +35,11 @@
 
 #define COLOR_BLACK					0
 #define COLOR_WHITE					1
+#define COLOR_DARK_RED				2 // RED
 #define COLOR_RED					2
 #define COLOR_CYAN					3
 #define COLOR_VIOLET				4
+#define COLOR_DARK_GREEN			5 // GREEN
 #define COLOR_GREEN					5
 #define COLOR_BLUE					6
 #define COLOR_YELLOW				7	
@@ -60,6 +62,7 @@
 #define COLOR_OLIVE_GREEN       	COLOR_GREEN
 #define COLOR_PINK       			COLOR_LIGHT_RED
 #define COLOR_PEACH       			COLOR_PINK
+#define COLOR_DARK_WHITE			COLOR_WHITE
 #define COLOR_LIGHT_WHITE			COLOR_WHITE
 #define COLOR_COUNT                 8
 
