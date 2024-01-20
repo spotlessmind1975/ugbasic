@@ -5241,7 +5241,7 @@ datatype :
         $$ = VT_IMAGE;
     }
     | IMAGES {
-        $$ = VT_IMAGE;
+        $$ = VT_IMAGES;
     }
     | SEQUENCE {
         $$ = VT_SEQUENCE;
