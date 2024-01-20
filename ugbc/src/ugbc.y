@@ -5372,15 +5372,17 @@ const_array_definitions1:
     const_array_definition {
 
     }
-    | const_array_definition OP_COMMA const_array_definitions1 {
-
-    };
+    | const_array_definition {
+        
+    } OP_COMMA const_array_definitions1;
 
 const_array_definitions : 
     {
 
     }
-    | const_array_definitions1;
+    | const_array_definitions1 {
+
+    };
 
 array_assign:
     {
