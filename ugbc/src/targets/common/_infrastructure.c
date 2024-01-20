@@ -10290,6 +10290,9 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     Variable * var;
     if ( variable_exists( _environment, _var ) ) {
         var = variable_retrieve( _environment, _var );
+        if ( var->type != expr->type ) {
+            CRITICAL_VARIABLE_CANNOT_DIRECT_ASSIGN_DIFFERENT_TYPE( DATATYPE_AS_STRING[var->type], DATATYPE_AS_STRING[expr->type] );
+        }
     } else {
         if ( !((struct _Environment *)_environment)->optionExplicit ) {
             var = variable_define( _environment, _var, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );

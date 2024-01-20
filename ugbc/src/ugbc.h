@@ -2717,6 +2717,7 @@ typedef struct _Environment {
 #define CRITICAL_MISSING_FILE_STORAGE(v) CRITICAL("E249 - missing file storage" );
 #define CRITICAL_DSAVE_MISSING_ADDRESS(v) CRITICAL2("E250 - source address for DSAVE is missing", v );
 #define CRITICAL_DSAVE_MISSING_SIZE(v) CRITICAL2("E251 - size for DSAVE is missing", v );
+#define CRITICAL_VARIABLE_CANNOT_DIRECT_ASSIGN_DIFFERENT_TYPE( t1, t2 ) CRITICAL3("E252 - cannot direct assign between different types", t1, t2 );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
