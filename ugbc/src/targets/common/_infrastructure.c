@@ -7407,8 +7407,8 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
     } else {
         for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
             int baseValue = 1;
-            for( j=0; j<i; ++j ) {
-                baseValue *= array->arrayDimensionsEach[array->arrayDimensions-j-1];
+            for( j=0; j<(_environment->arrayIndexes[_environment->arrayNestedIndex]-i-1); ++j ) {
+                baseValue *= array->arrayDimensionsEach[j];
             }
             if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] == NULL ) {
                 variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] * baseValue );
