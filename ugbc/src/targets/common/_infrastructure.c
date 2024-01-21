@@ -6466,6 +6466,8 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
                 cpu_label( _environment, unlimitedLenLabel );
             } else {
                 cpu_move_8bit( _environment, size->realName, copyofLen->realName );
+                cpu_math_sub_8bit( _environment, copyofLen->realName, position->realName, copyofLen->realName );
+                cpu_inc( _environment, copyofLen->realName );
             }
 
             cpu_greater_than_8bit( _environment, position->realName, size->realName, size2->realName, 0, 0 );
