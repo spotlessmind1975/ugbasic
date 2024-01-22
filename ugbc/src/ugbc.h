@@ -1075,6 +1075,9 @@ typedef struct _Loop {
     /** Variable with index. */
     Variable *index;
 
+    /** Variable with from. */
+    Variable *from;
+
     /** Variable with to. */
     Variable *to;
 
@@ -2718,6 +2721,7 @@ typedef struct _Environment {
 #define CRITICAL_DSAVE_MISSING_ADDRESS(v) CRITICAL2("E250 - source address for DSAVE is missing", v );
 #define CRITICAL_DSAVE_MISSING_SIZE(v) CRITICAL2("E251 - size for DSAVE is missing", v );
 #define CRITICAL_VARIABLE_CANNOT_DIRECT_ASSIGN_DIFFERENT_TYPE( t1, t2 ) CRITICAL3("E252 - cannot direct assign between different types", t1, t2 );
+#define CRITICAL_WRONG_NEXT_INDEX(v) CRITICAL2("E253 - NEXT with a wrong FOR index", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3736,9 +3740,12 @@ void                    bank_set_var( Environment * _environment, char * _bank )
 void                    bank_write_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
+void                    begin_for_from( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
+void                    begin_for_identifier( Environment * _environment, char * _index );
 void                    begin_for_mt( Environment * _environment, char * _index, char * _from, char * _to );  
-void                    begin_for_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
 void                    begin_for_mt_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
+void                    begin_for_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
+void                    begin_for_to( Environment * _environment, char *_to );
 void                    begin_gameloop( Environment * _environment );
 void                    begin_loop( Environment * _environment );
 void                    begin_procedure( Environment * _environment, char * _name );
@@ -3849,6 +3856,7 @@ void                    else_if_then( Environment * _environment, char * _expres
 void                    else_if_then_label( Environment * _environment );
 void                    end( Environment * _environment );
 void                    end_for( Environment * _environment );
+void                    end_for_identifier( Environment * _environment, char * _identifier );
 void                    end_gameloop( Environment * _environment );
 void                    end_if_then( Environment * _environment  );
 void                    end_loop( Environment * _environment );

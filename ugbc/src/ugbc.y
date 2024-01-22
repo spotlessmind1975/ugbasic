@@ -7886,8 +7886,10 @@ statement2nc:
       exit_loop_if( _environment, $4, $2 );  
   }
   | FOR Identifier OP_ASSIGN expr TO expr {
-      begin_for( _environment, $2, $4, $6 );  
-  } 
+      begin_for_from( _environment, $2, $4, $6, NULL );
+      begin_for_to( _environment, $6 );
+      begin_for_identifier( _environment, $2 );
+  }
   | FOR OSP Identifier CSP OP_ASSIGN expr TO expr {
       begin_for_mt( _environment, $3, $6, $8 );  
   } 
@@ -7895,7 +7897,7 @@ statement2nc:
       end_for( _environment );
   }
   | NEXT Identifier {
-      end_for( _environment );
+      end_for_identifier( _environment, $2 );
   }
   | parallel_optional PROCEDURE Identifier on_targets {
         ((struct _Environment *)_environment)->parameters = 0;
@@ -7933,7 +7935,9 @@ statement2nc:
       ((struct _Environment *)_environment)->emptyProcedure = 0;
   }
   | FOR Identifier OP_ASSIGN expr TO expr STEP expr {
-      begin_for_step( _environment, $2, $4, $6, $8 );  
+      begin_for_from( _environment, $2, $4, $6, $8 );
+      begin_for_to( _environment, $6 );
+      begin_for_identifier( _environment, $2 );
   }
   | PROC Identifier {
       ((struct _Environment *)_environment)->parameters = 0;

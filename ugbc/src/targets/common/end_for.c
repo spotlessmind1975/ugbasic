@@ -46,6 +46,28 @@
  * 
  * @param _environment Current calling environment
  */
+void end_for_identifier( Environment * _environment, char * _index ) {
+
+    Variable * index = variable_retrieve( _environment, _index );
+    
+    Loop * loop = _environment->loops;
+
+    if ( ! loop ) {
+        CRITICAL_NEXT_WITHOUT_FOR();
+    }
+
+    if ( loop->type != LT_FOR && loop->type != LT_FOR_MT ) {
+        CRITICAL_NEXT_WITHOUT_FOR();
+    }
+
+    if ( strcmp( loop->index->name, index->name ) ) {
+        CRITICAL_WRONG_NEXT_INDEX(_index);
+    }
+
+    end_for( _environment );
+
+}
+
 void end_for( Environment * _environment ) {
 
     Loop * loop = _environment->loops;
