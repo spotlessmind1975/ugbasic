@@ -38,6 +38,128 @@
  * CODE SECTION 
  ****************************************************************************/
 
+void begin_for_from_mt( Environment * _environment, char * _index, char * _from, char * _to, char * _step ) {
+
+    // Retrieve index and extremes. 
+    Variable * index = NULL;
+    Variable * from = variable_retrieve( _environment, _from );
+    Variable * to = variable_retrieve( _environment, _to );
+
+    index = variable_retrieve( _environment, _index );
+
+    if ( index->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( index->name );
+    }
+
+    // Calculate the maximum rappresentable size for the index, based on from and to.
+    int maxType = VT_MAX_BITWIDTH_TYPE( from->type, to->type );
+
+    if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) ) {
+        maxType = VT_SIGN( maxType );
+    }
+
+    Variable * step = NULL;
+    Variable * stepResident = NULL;
+    if ( ! _step ) {
+        // In this version, the step is not given - by default, step = 1
+        stepResident = variable_resident( _environment, maxType, "(step 1)" );
+        variable_store( _environment, stepResident->name, 1 );
+    } else {
+        // In this version, the step is given
+        step = variable_retrieve( _environment, _step );
+        stepResident = variable_resident( _environment, maxType, "(step)" );
+        variable_move( _environment, step->name, stepResident->name );
+    }
+
+    // Start by copying the from to index.
+    parser_array_init( _environment );    
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+    variable_move_array( _environment, index->name, from->name );
+    parser_array_cleanup( _environment );
+
+    // --- --- --- START OF LOOP --- --- ---
+
+    MAKE_LABEL
+    unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", label );
+    cpu_label( _environment, beginFor );
+
+    // Update the resident version of from and step at each loop.
+    Variable * fromResident = variable_resident( _environment, from->type, "(from)" );
+    variable_move( _environment, from->name, fromResident->name );
+    if ( step ) {
+        variable_move( _environment, step->name, stepResident->name );
+    }
+    
+    Loop * loop = malloc( sizeof( Loop ) );
+    memset( loop, 0, sizeof( Loop ) );
+    loop->label = strdup( label );
+    loop->type = LT_FOR_MT;
+    loop->next = _environment->loops;
+    loop->index = NULL;
+    loop->from = from;
+    loop->from->locked = 1;
+    loop->fromResident = fromResident;
+    loop->fromResident->locked = 1;
+    if ( step ) {
+        loop->step = step;
+        loop->step->locked = 1;
+    }
+    loop->stepResident = stepResident;
+    loop->stepResident->locked = 1;
+    loop->to = NULL;
+    _environment->loops = loop;
+
+}
+
+void begin_for_to_mt( Environment * _environment, char *_to ) {
+
+    Variable * to = variable_retrieve( _environment, _to );
+    Variable * toResident = variable_resident( _environment, to->type, "(to)" );
+
+    // Update the resident version of to at each loop.
+    variable_move( _environment, to->name, toResident->name );
+    
+    Loop * loop = _environment->loops;
+    loop->to = to;
+    loop->to->locked = 1;
+    loop->to = toResident;
+    loop->to->locked = 1;
+}
+
+void begin_for_identifier_mt( Environment * _environment, char * _index ) {
+
+    Loop * loop = _environment->loops;
+
+    Variable * index = variable_retrieve( _environment, _index );
+    if ( index->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( index->name );
+    }
+
+    parser_array_init( _environment );
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+    Variable * value = variable_move_from_array( _environment, index->name );
+    parser_array_cleanup( _environment );
+
+    Variable * from = loop->fromResident;
+    Variable * to = loop->toResident;
+    Variable * step = loop->stepResident;
+
+    unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
+
+    Variable * isLastStep;
+
+    // Finish the loop if the index is less than lower bound.
+    isLastStep = variable_less_than( _environment, value->name, loop->from->name, 0 );
+    cpu_bvneq( _environment, isLastStep->realName, endFor );
+
+    // Finish the loop if the index is less than upper bound.
+    isLastStep = variable_greater_than( _environment, value->name, loop->to->name, 0 );
+    cpu_bvneq( _environment, isLastStep->realName, endFor );
+
+    loop->index = index;
+
+}
+
 void begin_for_mt( Environment * _environment, char * _index, char * _from, char * _to ) {
 
     Variable * index = variable_retrieve( _environment, _index );

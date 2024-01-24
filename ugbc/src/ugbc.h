@@ -3648,11 +3648,14 @@ void                    bank_write_vars( Environment * _environment, char * _ban
 void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_from( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
+void                    begin_for_from_mt( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
 void                    begin_for_identifier( Environment * _environment, char * _index );
+void                    begin_for_identifier_mt( Environment * _environment, char * _index );
 void                    begin_for_mt( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_mt_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
 void                    begin_for_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
 void                    begin_for_to( Environment * _environment, char *_to );
+void                    begin_for_to_mt( Environment * _environment, char *_to );
 void                    begin_gameloop( Environment * _environment );
 void                    begin_loop( Environment * _environment );
 void                    begin_procedure( Environment * _environment, char * _name );
