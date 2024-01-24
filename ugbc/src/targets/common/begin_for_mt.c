@@ -81,15 +81,21 @@ void begin_for_from_mt( Environment * _environment, char * _index, char * _from,
 
     MAKE_LABEL
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", label );
+    unsigned char assignStep[MAX_TEMPORARY_STORAGE]; sprintf(assignStep, "%sas", label );
+    unsigned char assignStepAfter[MAX_TEMPORARY_STORAGE]; sprintf(assignStepAfter, "%sasa", label );
     cpu_label( _environment, beginFor );
 
     // Update the resident version of from and step at each loop.
     Variable * fromResident = variable_resident( _environment, from->type, "(from)" );
     variable_move( _environment, from->name, fromResident->name );
     if ( step ) {
+        cpu_jump( _environment, assignStepAfter );
+        cpu_label( _environment, assignStep );
         variable_move( _environment, step->name, stepResident->name );
+        cpu_return( _environment );
+        cpu_label( _environment, assignStepAfter );
     }
-    
+
     Loop * loop = malloc( sizeof( Loop ) );
     memset( loop, 0, sizeof( Loop ) );
     loop->label = strdup( label );

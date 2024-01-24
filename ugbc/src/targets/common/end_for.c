@@ -72,6 +72,8 @@ void end_for( Environment * _environment ) {
 
     Loop * loop = _environment->loops;
 
+    unsigned char assignStep[MAX_TEMPORARY_STORAGE]; sprintf(assignStep, "%sas", loop->label );
+
     Variable * step = loop->stepResident;
 
     if ( ! loop ) {
@@ -85,7 +87,12 @@ void end_for( Environment * _environment ) {
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
+    if ( loop->step ) {
+        cpu_call( _environment, assignStep );
+    }
+
     if ( loop->type == LT_FOR ) {
+
         variable_add_inplace_vars( _environment, loop->index->name, step->name );
 
         if ( !VT_SIGNED( loop->index->type ) ) {
