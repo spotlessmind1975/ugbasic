@@ -149,10 +149,16 @@ void begin_for_from( Environment * _environment, char * _index, char * _from, ch
     loop->type = LT_FOR;
     loop->next = _environment->loops;
     loop->index = NULL;
-    loop->from = fromResident;
+    loop->from = from;
     loop->from->locked = 1;
-    loop->step = stepResident;
-    loop->step->locked = 1;
+    loop->fromResident = fromResident;
+    loop->fromResident->locked = 1;
+    if ( step ) {
+        loop->step = step;
+        loop->step->locked = 1;
+    }
+    loop->stepResident = stepResident;
+    loop->stepResident->locked = 1;
     loop->to = NULL;
     _environment->loops = loop;
 
@@ -167,9 +173,10 @@ void begin_for_to( Environment * _environment, char *_to ) {
     variable_move( _environment, to->name, toResident->name );
     
     Loop * loop = _environment->loops;
+    loop->to = to;
+    loop->to->locked = 1;
     loop->to = toResident;
     loop->to->locked = 1;
-
 }
 
 void begin_for_identifier( Environment * _environment, char * _index ) {
@@ -178,9 +185,9 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
 
     Variable * index = variable_retrieve( _environment, _index );
 
-    Variable * from = loop->from;
-    Variable * to = loop->to;
-    Variable * step = loop->step;
+    Variable * from = loop->fromResident;
+    Variable * to = loop->toResident;
+    Variable * step = loop->stepResident;
 
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 

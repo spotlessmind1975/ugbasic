@@ -72,6 +72,8 @@ void end_for( Environment * _environment ) {
 
     Loop * loop = _environment->loops;
 
+    Variable * step = loop->stepResident;
+
     if ( ! loop ) {
         CRITICAL_NEXT_WITHOUT_FOR();
     }
@@ -84,7 +86,7 @@ void end_for( Environment * _environment ) {
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
     if ( loop->type == LT_FOR ) {
-        variable_add_inplace_vars( _environment, loop->index->name, loop->step->name );
+        variable_add_inplace_vars( _environment, loop->index->name, step->name );
 
         if ( !VT_SIGNED( loop->index->type ) ) {
             variable_compare_and_branch_const( _environment, loop->index->name, 0, endFor, 1 );
@@ -121,13 +123,26 @@ void end_for( Environment * _environment ) {
 
     cpu_label( _environment, endFor );
 
-    loop->index->locked = 0;
-    loop->to->locked = 0;
+    if ( loop->to ) {
+        loop->to->locked = 0;
+    }
+    if ( loop->from ) {
+        loop->from->locked = 0;
+    }
     if ( loop->step ) {
         loop->step->locked = 0;
     }
     if ( loop->zero ) {
         loop->zero->locked = 0;
+    }
+    if ( loop->toResident ) {
+        loop->toResident->locked = 0;
+    }
+    if ( loop->fromResident ) {
+        loop->fromResident->locked = 0;
+    }
+    if ( loop->stepResident ) {
+        loop->stepResident->locked = 0;
     }
 
     _environment->loops = _environment->loops->next;
