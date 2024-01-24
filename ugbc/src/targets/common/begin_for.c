@@ -239,11 +239,21 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     loop->type = LT_FOR;
     loop->next = _environment->loops;
     loop->index = index;
-    loop->index->locked = 1;
-    loop->step = step;
-    loop->step->locked = 1;
-    loop->to = toResident;
+    loop->from = from;
+    loop->from->locked = 1;
+    loop->fromResident = from;
+    loop->fromResident->locked = 1;
+    loop->to = from;
     loop->to->locked = 1;
+    loop->toResident = to;
+    loop->toResident->locked = 1;
+    if ( step ) {
+        loop->step = step;
+        loop->step->locked = 1;
+    }
+    loop->stepResident = step;
+    loop->stepResident->locked = 1;
+    loop->to = NULL;
     _environment->loops = loop;
 
     variable_move( _environment, from->name, index->name );
