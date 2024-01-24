@@ -1065,11 +1065,20 @@ typedef struct _Loop {
     /** Variable with from. */
     Variable *from;
 
+    /** Variable with from (resident). */
+    Variable *fromResident;
+
     /** Variable with to. */
     Variable *to;
 
+    /** Variable with to (resident). */
+    Variable *toResident;
+
     /** Variable with step. */
     Variable *step;
+
+    /** Variable with step (resident). */
+    Variable *stepResident;
 
     /** Variable with zero (0). */
     Variable *zero;
