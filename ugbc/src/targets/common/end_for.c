@@ -86,6 +86,9 @@ void end_for( Environment * _environment ) {
 
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
+    unsigned char beginForPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepare, "%sprep", loop->label );
+
+    cpu_call( _environment, beginForPrepare );
 
     if ( loop->step ) {
         cpu_call( _environment, assignStep );
