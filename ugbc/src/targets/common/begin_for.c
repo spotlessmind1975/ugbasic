@@ -94,7 +94,71 @@ per modificare la dimensione dell'incremento del valore dell'indice.
 @target all
 </usermanual> */
 
+void begin_for_to_prepare( Environment * _environment ) {
+
+    MAKE_LABEL
+
+    Loop * loop = malloc( sizeof( Loop ) );
+    memset( loop, 0, sizeof( Loop ) );
+    loop->label = strdup( label );
+    loop->type = LT_FOR;
+    loop->next = _environment->loops;
+    _environment->loops = loop;
+
+    unsigned char beginForPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepare, "%sprep", label );
+    unsigned char beginForPrepareAfter[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepareAfter, "%sprepa", label );
+
+    cpu_jump( _environment, beginForPrepareAfter );
+    cpu_label( _environment, beginForPrepare );
+
+}
+
+void begin_for_step_prepare( Environment * _environment, char * _from, char * _to, char * _step ) {
+
+    Loop * loop = _environment->loops;
+
+    Variable * from = variable_retrieve( _environment, _from );
+    Variable * to = variable_retrieve( _environment, _to );
+
+    // Calculate the maximum rappresentable size for the index, based on from and to.
+    int maxType = VT_MAX_BITWIDTH_TYPE( from->type, to->type );
+
+    if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) ) {
+        maxType = VT_SIGN( maxType );
+    }
+
+    Variable * step = NULL;
+    Variable * stepResident = NULL;
+
+    if ( ! _step ) {
+        // In this version, the step is not given - by default, step = 1
+        stepResident = variable_resident( _environment, maxType, "(step 1)" );
+        variable_store( _environment, stepResident->name, 1 );
+    } else {
+        // In this version, the step is given
+        step = variable_retrieve( _environment, _step );
+        stepResident = variable_resident( _environment, maxType, "(step)" );
+        variable_move( _environment, step->name, stepResident->name );
+    }    
+
+    if ( step ) {
+        loop->step = step;
+        loop->step->locked = 1;
+    }
+
+    loop->stepResident = stepResident;
+    loop->stepResident->locked = 1;
+
+}
+
 void begin_for_from( Environment * _environment, char * _index, char * _from, char * _to, char * _step ) {
+
+    Loop * loop = _environment->loops;
+    unsigned char beginForPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepare, "%sprep", loop->label );
+    unsigned char beginForPrepareAfter[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepareAfter, "%sprepa", loop->label );
+
+    cpu_return( _environment );
+    cpu_label( _environment, beginForPrepareAfter );
 
     // Retrieve index and extremes. 
     Variable * index = NULL;
@@ -114,57 +178,33 @@ void begin_for_from( Environment * _environment, char * _index, char * _from, ch
         index = variable_retrieve_or_define( _environment, _index, maxType, 0 );
     }
 
-    Variable * step = NULL;
-    Variable * stepResident = NULL;
-    if ( ! _step ) {
-        // In this version, the step is not given - by default, step = 1
-        stepResident = variable_resident( _environment, maxType, "(step 1)" );
-        variable_store( _environment, stepResident->name, 1 );
-    } else {
-        // In this version, the step is given
-        step = variable_retrieve( _environment, _step );
-        stepResident = variable_resident( _environment, maxType, "(step)" );
-        variable_move( _environment, step->name, stepResident->name );
-    }
-
     // Start by copying the from to index.
     variable_move( _environment, from->name, index->name );
 
     // --- --- --- START OF LOOP --- --- ---
-
-    MAKE_LABEL
-    unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", label );
-    unsigned char assignStep[MAX_TEMPORARY_STORAGE]; sprintf(assignStep, "%sas", label );
-    unsigned char assignStepAfter[MAX_TEMPORARY_STORAGE]; sprintf(assignStepAfter, "%sasa", label );
+    
+    unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
+    unsigned char assignStep[MAX_TEMPORARY_STORAGE]; sprintf(assignStep, "%sas", loop->label );
+    unsigned char assignStepAfter[MAX_TEMPORARY_STORAGE]; sprintf(assignStepAfter, "%sasa", loop->label );
     cpu_label( _environment, beginFor );
+
+    cpu_call( _environment, beginForPrepare );
 
     // Update the resident version of from and step at each loop.
     Variable * fromResident = variable_resident( _environment, from->type, "(from)" );
     variable_move( _environment, from->name, fromResident->name );
-    if ( step ) {
+    if ( loop->step ) {
         cpu_jump( _environment, assignStepAfter );
         cpu_label( _environment, assignStep );
-        variable_move( _environment, step->name, stepResident->name );
+        variable_move( _environment, loop->step->name, loop->stepResident->name );
         cpu_return( _environment );
         cpu_label( _environment, assignStepAfter );
     }
     
-    Loop * loop = malloc( sizeof( Loop ) );
-    memset( loop, 0, sizeof( Loop ) );
-    loop->label = strdup( label );
-    loop->type = LT_FOR;
-    loop->next = _environment->loops;
-    loop->index = NULL;
     loop->from = from;
     loop->from->locked = 1;
     loop->fromResident = fromResident;
     loop->fromResident->locked = 1;
-    if ( step ) {
-        loop->step = step;
-        loop->step->locked = 1;
-    }
-    loop->stepResident = stepResident;
-    loop->stepResident->locked = 1;
     loop->to = NULL;
     _environment->loops = loop;
 
