@@ -161,6 +161,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> dload_from_offset dload_to_address dload_size_size
 %type <string> dsave_to_offset dsave_from_address dsave_size_size
 %type <string> to_variable
+%type <string> optional_step
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -7568,6 +7569,14 @@ defdgr_definition :
         defdgr_vars( _environment, $2, $5, $7, $9, $11, $13, $15, $17, $19 );
     };
 
+optional_step :
+    {
+        $$ = NULL;
+    }
+    | STEP expr {
+        $$ = $2;
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -7885,14 +7894,20 @@ statement2nc:
   | EXIT direct_integer IF expr  {
       exit_loop_if( _environment, $4, $2 );  
   }
-  | FOR Identifier OP_ASSIGN expr TO expr {
-      begin_for_from( _environment, $2, $4, $6, NULL );
-      begin_for_to( _environment, $6 );
+  | FOR Identifier OP_ASSIGN expr TO  {
+      begin_for_to_prepare( _environment );
+  } expr optional_step {
+      begin_for_step_prepare( _environment, $4, $7, $8 );
+      begin_for_from( _environment, $2, $4, $7, $8 );
+      begin_for_to( _environment, $7 );
       begin_for_identifier( _environment, $2 );
   }
-  | FOR OSP Identifier CSP OP_ASSIGN expr TO expr {
-      begin_for_from_mt( _environment, $3, $6, $8, NULL );
-      begin_for_to_mt( _environment, $8 );
+  | FOR OSP Identifier CSP OP_ASSIGN expr TO {
+      begin_for_to_prepare_mt( _environment );
+  } expr optional_step {
+      begin_for_step_prepare_mt( _environment, $6, $9, $10 );
+      begin_for_from_mt( _environment, $3, $6, $9, $10 );
+      begin_for_to_mt( _environment, $9 );
       begin_for_identifier_mt( _environment, $3 );
   } 
   | NEXT {
@@ -7938,16 +7953,6 @@ statement2nc:
   | END PROCEDURE OSP expr CSP {
       end_procedure( _environment, $4 );
       ((struct _Environment *)_environment)->emptyProcedure = 0;
-  }
-  | FOR Identifier OP_ASSIGN expr TO expr STEP expr {
-      begin_for_from( _environment, $2, $4, $6, $8 );
-      begin_for_to( _environment, $6 );
-      begin_for_identifier( _environment, $2 );
-  }
-  | FOR OSP Identifier CSP OP_ASSIGN expr TO expr STEP expr {
-      begin_for_from_mt( _environment, $3, $6, $8, $10 );
-      begin_for_to_mt( _environment, $8 );
-      begin_for_identifier_mt( _environment, $3 );
   }
   | PROC Identifier {
       ((struct _Environment *)_environment)->parameters = 0;

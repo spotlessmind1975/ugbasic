@@ -109,7 +109,7 @@ void end_for( Environment * _environment ) {
         Variable * value = variable_move_from_array( _environment, loop->index->name );
         parser_array_cleanup( _environment );
 
-        variable_add_inplace_vars( _environment, value->name, loop->step->name );
+        variable_add_inplace_vars( _environment, value->name, step->name );
 
         parser_array_init( _environment );
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
