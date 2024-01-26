@@ -52,6 +52,10 @@ extern char DATATYPE_AS_STRING[][16];
  */
 void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
     Variable * image = variable_retrieve( _environment, _image );
 
     Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
