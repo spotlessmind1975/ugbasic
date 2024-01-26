@@ -289,7 +289,7 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     loop->from->locked = 1;
     loop->fromResident = from;
     loop->fromResident->locked = 1;
-    loop->to = from;
+    loop->to = to;
     loop->to->locked = 1;
     loop->toResident = to;
     loop->toResident->locked = 1;
@@ -299,7 +299,7 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     }
     loop->stepResident = step;
     loop->stepResident->locked = 1;
-    loop->to = NULL;
+    loop->statical = 1;
     _environment->loops = loop;
 
     variable_move( _environment, from->name, index->name );

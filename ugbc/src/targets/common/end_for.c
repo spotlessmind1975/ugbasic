@@ -88,9 +88,11 @@ void end_for( Environment * _environment ) {
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
     unsigned char beginForPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepare, "%sprep", loop->label );
 
-    cpu_call( _environment, beginForPrepare );
+    if ( !loop->statical ) {
+        cpu_call( _environment, beginForPrepare );
+    }
 
-    if ( loop->step ) {
+    if ( loop->step && !loop->statical ) {
         cpu_call( _environment, assignStep );
     }
 
