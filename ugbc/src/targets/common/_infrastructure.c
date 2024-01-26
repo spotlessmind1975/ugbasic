@@ -10661,6 +10661,11 @@ Resource * build_resource_for_sequence( Environment * _environment, char * _imag
     memset( resource, 0, sizeof( Resource ) );
 
     Variable * image = variable_retrieve( _environment, _image );
+
+    if ( ! image->valueBuffer ) {
+        CRITICAL_PUT_IMAGE_UNINITIALIZED( _image );
+    }
+
     resource->realName = image->realName;
     resource->type = image->type;
 
