@@ -3334,6 +3334,8 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
+                                        target->valueBuffer = malloc( target->size );
+                                        memset( target->valueBuffer, 0, target->size );
                                     }
                                     if ( source->size <= target->size ) {
                                         cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
@@ -3354,6 +3356,8 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
+                                        target->valueBuffer = malloc( target->size );
+                                        memset( target->valueBuffer, 0, target->size );
                                     }
                                     if ( source->size <= target->size ) {
                                         cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
@@ -3373,6 +3377,8 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
+                                        target->valueBuffer = malloc( target->size );
+                                        memset( target->valueBuffer, 0, target->size );
                                     }
                                     if ( source->size <= target->size ) {
                                         cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
@@ -3390,6 +3396,8 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
+                                        target->valueBuffer = malloc( target->size );
+                                        memset( target->valueBuffer, 0, target->size );
                                     }
                                     if ( source->size <= target->size ) {
                                         cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
@@ -3424,6 +3432,8 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
+                                        target->valueBuffer = malloc( target->size );
+                                        memset( target->valueBuffer, 0, target->size );
                                     }
                                     if ( source->size <= target->size ) {
                                         cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
