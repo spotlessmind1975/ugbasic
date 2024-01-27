@@ -7964,7 +7964,7 @@ statement2nc:
     if ( ((struct _Environment *)_environment)->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED("ASM");
     }
-    if ( $1 || $3 ) {
+    if ( $1 && $3 ) {
         outline1("%s", $2 );
     }
   }
