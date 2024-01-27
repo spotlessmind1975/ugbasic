@@ -10672,7 +10672,7 @@ Resource * build_resource_for_sequence( Environment * _environment, char * _imag
 
     Variable * image = variable_retrieve( _environment, _image );
 
-    if ( ! image->valueBuffer ) {
+    if ( ! image->valueBuffer && image->type != VT_ADDRESS ) {
         CRITICAL_PUT_IMAGE_UNINITIALIZED( _image );
     }
 
