@@ -1747,6 +1747,7 @@ Variable * vic1_new_images( Environment * _environment, int _frames, int _width,
     result->size = size;
     result->frameSize = frameSize;
     result->frameCount = _frames;
+    result->valueBuffer = malloc( size );
     
     return result;
 }
@@ -1766,6 +1767,7 @@ Variable * vic1_new_sequence( Environment * _environment, int _sequences, int _f
     result->size = size;
     result->frameSize = frameSize;
     result->frameCount = _frames;
+    result->valueBuffer = malloc( size );
     
     return result;
 }
