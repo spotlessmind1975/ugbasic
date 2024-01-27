@@ -16,12 +16,9 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
     x = 0
 
     ON CPU6809 ASM INC _x
-    ASM INC _x ON CPU6809
 
     ON CPU6502 ASM INC _x
-    ASM INC _x ON CPU6502
 
-    ASM INC _x ON CPUZ80
     ON CPUZ80 ASM INC _x
 
     IF x = 2 THEN
