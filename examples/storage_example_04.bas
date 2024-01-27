@@ -8,7 +8,7 @@ REM MEMORIE DI MASSA CARICARE IMMAGINI
 REM
 REM Questo esempio mostra come caricare delle immagini a runtime.
 
-    BITMAP ENABLE
+    BITMAP ENABLE(16)
 
 STORAGE "disco" AS "disk1"
 	IMAGES "bat.png" AS "bat" FRAME SIZE(32, 32)
