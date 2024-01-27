@@ -34,8 +34,6 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-PLOTDEST = $28 ; $29
-PLOTCDEST= $26 ; $27
 PLOTLDEST= $30 ; $31
 PLOTC2DEST= $32 ; $33
 
