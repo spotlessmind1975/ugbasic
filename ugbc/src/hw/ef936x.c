@@ -654,6 +654,10 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size ) 
     deploy( cls, src_hw_ef936x_cls_asm );
     deploy( textEncodedAt, src_hw_ef936x_text_at_asm );
 
+    if( ! _environment->descriptors ) {
+        font_descriptors_init( _environment, 0 );
+    }
+
     outline1("LDY %s", _text);
     outline0("STY <TEXTPTR" );
     outline1("LDA %s", _text_size);
