@@ -72,6 +72,10 @@ void end_for( Environment * _environment ) {
 
     Loop * loop = _environment->loops;
 
+    if ( ! loop ) {
+        CRITICAL_NEXT_WITHOUT_FOR();
+    }
+
     unsigned char assignStep[MAX_TEMPORARY_STORAGE]; sprintf(assignStep, "%sas", loop->label );
 
     Variable * step = loop->stepResident;
