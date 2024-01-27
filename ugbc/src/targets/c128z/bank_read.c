@@ -71,3 +71,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
 void bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
 }
+
+void bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
+
+}

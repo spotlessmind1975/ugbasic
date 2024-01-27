@@ -2813,6 +2813,10 @@ void vdcz_wait_vbl( Environment * _environment ) {
 
 }
 
+void vdcz_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+    // @todo
+}
+
 Variable * vdcz_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
