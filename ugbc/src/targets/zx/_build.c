@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
- * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+ * Copyright 2021-2024 Marco Spedaletti (asimov@mclink.it)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,9 +173,9 @@ void target_cleanup( Environment * _environment ) {
         char * p = strrchr( binFileName, '.' );
         memcpy( p, ".bin", 4 );
 
-        remove( _environment->configurationFileName );
-        remove( binFileName );
-        remove( _environment->asmFileName );
+        // remove( _environment->configurationFileName );
+        // remove( binFileName );
+        // remove( _environment->asmFileName );
 
         if ( _environment->analysis && _environment->listingFileName ) {
             target_analysis( _environment );

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
- * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+ * Copyright 2021-2024 Marco Spedaletti (asimov@mclink.it)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2075,7 +2075,7 @@ static unsigned int SOUND_FREQUENCIES[] = {
     0,		0,		0,		0,		0,		0,		0,		0,		0,		0,
     0,		0,		0,		0,		0,		0,		0,		0,		0,		0,
     0,		0,		0,		-5816,  -5432,  -5070,  -4728,  -4405,  -4100,  -3812,
-    -3541,  -3285,  -3043,  -2815,  -2599,  -2396,  -2204,  -2023,  -1852,  -1690,
+    -3541,  -3285,  -3043,  -2815,  -2599,  -2396,  -2204,  -2024,  -1852,  -1690,
     -1538,  -1394,  -1258,  -1130,  -1009,  -895,   -788,   -686,   -590,   -499,
     -414,   -333,   -257,   -185,   -117,   -53,    7,      64,     118,    169,
     217,    262,    305,    345,    383,    419,    453,    485,    516,    544,

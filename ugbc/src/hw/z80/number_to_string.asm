@@ -1,7 +1,7 @@
 ; /*****************************************************************************
 ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
 ;  *****************************************************************************
-;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
+;  * Copyright 2021-2024 Marco Spedaletti (asimov@mclink.it)
 ;  * Inspired from source code by Alwin Henseler on:
 ;  * https://www.msx.org/forum/development/msx-development/32-bit-long-ascii
 ;  *
