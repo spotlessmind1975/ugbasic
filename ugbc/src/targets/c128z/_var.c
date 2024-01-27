@@ -307,7 +307,7 @@ void variable_cleanup( Environment * _environment ) {
         while( actual ) {
             values[count] = actual->size;
             address[count] = malloc( MAX_TEMPORARY_STORAGE );
-            sprintf( address[count], "fs%4.4xsoffsetframe", actual->size );
+            sprintf( address[count], "fs%4.4xoffsetframe", actual->size );
             actual = actual->next;
             ++count;
         }
