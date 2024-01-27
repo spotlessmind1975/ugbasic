@@ -312,6 +312,8 @@ void variable_cleanup( Environment * _environment ) {
                     }
                     actualVariable = actualVariable->next;
                 }
+                outhead1("fs%4.4xoffsetsequence", actual->size );
+                outhead1("fs%4.4xoffsetframe", actual->size );                 
                 outline1("LDX #OFFSETS%4.4x", actual->size );
                 outline0("LDA #0" );
                 outline0("LEAX D, X" );
@@ -322,6 +324,24 @@ void variable_cleanup( Environment * _environment ) {
             }
             actual = actual->next;
         }
+
+        int values[MAX_TEMPORARY_STORAGE];
+        char * address[MAX_TEMPORARY_STORAGE];
+
+        actual = _environment->offsetting;
+        int count = 0;
+        while( actual ) {
+            values[count] = actual->size;
+            address[count] = malloc( MAX_TEMPORARY_STORAGE );
+            sprintf( address[count], "fs%4.4xoffsetframe", actual->size );
+            actual = actual->next;
+            ++count;
+        }
+
+        cpu_address_table_build( _environment, "EXECOFFSETS", values, address, count );
+
+        cpu_address_table_lookup( _environment, "EXECOFFSETS", count );        
+
     }
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
