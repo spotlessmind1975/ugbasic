@@ -220,11 +220,6 @@ void generate_dsk( Environment * _environment ) {
         if ( !strstr( buffer, ".dsk" ) ) {
             strcat( buffer, ".dsk" );
         }
-        sprintf( commandLine, "\"%s\" dskini \"%s\"", executableName, buffer );
-        if ( system_call( _environment,  commandLine ) ) {
-            printf("The compilation of assembly program failed.\n\n");
-            printf("Please use option '-I' to install chain tool.\n\n");
-        };
         _environment->exeFileName = strdup( buffer );
     } else {
         strcpy( binaryName, _environment->exeFileName );
@@ -235,6 +230,7 @@ void generate_dsk( Environment * _environment ) {
         _environment->exeFileName = strdup( binaryName );
     }
 
+    remove( _environment->exeFileName );
     sprintf( commandLine, "\"%s\" dskini \"%s\"", executableName, _environment->exeFileName );
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
@@ -296,7 +292,7 @@ void generate_dsk( Environment * _environment ) {
     fh = fopen( tempFileName, "wb" );
     fwrite( programExe, 1, programExeSize, fh );
     fclose( fh );
-    
+
     sprintf( commandLine, "\"%s\" copy -2 \"%s\" \"%s,PROGRAM.EXE\"",
         executableName, 
         tempFileName, 
@@ -306,7 +302,7 @@ void generate_dsk( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
     };
 
-    // remove( tempFileName );
+    remove( tempFileName );
 
     for( block = 0; block < blocks; ++block ) {
 
@@ -407,6 +403,7 @@ void generate_dsk( Environment * _environment ) {
                 if ( !strstr( buffer, ".dsk" ) ) {
                     strcat( buffer, ".dsk" );
                 }
+                remove( buffer );
                 sprintf( commandLine, "\"%s\" dskini \"%s\"", executableName, buffer );
                 if ( system_call( _environment,  commandLine ) ) {
                     printf("The compilation of assembly program failed.\n\n");
