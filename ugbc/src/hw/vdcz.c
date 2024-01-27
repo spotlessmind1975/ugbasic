@@ -2817,6 +2817,9 @@ Variable * vdcz_new_image( Environment * _environment, int _width, int _height, 
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 
+    result->size = 1;
+    result->valuePtr = malloc(1);
+    
     return result;
 
 }
