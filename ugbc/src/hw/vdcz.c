@@ -2828,6 +2828,9 @@ Variable * vdcz_new_images( Environment * _environment, int _frames, int _width,
 
     Variable * result = variable_temporary( _environment, VT_IMAGES, "(new images)" );
 
+    result->size = 1;
+    result->valueBuffer = malloc(1);
+    
     return result;
 
 }
