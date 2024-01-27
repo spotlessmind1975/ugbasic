@@ -2830,7 +2830,7 @@ Variable * vdcz_new_images( Environment * _environment, int _frames, int _width,
 
     result->size = 1;
     result->valueBuffer = malloc(1);
-    
+
     return result;
 
 }
@@ -2839,6 +2839,9 @@ Variable * vdcz_new_sequence( Environment * _environment, int _sequences, int _f
 
     Variable * result = variable_temporary( _environment, VT_SEQUENCE, "(new sequence)" );
 
+    result->size = 1;
+    result->valueBuffer = malloc(1);
+    
     return result;
 
 }

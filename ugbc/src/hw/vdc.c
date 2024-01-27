@@ -1049,6 +1049,9 @@ Variable * vdc_new_sequence( Environment * _environment, int _sequences, int _fr
 
     Variable * result = variable_temporary( _environment, VT_SEQUENCE, "(new sequence)" );
 
+    result->size = 1;
+    result->valueBuffer = malloc(1);
+    
     return result;
 
 }
