@@ -19,7 +19,7 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
 
     ON CPU6502 ASM INC _x
 
-    ON CPUZ80 ASM INC _x
+    ON CPUZ80 ASM LD A, (_x) \ INC A \ LD (_x), A
 
     IF x = 2 THEN
         PRINT "ok!"

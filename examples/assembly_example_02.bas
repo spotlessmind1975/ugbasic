@@ -39,13 +39,17 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
     END ASM ON CPU6502
 
     ON CPUZ80 BEGIN ASM 
-        INC _x
-        DEC _x
+        LD A, (_x)
+        INC A
+        DEC A
+        LD (_x), A
     END ASM
 
     BEGIN ASM 
-        INC _x
-        DEC _x
+        LD A, (_x)
+        INC A
+        DEC A
+        LD (_x), A
     END ASM ON CPUZ80 
 
     IF x = 42 THEN
