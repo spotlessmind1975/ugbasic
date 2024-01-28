@@ -193,7 +193,7 @@
 // are ten scan lines high, but since each of the characters are only eight scan lines high, the lower two scan lines are
 // normally left empty. However, if you use the last quarter of the character set, the top two lines remain blank, 
 // allowing you to create lowercase characters with descenders.
-#define TILEMAP_MODE_ANTIC3         3       // 40x24, 4 color
+#define TILEMAP_MODE_ANTIC3         3       // 40x24, 2 color
 
 // Antic 4 (Graphics 12-XL computers only)
 // This very powerful character graphics mode supports four colors while using relatively little screen memory (1 K). 
