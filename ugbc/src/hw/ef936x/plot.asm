@@ -792,12 +792,21 @@ PLOT2C1
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
 
 PLOT3C
-    LDB ,X        ; mode 3 - get color pair
-    LDA <PLOTX+1
+    LDA ,X        ; mode 3 - get color pair
+    LDB <(PLOTX+1)
+    LSRB          ; odd column ?
+    BCS PLOT3CLO  ; yes => get low nibble
+PLOT3CHI
+    LSRA          ; no => get high nibble
     LSRA
-    ; BCS PLOTC01   ; odd column => lower nibble
-    ; BRA PLOTC00   ; even column => upper nibble
+    LSRA
+    LSRA
+    TFR A,B
     RTS
+PLOT3CLO
+    ANDA #$0F
+    TFR A,B
+    RTS           ; done
 
 @ENDIF
 
