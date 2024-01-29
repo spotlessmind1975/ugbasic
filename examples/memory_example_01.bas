@@ -4,7 +4,7 @@ REM
 REM This example shows how to read a byte from the memory.
 REM
 REM @italian
-REM USARE IL MULTITASKING CON UN ESEMPIO (1)
+REM ACCEDERE ALLA MEMORIA LEGGERE UN BYTE
 REM
 REM Questo esempio mostra come leggere un byte dalla memoria.
 REM

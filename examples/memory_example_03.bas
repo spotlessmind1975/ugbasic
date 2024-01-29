@@ -1,12 +1,12 @@
 REM @english
-REM ACCESSING MEMORY READING A BYTE
+REM ACCESSING MEMORY READING A DOUBLE WORD
 REM
-REM This example shows how to read a byte from the memory.
+REM This example shows how to read a double word from the memory.
 REM
 REM @italian
-REM USARE IL MULTITASKING CON UN ESEMPIO (1)
+REM ACCEDERE ALLA MEMORIA LEGGERE UNA DOUBLE WORD
 REM
-REM Questo esempio mostra come leggere un byte dalla memoria.
+REM Questo esempio mostra come leggere una double word dalla memoria.
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,vic20,zx
 
