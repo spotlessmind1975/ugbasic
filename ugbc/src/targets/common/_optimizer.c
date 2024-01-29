@@ -169,13 +169,7 @@ int po_buf_trim(POBuffer buf) {
         ++p;
     }
     while(q > p) {
-        if ( ! ( (*q == ' ') || (*q == 10) || (*q == '\t') ) ) {
-            break;
-        };
-        --q;
-    }
-    while(q > p) {
-        if ( ! ( (*q == 13) ) || (*q == 10) ) {
+        if ( ! ( (*q == ' ') || (*q == 10) || (*q == 13) || (*q == '\t') ) ) {
             break;
         };
         --q;
