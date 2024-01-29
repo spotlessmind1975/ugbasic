@@ -103,12 +103,12 @@ CLS4
 @ENDIF
 
 CLSG
+    PSHS D
 @IF vestigialConfig.doubleBufferSelected
 
 @ELSE
     ; Check if double buffering is active -- in case,
     ; whe should use a different version.
-    PSHS D
     LDA DOUBLEBUFFERENABLED
     CMPA #0
     BEQ CLSGORIG
@@ -116,11 +116,11 @@ CLSG
 @ENDIF
 
 
+@IF ( !vestigialConfig.doubleBufferSelected ) || ( vestigialConfig.doubleBuffer )
+
 ; ----------------------------------------------
 ; Version active on double buffering ON
 ; ----------------------------------------------
-
-@IF ( !vestigialConfig.doubleBufferSelected ) || ( vestigialConfig.doubleBuffer )
 
     LDY BITMAPADDRESS
 CLSGDB
@@ -136,11 +136,11 @@ CLSGDB2
 
 @ENDIF
 
+@IF ( !vestigialConfig.doubleBufferSelected ) || ( !vestigialConfig.doubleBuffer )
+
 ; ----------------------------------------------
 ; Version active on double buffering OFF
 ; ----------------------------------------------
-
-@IF ( !vestigialConfig.doubleBufferSelected ) || ( !vestigialConfig.doubleBuffer )
 
 CLSGORIG
     PULS D
