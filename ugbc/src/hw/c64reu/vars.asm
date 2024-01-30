@@ -140,3 +140,11 @@ DLOADERROR:         .BYTE   $0
 DSAVEERROR:         .BYTE   $0
 
 OLDD018:            .BYTE   $0
+
+REUSTATUS           = $DF00
+REUCOMMAND          = $DF01
+REUC64BASE          = $DF02
+REUREUBASE          = $DF04
+REUTRANSLEN         = $DF07
+REUIRQMAXK          = $DF09
+REUCONTROL          = $DF0A
