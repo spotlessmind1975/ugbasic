@@ -4526,6 +4526,13 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/vg5000.h"
     #include "hw/ef9345.h"
+#elif __c64reu__
+    #include "../src-generated/modules_c64reu.h"
+    #include "hw/6502.h"
+    #include "hw/vic2.h"
+    #include "hw/sid.h"
+    #include "hw/c64reu.h"
+    #include "outputs/d64.h"
 #endif
 
 #endif
