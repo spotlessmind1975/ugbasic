@@ -35,47 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-@IF C64REU
-
-DUFFDEVICE:
-    LDA #0
-    STA REUCONTROL
-    LDA TMPPTR
-    STA REUC64BASE
-    LDA TMPPTR+1
-    STA REUC64BASE+1
-    LDA #0
-    STA REUREUBASE
-    STA REUREUBASE+1
-    STA REUREUBASE+2
-
-    LDA MATHPTR0
-    STA REUTRANSLEN
-    LDA MATHPTR1
-    STA REUTRANSLEN+1
-    LDA #%10010000
-    STA REUCOMMAND
-
-    LDA #0
-    STA REUCONTROL
-    LDA TMPPTR2
-    STA REUC64BASE
-    LDA TMPPTR2+1
-    STA REUC64BASE+1
-    LDA #0
-    STA REUREUBASE
-    STA REUREUBASE+1
-    STA REUREUBASE+2
-
-    LDA MATHPTR0
-    STA REUTRANSLEN
-    LDA MATHPTR1
-    STA REUTRANSLEN+1
-    LDA #%10010000
-    STA REUCOMMAND
-
-@ELSE
-
 DUFFDEVICE:
     LDA MATHPTR1
     BNE DUFFDEVICE2
@@ -129,4 +88,3 @@ DUFFDEVICEL1:
 
     RTS
 
-@ENDIF
