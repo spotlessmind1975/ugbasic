@@ -51,7 +51,6 @@ This is a short list of supported hardware and output file formats:
  * Atari XE Video Game System (`atarixl`)
  * Commodore 128 (`c128`)
  * Commodore 64 (`c64`)
- * Commodore 64 REU (`c64reu`)
  * Commodore PLUS/4 (`plus4`)
  * Commodore VIC-20 (`vic20`)
  * Dragon 32 (`d32`)

@@ -31,7 +31,7 @@
 .PHONY: paths toolchain compiler clean all built so
 
 ifndef target
-$(error missing 'target' (valid values: atari atarixl c128 c128z c64 c64reu coco coco3 coleco cpc d32 d64 mo5 msx1 pc128op plus4 sc3000 sg1000 vg5000 vic20 zx))
+$(error missing 'target' (valid values: atari atarixl c128 c128z c64 coco coco3 coleco cpc d32 d64 mo5 msx1 pc128op plus4 sc3000 sg1000 vg5000 vic20 zx))
 endif
 
 ifdef 10liner
@@ -66,9 +66,6 @@ ifeq ($(target),c128z)
   output=prg
 endif
 ifeq ($(target),c64)
-  output=prg
-endif
-ifeq ($(target),c64reu)
   output=prg
 endif
 ifeq ($(target),coco)
@@ -490,29 +487,6 @@ generated/c64/exeso/%.prg: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.prg=.
 
 generated/c64/exeso/%.d64: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.d64=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O d64 $(subst generated/c64/exeso/,,$(@:.d64=.bas))
-
-#------------------------------------------------ 
-# c64reu:
-#    COMMODORE 64 (6502) + REU
-#------------------------------------------------ 
-# 
-toolchain.c64reu: cc65
-
-generated/c64reu/asm/%.asm:
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64reu$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.asm=.listing) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64reu/asm/,,$(@:.asm=.bas)) ../$@
-
-generated/c64reu/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
-	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t c64 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
-	@rm -f $(@:.prg=.o)
-
-generated/c64reu/exe/%.d64:
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64reu$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O d64 $(subst generated/c64reu/exe/,,$(@:.d64=.bas))
-
-generated/c64reu/exeso/%.prg: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.prg=.bas))
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64reu$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/c64reu/exeso/,,$(@:.prg=.bas))
-
-generated/c64reu/exeso/%.d64: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.d64=.bas))
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64reu$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O d64 $(subst generated/c64reu/exeso/,,$(@:.d64=.bas))
 
 #------------------------------------------------ 
 # coleco:

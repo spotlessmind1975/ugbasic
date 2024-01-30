@@ -77,7 +77,7 @@ char *str_replace( char *orig, char *rep, char *with ) {
 
 %token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT OP_LT OP_LTE OP_GT OP_GTE OP_COMMA OP_TAB OP_PIPE
 %token IF ELSE ELSEIF ENDIF EMIT AS NewLine
-%token ATARI ATARIXL C128 C128Z C64 C64REU VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5 CPC COCO
+%token ATARI ATARIXL C128 C128Z C64 VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5 CPC COCO
 %token COCO1 COCO2 COCO3 MACRO ENDMACRO INLINE
 
 %token <string> Identifier
@@ -129,14 +129,6 @@ target :
     |
     C64 {
         #ifdef __c64__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    C64REU {
-        #ifdef __c64reu__
             $$ = 1;
         #else
             $$ = 0;

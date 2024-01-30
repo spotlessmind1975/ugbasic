@@ -484,19 +484,6 @@ src-generated/modules_c64.c: $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) $(SO
 	@grep "src" src-generated/modules_c64.c | awk -f modules.awk >src-generated/modules_c64.h
 	@grep "data" src-generated/modules_c64.c | awk -f modules.awk >>src-generated/modules_c64.h
 
-# Commodore 64 + REU
-
-MODULES_C64REU := $(wildcard src/hw/c64reu/*.asm)
-SOURCES_C64REU := $(subst src/hw/c64reu/,src-generated/c64reu_,$(MODULES_C64REU:.asm=.c))
-
-src-generated/c64reu_%.c: $(MODULES_C64REU)
-	@xxd -i $(subst src-generated/c64reu_,src/hw/c64reu/,$(@:.c=.asm)) >$@
-
-src-generated/modules_c64reu.c: $(SOURCES_6502) $(SOURCES_C64REU) $(SOURCES_VIC2) $(SOURCES_SID)
-	@cat $(SOURCES_6502) $(SOURCES_C64REU) $(SOURCES_VIC2) $(SOURCES_SID) >src-generated/modules_c64reu.c
-	@grep "src" src-generated/modules_c64reu.c | awk -f modules.awk >src-generated/modules_c64reu.h
-	@grep "data" src-generated/modules_c64reu.c | awk -f modules.awk >>src-generated/modules_c64reu.h
-
 # Commodore VIC-20
 
 MODULES_VIC20 := $(wildcard src/hw/vic20/*.asm)

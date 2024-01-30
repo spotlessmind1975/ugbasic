@@ -62,8 +62,6 @@ extern char * importPath;
     char targetName[] = "c128z";
 #elif defined(__vg5000__)
     char targetName[] = "vg5000";
-#elif defined(__c64reu__)
-    char targetName[] = "c64reu";
 #endif
 
 int yyconcatlineno;
@@ -327,7 +325,6 @@ C { RETURN(C,1); }
 C128 { RETURN(C128,1); }
 C128Z { RETURN(C128Z,1); }
 C64 { RETURN(C64,1); }
-C64REU { RETURN(C64REU,1); }
 CALL { RETURN(CALL,1); }
 Ca { RETURN(CALL,1); }
 CALLIOPE { RETURN(CALLIOPE,1); }
