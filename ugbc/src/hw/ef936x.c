@@ -750,6 +750,7 @@ void ef936x_initialization( Environment * _environment ) {
     _environment->screenColors = 16;
     _environment->currentModeBW = 1;
     _environment->currentRgbConverterFunction = rgbConverterFunction;
+    _environment->currentMode = 3;
 
     cpu_store_16bit( _environment, "CLIPX1", 0 );
     cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
@@ -1542,7 +1543,6 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
         commonPalette = palette_match_hardware_index( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
-        printf( " _transparent_color = %x\n", _transparent_color );
         if ( ( _transparent_color & 0x0f0000 ) || ( _transparent_color & 0xf00000 ) ) {
             commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
         }
