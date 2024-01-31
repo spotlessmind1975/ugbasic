@@ -154,8 +154,8 @@ INCLUDE             BEGIN(incl);
 
 [\t ]*"ASM"[^\n\r\x0a\x0d]+ { ++yylineno; yycolno = 0; int p = strstr( yytext, "ASM" ) - yytext; yylval.string = strdup( yytext + p + 3 ); RETURN(AsmSnippet,1); }
 [\t ]*"BEGIN ASM" { BEGIN(asm); asmSnippet = strdup(""); }
-<asm>[\t ]*"END ASM" { ++yylineno; yycolno = 0; BEGIN(INITIAL); yylval.string = strdup( asmSnippet ); RETURN(AsmSnippet,1); }
-<asm>[\n\r\x0a\x0d]{1,3} { ++yylineno; yycolno = 0; int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcpy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
+<asm>[\t ]*"END ASM" { yycolno = 0; BEGIN(INITIAL); yylval.string = strdup( asmSnippet ); RETURN(AsmSnippet,1); }
+<asm>[\n\r\x0a\x0d]{1,3} { for(int k=0; k<strlen(yytext); ++k ) { if(yytext[k]==10) ++yylineno; }; yycolno = 0; int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcpy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
 <asm>.{1,3} { yycolno += strlen(yytext); int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcpy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
 
 "#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
