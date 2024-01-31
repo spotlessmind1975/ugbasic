@@ -699,11 +699,11 @@ void ef936x_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
+    SCREEN_MODE_DEFINE( BITMAP_MODE_40_COLUMN, 1, 320, 200, 16, 8, 8, "BITMAP MODE 40 COLUMN" );
 #if !defined(__mo5__)
     SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_4, 1, 320, 200, 4, 8, 8, "BITMAP MODE BITMAP 4" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_16, 1, 160, 200, 16, 8, 8, "BITMAP MODE BITMAP 16" );
 #endif
-    SCREEN_MODE_DEFINE( BITMAP_MODE_40_COLUMN, 1, 320, 200, 16, 8, 8, "BITMAP MODE 40 COLUMN" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_80_COLUMN, 1, 640, 200, 2, 8, 8, "BITMAP MODE 80 COLUMN" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_PAGE, 1, 320, 200, 4, 8, 8, "BITMAP MODE PAGE" );
 
@@ -750,7 +750,6 @@ void ef936x_initialization( Environment * _environment ) {
     _environment->screenColors = 16;
     _environment->currentModeBW = 1;
     _environment->currentRgbConverterFunction = rgbConverterFunction;
-    _environment->currentMode = 3;
 
     cpu_store_16bit( _environment, "CLIPX1", 0 );
     cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
@@ -771,7 +770,7 @@ void ef936x_initialization( Environment * _environment ) {
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 4096;
 
-    // ef936x_screen_mode_enable( _environment, _environment->screenModes );
+    screen_mode( _environment, 0 );
 
 }
 
