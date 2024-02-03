@@ -126,8 +126,6 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
 
         variable_increment( _environment, y->name );
                   
-        wait_key( _environment );
-
     end_while( _environment );
 
 }
