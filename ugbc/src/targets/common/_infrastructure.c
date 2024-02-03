@@ -2913,6 +2913,10 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
 
     Variable * target = variable_retrieve( _environment, _destination );
 
+    if ( target->bankAssigned ) {
+        CRITICAL_CANNOT_COPY_TO_BANKED(_destination);
+    }
+
     switch( VT_BITWIDTH( source->type ) ) {
 
         //////////////////////////////////////////////////////////////////////////////
@@ -3331,18 +3335,53 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     target->originalColors = source->originalColors;
                                     target->originalDepth = source->originalDepth;
                                     memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
-                                case VT_BUFFER:
+                                case VT_BUFFER: {
+                                    char bankWindowName[MAX_TEMPORARY_STORAGE];
+                                    int realSize = 0;
+                                    int realAllocationSize = 0;
+                                    if ( source->bankAssigned ) {
+                                        
+                                        MAKE_LABEL
+
+                                        char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
+                                        sprintf(alreadyLoadedLabel, "%salready", label );
+
+                                        char bankWindowId[MAX_TEMPORARY_STORAGE];
+                                        sprintf( bankWindowId, "BANKWINDOWID%2.2x", source->residentAssigned );
+
+                                        sprintf( bankWindowName, "BANKWINDOW%2.2x", source->residentAssigned );
+
+                                        realAllocationSize = _environment->maxExpansionBankSize[source->residentAssigned];
+
+                                        cpu_compare_and_branch_16bit_const( _environment, bankWindowId, source->variableUniqueId, alreadyLoadedLabel, 1 );
+                                        if ( source->uncompressedSize ) {
+                                            bank_uncompress_semi_var( _environment, source->bankAssigned, source->absoluteAddress, bankWindowName );
+                                            realSize = source->uncompressedSize;
+                                        } else {
+                                            bank_read_semi_var( _environment, source->bankAssigned, source->absoluteAddress, bankWindowName, source->size );
+                                            realSize = source->size;
+                                        }
+                                        cpu_store_16bit(_environment, bankWindowId, source->variableUniqueId );
+                                        cpu_label( _environment, alreadyLoadedLabel );
+                                    } else {
+                                        strcpy( source->realName, bankWindowName );
+                                        realSize = source->size;
+                                        realAllocationSize = realSize;
+                                    }
+
                                     if ( target->size == 0 ) {
-                                        target->size = source->size;
+                                        target->size = realAllocationSize;
                                         target->valueBuffer = malloc( target->size );
                                         memset( target->valueBuffer, 0, target->size );
                                     }
                                     if ( source->size <= target->size ) {
-                                        cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                                        cpu_mem_move_direct_size( _environment, bankWindowName, target->realName, realSize );
                                     } else {
                                         CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                                     }
                                     break;
+
+                                }
                                 default:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
