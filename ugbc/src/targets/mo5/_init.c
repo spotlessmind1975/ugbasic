@@ -63,6 +63,8 @@ void target_initialization( Environment * _environment ) {
 
     cpu6809_init( _environment );
 
+    banks_init( _environment );
+    
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
@@ -84,9 +86,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "FREE_STRING", VT_WORD, DSTRING_DEFAULT_SPACE );
     variable_global( _environment, "FREE_STRING" );    
 
-    outline0("ORG $3000");
-    outhead0("CODESTART");
-    outline0("LDS #$A000");
+    // outline0("ORG $3000");
+    // outhead0("CODESTART");
+    // outline0("LDS #$A000");
 
     deploy( vars, src_hw_mo5_vars_asm);
     deploy_deferred( startup, src_hw_mo5_startup_asm);
