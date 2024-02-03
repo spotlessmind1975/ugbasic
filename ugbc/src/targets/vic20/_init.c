@@ -66,6 +66,8 @@ void target_initialization( Environment * _environment ) {
 
     cpu6502_init( _environment );
 
+    banks_init( _environment );
+    
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x0400, 0x0fff );
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
