@@ -2512,4 +2512,55 @@ void cpc_dsave( Environment * _environment, char * _filename, char * _offset, ch
 
 }
 
+void cpc_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    if ( !_sequence && !_frame ) {
+        outline0("LD HL, 0" );
+    } else {
+        outline0("LD HL, 0" );
+
+        if ( _sequence ) {
+            outline0("LD DE, $0003" );
+            outline0("ADD HL, DE" );
+            if ( strlen(_sequence) == 0 ) {
+
+            } else {
+                outline1("LD A, (%s)", _sequence );
+                outline0("PUSH HL" );
+                outline0("POP IX" );
+                outline1("CALL OFFSETS%4.4X", _frame_count * _frame_size );
+            }
+            if ( _frame ) {
+                if ( strlen(_frame) == 0 ) {
+
+                } else {
+                    outline1("LD A, (%s)", _frame );
+                    outline0("PUSH HL" );
+                    outline0("POP IX" );
+                    outline1("CALL OFFSETS%4.4X", _frame_size );
+                }
+            }
+
+        } else {
+
+            if ( _frame ) {
+                outline0("LD DE, $0003" );
+                outline0("ADD HL, DE" );
+                if ( strlen(_frame) == 0 ) {
+
+                } else {
+                    outline0("PUSH HL" );
+                    outline0("POP IX" );
+                    outline1("LD A, (%s)", _frame );
+                    outline1("CALL OFFSETS%4.4X", _frame_size );
+                }
+            }
+
+        }
+
+    }
+    outline1("LD (%s), HL", _offset );
+
+}
+
 #endif

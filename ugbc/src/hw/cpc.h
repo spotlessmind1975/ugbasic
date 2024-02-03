@@ -148,8 +148,8 @@
 
 #define DEFAULT_PAINT_BUCKET_SIZE   1024
 
-#define BANK_COUNT          0
-#define BANK_SIZE           0
+#define BANK_COUNT          1
+#define BANK_SIZE           4096
 
 void cpc_inkey( Environment * _environment, char * _pressed, char * _key );
 void cpc_scancode( Environment * _environment, char * _pressed, char * _scacode );
@@ -383,6 +383,7 @@ void cpc_slice_image_copy( Environment * _environment, char * _image, char * _fr
 void cpc_slice_image_extract( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
 void cpc_sys_call( Environment * _environment, int _destination );
 int cpc_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
+void cpc_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
 
 void cpc_timer_set_status_on( Environment * _environment, char * _timer );
 void cpc_timer_set_status_off( Environment * _environment, char * _timer );
