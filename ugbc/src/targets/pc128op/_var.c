@@ -349,13 +349,6 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
-    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
-        if ( _environment->maxExpansionBankSize[i] ) {
-            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
-            outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
-        }
-    }
-
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {
@@ -465,6 +458,26 @@ void variable_cleanup( Environment * _environment ) {
         staticStrings = staticStrings->next;
     }
 
+    buffered_push_output( );
+
+    outline0("ORG $3000");
+    outhead0("CODESTART");
+    outline0("LDS #$2FFF");
+    outline0("JMP CODESTART2");
+    outhead0("STACK");
+    outline0("rzb 256");
+    outhead0("STACKEND");
+
+    deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
+    deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_inplace_preferred( bank, src_hw_pc128op_bank_asm );
+    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
+        if ( _environment->maxExpansionBankSize[i] ) {
+            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
+            outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
+        }
+    }
+
     outhead0("BANKLOAD");
 
     Bank * bank = _environment->expansionBanks;
@@ -480,5 +493,10 @@ void variable_cleanup( Environment * _environment ) {
         bank = bank->next;
 
     }
+
+    outhead0("CODESTART2");
+    outline0("LDS #STACKEND");
+
+    buffered_prepend_output( );
 
 }

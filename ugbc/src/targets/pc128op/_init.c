@@ -63,22 +63,7 @@ void target_initialization( Environment * _environment ) {
 
     cpu6809_init( _environment );
 
-    int i=0;
-
-    for(i=0; i<BANK_COUNT; ++i) {
-        Bank * bank = malloc( sizeof( Bank ) );
-        bank->address = 0x0;
-        bank->filename = NULL;
-        bank->id = i;
-        bank->name = strdup( "bank" );
-        bank->remains = BANK_SIZE;
-        bank->space = BANK_SIZE;
-        bank->next = _environment->expansionBanks;
-        bank->data = malloc( BANK_SIZE );
-        memset( bank->data, 0, BANK_SIZE );
-        _environment->expansionBanks = bank;
-        _environment->maxExpansionBankSize[i+1] = 0;
-    }
+    banks_init( _environment );
 
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 
@@ -101,19 +86,17 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "FREE_STRING", VT_WORD, DSTRING_DEFAULT_SPACE );
     variable_global( _environment, "FREE_STRING" );    
 
-    outline0("ORG $3000");
-    outhead0("CODESTART");
-    outline0("LDS #$2FFF");
+    // outline0("ORG $3000");
+    // outhead0("CODESTART");
+    // outline0("LDS #$2FFF");
     
     deploy( vars, src_hw_pc128op_vars_asm);
-    deploy_deferred( startup, src_hw_pc128op_startup_asm);
+    deploy( startup, src_hw_pc128op_startup_asm);
     // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
 
     outline0( "JSR PC128OPSTARTUP" );
     outline0( "JSR PC128OPAUDIOSTARTUP" );
 
-    outline0("LDS #$A000");
-    
     setup_text_variables( _environment );
 
     ef936x_initialization( _environment );

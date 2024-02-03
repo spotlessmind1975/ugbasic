@@ -76,15 +76,19 @@ destinazione, che sarà la memoria RAM.
 </usermanual> */
 void bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size ) {
 
-    outline0("; bank read")
-    Variable * previous = bank_get( _environment );
-    bank_set( _environment, _bank );
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
     int realAddress = 0x6000 + _address1;
-    char realAddressAsString[MAX_TEMPORARY_STORAGE];
-    sprintf(realAddressAsString, "$%4.4x", realAddress);
-    cpu_mem_move_direct_size( _environment, realAddressAsString, _address2, _size );
-    bank_set_var( _environment, previous->name );
-    outline0("; end bank read")
+
+    outline0("; bank read")
+    outline1("LDU #$%4.4x", _bank );
+    outline1("LDY #$%4.4x", realAddress );
+    outline1("LDX #%s", _address2 );
+    outline1("LDD #$%4.4x", _size );
+    outline0("JSR BANKREAD");
+    outline0("; end bank read");
 
 }
 
@@ -106,32 +110,42 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
 </usermanual> */
 void bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    outline0("; bank read")
-    Variable * previous = bank_get( _environment );
-    bank_set_var( _environment, _bank );
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
     Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-    mmove_memory_memory( _environment, realAddress->name, address2->name, _size );
-    bank_set_var( _environment, previous->name );
-    outline0("; end bank read")
+
+    outline0("; bank read")
+    outline1("LDU #$%4.4x", _bank );
+    outline1("LDY %s", realAddress->realName );
+    outline1("LDX %s", address2->realName );
+    outline1("LDD %s", _size );
+    outline0("JSR BANKREAD");
+    outline0("; end bank read");
 
 }
 
 void bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    outline0("; bank read direct")
-    Variable * previous = bank_get( _environment );
-    bank_set_var( _environment, _bank );
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
     Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
-    
-    cpu_mem_move_direct2( _environment, realAddress->realName, _address2, size->realName );
 
-    bank_set_var( _environment, previous->name );
-    outline0("; end bank read direct")
+    outline0("; bank read")
+    outline1("LDU #$%4.4x", _bank );
+    outline1("LDY %s", realAddress->realName );
+    outline1("LDX #%s", _address2 );
+    outline1("LDD %s", _size );
+    outline0("JSR BANKREAD");
+    outline0("; end bank read");
 
 }
