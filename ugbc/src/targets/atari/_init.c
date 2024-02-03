@@ -67,6 +67,8 @@ void target_initialization( Environment * _environment ) {
 
     cpu6502_init( _environment );
 
+    banks_init( _environment );
+
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xb000, 0xbfff );
 
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0xa000 );
