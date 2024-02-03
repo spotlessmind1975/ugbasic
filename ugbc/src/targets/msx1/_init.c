@@ -72,20 +72,7 @@ void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
-    for(int i=0; i<BANK_COUNT; ++i) {
-        Bank * bank = malloc( sizeof( Bank ) );
-        bank->address = 0x0;
-        bank->filename = NULL;
-        bank->id = i+1;
-        bank->name = strdup( "bank" );
-        bank->remains = BANK_SIZE;
-        bank->space = BANK_SIZE;
-        bank->next = _environment->expansionBanks;
-        bank->data = malloc( BANK_SIZE );
-        memset( bank->data, 0, BANK_SIZE );
-        _environment->expansionBanks = bank;
-        _environment->maxExpansionBankSize[i+1] = 0;
-    }
+    banks_init( _environment );
 
     variable_import( _environment, "DLOADERR", VT_BYTE, 0 );
     variable_global( _environment, "DLOADERR" );
