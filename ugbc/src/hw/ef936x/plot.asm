@@ -53,6 +53,10 @@ PLOT
 
 @IF optionClip
 
+; ----------------------------------------------
+; optionClip active
+; ----------------------------------------------
+
     CMPX CLIPX2
     BGT PLOTP
     CMPX CLIPX1   ; check if plotting out of clipped area
@@ -71,7 +75,15 @@ PLOT
 
 @IF vestigialConfig.doubleBufferSelected
 
+; ----------------------------------------------
+; double buffer selected
+; ----------------------------------------------
+
 @ELSE
+
+; ----------------------------------------------
+; double buffer not selected
+; ----------------------------------------------
 
     ; Check if double buffering is active -- in case,
     ; whe should use a different version.
@@ -81,13 +93,14 @@ PLOT
 
 @ENDIF
 
+@IF !vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
+
 ; ----------------------------------------------
 ; Version active on double buffering ON
+; or if double buffering option is not selected
 ; ----------------------------------------------
 
 PLOTDB
-
-@IF !vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     LDX BITMAPADDRESS
 
@@ -125,7 +138,15 @@ PLOTMODEDB
 
 @IF vestigialConfig.screenModeUnique
 
+; ----------------------------------------------
+; Version active on screen mode unique ON
+; ----------------------------------------------
+
 @ELSE
+
+; ----------------------------------------------
+; Version active on screen mode unique OFF
+; ----------------------------------------------
 
     LDA CURRENTMODE
     CMPA #0
@@ -153,6 +174,11 @@ PLOT4XDB
 @ENDIF
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 2 ) || ( currentMode == 4 ) )
+
+; ----------------------------------------------
+; Version active on screen mode unique OFF
+; or current mode is 0, 1, 2 or 4
+; ----------------------------------------------
 
 PLOT0DB
 PLOT1DB
@@ -182,6 +208,11 @@ PLOT4DB
 @ENDIF
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
+
+; ----------------------------------------------
+; Version active on screen mode unique OFF
+; or current mode is 3
+; ----------------------------------------------
 
 PLOT3DB
 
@@ -238,6 +269,10 @@ PLOT3DB
 
 @ENDIF
 
+; ----------------------------------------------
+; Version active if double buffer ON
+; ----------------------------------------------
+
 PLOTCOMMONDB
 
     ;----------------------------------------------
@@ -267,7 +302,15 @@ PLOTDDB
 
 @IF vestigialConfig.screenModeUnique
 
+; ----------------------------------------------
+; Version active on screen mode unique ON
+; ----------------------------------------------
+
 @ELSE
+
+; ----------------------------------------------
+; Version active on screen mode unique OFF
+; ----------------------------------------------
 
     LDA CURRENTMODE
     CMPA #0
@@ -291,6 +334,11 @@ PLOTD3XDB
 @ENDIF
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
+
+; ----------------------------------------------
+; Version active on screen mode unique OFF
+; or current mode is 0, 1, 4
+; ----------------------------------------------
 
 PLOTD0DB
 PLOTD1DB
@@ -332,6 +380,11 @@ PLOTD4DB
 @ENDIF
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) )
+
+; ----------------------------------------------
+; Version active on screen mode unique OFF
+; or current mode is 2
+; ----------------------------------------------
 
 PLOTD2DB
 
@@ -395,6 +448,11 @@ PLOTD25DB
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
 
+; ----------------------------------------------
+; Version active on screen mode unique OFF
+; or current mode is 3
+; ----------------------------------------------
+
 PLOTD3DB
 
     LDA _PEN
@@ -440,6 +498,10 @@ PLOTD3FDB
     JMP PLOTP                  ;skip the erase-point section
 
 @ENDIF
+
+; ----------------------------------------------
+; Version active on double buffer ON
+; ----------------------------------------------
 
     ;-----------
     ;erase point
@@ -511,11 +573,12 @@ PLOTANDBIT4
     fcb %11110111
     fcb %01111111
 
-; ----------------------------------------------
-; Version active on double buffering OFF
-; ----------------------------------------------
-
 @IF !vestigialConfig.doubleBufferSelected || !vestigialConfig.doubleBuffer
+
+; ----------------------------------------------
+; Version active on double buffer not selected
+; or double buffer is OFF
+; ----------------------------------------------
 
 PLOTORIG
 
@@ -529,7 +592,15 @@ PLOTORIG
 
 @IF vestigialConfig.screenModeUnique
 
+; ----------------------------------------------
+; Version active on screen mode unique ON
+; ----------------------------------------------
+
 @ELSE
+
+; ----------------------------------------------
+; Version active on screen mode unique OFF
+; ----------------------------------------------
 
 PLOTMODE
     LDA CURRENTMODE
@@ -539,6 +610,11 @@ PLOTMODE
 @ENDIF
 
 @IF !vestigialConfig.screenModeUnique || ( currentMode == 3 )
+
+; ----------------------------------------------
+; Version active on screen mode unique OFF
+; or current mode 3
+; ----------------------------------------------
 
 PLOT3             ; yes
     LDA ,U
@@ -551,16 +627,24 @@ PLOT3             ; yes
 
     SBCA #0       ; chose plane 0/1 according bit 2 of X coordinate
     STA ,U        ; select proper plane
-    
-    BRA PLOTCOMMON
 
 @ENDIF
+
+    BRA PLOTCOMMON
 
 PLOTD             ; plot draw (placed here to keep the jump small)
 
 @IF vestigialConfig.screenModeUnique
 
+; ----------------------------------------------
+; Version active on screen mode unique ON
+; ----------------------------------------------
+
 @ELSE
+
+; ----------------------------------------------
+; Version active on screen mode unique OFF
+; ----------------------------------------------
 
     LDA CURRENTMODE
     CMPA #2
@@ -571,6 +655,11 @@ PLOTD             ; plot draw (placed here to keep the jump small)
 @ENDIF
 
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 0) || (currentMode == 1) || (currentMode == 4) )
+
+; ----------------------------------------------
+; Version active on screen mode unique OFF
+; or current mode is 0, 1, 4
+; ----------------------------------------------
 
 PLOTD0
 PLOTD1
