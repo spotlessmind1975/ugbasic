@@ -66,6 +66,8 @@ void target_initialization( Environment * _environment ) {
 
     cpu6502_init( _environment );
 
+    banks_init( _environment );
+
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
