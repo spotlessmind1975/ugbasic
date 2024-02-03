@@ -3596,7 +3596,7 @@ void cpu6809_dec_16bit( Environment * _environment, char * _variable ) {
 
 void cpu6809_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    deploy( duff, src_hw_6809_duff_asm );
+    deploy_preferred( duff, src_hw_6809_duff_asm );
 
     inline( cpu_mem_move )
 
@@ -3651,7 +3651,7 @@ void cpu6809_mem_move( Environment * _environment, char *_source, char *_destina
 
 void cpu6809_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    deploy( duff, src_hw_6809_duff_asm );
+    deploy_preferred( duff, src_hw_6809_duff_asm );
 
     inline( cpu_mem_move )
 
@@ -3671,7 +3671,7 @@ void cpu6809_mem_move_16bit( Environment * _environment, char *_source, char *_d
 
 void cpu6809_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    deploy( duff, src_hw_6809_duff_asm );
+    deploy_preferred( duff, src_hw_6809_duff_asm );
 
     inline( cpu_mem_move )
 
@@ -3724,9 +3724,42 @@ void cpu6809_mem_move_direct( Environment * _environment, char *_source, char *_
 
 }
 
+void cpu6809_mem_move_direct2_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+
+    inline( cpu_mem_move )
+
+        MAKE_LABEL
+
+        outline1("LDU #$%4.4x", _size );
+        outline0("CMPU #$0" );
+        outline1("BEQ %sdone", label );
+
+        outline1("LDY %s", _source );
+        outline1("LDX #%s", _destination );
+
+        outhead1("%s", label );
+        outline0("LDA ,Y+" );
+        outline0("STA ,X+" );
+        outline0("LEAU -1, U" );
+        outline0("CMPU #$0" );
+        outline1("BNE %s", label );
+
+    embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm )
+
+        outline1("LDD #$%4.4x", _size );
+        outline1("LDY %s", _source );
+        outline1("LDX #%s", _destination );
+        outline0("JSR DUFFDEVICE" );
+
+    done( )
+
+}
+
 void cpu6809_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    deploy( duff, src_hw_6809_duff_asm );
+    deploy_preferred( duff, src_hw_6809_duff_asm );
 
     inline( cpu_mem_move )
 
@@ -3759,7 +3792,7 @@ void cpu6809_mem_move_direct2( Environment * _environment, char *_source, char *
 
 void cpu6809_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-    deploy( duff, src_hw_6809_duff_asm );
+    deploy_preferred( duff, src_hw_6809_duff_asm );
 
     inline( cpu_mem_move )
 
@@ -3817,7 +3850,7 @@ void cpu6809_mem_move_size( Environment * _environment, char *_source, char *_de
 
 void cpu6809_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-    deploy( duff, src_hw_6809_duff_asm );
+    deploy_preferred( duff, src_hw_6809_duff_asm );
 
     inline( cpu_mem_move )
 
@@ -3875,7 +3908,7 @@ void cpu6809_mem_move_direct_size( Environment * _environment, char *_source, ch
 
 void cpu6809_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-    deploy( duff, src_hw_6809_duff_asm );
+    deploy_preferred( duff, src_hw_6809_duff_asm );
 
     inline( cpu_mem_move )
 
@@ -5326,15 +5359,25 @@ void cpu6809_msc1_uncompress_direct_direct( Environment * _environment, char * _
 
     MAKE_LABEL
 
-    inline( cpu_msc1_uncompress )
+    if ( ! _environment->deployed.msc1 ) {
 
-    embedded( cpu_msc1_uncompress, src_hw_6809_msc1_asm );
+        inline( cpu_msc1_uncompress )
+
+        embedded( cpu_msc1_uncompress, src_hw_6809_msc1_asm );
+
+            outline1("LDX #%s", _input);
+            outline1("LDY #%s", _output);
+            outline0("JSR MSC1UNCOMPRESS");
+
+        done()
+
+    } else {
 
         outline1("LDX #%s", _input);
         outline1("LDY #%s", _output);
         outline0("JSR MSC1UNCOMPRESS");
-
-    done()
+        
+    }
 
 }
 
