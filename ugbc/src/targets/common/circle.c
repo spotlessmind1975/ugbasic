@@ -79,12 +79,6 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
     Variable * xCentre = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * yCentre = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
     Variable * r = variable_retrieve_or_define( _environment, _r, VT_POSITION, 0 );
-    Variable * zero = variable_temporary( _environment, VT_POSITION, "0" );
-    variable_store( _environment, zero->name, 0 );
-    Variable * one = variable_temporary( _environment, VT_POSITION, "1" );
-    variable_store( _environment, one->name, 1 );
-    Variable * two = variable_temporary( _environment, VT_POSITION, "2" );
-    variable_store( _environment, two->name, 2 );
 
     Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
     variable_move( _environment, r->name, x->name );
@@ -97,21 +91,19 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
     plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
     plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
     
-    variable_move( _environment, variable_sub( _environment, one->name, r->name )->name, p->name );
+    variable_move( _environment, variable_complement_const( _environment, r->name, 1 )->name, p->name );
 
       begin_while( _environment );  
       begin_while_condition( _environment, variable_greater_than( _environment, x->name, y->name, 1 )->name );  
 
-        variable_increment( _environment, y->name );
-                  
-        if_then( _environment, variable_less_than( _environment, p->name, zero->name, 1 )->name );
-            variable_move( _environment, variable_add( _environment, variable_mul( _environment, two->name, y->name )->name, p->name )->name, p->name );
+        if_then( _environment, variable_less_than_const( _environment, p->name, 0, 1 )->name );
+            variable_move( _environment, variable_add( _environment, variable_mul2_const( _environment, y->name, 1 )->name, p->name )->name, p->name );
             variable_increment( _environment, p->name );
         else_if_then_label( _environment );              
         else_if_then( _environment, NULL );              
             variable_decrement( _environment, x->name );
-            variable_move( _environment, variable_add( _environment, variable_mul( _environment, two->name, y->name )->name, p->name )->name, p->name );
-            variable_move( _environment, variable_sub( _environment, p->name, variable_mul( _environment, two->name, x->name )->name )->name, p->name );
+            variable_move( _environment, variable_add( _environment, variable_mul2_const( _environment, y->name, 1 )->name, p->name )->name, p->name );
+            variable_move( _environment, variable_sub( _environment, p->name, variable_mul2_const( _environment, x->name, 1 )->name )->name, p->name );
             variable_increment( _environment, p->name );
         end_if_then( _environment );
 
@@ -124,13 +116,17 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
         plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
         plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
           
-        if_then( _environment, variable_compare_not( _environment, x->name, y->name )->name );
+        //if_then( _environment, variable_compare_not( _environment, x->name, y->name )->name );
             plot( _environment, variable_add( _environment, y->name, xCentre->name )->name, variable_add( _environment, x->name, yCentre->name )->name, _c );
             plot( _environment, variable_sub( _environment, xCentre->name, y->name )->name, variable_add( _environment, x->name, yCentre->name )->name, _c );
             plot( _environment, variable_add( _environment, y->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  x->name )->name, _c );
             plot( _environment, variable_sub( _environment, xCentre->name, y->name )->name, variable_sub( _environment, yCentre->name,  x->name )->name, _c );
 
-        end_if_then( _environment );
+        //end_if_then( _environment );
+
+        variable_increment( _environment, y->name );
+                  
+        wait_key( _environment );
 
     end_while( _environment );
 
