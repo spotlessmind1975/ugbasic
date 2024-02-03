@@ -205,7 +205,7 @@ int convertbintok7(Environment * _environment)
         if ( bank->address ) {
 
             char bankNumber[MAX_TEMPORARY_STORAGE];
-            sprintf( bankNumber, "bank%2.2x  dat", bank->id );
+            sprintf( bankNumber, "bank%2.2x  dat", ( bank->id - 1 ) );
 
             new_blk(0); /* k7 block 0: file name + type */
             write_bytes(fw, bankNumber, 11); /* file name */
