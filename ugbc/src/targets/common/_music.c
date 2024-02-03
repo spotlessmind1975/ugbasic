@@ -34,6 +34,7 @@
 
 #include "../../ugbc.h"
 #include "../../libs/midi.h"
+#include "../../libs/msc1.h"
 
 /****************************************************************************
  * CODE SECTION 
@@ -631,34 +632,84 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
 
     variable_store_buffer( _environment, result->name, imfBuffer, size, 0 );
 
-    if ( _bank_expansion && _environment->expansionBanks ) {
+    // If a bank expasion has been requested, and there is at least one bank...
+    if ( 0 /*_bank_expansion && _environment->expansionBanks*/ ) {
 
-        Bank * bank = _environment->expansionBanks;
+        // Try to compress the result of image conversion.
+        // This means that the buffer will be compressed using MSC1
+        // algorithm, up to 32 frequent sequences. The original size of
+        // the buffer will be considered as "uncompressed" size.
+        MSC1Compressor * compressor = msc1_create( 32 );
+        result->uncompressedSize = result->size;
+        MemoryBlock * output = msc1_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
 
-        while( bank ) {
-            if ( bank->remains > result->size ) {
-                break;
-            }
-            bank = bank->next;
+        int temporary;
+        MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
+
+        if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
+            CRITICAL("Compression failed");
+        }
+        msc1_free( compressor );
+
+        // If the compressed memory is greater than the original
+        // size, we discard the compression and we will continue as
+        // usual.
+        if ( result->uncompressedSize < result->size ) {
+            result->size = result->uncompressedSize;
+            result->uncompressedSize = 0;
+            free( output );
         } 
+        // Otherwise, we can safely replace the original data
+        // buffer with the compressed one.
+        else {
+            free( result->valueBuffer );
+            result->valueBuffer = output;
+        }
 
-        if ( ! bank ) {
+        if ( ! banks_store( _environment, result, _bank_expansion ) ) {
             CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
         }
 
-        result->bankAssigned = bank->id;
-        result->absoluteAddress = bank->address;
-        result->residentAssigned = _bank_expansion;
-        result->variableUniqueId = UNIQUE_RESOURCE_ID;
-        memcpy( &bank->data[bank->address], result->valueBuffer, result->size );
+    // We can compress also if COMPRESSED flag is used.
+    } else if ( 0 /*_flags & FLAG_COMPRESSED*/ ) {
 
-        bank->address += result->size;
-        bank->remains -= result->size;
-        if ( _environment->maxExpansionBankSize[_bank_expansion] < result->size ) {
-            _environment->maxExpansionBankSize[_bank_expansion] = result->size;
+        // Try to compress the result of image conversion.
+        // This means that the buffer will be compressed using MSC1
+        // algorithm, up to 32 frequent sequences. The original size of
+        // the buffer will be considered as "uncompressed" size.
+        MSC1Compressor * compressor = msc1_create( 32 );
+        result->uncompressedSize = result->size;
+        MemoryBlock * output = msc1_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
+
+        int temporary;
+        MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
+        if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
+            CRITICAL("Compression failed");
         }
+        msc1_free( compressor );
 
+        // If the compressed memory is greater than the original
+        // size, we discard the compression and we will continue as
+        // usual.
+        // If the compressed memory is greater than the original
+        // size, we discard the compression and we will continue as
+        // usual.
+        if ( result->uncompressedSize < result->size ) {
+            result->size = result->uncompressedSize;
+            result->uncompressedSize = 0;
+            free( output );
+        } 
+        // Otherwise, we can safely replace the original data
+        // buffer with the compressed one.
+        else {
+            result->valueBuffer = output;
+            banks_store( _environment, result, 1 );
+            free( result->valueBuffer );
+            result->valueBuffer = NULL;
+        }
+        
     }
+
 
     return result;
 
