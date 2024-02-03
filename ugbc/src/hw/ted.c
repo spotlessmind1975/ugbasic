@@ -1551,6 +1551,98 @@ Variable * ted_image_converter( Environment * _environment, char * _data, int _w
 
 }
 
+void ted_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline0("LDA #0" );
+    outline1("STA %s", _offset );
+    outline1("STA %s", address_displacement(_environment, _offset, "1") );
+
+    if ( _sequence ) {
+
+        outline0("CLC" );
+        outline1("LDA %s", _offset );
+        outline0("ADC #3" );
+        outline1("STA %s", _offset );
+        outline1("LDA %s", address_displacement(_environment, _offset, "1") );
+        outline0("ADC #0" );
+        outline1("STA %s", address_displacement(_environment, _offset, "1") );
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline1("LDA #<OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("STA MATHPTR0" );
+            outline1("LDA #>OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("STA MATHPTR0+1" );
+            outline0("CLC" );
+            outline1("LDA %s", _sequence );
+            outline0("ASL" );
+            outline0("TAY" );
+            outline1("LDA %s", _offset );
+            outline0("ADC (MATHPTR0), Y" );
+            outline1("STA %s", _offset );
+            outline0("INY" );
+            outline1("LDA %s", address_displacement(_environment, _offset, "1") );
+            outline0("ADC (MATHPTR0+1), Y" );
+            outline1("STA %s", address_displacement(_environment, _offset, "1") );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline1("LDA %s", _offset );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", _offset );
+                outline0("INY" );
+                outline1("LDA %s", address_displacement(_environment, _offset, "1") );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", address_displacement(_environment, _offset, "1") );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("CLC" );
+            outline1("LDA %s", _offset );
+            outline0("ADC #3" );
+            outline1("STA %s", _offset );
+            outline1("LDA %s", address_displacement(_environment, _offset, "1") );
+            outline0("ADC #0" );
+            outline1("STA %s", address_displacement(_environment, _offset, "1") );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline1("LDA %s", _offset );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", _offset );
+                outline0("INY" );
+                outline1("LDA %s", address_displacement(_environment, _offset, "1") );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", address_displacement(_environment, _offset, "1") );
+            }
+        }
+
+    }
+
+}
+
 static void ted_load_image_address_to_other_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     outline1("LDA #<%s", _source );
