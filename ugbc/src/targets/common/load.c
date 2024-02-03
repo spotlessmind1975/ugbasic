@@ -135,7 +135,7 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
 
     variable_store_buffer( _environment, result->name, buffer, size, _at );
 
-    if ( _flags & FLAG_COMPRESSED ) {
+    if ( _flags & FLAG_COMPRESSED && _environment->expansionBanks ) {
 
         // Try to compress the result of image conversion.
         // This means that the buffer will be compressed using MSC1
@@ -181,11 +181,11 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
         // Otherwise, we can safely replace the original data
         // buffer with the compressed one.
         else {
-            free( result->valueBuffer );
             result->valueBuffer = output;
+            banks_store( _environment, result, 1 );
+            free( result->valueBuffer );
+            result->valueBuffer = NULL;
         }
-        result->residentAssigned = 1;
-        _environment->maxExpansionBankSize[1] = BANK_SIZE;
 
     }
 
