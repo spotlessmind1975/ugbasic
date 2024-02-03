@@ -4414,6 +4414,17 @@ void z80_mem_move_direct2( Environment * _environment, char *_source, char *_des
 
 }
 
+void z80_mem_move_direct2_size( Environment * _environment, char *_source, char *_destination,  int _size ) {
+
+    deploy( duff, src_hw_z80_duff_asm );
+
+    outline1("LD HL, (%s)", _source);
+    outline1("LD DE, %s", _destination);
+    outline1("LD BC, $%4.4x", _size);
+    outline0("CALL DUFFDEVICE");
+
+}
+
 void z80_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size > 0 ) {
