@@ -521,6 +521,8 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("IRQSTACK");
 
     deploy_inplace( irq, src_hw_coco3_irq_asm);
+    deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
+    deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_inplace_preferred( gimevars, src_hw_gime_vars_asm );
     deploy_inplace_preferred( gimestartup, src_hw_gime_startup_asm );
     deploy_inplace_preferred( putimage, src_hw_gime_put_image_asm );
