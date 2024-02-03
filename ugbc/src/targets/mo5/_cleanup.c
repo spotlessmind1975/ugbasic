@@ -42,6 +42,16 @@ void target_finalization( Environment * _environment ) {
 
     ef936x_finalization( _environment );
 
+    if ( _environment->dataSegment ) {
+        outhead0( "DATAPREPARATION" );
+        outline0( "LDD #DATAFIRSTSEGMENT" );
+        outline0( "STD DATAPTR" );
+        outline0( "RTS" );
+    } else {
+        outhead0( "DATAPREPARATION" );
+        outline0( "RTS" );
+    }
+    
 }
 
 // -------------------------------------------------------------------------
