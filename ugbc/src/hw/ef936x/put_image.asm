@@ -780,6 +780,7 @@ PUTIMAGE2
     RORB
     LSRA
     RORB
+    STD <IMAGEW
     STD <IMAGEW2
     LDA 2,Y
     STA <IMAGEH
