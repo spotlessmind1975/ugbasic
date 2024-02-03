@@ -70,20 +70,7 @@ void target_initialization( Environment * _environment ) {
     MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );
     /*MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xff00 );*/
 
-    for(int i=0; i<BANK_COUNT; ++i) {
-        Bank * bank = malloc( sizeof( Bank ) );
-        bank->address = 0x0;
-        bank->filename = NULL;
-        bank->id = i+1;
-        bank->name = strdup( "bank" );
-        bank->remains = BANK_SIZE;
-        bank->space = BANK_SIZE;
-        bank->next = _environment->expansionBanks;
-        bank->data = malloc( BANK_SIZE );
-        memset( bank->data, 0, BANK_SIZE );
-        _environment->expansionBanks = bank;
-        _environment->maxExpansionBankSize[i+1] = 0;
-    }
+    banks_init( _environment );
 
     if ( _environment->tenLinerRulesEnforced ) {
         Variable * source = variable_retrieve( _environment, "SHELL_SOURCE" );

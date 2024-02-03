@@ -138,44 +138,49 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SEQUENCE:
                 case VT_MUSIC:
                 case VT_BUFFER:
-                    if ( ! variable->absoluteAddress || variable->bankAssigned ) {
-                        if ( variable->valueBuffer ) {
-                            if ( variable->printable ) {
-                                char * string = malloc( variable->size + 1 );
-                                memset( string, 0, variable->size );
-                                memcpy( string, variable->valueBuffer, variable->size );
-                                outline2("%s: .byte %s", variable->realName, escape_newlines( string ) );
-                            } else {
-                                out1("%s: .byte ", variable->realName);
-                                int i=0;
-                                for (i=0; i<(variable->size-1); ++i ) {
-                                    if ( ( ( i+1 ) % 16 ) == 0 ) {
-                                        outline1("%d", variable->valueBuffer[i]);
-                                        out0("  .byte ");
-                                    } else {
-                                        out1("%d,", variable->valueBuffer[i]);
+                    if ( variable->bankAssigned ) {
+                        outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
+                        outhead1("%s: .byte $0", variable->realName );
+                    } else {
+                        if ( ! variable->absoluteAddress || variable->bankAssigned ) {
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outline2("%s: .byte %s", variable->realName, escape_newlines( string ) );
+                                } else {
+                                    out1("%s: .byte ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        if ( ( ( i+1 ) % 16 ) == 0 ) {
+                                            outline1("%d", variable->valueBuffer[i]);
+                                            out0("  .byte ");
+                                        } else {
+                                            out1("%d,", variable->valueBuffer[i]);
+                                        }
                                     }
+                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                 }
-                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                            } else {
+                                outline2("%s: .res %d", variable->realName, variable->size);
                             }
                         } else {
-                            outline2("%s: .res %d", variable->realName, variable->size);
-                        }
-                    } else {
-                        if ( ! variable->memoryArea && variable->valueBuffer && ! variable->bankAssigned ) {
-                            outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
-                            if ( variable->printable ) {
-                                char * string = malloc( variable->size + 1 );
-                                memset( string, 0, variable->size );
-                                memcpy( string, variable->valueBuffer, variable->size );
-                                outline2("%scopy: .byte %s", variable->realName, escape_newlines( string ) );
-                            } else {
-                                out1("%scopy: .byte ", variable->realName);
-                                int i=0;
-                                for (i=0; i<(variable->size-1); ++i ) {
-                                    out1("%d,", variable->valueBuffer[i]);
+                            if ( ! variable->memoryArea && variable->valueBuffer && ! variable->bankAssigned ) {
+                                outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outline2("%scopy: .byte %s", variable->realName, escape_newlines( string ) );
+                                } else {
+                                    out1("%scopy: .byte ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        out1("%d,", variable->valueBuffer[i]);
+                                    }
+                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                 }
-                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
                         }
                     }
@@ -277,22 +282,27 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SEQUENCE:
         case VT_MUSIC:
         case VT_BUFFER:
-            if ( _variable->valueBuffer ) {
-                if ( _variable->printable ) {
-                    char * string = malloc( _variable->size + 1 );
-                    memset( string, 0, _variable->size );
-                    memcpy( string, _variable->valueBuffer, _variable->size );
-                    outline1("    .byte %s", escape_newlines( string ) );
-                } else {
-                    out0("    .byte ");
-                    int i=0;
-                    for (i=0; i<(_variable->size-1); ++i ) {
-                        out1("%d,", _variable->valueBuffer[i]);
-                    }
-                    outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
-                }
+            if ( _variable->bankAssigned ) {
+                outhead2("; relocated on bank %d (at %4.4x)", _variable->bankAssigned, _variable->absoluteAddress );
+                outhead1("%s: .byte $0", _variable->realName );
             } else {
-                outline1(" .res %d", _variable->size);
+                if ( _variable->valueBuffer ) {
+                    if ( _variable->printable ) {
+                        char * string = malloc( _variable->size + 1 );
+                        memset( string, 0, _variable->size );
+                        memcpy( string, _variable->valueBuffer, _variable->size );
+                        outline1("    .byte %s", escape_newlines( string ) );
+                    } else {
+                        out0("    .byte ");
+                        int i=0;
+                        for (i=0; i<(_variable->size-1); ++i ) {
+                            out1("%d,", _variable->valueBuffer[i]);
+                        }
+                        outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
+                    }
+                } else {
+                    outline1(" .res %d", _variable->size);
+                }
             }
             break;
         case VT_ARRAY: {
@@ -444,12 +454,41 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
-    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
-        if ( _environment->maxExpansionBankSize[i] ) {
-            outhead2("BANKWINDOW%2.2x: .RES %d", i, _environment->maxExpansionBankSize[i]);
-            outhead1("BANKWINDOWID%2.2x: .BYTE $FF, $FF", i );
+    int anyExpansionBank = 0;
+    Bank * bank = _environment->expansionBanks;
+    while( bank ) {
+        if ( bank->type == BT_EXPANSION && bank->name && ( bank->space != bank->remains ) ) {
+            int size = bank->space - bank->remains;
+            outhead1("%s:", bank->name );
+            if ( bank->data ) {
+                out0("    .byte ");
+                int i=0;
+                for (i=0; i<(size-1); ++i ) {
+                    out1("$%2.2x,", (unsigned char)( bank->data[i] & 0xff ) );
+                }
+                outline1("$%2.2x", (unsigned char)( bank->data[(size-1)] & 0xff ) );
+            }
+            anyExpansionBank = 1;
         }
-    }    
+        bank = bank->next;
+    }
+
+    if ( anyExpansionBank ) {
+       int values[MAX_TEMPORARY_STORAGE];
+       char * address[MAX_TEMPORARY_STORAGE];
+       Bank * actual = _environment->expansionBanks;
+       int count = 0;
+       while( actual ) {
+           values[count] = count;
+           address[count] = strdup( actual->name );
+           actual = actual->next;
+           ++count;
+       }
+
+       cpu_address_table_build( _environment, "EXPBANKS", values, address, count );
+
+	   cpu_address_table_lookup( _environment, "EXPBANKS", count );
+   }
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
@@ -489,6 +528,8 @@ void variable_cleanup( Environment * _environment ) {
             // } else if ( actual->type == BT_STRINGS ) {
             //     cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
             //     cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+            } else if ( actual->type == BT_EXPANSION && actual->name && ( actual->space != actual->remains ) ) {
+                outhead2("%s: .res %d", actual->name, actual->space - actual->remains );
             } else {
 
             }
@@ -619,6 +660,13 @@ void variable_cleanup( Environment * _environment ) {
     while( staticStrings ) {
         outline3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
         staticStrings = staticStrings->next;
+    }
+
+    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
+        if ( _environment->maxExpansionBankSize[i] ) {
+            outhead2("BANKWINDOW%2.2x: .res %d", i, _environment->maxExpansionBankSize[i]);
+            outhead1("BANKWINDOWID%2.2x: .byte $FF, $FF", i );
+        }
     }
 
 }
