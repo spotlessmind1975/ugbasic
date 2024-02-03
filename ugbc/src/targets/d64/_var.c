@@ -459,4 +459,18 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
+    buffered_push_output( );
+
+    outline0("ORG $2800");
+    outhead0("CODESTART");
+    outline0("LDS #$7000");
+    outline0("JMP CODESTART2");
+
+    deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
+    deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
+
+    outhead0("CODESTART2");
+    
+    buffered_prepend_output( );
+
 }

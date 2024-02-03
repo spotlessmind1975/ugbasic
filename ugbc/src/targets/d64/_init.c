@@ -63,20 +63,7 @@ void target_initialization( Environment * _environment ) {
 
     cpu6809_init( _environment );
 
-    for(int i=0; i<BANK_COUNT; ++i) {
-        Bank * bank = malloc( sizeof( Bank ) );
-        bank->address = 0x0;
-        bank->filename = NULL;
-        bank->id = i+1;
-        bank->name = strdup( "bank" );
-        bank->remains = BANK_SIZE;
-        bank->space = BANK_SIZE;
-        bank->next = _environment->expansionBanks;
-        bank->data = malloc( BANK_SIZE );
-        memset( bank->data, 0, BANK_SIZE );
-        _environment->expansionBanks = bank;
-        _environment->maxExpansionBankSize[i+1] = 0;
-    }
+    banks_init( _environment );
     
     _environment->dstring.count = 32;
     _environment->dstring.space = 512;
@@ -100,11 +87,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "FREE_STRING", VT_WORD, DSTRING_DEFAULT_SPACE );
     variable_global( _environment, "FREE_STRING" );    
 
-    outline0("ORG $2800");
-
-    outhead0("CODESTART");
-
-    outline0("LDS #$7000");
+    // outline0("ORG $2800");
+    // outhead0("CODESTART");
+    // outline0("LDS #$7000");
 
     deploy( vars, src_hw_d64_vars_asm);
     deploy_deferred( startup, src_hw_d64_startup_asm);
