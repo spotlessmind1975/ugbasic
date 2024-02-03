@@ -1534,6 +1534,10 @@ Variable * vic1_image_converter( Environment * _environment, char * _data, int _
 
 }
 
+void vic1_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+}
+
 static void vic1_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     if ( !_sequence && !_frame ) {
