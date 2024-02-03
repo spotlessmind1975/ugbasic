@@ -760,6 +760,87 @@ static void zx_load_image_address_to_other_register( Environment * _environment,
 
 }
 
+void zx_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline0("LD HL, 0" );
+    outline1("LD (%s), HL", _offset );
+
+    if ( _sequence ) {
+
+        outline0("LD DE, $0003" );
+        outline0("ADD HL, DE" );
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline0("PUSH HL" );
+            outline1("LD A, (%s)", _sequence );
+            outline0("LD L, A" );
+            outline0("LD H, 0" );
+            outline0("ADD HL, HL" );
+            outline0("LD DE, HL" );
+            outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("ADD HL, DE" );
+            outline0("LD A, (HL)" );
+            outline0("LD E, A" );
+            outline0("INC HL" );
+            outline0("LD A, (HL)" );
+            outline0("LD D, A" );
+            outline0("POP HL" );
+            outline0("ADD HL, DE" );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("LD DE, $0003" );
+            outline0("ADD HL, DE" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+    }
+
+}
+
 static void zx_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     if ( !_sequence && !_frame ) {

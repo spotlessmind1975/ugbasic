@@ -179,8 +179,8 @@
 
 #define DEFAULT_PAINT_BUCKET_SIZE   512
 
-#define BANK_COUNT          0
-#define BANK_SIZE           0
+#define BANK_COUNT          1
+#define BANK_SIZE           4096
 
 #define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     192 x 256 x 2
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode  32 x 25 x 8
@@ -276,5 +276,6 @@ void zx_timer_set_status_off( Environment * _environment, char * _timer );
 void zx_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
 void zx_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void zx_timer_set_address( Environment * _environment, char * _timer, char * _address );
+void zx_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
 
 #endif
