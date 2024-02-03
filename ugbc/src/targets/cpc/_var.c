@@ -128,39 +128,44 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SEQUENCE:
                 case VT_MUSIC:
                 case VT_BUFFER:
+                if ( variable->bankAssigned ) {
+                    outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
+                    outhead1("%s: defb $0", variable->realName );
+                } else {
                     if ( ! variable->absoluteAddress ) {
-                        if ( variable->valueBuffer ) {
-                            if ( variable->printable ) {
-                                char * string = malloc( variable->size + 1 );
-                                memset( string, 0, variable->size );
-                                memcpy( string, variable->valueBuffer, variable->size );
-                                outline2("%s: db %s", variable->realName, escape_newlines( string ) );
-                            } else {
-                                out1("%s: db ", variable->realName);
-                                int i=0;
-                                for (i=0; i<(variable->size-1); ++i ) {
-                                    out1("%d,", variable->valueBuffer[i]);
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outline2("%s: db %s", variable->realName, escape_newlines( string ) );
+                                } else {
+                                    out1("%s: db ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        out1("%d,", variable->valueBuffer[i]);
+                                    }
+                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                 }
-                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                            } else {
+                                outline2("%s: defs %d", variable->realName, variable->size);
                             }
                         } else {
-                            outline2("%s: defs %d", variable->realName, variable->size);
-                        }
-                    } else {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
-                        if ( variable->valueBuffer ) {
-                            if ( variable->printable ) {
-                                char * string = malloc( variable->size + 1 );
-                                memset( string, 0, variable->size );
-                                memcpy( string, variable->valueBuffer, variable->size );
-                                outline2("%scopy: db %s", variable->realName, escape_newlines( string ) );
-                            } else {
-                                out1("%scopy: db ", variable->realName);
-                                int i=0;
-                                for (i=0; i<(variable->size-1); ++i ) {
-                                    out1("%d,", variable->valueBuffer[i]);
+                            outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outline2("%scopy: db %s", variable->realName, escape_newlines( string ) );
+                                } else {
+                                    out1("%scopy: db ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        out1("%d,", variable->valueBuffer[i]);
+                                    }
+                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                 }
-                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
                         }
                     }
@@ -331,6 +336,43 @@ void variable_cleanup( Environment * _environment ) {
         c = c->next;
     }
 
+    int anyExpansionBank = 0;
+    Bank * bank = _environment->expansionBanks;
+    while( bank ) {
+        if ( bank->type == BT_EXPANSION && bank->name && ( bank->space != bank->remains ) ) {
+            int size = bank->space - bank->remains;
+            outhead1("%s:", bank->name );
+            if ( bank->data ) {
+                out0("    DEFB ");
+                int i=0;
+                for (i=0; i<(size-1); ++i ) {
+                    out1("$%2.2x,", (unsigned char)( bank->data[i] & 0xff ) );
+                }
+                outline1("$%2.2x", (unsigned char)( bank->data[(size-1)] & 0xff ) );
+            }
+            anyExpansionBank = 1;
+        }
+        bank = bank->next;
+    }
+
+    if ( anyExpansionBank ) {
+        int values[MAX_TEMPORARY_STORAGE];
+        char * address[MAX_TEMPORARY_STORAGE];
+        Bank * actual = _environment->expansionBanks;
+        int count = 0;
+        while( actual ) {
+            values[count] = count;
+            address[count] = strdup( actual->name );
+            actual = actual->next;
+            ++count;
+        }
+
+        cpu_address_table_build( _environment, "EXPBANKS", values, address, count );
+
+	    cpu_address_table_lookup( _environment, "EXPBANKS", count );
+
+    }
+
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {
@@ -422,6 +464,13 @@ void variable_cleanup( Environment * _environment ) {
                 out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
             }
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+        }
+    }
+
+    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
+        if ( _environment->maxExpansionBankSize[i] ) {
+            outhead2("BANKWINDOW%2.2x: defs %d", i, _environment->maxExpansionBankSize[i]);
+            outhead1("BANKWINDOWID%2.2x: defb $FF, $FF", i );
         }
     }
 

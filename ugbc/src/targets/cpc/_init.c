@@ -62,6 +62,7 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_less_than_16bit = 1;
     _environment->embedded.cpu_less_than_32bit = 1;
     _environment->embedded.cpu_math_div2_const_16bit = 1;
+    _environment->embedded.cpu_msc1_uncompress = 1;
     _environment->embedded.cpu_compare_16bit = 1;
     _environment->embedded.cpu_compare_32bit = 1;
 
@@ -70,6 +71,8 @@ void setup_embedded( Environment * _environment ) {
 void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
+
+    banks_init( _environment );
 
     variable_import( _environment, "DLOADERROR", VT_BYTE, 0 );
     variable_global( _environment, "DLOADERROR" );
