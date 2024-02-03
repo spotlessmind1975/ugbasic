@@ -48,17 +48,17 @@
  */
 /* <usermanual>
 @keyword BANK READ
-@target c128
 </usermanual> */
 void bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size ) {
 
-    Variable * previous = bank_get( _environment );
-    bank_set( _environment, _bank );
-    int realAddress = 0xebff + ( _bank - 1 ) * BANK_SIZE + _address1;
-    char realAddressAsString[MAX_TEMPORARY_STORAGE];
-    sprintf(realAddressAsString, "$%4.4x", realAddress);
-    cpu_mem_move_direct_size( _environment, realAddressAsString, _address2, _size );
-    bank_set_var( _environment, previous->name );
+    char * bankAddress = banks_get_address( _environment, _bank );
+    Variable * realAddress = variable_temporary( _environment, VT_ADDRESS, "(ADDRESS)" );
+    variable_store( _environment, realAddress->realName, 0 );
+    cpu_math_add_16bit( _environment, realAddress->realName, bankAddress, realAddress->realName );
+    cpu_math_add_16bit_const( _environment, realAddress->realName, _address1, realAddress->realName );
+    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+
+    cpu6502_mem_move_size( _environment, realAddress->realName, address2->realName, _size );
 
 }
 
@@ -76,35 +76,27 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
  */
 /* <usermanual>
 @keyword BANK READ
+
 </usermanual> */
 void bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    outline0("; bank read")
-    Variable * previous = bank_get( _environment );
-    bank_set_var( _environment, _bank );
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
+    Variable * bankAddress = banks_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-    mmove_memory_memory( _environment, realAddress->name, address2->name, _size );
-    bank_set_var( _environment, previous->name );
-    outline0("; end bank read")
-    
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
+
+    cpu6502_mem_move( _environment, realAddress->realName, address2->realName, size->realName );
+
 }
 
 void bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    outline0("; bank read direct")
-    Variable * previous = bank_get( _environment );
-    bank_set_var( _environment, _bank );
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
+    Variable * bankAddress = banks_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
-    
-    cpu_mem_move_direct2( _environment, realAddress->realName, _address2, size->realName );
 
-    bank_set_var( _environment, previous->name );
-    outline0("; end bank read direct")
+    cpu6502_mem_move_direct2( _environment, realAddress->realName, _address2, size->realName );
 
 }

@@ -358,6 +358,8 @@ void variable_cleanup( Environment * _environment ) {
 
                 variable_cleanup_entry( _environment, variable );
                 variable_cleanup_entry_bit( _environment, variable );
+            } else if ( actual->type == BT_EXPANSION && actual->name && ( actual->space != actual->remains ) ) {
+                outhead2("%s: DEFS %d", actual->name, actual->space - actual->remains );
             } else {
 
             }

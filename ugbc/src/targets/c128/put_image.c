@@ -197,7 +197,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
             break;
         case VT_IMAGE:
         case VT_ARRAY:
-            if ( image->residentAssigned ) {
+            if ( image->bankAssigned ) {
 
                 char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
                 sprintf(alreadyLoadedLabel, "%salready", label );
@@ -210,7 +210,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
                 cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
                 if ( image->uncompressedSize ) {
-                    cpu_msc1_uncompress_direct_direct( _environment, image->realName, bankWindowName );
+                    bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
                 } else {
                     bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
                 }
