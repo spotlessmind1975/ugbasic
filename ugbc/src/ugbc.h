@@ -100,14 +100,17 @@ typedef enum _BankType {
     BT_DATA = 3,
 
     /** Strings (static and dynamic) */
-    BT_STRINGS = 4
+    BT_STRINGS = 4,
+
+    /** Expansion (used by compression and bank commands) */
+    BT_EXPANSION = 5
 
 } BankType;
 
 /**
  * @brief Maximum number of bank types
  */
-#define BANK_TYPE_COUNT   5
+#define BANK_TYPE_COUNT   6
 
 /**
  * @brief Structure of a single bank
@@ -1531,6 +1534,8 @@ typedef struct _Deployed {
     int dcommon;
     int dload;
     int dsave;
+    int bank;
+    int msc1;
 
 } Deployed;
 
@@ -2734,6 +2739,8 @@ typedef struct _Environment {
 #define CRITICAL_VARIABLE_CANNOT_DIRECT_ASSIGN_DIFFERENT_TYPE( t1, t2 ) CRITICAL3("E252 - cannot direct assign between different types", t1, t2 );
 #define CRITICAL_WRONG_NEXT_INDEX(v) CRITICAL2("E253 - NEXT with a wrong FOR index", v );
 #define CRITICAL_PUT_IMAGE_UNINITIALIZED(v) CRITICAL2("E254 - PUT IMAGE with uninitialized image variable", v );
+#define CRITICAL_UNSUPPORTED_BANK_NUMBER(v) CRITICAL2i("E255 - bank number not available", v );
+#define CRITICAL_OUT_OF_BANKS( )  CRITICAL("E256 - out of bank detected");
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3671,6 +3678,11 @@ void setup_text_variables( Environment * _environment );
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
+
+void banks_init( Environment * _environment );
+char * banks_get_address( Environment * _environment, int _bank );
+Variable * banks_get_address_var( Environment * _environment, char * _bank );
+int banks_store( Environment * _environment, Variable * _variable, int _resident );
 
 #define FUNCTION_STUB( t )   Variable * result = variable_temporary( _environment, t, "(stub)" ); return result;
 
