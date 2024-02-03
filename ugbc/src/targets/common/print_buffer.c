@@ -136,13 +136,38 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
 
     value->printable = _printable;
 
+    int bufferSize = value->size; // strlen( string );
+
     // char * string = malloc( value->size + 1 );
     // memset( string, 0, value->size );
     // memcpy( string, value->valueBuffer, value->size );
 
-    cpu_addressof_16bit( _environment, value->realName, sourceAddress->realName );
+    if ( value->residentAssigned ) {
 
-    int bufferSize = value->size; // strlen( string );
+        char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
+        sprintf(alreadyLoadedLabel, "%salready", label );
+
+        char bankWindowId[MAX_TEMPORARY_STORAGE];
+        sprintf( bankWindowId, "BANKWINDOWID%2.2x", value->residentAssigned );
+
+        char bankWindowName[MAX_TEMPORARY_STORAGE];
+        sprintf( bankWindowName, "BANKWINDOW%2.2x", value->residentAssigned );
+
+        cpu_compare_and_branch_16bit_const( _environment, bankWindowId, value->variableUniqueId, alreadyLoadedLabel, 1 );
+        if ( value->uncompressedSize ) {
+            bank_uncompress_semi_var( _environment, value->bankAssigned, value->absoluteAddress, bankWindowName );
+            bufferSize = value->uncompressedSize;
+        } else {
+            printf( "bank_read_semi_var\n");
+            bank_read_semi_var( _environment, value->bankAssigned, value->absoluteAddress, bankWindowName, value->size );
+        }
+        cpu_store_16bit(_environment, bankWindowId, value->variableUniqueId );
+        cpu_label( _environment, alreadyLoadedLabel );
+        cpu_addressof_16bit( _environment, bankWindowName, sourceAddress->realName );
+    } else {
+        cpu_addressof_16bit( _environment, value->realName, sourceAddress->realName );
+    }
+
     int offset = 0;
 
     if ( bufferSize > 120 ) {
