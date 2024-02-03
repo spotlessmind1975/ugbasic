@@ -442,7 +442,6 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_mem_move_16bit( _environment, _source, _destination, _size ) cpu6502_mem_move_16bit( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct( _environment, _source, _destination, _size ) cpu6502_mem_move_direct( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct2( _environment, _source, _destination, _size ) cpu6502_mem_move_direct2( _environment, _source, _destination, _size )
-
 #define cpu_mem_move_size( _environment, _source, _destination, _size ) cpu6502_mem_move_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_size( _environment, _source, _destination, _size ) cpu6502_mem_move_direct_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_indirect_size( _environment, _source, _destination, _size ) cpu6502_mem_move_direct_indirect_size( _environment, _source, _destination, _size )

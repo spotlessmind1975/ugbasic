@@ -4570,6 +4570,69 @@ void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_
 
 }
 
+void cpu6502_mem_move_direct2_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    MAKE_LABEL
+
+    inline( cpu_mem_move ) // special case
+
+        outline1("LDA #$%2.2x", ( _size >> 8 ) & 0xff );
+        outline0("STA MATHPTR1" );
+        outline1("LDA #$%2.2x", _size & 0xff );
+        outline0("STA MATHPTR0" );
+        outline0("ORA MATHPTR1" );
+        outline1("BEQ %sdone", label );
+        outline0("LDY #$0" );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA #>%s", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA #<%s", _destination );
+        outline0("STA TMPPTR2" );
+        outhead1("%s:", label );
+        outline0("LDA (TMPPTR), Y" );
+        outline0("STA (TMPPTR2), Y" );
+        outline0("INC TMPPTR" );
+        outline1("BNE %sadd1", label );
+        outline0("INC TMPPTR+1" );
+        outhead1("%sadd1:", label );
+        outline0("INC TMPPTR2" );
+        outline1("BNE %sadd2", label );
+        outline0("INC TMPPTR2+1" );
+        outhead1("%sadd2:", label );
+        outline0("DEC MATHPTR0" );
+        outline1("BNE %sctr", label );
+        outline0("DEC MATHPTR1" );
+        outhead1("%sctr:", label );
+        outline0("LDA MATHPTR0" );
+        outline0("ORA MATHPTR1" );
+        outline1("BNE %s:", label );
+        outhead1("%sdone:", label );
+
+    embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
+
+        deploy( duff, src_hw_6502_duff_asm );
+
+        outline1("LDA #$%2.2x", ( _size >> 8 ) & 0xff );
+        outline0("STA MATHPTR1" );
+        outline1("LDA #$%2.2x", _size & 0xff );
+        outline0("STA MATHPTR0" );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA #>%s", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA #<%s", _destination );
+        outline0("STA TMPPTR2" );
+        outline0("JSR DUFFDEVICE" );
+
+    done()
+
+}
+
 void cpu6502_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     MAKE_LABEL
