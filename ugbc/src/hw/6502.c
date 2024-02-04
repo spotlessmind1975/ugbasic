@@ -634,11 +634,7 @@ void cpu6502_store_8bit( Environment * _environment, char *_destination, int _va
 
     inline( cpu_store_8bit )
 
-        if ( _value > 31 && _value < 128 ) {
-            outline1("LDA #'%c'", (_value & 0xff));
-        } else {
-            outline1("LDA #$%2.2x", (_value & 0xff));
-        }
+        outline1("LDA #$%2.2x", (_value & 0xff));
         outline1("STA %s", _destination);
 
     no_embedded( cpu_store_8bit )
@@ -749,11 +745,7 @@ void cpu6502_compare_and_branch_8bit_const( Environment * _environment, char *_s
     inline( cpu_compare_and_branch_8bit_const )
 
         outline1("LDA %s", _source);
-        if ( _destination > 31 && _destination < 128 ) {
-            outline1("CMP #'%c'", ( _destination & 0xff ) );
-        } else {
-            outline1("CMP #$%2.2x", _destination);
-        }
+        outline1("CMP #$%2.2x", _destination);
         if ( _positive ) {
             outline1("BNE %s", label);
         } else {
