@@ -699,7 +699,7 @@ void ef936x_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
-    SCREEN_MODE_DEFINE( BITMAP_MODE_40_COLUMN, 1, 320, 200, 16, 8, 8, "BITMAP MODE 40 COLUMN" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_40_COLUMN, 1, 320, 200, 15, 8, 8, "BITMAP MODE 40 COLUMN" );
 #if !defined(__mo5__)
     SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_4, 1, 320, 200, 4, 8, 8, "BITMAP MODE BITMAP 4" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_16, 1, 160, 200, 16, 8, 8, "BITMAP MODE BITMAP 16" );
