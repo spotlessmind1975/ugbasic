@@ -1203,7 +1203,11 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
             cpu_store_16bit( _environment, destination->realName, VT_ESIGN_16BIT( destination->type, _value ) );
             break;
         case 8:
-            cpu_store_8bit( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
+            if ( destination->type == VT_CHAR ) {
+                cpu_store_char( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
+            } else {
+                cpu_store_8bit( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
+            }
             break;
         case 1:
             cpu_bit_inplace_8bit( _environment, destination->realName, destination->bitPosition, &_value );

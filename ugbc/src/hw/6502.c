@@ -642,6 +642,24 @@ void cpu6502_store_8bit( Environment * _environment, char *_destination, int _va
 }
 
 /**
+ * @brief <i>CPU 6502</i>: emit code to store a char
+ * 
+ * @param _environment Current calling environment
+ * @param _destination Destination of store
+ * @param _value Value to store
+ */
+void cpu6502_store_char( Environment * _environment, char *_destination, int _value ) {
+
+    inline( cpu_store_char )
+
+        outline1("LDA #'%c'", (_value & 0xff));
+        outline1("STA %s", _destination);
+
+    no_embedded( cpu_store_char )
+
+}
+
+/**
  * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
@@ -755,6 +773,35 @@ void cpu6502_compare_and_branch_8bit_const( Environment * _environment, char *_s
         outhead1("%s:", label);
 
     no_embedded( cpu_compare_and_branch_8bit_const )
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void cpu6502_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    MAKE_LABEL
+
+    inline( cpu_compare_and_branch_char_const )
+
+        outline1("LDA %s", _source);
+        outline1("CMP #'%c'", _destination);
+        if ( _positive ) {
+            outline1("BNE %s", label);
+        } else {
+            outline1("BEQ %s", label);
+        }
+        outline1("JMP %s", _label);
+        outhead1("%s:", label);
+
+    no_embedded( cpu_compare_and_branch_char_const )
 
 }
 

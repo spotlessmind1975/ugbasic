@@ -1202,6 +1202,7 @@ typedef struct _Embedded {
     int cpu_compare_and_branch_16bit_const;
     int cpu_compare_and_branch_32bit_const;
     int cpu_compare_and_branch_8bit_const;
+    int cpu_compare_and_branch_char_const;
     int cpu_di;
     int cpu_ei;
     int cpu_inc;
@@ -1293,6 +1294,7 @@ typedef struct _Embedded {
     int cpu_store_16bit;
     int cpu_store_32bit;
     int cpu_store_8bit;
+    int cpu_store_char;
     int cpu_mem_move;
     int cpu_mem_move_direct;
     int cpu_mem_move_size;

@@ -306,7 +306,7 @@ void draw_string( Environment * _environment, char * _string ) {
             cpu_inc_16bit( _environment, address->realName );
 
             // Is it 'M' ? -> MOVE
-            cpu_compare_and_branch_8bit_const( _environment, command->realName, 'M', moveCommandLabel, 1 );
+            cpu_compare_and_branch_char_const( _environment, command->realName, 'M', moveCommandLabel, 1 );
 
             // Is it 'L' ? -> LEFT
             cpu_compare_and_branch_8bit( _environment, command->realName, drawLCommandLetter->realName, leftCommandLabel, 1 );
@@ -321,7 +321,7 @@ void draw_string( Environment * _environment, char * _string ) {
             cpu_compare_and_branch_8bit( _environment, command->realName, drawDCommandLetter->realName, downCommandLabel, 1 );
 
             // Is it 'B' ? -> BLANK (next action)
-            cpu_compare_and_branch_8bit_const( _environment, command->realName, 'B', blankCommandLabel, 1 );
+            cpu_compare_and_branch_char_const( _environment, command->realName, 'B', blankCommandLabel, 1 );
 
             // Is it 'E' ? -> 45°
             cpu_compare_and_branch_8bit( _environment, command->realName, drawECommandLetter->realName, angleCommandLabel, 1 );
@@ -336,16 +336,16 @@ void draw_string( Environment * _environment, char * _string ) {
             cpu_compare_and_branch_8bit( _environment, command->realName, drawHCommandLetter->realName, angleCommandLabel, 1 );
 
             // Is it 'C' ? -> change color
-            cpu_compare_and_branch_8bit_const( _environment, command->realName, 'C', colorCommandLabel, 1 );
+            cpu_compare_and_branch_char_const( _environment, command->realName, 'C', colorCommandLabel, 1 );
 
             // Is it 'S' ? -> scale
-            cpu_compare_and_branch_8bit_const( _environment, command->realName, 'S', scaleCommandLabel, 1 );
+            cpu_compare_and_branch_char_const( _environment, command->realName, 'S', scaleCommandLabel, 1 );
 
             // Is it 'A' ? -> angle (rotate)
-            cpu_compare_and_branch_8bit_const( _environment, command->realName, 'A', rotateCommandLabel, 1 );
+            cpu_compare_and_branch_char_const( _environment, command->realName, 'A', rotateCommandLabel, 1 );
 
             // Is it 'N' ? -> NO UPDATE (next action)
-            cpu_compare_and_branch_8bit_const( _environment, command->realName, 'N', noUpdateCommandLabel, 1 );
+            cpu_compare_and_branch_char_const( _environment, command->realName, 'N', noUpdateCommandLabel, 1 );
 
             // No command was recognized: silently, move to the next character.
             cpu_jump( _environment, doneCommandLabel );
@@ -410,47 +410,47 @@ void draw_string( Environment * _environment, char * _string ) {
             cpu_compare_and_branch_8bit_const( _environment, angle->realName, 3, rotate270CommandLabel, 1 );
 
             cpu_label( _environment, rotate0CommandLabel );
-            cpu_store_8bit( _environment, drawUCommandLetter->realName, 'U' );
-            cpu_store_8bit( _environment, drawDCommandLetter->realName, 'D' );
-            cpu_store_8bit( _environment, drawLCommandLetter->realName, 'L' );
-            cpu_store_8bit( _environment, drawRCommandLetter->realName, 'R' );
-            cpu_store_8bit( _environment, drawECommandLetter->realName, 'E' );
-            cpu_store_8bit( _environment, drawFCommandLetter->realName, 'F' );
-            cpu_store_8bit( _environment, drawGCommandLetter->realName, 'G' );
-            cpu_store_8bit( _environment, drawHCommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'H' );
             cpu_jump( _environment, done2CommandLabel );
 
             cpu_label( _environment, rotate90CommandLabel );
-            cpu_store_8bit( _environment, drawUCommandLetter->realName, 'L' );
-            cpu_store_8bit( _environment, drawDCommandLetter->realName, 'R' );
-            cpu_store_8bit( _environment, drawLCommandLetter->realName, 'D' );
-            cpu_store_8bit( _environment, drawRCommandLetter->realName, 'U' );
-            cpu_store_8bit( _environment, drawECommandLetter->realName, 'H' );
-            cpu_store_8bit( _environment, drawFCommandLetter->realName, 'E' );
-            cpu_store_8bit( _environment, drawGCommandLetter->realName, 'F' );
-            cpu_store_8bit( _environment, drawHCommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'G' );
             cpu_jump( _environment, done2CommandLabel );
 
             cpu_label( _environment, rotate180CommandLabel );
-            cpu_store_8bit( _environment, drawUCommandLetter->realName, 'D' );
-            cpu_store_8bit( _environment, drawDCommandLetter->realName, 'U' );
-            cpu_store_8bit( _environment, drawLCommandLetter->realName, 'R' );
-            cpu_store_8bit( _environment, drawRCommandLetter->realName, 'L' );
-            cpu_store_8bit( _environment, drawECommandLetter->realName, 'G' );
-            cpu_store_8bit( _environment, drawFCommandLetter->realName, 'H' );
-            cpu_store_8bit( _environment, drawGCommandLetter->realName, 'E' );
-            cpu_store_8bit( _environment, drawHCommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'F' );
             cpu_jump( _environment, done2CommandLabel );
 
             cpu_label( _environment, rotate270CommandLabel );
-            cpu_store_8bit( _environment, drawUCommandLetter->realName, 'R' );
-            cpu_store_8bit( _environment, drawDCommandLetter->realName, 'L' );
-            cpu_store_8bit( _environment, drawLCommandLetter->realName, 'U' );
-            cpu_store_8bit( _environment, drawRCommandLetter->realName, 'D' );
-            cpu_store_8bit( _environment, drawECommandLetter->realName, 'F' );
-            cpu_store_8bit( _environment, drawFCommandLetter->realName, 'G' );
-            cpu_store_8bit( _environment, drawGCommandLetter->realName, 'H' );
-            cpu_store_8bit( _environment, drawHCommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'E' );
             cpu_jump( _environment, done2CommandLabel );
 
             cpu_jump( _environment, done2CommandLabel );

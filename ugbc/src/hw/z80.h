@@ -75,6 +75,7 @@ void z80_compare_and_branch_16bit( Environment * _environment, char *_source, ch
 void z80_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void z80_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void z80_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
+void z80_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void z80_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
 void z80_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
 void z80_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
@@ -174,6 +175,7 @@ void z80_random( Environment * _environment, char * _entropy );
 void z80_random_16bit( Environment * _environment, char * _entropy, char * _result );
 void z80_random_32bit( Environment * _environment, char * _entropy, char * _result );
 void z80_random_8bit( Environment * _environment, char * _entropy, char * _result );
+void z80_store_char( Environment * _environment, char *_source, int _value );
 void z80_store_8bit( Environment * _environment, char *_source, int _value );
 void z80_store_16bit( Environment * _environment, char *_source, int _value );
 void z80_store_32bit( Environment * _environment, char *_source, int _value );
@@ -330,6 +332,7 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_and_branch_char_const( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_char_const( _environment, _source, _destination, _name, _positive )
 #define cpu_di( _environment  ) z80_di( _environment  )
 #define cpu_ei( _environment  ) z80_ei( _environment  )
 #define cpu_inc( _environment, _variable ) z80_inc( _environment, _variable );
@@ -428,6 +431,7 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_random_16bit( _environment,  _entropy,  _result  ) z80_random_16bit( _environment,  _entropy,  _result  )
 #define cpu_random_32bit( _environment,  _entropy,  _result  ) z80_random_32bit( _environment,  _entropy,  _result  )
 #define cpu_random_8bit( _environment,  _entropy,  _result  ) z80_random_8bit( _environment,  _entropy,  _result  )
+#define cpu_store_char( _environment, _source, _value  ) z80_store_char( _environment, _source, _value  )
 #define cpu_store_8bit( _environment, _source, _value  ) z80_store_8bit( _environment, _source, _value  )
 #define cpu_store_16bit( _environment, _source, _value  ) z80_store_16bit( _environment, _source, _value  )
 #define cpu_store_32bit( _environment, _source, _value  ) z80_store_32bit( _environment, _source, _value  )

@@ -8991,6 +8991,7 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_compare_and_branch_16bit_const );
                         parse_embedded( p, cpu_compare_and_branch_32bit_const );
                         parse_embedded( p, cpu_compare_and_branch_8bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_char_const );
                         parse_embedded( p, cpu_di );
                         parse_embedded( p, cpu_ei );
                         parse_embedded( p, cpu_inc );
