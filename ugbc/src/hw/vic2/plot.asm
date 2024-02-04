@@ -265,6 +265,10 @@ PLOT3XXX:
     BNE PLOT3XXX2
     JMP PLOT3GETC
 PLOT3XXX2:
+    LDA $D021
+    AND #$0f
+    CMP _PEN
+    BEQ PLOT3C0
     LDY #0
     LDA (PLOTCDEST),Y
     LSR
@@ -284,12 +288,21 @@ PLOT3XXX2:
     BEQ PLOT3C3
 
     LDA LASTCOLOR
+    CMP #0
+    BEQ PLOT3SC3
     CMP #1
     BEQ PLOT3SC2
     CMP #2
     BEQ PLOT3SC3
     CMP #3
     BEQ PLOT3SC1
+
+PLOT3C0:
+    LDA #<PLOTORBIT40
+    STA TMPPTR
+    LDA #>PLOTORBIT40
+    STA TMPPTR+1
+    JMP PLOT3PEN
 
 PLOT3SC1:
     LDA (PLOTCDEST),Y
@@ -331,7 +344,7 @@ PLOT3SC3:
     LDA _PEN
     LDY #0
     STA (PLOTC2DEST),Y
-    LDA #3
+    LDA #1
     STA LASTCOLOR
 PLOT3C3:
     LDA #<PLOTORBIT43
@@ -413,21 +426,6 @@ PLOTD:
     AND PLOTAMA
     ORA PLOTOMA              ;isolate AND set the point
     STA (PLOTDEST),y           ;write back to $A000
-    LDA CURRENTMODE
-    CMP #$2
-    BEQ PLOTDE
-    LDY #0
-    LDA (PLOTCDEST),y          ;get row with point in it
-    AND #$0f                   ;isolate AND set the point
-    STA (PLOTCDEST),y          ;get row with point in it
-    LDA _PEN
-    ASL
-    ASL
-    ASL
-    ASL
-    ORA (PLOTCDEST),y          ;write back to $A000    
-    STA (PLOTCDEST),y          ;write back to $A000    
-PLOTDE:
     JMP PLOTP                  ;skip the erase-point section
 
     ;-----------
