@@ -1118,6 +1118,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     outline0("STA $231" );
     outline0("CLI" );
 
+    if ( _environment->vestigialConfig.palettePreserve ) {
+        outline0("LDA #$0");
+        outline0("STA PALETTEPRESERVEUSED");
+        outline0("STA LASTCOLOR");
+    }
+    
 }
 
 void gtia_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
