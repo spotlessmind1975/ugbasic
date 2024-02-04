@@ -422,10 +422,25 @@ PLOTD:
     ;---------
     ;set point
     ;---------
-    LDA (PLOTDEST),y           ;get row with point in it
+    LDA (PLOTDEST),Y           ;get row with point in it
     AND PLOTAMA
     ORA PLOTOMA              ;isolate AND set the point
-    STA (PLOTDEST),y           ;write back to $A000
+    STA (PLOTDEST),Y           ;write back to $A000
+    LDA CURRENTMODE
+    CMP #$3
+    BEQ PLOTDE
+    LDY #0
+    LDA (PLOTCDEST),Y          ;get row with point in it
+    AND #$0f                   ;isolate AND set the point
+    STA (PLOTCDEST),Y          ;get row with point in it
+    LDA _PEN
+    ASL
+    ASL
+    ASL
+    ASL
+    ORA (PLOTCDEST),Y          ;write back to $A000    
+    STA (PLOTCDEST),Y          ;write back to $A000    
+PLOTDE:
     JMP PLOTP                  ;skip the erase-point section
 
     ;-----------
