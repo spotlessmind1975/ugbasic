@@ -215,6 +215,8 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
 
     switch( _variable->type ) {
         case VT_CHAR:
+            outline1(" .byte '%c'", ( _variable->value & 0xff ) );
+            break;
         case VT_BYTE:
         case VT_SBYTE:
         case VT_COLOR:
