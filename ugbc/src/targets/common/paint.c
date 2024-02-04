@@ -110,6 +110,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
 
         cpu_jump( _environment, beginPaintLabel );
 
+        Variable * pointValue = variable_define( _environment, "point__v", VT_COLOR, 0 );
         Variable * paintX = variable_define( _environment, "paint__x", VT_POSITION, 0 );
         Variable * paintY = variable_define( _environment, "paint__y", VT_POSITION, 0 );
         Variable * paintC = variable_define( _environment, "paint__c", VT_COLOR, 0 );
@@ -198,9 +199,11 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
 
             //      || screen[x][y] != prevC
 
+            variable_move( _environment, point( _environment, x->name, y->name )->name, pointValue->name );
+
             variable_move( _environment, 
                             variable_compare_not( _environment, 
-                                point( _environment, x->name, y->name )->name, 
+                                pointValue->name, 
                                 previousColor->name
                             )->name,
                             isValid->name );
@@ -210,7 +213,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
 
             variable_move( _environment, 
                             variable_compare( _environment, 
-                                point( _environment, x->name, y->name )->name, 
+                                pointValue->name, 
                                 paintC->name
                             )->name,
                             isValid->name );
@@ -222,7 +225,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
 
             variable_move( _environment, 
                             variable_compare( _environment, 
-                                point( _environment, x->name, y->name )->name, 
+                                pointValue->name, 
                                 paintB->name
                             )->name,
                             isValid->name );
