@@ -49,6 +49,9 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
     char backspaceLabel[MAX_TEMPORARY_STORAGE]; sprintf(backspaceLabel, "%sbackspace", label );
+    char skipCursorChangeLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipCursorChangeLabel, "%sskipcc", label );
+    char skipCursorChangeLabel2[MAX_TEMPORARY_STORAGE]; sprintf(skipCursorChangeLabel2, "%sskipcc2", label );
+    char skipCursorChangeLabel3[MAX_TEMPORARY_STORAGE]; sprintf(skipCursorChangeLabel3, "%sskipcc3", label );
 
     Variable * temporary = variable_temporary( _environment, VT_DSTRING, "(temporary storage for input)");
     Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset inside temporary storage)");
@@ -57,6 +60,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     Variable * comma = variable_temporary( _environment, VT_CHAR, "(comma)" );
     Variable * space = variable_temporary( _environment, VT_CHAR, "(space)" );
     Variable * underscore = variable_temporary( _environment, VT_CHAR, "(underscore)" );
+    Variable * underscoreTimer = variable_temporary( _environment, VT_BYTE, "(underscore timer)" );
     Variable * backspace = variable_temporary( _environment, VT_CHAR, "(backspace)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size max)" );
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
@@ -80,12 +84,25 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     cpu_dsalloc( _environment, size->realName, temporary->realName );
     cpu_dsdescriptor( _environment, temporary->realName, address->realName, pressed->realName );
 
+    cpu_store_8bit( _environment, underscoreTimer->realName, 143 );
+
     cpu_label( _environment, repeatLabel );
+
+    cpu_dec( _environment, underscoreTimer->realName );
+    cpu_compare_and_branch_8bit_const( _environment, underscoreTimer->realName, 0, skipCursorChangeLabel, 0 );
+    cpu_store_8bit( _environment, underscoreTimer->realName, 32 );
+    cpu_compare_and_branch_8bit_const( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor, skipCursorChangeLabel2, 1 );
+    cpu_label( _environment, skipCursorChangeLabel3 );
+    cpu_store_8bit( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor );
+    cpu_jump( _environment, skipCursorChangeLabel );
+    cpu_label( _environment, skipCursorChangeLabel2 );
+    cpu_store_8bit( _environment, underscore->realName, 32 );
+    cpu_label( _environment, skipCursorChangeLabel );
 
     print( _environment, underscore->name, 0 );
     cmove_direct( _environment, -1, 0 );
 
-    d64_inkey( _environment, pressed->realName, key->realName );
+    d32_inkey( _environment, pressed->realName, key->realName );
 
     cpu_bveq( _environment, pressed->realName, repeatLabel );
     cpu_bveq( _environment, key->realName, repeatLabel );
