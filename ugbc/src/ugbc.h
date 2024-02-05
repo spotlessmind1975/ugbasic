@@ -4379,6 +4379,7 @@ Variable *              variable_string_string( Environment * _environment, char
 Variable *              variable_string_upper( Environment * _environment, char * _string );
 Variable *              variable_string_val( Environment * _environment, char * _value );
 Variable *              variable_sub( Environment * _environment, char * _source, char * _dest );
+Variable *              variable_sub_const( Environment * _environment, char * _source, int _dest );
 void                    variable_sub_inplace( Environment * _environment, char * _source, char * _dest );
 void                    variable_swap( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
