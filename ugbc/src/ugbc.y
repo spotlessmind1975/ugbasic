@@ -1036,7 +1036,12 @@ expr_math :
 expr_math2: 
       term
     | expr_math2 OP_PLUS term {
-        $$ = variable_add( _environment, $1, $3 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_add_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_add( _environment, $1, $3 )->name;
+        }
     }
     | expr_math2 OP_MINUS term {
         $$ = variable_sub( _environment, $1, $3 )->name;

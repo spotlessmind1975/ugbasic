@@ -4294,6 +4294,7 @@ Variable *              uncompress( Environment * _environment, char * _value );
 //----------------------------------------------------------------------------
 
 Variable *              variable_add( Environment * _environment, char * _source, char * _dest );
+Variable *              variable_add_const( Environment * _environment, char * _source, int _dest );
 void                    variable_add_inplace( Environment * _environment, char * _source, int _dest );
 void                    variable_add_inplace_vars( Environment * _environment, char * _source, char * _dest );
 void                    variable_add_inplace_array( Environment * _environment, char * _source, char * _destination );

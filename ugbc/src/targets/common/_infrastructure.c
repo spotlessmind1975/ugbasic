@@ -3461,6 +3461,50 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
 }
 
 /**
+ * @brief Add a variable with a constant, and return the sum of them
+ * 
+ * This function allows you to sum the value of a variables and a
+ * constant. Note that variable must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination value to use
+ * @return Variable* The sum of source and destination variable
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+Variable * variable_add_const( Environment * _environment, char * _source, int  _destination ) {
+
+    Variable * source = variable_retrieve( _environment, _source );
+
+    Variable * result;
+    
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of sum)" );
+            cpu_math_add_32bit_const( _environment, source->realName, _destination, result->realName );
+            break;
+        case 16:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_SWORD, "(result of sum)" );
+            cpu_math_add_16bit_const( _environment, source->realName, _destination, result->realName );
+            break;
+        case 8:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(result of sum)" );
+            cpu_math_add_8bit_const( _environment, source->realName, _destination, result->realName );
+            break;
+        case 1:
+        case 0:
+            CRITICAL_ADD_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+            break;
+    }
+    
+    return result;
+}
+
+/**
  * @brief Store the value of a variable inside another variable without conversion
  * 
  * This function allows you to store the value of one variable in another, 
