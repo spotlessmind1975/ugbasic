@@ -1594,10 +1594,10 @@ void cpu6502_compare_16bit_const( Environment * _environment, char *_source, int
     inline( cpu_compare_16bit )
 
         outline1("LDA %s", _source);
-        outline1("CMP #$2.2x", (unsigned char)( _destination & 0xff ) );
+        outline1("CMP #$%2.2x", (unsigned char)( _destination & 0xff ) );
         outline1("BNE %s", label);
         outline1("LDA %s", address_displacement(_environment, _source, "1"));
-        outline1("CMP #$2.2x", (unsigned char)( ( _destination >> 8 ) & 0xff ) );
+        outline1("CMP #$%2.2x", (unsigned char)( ( _destination >> 8 ) & 0xff ) );
         outline1("BNE %s", label);
         outline1("LDA #$%2.2x", ( _positive ) ? 0xff : 0x00  );
         outline1("STA %s", _other);
