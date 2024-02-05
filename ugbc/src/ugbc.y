@@ -1044,12 +1044,7 @@ expr_math2:
         }
     }
     | expr_math2 OP_MINUS term {
-        Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
-            $$ = variable_sub_const( _environment, $1, expr->value )->name;
-        } else {
-            $$ = variable_sub( _environment, $1, $3 )->name;
-        }
+        $$ = variable_sub( _environment, $1, $3 )->name;
     }
     ;
 
