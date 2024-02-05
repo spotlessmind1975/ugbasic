@@ -4310,6 +4310,7 @@ Variable *              variable_compare( Environment * _environment, char * _so
 void                    variable_compare_and_branch_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 Variable *              variable_compare_const( Environment * _environment, char * _source, int _dest );
 Variable *              variable_compare_not( Environment * _environment, char * _source, char * _dest );
+Variable *              variable_compare_not_const( Environment * _environment, char * _source, int _dest );
 Variable *              variable_complement_const( Environment * _environment, char * _source, int _mask );
 Variable *              variable_decrement( Environment * _environment, char * _source );
 Variable *              variable_decrement_array( Environment * _environment, char * _source );

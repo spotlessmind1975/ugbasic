@@ -964,19 +964,44 @@ expr :
 expr_math : 
       expr_math2
     | expr_math2 OP_EQUAL expr_math {
-        $$ = variable_compare( _environment, $1, $3 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_compare_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_compare( _environment, $1, $3 )->name;
+        }
     }
     | expr_math2 OP_ASSIGN expr_math {
-        $$ = variable_compare( _environment, $1, $3 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_compare_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_compare( _environment, $1, $3 )->name;
+        }
     }
     | expr_math2 OP_DISEQUAL expr_math {
-        $$ = variable_compare_not( _environment, $1, $3 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_compare_not_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_compare_not( _environment, $1, $3 )->name;
+        }
     }
     | expr_math2 OP_LT expr_math {
-        $$ = variable_less_than( _environment, $1, $3, 0 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_less_than_const( _environment, $1, expr->value, 0 )->name;
+        } else {
+            $$ = variable_less_than( _environment, $1, $3, 0 )->name;
+        }
     }
     | expr_math2 OP_LTE expr_math {
-        $$ = variable_less_than( _environment, $1, $3, 1 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_less_than_const( _environment, $1, expr->value, 0 )->name;
+        } else {
+            $$ = variable_less_than( _environment, $1, $3, 1 )->name;
+        }
     }
     | expr_math2 OP_LT OP_HASH const_expr_math2 {
         $$ = variable_less_than_const( _environment, $1, $4, 0 )->name;
@@ -985,10 +1010,20 @@ expr_math :
         $$ = variable_less_than_const( _environment, $1, $4, 1 )->name;
     }
     | expr_math2 OP_GT expr_math {
-        $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_greater_than_const( _environment, $1, expr->value, 0 )->name;
+        } else {
+            $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
+        }
     }
     | expr_math2 OP_GTE expr_math {
-        $$ = variable_greater_than( _environment, $1, $3, 1 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_greater_than_const( _environment, $1, expr->value, 1 )->name;
+        } else {
+            $$ = variable_greater_than( _environment, $1, $3, 1 )->name;
+        }
     }
     | expr_math2 OP_GT OP_HASH const_expr_math2 {
         $$ = variable_greater_than_const( _environment, $1, $4, 0 )->name;
