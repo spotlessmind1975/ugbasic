@@ -85,7 +85,7 @@ void begin_repeat( Environment * _environment ) {
 
     unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
 
-    if ( _environment->procedureName && _environment->protothread ) {
+    if ( _environment->procedureName && _environment->protothread && ! _environment->protothreadForbid ) {
         yield( _environment );
     }
 

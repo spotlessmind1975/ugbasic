@@ -59,7 +59,7 @@ void end_compilation( Environment * _environment ) {
 
     gameloop_cleanup( _environment );
     
-    if ( !_environment->runParallel && _environment->anyProtothread ) {
+    if ( !_environment->runParallel && _environment->anyProtothread  && !_environment->protothreadForbid ) {
         begin_loop( _environment );
         run_parallel( _environment );
         end_loop( _environment );

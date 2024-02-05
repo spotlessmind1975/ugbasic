@@ -39,53 +39,35 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>SPAWN ...</strong>
+ * @brief Emit code for <strong>YIELD</strong>
  * 
  * @param _environment Current calling environment
- * @param _name Name of the procedure
  */
 /* <usermanual>
-@keyword RESPAWN
+@keyword FORBID
 
 @english
-This keyword will restart a (finished) (parallel) procedure. 
+This keyword will disable the multitasking up to the next ''ALLOW'' keyword.
 
 @italian
-Questa parola chiave fa ricominciare una funzione terminata,
-affinché sia eseguita in parallelo.
+Questa parola chiave sospende il multitasking, fino alla prossima parola
+chiave ''ALLOW''.
 
-@syntax RESPAWN [name][{[parameter],{[parameter],....}}]
+@syntax FORBID
 
-@example RESPAWN factorialHandle(42)
+@example FORBID
 
 @target all
 </usermanual> */
-Variable * respawn_procedure( Environment * _environment, char * _name ) {
-
-    MAKE_LABEL
-
-    Variable * threadId = variable_retrieve( _environment, _name );
-    Variable * threadState = variable_temporary( _environment, VT_BYTE, "(current thread state)" );
-
-    if ( threadId->type != VT_THREAD ) {
-        CRITICAL_CANNOT_RESPAWN_NOT_THREADID( _name );
-    }
-
-    if ( _environment->protothreadForbid ) {
-        CRITICAL_MULTITASKING_FORBIDDEN();
-    }
+void forbid( Environment * _environment ) {
 
     _environment->anyProtothread = 1;
 
-    char doNothingLabel[MAX_TEMPORARY_STORAGE]; sprintf(doNothingLabel, "%snothing", label );
-
-    cpu_protothread_get_state( _environment, threadId->realName, threadState->realName );
-    cpu_compare_and_branch_8bit_const( _environment, threadState->realName, PROTOTHREAD_STATUS_ENDED, doNothingLabel, 0 );
-    cpu_protothread_set_state( _environment, threadId->realName, PROTOTHREAD_STATUS_WAITING );
-    
-    cpu_label( _environment, doNothingLabel );
-
-    return threadId;
+    if ( ! _environment->protothreadForbid ) {
+        _environment->protothreadForbid = 1;
+    } else {
+        CRITICAL_MULTITASKING_ALREADY_FORBIDDEN();
+    }
 
 }
 

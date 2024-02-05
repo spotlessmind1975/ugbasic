@@ -62,6 +62,10 @@ di un nuovo quanto di tempo.
 </usermanual> */
 void yield( Environment * _environment ) {
 
+    if ( _environment->protothreadForbid ) {
+        CRITICAL_MULTITASKING_FORBIDDEN();
+    }
+
     if ( _environment->anyProtothread ) {
 
         char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, _environment->protothreadStep );

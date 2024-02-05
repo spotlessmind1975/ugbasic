@@ -74,7 +74,11 @@ void wait_while_condition( Environment * _environment, char * _condition ) {
     if ( _environment->emptyProcedure ) {
         return;
     }
-    
+
+    if ( _environment->protothreadForbid ) {
+        CRITICAL_MULTITASKING_FORBIDDEN();
+    }
+
     _environment->anyProtothread = 1;
 
     MAKE_LABEL

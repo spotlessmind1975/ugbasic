@@ -2187,6 +2187,11 @@ typedef struct _Environment {
     int protothreadStep;
     
     /**
+     * Is protothread forbidden?
+     */
+    int protothreadForbid;
+
+    /**
      * 
      */
     VariableType dataDataType;
@@ -2736,6 +2741,9 @@ typedef struct _Environment {
 #define CRITICAL_VARIABLE_CANNOT_DIRECT_ASSIGN_DIFFERENT_TYPE( t1, t2 ) CRITICAL3("E252 - cannot direct assign between different types", t1, t2 );
 #define CRITICAL_WRONG_NEXT_INDEX(v) CRITICAL2("E253 - NEXT with a wrong FOR index", v );
 #define CRITICAL_PUT_IMAGE_UNINITIALIZED(v) CRITICAL2("E254 - PUT IMAGE with uninitialized image variable", v );
+#define CRITICAL_MULTITASKING_ALREADY_FORBIDDEN() CRITICAL("E255 - multitasking is already forbidden");
+#define CRITICAL_MULTITASKING_NOT_FORBIDDEN() CRITICAL("E256 - multitasking is already allowed");
+#define CRITICAL_MULTITASKING_FORBIDDEN() CRITICAL("E257 - multitasking is actually forbidden");
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3731,6 +3739,7 @@ void                    add_complex_vars( Environment * _environment, char * _va
 void                    add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 char *                  address_displacement( Environment * _environment, char * _address, char * _displacement );
+void                    allow( Environment * _environment );
 
 //----------------------------------------------------------------------------
 // *B*
@@ -3904,6 +3913,7 @@ void                    exit_procedure( Environment * _environment );
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
 int                     find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
 void                    font_descriptors_init( Environment * _environment, int _embedded_present );
+void                    forbid( Environment * _environment );
 int                     frames( Environment * _environment, char * _image );
 Variable *              fp_cos( Environment * _environment, char * _angle );
 Variable *              fp_sin( Environment * _environment, char * _angle );
