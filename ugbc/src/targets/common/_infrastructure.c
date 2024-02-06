@@ -3481,7 +3481,7 @@ Variable * variable_add_const( Environment * _environment, char * _source, int  
     Variable * source = variable_retrieve( _environment, _source );
 
     Variable * result;
-    
+
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of sum)" );
@@ -4064,6 +4064,46 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
                 }
         }
     }
+    return result;
+}
+
+/**
+ * @brief Make a differenze between a variable a constant, and return the difference of them
+ * 
+ * This function allows you to difference the value of a variable and a constant. Note 
+ * that both variable must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source variable must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Value to subtract
+ * @return Variable* The difference of source and destination variable
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+Variable * variable_sub_const( Environment * _environment, char * _source, int _destination ) {
+    Variable * source = variable_retrieve( _environment, _source );
+
+    Variable * result = variable_temporary( _environment, source->type, "(result of subtracting)" );
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_math_add_32bit_const( _environment, source->realName, VT_ESIGN_32BIT( source->type, _destination ), result->realName );
+            break;
+        case 16:
+            cpu_math_add_16bit_const( _environment, source->realName, VT_ESIGN_16BIT( source->type, _destination ), result->realName );
+            break;
+        case 8:
+            cpu_math_add_8bit_const( _environment, source->realName, VT_ESIGN_8BIT( source->type, _destination ), result->realName );
+            break;
+        case 1:
+        case 0:
+            CRITICAL_SUB_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+            break;
+    }
+
     return result;
 }
 
