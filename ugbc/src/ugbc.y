@@ -1063,7 +1063,20 @@ term:
 modula: 
       factor
     | modula OP_MULTIPLICATION factor {
-        $$ = variable_mul( _environment, $1, $3 )->name;
+        Variable * modula = variable_retrieve( _environment, $1 );
+        Variable * factor = variable_retrieve( _environment, $3 );
+        if ( factor->initializedByConstant ) {
+            if ( modula->initializedByConstant ) {
+                Variable * number = variable_temporary( _environment, VT_MAX_BITWIDTH_TYPE( factor->type, modula->type ), "(constant)" );
+                $$ = number->name;
+                variable_store( _environment, $$, factor->value * modula->value );
+                number->initializedByConstant = 1;
+            } else {
+                $$ = variable_mul( _environment, $1, $3 )->name;
+            }
+        } else {
+            $$ = variable_mul( _environment, $1, $3 )->name;
+        }
     } 
     | modula OP_MULTIPLICATION2 direct_integer {
         if ( log2($3) != (int)log2($3) ) {
