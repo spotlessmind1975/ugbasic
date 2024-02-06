@@ -221,6 +221,17 @@ static int chg_read(POBuffer buf) {
     return 0;
 }
 
+static int chg_write(POBuffer buf, char * REG) {
+    if ( strcmp( REG, "A" ) == 0 ) {
+        if(po_buf_match(buf, " STA")) return 1;
+    } else if ( strcmp( REG, "X" ) == 0 ) {
+        if(po_buf_match(buf, " STX")) return 1;
+    } else if ( strcmp( REG, "Y" ) == 0 ) {
+        if(po_buf_match(buf, " STY")) return 1;
+    }
+    return 0;
+}
+
 /* perform basic peephole optimization with a length-4 look-ahead */
 static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     /* allows presumably safe operations */
@@ -433,15 +444,14 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
 	if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) && 
         po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[1], " LDA *", v2 )
-        && strcmp( v1->str, v2->str ) == 0 ) {
-        optim( buf[1], RULE "(LDA x, LDA x)->(LDA x) [1]", NULL );
+        ) {
+        optim( buf[0], RULE "(LDA x, LDA x)->(LDA x) [1]", NULL );
         ++_environment->removedAssemblyLines;
     }
-
-	if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) && 
-        po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[1], " LDA *", v2 )
-        ) {
-        optim( buf[0], RULE "(LDA x, LDA y)->(LDA y)", NULL );
+    if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) && 
+        po_buf_match( buf[0], " LD* *", v1, v2 ) && chg_write( buf[1], v1->str) && po_buf_match( buf[2], " LD* *", v3, v4 )
+        && strcmp( v1->str, v3->str ) == 0 && strcmp( v2->str, v4->str ) == 0 ) {
+        optim( buf[2], RULE "(LD x, |STx, LD y)->(LD y)", NULL );
         ++_environment->removedAssemblyLines;
     }
 
