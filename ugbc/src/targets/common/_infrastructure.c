@@ -4090,13 +4090,13 @@ Variable * variable_sub_const( Environment * _environment, char * _source, int _
 
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
-            cpu_math_add_32bit_const( _environment, source->realName, VT_ESIGN_32BIT( source->type, _destination ), result->realName );
+            cpu_math_add_32bit_const( _environment, source->realName, VT_ESIGN_32BIT( source->type, -_destination ), result->realName );
             break;
         case 16:
-            cpu_math_add_16bit_const( _environment, source->realName, VT_ESIGN_16BIT( source->type, _destination ), result->realName );
+            cpu_math_add_16bit_const( _environment, source->realName, VT_ESIGN_16BIT( source->type, -_destination ), result->realName );
             break;
         case 8:
-            cpu_math_add_8bit_const( _environment, source->realName, VT_ESIGN_8BIT( source->type, _destination ), result->realName );
+            cpu_math_add_8bit_const( _environment, source->realName, VT_ESIGN_8BIT( source->type, -_destination ), result->realName );
             break;
         case 1:
         case 0:
