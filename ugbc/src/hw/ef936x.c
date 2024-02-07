@@ -1873,11 +1873,11 @@ Variable * ef936x_new_images( Environment * _environment, int _frames, int _widt
     memset( buffer, 0, size );
 
     *(buffer) = _frames;
-    *(buffer+1) = ( _width & 0xff );
-    *(buffer+2) = ( _width >> 8 ) & 0xff;
+    *(buffer+1) = ( _width >> 8 ) & 0xff;
+    *(buffer+2) = ( _width & 0xff );
     for( int i=0; i<_frames; ++i ) {
-        *(buffer+3+(i*frameSize)) = ( _width & 0xff );
-        *(buffer+3+(i*frameSize)+1) = ( ( _width >> 8 ) & 0xff );
+        *(buffer+3+(i*frameSize)) = ( ( _width >> 8 ) & 0xff );
+        *(buffer+3+(i*frameSize)+1) = ( _width & 0xff );
         *(buffer+3+(i*frameSize)+2) = ( _height & 0xff );
     }
 
