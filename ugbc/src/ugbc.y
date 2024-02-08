@@ -4189,6 +4189,10 @@ var_definition_simple:
   Identifier as_datatype {
       variable_define( _environment, $1, $2, 0 );
   }
+  |
+  Identifier as_datatype_suffix {
+      variable_define( _environment, $1, $2, 0 );
+  }
   | Identifier as_datatype OP_ASSIGN const_expr {
       variable_define( _environment, $1, $2, $4 );
   }
