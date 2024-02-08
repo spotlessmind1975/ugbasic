@@ -6992,6 +6992,12 @@ define_definition :
         }
         ((struct _Environment *)_environment)->inputConfig.delay = $3;
     }
+    | PAINT BUFFER const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_PAINT_BUFFER( $3 );
+        }
+        ((struct _Environment *)_environment)->paintBucketSize = $3;
+    }
     ;
 
 system : {

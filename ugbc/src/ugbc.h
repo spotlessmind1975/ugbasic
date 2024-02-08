@@ -2744,6 +2744,8 @@ typedef struct _Environment {
 #define CRITICAL_MULTITASKING_ALREADY_FORBIDDEN() CRITICAL("E255 - multitasking is already forbidden");
 #define CRITICAL_MULTITASKING_NOT_FORBIDDEN() CRITICAL("E256 - multitasking is already allowed");
 #define CRITICAL_MULTITASKING_FORBIDDEN() CRITICAL("E257 - multitasking is actually forbidden");
+#define CRITICAL_INVALID_PAINT_BUFFER(v) CRITICAL2i("E258 - invalid PAINT BUFFER size", v );
+
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
