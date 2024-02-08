@@ -646,6 +646,14 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         };
 
     if( 
+        po_buf_match( buf[0], " INC *",  arg )
+     ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+            v->nb_wr++;
+        };
+
+    if( 
         po_buf_match( buf[0], " LD* *",  tmp, arg ) && 
         strstr("A X Y", tmp->str)!=NULL
      ) if(vars_ok(arg)) {
@@ -751,6 +759,11 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         v->init = strdup(arg->str);
     }
 
+    if( po_buf_match(buf[0], " *: .res *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
+        struct var *v = vars_get(tmp);
+        v->size = atoi( arg->str );
+        v->init = NULL;
+    }
 }
 
 /* compares two variables according to their access-count */
@@ -783,6 +796,7 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     /* remove changed variables */
     if(po_buf_match( buf[0], " *: .byte ", var)
     || po_buf_match( buf[0], " *: .word ", var)
+    || po_buf_match( buf[0], " *: .res ", var)
     ) if(vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd==0 && 0<v->size && v->size<=4 && 0==(v->flags & NO_REMOVE) && v->offset!=-2) {
@@ -790,7 +804,7 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
             ++_environment->removedAssemblyLines;
             ++num_unread;
         }             
-     }
+    }
 }            
 
 /* collapse all heading spaces into a single tabulation */
