@@ -157,7 +157,10 @@ static void variable_reset_pool( Environment * _environment, Variable * _pool ) 
     while( actual ) {
         if ( actual->locked == 0 ) {
             if ( actual->used && actual->type != VT_DSTRING ) {
-                actual->used = 0;       
+                actual->used = 0;
+                if ( actual->initializedByConstant ) {
+                    outline1("; V %s", actual->realName );
+                }
             }     
         }
         actual = actual->next;
@@ -831,6 +834,13 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
 }
 
 /**
+ * @brief Set the usage flags for the temporary variable pool
+ */
+void variable_set( Environment * _environment ) {
+    outline0("; VRP" );
+}
+
+/**
  * @brief Reset the usage flags for the temporary variable pool
  * 
  * This function allows you to reset the use flag of each temporary variable
@@ -844,6 +854,7 @@ void variable_reset( Environment * _environment ) {
     } else {
         variable_reset_pool( _environment, _environment->tempVariables[0] );
     }    
+    outline0("; VSP" );
 }
 
 // @bit2: ok
