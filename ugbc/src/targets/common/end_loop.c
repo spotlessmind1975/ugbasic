@@ -63,7 +63,7 @@ void end_loop( Environment * _environment ) {
 
     _environment->loops = _environment->loops->next;
 
-    if ( _environment->procedureName && _environment->protothread ) {
+    if ( _environment->procedureName && _environment->protothread && ! _environment->protothreadForbid ) {
         yield( _environment );
     }
 

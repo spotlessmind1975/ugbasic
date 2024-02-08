@@ -132,7 +132,7 @@ void end_while( Environment * _environment ) {
         CRITICAL_WEND_WITHOUT_WHILE();
     }
 
-    if ( _environment->procedureName && _environment->protothread ) {
+    if ( _environment->procedureName && _environment->protothread && ! _environment->protothreadForbid ) {
         yield( _environment );
     }
     

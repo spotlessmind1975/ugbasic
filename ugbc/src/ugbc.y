@@ -92,7 +92,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
-%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR
+%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -964,19 +964,44 @@ expr :
 expr_math : 
       expr_math2
     | expr_math2 OP_EQUAL expr_math {
-        $$ = variable_compare( _environment, $1, $3 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_compare_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_compare( _environment, $1, $3 )->name;
+        }
     }
     | expr_math2 OP_ASSIGN expr_math {
-        $$ = variable_compare( _environment, $1, $3 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_compare_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_compare( _environment, $1, $3 )->name;
+        }
     }
     | expr_math2 OP_DISEQUAL expr_math {
-        $$ = variable_compare_not( _environment, $1, $3 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_compare_not_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_compare_not( _environment, $1, $3 )->name;
+        }
     }
     | expr_math2 OP_LT expr_math {
-        $$ = variable_less_than( _environment, $1, $3, 0 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_less_than_const( _environment, $1, expr->value, 0 )->name;
+        } else {
+            $$ = variable_less_than( _environment, $1, $3, 0 )->name;
+        }
     }
     | expr_math2 OP_LTE expr_math {
-        $$ = variable_less_than( _environment, $1, $3, 1 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_less_than_const( _environment, $1, expr->value, 0 )->name;
+        } else {
+            $$ = variable_less_than( _environment, $1, $3, 1 )->name;
+        }
     }
     | expr_math2 OP_LT OP_HASH const_expr_math2 {
         $$ = variable_less_than_const( _environment, $1, $4, 0 )->name;
@@ -985,10 +1010,20 @@ expr_math :
         $$ = variable_less_than_const( _environment, $1, $4, 1 )->name;
     }
     | expr_math2 OP_GT expr_math {
-        $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_greater_than_const( _environment, $1, expr->value, 0 )->name;
+        } else {
+            $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
+        }
     }
     | expr_math2 OP_GTE expr_math {
-        $$ = variable_greater_than( _environment, $1, $3, 1 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_greater_than_const( _environment, $1, expr->value, 1 )->name;
+        } else {
+            $$ = variable_greater_than( _environment, $1, $3, 1 )->name;
+        }
     }
     | expr_math2 OP_GT OP_HASH const_expr_math2 {
         $$ = variable_greater_than_const( _environment, $1, $4, 0 )->name;
@@ -1001,10 +1036,20 @@ expr_math :
 expr_math2: 
       term
     | expr_math2 OP_PLUS term {
-        $$ = variable_add( _environment, $1, $3 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_add_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_add( _environment, $1, $3 )->name;
+        }
     }
     | expr_math2 OP_MINUS term {
-        $$ = variable_sub( _environment, $1, $3 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_sub_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_sub( _environment, $1, $3 )->name;
+        }
     }
     ;
 
@@ -1018,7 +1063,20 @@ term:
 modula: 
       factor
     | modula OP_MULTIPLICATION factor {
-        $$ = variable_mul( _environment, $1, $3 )->name;
+        Variable * modula = variable_retrieve( _environment, $1 );
+        Variable * factor = variable_retrieve( _environment, $3 );
+        if ( factor->initializedByConstant ) {
+            if ( modula->initializedByConstant ) {
+                Variable * number = variable_temporary( _environment, VT_MAX_BITWIDTH_TYPE( factor->type, modula->type ), "(constant)" );
+                $$ = number->name;
+                variable_store( _environment, $$, factor->value * modula->value );
+                number->initializedByConstant = 1;
+            } else {
+                $$ = variable_mul( _environment, $1, $3 )->name;
+            }
+        } else {
+            $$ = variable_mul( _environment, $1, $3 )->name;
+        }
     } 
     | modula OP_MULTIPLICATION2 direct_integer {
         if ( log2($3) != (int)log2($3) ) {
@@ -5831,6 +5889,17 @@ readonly_optional :
     };
 
 dim_definition :
+    Identifier as_datatype_suffix {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } OP dimensions CP {
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
+        variable_array_type( _environment, $1, $2 );
+    } array_assign readonly_optional {
+        Variable * array = variable_retrieve( _environment, $1 );
+        array->readonly = $9;
+    }
+    |
     Identifier datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
@@ -5841,6 +5910,8 @@ dim_definition :
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
     }
+
+    as_datatype_suffix
     |
     Identifier OP_DOLLAR {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -8040,6 +8111,12 @@ statement2nc:
   | YIELD {
       yield( _environment );
   }
+  | FORBID {
+      forbid( _environment );
+  }
+  | ALLOW {
+      allow( _environment );
+  }
   | PEN expr {
       pen( _environment, $2 );
   }
@@ -8323,7 +8400,7 @@ statement2nc:
   }
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
-        Variable * variable;        
+        Variable * variable;
         if ( variable_exists( _environment, $1 ) ) {
             variable = variable_retrieve( _environment, $1 );
         } else {
@@ -8334,20 +8411,29 @@ statement2nc:
             }
         }
 
-        if ( variable->type == VT_ARRAY ) {
-            if ( expr->type != VT_BUFFER ) {
-                CRITICAL_CANNOT_ASSIGN_TO_ARRAY( $1, DATATYPE_AS_STRING[expr->type] );
+        if ( expr->initializedByConstant ) {
+            if ( variable->type == VT_FLOAT ) {
+                variable_store_float( _environment, variable->name, expr->valueFloating );
+            } else {
+                variable_store( _environment, variable->name, expr->value );
             }
-            if ( expr->size != variable->size ) {
-                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( $1, expr->size, variable->size );
-            }
-        }
-
-        if ( variable->type != expr->type ) {
-            Variable * casted = variable_cast( _environment, expr->name, variable->type );
-            variable_move( _environment, casted->name, variable->name );
         } else {
-            variable_move( _environment, expr->name, variable->name );
+            if ( variable->type == VT_ARRAY ) {
+                if ( expr->type != VT_BUFFER ) {
+                    CRITICAL_CANNOT_ASSIGN_TO_ARRAY( $1, DATATYPE_AS_STRING[expr->type] );
+                }
+                if ( expr->size != variable->size ) {
+                    CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( $1, expr->size, variable->size );
+                }
+            }
+
+            if ( variable->type != expr->type ) {
+                Variable * casted = variable_cast( _environment, expr->name, variable->type );
+                variable_move( _environment, casted->name, variable->name );
+            } else {
+                variable_move( _environment, expr->name, variable->name );
+            }
+
         }
 
   }
@@ -8572,10 +8658,13 @@ emit_additional_info: {
 
 };
 
-statements_complex2:
+statements_complex3:
     statements_no_linenumbers emit_additional_info
     | statements_with_linenumbers emit_additional_info
     ;
+
+statements_complex2:
+    { variable_set( _environment ); } statements_complex3;
 
 statements_complex:
       statements_complex2
@@ -8991,6 +9080,7 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_compare_and_branch_16bit_const );
                         parse_embedded( p, cpu_compare_and_branch_32bit_const );
                         parse_embedded( p, cpu_compare_and_branch_8bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_char_const );
                         parse_embedded( p, cpu_di );
                         parse_embedded( p, cpu_ei );
                         parse_embedded( p, cpu_inc );

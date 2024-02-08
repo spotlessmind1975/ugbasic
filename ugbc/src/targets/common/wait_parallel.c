@@ -64,6 +64,10 @@ void wait_parallel( Environment * _environment, char * _thread ) {
 
     _environment->anyProtothread = 1;
 
+    if ( _environment->protothreadForbid ) {
+        CRITICAL_MULTITASKING_FORBIDDEN();
+    }
+
     yield( _environment );
 
     MAKE_LABEL

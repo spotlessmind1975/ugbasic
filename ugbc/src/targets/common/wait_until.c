@@ -70,6 +70,10 @@ void wait_until_condition( Environment * _environment, char * _condition ) {
 
     _environment->anyProtothread = 1;
 
+    if ( _environment->protothreadForbid ) {
+        CRITICAL_MULTITASKING_FORBIDDEN();
+    }
+
     MAKE_LABEL
 
     char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, _environment->protothreadStep );

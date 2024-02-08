@@ -1205,6 +1205,7 @@ typedef struct _Embedded {
     int cpu_compare_and_branch_16bit_const;
     int cpu_compare_and_branch_32bit_const;
     int cpu_compare_and_branch_8bit_const;
+    int cpu_compare_and_branch_char_const;
     int cpu_di;
     int cpu_ei;
     int cpu_inc;
@@ -1296,6 +1297,7 @@ typedef struct _Embedded {
     int cpu_store_16bit;
     int cpu_store_32bit;
     int cpu_store_8bit;
+    int cpu_store_char;
     int cpu_mem_move;
     int cpu_mem_move_direct;
     int cpu_mem_move_size;
@@ -2190,6 +2192,11 @@ typedef struct _Environment {
     int protothreadStep;
     
     /**
+     * Is protothread forbidden?
+     */
+    int protothreadForbid;
+
+    /**
      * 
      */
     VariableType dataDataType;
@@ -2739,9 +2746,12 @@ typedef struct _Environment {
 #define CRITICAL_VARIABLE_CANNOT_DIRECT_ASSIGN_DIFFERENT_TYPE( t1, t2 ) CRITICAL3("E252 - cannot direct assign between different types", t1, t2 );
 #define CRITICAL_WRONG_NEXT_INDEX(v) CRITICAL2("E253 - NEXT with a wrong FOR index", v );
 #define CRITICAL_PUT_IMAGE_UNINITIALIZED(v) CRITICAL2("E254 - PUT IMAGE with uninitialized image variable", v );
-#define CRITICAL_UNSUPPORTED_BANK_NUMBER(v) CRITICAL2i("E255 - bank number not available", v );
-#define CRITICAL_OUT_OF_BANKS( )  CRITICAL("E256 - out of bank detected");
-#define CRITICAL_CANNOT_COPY_TO_BANKED(v) CRITICAL2("E257 - cannot copy something on BANKed variables", v );
+#define CRITICAL_MULTITASKING_ALREADY_FORBIDDEN() CRITICAL("E255 - multitasking is already forbidden");
+#define CRITICAL_MULTITASKING_NOT_FORBIDDEN() CRITICAL("E256 - multitasking is already allowed");
+#define CRITICAL_MULTITASKING_FORBIDDEN() CRITICAL("E257 - multitasking is actually forbidden");
+#define CRITICAL_UNSUPPORTED_BANK_NUMBER(v) CRITICAL2i("E258 - bank number not available", v );
+#define CRITICAL_OUT_OF_BANKS( )  CRITICAL("E259 - out of bank detected");
+#define CRITICAL_CANNOT_COPY_TO_BANKED(v) CRITICAL2("E260 - cannot copy something on BANKed variables", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3742,6 +3752,7 @@ void                    add_complex_vars( Environment * _environment, char * _va
 void                    add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 char *                  address_displacement( Environment * _environment, char * _address, char * _displacement );
+void                    allow( Environment * _environment );
 
 //----------------------------------------------------------------------------
 // *B*
@@ -3915,6 +3926,7 @@ void                    exit_procedure( Environment * _environment );
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
 int                     find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
 void                    font_descriptors_init( Environment * _environment, int _embedded_present );
+void                    forbid( Environment * _environment );
 int                     frames( Environment * _environment, char * _image );
 Variable *              fp_cos( Environment * _environment, char * _angle );
 Variable *              fp_sin( Environment * _environment, char * _angle );
@@ -4295,6 +4307,7 @@ Variable *              uncompress( Environment * _environment, char * _value );
 //----------------------------------------------------------------------------
 
 Variable *              variable_add( Environment * _environment, char * _source, char * _dest );
+Variable *              variable_add_const( Environment * _environment, char * _source, int _dest );
 void                    variable_add_inplace( Environment * _environment, char * _source, int _dest );
 void                    variable_add_inplace_vars( Environment * _environment, char * _source, char * _dest );
 void                    variable_add_inplace_array( Environment * _environment, char * _source, char * _destination );
@@ -4311,6 +4324,7 @@ Variable *              variable_compare( Environment * _environment, char * _so
 void                    variable_compare_and_branch_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 Variable *              variable_compare_const( Environment * _environment, char * _source, int _dest );
 Variable *              variable_compare_not( Environment * _environment, char * _source, char * _dest );
+Variable *              variable_compare_not_const( Environment * _environment, char * _source, int _dest );
 Variable *              variable_complement_const( Environment * _environment, char * _source, int _mask );
 Variable *              variable_decrement( Environment * _environment, char * _source );
 Variable *              variable_decrement_array( Environment * _environment, char * _source );
@@ -4353,6 +4367,7 @@ int                     variable_exists( Environment * _environment, char * _nam
 Variable *              variable_retrieve( Environment * _environment, char * _name );
 Variable *              variable_retrieve_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
+void                    variable_set( Environment * _environment );
 Variable *              variable_store( Environment * _environment, char * _source, unsigned int _value );
 void                    variable_store_mt( Environment * _environment, char * _source, unsigned int _value );
 Variable *              variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at );
@@ -4378,6 +4393,7 @@ Variable *              variable_string_string( Environment * _environment, char
 Variable *              variable_string_upper( Environment * _environment, char * _string );
 Variable *              variable_string_val( Environment * _environment, char * _value );
 Variable *              variable_sub( Environment * _environment, char * _source, char * _dest );
+Variable *              variable_sub_const( Environment * _environment, char * _source, int _dest );
 void                    variable_sub_inplace( Environment * _environment, char * _source, char * _dest );
 void                    variable_swap( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_temporary( Environment * _environment, VariableType _type, char * _meaning );

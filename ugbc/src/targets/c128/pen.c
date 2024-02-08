@@ -80,10 +80,5 @@ void pen( Environment * _environment, char * _color ) {
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
     variable_move( _environment, color->name, pen->name );
-    if ( _environment->currentMode != BITMAP_MODE_STANDARD ) {
-
-    } else {
-        cpu6502_math_mul2_const_8bit( _environment, pen->realName, 4, 0 );
-    }
    
 }

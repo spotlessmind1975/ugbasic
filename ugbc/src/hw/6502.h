@@ -70,6 +70,7 @@ void cpu6502_compare_and_branch_16bit( Environment * _environment, char *_source
 void cpu6502_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6502_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6502_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
+void cpu6502_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6502_di( Environment * _environment );
 void cpu6502_ei( Environment * _environment );
 void cpu6502_inc( Environment * _environment, char * _variable );
@@ -176,6 +177,7 @@ void cpu6502_random( Environment * _environment, char * _entropy );
 void cpu6502_random_16bit( Environment * _environment, char * _entropy, char * _result );
 void cpu6502_random_32bit( Environment * _environment, char * _entropy, char * _result );
 void cpu6502_random_8bit( Environment * _environment, char * _entropy, char * _result );
+void cpu6502_store_char( Environment * _environment, char *_source, int _value );
 void cpu6502_store_8bit( Environment * _environment, char *_source, int _value );
 void cpu6502_store_16bit( Environment * _environment, char *_source, int _value );
 void cpu6502_store_32bit( Environment * _environment, char *_source, int _value );
@@ -327,6 +329,7 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive ) cpu6502_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive ) cpu6502_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive ) cpu6502_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_and_branch_char_const( _environment, _source, _destination, _name, _positive ) cpu6502_compare_and_branch_char_const( _environment, _source, _destination, _name, _positive )
 #define cpu_di( _environment ) cpu6502_di( _environment )
 #define cpu_ei( _environment ) cpu6502_ei( _environment )
 #define cpu_inc( _environment, _variable ) cpu6502_inc( _environment, _variable );
@@ -434,6 +437,7 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_random_16bit( _environment,  _entropy,  _result  ) cpu6502_random_16bit( _environment,  _entropy,  _result  )
 #define cpu_random_32bit( _environment,  _entropy,  _result  ) cpu6502_random_32bit( _environment,  _entropy,  _result  )
 #define cpu_random_8bit( _environment,  _entropy,  _result  ) cpu6502_random_8bit( _environment,  _entropy,  _result  )
+#define cpu_store_char( _environment, _source, _value  ) cpu6502_store_char( _environment, _source, _value  )
 #define cpu_store_8bit( _environment, _source, _value  ) cpu6502_store_8bit( _environment, _source, _value  )
 #define cpu_store_16bit( _environment, _source, _value  ) cpu6502_store_16bit( _environment, _source, _value  )
 #define cpu_store_32bit( _environment, _source, _value  ) cpu6502_store_32bit( _environment, _source, _value  )

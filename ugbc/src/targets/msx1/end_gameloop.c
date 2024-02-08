@@ -79,7 +79,7 @@ Loop * loop = _environment->loops;
     _environment->loops = _environment->loops->next;
 
     if ( _environment->hasGameLoop ) {
-        if ( _environment->anyProtothread ) {
+        if ( _environment->anyProtothread && !_environment->protothreadForbid ) {
             run_parallel( _environment );
         }
         cpu_call( _environment, "WAITVBL" );

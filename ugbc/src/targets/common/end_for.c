@@ -131,7 +131,7 @@ void end_for( Environment * _environment ) {
 
     }
 
-    if ( _environment->procedureName && _environment->protothread ) {
+    if ( _environment->procedureName && _environment->protothread && ! _environment->protothreadForbid ) {
         yield( _environment );
     }
     

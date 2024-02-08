@@ -69,6 +69,10 @@ void kill_procedure( Environment * _environment, char * _handle ) {
     if ( threadId->type != VT_THREAD ) {
         CRITICAL_CANNOT_KILL_NOT_THREADID( _handle );
     }
+
+    if ( _environment->protothreadForbid ) {
+        CRITICAL_MULTITASKING_FORBIDDEN();
+    }
     
     _environment->anyProtothread = 1;
 

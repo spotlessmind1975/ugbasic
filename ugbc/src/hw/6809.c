@@ -715,7 +715,31 @@ void cpu6809_store_8bit( Environment * _environment, char *_destination, int _va
         outline1("STA %s", _destination );
     }
         
-    no_embedded( cpu_move_8bit )
+    no_embedded( cpu_store_8bit )
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to store 8 bit
+ *
+ * @param _environment Current calling environment
+ * @param _destination Destination of store
+ * @param _value Value to store
+ */
+void cpu6809_store_char( Environment * _environment, char *_destination, int _value ) {
+
+    inline( cpu_store_char )
+
+    if(_value) {
+        outline1("LDB #'%c'" , _value );
+        outline1("STB %s", _destination );
+    } else {
+        // make A=0 as much as possible
+        outline0("CLRA");
+        outline1("STA %s", _destination );
+    }
+        
+    no_embedded( cpu_store_char )
 
 }
 
@@ -760,7 +784,7 @@ void cpu6809_compare_8bit_const( Environment * _environment, char *_source, int 
 
 void cpu6809_compare_and_branch_8bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
 
-    inline( cpu_compare_and_branch_8bit_const )
+    inline( cpu_compare_and_branch_8bit )
 
         outline1("LDB %s", _source);
         outline1("CMPB %s", _destination);
@@ -770,7 +794,7 @@ void cpu6809_compare_and_branch_8bit( Environment * _environment, char *_source,
             B(NE, _label);
         }
 
-    no_embedded( cpu_compare_and_branch_8bit_const )
+    no_embedded( cpu_compare_and_branch_8bit )
 
 }
 
@@ -796,6 +820,31 @@ void cpu6809_compare_and_branch_8bit_const( Environment * _environment, char *_s
         }
 
     no_embedded( cpu_compare_and_branch_8bit_const )
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void cpu6809_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    inline( cpu_compare_and_branch_char_const )
+
+        outline1("LDB %s", _source);
+        outline1("CMPB #'%c'", _destination);
+        if ( _positive ) {
+            B(EQ, _label);
+        } else {
+            B(NE, _label);
+        }
+
+    no_embedded( cpu_compare_and_branch_char_const )
 
 }
 

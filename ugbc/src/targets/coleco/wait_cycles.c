@@ -55,6 +55,10 @@ void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
     if ( _environment->protothread && _environment->procedureName && _parallel ) {
 
+        if ( _environment->protothreadForbid ) {
+            CRITICAL_MULTITASKING_FORBIDDEN();
+        }
+
         char waitVariableName[MAX_TEMPORARY_STORAGE]; sprintf(waitVariableName, "%swaitms%d", _environment->procedureName, _environment->protothreadStep );
 
         ///////////
@@ -108,6 +112,10 @@ void wait_cycles_var( Environment * _environment, char * _timing, int _parallel 
     Variable * timing = variable_retrieve( _environment, _timing );
     
     if ( _environment->protothread && _environment->procedureName && _parallel) {
+
+        if ( _environment->protothreadForbid ) {
+            CRITICAL_MULTITASKING_FORBIDDEN();
+        }
 
         char waitVariableName[MAX_TEMPORARY_STORAGE]; sprintf(waitVariableName, "%swaitms%d", _environment->procedureName, _environment->protothreadStep );
 

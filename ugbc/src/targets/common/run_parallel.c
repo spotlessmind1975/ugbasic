@@ -60,6 +60,10 @@ Questa parola chiave eseguirà tutte le procedure invocate in precedenza
 </usermanual> */
 void run_parallel( Environment * _environment ) {
 
+    if ( _environment->protothreadForbid ) {
+        CRITICAL_MULTITASKING_FORBIDDEN();
+    }
+
     _environment->anyProtothread = 1;
     _environment->runParallel = 1;
     

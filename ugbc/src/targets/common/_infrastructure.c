@@ -157,7 +157,10 @@ static void variable_reset_pool( Environment * _environment, Variable * _pool ) 
     while( actual ) {
         if ( actual->locked == 0 ) {
             if ( actual->used && actual->type != VT_DSTRING ) {
-                actual->used = 0;       
+                actual->used = 0;
+                if ( actual->initializedByConstant ) {
+                    outline1("; V %s", actual->realName );
+                }
             }     
         }
         actual = actual->next;
@@ -831,6 +834,13 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
 }
 
 /**
+ * @brief Set the usage flags for the temporary variable pool
+ */
+void variable_set( Environment * _environment ) {
+    outline0("; VRP" );
+}
+
+/**
  * @brief Reset the usage flags for the temporary variable pool
  * 
  * This function allows you to reset the use flag of each temporary variable
@@ -844,6 +854,7 @@ void variable_reset( Environment * _environment ) {
     } else {
         variable_reset_pool( _environment, _environment->tempVariables[0] );
     }    
+    outline0("; VSP" );
 }
 
 // @bit2: ok
@@ -1203,7 +1214,11 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
             cpu_store_16bit( _environment, destination->realName, VT_ESIGN_16BIT( destination->type, _value ) );
             break;
         case 8:
-            cpu_store_8bit( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
+            if ( destination->type == VT_CHAR ) {
+                cpu_store_char( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
+            } else {
+                cpu_store_8bit( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
+            }
             break;
         case 1:
             cpu_bit_inplace_8bit( _environment, destination->realName, destination->bitPosition, &_value );
@@ -3496,6 +3511,50 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
 }
 
 /**
+ * @brief Add a variable with a constant, and return the sum of them
+ * 
+ * This function allows you to sum the value of a variables and a
+ * constant. Note that variable must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination value to use
+ * @return Variable* The sum of source and destination variable
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+Variable * variable_add_const( Environment * _environment, char * _source, int  _destination ) {
+
+    Variable * source = variable_retrieve( _environment, _source );
+
+    Variable * result;
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of sum)" );
+            cpu_math_add_32bit_const( _environment, source->realName, _destination, result->realName );
+            break;
+        case 16:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_SWORD, "(result of sum)" );
+            cpu_math_add_16bit_const( _environment, source->realName, _destination, result->realName );
+            break;
+        case 8:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(result of sum)" );
+            cpu_math_add_8bit_const( _environment, source->realName, _destination, result->realName );
+            break;
+        case 1:
+        case 0:
+            CRITICAL_ADD_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+            break;
+    }
+    
+    return result;
+}
+
+/**
  * @brief Store the value of a variable inside another variable without conversion
  * 
  * This function allows you to store the value of one variable in another, 
@@ -4055,6 +4114,46 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
                 }
         }
     }
+    return result;
+}
+
+/**
+ * @brief Make a differenze between a variable a constant, and return the difference of them
+ * 
+ * This function allows you to difference the value of a variable and a constant. Note 
+ * that both variable must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source variable must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Value to subtract
+ * @return Variable* The difference of source and destination variable
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+Variable * variable_sub_const( Environment * _environment, char * _source, int _destination ) {
+    Variable * source = variable_retrieve( _environment, _source );
+
+    Variable * result = variable_temporary( _environment, source->type, "(result of subtracting)" );
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_math_add_32bit_const( _environment, source->realName, VT_ESIGN_32BIT( source->type, -_destination ), result->realName );
+            break;
+        case 16:
+            cpu_math_add_16bit_const( _environment, source->realName, VT_ESIGN_16BIT( source->type, -_destination ), result->realName );
+            break;
+        case 8:
+            cpu_math_add_8bit_const( _environment, source->realName, VT_ESIGN_8BIT( source->type, -_destination ), result->realName );
+            break;
+        case 1:
+        case 0:
+            CRITICAL_SUB_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+            break;
+    }
+
     return result;
 }
 
@@ -5113,6 +5212,46 @@ Variable * variable_compare_const( Environment * _environment, char * _source, i
             break;        
     }
     return result;
+}
+
+/**
+ * @brief Compare two variable and return the result of comparation
+ * 
+ * This function allows you to compare the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination variable's name
+ * @return Variable* The product of source and destination variable
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+Variable * variable_compare_not_const( Environment * _environment, char * _source, int _destination ) {
+    Variable * source = variable_retrieve( _environment, _source );
+
+    MAKE_LABEL
+
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_compare_32bit_const( _environment, source->realName, _destination, result->realName, 1 );
+            break;
+        case 16:
+            cpu_compare_16bit_const( _environment, source->realName, _destination, result->realName, 1 );
+            break;
+        case 8:
+            cpu_compare_8bit_const( _environment, source->realName, _destination, result->realName, 1 );
+            break;
+        case 1: 
+        case 0: 
+            CRITICAL_CANNOT_COMPARE_CONST(DATATYPE_AS_STRING[source->type]);
+            break;        
+    }
+    return variable_not( _environment, result->name );
 }
 
 /**
