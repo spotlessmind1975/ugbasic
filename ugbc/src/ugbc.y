@@ -5889,6 +5889,17 @@ readonly_optional :
     };
 
 dim_definition :
+    Identifier as_datatype_suffix {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } OP dimensions CP {
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
+        variable_array_type( _environment, $1, $2 );
+    } array_assign readonly_optional {
+        Variable * array = variable_retrieve( _environment, $1 );
+        array->readonly = $9;
+    }
+    |
     Identifier datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
@@ -5899,6 +5910,8 @@ dim_definition :
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
     }
+
+    as_datatype_suffix
     |
     Identifier OP_DOLLAR {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -8399,7 +8412,11 @@ statement2nc:
         }
 
         if ( expr->initializedByConstant ) {
-            variable_store( _environment, variable->name, expr->value );
+            if ( variable->type == VT_FLOAT ) {
+                variable_store_float( _environment, variable->name, expr->valueFloating );
+            } else {
+                variable_store( _environment, variable->name, expr->value );
+            }
         } else {
             if ( variable->type == VT_ARRAY ) {
                 if ( expr->type != VT_BUFFER ) {
@@ -8641,10 +8658,13 @@ emit_additional_info: {
 
 };
 
-statements_complex2:
+statements_complex3:
     statements_no_linenumbers emit_additional_info
     | statements_with_linenumbers emit_additional_info
     ;
+
+statements_complex2:
+    { variable_set( _environment ); } statements_complex3;
 
 statements_complex:
       statements_complex2
