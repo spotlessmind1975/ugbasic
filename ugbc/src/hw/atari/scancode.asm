@@ -52,11 +52,11 @@ KEYCODE2ATASCII: .BYTE 108,        106,        59,          0,          0,      
                  .BYTE 71,         83,         65
 
 SCANCODE:
-    LDY $02FC
+    LDY $02F2
     CPY #$FF
     BEQ SCANCODENO
     LDX #$FF
-    STX $02FC
+    STX $02F2
 
     CPY KBDCHAR
     BNE SCANCODEDIFF3
@@ -94,6 +94,7 @@ SCANCDENODELAY:
 
 INKEY:
     JSR SCANCODE
+    CPY #$FF
     BEQ INKEYNO
 
     LDA #<KEYCODE2ATASCII
