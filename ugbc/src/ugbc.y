@@ -2297,7 +2297,7 @@ exponential:
                     $$ = variable_temporary( _environment, VT_FLOAT, "(constant)" )->name;
                     variable_store_float( _environment, $$, c->valueFloating );
                 } else {
-                    Variable * number = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(constant)" );
+                    Variable * number = variable_temporary( _environment, variable_type_from_numeric_value( _environment, c->value ), "(constant)" );
                     $$ = number->name;
                     variable_store( _environment, $$, c->value );
                     number->initializedByConstant = 1;
