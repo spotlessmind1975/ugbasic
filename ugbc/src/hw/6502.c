@@ -1159,7 +1159,7 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
 
             outline0("LDA #0");
             outline0("LDX #8");
-            outhead1("%s1:", label);
+            outhead1("%sd1:", label);
             outline0("LSR MATHPTR1");
             outline1("BCC %s_2", label);
             outline0("CLC");
@@ -1168,7 +1168,7 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
             outline0("ROR A");
             outline1("ROR %s", _other);
             outline0("DEX" );
-            outline1("BNE %s1", label);
+            outline1("BNE %sd1", label);
             outline1("STA %s", address_displacement(_environment, _other, "1") );
 
             outline0("PLA");
@@ -1192,7 +1192,7 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
         } else {
             outline0("LDA #0");
             outline0("LDX #8");
-            outhead1("%s1:", label);
+            outhead1("%sd1:", label);
             outline1("LSR %s", _destination);
             outline1("BCC %s_2", label);
             outline0("CLC");
@@ -1201,7 +1201,7 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
             outline0("ROR A");
             outline1("ROR %s", _other);
             outline0("DEX" );
-            outline1("BNE %s1", label);
+            outline1("BNE %sd1", label);
             outline1("STA %s", address_displacement(_environment, _other, "1") );
         }
 
@@ -4130,11 +4130,11 @@ void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _
     inline( cpu_logical_or_8bit )
 
         outline1("LDA %s", _left );
-        outhead1("BNE %s1", label );
+        outhead1("BNE %sd1", label );
         outline1("LDA %s", _right );
-        outline1("BNE %s1", label);
+        outline1("BNE %sd1", label);
         outline1("JMP %s0", label);
-        outhead1("%s1:", label);
+        outhead1("%sd1:", label);
         outline0("LDA #$FF");
         outline1("STA %s", _result);
         outline1("JMP %sx", label);

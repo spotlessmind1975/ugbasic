@@ -4068,14 +4068,14 @@ void z80_logical_or_8bit( Environment * _environment, char * _left, char * _righ
     MAKE_LABEL
 
     outline1("LD A, (%s)", _left );
-    outline1("JR NZ, %s1", label );
+    outline1("JR NZ, %sd1", label );
     outline1("LD A, (%s)", _right );
-    outline1("JR NZ, %s1", label );
+    outline1("JR NZ, %sd1", label );
     outhead1("%s0:", label );
     outline0("LD A, 0" );
     outline1("LD (%s), A", _result );
     outline1("JMP %sx", label );
-    outhead1("%s1:", label );
+    outhead1("%sd1:", label );
     outline0("LD A, $ff" );
     outline1("LD (%s), A", _result );
     outhead1("%sx:", label );
