@@ -82,27 +82,63 @@ bitmask di 16 bit con il comando ''SET LINE''.
 </usermanual> */
 void bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c ) {
 
-    MAKE_LABEL
+    deploy_begin( bar );
+
+        MAKE_LABEL
+
+        Variable * x0 = variable_define( _environment, "bar__x0", VT_POSITION, 0 );
+        Variable * y0 = variable_define( _environment, "bar__y0", VT_POSITION, 0 );
+        Variable * x1 = variable_define( _environment, "bar__x1", VT_POSITION, 0 );
+        Variable * y1 = variable_define( _environment, "bar__y1", VT_POSITION, 0 );
+        Variable * c = variable_define( _environment, "bar__c", VT_COLOR, 0 );
+
+        Variable * yOrdered = variable_less_than( _environment, y0->name, y1->name, 1 );
+        Variable * y = variable_resident( _environment, VT_POSITION, "(y)" );
+        
+        char labelOrdered[MAX_TEMPORARY_STORAGE]; sprintf(labelOrdered, "%slo", label );
+
+        cpu_bvneq( _environment, yOrdered->realName, labelOrdered );
+
+        variable_move( _environment, y0->name, y->name );
+        variable_move( _environment, y1->name, y0->name );
+        variable_move( _environment, y->name, y1->name );
+
+        cpu_label( _environment, labelOrdered );
+
+        begin_for( _environment, y->name, y0->name, y1->name );
+            draw( _environment, x0->name, y->name, x1->name, y->name, _c );
+        end_for( _environment );
+
+    cpu_return( _environment );
+
+    deploy_end( bar );
 
     Variable * x0 = variable_retrieve_or_define( _environment, _x0, VT_POSITION, 0 );
     Variable * y0 = variable_retrieve_or_define( _environment, _y0, VT_POSITION, 0 );
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
-    Variable * yOrdered = variable_less_than( _environment, y0->name, y1->name, 1 );
-    Variable * y = variable_resident( _environment, VT_POSITION, "(y)" );
-    
-    char labelOrdered[MAX_TEMPORARY_STORAGE]; sprintf(labelOrdered, "%slo", label );
+    Variable * c = NULL;
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    }
 
-    cpu_bvneq( _environment, yOrdered->realName, labelOrdered );
+    Variable * dx0 = variable_retrieve( _environment, "bar__x0" );
+    Variable * dy0 = variable_retrieve( _environment, "bar__y0" );
+    Variable * dx1 = variable_retrieve( _environment, "bar__x1" );
+    Variable * dy1 = variable_retrieve( _environment, "bar__y1" );
+    Variable * dc = variable_retrieve( _environment, "bar__c" );
 
-    variable_move( _environment, y0->name, y->name );
-    variable_move( _environment, y1->name, y0->name );
-    variable_move( _environment, y->name, y1->name );
+    variable_move( _environment, x0->name, dx0->name );
+    variable_move( _environment, y0->name, dy0->name );
+    variable_move( _environment, x1->name, dx1->name );
+    variable_move( _environment, y1->name, dy1->name );
 
-    cpu_label( _environment, labelOrdered );
+    if ( c ) {
+        variable_move( _environment, c->name, dc->name );
+    } else {
+        variable_move( _environment, "PEN", dc->name );
+    }
 
-    begin_for( _environment, y->name, y0->name, y1->name );
-        draw( _environment, x0->name, y->name, x1->name, y->name, _c );
-    end_for( _environment );
+    cpu_call( _environment, "lib_bar");
 
 }

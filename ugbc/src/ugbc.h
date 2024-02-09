@@ -1450,6 +1450,7 @@ typedef struct _Deployed {
     int sn76489startup;
 
     int draw;
+    int bar;
 
     Embedded embedded;
 
