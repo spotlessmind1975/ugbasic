@@ -608,6 +608,10 @@ PLOTD4x
     ;erase point
     ;-----------
 PLOTE
+PLOTE0
+PLOTE1
+PLOTE2
+PLOTE3
     INC ,U        ; form plane
     LDA ,X        ; get bit mask
     ANDA 8,Y      ; clear bit
@@ -643,13 +647,81 @@ PLOTCOMMON
     ;depending on PLOTM, routine draws or erases
     ;----------------------------------------------
     LDA <PLOTM    ; (0 = erase, 1 = set, 2 = get pixel, 3 = get color)
-    BEQ PLOTE       
+
+    @IF vestigialConfig.screenModeUnique
+        @IF ( (currentMode == 0) )
+            BEQ PLOTE0
+        @ENDIF
+        @IF ( (currentMode == 0) )
+            BEQ PLOTE1
+        @ENDIF
+        @IF ( (currentMode == 2) )
+            BEQ PLOTE2
+        @ENDIF
+        @IF ( (currentMode == 3) )
+            BEQ PLOTE3
+        @ENDIF
+    @ELSE
+        BEQ PLOTE
+    @ENDIF
+
     DECA            
-    BEQ PLOTD     ; if = 1 then branch to draw the point
+
+    @IF vestigialConfig.screenModeUnique
+        @IF ( (currentMode == 0) )
+            BEQ PLOTD0
+        @ENDIF
+        @IF ( (currentMode == 0) )
+            BEQ PLOTD1
+        @ENDIF
+        @IF ( (currentMode == 2) )
+            BEQ PLOTD2
+        @ENDIF
+        @IF ( (currentMode == 3) )
+            BEQ PLOTD3
+        @ENDIF
+    @ELSE
+        BEQ PLOTD
+    @ENDIF
+
     DECA            
-    BEQ PLOTG     ; if = 2 then branch to get the point (0/1)
+
+    @IF vestigialConfig.screenModeUnique
+        @IF ( (currentMode == 0) )
+            BEQ PLOTG0
+        @ENDIF
+        @IF ( (currentMode == 0) )
+            BEQ PLOTG1
+        @ENDIF
+        @IF ( (currentMode == 2) )
+            BEQ PLOTG2
+        @ENDIF
+        @IF ( (currentMode == 3) )
+            BEQ PLOTG3
+        @ENDIF
+    @ELSE
+        BEQ PLOTG     ; if = 2 then branch to get the point (0/1)
+    @ENDIF
+
     DECA            
-    BEQ PLOTC     ; if = 3 then branch to get the color index (0...15)
+
+    @IF vestigialConfig.screenModeUnique
+        @IF ( (currentMode == 0) )
+            BEQ PLOTC0
+        @ENDIF
+        @IF ( (currentMode == 0) )
+            BEQ PLOTC1
+        @ENDIF
+        @IF ( (currentMode == 2) )
+            BEQ PLOTC2
+        @ENDIF
+        @IF ( (currentMode == 3) )
+            BEQ PLOTC3
+        @ENDIF
+    @ELSE
+        BEQ PLOTC     ; if = 3 then branch to get the color index (0...15)
+    @ENDIF
+
     RTS
 
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 2) )
@@ -749,8 +821,11 @@ PLOTC
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
 
+PLOTC0
 PLOT0C
+PLOTC1
 PLOT1C
+PLOTC4
 PLOT4C            ; modes 0/1/4
     LDB ,X        ; get color byte
     INC ,U        ; bitmask plane
@@ -771,6 +846,7 @@ PLOTC01
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) )
 
+PLOTC2
 PLOT2C
     CLRB          ; mode 2 - clear all bits
     LDA ,X        ; get bitmask at plane0
@@ -791,6 +867,7 @@ PLOT2C1
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
 
+PLOTC3
 PLOT3C
     LDA ,X        ; mode 3 - get color pair
     LDB <(PLOTX+1)
