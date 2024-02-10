@@ -378,6 +378,7 @@ TEXTATFONT0L1:
     SRL A
     SRL A
     SRL A
+    AND $03
     CALL CPCVIDEOMUL84
     LD (DE), A
 
@@ -386,12 +387,14 @@ TEXTATFONT0L1:
     LD A, (HL)
     SRL A
     SRL A
+    AND $03
     CALL CPCVIDEOMUL84
     LD (DE), A
 
     INC DE
 
     LD A, (HL)
+    AND $03
     CALL CPCVIDEOMUL84
     LD (DE), A
 
