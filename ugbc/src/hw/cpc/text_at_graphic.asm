@@ -347,6 +347,30 @@ TEXTATBMSP0:
 ; bit 7	bit 6	bit 5	bit 4	bit 3	bit 2	bit 1	bit 0
 ; pixel 0 (bit 0)	pixel 1 (bit 0)	pixel 0 (bit 2)	pixel 1 (bit 2)	pixel 0 (bit 1)	pixel 1 (bit 1)	pixel 0 (bit 3)	pixel 1 (bit 3)
 
+;              3210
+; COLOR => 0000abcd
+;
+;          01010101
+; CHAR  => xxyyzzkk
+;
+; 01 01 01 01
+; xx xx xx xx
+; dd bb cc aa
+;
+; 01 01 01 01
+; yy yy yy yy
+; dd bb cc aa
+;
+; 01 01 01 01
+; zz zz zz zz
+; dd bb cc aa
+;
+; 01 01 01 01
+; kk kk kk kk
+; dd bb cc aa
+
+; pixel 0 (bit 0)	pixel 1 (bit 0)	pixel 0 (bit 2)	pixel 1 (bit 2)	pixel 0 (bit 1)	pixel 1 (bit 1)	pixel 0 (bit 3)	pixel 1 (bit 3)
+
 TEXTATFONT0L1X:
 
     LD A, (_PEN)
@@ -378,6 +402,7 @@ TEXTATFONT0L1:
     SRL A
     SRL A
     SRL A
+    AND $03
     CALL CPCVIDEOMUL84
     LD (DE), A
 
@@ -386,12 +411,14 @@ TEXTATFONT0L1:
     LD A, (HL)
     SRL A
     SRL A
+    AND $03
     CALL CPCVIDEOMUL84
     LD (DE), A
 
     INC DE
 
     LD A, (HL)
+    AND $03
     CALL CPCVIDEOMUL84
     LD (DE), A
 

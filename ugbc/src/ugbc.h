@@ -1453,6 +1453,7 @@ typedef struct _Deployed {
     int sn76489startup;
 
     int draw;
+    int bar;
 
     Embedded embedded;
 
@@ -2749,9 +2750,10 @@ typedef struct _Environment {
 #define CRITICAL_MULTITASKING_ALREADY_FORBIDDEN() CRITICAL("E255 - multitasking is already forbidden");
 #define CRITICAL_MULTITASKING_NOT_FORBIDDEN() CRITICAL("E256 - multitasking is already allowed");
 #define CRITICAL_MULTITASKING_FORBIDDEN() CRITICAL("E257 - multitasking is actually forbidden");
-#define CRITICAL_UNSUPPORTED_BANK_NUMBER(v) CRITICAL2i("E258 - bank number not available", v );
-#define CRITICAL_OUT_OF_BANKS( )  CRITICAL("E259 - out of bank detected");
-#define CRITICAL_CANNOT_COPY_TO_BANKED(v) CRITICAL2("E260 - cannot copy something on BANKed variables", v );
+#define CRITICAL_INVALID_PAINT_BUFFER(v) CRITICAL2i("E258 - invalid PAINT BUFFER size", v );
+#define CRITICAL_UNSUPPORTED_BANK_NUMBER(v) CRITICAL2i("E259 - bank number not available", v );
+#define CRITICAL_OUT_OF_BANKS( )  CRITICAL("E260 - out of bank detected");
+#define CRITICAL_CANNOT_COPY_TO_BANKED(v) CRITICAL2("E261 - cannot copy something on BANKed variables", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

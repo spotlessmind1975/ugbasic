@@ -200,7 +200,7 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 #define COLOR_VIOLET				COLOR_PURPLE
 #define COLOR_BROWN					COLOR_RED
 #define COLOR_DARK_GREY				COLOR_BLACK
-#define COLOR_GREY					COLOR_BLACK
+#define COLOR_GREY					COLOR_WHITE
 #define COLOR_LIGHT_GREY			COLOR_WHITE
 #define COLOR_LAVENDER       		COLOR_VIOLET
 #define COLOR_GOLD       			COLOR_YELLOW

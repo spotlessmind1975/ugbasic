@@ -776,8 +776,9 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     // data type if it is different from the source one.
 
     if ( var ) {
-
         if ( 
+            ! var->initializedByConstant 
+            &&
             ( VT_BITWIDTH( var->type ) != 1 ) 
             && 
             ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) ) 

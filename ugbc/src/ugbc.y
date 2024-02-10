@@ -2297,7 +2297,7 @@ exponential:
                     $$ = variable_temporary( _environment, VT_FLOAT, "(constant)" )->name;
                     variable_store_float( _environment, $$, c->valueFloating );
                 } else {
-                    Variable * number = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(constant)" );
+                    Variable * number = variable_temporary( _environment, variable_type_from_numeric_value( _environment, c->value ), "(constant)" );
                     $$ = number->name;
                     variable_store( _environment, $$, c->value );
                     number->initializedByConstant = 1;
@@ -4187,6 +4187,10 @@ as_datatype_suffix :
 
 var_definition_simple:
   Identifier as_datatype {
+      variable_define( _environment, $1, $2, 0 );
+  }
+  |
+  Identifier as_datatype_suffix {
       variable_define( _environment, $1, $2, 0 );
   }
   | Identifier as_datatype OP_ASSIGN const_expr {
@@ -6987,6 +6991,12 @@ define_definition :
             CRITICAL_INVALID_INPUT_DELAY( $3 );
         }
         ((struct _Environment *)_environment)->inputConfig.delay = $3;
+    }
+    | PAINT BUFFER const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_PAINT_BUFFER( $3 );
+        }
+        ((struct _Environment *)_environment)->paintBucketSize = $3;
     }
     ;
 

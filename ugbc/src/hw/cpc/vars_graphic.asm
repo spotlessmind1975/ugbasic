@@ -353,6 +353,10 @@ CPCVIDEOMUL82E:
     POP HL
     RET
 
+; 01 01 01 01 <- A
+; kk kk kk kk
+; dd bb cc aa <- B
+
 CPCVIDEOMUL84:
     PUSH HL
     PUSH BC
@@ -387,7 +391,9 @@ CPCVIDEOMUL84H:
 CPCVIDEOMUL84H1:
     POP AF
     PUSH AF
-    AND $c
+    AND $3
+    SLA A
+    SLA A
     OR L
     LD L, A
     POP AF
@@ -403,7 +409,11 @@ CPCVIDEOMUL84I:
 CPCVIDEOMUL84I1:
     POP AF
     PUSH AF
-    AND $30
+    AND $3
+    SLA A
+    SLA A
+    SLA A
+    SLA A
     OR L
     LD L, A
     POP AF
@@ -419,13 +429,6 @@ CPCVIDEOMUL84J:
 CPCVIDEOMUL84J1:
     POP AF
     PUSH AF
-    AND $C0
-    SRL A
-    SRL A
-    SRL A
-    SRL A
-    SRL A
-    SRL A
     OR L
     LD L, A
     POP AF
@@ -517,3 +520,4 @@ CPCVIDEOBITMASK2:
 CPCVIDEOBITMASK4:
     DB $80,$40,$20,$10
     DB $08,$04,$02,$01
+
