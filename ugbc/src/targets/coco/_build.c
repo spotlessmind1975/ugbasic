@@ -315,7 +315,7 @@ void generate_dsk( Environment * _environment ) {
         sprintf( commandLine, "\"%s\" copy -2 \"%s\" \"%s,PROGRAM.%03d\"",
             executableName, 
             tempFileName, 
-            originalFileName,
+            _environment->exeFileName,
             block );
         if ( system_call( _environment,  commandLine ) ) {
             printf("The compilation of assembly program failed.\n\n"); 
