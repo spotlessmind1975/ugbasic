@@ -50,6 +50,7 @@ LASTCOLOR:      .BYTE   0
 KBDCHAR:      .BYTE   $ff
 KBDRATE:      .BYTE   16
 KBDDELAY:      .BYTE   32
+KBDDELAYCT:    .BYTE   0
 
 KBDRATEC:      .BYTE   16
 KBDDELAYC:      .BYTE   32
