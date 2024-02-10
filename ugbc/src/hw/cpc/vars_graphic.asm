@@ -394,8 +394,6 @@ CPCVIDEOMUL84H1:
     AND $3
     SLA A
     SLA A
-    SLA A
-    SLA A
     OR L
     LD L, A
     POP AF
@@ -412,6 +410,8 @@ CPCVIDEOMUL84I1:
     POP AF
     PUSH AF
     AND $3
+    SLA A
+    SLA A
     SLA A
     SLA A
     OR L
