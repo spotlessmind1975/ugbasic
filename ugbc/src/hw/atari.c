@@ -91,15 +91,19 @@ void atari_scancode( Environment * _environment, char * _pressed, char * _scanco
 
 void atari_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
+    deploy( scancode, src_hw_atari_scancode_asm);
+
     MAKE_LABEL
+
+    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+
+    outline0("JSR SCANCODEWITHDELAY");
+
+    outline1("STY %s", temp->realName );    
 
     char nokeyLabel[MAX_TEMPORARY_STORAGE];
     sprintf( nokeyLabel, "%slabel", label );
     
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
-
-    cpu_move_8bit( _environment, "$02FC", temp->realName );
-    cpu_store_8bit( _environment, "$02FC", 0xff );
     cpu_compare_8bit( _environment, temp->realName, _scancode,  temp->realName, 1 );
     cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
     cpu_store_8bit( _environment, _result, 0xff );

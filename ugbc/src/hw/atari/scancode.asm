@@ -51,6 +51,23 @@ KEYCODE2ATASCII: .BYTE 108,        106,        59,          0,          0,      
                  .BYTE 156,        64,         125,        157,        70,         72,         68,         0
                  .BYTE 71,         83,         65
 
+SCANCODEWITHDELAY:
+    LDY $02FC
+    CPY #$FF
+    BEQ SCANCODEWITHDELAYNO
+    CPY KBDCHAR
+    BNE SCANCODEWITHDELAYRESETDELAY
+    DEC KBDDELAY
+    BNE SCANCODEWITHDELAYNO
+    LDY #$FF
+    STY $02FC
+SCANCODEWITHDELAYRESETDELAY:
+    LDA KBDDELAY
+    STA KBDDELAYC
+    STY KBDCHAR
+SCANCODEWITHDELAYNO:
+    RTS
+
 SCANCODE:
     LDY $02FC
     CPY #$FF
