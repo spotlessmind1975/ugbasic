@@ -172,11 +172,7 @@ COCO3DECB = ./coco3_decb.sh
 #------------------------------------------------ 
 
 # List of examples to compile
-ifdef 10liner
-EXAMPLES := $(wildcard $(EXAMPLESDIR)/*_10lines.bas)
-else
 EXAMPLES := $(wildcard $(EXAMPLESDIR)/$(EXAMPLESFILEMASK))
-endif
 
 # List of assembled files of examples
 COMPILED := $(subst $(EXAMPLESDIR)/,generated/$(target)/asm/,$(EXAMPLES:.bas=.asm))
