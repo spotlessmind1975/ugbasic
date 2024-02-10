@@ -57,7 +57,8 @@ SCANCODE:
     BEQ SCANCODENO
     ; LDX #$FF
     ; STX $02FC
-
+    ; RTS
+    
     CPY KBDCHAR
     BNE SCANCODEDIFF3
 
