@@ -124,12 +124,17 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
 
     MAKE_LABEL
 
+    const int bufferSizeSegment = 40;
+
     Variable * value = variable_retrieve( _environment, _value );
     Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(temporary buffer)" );
     Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
     Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
-    
+   
+    char printBufferLabel[MAX_TEMPORARY_STORAGE]; sprintf( printBufferLabel, "%sloop", label );
+    char printBufferRestLabel[MAX_TEMPORARY_STORAGE]; sprintf( printBufferRestLabel, "%srest", label );
+
     if ( value->type != VT_BUFFER ) {
         CRITICAL_PRINT_BUFFER_ON_A_NOT_BUFFER( _value );
     }
@@ -142,37 +147,35 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
 
     cpu_addressof_16bit( _environment, value->realName, sourceAddress->realName );
 
-    int bufferSize = value->size; // strlen( string );
+    // int bufferSize = value->size; // strlen( string );
     int offset = 0;
 
-    if ( bufferSize > 120 ) {
+    Variable * bufferSize = variable_temporary( _environment, VT_WORD, "(bufferSize)" );
+    variable_store( _environment, bufferSize->name, value->size );
 
-        cpu_dsalloc_size( _environment, 120, dstring->realName );
-        cpu_dsdescriptor( _environment, dstring->realName, targetAddress->realName, size->realName );
-
-        while( bufferSize > 120 ) {
-
-            cpu_mem_move_size( _environment, sourceAddress->realName, targetAddress->realName, 120 );
-            // cpu_mem_move_direct_indirect_size( _environment, sourceAddress, address->realName, 120 );
-            text_text( _environment, dstring->name );
-
-            bufferSize -= 120;
-
-            cpu_math_add_16bit_const( _environment, sourceAddress->realName, 120, sourceAddress->realName );
-
-        }
-
-        cpu_dsfree( _environment, dstring->realName );
-
-    }
-
-    cpu_dsalloc_size( _environment, bufferSize, dstring->realName );
+    cpu_dsalloc_size( _environment, bufferSizeSegment, dstring->realName );
     cpu_dsdescriptor( _environment, dstring->realName, targetAddress->realName, size->realName );
 
-    cpu_mem_move_size( _environment, sourceAddress->realName, targetAddress->realName, bufferSize );
+    cpu_label( _environment, printBufferLabel );
+
+    Variable * compare = variable_greater_than_const( _environment, bufferSize->name, bufferSizeSegment, 1 );
+    cpu_compare_and_branch_8bit_const( _environment, compare->realName, 0, printBufferRestLabel, 1 );
+
+    cpu_mem_move_size( _environment, sourceAddress->realName, targetAddress->realName, bufferSizeSegment );
+    cpu_math_add_16bit_const( _environment, sourceAddress->realName, bufferSizeSegment, sourceAddress->realName );
+    cpu_math_add_16bit_const( _environment, bufferSize->realName, -bufferSizeSegment, bufferSize->realName );
 
     text_text( _environment, dstring->name );
 
+    cpu_jump( _environment, printBufferLabel );
+
+    cpu_label( _environment, printBufferRestLabel );
+
+    cpu_dsfree( _environment, dstring->realName );
+    cpu_dsalloc( _environment, bufferSize->realName, dstring->realName );
+    cpu_dsdescriptor( _environment, dstring->realName, targetAddress->realName, size->realName );
+    cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, bufferSize->realName );
+    text_text( _environment, dstring->name );
     cpu_dsfree( _environment, dstring->realName );
 
     if ( _new_line ) {
