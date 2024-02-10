@@ -882,6 +882,18 @@ static int optim_remove_unused_temporary( Environment * _environment ) {
                 if ( ! result ) result = po_buf_match(buf[0], " OR (*)", v1 );
                 if ( ! result ) result = po_buf_match(buf[0], " SBC (*)", v1 );
                 if ( ! result ) result = po_buf_match(buf[0], " XOR (*)", v1 );
+
+                if ( ! result ) result = po_buf_match(buf[0], " ADC *", v1 );
+                if ( ! result ) result = po_buf_match(buf[0], " ADD *", v1 );
+                if ( ! result ) result = po_buf_match(buf[0], " AND *", v1 );
+                if ( ! result ) result = po_buf_match(buf[0], " BIT *", v1 );
+                if ( ! result ) result = po_buf_match(buf[0], " CP *", v1 );
+                if ( ! result ) result = po_buf_match(buf[0], " CPL *", v1 );
+                if ( ! result ) result = po_buf_match(buf[0], " LD *, *", v2, v1 );
+                if ( ! result ) result = po_buf_match(buf[0], " OR *", v1 );
+                if ( ! result ) result = po_buf_match(buf[0], " SBC *", v1 );
+                if ( ! result ) result = po_buf_match(buf[0], " XOR *", v1 );
+
                 if ( result ) {
                     char * realVarName = strdup( v1->str );
                     char * c = strstr( realVarName, "+" );
