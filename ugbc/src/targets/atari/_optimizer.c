@@ -455,6 +455,19 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+    //
+
+    if( po_buf_match( buf[0], " LDA *", v1 ) && 
+        po_buf_match( buf[1], " STA *", v2 ) &&
+        po_buf_match( buf[2], " LDA *", v3 ) &&
+        po_buf_match( buf[3], " STA *", v4 ) &&
+        strcmp( v2->str, v3->str ) == 0 ) {
+        optim( buf[1], RULE "(LDA x, STA y, LDA y, STz)->(LDA x, STA z)", NULL );
+        optim( buf[2], RULE "(LDA x, STA y, LDA y, STz)->(LDA x, STA z)", NULL );
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+    }
+
 	// if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) &&
     //     po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[2], " LDA *", v2 ) &&
     //     ! chg_reg(buf[1], "A") &&
