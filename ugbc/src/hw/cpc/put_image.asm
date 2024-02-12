@@ -92,6 +92,43 @@ PUTIMAGE:
 PUTIMAGE0:
 PUTIMAGE3:
 
+    ; Manage the "WITH TRANSPARENCY" flag.
+    LD A, (IMAGEF)
+    AND $20
+    CP $20
+    JP Z, PUTIMAGE0ST
+
+PUTIMAGE0SN:
+    PUSH DE
+    PUSH HL
+    LD DE, PUTIMAGE0L1N 
+    LD HL, PUTIMAGE0L1
+    ADD HL, 1
+    LD A, E
+    LD (HL), A
+    LD A, D
+    ADD HL, 1
+    LD (HL), A
+    POP HL
+    POP DE
+    JP PUTIMAGE0SDONE
+
+PUTIMAGE0ST:
+    PUSH DE
+    PUSH HL
+    LD DE, PUTIMAGE0L1T 
+    LD HL, PUTIMAGE0L1
+    ADD HL, 1
+    LD A, E
+    LD (HL), A
+    ADD HL, 1
+    LD A, D
+    LD (HL), A
+    POP HL
+    POP DE
+    JP PUTIMAGE0SDONE
+
+PUTIMAGE0SDONE:
     ; Halves the width of the image to draw, since each byte keep two pixels.
 
     SRL C
@@ -116,11 +153,9 @@ PUTIMAGE0L2:
     PUSH BC
 PUTIMAGE0L1:
 
-    ; Manage the "WITH TRANSPARENCY" flag.
-    LD A, (IMAGEF)
-    AND $20
-    CP $20
-    JP Z, PUTIMAGE0L1T
+    JP $0000
+
+PUTIMAGE0L1N:
 
     ; Copy the bitmap data from the memory to the video.
     ; This is a direct copy.
