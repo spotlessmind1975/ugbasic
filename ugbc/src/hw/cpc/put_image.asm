@@ -89,6 +89,35 @@ PUTIMAGE:
     ; --- MODE 0 & 3
     ; ------------------------------------------------------------------------
 
+PUTIMAGE0PIXELTRANS:
+    PUSH BC
+    LD IYH, 0
+    LD A, (HL)
+    AND $AA
+    JR Z, PUTIMAGE0PIXELTRANS2
+    LD A, $AA
+    LD IYH, A
+PUTIMAGE0PIXELTRANS2:
+    LD A, (HL)
+    AND $55
+    JR Z, PUTIMAGE0PIXELTRANS3
+    LD A, IYH
+    OR $55
+    LD IYH, A
+PUTIMAGE0PIXELTRANS3:
+    LD A, IYH
+    XOR $FF
+    LD B, A
+    LD A, (DE)
+    AND B
+    LD B, A
+    LD A, (HL)
+    AND IYH
+    ORA B
+    LD (DE),A
+    POP BC
+    RET
+
 PUTIMAGE0:
 PUTIMAGE3:
 
@@ -169,32 +198,7 @@ PUTIMAGE0L1N:
     ; This is a copy that support the transparency.
 
 PUTIMAGE0L1T:
-    PUSH BC
-    LD IYH, 0
-    LD A, (HL)
-    AND $AA
-    JR Z, PUTIMAGE0L1T2
-    LD A, $AA
-    LD IYH, A
-PUTIMAGE0L1T2:
-    LD A, (HL)
-    AND $55
-    JR Z, PUTIMAGE0L1T3
-    LD A, IYH
-    OR $55
-    LD IYH, A
-PUTIMAGE0L1T3:
-    LD A, IYH
-    XOR $FF
-    LD B, A
-    LD A, (DE)
-    AND B
-    LD B, A
-    LD A, (HL)
-    AND IYH
-    ORA B
-    LD (DE),A
-    POP BC
+    CALL PUTIMAGE0PIXELTRANS
 
 PUTIMAGE0L1T0:
 
