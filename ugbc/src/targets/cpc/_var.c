@@ -425,11 +425,4 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
-    if ( _environment->transparencyMemorySize ) {
-        outhead0("TRANSPARENCYSTAGEAREA:" );
-        outline1("   defs %d", _environment->transparencyMemorySize );
-        outhead0("TRANSPARENCYSTAGEAREAPTR:" );
-        outline0("   defs 2" );
-    }
-
 }
