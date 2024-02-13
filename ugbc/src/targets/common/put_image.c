@@ -51,8 +51,43 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _y Ordinate of the point
  */
 void put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
+
+    // If flag transparency is requested, we save the actual background into the
+    // TRANSPARENCYSTAGEAREA image.
+    if ( ( _flags & FLAG_TRANSPARENCY ) && variable_exists( _environment, "TRANSPARENCYSTAGEAREA" ) ) {
+        Variable * image = variable_retrieve( _environment, _image );
+        if ( _environment->transparencyMemorySize < image->size ) {
+            _environment->transparencyMemorySize = image->size;
+        }
+        Variable * transparencyStageArea = variable_retrieve( _environment, "TRANSPARENCYSTAGEAREA" );
+        transparencyStageArea->valueBuffer = malloc(1);
+        transparencyStageArea->assigned = 1;
+        transparencyStageArea->temporary = 1;
+        switch( image->type ) {
+            case VT_IMAGE:
+                cpu_mem_move_direct_size( _environment, image->realName, "TRANSPARENCYSTAGEAREA", 3 );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                cpu_mem_move_direct_size( _environment, address_displacement( _environment, image->realName, "3" ), "TRANSPARENCYSTAGEAREA", 3 );
+                break;
+        }
+        get_image( _environment, "TRANSPARENCYSTAGEAREA", _x1, _y1, _x2, _y2, NULL, NULL, 0 );
+    }
+
+    // Next, we ask to draw with the transparency. Currently, if TRANSPARENCYSTAGEAREA
+    // is used, the drawing will occur on the TRANSPARENCYSTAGEAREA area and not
+    // on the screen.
     Variable * flags = variable_temporary( _environment, VT_WORD, "(flags)" );
     variable_store( _environment, flags->name, _flags );
     put_image_vars( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, flags->name );
+
+    // Finally, we update effectively the screen, but not using PALETTE (that has been
+    // already updated by the previous PUT IMAGE) and the transparency (since it has
+    // been already done off-screen).
+    if ( ( _flags & FLAG_TRANSPARENCY ) && variable_exists( _environment, "TRANSPARENCYSTAGEAREA" ) ) {
+        variable_store( _environment, flags->name, ( _flags & ~FLAG_TRANSPARENCY ) & ~FLAG_WITH_PALETTE );
+        put_image_vars( _environment, "TRANSPARENCYSTAGEAREA", _x1, _y1, _x2, _y2, NULL, NULL, flags->name );
+    }
 }
 

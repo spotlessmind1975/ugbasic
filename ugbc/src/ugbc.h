@@ -2442,6 +2442,11 @@ typedef struct _Environment {
      */
     int paintBucketSize;
 
+    /**
+     * Size of the common area needed for transparency operations
+     */
+    int transparencyMemorySize;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

@@ -74,6 +74,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "DLOADERROR", VT_BYTE, 0 );
     variable_global( _environment, "DLOADERROR" );
 
+    variable_import( _environment, "TRANSPARENCYSTAGEAREA", VT_IMAGE, 0 );
+    variable_global( _environment, "TRANSPARENCYSTAGEAREA" );
+
     variable_import( _environment, "TIMERRUNNING", VT_BYTE, 0 );
     variable_global( _environment, "TIMERRUNNING" );
     variable_import( _environment, "TIMERSTATUS", VT_BYTE, 0 );

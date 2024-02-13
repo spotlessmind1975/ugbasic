@@ -44,6 +44,13 @@
 ;       IMAGET + IMAGEF ->  various flags       
 PUTIMAGE:
 
+    ; Prepare transparency stage area
+
+    PUSH HL
+    LD HL, TRANSPARENCYSTAGEAREA+3
+    LD (TRANSPARENCYSTAGEAREAPTR), HL
+    POP HL
+
     ; Skip if in TILE MODE
 
     LD A, (CURRENTTILEMODE)
@@ -122,14 +129,6 @@ PUTIMAGE0PIXELTRANS3:
     ; --- MODE 0 & 3
     ; ------------------------------------------------------------------------
 
-    ; ------------------------------------------------------------------------
-    ; --- MODE 0 & 3 (SINGLE)
-    ; ------------------------------------------------------------------------
-
-    ; ------------------------------------------------------------------------
-    ; --- MODE 0 & 3 (DOUBLE)
-    ; ------------------------------------------------------------------------
-
 PUTIMAGE0:
 PUTIMAGE3:
 
@@ -154,7 +153,7 @@ PUTIMAGE0SINGLE:
     CP $20
     JP Z, PUTIMAGE0SINGLEST
 
-PUTIMAGE0SN:
+PUTIMAGE0SINGLESN:
     PUSH DE
     PUSH HL
     LD DE, PUTIMAGE0SINGLEL1N 
@@ -165,6 +164,14 @@ PUTIMAGE0SN:
     LD A, D
     ADD HL, 1
     LD (HL), A
+    LD DE, PUTIMAGE0SINGLEDOVIDEOPOS
+    LD HL, PUTIMAGE0SINGLESKIPVIDEOPOS
+    ADD HL, 1
+    LD A, E
+    LD (HL), A
+    ADD HL, 1
+    LD A, D
+    LD (HL), A
     POP HL
     POP DE
     JP PUTIMAGE0SINGLESDONE
@@ -174,6 +181,14 @@ PUTIMAGE0SINGLEST:
     PUSH HL
     LD DE, PUTIMAGE0SINGLEL1T 
     LD HL, PUTIMAGE0SINGLEL1
+    ADD HL, 1
+    LD A, E
+    LD (HL), A
+    ADD HL, 1
+    LD A, D
+    LD (HL), A
+    LD DE, PUTIMAGE0SINGLESKIPPEDVIDEOPOS
+    LD HL, PUTIMAGE0SINGLESKIPVIDEOPOS
     ADD HL, 1
     LD A, E
     LD (HL), A
@@ -195,12 +210,24 @@ PUTIMAGE0SINGLEL2:
 
     ; Recalculate the starting position on the video buffer.
 
+PUTIMAGE0SINGLESKIPVIDEOPOS:
+    JP PUTIMAGE0SINGLESKIPPEDVIDEOPOS
+
+PUTIMAGE0SINGLEDOVIDEOPOS:
+
     PUSH HL
     CALL CPCVIDEOPOS
     LD DE, HL
     POP HL
 
+    JP PUTIMAGE0SINGLEVIDEOPOSDONE
+
+PUTIMAGE0SINGLESKIPPEDVIDEOPOS:
+    LD DE, (TRANSPARENCYSTAGEAREAPTR)
+
     ; Row copy loop.
+
+PUTIMAGE0SINGLEVIDEOPOSDONE:
 
     PUSH BC
 PUTIMAGE0SINGLEL1:
@@ -238,6 +265,8 @@ PUTIMAGE0SINGLEL1T0:
     JR NZ, PUTIMAGE0SINGLEL1
 
 PUTIMAGE0SINGLEDONEROW:
+
+    LD (TRANSPARENCYSTAGEAREAPTR), DE
 
     ; The copy of the row has been completed.
     
