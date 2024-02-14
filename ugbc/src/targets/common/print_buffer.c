@@ -141,11 +141,11 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
 
     value->printable = _printable;
 
-    int bufferSize = value->size; // strlen( string );
-
     // char * string = malloc( value->size + 1 );
     // memset( string, 0, value->size );
     // memcpy( string, value->valueBuffer, value->size );
+    
+    Variable * bufferSize = variable_temporary( _environment, VT_WORD, "(bufferSize)" );
 
     if ( value->residentAssigned ) {
 
@@ -161,22 +161,21 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
         cpu_compare_and_branch_16bit_const( _environment, bankWindowId, value->variableUniqueId, alreadyLoadedLabel, 1 );
         if ( value->uncompressedSize ) {
             bank_uncompress_semi_var( _environment, value->bankAssigned, value->absoluteAddress, bankWindowName );
-            bufferSize = value->uncompressedSize;
+            variable_store( _environment, bufferSize->name, value->uncompressedSize );
         } else {
             printf( "bank_read_semi_var\n");
             bank_read_semi_var( _environment, value->bankAssigned, value->absoluteAddress, bankWindowName, value->size );
+            variable_store( _environment, bufferSize->name, value->size );
         }
         cpu_store_16bit(_environment, bankWindowId, value->variableUniqueId );
         cpu_label( _environment, alreadyLoadedLabel );
         cpu_addressof_16bit( _environment, bankWindowName, sourceAddress->realName );
     } else {
         cpu_addressof_16bit( _environment, value->realName, sourceAddress->realName );
+        variable_store( _environment, bufferSize->name, value->size );
     }
 
     int offset = 0;
-
-    Variable * bufferSize = variable_temporary( _environment, VT_WORD, "(bufferSize)" );
-    variable_store( _environment, bufferSize->name, value->size );
 
     cpu_dsalloc_size( _environment, bufferSizeSegment, dstring->realName );
     cpu_dsdescriptor( _environment, dstring->realName, targetAddress->realName, size->realName );
