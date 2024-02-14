@@ -1443,9 +1443,9 @@ void gime_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTWIDTH" );
     variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 128  );
     variable_global( _environment, "CURRENTHEIGHT" );
-    variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE, 32 );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 32 );
     variable_global( _environment, "CURRENTTILESWIDTH" );
-    variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE, 16 );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 16 );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
     variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
     variable_global( _environment, "CURRENTTILES" );

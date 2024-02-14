@@ -878,9 +878,9 @@ void cpc_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTHEIGHT" );
     variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
     variable_global( _environment, "CURRENTTILES" );
-    variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE, 20 );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 20 );
     variable_global( _environment, "CURRENTTILESWIDTH" );
-    variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE, 25 );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 25 );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
     variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
     variable_global( _environment, "FONTWIDTH" );

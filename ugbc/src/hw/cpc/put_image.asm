@@ -38,7 +38,7 @@
 ; PUT an IMAGE on the screen.
 ;
 ; input:
-;       IXL:E           -> x
+;       IXH:E           -> x
 ;       D               -> y
 ;       HL              -> start of bitmap data
 ;       IMAGET + IMAGEF ->  various flags       
@@ -89,14 +89,103 @@ PUTIMAGE:
     ; --- MODE 0 & 3
     ; ------------------------------------------------------------------------
 
+PUTIMAGE0PIXELTRANS:
+    PUSH BC
+    LD IYH, 0
+    LD A, (HL)
+    AND $AA
+    JR Z, PUTIMAGE0PIXELTRANS2
+    LD A, $AA
+    LD IYH, A
+PUTIMAGE0PIXELTRANS2:
+    LD A, (HL)
+    AND $55
+    JR Z, PUTIMAGE0PIXELTRANS3
+    LD A, IYH
+    OR $55
+    LD IYH, A
+PUTIMAGE0PIXELTRANS3:
+    LD A, IYH
+    XOR $FF
+    LD B, A
+    LD A, (DE)
+    AND B
+    LD B, A
+    LD A, (HL)
+    AND IYH
+    ORA B
+    LD (DE),A
+    POP BC
+    RET
+
+    ; ------------------------------------------------------------------------
+    ; --- MODE 0 & 3
+    ; ------------------------------------------------------------------------
+
+    ; ------------------------------------------------------------------------
+    ; --- MODE 0 & 3 (SINGLE)
+    ; ------------------------------------------------------------------------
+
+    ; ------------------------------------------------------------------------
+    ; --- MODE 0 & 3 (DOUBLE)
+    ; ------------------------------------------------------------------------
+
 PUTIMAGE0:
 PUTIMAGE3:
 
     ; Halves the width of the image to draw, since each byte keep two pixels.
-
     SRL C
 
-PUTIMAGE0L2:
+    ; Check (and manage) if a "DOUBLE" flag has been requested.
+    LD A, (IMAGEF)
+    AND $40
+    CP $40
+    JP Z, PUTIMAGE0DOUBLE
+
+    ; ------------------------------------------------------------------------
+    ; --- MODE 0 & 3 (SINGLE)
+    ; ------------------------------------------------------------------------
+
+PUTIMAGE0SINGLE:
+
+    ; Manage the "WITH TRANSPARENCY" flag.
+    LD A, (IMAGEF)
+    AND $20
+    CP $20
+    JP Z, PUTIMAGE0SINGLEST
+
+PUTIMAGE0SN:
+    PUSH DE
+    PUSH HL
+    LD DE, PUTIMAGE0SINGLEL1N 
+    LD HL, PUTIMAGE0SINGLEL1
+    ADD HL, 1
+    LD A, E
+    LD (HL), A
+    LD A, D
+    ADD HL, 1
+    LD (HL), A
+    POP HL
+    POP DE
+    JP PUTIMAGE0SINGLESDONE
+
+PUTIMAGE0SINGLEST:
+    PUSH DE
+    PUSH HL
+    LD DE, PUTIMAGE0SINGLEL1T 
+    LD HL, PUTIMAGE0SINGLEL1
+    ADD HL, 1
+    LD A, E
+    LD (HL), A
+    ADD HL, 1
+    LD A, D
+    LD (HL), A
+    POP HL
+    POP DE
+    JP PUTIMAGE0SINGLESDONE
+
+PUTIMAGE0SINGLESDONE:
+PUTIMAGE0SINGLEL2:
 
     ; Move ahead of one row.
 
@@ -114,13 +203,11 @@ PUTIMAGE0L2:
     ; Row copy loop.
 
     PUSH BC
-PUTIMAGE0L1:
+PUTIMAGE0SINGLEL1:
 
-    ; Manage the "WITH TRANSPARENCY" flag.
-    LD A, (IMAGEF)
-    AND $20
-    CP $20
-    JP Z, PUTIMAGE0L1T
+    JP $0000
+
+PUTIMAGE0SINGLEL1N:
 
     ; Copy the bitmap data from the memory to the video.
     ; This is a direct copy.
@@ -128,46 +215,15 @@ PUTIMAGE0L1:
     LD (DE),A
 
     ; Jump to the end of the loop.
-    JP PUTIMAGE0L1T0
+    JP PUTIMAGE0SINGLEL1T0
 
     ; Copy the bitmap data from the memory to the video.
     ; This is a copy that support the transparency.
 
-PUTIMAGE0L1T:
-    PUSH IX
-    PUSH BC
-    LD A, 0
-    LD IXH, A
-    LD A, (HL)
-    AND $AA
-    CP $0
-    JR Z, PUTIMAGE0L1T2
-    LD A, IXH
-    OR $AA
-    LD IXH, A
-PUTIMAGE0L1T2:
-    LD A, (HL)
-    AND $55
-    CP $0
-    JR Z, PUTIMAGE0L1T3
-    LD A, IXH
-    OR $55
-    LD IXH, A
-PUTIMAGE0L1T3:
-    LD A, IXH
-    XOR $FF
-    LD B, A
-    LD A, (DE)
-    AND B
-    LD B, A
-    LD A, (HL)
-    AND IXH
-    ORA B
-    LD (DE),A
-    POP BC
-    POP IX
+PUTIMAGE0SINGLEL1T:
+    CALL PUTIMAGE0PIXELTRANS
 
-PUTIMAGE0L1T0:
+PUTIMAGE0SINGLEL1T0:
 
     ; This is the end of the row copy loop.
     ; Move to the next source and destination byte.
@@ -179,9 +235,152 @@ PUTIMAGE0L1T0:
     ; Repeat until finished.
 
     DEC C
-    JR NZ, PUTIMAGE0L1
+    JR NZ, PUTIMAGE0SINGLEL1
 
-PUTIMAGE0DONEROW:
+PUTIMAGE0SINGLEDONEROW:
+
+    ; The copy of the row has been completed.
+    
+    POP BC
+
+    ; Increment the vertical position
+    PUSH BC
+    LD A, (IMAGEY)
+    ADD $1
+    LD (IMAGEY), A
+    LD B, A
+    LD A, (CURRENTHEIGHT)
+    CP B
+    POP BC
+    JR Z, PUTIMAGE0SINGLEDONEROW2B
+
+    ; Decrement the number of rows last to copy.
+    DEC B
+
+    ; Repeat the copy for the next row.
+    JP NZ, PUTIMAGE0SINGLEL2
+
+    JP PUTIMAGE0L2AX
+
+PUTIMAGE0SINGLEDONEROW2B:
+
+    ; Before skipping, decrement the number of rows last to copy.
+    DEC B
+
+    ; Skip only if there are any rows.
+    JP NZ, PUTIMAGE0SINGLEL2A
+
+    JP PUTIMAGE0L2AX
+
+PUTIMAGE0SINGLEL2A:
+
+    PUSH DE
+    LD A, C
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    POP DE
+    DEC B
+    JP NZ, PUTIMAGE0SINGLEL2A
+
+    JP PUTIMAGE0L2AX
+
+    ; ------------------------------------------------------------------------
+    ; --- MODE 0 & 3 (DOUBLE)
+    ; ------------------------------------------------------------------------
+
+PUTIMAGE0DOUBLE:
+
+    ; Manage the "WITH TRANSPARENCY" flag.
+    LD A, (IMAGEF)
+    AND $20
+    CP $20
+    JP Z, PUTIMAGE0DOUBLEST
+
+PUTIMAGE0DOUBLESN:
+    PUSH DE
+    PUSH HL
+    LD DE, PUTIMAGE0DOUBLEL1N 
+    LD HL, PUTIMAGE0DOUBLEL1
+    ADD HL, 1
+    LD A, E
+    LD (HL), A
+    LD A, D
+    ADD HL, 1
+    LD (HL), A
+    POP HL
+    POP DE
+    JP PUTIMAGE0DOUBLESDONE
+
+PUTIMAGE0DOUBLEST:
+    PUSH DE
+    PUSH HL
+    LD DE, PUTIMAGE0DOUBLEL1T 
+    LD HL, PUTIMAGE0DOUBLEL1
+    ADD HL, 1
+    LD A, E
+    LD (HL), A
+    ADD HL, 1
+    LD A, D
+    LD (HL), A
+    POP HL
+    POP DE
+    JP PUTIMAGE0DOUBLESDONE
+
+PUTIMAGE0DOUBLESDONE:
+PUTIMAGE0DOUBLEL2:
+
+    ; Move ahead of one row.
+
+    POP DE
+    INC D
+    PUSH DE
+
+    ; Recalculate the starting position on the video buffer.
+
+    PUSH HL
+    CALL CPCVIDEOPOS
+    LD DE, HL
+    POP HL
+
+    ; Row copy loop.
+
+    PUSH BC
+PUTIMAGE0DOUBLEL1:
+
+    JP $0000
+
+PUTIMAGE0DOUBLEL1N:
+
+    ; Copy the bitmap data from the memory to the video.
+    ; This is a direct copy.
+    LD A, (HL)
+    LD (DE),A
+
+    ; Jump to the end of the loop.
+    JP PUTIMAGE0DOUBLEL1T0
+
+    ; Copy the bitmap data from the memory to the video.
+    ; This is a copy that support the transparency.
+
+PUTIMAGE0DOUBLEL1T:
+    CALL PUTIMAGE0PIXELTRANS
+
+PUTIMAGE0DOUBLEL1T0:
+
+    ; This is the end of the row copy loop.
+    ; Move to the next source and destination byte.
+
+    INC DE
+    INC HL
+
+    ; Decrement the number of byte to copy.
+    ; Repeat until finished.
+
+    DEC C
+    JR NZ, PUTIMAGE0DOUBLEL1
+
+PUTIMAGE0DOUBLEDONEROW:
 
     ; The copy of the row has been completed.
     
@@ -191,10 +390,10 @@ PUTIMAGE0DONEROW:
     LD A, (IMAGEF)
     AND $41
     CP $41
-    JR Z, PUTIMAGE0DONEROW2
+    JR Z, PUTIMAGE0DOUBLEDONEROW2
     AND $40
     CP $40
-    JR NZ, PUTIMAGE0DONEROW2
+    JR NZ, PUTIMAGE0DOUBLEDONEROW2
     OR $01
     LD (IMAGEF), A
 
@@ -208,10 +407,10 @@ PUTIMAGE0DONEROW:
     AND A
     SBC HL, DE
     POP DE
-    JP PUTIMAGE0L2 ; Repeat the row copy.
+    JP PUTIMAGE0DOUBLEL2 ; Repeat the row copy.
 
     ; Disable if a "DOUBLE" flag has been requested.
-PUTIMAGE0DONEROW2:
+PUTIMAGE0DOUBLEDONEROW2:
     LD A, (IMAGEF)
     AND $FE
     LD (IMAGEF), A
@@ -225,27 +424,27 @@ PUTIMAGE0DONEROW2:
     LD A, (CURRENTHEIGHT)
     CP B
     POP BC
-    JR Z, PUTIMAGE0DONEROW2B
+    JR Z, PUTIMAGE0DOUBLEDONEROW2B
 
     ; Decrement the number of rows last to copy.
     DEC B
 
     ; Repeat the copy for the next row.
-    JP NZ, PUTIMAGE0L2
+    JP NZ, PUTIMAGE0DOUBLEL2
 
     JP PUTIMAGE0L2AX
 
-PUTIMAGE0DONEROW2B:
+PUTIMAGE0DOUBLEDONEROW2B:
 
     ; Before skipping, decrement the number of rows last to copy.
     DEC B
 
     ; Skip only if there are any rows.
-    JP NZ, PUTIMAGE0L2A
+    JP NZ, PUTIMAGE0DOUBLEL2A
 
     JP PUTIMAGE0L2AX
 
-PUTIMAGE0L2A:
+PUTIMAGE0DOUBLEL2A:
 
     PUSH DE
     LD A, C
@@ -254,7 +453,9 @@ PUTIMAGE0L2A:
     ADD HL, DE
     POP DE
     DEC B
-    JP NZ, PUTIMAGE0L2A
+    JP NZ, PUTIMAGE0DOUBLEL2A
+
+; ------------------------------------------------------------------------
 
 PUTIMAGE0L2AX:
     ; Prepare to store the palette (16 colors)
@@ -466,7 +667,7 @@ PUTIMAGE1DONEROW:
     AND A
     SBC HL, DE
     POP DE
-    JP PUTIMAGE0L2 ; Repeat the row copy.
+    JP PUTIMAGE1L2 ; Repeat the row copy.
 
     ; Disable if a "DOUBLE" flag has been requested.
 PUTIMAGE1DONEROW2:
@@ -782,7 +983,7 @@ PUTIMAGE2DONEROW:
     AND A
     SBC HL, DE
     POP DE
-    JP PUTIMAGE0L2 ; Repeat the row copy.
+    JP PUTIMAGE2L2 ; Repeat the row copy.
 
     ; Disable if a "DOUBLE" flag has been requested.
 PUTIMAGE2DONEROW2:
