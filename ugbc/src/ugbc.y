@@ -3786,8 +3786,12 @@ wait_definition_simple:
         }
     }
     | VBL {
-      wait_vbl( _environment );
-    };
+      wait_vbl( _environment, NULL );
+    }
+    | VBL expr {
+      wait_vbl( _environment, $2 );
+    }    
+    ;
 
 wait_definition_expression:
       expr CYCLES parallel_optional {
