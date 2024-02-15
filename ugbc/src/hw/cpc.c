@@ -1978,7 +1978,7 @@ void cpc_wait_vbl( Environment * _environment, char * _raster_line ) {
         outline0("ADD HL, DE" );
         outline0("LD DE, HL" );
     } else {
-        outline0("LD DE, 0" );
+        outline0("LD DE, $1000" );
     }
     outline0("CALL WAITVBL");
 
