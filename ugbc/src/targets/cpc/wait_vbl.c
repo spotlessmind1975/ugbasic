@@ -49,8 +49,8 @@
 @keyword WAIT VBL
 @target cpc
 </usermanual> */
-void wait_vbl( Environment * _environment ) {
+void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    cpc_wait_vbl( _environment );
+    cpc_wait_vbl( _environment, _raster_line );
 
 }

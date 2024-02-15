@@ -4407,7 +4407,7 @@ void                    wait_milliseconds( Environment * _environment, int _timi
 void                    wait_milliseconds_var( Environment * _environment, char * _timing );
 void                    wait_ticks( Environment * _environment, int _timing );
 void                    wait_ticks_var( Environment * _environment, char * _timing );
-void                    wait_vbl( Environment * _environment );
+void                    wait_vbl( Environment * _environment, char * _raster_line );
 void                    wait_until( Environment * _environment );
 void                    wait_until_condition( Environment * _environment, char * _condition );
 void                    wait_while( Environment * _environment );
