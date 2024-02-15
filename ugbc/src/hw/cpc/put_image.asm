@@ -152,39 +152,13 @@ PUTIMAGE0SINGLE:
     LD A, (IMAGEF)
     AND $20
     CP $20
-    JP Z, PUTIMAGE0SINGLEST
+    JP Z, PUTIMAGE0SINGLETRANSPARENT
 
-PUTIMAGE0SN:
-    PUSH DE
-    PUSH HL
-    LD DE, PUTIMAGE0SINGLEL1N 
-    LD HL, PUTIMAGE0SINGLEL1
-    ADD HL, 1
-    LD A, E
-    LD (HL), A
-    LD A, D
-    ADD HL, 1
-    LD (HL), A
-    POP HL
-    POP DE
-    JP PUTIMAGE0SINGLESDONE
+    ; ------------------------------------------------------------------------
+    ; --- MODE 0 & 3 (SINGLE MATTE)
+    ; ------------------------------------------------------------------------
 
-PUTIMAGE0SINGLEST:
-    PUSH DE
-    PUSH HL
-    LD DE, PUTIMAGE0SINGLEL1T 
-    LD HL, PUTIMAGE0SINGLEL1
-    ADD HL, 1
-    LD A, E
-    LD (HL), A
-    ADD HL, 1
-    LD A, D
-    LD (HL), A
-    POP HL
-    POP DE
-    JP PUTIMAGE0SINGLESDONE
-
-PUTIMAGE0SINGLESDONE:
+PUTIMAGE0SINGLEMATTE:
 PUTIMAGE0SINGLEL2:
 
     ; Move ahead of one row.
@@ -203,39 +177,14 @@ PUTIMAGE0SINGLEL2:
     ; Row copy loop.
 
     PUSH BC
-PUTIMAGE0SINGLEL1:
 
-    JP $0000
+    LD B, 0
 
 PUTIMAGE0SINGLEL1N:
 
     ; Copy the bitmap data from the memory to the video.
     ; This is a direct copy.
-    LD A, (HL)
-    LD (DE),A
-
-    ; Jump to the end of the loop.
-    JP PUTIMAGE0SINGLEL1T0
-
-    ; Copy the bitmap data from the memory to the video.
-    ; This is a copy that support the transparency.
-
-PUTIMAGE0SINGLEL1T:
-    CALL PUTIMAGE0PIXELTRANS
-
-PUTIMAGE0SINGLEL1T0:
-
-    ; This is the end of the row copy loop.
-    ; Move to the next source and destination byte.
-
-    INC DE
-    INC HL
-
-    ; Decrement the number of byte to copy.
-    ; Repeat until finished.
-
-    DEC C
-    JR NZ, PUTIMAGE0SINGLEL1
+    LDIR
 
 PUTIMAGE0SINGLEDONEROW:
 
@@ -282,6 +231,98 @@ PUTIMAGE0SINGLEL2A:
     POP DE
     DEC B
     JP NZ, PUTIMAGE0SINGLEL2A
+
+    JP PUTIMAGE0L2AX
+
+    ; ------------------------------------------------------------------------
+    ; --- MODE 0 & 3 (SINGLE)
+    ; ------------------------------------------------------------------------
+
+
+PUTIMAGE0SINGLETRANSPARENT:
+PUTIMAGE0SINGLETRANSPARENTL2:
+
+    ; Move ahead of one row.
+
+    POP DE
+    INC D
+    PUSH DE
+
+    ; Recalculate the starting position on the video buffer.
+
+    PUSH HL
+    CALL CPCVIDEOPOS
+    LD DE, HL
+    POP HL
+
+    ; Row copy loop.
+
+    PUSH BC
+PUTIMAGE0SINGLETRANSPARENTL1:
+PUTIMAGE0SINGLETRANSPARENTL1N:
+
+    ; Copy the bitmap data from the memory to the video.
+    ; This is a copy that support the transparency.
+
+    CALL PUTIMAGE0PIXELTRANS
+
+    ; This is the end of the row copy loop.
+    ; Move to the next source and destination byte.
+
+    INC DE
+    INC HL
+
+    ; Decrement the number of byte to copy.
+    ; Repeat until finished.
+
+    DEC C
+    JR NZ, PUTIMAGE0SINGLETRANSPARENTL1N
+
+PUTIMAGE0SINGLETRANSPARENTDONEROW:
+
+    ; The copy of the row has been completed.
+    
+    POP BC
+
+    ; Increment the vertical position
+    PUSH BC
+    LD A, (IMAGEY)
+    ADD $1
+    LD (IMAGEY), A
+    LD B, A
+    LD A, (CURRENTHEIGHT)
+    CP B
+    POP BC
+    JR Z, PUTIMAGE0SINGLETRANSPARENTDONEROW2B
+
+    ; Decrement the number of rows last to copy.
+    DEC B
+
+    ; Repeat the copy for the next row.
+    JP NZ, PUTIMAGE0SINGLETRANSPARENTL2
+
+    JP PUTIMAGE0L2AX
+
+PUTIMAGE0SINGLETRANSPARENTDONEROW2B:
+
+    ; Before skipping, decrement the number of rows last to copy.
+    DEC B
+
+    ; Skip only if there are any rows.
+    JP NZ, PUTIMAGE0SINGLETRANSPARENTL2A
+
+    JP PUTIMAGE0L2AX
+
+PUTIMAGE0SINGLETRANSPARENTL2A:
+
+    PUSH DE
+    LD A, C
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    POP DE
+    DEC B
+    JP NZ, PUTIMAGE0SINGLETRANSPARENTL2A
 
     JP PUTIMAGE0L2AX
 
