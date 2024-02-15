@@ -49,8 +49,8 @@
 @keyword WAIT VBL
 @target atari
 </usermanual> */
-void wait_vbl( Environment * _environment ) {
+void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    gtia_wait_vbl( _environment );
+    gtia_wait_vbl( _environment, _raster_line );
 
 }
