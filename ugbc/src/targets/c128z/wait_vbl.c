@@ -49,8 +49,8 @@
 @keyword WAIT VBL
 @target c128z
 </usermanual> */
-void wait_vbl( Environment * _environment ) {
+void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    vdcz_wait_vbl( _environment );
+    vdcz_wait_vbl( _environment, _raster_line );
 
 }
