@@ -1817,7 +1817,7 @@ void ted_blit_image( Environment * _environment, char * _sources[], int _source_
 
 }
 
-void ted_wait_vbl( Environment * _environment ) {
+void ted_wait_vbl( Environment * _environment, char * _raster_line ) {
 
     deploy( vbl, src_hw_ted_vbl_asm);
 
