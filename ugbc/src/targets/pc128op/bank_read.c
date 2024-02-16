@@ -118,12 +118,13 @@ void bank_read_vars( Environment * _environment, char * _bank, char * _address1,
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
     outline0("; bank read")
     outline1("LDU #$%4.4x", _bank );
     outline1("LDY %s", realAddress->realName );
     outline1("LDX %s", address2->realName );
-    outline1("LDD %s", _size );
+    outline1("LDD %s", size->realName );
     outline0("JSR BANKREAD");
     outline0("; end bank read");
 
@@ -144,7 +145,7 @@ void bank_read_vars_direct( Environment * _environment, char * _bank, char * _ad
     outline1("LDU #$%4.4x", _bank );
     outline1("LDY %s", realAddress->realName );
     outline1("LDX #%s", _address2 );
-    outline1("LDD %s", _size );
+    outline1("LDD %s", size->realName );
     outline0("JSR BANKREAD");
     outline0("; end bank read");
 
