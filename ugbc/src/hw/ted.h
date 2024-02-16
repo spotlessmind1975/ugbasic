@@ -182,7 +182,7 @@ Variable * ted_get_raster_line( Environment * _environment );
 Variable * ted_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void ted_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );
 void ted_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
-void ted_wait_vbl( Environment * _environment );
+void ted_wait_vbl( Environment * _environment, char * _raster_line );
 Variable * ted_new_image( Environment * _environment, int _width, int _height, int _mode );
 Variable * ted_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
 Variable * ted_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode );

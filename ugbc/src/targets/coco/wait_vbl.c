@@ -49,8 +49,13 @@
 @keyword WAIT VBL
 @target c64
 </usermanual> */
-void wait_vbl( Environment * _environment ) {
+void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    // TODO: implementation
+    MAKE_LABEL
+
+    outhead1("%sa", label);
+    outline0("LDD COCOTIMER");
+    outline0("CMPD COCOTIMER" );
+    outline1("BEQ %sa", label);
     
 }

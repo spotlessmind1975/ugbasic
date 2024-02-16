@@ -42,5 +42,19 @@ VBL2:
     LDA ANTICVBL
     BEQ VBL2
 VBL3:
+    ; CPX #0
+    ; BNE VBL3RL
     RTS
+; VBL3RL:
+;     CLC
+;     TXA
+;     ADC #$40
+;     TAX
+;     LDY #14
+; VBL3RLDELAY:
+;     DEY 
+;     BNE VBL3RLDELAY
+;     DEX
+;     BNE VBL3RL
+;     RTS
 

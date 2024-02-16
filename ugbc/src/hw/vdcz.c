@@ -2885,7 +2885,7 @@ void vdcz_blit_image( Environment * _environment, char * _sources[], int _source
 
 }
 
-void vdcz_wait_vbl( Environment * _environment ) {
+void vdcz_wait_vbl( Environment * _environment, char * _raster_line ) {
 
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( vbl, src_hw_vdcz_vbl_asm);

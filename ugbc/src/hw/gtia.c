@@ -2948,10 +2948,16 @@ void gtia_use_tileset( Environment * _environment, char * _tileset ) {
 
 }
 
-void gtia_wait_vbl( Environment * _environment ) {
+void gtia_wait_vbl( Environment * _environment, char * _raster_line ) {
 
     deploy( vbl, src_hw_gtia_vbl_asm);
 
+    if ( _raster_line ) {
+        Variable * raster_line = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 255 );
+        outline1( "LDX %s", raster_line->realName );
+    } else {
+        outline0( "LDX #0" );
+    }
     outline0("JSR VBL");
 
 }

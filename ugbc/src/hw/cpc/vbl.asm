@@ -36,10 +36,93 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 WAITVBL:
-    LD B, $f5
-WAITVBLL1:    
+    PUSH DE
+    DI
+    LD B, $F5
+    LD HL, 19968-23
+    LD DE, -11
+WAITVBL1:
     IN A, (C)
     RRA
-    JP NC, WAITVBLL1
+    JR NC, WAITVBL1
+
+WAITVBL2:
+    IN A, (C)
+    RRA
+    JR C, WAITVBL2
+
+WAITVBL3:
+    IN A, (C)
+    RRA
+    JR NC, WAITVBL3
+
+WAITVBL4:
+    ADD HL, DE
+    IN A, (C)
+    RRA
+    JR C, WAITVBL4
+    EX DE, HL    
+    CALL WAITUSEC
+
+WAITVBL5:
+    LD B, $F5
+    IN A, (C)
+    RRA
+    JR C, WAITVBL6
+    ; LD DE, 19969-20
+    ; CALL WAITUSEC
+
+     JR WAITVBL5
+WAITVBL6:
+    POP DE
+    EI
+    JP WAITUSEC
+
+WAITUSEC:
+    LD HL, WAITUSEC2
+    LD B, 0
+    LD A, E
+    AND %111
+    LD C, A
+    SBC HL, BC
+    SRL D
+    RR E
+    SRL D
+    RR E
+    SRL D
+    RR E
+    DEC DE
+    DEC DE
+    DEC DE
+    DEC DE
+    DEC DE
+    NOP
+WAITUSEC_01:
+    DEC DE
+    LD A, D
+    OR E
+    NOP
+    JP NZ, WAITUSEC_01
+    JP (HL)
+    NOP
+    NOP
+    NOP 
+    NOP
+    NOP
+    NOP
+    NOP
+WAITUSEC2:
     RET
+
+; WAITVBL:
+;     LD B, $f5
+; WAITVBLL1:    
+;     IN A, (C)
+;     RRA
+;     JP C, WAITVBLL1
+; WAITVBLL2:    
+;     IN A, (C)
+;     RRA
+;     JP NC, WAITVBLL2
+;     RET
     

@@ -49,7 +49,7 @@
 @keyword WAIT VBL
 @target vic20
 </usermanual> */
-void wait_vbl( Environment * _environment ) {
+void wait_vbl( Environment * _environment, char * _raster_line ) {
 
     vic1_wait_vbl( _environment );
 

@@ -49,7 +49,7 @@
 @keyword WAIT VBL
 @target pc128op
 </usermanual> */
-void wait_vbl( Environment * _environment ) {
+void wait_vbl( Environment * _environment, char * _raster_line ) {
 
     cpu_call( _environment, "WAITVBL" );
 

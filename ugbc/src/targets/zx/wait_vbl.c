@@ -49,8 +49,7 @@
 @keyword WAIT VBL
 @target zx
 </usermanual> */
-void wait_vbl( Environment * _environment ) {
+void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    // TODO: implementation
-
+    // todo
 }

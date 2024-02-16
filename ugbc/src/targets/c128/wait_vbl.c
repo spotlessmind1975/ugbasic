@@ -49,8 +49,8 @@
 @keyword WAIT VBL
 @target c128
 </usermanual> */
-void wait_vbl( Environment * _environment ) {
+void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    vic2_wait_vbl( _environment );
+    vic2_wait_vbl( _environment, _raster_line );
 
 }

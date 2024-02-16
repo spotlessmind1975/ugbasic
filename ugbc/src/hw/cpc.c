@@ -1952,11 +1952,34 @@ void cpc_blit_image( Environment * _environment, char * _sources[], int _source_
 
 }
 
-void cpc_wait_vbl( Environment * _environment ) {
+void cpc_wait_vbl( Environment * _environment, char * _raster_line ) {
 
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( vbl, src_hw_cpc_vbl_asm);
 
+    if ( _raster_line ) {
+        Variable * raster_line = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 255 );
+        outline0("LD HL, $1000" );
+        outline1("LD A, (%s)", raster_line->realName );
+        outline0("LD E, A" );
+        outline0("LD D, 0" );
+        outline0("SLA E" );
+        outline0("RL D" );
+        outline0("SLA E" );
+        outline0("RL D" );
+        outline0("SLA E" );
+        outline0("RL D" );
+        outline0("SLA E" );
+        outline0("RL D" );
+        outline0("SLA E" );
+        outline0("RL D" );
+        outline0("SLA E" );
+        outline0("RL D" );
+        outline0("ADD HL, DE" );
+        outline0("LD DE, HL" );
+    } else {
+        outline0("LD DE, $1000" );
+    }
     outline0("CALL WAITVBL");
 
 }

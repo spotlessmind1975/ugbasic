@@ -49,8 +49,8 @@
 @keyword WAIT VBL
 @target plus4
 </usermanual> */
-void wait_vbl( Environment * _environment ) {
+void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    ted_wait_vbl( _environment );
+    ted_wait_vbl( _environment, _raster_line );
 
 }
