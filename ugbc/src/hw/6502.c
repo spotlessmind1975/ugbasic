@@ -6524,35 +6524,35 @@ void cpu6502_dstring_vars( Environment * _environment ) {
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
     emit_segment_if_enough_space( _environment, 1 );
-    outhead1("MAXSTRINGS:                   .BYTE %d", count );
+    outhead1("MAXSTRINGS:                   .BYTE %d,0", count );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, count );
-    outhead1("DESCRIPTORS_STATUS:           .RES %d", count );
+    outhead1("DESCRIPTORS_STATUS:           .RES %d,0", count );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, count );
-    outhead1("DESCRIPTORS_ADDRESS_LO:       .RES %d", count );
+    outhead1("DESCRIPTORS_ADDRESS_LO:       .RES %d,0", count );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, count );
-    outhead1("DESCRIPTORS_ADDRESS_HI:       .RES %d", count );
+    outhead1("DESCRIPTORS_ADDRESS_HI:       .RES %d,0", count );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, count );
-    outhead1("DESCRIPTORS_SIZE:             .RES %d", count );
+    outhead1("DESCRIPTORS_SIZE:             .RES %d,0", count );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, space );
-    outhead1("WORKING:                      .RES %d", space );
+    outhead1("WORKING:                      .RES %d,0", space );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, space );
-    outhead1("TEMPORARY:                    .RES %d", space );
+    outhead1("TEMPORARY:                    .RES %d,0", space );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, 2 );
-    outhead1("FREE_STRING:                  .WORD %d", space );
+    outhead1("FREE_STRING:                  .WORD %d,0", space );
     outhead0(".segment \"CODE\"" );
 
 
@@ -6562,8 +6562,8 @@ void cpu6502_protothread_vars( Environment * _environment ) {
 
     int count = _environment->protothreadConfig.count == 0 ? PROTOTHREAD_DEFAULT_COUNT : _environment->protothreadConfig.count;
 
-    outhead1("PROTOTHREADLC:      .RES        %d", count );
-    outhead1("PROTOTHREADST:      .RES        %d", count );
+    outhead1("PROTOTHREADLC:      .RES        %d,0", count );
+    outhead1("PROTOTHREADST:      .RES        %d,0", count );
     outhead0("PROTOTHREADCT:      .BYTE       0" );
     outhead0("PROTOTHREADLOOP:");
 

@@ -383,6 +383,6 @@ radxtab:  .byte 0,37,64,36         ;recognized symbols
 ;
 ;STATIC STORAGE
 ;
-strbuf:   .res m_strlen+1        ;conversion string buffer
+strbuf:   .res m_strlen+1,0        ;conversion string buffer
 ;
 ;================================================================================

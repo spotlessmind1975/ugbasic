@@ -157,3 +157,127 @@ PLOTLOOP2:
 
 PLOTCLIPPED:
     RET
+
+PLOTG:
+
+@IF optionClip
+
+    LD A, (CLIPX1)
+    LD B, A
+    LD A, (CLIPX2)
+    LD D, A
+    LD A, H
+    CMP B
+    JP C, PLOTGCLIPPED
+    CMP D
+    JP Z, PLOTGNOCLIPPED
+    JP NC, PLOTGCLIPPED
+PLOTGNOCLIPPED:
+    LD A, (CLIPY1)
+    LD B, A
+    LD A, (CLIPY2)
+    LD D, A
+    LD A, L
+    CMP B
+    JP C, PLOTGCLIPPED
+    CMP D
+    JR Z, PLOTGNOCLIPPED2
+    JR NC, PLOTGCLIPPED
+PLOTGNOCLIPPED2: 
+
+@ENDIF
+
+    LD A, H
+    AND $7
+    LD B, A
+    LD A, $8
+    SUB B
+    LD B, A
+    LD E, 1
+PLOTGLOOP: 
+    DEC B
+    JR Z, PLOTGLOOP2
+    SLA E
+    JMP PLOTGLOOP
+PLOTGLOOP2:
+    PUSH HL
+    LD A, L
+    LD B, A
+    LD A, H
+    LD C, A
+    LD A,B
+    AND %00000111
+    OR %01000000
+    LD H, A
+    LD A, B
+    RRA
+    RRA
+    RRA
+    AND %00011000
+    OR H
+    LD H, A
+    LD A, B 
+    RLA
+    RLA
+    AND %11100000
+    LD L, A
+    LD A, C
+    RRA
+    RRA
+    RRA
+    AND %00011111
+    OR L
+    LD L, A
+
+    LD A, (HL)
+    AND E
+    LD (HL),A
+
+    POP BC
+
+    PUSH AF
+
+    LD A, B
+    LD L, A
+    LD A, 0
+    LD H, A
+    SRA H
+    RR L
+    SRA H
+    RR L
+    SRA H
+    RR L
+    LD DE,HL
+
+    LD A, C
+    LD L, A
+    LD A, 0
+    LD H, A
+    SLA L
+    RL H
+    SLA L
+    RL H
+    ADD HL, DE
+    LD DE, (COLORMAPADDRESS)
+    ADD HL, DE
+
+    POP AF
+
+    CP 0
+    JR Z, PLOTGBACK
+
+PLOTGFORE:
+    LD A, (HL)
+    AND $7
+    RET
+
+PLOTGBACK:
+    LD A, (HL)
+    SRL A
+    SRL A
+    SRL A
+    AND $7
+    RET
+
+PLOTGCLIPPED:
+    RET
