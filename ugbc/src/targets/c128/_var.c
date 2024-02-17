@@ -62,7 +62,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 1", variable->realName);
+                        outline1("%s: .res 1,0", variable->realName);
                     }        
                     break;
                 case VT_WORD:
@@ -72,7 +72,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 2", variable->realName);
+                        outline1("%s: .res 2,0", variable->realName);
                     }
                     break;
                 case VT_DWORD:
@@ -80,14 +80,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 4", variable->realName);
+                        outline1("%s: .res 4,0", variable->realName);
                     }
                     break;
                 case VT_FLOAT:
                     if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 4", variable->realName);
+                        outline1("%s: .res 4,0", variable->realName);
                     }
                     break;
                 case VT_STRING:
@@ -112,7 +112,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 1", variable->realName);
+                        outline1("%s: .res 1,0", variable->realName);
                     }
                     break;
                 case VT_TILE:
@@ -121,14 +121,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 1", variable->realName);
+                        outline1("%s: .res 1,0", variable->realName);
                     }
                     break;
                 case VT_TILES:
                     if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 4", variable->realName);
+                        outline1("%s: .res 4,0", variable->realName);
                     }
                     break;
                 case VT_BLIT:
@@ -159,7 +159,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 outline1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
                         } else {
-                            outline2("%s: .res %d", variable->realName, variable->size);
+                            outline2("%s: .res %d,0", variable->realName, variable->size);
                         }
                     } else {
                         if ( ! variable->memoryArea && variable->valueBuffer && ! variable->onStorage && ! variable->bankAssigned ) {
@@ -195,7 +195,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         if ( variable->value ) {
                             outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff));
                         } else {
-                            outline2("%s: .res %d", variable->realName, variable->size);
+                            outline2("%s: .res %d,0", variable->realName, variable->size);
                         }
                     }
                     break;
@@ -294,7 +294,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                     outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
                 }
             } else {
-                outline1(" .res %d", _variable->size);
+                outline1(" .res %d,0", _variable->size);
             }
             break;
         case VT_ARRAY: {
@@ -309,7 +309,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 if ( _variable->value ) {
                     outline2("    .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value&0xff));
                 } else {
-                    outline1("    .res %d", _variable->size);
+                    outline1("    .res %d,0", _variable->size);
                 }
             }
             break;
@@ -341,7 +341,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
                     }
                     ++bitCount;
                     if ( bitCount == 8 ) {
-                        outline0("   .res 1");
+                        outline0("   .res 1,0");
                     }        
                     break;
             }
@@ -352,7 +352,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 
     }
 
-    outline0("   .res 1");
+    outline0("   .res 1,0");
 
 }
 
