@@ -135,29 +135,33 @@ TmxMap * tmx_load( char * _filename ) {
                             properties = properties->next;
                         }
 
-                        char * filename = strdup( _filename );
-                        char * filenameWithPath = malloc( 1024 );
-                        memset( filenameWithPath, 0, 1024 );
-                        char * separator = strrchr( filename, '/' );
-                        if ( separator ) {
-                            *(separator+1) = 0;
-                            strcpy( filenameWithPath, filename );
-                        }
-                        strcat( filenameWithPath, source );
+                        if ( source ) {
 
-                        TsxTileset * tileset = tsx_load( filenameWithPath );
-
-                        tileset->source = source;
-                        tileset->firstgid = firstgid;
-
-                        if ( ! result->tilesets ) {
-                            result->tilesets = tileset;
-                        } else {
-                            TsxTileset * actual = result->tilesets;
-                            while( actual->next )  {
-                                actual = actual->next;
+                            char * filename = strdup( _filename );
+                            char * filenameWithPath = malloc( 1024 );
+                            memset( filenameWithPath, 0, 1024 );
+                            char * separator = strrchr( filename, '/' );
+                            if ( separator ) {
+                                *(separator+1) = 0;
+                                strcpy( filenameWithPath, filename );
                             }
-                            actual->next = tileset;
+                            strcat( filenameWithPath, source );
+
+                            TsxTileset * tileset = tsx_load( filenameWithPath );
+
+                            tileset->source = source;
+                            tileset->firstgid = firstgid;
+
+                            if ( ! result->tilesets ) {
+                                result->tilesets = tileset;
+                            } else {
+                                TsxTileset * actual = result->tilesets;
+                                while( actual->next )  {
+                                    actual = actual->next;
+                                }
+                                actual->next = tileset;
+                            }
+
                         }
 
                     } else if ( strcmp( child->name, "layer" ) == 0 ) {

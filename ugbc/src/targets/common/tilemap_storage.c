@@ -101,6 +101,10 @@ Variable * tilemap_storage( Environment * _environment, char * _source_name, cha
 
     TsxTileset * tileset = tilemap->tilesets;
 
+    if ( !tileset->source ) {
+        CRITICAL_TILEMAP_SOURCE_MISSING( _source_name );
+    }
+
     // while( tileset ) {
         if ( final->tileset ) {
             CRITICAL_TILEMAP_LOAD_ONLY_ONE_TILESET( _source_name );
