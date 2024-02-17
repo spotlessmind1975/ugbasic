@@ -57,45 +57,21 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
         _y = variable_retrieve( _environment, "YGR" )->name;
     }
 
-    Variable * y = variable_retrieve( _environment, _y );
-    Variable * x = variable_retrieve( _environment, _x );
+    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( plot, src_hw_zx_plot_asm );
+
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
     outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
-    outline0("CP 0" );
-    outline1("JR NZ, clip%s", label );
-
+    outline0("CP 0");
+    outline1("JR NZ, %s", label );
     outline1("LD A, (%s)", x->realName );
-    outline0("LD L, A" );
-    outline0("LD A, 0" );
-    outline0("LD H, A" );
-    outline0("SRA H" );
-    outline0("RR L" );
-    outline0("SRA H" );
-    outline0("RR L" );
-    outline0("SRA H" );
-    outline0("RR L" );
-    outline0("LD DE,HL");
-
+    outline0("LD H, A");
     outline1("LD A, (%s)", y->realName );
-    outline0("LD L, A" );
-    outline0("LD A, 0" );
-    outline0("LD H, A" );
-    outline0("SLA L" );
-    outline0("RL H" );
-    outline0("SLA L" );
-    outline0("RL H" );
-    outline0("ADD HL, DE" );
-    outline0("LD DE, (COLORMAPADDRESS)");
-    outline0("ADD HL, DE" );
-    outline0("LD A, (HL)");
-    outline0("AND $40");
-    outline1("JR Z, clip%s", label);
-    outline0("LD A, $10");
-    outhead1("clip%s:", label);
-    outline0("LD B, A");
-    outline0("LD A, (HL)");
-    outline0("AND $7");
-    outline0("ADD B");
+    outline0("LD L, A");
+    outline0("CALL PLOTG");
+    outhead1("%s:", label );
     outline1("LD (%s), A", result->realName );
 
     return result;
