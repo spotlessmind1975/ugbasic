@@ -3752,7 +3752,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
             cpu_math_add_32bit( _environment, source->realName, target->realName, result->realName );
             break;
         case 16:
-            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_SWORD, "(result of sum)" );
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of sum)" );
             cpu_math_add_16bit( _environment, source->realName, target->realName, result->realName );
             break;
         case 8:
