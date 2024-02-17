@@ -81,7 +81,7 @@ ICAUX6              = $034F     ; AUX 6
 CIOV                = $E456     ; JSR vector for CIO. All CIO operations go through this address
 
 ATARIFILENAME:      .BYTE 'D', ':'
-ATARIFILENAME0:     .RES 13
+ATARIFILENAME0:     .RES 13,0
 
 ATARIPREPAREFILENAME:
     LDA #<ATARIFILENAME0
