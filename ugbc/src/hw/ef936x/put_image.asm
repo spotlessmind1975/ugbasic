@@ -57,6 +57,11 @@ PUTIMAGE
 
 @IF !vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
+    PSHS D
+    LDA BANKSHADOW
+    STA $A7E5
+    PULS D
+
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
@@ -83,6 +88,12 @@ PUTIMAGE3XDB
     BNE PUTIMAGE4XDB
     JMP PUTIMAGE4DB
 PUTIMAGE4XDB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     RTS
 
 @ENDIF
@@ -91,6 +102,12 @@ PUTIMAGE4XDB
 
 PUTIMAGE1DB
 PUTIMAGE4DB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     RTS
 
 @ENDIF
@@ -669,6 +686,11 @@ PUTIMAGECOMMONE5DB
     ; BNE PUTIMAGECOMMONE50L1
 
 PUTIMAGECOMMONEDB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
 
 	RTS
 

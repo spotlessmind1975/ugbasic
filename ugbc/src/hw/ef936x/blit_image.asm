@@ -59,6 +59,11 @@ BLITIMAGE
 
 @IF !vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
+    PSHS D
+    LDA BANKSHADOW
+    STA $A7E5
+    PULS D
+
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
@@ -85,6 +90,12 @@ BLITIMAGE3XDB
     BNE BLITIMAGE4XDB
     JMP BLITIMAGE4DB
 BLITIMAGE4XDB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     RTS
 
 @ENDIF
@@ -93,6 +104,12 @@ BLITIMAGE4XDB
 
 BLITIMAGE1DB
 BLITIMAGE4DB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     RTS
 
 @ENDIF
@@ -446,6 +463,11 @@ BLITIMAGECOMMONE5DB
 
 BLITIMAGECOMMONEDB
 
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+    
 	RTS
 
 @ENDIF

@@ -102,6 +102,11 @@ PLOT
 
 PLOTDB
 
+    PSHS D
+    LDA BANKSHADOW
+    STA $A7E5
+    PULS D
+
     LDX BITMAPADDRESS
 
     ANDCC #$FE
@@ -169,6 +174,12 @@ PLOT3XDB
     BNE PLOT4XDB
     JMP PLOT4DB
 PLOT4XDB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     RTS
 
 @ENDIF
@@ -296,6 +307,12 @@ PLOTGXDB
     BEQ PLOTCXDB                  ;if = 3 then branch to get the color index (0...15)
     JMP PLOTCDB
 PLOTCXDB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     JMP PLOTP
 
 PLOTDDB
@@ -329,6 +346,12 @@ PLOTD2XDB
     BNE PLOTD3XDB
     JMP PLOTD3DB
 PLOTD3XDB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     JMP PLOTP
 
 @ENDIF
@@ -374,6 +397,11 @@ PLOTD4DB
     ANDA #$0F
     ORA <MATHPTR5
     STA , X           ;write back to $A000
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
 
     JMP PLOTP                  ;skip the erase-point section
 
@@ -442,6 +470,12 @@ PLOTD24DB
     JMP PLOTD25DB
 
 PLOTD25DB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     JMP PLOTP                  ;skip the erase-point section
 
 @ENDIF
@@ -495,6 +529,12 @@ PLOTD3LODB
     JMP PLOTD3FDB
 
 PLOTD3FDB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     JMP PLOTP                  ;skip the erase-point section
 
 @ENDIF
@@ -514,6 +554,11 @@ PLOTEDB                          ;handled same way as setting a point
     LDA , X           ;get row with point in it
     ANDA , U
     STA , X           ;write back to $A000
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
 
     JMP PLOTP                  ;skip the erase-point section
 
@@ -547,6 +592,12 @@ PLOTCDB
     LSRA
     LSRA
     STA PLOTM
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     JMP PLOTP
 
 	RTS

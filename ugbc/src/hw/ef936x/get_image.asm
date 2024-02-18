@@ -57,6 +57,12 @@ GETIMAGE
 @IF ! vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
 GETIMAGEDB
+
+    PSHS D
+    LDA BANKSHADOW
+    STA $A7E5
+    PULS D
+
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
@@ -81,6 +87,12 @@ GETIMAGE3XDB
     BNE GETIMAGE4XDB
     JMP GETIMAGE4DB
 GETIMAGE4XDB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     RTS
 @ENDIF
 
@@ -88,6 +100,12 @@ GETIMAGE4XDB
 
 GETIMAGE1DB
 GETIMAGE4DB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     RTS
 
 @ENDIF
@@ -298,6 +316,12 @@ GETIMAGECOMMONE5DB
     ; BNE GETIMAGECOMMONE50L1
 
 GETIMAGECOMMONEDB
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     RTS
 
 @ENDIF

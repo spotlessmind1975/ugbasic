@@ -49,12 +49,12 @@ BANKREAD
     PSHS D
 
     ; Save actual bank number.
-    LDA BANKSHADOW
-    STA BANKSHADOWPREV
+    ; LDA BANKSHADOW
+    ; STA BANKSHADOWPREV
 
     ; Change bank number to the required one.
     TFR U, D
-    STB BANKSHADOW
+    ; STB BANKSHADOW
     STB $A7E5
 
     ; Restore size register.
@@ -64,8 +64,9 @@ BANKREAD
     JSR DUFFDEVICE
 
     ; Restore the bank number to the previous.
-    LDA BANKSHADOWPREV
-    STA BANKSHADOW
+    ; LDA BANKSHADOWPREV
+    ; STA BANKSHADOW
+    LDA #7
     STA $A7E5
 
     RTS
@@ -78,20 +79,21 @@ BANKREAD
 BANKUNCOMPRESS
 
     ; Save actual bank number.
-    LDA BANKSHADOW
-    STA BANKSHADOWPREV
+    ;LDA BANKSHADOW
+    ;STA BANKSHADOWPREV
 
     ; Change bank number to the required one.
     TFR U, D
-    STB BANKSHADOW
+    ; STB BANKSHADOW
     STB $A7E5
 
     ; Uncompress memory at high speed.
     JSR MSC1UNCOMPRESS
 
     ; Restore the bank number to the previous.
-    LDA BANKSHADOWPREV
-    STA BANKSHADOW
+    ;LDA BANKSHADOWPREV
+    ;STA BANKSHADOW
+    LDA #7
     STA $A7E5
     
     RTS

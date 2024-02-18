@@ -118,6 +118,11 @@ CLSG
 
 @IF ( !vestigialConfig.doubleBufferSelected ) || ( vestigialConfig.doubleBuffer )
 
+    PSHS D
+    LDA BANKSHADOW
+    STA $A7E5
+    PULS D
+
 ; ----------------------------------------------
 ; Version active on double buffering ON
 ; ----------------------------------------------
@@ -132,6 +137,12 @@ CLSGDB2
     STA ,Y+
     CMPY #$9FFF 
     BNE CLSGDB2
+
+    PSHS D
+    LDA #7
+    STA $A7E5
+    PULS D
+
     PULS DP,PC
 
 @ENDIF
