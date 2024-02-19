@@ -59,7 +59,7 @@ PLOTNOCLIPPED:
     JP C, PLOTCLIPPED
     CMP D
     JR Z, PLOTNOCLIPPED2
-    JR NC, PLOTCLIPPED
+    JP NC, PLOTCLIPPED
 PLOTNOCLIPPED2: 
 
 @ENDIF
@@ -106,6 +106,13 @@ PLOTLOOP2:
     OR L
     LD L, A
 
+    LD A, (_PEN)
+    LD B, A
+    LD A, (_PAPER)
+    CP B
+    JR Z, PLOTRESET
+
+PLOTSET:
     LD A, (HL)
     OR E
     LD (HL),A
@@ -136,24 +143,65 @@ PLOTLOOP2:
     LD DE, (COLORMAPADDRESS)
     ADD HL, DE
 
-    LD A, (_PAPER)
-    AND $0F
-    SLA A
-    SLA A
-    SLA A
-    LD B, A
     LD A, (_PEN)
     AND $07
-    OR A, B
     LD B, A
-    LD A, (_PEN)
-    AND $08
-    SLA A
-    SLA A
-    SLA A
-    OR A, B    
+    LD A, (HL)
+    AND $F8
+    OR A, B
+    ; LD B, A
+    ; LD A, (_PEN)
+    ; AND $08
+    ; SLA A
+    ; SLA A
+    ; SLA A
+    ; OR A, B
     LD (HL), A
     RET
+
+PLOTRESET:
+    LD A, E
+    XOR $FF
+    LD B, A
+    LD A, (HL)
+    AND B
+    LD (HL),A
+
+    POP BC
+
+    LD A, B
+    LD L, A
+    LD A, 0
+    LD H, A
+    SRA H
+    RR L
+    SRA H
+    RR L
+    SRA H
+    RR L
+    LD DE,HL
+
+    LD A, C
+    LD L, A
+    LD A, 0
+    LD H, A
+    SLA L
+    RL H
+    SLA L
+    RL H
+    ADD HL, DE
+    LD DE, (COLORMAPADDRESS)
+    ADD HL, DE
+
+    LD A, (_PAPER)
+    AND $07
+    SLA A
+    SLA A
+    SLA A
+    OR A, B
+    LD (HL), A
+    RET
+
 
 PLOTCLIPPED:
     RET
@@ -231,7 +279,6 @@ PLOTGLOOP2:
 
     LD A, (HL)
     AND E
-    LD (HL),A
 
     POP BC
 
