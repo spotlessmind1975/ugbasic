@@ -121,6 +121,8 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 variable_add_inplace_vars( _environment, address->name, offset->name );
                 bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
 
+                cpu_store_16bit(_environment, bankWindowId, 0 );
+                
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
@@ -180,6 +182,8 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 variable_store( _environment, address->name, image->absoluteAddress );
                 variable_add_inplace_vars( _environment, address->name, offset->name );
                 bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+
+                cpu_store_16bit(_environment, bankWindowId, 0 );
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
