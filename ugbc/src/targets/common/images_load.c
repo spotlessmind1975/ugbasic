@@ -209,7 +209,8 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     int bufferSize = 0;
     int realFramesCount;
     int i;
-    Variable * result[MAX_TEMPORARY_STORAGE];
+    Variable * firstImage = NULL;
+    Variable * lastImage = NULL;
 
     if ( layout_mode == 0 ) {
 
@@ -244,8 +245,15 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         for( z=0; z<a; ++z ) {
             for( y=0; y<height; y+=_frame_height ) {
                 for( x=0; x<width; x+=_frame_width ) {
-                    result[i] = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
-                    bufferSize += result[i]->size;
+                    Variable * partial = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
+                    if ( ! firstImage && !lastImage ) {
+                        firstImage = partial;
+                        lastImage = firstImage;
+                    } else {
+                        lastImage->next = partial;
+                        lastImage = lastImage->next;
+                    }
+                    bufferSize += partial->size;
                     i += di;
                 }
             }
@@ -285,8 +293,15 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         for( z=0; z<frames; ++z ) {
             // for( y=0; y<height; y+=_frame_height ) {
             //     for( x=0; x<width; x+=_frame_width ) {
-                    result[i] = image_converter( _environment, source, width, height, depth, 0, 0, _frame_width, _frame_height, _mode, _transparent_color, _flags );
-                    bufferSize += result[i]->size;
+                    Variable * partial = image_converter( _environment, source, width, height, depth, 0, 0, _frame_width, _frame_height, _mode, _transparent_color, _flags );
+                    if ( ! firstImage && !lastImage ) {
+                        firstImage = partial;
+                        lastImage = firstImage;
+                    } else {
+                        lastImage->next = partial;
+                        lastImage = lastImage->next;
+                    }
+                    bufferSize += partial->size;
                     ++i;
                     source += (width*height*depth)+2;
             //     }
@@ -319,17 +334,19 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     ptr[1] = ( _frame_width & 0xff );
     ptr[2] = ( _frame_width >> 8 ) & 0xff;
 
-    if ( ( result[0]->size * realFramesCount ) > 0xffff ) {
+    if ( ( firstImage->size * realFramesCount ) > 0xffff ) {
         CRITICAL_IMAGES_LOAD_IMAGE_TOO_BIG( _filename );
     }
 
-    final->offsettingFrames = offsetting_size_count( _environment, result[0]->size, realFramesCount );
+    final->offsettingFrames = offsetting_size_count( _environment, firstImage->size, realFramesCount );
     offsetting_add_variable_reference( _environment, final->offsettingFrames, final, 0 );
 
     ptr += 3;
+    lastImage = firstImage;
     for(i=0; i<realFramesCount; ++i ) {
-        memcpy( ptr, result[i]->valueBuffer, result[i]->size );
-        ptr += result[i]->size;
+        memcpy( ptr, lastImage->valueBuffer, lastImage->size );
+        ptr += lastImage->size;
+        lastImage = lastImage->next;
     }
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
     final->originalBitmap = originalSource;
@@ -339,11 +356,13 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     final->originalColors = palette_extract( _environment, final->originalBitmap, final->originalWidth, final->originalHeight, final->originalDepth, _flags, final->originalPalette );
     final->frameWidth = _frame_width;
     final->frameHeight = _frame_height;
-    final->frameSize = result[0]->size;
+    final->frameSize = firstImage->size;
     final->frameCount = realFramesCount;
 
+    lastImage = firstImage;
     for(i=0; i<realFramesCount; ++i ) {
-        variable_temporary_remove( _environment, result[i]->name );
+        variable_temporary_remove( _environment, lastImage->name );
+        lastImage = lastImage->next;
     }
 
     // stbi_image_free(source);

@@ -107,7 +107,8 @@ Variable * sequence_storage( Environment * _environment, char * _source_name, ch
     int wc = ( width / _frame_width );
     int hc = ( height / _frame_height );
 
-    Variable * result[MAX_TEMPORARY_STORAGE];
+    Variable * firstImage = NULL;
+    Variable * lastImage = NULL;
     int i,di,x=0,y=0,z=0;
     int bufferSize = 0;
 
@@ -129,8 +130,15 @@ Variable * sequence_storage( Environment * _environment, char * _source_name, ch
     int base = ( 3*width*height ) - 6;
     for( y=0; y<height; y+=_frame_height ) {
         for( x=0; x<width; x+=_frame_width ) {
-            result[i] = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
-            bufferSize += result[i]->size;
+            Variable * partial = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
+            if ( ! firstImage && ! lastImage ) {
+                firstImage = partial;
+                lastImage = firstImage;
+            } else {
+                lastImage->next = partial;
+                lastImage = lastImage->next;
+            }
+            bufferSize += partial->size;
             i += di;
         }
     }
@@ -143,25 +151,27 @@ Variable * sequence_storage( Environment * _environment, char * _source_name, ch
     ptr[1] = _frame_width;
     ptr[2] = hc;
 
-    if ( ( result[0]->size * wc ) > 0xffff ) {
+    if ( ( firstImage->size * wc ) > 0xffff ) {
         CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _source_name );
     }
 
-    final->offsettingFrames = offsetting_size_count( _environment, result[0]->size, wc );
+    final->offsettingFrames = offsetting_size_count( _environment, firstImage->size, wc );
     offsetting_add_variable_reference( _environment, final->offsettingFrames, final, 0 );
 
-    if ( ( wc*result[0]->size ) > 0xffff ) {
+    if ( ( wc*firstImage->size ) > 0xffff ) {
         CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _source_name );
     }
 
-    final->offsettingSequences = offsetting_size_count( _environment, wc*result[0]->size, hc );
+    final->offsettingSequences = offsetting_size_count( _environment, wc*firstImage->size, hc );
     offsetting_add_variable_reference( _environment, final->offsettingSequences, final, 1 );
 
     ptr += 3;
+    lastImage = firstImage;
     for(int i=0;i<hc;++i) {
         for(i=0; i<realFramesCount; ++i ) {
-            memcpy( ptr, result[i]->valueBuffer, result[i]->size );
-            ptr += result[i]->size;
+            memcpy( ptr, lastImage->valueBuffer, lastImage->size );
+            ptr += lastImage->size;
+            lastImage = lastImage->next;
         }
     }
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
@@ -170,11 +180,13 @@ Variable * sequence_storage( Environment * _environment, char * _source_name, ch
     final->originalHeight = height;
     final->originalDepth = depth;
     final->originalColors = palette_extract( _environment, final->originalBitmap, final->originalWidth, final->originalHeight, final->originalDepth, _flags, final->originalPalette );
-    final->frameSize = result[0]->size;
+    final->frameSize = firstImage->size;
     final->frameCount = wc;
 
+    lastImage = firstImage;
     for(i=0; i<realFramesCount; ++i ) {
-        variable_temporary_remove( _environment, result[i]->name );
+        variable_temporary_remove( _environment, lastImage->name );
+        lastImage = lastImage->next;
     }
 
     // stbi_image_free(source);
