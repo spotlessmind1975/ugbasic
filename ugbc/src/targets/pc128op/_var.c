@@ -155,7 +155,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_MUSIC:
                 case VT_BUFFER:
                     if ( variable->bankAssigned ) {
-                        outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
+                        outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         outhead1("%s    fcb 0", variable->realName );
                     } else {
                         if ( ! variable->absoluteAddress ) {
@@ -243,7 +243,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                 case VT_IMAGES:
                 case VT_SEQUENCE:
                     if ( variable->bankAssigned ) {
-                        outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
+                        outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         outhead1("%s    fcb 0", variable->realName );
                     } else {
                         if ( ! variable->absoluteAddress ) {

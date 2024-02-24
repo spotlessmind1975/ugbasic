@@ -119,11 +119,15 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
     // memory. If uncompressed size is zero, it means that
     // the memory block is not compressed -- so we can use the
     // size as well.
-    int realSize = _variable->uncompressedSize;
-    if ( realSize == 0 ) realSize = _variable->size;
 
-    if ( _environment->maxExpansionBankSize[_resident] < realSize ) {
-        _environment->maxExpansionBankSize[_resident] = realSize;
+    if ( _variable->uncompressedSize ) {
+        if ( _environment->maxExpansionBankSize[_resident] < _variable->uncompressedSize ) {
+            _environment->maxExpansionBankSize[_resident] = _variable->uncompressedSize;
+        }
+    } else if ( _variable->frameSize ) {
+        if ( _environment->maxExpansionBankSize[_resident] < _variable->frameSize ) {
+            _environment->maxExpansionBankSize[_resident] = _variable->frameSize;
+        }
     }
 
     return 1;
