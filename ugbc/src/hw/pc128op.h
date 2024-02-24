@@ -151,7 +151,7 @@
 #define DEFAULT_PAINT_BUCKET_SIZE   512
 
 #define BANK_COUNT                  6
-#define BANK_SIZE                   12288
+#define BANK_SIZE                   16128
 
 #define MAX_AUDIO_CHANNELS  1
 

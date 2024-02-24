@@ -63,7 +63,9 @@ void target_initialization( Environment * _environment ) {
 
     cpu6809_init( _environment );
 
-    banks_init( _environment );
+    int allowed[] = { 6, 5, 4 };
+
+    banks_init_extended( _environment, allowed, sizeof( allowed ) / sizeof( int ) );
 
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 

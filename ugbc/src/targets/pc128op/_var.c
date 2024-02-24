@@ -154,7 +154,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_MUSIC:
                 case VT_BUFFER:
-                    if ( variable->bankAssigned ) {
+                    if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         outhead1("%s    fcb 0", variable->realName );
                     } else {
@@ -242,7 +242,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
-                    if ( variable->bankAssigned ) {
+                    if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         outhead1("%s    fcb 0", variable->realName );
                     } else {
@@ -593,6 +593,8 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
+    outline0("fcb $ff");
+    
     outhead0("CODESTART2");
     outline0("LDS #STACKEND");
 
