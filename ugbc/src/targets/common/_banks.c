@@ -40,12 +40,12 @@
 
 void banks_init( Environment * _environment ) {
     
-    for(int i=0; i<BANK_COUNT; ++i) {
+    for(int i=-1; i<BANK_COUNT; ++i) {
         Bank * bank = malloc( sizeof( Bank ) );
         bank->address = 0x0;
         bank->filename = NULL;
         bank->id = i+1;
-        char bankName[MAX_TEMPORARY_STORAGE]; sprintf( bankName, "BANK%2.2x", i );
+        char bankName[MAX_TEMPORARY_STORAGE]; sprintf( bankName, "BANK%2.2x", i+1 );
         bank->name = strdup( bankName );
         bank->type = BT_EXPANSION;
         bank->remains = BANK_SIZE;
