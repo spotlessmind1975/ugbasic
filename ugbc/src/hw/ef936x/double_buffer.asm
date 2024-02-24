@@ -42,25 +42,25 @@ ONSWITCHTILEMAP
     JMP ONSWITCHTILEMAPVOID
 
 DOUBLEBUFFERINIT
-    ; by Dino Florenzi
-    TFR S,X
-    PSHS X
-    LDD #STACKEND
-    SUBD ,S
-    TFR D, U
-    LDX #STACKEND
-    LDS #$2000
-    LEAX -1, X
-    LEAS -1, S
-DOUBLEBUFFERINITSTACK
-    LDA , X
-    STA , S
-    LEAX -1, X
-    LEAS -1, S
-    LEAU -1, U
-    CMPU #0
-    BNE DOUBLEBUFFERINITSTACK
-    LEAS 1, S
+;     ; by Dino Florenzi
+;     TFR S,X
+;     PSHS X
+;     LDD #STACKEND
+;     SUBD ,S
+;     TFR D, U
+;     LDX #STACKEND
+;     LDS #$2000
+;     LEAX -1, X
+;     LEAS -1, S
+; DOUBLEBUFFERINITSTACK
+;     LDA , X
+;     STA , S
+;     LEAX -1, X
+;     LEAS -1, S
+;     LEAU -1, U
+;     CMPU #0
+;     BNE DOUBLEBUFFERINITSTACK
+;     LEAS 1, S
 
     LDA #1
     STA DOUBLEBUFFERENABLED
