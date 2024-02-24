@@ -84,7 +84,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                case VT_FLOAT:
-                    if ( variable->memoryArea && !variable->bankAssigned ) {
+                    if ( variable->memoryArea && !variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 4,0", variable->realName);
@@ -150,7 +150,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SEQUENCE:
                 case VT_MUSIC:
                 case VT_BUFFER:
-                    if ( variable->bankAssigned ) {
+                    if ( variable->bankAssigned != -1 ) {
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
                         outhead1("%s: .byte $0", variable->realName );
                     } else {

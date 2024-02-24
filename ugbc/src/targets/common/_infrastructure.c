@@ -431,6 +431,7 @@ static Variable * variable_define_internal( Environment * _environment, Variable
     Variable * var = malloc( sizeof( Variable ) );
     memset( var, 0, sizeof( Variable ) );
     var->name = strdup( _name );
+    var->bankAssigned = -1;
 
     if ( _procedure_name ) {
         var->realName = malloc( strlen( _name ) + strlen( _procedure_name ) + 3 ); 
@@ -614,6 +615,7 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
         var = malloc( sizeof( Variable ) );
         memset( var, 0, sizeof( Variable ) );
         var->name = strdup( _name );
+        var->bankAssigned = -1;
         var->realName = strdup( _name );
         var->type = _type;
         if ( var->type == VT_BUFFER ) {
@@ -668,6 +670,7 @@ Variable * variable_define_no_init( Environment * _environment, char * _name, Va
         var = malloc( sizeof( Variable ) );
         memset( var, 0, sizeof( Variable ) );
         var->name = strdup( _name );
+        var->bankAssigned = -1;
         var->realName = malloc( strlen( _name ) + strlen( var->name ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
         var->type = _type;
 
@@ -1081,6 +1084,7 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
     var->realName = malloc( strlen( var->name ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
     var->meaningName = _meaning;
     var->type = _type;
+    var->bankAssigned = -1;
     var->bank = _environment->banks[BT_TEMPORARY];
     var->precision = _environment->floatType.precision;
     Variable * varLast = _environment->tempResidentVariables;
@@ -2929,7 +2933,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
 
     Variable * target = variable_retrieve( _environment, _destination );
 
-    if ( target->bankAssigned ) {
+    if ( target->bankAssigned != -1 ) {
         CRITICAL_CANNOT_COPY_TO_BANKED(_destination);
     }
 
@@ -3355,7 +3359,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     char bankWindowName[MAX_TEMPORARY_STORAGE];
                                     int realSize = 0;
                                     int realAllocationSize = 0;
-                                    if ( source->bankAssigned ) {
+                                    if ( source->bankAssigned != -1 ) {
                                         
                                         MAKE_LABEL
 
@@ -3695,7 +3699,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     target->bankAssigned = source->bankAssigned;
                     target->residentAssigned = source->residentAssigned;
                     target->uncompressedSize = source->uncompressedSize;
-                    if ( target->bankAssigned ) {
+                    if ( target->bankAssigned != -1 ) {
                         target->absoluteAddress = source->absoluteAddress;
                         target->variableUniqueId = source->variableUniqueId;
                     }
@@ -10521,7 +10525,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     var->bankAssigned = expr->bankAssigned;
     var->residentAssigned = expr->residentAssigned;
     var->uncompressedSize = expr->uncompressedSize;
-    if ( var->bankAssigned ) {
+    if ( var->bankAssigned != -1 ) {
         var->absoluteAddress = expr->absoluteAddress;
         var->variableUniqueId = expr->variableUniqueId;
     }

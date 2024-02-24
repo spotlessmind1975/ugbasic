@@ -3694,6 +3694,7 @@ ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
 
 void banks_init( Environment * _environment );
+void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count );
 char * banks_get_address( Environment * _environment, int _bank );
 Variable * banks_get_address_var( Environment * _environment, char * _bank );
 int banks_store( Environment * _environment, Variable * _variable, int _resident );
