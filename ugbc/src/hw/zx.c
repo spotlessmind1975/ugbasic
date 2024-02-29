@@ -55,7 +55,7 @@ static int lastUsedSlotInCommonPalette = 0;
 
 #ifdef __zx__
 
-static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+int zx_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
 
@@ -904,7 +904,7 @@ Variable * zx_new_image( Environment * _environment, int _width, int _height, in
 
     deploy( vars, src_hw_zx_vars_asm );
 
-    int size = calculate_image_size( _environment, _width, _height, _mode );
+    int size = zx_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
@@ -931,7 +931,7 @@ Variable * zx_new_images( Environment * _environment, int _frames, int _width, i
     deploy( vars, src_hw_zx_vars_asm );
 
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = zx_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
@@ -966,7 +966,7 @@ Variable * zx_new_sequence( Environment * _environment, int _sequences, int _fra
 
     int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = zx_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
