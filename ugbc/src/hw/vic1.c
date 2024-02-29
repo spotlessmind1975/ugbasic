@@ -841,7 +841,7 @@ void vic1_cline( Environment * _environment, char * _characters ) {
 
 }
 
-static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+int vic1_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
    switch( _mode ) {
 
@@ -932,7 +932,7 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
 
     memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
+    int bufferSize = vic1_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
 
     // printf("bufferSize = %d\n", bufferSize );
 
@@ -1719,7 +1719,7 @@ void vic1_wait_vbl( Environment * _environment ) {
 
 Variable * vic1_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    int size = calculate_image_size( _environment, _width, _height, _mode );
+    int size = vic1_image_size( _environment, _width, _height, _mode );
 
     // if ( ! size ) {
     //     CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
@@ -1736,7 +1736,7 @@ Variable * vic1_new_image( Environment * _environment, int _width, int _height, 
 Variable * vic1_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = vic1_image_size( _environment, _width, _height, _mode );
 
     // if ( ! size ) {
     //     CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
@@ -1756,7 +1756,7 @@ Variable * vic1_new_sequence( Environment * _environment, int _sequences, int _f
 
     int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = vic1_image_size( _environment, _width, _height, _mode );
 
     // if ( ! size ) {
     //     CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
