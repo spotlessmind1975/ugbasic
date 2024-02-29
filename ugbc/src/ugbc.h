@@ -3420,34 +3420,6 @@ int embed_scan_string (const char *);
 
 #define IMF_NOTE( o, n )                                ( ( o ) * IMF_NOTE_COUNT + ( n ) )
 
-#ifdef CPU_BIG_ENDIAN
-    #define IMAGE_GET_WIDTH( buffer, offset, width ) \
-        if ( IMAGE_WIDTH_SIZE == 1 ) { \
-            width = buffer[offset+IMAGE_WIDTH_OFFSET]; \
-        } else { \
-            width = 256*buffer[offset+IMAGE_WIDTH_OFFSET] + buffer[offset+IMAGE_WIDTH_OFFSET+1]; \
-        }
-    #define IMAGE_GET_HEIGHT( buffer, offset, height ) \
-        if ( IMAGE_HEIGHT_SIZE == 1 ) { \
-            height = buffer[offset+IMAGE_HEIGHT_OFFSET]; \
-        } else { \
-            height = 256*buffer[offset+IMAGE_HEIGHT_OFFSET] + buffer[offset+IMAGE_HEIGHT_OFFSET+1]; \
-        }
-#else
-    #define IMAGE_GET_WIDTH( buffer, offset, width ) \
-        if ( IMAGE_WIDTH_SIZE == 1 ) { \
-            width = buffer[offset+IMAGE_WIDTH_OFFSET]; \
-        } else { \
-            width = buffer[offset+IMAGE_WIDTH_OFFSET] + 256 * buffer[offset+IMAGE_WIDTH_OFFSET+1]; \
-        }
-    #define IMAGE_GET_HEIGHT( buffer, offset, height ) \
-        if ( IMAGE_HEIGHT_SIZE == 1 ) { \
-            height = buffer[offset+IMAGE_HEIGHT_OFFSET]; \
-        } else { \
-            height = buffer[offset+IMAGE_HEIGHT_OFFSET] + 256 * buffer[offset+IMAGE_HEIGHT_OFFSET+1]; \
-        }
-#endif
-
 char * strtoupper( char * _string );
 char * basename( char * _path );
 
@@ -4578,6 +4550,34 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/vg5000.h"
     #include "hw/ef9345.h"
+#endif
+
+#ifdef CPU_BIG_ENDIAN
+    #define IMAGE_GET_WIDTH( buffer, offset, width ) \
+        if ( IMAGE_WIDTH_SIZE == 1 ) { \
+            width = buffer[offset+IMAGE_WIDTH_OFFSET]; \
+        } else { \
+            width = 256*buffer[offset+IMAGE_WIDTH_OFFSET] + buffer[offset+IMAGE_WIDTH_OFFSET+1]; \
+        }
+    #define IMAGE_GET_HEIGHT( buffer, offset, height ) \
+        if ( IMAGE_HEIGHT_SIZE == 1 ) { \
+            height = buffer[offset+IMAGE_HEIGHT_OFFSET]; \
+        } else { \
+            height = 256*buffer[offset+IMAGE_HEIGHT_OFFSET] + buffer[offset+IMAGE_HEIGHT_OFFSET+1]; \
+        }
+#else
+    #define IMAGE_GET_WIDTH( buffer, offset, width ) \
+        if ( IMAGE_WIDTH_SIZE == 1 ) { \
+            width = buffer[offset+IMAGE_WIDTH_OFFSET]; \
+        } else { \
+            width = buffer[offset+IMAGE_WIDTH_OFFSET] + 256 * buffer[offset+IMAGE_WIDTH_OFFSET+1]; \
+        }
+    #define IMAGE_GET_HEIGHT( buffer, offset, height ) \
+        if ( IMAGE_HEIGHT_SIZE == 1 ) { \
+            height = buffer[offset+IMAGE_HEIGHT_OFFSET]; \
+        } else { \
+            height = buffer[offset+IMAGE_HEIGHT_OFFSET] + 256 * buffer[offset+IMAGE_HEIGHT_OFFSET+1]; \
+        }
 #endif
 
 #endif
