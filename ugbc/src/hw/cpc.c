@@ -1091,7 +1091,7 @@ void cpc_cline( Environment * _environment, char * _characters ) {
 
 }
 
-static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+int cpc_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
 
@@ -1220,7 +1220,7 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
+    int bufferSize = cpc_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
 
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
 
@@ -1383,7 +1383,7 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC1 );
+    int bufferSize = cpc_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC1 );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC1 );
 
@@ -1585,7 +1585,7 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC0 );
+    int bufferSize = cpc_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC0 );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC0 );
 
@@ -1988,7 +1988,7 @@ Variable * cpc_new_image( Environment * _environment, int _width, int _height, i
 
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
 
-    int size = calculate_image_size( _environment, _width, _height, _mode );
+    int size = cpc_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
@@ -2015,7 +2015,7 @@ Variable * cpc_new_images( Environment * _environment, int _frames, int _width, 
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
 
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = cpc_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
@@ -2050,7 +2050,7 @@ Variable * cpc_new_sequence( Environment * _environment, int _sequences, int _fr
 
     int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = cpc_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
