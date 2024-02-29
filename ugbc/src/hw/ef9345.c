@@ -893,7 +893,7 @@ void ef9345_cline( Environment * _environment, char * _characters ) {
 
 }
 
-static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+int ef9345_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
 
@@ -1087,7 +1087,7 @@ void ef9345_wait_vbl( Environment * _environment ) {
 
 Variable * ef9345_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    int size = calculate_image_size( _environment, _width, _height, _mode );
+    int size = ef9345_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
@@ -1112,7 +1112,7 @@ Variable * ef9345_new_image( Environment * _environment, int _width, int _height
 Variable * ef9345_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = ef9345_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
@@ -1145,7 +1145,7 @@ Variable * ef9345_new_sequence( Environment * _environment, int _sequences, int 
 
     int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = ef9345_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
