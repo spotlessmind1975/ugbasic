@@ -7908,8 +7908,10 @@ statement2nc:
   | REPEAT {
       begin_repeat( _environment );  
   }
-  | UNTIL expr {
-      end_repeat( _environment, $2 );  
+  | UNTIL {
+      end_repeat( _environment );  
+  } expr {
+      end_repeat_condition( _environment, $3 );  
   }
   | EXIT {
       exit_loop( _environment, 0 );  

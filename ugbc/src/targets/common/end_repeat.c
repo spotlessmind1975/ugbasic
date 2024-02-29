@@ -46,7 +46,25 @@
  * 
  * @param _environment Current calling environment
  */
-void end_repeat( Environment * _environment, char * _expression ) {
+void end_repeat( Environment * _environment ) {
+
+    Loop * loop = _environment->loops;
+
+    if ( ! loop ) {
+        CRITICAL_UNTIL_WITHOUT_REPEAT();
+    }
+
+    if ( loop->type != LT_REPEAT ) {
+        CRITICAL_UNTIL_WITHOUT_REPEAT();
+    }
+
+    if ( _environment->procedureName && _environment->protothread && ! _environment->protothreadForbid ) {
+        yield( _environment );
+    }
+
+};
+
+void end_repeat_condition( Environment * _environment, char * _expression ) {
 
     Loop * loop = _environment->loops;
 
@@ -59,10 +77,6 @@ void end_repeat( Environment * _environment, char * _expression ) {
     }
 
     _environment->loops = _environment->loops->next;
-
-    if ( _environment->procedureName && _environment->protothread && ! _environment->protothreadForbid ) {
-        yield( _environment );
-    }
 
     Variable * expression = variable_retrieve_or_define( _environment, _expression, VT_BYTE, 0 );
 
