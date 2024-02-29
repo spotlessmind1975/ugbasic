@@ -724,19 +724,7 @@ const_factor:
             if ( !v->valueBuffer ) {
                 CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
             }
-            #ifdef CPU_BIG_ENDIAN
-                if ( IMAGE_WIDTH_SIZE == 1 ) {
-                    $$ = v->valueBuffer[overallOffset+IMAGE_WIDTH_OFFSET];
-                } else {
-                    $$ = 256*v->valueBuffer[overallOffset+IMAGE_WIDTH_OFFSET] + v->valueBuffer[overallOffset+IMAGE_WIDTH_OFFSET+1];
-                }
-            #else
-                if ( IMAGE_WIDTH_SIZE == 1 ) {
-                    $$ = v->valueBuffer[overallOffset+IMAGE_WIDTH_OFFSET];
-                } else {
-                    $$ = v->valueBuffer[overallOffset+IMAGE_WIDTH_OFFSET] + 256 * v->valueBuffer[overallOffset+IMAGE_WIDTH_OFFSET+1];
-                }
-            #endif
+            IMAGE_GET_WIDTH( v->valueBuffer, overallOffset, $$ );
           } else {
             $$ = 0;
           }
@@ -856,20 +844,8 @@ const_factor:
             }
             if ( !v->valueBuffer ) {
                 CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-            }          
-            #ifdef CPU_BIG_ENDIAN
-                if ( IMAGE_HEIGHT_SIZE == 1 ) {
-                    $$ = v->valueBuffer[overallOffset+IMAGE_HEIGHT_OFFSET];
-                } else {
-                    $$ = 256*v->valueBuffer[overallOffset+IMAGE_HEIGHT_OFFSET] + v->valueBuffer[overallOffset+IMAGE_HEIGHT_OFFSET+1];
-                }
-            #else
-                if ( IMAGE_HEIGHT_SIZE == 1 ) {
-                    $$ = v->valueBuffer[overallOffset+IMAGE_HEIGHT_OFFSET];
-                } else {
-                    $$ = v->valueBuffer[overallOffset+IMAGE_HEIGHT_OFFSET] + 256 * v->valueBuffer[overallOffset+IMAGE_HEIGHT_OFFSET+1];
-                }
-            #endif
+            }        
+            IMAGE_GET_HEIGHT( v->valueBuffer, overallOffset, $$ );
           } else {
             $$ = 0;
           }
@@ -2503,10 +2479,14 @@ exponential:
         $$ = parse_buffer_definition( _environment, $1, VT_BUFFER )->name;
       }
     | OP IMAGE CP BufferDefinition { 
-        $$ = parse_buffer_definition( _environment, $4, VT_IMAGE )->name;
+        int size;
+        char * buffer = parse_buffer( _environment, $4, &size );
+        $$ = image_load_from_buffer( _environment, buffer, size )->name;
       }      
     | OP IMAGES CP BufferDefinition { 
-        $$ = parse_buffer_definition( _environment, $4, VT_IMAGES )->name;
+        int size;
+        char * buffer = parse_buffer( _environment, $4, &size );
+        $$ = images_load_from_buffer( _environment, buffer, size )->name;
       }   
     | BETA {
 #ifdef __BETA__
