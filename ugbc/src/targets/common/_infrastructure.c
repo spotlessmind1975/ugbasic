@@ -776,18 +776,29 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     // data type if it is different from the source one.
 
     if ( var ) {
-        if ( 
-            ! var->initializedByConstant 
-            &&
-            ( VT_BITWIDTH( var->type ) != 1 ) 
-            && 
-            ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) ) 
-            && 
-            ( ( VT_BITWIDTH( _type ) > 0 ) || ( _type == VT_FLOAT ) ) 
-            && 
-            ( ( VT_BITWIDTH( var->type ) > 0 ) || ( var->type == VT_FLOAT ) ) 
-        ) {
-            var = variable_cast( _environment, var->name, _type );
+        if ( var->initializedByConstant ) {
+            if ( 
+                ( VT_BITWIDTH( var->type ) != 1 ) 
+                && 
+                ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) ) 
+            ) {
+                Variable * varNew = variable_temporary( _environment, _type, "(temp)");
+                variable_store( _environment, varNew->name, var->value );
+                varNew->initializedByConstant = 1;
+                var = varNew;
+            }
+        } else {
+            if ( 
+                ( VT_BITWIDTH( var->type ) != 1 ) 
+                && 
+                ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) ) 
+                && 
+                ( ( VT_BITWIDTH( _type ) > 0 ) || ( _type == VT_FLOAT ) ) 
+                && 
+                ( ( VT_BITWIDTH( var->type ) > 0 ) || ( var->type == VT_FLOAT ) ) 
+            ) {
+                var = variable_cast( _environment, var->name, _type );
+            }
         }
         return var;
     }
