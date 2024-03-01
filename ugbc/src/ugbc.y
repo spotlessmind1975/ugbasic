@@ -104,7 +104,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token <string> Identifier
 %token <string> String
 %token <integer> Integer
-%token <string> BufferDefinition
+%token <string> BufferDefinitionHex
 %token <string> RawString
 %token <floating> Float
 %token <string> Register
@@ -2475,17 +2475,27 @@ exponential:
     | OP STRING CP Identifier { 
         $$ = variable_cast( _environment, $4, VT_DSTRING )->name;        
       }
-    | BufferDefinition { 
-        $$ = parse_buffer_definition( _environment, $1, VT_BUFFER )->name;
+    | BufferDefinitionHex { 
+        $$ = parse_buffer_definition( _environment, $1, VT_BUFFER, 1 )->name;
       }
-    | OP IMAGE CP BufferDefinition { 
+    | OP IMAGE CP BufferDefinitionHex { 
         int size;
-        char * buffer = parse_buffer( _environment, $4, &size );
+        char * buffer = parse_buffer( _environment, $4, &size, 1 );
         $$ = image_load_from_buffer( _environment, buffer, size )->name;
       }      
-    | OP IMAGES CP BufferDefinition { 
+    | OP IMAGE CP RawString { 
         int size;
-        char * buffer = parse_buffer( _environment, $4, &size );
+        char * buffer = parse_buffer( _environment, $4, &size, 0 );
+        $$ = image_load_from_buffer( _environment, buffer, size )->name;
+      }      
+    | OP IMAGES CP BufferDefinitionHex { 
+        int size;
+        char * buffer = parse_buffer( _environment, $4, &size, 1 );
+        $$ = images_load_from_buffer( _environment, buffer, size )->name;
+      }   
+    | OP IMAGES CP RawString { 
+        int size;
+        char * buffer = parse_buffer( _environment, $4, &size, 0 );
         $$ = images_load_from_buffer( _environment, buffer, size )->name;
       }   
     | BETA {
@@ -5455,7 +5465,7 @@ array_assign:
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
     }
-    | OP_ASSIGN BufferDefinition {
+    | OP_ASSIGN BufferDefinitionHex {
         int size = ( strlen( $2 ) - 3 ) / 2;
         if ( ((struct _Environment *)_environment)->currentArray->arrayDimensions > 1 ) {
             if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
@@ -5794,7 +5804,7 @@ array_assign:
     };
 
 array_reassign:
-    BufferDefinition {
+    BufferDefinitionHex {
         int size = ( strlen( $1 ) - 3 ) / 2;
         if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
             CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
@@ -9246,7 +9256,7 @@ int main( int _argc, char *_argv[] ) {
         }
         (void)!fread( sourceText, 1, sourceSize, fh );
         fclose( fh );
-        char * escapedSourceText = unescape_string( _environment, sourceText, 1 );
+        char * escapedSourceText = unescape_string( _environment, sourceText, 1, NULL );
         int i=0;
         for( int c=strlen(escapedSourceText); i<c; ++i ) {
             if ( escapedSourceText[i] == 0x0d ) {

@@ -4098,8 +4098,8 @@ RGBi *                  palette_remove_duplicates( RGBi * _source, int _source_s
 RGBi *                  palette_shift( RGBi * _source, int _source_size, int _offset );
 void                    paper( Environment * _environment, char * _paper );
 Variable *              param_procedure( Environment * _environment, char * _name );
-char *                  parse_buffer( Environment * _environment, char * _buffer, int * _size );
-Variable *              parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type );
+char *                  parse_buffer( Environment * _environment, char * _buffer, int * _size, int _hex_only );
+Variable *              parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type, int _hex_only );
 Variable *              peek_var( Environment * _environment, char * _location );
 Variable *              peekw_var( Environment * _environment, char * _location );
 Variable *              peekd_var( Environment * _environment, char * _location );
@@ -4295,7 +4295,7 @@ Variable *              tileset_of_vars( Environment * _environment, char * _til
 //----------------------------------------------------------------------------
 
 void                    use_tileset( Environment * _environment, char * _tileset );
-char *                  unescape_string( Environment * _environment, char * _value, int _printing );
+char *                  unescape_string( Environment * _environment, char * _value, int _printing, int * _final_size );
 Variable *              uncompress( Environment * _environment, char * _value );
 
 //----------------------------------------------------------------------------
