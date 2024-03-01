@@ -93,8 +93,28 @@ void gtia_hit( Environment * _environment, char * _sprite_mask, char * _result )
  */
 void gtia_border_color( Environment * _environment, char * _border_color ) {
 
-    outline1("LDA %s", _border_color );
-    outline0("STA $02c8");
+    switch( _environment->currentMode ) {
+        case TILEMAP_MODE_ANTIC2:
+        case TILEMAP_MODE_ANTIC6:
+        case TILEMAP_MODE_ANTIC7:
+                outline1("LDA %s", _border_color );
+                outline0("STA $02c8");
+            break;
+
+        case BITMAP_MODE_ANTIC8:
+        case BITMAP_MODE_ANTIC10:
+        case BITMAP_MODE_ANTIC13:
+            break;
+
+        case BITMAP_MODE_ANTIC9:
+        case BITMAP_MODE_ANTIC11:
+        case BITMAP_MODE_ANTIC15:
+        case BITMAP_MODE_ANTIC12:
+        case BITMAP_MODE_ANTIC14:
+        case TILEMAP_MODE_ANTIC3:
+        case TILEMAP_MODE_ANTIC4:
+        case TILEMAP_MODE_ANTIC5:
+    }
 
 }
 
@@ -110,9 +130,110 @@ void gtia_border_color( Environment * _environment, char * _border_color ) {
  */
 void gtia_background_color( Environment * _environment, int _index, int _background_color ) {
  
-    outline1("LDA #$%2.2x", _background_color );
-    outline0("AND #$0f" );
-    outline1("STA $02C5+%d", (_index & 0x07) )
+    switch( _environment->currentMode ) {
+        case TILEMAP_MODE_ANTIC2:
+        case TILEMAP_MODE_ANTIC6:
+        case TILEMAP_MODE_ANTIC7:
+            break;
+
+        case BITMAP_MODE_ANTIC8:
+        case BITMAP_MODE_ANTIC10:
+        case BITMAP_MODE_ANTIC13:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            switch( _index ) {
+                case 0:
+                    outline0("STA $02C8" )
+                    break;
+                case 1:
+                    outline0("STA $02C4" )
+                    break;
+                case 2:
+                    outline0("STA $02C6" )
+                    break;
+                case 3:
+                    outline0("STA $02C5" )
+                    break;
+            }
+            break;
+
+        case BITMAP_MODE_ANTIC9:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            outline0("STA $02C8" )
+            break;
+
+        case BITMAP_MODE_ANTIC11:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            outline0("STA $02C4" )
+            break;
+
+        case BITMAP_MODE_ANTIC15:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            switch( _index ) {
+                case 0:
+                    outline0("STA $02C5" )
+                    break;
+                case 1:
+                    outline0("STA $02C6" )
+                    break;
+            }
+
+        case TILEMAP_MODE_ANTIC4:
+        case TILEMAP_MODE_ANTIC5:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            switch( _index ) {
+                case 0:
+                    outline0("STA $02C8" )
+                    break;
+                case 1:
+                    outline0("STA $02C4" )
+                    break;
+                case 2:
+                    outline0("STA $02C5" )
+                    break;
+                case 3:
+                    outline0("STA $02C6" )
+                    break;
+            }
+            break;
+
+        case BITMAP_MODE_ANTIC12:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            switch( _index ) {
+                case 0:
+                    outline0("STA $02C6" )
+                    break;
+            }
+            break;
+
+        case BITMAP_MODE_ANTIC14:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            switch( _index ) {
+                case 0:
+                    outline0("STA $02C8" )
+                    break;
+                case 1:
+                    outline0("STA $02C4" )
+                    break;
+                case 2:
+                    outline0("STA $02C5" )
+                    break;
+                case 3:
+                    outline0("STA $02C6" )
+                    break;
+            }
+            break;
+
+        case TILEMAP_MODE_ANTIC3:
+            break;
+    }
+
 
 }
 
@@ -128,12 +249,128 @@ void gtia_background_color( Environment * _environment, int _index, int _backgro
  */
 void gtia_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
  
-    outline1("LDA %s", _index);
-    outline0("AND #$07");
-    outline0("TAX");
-    outline1("LDA %s", _background_color );
-    outline0("AND #$0f" );
-    outline0("STA $02C5,X")
+    MAKE_LABEL
+
+    switch( _environment->currentMode ) {
+        case TILEMAP_MODE_ANTIC2:
+        case TILEMAP_MODE_ANTIC6:
+        case TILEMAP_MODE_ANTIC7:
+            break;
+
+        case BITMAP_MODE_ANTIC8:
+        case BITMAP_MODE_ANTIC10:
+        case BITMAP_MODE_ANTIC13:
+            outline1("LDA %s", _index);
+            outline0("AND #$03");
+            outline0("TAX");
+            outline1("LDA %s", _background_color );
+            outline0("AND #$0f" );
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("STA $02C8" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("CPX #1" );
+            outline1("BNE %snc1", label );
+            outline0("STA $02C4" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc1:", label);
+            outline0("CPX #2" );
+            outline1("BNE %snc2", label );
+            outline0("STA $02C6" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc2:", label);
+            outline0("STA $02C5")
+            outhead1("%scdone:", label);
+            break;
+
+        case BITMAP_MODE_ANTIC9:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            outline0("STA $02C8" )
+            break;
+
+        case BITMAP_MODE_ANTIC11:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            outline0("STA $02C4" )
+            break;
+
+        case BITMAP_MODE_ANTIC15:
+            outline1("LDA %s", _index);
+            outline0("AND #$01");
+            outline0("TAX");
+            outline1("LDA %s", _background_color );
+            outline0("AND #$0f" );
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("STA $02C5" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("STA $02C6")
+            outhead1("%scdone:", label);
+            break;
+
+        case TILEMAP_MODE_ANTIC4:
+        case TILEMAP_MODE_ANTIC5:
+            outline1("LDA %s", _index);
+            outline0("AND #$03");
+            outline0("TAX");
+            outline1("LDA %s", _background_color );
+            outline0("AND #$0f" );
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("STA $02C8" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("CPX #1" );
+            outline1("BNE %snc1", label );
+            outline0("STA $02C4" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc1:", label);
+            outline0("CPX #2" );
+            outline1("BNE %snc2", label );
+            outline0("STA $02C6" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc2:", label);
+            outline0("STA $02C6")
+            outhead1("%scdone:", label);
+            break;
+
+        case BITMAP_MODE_ANTIC12:
+            outline1("LDA %s", _index);
+            outline0("AND #$0f" );
+            outline0("STA $02C6" )
+            break;
+
+        case BITMAP_MODE_ANTIC14:
+            outline1("LDA %s", _index);
+            outline0("AND #$03");
+            outline0("TAX");
+            outline1("LDA %s", _background_color );
+            outline0("AND #$0f" );
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("STA $02C8" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("CPX #1" );
+            outline1("BNE %snc1", label );
+            outline0("STA $02C4" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc1:", label);
+            outline0("CPX #2" );
+            outline1("BNE %snc2", label );
+            outline0("STA $02C5" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc2:", label);
+            outline0("STA $02C6")
+            outhead1("%scdone:", label);
+            break;
+
+        case TILEMAP_MODE_ANTIC3:
+            break;
+    }
 
 }
 
@@ -149,12 +386,128 @@ void gtia_background_color_vars( Environment * _environment, char * _index, char
  */
 void gtia_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
  
-    outline1("LDA #$%2.2x", _index);
-    outline0("AND #$07");
-    outline0("TAX");
-    outline1("LDA %s", _background_color );
-    outline0("AND #$0f" );
-    outline0("STA $02C5,X")
+    MAKE_LABEL
+
+    switch( _environment->currentMode ) {
+        case TILEMAP_MODE_ANTIC2:
+        case TILEMAP_MODE_ANTIC6:
+        case TILEMAP_MODE_ANTIC7:
+            break;
+
+        case BITMAP_MODE_ANTIC8:
+        case BITMAP_MODE_ANTIC10:
+        case BITMAP_MODE_ANTIC13:
+            outline1("LDA #$%2.2x", _index);
+            outline0("AND #$03");
+            outline0("TAX");
+            outline1("LDA %s", _background_color );
+            outline0("AND #$0f" );
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("STA $02C8" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("CPX #1" );
+            outline1("BNE %snc1", label );
+            outline0("STA $02C4" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc1:", label);
+            outline0("CPX #2" );
+            outline1("BNE %snc2", label );
+            outline0("STA $02C6" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc2:", label);
+            outline0("STA $02C5")
+            outhead1("%scdone:", label);
+            break;
+
+        case BITMAP_MODE_ANTIC9:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            outline0("STA $02C8" )
+            break;
+
+        case BITMAP_MODE_ANTIC11:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            outline0("STA $02C4" )
+            break;
+
+        case BITMAP_MODE_ANTIC15:
+            outline1("LDA #$%2.2x", _index);
+            outline0("AND #$01");
+            outline0("TAX");
+            outline1("LDA %s", _background_color );
+            outline0("AND #$0f" );
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("STA $02C5" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("STA $02C6")
+            outhead1("%scdone:", label);
+            break;
+
+        case TILEMAP_MODE_ANTIC4:
+        case TILEMAP_MODE_ANTIC5:
+            outline1("LDA #$%2.2x", _index);
+            outline0("AND #$03");
+            outline0("TAX");
+            outline1("LDA %s", _background_color );
+            outline0("AND #$0f" );
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("STA $02C8" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("CPX #1" );
+            outline1("BNE %snc1", label );
+            outline0("STA $02C4" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc1:", label);
+            outline0("CPX #2" );
+            outline1("BNE %snc2", label );
+            outline0("STA $02C6" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc2:", label);
+            outline0("STA $02C6")
+            outhead1("%scdone:", label);
+            break;
+
+        case BITMAP_MODE_ANTIC12:
+            outline1("LDA #$%2.2x", _background_color );
+            outline0("AND #$0f" );
+            outline0("STA $02C6" )
+            break;
+
+        case BITMAP_MODE_ANTIC14:
+            outline1("LDA #$%2.2x", _index);
+            outline0("AND #$03");
+            outline0("TAX");
+            outline1("LDA %s", _background_color );
+            outline0("AND #$0f" );
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("STA $02C8" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("CPX #1" );
+            outline1("BNE %snc1", label );
+            outline0("STA $02C4" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc1:", label);
+            outline0("CPX #2" );
+            outline1("BNE %snc2", label );
+            outline0("STA $02C5" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc2:", label);
+            outline0("STA $02C6")
+            outhead1("%scdone:", label);
+            break;
+
+        case TILEMAP_MODE_ANTIC3:
+            break;
+    }
 
 }
 
@@ -170,10 +523,116 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
  */
 void gtia_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
  
-    outline1("LDA %s", _index);
-    outline0("AND #$07");
-    outline0("TAX");
-    outline0("LDA $02C5,X")
+    MAKE_LABEL
+
+    switch( _environment->currentMode ) {
+        case TILEMAP_MODE_ANTIC2:
+        case TILEMAP_MODE_ANTIC6:
+        case TILEMAP_MODE_ANTIC7:
+            outline0("LDA #0");
+            break;
+
+        case BITMAP_MODE_ANTIC8:
+        case BITMAP_MODE_ANTIC10:
+        case BITMAP_MODE_ANTIC13:
+            outline1("LDA %s", _index);
+            outline0("AND #$03");
+            outline0("TAX");
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("LDA $02C8" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("CPX #1" );
+            outline1("BNE %snc1", label );
+            outline0("LDA $02C4" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc1:", label);
+            outline0("CPX #2" );
+            outline1("BNE %snc2", label );
+            outline0("LDA $02C6" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc2:", label);
+            outline0("LDA $02C5")
+            outhead1("%scdone:", label);
+            break;
+
+        case BITMAP_MODE_ANTIC9:
+            outline0("LDA $02C8" )
+            break;
+
+        case BITMAP_MODE_ANTIC11:
+            outline0("LDA $02C4" )
+            break;
+
+        case BITMAP_MODE_ANTIC15:
+            outline1("LDA %s", _index);
+            outline0("AND #$01");
+            outline0("TAX");
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("LDA $02C5" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("LDA $02C6")
+            outhead1("%scdone:", label);
+            break;
+
+        case TILEMAP_MODE_ANTIC4:
+        case TILEMAP_MODE_ANTIC5:
+            outline1("LDA %s", _index);
+            outline0("AND #$03");
+            outline0("TAX");
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("LDA $02C8" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("CPX #1" );
+            outline1("BNE %snc1", label );
+            outline0("LDA $02C4" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc1:", label);
+            outline0("CPX #2" );
+            outline1("BNE %snc2", label );
+            outline0("LDA $02C5" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc2:", label);
+            outline0("LDA $02C6")
+            outhead1("%scdone:", label);
+            break;
+
+        case BITMAP_MODE_ANTIC12:
+            outline0("LDA $02C6" )
+            break;
+
+        case BITMAP_MODE_ANTIC14:
+            outline1("LDA %s", _index);
+            outline0("AND #$03");
+            outline0("TAX");
+            outline0("CPX #0" );
+            outline1("BNE %snc0", label );
+            outline0("LDA $02C8" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc0:", label);
+            outline0("CPX #1" );
+            outline1("BNE %snc1", label );
+            outline0("LDA $02C4" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc1:", label);
+            outline0("CPX #2" );
+            outline1("BNE %snc2", label );
+            outline0("LDA $02C5" )
+            outline1("JMP %scdone", label )
+            outhead1("%snc2:", label);
+            outline0("LDA $02C6")
+            outhead1("%scdone:", label);
+            break;
+
+        case TILEMAP_MODE_ANTIC3:
+            break;
+    }
+
     outline1("STA %s", _background_color );
 
 }
