@@ -158,8 +158,8 @@ INCLUDE             BEGIN(incl);
 <asm>[\n\r\x0a\x0d]{1,3} { for(int k=0; k<strlen(yytext); ++k ) { if(yytext[k]==10) ++yylineno; }; yycolno = 0; int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcpy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
 <asm>.{1,3} { yycolno += strlen(yytext); int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcpy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
 
-"#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext+2); yylval.string[strlen(yylval.string)-1] = 0; RETURN(BufferDefinition,1); }
-"#["[a-fA-F0-9]+ { yylval.string = strdup(yytext+2); RETURN(BufferDefinition,1); }
+"#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext+2); yylval.string[strlen(yylval.string)-1] = 0; RETURN(BufferDefinitionHex,1); }
+"#["[a-fA-F0-9]+ { yylval.string = strdup(yytext+2); RETURN(BufferDefinitionHex,1); }
 
 [\x0d] { }
 _[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
