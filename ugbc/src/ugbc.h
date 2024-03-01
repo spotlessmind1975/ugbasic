@@ -2752,9 +2752,10 @@ typedef struct _Environment {
 #define CRITICAL_MULTITASKING_FORBIDDEN() CRITICAL("E257 - multitasking is actually forbidden");
 #define CRITICAL_INVALID_PAINT_BUFFER(v) CRITICAL2i("E258 - invalid PAINT BUFFER size", v );
 #define CRITICAL_TILEMAP_SOURCE_MISSING(v) CRITICAL2("E259 - invalid tilemap, missing source", v );
-#define CRITICAL_UNSUPPORTED_BANK_NUMBER(v) CRITICAL2i("E260 - bank number not available", v );
-#define CRITICAL_OUT_OF_BANKS( )  CRITICAL("E261 - out of bank detected");
-#define CRITICAL_CANNOT_COPY_TO_BANKED(v) CRITICAL2("E262 - cannot copy something on BANKed variables", v );
+#define CRITICAL_IMAGES_LOAD_IMAGE_BUFFER_TOO_BIG() CRITICAL("E260 - image too big from buffer" );
+#define CRITICAL_UNSUPPORTED_BANK_NUMBER(v) CRITICAL2i("E261 - bank number not available", v );
+#define CRITICAL_OUT_OF_BANKS( )  CRITICAL("E262 - out of bank detected");
+#define CRITICAL_CANNOT_COPY_TO_BANKED(v) CRITICAL2("E263 - cannot copy something on BANKed variables", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3908,7 +3909,8 @@ void                    end_gameloop( Environment * _environment );
 void                    end_if_then( Environment * _environment  );
 void                    end_loop( Environment * _environment );
 void                    end_procedure( Environment * _environment, char * _value );
-void                    end_repeat( Environment * _environment, char * _expression );
+void                    end_repeat( Environment * _environment );
+void                    end_repeat_condition( Environment * _environment, char * _expression );
 void                    end_select_case( Environment * _environment );
 void                    end_storage( Environment * _environment );
 void                    end_while( Environment * _environment );
@@ -3978,6 +3980,8 @@ char *                  image_cut( Environment * _environment, char * _source, i
 char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height, int _depth );
 char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height, int _depth );
 Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
+Variable *              image_load_from_buffer( Environment * _environment, char * _buffer, int _buffer_size );
+int                     image_size( Environment * _environment, int _width, int _height );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
 void                    image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
@@ -3994,6 +3998,7 @@ char *                  image_roll_y_down( Environment * _environment, char * _s
 Variable *              image_storage( Environment * _environment, char * _source_name, char *_target_name, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              images_storage( Environment * _environment, char * _source_name, char *_target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
+Variable *              images_load_from_buffer( Environment * _environment, char * _buffer, int _buffer_size );
 Variable *              in_var( Environment * _environment, char * _port );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
@@ -4107,6 +4112,7 @@ RGBi *                  palette_remove_duplicates( RGBi * _source, int _source_s
 RGBi *                  palette_shift( RGBi * _source, int _source_size, int _offset );
 void                    paper( Environment * _environment, char * _paper );
 Variable *              param_procedure( Environment * _environment, char * _name );
+char *                  parse_buffer( Environment * _environment, char * _buffer, int * _size );
 Variable *              parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type );
 Variable *              peek_var( Environment * _environment, char * _location );
 Variable *              peekw_var( Environment * _environment, char * _location );
@@ -4559,6 +4565,34 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/vg5000.h"
     #include "hw/ef9345.h"
+#endif
+
+#ifdef CPU_BIG_ENDIAN
+    #define IMAGE_GET_WIDTH( buffer, offset, width ) \
+        if ( IMAGE_WIDTH_SIZE == 1 ) { \
+            width = buffer[offset+IMAGE_WIDTH_OFFSET]; \
+        } else { \
+            width = 256*buffer[offset+IMAGE_WIDTH_OFFSET] + buffer[offset+IMAGE_WIDTH_OFFSET+1]; \
+        }
+    #define IMAGE_GET_HEIGHT( buffer, offset, height ) \
+        if ( IMAGE_HEIGHT_SIZE == 1 ) { \
+            height = buffer[offset+IMAGE_HEIGHT_OFFSET]; \
+        } else { \
+            height = 256*buffer[offset+IMAGE_HEIGHT_OFFSET] + buffer[offset+IMAGE_HEIGHT_OFFSET+1]; \
+        }
+#else
+    #define IMAGE_GET_WIDTH( buffer, offset, width ) \
+        if ( IMAGE_WIDTH_SIZE == 1 ) { \
+            width = buffer[offset+IMAGE_WIDTH_OFFSET]; \
+        } else { \
+            width = buffer[offset+IMAGE_WIDTH_OFFSET] + 256 * buffer[offset+IMAGE_WIDTH_OFFSET+1]; \
+        }
+    #define IMAGE_GET_HEIGHT( buffer, offset, height ) \
+        if ( IMAGE_HEIGHT_SIZE == 1 ) { \
+            height = buffer[offset+IMAGE_HEIGHT_OFFSET]; \
+        } else { \
+            height = buffer[offset+IMAGE_HEIGHT_OFFSET] + 256 * buffer[offset+IMAGE_HEIGHT_OFFSET+1]; \
+        }
 #endif
 
 #endif

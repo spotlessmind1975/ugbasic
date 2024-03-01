@@ -82,6 +82,7 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
     pokey_set_frequency( _environment, _channels, _freq );
     if ( _delay ) {
         wait_milliseconds( _environment, _delay );
+        sound_off( _environment, _channels );
     }
 
 }
@@ -121,6 +122,7 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
     }
     if ( _delay ) {
         wait_milliseconds_var( _environment, _delay );
+        sound_off_var( _environment, _channels );
     }
 
 }

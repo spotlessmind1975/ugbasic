@@ -206,6 +206,7 @@ void tms9918_calculate_sequence_frame_offset( Environment * _environment, char *
 
 Variable * tms9918_get_raster_line( Environment * _environment );
 
+int tms9918_image_size( Environment * _environment, int _width, int _height, int _mode );
 Variable * tms9918_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 Variable * tms9918_sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color );
 void tms9918_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );

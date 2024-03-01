@@ -779,18 +779,29 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     // data type if it is different from the source one.
 
     if ( var ) {
-        if ( 
-            ! var->initializedByConstant 
-            &&
-            ( VT_BITWIDTH( var->type ) != 1 ) 
-            && 
-            ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) ) 
-            && 
-            ( ( VT_BITWIDTH( _type ) > 0 ) || ( _type == VT_FLOAT ) ) 
-            && 
-            ( ( VT_BITWIDTH( var->type ) > 0 ) || ( var->type == VT_FLOAT ) ) 
-        ) {
-            var = variable_cast( _environment, var->name, _type );
+        if ( var->initializedByConstant ) {
+            if ( 
+                ( VT_BITWIDTH( var->type ) != 1 ) 
+                && 
+                ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) ) 
+            ) {
+                Variable * varNew = variable_temporary( _environment, _type, "(temp)");
+                variable_store( _environment, varNew->name, var->value );
+                varNew->initializedByConstant = 1;
+                var = varNew;
+            }
+        } else {
+            if ( 
+                ( VT_BITWIDTH( var->type ) != 1 ) 
+                && 
+                ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) ) 
+                && 
+                ( ( VT_BITWIDTH( _type ) > 0 ) || ( _type == VT_FLOAT ) ) 
+                && 
+                ( ( VT_BITWIDTH( var->type ) > 0 ) || ( var->type == VT_FLOAT ) ) 
+            ) {
+                var = variable_cast( _environment, var->name, _type );
+            }
         }
         return var;
     }
@@ -9055,19 +9066,29 @@ int tile_allocate( TileDescriptors * _tiles, char * _data ) {
 
 }
 
-Variable * parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type ) {
+char * parse_buffer( Environment * _environment, char * _buffer, int * _size ) {
 
-    char * buffer = malloc( strlen( _buffer ) / 2 );
+    *_size = strlen( _buffer ) / 2;
+    char * buffer = malloc( *_size );
     char hexdigits[3];
     int i = 0, c = 0;
-    for( i = 1, c = strlen( _buffer ); i<(c-1); i += 2 ) {
+    for( i = 0, c = strlen( _buffer ); i<(c); i += 2 ) {
         hexdigits[0] = _buffer[i];
         hexdigits[1] = _buffer[i+1];
         hexdigits[2] = 0;
         buffer[i>>1] = strtol(hexdigits,0,16);
     }
+    
+    return buffer;
+
+}
+
+Variable * parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type ) {
+
+    int bufferSize;
+    char * buffer = parse_buffer( _environment, _buffer, &bufferSize ); 
     Variable * result = variable_temporary( _environment, _type, "(buffer)" );
-    variable_store_buffer( _environment, result->name, buffer, strlen( _buffer ) / 2, 0 );
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
     return result;
 

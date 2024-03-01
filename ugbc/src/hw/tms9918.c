@@ -1641,7 +1641,7 @@ void tms9918_cline( Environment * _environment, char * _characters ) {
 
 }
 
-static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+int tms9918_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
 
@@ -1730,7 +1730,7 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
+    int bufferSize = tms9918_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
 
@@ -2231,7 +2231,7 @@ Variable * tms9918_new_image( Environment * _environment, int _width, int _heigh
 
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
 
-    int size = calculate_image_size( _environment, _width, _height, _mode );
+    int size = tms9918_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
@@ -2258,7 +2258,7 @@ Variable * tms9918_new_images( Environment * _environment, int _frames, int _wid
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
 
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = tms9918_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
@@ -2293,7 +2293,7 @@ Variable * tms9918_new_sequence( Environment * _environment, int _sequences, int
 
     int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = tms9918_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );

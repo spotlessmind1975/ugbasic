@@ -1782,7 +1782,7 @@ void vic2_cline( Environment * _environment, char * _characters ) {
 
 }
 
-static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+int vic2_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
 
@@ -1963,7 +1963,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
+    int bufferSize = vic2_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
 
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_STANDARD );
 
@@ -2029,7 +2029,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
+    int bufferSize = vic2_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
 
@@ -3152,7 +3152,7 @@ Variable * vic2_new_image( Environment * _environment, int _width, int _height, 
 
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
 
-    int size = calculate_image_size( _environment, _width, _height, _mode );
+    int size = vic2_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
@@ -3179,7 +3179,7 @@ Variable * vic2_new_images( Environment * _environment, int _frames, int _width,
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
 
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = vic2_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
@@ -3214,7 +3214,7 @@ Variable * vic2_new_sequence( Environment * _environment, int _sequences, int _f
 
     int size2 = calculate_sequences_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = vic2_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );

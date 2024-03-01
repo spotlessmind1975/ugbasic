@@ -1641,7 +1641,7 @@ void gime_cline( Environment * _environment, char * _characters ) {
 
 }
 
-static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+int gime_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
 
@@ -1941,7 +1941,7 @@ static Variable * gime_image_converter_bitmap_mode_hires( Environment * _environ
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_128x192x2 );
+    int bufferSize = gime_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_128x192x2 );
 
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_128x192x2 );
 
@@ -2104,7 +2104,7 @@ static Variable * gime_image_converter_multicolor_mode_midres( Environment * _en
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_320x200x4 );
+    int bufferSize = gime_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_320x200x4 );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_320x200x4 );
 
@@ -2305,7 +2305,7 @@ static Variable * gime_image_converter_multicolor_mode_lores( Environment * _env
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_320x200x16 );
+    int bufferSize = gime_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_320x200x16 );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_320x200x16 );
 
@@ -2689,7 +2689,7 @@ void gime_put_image( Environment * _environment, Resource * _image, char * _x, c
 
 Variable * gime_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    int size = calculate_image_size( _environment, _width, _height, _mode );
+    int size = gime_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
@@ -2714,7 +2714,7 @@ Variable * gime_new_image( Environment * _environment, int _width, int _height, 
 Variable * gime_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = gime_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
@@ -2747,7 +2747,7 @@ Variable * gime_new_sequence( Environment * _environment, int _sequences, int _f
 
     int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = gime_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );

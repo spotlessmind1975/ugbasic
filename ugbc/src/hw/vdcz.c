@@ -79,7 +79,7 @@ RGBi * vdcz_image_nearest_system_color( RGBi * _color ) {
 
 }
 
-static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+int vdcz_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
         case BITMAP_MODE_STANDARD:
@@ -120,7 +120,7 @@ static Variable * vcdz_image_converter_bitmap_mode_standard( Environment * _envi
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
+    int bufferSize = vdcz_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
     // printf("bufferSize = %d\n", bufferSize );
 
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_STANDARD );
@@ -428,7 +428,7 @@ static Variable * vdcz_image_converter_bitmap_mode_multicolor( Environment * _en
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
+    int bufferSize = vdcz_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
 
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
 

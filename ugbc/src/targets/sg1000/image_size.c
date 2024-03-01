@@ -38,48 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>... UNTIL [expression]</b>
- * 
- * This function outputs the code to implement the end of
- * a while loop, by defining the last point of the loop.
- * 
- * @param _environment Current calling environment
- */
-void end_repeat( Environment * _environment ) {
+int image_size( Environment * _environment, int _width, int _height ) {
 
-    Loop * loop = _environment->loops;
+    return tms9918_image_size( _environment, _width, _height, _environment->currentMode );
 
-    if ( ! loop ) {
-        CRITICAL_UNTIL_WITHOUT_REPEAT();
-    }
-
-    if ( loop->type != LT_REPEAT ) {
-        CRITICAL_UNTIL_WITHOUT_REPEAT();
-    }
-
-    if ( _environment->procedureName && _environment->protothread && ! _environment->protothreadForbid ) {
-        yield( _environment );
-    }
-
-};
-
-void end_repeat_condition( Environment * _environment, char * _expression ) {
-
-    Loop * loop = _environment->loops;
-
-    if ( ! loop ) {
-        CRITICAL_UNTIL_WITHOUT_REPEAT();
-    }
-
-    if ( loop->type != LT_REPEAT ) {
-        CRITICAL_UNTIL_WITHOUT_REPEAT();
-    }
-
-    _environment->loops = _environment->loops->next;
-
-    Variable * expression = variable_retrieve_or_define( _environment, _expression, VT_BYTE, 0 );
-
-    cpu_bveq( _environment,  expression->realName, loop->label );
-
-};
+}

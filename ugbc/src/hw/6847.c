@@ -1079,7 +1079,7 @@ void c6847_cline( Environment * _environment, char * _characters ) {
 
 }
 
-static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+int c6847_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
@@ -1199,7 +1199,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
+    int bufferSize = c6847_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
     // printf("bufferSize = %d\n", bufferSize );
 
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
@@ -1334,7 +1334,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_COLOR1 );
+    int bufferSize = c6847_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_COLOR1 );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
 
@@ -1625,7 +1625,7 @@ void c6847_put_image( Environment * _environment, Resource * _source, char * _x,
 
 Variable * c6847_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    int size = calculate_image_size( _environment, _width, _height, _mode );
+    int size = c6847_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
@@ -1649,7 +1649,7 @@ Variable * c6847_new_image( Environment * _environment, int _width, int _height,
 Variable * c6847_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = c6847_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
@@ -1681,7 +1681,7 @@ Variable * c6847_new_sequence( Environment * _environment, int _sequences, int _
 
     int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = c6847_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );

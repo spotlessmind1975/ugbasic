@@ -152,13 +152,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     int i=0;
                                     for (i=0; i<(variable->size-1); ++i ) {
                                         if ( (i+1) % 16 == 0 ) {
-                                            outline1("%d", variable->valueBuffer[i]);
+                                            outline1("$%2.2x", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                             out0("    .byte ");
                                         } else {
-                                            out1("%d,", variable->valueBuffer[i]);
+                                            out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                         }
+
                                     }
-                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    outline1("%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                                 }
                             } else {
                                 outline2("%s: .res %d,0", variable->realName, variable->size);
@@ -175,9 +176,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     out1("%scopy: .byte ", variable->realName);
                                     int i=0;
                                     for (i=0; i<(variable->size-1); ++i ) {
-                                        out1("%d,", variable->valueBuffer[i]);
+                                        out1("%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                     }
-                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    outline1("%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                                 }
                             }
                         }
@@ -191,9 +192,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         out1("%s: .byte ", variable->realName);
                         int i=0;
                         for (i=0; i<(variable->size-1); ++i ) {
-                            out1("%d,", variable->valueBuffer[i]);
+                            out1("$%2.2x,", (unsigned char) ( variable->valueBuffer[i] & 0xff ) );
                         }
-                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                        outline1("$2.2x", (unsigned char) ( variable->valueBuffer[(variable->size-1)] & 0xff ) );
                     } else if ( variable->memoryArea && ! variable->value ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
@@ -291,9 +292,9 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                         out0("    .byte ");
                         int i=0;
                         for (i=0; i<(_variable->size-1); ++i ) {
-                            out1("%d,", _variable->valueBuffer[i]);
+                            out1("%2.2x,", (unsigned char)(_variable->valueBuffer[i] & 0xff ) );
                         }
-                        outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
+                        outline1("%2.2x", (unsigned char)(_variable->valueBuffer[(_variable->size-1)] & 0xff ) );
                     }
                 } else {
                     outline1(" .res %d,0", _variable->size);
@@ -308,9 +309,9 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 out0("    .byte ");
                 int i=0;
                 for (i=0; i<(_variable->size-1); ++i ) {
-                    out1("%d,", _variable->valueBuffer[i]);
+                    out1("$%2.2x,", (unsigned char) ( _variable->valueBuffer[i] & 0xff ) );
                 }
-                outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
+                outline1("$%2.2x", (unsigned char) ( _variable->valueBuffer[(_variable->size-1)] & 0xff ) );
             } else {
                 if ( _variable->value ) {
                     outline2("    .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value&0xff));

@@ -895,7 +895,7 @@ void ef936x_cline( Environment * _environment, char * _characters ) {
 
 }
 
-static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+int ef936x_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
         case BITMAP_MODE_40_COLUMN:
@@ -1015,7 +1015,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_DEFAULT );;
+    int bufferSize = ef936x_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_DEFAULT );;
     // printf("bufferSize = %d\n", bufferSize );
 
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_DEFAULT );
@@ -1185,7 +1185,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_40_COLUMN );
+    int bufferSize = ef936x_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_40_COLUMN );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_40_COLUMN );
 
@@ -1408,7 +1408,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_BITMAP_4 );
+    int bufferSize = ef936x_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_BITMAP_4 );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_BITMAP_4 );
 
@@ -1591,7 +1591,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_BITMAP_16 );
+    int bufferSize = ef936x_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_BITMAP_16 );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_BITMAP_4 );
 
@@ -1836,7 +1836,7 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
 
 Variable * ef936x_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    int size = calculate_image_size( _environment, _width, _height, _mode );
+    int size = ef936x_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
@@ -1861,7 +1861,7 @@ Variable * ef936x_new_image( Environment * _environment, int _width, int _height
 Variable * ef936x_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = ef936x_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
@@ -1894,7 +1894,7 @@ Variable * ef936x_new_sequence( Environment * _environment, int _sequences, int 
 
     int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = calculate_image_size( _environment, _width, _height, _mode );
+    int frameSize = ef936x_image_size( _environment, _width, _height, _mode );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );

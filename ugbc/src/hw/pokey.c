@@ -901,7 +901,11 @@ void pokey_stop_vars( Environment * _environment, char * _channels ) {
     deploy( pokeyvars, src_hw_pokey_vars_asm );
     deploy( pokeystartup, src_hw_pokey_startup_asm );
 
-    outline1("LDA %s", _channels );
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$f" );
+    }
     outline0("JSR POKEYSTOP");
 
 }
