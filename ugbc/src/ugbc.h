@@ -2406,6 +2406,10 @@ typedef struct _Environment {
 
     int deferredEmbeddedSize[MAX_TEMPORARY_STORAGE];
 
+    char * threadIdentifier[MAX_TEMPORARY_STORAGE];
+
+    int lastThreadIdentifierUsed;
+
     /*
      * Starting address of frame buffer
      */

@@ -7652,6 +7652,24 @@ optional_step :
         $$ = $2;
     };
 
+thread_identifiers :
+    expr {
+        ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strudp( $1 );
+        ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+    }
+    | expr OP_COMMA thread_identifiers;
+
+kill_definition : {
+        ((struct _Environment *)_environment)->lastThreadIdentifierUsed = 0;
+        memset( ((struct _Environment *)_environment)->threadIdentifier, 0, MAX_TEMPORARY_STORAGE * sizeof( char * ) );
+    } thread_identifiers on_targets {
+      if ( $3 ) {
+        for( int i=0; i<((struct _Environment *)_environment)->threadIdentifier; ++i ) {
+          kill_procedure( _environment, ((struct _Environment *)_environment)->threadIdentifier[i] );
+        }
+      }
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -8109,11 +8127,7 @@ statement2nc:
           respawn_procedure( _environment, $2 );
       }
   }
-  | KILL expr on_targets {
-      if ( $3 ) {
-          kill_procedure( _environment, $2 );
-      }
-  }
+  | KILL kill_definition
   | YIELD {
       yield( _environment );
   }
