@@ -2752,7 +2752,8 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_PAINT_BUFFER(v) CRITICAL2i("E258 - invalid PAINT BUFFER size", v );
 #define CRITICAL_TILEMAP_SOURCE_MISSING(v) CRITICAL2("E259 - invalid tilemap, missing source", v );
 #define CRITICAL_IMAGES_LOAD_IMAGE_BUFFER_TOO_BIG() CRITICAL("E260 - image too big from buffer" );
-#define CRITICAL_PROCEDURE_DUPLICATE_PARAMETER( p, v ) CRITICAL3("E261 - duplicate parameter on procedure", p, v );
+#define CRITICAL_PROCEDURE_DUPLICATE_PARAMETER(p,v) CRITICAL3("E261 - duplicate parameter on procedure", p, v );
+#define CRITICAL_CANNOT_KILL_NOT_ARRAY_THREADS(v) CRITICAL2("E262 - cannot KILL elements of something that is not an array of threads", p, v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

@@ -918,7 +918,9 @@ const_factor:
         $$ = tile_id( _environment, $4, $6 );
       }
       | const_color_enumeration
-      | const_key_scancode_definition
+      | KEY const_key_scancode_definition {
+        $$ = $2;
+      }
       ;
 
 expr : 
@@ -7654,17 +7656,40 @@ optional_step :
 
 thread_identifiers :
     expr {
-        ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strudp( $1 );
-        ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+        Variable * array = variable_retrieve( _environment, $1 );
+        if ( array->type != VT_ARRAY || array->arrayType != VT_THREAD ) {
+            ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
+            ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+        } else {
+            for( int i=0; i<array->size; ++i ) {
+                parser_array_init( _environment );
+                parser_array_index_numeric( _environment, i );
+                ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( variable_move_from_array( _environment, array->name )->name );
+                ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+            }
+        }
     }
-    | expr OP_COMMA thread_identifiers;
+    | expr OP_COMMA thread_identifiers {
+        Variable * array = variable_retrieve( _environment, $1 );
+        if ( array->type != VT_ARRAY || array->arrayType != VT_THREAD ) {
+            ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
+            ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+        } else {
+            for( int i=0; i<array->size; ++i ) {
+                parser_array_init( _environment );
+                parser_array_index_numeric( _environment, i );
+                ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( variable_move_from_array( _environment, array->name )->name );
+                ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+            }
+        }
+    };
 
 kill_definition : {
         ((struct _Environment *)_environment)->lastThreadIdentifierUsed = 0;
         memset( ((struct _Environment *)_environment)->threadIdentifier, 0, MAX_TEMPORARY_STORAGE * sizeof( char * ) );
     } thread_identifiers on_targets {
       if ( $3 ) {
-        for( int i=0; i<((struct _Environment *)_environment)->threadIdentifier; ++i ) {
+        for( int i=0; i<((struct _Environment *)_environment)->lastThreadIdentifierUsed; ++i ) {
           kill_procedure( _environment, ((struct _Environment *)_environment)->threadIdentifier[i] );
         }
       }
