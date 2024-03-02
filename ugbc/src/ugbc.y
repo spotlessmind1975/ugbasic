@@ -2490,6 +2490,16 @@ exponential:
         char * buffer = parse_buffer( _environment, $4, &size, 0 );
         $$ = image_load_from_buffer( _environment, buffer, size )->name;
       }      
+    | OP IMAGE CP Identifier { 
+        Constant * c = constant_find( ((Environment *)_environment)->constants, $4 );
+        if ( c == NULL ) {
+            CRITICAL_UNDEFINED_CONSTANT( $4 );
+        }
+        if ( c->type != CT_STRING ) {
+            CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $4 );
+        }
+        $$ = image_load_from_buffer( _environment, c->valueString->value, c->valueString->size )->name;
+      }      
     | OP IMAGES CP BufferDefinitionHex { 
         int size;
         char * buffer = parse_buffer( _environment, $4, &size, 1 );
@@ -2500,6 +2510,16 @@ exponential:
         char * buffer = parse_buffer( _environment, $4, &size, 0 );
         $$ = images_load_from_buffer( _environment, buffer, size )->name;
       }   
+    | OP IMAGES CP Identifier { 
+        Constant * c = constant_find( ((Environment *)_environment)->constants, $4 );
+        if ( c == NULL ) {
+            CRITICAL_UNDEFINED_CONSTANT( $4 );
+        }
+        if ( c->type != CT_STRING ) {
+            CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $4 );
+        }
+        $$ = images_load_from_buffer( _environment, c->valueString->value, c->valueString->size )->name;
+      }      
     | BETA {
 #ifdef __BETA__
          int beta = 1;

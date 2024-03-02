@@ -10574,7 +10574,7 @@ StaticString * string_reserve( Environment * _environment, char * _value ) {
     memset( current, 0, sizeof( StaticString ) );
 
     current->id = UNIQUE_ID;
-    current->value = strdup( unescape_string( _environment, _value, 0, NULL ) );
+    current->value = unescape_string( _environment, _value, 0, &current->size );
 
     current->next = _environment->strings;
     _environment->strings = current;

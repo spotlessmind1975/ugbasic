@@ -255,6 +255,8 @@ typedef struct _StaticString {
     /** String */
     char * value;
 
+    int size;
+
     /** Link to the next string (NULL if this is the last one) */
     struct _StaticString * next;
 
