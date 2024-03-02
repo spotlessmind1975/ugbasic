@@ -7754,6 +7754,78 @@ kill_definition : {
       }
     };
 
+spawn_definition :
+  Identifier on_targets {
+      if ( $2 ) {
+        ((struct _Environment *)_environment)->parameters = 0;
+        spawn_procedure( _environment, $1, 0 );
+      }
+  }
+  | Identifier OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP on_targets {
+      if ( $6 ) {
+          spawn_procedure( _environment, $1, 0 );
+      }
+  }
+  | Identifier OSP CSP on_targets {
+      ((struct _Environment *)_environment)->parameters = 0;
+      if ( $4 ) {
+          spawn_procedure( _environment, $1, 0 );
+      }
+  }
+  | Identifier OP_COMMA Identifier on_targets {
+        if ( $4 ) {
+            Variable * variable = variable_retrieve( _environment, $1 );
+            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+            } else {
+                for( int i=0; i<variable->size; ++i ) {
+                    parser_array_init( _environment );
+                    parser_array_index_numeric( _environment, i );
+                    ((struct _Environment *)_environment)->parameters = 0;
+                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                }
+            }
+        }
+  }
+  | Identifier OP_COMMA Identifier OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP on_targets {
+      if ( $8 ) {
+            Variable * variable = variable_retrieve( _environment, $1 );
+            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+            } else {
+                for( int i=0; i<variable->size; ++i ) {
+                    parser_array_init( _environment );
+                    parser_array_index_numeric( _environment, i );
+                    ((struct _Environment *)_environment)->parameters = 0;
+                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                }
+            }
+      }
+  }
+  | Identifier OP_COMMA Identifier OSP CSP on_targets {
+      ((struct _Environment *)_environment)->parameters = 0;
+      if ( $6 ) {
+            Variable * variable = variable_retrieve( _environment, $1 );
+            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+            } else {
+                for( int i=0; i<variable->size; ++i ) {
+                    parser_array_init( _environment );
+                    parser_array_index_numeric( _environment, i );
+                    ((struct _Environment *)_environment)->parameters = 0;
+                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                }
+            }
+      }
+  };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -8186,25 +8258,7 @@ statement2nc:
           call_procedure( _environment, $2 );
       }
   }
-  | SPAWN Identifier on_targets {
-      if ( $3 ) {
-        ((struct _Environment *)_environment)->parameters = 0;
-        spawn_procedure( _environment, $2, 0 );
-      }
-  }
-  | SPAWN Identifier OSP on_targets {
-      ((struct _Environment *)_environment)->parameters = 0;
-    } values CSP {
-      if ( $4 ) {
-          spawn_procedure( _environment, $2, 0 );
-      }
-  }
-  | SPAWN Identifier OSP CSP on_targets {
-      ((struct _Environment *)_environment)->parameters = 0;
-      if ( $5 ) {
-          spawn_procedure( _environment, $2, 0 );
-      }
-  }
+  | SPAWN spawn_definition
   | RESPAWN expr on_targets {
       ((struct _Environment *)_environment)->parameters = 0;
       if ( $3 ) {
