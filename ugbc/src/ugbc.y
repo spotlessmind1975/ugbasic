@@ -375,7 +375,40 @@ const_expr_floating :
       };
 
 const_expr_string_const:
-    String {
+    Z OP const_expr CP {
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = malloc( MAX_TEMPORARY_STORAGE );
+        memset( c3->name, 0, MAX_TEMPORARY_STORAGE );
+        sprintf( c3->name, "tempconst%d", UNIQUE_ID );
+        c3->realName = strdup( c3->name );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = malloc( $3 );
+        memset( c3->valueString->value, 0, $3 );
+        c3->valueString->size = $3;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        Constant * constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        $$ = c3->name;
+
+    }
+    | String {
         int size;
         char * buffer = parse_buffer( _environment, $1, &size, 0 );
 
@@ -527,6 +560,70 @@ const_expr_string_const:
         }
 
         Constant * c2 = constant_find( ((Environment *)_environment)->constants, $3 );
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = malloc( MAX_TEMPORARY_STORAGE );
+        memset( c3->name, 0, MAX_TEMPORARY_STORAGE );
+        sprintf( c3->name, "tempconst%d", UNIQUE_ID );
+        c3->realName = strdup( c3->name );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = malloc( c1->valueString->size + c2->valueString->size );
+        memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
+        memcpy( c3->valueString->value+c1->valueString->size, c2->valueString->value, c2->valueString->size );
+        c3->valueString->size = c1->valueString->size + c2->valueString->size;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        $$ = c3->name;
+
+    }    
+    | Z OP const_expr CP OP_PLUS const_expr_string_const {
+
+        Constant * c1 = malloc( sizeof( Constant ) );
+        memset( c1, 0, sizeof( Constant ) );
+        c1->name = malloc( MAX_TEMPORARY_STORAGE );
+        memset( c1->name, 0, MAX_TEMPORARY_STORAGE );
+        sprintf( c1->name, "tempconst%d", UNIQUE_ID );
+        c1->realName = strdup( c1->name );
+
+        c1->valueString = malloc( sizeof( StaticString ) );
+        memset( c1->valueString, 0, sizeof( StaticString ) );
+
+        c1->valueString->id = UNIQUE_ID;
+        c1->valueString->value = malloc( $3 );
+        memset( c1->valueString->value, 0, $3 );
+        c1->valueString->size = $3;
+        c1->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c1->valueString;
+
+        c1->type = CT_STRING;
+        Constant * constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c1;
+        } else {
+            ((Environment *)_environment)->constants = c1;
+        }
+
+        Constant * c2 = constant_find( ((Environment *)_environment)->constants, $6 );
 
         Constant * c3 = malloc( sizeof( Constant ) );
         memset( c3, 0, sizeof( Constant ) );
