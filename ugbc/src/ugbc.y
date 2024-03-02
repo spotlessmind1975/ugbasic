@@ -112,7 +112,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 %type <string> expr term modula factor exponential expr_math expr_math2
 %type <integer> const_expr const_term const_modula const_factor const_expr_math const_expr_math2
-%type <string> const_expr_string
+%type <string> const_expr_string const_expr_string_const
 %type <floating> const_expr_floating
 %type <integer> direct_integer
 %type <string> random_definition_simple random_definition
@@ -374,6 +374,98 @@ const_expr_floating :
         }
       };
 
+const_expr_string_const:
+    Identifier {
+
+        Constant * c1 = constant_find( ((Environment *)_environment)->constants, $1 );
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = strdup( c1->name );
+        c3->realName = strdup( c1->realName );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = malloc( c1->valueString->size );
+        memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
+        c3->valueString->size = c1->valueString->size;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        Constant * constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        $$ = $1;
+
+    }
+    | Identifier OP_PLUS const_expr_string_const {
+        
+        Constant * c1 = constant_find( ((Environment *)_environment)->constants, $1 );
+        Constant * c2 = constant_find( ((Environment *)_environment)->constants, $3 );
+
+        Constant * constLast = ((Environment *)_environment)->constants;
+        Constant * previous = NULL;
+        if ( constLast ) {
+            if ( !constLast->next ) {
+                ((Environment *)_environment)->constants = NULL;
+            } else {
+                while( constLast ) {
+                    if ( strcmp( constLast->name, c1->name ) == 0 ) {
+                        if ( previous ) {
+                            previous->next = constLast->next;
+                        } else {
+                            ((Environment *)_environment)->constants = constLast->next;
+                        }
+                        break;
+                    }
+                    previous = constLast;
+                    constLast = constLast->next;
+                }
+            }
+        } else {
+            ((Environment *)_environment)->constants = NULL;
+        }
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = strdup( c1->name );
+        c3->realName = strdup( c1->realName );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = malloc( c1->valueString->size + c2->valueString->size );
+        memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
+        memcpy( c3->valueString->value+c1->valueString->size, c2->valueString->value, c2->valueString->size );
+        c3->valueString->size = c1->valueString->size + c2->valueString->size;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        $$ = $1;
+
+    };
 
 const_expr_string :
     String {
@@ -8492,6 +8584,37 @@ statement2nc:
   | RESOLUTION resolution_definitions
   | DIM dim_definitions
   | FILL fill_definitions
+  | const_instruction STRING Identifier OP_ASSIGN const_expr_string_const {
+        Constant * c1 = constant_find( ((Environment *)_environment)->constants, $5 );
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = strdup( $3 );
+        c3->realName = strdup( $3 );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = malloc( c1->valueString->size );
+        memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
+        c3->valueString->size = c1->valueString->size;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        Constant * constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        // const_emit( _environment, c1->name );
+  }
   | const_instruction Identifier OP_ASSIGN const_expr_string {
         const_define_string( _environment, $2, $4 );
   }
