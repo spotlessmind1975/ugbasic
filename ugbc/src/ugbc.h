@@ -2410,6 +2410,13 @@ typedef struct _Environment {
 
     int lastThreadIdentifierUsed;
 
+    char * soundNote[MAX_TEMPORARY_STORAGE];
+    int soundNoteValue[MAX_TEMPORARY_STORAGE];
+    char * soundDuration[MAX_TEMPORARY_STORAGE];
+    int soundDurationValue[MAX_TEMPORARY_STORAGE];
+    int lastSoundNoteDuration;
+    int atLeastOneSoundNoteDurationSymbolic;
+
     /*
      * Starting address of frame buffer
      */

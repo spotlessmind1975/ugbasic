@@ -6358,18 +6358,97 @@ writing_definition :
     }
     ;
 
-sound_definition_simple : 
+sound_definition_argument :
     OP_HASH const_expr {
-        sound( _environment, $2, 0, 0xffff );
+        ((struct _Environment *)_environment)->soundNoteValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $2;
+        ++((struct _Environment *)_environment)->lastSoundNoteDuration;
     }
     | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-        sound( _environment, $2, $5, 0xffff );
+        ((struct _Environment *)_environment)->soundNoteValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $2;
+        ((struct _Environment *)_environment)->soundDurationValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $5;
+        ++((struct _Environment *)_environment)->lastSoundNoteDuration;
     }
-    | OP_HASH const_expr ON OP_HASH const_expr {
-        sound( _environment, $2, 0, $5 );
+    | expr {
+        ((struct _Environment *)_environment)->soundNote[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $1 );
+        ++((struct _Environment *)_environment)->lastSoundNoteDuration;
     }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
-        sound( _environment, $2, $5, $8 );
+    | expr OP_COMMA expr {
+        ((struct _Environment *)_environment)->soundNote[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $1 );
+        ((struct _Environment *)_environment)->soundDuration[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $3 );
+        ++((struct _Environment *)_environment)->lastSoundNoteDuration;
+    };
+
+sound_definition_arguments :
+    sound_definition_argument
+    | sound_definition_argument OP_SEMICOLON sound_definition_arguments;
+
+sound_definition : 
+    sound_definition_arguments ON OP_HASH const_expr {
+        Variable * channel;
+        if ( ((struct _Environment *)_environment)->atLeastOneSoundNoteDurationSymbolic ) {
+            channel = variable_temporary( _environment, VT_BYTE, "(channel)" );
+            variable_store( _environment, channel->name, $4 );
+        }
+        for( int i=0; i<((struct _Environment *)_environment)->lastSoundNoteDuration; ++i ) {
+            if ( ((struct _Environment *)_environment)->soundNote[i] ) {
+                if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], ((struct _Environment *)_environment)->soundDuration[i], channel->name );
+                } else {
+                    Variable * duration = variable_temporary( _environment, VT_BYTE, "(duration)" );
+                    variable_store( _environment, duration->name, ((struct _Environment *)_environment)->soundDurationValue[i] );
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], duration->name, channel->name );
+                }
+            } else if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                Variable * note = variable_temporary( _environment, VT_BYTE, "(note)" );
+                variable_store( _environment, note->name, ((struct _Environment *)_environment)->soundNoteValue[i] );
+                sound_vars( _environment, note->name, ((struct _Environment *)_environment)->soundDuration[i], channel->name );
+            } else {
+                sound( _environment, ((struct _Environment *)_environment)->soundNoteValue[i], ((struct _Environment *)_environment)->soundDurationValue[i], $4 );
+            }
+        }
+    }
+    | sound_definition_arguments ON expr {
+        for( int i=0; i<((struct _Environment *)_environment)->lastSoundNoteDuration; ++i ) {
+            if ( ((struct _Environment *)_environment)->soundNote[i] ) {
+                if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], ((struct _Environment *)_environment)->soundDuration[i], $3 );
+                } else {
+                    Variable * duration = variable_temporary( _environment, VT_BYTE, "(duration)" );
+                    variable_store( _environment, duration->name, ((struct _Environment *)_environment)->soundDurationValue[i] );
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], duration->name, $3 );
+                }
+            } else if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                Variable * note = variable_temporary( _environment, VT_BYTE, "(note)" );
+                variable_store( _environment, note->name, ((struct _Environment *)_environment)->soundNoteValue[i] );
+                sound_vars( _environment, note->name, ((struct _Environment *)_environment)->soundDuration[i], $3 );
+            } else {
+                Variable * duration = variable_temporary( _environment, VT_BYTE, "(duration)" );
+                variable_store( _environment, duration->name, ((struct _Environment *)_environment)->soundDurationValue[i] );
+                Variable * note = variable_temporary( _environment, VT_BYTE, "(note)" );
+                variable_store( _environment, note->name, ((struct _Environment *)_environment)->soundNoteValue[i] );
+                sound_vars( _environment, note->name, ((struct _Environment *)_environment)->soundDuration[i], $3 );
+                sound_vars( _environment, note->name, duration->name, $3 );
+            }
+        }
+    }
+    | sound_definition_arguments {
+        for( int i=0; i<((struct _Environment *)_environment)->lastSoundNoteDuration; ++i ) {
+            if ( ((struct _Environment *)_environment)->soundNote[i] ) {
+                if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], ((struct _Environment *)_environment)->soundDuration[i], NULL );
+                } else {
+                    Variable * duration = variable_temporary( _environment, VT_BYTE, "(duration)" );
+                    variable_store( _environment, duration->name, ((struct _Environment *)_environment)->soundDurationValue[i] );
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], duration->name, NULL );
+                }
+            } else if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                Variable * note = variable_temporary( _environment, VT_BYTE, "(note)" );
+                variable_store( _environment, note->name, ((struct _Environment *)_environment)->soundNoteValue[i] );
+                sound_vars( _environment, note->name, ((struct _Environment *)_environment)->soundDuration[i], NULL );
+            } else {
+                sound( _environment, ((struct _Environment *)_environment)->soundNoteValue[i], ((struct _Environment *)_environment)->soundDurationValue[i], 0xff );
+            }
+        }
     }
     | OFF  {
         sound_off( _environment, 0xffff );
@@ -6377,29 +6456,9 @@ sound_definition_simple :
     | OFF ON OP_HASH const_expr {
         sound_off( _environment, $4 );
     }
-    ;
-
-sound_definition_expression : 
-    expr {
-        sound_vars( _environment, $1, NULL, NULL );
-    }
-    | expr OP_COMMA expr {
-        sound_vars( _environment, $1, $3, NULL );
-    }
-    | expr OP_COMMA expr ON expr {
-        sound_vars( _environment, $1, $3, $5 );
-    }
-    | expr ON expr {
-        sound_vars( _environment, $1, NULL, $3 );
-    }
     | OFF ON expr {
         sound_off_var( _environment, $3 );
     }
-    ;
-
-sound_definition : 
-    sound_definition_simple
-    | sound_definition_expression
     ;
 
 instrument_definition_simple :
