@@ -8591,7 +8591,7 @@ void const_define_numeric( Environment * _environment, char * _name, int _value 
         } else {
             _environment->constants = c;
         }
-        const_emit( _environment, c->name );
+        // const_emit( _environment, c->name );
     }
 
 }
@@ -8631,7 +8631,7 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
             _environment->constants = c;
         }
 
-        const_emit( _environment, c->name );
+        // const_emit( _environment, c->name );
     
     }
 
