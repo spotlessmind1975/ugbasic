@@ -574,8 +574,20 @@ void variable_cleanup( Environment * _environment ) {
     outline0("STA $FF00");
     outline0("JMP CODESTART")
     deploy_inplace_preferred( vars, src_hw_c128_vars_asm);
+    deploy_inplace_preferred( startup, src_hw_c128_startup_asm);
     deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
     deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
+
+    // Moved here for banking reasons.
+    if ( ! _environment->deployed.timer ) {
+        cpu_label( _environment, "TIMERMANAGER" );
+        outline0( "RTS" );
+    }
+    
+    if ( ! _environment->deployed.joystick ) {
+        cpu_label( _environment, "JOYSTICKMANAGER" );
+        outline0( "RTS" );
+    }
 
     // outhead0(".segment \"CODE\"" );
 
