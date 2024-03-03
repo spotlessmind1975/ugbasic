@@ -344,11 +344,11 @@ static void vic2_image_converter_tile_multicolor( Environment * _environment, ch
     
     colorIndexesCount[_background] = 0;
 
-    int colorFirst = 0;
+    int colorFirst = -1;
     int colorFirstMax = 0;
-    int colorSecond = 0;
+    int colorSecond = -1;
     int colorSecondMax = 0;
-    int colorThird = 0;
+    int colorThird = -1;
     int colorThirdMax = 0;
 
     for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
@@ -358,7 +358,9 @@ static void vic2_image_converter_tile_multicolor( Environment * _environment, ch
         };
     }
 
-    colorIndexesCount[colorFirst] = 0;
+    if ( colorFirst > -1 ) {
+        colorIndexesCount[colorFirst] = 0;
+    }
 
     for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
         if ( colorIndexesCount[xx] > colorSecondMax ) {
@@ -367,7 +369,9 @@ static void vic2_image_converter_tile_multicolor( Environment * _environment, ch
         };
     }
 
-    colorIndexesCount[colorSecond] = 0;
+    if ( colorSecond > -1 ) {
+        colorIndexesCount[colorSecond] = 0;
+    }
 
     for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
         if ( colorIndexesCount[xx] > colorThirdMax ) {
@@ -376,7 +380,9 @@ static void vic2_image_converter_tile_multicolor( Environment * _environment, ch
         };
     }
 
-    colorIndexesCount[colorThird] = 0;
+    if ( colorThird > -1 ) {
+        colorIndexesCount[colorThird] = 0;
+    }
 
     source = _source;
 
@@ -436,6 +442,11 @@ static void vic2_image_converter_tile_multicolor( Environment * _environment, ch
         source += _depth * ( _source_width - 4 );
 
     }
+
+    colorFirst = ( colorFirst == -1 ) ? 0 : colorFirst;
+    colorSecond = ( colorSecond == -1 ) ? 0 : colorSecond;
+    colorThird = ( colorThird == -1 ) ? 0 : colorThird;
+    _background = ( _background == -1 ) ? 0 : _background;
 
     *( _dest + 8 ) = ( colorFirst << 4 ) | colorSecond ;
     *( _dest + 9 ) = ( _background << 4 ) | colorThird;
