@@ -114,6 +114,7 @@ void gtia_border_color( Environment * _environment, char * _border_color ) {
         case TILEMAP_MODE_ANTIC3:
         case TILEMAP_MODE_ANTIC4:
         case TILEMAP_MODE_ANTIC5:
+            break;
     }
 
 }
