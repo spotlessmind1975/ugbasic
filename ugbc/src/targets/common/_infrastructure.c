@@ -1852,7 +1852,7 @@ static void variable_move_32bit_8bit( Environment * _environment, Variable * _so
             cpu_label( _environment, label );
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
+                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
                     cpu_move_8bit( _environment, sourceRealName, _target->realName );
                 }
             #else
