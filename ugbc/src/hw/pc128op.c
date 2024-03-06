@@ -228,7 +228,7 @@ void pc128op_key_pressed( Environment * _environment, char *_scancode, char * _r
     outline1("LDA %s", _scancode );
     outline0("JSR KEYPRESSED");
     outline1("BEQ %snopressed", label );
-    outline0("LDA #1" );
+    outline0("LDA #$ff" );
     outline1("STA %s", _result );
     outline1("BRA %sfinish", label );
     outhead1("%snopressed", label );
