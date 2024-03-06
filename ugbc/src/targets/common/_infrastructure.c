@@ -1293,7 +1293,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                             ++q; \
                     }
 
-char * unescape_string( Environment * _environment, char * _value, int _printing ) {
+char * unescape_string( Environment * _environment, char * _value, int _printing, int * _final_size ) {
 
     char * newValue = malloc( strlen( _value ) + 1 );
     
@@ -1301,6 +1301,10 @@ char * unescape_string( Environment * _environment, char * _value, int _printing
 
     char * p = _value, * q = newValue;
     int c = 0;
+
+    if ( _final_size ) {
+        *_final_size = 0;
+    }
 
     while( *p ) {
         if ( *p == '{' ) {
@@ -1318,6 +1322,9 @@ char * unescape_string( Environment * _environment, char * _value, int _printing
                 }
                 ++q;
                 ++p;
+                if ( _final_size ) {
+                    ++*_final_size;
+                }
             } else {
                 char * p2 = strchr(p+1, '}' );
                 if ( p2 ) {
@@ -1333,6 +1340,9 @@ char * unescape_string( Environment * _environment, char * _value, int _printing
                             *q = 5;
                         }
                         ++q;
+                        if ( _final_size ) {
+                            ++*_final_size;
+                        }
                     } 
                     UNESCAPE_COLOR( "black", BLACK )
                     UNESCAPE_COLOR( "white", WHITE )
@@ -1376,12 +1386,18 @@ char * unescape_string( Environment * _environment, char * _value, int _printing
                     *q = *p;
                     ++p;
                     ++q;
+                    if ( _final_size ) {
+                        ++*_final_size;
+                    }
                 }
             }
         } else {
             *q = *p;
             ++q;
             ++p;
+            if ( _final_size ) {
+                ++*_final_size;
+            }
         }
     }
 
@@ -1840,7 +1856,7 @@ static void variable_move_32bit_8bit( Environment * _environment, Variable * _so
             cpu_label( _environment, label );
             #ifdef CPU_BIG_ENDIAN
                 {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
+                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
                     cpu_move_8bit( _environment, sourceRealName, _target->realName );
                 }
             #else
@@ -8618,7 +8634,7 @@ void const_define_numeric( Environment * _environment, char * _name, int _value 
         } else {
             _environment->constants = c;
         }
-        const_emit( _environment, c->name );
+        // const_emit( _environment, c->name );
     }
 
 }
@@ -8658,7 +8674,7 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
             _environment->constants = c;
         }
 
-        const_emit( _environment, c->name );
+        // const_emit( _environment, c->name );
     
     }
 
@@ -9066,27 +9082,35 @@ int tile_allocate( TileDescriptors * _tiles, char * _data ) {
 
 }
 
-char * parse_buffer( Environment * _environment, char * _buffer, int * _size ) {
+char * parse_buffer( Environment * _environment, char * _buffer, int * _size, int _hex_only ) {
 
-    *_size = strlen( _buffer ) / 2;
-    char * buffer = malloc( *_size );
-    char hexdigits[3];
-    int i = 0, c = 0;
-    for( i = 0, c = strlen( _buffer ); i<(c); i += 2 ) {
-        hexdigits[0] = _buffer[i];
-        hexdigits[1] = _buffer[i+1];
-        hexdigits[2] = 0;
-        buffer[i>>1] = strtol(hexdigits,0,16);
+    char * buffer = NULL;
+
+    if ( _hex_only ) {
+        *_size = strlen( _buffer ) / 2;
+        buffer = malloc( *_size );
+        char hexdigits[3];
+        int i = 0, c = 0;
+        for( i = 0, c = strlen( _buffer ); i<(c); i += 2 ) {
+            hexdigits[0] = _buffer[i];
+            hexdigits[1] = _buffer[i+1];
+            hexdigits[2] = 0;
+            buffer[i>>1] = strtol(hexdigits,0,16);
+        }
+    } else {
+        char * unescapedString = unescape_string( _environment, _buffer, 0, _size );
+        buffer = malloc( *_size );
+        memcpy( buffer, unescapedString, *_size );
     }
     
     return buffer;
 
 }
 
-Variable * parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type ) {
+Variable * parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type, int _hex_only ) {
 
     int bufferSize;
-    char * buffer = parse_buffer( _environment, _buffer, &bufferSize ); 
+    char * buffer = parse_buffer( _environment, _buffer, &bufferSize, _hex_only ); 
     Variable * result = variable_temporary( _environment, _type, "(buffer)" );
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
@@ -10593,7 +10617,7 @@ StaticString * string_reserve( Environment * _environment, char * _value ) {
     memset( current, 0, sizeof( StaticString ) );
 
     current->id = UNIQUE_ID;
-    current->value = strdup( unescape_string( _environment, _value, 0 ) );
+    current->value = unescape_string( _environment, _value, 0, &current->size );
 
     current->next = _environment->strings;
     _environment->strings = current;

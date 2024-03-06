@@ -258,6 +258,8 @@ typedef struct _StaticString {
     /** String */
     char * value;
 
+    int size;
+
     /** Link to the next string (NULL if this is the last one) */
     struct _StaticString * next;
 
@@ -2411,6 +2413,17 @@ typedef struct _Environment {
 
     int deferredEmbeddedSize[MAX_TEMPORARY_STORAGE];
 
+    char * threadIdentifier[MAX_TEMPORARY_STORAGE];
+
+    int lastThreadIdentifierUsed;
+
+    char * soundNote[MAX_TEMPORARY_STORAGE];
+    int soundNoteValue[MAX_TEMPORARY_STORAGE];
+    char * soundDuration[MAX_TEMPORARY_STORAGE];
+    int soundDurationValue[MAX_TEMPORARY_STORAGE];
+    int lastSoundNoteDuration;
+    int atLeastOneSoundNoteDurationSymbolic;
+
     /*
      * Starting address of frame buffer
      */
@@ -2753,9 +2766,11 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_PAINT_BUFFER(v) CRITICAL2i("E258 - invalid PAINT BUFFER size", v );
 #define CRITICAL_TILEMAP_SOURCE_MISSING(v) CRITICAL2("E259 - invalid tilemap, missing source", v );
 #define CRITICAL_IMAGES_LOAD_IMAGE_BUFFER_TOO_BIG() CRITICAL("E260 - image too big from buffer" );
-#define CRITICAL_UNSUPPORTED_BANK_NUMBER(v) CRITICAL2i("E261 - bank number not available", v );
-#define CRITICAL_OUT_OF_BANKS( )  CRITICAL("E262 - out of bank detected");
-#define CRITICAL_CANNOT_COPY_TO_BANKED(v) CRITICAL2("E263 - cannot copy something on BANKed variables", v );
+#define CRITICAL_PROCEDURE_DUPLICATE_PARAMETER(p,v) CRITICAL3("E261 - duplicate parameter on procedure", p, v );
+#define CRITICAL_CANNOT_KILL_NOT_ARRAY_THREADS(v) CRITICAL2("E262 - cannot KILL elements of something that is not an array of threads", p, v );
+#define CRITICAL_UNSUPPORTED_BANK_NUMBER(v) CRITICAL2i("E263 - bank number not available", v );
+#define CRITICAL_OUT_OF_BANKS( )  CRITICAL("E264 - out of bank detected");
+#define CRITICAL_CANNOT_COPY_TO_BANKED(v) CRITICAL2("E265 - cannot copy something on BANKed variables", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -4112,8 +4127,8 @@ RGBi *                  palette_remove_duplicates( RGBi * _source, int _source_s
 RGBi *                  palette_shift( RGBi * _source, int _source_size, int _offset );
 void                    paper( Environment * _environment, char * _paper );
 Variable *              param_procedure( Environment * _environment, char * _name );
-char *                  parse_buffer( Environment * _environment, char * _buffer, int * _size );
-Variable *              parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type );
+char *                  parse_buffer( Environment * _environment, char * _buffer, int * _size, int _hex_only );
+Variable *              parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type, int _hex_only );
 Variable *              peek_var( Environment * _environment, char * _location );
 Variable *              peekw_var( Environment * _environment, char * _location );
 Variable *              peekd_var( Environment * _environment, char * _location );
@@ -4309,7 +4324,7 @@ Variable *              tileset_of_vars( Environment * _environment, char * _til
 //----------------------------------------------------------------------------
 
 void                    use_tileset( Environment * _environment, char * _tileset );
-char *                  unescape_string( Environment * _environment, char * _value, int _printing );
+char *                  unescape_string( Environment * _environment, char * _value, int _printing, int * _final_size );
 Variable *              uncompress( Environment * _environment, char * _value );
 
 //----------------------------------------------------------------------------

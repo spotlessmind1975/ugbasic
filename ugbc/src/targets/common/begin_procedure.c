@@ -123,6 +123,9 @@ void begin_procedure( Environment * _environment, char * _name ) {
     int i = 0;
     for( i=0; i<_environment->parameters; ++i ) {
         char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", procedure->name, _environment->parametersEach[i] );
+        if ( variable_exists( _environment, parameterName ) ) {
+            CRITICAL_PROCEDURE_DUPLICATE_PARAMETER( _name, _environment->parametersEach[i] );
+        }
         Variable * parameter = variable_define( _environment, parameterName, _environment->parametersTypeEach[i], 0 );
     }
 

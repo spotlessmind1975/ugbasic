@@ -109,7 +109,8 @@ Variable * spawn_procedure( Environment * _environment, char * _name, int _halte
 
     cpu_protothread_register( _environment, procedureLabel, threadId->realName );
     cpu_protothread_set_state( _environment, threadId->realName, _halted ? PROTOTHREAD_STATUS_ENDED : PROTOTHREAD_STATUS_WAITING );
-
+    cpu_protothread_save( _environment, threadId->realName, 0 );
+    
     return threadId;
 
 }

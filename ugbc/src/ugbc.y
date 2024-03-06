@@ -104,7 +104,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token <string> Identifier
 %token <string> String
 %token <integer> Integer
-%token <string> BufferDefinition
+%token <string> BufferDefinitionHex
 %token <string> RawString
 %token <floating> Float
 %token <string> Register
@@ -112,7 +112,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 %type <string> expr term modula factor exponential expr_math expr_math2
 %type <integer> const_expr const_term const_modula const_factor const_expr_math const_expr_math2
-%type <string> const_expr_string
+%type <string> const_expr_string const_expr_string_const
 %type <floating> const_expr_floating
 %type <integer> direct_integer
 %type <string> random_definition_simple random_definition
@@ -374,6 +374,290 @@ const_expr_floating :
         }
       };
 
+const_expr_string_const:
+    Z OP const_expr CP {
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = malloc( MAX_TEMPORARY_STORAGE );
+        memset( c3->name, 0, MAX_TEMPORARY_STORAGE );
+        sprintf( c3->name, "tempconst%d", UNIQUE_ID );
+        c3->realName = strdup( c3->name );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = malloc( $3 );
+        memset( c3->valueString->value, 0, $3 );
+        c3->valueString->size = $3;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        Constant * constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        $$ = c3->name;
+
+    }
+    | String {
+        int size;
+        char * buffer = parse_buffer( _environment, $1, &size, 0 );
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = malloc( MAX_TEMPORARY_STORAGE );
+        memset( c3->name, 0, MAX_TEMPORARY_STORAGE );
+        sprintf( c3->name, "tempconst%d", UNIQUE_ID );
+        c3->realName = strdup( c3->name );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = buffer;
+        c3->valueString->size = size;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        Constant * constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        $$ = c3->name;
+
+    } 
+    | Identifier {
+
+        Constant * c1 = constant_find( ((Environment *)_environment)->constants, $1 );
+        if ( c1 == NULL ) {
+            CRITICAL_UNDEFINED_CONSTANT( $1 );
+        }
+        if ( c1->type != CT_STRING ) {
+            CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $1 );
+        }
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = malloc( MAX_TEMPORARY_STORAGE );
+        memset( c3->name, 0, MAX_TEMPORARY_STORAGE );
+        sprintf( c3->name, "tempconst%d", UNIQUE_ID );
+        c3->realName = strdup( c3->name );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = malloc( c1->valueString->size );
+        memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
+        c3->valueString->size = c1->valueString->size;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        Constant * constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        $$ = c3->name;
+
+    }
+    | Identifier OP_PLUS const_expr_string_const {
+
+        Constant * c1 = constant_find( ((Environment *)_environment)->constants, $1 );
+        Constant * c2 = constant_find( ((Environment *)_environment)->constants, $3 );
+
+        if ( c1 == NULL ) {
+            CRITICAL_UNDEFINED_CONSTANT( $1 );
+        }
+        if ( c1->type != CT_STRING ) {
+            CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $1 );
+        }
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = malloc( MAX_TEMPORARY_STORAGE );
+        memset( c3->name, 0, MAX_TEMPORARY_STORAGE );
+        sprintf( c3->name, "tempconst%d", UNIQUE_ID );
+        c3->realName = strdup( c3->name );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = malloc( c1->valueString->size + c2->valueString->size );
+        memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
+        memcpy( c3->valueString->value+c1->valueString->size, c2->valueString->value, c2->valueString->size );
+        c3->valueString->size = c1->valueString->size + c2->valueString->size;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        Constant * constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        $$ = c3->name;
+
+    }
+    | String OP_PLUS const_expr_string_const {
+
+        int size;
+        char * buffer = parse_buffer( _environment, $1, &size, 0 );
+
+        Constant * c1 = malloc( sizeof( Constant ) );
+        memset( c1, 0, sizeof( Constant ) );
+        c1->name = malloc( MAX_TEMPORARY_STORAGE );
+        memset( c1->name, 0, MAX_TEMPORARY_STORAGE );
+        sprintf( c1->name, "tempconst%d", UNIQUE_ID );
+        c1->realName = strdup( c1->name );
+
+        c1->valueString = malloc( sizeof( StaticString ) );
+        memset( c1->valueString, 0, sizeof( StaticString ) );
+
+        c1->valueString->id = UNIQUE_ID;
+        c1->valueString->value = buffer;
+        c1->valueString->size = size;
+        c1->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c1->valueString;
+
+        c1->type = CT_STRING;
+        Constant * constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c1;
+        } else {
+            ((Environment *)_environment)->constants = c1;
+        }
+
+        Constant * c2 = constant_find( ((Environment *)_environment)->constants, $3 );
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = malloc( MAX_TEMPORARY_STORAGE );
+        memset( c3->name, 0, MAX_TEMPORARY_STORAGE );
+        sprintf( c3->name, "tempconst%d", UNIQUE_ID );
+        c3->realName = strdup( c3->name );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = malloc( c1->valueString->size + c2->valueString->size );
+        memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
+        memcpy( c3->valueString->value+c1->valueString->size, c2->valueString->value, c2->valueString->size );
+        c3->valueString->size = c1->valueString->size + c2->valueString->size;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        $$ = c3->name;
+
+    }    
+    | Z OP const_expr CP OP_PLUS const_expr_string_const {
+
+        Constant * c1 = malloc( sizeof( Constant ) );
+        memset( c1, 0, sizeof( Constant ) );
+        c1->name = malloc( MAX_TEMPORARY_STORAGE );
+        memset( c1->name, 0, MAX_TEMPORARY_STORAGE );
+        sprintf( c1->name, "tempconst%d", UNIQUE_ID );
+        c1->realName = strdup( c1->name );
+
+        c1->valueString = malloc( sizeof( StaticString ) );
+        memset( c1->valueString, 0, sizeof( StaticString ) );
+
+        c1->valueString->id = UNIQUE_ID;
+        c1->valueString->value = malloc( $3 );
+        memset( c1->valueString->value, 0, $3 );
+        c1->valueString->size = $3;
+        c1->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c1->valueString;
+
+        c1->type = CT_STRING;
+        Constant * constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c1;
+        } else {
+            ((Environment *)_environment)->constants = c1;
+        }
+
+        Constant * c2 = constant_find( ((Environment *)_environment)->constants, $6 );
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = malloc( MAX_TEMPORARY_STORAGE );
+        memset( c3->name, 0, MAX_TEMPORARY_STORAGE );
+        sprintf( c3->name, "tempconst%d", UNIQUE_ID );
+        c3->realName = strdup( c3->name );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = malloc( c1->valueString->size + c2->valueString->size );
+        memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
+        memcpy( c3->valueString->value+c1->valueString->size, c2->valueString->value, c2->valueString->size );
+        c3->valueString->size = c1->valueString->size + c2->valueString->size;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        $$ = c3->name;
+
+    }    
+    ;
 
 const_expr_string :
     String {
@@ -918,7 +1202,9 @@ const_factor:
         $$ = tile_id( _environment, $4, $6 );
       }
       | const_color_enumeration
-      | const_key_scancode_definition
+      | KEY const_key_scancode_definition {
+        $$ = $2;
+      }
       ;
 
 expr : 
@@ -2475,19 +2761,49 @@ exponential:
     | OP STRING CP Identifier { 
         $$ = variable_cast( _environment, $4, VT_DSTRING )->name;        
       }
-    | BufferDefinition { 
-        $$ = parse_buffer_definition( _environment, $1, VT_BUFFER )->name;
+    | BufferDefinitionHex { 
+        $$ = parse_buffer_definition( _environment, $1, VT_BUFFER, 1 )->name;
       }
-    | OP IMAGE CP BufferDefinition { 
+    | OP IMAGE CP BufferDefinitionHex { 
         int size;
-        char * buffer = parse_buffer( _environment, $4, &size );
+        char * buffer = parse_buffer( _environment, $4, &size, 1 );
         $$ = image_load_from_buffer( _environment, buffer, size )->name;
       }      
-    | OP IMAGES CP BufferDefinition { 
+    | OP IMAGE CP RawString { 
         int size;
-        char * buffer = parse_buffer( _environment, $4, &size );
+        char * buffer = parse_buffer( _environment, $4, &size, 0 );
+        $$ = image_load_from_buffer( _environment, buffer, size )->name;
+      }      
+    | OP IMAGE CP Identifier { 
+        Constant * c = constant_find( ((Environment *)_environment)->constants, $4 );
+        if ( c == NULL ) {
+            CRITICAL_UNDEFINED_CONSTANT( $4 );
+        }
+        if ( c->type != CT_STRING ) {
+            CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $4 );
+        }
+        $$ = image_load_from_buffer( _environment, c->valueString->value, c->valueString->size )->name;
+      }      
+    | OP IMAGES CP BufferDefinitionHex { 
+        int size;
+        char * buffer = parse_buffer( _environment, $4, &size, 1 );
         $$ = images_load_from_buffer( _environment, buffer, size )->name;
       }   
+    | OP IMAGES CP RawString { 
+        int size;
+        char * buffer = parse_buffer( _environment, $4, &size, 0 );
+        $$ = images_load_from_buffer( _environment, buffer, size )->name;
+      }   
+    | OP IMAGES CP Identifier { 
+        Constant * c = constant_find( ((Environment *)_environment)->constants, $4 );
+        if ( c == NULL ) {
+            CRITICAL_UNDEFINED_CONSTANT( $4 );
+        }
+        if ( c->type != CT_STRING ) {
+            CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $4 );
+        }
+        $$ = images_load_from_buffer( _environment, c->valueString->value, c->valueString->size )->name;
+      }      
     | BETA {
 #ifdef __BETA__
          int beta = 1;
@@ -5455,7 +5771,7 @@ array_assign:
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
     }
-    | OP_ASSIGN BufferDefinition {
+    | OP_ASSIGN BufferDefinitionHex {
         int size = ( strlen( $2 ) - 3 ) / 2;
         if ( ((struct _Environment *)_environment)->currentArray->arrayDimensions > 1 ) {
             if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
@@ -5794,7 +6110,7 @@ array_assign:
     };
 
 array_reassign:
-    BufferDefinition {
+    BufferDefinitionHex {
         int size = ( strlen( $1 ) - 3 ) / 2;
         if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
             CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
@@ -6346,18 +6662,97 @@ writing_definition :
     }
     ;
 
-sound_definition_simple : 
+sound_definition_argument :
     OP_HASH const_expr {
-        sound( _environment, $2, 0, 0xffff );
+        ((struct _Environment *)_environment)->soundNoteValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $2;
+        ++((struct _Environment *)_environment)->lastSoundNoteDuration;
     }
     | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-        sound( _environment, $2, $5, 0xffff );
+        ((struct _Environment *)_environment)->soundNoteValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $2;
+        ((struct _Environment *)_environment)->soundDurationValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $5;
+        ++((struct _Environment *)_environment)->lastSoundNoteDuration;
     }
-    | OP_HASH const_expr ON OP_HASH const_expr {
-        sound( _environment, $2, 0, $5 );
+    | expr {
+        ((struct _Environment *)_environment)->soundNote[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $1 );
+        ++((struct _Environment *)_environment)->lastSoundNoteDuration;
     }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
-        sound( _environment, $2, $5, $8 );
+    | expr OP_COMMA expr {
+        ((struct _Environment *)_environment)->soundNote[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $1 );
+        ((struct _Environment *)_environment)->soundDuration[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $3 );
+        ++((struct _Environment *)_environment)->lastSoundNoteDuration;
+    };
+
+sound_definition_arguments :
+    sound_definition_argument
+    | sound_definition_argument OP_SEMICOLON sound_definition_arguments;
+
+sound_definition : 
+    sound_definition_arguments ON OP_HASH const_expr {
+        Variable * channel;
+        if ( ((struct _Environment *)_environment)->atLeastOneSoundNoteDurationSymbolic ) {
+            channel = variable_temporary( _environment, VT_BYTE, "(channel)" );
+            variable_store( _environment, channel->name, $4 );
+        }
+        for( int i=0; i<((struct _Environment *)_environment)->lastSoundNoteDuration; ++i ) {
+            if ( ((struct _Environment *)_environment)->soundNote[i] ) {
+                if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], ((struct _Environment *)_environment)->soundDuration[i], channel->name );
+                } else {
+                    Variable * duration = variable_temporary( _environment, VT_BYTE, "(duration)" );
+                    variable_store( _environment, duration->name, ((struct _Environment *)_environment)->soundDurationValue[i] );
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], duration->name, channel->name );
+                }
+            } else if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                Variable * note = variable_temporary( _environment, VT_BYTE, "(note)" );
+                variable_store( _environment, note->name, ((struct _Environment *)_environment)->soundNoteValue[i] );
+                sound_vars( _environment, note->name, ((struct _Environment *)_environment)->soundDuration[i], channel->name );
+            } else {
+                sound( _environment, ((struct _Environment *)_environment)->soundNoteValue[i], ((struct _Environment *)_environment)->soundDurationValue[i], $4 );
+            }
+        }
+    }
+    | sound_definition_arguments ON expr {
+        for( int i=0; i<((struct _Environment *)_environment)->lastSoundNoteDuration; ++i ) {
+            if ( ((struct _Environment *)_environment)->soundNote[i] ) {
+                if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], ((struct _Environment *)_environment)->soundDuration[i], $3 );
+                } else {
+                    Variable * duration = variable_temporary( _environment, VT_BYTE, "(duration)" );
+                    variable_store( _environment, duration->name, ((struct _Environment *)_environment)->soundDurationValue[i] );
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], duration->name, $3 );
+                }
+            } else if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                Variable * note = variable_temporary( _environment, VT_BYTE, "(note)" );
+                variable_store( _environment, note->name, ((struct _Environment *)_environment)->soundNoteValue[i] );
+                sound_vars( _environment, note->name, ((struct _Environment *)_environment)->soundDuration[i], $3 );
+            } else {
+                Variable * duration = variable_temporary( _environment, VT_BYTE, "(duration)" );
+                variable_store( _environment, duration->name, ((struct _Environment *)_environment)->soundDurationValue[i] );
+                Variable * note = variable_temporary( _environment, VT_BYTE, "(note)" );
+                variable_store( _environment, note->name, ((struct _Environment *)_environment)->soundNoteValue[i] );
+                sound_vars( _environment, note->name, ((struct _Environment *)_environment)->soundDuration[i], $3 );
+                sound_vars( _environment, note->name, duration->name, $3 );
+            }
+        }
+    }
+    | sound_definition_arguments {
+        for( int i=0; i<((struct _Environment *)_environment)->lastSoundNoteDuration; ++i ) {
+            if ( ((struct _Environment *)_environment)->soundNote[i] ) {
+                if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], ((struct _Environment *)_environment)->soundDuration[i], NULL );
+                } else {
+                    Variable * duration = variable_temporary( _environment, VT_BYTE, "(duration)" );
+                    variable_store( _environment, duration->name, ((struct _Environment *)_environment)->soundDurationValue[i] );
+                    sound_vars( _environment, ((struct _Environment *)_environment)->soundNote[i], duration->name, NULL );
+                }
+            } else if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
+                Variable * note = variable_temporary( _environment, VT_BYTE, "(note)" );
+                variable_store( _environment, note->name, ((struct _Environment *)_environment)->soundNoteValue[i] );
+                sound_vars( _environment, note->name, ((struct _Environment *)_environment)->soundDuration[i], NULL );
+            } else {
+                sound( _environment, ((struct _Environment *)_environment)->soundNoteValue[i], ((struct _Environment *)_environment)->soundDurationValue[i], 0xff );
+            }
+        }
     }
     | OFF  {
         sound_off( _environment, 0xffff );
@@ -6365,29 +6760,9 @@ sound_definition_simple :
     | OFF ON OP_HASH const_expr {
         sound_off( _environment, $4 );
     }
-    ;
-
-sound_definition_expression : 
-    expr {
-        sound_vars( _environment, $1, NULL, NULL );
-    }
-    | expr OP_COMMA expr {
-        sound_vars( _environment, $1, $3, NULL );
-    }
-    | expr OP_COMMA expr ON expr {
-        sound_vars( _environment, $1, $3, $5 );
-    }
-    | expr ON expr {
-        sound_vars( _environment, $1, NULL, $3 );
-    }
     | OFF ON expr {
         sound_off_var( _environment, $3 );
     }
-    ;
-
-sound_definition : 
-    sound_definition_simple
-    | sound_definition_expression
     ;
 
 instrument_definition_simple :
@@ -7642,6 +8017,119 @@ optional_step :
         $$ = $2;
     };
 
+thread_identifiers :
+    expr {
+        Variable * array = variable_retrieve( _environment, $1 );
+        if ( array->type != VT_ARRAY || array->arrayType != VT_THREAD ) {
+            ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
+            ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+        } else {
+            for( int i=0; i<array->size; ++i ) {
+                parser_array_init( _environment );
+                parser_array_index_numeric( _environment, i );
+                ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( variable_move_from_array( _environment, array->name )->name );
+                ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+            }
+        }
+    }
+    | expr OP_COMMA thread_identifiers {
+        Variable * array = variable_retrieve( _environment, $1 );
+        if ( array->type != VT_ARRAY || array->arrayType != VT_THREAD ) {
+            ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
+            ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+        } else {
+            for( int i=0; i<array->size; ++i ) {
+                parser_array_init( _environment );
+                parser_array_index_numeric( _environment, i );
+                ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( variable_move_from_array( _environment, array->name )->name );
+                ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+            }
+        }
+    };
+
+kill_definition : {
+        ((struct _Environment *)_environment)->lastThreadIdentifierUsed = 0;
+        memset( ((struct _Environment *)_environment)->threadIdentifier, 0, MAX_TEMPORARY_STORAGE * sizeof( char * ) );
+    } thread_identifiers on_targets {
+      if ( $3 ) {
+        for( int i=0; i<((struct _Environment *)_environment)->lastThreadIdentifierUsed; ++i ) {
+          kill_procedure( _environment, ((struct _Environment *)_environment)->threadIdentifier[i] );
+        }
+      }
+    };
+
+spawn_definition :
+  Identifier on_targets {
+      if ( $2 ) {
+        ((struct _Environment *)_environment)->parameters = 0;
+        spawn_procedure( _environment, $1, 0 );
+      }
+  }
+  | Identifier OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP on_targets {
+      if ( $6 ) {
+          spawn_procedure( _environment, $1, 0 );
+      }
+  }
+  | Identifier OSP CSP on_targets {
+      ((struct _Environment *)_environment)->parameters = 0;
+      if ( $4 ) {
+          spawn_procedure( _environment, $1, 0 );
+      }
+  }
+  | Identifier OP_COMMA Identifier on_targets {
+        if ( $4 ) {
+            Variable * variable = variable_retrieve( _environment, $1 );
+            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+            } else {
+                for( int i=0; i<variable->size; ++i ) {
+                    parser_array_init( _environment );
+                    parser_array_index_numeric( _environment, i );
+                    ((struct _Environment *)_environment)->parameters = 0;
+                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                }
+            }
+        }
+  }
+  | Identifier OP_COMMA Identifier OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP on_targets {
+      if ( $8 ) {
+            Variable * variable = variable_retrieve( _environment, $1 );
+            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+            } else {
+                for( int i=0; i<variable->size; ++i ) {
+                    parser_array_init( _environment );
+                    parser_array_index_numeric( _environment, i );
+                    ((struct _Environment *)_environment)->parameters = 0;
+                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                }
+            }
+      }
+  }
+  | Identifier OP_COMMA Identifier OSP CSP on_targets {
+      ((struct _Environment *)_environment)->parameters = 0;
+      if ( $6 ) {
+            Variable * variable = variable_retrieve( _environment, $1 );
+            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+            } else {
+                for( int i=0; i<variable->size; ++i ) {
+                    parser_array_init( _environment );
+                    parser_array_index_numeric( _environment, i );
+                    ((struct _Environment *)_environment)->parameters = 0;
+                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                }
+            }
+      }
+  };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -8074,36 +8562,14 @@ statement2nc:
           call_procedure( _environment, $2 );
       }
   }
-  | SPAWN Identifier on_targets {
-      if ( $3 ) {
-        ((struct _Environment *)_environment)->parameters = 0;
-        spawn_procedure( _environment, $2, 0 );
-      }
-  }
-  | SPAWN Identifier OSP on_targets {
-      ((struct _Environment *)_environment)->parameters = 0;
-    } values CSP {
-      if ( $4 ) {
-          spawn_procedure( _environment, $2, 0 );
-      }
-  }
-  | SPAWN Identifier OSP CSP on_targets {
-      ((struct _Environment *)_environment)->parameters = 0;
-      if ( $5 ) {
-          spawn_procedure( _environment, $2, 0 );
-      }
-  }
+  | SPAWN spawn_definition
   | RESPAWN expr on_targets {
       ((struct _Environment *)_environment)->parameters = 0;
       if ( $3 ) {
           respawn_procedure( _environment, $2 );
       }
   }
-  | KILL expr on_targets {
-      if ( $3 ) {
-          kill_procedure( _environment, $2 );
-      }
-  }
+  | KILL kill_definition
   | YIELD {
       yield( _environment );
   }
@@ -8310,6 +8776,37 @@ statement2nc:
   | RESOLUTION resolution_definitions
   | DIM dim_definitions
   | FILL fill_definitions
+  | const_instruction STRING Identifier OP_ASSIGN const_expr_string_const {
+        Constant * c1 = constant_find( ((Environment *)_environment)->constants, $5 );
+
+        Constant * c3 = malloc( sizeof( Constant ) );
+        memset( c3, 0, sizeof( Constant ) );
+        c3->name = strdup( $3 );
+        c3->realName = strdup( $3 );
+
+        c3->valueString = malloc( sizeof( StaticString ) );
+        memset( c3->valueString, 0, sizeof( StaticString ) );
+
+        c3->valueString->id = UNIQUE_ID;
+        c3->valueString->value = malloc( c1->valueString->size );
+        memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
+        c3->valueString->size = c1->valueString->size;
+        c3->valueString->next = ((Environment *)_environment)->strings;
+        ((Environment *)_environment)->strings = c3->valueString;
+
+        c3->type = CT_STRING;
+        Constant * constLast = ((Environment *)_environment)->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c3;
+        } else {
+            ((Environment *)_environment)->constants = c3;
+        }
+
+        // const_emit( _environment, c1->name );
+  }
   | const_instruction Identifier OP_ASSIGN const_expr_string {
         const_define_string( _environment, $2, $4 );
   }
@@ -9246,7 +9743,7 @@ int main( int _argc, char *_argv[] ) {
         }
         (void)!fread( sourceText, 1, sourceSize, fh );
         fclose( fh );
-        char * escapedSourceText = unescape_string( _environment, sourceText, 1 );
+        char * escapedSourceText = unescape_string( _environment, sourceText, 1, NULL );
         int i=0;
         for( int c=strlen(escapedSourceText); i<c; ++i ) {
             if ( escapedSourceText[i] == 0x0d ) {

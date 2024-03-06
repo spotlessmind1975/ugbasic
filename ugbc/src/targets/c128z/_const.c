@@ -40,19 +40,19 @@
 
 void const_emit( Environment * _environment, char * _name ) {
 
-    Constant * c = constant_find( _environment->constants, _name );
+    // Constant * c = constant_find( _environment->constants, _name );
 
-    if ( c ) {
-            if ( !c->imported ) {
-                if ( c->valueString ) {
-                    // outline2("%s = \"%s\"", c->realName, c->valueString)
-                } else {
-                    outline2("%s = $%4.4x", c->realName, c->value);
-                }
+    // if ( c ) {
+    //         if ( !c->imported ) {
+    //             if ( c->valueString ) {
+    //                 // outline2("%s = \"%s\"", c->realName, c->valueString)
+    //             } else {
+    //                 outline2("%s = $%4.4x", c->realName, c->value);
+    //             }
 
-            }
-    } else {
-        CRITICAL( "Trying to emit an undefined constant");
-    }
+    //         }
+    // } else {
+    //     CRITICAL( "Trying to emit an undefined constant");
+    // }
 
 }

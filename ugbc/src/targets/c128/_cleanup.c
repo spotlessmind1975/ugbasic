@@ -43,11 +43,6 @@ void target_finalization( Environment * _environment ) {
     vic2_finalization( _environment );
     sid_finalization( _environment );
 
-    if ( ! _environment->deployed.joystick ) {
-        cpu_label( _environment, "JOYSTICKMANAGER" );
-        outline0( "RTS" );
-    }
-
     buffered_prepend_output( );
 
 }

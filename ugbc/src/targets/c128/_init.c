@@ -124,10 +124,10 @@ void target_initialization( Environment * _environment ) {
     // outline0("NOP");
     outhead0("CODESTART:");
     deploy_preferred( vars, src_hw_c128_vars_asm);
+    deploy_preferred( startup, src_hw_c128_startup_asm);
 
     setup_text_variables( _environment );
 
-    deploy_deferred( startup, src_hw_c128_startup_asm);
     cpu_call( _environment, "C128STARTUP" );
 
     vic2_initialization( _environment );

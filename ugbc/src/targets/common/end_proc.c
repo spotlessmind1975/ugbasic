@@ -110,7 +110,7 @@ void end_procedure( Environment * _environment, char * _value ) {
 
             int i = 0;
 
-            for(i=1;i<_environment->protothreadStep; ++i) {
+            for(i=0;i<_environment->protothreadStep; ++i) {
                 outline1("; step %d", i );
                 char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, i );
                 cpu_compare_and_branch_8bit_const( _environment, step->realName, i, protothreadLabel, 1 );
