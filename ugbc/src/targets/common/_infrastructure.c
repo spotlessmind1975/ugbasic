@@ -10397,7 +10397,7 @@ void font_descriptors_init( Environment * _environment, int _embedded_present ) 
         _environment->descriptors->first = 0;
         _environment->descriptors->firstFree = ( dataSize - 1 );
         _environment->descriptors->lastFree = 255;
-        _environment->descriptors->count = 255;
+        _environment->descriptors->count = dataSize;
     }
 
 }
