@@ -1205,6 +1205,9 @@ const_factor:
       | KEY const_key_scancode_definition {
         $$ = $2;
       }
+      | const_key_scancode_definition {
+        $$ = $1;
+      }
       ;
 
 expr : 
