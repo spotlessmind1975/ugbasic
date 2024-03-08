@@ -1579,80 +1579,82 @@ Variable * variable_store_array( Environment * _environment, char * _destination
  */
 static void variable_move_32bit_32bit( Environment * _environment, Variable * _source, Variable * _target ) {
 
-    if ( VT_SIGNED( _source->type ) ) {
+    cpu_move_32bit( _environment, _source->realName, _target->realName );
 
-        if ( VT_SIGNED( _target->type ) ) {
+    // if ( VT_SIGNED( _source->type ) ) {
 
-            ////////////////////////////////////////
-            // 32 BIT (signed) -> 32 BIT (signed) //
-            ////////////////////////////////////////
+    //     if ( VT_SIGNED( _target->type ) ) {
 
-            cpu_move_32bit( _environment, _source->realName, _target->realName );
+    //         ////////////////////////////////////////
+    //         // 32 BIT (signed) -> 32 BIT (signed) //
+    //         ////////////////////////////////////////
 
-        } else {
+    //         cpu_move_32bit( _environment, _source->realName, _target->realName );
 
-            //////////////////////////////////////////
-            // 32 BIT (signed) -> 32 BIT (unsigned) //
-            //////////////////////////////////////////
+    //     } else {
 
-            MAKE_LABEL
+    //         //////////////////////////////////////////
+    //         // 32 BIT (signed) -> 32 BIT (unsigned) //
+    //         //////////////////////////////////////////
 
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    //         MAKE_LABEL
 
-            // Generic algorithm: copy source on target and check if the number is negative.    
-            cpu_move_32bit( _environment, _source->realName, _target->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_is_negative( _environment, _target->realName, sign->realName );
-                }
-            #else
-                {
-                cpu_is_negative( _environment, address_displacement( _environment, _target->realName, "3" ), sign->realName );
-                }
-            #endif
-            cpu_bveq( _environment, sign->realName, label );
+    //         Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
 
-            //  - (new) target is negative > 2 complement 
-            cpu_complement2_32bit( _environment, _target->realName, NULL );
+    //         // Generic algorithm: copy source on target and check if the number is negative.    
+    //         cpu_move_32bit( _environment, _source->realName, _target->realName );
+    //         #ifdef CPU_BIG_ENDIAN
+    //             {
+    //             cpu_is_negative( _environment, _target->realName, sign->realName );
+    //             }
+    //         #else
+    //             {
+    //             cpu_is_negative( _environment, address_displacement( _environment, _target->realName, "3" ), sign->realName );
+    //             }
+    //         #endif
+    //         cpu_bveq( _environment, sign->realName, label );
 
-            //  - (new) target is positive > nothing to do
-            cpu_label( _environment, label );
+    //         //  - (new) target is negative > 2 complement 
+    //         cpu_complement2_32bit( _environment, _target->realName, NULL );
+
+    //         //  - (new) target is positive > nothing to do
+    //         cpu_label( _environment, label );
                     
-        }
+    //     }
 
-    } else {
+    // } else {
 
-        if ( VT_SIGNED( _target->type ) ) {
+    //     if ( VT_SIGNED( _target->type ) ) {
 
-            //////////////////////////////////////////
-            // 32 BIT (unsigned) -> 32 BIT (signed) //
-            //////////////////////////////////////////
+    //         //////////////////////////////////////////
+    //         // 32 BIT (unsigned) -> 32 BIT (signed) //
+    //         //////////////////////////////////////////
 
-            // Generic algorithm: copy source on target and discard the sign bit.
+    //         // Generic algorithm: copy source on target and discard the sign bit.
 
-            cpu_move_32bit( _environment, _source->realName, _target->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
-                }
-            #else
-                {
-                cpu_math_and_const_8bit( _environment, address_displacement( _environment, _target->realName, "3" ), 0x7f );
-                }
-            #endif
+    //         cpu_move_32bit( _environment, _source->realName, _target->realName );
+    //         #ifdef CPU_BIG_ENDIAN
+    //             {
+    //             cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+    //             }
+    //         #else
+    //             {
+    //             cpu_math_and_const_8bit( _environment, address_displacement( _environment, _target->realName, "3" ), 0x7f );
+    //             }
+    //         #endif
 
-        } else {
+    //     } else {
 
-            ////////////////////////////////////////////
-            // 32 BIT (unsigned) -> 32 BIT (unsigned) //
-            ////////////////////////////////////////////
+    //         ////////////////////////////////////////////
+    //         // 32 BIT (unsigned) -> 32 BIT (unsigned) //
+    //         ////////////////////////////////////////////
 
-            // 32 BIT (unsigned) -> 32 BIT (unsigned)
-            cpu_move_32bit( _environment, _source->realName, _target->realName );
+    //         // 32 BIT (unsigned) -> 32 BIT (unsigned)
+    //         cpu_move_32bit( _environment, _source->realName, _target->realName );
 
-        }
+    //     }
 
-    }
+    // }
 
 }
 
@@ -2182,68 +2184,70 @@ static void variable_move_16bit_32bit( Environment * _environment, Variable * _s
  */
 static void variable_move_16bit_16bit( Environment * _environment, Variable * _source, Variable * _target ) {
 
-    if ( VT_SIGNED( _source->type ) ) {
+    cpu_move_16bit( _environment, _source->realName, _target->realName );
 
-        if ( VT_SIGNED( _target->type ) ) {
+    // if ( VT_SIGNED( _source->type ) ) {
 
-            // 16 BIT (signed) -> 16 BIT (signed)
-            cpu_move_16bit( _environment, _source->realName, _target->realName );
+    //     if ( VT_SIGNED( _target->type ) ) {
 
-        } else {
+    //         // 16 BIT (signed) -> 16 BIT (signed)
+    //         cpu_move_16bit( _environment, _source->realName, _target->realName );
 
-            MAKE_LABEL
+    //     } else {
 
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    //         MAKE_LABEL
 
-            // 16 BIT (signed) -> 16 BIT (unsigned)
+    //         Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
 
-            // Generic algorithm: copy source on target and check if the number is negative.    
-            cpu_move_16bit( _environment, _source->realName, _target->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_is_negative( _environment, _target->realName, sign->realName );
-                }
-            #else
-                {
-                cpu_is_negative( _environment, address_displacement( _environment, _target->realName, "1" ), sign->realName );
-                }
-            #endif
-            cpu_beq( _environment, label );
+    //         // 16 BIT (signed) -> 16 BIT (unsigned)
 
-            //  - (new) target is negative > 2 complement 
-            cpu_complement2_16bit( _environment, _target->realName, NULL );
+    //         // Generic algorithm: copy source on target and check if the number is negative.    
+    //         cpu_move_16bit( _environment, _source->realName, _target->realName );
+    //         #ifdef CPU_BIG_ENDIAN
+    //             {
+    //             cpu_is_negative( _environment, _target->realName, sign->realName );
+    //             }
+    //         #else
+    //             {
+    //             cpu_is_negative( _environment, address_displacement( _environment, _target->realName, "1" ), sign->realName );
+    //             }
+    //         #endif
+    //         cpu_beq( _environment, label );
 
-            //  - (new) target is positive > nothing to do
-            cpu_label( _environment, label );
+    //         //  - (new) target is negative > 2 complement 
+    //         cpu_complement2_16bit( _environment, _target->realName, NULL );
+
+    //         //  - (new) target is positive > nothing to do
+    //         cpu_label( _environment, label );
                     
-        }
+    //     }
 
-    } else {
+    // } else {
 
-        if ( VT_SIGNED( _target->type ) ) {
+    //     if ( VT_SIGNED( _target->type ) ) {
 
-            // 32 BIT (unsigned) -> 32 BIT (signed)
+    //         // 32 BIT (unsigned) -> 32 BIT (signed)
 
-            // Generic algorithm: copy source on target and discard the sign bit.
-            cpu_move_16bit( _environment, _source->realName, _target->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
-                }
-            #else
-                {
-                cpu_math_and_const_8bit( _environment, address_displacement( _environment, _target->realName, "1" ), 0x7f );
-                }
-            #endif
+    //         // Generic algorithm: copy source on target and discard the sign bit.
+    //         cpu_move_16bit( _environment, _source->realName, _target->realName );
+    //         #ifdef CPU_BIG_ENDIAN
+    //             {
+    //             cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+    //             }
+    //         #else
+    //             {
+    //             cpu_math_and_const_8bit( _environment, address_displacement( _environment, _target->realName, "1" ), 0x7f );
+    //             }
+    //         #endif
 
-        } else {
+    //     } else {
 
-            // 32 BIT (unsigned) -> 32 BIT (unsigned)
-            cpu_move_16bit( _environment, _source->realName, _target->realName );
+    //         // 32 BIT (unsigned) -> 32 BIT (unsigned)
+    //         cpu_move_16bit( _environment, _source->realName, _target->realName );
 
-        }
+    //     }
 
-    }
+    // }
 
 }
 
@@ -2780,52 +2784,54 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
  */
 static void variable_move_8bit_8bit( Environment * _environment, Variable * _source, Variable * _target ) {
 
-    if ( VT_SIGNED( _source->type ) ) {
+    cpu_move_8bit( _environment, _source->realName, _target->realName );
 
-        if ( VT_SIGNED( _target->type ) ) {
+    // if ( VT_SIGNED( _source->type ) ) {
 
-            // 8 BIT (signed) -> 8 BIT (signed)
-            cpu_move_8bit( _environment, _source->realName, _target->realName );
+    //     if ( VT_SIGNED( _target->type ) ) {
 
-        } else {
+    //         // 8 BIT (signed) -> 8 BIT (signed)
+    //         cpu_move_8bit( _environment, _source->realName, _target->realName );
 
-            MAKE_LABEL
+    //     } else {
 
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    //         MAKE_LABEL
 
-            // 8 BIT (signed) -> 8 BIT (unsigned)
+    //         Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
 
-            // Generic algorithm: copy source on target and check if the number is negative.    
-            cpu_move_8bit( _environment, _source->realName, _target->realName );
-            cpu_is_negative( _environment, _target->realName, sign->realName );
-            cpu_beq( _environment, label );
+    //         // 8 BIT (signed) -> 8 BIT (unsigned)
 
-            //  - (new) target is negative > 2 complement 
-            cpu_complement2_8bit( _environment, _target->realName, NULL );
+    //         // Generic algorithm: copy source on target and check if the number is negative.    
+    //         cpu_move_8bit( _environment, _source->realName, _target->realName );
+    //         cpu_is_negative( _environment, _target->realName, sign->realName );
+    //         cpu_beq( _environment, label );
 
-            //  - (new) target is positive > nothing to do
-            cpu_label( _environment, label );
+    //         //  - (new) target is negative > 2 complement 
+    //         cpu_complement2_8bit( _environment, _target->realName, NULL );
+
+    //         //  - (new) target is positive > nothing to do
+    //         cpu_label( _environment, label );
                     
-        }
+    //     }
 
-    } else {
+    // } else {
 
-        if ( VT_SIGNED( _target->type ) ) {
+    //     if ( VT_SIGNED( _target->type ) ) {
 
-            // 8 BIT (unsigned) -> 8 BIT (signed)
+    //         // 8 BIT (unsigned) -> 8 BIT (signed)
 
-            // Generic algorithm: copy source on target and discard the sign bit.
-            cpu_move_8bit( _environment, _source->realName, _target->realName );
-            cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+    //         // Generic algorithm: copy source on target and discard the sign bit.
+    //         cpu_move_8bit( _environment, _source->realName, _target->realName );
+    //         cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
 
-        } else {
+    //     } else {
 
-            // 32 BIT (unsigned) -> 32 BIT (unsigned)
-            cpu_move_8bit( _environment, _source->realName, _target->realName );
+    //         // 32 BIT (unsigned) -> 32 BIT (unsigned)
+    //         cpu_move_8bit( _environment, _source->realName, _target->realName );
 
-        }
+    //     }
 
-    }
+    // }
 
 }
 
