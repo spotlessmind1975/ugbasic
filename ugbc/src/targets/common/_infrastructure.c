@@ -1669,7 +1669,7 @@ static void variable_move_32bit_16bit( Environment * _environment, Variable * _s
 
     if ( VT_SIGNED( _source->type ) ) {
 
-        if ( VT_SIGNED( _target->type ) ) {
+        if ( VT_SIGNED( _target->type ) || _environment->signedModeRaw ) {
 
             Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
             Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(temporary)" );
@@ -1764,7 +1764,7 @@ static void variable_move_32bit_16bit( Environment * _environment, Variable * _s
 
     } else {
 
-        if ( VT_SIGNED( _target->type ) ) {
+        if ( VT_SIGNED( _target->type ) && ! _environment->signedModeRaw ) {
 
             // 32 BIT (unsigned) -> 16 BIT (signed)
 
@@ -1813,7 +1813,7 @@ static void variable_move_32bit_8bit( Environment * _environment, Variable * _so
 
     if ( VT_SIGNED( _source->type ) ) {
 
-        if ( VT_SIGNED( _target->type ) ) {
+        if ( VT_SIGNED( _target->type ) || _environment->signedModeRaw ) {
 
             Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
             Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(temporary)" );
@@ -1923,7 +1923,7 @@ static void variable_move_32bit_8bit( Environment * _environment, Variable * _so
 
     } else {
 
-        if ( VT_SIGNED( _target->type ) ) {
+        if ( VT_SIGNED( _target->type ) && !_environment->signedModeRaw ) {
 
             // 32 BIT (unsigned) -> 8 BIT (signed)
 
@@ -2004,7 +2004,7 @@ static void variable_move_16bit_32bit( Environment * _environment, Variable * _s
 
     if ( VT_SIGNED( _source->type ) ) {
 
-        if ( VT_SIGNED( _target->type ) ) {
+        if ( VT_SIGNED( _target->type ) || _environment->signedModeRaw ) {
 
             // 16 BIT (signed) -> 32 BIT (signed)
 
@@ -2121,7 +2121,7 @@ static void variable_move_16bit_32bit( Environment * _environment, Variable * _s
 
     } else {
 
-        if ( VT_SIGNED( _target->type ) ) {
+        if ( VT_SIGNED( _target->type ) && ! _environment->signedModeRaw ) {
 
             // 16 BIT (unsigned) -> 32 BIT (signed)
 
@@ -2262,7 +2262,7 @@ static void variable_move_16bit_8bit( Environment * _environment, Variable * _so
 
         Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
 
-        if ( VT_SIGNED( _target->type ) ) {
+        if ( VT_SIGNED( _target->type ) || _environment->signedModeRaw ) {
 
             Variable * tmp = variable_temporary( _environment, VT_SWORD, "(temporary)" );
 
@@ -2371,7 +2371,7 @@ static void variable_move_16bit_8bit( Environment * _environment, Variable * _so
 
     } else {
 
-        if ( VT_SIGNED( _target->type ) ) {
+        if ( VT_SIGNED( _target->type ) && !_environment->signedModeRaw ) {
 
             // 16 BIT (unsigned) -> 8 BIT (signed)
 
@@ -2452,7 +2452,7 @@ static void variable_move_8bit_32bit( Environment * _environment, Variable * _so
 
     if ( VT_SIGNED( _source->type ) ) {
 
-        if ( VT_SIGNED( _target->type ) ) {
+        if ( VT_SIGNED( _target->type ) || _environment->signedModeRaw ) {
 
             // 8 BIT (signed) -> 32 BIT (signed)
 
@@ -2553,7 +2553,7 @@ static void variable_move_8bit_32bit( Environment * _environment, Variable * _so
 
     } else {
 
-        if ( VT_SIGN( _target->type ) ) {
+        if ( VT_SIGN( _target->type ) && !_environment->signedModeRaw ) {
 
             // 8 BIT (unsigned) -> 32 BIT (signed)
 
@@ -2618,7 +2618,7 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
 
     if ( VT_SIGNED( _source->type ) ) {
 
-        if ( VT_SIGNED( _target->type ) ) {
+        if ( VT_SIGNED( _target->type ) || _environment->signedModeRaw ) {
 
             // 8 BIT (signed) -> 16 BIT (signed)
 
@@ -2719,7 +2719,7 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
 
     } else {
 
-        if ( VT_SIGNED( _target->type ) ) {
+        if ( VT_SIGNED( _target->type ) && !_environment->signedModeRaw ) {
 
             // 8 BIT (unsigned) -> 16 BIT (signed)
 
