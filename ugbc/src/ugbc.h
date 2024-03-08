@@ -2406,6 +2406,8 @@ typedef struct _Environment {
 
     int defaultNarrowType;
 
+    int signedModeRaw;
+
     /*
      * Used for deferred writing of assembly file.
      */
