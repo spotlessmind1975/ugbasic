@@ -3806,8 +3806,8 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
     } else {
 
         if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-            source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-            target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+            source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+            target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
         } else {
             if ( VT_SIGNED( source->type ) || VT_SIGNED( target->type ) ) {
                 source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
@@ -3824,15 +3824,15 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
 
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
-            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of sum)" );
+            result = variable_temporary( _environment, ( VT_SIGNED( source->type ) || VT_SIGNED( target->type ) ) ? VT_SDWORD : VT_DWORD, "(result of sum)" );
             cpu_math_add_32bit( _environment, source->realName, target->realName, result->realName );
             break;
         case 16:
-            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of sum)" );
+            result = variable_temporary( _environment, ( VT_SIGNED( source->type ) || VT_SIGNED( target->type ) ) ? VT_SWORD : VT_WORD, "(result of sum)" );
             cpu_math_add_16bit( _environment, source->realName, target->realName, result->realName );
             break;
         case 8:
-            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(result of sum)" );
+            result = variable_temporary( _environment, ( VT_SIGNED( source->type ) || VT_SIGNED( target->type ) ) ? VT_SBYTE : VT_BYTE, "(result of sum)" );
             cpu_math_add_8bit( _environment, source->realName, target->realName, result->realName );
             break;
         case 1:
