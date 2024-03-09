@@ -1263,7 +1263,7 @@ expr_math :
     | expr_math2 OP_LTE expr_math {
         Variable * expr = variable_retrieve( _environment, $3 );
         if ( expr->initializedByConstant ) {
-            $$ = variable_less_than_const( _environment, $1, expr->value, 0 )->name;
+            $$ = variable_less_than_const( _environment, $1, expr->value, 1 )->name;
         } else {
             $$ = variable_less_than( _environment, $1, $3, 1 )->name;
         }
