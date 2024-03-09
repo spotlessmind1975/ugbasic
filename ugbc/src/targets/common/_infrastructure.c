@@ -4103,17 +4103,17 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
 
         if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
             result = variable_temporary( _environment, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ), "(result of subtracting)" );
-            source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-            target = variable_cast( _environment, _dest, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+            source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+            target = variable_cast( _environment, _dest, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
         } else {
             if ( VT_SIGNED( source->type ) || VT_SIGNED( target->type ) ) {
-                source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-                target = variable_cast( _environment, _dest, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+                source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
+                target = variable_cast( _environment, _dest, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
                 result = variable_temporary( _environment, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ), "(result of subtracting)" );
             } else {
                 source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
                 target = variable_cast( _environment, _dest, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-                result = variable_temporary( _environment, VT_MAX_BITWIDTH_TYPE( source->type, target->type ), "(result of subtracting)" );
+                result = variable_temporary( _environment, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ), "(result of subtracting)" );
             }
         }
 
