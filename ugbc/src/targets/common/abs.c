@@ -74,7 +74,7 @@ sia positivo o negativo, in altre parole, ignorando il suo segno.
 Variable * absolute( Environment * _environment, char * _value ) {
     Variable * value = variable_retrieve( _environment, _value );
 
-    Variable * result = variable_temporary( _environment, value->type, "(result of ABS)");
+    Variable * result = variable_temporary( _environment, VT_UNSIGN( value->type ), "(result of ABS)");
 
     MAKE_LABEL
 
