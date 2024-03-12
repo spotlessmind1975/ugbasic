@@ -159,7 +159,9 @@ void target_initialization( Environment * _environment ) {
     // outline0("NOP");
 
     outhead0("CODESTART:");
-    
+    outline1("LDA $%2.2x", bankCount - 1 )
+    outline0("STA MAXFREEBANK" );
+
     deploy_preferred( vars, src_hw_c64reu_vars_asm);
 
     setup_text_variables( _environment );
