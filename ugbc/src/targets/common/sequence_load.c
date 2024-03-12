@@ -278,7 +278,7 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
             CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
         }
 
-    } else if ( _flags & FLAG_COMPRESSED ) {
+    } else if ( ( _flags & FLAG_COMPRESSED ) && !_environment->compressionForbidden ) {
 
         // Try to compress the result of image conversion.
         // This means that the buffer will be compressed using MSC1

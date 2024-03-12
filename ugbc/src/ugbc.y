@@ -92,7 +92,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
-%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW
+%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -7430,7 +7430,8 @@ target :
     }
     | CPU6502 {
         #if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
-            defined(__c128__) || defined(__plus4__) || defined(__vic20__)
+            defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
+            defined( __c64reu__)
             $$ = 1;
         #else
             $$ = 0;
@@ -7470,6 +7471,14 @@ target :
     |
     C64 {
         #ifdef __c64__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    C64REU {
+        #ifdef __c64reu__
             $$ = 1;
         #else
             $$ = 0;
@@ -9218,6 +9227,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer";
 #elif __coco3__
     char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer 3";
+#elif __c64reu__
+    char target[MAX_TEMPORARY_STORAGE] = "Commodore 64 + REU";
 #endif
 
     printf("--------------------------------------------------\n");
@@ -9333,6 +9344,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __vg5000__
     printf("\t                k7 - K7 format\n" );
     #define defaultExtension "k7"
+#elif __c64reu__
+    printf("\t                d64 - D64 disk image\n" );
+    #define defaultExtension "d64"
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
@@ -9415,9 +9429,11 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #elif __vg5000__
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+#elif __c64reu__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "1a:A:b:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:st:T:VWX:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "1a:A:b:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:R:st:T:VWX:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -9546,6 +9562,9 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'p':
                     _environment->peepholeOptimizationLimit = atoi(optarg);
+                    break;
+                case 'R':
+                    _environment->ramSize = atoi(optarg);
                     break;
                 case 'q':
                     _environment->profileCycles = atoi(optarg);

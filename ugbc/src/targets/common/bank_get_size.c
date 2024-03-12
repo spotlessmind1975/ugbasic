@@ -75,7 +75,11 @@ Variable * bank_get_size( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank size)" );
 
-    cpu_store_16bit(_environment, result->realName, BANK_SIZE );
+    Bank * bank = _environment->expansionBanks;
+
+    if ( bank ) {
+        cpu_store_16bit(_environment, result->realName, bank->space );
+    }
 
     return result;
     
@@ -104,7 +108,11 @@ Variable * bank_get_size_var( Environment * _environment, char * _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank size)" );
 
-    cpu_store_16bit(_environment, result->realName, BANK_SIZE );
+    Bank * bank = _environment->expansionBanks;
+
+    if ( bank ) {
+        cpu_store_16bit(_environment, result->realName, bank->space );
+    }
 
     return result;
     

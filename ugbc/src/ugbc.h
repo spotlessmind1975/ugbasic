@@ -379,6 +379,7 @@ typedef enum _VariableType {
 typedef struct _Resource {
 
     char        *   realName;
+    int             bankNumber;
     int             isAddress;
     VariableType    type;
 
@@ -2460,6 +2461,10 @@ typedef struct _Environment {
      */
     int paintBucketSize;
 
+    int compressionForbidden;
+
+    int ramSize;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -2771,6 +2776,7 @@ typedef struct _Environment {
 #define CRITICAL_UNSUPPORTED_BANK_NUMBER(v) CRITICAL2i("E263 - bank number not available", v );
 #define CRITICAL_OUT_OF_BANKS( )  CRITICAL("E264 - out of bank detected");
 #define CRITICAL_CANNOT_COPY_TO_BANKED(v) CRITICAL2("E265 - cannot copy something on BANKed variables", v );
+#define CRITICAL_INVALID_RAM_SIZE(r) CRITICAL2i("E266 - invalid ram size (-R)", r );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3710,7 +3716,7 @@ ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
 
 void banks_init( Environment * _environment );
-void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count );
+void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count, int _allowed_size );
 char * banks_get_address( Environment * _environment, int _bank );
 Variable * banks_get_address_var( Environment * _environment, char * _bank );
 int banks_store( Environment * _environment, Variable * _variable, int _resident );
@@ -4580,6 +4586,13 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/vg5000.h"
     #include "hw/ef9345.h"
+#elif __c64reu__
+    #include "../src-generated/modules_c64reu.h"
+    #include "hw/6502.h"
+    #include "hw/vic2.h"
+    #include "hw/sid.h"
+    #include "hw/c64reu.h"
+    #include "outputs/d64.h"
 #endif
 
 #ifdef CPU_BIG_ENDIAN

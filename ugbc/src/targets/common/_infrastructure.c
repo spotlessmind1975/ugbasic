@@ -8849,6 +8849,8 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/coco" );
 #elif __coco3__
     strcat( lookedFilename, "/coco3" );
+#elif __c64reu__
+    strcat( lookedFilename, "/c64reu" );
 #endif
 
     if ( strlen( lookedExtension ) ) {

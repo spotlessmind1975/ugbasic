@@ -65,7 +65,7 @@ void target_initialization( Environment * _environment ) {
 
     int allowed[] = { 6, 5, 4 };
 
-    banks_init_extended( _environment, allowed, sizeof( allowed ) / sizeof( int ) );
+    banks_init_extended( _environment, allowed, sizeof( allowed ) / sizeof( int ), BANK_SIZE );
 
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 

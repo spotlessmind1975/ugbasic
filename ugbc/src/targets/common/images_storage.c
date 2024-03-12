@@ -275,7 +275,7 @@ Variable * images_storage( Environment * _environment, char * _source_name, char
 
     // stbi_image_free(source);
 
-    if ( _flags & FLAG_COMPRESSED ) {
+    if ( ( _flags & FLAG_COMPRESSED ) && !_environment->compressionForbidden ) {
 
         // Try to compress the result of image conversion.
         // This means that the buffer will be compressed using MSC1

@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#if defined(__c64__) || defined(__c128__)
+#if defined(__c64__) || defined(__c128__) || defined(__c64reu__)
 
 #include "../ugbc.h"
 #include <math.h>
@@ -2886,6 +2886,20 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline1("STA %s", _register );
             outline1("LDA %s", address_displacement(_environment, _source->realName, "1") );
             outline1("STA %s", address_displacement(_environment, _register, "1") );
+#ifdef __c64reu__
+            if ( _source->bankNumber > 0 ) {
+                outline1("LDA #$%2.2x", ( _source->bankNumber - 1 ) );
+                outline0("STA BANKPTR" );
+                outline0("LDA #$FF" );
+                outline0("STA BANKUSE" );
+            } else {
+#endif
+                outline0("LDA #0" );
+                outline0("STA BANKPTR" );
+                outline0("STA BANKUSE" );
+#ifdef __c64reu__
+            }
+#endif
         } else {
             outline1("LDA #<%s", _source->realName );
             outline1("STA %s", _register );
@@ -2898,6 +2912,21 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline0("STA TMPPTR" );
             outline1("LDA %s", address_displacement(_environment, _source->realName, "1") );
             outline0("STA TMPPTR+1" );
+
+#ifdef __c64reu__
+            if ( _source->bankNumber > 0 ) {
+                outline1("LDA #$%2.2x", ( _source->bankNumber - 1 ) );
+                outline0("STA BANKPTR" );
+                outline0("LDA #$FF" );
+                outline0("STA BANKUSE" );
+            } else {
+#endif
+                outline0("LDA #0" );
+                outline0("STA BANKPTR" );
+                outline0("STA BANKUSE" );
+#ifdef __c64reu__
+            }
+#endif
         } else {
             outline1("LDA #<%s", _source->realName );
             outline0("STA TMPPTR" );
@@ -2912,7 +2941,7 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline0("STA TMPPTR" );
             outline0("LDA TMPPTR+1" );
             outline0("ADC #0" );
-            outline0("STA  TMPPTR+1" );
+            outline0("STA TMPPTR+1" );
 
             if ( strlen(_sequence) == 0 ) {
 
@@ -2973,6 +3002,11 @@ void vic2_put_image( Environment * _environment, Resource * _image, char * _x, c
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
+#ifdef __c64reu__
+    deploy_embedded( cpu_math_mul_8bit_to_16bit, src_hw_6502_cpu_math_mul_8bit_to_16bit_asm )
+#endif
+    deploy( putimage, src_hw_vic2_put_image_asm );
+
     deploy( putimage, src_hw_vic2_put_image_asm );
 
     MAKE_LABEL

@@ -51,7 +51,14 @@ Variable * bank_get_count( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(bank count)" );
 
-    variable_store( _environment, result->name, BANK_COUNT );
+    int bankCount = 0;
+    Bank * bank = _environment->expansionBanks;
+    while( bank ) {
+        ++bankCount;
+        bank = bank->next;
+    }
+
+    variable_store( _environment, result->name, bankCount );
 
     return result;
     

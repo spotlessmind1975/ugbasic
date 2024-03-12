@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count ) {
+void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count, int _allowed_size ) {
     
     for(int i=0; i<_allowed_count; ++i) {
         Bank * bank = malloc( sizeof( Bank ) );
@@ -48,11 +48,11 @@ void banks_init_extended( Environment * _environment, int * _allowed, int _allow
         char bankName[MAX_TEMPORARY_STORAGE]; sprintf( bankName, "BANK%2.2x", _allowed[i] );
         bank->name = strdup( bankName );
         bank->type = BT_EXPANSION;
-        bank->remains = BANK_SIZE;
-        bank->space = BANK_SIZE;
+        bank->remains = _allowed_size;
+        bank->space = _allowed_size;
         bank->next = _environment->expansionBanks;
-        bank->data = malloc( BANK_SIZE );
-        memset( bank->data, 0, BANK_SIZE );
+        bank->data = malloc( _allowed_size );
+        memset( bank->data, 0, _allowed_size );
         _environment->expansionBanks = bank;
         _environment->maxExpansionBankSize[i+1] = 0;
     }

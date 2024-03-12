@@ -73,6 +73,7 @@ YSCROLL:            .byte 0
 IMAGEX:             .word $0
 IMAGEY:             .word $0
 IMAGEW:             .word $0
+IMAGEW2:            .word $0
 IMAGEH:             .word $0
 IMAGEH2:            .word $0
 IMAGET:             .byte $0

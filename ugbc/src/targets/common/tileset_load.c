@@ -318,7 +318,7 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
             _environment->maxExpansionBankSize[_bank_expansion] = final->frameSize;
         }
 
-    } else if ( _flags & FLAG_COMPRESSED ) {
+    } else if ( ( _flags & FLAG_COMPRESSED ) && !_environment->compressionForbidden ) {
 
         // Try to compress the result of image conversion.
         // This means that the buffer will be compressed using MSC1

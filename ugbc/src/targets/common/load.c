@@ -135,7 +135,7 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
 
     variable_store_buffer( _environment, result->name, buffer, size, _at );
 
-    if ( _flags & FLAG_COMPRESSED && _environment->expansionBanks ) {
+    if ( ( _flags & FLAG_COMPRESSED ) && _environment->expansionBanks ) {
 
         // Try to compress the result of image conversion.
         // This means that the buffer will be compressed using MSC1

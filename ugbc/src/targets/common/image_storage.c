@@ -123,7 +123,7 @@ Variable * image_storage( Environment * _environment, char * _source_name, char 
     // Space efficiency can be applied after, if a bank is present.
     Variable * result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
 
-    if ( _flags & FLAG_COMPRESSED ) {
+    if ( ( _flags & FLAG_COMPRESSED ) && !_environment->compressionForbidden ) {
 
         // Try to compress the result of image conversion.
         // This means that the buffer will be compressed using MSC1
