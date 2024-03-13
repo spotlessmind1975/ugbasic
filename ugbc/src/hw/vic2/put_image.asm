@@ -792,12 +792,22 @@ PUTIMAGEREU1L1:
 
     ; Decrease manually the source address.
 
-    SEC
     LDA REUREUBASE
-    SBC IMAGEW
-    STA REUREUBASE
+    STA TMPPTR2
     LDA REUREUBASE+1
+    STA TMPPTR2+1
+
+    SEC
+    LDA TMPPTR2
+    SBC IMAGEW
+    STA TMPPTR2
+    LDA TMPPTR2+1
     SBC #0
+    STA TMPPTR2+1
+
+    LDA TMPPTR2
+    STA REUREUBASE
+    LDA TMPPTR2+1
     STA REUREUBASE+1
 
     LDA IMAGEW
@@ -1637,12 +1647,22 @@ PUTIMAGEREU2L2:
     ADC #0
     STA PLOTCDEST+1
 
-    SEC
     LDA REUREUBASE
-    SBC IMAGEW
-    STA REUREUBASE
+    STA TMPPTR2
     LDA REUREUBASE+1
+    STA TMPPTR2+1
+
+    SEC
+    LDA TMPPTR2
+    SBC IMAGEW
+    STA TMPPTR2
+    LDA TMPPTR2+1
     SBC #0
+    STA TMPPTR2+1
+
+    LDA TMPPTR2
+    STA REUREUBASE
+    LDA TMPPTR2+1
     STA REUREUBASE+1
 
     LDY #0
@@ -1832,6 +1852,8 @@ PUTIMAGEREU3D0:
     STA IMAGEW2
     BCC PUTIMAGEREU3L1U
 
+bitmap1:
+
     LDX #1
     LDY #0
 PUTIMAGEREU3L1:
@@ -1931,6 +1953,8 @@ PUTIMAGEREU3L1FINAL:
 
     INY
     BNE PUTIMAGEREU3L1
+    LDA IMAGEW2
+    BEQ PUTIMAGEREU3L1F
 
     INC PLOTDEST+1
 
@@ -1975,6 +1999,8 @@ PUTIMAGEREU3L1FX:
     ; data source address to the video bitmap address.
 
     LDY #0
+
+bitmap2:
 
 PUTIMAGEREU3L1X:
 
@@ -2106,6 +2132,8 @@ PUTIMAGEREU3L1F:
 
     CPX #1
     BNE PUTIMAGEREU3L1FY
+    LDA IMAGEW2
+    BEQ PUTIMAGEREU3L1FY
 
     DEC PLOTDEST+1
 
@@ -2165,26 +2193,36 @@ PUTIMAGEREU3CA:
     ; occupy 2 bits, we have to double the IMAGEW
     ; value. So we add this size twice.
 
-    CLC
     LDA REUREUBASE
-    ADC IMAGEW
-    STA REUREUBASE
+    STA TMPPTR2
     LDA REUREUBASE+1
-    ADC #0
-    STA REUREUBASE+1
+    STA TMPPTR2+1
 
     CLC
-    LDA REUREUBASE
+    LDA TMPPTR2
     ADC IMAGEW
-    STA REUREUBASE
-    LDA REUREUBASE+1
+    STA TMPPTR2
+    LDA TMPPTR2+1
     ADC #0
+    STA TMPPTR2+1
+
+    CLC
+    LDA TMPPTR2
+    ADC IMAGEW
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    ADC #0
+    STA TMPPTR2+1
+
+    LDA TMPPTR2
+    STA REUREUBASE
+    LDA TMPPTR2+1
     STA REUREUBASE+1
 
     ; We repeat the adding as long as remain lines to draw.
 
     DEC IMAGEH
-    BEQ PUTIMAGEREU3C
+    BNE PUTIMAGEREU3CA
 
     ; Starting from this line, we are drawing the first
     ; color map, the map for 01 and 10 bitmap.
@@ -2215,6 +2253,8 @@ PUTIMAGEREU3C:
     ; that, since we are using indirect indexed access to the memory,
     ; Y will contain the LAST data to copy. So we must decrement
     ; it by 1, in order to start from the end of the line.
+
+colormap1:
 
     LDY #0
 PUTIMAGEREU3L2:
@@ -2308,12 +2348,30 @@ PUTIMAGEREU3C2A:
     ; Now we must go ahead, in order to access to the
     ; colormap data.
 
-    CLC
     LDA REUREUBASE
-    ADC IMAGEW
-    STA REUREUBASE
+    STA TMPPTR2
     LDA REUREUBASE+1
+    STA TMPPTR2+1
+
+    CLC
+    LDA TMPPTR2
+    ADC IMAGEW
+    STA TMPPTR2
+    LDA TMPPTR2+1
     ADC #0
+    STA TMPPTR2+1
+
+    CLC
+    LDA TMPPTR2
+    ADC IMAGEW
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    ADC #0
+    STA TMPPTR2+1
+
+    LDA TMPPTR2
+    STA REUREUBASE
+    LDA TMPPTR2+1
     STA REUREUBASE+1
 
     ; Are still lines to draw?
@@ -2335,6 +2393,8 @@ PUTIMAGEREU3C2:
 
     LDA IMAGEH2
     STA IMAGEH
+
+colormap2:
 
     ; Then reset the width, and restart.
     LDY #0
@@ -2425,12 +2485,30 @@ PUTIMAGEREU3EA:
 
     ; Move ahead in memory still exist lines to be drawn.
 
-    CLC
     LDA REUREUBASE
-    ADC IMAGEW
-    STA REUREUBASE
+    STA TMPPTR2
     LDA REUREUBASE+1
+    STA TMPPTR2+1
+
+    CLC
+    LDA TMPPTR2
+    ADC IMAGEW
+    STA TMPPTR2
+    LDA TMPPTR2+1
     ADC #0
+    STA TMPPTR2+1
+
+    CLC
+    LDA TMPPTR2
+    ADC IMAGEW
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    ADC #0
+    STA TMPPTR2+1
+
+    LDA TMPPTR2
+    STA REUREUBASE
+    LDA TMPPTR2+1
     STA REUREUBASE+1
 
     DEC IMAGEH
@@ -2442,12 +2520,22 @@ PUTIMAGEREU3EA:
 
 PUTIMAGEREU3E:
 
-    SEC
     LDA REUREUBASE
-    SBC #1
-    STA REUREUBASE
+    STA TMPPTR2
     LDA REUREUBASE+1
+    STA TMPPTR2+1
+
+    SEC
+    LDA TMPPTR2
+    SBC #1
+    STA TMPPTR2
+    LDA TMPPTR2+1
     SBC #0
+    STA TMPPTR2+1
+
+    LDA TMPPTR2
+    STA REUREUBASE
+    LDA TMPPTR2+1
     STA REUREUBASE+1
 
     ; IF bit 5 of IMAGEF is enabled it means that the image must be

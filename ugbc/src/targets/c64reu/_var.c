@@ -47,7 +47,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
     while( variable ) {
 
-        if ( !variable->bankAssigned && (variable->memoryArea && !variable->bankAssigned && !variable->assigned) || ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
+        if ( (variable->memoryArea && !variable->assigned) || ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
 
             if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
                 fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
@@ -138,47 +138,51 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SEQUENCE:
                 case VT_MUSIC:
                 case VT_BUFFER:
-                    if ( ! variable->absoluteAddress ) {
-                        if ( variable->valueBuffer ) {
-                            if ( variable->printable ) {
-                                char * string = malloc( variable->size + 1 );
-                                memset( string, 0, variable->size );
-                                memcpy( string, variable->valueBuffer, variable->size );
-                                outline2("%s: .byte %s", variable->realName, escape_newlines( string ) );
-                            } else {
-                                out1("%s: .byte ", variable->realName);
-                                int i=0;
-                                for (i=0; i<(variable->size-1); ++i ) {
-                                    if ( ( ( i+1 ) % 16 ) == 0 ) {
-                                        outline1("%d", variable->valueBuffer[i]);
-                                        out0("  .byte ");
-                                    } else {
-                                        out1("%d,", variable->valueBuffer[i]);
+
+                    if ( !variable->bankAssigned ) {
+                        if ( ! variable->absoluteAddress ) {
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outline2("%s: .byte %s", variable->realName, escape_newlines( string ) );
+                                } else {
+                                    out1("%s: .byte ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        if ( ( ( i+1 ) % 16 ) == 0 ) {
+                                            outline1("%d", variable->valueBuffer[i]);
+                                            out0("  .byte ");
+                                        } else {
+                                            out1("%d,", variable->valueBuffer[i]);
+                                        }
                                     }
+                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                 }
-                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                            } else {
+                                outline2("%s: .res %d", variable->realName, variable->size);
                             }
                         } else {
-                            outline2("%s: .res %d", variable->realName, variable->size);
-                        }
-                    } else {
-                        if ( ! variable->memoryArea && variable->valueBuffer ) {
-                            outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
-                            if ( variable->printable ) {
-                                char * string = malloc( variable->size + 1 );
-                                memset( string, 0, variable->size );
-                                memcpy( string, variable->valueBuffer, variable->size );
-                                outline2("%scopy: .byte %s", variable->realName, escape_newlines( string ) );
-                            } else {
-                                out1("%scopy: .byte ", variable->realName);
-                                int i=0;
-                                for (i=0; i<(variable->size-1); ++i ) {
-                                    out1("%d,", variable->valueBuffer[i]);
+                            if ( ! variable->memoryArea && variable->valueBuffer ) {
+                                outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outline2("%scopy: .byte %s", variable->realName, escape_newlines( string ) );
+                                } else {
+                                    out1("%scopy: .byte ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        out1("%d,", variable->valueBuffer[i]);
+                                    }
+                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                 }
-                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
                         }
                     }
+
                     break;
                 case VT_TILEMAP:
                 case VT_ARRAY: {
@@ -277,22 +281,24 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SEQUENCE:
         case VT_MUSIC:
         case VT_BUFFER:
-            if ( _variable->valueBuffer ) {
-                if ( _variable->printable ) {
-                    char * string = malloc( _variable->size + 1 );
-                    memset( string, 0, _variable->size );
-                    memcpy( string, _variable->valueBuffer, _variable->size );
-                    outline1("    .byte %s", escape_newlines( string ) );
-                } else {
-                    out0("    .byte ");
-                    int i=0;
-                    for (i=0; i<(_variable->size-1); ++i ) {
-                        out1("%d,", _variable->valueBuffer[i]);
+            if ( !_variable->bankAssigned ) {
+                if ( _variable->valueBuffer ) {
+                    if ( _variable->printable ) {
+                        char * string = malloc( _variable->size + 1 );
+                        memset( string, 0, _variable->size );
+                        memcpy( string, _variable->valueBuffer, _variable->size );
+                        outline1("    .byte %s", escape_newlines( string ) );
+                    } else {
+                        out0("    .byte ");
+                        int i=0;
+                        for (i=0; i<(_variable->size-1); ++i ) {
+                            out1("%d,", _variable->valueBuffer[i]);
+                        }
+                        outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
                     }
-                    outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
+                } else {
+                    outline1(" .res %d", _variable->size);
                 }
-            } else {
-                outline1(" .res %d", _variable->size);
             }
             break;
         case VT_ARRAY: {
@@ -576,7 +582,6 @@ void variable_cleanup( Environment * _environment ) {
     while( bank ) {
         if ( bank->remains < bank->space ) {
             int offset = ( bank->id - 1 ) * bank->space;
-            printf( "%d\n", offset );
             outline1("LDA #'%d'", bank->id );
             outline0("STA C64REUBANKFILENAME+4" );
             outline1("LDA #$%2.2x", ( offset ) & 0xff );
