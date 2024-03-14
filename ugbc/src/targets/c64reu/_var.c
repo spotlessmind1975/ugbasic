@@ -581,14 +581,12 @@ void variable_cleanup( Environment * _environment ) {
     Bank * bank = _environment->expansionBanks;
     while( bank ) {
         if ( bank->remains < bank->space ) {
-            int offset = ( bank->id - 1 ) * bank->space;
-            outline1("LDA #'%d'", bank->id );
+            outline1("LDA #'%d'", ( bank->id - 1 ) );
             outline0("STA C64REUBANKFILENAME+4" );
-            outline1("LDA #$%2.2x", ( offset ) & 0xff );
+            outline0("LDA #0" );
             outline0("STA REUREUBASE" );
-            outline1("LDA #$%2.2x", ( offset >> 8 ) & 0xff );
             outline0("STA REUREUBASE+1" );
-            outline1("LDA #$%2.2x", ( offset >> 16 ) & 0xff );
+            outline1("LDA #$%2.2x", ( bank->id - 1 ));
             outline0("STA REUREUBASE+2" );
             outline0("JSR C64REUBANKLOAD");
         }

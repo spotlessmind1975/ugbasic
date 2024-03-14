@@ -11033,3 +11033,12 @@ void prepare_variable_storage( Environment * _environment, char * _name, Variabl
 
 }
 
+char * generate_storage_filename( Environment * _environment, char * _prefix, char * _suffix, int _number ) {
+    
+    char filename[ MAX_TEMPORARY_STORAGE ];
+
+    sprintf( filename, "%s%2.2d.%s", _prefix, _number, _suffix );
+
+    return strdup( filename );
+
+}

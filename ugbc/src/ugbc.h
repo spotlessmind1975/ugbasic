@@ -3743,6 +3743,7 @@ int po_buf_strcmp(POBuffer _s, POBuffer _t);
 
 char * get_default_temporary_path( );
 char * find_last_path_separator( char * _path );
+char * generate_storage_filename( Environment * _environment, char * _prefix, char * _suffix, int _number );
 
 //----------------------------------------------------------------------------
 // Common functions used by parser only

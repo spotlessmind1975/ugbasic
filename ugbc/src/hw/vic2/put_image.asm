@@ -66,7 +66,7 @@ PUTIMAGEREU:
     LDA TMPPTR+1
     STA REUREUBASE+1
     LDA BANKPTR
-    STA REUREUBASE+3
+    STA REUREUBASE+2
 
     ; Then, reset the destination address to the auxiliary area
     ; with the space for the header, that is the first thing we read.
@@ -1852,8 +1852,6 @@ PUTIMAGEREU3D0:
     STA IMAGEW2
     BCC PUTIMAGEREU3L1U
 
-bitmap1:
-
     LDX #1
     LDY #0
 PUTIMAGEREU3L1:
@@ -1999,8 +1997,6 @@ PUTIMAGEREU3L1FX:
     ; data source address to the video bitmap address.
 
     LDY #0
-
-bitmap2:
 
 PUTIMAGEREU3L1X:
 
@@ -2254,8 +2250,6 @@ PUTIMAGEREU3C:
     ; Y will contain the LAST data to copy. So we must decrement
     ; it by 1, in order to start from the end of the line.
 
-colormap1:
-
     LDY #0
 PUTIMAGEREU3L2:
 
@@ -2393,8 +2387,6 @@ PUTIMAGEREU3C2:
 
     LDA IMAGEH2
     STA IMAGEH
-
-colormap2:
 
     ; Then reset the width, and restart.
     LDY #0

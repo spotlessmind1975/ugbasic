@@ -265,6 +265,20 @@ static void d64_allocate_sector_on_bam( D64BAMEntry * _entry, D64Sector _sector 
 
 }
 
+int d64_get_free_sectors( D64Handle * _handle ) {
+
+    D64SectorBAM * bam = (D64SectorBAM *) d64_get_sector( _handle, D64_BAM_TRACK, D64_BAM_SECTOR );
+
+    int freeSectors = 0;
+
+    for( int i=0; i<35; ++i ) {
+        freeSectors += bam->entries[i].freeSectors;
+    }
+
+    return freeSectors;
+
+}
+
 /**
  * @brief Allocate a specific sector
  * 

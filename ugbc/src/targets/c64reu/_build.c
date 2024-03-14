@@ -102,43 +102,85 @@ void generate_d64( Environment * _environment ) {
     (void)!fread( prgContent, prgSize, 1, prgHandle );
     fclose( prgHandle );
 
-    char d64FileName[MAX_TEMPORARY_STORAGE];
-    strcpy( d64FileName, _environment->exeFileName );
-    char * p = strstr( d64FileName, ".d64" );
-    if ( !p ) {
-        strcat( d64FileName, ".d64");
+    remove(_environment->exeFileName);
+
+    char * exeFileName = strdup( _environment->exeFileName );
+    char * extension = strstr( exeFileName, ".d64" );
+    if ( extension ) {
+        * extension = 0;
     }
-    
-    remove(d64FileName);
+    int diskNumber = 1;
+
+    D64Handle * handle = NULL;
 
     Storage * storage = _environment->storage;
 
     if ( !storage ) {
-        D64Handle * handle = d64_create( CBMDOS );
+        char * storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );
+        handle = d64_create( CBMDOS );
         d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
         Bank * bank = _environment->expansionBanks;
         while( bank ) {
+            int bankSize = bank->space - bank->remains;
+            if ( ( d64_get_free_sectors( handle ) * 256 ) < bankSize ) {
+                d64_output( handle, storageFileName );
+                d64_free( handle );
+                ++diskNumber;
+                storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );
+                handle = d64_create( CBMDOS );
+            }
             if ( bank->remains < bank->space ) {
                 char bankFileName[MAX_TEMPORARY_STORAGE];
-                sprintf( bankFileName, "BANK%d", bank->id );
-                d64_write_file( handle, bankFileName, SEQ, bank->data, bank->space - bank->remains );
+                sprintf( bankFileName, "BANK%d", ( bank->id - 1 ) );
+                d64_write_file( handle, bankFileName, SEQ, bank->data, bankSize );
             }
             bank = bank->next;
         }
-        d64_output( handle, d64FileName );
+        d64_output( handle, storageFileName );
         d64_free( handle );
     } else {
+
+        char buffer[MAX_TEMPORARY_STORAGE];
+        char filemask[MAX_TEMPORARY_STORAGE];
+        strcpy( filemask, exeFileName );
+        char * basePath = find_last_path_separator( filemask );
+        if ( basePath ) {
+            ++basePath;
+            *basePath = 0;
+            if ( storage->fileName ) {
+                strcat( basePath, storage->fileName );
+            } else {
+                strcat( basePath, "disk" );
+            }
+        } else {
+            if ( storage->fileName ) {
+                strcpy( filemask, storage->fileName );
+            } else {
+                strcpy( filemask, "disk" );
+            }
+        }
+
+        char * storageFileName = generate_storage_filename( _environment, filemask, "d64", diskNumber );
+        
         int i=0;
         while( storage ) {
-            D64Handle * handle = d64_create( CBMDOS );
+            handle = d64_create( CBMDOS );
             if ( i == 0 ) {
                 d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
             }
             Bank * bank = _environment->expansionBanks;
             while( bank ) {
+                int bankSize = bank->space - bank->remains;
+                if ( ( d64_get_free_sectors( handle ) * 256 ) < bankSize ) {
+                    d64_output( handle, storageFileName );
+                    d64_free( handle );
+                    ++diskNumber;
+                    storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );
+                    handle = d64_create( CBMDOS );
+                }
                 if ( bank->remains < bank->space ) {
                     char bankFileName[MAX_TEMPORARY_STORAGE];
-                    sprintf( bankFileName, "BANK%d", bank->id );
+                    sprintf( bankFileName, "BANK%d", ( bank->id - 1 ) );
                     d64_write_file( handle, bankFileName, SEQ, bank->data, bank->space - bank->remains );
                 }
                 bank = bank->next;
@@ -169,9 +211,12 @@ void generate_d64( Environment * _environment ) {
                 d64_write_file( handle, fileStorage->targetName, PRG, buffer, size );
                 fileStorage = fileStorage->next;
             }
-            char buffer[MAX_TEMPORARY_STORAGE];
-            char filemask[MAX_TEMPORARY_STORAGE];
-            strcpy( filemask, d64FileName );
+            d64_output( handle, storageFileName );
+            d64_free( handle );
+
+            ++diskNumber;
+
+            strcpy( filemask, exeFileName );
             char * basePath = find_last_path_separator( filemask );
             if ( basePath ) {
                 ++basePath;
@@ -179,21 +224,16 @@ void generate_d64( Environment * _environment ) {
                 if ( storage->fileName ) {
                     strcat( basePath, storage->fileName );
                 } else {
-                    strcat( basePath, "disk%d.d64" );
+                    strcat( basePath, "disk" );
                 }
             } else {
                 if ( storage->fileName ) {
                     strcpy( filemask, storage->fileName );
                 } else {
-                    strcpy( filemask, "disk%d.d64" );
+                    strcpy( filemask, "disk" );
                 }
             }
-            sprintf( buffer, filemask, i );
-            if ( !strstr( buffer, ".d64" ) ) {
-                strcat( buffer, ".d64" );
-            }
-            d64_output( handle, buffer );
-            d64_free( handle );
+            storageFileName = generate_storage_filename( _environment, filemask, "d64", diskNumber );
             storage = storage->next;
             ++i;
         }        

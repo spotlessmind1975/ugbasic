@@ -332,71 +332,97 @@ RESTOREUGBASICIRQVECTORS:
     RTS
 
 C64REUBANKFILENAME:
-    .BYTE   "bank1"
+    .BYTE   "bank0"
 
 C64REUBANKTMPBUF:
     .BYTE   $00
 
+C64REUBANKLOADDEVICE:
+    .BYTE   $08
+
 C64REUBANKLOAD:
+C64REUBANKLOADREPEAT:
 
     LDA #5
     LDX #<C64REUBANKFILENAME
     LDY #>C64REUBANKFILENAME
     JSR $FFBD
 
-    LDA #$02      ; file number 2
-    LDX $BA       ; last used device number
-    BNE C64REUBANKLOAD0
-    LDX #$08      ; default to device 8
+    LDA #$02
+    LDX C64REUBANKLOADDEVICE
 C64REUBANKLOAD0:
-    LDY #$02      ; secondary address 2
+    LDY #$02
     JSR $FFBA
-
     JSR $FFC0
-
-    BCS C64REUBANKLOADERR ; if carry set, a load error has happened
-
-    ; check drive error channel here to test for
-    ; FILE NOT FOUND error etc.
-
-    LDX #$02      ; filenumber 2
+errore:
+    BCS C64REUBANKLOADERR
+    LDX #$02
     JSR $FFC6
-
     LDY #$00
 C64REUBANKLOADL1:    
     JSR $FFB7
-
-    BNE C64REUBANKLOADEOF ; either EOF or read error
-
+    BNE C64REUBANKLOADEOF
     JSR $FFCF
-
-    STA C64REUBANKTMPBUF   ; write byte to memory
-
+    STA C64REUBANKTMPBUF
+    JSR $FFB7
+    BNE C64REUBANKLOADEOF
     LDA #%10010000
     STA REUCOMMAND
-
-    JMP C64REUBANKLOADL1     ; next byte
-
+    JMP C64REUBANKLOADL1
 C64REUBANKLOADEOF:
-    AND #$40      ; end of file?
+    AND #$02
+    CMP #$02
     BEQ C64REUBANKLOADERR
 C64REUBANKLOADCLOSE:
-    LDA #$02      ; filenumber 2
-
+    LDA #$02
     JSR $FFC3
-
     JSR $FFCC
-
     RTS
 
 C64REUBANKLOADERR:
-    ; Akkumulator contains BASIC error code
+    PHA
+    JSR C64REUBANKLOADCLOSE
+    PLA
+C64REUBANKLOADNEXTDEVICE:
+    LDX C64REUBANKLOADDEVICE
+    INX
+    STX C64REUBANKLOADDEVICE
+    CPX #12
+    BEQ C64REUBANKASKDISK
+    JMP C64REUBANKLOADREPEAT
 
-    ; most likely errors:
-    ; A = $05 (DEVICE NOT PRESENT)
+C64REUBANKASKDISK:
+    JSR $E544
+    
+    LDX #$01
+    LDY #$01
+    JSR $E50C
 
-    ;... error handling for open errors ...
-    JMP C64REUBANKLOADCLOSE    ; even if OPEN failed, the file has to be closed
-    ; for further information, the drive error channel has to be read
+    LDA C64REUBANKFILENAME+4
+    STA C64REUBANKASKDISKPROMPT2
+    LDA #<C64REUBANKASKDISKPROMPT
+    LDY #>C64REUBANKASKDISKPROMPT
+    JSR $AB1E
 
+    LDX #$02
+    LDY #$01
+    JSR $E50C
+    LDA #<C64REUBANKASKDISKPROMPT3
+    LDY #>C64REUBANKASKDISKPROMPT3
+    JSR $AB1E
 
+C64REUBANKASKDISKL1:
+    JSR $FFE4
+    BEQ C64REUBANKASKDISKL1
+
+    LDX #8
+    STX C64REUBANKLOADDEVICE    
+
+    JMP C64REUBANKLOADREPEAT
+
+C64REUBANKASKDISKPROMPT:
+    .BYTE "please insert disk with file bank"
+C64REUBANKASKDISKPROMPT2:
+    .BYTE "0 ",0
+C64REUBANKASKDISKPROMPT3:
+    .BYTE "and press any key to continue", 0

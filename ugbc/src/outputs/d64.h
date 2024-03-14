@@ -627,6 +627,7 @@ typedef struct _D64Handle {
  ****************************************************************************/
 
 D64Handle *         d64_create( D64Format _format );
+int                 d64_get_free_sectors( D64Handle * _handle );
 void                d64_set_dos_version( D64Handle * _handle, D64DosVersion _version );
 void                d64_set_disk_name( D64Handle * _handle, unsigned char * _disk_name );
 void                d64_set_disk_id( D64Handle * _handle, D64DiskId _disk_id );
