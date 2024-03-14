@@ -79,20 +79,59 @@ char *str_replace( char *orig, char *rep, char *with ) {
 %token IF ELSE ELSEIF ENDIF EMIT AS NewLine
 %token ATARI ATARIXL C128 C128Z C64 C64REU VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5 CPC COCO
 %token COCO1 COCO2 COCO3 MACRO ENDMACRO INLINE
+%token BIN PRG XEX K7O K7N K7 TAP ROM D64 DSK ATR REU
 
 %token <string> Identifier
 %token <string> Content
 %token <string> Value
 %token <integer> Integer
 
-%type <integer> const_expr const_factor target
+%type <integer> const_expr const_factor target output
 
 %right Integer String CP 
-%left OP
+%left OP OP_EQUAL
 %right ELSE OP_NOT
 %left OP_AND OP_OR
 
 %%
+
+output :
+    BIN {
+        $$ = OUTPUT_FILE_TYPE_BIN;
+    }
+    | PRG {
+        $$ = OUTPUT_FILE_TYPE_PRG;
+    }
+    | XEX {
+        $$ = OUTPUT_FILE_TYPE_XEX;
+    }
+    | K7O {
+        $$ = OUTPUT_FILE_TYPE_K7_ORIGINAL;
+    }
+    | K7N {
+        $$ = OUTPUT_FILE_TYPE_K7_NEW;
+    }
+    | K7 {
+        $$ = OUTPUT_FILE_TYPE_K7_NEW;
+    }
+    | TAP {
+        $$ = OUTPUT_FILE_TYPE_TAP;
+    }
+    | ROM {
+        $$ = OUTPUT_FILE_TYPE_ROM;
+    }
+    | D64 {
+        $$ = OUTPUT_FILE_TYPE_D64;
+    }
+    | DSK {
+        $$ = OUTPUT_FILE_TYPE_DSK;
+    }
+    | ATR {
+        $$ = OUTPUT_FILE_TYPE_ATR;
+    }
+    | REU {
+        $$ = OUTPUT_FILE_TYPE_REU;
+    };
 
 target : 
     ATARI {
@@ -282,7 +321,7 @@ target :
 
 const_expr : 
       const_factor {
-        // printf( "%d\n", $1 );
+         // printf( "const_factor = %d\n", $1 );
       }
     | const_factor OP_AND const_expr {        
         // printf( "%d AND %d\n", $1, $3 );
@@ -327,6 +366,10 @@ const_factor:
         //   printf( "(%d)\n", $2 );
           $$ = $1;
       }
+      | output {
+        // printf( "output = (%d)\n", $1 );
+        $$ = $1;
+      }
       | OP const_expr CP {
         //   printf( "(%d)\n", $2 );
           $$ = $2;
@@ -370,8 +413,12 @@ const_factor:
         // printf( "%s.%s == %d\n", $1, $3, $$ );
       }
       | Identifier {
+        // printf( "%s\n", $1 );
+
         if ( strcmp( $1, "currentMode" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->currentMode;
+        } else if ( strcmp( $1, "outputFileType" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->outputFileType;
         } else if ( strcmp( $1, "descriptors" ) == 0 ) {
             if ( ((struct _Environment *)_environment)->descriptors ) {
                 $$ = 1;
@@ -426,7 +473,7 @@ macro_values :
 
 embed2:
     OP_AT IF const_expr {
-    //    printf( "--- IF ---\n" );
+        // printf( "--- IF ---\n" );
 
       ((struct _Environment *)_environment)->embedResult.conditional = 1;
     if ( $3 ) {
