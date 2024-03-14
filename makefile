@@ -37,7 +37,7 @@ endif
 ifdef 10liner
 OPTIONS=-1 -R512
 else
-OPTIONS=-R512
+OPTIONS=-R512 -v
 endif
 
 ifdef examples
