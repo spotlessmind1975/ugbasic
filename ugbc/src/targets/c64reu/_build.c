@@ -117,6 +117,7 @@ void generate_d64( Environment * _environment ) {
 
     if ( !storage ) {
         char * storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );
+
         handle = d64_create( CBMDOS );
         d64_write_file( handle, "MAIN", FT_PRG, prgContent, prgSize );
         Bank * bank = _environment->expansionBanks;
@@ -125,6 +126,9 @@ void generate_d64( Environment * _environment ) {
             if ( ( d64_get_free_sectors( handle ) * 256 ) < bankSize ) {
                 d64_output( handle, storageFileName );
                 d64_free( handle );
+                if ( _environment->outputGeneratedFiles ) {
+                    printf( "%s\n", storageFileName );
+                }
                 ++diskNumber;
                 storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );
                 handle = d64_create( CBMDOS );
@@ -138,6 +142,10 @@ void generate_d64( Environment * _environment ) {
         }
         d64_output( handle, storageFileName );
         d64_free( handle );
+        if ( _environment->outputGeneratedFiles ) {
+            printf( "%s\n", storageFileName );
+        }
+
     } else {
 
         char buffer[MAX_TEMPORARY_STORAGE];
@@ -196,6 +204,9 @@ void generate_d64( Environment * _environment ) {
             }
             d64_output( handle, storageFileName );
             d64_free( handle );
+            if ( _environment->outputGeneratedFiles ) {
+                printf( "%s\n", storageFileName );
+            }
 
             ++diskNumber;
 
@@ -227,6 +238,9 @@ void generate_d64( Environment * _environment ) {
             if ( ( d64_get_free_sectors( handle ) * 256 ) < bankSize ) {
                 d64_output( handle, storageFileName );
                 d64_free( handle );
+                if ( _environment->outputGeneratedFiles ) {
+                    printf( "%s\n", storageFileName );
+                }
                 ++diskNumber;
                 storageFileName = generate_storage_filename( _environment, filemask, "d64", diskNumber );
                 handle = d64_create( CBMDOS );
@@ -237,6 +251,11 @@ void generate_d64( Environment * _environment ) {
                 d64_write_file( handle, bankFileName, FT_SEQ, bank->data, bank->space - bank->remains );
             }
             bank = bank->next;
+        }
+        d64_output( handle, storageFileName );
+        d64_free( handle );
+        if ( _environment->outputGeneratedFiles ) {
+            printf( "%s\n", storageFileName );
         }
 
     }
@@ -267,7 +286,7 @@ void generate_reu( Environment * _environment ) {
     Storage * storage = _environment->storage;
 
     if ( !storage ) {
-        char * storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );
+        char * storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );      
         FILE * reuHandle = fopen( _environment->exeFileName, "wb" );
         for( int i=0; i<_environment->ramSize * 1024; ++i ) {
             fputc( 0, reuHandle );
@@ -286,7 +305,13 @@ void generate_reu( Environment * _environment ) {
         }
         d64_output( handle, storageFileName );
         d64_free( handle );
+        if ( _environment->outputGeneratedFiles ) {
+            printf( "%s\n", storageFileName );
+        }
         fclose( reuHandle );
+        if ( _environment->outputGeneratedFiles ) {
+            printf( "%s\n", _environment->exeFileName );
+        }
     } else {
         char buffer[MAX_TEMPORARY_STORAGE];
         char filemask[MAX_TEMPORARY_STORAGE];
@@ -344,6 +369,9 @@ void generate_reu( Environment * _environment ) {
             }
             d64_output( handle, storageFileName );
             d64_free( handle );
+            if ( _environment->outputGeneratedFiles ) {
+                printf( "%s\n", storageFileName );
+            }
 
             ++diskNumber;
 
@@ -384,6 +412,9 @@ void generate_reu( Environment * _environment ) {
             bank = bank->next;
         }
         fclose( reuHandle );
+        if ( _environment->outputGeneratedFiles ) {
+            printf( "%s\n", _environment->exeFileName );
+        }
 
     }
 
