@@ -117,19 +117,19 @@ typedef unsigned short D64WordLength;
 typedef enum _D64FileType {
 
     // 0000	0	DEL
-    DEL = 0,
+    FT_DEL = 0,
 
     // 0001	1	SEQ
-    SEQ = 1,
+    FT_SEQ = 1,
 
     // 0010	2	PRG
-    PRG = 2,
+    FT_PRG = 2,
 
     // 0011	3	USR
-    USR = 3,
+    FT_USR = 3,
 
     // 0100	4	REL
-    REL = 4
+    FT_REL = 4
 
 } D64FileType;
 

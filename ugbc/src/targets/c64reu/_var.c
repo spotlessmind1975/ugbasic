@@ -576,23 +576,24 @@ void variable_cleanup( Environment * _environment ) {
 
     variable_on_memory_init( _environment, 0 );
 
-    outhead0("C64REUBANKSLOAD:")
-
-    Bank * bank = _environment->expansionBanks;
-    while( bank ) {
-        if ( bank->remains < bank->space ) {
-            outline1("LDA #'%d'", ( bank->id - 1 ) );
-            outline0("STA C64REUBANKFILENAME+4" );
-            outline0("LDA #0" );
-            outline0("STA REUREUBASE" );
-            outline0("STA REUREUBASE+1" );
-            outline1("LDA #$%2.2x", ( bank->id - 1 ));
-            outline0("STA REUREUBASE+2" );
-            outline0("JSR C64REUBANKLOAD");
+    if ( _environment->outputFileType == OUTPUT_FILE_TYPE_D64 ) {
+        outhead0("C64REUBANKSLOAD:")
+        Bank * bank = _environment->expansionBanks;
+        while( bank ) {
+            if ( bank->remains < bank->space ) {
+                outline1("LDA #'%d'", ( bank->id - 1 ) );
+                outline0("STA C64REUBANKFILENAME+4" );
+                outline0("LDA #0" );
+                outline0("STA REUREUBASE" );
+                outline0("STA REUREUBASE+1" );
+                outline1("LDA #$%2.2x", ( bank->id - 1 ));
+                outline0("STA REUREUBASE+2" );
+                outline0("JSR C64REUBANKLOAD");
+            }
+            bank = bank->next;
         }
-        bank = bank->next;
+        outline0("RTS" );
     }
-    outline0("RTS" );
 
     DataSegment * dataSegment = _environment->dataSegment;
     while( dataSegment ) {

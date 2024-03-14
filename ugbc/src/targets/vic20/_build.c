@@ -107,7 +107,7 @@ void generate_d64( Environment * _environment ) {
 
     if ( !storage ) {
         D64Handle * handle = d64_create( CBMDOS );
-        d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
+        d64_write_file( handle, "MAIN", FT_PRG, prgContent, prgSize );
         d64_output( handle, d64FileName );
         d64_free( handle );
     } else {
@@ -115,7 +115,7 @@ void generate_d64( Environment * _environment ) {
         while( storage ) {
             D64Handle * handle = d64_create( CBMDOS );
             if ( i == 0 ) {
-                d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
+                d64_write_file( handle, "MAIN", FT_PRG, prgContent, prgSize );
             }
             FileStorage * fileStorage = storage->files;
             while( fileStorage ) {
@@ -130,7 +130,7 @@ void generate_d64( Environment * _environment ) {
                 buffer = malloc( size );
                 (void)!fread( &buffer[0], size, 1, file );
                 fclose( file );
-                d64_write_file( handle, fileStorage->targetName, PRG, buffer, size );
+                d64_write_file( handle, fileStorage->targetName, FT_PRG, buffer, size );
                 fileStorage = fileStorage->next;
             }
             char buffer[MAX_TEMPORARY_STORAGE];

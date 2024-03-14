@@ -9346,6 +9346,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     #define defaultExtension "k7"
 #elif __c64reu__
     printf("\t                d64 - D64 disk image\n" );
+    printf("\t                reu - REU RAM espansion image\n" );
     #define defaultExtension "d64"
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
@@ -9529,6 +9530,8 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
                     } else if ( strcmp( optarg, "atr") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ATR;
+                    } else if ( strcmp( optarg, "reu") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_REU;
                     } else {
                         CRITICAL2("Unknown output format", optarg);
                     }

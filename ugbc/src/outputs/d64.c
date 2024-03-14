@@ -451,7 +451,7 @@ static D64DirectoryEntry * d64_allocate_directory_entry( D64Handle * _handle ) {
         
         // If the file type value is not DEL (0), it means that
         // the entry is used. So we must go ahead to the next entry.
-        if ( value->attribute.type != DEL ) {
+        if ( value->attribute.type != FT_DEL ) {
 
             // Reset the address.
             value = NULL;

@@ -72,7 +72,7 @@ void target_initialization( Environment * _environment ) {
 
     int bankCount = 0;
     int * bankIds = NULL;
-    int bankSize = 0xffff;
+    int bankSize = 0x10000;
 
     switch( _environment->ramSize ) {
         case 128:

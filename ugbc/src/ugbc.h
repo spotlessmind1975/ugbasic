@@ -208,7 +208,8 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_ROM = 7,
     OUTPUT_FILE_TYPE_D64 = 8,
     OUTPUT_FILE_TYPE_DSK = 9,
-    OUTPUT_FILE_TYPE_ATR = 10
+    OUTPUT_FILE_TYPE_ATR = 10,
+    OUTPUT_FILE_TYPE_REU = 11
 
 } OutputFileType;
 

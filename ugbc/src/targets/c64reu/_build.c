@@ -118,7 +118,7 @@ void generate_d64( Environment * _environment ) {
     if ( !storage ) {
         char * storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );
         handle = d64_create( CBMDOS );
-        d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
+        d64_write_file( handle, "MAIN", FT_PRG, prgContent, prgSize );
         Bank * bank = _environment->expansionBanks;
         while( bank ) {
             int bankSize = bank->space - bank->remains;
@@ -132,7 +132,7 @@ void generate_d64( Environment * _environment ) {
             if ( bank->remains < bank->space ) {
                 char bankFileName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankFileName, "BANK%d", ( bank->id - 1 ) );
-                d64_write_file( handle, bankFileName, SEQ, bank->data, bankSize );
+                d64_write_file( handle, bankFileName, FT_SEQ, bank->data, bankSize );
             }
             bank = bank->next;
         }
@@ -166,24 +166,7 @@ void generate_d64( Environment * _environment ) {
         while( storage ) {
             handle = d64_create( CBMDOS );
             if ( i == 0 ) {
-                d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
-            }
-            Bank * bank = _environment->expansionBanks;
-            while( bank ) {
-                int bankSize = bank->space - bank->remains;
-                if ( ( d64_get_free_sectors( handle ) * 256 ) < bankSize ) {
-                    d64_output( handle, storageFileName );
-                    d64_free( handle );
-                    ++diskNumber;
-                    storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );
-                    handle = d64_create( CBMDOS );
-                }
-                if ( bank->remains < bank->space ) {
-                    char bankFileName[MAX_TEMPORARY_STORAGE];
-                    sprintf( bankFileName, "BANK%d", ( bank->id - 1 ) );
-                    d64_write_file( handle, bankFileName, SEQ, bank->data, bank->space - bank->remains );
-                }
-                bank = bank->next;
+                d64_write_file( handle, "MAIN", FT_PRG, prgContent, prgSize );
             }
             FileStorage * fileStorage = storage->files;
             while( fileStorage ) {
@@ -208,7 +191,7 @@ void generate_d64( Environment * _environment ) {
                     fclose( file );
                     size += 2;
                 }
-                d64_write_file( handle, fileStorage->targetName, PRG, buffer, size );
+                d64_write_file( handle, fileStorage->targetName, FT_PRG, buffer, size );
                 fileStorage = fileStorage->next;
             }
             d64_output( handle, storageFileName );
@@ -237,6 +220,171 @@ void generate_d64( Environment * _environment ) {
             storage = storage->next;
             ++i;
         }        
+
+        Bank * bank = _environment->expansionBanks;
+        while( bank ) {
+            int bankSize = bank->space - bank->remains;
+            if ( ( d64_get_free_sectors( handle ) * 256 ) < bankSize ) {
+                d64_output( handle, storageFileName );
+                d64_free( handle );
+                ++diskNumber;
+                storageFileName = generate_storage_filename( _environment, filemask, "d64", diskNumber );
+                handle = d64_create( CBMDOS );
+            }
+            if ( bank->remains < bank->space ) {
+                char bankFileName[MAX_TEMPORARY_STORAGE];
+                sprintf( bankFileName, "BANK%d", ( bank->id - 1 ) );
+                d64_write_file( handle, bankFileName, FT_SEQ, bank->data, bank->space - bank->remains );
+            }
+            bank = bank->next;
+        }
+
+    }
+
+}
+
+void generate_reu( Environment * _environment ) {
+
+    FILE * prgHandle = fopen(_environment->exeFileName, "rb");
+    fseek( prgHandle, 0, SEEK_END );
+    int prgSize = ftell( prgHandle );
+    fseek( prgHandle, 0, SEEK_SET );
+    unsigned char * prgContent = malloc( prgSize );
+    (void)!fread( prgContent, prgSize, 1, prgHandle );
+    fclose( prgHandle );
+
+    remove(_environment->exeFileName);
+
+    char * exeFileName = strdup( _environment->exeFileName );
+    char * extension = strstr( exeFileName, ".reu" );
+    if ( extension ) {
+        * extension = 0;
+    }
+    int diskNumber = 1;
+
+    D64Handle * handle = NULL;
+
+    Storage * storage = _environment->storage;
+
+    if ( !storage ) {
+        char * storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );
+        FILE * reuHandle = fopen( _environment->exeFileName, "wb" );
+        for( int i=0; i<_environment->ramSize * 1024; ++i ) {
+            fputc( 0, reuHandle );
+        }
+        fseek( reuHandle, 0, SEEK_SET );
+        handle = d64_create( CBMDOS );
+        d64_write_file( handle, "MAIN", FT_PRG, prgContent, prgSize );
+        Bank * bank = _environment->expansionBanks;
+        while( bank ) {
+            if ( bank->remains < bank->space ) {
+                int bankSize = bank->space - bank->remains;
+                fseek( reuHandle, ( bank->id - 1 ) * bank->space, SEEK_SET );
+                fwrite( bank->data, 1, bankSize, reuHandle );
+            }
+            bank = bank->next;
+        }
+        d64_output( handle, storageFileName );
+        d64_free( handle );
+        fclose( reuHandle );
+    } else {
+        char buffer[MAX_TEMPORARY_STORAGE];
+        char filemask[MAX_TEMPORARY_STORAGE];
+        strcpy( filemask, exeFileName );
+        char * basePath = find_last_path_separator( filemask );
+        if ( basePath ) {
+            ++basePath;
+            *basePath = 0;
+            if ( storage->fileName ) {
+                strcat( basePath, storage->fileName );
+            } else {
+                strcat( basePath, "disk" );
+            }
+        } else {
+            if ( storage->fileName ) {
+                strcpy( filemask, storage->fileName );
+            } else {
+                strcpy( filemask, "disk" );
+            }
+        }
+
+        char * storageFileName = generate_storage_filename( _environment, filemask, "d64", diskNumber );
+        
+        int i=0;
+        while( storage ) {
+            handle = d64_create( CBMDOS );
+            if ( i == 0 ) {
+                d64_write_file( handle, "MAIN", FT_PRG, prgContent, prgSize );
+            }
+            FileStorage * fileStorage = storage->files;
+            while( fileStorage ) {
+                int size;
+                char * buffer;
+                if ( fileStorage->content && fileStorage->size ) {
+                    size = fileStorage->size + 2;
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
+                    memcpy( &buffer[2], fileStorage->content, fileStorage->size );
+                } else {
+                    FILE * file = fopen( fileStorage->sourceName, "rb" );
+                    if ( !file ) {
+                        CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                    }
+                    fseek( file, 0, SEEK_END );
+                    size = ftell( file );
+                    fseek( file, 0, SEEK_SET );
+                    buffer = malloc( size + 2 );
+                    memset( buffer, 0, size + 2 );
+                    (void)!fread( &buffer[2], size, 1, file );
+                    fclose( file );
+                    size += 2;
+                }
+                d64_write_file( handle, fileStorage->targetName, FT_PRG, buffer, size );
+                fileStorage = fileStorage->next;
+            }
+            d64_output( handle, storageFileName );
+            d64_free( handle );
+
+            ++diskNumber;
+
+            strcpy( filemask, exeFileName );
+            char * basePath = find_last_path_separator( filemask );
+            if ( basePath ) {
+                ++basePath;
+                *basePath = 0;
+                if ( storage->fileName ) {
+                    strcat( basePath, storage->fileName );
+                } else {
+                    strcat( basePath, "disk" );
+                }
+            } else {
+                if ( storage->fileName ) {
+                    strcpy( filemask, storage->fileName );
+                } else {
+                    strcpy( filemask, "disk" );
+                }
+            }
+            storageFileName = generate_storage_filename( _environment, filemask, "d64", diskNumber );
+            storage = storage->next;
+            ++i;
+        }        
+
+        FILE * reuHandle = fopen( _environment->exeFileName, "wb" );
+        for( int i=0; i<_environment->ramSize * 1024; ++i ) {
+            fputc( 0, reuHandle );
+        }
+        fseek( reuHandle, 0, SEEK_SET );
+        Bank * bank = _environment->expansionBanks;
+        while( bank ) {
+            if ( bank->remains < bank->space ) {
+                int bankSize = bank->space - bank->remains;
+                fseek( reuHandle, ( bank->id - 1 ) * bank->space, SEEK_SET );
+                fwrite( bank->data, 1, bankSize, reuHandle );
+            }
+            bank = bank->next;
+        }
+        fclose( reuHandle );
+
     }
 
 }
@@ -252,6 +400,10 @@ void target_linkage( Environment * _environment ) {
         case OUTPUT_FILE_TYPE_D64:
             generate_prg( _environment );
             generate_d64( _environment );
+            break;
+        case OUTPUT_FILE_TYPE_REU:
+            generate_prg( _environment );
+            generate_reu( _environment );
             break;
         default:
             CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
