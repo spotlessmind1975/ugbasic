@@ -37,15 +37,6 @@
 
 @IF vestigialConfig.palettePreserve == 1
 
-; bit   index      address
-; 0     1          $02c4
-; 1     2          $02c5
-; 2     4          $02c6
-; 3     8          $02c7
-; 4     16         $02c8
-PALETTEPRESERVEUSED:
-    .byte $00
-
 @MACRO PALETTEPRESERVE2C4 value, increment
 @@
 @@  LDA PALETTEPRESERVEUSED
