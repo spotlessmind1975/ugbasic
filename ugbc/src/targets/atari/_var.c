@@ -456,9 +456,9 @@ void variable_cleanup( Environment * _environment ) {
     int anyExpansionBank = 0;
     Bank * bank = _environment->expansionBanks;
     while( bank ) {
+        outhead1("%s:", bank->name );
         if ( bank->type == BT_EXPANSION && bank->name && ( bank->space != bank->remains ) ) {
             int size = bank->space - bank->remains;
-            outhead1("%s:", bank->name );
             if ( bank->data ) {
                 out0("    .byte ");
                 int i=0;
