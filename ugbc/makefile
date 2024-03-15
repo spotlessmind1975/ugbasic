@@ -88,7 +88,12 @@ endif
 ifeq ($(OS),Windows_NT)
 BISON = bison
 else
+BISON_PATH = $(shell which bison 2>/dev/null)
+ifeq ($(strip $(BISON_PATH)),)
 BISON = ./../modules/bison/src/bison$(EXESUFFIX)
+else
+BISON = $(BISON_PATH)
+endif
 endif
 
 #------------------------------------------------ 
@@ -113,7 +118,7 @@ endif
 #
 ifeq ($(OS),Windows_NT)
 
-else
+else ifeq ($(strip $(BISON_PATH)),)
 $(BISON): $(dir $(BISON))../src/*.c $(dir $(BISON))../src/*.h \
 			$(dir $(BISON))../src/*.c $(dir $(BISON))../src/*.h
 	@mkdir -p $(realpath $(dir $(BISON)))/share
