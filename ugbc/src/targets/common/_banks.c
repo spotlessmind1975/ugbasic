@@ -80,34 +80,65 @@ void banks_init( Environment * _environment ) {
 
 }
 
-char * banks_get_address( Environment * _environment, int _bank ) {
-    
-    Bank * bank = _environment->expansionBanks;
+int banks_any_used( Environment * _environment ) {
 
+    Bank * bank = _environment->expansionBanks;
     while( bank ) {
-        if ( bank->id == _bank ) {
-            break;
+        if ( bank->type == BT_EXPANSION && bank->name && ( bank->space != bank->remains ) ) {
+            return 1;
         }
         bank = bank->next;
-    } 
-
-    if ( ! bank ) {
-        CRITICAL_OUT_OF_BANKS( );
     }
 
-    return bank->name;
+    return 0;
+
+}
+
+char * banks_get_address( Environment * _environment, int _bank ) {
+    
+    if ( banks_any_used( _environment ) ) {
+
+        Bank * bank = _environment->expansionBanks;
+
+        while( bank ) {
+            if ( bank->id == _bank ) {
+                break;
+            }
+            bank = bank->next;
+        } 
+
+        if ( ! bank ) {
+            CRITICAL_OUT_OF_BANKS( );
+        }
+
+        return bank->name;
+
+    } else {
+
+        Variable * bankAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+
+        return bankAddress->name;
+
+    }
 
 }
 
 Variable * banks_get_address_var( Environment * _environment, char * _bank ) {
 
-    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * bankAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
 
-    cpu_address_table_call( _environment, "EXPBANKS", bank->realName, bankAddress->realName );
+    if ( banks_any_used( _environment ) ) {
 
-    return bankAddress;
- 
+        Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
+
+        cpu_address_table_call( _environment, "EXPBANKS", bank->realName, bankAddress->realName );
+
+        return bankAddress;
+
+    } else {
+        return bankAddress;
+    }
+
 }
 
 int banks_store( Environment * _environment, Variable * _variable, int _resident ) {

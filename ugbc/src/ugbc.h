@@ -3723,6 +3723,7 @@ void banks_init_extended( Environment * _environment, int * _allowed, int _allow
 char * banks_get_address( Environment * _environment, int _bank );
 Variable * banks_get_address_var( Environment * _environment, char * _bank );
 int banks_store( Environment * _environment, Variable * _variable, int _resident );
+int banks_any_used( Environment * _environment );
 
 #define FUNCTION_STUB( t )   Variable * result = variable_temporary( _environment, t, "(stub)" ); return result;
 
