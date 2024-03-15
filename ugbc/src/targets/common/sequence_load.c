@@ -206,7 +206,6 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
         _flags |= FLAG_TRANSPARENCY;
     }
 
-    int base = ( 3*width*height ) - 6;
     for( y=0; y<height; y+=_frame_height ) {
         for( x=0; x<width; x+=_frame_width ) {
             Variable * partial = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
@@ -248,12 +247,10 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
 
     ptr += 3;
     lastImage = firstImage;
-    for(int i=0;i<hc;++i) {
-        for(i=0; i<realFramesCount; ++i ) {
-            memcpy( ptr, lastImage->valueBuffer, lastImage->size );
-            lastImage = lastImage->next;
-            ptr += lastImage->size;
-        }
+    for(i=0; i<realFramesCount; ++i ) {
+        memcpy( ptr, lastImage->valueBuffer, lastImage->size );
+        ptr += lastImage->size;
+        lastImage = lastImage->next;
     }
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
     final->originalBitmap = source;
