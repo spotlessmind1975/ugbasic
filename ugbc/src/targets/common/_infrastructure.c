@@ -770,7 +770,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     // Try to retrieve / create a variable in a rational way.
 
     // Check if the variable is global or not.
-
+    
     int isGlobal = variable_is_global( _environment, _name );
 
     Variable * var = variable_retrieve_internal( _environment, _name, 0 );
@@ -779,7 +779,8 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     // data type if it is different from the source one.
 
     if ( var ) {
-        if ( var->initializedByConstant ) {
+
+        if ( var->initializedByConstant && ( _type != VT_DSTRING && _type != VT_STRING ) ) {
             if ( 
                 ( VT_BITWIDTH( var->type ) != 1 ) 
                 && 
