@@ -780,7 +780,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
 
     if ( var ) {
 
-        if ( var->initializedByConstant && ( _type != VT_DSTRING && _type != VT_STRING ) ) {
+        if ( var->initializedByConstant && ( _type != VT_DSTRING && _type != VT_STRING && _type != VT_FLOAT ) ) {
             if ( 
                 ( VT_BITWIDTH( var->type ) != 1 ) 
                 && 
