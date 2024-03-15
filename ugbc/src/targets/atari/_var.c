@@ -194,7 +194,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         for (i=0; i<(variable->size-1); ++i ) {
                             out1("$%2.2x,", (unsigned char) ( variable->valueBuffer[i] & 0xff ) );
                         }
-                        outline1("$2.2x", (unsigned char) ( variable->valueBuffer[(variable->size-1)] & 0xff ) );
+                        outline1("$%2.2x", (unsigned char) ( variable->valueBuffer[(variable->size-1)] & 0xff ) );
                     } else if ( variable->memoryArea && ! variable->value ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
