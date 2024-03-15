@@ -18,5 +18,9 @@ nightly_build_all.sh
 upload_build.sh
 upload_build_beta.sh
 build_all_examples.sh
+*.php
 BETA
 website/
+acme-inc-10liner/
+falling-balls-10liner/
+
