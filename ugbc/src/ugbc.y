@@ -5793,7 +5793,7 @@ array_assign:
         char * buffer = malloc( size );
         char hexdigits[3];
         int i = 0, c = 0, j = 0;
-        for( i = 2, c = strlen( $2 ); i<(c-2); i += 2 ) {
+        for( i = 0, c = strlen( $2 ); i<(c-2); i += 2 ) {
             hexdigits[0] = $2[i];
             hexdigits[1] = $2[i+1];
             hexdigits[2] = 0;
