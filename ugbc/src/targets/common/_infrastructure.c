@@ -3418,7 +3418,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                         cpu_store_16bit(_environment, bankWindowId, source->variableUniqueId );
                                         cpu_label( _environment, alreadyLoadedLabel );
                                     } else {
-                                        strcpy( source->realName, bankWindowName );
+                                        strcpy( bankWindowName, source->realName );
                                         realSize = source->size;
                                         realAllocationSize = realSize;
                                     }
