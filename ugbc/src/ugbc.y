@@ -5775,7 +5775,7 @@ array_assign:
         }
     }
     | OP_ASSIGN BufferDefinitionHex {
-        int size = ( strlen( $2 ) - 3 ) / 2;
+        int size = ( strlen( $2 ) ) / 2;
         if ( ((struct _Environment *)_environment)->currentArray->arrayDimensions > 1 ) {
             if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
                 CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
