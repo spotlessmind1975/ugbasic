@@ -92,7 +92,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
-%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU
+%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1079,6 +1079,26 @@ const_factor:
       | SPRITE Y MAX {
           $$ = SPRITE_Y_MAX;
       }
+      | LITTLE ENDIAN {
+        #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+            defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
+            defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
+            defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
+            defined( __c64reu__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+      }
+      | BIG ENDIAN {
+        #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
+            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+      }
       | HEIGHT {
           $$ = ((Environment *)_environment)->screenHeight;
       }
@@ -1139,7 +1159,7 @@ const_factor:
           if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
           }
-          $$ = array->arrayDimensionsEach[0];
+          $$ = array->arrayDimensionsEach[array->arrayDimensions-1];
       }
       | UBOUND OP Identifier OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
@@ -1152,7 +1172,7 @@ const_factor:
         if ( ( array->arrayDimensions > 1 ) && ( $5 > array->arrayDimensions ) ) {
             CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
         }
-        $$ = array->arrayDimensionsEach[$5];
+        $$ = array->arrayDimensionsEach[array->arrayDimensions-$5-1];
       }
       | LBOUND OP Identifier CP {
           Variable * array = variable_retrieve( _environment, $3 );
@@ -3108,7 +3128,7 @@ exponential:
             CRITICAL_NOT_ARRAY( $3 );
         }
         Variable * value = variable_temporary( _environment, VT_WORD, "(ubound)" );
-        variable_store( _environment, value->name, array->arrayDimensionsEach[0] );
+        variable_store( _environment, value->name, array->arrayDimensionsEach[array->arrayDimensions-1] );
         $$ = value->name;
     }
     | UBOUND OP expr OP_COMMA const_expr CP {
@@ -3123,7 +3143,7 @@ exponential:
           CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
         }
         Variable * value = variable_temporary( _environment, VT_WORD, "(ubound)" );
-        variable_store( _environment, value->name, array->arrayDimensionsEach[$5] );
+        variable_store( _environment, value->name, array->arrayDimensionsEach[array->arrayDimensions-$5-1] );
         $$ = value->name;
     }
     | LBOUND OP expr CP {
