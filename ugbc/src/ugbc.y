@@ -1139,20 +1139,40 @@ const_factor:
           if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
           }
-          if ( array->arrayDimensions > 1 ) {
-            CRITICAL_ARRAY_MULTIDIMENSIONAL( $3 );
-          }
           $$ = array->arrayDimensionsEach[0];
+      }
+      | UBOUND OP Identifier OP_COMMA const_expr CP {
+        Variable * array = variable_retrieve( _environment, $3 );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+        }
+        if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
+            CRITICAL_ARRAY_MONODIMENSIONAL( $3 );
+        }
+        if ( ( array->arrayDimensions > 1 ) && ( $5 > array->arrayDimensions ) ) {
+            CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
+        }
+        $$ = array->arrayDimensionsEach[$5];
       }
       | LBOUND OP Identifier CP {
           Variable * array = variable_retrieve( _environment, $3 );
           if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
           }
-          if ( array->arrayDimensions > 1 ) {
-            CRITICAL_ARRAY_MULTIDIMENSIONAL( $3 );
-          }
           $$ = 0;
+      }
+      | LBOUND OP Identifier OP_COMMA const_expr CP {
+        Variable * array = variable_retrieve( _environment, $3 );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+        }
+        if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
+            CRITICAL_ARRAY_MONODIMENSIONAL( $3 );
+        }
+        if ( ( array->arrayDimensions > 1 ) && ( $5 > array->arrayDimensions ) ) {
+            CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
+        }
+        $$ = 0;
       }
       | LEN OP Identifier CP {
           Constant * c = constant_find( ((Environment *)_environment)->constants, $3 );
@@ -2529,6 +2549,9 @@ exponential:
         parser_array_cleanup( _environment );
     }
     | OSP Identifier CSP {
+        if ( !((struct _Environment *)_environment)->procedureName ) {
+            CRITICAL_CANNOT_USE_MULTITASKED_ARRAY($2);
+        }
         parser_array_init( _environment );
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * array = variable_retrieve_or_define( _environment, $2, VT_ARRAY, 0 );
@@ -3082,22 +3105,46 @@ exponential:
     | UBOUND OP expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
         if ( array->type != VT_ARRAY ) {
-        CRITICAL_NOT_ARRAY( $3 );
-        }
-        if ( array->arrayDimensions > 1 ) {
-        CRITICAL_ARRAY_MULTIDIMENSIONAL( $3 );
+            CRITICAL_NOT_ARRAY( $3 );
         }
         Variable * value = variable_temporary( _environment, VT_WORD, "(ubound)" );
         variable_store( _environment, value->name, array->arrayDimensionsEach[0] );
         $$ = value->name;
     }
+    | UBOUND OP expr OP_COMMA const_expr CP {
+        Variable * array = variable_retrieve( _environment, $3 );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+        }
+        if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
+          CRITICAL_ARRAY_MONODIMENSIONAL( $3 );
+        }
+        if ( ( array->arrayDimensions > 1 ) && ( $5 > array->arrayDimensions ) ) {
+          CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
+        }
+        Variable * value = variable_temporary( _environment, VT_WORD, "(ubound)" );
+        variable_store( _environment, value->name, array->arrayDimensionsEach[$5] );
+        $$ = value->name;
+    }
     | LBOUND OP expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
         if ( array->type != VT_ARRAY ) {
-        CRITICAL_NOT_ARRAY( $3 );
+            CRITICAL_NOT_ARRAY( $3 );
         }
-        if ( array->arrayDimensions > 1 ) {
-        CRITICAL_ARRAY_MULTIDIMENSIONAL( $3 );
+        Variable * value = variable_temporary( _environment, VT_WORD, "(lbound)" );
+        variable_store( _environment, value->name, 0 );
+        $$ = value->name;
+    }
+    | LBOUND OP expr OP_COMMA const_expr CP {
+        Variable * array = variable_retrieve( _environment, $3 );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+        }
+        if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
+          CRITICAL_ARRAY_MONODIMENSIONAL( $3 );
+        }
+        if ( ( array->arrayDimensions > 1 ) && ( $5 > array->arrayDimensions ) ) {
+          CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
         }
         Variable * value = variable_temporary( _environment, VT_WORD, "(lbound)" );
         variable_store( _environment, value->name, 0 );

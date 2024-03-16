@@ -2780,6 +2780,9 @@ typedef struct _Environment {
 #define CRITICAL_OUT_OF_BANKS( )  CRITICAL("E264 - out of bank detected");
 #define CRITICAL_CANNOT_COPY_TO_BANKED(v) CRITICAL2("E265 - cannot copy something on BANKed variables", v );
 #define CRITICAL_INVALID_RAM_SIZE(r) CRITICAL2i("E266 - invalid ram size (-R)", r );
+#define CRITICAL_ARRAY_MONODIMENSIONAL(v) CRITICAL2i("E267 - dimension > 0 for one dimensional array in UBOUND/LBOUND", v );
+#define CRITICAL_ARRAY_INVALID_DIMENSION(v) CRITICAL2i("E268 - invalid dimension for UBOUND/LBOUND", v );
+#define CRITICAL_CANNOT_USE_MULTITASKED_ARRAY(v) CRITICAL2("E269 - cannot use [ ] operator outside a PARALLEL PROCEDURE", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
