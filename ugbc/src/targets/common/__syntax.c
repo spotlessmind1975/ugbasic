@@ -1936,3 +1936,37 @@ Questa istruzione cambia il colore del bordo.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword UBOUND
+
+@english
+Retrieves the maximum value of the index of an array, given the dimension.
+
+@italian
+Recupera il valore massimo dell'indice di un array, data la dimensione.
+
+@syntax = UBOUND( array [, dimension])
+
+@example DIM a(10,20)
+@example PRINT UBOUND(a,1) : REM it will print 20
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword LBOUND
+
+@english
+Retrieves the minimum value of the index of an array, given the dimension.
+
+@italian
+Recupera il valore minimo dell'indice di un array, data la dimensione.
+
+@syntax = LBOUND( array [, dimension])
+
+@example DIM a(10,20)
+@example PRINT LBOUND(a) : REM it will print 0
+
+@target all
+</usermanual> */
