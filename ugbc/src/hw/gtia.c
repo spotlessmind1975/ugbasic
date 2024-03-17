@@ -1489,9 +1489,9 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_16bit( _environment, "ORIGINY", 0) ;
 
     cpu_store_16bit( _environment, "CLIPX1", 0) ;
-    cpu_store_16bit( _environment, "CLIPY2", 0) ;
-    cpu_move_16bit( _environment, "CURRENTWIDTH", "CLIPX2");
-    cpu_move_16bit( _environment, "CURRENTHEIGHT", "CLIPY2");
+    cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
+    cpu_store_16bit( _environment, "CLIPY1", 0) ;
+    cpu_store_16bit( _environment, "CLIPY2", _environment->screenHeight-1 );
 
     cpu_store_16bit( _environment, "TEXTADDRESS", _environment->frameBufferStart );
     cpu_store_16bit( _environment, "BITMAPADDRESS", _environment->frameBufferStart );
