@@ -23,12 +23,22 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc,
 
 	INK WHITE
 
+	PRINT "*** TIMER CALIBRATION ***"
+
+	PRINT
+	PRINT "PAL    : "; PAL
+	PRINT "NTSC   : "; NTSC
+	PRINT "T.P.S. : "; TICKS PER SECOND
+	PRINT
+
 	PRINT "HARDWARE DETECTED: ";
 
-	IF TICKS PER SECOND = 50 THEN
+	IF PAL THEN
 		PRINT "PAL (50 Hz)"
-	ELSE
+	ELSE IF NTSC THEN
 		PRINT "NTSC (60 Hz)"
+	ELSE
+		PRINT "unknown (not 50 Hz or 60 Hz)"
 	ENDIF
 
 	PRINT 
@@ -44,7 +54,7 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc,
 
 		WHILE ( TIMER - t ) < TICKS PER SECOND
 
-			LOCATE 11 + s, 2
+			LOCATE 11 + s, 8
 
 			dt = TIMER - t
 			
@@ -60,7 +70,7 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc,
 
 		WEND
 		
-		LOCATE 11 + s, 2
+		LOCATE 11 + s, 8
 		PRINT "*";
 		
 		INC s

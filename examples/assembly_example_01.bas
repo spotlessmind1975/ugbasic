@@ -1,4 +1,4 @@
-REM ASSEMBLY INTEGRATION INLINE (1 LINE)
+﻿REM ASSEMBLY INTEGRATION INLINE (1 LINE)
 REM 
 REM This small example explains how to integrate assembly
 REM just with inline instructions.
@@ -11,9 +11,11 @@ REM in solo una linea di codice
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,vic20,zx
 
+	CLS
+	
     DIM x AS BYTE
 
-    x = 0
+    x = 1
 
     ON CPU6809 ASM INC _x
 
@@ -26,3 +28,4 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
     ELSE
         PRINT "bad!"
     ENDIF
+

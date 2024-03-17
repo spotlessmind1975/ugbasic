@@ -16,9 +16,10 @@ REM fattori nelle operazioni.
 REM
 REM @include coco3
 
-CONST timeLimit = 50 * 10
 CONST width = 16
 CONST height = 16
+
+timeLimit = (TICKS PER SECOND) * 10
 
 BITMAP ENABLE ( 320, 192, 16 )
 COLOR BORDER BLACK
@@ -28,14 +29,11 @@ VAR counter AS WORD = 0
 
 LOCATE 0,0
 PEN WHITE
-PRINT "TESTING ON ";PEN(YELLOW);SCREEN WIDTH;"x";SCREEN HEIGHT;" (";SCREEN COLORS;" colors)";PEN(WHITE)
-PRINT "  PICTURE SIZE = ";PEN(YELLOW);width;"x";height;PEN(WHITE)
-PRINT "  DURATION = ";PEN(YELLOW);timeLimit / TICKS PER SECOND;" secs";PEN(WHITE)
+PRINT "TESTING ON ";PEN(YELLOW);SCREEN WIDTH;"x";SCREEN HEIGHT;"x";SCREEN COLORS;PEN(WHITE)
+PRINT "  FRAME : ";PEN(YELLOW);width;"x";height;PEN(WHITE)
+PRINT "  DUR.  : ";PEN(YELLOW);(timeLimit / (TICKS PER SECOND));" secs";PEN(WHITE)
 PRINT
-PRINT "PRESS ";PEN(RED);"ANY KEY";PEN(WHITE);" TO BEGIN TESTING"
-PRINT
-WAIT KEY OR FIRE
-PRINT PEN(WHITE);"--- STARTING TEST ---"
+PRINT "";PEN(WHITE);"RUNNING--->";
 PRINT
 
 background := NEW IMAGE(#width, #height)
@@ -49,18 +47,17 @@ DO
     EXIT IF TIMER > timeLimit
 LOOP
 
-PRINT "--- ENDING TEST ---"
+PRINT "DONE"
 PRINT
 
 DIM fps AS FLOAT, frames AS FLOAT, time AS FLOAT
 DIM pxs AS FLOAT, pixels AS FLOAT
+px = 32 * 32
 frames = counter
 time = 10
-pixels = 32 * 32
-fps = frames / time
-pxs = ( pixels * frames ) / time
+pixels = px * frames
+fps = INT( frames / time )
 
-PRINT PEN(WHITE);" FRAMES/S:"; PEN(YELLOW); fps
-PRINT PEN(WHITE);" PIXELS/S:"; PEN(YELLOW); pxs
-
-
+PRINT PEN(WHITE);" FRAMES   : "; frames
+PRINT PEN(WHITE);" PIXELS   : "; pixels
+PRINT PEN(WHITE);" FRAMES/S : "; PEN(YELLOW); fps

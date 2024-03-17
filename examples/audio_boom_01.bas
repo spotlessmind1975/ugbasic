@@ -14,6 +14,13 @@ REM
 	CLS
 
     CENTRE "Thunderbolt and Lightning"
-    BOOM : WAIT 1000 MS: BOOM: CLS
+    BOOM 
+    
+    WAIT 1000 MS
+    
+    BOOM
+    
+    CLS
+    
     CENTRE "Very Very Frightening"
     WAIT 500 MS: BOOM
