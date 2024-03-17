@@ -70,6 +70,7 @@ void boom( Environment * _environment, int _channels ) {
     pokey_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
     pokey_start( _environment, _channels );
     pokey_set_frequency( _environment, _channels, 1000 );
+    pokey_set_duration( _environment, _channels, 50 );
 
 }
 
@@ -92,9 +93,11 @@ void boom_var( Environment * _environment, char * _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         pokey_start_var( _environment, channels->realName );
         pokey_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
+        pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
     } else {
         pokey_start_var( _environment, NULL );
         pokey_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
+        pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
     }
     
 }

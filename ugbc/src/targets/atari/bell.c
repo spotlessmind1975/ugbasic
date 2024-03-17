@@ -88,10 +88,6 @@ void bell( Environment * _environment, int _note, int _channels ) {
 
 @syntax BELL note [ON channels]
 
-@example SOUND laDiesis
-@example SOUND solMaggiore, breve
-@example SOUND solMaggiore, lunga ON primaVoce
-
 @target atari
 </usermanual> */
 void bell_vars( Environment * _environment, char * _note, char * _channels ) {
@@ -102,10 +98,12 @@ void bell_vars( Environment * _environment, char * _note, char * _channels ) {
         pokey_start_var( _environment, channels->realName );
         pokey_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
         pokey_set_note_vars( _environment, channels->realName, note->realName );
+        pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
     } else {
         pokey_start_var( _environment, NULL );
         pokey_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
         pokey_set_note_vars( _environment, NULL, note->realName );
+        pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
     }
 
 }

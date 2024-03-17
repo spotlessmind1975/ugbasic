@@ -90,7 +90,14 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
     deploy( pokeystartup, src_hw_pokey_startup_asm );
 
-    outline1("LDX #%2.2x", ( _volume & 0x0f ) );
+    // The lower 4 bits of the audio control register contain a 4-bit number
+    // that specifies the volume of the sound. A zero in these bits means 
+    // zero volume, and a 15 means as loud as possible. The sum of the volumes 
+    // of the four channels should not exceed 32, since this forces 
+    // overmodulation of the audio output. The sound produced tends to actually
+    // lose volume and assume a buzzing quality.
+
+    outline1("LDX #%2.2x", ( _volume >> 5 ) & 0x07 );
     outline0("JSR POKEYSTARTVOL");
 
 }
@@ -154,162 +161,6 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
     outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
     outline0("JSR POKEYPROGFREQ" );
 
-#define     PROGRAM_PULSE( c, p ) \
-    outline1("LDX #$%2.2x", ( p & 0xff ) ); \
-    outline1("LDY #$%2.2x", ( ( p >> 8 ) & 0xff ) ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR POKEYPROGPULSE0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR POKEYPROGPULSE1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("JSR POKEYPROGPULSE2" ); \
-    if ( ( c & 0x08 ) ) \
-        outline0("JSR POKEYPROGPULSE3" );
-
-#define     PROGRAM_PULSE_V( c, p ) \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline1("LDX %s", p ); \
-    outline1("LDY %s", address_displacement(_environment, p, "1") ); \
-    outline0("JSR POKEYPROGPULSE" );
-
-#define     PROGRAM_PULSE_SV( c, p ) \
-    outline1("LDX #$%2.2x", ( p & 0xff ) ); \
-    outline1("LDY #$%2.2x", ( ( p >> 8 ) & 0xff ) ); \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline0("JSR POKEYPROGPULSE" );
-
-#define     PROGRAM_NOISE( c ) \
-    outline0("LDX #$82" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR POKEYPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR POKEYPROGCTR1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("JSR POKEYPROGCTR2" ); \
-    if ( ( c & 0x08 ) ) \
-        outline0("JSR POKEYPROGCTR3" );
-
-#define     PROGRAM_NOISE_V( c, p ) \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline0("LDX #$82" ); \
-    outline0("JSR POKEYPROGCTR" );
-
-#define     PROGRAM_NOISE_SV( c ) \
-    outline0("LDX #$82" ); \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline0("JSR POKEYPROGCTR" );
-
-#define     PROGRAM_SAW( c ) \
-    outline0("LDX #$22" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR POKEYPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR POKEYPROGCTR1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("JSR POKEYPROGCTR2" ); \
-    if ( ( c & 0x08 ) ) \
-        outline0("JSR POKEYPROGCTR3" );
-
-#define     PROGRAM_SAW_V( c) \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline0("LDX #$22" ); \
-    outline0("JSR POKEYPROGCTR" );
-
-#define     PROGRAM_SAW_SV( c ) \
-    outline0("LDX #$22" ); \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline0("JSR POKEYPROGCTR" );
-
-#define     PROGRAM_TRIANGLE( c ) \
-    outline0("LDX #$12" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR POKEYPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR POKEYPROGCTR1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("JSR POKEYPROGCTR2" ); \
-    if ( ( c & 0x08 ) ) \
-        outline0("JSR POKEYPROGCTR3" );
-
-#define     PROGRAM_TRIANGLE_V( c ) \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline0("LDX #$12" ); \
-    outline0("JSR POKEYPROGCTR" );
-
-#define     PROGRAM_TRIANGLE_SV( c ) \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline0("LDX #$12" ); \
-    outline0("JSR POKEYPROGCTR" );
-
-#define     PROGRAM_SAW_TRIANGLE( c ) \
-    outline0("LDX #$32" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR POKEYPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR POKEYPROGCTR1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("JSR POKEYPROGCTR2" ); \
-    if ( ( c & 0x08 ) ) \
-        outline0("JSR POKEYPROGCTR3" );
-
-#define     PROGRAM_SAW_TRIANGLE_V( c ) \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline0("LDX #$32" ); \
-    outline0("JSR POKEYPROGCTR" );
-
-#define     PROGRAM_SAW_TRIANGLE_SV( c ) \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline0("LDX #$32" ); \
-    outline0("JSR POKEYPROGCTR" );
-
-#define     PROGRAM_ATTACK_DECAY( c, a, d ) \
-    outline1("LDX #$%2.2x", ( a & 0x0f ) ); \
-    outline1("LDY #$%2.2x", ( d & 0x0f ) ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR POKEYPROGAD0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR POKEYPROGAD1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("JSR POKEYPROGAD2" ); \
-    if ( ( c & 0x08 ) ) \
-        outline0("JSR POKEYPROGAD3" );
-
-#define     PROGRAM_ATTACK_DECAY_V( c, a, d ) \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline1("LDX %s", a ); \
-    outline1("LDY %s", d ); \
-    outline0("JSR POKEYPROGAD" );
-
-#define     PROGRAM_ATTACK_DECAY_SV( c, a, d ) \
-    outline1("LDX #$%2.2x", ( a & 0x0f ) ); \
-    outline1("LDY #$%2.2x", ( d & 0x0f ) ); \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline0("JSR POKEYPROGAD" );
-
-#define     PROGRAM_SUSTAIN_RELEASE( c, s, r ) \
-    outline1("LDX #$%2.2x", ( s & 0x0f ) ); \
-    outline1("LDY #$%2.2x", ( r & 0x0f ) ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR POKEYPROGSR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR POKEYPROGSR1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("JSR POKEYPROGSR2" ); \
-    if ( ( c & 0x08 ) ) \
-        outline0("JSR POKEYPROGSR3" );
-
-#define     PROGRAM_SUSTAIN_RELEASE_V( c, s, r ) \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline1("LDX %s", s ); \
-    outline1("LDY %s", r ); \
-    outline0("JSR POKEYPROGSR" );
-
-#define     PROGRAM_SUSTAIN_RELEASE_SV( c, s, r ) \
-    outline1("LDX #$%2.2x", ( s & 0x0f ) ); \
-    outline1("LDY #$%2.2x", ( r & 0x0f ) ); \
-    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
-    outline0("JSR POKEYPROGSR" );
-
 #define     STOP_FREQUENCY( c ) \
     if ( ( c & 0x01 ) ) \
         outline0("JSR POKEYSTOP0" ); \
@@ -328,45 +179,74 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
     outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
     outline0("JSR POKEYSTOP" );
 
+#define     PROGRAM_DISTORTION( c, v ) \
+    outline1("LDX #$%2.2x", v ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR POKEYPROGDIST0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR POKEYPROGDIST1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR POKEYPROGDIST2" );
+
+#define     PROGRAM_DISTORTION_SV( c, v ) \
+    outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
+    outline1("LDX #$%2.2x", v ); \
+    outline0("JSR POKEYPROGDIST" );
+
 void pokey_set_program( Environment * _environment, int _channels, int _program ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
     deploy( pokeystartup, src_hw_pokey_startup_asm );
 
     switch (_program) {
+
+        case IMF_INSTRUMENT_APPLAUSE:
+        case IMF_INSTRUMENT_FX_4_ATMOSPHERE:
+        case IMF_INSTRUMENT_TIMPANI:
+        case IMF_INSTRUMENT_ORCHESTRA_HIT:
+            PROGRAM_PITCH( _channels, 0 );
+            PROGRAM_DISTORTION( _channels, 0x01 );
+            break;
+
         case IMF_INSTRUMENT_EXPLOSION:
-            PROGRAM_NOISE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 2, 11);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 0, 1);
+            PROGRAM_PITCH( _channels, 0 );
+            PROGRAM_DISTORTION( _channels, 0x02 );
             break;
+
         case IMF_INSTRUMENT_GUNSHOT:
-            PROGRAM_NOISE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 2, 4);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 0, 1);
+            PROGRAM_PITCH( _channels, 0x80 );
+            PROGRAM_DISTORTION( _channels, 0x09 );
             break;
+
+        case IMF_INSTRUMENT_FX_1_RAIN:
+        case IMF_INSTRUMENT_FX_2_SOUNDTRACK:
+        case IMF_INSTRUMENT_FX_3_CRYSTAL:
+        case IMF_INSTRUMENT_FX_5_BRIGHTNESS:
+        case IMF_INSTRUMENT_FX_6_GOBLINS:
+        case IMF_INSTRUMENT_FX_7_ECHOES:
+        case IMF_INSTRUMENT_FX_8_SCI_FI:
         case IMF_INSTRUMENT_PAD_5_BOWED:
         case IMF_INSTRUMENT_PAD_6_METALLIC:
         case IMF_INSTRUMENT_PAD_7_HALO:
         case IMF_INSTRUMENT_PAD_8_SWEEP:
+            PROGRAM_PITCH( _channels, 0x0 );
+            PROGRAM_DISTORTION( _channels, 0x09 );
+            break;
+
+        case IMF_INSTRUMENT_HELICOPTER:
+            PROGRAM_PITCH( _channels, 0xd0 );
+            PROGRAM_DISTORTION( _channels, 0x0d );
+            break;
+
         case IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO:
         case IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO:
         case IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO:
         case IMF_INSTRUMENT_HONKY_TONK_PIANO:
         case IMF_INSTRUMENT_ELECTRIC_PIANO1:
         case IMF_INSTRUMENT_ELECTRIC_PIANO2:
-            PROGRAM_TRIANGLE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 4, 2);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
-            break;
-
         case IMF_INSTRUMENT_HARPSICHORD:
         case IMF_INSTRUMENT_CLAVI:
         case IMF_INSTRUMENT_CELESTA:
-            PROGRAM_PULSE(_channels, 1024);
-            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 3);
-            break;
-
         case IMF_INSTRUMENT_LEAD_3_CALLIOPE:
         case IMF_INSTRUMENT_GLOCKENSPIEL:
         case IMF_INSTRUMENT_MUSIC_BOX:
@@ -375,12 +255,6 @@ void pokey_set_program( Environment * _environment, int _channels, int _program 
         case IMF_INSTRUMENT_XYLOPHONE:
         case IMF_INSTRUMENT_TUBULAR_BELLS:
         case IMF_INSTRUMENT_DULCIMER:
-            PROGRAM_TRIANGLE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 2, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 12, 14);
-            break;
-
-        default:
         case IMF_INSTRUMENT_PAD_3_POLYSYNTH:
         case IMF_INSTRUMENT_DRAWBAR_ORGAN:
         case IMF_INSTRUMENT_PERCUSSIVE_ORGAN:
@@ -390,11 +264,6 @@ void pokey_set_program( Environment * _environment, int _channels, int _program 
         case IMF_INSTRUMENT_ACCORDION:
         case IMF_INSTRUMENT_HARMONICA:
         case IMF_INSTRUMENT_TANGO_ACCORDION:
-            PROGRAM_TRIANGLE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
-            break;
-
         case IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON:
         case IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL:
         case IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ:
@@ -402,17 +271,7 @@ void pokey_set_program( Environment * _environment, int _channels, int _program 
         case IMF_INSTRUMENT_OVERDRIVEN_GUITAR:
         case IMF_INSTRUMENT_DISTORTION_GUITAR:
         case IMF_INSTRUMENT_GUITAR_HARMONICS:
-            PROGRAM_PULSE(_channels, 128);
-            PROGRAM_ATTACK_DECAY(_channels, 10, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
-            break;
-
         case IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED:
-            PROGRAM_PULSE(_channels, 128);
-            PROGRAM_ATTACK_DECAY(_channels, 1, 2);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 4, 3);
-            break;
-
         case IMF_INSTRUMENT_LEAD_8_BASS_LEAD:
         case IMF_INSTRUMENT_ACOUSTIC_BASS:
         case IMF_INSTRUMENT_ELECTRIC_BASS_FINGER:
@@ -422,11 +281,6 @@ void pokey_set_program( Environment * _environment, int _channels, int _program 
         case IMF_INSTRUMENT_SLAP_BASS_2:
         case IMF_INSTRUMENT_SYNTH_BASS_1:
         case IMF_INSTRUMENT_SYNTH_BASS_2:
-            PROGRAM_TRIANGLE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 2, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 12, 14);
-            break;
-
         case IMF_INSTRUMENT_LEAD_1_SQUARE:
         case IMF_INSTRUMENT_VIOLIN:
         case IMF_INSTRUMENT_VIOLA:
@@ -439,11 +293,6 @@ void pokey_set_program( Environment * _environment, int _channels, int _program 
         case IMF_INSTRUMENT_STRING_ENSEMBLE_2:
         case IMF_INSTRUMENT_SYNTHSTRINGS_1:
         case IMF_INSTRUMENT_SYNTHSTRINGS_2:
-            PROGRAM_PULSE(_channels, 128);
-            PROGRAM_ATTACK_DECAY(_channels, 10, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
-            break;
-
         case IMF_INSTRUMENT_PAD_4_CHOIR:
         case IMF_INSTRUMENT_CHOIR_AAHS:
         case IMF_INSTRUMENT_VOICE_OOHS:
@@ -452,22 +301,6 @@ void pokey_set_program( Environment * _environment, int _channels, int _program 
         case IMF_INSTRUMENT_LEAD_5_CHARANG:
         case IMF_INSTRUMENT_LEAD_6_VOICE:
         case IMF_INSTRUMENT_LEAD_7_FIFTHS:
-        case IMF_INSTRUMENT_FX_1_RAIN:
-        case IMF_INSTRUMENT_FX_2_SOUNDTRACK:
-        case IMF_INSTRUMENT_FX_3_CRYSTAL:
-        case IMF_INSTRUMENT_FX_4_ATMOSPHERE:
-        case IMF_INSTRUMENT_FX_5_BRIGHTNESS:
-        case IMF_INSTRUMENT_FX_6_GOBLINS:
-        case IMF_INSTRUMENT_FX_7_ECHOES:
-        case IMF_INSTRUMENT_FX_8_SCI_FI:
-        case IMF_INSTRUMENT_TIMPANI:
-        case IMF_INSTRUMENT_ORCHESTRA_HIT:
-        case IMF_INSTRUMENT_APPLAUSE:
-            PROGRAM_NOISE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 1, 14);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
-            break;
-
         case IMF_INSTRUMENT_LEAD_2_SAWTOOTH:
         case IMF_INSTRUMENT_PAD_1_NEW_AGE:
         case IMF_INSTRUMENT_PAD_2_WARM:
@@ -495,11 +328,6 @@ void pokey_set_program( Environment * _environment, int _channels, int _program 
         case IMF_INSTRUMENT_SHAKUHACHI:
         case IMF_INSTRUMENT_WHISTLE:
         case IMF_INSTRUMENT_OCARINA:
-            PROGRAM_SAW(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
-            break;
-
         case IMF_INSTRUMENT_SITAR:
         case IMF_INSTRUMENT_BANJO:
         case IMF_INSTRUMENT_SHAMISEN:
@@ -521,11 +349,12 @@ void pokey_set_program( Environment * _environment, int _channels, int _program 
         case IMF_INSTRUMENT_SEASHORE:
         case IMF_INSTRUMENT_BIRD_TWEET:
         case IMF_INSTRUMENT_TELEPHONE_RING:
-        case IMF_INSTRUMENT_HELICOPTER:
-            PROGRAM_SAW(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
+            PROGRAM_DISTORTION( _channels, 0x00 );
             break;
+
+        default:
+            break;
+
     }
 
 }
@@ -600,6 +429,7 @@ void pokey_set_volume_vars( Environment * _environment, char * _channels, char *
     outline0("LSR" );
     outline0("LSR" );
     outline0("LSR" );
+    outline0("LSR" );
     outline0("TAX" );
     outline0("JSR POKEYSTARTVOL");
 
@@ -621,39 +451,54 @@ void pokey_set_program_semi_var( Environment * _environment, char * _channels, i
     deploy( pokeystartup, src_hw_pokey_startup_asm );
 
     switch (_program) {
+
+        case IMF_INSTRUMENT_APPLAUSE:
+        case IMF_INSTRUMENT_FX_4_ATMOSPHERE:
+        case IMF_INSTRUMENT_TIMPANI:
+        case IMF_INSTRUMENT_ORCHESTRA_HIT:
+            PROGRAM_PITCH_SV( _channels, 0 );
+            PROGRAM_DISTORTION_SV( _channels, 0x01 );
+            break;
+
         case IMF_INSTRUMENT_EXPLOSION:
-            PROGRAM_NOISE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 11);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 0, 1);
+            PROGRAM_PITCH_SV( _channels, 0xff );
+            PROGRAM_DISTORTION_SV( _channels, 0x09 );
             break;
+
         case IMF_INSTRUMENT_GUNSHOT:
-            PROGRAM_NOISE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 4);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 0, 1);
+            PROGRAM_PITCH_SV( _channels, 0x80 );
+            PROGRAM_DISTORTION_SV( _channels, 0x09 );
             break;
+
+        case IMF_INSTRUMENT_FX_1_RAIN:
+        case IMF_INSTRUMENT_FX_2_SOUNDTRACK:
+        case IMF_INSTRUMENT_FX_3_CRYSTAL:
+        case IMF_INSTRUMENT_FX_5_BRIGHTNESS:
+        case IMF_INSTRUMENT_FX_6_GOBLINS:
+        case IMF_INSTRUMENT_FX_7_ECHOES:
+        case IMF_INSTRUMENT_FX_8_SCI_FI:
         case IMF_INSTRUMENT_PAD_5_BOWED:
         case IMF_INSTRUMENT_PAD_6_METALLIC:
         case IMF_INSTRUMENT_PAD_7_HALO:
         case IMF_INSTRUMENT_PAD_8_SWEEP:
+            PROGRAM_PITCH_SV( _channels, 0x0 );
+            PROGRAM_DISTORTION_SV( _channels, 0x09 );
+            break;
+
+        case IMF_INSTRUMENT_HELICOPTER:
+            PROGRAM_PITCH_SV( _channels, 0xd0 );
+            PROGRAM_DISTORTION_SV( _channels, 0x0d );
+            break;
+
         case IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO:
         case IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO:
         case IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO:
         case IMF_INSTRUMENT_HONKY_TONK_PIANO:
         case IMF_INSTRUMENT_ELECTRIC_PIANO1:
         case IMF_INSTRUMENT_ELECTRIC_PIANO2:
-            PROGRAM_TRIANGLE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 4, 2);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
-            break;
-
         case IMF_INSTRUMENT_HARPSICHORD:
         case IMF_INSTRUMENT_CLAVI:
         case IMF_INSTRUMENT_CELESTA:
-            PROGRAM_PULSE_SV(_channels, 1024);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 3);
-            break;
-
         case IMF_INSTRUMENT_LEAD_3_CALLIOPE:
         case IMF_INSTRUMENT_GLOCKENSPIEL:
         case IMF_INSTRUMENT_MUSIC_BOX:
@@ -662,12 +507,6 @@ void pokey_set_program_semi_var( Environment * _environment, char * _channels, i
         case IMF_INSTRUMENT_XYLOPHONE:
         case IMF_INSTRUMENT_TUBULAR_BELLS:
         case IMF_INSTRUMENT_DULCIMER:
-            PROGRAM_TRIANGLE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 10);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 12, 14);
-            break;
-
-        default:
         case IMF_INSTRUMENT_PAD_3_POLYSYNTH:
         case IMF_INSTRUMENT_DRAWBAR_ORGAN:
         case IMF_INSTRUMENT_PERCUSSIVE_ORGAN:
@@ -677,11 +516,6 @@ void pokey_set_program_semi_var( Environment * _environment, char * _channels, i
         case IMF_INSTRUMENT_ACCORDION:
         case IMF_INSTRUMENT_HARMONICA:
         case IMF_INSTRUMENT_TANGO_ACCORDION:
-            PROGRAM_TRIANGLE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
-            break;
-
         case IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON:
         case IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL:
         case IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ:
@@ -689,17 +523,7 @@ void pokey_set_program_semi_var( Environment * _environment, char * _channels, i
         case IMF_INSTRUMENT_OVERDRIVEN_GUITAR:
         case IMF_INSTRUMENT_DISTORTION_GUITAR:
         case IMF_INSTRUMENT_GUITAR_HARMONICS:
-            PROGRAM_PULSE_SV(_channels, 128);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 10, 10);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
-            break;
-
         case IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED:
-            PROGRAM_PULSE_SV(_channels, 128);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 1, 2);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 4, 3);
-            break;
-
         case IMF_INSTRUMENT_LEAD_8_BASS_LEAD:
         case IMF_INSTRUMENT_ACOUSTIC_BASS:
         case IMF_INSTRUMENT_ELECTRIC_BASS_FINGER:
@@ -709,11 +533,6 @@ void pokey_set_program_semi_var( Environment * _environment, char * _channels, i
         case IMF_INSTRUMENT_SLAP_BASS_2:
         case IMF_INSTRUMENT_SYNTH_BASS_1:
         case IMF_INSTRUMENT_SYNTH_BASS_2:
-            PROGRAM_TRIANGLE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 10);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 12, 14);
-            break;
-
         case IMF_INSTRUMENT_LEAD_1_SQUARE:
         case IMF_INSTRUMENT_VIOLIN:
         case IMF_INSTRUMENT_VIOLA:
@@ -726,11 +545,6 @@ void pokey_set_program_semi_var( Environment * _environment, char * _channels, i
         case IMF_INSTRUMENT_STRING_ENSEMBLE_2:
         case IMF_INSTRUMENT_SYNTHSTRINGS_1:
         case IMF_INSTRUMENT_SYNTHSTRINGS_2:
-            PROGRAM_PULSE_SV(_channels, 128);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 10, 10);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
-            break;
-
         case IMF_INSTRUMENT_PAD_4_CHOIR:
         case IMF_INSTRUMENT_CHOIR_AAHS:
         case IMF_INSTRUMENT_VOICE_OOHS:
@@ -739,22 +553,6 @@ void pokey_set_program_semi_var( Environment * _environment, char * _channels, i
         case IMF_INSTRUMENT_LEAD_5_CHARANG:
         case IMF_INSTRUMENT_LEAD_6_VOICE:
         case IMF_INSTRUMENT_LEAD_7_FIFTHS:
-        case IMF_INSTRUMENT_FX_1_RAIN:
-        case IMF_INSTRUMENT_FX_2_SOUNDTRACK:
-        case IMF_INSTRUMENT_FX_3_CRYSTAL:
-        case IMF_INSTRUMENT_FX_4_ATMOSPHERE:
-        case IMF_INSTRUMENT_FX_5_BRIGHTNESS:
-        case IMF_INSTRUMENT_FX_6_GOBLINS:
-        case IMF_INSTRUMENT_FX_7_ECHOES:
-        case IMF_INSTRUMENT_FX_8_SCI_FI:
-        case IMF_INSTRUMENT_TIMPANI:
-        case IMF_INSTRUMENT_ORCHESTRA_HIT:
-        case IMF_INSTRUMENT_APPLAUSE:
-            PROGRAM_NOISE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 1, 14);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
-            break;
-
         case IMF_INSTRUMENT_LEAD_2_SAWTOOTH:
         case IMF_INSTRUMENT_PAD_1_NEW_AGE:
         case IMF_INSTRUMENT_PAD_2_WARM:
@@ -782,11 +580,6 @@ void pokey_set_program_semi_var( Environment * _environment, char * _channels, i
         case IMF_INSTRUMENT_SHAKUHACHI:
         case IMF_INSTRUMENT_WHISTLE:
         case IMF_INSTRUMENT_OCARINA:
-            PROGRAM_SAW_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
-            break;
-
         case IMF_INSTRUMENT_SITAR:
         case IMF_INSTRUMENT_BANJO:
         case IMF_INSTRUMENT_SHAMISEN:
@@ -808,11 +601,12 @@ void pokey_set_program_semi_var( Environment * _environment, char * _channels, i
         case IMF_INSTRUMENT_SEASHORE:
         case IMF_INSTRUMENT_BIRD_TWEET:
         case IMF_INSTRUMENT_TELEPHONE_RING:
-        case IMF_INSTRUMENT_HELICOPTER:
-            PROGRAM_SAW_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
+            PROGRAM_DISTORTION_SV( _channels, 0x00 );
             break;
+
+        default:
+            break;
+
     }
 
 }
