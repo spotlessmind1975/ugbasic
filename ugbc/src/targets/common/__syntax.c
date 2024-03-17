@@ -1970,3 +1970,35 @@ Recupera il valore minimo dell'indice di un array, data la dimensione.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword BIG ENDIAN
+
+@english
+Returns not zero if the CPU has big endian byte order, zero otherwise.
+
+@italian
+Restituisce un valore diverso da zero se la CPU ha un ordinamento "big endian", zero altrimenti.
+
+@syntax = BIG ENDIAN
+
+@example IF BIG ENDIAN THEN : PRINT "BIG ENDIAN" : ENDIF
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword LITTLE ENDIAN
+
+@english
+Returns not zero if the CPU has little endian byte order, zero otherwise.
+
+@italian
+Restituisce un valore diverso da zero se la CPU ha un ordinamento "little endian", zero altrimenti.
+
+@syntax = LITTLE ENDIAN
+
+@example IF LITTLE ENDIAN THEN : PRINT "LITTLE ENDIAN" : ENDIF
+
+@target all
+</usermanual> */
