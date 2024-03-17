@@ -8993,9 +8993,7 @@ statement2nc:
             }
         }
 
-        printf( "%s = %s\n", $1, $3 );
         if ( expr->initializedByConstant ) {
-            printf( " initializedByConstant\n" );
             if ( variable->type == VT_FLOAT ) {
                 if ( expr->type != VT_FLOAT ) {
                     variable_store_float( _environment, variable->name, expr->value );
