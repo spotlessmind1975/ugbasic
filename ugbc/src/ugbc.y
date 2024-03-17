@@ -92,7 +92,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
-%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN
+%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3450,6 +3450,16 @@ exponential:
     | DSAVE ERROR {
         $$ = variable_temporary( _environment, VT_BYTE, "(DSAVE ERROR)" )->name;
         variable_move( _environment, "DSAVEERROR", $$ );
+    }
+    | PAL {
+        Variable * pal = variable_temporary( _environment, VT_SBYTE, "PAL" );
+        cpu_compare_8bit_const( _environment, "TICKSPERSECOND", 50, pal->realName, 1 );
+        $$ = pal->name;
+    }
+    | NTSC {
+        Variable * ntsc = variable_temporary( _environment, VT_SBYTE, "NTSC" );
+        cpu_compare_8bit_const( _environment, "TICKSPERSECOND", 60, ntsc->realName, 1 );
+        $$ = ntsc->name;
     }
     | IMAGE WIDTH OP expr CP {
         $$ = image_get_width( _environment, $4 )->name;
@@ -8983,11 +8993,21 @@ statement2nc:
             }
         }
 
+        printf( "%s = %s\n", $1, $3 );
         if ( expr->initializedByConstant ) {
+            printf( " initializedByConstant\n" );
             if ( variable->type == VT_FLOAT ) {
-                variable_store_float( _environment, variable->name, expr->valueFloating );
+                if ( expr->type != VT_FLOAT ) {
+                    variable_store_float( _environment, variable->name, expr->value );
+                } else {
+                    variable_store_float( _environment, variable->name, expr->valueFloating );
+                }
             } else {
-                variable_store( _environment, variable->name, expr->value );
+                if ( expr->type != VT_FLOAT ) {
+                    variable_store( _environment, variable->name, expr->value );
+                } else {
+                    variable_store( _environment, variable->name, expr->valueFloating );
+                }
             }
         } else {
             if ( variable->type == VT_ARRAY ) {
