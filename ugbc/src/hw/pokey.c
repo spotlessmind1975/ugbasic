@@ -97,6 +97,7 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
     // overmodulation of the audio output. The sound produced tends to actually
     // lose volume and assume a buzzing quality.
 
+    outline1("LDA #%2.2x", _channels );
     outline1("LDX #%2.2x", ( _volume >> 5 ) & 0x07 );
     outline0("JSR POKEYSETVOL");
 
@@ -205,7 +206,7 @@ void pokey_set_program( Environment * _environment, int _channels, int _program 
         case IMF_INSTRUMENT_TIMPANI:
         case IMF_INSTRUMENT_ORCHESTRA_HIT:
             PROGRAM_PITCH( _channels, 0 );
-            PROGRAM_DISTORTION( _channels, 0x01 );
+            PROGRAM_DISTORTION( _channels, 0x02 );
             break;
 
         case IMF_INSTRUMENT_EXPLOSION:
@@ -215,7 +216,7 @@ void pokey_set_program( Environment * _environment, int _channels, int _program 
 
         case IMF_INSTRUMENT_GUNSHOT:
             PROGRAM_PITCH( _channels, 0x80 );
-            PROGRAM_DISTORTION( _channels, 0x09 );
+            PROGRAM_DISTORTION( _channels, 0x02 );
             break;
 
         case IMF_INSTRUMENT_FX_1_RAIN:
@@ -436,6 +437,7 @@ void pokey_set_volume_semi_var( Environment * _environment, char * _channel, int
     deploy( pokeyvars, src_hw_pokey_vars_asm );
     deploy( pokeystartup, src_hw_pokey_startup_asm );
 
+    outline1("LDA %s", _channel );
     outline1("LDX #$%2.2x", _volume );
     outline0("JSR POKEYSETVOL");
 
