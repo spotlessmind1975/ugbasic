@@ -50,7 +50,7 @@ static unsigned int SOUND_FREQUENCIES[] = {
 
 void pokey_initialization( Environment * _environment ) {
 
-    cpu_call( _environment, "POKEYSTARTUP" );
+    outline0("JSR POKEYSTARTUP");
 
 }
 
@@ -98,7 +98,7 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
     // lose volume and assume a buzzing quality.
 
     outline1("LDX #%2.2x", ( _volume >> 5 ) & 0x07 );
-    outline0("JSR POKEYSTARTVOL");
+    outline0("JSR POKEYSETVOL");
 
 }
 
@@ -349,7 +349,7 @@ void pokey_set_program( Environment * _environment, int _channels, int _program 
         case IMF_INSTRUMENT_SEASHORE:
         case IMF_INSTRUMENT_BIRD_TWEET:
         case IMF_INSTRUMENT_TELEPHONE_RING:
-            PROGRAM_DISTORTION( _channels, 0x00 );
+            PROGRAM_DISTORTION( _channels, 0x0a );
             break;
 
         default:
@@ -410,11 +410,7 @@ void pokey_start_var( Environment * _environment, char * _channels ) {
     deploy( pokeyvars, src_hw_pokey_vars_asm );
     deploy( pokeystartup, src_hw_pokey_startup_asm );
 
-    if ( _channels ) {
-        outline1("LDA %s", _channels );
-    } else {
-        outline0("LDA #$f" );
-    }
+    outline1("LDA %s", ( _channels == NULL ? "#$f" : _channels ) );
     outline0("JSR POKEYSTART");
 
 }
@@ -431,7 +427,7 @@ void pokey_set_volume_vars( Environment * _environment, char * _channels, char *
     outline0("LSR" );
     outline0("LSR" );
     outline0("TAX" );
-    outline0("JSR POKEYSTARTVOL");
+    outline0("JSR POKEYSETVOL");
 
 }
 
@@ -441,7 +437,7 @@ void pokey_set_volume_semi_var( Environment * _environment, char * _channel, int
     deploy( pokeystartup, src_hw_pokey_startup_asm );
 
     outline1("LDX #$%2.2x", _volume );
-    outline0("JSR POKEYSTARTVOL");
+    outline0("JSR POKEYSETVOL");
 
 }
 
@@ -601,7 +597,7 @@ void pokey_set_program_semi_var( Environment * _environment, char * _channels, i
         case IMF_INSTRUMENT_SEASHORE:
         case IMF_INSTRUMENT_BIRD_TWEET:
         case IMF_INSTRUMENT_TELEPHONE_RING:
-            PROGRAM_DISTORTION_SV( _channels, 0x00 );
+            PROGRAM_DISTORTION_SV( _channels, 0x0a );
             break;
 
         default:
