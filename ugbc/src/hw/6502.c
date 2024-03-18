@@ -6253,28 +6253,18 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
 
     deploy( bitsToString, src_hw_6502_bits_to_string_asm );
 
-    outline1("LDA #$%2.2x", _bits);
-    outline0("STA BITSTOCONVERT");
-    outline0("LDA #37");
-    outline1("LDX #<%s", _number);
-    outline1("LDY #>%s", _number);
-    outline0("ORA #%10000000" );
-    outline0("JSR binstr");
-
-    outline0("STX TMPPTR");
-    outline0("STY TMPPTR+1");
-    outline1("LDA #$%2.2x", _bits);
-    outline1("STA %s", _string_size);
-    outline0("TAY");
+    outline1("LDA #<%s", _number);
+    outline0("STA TMPPTR");
+    outline1("LDA #>%s", _number);
+    outline0("STA TMPPTR+1");
     outline1("LDA %s", _string);
     outline0("STA TMPPTR2");
-    outline1("LDA %s", address_displacement(_environment, _string, "1"));
+    outline1("LDA %s+1", _string);
     outline0("STA TMPPTR2+1");
-    outline1("%sLOOP:", label );
-    outline0("LDA (TMPPTR),Y" );
-    outline0("STA (TMPPTR2),Y");
-    outline0("DEY");
-    outline1("BPL %sLOOP", label );
+
+    outline1("LDA #$%2.2x", _bits);
+    outline1("STA %s", _string_size);
+    outline0("JSR BINTOSTR");
 
 }
 

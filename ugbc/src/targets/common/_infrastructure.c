@@ -8222,7 +8222,7 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
         cpu_dsfree( _environment, result2->realName );
         cpu_dsalloc( _environment, digits->realName, result2->realName );
 
-        cpu_bvneq( _environment, pad->realName, truncateLabel );
+        cpu_bveq( _environment, pad->realName, truncateLabel );
 
         cpu_label( _environment, padLabel );
 
@@ -8240,6 +8240,7 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
         cpu_dsdescriptor( _environment, result2->realName, address2->realName, size2->realName );
         cpu_math_add_16bit_with_8bit( _environment, address->realName, size->realName, address->realName );
         cpu_math_sub_16bit_with_8bit( _environment, address->realName, digits->realName, address->realName );
+        cpu_inc_16bit( _environment, address->realName );
         cpu_mem_move( _environment, address->realName, address2->realName, digits->realName );
 
         cpu_label( _environment, finishedLabel );
