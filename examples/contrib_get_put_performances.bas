@@ -33,8 +33,6 @@ PRINT "TESTING ON ";PEN(YELLOW);SCREEN WIDTH;"x";SCREEN HEIGHT;"x";SCREEN COLORS
 PRINT "  FRAME : ";PEN(YELLOW);width;"x";height;PEN(WHITE)
 PRINT "  DUR.  : ";PEN(YELLOW);(timeLimit / (TICKS PER SECOND));" secs";PEN(WHITE)
 PRINT
-PRINT "";PEN(WHITE);"RUNNING--->";
-PRINT
 
 background := NEW IMAGE(#width, #height)
 
