@@ -90,8 +90,9 @@ DO
 		
 		PLOT z,t,bg
 		PLOT x,y,fg
-		PLOT x,y,bg
+		'PLOT x,y,bg
 	NEXT
+    WAIT VBL
 	joy = JOY(0) : dx = 0 : dy = 0
 	IF joy HAS BIT LEFT  THEN : DEC dx : ENDIF
 	IF joy HAS BIT RIGHT THEN : INC dx : ENDIF
