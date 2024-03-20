@@ -2901,11 +2901,9 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
                 outline0("LDA #$FF" );
                 outline0("STA BANKUSE" );
             } else {
-#endif
                 outline0("LDA #0" );
                 outline0("STA BANKPTR" );
                 outline0("STA BANKUSE" );
-#ifdef __c64reu__
             }
 #endif
         } else {
@@ -2928,11 +2926,9 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
                 outline0("LDA #$FF" );
                 outline0("STA BANKUSE" );
             } else {
-#endif
                 outline0("LDA #0" );
                 outline0("STA BANKPTR" );
                 outline0("STA BANKUSE" );
-#ifdef __c64reu__
             }
 #endif
         } else {
