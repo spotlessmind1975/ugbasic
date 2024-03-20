@@ -166,7 +166,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 outline2("%s: .res %d,0", variable->realName, variable->size);
                             }
                         } else {
-                            if ( ! variable->memoryArea && variable->valueBuffer && ! variable->onStorage && ! variable->bankAssigned ) {
+                            if ( ! variable->memoryArea && variable->valueBuffer && ! variable->onStorage && variable->bankAssigned == -1 ) {
                                 outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                                 if ( variable->printable ) {
                                     char * string = malloc( variable->size + 1 );
@@ -460,9 +460,9 @@ void variable_cleanup( Environment * _environment ) {
     int anyExpansionBank = 0;
     Bank * bank = _environment->expansionBanks;
     while( bank ) {
+        outhead1("%s:", bank->name );
         if ( bank->type == BT_EXPANSION && bank->name && ( bank->space != bank->remains ) ) {
             int size = bank->space - bank->remains;
-            outhead1("%s:", bank->name );
             if ( bank->data ) {
                 out0("    .byte ");
                 int i=0;
