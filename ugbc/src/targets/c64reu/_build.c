@@ -204,6 +204,7 @@ void generate_d64( Environment * _environment ) {
             }
             d64_output( handle, storageFileName );
             d64_free( handle );
+            handle = NULL;
             if ( _environment->outputGeneratedFiles ) {
                 printf( "%s\n", storageFileName );
             }
@@ -233,6 +234,9 @@ void generate_d64( Environment * _environment ) {
         }        
 
         Bank * bank = _environment->expansionBanks;
+        if ( bank && ! handle ) {
+            handle = d64_create( CBMDOS );
+        }
         while( bank ) {
             int bankSize = bank->space - bank->remains;
             if ( ( d64_get_free_sectors( handle ) * 256 ) < bankSize ) {
