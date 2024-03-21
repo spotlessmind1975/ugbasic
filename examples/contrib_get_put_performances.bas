@@ -19,6 +19,8 @@ REM @include coco3
 CONST width = 16
 CONST height = 16
 
+DIM timeLimit AS INTEGER
+
 timeLimit = (TICKS PER SECOND) * 10
 
 BITMAP ENABLE ( 320, 192, 16 )
