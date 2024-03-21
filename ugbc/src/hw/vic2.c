@@ -2799,6 +2799,11 @@ static void vic2_load_image_address_to_other_register( Environment * _environmen
     outline1("STA %s", _register );
     outline1("LDA #>%s", _source );
     outline1("STA %s", address_displacement(_environment, _register, "1") );
+#ifdef __c64reu__
+    outline0("LDA #0" );
+    outline0("STA BANKPTR" );
+    outline0("STA BANKUSE" );
+#endif
 
     if ( _sequence ) {
 
@@ -2895,8 +2900,8 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline1("LDA %s", address_displacement(_environment, _source->realName, "1") );
             outline1("STA %s", address_displacement(_environment, _register, "1") );
 #ifdef __c64reu__
-            if ( _source->bankNumber > 0 ) {
-                outline1("LDA #$%2.2x", ( _source->bankNumber - 1 ) );
+            if ( _source->bankNumber != -1 ) {
+                outline1("LDA #$%2.2x", _source->bankNumber );
                 outline0("STA BANKPTR" );
                 outline0("LDA #$FF" );
                 outline0("STA BANKUSE" );
@@ -2911,6 +2916,11 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline1("STA %s", _register );
             outline1("LDA #>%s", _source->realName );
             outline1("STA %s", address_displacement(_environment, _register, "1") );
+#ifdef __c64reu__
+            outline0("LDA #0" );
+            outline0("STA BANKPTR" );
+            outline0("STA BANKUSE" );
+#endif
         }
     } else {
         if ( _source->isAddress ) {
@@ -2920,8 +2930,8 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline0("STA TMPPTR+1" );
 
 #ifdef __c64reu__
-            if ( _source->bankNumber > 0 ) {
-                outline1("LDA #$%2.2x", ( _source->bankNumber - 1 ) );
+            if ( _source->bankNumber != -1 ) {
+                outline1("LDA #$%2.2x", _source->bankNumber );
                 outline0("STA BANKPTR" );
                 outline0("LDA #$FF" );
                 outline0("STA BANKUSE" );
@@ -2936,6 +2946,11 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline0("STA TMPPTR" );
             outline1("LDA #>%s", _source->realName );
             outline0("STA TMPPTR+1" );
+#ifdef __c64reu__
+            outline0("LDA #0" );
+            outline0("STA BANKPTR" );
+            outline0("STA BANKUSE" );
+#endif
         }
 
         if ( _sequence ) {
