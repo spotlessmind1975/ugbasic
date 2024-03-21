@@ -47,7 +47,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
     while( variable ) {
 
-        if ( (variable->memoryArea && variable->bankAssigned!=-1 && !variable->assigned) || ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
+        if ( (variable->memoryArea && variable->bankAssigned != -1 && !variable->assigned) || ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
 
             if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
                 fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
@@ -59,7 +59,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SBYTE:
                 case VT_COLOR:
                 case VT_THREAD:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 1,0", variable->realName);
@@ -69,7 +69,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SWORD:
                 case VT_POSITION:
                 case VT_ADDRESS:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 2,0", variable->realName);
@@ -77,25 +77,25 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_DWORD:
                 case VT_SDWORD:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 4,0", variable->realName);
                     }
                     break;
                 case VT_FLOAT:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 4,0", variable->realName);
                     }
                     break;
                 case VT_STRING:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         // if ( variable->printable ) {
-                        //     int c = strlen( variable->valueString );
+                        //     int c = strlen( variable->valueString->value );
                         //     out2("%s: .byte %d,", variable->realName, c);
                         //     int i=0;
                         //     for (i=0; i<(c-1); ++i ) {
@@ -109,7 +109,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_DSTRING:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 1,0", variable->realName);
@@ -118,14 +118,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_TILE:
                 case VT_TILESET:
                 case VT_SPRITE:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 1,0", variable->realName);
                     }
                     break;
                 case VT_TILES:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 4,0", variable->realName);
@@ -142,8 +142,8 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
                         outhead1("%s: .byte $0", variable->realName );
                     } else {
-                        if ( ! variable->absoluteAddress || variable->bankAssigned != -1 ) {
-                            if ( variable->valueBuffer ) {
+                        if ( ! variable->absoluteAddress ) {
+                            if ( variable->valueBuffer && ! variable->onStorage ) {
                                 if ( variable->printable ) {
                                     char * string = malloc( variable->size + 1 );
                                     memset( string, 0, variable->size );
@@ -154,19 +154,19 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     int i=0;
                                     for (i=0; i<(variable->size-1); ++i ) {
                                         if ( ( ( i+1 ) % 16 ) == 0 ) {
-                                            outline1("%d", variable->valueBuffer[i]);
+                                            outline1("$%2.2x", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                             out0("  .byte ");
                                         } else {
-                                            out1("%d,", variable->valueBuffer[i]);
+                                            out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                         }
                                     }
-                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                                 }
                             } else {
                                 outline2("%s: .res %d,0", variable->realName, variable->size);
                             }
                         } else {
-                            if ( ! variable->memoryArea && variable->valueBuffer && variable->bankAssigned == -1 ) {
+                            if ( ! variable->memoryArea && variable->valueBuffer && ! variable->onStorage && variable->bankAssigned == -1 ) {
                                 outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                                 if ( variable->printable ) {
                                     char * string = malloc( variable->size + 1 );
@@ -177,9 +177,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     out1("%scopy: .byte ", variable->realName);
                                     int i=0;
                                     for (i=0; i<(variable->size-1); ++i ) {
-                                        out1("%d,", variable->valueBuffer[i]);
+                                        out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                     }
-                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                                 }
                             }
                         }
@@ -191,9 +191,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         out1("%s: .byte ", variable->realName);
                         int i=0;
                         for (i=0; i<(variable->size-1); ++i ) {
-                            out1("%d,", variable->valueBuffer[i]);
+                            out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                         }
-                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                        outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                     } else if ( variable->memoryArea && ! variable->value ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
@@ -292,7 +292,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 outhead2("; relocated on bank %d (at %4.4x)", _variable->bankAssigned, _variable->absoluteAddress );
                 outhead1("%s: .byte $0", _variable->realName );
             } else {
-                if ( _variable->valueBuffer ) {
+                if ( _variable->valueBuffer && ! _variable->onStorage ) {
                     if ( _variable->printable ) {
                         char * string = malloc( _variable->size + 1 );
                         memset( string, 0, _variable->size );
@@ -302,9 +302,9 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                         out0("    .byte ");
                         int i=0;
                         for (i=0; i<(_variable->size-1); ++i ) {
-                            out1("%d,", _variable->valueBuffer[i]);
+                            out1("$%2.2x,", (unsigned char)(_variable->valueBuffer[i] & 0xff ) );
                         }
-                        outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
+                        outline1("$%2.2x", (unsigned char)(_variable->valueBuffer[(_variable->size-1)] & 0xff ) );
                     }
                 } else {
                     outline1(" .res %d,0", _variable->size);
@@ -316,9 +316,9 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 out0("    .byte ");
                 int i=0;
                 for (i=0; i<(_variable->size-1); ++i ) {
-                    out1("%d,", _variable->valueBuffer[i]);
+                    out1("$%2.2x,", (unsigned char)(_variable->valueBuffer[i] & 0xff ) );
                 }
-                outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
+                outline1("$%2.2x", (unsigned char)(_variable->valueBuffer[(_variable->size-1)] & 0xff ) );
             } else {
                 if ( _variable->value ) {
                     outline2("    .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value&0xff));
