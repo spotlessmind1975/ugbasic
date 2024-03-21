@@ -2783,6 +2783,8 @@ typedef struct _Environment {
 #define CRITICAL_ARRAY_MONODIMENSIONAL(v) CRITICAL2("E267 - dimension > 0 for one dimensional array in UBOUND/LBOUND", v );
 #define CRITICAL_ARRAY_INVALID_DIMENSION(v) CRITICAL2("E268 - invalid dimension for UBOUND/LBOUND", v );
 #define CRITICAL_CANNOT_USE_MULTITASKED_ARRAY(v) CRITICAL2("E269 - cannot use [ ] operator outside a PARALLEL PROCEDURE", v );
+#define CRITICAL_STORAGE_BANKED_UNCOMPATIBLE_TILEMAP(v) CRITICAL2("E270 - cannot use TILEMAP both on (implicit) BANKED and STORAGE", v );
+#define CRITICAL_STORAGE_BANKED_UNCOMPATIBLE(v) CRITICAL2("E271 - cannot use variables both on (implicit) BANKED and STORAGE", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
