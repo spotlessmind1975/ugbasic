@@ -3011,8 +3011,6 @@ void vic2_put_image( Environment * _environment, Resource * _image, char * _x, c
 #endif
     deploy( putimage, src_hw_vic2_put_image_asm );
 
-    deploy( putimage, src_hw_vic2_put_image_asm );
-
     MAKE_LABEL
 
     vic2_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
