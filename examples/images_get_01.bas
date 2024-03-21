@@ -18,6 +18,7 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
     x = NEW IMAGE(32,32)
 
     HOME
+    INK WHITE
     PRINT "1234"
     PRINT "ABCD"
     PRINT "abcd"
