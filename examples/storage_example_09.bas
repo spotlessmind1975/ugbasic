@@ -17,8 +17,17 @@ STORAGE "disco" AS "disk1"
 	TILEMAP "kenney-line.tmx" AS "kenney" TO tilemap
 ENDSTORAGE
 
+
+PROCEDURE example09 ON ALL BUT C64REU
+
+    SHARED tilemap
+
     CLS
 
     DLOAD "kenney" TO VARPTR(tilemap)
 
     PUT TILEMAP tilemap
+
+END PROCEDURE
+
+    example09[] ON ALL BUT C64REU
