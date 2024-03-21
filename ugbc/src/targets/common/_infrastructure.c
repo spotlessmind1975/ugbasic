@@ -11031,6 +11031,10 @@ void prepare_variable_storage( Environment * _environment, char * _name, Variabl
         memset( v->valueBuffer, 0, v->size );
     }
 
+    if ( v->bankAssigned != -1 ) {
+        CRITICAL_STORAGE_BANKED_UNCOMPATIBLE( v->name );
+    }
+
     v->onStorage = 1;
 
 }
