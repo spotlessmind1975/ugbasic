@@ -70,6 +70,10 @@ have to be drawn on the screen.
 
 void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer, char * _pad_frame ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
     deploy_begin( put_tilemap );
 
         MAKE_LABEL
@@ -344,6 +348,9 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
     Variable * vtileset = variable_retrieve( _environment, "puttilemap__tileset" );
     if ( ptilemap->onStorage ) {
+        if ( ptilemap->bankAssigned != -1 ) {
+            CRITICAL_STORAGE_BANKED_UNCOMPATIBLE( ptilemap->name );
+        }
         cpu_addressof_16bit( _environment, ptilemap->realName, vtileset->realName );
         cpu_peekw( _environment, vtileset->realName, vtileset->realName );
         cpu_math_add_16bit( _environment, vtilemap->realName, vtileset->realName, vtileset->realName );
@@ -471,6 +478,9 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
     Variable * voffsetFrameRoutine = variable_retrieve( _environment, "puttilemap__offsetFrameRoutine" );
     if ( ptilemap->onStorage ) {
+        if ( ptilemap->bankAssigned != -1 ) {
+            CRITICAL_STORAGE_BANKED_UNCOMPATIBLE_TILEMAP( ptilemap->name );
+        }
         cpu_addressof_16bit( _environment, ptilemap->realName, temporaryAddress->realName );
         cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 13, temporaryAddress->realName );
         cpu_peekw( _environment, temporaryAddress->realName, temporaryAddress->realName );
