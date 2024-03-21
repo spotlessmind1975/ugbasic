@@ -220,7 +220,11 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
 
     switch( _variable->type ) {
         case VT_CHAR:
-            outline1(" .byte '%c'", ( _variable->value & 0xff ) );
+            if ( _variable->value >= 32 ) {
+                outline1(" .byte '%c'", ( _variable->value & 0xff ) );
+            } else {
+                outline1(" .byte $%1.1x", ( _variable->value & 0xff ) );
+            }
             break;
         case VT_BYTE:
         case VT_SBYTE:
@@ -365,7 +369,6 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
     outline0("   .res 1,0");
 
 }
-
 
 /**
  * @brief Emit source and configuration lines for variables
