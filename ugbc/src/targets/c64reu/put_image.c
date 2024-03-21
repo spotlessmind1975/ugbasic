@@ -105,7 +105,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
     switch( resource->type ) {
         case VT_SEQUENCE:
-            if ( image->bankAssigned ) {
+            if ( image->bankAssigned != -1 ) {
 
                 Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
                 variable_store( _environment, frameSize->name, image->frameSize );
@@ -153,7 +153,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
             }
             break;
         case VT_IMAGES:
-            if ( image->bankAssigned ) {
+            if ( image->bankAssigned != -1 ) {
                 
                 Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
                 variable_store( _environment, frameSize->name, image->frameSize );
@@ -186,7 +186,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
             break;
         case VT_IMAGE:
         case VT_ARRAY:
-            if ( image->bankAssigned ) {
+            if ( image->bankAssigned != -1 ) {
 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
                 variable_store( _environment, address->name, image->absoluteAddress );
