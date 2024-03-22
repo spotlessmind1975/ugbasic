@@ -133,16 +133,14 @@ VDPLOOP:
     AND $80
 	JR Z, VDPLOOP
 VDPLOOPD:
-    LD A, L
-    CMP $32
-    JR NZ, VDPLOOPDQ1
+
     LD A, H
-    CMP $17
-    JR NZ, VDPLOOPDQ1
+    CMP $06
+    JR Z, VDPLOOPDQ0
     LD A, 1
     RET
 
-VDPLOOPDQ1:
+VDPLOOPDQ0:
     LD A, 0
     RET
 
