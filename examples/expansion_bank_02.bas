@@ -8,7 +8,9 @@ REM ESPANSIONE DI MEMORIA INDIRIZZI E BANCHI
 REM
 REM Questo esempio cambierà il banco selezionato.
 REM
-REM @include c128,coco,coco3,d32,d64
+REM @include coco3,c64reu
+
+PROCEDURE example ON COCO3, C64REU
 
     CLS
 
@@ -36,3 +38,8 @@ REM @include c128,coco,coco3,d32,d64
 
         PRINT "* = actual bank selected"
     ENDIF
+
+END PROCEDURE
+
+    example[] ON COCO3, C64REU
+

@@ -7,6 +7,9 @@ REM @italian
 REM ESPANSIONE DI MEMORIA CARICARE IMMAGINI NELL'ESPANSIONE
 REM
 REM Questo esempio mostra come caricare le immagini su una espansione.
+REM @include coco3,c64reu
+
+PROCEDURE example ON COCO3, C64REU
 
     IF BANK COUNT = 0 THEN
         PRINT "Sorry, this target "
@@ -23,3 +26,7 @@ REM Questo esempio mostra come caricare le immagini su una espansione.
             ADD frame,1,0 TO FRAMES(bat)-1
         LOOP
     ENDIF
+
+END PROCEDURE
+
+    example[] ON COCO3, C64REU

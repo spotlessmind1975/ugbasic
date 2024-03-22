@@ -15,7 +15,9 @@ REM questo significa che il banco non è raggiungibile direttamente
 REM con un accesso ma solo tramite le primitive messe a disposizione 
 REM da ugBASIC.
 REM
-REM @include c128,coco,coco3,d32,d64
+REM @include coco3,c64reu
+
+PROCEDURE example ON COCO3, C64REU
 
     CLS
     
@@ -40,3 +42,7 @@ REM @include c128,coco,coco3,d32,d64
 
         PRINT "* = actual bank selected"
     ENDIF
+
+END PROCEDURE
+
+    example[] ON COCO3, C64REU
