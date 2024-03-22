@@ -56,8 +56,7 @@ px = 32 * 32
 frames = counter
 time = 10
 pixels = px * frames
-fps = INT( frames / time )
 
 PRINT PEN(WHITE);" FRAMES   : "; frames
 PRINT PEN(WHITE);" PIXELS   : "; pixels
-PRINT PEN(WHITE);" FRAMES/S : "; PEN(YELLOW); fps
+PRINT PEN(WHITE);" FRAMES/S : "; PEN(YELLOW); INT( frames / time )
