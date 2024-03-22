@@ -148,8 +148,8 @@
 
 #define DEFAULT_PAINT_BUCKET_SIZE   1024
 
-#define BANK_COUNT          1
-#define BANK_SIZE           4096
+#define BANK_COUNT          0
+#define BANK_SIZE           0
 
 void cpc_inkey( Environment * _environment, char * _pressed, char * _key );
 void cpc_scancode( Environment * _environment, char * _pressed, char * _scacode );
