@@ -30,6 +30,6 @@ i = 0
         LOCATE 2, 3
         PRINT BIN$(j,5)
         LOCATE 2, 5
-        PRINT "T: ";i
+        PRINT "T: ";i;"(";j;")"
         INC i
     LOOP
