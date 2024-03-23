@@ -56,6 +56,7 @@ ZXSTARTUP:
 
     LD A, 0
     LD ($5C08), A
+
     RET
          
 ZXIRQSVC:
@@ -100,6 +101,28 @@ IRQVECTORSKIP:
     EI
     RET
 
+CHECKIF60HZ:
+    LD DE, 0
+    LD A, 0
+    LD (ZXTIMER), A
+    LD (ZXTIMER+1), A
+VDPSYNC:
+    INC DE
+    LD A, D
+    CP $D0
+    JR NZ, VDPSYNC
+
+    LD A, (ZXTIMER)
+    CMP $0C
+    JR Z, VDPLOOPDQ0
+    JR NC, VDPLOOPDQ0
+    LD A, 1
+    RET
+
+VDPLOOPDQ0:
+    LD A, 0
+    RET
+
 ZXSTARTUP2:
 
 @IF dataSegment
@@ -107,5 +130,20 @@ ZXSTARTUP2:
     LD (DATAPTR), HL
 @ENDIF
 
+    CALL CHECKIF60HZ
+    CMP 1
+    JR Z, ZXNTSC
+
+ZXPAL:
+    LD A, 50
+    LD (TICKSPERSECOND), A
+    JP ZXSTARTUPDONE
+
+ZXNTSC:
+    LD A, 60
+    LD (TICKSPERSECOND), A
+    JP ZXSTARTUPDONE    
+
+ZXSTARTUPDONE:
     RET
     
