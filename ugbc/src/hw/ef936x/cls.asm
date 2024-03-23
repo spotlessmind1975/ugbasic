@@ -118,6 +118,8 @@ CLSG
 
 @IF ( !vestigialConfig.doubleBufferSelected ) || ( vestigialConfig.doubleBuffer )
 
+    ORCC #$50
+
     PSHS D
     LDA BANKSHADOW
     STA $A7E5
@@ -143,6 +145,8 @@ CLSGDB2
     STA $A7E5
     PULS D
 
+    ANDCC #$AF
+    
     PULS DP,PC
 
 @ENDIF

@@ -58,6 +58,8 @@ GETIMAGE
 
 GETIMAGEDB
 
+    ORCC #$50
+
     PSHS D
     LDA BANKSHADOW
     STA $A7E5
@@ -93,6 +95,8 @@ GETIMAGE4XDB
     STA $A7E5
     PULS D
 
+    ANDCC #$AF
+
     RTS
 @ENDIF
 
@@ -105,6 +109,8 @@ GETIMAGE4DB
     LDA #7
     STA $A7E5
     PULS D
+
+    ANDCC #$AF
 
     RTS
 
@@ -322,6 +328,8 @@ GETIMAGECOMMONEDB
     STA $A7E5
     PULS D
 
+    ANDCC #$AF
+    
     RTS
 
 @ENDIF

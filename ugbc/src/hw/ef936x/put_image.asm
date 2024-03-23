@@ -57,6 +57,8 @@ PUTIMAGE
 
 @IF !vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
+    ORCC #$50
+
     PSHS D
     LDA BANKSHADOW
     STA $A7E5
@@ -94,6 +96,8 @@ PUTIMAGE4XDB
     STA $A7E5
     PULS D
 
+    ANDCC #$AF
+
     RTS
 
 @ENDIF
@@ -107,6 +111,8 @@ PUTIMAGE4DB
     LDA #7
     STA $A7E5
     PULS D
+
+    ANDCC #$AF
 
     RTS
 
@@ -715,6 +721,8 @@ PUTIMAGECOMMONEDB
     STA $A7E5
     PULS D
 
+    ANDCC #$AF
+    
 	RTS
 
 @ENDIF

@@ -45,6 +45,8 @@ BANKSHADOWPREV     fcb     $0
 ; X : address on memory 
 BANKREAD
 
+    ORCC #$50
+
     ; Preserve size register.
     PSHS D
 
@@ -69,6 +71,8 @@ BANKREAD
     LDA #7
     STA $A7E5
 
+    ANDCC #$AF
+
     RTS
 
 ; Uncompress directly the data from bank.
@@ -77,6 +81,8 @@ BANKREAD
 ; X : address on bank 
 ; Y : address on memory 
 BANKUNCOMPRESS
+
+    ORCC #$50
 
     ; Save actual bank number.
     ;LDA BANKSHADOW
@@ -96,4 +102,6 @@ BANKUNCOMPRESS
     LDA #7
     STA $A7E5
     
+    ANDCC #$AF
+
     RTS

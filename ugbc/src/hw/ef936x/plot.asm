@@ -102,6 +102,8 @@ PLOT
 
 PLOTDB
 
+    ORCC #$50
+
     PSHS D
     LDA BANKSHADOW
     STA $A7E5
@@ -179,6 +181,8 @@ PLOT4XDB
     LDA #7
     STA $A7E5
     PULS D
+
+    ANDCC #$AF
 
     RTS
 
@@ -313,6 +317,8 @@ PLOTCXDB
     STA $A7E5
     PULS D
 
+    ANDCC #$AF
+
     JMP PLOTP
 
 PLOTDDB
@@ -351,6 +357,8 @@ PLOTD3XDB
     LDA #7
     STA $A7E5
     PULS D
+
+    ANDCC #$AF
 
     JMP PLOTP
 
@@ -402,6 +410,8 @@ PLOTD4DB
     LDA #7
     STA $A7E5
     PULS D
+
+    ANDCC #$AF
 
     JMP PLOTP                  ;skip the erase-point section
 
@@ -476,6 +486,8 @@ PLOTD25DB
     STA $A7E5
     PULS D
 
+    ANDCC #$AF
+
     JMP PLOTP                  ;skip the erase-point section
 
 @ENDIF
@@ -535,6 +547,8 @@ PLOTD3FDB
     STA $A7E5
     PULS D
 
+    ANDCC #$AF
+
     JMP PLOTP                  ;skip the erase-point section
 
 @ENDIF
@@ -559,6 +573,8 @@ PLOTEDB                          ;handled same way as setting a point
     LDA #7
     STA $A7E5
     PULS D
+
+    ANDCC #$AF
 
     JMP PLOTP                  ;skip the erase-point section
 
@@ -598,6 +614,8 @@ PLOTCDB
     STA $A7E5
     PULS D
 
+    ANDCC #$AF
+    
     JMP PLOTP
 
 	RTS

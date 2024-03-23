@@ -59,6 +59,8 @@ BLITIMAGE
 
 @IF !vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
+    ORCC #$50
+
     PSHS D
     LDA BANKSHADOW
     STA $A7E5
@@ -95,6 +97,8 @@ BLITIMAGE4XDB
     LDA #7
     STA $A7E5
     PULS D
+    
+    ANDCC #$AF
 
     RTS
 
@@ -109,6 +113,8 @@ BLITIMAGE4DB
     LDA #7
     STA $A7E5
     PULS D
+
+    ANDCC #$AF
 
     RTS
 
@@ -468,6 +474,8 @@ BLITIMAGECOMMONEDB
     STA $A7E5
     PULS D
     
+    ANDCC #$AF
+
 	RTS
 
 @ENDIF
