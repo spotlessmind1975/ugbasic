@@ -5882,116 +5882,131 @@ array_assign:
         ((struct _Environment *)_environment)->currentArray = NULL;
     }
     | OP_ASSIGN LOAD String AS TEXT {
-        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
-        
-        currentArray->arrayInitialization = NULL;
 
-        FILE * handle = fopen( $3, "rt" );
-        if ( ! handle ) {
-            CRITICAL_ARRAY_DEFINITION_FILE_NOT_FOUND( $3 );
-        }
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
 
-        currentArray->arrayInitialization = malloc( sizeof( Constant ) );
-        memset( currentArray->arrayInitialization, 0, sizeof( Constant ) );
+            Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+            
+            currentArray->arrayInitialization = NULL;
 
-        Constant * current = currentArray->arrayInitialization;
-
-        while( !feof( handle ) ) {
-
-            char valueString[MAX_TEMPORARY_STORAGE];
-            memset( valueString, 0, MAX_TEMPORARY_STORAGE );
-            int p=0, j=0;
-
-            while( !feof( handle ) ) {
-                char c = fgetc(handle);
-                if ( j == 0 ) {
-                    if ( (c < '0') || (c > '9') ) {
-                        continue;
-                    }
-                    j = 1;
-                } else {
-                    if ( (c < '0') || (c > '9') ) {
-                        break;
-                    }
-                }
-                valueString[p] = c;
-                ++p;
+            FILE * handle = fopen( $3, "rt" );
+            if ( ! handle ) {
+                CRITICAL_ARRAY_DEFINITION_FILE_NOT_FOUND( $3 );
             }
 
-            current->value = atoi( valueString );
+            currentArray->arrayInitialization = malloc( sizeof( Constant ) );
+            memset( currentArray->arrayInitialization, 0, sizeof( Constant ) );
 
-            current->next = malloc( sizeof( Constant ) );
-            memset( current->next, 0, sizeof( Constant ) );
-            current = current->next;
+            Constant * current = currentArray->arrayInitialization;
 
-        }
+            while( !feof( handle ) ) {
 
-        fclose( handle );
+                char valueString[MAX_TEMPORARY_STORAGE];
+                memset( valueString, 0, MAX_TEMPORARY_STORAGE );
+                int p=0, j=0;
 
-        int size = 0;
-        Constant * first = currentArray->arrayInitialization;
-        while( first->next ) {
-            first = first->next;
-            ++size;
-        }
+                while( !feof( handle ) ) {
+                    char c = fgetc(handle);
+                    if ( j == 0 ) {
+                        if ( (c < '0') || (c > '9') ) {
+                            continue;
+                        }
+                        j = 1;
+                    } else {
+                        if ( (c < '0') || (c > '9') ) {
+                            break;
+                        }
+                    }
+                    valueString[p] = c;
+                    ++p;
+                }
 
-        if ( currentArray->arrayDimensions == 1 ) {
-            if ( currentArray->size < 0 ) {
-                currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
-                currentArray->arrayDimensionsEach[0] = size;
+                current->value = atoi( valueString );
+
+                current->next = malloc( sizeof( Constant ) );
+                memset( current->next, 0, sizeof( Constant ) );
+                current = current->next;
+
+            }
+
+            fclose( handle );
+
+            int size = 0;
+            Constant * first = currentArray->arrayInitialization;
+            while( first->next ) {
+                first = first->next;
+                ++size;
+            }
+
+            if ( currentArray->arrayDimensions == 1 ) {
+                if ( currentArray->size < 0 ) {
+                    currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
+                    currentArray->arrayDimensionsEach[0] = size;
+                } else {
+                    if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+                        CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+                    }
+                }
             } else {
                 if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
                     CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
                 }
             }
-        } else {
-            if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
-                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+
+            char * buffer = malloc( currentArray->size ), * ptr = buffer;
+            int i=0;
+            Constant * initializationValues = currentArray->arrayInitialization;
+            while(initializationValues->next) {
+                switch( VT_BITWIDTH(currentArray->arrayType) ) {
+                    case 8:
+                        *ptr = (initializationValues->value) & 0xff;
+                        ++ptr;
+                        break;
+                    case 16:
+                        #ifdef CPU_BIG_ENDIAN
+                            *ptr = ( initializationValues->value >> 8 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value ) & 0xff;
+                        #else
+                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                            *ptr = ( initializationValues->value ) & 0xff;
+                        #endif
+                        ptr += 2;
+                        break;
+                    case 32:
+                        #ifdef CPU_BIG_ENDIAN
+                            *ptr = ( initializationValues->value >> 24 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
+                            *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
+                            *(ptr+3) = ( initializationValues->value ) & 0xff;
+                        #else
+                            *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
+                            *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                            *ptr = ( initializationValues->value ) & 0xff;
+                        #endif
+                        ptr += 4;
+                        break;
+                }
+                initializationValues = initializationValues->next;
             }
+            if ( ( ptr - buffer ) != currentArray->size ) {
+                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
+            }
+            ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+            ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
+            ((struct _Environment *)_environment)->currentArray = NULL;
+
+        } else {
+
+            ((struct _Environment *)_environment)->currentArray->arrayInitialization = NULL;
+
+            ((struct _Environment *)_environment)->currentArray->arrayInitialization = malloc( sizeof( Constant ) );
+            memset( ((struct _Environment *)_environment)->currentArray->arrayInitialization, 0, sizeof( Constant ) );
+            ((struct _Environment *)_environment)->currentArray->size = 1;
+            ((struct _Environment *)_environment)->currentArray->valueBuffer = malloc(1);
+
         }
 
-        char * buffer = malloc( currentArray->size ), * ptr = buffer;
-        int i=0;
-        Constant * initializationValues = currentArray->arrayInitialization;
-        while(initializationValues->next) {
-            switch( VT_BITWIDTH(currentArray->arrayType) ) {
-                case 8:
-                    *ptr = (initializationValues->value) & 0xff;
-                    ++ptr;
-                    break;
-                case 16:
-                    #ifdef CPU_BIG_ENDIAN
-                        *ptr = ( initializationValues->value >> 8 ) & 0xff;
-                        *(ptr+1) = ( initializationValues->value ) & 0xff;
-                    #else
-                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
-                        *ptr = ( initializationValues->value ) & 0xff;
-                    #endif
-                    ptr += 2;
-                    break;
-                case 32:
-                    #ifdef CPU_BIG_ENDIAN
-                        *ptr = ( initializationValues->value >> 24 ) & 0xff;
-                        *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
-                        *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
-                        *(ptr+3) = ( initializationValues->value ) & 0xff;
-                    #else
-                        *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
-                        *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
-                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
-                        *ptr = ( initializationValues->value ) & 0xff;
-                    #endif
-                    ptr += 4;
-                    break;
-            }
-            initializationValues = initializationValues->next;
-        }
-        if ( ( ptr - buffer ) != currentArray->size ) {
-            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
-        }
-        ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
-        ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
-        ((struct _Environment *)_environment)->currentArray = NULL;
     }
     | OP_ASSIGN LOAD String AS BINARY {
         Variable *currentArray = ((struct _Environment *)_environment)->currentArray;

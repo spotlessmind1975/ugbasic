@@ -89,6 +89,12 @@ ma con nomi diversi.
 </usermanual> */
 Variable * load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion, int _flags ) {
 
+    Variable * result = variable_temporary( _environment, VT_BUFFER, "(buffer)" );
+
+    if ( _environment->emptyProcedure ) {
+        return result;
+    }
+
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD");
     }
@@ -111,8 +117,6 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
 
     adiline1("LF:%s", _filename );
 
-    Variable * result = variable_temporary( _environment, VT_BUFFER, "(buffer)" );
-        
     check_if_filename_is_valid( _environment,  _filename );
 
     char * lookedFilename = resource_load_asserts( _environment, _filename );
