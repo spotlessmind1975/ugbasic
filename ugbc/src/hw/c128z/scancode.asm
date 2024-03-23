@@ -73,8 +73,8 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 KEYBOARDMAP:
-	; 		INST/DEL, Return, CRSR =>,  F7,  F1,  F3,  F5,  CRSR|V
-	DEFB 	     $08,    $0d,     $00, $00, $00, $00, $00,     $00
+	; 		INST/DEL, Return, CRSR =>,  F7,  ' ',  F3,  F5,  CRSR|V
+	DEFB 	     $08,    $0d,     $00, $00,  ' ', $00, $00,     $00
 	; 		     #/3,    W,       A,    $/4,   Z,   S,   E,   Left Shift/Shift Lock
 	DEFB        '3',  'W',     'A',    '4', 'Z', 'S', 'E',    $00
 	;            %/5,    R,       D,    &/6,   C,   F,   T,      X
