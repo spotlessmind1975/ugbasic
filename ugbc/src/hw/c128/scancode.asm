@@ -36,8 +36,8 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 KEYBOARDMAP:
-	; 		INST/DEL, Return, CRSR =>,  F7,  F1,  F3,  F5,  CRSR|V
-	.BYTE 	     $08,    $0d,     $00, $00, $00, $00, $00,     $00
+	; 		INST/DEL, Return, CRSR =>,  F7,  ' ',  F3,  F5,  CRSR|V
+	.BYTE 	     $08,    $0d,     $00, $00,  ' ', $00, $00,     $00
 	; 		     #/3,    W,       A,    $/4,   Z,   S,   E,   Left Shift/Shift Lock
 	.BYTE        '3',  'W',     'A',    '4', 'Z', 'S', 'E',    $00
 	;            %/5,    R,       D,    &/6,   C,   F,   T,      X
@@ -82,13 +82,13 @@ SCANCODEFULL:
 
 	LDY #0
 	LDA #$FE
-	SEC
 SCANCODEFULLL1:
 	STA $DC00
 	PHA
 	LDA $DC01
 	STA (TMPPTR),Y
 	PLA
+	SEC
 	ROL A
 	INY
 	CPY #8
