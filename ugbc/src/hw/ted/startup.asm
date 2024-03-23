@@ -73,21 +73,8 @@ TEDISRSVC:
 
 TEDSTARTUP:
 
-    ; ; SET_VIDEO( DEFAULT_VIDEO )
-    ; ; LDA $FF12
-    ; ; AND #%00000011
-    ; ; ORA #%00011000
-    ; ; STA $FF12
     LDA #$EC
     STA $FF14
-    ; ; LDA $FF14
-    ; ; AND #%00000111
-    ; ; LDA #%11110000
-    ; ; STA $FF14
-    ; ; LDA $FF13
-    ; ; AND #%00000011
-    ; ; LDA #%11010100
-    ; ; STA $FF13
     
     ; ; SET_BACKGROUND_COLOR( BLACK )
     LDA #$0
