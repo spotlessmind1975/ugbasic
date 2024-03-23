@@ -20,6 +20,8 @@ REM @url http://patsos.de/New_Weblog/?p=671
 REM
 REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000
 
+PROCEDURE example ON ALL BUT VIC20
+
 	BITMAP ENABLE(320,200)
 
 	RESOLUTION 300,200
@@ -44,3 +46,8 @@ REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000
 		INC pos : INC pos : INC pos
 		
 	LOOP
+
+END PROCEDURE
+
+	example[] ON ALL BUT VIC20
+

@@ -25,7 +25,9 @@ REM sufficienti. In caso di tipi con segno, se il numero di sorgente è
 REM negativo ma il tipo di destinazione è privo di segno, il valore sarà 
 REM posto al valor assoluto.
 REM
-REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,vic20,zx
+REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,zx
+
+PROCEDURE example ON ALL BUT VIC20
 
     CLS
 
@@ -304,3 +306,7 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
 
     udw = 10020000
     PRINT "unsigned dword(10020000) = "; udw; " (exp ";"10020000";" )"
+
+END PROCEDURE
+
+    example[] ON ALL BUT VIC20
