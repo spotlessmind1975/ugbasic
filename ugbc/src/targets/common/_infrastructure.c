@@ -4614,13 +4614,13 @@ Tale operazione è assai più efficiente che utilizzare la sintassi standard ''v
 
 @target all
 </usermanual> */
-Variable * variable_increment( Environment * _environment, char * _source ) {
-
-    Variable * source = variable_retrieve( _environment, _source );
+void variable_increment( Environment * _environment, char * _source ) {
 
     if ( _environment->emptyProcedure ) {
-        return source;
+        return;
     }
+
+    Variable * source = variable_retrieve( _environment, _source );
 
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
@@ -4636,7 +4636,7 @@ Variable * variable_increment( Environment * _environment, char * _source ) {
             cpu_inc( _environment, source->realName );
             break;
     }
-    return source;
+    return;
 }
 
 /**
@@ -4646,7 +4646,11 @@ Variable * variable_increment( Environment * _environment, char * _source ) {
  * @param _source Source variable's name
  * @return Variable* The source variable
  */
-Variable * variable_increment_array( Environment * _environment, char * _source ) {
+void variable_increment_array( Environment * _environment, char * _source ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
 
     Variable * array = variable_retrieve( _environment, _source );
     if ( array->type != VT_ARRAY ) {
@@ -4658,7 +4662,7 @@ Variable * variable_increment_array( Environment * _environment, char * _source 
 
     variable_move_array( _environment, array->name, value->name );
 
-    return value;
+    return;
 
 }
 
@@ -4735,7 +4739,11 @@ Variable * variable_move_to_mt( Environment * _environment, char * _source, char
  * @param _source Source variable's name
  * @return Variable* The source variable
  */
-Variable * variable_increment_mt( Environment * _environment, char * _source ) {
+void variable_increment_mt( Environment * _environment, char * _source ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
 
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
@@ -4757,7 +4765,7 @@ Variable * variable_increment_mt( Environment * _environment, char * _source ) {
     variable_move_array( _environment, array->name, value->name );
     parser_array_cleanup( _environment );
 
-    return value;
+    return;
     
 }
 
@@ -4768,12 +4776,13 @@ Variable * variable_increment_mt( Environment * _environment, char * _source ) {
  * @param _source Source variable's name
  * @return Variable* The source variable
  */
-Variable * variable_decrement( Environment * _environment, char * _source ) {
-    Variable * source = variable_retrieve( _environment, _source );
+void variable_decrement( Environment * _environment, char * _source ) {
 
     if ( _environment->emptyProcedure ) {
-        return source;
+        return;
     }
+
+    Variable * source = variable_retrieve( _environment, _source );
 
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
@@ -4789,7 +4798,7 @@ Variable * variable_decrement( Environment * _environment, char * _source ) {
             cpu_dec( _environment, source->realName );
             break;
     }
-    return source;
+    return;
 }
 
 /**
@@ -4799,7 +4808,11 @@ Variable * variable_decrement( Environment * _environment, char * _source ) {
  * @param _source Source variable's name
  * @return Variable* The source variable
  */
-Variable * variable_decrement_array( Environment * _environment, char * _source ) {
+void variable_decrement_array( Environment * _environment, char * _source ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
 
     Variable * array = variable_retrieve( _environment, _source );
     if ( array->type != VT_ARRAY ) {
@@ -4811,8 +4824,7 @@ Variable * variable_decrement_array( Environment * _environment, char * _source 
 
     variable_move_array( _environment, array->name, value->name );
 
-    return value;
-
+    return;
 
 }
 
@@ -4823,7 +4835,11 @@ Variable * variable_decrement_array( Environment * _environment, char * _source 
  * @param _source Source variable's name
  * @return Variable* The source variable
  */
-Variable * variable_decrement_mt( Environment * _environment, char * _source ) {
+void variable_decrement_mt( Environment * _environment, char * _source ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
 
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
@@ -4845,7 +4861,7 @@ Variable * variable_decrement_mt( Environment * _environment, char * _source ) {
     variable_move_array( _environment, array->name, value->name );
     parser_array_cleanup( _environment );
 
-    return value;
+    return;
 
 }
 
