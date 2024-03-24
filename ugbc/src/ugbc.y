@@ -8396,6 +8396,16 @@ statement2nc:
   | OP_DEC Identifier {
       variable_decrement( _environment, $2 );
   }
+  | OP_INC TI {
+      Variable * ti = get_timer( _environment );
+      variable_increment( _environment, ti->name );
+      set_timer( _environment, ti->name );
+  }
+  | OP_DEC TI {
+      Variable * ti = get_timer( _environment );
+      variable_decrement( _environment, ti->name );
+      set_timer( _environment, ti->name );
+  }
   | OP_INC Identifier OP {
         parser_array_init( _environment );
     } indexes CP {
