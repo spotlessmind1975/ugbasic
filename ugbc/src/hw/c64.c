@@ -92,7 +92,7 @@ void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("LDX #0");
     outhead1("%sclkeys:", label);
     outline0("LDA $0278,X" );
-    outline0("LDA $0277,X" );
+    outline0("STA $0277,X" );
     outline0("INX");
     outline0("CPX $c6");
     outline1("BNE %sclkeys", label);

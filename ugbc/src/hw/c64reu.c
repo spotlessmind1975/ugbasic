@@ -11,7 +11,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or °_.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *----------------------------------------------------------------------------
@@ -92,7 +92,7 @@ void c64reu_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("LDX #0");
     outhead1("%sclkeys:", label);
     outline0("LDA $0278,X" );
-    outline0("LDA $0277,X" );
+    outline0("STA $0277,X" );
     outline0("INX");
     outline0("CPX $c6");
     outline1("BNE %sclkeys", label);
