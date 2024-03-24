@@ -4711,9 +4711,9 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
         // ripeti
         outline0("DEC ,S" );
         outline1("BNE %sloop", label );
-        outline0("LEAS 1,S");
 
         outhead1("%sdone", label );
+        outline0("LEAS 1,S");
         outline1("STX %s", _value );
 
     no_embedded( cpu_convert_string_into_16bit )
