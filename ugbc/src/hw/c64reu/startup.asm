@@ -196,6 +196,9 @@ C64REUSTARTUPDONE:
     STA $01
     PLA
 
+    LDA #0
+    STA $C6
+    
     CLI
 
 SYSCALLDONE:
