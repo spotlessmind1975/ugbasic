@@ -4615,7 +4615,13 @@ Tale operazione è assai più efficiente che utilizzare la sintassi standard ''v
 @target all
 </usermanual> */
 Variable * variable_increment( Environment * _environment, char * _source ) {
+
     Variable * source = variable_retrieve( _environment, _source );
+
+    if ( _environment->emptyProcedure ) {
+        return source;
+    }
+
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
         case 1:
@@ -4764,6 +4770,11 @@ Variable * variable_increment_mt( Environment * _environment, char * _source ) {
  */
 Variable * variable_decrement( Environment * _environment, char * _source ) {
     Variable * source = variable_retrieve( _environment, _source );
+
+    if ( _environment->emptyProcedure ) {
+        return source;
+    }
+
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
         case 1:
