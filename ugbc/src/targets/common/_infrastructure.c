@@ -1582,80 +1582,128 @@ static void variable_move_32bit_32bit( Environment * _environment, Variable * _s
 
     cpu_move_32bit( _environment, _source->realName, _target->realName );
 
-    // if ( VT_SIGNED( _source->type ) ) {
+}
 
-    //     if ( VT_SIGNED( _target->type ) ) {
+static void variable_move_32bit_signed_16bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
 
-    //         ////////////////////////////////////////
-    //         // 32 BIT (signed) -> 32 BIT (signed) //
-    //         ////////////////////////////////////////
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(temporary)" );
 
-    //         cpu_move_32bit( _environment, _source->realName, _target->realName );
+    MAKE_LABEL
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
 
-    //     } else {
+    // 32 BIT (signed) -> 16 BIT (signed)
+    //
+    // Generic algorithm:
 
-    //         //////////////////////////////////////////
-    //         // 32 BIT (signed) -> 32 BIT (unsigned) //
-    //         //////////////////////////////////////////
+    #ifdef CPU_BIG_ENDIAN
+        {
+        cpu_is_negative( _environment, _source->realName, sign->realName );
+        }
+    #else
+        {
+        cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "3" ), sign->realName );
+        }
+    #endif
+    cpu_bveq( _environment, sign->realName, label );
 
-    //         MAKE_LABEL
+    //  - negative? -> 2 complement, copy lower 16 bits, 2 complement
 
-    //         Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    cpu_complement2_32bit( _environment, _source->realName, tmp->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "2") );
+            cpu_move_16bit( _environment, sourceRealName, _target->realName );
+            cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+        }
+    #else
+        cpu_move_16bit( _environment, tmp->realName, _target->realName );
+        cpu_math_and_const_8bit( _environment, address_displacement(_environment, _target->realName, "1"), 0x7f );
+    #endif
+    cpu_complement2_16bit( _environment, _target->realName, NULL );
+    cpu_jump( _environment, doneLabel );
 
-    //         // Generic algorithm: copy source on target and check if the number is negative.    
-    //         cpu_move_32bit( _environment, _source->realName, _target->realName );
-    //         #ifdef CPU_BIG_ENDIAN
-    //             {
-    //             cpu_is_negative( _environment, _target->realName, sign->realName );
-    //             }
-    //         #else
-    //             {
-    //             cpu_is_negative( _environment, address_displacement( _environment, _target->realName, "3" ), sign->realName );
-    //             }
-    //         #endif
-    //         cpu_bveq( _environment, sign->realName, label );
+    //  - positive? -> copy lower 16 bits, put bit 15 to zero
 
-    //         //  - (new) target is negative > 2 complement 
-    //         cpu_complement2_32bit( _environment, _target->realName, NULL );
+    cpu_label( _environment, label );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "2") );
+            cpu_move_16bit( _environment, sourceRealName, _target->realName );
+            cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+        }
+    #else
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+        cpu_math_and_const_8bit( _environment, address_displacement( _environment, _target->realName, "1" ), 0x7f );
+    #endif
+    cpu_label( _environment, doneLabel );
 
-    //         //  - (new) target is positive > nothing to do
-    //         cpu_label( _environment, label );
-                    
-    //     }
+}
 
-    // } else {
+static void variable_move_32bit_signed_16bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
 
-    //     if ( VT_SIGNED( _target->type ) ) {
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
 
-    //         //////////////////////////////////////////
-    //         // 32 BIT (unsigned) -> 32 BIT (signed) //
-    //         //////////////////////////////////////////
+    // 32 BIT (signed) -> 16 BIT (unsigned)
 
-    //         // Generic algorithm: copy source on target and discard the sign bit.
+    MAKE_LABEL
 
-    //         cpu_move_32bit( _environment, _source->realName, _target->realName );
-    //         #ifdef CPU_BIG_ENDIAN
-    //             {
-    //             cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
-    //             }
-    //         #else
-    //             {
-    //             cpu_math_and_const_8bit( _environment, address_displacement( _environment, _target->realName, "3" ), 0x7f );
-    //             }
-    //         #endif
+    // Generic algorithm:
 
-    //     } else {
+    cpu_store_16bit( _environment, _target->realName, 0 );
+    #ifdef CPU_BIG_ENDIAN
+        {
+        cpu_is_negative( _environment, _source->realName, sign->realName );
+        }
+    #else
+        {
+        cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "3" ), sign->realName );
+        }
+    #endif
+    cpu_bvneq( _environment, sign->realName, label );
 
-    //         ////////////////////////////////////////////
-    //         // 32 BIT (unsigned) -> 32 BIT (unsigned) //
-    //         ////////////////////////////////////////////
+    //  - positive? -> copy lower 16 bits
 
-    //         // 32 BIT (unsigned) -> 32 BIT (unsigned)
-    //         cpu_move_32bit( _environment, _source->realName, _target->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "2") );
+            cpu_move_16bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+    #endif
 
-    //     }
+    //  - negative? -> put value of zero!
 
-    // }
+    cpu_label( _environment, label );
+
+}
+
+static void variable_move_32bit_unsigned_16bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "2") );
+            cpu_move_16bit( _environment, sourceRealName, _target->realName );
+            cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+        }
+    #else
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+        cpu_math_and_const_8bit( _environment, address_displacement(_environment, _target->realName, "1"), 0x7f );
+    #endif
+
+}
+
+static void variable_move_32bit_unsigned_16bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "2") );
+            cpu_move_16bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+    #endif
 
 }
 
@@ -1674,94 +1722,11 @@ static void variable_move_32bit_16bit( Environment * _environment, Variable * _s
 
         if ( VT_SIGNED( _target->type ) ) {
 
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-            Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(temporary)" );
-
-            MAKE_LABEL
-            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
-
-            // 32 BIT (signed) -> 16 BIT (signed)
-            //
-            // Generic algorithm:
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_is_negative( _environment, _source->realName, sign->realName );
-                }
-            #else
-                {
-                cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "3" ), sign->realName );
-                }
-            #endif
-            cpu_bveq( _environment, sign->realName, label );
-
-            //  - negative? -> 2 complement, copy lower 16 bits, 2 complement
-
-            cpu_complement2_32bit( _environment, _source->realName, tmp->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "2") );
-                    cpu_move_16bit( _environment, sourceRealName, _target->realName );
-                    cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
-                }
-            #else
-                cpu_move_16bit( _environment, tmp->realName, _target->realName );
-                cpu_math_and_const_8bit( _environment, address_displacement(_environment, _target->realName, "1"), 0x7f );
-            #endif
-            cpu_complement2_16bit( _environment, _target->realName, NULL );
-            cpu_jump( _environment, doneLabel );
-
-            //  - positive? -> copy lower 16 bits, put bit 15 to zero
-
-            cpu_label( _environment, label );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "2") );
-                    cpu_move_16bit( _environment, sourceRealName, _target->realName );
-                    cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
-                }
-            #else
-                cpu_move_16bit( _environment, _source->realName, _target->realName );
-                cpu_math_and_const_8bit( _environment, address_displacement( _environment, _target->realName, "1" ), 0x7f );
-            #endif
-            cpu_label( _environment, doneLabel );
+            variable_move_32bit_signed_16bit_signed( _environment, _source, _target );
 
         } else {
             
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-
-            // 32 BIT (signed) -> 16 BIT (unsigned)
-
-            MAKE_LABEL
-
-            // Generic algorithm:
-
-            cpu_store_16bit( _environment, _target->realName, 0 );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_is_negative( _environment, _source->realName, sign->realName );
-                }
-            #else
-                {
-                cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "3" ), sign->realName );
-                }
-            #endif
-            cpu_bvneq( _environment, sign->realName, label );
-
-            //  - positive? -> copy lower 16 bits
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "2") );
-                    cpu_move_16bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_16bit( _environment, _source->realName, _target->realName );
-            #endif
-
-            //  - negative? -> put value of zero!
-
-            cpu_label( _environment, label );
+            variable_move_32bit_signed_16bit_unsigned( _environment, _source, _target );
 
         }
 
@@ -1773,33 +1738,155 @@ static void variable_move_32bit_16bit( Environment * _environment, Variable * _s
 
             // copy lower 15 bits, then put bit 15 to zero
 
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "2") );
-                    cpu_move_16bit( _environment, sourceRealName, _target->realName );
-                    cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
-                }
-            #else
-                cpu_move_16bit( _environment, _source->realName, _target->realName );
-                cpu_math_and_const_8bit( _environment, address_displacement(_environment, _target->realName, "1"), 0x7f );
-            #endif
+            variable_move_32bit_unsigned_16bit_signed( _environment, _source, _target );
 
         } else {
             
             // 32 BIT (unsigned) -> 16 BIT (unsigned)
 
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "2") );
-                    cpu_move_16bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_16bit( _environment, _source->realName, _target->realName );
-            #endif
+            variable_move_32bit_unsigned_16bit_unsigned( _environment, _source, _target );
 
         }
 
     }
+
+}
+
+static void variable_move_32bit_signed_8bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(temporary)" );
+
+    MAKE_LABEL
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    // 32 BIT (signed) -> 8 BIT (signed)
+    //
+    // Generic algorithm:
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+        cpu_is_negative( _environment, _source->realName, sign->realName );
+        }
+    #else
+        {
+        cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "3" ), sign->realName );
+        }
+    #endif
+    cpu_bveq( _environment, sign->realName, label );
+
+    //  - negative? -> 2 complement, copy lower 8 bits, 2 complement
+
+    cpu_complement2_32bit( _environment, _source->realName, tmp->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "3") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, tmp->realName, _target->realName );
+    #endif
+    cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+    cpu_complement2_8bit( _environment, _target->realName, NULL );
+    cpu_jump( _environment, doneLabel );
+
+    //  - positive? -> copy lower 8 bits, put bit 8 to zero
+
+    cpu_label( _environment, label );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif
+    cpu_label( _environment, doneLabel );
+
+}
+
+static void variable_move_32bit_signed_8bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+
+    // 32 BIT (signed) -> 8 BIT (unsigned)
+
+    MAKE_LABEL
+
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    // Generic algorithm:
+
+    cpu_store_8bit( _environment, _target->realName, 0 );
+    #ifdef CPU_BIG_ENDIAN
+        {
+        cpu_is_negative( _environment, _source->realName, sign->realName );
+        }
+    #else
+        {
+        cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "3" ), sign->realName );
+        }
+    #endif
+    cpu_bveq( _environment, sign->realName, label );
+
+    //  - negative? -> put value of zero!
+
+    Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(tmp)" );
+
+    cpu_complement2_32bit( _environment, _source->realName, tmp->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "3") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, tmp->realName, _target->realName );
+    #endif
+
+    cpu_jump( _environment, doneLabel );
+
+    //  - positive? -> copy lower 16 bits
+
+    cpu_label( _environment, label );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif
+
+    cpu_label( _environment, doneLabel );
+
+}
+
+static void variable_move_32bit_unsigned_8bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif
+    cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+
+}
+
+static void variable_move_32bit_unsigned_8bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif
+
 
 }
 
@@ -1818,109 +1905,11 @@ static void variable_move_32bit_8bit( Environment * _environment, Variable * _so
 
         if ( VT_SIGNED( _target->type ) ) {
 
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-            Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(temporary)" );
-
-            MAKE_LABEL
-            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
-
-            // 32 BIT (signed) -> 8 BIT (signed)
-            //
-            // Generic algorithm:
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_is_negative( _environment, _source->realName, sign->realName );
-                }
-            #else
-                {
-                cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "3" ), sign->realName );
-                }
-            #endif
-            cpu_bveq( _environment, sign->realName, label );
-
-            //  - negative? -> 2 complement, copy lower 8 bits, 2 complement
-
-            cpu_complement2_32bit( _environment, _source->realName, tmp->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "3") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, tmp->realName, _target->realName );
-            #endif
-            cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
-            cpu_complement2_8bit( _environment, _target->realName, NULL );
-            cpu_jump( _environment, doneLabel );
-
-            //  - positive? -> copy lower 8 bits, put bit 8 to zero
-
-            cpu_label( _environment, label );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif
-            cpu_label( _environment, doneLabel );
+            variable_move_32bit_signed_8bit_signed( _environment, _source, _target );
 
         } else {
             
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-
-            // 32 BIT (signed) -> 8 BIT (unsigned)
-
-            MAKE_LABEL
-
-            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
-
-            // Generic algorithm:
-
-            cpu_store_8bit( _environment, _target->realName, 0 );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_is_negative( _environment, _source->realName, sign->realName );
-                }
-            #else
-                {
-                cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "3" ), sign->realName );
-                }
-            #endif
-            cpu_bveq( _environment, sign->realName, label );
-
-            //  - negative? -> put value of zero!
-
-            Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(tmp)" );
-
-            cpu_complement2_32bit( _environment, _source->realName, tmp->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "3") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, tmp->realName, _target->realName );
-            #endif
-
-            cpu_jump( _environment, doneLabel );
-
-            //  - positive? -> copy lower 16 bits
-
-            cpu_label( _environment, label );
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif
-
-            cpu_label( _environment, doneLabel );
+            variable_move_32bit_signed_8bit_unsigned( _environment, _source, _target );
 
         }
 
@@ -1932,28 +1921,13 @@ static void variable_move_32bit_8bit( Environment * _environment, Variable * _so
 
             // copy lower 8 bits, then put bit 8 to zero
 
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif
-            cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+            variable_move_32bit_unsigned_8bit_signed( _environment, _source, _target );
 
         } else {
             
             // 32 BIT (unsigned) -> 8 BIT (unsigned)
 
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "3") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif
+            variable_move_32bit_unsigned_8bit_unsigned( _environment, _source, _target );
 
         }
 
@@ -1994,6 +1968,165 @@ static void variable_move_32bit_1bit( Environment * _environment, Variable * _so
 
 }
 
+static void variable_move_16bit_signed_32bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    Variable * tmp = variable_temporary( _environment, VT_SWORD, "(sign)" );
+
+    MAKE_LABEL
+
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    // Generic algorithm:
+    //
+    // put 0 to target
+
+    cpu_store_32bit( _environment, _target->realName, 0 );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+        cpu_is_negative( _environment, _source->realName, sign->realName );
+        }
+    #else
+        {
+        cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "1" ), sign->realName );
+        }
+    #endif
+    cpu_bveq( _environment, sign->realName, label );
+
+    // negative? 2 complement, copy to lower 16 bits, 2 complement
+
+    cpu_complement2_16bit( _environment, _source->realName, tmp->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
+            cpu_move_16bit( _environment, tmp->realName, targetRealName );
+        }
+    #else
+        cpu_move_16bit( _environment, tmp->realName, _target->realName );
+    #endif            
+    cpu_complement2_32bit( _environment, _target->realName, NULL );
+    cpu_jump( _environment, doneLabel );
+
+    // positive? copy to lower 16 bits
+
+    cpu_label( _environment, label );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf(targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
+            cpu_move_16bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+    #endif            
+
+    cpu_label( _environment, doneLabel );
+
+}
+
+static void variable_move_16bit_signed_32bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    Variable * tmp = variable_temporary( _environment, VT_SWORD, "(sign)" );
+
+    MAKE_LABEL
+
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    // Generic algorithm:
+    //
+    // put 0 to target
+
+    cpu_store_32bit( _environment, _target->realName, 0 );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+        cpu_is_negative( _environment, _source->realName, sign->realName );
+        }
+    #else
+        {
+        cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "1" ), sign->realName );
+        }
+    #endif
+    cpu_bveq( _environment, sign->realName, label );
+
+    // negative? 0
+
+    cpu_complement2_16bit( _environment, _source->realName, tmp->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
+            cpu_move_16bit( _environment, tmp->realName, targetRealName );
+        }
+    #else
+        cpu_move_16bit( _environment, tmp->realName, _target->realName );
+    #endif            
+    cpu_jump( _environment, doneLabel );
+
+    cpu_label( _environment, label );
+
+    // positive? copy to lower 16 bits
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, tmp->realName, "2") );
+            cpu_move_16bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+    #endif            
+
+    cpu_label( _environment, doneLabel );
+
+}
+
+static void variable_move_16bit_unsigned_32bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    MAKE_LABEL
+
+    // Generic algorithm:
+    //
+    // put 0 to target
+
+    cpu_store_32bit( _environment, _target->realName, 0 );
+    
+    // copy to lower 16 bits
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
+            cpu_move_16bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+    #endif            
+
+}
+
+static void variable_move_16bit_unsigned_32bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    MAKE_LABEL
+
+    // Generic algorithm:
+    //
+    // put 0 to target
+
+    cpu_store_32bit( _environment, _target->realName, 0 );
+    
+    // copy to lower 16 bits
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
+            cpu_move_16bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+    #endif            
+
+}
+
 /**
  * @brief (internal) routine to move 16 bit to 32 bit
  * 
@@ -2011,114 +2144,13 @@ static void variable_move_16bit_32bit( Environment * _environment, Variable * _s
 
             // 16 BIT (signed) -> 32 BIT (signed)
 
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-            Variable * tmp = variable_temporary( _environment, VT_SWORD, "(sign)" );
-
-            MAKE_LABEL
-
-            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
-
-            // Generic algorithm:
-            //
-            // put 0 to target
-
-            cpu_store_32bit( _environment, _target->realName, 0 );
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_is_negative( _environment, _source->realName, sign->realName );
-                }
-            #else
-                {
-                cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "1" ), sign->realName );
-                }
-            #endif
-            cpu_bveq( _environment, sign->realName, label );
-
-            // negative? 2 complement, copy to lower 16 bits, 2 complement
-
-            cpu_complement2_16bit( _environment, _source->realName, tmp->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
-                    cpu_move_16bit( _environment, tmp->realName, targetRealName );
-                }
-            #else
-                cpu_move_16bit( _environment, tmp->realName, _target->realName );
-            #endif            
-            cpu_complement2_32bit( _environment, _target->realName, NULL );
-            cpu_jump( _environment, doneLabel );
-
-            // positive? copy to lower 16 bits
-
-            cpu_label( _environment, label );
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf(targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
-                    cpu_move_16bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_16bit( _environment, _source->realName, _target->realName );
-            #endif            
-
-            cpu_label( _environment, doneLabel );
+            variable_move_16bit_signed_32bit_signed( _environment, _source, _target );
 
         } else {
             
             // 16 BIT (signed) -> 32 BIT (unsigned)
 
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-            Variable * tmp = variable_temporary( _environment, VT_SWORD, "(sign)" );
-
-            MAKE_LABEL
-
-            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
-
-            // Generic algorithm:
-            //
-            // put 0 to target
-
-            cpu_store_32bit( _environment, _target->realName, 0 );
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_is_negative( _environment, _source->realName, sign->realName );
-                }
-            #else
-                {
-                cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "1" ), sign->realName );
-                }
-            #endif
-            cpu_bveq( _environment, sign->realName, label );
-
-            // negative? 0
-
-            cpu_complement2_16bit( _environment, _source->realName, tmp->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
-                    cpu_move_16bit( _environment, tmp->realName, targetRealName );
-                }
-            #else
-                cpu_move_16bit( _environment, tmp->realName, _target->realName );
-            #endif            
-            cpu_jump( _environment, doneLabel );
-
-            cpu_label( _environment, label );
-
-            // positive? copy to lower 16 bits
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, tmp->realName, "2") );
-                    cpu_move_16bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_16bit( _environment, _source->realName, _target->realName );
-            #endif            
-
-            cpu_label( _environment, doneLabel );
+            variable_move_16bit_signed_32bit_unsigned( _environment, _source, _target );
 
         }
 
@@ -2128,47 +2160,13 @@ static void variable_move_16bit_32bit( Environment * _environment, Variable * _s
 
             // 16 BIT (unsigned) -> 32 BIT (signed)
 
-            MAKE_LABEL
-
-            // Generic algorithm:
-            //
-            // put 0 to target
-
-            cpu_store_32bit( _environment, _target->realName, 0 );
-            
-            // copy to lower 16 bits
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
-                    cpu_move_16bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_16bit( _environment, _source->realName, _target->realName );
-            #endif            
+            variable_move_16bit_unsigned_32bit_signed( _environment, _source, _target );
 
         } else {
             
             // 16 BIT (unsigned) -> 32 BIT (signed)
 
-            MAKE_LABEL
-
-            // Generic algorithm:
-            //
-            // put 0 to target
-
-            cpu_store_32bit( _environment, _target->realName, 0 );
-            
-            // copy to lower 16 bits
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "2") );
-                    cpu_move_16bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_16bit( _environment, _source->realName, _target->realName );
-            #endif            
+            variable_move_16bit_unsigned_32bit_unsigned( _environment, _source, _target );
 
         }
 
@@ -2187,68 +2185,144 @@ static void variable_move_16bit_16bit( Environment * _environment, Variable * _s
 
     cpu_move_16bit( _environment, _source->realName, _target->realName );
 
-    // if ( VT_SIGNED( _source->type ) ) {
+}
 
-    //     if ( VT_SIGNED( _target->type ) ) {
+static void variable_move_16bit_signed_8bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
 
-    //         // 16 BIT (signed) -> 16 BIT (signed)
-    //         cpu_move_16bit( _environment, _source->realName, _target->realName );
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    Variable * tmp = variable_temporary( _environment, VT_SWORD, "(temporary)" );
 
-    //     } else {
+    MAKE_LABEL
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
 
-    //         MAKE_LABEL
+    // 16 BIT (signed) -> 8 BIT (signed)
+    //
+    // Generic algorithm:
 
-    //         Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    #ifdef CPU_BIG_ENDIAN
+        {
+        cpu_is_negative( _environment, _source->realName, sign->realName );
+        }
+    #else
+        {
+        cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "1" ), sign->realName );
+        }
+    #endif
+    cpu_bveq( _environment, sign->realName, label );
 
-    //         // 16 BIT (signed) -> 16 BIT (unsigned)
+    //  - negative? -> 2 complement, copy lower 8 bits, 2 complement
 
-    //         // Generic algorithm: copy source on target and check if the number is negative.    
-    //         cpu_move_16bit( _environment, _source->realName, _target->realName );
-    //         #ifdef CPU_BIG_ENDIAN
-    //             {
-    //             cpu_is_negative( _environment, _target->realName, sign->realName );
-    //             }
-    //         #else
-    //             {
-    //             cpu_is_negative( _environment, address_displacement( _environment, _target->realName, "1" ), sign->realName );
-    //             }
-    //         #endif
-    //         cpu_beq( _environment, label );
+    cpu_complement2_16bit( _environment, _source->realName, tmp->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "1") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, tmp->realName, _target->realName );
+    #endif
+    cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+    cpu_complement2_8bit( _environment, _target->realName, NULL );
+    cpu_jump( _environment, doneLabel );
 
-    //         //  - (new) target is negative > 2 complement 
-    //         cpu_complement2_16bit( _environment, _target->realName, NULL );
+    //  - positive? -> copy lower 16 bits, put bit 15 to zero
 
-    //         //  - (new) target is positive > nothing to do
-    //         cpu_label( _environment, label );
-                    
-    //     }
+    cpu_label( _environment, label );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif
+    cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+    cpu_label( _environment, doneLabel );
 
-    // } else {
+}
 
-    //     if ( VT_SIGNED( _target->type ) ) {
+static void variable_move_16bit_signed_8bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
 
-    //         // 32 BIT (unsigned) -> 32 BIT (signed)
+    Variable * sign = variable_temporary( _environment, VT_WORD, "(sign)" );
+    Variable * tmp = variable_temporary( _environment, VT_WORD, "(tmp)" );
 
-    //         // Generic algorithm: copy source on target and discard the sign bit.
-    //         cpu_move_16bit( _environment, _source->realName, _target->realName );
-    //         #ifdef CPU_BIG_ENDIAN
-    //             {
-    //             cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
-    //             }
-    //         #else
-    //             {
-    //             cpu_math_and_const_8bit( _environment, address_displacement( _environment, _target->realName, "1" ), 0x7f );
-    //             }
-    //         #endif
+    // 16 BIT (signed) -> 8 BIT (unsigned)
 
-    //     } else {
+    MAKE_LABEL
 
-    //         // 32 BIT (unsigned) -> 32 BIT (unsigned)
-    //         cpu_move_16bit( _environment, _source->realName, _target->realName );
+    char positiveLabel[MAX_TEMPORARY_STORAGE]; sprintf( positiveLabel, "%spos", label );
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
 
-    //     }
+    // Generic algorithm:
 
-    // }
+    cpu_store_8bit( _environment, _target->realName, 0 );
+    #ifdef CPU_BIG_ENDIAN
+        {
+        cpu_is_negative( _environment, _source->realName, sign->realName );
+        }
+    #else
+        {
+        cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "1" ), sign->realName );
+        }
+    #endif          
+    cpu_bveq( _environment, sign->realName, positiveLabel );
+
+    //  - negative? -> 
+
+    cpu_complement2_16bit( _environment, _source->realName, tmp->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "1") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, tmp->realName, _target->realName );
+    #endif
+    cpu_complement2_8bit( _environment, _target->realName, NULL );
+    cpu_jump( _environment, doneLabel );
+
+    //  - positive? -> copy lower 16 bits
+
+    cpu_label( _environment, positiveLabel );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif
+
+    cpu_label( _environment, doneLabel );
+
+}
+
+static void variable_move_16bit_unsigned_8bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif
+    cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+
+}
+
+static void variable_move_16bit_unsigned_8bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif
+
 
 }
 
@@ -2265,112 +2339,13 @@ static void variable_move_16bit_8bit( Environment * _environment, Variable * _so
 
     if ( VT_SIGNED( _source->type ) ) {
 
-        Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-
         if ( VT_SIGNED( _target->type ) ) {
 
-            Variable * tmp = variable_temporary( _environment, VT_SWORD, "(temporary)" );
-
-            MAKE_LABEL
-            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
-
-            // 16 BIT (signed) -> 8 BIT (signed)
-            //
-            // Generic algorithm:
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_is_negative( _environment, _source->realName, sign->realName );
-                }
-            #else
-                {
-                cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "1" ), sign->realName );
-                }
-            #endif
-            cpu_bveq( _environment, sign->realName, label );
-
-            //  - negative? -> 2 complement, copy lower 8 bits, 2 complement
-
-            cpu_complement2_16bit( _environment, _source->realName, tmp->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "1") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, tmp->realName, _target->realName );
-            #endif
-            cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
-            cpu_complement2_8bit( _environment, _target->realName, NULL );
-            cpu_jump( _environment, doneLabel );
-
-            //  - positive? -> copy lower 16 bits, put bit 15 to zero
-
-            cpu_label( _environment, label );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif
-            cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
-            cpu_label( _environment, doneLabel );
+            variable_move_16bit_signed_8bit_signed( _environment, _source, _target );
 
         } else {
             
-            Variable * tmp = variable_temporary( _environment, VT_WORD, "(tmp)" );
-
-            // 16 BIT (signed) -> 8 BIT (unsigned)
-
-            MAKE_LABEL
-
-            char positiveLabel[MAX_TEMPORARY_STORAGE]; sprintf( positiveLabel, "%spos", label );
-            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
-
-            // Generic algorithm:
-
-            cpu_store_8bit( _environment, _target->realName, 0 );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                cpu_is_negative( _environment, _source->realName, sign->realName );
-                }
-            #else
-                {
-                cpu_is_negative( _environment, address_displacement( _environment, _source->realName, "1" ), sign->realName );
-                }
-            #endif          
-            cpu_bveq( _environment, sign->realName, positiveLabel );
-
-            //  - negative? -> 
-
-            cpu_complement2_16bit( _environment, _source->realName, tmp->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, tmp->realName, "1") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, tmp->realName, _target->realName );
-            #endif
-            cpu_complement2_8bit( _environment, _target->realName, NULL );
-            cpu_jump( _environment, doneLabel );
-
-            //  - positive? -> copy lower 16 bits
-
-            cpu_label( _environment, positiveLabel );
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif
-
-            cpu_label( _environment, doneLabel );
+            variable_move_16bit_signed_8bit_unsigned( _environment, _source, _target );
 
         }
 
@@ -2382,28 +2357,13 @@ static void variable_move_16bit_8bit( Environment * _environment, Variable * _so
 
             // copy lower 8 bits, then put bit 8 to zero
 
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif
-            cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
+            variable_move_16bit_unsigned_8bit_signed( _environment, _source, _target );
 
         } else {
             
             // 16 BIT (unsigned) -> 8 BIT (unsigned)
 
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, "1") );
-                    cpu_move_8bit( _environment, sourceRealName, _target->realName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif
+            variable_move_16bit_unsigned_8bit_unsigned( _environment, _source, _target );
 
         }
 
@@ -2444,6 +2404,145 @@ static void variable_move_16bit_1bit( Environment * _environment, Variable * _so
 
 }
 
+static void variable_move_8bit_signed_32bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    Variable * tmp = variable_temporary( _environment, VT_SBYTE, "(sign)" );
+
+    MAKE_LABEL
+
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    // Generic algorithm:
+    //
+    // put 0 to target
+
+    cpu_store_32bit( _environment, _target->realName, 0 );
+
+    cpu_is_negative( _environment, _source->realName, sign->realName );
+    cpu_bveq( _environment, sign->realName, label );
+
+    // negative? 2 complement, copy to lower 16 bits, 2 complement
+
+    cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
+            cpu_move_8bit( _environment, tmp->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, tmp->realName, _target->realName );
+    #endif            
+    cpu_complement2_32bit( _environment, _target->realName, NULL );
+    cpu_jump( _environment, doneLabel );
+
+    // positive? copy to lower 8 bits
+
+    cpu_label( _environment, label );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif            
+
+    cpu_label( _environment, doneLabel );
+
+}
+
+static void variable_move_8bit_signed_32bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    Variable * tmp = variable_temporary( _environment, VT_BYTE, "(tmp)" );
+
+    MAKE_LABEL
+
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    // Generic algorithm:
+    //
+    // put 0 to target
+
+    cpu_store_32bit( _environment, _target->realName, 0 );
+
+    cpu_is_negative( _environment, _source->realName, sign->realName );
+    cpu_bveq( _environment, sign->realName, label );
+
+    // negative? 0
+
+    cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
+            cpu_move_8bit( _environment, tmp->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, tmp->realName, _target->realName );
+    #endif            
+    cpu_jump( _environment, doneLabel );
+
+    // positive? copy to lower 16 bits
+
+    cpu_label( _environment, label );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif            
+
+    cpu_label( _environment, doneLabel );
+
+}
+
+static void variable_move_8bit_unsigned_32bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    MAKE_LABEL
+
+    // Generic algorithm:
+    //
+    // put 0 to target
+    
+    cpu_store_32bit( _environment, _target->realName, 0 );
+
+    // copy to lower 8 bits
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif            
+
+}
+
+static void variable_move_8bit_unsigned_32bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    MAKE_LABEL
+
+    cpu_store_32bit( _environment, _target->realName, 0 );
+    
+    // copy to lower 16 bits
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif            
+
+}
+
 /**
  * @brief (internal) routine to move 8 bit to 32 bit
  * 
@@ -2453,106 +2552,19 @@ static void variable_move_16bit_1bit( Environment * _environment, Variable * _so
  */
 static void variable_move_8bit_32bit( Environment * _environment, Variable * _source, Variable * _target ) {
 
-    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-
     if ( VT_SIGNED( _source->type ) ) {
 
         if ( VT_SIGNED( _target->type ) ) {
 
             // 8 BIT (signed) -> 32 BIT (signed)
 
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-            Variable * tmp = variable_temporary( _environment, VT_SBYTE, "(sign)" );
-
-            MAKE_LABEL
-
-            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
-
-            // Generic algorithm:
-            //
-            // put 0 to target
-
-            cpu_store_32bit( _environment, _target->realName, 0 );
-
-            cpu_is_negative( _environment, _source->realName, sign->realName );
-            cpu_bveq( _environment, sign->realName, label );
-
-            // negative? 2 complement, copy to lower 16 bits, 2 complement
-
-            cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
-                    cpu_move_8bit( _environment, tmp->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, tmp->realName, _target->realName );
-            #endif            
-            cpu_complement2_32bit( _environment, _target->realName, NULL );
-            cpu_jump( _environment, doneLabel );
-
-            // positive? copy to lower 8 bits
-
-            cpu_label( _environment, label );
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
-                    cpu_move_8bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif            
-
-            cpu_label( _environment, doneLabel );
+            variable_move_8bit_signed_32bit_signed( _environment, _source, _target );
 
         } else {
             
             // 8 BIT (signed) -> 32 BIT (unsigned)
 
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-            Variable * tmp = variable_temporary( _environment, VT_BYTE, "(tmp)" );
-
-            MAKE_LABEL
-
-            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
-
-            // Generic algorithm:
-            //
-            // put 0 to target
-
-            cpu_store_32bit( _environment, _target->realName, 0 );
-
-            cpu_is_negative( _environment, _source->realName, sign->realName );
-            cpu_bveq( _environment, sign->realName, label );
-
-            // negative? 0
-
-            cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
-                    cpu_move_8bit( _environment, tmp->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, tmp->realName, _target->realName );
-            #endif            
-            cpu_jump( _environment, doneLabel );
-
-            // positive? copy to lower 16 bits
-
-            cpu_label( _environment, label );
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
-                    cpu_move_8bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif            
-
-            cpu_label( _environment, doneLabel );
+            variable_move_8bit_signed_32bit_unsigned( _environment, _source, _target );
 
         }
 
@@ -2562,51 +2574,166 @@ static void variable_move_8bit_32bit( Environment * _environment, Variable * _so
 
             // 8 BIT (unsigned) -> 32 BIT (signed)
 
-            MAKE_LABEL
-
-            // Generic algorithm:
-            //
-            // put 0 to target
-            
-            cpu_store_32bit( _environment, _target->realName, 0 );
-
-            // copy to lower 8 bits
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
-                    cpu_move_8bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif            
+            variable_move_8bit_unsigned_32bit_signed( _environment, _source, _target );
 
         } else {
             
             // 8 BIT (unsigned) -> 32 BIT (unsigned)
 
-            MAKE_LABEL
+            variable_move_8bit_unsigned_32bit_unsigned( _environment, _source, _target );
 
             // Generic algorithm:
             //
             // put 0 to target
 
-            cpu_store_32bit( _environment, _target->realName, 0 );
-            
-            // copy to lower 16 bits
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "3") );
-                    cpu_move_8bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif            
-
         }
 
     }
+
+}
+
+static void variable_move_8bit_signed_16bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    // 8 BIT (signed) -> 16 BIT (signed)
+
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    Variable * tmp = variable_temporary( _environment, VT_SWORD, "(tmp)" );
+
+    MAKE_LABEL
+
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    // Generic algorithm:
+    //
+    // put 0 to target
+
+    cpu_store_16bit( _environment, _target->realName, 0 );
+
+    cpu_is_negative( _environment, _source->realName, sign->realName );
+    cpu_bveq( _environment, sign->realName, label );
+
+    // negative? 2 complement, copy to lower 16 bits, 2 complement
+
+    cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+            cpu_move_8bit( _environment, tmp->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, tmp->realName, _target->realName );
+    #endif
+    cpu_complement2_16bit( _environment, _target->realName, NULL );
+    cpu_jump( _environment, doneLabel );
+
+    // positive? copy to lower 8 bits
+
+    cpu_label( _environment, label );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif            
+
+    cpu_label( _environment, doneLabel );
+
+}
+
+static void variable_move_8bit_signed_16bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+    Variable * tmp = variable_temporary( _environment, VT_BYTE, "(sign)" );
+
+    MAKE_LABEL
+
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    // Generic algorithm:
+    //
+    // put 0 to target
+
+    cpu_store_16bit( _environment, _target->realName, 0 );
+
+    cpu_is_negative( _environment, _source->realName, sign->realName );
+    cpu_bveq( _environment, sign->realName, label );
+
+    // negative? 0
+
+    cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+            cpu_move_8bit( _environment, tmp->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, tmp->realName, _target->realName );
+    #endif            
+    cpu_jump( _environment, doneLabel );
+
+    // positive? copy to lower 16 bits
+
+    cpu_label( _environment, label );
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif            
+
+    cpu_label( _environment, doneLabel );
+
+}
+
+static void variable_move_8bit_unsigned_16bit_signed( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    MAKE_LABEL
+
+    // Generic algorithm:
+    //
+    // put 0 to target
+    
+    cpu_store_16bit( _environment, _target->realName, 0 );
+
+    // copy to lower 8 bits
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif            
+
+}
+
+static void variable_move_8bit_unsigned_16bit_unsigned( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    MAKE_LABEL
+
+    // Generic algorithm:
+    //
+    // put 0 to target
+
+    cpu_store_16bit( _environment, _target->realName, 0 );
+    
+    // copy to lower 16 bits
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif            
 
 }
 
@@ -2619,106 +2746,17 @@ static void variable_move_8bit_32bit( Environment * _environment, Variable * _so
  */
 static void variable_move_8bit_16bit( Environment * _environment, Variable * _source, Variable * _target ) {
 
-    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-
     if ( VT_SIGNED( _source->type ) ) {
 
         if ( VT_SIGNED( _target->type ) ) {
 
-            // 8 BIT (signed) -> 16 BIT (signed)
-
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-            Variable * tmp = variable_temporary( _environment, VT_SWORD, "(tmp)" );
-
-            MAKE_LABEL
-
-            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
-
-            // Generic algorithm:
-            //
-            // put 0 to target
-
-            cpu_store_16bit( _environment, _target->realName, 0 );
-
-            cpu_is_negative( _environment, _source->realName, sign->realName );
-            cpu_bveq( _environment, sign->realName, label );
-
-            // negative? 2 complement, copy to lower 16 bits, 2 complement
-
-            cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
-                    cpu_move_8bit( _environment, tmp->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, tmp->realName, _target->realName );
-            #endif
-            cpu_complement2_16bit( _environment, _target->realName, NULL );
-            cpu_jump( _environment, doneLabel );
-
-            // positive? copy to lower 8 bits
-
-            cpu_label( _environment, label );
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
-                    cpu_move_8bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif            
-
-            cpu_label( _environment, doneLabel );
-
+            variable_move_8bit_signed_16bit_signed( _environment, _source, _target );
+    
         } else {
             
+            variable_move_8bit_signed_16bit_unsigned( _environment, _source, _target );
+
             // 8 BIT (signed) -> 16 BIT (unsigned)
-
-            Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-            Variable * tmp = variable_temporary( _environment, VT_BYTE, "(sign)" );
-
-            MAKE_LABEL
-
-            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
-
-            // Generic algorithm:
-            //
-            // put 0 to target
-
-            cpu_store_16bit( _environment, _target->realName, 0 );
-
-            cpu_is_negative( _environment, _source->realName, sign->realName );
-            cpu_bveq( _environment, sign->realName, label );
-
-            // negative? 0
-
-            cpu_complement2_8bit( _environment, _source->realName, tmp->realName );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
-                    cpu_move_8bit( _environment, tmp->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, tmp->realName, _target->realName );
-            #endif            
-            cpu_jump( _environment, doneLabel );
-
-            // positive? copy to lower 16 bits
-
-            cpu_label( _environment, label );
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
-                    cpu_move_8bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif            
-
-            cpu_label( _environment, doneLabel );
 
         }
 
@@ -2728,47 +2766,13 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
 
             // 8 BIT (unsigned) -> 16 BIT (signed)
 
-            MAKE_LABEL
-
-            // Generic algorithm:
-            //
-            // put 0 to target
-            
-            cpu_store_16bit( _environment, _target->realName, 0 );
-
-            // copy to lower 8 bits
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
-                    cpu_move_8bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif            
+            variable_move_8bit_unsigned_16bit_signed( _environment, _source, _target );
 
         } else {
             
             // 8 BIT (unsigned) -> 16 BIT (unsigned)
 
-            MAKE_LABEL
-
-            // Generic algorithm:
-            //
-            // put 0 to target
-
-            cpu_store_16bit( _environment, _target->realName, 0 );
-            
-            // copy to lower 16 bits
-
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, "1") );
-                    cpu_move_8bit( _environment, _source->realName, targetRealName );
-                }
-            #else
-                cpu_move_8bit( _environment, _source->realName, _target->realName );
-            #endif            
+            variable_move_8bit_unsigned_16bit_unsigned( _environment, _source, _target );
 
         }
 
@@ -2786,53 +2790,6 @@ static void variable_move_8bit_16bit( Environment * _environment, Variable * _so
 static void variable_move_8bit_8bit( Environment * _environment, Variable * _source, Variable * _target ) {
 
     cpu_move_8bit( _environment, _source->realName, _target->realName );
-
-    // if ( VT_SIGNED( _source->type ) ) {
-
-    //     if ( VT_SIGNED( _target->type ) ) {
-
-    //         // 8 BIT (signed) -> 8 BIT (signed)
-    //         cpu_move_8bit( _environment, _source->realName, _target->realName );
-
-    //     } else {
-
-    //         MAKE_LABEL
-
-    //         Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
-
-    //         // 8 BIT (signed) -> 8 BIT (unsigned)
-
-    //         // Generic algorithm: copy source on target and check if the number is negative.    
-    //         cpu_move_8bit( _environment, _source->realName, _target->realName );
-    //         cpu_is_negative( _environment, _target->realName, sign->realName );
-    //         cpu_beq( _environment, label );
-
-    //         //  - (new) target is negative > 2 complement 
-    //         cpu_complement2_8bit( _environment, _target->realName, NULL );
-
-    //         //  - (new) target is positive > nothing to do
-    //         cpu_label( _environment, label );
-                    
-    //     }
-
-    // } else {
-
-    //     if ( VT_SIGNED( _target->type ) ) {
-
-    //         // 8 BIT (unsigned) -> 8 BIT (signed)
-
-    //         // Generic algorithm: copy source on target and discard the sign bit.
-    //         cpu_move_8bit( _environment, _source->realName, _target->realName );
-    //         cpu_math_and_const_8bit( _environment, _target->realName, 0x7f );
-
-    //     } else {
-
-    //         // 32 BIT (unsigned) -> 32 BIT (unsigned)
-    //         cpu_move_8bit( _environment, _source->realName, _target->realName );
-
-    //     }
-
-    // }
 
 }
 
