@@ -70,7 +70,7 @@ void begin_gameloop( Environment * _environment ) {
     _environment->hasGameLoop = 1;
 
     outline0( "LDA $9004");
-    outline0( "CMP #$FA");
+    outline0( "CMP #$80");
     outline1( "BCC %s", loop->label );
 
 }
