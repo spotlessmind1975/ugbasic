@@ -2190,21 +2190,21 @@ void cpu6809_compare_32bit_const( Environment * _environment, char *_source, int
 
         if ( _positive ) {
 
-            cpu6809_compare_16bit_const( _environment, _source, (_destination & 0xffff ), _other, _positive );
+            cpu6809_compare_16bit_const( _environment, _source, ((_destination>>16)&0xffff), _other, _positive );
 
             outline1("LDB %s", _other );
             outline1("BEQ %sdone", label );
 
-            cpu6809_compare_16bit_const( _environment, sourceEffective, ((_destination>>16)&0xffff), _other, _positive );
+            cpu6809_compare_16bit_const( _environment, sourceEffective, (_destination & 0xffff ), _other, _positive );
 
         } else {
 
-            cpu6809_compare_16bit_const( _environment, _source, (_destination&0xffff), _other, _positive );
+            cpu6809_compare_16bit_const( _environment, _source, ((_destination>>16)&0xffff), _other, _positive );
 
             outline1("LDB %s", _other );
             outline1("BNE %sdone", label );
 
-            cpu6809_compare_16bit_const( _environment, sourceEffective, ((_destination>>16)&0xffff), _other, _positive );
+            cpu6809_compare_16bit_const( _environment, sourceEffective, (_destination&0xffff), _other, _positive );
 
         }
 
@@ -6452,6 +6452,193 @@ void cpu6809_address_table_call( Environment * _environment, char * _table, char
     outline1("LDD %s", _value );
     outline1("JSR LOOKFOR%s", _table );
     outline1("STD %s", _address );
+
+}
+
+void cpu6809_move_8bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ) {
+
+    outline1("LDB %s", _source );
+    outline0("SEX" );
+    outline1("STD %s", _destination );
+
+}
+
+void cpu6809_move_8bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDB %s", _source );
+    outline0("SEX" );
+    outline1("STD %s", _destination );
+
+}
+
+void cpu6809_move_8bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDB %s", _source );
+    outline0("LDA #0" );
+    outline1("STD %s", _destination );
+
+}
+
+void cpu6809_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDB %s", _source );
+    outline0("LDA #0" );
+    outline1("STD %s", _destination );
+
+}
+
+void cpu6809_move_8bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDB %s", _source );
+    outline0("SEX" );
+    outline1("STD %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline1("STA %s", _destination );
+
+}
+
+void cpu6809_move_8bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDB %s", _source );
+    outline0("SEX" );
+    outline1("STD %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline1("STA %s", _destination );
+
+}
+
+void cpu6809_move_8bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDB %s", _source );
+    outline0("LDA #0" );
+    outline1("STD %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline1("STA %s", _destination );
+
+}
+void cpu6809_move_8bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+    
+    outline1("LDB %s", _source );
+    outline0("LDA #0" );
+    outline1("STD %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline1("STA %s", _destination );
+
+}
+
+void cpu6809_move_16bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDD %s", _source );
+    outline1("STB %s", _destination );
+
+}
+void cpu6809_move_16bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDD %s", _source );
+    outline1("STB %s", _destination );
+
+}
+void cpu6809_move_16bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDD %s", _source );
+    outline1("STB %s", _destination );
+
+}
+void cpu6809_move_16bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDD %s", _source );
+    outline1("STB %s", _destination );
+
+}
+
+void cpu6809_move_16bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDB %s", _source );
+    outline0("SEX" );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline1("STA %s", _destination );
+    outline1("LDD %s", _source );
+    outline1("STD %s", address_displacement( _environment, _destination, "2" ) );
+
+}
+void cpu6809_move_16bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDB %s", address_displacement( _environment, _source, "1" ) );
+    outline0("SEX" );
+    outline0("TFR A, B" );
+    outline1("STD %s", _destination );
+    outline1("LDD %s", _source );
+    outline1("STD %s", address_displacement( _environment, _destination, "2" ) );
+
+}
+
+void cpu6809_move_16bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline0("LDD #0" );
+    outline1("STD %s", _destination );
+    outline1("LDD %s", _source );
+    outline1("STD %s", address_displacement( _environment, _destination, "2" ) );
+
+}
+void cpu6809_move_16bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline0("LDD #0" );
+    outline1("STD %s", _destination );
+    outline1("LDD %s", _source );
+    outline1("STD %s", address_displacement( _environment, _destination, "2" ) );
+
+}
+
+void cpu6809_move_32bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", address_displacement( _environment, _source, "3" ) );
+    outline1("STA %s", _destination );
+
+}
+void cpu6809_move_32bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", address_displacement( _environment, _source, "3" ) );
+    outline1("STA %s", _destination );
+
+}
+void cpu6809_move_32bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", address_displacement( _environment, _source, "3" ) );
+    outline1("STA %s", _destination );
+
+}
+void cpu6809_move_32bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", address_displacement( _environment, _source, "3" ) );
+    outline1("STA %s", _destination );
+
+}
+
+void cpu6809_move_32bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDD %s", address_displacement( _environment, _source, "2" ) );
+    outline1("STD %s", _destination );
+
+}
+
+void cpu6809_move_32bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDD %s", address_displacement( _environment, _source, "2" ) );
+    outline1("STD %s", _destination );
+
+}
+
+void cpu6809_move_32bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDD %s", address_displacement( _environment, _source, "2" ) );
+    outline1("STD %s", _destination );
+
+}
+
+void cpu6809_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+    
+    outline1("LDD %s", address_displacement( _environment, _source, "2" ) );
+    outline1("STD %s", _destination );
 
 }
 

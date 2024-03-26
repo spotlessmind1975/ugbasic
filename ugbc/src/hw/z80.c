@@ -8201,4 +8201,263 @@ void z80_address_table_call( Environment * _environment, char * _table, char * _
     outline1("LD (%s), DE", _address );
 
 }
+
+void z80_move_8bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ) {
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("ADD A, A" );
+    outline0("SBC A" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_move_8bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("ADD A, A" );
+    outline0("SBC A" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_move_8bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD A, 0" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD A, 0" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_move_8bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("ADD A, A" );
+    outline0("SBC A" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_move_8bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("ADD A, A" );
+    outline0("SBC A" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_move_8bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD A, 0" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD A, 0" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD A, 0" );
+    outline0("LD (DE), A" );
+
+}
+void z80_move_8bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+    
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD A, 0" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD A, 0" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD A, 0" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_move_16bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD HL, (%s)", _source );
+    outline0("LD A, L" );
+    outline1("LD (%s), A", _destination );
+
+}
+void z80_move_16bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD HL, (%s)", _source );
+    outline0("LD A, L" );
+    outline1("LD (%s), A", _destination );
+
+}
+void z80_move_16bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD HL, (%s)", _source );
+    outline0("LD A, L" );
+    outline1("LD (%s), A", _destination );
+
+}
+void z80_move_16bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD HL, (%s)", _source );
+    outline0("LD A, L" );
+    outline1("LD (%s), A", _destination );
+
+}
+
+void z80_move_16bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("ADD A, A" );
+    outline0("SBC A" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_move_16bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("ADD A, A" );
+    outline0("SBC A" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_move_16bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD A, 0" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD (DE), A" );
+
+}
+void z80_move_16bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD A, 0" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_move_32bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD A, (%s)", _source );
+    outline1("LD (%s), A", _destination );
+
+}
+void z80_move_32bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD A, (%s)", _source );
+    outline1("LD (%s), A", _destination );
+
+}
+void z80_move_32bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD A, (%s)", _source );
+    outline1("LD (%s), A", _destination );
+
+}
+void z80_move_32bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD A, (%s)", _source );
+    outline1("LD (%s), A", _destination );
+
+}
+
+void z80_move_32bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD HL, (%s)", _source );
+    outline1("LD (%s), HL", _destination );
+
+}
+
+void z80_move_32bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD HL, (%s)", _source );
+    outline1("LD (%s), HL", _destination );
+
+}
+
+void z80_move_32bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD HL, (%s)", _source );
+    outline1("LD (%s), HL", _destination );
+
+}
+
+void z80_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+    
+    outline1("LD HL, (%s)", _source );
+    outline1("LD (%s), HL", _destination );
+
+}
+
 #endif

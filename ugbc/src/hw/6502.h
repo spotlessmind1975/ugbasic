@@ -166,6 +166,37 @@ void cpu6502_move_16bit( Environment * _environment, char *_source, char *_desti
 void cpu6502_addressof_16bit( Environment * _environment, char *_source, char *_destination );
 void cpu6502_move_32bit( Environment * _environment, char *_source, char *_destination );
 void cpu6502_move_8bit( Environment * _environment, char *_source, char *_destination );
+
+void cpu6502_move_8bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_8bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_8bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
+void cpu6502_move_8bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_8bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_8bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_8bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
+void cpu6502_move_16bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_16bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_16bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_16bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
+void cpu6502_move_16bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_16bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_16bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_16bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
+void cpu6502_move_32bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_32bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_32bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_32bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
+void cpu6502_move_32bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_32bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_32bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination );
+void cpu6502_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
 void cpu6502_move_nbit( Environment * _environment, int _n, char *_source, char *_destination );
 void cpu6502_peek( Environment * _environment, char * _address, char * _target );
 void cpu6502_poke( Environment * _environment, char * _address, char * _value );
@@ -426,6 +457,37 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_addressof_16bit( _environment, _source, _destination  ) cpu6502_addressof_16bit( _environment, _source, _destination  )
 #define cpu_move_32bit( _environment, _source, _destination  ) cpu6502_move_32bit( _environment, _source, _destination  )
 #define cpu_move_8bit( _environment, _source, _destination  ) cpu6502_move_8bit( _environment, _source, _destination  )
+
+#define cpu_move_8bit_signed_16bit_signed(  _environment, _source, _destination ) cpu6502_move_8bit_signed_16bit_signed(  _environment, _source, _destination )
+#define cpu_move_8bit_signed_16bit_unsigned(  _environment, _source, _destination ) cpu6502_move_8bit_signed_16bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_8bit_unsigned_16bit_signed(  _environment, _source, _destination ) cpu6502_move_8bit_unsigned_16bit_signed(  _environment, _source, _destination )
+#define cpu_move_8bit_unsigned_16bit_unsigned(  _environment, _source, _destination ) cpu6502_move_8bit_unsigned_16bit_unsigned(  _environment, _source, _destination )
+
+#define cpu_move_8bit_signed_32bit_signed(  _environment, _source, _destination ) cpu6502_move_8bit_signed_32bit_signed(  _environment, _source, _destination )
+#define cpu_move_8bit_signed_32bit_unsigned(  _environment, _source, _destination ) cpu6502_move_8bit_signed_32bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_8bit_unsigned_32bit_signed(  _environment, _source, _destination ) cpu6502_move_8bit_unsigned_32bit_signed(  _environment, _source, _destination )
+#define cpu_move_8bit_unsigned_32bit_unsigned(  _environment, _source, _destination ) cpu6502_move_8bit_unsigned_32bit_unsigned(  _environment, _source, _destination )
+
+#define cpu_move_16bit_signed_8bit_signed(  _environment, _source, _destination ) cpu6502_move_16bit_signed_8bit_signed(  _environment, _source, _destination )
+#define cpu_move_16bit_signed_8bit_unsigned(  _environment, _source, _destination ) cpu6502_move_16bit_signed_8bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_16bit_unsigned_8bit_signed(  _environment, _source, _destination ) cpu6502_move_16bit_unsigned_8bit_signed(  _environment, _source, _destination )
+#define cpu_move_16bit_unsigned_8bit_unsigned(  _environment, _source, _destination ) cpu6502_move_16bit_unsigned_8bit_unsigned(  _environment, _source, _destination )
+
+#define cpu_move_16bit_signed_32bit_signed(  _environment, _source, _destination ) cpu6502_move_16bit_signed_32bit_signed(  _environment, _source, _destination )
+#define cpu_move_16bit_signed_32bit_unsigned(  _environment, _source, _destination ) cpu6502_move_16bit_signed_32bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_16bit_unsigned_32bit_signed(  _environment, _source, _destination ) cpu6502_move_16bit_unsigned_32bit_signed(  _environment, _source, _destination )
+#define cpu_move_16bit_unsigned_32bit_unsigned(  _environment, _source, _destination ) cpu6502_move_16bit_unsigned_32bit_unsigned(  _environment, _source, _destination )
+
+#define cpu_move_32bit_signed_8bit_signed(  _environment, _source, _destination ) cpu6502_move_32bit_signed_8bit_signed(  _environment, _source, _destination )
+#define cpu_move_32bit_signed_8bit_unsigned(  _environment, _source, _destination ) cpu6502_move_32bit_signed_8bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_32bit_unsigned_8bit_signed(  _environment, _source, _destination ) cpu6502_move_32bit_unsigned_8bit_signed(  _environment, _source, _destination )
+#define cpu_move_32bit_unsigned_8bit_unsigned(  _environment, _source, _destination ) cpu6502_move_32bit_unsigned_8bit_unsigned(  _environment, _source, _destination )
+
+#define cpu_move_32bit_signed_16bit_signed(  _environment, _source, _destination ) cpu6502_move_32bit_signed_16bit_signed(  _environment, _source, _destination )
+#define cpu_move_32bit_signed_16bit_unsigned(  _environment, _source, _destination ) cpu6502_move_32bit_signed_16bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_32bit_unsigned_16bit_signed(  _environment, _source, _destination ) cpu6502_move_32bit_unsigned_16bit_signed(  _environment, _source, _destination )
+#define cpu_move_32bit_unsigned_16bit_unsigned(  _environment, _source, _destination ) cpu6502_move_32bit_unsigned_16bit_unsigned(  _environment, _source, _destination )
+
 #define cpu_move_nbit( _environment, _n, _source, _destination  ) cpu6502_move_nbit( _environment, _n, _source, _destination )
 #define cpu_peek( _environment,  _address,  _target  ) cpu6502_peek( _environment,  _address,  _target  )
 #define cpu_poke( _environment,  _address,  _value  ) cpu6502_poke( _environment,  _address,  _value  )

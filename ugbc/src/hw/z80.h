@@ -161,6 +161,38 @@ void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destin
 void z80_move_8bit( Environment * _environment, char *_source, char *_destination );
 void z80_move_16bit( Environment * _environment, char *_source, char *_destination );
 void z80_move_32bit( Environment * _environment, char *_source, char *_destination );
+
+void z80_move_8bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_8bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void z80_move_8bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
+void z80_move_8bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_8bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void z80_move_8bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_8bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
+void z80_move_16bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_16bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void z80_move_16bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_16bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
+void z80_move_16bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_16bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void z80_move_16bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_16bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
+void z80_move_32bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_32bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void z80_move_32bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_32bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
+void z80_move_32bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_32bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination );
+void z80_move_32bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination );
+void z80_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination );
+
+
 void z80_move_nbit( Environment * _environment, int _n, char *_source, char *_destination );
 void z80_addressof_16bit( Environment * _environment, char *_source, char *_destination );
 void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char *_destination, int _offset );
@@ -420,6 +452,38 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_move_8bit( _environment, _source, _destination  ) z80_move_8bit( _environment, _source, _destination  )
 #define cpu_move_16bit( _environment, _source, _destination  ) z80_move_16bit( _environment, _source, _destination  )
 #define cpu_move_32bit( _environment, _source, _destination  ) z80_move_32bit( _environment, _source, _destination  )
+
+#define cpu_move_8bit_signed_16bit_signed(  _environment, _source, _destination ) z80_move_8bit_signed_16bit_signed(  _environment, _source, _destination )
+#define cpu_move_8bit_signed_16bit_unsigned(  _environment, _source, _destination ) z80_move_8bit_signed_16bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_8bit_unsigned_16bit_signed(  _environment, _source, _destination ) z80_move_8bit_unsigned_16bit_signed(  _environment, _source, _destination )
+#define cpu_move_8bit_unsigned_16bit_unsigned(  _environment, _source, _destination ) z80_move_8bit_unsigned_16bit_unsigned(  _environment, _source, _destination )
+
+#define cpu_move_8bit_signed_32bit_signed(  _environment, _source, _destination ) z80_move_8bit_signed_32bit_signed(  _environment, _source, _destination )
+#define cpu_move_8bit_signed_32bit_unsigned(  _environment, _source, _destination ) z80_move_8bit_signed_32bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_8bit_unsigned_32bit_signed(  _environment, _source, _destination ) z80_move_8bit_unsigned_32bit_signed(  _environment, _source, _destination )
+#define cpu_move_8bit_unsigned_32bit_unsigned(  _environment, _source, _destination ) z80_move_8bit_unsigned_32bit_unsigned(  _environment, _source, _destination )
+
+#define cpu_move_16bit_signed_8bit_signed(  _environment, _source, _destination ) z80_move_16bit_signed_8bit_signed(  _environment, _source, _destination )
+#define cpu_move_16bit_signed_8bit_unsigned(  _environment, _source, _destination ) z80_move_16bit_signed_8bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_16bit_unsigned_8bit_signed(  _environment, _source, _destination ) z80_move_16bit_unsigned_8bit_signed(  _environment, _source, _destination )
+#define cpu_move_16bit_unsigned_8bit_unsigned(  _environment, _source, _destination ) z80_move_16bit_unsigned_8bit_unsigned(  _environment, _source, _destination )
+
+#define cpu_move_16bit_signed_32bit_signed(  _environment, _source, _destination ) z80_move_16bit_signed_32bit_signed(  _environment, _source, _destination )
+#define cpu_move_16bit_signed_32bit_unsigned(  _environment, _source, _destination ) z80_move_16bit_signed_32bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_16bit_unsigned_32bit_signed(  _environment, _source, _destination ) z80_move_16bit_unsigned_32bit_signed(  _environment, _source, _destination )
+#define cpu_move_16bit_unsigned_32bit_unsigned(  _environment, _source, _destination ) z80_move_16bit_unsigned_32bit_unsigned(  _environment, _source, _destination )
+
+#define cpu_move_32bit_signed_8bit_signed(  _environment, _source, _destination ) z80_move_32bit_signed_8bit_signed(  _environment, _source, _destination )
+#define cpu_move_32bit_signed_8bit_unsigned(  _environment, _source, _destination ) z80_move_32bit_signed_8bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_32bit_unsigned_8bit_signed(  _environment, _source, _destination ) z80_move_32bit_unsigned_8bit_signed(  _environment, _source, _destination )
+#define cpu_move_32bit_unsigned_8bit_unsigned(  _environment, _source, _destination ) z80_move_32bit_unsigned_8bit_unsigned(  _environment, _source, _destination )
+
+#define cpu_move_32bit_signed_16bit_signed(  _environment, _source, _destination ) z80_move_32bit_signed_16bit_signed(  _environment, _source, _destination )
+#define cpu_move_32bit_signed_16bit_unsigned(  _environment, _source, _destination ) z80_move_32bit_signed_16bit_unsigned(  _environment, _source, _destination )
+#define cpu_move_32bit_unsigned_16bit_signed(  _environment, _source, _destination ) z80_move_32bit_unsigned_16bit_signed(  _environment, _source, _destination )
+#define cpu_move_32bit_unsigned_16bit_unsigned(  _environment, _source, _destination ) z80_move_32bit_unsigned_16bit_unsigned(  _environment, _source, _destination )
+
+
 #define cpu_move_nbit( _environment, _n, _source, _destination  ) z80_move_nbit( _environment, _n, _source, _destination )
 #define cpu_addressof_16bit( _environment, _source, _destination  ) z80_addressof_16bit( _environment, _source, _destination  )
 #define cpu_peek( _environment,  _address,  _target  ) z80_peek( _environment,  _address,  _target  )

@@ -7740,4 +7740,233 @@ void cpu6502_address_table_call( Environment * _environment, char * _table, char
 
 }
 
+void cpu6502_move_8bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ) {
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline0("LDA #$7F" );
+    outline1("CMP %s", _destination );
+    outline0("SBC #$7F" );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+
+}
+
+void cpu6502_move_8bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline0("LDA #$7F" );
+    outline1("CMP %s", _destination );
+    outline0("SBC #$7F" );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+
+}
+
+void cpu6502_move_8bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline0("LDA #0" );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+
+}
+
+void cpu6502_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline0("LDA #0" );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+
+}
+
+void cpu6502_move_8bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline0("LDA #$7F" );
+    outline1("CMP %s", _destination );
+    outline0("SBC #$7F" );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
+
+}
+
+void cpu6502_move_8bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline0("LDA #$7F" );
+    outline1("CMP %s", _destination );
+    outline0("SBC #$7F" );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
+
+}
+
+void cpu6502_move_8bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline0("LDA #0" );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
+
+}
+void cpu6502_move_8bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+    
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline0("LDA #0" );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
+
+}
+
+void cpu6502_move_16bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+
+}
+void cpu6502_move_16bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+
+}
+void cpu6502_move_16bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+
+}
+void cpu6502_move_16bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+
+}
+
+void cpu6502_move_16bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline0("LDA #$7F" );
+    outline1("CMP %s", address_displacement( _environment, _destination, "1" ) );
+    outline0("SBC #$7F" );
+    outline1("STA %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
+
+}
+
+void cpu6502_move_16bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline0("LDA #$7F" );
+    outline1("CMP %s", address_displacement( _environment, _destination, "1" ) );
+    outline0("SBC #$7F" );
+    outline1("STA %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
+
+}
+
+void cpu6502_move_16bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline0("LDA #0" );
+    outline1("STA %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
+
+}
+void cpu6502_move_16bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline0("LDA #0" );
+    outline1("STA %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
+
+}
+
+void cpu6502_move_32bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline0("LDA #0" );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
+
+}
+void cpu6502_move_32bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+
+}
+void cpu6502_move_32bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+
+}
+void cpu6502_move_32bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+
+}
+
+void cpu6502_move_32bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+
+}
+
+void cpu6502_move_32bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+
+}
+
+void cpu6502_move_32bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+
+}
+
+void cpu6502_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+    
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+   
+}
+
 #endif
