@@ -42,7 +42,7 @@ endif
 
 FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
-BISON_OPTIONS=--locations -d -Wcounterexamples
+BISON_OPTIONS=--locations -d
 CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC
 LFLAGS=
 LIBS=-lm $(LIBXML2)
