@@ -156,14 +156,17 @@ void zx_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("LD A, 0");
     outline1("LD (%s), A", _pressed );
     outline1("LD (%s), A", _key );
+    outline0("LD A, ($5C3B)");
+    outline0("AND $20");
+    outline0("CP $20");
+    outline1("JR NZ, %snokey", label);
     outline0("LD A, ($5C08)");
-    outline0("CP 0");
-    outline1("JR Z, %snokey", label );
-    outline1("LD (%s), a", _key );
+    outline1("LD (%s), A", _key );
     outline0("LD A, $FF");
     outline1("LD (%s), A", _pressed );
-    outline0("LD A, 0");
-    outline0("LD ($5C08), A");
+    outline0("LD A, ($5C3B)");
+    outline0("AND $DF");
+    outline0("LD ($5C3B), A");
     outhead1("%snokey:", label );
    
 }
@@ -443,12 +446,6 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
 
-    int avoidColorRecalculation = 0;
-
-    if (paletteColorCount<=2) {
-        avoidColorRecalculation = 1;
-    }
-
     int i, j, k;
 
     commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
@@ -517,100 +514,108 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
     int step = 0;
    
-    // Loop for all the source surface, in order to calculate colors.
-    // We do it in one pass only.
-    for (image_y = 0; image_y < _frame_height; image_y+=8) {
+    if ( paletteColorCount > 2 ) {
 
-        for (image_x = 0; image_x < _frame_width; image_x+=8) {
+        // Loop for all the source surface, in order to calculate colors.
+        // We do it in one pass only.
+        for (image_y = 0; image_y < _frame_height; image_y+=8) {
 
-            memset( colorIndexCount, 0, MAX_PALETTE * sizeof( int ) );
+            for (image_x = 0; image_x < _frame_width; image_x+=8) {
 
-            for( int y = 0; y<8; ++y ) {
+                memset( colorIndexCount, 0, MAX_PALETTE * sizeof( int ) );
 
-                _source = source + ( ( _offset_y * _width ) + _offset_x ) * _depth + 
-                    ( ( image_y * _frame_width + image_x ) * _depth ) +
-                    ( ( y * 8 ) * _depth );
+                for( int y = 0; y<8; ++y ) {
 
-                for( int x = 0; x<8; ++x ) {
-                    
-                    // Take the color of the pixel
-                    rgb.red = *_source;
-                    rgb.green = *(_source + 1);
-                    rgb.blue = *(_source + 2);
-                    if ( _depth > 3 ) {
-                        rgb.alpha = *(_source + 3);
-                    } else {
-                        rgb.alpha = 255;
-                    }
-                    if ( rgb.alpha == 0 ) {
-                        rgb.red = 0;
-                        rgb.green = 0;
-                        rgb.blue = 0;
-                    }
+                    _source = source + ( ( _offset_y * _width ) + _offset_x ) * _depth + 
+                        ( ( image_y * _frame_width + image_x ) * _depth ) +
+                        ( ( y * 8 ) * _depth );
 
-                    colorIndex = 0;
-
-                    for( int index = 0; index <paletteColorCount; ++index ) {
-                        int minDistance = 9999;
-                        int distance = rgbi_distance(&commonPalette[index], &rgb );
-                        if ( distance < minDistance ) {
-                            minDistance = distance;
-                            colorIndex = commonPalette[index].index;
+                    for( int x = 0; x<8; ++x ) {
+                        
+                        // Take the color of the pixel
+                        rgb.red = *_source;
+                        rgb.green = *(_source + 1);
+                        rgb.blue = *(_source + 2);
+                        if ( _depth > 3 ) {
+                            rgb.alpha = *(_source + 3);
+                        } else {
+                            rgb.alpha = 255;
                         }
+                        if ( rgb.alpha == 0 ) {
+                            rgb.red = 0;
+                            rgb.green = 0;
+                            rgb.blue = 0;
+                        }
+
+                        colorIndex = 0;
+
+                        int minDistance = 9999;
+                        for( int index = 0; index <paletteColorCount; ++index ) {
+                            int distance = rgbi_distance(&commonPalette[index], &rgb );
+                            if ( distance < minDistance ) {
+                                minDistance = distance;
+                                colorIndex = commonPalette[index].index;
+                            }
+                        }
+
+                        ++colorIndexCount[colorIndex];
+
+                        _source += _depth;
+
                     }
 
-                    ++colorIndexCount[colorIndex];
+                }
 
-                    _source += _depth;
+                int colorBackgroundMax = 0;
+                int colorBackground = 0;
+                int colorForegroundMax = 0;
+                int colorForeground = 0;
+
+                if ( _transparent_color & 0x0f0000 ) {
+                    colorBackground = ( _transparent_color & 0xff );
+                } else {
+                    for( int xx = 0; xx<16; ++xx ) {
+                        if ( colorIndexCount[xx] > colorBackgroundMax ) {
+                            colorBackground = xx;
+                            colorBackgroundMax = colorIndexCount[xx];
+                        };
+                    }
+
+                    colorIndexCount[colorBackground] = 0;
+                    
+                }
+                if ( _transparent_color & 0xf00000 ) {
+                    colorForeground = ( _transparent_color & 0xff00 ) >> 8;
+                } else {
+                    for( int xx = 0; xx<16; ++xx ) {
+                        if ( colorIndexCount[xx] > colorForegroundMax ) {
+                            colorForeground = xx;
+                            colorForegroundMax = colorIndexCount[xx];
+                        };
+                    }
+
+                    if ( colorForeground == colorBackground ) {
+                        colorForeground = ( colorBackground == 0 ) ? 1 : 0;
+                    }
+
+                    colorIndexCount[colorForeground] = 0;
 
                 }
+
+                // printf( "cell (%d,%d) = %2.2x, %2.2x\n", image_x>>3, image_y>>3, colorForeground, colorBackground );
+
+                *(colorForegroundCells + (image_y>>3)*(_frame_width>>3) + (image_x>>3)) = colorForeground;
+                *(colorBackgroundCells + (image_y>>3)*(_frame_width>>3) + (image_x>>3)) = colorBackground;
 
             }
 
-            int colorBackgroundMax = 0;
-            int colorBackground = 0;
-            int colorForegroundMax = 0;
-            int colorForeground = 0;
-
-            if ( _transparent_color & 0x0f0000 ) {
-                colorBackground = ( _transparent_color & 0xff );
-            } else {
-                for( int xx = 0; xx<16; ++xx ) {
-                    if ( colorIndexCount[xx] > colorBackgroundMax ) {
-                        colorBackground = xx;
-                        colorBackgroundMax = colorIndexCount[xx];
-                    };
-                }
-
-                colorIndexCount[colorBackground] = 0;
-                
-            }
-            if ( _transparent_color & 0xf00000 ) {
-                colorForeground = ( _transparent_color & 0xff00 ) >> 8;
-            } else {
-                for( int xx = 0; xx<16; ++xx ) {
-                    if ( colorIndexCount[xx] > colorForegroundMax ) {
-                        colorForeground = xx;
-                        colorForegroundMax = colorIndexCount[xx];
-                    };
-                }
-
-                if ( colorForeground == colorBackground ) {
-                    colorForeground = ( colorBackground == 0 ) ? 1 : 0;
-                }
-
-                colorIndexCount[colorForeground] = 0;
-
-            }
-
-            // printf( "cell (%d,%d) = %2.2x, %2.2x\n", image_x>>3, image_y>>3, colorForeground, colorBackground );
-
-            *(colorForegroundCells + (image_y>>3)*(_frame_width>>3) + (image_x>>3)) = colorForeground;
-            *(colorBackgroundCells + (image_y>>3)*(_frame_width>>3) + (image_x>>3)) = colorBackground;
+            // printf("\n");
 
         }
 
     }
+
+    // printf("\n\n");
 
     _source = source + ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
@@ -648,9 +653,20 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
                 int offset = ( image_y * _frame_width>>3 ) + (image_x>>3);
                 int bitmask = 1 << ( 7 - xx );
+                int colorForeground = 0;
+                int colorBackground = 0;
 
-                int colorForeground = *(colorForegroundCells + (image_y>>3)*(_frame_width>>3) + (image_x>>3));
-                int colorBackground = *(colorBackgroundCells + (image_y>>3)*(_frame_width>>3) + (image_x>>3));
+                if ( paletteColorCount > 2 ) {
+
+                    colorForeground = *(colorForegroundCells + (image_y>>3)*(_frame_width>>3) + (image_x>>3));
+                    colorBackground = *(colorBackgroundCells + (image_y>>3)*(_frame_width>>3) + (image_x>>3));
+
+                } else {
+
+                    colorBackground = commonPalette[0].index;
+                    colorForeground = commonPalette[1].index;
+
+                }
 
                 // printf( "> cell (%d,%d) = %2.2x, %2.2x\n", image_x>>3, image_y>>3, colorForeground, colorBackground );
 
@@ -680,12 +696,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
         _source += _depth * ( _width - _frame_width );
 
-        // printf("\n" );
-
     }
-
-    // printf("\n" );
-    // printf("\n" );
 
     adilineendbitmap();
 
