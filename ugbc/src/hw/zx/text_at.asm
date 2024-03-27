@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTAT:
+    LD A, C
+    CP 0
+    RET Z
     LD A, (XCURSYS)
     LD E, A
     LD A, (YCURSYS)
