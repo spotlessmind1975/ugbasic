@@ -583,6 +583,10 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                             };
                         }
 
+                        if ( colorForeground[image_x>>3] == colorBackground[image_x>>3] ) {
+                            colorForeground[image_x>>3] = ( colorBackground[image_x>>3] == 0 ) ? 1 : 0;
+                        }
+
                         colorIndexCount[colorForeground[image_x>>3]] = 0;
 
                     }
