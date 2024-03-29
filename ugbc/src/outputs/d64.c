@@ -272,7 +272,9 @@ int d64_get_free_sectors( D64Handle * _handle ) {
     int freeSectors = 0;
 
     for( int i=0; i<35; ++i ) {
-        freeSectors += bam->entries[i].freeSectors;
+        if ( i != 18 ) {
+            freeSectors += bam->entries[i].freeSectors;
+        }
     }
 
     return freeSectors;
