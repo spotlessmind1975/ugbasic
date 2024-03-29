@@ -302,7 +302,7 @@ void generate_reu( Environment * _environment ) {
         while( bank ) {
             if ( bank->remains < bank->space ) {
                 int bankSize = bank->space - bank->remains;
-                fseek( reuHandle, ( bank->id - 1 ) * bank->space, SEEK_SET );
+                fseek( reuHandle, bank->id * bank->space, SEEK_SET );
                 fwrite( bank->data, 1, bankSize, reuHandle );
             }
             bank = bank->next;
@@ -410,7 +410,7 @@ void generate_reu( Environment * _environment ) {
         while( bank ) {
             if ( bank->remains < bank->space ) {
                 int bankSize = bank->space - bank->remains;
-                fseek( reuHandle, ( bank->id - 1 ) * bank->space, SEEK_SET );
+                fseek( reuHandle, bank->id * bank->space, SEEK_SET );
                 fwrite( bank->data, 1, bankSize, reuHandle );
             }
             bank = bank->next;

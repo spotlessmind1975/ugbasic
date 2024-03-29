@@ -106,7 +106,7 @@ void target_initialization( Environment * _environment ) {
     bankIds = malloc( sizeof( int ) * bankCount );
     
     for( int i=0; i<bankCount; ++i ) {
-        bankIds[i] = bankCount-i;
+        bankIds[i] = bankCount-i-1;
     }
 
     _environment->compressionForbidden = 1;
