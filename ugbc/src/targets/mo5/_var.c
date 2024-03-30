@@ -214,7 +214,34 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         }
                         outhead1("%d", variable->valueBuffer[(variable->size-1)]);
                     } else if ( variable->value ) {
-                        outhead3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff));
+
+                        switch( VT_BITWIDTH( variable->arrayType ) ) {
+                            case 32: {
+                                out1("%s fcb ", variable->realName );
+                                for( int i=0; i<(variable->size/4)-1; ++i ) {
+                                    out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x, ", (unsigned int)( ( variable->value >> 24 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
+                                }
+                                out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x", (unsigned int)( ( variable->value >> 24 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
+                                outline0("");
+                                break;
+                            }
+                            case 16: {
+                                out1("%s fcb ", variable->realName );
+                                for( int i=0; i<(variable->size/2)-1; ++i ) {
+                                    out2("$%2.2x, $%2.2x,", (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
+                                }
+                                out2("$%2.2x, $%2.2x", (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
+                                outline0("");
+                                break;
+                            }
+                            case 8:
+                                outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
+                                break;
+                            case 1:
+                                outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
+                                break;
+                        }                             
+                        
                     } else {
                         outhead2("%s rzb %d", variable->realName, variable->size);
                     }

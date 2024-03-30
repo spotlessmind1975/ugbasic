@@ -424,30 +424,14 @@ void cpu6809_fill_blocks( Environment * _environment, char * _address, char * _b
  */
 void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB %s", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA %s", _pattern );
-        outline1("LDX %s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB %s", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
         outline1("LDA %s", _pattern );
         outline1("LDX %s", _address);
-        outline0("JSR CPUFILL");
+        outline1("LDY %s", _bytes);
+        outline0("JSR CPUFILL16");
 
     done( )
 
@@ -468,30 +452,18 @@ void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, c
  */
 void cpu6809_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA %s", _pattern );
-        outline1("LDX %s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
         outline1("LDA %s", _pattern );
         outline1("LDX %s", _address);
-        outline0("JSR CPUFILL");
+        outline1("LDY #$%4.4x", _bytes );
+        if ( _bytes < 256 ) {
+            outline0("JSR CPUFILL8");
+        } else {
+            outline0("JSR CPUFILL16");
+        }
 
     done( )
 
@@ -512,30 +484,18 @@ void cpu6809_fill_size( Environment * _environment, char * _address, int _bytes,
  */
 void cpu6809_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA #$%2.2x", _pattern );
-        outline1("LDX %s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
         outline1("LDA #$%2.2x", _pattern );
         outline1("LDX %s", _address);
-        outline0("JSR CPUFILL");
+        outline1("LDY #$%4.4x", _bytes );
+        if ( _bytes < 256 ) {
+            outline0("JSR CPUFILL8");
+        } else {
+            outline0("JSR CPUFILL16");
+        }
 
     done( )
 
@@ -556,30 +516,14 @@ void cpu6809_fill_size_value( Environment * _environment, char * _address, int _
  */
 void cpu6809_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB %s", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA %s", _pattern );
-        outline1("LDX #%s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB %s", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
         outline1("LDA %s", _pattern );
         outline1("LDX #%s", _address);
-        outline0("JSR CPUFILL");
+        outline1("LDY %s", _bytes);
+        outline0("JSR CPUFILL16");
 
     done( )
 
@@ -600,30 +544,19 @@ void cpu6809_fill_direct( Environment * _environment, char * _address, char * _b
  */
 void cpu6809_fill_direct_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA %s", _pattern );
-        outline1("LDX #%s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
         outline1("LDA %s", _pattern );
         outline1("LDX #%s", _address);
-        outline0("JSR CPUFILL");
+        outline1("LDY #$%4.4x", _bytes);
+
+        if ( _bytes < 256 ) {
+            outline0("JSR CPUFILL8");
+        } else {
+            outline0("JSR CPUFILL16");
+        }
 
     done( )
 
@@ -644,30 +577,19 @@ void cpu6809_fill_direct_size( Environment * _environment, char * _address, int 
  */
 void cpu6809_fill_direct_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA #$%2.2x", _pattern );
-        outline1("LDX #%s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
         outline1("LDA #$%2.2x", _pattern );
         outline1("LDX #%s", _address);
-        outline0("JSR CPUFILL");
+        outline1("LDY #$%4.4x", _bytes);
+
+        if ( _bytes < 256 ) {
+            outline0("JSR CPUFILL8");
+        } else {
+            outline0("JSR CPUFILL16");
+        }
 
     done( )
 

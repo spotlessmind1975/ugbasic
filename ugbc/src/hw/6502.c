@@ -318,24 +318,7 @@ void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, c
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-
-        // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA %s", _address);
-        outline0("STA TMPPTR");
-        outline1("LDA %s", address_displacement(_environment, _address, "1"));
-        outline0("STA TMPPTR+1");
-
-        outline1("LDA %s", _pattern);
-
-        // Fill the bitmap with the given pattern.
-        outline1("LDX %s", _bytes );
-        outline0("LDY #0");
-        outhead1("%sx:", label);
-        outline0("STA (TMPPTR),Y");
-        outline0("INY");
-        outline0("DEX");
-        outline1("BNE %sx", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
 
@@ -343,9 +326,13 @@ void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, c
         outline0("STA TMPPTR");
         outline1("LDA %s", address_displacement(_environment, _address, "1"));
         outline0("STA TMPPTR+1");
-        outline1("LDX %s", _bytes );
+        outline1("LDA %s", _bytes);
+        outline0("STA MATHPTR0");
+        outline1("LDA %s", address_displacement(_environment, _bytes, "1"));
+        outline0("STA MATHPTR0+1");
+
         outline1("LDA %s", _pattern);
-        outline0("JSR CPUFILL");
+        outline0("JSR CPUFILL16");
 
     done()
 
@@ -368,24 +355,7 @@ void cpu6502_fill_size( Environment * _environment, char * _address, int _bytes,
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-
-        // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA %s", _address);
-        outline0("STA TMPPTR");
-        outline1("LDA %s", address_displacement(_environment, _address, "1") );
-        outline0("STA TMPPTR+1");
-
-        outline1("LDA %s", _pattern);
-
-        // Fill the bitmap with the given pattern.
-        outline1("LDX #$%2.2x", _bytes );
-        outline0("LDY #0");
-        outhead1("%sx:", label);
-        outline0("STA (TMPPTR),Y");
-        outline0("INY");
-        outline0("DEX");
-        outline1("BNE %sx", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
 
@@ -393,9 +363,18 @@ void cpu6502_fill_size( Environment * _environment, char * _address, int _bytes,
         outline0("STA TMPPTR");
         outline1("LDA %s", address_displacement(_environment, _address, "1") );
         outline0("STA TMPPTR+1");
-        outline1("LDX #$%2.2x", _bytes );
-        outline1("LDA %s", _pattern);
-        outline0("JSR CPUFILL");
+        if ( _bytes < 256 ) {
+            outline1("LDX #$%2.2x", (unsigned char)( _bytes & 0xff ) );
+            outline1("LDA %s", _pattern);
+            outline0("JSR CPUFILL8");
+        } else {
+            outline1("LDA #$%2.2x", (unsigned char)( _bytes & 0xff ) );
+            outline0("STA MATHPTR0");
+            outline1("LDA #$%2.2x", ( unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
+            outline0("STA MATHPTR0+1");
+            outline1("LDA %s", _pattern);
+            outline0("JSR CPUFILL16");
+        }
 
     done()
 
@@ -418,24 +397,7 @@ void cpu6502_fill_size_value( Environment * _environment, char * _address, int _
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-
-        // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA %s", _address);
-        outline0("STA TMPPTR");
-        outline1("LDA %s", address_displacement(_environment, _address, "1"));
-        outline0("STA TMPPTR+1");
-
-        outline1("LDA #$%2.2x", (_pattern & 0xff ) );
-
-        // Fill the bitmap with the given pattern.
-        outline1("LDX #$%2.2x", ( _bytes & 0xff ) );
-        outline0("LDY #0");
-        outhead1("%sx:", label);
-        outline0("STA (TMPPTR),Y");
-        outline0("INY");
-        outline0("DEX");
-        outline1("BNE %sx", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
 
@@ -443,9 +405,19 @@ void cpu6502_fill_size_value( Environment * _environment, char * _address, int _
         outline0("STA TMPPTR");
         outline1("LDA %s", address_displacement(_environment, _address, "1") );
         outline0("STA TMPPTR+1");
-        outline1("LDX #$%2.2x", ( _bytes & 0xff ) );
-        outline1("LDA #$%2.2x", (_pattern & 0xff ) );
-        outline0("JSR CPUFILL");
+
+        if ( _bytes < 256 ) {
+            outline1("LDX #$%2.2x", (unsigned char)( _bytes & 0xff ) );
+            outline1("LDA #$%2.2x", (unsigned char) (_pattern & 0xff ) );
+            outline0("JSR CPUFILL8");
+        } else {
+            outline1("LDA #$%2.2x", (unsigned char)( _bytes & 0xff ) );
+            outline0("STA MATHPTR0");
+            outline1("LDA #$%2.2x", ( unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
+            outline0("STA MATHPTR0+1");
+            outline1("LDA #$%2.2x", (unsigned char) (_pattern & 0xff ) );
+            outline0("JSR CPUFILL16");
+        }
 
     done()
 
@@ -468,24 +440,7 @@ void cpu6502_fill_direct( Environment * _environment, char * _address, char * _b
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-
-        // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA #<%s", _address);
-        outline0("STA TMPPTR");
-        outline1("LDA #>%s", _address);
-        outline0("STA TMPPTR+1");
-
-        outline1("LDA %s", _pattern);
-
-        // Fill the bitmap with the given pattern.
-        outline1("LDX %s", _bytes );
-        outline0("LDY #0");
-        outhead1("%sx:", label);
-        outline0("STA (TMPPTR),Y");
-        outline0("INY");
-        outline0("DEX");
-        outline1("BNE %sx", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
 
@@ -493,9 +448,12 @@ void cpu6502_fill_direct( Environment * _environment, char * _address, char * _b
         outline0("STA TMPPTR");
         outline1("LDA #>%s", _address);
         outline0("STA TMPPTR+1");
-        outline1("LDX %s", _bytes );
+        outline1("LDA %s", _bytes);
+        outline0("STA MATHPTR0");
+        outline1("LDA %s", address_displacement(_environment, _bytes, "1"));
+        outline0("STA MATHPTR0+1");
         outline1("LDA %s", _pattern);
-        outline0("JSR CPUFILL");
+        outline0("JSR CPUFILL16");
 
     done()
 
@@ -518,24 +476,7 @@ void cpu6502_fill_direct_size( Environment * _environment, char * _address, int 
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-
-        // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA #<%s", _address);
-        outline0("STA TMPPTR");
-        outline1("LDA #>%s", _address);
-        outline0("STA TMPPTR+1");
-
-        outline1("LDA %s", _pattern);
-
-        // Fill the bitmap with the given pattern.
-        outline1("LDX #$%2.2x", _bytes );
-        outline0("LDY #0");
-        outhead1("%sx:", label);
-        outline0("STA (TMPPTR),Y");
-        outline0("INY");
-        outline0("DEX");
-        outline1("BNE %sx", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
 
@@ -543,9 +484,19 @@ void cpu6502_fill_direct_size( Environment * _environment, char * _address, int 
         outline0("STA TMPPTR");
         outline1("LDA #>%s", _address);
         outline0("STA TMPPTR+1");
-        outline1("LDX #$%2.2x", _bytes );
-        outline1("LDA %s", _pattern);
-        outline0("JSR CPUFILL");
+
+        if ( _bytes < 256 ) {
+            outline1("LDX #$%2.2x", (unsigned char)( _bytes & 0xff ) );
+            outline1("LDA %s", _pattern);
+            outline0("JSR CPUFILL8");
+        } else {
+            outline1("LDA #$%2.2x", (unsigned char)( _bytes & 0xff ) );
+            outline0("STA MATHPTR0");
+            outline1("LDA #$%2.2x", ( unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
+            outline0("STA MATHPTR0+1");
+            outline1("LDA %s", _pattern);
+            outline0("JSR CPUFILL16");
+        }
 
     done()
 
@@ -568,24 +519,7 @@ void cpu6502_fill_direct_size_value( Environment * _environment, char * _address
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-
-        // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA #<%s", _address);
-        outline0("STA TMPPTR");
-        outline1("LDA #>%s", _address);
-        outline0("STA TMPPTR+1");
-
-        outline1("LDA #$%2.2x", ( _pattern & 0xff ) );
-
-        // Fill the bitmap with the given pattern.
-        outline1("LDX #$%2.2x", ( _bytes & 0xff ) );
-        outline0("LDY #0");
-        outhead1("%sx:", label);
-        outline0("STA (TMPPTR),Y");
-        outline0("INY");
-        outline0("DEX");
-        outline1("BNE %sx", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
 
@@ -593,9 +527,20 @@ void cpu6502_fill_direct_size_value( Environment * _environment, char * _address
         outline0("STA TMPPTR");
         outline1("LDA #>%s", _address);
         outline0("STA TMPPTR+1");
-        outline1("LDX #$%2.2x", ( _bytes & 0xff ) );
-        outline1("LDA #$%2.2x", ( _pattern & 0xff ) );
-        outline0("JSR CPUFILL");
+
+        if ( _bytes < 256 ) {
+            outline1("LDX #$%2.2x", (unsigned char)( _bytes & 0xff ) );
+            outline1("LDA #$%2.2x", ( _pattern & 0xff ) );
+            outline0("JSR CPUFILL8");
+        } else {
+            outline1("LDA #$%2.2x", (unsigned char)( _bytes & 0xff ) );
+            outline0("STA MATHPTR0");
+            outline1("LDA #$%2.2x", ( unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
+            outline0("STA MATHPTR0+1");
+            outline1("LDA #$%2.2x", (unsigned char) (_pattern & 0xff ) );
+            outline1("LDA #$%2.2x", ( _pattern & 0xff ) );
+            outline0("JSR CPUFILL16");
+        }
 
     done()
 
@@ -5812,35 +5757,19 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-        // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA %s", _address);
-        outline0("STA TMPPTR");
-        outline1("LDA %s", address_displacement(_environment, _address, "1"));
-        outline0("STA TMPPTR+1");
-
-        outline1("LDA %s", _pattern);
-        outline0("STA TMPPTR2");
-        outline1("LDA %s", address_displacement(_environment, _pattern, "1"));
-        outline0("STA TMPPTR2+1");
-
-        // Fill the bitmap with the given pattern.
-        outline1("LDX %s", _size );
-        outline0("LDY #0");
-        outline0("LDA (TMPPTR2),Y");
-        outhead1("%sx:", label);
-        outline0("STA (TMPPTR),Y");
-        outline0("INY");
-        outline0("DEX");
-        outline1("BNE %sx", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
 
-        // Use the current bitmap address as starting address for filling routine.
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
         outline1("LDA %s", address_displacement(_environment, _address, "1"));
         outline0("STA TMPPTR+1");
+
+        outline1("LDA %s", _size);
+        outline0("STA MATHPTR0");
+        outline1("LDA %s", address_displacement(_environment, _size, "1"));
+        outline0("STA MATHPTR0+1");
 
         outline1("LDA %s", _pattern);
         outline0("STA TMPPTR2");
@@ -5849,8 +5778,7 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
         outline0("LDY #0");
         outline0("LDA (TMPPTR2),Y");
 
-        outline1("LDX %s", _size );
-        outline0("JSR CPUFILL");
+        outline0("JSR CPUFILL16");
 
     done()
 

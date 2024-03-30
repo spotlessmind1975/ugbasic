@@ -35,14 +35,47 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-CPUFILL:
-    LDY #0
+CPUFILL8:
     CPX #0
-    BEQ CPUFILL2X
+    BEQ CPUFILLX
+    LDY #0
 CPUFILL2:
     STA (TMPPTR),Y
     INY
     DEX
     BNE CPUFILL2
-CPUFILL2X:
+CPUFILLX:
     RTS
+
+CPUFILL16:
+    PHA
+    LDA MATHPTR0+1
+    BNE CPUFILL16OK
+    LDA MATHPTR0
+    BNE CPUFILL16OK
+    PLA
+    RTS
+
+CPUFILL16OK:
+    PLA
+    LDY #0
+CPUFILL16LP:
+    STA (TMPPTR),Y
+    INC TMPPTR
+    BNE CPUFILL16LP0
+    INC TMPPTR+1
+CPUFILL16LP0:
+    PHA
+    DEC MATHPTR0
+    LDA MATHPTR0
+    CMP #$FF
+    BNE CPUFILL16LP1
+    DEC MATHPTR0+1
+    LDA MATHPTR0+1
+    CMP #$FF
+    BNE CPUFILL16LP1
+    PLA
+    RTS
+CPUFILL16LP1:
+    PLA
+    JMP CPUFILL16LP
