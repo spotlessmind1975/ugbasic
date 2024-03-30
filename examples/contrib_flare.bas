@@ -6,16 +6,16 @@ REM pictures into REU memory. To make this demo, we take a
 REM YouTube video, 8 frames per second for a total of 56 frames. 
 REM The frames is resized to 128x128 pixels, composed in a strip 
 REM and reproduced, one frame at a time, with the illusion of an
-REM animation. The demo can be stored on two floppy disk or in a
+REM animation. The demo can be stored on two floppy disks or in a
 REM single 512KB REU image.
 REM
 REM @url https://www.youtube.com/watch?v=ZyBTz8Pa3NY
 REM 
 REM @italian
-REM VARI ALTRI CONTRIBUTI CALCULATE FIBONACCI
+REM VARI ALTRI CONTRIBUTI ANIMAZIONE DI UN BAGLIORE
 REM 
 REM Questo esempio crea una sorta di lettore video, inserendo 
-REM immagini nella memoria. Per realizzare questa demo se viene 
+REM immagini nella memoria REU. Per realizzare questa demo viene 
 REM preso un video da YouTube, 8 fotogrammi al secondo per un 
 REM totale di 56 fotogrammi. I fotogrammi vengono 
 REM ridimensionati a 128x128 pixel, composti in una striscia 
@@ -78,5 +78,6 @@ DO
 	ENDIF
 
 LOOP
+
 
 
