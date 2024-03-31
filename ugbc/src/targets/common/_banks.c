@@ -160,7 +160,94 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
     _variable->absoluteAddress = bank->address;
     _variable->residentAssigned = _resident;
     _variable->variableUniqueId = UNIQUE_RESOURCE_ID;
-    memcpy( &bank->data[bank->address], _variable->valueBuffer, _variable->size );
+    if ( _variable->valueBuffer ) {
+        memcpy( &bank->data[bank->address], _variable->valueBuffer, _variable->size );
+    } else {
+        if ( _variable->value ) {
+            if ( _variable->type == VT_ARRAY ) {
+                switch( VT_BITWIDTH( _variable->arrayType ) ) {
+                    case 32: {
+                        for( int i=0; i<(_variable->size/4)-1; ++i ) {
+#ifdef CPU_BIG_ENDIAN
+                            bank->data[bank->address+i] = ( ( _variable->value >> 24 ) & 0xff );
+                            bank->data[bank->address+i+1] = ( ( _variable->value >> 16 ) & 0xff );
+                            bank->data[bank->address+i+2] = ( ( _variable->value >> 8 ) & 0xff );
+                            bank->data[bank->address+i+3] = ( _variable->value & 0xff );
+#else
+                            bank->data[bank->address+i+3] = ( ( _variable->value >> 24 ) & 0xff );
+                            bank->data[bank->address+i+2] = ( ( _variable->value >> 16 ) & 0xff );
+                            bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
+                            bank->data[bank->address+i] = ( _variable->value & 0xff );
+#endif                            
+                        }
+                        break;
+                    }
+                    case 16: {
+                        for( int i=0; i<(_variable->size/4)-1; ++i ) {
+#ifdef CPU_BIG_ENDIAN
+                            bank->data[bank->address+i] = ( _variable->value & 0xff );
+                            bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
+#else
+                            bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
+                            bank->data[bank->address+i] = ( _variable->value & 0xff );
+#endif                            
+                        }
+                        break;
+                    }
+                    case 8:
+                        memset( &bank->data[bank->address], ( _variable->value & 0xff ), _variable->size );
+                        break;
+                    case 1:
+                        memset( &bank->data[bank->address], ( _variable->value ? 0xff : 0x00), _variable->size );
+                        break;
+                    case 0:
+                        CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", _variable->arrayType );
+                }
+            } else {
+                switch( VT_BITWIDTH( _variable->type ) ) {
+                    case 32: {
+                        for( int i=0; i<(_variable->size/4)-1; ++i ) {
+#ifdef CPU_BIG_ENDIAN
+                            bank->data[bank->address+i] = ( ( _variable->value >> 24 ) & 0xff );
+                            bank->data[bank->address+i+1] = ( ( _variable->value >> 16 ) & 0xff );
+                            bank->data[bank->address+i+2] = ( ( _variable->value >> 8 ) & 0xff );
+                            bank->data[bank->address+i+3] = ( _variable->value & 0xff );
+#else
+                            bank->data[bank->address+i+3] = ( ( _variable->value >> 24 ) & 0xff );
+                            bank->data[bank->address+i+2] = ( ( _variable->value >> 16 ) & 0xff );
+                            bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
+                            bank->data[bank->address+i] = ( _variable->value & 0xff );
+#endif                            
+                        }
+                        break;
+                    }
+                    case 16: {
+                        for( int i=0; i<(_variable->size/4)-1; ++i ) {
+#ifdef CPU_BIG_ENDIAN
+                            bank->data[bank->address+i] = ( _variable->value & 0xff );
+                            bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
+#else
+                            bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
+                            bank->data[bank->address+i] = ( _variable->value & 0xff );
+#endif                            
+                        }
+                        break;
+                    }
+                    case 8:
+                        memset( &bank->data[bank->address], ( _variable->value & 0xff ), _variable->size );
+                        break;
+                    case 1:
+                        memset( &bank->data[bank->address], ( _variable->value ? 0xff : 0x00), _variable->size );
+                        break;
+                    case 0:
+                        CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", _variable->type );
+                }
+
+            }
+        } else {
+            memset( &bank->data[bank->address], 0, _variable->size );
+        }
+    }
 
     bank->address += _variable->size;
     bank->remains -= _variable->size;

@@ -6294,9 +6294,12 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
-    } array_assign readonly_optional {
+    } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
+        if ( $10 ) {
+            banks_store( _environment, array, $10 );    
+        }
     }
     |
     Identifier datatype {
@@ -6305,11 +6308,13 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
-    } array_assign readonly_optional {
+    } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
+        if ( $10 ) {
+            banks_store( _environment, array, $10 );    
+        }
     }
-
     as_datatype_suffix
     |
     Identifier OP_DOLLAR {
@@ -6318,9 +6323,12 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_DSTRING );
-    } array_assign readonly_optional {
+    } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
+        if ( $10 ) {
+            banks_store( _environment, array, $10 );    
+        }        
     }
     | Identifier datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -6335,9 +6343,12 @@ dim_definition :
         if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
-      } readonly_optional {
+      } readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
+        if ( $11 ) {
+            banks_store( _environment, array, $11 );
+        }        
     }
     | Identifier as_datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -6345,9 +6356,12 @@ dim_definition :
       } OP dimensions CP as_datatype {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
-    } array_assign readonly_optional {
+    } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
+        if ( $11 ) {
+            banks_store( _environment, array, $11 );
+        }        
     }
     | Identifier as_datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -6362,9 +6376,12 @@ dim_definition :
         if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
-    } readonly_optional {
+    } readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
+        if ( $11 ) {
+            banks_store( _environment, array, $11 );
+        }        
     }
     ;
 
