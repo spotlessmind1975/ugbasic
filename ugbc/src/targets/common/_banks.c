@@ -38,6 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count, int _allowed_size ) {
     
     for(int i=0; i<_allowed_count; ++i) {
@@ -201,7 +203,7 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
                         memset( &bank->data[bank->address], ( _variable->value ? 0xff : 0x00), _variable->size );
                         break;
                     case 0:
-                        CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", _variable->arrayType );
+                        CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ _variable->arrayType ] );
                 }
             } else {
                 switch( VT_BITWIDTH( _variable->type ) ) {
@@ -240,7 +242,7 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
                         memset( &bank->data[bank->address], ( _variable->value ? 0xff : 0x00), _variable->size );
                         break;
                     case 0:
-                        CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", _variable->type );
+                        CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ _variable->type ] );
                 }
 
             }
