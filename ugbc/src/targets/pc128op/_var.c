@@ -203,45 +203,62 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_TILEMAP:
                 case VT_ARRAY: {
-                    if ( variable->valueBuffer ) {
-                        out1("%s fcb ", variable->realName);
-                        int i=0;
-                        for (i=0; i<(variable->size-1); ++i ) {
-                            out1("%d,", variable->valueBuffer[i]);
-                        }
-                        outhead1("%d", variable->valueBuffer[(variable->size-1)]);
-                    } else if ( variable->value ) {
+                    if ( variable->bankAssigned == -1 ) {
 
-                        switch( VT_BITWIDTH( variable->arrayType ) ) {
-                            case 32: {
-                                out1("%s fcb ", variable->realName );
-                                for( int i=0; i<(variable->size/4)-1; ++i ) {
-                                    out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x, ", (unsigned int)( ( variable->value >> 24 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
-                                }
-                                out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x", (unsigned int)( ( variable->value >> 24 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
-                                outline0("");
-                                break;
+                        if ( variable->valueBuffer ) {
+                            out1("%s fcb ", variable->realName);
+                            int i=0;
+                            for (i=0; i<(variable->size-1); ++i ) {
+                                out1("%d,", variable->valueBuffer[i]);
                             }
-                            case 16: {
-                                out1("%s fcb ", variable->realName );
-                                for( int i=0; i<(variable->size/2)-1; ++i ) {
-                                    out2("$%2.2x, $%2.2x,", (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
+                            outhead1("%d", variable->valueBuffer[(variable->size-1)]);
+                        } else if ( variable->value ) {
+
+                            switch( VT_BITWIDTH( variable->arrayType ) ) {
+                                case 32: {
+                                    out1("%s fcb ", variable->realName );
+                                    for( int i=0; i<(variable->size/4)-1; ++i ) {
+                                        out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x, ", (unsigned int)( ( variable->value >> 24 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
+                                    }
+                                    out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x", (unsigned int)( ( variable->value >> 24 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
+                                    outline0("");
+                                    break;
                                 }
-                                out2("$%2.2x, $%2.2x", (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
-                                outline0("");
-                                break;
-                            }
-                            case 8:
-                                outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
-                                break;
-                            case 1:
-                                outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
-                                break;
-                        }                             
-                        
+                                case 16: {
+                                    out1("%s fcb ", variable->realName );
+                                    for( int i=0; i<(variable->size/2)-1; ++i ) {
+                                        out2("$%2.2x, $%2.2x,", (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
+                                    }
+                                    out2("$%2.2x, $%2.2x", (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( variable->value & 0xff ) );
+                                    outline0("");
+                                    break;
+                                }
+                                case 8:
+                                    outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
+                                    break;
+                                case 1:
+                                    outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
+                                    break;
+                            }                             
+                            
+                        } else {
+                            outhead2("%s rzb %d", variable->realName, variable->size);
+                        }
+
                     } else {
-                        outhead2("%s rzb %d", variable->realName, variable->size);
+                        if ( variable->type == VT_ARRAY ) {
+                            if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
+                                CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ _variable->arrayType ] );
+                            }
+                            outhead1("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>8) );
+                        } else {
+                            if (VT_BITWIDTH( variable->type ) == 0 ) {
+                                CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ _variable->type ] );
+                            }
+                            outhead1("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->type )>>8) );
+                        }
                     }
+
                     break;
                 }
             }
