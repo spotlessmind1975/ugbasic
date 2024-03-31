@@ -323,7 +323,7 @@ void z80_fill_blocks( Environment * _environment, char * _address, char * _block
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void z80_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
+void z80_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern ) {
 
     MAKE_LABEL
 
@@ -331,13 +331,24 @@ void z80_fill( Environment * _environment, char * _address, char * _bytes, char 
 
     embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
 
-        outline1("LD A, (%s)", _bytes);
-        outline0("LD C, A");
-        outline1("LD A, (%s+1)", _bytes);
-        outline0("LD B, A");
+        if ( _bytes_width == 8 ) {
+            outline1("LD A, (%s)", _bytes);
+            outline0("LD C, A");
+        } else {
+            outline1("LD A, (%s)", _bytes);
+            outline0("LD C, A");
+            outline1("LD A, (%s+1)", _bytes);
+            outline0("LD B, A");
+        }
+
         outline1("LD A, (%s)", _pattern);
         outline1("LD HL, (%s)", _address);
-        outline0("CALL CPUFILL16");
+
+        if ( _bytes_width == 8 ) {
+            outline0("CALL CPUFILL8");
+        } else {
+            outline0("CALL CPUFILL16");
+        }
 
     done(  )
 }

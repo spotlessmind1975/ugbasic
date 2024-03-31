@@ -90,7 +90,7 @@ void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char 
 void cpu6502_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void cpu6502_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void cpu6502_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
-void cpu6502_fill( Environment * _environment, char * _address, char * _blocks, char * _pattern );
+void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern );
 void cpu6502_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern );
 void cpu6502_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern );
 void cpu6502_fill_direct( Environment * _environment, char * _address, char * _blocks, char * _pattern );
@@ -380,7 +380,7 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_greater_than_16bit_const( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_greater_than_16bit_const( _environment, _source, _destination, _name, _equal, _signed )
 #define cpu_greater_than_32bit_const( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_greater_than_32bit_const( _environment, _source, _destination, _name, _equal, _signed )
 #define cpu_greater_than_8bit_const( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_greater_than_8bit_const( _environment, _source, _destination, _name, _equal, _signed )
-#define cpu_fill( _environment,  _address,  _blocks,  _pattern  ) cpu6502_fill( _environment,  _address,  _blocks,  _pattern  )
+#define cpu_fill( _environment,  _address, _bytes, _bytes_width,  _pattern  ) cpu6502_fill( _environment,  _address, _bytes, _bytes_width, _pattern  )
 #define cpu_fill_size( _environment,  _address,  _bytes,  _pattern  ) cpu6502_fill_size( _environment,  _address,  _bytes,  _pattern  )
 #define cpu_fill_size_value( _environment,  _address,  _bytes,  _pattern  ) cpu6502_fill_size_value( _environment,  _address,  _bytes,  _pattern  )
 #define cpu_fill_direct( _environment,  _address,  _blocks,  _pattern  ) cpu6502_fill_direct( _environment,  _address,  _blocks,  _pattern  )

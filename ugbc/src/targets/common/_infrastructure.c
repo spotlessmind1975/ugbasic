@@ -7513,7 +7513,7 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
         cpu_label( _environment, padLabel );
 
         cpu_dsdescriptor( _environment, result2->realName, address2->realName, size2->realName );
-        cpu_fill( _environment, address2->realName, digits->realName, zero->realName );
+        cpu_fill( _environment, address2->realName, digits->realName, VT_BITWIDTH( digits->type ), zero->realName );
         
         cpu_math_add_16bit_with_8bit( _environment, address2->realName, digits->realName, address2->realName );
         cpu_math_sub_16bit_with_8bit( _environment, address2->realName, size->realName, address2->realName );

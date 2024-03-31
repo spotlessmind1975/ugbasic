@@ -422,16 +422,24 @@ void cpu6809_fill_blocks( Environment * _environment, char * _address, char * _b
  * @param _bytes Number of bytes to fill
  * @param _<PATTERN <PATTERN to use
  */
-void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
+void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern ) {
 
     no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
+        if ( _bytes_width == 8 ) {
+            outline1("LDB %s", _bytes);
+            outline0("CLRA");
+            outline0("TFR D, Y");
+            outline0("JSR CPUFILL8");
+        } else {
+            outline1("LDY %s", _bytes);
+            outline0("JSR CPUFILL16");
+        }
+
         outline1("LDA %s", _pattern );
         outline1("LDX %s", _address);
-        outline1("LDY %s", _bytes);
-        outline0("JSR CPUFILL16");
 
     done( )
 

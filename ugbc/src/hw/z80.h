@@ -88,7 +88,7 @@ void z80_greater_than_8bit( Environment * _environment, char *_source, char *_de
 void z80_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void z80_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void z80_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
-void z80_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern );
+void z80_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern );
 void z80_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern );
 void z80_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern );
 void z80_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern );
@@ -382,7 +382,7 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_greater_than_16bit_const( _environment, _source, _destination, _name, _equal, _signed  ) z80_greater_than_16bit_const( _environment, _source, _destination, _name, _equal, _signed  )
 #define cpu_greater_than_32bit_const( _environment, _source, _destination, _name, _equal, _signed  ) z80_greater_than_32bit_const( _environment, _source, _destination, _name, _equal, _signed  )
 #define cpu_greater_than_8bit_const( _environment, _source, _destination, _name, _equal, _signed  ) z80_greater_than_8bit_const( _environment, _source, _destination, _name, _equal, _signed  )
-#define cpu_fill( _environment,  _address,  _bytes,  _pattern  ) z80_fill( _environment,  _address, _bytes,  _pattern  )
+#define cpu_fill( _environment,  _address,  _bytes, _bytes_width, _pattern  ) z80_fill( _environment,  _address, _bytes, _bytes_width, _pattern  )
 #define cpu_fill_size( _environment,  _address,  _bytes,  _pattern  ) z80_fill_size( _environment,  _address, _bytes,  _pattern  )
 #define cpu_fill_size_value( _environment,  _address,  _bytes,  _pattern  ) z80_fill_size_value( _environment,  _address, _bytes,  _pattern  )
 #define cpu_fill_direct( _environment,  _address,  _bytes,  _pattern  ) z80_fill_direct( _environment,  _address, _bytes,  _pattern  )

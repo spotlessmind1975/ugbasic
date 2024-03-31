@@ -314,7 +314,7 @@ void cpu6502_fill_blocks( Environment * _environment, char * _address, char * _b
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
+void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern ) {
 
     MAKE_LABEL
 
@@ -326,13 +326,24 @@ void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, c
         outline0("STA TMPPTR");
         outline1("LDA %s", address_displacement(_environment, _address, "1"));
         outline0("STA TMPPTR+1");
-        outline1("LDA %s", _bytes);
-        outline0("STA MATHPTR0");
-        outline1("LDA %s", address_displacement(_environment, _bytes, "1"));
-        outline0("STA MATHPTR0+1");
 
-        outline1("LDA %s", _pattern);
-        outline0("JSR CPUFILL16");
+        if ( _bytes_width == 8 ) {
+
+            outline1("LDY %s", _bytes);
+            outline1("LDA %s", _pattern);
+            outline0("JSR CPUFILL8");
+
+        } else {
+
+            outline1("LDA %s", _bytes);
+            outline0("STA MATHPTR0");
+            outline1("LDA %s", address_displacement(_environment, _bytes, "1"));
+            outline0("STA MATHPTR0+1");
+
+            outline1("LDA %s", _pattern);
+            outline0("JSR CPUFILL16");
+
+        }
 
     done()
 
