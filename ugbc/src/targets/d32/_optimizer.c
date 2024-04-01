@@ -1503,6 +1503,10 @@ static int optim_remove_unused_temporary( Environment * _environment ) {
                     if ( c ) {
                         *c = 0;
                     }
+                    c = strstr( realVarName, "#" );
+                    if ( c ) {
+                        strcpy( c, c+1 );
+                    }
                     UnusedSymbol * tmp = unusedSymbol;
                     UnusedSymbol * previous = NULL;
                     while( tmp ) {
