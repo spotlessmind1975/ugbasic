@@ -105,3 +105,41 @@ BANKUNCOMPRESS
     ANDCC #$AF
 
     RTS
+
+; Move data to bank from main memory.
+;
+; Y : address from memory 
+; D : size to write
+; U : number of bank 
+; X : address on bank 
+BANKWRITE
+
+    ORCC #$50
+
+    ; Preserve size register.
+    PSHS D
+
+    ; Save actual bank number.
+    ; LDA BANKSHADOW
+    ; STA BANKSHADOWPREV
+
+    ; Change bank number to the required one.
+    TFR U, D
+    ; STB BANKSHADOW
+    STB $A7E5
+
+    ; Restore size register.
+    PULS D
+
+    ; Copy memory at high speed.
+    JSR DUFFDEVICE
+
+    ; Restore the bank number to the previous.
+    ; LDA BANKSHADOWPREV
+    ; STA BANKSHADOW
+    LDA #7
+    STA $A7E5
+
+    ANDCC #$AF
+
+    RTS
