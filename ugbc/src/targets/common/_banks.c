@@ -169,7 +169,7 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
             if ( _variable->type == VT_ARRAY ) {
                 switch( VT_BITWIDTH( _variable->arrayType ) ) {
                     case 32: {
-                        for( int i=0; i<(_variable->size/4)-1; ++i ) {
+                        for( int i=0; i<(_variable->size); i+=4 ) {
 #ifdef CPU_BIG_ENDIAN
                             bank->data[bank->address+i] = ( ( _variable->value >> 24 ) & 0xff );
                             bank->data[bank->address+i+1] = ( ( _variable->value >> 16 ) & 0xff );
@@ -185,13 +185,13 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
                         break;
                     }
                     case 16: {
-                        for( int i=0; i<(_variable->size/4)-1; ++i ) {
+                        for( int i=0; i<(_variable->size); i+=2 ) {
 #ifdef CPU_BIG_ENDIAN
-                            bank->data[bank->address+i] = ( _variable->value & 0xff );
-                            bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
+                            bank->data[bank->address+i] = ( ( _variable->value >> 8 ) & 0xff );
+                            bank->data[bank->address+i+1] = ( _variable->value & 0xff );
 #else
-                            bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
                             bank->data[bank->address+i] = ( _variable->value & 0xff );
+                            bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
 #endif                            
                         }
                         break;
@@ -208,7 +208,7 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
             } else {
                 switch( VT_BITWIDTH( _variable->type ) ) {
                     case 32: {
-                        for( int i=0; i<(_variable->size/4)-1; ++i ) {
+                        for( int i=0; i<(_variable->size); i+=4 ) {
 #ifdef CPU_BIG_ENDIAN
                             bank->data[bank->address+i] = ( ( _variable->value >> 24 ) & 0xff );
                             bank->data[bank->address+i+1] = ( ( _variable->value >> 16 ) & 0xff );
@@ -224,7 +224,7 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
                         break;
                     }
                     case 16: {
-                        for( int i=0; i<(_variable->size/4)-1; ++i ) {
+                        for( int i=0; i<(_variable->size); i+=2 ) {
 #ifdef CPU_BIG_ENDIAN
                             bank->data[bank->address+i] = ( _variable->value & 0xff );
                             bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
