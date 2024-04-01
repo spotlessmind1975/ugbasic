@@ -2785,6 +2785,10 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_MULTITASKED_ARRAY(v) CRITICAL2("E269 - cannot use [ ] operator outside a PARALLEL PROCEDURE", v );
 #define CRITICAL_STORAGE_BANKED_UNCOMPATIBLE_TILEMAP(v) CRITICAL2("E270 - cannot use TILEMAP both on (implicit) BANKED and STORAGE", v );
 #define CRITICAL_STORAGE_BANKED_UNCOMPATIBLE(v) CRITICAL2("E271 - cannot use variables both on (implicit) BANKED and STORAGE", v );
+#define CRITICAL_CANNOT_STORE_BIT_ON_BANKED_ARRAY(v) CRITICAL2("E272 - cannot store a bit into a BANKED array", v );
+#define CRITICAL_CANNOT_MOVE_BIT_ON_BANKED_ARRAY(v) CRITICAL2("E273 - cannot move a bit into a BANKED array", v );
+#define CRITICAL_CANNOT_MOVE_STRING_ON_BANKED_ARRAY(v) CRITICAL2("E274 - cannot move string into a BANKED array", v );
+#define CRITICAL_CANNOT_MOVE_FROM_BIT_ON_BANKED_ARRAY(v) CRITICAL2("E275 - cannot move bit from a BANKED array", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3805,11 +3809,14 @@ Variable *              bank_get_count( Environment * _environment );
 void                    bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size );
 void                    bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
+void                    bank_read_vars_direct_size( Environment * _environment, char * _bank, char * _address1, char * _address2, int _size );
+void                    bank_read_vars_bank_direct_size( Environment * _environment, int _bank, char * _address1, char * _address2, int _size );
 void                    bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 );
 void                    bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 );
 void                    bank_set( Environment * _environment, int _bank );
 void                    bank_set_var( Environment * _environment, char * _bank );
 void                    bank_write_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
+void                    bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size );
 void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_from( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  

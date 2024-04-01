@@ -6953,6 +6953,10 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 // @bit2: ok
 void variable_store_array_const_bit( Environment * _environment, Variable * _array, int _value  ) {
 
+    if ( _array->bankAssigned != -1 ) {
+        CRITICAL_CANNOT_STORE_BIT_ON_BANKED_ARRAY( _array->name );
+    }
+
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
     Variable * position = variable_temporary( _environment, VT_BYTE, "(position)");
     variable_move( _environment, offset->name, position->name );
@@ -6992,35 +6996,75 @@ void variable_store_array_const_byte( Environment * _environment, Variable * _ar
             break;
     }
 
-    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+    if ( _array->bankAssigned == -1 ) {
 
-    switch( _array->arrayType ) {
-        case VT_FLOAT:
-            CRITICAL_DATATYPE_UNSUPPORTED("array(3x)", DATATYPE_AS_STRING[_array->arrayType]);
-            break;
-        case VT_TILES:
-            cpu_store_32bit( _environment, offset->realName, _value );
-            break;
-        case VT_TILE:
-        case VT_TILESET:
-        case VT_SPRITE:
-            cpu_store_8bit( _environment, offset->realName, _value );
-            break;
-        default:
-            switch( VT_BITWIDTH( _array->arrayType ) ) {
-                case 32:
-                    cpu_store_32bit( _environment, offset->realName, _value );
-                    break;
-                case 16:
-                    cpu_store_16bit( _environment, offset->realName, _value );
-                    break;
-                case 8:
-                    cpu_store_8bit( _environment, offset->realName, _value );
-                    break;
-                case 0:
-                    CRITICAL_DATATYPE_UNSUPPORTED("array(3x)", DATATYPE_AS_STRING[_array->arrayType]);
-            }
-            break;
+        cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+        switch( _array->arrayType ) {
+            case VT_FLOAT:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(3x)", DATATYPE_AS_STRING[_array->arrayType]);
+                break;
+            case VT_TILES:
+                cpu_store_32bit( _environment, offset->realName, _value );
+                break;
+            case VT_TILE:
+            case VT_TILESET:
+            case VT_SPRITE:
+                cpu_store_8bit( _environment, offset->realName, _value );
+                break;
+            default:
+                switch( VT_BITWIDTH( _array->arrayType ) ) {
+                    case 32:
+                        cpu_store_32bit( _environment, offset->realName, _value );
+                        break;
+                    case 16:
+                        cpu_store_16bit( _environment, offset->realName, _value );
+                        break;
+                    case 8:
+                        cpu_store_8bit( _environment, offset->realName, _value );
+                        break;
+                    case 0:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(3x)", DATATYPE_AS_STRING[_array->arrayType]);
+                }
+                break;
+        }
+
+    } else {
+
+        switch( _array->arrayType ) {
+            case VT_FLOAT:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(3x)", DATATYPE_AS_STRING[_array->arrayType]);
+                break;
+            case VT_TILES:
+                cpu_store_32bit( _environment, _array->realName, _value );
+                bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 4 );
+                break;
+            case VT_TILE:
+            case VT_TILESET:
+            case VT_SPRITE:
+                cpu_store_8bit( _environment, _array->realName, _value );
+                bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 1 );
+                break;
+            default:
+                switch( VT_BITWIDTH( _array->arrayType ) ) {
+                    case 32:
+                        cpu_store_32bit( _environment, _array->realName, _value );
+                        bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 4 );
+                        break;
+                    case 16:
+                        cpu_store_16bit( _environment, _array->realName, _value );
+                        bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 2 );
+                        break;
+                    case 8:
+                        cpu_store_8bit( _environment, _array->realName, _value );
+                        bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 1 );
+                        break;
+                    case 0:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(3x)", DATATYPE_AS_STRING[_array->arrayType]);
+                }
+                break;
+        }
+
     }
 }
 
@@ -7049,6 +7093,10 @@ void variable_store_array_const( Environment * _environment, char * _array, int 
 
 // @bit2: ok
 void variable_move_array_bit( Environment * _environment, Variable * _array, Variable * _value  ) {
+
+    if ( _array->bankAssigned != -1 ) {
+        CRITICAL_CANNOT_MOVE_BIT_ON_BANKED_ARRAY( _array->name );
+    }
 
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
     Variable * position = variable_temporary( _environment, VT_BYTE, "(position)");
@@ -7106,36 +7154,73 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
             break;
     }
 
-    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+    if ( _array->bankAssigned == -1 ) {
 
-    switch( _array->arrayType ) {
-        case VT_FLOAT:
-            cpu_move_nbit_indirect( _environment, VT_FLOAT_BITWIDTH( _array->arrayPrecision ), _value->realName, offset->realName );
-            break;
-        case VT_TILES:
-            cpu_move_32bit_indirect( _environment, _value->realName, offset->realName );
-            break;
-        case VT_TILE:
-        case VT_TILESET:
-        case VT_SPRITE:
-            cpu_move_8bit_indirect( _environment, _value->realName, offset->realName );
-            break;
-        default:
-            switch( VT_BITWIDTH( _array->arrayType ) ) {
-                case 32:
-                    cpu_move_32bit_indirect( _environment, _value->realName, offset->realName );
-                    break;
-                case 16:
-                    cpu_move_16bit_indirect( _environment, _value->realName, offset->realName );
-                    break;
-                case 8:
-                    cpu_move_8bit_indirect( _environment, _value->realName, offset->realName );
-                    break;
-                case 1:
-                case 0:
-                    CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
-            }
-            break;
+        cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+        switch( _array->arrayType ) {
+            case VT_FLOAT:
+                cpu_move_nbit_indirect( _environment, VT_FLOAT_BITWIDTH( _array->arrayPrecision ), _value->realName, offset->realName );
+                break;
+            case VT_TILES:
+                cpu_move_32bit_indirect( _environment, _value->realName, offset->realName );
+                break;
+            case VT_TILE:
+            case VT_TILESET:
+            case VT_SPRITE:
+                cpu_move_8bit_indirect( _environment, _value->realName, offset->realName );
+                break;
+            default:
+                switch( VT_BITWIDTH( _array->arrayType ) ) {
+                    case 32:
+                        cpu_move_32bit_indirect( _environment, _value->realName, offset->realName );
+                        break;
+                    case 16:
+                        cpu_move_16bit_indirect( _environment, _value->realName, offset->realName );
+                        break;
+                    case 8:
+                        cpu_move_8bit_indirect( _environment, _value->realName, offset->realName );
+                        break;
+                    case 1:
+                    case 0:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
+                }
+                break;
+        }
+
+    } else {
+
+        switch( _array->arrayType ) {
+            case VT_FLOAT:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
+                break;
+            case VT_TILES:
+                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 4 );
+                break;
+            case VT_TILE:
+            case VT_TILESET:
+            case VT_SPRITE:
+                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 1 );
+                break;
+            default:
+                switch( VT_BITWIDTH( _array->arrayType ) ) {
+                    case 32:
+                        bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 4 );
+                        break;
+                    case 16:
+                        bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 2 );
+                        break;
+                    case 8:
+                        bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 1 );
+                        break;
+                    case 1:
+                    case 0:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
+                }
+                break;
+        }
+        
+
     }
 }
 
@@ -7167,6 +7252,10 @@ void variable_move_array_string( Environment * _environment, char * _array, char
 
     Variable * array = variable_retrieve( _environment, _array );
     Variable * string = variable_retrieve( _environment, _string );
+
+    if ( array->bankAssigned != -1 ) {
+        CRITICAL_CANNOT_MOVE_STRING_ON_BANKED_ARRAY( array->name );
+    }
 
     if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
         CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
@@ -7211,6 +7300,10 @@ void variable_move_array_string( Environment * _environment, char * _array, char
 // @bit2: ok
 Variable * variable_move_from_array_bit( Environment * _environment, Variable * _array ) {
 
+    if ( _array->bankAssigned != -1 ) {
+        CRITICAL_CANNOT_MOVE_FROM_BIT_ON_BANKED_ARRAY( _array->name );
+    }
+
     Variable * tmp = variable_temporary( _environment, VT_BYTE, "(element from array)" );
     Variable * result = variable_temporary( _environment, VT_BIT, "(element from array)" );
 
@@ -7240,15 +7333,135 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
 
     Variable * result = variable_temporary( _environment, _array->arrayType, "(element from array)" );
 
-    if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
-        Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
-        cpu_move_8bit_indirect2_8bit( _environment, _array->realName, index->realName, result->realName );
-    } else if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 65535 && VT_BITWIDTH( _array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
-        Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_WORD, 0 );
-        cpu_move_8bit_indirect2_16bit( _environment, _array->realName, index->realName, result->realName );
-    } else if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 16 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
-        Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
-        cpu_move_16bit_indirect2_8bit( _environment, _array->realName, index->realName, result->realName );
+    if ( _array->bankAssigned == -1 ) {
+
+        if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
+            Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
+            cpu_move_8bit_indirect2_8bit( _environment, _array->realName, index->realName, result->realName );
+        } else if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 65535 && VT_BITWIDTH( _array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
+            Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_WORD, 0 );
+            cpu_move_8bit_indirect2_16bit( _environment, _array->realName, index->realName, result->realName );
+        } else if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 16 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
+            Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
+            cpu_move_16bit_indirect2_8bit( _environment, _array->realName, index->realName, result->realName );
+        } else {
+
+            // @bit2: ok
+            Variable * offset = calculate_offset_in_array( _environment, _array->name);
+
+            switch( _array->arrayType ) {
+                case VT_STRING: {
+
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[_array->arrayType]);
+
+                    break;
+                }
+                case VT_TILES:{
+
+                    offset = variable_mul2_const( _environment, offset->name, 2 );
+
+                    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+                    cpu_move_32bit_indirect2( _environment, offset->realName, result->realName );
+
+                    break;
+
+                }
+                case VT_TILESET:
+                case VT_TILE:
+                case VT_SPRITE: {
+
+                    offset = variable_mul2_const( _environment, offset->name, 0 );
+
+                    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+                    cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
+
+                    break;
+
+                }
+                case VT_DSTRING: {
+
+                    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+                    Variable * dstring = variable_temporary( _environment, _array->arrayType, "(array element)");
+
+                    cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
+
+                    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+                    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+
+                    cpu_dsdescriptor( _environment, dstring->realName, address->realName, size->realName );
+                    cpu_dsfree( _environment, result->realName );
+                    cpu_dsalloc( _environment, size->realName, result->realName );
+                    cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
+                    cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+
+                    break;
+                }
+
+                case VT_FLOAT: {
+
+                    offset = variable_mul2_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( _array->arrayPrecision) );
+
+                    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+                    cpu_move_nbit_indirect2( _environment, VT_FLOAT_BITWIDTH( _array->arrayPrecision ), offset->realName, result->realName );
+
+                    break;
+
+                }
+
+                default: {
+
+                    if ( _array->arrayType == 0 ) {
+                        WARNING_USE_OF_UNDEFINED_ARRAY( _array->name );
+                        _array->arrayType = VT_WORD;
+                    }
+            
+                    switch( VT_BITWIDTH( _array->arrayType ) ) {
+                        case 32:
+                            offset = variable_mul2_const( _environment, offset->name, 2 );
+                            break;
+                        case 16:
+                            offset = variable_mul2_const( _environment, offset->name, 1 );
+                            break;
+                        case 8:
+                            break;
+                        case 1:
+                            CRITICAL_DATATYPE_UNSUPPORTED("array(4a)", DATATYPE_AS_STRING[_array->arrayType]);
+                            break;
+                        case 0:
+                            CRITICAL_DATATYPE_UNSUPPORTED("array(4a)", DATATYPE_AS_STRING[_array->arrayType]);
+                    }
+
+                    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+                    switch( VT_BITWIDTH( _array->arrayType ) ) {
+                        case 32:
+                            cpu_move_32bit_indirect2( _environment, offset->realName, result->realName );
+                            break;
+                        case 16:
+                            cpu_move_16bit_indirect2( _environment, offset->realName, result->realName);
+                            break;
+                        case 8:
+                            cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
+                            break;
+                        case 1:
+                            CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[_array->arrayType]);
+                        case 0:
+                            CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[_array->arrayType]);
+                    }
+
+                }
+
+            }
+
+        }
+
+
     } else {
 
         // @bit2: ok
@@ -7261,13 +7474,11 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
 
                 break;
             }
-            case VT_TILES:{
+            case VT_TILES: {
 
-                offset = variable_mul2_const( _environment, offset->name, 2 );
+                offset = variable_mul2_const( _environment, offset->name, 4 );
 
-                cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
-
-                cpu_move_32bit_indirect2( _environment, offset->realName, result->realName );
+                bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, result->name, 4 );
 
                 break;
 
@@ -7278,42 +7489,21 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
 
                 offset = variable_mul2_const( _environment, offset->name, 0 );
 
-                cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
-
-                cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
+                bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, result->name, 1 );
 
                 break;
 
             }
             case VT_DSTRING: {
 
-                cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
-
-                Variable * dstring = variable_temporary( _environment, _array->arrayType, "(array element)");
-
-                cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
-
-                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
-                Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
-                Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
-                Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
-
-                cpu_dsdescriptor( _environment, dstring->realName, address->realName, size->realName );
-                cpu_dsfree( _environment, result->realName );
-                cpu_dsalloc( _environment, size->realName, result->realName );
-                cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-                cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+                CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[_array->arrayType]);
 
                 break;
             }
 
             case VT_FLOAT: {
 
-                offset = variable_mul2_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( _array->arrayPrecision) );
-
-                cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
-
-                cpu_move_nbit_indirect2( _environment, VT_FLOAT_BITWIDTH( _array->arrayPrecision ), offset->realName, result->realName );
+                CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[_array->arrayType]);
 
                 break;
 
@@ -7342,17 +7532,16 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                         CRITICAL_DATATYPE_UNSUPPORTED("array(4a)", DATATYPE_AS_STRING[_array->arrayType]);
                 }
 
-                cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
-
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
                     case 32:
-                        cpu_move_32bit_indirect2( _environment, offset->realName, result->realName );
+                        bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, result->name, 4 );
                         break;
                     case 16:
-                        cpu_move_16bit_indirect2( _environment, offset->realName, result->realName);
+                        outline3("; bank_read_vars_bank_direct_size( ..., %d, %s, %s, 2)", _array->bankAssigned, offset->name, result->name );
+                        bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, result->name, 2 );
                         break;
                     case 8:
-                        cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
+                        bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, result->name, 1 );
                         break;
                     case 1:
                         CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[_array->arrayType]);
@@ -7390,6 +7579,8 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
     } else {
         result = variable_move_from_array_bit( _environment, array );
     }
+
+    outline1("; move from array to = %s", result->realName );
 
     return result;
 
