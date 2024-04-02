@@ -32,7 +32,9 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__c128z__) || defined(__msx1__)
 
 /**
  * @brief Emit ASM code for instruction <b>= BANK( )</b>
@@ -50,9 +52,10 @@ Variable * bank_get( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(bank number)" );
 
-    outline0("LD A, (BANKSHADOW)" );
-    outline1("LD (%s), A", result->realName );
-    
+    variable_store( _environment, result->name, 0 );
+
     return result;
     
 }
+
+#endif

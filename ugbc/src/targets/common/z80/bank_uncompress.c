@@ -32,34 +32,60 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__c128z__) || defined(__msx1__)
 
 /**
- * @brief Emit ASM code for instruction <b>BANK WRITE ...</b>
+ * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
  * 
- * This function outputs the ASM code to write data from the
- * RAM to a specific bank.
+ * This function outputs the ASM code to uncompress data from
+ * a specific bank into the RAM.
  * 
  * @param _environment Current calling environment
- * @param _bank bank to write to
- * @param _address1 address to read from (RAM)
- * @param _address2 address to write to (0 based)
- * @param _size size of memory to read/write
+ * @param _bank bank from uncompress from
+ * @param _address1 address to uncompress from (0 based)
+ * @param _address2 address to write to (RAM)
  */
 /* <usermanual>
-@keyword BANK WRITE
+@target atari
+@verified
 </usermanual> */
-void bank_write_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
+void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
 
-    outline0("; bank write")
-    Variable * previous = bank_get( _environment );
-    bank_set_var( _environment, _bank );
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
-    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+    char * bankAddress = banks_get_address( _environment, _bank );
+    Variable * realAddress = variable_temporary( _environment, VT_ADDRESS, "(ADDRESS)" );
+    cpu_addressof_16bit( _environment, bankAddress, realAddress->realName );
+    cpu_math_add_16bit_const( _environment, realAddress->realName, _address1, realAddress->realName );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
-    mmove_memory_memory( _environment, address1->name, realAddress->name, _size );
-    bank_set_var( _environment, previous->name );
-    outline0("; end bank write")
+
+    cpu_msc1_uncompress_indirect_direct( _environment, realAddress->realName, _address2 );
+
+}
+
+/**
+ * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
+ * 
+ * This function outputs the ASM code to uncompress data from
+ * a specific bank into the RAM.
+ * 
+ * @param _environment Current calling environment
+ * @param _bank bank from uncompress from
+ * @param _address1 address to uncompress from (0 based)
+ * @param _address2 address to write to (RAM)
+ */
+/* <usermanual>
+@keyword BANK UNCOMPRESS
+</usermanual> */
+void bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 ) {
+
+    Variable * bankAddress = banks_get_address_var( _environment, _bank );
+    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
+    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+
+    cpu_msc1_uncompress_indirect_indirect( _environment, realAddress->name, address2->name );
     
 }
+
+#endif

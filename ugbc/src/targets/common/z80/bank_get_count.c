@@ -32,7 +32,9 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__c128z__) || defined(__msx1__)
 
 /**
  * @brief Emit ASM code for instruction <b>= BANK COUNT</b>
@@ -45,7 +47,6 @@
  */
 /* <usermanual>
 @keyword BANK COUNT
-@target msx1
 </usermanual> */
 Variable * bank_get_count( Environment * _environment ) {
 
@@ -63,3 +64,5 @@ Variable * bank_get_count( Environment * _environment ) {
     return result;
     
 }
+
+#endif

@@ -32,7 +32,9 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__c128z__) || defined(__msx1__)
 
 /**
  * @brief Emit ASM code for instruction <b>BANK ...</b>
@@ -47,9 +49,6 @@
 @keyword BANK
 </usermanual> */
 void bank_set( Environment * _environment, int _bank ) {
-
-    outline1("LD A, $%2.2x", _bank  );
-    outline0("LD (BANKSHADOW), A" );
 
 }
 
@@ -67,9 +66,6 @@ void bank_set( Environment * _environment, int _bank ) {
 </usermanual> */
 void bank_set_var( Environment * _environment, char * _bank ) {
     
-    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
-
-    outline1("LD A, (%s)", bank->realName  );
-    outline0("LD (BANKSHADOW), A" );
-    
 }
+
+#endif

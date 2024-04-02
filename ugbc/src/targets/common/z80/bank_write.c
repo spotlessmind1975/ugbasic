@@ -32,56 +32,53 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__c128z__) || defined(__msx1__)
 
 /**
- * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
+ * @brief Emit ASM code for instruction <b>BANK WRITE ...</b>
  * 
- * This function outputs the ASM code to uncompress data from
- * a specific bank into the RAM.
- * 
- * @param _environment Current calling environment
- * @param _bank bank from uncompress from
- * @param _address1 address to uncompress from (0 based)
- * @param _address2 address to write to (RAM)
- */
-/* <usermanual>
-@target atari
-@verified
-</usermanual> */
-void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
-
-    char * bankAddress = banks_get_address( _environment, _bank );
-    Variable * realAddress = variable_temporary( _environment, VT_ADDRESS, "(ADDRESS)" );
-    cpu_addressof_16bit( _environment, bankAddress, realAddress->realName );
-    cpu_math_add_16bit_const( _environment, realAddress->realName, _address1, realAddress->realName );
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-
-    cpu_msc1_uncompress_indirect_direct( _environment, realAddress->realName, _address2 );
-
-}
-
-/**
- * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
- * 
- * This function outputs the ASM code to uncompress data from
- * a specific bank into the RAM.
+ * This function outputs the ASM code to write data from the
+ * RAM to a specific bank.
  * 
  * @param _environment Current calling environment
- * @param _bank bank from uncompress from
- * @param _address1 address to uncompress from (0 based)
- * @param _address2 address to write to (RAM)
+ * @param _bank bank to write to
+ * @param _address1 address to read from (RAM)
+ * @param _address2 address to write to (0 based)
+ * @param _size size of memory to read/write
  */
 /* <usermanual>
-@keyword BANK UNCOMPRESS
+@keyword BANK WRITE
 </usermanual> */
-void bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 ) {
+void bank_write_vars( Environment * _environment, char * _address1, char * _bank, char * _address2, char * _size ) {
 
+    outline4("; bank write( ..., %s, %s, %s, %s)", _address1, _bank, _address2, _size );
+    // Variable * previous = bank_get( _environment );
+    // bank_set_var( _environment, _bank );
     Variable * bankAddress = banks_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-
-    cpu_msc1_uncompress_indirect_indirect( _environment, realAddress->name, address2->name );
+    Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
+    mmove_memory_memory( _environment, address1->name, realAddress->name, _size );
+    // bank_set_var( _environment, previous->name );
+    outline0("; end bank write")
     
 }
+
+void bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size ) {
+
+    outline0("; bank write")
+    Variable * address1 = variable_retrieve( _environment, _address1 );
+    Variable * effectiveAddress = variable_temporary( _environment, VT_ADDRESS, "(effectiveAddress)");
+    Variable * bank = variable_temporary( _environment, VT_WORD, "(bank)");
+    Variable * size = variable_temporary( _environment, VT_WORD, "(size)");
+    cpu_addressof_16bit( _environment, address1->realName, effectiveAddress->realName );
+    variable_store( _environment, bank->name, _bank );
+    variable_store( _environment, size->name, _size );
+    bank_write_vars( _environment, effectiveAddress->name, bank->name, _address2, size->name );
+    outline0("; end bank write")
+    
+}
+
+#endif
