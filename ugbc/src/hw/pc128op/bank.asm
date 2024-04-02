@@ -75,6 +75,94 @@ BANKREAD
 
     RTS
 
+; Move data (1 byte) from bank to main memory.
+;
+; U : number of bank 
+; Y : address on bank 
+; X : address on memory 
+BANKREAD1
+
+    ORCC #$50
+
+    ; Change bank number to the required one.
+    TFR U, D
+    ; STB BANKSHADOW
+    STB $A7E5
+    
+    ; copy 1 byte
+    LDA ,Y
+    STA ,X
+
+    ; Restore the bank number to the previous.
+    ; LDA BANKSHADOWPREV
+    ; STA BANKSHADOW
+    LDA #7
+    STA $A7E5
+
+    ANDCC #$AF
+
+    RTS
+
+; Move data (2 bytes) from bank to main memory.
+;
+; U : number of bank 
+; Y : address on bank 
+; X : address on memory 
+BANKREAD2
+
+    ORCC #$50
+
+    ; Change bank number to the required one.
+    TFR U, D
+    ; STB BANKSHADOW
+    STB $A7E5
+    
+    ; copy 2 bytes
+    LDD ,Y
+    STD ,X
+
+    ; Restore the bank number to the previous.
+    ; LDA BANKSHADOWPREV
+    ; STA BANKSHADOW
+    LDA #7
+    STA $A7E5
+
+    ANDCC #$AF
+
+    RTS
+
+; Move data (4 bytes) from bank to main memory.
+;
+; U : number of bank 
+; Y : address on bank 
+; X : address on memory 
+BANKREAD4
+
+    ORCC #$50
+
+    ; Change bank number to the required one.
+    TFR U, D
+    ; STB BANKSHADOW
+    STB $A7E5
+    
+    ; copy 4 bytes
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y
+    STD ,X
+
+    ; Restore the bank number to the previous.
+    ; LDA BANKSHADOWPREV
+    ; STA BANKSHADOW
+    LDA #7
+    STA $A7E5
+
+    ANDCC #$AF
+
+    RTS
+
+
+
 ; Uncompress directly the data from bank.
 ;
 ; U : number of bank 
@@ -134,6 +222,101 @@ BANKWRITE
     ; Copy memory at high speed.
     JSR DUFFDEVICE
 
+    ; Restore the bank number to the previous.
+    ; LDA BANKSHADOWPREV
+    ; STA BANKSHADOW
+    LDA #7
+    STA $A7E5
+
+    ANDCC #$AF
+
+    RTS
+
+; Move data (1 byte) to bank from main memory.
+;
+; Y : address from memory 
+; U : number of bank 
+; X : address on bank 
+BANKWRITE1
+
+    ORCC #$50
+
+    ; Save actual bank number.
+    ; LDA BANKSHADOW
+    ; STA BANKSHADOWPREV
+
+    ; Change bank number to the required one.
+    TFR U, D
+    ; STB BANKSHADOW
+    STB $A7E5
+
+    LDA ,Y
+    STA ,X
+
+    ; Restore the bank number to the previous.
+    ; LDA BANKSHADOWPREV
+    ; STA BANKSHADOW
+    LDA #7
+    STA $A7E5
+
+    ANDCC #$AF
+
+    RTS
+
+; Move data (2 bytes) to bank from main memory.
+;
+; Y : address from memory 
+; U : number of bank 
+; X : address on bank 
+BANKWRITE2
+
+    ORCC #$50
+
+    ; Save actual bank number.
+    ; LDA BANKSHADOW
+    ; STA BANKSHADOWPREV
+
+    ; Change bank number to the required one.
+    TFR U, D
+    ; STB BANKSHADOW
+    STB $A7E5
+
+    LDD ,Y
+    STD ,X
+    
+    ; Restore the bank number to the previous.
+    ; LDA BANKSHADOWPREV
+    ; STA BANKSHADOW
+    LDA #7
+    STA $A7E5
+
+    ANDCC #$AF
+
+    RTS
+
+; Move data (4 bytes) to bank from main memory.
+;
+; Y : address from memory 
+; U : number of bank 
+; X : address on bank 
+BANKWRITE4
+
+    ORCC #$50
+
+    ; Save actual bank number.
+    ; LDA BANKSHADOW
+    ; STA BANKSHADOWPREV
+
+    ; Change bank number to the required one.
+    TFR U, D
+    ; STB BANKSHADOW
+    STB $A7E5
+
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y
+    STD ,X
+    
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW

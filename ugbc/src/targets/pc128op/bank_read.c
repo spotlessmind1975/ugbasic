@@ -86,8 +86,23 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
     outline1("LDU #$%4.4x", _bank );
     outline1("LDY #$%4.4x", realAddress );
     outline1("LDX #%s", _address2 );
-    outline1("LDD #$%4.4x", _size );
-    outline0("JSR BANKREAD");
+
+    switch( _size ) {
+        case 1:
+            outline0("JSR BANKREAD1");
+            break;
+        case 2:
+            outline0("JSR BANKREAD2");
+            break;
+        case 4:
+            outline0("JSR BANKREAD4");
+            break;
+        default:
+            outline1("LDD #$%4.4x", _size );
+            outline0("JSR BANKREAD");
+            break;
+
+    }
     outline0("; end bank read");
 
 }
@@ -168,8 +183,22 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
     outline1("LDU %s", address_displacement( _environment, bank->realName, "-1" ) );
     outline1("LDY %s", realAddress->realName );
     outline1("LDX #%s", _address2 );
-    outline1("LDD #$%4.4x", _size );
-    outline0("JSR BANKREAD");
+    switch( _size ) {
+        case 1:
+            outline0("JSR BANKREAD1");
+            break;
+        case 2:
+            outline0("JSR BANKREAD2");
+            break;
+        case 4:
+            outline0("JSR BANKREAD4");
+            break;
+        default:
+            outline1("LDD #$%4.4x", _size );
+            outline0("JSR BANKREAD");
+            break;
+
+    }
     outline0("; end bank read");
 
 }
@@ -189,8 +218,22 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
     outline1("LDU #$%4.4x", _bank );
     outline1("LDY %s", realAddress->realName );
     outline1("LDX #%s", address2->realName );
-    outline1("LDD #$%4.4x", _size );
-    outline0("JSR BANKREAD");
+    switch( _size ) {
+        case 1:
+            outline0("JSR BANKREAD1");
+            break;
+        case 2:
+            outline0("JSR BANKREAD2");
+            break;
+        case 4:
+            outline0("JSR BANKREAD4");
+            break;
+        default:
+            outline1("LDD #$%4.4x", _size );
+            outline0("JSR BANKREAD");
+            break;
+
+    }
     outline0("; end bank read");
 
 }

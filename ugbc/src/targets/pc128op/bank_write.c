@@ -110,10 +110,25 @@ void bank_write_vars_bank_direct_size( Environment * _environment, char * _addre
 
     outline0("; bank write rv")
     outline1("LDY #%s", address1->realName );
-    outline1("LDD #$%4.4x", _size );
     outline1("LDU #$%4.4x", _bank );
     outline1("LDX %s", realAddress->realName );
-    outline0("JSR BANKWRITE");
+
+    switch( _size ) {
+        case 1:
+            outline0("JSR BANKWRITE1");
+            break;
+        case 2:
+            outline0("JSR BANKWRITE2");
+            break;
+        case 4:
+            outline0("JSR BANKWRITE4");
+            break;
+        default:
+            outline1("LDD #$%4.4x", _size );
+            outline0("JSR BANKWRITE");
+            break;
+
+    }
     outline0("; end bank write");
 
 }
