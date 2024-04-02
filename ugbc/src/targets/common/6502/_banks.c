@@ -34,6 +34,8 @@
 
 #include "../../../ugbc.h"
 
+#if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || defined(__c128__)
+
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
@@ -83,3 +85,4 @@ void banks_generate( Environment * _environment ) {
     
 }
 
+#endif
