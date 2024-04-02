@@ -135,7 +135,7 @@ void generate_d64( Environment * _environment ) {
             }
             if ( bank->remains < bank->space ) {
                 char bankFileName[MAX_TEMPORARY_STORAGE];
-                sprintf( bankFileName, "BANK%d", ( bank->id - 1 ) );
+                sprintf( bankFileName, "BANK%d", bank->id );
                 d64_write_file( handle, bankFileName, FT_SEQ, bank->data, bankSize );
             }
             bank = bank->next;
@@ -251,7 +251,7 @@ void generate_d64( Environment * _environment ) {
             }
             if ( bank->remains < bank->space ) {
                 char bankFileName[MAX_TEMPORARY_STORAGE];
-                sprintf( bankFileName, "BANK%d", ( bank->id - 1 ) );
+                sprintf( bankFileName, "BANK%d", bank->id );
                 d64_write_file( handle, bankFileName, FT_SEQ, bank->data, bank->space - bank->remains );
             }
             bank = bank->next;

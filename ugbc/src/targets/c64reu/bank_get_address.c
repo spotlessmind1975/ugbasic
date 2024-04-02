@@ -51,7 +51,7 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
 
-    int address = 0x0000;
+    variable_store( _environment, result->name, 0 );
 
     return result;
     
@@ -73,17 +73,9 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
 </usermanual> */
 Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
 
-    MAKE_LABEL
-
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
-    Variable * bank = variable_temporary( _environment, VT_BYTE, "(bank number)" );
 
-    int address = 0x0000;
-
-    outline1("LDA #$%2.2x", ( address & 0xff ) );
-    outline1("STA %s", result->realName );
-    outline1("LDA #$%2.2x", ( address >> 8 ) & 0xff );
-    outline1("STA %s", address_displacement(_environment, result->realName, "1") );
+    variable_store( _environment, result->name, 0 );
 
     return result;
     
