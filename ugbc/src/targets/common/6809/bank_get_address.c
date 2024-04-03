@@ -32,7 +32,9 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__coco__)
 
 /**
  * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
@@ -51,8 +53,9 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
 
-    outline0("LDD #$700F" );
-    outline1("STD %s", result->realName );
+    char * address = banks_get_address( _environment, _bank );
+
+    cpu_addressof_16bit( _environment, address, result->realName );
 
     return result;
     
@@ -73,11 +76,8 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
 </usermanual> */
 Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
 
-    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
+    return banks_get_address_var( _environment, _bank );
 
-    outline0("LDD #$700F" );
-    outline1("STD %s", result->realName );
-
-    return result;
-    
 }
+
+#endif

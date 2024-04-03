@@ -32,7 +32,9 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__coco__)
 
 /**
  * @brief Emit ASM code for instruction <b>BANK ...</b>
@@ -48,9 +50,6 @@
 </usermanual> */
 void bank_set( Environment * _environment, int _bank ) {
 
-    outline1("LDA #$%2.2x", _bank  );
-    outline0("STA BANKSHADOW" );
-    
 }
 
 /**
@@ -67,10 +66,6 @@ void bank_set( Environment * _environment, int _bank ) {
 </usermanual> */
 void bank_set_var( Environment * _environment, char * _bank ) {
     
-    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
-
-    outline1("LDA %s", bank->realName  );
-    outline0("STA BANKSHADOW" );
-    // outline0("STA $A7E5" );
-    
 }
+
+#endif

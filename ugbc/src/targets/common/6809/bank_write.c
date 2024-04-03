@@ -32,7 +32,9 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__coco__)
 
 /**
  * @brief Emit ASM code for instruction <b>BANK WRITE ...</b>
@@ -49,17 +51,35 @@
 /* <usermanual>
 @keyword BANK WRITE
 </usermanual> */
-void bank_write_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
+void bank_write_vars( Environment * _environment, char * _address1, char * _bank, char * _address2, char * _size ) {
 
-    outline0("; bank write")
-    Variable * previous = bank_get( _environment );
-    bank_set_var( _environment, _bank );
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
+    outline4("; bank write( ..., %s, %s, %s, %s)", _address1, _bank, _address2, _size );
+    // Variable * previous = bank_get( _environment );
+    // bank_set_var( _environment, _bank );
+    Variable * bankAddress = banks_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
     Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
+    outline3("; mmove_memory_memory( ..., %s, %s, %s)", address1->name, realAddress->name, _size );
     mmove_memory_memory( _environment, address1->name, realAddress->name, _size );
-    bank_set_var( _environment, previous->name );
+    // bank_set_var( _environment, previous->name );
     outline0("; end bank write")
     
 }
+
+void bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size ) {
+
+    outline4("; bank write( ..., %s, %d, %s, %d)", _address1, _bank, _address2, _size );
+    Variable * address1 = variable_retrieve( _environment, _address1 );
+    Variable * effectiveAddress = variable_temporary( _environment, VT_ADDRESS, "(effectiveAddress)");
+    Variable * bank = variable_temporary( _environment, VT_WORD, "(bank)");
+    Variable * size = variable_temporary( _environment, VT_WORD, "(size)");
+    cpu_addressof_16bit( _environment, address1->realName, effectiveAddress->realName );
+    variable_store( _environment, bank->name, _bank );
+    variable_store( _environment, size->name, _size );
+    bank_write_vars( _environment, effectiveAddress->name, bank->name, _address2, size->name );
+    outline0("; end bank write")
+    
+}
+
+#endif
