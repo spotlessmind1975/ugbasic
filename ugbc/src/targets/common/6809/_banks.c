@@ -34,7 +34,7 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__coco__) || defined(__d32__) || defined(__d64__)
+#if defined(__coco__) || defined(__d32__) || defined(__d64__) || defined(__mo5__)
 
 /****************************************************************************
  * CODE SECTION 
