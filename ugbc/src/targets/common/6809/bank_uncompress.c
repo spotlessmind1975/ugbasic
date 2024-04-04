@@ -34,7 +34,7 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__coco__) || defined(__d32__)
+#if defined(__coco__) || defined(__d32__) || defined(__d64__)
 
 /**
  * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
