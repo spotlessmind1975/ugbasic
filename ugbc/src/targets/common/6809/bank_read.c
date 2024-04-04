@@ -34,7 +34,7 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__coco__)
+#if defined(__coco__) || defined(__d32__)
 
 /**
  * @brief Emit ASM code for instruction <b>BANK READ ...</b>
