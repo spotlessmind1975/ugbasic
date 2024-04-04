@@ -187,49 +187,68 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_TILEMAP:
                 case VT_ARRAY: {
-                    if ( ! variable->memoryArea && variable->valueBuffer ) {
-                        out1("%s: .byte ", variable->realName);
-                        int i=0;
-                        for (i=0; i<(variable->size-1); ++i ) {
-                            out1("%d,", variable->valueBuffer[i]);
-                        }
-                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
-                    } else if ( variable->memoryArea && ! variable->value ) {
-                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
-                    } else {
-                        if ( variable->value ) {
-
-                            switch( VT_BITWIDTH( _variable->arrayType ) ) {
-                                case 32: {
-                                    out1("%s: .byte ", _variable->realName );
-                                    for( int i=0; i<(_variable->size/4)-1; ++i ) {
-                                        out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x, ", (unsigned int)( _variable->value & 0xff ), (unsigned int)( ( _variable->value >> 8 ) & 0xff ), (unsigned int)( ( _variable->value >> 16 ) & 0xff ), (unsigned int)( ( _variable->value >> 24 ) & 0xff ) );
-                                    }
-                                    out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x", (unsigned int)( _variable->value & 0xff ), (unsigned int)( ( _variable->value >> 8 ) & 0xff ), (unsigned int)( ( _variable->value >> 16 ) & 0xff ), (unsigned int)( ( _variable->value >> 24 ) & 0xff ) );
-                                    outline0("");
-                                    break;
-                                }
-                                case 16: {
-                                    out1("%s: .byte ", _variable->realName );
-                                    for( int i=0; i<(_variable->size/2)-1; ++i ) {
-                                        out2("$%2.2x, $%2.2x,", (unsigned int)( _variable->value & 0xff ), (unsigned int)( ( _variable->value >> 8 ) & 0xff ) );
-                                    }
-                                    out2("$%2.2x, $%2.2x", (unsigned int)( _variable->value & 0xff ), (unsigned int)( ( _variable->value >> 8 ) & 0xff ) );
-                                    outline0("");
-                                    break;
-                                }
-                                case 8:
-                                    outline3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value&0xff) );
-                                    break;
-                                case 1:
-                                    outline3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value?0xff:0x00));
-                                    break;
-                            }                    
-                            
+                    if ( variable->bankAssigned != -1 ) {
+                        outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
+                        if ( variable->type == VT_ARRAY ) {
+                            if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
+                                CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
+                            }
+                            // force +1 byte if size is odd
+                            outhead2("%s: .res %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3) );
                         } else {
-                            outline2("%s: .res %d,0", variable->realName, variable->size);
+                            if (VT_BITWIDTH( variable->type ) == 0 ) {
+                                CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->type ] );
+                            }
+                            // force +1 byte if size is odd
+                            outhead2("%s: .res %d, $00", variable->realName, (VT_BITWIDTH( variable->type )>>3) );
+                        }
+                    } else {
+
+                        if ( ! variable->memoryArea && variable->valueBuffer ) {
+                            out1("%s: .byte ", variable->realName);
+                            int i=0;
+                            for (i=0; i<(variable->size-1); ++i ) {
+                                out1("%d,", variable->valueBuffer[i]);
+                            }
+                            outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                        } else if ( variable->memoryArea && ! variable->value ) {
+                            // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        } else {
+                            if ( variable->value ) {
+
+                                switch( VT_BITWIDTH( variable->arrayType ) ) {
+                                    case 32: {
+                                        out1("%s: .byte ", variable->realName );
+                                        for( int i=0; i<(variable->size/4)-1; ++i ) {
+                                            out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x, ", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 24 ) & 0xff ) );
+                                        }
+                                        out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 24 ) & 0xff ) );
+                                        outline0("");
+                                        break;
+                                    }
+                                    case 16: {
+                                        out1("%s: .byte ", variable->realName );
+                                        for( int i=0; i<(variable->size/2)-1; ++i ) {
+                                            out2("$%2.2x, $%2.2x,", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ) );
+                                        }
+                                        out2("$%2.2x, $%2.2x", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ) );
+                                        outline0("");
+                                        break;
+                                    }
+                                    case 8:
+                                        outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
+                                        break;
+                                    case 1:
+                                        outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
+                                        break;
+                                }                    
+                                
+                            } else {
+                                outline2("%s: .res %d,0", variable->realName, variable->size);
+                            }
                         }
                     }
+
                     break;
                 }
             }
@@ -333,20 +352,39 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             break;
         case VT_TILEMAP:
         case VT_ARRAY: {
-            if ( _variable->valueBuffer ) {
-                out0("    .byte ");
-                int i=0;
-                for (i=0; i<(_variable->size-1); ++i ) {
-                    out1("%d,", _variable->valueBuffer[i]);
-                }
-                outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
-            } else {
-                if ( _variable->value ) {
-                    outline2("    .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value&0xff));
+            if ( _variable->bankAssigned != -1 ) {
+                outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", _variable->bankAssigned, _variable->absoluteAddress, _variable->size, _variable->uncompressedSize );
+                if ( _variable->type == VT_ARRAY ) {
+                    if (VT_BITWIDTH( _variable->arrayType ) == 0 ) {
+                        CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ _variable->arrayType ] );
+                    }
+                    // force +1 byte if size is odd
+                    outhead2("%s: .res %d, $00", _variable->realName, (VT_BITWIDTH( _variable->arrayType )>>3) );
                 } else {
-                    outline1("    .res %d,0", _variable->size);
+                    if (VT_BITWIDTH( _variable->type ) == 0 ) {
+                        CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ _variable->type ] );
+                    }
+                    // force +1 byte if size is odd
+                    outhead2("%s: .res %d, $00", _variable->realName, (VT_BITWIDTH( _variable->type )>>3) );
+                }
+            } else {
+
+                if ( _variable->valueBuffer ) {
+                    out0("    .byte ");
+                    int i=0;
+                    for (i=0; i<(_variable->size-1); ++i ) {
+                        out1("%d,", _variable->valueBuffer[i]);
+                    }
+                    outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
+                } else {
+                    if ( _variable->value ) {
+                        outline2("    .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value&0xff));
+                    } else {
+                        outline1("    .res %d,0", _variable->size);
+                    }
                 }
             }
+
             break;
         }
     }
@@ -481,41 +519,7 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
-    int anyExpansionBank = 0;
-    Bank * bank = _environment->expansionBanks;
-    while( bank ) {
-        if ( bank->type == BT_EXPANSION && bank->name && ( bank->space != bank->remains ) ) {
-            int size = bank->space - bank->remains;
-            outhead1("%s:", bank->name );
-            if ( bank->data ) {
-                out0("    .byte ");
-                int i=0;
-                for (i=0; i<(size-1); ++i ) {
-                    out1("$%2.2x,", (unsigned char)( bank->data[i] & 0xff ) );
-                }
-                outline1("$%2.2x", (unsigned char)( bank->data[(size-1)] & 0xff ) );
-            }
-            anyExpansionBank = 1;
-        }
-        bank = bank->next;
-    }
-
-    if ( anyExpansionBank ) {
-        int values[MAX_TEMPORARY_STORAGE];
-        char * address[MAX_TEMPORARY_STORAGE];
-        Bank * actual = _environment->expansionBanks;
-        int count = 0;
-        while( actual ) {
-            values[count] = count;
-            address[count] = strdup( actual->name );
-            actual = actual->next;
-            ++count;
-        }
-
-        cpu_address_table_build( _environment, "EXPBANKS", values, address, count );
-
-        cpu_address_table_lookup( _environment, "EXPBANKS", count );
-    }
+    banks_generate( _environment );
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
