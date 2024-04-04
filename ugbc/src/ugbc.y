@@ -3987,7 +3987,7 @@ bank_expansion_definition_expression :
         bank_read_vars( _environment, $2, $4, $6, $8 );
     }
     | WRITE expr FROM expr TO expr SIZE expr {
-        bank_write_vars( _environment, $2, $4, $6, $8 );
+        bank_write_vars( _environment, $4, $2, $6, $8 );
     }
     ;
 
