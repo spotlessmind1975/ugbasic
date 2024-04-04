@@ -34,7 +34,7 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__c128z__) || defined(__msx1__)
+#if defined(__c128z__) || defined(__msx1__) || defined(__coleco__)
 
 /**
  * @brief Emit ASM code for instruction <b>BANK WRITE ...</b>
@@ -60,6 +60,7 @@ void bank_write_vars( Environment * _environment, char * _address1, char * _bank
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
     Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
+    outline3("; mmove_memory_memory( ..., %s, %s, %s)", address1->name, realAddress->name, _size );
     mmove_memory_memory( _environment, address1->name, realAddress->name, _size );
     // bank_set_var( _environment, previous->name );
     outline0("; end bank write")
@@ -68,7 +69,7 @@ void bank_write_vars( Environment * _environment, char * _address1, char * _bank
 
 void bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size ) {
 
-    outline0("; bank write")
+    outline4("; bank write( ..., %s, %d, %s, %d)", _address1, _bank, _address2, _size );
     Variable * address1 = variable_retrieve( _environment, _address1 );
     Variable * effectiveAddress = variable_temporary( _environment, VT_ADDRESS, "(effectiveAddress)");
     Variable * bank = variable_temporary( _environment, VT_WORD, "(bank)");

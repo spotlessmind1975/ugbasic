@@ -34,7 +34,7 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__c128z__) || defined(__msx1__)
+#if defined(__c128z__) || defined(__msx1__) || defined(__coleco__)
 
 /****************************************************************************
  * CODE SECTION 
@@ -44,7 +44,7 @@ extern char DATATYPE_AS_STRING[][16];
 
 void banks_generate( Environment * _environment ) {
     
-#if defined(__msx1__)
+#if defined(__msx1__) || defined(__coleco__)
     outhead0("section data_user");
 #endif
 
