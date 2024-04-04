@@ -98,6 +98,8 @@ int banks_any_used( Environment * _environment ) {
 
 char * banks_get_address( Environment * _environment, int _bank ) {
     
+    Variable * bankAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+
     if ( banks_any_used( _environment ) ) {
 
         Bank * bank = _environment->expansionBanks;
@@ -113,15 +115,15 @@ char * banks_get_address( Environment * _environment, int _bank ) {
             CRITICAL_OUT_OF_BANKS( );
         }
 
-        return bank->name;
-
-    } else {
-
-        Variable * bankAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
-
-        return bankAddress->name;
+        if ( bank->bankAddress ) {
+            variable_store( _environment, bankAddress->name, bank->bankAddress );
+        } else {
+            cpu_addressof_16bit( _environment, bank->name, bankAddress->realName );
+        }
 
     }
+
+    return bankAddress->name;
 
 }
 
@@ -131,7 +133,7 @@ Variable * banks_get_address_var( Environment * _environment, char * _bank ) {
 
     if ( banks_any_used( _environment ) ) {
 
-        Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
+        Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_WORD, 0 );
 
         cpu_address_table_call( _environment, "EXPBANKS", bank->realName, bankAddress->realName );
 
