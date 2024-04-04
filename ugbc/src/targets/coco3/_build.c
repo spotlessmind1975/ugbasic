@@ -233,32 +233,82 @@ void generate_dsk( Environment * _environment ) {
 
     strcpy( loaderBas, "1 REM ugBASIC loader\n" );
     strcat( loaderBas, "2 REM --[ PROLOGUE ]--\n" );
-    strcat( loaderBas, "3 DATA 26,80,52,16,52,6,142,14,0,159,31,31\n" );
-    strcat( loaderBas, "4 DATA 65,16,206,15,0,16,223,33,198,255,166\n" );
-    strcat( loaderBas, "5 DATA 133,167,229,90,38,249,53,6,53,16,28\n" );
-    strcat( loaderBas, "6 DATA 159,57,26,80,142,42,0,16,142,42,0\n" );
-    strcat( loaderBas, "7 DATA 183,255,223,206,16,0,166,128,167,160\n" );
-    strcat( loaderBas, "8 DATA 51,95,17,131,0,0,38,244,183,255,222\n" );
-    strcat( loaderBas, "9 DATA 28,159,57\n" );
-    strcat( loaderBas, "11FORA=&HE00 TO &HE44:READX:POKEA,X:NEXTA\n" );
-    strcat( loaderBas, "12REM --[ MAIN ]--\n" );
-    strcat( loaderBas, "13CLEAR 999: PRINT \"LOADING, PLEASE WAIT\";\n" );
+    strcat( loaderBas, "3 DATA  26, 80, 52, 16, 52,  6,142, 14\n");
+    strcat( loaderBas, "4 DATA   0,191,  0, 31, 31, 65, 16,206\n");
+    strcat( loaderBas, "5 DATA  15,  0, 16,255,  0, 33,198,255\n");
+    strcat( loaderBas, "6 DATA 166,133,167,229, 90, 38,249, 53\n");
+    strcat( loaderBas, "7 DATA   6, 53, 16, 28,159, 57, 26, 80\n");
+    strcat( loaderBas, "8 DATA 206, 16,  0,142, 42,  0, 16,142\n");
+    strcat( loaderBas, "9 DATA  42,  0,183,255,223,166,128,167\n");
+    strcat( loaderBas, "10DATA 160, 51, 95, 17,131,  0,  0, 38\n");
+    strcat( loaderBas, "11DATA 244,183,255,222, 28,159, 57, 26\n");
+    strcat( loaderBas, "12DATA  80,206, 16,  0,142, 42,  0, 16\n");
+    strcat( loaderBas, "13DATA 142,192,  0,183,255,223,134,  0\n");
+    strcat( loaderBas, "14DATA 183,255,166,166,128,167,160, 51\n");
+    strcat( loaderBas, "15DATA  95, 17,131,  0,  0, 38,244,134\n");
+    strcat( loaderBas, "16DATA  62,183,255,166,183,255,222, 28\n");
+    strcat( loaderBas, "17DATA 159, 57,  0\n" );
+    strcat( loaderBas, "18FORA=&HE00 TO &HE71:READX:POKEA,X:NEXTA\n" );
+    strcat( loaderBas, "19REM --[ MAIN ]--\n" );
+    strcat( loaderBas, "20CLEAR 999: PRINT \"LOADING, PLEASE WAIT\";\n" );
 
+    int lineNr = 21;
+
+    Bank * bank = _environment->expansionBanks;
+    while( bank ) {
+        int bankSize = bank->space - bank->remains;
+        if ( bank->remains < bank->space ) {
+            char line[MAX_TEMPORARY_STORAGE];
+
+            if ( ( bank->space - bank->remains ) > blockSize ) {
+                sprintf( line, "%dLOADM\"BANK0.%03d\":PRINT\".\";\n", lineNr, bank->id);
+                strcat( loaderBas, line );
+                ++lineNr;
+
+                sprintf( line, "%dPOKE &HE51, &HC0: POKE &HE57, %d: EXEC &HE47\n", lineNr, bank->id);
+                strcat( loaderBas, line );
+                ++lineNr;
+
+                sprintf( line, "%dLOADM\"BANK1.%03d\":PRINT\".\";\n", lineNr, bank->id);
+                strcat( loaderBas, line );
+                ++lineNr;
+
+                sprintf( line, "%dPOKE &HE51, &HD0: EXEC &HE47\n", lineNr);
+                strcat( loaderBas, line );
+                ++lineNr;
+
+            } else {
+                sprintf( line, "%dEXEC &HE46: LOADM\"BANK0.%03d\":PRINT\".\";\n", lineNr, bank->id);
+                strcat( loaderBas, line );
+                ++lineNr;
+
+                sprintf( line, "%dPOKE &HE51, &HC0: POKE &HE57, %d: EXEC &HE47\n", lineNr, bank->id);
+                strcat( loaderBas, line );
+                ++lineNr;
+
+            }
+
+        }
+        bank = bank->next;
+    }
+
+    char line[MAX_TEMPORARY_STORAGE];
     for( block = 0; block < blocks; ++block ) {
 
-        int lineNr = 14 + block*2;
-        char line[MAX_TEMPORARY_STORAGE];
         sprintf( line, "%dLOADM\"PROGRAM.%03d\":PRINT\".\";\n", lineNr, block);
         strcat( loaderBas, line );
+        ++lineNr;
 
-        lineNr = 15 + block*2;
         int address = 128 + block*16;
-        sprintf( line, "%dPOKE 3627, %d: EXEC 3620\n", lineNr, address);
+        sprintf( line, "%dPOKE &HE30, %d: EXEC &HE26\n", lineNr, address);
         strcat( loaderBas, line );
+        ++lineNr;
 
     }
 
-    strcat( loaderBas, "90EXEC 3584: PRINT \"...\";: LOADM\"PROGRAM.EXE\": PRINT \"...\": EXEC\n");
+    sprintf( line, "%dEXEC &HE00: PRINT \"...\";: LOADM\"PROGRAM.EXE\": PRINT \"...\": EXEC\n", lineNr);
+    strcat( loaderBas, line );
+    ++lineNr;
 
     char basFileName[MAX_TEMPORARY_STORAGE];
     sprintf( basFileName, "%sloader.bas", temporaryPath );
@@ -294,7 +344,7 @@ void generate_dsk( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
     };
 
-    remove( tempFileName );
+    // remove( tempFileName );
 
     for( block = 0; block < blocks; ++block ) {
 
@@ -314,8 +364,75 @@ void generate_dsk( Environment * _environment ) {
             printf("Please use option '-I' to install chain tool.\n\n");
         };
 
-        remove( tempFileName );
+        // remove( tempFileName );
 
+    }
+
+    bank = _environment->expansionBanks;
+    while( bank ) {
+        int bankSize = bank->space - bank->remains;
+        if ( bankSize > 0 ) {
+            int effectiveSize = blockSize > bankSize ? bankSize : blockSize;
+            char bankFileName[MAX_TEMPORARY_STORAGE];
+            sprintf( bankFileName, "%sbank0.%03d", temporaryPath, bank->id );
+            fh = fopen( bankFileName, "wb" );
+            fputc( 0, fh );
+            fputc( (unsigned char) ( ( effectiveSize >> 8 ) & 0xff ), fh );
+            fputc( (unsigned char) ( ( effectiveSize ) & 0xff ), fh );
+            fputc( 0x2a, fh );
+            fputc( 0x00, fh );
+            fwrite( &bank->data[0], 1, effectiveSize, fh );
+            fputc( 0xff, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+            fputc( 0x2a, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+
+            fclose( fh );
+            sprintf( commandLine, "\"%s\" copy -2 -b \"%s\" \"%s,BANK0.%03d\"",
+                executableName, 
+                bankFileName, 
+                _environment->exeFileName,
+                bank->id );
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The compilation of assembly program failed.\n\n"); 
+                printf("Please use option '-I' to install chain tool.\n\n");
+                exit(0);
+            };
+            // remove( bankFileName );
+
+            if ( bankSize > blockSize ) {
+                effectiveSize = bankSize - blockSize;
+                sprintf( bankFileName, "%sbank1.%03d", temporaryPath, bank->id );
+                fh = fopen( bankFileName, "wb" );
+                fputc( 0, fh );
+                fputc( (unsigned char) ( ( effectiveSize >> 8 ) & 0xff ), fh );
+                fputc( (unsigned char) ( ( effectiveSize ) & 0xff ), fh );
+                fputc( 0x2a, fh );
+                fputc( 0x00, fh );
+                fwrite( &bank->data[blockSize], 1, bankSize - blockSize, fh );
+                fputc( 0xff, fh );
+                fputc( 0x00, fh );
+                fputc( 0x00, fh );
+                fputc( 0x2a, fh );
+                fputc( 0x00, fh );
+                fputc( 0x00, fh );
+                fclose( fh );
+                sprintf( commandLine, "\"%s\" copy -2 -b \"%s\" \"%s,BANK1.%03d\"",
+                    executableName, 
+                    bankFileName, 
+                    _environment->exeFileName,
+                    bank->id );
+                if ( system_call( _environment,  commandLine ) ) {
+                    printf("The compilation of assembly program failed.\n\n"); 
+                    printf("Please use option '-I' to install chain tool.\n\n");
+                    exit(0);
+                };
+                // remove( bankFileName );
+            }
+        }
+        bank = bank->next;
     }
 
     if ( !storage ) {
