@@ -34,7 +34,7 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__c128z__) || defined(__msx1__) || defined(__coleco__)
+#if defined(__c128z__) || defined(__msx1__) || defined(__coleco__) || defined(__cpc__)
 
 /**
  * @brief Emit ASM code for instruction <b>BANK WRITE ...</b>

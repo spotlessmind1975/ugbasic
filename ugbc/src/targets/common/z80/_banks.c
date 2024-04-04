@@ -34,7 +34,7 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__c128z__) || defined(__msx1__) || defined(__coleco__)
+#if defined(__c128z__) || defined(__msx1__) || defined(__coleco__) || defined(__cpc__)
 
 /****************************************************************************
  * CODE SECTION 
@@ -67,7 +67,7 @@ void banks_generate( Environment * _environment ) {
         bank = bank->next;
     }
 
-#if defined(__msx1__)
+#if defined(__msx1__) || defined(__coleco__)
     outhead0("section code_user");
 #endif
 
