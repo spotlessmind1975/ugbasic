@@ -135,6 +135,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> sequence_load_flags sequence_load_flags1 sequence_load_flag
 %type <integer> put_image_flags put_image_flags1 put_image_flag
 %type <integer> blit_image_flags blit_image_flags1 blit_image_flag
+%type <integer> flip_image_flags
 %type <integer> const_color_enumeration
 %type <integer> using_transparency
 %type <integer> using_opacity
@@ -8162,6 +8163,37 @@ optional_step :
         $$ = $2;
     };
 
+flip_image_flags :
+    X {
+        $$ = FLAG_FLIP_X;
+    }
+    | Y {
+        $$ = FLAG_FLIP_Y;
+    }
+    | XY {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | YX {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    };
+
+flip_definition:
+    IMAGE expr flip_image_flags {
+        flip_image_vars( _environment, $2, NULL, NULL, $3 );
+    }
+    | IMAGE expr frame OP_HASH Identifier flip_image_flags {
+        Variable * images = variable_retrieve( _environment, $2 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
+        flip_image_vars( _environment, $2, calculatedFrame->name, NULL, $6 );
+    }
+    | IMAGE expr SEQUENCE expr frame expr flip_image_flags {
+        flip_image_vars( _environment, $2, $6, $4, $7 );
+    }
+    | IMAGE expr frame expr flip_image_flags {
+        flip_image_vars( _environment, $2, $4, NULL, $5 );
+    }
+    ;
+
 thread_identifiers :
     expr {
         Variable * array = variable_retrieve( _environment, $1 );
@@ -8308,6 +8340,7 @@ statement2nc:
   | PUT put_definition
   | DEFDGR defdgr_definition
   | BLIT blit_definition
+  | FLIP flip_definition
   | MOVE move_definition
   | GET get_definition
   | SLICE slice_definition

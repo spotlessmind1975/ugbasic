@@ -1546,6 +1546,8 @@ typedef struct _Deployed {
     int dsave;
     int bank;
     int msc1;
+    int flipimagex;
+    int flipimagey;
 
 } Deployed;
 
@@ -2793,6 +2795,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_MOVE_STRING_ON_BANKED_ARRAY(v) CRITICAL2("E274 - cannot move string into a BANKED array", v );
 #define CRITICAL_CANNOT_MOVE_FROM_BIT_ON_BANKED_ARRAY(v) CRITICAL2("E275 - cannot move bit from a BANKED array", v );
 #define CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY(v) CRITICAL2("E276 - out of memory when storing this variable on bank", v );
+#define CRITICAL_FLIP_IMAGE_UNSUPPORTED(v,t) CRITICAL3("E277 - unsupported type for FLIP IMAGE", v, t );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3974,6 +3977,7 @@ void                    exit_procedure( Environment * _environment );
 
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
 int                     find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
+void                    flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, int _direction );
 void                    font_descriptors_init( Environment * _environment, int _embedded_present );
 void                    forbid( Environment * _environment );
 int                     frames( Environment * _environment, char * _image );

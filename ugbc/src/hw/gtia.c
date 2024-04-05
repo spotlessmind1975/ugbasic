@@ -3579,4 +3579,21 @@ int gtia_palette_extract( Environment * _environment, char * _data, int _width, 
 
 }
 
+void gtia_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction ) {
+
+    deploy( gtiavars, src_hw_gtia_vars_asm);
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+
+    gtia_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+
+    if ( _direction & FLAG_FLIP_X ) {
+        deploy( flipimagex, src_hw_gtia_flip_image_x_asm );
+        outline0("JSR FLIPIMAGEX");
+    } else if ( _direction & FLAG_FLIP_Y ) {
+        deploy( flipimagey, src_hw_gtia_flip_image_y_asm );
+        outline0("JSR FLIPIMAGEY");
+    }
+
+}
+
 #endif
