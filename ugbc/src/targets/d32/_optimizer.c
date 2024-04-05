@@ -360,8 +360,8 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     }
 
     if ( (po_buf_match(buf[0], " LD* ", v1) || po_buf_match(buf[0], " CLR*", v1))
-    &&   po_buf_match(buf[1], " LD* ", v2)
-    &&  po_buf_strcmp(v1,v2)==0) {
+    &&   po_buf_match(buf[1], " LD* *,*", v2, v3, v4)
+    &&  po_buf_strcmp(v1,v2)==0 && po_buf_strcmp(v2,v3)!=0 ) {
         optim(buf[0], RULE "(LOAD/CLR,LOAD)->(LOAD)", NULL);
         ++_environment->removedAssemblyLines;
     }

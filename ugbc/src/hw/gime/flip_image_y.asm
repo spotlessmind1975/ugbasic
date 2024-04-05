@@ -29,76 +29,117 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                       INTERNAL VARIABLES FOR GIME HARDWARE                  *
+;*                          FLIP Y ROUTINE FOR GIME                            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PLOTDEST equ $0b ; $29
-PLOTCDEST equ $0d ; $27
-PLOTC2DEST equ $0f ; $25
+; ----------------------------------------------------------------------------
+; - Flip image
+; ----------------------------------------------------------------------------
 
-XGR    fdb 0
-YGR    fdb 0
-LINE   fcb $ff, $ff
+FLIPIMAGEY
 
-ORIGINX    fdb 0
-ORIGINY    fdb 0
-RESOLUTIONX    fdb 0
-RESOLUTIONY    fdb 0
+    LDA PALETTELIMIT
+    CMPA #2
+    BEQ FLIPIMAGEYL1T2
+    CMPA #4
+    BEQ FLIPIMAGEYL1T4
 
-CLIPX1    fdb 0
-CLIPY1    fdb 0
-CLIPX2    fdb 319
-CLIPY2    fdb 199
+FLIPIMAGEYL1T16
+    LDD , Y
+    LSRA
+    RORB
+    STD IMAGEW
+    JMP FLIPIMAGEYCOMMON
 
-LASTCOLOR fcb 0
-CURRENTWIDTH      fdb 320
-CURRENTHEIGHT      fdb 200
-CURRENTTILESWIDTH      fcb 40
-CURRENTTILESHEIGHT      fcb 25
-CURRENTTILES            fcb 128
-CURRENTFRAMESIZE   fdb 40*25
-CURRENTSL          fcb 40
-TEXTWW      fcb 3
-FONTWIDTH       fcb 8
-FONTHEIGHT      fcb 8
+FLIPIMAGEYL1T4
+    LDD , Y
+    LSRA
+    RORB
+    LSRA
+    RORB
+    STD IMAGEW
+    JMP FLIPIMAGEYCOMMON
 
-IMAGEX EQU $41 ; $42
-IMAGEY EQU $43 ; $44
-IMAGEW EQU $45
-IMAGEH EQU $47 ; $48
-IMAGEH2 EQU $49 ; $50
-IMAGET EQU $51
-IMAGEF EQU $52
-IMAGEW2 EQU $54 ; $55
+FLIPIMAGEYL1T2
+    LDD , Y
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    STD IMAGEW
+    JMP FLIPIMAGEYCOMMON
 
-BLITTMPPTR fdb $0
-BLITTMPPTR2 fdb $0
-BLITS0 fcb $0
-BLITS1 fcb $0
-BLITS2 fcb $0
-BLITR0 fcb $0
-BLITR1 fcb $0
-BLITR2 fcb $0
-BLITR3 fcb $0
+FLIPIMAGEYCOMMON
 
-PLOTX   EQU $41 ; $42
-PLOTY   EQU $43
-PLOTC   EQU $45
+    ; Retrieve the width (in bytes) and the height 
+    ; (in bytes) of the image to flip horizontally.
 
-; PALETTEPAPER               fcb $12, $24, $0b, $07, $3f, $1f, $09, $26
-; PALETTEPEN                 fcb $00, $12, $00, $3f, $00, $12, $00, $26
-PALETTEPAPER               fcb $00, $00, $00, $00, $00, $00, $00, $00
-PALETTEPEN                 fcb $00, $00, $00, $00, $00, $00, $00, $00
+    LDA 2,Y
+    STA IMAGEH
+    STA IMAGEH2
 
-PALETTEPENUNUSED           fcb 0
-PALETTEPAPERUNUSED         fcb 0
-PALETTELIMIT               fcb 0
-GIMEVIDMSHADOW             fcb 0
-GIMEMMUSTART               fcb 3
-GIMEMMUCOUNT               fcb 1
-GIMEINIT1SHADOW            fcb 0
+    ; Move the image pointer ahead of header.
 
-GIMESCREENCURRENT          fcb $8
+    LEAY 3,Y
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+FLIPIMAGEYCOMMONCL0
+
+    ; Copy the starting line pointer to the ending line pointer.
+
+    TFR Y, X
+
+    CLRA
+    LDB IMAGEH
+    TFR D, U 
+    
+    LDD IMAGEW
+    LEAU -1, U
+FLIPIMAGEYCOMMONCL0L
+    ; Move ahead the ending line pointer of 2 x IMAGE WIDTH - 1
+    LEAX D, X
+    LEAU -1, U
+    CMPU #0
+    BNE FLIPIMAGEYCOMMONCL0L
+
+    CLRA
+    LDB IMAGEH
+    LSRB
+    TFR D, U
+
+    CLRA
+FLIPIMAGEYCOMMONCL1
+    LDB #0
+FLIPIMAGEYCOMMONCLN
+    LDA B, Y
+    PSHS D
+    LDA B, X
+    STA B, Y
+    PULS D
+    STA B, X
+    ADDD #1
+    CMPD IMAGEW
+    BNE FLIPIMAGEYCOMMONCLN
+
+    LEAY D, Y
+    EORA #$FF
+    EORB #$FF
+    ADDD #1
+    LEAX D, X
+
+    ; Decrement the number of lines to flip.
+
+    LEAU -1, U
+
+    ; If not finished, repeat the loop.
+
+    CMPU #0
+    BNE FLIPIMAGEYCOMMONCL1
+
+    RTS

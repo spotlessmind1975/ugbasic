@@ -2892,4 +2892,22 @@ void gime_calculate_sequence_frame_offset( Environment * _environment, char * _o
 
 }
 
+void gime_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction ) {
+
+    deploy( gimevars, src_hw_gime_vars_asm);
+
+    if ( _direction & FLAG_FLIP_X ) {
+        gime_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagex, src_hw_gime_flip_image_x_asm );
+        outline0("JSR FLIPIMAGEX");
+    } 
+    
+    if ( _direction & FLAG_FLIP_Y ) {
+        gime_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagey, src_hw_gime_flip_image_y_asm );
+        outline0("JSR FLIPIMAGEY");
+    }
+
+}
+
 #endif

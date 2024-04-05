@@ -328,5 +328,6 @@ void gime_slice_image( Environment * _environment, char * _image, char * _frame,
 int gime_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 
 void gime_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
+void gime_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction );
 
 #endif
