@@ -3503,12 +3503,14 @@ void vic2_flip_image( Environment * _environment, Resource * _image, char * _fra
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
 
-    vic2_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
-
     if ( _direction & FLAG_FLIP_X ) {
+        vic2_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
         deploy( flipimagex, src_hw_vic2_flip_image_x_asm );
         outline0("JSR FLIPIMAGEX");
-    } else if ( _direction & FLAG_FLIP_Y ) {
+    } 
+    
+    if ( _direction & FLAG_FLIP_Y ) {
+        vic2_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
         deploy( flipimagey, src_hw_vic2_flip_image_y_asm );
         outline0("JSR FLIPIMAGEY");
     }
