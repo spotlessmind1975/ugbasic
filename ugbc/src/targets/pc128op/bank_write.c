@@ -80,18 +80,18 @@ void bank_write_vars( Environment * _environment, char * _address1, char * _bank
     deploy_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_preferred( bank, src_hw_pc128op_bank_asm );
 
-    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_WORD, 0 );
     Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
     outline0("; bank write rv")
     outline1("LDY %s", address1->realName );
     outline1("LDD %s", size->realName );
     outline1("LDU %s", bank->realName );
-    outline1("LDX %s", address2->realName );
+    outline1("LDX %s", realAddress->realName );
     outline0("JSR BANKWRITE");
     outline0("; end bank write");
 
