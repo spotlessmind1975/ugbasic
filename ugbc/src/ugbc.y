@@ -8192,6 +8192,22 @@ flip_definition:
     | IMAGE expr frame expr flip_image_flags {
         flip_image_vars( _environment, $2, $4, NULL, $5 );
     }
+
+    | flip_image_flags IMAGE expr {
+        flip_image_vars( _environment, $3, NULL, NULL, $1 );
+    }
+    | flip_image_flags IMAGE expr frame OP_HASH Identifier {
+        Variable * images = variable_retrieve( _environment, $3 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $3, $6 );
+        flip_image_vars( _environment, $3, calculatedFrame->name, NULL, $1 );
+    }
+    | flip_image_flags IMAGE expr SEQUENCE expr frame expr {
+        flip_image_vars( _environment, $3, $7, $5, $1 );
+    }
+    | flip_image_flags IMAGE expr frame expr {
+        flip_image_vars( _environment, $3, $5, NULL, $1 );
+    }
+    
     ;
 
 thread_identifiers :
