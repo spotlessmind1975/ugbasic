@@ -3584,12 +3584,14 @@ void gtia_flip_image( Environment * _environment, Resource * _image, char * _fra
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
 
-    gtia_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
-
     if ( _direction & FLAG_FLIP_X ) {
+        gtia_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
         deploy( flipimagex, src_hw_gtia_flip_image_x_asm );
         outline0("JSR FLIPIMAGEX");
-    } else if ( _direction & FLAG_FLIP_Y ) {
+    } 
+    
+    if ( _direction & FLAG_FLIP_Y ) {
+        gtia_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
         deploy( flipimagey, src_hw_gtia_flip_image_y_asm );
         outline0("JSR FLIPIMAGEY");
     }
