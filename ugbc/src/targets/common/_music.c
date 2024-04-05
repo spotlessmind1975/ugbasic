@@ -703,7 +703,9 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
         // buffer with the compressed one.
         else {
             result->valueBuffer = output;
-            banks_store( _environment, result, 1 );
+            if ( ! banks_store( _environment, result, 1 ) ) {
+                CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( result->name );
+            };
             free( result->valueBuffer );
             result->valueBuffer = NULL;
         }

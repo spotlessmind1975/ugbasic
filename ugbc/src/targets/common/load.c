@@ -186,7 +186,9 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
         // buffer with the compressed one.
         else {
             result->valueBuffer = output;
-            banks_store( _environment, result, 1 );
+            if ( ! banks_store( _environment, result, 1 ) ) {
+                CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
+            };
             free( result->valueBuffer );
             result->valueBuffer = NULL;
         }
