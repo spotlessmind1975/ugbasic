@@ -92,7 +92,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
-%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL
+%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3064,6 +3064,18 @@ exponential:
     }
     | VARPTR OP Identifier CP {
         $$ = varptr( _environment, $3 )->name;
+    }
+    | VARBANK OP Identifier CP {
+        Variable * variable = variable_retrieve( _environment, $3 );
+        Variable * bank = variable_temporary( _environment, VT_BYTE, "(bank)");
+        variable_store( _environment, bank->name, variable->bankAssigned );
+        $$ = bank->name;
+    }
+    | VARBANKPTR OP Identifier CP {
+        Variable * variable = variable_retrieve( _environment, $3 );
+        Variable * ptr = variable_temporary( _environment, VT_ADDRESS, "(ptr)");
+        variable_store( _environment, ptr->name, variable->absoluteAddress );
+        $$ = ptr->name;
     }
     | BANK OP CP {
         $$ = bank_get( _environment )->name;
@@ -6298,7 +6310,9 @@ dim_definition :
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
         if ( $10 ) {
-            banks_store( _environment, array, $10 );    
+            if ( !banks_store( _environment, array, $10 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
         }
     }
     |
@@ -6312,7 +6326,9 @@ dim_definition :
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
         if ( $10 ) {
-            banks_store( _environment, array, $10 );    
+            if ( ! banks_store( _environment, array, $10 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
         }
     }
     as_datatype_suffix
@@ -6327,7 +6343,9 @@ dim_definition :
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
         if ( $10 ) {
-            banks_store( _environment, array, $10 );    
+            if ( ! banks_store( _environment, array, $10 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
         }        
     }
     | Identifier datatype WITH const_expr {
@@ -6347,7 +6365,9 @@ dim_definition :
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
         if ( $11 ) {
-            banks_store( _environment, array, $11 );
+            if ( ! banks_store( _environment, array, $11 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
         }        
     }
     | Identifier as_datatype {
@@ -6360,7 +6380,9 @@ dim_definition :
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
         if ( $11 ) {
-            banks_store( _environment, array, $11 );
+            if ( ! banks_store( _environment, array, $11 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
         }        
     }
     | Identifier as_datatype WITH const_expr {
@@ -6380,7 +6402,9 @@ dim_definition :
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
         if ( $11 ) {
-            banks_store( _environment, array, $11 );
+            if ( ! banks_store( _environment, array, $11 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
         }        
     }
     ;

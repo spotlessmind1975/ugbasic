@@ -2002,3 +2002,40 @@ Restituisce un valore diverso da zero se la CPU ha un ordinamento "little endian
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword VARBANK
+
+@english
+Returns the bank assigned for the given variable, -1 if the variable is on resident memory.
+
+@italian
+Restituisce il banco della memoria espansa assegnato per la data variabile, oppure -1
+se la variabile è posta sulla memoria residente.
+
+@syntax = VARBANK( variable )
+
+@example DIM x as INTEGER: DIM largeArray( 100, 100 ) AS INTEGER BANKED
+@example x = 42
+@example BANK WRITE VARBANK( largeArray ) FROM VARPTR( x ) TO VARBANKPTR( largeArray ) SIZE 2
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword VARBANKPTR
+
+@english
+Returns the address assigned for the given variable inside a bank of memory expansion.
+
+@italian
+Restituisce l'indirizzo di memoria assegnato all'interno del banco di memoria espansa.
+
+@syntax = VARBANKPTR( variable )
+
+@example DIM x as INTEGER: DIM largeArray( 100, 100 ) AS INTEGER BANKED
+@example x = 42
+@example BANK WRITE VARBANK( largeArray ) FROM VARPTR( x ) TO VARBANKPTR( largeArray ) SIZE 2
+
+@target all
+</usermanual> */
