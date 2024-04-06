@@ -625,8 +625,8 @@ SOURCES_PC128OP := $(subst src/hw/pc128op/,src-generated/pc128op_,$(MODULES_PC12
 src-generated/pc128op_%.c: $(MODULES_PC128OP)
 	@xxd -i $(subst src-generated/pc128op_,src/hw/pc128op/,$(@:.c=.asm)) >$@
 
-src-generated/modules_pc128op.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_PC128OP)
-	@cat $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_PC128OP) >src-generated/modules_pc128op.c
+src-generated/modules_pc128op.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_SN76489M) $(SOURCES_PC128OP)
+	@cat $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_SN76489M) $(SOURCES_PC128OP) >src-generated/modules_pc128op.c
 	@grep "src" src-generated/modules_pc128op.c | awk -f modules.awk >src-generated/modules_pc128op.h
 	@grep "data" src-generated/modules_pc128op.c | awk -f modules.awk >>src-generated/modules_pc128op.h
 
