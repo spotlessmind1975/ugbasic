@@ -39,6 +39,7 @@ PAGE0 equ $21
 
 ; TIMER service routine
 PC128IRQ
+    PSHS  D
     LDD   #0              ; TI variable
 PC128TIMER  set *-2       ; (variable within code)
     ADDD  #1              ; increment
@@ -46,6 +47,7 @@ PC128TIMER  set *-2       ; (variable within code)
     LDA   #PAGE0          ; sets the direct page
     TFR   A,DP            ; for ugbc routines
     JSR   TIMERMANAGER
+    PULS  D
     JMP   >PC128IRQDEF    ; jump to next ISR
 PC128IRQN   set *-2       ; (variable within code)
 
