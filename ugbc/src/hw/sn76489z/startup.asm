@@ -53,14 +53,14 @@
 ; CSG_OUT: EQU         $06
 ; CSG_IN: EQU          $03
 
-CSG_F1: EQU          00
-CSG_A1: EQU          10
-CSG_F2: EQU          20
-CSG_A2: EQU          30
-CSG_F3: EQU          40
-CSG_A3: EQU          50
-CSG_NC: EQU          60
-CSG_NA: EQU          70
+CSG_F1: EQU          $00
+CSG_A1: EQU          $10
+CSG_F2: EQU          $20
+CSG_A2: EQU          $30
+CSG_F3: EQU          $40
+CSG_A3: EQU          $50
+CSG_NC: EQU          $60
+CSG_NA: EQU          $70
 
 IMF_TOKEN_WAIT1:								EQU $ff
 IMF_TOKEN_WAIT2:								EQU $fe
@@ -211,20 +211,21 @@ SN76489STARTUP:
 
 SN76489START:
     SRL A
-    JR C,SN76489START0X
+    JR NC,SN76489START0X
     CALL SN76489START0
 SN76489START0X:
     SRL A
-    JP C, SN76489START1X
+    JP NC, SN76489START1X
     CALL SN76489START1
 SN76489START1X:
     SRL A
-    JP C, SN76489START2X
+    JP NC, SN76489START2X
     CALL SN76489START2
 SN76489START2X:
     RET
 
 SN76489START0:
+    PUSH AF
     LD A, CSG_OUT
     LD C, A
     LD A, $80
@@ -256,9 +257,11 @@ SN76489START0:
     LD C, A
     IN A, (C)
     LD B, A
+    POP AF
     RET
 
 SN76489START1:
+    PUSH AF
     LD A, CSG_OUT
     LD C, A
     LD A, $80
@@ -290,9 +293,11 @@ SN76489START1:
     LD C, A
     IN A, (C)
     LD B, A
+    POP AF
     RET
 
 SN76489START2:
+    PUSH AF
     LD A, CSG_OUT
     LD C, A
     LD A, $80
@@ -326,21 +331,81 @@ SN76489START2:
     LD B, A
     RET
 
+; A: channels
+; B: volume
 SN76489STARTVOL:
+    SRL A
+    JR NC,SN76489STARTVOL0X
+    CALL SN76489STARTVOL0
+SN76489STARTVOL0X:
+    SRL A
+    JP NC, SN76489STARTVOL1X
+    CALL SN76489STARTVOL1
+SN76489STARTVOL1X:
+    SRL A
+    JP NC, SN76489STARTVOL2X
+    CALL SN76489STARTVOL2
+SN76489STARTVOL2X:
+    RET
+
+SN76489STARTVOL0:
+    PUSH AF
+    LD A, CSG_OUT
+    LD C, A
+    LD A, $80
+    OR CSG_A1
+    OUT (C), B
+
+    LD A, CSG_IN
+    LD C, A
+    IN A, (C)
+    LD B, A
+    POP AF
+    RET
+
+SN76489STARTVOL1:
+    PUSH AF
+    LD A, CSG_OUT
+    LD C, A
+    LD A, $80
+    OR CSG_A2
+    OUT (C), B
+
+    LD A, CSG_IN
+    LD C, A
+    IN A, (C)
+    LD B, A
+
+    POP AF
+    RET
+
+SN76489STARTVOL2:
+    PUSH AF
+    LD A, CSG_OUT
+    LD C, A
+    LD A, $80
+    OR CSG_F3
+    OUT (C), B
+
+    LD A, CSG_IN
+    LD C, A
+    IN A, (C)
+    LD B, A
+
     RET
 
 SN76489FREQ:
     CALL SN76489CALCFREQ
     SRL A
-    JR C,SN76489FREQ0X
+    JR NC,SN76489FREQ0X
     CALL SN76489FREQ0T
 SN76489FREQ0X:
     SRL A
-    JP C, SN76489FREQ1X
+    JP NC, SN76489FREQ1X
     CALL SN76489FREQ1T
 SN76489FREQ1X:
     SRL A
-    JP C, SN76489FREQ2X
+    JP NC, SN76489FREQ2X
     CALL SN76489FREQ2T
 SN76489FREQ2X:
     RET
@@ -379,6 +444,7 @@ SN76489PROGFREQ2X:
     RET
 
 SN76489PROGFREQ0:
+    PUSH AF
     PUSH DE
 
     SRL D
@@ -400,6 +466,7 @@ SN76489PROGFREQ0:
     LD A, CSG_OUT
     LD C, A
     LD A, E
+    OR $80
     OR CSG_F1
     OUT (C), A
 
@@ -427,22 +494,13 @@ SN76489PROGFREQ0:
     IN A, (C)
     LD B, A
 
-    LD A, CSG_OUT
-    LD C, A
-    LD A, $80
-    OR CSG_A1
-    OUT (C), A
-
-    LD A, CSG_IN
-    LD C, A
-    IN A, (C)
-    LD B, A
-
     POP DE
+    POP AF
 
     RET
 
 SN76489PROGFREQ1:
+    PUSH AF
     PUSH DE
     
     SRL D
@@ -464,6 +522,7 @@ SN76489PROGFREQ1:
     LD A, CSG_OUT
     LD C, A
     LD A, E
+    OR $80
     OR CSG_F2
     OUT (C), A
 
@@ -491,22 +550,13 @@ SN76489PROGFREQ1:
     IN A, (C)
     LD B, A
 
-    LD A, CSG_OUT
-    LD C, A
-    LD A, $80
-    OR CSG_A2
-    OUT (C), A
-
-    LD A, CSG_IN
-    LD C, A
-    IN A, (C)
-    LD B, A
-
     POP DE
+    POP AF
 
     RET
 
 SN76489PROGFREQ2:
+    PUSH AF
     PUSH DE
     
     SRL D
@@ -528,6 +578,7 @@ SN76489PROGFREQ2:
     LD A, CSG_OUT
     LD C, A
     LD A, E
+    OR $80
     OR CSG_F3
     OUT (C), A
 
@@ -555,18 +606,8 @@ SN76489PROGFREQ2:
     IN A, (C)
     LD B, A
 
-    LD A, CSG_OUT
-    LD C, A
-    LD A, $80
-    OR CSG_A3
-    OUT (C), A
-
-    LD A, CSG_IN
-    LD C, A
-    IN A, (C)
-    LD B, A
-
     POP DE
+    POP AF
 
     RET
 
@@ -596,20 +637,21 @@ SN76489PROGSR2:
     
 SN76489STOP:
     SRL A
-    JP C, SN76489STOP0X
+    JP NC, SN76489STOP0X
     CALL SN76489STOP0
 SN76489STOP0X:
     SRL A
-    JP C, SN76489STOP1X
+    JP NC, SN76489STOP1X
     CALL SN76489STOP1
 SN76489STOP1X:
     SRL A
-    JP C, SN76489STOP2X
+    JP NC, SN76489STOP2X
     CALL SN76489STOP2
 SN76489STOP2X:
     RET
 
 SN76489STOP0:
+    PUSH AF
     LD A, CSG_OUT
     LD C, A
     LD A, $80
@@ -621,9 +663,11 @@ SN76489STOP0:
     LD C, A
     IN A, (C)
     LD B, A
+    POP AF
     RET
 
 SN76489STOP1:
+    PUSH AF
     LD A, CSG_OUT
     LD C, A
     LD A, $80
@@ -635,9 +679,11 @@ SN76489STOP1:
     LD C, A
     IN A, (C)
     LD B, A
+    POP AF
     RET
 
 SN76489STOP2:
+    PUSH AF
     LD A, CSG_OUT
     LD C, A
     LD A, $80
@@ -649,6 +695,7 @@ SN76489STOP2:
     LD C, A
     IN A, (C)
     LD B, A
+    POP AF
     RET
 
 ; HL: music address, B: blocks, C: last block
@@ -747,16 +794,16 @@ MUSICPLAYERL1B:
 MUSICPLAYERL1X:
     LD A, C
     SLA A
-    JR C, MUSICPLAYERL1X0
+    JR NC, MUSICPLAYERL1X0
     JMP MUSICWAIT
 MUSICPLAYERL1X0:
     SLA A
     SLA A
-    JR C, MUSICPLAYERL1X1
+    JR NC, MUSICPLAYERL1X1
     JMP MUSICNOTEON
 MUSICPLAYERL1X1:
     SLA A
-    JR C, MUSICPLAYERL1X2
+    JR NC, MUSICPLAYERL1X2
     JMP MUSICNOTEOFF
 MUSICPLAYERL1X2:
     RET
