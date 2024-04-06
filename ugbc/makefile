@@ -378,13 +378,21 @@ SOURCES_TED := $(subst src/hw/ted/,src-generated/ted_,$(MODULES_TED:.asm=.c)) $(
 src-generated/ted_%.c: $(MODULES_TED)
 	@xxd -i $(subst src-generated/ted_,src/hw/ted/,$(@:.c=.asm)) >$@
 
-# Texas Instruments SN76489
+# Texas Instruments SN76489 (Zilog Z80 implementation)
 
-MODULES_SN76489 := $(wildcard src/hw/sn76489/*.asm)
-SOURCES_SN76489 := $(subst src/hw/sn76489/,src-generated/sn76489_,$(MODULES_SN76489:.asm=.c))
+MODULES_SN76489Z := $(wildcard src/hw/sn76489z/*.asm)
+SOURCES_SN76489Z := $(subst src/hw/sn76489z/,src-generated/sn76489z_,$(MODULES_SN76489Z:.asm=.c))
 
-src-generated/sn76489_%.c: $(MODULES_SN76489)
-	@xxd -i $(subst src-generated/sn76489_,src/hw/sn76489/,$(@:.c=.asm)) >$@
+src-generated/sn76489z_%.c: $(MODULES_SN76489Z)
+	@xxd -i $(subst src-generated/sn76489z_,src/hw/sn76489z/,$(@:.c=.asm)) >$@
+
+# Texas Instruments SN76489 (Motorola 6809 implementation)
+
+MODULES_SN76489M := $(wildcard src/hw/sn76489m/*.asm)
+SOURCES_SN76489M := $(subst src/hw/sn76489m/,src-generated/sn76489m_,$(MODULES_SN76489M:.asm=.c))
+
+src-generated/sn76489m_%.c: $(MODULES_SN76489M)
+	@xxd -i $(subst src-generated/sn76489m_,src/hw/sn76489m/,$(@:.c=.asm)) >$@
 
 # Texas Instruments TMS9918
 
@@ -445,8 +453,8 @@ SOURCES_COLECO := $(subst src/hw/coleco/,src-generated/coleco_,$(MODULES_COLECO:
 src-generated/coleco_%.c: $(MODULES_COLECO)
 	@xxd -i $(subst src-generated/coleco_,src/hw/coleco/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coleco.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_COLECO)
-	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_COLECO) >src-generated/modules_coleco.c
+src-generated/modules_coleco.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489Z) $(SOURCES_COLECO)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489Z) $(SOURCES_COLECO) >src-generated/modules_coleco.c
 	@grep "src" src-generated/modules_coleco.c | awk -f modules.awk >src-generated/modules_coleco.h
 	@grep "data" src-generated/modules_coleco.c | awk -f modules.awk >>src-generated/modules_coleco.h
 
@@ -588,8 +596,8 @@ SOURCES_SC3000 := $(subst src/hw/sc3000/,src-generated/sc3000_,$(MODULES_SC3000:
 src-generated/sc3000_%.c: $(MODULES_SC3000)
 	@xxd -i $(subst src-generated/sc3000_,src/hw/sc3000/,$(@:.c=.asm)) >$@
 
-src-generated/modules_sc3000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SC3000)
-	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SC3000) >src-generated/modules_sc3000.c
+src-generated/modules_sc3000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489Z) $(SOURCES_SC3000)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489Z) $(SOURCES_SC3000) >src-generated/modules_sc3000.c
 	@grep "src" src-generated/modules_sc3000.c | awk -f modules.awk >src-generated/modules_sc3000.h
 	@grep "data" src-generated/modules_sc3000.c | awk -f modules.awk >>src-generated/modules_sc3000.h
 
@@ -601,8 +609,8 @@ SOURCES_SG1000 := $(subst src/hw/sg1000/,src-generated/sg1000_,$(MODULES_SG1000:
 src-generated/sg1000_%.c: $(MODULES_SG1000)
 	@xxd -i $(subst src-generated/sg1000_,src/hw/sg1000/,$(@:.c=.asm)) >$@
 
-src-generated/modules_sg1000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SG1000)
-	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SG1000) >src-generated/modules_sg1000.c
+src-generated/modules_sg1000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489Z) $(SOURCES_SG1000)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489Z) $(SOURCES_SG1000) >src-generated/modules_sg1000.c
 	@grep "src" src-generated/modules_sg1000.c | awk -f modules.awk >src-generated/modules_sg1000.h
 	@grep "data" src-generated/modules_sg1000.c | awk -f modules.awk >>src-generated/modules_sg1000.h
 
