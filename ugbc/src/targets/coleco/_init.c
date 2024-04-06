@@ -183,7 +183,7 @@ void target_initialization( Environment * _environment ) {
     outline0("CALL $1f7f");
 
     tms9918_initialization( _environment );
-    sn76489_initialization( _environment );
+    sn76489z_initialization( _environment );
 
     z80_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
 

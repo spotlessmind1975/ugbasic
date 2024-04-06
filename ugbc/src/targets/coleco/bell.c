@@ -54,9 +54,9 @@
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {
 
-    sn76489_start( _environment, _channels );
-    sn76489_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
-    sn76489_set_note( _environment, _channels, _note );
+    sn76489z_start( _environment, _channels );
+    sn76489z_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
+    sn76489z_set_note( _environment, _channels, _note );
 
 }
 
@@ -79,13 +79,13 @@ void bell_vars( Environment * _environment, char * _note, char * _channels ) {
     Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        sn76489_start_var( _environment, channels->realName );
-        sn76489_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
-        sn76489_set_note_vars( _environment, channels->realName, note->realName );
+        sn76489z_start_var( _environment, channels->realName );
+        sn76489z_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
+        sn76489z_set_note_vars( _environment, channels->realName, note->realName );
     } else {
-        sn76489_start_var( _environment, NULL );
-        sn76489_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
-        sn76489_set_note_vars( _environment, NULL, note->realName );
+        sn76489z_start_var( _environment, NULL );
+        sn76489z_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
+        sn76489z_set_note_vars( _environment, NULL, note->realName );
     }
 
 }

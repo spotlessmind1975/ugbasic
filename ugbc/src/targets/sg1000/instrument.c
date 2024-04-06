@@ -54,8 +54,8 @@
 </usermanual> */
 void instrument( Environment * _environment, int _instrument, int _channels ) {
 
-    sn76489_start( _environment, _channels );
-    sn76489_set_program( _environment, _channels, _instrument );
+    sn76489z_start( _environment, _channels );
+    sn76489z_set_program( _environment, _channels, _instrument );
 
 }
 
@@ -77,11 +77,11 @@ void instrument_semi_var( Environment * _environment, int _instrument, char * _c
 
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        sn76489_start_var( _environment, channels->realName );
-        sn76489_set_program_semi_var( _environment, channels->realName, _instrument );
+        sn76489z_start_var( _environment, channels->realName );
+        sn76489z_set_program_semi_var( _environment, channels->realName, _instrument );
     } else {
-        sn76489_start_var( _environment, NULL );
-        sn76489_set_program_semi_var( _environment, NULL, _instrument );
+        sn76489z_start_var( _environment, NULL );
+        sn76489z_set_program_semi_var( _environment, NULL, _instrument );
     }
 
 }
