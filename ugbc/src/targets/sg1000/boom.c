@@ -52,9 +52,9 @@
 </usermanual> */
 void boom( Environment * _environment, int _channels ) {
 
-    sn76489_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
-    sn76489_start( _environment, _channels );
-    sn76489_set_frequency( _environment, _channels, 1000 );
+    sn76489z_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
+    sn76489z_start( _environment, _channels );
+    sn76489z_set_frequency( _environment, _channels, 1000 );
 
 }
 
@@ -74,11 +74,11 @@ void boom_var( Environment * _environment, char * _channels ) {
 
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        sn76489_start_var( _environment, channels->realName );
-        sn76489_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
+        sn76489z_start_var( _environment, channels->realName );
+        sn76489z_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
     } else {
-        sn76489_start_var( _environment, NULL );
-        sn76489_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
+        sn76489z_start_var( _environment, NULL );
+        sn76489z_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
     }
     
 }
