@@ -655,8 +655,6 @@ void variable_cleanup( Environment * _environment ) {
 
     variable_on_memory_init( _environment, 0 );
 
-    printf( "outputFileType = %d\n", _environment->outputFileType );
-    
     if ( _environment->outputFileType == OUTPUT_FILE_TYPE_D64 ) {
         outhead0("C64REUBANKSLOAD:")
         Bank * bank = _environment->expansionBanks;
