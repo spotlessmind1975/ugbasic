@@ -2103,4 +2103,22 @@ int ef936x_palette_extract( Environment * _environment, char * _data, int _width
 
 }
 
+void ef936x_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction ) {
+
+    deploy( ef936xvars, src_hw_ef936x_vars_asm);
+
+    if ( _direction & FLAG_FLIP_X ) {
+        ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagex, src_hw_ef936x_flip_image_x_asm );
+        outline0("JSR FLIPIMAGEX");
+    } 
+    
+    if ( _direction & FLAG_FLIP_Y ) {
+        ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagey, src_hw_ef936x_flip_image_y_asm );
+        outline0("JSR FLIPIMAGEY");
+    }
+
+}
+
 #endif
