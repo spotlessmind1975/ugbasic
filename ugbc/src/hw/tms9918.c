@@ -2679,4 +2679,25 @@ void tms9918_calculate_sequence_frame_offset( Environment * _environment, char *
 
 }
 
+void tms9918_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction ) {
+
+    // deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    // deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
+
+    // MAKE_LABEL
+
+    // if ( _direction & FLAG_FLIP_X ) {
+    //     tms9918_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    //     deploy( flipimagex, src_hw_tms9918_flip_image_x_asm );
+    //     outline0("CALL FLIPIMAGEX");
+    // } 
+    
+    // if ( _direction & FLAG_FLIP_Y ) {
+    //     ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    //     deploy( flipimagey, src_hw_tms9918_flip_image_y_asm );
+    //     outline0("CALL FLIPIMAGEY");
+    // }
+
+}
+
 #endif
