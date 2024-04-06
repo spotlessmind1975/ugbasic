@@ -2586,4 +2586,25 @@ void cpc_calculate_sequence_frame_offset( Environment * _environment, char * _of
 
 }
 
+void cpc_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction ) {
+
+    // deploy( cpcvars, src_hw_cpc_vars_asm);
+    // deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+
+    // MAKE_LABEL
+
+    // if ( _direction & FLAG_FLIP_X ) {
+    //     cpc_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    //     deploy( flipimagex, src_hw_cpc_flip_image_x_asm );
+    //     outline0("CALL FLIPIMAGEX");
+    // } 
+    
+    // if ( _direction & FLAG_FLIP_Y ) {
+    //     ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    //     deploy( flipimagey, src_hw_cpc_flip_image_y_asm );
+    //     outline0("CALL FLIPIMAGEY");
+    // }
+
+}
+
 #endif
