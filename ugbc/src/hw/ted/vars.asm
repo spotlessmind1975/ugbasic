@@ -55,6 +55,8 @@ XSCROLLPOS:         .byte 0
 YSCROLLPOS:         .byte 4
 XSCROLL:            .byte 0
 YSCROLL:            .byte 0
+IMAGE2:             .word $0
+IMAGEW2:            .word $0
 
 .feature force_range
 

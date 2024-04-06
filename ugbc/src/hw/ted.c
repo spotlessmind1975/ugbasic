@@ -2978,4 +2978,23 @@ int ted_palette_extract( Environment * _environment, char * _data, int _width, i
 
 }
 
+void ted_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
+
+    if ( _direction & FLAG_FLIP_X ) {
+        ted_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagex, src_hw_ted_flip_image_x_asm );
+        outline0("JSR FLIPIMAGEX");
+    } 
+    
+    if ( _direction & FLAG_FLIP_Y ) {
+        ted_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagey, src_hw_ted_flip_image_y_asm );
+        outline0("JSR FLIPIMAGEY");
+    }
+
+}
+
 #endif
