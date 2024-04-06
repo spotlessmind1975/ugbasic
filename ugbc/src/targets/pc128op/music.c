@@ -51,5 +51,14 @@
 </usermanual> */
 void music_var( Environment * _environment, char * _music, int _loop ) {
 
+    Variable * music = variable_retrieve( _environment, _music );
+
+    if ( music->type != VT_MUSIC ) {
+        CRITICAL_CANNOT_MUSIC( _music );
+    }
+
+    sn76489m_start( _environment, 0xff );
+    sn76489m_music( _environment, music->realName, music->size, _loop );
+
 }
 
