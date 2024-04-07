@@ -46,6 +46,7 @@ PC128TIMER  set *-2       ; (variable within code)
     STD   PC128TIMER      ; write result to TI variable
     LDA   #PAGE0          ; sets the direct page
     TFR   A,DP            ; for ugbc routines
+    JSR   MUSICPLAYER
     JSR   TIMERMANAGER
     PULS  D
     JMP   >PC128IRQDEF    ; jump to next ISR

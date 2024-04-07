@@ -102,6 +102,7 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
 
     ef936x_initialization( _environment );
+    sn76489m_initialization( _environment );
 
     if ( _environment->tenLinerRulesEnforced ) {
         cpu_call( _environment, "VARINIT" );

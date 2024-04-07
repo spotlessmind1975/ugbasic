@@ -754,7 +754,7 @@ void sn76489m_music( Environment * _environment, char * _music, int _size, int _
     outline0("ORCC #$50");
     outline1("LDA #$%2.2x", _loop );
     outline0("STA SN76489MUSICLOOP");
-    outline1("LDX %s", _music);
+    outline1("LDX #%s", _music);
     outline1("LDB #$%4.4x", _size);
     outline0("JSR MUSICPLAYERRESET");
     outline0("ANDCC #$AF");
