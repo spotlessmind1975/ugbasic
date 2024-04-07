@@ -52,9 +52,9 @@
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {
 
-    sn76489m_start( _environment, _channels );
-    sn76489m_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
-    sn76489m_set_note( _environment, _channels, _note );
+    deploy( pc128audio, src_hw_pc128op_audio_asm );
+
+    outline0("JSR PC128AUDIOBELL");
 
 }
 
@@ -72,16 +72,9 @@ void bell( Environment * _environment, int _note, int _channels ) {
 </usermanual> */
 void bell_vars( Environment * _environment, char * _note, char * _channels ) {
 
-    Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        sn76489m_start_var( _environment, channels->realName );
-        sn76489m_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
-        sn76489m_set_note_vars( _environment, channels->realName, note->realName );
-    } else {
-        sn76489m_start_var( _environment, NULL );
-        sn76489m_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
-        sn76489m_set_note_vars( _environment, NULL, note->realName );
-    }
+    deploy( pc128audio, src_hw_pc128op_audio_asm );
+
+    outline0("LDY #$80");
+    outline0("JSR PC128AUDIOBELL");
 
 }

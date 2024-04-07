@@ -51,8 +51,6 @@
 </usermanual> */
 void volume_off( Environment * _environment, int _channels ) {
 
-    sn76489m_set_volume( _environment, 0, _channels );
-
 }
 
 /**
@@ -67,12 +65,5 @@ void volume_off( Environment * _environment, int _channels ) {
 @keyword VOLUME OFF
 </usermanual> */
 void volume_off_var( Environment * _environment, char * _channels ) {
-
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        sn76489m_set_volume_semi_var( _environment, channels->realName, 0 );
-    } else {
-        sn76489m_set_volume_semi_var( _environment, NULL, 0 );
-    }
 
 }
