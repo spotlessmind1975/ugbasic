@@ -329,6 +329,7 @@ SN76489START2:
     LD C, A
     IN A, (C)
     LD B, A
+    POP AF
     RET
 
 ; A: channels
@@ -730,6 +731,24 @@ MUSICPLAYER:
     LD A, (SN76489MUSICREADY)
     CP 0
     JR Z, MUSICPLAYERQ
+
+    LD A, (SN76489MUSICTYPE)
+    SRL A
+    JR NC, MUSICPLAYER2
+    JP MUSICPLAYERIAF
+MUSICPLAYER2:
+    SRL A
+    JR NC, MUSICPLAYER4
+    JR MUSICPLAYER8
+MUSICPLAYER4:
+    SRL A
+    JR NC, MUSICPLAYER8
+    CALL MUSICPLAYERPSG
+MUSICPLAYER8:
+    POP AF
+    RET
+
+MUSICPLAYERIAF:
     PUSH BC
     PUSH DE
     PUSH HL
@@ -912,3 +931,54 @@ MUSICPLAYERLE2:
 MUSICREADNEXTBYTEEND:
     LD B, $00
     RET
+
+; Original code by Dino Florenzi:
+; https://github.com/dinoflorenzi/THOMSON-MO-TO-SOUNDCARD/blob/efed15f2510d181f550dca5f3da296c8e39fe80d/SN76489AN/DEMOS/VAMPIRE/vampire_music.asm
+; Adapted by Marco Spedaletti for ugBASIC and Zilog Z80
+
+MUSICPLAYERPSG:
+    PUSH AF
+    PUSH HL
+	LD A, (SN76489JIFFIES)		    ;load delay counter value 		
+    CP 0
+	JR NZ, MUSICPLAYERPSGSKIP		;equal to zero? YES continue, NO jump to SKIP 
+MUSICPLAYERPSGLOOP:
+	LD HL, (SN76489TMPPTR)	        ;load music track execution address
+    LD A, (HL)                      ;load music data
+    LD B, A
+    INC HL
+    CP 0
+	JR Z, MUSICPLAYERPSGRESET		;equal to ZERO? YES jump to RESET 
+    PUSH AF
+    AND $C0		                ;test the A register with %11000000 mask (delay data bit)
+    CP 0
+    POP AF
+    JR Z, MUSICPLAYERPSGSTOSKIP	    ;is delay data? YES jump to STOSKIP, NO continue
+
+                                    ;write register A to PSG device (update sound)
+    PUSH BC
+    PUSH AF
+    LD A, CSG_OUT
+    LD C, A
+    POP AF
+    OUT (C), A
+    POP BC
+	LD (SN76489TMPPTR), HL       	;update the music execution address
+	JR MUSICPLAYERPSGLOOP		    ;jump to LOOP
+MUSICPLAYERPSGSKIP:
+    LD A, (SN76489JIFFIES)          ;decrement delay value in memory
+    DEC A
+    LD (SN76489JIFFIES), A
+MUSICPLAYERPSGEXIT:
+    POP HL
+    POP AF
+	RET				            ;return
+MUSICPLAYERPSGSTOSKIP:
+	AND $07		                ;get the delay value (7*1/50 sec max)
+	LD (SN76489JIFFIES), A	    ;store to delay memory address
+	LD (SN76489TMPPTR), HL     	;update the music execution address
+	JR MUSICPLAYERPSGEXIT		;jump to EXIT
+MUSICPLAYERPSGRESET:
+	LD HL, (SN76489TMPPTR_BACKUP)	;reset the execution address (restart music to the start)
+	LD (SN76489TMPPTR), HL
+	JR MUSICPLAYERPSGEXIT	    ;jump to EXIT
