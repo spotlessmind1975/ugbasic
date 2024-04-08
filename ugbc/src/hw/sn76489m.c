@@ -746,7 +746,7 @@ void sn76489m_stop_vars( Environment * _environment, char * _channels ) {
 
 }
 
-void sn76489m_music( Environment * _environment, char * _music, int _size, int _loop ) {
+void sn76489m_music( Environment * _environment, char * _music, int _size, int _loop, int _type ) {
 
     deploy( sn76489vars, src_hw_sn76489m_vars_asm );
     deploy( sn76489startup, src_hw_sn76489m_startup_asm );
@@ -757,6 +757,8 @@ void sn76489m_music( Environment * _environment, char * _music, int _size, int _
     outline1("LDX #%s", _music);
     outline1("LDB #$%4.4x", _size);
     outline0("JSR MUSICPLAYERRESET");
+    outline1("LDA #$%2.2x", _type );
+    outline0("STA SN76489MUSICTYPE" );
     outline0("ANDCC #$AF");
 
 }

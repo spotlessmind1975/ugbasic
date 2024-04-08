@@ -49,6 +49,7 @@ SN76489FREQTABLE
     fdb 4,          4,          3,          3,          3,          3,          3,          2,          2,          2
     fdb 2,          2,          2,          2,          1,          1,          1,          1,          1           
     
+SN76489MUSICTYPE        fcb $0
 SN76489MUSICREADY       fcb $0
 SN76489BLOCKS           fdb $0
 SN76489LASTBLOCK        fcb $0

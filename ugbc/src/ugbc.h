@@ -199,6 +199,15 @@ typedef struct _Storage {
 
 } Storage;
 
+typedef enum _MusicType {
+
+    MUSIC_TYPE_AUTO = 0,
+    MUSIC_TYPE_IAF = 1,
+    MUSIC_TYPE_MID = 2,
+    MUSIC_TYPE_PSG = 4
+
+} MusicType;
+
 typedef enum _OutputFileType {
 
     OUTPUT_FILE_TYPE_BIN = 0,
@@ -4107,7 +4116,7 @@ void                    move_tile( Environment * _environment, char * _tile, cha
 Variable *              music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 Variable *              music_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 Variable *              music_storage( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
-void                    music_var( Environment * _environment, char * _music, int _loop );
+void                    music_var( Environment * _environment, char * _music, int _loop, int _music_type );
 
 //----------------------------------------------------------------------------
 // *N*

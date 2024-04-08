@@ -93,6 +93,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
+%token IAF PSG MIDI
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -163,6 +164,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> dsave_to_offset dsave_from_address dsave_size_size
 %type <string> to_variable
 %type <string> optional_step
+%type <integer> music_type
+%type <integer> optional_loop
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -6925,16 +6928,34 @@ instrument_definition :
     | instrument_definition_expression
     ;
 
-music_definition_expression:
-    expr {
-        music_var( _environment, $1, 0 );
+music_type :
+    {
+        $$ = MUSIC_TYPE_AUTO;
     }
-    | LOOP expr {
-        music_var( _environment, $2, 1 );
+    | IAF {
+        $$ = MUSIC_TYPE_IAF;
     }
-    | expr LOOP {
-        music_var( _environment, $1, 1 );
+    | MID {
+        $$ = MUSIC_TYPE_MID;
+    }
+    | PSG {
+        $$ = MUSIC_TYPE_PSG;
     };
+
+optional_loop:
+    {
+        $$ = 0;
+    }
+    | LOOP {
+        $$ = 1;
+    }
+    ;
+
+music_definition_expression:
+    expr music_type optional_loop {
+        music_var( _environment, $1, $3, $2 );
+    }
+    ;
 
 music_definition:
     music_definition_expression

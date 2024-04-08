@@ -531,6 +531,23 @@ MUSICPLAYER
     PSHS D
     LDA SN76489MUSICREADY
     BEQ MUSICPLAYERQ
+    LDA SN76489MUSICTYPE
+    LSRA
+    BCC MUSICPLAYER2
+    JMP MUSICPLAYERIAF
+MUSICPLAYER2
+    LSRA
+    BCC MUSICPLAYER4
+    JMP MUSICPLAYER8
+MUSICPLAYER4
+    LSRA
+    BCC MUSICPLAYER8
+    JSR MUSICPLAYERPSG
+MUSICPLAYER8
+    PULS D
+    RTS
+
+MUSICPLAYERIAF
     PSHS D
     PSHS X
     PSHS Y
@@ -692,3 +709,37 @@ MUSICREADNEXTBYTEEND
     LDB #$00
     PULS X
     RTS
+
+; Original code by Dino Florenzi:
+; https://github.com/dinoflorenzi/THOMSON-MO-TO-SOUNDCARD/blob/efed15f2510d181f550dca5f3da296c8e39fe80d/SN76489AN/DEMOS/VAMPIRE/vampire_music.asm
+; Adapted by Marco Spedaletti for ugBASIC.
+
+MUSICPLAYERPSG
+    PSHS D
+    PSHS X
+	LDA SN76489JIFFIES		    ;load delay counter value 		
+	BNE MUSICPLAYERPSGSKIP		;equal to zero? YES continue, NO jump to SKIP 
+MUSICPLAYERPSGLOOP
+	LDX SN76489TMPPTR	        ;load music track execution address
+	LDA ,X+			            ;load music data
+	BEQ MUSICPLAYERPSGRESET		;equal to ZERO? YES jump to RESET 
+	BITA #$C0		            ;test the A register with %11000000 mask (delay data bit)
+	BEQ MUSICPLAYERPSGSTOSKIP	;is delay data? YES jump to STOSKIP, NO continue
+	STA $A7FF		            ;write register A to PSG device (update sound)
+	STX SN76489TMPPTR       	;update the music execution address
+	BRA MUSICPLAYERPSGLOOP		;jump to LOOP
+MUSICPLAYERPSGSKIP
+	DEC SN76489JIFFIES		    ;decrement delay value in memory
+MUSICPLAYERPSGEXIT
+    PULS X
+    PULS D
+	RTS				            ;return
+MUSICPLAYERPSGSTOSKIP
+	ANDA #$07		            ;get the delay value (7*1/50 sec max)
+	STA SN76489JIFFIES		    ;store to delay memory address
+	STX SN76489TMPPTR       	;update the music execution address
+	BRA MUSICPLAYERPSGEXIT		;jump to EXIT
+MUSICPLAYERPSGRESET
+	LDX SN76489TMPPTR_BACKUP	;reset the execution address (restart music to the start)
+	STX SN76489TMPPTR
+	BRA MUSICPLAYERPSGEXIT	    ;jump to EXIT
