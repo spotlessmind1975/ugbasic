@@ -50,16 +50,18 @@
 @keyword MUSIC
 @target sc3000
 </usermanual> */
-void music_var( Environment * _environment, char * _music, int _loop ) {
+void music_var( Environment * _environment, char * _music, int _loop, int _music_type ) {
 
     Variable * music = variable_retrieve( _environment, _music );
 
-    if ( music->type != VT_MUSIC ) {
-        CRITICAL_CANNOT_MUSIC( _music );
+    if ( _music_type == MUSIC_TYPE_AUTO ) {
+        if ( music->type != VT_MUSIC ) {
+            CRITICAL_CANNOT_MUSIC( _music );
+        }
+
+        sn76489_start( _environment, 0xff );
+        sn76489_music( _environment, music->realName, music->size, _loop);
     }
-
-    sn76489_start( _environment, 0xff );
-    sn76489_music( _environment, music->realName, music->size, _loop);
-
+    
 }
 
