@@ -4940,6 +4940,38 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
 
 }
 
+void cpu6502_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    if ( _size ) {
+
+        MAKE_LABEL
+
+        no_inline( cpu_mem_move )
+
+        embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
+
+            deploy( duff, src_hw_6502_duff_asm );
+
+            outline1("LDX #$%2.2X", (_size & 0xff ) );
+            outline0("STX MATHPTR0" );
+            outline1("LDX #$%2.2X", ( _size >> 8 ) & 0xff );
+            outline0("STX MATHPTR1" );
+            outline1("LDA %s", _source );
+            outline0("STA TMPPTR+1" );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline0("STA TMPPTR" );
+            outline1("LDA #>%s", _destination );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA #<%s", _destination );
+            outline0("STA TMPPTR2" );
+            outline0("JSR DUFFDEVICE" );
+
+        done()
+
+    }
+
+}
+
 void cpu6502_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
     
     MAKE_LABEL
