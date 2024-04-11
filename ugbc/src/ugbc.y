@@ -6971,6 +6971,9 @@ music_definition_expression:
     expr music_type optional_loop {
         music_var( _environment, $1, $3, $2 );
     }
+    | LOOP expr music_type {
+        music_var( _environment, $2, 1, $3 );
+    }
     ;
 
 music_definition:
