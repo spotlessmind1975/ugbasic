@@ -60,6 +60,10 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
     
     Variable * image = variable_retrieve( _environment, _image );
 
+    if ( image->bankAssigned != -1 ) {
+        CRITICAL_CANNOT_FLIP_BANKED_IMAGE( _image );
+    }
+    
     Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
 
     Variable * frame = NULL;
@@ -227,10 +231,6 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 resource.isAddress = 0;
 
                 ef936x_flip_image( _environment, &resource, NULL, NULL, 0, 0, _direction );
-
-                if ( ! image->readonly && ( image->uncompressedSize == 0 )) {
-                    bank_write_semi_var( _environment, bankWindowName, bank->name, address->name, frameSize->name );
-                }
 
             } else {
                 ef936x_flip_image( _environment, resource, NULL, NULL, 0, 0, _direction );
