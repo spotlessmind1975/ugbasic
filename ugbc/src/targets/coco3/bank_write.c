@@ -71,6 +71,27 @@ void bank_write_vars( Environment * _environment, char * _address1, char * _bank
     
 }
 
+void bank_write_vars_direct( Environment * _environment, char * _address1, char * _bank, char * _address2, char * _size ) {
+
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_coco3_bank_asm );
+
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
+    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
+
+    outline1("LDY #%s", address1->realName );
+    outline1("LDX %s", address2->realName );
+    outline1("LDA %s", bank->realName );
+    outline1("LDU %s", size->realName );
+    outline0("JSR BANKREAD");
+
+    outline0("; end bank read");
+    
+}
+
 void bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size ) {
 
     deploy_preferred( duff, src_hw_6809_duff_asm );
@@ -101,4 +122,36 @@ void bank_write_vars_bank_direct_size( Environment * _environment, char * _addre
 
     }
     outline0("; end bank read");    
+}
+
+void bank_write_semi_var( Environment * _environment, char * _address2, int _bank, int _address1, int _size ) {
+
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_coco3_bank_asm );
+
+    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+
+    outline1("LDY %s", address2->realName );
+    outline1("LDA #$%2.2x", _bank );
+    outline1("LDX #$%4.4x", _address1 );
+
+    switch( _size ) {
+        case 1:
+            outline0("JSR BANKREAD1");
+            break;
+        case 2:
+            outline0("JSR BANKREAD2");
+            break;
+        case 4:
+            outline0("JSR BANKREAD4");
+            break;
+        default:
+            outline1("LDU #$%4.4x", _size );
+            outline0("JSR BANKREAD");
+            break;
+
+    }
+    outline0("; end bank read");
+
 }
