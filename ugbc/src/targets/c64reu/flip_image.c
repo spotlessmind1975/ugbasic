@@ -69,31 +69,102 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
 
     switch( resource->type ) {
         case VT_SEQUENCE:
-            if ( !sequence ) {
-                if ( !frame ) {
-                    vic2_flip_image( _environment, resource, "", "", image->frameSize, image->frameCount, _direction );
+            if ( image->bankAssigned != -1 ) {
+
+                Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
+                variable_store( _environment, frameSize->name, image->frameSize );
+                Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+
+                if ( !sequence ) {
+                    if ( !frame ) {
+                        vic2_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
+                    } else {
+                        vic2_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
+                    }
                 } else {
-                    vic2_flip_image( _environment, resource, "", frame->realName, image->frameSize, image->frameCount, _direction );
+                    if ( !frame ) {
+                        vic2_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
+                    } else {
+                        vic2_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
+                    }
                 }
+
+                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                variable_store( _environment, address->name, image->absoluteAddress );
+                variable_add_inplace_vars( _environment, address->name, offset->name );
+
+                Resource resource;
+                resource.realName = strdup( address->realName );
+                resource.bankNumber = image->bankAssigned;
+                resource.isAddress = 1;
+
+                vic2_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
+
             } else {
-                if ( !frame ) {
-                    vic2_flip_image( _environment, resource, "", sequence->realName, image->frameSize, image->frameCount, _direction );
+                if ( !sequence ) {
+                    if ( !frame ) {
+                        vic2_flip_image( _environment, resource, "", "", image->frameSize, image->frameCount, _direction );
+                    } else {
+                        vic2_flip_image( _environment, resource, frame->realName, "", image->frameSize, image->frameCount, _direction );
+                    }
                 } else {
-                    vic2_flip_image( _environment, resource, frame->realName, sequence->realName, image->frameSize, image->frameCount, _direction );
+                    if ( !frame ) {
+                        vic2_flip_image( _environment, resource, "", sequence->realName, image->frameSize, image->frameCount, _direction );
+                    } else {
+                        vic2_flip_image( _environment, resource, frame->realName, sequence->realName, image->frameSize, image->frameCount, _direction );
+                    }
                 }
             }
             break;
         case VT_IMAGES:
-            if ( !frame ) {
-                vic2_flip_image( _environment, resource, "", NULL, image->frameSize, 0, _direction );
+            if ( image->bankAssigned != -1 ) {
+                
+                Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
+                variable_store( _environment, frameSize->name, image->frameSize );
+                Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+
+                if ( !frame ) {
+                    vic2_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
+                } else {
+                    vic2_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                }
+
+                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                variable_store( _environment, address->name, image->absoluteAddress );
+                variable_add_inplace_vars( _environment, address->name, offset->name );
+
+                Resource resource;
+                resource.realName = strdup( address->realName );
+                resource.bankNumber = image->bankAssigned;
+                resource.isAddress = 1;
+
+                vic2_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
+                
             } else {
-                vic2_flip_image( _environment, resource, frame->realName, NULL, image->frameSize, 0, _direction );
+                if ( !frame ) {
+                    vic2_flip_image( _environment, resource, "", NULL, image->frameSize, 0, _direction );
+                } else {
+                    vic2_flip_image( _environment, resource, frame->realName, NULL, image->frameSize, 0, _direction );
+                }
             }
             break;
         case VT_IMAGE:
         case VT_ARRAY:
-            vic2_flip_image( _environment, resource, NULL, NULL, 0, 0, _direction );
-            break;
+            if ( image->bankAssigned != -1 ) {
+
+                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                variable_store( _environment, address->name, image->absoluteAddress );
+
+                Resource resource;
+                resource.realName = strdup( address->realName );
+                resource.bankNumber = image->bankAssigned;
+                resource.isAddress = 1;
+
+                vic2_flip_image( _environment, &resource, NULL, NULL, 0, 0, _direction );
+            } else {
+                vic2_flip_image( _environment, resource, NULL, NULL, 0, 0, _direction );
+            }
+             break;
         default:
             CRITICAL_FLIP_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }

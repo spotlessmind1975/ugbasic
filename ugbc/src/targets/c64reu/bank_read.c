@@ -78,16 +78,14 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
 
     deploy( bank, src_hw_c64reu_bank_asm );
 
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-
     outline1("LDA #$%2.2x", (unsigned char) ( _address1 & 0xff ) );
     outline0("STA TMPPTR");
     outline1("LDA #$%2.2x", (unsigned char) ( ( _address1 >> 8 ) & 0xff ) );
     outline0("STA TMPPTR+1");
 
-    outline1("LDA %s", address2->realName );
+    outline1("LDA #<%s", _address2 );
     outline0("STA TMPPTR2");
-    outline1("LDA %s", address_displacement( _environment, address2->realName, "1" ) );
+    outline1("LDA #>%s", _address2 );
     outline0("STA TMPPTR2+1");
 
     switch( _size ) {
