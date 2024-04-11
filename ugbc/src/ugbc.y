@@ -93,7 +93,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
-%token IAF PSG MIDI
+%token IAF PSG MIDI ATLAS
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1541,6 +1541,9 @@ load_flag :
         $$ = FLAG_COMPRESSED;
     };
 
+images_or_atlas :
+    IMAGES | ATLAS;
+
 images_load_flag :
     FLIP X {
         $$ = FLAG_FLIP_X;
@@ -2522,7 +2525,7 @@ const_key_scancode_definition :
     };
 
 load_image  : LOAD IMAGE | IMAGE LOAD;
-load_images : LOAD IMAGES | IMAGES LOAD;
+load_images : LOAD images_or_atlas | images_or_atlas LOAD;
 load_sequence : LOAD SEQUENCE | SEQUENCE LOAD;
 load_tileset  : LOAD TILESET | TILESET LOAD;
 load_tilemap  : LOAD TILEMAP | TILEMAP LOAD;
@@ -2834,17 +2837,17 @@ exponential:
         }
         $$ = image_load_from_buffer( _environment, c->valueString->value, c->valueString->size )->name;
       }      
-    | OP IMAGES CP BufferDefinitionHex { 
+    | OP images_or_atlas CP BufferDefinitionHex { 
         int size;
         char * buffer = parse_buffer( _environment, $4, &size, 1 );
         $$ = images_load_from_buffer( _environment, buffer, size )->name;
       }   
-    | OP IMAGES CP RawString { 
+    | OP images_or_atlas CP RawString { 
         int size;
         char * buffer = parse_buffer( _environment, $4, &size, 0 );
         $$ = images_load_from_buffer( _environment, buffer, size )->name;
       }   
-    | OP IMAGES CP Identifier { 
+    | OP images_or_atlas CP Identifier { 
         Constant * c = constant_find( ((Environment *)_environment)->constants, $4 );
         if ( c == NULL ) {
             CRITICAL_UNDEFINED_CONSTANT( $4 );
@@ -2901,7 +2904,7 @@ exponential:
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
-    | NEW IMAGES OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
+    | NEW images_or_atlas OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
         $$ = new_images( _environment, $4, $6, $8, ((struct _Environment *)_environment)->currentMode )->name;
       }
     | NEW SEQUENCE OP const_expr OP_COMMA const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
@@ -5197,7 +5200,7 @@ blit_definition_define_expression :
     ;
 
 image_or_images : 
-    IMAGE | IMAGES
+    IMAGE | IMAGES | ATLAS
     ;
 
 bitmap_or_bitmaps : 
@@ -5775,6 +5778,9 @@ datatype :
         $$ = VT_IMAGE;
     }
     | IMAGES {
+        $$ = VT_IMAGES;
+    }
+    | ATLAS {
         $$ = VT_IMAGES;
     }
     | SEQUENCE {
@@ -8947,14 +8953,14 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | IMAGES const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+  | images_or_atlas const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
         Variable * v = images_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $5+$6, $7, $8 );
         if ( $9 ) {
             prepare_variable_storage( _environment, $9, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | IMAGES const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+  | images_or_atlas const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
         Variable * v = images_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $7+$8, $9, $10 );
         if ( $11 ) {
             prepare_variable_storage( _environment, $11, v );
