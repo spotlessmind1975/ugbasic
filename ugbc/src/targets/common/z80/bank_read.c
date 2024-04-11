@@ -58,9 +58,8 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
     variable_store( _environment, realAddress->realName, 0 );
     cpu_math_add_16bit( _environment, realAddress->realName, bankAddress, realAddress->realName );
     cpu_math_add_16bit_const( _environment, realAddress->realName, _address1, realAddress->realName );
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
 
-    cpu_mem_move_size( _environment, realAddress->realName, address2->realName, _size );
+    cpu_mem_move_indirect_direct_size( _environment, realAddress->realName, _address2, _size );
 
 }
 
