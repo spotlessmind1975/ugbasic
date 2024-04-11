@@ -66,9 +66,9 @@ indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà eme
 </usermanual> */
 void shoot( Environment * _environment, int _channels ) {
 
-    sn76489_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
-    sn76489_start( _environment, _channels );
-    sn76489_set_frequency( _environment, _channels, 1000 );
+    sn76489z_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
+    sn76489z_start( _environment, _channels );
+    sn76489z_set_frequency( _environment, _channels, 1000 );
 
 }
 
