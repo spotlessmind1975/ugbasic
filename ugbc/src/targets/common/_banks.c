@@ -123,7 +123,7 @@ char * banks_get_address( Environment * _environment, int _bank ) {
 
     }
 
-    return bankAddress->name;
+    return bankAddress->realName;
 
 }
 
