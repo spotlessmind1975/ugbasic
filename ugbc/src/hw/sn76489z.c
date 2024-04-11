@@ -725,8 +725,8 @@ void sn76489z_set_volume_semi_var( Environment * _environment, char * _channel, 
 
     outline1("LD A, $%2.2x", _volume );
     outline0("LD B, A" );
-    if ( _channels ) {
-        outline1("LD A, (%s)", _channels );
+    if ( _channel ) {
+        outline1("LD A, (%s)", _channel );
     } else {
         outline0("LD A, $7" );
     }
