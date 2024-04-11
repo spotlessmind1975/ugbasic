@@ -80,10 +80,9 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
     deploy_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_preferred( bank, src_hw_coco3_bank_asm );
 
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-
+    outline0("; bank_read_semi_var ");
     outline1("LDY #$%4.4x", _address1 );
-    outline1("LDX %s", address2->realName );
+    outline1("LDX #%s", _address2 );
     outline1("LDA #$%2.2x", _bank );
 
     switch( _size ) {
