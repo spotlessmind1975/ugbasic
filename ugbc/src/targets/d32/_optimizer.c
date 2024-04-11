@@ -306,8 +306,15 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 			printf("XXX %s", buf[x+1]->str);
 		}
     }
-	
-    
+
+	if( po_buf_match( buf[0], " LDD #$*", v1)
+	&&  po_buf_match( buf[1], " STD *", v2)
+    &&  po_buf_match( buf[2], " LDD *", v3)) {
+	    optim( buf[1], RULE "(LDD const,STD var, LDD var)->(LDD const)", NULL);
+		optim( buf[2], NULL, NULL);
+		optim( buf[3], NULL, "\tLDD #$%s", v1->str);
+    }
+
     /* a bunch of rules */
 	if( po_buf_match( buf[0], " LDA #*", v1)
 	&&  po_buf_match( buf[1], " LDB #*", v2)) {
