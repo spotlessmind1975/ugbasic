@@ -2928,17 +2928,25 @@ exponential:
     | LOAD MUSIC OP String AS String CP on_bank {
         $$ = music_load( _environment, $4, $6, $8 )->name;
       }
-    | load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = sequence_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $10, $12, $14, $15+$16, $17, $18 )->name;
+    | load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * sequence = sequence_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $10, $12, $14, $15+$16, $17, $18 );
+        sequence->readonly = $19;
+        $$ = sequence->name;
       }
-    | load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {        
-        $$ = sequence_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 )->name;
+    | load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {        
+        Variable * sequence = sequence_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 );
+        sequence->readonly = $17;
+        $$ = sequence->name;
       }
-    | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank {        
-        $$ = images_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $7+$8, $9, $10 )->name;
+    | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * images = images_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $7+$8, $9, $10 );
+        images->readonly = $11;
+        $$ = images->name;
       }
-    | load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = images_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $9+$10, $11, $12 )->name;
+    | load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * images = images_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $9+$10, $11, $12 );
+        images->readonly = $13;
+        $$ = images->name;
       }
     | load_tileset OP String CP images_load_flags using_transparency using_opacity using_background on_bank {
         $$ = tileset_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
@@ -2949,17 +2957,25 @@ exponential:
     | load_tilemap OP String CP images_load_flags using_transparency using_opacity using_background on_bank {
         $$ = tilemap_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
       }
-    | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
+    | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * image = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
+        image->readonly = $10;
+        $$ = image->name;
       }
-    | load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 )->name;
+    | load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * image = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 );
+        image->readonly = $12;
+        $$ = image->name;
       }
-    | load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = image_load( _environment, $3, NULL, $5, $7, $8+$9, $10, $11 )->name;
+    | load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * image = image_load( _environment, $3, NULL, $5, $7, $8+$9, $10, $11 );
+        image->readonly = $12;
+        $$ = image->name;
       }
-    | load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = image_load( _environment, $3, $5, $7, $9, $10+$11, $12, $13 )->name;
+    | load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * image = image_load( _environment, $3, $5, $7, $9, $10+$11, $12, $13 );
+        image->readonly = $14;
+        $$ = image->name;
       }
     | LOAD TILE OP String CP tile_load_flags {
         $$ = tile_load( _environment, $4, $6, NULL, -1 )->name;
