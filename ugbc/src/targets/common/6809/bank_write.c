@@ -67,7 +67,7 @@ void bank_write_vars( Environment * _environment, char * _address1, char * _bank
     
 }
 
-void bank_write_vars_direct( Environment * _environment, char * _address1, int _bank, char * _address2, int _size ) {
+void bank_write_vars_direct( Environment * _environment, char * _address1, char * _bank, char * _address2, char * _size ) {
 
     outline4("; bank write( ..., %s, %d, %s, %d)", _address1, _bank, _address2, _size );
     Variable * address1 = variable_retrieve( _environment, _address1 );
