@@ -3021,10 +3021,12 @@ void vic2_put_image( Environment * _environment, Resource * _image, char * _x, c
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
+    deploy( putimageram, src_hw_vic2_put_image_ram_asm );
+    deploy( putimage, src_hw_vic2_put_image_asm );
 #ifdef __c64reu__
     deploy_embedded( cpu_math_mul_8bit_to_16bit, src_hw_6502_cpu_math_mul_8bit_to_16bit_asm )
+    deploy( putimagereu, src_hw_vic2_put_image_reu_asm );
 #endif
-    deploy( putimage, src_hw_vic2_put_image_asm );
 
     MAKE_LABEL
 

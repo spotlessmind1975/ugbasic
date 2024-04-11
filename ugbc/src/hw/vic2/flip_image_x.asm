@@ -109,6 +109,830 @@ FLIPIMAGEDATA2:
 ; ----------------------------------------------------------------------------
 FLIPIMAGEX:
 
+@IF C64REU
+    LDA BANKUSE
+    BNE FLIPIMAGEXREU
+@ENDIF
+
+    JMP FLIPIMAGEXRAM
+
+@IF C64REU
+
+FLIPIMAGEXREU:
+
+    ; First of all, reset the source address from expanded
+    ; memory, since we are going to refer to it in a relative way.
+    LDA TMPPTR
+    STA REUREUBASE
+    LDA TMPPTR+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+
+    ; Then, reset the destination address to the auxiliary area
+    ; with the space for the header, that is the first thing we read.
+    LDA #<PUTIMAGEHEADER
+    STA REUC64BASE
+    LDA #>PUTIMAGEHEADER
+    STA REUC64BASE+1
+
+    ; Set the legth of the header and read it.
+    LDA #3
+    STA REUTRANSLEN
+    LDA #0
+    STA REUTRANSLEN+1
+    STA REUCONTROL
+    LDA #%10010001
+    STA REUCOMMAND
+
+    LDA #<C64REUBANKTMPBUF
+    STA REUC64BASE
+    LDA #>C64REUBANKTMPBUF
+    STA REUC64BASE+1
+    LDA #1
+    STA REUTRANSLEN
+    LDA #0
+    STA REUTRANSLEN+1
+    LDA #$BF
+    STA REUCONTROL
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
+    LDA CURRENTMODE
+    ; BITMAP_MODE_STANDARD
+    CMP #2
+    BNE FLIPIMAGEREUX2X
+    JMP FLIPIMAGEREUX2
+FLIPIMAGEREUX2X:
+    ; BITMAP_MODE_MULTICOLOR
+    CMP #3
+    BNE FLIPIMAGEREUX3X
+    JMP FLIPIMAGEREUX3
+FLIPIMAGEREUX3X:
+    ; TILEMAP_MODE_STANDARD
+    CMP #0
+    BNE FLIPIMAGEREUX0X
+    JMP FLIPIMAGEREUX0
+FLIPIMAGEREUX0X:
+    ; TILEMAP_MODE_MULTICOLOR
+    CMP #1
+    BNE FLIPIMAGEREUX1X
+    JMP FLIPIMAGEREUX1
+FLIPIMAGEREUX1X:
+    ; TILEMAP_MODE_EXTENDED
+    CMP #4
+    BNE FLIPIMAGEREUX4X
+    JMP FLIPIMAGEREUX4
+FLIPIMAGEREUX4X:
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) )
+
+; ------------------------------------------------------------------
+; --- SCREEN MODE 2 (320x200, 2 colors)
+; ------------------------------------------------------------------
+
+FLIPIMAGEREUX2:
+
+    ; Retrieve the precalculated matrix for 1 bit colors
+
+    LDA #<FLIPIMAGEDATA1
+    STA MATHPTR0
+    LDA #>FLIPIMAGEDATA1
+    STA MATHPTR0+1
+
+    ; Retrieve the width (in bytes) and the height 
+    ; (in bytes) of the image to flip horizontally.
+
+    ; LDY #0
+    ; LDA (TMPPTR),Y
+    LDA PUTIMAGEHEADER
+    STA IMAGEW
+    ; LDY #1
+    ; LDA (TMPPTR),Y
+    LDA PUTIMAGEHEADER+1
+    STA IMAGEW+1
+    LSR IMAGEW+1
+    ROR IMAGEW
+    LSR IMAGEW+1
+    ROR IMAGEW
+    LSR IMAGEW+1
+    ROR IMAGEW
+    ; LDY #2
+    ; LDA (TMPPTR),Y
+    LDA PUTIMAGEHEADER+2
+    STA IMAGEH
+    LSR IMAGEH
+    LSR IMAGEH
+    LSR IMAGEH
+    LDA IMAGEH
+    STA IMAGEH2
+
+    ; IMAGEW : width of bitmap image, in characters
+    ;  8 pixels     ->  1 character
+    ; 16 pixels     ->  2 characters
+    ; ...           ->  ...
+
+    LDA IMAGEW
+    STA IMAGEW2
+    LDA IMAGEW+1
+    STA IMAGEW2+1
+
+    ; IMAGEW2 : width of bitmap image, in pixels (IMAGEW2 = 8 * IMAGEW)
+
+    LDA IMAGEW
+    LSR A
+    ASL A
+    ASL A
+    ASL A
+    STA MATHPTR2
+    
+    ASL IMAGEW2
+    ROL IMAGEW2+1
+    ASL IMAGEW2
+    ROL IMAGEW2+1
+    ASL IMAGEW2
+    ROL IMAGEW2+1
+
+    ; Move the image pointer ahead of header.
+
+    CLC
+    LDA TMPPTR
+    ADC #3
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    ; This is the beginning of the line flip loop.
+
+    JMP FLIPIMAGEREUXCOMMONCL0
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
+
+FLIPIMAGEREUX3:
+
+    ; Retrieve the precalculated matrix for 2 bit colors
+
+    LDA #<FLIPIMAGEDATA2
+    STA MATHPTR0
+    LDA #>FLIPIMAGEDATA2
+    STA MATHPTR0+1
+
+    ; Retrieve the width (in bytes) and the height 
+    ; (in bytes) of the image to flip horizontally.
+
+    ; LDY #0
+    ; LDA (TMPPTR),Y
+    LDA PUTIMAGEHEADER
+    STA IMAGEW
+    ; LDY #1
+    ; LDA (TMPPTR),Y
+    LDA PUTIMAGEHEADER+1
+    STA IMAGEW+1
+    LSR IMAGEW+1
+    ROR IMAGEW
+    LSR IMAGEW+1
+    ROR IMAGEW
+    ; LDY #2
+    ; LDA (TMPPTR),Y    
+    LDA PUTIMAGEHEADER+2
+    STA IMAGEH
+    LSR IMAGEH
+    LSR IMAGEH
+    LSR IMAGEH
+    LDA IMAGEH
+    STA IMAGEH2
+
+    ; Move the image pointer ahead of header.
+
+    CLC
+    LDA TMPPTR
+    ADC #3
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    LDA IMAGEW
+    STA IMAGEW2
+    LDA IMAGEW+1
+    STA IMAGEW2+1
+
+; IMAGEW2 : width of bitmap image, in pixels (IMAGEW2 = 8 * IMAGEW)
+
+    LDA IMAGEW
+    LSR A
+    ASL A
+    ASL A
+    ASL A
+    STA MATHPTR2
+    
+    ASL IMAGEW2
+    ROL IMAGEW2+1
+    ASL IMAGEW2
+    ROL IMAGEW2+1
+    ASL IMAGEW2
+    ROL IMAGEW2+1
+
+    ; This is the beginning of the line flip loop.
+
+    JMP FLIPIMAGEREUXCOMMONCL0
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) )
+
+FLIPIMAGEREUX1:
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) )
+
+FLIPIMAGEREUX0:
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 4 ) )
+
+FLIPIMAGEREUX4:
+    RTS
+@ENDIF
+
+FLIPIMAGEREUXCELL:
+    TXA
+    PHA
+
+    TYA
+    TAX
+
+    ; Take first left byte and invert it.
+    
+    ; LDA (TMPPTR),Y
+
+    CLC
+    ADC TMPPTR
+    STA REUREUBASE
+    LDA #0
+    ADC TMPPTR+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010001
+    STA REUCOMMAND
+    LDA C64REUBANKTMPBUF
+
+    TAY
+    LDA (MATHPTR0),Y
+    ; Save it on the stack.
+    PHA
+    ; Take first right byte and invert it.
+    TXA
+    TAY
+    ; LDA (TMPPTR2),Y
+
+    CLC
+    ADC TMPPTR2
+    STA REUREUBASE
+    LDA #0
+    ADC TMPPTR2+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010001
+    STA REUCOMMAND
+    LDA C64REUBANKTMPBUF
+
+    TAY
+    LDA (MATHPTR0),Y
+    PHA
+    ; Store it on the first left byte.
+    TXA
+    TAY
+    PLA
+    ; STA (TMPPTR),Y
+
+    STA C64REUBANKTMPBUF
+    CLC
+    ADC TMPPTR
+    STA REUREUBASE
+    LDA #0
+    ADC TMPPTR+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010000
+    STA REUCOMMAND
+
+    ; Store the one stacked on the first right byte.
+    PLA
+
+    ; STA (TMPPTR2),Y
+
+    STA C64REUBANKTMPBUF
+    CLC
+    ADC TMPPTR2
+    STA REUREUBASE
+    LDA #0
+    ADC TMPPTR2+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010000
+    STA REUCOMMAND
+
+    PLA
+    TAX
+    RTS
+
+FLIPIMAGEREUXCOMMON:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+FLIPIMAGEREUXCOMMONC:
+
+    ; This is the beginning of the line flip loop.
+
+FLIPIMAGEREUXCOMMONCL0:
+
+    ; Copy the starting line pointer to the ending line pointer.
+
+    LDA TMPPTR
+    STA TMPPTR2
+    LDA TMPPTR+1
+    STA TMPPTR2+1
+
+    ; Move ahead the ending line pointer of 2 x ( 8 x IMAGE WIDTH ) - 1
+
+    CLC
+    LDA TMPPTR2
+    ADC IMAGEW2
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    ADC IMAGEW2+1
+    STA TMPPTR2+1
+
+    SEC
+    LDA TMPPTR2
+    SBC #8
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    SBC #0
+    STA TMPPTR2+1
+
+    ; Loop in both directions, rows at a time
+    ; TMPPTR ---->
+    ;        <---- TMPPTR2
+
+    LDA IMAGEW
+    LSR
+    TAX 
+    BNE FLIPIMAGEREUXCOMMONCL1
+    JMP FLIPIMAGEREUXCOMMONCL1TER
+
+FLIPIMAGEREUXCOMMONCL1:
+    LDY #0
+    JSR FLIPIMAGEREUXCELL
+    LDY #1
+    JSR FLIPIMAGEREUXCELL
+    LDY #2
+    JSR FLIPIMAGEREUXCELL
+    LDY #3
+    JSR FLIPIMAGEREUXCELL
+    LDY #4
+    JSR FLIPIMAGEREUXCELL
+    LDY #5
+    JSR FLIPIMAGEREUXCELL
+    LDY #6
+    JSR FLIPIMAGEREUXCELL
+    LDY #7
+    JSR FLIPIMAGEREUXCELL
+
+    ; Move back the TMPPTR2 pointer.
+
+    SEC
+    LDA TMPPTR2
+    SBC #8
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    SBC #0
+    STA TMPPTR2+1
+
+    ; Move ahead the TMPPTR pointer.
+
+    CLC
+    LDA TMPPTR
+    ADC #8
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    ; Decrement the number of bytes to flip.
+
+    DEX
+
+    ; If not finished, repeat the loop.
+
+    BNE FLIPIMAGEREUXCOMMONCL1
+
+FLIPIMAGEREUXCOMMONCL1TER:
+
+    LDA IMAGEW
+    LSR
+    BCC FLIPIMAGEREUXCOMMONCNEXTLINE
+
+    LDY #0
+    JSR FLIPIMAGEREUXCELL
+    LDY #1
+    JSR FLIPIMAGEREUXCELL
+    LDY #2
+    JSR FLIPIMAGEREUXCELL
+    LDY #3
+    JSR FLIPIMAGEREUXCELL
+    LDY #4
+    JSR FLIPIMAGEREUXCELL
+    LDY #5
+    JSR FLIPIMAGEREUXCELL
+    LDY #6
+    JSR FLIPIMAGEREUXCELL
+    LDY #7
+    JSR FLIPIMAGEREUXCELL
+
+    CLC
+    LDA TMPPTR
+    ADC #8
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    ; Move to the next line.
+FLIPIMAGEREUXCOMMONCNEXTLINE:
+    CLC
+    LDA TMPPTR
+    ADC MATHPTR2
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    ; Decrement the number of line flipped.
+
+    DEC IMAGEH
+
+    ; If there are lines to flip, repeat the loop.
+
+    LDA IMAGEH
+    BEQ FLIPIMAGEREUXCOMMONCL0X
+    JMP FLIPIMAGEREUXCOMMONCL0
+
+FLIPIMAGEREUXCOMMONCL0X:
+
+    ; Reset IMAGEH to repeat the process for the color
+    ; component.
+
+    LDA IMAGEH2
+    STA IMAGEH
+
+FLIPIMAGEREUXCOMMONCL0X2:
+
+    ; Copy the starting line pointer to the ending line pointer.
+
+    LDA TMPPTR
+    STA TMPPTR2
+    LDA TMPPTR+1
+    STA TMPPTR2+1
+
+    ; Move ahead the ending line pointer of 2 x IMAGE WIDTH - 1
+
+    CLC
+    LDA TMPPTR2
+    ADC IMAGEW
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    ADC IMAGEW+1
+    STA TMPPTR2+1
+
+    SEC
+    LDA TMPPTR2
+    SBC #1
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    SBC #0
+    STA TMPPTR2+1
+
+    ; Loop in both directions, 1 row at a time
+    ; TMPPTR ---->
+    ;        <---- TMPPTR2
+
+    LDA IMAGEW
+    LSR
+    STA IMAGEW2
+    TAX 
+    BNE FLIPIMAGEREUXCOMMONCL1X2
+    JMP FLIPIMAGEREUXCOMMONCNEXTLINEC
+
+FLIPIMAGEREUXCOMMONCL1X2:
+    ; Take first left byte
+    LDY #0
+
+    ; LDA (TMPPTR),Y
+
+    LDA TMPPTR
+    STA REUREUBASE
+    LDA TMPPTR+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010001
+    STA REUCOMMAND
+    LDA C64REUBANKTMPBUF
+
+    ; Save it on the stack.
+    PHA
+    ; Take first right byte
+    ; LDA (TMPPTR2),Y
+
+    LDA TMPPTR2
+    STA REUREUBASE
+    LDA TMPPTR2+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010001
+    STA REUCOMMAND
+    LDA C64REUBANKTMPBUF
+
+    ; Store it on the first
+    ; STA (TMPPTR),Y
+
+    STA C64REUBANKTMPBUF
+    LDA TMPPTR
+    STA REUREUBASE
+    LDA TMPPTR+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010000
+    STA REUCOMMAND
+
+    ; Store the one stacked on the first right byte.
+    PLA
+    ; STA (TMPPTR2),Y
+
+    STA C64REUBANKTMPBUF
+    LDA TMPPTR2
+    STA REUREUBASE
+    LDA TMPPTR2+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010000
+    STA REUCOMMAND
+
+    ; Move back the TMPPTR2 pointer.
+
+    DEC TMPPTR2
+    LDA TMPPTR2
+    CMP #$FF
+    BNE FLIPIMAGEREUXCOMMONCL1AX
+    DEC TMPPTR2+1
+FLIPIMAGEREUXCOMMONCL1AX:
+
+    ; Move ahead the TMPPTR pointer.
+
+    INC TMPPTR
+    BNE FLIPIMAGEREUXCOMMONCL1BX
+    INC TMPPTR+1
+FLIPIMAGEREUXCOMMONCL1BX:
+
+    ; Decrement the number of bytes to flip.
+
+    DEX
+
+    ; If not finished, repeat the loop.
+
+    BNE FLIPIMAGEREUXCOMMONCL1X2
+
+    LDA TMPPTR
+    CMP TMPPTR2
+    BNE FLIPIMAGEREUXCOMMONCNEXTLINEC
+
+    CLC
+    LDA TMPPTR
+    ADC #1
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    ; Move to the next line.
+FLIPIMAGEREUXCOMMONCNEXTLINEC:
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW2
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    ; Decrement the number of line flipped.
+
+    DEC IMAGEH
+
+    ; If there are lines to flip, repeat the loop.
+
+    LDA IMAGEH
+    BEQ FLIPIMAGEREUXCOMMONCL0X22
+    JMP FLIPIMAGEREUXCOMMONCL0X2
+
+FLIPIMAGEREUXCOMMONCL0X22:
+
+    LDA CURRENTMODE
+    CMP #3
+    BEQ FLIPIMAGEREUXCOMMONCL0X22X
+    RTS
+
+FLIPIMAGEREUXCOMMONCL0X22X:
+
+    ; Reset IMAGEH to repeat the process for the color
+    ; component.
+
+    LDA IMAGEH2
+    STA IMAGEH
+
+FLIPIMAGEREUXCOMMONCL0X2A:
+
+    ; Copy the starting line pointer to the ending line pointer.
+
+    LDA TMPPTR
+    STA TMPPTR2
+    LDA TMPPTR+1
+    STA TMPPTR2+1
+
+    ; Move ahead the ending line pointer of 2 x IMAGE WIDTH - 1
+
+    CLC
+    LDA TMPPTR2
+    ADC IMAGEW
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    ADC IMAGEW+1
+    STA TMPPTR2+1
+
+    SEC
+    LDA TMPPTR2
+    SBC #1
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    SBC #0
+    STA TMPPTR2+1
+
+    ; Loop in both directions, 1 row at a time
+    ; TMPPTR ---->
+    ;        <---- TMPPTR2
+
+    LDA IMAGEW
+    LSR
+    STA IMAGEW2
+    TAX 
+    BNE FLIPIMAGEREUXCOMMONCL1X2A
+    JMP FLIPIMAGEREUXCOMMONCNEXTLINECA
+
+FLIPIMAGEREUXCOMMONCL1X2A:
+    ; Take first left byte
+    LDY #0
+
+    ; LDA (TMPPTR),Y
+
+    LDA TMPPTR
+    STA REUREUBASE
+    LDA TMPPTR+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010001
+    STA REUCOMMAND
+    LDA C64REUBANKTMPBUF
+
+    ; Save it on the stack.
+    PHA
+    ; Take first right byte
+    ; LDA (TMPPTR2),Y
+
+    LDA TMPPTR2
+    STA REUREUBASE
+    LDA TMPPTR2+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010001
+    STA REUCOMMAND
+    LDA C64REUBANKTMPBUF
+
+    ; Store it on the first
+    ; STA (TMPPTR),Y
+
+    STA C64REUBANKTMPBUF
+    LDA TMPPTR
+    STA REUREUBASE
+    LDA TMPPTR+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010000
+    STA REUCOMMAND
+
+    ; Store the one stacked on the first right byte.
+    PLA
+    ; STA (TMPPTR2),Y
+
+    STA C64REUBANKTMPBUF
+    LDA TMPPTR2
+    STA REUREUBASE
+    LDA TMPPTR2+1
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+    LDA #%10010000
+    STA REUCOMMAND
+
+    ; Move back the TMPPTR2 pointer.
+
+    DEC TMPPTR2
+    LDA TMPPTR2
+    CMP #$FF
+    BNE FLIPIMAGEREUXCOMMONCL1AXA
+    DEC TMPPTR2+1
+FLIPIMAGEREUXCOMMONCL1AXA:
+
+    ; Move ahead the TMPPTR pointer.
+
+    INC TMPPTR
+    BNE FLIPIMAGEREUXCOMMONCL1BXA
+    INC TMPPTR+1
+FLIPIMAGEREUXCOMMONCL1BXA:
+
+    ; Decrement the number of bytes to flip.
+
+    DEX
+
+    ; If not finished, repeat the loop.
+
+    BNE FLIPIMAGEREUXCOMMONCL1X2A
+
+    LDA TMPPTR
+    CMP TMPPTR2
+    BNE FLIPIMAGEREUXCOMMONCNEXTLINECA
+
+    CLC
+    LDA TMPPTR
+    ADC #1
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    ; Move to the next line.
+FLIPIMAGEREUXCOMMONCNEXTLINECA:
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW2
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    ; Decrement the number of line flipped.
+
+    DEC IMAGEH
+
+    ; If there are lines to flip, repeat the loop.
+
+    LDA IMAGEH
+    BEQ FLIPIMAGEREUXCOMMONCL0X22A
+    JMP FLIPIMAGEREUXCOMMONCL0X2A
+
+FLIPIMAGEREUXCOMMONCL0X22A:
+
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+@ENDIF
+
+FLIPIMAGEXRAM:
+
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
@@ -731,3 +1555,4 @@ FLIPIMAGEXCOMMONCNEXTLINECA:
 FLIPIMAGEXCOMMONCL0X22A:
 
     RTS
+
