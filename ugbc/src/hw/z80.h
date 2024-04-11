@@ -230,6 +230,7 @@ void z80_mem_move_direct2_size( Environment * _environment, char *_source, char 
 void z80_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size );
 void z80_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size );
 void z80_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size );
+void z80_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size );
 void z80_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other );
 void z80_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other );
 void z80_uppercase( Environment * _environment, char *_source, char *_size, char *_result );
@@ -518,6 +519,7 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_mem_move_size( _environment, _source, _destination,  _size ) z80_mem_move_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_size( _environment, _source, _destination,  _size ) z80_mem_move_direct_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_indirect_size( _environment, _source, _destination,  _size ) z80_mem_move_direct_indirect_size( _environment, _source, _destination, _size )
+#define cpu_mem_move_indirect_direct_size( _environment, _source, _destination,  _size ) z80_mem_move_indirect_direct_size( _environment, _source, _destination, _size )
 #define cpu_math_add_16bit_with_8bit( _environment, _source, _destination, _other ) z80_math_add_16bit_with_8bit( _environment, _source, _destination, _other )
 #define cpu_math_sub_16bit_with_8bit( _environment, _source, _destination, _other ) z80_math_sub_16bit_with_8bit( _environment, _source, _destination, _other )
 #define cpu_uppercase( _environment, _source, _size, _result ) z80_uppercase( _environment, _source, _size, _result )

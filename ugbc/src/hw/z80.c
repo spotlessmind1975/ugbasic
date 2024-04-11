@@ -4479,6 +4479,22 @@ void z80_mem_move_direct_indirect_size( Environment * _environment, char *_sourc
 
 }
 
+void z80_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    if ( _size ) {
+
+        deploy( duff, src_hw_z80_duff_asm );
+
+        outline1("LD HL, (%s)", _source);
+        outline1("LD DE, %s", _destination);
+        outline1("LD A, $%2.2x", ( _size & 0xff ) );
+        outline0("LD C, A");
+        outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
+        outline0("CALL DUFFDEVICE");
+    }
+
+}
+
 void z80_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
     MAKE_LABEL
