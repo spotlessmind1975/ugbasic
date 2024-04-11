@@ -3943,6 +3943,64 @@ void cpu6809_mem_move_direct_indirect_size( Environment * _environment, char *_s
 
 }
 
+void cpu6809_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+
+    inline( cpu_mem_move )
+
+        MAKE_LABEL
+
+        if ( _size ) {
+
+            outline1("LDY %s", _source );
+            outline1("LDX #%s", _destination );
+
+            if ( _size >= 0x7f ) {
+
+                outline0("LDB #$7F" );
+                outline0("DECB" );
+                outhead1("%s", label );
+                outline0("LDA B,Y" );
+                outline0("STA B,X" );
+                outline0("DECB" );
+                outline0("CMPB #$FF" );
+                outline1("BNE %s", label );
+                outline0("LEAY 127,Y" );
+                outline0("LEAX 127,X" );
+                outline0("LEAY 1,Y" );
+                outline0("LEAX 1,X" );
+
+                _size -= 0x7f;
+
+            }
+
+            if ( _size ) {
+
+                outline1("LDB #$%2.2x", ( _size & 0xff ) );
+                outline0("DECB" );
+                outhead1("%s_2", label );
+                outline0("LDA B,Y" );
+                outline0("STA B,X" );
+                outline0("DECB" );
+                outline0("CMPB #$FF" );
+                outline1("BNE %s_2", label );
+
+            }
+
+        }
+
+    embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm )
+
+        outline1("LDD #$%4.4x", _size );
+        outline1("LDY %s", _source );
+        outline1("LDX #%s", _destination );
+        outline0("JSR DUFFDEVICE" );
+
+    done( )
+
+}
+
 void cpu6809_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
     inline( cpu_compare_memory )
