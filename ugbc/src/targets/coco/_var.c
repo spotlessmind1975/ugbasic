@@ -159,7 +159,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_BUFFER:
                     if ( variable->bankAssigned != -1 ) {
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
-                        outhead1("%s fcb $0", variable->realName );
+                        outhead1("%s fcb $0,$0", variable->realName );
                     } else {
                         if ( ! variable->absoluteAddress ) {
                             if ( variable->valueBuffer ) {

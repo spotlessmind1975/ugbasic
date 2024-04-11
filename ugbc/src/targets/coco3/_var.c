@@ -317,47 +317,53 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
-                    if ( ! variable->absoluteAddress ) {
-                        if ( variable->valueBuffer ) {
-                            if ( variable->printable ) {
-                                char * string = malloc( variable->size + 1 );
-                                memset( string, 0, variable->size );
-                                memcpy( string, variable->valueBuffer, variable->size );
-                                outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
-                            } else {
-                                out1("%s fcb ", variable->realName);
-                                int i=0;
-                                for (i=0; i<(variable->size-1); ++i ) {
-                                    if ( ( ( i + 1 ) % 16 ) == 0 ) {
-                                        outline1("%d", variable->valueBuffer[i]);
-                                        out0("   fcb ");
-                                    } else {
-                                        out1("%d,", variable->valueBuffer[i]);
+                    if ( variable->bankAssigned != -1 ) {
+                        outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
+                        outhead1("%s fcb $0,$0", variable->realName );
+                    } else {
+                        if ( ! variable->absoluteAddress ) {
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
+                                } else {
+                                    out1("%s fcb ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                            outline1("%d", variable->valueBuffer[i]);
+                                            out0("   fcb ");
+                                        } else {
+                                            out1("%d,", variable->valueBuffer[i]);
+                                        }
                                     }
+                                    outhead1("%d", variable->valueBuffer[(variable->size-1)]);
                                 }
-                                outhead1("%d", variable->valueBuffer[(variable->size-1)]);
+                            } else {
+                                outhead2("%s rzb %d", variable->realName, variable->size);
                             }
                         } else {
-                            outhead2("%s rzb %d", variable->realName, variable->size);
-                        }
-                    } else {
-                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
-                        if ( variable->valueBuffer ) {
-                            if ( variable->printable ) {
-                                char * string = malloc( variable->size + 1 );
-                                memset( string, 0, variable->size );
-                                memcpy( string, variable->valueBuffer, variable->size );
-                                outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
-                            } else {
-                                out1("%scopy fcb ", variable->realName);
-                                int i=0;
-                                for (i=0; i<(variable->size-1); ++i ) {
-                                    out1("%d,", variable->valueBuffer[i]);
+                            outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
+                                } else {
+                                    out1("%scopy fcb ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        out1("%d,", variable->valueBuffer[i]);
+                                    }
+                                    outhead1("%d", variable->valueBuffer[(variable->size-1)]);
                                 }
-                                outhead1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
                         }
                     }
+
                     break;
             }
         }

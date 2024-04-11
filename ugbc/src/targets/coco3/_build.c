@@ -257,10 +257,10 @@ void generate_dsk( Environment * _environment ) {
     Bank * bank = _environment->expansionBanks;
     while( bank ) {
         int bankSize = bank->space - bank->remains;
-        if ( bank->remains < bank->space ) {
+        if ( bankSize ) {
             char line[MAX_TEMPORARY_STORAGE];
 
-            if ( ( bank->space - bank->remains ) > blockSize ) {
+            if ( bankSize > blockSize ) {
                 sprintf( line, "%dLOADM\"BANK0.%03d\":PRINT\".\";\n", lineNr, bank->id);
                 strcat( loaderBas, line );
                 ++lineNr;
