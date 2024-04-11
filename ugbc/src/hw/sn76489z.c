@@ -709,7 +709,11 @@ void sn76489z_set_volume_vars( Environment * _environment, char * _channels, cha
     outline0("SRL A" );
     outline0("SRL A" );
     outline0("LD B, A" );
-    outline1("LD A, (%s)", _channels );
+    if ( _channels ) {
+        outline1("LD A, (%s)", _channels );
+    } else {
+        outline0("LD A, $7" );
+    }
     outline0("CALL SN76489STARTVOL");
 
 }
@@ -721,7 +725,11 @@ void sn76489z_set_volume_semi_var( Environment * _environment, char * _channel, 
 
     outline1("LD A, $%2.2x", _volume );
     outline0("LD B, A" );
-    outline1("LD A, (%s)", _channel );
+    if ( _channels ) {
+        outline1("LD A, (%s)", _channels );
+    } else {
+        outline0("LD A, $7" );
+    }
     outline0("CALL SN76489STARTVOL");
 
 }
