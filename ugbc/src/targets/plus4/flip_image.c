@@ -56,6 +56,10 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
 
     Variable * image = variable_retrieve( _environment, _image );
 
+    if ( image->bankAssigned != -1 ) {
+        CRITICAL_CANNOT_FLIP_BANKED_IMAGE( _image );
+    }
+    
     Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
 
     Variable * frame = NULL;
