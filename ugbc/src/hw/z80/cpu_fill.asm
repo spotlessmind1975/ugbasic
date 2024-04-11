@@ -46,11 +46,11 @@ CPUFILL8:
     DEC C
     RET Z
   
-CPUFILLL1:
+CPUFILL8L1:
     LD (HL), A
     DEC C
     INC HL
-    JR NZ, CPUFILLL1
+    JR NZ, CPUFILL8L1
     RET
 
 CPUFILL16:
@@ -60,7 +60,7 @@ CPUFILL16:
     POP AF
     RET Z
   
-CPUFILLL1:
+CPUFILL16L1:
     LD DE, HL
     INC DE
     LD (HL), A
