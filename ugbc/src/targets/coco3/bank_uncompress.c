@@ -51,6 +51,29 @@
 </usermanual> */
 void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
 
+    deploy_preferred( duff, src_hw_6809_msc1_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_coco3_bank_asm );
+
+    int realAddress = 0xc000 + _address1;
+
+    // outline0("; bank uncompress (1)")
+    // Variable * previous = bank_get( _environment );
+    // bank_set( _environment, _bank );
+    // int realAddress = 0x6000 + _address1;
+    // char realAddressAsString[MAX_TEMPORARY_STORAGE];
+    // sprintf(realAddressAsString, "$%4.4x", realAddress);
+    // cpu_msc1_uncompress_direct_direct( _environment, realAddressAsString, _address2 );
+    // bank_set_var( _environment, previous->name );
+    // outline0("; end bank uncompress (1)")
+
+    outline0("; bank uncompress")
+    outline1("LDA #$%2.2x", _bank );
+    outline1("LDX #$%4.4x", realAddress );
+    outline1("LDY #%s", _address2 );
+    outline0("JSR BANKUNCOMPRESS");
+    outline0("; end bank uncompress");
+
 }
 
 /**

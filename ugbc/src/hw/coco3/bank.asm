@@ -180,3 +180,24 @@ BANKWRITE
     TFR U, D
     JSR BANKWRITEG
     RTS
+
+; Uncompress directly the data from bank.
+;
+; A : bank
+; X : source memory address
+; Y : destination memory address
+BANKUNCOMPRESS
+    STA BANKSHADOW
+    JSR GIMEBANKSHADOWCHANGE
+
+    ; Save actual bank number.
+    ;LDA BANKSHADOW
+    ;STA BANKSHADOWPREV
+
+    ; Uncompress memory at high speed.
+    JSR MSC1UNCOMPRESS
+
+    JSR GIMEBANKSHADOWCHANGERESET
+    RTS
+
+    RTS
