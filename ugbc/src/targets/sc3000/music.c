@@ -60,7 +60,7 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
         }
 
         sn76489z_start( _environment, 0xff );
-        sn76489z_music( _environment, music->realName, music->size, _loop);
+        sn76489z_music( _environment, music->realName, music->size, _loop, MUSIC_TYPE_IAF );
     }
     
 }
