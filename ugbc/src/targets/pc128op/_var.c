@@ -172,13 +172,13 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                             out1("%s fcb ", variable->realName);
                             int i=0;
                             for (i=0; i<(variable->size-1); ++i ) {
-                                out1("$2.2x,", variable->valueBuffer[i]);
+                                out1("$%2.2x,", variable->valueBuffer[i]);
                             }
                             // force +1 byte if size is odd
                             if ( variable->size & 0x01 ) {
-                                outhead1("$2.2x,$0", variable->valueBuffer[(variable->size-1)]);
+                                outhead1("$%2.2x,$0", variable->valueBuffer[(variable->size-1)]);
                             } else {
-                                outhead1("$2.2x", variable->valueBuffer[(variable->size-1)]);
+                                outhead1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
                             }
                         } else if ( variable->value ) {
 
@@ -202,12 +202,10 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                                     break;
                                 }
                                 case 8:
-                                    out3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
-                                    outline0("");
+                                    outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
                                     break;
                                 case 1:
-                                    out3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
-                                    outline0("");
+                                    outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                     break;
                             }                             
                             
