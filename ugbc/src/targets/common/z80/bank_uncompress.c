@@ -53,11 +53,18 @@
 </usermanual> */
 void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
 
+    outline0( "; 1");
     char * bankAddress = banks_get_address( _environment, _bank );
+    outline0( "; 2");
     Variable * realAddress = variable_temporary( _environment, VT_ADDRESS, "(ADDRESS)" );
+    outline0( "; 3");
     cpu_addressof_16bit( _environment, bankAddress, realAddress->realName );
+    outline0( "; 4");
     cpu_math_add_16bit_const( _environment, realAddress->realName, _address1, realAddress->realName );
+    outline0( "; 5");
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+
+    outline0( "; bank_uncompress_semi_var");
 
     cpu_msc1_uncompress_indirect_direct( _environment, realAddress->realName, _address2 );
 
@@ -84,7 +91,7 @@ void bank_uncompress_vars( Environment * _environment, char * _bank, char * _add
     Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
 
-    cpu_msc1_uncompress_indirect_indirect( _environment, realAddress->name, address2->name );
+    cpu_msc1_uncompress_indirect_indirect( _environment, realAddress->realName, address2->realName );
     
 }
 
