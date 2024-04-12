@@ -295,7 +295,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     &&   po_buf_match(buf[1], " *DD _*", NULL,v2) 
 	&&   strchr(v1->str,'+')==NULL
 	&&   strchr(v2->str,'+')==NULL
-	&&  po_buf_strcmp(v1, v2)) {
+	&&  po_buf_strcmp(v1, v2) ) {
         int x = 1, i;
         if( po_buf_match(buf[x+1], "* equ ", NULL)) ++x;
         if(!po_buf_match(buf[x+1], " IF ") && !isConditionnal(buf[x+1])) {
@@ -306,8 +306,24 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 			printf("XXX %s", buf[x+1]->str);
 		}
     }
-	
-    
+
+	if( po_buf_match( buf[0], " LDD #$*", v1)
+	&&  po_buf_match( buf[1], " STD *", v2)
+    &&  po_buf_match( buf[2], " LDD *", v3) &&
+        po_buf_strcmp( v2, v3 ) == 0 ) {
+	    optim( buf[1], RULE "(LDD const,STD var, LDD var)->(LDD const)", NULL);
+		optim( buf[2], NULL, NULL);
+		optim( buf[3], NULL, "\tLDD #$%s", v1->str);
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+    }
+
+	if( po_buf_match( buf[0], " LDB #*", v1)
+	&&  po_buf_match( buf[1], " LDB #*", v2)) {
+	    optim( buf[1], RULE "(LDB, LDB)->(LDB)", NULL);
+        ++_environment->removedAssemblyLines;
+    }
+
     /* a bunch of rules */
 	if( po_buf_match( buf[0], " LDA #*", v1)
 	&&  po_buf_match( buf[1], " LDB #*", v2)) {
