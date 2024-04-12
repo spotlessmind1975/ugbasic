@@ -1816,19 +1816,16 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( putimage, src_hw_ef936x_put_image_asm );
 
-    outline1("LDB %s", address_displacement( _environment, _flags, "1" ) );
-    outline1("ANDB #$%2.2x", FLAG_TRANSPARENCY );
-    outline0("STB <IMAGEF" );
-
     ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
 
     outline1("LDD %s", _x );
     outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
     outline0("STD <IMAGEY" );
-    outline1("LDA %s", _flags );
+    outline1("LDD %s", _flags );
     outline1("ANDA #$%2.2x", FLAG_DOUBLE_Y );
-    outline0("STA <IMAGET" );
+    outline1("ANDB #$%2.2x", FLAG_TRANSPARENCY );
+    outline0("STD <IMAGET" );
 
     outline0("JSR PUTIMAGE");
     
