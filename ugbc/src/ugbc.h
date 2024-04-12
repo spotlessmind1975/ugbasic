@@ -3771,6 +3771,7 @@ POBuffer tmp_buf(void *key1, unsigned int key2);
 void tmp_buf_clr(void *key1);
 POBuffer po_buf_match(POBuffer _buf, const char *_pattern, ...);
 int po_buf_strcmp(POBuffer _s, POBuffer _t);
+int po_buf_is_hex(POBuffer _s);
 
 #define TMP_BUF         tmp_buf(__FILE__, __LINE__)
 #define TMP_BUF_CLR     tmp_buf_clr(__FILE__)
