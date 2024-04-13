@@ -621,6 +621,8 @@ typedef struct _Constant {
      */
     double valueFloating;
 
+    int emitted;
+
     /** Link to the next constant (NULL if this is the last one) */
     struct _Constant * next;
 
@@ -2483,7 +2485,7 @@ typedef struct _Environment {
     int ramSize;
 
     int outputGeneratedFiles;
-    
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -4205,6 +4207,7 @@ void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
 void                    put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
 void                    put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags );
+void                    put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
 void                    put_tile( Environment * _environment, char * _tile, char * _x, char * _y, char * _w, char * _h );
 void                    put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer, char * _padding_tile );
 void                    put_tilemap_inline( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer, int _padding_tile );

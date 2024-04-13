@@ -1822,10 +1822,10 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
     outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
     outline0("STD <IMAGEY" );
-    outline1("LDD %s", _flags );
-    outline1("ANDA #$%2.2x", FLAG_DOUBLE_Y );
-    outline1("ANDB #$%2.2x", FLAG_TRANSPARENCY );
-    outline0("STD <IMAGET" );
+    if( _flags ) {
+        outline1("LDD %s", _flags );
+        outline0("STD <IMAGET" );
+    }
 
     outline0("JSR PUTIMAGE");
     
