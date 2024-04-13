@@ -498,21 +498,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 void variable_cleanup( Environment * _environment ) {
     int i=0;
 
-    if ( _environment->constants ) {
-        Constant * actual = _environment->constants;
-        while( actual ) {
-            if ( ! actual->emitted ) {
-                switch( actual->type ) {
-                    case CT_INTEGER:
-                        outhead2("%s EQU $%4.4x", actual->name, actual->value );
-                        break;
-                    case CT_STRING:
-                    break;
-                }
-            }
-            actual = actual->next;
-        }
-    }
+    vars_emit_constants( _environment );
 
     if ( _environment->dataSegment ) {
         outhead1("DATAFIRSTSEGMENT EQU %s", _environment->dataSegment->realName );

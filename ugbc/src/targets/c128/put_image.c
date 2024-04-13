@@ -232,3 +232,23 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
 
 }
+
+void put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
+
+    char flagsConstantName[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
+    char flagsConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags );
+    
+    Constant * flagsConstant = constant_find( _environment->constants, flagsConstantName );
+    
+    if ( !flagsConstant ) {
+        flagsConstant = malloc( sizeof( Constant ) );
+        memset( flagsConstant, 0, sizeof( Constant ) );
+        flagsConstant->name = strdup( flagsConstantName );
+        flagsConstant->value = _flags;
+        flagsConstant->type = CT_INTEGER;
+        flagsConstant->next = _environment->constants;
+        _environment->constants = flagsConstant;
+    }
+
+    put_image_vars( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, flagsConstantParameter );
+}

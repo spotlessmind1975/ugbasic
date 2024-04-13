@@ -3757,6 +3757,8 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
 int banks_any_used( Environment * _environment );
 void banks_generate( Environment * _environment );
 
+void vars_emit_constants( Environment * _environment );
+
 #define FUNCTION_STUB( t )   Variable * result = variable_temporary( _environment, t, "(stub)" ); return result;
 
 POBuffer po_buf_del( POBuffer buf );
