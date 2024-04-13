@@ -57,9 +57,21 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
         if ( music->type != VT_MUSIC ) {
             CRITICAL_CANNOT_MUSIC( _music );
         }
-        sn76489m_music( _environment, music->realName, music->size, _loop, MUSIC_TYPE_IAF );
+        if ( music->bankAssigned != -1 ) {
+            char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#$%4.4x", 0x6000 + music->absoluteAddress );
+            sn76489m_music( _environment, musicAddress, music->size, _loop, MUSIC_TYPE_IAF, music->bankAssigned );
+        } else {
+            char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#%s", music->realName );
+            sn76489m_music( _environment, musicAddress, music->size, _loop, MUSIC_TYPE_IAF, music->bankAssigned );
+        }
     } else {
-        sn76489m_music( _environment, music->realName, music->size, _loop, _music_type );
+        if ( music->bankAssigned != -1 ) {
+            char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#$%4.4x", 0x6000 + music->absoluteAddress );
+            sn76489m_music( _environment, musicAddress, music->size, _loop, _music_type, music->bankAssigned );
+        } else {
+            char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#%s", music->realName );
+            sn76489m_music( _environment, musicAddress, music->size, _loop, _music_type, music->bankAssigned );
+        }
     }
     sn76489m_start( _environment, 0xff );
 

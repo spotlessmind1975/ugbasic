@@ -63,6 +63,8 @@ void sn76489m_initialization( Environment * _environment ) {
     variable_global( _environment, "SN76489TMPPTR" );
     variable_import( _environment, "SN76489TMPOFS", VT_BYTE, 0 );
     variable_global( _environment, "SN76489TMPOFS" );
+    variable_import( _environment, "SN76489BANK", VT_BYTE, 0xff );
+    variable_global( _environment, "SN76489BANK" );
     variable_import( _environment, "SN76489TMPLEN", VT_BYTE, 0 );
     variable_global( _environment, "SN76489TMPLEN" );
     variable_import( _environment, "SN76489JIFFIES", VT_BYTE, 0 );
@@ -746,15 +748,17 @@ void sn76489m_stop_vars( Environment * _environment, char * _channels ) {
 
 }
 
-void sn76489m_music( Environment * _environment, char * _music, int _size, int _loop, int _type ) {
+void sn76489m_music( Environment * _environment, char * _music, int _size, int _loop, int _type, int _bank ) {
 
     deploy( sn76489vars, src_hw_sn76489m_vars_asm );
     deploy( sn76489startup, src_hw_sn76489m_startup_asm );
 
     outline0("ORCC #$50");
+    outline1("LDA #$%2.2x", _bank );
+    outline0("STA SN76489BANK");
     outline1("LDA #$%2.2x", _loop );
     outline0("STA SN76489MUSICLOOP");
-    outline1("LDX #%s", _music);
+    outline1("LDX %s", _music);
     outline1("LDB #$%4.4x", _size);
     outline0("JSR MUSICPLAYERRESET");
     outline1("LDA #$%2.2x", _type );

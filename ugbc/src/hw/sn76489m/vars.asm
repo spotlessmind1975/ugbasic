@@ -60,6 +60,7 @@ SN76489TMPPTR           fdb $0
 SN76489TMPOFS           fdb $0
 SN76489TMPLEN           fdb $0
 SN76489JIFFIES          fdb $0
+SN76489BANK             fdb $0
 
 SN76489TMPPTR_BACKUP    fdb $0
 SN76489LASTBLOCK_BACKUP fdb $0

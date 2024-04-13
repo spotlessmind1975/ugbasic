@@ -663,12 +663,28 @@ MUSICREADNEXTBYTE
     BEQ MUSICREADNEXTBYTELE
 
 MUSICREADNEXTBYTE2
-    LDB #$ff
+    LDA SN76489BANK
+    CMPA #$FF
+    BNE MUSICREADNEXTBYTE2BANKED
     LDX SN76489TMPPTR
     LDA SN76489TMPOFS
     INC SN76489TMPOFS
     LDA A,X
     PULS X
+    LDB #$ff
+    RTS
+
+MUSICREADNEXTBYTE2BANKED
+    LDB SN76489BANK
+    STB $A7E5
+    LDX SN76489TMPPTR
+    LDA SN76489TMPOFS
+    INC SN76489TMPOFS
+    LDA A,X
+    LDA #7
+    STA $A7E5
+    PULS X
+    LDB #$ff
     RTS
 
 ; This is the entry point if a block (256 or less bytes)
@@ -721,7 +737,18 @@ MUSICPLAYERPSG
 	BNE MUSICPLAYERPSGSKIP		;equal to zero? YES continue, NO jump to SKIP 
 MUSICPLAYERPSGLOOP
 	LDX SN76489TMPPTR	        ;load music track execution address
+    LDB SN76489BANK
+    CMPB #$FF
+    BNE MUSICPLAYERPSGLOOPBANKED
 	LDA ,X+			            ;load music data
+    JMP MUSICPLAYERPSGLOOPREAD
+MUSICPLAYERPSGLOOPBANKED
+    STB $A7E5
+	LDA ,X+			            ;load music data
+    LDB #7
+    STB $A7E5
+    CMPA #0
+MUSICPLAYERPSGLOOPREAD
 	BEQ MUSICPLAYERPSGRESET		;equal to ZERO? YES jump to RESET 
 	BITA #$C0		            ;test the A register with %11000000 mask (delay data bit)
 	BEQ MUSICPLAYERPSGSTOSKIP	;is delay data? YES jump to STOSKIP, NO continue
