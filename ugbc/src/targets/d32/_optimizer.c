@@ -440,7 +440,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     if ((po_buf_match(buf[0], " ST* *+", NULL, v1) || po_buf_match(buf[0], " ST* *", NULL, v1))
     &&  !isBranch(buf[1]) && po_buf_match(buf[1], " * *", NULL, v2) && po_buf_strcmp(v1, v2)!=0
     &&  !isBranch(buf[2]) && po_buf_match(buf[2], " * *", NULL, v2) && po_buf_strcmp(v1, v2)!=0
-    && po_buf_strcmp(buf[3], buf[0])==0) {
+    && po_buf_strcmp(buf[3], buf[0])==0 && strcmp(v2->str, "$A7E5")==0 ) {
         optim(buf[0], RULE "(STORE*,?,?,STORE*)->(?,?,STORE*)", NULL);
         ++_environment->removedAssemblyLines;
     }
