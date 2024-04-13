@@ -209,15 +209,13 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
     deploy_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_preferred( bank, src_hw_pc128op_bank_asm );
 
-    Variable * bankAddress = bank_get_address( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * address2 = variable_retrieve( _environment, _address2 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
 
     outline0("; bank read rvd")
     outline1("LDU #$%4.4x", _bank );
-    outline1("LDY %s", realAddress->realName );
-    outline1("LDX #%s", address2->realName );
+    outline1("LDY %s", address1->realName );
+    outline0("LEAY $6000,Y" );
+    outline1("LDX #%s", _address2 );
     switch( _size ) {
         case 1:
             outline0("JSR BANKREAD1");
@@ -237,3 +235,4 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
     outline0("; end bank read");
 
 }
+

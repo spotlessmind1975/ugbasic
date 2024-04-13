@@ -95,10 +95,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 // cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 // cpu_label( _environment, alreadyLoadedLabel );
 
-                Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
-                variable_store( _environment, frameSize->name, image->frameSize );
-                Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
-                variable_store( _environment, bank->name, image->bankAssigned );
+                // Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
+                // variable_store( _environment, frameSize->name, image->frameSize );
+                // Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
+                // variable_store( _environment, bank->name, image->bankAssigned );
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
                 if ( !sequence ) {
@@ -115,10 +115,12 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                     }
                 }
 
-                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
-                variable_store( _environment, address->name, image->absoluteAddress );
-                variable_add_inplace_vars( _environment, address->name, offset->name );
-                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                // variable_store( _environment, address->name, image->absoluteAddress );
+                // variable_add_inplace_vars( _environment, address->name, offset->name );
+                // bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
+                bank_read_vars_bank_direct_size( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
 
                 cpu_store_16bit(_environment, bankWindowId, 0xffff );
 
@@ -165,10 +167,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 // cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 // cpu_label( _environment, alreadyLoadedLabel );
 
-                Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
-                variable_store( _environment, frameSize->name, image->frameSize );
-                Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
-                variable_store( _environment, bank->name, image->bankAssigned );
+                // Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
+                // variable_store( _environment, frameSize->name, image->frameSize );
+                // Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
+                // variable_store( _environment, bank->name, image->bankAssigned );
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
                 if ( !frame ) {
@@ -177,10 +179,11 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                     ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
                 }
 
-                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
-                variable_store( _environment, address->name, image->absoluteAddress );
-                variable_add_inplace_vars( _environment, address->name, offset->name );
-                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                // variable_store( _environment, address->name, image->absoluteAddress );
+                // variable_add_inplace_vars( _environment, address->name, offset->name );
+                cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
+                bank_read_vars_bank_direct_size( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
 
                 cpu_store_16bit(_environment, bankWindowId, 0xffff );
 
