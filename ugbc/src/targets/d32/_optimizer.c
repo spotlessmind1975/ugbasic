@@ -436,6 +436,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         optim(buf[0], RULE "(STORE*,?,STORE*)->(?,STORE*)", NULL);
         ++_environment->removedAssemblyLines;
     }
+
     if ((po_buf_match(buf[0], " ST* *+", NULL, v1) || po_buf_match(buf[0], " ST* *", NULL, v1))
     &&  !isBranch(buf[1]) && po_buf_match(buf[1], " * *", NULL, v2) && po_buf_strcmp(v1, v2)!=0
     &&  !isBranch(buf[2]) && po_buf_match(buf[2], " * *", NULL, v2) && po_buf_strcmp(v1, v2)!=0
@@ -708,6 +709,14 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 		optim(buf[3], RULE "(STD,?,?,LDB+1)", NULL);
         ++_environment->removedAssemblyLines;
 	}
+
+    if( po_buf_match(buf[0], " ST* *", v1, v2)
+    &&  po_buf_match(buf[1], " LD* *", v3, v4)
+    && po_buf_strcmp(v1, v3)==0 && po_buf_strcmp(v2, v4)==0 && strchr( v2->str, '$' ) == NULL ) {
+        optim(buf[1], RULE "(ST*a,LD*a)->(ST*a)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
 }
 
 /* check if POBuffer matches any of xxyy (used for LDD #$xxyy op) */
