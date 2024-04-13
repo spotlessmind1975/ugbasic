@@ -52,7 +52,7 @@ void vars_emit_constants( Environment * _environment ) {
             if ( ! actual->emitted ) {
                 switch( actual->type ) {
                     case CT_INTEGER:
-                        outhead2("%s EQU $%4.4x", actual->name, actual->value );
+                        outhead2("%s = $%4.4x", actual->name, actual->value );
                         break;
                     case CT_STRING:
                     break;
