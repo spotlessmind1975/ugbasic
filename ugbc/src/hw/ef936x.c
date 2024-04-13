@@ -1987,9 +1987,8 @@ Variable * ef936x_get_raster_line( Environment * _environment ) {
 
 void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    outline0("LDY #$0" );
     if ( _sequence ) {
-        outline0("LEAY 3,y" );
+        outline0("LDY #$3" );
         if ( strlen(_sequence) == 0 ) {
         } else {
             outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
@@ -2014,7 +2013,7 @@ void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * 
         }
     } else {
         if ( _frame ) {
-            outline0("LEAY 3,y" );
+            outline0("LDY #$3" );
             if ( strlen(_frame) == 0 ) {
             } else {
                 outline1("LDX #OFFSETS%4.4x", _frame_size );
@@ -2025,6 +2024,8 @@ void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * 
                 outline0("LDD ,X" );
                 outline0("LEAY D, Y" );
             }
+        } else {
+        outline0("LDY #$0" );
         }
     }
 
