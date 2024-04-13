@@ -586,6 +586,16 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+    if( po_buf_match(buf[0], " STD *", v1)
+    &&  po_buf_match(buf[1], " LDD *", v2)
+    &&  po_buf_match(buf[2], " STD *", v3)
+    && po_buf_strcmp(v1, v2)==0 ) {
+        optim(buf[0], RULE "(STDa,LDDa,STDb)->(STDb)", NULL );
+        optim(buf[1], NULL, NULL);
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+    }
+
     if( po_buf_match(buf[0], " LDD *", v1)
     &&  po_buf_match(buf[1], " STD *", v2)
     &&  po_buf_match(buf[2], " TFR D,X")
