@@ -53,6 +53,8 @@ void sn76489z_initialization( Environment * _environment ) {
     variable_global( _environment, "SN76489MUSICTYPE" );
     variable_import( _environment, "SN76489MUSICREADY", VT_BYTE, 0 );
     variable_global( _environment, "SN76489MUSICREADY" );
+    variable_import( _environment, "SN76489MUSICPAUSE", VT_BYTE, 0 );
+    variable_global( _environment, "SN76489MUSICPAUSE" );
     variable_import( _environment, "SN76489MUSICLOOP", VT_BYTE, 0 );
     variable_global( _environment, "SN76489MUSICLOOP" );
     variable_import( _environment, "SN76489BLOCKS", VT_BYTE, 0 );

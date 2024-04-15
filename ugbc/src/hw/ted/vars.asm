@@ -75,6 +75,7 @@ TEDFREQTABLE:
     .word 979,    982,    984,    986,    988,    990,    992,    994,    996
 
 TEDMUSICREADY: .byte $0
+TEDMUSICPAUSE: .byte $0
 TEDBLOCKS: .word $0
 TEDLASTBLOCK: .byte $0
 TEDMUSICLOOP: .byte $0

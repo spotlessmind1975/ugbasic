@@ -69,7 +69,7 @@ singola voce.
 </usermanual> */
 void volume( Environment * _environment, int _volume, int _channels ) {
 
-    sn76489z_set_volume( _environment, _volume/16, _channels );
+    sn76489z_set_volume( _environment, _channels, _volume/16 );
 
 }
 

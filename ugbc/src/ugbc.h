@@ -4128,6 +4128,10 @@ Variable *              music_load( Environment * _environment, char * _filename
 Variable *              music_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 Variable *              music_storage( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 void                    music_var( Environment * _environment, char * _music, int _loop, int _music_type );
+void                    music_pause( Environment * _environment );
+void                    music_resume( Environment * _environment );
+void                    music_stop( Environment * _environment );
+void                    music_seek_var( Environment * _environment, char * _position );
 
 //----------------------------------------------------------------------------
 // *N*

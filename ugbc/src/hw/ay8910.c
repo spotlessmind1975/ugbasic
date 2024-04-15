@@ -51,6 +51,8 @@ void ay8910_initialization( Environment * _environment ) {
 
     variable_import( _environment, "AY8910MUSICREADY", VT_BYTE, 0 );
     variable_global( _environment, "AY8910MUSICREADY" );
+    variable_import( _environment, "AY8910MUSICPAUSE", VT_BYTE, 0 );
+    variable_global( _environment, "AY8910MUSICPAUSE" );
     variable_import( _environment, "AY8910MUSICLOOP", VT_BYTE, 0 );
     variable_global( _environment, "AY8910MUSICLOOP" );
     variable_import( _environment, "AY8910BLOCKS", VT_BYTE, 0 );

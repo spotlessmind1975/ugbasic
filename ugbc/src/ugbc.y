@@ -93,7 +93,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
-%token IAF PSG MIDI ATLAS
+%token IAF PSG MIDI ATLAS PAUSE RESUME SEEK
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -6979,6 +6979,18 @@ music_definition_expression:
     }
     | LOOP expr music_type {
         music_var( _environment, $2, 1, $3 );
+    }
+    | PAUSE {
+        music_pause( _environment );
+    }
+    | RESUME {
+        music_resume( _environment );
+    }
+    | STOP {
+        music_stop( _environment );
+    }
+    | SEEK expr {
+        music_seek_var( _environment, $2 );
     }
     ;
 

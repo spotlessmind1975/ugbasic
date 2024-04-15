@@ -182,6 +182,7 @@ VIC1FREQTABLE:
     .word 253,    253,    253,    254,    254,    254,    254,    254,    254    
 
 VIC1MUSICREADY: .byte $0
+VIC1MUSICPAUSE: .byte $0
 VIC1MUSICLOOP: .byte $0
 
 VIC1BLOCKS: .word $0

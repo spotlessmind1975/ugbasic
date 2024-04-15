@@ -51,6 +51,8 @@ void sn76489m_initialization( Environment * _environment ) {
 
     variable_import( _environment, "SN76489MUSICREADY", VT_BYTE, 0 );
     variable_global( _environment, "SN76489MUSICREADY" );
+    variable_import( _environment, "SN76489MUSICPAUSE", VT_BYTE, 0 );
+    variable_global( _environment, "SN76489MUSICPAUSE" );
     variable_import( _environment, "SN76489MUSICLOOP", VT_BYTE, 0 );
     variable_global( _environment, "SN76489MUSICLOOP" );
     variable_import( _environment, "SN76489BLOCKS", VT_BYTE, 0 );
@@ -114,8 +116,8 @@ void sn76489m_set_volume( Environment * _environment, int _channels, int _volume
     deploy( sn76489vars, src_hw_sn76489m_vars_asm );
     deploy( sn76489startup, src_hw_sn76489m_startup_asm );
 
-    outline1("LDB $%2.2x", ( _volume & 0x0f ) );
-    outline1("LDA $%2.2x", ( _channels ) );
+    outline1("LDB #$%2.2x", ( _volume & 0x0f ) );
+    outline1("LDA #$%2.2x", ( _channels ) );
     outline0("JSR SN76489STARTVOL");
 
 }

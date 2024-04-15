@@ -1927,6 +1927,20 @@ static int optim_remove_unused_temporary( Environment * _environment ) {
                 if ( ! result ) result = po_buf_match( buf[0], " ASL *", v1);
                 if ( ! result ) result = po_buf_match( buf[0], " ASR *", v1);
                 if ( ! result ) result = po_buf_match( buf[0], " TST *", v1);
+                if ( ! result ) result = po_buf_match(buf[0], " ADC* [*]", v2, v1 );
+                if ( ! result ) result = po_buf_match( buf[0], " ADD* [*]", v2, v1);
+                if ( ! result ) result = po_buf_match( buf[0], " ADC* [*]", v2, v1);
+                if ( ! result ) result = po_buf_match( buf[0], " AND* [*]", v2, v1);
+                if ( ! result ) result = po_buf_match( buf[0], " CMP* [*]", v2, v1);
+                if ( ! result ) result = po_buf_match( buf[0], " EOR* [*]", v2, v1);
+                if ( ! result ) result = po_buf_match( buf[0], " LD* [*]", v2, v1);
+                if ( ! result ) result = po_buf_match( buf[0], " OR* [*]", v2, v1);
+                if ( ! result ) result = po_buf_match( buf[0], " SBC* [*]", v2, v1);
+                if ( ! result ) result = po_buf_match( buf[0], " ST* [*]", v2, v1);
+                if ( ! result ) result = po_buf_match( buf[0], " SUB* [*]", v2, v1);
+                if ( ! result ) result = po_buf_match( buf[0], " ASL [*]", v1);
+                if ( ! result ) result = po_buf_match( buf[0], " ASR [*]", v1);
+                if ( ! result ) result = po_buf_match( buf[0], " TST [*]", v1);
                 if ( result ) {
                     char * realVarName = strdup( v1->str );
                     char * c = strstr( realVarName, "+" );
