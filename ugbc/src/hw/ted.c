@@ -2022,7 +2022,7 @@ void ted_get_image( Environment * _environment, char * _image, char * _x, char *
     outline0("STA IMAGEY" );
     outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA IMAGEY+1" );
-    outline1("LDA $%2.2x", _palette );
+    outline1("LDA #$%2.2x", _palette );
     outline0("STA IMAGET" );
 
     outline0("JSR GETIMAGE");

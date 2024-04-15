@@ -1761,7 +1761,7 @@ void c6847_get_image( Environment * _environment, char * _image, char * _x, char
     outline0("STD IMAGEX" );
     outline1("LDD %s", _y );
     outline0("STD IMAGEY" );
-    outline1("LDA $%2.2x", _palette );
+    outline1("LDA #$%2.2x", _palette );
     outline0("STA IMAGET");
 
     outline0("JSR GETIMAGE");
