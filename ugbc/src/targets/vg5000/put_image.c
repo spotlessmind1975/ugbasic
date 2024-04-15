@@ -76,28 +76,28 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
-                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
+                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
                 } else {
-                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
+                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                 }
             } else {
                 if ( !frame ) {
-                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                 } else {
-                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                    ef9345_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                 }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                ef9345_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
+                ef9345_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
             } else {
-                ef9345_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
+                ef9345_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
             }
             break;
         case VT_IMAGE:
         case VT_ARRAY:
-            ef9345_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
+            ef9345_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
@@ -115,6 +115,7 @@ void put_image_vars_flags( Environment * _environment, char * _image, char * _x1
         flagsConstant = malloc( sizeof( Constant ) );
         memset( flagsConstant, 0, sizeof( Constant ) );
         flagsConstant->name = strdup( flagsConstantName );
+        flagsConstant->realName = strdup( flagsConstantName );
         flagsConstant->value = _flags;
         flagsConstant->type = CT_INTEGER;
         flagsConstant->next = _environment->constants;

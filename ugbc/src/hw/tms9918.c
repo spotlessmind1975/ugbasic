@@ -2176,10 +2176,12 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
     outline0("LD E, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
-    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
-    outline0("LD (IMAGEF), A" );
-    outline1("LD A, $%2.2x", ( (_flags>>8) & 0xff ) );
-    outline0("LD (IMAGET), A" );
+
+    outline0("PUSH HL" );
+    outline1("LD HL, %s", _flags );
+    outline0("LD (IMAGEF), L" );
+    outline0("LD (IMAGET), H" );
+    outline0("POP HL" );
 
     if ( ! _environment->hasGameLoop ) {
         outline0("CALL BLITIMAGE");

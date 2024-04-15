@@ -1887,10 +1887,11 @@ void cpc_put_image( Environment * _environment, Resource * _image, char * _x, ch
     outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
-    outline1("LD A, (%s)", _flags );
-    outline0("LD (IMAGEF), A" );
-    outline1("LD A, (%s)", address_displacement(_environment, _flags, "1") );
-    outline0("LD (IMAGET), A" );
+    outline0("PUSH HL" );
+    outline1("LD HL, %s", _flags );
+    outline0("LD (IMAGEF), L" );
+    outline0("LD (IMAGET), H" );
+    outline0("POP HL" );
 
     outline0("CALL PUTIMAGE");
 

@@ -93,7 +93,6 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
-    Variable * flags = variable_retrieve_or_define( _environment, _flags, VT_WORD, 0 );
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -154,20 +153,20 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ted_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, flags->realName );
+                ted_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
 
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        ted_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, flags->realName );
+                        ted_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        ted_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, flags->realName );
+                        ted_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        ted_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                        ted_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        ted_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, flags->realName );
+                        ted_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -214,13 +213,13 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ted_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, flags->realName );
+                ted_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
                 if ( !frame ) {
-                    ted_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, flags->realName );
+                    ted_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    ted_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, flags->realName );
+                    ted_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
@@ -250,9 +249,9 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ted_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
+                ted_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
             } else {
-                ted_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, flags->realName );
+                ted_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
             }
             break;
         default:
@@ -273,6 +272,7 @@ void put_image_vars_flags( Environment * _environment, char * _image, char * _x1
         flagsConstant = malloc( sizeof( Constant ) );
         memset( flagsConstant, 0, sizeof( Constant ) );
         flagsConstant->name = strdup( flagsConstantName );
+        flagsConstant->realName = strdup( flagsConstantName );
         flagsConstant->value = _flags;
         flagsConstant->type = CT_INTEGER;
         flagsConstant->next = _environment->constants;

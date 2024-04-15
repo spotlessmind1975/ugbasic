@@ -252,6 +252,7 @@ void put_image_vars_flags( Environment * _environment, char * _image, char * _x1
         flagsConstant = malloc( sizeof( Constant ) );
         memset( flagsConstant, 0, sizeof( Constant ) );
         flagsConstant->name = strdup( flagsConstantName );
+        flagsConstant->realName = strdup( flagsConstantName );
         flagsConstant->value = _flags;
         flagsConstant->type = CT_INTEGER;
         flagsConstant->next = _environment->constants;

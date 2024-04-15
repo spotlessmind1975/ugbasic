@@ -51,6 +51,7 @@ void flip_image_vars_direction( Environment * _environment, char * _image, char 
         directionConstant = malloc( sizeof( Constant ) );
         memset( directionConstant, 0, sizeof( Constant ) );
         directionConstant->name = strdup( directionConstantName );
+        directionConstant->realName = strdup( directionConstantName );
         directionConstant->value = _direction;
         directionConstant->type = CT_INTEGER;
         directionConstant->next = _environment->constants;

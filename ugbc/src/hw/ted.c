@@ -1842,10 +1842,17 @@ void ted_put_image( Environment * _environment, Resource * _image, char * _x, ch
     outline0("STA IMAGEY" );
     outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA IMAGEY+1" );
-    outline1("LDA %s", _flags );
-    outline0("STA IMAGEF" );
-    outline1("LDA %s", address_displacement(_environment, _flags, "1") );
-    outline0("STA IMAGET" );
+    if ( strchr( _flags, '#' ) ) {
+        outline1("LDA #((%s)&255)", _flags+1 );
+        outline0("STA IMAGEF" );
+        outline1("LDA #(((%s)>>8)&255)", _flags+1 );
+        outline0("STA IMAGET" );
+    } else {
+        outline1("LDA %s", _flags );
+        outline0("STA IMAGEF" );
+        outline1("LDA %s", address_displacement(_environment, _flags, "1") );
+        outline0("STA IMAGET" );
+    }    
 
     outline0("JSR PUTIMAGE");
 
@@ -2994,7 +3001,7 @@ void ted_flip_image( Environment * _environment, Resource * _image, char * _fram
         ted_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
         deploy( flipimagex, src_hw_ted_flip_image_x_asm );
         outline1("LDA %s", _direction );
-        outline0("AND #$%2.2x", FLAG_FLIP_X );
+        outline1("AND #$%2.2x", FLAG_FLIP_X );
         outline1("BEQ %s", label );
         outline0("JSR FLIPIMAGEX");
         outhead1("%s:", label );
@@ -3012,7 +3019,7 @@ void ted_flip_image( Environment * _environment, Resource * _image, char * _fram
         ted_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
         deploy( flipimagey, src_hw_ted_flip_image_y_asm );
         outline1("LDA %s", _direction );
-        outline0("AND #$%2.2x", FLAG_FLIP_Y );
+        outline1("AND #$%2.2x", FLAG_FLIP_Y );
         outline1("BEQ %s", label );
         outline0("JSR FLIPIMAGEY");
         outhead1("%s:", label );
