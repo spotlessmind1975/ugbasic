@@ -62,6 +62,19 @@ The music system is intelligent, and will automatically suspend your music for t
 duration of any subsequent sound effects on the current channel. When the sound has
 finished, your tune will be restarted from its previous position.
 
+The command accepts an additional keyword, ''LOOP'', which allows you to indicate that
+the piece of music must be played without ever ending playback: ugBASIC will make it 
+start again from the beginning, once playback has finished.
+
+Finally, the command accepts the indication of the ''format'' in which the music is stored
+in the variable. This specification is necessary only if the audio file was not loaded 
+by the ''LOAD MUSIC'' command. The ''LOAD MUSIC'' command takes care of converting one 
+of the supported formats into the internal (''IAF'') ugBASIC format. However, 
+ugBASIC can play formats compatible with your audio hardware. In this case, by specifying
+the format in which the data is prepared, it is possible to follow up on this request.
+
+Each target has a specific list of supported audio formats.
+
 @italian
 
 Il comando ''MUSIC'' avvia un brano musicale dalla variabile music. Questa musica 
@@ -74,9 +87,26 @@ Il sistema musicale è intelligente e sospenderà automaticamente la musica per 
 durata di eventuali effetti sonori successivi sul canale corrente. Una volta terminato 
 il suono, la melodia verrà riavviata dalla posizione precedente.
 
-@syntax MUSIC music
+Il comando accetta una keyword aggiuntiva, LOOP, che permette di indicare che il brano 
+musicale deve essere suonato senza mai terminare la riproduzione: ugBASIC lo farà 
+ricominciare dall'inizio, una volta terminata la riproduzione.
+
+Infine, il comando accetta l'indicazione del formato (''format'') in cui la musica è memorizzata 
+nella variabile. Questa specifica è necessaria solo ed unicamente se il file audio
+non è stato caricato dal comando LOAD MUSIC. Il comando LOAD MUSIC si occupa di 
+convertire uno dei formati supportati nel formato interno di ugBASIC. Tuttavia, ugBASIC
+è in grado di riprodurre formati compatibili con l'hardware audio. In tal caso, 
+specificando il formato con cui sono preparati i dati, è possibile dar seguito 
+a tale richiesta.
+
+Ogni target ha uno specifico elenco di formati audio supportati.
+
+@syntax MUSIC [LOOP] music [format]
+@syntax MUSIC music [format] [LOOP]
 
 @example MUSIC fugue
+@example MUSIC backmusic LOOP
+@example MUSIC soundtrack PSG
 
 @target c128
 </usermanual> */
@@ -97,8 +127,27 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
     
 }
 
+/* <usermanual>
+@keyword MUSIC PAUSE
 
+@english
 
+The ''MUSIC PAUSE'' command allows you to temporarily suspend the performance of a piece of music. 
+The suspension is carried out either by interrupting the execution of the notes and by setting 
+the volume to zero. The music can be reactivated using the command ''MUSIC RESUME''.
+
+@italian
+
+Il comando ''MUSIC PAUSE'' permette di sospendere temporaneamente l'esecuzione di un brano musicale.
+La sospensione è svolta sia interrompendo l'esecuzione delle note che ponendo il volume a zero. 
+La musica potrà essere riattivata utilizzando il comando ''MUSIC RESUME''.
+
+@syntax MUSIC PAUSE
+
+@example MUSIC PAUSE: WAIT KEY: MUSIC RESUME
+
+@target c128
+</usermanual> */
 void music_pause( Environment * _environment ) {
     
     variable_store( _environment, "SN76489MUSICPAUSE", 0xff );
@@ -106,6 +155,25 @@ void music_pause( Environment * _environment ) {
 
 }
 
+/* <usermanual>
+@keyword MUSIC RESUME
+
+@english
+
+The ''MUSIC RESUME'' command allows you to resume a suspended performance of a piece of music. 
+The music can be suspended using the command ''MUSIC PAUSE''.
+
+@italian
+
+Il comando ''MUSIC RESUME'' permette di riprendere l'esecuzione di un brano musicale.
+La musica viene sospesa dal comando ''MUSIC PAUSE''.
+
+@syntax MUSIC RESUME
+
+@example MUSIC PAUSE: WAIT KEY: MUSIC RESUME
+
+@target c128
+</usermanual> */
 void music_resume( Environment * _environment ) {
 
     variable_store( _environment, "SN76489MUSICPAUSE", 0x0 );
@@ -113,6 +181,23 @@ void music_resume( Environment * _environment ) {
 
 }
 
+/* <usermanual>
+@keyword MUSIC STOP
+
+@english
+
+The ''MUSIC STOP'' command allows you to halt definitively the performance of a piece of music. 
+
+@italian
+
+Il comando ''MUSIC STOP'' permette di fermare in modo definitivo l'esecuzione di un brano musicale.
+
+@syntax MUSIC STOP
+
+@example MUSIC STOP
+
+@target c128
+</usermanual> */
 void music_stop( Environment * _environment ) {
 
     variable_store( _environment, "SN76489MUSICLOOP", 0x0 );
@@ -121,6 +206,23 @@ void music_stop( Environment * _environment ) {
 
 }
 
+/* <usermanual>
+@keyword MUSIC SEEK
+
+@english
+
+The ''MUSIC SEEK'' command allows you to move the reproduction to a specific position.
+
+@italian
+
+Il comando ''MUSIC SEEK'' permette di spostare l'esecuzione a una posizione specifica.
+
+@syntax MUSIC SEEK position
+
+@example MUSIC SEEK 42
+
+@target c128
+</usermanual> */
 void music_seek_var( Environment * _environment, char * _position ) {
 
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_WORD, 0 );
