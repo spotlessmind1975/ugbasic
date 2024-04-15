@@ -256,7 +256,7 @@ void pc128op_joystick( Environment * _environment, int _joystick, char * _result
 
     deploy( joystick, src_hw_pc128op_joystick_asm );
 
-    outline1("LDA $%2.2x", _joystick );
+    outline1("LDA #$%2.2x", _joystick );
     outline0("JSR JOYSTICK");
     outline1("STA %s", _result );
 
