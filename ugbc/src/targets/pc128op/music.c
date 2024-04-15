@@ -48,6 +48,8 @@
  */
 /* <usermanual>
 @keyword MUSIC
+
+@target pc128op
 </usermanual> */
 void music_var( Environment * _environment, char * _music, int _loop, int _music_type ) {
 
