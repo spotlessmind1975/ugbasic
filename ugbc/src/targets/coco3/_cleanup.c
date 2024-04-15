@@ -41,6 +41,7 @@
 void target_finalization( Environment * _environment ) {
 
     gime_finalization( _environment );
+    sn76489m_finalization( _environment );
 
 }
 

@@ -544,8 +544,8 @@ SOURCES_COCO := $(subst src/hw/coco/,src-generated/coco_,$(MODULES_COCO:.asm=.c)
 src-generated/coco_%.c: $(MODULES_COCO)
 	@xxd -i $(subst src-generated/coco_,src/hw/coco/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(COCO)
-	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(COCO) >src-generated/modules_coco.c
+src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_COCO) $(COCO)
+	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_COCO) $(COCO) >src-generated/modules_coco.c
 	@grep "src" src-generated/modules_coco.c | awk -f modules.awk >src-generated/modules_coco.h
 	@grep "data" src-generated/modules_coco.c | awk -f modules.awk >>src-generated/modules_coco.h
 
@@ -557,8 +557,8 @@ SOURCES_COCO3 := $(subst src/hw/coco3/,src-generated/coco3_,$(MODULES_COCO3:.asm
 src-generated/coco3_%.c: $(MODULES_COCO3)
 	@xxd -i $(subst src-generated/coco3_,src/hw/coco3/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coco3.c: $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_COCO3) $(COCO3)
-	@cat $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_COCO3) $(COCO3) >src-generated/modules_coco3.c
+src-generated/modules_coco3.c: $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_SN76489M) $(SOURCES_COCO3) $(COCO3)
+	@cat $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_SN76489M) $(SOURCES_COCO3) $(COCO3) >src-generated/modules_coco3.c
 	@grep "src" src-generated/modules_coco3.c | awk -f modules.awk >src-generated/modules_coco3.h
 	@grep "data" src-generated/modules_coco3.c | awk -f modules.awk >>src-generated/modules_coco3.h
 

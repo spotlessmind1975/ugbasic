@@ -37,7 +37,15 @@
 
 ; l'sn76489 è collegato al bus dati e viene selezionato facendo scritture 
 ; all'indirizzo a7fe oppure a7ff.
+
+@IF PC128OP
 CSG_OUT EQU         $A7FF
+@ENDIF
+
+@IF COCO || COCO3
+CSG_OUT EQU         $FF41
+@ENDIF
+
 
 CSG_F1 EQU          $00
 CSG_A1 EQU          $10
@@ -194,6 +202,21 @@ SN76489STARTUP
     STA ,X
     LDA #$7
     JSR SN76489STOP
+
+@IF COCO || COCO3
+
+	LDA	#$03
+	STA	$FF7F
+
+    LDA #$34
+	STA $FF01
+	LDA #$3F
+	STA $FF03
+    LDA #$38
+	STA $FF23
+
+@ENDIF
+
     RTS
 
 SN76489START
@@ -214,28 +237,64 @@ SN76489START2X
 SN76489START0
     LDA #($80 | CSG_F1)
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     CLRA
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     LDA #($80 | CSG_A1)
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     RTS
 
 SN76489START1
     LDA #($80 | CSG_F2)
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     CLRA
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     LDA #($80 | CSG_A2)
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     RTS
 
 SN76489START2
     LDA #($80 | CSG_F3)
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     CLRA
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     LDA #($80 | CSG_A3)
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     RTS
 
 SN76489STARTVOL
@@ -260,7 +319,15 @@ SN76489STARTVOL0
     TFR B, A
     ORB #($80 | CSG_A1)
     STB CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     STB CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     PULS D 
     RTS
 
@@ -270,6 +337,10 @@ SN76489STARTVOL1
     ANDB #$F
     ORB #($80 | CSG_A2)
     STB CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     PULS D 
     RTS
 
@@ -279,6 +350,10 @@ SN76489STARTVOL2
     ANDB #$F
     ORB #($80 | CSG_A3)
     STB CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     PULS D 
     RTS
 
@@ -354,15 +429,27 @@ SN76489PROGFREQ0
     ORB #$80
     ORB #CSG_F1
     STB CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
 
     TFR U, D
 
     ANDB #$3F
     ORB #CSG_F1
     STB CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
 
     LDA #($80 | CSG_A1)
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
 
     PULS U
     PULS D
@@ -392,15 +479,27 @@ SN76489PROGFREQ1
     ORB #$80
     ORB #CSG_F2
     STB CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
 
     TFR U, D
 
     ANDB #$3F
     ORB #CSG_F2
     STB CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
 
     LDA #($80 | CSG_A1)
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
 
     PULS U
     PULS D
@@ -430,15 +529,27 @@ SN76489PROGFREQ2
     ORB #$80
     ORB #CSG_F3
     STB CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
 
     TFR U, D
 
     ANDB #$3F
     ORB #CSG_F3
     STB CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
 
     LDA #($80 | CSG_A1)
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
 
     PULS U
     PULS D
@@ -490,6 +601,10 @@ SN76489STOP0
     LDA #$8F
     ORA #CSG_F1
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     PULS D
     RTS
 
@@ -498,6 +613,10 @@ SN76489STOP1
     LDA #$8F
     ORA #CSG_F2
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     PULS D
     RTS
 
@@ -506,6 +625,10 @@ SN76489STOP2
     LDA #$8F
     ORA #CSG_F3
     STA CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
     PULS D
     RTS
 
@@ -676,9 +799,11 @@ MUSICREADNEXTBYTE
     BEQ MUSICREADNEXTBYTELE
 
 MUSICREADNEXTBYTE2
+@IF COCO3
     LDA SN76489BANK
     CMPA #$FF
     BNE MUSICREADNEXTBYTE2BANKED
+@ENDIF
     LDX SN76489TMPPTR
     LDA SN76489TMPOFS
     INC SN76489TMPOFS
@@ -687,18 +812,6 @@ MUSICREADNEXTBYTE2
     LDB #$ff
     RTS
 
-MUSICREADNEXTBYTE2BANKED
-    LDB SN76489BANK
-    STB $A7E5
-    LDX SN76489TMPPTR
-    LDA SN76489TMPOFS
-    INC SN76489TMPOFS
-    LDA A,X
-    LDA #7
-    STA $A7E5
-    PULS X
-    LDB #$ff
-    RTS
 
 ; This is the entry point if a block (256 or less bytes)
 ; is finished, and we must move forward to the next block.
@@ -739,6 +852,21 @@ MUSICREADNEXTBYTEEND
     PULS X
     RTS
 
+@IF PC128OP
+
+MUSICREADNEXTBYTE2BANKED
+    LDB SN76489BANK
+    STB $A7E5
+    LDX SN76489TMPPTR
+    LDA SN76489TMPOFS
+    INC SN76489TMPOFS
+    LDA A,X
+    LDA #7
+    STA $A7E5
+    PULS X
+    LDB #$ff
+    RTS
+
 ; Original code by Dino Florenzi:
 ; https://github.com/dinoflorenzi/THOMSON-MO-TO-SOUNDCARD/blob/efed15f2510d181f550dca5f3da296c8e39fe80d/SN76489AN/DEMOS/VAMPIRE/vampire_music.asm
 ; Adapted by Marco Spedaletti for ugBASIC.
@@ -765,7 +893,7 @@ MUSICPLAYERPSGLOOPREAD
 	BEQ MUSICPLAYERPSGRESET		;equal to ZERO? YES jump to RESET 
 	BITA #$C0		            ;test the A register with %11000000 mask (delay data bit)
 	BEQ MUSICPLAYERPSGSTOSKIP	;is delay data? YES jump to STOSKIP, NO continue
-	STA $A7FF		            ;write register A to PSG device (update sound)
+	STA CSG_OUT		            ;write register A to PSG device (update sound)
 	STX SN76489TMPPTR       	;update the music execution address
 	BRA MUSICPLAYERPSGLOOP		;jump to LOOP
 MUSICPLAYERPSGSKIP
@@ -783,3 +911,86 @@ MUSICPLAYERPSGRESET
 	LDX SN76489TMPPTR_BACKUP	;reset the execution address (restart music to the start)
 	STX SN76489TMPPTR
 	BRA MUSICPLAYERPSGEXIT	    ;jump to EXIT
+
+@ENDIF
+
+@IF COCO3
+
+MUSICREADNEXTBYTE2BANKED
+    LDB SN76489BANK
+    STA BANKSHADOW
+    JSR GIMEBANKSHADOWCHANGE
+    LDX SN76489TMPPTR
+    TFR X, D
+    ADDD #$C000
+    TFR D, X
+    LDA SN76489TMPOFS
+    INC SN76489TMPOFS
+    LDA A,X
+    JSR GIMEBANKSHADOWCHANGERESET
+    PULS X
+    LDB #$ff
+    RTS
+
+@ENDIF
+
+@IF COCO || COCO3
+
+; Original code by Dino Florenzi:
+; https://github.com/dinoflorenzi/THOMSON-MO-TO-SOUNDCARD/blob/efed15f2510d181f550dca5f3da296c8e39fe80d/SN76489AN/DEMOS/VAMPIRE/vampire_music.asm
+; Adapted by Marco Spedaletti for ugBASIC.
+
+MUSICPLAYERPSG
+    PSHS D
+    PSHS X
+	LDA SN76489JIFFIES		    ;load delay counter value 		
+	BNE MUSICPLAYERPSGSKIP		;equal to zero? YES continue, NO jump to SKIP 
+MUSICPLAYERPSGLOOP
+	LDX SN76489TMPPTR	        ;load music track execution address
+@IF COCO3
+    LDB SN76489BANK
+    CMPB #$FF
+    BNE MUSICPLAYERPSGLOOPBANKED
+@ENDIF
+	LDA ,X+			            ;load music data
+@IF COCO3
+    JMP MUSICPLAYERPSGLOOPREAD
+MUSICPLAYERPSGLOOPBANKED
+    STB BANKSHADOW
+    JSR GIMEBANKSHADOWCHANGE
+    LDX SN76489TMPPTR
+    TFR X, D
+    ADDD #$C000
+    TFR D, X
+    LDA SN76489TMPOFS
+    INC SN76489TMPOFS
+    LDA A,X
+    JSR GIMEBANKSHADOWCHANGERESET
+    CMPA #0
+MUSICPLAYERPSGLOOPREAD
+@ENDIF
+	BEQ MUSICPLAYERPSGRESET		;equal to ZERO? YES jump to RESET 
+	BITA #$C0		            ;test the A register with %11000000 mask (delay data bit)
+	BEQ MUSICPLAYERPSGSTOSKIP	;is delay data? YES jump to STOSKIP, NO continue
+	STA CSG_OUT		            ;write register A to PSG device (update sound)
+    NOP
+    NOP
+	STX SN76489TMPPTR       	;update the music execution address
+	BRA MUSICPLAYERPSGLOOP		;jump to LOOP
+MUSICPLAYERPSGSKIP
+	DEC SN76489JIFFIES		    ;decrement delay value in memory
+MUSICPLAYERPSGEXIT
+    PULS X
+    PULS D
+	RTS				            ;return
+MUSICPLAYERPSGSTOSKIP
+	ANDA #$07		            ;get the delay value (7*1/50 sec max)
+	STA SN76489JIFFIES		    ;store to delay memory address
+	STX SN76489TMPPTR       	;update the music execution address
+	BRA MUSICPLAYERPSGEXIT		;jump to EXIT
+MUSICPLAYERPSGRESET
+	LDX SN76489TMPPTR_BACKUP	;reset the execution address (restart music to the start)
+	STX SN76489TMPPTR
+	BRA MUSICPLAYERPSGEXIT	    ;jump to EXIT
+
+@ENDIF
