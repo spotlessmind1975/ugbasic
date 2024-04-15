@@ -2978,22 +2978,47 @@ int ted_palette_extract( Environment * _environment, char * _data, int _width, i
 
 }
 
-void ted_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction ) {
+void ted_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
     deploy( tedvars, src_hw_ted_vars_asm);
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
 
-    if ( _direction & FLAG_FLIP_X ) {
+    if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0001" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
         ted_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
         deploy( flipimagex, src_hw_ted_flip_image_x_asm );
         outline0("JSR FLIPIMAGEX");
-    } 
+    } else {
+        
+        MAKE_LABEL
+
+        ted_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagex, src_hw_ted_flip_image_x_asm );
+        outline1("LDA %s", _direction );
+        outline0("AND #$%2.2x", FLAG_FLIP_X );
+        outline1("BEQ %s", label );
+        outline0("JSR FLIPIMAGEX");
+        outhead1("%s:", label );
+
+    }
     
-    if ( _direction & FLAG_FLIP_Y ) {
+    if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0002" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
         ted_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
         deploy( flipimagey, src_hw_ted_flip_image_y_asm );
         outline0("JSR FLIPIMAGEY");
+    } else {
+        
+        MAKE_LABEL
+
+        ted_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagey, src_hw_ted_flip_image_y_asm );
+        outline1("LDA %s", _direction );
+        outline0("AND #$%2.2x", FLAG_FLIP_Y );
+        outline1("BEQ %s", label );
+        outline0("JSR FLIPIMAGEY");
+        outhead1("%s:", label );
+
     }
+
 
 }
 

@@ -32,26 +32,33 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__coco__) || defined(__coco3__) || defined(__d32__) || defined(__d64__) || defined(__mo5__) || defined(__pc128op__)
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+void flip_image_vars_direction( Environment * _environment, char * _image, char * _frame, char * _sequence, int _direction ) {
 
-/**
- * @brief Emit ASM code for <b>FLIP IMAGE X/Y/XY/YX [image]</b>
- * 
- * This function outputs a code that flip an image
- * 
- * @param _environment Current calling environment
- * @param _image Image to draw
- */
-void flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction ) {
-
-    if ( _environment->emptyProcedure ) {
-        return;
+    char directionConstantName[MAX_TEMPORARY_STORAGE]; sprintf( directionConstantName, "FLIPIMAGEDIRECTION%4.4x", _direction );
+    char directionConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( directionConstantParameter, "#FLIPIMAGEDIRECTION%4.4x", _direction );
+    
+    Constant * directionConstant = constant_find( _environment->constants, directionConstantName );
+    
+    if ( !directionConstant ) {
+        directionConstant = malloc( sizeof( Constant ) );
+        memset( directionConstant, 0, sizeof( Constant ) );
+        directionConstant->name = strdup( directionConstantName );
+        directionConstant->value = _direction;
+        directionConstant->type = CT_INTEGER;
+        directionConstant->next = _environment->constants;
+        _environment->constants = directionConstant;
     }
-   
+
+    flip_image_vars( _environment, _image, _frame, _sequence, directionConstantParameter );
+    
 }
+
+#endif

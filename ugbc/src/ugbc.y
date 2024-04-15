@@ -93,7 +93,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
-%token IAF PSG MIDI ATLAS PAUSE RESUME SEEK
+%token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -8237,35 +8237,64 @@ flip_image_flags :
 
 flip_definition:
     IMAGE expr flip_image_flags {
-        flip_image_vars( _environment, $2, NULL, NULL, $3 );
+        flip_image_vars_direction( _environment, $2, NULL, NULL, $3 );
     }
     | IMAGE expr frame OP_HASH Identifier flip_image_flags {
         Variable * images = variable_retrieve( _environment, $2 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
-        flip_image_vars( _environment, $2, calculatedFrame->name, NULL, $6 );
+        flip_image_vars_direction( _environment, $2, calculatedFrame->name, NULL, $6 );
     }
     | IMAGE expr SEQUENCE expr frame expr flip_image_flags {
-        flip_image_vars( _environment, $2, $6, $4, $7 );
+        flip_image_vars_direction( _environment, $2, $6, $4, $7 );
     }
     | IMAGE expr frame expr flip_image_flags {
-        flip_image_vars( _environment, $2, $4, NULL, $5 );
+        flip_image_vars_direction( _environment, $2, $4, NULL, $5 );
     }
 
     | flip_image_flags IMAGE expr {
-        flip_image_vars( _environment, $3, NULL, NULL, $1 );
+        flip_image_vars_direction( _environment, $3, NULL, NULL, $1 );
     }
     | flip_image_flags IMAGE expr frame OP_HASH Identifier {
         Variable * images = variable_retrieve( _environment, $3 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $3, $6 );
-        flip_image_vars( _environment, $3, calculatedFrame->name, NULL, $1 );
+        flip_image_vars_direction( _environment, $3, calculatedFrame->name, NULL, $1 );
     }
     | flip_image_flags IMAGE expr SEQUENCE expr frame expr {
-        flip_image_vars( _environment, $3, $7, $5, $1 );
+        flip_image_vars_direction( _environment, $3, $7, $5, $1 );
     }
     | flip_image_flags IMAGE expr frame expr {
-        flip_image_vars( _environment, $3, $5, NULL, $1 );
+        flip_image_vars_direction( _environment, $3, $5, NULL, $1 );
     }
     
+    | IMAGE expr DIRECTION expr {
+        flip_image_vars( _environment, $2, NULL, NULL, $4 );
+    }
+    | IMAGE expr frame OP_HASH Identifier DIRECTION expr {
+        Variable * images = variable_retrieve( _environment, $2 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
+        flip_image_vars( _environment, $2, calculatedFrame->name, NULL, $7 );
+    }
+    | IMAGE expr SEQUENCE expr frame expr DIRECTION expr {
+        flip_image_vars( _environment, $2, $6, $4, $8 );
+    }
+    | IMAGE expr frame expr DIRECTION expr {
+        flip_image_vars( _environment, $2, $4, NULL, $6 );
+    }
+
+    | DIRECTION expr IMAGE expr {
+        flip_image_vars( _environment, $4, NULL, NULL, $2 );
+    }
+    | DIRECTION expr IMAGE expr frame OP_HASH Identifier {
+        Variable * images = variable_retrieve( _environment, $4 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $4, $7 );
+        flip_image_vars( _environment, $4, calculatedFrame->name, NULL, $2 );
+    }
+    | DIRECTION expr IMAGE expr SEQUENCE expr frame expr {
+        flip_image_vars( _environment, $4, $8, $6, $2 );
+    }
+    | DIRECTION expr IMAGE expr frame expr {
+        flip_image_vars( _environment, $4, $6, NULL, $2 );
+    }
     ;
 
 thread_identifiers :

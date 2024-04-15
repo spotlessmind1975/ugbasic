@@ -393,6 +393,6 @@ void cpc_timer_set_init( Environment * _environment, char * _timer, char * _init
 void cpc_timer_set_address( Environment * _environment, char * _timer, char * _address );
 void cpc_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void cpc_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
-void cpc_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction );
+void cpc_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
 
 #endif

@@ -2679,7 +2679,7 @@ void tms9918_calculate_sequence_frame_offset( Environment * _environment, char *
 
 }
 
-void tms9918_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction ) {
+void tms9918_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
     // deploy( tms9918vars, src_hw_tms9918_vars_asm);
     // deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );

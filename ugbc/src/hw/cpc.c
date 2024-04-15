@@ -2586,7 +2586,7 @@ void cpc_calculate_sequence_frame_offset( Environment * _environment, char * _of
 
 }
 
-void cpc_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction ) {
+void cpc_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
     // deploy( cpcvars, src_hw_cpc_vars_asm);
     // deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
