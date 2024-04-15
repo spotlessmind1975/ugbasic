@@ -2892,7 +2892,7 @@ void gime_calculate_sequence_frame_offset( Environment * _environment, char * _o
 
 }
 
-void gime_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _direction ) {
+void gime_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
     deploy( gimevars, src_hw_gime_vars_asm);
 
