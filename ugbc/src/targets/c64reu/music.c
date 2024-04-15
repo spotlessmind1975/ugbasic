@@ -66,6 +66,11 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
 
 }
 
+/* <usermanual>
+@keyword MUSIC PAUSE
+
+@target c64
+</usermanual> */
 void music_pause( Environment * _environment ) {
     
     variable_store( _environment, "SN76489MUSICPAUSE", 0xff );
@@ -73,6 +78,11 @@ void music_pause( Environment * _environment ) {
 
 }
 
+/* <usermanual>
+@keyword MUSIC RESUME
+
+@target c64
+</usermanual> */
 void music_resume( Environment * _environment ) {
 
     variable_store( _environment, "SN76489MUSICPAUSE", 0x0 );
@@ -80,6 +90,11 @@ void music_resume( Environment * _environment ) {
 
 }
 
+/* <usermanual>
+@keyword MUSIC STOP
+
+@target c64
+</usermanual> */
 void music_stop( Environment * _environment ) {
 
     variable_store( _environment, "SN76489MUSICLOOP", 0x0 );
@@ -88,6 +103,11 @@ void music_stop( Environment * _environment ) {
 
 }
 
+/* <usermanual>
+@keyword MUSIC SEEK
+
+@target c64
+</usermanual> */
 void music_seek_var( Environment * _environment, char * _position ) {
 
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_WORD, 0 );

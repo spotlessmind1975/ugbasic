@@ -53,3 +53,18 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
 
 }
 
+void music_pause( Environment * _environment ) {
+
+}
+
+void music_resume( Environment * _environment ) {
+
+}
+
+void music_stop( Environment * _environment ) {
+
+}
+
+void music_seek_var( Environment * _environment, char * _position ) {
+
+}
