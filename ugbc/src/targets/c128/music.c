@@ -97,3 +97,36 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
     
 }
 
+
+
+void music_pause( Environment * _environment ) {
+    
+    variable_store( _environment, "SN76489MUSICPAUSE", 0xff );
+    volume( _environment, 0, 0x7 );
+
+}
+
+void music_resume( Environment * _environment ) {
+
+    variable_store( _environment, "SN76489MUSICPAUSE", 0x0 );
+    volume( _environment, 255, 0x7 );
+
+}
+
+void music_stop( Environment * _environment ) {
+
+    variable_store( _environment, "SN76489MUSICLOOP", 0x0 );
+    variable_store( _environment, "SN76489MUSICREADY", 0x0 );
+    volume( _environment, 0, 0x7 );
+
+}
+
+void music_seek_var( Environment * _environment, char * _position ) {
+
+    Variable * position = variable_retrieve_or_define( _environment, _position, VT_WORD, 0 );
+
+    cpu_move_8bit( _environment, address_displacement( _environment, position->realName, "1" ), "SN76489BLOCKS" );
+    cpu_move_8bit( _environment, position->realName, "SN76489LASTBLOCK" );
+
+}
+
