@@ -192,6 +192,13 @@ IMF_INSTRUMENT_APPLAUSE						EQU $7F
 IMF_INSTRUMENT_GUNSHOT						EQU $80
 
 SN76489STARTUP
+@IF COCO || COCO3
+
+	LDA	#$30
+	STA	$FF7F
+
+@ENDIF
+
     LDX #SN76489FREQTABLE
     STX SN76489TMPPTR2
     LDX #SN76489TMPPTR
@@ -204,9 +211,6 @@ SN76489STARTUP
     JSR SN76489STOP
 
 @IF COCO || COCO3
-
-	LDA	#$03
-	STA	$FF7F
 
     LDA #$34
 	STA $FF01
@@ -235,20 +239,20 @@ SN76489START2X
     RTS
 
 SN76489START0
-    LDA #($80 | CSG_F1)
-    STA CSG_OUT
+    LDB #($80 | CSG_F1)
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
-    CLRA
-    STA CSG_OUT
+    CLRB
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
-    LDA #($80 | CSG_A1)
-    STA CSG_OUT
+    LDB #($80 | CSG_A1)
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
@@ -256,20 +260,20 @@ SN76489START0
     RTS
 
 SN76489START1
-    LDA #($80 | CSG_F2)
-    STA CSG_OUT
+    LDB #($80 | CSG_F2)
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
-    CLRA
-    STA CSG_OUT
+    CLRB
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
-    LDA #($80 | CSG_A2)
-    STA CSG_OUT
+    LDB #($80 | CSG_A2)
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
@@ -277,20 +281,20 @@ SN76489START1
     RTS
 
 SN76489START2
-    LDA #($80 | CSG_F3)
-    STA CSG_OUT
+    LDB #($80 | CSG_F3)
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
-    CLRA
-    STA CSG_OUT
+    CLRB
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
-    LDA #($80 | CSG_A3)
-    STA CSG_OUT
+    LDB #($80 | CSG_A3)
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
@@ -316,13 +320,7 @@ SN76489STARTVOL0
     PSHS D
     COMB
     ANDB #$F
-    TFR B, A
     ORB #($80 | CSG_A1)
-    STB CSG_OUT
-@IF COCO || COCO3
-    NOP
-    NOP
-@ENDIF
     STB CSG_OUT
 @IF COCO || COCO3
     NOP
@@ -444,8 +442,8 @@ SN76489PROGFREQ0
     NOP
 @ENDIF
 
-    LDA #($80 | CSG_A1)
-    STA CSG_OUT
+    LDB #($80 | CSG_A1)
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
@@ -494,8 +492,8 @@ SN76489PROGFREQ1
     NOP
 @ENDIF
 
-    LDA #($80 | CSG_A1)
-    STA CSG_OUT
+    LDB #($80 | CSG_A1)
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
@@ -544,8 +542,8 @@ SN76489PROGFREQ2
     NOP
 @ENDIF
 
-    LDA #($80 | CSG_A1)
-    STA CSG_OUT
+    LDB #($80 | CSG_A1)
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
@@ -598,9 +596,9 @@ SN76489STOP2X
 
 SN76489STOP0
     PSHS D
-    LDA #$8F
-    ORA #CSG_F1
-    STA CSG_OUT
+    LDB #$8F
+    ORB #CSG_F1
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
@@ -610,9 +608,9 @@ SN76489STOP0
 
 SN76489STOP1
     PSHS D
-    LDA #$8F
-    ORA #CSG_F2
-    STA CSG_OUT
+    LDB #$8F
+    ORB #CSG_F2
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
@@ -622,9 +620,9 @@ SN76489STOP1
 
 SN76489STOP2
     PSHS D
-    LDA #$8F
-    ORA #CSG_F3
-    STA CSG_OUT
+    LDB #$8F
+    ORB #CSG_F3
+    STB CSG_OUT
 @IF COCO || COCO3
     NOP
     NOP
@@ -972,7 +970,7 @@ MUSICPLAYERPSGLOOPREAD
 	BEQ MUSICPLAYERPSGRESET		;equal to ZERO? YES jump to RESET 
 	BITA #$C0		            ;test the A register with %11000000 mask (delay data bit)
 	BEQ MUSICPLAYERPSGSTOSKIP	;is delay data? YES jump to STOSKIP, NO continue
-	STA CSG_OUT		            ;write register A to PSG device (update sound)
+    STA CSG_OUT		            ;write register A to PSG device (update sound)
     NOP
     NOP
 	STX SN76489TMPPTR       	;update the music execution address
