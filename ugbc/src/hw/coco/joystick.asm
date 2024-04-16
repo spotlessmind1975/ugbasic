@@ -77,13 +77,16 @@ LBD4F
     RTS
 
 JOYSTICK
+    LDA $FF01
+    LDB $FF03
+    PSHS D
 LBD52   
     LEAS    -3,S			; make room on stack for temporary values
     LDX     #TEMPJOYSTICK
     LDB     #$03			; get values for 3+1 joystick axies
 	
 LBD59   
-    LDA     #$0A			; 10 retries to get a stable value
+    LDA     #$04			; 10 retries to get a stable value
     STD     1,S			; store joystic axis number and try number on stack
     JSR     SELJOYSTICK 		; select the joystick to read
 
@@ -174,5 +177,8 @@ JOYSTICKRIGHT
 
 JOYSTICKDONE
     LEAS    3,S
+    PULS D
+    STA $FF01
+    STB $FF03
     RTS
 
