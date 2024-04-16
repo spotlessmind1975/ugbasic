@@ -315,7 +315,8 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
     /* a bunch of rules */
 	if( po_buf_match( buf[0], " LDA #*", v1)
-	&&  po_buf_match( buf[1], " LDB #*", v2)) {
+	&&  po_buf_match( buf[1], " LDB #*", v2)
+    &&  strchr( v1->str, '(' ) == NULL && strchr( v2->str, '(' ) == NULL ) {
 	    optim( buf[0], RULE "(LDA,LDB)->(LDD)", NULL);
 		optim( buf[1], NULL, "\tLDD #((%s)&255)*256+((%s)&255)", v1->str, v2->str);
     }
