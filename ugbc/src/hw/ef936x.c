@@ -2129,14 +2129,14 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
     
     if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0002" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
         ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
-        deploy( flipimagex, src_hw_ef936x_flip_image_y_asm );
+        deploy( flipimagey, src_hw_ef936x_flip_image_y_asm );
         outline0("JSR FLIPIMAGEY");
     } else {
         
         MAKE_LABEL
 
         ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
-        deploy( flipimagex, src_hw_ef936x_flip_image_y_asm );
+        deploy( flipimagey, src_hw_ef936x_flip_image_y_asm );
         outline1("LDA %s", _direction );
         outline1("ANDA #$%2.2x", FLAG_FLIP_Y );
         outline1("BEQ %s", label );
