@@ -2910,7 +2910,7 @@ void gime_flip_image( Environment * _environment, Resource * _image, char * _fra
         outline1("ANDA #$%2.2x", FLAG_FLIP_X );
         outline1("BEQ %s", label );
         outline0("JSR FLIPIMAGEX");
-        outhead1("%s:", label );
+        outhead1("%s", label );
 
     }
     
@@ -2928,7 +2928,7 @@ void gime_flip_image( Environment * _environment, Resource * _image, char * _fra
         outline1("ANDA #$%2.2x", FLAG_FLIP_Y );
         outline1("BEQ %s", label );
         outline0("JSR FLIPIMAGEY");
-        outhead1("%s:", label );
+        outhead1("%s", label );
 
     }
 
