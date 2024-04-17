@@ -35,7 +35,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PORT        EQU     DIRECTION
+PORT        EQU     DIRECTION+1
 
 IO		equ		$ff00		; IO page on Dragon
 
@@ -77,6 +77,34 @@ LBD4F
     RTS
 
 JOYSTICK
+
+    CLR DIRECTION
+    LDA #$FF
+    STA $FF02
+    LDA $FF00
+    COMA
+    LDB PORT
+    BEQ JOYSTICKP0
+JOYSTICKP1
+    ANDA #$01
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    STA DIRECTION
+    JMP JOYSTICKD
+JOYSTICKP0
+    ANDA #$02
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    STA DIRECTION
+    JMP JOYSTICKD
+
+JOYSTICKD
+
 LBD52   
     LEAS    -3,S			; make room on stack for temporary values
     LDX     #TEMPJOYSTICK
@@ -137,12 +165,14 @@ LBD81
     JMP JOYSTICKHZ
 
 JOYSTICKUP
-    LDA #$01
+    LDA DIRECTION
+    ORA #$01
     STA DIRECTION
     JMP JOYSTICKHZ
 
 JOYSTICKDOWN
-    LDA #$02
+    LDA DIRECTION
+    ORA #$02
     STA DIRECTION
     JMP JOYSTICKHZ
 

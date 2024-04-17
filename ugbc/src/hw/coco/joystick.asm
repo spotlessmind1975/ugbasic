@@ -35,7 +35,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PORT        EQU     DIRECTION
+PORT        EQU     DIRECTION+1
 
 IO		equ		$ff00		; IO page on Dragon
 
@@ -77,6 +77,33 @@ LBD4F
     RTS
 
 JOYSTICK
+
+    CLR DIRECTION
+    LDA #$FF
+    STA $FF02
+    LDA $FF00
+    COMA
+    LDB PORT
+    BEQ JOYSTICKP0
+JOYSTICKP1
+    ANDA #$01
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    STA DIRECTION
+    JMP JOYSTICKD
+JOYSTICKP0
+    ANDA #$02
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    STA DIRECTION
+    JMP JOYSTICKD
+
+JOYSTICKD
     LDA $FF01
     LDB $FF03
     PSHS D
@@ -133,7 +160,6 @@ LBD81
     LSLB
     LDA B,X
 
-    CLR DIRECTION
     CMPA #24
     BEQ JOYSTICKUP
     BLT JOYSTICKUP
@@ -143,12 +169,14 @@ LBD81
     JMP JOYSTICKHZ
 
 JOYSTICKUP
-    LDA #$01
+    LDA DIRECTION
+    ORA #$01
     STA DIRECTION
     JMP JOYSTICKHZ
 
 JOYSTICKDOWN
-    LDA #$02
+    LDA DIRECTION
+    ORA #$02
     STA DIRECTION
     JMP JOYSTICKHZ
 
@@ -180,5 +208,6 @@ JOYSTICKDONE
     PULS D
     STA $FF01
     STB $FF03
+
     RTS
 
