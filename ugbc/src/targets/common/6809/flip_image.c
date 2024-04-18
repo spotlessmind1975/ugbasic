@@ -62,4 +62,9 @@ void flip_image_vars_direction( Environment * _environment, char * _image, char 
     
 }
 
+void flip_image_vars_indirection( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction ) {
+    Variable * direction = variable_retrieve_or_define( _environment, _direction, VT_BYTE, 0 );
+    flip_image_vars( _environment, _image, _frame, _sequence, direction->realName );
+}
+
 #endif

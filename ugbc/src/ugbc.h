@@ -3999,6 +3999,7 @@ void                    file_storage( Environment * _environment, char * _source
 int                     find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
 void                    flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction );
 void                    flip_image_vars_direction( Environment * _environment, char * _image, char * _frame, char * _sequence, int _direction );
+void                    flip_image_vars_indirection( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction );
 void                    font_descriptors_init( Environment * _environment, int _embedded_present );
 void                    forbid( Environment * _environment );
 int                     frames( Environment * _environment, char * _image );

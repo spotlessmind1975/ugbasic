@@ -8267,33 +8267,33 @@ flip_definition:
     }
     
     | IMAGE expr DIRECTION expr {
-        flip_image_vars( _environment, $2, NULL, NULL, $4 );
+        flip_image_vars_indirection( _environment, $2, NULL, NULL, $4 );
     }
     | IMAGE expr frame OP_HASH Identifier DIRECTION expr {
         Variable * images = variable_retrieve( _environment, $2 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
-        flip_image_vars( _environment, $2, calculatedFrame->name, NULL, $7 );
+        flip_image_vars_indirection( _environment, $2, calculatedFrame->name, NULL, $7 );
     }
     | IMAGE expr SEQUENCE expr frame expr DIRECTION expr {
-        flip_image_vars( _environment, $2, $6, $4, $8 );
+        flip_image_vars_indirection( _environment, $2, $6, $4, $8 );
     }
     | IMAGE expr frame expr DIRECTION expr {
-        flip_image_vars( _environment, $2, $4, NULL, $6 );
+        flip_image_vars_indirection( _environment, $2, $4, NULL, $6 );
     }
 
     | DIRECTION expr IMAGE expr {
-        flip_image_vars( _environment, $4, NULL, NULL, $2 );
+        flip_image_vars_indirection( _environment, $4, NULL, NULL, $2 );
     }
     | DIRECTION expr IMAGE expr frame OP_HASH Identifier {
         Variable * images = variable_retrieve( _environment, $4 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $4, $7 );
-        flip_image_vars( _environment, $4, calculatedFrame->name, NULL, $2 );
+        flip_image_vars_indirection( _environment, $4, calculatedFrame->name, NULL, $2 );
     }
     | DIRECTION expr IMAGE expr SEQUENCE expr frame expr {
-        flip_image_vars( _environment, $4, $8, $6, $2 );
+        flip_image_vars_indirection( _environment, $4, $8, $6, $2 );
     }
     | DIRECTION expr IMAGE expr frame expr {
-        flip_image_vars( _environment, $4, $6, NULL, $2 );
+        flip_image_vars_indirection( _environment, $4, $6, NULL, $2 );
     }
     ;
 
