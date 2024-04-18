@@ -7958,6 +7958,9 @@ option_definitions :
     | TYPE SIGNED {
         ((struct _Environment *)_environment)->defaultUnsignedType = 0;
     }
+    | DEFAULT TYPE datatype {
+        ((struct _Environment *)_environment)->defaultVariableType = $3;
+    }
     | TYPE UNSIGNED {
         ((struct _Environment *)_environment)->defaultUnsignedType = 1;
     }
