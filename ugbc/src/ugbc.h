@@ -2486,6 +2486,8 @@ typedef struct _Environment {
 
     int outputGeneratedFiles;
 
+    int optionConfigure;
+    
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

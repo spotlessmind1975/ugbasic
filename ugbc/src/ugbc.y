@@ -166,6 +166,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_step
 %type <integer> music_type
 %type <integer> optional_loop
+%type <integer> option_configure
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -7948,6 +7949,14 @@ option_read :
         $$ = 1;
     };
 
+option_configure :
+    STATIC {
+        $$ = 0;
+    }
+    | DYNAMIC {
+        $$ = 1;
+    };
+
 option_definitions :
      TYPE WIDE {
         ((struct _Environment *)_environment)->defaultNarrowType = 0;
@@ -7972,6 +7981,9 @@ option_definitions :
     };
     | CLIP option_clip {
         ((struct _Environment *)_environment)->optionClip = $2;
+    }
+    | CONFIGURE option_configure {
+        ((struct _Environment *)_environment)->optionConfigure = $2;
     };
 
 origin_direction :
