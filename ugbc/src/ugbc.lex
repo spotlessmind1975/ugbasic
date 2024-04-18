@@ -204,6 +204,10 @@ _[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
 16BIT { RETURN(WORD,1); }
 32BIT { RETURN(DWORD,1); }
 
+%{ /********************************* KEYWORDS *********************************/ %}
+
+%{ /* --------------------------------- A --------------------------------- */ %}
+
 A { RETURN(A,1); }
 AAHS { RETURN(AAHS,1); }
 Aa { RETURN(AAHS,1); }
@@ -259,6 +263,9 @@ ARROW { RETURN(ARROW,1); }
 Aw { RETURN(ARROW,1); }
 AUTO { RETURN(AUTO,1); }
 Au { RETURN(AUTO,1); }
+
+%{ /* --------------------------------- B --------------------------------- */ %}
+
 B { RETURN(B,1); }
 BACK { RETURN(BACK,1); }
 Ba { RETURN(BACK,1); }
@@ -329,6 +336,9 @@ BUFFER { RETURN(BUFFER,1); }
 BUT { RETURN(BUT,1); }
 But { RETURN(BUT,1); }
 Bf { RETURN(BUFFER,1); }
+
+%{ /* --------------------------------- C --------------------------------- */ %}
+
 C { RETURN(C,1); }
 C128 { RETURN(C128,1); }
 C128Z { RETURN(C128Z,1); }
@@ -416,6 +426,8 @@ C= { RETURN(COMMODORE,1); }
 COMPRESS { RETURN(COMPRESS,1); }
 Cpr { RETURN(COMPRESS,1); }
 COMPRESSED { RETURN(COMPRESSED,1); }
+CONFIGURE { RETURN(CONFIGURE,1); }
+Cfg { RETURN(CONFIGURE,1); }
 CONTRABASS { RETURN(CONTRABASS,1); }
 CONST { RETURN(CONST,1); }
 C# { RETURN(CONST,1); }
@@ -428,6 +440,7 @@ C% { RETURN(COUNT,1); }
 CPC { RETURN(CPC,1); }
 CPU6502 { RETURN(CPU6502,1); }
 CPU6809 { RETURN(CPU6809,1); }
+CPUZ80 { RETURN(CPUZ80,1); }
 CRIGHT { RETURN(CRIGHT,1); }
 Crg { RETURN(CRIGHT,1); }
 CRSR { RETURN(CRSR,1); }
@@ -442,6 +455,9 @@ Cy { RETURN(CURSOR,1); }
 CYCLES { RETURN(CYCLES,1); }
 Cyc { RETURN(CYCLES,1); }
 CYMBAL { RETURN(CYMBAL,1); }
+
+%{ /* --------------------------------- D --------------------------------- */ %}
+
 D { RETURN(D,1); }
 DARK { RETURN(DARK,1); }
 Dk { RETURN(DARK,1); }
@@ -507,6 +523,11 @@ Dts { RETURN(DTILES,1); }
 DULCIMER { RETURN(DULCIMER,1); }
 DWORD { RETURN(DWORD,1); }
 Dwd { RETURN(DWORD,1); }
+DYNAMIC { RETURN(DYNAMIC,1); }
+Dyn { RETURN(DYNAMIC,1); }
+
+%{ /* --------------------------------- E --------------------------------- */ %}
+
 E { RETURN(E,1); }
 ECHOES { RETURN(ECHOES,1); }
 ECM { RETURN(ECM,1); }
@@ -555,6 +576,9 @@ EXPLOSION { RETURN(EXPLOSION,1); }
 Exx { RETURN(EXPLOSION,1); }
 EVERY { RETURN(EVERY,1); }
 Ev { RETURN(EVERY,1); }
+
+%{ /* --------------------------------- F --------------------------------- */ %}
+
 FALSE { RETURN(FALSE,1); }
 Fa { RETURN(FALSE,1); }
 FAST { RETURN(FAST,1); } 
@@ -605,6 +629,9 @@ Fm { RETURN(FROM,1); }
 FUNCTION { RETURN(FUNCTION,1); }
 Fu { RETURN(FUNCTION,1); }
 FX { RETURN(FX,1); }
+
+%{ /* --------------------------------- G --------------------------------- */ %}
+
 G { RETURN(G,1); }
 GAMELOOP { RETURN(GAMELOOP,1); }
 Gl { RETURN(GAMELOOP,1); }
@@ -631,6 +658,9 @@ Gre { RETURN(GREEN,1); }
 GREY { RETURN(GREY,1); }
 GUITAR { RETURN(GUITAR,1); }
 GUNSHOT { RETURN(GUNSHOT,1); }
+
+%{ /* --------------------------------- H --------------------------------- */ %}
+
 H { RETURN(H,1); }
 HALO { RETURN(HALO,1); }
 HALT { RETURN(HALT,1); }
@@ -661,6 +691,9 @@ Hz { RETURN(HORIZONTAL,1); }
 HORN { RETURN(HORN,1); }
 HSCROLL { RETURN(HSCROLL,1); }
 Hs { RETURN(HSCROLL,1); }
+
+%{ /* --------------------------------- I --------------------------------- */ %}
+
 I { RETURN(I,1); }
 IAF { RETURN(IAF,1); }
 Ia { RETURN(IAF,1); }
@@ -698,6 +731,9 @@ INTEGER { RETURN(INT,1); }
 Int { RETURN(INT,1); }
 Ist { RETURN(INSTR,1); }
 IS { RETURN(IS,1); }
+
+%{ /* --------------------------------- J --------------------------------- */ %}
+
 J { RETURN(J,1); }
 JAZZ { RETURN(JAZZ,1); }
 JDOWN { RETURN(JDOWN,1); }
@@ -714,6 +750,9 @@ JOY { RETURN(JOY,1); }
 Jy { RETURN(JOY,1); }
 JOYCOUNT { RETURN(JOYCOUNT,1); }
 Jyc { RETURN(JOYCOUNT,1); }
+
+%{ /* --------------------------------- K --------------------------------- */ %}
+
 K { RETURN(K,1); }
 KALIMBA { RETURN(KALIMBA,1); }
 KEY { RETURN(KEY,1); }
@@ -727,6 +766,9 @@ Kt { RETURN(KEYSTATE,1); }
 KILL { RETURN(KILL,1); }
 Ki { RETURN(KILL,1); }
 KOTO { RETURN(KOTO,1); }
+
+%{ /* --------------------------------- L --------------------------------- */ %}
+
 L { RETURN(L,1); }
 LAVENDER { RETURN(LAVENDER,1); }
 La { RETURN(LAVENDER,1); }
@@ -762,6 +804,9 @@ Lp { RETURN(LOOP,1); }
 LOWER { RETURN(LOWER,1); }
 Lw { RETURN(LOWER,1); }
 LOWER\$ { RETURN(LOWER,1); }
+
+%{ /* --------------------------------- M --------------------------------- */ %}
+
 M { RETURN(M,1); }
 MAGENTA { RETURN(MAGENTA,1); }
 Mg { RETURN(MAGENTA,1); }
@@ -813,6 +858,9 @@ MULTICOLOUR { RETURN(MULTICOLOUR,1); }
 MUSIC { RETURN(MUSIC,1); }
 Mus { RETURN(MUSIC,1); }
 MUTED { RETURN(MUTED,1); }
+
+%{ /* --------------------------------- N --------------------------------- */ %}
+
 NAMED { RETURN(NAMED,1); }
 Na { RETURN(NAMED,1); }
 NARROW { RETURN(NARROW,1); }
@@ -836,6 +884,9 @@ Ne { RETURN(NOTE,1); }
 NYLON { RETURN(NYLON,1); }
 NTSC { RETURN(NTSC,1); }
 Nts { RETURN(NTSC,1); }
+
+%{ /* --------------------------------- O --------------------------------- */ %}
+
 O { RETURN(O,1); }
 OBOE { RETURN(OBOE,1); }
 OCARINA { RETURN(OCARINA,1); }
@@ -865,6 +916,9 @@ Ou { RETURN(OUT,1); }
 OVERDRIVEN { RETURN(OVERDRIVEN,1); }
 OVERLAYED { RETURN(OVERLAYED,1); }
 Ov { RETURN(OVERLAYED,1); }
+
+%{ /* --------------------------------- P --------------------------------- */ %}
+
 P { RETURN(P,1); }
 PAD { RETURN(PAD,1); }
 Pd { RETURN(PAD,1); }
@@ -965,7 +1019,13 @@ PURPLE { RETURN(PURPLE,1); }
 Pur { RETURN(PURPLE,1); }
 PUT { RETURN(PUT,1); }
 Pu { RETURN(PUT,1); }
+
+%{ /* --------------------------------- Q --------------------------------- */ %}
+
 Q { RETURN(Q,1); }
+
+%{ /* --------------------------------- R --------------------------------- */ %}
+
 R { RETURN(R,1); }
 RADIAN { RETURN(RADIAN,1); }
 Rdn { RETURN(RADIAN,1); }
@@ -1029,6 +1089,9 @@ ROWS { RETURN(ROWS,1); }
 Rws { RETURN(ROWS,1); }
 RUNSTOP { RETURN(RUNSTOP,1); }
 RUN { RETURN(RUN,1); }
+
+%{ /* --------------------------------- S --------------------------------- */ %}
+
 S { RETURN(S,1); }
 SAFE { RETURN(SAFE,1); }
 Sa { RETURN(SAFE,1); }
@@ -1114,6 +1177,8 @@ STANDARD { RETURN(STANDARD,1); }
 Std { RETURN(STANDARD,1); }
 STATE { RETURN(STATE,1); }
 Stt { RETURN(STATE,1); }
+STATIC { RETURN(STATIC,1); }
+Stc { RETURN(STATIC,1); }
 STEEL { RETURN(STEEL,1); }
 STEP { RETURN(STEP,1); }
 Stp { RETURN(STEP,1); }
@@ -1139,6 +1204,9 @@ SYS { RETURN(SYS,1); }
 Sy { RETURN(SYS,1); }
 SYSTEM { RETURN(SYSTEM,1); }
 Sys { RETURN(SYSTEM,1); }
+
+%{ /* --------------------------------- T --------------------------------- */ %}
+
 T { RETURN(T,1); }
 TAB { RETURN(TAB,1); }
 Tb { RETURN(TAB,1); }
@@ -1202,6 +1270,9 @@ Tr { RETURN(TRUE,1); }
 TWEET { RETURN(TWEET,1); }
 TYPE { RETURN(TYPE,1); }
 Ty { RETURN(TYPE,1); }
+
+%{ /* --------------------------------- U --------------------------------- */ %}
+
 U { RETURN(U,1); }
 UBOUND { RETURN(UBOUND,1); }
 Ub { RETURN(UBOUND,1); }
@@ -1219,6 +1290,9 @@ USE { RETURN(USE,1); }
 Ux { RETURN(USE,1); }
 USING { RETURN(USING,1); }
 Us { RETURN(USING,1); }
+
+%{ /* --------------------------------- V --------------------------------- */ %}
+
 V { RETURN(V,1); }
 VAL { RETURN(VAL,1); }
 Va { RETURN(VAL,1); }
@@ -1256,6 +1330,9 @@ VOLUME { RETURN(VOLUME,1); }
 Vo { RETURN(VOLUME,1); }
 VSCROLL { RETURN(VSCROLL,1); }
 Vscl { RETURN(VSCROLL,1); }
+
+%{ /* --------------------------------- W --------------------------------- */ %}
+
 W { RETURN(W,1); }
 WAIT { RETURN(WAIT,1); }
 Wt { RETURN(WAIT,1); }
@@ -1281,6 +1358,9 @@ Wrt { RETURN(WRITING,1); }
 WOODBLOCK { RETURN(WOODBLOCK,1); }
 WORD { RETURN(WORD,1); }
 Wo { RETURN(WORD,1); }
+
+%{ /* --------------------------------- X --------------------------------- */ %}
+
 X { RETURN(X,1); }
 XGR { RETURN(XGR,1); }
 XGRAPHIC { RETURN(XGRAPHIC,1); }
@@ -1295,6 +1375,9 @@ XTEXT { RETURN(XTEXT,1); }
 Xt { RETURN(XTEXT,1); }
 XPEN { RETURN(XPEN,1); }
 Xp { RETURN(XPEN,1); }
+
+%{ /* --------------------------------- Y --------------------------------- */ %}
+
 Y { RETURN(Y,1); }
 YGR { RETURN(YGR,1); }
 YGRAPHIC { RETURN(YGRAPHIC,1); }
@@ -1310,9 +1393,11 @@ YTEXT { RETURN(YTEXT,1); }
 Yt { RETURN(YTEXT,1); }
 YPEN { RETURN(YPEN,1); }
 Yp { RETURN(YPEN,1); }
+
+%{ /* --------------------------------- Z --------------------------------- */ %}
+
 Z { RETURN(Z,1); }
 ZX { RETURN(ZX,1); }
-CPUZ80 { RETURN(CPUZ80,1); }
 
 "REM"[^\x0a]* { RETURN(Remark,1);  }
 "'"[^\x0a]* { RETURN(Remark,1);  }
