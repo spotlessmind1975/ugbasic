@@ -397,6 +397,7 @@ const_factor:
         char * p3 = $3;
         char * p5 = $5;
         configure_get_value( gmc, slot );
+        configure_get_value( sn76489, address );
         if ( valued ) {
             // printf( "%s.%s.%s = %d\n", p1, p3, p5, value );
             $$ = value;
@@ -553,6 +554,7 @@ embed2:
             char * p3 = $5;
             char * p5 = $7;
             configure_get_value( gmc, slot );
+            configure_get_value( sn76489, address );
             vars_emit_constant_integer( _environment, $9, value );
             ((struct _Environment *)_environment)->embedResult.conditional = 1;
         }

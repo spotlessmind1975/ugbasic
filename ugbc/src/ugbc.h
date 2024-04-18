@@ -280,13 +280,15 @@ typedef struct _StaticString {
 
 typedef enum _HardwareName {
 
-    HN_GMC = 1
+    HN_GMC = 1,
+    HN_SN76489 = 2
 
 } HardwareName;
 
 typedef enum _HardwareParameterName {
 
-    HPN_SLOT = 1
+    HPN_SLOT = 1,
+    HPN_ADDRESS = 2
 
 } HardwareParameterName;
 
@@ -320,9 +322,17 @@ typedef struct _ConfigureGMCParameters {
  
 } ConfigureGMCParameters;
 
+typedef struct _ConfigureSN76489Parameters {
+
+    OptionParameterValued   address;
+ 
+} ConfigureSN76489Parameters;
+
 typedef struct _ConfigureParameters {
 
-    ConfigureGMCParameters gmc;
+    ConfigureGMCParameters      gmc;
+
+    ConfigureSN76489Parameters  sn76489;
 
 } ConfigureParameters;
 

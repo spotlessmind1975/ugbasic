@@ -38,15 +38,6 @@
 ; l'sn76489 è collegato al bus dati e viene selezionato facendo scritture 
 ; all'indirizzo a7fe oppure a7ff.
 
-@IF PC128OP
-CSG_OUT EQU         $A7FF
-@ENDIF
-
-@IF COCO || COCO3
-CSG_OUT EQU         $FF41
-@ENDIF
-
-
 CSG_F1 EQU          $00
 CSG_A1 EQU          $10
 CSG_F2 EQU          $20
@@ -208,19 +199,19 @@ SN76489START2X
 
 SN76489START0
     LDB #($80 | CSG_F1)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
     CLRB
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
     LDB #($80 | CSG_A1)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -229,19 +220,19 @@ SN76489START0
 
 SN76489START1
     LDB #($80 | CSG_F2)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
     CLRB
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
     LDB #($80 | CSG_A2)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -250,19 +241,19 @@ SN76489START1
 
 SN76489START2
     LDB #($80 | CSG_F3)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
     CLRB
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
     LDB #($80 | CSG_A3)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -293,7 +284,7 @@ SN76489STARTVOL0
     COMB
     ANDB #$F
     ORB #($80 | CSG_A1)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -306,7 +297,7 @@ SN76489STARTVOL1
     COMB
     ANDB #$F
     ORB #($80 | CSG_A2)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -319,7 +310,7 @@ SN76489STARTVOL2
     COMB
     ANDB #$F
     ORB #($80 | CSG_A3)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -332,7 +323,7 @@ SN76489STARTVOL3
     COMB
     ANDB #$F
     ORB #($80 | CSG_NA)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -411,7 +402,7 @@ SN76489PROGFREQ0
     ANDB #$7
     ORB #$80
     ORB #CSG_F1
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -421,14 +412,14 @@ SN76489PROGFREQ0
 
     ANDB #$3F
     ORB #CSG_F1
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
 
     LDB #($80 | CSG_A1)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -461,7 +452,7 @@ SN76489PROGFREQ1
     ANDB #$7
     ORB #$80
     ORB #CSG_F2
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -471,14 +462,14 @@ SN76489PROGFREQ1
 
     ANDB #$3F
     ORB #CSG_F2
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
 
     LDB #($80 | CSG_A1)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -511,7 +502,7 @@ SN76489PROGFREQ2
     ANDB #$7
     ORB #$80
     ORB #CSG_F3
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -521,14 +512,14 @@ SN76489PROGFREQ2
 
     ANDB #$3F
     ORB #CSG_F3
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
 @ENDIF
 
     LDB #($80 | CSG_A1)
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -583,7 +574,7 @@ SN76489STOP0
     PSHS D
     LDB #$8F
     ORB #CSG_F1
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -595,7 +586,7 @@ SN76489STOP1
     PSHS D
     LDB #$8F
     ORB #CSG_F2
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -607,7 +598,7 @@ SN76489STOP2
     PSHS D
     LDB #$8F
     ORB #CSG_F3
-    STB CSG_OUT
+    JSR SN76489WRITE
 @IF COCO || COCO3
     NOP
     NOP
@@ -876,7 +867,8 @@ MUSICPLAYERPSGLOOPREAD
 	BEQ MUSICPLAYERPSGRESET		;equal to ZERO? YES jump to RESET 
 	BITA #$C0		            ;test the A register with %11000000 mask (delay data bit)
 	BEQ MUSICPLAYERPSGSTOSKIP	;is delay data? YES jump to STOSKIP, NO continue
-	STA CSG_OUT		            ;write register A to PSG device (update sound)
+    TFR A,B
+    JSR SN76489WRITE            ;write register A to PSG device (update sound)
 	STX SN76489TMPPTR       	;update the music execution address
 	BRA MUSICPLAYERPSGLOOP		;jump to LOOP
 MUSICPLAYERPSGSKIP
@@ -955,7 +947,8 @@ MUSICPLAYERPSGLOOPREAD
 	BEQ MUSICPLAYERPSGRESET		;equal to ZERO? YES jump to RESET 
 	BITA #$C0		            ;test the A register with %11000000 mask (delay data bit)
 	BEQ MUSICPLAYERPSGSTOSKIP	;is delay data? YES jump to STOSKIP, NO continue
-    STA CSG_OUT		            ;write register A to PSG device (update sound)
+    TFR A, B
+    JSR SN76489WRITE            ;write register A to PSG device (update sound)
     NOP
     NOP
 	STX SN76489TMPPTR       	;update the music execution address

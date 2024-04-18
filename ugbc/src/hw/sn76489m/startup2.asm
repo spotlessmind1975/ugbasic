@@ -42,6 +42,30 @@ GMC_SLOT        fcb  GMC_SLOT_STATIC
 @ENDIF
 @ENDIF
 
+@IF PC128OP
+@IF sn76489.address.static || sn76489.address.dynamic 
+@EMIT sn76489.address.value AS CSG_OUT
+@ELSE
+CSG_OUT EQU         $A7FF
+@ENDIF
+@ENDIF
+
+@IF COCO || COCO3
+@IF sn76489.address.static || sn76489.address.dynamic 
+@EMIT sn76489.address.value AS CSG_OUT
+@ELSE
+CSG_OUT EQU         $FF41
+@ENDIF
+@ENDIF
+
+SN76489WRITE
+    STB CSG_OUT
+@IF COCO || COCO3
+    NOP
+    NOP
+@ENDIF
+    RTS
+
 SN76489STARTUP
 @IF COCO || COCO3
 
