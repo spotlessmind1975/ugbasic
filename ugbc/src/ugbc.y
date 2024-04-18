@@ -93,7 +93,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
-%token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC
+%token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -166,7 +166,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_step
 %type <integer> music_type
 %type <integer> optional_loop
-%type <integer> option_configure
+%type <integer> configure_name
+%type <integer> option_name
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -7555,6 +7556,73 @@ define_definition :
     }
     ;
 
+configure_name :
+    GMC {
+        $$ = HN_GMC;
+    };
+
+option_name :
+    SLOT {
+        $$ = HPN_SLOT;
+    };
+
+configure_set_static_option :
+    option_name OP_ASSIGN const_expr {
+        OptionParameterValue * actual = malloc( sizeof( OptionParameterValue ) );
+        memset( actual, 0, sizeof( OptionParameterValue ) );
+        actual->parameter = $1;
+        actual->value = $3;
+        actual->next = ((struct _Environment *)_environment)->optionParameters;
+        ((struct _Environment *)_environment)->optionParameters = actual;
+    };
+
+configure_set_static_options :
+    configure_set_static_option
+    | configure_set_static_option OP_COMMA configure_set_static_options;
+
+static_optional :
+    STATIC | ;
+
+configure_static_definitions :
+    static_optional configure_name {
+        ((struct _Environment *)_environment)->optionParameters = NULL;
+    } SET configure_set_static_options {
+        OptionParameterValue * actual = ((struct _Environment *)_environment)->optionParameters;
+        while( actual ) {
+            configure_set_value( _environment, $2, actual->parameter, actual->value );
+            actual = actual->next;
+        }
+    };
+
+configure_set_dynamic_option :
+    option_name OP_ASSIGN expr {
+        OptionParameterValue * actual = malloc( sizeof( OptionParameterValue ) );
+        memset( actual, 0, sizeof( OptionParameterValue ) );
+        actual->parameter = $1;
+        actual->valueName = strdup( $3 );
+        actual->next = ((struct _Environment *)_environment)->optionParameters;
+        ((struct _Environment *)_environment)->optionParameters = actual;
+    };
+
+configure_set_dynamic_options :
+    configure_set_dynamic_option
+    | configure_set_dynamic_option OP_COMMA configure_set_dynamic_options;
+
+configure_dynamic_definitions :
+    DYNAMIC configure_name {
+        ((struct _Environment *)_environment)->optionParameters = NULL;
+    } SET configure_set_dynamic_options {
+        OptionParameterValue * actual = ((struct _Environment *)_environment)->optionParameters;
+        while( actual ) {
+            configure_set_value_var( _environment, $2, actual->parameter, actual->valueName );
+            actual = actual->next;
+        }
+    };
+
+configure_definitions :
+    configure_static_definitions
+    | configure_dynamic_definitions;
+
 system : {
         $$ = 0;
     }
@@ -7949,14 +8017,6 @@ option_read :
         $$ = 1;
     };
 
-option_configure :
-    STATIC {
-        $$ = 0;
-    }
-    | DYNAMIC {
-        $$ = 1;
-    };
-
 option_definitions :
      TYPE WIDE {
         ((struct _Environment *)_environment)->defaultNarrowType = 0;
@@ -7981,9 +8041,6 @@ option_definitions :
     };
     | CLIP option_clip {
         ((struct _Environment *)_environment)->optionClip = $2;
-    }
-    | CONFIGURE option_configure {
-        ((struct _Environment *)_environment)->optionConfigure = $2;
     };
 
 origin_direction :
@@ -9078,6 +9135,7 @@ statement2nc:
   | DECLARE declare_definition
   | DEFINE define_definitions
   | OPTION option_definitions
+  | CONFIGURE configure_definitions
   | ORIGIN origin_definitions
   | RESOLUTION resolution_definitions
   | DIM dim_definitions

@@ -32,42 +32,48 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+#include "../../ugbc.h"
 
-#if defined(__coco__) || defined(__coco3__) || defined(__d32__) || defined(__d64__) || defined(__mo5__) || defined(__pc128op__)
+void configure_set_value( Environment * _environment, int _name, int _parameter, int _value ) {
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
-
-extern char DATATYPE_AS_STRING[][16];
-
-void vars_emit_constant_integer( Environment * _environment, char * _name, int _value ) {
-
-    outhead2("%s EQU $%4.4x", _name, _value );
-
-}
-
-void vars_emit_constants( Environment * _environment ) {
-
-    int i=0;
-
-    if ( _environment->constants ) {
-        Constant * actual = _environment->constants;
-        while( actual ) {
-            if ( ! actual->emitted ) {
-                switch( actual->type ) {
-                    case CT_INTEGER:
-                        vars_emit_constant_integer( _environment, actual->realName, actual->value );
-                        break;
-                    case CT_STRING:
+    switch( _name ) {
+        case HN_GMC:
+            switch( _parameter ) {
+                case HPN_SLOT:
+                    _environment->configureParameters.gmc.slot.value = _value;
+                    _environment->configureParameters.gmc.slot.statically = 1;
                     break;
-                }
+                default:
+                    break;
             }
-            actual = actual->next;
-        }
+            break;
+        default:
     }
 
 }
 
-#endif
+void configure_set_value_var( Environment * _environment, int _name, int _parameter, char * _value ) {
+
+    switch( _name ) {
+        case HN_GMC:
+            switch( _parameter ) {
+                case HPN_SLOT: {
+                    Variable * value = variable_retrieve_or_define( _environment, _value, VT_BYTE, 0 );
+                    cpu_move_8bit( _environment, value->realName, "GMC_SLOT" );
+                    outline0( "LDA #$30");
+                    outline0( "ORA GMC_SLOT");
+                    outline0( "STA $FF7F");
+                    if ( !_environment->configureParameters.gmc.slot.statically ) {
+                        _environment->configureParameters.gmc.slot.value = 0;
+                    }
+                    _environment->configureParameters.gmc.slot.dynamically = 1;
+                    break;
+                }
+                default:
+                    break;
+            }
+            break;
+        default:
+    }
+
+}

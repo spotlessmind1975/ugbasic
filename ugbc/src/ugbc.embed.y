@@ -60,6 +60,17 @@ char *str_replace( char *orig, char *rep, char *with ) {
     return result;
 }
 
+#define configure_get_value_single( hardware, parameter, name, field ) \
+        if ( !valued && strcmp( p1, #hardware ) == 0 && strcmp( p3, #parameter ) == 0 && strcmp( p5, #name ) == 0 ) { \
+            value = ((struct _Environment *)_environment)->configureParameters.hardware.parameter.field; \
+            valued = 1; \
+        }
+
+#define configure_get_value( hardware, parameter ) \
+        configure_get_value_single( hardware, parameter, value, value ) \
+        configure_get_value_single( hardware, parameter, static, statically ) \
+        configure_get_value_single( hardware, parameter, dynamic, dynamically )
+
 %}
 
 %parse-param {void * _environment}
@@ -378,6 +389,23 @@ const_factor:
         // printf( "NOT %d\n", $2 );
           $$ = ( ! $2 );
       }
+      | Identifier OP_POINT Identifier OP_POINT Identifier {
+
+        int valued = 0;
+        int value = 0;
+        char * p1 = $1;
+        char * p3 = $3;
+        char * p5 = $5;
+        configure_get_value( gmc, slot );
+        if ( valued ) {
+            // printf( "%s.%s.%s = %d\n", p1, p3, p5, value );
+            $$ = value;
+        } else {
+            // printf( "%s.%s.%s = 0 (unvalued)\n", p1, p3, p5 );
+            $$ = 0;
+        }
+        // printf( "%s.%s == %d\n", $1, $3, $$ );
+      }
       | Identifier OP_POINT Identifier {
         if ( strcmp( $1, "vestigialConfig" ) == 0 ) {
             if ( strcmp( $3, "screenModeUnique" ) == 0 ) {
@@ -516,12 +544,25 @@ embed2:
     ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 0;
     --((struct _Environment *)_environment)->embedResult.current;
   }
+  | OP_AT EMIT Identifier OP_POINT Identifier OP_POINT Identifier AS Identifier {
+
+        if ( !((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] ) {
+            int valued = 0;
+            int value = 0;
+            char * p1 = $3;
+            char * p3 = $5;
+            char * p5 = $7;
+            configure_get_value( gmc, slot );
+            vars_emit_constant_integer( _environment, $9, value );
+            ((struct _Environment *)_environment)->embedResult.conditional = 1;
+        }
+  }
   | OP_AT EMIT Identifier AS Identifier {
         if ( strcmp( $3, "frameBufferStart" ) == 0 ) {
-            outline2( "%s=$%4.4x", $5, ((struct _Environment *)_environment)->frameBufferStart );
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart );
         }
         if ( strcmp( $3, "frameBufferStart2" ) == 0 ) {
-            outline2( "%s=$%4.4x", $5, ((struct _Environment *)_environment)->frameBufferStart2 );
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart );
         }
         ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }

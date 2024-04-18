@@ -90,6 +90,8 @@ void sn76489m_finalization( Environment * _environment ) {
         outline0( "RTS" );
         cpu_label( _environment, "MUSICPLAYER" );
         outline0( "RTS" );
+    } else {
+        deploy( sn76489startup2, src_hw_sn76489m_startup2_asm );
     }
 
 }
@@ -752,8 +754,8 @@ void sn76489m_stop_vars( Environment * _environment, char * _channels ) {
 
 void sn76489m_music( Environment * _environment, char * _music, int _size, int _loop, int _type, int _bank ) {
 
-    deploy( sn76489vars, src_hw_sn76489m_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489m_startup_asm );
+    deploy_deferred( sn76489vars, src_hw_sn76489m_vars_asm );
+    deploy_deferred( sn76489startup, src_hw_sn76489m_startup_asm );
 
     outline0("ORCC #$50");
     outline1("LDA #$%2.2x", _bank );

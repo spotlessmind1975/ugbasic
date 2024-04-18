@@ -34,39 +34,12 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__coco__) || defined(__coco3__) || defined(__d32__) || defined(__d64__) || defined(__mo5__) || defined(__pc128op__)
+#if defined(__d32__) || defined(__d64__) || defined(__mo5__)
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
-
-extern char DATATYPE_AS_STRING[][16];
-
-void vars_emit_constant_integer( Environment * _environment, char * _name, int _value ) {
-
-    outhead2("%s EQU $%4.4x", _name, _value );
+void configure_set_value( Environment * _environment, int _name, int _parameter, int _value ) {
 
 }
-
-void vars_emit_constants( Environment * _environment ) {
-
-    int i=0;
-
-    if ( _environment->constants ) {
-        Constant * actual = _environment->constants;
-        while( actual ) {
-            if ( ! actual->emitted ) {
-                switch( actual->type ) {
-                    case CT_INTEGER:
-                        vars_emit_constant_integer( _environment, actual->realName, actual->value );
-                        break;
-                    case CT_STRING:
-                    break;
-                }
-            }
-            actual = actual->next;
-        }
-    }
+void configure_set_value_var( Environment * _environment, int _name, int _parameter, char * _value ) {
 
 }
 

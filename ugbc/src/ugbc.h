@@ -278,6 +278,54 @@ typedef struct _StaticString {
 
 } StaticString;
 
+typedef enum _HardwareName {
+
+    HN_GMC = 1
+
+} HardwareName;
+
+typedef enum _HardwareParameterName {
+
+    HPN_SLOT = 1
+
+} HardwareParameterName;
+
+/**
+ * @brief Structure of a single (option) setting
+ */
+typedef struct _OptionParameterValue {
+
+    HardwareParameterName          parameter;
+
+    int                            value;
+
+    char *                         valueName;
+
+    /** Link to the next option (NULL if this is the last one) */
+    struct _OptionParameterValue * next;
+
+} OptionParameterValue;
+
+typedef struct _OptionParameterValued {
+
+    int value;
+    int statically;
+    int dynamically;
+
+} OptionParameterValued;
+
+typedef struct _ConfigureGMCParameters {
+
+    OptionParameterValued   slot;
+ 
+} ConfigureGMCParameters;
+
+typedef struct _ConfigureParameters {
+
+    ConfigureGMCParameters gmc;
+
+} ConfigureParameters;
+
 /**
  * @brief Structure to store color components (red, green and blue)
  * 
@@ -1471,6 +1519,7 @@ typedef struct _Deployed {
     int ay8910startup;
     int sn76489vars;
     int sn76489startup;
+    int sn76489startup2;
 
     int draw;
     int bar;
@@ -2486,8 +2535,10 @@ typedef struct _Environment {
 
     int outputGeneratedFiles;
 
-    int optionConfigure;
-    
+    OptionParameterValue    * optionParameters;
+
+    ConfigureParameters     configureParameters;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3759,6 +3810,7 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
 int banks_any_used( Environment * _environment );
 void banks_generate( Environment * _environment );
 
+void vars_emit_constant_integer( Environment * _environment, char * _name, int _value );
 void vars_emit_constants( Environment * _environment );
 
 #define FUNCTION_STUB( t )   Variable * result = variable_temporary( _environment, t, "(stub)" ); return result;
@@ -3931,6 +3983,8 @@ void                    colormap_at_var( Environment * _environment, char * _add
 void                    colormap_clear( Environment * _environment );
 void                    colormap_clear_with( Environment * _environment, int _foreground, int _background );
 void                    colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background );
+void                    configure_set_value( Environment * _environment, int _name, int _parameter, int _value );
+void                    configure_set_value_var( Environment * _environment, int _name, int _parameter, char * _value );
 void                    const_define_numeric( Environment * _environment, char * _name, int _value );
 void                    const_define_string( Environment * _environment, char * _name, char * _value );
 void                    const_define_float( Environment * _environment, char * _name, double _value );

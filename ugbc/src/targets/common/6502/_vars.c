@@ -42,6 +42,12 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
+void vars_emit_constant_integer( Environment * _environment, char * _name, int _value ) {
+
+    outhead2("%s = $%4.4x", _name, _value );
+
+}
+
 void vars_emit_constants( Environment * _environment ) {
 
     int i=0;
@@ -52,7 +58,7 @@ void vars_emit_constants( Environment * _environment ) {
             if ( ! actual->emitted ) {
                 switch( actual->type ) {
                     case CT_INTEGER:
-                        outhead2("%s = $%4.4x", actual->realName, actual->value );
+                        vars_emit_constant_integer( _environment, actual->realName, actual->value );
                         break;
                     case CT_STRING:
                     break;
