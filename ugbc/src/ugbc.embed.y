@@ -547,7 +547,13 @@ embed2:
   }
   | OP_AT EMIT Identifier OP_POINT Identifier OP_POINT Identifier AS Identifier {
 
-        if ( !((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] ) {
+        int i; 
+        for( i=0; i<((struct _Environment *)_environment)->embedResult.current; ++i ) {\
+            if ( ((struct _Environment *)_environment)->embedResult.excluded[i] )
+                break;
+        }
+
+        if ( i>=((struct _Environment *)_environment)->embedResult.current ) {
             int valued = 0;
             int value = 0;
             char * p1 = $3;
