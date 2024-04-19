@@ -34,7 +34,7 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || defined(__c128__) || defined(__plus4__) || defined(__vic20__)
+#if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || defined(__c64reu__) || defined(__c128__) || defined(__plus4__) || defined(__vic20__)
 
 void configure_set_value( Environment * _environment, int _name, int _parameter, int _value ) {
 
