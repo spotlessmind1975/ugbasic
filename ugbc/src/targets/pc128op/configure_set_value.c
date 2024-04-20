@@ -65,9 +65,10 @@ void configure_set_value_var( Environment * _environment, int _name, int _parame
                     }
                     _environment->configureParameters.gmc.slot.dynamically = 1;
                     break;
-                }
-                default:
+                };
+                default: {
                     break;
+                };
             }
             break;
         default:
