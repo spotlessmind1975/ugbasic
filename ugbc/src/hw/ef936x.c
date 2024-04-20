@@ -351,7 +351,7 @@ void ef936x_bank_select( Environment * _environment, int _bank ) {
 
 int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm );
+    deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
@@ -480,7 +480,7 @@ void ef936x_textmap_at( Environment * _environment, char * _address ) {
 
 void ef936x_pset_int( Environment * _environment, int _x, int _y ) {
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm );
+    deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
     
     outline0("LDA #1");
@@ -494,7 +494,7 @@ void ef936x_pset_vars( Environment * _environment, char *_x, char *_y ) {
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm );
+    deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
     
     outline0("LDA #1");
@@ -510,7 +510,7 @@ void ef936x_pget_color_vars( Environment * _environment, char *_x, char *_y, cha
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
     Variable * result = variable_retrieve_or_define( _environment, _result, VT_BYTE, 0 );
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm );
+    deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
     
     outline0("LDA #3");
@@ -649,7 +649,7 @@ void ef936x_scroll_text( Environment * _environment, int _direction ) {
 
 void ef936x_text( Environment * _environment, char * _text, char * _text_size ) {
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
     deploy( cls, src_hw_ef936x_cls_asm );
     deploy( textEncodedAt, src_hw_ef936x_text_at_asm );
@@ -676,7 +676,7 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size ) 
 
 void ef936x_initialization( Environment * _environment ) {
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm );
+    deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( ef936xstartup, src_hw_ef936x_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
@@ -1813,8 +1813,8 @@ static void ef936x_load_image_address_to_register( Environment * _environment, c
 
 void ef936x_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm);
-    deploy( putimage, src_hw_ef936x_put_image_asm );
+    deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_preferred( putimage, src_hw_ef936x_put_image_asm );
 
     ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
 
@@ -1922,8 +1922,8 @@ Variable * ef936x_new_sequence( Environment * _environment, int _sequences, int 
 
 void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm);
-    deploy( getimage, src_hw_ef936x_get_image_asm );
+    deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_preferred( getimage, src_hw_ef936x_get_image_asm );
 
     ef936x_load_image_address_to_y( _environment, _image, _sequence, _frame, _frame_size, _frame_count );
 
@@ -1940,7 +1940,7 @@ void ef936x_get_image( Environment * _environment, char * _image, char * _x, cha
 
 void ef936x_scroll( Environment * _environment, int _dx, int _dy ) {
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( scroll, src_hw_ef936x_scroll_asm);
     deploy( textHScroll, src_hw_ef936x_hscroll_text_asm );
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
@@ -2039,7 +2039,7 @@ void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * 
 
 void ef936x_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( blitimage, src_hw_ef936x_blit_image_asm );
 
     if ( _source_count > 2 ) {
@@ -2107,7 +2107,7 @@ int ef936x_palette_extract( Environment * _environment, char * _data, int _width
 
 void ef936x_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
-    deploy( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
 
     if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0001" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
         ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );

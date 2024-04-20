@@ -81,7 +81,7 @@ void pc128op_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 void pc128op_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
-    deploy( scancode, src_hw_pc128op_scancode_asm );
+    deploy_preferred( scancode, src_hw_pc128op_scancode_asm );
 
     MAKE_LABEL
 
@@ -134,7 +134,7 @@ void pc128op_scancode( Environment * _environment, char * _pressed, char * _scan
 
     MAKE_LABEL
 
-    deploy( scancode, src_hw_pc128op_scancode_asm );
+    deploy_preferred( scancode, src_hw_pc128op_scancode_asm );
 
     outline0("LDA #0" );
     outline1("STA %s", _pressed );
@@ -223,7 +223,7 @@ void pc128op_key_pressed( Environment * _environment, char *_scancode, char * _r
 
     MAKE_LABEL
 
-    deploy( scancode, src_hw_pc128op_scancode_asm );
+    deploy_preferred( scancode, src_hw_pc128op_scancode_asm );
 
     outline1("LDA %s", _scancode );
     outline0("JSR KEYPRESSED");

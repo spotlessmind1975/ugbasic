@@ -746,6 +746,11 @@ void variable_cleanup( Environment * _environment ) {
     }
 
     outline0("fcb $ff");
+
+    deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
+    deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
+    deploy_inplace_preferred( scancode, src_hw_pc128op_scancode_asm );
     
     outhead0("CODESTART2");
     outline0("LDS #STACKEND");
