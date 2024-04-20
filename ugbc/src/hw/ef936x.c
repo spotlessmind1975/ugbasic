@@ -2112,7 +2112,16 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
     if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0001" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
         ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
         deploy( flipimagex, src_hw_ef936x_flip_image_x_asm );
+        if ( _image->isAddress && _image->bankNumber != -1 ) {
+            outline0("ORCC #$50");
+            outline0("LEAY $6000,Y");
+            bank_set( _environment, _image->bankNumber );
+        }
         outline0("JSR FLIPIMAGEX");
+        if ( _image->isAddress && _image->bankNumber != -1 ) {
+            bank_set( _environment, 0x07 );
+            outline0("ANDCC #$AF");
+        }
     } else {
         
         MAKE_LABEL
@@ -2122,7 +2131,16 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
         outline1("LDA %s", _direction );
         outline1("ANDA #$%2.2x", FLAG_FLIP_X );
         outline1("BEQ %s", label );
+        if ( _image->isAddress && _image->bankNumber != -1 ) {
+            outline0("ORCC #$50");
+            outline0("LEAY $6000,Y");
+            bank_set( _environment, _image->bankNumber );
+        }
         outline0("JSR FLIPIMAGEX");
+        if ( _image->isAddress && _image->bankNumber != -1 ) {
+            bank_set( _environment, 0x07 );
+            outline0("ANDCC #$AF");
+        }
         outhead1("%s", label );
 
     }
@@ -2130,7 +2148,16 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
     if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0002" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
         ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
         deploy( flipimagey, src_hw_ef936x_flip_image_y_asm );
+        if ( _image->isAddress && _image->bankNumber != -1 ) {
+            outline0("ORCC #$50");
+            outline0("LEAY $6000,Y");
+            bank_set( _environment, _image->bankNumber );
+        }
         outline0("JSR FLIPIMAGEY");
+        if ( _image->isAddress && _image->bankNumber != -1 ) {
+            bank_set( _environment, 0x07 );
+            outline0("ANDCC #$AF");
+        }
     } else {
         
         MAKE_LABEL
@@ -2140,7 +2167,16 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
         outline1("LDA %s", _direction );
         outline1("ANDA #$%2.2x", FLAG_FLIP_Y );
         outline1("BEQ %s", label );
+        if ( _image->isAddress && _image->bankNumber != -1 ) {
+            outline0("ORCC #$50");
+            outline0("LEAY $6000,Y");
+            bank_set( _environment, _image->bankNumber );
+        }
         outline0("JSR FLIPIMAGEY");
+        if ( _image->isAddress && _image->bankNumber != -1 ) {
+            bank_set( _environment, 0x07 );
+            outline0("ANDCC #$AF");
+        }
         outhead1("%s", label );
 
     }
