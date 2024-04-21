@@ -6405,6 +6405,25 @@ void cpu6809_float_single_tan( Environment * _environment, char * _angle, char *
 
 }
 
+void cpu6809_float_fast_log( Environment * _environment, char * _value, char * _result ) {
+    cpu6809_float_single_log( _environment, _value, _result );
+}
+
+void cpu6809_float_single_log( Environment * _environment, char * _value, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _value );
+    outline0( "JSR FPLOD" );
+
+    outline0( "JSR FPLN" );
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
+
+}
+
 void cpu6809_address_table_build( Environment * _environment, char * _table, int * _values, char *_address[], int _count ) {
 
     outhead1("%s", _table );

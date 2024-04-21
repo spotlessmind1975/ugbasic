@@ -4072,6 +4072,7 @@ int                     frames( Environment * _environment, char * _image );
 Variable *              fp_cos( Environment * _environment, char * _angle );
 Variable *              fp_sin( Environment * _environment, char * _angle );
 Variable *              fp_tan( Environment * _environment, char * _angle );
+Variable *              fp_log( Environment * _environment, char * _value );
 
 //----------------------------------------------------------------------------
 // *G*

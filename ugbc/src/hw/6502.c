@@ -7560,6 +7560,10 @@ void cpu6502_float_fast_sin( Environment * _environment, char * _angle, char * _
     cpu6502_float_single_sin( _environment, _angle, _result );
 }
 
+void cpu6502_float_fast_log( Environment * _environment, char * _value, char * _result ) {
+    cpu6502_float_single_log( _environment, _value, _result );
+}
+
 void cpu6502_float_single_sin( Environment * _environment, char * _angle, char * _result ) {
     
     MAKE_LABEL
@@ -7576,6 +7580,34 @@ void cpu6502_float_single_sin( Environment * _environment, char * _angle, char *
     outline0( "STA M1+2" );
 
     outline0( "JSR FSIN");
+
+    outline0( "LDA X1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
+    outline0( "LDA M1+2" );
+    outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
+
+}
+
+void cpu6502_float_single_log( Environment * _environment, char * _value, char * _result ) {
+    
+    MAKE_LABEL
+    
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _value, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "3" ) );
+    outline0( "STA M1+2" );
+
+    outline0( "JSR FPLOG");
 
     outline0( "LDA X1" );
     outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
