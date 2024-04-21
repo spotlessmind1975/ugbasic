@@ -8438,13 +8438,25 @@ void z80_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_
 
 void z80_float_fast_log( Environment * _environment, char * _value, char * _result ) {
 
-    CRITICAL_UNIMPLEMENTED("Z80 LOG not implemented");
+    CRITICAL_UNIMPLEMENTED("LOG");
 
 }
 
 void z80_float_single_log( Environment * _environment, char * _value, char * _result ) {
 
-    CRITICAL_UNIMPLEMENTED("Z80 LOG not implemented");
+    CRITICAL_UNIMPLEMENTED("LOG");
+
+}
+
+void z80_float_fast_exp( Environment * _environment, char * _value, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED("EXP");
+
+}
+
+void z80_float_single_exp( Environment * _environment, char * _value, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED("EXP");
 
 }
 

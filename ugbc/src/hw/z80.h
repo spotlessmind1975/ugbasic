@@ -327,6 +327,7 @@ void z80_float_fast_neg( Environment * _environment, char * _value, char * _resu
 void z80_float_fast_abs( Environment * _environment, char * _value, char * _result );
 void z80_float_fast_tan( Environment * _environment, char * _value, char * _result );
 void z80_float_fast_log( Environment * _environment, char * _value, char * _result );
+void z80_float_fast_exp( Environment * _environment, char * _value, char * _result );
 
 // SINGLE FP (32 bit) IEEE-754
 
@@ -349,6 +350,7 @@ void z80_float_single_neg( Environment * _environment, char * _value, char * _re
 void z80_float_single_abs( Environment * _environment, char * _value, char * _result );
 void z80_float_single_tan( Environment * _environment, char * _value, char * _result );
 void z80_float_single_log( Environment * _environment, char * _value, char * _result );
+void z80_float_single_exp( Environment * _environment, char * _value, char * _result );
 
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
@@ -659,6 +661,9 @@ void z80_float_single_log( Environment * _environment, char * _value, char * _re
 
 #define cpu_float_fast_log( _environment, _value, _result ) z80_float_fast_log( _environment, _value, _result ) 
 #define cpu_float_single_log( _environment, _value, _result ) z80_float_single_log( _environment, _value, _result ) 
+
+#define cpu_float_fast_exp( _environment, _value, _result ) z80_float_fast_exp( _environment, _value, _result ) 
+#define cpu_float_single_exp( _environment, _value, _result ) z80_float_single_exp( _environment, _value, _result ) 
 
 #define     CPU_LITTLE_ENDIAN      1
 #define     REGISTER_BASE           0x1000

@@ -408,7 +408,7 @@ MHLF:  .byte $7F, $40, $00, $00 ; 0.5
 ;
 ;     EXP OF MANT/EXP1 RESULT IN MANT/EXP1
 ;
-EXP:   LDX #3      ; 4 BYTE TRANSFER
+FPEXP:   LDX #3      ; 4 BYTE TRANSFER
 
 @IF C128
        LDA L2E+3

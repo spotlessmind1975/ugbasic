@@ -320,6 +320,7 @@ void cpu6502_float_fast_sin( Environment * _environment, char * _angle, char * _
 void cpu6502_float_fast_cos( Environment * _environment, char * _angle, char * _result );
 void cpu6502_float_fast_tan( Environment * _environment, char * _angle, char * _result );
 void cpu6502_float_fast_log( Environment * _environment, char * _value, char * _result );
+void cpu6502_float_fast_exp( Environment * _environment, char * _value, char * _result );
 
 // SINGLE FP (32 bit) IEEE-754
 
@@ -338,6 +339,7 @@ void cpu6502_float_single_sin( Environment * _environment, char * _angle, char *
 void cpu6502_float_single_cos( Environment * _environment, char * _angle, char * _result );
 void cpu6502_float_single_tan( Environment * _environment, char * _angle, char * _result );
 void cpu6502_float_single_log( Environment * _environment, char * _value, char * _result );
+void cpu6502_float_single_exp( Environment * _environment, char * _value, char * _result );
 
 void cpu6502_f32add( char * _x, char * _y, char * _result );
 void cpu6502_f32div( char * _x, char * _y, char * _result );
@@ -644,6 +646,9 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 
 #define cpu_float_fast_log( _environment, _value, _result ) cpu6502_float_fast_log( _environment, _value, _result ) 
 #define cpu_float_single_log( _environment, _value, _result ) cpu6502_float_single_log( _environment, _value, _result ) 
+
+#define cpu_float_fast_exp( _environment, _value, _result ) cpu6502_float_fast_exp( _environment, _value, _result ) 
+#define cpu_float_single_exp( _environment, _value, _result ) cpu6502_float_single_exp( _environment, _value, _result ) 
 
 #define     CPU_LITTLE_ENDIAN      1
 #define     REGISTER_BASE          0x1000
