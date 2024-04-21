@@ -93,7 +93,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
-%token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG
+%token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1376,7 +1376,7 @@ modula:
     | modula OP_MULTIPLICATION factor {
         Variable * modula = variable_retrieve( _environment, $1 );
         Variable * factor = variable_retrieve( _environment, $3 );
-        if ( factor->initializedByConstant ) {
+        if ( ( modula->type != VT_FLOAT && factor->type != VT_FLOAT ) && factor->initializedByConstant ) {
             if ( modula->initializedByConstant ) {
                 Variable * number = variable_temporary( _environment, VT_MAX_BITWIDTH_TYPE( factor->type, modula->type ), "(constant)" );
                 $$ = number->name;
@@ -1443,9 +1443,15 @@ factor:
       }
       | OP_MINUS factor {
         Variable * expr = variable_retrieve( _environment, $2 );
-        Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
-        variable_store( _environment, zero->name, 0 );
-        $$ = variable_sub( _environment, zero->name, expr->name )->name;
+        if ( expr->type == VT_FLOAT ) {
+            Variable * zero = variable_temporary( _environment, VT_FLOAT, "(zero)" );
+            variable_store_float( _environment, zero->name, 0 );
+            $$ = variable_sub( _environment, zero->name, expr->name )->name;
+        } else {
+            Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
+            variable_store( _environment, zero->name, 0 );
+            $$ = variable_sub( _environment, zero->name, expr->name )->name;
+        }
       }
       ;
 
@@ -2883,6 +2889,9 @@ exponential:
       }
     | LOG OP expr CP {
         $$ = fp_log( _environment, $3 )->name;
+      }
+    | EXP OP expr CP {
+        $$ = fp_exp( _environment, $3 )->name;
       }
     | SIN OP expr CP {
         $$ = fp_sin( _environment, $3 )->name;
