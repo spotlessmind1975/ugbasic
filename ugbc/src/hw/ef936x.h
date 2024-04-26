@@ -33,7 +33,7 @@
 
 #include "../ugbc.h"
 
-#if defined(__pc128op__)
+#if defined(__pc128op__) || defined(__to8__)
 
     #define COLOR_BLACK					0
     #define COLOR_WHITE					1

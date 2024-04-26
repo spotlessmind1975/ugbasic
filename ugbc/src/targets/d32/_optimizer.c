@@ -279,7 +279,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     POBuffer v4 = TMP_BUF;
     
     /* move B stuff after A stuff */
-    if( (po_buf_match(buf[0], " LDB *", v1) || po_buf_match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0])
+    if( (po_buf_match(buf[0], " LDB *", v1) || po_buf_match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0]) && strstr(v1->str, "BASE_SEGMENT" ) == NULL
     &&  sets_flag(buf[1], 'A') 
 	&&  (!po_buf_match(buf[1], " * *", NULL, v2) || po_buf_strcmp(v1, v2)) ) {
         int x = 1, i;
@@ -338,9 +338,9 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
             ++_environment->removedAssemblyLines;
         }
 
-        if ( !po_buf_match(v2, "_Ttmp") && strcmp( v2->str, "$A7C1") && strcmp( v2->str, "$FFDE") && strcmp( v2->str, "$FFDF")
+        if ( !po_buf_match(v2, "_Ttmp") && strcmp( v2->str, "BASE_SEGMENT+$C1") && strcmp( v2->str, "$FFDE") && strcmp( v2->str, "$FFDF")
             &&
-             strcmp( v4->str, "$A7C1") && strcmp( v4->str, "$FFDE") && strcmp( v4->str, "$FFDF")  ) {
+             strcmp( v4->str, "BASE_SEGMENT+$C1") && strcmp( v4->str, "$FFDE") && strcmp( v4->str, "$FFDF")  ) {
             optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
             ++_environment->removedAssemblyLines;
         }
@@ -441,7 +441,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     if ((po_buf_match(buf[0], " ST* *+", NULL, v1) || po_buf_match(buf[0], " ST* *", NULL, v1))
     &&  !isBranch(buf[1]) && po_buf_match(buf[1], " * *", NULL, v2) && po_buf_strcmp(v1, v2)!=0
     &&  !isBranch(buf[2]) && po_buf_match(buf[2], " * *", NULL, v2) && po_buf_strcmp(v1, v2)!=0
-    && po_buf_strcmp(buf[3], buf[0])==0 && strcmp(v2->str, "$A7E5")==0 ) {
+    && po_buf_strcmp(buf[3], buf[0])==0 && strcmp(v2->str, "BASE_SEGMENT+$E5")==0 ) {
         optim(buf[0], RULE "(STORE*,?,?,STORE*)->(?,?,STORE*)", NULL);
         ++_environment->removedAssemblyLines;
     }

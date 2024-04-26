@@ -51,8 +51,8 @@
 void color_border( Environment * _environment, int _color ) {
 	outline1("LDA #%d", _color&15);
 	/* emmit0("STA <$86"); to be compatible with ROM routines */
-	outline0("ORA $A7E4");
-	outline0("STA $A7DD");
+	outline0("ORA BASE_SEGMENT+$E4");
+	outline0("STA BASE_SEGMENT+$DD");
 
 }
 
@@ -74,6 +74,6 @@ void color_border_var( Environment * _environment, char * _color ) {
 	outline1("LDA %s", var->realName);
 	outline0("ANDA #$0F");
 	/* emmit0("STA <$86"); to be compatible with ROM routines */
-	outline0("ORA $A7E4");
-	outline0("STA $A7DD");
+	outline0("ORA BASE_SEGMENT+$E4");
+	outline0("STA BASE_SEGMENT+$DD");
 }

@@ -49,8 +49,8 @@
 ;     FCB     $FF
 
 KEYPRESSED
-    STA $A7C1
-    LDA $A7C1
+    STA BASE_SEGMENT+$C1
+    LDA BASE_SEGMENT+$C1
     ANDA #$80
     CMPA #$80
     RTS

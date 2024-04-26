@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#if defined(__pc128op__) || defined(__mo5__)
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
 
 #include "../ugbc.h"
 #include <math.h>
@@ -78,6 +78,27 @@
             { 0xee, 0xff, 0xff, 0xff, 14, "CYAN", 14 },
             { 0xa1, 0x68, 0x3c, 0xff, 15, "ORANGE", 15 }
         };
+
+#elif defined(__to8__)
+
+    static RGBi SYSTEM_PALETTE[] = {
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK", 0 },        
+            { 0xff, 0xff, 0xff, 0xff, 1, "WHITE", 1 },
+            { 0x88, 0x00, 0x00, 0xff, 2, "RED", 2 },
+            { 0xaa, 0xff, 0xe6, 0xff, 3, "CYAN", 3 },
+            { 0xcc, 0x44, 0xcc, 0xff, 4, "VIOLET", 4 },
+            { 0x00, 0xcc, 0x55, 0xff, 5, "GREEN", 5 },
+            { 0x00, 0x00, 0xaa, 0xff, 6, "BLUE", 6 },
+            { 0xee, 0xee, 0x77, 0xff, 7, "YELLOW", 7 },
+            { 0xa1, 0x68, 0x3c, 0xff, 8, "ORANGE", 8 },
+            { 0xdd, 0x88, 0x65, 0xff, 9, "BROWN", 9 },
+            { 0xff, 0x77, 0x77, 0xff, 10, "LIGHT RED", 10 },
+            { 0x33, 0x33, 0x33, 0xff, 11, "DARK GREY", 11 },
+            { 0x77, 0x77, 0x77, 0xff, 12, "GREY", 12 },
+            { 0xaa, 0xff, 0x66, 0xff, 13, "LIGHT GREEN", 13 },
+            { 0x00, 0x88, 0xff, 0xff, 14, "LIGHT BLUE", 14 },
+            { 0xbb, 0xbb, 0xbb, 0xff, 15, "LIGHT GREY", 15 }
+    };
 
 #endif
 
@@ -163,10 +184,10 @@ void ef936x_border_color( Environment * _environment, char * _border_color ) {
 void ef936x_background_color( Environment * _environment, int _index, int _background_color ) {
 
     outline1("LDB #$%2.2x", ( _index & 0x0f ) * 2 );
-    outline0("STB $A7DB" );
+    outline0("STB BASE_SEGMENT+$DB" );
     outline1("LDD #$%4.4x", _background_color );
-    outline0("STB $A7DA" );
-    outline0("STA $A7DA" );
+    outline0("STB BASE_SEGMENT+$DA" );
+    outline0("STA BASE_SEGMENT+$DA" );
 
     rgbConverterFunctionInverse( _background_color, &SYSTEM_PALETTE[_index].red, &SYSTEM_PALETTE[_index].green, &SYSTEM_PALETTE[_index].blue );
 
@@ -197,10 +218,10 @@ void ef936x_background_color_vars( Environment * _environment, char * _index, ch
 
     outline1("LDB %s", _index );
     outline0("LSLB" );
-    outline0("STB $A7DB" );
+    outline0("STB BASE_SEGMENT+$DB" );
     outline1("LDD %s", _background_color );
-    outline0("STB $A7DA" );
-    outline0("STA $A7DA" );
+    outline0("STB BASE_SEGMENT+$DA" );
+    outline0("STA BASE_SEGMENT+$DA" );
     
 }
 
@@ -217,10 +238,10 @@ void ef936x_background_color_vars( Environment * _environment, char * _index, ch
 void ef936x_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
 
     outline1("LDB #$%2.2x", (_index*2) );
-    outline0("STB $A7DB" );
+    outline0("STB BASE_SEGMENT+$DB" );
     outline1("LDD %s", _background_color );
-    outline0("STB $A7DA" );
-    outline0("STA $A7DA" );
+    outline0("STB BASE_SEGMENT+$DA" );
+    outline0("STA BASE_SEGMENT+$DA" );
     
 }
 
@@ -238,9 +259,9 @@ void ef936x_background_color_get_vars( Environment * _environment, char * _index
 
     outline1("LDB %s", _index );
     outline0("ASLB" );
-    outline0("STB $A7DB" );
-    outline0("LDB $A7DA" );
-    outline0("LDA $A7DA" );
+    outline0("STB BASE_SEGMENT+$DB" );
+    outline0("LDB BASE_SEGMENT+$DA" );
+    outline0("LDA BASE_SEGMENT+$DA" );
     outline1("STD %s", _background_color );
     
 }
@@ -364,8 +385,12 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesHeight = 25;
             _environment->screenColors = 16;
             _environment->currentModeBW = 4;
-            outline0("LDA #%00000000");
-            outline0("STA $A7DC");
+            #if defined(__to8__)
+                outline0("LDA #%00100000");
+            #else
+                outline0("LDA #%00000000");
+            #endif
+            outline0("STA BASE_SEGMENT+$DC");
             break;
         case BITMAP_MODE_80_COLUMN:
             _environment->screenWidth = 640;
@@ -375,7 +400,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
             outline0("LDA #%00101010");
-            outline0("STA $A7DC");
+            outline0("STA BASE_SEGMENT+$DC");
             break;
         case BITMAP_MODE_BITMAP_4:
             _environment->screenWidth = 320;
@@ -385,7 +410,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
             outline0("LDA #%00100001");
-            outline0("STA $A7DC");
+            outline0("STA BASE_SEGMENT+$DC");
             break;
         case BITMAP_MODE_BITMAP_16:
             _environment->screenWidth = 160;
@@ -395,7 +420,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenColors = 16;
             _environment->currentModeBW = 4;
             outline0("LDA #%01111011");
-            outline0("STA $A7DC");
+            outline0("STA BASE_SEGMENT+$DC");
             break;
         case BITMAP_MODE_PAGE:
             _environment->screenWidth = 320;
@@ -405,7 +430,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
             outline0("LDA #%00100100");
-            outline0("STA $A7DC");
+            outline0("STA BASE_SEGMENT+$DC");
             break;
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
@@ -672,6 +697,7 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size ) 
 
 @target pc128op
 @target mo5
+@target to8
 </usermanual> */
 
 void ef936x_initialization( Environment * _environment ) {
@@ -814,36 +840,54 @@ void ef936x_finalization( Environment * _environment ) {
         palette = SYSTEM_PALETTE;
     }
 
+#ifdef __to8__
+    if ( _environment->currentMode < 3 ) {
+        
+        RGBi * transposedPalette = malloc_palette( 16 );
+        rgbi_move( &palette[0], &transposedPalette[8] );
+        rgbi_move( &palette[1], &transposedPalette[10] );
+        rgbi_move( &palette[2], &transposedPalette[12] );
+        rgbi_move( &palette[3], &transposedPalette[14] );
+
+        rgbi_move( &palette[4], &transposedPalette[0] );
+        rgbi_move( &palette[5], &transposedPalette[2] );
+        rgbi_move( &palette[6], &transposedPalette[4] );
+        rgbi_move( &palette[7], &transposedPalette[6] );
+
+        palette = transposedPalette;
+    }
+#endif
+
     for( i=0; i<15; ++i ) {
         switch( _environment->gammaCorrection ) {
             case GAMMA_CORRECTION_NONE:
                 out4( "$%1.1x%1.1x%1.1x%1.1x, ", 
                     0, 
-                    ( palette[i].blue >> 4 ) & 0x0f, 
-                    ( palette[i].green >> 4 ) & 0x0f, 
-                    ( palette[i].red >> 4 ) & 0x0f 
+                    ( EF936X_COMPONENT_BITMASK * 0x10 ) | ( ( palette[i].blue >> 4 ) & 0x0f ) , 
+                    ( ( palette[i].green >> 4 ) & 0x0f ) , 
+                    ( ( palette[i].red >> 4 ) & 0x0f )  
                 );
                 break;
             case GAMMA_CORRECTION_TYPE1:
                 out4( "$%1.1x%1.1x%1.1x%1.1x, ", 
                     0, 
-                    pc_to_ef936x( palette[i].blue >> 4 ) & 0x0f, 
-                    pc_to_ef936x( palette[i].green >> 4 ) & 0x0f, 
-                    pc_to_ef936x( palette[i].red >> 4 ) & 0x0f 
+                    ( EF936X_COMPONENT_BITMASK * 0x10 ) | ( pc_to_ef936x( palette[i].blue >> 4 ) & 0x0f ) , 
+                    ( pc_to_ef936x( palette[i].green >> 4 ) & 0x0f ) , 
+                    ( pc_to_ef936x( palette[i].red >> 4 ) & 0x0f )  
                 );
                 break;
             case GAMMA_CORRECTION_TYPE2:
                 out4( "$%1.1x%1.1x%1.1x%1.1x, ", 
                     0, 
-                    df_gamma( palette[i].blue >> 4 ) & 0x0f, 
-                    df_gamma( palette[i].green >> 4 ) & 0x0f, 
-                    df_gamma( palette[i].red >> 4 ) & 0x0f 
+                    ( EF936X_COMPONENT_BITMASK * 0x10 ) | ( df_gamma( palette[i].blue >> 4 ) & 0x0f ) , 
+                    ( df_gamma( palette[i].green >> 4 ) & 0x0f ) , 
+                    ( df_gamma( palette[i].red >> 4 ) & 0x0f )  
                 );
                 break;
         }
     }
-    outline4("$%1.1x%1.1x%1.1x%1.1x", 0, ( palette[15].blue >> 4 ) & 0x0f, ( palette[15].green >> 4 ) & 0x0f, ( palette[15].red >> 4 ) & 0x0f );
-
+    outline4("$%1.1x%1.1x%1.1x%1.1x", 0, EF936X_COMPONENT_BITMASK * 0x10 | ( ( palette[15].blue >> 4 ) & 0x0f ) , ( ( palette[15].green >> 4 ) & 0x0f ) , ( ( palette[15].red >> 4 ) & 0x0f )  );
+    
 }
 
 void ef936x_hscroll_line( Environment * _environment, int _direction ) {
@@ -2114,7 +2158,11 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
         deploy( flipimagex, src_hw_ef936x_flip_image_x_asm );
         if ( _image->isAddress && _image->bankNumber != -1 ) {
             outline0("ORCC #$50");
-            outline0("LEAY $6000,Y");
+            #if defined(__to8__)
+                outline0("LEAY $A000,Y");
+            #else
+                outline0("LEAY $6000,Y");
+            #endif
             bank_set( _environment, _image->bankNumber );
         }
         outline0("JSR FLIPIMAGEX");
@@ -2133,7 +2181,11 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
         outline1("BEQ %s", label );
         if ( _image->isAddress && _image->bankNumber != -1 ) {
             outline0("ORCC #$50");
-            outline0("LEAY $6000,Y");
+            #if defined(__to8__)
+                outline0("LEAY $A000,Y");
+            #else
+                outline0("LEAY $6000,Y");
+            #endif
             bank_set( _environment, _image->bankNumber );
         }
         outline0("JSR FLIPIMAGEX");
@@ -2150,7 +2202,11 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
         deploy( flipimagey, src_hw_ef936x_flip_image_y_asm );
         if ( _image->isAddress && _image->bankNumber != -1 ) {
             outline0("ORCC #$50");
-            outline0("LEAY $6000,Y");
+            #if defined(__to8__)
+                outline0("LEAY $A000,Y");
+            #else
+                outline0("LEAY $6000,Y");
+            #endif
             bank_set( _environment, _image->bankNumber );
         }
         outline0("JSR FLIPIMAGEY");
@@ -2169,7 +2225,11 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
         outline1("BEQ %s", label );
         if ( _image->isAddress && _image->bankNumber != -1 ) {
             outline0("ORCC #$50");
-            outline0("LEAY $6000,Y");
+            #if defined(__to8__)
+                outline0("LEAY $A000,Y");
+            #else
+                outline0("LEAY $6000,Y");
+            #endif
             bank_set( _environment, _image->bankNumber );
         }
         outline0("JSR FLIPIMAGEY");

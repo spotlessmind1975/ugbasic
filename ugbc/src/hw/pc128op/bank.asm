@@ -57,7 +57,7 @@ BANKREAD
     ; Change bank number to the required one.
     TFR U, D
     ; STB BANKSHADOW
-    STB $A7E5
+    STB BASE_SEGMENT+$E5
 
     ; Restore size register.
     PULS D
@@ -69,7 +69,7 @@ BANKREAD
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
 
     ANDCC #$AF
 
@@ -87,7 +87,7 @@ BANKREAD1
     ; Change bank number to the required one.
     TFR U, D
     ; STB BANKSHADOW
-    STB $A7E5
+    STB BASE_SEGMENT+$E5
     
     ; copy 1 byte
     LDA ,Y
@@ -97,7 +97,7 @@ BANKREAD1
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
 
     ANDCC #$AF
 
@@ -115,7 +115,7 @@ BANKREAD2
     ; Change bank number to the required one.
     TFR U, D
     ; STB BANKSHADOW
-    STB $A7E5
+    STB BASE_SEGMENT+$E5
     
     ; copy 2 bytes
     LDD ,Y
@@ -125,7 +125,7 @@ BANKREAD2
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
 
     ANDCC #$AF
 
@@ -143,7 +143,7 @@ BANKREAD4
     ; Change bank number to the required one.
     TFR U, D
     ; STB BANKSHADOW
-    STB $A7E5
+    STB BASE_SEGMENT+$E5
     
     ; copy 4 bytes
     LDD ,Y++
@@ -155,7 +155,7 @@ BANKREAD4
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
 
     ANDCC #$AF
 
@@ -179,7 +179,7 @@ BANKUNCOMPRESS
     ; Change bank number to the required one.
     TFR U, D
     ; STB BANKSHADOW
-    STB $A7E5
+    STB BASE_SEGMENT+$E5
 
     ; Uncompress memory at high speed.
     JSR MSC1UNCOMPRESS
@@ -188,7 +188,7 @@ BANKUNCOMPRESS
     ;LDA BANKSHADOWPREV
     ;STA BANKSHADOW
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     
     ANDCC #$AF
 
@@ -214,7 +214,7 @@ BANKWRITE
     ; Change bank number to the required one.
     TFR U, D
     ; STB BANKSHADOW
-    STB $A7E5
+    STB BASE_SEGMENT+$E5
 
     ; Restore size register.
     PULS D
@@ -226,7 +226,7 @@ BANKWRITE
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
 
     ANDCC #$AF
 
@@ -248,7 +248,7 @@ BANKWRITE1
     ; Change bank number to the required one.
     TFR U, D
     ; STB BANKSHADOW
-    STB $A7E5
+    STB BASE_SEGMENT+$E5
 
     LDA ,Y
     STA ,X
@@ -257,7 +257,7 @@ BANKWRITE1
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
 
     ANDCC #$AF
 
@@ -279,7 +279,7 @@ BANKWRITE2
     ; Change bank number to the required one.
     TFR U, D
     ; STB BANKSHADOW
-    STB $A7E5
+    STB BASE_SEGMENT+$E5
 
     LDD ,Y
     STD ,X
@@ -288,7 +288,7 @@ BANKWRITE2
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
 
     ANDCC #$AF
 
@@ -310,7 +310,7 @@ BANKWRITE4
     ; Change bank number to the required one.
     TFR U, D
     ; STB BANKSHADOW
-    STB $A7E5
+    STB BASE_SEGMENT+$E5
 
     LDD ,Y++
     STD ,X++
@@ -321,7 +321,7 @@ BANKWRITE4
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
 
     ANDCC #$AF
 

@@ -46,7 +46,7 @@ GMC_SLOT        fcb  GMC_SLOT_STATIC
 @IF sn76489.address.static || sn76489.address.dynamic 
 @EMIT sn76489.address.value AS CSG_OUT
 @ELSE
-CSG_OUT EQU         $A7FF
+CSG_OUT EQU         BASE_SEGMENT+$FF
 @ENDIF
 @ENDIF
 

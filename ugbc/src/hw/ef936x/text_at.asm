@@ -200,6 +200,9 @@ TEXTATCALCPOS3
     ADDD #PLOTVBASE
     TFR D, X
     LDD , X
+@IF TO8
+    ADDD BITMAPADDRESS
+@ENDIF
     TFR D, X
 
     LDB XCURSYS
@@ -209,7 +212,6 @@ TEXTATCALCPOS3
     LEAX B, X
 
     PULS D,Y
-
     RTS
 
 TEXTATBITMAPMODE
@@ -416,16 +418,36 @@ TEXTATBMSP04
 
 TEXTATBMSP0L1
 
-    LDA $a7c0
+@IF TO8
+
+    LDA BASE_SEGMENT+$c3
     ORA #$01
-    STA $a7c0
+    STA BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDA BASE_SEGMENT+$c0
+    ORA #$01
+    STA BASE_SEGMENT+$c0
+
+@ENDIF
 
     LDA ,Y
     STA ,X
 
-    LDA $a7c0
+@IF TO8
+
+    LDA BASE_SEGMENT+$c3
     ANDA #$fe
-    STA $a7c0
+    STA BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDA BASE_SEGMENT+$c0
+    ANDA #$fe
+    STA BASE_SEGMENT+$c0
+
+@ENDIF
 
     LDA <MATHPTR5
     STA ,X
@@ -490,9 +512,19 @@ TEXTATBMSP02
 
 TEXTATBMSP02L1
 
-    LDA $a7c0
+@IF TO8
+
+    LDA BASE_SEGMENT+$c3
+    ANDA #$fe
+    STA BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDA BASE_SEGMENT+$c0
     ORA #$01
-    STA $a7c0
+    STA BASE_SEGMENT+$c0
+
+@ENDIF
 
     LDA _PEN
     ANDA #$01
@@ -508,9 +540,19 @@ TEXTATBMSP02L1NO
 
 TEXTATBMSP02L1DONE
 
-    LDA $a7c0
+@IF TO8
+
+    LDA BASE_SEGMENT+$c3
+    ORA #$01
+    STA BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDA BASE_SEGMENT+$c0
     ANDA #$fe
-    STA $a7c0
+    STA BASE_SEGMENT+$c0
+
+@ENDIF
 
     LDA _PEN
     ANDA #$02
@@ -588,9 +630,19 @@ TEXTATBMSP03L1
     TFR B, A
     PULS Y
 
-    LDB $a7c0
+@IF TO8
+
+    LDB BASE_SEGMENT+$c3
+    ANDB #$fe
+    STB BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDB BASE_SEGMENT+$c0
     ORB #$01
-    STB $a7c0
+    STB BASE_SEGMENT+$c0
+
+@ENDIF
 
     STA ,X
 
@@ -609,9 +661,19 @@ TEXTATBMSP03L1
     TFR B, A
     PULS Y
 
-    LDB $a7c0
+@IF TO8
+
+    LDB BASE_SEGMENT+$c3
+    ORB #$01
+    STB BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDB BASE_SEGMENT+$c0
     ANDB #$fe
-    STB $a7c0
+    STB BASE_SEGMENT+$c0
+
+@ENDIF
 
     STA ,X+
 

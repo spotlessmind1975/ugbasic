@@ -42,6 +42,8 @@ extern char * importPath;
     char targetName[] = "d64";
 #elif defined(__pc128op__)
     char targetName[] = "pc128op";
+#elif defined(__to8__)
+    char targetName[] = "to8";
 #elif defined(__mo5__)
     char targetName[] = "mo5";
 #elif defined(__vic20__)
@@ -1258,6 +1260,7 @@ TIMER { RETURN(TIMER,1); }
 Tmr { RETURN(TIMER,1); }
 TO { RETURN(TO,1); }
 To { RETURN(TO,1); }
+TO8 { RETURN(TO8,1); }
 TOM { RETURN(TOM,1); }
 TONK { RETURN(TONK,1); }
 TREMOLO { RETURN(TREMOLO,1); }

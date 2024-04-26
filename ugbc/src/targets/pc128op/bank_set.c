@@ -67,7 +67,7 @@ void bank_set( Environment * _environment, int _bank ) {
 
     outline1("LDA #$%2.2x", _bank  );
     // outline0("STA BANKSHADOW" );
-    outline0("STA $A7E5" );
+    outline0("STA BASE_SEGMENT+$E5" );
     
 }
 
@@ -95,6 +95,6 @@ void bank_set_var( Environment * _environment, char * _bank ) {
 
     outline1("LDA %s", bank->realName  );
     // outline0("STA BANKSHADOW" );
-    outline0("STA $A7E5" );
+    outline0("STA BASE_SEGMENT+$E5" );
     
 }

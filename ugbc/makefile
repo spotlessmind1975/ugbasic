@@ -230,6 +230,15 @@ src-generated/coco3_footer.c:
 COCO3 := src-generated/coco3_header.c src-generated/coco3_footer.c
 
 # ----------------------------------------------------------------------------
+# LOADER FOR THOMSON TO8
+# ----------------------------------------------------------------------------
+
+src-generated/to8_loader.c:
+	@xxd -i $(subst src-generated/to8_,data/to8/,$(@:.c=.bin)) >$@
+
+TO8 := src-generated/to8_loader.c
+
+# ----------------------------------------------------------------------------
 # Components and chipsets
 # ----------------------------------------------------------------------------
 
@@ -648,6 +657,19 @@ src-generated/modules_mo5.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_MO5)
 	@cat $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_MO5) >src-generated/modules_mo5.c
 	@grep "src" src-generated/modules_mo5.c | awk -f modules.awk >src-generated/modules_mo5.h
 	@grep "data" src-generated/modules_mo5.c | awk -f modules.awk >>src-generated/modules_mo5.h
+
+# Thomson TO8
+
+MODULES_TO8 := $(wildcard src/hw/to8/*.asm)
+SOURCES_TO8 := $(subst src/hw/to8/,src-generated/to8_,$(MODULES_TO8:.asm=.c))
+
+src-generated/to8_%.c: $(MODULES_TO8)
+	@xxd -i $(subst src-generated/to8_,src/hw/to8/,$(@:.c=.asm)) >$@
+
+src-generated/modules_to8.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_TO8) $(TO8)
+	@cat $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_TO8) $(TO8) >src-generated/modules_to8.c
+	@grep "src" src-generated/modules_to8.c | awk -f modules.awk >src-generated/modules_to8.h
+	@grep "data" src-generated/modules_to8.c | awk -f modules.awk >>src-generated/modules_to8.h
 
 # MSX1
 

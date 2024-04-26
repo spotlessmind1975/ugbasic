@@ -34,9 +34,9 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-PLOTDEST equ $0b ; $29
-PLOTCDEST equ $0d ; $27
-PLOTC2DEST equ $0f ; $25
+PLOTDEST equ $4B ; $29
+PLOTCDEST equ $4D ; $27
+PLOTC2DEST equ $4F ; $25
 
 XGR    fdb 0
 YGR    fdb 0
@@ -115,5 +115,4 @@ PLOTVBASE
     fdb $1A90, $1AB8, $1AE0, $1B08, $1B30, $1B58, $1B80, $1BA8, $1BD0, $1BF8
     fdb $1C20, $1C48, $1C70, $1C98, $1CC0, $1CE8, $1D10, $1D38, $1D60, $1D88
     fdb $1DB0, $1DD8, $1E00, $1E28, $1E50, $1E78, $1EA0, $1EC8, $1EF0, $1F18
-
     

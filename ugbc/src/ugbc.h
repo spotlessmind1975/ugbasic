@@ -4652,6 +4652,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/ef936x.h"
     #include "hw/pc128op.h"
     #include "hw/sn76489m.h"
+#elif __to8__ 
+    #include "../src-generated/modules_to8.h"
+    #include "hw/6809.h"
+    #include "hw/ef936x.h"
+    #include "hw/to8.h"
 #elif __mo5__ 
     #include "../src-generated/modules_mo5.h"
     #include "hw/6809.h"

@@ -67,6 +67,8 @@ void target_initialization( Environment * _environment ) {
 
     banks_init_extended( _environment, allowed, sizeof( allowed ) / sizeof( int ), BANK_SIZE );
 
+    outhead1("BASE_SEGMENT EQU $%4.4x", 0x0100 * BASE_SEGMENT );
+    
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );

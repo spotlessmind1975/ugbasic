@@ -93,7 +93,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
-%token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP
+%token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1099,7 +1099,8 @@ const_factor:
       }
       | BIG ENDIAN {
         #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
-            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__)
+            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
+            defined(__to8__)
             $$ = 1;
         #else
             $$ = 0;
@@ -7701,7 +7702,8 @@ target :
     }
     | CPU6809 {
         #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
-            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__)
+            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
+            defined(__to8__)
             $$ = 1;
         #else
             $$ = 0;
@@ -7894,6 +7896,14 @@ target :
     |
     PC128OP {
         #ifdef __pc128op__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    TO8 {
+        #ifdef __to8__
             $$ = 1;
         #else
             $$ = 0;
@@ -9585,6 +9595,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "Dragon 64";
 #elif __pc128op__
     char target[MAX_TEMPORARY_STORAGE] = "PC128 Olivetti Prodest / Thomson MO6";
+#elif __to8__
+    char target[MAX_TEMPORARY_STORAGE] = "Thomson TO8";
 #elif __mo5__
     char target[MAX_TEMPORARY_STORAGE] = "Thomson MO5";
 #elif __vic20__
@@ -9640,7 +9652,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #if defined(__msx1__)
     printf("\t-t <file>    Path to DSKTOOLS tool\n" );
 #endif
-#if defined(__pc128op__) || defined(__mo5__)
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
     printf("\t-G <type>    Type of gamma correction on PALETTE generation:\n" );
     printf("\t               none (0): no gamma correction\n" );
     printf("\t               type1 (1): algorithmic\n" );
@@ -9693,6 +9705,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     #define defaultExtension "bin"
 #elif __pc128op__
     printf("\t                k7o - K7 format (original algorithm)\n" );
+    printf("\t                k7 - K7 format\n" );
+    #define defaultExtension "k7"
+#elif __to8__
     printf("\t                k7 - K7 format\n" );
     #define defaultExtension "k7"
 #elif __mo5__
@@ -9788,6 +9803,8 @@ int main( int _argc, char *_argv[] ) {
 #elif __d64__
     _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
 #elif __pc128op__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+#elif __to8__
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
 #elif __mo5__
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;

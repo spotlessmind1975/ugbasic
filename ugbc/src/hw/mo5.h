@@ -156,6 +156,10 @@
 
 #define MAX_AUDIO_CHANNELS  1
 
+#define BASE_SEGMENT        0xa7
+
+#define EF936X_COMPONENT_BITMASK     0
+
 void mo5_xpen( Environment * _environment, char * _destination );
 void mo5_ypen( Environment * _environment, char * _destination );
 void mo5_inkey( Environment * _environment, char * _pressed, char * _key );

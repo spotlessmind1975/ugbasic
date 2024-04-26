@@ -153,7 +153,11 @@
 #define BANK_COUNT                  6
 #define BANK_SIZE                   16128
 
-#define MAX_AUDIO_CHANNELS  1
+#define MAX_AUDIO_CHANNELS          1
+
+#define BASE_SEGMENT                0xa7
+
+#define EF936X_COMPONENT_BITMASK     0
 
 void pc128op_xpen( Environment * _environment, char * _destination );
 void pc128op_ypen( Environment * _environment, char * _destination );

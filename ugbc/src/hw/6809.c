@@ -40,7 +40,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__d32__) || defined(__d64__) || defined(__pc128op__) || defined(__mo5__) || defined(__coco__) || defined(__coco3__)
+#if defined(__d32__) || defined(__d64__) || defined(__pc128op__) || defined(__mo5__) || defined(__coco__) || defined(__coco3__) || defined(__to8__)
 
 /* output code that is the best "JUMP" version between "small" and "long" branch.
    LBRA and LBSR are transformed into JMP and JSR respectively. */
@@ -5493,15 +5493,15 @@ void cpu6809_string_sub( Environment * _environment, char * _source, char * _sou
 
         outline1("LDY %s", _source);
         outline1("LDA %s", _source_size);
-        outline0("STA MATHPTR0");
+        outline0("STA <MATHPTR0");
         outline1("LDX %s", _pattern);
         outline1("LDA %s", _pattern_size);
-        outline0("STA MATHPTR1");
+        outline0("STA <MATHPTR1");
         outline1("LDU %s", _destination);
 
         outline0("JSR CPUSTRINGSUB");
 
-        outline0("LDA MATHPTR2");
+        outline0("LDA <MATHPTR2");
         outline1("STA %s", _destination_size);
 
     done()
