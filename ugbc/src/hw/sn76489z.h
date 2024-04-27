@@ -54,6 +54,6 @@ void sn76489z_set_pitch_vars( Environment * _environment, char * _channel, char 
 void sn76489z_set_note_vars( Environment * _environment, char * _channel, char * _note );
 void sn76489z_stop_vars( Environment * _environment, char * _channel );
 
-void sn76489z_music( Environment * _environment, char * _music, int _size, int _loop );
+void sn76489z_music( Environment * _environment, char * _music, int _size, int _loop, int _type );
 
 #endif

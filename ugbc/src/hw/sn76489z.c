@@ -49,8 +49,12 @@ static unsigned int SOUND_FREQUENCIES[] = {
 
 void sn76489z_initialization( Environment * _environment ) {
 
+    variable_import( _environment, "SN76489MUSICTYPE", VT_BYTE, 0 );
+    variable_global( _environment, "SN76489MUSICTYPE" );
     variable_import( _environment, "SN76489MUSICREADY", VT_BYTE, 0 );
     variable_global( _environment, "SN76489MUSICREADY" );
+    variable_import( _environment, "SN76489MUSICPAUSE", VT_BYTE, 0 );
+    variable_global( _environment, "SN76489MUSICPAUSE" );
     variable_import( _environment, "SN76489MUSICLOOP", VT_BYTE, 0 );
     variable_global( _environment, "SN76489MUSICLOOP" );
     variable_import( _environment, "SN76489BLOCKS", VT_BYTE, 0 );
@@ -707,7 +711,11 @@ void sn76489z_set_volume_vars( Environment * _environment, char * _channels, cha
     outline0("SRL A" );
     outline0("SRL A" );
     outline0("LD B, A" );
-    outline1("LD A, (%s)", _channels );
+    if ( _channels ) {
+        outline1("LD A, (%s)", _channels );
+    } else {
+        outline0("LD A, $7" );
+    }
     outline0("CALL SN76489STARTVOL");
 
 }
@@ -719,7 +727,11 @@ void sn76489z_set_volume_semi_var( Environment * _environment, char * _channel, 
 
     outline1("LD A, $%2.2x", _volume );
     outline0("LD B, A" );
-    outline1("LD A, (%s)", _channel );
+    if ( _channel ) {
+        outline1("LD A, (%s)", _channel );
+    } else {
+        outline0("LD A, $7" );
+    }
     outline0("CALL SN76489STARTVOL");
 
 }
@@ -1007,7 +1019,7 @@ void sn76489z_stop_vars( Environment * _environment, char * _channels ) {
 
 }
 
-void sn76489z_music( Environment * _environment, char * _music, int _size, int _loop ) {
+void sn76489z_music( Environment * _environment, char * _music, int _size, int _loop, int _type ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
     deploy( sn76489startup, src_hw_sn76489z_startup_asm );
@@ -1020,6 +1032,8 @@ void sn76489z_music( Environment * _environment, char * _music, int _size, int _
     outline0("LD C, A");
     outline1("LD A, $%2.2x", _loop );
     outline0("LD (SN76489MUSICLOOP), A");
+    outline1("LD A, $%2.2x", _type );
+    outline0("LD (SN76489MUSICTYPE), A");
     outline0("CALL MUSICPLAYERRESET");
     outline0("EI");
 
