@@ -107,11 +107,11 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
 
     int colorBackgroundMax = 0;
     int colorBackground[8];
-    memset( colorBackground, 0, 8 );
+    memset( colorBackground, 0, 8 * sizeof( int ) );
     
     int colorForegroundMax = 0;
     int colorForeground[8];
-    memset( colorForeground, 0, 8 );
+    memset( colorForeground, 0, 8 * sizeof( int ) );
 
     char * source = _source;
 
@@ -2156,6 +2156,7 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
         Resource resource;
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
+        resource.isAddress = 0;
         tms9918_load_image_address_to_register( _environment, "BLITTMPPTR", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LD HL, 0" );
@@ -2166,6 +2167,7 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
         Resource resource;
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
+        resource.isAddress = 0;
         tms9918_load_image_address_to_register( _environment, "BLITTMPPTR2", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LD HL, 0" );
@@ -2178,7 +2180,7 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
     outline0("LD D, A" );
 
     outline0("PUSH HL" );
-    outline1("LD HL, %s", _flags );
+    outline1("LD HL, %4.4x", _flags );
     outline0("LD A, L" );
     outline0("LD (IMAGEF), A" );
     outline0("LD A, H" );
