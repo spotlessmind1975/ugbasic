@@ -10,7 +10,7 @@ REM
 REM This example shows a simple starfield by S.Devulder for ugBasic.
 REM Modified by M.Spedaletti.
 REM
-REM @include c128,cpc
+REM @include c128,cpc,pc128op,to8
 
 
 CONST numr  =  1000 : REM num of random position in pool 

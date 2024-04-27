@@ -14,7 +14,7 @@ REM Gary Luckenbaugh sulle best practice nell'uso del FOR...NEXT.
 REM
 REM @url https://garyluckenbaugh.substack.com/p/basic-for-next-best-practices
 REM
-REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,vic20,zx
+REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,vic20,zx,pc128op,to8
 
 CLS
 

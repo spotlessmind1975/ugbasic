@@ -15,25 +15,25 @@ REM dimensioni, inizializzato con una costante (3). Inoltre, si mostra come
 REM permettere l'accesso ad un array sul programma principale da parte di una 
 REM procedura parametrica.
 REM
-REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc,vic20,zx
+REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,to8,sg1000,sc3000,cpc,vic20,zx
 
     CLS
 	
-    CONST a = 6
-    CONST b = 7
-    CONST c = ( a*b ) / 2
+    CONST first = 6
+    CONST second = 7
+    CONST third = ( first*second ) / 2
 
-    DIM ax AS BYTE WITH (3) (a,b)
-    DIM ay AS BYTE WITH (3) (c)
-    DIM az AS BYTE WITH (3) (c)
+    DIM firstx AS BYTE WITH (3) (first,second)
+    DIM firsty AS BYTE WITH (3) (third)
+    DIM firstz AS BYTE WITH (3) (third)
 
     PROCEDURE execute[t]
         
-        SHARED ax, ay, az
+        SHARED firstx, firsty, firstz
 
-        ax(ay(t),az(t)) = 0
-        az(t) = az(t) + 1
-        ax(ay(t),az(t)) = 1
+        firstx(firsty(t),firstz(t)) = 0
+        firstz(t) = firstz(t) + 1
+        firstx(firsty(t),firstz(t)) = 1
 
     END PROCEDURE
 
@@ -42,7 +42,7 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc,
     FOR y = 0 TO a-1
         FOR x = 0 TO b-1
             LOCATE x+1,y+1
-            PRINT ax(x,y)
+            PRINT firstx(x,y)
         NEXT
         PRINT
     NEXT    

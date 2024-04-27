@@ -14,7 +14,7 @@ REM è un segnale di test televisivo, generalmente trasmesso negli orari in cui 
 REM è attivo ma non viene trasmesso alcun programma. Sono modelli di test generati 
 REM elettronicamente, utilizzati per calibrare o risolvere i problemi dell'uscita video.
 REM
-REM @include c128,c64,coco3,cpc,pc128op,msx1,
+REM @include c128,c64,coco3,cpc,pc128op,msx1
 
 OPTION EXPLICIT
 

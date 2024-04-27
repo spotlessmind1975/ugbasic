@@ -14,7 +14,7 @@ REM ridisegno delle primitive ''GET IMAGE'' e ''PUT IMAGE''.
 REM L'esempio è configurabile per individuare il peso di vari 
 REM fattori nelle operazioni.
 REM
-REM @include coco3
+REM @include coco3,pc128op,to8
 
 CONST width = 16
 CONST height = 16
@@ -23,7 +23,7 @@ DIM timeLimit AS INTEGER
 
 timeLimit = (TICKS PER SECOND) * 10
 
-BITMAP ENABLE ( 320, 192, 16 )
+BITMAP ENABLE (16)
 COLOR BORDER BLACK
 CLS BLACK
 
@@ -60,3 +60,4 @@ pixels = px * frames
 PRINT PEN(WHITE);" FRAMES   : "; frames
 PRINT PEN(WHITE);" PIXELS   : "; pixels
 PRINT PEN(WHITE);" FRAMES/S : "; PEN(YELLOW); INT( frames / time )
+
