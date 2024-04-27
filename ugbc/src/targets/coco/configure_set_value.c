@@ -73,7 +73,6 @@ void configure_set_value_var( Environment * _environment, int _name, int _parame
                     break;
             }
             break;
-        default:
     }
 
 }
