@@ -2829,8 +2829,10 @@ void vdcz_put_image( Environment * _environment, Resource * _image, char * _x, c
     outline1("LD IY, (%s)", _y );
     outline0("PUSH HL" );
     outline1("LD HL, %s", _flags );
-    outline0("LD (IMAGEF), L" );
-    outline0("LD (IMAGET), H" );
+    outline0("LD A, L" );
+    outline0("LD (IMAGEF), A" );
+    outline0("LD A, H" );
+    outline0("LD (IMAGET), A" );
     outline0("POP HL" );
     
     outline0("CALL PUTIMAGE");
