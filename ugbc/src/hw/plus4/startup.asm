@@ -38,59 +38,59 @@
 ;     ; ...
 ;     ; ; **** Gestore IRQ personalizzato
 
-IRQWRAPPER:
+; IRQWRAPPER:
 
-    PHP
-    PHA
-    TXA
-    PHA
+;     PHP
+;     PHA
+;     TXA
+;     PHA
 
-    LDA $FF1C
-    LSR A
-    BCS IRQWRAPPEREND2
+;     LDA $FF1C
+;     LSR A
+;     BCS IRQWRAPPEREND2
 
-    LDA $FF1D
-    CMP #206
-    BCC IRQWRAPPEREND2
+;     LDA $FF1D
+;     CMP #206
+;     BCC IRQWRAPPEREND2
 
-    TSX
-    LDA $101,X ; recupero il registro di stato salvato nello stack
-    TAX
-    LDA #>IRQWRAPPEREND ; prima il byte alto
-    PHA
-    LDA #<IRQWRAPPEREND ; poi il byte basso
-    PHA
-    TXA
-    PHA ; infine il registro di stato
+;     TSX
+;     LDA $101,X ; recupero il registro di stato salvato nello stack
+;     TAX
+;     LDA #>IRQWRAPPEREND ; prima il byte alto
+;     PHA
+;     LDA #<IRQWRAPPEREND ; poi il byte basso
+;     PHA
+;     TXA
+;     PHA ; infine il registro di stato
     
-    ; ... ; abilita ROM
+;     ; ... ; abilita ROM
 
-    LDA #$42
-    STA $FF3E
+;     LDA #$42
+;     STA $FF3E
 
-SYSIRQADDR:
-    JMP $0000
+; SYSIRQADDR:
+;     JMP $0000
 
-IRQWRAPPEREND:
+; IRQWRAPPEREND:
 
-    SEI
+;     SEI
     
-IRQWRAPPEREND2:
+; IRQWRAPPEREND2:
 
-    ; myEndIRQ:
-    ; ... ; disabilita ROM
+;     ; myEndIRQ:
+;     ; ... ; disabilita ROM
 
-    LDA #$42
-    STA $FF3F
+;     LDA #$42
+;     STA $FF3F
 
-    PLA
-    TAX
-    PLA
-    PLP
+;     PLA
+;     TAX
+;     PLA
+;     PLP
 
-    CLI
+;     CLI
 
-    RTI
+;     RTI
 
 PLUS4STARTUP:
 
@@ -134,29 +134,29 @@ PLUS4NTSC:
 
 PLUS4STARTUPDONE:
 
-    SEI
+    ; SEI
 
-    LDA SYSIRQADDR+1
-    BNE PLUS4STARTUPDONENOIRQ
-    LDA SYSIRQADDR+2
-    BNE PLUS4STARTUPDONENOIRQ
+    ; LDA SYSIRQADDR+1
+    ; BNE PLUS4STARTUPDONENOIRQ
+    ; LDA SYSIRQADDR+2
+    ; BNE PLUS4STARTUPDONENOIRQ
 
-    LDA $FFFE
-    STA SYSIRQADDR+1
-    LDA $FFFF
-    STA SYSIRQADDR+2
+    ; LDA $FFFE
+    ; STA SYSIRQADDR+1
+    ; LDA $FFFF
+    ; STA SYSIRQADDR+2
 
-    LDA #$42
-    STA $FF3F
+    ; LDA #$42
+    ; STA $FF3F
 
-    LDA #<IRQWRAPPER
-    STA $FFFE
-    LDA #>IRQWRAPPER
-    STA $FFFF
+    ; LDA #<IRQWRAPPER
+    ; STA $FFFE
+    ; LDA #>IRQWRAPPER
+    ; STA $FFFF
 
 PLUS4STARTUPDONENOIRQ:
 
-    CLI
+    ; CLI
 
 @IF dataSegment
     LDA #<DATAFIRSTSEGMENT
