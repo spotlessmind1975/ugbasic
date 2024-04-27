@@ -63,9 +63,30 @@ void target_initialization( Environment * _environment ) {
 
     cpu6809_init( _environment );
 
-    int allowed[] = { 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    int * bankIds = NULL;
+    int bankMax = 0;
+    int bankCount = 0;
 
-    banks_init_extended( _environment, allowed, sizeof( allowed ) / sizeof( int ), BANK_SIZE );
+    switch( _environment->ramSize ) {
+        case 512:
+            bankMax=31; /* 3...30 = 28 banks */
+            break;
+        case 256:
+            bankMax=16; /* 3...15 = 13 banks */
+            break;
+        default:
+            CRITICAL_INVALID_RAM_SIZE( _environment->ramSize );
+            break;
+    }
+
+    bankIds = malloc( sizeof( int ) * bankMax );
+    
+    for( int i=3; i<bankMax; ++i ) {
+        bankIds[i-3] = bankMax - ( i-3 ) - 1;
+        ++bankCount;
+    }
+
+    banks_init_extended( _environment, bankIds, bankCount, BANK_SIZE );
 
     outhead1("BASE_SEGMENT EQU $%4.4x", 0x0100 * BASE_SEGMENT );
 
