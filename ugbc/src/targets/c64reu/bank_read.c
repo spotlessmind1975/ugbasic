@@ -150,9 +150,9 @@ void bank_read_vars( Environment * _environment, char * _bank, char * _address1,
     outline1("LDA %s", address_displacement( _environment, address2->realName, "1" ) );
     outline0("STA TMPPTR2+1");
 
-    outline1("LDA #$%2.2x", size->realName );
+    outline1("LDA %s", size->realName );
     outline0("STA MATHPTR0");
-    outline1("LDA #$%2.2x", address_displacement( _environment, size->realName, "1" ) );
+    outline1("LDA %s", address_displacement( _environment, size->realName, "1" ) );
     outline0("STA MATHPTR1");
     outline1("LDA %s", bank->realName );
     outline0("JSR BANKREAD");
@@ -180,9 +180,9 @@ void bank_read_vars_direct( Environment * _environment, char * _bank, char * _ad
     outline1("LDA #>%s", address2->realName );
     outline0("STA TMPPTR2+1");
 
-    outline1("LDA #$%2.2x", size->realName );
+    outline1("LDA %s", size->realName );
     outline0("STA MATHPTR0");
-    outline1("LDA #$%2.2x", address_displacement( _environment, size->realName, "1" ) );
+    outline1("LDA %s", address_displacement( _environment, size->realName, "1" ) );
     outline0("STA MATHPTR1");
     outline1("LDA %s", bank->realName );
     outline0("JSR BANKREAD");

@@ -334,7 +334,6 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_BUFFER:
             if ( _variable->bankAssigned != -1 ) {
                 outhead2("; relocated on bank %d (at %4.4x)", _variable->bankAssigned, _variable->absoluteAddress );
-                outhead1("%s: .byte $0", _variable->realName );
             } else {
                 if ( _variable->valueBuffer && ! _variable->onStorage ) {
                     if ( _variable->printable ) {
@@ -367,7 +366,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 if ( _variable->value ) {
                     switch( VT_BITWIDTH( _variable->arrayType ) ) {
                         case 32: {
-                            out1("%s: .byte ", _variable->realName );
+                            out0(" .byte " );
                             for( int i=0; i<(_variable->size/4)-1; ++i ) {
                                 out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x, ", (unsigned int)( _variable->value & 0xff ), (unsigned int)( ( _variable->value >> 8 ) & 0xff ), (unsigned int)( ( _variable->value >> 16 ) & 0xff ), (unsigned int)( ( _variable->value >> 24 ) & 0xff ) );
                             }
@@ -376,7 +375,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                             break;
                         }
                         case 16: {
-                            out1("%s: .byte ", _variable->realName );
+                            out0(" .byte " );
                             for( int i=0; i<(_variable->size/2)-1; ++i ) {
                                 out2("$%2.2x, $%2.2x,", (unsigned int)( _variable->value & 0xff ), (unsigned int)( ( _variable->value >> 8 ) & 0xff ) );
                             }
@@ -385,10 +384,10 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                             break;
                         }
                         case 8:
-                            outline3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value&0xff) );
+                            outline2(" .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value&0xff) );
                             break;
                         case 1:
-                            outline3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value?0xff:0x00));
+                            outline2(" .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value?0xff:0x00));
                             break;
                     }                    
                 } else {

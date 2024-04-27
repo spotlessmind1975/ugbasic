@@ -69,9 +69,9 @@ void bank_write_vars( Environment * _environment, char * _address1, char * _bank
     outline1("LDA %s", address_displacement( _environment, address2->realName, "1" ) );
     outline0("STA TMPPTR2+1");
 
-    outline1("LDA #$%2.2x", size->realName );
+    outline1("LDA %s", size->realName );
     outline0("STA MATHPTR0");
-    outline1("LDA #$%2.2x", address_displacement( _environment, size->realName, "1" ) );
+    outline1("LDA %s", address_displacement( _environment, size->realName, "1" ) );
     outline0("STA MATHPTR1");
     outline1("LDA %s", bank->realName );
     outline0("JSR BANKWRITE");
@@ -100,9 +100,9 @@ void bank_write_vars_direct( Environment * _environment, char * _address1, char 
     outline1("LDA %s", address_displacement( _environment, address2->realName, "1" ) );
     outline0("STA TMPPTR2+1");
 
-    outline1("LDA #$%2.2x", size->realName );
+    outline1("LDA %s", size->realName );
     outline0("STA MATHPTR0");
-    outline1("LDA #$%2.2x", address_displacement( _environment, size->realName, "1" ) );
+    outline1("LDA %s", address_displacement( _environment, size->realName, "1" ) );
     outline0("STA MATHPTR1");
     outline1("LDA %s", bank->realName );
     outline0("JSR BANKWRITE");
