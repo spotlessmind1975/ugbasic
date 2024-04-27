@@ -522,7 +522,10 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
-
+    deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
+    deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
+    
     outhead0("CODESTART2");
 
     buffered_prepend_output( );
