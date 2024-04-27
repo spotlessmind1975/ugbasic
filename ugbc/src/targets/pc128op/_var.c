@@ -202,10 +202,10 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                                     break;
                                 }
                                 case 8:
-                                    outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
+                                    outhead3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
                                     break;
                                 case 1:
-                                    outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
+                                    outhead3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                     break;
                             }                             
                             
