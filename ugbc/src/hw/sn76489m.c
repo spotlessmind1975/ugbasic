@@ -466,7 +466,11 @@ void sn76489m_set_volume_vars( Environment * _environment, char * _channels, cha
     outline0("LSRB" );
     outline0("LSRB" );
     outline0("LSRB" );
-    outline1("LDA %s", _channels );
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA $%2.2x" );
+    }
     outline0("JSR SN76489STARTVOL");
 
 }
@@ -477,7 +481,11 @@ void sn76489m_set_volume_semi_var( Environment * _environment, char * _channel, 
     deploy( sn76489startup, src_hw_sn76489m_startup_asm );
 
     outline1("LDB #$%2.2x", _volume );
-    outline1("LDA %s", _channel );
+    if ( _channel ) {
+        outline1("LDA %s", _channel );
+    } else {
+        outline0("LDA $%2.2x" );
+    }
     outline0("JSR SN76489STARTVOL");
 
 }
