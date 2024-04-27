@@ -241,10 +241,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     break;
                                 }
                                 case 8:
-                                    outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
+                                    outhead3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
                                     break;
                                 case 1:
-                                    outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
+                                    outhead3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                     break;
                             }                             
                         } else {
@@ -573,6 +573,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace( irq, src_hw_coco3_irq_asm);
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_inplace_preferred( bank, src_hw_coco3_bank_asm);
     deploy_inplace_preferred( gimevars, src_hw_gime_vars_asm );
     deploy_inplace_preferred( gimestartup, src_hw_gime_startup_asm );
     deploy_inplace_preferred( putimage, src_hw_gime_put_image_asm );
@@ -588,7 +589,6 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( dcommon, src_hw_coco3_dcommon_asm);
     deploy_inplace_preferred( dload, src_hw_coco3_dload_asm);
     deploy_inplace_preferred( dsave, src_hw_coco3_dsave_asm);
-    deploy_inplace_preferred( duff, src_hw_coco3_bank_asm );
     
     // Moved here for banking reasons.
     if ( ! _environment->deployed.timer ) {
