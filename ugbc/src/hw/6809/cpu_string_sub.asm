@@ -41,19 +41,19 @@
 CPUSTRINGSUB
 
     ; Check if source len is zero: if so, we can exit.
-    LDA MATHPTR0
+    LDA <MATHPTR0
     BEQ CPUSTRINGSUBDONE
     ; Save the source len
-    STA MATHPTR2
+    STA <MATHPTR2
 
     ; Check if pattern len is zero: if so, we can exit.
-    LDA MATHPTR1
+    LDA <MATHPTR1
     BEQ CPUSTRINGSUBDONE
     ; Save the pattern len
-    STA MATHPTR3
+    STA <MATHPTR3
 
     ; Save original pattern's pointer.
-    STX MATHPTR6
+    STX <MATHPTR6
 
     LDB #0
 
@@ -83,10 +83,10 @@ CPUSTRINGSUBL1
     BNE CPUSTRINGSUBL1
 
     ; Reset the original pointer and length of the pattern
-    LDX MATHPTR6
+    LDX <MATHPTR6
     STX TMPPTR2
-    LDA MATHPTR3
-    STA MATHPTR1
+    LDA <MATHPTR3
+    STA <MATHPTR1
 
     ; Restart the loop.
     JMP CPUSTRINGSUBL1
@@ -96,10 +96,10 @@ CPUSTRINGSUBL2
     STA B, U
 
     ; Reset the original pointer and length of the pattern
-    LDX MATHPTR6
+    LDX <MATHPTR6
     STX TMPPTR2
-    LDA MATHPTR3
-    STA MATHPTR1
+    LDA <MATHPTR3
+    STA <MATHPTR1
 
     ; Go ahead on the original string
     LEAY 1, Y

@@ -88,7 +88,7 @@ void z80_greater_than_8bit( Environment * _environment, char *_source, char *_de
 void z80_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void z80_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void z80_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
-void z80_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern );
+void z80_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern );
 void z80_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern );
 void z80_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern );
 void z80_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern );
@@ -230,6 +230,7 @@ void z80_mem_move_direct2_size( Environment * _environment, char *_source, char 
 void z80_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size );
 void z80_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size );
 void z80_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size );
+void z80_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size );
 void z80_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other );
 void z80_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other );
 void z80_uppercase( Environment * _environment, char *_source, char *_size, char *_result );
@@ -325,6 +326,8 @@ void z80_float_fast_mod1( Environment * _environment, char * _angle, char * _res
 void z80_float_fast_neg( Environment * _environment, char * _value, char * _result );
 void z80_float_fast_abs( Environment * _environment, char * _value, char * _result );
 void z80_float_fast_tan( Environment * _environment, char * _value, char * _result );
+void z80_float_fast_log( Environment * _environment, char * _value, char * _result );
+void z80_float_fast_exp( Environment * _environment, char * _value, char * _result );
 
 // SINGLE FP (32 bit) IEEE-754
 
@@ -346,6 +349,8 @@ void z80_float_single_mod1( Environment * _environment, char * _angle, char * _r
 void z80_float_single_neg( Environment * _environment, char * _value, char * _result );
 void z80_float_single_abs( Environment * _environment, char * _value, char * _result );
 void z80_float_single_tan( Environment * _environment, char * _value, char * _result );
+void z80_float_single_log( Environment * _environment, char * _value, char * _result );
+void z80_float_single_exp( Environment * _environment, char * _value, char * _result );
 
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
@@ -382,7 +387,7 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_greater_than_16bit_const( _environment, _source, _destination, _name, _equal, _signed  ) z80_greater_than_16bit_const( _environment, _source, _destination, _name, _equal, _signed  )
 #define cpu_greater_than_32bit_const( _environment, _source, _destination, _name, _equal, _signed  ) z80_greater_than_32bit_const( _environment, _source, _destination, _name, _equal, _signed  )
 #define cpu_greater_than_8bit_const( _environment, _source, _destination, _name, _equal, _signed  ) z80_greater_than_8bit_const( _environment, _source, _destination, _name, _equal, _signed  )
-#define cpu_fill( _environment,  _address,  _bytes,  _pattern  ) z80_fill( _environment,  _address, _bytes,  _pattern  )
+#define cpu_fill( _environment,  _address,  _bytes, _bytes_width, _pattern  ) z80_fill( _environment,  _address, _bytes, _bytes_width, _pattern  )
 #define cpu_fill_size( _environment,  _address,  _bytes,  _pattern  ) z80_fill_size( _environment,  _address, _bytes,  _pattern  )
 #define cpu_fill_size_value( _environment,  _address,  _bytes,  _pattern  ) z80_fill_size_value( _environment,  _address, _bytes,  _pattern  )
 #define cpu_fill_direct( _environment,  _address,  _bytes,  _pattern  ) z80_fill_direct( _environment,  _address, _bytes,  _pattern  )
@@ -518,6 +523,7 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 #define cpu_mem_move_size( _environment, _source, _destination,  _size ) z80_mem_move_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_size( _environment, _source, _destination,  _size ) z80_mem_move_direct_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_indirect_size( _environment, _source, _destination,  _size ) z80_mem_move_direct_indirect_size( _environment, _source, _destination, _size )
+#define cpu_mem_move_indirect_direct_size( _environment, _source, _destination,  _size ) z80_mem_move_indirect_direct_size( _environment, _source, _destination, _size )
 #define cpu_math_add_16bit_with_8bit( _environment, _source, _destination, _other ) z80_math_add_16bit_with_8bit( _environment, _source, _destination, _other )
 #define cpu_math_sub_16bit_with_8bit( _environment, _source, _destination, _other ) z80_math_sub_16bit_with_8bit( _environment, _source, _destination, _other )
 #define cpu_uppercase( _environment, _source, _size, _result ) z80_uppercase( _environment, _source, _size, _result )
@@ -652,6 +658,12 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 
 #define cpu_float_fast_tan( _environment, _value, _result ) z80_float_fast_tan( _environment, _value, _result ) 
 #define cpu_float_single_tan( _environment, _value, _result ) z80_float_single_tan( _environment, _value, _result ) 
+
+#define cpu_float_fast_log( _environment, _value, _result ) z80_float_fast_log( _environment, _value, _result ) 
+#define cpu_float_single_log( _environment, _value, _result ) z80_float_single_log( _environment, _value, _result ) 
+
+#define cpu_float_fast_exp( _environment, _value, _result ) z80_float_fast_exp( _environment, _value, _result ) 
+#define cpu_float_single_exp( _environment, _value, _result ) z80_float_single_exp( _environment, _value, _result ) 
 
 #define     CPU_LITTLE_ENDIAN      1
 #define     REGISTER_BASE           0x1000

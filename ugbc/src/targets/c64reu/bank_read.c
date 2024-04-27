@@ -48,16 +48,70 @@
  */
 /* <usermanual>
 @keyword BANK READ
+
+@english
+
+This instruction can be used to read a number of bytes from an 
+out-of-memory bank in main memory. You must therefore indicate 
+one of the available banks, the memory address from which you 
+want to copy (the $0000 implies the beginning of the bank), 
+the size in bytes and finally the destination address, 
+which will be the RAM memory.
+
+@italian
+
+Questa istruzione può essere utilizzata per leggere un certo
+numero di byte da un banco fuori memoria nella memoria centrale.
+Si deve quindi indicare uno dei banchi disponibili, l'indirizzo
+di memoria dal quale si vuole copiare (lo $0000 implica l'inizio
+del banco), la dimensione in byte ed infine l'indirizzo di
+destinazione, che sarà la memoria RAM.
+
+@syntax BANK READ bank FROM address1 TO address2 SIZE size
+
+@example BANK READ 1 FROM $0100 TO $2000 SIZE 128
+
+@target c64reu
+@verified
 </usermanual> */
 void bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size ) {
 
-    Variable * previous = bank_get( _environment );
-    bank_set( _environment, _bank );
-    int realAddress = 0xe000 + ( _bank - 1 ) * BANK_SIZE + _address1;
-    char realAddressAsString[MAX_TEMPORARY_STORAGE];
-    sprintf(realAddressAsString, "$%4.4x", realAddress);
-    cpu_mem_move_direct_size( _environment, realAddressAsString, _address2, _size );
-    bank_set_var( _environment, previous->name );
+    deploy( bank, src_hw_c64reu_bank_asm );
+
+    outline1("LDA #$%2.2x", (unsigned char) ( _address1 & 0xff ) );
+    outline0("STA TMPPTR");
+    outline1("LDA #$%2.2x", (unsigned char) ( ( _address1 >> 8 ) & 0xff ) );
+    outline0("STA TMPPTR+1");
+
+    outline1("LDA #<%s", _address2 );
+    outline0("STA TMPPTR2");
+    outline1("LDA #>%s", _address2 );
+    outline0("STA TMPPTR2+1");
+
+    switch( _size ) {
+        case 1:
+            outline1("LDA #$%2.2x", _bank );
+            outline0("JSR BANKREAD1");
+            break;
+        case 2:
+            outline1("LDA #$%2.2x", _bank );
+            outline0("JSR BANKREAD2");
+            break;
+        case 4:
+            outline1("LDA #$%2.2x", _bank );
+            outline0("JSR BANKREAD4");
+            break;
+        default:
+            outline1("LDA #$%2.2x", (unsigned char) ( _size & 0xff ) );
+            outline0("STA MATHPTR0");
+            outline1("LDA #$%2.2x", (unsigned char) ( ( _size >> 8 ) & 0xff ) );
+            outline0("STA MATHPTR1");
+            outline1("LDA #$%2.2x", _bank );
+            outline0("JSR BANKREAD");
+            break;
+
+    }
+    outline0("; end bank read");
 
 }
 
@@ -75,36 +129,153 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
  */
 /* <usermanual>
 @keyword BANK READ
-@target c64
+@target pc128op
 </usermanual> */
 void bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    outline0("; bank read")
-    Variable * previous = bank_get( _environment );
-    bank_set_var( _environment, _bank );
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
+    deploy( bank, src_hw_c64reu_bank_asm );
+
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-    mmove_memory_memory( _environment, realAddress->name, address2->name, _size );
-    bank_set_var( _environment, previous->name );
-    outline0("; end bank read")
-    
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
+
+    outline1("LDA %s", address1->realName );
+    outline0("STA TMPPTR");
+    outline1("LDA %s", address_displacement( _environment, address1->realName, "1" ) );
+    outline0("STA TMPPTR+1");
+
+    outline1("LDA %s", address2->realName );
+    outline0("STA TMPPTR2");
+    outline1("LDA %s", address_displacement( _environment, address2->realName, "1" ) );
+    outline0("STA TMPPTR2+1");
+
+    outline1("LDA #$%2.2x", size->realName );
+    outline0("STA MATHPTR0");
+    outline1("LDA #$%2.2x", address_displacement( _environment, size->realName, "1" ) );
+    outline0("STA MATHPTR1");
+    outline1("LDA %s", bank->realName );
+    outline0("JSR BANKREAD");
+
+    outline0("; end bank read");
+
 }
 
 void bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    outline0("; bank read direct")
-    Variable * previous = bank_get( _environment );
-    bank_set_var( _environment, _bank );
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
-    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
-    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
-    
-    cpu_mem_move_direct2( _environment, realAddress->realName, _address2, size->realName );
+    deploy( bank, src_hw_c64reu_bank_asm );
 
-    bank_set_var( _environment, previous->name );
-    outline0("; end bank read direct")
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
+    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
+
+    outline1("LDA %s", address1->realName );
+    outline0("STA TMPPTR");
+    outline1("LDA %s", address_displacement( _environment, address1->realName, "1" ) );
+    outline0("STA TMPPTR+1");
+
+    outline1("LDA #<%s", address2->realName );
+    outline0("STA TMPPTR2");
+    outline1("LDA #>%s", address2->realName );
+    outline0("STA TMPPTR2+1");
+
+    outline1("LDA #$%2.2x", size->realName );
+    outline0("STA MATHPTR0");
+    outline1("LDA #$%2.2x", address_displacement( _environment, size->realName, "1" ) );
+    outline0("STA MATHPTR1");
+    outline1("LDA %s", bank->realName );
+    outline0("JSR BANKREAD");
+
+    outline0("; end bank read");
+
+}
+
+void bank_read_vars_direct_size( Environment * _environment, char * _bank, char * _address1, char * _address2, int _size ) {
+
+    deploy( bank, src_hw_c64reu_bank_asm );
+
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
+    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+
+    outline1("LDA %s", address1->realName );
+    outline0("STA TMPPTR");
+    outline1("LDA %s", address_displacement( _environment, address1->realName, "1" ) );
+    outline0("STA TMPPTR+1");
+
+    outline1("LDA #<%s", address2->realName );
+    outline0("STA TMPPTR2");
+    outline1("LDA #>%s", address2->realName );
+    outline0("STA TMPPTR2+1");
+
+    switch( _size ) {
+        case 1:
+            outline1("LDA %s", bank->realName );
+            outline0("JSR BANKREAD1");
+            break;
+        case 2:
+            outline1("LDA %s", bank->realName );
+            outline0("JSR BANKREAD2");
+            break;
+        case 4:
+            outline1("LDA %s", bank->realName );
+            outline0("JSR BANKREAD4");
+            break;
+        default:
+            outline1("LDA #$%2.2x", (unsigned char) ( _size & 0xff ) );
+            outline0("STA MATHPTR0");
+            outline1("LDA #$%2.2x", (unsigned char) ( ( _size >> 8 ) & 0xff ) );
+            outline0("STA MATHPTR1");
+            outline1("LDA %s", bank->realName );
+            outline0("JSR BANKREAD");
+            break;
+
+    }
+    outline0("; end bank read");
+
+}
+
+void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, char * _address1, char * _address2, int _size ) {
+
+    deploy( bank, src_hw_c64reu_bank_asm );
+
+    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+
+    outline1("LDA %s", address1->realName );
+    outline0("STA TMPPTR");
+    outline1("LDA %s", address_displacement( _environment, address1->realName, "1" ) );
+    outline0("STA TMPPTR+1");
+
+    outline1("LDA #<%s", address2->realName );
+    outline0("STA TMPPTR2");
+    outline1("LDA #>%s", address2->realName );
+    outline0("STA TMPPTR2+1");
+
+    switch( _size ) {
+        case 1:
+            outline1("LDA #$%2.2x", _bank );
+            outline0("JSR BANKREAD1");
+            break;
+        case 2:
+            outline1("LDA #$%2.2x", _bank );
+            outline0("JSR BANKREAD2");
+            break;
+        case 4:
+            outline1("LDA #$%2.2x", _bank );
+            outline0("JSR BANKREAD4");
+            break;
+        default:
+            outline1("LDA #$%2.2x", (unsigned char) ( _size & 0xff ) );
+            outline0("STA MATHPTR0");
+            outline1("LDA #$%2.2x", (unsigned char) ( ( _size >> 8 ) & 0xff ) );
+            outline0("STA MATHPTR1");
+            outline1("LDA #$%2.2x", _bank );
+            outline0("JSR BANKREAD");
+            break;
+
+    }
+    outline0("; end bank read");
 
 }

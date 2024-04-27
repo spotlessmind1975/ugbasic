@@ -2787,7 +2787,7 @@ void gime_get_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STD IMAGEX" );
     outline1("LDD %s", _y );
     outline0("STD IMAGEY" );
-    outline1("LDA $%2.2x", _palette );
+    outline1("LDA #$%2.2x", _palette );
     outline0("STA IMAGET");
 
     outline0("JSR GETIMAGE");
@@ -2889,6 +2889,48 @@ void gime_calculate_sequence_frame_offset( Environment * _environment, char * _o
     }
 
     outline1("STY %s", _offset );
+
+}
+
+void gime_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
+
+    deploy( gimevars, src_hw_gime_vars_asm);
+
+    if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0001" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
+        gime_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagex, src_hw_gime_flip_image_x_asm );
+        outline0("JSR FLIPIMAGEX");
+    } else {
+        
+        MAKE_LABEL
+
+        gime_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagex, src_hw_gime_flip_image_x_asm );
+        outline1("LDA %s", _direction );
+        outline1("ANDA #$%2.2x", FLAG_FLIP_X );
+        outline1("BEQ %s", label );
+        outline0("JSR FLIPIMAGEX");
+        outhead1("%s", label );
+
+    }
+    
+    if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0002" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
+        gime_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagey, src_hw_gime_flip_image_y_asm );
+        outline0("JSR FLIPIMAGEY");
+    } else {
+        
+        MAKE_LABEL
+
+        gime_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+        deploy( flipimagey, src_hw_gime_flip_image_y_asm );
+        outline1("LDA %s", _direction );
+        outline1("ANDA #$%2.2x", FLAG_FLIP_Y );
+        outline1("BEQ %s", label );
+        outline0("JSR FLIPIMAGEY");
+        outhead1("%s", label );
+
+    }
 
 }
 

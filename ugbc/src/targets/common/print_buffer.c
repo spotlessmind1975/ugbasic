@@ -163,7 +163,6 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
             bank_uncompress_semi_var( _environment, value->bankAssigned, value->absoluteAddress, bankWindowName );
             variable_store( _environment, bufferSize->name, value->uncompressedSize );
         } else {
-            printf( "bank_read_semi_var\n");
             bank_read_semi_var( _environment, value->bankAssigned, value->absoluteAddress, bankWindowName, value->size );
             variable_store( _environment, bufferSize->name, value->size );
         }

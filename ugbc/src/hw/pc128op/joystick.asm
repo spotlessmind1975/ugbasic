@@ -36,7 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 JOYSTICK
-;     LDA #$A7CC
+;     LDA #(BASE_SEGMENT+$CC)
 ;     CMPA #0
 ;     BEQ JOYSTICK0
     
@@ -50,7 +50,7 @@ JOYSTICK
 ; JOYSTICK0
 ;     ANDB #$0F
 ;     ADDA #$40
-;     ANDA #$A7CD
+;     ANDA #(BASE_SEGMENT+$CD)
 ;     CMPA #$0
 ;     BEQ JOYNOFIRE
 ;     TFR B, A

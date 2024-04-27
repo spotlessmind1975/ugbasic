@@ -51,8 +51,7 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
 
-    outline0("LDD #$c000" );
-    outline1("STD %s", result->realName );
+    variable_store( _environment, result->name, 0xc000 );
 
     return result;
     
@@ -70,13 +69,13 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
  */
 /* <usermanual>
 @keyword BANK ADDRESS
+@target c64
 </usermanual> */
 Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
 
-    outline0("LDD #$c000" );
-    outline1("STD %s", result->realName );
+    variable_store( _environment, result->name, 0 );
 
     return result;
     

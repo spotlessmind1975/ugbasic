@@ -60,6 +60,17 @@ char *str_replace( char *orig, char *rep, char *with ) {
     return result;
 }
 
+#define configure_get_value_single( hardware, parameter, name, field ) \
+        if ( !valued && strcmp( p1, #hardware ) == 0 && strcmp( p3, #parameter ) == 0 && strcmp( p5, #name ) == 0 ) { \
+            value = ((struct _Environment *)_environment)->configureParameters.hardware.parameter.field; \
+            valued = 1; \
+        }
+
+#define configure_get_value( hardware, parameter ) \
+        configure_get_value_single( hardware, parameter, value, value ) \
+        configure_get_value_single( hardware, parameter, static, statically ) \
+        configure_get_value_single( hardware, parameter, dynamic, dynamically )
+
 %}
 
 %parse-param {void * _environment}
@@ -79,7 +90,7 @@ char *str_replace( char *orig, char *rep, char *with ) {
 %token IF ELSE ELSEIF ENDIF EMIT AS NewLine
 %token ATARI ATARIXL C128 C128Z C64 C64REU VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5 CPC COCO
 %token COCO1 COCO2 COCO3 MACRO ENDMACRO INLINE
-%token BIN PRG XEX K7O K7N K7 TAP ROM D64 DSK ATR REU
+%token BIN PRG XEX K7O K7N K7 TAP ROM D64 DSK ATR REU TO8
 
 %token <string> Identifier
 %token <string> Content
@@ -302,6 +313,14 @@ target :
         #endif
     }
     |
+    TO8 {
+        #ifdef __to8__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
     MO5 {
         #ifdef __mo5__
             $$ = 1;
@@ -377,6 +396,24 @@ const_factor:
       | OP_NOT const_factor {
         // printf( "NOT %d\n", $2 );
           $$ = ( ! $2 );
+      }
+      | Identifier OP_POINT Identifier OP_POINT Identifier {
+
+        int valued = 0;
+        int value = 0;
+        char * p1 = $1;
+        char * p3 = $3;
+        char * p5 = $5;
+        configure_get_value( gmc, slot );
+        configure_get_value( sn76489, address );
+        if ( valued ) {
+            // printf( "%s.%s.%s = %d\n", p1, p3, p5, value );
+            $$ = value;
+        } else {
+            // printf( "%s.%s.%s = 0 (unvalued)\n", p1, p3, p5 );
+            $$ = 0;
+        }
+        // printf( "%s.%s == %d\n", $1, $3, $$ );
       }
       | Identifier OP_POINT Identifier {
         if ( strcmp( $1, "vestigialConfig" ) == 0 ) {
@@ -516,12 +553,32 @@ embed2:
     ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 0;
     --((struct _Environment *)_environment)->embedResult.current;
   }
+  | OP_AT EMIT Identifier OP_POINT Identifier OP_POINT Identifier AS Identifier {
+
+        int i; 
+        for( i=0; i<((struct _Environment *)_environment)->embedResult.current; ++i ) {\
+            if ( ((struct _Environment *)_environment)->embedResult.excluded[i] )
+                break;
+        }
+
+        if ( i>=((struct _Environment *)_environment)->embedResult.current ) {
+            int valued = 0;
+            int value = 0;
+            char * p1 = $3;
+            char * p3 = $5;
+            char * p5 = $7;
+            configure_get_value( gmc, slot );
+            configure_get_value( sn76489, address );
+            vars_emit_constant_integer( _environment, $9, value );
+            ((struct _Environment *)_environment)->embedResult.conditional = 1;
+        }
+  }
   | OP_AT EMIT Identifier AS Identifier {
         if ( strcmp( $3, "frameBufferStart" ) == 0 ) {
-            outline2( "%s=$%4.4x", $5, ((struct _Environment *)_environment)->frameBufferStart );
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart );
         }
         if ( strcmp( $3, "frameBufferStart2" ) == 0 ) {
-            outline2( "%s=$%4.4x", $5, ((struct _Environment *)_environment)->frameBufferStart2 );
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart );
         }
         ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }

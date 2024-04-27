@@ -67,6 +67,8 @@ void target_initialization( Environment * _environment ) {
     
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 
+    outhead1("BASE_SEGMENT EQU $%4.4x", 0x0100 * BASE_SEGMENT );
+    
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 

@@ -230,6 +230,15 @@ src-generated/coco3_footer.c:
 COCO3 := src-generated/coco3_header.c src-generated/coco3_footer.c
 
 # ----------------------------------------------------------------------------
+# LOADER FOR THOMSON TO8
+# ----------------------------------------------------------------------------
+
+src-generated/to8_loader.c:
+	@xxd -i $(subst src-generated/to8_,data/to8/,$(@:.c=.bin)) >$@
+
+TO8 := src-generated/to8_loader.c
+
+# ----------------------------------------------------------------------------
 # Components and chipsets
 # ----------------------------------------------------------------------------
 
@@ -544,8 +553,8 @@ SOURCES_COCO := $(subst src/hw/coco/,src-generated/coco_,$(MODULES_COCO:.asm=.c)
 src-generated/coco_%.c: $(MODULES_COCO)
 	@xxd -i $(subst src-generated/coco_,src/hw/coco/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(COCO)
-	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_COCO) $(COCO) >src-generated/modules_coco.c
+src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_COCO) $(COCO)
+	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_COCO) $(COCO) >src-generated/modules_coco.c
 	@grep "src" src-generated/modules_coco.c | awk -f modules.awk >src-generated/modules_coco.h
 	@grep "data" src-generated/modules_coco.c | awk -f modules.awk >>src-generated/modules_coco.h
 
@@ -557,8 +566,8 @@ SOURCES_COCO3 := $(subst src/hw/coco3/,src-generated/coco3_,$(MODULES_COCO3:.asm
 src-generated/coco3_%.c: $(MODULES_COCO3)
 	@xxd -i $(subst src-generated/coco3_,src/hw/coco3/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coco3.c: $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_COCO3) $(COCO3)
-	@cat $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_COCO3) $(COCO3) >src-generated/modules_coco3.c
+src-generated/modules_coco3.c: $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_SN76489M) $(SOURCES_COCO3) $(COCO3)
+	@cat $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_SN76489M) $(SOURCES_COCO3) $(COCO3) >src-generated/modules_coco3.c
 	@grep "src" src-generated/modules_coco3.c | awk -f modules.awk >src-generated/modules_coco3.h
 	@grep "data" src-generated/modules_coco3.c | awk -f modules.awk >>src-generated/modules_coco3.h
 
@@ -625,8 +634,8 @@ SOURCES_PC128OP := $(subst src/hw/pc128op/,src-generated/pc128op_,$(MODULES_PC12
 src-generated/pc128op_%.c: $(MODULES_PC128OP)
 	@xxd -i $(subst src-generated/pc128op_,src/hw/pc128op/,$(@:.c=.asm)) >$@
 
-src-generated/modules_pc128op.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_PC128OP)
-	@cat $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_PC128OP) >src-generated/modules_pc128op.c
+src-generated/modules_pc128op.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_SN76489M) $(SOURCES_PC128OP)
+	@cat $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_SN76489M) $(SOURCES_PC128OP) >src-generated/modules_pc128op.c
 	@grep "src" src-generated/modules_pc128op.c | awk -f modules.awk >src-generated/modules_pc128op.h
 	@grep "data" src-generated/modules_pc128op.c | awk -f modules.awk >>src-generated/modules_pc128op.h
 
@@ -648,6 +657,19 @@ src-generated/modules_mo5.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_MO5)
 	@cat $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_MO5) >src-generated/modules_mo5.c
 	@grep "src" src-generated/modules_mo5.c | awk -f modules.awk >src-generated/modules_mo5.h
 	@grep "data" src-generated/modules_mo5.c | awk -f modules.awk >>src-generated/modules_mo5.h
+
+# Thomson TO8
+
+MODULES_TO8 := $(wildcard src/hw/to8/*.asm)
+SOURCES_TO8 := $(subst src/hw/to8/,src-generated/to8_,$(MODULES_TO8:.asm=.c))
+
+src-generated/to8_%.c: $(MODULES_TO8)
+	@xxd -i $(subst src-generated/to8_,src/hw/to8/,$(@:.c=.asm)) >$@
+
+src-generated/modules_to8.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_TO8) $(TO8)
+	@cat $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_TO8) $(TO8) >src-generated/modules_to8.c
+	@grep "src" src-generated/modules_to8.c | awk -f modules.awk >src-generated/modules_to8.h
+	@grep "data" src-generated/modules_to8.c | awk -f modules.awk >>src-generated/modules_to8.h
 
 # MSX1
 
@@ -718,6 +740,9 @@ SOURCES += $(wildcard src/targets/*.c)
 SOURCES += $(wildcard src/hw/*.c)
 SOURCES += $(wildcard src/outputs/*.c)
 SOURCES += $(wildcard src/targets/common/*.c)
+SOURCES += $(wildcard src/targets/common/6502/*.c)
+SOURCES += $(wildcard src/targets/common/6809/*.c)
+SOURCES += $(wildcard src/targets/common/z80/*.c)
 SOURCES += $(wildcard src/targets/$(target)/*.c)
 SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 

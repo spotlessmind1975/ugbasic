@@ -113,7 +113,7 @@ static void blit_define_bltu( Environment * _environment, int _op, char * _a, ch
                 break;
         }        
         outline0("; bltu C = value");
-        outline1("LDA $%2.2x", value );
+        outline1("LDA #$%2.2x", value );
         outline1("STA %s", _c );
     }
 

@@ -92,7 +92,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token ALL BUT VG5000 CLASS PROBABILITY LAYER SLICE INDEX SYS EXEC REGISTER CPU6502 CPU6809 CPUZ80 ASM 
 %token STACK DECLARE SYSTEM KEYBOARD RATE DELAY NAMED MAP ID RATIO BETA PER SECOND AUTO COCO1 COCO2 COCO3
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
-%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL
+%token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
+%token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -135,6 +136,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> sequence_load_flags sequence_load_flags1 sequence_load_flag
 %type <integer> put_image_flags put_image_flags1 put_image_flag
 %type <integer> blit_image_flags blit_image_flags1 blit_image_flag
+%type <integer> flip_image_flags
 %type <integer> const_color_enumeration
 %type <integer> using_transparency
 %type <integer> using_opacity
@@ -162,6 +164,10 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> dsave_to_offset dsave_from_address dsave_size_size
 %type <string> to_variable
 %type <string> optional_step
+%type <integer> music_type
+%type <integer> optional_loop
+%type <integer> configure_name
+%type <integer> option_name
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -1093,7 +1099,8 @@ const_factor:
       }
       | BIG ENDIAN {
         #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
-            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__)
+            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
+            defined(__to8__)
             $$ = 1;
         #else
             $$ = 0;
@@ -1370,7 +1377,7 @@ modula:
     | modula OP_MULTIPLICATION factor {
         Variable * modula = variable_retrieve( _environment, $1 );
         Variable * factor = variable_retrieve( _environment, $3 );
-        if ( factor->initializedByConstant ) {
+        if ( ( modula->type != VT_FLOAT && factor->type != VT_FLOAT ) && factor->initializedByConstant ) {
             if ( modula->initializedByConstant ) {
                 Variable * number = variable_temporary( _environment, VT_MAX_BITWIDTH_TYPE( factor->type, modula->type ), "(constant)" );
                 $$ = number->name;
@@ -1437,9 +1444,15 @@ factor:
       }
       | OP_MINUS factor {
         Variable * expr = variable_retrieve( _environment, $2 );
-        Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
-        variable_store( _environment, zero->name, 0 );
-        $$ = variable_sub( _environment, zero->name, expr->name )->name;
+        if ( expr->type == VT_FLOAT ) {
+            Variable * zero = variable_temporary( _environment, VT_FLOAT, "(zero)" );
+            variable_store_float( _environment, zero->name, 0 );
+            $$ = variable_sub( _environment, zero->name, expr->name )->name;
+        } else {
+            Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
+            variable_store( _environment, zero->name, 0 );
+            $$ = variable_sub( _environment, zero->name, expr->name )->name;
+        }
       }
       ;
 
@@ -1536,6 +1549,9 @@ load_flag :
     COMPRESSED {
         $$ = FLAG_COMPRESSED;
     };
+
+images_or_atlas :
+    IMAGES | ATLAS;
 
 images_load_flag :
     FLIP X {
@@ -2518,7 +2534,7 @@ const_key_scancode_definition :
     };
 
 load_image  : LOAD IMAGE | IMAGE LOAD;
-load_images : LOAD IMAGES | IMAGES LOAD;
+load_images : LOAD images_or_atlas | images_or_atlas LOAD;
 load_sequence : LOAD SEQUENCE | SEQUENCE LOAD;
 load_tileset  : LOAD TILESET | TILESET LOAD;
 load_tilemap  : LOAD TILEMAP | TILEMAP LOAD;
@@ -2830,17 +2846,17 @@ exponential:
         }
         $$ = image_load_from_buffer( _environment, c->valueString->value, c->valueString->size )->name;
       }      
-    | OP IMAGES CP BufferDefinitionHex { 
+    | OP images_or_atlas CP BufferDefinitionHex { 
         int size;
         char * buffer = parse_buffer( _environment, $4, &size, 1 );
         $$ = images_load_from_buffer( _environment, buffer, size )->name;
       }   
-    | OP IMAGES CP RawString { 
+    | OP images_or_atlas CP RawString { 
         int size;
         char * buffer = parse_buffer( _environment, $4, &size, 0 );
         $$ = images_load_from_buffer( _environment, buffer, size )->name;
       }   
-    | OP IMAGES CP Identifier { 
+    | OP images_or_atlas CP Identifier { 
         Constant * c = constant_find( ((Environment *)_environment)->constants, $4 );
         if ( c == NULL ) {
             CRITICAL_UNDEFINED_CONSTANT( $4 );
@@ -2872,6 +2888,12 @@ exponential:
     | SQR OP expr CP {
         $$ = sqroot( _environment, $3 )->name;
       }
+    | LOG OP expr CP {
+        $$ = fp_log( _environment, $3 )->name;
+      }
+    | EXP OP expr CP {
+        $$ = fp_exp( _environment, $3 )->name;
+      }
     | SIN OP expr CP {
         $$ = fp_sin( _environment, $3 )->name;
       }
@@ -2897,7 +2919,7 @@ exponential:
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
-    | NEW IMAGES OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
+    | NEW images_or_atlas OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
         $$ = new_images( _environment, $4, $6, $8, ((struct _Environment *)_environment)->currentMode )->name;
       }
     | NEW SEQUENCE OP const_expr OP_COMMA const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
@@ -2924,17 +2946,25 @@ exponential:
     | LOAD MUSIC OP String AS String CP on_bank {
         $$ = music_load( _environment, $4, $6, $8 )->name;
       }
-    | load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = sequence_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $10, $12, $14, $15+$16, $17, $18 )->name;
+    | load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * sequence = sequence_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $10, $12, $14, $15+$16, $17, $18 );
+        sequence->readonly = $19;
+        $$ = sequence->name;
       }
-    | load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank {        
-        $$ = sequence_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 )->name;
+    | load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {        
+        Variable * sequence = sequence_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 );
+        sequence->readonly = $17;
+        $$ = sequence->name;
       }
-    | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank {        
-        $$ = images_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $7+$8, $9, $10 )->name;
+    | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * images = images_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $7+$8, $9, $10 );
+        images->readonly = $11;
+        $$ = images->name;
       }
-    | load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = images_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $9+$10, $11, $12 )->name;
+    | load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * images = images_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $9+$10, $11, $12 );
+        images->readonly = $13;
+        $$ = images->name;
       }
     | load_tileset OP String CP images_load_flags using_transparency using_opacity using_background on_bank {
         $$ = tileset_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
@@ -2945,17 +2975,25 @@ exponential:
     | load_tilemap OP String CP images_load_flags using_transparency using_opacity using_background on_bank {
         $$ = tilemap_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
       }
-    | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
+    | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * image = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
+        image->readonly = $10;
+        $$ = image->name;
       }
-    | load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 )->name;
+    | load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * image = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 );
+        image->readonly = $12;
+        $$ = image->name;
       }
-    | load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = image_load( _environment, $3, NULL, $5, $7, $8+$9, $10, $11 )->name;
+    | load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * image = image_load( _environment, $3, NULL, $5, $7, $8+$9, $10, $11 );
+        image->readonly = $12;
+        $$ = image->name;
       }
-    | load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank {
-        $$ = image_load( _environment, $3, $5, $7, $9, $10+$11, $12, $13 )->name;
+    | load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+        Variable * image = image_load( _environment, $3, $5, $7, $9, $10+$11, $12, $13 );
+        image->readonly = $14;
+        $$ = image->name;
       }
     | LOAD TILE OP String CP tile_load_flags {
         $$ = tile_load( _environment, $4, $6, NULL, -1 )->name;
@@ -3064,6 +3102,18 @@ exponential:
     }
     | VARPTR OP Identifier CP {
         $$ = varptr( _environment, $3 )->name;
+    }
+    | VARBANK OP Identifier CP {
+        Variable * variable = variable_retrieve( _environment, $3 );
+        Variable * bank = variable_temporary( _environment, VT_BYTE, "(bank)");
+        variable_store( _environment, bank->name, variable->bankAssigned );
+        $$ = bank->name;
+    }
+    | VARBANKPTR OP Identifier CP {
+        Variable * variable = variable_retrieve( _environment, $3 );
+        Variable * ptr = variable_temporary( _environment, VT_ADDRESS, "(ptr)");
+        variable_store( _environment, ptr->name, variable->absoluteAddress );
+        $$ = ptr->name;
     }
     | BANK OP CP {
         $$ = bank_get( _environment )->name;
@@ -3987,7 +4037,7 @@ bank_expansion_definition_expression :
         bank_read_vars( _environment, $2, $4, $6, $8 );
     }
     | WRITE expr FROM expr TO expr SIZE expr {
-        bank_write_vars( _environment, $2, $4, $6, $8 );
+        bank_write_vars( _environment, $4, $2, $6, $8 );
     }
     ;
 
@@ -5165,7 +5215,7 @@ blit_definition_define_expression :
     ;
 
 image_or_images : 
-    IMAGE | IMAGES
+    IMAGE | IMAGES | ATLAS
     ;
 
 bitmap_or_bitmaps : 
@@ -5745,6 +5795,9 @@ datatype :
     | IMAGES {
         $$ = VT_IMAGES;
     }
+    | ATLAS {
+        $$ = VT_IMAGES;
+    }
     | SEQUENCE {
         $$ = VT_SEQUENCE;
     }
@@ -6294,9 +6347,14 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
-    } array_assign readonly_optional {
+    } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
+        if ( $10 ) {
+            if ( !banks_store( _environment, array, $10 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
+        }
     }
     |
     Identifier datatype {
@@ -6305,11 +6363,15 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
-    } array_assign readonly_optional {
+    } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
+        if ( $10 ) {
+            if ( ! banks_store( _environment, array, $10 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
+        }
     }
-
     as_datatype_suffix
     |
     Identifier OP_DOLLAR {
@@ -6318,9 +6380,14 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_DSTRING );
-    } array_assign readonly_optional {
+    } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
+        if ( $10 ) {
+            if ( ! banks_store( _environment, array, $10 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
+        }        
     }
     | Identifier datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -6335,9 +6402,14 @@ dim_definition :
         if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
-      } readonly_optional {
+      } readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
+        if ( $11 ) {
+            if ( ! banks_store( _environment, array, $11 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
+        }        
     }
     | Identifier as_datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -6345,9 +6417,14 @@ dim_definition :
       } OP dimensions CP as_datatype {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
-    } array_assign readonly_optional {
+    } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
+        if ( $11 ) {
+            if ( ! banks_store( _environment, array, $11 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
+        }        
     }
     | Identifier as_datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -6362,9 +6439,14 @@ dim_definition :
         if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
-    } readonly_optional {
+    } readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
+        if ( $11 ) {
+            if ( ! banks_store( _environment, array, $11 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
+        }        
     }
     ;
 
@@ -6883,16 +6965,49 @@ instrument_definition :
     | instrument_definition_expression
     ;
 
-music_definition_expression:
-    expr {
-        music_var( _environment, $1, 0 );
+music_type :
+    {
+        $$ = MUSIC_TYPE_AUTO;
     }
-    | LOOP expr {
-        music_var( _environment, $2, 1 );
+    | IAF {
+        $$ = MUSIC_TYPE_IAF;
     }
-    | expr LOOP {
-        music_var( _environment, $1, 1 );
+    | MID {
+        $$ = MUSIC_TYPE_MID;
+    }
+    | PSG {
+        $$ = MUSIC_TYPE_PSG;
     };
+
+optional_loop:
+    {
+        $$ = 0;
+    }
+    | LOOP {
+        $$ = 1;
+    }
+    ;
+
+music_definition_expression:
+    expr music_type optional_loop {
+        music_var( _environment, $1, $3, $2 );
+    }
+    | LOOP expr music_type {
+        music_var( _environment, $2, 1, $3 );
+    }
+    | PAUSE {
+        music_pause( _environment );
+    }
+    | RESUME {
+        music_resume( _environment );
+    }
+    | STOP {
+        music_stop( _environment );
+    }
+    | SEEK expr {
+        music_seek_var( _environment, $2 );
+    }
+    ;
 
 music_definition:
     music_definition_expression
@@ -7454,6 +7569,79 @@ define_definition :
     }
     ;
 
+configure_name :
+    GMC {
+        $$ = HN_GMC;
+    }
+    | SN76489 {
+        $$ = HN_SN76489;
+    };
+
+option_name :
+    SLOT {
+        $$ = HPN_SLOT;
+    }
+    | ADDRESS {
+        $$ = HPN_ADDRESS;
+    };
+
+configure_set_static_option :
+    option_name OP_ASSIGN const_expr {
+        OptionParameterValue * actual = malloc( sizeof( OptionParameterValue ) );
+        memset( actual, 0, sizeof( OptionParameterValue ) );
+        actual->parameter = $1;
+        actual->value = $3;
+        actual->next = ((struct _Environment *)_environment)->optionParameters;
+        ((struct _Environment *)_environment)->optionParameters = actual;
+    };
+
+configure_set_static_options :
+    configure_set_static_option
+    | configure_set_static_option OP_COMMA configure_set_static_options;
+
+static_optional :
+    STATIC | ;
+
+configure_static_definitions :
+    static_optional configure_name {
+        ((struct _Environment *)_environment)->optionParameters = NULL;
+    } SET configure_set_static_options {
+        OptionParameterValue * actual = ((struct _Environment *)_environment)->optionParameters;
+        while( actual ) {
+            configure_set_value( _environment, $2, actual->parameter, actual->value );
+            actual = actual->next;
+        }
+    };
+
+configure_set_dynamic_option :
+    option_name OP_ASSIGN expr {
+        OptionParameterValue * actual = malloc( sizeof( OptionParameterValue ) );
+        memset( actual, 0, sizeof( OptionParameterValue ) );
+        actual->parameter = $1;
+        actual->valueName = strdup( $3 );
+        actual->next = ((struct _Environment *)_environment)->optionParameters;
+        ((struct _Environment *)_environment)->optionParameters = actual;
+    };
+
+configure_set_dynamic_options :
+    configure_set_dynamic_option
+    | configure_set_dynamic_option OP_COMMA configure_set_dynamic_options;
+
+configure_dynamic_definitions :
+    DYNAMIC configure_name {
+        ((struct _Environment *)_environment)->optionParameters = NULL;
+    } SET configure_set_dynamic_options {
+        OptionParameterValue * actual = ((struct _Environment *)_environment)->optionParameters;
+        while( actual ) {
+            configure_set_value_var( _environment, $2, actual->parameter, actual->valueName );
+            actual = actual->next;
+        }
+    };
+
+configure_definitions :
+    configure_static_definitions
+    | configure_dynamic_definitions;
+
 system : {
         $$ = 0;
     }
@@ -7514,7 +7702,8 @@ target :
     }
     | CPU6809 {
         #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
-            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__)
+            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
+            defined(__to8__)
             $$ = 1;
         #else
             $$ = 0;
@@ -7713,6 +7902,14 @@ target :
         #endif
     }
     |
+    TO8 {
+        #ifdef __to8__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
     MO5 {
         #ifdef __mo5__
             $$ = 1;
@@ -7857,6 +8054,9 @@ option_definitions :
     }
     | TYPE SIGNED {
         ((struct _Environment *)_environment)->defaultUnsignedType = 0;
+    }
+    | DEFAULT TYPE datatype {
+        ((struct _Environment *)_environment)->defaultVariableType = $3;
     }
     | TYPE UNSIGNED {
         ((struct _Environment *)_environment)->defaultUnsignedType = 1;
@@ -8121,6 +8321,82 @@ optional_step :
         $$ = $2;
     };
 
+flip_image_flags :
+    X {
+        $$ = FLAG_FLIP_X;
+    }
+    | Y {
+        $$ = FLAG_FLIP_Y;
+    }
+    | XY {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | YX {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    };
+
+flip_definition:
+    IMAGE expr flip_image_flags {
+        flip_image_vars_direction( _environment, $2, NULL, NULL, $3 );
+    }
+    | IMAGE expr frame OP_HASH Identifier flip_image_flags {
+        Variable * images = variable_retrieve( _environment, $2 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
+        flip_image_vars_direction( _environment, $2, calculatedFrame->name, NULL, $6 );
+    }
+    | IMAGE expr SEQUENCE expr frame expr flip_image_flags {
+        flip_image_vars_direction( _environment, $2, $6, $4, $7 );
+    }
+    | IMAGE expr frame expr flip_image_flags {
+        flip_image_vars_direction( _environment, $2, $4, NULL, $5 );
+    }
+
+    | flip_image_flags IMAGE expr {
+        flip_image_vars_direction( _environment, $3, NULL, NULL, $1 );
+    }
+    | flip_image_flags IMAGE expr frame OP_HASH Identifier {
+        Variable * images = variable_retrieve( _environment, $3 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $3, $6 );
+        flip_image_vars_direction( _environment, $3, calculatedFrame->name, NULL, $1 );
+    }
+    | flip_image_flags IMAGE expr SEQUENCE expr frame expr {
+        flip_image_vars_direction( _environment, $3, $7, $5, $1 );
+    }
+    | flip_image_flags IMAGE expr frame expr {
+        flip_image_vars_direction( _environment, $3, $5, NULL, $1 );
+    }
+    
+    | IMAGE expr DIRECTION expr {
+        flip_image_vars_indirection( _environment, $2, NULL, NULL, $4 );
+    }
+    | IMAGE expr frame OP_HASH Identifier DIRECTION expr {
+        Variable * images = variable_retrieve( _environment, $2 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
+        flip_image_vars_indirection( _environment, $2, calculatedFrame->name, NULL, $7 );
+    }
+    | IMAGE expr SEQUENCE expr frame expr DIRECTION expr {
+        flip_image_vars_indirection( _environment, $2, $6, $4, $8 );
+    }
+    | IMAGE expr frame expr DIRECTION expr {
+        flip_image_vars_indirection( _environment, $2, $4, NULL, $6 );
+    }
+
+    | DIRECTION expr IMAGE expr {
+        flip_image_vars_indirection( _environment, $4, NULL, NULL, $2 );
+    }
+    | DIRECTION expr IMAGE expr frame OP_HASH Identifier {
+        Variable * images = variable_retrieve( _environment, $4 );
+        Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $4, $7 );
+        flip_image_vars_indirection( _environment, $4, calculatedFrame->name, NULL, $2 );
+    }
+    | DIRECTION expr IMAGE expr SEQUENCE expr frame expr {
+        flip_image_vars_indirection( _environment, $4, $8, $6, $2 );
+    }
+    | DIRECTION expr IMAGE expr frame expr {
+        flip_image_vars_indirection( _environment, $4, $6, NULL, $2 );
+    }
+    ;
+
 thread_identifiers :
     expr {
         Variable * array = variable_retrieve( _environment, $1 );
@@ -8267,6 +8543,7 @@ statement2nc:
   | PUT put_definition
   | DEFDGR defdgr_definition
   | BLIT blit_definition
+  | FLIP flip_definition
   | MOVE move_definition
   | GET get_definition
   | SLICE slice_definition
@@ -8817,14 +9094,14 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | IMAGES const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+  | images_or_atlas const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
         Variable * v = images_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $5+$6, $7, $8 );
         if ( $9 ) {
             prepare_variable_storage( _environment, $9, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | IMAGES const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+  | images_or_atlas const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
         Variable * v = images_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $7+$8, $9, $10 );
         if ( $11 ) {
             prepare_variable_storage( _environment, $11, v );
@@ -8886,6 +9163,7 @@ statement2nc:
   | DECLARE declare_definition
   | DEFINE define_definitions
   | OPTION option_definitions
+  | CONFIGURE configure_definitions
   | ORIGIN origin_definitions
   | RESOLUTION resolution_definitions
   | DIM dim_definitions
@@ -9317,6 +9595,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "Dragon 64";
 #elif __pc128op__
     char target[MAX_TEMPORARY_STORAGE] = "PC128 Olivetti Prodest / Thomson MO6";
+#elif __to8__
+    char target[MAX_TEMPORARY_STORAGE] = "Thomson TO8";
 #elif __mo5__
     char target[MAX_TEMPORARY_STORAGE] = "Thomson MO5";
 #elif __vic20__
@@ -9372,7 +9652,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #if defined(__msx1__)
     printf("\t-t <file>    Path to DSKTOOLS tool\n" );
 #endif
-#if defined(__pc128op__) || defined(__mo5__)
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
     printf("\t-G <type>    Type of gamma correction on PALETTE generation:\n" );
     printf("\t               none (0): no gamma correction\n" );
     printf("\t               type1 (1): algorithmic\n" );
@@ -9425,6 +9705,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     #define defaultExtension "bin"
 #elif __pc128op__
     printf("\t                k7o - K7 format (original algorithm)\n" );
+    printf("\t                k7 - K7 format\n" );
+    #define defaultExtension "k7"
+#elif __to8__
     printf("\t                k7 - K7 format\n" );
     #define defaultExtension "k7"
 #elif __mo5__
@@ -9520,6 +9803,8 @@ int main( int _argc, char *_argv[] ) {
 #elif __d64__
     _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
 #elif __pc128op__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+#elif __to8__
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
 #elif __mo5__
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;

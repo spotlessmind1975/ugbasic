@@ -41,14 +41,28 @@
 ;       HL : address
 ;       C : size
 ;
-CPUFILL:
+CPUFILL8:
     INC C
     DEC C
     RET Z
   
-CPUFILLL1:
+CPUFILL8L1:
     LD (HL), A
     DEC C
     INC HL
-    JR NZ, CPUFILLL1
+    JR NZ, CPUFILL8L1
     RET
+
+CPUFILL16:
+    PUSH AF
+    LD A, C
+    OR B
+    POP AF
+    RET Z
+  
+CPUFILL16L1:
+    LD DE, HL
+    INC DE
+    LD (HL), A
+    LDIR
+    RET    

@@ -45,13 +45,12 @@
  */
 /* <usermanual>
 @keyword BANK
+@target c64
 </usermanual> */
 void bank_set( Environment * _environment, int _bank ) {
 
-    outline1("LDA #$%2.2x", _bank  );
-    outline0("STA BANKSHADOW" );
-    outline0("JSR GIMEBANKSHADOWCHANGE" );
-    
+    variable_store( _environment, "BANKSHADOW", _bank );
+
 }
 
 /**
@@ -67,11 +66,9 @@ void bank_set( Environment * _environment, int _bank ) {
 @keyword BANK
 </usermanual> */
 void bank_set_var( Environment * _environment, char * _bank ) {
-    
-    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
 
-    outline1("LDA %s", bank->realName  );
-    outline0("STA BANKSHADOW" );
-    outline0("JSR GIMEBANKSHADOWCHANGE" );
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     
+    variable_move( _environment, bank->name, "BANKSHADOW" );
+
 }

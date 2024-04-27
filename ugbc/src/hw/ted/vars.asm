@@ -55,6 +55,8 @@ XSCROLLPOS:         .byte 0
 YSCROLLPOS:         .byte 4
 XSCROLL:            .byte 0
 YSCROLL:            .byte 0
+IMAGE2:             .word $0
+IMAGEW2:            .word $0
 
 .feature force_range
 
@@ -73,6 +75,7 @@ TEDFREQTABLE:
     .word 979,    982,    984,    986,    988,    990,    992,    994,    996
 
 TEDMUSICREADY: .byte $0
+TEDMUSICPAUSE: .byte $0
 TEDBLOCKS: .word $0
 TEDLASTBLOCK: .byte $0
 TEDMUSICLOOP: .byte $0

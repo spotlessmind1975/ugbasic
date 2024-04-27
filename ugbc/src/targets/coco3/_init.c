@@ -83,6 +83,8 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "EMPTYTILE" );    
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
+    variable_import( _environment, "BANKSHADOW", VT_BYTE, 0 );
+    variable_global( _environment, "BANKSHADOW" );
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
@@ -105,6 +107,7 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
 
     gime_initialization( _environment );
+    sn76489m_initialization( _environment );
 
     if ( _environment->tenLinerRulesEnforced ) {
         cpu_call( _environment, "VARINIT" );

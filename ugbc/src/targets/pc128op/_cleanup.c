@@ -41,6 +41,8 @@
 void target_finalization( Environment * _environment ) {
 
     ef936x_finalization( _environment );
+    sn76489m_finalization( _environment );
+    
     if ( ! _environment->deployed.pc128audio ) {
         cpu_label( _environment, "PC128OPAUDIOSTARTUP" );
         outline0( "RTS" );

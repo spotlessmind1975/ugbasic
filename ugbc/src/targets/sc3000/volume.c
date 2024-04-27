@@ -69,7 +69,7 @@ singola voce.
 </usermanual> */
 void volume( Environment * _environment, int _volume, int _channels ) {
 
-    sn76489_set_volume( _environment, _volume/16, _channels );
+    sn76489z_set_volume( _environment, _channels, _volume/16 );
 
 }
 
@@ -98,9 +98,9 @@ void volume_vars( Environment * _environment, char * _volume, char * _channels )
     Variable * volume = variable_retrieve_or_define( _environment, _volume, VT_BYTE, 255 );
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        sn76489_set_volume_vars( _environment, channels->realName, volume->realName );
+        sn76489z_set_volume_vars( _environment, channels->realName, volume->realName );
     } else {
-        sn76489_set_volume_vars( _environment, NULL, volume->realName );
+        sn76489z_set_volume_vars( _environment, NULL, volume->realName );
     }
 
 }

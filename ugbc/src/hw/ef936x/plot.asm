@@ -104,10 +104,14 @@ PLOTDB
 
     ORCC #$50
 
+@IF PC128OP
+
     PSHS D
     LDA BANKSHADOW
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     PULS D
+
+@ENDIF
 
     LDX BITMAPADDRESS
 
@@ -177,10 +181,14 @@ PLOT3XDB
     JMP PLOT4DB
 PLOT4XDB
 
+@IF PC128OP
+
     PSHS D
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     PULS D
+
+@ENDIF
 
     ANDCC #$AF
 
@@ -264,17 +272,17 @@ PLOT3DB
 
 ; PLOT3PAGE0
 
-;     LDA $a7c0
+;     LDA BASE_SEGMENT+$c0
 ;     ORA #$01
-;     STA $a7c0
+;     STA BASE_SEGMENT+$c0
 
 ;     JMP PLOT3PAGEF
 
 ; PLOT3PAGE1
 
-;     LDA $a7c0
+;     LDA BASE_SEGMENT+$c0
 ;     ANDA #$fe
-;     STA $a7c0
+;     STA BASE_SEGMENT+$c0
 
 ;     JMP PLOT3PAGEF
 
@@ -312,10 +320,14 @@ PLOTGXDB
     JMP PLOTCDB
 PLOTCXDB
 
+@IF PC128OP
+
     PSHS D
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     PULS D
+
+@ENDIF
 
     ANDCC #$AF
 
@@ -353,10 +365,14 @@ PLOTD2XDB
     JMP PLOTD3DB
 PLOTD3XDB
 
+@IF PC128OP
+
     PSHS D
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     PULS D
+
+@ENDIF
 
     ANDCC #$AF
 
@@ -388,28 +404,32 @@ PLOTD4DB
     ;set point
     ;---------
 
-    ; LDA $a7c0
+    ; LDA BASE_SEGMENT+$c0
     ; ORA #$01
-    ; STA $a7c0
+    ; STA BASE_SEGMENT+$c0
 
     LDA $2000, X           ;get row with point in it
     ANDA , U
     ORA , Y               ;isolate AND set the point
     STA $2000, X           ;write back to $A000
 
-    ; LDA $a7c0
+    ; LDA BASE_SEGMENT+$c0
     ; ANDA #$fe
-    ; STA $a7c0
+    ; STA BASE_SEGMENT+$c0
 
     LDA , X           ;get row with point in it
     ANDA #$0F
     ORA <MATHPTR5
     STA , X           ;write back to $A000
 
+@IF PC128OP
+
     PSHS D
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     PULS D
+
+@ENDIF
 
     ANDCC #$AF
 
@@ -434,9 +454,9 @@ PLOTD2DB
     ;set point
     ;---------
 
-    ; LDA $a7c0
+    ; LDA BASE_SEGMENT+$c0
     ; ORA #$01
-    ; STA $a7c0
+    ; STA BASE_SEGMENT+$c0
 
     LDA <MATHPTR5
     ANDA #$02
@@ -457,9 +477,9 @@ PLOTD21DB
     JMP PLOTD22DB
 
 PLOTD22DB
-    ; LDA $a7c0
+    ; LDA BASE_SEGMENT+$c0
     ; ANDA #$fe
-    ; STA $a7c0
+    ; STA BASE_SEGMENT+$c0
 
     LDA <MATHPTR5
     ANDA #$01
@@ -481,10 +501,14 @@ PLOTD24DB
 
 PLOTD25DB
 
+@IF PC128OP
+
     PSHS D
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     PULS D
+
+@ENDIF
 
     ANDCC #$AF
 
@@ -542,10 +566,14 @@ PLOTD3LODB
 
 PLOTD3FDB
 
+@IF PC128OP
+
     PSHS D
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     PULS D
+
+@ENDIF
 
     ANDCC #$AF
 
@@ -561,27 +589,31 @@ PLOTD3FDB
     ;erase point
     ;-----------
 PLOTEDB                          ;handled same way as setting a point
-    ; LDA $a7c0
+    ; LDA BASE_SEGMENT+$c0
     ; ORA #$01
-    ; STA $a7c0
+    ; STA BASE_SEGMENT+$c0
 
     LDA , X           ;get row with point in it
     ANDA , U
     STA , X           ;write back to $A000
 
+@IF PC128OP
+
     PSHS D
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     PULS D
+
+@ENDIF
 
     ANDCC #$AF
 
     JMP PLOTP                  ;skip the erase-point section
 
 PLOTGDB      
-    ; LDA $a7c0
+    ; LDA BASE_SEGMENT+$c0
     ; ORA #$01
-    ; STA $a7c0
+    ; STA BASE_SEGMENT+$c0
 
     LDA , X           ;get row with point in it
     ANDA , U
@@ -598,9 +630,9 @@ PLOTG0DB
     JMP PLOTP            
 
 PLOTCDB
-    ; LDA $a7c0
+    ; LDA BASE_SEGMENT+$c0
     ; ANDA #$fe
-    ; STA $a7c0
+    ; STA BASE_SEGMENT+$c0
 
     LDA , X           ;get row with point in it
     LSRA
@@ -609,10 +641,14 @@ PLOTCDB
     LSRA
     STA PLOTM
 
+@IF PC128OP
+
     PSHS D
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     PULS D
+
+@ENDIF
 
     ANDCC #$AF
     
@@ -657,7 +693,16 @@ PLOTORIG
     ADDD BITMAPADDRESS ; 7
     TFR D,X       ; 6
     
-    LDU #$A7C0    ; that adress is handy
+@IF TO8
+
+    LDU #(BASE_SEGMENT+$C3)    ; that adress is handy
+
+@ELSE
+
+    LDU #(BASE_SEGMENT+$C0)    ; that adress is handy
+
+@ENDIF
+
 
 @IF vestigialConfig.screenModeUnique
 

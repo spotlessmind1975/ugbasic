@@ -51,10 +51,9 @@
 </usermanual> */
 void boom( Environment * _environment, int _channels ) {
 
-    deploy( pc128audio, src_hw_pc128op_audio_asm );
-
-    outline0("LDU #20");
-    outline0("JSR PC128AUDIOBOOM");
+    sn76489m_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
+    sn76489m_start( _environment, _channels );
+    sn76489m_set_frequency( _environment, _channels, 1000 );
 
 }
 
@@ -71,10 +70,14 @@ void boom( Environment * _environment, int _channels ) {
 </usermanual> */
 void boom_var( Environment * _environment, char * _channels ) {
     
-    deploy( pc128audio, src_hw_pc128op_audio_asm );
-
-    outline0("LDU #512");
-    outline0("JSR PC128AUDIOBOOM");
+    if ( _channels ) {
+        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
+        sn76489m_start_var( _environment, channels->realName );
+        sn76489m_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
+    } else {
+        sn76489m_start_var( _environment, NULL );
+        sn76489m_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
+    }
 
 }
 

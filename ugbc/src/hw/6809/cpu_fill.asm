@@ -35,13 +35,14 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-CPUFILL
-    CMPB #$0
-    BEQ CPUFILLL1X
-CPUFILLL1
-    DECB
-    STA B,X
-    CMPB #$0
-    BNE CPUFILLL1
-CPUFILLL1X
+CPUFILL8
+CPUFILL16
+    CMPY #$0
+    BEQ CPUFILLX
+CPUFILLLP
+    STA ,X+
+    LEAY -1, Y
+    CMPY #$0
+    BNE CPUFILLLP
+CPUFILLX
     RTS

@@ -81,7 +81,7 @@ void pc128op_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 void pc128op_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
-    deploy( scancode, src_hw_pc128op_scancode_asm );
+    deploy_preferred( scancode, src_hw_pc128op_scancode_asm );
 
     MAKE_LABEL
 
@@ -134,7 +134,7 @@ void pc128op_scancode( Environment * _environment, char * _pressed, char * _scan
 
     MAKE_LABEL
 
-    deploy( scancode, src_hw_pc128op_scancode_asm );
+    deploy_preferred( scancode, src_hw_pc128op_scancode_asm );
 
     outline0("LDA #0" );
     outline1("STA %s", _pressed );
@@ -223,7 +223,7 @@ void pc128op_key_pressed( Environment * _environment, char *_scancode, char * _r
 
     MAKE_LABEL
 
-    deploy( scancode, src_hw_pc128op_scancode_asm );
+    deploy_preferred( scancode, src_hw_pc128op_scancode_asm );
 
     outline1("LDA %s", _scancode );
     outline0("JSR KEYPRESSED");
@@ -256,7 +256,7 @@ void pc128op_joystick( Environment * _environment, int _joystick, char * _result
 
     deploy( joystick, src_hw_pc128op_joystick_asm );
 
-    outline1("LDA $%2.2x", _joystick );
+    outline1("LDA #$%2.2x", _joystick );
     outline0("JSR JOYSTICK");
     outline1("STA %s", _result );
 
@@ -282,7 +282,7 @@ void pc128op_timer_set_status_on( Environment * _environment, char * _timer ) {
         outline0("LDB #0" );
     }
     outline0("LDA #$1" );
-    outline0("STA MATHPTR0" );
+    outline0("STA <MATHPTR0" );
     outline0("JSR TIMERSETSTATUS" );
 
 }
@@ -297,7 +297,7 @@ void pc128op_timer_set_status_off( Environment * _environment, char * _timer ) {
         outline0("LDB #0" );
     }
     outline0("LDA #$0" );
-    outline0("STA MATHPTR0" );
+    outline0("STA <MATHPTR0" );
     outline0("JSR TIMERSETSTATUS" );
 
 }
@@ -311,7 +311,7 @@ void pc128op_timer_set_counter( Environment * _environment, char * _timer, char 
     } else {
         outline0("LDD #0" );
     }
-    outline0("STD MATHPTR2");
+    outline0("STD <MATHPTR2");
     if ( _timer ) {
         outline1("LDB %s", _timer );
     } else {
@@ -326,7 +326,7 @@ void pc128op_timer_set_init( Environment * _environment, char * _timer, char * _
     deploy( timer, src_hw_6809_timer_asm);
 
     outline1("LDD %s", _init );
-    outline0("STD MATHPTR2");
+    outline0("STD <MATHPTR2");
     if ( _timer ) {
         outline1("LDB %s", _timer );
     } else {
@@ -341,7 +341,7 @@ void pc128op_timer_set_address( Environment * _environment, char * _timer, char 
     deploy( timer, src_hw_6809_timer_asm);
 
     outline1("LDD #%s", _address );
-    outline0("STD MATHPTR2");
+    outline0("STD <MATHPTR2");
     if ( _timer ) {
         outline1("LDB %s", _timer );
     } else {

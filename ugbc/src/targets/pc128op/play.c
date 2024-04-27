@@ -54,10 +54,11 @@
 </usermanual> */
 void play( Environment * _environment, int _note, int _delay, int _channels ) {
 
-    deploy( pc128audio, src_hw_pc128op_audio_asm );
-
-    outline1("LDY #$%4.4x", _delay / 10 );
-    outline0("JSR PC128AUDIOBELL");
+    sn76489m_start( _environment, _channels );
+    sn76489m_set_note( _environment, _channels, _note );
+    if ( _delay ) {
+        wait_milliseconds( _environment, _delay );
+    }
 
 }
 
@@ -77,14 +78,17 @@ void play( Environment * _environment, int _note, int _delay, int _channels ) {
 </usermanual> */
 void play_vars( Environment * _environment, char * _note, char * _delay, char * _channels ) {
 
-    deploy( pc128audio, src_hw_pc128op_audio_asm );
-
-    Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
- 
-    outline1("LDD %s", delay->realName );
-    outline0("LSRA" );
-    outline0("RORB" );
-    outline0("TFR D, Y" );
-    outline0("JSR PC128AUDIOBELL");
+    Variable * note = variable_retrieve_or_define( _environment, _note, VT_BYTE, 42 );
+    if ( _channels ) {
+        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
+        sn76489m_start_var( _environment, channels->realName );
+        sn76489m_set_note_vars( _environment, channels->realName, note->realName );
+    } else {
+        sn76489m_start_var( _environment, NULL );
+        sn76489m_set_note_vars( _environment, NULL, note->realName );
+    }
+    if ( _delay ) {
+        wait_milliseconds_var( _environment, _delay );
+    }
 
 }

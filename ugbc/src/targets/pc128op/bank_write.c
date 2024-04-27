@@ -74,17 +74,117 @@ sorgente, che sarà la memoria RAM.
 @target pc128op
 @verified
 </usermanual> */
-void bank_write_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
+void bank_write_vars( Environment * _environment, char * _address1, char * _bank, char * _address2, char * _size ) {
 
-    outline0("; bank write")
-    Variable * previous = bank_get( _environment );
-    bank_set_var( _environment, _bank );
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_WORD, 0 );
     Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
     Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
-    mmove_memory_memory( _environment, address1->name, realAddress->name, _size );
-    bank_set_var( _environment, previous->name );
-    outline0("; end bank write")
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
+
+    outline0("; bank write rv")
+    outline1("LDY %s", address1->realName );
+    outline1("LDD %s", size->realName );
+    outline1("LDU %s", bank->realName );
+    outline1("LDX %s", realAddress->realName );
+    outline0("JSR BANKWRITE");
+    outline0("; end bank write");
 
 }
+
+void bank_write_semi_var( Environment * _environment, char * _address2, int _bank, int _address1, int _size ) {
+
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
+    int realAddress = 0x6000 + _address1;
+
+    outline0("; bank read sv")
+    outline1("LDU #$%4.4x", _bank );
+    outline1("LDY #%s", _address2 );
+    outline1("LDX #$%4.4x", realAddress );
+
+    switch( _size ) {
+        case 1:
+            outline0("JSR BANKWRITE1");
+            break;
+        case 2:
+            outline0("JSR BANKWRITE2");
+            break;
+        case 4:
+            outline0("JSR BANKWRITE4");
+            break;
+        default:
+            outline1("LDD #$%4.4x", _size );
+            outline0("JSR BANKWRITE");
+            break;
+
+    }
+    outline0("; end bank read");
+
+}
+
+void bank_write_vars_direct( Environment * _environment, char * _address1, char * _bank, char * _address2, char * _size ) {
+
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_WORD, 0 );
+    Variable * bankAddress = bank_get_address_var( _environment, _bank );
+    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
+
+    outline0("; bank write rv")
+    outline1("LDY #%s", _address1 );
+    outline1("LDD %s", size->realName );
+    outline1("LDU %s", bank->realName );
+    outline1("LDX %s", realAddress->realName );
+    outline0("JSR BANKWRITE");
+    outline0("; end bank write");
+
+}
+
+void bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size ) {
+
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
+    Variable * address1 = variable_retrieve( _environment, _address1 );
+    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * bankAddress = bank_get_address( _environment, _bank );
+    Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
+
+    outline0("; bank write rv")
+    outline1("LDY #%s", address1->realName );
+    outline1("LDU #$%4.4x", _bank );
+    outline1("LDX %s", realAddress->realName );
+
+    switch( _size ) {
+        case 1:
+            outline0("JSR BANKWRITE1");
+            break;
+        case 2:
+            outline0("JSR BANKWRITE2");
+            break;
+        case 4:
+            outline0("JSR BANKWRITE4");
+            break;
+        default:
+            outline1("LDD #$%4.4x", _size );
+            outline0("JSR BANKWRITE");
+            break;
+
+    }
+    outline0("; end bank write");
+
+}
+

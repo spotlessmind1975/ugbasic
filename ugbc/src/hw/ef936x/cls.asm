@@ -120,30 +120,38 @@ CLSG
 
     ORCC #$50
 
+@IF PC128OP
+
     PSHS D
     LDA BANKSHADOW
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     PULS D
+
+@ENDIF
 
 ; ----------------------------------------------
 ; Version active on double buffering ON
 ; ----------------------------------------------
 
     LDY BITMAPADDRESS
+    LEAY $3FFF, Y
+    STY CLSGDBADDR+2
+    LDY BITMAPADDRESS
+    LDA #0
 CLSGDB
     STA ,Y+
+CLSGDBADDR
     CMPY #$7FFF 
     BNE CLSGDB
-    LDA #0
-CLSGDB2
-    STA ,Y+
-    CMPY #$9FFF 
-    BNE CLSGDB2
+
+@IF PC128OP
 
     PSHS D
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     PULS D
+
+@ENDIF
 
     ANDCC #$AF
     
@@ -165,15 +173,28 @@ CLSGORIG
     LDD CURRENTFRAMESIZE
     LEAU D,X
     STU CLSGL2+1
-    LDA #$A7
+    LDD #BASE_SEGMENT
     TFR A,DP
+
+@IF TO8
+    LDA <$C3
+    ANDA #$FE
+    STA <$C3
+@ELSE
     LDA <$C0
     ANDA #$FE
     STA <$C0
+@ENDIF
 
     PULS D,U
 CLSGL1
+
+@IF TO8
+    INC <$C3
+@ELSE
     INC <$C0
+@ENDIF
+
     STU -10,X
     STU -8,X
     STU -6,X
@@ -184,7 +205,13 @@ CLSGL1
     STU 4,X
     STU 6,X
     STU 8,X
+
+@IF TO8
+    DEC <$C3
+@ELSE
     DEC <$C0
+@ENDIF
+
     STD -10,X
     STD -8,X
     STD -6,X

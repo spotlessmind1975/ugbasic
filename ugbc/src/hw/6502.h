@@ -90,7 +90,7 @@ void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char 
 void cpu6502_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void cpu6502_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void cpu6502_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
-void cpu6502_fill( Environment * _environment, char * _address, char * _blocks, char * _pattern );
+void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern );
 void cpu6502_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern );
 void cpu6502_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern );
 void cpu6502_fill_direct( Environment * _environment, char * _address, char * _blocks, char * _pattern );
@@ -217,9 +217,11 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
 void cpu6502_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6502_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size );
+void cpu6502_mem_move_direct2_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size );
+void cpu6502_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6502_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
 void cpu6502_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char *_result, int _equal );
 void cpu6502_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
@@ -317,6 +319,8 @@ void cpu6502_float_fast_cmp( Environment * _environment, char * _x, char * _y, c
 void cpu6502_float_fast_sin( Environment * _environment, char * _angle, char * _result );
 void cpu6502_float_fast_cos( Environment * _environment, char * _angle, char * _result );
 void cpu6502_float_fast_tan( Environment * _environment, char * _angle, char * _result );
+void cpu6502_float_fast_log( Environment * _environment, char * _value, char * _result );
+void cpu6502_float_fast_exp( Environment * _environment, char * _value, char * _result );
 
 // SINGLE FP (32 bit) IEEE-754
 
@@ -334,6 +338,8 @@ void cpu6502_float_single_cmp( Environment * _environment, char * _x, char * _y,
 void cpu6502_float_single_sin( Environment * _environment, char * _angle, char * _result );
 void cpu6502_float_single_cos( Environment * _environment, char * _angle, char * _result );
 void cpu6502_float_single_tan( Environment * _environment, char * _angle, char * _result );
+void cpu6502_float_single_log( Environment * _environment, char * _value, char * _result );
+void cpu6502_float_single_exp( Environment * _environment, char * _value, char * _result );
 
 void cpu6502_f32add( char * _x, char * _y, char * _result );
 void cpu6502_f32div( char * _x, char * _y, char * _result );
@@ -380,7 +386,7 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_greater_than_16bit_const( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_greater_than_16bit_const( _environment, _source, _destination, _name, _equal, _signed )
 #define cpu_greater_than_32bit_const( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_greater_than_32bit_const( _environment, _source, _destination, _name, _equal, _signed )
 #define cpu_greater_than_8bit_const( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_greater_than_8bit_const( _environment, _source, _destination, _name, _equal, _signed )
-#define cpu_fill( _environment,  _address,  _blocks,  _pattern  ) cpu6502_fill( _environment,  _address,  _blocks,  _pattern  )
+#define cpu_fill( _environment,  _address, _bytes, _bytes_width,  _pattern  ) cpu6502_fill( _environment,  _address, _bytes, _bytes_width, _pattern  )
 #define cpu_fill_size( _environment,  _address,  _bytes,  _pattern  ) cpu6502_fill_size( _environment,  _address,  _bytes,  _pattern  )
 #define cpu_fill_size_value( _environment,  _address,  _bytes,  _pattern  ) cpu6502_fill_size_value( _environment,  _address,  _bytes,  _pattern  )
 #define cpu_fill_direct( _environment,  _address,  _blocks,  _pattern  ) cpu6502_fill_direct( _environment,  _address,  _blocks,  _pattern  )
@@ -508,9 +514,11 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_mem_move_16bit( _environment, _source, _destination, _size ) cpu6502_mem_move_16bit( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct( _environment, _source, _destination, _size ) cpu6502_mem_move_direct( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct2( _environment, _source, _destination, _size ) cpu6502_mem_move_direct2( _environment, _source, _destination, _size )
+#define cpu_mem_move_direct2_size( _environment, _source, _destination, _size ) cpu6502_mem_move_direct2_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_size( _environment, _source, _destination, _size ) cpu6502_mem_move_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_size( _environment, _source, _destination, _size ) cpu6502_mem_move_direct_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_indirect_size( _environment, _source, _destination, _size ) cpu6502_mem_move_direct_indirect_size( _environment, _source, _destination, _size )
+#define cpu_mem_move_indirect_direct_size( _environment, _source, _destination, _size ) cpu6502_mem_move_indirect_direct_size( _environment, _source, _destination, _size )
 #define cpu_compare_memory( _environment, _source, _destination, _size, _result, _equal ) cpu6502_compare_memory( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_compare_memory_size( _environment, _source, _destination, _size, _result, _equal ) cpu6502_compare_memory_size( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_less_than_memory( _environment, _source, _destination, _size, _result, _equal ) cpu6502_less_than_memory( _environment, _source, _destination, _size, _result, _equal )
@@ -635,6 +643,12 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 
 #define cpu_float_fast_tan( _environment, _angle, _result ) cpu6502_float_fast_tan( _environment, _angle, _result ) 
 #define cpu_float_single_tan( _environment, _angle, _result ) cpu6502_float_single_tan( _environment, _angle, _result ) 
+
+#define cpu_float_fast_log( _environment, _value, _result ) cpu6502_float_fast_log( _environment, _value, _result ) 
+#define cpu_float_single_log( _environment, _value, _result ) cpu6502_float_single_log( _environment, _value, _result ) 
+
+#define cpu_float_fast_exp( _environment, _value, _result ) cpu6502_float_fast_exp( _environment, _value, _result ) 
+#define cpu_float_single_exp( _environment, _value, _result ) cpu6502_float_single_exp( _environment, _value, _result ) 
 
 #define     CPU_LITTLE_ENDIAN      1
 #define     REGISTER_BASE          0x1000

@@ -185,7 +185,7 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
     
     tms9918_initialization( _environment );
-    sn76489_initialization( _environment );
+    sn76489z_initialization( _environment );
 
     // outline0("call	CheckIf60Hz");
     // outline0("ld		(VDP60HZ),a				; save it, 00/01 = 50/60 Hz		");

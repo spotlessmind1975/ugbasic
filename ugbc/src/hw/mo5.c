@@ -255,7 +255,7 @@ void mo5_timer_set_status_on( Environment * _environment, char * _timer ) {
         outline0("LDB #0" );
     }
     outline0("LDA #$1" );
-    outline0("STA MATHPTR0" );
+    outline0("STA <MATHPTR0" );
     outline0("JSR TIMERSETSTATUS" );
 
 }
@@ -270,7 +270,7 @@ void mo5_timer_set_status_off( Environment * _environment, char * _timer ) {
         outline0("LDB #0" );
     }
     outline0("LDA #$0" );
-    outline0("STA MATHPTR0" );
+    outline0("STA <MATHPTR0" );
     outline0("JSR TIMERSETSTATUS" );
 
 }
@@ -284,7 +284,7 @@ void mo5_timer_set_counter( Environment * _environment, char * _timer, char * _c
     } else {
         outline0("LDD #0" );
     }
-    outline0("STD MATHPTR2");
+    outline0("STD <MATHPTR2");
     if ( _timer ) {
         outline1("LDB %s", _timer );
     } else {
@@ -299,7 +299,7 @@ void mo5_timer_set_init( Environment * _environment, char * _timer, char * _init
     deploy( timer, src_hw_6809_timer_asm);
 
     outline1("LDD %s", _init );
-    outline0("STD MATHPTR2");
+    outline0("STD <MATHPTR2");
     if ( _timer ) {
         outline1("LDB %s", _timer );
     } else {
@@ -314,7 +314,7 @@ void mo5_timer_set_address( Environment * _environment, char * _timer, char * _a
     deploy( timer, src_hw_6809_timer_asm);
 
     outline1("LDD #%s", _address );
-    outline0("STD MATHPTR2");
+    outline0("STD <MATHPTR2");
     if ( _timer ) {
         outline1("LDB %s", _timer );
     } else {

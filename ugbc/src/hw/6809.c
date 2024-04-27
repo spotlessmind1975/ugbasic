@@ -40,7 +40,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__d32__) || defined(__d64__) || defined(__pc128op__) || defined(__mo5__) || defined(__coco__) || defined(__coco3__)
+#if defined(__d32__) || defined(__d64__) || defined(__pc128op__) || defined(__mo5__) || defined(__coco__) || defined(__coco3__) || defined(__to8__)
 
 /* output code that is the best "JUMP" version between "small" and "long" branch.
    LBRA and LBSR are transformed into JMP and JSR respectively. */
@@ -422,32 +422,24 @@ void cpu6809_fill_blocks( Environment * _environment, char * _address, char * _b
  * @param _bytes Number of bytes to fill
  * @param _<PATTERN <PATTERN to use
  */
-void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
+void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB %s", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA %s", _pattern );
-        outline1("LDX %s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB %s", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
+        if ( _bytes_width == 8 ) {
+            outline1("LDB %s", _bytes);
+            outline0("CLRA");
+            outline0("TFR D, Y");
+            outline0("JSR CPUFILL8");
+        } else {
+            outline1("LDY %s", _bytes);
+            outline0("JSR CPUFILL16");
+        }
+
         outline1("LDA %s", _pattern );
         outline1("LDX %s", _address);
-        outline0("JSR CPUFILL");
 
     done( )
 
@@ -468,30 +460,18 @@ void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, c
  */
 void cpu6809_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA %s", _pattern );
-        outline1("LDX %s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
         outline1("LDA %s", _pattern );
         outline1("LDX %s", _address);
-        outline0("JSR CPUFILL");
+        outline1("LDY #$%4.4x", _bytes );
+        if ( _bytes < 256 ) {
+            outline0("JSR CPUFILL8");
+        } else {
+            outline0("JSR CPUFILL16");
+        }
 
     done( )
 
@@ -512,30 +492,18 @@ void cpu6809_fill_size( Environment * _environment, char * _address, int _bytes,
  */
 void cpu6809_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA #$%2.2x", _pattern );
-        outline1("LDX %s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
         outline1("LDA #$%2.2x", _pattern );
         outline1("LDX %s", _address);
-        outline0("JSR CPUFILL");
+        outline1("LDY #$%4.4x", _bytes );
+        if ( _bytes < 256 ) {
+            outline0("JSR CPUFILL8");
+        } else {
+            outline0("JSR CPUFILL16");
+        }
 
     done( )
 
@@ -556,30 +524,14 @@ void cpu6809_fill_size_value( Environment * _environment, char * _address, int _
  */
 void cpu6809_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB %s", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA %s", _pattern );
-        outline1("LDX #%s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB %s", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
         outline1("LDA %s", _pattern );
         outline1("LDX #%s", _address);
-        outline0("JSR CPUFILL");
+        outline1("LDY %s", _bytes);
+        outline0("JSR CPUFILL16");
 
     done( )
 
@@ -600,30 +552,19 @@ void cpu6809_fill_direct( Environment * _environment, char * _address, char * _b
  */
 void cpu6809_fill_direct_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA %s", _pattern );
-        outline1("LDX #%s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
         outline1("LDA %s", _pattern );
         outline1("LDX #%s", _address);
-        outline0("JSR CPUFILL");
+        outline1("LDY #$%4.4x", _bytes);
+
+        if ( _bytes < 256 ) {
+            outline0("JSR CPUFILL8");
+        } else {
+            outline0("JSR CPUFILL16");
+        }
 
     done( )
 
@@ -644,30 +585,19 @@ void cpu6809_fill_direct_size( Environment * _environment, char * _address, int 
  */
 void cpu6809_fill_direct_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
-    inline( cpu_fill )
-
-        MAKE_LABEL
-
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
-        outline1("LDA #$%2.2x", _pattern );
-        outline1("LDX #%s", _address);
-        outhead1("%s", label);
-        outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
-        outline1("BNE %sinner", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDB #$%2.2x", _bytes);
-        outline0("LDA #0");
-        outline0("LEAY D,Y");
         outline1("LDA #$%2.2x", _pattern );
         outline1("LDX #%s", _address);
-        outline0("JSR CPUFILL");
+        outline1("LDY #$%4.4x", _bytes);
+
+        if ( _bytes < 256 ) {
+            outline0("JSR CPUFILL8");
+        } else {
+            outline0("JSR CPUFILL16");
+        }
 
     done( )
 
@@ -4013,6 +3943,64 @@ void cpu6809_mem_move_direct_indirect_size( Environment * _environment, char *_s
 
 }
 
+void cpu6809_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+
+    inline( cpu_mem_move )
+
+        MAKE_LABEL
+
+        if ( _size ) {
+
+            outline1("LDY %s", _source );
+            outline1("LDX #%s", _destination );
+
+            if ( _size >= 0x7f ) {
+
+                outline0("LDB #$7F" );
+                outline0("DECB" );
+                outhead1("%s", label );
+                outline0("LDA B,Y" );
+                outline0("STA B,X" );
+                outline0("DECB" );
+                outline0("CMPB #$FF" );
+                outline1("BNE %s", label );
+                outline0("LEAY 127,Y" );
+                outline0("LEAX 127,X" );
+                outline0("LEAY 1,Y" );
+                outline0("LEAX 1,X" );
+
+                _size -= 0x7f;
+
+            }
+
+            if ( _size ) {
+
+                outline1("LDB #$%2.2x", ( _size & 0xff ) );
+                outline0("DECB" );
+                outhead1("%s_2", label );
+                outline0("LDA B,Y" );
+                outline0("STA B,X" );
+                outline0("DECB" );
+                outline0("CMPB #$FF" );
+                outline1("BNE %s_2", label );
+
+            }
+
+        }
+
+    embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm )
+
+        outline1("LDD #$%4.4x", _size );
+        outline1("LDY %s", _source );
+        outline1("LDX #%s", _destination );
+        outline0("JSR DUFFDEVICE" );
+
+    done( )
+
+}
+
 void cpu6809_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
     inline( cpu_compare_memory )
@@ -5505,15 +5493,15 @@ void cpu6809_string_sub( Environment * _environment, char * _source, char * _sou
 
         outline1("LDY %s", _source);
         outline1("LDA %s", _source_size);
-        outline0("STA MATHPTR0");
+        outline0("STA <MATHPTR0");
         outline1("LDX %s", _pattern);
         outline1("LDA %s", _pattern_size);
-        outline0("STA MATHPTR1");
+        outline0("STA <MATHPTR1");
         outline1("LDU %s", _destination);
 
         outline0("JSR CPUSTRINGSUB");
 
-        outline0("LDA MATHPTR2");
+        outline0("LDA <MATHPTR2");
         outline1("STA %s", _destination_size);
 
     done()
@@ -6411,6 +6399,44 @@ void cpu6809_float_single_tan( Environment * _environment, char * _angle, char *
     outline0( "JSR FPLOD" );
 
     outline0( "JSR FPTAN" );
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
+
+}
+
+void cpu6809_float_fast_log( Environment * _environment, char * _value, char * _result ) {
+    cpu6809_float_single_log( _environment, _value, _result );
+}
+
+void cpu6809_float_single_log( Environment * _environment, char * _value, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _value );
+    outline0( "JSR FPLOD" );
+
+    outline0( "JSR FPLN" );
+
+    outline1( "LDX #%s", _result );
+    outline0( "JSR FPSTO" );
+
+}
+
+void cpu6809_float_fast_exp( Environment * _environment, char * _value, char * _result ) {
+    cpu6809_float_single_exp( _environment, _value, _result );
+}
+
+void cpu6809_float_single_exp( Environment * _environment, char * _value, char * _result ) {
+    
+    deploy( fp_vars, src_hw_6809_fp_routines_asm );
+
+    outline0( "LDU #FPSPAREA" );
+    outline1( "LDX #%s", _value );
+    outline0( "JSR FPLOD" );
+
+    outline0( "JSR FPEXP" );
 
     outline1( "LDX #%s", _result );
     outline0( "JSR FPSTO" );

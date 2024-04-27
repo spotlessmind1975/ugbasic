@@ -502,7 +502,7 @@ generated/c64reu/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/c64reu/exe/%.d64:
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64reu$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O d64 $(subst generated/c64reu/exe/,,$(@:.d64=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64reu$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.d64=.lst) -o ../$@ -O d64 $(subst generated/c64reu/exe/,,$(@:.d64=.bas))
 
 generated/c64reu/exe/%.reu:
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64reu$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O reu $(subst generated/c64reu/exe/,,$(@:.reu=.bas))

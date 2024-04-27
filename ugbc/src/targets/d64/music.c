@@ -49,7 +49,22 @@
 /* <usermanual>
 @keyword MUSIC
 </usermanual> */
-void music_var( Environment * _environment, char * _music, int _loop ) {
+void music_var( Environment * _environment, char * _music, int _loop, int _music_type ) {
 
 }
 
+void music_pause( Environment * _environment ) {
+
+}
+
+void music_resume( Environment * _environment ) {
+
+}
+
+void music_stop( Environment * _environment ) {
+
+}
+
+void music_seek_var( Environment * _environment, char * _position ) {
+
+}

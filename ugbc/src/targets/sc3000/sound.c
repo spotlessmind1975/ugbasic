@@ -78,8 +78,8 @@ espressa in millisecondi.
 </usermanual> */
 void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 
-    sn76489_start( _environment, _channels );
-    sn76489_set_frequency( _environment, _channels, _freq );
+    sn76489z_start( _environment, _channels );
+    sn76489z_set_frequency( _environment, _channels, _freq );
     if ( _delay ) {
         wait_milliseconds( _environment, _delay );
     }
@@ -113,11 +113,11 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
     Variable * freq = variable_retrieve_or_define( _environment, _freq, VT_WORD, 440 );
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        sn76489_start_var( _environment, channels->realName );
-        sn76489_set_frequency_vars( _environment, channels->realName, freq->realName );
+        sn76489z_start_var( _environment, channels->realName );
+        sn76489z_set_frequency_vars( _environment, channels->realName, freq->realName );
     } else {
-        sn76489_start_var( _environment, NULL );
-        sn76489_set_frequency_vars( _environment, NULL, freq->realName );
+        sn76489z_start_var( _environment, NULL );
+        sn76489z_set_frequency_vars( _environment, NULL, freq->realName );
     }
     if ( _delay ) {
         wait_milliseconds_var( _environment, _delay );

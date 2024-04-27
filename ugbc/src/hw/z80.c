@@ -323,36 +323,32 @@ void z80_fill_blocks( Environment * _environment, char * _address, char * _block
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void z80_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
+void z80_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern ) {
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-
-        outline1("LD A, (%s)", _pattern);
-        outline1("LD HL, (%s)", _address);
-        outline0("LD (HL),A")
-        outline0("LD E,L");
-        outline0("LD D,H");
-        outline0("INC DE");
-        outline0("LD (DE),A")
-        outline1("LD A, (%s)", _bytes);
-        outline0("CP 0");
-        outline1("JR Z, %sdone", label);
-        outline0("DEC A");
-        outline0("LD C,A");
-        outline0("LD A,0");
-        outline0("LD B,A");
-        outline0("LDIR");
-        outhead1("%sdone:", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
 
-        outline1("LD A, (%s)", _bytes);
-        outline0("LD C, A");
+        if ( _bytes_width == 8 ) {
+            outline1("LD A, (%s)", _bytes);
+            outline0("LD C, A");
+        } else {
+            outline1("LD A, (%s)", _bytes);
+            outline0("LD C, A");
+            outline1("LD A, (%s+1)", _bytes);
+            outline0("LD B, A");
+        }
+
         outline1("LD A, (%s)", _pattern);
         outline1("LD HL, (%s)", _address);
-        outline0("CALL CPUFILL");
+
+        if ( _bytes_width == 8 ) {
+            outline0("CALL CPUFILL8");
+        } else {
+            outline0("CALL CPUFILL16");
+        }
 
     done(  )
 }
@@ -374,31 +370,27 @@ void z80_fill_size( Environment * _environment, char * _address, int _bytes, cha
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-
-        outline1("LD A, (%s)", _pattern);
-        outline1("LD HL, (%s)", _address);
-        outline0("LD (HL),A")
-        outline0("LD E,L");
-        outline0("LD D,H");
-        outline0("INC DE");
-        outline0("LD (DE),A")
-        outline1("LD A,$%2.2x", _bytes);
-        outline1("JR Z, %sdone", label);
-        outline0("DEC A");
-        outline0("LD C,A");
-        outline0("LD A,0");
-        outline0("LD B,A");
-        outline0("LDIR");
-        outhead1("%sdone:", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
 
-        outline1("LD A, $%2.2x", _bytes);
+        outline1("LD A, $%2.2x", (unsigned char) ( _bytes & 0xff ) );
         outline0("LD C, A");
+
+        if ( _bytes < 256 ) {
+
+        } else {
+            outline1("LD A, $%2.2x", (unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
+            outline0("LD B, A");
+        }
+
         outline1("LD A, (%s)", _pattern);
         outline1("LD HL, (%s)", _address);
-        outline0("CALL CPUFILL");
+        if ( _bytes < 256 ) {
+            outline0("CALL CPUFILL8");
+        } else {
+            outline0("CALL CPUFILL16");
+        }
 
     done(  )
 
@@ -421,32 +413,27 @@ void z80_fill_size_value( Environment * _environment, char * _address, int _byte
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-
-        outline1("LD A, $%2.2x", _pattern);
-        outline1("LD HL, (%s)", _address);
-        outline0("LD (HL),A")
-        outline0("LD E,L");
-        outline0("LD D,H");
-        outline0("INC DE");
-        outline0("LD (DE),A")
-        outline1("LD A, $%2.2x", _bytes);
-        outline0("CP 0");
-        outline1("JR Z, %sdone", label);
-        outline0("DEC A");
-        outline0("LD C,A");
-        outline0("LD A,0");
-        outline0("LD B,A");
-        outline0("LDIR");
-        outhead1("%sdone:", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
 
-        outline1("LD A, $%2.2x", _bytes);
+        outline1("LD A, $%2.2x", (unsigned char) ( _bytes & 0xff ) );
         outline0("LD C, A");
+
+        if ( _bytes < 256 ) {
+
+        } else {
+            outline1("LD A, $%2.2x", (unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
+            outline0("LD B, A");
+        }
+
         outline1("LD A, $%2.2x", _pattern);
         outline1("LD HL, (%s)", _address);
-        outline0("CALL CPUFILL");
+        if ( _bytes < 256 ) {
+            outline0("CALL CPUFILL8");
+        } else {
+            outline0("CALL CPUFILL16");
+        }
 
     done(  )
 
@@ -469,32 +456,17 @@ void z80_fill_direct( Environment * _environment, char * _address, char * _bytes
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-
-        outline1("LD A, (%s)", _pattern);
-        outline1("LD HL, %s", _address);
-        outline0("LD (HL),A")
-        outline0("LD E,L");
-        outline0("LD D,H");
-        outline0("INC DE");
-        outline0("LD (DE),A")
-        outline1("LD A, (%s)", _bytes);
-        outline0("CP 0");
-        outline1("JR Z, %sdone", label);
-        outline0("DEC A");
-        outline0("LD C,A");
-        outline0("LD A,0");
-        outline0("LD B,A");
-        outline0("LDIR");
-        outhead1("%sdone:", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
 
         outline1("LD A, (%s)", _bytes);
-        outline0("LD c, A");
+        outline0("LD C, A");
+        outline1("LD A, (%s+1)", _bytes);
+        outline0("LD B, A");
         outline1("LD A, (%s)", _pattern);
         outline1("LD HL, %s", _address);
-        outline0("CALL CPUFILL");
+        outline0("CALL CPUFILL16");
 
     done(  )
 
@@ -517,32 +489,27 @@ void z80_fill_direct_size( Environment * _environment, char * _address, int _byt
 
     MAKE_LABEL
 
-    inline( cpu_fill )
-
-        outline1("LD A, (%s)", _pattern);
-        outline1("LD HL, %s", _address);
-        outline0("LD (HL),A")
-        outline0("LD E,L");
-        outline0("LD D,H");
-        outline0("INC DE");
-        outline0("LD (DE),A")
-        outline1("LD A,$%2.2x", _bytes);
-        outline0("CP 0");
-        outline1("JR Z, %sdone", label);
-        outline0("DEC A");
-        outline0("LD C,A");
-        outline0("LD A,0");
-        outline0("LD B,A");
-        outline0("LDIR");
-        outhead1("%sdone:", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
 
-        outline1("LD A, $%2.2x", _bytes);
-        outline0("LD c, A");
+        outline1("LD A, $%2.2x", (unsigned char) ( _bytes & 0xff ) );
+        outline0("LD C, A");
+
+        if ( _bytes < 256 ) {
+
+        } else {
+            outline1("LD A, $%2.2x", (unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
+            outline0("LD B, A");
+        }
+
         outline1("LD A, (%s)", _pattern);
         outline1("LD HL, %s", _address);
-        outline0("CALL CPUFILL");
+        if ( _bytes < 256 ) {
+            outline0("CALL CPUFILL8");
+        } else {
+            outline0("CALL CPUFILL16");
+        }
 
     done(  )
 
@@ -565,34 +532,27 @@ void z80_fill_direct_size_value( Environment * _environment, char * _address, in
 
     MAKE_LABEL
     
-    inline( cpu_fill )
-
-        outline1("LD A,$%2.2x", _pattern);
-        outline1("LD HL, %s", _address);
-        outline0("LD (HL),A")
-        outline0("LD E,L");
-        outline0("LD D,H");
-        outline0("INC DE");
-        outline0("LD (DE),A")
-        outline1("LD A,$%2.2x", _bytes);
-        outline0("CP 0");
-        outline1("JR Z, %sdone", label);
-        outline0("DEC A");
-        outline0("CP 0");
-        outline1("JR Z, %sdone", label);
-        outline0("LD C,A");
-        outline0("LD A,0");
-        outline0("LD B,A");
-        outline0("LDIR");
-        outhead1("%sdone:", label);
+    no_inline( cpu_fill )
 
     embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
 
-        outline1("LD A, $%2.2x", _bytes);
-        outline0("LD c, A");
+        outline1("LD A, $%2.2x", (unsigned char) ( _bytes & 0xff ) );
+        outline0("LD C, A");
+
+        if ( _bytes < 256 ) {
+
+        } else {
+            outline1("LD A, $%2.2x", (unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
+            outline0("LD B, A");
+        }
+
         outline1("LD A, $%2.2x", _pattern);
         outline1("LD HL, %s", _address);
-        outline0("CALL CPUFILL");
+        if ( _bytes < 256 ) {
+            outline0("CALL CPUFILL8");
+        } else {
+            outline0("CALL CPUFILL16");
+        }
 
     done(  )
     
@@ -4511,6 +4471,22 @@ void z80_mem_move_direct_indirect_size( Environment * _environment, char *_sourc
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, (%s)", _destination);
+        outline1("LD A, $%2.2x", ( _size & 0xff ) );
+        outline0("LD C, A");
+        outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
+        outline0("CALL DUFFDEVICE");
+    }
+
+}
+
+void z80_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    if ( _size ) {
+
+        deploy( duff, src_hw_z80_duff_asm );
+
+        outline1("LD HL, (%s)", _source);
+        outline1("LD DE, %s", _destination);
         outline1("LD A, $%2.2x", ( _size & 0xff ) );
         outline0("LD C, A");
         outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
@@ -8459,5 +8435,30 @@ void z80_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_
     outline1("LD (%s), HL", _destination );
 
 }
+
+void z80_float_fast_log( Environment * _environment, char * _value, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED("LOG");
+
+}
+
+void z80_float_single_log( Environment * _environment, char * _value, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED("LOG");
+
+}
+
+void z80_float_fast_exp( Environment * _environment, char * _value, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED("EXP");
+
+}
+
+void z80_float_single_exp( Environment * _environment, char * _value, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED("EXP");
+
+}
+
 
 #endif

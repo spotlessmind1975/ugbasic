@@ -39,13 +39,16 @@ PAGE0 equ $21
 
 ; TIMER service routine
 PC128IRQ
+    PSHS  D
     LDD   #0              ; TI variable
 PC128TIMER  set *-2       ; (variable within code)
     ADDD  #1              ; increment
     STD   PC128TIMER      ; write result to TI variable
     LDA   #PAGE0          ; sets the direct page
     TFR   A,DP            ; for ugbc routines
+    JSR   MUSICPLAYER
     JSR   TIMERMANAGER
+    PULS  D
     JMP   >PC128IRQDEF    ; jump to next ISR
 PC128IRQN   set *-2       ; (variable within code)
 
@@ -91,10 +94,12 @@ PC128STARTUP3
     SWI
     FCB   $02
 
+    ANDCC #$AF
+
     LDD #$0
 PC128STARTUPL1
     ADDD #$1
-    STD MATHPTR0
+    STD <MATHPTR0
     CMPD #$3100
     BNE PC128STARTUPL1
 
@@ -114,6 +119,8 @@ PC128NTSC
 
 PC128STARTUPDONE
 
+    ORCC #$50
+
     LDB   #0
     STB   $2076
     LDB   $2019
@@ -126,7 +133,7 @@ BANKLOADL1
     LDA B,U
     CMPA #$FF
     BEQ BANKLOADL2
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     INCB
 
     PSHS D,Y,X,U
@@ -184,7 +191,7 @@ BANKLOADL2
     ; CMPB #7
     ; BNE BANKLOADL1
     LDA #7
-    STA $A7E5
+    STA BASE_SEGMENT+$E5
     STA BANKSHADOW
 
     ANDCC #$AF

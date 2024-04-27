@@ -51,7 +51,7 @@ POKEYFREQTABLE:
     .word 1
     
 POKEYMUSICREADY: .byte $0
-
+POKEYMUSICPAUSE: .byte $0
 POKEYMUSICLOOP: .byte $0
 
 POKEYBLOCKS: .word $0

@@ -405,7 +405,9 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         // buffer with the compressed one.
         else {
             final->valueBuffer = output;
-            banks_store( _environment, final, 1 );
+            if ( ! banks_store( _environment, final, 1 ) ) {
+                CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
+            };
             free( final->valueBuffer );
             final->valueBuffer = NULL;
         }

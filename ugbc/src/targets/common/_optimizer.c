@@ -309,3 +309,15 @@ POBuffer po_buf_match(POBuffer _buf, const char *_pattern, ...) {
 
     return *p=='\0' ? ret : NULL;
 }
+
+/* Check if buffer is a (hexadecimal) number */
+int po_buf_is_hex(POBuffer _s) {
+    char *s = _s->str;
+
+    while(!_eol(*s)) {
+        if ( ( (*s) < '0' || (*s) > '9' ) && ( (*s) < 'a' || (*s) > 'f' ) && ( (*s) < 'A' || (*s) > 'Z' ) )
+            return 0;
+        ++s;
+    }
+    return 1;
+}

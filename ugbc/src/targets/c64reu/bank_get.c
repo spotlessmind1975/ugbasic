@@ -49,10 +49,9 @@
 </usermanual> */
 Variable * bank_get( Environment * _environment ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(bank number)" );
+    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
 
-    outline0("LDA BANKSHADOW" );
-    outline1("STA %s", result->realName );
+    variable_store( _environment, result->name, 0 );
 
     return result;
     

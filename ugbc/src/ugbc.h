@@ -141,6 +141,9 @@ typedef struct _Bank {
     /** Data contained in the block */
     char * data;
 
+    /** Starting address for bank (if needed) */
+    int bankAddress;
+
     /** Link to the next bank (NULL if this is the last one) */
     struct _Bank * next;
 
@@ -195,6 +198,15 @@ typedef struct _Storage {
     struct _Storage * next;
 
 } Storage;
+
+typedef enum _MusicType {
+
+    MUSIC_TYPE_AUTO = 0,
+    MUSIC_TYPE_IAF = 1,
+    MUSIC_TYPE_MID = 2,
+    MUSIC_TYPE_PSG = 4
+
+} MusicType;
 
 typedef enum _OutputFileType {
 
@@ -265,6 +277,64 @@ typedef struct _StaticString {
     struct _StaticString * next;
 
 } StaticString;
+
+typedef enum _HardwareName {
+
+    HN_GMC = 1,
+    HN_SN76489 = 2
+
+} HardwareName;
+
+typedef enum _HardwareParameterName {
+
+    HPN_SLOT = 1,
+    HPN_ADDRESS = 2
+
+} HardwareParameterName;
+
+/**
+ * @brief Structure of a single (option) setting
+ */
+typedef struct _OptionParameterValue {
+
+    HardwareParameterName          parameter;
+
+    int                            value;
+
+    char *                         valueName;
+
+    /** Link to the next option (NULL if this is the last one) */
+    struct _OptionParameterValue * next;
+
+} OptionParameterValue;
+
+typedef struct _OptionParameterValued {
+
+    int value;
+    int statically;
+    int dynamically;
+
+} OptionParameterValued;
+
+typedef struct _ConfigureGMCParameters {
+
+    OptionParameterValued   slot;
+ 
+} ConfigureGMCParameters;
+
+typedef struct _ConfigureSN76489Parameters {
+
+    OptionParameterValued   address;
+ 
+} ConfigureSN76489Parameters;
+
+typedef struct _ConfigureParameters {
+
+    ConfigureGMCParameters      gmc;
+
+    ConfigureSN76489Parameters  sn76489;
+
+} ConfigureParameters;
 
 /**
  * @brief Structure to store color components (red, green and blue)
@@ -608,6 +678,8 @@ typedef struct _Constant {
      * The initial (floating) value of the variable, as given by last (re)definition.
      */
     double valueFloating;
+
+    int emitted;
 
     /** Link to the next constant (NULL if this is the last one) */
     struct _Constant * next;
@@ -1437,6 +1509,8 @@ typedef struct _Deployed {
     int scroll;
     int raster;
     int putimage;
+    int putimagereu;
+    int putimageram;
     int getimage;
     int puttilemap;
     int blitimage;
@@ -1455,6 +1529,7 @@ typedef struct _Deployed {
     int ay8910startup;
     int sn76489vars;
     int sn76489startup;
+    int sn76489startup2;
 
     int draw;
     int bar;
@@ -1543,6 +1618,8 @@ typedef struct _Deployed {
     int dsave;
     int bank;
     int msc1;
+    int flipimagex;
+    int flipimagey;
 
 } Deployed;
 
@@ -2467,7 +2544,11 @@ typedef struct _Environment {
     int ramSize;
 
     int outputGeneratedFiles;
-    
+
+    OptionParameterValue    * optionParameters;
+
+    ConfigureParameters     configureParameters;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -2506,7 +2587,7 @@ typedef struct _Environment {
 #define MAKE_LABEL  char label[32]; sprintf( label, "_label%d", UNIQUE_ID);
 
 #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n",  ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -2785,6 +2866,14 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_MULTITASKED_ARRAY(v) CRITICAL2("E269 - cannot use [ ] operator outside a PARALLEL PROCEDURE", v );
 #define CRITICAL_STORAGE_BANKED_UNCOMPATIBLE_TILEMAP(v) CRITICAL2("E270 - cannot use TILEMAP both on (implicit) BANKED and STORAGE", v );
 #define CRITICAL_STORAGE_BANKED_UNCOMPATIBLE(v) CRITICAL2("E271 - cannot use variables both on (implicit) BANKED and STORAGE", v );
+#define CRITICAL_CANNOT_STORE_BIT_ON_BANKED_ARRAY(v) CRITICAL2("E272 - cannot store a bit into a BANKED array", v );
+#define CRITICAL_CANNOT_MOVE_BIT_ON_BANKED_ARRAY(v) CRITICAL2("E273 - cannot move a bit into a BANKED array", v );
+#define CRITICAL_CANNOT_MOVE_STRING_ON_BANKED_ARRAY(v) CRITICAL2("E274 - cannot move string into a BANKED array", v );
+#define CRITICAL_CANNOT_MOVE_FROM_BIT_ON_BANKED_ARRAY(v) CRITICAL2("E275 - cannot move bit from a BANKED array", v );
+#define CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY(v) CRITICAL2("E276 - out of memory when storing this variable on bank", v );
+#define CRITICAL_FLIP_IMAGE_UNSUPPORTED(v,t) CRITICAL3("E277 - unsupported type for FLIP IMAGE", v, t );
+#define CRITICAL_CANNOT_FLIP_BANKED_IMAGE(v) CRITICAL2("E278 - cannot FLIP BANKED IMAGE", v );
+#define CRITICAL_CANNOT_FLIP_COMPRESSED_IMAGE(v) CRITICAL2("E279 - cannot FLIP COMPRESSED IMAGE(S)", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3729,6 +3818,10 @@ char * banks_get_address( Environment * _environment, int _bank );
 Variable * banks_get_address_var( Environment * _environment, char * _bank );
 int banks_store( Environment * _environment, Variable * _variable, int _resident );
 int banks_any_used( Environment * _environment );
+void banks_generate( Environment * _environment );
+
+void vars_emit_constant_integer( Environment * _environment, char * _name, int _value );
+void vars_emit_constants( Environment * _environment );
 
 #define FUNCTION_STUB( t )   Variable * result = variable_temporary( _environment, t, "(stub)" ); return result;
 
@@ -3746,6 +3839,7 @@ POBuffer tmp_buf(void *key1, unsigned int key2);
 void tmp_buf_clr(void *key1);
 POBuffer po_buf_match(POBuffer _buf, const char *_pattern, ...);
 int po_buf_strcmp(POBuffer _s, POBuffer _t);
+int po_buf_is_hex(POBuffer _s);
 
 #define TMP_BUF         tmp_buf(__FILE__, __LINE__)
 #define TMP_BUF_CLR     tmp_buf_clr(__FILE__)
@@ -3805,11 +3899,16 @@ Variable *              bank_get_count( Environment * _environment );
 void                    bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size );
 void                    bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
+void                    bank_read_vars_direct_size( Environment * _environment, char * _bank, char * _address1, char * _address2, int _size );
+void                    bank_read_vars_bank_direct_size( Environment * _environment, int _bank, char * _address1, char * _address2, int _size );
 void                    bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 );
 void                    bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 );
 void                    bank_set( Environment * _environment, int _bank );
 void                    bank_set_var( Environment * _environment, char * _bank );
 void                    bank_write_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
+void                    bank_write_semi_var( Environment * _environment, char * _address2, int _bank, int _address1, int _size );
+void                    bank_write_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
+void                    bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size );
 void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_from( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
@@ -3894,6 +3993,8 @@ void                    colormap_at_var( Environment * _environment, char * _add
 void                    colormap_clear( Environment * _environment );
 void                    colormap_clear_with( Environment * _environment, int _foreground, int _background );
 void                    colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background );
+void                    configure_set_value( Environment * _environment, int _name, int _parameter, int _value );
+void                    configure_set_value_var( Environment * _environment, int _name, int _parameter, char * _value );
 void                    const_define_numeric( Environment * _environment, char * _name, int _value );
 void                    const_define_string( Environment * _environment, char * _name, char * _value );
 void                    const_define_float( Environment * _environment, char * _name, double _value );
@@ -3962,12 +4063,17 @@ void                    exit_procedure( Environment * _environment );
 
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
 int                     find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
+void                    flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction );
+void                    flip_image_vars_direction( Environment * _environment, char * _image, char * _frame, char * _sequence, int _direction );
+void                    flip_image_vars_indirection( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction );
 void                    font_descriptors_init( Environment * _environment, int _embedded_present );
 void                    forbid( Environment * _environment );
 int                     frames( Environment * _environment, char * _image );
 Variable *              fp_cos( Environment * _environment, char * _angle );
 Variable *              fp_sin( Environment * _environment, char * _angle );
 Variable *              fp_tan( Environment * _environment, char * _angle );
+Variable *              fp_log( Environment * _environment, char * _value );
+Variable *              fp_exp( Environment * _environment, char * _value );
 
 //----------------------------------------------------------------------------
 // *G*
@@ -4091,7 +4197,11 @@ void                    move_tile( Environment * _environment, char * _tile, cha
 Variable *              music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 Variable *              music_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 Variable *              music_storage( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
-void                    music_var( Environment * _environment, char * _music, int _loop );
+void                    music_var( Environment * _environment, char * _music, int _loop, int _music_type );
+void                    music_pause( Environment * _environment );
+void                    music_resume( Environment * _environment );
+void                    music_stop( Environment * _environment );
+void                    music_seek_var( Environment * _environment, char * _position );
 
 //----------------------------------------------------------------------------
 // *N*
@@ -4173,6 +4283,7 @@ void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
 void                    put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
 void                    put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags );
+void                    put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
 void                    put_tile( Environment * _environment, char * _tile, char * _x, char * _y, char * _w, char * _h );
 void                    put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer, char * _padding_tile );
 void                    put_tilemap_inline( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer, int _padding_tile );
@@ -4518,11 +4629,13 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/6809.h"
     #include "hw/6847.h"
     #include "hw/coco.h"
+    #include "hw/sn76489m.h"
 #elif __coco3__ 
     #include "../src-generated/modules_coco3.h"
     #include "hw/6809.h"
     #include "hw/gime.h"
     #include "hw/coco3.h"
+    #include "hw/sn76489m.h"
 #elif __d32__ 
     #include "../src-generated/modules_d32.h"
     #include "hw/6809.h"
@@ -4538,6 +4651,12 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/6809.h"
     #include "hw/ef936x.h"
     #include "hw/pc128op.h"
+    #include "hw/sn76489m.h"
+#elif __to8__ 
+    #include "../src-generated/modules_to8.h"
+    #include "hw/6809.h"
+    #include "hw/ef936x.h"
+    #include "hw/to8.h"
 #elif __mo5__ 
     #include "../src-generated/modules_mo5.h"
     #include "hw/6809.h"
