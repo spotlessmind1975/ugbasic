@@ -31,7 +31,7 @@
 .PHONY: paths toolchain compiler clean all built so
 
 ifndef target
-$(error missing 'target' (valid values: atari atarixl c128 c128z c64 c64reu coco coco3 coleco cpc d32 d64 mo5 msx1 pc128op plus4 sc3000 sg1000 vg5000 vic20 zx))
+$(error missing 'target' (valid values: atari atarixl c128 c128z c64 c64reu coco coco3 coleco cpc d32 d64 mo5 msx1 pc128op plus4 sc3000 sg1000 to8 vg5000 vic20 zx))
 endif
 
 ifdef 10liner
@@ -96,6 +96,9 @@ ifeq ($(target),msx1)
   output=rom
 endif
 ifeq ($(target),pc128op)
+  output=k7
+endif
+ifeq ($(target),to8)
   output=k7
 endif
 ifeq ($(target),plus4)
@@ -776,6 +779,29 @@ generated/sg1000/exe/%.rom:
 
 generated/sg1000/exeso/%.rom: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.rom=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.sg1000$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O rom $(subst generated/sg1000/exeso/,,$(@:.rom=.bas))
+
+#------------------------------------------------ 
+# to8:
+#    THOMSON TO8
+#------------------------------------------------ 
+# 
+toolchain.to8: asm6809
+
+generated/to8/asm/%.asm: compiler
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.to8$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.k7=.lis) $(subst generated/to8/asm/,,$(@:.asm=.bas)) ../$@
+
+generated/to8/exe/%.k7: compiler
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.to8$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.k7=.lis) $(subst generated/to8/exe/,,$(@:.k7=.bas)) -o ../$@
+
+generated/to8/exe/%.bin: compiler
+	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
+
+generated/to8/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.to8$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/to8/exeso/,,$(@:.bin=.bas))
+
+generated/to8/exeso/%.k7: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.k7=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.to8$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O k7 $(subst generated/to8/exeso/,,$(@:.k7=.bas))
+
 
 #------------------------------------------------ 
 # vg5000:
