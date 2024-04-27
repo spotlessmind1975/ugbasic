@@ -10,7 +10,7 @@ REM
 REM Questo esempio permette di verificare che l'assegnazione tra tipi
 REM interi, con e senza segno, funzioni correttamente.
 REM
-REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,vg5000,zx
+REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,to8,plus4,sc3000,sg1000,vg5000,zx
 
 CLS
 

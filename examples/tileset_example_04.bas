@@ -15,7 +15,7 @@ REM Per maggiori informazioni:
 REM @url https://www.mapeditor.org/
 REM @url https://kenney.nl/
 REM
-REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
+REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,pc128op,to8,cpc
 
     BITMAP ENABLE(16)
 
