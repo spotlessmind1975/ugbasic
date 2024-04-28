@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__pc128op__) || defined(__mo5__)
 
 // -------------------------------------------------------------------------
 // CONVERT BINARY TO K7 TAPE FILE 
@@ -126,7 +128,7 @@ static unsigned char cmpl(unsigned int n)
 	return 0x100- ((unsigned char)n);
 }
 
-int pc128op_convertbintok7_original(Environment * _environment)
+int convertbintok7_original(Environment * _environment)
 {
 	// if(argc==1)
 	// {
@@ -272,3 +274,5 @@ int pc128op_convertbintok7_original(Environment * _environment)
 
 	return 0;
 }
+
+#endif
