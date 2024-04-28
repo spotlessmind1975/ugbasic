@@ -9642,6 +9642,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-X <file>    Path to executer\n" );
     printf("\t-P <file>    Path to profile (-L needed)\n" );
     printf("\t-q <cycles>  Cycles for profiling (default: 1000000)\n" );
+#if defined(__c64reu__) || defined(__to8__)
+    printf("\t-R <size>    Size of expansion memory (in KB)\n" );
+#endif
     printf("\t-c <file>    Output filename with linker configuration\n" );
 #if defined(__coco__) || defined(__coco3__)
     printf("\t-b <file>    Path to DECB image tool\n" );
