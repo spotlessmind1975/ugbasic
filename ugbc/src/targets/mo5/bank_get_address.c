@@ -32,40 +32,55 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__coco__) || defined(__d32__) || defined(__d64__)
+#include "../../ugbc.h"
 
 /**
- * @brief Emit ASM code for instruction <b>BANK ...</b>
+ * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
  * 
- * This function outputs the ASM code to set the current 
- * expansion bank index.
- * 
- * @param _environment Current calling environment
- * @param _bank Bank to select
- */
-/* <usermanual>
-@keyword BANK
-</usermanual> */
-void bank_set( Environment * _environment, int _bank ) {
-
-}
-
-/**
- * @brief Emit ASM code for instruction <b>BANK ...</b>
- * 
- * This function outputs the ASM code to set the current 
- * expansion bank index.
+ * This function outputs the ASM code to get the resident
+ * memory address for the given bank.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to select
+ * @param _bank Bank to get address of
+ * @return Current address of the bank selected
  */
 /* <usermanual>
-@keyword BANK
+@keyword BANK ADDRESS
+@target mo5
+@verified
 </usermanual> */
-void bank_set_var( Environment * _environment, char * _bank ) {
+Variable * bank_get_address( Environment * _environment, int _bank ) {
+
+    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
+
+    outline0("LDD #$B000" );
+    outline1("STD %s", result->realName );
+
+    return result;
     
 }
 
-#endif
+/**
+ * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
+ * 
+ * This function outputs the ASM code to get the resident
+ * memory address for the given bank.
+ * 
+ * @param _environment Current calling environment
+ * @param _bank Bank to get address of
+ * @return Current address of the bank selected
+ */
+/* <usermanual>
+@keyword BANK ADDRESS
+@target mo5
+</usermanual> */
+Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
+
+    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
+
+    outline0("LDD #$B000" );
+    outline1("STD %s", result->realName );
+
+    return result;
+    
+}

@@ -32,9 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__coco__) || defined(__d32__) || defined(__d64__)
+#include "../../ugbc.h"
 
 /**
  * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
@@ -48,18 +46,34 @@
  * @param _address2 address to write to (RAM)
  */
 /* <usermanual>
-@target atari
+@keyword BANK UNCOMPRESS
+@target mo5
 @verified
 </usermanual> */
 void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
 
-    char * bankAddress = banks_get_address( _environment, _bank );
-    Variable * realAddress = variable_temporary( _environment, VT_ADDRESS, "(ADDRESS)" );
-    cpu_addressof_16bit( _environment, bankAddress, realAddress->realName );
-    cpu_math_add_16bit_const( _environment, realAddress->realName, _address1, realAddress->realName );
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    deploy_preferred( duff, src_hw_6809_msc1_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_mo5_bank_asm );
 
-    cpu_msc1_uncompress_indirect_direct( _environment, realAddress->realName, _address2 );
+    int realAddress = 0xb000 + _address1;
+
+    // outline0("; bank uncompress (1)")
+    // Variable * previous = bank_get( _environment );
+    // bank_set( _environment, _bank );
+    // int realAddress = 0x6000 + _address1;
+    // char realAddressAsString[MAX_TEMPORARY_STORAGE];
+    // sprintf(realAddressAsString, "$%4.4x", realAddress);
+    // cpu_msc1_uncompress_direct_direct( _environment, realAddressAsString, _address2 );
+    // bank_set_var( _environment, previous->name );
+    // outline0("; end bank uncompress (1)")
+
+    outline0("; bank uncompress")
+    outline1("LDU #$%4.4x", _bank );
+    outline1("LDX #$%4.4x", realAddress );
+    outline1("LDY #%s", _address2 );
+    outline0("JSR BANKUNCOMPRESS");
+    outline0("; end bank uncompress");
 
 }
 
@@ -79,13 +93,31 @@ void bank_uncompress_semi_var( Environment * _environment, int _bank, int _addre
 </usermanual> */
 void bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 ) {
 
-    Variable * bankAddress = banks_get_address_var( _environment, _bank );
+    deploy_preferred( duff, src_hw_6809_msc1_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_mo5_bank_asm );
+
+    Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
 
-    cpu_msc1_uncompress_indirect_indirect( _environment, realAddress->name, address2->name );
-    
-}
+    // outline0("; bank uncompress (2)")
+    // Variable * previous = bank_get( _environment );
+    // bank_set_var( _environment, _bank );
+    // Variable * bankAddress = bank_get_address_var( _environment, _bank );
+    // Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+    // Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
+    // Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    // cpu_msc1_uncompress_indirect_indirect( _environment, realAddress->name, address2->name );
+    // bank_set_var( _environment, previous->name );
+    // outline0("; end bank uncompress (2)")
 
-#endif
+    outline0("; bank uncompress")
+    outline1("LDU #$%4.4x", _bank );
+    outline1("LDX %s", realAddress->realName );
+    outline1("LDY #%s", address2->realName );
+    outline0("JSR BANKUNCOMPRESS");
+    outline0("; end bank uncompress");
+
+}

@@ -32,9 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__coco__) || defined(__d32__) || defined(__d64__)
+#include "../../ugbc.h"
 
 /**
  * @brief Emit ASM code for instruction <b>BANK ...</b>
@@ -47,9 +45,25 @@
  */
 /* <usermanual>
 @keyword BANK
+@target mo5
+@verified
 </usermanual> */
 void bank_set( Environment * _environment, int _bank ) {
 
+    int realBank = 0;
+    if ( _bank < 32 && _bank > 0 ) {
+        // Then bits b6 b5 b4 b1 b0 at $A7CB 
+        // allows selecting one 16k bank out of 32.
+        realBank = ( ( _bank & 0xfc ) << 2 ) | ( _bank & 0x03 );
+        // but beware that to get access to it at $B000-$EFFF 
+        // (basic-rom space), you should set b2 of $A7CB 
+        // (and b3 to allow writing onto it).
+        realBank = realBank | 0xc0;
+    }
+    outline1("LDA #$%2.2x", realBank  );
+    // outline0("STA BANKSHADOW" );
+    outline0("STA BASE_SEGMENT+$E5" );
+    
 }
 
 /**
@@ -63,9 +77,35 @@ void bank_set( Environment * _environment, int _bank ) {
  */
 /* <usermanual>
 @keyword BANK
+@target mo5
 </usermanual> */
 void bank_set_var( Environment * _environment, char * _bank ) {
+
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
+
+    MAKE_LABEL
+
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    outline1("LDA %s", bank->realName  );
+    outline1("BLT %s", label  );
+    outline0("CMPA #31"  );
+    outline1("BGT %s", label  );
+    // outline0("STA BANKSHADOW" );
+    outline0("ANDA #$FC"  );
+    outline0("LSLA"  );
+    outline0("LSLA"  );
+    outline1("LDB %s", bank->realName  );
+    outline0("ANDB #$03"  );
+    outline0("ORB #$0C"  );
+    outline0("STA <MATHPTR0" );
+    outline0("ORB <MATHPTR0" );
+    outline0("STB <MATHPTR0" );
+    outline0("LDB <MATHPTR0" );
+    outline0("STB $A7CB" );
+    outline1("JMP %s", doneLabel );
+    outhead1("%s", label );
+    outline0("CLRA" );
+    outline0("STA $A7CB" );
     
 }
-
-#endif

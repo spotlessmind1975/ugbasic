@@ -32,40 +32,28 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__coco__) || defined(__d32__) || defined(__d64__)
+#include "../../ugbc.h"
 
 /**
- * @brief Emit ASM code for instruction <b>BANK ...</b>
+ * @brief Emit ASM code for instruction <b>= BANK( )</b>
  * 
- * This function outputs the ASM code to set the current 
+ * This function outputs the ASM code to get the current 
  * expansion bank index.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to select
+ * @return Current number of the bank selected
  */
 /* <usermanual>
-@keyword BANK
+@keyword BANK (function)
+@target mo5
 </usermanual> */
-void bank_set( Environment * _environment, int _bank ) {
+Variable * bank_get( Environment * _environment ) {
 
-}
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(bank number)" );
 
-/**
- * @brief Emit ASM code for instruction <b>BANK ...</b>
- * 
- * This function outputs the ASM code to set the current 
- * expansion bank index.
- * 
- * @param _environment Current calling environment
- * @param _bank Bank to select
- */
-/* <usermanual>
-@keyword BANK
-</usermanual> */
-void bank_set_var( Environment * _environment, char * _bank ) {
+    outline0("LDA BANKSHADOW" );
+    outline1("STA %s", result->realName );
+
+    return result;
     
 }
-
-#endif

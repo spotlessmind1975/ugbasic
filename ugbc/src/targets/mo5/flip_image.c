@@ -60,10 +60,10 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
     
     Variable * image = variable_retrieve( _environment, _image );
 
-    if ( image->bankAssigned != -1 ) {
-        CRITICAL_CANNOT_FLIP_BANKED_IMAGE( _image );
+    if ( image->uncompressedSize ) {
+        CRITICAL_CANNOT_FLIP_COMPRESSED_IMAGE( _image );
     }
-    
+
     Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
 
     Variable * frame = NULL;
@@ -120,17 +120,19 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
                 variable_store( _environment, address->name, image->absoluteAddress );
                 variable_add_inplace_vars( _environment, address->name, offset->name );
-                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                // bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
 
                 Resource resource;
-                resource.realName = strdup( bankWindowName );
-                resource.isAddress = 0;
+                // resource.realName = strdup( bankWindowName );
+                resource.realName = address->realName;
+                resource.bankNumber = image->bankAssigned;
+                resource.isAddress = 1;
 
                 ef936x_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
 
-                if ( ! image->readonly ) {
-                    bank_write_vars_direct( _environment, bankWindowName, bank->name, address->name, frameSize->name );
-                }
+                // if ( ! image->readonly ) {
+                //     bank_write_vars_direct( _environment, bankWindowName, bank->name, address->name, frameSize->name );
+                // }
 
             } else {
                 if ( !sequence ) {
@@ -184,17 +186,19 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
                 variable_store( _environment, address->name, image->absoluteAddress );
                 variable_add_inplace_vars( _environment, address->name, offset->name );
-                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                // bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
 
                 Resource resource;
-                resource.realName = strdup( bankWindowName );
-                resource.isAddress = 0;
+                //resource.realName = strdup( bankWindowName );
+                resource.realName = address->realName;
+                resource.bankNumber = image->bankAssigned;
+                resource.isAddress = 1;
 
                 ef936x_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
 
-                if ( ! image->readonly ) {
-                    bank_write_vars_direct( _environment, bankWindowName, bank->name, address->name, frameSize->name );
-                }
+                // if ( ! image->readonly ) {
+                //     bank_write_vars_direct( _environment, bankWindowName, bank->name, address->name, frameSize->name );
+                // }
 
             } else {
                 if ( !frame ) {
@@ -230,7 +234,13 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
+                bank_set( _environment, image->bankAssigned );
                 ef936x_flip_image( _environment, &resource, NULL, NULL, 0, 0, _direction );
+                bank_set( _environment, 7 );
+
+                if ( ! image->readonly && ( image->uncompressedSize == 0 ) ) {
+                    bank_write_semi_var( _environment, bankWindowName, image->bankAssigned, image->absoluteAddress, image->size );
+                }
 
             } else {
                 ef936x_flip_image( _environment, resource, NULL, NULL, 0, 0, _direction );

@@ -506,12 +506,6 @@ void variable_cleanup( Environment * _environment ) {
         staticStrings = staticStrings->next;
     }
 
-    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
-        if ( _environment->maxExpansionBankSize[i] ) {
-            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
-            outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
-        }
-    }
 
     buffered_push_output( );
 
@@ -522,6 +516,15 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_inplace_preferred( bank, src_hw_mo5_bank_asm );
+    
+    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
+        if ( _environment->maxExpansionBankSize[i] ) {
+            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
+            outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
+        }
+    }
+
     deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
