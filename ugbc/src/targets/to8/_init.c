@@ -67,6 +67,10 @@ void target_initialization( Environment * _environment ) {
     int bankMax = 0;
     int bankCount = 0;
 
+    if ( ! _environment->ramSize ) {
+        _environment->ramSize = 256;
+    }
+    
     switch( _environment->ramSize ) {
         case 512:
             bankMax=31; /* 3...30 = 28 banks */
