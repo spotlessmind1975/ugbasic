@@ -525,6 +525,26 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
+    outhead0("BANKLOAD");
+
+    Bank * bank = _environment->expansionBanks;
+
+    while( bank ) {
+
+        if ( bank->address ) {
+            int realBank = ( ( bank->id & 0xfc ) << 2 ) | ( bank->id & 0x03 );
+            realBank = realBank | 0x08;
+            outline1("fcb $%2.2x", realBank);
+        } else {
+            outline0("fcb $ff");
+        }
+
+        bank = bank->next;
+
+    }
+
+    outline0("fcb $ff");
+
     deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );

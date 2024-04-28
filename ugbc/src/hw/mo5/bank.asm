@@ -78,7 +78,7 @@ BANKREAD
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
-    CLRA
+    LDA #$04
     STA $A7CB
 
     ANDCC #$AF
@@ -116,7 +116,7 @@ BANKREAD1
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
-    CLRA
+    LDA #$04
     STA $A7CB
 
     ANDCC #$AF
@@ -154,7 +154,7 @@ BANKREAD2
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
-    CLRA
+    LDA #$04
     STA $A7CB
 
     ANDCC #$AF
@@ -194,7 +194,7 @@ BANKREAD4
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
-    CLRA
+    LDA #$04
     STA $A7CB
 
     ANDCC #$AF
@@ -237,7 +237,7 @@ BANKUNCOMPRESS
     ; Restore the bank number to the previous.
     ;LDA BANKSHADOWPREV
     ;STA BANKSHADOW
-    CLRA
+    LDA #$04
     STA $A7CB
     
     ANDCC #$AF
@@ -285,7 +285,7 @@ BANKWRITE
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
-    CLRA
+    LDA #$04
     STA $A7CB
 
     ANDCC #$AF
@@ -326,7 +326,7 @@ BANKWRITE1
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
-    CLRA
+    LDA #$04
     STA $A7CB
 
     ANDCC #$AF
@@ -367,7 +367,7 @@ BANKWRITE2
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
-    CLRA
+    LDA #$04
     STA $A7CB
 
     ANDCC #$AF
@@ -410,7 +410,7 @@ BANKWRITE4
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
     ; STA BANKSHADOW
-    CLRA
+    LDA #$04
     STA $A7CB
 
     ANDCC #$AF
