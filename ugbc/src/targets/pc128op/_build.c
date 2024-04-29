@@ -93,7 +93,7 @@ void target_linkage( Environment * _environment ) {
 	if ( _environment->outputFileType == OUTPUT_FILE_TYPE_K7_NEW ) {
 	    convertbintok7( _environment );
 	} else {
-	    pc128op_convertbintok7_original( _environment );
+	    convertbintok7_original( _environment );
 	}
 
 }
