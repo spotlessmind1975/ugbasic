@@ -840,7 +840,7 @@ void ef936x_finalization( Environment * _environment ) {
         palette = SYSTEM_PALETTE;
     }
 
-#ifdef __to8__
+#if defined( __to8__ ) || defined( __mo5__ )
     if ( _environment->currentMode < 3 ) {
         
         RGBi * transposedPalette = malloc_palette( 16 );
