@@ -89,6 +89,8 @@ SEXP1:
        LDA R22
        STA X1
 
+       LDX #0
+
 @ELSE
        LDA X2,X
        STA ZZ,X    ; COPY MANTISSA TO Z
@@ -132,6 +134,9 @@ SAVET:
        STA X1
        LDA R22
        STA X2
+
+       LDX #0
+      
 @ELSE
        LDA X1,X    ; SAVE EXP/MANT1 AS T
        STA T,X
@@ -159,6 +164,9 @@ TM2:
 
        LDA T
        STA X2
+
+       LDX #0
+
 @ELSE
        LDA T,X
        STA X2,X    ; LOAD T INTO EXP/MANT2
@@ -187,6 +195,8 @@ MIT:
        STA T
        STA X2
 
+       LDX #0
+
 @ELSE
        LDA X1,X
        STA T,X     ; COPY EXP/MANT1 TO T AND
@@ -212,6 +222,9 @@ MIC:
 
        LDA C
        STA X1
+
+       LDX #0
+
 @ELSE
        LDA C,X
        STA X1,X    ; LOAD EXP/MANT1 WITH C
@@ -236,6 +249,8 @@ M2MB:
        LDA MB
        STA X2
 
+       LDX #0
+
 @ELSE
        LDA MB,X
        STA X2,X    ; LOAD EXP/MANT2 WITH MB
@@ -258,6 +273,8 @@ M2A1:
 
        LDA A1
        STA X2
+
+       LDX #0
 
 @ELSE
        LDA A1,X
@@ -283,6 +300,8 @@ M2T:
        LDA T
        STA X2
 
+       LDX #0
+
 @ELSE
        LDA T,X
        STA X2,X    ; LOAD EXP/MANT2 WITH T
@@ -307,6 +326,9 @@ M2MHL:
 
        LDA MHLF
        STA X2
+
+       LDX #0
+
 @ELSE
        LDA MHLF,X
        STA X2,X    ; LOAD EXP/MANT2 WITH MHLF (.5)
@@ -354,6 +376,9 @@ MLE2:
 
        LDA LE2
        STA X2
+
+       LDX #0
+
 @ELSE
        LDA LE2,X
        STA X2,X    ; LOAD EXP/MANT2 WITH LN(2)
@@ -381,6 +406,9 @@ L10:
 
        LDA LN10
        STA X2
+
+       LDX #0
+
 @ELSE
        LDA LN10,X
        STA X2,X    ; LOAD EXP/MANT2 WITH 1/LN(10)
@@ -785,6 +813,9 @@ ADD1:
        LDA M1
        ADC M2
        STA M1
+
+       LDX #0
+
 @ELSE
        LDA M1,X
        ADC M2,X    ; ADD A BYTE OF MANT2 TO MANT1
@@ -831,6 +862,8 @@ SWAP1:
        LDY X2-1+1
        STY X1-1+1
        STA X2-1+1
+
+       LDX #0
 @ELSE
        STY E-1,X
        LDA X1-1,X  ; SWAP A BYTE OF EXP/MANT1 WITH
@@ -1966,7 +1999,7 @@ PI2:   .BYTE $80, $64, $87, $ED
 DX:    .BYTE $00, $00, $00, $00
 QX:    .BYTE $00, $00, $00, $00
 TX:    .BYTE $00, $00, $00, $00
-N1:    .BYTE $80, $00, $00, $00
+N1:    .BYTE $80, $40, $00, $00
 N2:    .BYTE $81, $40, $00, $00
 N24:   .BYTE $84, $60, $00, $00
 N720:  .BYTE $89, $5a, $00, $00
