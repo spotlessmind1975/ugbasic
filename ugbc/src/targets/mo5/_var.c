@@ -533,7 +533,7 @@ void variable_cleanup( Environment * _environment ) {
 
         if ( bank->address ) {
             int realBank = ( ( bank->id & 0xfc ) << 2 ) | ( bank->id & 0x03 );
-            realBank = realBank | 0x08;
+            realBank = realBank | 0x0c;
             outline1("fcb $%2.2x", realBank);
         } else {
             outline0("fcb $ff");

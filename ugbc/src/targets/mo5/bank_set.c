@@ -58,9 +58,9 @@ void bank_set( Environment * _environment, int _bank ) {
         // but beware that to get access to it at $B000-$EFFF 
         // (basic-rom space), you should set b2 of $A7CB 
         // (and b3 to allow writing onto it).
-        realBank = realBank | 0x08;
+        realBank = realBank | 0x0c;
     } else {
-        realBank = 0x04;
+        realBank = 0x00;
     }
     outline1("LDA #$%2.2x", realBank  );
     // outline0("STA BANKSHADOW" );
@@ -107,7 +107,7 @@ void bank_set_var( Environment * _environment, char * _bank ) {
     outline0("STB $A7CB" );
     outline1("JMP %s", doneLabel );
     outhead1("%s", label );
-    outline0("LDA #$80" );
+    outline0("LDA #$00" );
     outline0("STA $A7CB" );
     
 }
