@@ -1169,6 +1169,15 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
+#if defined( __mo5__ ) 
+
+    RGBi * palette = &SYSTEM_PALETTE[0];
+    int paletteColorCount = 16;
+    commonPalette = &SYSTEM_PALETTE[0];
+    lastUsedSlotInCommonPalette = 16;
+
+#else
+
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
     int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
@@ -1224,6 +1233,8 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
         adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
     }
+
+#endif
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -1346,20 +1357,23 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 if ( colorIndexes[xx] != colorBackground ) {
                     adilinepixel(colorForeground);
                     *( buffer + offset + 3) |= bitmask;
+                    if ( _environment->debugImageLoad ) {
+                        printf( "%1.1x", colorForeground );
+                    }
                     // printf("*");
                 } else {
                     adilinepixel(colorBackground);
                     *( buffer + offset + 3) &= ~bitmask;
                     // printf(" ");
+                    if ( _environment->debugImageLoad ) {
+                        printf( "%1.1x", colorBackground );
+                    }
                 }
 
                 offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
 
                 bitmask = colorForeground << 4 | ( colorBackground );
                 *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) = bitmask;
-                if ( _environment->debugImageLoad ) {
-                    printf( "%1.1x", colorForeground );
-                }
 
             }
         }
