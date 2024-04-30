@@ -1406,6 +1406,17 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
+#if defined( __mo5__ ) 
+
+    RGBi * palette = &SYSTEM_PALETTE[0];
+    int paletteColorCount = 16;
+    commonPalette = &SYSTEM_PALETTE[0];
+    lastUsedSlotInCommonPalette = 16;
+
+    int i;
+
+#else
+
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
     int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
@@ -1461,6 +1472,8 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
         adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
     }
+
+#endif
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -1586,6 +1599,17 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
+#if defined( __mo5__ ) 
+
+    RGBi * palette = &SYSTEM_PALETTE[0];
+    int paletteColorCount = 16;
+    commonPalette = &SYSTEM_PALETTE[0];
+    lastUsedSlotInCommonPalette = 16;
+
+    int i;
+    
+#else
+
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
     int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
@@ -1644,6 +1668,8 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
         adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
     }
+
+#endif
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
