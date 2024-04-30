@@ -396,8 +396,6 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
-    banks_generate( _environment );
-
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {
