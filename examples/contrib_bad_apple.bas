@@ -2,20 +2,20 @@
 REM OTHER CONTRIBUTIONS BAD APPLE
 REM
 REM This example shows how to take advantage of a large memory expansion 
-REM (about 160 KB). The frame loading mechanism is carried out directly 
+REM (the demo is about 160 KB). The frame loading mechanism is carried out directly 
 REM by ugBASIC, while what you see here is a simple player.
 REM 
 REM @italian
 REM VARI ALTRI CONTRIBUTI BAD APPLE
 REM
 REM Questo esempio mostra come sfruttare una espansione di memoria di 
-REM grandi dimensioni (circa 160 KB). Il meccanismo di caricamento dei 
+REM grandi dimensioni (la demo occupa circa 160 KB). Il meccanismo di caricamento dei 
 REM fotogrammi è svolto direttamente da ugBASIC, mentre quello che 
 REM vedete qui è un semplice player.
 REM
 REM @include mo5
 
-    BITMAP ENABLE(16)
+    SCREEN #0
     CLS
     
 	CONST centerX = ( SCREEN WIDTH - 120 ) / 2
