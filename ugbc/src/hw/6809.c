@@ -3034,41 +3034,54 @@ void cpu6809_end( Environment * _environment ) {
 
 void cpu6809_random( Environment * _environment, char * _entropy ) {
 
-    inline( cpu_random )
+    if ( ! _environment->deployed.random ) {
 
-        MAKE_LABEL
+        inline( cpu_random )
 
-        srand( time( NULL ) );
+            MAKE_LABEL
 
-        if ( _entropy ) {
-            outline0("LDD CPURANDOM_SEED");
-            outline0("ASLB");
-            outline0("ASLB");
-            outline0("ROLA");
-            outline0("ADDD CPURANDOM_SEED+2");
-            outline0("LSR CPURANDOM_SEED");
-            outline0("ROR CPURANDOM_SEED+1");
-            outline0("ASLB");
-            outline0("ROLA");
-            outline1("ADDA %s", _entropy);
-            outline0("ASLB");
-            outline0("ROLA");
-            outline0("ASLB");
-            outline0("ROLA");
-            outline0("ADDD CPURANDOM_SEED+1");
-            outline0("STD CPURANDOM_SEED+1");
-        }
+            srand( time( NULL ) );
 
-    embedded( cpu_random, src_hw_6809_cpu_random_asm );
+            if ( _entropy ) {
+                outline0("LDD CPURANDOM_SEED");
+                outline0("ASLB");
+                outline0("ASLB");
+                outline0("ROLA");
+                outline0("ADDD CPURANDOM_SEED+2");
+                outline0("LSR CPURANDOM_SEED");
+                outline0("ROR CPURANDOM_SEED+1");
+                outline0("ASLB");
+                outline0("ROLA");
+                outline1("ADDA %s", _entropy);
+                outline0("ASLB");
+                outline0("ROLA");
+                outline0("ASLB");
+                outline0("ROLA");
+                outline0("ADDD CPURANDOM_SEED+1");
+                outline0("STD CPURANDOM_SEED+1");
+            }
+
+        embedded( cpu_random, src_hw_6809_cpu_random_asm );
+
+            if ( _entropy ) {
+                outline1( "LDB %s", _entropy );
+                outline0( "STB <PATTERN" );
+            }
+
+            outline0( "JSR CPURANDOM" );
+
+        done( )
+
+    } else {
 
         if ( _entropy ) {
             outline1( "LDB %s", _entropy );
             outline0( "STB <PATTERN" );
-            outline0( "JSR CPURANDOM" );
         }
 
-    done( )
+        outline0( "JSR CPURANDOM" );
 
+    }
 }
 
 void cpu6809_random_8bit( Environment * _environment, char * _entropy, char * _result ) {

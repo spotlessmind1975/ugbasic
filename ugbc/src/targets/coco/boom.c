@@ -51,6 +51,11 @@
 </usermanual> */
 void boom( Environment * _environment, int _channels ) {
 
+    deploy( random, src_hw_6809_cpu_random_asm );
+    deploy( audio1startup, src_hw_coco_audio1_asm );
+
+    outline0( "LDY #$FFFF" )
+    outline0( "JSR COCOAUDIO1BOOM" );
 }
 
 /**
@@ -66,5 +71,11 @@ void boom( Environment * _environment, int _channels ) {
 </usermanual> */
 void boom_var( Environment * _environment, char * _channels ) {
 
+    deploy( random, src_hw_6809_cpu_random_asm );
+    deploy( audio1startup, src_hw_coco_audio1_asm );
+
+    outline0( "LDY #$FFFF" )
+    outline0( "JSR COCOAUDIO1BOOM" );
+    
 }
 

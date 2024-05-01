@@ -41,6 +41,10 @@
 void target_finalization( Environment * _environment ) {
 
     c6847_finalization( _environment );
+    if ( ! _environment->deployed.audio1startup ) {
+        cpu_label( _environment, "COCOAUDIO1STARTUP" );
+        cpu_return( _environment );
+    }
     sn76489m_finalization( _environment );
 
 }

@@ -1529,6 +1529,7 @@ typedef struct _Deployed {
     int sn76489vars;
     int sn76489startup;
     int sn76489startup2;
+    int audio1startup;
 
     int draw;
     int bar;
@@ -1619,6 +1620,7 @@ typedef struct _Deployed {
     int msc1;
     int flipimagex;
     int flipimagey;
+    int random;
 
 } Deployed;
 

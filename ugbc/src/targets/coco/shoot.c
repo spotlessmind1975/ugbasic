@@ -51,5 +51,10 @@
 </usermanual> */
 void shoot( Environment * _environment, int _channels ) {
 
+    deploy( random, src_hw_6809_cpu_random_asm );
+    deploy( audio1startup, src_hw_coco_audio1_asm );
+
+    outline0( "JSR COCOAUDIO1SHOOT" );
+
 }
 

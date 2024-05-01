@@ -7090,6 +7090,9 @@ volume_definition :
     ;
 
 bell_definition_simple : 
+    {
+        bell( _environment, 400, 0xffff );
+    } 
     | OP_HASH const_expr {
         bell( _environment, $2, 0xffff );
     }

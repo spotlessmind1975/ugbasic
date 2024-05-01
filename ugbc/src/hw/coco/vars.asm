@@ -117,3 +117,13 @@ DLOADERROR      fcb  $0
 DSAVEERROR      fcb  $0
 
 RAMENABLED      fcb  $1
+
+PIA0AD     equ   $FF00
+PIA0AC     equ   $FF01
+PIA0BD     equ   $FF02
+PIA0BC     equ   $FF03
+
+PIA1AD     equ   $FF20
+PIA1AC     equ   $FF21
+PIA1BD     equ   $FF22
+PIA1BC     equ   $FF23
