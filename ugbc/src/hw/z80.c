@@ -1101,59 +1101,6 @@ void z80_math_double_8bit( Environment * _environment, char *_source, char *_oth
 }
 
 /**
- * @brief <i>Z80</i>: emit code to halves for several times a 8 bit value 
- * 
- * @param _environment Current calling environment
- * @param _source Value to halves and destination for result
- * @param _steps Times to halves
- */
-void z80_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
-
-    inline( cpu_math_div2_8bit )
-
-        MAKE_LABEL
-
-        if ( _signed ) {
-            outline1("LD A, (%s)", _source );
-            outline0("AND $80" );
-            outline0("CP 0" );
-            outline0("PUSH AF" );
-            outline1("JR Z,%spos", label );
-            outline1("LD A, (%s)", _source );
-            outline0("XOR $FF" );
-            outline0("ADC $1" );
-            outline1("JMP %spos2", label );
-            outhead1("%spos:", label );
-            outline1("LD A, (%s)", _source );
-            outhead1("%spos2:", label );
-            while( _steps ) {
-                outline0("SRA A" );
-                --_steps;
-            }
-            outline1("LD (%s), A", _source );
-            outline0("POP AF" );
-            outline0("AND $80" );
-            outline0("CP 0" );
-            outline1("JR Z,%spos3", label );
-            outline1("LD A, (%s)", _source );
-            outline0("XOR $FF" );
-            outline0("ADC $1" );
-            outline1("LD (%s), A", _source );
-            outhead1("%spos3:", label );
-        } else {
-            outline1("LD A, (%s)", _source );
-            while( _steps ) {
-                outline0("SRA A" );
-                --_steps;
-            }
-            outline1("LD (%s), A", _source );
-        }
-
-    no_embedded( cpu_math_div2_8bit )
-
-}
-
-/**
  * @brief <i>Z80</i>: emit code to multiply two 8bit values in a 16 bit register
  * 
  * @param _environment Current calling environment

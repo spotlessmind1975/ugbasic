@@ -908,68 +908,6 @@ void cpu6809_math_double_8bit( Environment * _environment, char *_source, char *
 }
 
 /**
- * @brief <i>CPU 6809</i>: emit code to halves for several times a 8 bit value
- *
- * @param _environment Current calling environment
- * @param _source Value to halves and destination for result
- * @param _steps Times to halves
- */
-void cpu6809_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
-
-    inline( cpu_math_div2_8bit )
-
-        MAKE_LABEL
-
-        if ( _signed ) {
-            outline0("LDA #0");
-            outline0("STA <MATHPTR0");
-            outline1("LDA %s", _source);
-            outline0("AND #$80");
-            outline1("BEQ %spos", label);
-            outline0("LDA #1");
-            outline0("STA <MATHPTR0");
-            outline0("EORA #$FF");
-            outline0("ADDA #1");
-            outhead1("%spos", label);
-        } else {
-            outline1("LDA %s", _source);
-        }
-        outline1("LDB #$%2.2x", _steps);
-        outline0("CMPB #0");
-        outline1("BEQ %sdone", label);
-        outhead1("%sloop", label);
-        outline0("ASRA");
-        outline0("DECB");
-        outline0("CMPB #0");
-        outline1("BNE %sloop", label);
-        outhead1("%sdone", label);
-        if ( _signed ) {
-            outline0("PSHS A");
-            outline0("LDA <MATHPTR0");
-            outline1("BEQ %spos2", label);
-            outline0("PULS A");
-            outline0("EORA #$FF");
-            outline0("ADDA #1");
-            outhead1("%spos2", label);
-        }
-        outline1("STA %s", _source);
-
-    embedded( cpu_math_div2_8bit, src_hw_6809_cpu_math_div2_8bit_asm );
-
-        outline1("LDB %s", _source);
-        outline1("LDA #$%2.2x", _steps);
-        if ( _signed ) {
-            outline0("JSR CPUMATHDIV28BIT_SIGNED");
-        } else {
-            outline0("JSR CPUMATHDIV28BIT");
-        }
-        outline1("STB %s", _source);
-
-    done( )
-
-}
-
-/**
  * @brief <i>CPU 6809</i>: emit code to multiply two 8bit values in a 16 bit register
  *
  * @param _environment Current calling environment
@@ -1141,7 +1079,7 @@ void cpu6809_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
  */
 void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    inline( cpu_math_div2_8bit )
+    inline( cpu_math_div2_const_8bit )
 
         MAKE_LABEL
 
@@ -1176,7 +1114,7 @@ void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, in
         }
         outline1("STA %s", _source);
 
-    embedded( cpu_math_div2_8bit, src_hw_6809_cpu_math_div2_8bit_asm );
+    embedded( cpu_math_div2_const_8bit, src_hw_6809_cpu_math_div2_const_8bit_asm );
 
         outline1("LDB %s", _source);
         outline1("LDA #$%2.2x", _steps);

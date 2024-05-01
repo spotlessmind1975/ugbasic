@@ -10056,7 +10056,6 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_math_complement_const_16bit );
                         parse_embedded( p, cpu_math_complement_const_32bit );
                         parse_embedded( p, cpu_math_complement_const_8bit );
-                        parse_embedded( p, cpu_math_div2_8bit );
                         parse_embedded( p, cpu_math_div2_const_16bit );
                         parse_embedded( p, cpu_math_div2_const_32bit );
                         parse_embedded( p, cpu_math_div2_const_8bit );
@@ -10302,7 +10301,6 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_math_complement_const_16bit );
         stats_embedded( cpu_math_complement_const_32bit );
         stats_embedded( cpu_math_complement_const_8bit );
-        stats_embedded( cpu_math_div2_8bit );
         stats_embedded( cpu_math_div2_const_16bit );
         stats_embedded( cpu_math_div2_const_32bit );
         stats_embedded( cpu_math_div2_const_8bit );

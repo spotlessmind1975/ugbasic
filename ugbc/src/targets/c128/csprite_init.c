@@ -65,7 +65,7 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
         cpu_math_and_const_8bit( _environment, startIndex->realName, 0x0f );
         spriteCount = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
         cpu_move_8bit( _environment, index->realName, spriteCount->realName );
-        cpu_math_div2_8bit( _environment, spriteCount->realName, 4, 0 );
+        cpu_math_div2_const_8bit( _environment, spriteCount->realName, 4, 0 );
         cpu_math_and_const_8bit( _environment, spriteCount->realName, 0x0f );
         cpu_math_sub_8bit( _environment, spriteCount->realName, startIndex->realName, spriteCount->realName );
         cpu_move_8bit( _environment, startIndex->realName, index->realName );

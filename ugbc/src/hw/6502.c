@@ -1025,57 +1025,6 @@ void cpu6502_math_double_8bit( Environment * _environment, char *_source, char *
 }
 
 /**
- * @brief <i>CPU 6502</i>: emit code to halves for several times a 8 bit value 
- * 
- * @param _environment Current calling environment
- * @param _source Value to halves and destination for result
- * @param _steps Times to halves
- */
-void cpu6502_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
-
-    inline( cpu_math_div2_8bit )
-
-        int i=0;
-        if ( _signed ) {
-            outline1("LDA %s", _source);
-            outline0("AND #$80");
-            outline0("TAX");
-            outline1("LDA %s", _source);
-            for(i=0; i<_steps; ++i ) {
-                outline0("LSR A");
-            }
-            outline1("STA %s", _source);
-            outline0("TXA");
-            outline1("ORA %s", _source);
-            outline1("STA %s", _source);
-        } else {
-            outline1("LDA %s", _source);
-            for(i=0; i<_steps; ++i ) {
-                outline0("LSR A");
-            }
-            outline1("STA %s", _source);
-        }
-
-    embedded( cpu_math_div2_8bit, src_hw_6502_cpu_math_div2_8bit_asm )
-
-        int i=0;
-        if ( _signed ) {
-            outline1("LDA %s", _source);
-            outline1("LDX #$%2.2X", _steps);
-            outline0("JSR CPUMATHDIV28BIT_SIGNED");
-            outline1("STA %s", _source);
-        } else {
-            outline1("LDA %s", _source);
-            outline1("LDX #$%2.2X", _steps);
-            outline0("JSR CPUMATHDIV28BIT");
-            outline1("STA %s", _source);
-        }
-
-    done()
-
-}
-
-/**
  * @brief <i>CPU 6502</i>: emit code to multiply two 8bit values in a 16 bit register
  * 
  * @param _environment Current calling environment

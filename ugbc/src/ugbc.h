@@ -1341,7 +1341,6 @@ typedef struct _Embedded {
     int cpu_math_complement_const_16bit;
     int cpu_math_complement_const_32bit;
     int cpu_math_complement_const_8bit;
-    int cpu_math_div2_8bit;
     int cpu_math_div2_const_16bit;
     int cpu_math_div2_const_32bit;
     int cpu_math_div2_const_8bit;

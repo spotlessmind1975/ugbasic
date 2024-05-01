@@ -140,7 +140,6 @@ void z80_math_and_const_8bit( Environment * _environment, char *_source, int _ma
 void z80_math_complement_const_16bit( Environment * _environment, char *_source, int _value );
 void z80_math_complement_const_32bit( Environment * _environment, char *_source, int _value );
 void z80_math_complement_const_8bit( Environment * _environment, char *_source, int _value );
-void z80_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed );
 void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _value, int _signed );
 void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _value, int _signed );
 void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _value, int _signed );
@@ -439,7 +438,6 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_math_complement_const_16bit( _environment, _source, _value  ) z80_math_complement_const_16bit( _environment, _source, _value  )
 #define cpu_math_complement_const_32bit( _environment, _source, _value  ) z80_math_complement_const_32bit( _environment, _source, _value  )
 #define cpu_math_complement_const_8bit( _environment, _source, _value  ) z80_math_complement_const_8bit( _environment, _source, _value  )
-#define cpu_math_div2_8bit( _environment, _source, _steps, _signed  ) z80_math_div2_8bit( _environment, _source, _steps, _signed  )
 #define cpu_math_div2_const_16bit( _environment, _source, _value, _signed  ) z80_math_div2_const_16bit( _environment, _source, _value, _signed  )
 #define cpu_math_div2_const_32bit( _environment, _source, _value, _signed  ) z80_math_div2_const_32bit( _environment, _source, _value, _signed  )
 #define cpu_math_div2_const_8bit( _environment, _source, _value, _signed  ) z80_math_div2_const_8bit( _environment, _source, _value, _signed  )
