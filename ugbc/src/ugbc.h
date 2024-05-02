@@ -1662,6 +1662,12 @@ typedef struct _FontConfig {
 
 } FontConfig;
 
+typedef struct _AudioConfig {
+
+    int async;
+
+} AudioConfig;
+
 typedef struct _Macro {
 
     char * name;
@@ -1895,6 +1901,11 @@ typedef struct _Environment {
      * 
      */
     FontConfig fontConfig;
+
+    /**
+     * 
+     */
+    AudioConfig audioConfig;
 
     /**
      * 

@@ -68,6 +68,8 @@ void target_initialization( Environment * _environment ) {
 
     banks_init( _environment );
     
+    _environment->audioConfig.async = 1;
+    
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x0400, 0x0fff );
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );

@@ -72,6 +72,8 @@ void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
+    _environment->audioConfig.async = 1;
+
     banks_init( _environment );
 
     variable_import( _environment, "DLOADERROR", VT_BYTE, 0 );

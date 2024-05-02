@@ -69,6 +69,8 @@ void target_initialization( Environment * _environment ) {
 
     banks_init( _environment );
 
+    _environment->audioConfig.async = 1;
+    
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xb000, 0xbfff );
 
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0xa000 );

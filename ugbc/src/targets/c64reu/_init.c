@@ -67,6 +67,8 @@ void target_initialization( Environment * _environment ) {
 
     cpu6502_init( _environment );
 
+    _environment->audioConfig.async = 1;
+
     MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );
     /*MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xff00 );*/
 

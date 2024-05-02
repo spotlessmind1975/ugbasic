@@ -72,6 +72,8 @@ void target_initialization( Environment * _environment ) {
 
     banks_init( _environment );
 
+    _environment->audioConfig.async = 1;
+
     if ( _environment->tenLinerRulesEnforced ) {
         Variable * source = variable_retrieve( _environment, "SHELL_SOURCE" );
         if ( _environment->memoryAreas ) {
