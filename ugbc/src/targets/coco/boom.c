@@ -51,6 +51,10 @@
 </usermanual> */
 void boom( Environment * _environment, int _channels ) {
 
+    if ( _environment->audioConfig.async ) {
+        CRITICAL_BOOM_NOT_ASYNC();
+    }
+
     deploy( random, src_hw_6809_cpu_random_asm );
     deploy( audio1startup, src_hw_coco_audio1_asm );
 
@@ -70,6 +74,10 @@ void boom( Environment * _environment, int _channels ) {
 @keyword BOOM
 </usermanual> */
 void boom_var( Environment * _environment, char * _channels ) {
+
+    if ( _environment->audioConfig.async ) {
+        CRITICAL_BOOM_NOT_ASYNC();
+    }
 
     deploy( random, src_hw_6809_cpu_random_asm );
     deploy( audio1startup, src_hw_coco_audio1_asm );
