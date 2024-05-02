@@ -150,6 +150,16 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
     if ( ( c & 0x08 ) ) \
         outline0("JSR POKEYSETDURATION3" );
 
+#define     WAIT_DURATION( c ) \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR POKEYWAITDURATION0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR POKEYWAITDURATION1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR POKEYWAITDURATION2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("JSR POKEYWAITDURATION3" );
+
 #define     PROGRAM_PITCH_V( c, f ) \
     outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
     outline1("LDX %s", f ); \
@@ -187,7 +197,9 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
     if ( ( c & 0x02 ) ) \
         outline0("JSR POKEYPROGDIST1" ); \
     if ( ( c & 0x04 ) ) \
-        outline0("JSR POKEYPROGDIST2" );
+        outline0("JSR POKEYPROGDIST2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("JSR POKEYPROGDIST3" );
 
 #define     PROGRAM_DISTORTION_SV( c, v ) \
     outline1("LDA %s", ( c == NULL ? "#$f" : c ) ); \
@@ -388,6 +400,15 @@ void pokey_set_duration( Environment * _environment, int _channels, int _duratio
     deploy( pokeystartup, src_hw_pokey_startup_asm );
 
     PROGRAM_DURATION( _channels, _duration );
+
+}
+
+void pokey_wait_duration( Environment * _environment, int _channels ) {
+
+    deploy( pokeyvars, src_hw_pokey_vars_asm );
+    deploy( pokeystartup, src_hw_pokey_startup_asm );
+
+    WAIT_DURATION( _channels );
 
 }
 
@@ -656,6 +677,21 @@ void pokey_set_duration_vars( Environment * _environment, char * _channels, char
     outline1("LDX %s", _duration );
 
     outline0("JSR POKEYSETDURATION");
+
+}
+
+void pokey_wait_duration_vars( Environment * _environment, char * _channels ) {
+
+    deploy( pokeyvars, src_hw_pokey_vars_asm );
+    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$f" );
+    }
+
+    outline0("JSR POKEYWAITDURATION");
 
 }
 

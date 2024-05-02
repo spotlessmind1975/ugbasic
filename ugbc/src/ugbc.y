@@ -7092,13 +7092,13 @@ volume_definition :
 
 bell_definition_simple : 
     {
-        bell( _environment, 400, 3500, 0xffff );
+        bell( _environment, 400, 1500, 0xffff );
     } 
     | OP_HASH const_expr {
-        bell( _environment, $2, 3500, 0xffff );
+        bell( _environment, $2, 1500, 0xffff );
     }
     | OP_HASH const_expr ON OP_HASH const_expr {
-        bell( _environment, $2, 3500, $5 );
+        bell( _environment, $2, 1500, $5 );
     }
     | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
         bell( _environment, $2, $5, 0xffff );
@@ -7130,7 +7130,7 @@ bell_definition :
 
 boom_definition_simple : 
     {
-        boom( _environment, 3500, 0xffff );
+        boom( _environment, 1500, 0xffff );
     }
     | OP_HASH const_expr {
         boom( _environment, $2, 0xffff );
@@ -7139,7 +7139,7 @@ boom_definition_simple :
         boom( _environment, $2, 0xffff );
     }
     | ON OP_HASH const_expr {
-        boom( _environment, 3500, $3 );
+        boom( _environment, 1500, $3 );
     }
     | OP_HASH const_expr OP_COMMA ON OP_HASH const_expr {
         boom( _environment, $2, $6 );

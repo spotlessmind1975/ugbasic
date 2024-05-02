@@ -81,12 +81,19 @@ il target in oggetto.
 
 @target atari
 </usermanual> */
-void boom( Environment * _environment, int _channels ) {
+void boom( Environment * _environment, int _duration, int _channels ) {
 
     pokey_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
     pokey_start( _environment, _channels );
     pokey_set_frequency( _environment, _channels, 1000 );
-    pokey_set_duration( _environment, _channels, 50 );
+
+    long durationInTicks = ( _duration / 20 ) & 0xff;
+
+    pokey_set_duration( _environment, _channels, durationInTicks );
+
+    if ( ! _environment->audioConfig.async ) {
+        pokey_wait_duration( _environment, _channels );
+    }
 
 }
 
@@ -103,18 +110,35 @@ void boom( Environment * _environment, int _channels ) {
 
 @target atari
 </usermanual> */
-void boom_var( Environment * _environment, char * _channels ) {
+void boom_var( Environment * _environment, char * _duration, char * _channels ) {
 
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         pokey_start_var( _environment, channels->realName );
         pokey_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
-        pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            pokey_set_duration_vars( _environment, NULL, duration->realName );
+        } else {
+            pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            pokey_wait_duration_vars( _environment, channels->realName );
+        }
     } else {
         pokey_start_var( _environment, NULL );
         pokey_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
-        pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            pokey_set_duration_vars( _environment, NULL, duration->realName );
+        } else {
+            pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            pokey_wait_duration_vars( _environment, NULL );
+        }
     }
-    
+
+
 }
 
