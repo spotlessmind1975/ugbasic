@@ -85,7 +85,7 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
     deploy( audio1startup, src_hw_coco_audio1_asm );
 
     if ( _duration ) {
-        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0xffff );
+        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 3500 );
 
         outline1( "LDD %s", duration->realName );
         outline0( "ASLB" );

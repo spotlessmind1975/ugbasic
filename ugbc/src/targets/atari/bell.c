@@ -52,15 +52,21 @@
 
 @english
 This command makes the computer emit a bell-like sound. It is possible to indicate 
-on which voices the system should emit the sound. If omitted, it will be issued on all.
+the pitch, the duration and on which voices the system should emit the sound. 
+If channel is omitted, it will be issued on all. If duration is omitted, the
+duration is 3500 ms. Finally, if pitch is omitted, a C3 note frequency will be
+used.
 
 @italian
-Questo comando fa emettere al computer un suono tipo campana. E' possibile indicare su 
-quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
+Questo comando fa emettere al computer un suono tipo campana. E' possibile indicare
+il pitch, la durata e sy quali voci il sistema dovrà emettere il suono. 
+Se il canale omesso, sarà emesso su tutte. Se la durata è omessa, la durata standard
+sarà di 3500 millisecondi. Infine, se il pitch è omesso, sarà utilizzata una nota C3.
 
-@syntax BELL #note [ON #channels]
+@syntax BELL [[#note] [, #duration]] [ON #channels]
+@syntax BELL [[note] [, duration]] [ON channels]
 
-@example BELL #42
+@example BELL 42
 @example BELL #42 ON #%001
 
 @target atari
@@ -85,8 +91,6 @@ void bell( Environment * _environment, int _note, int _channels ) {
  */
 /* <usermanual>
 @keyword BELL
-
-@syntax BELL note [ON channels]
 
 @target atari
 </usermanual> */

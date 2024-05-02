@@ -49,7 +49,7 @@
  */
 /* <usermanual>
 @keyword BELL
-@target c64
+@target vic20
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {
 

@@ -49,6 +49,7 @@
  */
 /* <usermanual>
 @keyword BELL
+@target to8
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {
 

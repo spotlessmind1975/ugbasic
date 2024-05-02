@@ -49,6 +49,7 @@
  */
 /* <usermanual>
 @keyword BELL
+@target mo5
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {
 

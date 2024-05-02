@@ -49,7 +49,6 @@
  */
 /* <usermanual>
 @keyword BELL
-
 @target coco3
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {

@@ -71,12 +71,6 @@ void bell( Environment * _environment, int _note, int _channels ) {
 /* <usermanual>
 @keyword BELL
 
-@syntax BELL [note] {ON [channels]}
-
-@example SOUND laDiesis
-@example SOUND solMaggiore, breve
-@example SOUND solMaggiore, lunga ON primaVoce
-
 @target c64
 </usermanual> */
 void bell_vars( Environment * _environment, char * _note, char * _channels ) {

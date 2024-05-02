@@ -50,7 +50,7 @@
 /* <usermanual>
 @keyword BELL
 
-@target ZX
+@target zx
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {
 

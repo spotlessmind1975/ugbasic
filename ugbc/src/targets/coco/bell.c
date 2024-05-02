@@ -52,7 +52,7 @@
 
 @target coco
 </usermanual> */
-void bell( Environment * _environment, int _note, int _channels ) {
+void bell( Environment * _environment, int _note, int _duration, int _channels ) {
 
     if ( _environment->audioConfig.async ) {
         CRITICAL_BELL_NOT_ASYNC();
@@ -61,8 +61,10 @@ void bell( Environment * _environment, int _note, int _channels ) {
     deploy( random, src_hw_6809_cpu_random_asm );
     deploy( audio1startup, src_hw_coco_audio1_asm );
 
-    outline1( "LDB %2.2x", _note )
-    outline0( "LDY #$FFFF" )
+    long durationInCycles = ( _duration * 67 ) & 0xffff;
+
+    outline1( "LDB $%2.2x", _note );
+    outline0( "LDY $%4.4x", durationInCycles );
     outline0( "JSR COCOAUDIO1BELL" );
 
 }
@@ -79,7 +81,7 @@ void bell( Environment * _environment, int _note, int _channels ) {
 /* <usermanual>
 @keyword BELL
 </usermanual> */
-void bell_vars( Environment * _environment, char * _note, char * _channels ) {
+void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels ) {
 
     if ( _environment->audioConfig.async ) {
         CRITICAL_BELL_NOT_ASYNC();
@@ -88,10 +90,28 @@ void bell_vars( Environment * _environment, char * _note, char * _channels ) {
     deploy( random, src_hw_6809_cpu_random_asm );
     deploy( audio1startup, src_hw_coco_audio1_asm );
 
-    Variable * note = variable_retrieve_or_define( _environment, _note, VT_BYTE, 0 );
+    if ( _note ) {
+        Variable * note = variable_retrieve_or_define( _environment, _note, VT_BYTE, 0 );
+        outline1( "LDB %s", note->realName );
+    } else {
+        outline0( "LDB #36" );
+    }
 
-    outline1( "LDB %s", note->realName )
-    outline0( "LDY #$FFFF" )
+    if ( duration ) {
+        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 3500 );
+
+        outline1( "LDD %s", duration->realName );
+        outline0( "ASLB" );
+        outline0( "ROLA" );
+        outline0( "ASLB" );
+        outline0( "ROLA" );
+        outline0( "ASLB" );
+        outline0( "ROLA" );
+        outline0( "TFR D, Y" );
+
+    } else {
+        
+    }
     cpu_call( _environment, "COCOAUDIO1BELL" );
 
 }

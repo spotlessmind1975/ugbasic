@@ -49,7 +49,7 @@
  */
 /* <usermanual>
 @keyword BELL
-@target c64
+@target c64reu
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {
 
@@ -70,14 +70,7 @@ void bell( Environment * _environment, int _note, int _channels ) {
  */
 /* <usermanual>
 @keyword BELL
-
-@syntax BELL [note] {ON [channels]}
-
-@example SOUND laDiesis
-@example SOUND solMaggiore, breve
-@example SOUND solMaggiore, lunga ON primaVoce
-
-@target c64
+@target c64reu
 </usermanual> */
 void bell_vars( Environment * _environment, char * _note, char * _channels ) {
 
