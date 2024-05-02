@@ -61,7 +61,7 @@ void bell( Environment * _environment, int _note, int _channels ) {
     deploy( random, src_hw_6809_cpu_random_asm );
     deploy( audio1startup, src_hw_coco_audio1_asm );
 
-    outline1( "LDA %2.2x", _note )
+    outline1( "LDB %2.2x", _note )
     outline0( "LDY #$FFFF" )
     outline0( "JSR COCOAUDIO1BELL" );
 
@@ -90,7 +90,7 @@ void bell_vars( Environment * _environment, char * _note, char * _channels ) {
 
     Variable * note = variable_retrieve_or_define( _environment, _note, VT_BYTE, 0 );
 
-    outline1( "LDA %s", note->realName )
+    outline1( "LDB %s", note->realName )
     outline0( "LDY #$FFFF" )
     cpu_call( _environment, "COCOAUDIO1BELL" );
 
