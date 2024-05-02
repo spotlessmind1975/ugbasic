@@ -2887,6 +2887,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_FLIP_BANKED_IMAGE(v) CRITICAL2("E278 - cannot FLIP BANKED IMAGE", v );
 #define CRITICAL_CANNOT_FLIP_COMPRESSED_IMAGE(v) CRITICAL2("E279 - cannot FLIP COMPRESSED IMAGE(S)", v );
 #define CRITICAL_BOOM_NOT_ASYNC(v) CRITICAL("E280 - cannot BOOM in asyncronous mode on this target" );
+#define CRITICAL_SHOOT_NOT_ASYNC(v) CRITICAL("E281 - cannot SHOOT in asyncronous mode on this target" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
