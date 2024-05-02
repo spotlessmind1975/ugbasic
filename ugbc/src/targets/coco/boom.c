@@ -49,7 +49,7 @@
 /* <usermanual>
 @keyword BOOM
 </usermanual> */
-void boom( Environment * _environment, int _channels ) {
+void boom( Environment * _environment, int _duration, int _channels ) {
 
     if ( _environment->audioConfig.async ) {
         CRITICAL_BOOM_NOT_ASYNC();
@@ -58,7 +58,9 @@ void boom( Environment * _environment, int _channels ) {
     deploy( random, src_hw_6809_cpu_random_asm );
     deploy( audio1startup, src_hw_coco_audio1_asm );
 
-    outline0( "LDY #$FFFF" )
+    long durationInCycles = ( _duration * 67 ) & 0xffff;
+
+    outline1( "LDY #$%4.4x", (unsigned int) durationInCycles );
     outline0( "JSR COCOAUDIO1BOOM" );
 }
 
@@ -73,7 +75,7 @@ void boom( Environment * _environment, int _channels ) {
 /* <usermanual>
 @keyword BOOM
 </usermanual> */
-void boom_var( Environment * _environment, char * _channels ) {
+void boom_var( Environment * _environment, char * _duration, char * _channels ) {
 
     if ( _environment->audioConfig.async ) {
         CRITICAL_BOOM_NOT_ASYNC();
@@ -82,7 +84,24 @@ void boom_var( Environment * _environment, char * _channels ) {
     deploy( random, src_hw_6809_cpu_random_asm );
     deploy( audio1startup, src_hw_coco_audio1_asm );
 
-    outline0( "LDY #$FFFF" )
+    if ( _duration ) {
+        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0xffff );
+
+        outline1( "LDD %s", duration->realName );
+        outline0( "ASLB" );
+        outline0( "ROLA" );
+        outline0( "ASLB" );
+        outline0( "ROLA" );
+        outline0( "ASLB" );
+        outline0( "ROLA" );
+        outline0( "TFR D, Y" );
+
+    } else {
+
+        outline0( "LDY #$FFFF" )
+
+    }
+
     outline0( "JSR COCOAUDIO1BOOM" );
     
 }

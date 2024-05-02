@@ -7118,16 +7118,40 @@ bell_definition :
 
 boom_definition_simple : 
     {
-        boom( _environment, 0xffff );
+        boom( _environment, 0xffff, 0xffff );
     }
     | OP_HASH const_expr {
-        boom( _environment, $2 );
+        boom( _environment, $2, 0xffff );
+    }
+    | OP_HASH const_expr milliseconds {
+        boom( _environment, $2, 0xffff );
+    }
+    | ON OP_HASH const_expr {
+        boom( _environment, 0xffff, $3 );
+    }
+    | OP_HASH const_expr OP_COMMA ON OP_HASH const_expr {
+        boom( _environment, $2, $6 );
+    }
+    | OP_HASH milliseconds const_expr OP_COMMA ON OP_HASH const_expr {
+        boom( _environment, $3, $7 );
     }
     ;
 
 boom_definition_expression : 
-    ON expr {
-        boom_var( _environment, $2 );
+    expr {
+        boom_var( _environment, $1, NULL );
+    }
+    | expr milliseconds {
+        boom_var( _environment, $1, NULL );
+    }
+    | ON expr {
+        boom_var( _environment, NULL, $2 );
+    }
+    | expr ON expr {
+        boom_var( _environment, $1, $3 );
+    }
+    | expr milliseconds ON expr {
+        boom_var( _environment, $1, $4 );
     }
     ;
 

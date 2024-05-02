@@ -2886,6 +2886,7 @@ typedef struct _Environment {
 #define CRITICAL_FLIP_IMAGE_UNSUPPORTED(v,t) CRITICAL3("E277 - unsupported type for FLIP IMAGE", v, t );
 #define CRITICAL_CANNOT_FLIP_BANKED_IMAGE(v) CRITICAL2("E278 - cannot FLIP BANKED IMAGE", v );
 #define CRITICAL_CANNOT_FLIP_COMPRESSED_IMAGE(v) CRITICAL2("E279 - cannot FLIP COMPRESSED IMAGE(S)", v );
+#define CRITICAL_BOOM_NOT_ASYNC(v) CRITICAL("E280 - cannot BOOM in asyncronous mode on this target" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3959,8 +3960,8 @@ void                    blit_define_compound_unary( Environment * _environment, 
 void                    blit_define_compound_operand_to_register( Environment * _environment, int _register, int _source );
 void                    blit_define_end_compound( Environment * _environment, int _register );
 void                    blit_image( Environment * _environment, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _flags );
-void                    boom( Environment * _environment, int _channels );
-void                    boom_var( Environment * _environment, char * _channels );
+void                    boom( Environment * _environment, int _duration, int _channels );
+void                    boom_var( Environment * _environment, char * _duration, char * _channels );
 void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c );
 Resource *              build_resource_for_sequence( Environment * _environment, char * _image, char * _frame, char * _sequence );
 
