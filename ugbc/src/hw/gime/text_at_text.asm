@@ -67,8 +67,11 @@ CALCPOSLOOP1
     ; and a character attribute.
 
     ANDCC #$FE
-    LEAX A, X
-    LEAX A, X
+    PSHS D
+    TFR A, B
+    ABX
+    ABX
+    PULS D
 
     ; Decrement the number of rows.
 
@@ -82,8 +85,11 @@ CALCPOSSKIP
 
     ; Now we can add the X position. Again, twice.
     LDA <XCURSYS
-    LEAX A, X
-    LEAX A, X
+    PSHS D
+    TFR A, B
+    ABX
+    ABX
+    PULS D    
 
     ; Store the position.
     STX <COPYOFTEXTADDRESS
@@ -283,7 +289,10 @@ TEXTATLF
     LDA CURRENTTILESWIDTH
     SUBA <XCURSYS
     SUBA #1
-    LEAX A,X
+    PSHS D
+    TFR A, B
+    ABX
+    PULS D
 
     ; Move to the routine that should scroll the video if we are
     ; printing on the last line of the screen.
@@ -434,8 +443,11 @@ TEXTATCMOVE
 
     LDA <CLINEX
     ;LDX <COPYOFTEXTADDRESS
-    LEAX A, X
-    LEAX A, X
+    PSHS D
+    TFR A, B
+    ABX
+    ABX
+    PULS D
     ;STX <COPYOFTEXTADDRESS
 
 TEXTATCMOVESKIPX
@@ -663,7 +675,11 @@ TEXTATNEXT3
     LDA #0
     SUBA CURRENTTILESWIDTH
     LDX <COPYOFTEXTADDRESS
-    LEAX A, X
+    PSHS D
+    TFR A, B
+    ABX
+    ABX
+    PULS D
     STX <COPYOFTEXTADDRESS
 
     ; Manage for the next character to print.
