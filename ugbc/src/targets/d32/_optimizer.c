@@ -983,7 +983,8 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     // }
 
     if( po_buf_match( buf[0], " * #*",  NULL, arg)
-    ||  po_buf_match( buf[0], " * [*]", NULL, arg) ) if(vars_ok(arg)) {
+    ||  po_buf_match( buf[0], " * [*]", NULL, arg)
+    ||  po_buf_match( buf[0], " * <*", NULL, arg) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->flags |= NO_REMOVE/*|NO_DP*/;
         v->nb_rd++;
@@ -1003,11 +1004,23 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     ||  po_buf_match( buf[0], " LD* *",  NULL, arg)
     ||  po_buf_match( buf[0], " OR* *",  NULL, arg)
     ||  po_buf_match( buf[0], " SBC* *", NULL, arg)
-    ||  po_buf_match( buf[0], " SUB* *", NULL, arg) ) if(vars_ok(arg)) {
+    ||  po_buf_match( buf[0], " SUB* *", NULL, arg)
+    
+    ||  po_buf_match( buf[0], " ADD* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " ADC* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " AND* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " CMP* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " EOR* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " LD* <*",  NULL, arg)
+    ||  po_buf_match( buf[0], " OR* <*",  NULL, arg)
+    ||  po_buf_match( buf[0], " SBC* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " SUB* <*", NULL, arg)
+     ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_rd++;
     }
-    if( po_buf_match( buf[0], " ASL *", arg)
+    if( 
+        po_buf_match( buf[0], " ASL *", arg)
     ||  po_buf_match( buf[0], " ASR *", arg)
     ||  po_buf_match( buf[0], " COM *", arg)
     ||  po_buf_match( buf[0], " DEC *", arg)
@@ -1016,7 +1029,20 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     ||  po_buf_match( buf[0], " LSR *", arg)
     ||  po_buf_match( buf[0], " ROL *", arg)
     ||  po_buf_match( buf[0], " ROR *", arg)
-    ||  po_buf_match( buf[0], " TST *", arg)) if(vars_ok(arg)) {
+    ||  po_buf_match( buf[0], " TST *", arg)
+
+    ||  po_buf_match( buf[0], " ASL <*", arg)
+    ||  po_buf_match( buf[0], " ASR <*", arg)
+    ||  po_buf_match( buf[0], " COM <*", arg)
+    ||  po_buf_match( buf[0], " DEC <*", arg)
+    ||  po_buf_match( buf[0], " INC <*", arg)
+    ||  po_buf_match( buf[0], " LSL <*", arg)
+    ||  po_buf_match( buf[0], " LSR <*", arg)
+    ||  po_buf_match( buf[0], " ROL <*", arg)
+    ||  po_buf_match( buf[0], " ROR <*", arg)
+    ||  po_buf_match( buf[0], " TST< *", arg)
+
+    ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
         v->nb_rd++;
