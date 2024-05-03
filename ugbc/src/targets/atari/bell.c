@@ -112,9 +112,9 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
         if ( _duration ) {
             Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
             cpu_math_div2_const_16bitnvironment, duration->realName, 4, 0 );
-            pokey_set_duration_vars( _environment, NULL, duration->realName );
+            pokey_set_duration_vars( _environment, channels->realName, duration->realName );
         } else {
-            pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+            pokey_set_duration_vars( _environment, channels->realName, "TICKSPERSECOND" );
         }
         if ( ! _environment->audioConfig.async ) {
             pokey_wait_duration_vars( _environment, channels->realName );

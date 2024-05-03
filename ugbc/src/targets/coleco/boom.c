@@ -94,7 +94,7 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
         cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
         sn76489z_set_duration_vars( _environment, _channels, duration->realName );
     } else {
-        sn76489z_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+        sn76489z_set_duration_vars( _environment, _channels, "TICKSPERSECOND" );
     } 
 
     if ( ! _environment->audioConfig.async ) {

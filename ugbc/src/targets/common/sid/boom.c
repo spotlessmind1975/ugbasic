@@ -91,9 +91,9 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
         if ( _duration ) {
             Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
             cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
-            sid_set_duration_vars( _environment, NULL, duration->realName );
+            sid_set_duration_vars( _environment, channels->realName, duration->realName );
         } else {
-            sid_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+            sid_set_duration_vars( _environment, channels->realName, "TICKSPERSECOND" );
         }
         if ( ! _environment->audioConfig.async ) {
             sid_wait_duration_vars( _environment, channels->realName );
