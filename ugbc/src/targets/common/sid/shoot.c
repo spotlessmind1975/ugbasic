@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__c128__) || defined(__c64__)
+#if defined(__c128__) || defined(__c64__) || defined(__c64reu__)
 
 /**
  * @brief Emit ASM code for <b>SHOOT ...</b>
