@@ -159,6 +159,26 @@ void sn76489z_set_volume( Environment * _environment, int _channels, int _volume
     } \
     outline0("CALL SN76489FREQ" );
 
+#define     PROGRAM_DURATION( c, d ) \
+    outline1("LD A, $%2.2x", ( d & 0xff ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( ( d >> 8 ) & 0xff ) ); \
+    outline0("LD D, A" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL SN76489PROGDUR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL SN76489PROGDUR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL SN76489PROGDUR2" );
+
+#define     WAIT_DURATION( c ) \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL SN76489WAITDUR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL SN76489WAITDUR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL SN76489WAITDUR2" );
+
 #define     PROGRAM_PITCH( c, f ) \
     outline1("LD A, $%2.2x", ( f & 0xff ) ); \
     outline0("LD E, A" ); \
@@ -1036,6 +1056,55 @@ void sn76489z_music( Environment * _environment, char * _music, int _size, int _
     outline0("LD (SN76489MUSICTYPE), A");
     outline0("CALL MUSICPLAYERRESET");
     outline0("EI");
+
+}
+
+void sn76489z_set_duration( Environment * _environment, int _channel, int _duration ) {
+
+    deploy( sn76489vars, src_hw_sn76489z_vars_asm );
+    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+
+    PROGRAM_DURATION( _channel, _duration );
+
+}
+
+void sn76489z_wait_duration( Environment * _environment, int _channel ) {
+
+    deploy( sn76489vars, src_hw_sn76489z_vars_asm );
+    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+
+    WAIT_DURATION( _channel );
+
+}
+
+void sn76489z_set_duration_vars( Environment * _environment, char * _channel, char * _duration ) {
+
+    deploy( sn76489vars, src_hw_sn76489z_vars_asm );
+    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+
+    outline1("LD DE, (%s)", _duration );
+    if ( _channel ) {
+        outline1("LD A, (%s)", _channel );
+    } else {
+        outline0("LD A, 3" );
+    }
+
+    outline0("CALL SN76489PROGDUR" );
+
+}
+
+void sn76489z_wait_duration_vars( Environment * _environment, char *  _channel ) {
+
+    deploy( sn76489vars, src_hw_sn76489z_vars_asm );
+    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+
+    if ( _channel ) {
+        outline1("LD A, (%s)", _channel );
+    } else {
+        outline0("LD A, 3" );
+    }
+    
+    outline0("CALL SN76489WAITDUR" );
 
 }
 

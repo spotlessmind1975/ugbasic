@@ -51,11 +51,19 @@
 @keyword BELL
 @target coleco
 </usermanual> */
-void bell( Environment * _environment, int _note, int _channels ) {
+void bell( Environment * _environment, int _note, int _duration, int _channels ) {
 
     sn76489z_start( _environment, _channels );
     sn76489z_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
     sn76489z_set_note( _environment, _channels, _note );
+
+    long durationInCycles = ( _duration / 20 ) & 0xffff;
+
+    sn76489z_set_duration( _environment, durationInCycles, _channels );
+
+    if ( ! _environment->audioConfig.async ) {
+        sn76489z_wait_duration( _environment, _channels );
+    }
 
 }
 
@@ -72,7 +80,7 @@ void bell( Environment * _environment, int _note, int _channels ) {
 @keyword BELL
 @target coleco
 </usermanual> */
-void bell_vars( Environment * _environment, char * _note, char * _channels ) {
+void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels ) {
 
     Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
     if ( _channels ) {
@@ -84,6 +92,18 @@ void bell_vars( Environment * _environment, char * _note, char * _channels ) {
         sn76489z_start_var( _environment, NULL );
         sn76489z_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
         sn76489z_set_note_vars( _environment, NULL, note->realName );
+    }
+
+    if ( _duration ) {
+        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 1500 );
+        cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
+        sn76489z_set_duration_vars( _environment, duration->realName, _channels );
+    } else {
+        sn76489z_set_duration_vars( _environment, _channels, "TICKSPERSECOND" );
+    } 
+
+    if ( ! _environment->audioConfig.async ) {
+        sn76489z_wait_duration_vars( _environment, _channels );
     }
 
 }
