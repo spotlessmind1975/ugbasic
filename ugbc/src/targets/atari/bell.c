@@ -114,7 +114,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
             cpu_math_div2_const_16bitnvironment, duration->realName, 4, 0 );
             pokey_set_duration_vars( _environment, channels->realName, duration->realName );
         } else {
-            pokey_set_duration_vars( _environment, channels->realName, "TICKSPERSECOND" );
+            pokey_set_duration_vars( _environment, channels->realName, NULL );
         }
         if ( ! _environment->audioConfig.async ) {
             pokey_wait_duration_vars( _environment, channels->realName );
@@ -128,7 +128,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
             cpu_math_div2_const_16bitnvironment, duration->realName, 4, 0 );
             pokey_set_duration_vars( _environment, NULL, duration->realName );
         } else {
-            pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+            pokey_set_duration_vars( _environment, NULL, NULL );
         }
         if ( ! _environment->audioConfig.async ) {
             pokey_wait_duration_vars( _environment, NULL );

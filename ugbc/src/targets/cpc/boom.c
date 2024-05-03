@@ -94,7 +94,7 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
         cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
         ay8910_set_duration_vars( _environment, _channels, duration->realName );
     } else {
-        ay8910_set_duration_vars( _environment, _channels, "TICKSPERSECOND" );
+        ay8910_set_duration_vars( _environment, _channels, NULL );
     } 
 
     if ( ! _environment->audioConfig.async ) {

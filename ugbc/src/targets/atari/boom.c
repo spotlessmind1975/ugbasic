@@ -121,7 +121,7 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
             cpu_math_div2_const_16bitnvironment, duration->realName, 4, 0 );
             sid_set_duration_vars( _environment, channels->realName, duration->realName );
         } else {
-            sid_set_duration_vars( _environment, channels->realName, "TICKSPERSECOND" );
+            sid_set_duration_vars( _environment, channels->realName, NULL );
         }
         if ( ! _environment->audioConfig.async ) {
             sid_wait_duration_vars( _environment, channels->realName );
@@ -134,7 +134,7 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
             cpu_math_div2_const_16bitnvironment, duration->realName, 4, 0 );
             sid_set_duration_vars( _environment, NULL, duration->realName );
         } else {
-            sid_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+            sid_set_duration_vars( _environment, NULL, NULL );
         }
         if ( ! _environment->audioConfig.async ) {
             sid_wait_duration_vars( _environment, NULL );

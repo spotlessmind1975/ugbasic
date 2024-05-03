@@ -1062,11 +1062,15 @@ void ay8910_set_duration_vars( Environment * _environment, char * _channel, char
     deploy( ay8910vars, src_hw_ay8910_vars_asm );
     deploy( ay8910startup, src_hw_ay8910_startup_asm );
 
-    outline1("LD DE, (%s)", _duration );
+    if ( _duration ) {
+        outline1("LD DE, (%s)", _duration );
+    } else {
+        outline0("LD DE, 50" );
+    }
     if ( _channel ) {
         outline1("LD A, (%s)", _channel );
     } else {
-        outline0("LD A, 3" );
+        outline0("LD A, $7" );
     }
 
     outline0("CALL AY8910PROGDUR" );
@@ -1081,10 +1085,10 @@ void ay8910_wait_duration_vars( Environment * _environment, char *  _channel ) {
     if ( _channel ) {
         outline1("LD A, (%s)", _channel );
     } else {
-        outline0("LD A, 3" );
+        outline0("LD A, $7" );
     }
     
-    outline0("CALL AY8910PROGDUR" );
+    outline0("CALL AY8910WAITDUR" );
 
 }
 

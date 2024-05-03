@@ -59,7 +59,7 @@ void bell( Environment * _environment, int _note, int _duration, int _channels )
 
     long durationInCycles = ( _duration / 20 ) & 0xffff;
 
-    ay8910_set_duration( _environment, durationInCycles, _channels );
+    ay8910_set_duration( _environment,  _channels, durationInCycles );
 
     if ( ! _environment->audioConfig.async ) {
         ay8910_wait_duration( _environment, _channels );
@@ -99,7 +99,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
         cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
         ay8910_set_duration_vars( _environment, _channels, duration->realName );
     } else {
-        ay8910_set_duration_vars( _environment, _channels, "TICKSPERSECOND" );
+        ay8910_set_duration_vars( _environment, _channels, NULL );
     } 
 
     if ( ! _environment->audioConfig.async ) {

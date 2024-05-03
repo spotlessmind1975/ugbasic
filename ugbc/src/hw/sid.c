@@ -861,8 +861,12 @@ void sid_set_duration_vars( Environment * _environment, char * _channels, char *
     } else {
         outline0("LDA #$f" );
     }
-    outline1("LDX %s", _duration );
-
+    if ( _duration ) {
+        outline1("LDX %s", _duration );
+    } else {
+        outline0("LDX #50" );
+    }
+    
     outline0("JSR SIDSETDURATION");
 
 }

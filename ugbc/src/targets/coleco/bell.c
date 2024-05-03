@@ -99,7 +99,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
         cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
         sn76489z_set_duration_vars( _environment, duration->realName, _channels );
     } else {
-        sn76489z_set_duration_vars( _environment, _channels, "TICKSPERSECOND" );
+        sn76489z_set_duration_vars( _environment, _channels, NULL );
     } 
 
     if ( ! _environment->audioConfig.async ) {
