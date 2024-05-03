@@ -228,10 +228,10 @@ FLIPIMAGEYCOMMON
     LSRA
     LSRA
     LSRA
-    STA IMAGEW
+    STA <IMAGEW
     LDA 1,Y
-    STA IMAGEH
-    STA IMAGEH2
+    STA <IMAGEH
+    STA <IMAGEH2
 
     ; Move the image pointer ahead of header.
 
@@ -249,10 +249,10 @@ FLIPIMAGEYCOMMONC
     LDA ,Y
     LSRA
     LSRA
-    STA IMAGEW
+    STA <IMAGEW
     LDA 1,Y
-    STA IMAGEH
-    STA IMAGEH2
+    STA <IMAGEH
+    STA <IMAGEH2
 
     ; Move the image pointer ahead of header.
 
@@ -264,8 +264,8 @@ FLIPIMAGEYCOMMONCL0
 
     TFR Y, X
 
-    LDA IMAGEW
-    LDB IMAGEH
+    LDA <IMAGEW
+    LDB <IMAGEH
     DECB
 FLIPIMAGEYCOMMONCL0L
     ; Move ahead the ending line pointer of 2 x IMAGE WIDTH - 1
@@ -274,7 +274,7 @@ FLIPIMAGEYCOMMONCL0L
     BNE FLIPIMAGEYCOMMONCL0L
 
     CLRA
-    LDB IMAGEH
+    LDB <IMAGEH
     LSRB
     TFR D, U
 
@@ -288,7 +288,7 @@ FLIPIMAGEYCOMMONCLN
     PULS D
     STA B, X
     INCB
-    CMPB IMAGEW
+    CMPB <IMAGEW
     BNE FLIPIMAGEYCOMMONCLN
 
     LEAY B, Y

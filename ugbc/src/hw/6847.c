@@ -740,9 +740,9 @@ void c6847_pset_int( Environment * _environment, int _x, int _y ) {
     deploy( plot, src_hw_6847_plot_asm );
     
     outline1("LDX %4.4x", (_x & 0xffff ) );
-    outline0("STX PLOTX");
+    outline0("STX <PLOTX");
     outline1("LDD %4.4x", ( _y & 0xffff ) );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -759,9 +759,9 @@ void c6847_pset_vars( Environment * _environment, char *_x, char *_y ) {
     deploy( plot, src_hw_6847_plot_asm );
     
     outline1("LDX %s", x->realName );
-    outline0("STX PLOTX");
+    outline0("STX <PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -778,9 +778,9 @@ void c6847_pget_color_vars( Environment * _environment, char *_x, char *_y, char
     deploy( plot, src_hw_6847_plot_asm );
     
     outline1("LDD %s", x->realName );
-    outline0("STD PLOTX");
+    outline0("STD <PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #3");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -1553,9 +1553,9 @@ void c6847_blit_image( Environment * _environment, char * _sources[], int _sourc
     }
 
     outline1("LDD %s", _x );
-    outline0("STD IMAGEX" );
+    outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
-    outline0("STD IMAGEY" );
+    outline0("STD <IMAGEY" );
 
     outline1("LDA #$%2.2x", ( _flags & 0xff ) );
     outline0("STA <IMAGEF" );
@@ -1613,9 +1613,9 @@ void c6847_put_image( Environment * _environment, Resource * _source, char * _x,
     }
     
     outline1("LDD %s", _x );
-    outline0("STD IMAGEX" );
+    outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
-    outline0("STD IMAGEY" );
+    outline0("STD <IMAGEY" );
 
     outline1("LDD %s", _flags );
     outline0("STB <IMAGEF" );
@@ -1758,11 +1758,11 @@ void c6847_get_image( Environment * _environment, char * _image, char * _x, char
     }
 
     outline1("LDD %s", _x );
-    outline0("STD IMAGEX" );
+    outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
-    outline0("STD IMAGEY" );
+    outline0("STD <IMAGEY" );
     outline1("LDA #$%2.2x", _palette );
-    outline0("STA IMAGET");
+    outline0("STA <IMAGET");
 
     outline0("JSR GETIMAGE");
 

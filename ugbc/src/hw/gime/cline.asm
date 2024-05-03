@@ -47,11 +47,11 @@ CLINET
     LSLA
     LSLA
     LSLA
-    STA PLOTC
+    STA <PLOTC
     LDB _PAPER
     JSR GIMESELECTPALETTEPAPER
-    ORA PLOTC
-    STA PLOTC
+    ORA <PLOTC
+    STA <PLOTC
     
     LDX TEXTADDRESS
 
@@ -79,7 +79,7 @@ CLINESKIP
 CLINEINCX
     
     LDA EMPTYTILE
-    LDB PLOTC
+    LDB <PLOTC
 
     ; The CLINE command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 
@@ -117,7 +117,7 @@ CLINEENTIRE
 CLINEINC2X
 
     LDA EMPTYTILE
-    LDB PLOTC
+    LDB <PLOTC
 
     ; The CLINE command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 

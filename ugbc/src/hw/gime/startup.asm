@@ -521,8 +521,8 @@ GIMERESETPALETTEL1
 	RTS
 
 ; Calculate the starting address (byte) of the first pixel
-; positioned at PLOTX, PLOTY for the current screen mode.
-;		Input: PLOTX, PLOTY
+; positioned at <PLOTX, <PLOTY for the current screen mode.
+;		Input: <PLOTX, <PLOTY
 ;		Output: 
 ;				X -> address
 GIMECALCPOSBM
@@ -574,11 +574,11 @@ GIMECALCPOSBM16X320
     LDA #160
     JMP GIMECALCPOSBM16OFFSET
 GIMECALCPOSBM16OFFSET
-    LDB PLOTY+1
+    LDB <PLOTY+1
     MUL
     LEAX D, X
 
-    LDD PLOTX
+    LDD <PLOTX
     LSRA
     RORB
     LEAX D, X
@@ -630,11 +630,11 @@ GIMECALCPOSBM4X640
     LDA #160
     JMP GIMECALCPOSBM4OFFSET
 GIMECALCPOSBM4OFFSET
-    LDB PLOTY+1
+    LDB <PLOTY+1
     MUL
     LEAX D, X
 
-    LDD PLOTX
+    LDD <PLOTX
     LSRA
     RORB
     LSRA
@@ -678,11 +678,11 @@ GIMECALCPOSBM2X640
     LDA #80
     JMP GIMECALCPOSBM2OFFSET
 GIMECALCPOSBM2OFFSET
-    LDB PLOTY+1
+    LDB <PLOTY+1
     MUL
     LEAX D, X
 
-    LDD PLOTX
+    LDD <PLOTX
     LSRA
     RORB
     LSRA

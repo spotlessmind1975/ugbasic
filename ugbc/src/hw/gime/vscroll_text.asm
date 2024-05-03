@@ -48,11 +48,11 @@ VSCROLLTX
     LSLA
     LSLA
     LSLA
-    STA PLOTC
+    STA <PLOTC
     LDB _PAPER
     JSR GIMESELECTPALETTEPAPER
-    ORA PLOTC
-    STA PLOTC
+    ORA <PLOTC
+    STA <PLOTC
 
     LDA <DIRECTION
     CMPA #0
@@ -103,7 +103,7 @@ VSCROLLTUPYSCR1
     TFR D, U
 
     LDA EMPTYTILE
-    LDB PLOTC
+    LDB <PLOTC
 
     ; The VSCROLL command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 
@@ -170,7 +170,7 @@ VSCROLLTDOWNSCR1
     JSR GIMEBANKROM
     
     LDA EMPTYTILE
-    LDB PLOTC
+    LDB <PLOTC
 
     ; The VSCROLL command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 

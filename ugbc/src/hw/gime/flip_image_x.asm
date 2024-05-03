@@ -155,7 +155,7 @@ FLIPIMAGEXL1T16
     LDD , Y
     LSRA
     RORB
-    STD IMAGEW
+    STD <IMAGEW
     JMP FLIPIMAGEXCOMMON
 
 FLIPIMAGEXL1T4
@@ -165,7 +165,7 @@ FLIPIMAGEXL1T4
     RORB
     LSRA
     RORB
-    STD IMAGEW
+    STD <IMAGEW
     JMP FLIPIMAGEXCOMMON
 
 FLIPIMAGEXL1T2
@@ -177,7 +177,7 @@ FLIPIMAGEXL1T2
     RORB
     LSRA
     RORB
-    STD IMAGEW
+    STD <IMAGEW
     JMP FLIPIMAGEXCOMMON
 
 FLIPIMAGEXCOMMON
@@ -186,18 +186,18 @@ FLIPIMAGEXCOMMON
     ; (in bytes) of the image to flip horizontally.
 
     LDA 2,Y
-    STA IMAGEH
-    STA IMAGEH2
+    STA <IMAGEH
+    STA <IMAGEH2
 
     ; Move the image pointer ahead of header.
 
     LEAY 3,Y
 
     CLRA
-    LDD IMAGEW
+    LDD <IMAGEW
     LSRA
     RORB
-    STD IMAGEW2
+    STD <IMAGEW2
 
 FLIPIMAGEXCOMMONCL0
 
@@ -205,7 +205,7 @@ FLIPIMAGEXCOMMONCL0
 
     TFR Y, X
 
-    LDD IMAGEW
+    LDD <IMAGEW
 
     ; Move ahead the ending line pointer of 2 x IMAGE WIDTH - 1
 
@@ -216,7 +216,7 @@ FLIPIMAGEXCOMMONCL0
     ; <TMPPTR ---->
     ;        <---- <TMPPTR2
 
-    LDD IMAGEW2
+    LDD <IMAGEW2
 
 FLIPIMAGEXCOMMONCL1
     PSHS D
@@ -254,7 +254,7 @@ FLIPIMAGEXCOMMONCL1
     CMPD #0
     BNE FLIPIMAGEXCOMMONCL1
 
-    LDD IMAGEW
+    LDD <IMAGEW
     LSRA
     RORB
     BCC FLIPIMAGEXCOMMONCNEXTLINE
@@ -269,16 +269,16 @@ FLIPIMAGEXCOMMONCL1
 
     ; Move to the next line.
 FLIPIMAGEXCOMMONCNEXTLINE
-    LDD IMAGEW2
+    LDD <IMAGEW2
     LEAY D, Y
 
     ; Decrement the number of line flipped.
 
-    DEC IMAGEH
+    DEC <IMAGEH
 
     ; If there are lines to flip, repeat the loop.
 
-    LDB IMAGEH
+    LDB <IMAGEH
     LBNE FLIPIMAGEXCOMMONCL0
 
     RTS

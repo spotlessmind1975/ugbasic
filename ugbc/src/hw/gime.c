@@ -1224,9 +1224,9 @@ void gime_pset_int( Environment * _environment, int _x, int _y ) {
     deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDX %4.4x", (_x & 0xffff ) );
-    outline0("STX PLOTX");
+    outline0("STX <PLOTX");
     outline1("LDD %4.4x", ( _y & 0xffff ) );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -1243,9 +1243,9 @@ void gime_pset_vars( Environment * _environment, char *_x, char *_y ) {
     deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDX %s", x->realName );
-    outline0("STX PLOTX");
+    outline0("STX <PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -1262,9 +1262,9 @@ void gime_pget_color_vars( Environment * _environment, char *_x, char *_y, char 
     deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDD %s", x->realName );
-    outline0("STD PLOTX");
+    outline0("STD <PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #3");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -2675,9 +2675,9 @@ void gime_put_image( Environment * _environment, Resource * _image, char * _x, c
     }
 
     outline1("LDD %s", _x );
-    outline0("STD IMAGEX" );
+    outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
-    outline0("STD IMAGEY" );
+    outline0("STD <IMAGEY" );
 
     outline1("LDD %s", _flags );
     outline0("STB <IMAGEF" );
@@ -2784,11 +2784,11 @@ void gime_get_image( Environment * _environment, char * _image, char * _x, char 
     gime_load_image_address_to_y( _environment, _image, _sequence, _frame, _frame_size, _frame_count );
 
     outline1("LDD %s", _x );
-    outline0("STD IMAGEX" );
+    outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
-    outline0("STD IMAGEY" );
+    outline0("STD <IMAGEY" );
     outline1("LDA #$%2.2x", _palette );
-    outline0("STA IMAGET");
+    outline0("STA <IMAGET");
 
     outline0("JSR GETIMAGE");
 

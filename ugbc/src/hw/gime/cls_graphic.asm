@@ -45,7 +45,7 @@ CLSGX
 
     LDB _PAPER
     JSR GIMESELECTPALETTE
-    STA PLOTC
+    STA <PLOTC
 
     LDA CURRENTMODE
     ANDA #$E0
@@ -58,53 +58,53 @@ CLSGX
     RTS
 
 CLSGB16
-    LDA PLOTC
+    LDA <PLOTC
     LSLA
     LSLA
     LSLA
     LSLA
-    ORA PLOTC
-    STA PLOTC
+    ORA <PLOTC
+    STA <PLOTC
     JMP CLSGGO
 
 CLSGB4
-    LDA PLOTC
+    LDA <PLOTC
     LSLA
     LSLA
-    ORA PLOTC
+    ORA <PLOTC
     LSLA
     LSLA
-    ORA PLOTC
+    ORA <PLOTC
     LSLA
     LSLA
-    ORA PLOTC
-    STA PLOTC
+    ORA <PLOTC
+    STA <PLOTC
     JMP CLSGGO
 
 CLSGB2
-    LDA PLOTC
+    LDA <PLOTC
     LSLA
-    ORA PLOTC
+    ORA <PLOTC
     LSLA
-    ORA PLOTC
+    ORA <PLOTC
     LSLA
-    ORA PLOTC
+    ORA <PLOTC
     LSLA
-    ORA PLOTC
+    ORA <PLOTC
     LSLA
-    ORA PLOTC
+    ORA <PLOTC
     LSLA
-    ORA PLOTC
+    ORA <PLOTC
     LSLA
-    ORA PLOTC
-    STA PLOTC
+    ORA <PLOTC
+    STA <PLOTC
     JMP CLSGGO
 
 CLSGGO
     LDU CURRENTFRAMESIZE
     LDX BITMAPADDRESS
 
-    LDA PLOTC
+    LDA <PLOTC
 
     ; The CLS command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 
