@@ -43,11 +43,11 @@ CALCPOS
     ; Start from the beginning of the video RAM.
 
     LDX TEXTADDRESS
-    STX COPYOFTEXTADDRESS
+    STX <COPYOFTEXTADDRESS
 
     ; Load the number of rows to move ahead.
 
-    LDB YCURSYS
+    LDB <YCURSYS
 
     ; If zero, we can skip this step.
 
@@ -81,12 +81,12 @@ CALCPOSLOOP1
 CALCPOSSKIP
 
     ; Now we can add the X position. Again, twice.
-    LDA XCURSYS
+    LDA <XCURSYS
     LEAX A, X
     LEAX A, X
 
     ; Store the position.
-    STX COPYOFTEXTADDRESS
+    STX <COPYOFTEXTADDRESS
 
     RTS
 
@@ -198,7 +198,7 @@ TEXTATTAB
 
     ; Loop until X cursor position is greater than tab count.
 
-    LDA XCURSYS
+    LDA <XCURSYS
 TEXTATTAB2
     CMPA TABCOUNT
     BLO TEXTATTAB3
@@ -209,10 +209,10 @@ TEXTATTAB2
     ; Calculate the complement for tab count.
 
 TEXTATTAB3
-    STA TMPPTR
+    STA <TMPPTR
     LDA TABCOUNT
     ANDCC #$01
-    SUBA TMPPTR
+    SUBA <TMPPTR
     STA <TABSTODRAW
 
     ; Move to the next character to print.
@@ -281,7 +281,7 @@ TEXTATLF
     ; back and update the address.
 
     LDA CURRENTTILESWIDTH
-    SUBA XCURSYS
+    SUBA <XCURSYS
     SUBA #1
     LEAX A,X
 
@@ -394,13 +394,13 @@ TEXTATCMOVEPREPARE
 
     LDA , Y+
     DECB
-    STA CLINEX
+    STA <CLINEX
 
     ; Load and store the delta on ordinate.
     
     LDA , Y+
     DECB
-    STA CLINEY
+    STA <CLINEY
 
     ; This routine will move the current cursor position
     ; on an absolute position.
@@ -411,8 +411,8 @@ TEXTATCMOVE
     ; add the delta to the current horizontal position.
 
     ANDCC #$FE
-    LDA CLINEX
-    ADDA XCURSYS
+    LDA <CLINEX
+    ADDA <XCURSYS
 
     ; If the calculated horizontal position is negative,
     ; we have nothing to do.
@@ -428,15 +428,15 @@ TEXTATCMOVE
 
     ; Store the new horizontal position.
 
-    STA XCURSYS
+    STA <XCURSYS
 
     ; Update the address by delta.
 
-    LDA CLINEX
-    ;LDX COPYOFTEXTADDRESS
+    LDA <CLINEX
+    ;LDX <COPYOFTEXTADDRESS
     LEAX A, X
     LEAX A, X
-    ;STX COPYOFTEXTADDRESS
+    ;STX <COPYOFTEXTADDRESS
 
 TEXTATCMOVESKIPX
 
@@ -444,8 +444,8 @@ TEXTATCMOVESKIPX
     ; add the delta to the current vertical position.
 
     ANDCC #$FE
-    LDA CLINEY
-    ADDA YCURSYS
+    LDA <CLINEY
+    ADDA <YCURSYS
 
     ; If the calculated vertical position is negative,
     ; we have nothing to do.
@@ -461,17 +461,17 @@ TEXTATCMOVESKIPX
 
     ; Store the new vertical position.
 
-    STA YCURSYS
+    STA <YCURSYS
 
     ; Update the address by delta.
 
     PSHS D
-    LDA CLINEY
+    LDA <CLINEY
     ANDA #$80
     CMPA #$80
     BEQ TEXTATCMOVELOOPYM
     LDA CURRENTTILESWIDTH
-    LDB CLINEY
+    LDB <CLINEY
     MUL
     LSLB
     ROLA
@@ -479,7 +479,7 @@ TEXTATCMOVESKIPX
     JMP TEXTATCMOVELOOPY0
 TEXTATCMOVELOOPYM
     LDA CURRENTTILESWIDTH
-    LDB CLINEY
+    LDB <CLINEY
     NEGB
     MUL
     LSLB
@@ -490,7 +490,7 @@ TEXTATCMOVELOOPYM
     LEAX D, X
     JMP TEXTATCMOVELOOPY0
 TEXTATCMOVELOOPY0
-    ; STX COPYOFTEXTADDRESS
+    ; STX <COPYOFTEXTADDRESS
     PULS D
 
 TEXTATCMOVESKIPY
@@ -510,8 +510,8 @@ TEXTATAT
     LDA , Y+
     DECB
     ANDCC #$01
-    SUBA XCURSYS
-    STA CLINEX
+    SUBA <XCURSYS
+    STA <CLINEX
 
     ; The vertical delta is calculated started from
     ; the current position.
@@ -519,8 +519,8 @@ TEXTATAT
     LDA , Y+
     DECB
     ANDCC #$01
-    SUBA YCURSYS
-    STA CLINEY
+    SUBA <YCURSYS
+    STA <CLINEY
 
     ; Change the position like a CMOVE.
 
@@ -605,12 +605,12 @@ TEXTATINCX
 
     ; Increment the current horizontal position.
 
-    INC XCURSYS
+    INC <XCURSYS
 
     ; If the current horizontal position is at the end
     ; of the line, we must increment the vertical position.
 
-    LDA XCURSYS
+    LDA <XCURSYS
     CMPA CURRENTTILESWIDTH
     BEQ TEXTATNEXT2
 
@@ -623,20 +623,20 @@ TEXTATNEXT2
     ; Put 0 as horizontal position.
 
     LDA #0
-    STA XCURSYS
+    STA <XCURSYS
 
     ; Increment the vertical position.
 
-    INC YCURSYS
+    INC <YCURSYS
 
     ; Update the video ram address.
 
-    STX COPYOFTEXTADDRESS
+    STX <COPYOFTEXTADDRESS
 
     ; If the current vertical position is at the end
     ; of the screen, we must scroll the screen.
 
-    LDA YCURSYS
+    LDA <YCURSYS
     CMPA CURRENTTILESHEIGHT
     BEQ TEXTATNEXT3
 
@@ -649,22 +649,22 @@ TEXTATNEXT3
     ; Let's scroll vertically
 
     LDA #$FE
-    STA DIRECTION
+    STA <DIRECTION
     JSR VSCROLLT
 
     ; Decrement the current vertical position, since
     ; now the last line is not last anymore.
 
-    DEC YCURSYS
+    DEC <YCURSYS
 
     ; Update the current address video RAM, as well.
 
     ANDCC #$01
     LDA #0
     SUBA CURRENTTILESWIDTH
-    LDX COPYOFTEXTADDRESS
+    LDX <COPYOFTEXTADDRESS
     LEAX A, X
-    STX COPYOFTEXTADDRESS
+    STX <COPYOFTEXTADDRESS
 
     ; Manage for the next character to print.
 

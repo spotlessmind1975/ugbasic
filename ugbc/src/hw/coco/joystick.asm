@@ -35,8 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PORT        EQU     DIRECTION+1
-
 IO		equ		$ff00		; IO page on Dragon
 
 DPPIA0DA	EQU		$00		; Side A Data/DDR
@@ -78,12 +76,12 @@ LBD4F
 
 JOYSTICK
 
-    CLR DIRECTION
+    CLR <DIRECTION
     LDA #$FF
     STA $FF02
     LDA $FF00
     COMA
-    LDB PORT
+    LDB <PORT
     BEQ JOYSTICKP0
 JOYSTICKP1
     ANDA #$01
@@ -92,7 +90,7 @@ JOYSTICKP1
     LSLA
     LSLA
     LSLA
-    STA DIRECTION
+    STA <DIRECTION
     JMP JOYSTICKD
 JOYSTICKP0
     ANDA #$02
@@ -100,7 +98,7 @@ JOYSTICKP0
     LSLA
     LSLA
     LSLA
-    STA DIRECTION
+    STA <DIRECTION
     JMP JOYSTICKD
 
 JOYSTICKD
@@ -156,7 +154,7 @@ LBD81
     BPL     LBD59			; loop if still have axies to read
 
     LDX #TEMPJOYSTICK
-    LDB PORT
+    LDB <PORT
     LSLB
     LDA B,X
 
@@ -169,15 +167,15 @@ LBD81
     JMP JOYSTICKHZ
 
 JOYSTICKUP
-    LDA DIRECTION
+    LDA <DIRECTION
     ORA #$01
-    STA DIRECTION
+    STA <DIRECTION
     JMP JOYSTICKHZ
 
 JOYSTICKDOWN
-    LDA DIRECTION
+    LDA <DIRECTION
     ORA #$02
-    STA DIRECTION
+    STA <DIRECTION
     JMP JOYSTICKHZ
 
 JOYSTICKHZ
@@ -192,15 +190,15 @@ JOYSTICKHZ
     JMP JOYSTICKDONE
 
 JOYSTICKLEFT
-    LDA DIRECTION
+    LDA <DIRECTION
     ORA #$04
-    STA DIRECTION
+    STA <DIRECTION
     JMP JOYSTICKDONE
 
 JOYSTICKRIGHT
-    LDA DIRECTION
+    LDA <DIRECTION
     ORA #$08
-    STA DIRECTION
+    STA <DIRECTION
     JMP JOYSTICKDONE
 
 JOYSTICKDONE

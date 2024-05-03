@@ -48,12 +48,12 @@ TEXTATBMDRAWCHAR
     ADDD #UDCCHAR
     TFR D, Y
 
-    LDA YCURSYS
+    LDA <YCURSYS
     LDB #8
     MUL
     STD PLOTY
 
-    LDA XCURSYS
+    LDA <XCURSYS
     LDB #8
     MUL
     STD PLOTX
@@ -356,7 +356,7 @@ TEXTATBMTAB
 
     ; Loop until X cursor position is greater than tab count.
 
-    LDA XCURSYS
+    LDA <XCURSYS
 TEXTATBMTAB2
     CMPA TABCOUNT
     BLO TEXTATBMTAB3
@@ -367,10 +367,10 @@ TEXTATBMTAB2
     ; Calculate the complement for tab count.
 
 TEXTATBMTAB3
-    STA TMPPTR
+    STA <TMPPTR
     LDA TABCOUNT
     ANDCC #$01
-    SUBA TMPPTR
+    SUBA <TMPPTR
     STA TABSTODRAW
 
     ; Move to the next character to print.
@@ -439,7 +439,7 @@ TEXTATBMLF
     ; back and update the address.
 
     LDA CURRENTTILESWIDTH
-    SUBA XCURSYS
+    SUBA <XCURSYS
     SUBA #1
     LEAX A,X
 
@@ -531,13 +531,13 @@ TEXTATBMCMOVEPREPARE
 
     LDA , Y+
     DECB
-    STA CLINEX
+    STA <CLINEX
 
     ; Load and store the delta on ordinate.
     
     LDA , Y+
     DECB
-    STA CLINEY
+    STA <CLINEY
 
     ; This routine will move the current cursor position
     ; on an absolute position.
@@ -548,8 +548,8 @@ TEXTATBMCMOVE
     ; add the delta to the current horizontal position.
 
     ANDCC #$FE
-    LDA CLINEX
-    ADDA XCURSYS
+    LDA <CLINEX
+    ADDA <XCURSYS
 
     ; If the calculated horizontal position is negative,
     ; we have nothing to do.
@@ -565,7 +565,7 @@ TEXTATBMCMOVE
 
     ; Store the new horizontal position.
 
-    STA XCURSYS
+    STA <XCURSYS
 
     ; Update the address by delta.
 
@@ -575,8 +575,8 @@ TEXTATBMCMOVESKIPX
     ; add the delta to the current vertical position.
 
     ANDCC #$FE
-    LDA CLINEY
-    ADDA YCURSYS
+    LDA <CLINEY
+    ADDA <YCURSYS
 
     ; If the calculated vertical position is negative,
     ; we have nothing to do.
@@ -592,7 +592,7 @@ TEXTATBMCMOVESKIPX
 
     ; Store the new vertical position.
 
-    STA YCURSYS
+    STA <YCURSYS
 
     ; Update the address by delta.
 
@@ -613,8 +613,8 @@ TEXTATBMAT
     LDA , Y+
     DECB
     ANDCC #$01
-    SUBA XCURSYS
-    STA CLINEX
+    SUBA <XCURSYS
+    STA <CLINEX
 
     ; The vertical delta is calculated started from
     ; the current position.
@@ -622,8 +622,8 @@ TEXTATBMAT
     LDA , Y+
     DECB
     ANDCC #$01
-    SUBA YCURSYS
-    STA CLINEY
+    SUBA <YCURSYS
+    STA <CLINEY
 
     ; Change the position like a CMOVE.
 
@@ -651,12 +651,12 @@ TEXTATBMINCX
 
     ; Increment the current horizontal position.
 
-    INC XCURSYS
+    INC <XCURSYS
 
     ; If the current horizontal position is at the end
     ; of the line, we must increment the vertical position.
 
-    LDA XCURSYS
+    LDA <XCURSYS
     CMPA CURRENTTILESWIDTH
     BEQ TEXTATBMNEXT2
 
@@ -669,16 +669,16 @@ TEXTATBMNEXT2
     ; Put 0 as horizontal position.
 
     LDA #0
-    STA XCURSYS
+    STA <XCURSYS
 
     ; Increment the vertical position.
 
-    INC YCURSYS
+    INC <YCURSYS
 
     ; If the current vertical position is at the end
     ; of the screen, we must scroll the screen.
 
-    LDA YCURSYS
+    LDA <YCURSYS
     CMPA CURRENTTILESHEIGHT
     BEQ TEXTATBMNEXT3
 
@@ -691,13 +691,13 @@ TEXTATBMNEXT3
     ; Let's scroll vertically
 
     ; LDA #$FE
-    ; STA DIRECTION
+    ; STA <DIRECTION
     ; JSR VSCROLLG
 
     ; Decrement the current vertical position, since
     ; now the last line is not last anymore.
 
-    DEC YCURSYS
+    DEC <YCURSYS
 
     ; Manage for the next character to print.
 

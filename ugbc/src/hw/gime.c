@@ -1399,7 +1399,7 @@ void gime_scroll_text( Environment * _environment, int _direction ) {
     deploy_preferred( vScrollText, src_hw_gime_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
+    outline0("STA <DIRECTION" );
 
     outline0("JSR VSCROLLT");
 
@@ -1597,9 +1597,9 @@ void gime_hscroll_line( Environment * _environment, int _direction ) {
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
+    outline0("STA <DIRECTION" );
     outline1("LDA %s", y->realName );
-    outline0("STA CLINEY");
+    outline0("STA <CLINEY");
 
     outline0("JSR HSCROLLLT");    
 
@@ -1611,7 +1611,7 @@ void gime_hscroll_screen( Environment * _environment, int _direction ) {
     deploy( textHScroll, src_hw_gime_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
+    outline0("STA <DIRECTION" );
 
     outline0("JSR HSCROLLST");    
 
@@ -1632,11 +1632,11 @@ void gime_cline( Environment * _environment, char * _characters ) {
     } else {
         outline0("LDA #0");
     }
-    outline0("STA CHARACTERS");
+    outline0("STA <CHARACTERS");
     outline1("LDA %s", x->realName );
-    outline0("STA CLINEX" );
+    outline0("STA <CLINEX" );
     outline1("LDA %s", y->realName );
-    outline0("STA CLINEY");
+    outline0("STA <CLINEY");
     outline0("JSR CLINE");
 
 }

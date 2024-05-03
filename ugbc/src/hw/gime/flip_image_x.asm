@@ -213,8 +213,8 @@ FLIPIMAGEXCOMMONCL0
     LEAX -1, X
 
     ; Loop in both directions
-    ; TMPPTR ---->
-    ;        <---- TMPPTR2
+    ; <TMPPTR ---->
+    ;        <---- <TMPPTR2
 
     LDD IMAGEW2
 
@@ -237,11 +237,11 @@ FLIPIMAGEXCOMMONCL1
 
     PULS D
 
-    ; Move back the TMPPTR2 pointer.
+    ; Move back the <TMPPTR2 pointer.
 
     LEAX -1, X
 
-    ; Move ahead the TMPPTR pointer.
+    ; Move ahead the <TMPPTR pointer.
 
     LEAY 1, Y
 
