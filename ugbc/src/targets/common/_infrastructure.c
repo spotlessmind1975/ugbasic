@@ -616,7 +616,22 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
         memset( var, 0, sizeof( Variable ) );
         var->name = strdup( _name );
         var->bankAssigned = -1;
+#if defined(cpu6809)
+        if ( 
+            strcmp( _name, "PEN" ) == 0 ||
+            strcmp( _name, "XCURSYS" ) == 0 ||
+            strcmp( _name, "YCURSYS" ) == 0
+         ) {
+            var->realName = malloc( strlen( _name ) + 2 );
+            strcpy( var->realName, "<" ); 
+            strcat( var->realName, var->name );
+         } else {
+            var->realName = strdup( _name );
+         }
+#else
         var->realName = strdup( _name );
+#endif
+
         var->type = _type;
         if ( var->type == VT_BUFFER ) {
             var->size = _size_or_value;
