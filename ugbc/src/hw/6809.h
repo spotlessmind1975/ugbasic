@@ -1,6 +1,8 @@
 #ifndef __UGBC_CPU6809__
 #define __UGBC_CPU6809__
 
+#define     cpu6809     1
+
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
