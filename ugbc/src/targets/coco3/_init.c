@@ -107,6 +107,7 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
 
     gime_initialization( _environment );
+    cpu_call( _environment, "COCO3AUDIO1STARTUP" );
     sn76489m_initialization( _environment );
 
     if ( _environment->tenLinerRulesEnforced ) {

@@ -64,7 +64,7 @@ void bell( Environment * _environment, int _note, int _duration, int _channels )
     long durationInCycles = ( _duration * 67 ) & 0xffff;
 
     outline1( "LDB $%2.2x", _note );
-    outline0( "LDY $%4.4x", durationInCycles );
+    outline1( "LDY $%4.4x", durationInCycles );
     outline0( "JSR COCOAUDIO1BELL" );
 
 }
@@ -97,7 +97,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
         outline0( "LDB #36" );
     }
 
-    if ( duration ) {
+    if ( _duration ) {
         Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 3500 );
 
         outline1( "LDD %s", duration->realName );
