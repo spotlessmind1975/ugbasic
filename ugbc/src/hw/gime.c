@@ -1412,9 +1412,9 @@ void gime_text( Environment * _environment, char * _text, char * _text_size ) {
     deploy_preferred( textEncodedAt, src_hw_gime_text_at_asm );
 
     outline1("LDY %s", _text);
-    outline0("STY TEXTPTR" );
+    outline0("STY <TEXTPTR" );
     outline1("LDA %s", _text_size);
-    outline0("STA TEXTSIZE" );
+    outline0("STA <TEXTSIZE" );
 
     if ( _environment->currentMode < 0x10 ) {
         deploy_preferred( clsText, src_hw_gime_cls_text_asm );

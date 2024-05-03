@@ -926,9 +926,9 @@ void c6847_text( Environment * _environment, char * _text, char * _text_size ) {
     deploy( textEncodedAt, src_hw_6847_text_at_asm );
 
     outline1("LDY %s", _text);
-    outline0("STY TEXTPTR" );
+    outline0("STY <TEXTPTR" );
     outline1("LDA %s", _text_size);
-    outline0("STA TEXTSIZE" );
+    outline0("STA <TEXTSIZE" );
 
     if ( _environment->currentMode < 7 ) {
         deploy( clsText, src_hw_6847_cls_text_asm );

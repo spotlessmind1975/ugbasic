@@ -105,7 +105,7 @@ TEXTATTILEMODE
 TEXTATTILEMODEGO
 
     ; Avoid to do anything if there is no text to print.
-    LDA TEXTSIZE
+    LDA <TEXTSIZE
     BNE TEXTATGO
     RTS
 
@@ -136,16 +136,16 @@ TEXTATGO
     ; Initialize the counter for printing tabs.
 
     LDA #0
-    STA TABSTODRAW
+    STA <TABSTODRAW
 
     ; Load in Y register the starting address of the
     ; string to print on the video RAM.
 
-    LDY TEXTPTR
+    LDY <TEXTPTR
 
     ; Load in B the size of the string.
 
-    LDB TEXTSIZE
+    LDB <TEXTSIZE
 
     ; When program reach this point, we are going to
     ; print the next character.
@@ -154,7 +154,7 @@ TEXTATLOOP2
 
     ; If there are TABs to print, we have to skip the printing.
 
-    LDA TABSTODRAW
+    LDA <TABSTODRAW
     LBNE TEXTATSKIPTAB
 
     ; Load the character from the string and move it into the
@@ -213,7 +213,7 @@ TEXTATTAB3
     LDA TABCOUNT
     ANDCC #$01
     SUBA TMPPTR
-    STA TABSTODRAW
+    STA <TABSTODRAW
 
     ; Move to the next character to print.
 
@@ -596,7 +596,7 @@ TEXTATSP0C
     ; character, to move to the next tab marker.
 
 TEXTATSKIPTAB
-    DEC TABSTODRAW
+    DEC <TABSTODRAW
     JMP TEXTATINCX
 
     ; Go ahead by one character.
@@ -673,7 +673,7 @@ TEXTATNEXT
     ; If there are characters to skip to reach
     ; tabs marker, move ahead and loop.
 
-    LDA TABSTODRAW
+    LDA <TABSTODRAW
     LBNE TEXTATLOOP2
 
     ; If there are still characters to print,
