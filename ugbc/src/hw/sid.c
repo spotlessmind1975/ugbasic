@@ -241,6 +241,23 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LDA %s", ( c == NULL ? "#$7" : c ) ); \
     outline0("JSR SIDSTOP" );
 
+#define     PROGRAM_DURATION( c, d ) \
+    outline1("LDX #$%2.2x", ( d & 0xff ) ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDSETDURATION0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDSETDURATION1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDSETDURATION2" ); \
+
+#define     WAIT_DURATION( c ) \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDWAITDURATION0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDWAITDURATION1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDWAITDURATION2" ); \
+
 void sid_set_program( Environment * _environment, int _channels, int _program ) {
 
     deploy( sidvars, src_hw_sid_vars_asm );
@@ -813,6 +830,55 @@ void sid_music( Environment * _environment, char * _music, int _size, int _loop 
     outline0("STA SIDMUSICLOOP");
     outline0("JSR MUSICPLAYERRESET");
     outline0("CLI");
+
+}
+
+void sid_set_duration( Environment * _environment, int _channels, int _duration ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    PROGRAM_DURATION( _channels, _duration );
+
+}
+
+void sid_wait_duration( Environment * _environment, int _channels ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    WAIT_DURATION( _channels );
+
+}
+
+void sid_set_duration_vars( Environment * _environment, char * _channels, char * _duration ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$f" );
+    }
+    outline1("LDX %s", _duration );
+
+    outline0("JSR SIDSETDURATION");
+
+}
+
+void sid_wait_duration_vars( Environment * _environment, char * _channels ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+    
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$f" );
+    }
+
+    outline0("JSR SIDWAITDURATION");
 
 }
 

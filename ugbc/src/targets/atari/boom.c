@@ -118,24 +118,24 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
         pokey_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
         if ( _duration ) {
             Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
-            pokey_set_duration_vars( _environment, NULL, duration->realName );
+            sid_set_duration_vars( _environment, NULL, duration->realName );
         } else {
-            pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+            sid_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
         }
         if ( ! _environment->audioConfig.async ) {
-            pokey_wait_duration_vars( _environment, channels->realName );
+            sid_wait_duration_vars( _environment, channels->realName );
         }
     } else {
         pokey_start_var( _environment, NULL );
         pokey_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
         if ( _duration ) {
             Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
-            pokey_set_duration_vars( _environment, NULL, duration->realName );
+            sid_set_duration_vars( _environment, NULL, duration->realName );
         } else {
-            pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+            sid_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
         }
         if ( ! _environment->audioConfig.async ) {
-            pokey_wait_duration_vars( _environment, NULL );
+            sid_wait_duration_vars( _environment, NULL );
         }
     }
 

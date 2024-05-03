@@ -70,5 +70,11 @@ void shoot( Environment * _environment, int _channels ) {
     sid_start( _environment, _channels );
     sid_set_frequency( _environment, _channels, 1000 );
 
+    sid_set_duration( _environment, _channels, 4 );
+
+    if ( ! _environment->audioConfig.async ) {
+        sid_wait_duration( _environment, _channels );
+    }
+
 }
 
