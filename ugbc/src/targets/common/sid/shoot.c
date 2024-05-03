@@ -32,33 +32,48 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__c128__) || defined(__c64__)
+
 /**
- * @brief Emit ASM code for <b>BOOM ...</b>
+ * @brief Emit ASM code for <b>SHOOT ...</b>
  * 
- * This function emits a code capable of play a explosion-like sound.
+ * This function emits a code capable of play a shoot sound.
  * 
  * @param _environment Current calling environment
  * @param _channels channels to play on
  */
 /* <usermanual>
-@keyword BOOM
-@target c128
-</usermanual> */
-void boom( Environment * _environment, int _duration, int _channels ) {
+@keyword SHOOT
 
-    sid_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
+@english
+This command makes the computer emit an shoot-like sound. It is possible to indicate 
+on which voices the system should emit the sound. If omitted, it will be issued on all.
+
+@italian
+Questo comando fa emettere al computer un suono simile a un colpo. E' possibile
+indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
+
+@syntax SHOOT {ON #[channel]}
+
+@example SHOOT
+@example SHOOT ON %001
+
+@target c128
+@target c64
+</usermanual> */
+void shoot( Environment * _environment, int _channels ) {
+
+    sid_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
     sid_start( _environment, _channels );
     sid_set_frequency( _environment, _channels, 1000 );
 
-    long durationInTicks = ( _duration / 20 ) & 0xff;
-
-    sid_set_duration( _environment, _channels, durationInTicks );
+    sid_set_duration( _environment, _channels, 4 );
 
     if ( ! _environment->audioConfig.async ) {
         sid_wait_duration( _environment, _channels );
@@ -66,46 +81,4 @@ void boom( Environment * _environment, int _duration, int _channels ) {
 
 }
 
-/**
- * @brief Emit ASM code for <b>BOOM ...</b>
- * 
- * This function emits a code capable of play a explosion-like sound.
- * 
- * @param _environment Current calling environment
- * @param _channels channels to play on
- */
-/* <usermanual>
-@keyword BOOM
-@target c128
-</usermanual> */
-void boom_var( Environment * _environment, char * _duration, char * _channels ) {
-
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        sid_start_var( _environment, channels->realName );
-        sid_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
-        if ( _duration ) {
-            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
-            sid_set_duration_vars( _environment, NULL, duration->realName );
-        } else {
-            sid_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
-        }
-        if ( ! _environment->audioConfig.async ) {
-            sid_wait_duration_vars( _environment, channels->realName );
-        }        
-    } else {
-        sid_start_var( _environment, NULL );
-        sid_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
-        if ( _duration ) {
-            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
-            sid_set_duration_vars( _environment, NULL, duration->realName );
-        } else {
-            sid_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
-        }
-        if ( ! _environment->audioConfig.async ) {
-            sid_wait_duration_vars( _environment, NULL );
-        }        
-    }
-    
-}
-
+#endif

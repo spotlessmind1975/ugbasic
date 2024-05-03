@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__c128__) || defined(__c64__)
 
 /**
  * @brief Emit ASM code for <b>BELL ...</b>
@@ -49,13 +51,22 @@
  */
 /* <usermanual>
 @keyword BELL
-@target c64
+
+@target c128
 </usermanual> */
-void bell( Environment * _environment, int _note, int _channels ) {
+void bell( Environment * _environment, int _note, int _duration, int _channels ) {
 
     sid_start( _environment, _channels );
     sid_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
     sid_set_note( _environment, _channels, _note );
+
+    long durationInTicks = ( _duration / 20 ) & 0xff;
+
+    sid_set_duration( _environment, _channels, durationInTicks );
+
+    if ( ! _environment->audioConfig.async ) {
+        sid_wait_duration( _environment, _channels );
+    }
 
 }
 
@@ -71,9 +82,9 @@ void bell( Environment * _environment, int _note, int _channels ) {
 /* <usermanual>
 @keyword BELL
 
-@target c64
+@target c128
 </usermanual> */
-void bell_vars( Environment * _environment, char * _note, char * _channels ) {
+void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels ) {
 
     Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
     if ( _channels ) {
@@ -81,10 +92,30 @@ void bell_vars( Environment * _environment, char * _note, char * _channels ) {
         sid_start_var( _environment, channels->realName );
         sid_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
         sid_set_note_vars( _environment, channels->realName, note->realName );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            sid_set_duration_vars( _environment, NULL, duration->realName );
+        } else {
+            sid_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            sid_wait_duration_vars( _environment, channels->realName );
+        }              
     } else {
         sid_start_var( _environment, NULL );
         sid_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
         sid_set_note_vars( _environment, NULL, note->realName );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            sid_set_duration_vars( _environment, NULL, duration->realName );
+        } else {
+            sid_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            sid_wait_duration_vars( _environment, NULL );
+        }          
     }
 
 }
+
+#endif
