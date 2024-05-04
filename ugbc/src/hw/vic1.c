@@ -1994,6 +1994,24 @@ void vic1_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LDA %s", ( c == NULL ? "#$7" : c ) ); \
     outline0("JSR VIC1FREQ2" );
 
+#define     PROGRAM_DURATION( c, d ) \
+    outline1("LDX #$%2.2x", ( ( d & 0xff ) ) ); \
+    outline1("LDY #$%2.2x", ( ( ( d >> 9 ) & 0xff ) ) ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR VIC1SETDURATION0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR VIC1SETDURATION1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR VIC1SETDURATION2" );
+
+#define     WAIT_DURATION( c ) \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR VIC1WAITDURATION0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR VIC1WAITDURATION1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR VIC1WAITDURATION2" );
+
 #define     PROGRAM_PITCH( c, f ) \
     outline1("LDX #$%2.2x", ( f & 0xff ) ); \
     outline1("LDY #$%2.2x", 0 ); \
@@ -2763,6 +2781,59 @@ int vic1_palette_extract( Environment * _environment, char * _data, int _width, 
     memcpy( _palette, palette_remove_duplicates( _palette, paletteColorCount, &uniquePaletteCount ), paletteColorCount * sizeof( RGBi ) );
 
     return uniquePaletteCount;
+
+}
+
+void vic1_set_duration( Environment * _environment, int _channels, int _duration ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy( vic1startup, src_hw_vic1_startup_asm );
+
+    PROGRAM_DURATION( _channels, _duration );
+
+}
+
+void vic1_wait_duration( Environment * _environment, int _channels ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy( vic1startup, src_hw_vic1_startup_asm );
+
+    WAIT_DURATION( _channels );
+
+}
+
+void vic1_set_duration_vars( Environment * _environment, char * _channels, char * _duration ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy( vic1startup, src_hw_vic1_startup_asm );
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$f" );
+    }
+    if ( _duration ) {
+        outline1("LDX %s", _duration );
+    } else {
+        outline0("LDX #50" );
+    }
+    
+    outline0("JSR VIC1SETDURATION");
+
+}
+
+void vic1_wait_duration_vars( Environment * _environment, char * _channels ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy( vic1startup, src_hw_vic1_startup_asm );
+    
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$f" );
+    }
+
+    outline0("JSR VIC1WAITDURATION");
 
 }
 

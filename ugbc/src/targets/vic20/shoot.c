@@ -70,5 +70,11 @@ void shoot( Environment * _environment, int _channels ) {
     vic1_start( _environment, _channels );
     vic1_set_frequency( _environment, _channels, 1000 );
 
+    vic1_set_duration( _environment, _channels, 4 );
+
+    if ( ! _environment->audioConfig.async ) {
+        vic1_wait_duration( _environment, _channels );
+    }
+
 }
 

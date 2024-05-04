@@ -50,11 +50,19 @@
 @keyword BOOM
 @target vic20
 </usermanual> */
-void boom( Environment * _environment, int _channels ) {
+void boom( Environment * _environment, int _duration, int _channels ) {
 
     vic1_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
     vic1_start( _environment, _channels );
     vic1_set_frequency( _environment, _channels, 1000 );
+
+    long durationInTicks = ( _duration / 20 ) & 0xff;
+
+    vic1_set_duration( _environment, _channels, durationInTicks );
+
+    if ( ! _environment->audioConfig.async ) {
+        vic1_wait_duration( _environment, _channels );
+    }
 
 }
 
@@ -70,16 +78,37 @@ void boom( Environment * _environment, int _channels ) {
 @keyword BOOM
 @target vic20
 </usermanual> */
-void boom_var( Environment * _environment, char * _channels ) {
+void boom_var( Environment * _environment, char * _duration, char * _channels ) {
 
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         vic1_start_var( _environment, channels->realName );
         vic1_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
+            vic1_set_duration_vars( _environment, channels->realName, duration->realName );
+        } else {
+            vic1_set_duration_vars( _environment, channels->realName, NULL );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            vic1_wait_duration_vars( _environment, channels->realName );
+        }        
     } else {
         vic1_start_var( _environment, NULL );
         vic1_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
+            vic1_set_duration_vars( _environment, NULL, duration->realName );
+        } else {
+            vic1_set_duration_vars( _environment, NULL, NULL );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            vic1_wait_duration_vars( _environment, NULL );
+        }        
     }
+
     
 }
 
