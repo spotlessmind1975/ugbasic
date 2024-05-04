@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__coleco__) || defined(__sc3000__)
+#if defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
 
 /**
  * @brief Emit ASM code for <b>BOOM ...</b>

@@ -146,6 +146,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
 
+    variable_import( _environment, "SN76489TIMER", VT_BUFFER, 6 );
+    variable_global( _environment, "SN76489TIMER" );    
+
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
