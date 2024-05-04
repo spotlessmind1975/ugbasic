@@ -151,6 +151,23 @@ void sn76489m_set_volume( Environment * _environment, int _channels, int _volume
     } \
     outline0("JSR SN76489FREQ" );
 
+#define     PROGRAM_DURATION( c, d ) \
+    outline1("LDU #$%4.4x", ( d ) ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SN76489PROGDUR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SN76489PROGDUR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SN76489PROGDUR2" );
+
+#define     WAIT_DURATION( c ) \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SN76489WAITDUR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SN76489WAITDUR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SN76489WAITDUR2" );
+
 #define     PROGRAM_PITCH( c, f ) \
     outline1("LDU $%4.4x", ( f & 0xff ) ); \
     if ( ( c & 0x01 ) ) \
@@ -776,6 +793,59 @@ void sn76489m_music( Environment * _environment, char * _music, int _size, int _
     outline1("LDA #$%2.2x", _type );
     outline0("STA SN76489MUSICTYPE" );
     outline0("ANDCC #$AF");
+
+}
+
+void sn76489m_set_duration( Environment * _environment, int _channel, int _duration ) {
+
+    deploy( sn76489vars, src_hw_sn76489m_vars_asm );
+    deploy( sn76489startup, src_hw_sn76489m_startup_asm );
+
+    PROGRAM_DURATION( _channel, _duration );
+
+}
+
+void sn76489m_wait_duration( Environment * _environment, int _channel ) {
+
+    deploy( sn76489vars, src_hw_sn76489m_vars_asm );
+    deploy( sn76489startup, src_hw_sn76489m_startup_asm );
+
+    WAIT_DURATION( _channel );
+
+}
+
+void sn76489m_set_duration_vars( Environment * _environment, char * _channel, char * _duration ) {
+
+    deploy( sn76489vars, src_hw_sn76489m_vars_asm );
+    deploy( sn76489startup, src_hw_sn76489m_startup_asm );
+
+    if ( _duration ) {
+        outline1("LDU %s", _duration );
+    } else {
+        outline0("LDU #50" );
+    }
+    if ( _channel ) {
+        outline1("LDA %s", _channel );
+    } else {
+        outline0("LDA #$7" );
+    }
+
+    outline0("JSR SN76489PROGDUR" );
+
+}
+
+void sn76489m_wait_duration_vars( Environment * _environment, char *  _channel ) {
+
+    deploy( sn76489vars, src_hw_sn76489m_vars_asm );
+    deploy( sn76489startup, src_hw_sn76489m_startup_asm );
+
+    if ( _channel ) {
+        outline1("LDA %s", _channel );
+    } else {
+        outline0("LDA #$7" );
+    }
+    
+    outline0("JSR SN76489WAITDUR" );
 
 }
 

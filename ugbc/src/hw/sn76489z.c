@@ -1090,7 +1090,7 @@ void sn76489z_set_duration_vars( Environment * _environment, char * _channel, ch
     if ( _channel ) {
         outline1("LD A, (%s)", _channel );
     } else {
-        outline0("LD A, 3" );
+        outline0("LD A, $7" );
     }
 
     outline0("CALL SN76489PROGDUR" );
@@ -1105,7 +1105,7 @@ void sn76489z_wait_duration_vars( Environment * _environment, char *  _channel )
     if ( _channel ) {
         outline1("LD A, (%s)", _channel );
     } else {
-        outline0("LD A, 3" );
+        outline0("LD A, $7" );
     }
     
     outline0("CALL SN76489WAITDUR" );
