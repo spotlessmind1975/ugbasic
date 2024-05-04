@@ -208,4 +208,4 @@ BLITR1 = $F2 ; $F3
 BLITR2 = $F0 ; $F1
 BLITR3 = $EE ; $EF
 
-VIC1TIMER:  .word $0, $0, $0
+VIC1TIMER:  .byte $0, $0, $0
