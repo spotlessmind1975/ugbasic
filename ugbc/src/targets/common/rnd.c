@@ -101,8 +101,8 @@ Variable * rnd( Environment * _environment, char * _value ) {
     switch( VT_BITWIDTH( value->type ) ) {
         case 32:
             cpu_math_div_32bit_to_16bit( _environment, result->realName, value->realName, ignored->realName, remainder->realName, 0 );
-            cpu_move_32bit( _environment, remainder->realName, result->realName );
-            cpu_move_32bit( _environment, remainder->realName, last_random->realName );
+            cpu_move_16bit( _environment, remainder->realName, result->realName );
+            cpu_move_16bit( _environment, remainder->realName, last_random->realName );
             cpu_jump( _environment, endLabel );
             break;
         case 16:
