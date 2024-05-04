@@ -2225,6 +2225,20 @@ void ted_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
     outline0("JSR TEDFREQ2" );
 
+#define     PROGRAM_DURATION( c, d ) \
+    outline1("LDX #$%2.2x", ( d ) & 0xff ); \
+    outline1("LDY #$%2.2x", ( ( d ) >> 8 ) & 0xff ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDPROGDUR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDPROGDUR1" ); \
+
+#define     WAIT_DURATION( c ) \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDWAITDUR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDWAITDUR1" ); \
+
 #define     PROGRAM_PITCH( c, f ) \
     outline1("LDX #$%2.2x", ( f & 0xff ) ); \
     outline1("LDY #$%2.2x", ( ( f >> 8 ) & 0xff ) ); \
@@ -3020,6 +3034,59 @@ void ted_flip_image( Environment * _environment, Resource * _image, char * _fram
 
     }
 
+
+}
+
+void ted_set_duration( Environment * _environment, int _channels, int _duration ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    PROGRAM_DURATION( _channels, _duration );
+
+}
+
+void ted_wait_duration( Environment * _environment, int _channels ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    WAIT_DURATION( _channels );
+
+}
+
+void ted_set_duration_vars( Environment * _environment, char * _channels, char * _duration ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$3" );
+    }
+    if ( _duration ) {
+        outline1("LDX %s", _duration );
+    } else {
+        outline0("LDX #50" );
+    }
+    
+    outline0("JSR TEDPROGDUR");
+
+}
+
+void ted_wait_duration_vars( Environment * _environment, char * _channels ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+    
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$3" );
+    }
+
+    outline0("JSR TEDWAITDUR");
 
 }
 

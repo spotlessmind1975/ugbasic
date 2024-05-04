@@ -70,5 +70,11 @@ void shoot( Environment * _environment, int _channels ) {
     ted_start( _environment, _channels );
     ted_set_frequency( _environment, _channels, 1000 );
 
+    ted_set_duration( _environment, _channels, 4 );
+
+    if ( ! _environment->audioConfig.async ) {
+        ted_wait_duration( _environment, _channels );
+    }
+    
 }
 
