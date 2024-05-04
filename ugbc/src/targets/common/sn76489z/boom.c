@@ -32,30 +32,31 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__coleco__) || defined(__sc3000__)
+
 /**
- * @brief Emit ASM code for <b>BELL ...</b>
+ * @brief Emit ASM code for <b>BOOM ...</b>
  * 
- * This function emits a code capable of play a bell sound
+ * This function emits a code capable of play a explosion-like sound.
  * 
  * @param _environment Current calling environment
- * @param _pitch frequency to play
  * @param _channels channels to play on
  */
 /* <usermanual>
-@keyword BELL
+@keyword BOOM
 @target coleco
 </usermanual> */
-void bell( Environment * _environment, int _note, int _duration, int _channels ) {
+void boom( Environment * _environment, int _duration, int _channels ) {
 
+    sn76489z_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
     sn76489z_start( _environment, _channels );
-    sn76489z_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
-    sn76489z_set_note( _environment, _channels, _note );
+    sn76489z_set_frequency( _environment, _channels, 1000 );
 
     long durationInCycles = ( _duration / 20 ) & 0xffff;
 
@@ -68,36 +69,32 @@ void bell( Environment * _environment, int _note, int _duration, int _channels )
 }
 
 /**
- * @brief Emit ASM code for <b>BELL ...</b>
+ * @brief Emit ASM code for <b>BOOM ...</b>
  * 
- * This function emits a code capable of play a bell-like sound.
+ * This function emits a code capable of play a explosion-like sound.
  * 
  * @param _environment Current calling environment
- * @param _pitch frequency to play
  * @param _channels channels to play on
  */
 /* <usermanual>
-@keyword BELL
+@keyword BOOM
 @target coleco
 </usermanual> */
-void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels ) {
+void boom_var( Environment * _environment, char * _duration, char * _channels ) {
 
-    Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         sn76489z_start_var( _environment, channels->realName );
-        sn76489z_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
-        sn76489z_set_note_vars( _environment, channels->realName, note->realName );
+        sn76489z_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
     } else {
         sn76489z_start_var( _environment, NULL );
-        sn76489z_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
-        sn76489z_set_note_vars( _environment, NULL, note->realName );
+        sn76489z_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
     }
 
     if ( _duration ) {
-        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 1500 );
+        Variable * duration = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
-        sn76489z_set_duration_vars( _environment, duration->realName, _channels );
+        sn76489z_set_duration_vars( _environment, _channels, duration->realName );
     } else {
         sn76489z_set_duration_vars( _environment, _channels, NULL );
     } 
@@ -107,3 +104,5 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
     }
 
 }
+
+#endif

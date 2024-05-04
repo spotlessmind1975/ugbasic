@@ -745,6 +745,7 @@ SOURCES += $(wildcard src/targets/common/6809/*.c)
 SOURCES += $(wildcard src/targets/common/z80/*.c)
 SOURCES += $(wildcard src/targets/common/k7mo/*.c)
 SOURCES += $(wildcard src/targets/common/sid/*.c)
+SOURCES += $(wildcard src/targets/common/sn76489z/*.c)
 SOURCES += $(wildcard src/targets/$(target)/*.c)
 SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 

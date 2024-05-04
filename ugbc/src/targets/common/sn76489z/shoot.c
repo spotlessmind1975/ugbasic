@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__coleco__) || defined(__sc3000__)
 
 /**
  * @brief Emit ASM code for <b>SHOOT ...</b>
@@ -62,7 +64,7 @@ indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà eme
 @example SHOOT
 @example SHOOT ON %001
 
-@target sc3000
+@target coleco
 </usermanual> */
 void shoot( Environment * _environment, int _channels ) {
 
@@ -70,5 +72,12 @@ void shoot( Environment * _environment, int _channels ) {
     sn76489z_start( _environment, _channels );
     sn76489z_set_frequency( _environment, _channels, 1000 );
 
+    sn76489z_set_duration( _environment, 4, _channels );
+
+    if ( ! _environment->audioConfig.async ) {
+        sn76489z_wait_duration( _environment, _channels );
+    }
+
 }
 
+#endif
