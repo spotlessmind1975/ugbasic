@@ -92,8 +92,8 @@ CLINEY equ $4c
 
 BITSTOCONVERT equ $4a
 
-XCURSYS fcb 0
-YCURSYS fcb 0
+XCURSYS equ $4d
+YCURSYS equ $4e
 
 BANKSHADOW      fcb     $00
 
