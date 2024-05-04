@@ -136,6 +136,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
     variable_global( _environment, "TICKSPERSECOND" );   
 
+    variable_import( _environment, "AY8910TIMER", VT_BUFFER, 6 );
+    variable_global( _environment, "AY8910TIMER" );    
+
     variable_import( _environment, "KBDCHAR", VT_BYTE, 0 );
     variable_global( _environment, "KBDCHAR" );
     variable_import( _environment, "KBDRATE", VT_BYTE, 16 );
