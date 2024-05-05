@@ -70,7 +70,7 @@ void target_initialization( Environment * _environment ) {
     banks_init( _environment );
 
     _environment->audioConfig.async = 1;
-    _environment->audioConfig.device = ADN_POKEY;
+    _environment->audioConfig.target = ADN_POKEY;
     
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xb000, 0xbfff );
 
