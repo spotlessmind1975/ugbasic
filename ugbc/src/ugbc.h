@@ -2874,6 +2874,7 @@ typedef struct _Environment {
 #define CRITICAL_FLIP_IMAGE_UNSUPPORTED(v,t) CRITICAL3("E277 - unsupported type for FLIP IMAGE", v, t );
 #define CRITICAL_CANNOT_FLIP_BANKED_IMAGE(v) CRITICAL2("E278 - cannot FLIP BANKED IMAGE", v );
 #define CRITICAL_CANNOT_FLIP_COMPRESSED_IMAGE(v) CRITICAL2("E279 - cannot FLIP COMPRESSED IMAGE(S)", v );
+#define CRITICAL_CANNOT_CAST_FLOAT_32BIT_UNSIGNED(v) CRITICAL2("E280 - cannot convert UNSIGNED DWORD to FLOAT", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
