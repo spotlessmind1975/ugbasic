@@ -292,6 +292,18 @@ typedef enum _HardwareParameterName {
 
 } HardwareParameterName;
 
+typedef enum _AudioDeviceName {
+
+    ADN_SN76489 = 1,
+    ADN_POKEY = 2,
+    ADN_SID = 3,
+    ADN_DAC1 = 4,
+    ADN_AY8910 = 5,
+    ADN_TED = 6,
+    ADN_VIC1 = 6
+
+} AudioDeviceName;
+
 /**
  * @brief Structure of a single (option) setting
  */
@@ -1664,7 +1676,8 @@ typedef struct _FontConfig {
 
 typedef struct _AudioConfig {
 
-    int async;
+    int                 async;
+    AudioDeviceName     target;
 
 } AudioConfig;
 
@@ -2887,9 +2900,10 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_FLIP_BANKED_IMAGE(v) CRITICAL2("E278 - cannot FLIP BANKED IMAGE", v );
 #define CRITICAL_CANNOT_FLIP_COMPRESSED_IMAGE(v) CRITICAL2("E279 - cannot FLIP COMPRESSED IMAGE(S)", v );
 #define CRITICAL_CANNOT_CAST_FLOAT_32BIT_UNSIGNED(v) CRITICAL2("E280 - cannot convert UNSIGNED DWORD to FLOAT", v );
-#define CRITICAL_BOOM_NOT_ASYNC(v) CRITICAL("E281 - cannot BOOM in asyncronous mode on this target" );
-#define CRITICAL_SHOOT_NOT_ASYNC(v) CRITICAL("E282 - cannot SHOOT in asyncronous mode on this target" );
-#define CRITICAL_BELL_NOT_ASYNC(v) CRITICAL("E283 - cannot BELL in asyncronous mode on this target" );
+#define CRITICAL_BOOM_NOT_ASYNC() CRITICAL("E281 - cannot BOOM in asyncronous mode on this target" );
+#define CRITICAL_SHOOT_NOT_ASYNC() CRITICAL("E282 - cannot SHOOT in asyncronous mode on this target" );
+#define CRITICAL_BELL_NOT_ASYNC() CRITICAL("E283 - cannot BELL in asyncronous mode on this target" );
+#define CRITICAL_AUDIO_SOURCE_UNAVAILABLE() CRITICAL("E284 - AUDIO SOURCE unavailable for this target" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3827,6 +3841,8 @@ void setup_text_variables( Environment * _environment );
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
+
+int define_audio_target_check( Environment * _environment, int _value );
 
 void banks_init( Environment * _environment );
 void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count, int _allowed_size );

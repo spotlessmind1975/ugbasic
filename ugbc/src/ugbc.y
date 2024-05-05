@@ -169,6 +169,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> optional_loop
 %type <integer> configure_name
 %type <integer> option_name
+%type <integer> audio_source
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -7512,12 +7513,23 @@ precision :
     }
     ;
 
+audio_source :
+    SN76489 {
+        $$ = ADN_SN76489;
+    };
+
 define_definition :
       AUDIO SYNC {
         ((struct _Environment *)_environment)->audioConfig.async = 0;
     }
     | AUDIO ASYNC {
         ((struct _Environment *)_environment)->audioConfig.async = 1;
+    }
+    | AUDIO TARGET audio_source {
+        if ( ! define_audio_target_check( _environment, $3 ) ) {
+            CRITICAL_AUDIO_TARGET_UNAVAILABLE( );
+        }
+        ((struct _Environment *)_environment)->audioConfig.target = $3;
     }
     | FONT font_schema {
         ((struct _Environment *)_environment)->fontConfig.schema = $2;
