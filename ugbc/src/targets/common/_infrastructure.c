@@ -2218,6 +2218,26 @@ static void variable_move_1bit_1bit( Environment * _environment, Variable * _sou
 }
 
 /**
+ * @brief (internal) routine to move 32 bit to 16 bit
+ * 
+ * @param _environment Environment for execution
+ * @param _source Variable with source of data (32 bit, signed / unsigned)
+ * @param _target Variable with target of data (16 bit, signed / unsigned)
+ */
+static void variable_move_higher_32bit_16bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * temp = variable_temporary( _environment, _target->type, "(temp)");
+
+#if CPU_BIG_ENDIAN
+    cpu_move_16bit( _environment, _source->realName, temp->realName );
+#else
+    cpu_move_16bit( _environment, address_displacement( _environment, _source->realName, "2" ), temp->realName );
+#endif
+    variable_move_16bit_16bit( _environment, temp, _target );
+
+}
+
+/**
  * @brief Store the value of a variable inside another variable by converting it
  * 
  * This function allows you to store the value of one variable in another, 
@@ -2295,18 +2315,25 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                             break;
                         case VT_FLOAT:
                             WARNING_DOWNCAST( _source, target->name );
-                            Variable * word = variable_temporary( _environment, VT_WORD, "(word)");
-                            variable_move( _environment, source->name, word->name );
+                            if ( ! VT_SIGNED( source->type ) ) {
+                                CRITICAL_CANNOT_CAST_FLOAT_32BIT_UNSIGNED( _source );
+                            }
+                            Variable * word = variable_temporary( _environment, VT_SWORD, "(word)");
+                            Variable * scale = variable_temporary( _environment, VT_FLOAT, "(scale)");
+                            variable_store_float( _environment, scale->name, 65536 );
+                            variable_move_higher_32bit_16bit( _environment, source, word );
                             switch( target->precision ) {
                                 case FT_FAST:
                                     cpu_float_fast_from_16( _environment, word->realName, target->realName, VT_SIGNED( source->type ) );
+                                    cpu_float_fast_mul( _environment, target->realName, scale->realName, target->realName );
                                     break;
                                 case FT_SINGLE:
                                     cpu_float_single_from_16( _environment, word->realName, target->realName, VT_SIGNED( source->type ) );
+                                    cpu_float_fast_mul( _environment, target->realName, scale->realName, target->realName );
                                     break;
                                 default:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-                            }                            
+                            }
                             break;
                         default:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);

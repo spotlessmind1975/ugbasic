@@ -2886,9 +2886,10 @@ typedef struct _Environment {
 #define CRITICAL_FLIP_IMAGE_UNSUPPORTED(v,t) CRITICAL3("E277 - unsupported type for FLIP IMAGE", v, t );
 #define CRITICAL_CANNOT_FLIP_BANKED_IMAGE(v) CRITICAL2("E278 - cannot FLIP BANKED IMAGE", v );
 #define CRITICAL_CANNOT_FLIP_COMPRESSED_IMAGE(v) CRITICAL2("E279 - cannot FLIP COMPRESSED IMAGE(S)", v );
-#define CRITICAL_BOOM_NOT_ASYNC(v) CRITICAL("E280 - cannot BOOM in asyncronous mode on this target" );
-#define CRITICAL_SHOOT_NOT_ASYNC(v) CRITICAL("E281 - cannot SHOOT in asyncronous mode on this target" );
-#define CRITICAL_BELL_NOT_ASYNC(v) CRITICAL("E282 - cannot BELL in asyncronous mode on this target" );
+#define CRITICAL_CANNOT_CAST_FLOAT_32BIT_UNSIGNED(v) CRITICAL2("E280 - cannot convert UNSIGNED DWORD to FLOAT", v );
+#define CRITICAL_BOOM_NOT_ASYNC(v) CRITICAL("E281 - cannot BOOM in asyncronous mode on this target" );
+#define CRITICAL_SHOOT_NOT_ASYNC(v) CRITICAL("E282 - cannot SHOOT in asyncronous mode on this target" );
+#define CRITICAL_BELL_NOT_ASYNC(v) CRITICAL("E283 - cannot BELL in asyncronous mode on this target" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
