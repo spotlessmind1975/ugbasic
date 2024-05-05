@@ -204,7 +204,8 @@ typedef enum _MusicType {
     MUSIC_TYPE_AUTO = 0,
     MUSIC_TYPE_IAF = 1,
     MUSIC_TYPE_MID = 2,
-    MUSIC_TYPE_PSG = 4
+    MUSIC_TYPE_PSG = 4,
+    MUSIC_TYPE_SJ2 = 5 // 2 voice squarewave
 
 } MusicType;
 
@@ -1542,6 +1543,7 @@ typedef struct _Deployed {
     int sn76489startup;
     int sn76489startup2;
     int audio1startup;
+    int audio1bitnoirq;
 
     int draw;
     int bar;
@@ -2904,6 +2906,8 @@ typedef struct _Environment {
 #define CRITICAL_SHOOT_NOT_ASYNC() CRITICAL("E282 - cannot SHOOT in asyncronous mode on this target" );
 #define CRITICAL_BELL_NOT_ASYNC() CRITICAL("E283 - cannot BELL in asyncronous mode on this target" );
 #define CRITICAL_AUDIO_TARGET_UNAVAILABLE() CRITICAL("E284 - AUDIO SOURCE unavailable for this target" );
+#define CRITICAL_CANNOT_MUSIC_ON_AUDIO_DEVICE(v) CRITICAL2("E285 - cannot MUSIC on the given AUDIO TARGET", v );
+#define CRITICAL_MUSIC_NOT_ASYNC() CRITICAL("E283 - cannot MUSIC in asyncronous mode on this target" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

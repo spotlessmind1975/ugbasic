@@ -59,6 +59,9 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
         if ( music->type != VT_MUSIC ) {
             CRITICAL_CANNOT_MUSIC( _music );
         }
+        if ( _environment->audioConfig.target != ADN_SN76489 ) {
+            CRITICAL_CANNOT_MUSIC_ON_AUDIO_DEVICE( _music );
+        }
         if ( music->bankAssigned != -1 ) {
             char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#$%4.4x", 0x6000 + music->absoluteAddress );
             sn76489m_music( _environment, musicAddress, music->size, _loop, MUSIC_TYPE_IAF, music->bankAssigned );
@@ -66,16 +69,42 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
             char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#%s", music->realName );
             sn76489m_music( _environment, musicAddress, music->size, _loop, MUSIC_TYPE_IAF, music->bankAssigned );
         }
+        sn76489m_start( _environment, 0xff );
     } else {
-        if ( music->bankAssigned != -1 ) {
-            char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#$%4.4x", 0x6000 + music->absoluteAddress );
-            sn76489m_music( _environment, musicAddress, music->size, _loop, _music_type, music->bankAssigned );
-        } else {
-            char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#%s", music->realName );
-            sn76489m_music( _environment, musicAddress, music->size, _loop, _music_type, music->bankAssigned );
+        switch( _music_type ) {
+            case MUSIC_TYPE_PSG: {
+                    if ( music->bankAssigned != -1 ) {
+                        char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#$%4.4x", 0x6000 + music->absoluteAddress );
+                        sn76489m_music( _environment, musicAddress, music->size, _loop, _music_type, music->bankAssigned );
+                    } else {
+                        char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#%s", music->realName );
+                        sn76489m_music( _environment, musicAddress, music->size, _loop, _music_type, music->bankAssigned );
+                    }
+                    sn76489m_start( _environment, 0xff );
+                }
+                break;
+            case MUSIC_TYPE_SJ2: {
+
+                    char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#%s", music->realName );
+
+                    if ( _environment->audioConfig.async ) {
+                        CRITICAL_MUSIC_NOT_ASYNC( );
+                    }
+
+                    deploy( audio1bitnoirq, src_hw_coco_audio1bitnoirq_asm );
+
+                    outline1("LDX %s", musicAddress);
+                    outline0("STX AUDIO1BITNOIRQOLDU+1");
+                    outline1("LDD #$%4.4x", music->size );
+                    outline0("LEAX D, X" );
+                    outline0("STX AUDIO1BITNOIRQCURNOTEENDZIX+2");
+                    outline1("LDX %s", musicAddress);
+                    outline0("JSR AUDIO1BITNOIRQ");
+
+                }
+                break;
         }
     }
-    sn76489m_start( _environment, 0xff );
 
 }
 
