@@ -2903,7 +2903,7 @@ typedef struct _Environment {
 #define CRITICAL_BOOM_NOT_ASYNC() CRITICAL("E281 - cannot BOOM in asyncronous mode on this target" );
 #define CRITICAL_SHOOT_NOT_ASYNC() CRITICAL("E282 - cannot SHOOT in asyncronous mode on this target" );
 #define CRITICAL_BELL_NOT_ASYNC() CRITICAL("E283 - cannot BELL in asyncronous mode on this target" );
-#define CRITICAL_AUDIO_SOURCE_UNAVAILABLE() CRITICAL("E284 - AUDIO SOURCE unavailable for this target" );
+#define CRITICAL_AUDIO_TARGET_UNAVAILABLE() CRITICAL("E284 - AUDIO SOURCE unavailable for this target" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
