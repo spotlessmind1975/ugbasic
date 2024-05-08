@@ -109,6 +109,13 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "PROTOTHREADCT" );
     variable_import( _environment, "CPURANDOM_SEED", VT_DWORD, 0xffffffff );
     variable_global( _environment, "CPURANDOM_SEED" );
-
+    variable_define( _environment, "PLAYDURATION", VT_BYTE, 64 );
+    variable_global( _environment, "PLAYDURATION" );
+    variable_define( _environment, "PLAYOCTAVE", VT_BYTE, 2 );
+    variable_global( _environment, "PLAYOCTAVE" );
+    variable_define( _environment, "PLAYTEMPO", VT_BYTE, 2 );
+    variable_global( _environment, "PLAYTEMPO" );
+    variable_define( _environment, "PLAYVOLUME", VT_BYTE, 15 );
+    variable_global( _environment, "PLAYVOLUME" );
 
 }

@@ -7042,7 +7042,12 @@ play_definition_simple :
 
 play_definition_expression : 
     expr {
-        play_vars( _environment, $1, NULL, NULL );
+        Variable * var = variable_retrieve_or_define( _environment, $1, VT_DWORD, 0 );
+        if ( var->type == VT_STRING || var->type == VT_DSTRING ) {
+            play_string( _environment, $1 );
+        } else {
+            play_vars( _environment, $1, NULL, NULL );
+        }
     }
     | expr OP_COMMA expr {
         play_vars( _environment, $1, $3, NULL );
