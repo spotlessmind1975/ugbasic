@@ -156,7 +156,7 @@ CALCPOS8:
     LDA #2
     STA PATTERN
 
-    LDA <XCURSYS
+    LDA XCURSYS
     ASL A
     TAX                        ;tbl_8,x index
 
@@ -195,7 +195,7 @@ CALCPOS9:
     LDA #1
     STA PATTERN
 
-    LDA <XCURSYS
+    LDA XCURSYS
     TAX                        ;tbl_8,x index
 
     ;-------------------------
@@ -233,7 +233,7 @@ CALCPOS10:
     LDA #2
     STA PATTERN
 
-    LDA <XCURSYS
+    LDA XCURSYS
     ASL A
     TAX                        ;tbl_8,x index
 
@@ -272,7 +272,7 @@ CALCPOS11:
     LDA #1
     STA PATTERN
 
-    LDA <XCURSYS
+    LDA XCURSYS
     TAX                        ;tbl_8,x index
 
     ;-------------------------
@@ -310,7 +310,7 @@ CALCPOS12:
     LDA #1
     STA PATTERN
 
-    LDA <XCURSYS
+    LDA XCURSYS
     ; ASL A
     TAX                        ;tbl_8,x index
 
@@ -349,7 +349,7 @@ CALCPOS13:
     LDA #2
     STA PATTERN
 
-    LDA <XCURSYS
+    LDA XCURSYS
     ASL A
     TAX                        ;tbl_8,x index
 
@@ -388,7 +388,7 @@ CALCPOS14:
     LDA #0
     STA PATTERN
 
-    LDA <XCURSYS
+    LDA XCURSYS
     ; ASL A
     TAX                        ;tbl_8,x index
 
@@ -427,7 +427,7 @@ CALCPOS15:
     LDA #0
     STA PATTERN
 
-    LDA <XCURSYS
+    LDA XCURSYS
     TAX                        ;tbl_8,x index
 
     ;-------------------------
@@ -623,7 +623,7 @@ TEXTATBMXCC:
     JMP TEXTATBMSP0
 
 TEXTATBMTAB:
-    LDA <XCURSYS
+    LDA XCURSYS
 TEXTATBMTAB2:
     CMP TABCOUNT
     BCC TEXTATBMTAB3
@@ -676,7 +676,7 @@ TEXTATBMLF:
     INC TEXTPTR
     DEX
     LDA #0
-    STA <XCURSYS
+    STA XCURSYS
     INC YCURSYS
     JSR CALCPOSG
     JMP TEXTATBMNEXT2
@@ -725,8 +725,8 @@ TEXTATBMCMOVEPREPARE:
 TEXTATBMCMOVE:
     CLC
     LDA CLINEX
-    ADC <XCURSYS
-    STA <XCURSYS
+    ADC XCURSYS
+    STA XCURSYS
     LDA CLINEY
     ADC YCURSYS
     STA YCURSYS
@@ -738,7 +738,7 @@ TEXTATBMAT:
     DEX
     LDA (TEXTPTR), Y
     SEC
-    SBC <XCURSYS
+    SBC XCURSYS
     STA CLINEX
     INC TEXTPTR
     DEX
@@ -909,14 +909,14 @@ TEXTATBMSKIPTAB:
     JMP TEXTATBMINCX
 
 TEXTATBMINCX:
-    INC <XCURSYS
-    LDA <XCURSYS
+    INC XCURSYS
+    LDA XCURSYS
     CMP CURRENTWIDTH
     BEQ TEXTATBMNEXT2
     JMP TEXTATBMNEXT
 TEXTATBMNEXT2:
     LDA #0
-    STA <XCURSYS
+    STA XCURSYS
     INC YCURSYS
     LDA YCURSYS
     CMP #23
