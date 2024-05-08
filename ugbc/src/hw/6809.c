@@ -4609,6 +4609,57 @@ void cpu6809_lowercase( Environment * _environment, char *_source, char *_size, 
 
 }
 
+void cpu6809_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value ) {
+
+    inline( cpu_convert_string_into_16bit )
+
+        MAKE_LABEL
+
+        // Y = 0
+        outline1("LDB %s", _len);
+        outline1("beq %sdone", label );
+        outline0("STB ,-S");
+        outline1("LDU %s", _string);
+
+        outline0("LDX #0");
+        outhead1("%sloop", label );
+        
+        // X=X*10
+        outline0("TFR X,D");    //6
+        outline0("LSLB");       //2
+        outline0("ROLA");       //2
+        outline0("TFR D,X");    //6 D=X=2val
+        outline0("LSLB");       //2 
+        outline0("ROLA");       //2 D=4val
+        outline0("LSLB");       //2 
+        outline0("ROLA");       //2 D=8val
+        outline0("LEAX D,X");   //8 D=8val+2val=10val (32 cycles)
+                
+        // leggo carattere
+        outline0("LDB ,U+" );
+
+        // numero? no -> fine
+        outline0("SUBB #48" );
+        outline1("BMI %sdone", label );
+        outline0("CMPB #9" );
+        outline1("BHI %sdone", label );
+
+        // aggiungo il numero al registro X
+        outline0("ABX");
+        
+        // ripeti
+        outline0("DEC ,S" );
+        outline1("BNE %sloop", label );
+
+        outhead1("%sdone", label );
+        outline0("LEAS 1,S");
+        outline0("TFR X, D" );
+        outline1("STB %s", _value );
+
+    no_embedded( cpu_convert_string_into_16bit )
+
+}
+
 void cpu6809_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
     inline( cpu_convert_string_into_16bit )

@@ -5665,6 +5665,27 @@ void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, 
 
 }
 
+void cpu6502_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value ) {
+
+    MAKE_LABEL
+
+    no_inline( cpu_convert_string_into_16bit )
+
+    embedded( cpu_convert_string_into_16bit, src_hw_6502_cpu_convert_string_into_16bit_asm );
+
+        outline1("LDA %s", address_displacement(_environment, _string, "1") );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _string  );
+        outline0("STA TMPPTR" );
+        outline1("LDX %s", _len );
+        outline0("JSR CPUCONVERTSTRINGINTO16BIT" );
+        outline0("LDA CPUCONVERTSTRINGINTO16BIT_VALUE" );
+        outline1("STA %s", _value );
+
+    done()
+
+}
+
 void cpu6502_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
     MAKE_LABEL

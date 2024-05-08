@@ -4736,6 +4736,16 @@ void z80_lowercase( Environment * _environment, char *_source, char *_size, char
 
 }
 
+void z80_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value ) {
+
+    Variable * temp = variable_temporary( _environment, VT_WORD, "(temp)" );
+
+    z80_convert_string_into_16bit( _environment, _string, _len, temp->realName );
+
+    z80_move_8bit( _environment, temp->realName, _value );
+  
+}
+
 void z80_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
     MAKE_LABEL
