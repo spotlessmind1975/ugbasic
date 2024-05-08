@@ -90,13 +90,6 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
     deploy( random, src_hw_6809_cpu_random_asm );
     deploy( audio1startup, src_hw_coco_audio1_asm );
 
-    if ( _note ) {
-        Variable * note = variable_retrieve_or_define( _environment, _note, VT_BYTE, 0 );
-        outline1( "LDB %s", note->realName );
-    } else {
-        outline0( "LDB #36" );
-    }
-
     if ( _duration ) {
         Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 3500 );
 
@@ -112,6 +105,14 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
     } else {
         
     }
+
+    if ( _note ) {
+        Variable * note = variable_retrieve_or_define( _environment, _note, VT_BYTE, 0 );
+        outline1( "LDB %s ; note!", note->realName );
+    } else {
+        outline0( "LDB #36" );
+    }
+
     cpu_call( _environment, "COCOAUDIO1BELL" );
 
 }
