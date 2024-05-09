@@ -77,6 +77,8 @@ void console( Environment * _environment, int _x1, int _y1, int _x2, int _y2 ) {
     int realWidth = ( _x2 - _x1 ) > 0 ? ( ( _x2 - _x1 ) + 1 ) : ( ( _environment->screenTilesWidth - _x1 ) + 1 );
     int realHeight = ( _x2 - _x1 ) > 0 ? ( ( _x2 - _x1 ) + 1 ) : ( ( _environment->screenTilesHeight - _y1 ) + 1 );
 
+    variable_store( _environment, "XCURSYS", _x1 );
+    variable_store( _environment, "YCURSYS", _y1 );
     variable_store( _environment, "CONSOLEX1", _x1 );
     variable_store( _environment, "CONSOLEY1", _y1 );
     variable_store( _environment, "CONSOLEW", realWidth );
@@ -103,6 +105,8 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     variable_move( _environment, x1->name, "CONSOLEX1" );
     variable_move( _environment, y1->name, "CONSOLEY1");
+    variable_move( _environment, x1->name, "XCURSYS" );
+    variable_move( _environment, y1->name, "YCURSYS");
 
     variable_move( _environment, variable_sub( _environment, x2->name, x1->name )->name, "CONSOLEW" );
     variable_move( _environment, variable_sub( _environment, y2->name, y1->name )->name, "CONSOLEH" );
