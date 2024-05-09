@@ -253,6 +253,48 @@ void c6847_bank_select( Environment * _environment, int _bank ) {
 #define SET_VIDEOAT_600     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F0_SET; SAM_F1_SET; 
 #define SET_VIDEOAT_C00     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F1_SET; SAM_F2_SET; 
 
+void console_update_width_in_bytes( Environment * _environment ) {
+
+    cpu_math_sub_8bit( _environment, "CURRENTTILESWIDTH", "CONSOLEW", "CONSOLESL" );
+    cpu_math_sub_8bit( _environment, "CONSOLESL", "CONSOLEX1", "CONSOLESL" );
+    cpu_inc( _environment, "CONSOLESL" );
+
+    switch( _environment->currentMode ) {
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+        case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+        case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+        case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+        case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+            break;
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            break;
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+            break;
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            break;
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+            break;
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            break;
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+            break;
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            break;
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            break;
+        default:
+            CRITICAL_SCREEN_UNSUPPORTED( _environment->currentMode );
+    }
+
+}
+
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm );
@@ -647,10 +689,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
-    cpu_store_8bit( _environment, "CONSOLEX", 0 );
-    cpu_store_8bit( _environment, "CONSOLEY", 0 );
+    cpu_store_8bit( _environment, "CONSOLEX1", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY1", 0 );
+    cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
+    cpu_store_8bit( _environment, "CONSOLEY2", _environment->consoleTilesHeight-1 );
     cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
-    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesHeight );
 
 }
 

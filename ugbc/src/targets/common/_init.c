@@ -123,13 +123,19 @@ void setup_text_variables( Environment * _environment ) {
     variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
     variable_global( _environment, "YCURSYS" );
 
-    variable_define( _environment, "CONSOLEX", VT_SBYTE, 0 );
-    variable_global( _environment, "CONSOLEX" );
-    variable_define( _environment, "CONSOLEY", VT_SBYTE, 0 );
-    variable_global( _environment, "CONSOLEY" );
-    variable_define( _environment, "CONSOLEW", VT_SBYTE, 0 );
+    variable_import( _environment, "CONSOLEX1", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEX1" );
+    variable_import( _environment, "CONSOLEY1", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEY1" );
+    variable_import( _environment, "CONSOLEX2", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEX2" );
+    variable_import( _environment, "CONSOLEY2", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEY2" );
+    variable_import( _environment, "CONSOLEW", VT_SBYTE, 0 );
     variable_global( _environment, "CONSOLEW" );
-    variable_define( _environment, "CONSOLEH", VT_SBYTE, 0 );
+    variable_import( _environment, "CONSOLEH", VT_SBYTE, 0 );
     variable_global( _environment, "CONSOLEH" );
+    variable_import( _environment, "CONSOLESL", VT_SWORD, 0 );
+    variable_global( _environment, "CONSOLESL" );
 
 }

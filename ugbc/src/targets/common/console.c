@@ -74,10 +74,15 @@ Se hai bisogno di avere le righe e le colonne dell'intero schermo, devi usare i 
 </usermanual> */
 void console( Environment * _environment, int _x1, int _y1, int _x2, int _y2 ) {
 
-    variable_store( _environment, "CONSOLEX", _x1 );
-    variable_store( _environment, "CONSOLEY", _y1 );
-    variable_store( _environment, "CONSOLEW", ( _x2 - _x1 ) > 0 ? ( ( _x2 - _x1 ) + 1 ) : ( _environment->screenTilesWidth - _x1 ) );
-    variable_store( _environment, "CONSOLEH", ( _y2 - _y1 ) > 0 ? ( ( _y2 - _y1 ) + 1 ) : ( _environment->screenTilesHeight - _x1 ) );
+    int realWidth = ( _x2 - _x1 ) > 0 ? ( ( _x2 - _x1 ) + 1 ) : ( ( _environment->screenTilesWidth - _x1 ) + 1 );
+    int realHeight = ( _x2 - _x1 ) > 0 ? ( ( _x2 - _x1 ) + 1 ) : ( ( _environment->screenTilesHeight - _y1 ) + 1 );
+
+    variable_store( _environment, "CONSOLEX1", _x1 );
+    variable_store( _environment, "CONSOLEY1", _y1 );
+    variable_store( _environment, "CONSOLEW", realWidth );
+    variable_store( _environment, "CONSOLEH", realHeight );
+    variable_store( _environment, "CONSOLEX2", _x1 + realWidth - 1 );
+    variable_store( _environment, "CONSOLEY2", _y2 + realHeight - 1 );
 
 }
 
@@ -96,8 +101,8 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
     Variable * w = variable_temporary( _environment, VT_SBYTE, "(w)" );
     Variable * h = variable_temporary( _environment, VT_SBYTE, "(h)" );
 
-    variable_move( _environment, x1->name, "CONSOLEX" );
-    variable_move( _environment, y1->name, "CONSOLEY");
+    variable_move( _environment, x1->name, "CONSOLEX1" );
+    variable_move( _environment, y1->name, "CONSOLEY1");
 
     variable_move( _environment, variable_sub( _environment, x2->name, x1->name )->name, "CONSOLEW" );
     variable_move( _environment, variable_sub( _environment, y2->name, y1->name )->name, "CONSOLEH" );
@@ -116,6 +121,13 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     cpu_label( _environment, consoleHPositiveLabel );
 
+    console_update_width_in_bytes( _environment );
+
     cpu_inc( _environment, "CONSOLEH" );
+
+    cpu_math_add_8bit( _environment, "CONSOLEX1", "CONSOLEW", "CONSOLEX2" );
+    cpu_dec( _environment, "CONSOLEX2" );
+    cpu_math_add_8bit( _environment, "CONSOLEY1", "CONSOLEW", "CONSOLEY2" );
+    cpu_dec( _environment, "CONSOLEY2" );
 
 }
