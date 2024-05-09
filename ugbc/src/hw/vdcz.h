@@ -161,9 +161,7 @@ void vdcz_busy_wait( Environment * _environment, char * _timing );
 
 void vdcz_tiles_get( Environment * _environment, char * _result );
 void vdcz_get_width( Environment * _environment, char * _result );
-void vdcz_tiles_get_width( Environment * _environment, char * _result );
 void vdcz_get_height( Environment * _environment, char * _result );
-void vdcz_tiles_get_height( Environment * _environment, char * _result );
 
 void vdcz_pset_int( Environment * _environment, int _x, int _y );
 void vdcz_pset_vars( Environment * _environment, char *_x, char *_y );

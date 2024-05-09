@@ -187,9 +187,7 @@ void tms9918_busy_wait( Environment * _environment, char * _timing );
 
 void tms9918_tiles_get( Environment * _environment, char * _result );
 void tms9918_get_width( Environment * _environment, char * _result );
-void tms9918_tiles_get_width( Environment * _environment, char * _result );
 void tms9918_get_height( Environment * _environment, char * _result );
-void tms9918_tiles_get_height( Environment * _environment, char * _result );
 
 void tms9918_pset_int( Environment * _environment, int _x, int _y );
 void tms9918_pset_vars( Environment * _environment, char *_x, char *_y );

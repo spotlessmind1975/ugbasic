@@ -2300,15 +2300,7 @@ void vdcz_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void vdcz_tiles_get_width( Environment * _environment, char *_result ) {
-
-}
-
 void vdcz_get_height( Environment * _environment, char *_result ) {
-
-}
-
-void vdcz_tiles_get_height( Environment * _environment, char *_result ) {
 
 }
 

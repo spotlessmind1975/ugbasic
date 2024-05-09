@@ -1366,24 +1366,10 @@ void gime_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void gime_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESWIDTH" );
-    outline1("STA %s", _result );
-
-}
-
 void gime_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDX CURRENTHEIGHT" );
     outline1("STX %s", _result );
-
-}
-
-void gime_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESHEIGHT" );
-    outline1("STA %s", _result );
 
 }
 

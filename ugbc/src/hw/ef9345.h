@@ -159,9 +159,7 @@ void ef9345_busy_wait( Environment * _environment, char * _timing );
 
 void ef9345_tiles_get( Environment * _environment, char * _result );
 void ef9345_get_width( Environment * _environment, char * _result );
-void ef9345_tiles_get_width( Environment * _environment, char * _result );
 void ef9345_get_height( Environment * _environment, char * _result );
-void ef9345_tiles_get_height( Environment * _environment, char * _result );
 
 void ef9345_pset_int( Environment * _environment, int _x, int _y );
 void ef9345_pset_vars( Environment * _environment, char *_x, char *_y );

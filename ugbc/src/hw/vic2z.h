@@ -188,9 +188,7 @@ void vic2z_busy_wait( Environment * _environment, char * _timing );
 
 void vic2z_tiles_get( Environment * _environment, char * _result );
 void vic2z_get_width( Environment * _environment, char * _result );
-void vic2z_tiles_get_width( Environment * _environment, char * _result );
 void vic2z_get_height( Environment * _environment, char * _result );
-void vic2z_tiles_get_height( Environment * _environment, char * _result );
 
 void vic2z_pset_int( Environment * _environment, int _x, int _y );
 void vic2z_pset_vars( Environment * _environment, char *_x, char *_y );

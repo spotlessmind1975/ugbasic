@@ -639,24 +639,10 @@ void ef936x_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void ef936x_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LDB CURRENTTILESWIDTH" );
-    outline1("STB %s", _result );
-
-}
-
 void ef936x_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDD CURRENTHEIGHT" );
     outline1("STD %s", _result );
-
-}
-
-void ef936x_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LDB CURRENTTILESHEIGHT" );
-    outline1("STB %s", _result );
 
 }
 

@@ -293,9 +293,7 @@ void gime_horizontal_scroll( Environment * _environment, char * _displacement );
 
 void gime_tiles_get( Environment * _environment, char * _result );
 void gime_get_width( Environment * _environment, char * _result );
-void gime_tiles_get_width( Environment * _environment, char * _result );
 void gime_get_height( Environment * _environment, char * _result );
-void gime_tiles_get_height( Environment * _environment, char * _result );
 
 void gime_pset_int( Environment * _environment, int _x, int _y );
 void gime_pset_vars( Environment * _environment, char *_x, char *_y );

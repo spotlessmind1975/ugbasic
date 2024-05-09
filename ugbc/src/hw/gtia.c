@@ -1836,13 +1836,6 @@ void gtia_get_width( Environment * _environment, char *_result ) {
 
 }
 
-void gtia_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESWIDTH" );
-    outline1("STA %s", _result );
-
-}
-
 void gtia_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTHEIGHT" );
@@ -1855,13 +1848,6 @@ void gtia_get_height( Environment * _environment, char *_result ) {
 void gtia_tiles_get( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTTILES" );
-    outline1("STA %s", _result );
-
-}
-
-void gtia_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESHEIGHT" );
     outline1("STA %s", _result );
 
 }

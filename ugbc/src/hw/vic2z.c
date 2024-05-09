@@ -1492,26 +1492,12 @@ void vic2z_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void vic2z_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESWIDTH" );
-    outline1("STA %s", _result );
-
-}
-
 void vic2z_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTHEIGHT" );
     outline1("STA %s", _result );
     outline0("LDA CURRENTHEIGHT+1" );
     outline1("STA %s+1", _result );
-
-}
-
-void vic2z_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESHEIGHT" );
-    outline1("STA %s", _result );
 
 }
 

@@ -813,24 +813,10 @@ void cpc_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void cpc_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LD A, (CURRENTTILESWIDTH)" );
-    outline1("LD (%s), A", _result );
-
-}
-
 void cpc_get_height( Environment * _environment, char *_result ) {
 
     outline0("LD HL, (CURRENTHEIGHT)" );
     outline1("LD (%s), HL", _result );
-
-}
-
-void cpc_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LD A, (CURRENTTILESHEIGHT)" );
-    outline1("LD (%s), A", _result );
 
 }
 
