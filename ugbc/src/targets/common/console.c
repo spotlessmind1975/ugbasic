@@ -74,10 +74,15 @@ Se hai bisogno di avere le righe e le colonne dell'intero schermo, devi usare i 
 </usermanual> */
 void console( Environment * _environment, int _x1, int _y1, int _x2, int _y2 ) {
 
+    _environment->consoleTilesWidth = ( _x2 - _x1 ) > 0 ? ( ( _x2 - _x1 ) + 1 ) : ( _environment->screenTilesWidth - _x1 );
+    _environment->consoleTilesheight = ( _y2 - _y1 ) > 0 ? ( ( _y2 - _y1 ) + 1 ) : ( _environment->screenTilesHeight - _x1 );
+
     variable_store( _environment, "CONSOLEX", _x1 );
     variable_store( _environment, "CONSOLEY", _y1 );
-    variable_store( _environment, "CONSOLEW", ( _x2 - _x1 ) > 0 ? ( ( _x2 - _x1 ) + 1 ) : ( _environment->screenTilesWidth - _x1 ) );
-    variable_store( _environment, "CONSOLEH", ( _y2 - _y1 ) > 0 ? ( ( _y2 - _y1 ) + 1 ) : ( _environment->screenTilesHeight - _x1 ) );
+    variable_store( _environment, "CONSOLEW", _environment->consoleTilesWidth );
+    variable_store( _environment, "CONSOLEH", _environment->consoleTilesheight );
+
+    variable_store( _environment, "CONSOLEWB", console_calculate_width_in_bytes( _environment, _environment->consoleTilesWidth ) );
 
 }
 
@@ -118,4 +123,6 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     cpu_inc( _environment, "CONSOLEH" );
 
+    console_update_width_in_bytes( _environment );
+    
 }
