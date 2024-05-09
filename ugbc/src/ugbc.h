@@ -3859,9 +3859,6 @@ Bank * bank_find( Bank * _first, char * _name );
 
 int define_audio_target_check( Environment * _environment, int _value );
 
-int console_calculate_width_in_bytes( _environment, int _width );
-void console_update_width_in_bytes( _environment );
-
 void banks_init( Environment * _environment );
 void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count, int _allowed_size );
 char * banks_get_address( Environment * _environment, int _bank );

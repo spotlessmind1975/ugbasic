@@ -56,7 +56,7 @@ RESOLUTIONY:      .word 0
 CURRENTTILESWIDTH:      .byte 22
 CURRENTTILESHEIGHT:      .byte 23
 CURRENTTILES:      .byte 255
-CONSOLEWB:          .byte 0
+CONSOLEWIDTHINBYTES:          .byte 0
 TEXTWW:             .byte 3
 FONTWIDTH:          .byte 8
 FONTHEIGHT:         .byte 8

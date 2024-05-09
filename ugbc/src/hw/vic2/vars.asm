@@ -60,7 +60,7 @@ RESOLUTIONX:       .word 0
 RESOLUTIONY:      .word 0
 CURRENTTILESWIDTH:      .byte 40
 CURRENTTILESHEIGHT:      .byte 25
-CONSOLEWB:          .byte 0
+CONSOLEWIDTHINBYTES:          .byte 0
 TEXTWW:             .byte 3
 FONTWIDTH:          .byte 8
 FONTHEIGHT:         .byte 8

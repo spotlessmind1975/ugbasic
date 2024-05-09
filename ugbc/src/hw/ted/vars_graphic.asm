@@ -42,7 +42,7 @@ YGR:    .word 0
 LINE:   .byte $ff, $ff
 
 LASTCOLOR: .byte 0
-CONSOLEWB:          .byte 0
+CONSOLEWIDTHINBYTES:          .byte 0
 
 IMAGEX = $17
 IMAGEY = $19
