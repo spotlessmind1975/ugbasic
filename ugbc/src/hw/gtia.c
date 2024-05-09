@@ -778,7 +778,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             
             break;        
 
@@ -831,7 +831,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Graphics 5 (ANTIC A or 10)
@@ -882,7 +882,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             scanline = 20;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Graphics 6 (ANTIC B or 11)
@@ -932,7 +932,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             scanline = 20;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
         break;
 
         // Graphics 7 (ANTIC D or 13)
@@ -984,7 +984,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             scanline = 40;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
         break;
 
         // Graphics 8 (ANTIC F or 15)
@@ -1055,7 +1055,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             scanline = 40;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
         break;
             
         // The following five graphics modes have no equivalent in BASIC on older machine but if indicated do correspond to
@@ -1109,7 +1109,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             scanline = 20;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 20 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Antic E (Graphics 15-XL computers only)
@@ -1160,7 +1160,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 20 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Graphics Mode 0 (ANTIC 2)
@@ -1214,7 +1214,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Graphics 1 (ANTIC 6)
@@ -1269,7 +1269,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Graphics 2 (ANTIC 7)
@@ -1317,7 +1317,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Antic 3
@@ -1367,7 +1367,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
         
         // Antic 4 (Graphics 12-XL computers only)
@@ -1420,7 +1420,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
         break;
 
         // Antic 5 (Graphics 13-XL computers only)
@@ -1468,7 +1468,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         default:

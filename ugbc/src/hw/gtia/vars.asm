@@ -55,7 +55,7 @@ CURRENTTILESHEIGHT:      .byte 24
 CURRENTTILES:      .byte 255
 TEXTBLOCKREMAIN:      .byte 152
 TEXTBLOCKREMAINPW:      .byte 192
-CONSOLEWIDTHINBYTES:          .byte 0
+CURRENTSL:          .byte 0
 TEXTWW:             .byte 3
 FONTWIDTH:          .byte 8
 FONTHEIGHT:         .byte 8

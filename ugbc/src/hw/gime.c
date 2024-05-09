@@ -1157,13 +1157,13 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_16bit( _environment, "CURRENTFRAMESIZE", currentFrameSize );
     switch( _environment->screenColors ) {
         case 2:
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", _environment->screenTilesWidth );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->screenTilesWidth );
             break;
         case 4:
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", _environment->screenTilesWidth * 2 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->screenTilesWidth * 2 );
             break;
         case 16:
-            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", _environment->screenTilesWidth * 4 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->screenTilesWidth * 4 );
             break;
     }
 
