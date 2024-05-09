@@ -118,6 +118,11 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "PLAYVOLUME", VT_BYTE, 15 );
     variable_global( _environment, "PLAYVOLUME" );
 
+    variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
+    variable_global( _environment, "XCURSYS" );
+    variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
+    variable_global( _environment, "YCURSYS" );
+
     variable_define( _environment, "CONSOLEX", VT_SBYTE, 0 );
     variable_global( _environment, "CONSOLEX" );
     variable_define( _environment, "CONSOLEY", VT_SBYTE, 0 );
