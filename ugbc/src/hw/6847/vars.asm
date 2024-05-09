@@ -64,6 +64,11 @@ TEXTWW      fcb 3
 FONTWIDTH       fcb 8
 FONTHEIGHT      fcb 8
 
+CONSOLEX      fcb 0
+CONSOLEY      fcb 0
+CONSOLEW      fcb 32
+CONSOLEH      fcb 16
+
 IMAGEW2 EQU $40
 IMAGEX EQU $41 ; $42
 IMAGEY EQU $43 ; $44
