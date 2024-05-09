@@ -83,8 +83,8 @@ void console( Environment * _environment, int _x1, int _y1, int _x2, int _y2 ) {
     variable_store( _environment, "CONSOLEY1", _y1 );
     variable_store( _environment, "CONSOLEW", realWidth );
     variable_store( _environment, "CONSOLEH", realHeight );
-    variable_store( _environment, "CONSOLEX2", _x1 + realWidth - 1 );
-    variable_store( _environment, "CONSOLEY2", _y2 + realHeight - 1 );
+    variable_store( _environment, "CONSOLEX2", _x1 + realWidth );
+    variable_store( _environment, "CONSOLEY2", _y2 + realHeight );
 
 }
 
@@ -130,8 +130,6 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
     cpu_inc( _environment, "CONSOLEH" );
 
     cpu_math_add_8bit( _environment, "CONSOLEX1", "CONSOLEW", "CONSOLEX2" );
-    cpu_dec( _environment, "CONSOLEX2" );
-    cpu_math_add_8bit( _environment, "CONSOLEY1", "CONSOLEW", "CONSOLEY2" );
-    cpu_dec( _environment, "CONSOLEY2" );
+    cpu_math_add_8bit( _environment, "CONSOLEY1", "CONSOLEH", "CONSOLEY2" );
 
 }
