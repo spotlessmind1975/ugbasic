@@ -40,8 +40,6 @@
 
 Variable * screen_tiles_get_height( Environment * _environment ) {
 
-    Variable * height = variable_retrieve( _environment, "CURRENTTILESHEIGHT");
-
-    return height;
+    return variable_retrieve( _environment, "CURRENTTILESHEIGHT");
 
 }

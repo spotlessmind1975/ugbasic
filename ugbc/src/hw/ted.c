@@ -843,6 +843,11 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
+    _environment->screenTilesWidth = _environment->screenWidth / 8;
+    _environment->screenTilesHeight = _environment->screenHeight / 8;
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "ORIGINX", 0 );
     cpu_store_16bit( _environment, "ORIGINY", 0 );
 
@@ -851,12 +856,14 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
     cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
     cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
-    _environment->screenTilesWidth = _environment->screenWidth / 8;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
-    _environment->screenTilesHeight = _environment->screenHeight / 8;
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
+    cpu_store_8bit( _environment, "CONSOLEX", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY", 0 );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesWidth );
 
 }
 

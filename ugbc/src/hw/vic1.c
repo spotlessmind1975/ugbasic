@@ -397,6 +397,9 @@ int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     _environment->screenWidth = _environment->screenTilesWidth * 8;
     _environment->screenHeight = _environment->screenTilesHeight * 8;
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     _environment->screenColors = 2;
     _environment->screenShades = 8;
 
@@ -405,6 +408,10 @@ int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "CONSOLEX", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY", 0 );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesWidth );
 
 }
 

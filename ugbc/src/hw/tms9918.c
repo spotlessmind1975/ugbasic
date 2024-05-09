@@ -868,6 +868,9 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             break;
     }
 
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "CLIPX1", 0 );
     cpu_store_16bit( _environment, "CLIPX2", (_environment->screenWidth-1) );
     cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -886,6 +889,10 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
+    cpu_store_8bit( _environment, "CONSOLEX", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY", 0 );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesWidth );
 
 // #ifdef __coleco__
 

@@ -436,6 +436,9 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "CLIPX1", 0 );
     cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
     cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -452,6 +455,10 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "CONSOLEX", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY", 0 );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesWidth );
 
 }
 
@@ -769,6 +776,8 @@ void ef936x_initialization( Environment * _environment ) {
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 40;
     _environment->screenTilesHeight = 25;
+    _environment->consoleTilesWidth = 40;
+    _environment->consoleTilesHeight = 25;
     _environment->screenTiles = 255;
     _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
     _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;

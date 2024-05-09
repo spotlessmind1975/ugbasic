@@ -38,10 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * screen_tiles_get_height( Environment * _environment ) {
+Variable * console_tiles_get_width( Environment * _environment ) {
 
-    Variable * height = variable_retrieve( _environment, "CURRENTTILESHEIGHT");
-
-    return height;
+    return variable_retrieve( _environment, "CONSOLEW");
 
 }

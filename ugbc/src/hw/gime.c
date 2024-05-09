@@ -1137,6 +1137,9 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         cpu_store_16bit( _environment, "TEXTADDRESS", 0x6000 );
     }
 
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "ORIGINX", 0 );
     cpu_store_16bit( _environment, "ORIGINY", 0 );
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
@@ -1146,6 +1149,10 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "CONSOLEX", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY", 0 );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesWidth );
     cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );
     cpu_store_16bit( _environment, "CURRENTFRAMESIZE", currentFrameSize );
     switch( _environment->screenColors ) {
@@ -1571,6 +1578,8 @@ void gime_initialization( Environment * _environment ) {
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 40;
     _environment->screenTilesHeight = 25;
+    _environment->consoleTilesWidth = 40;
+    _environment->consoleTilesHeight = 25;
     _environment->screenTiles = 128;
     _environment->screenWidth = _environment->screenTilesWidth*_environment->fontWidth;
     _environment->screenHeight = _environment->screenTilesHeight*_environment->fontHeight;

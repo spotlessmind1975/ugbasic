@@ -885,6 +885,9 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     }
 
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     /////////////////////////////////////////////////////////////////
     // -- [ $00 ] --
     /////////////////////////////////////////////////////////////////
@@ -2045,6 +2048,10 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
+    cpu_store_8bit( _environment, "CONSOLEX", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY", 0 );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesWidth );
 
     _environment->screenShades = 16;
     _environment->screenColors = 2;

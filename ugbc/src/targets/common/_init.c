@@ -118,4 +118,13 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "PLAYVOLUME", VT_BYTE, 15 );
     variable_global( _environment, "PLAYVOLUME" );
 
+    variable_define( _environment, "CONSOLEX", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEX" );
+    variable_define( _environment, "CONSOLEY", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEY" );
+    variable_define( _environment, "CONSOLEW", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEW" );
+    variable_define( _environment, "CONSOLEH", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEH" );
+
 }
