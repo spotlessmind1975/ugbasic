@@ -443,7 +443,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1024 );
-            cpu_store_8bit( _environment, "CURRENTSL", 64 / 4 );            
+            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", 64 / 4 );            
             break;
         // The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
         // by 64 elements high. Each element may be either ON or OFF. However, 
@@ -470,7 +470,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1024 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );            
+            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", 128 / 8 );            
             break;
         // The 128 x 64 Color Graphics mode generates a display matrix 128 
         // elements wide by 64 elements high. Each element may be one of four 
@@ -496,7 +496,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 2048 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
+            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", 128 / 4 );
             break;
         // The 128 x 96 Graphics mode generates a display matrix 128 
         // elements wide by 96 elements high. Each element may be either 
@@ -523,7 +523,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1536 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );
+            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", 128 / 8 );
             break;
         // The 128 x 96 Color Graphics mode generates a display 128 elements 
         // wide by 96 elements high. Each element may be one of four colors. 
@@ -549,7 +549,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
+            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", 128 / 4 );
             break;
         // The 128 x 192 Graphics mode generates a display matrix 128 elements 
         // wide by 192 elements high. Each element may be either ON or OFF,
@@ -576,7 +576,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );
+            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", 128 / 8 );
             break;
         // The 128 x 192 Color Graphics mode generates a display 128 elements 
         // wide by 192 elements high. Each element may be one of four colors.
@@ -602,7 +602,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
+            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", 128 / 4 );
             break;
         // The 256 x 192 Graphics mode generates a display 256 elements wide by 
         // 192 elements high. Each element may be either ON or OFF, but the ON 
@@ -629,7 +629,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
-            cpu_store_8bit( _environment, "CURRENTSL", 256 / 8 );
+            cpu_store_8bit( _environment, "CONSOLEWIDTHINBYTES", 256 / 8 );
             break;
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
