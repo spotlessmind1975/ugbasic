@@ -2918,6 +2918,7 @@ typedef struct _Environment {
 #define CRITICAL_AUDIO_TARGET_UNAVAILABLE() CRITICAL("E284 - AUDIO SOURCE unavailable for this target" );
 #define CRITICAL_CANNOT_MUSIC_ON_AUDIO_DEVICE(v) CRITICAL2("E285 - cannot MUSIC on the given AUDIO TARGET", v );
 #define CRITICAL_MUSIC_NOT_ASYNC() CRITICAL("E283 - cannot MUSIC in asyncronous mode on this target" );
+#define CRITICAL_CANNOT_USE_STRINGS_LONGER_256_CHARS( ) CRITICAL("E284 - string too long (>256 characters)" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
