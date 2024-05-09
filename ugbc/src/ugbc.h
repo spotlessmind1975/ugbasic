@@ -2346,6 +2346,16 @@ typedef struct _Environment {
     int screenTilesHeight;
 
     /**
+     * Console width in characters (statically determined)
+     */
+    int consoleTilesWidth;
+
+    /**
+     * Console height in characters (statically determined)
+     */
+    int consoleTilesHeight;
+
+    /**
      * Font width in pixels (statically determined)
      */
     int fontWidth;
@@ -4031,6 +4041,10 @@ void                    colormap_clear_with( Environment * _environment, int _fo
 void                    colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background );
 void                    configure_set_value( Environment * _environment, int _name, int _parameter, int _value );
 void                    configure_set_value_var( Environment * _environment, int _name, int _parameter, char * _value );
+void                    console( Environment * _environment, int _x1, int _x2, int _x3, int _x4 );
+void                    console_vars( Environment * _environment, char * _x1, char * _x2, char * _x3, char * _x4 );
+Variable *              console_tiles_get_height( Environment * _environment );
+Variable *              console_tiles_get_width( Environment * _environment );
 void                    const_define_numeric( Environment * _environment, char * _name, int _value );
 void                    const_define_string( Environment * _environment, char * _name, char * _value );
 void                    const_define_float( Environment * _environment, char * _name, double _value );

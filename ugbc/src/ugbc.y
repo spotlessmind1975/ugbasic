@@ -94,7 +94,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
-%token AUDIO SYNC ASYNC TARGET SJ2
+%token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -952,9 +952,6 @@ const_factor:
       | SCREEN WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
-      | SCREEN TILES WIDTH {
-          $$ = ((Environment *)_environment)->screenTilesWidth;
-      }
       | PAGE "0" {
           $$ = DOUBLE_BUFFER_PAGE_0;
       }
@@ -967,8 +964,11 @@ const_factor:
       | PAGE "B" {
           $$ = DOUBLE_BUFFER_PAGE_1;
       }
-      | TILES WIDTH {
+      | SCREEN TILES WIDTH {
           $$ = ((Environment *)_environment)->screenTilesWidth;
+      }
+      | TILES WIDTH {
+          $$ = ((Environment *)_environment)->consoleTilesWidth;
       }
       | TILEMAP WIDTH OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
@@ -990,7 +990,7 @@ const_factor:
           $$ = ((Environment *)_environment)->screenTilesWidth;
       }
       | COLUMNS {
-          $$ = ((Environment *)_environment)->screenTilesWidth;
+          $$ = ((Environment *)_environment)->consoleTilesWidth;
       }
       | FONT WIDTH {
           $$ = ((Environment *)_environment)->fontWidth;
@@ -1118,7 +1118,7 @@ const_factor:
           $$ = ((Environment *)_environment)->screenTilesHeight;
       }
       | TILES HEIGHT {
-          $$ = ((Environment *)_environment)->screenTilesHeight;
+          $$ = ((Environment *)_environment)->consoleTilesHeight;
       }
       | TILEMAP HEIGHT OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
@@ -1140,7 +1140,7 @@ const_factor:
           $$ = ((Environment *)_environment)->screenTilesHeight;
       }
       | ROWS {
-          $$ = ((Environment *)_environment)->screenTilesHeight;
+          $$ = ((Environment *)_environment)->consoleTilesHeight;
       }
       | FONT HEIGHT {
           $$ = ((Environment *)_environment)->fontHeight;
@@ -3444,6 +3444,9 @@ exponential:
     | SCREEN TILES WIDTH {
         $$ = screen_tiles_get_width( _environment )->name;
     }
+    | TILES WIDTH {
+        $$ = console_tiles_get_width( _environment )->name;
+    }
     | TILES COUNT {
         $$ = screen_tiles_get( _environment )->name;
     }
@@ -3451,7 +3454,7 @@ exponential:
         $$ = screen_tiles_get_width( _environment )->name;
     }
     | COLUMNS {
-        $$ = screen_tiles_get_width( _environment )->name;
+        $$ = console_tiles_get_width( _environment )->name;
     }
     | FONT WIDTH {
         $$ = variable_temporary( _environment, VT_POSITION, "(FONT WIDTH)" )->name;
@@ -3529,7 +3532,7 @@ exponential:
         $$ = screen_tiles_get_height( _environment )->name;
     }
     | ROWS {
-        $$ = screen_tiles_get_height( _environment )->name;
+        $$ = console_tiles_get_height( _environment )->name;
     }
     | FONT HEIGHT {
         $$ = variable_temporary( _environment, VT_POSITION, "(FONT HEIGHT)" )->name;
@@ -5418,6 +5421,20 @@ box_definition_expression:
 
 box_definition:
     box_definition_expression;
+
+console_definition_simple :
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        console( _environment, $2, $5, 8, $11 );        
+    };
+
+console_definition_expression :
+    expr OP_COMMA expr TO expr OP_COMMA expr {
+        console_vars( _environment, $1, $3, $5, $7 );        
+    };
+
+console_definition:
+    console_definition_simple
+    | console_definition_expression;
 
 bar_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
@@ -8615,6 +8632,7 @@ statement2nc:
   | GET get_definition
   | SLICE slice_definition
   | BOX box_definition
+  | CONSOLE console_definition
   | BAR bar_definition
   | POLYLINE polyline_definition
   | CLIP clip_definition
