@@ -10135,6 +10135,10 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
 
 StaticString * string_reserve( Environment * _environment, char * _value ) {
 
+    if ( strlen( _value ) > 255 ) {
+        CRITICAL_CANNOT_USE_STRINGS_LONGER_256_CHARS( )
+    }
+
     StaticString * current = _environment->strings;
 
     while ( current ) {
