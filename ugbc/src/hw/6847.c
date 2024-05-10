@@ -947,19 +947,23 @@ void c6847_cls( Environment * _environment ) {
 
 void c6847_scroll_text( Environment * _environment, int _direction ) {
 
-    deploy( vScrollText, src_hw_6847_vscroll_text_asm );
-
-    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA <DIRECTION" );
-
-    outline0("JSR VSCROLLT");
+    if ( _environment->currentMode < 7 ) {
+        deploy( vScrollText, src_hw_6847_vscroll_text_asm );
+        outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+        outline0("STA <DIRECTION" );
+        outline0("JSR VSCROLLT");
+    } else {
+        deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
+        outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+        outline0("STA <DIRECTION" );
+        outline0("JSR VSCROLLG");
+    }
 
 }
 
 void c6847_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm);
-    deploy( vScrollText, src_hw_6847_vscroll_text_asm );
     deploy( textEncodedAt, src_hw_6847_text_at_asm );
 
     outline1("LDY %s", _text);
@@ -969,10 +973,12 @@ void c6847_text( Environment * _environment, char * _text, char * _text_size ) {
 
     if ( _environment->currentMode < 7 ) {
         deploy( clsText, src_hw_6847_cls_text_asm );
+        deploy( vScrollText, src_hw_6847_vscroll_text_asm );
         deploy( textEncodedAtText, src_hw_6847_text_at_text_asm );
         outline0("JSR TEXTATTILEMODE");
     } else {
         deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
+        deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
         deploy( textEncodedAtGraphic, src_hw_6847_text_at_graphic_asm );
         outline0("JSR TEXTATBITMAPMODE");
     }
