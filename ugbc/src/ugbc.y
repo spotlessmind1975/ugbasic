@@ -5423,8 +5423,11 @@ box_definition:
     box_definition_expression;
 
 console_definition_simple :
-    OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-        console( _environment, $2, $5, 8, $11 );        
+    OFF {
+        console( _environment, 0, 0, ((struct _Environment *)_environment)->screenTilesWidth, ((struct _Environment *)_environment)->screenTilesHeight );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        console( _environment, $2, $5, $8, $11 );        
     };
 
 console_definition_expression :

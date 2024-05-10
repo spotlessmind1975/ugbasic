@@ -94,40 +94,75 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     char consoleWPositiveLabel[MAX_TEMPORARY_STORAGE]; sprintf( consoleWPositiveLabel, "%scw", label );
     char consoleHPositiveLabel[MAX_TEMPORARY_STORAGE]; sprintf( consoleHPositiveLabel, "%sch", label );
+    char consoleWLimitedLabel[MAX_TEMPORARY_STORAGE]; sprintf( consoleWLimitedLabel, "%sclw", label );
+    char consoleHLimitedLabel[MAX_TEMPORARY_STORAGE]; sprintf( consoleHLimitedLabel, "%sclh", label );
 
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_SBYTE, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_SBYTE, 0 );
     Variable * x2 = variable_retrieve_or_define( _environment, _x2, VT_SBYTE, 0 );
     Variable * y2 = variable_retrieve_or_define( _environment, _y2, VT_SBYTE, 0 );
 
-    Variable * w = variable_temporary( _environment, VT_SBYTE, "(w)" );
-    Variable * h = variable_temporary( _environment, VT_SBYTE, "(h)" );
+    // ----------- CONSOLE X ----------- 
 
+    // Setup left abscissa (and current cursor position).
     variable_move( _environment, x1->name, "CONSOLEX1" );
-    variable_move( _environment, y1->name, "CONSOLEY1");
     variable_move( _environment, x1->name, "XCURSYS" );
-    variable_move( _environment, y1->name, "YCURSYS");
 
+    // Starting width is x2 - x1
     variable_move( _environment, variable_sub( _environment, x2->name, x1->name )->name, "CONSOLEW" );
-    variable_move( _environment, variable_sub( _environment, y2->name, y1->name )->name, "CONSOLEH" );
 
+    // Positive? Go on!
     cpu_compare_and_branch_8bit_const( _environment, variable_less_than_const( _environment, "CONSOLEW", 0, 1 )->realName, 0, consoleWPositiveLabel, 1 );
 
+    // Console width is negative: so we must reset it at ( SCREEN WIDTH - x1 )
     variable_move( _environment, variable_sub( _environment, "CURRENTTILESWIDTH", x1->name )->name, "CONSOLEW" );
 
+    // Positive o resetted, the width must increased by 1 (since is 0 based)
     cpu_label( _environment, consoleWPositiveLabel );
-
     cpu_inc( _environment, "CONSOLEW" );
 
+    // x1 + console width is equal or larger than screen?
+    cpu_compare_and_branch_8bit_const( _environment, variable_less_than( _environment, variable_add( _environment, "CONSOLEX1", "CONSOLEW" )->name, "CURRENTTILESWIDTH", 0 )->realName, 0, consoleWLimitedLabel, 0 );
+
+    // So we must reset it at ( SCREEN WIDTH - x1 )
+    variable_move( _environment, variable_sub( _environment, "CURRENTTILESWIDTH", x1->name )->name, "CONSOLEW" );
+    cpu_inc( _environment, "CONSOLEW" );
+
+    cpu_label( _environment, consoleWLimitedLabel );
+
+    // ----------- CONSOLE Y ----------- 
+
+    // Starting height is y2 - y1
+    variable_move( _environment, variable_sub( _environment, y2->name, y1->name )->name, "CONSOLEH" );
+
+    // Positive? Go on!
     cpu_compare_and_branch_8bit_const( _environment, variable_less_than_const( _environment, "CONSOLEH", 0, 1 )->realName, 0, consoleHPositiveLabel, 1 );
 
-    variable_move( _environment, variable_sub( _environment, "CURRENTTILESHEIGHT", y1->name )->name, "CONSOLEH" );
+    // Console height is negative: so we must reset it at ( SCREEN HEIGHT - x1 )
+    variable_move( _environment, variable_sub( _environment, "CURRENTTILESHEIGHT", x1->name )->name, "CONSOLEH" );
 
     cpu_label( _environment, consoleHPositiveLabel );
 
+    // Positive o resetted, the width must increased by 1 (since is 0 based)
+    cpu_inc( _environment, "CONSOLEH" );
+
+    // x1 + console height is equal or larger than screen?
+    cpu_compare_and_branch_8bit_const( _environment, variable_less_than( _environment, variable_add( _environment, "CONSOLEY1", "CONSOLEH" )->name, "CURRENTTILESHEIGHT", 0 )->realName, 0, consoleHLimitedLabel, 0 );
+
+    // So we must reset it at ( SCREEN HEIGHT - y1 )
+    variable_move( _environment, variable_sub( _environment, "CURRENTTILESHEIGHT", x1->name )->name, "CONSOLEH" );
+
+    // Positive o resetted, the height must increased by 1 (since is 0 based)
+    cpu_inc( _environment, "CONSOLEH" );
+
+    cpu_label( _environment, consoleHLimitedLabel );
+
+    // ----------- BOTH ----------- 
+
+    // Now we can calculate the various byte oriented sizes.
     console_update_width_in_bytes( _environment );
 
-    cpu_inc( _environment, "CONSOLEH" );
+    // Recalculate X2 and Y2.
 
     cpu_math_add_8bit( _environment, "CONSOLEX1", "CONSOLEW", "CONSOLEX2" );
     cpu_math_add_8bit( _environment, "CONSOLEY1", "CONSOLEH", "CONSOLEY2" );
