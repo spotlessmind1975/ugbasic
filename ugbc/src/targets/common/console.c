@@ -132,6 +132,10 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     // ----------- CONSOLE Y ----------- 
 
+    // Setup top ordinate (and current cursor position).
+    variable_move( _environment, x1->name, "CONSOLEY1" );
+    variable_move( _environment, x1->name, "YCURSYS" );
+
     // Starting height is y2 - y1
     variable_move( _environment, variable_sub( _environment, y2->name, y1->name )->name, "CONSOLEH" );
 
