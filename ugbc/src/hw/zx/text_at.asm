@@ -222,19 +222,12 @@ TEXTATROW:
     LD A, (HL)
     AND $38
     LD B, A
-    LD A, (TEXTWW)
-    AND 1
-    JP Z, TEXTATPC3
     LD A, (_PAPER)
     AND $0F
     SLA A
     SLA A
     SLA A
     LD B, A
-TEXTATPC3:
-    LD A, (TEXTWW)
-    AND 2
-    JP Z, TEXTATPC4
     PUSH BC
     LD A, (_PEN)
     AND $07
@@ -248,7 +241,6 @@ TEXTATPC3:
     OR A, B    
     POP BC
     JMP TEXTATPC5
-TEXTATPC4:
     LD A, (HL)
     AND $07
 TEXTATPC5:

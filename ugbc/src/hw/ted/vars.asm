@@ -42,7 +42,6 @@ RESOLUTIONY:      .word 0
 CURRENTTILESWIDTH:      .byte 40
 CURRENTTILESHEIGHT:      .byte 25
 CURRENTTILES:      .byte 255
-TEXTWW:             .byte 3
 FONTWIDTH:          .byte 8
 FONTHEIGHT:         .byte 8
 CLIPX1:    .word 0

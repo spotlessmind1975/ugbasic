@@ -60,7 +60,6 @@ CURRENTTILESHEIGHT      fcb 16
 CURRENTTILES            fcb 128
 CURRENTFRAMESIZE   fdb 32*16
 CURRENTSL          fcb 32
-TEXTWW      fcb 3
 FONTWIDTH       fcb 8
 FONTHEIGHT      fcb 8
 

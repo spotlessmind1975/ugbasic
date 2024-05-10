@@ -57,7 +57,6 @@ CURRENTTILESWIDTH:      .byte 22
 CURRENTTILESHEIGHT:      .byte 23
 CURRENTTILES:      .byte 255
 CURRENTSL:          .byte 0
-TEXTWW:             .byte 3
 FONTWIDTH:          .byte 8
 FONTHEIGHT:         .byte 8
 

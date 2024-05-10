@@ -68,7 +68,6 @@
 ; CURRENTTILESHEIGHT:   DEFB    24
 ; CURRENTTILES:   DEFB    255
 ; CURRENTMODE:        DEFB 0
-; TEXTWW:             DEFB 3
 ; FONTWIDTH:          DEFB 8
 ; FONTHEIGHT:         DEFB 8
 ; CPURANDOM_SEED:     DEFB $FF, $FF, $FF, $FF
@@ -134,9 +133,6 @@
 
 ;     LD A, 0
 ;     LD (CURRENTMODE), A
-
-;     LD A, 3
-;     LD (TEXTWW), A
 
 ;     LD A, 8
 ;     LD (FONTWIDTH), A

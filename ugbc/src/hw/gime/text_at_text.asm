@@ -304,13 +304,6 @@ TEXTATLF
 
 TEXTATPEN
 
-    ; We have to check if the current WRITING flags allows to
-    ; change the pen color.
-
-    LDA TEXTWW
-    ANDA #$2
-    BEQ TEXTATPENDISABLED
-
     ; Load the parameter from the next character.
     LDA , Y+
     DECB
@@ -338,28 +331,10 @@ TEXTATPEN2
 
     JMP TEXTATNEXT
 
-    ; Change pen color is disabled. So we can ignore the
-    ; parameter, and move ahead.
-
-TEXTATPENDISABLED
-    LEAY 1,Y
-    DECB
-
-    ; Move to the next character to print.
-
-    JMP TEXTATNEXT
-
     ; This routine will change the current paper color, used for
     ; the following writing texts.
 
 TEXTATPAPER
-
-    ; We have to check if the current WRITING flags allows to
-    ; change the paper color.
-
-    LDA TEXTWW
-    ANDA #$1
-    BEQ TEXTATPAPERDISABLED
 
     ; Load the parameter from the next character.
     LDA , Y+
@@ -384,14 +359,6 @@ TEXTATPAPER2
 
     ; Move to the next character to print.
 
-    JMP TEXTATNEXT
-
-    ; Change paper color is disabled. So we can ignore the
-    ; parameter, and move ahead.
-
-TEXTATPAPERDISABLED
-    LEAY 1,Y
-    DECB
     JMP TEXTATNEXT
 
     ; This routine will move the current cursor position on a relative
@@ -544,57 +511,6 @@ TEXTATSP0
 
     JSR GIMEBANKVIDEO
     STA , X+
-
-    ; Check if WRITING allows to change the pen+paper color.
-    ; In such case, we are going to copy the color directly.
-    LDA TEXTWW
-    CMPA #$3
-    BEQ TEXTATSP0C
-
-    ; Check if WRITING allows to change the pen color.
-
-    LDA TEXTWW
-    ANDA #$2
-    BEQ TEXTATCNOPEN
-
-    ; Update the foreground color of the character.
-
-    LDA , X
-    ANDA #$C7
-    STA , X
-    LDA <PLOTC
-    ANDA #$F8
-    ORA , X
-    STA , X
-    
-TEXTATCNOPEN
-
-    ; Check if WRITING allows to change the paper color.
-
-    LDA TEXTWW
-    ANDA #$1
-    BEQ TEXTATCNOPAPER
-
-    ; Update the background color of the character.
-    
-    LDA , X
-    ANDA #$F8
-    STA , X
-    LDA <PLOTC
-    ANDA #$C7
-    ORA , X
-    STA , X
-    
-TEXTATCNOPAPER
-
-    LEAX 1, X
-
-    ; Move the current cursor position ahead by one position.
-
-    JMP TEXTATINCX
-
-    ; If the program reach this point, it means that must copy
-    ; the color directly to the screen RAM.
 
 TEXTATSP0C
 

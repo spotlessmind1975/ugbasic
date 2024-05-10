@@ -453,13 +453,6 @@ TEXTATBMLF
 
 TEXTATBMPEN
 
-    ; We have to check if the current WRITING flags allows to
-    ; change the pen color.
-
-    LDA TEXTWW
-    ANDA #$2
-    BEQ TEXTATBMPENDISABLED
-
     ; Load the parameter from the next character.
     LDA , Y+
     DECB
@@ -475,28 +468,10 @@ TEXTATBMPEN2
 
     JMP TEXTATBMNEXT
 
-    ; Change pen color is disabled. So we can ignore the
-    ; parameter, and move ahead.
-
-TEXTATBMPENDISABLED
-    LEAY 1,Y
-    DECB
-
-    ; Move to the next character to print.
-
-    JMP TEXTATBMNEXT
-
     ; This routine will change the current paper color, used for
     ; the following writing texts.
 
 TEXTATBMPAPER
-
-    ; We have to check if the current WRITING flags allows to
-    ; change the paper color.
-
-    LDA TEXTWW
-    ANDA #$1
-    BEQ TEXTATBMPAPERDISABLED
 
     ; Load the parameter from the next character.
     LDA , Y+
@@ -512,14 +487,6 @@ TEXTATBMPAPER2
 
     ; Move to the next character to print.
 
-    JMP TEXTATBMNEXT
-
-    ; Change paper color is disabled. So we can ignore the
-    ; parameter, and move ahead.
-
-TEXTATBMPAPERDISABLED
-    LEAY 1,Y
-    DECB
     JMP TEXTATBMNEXT
 
     ; This routine will move the current cursor position on a relative
