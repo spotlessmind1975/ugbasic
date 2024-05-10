@@ -65,8 +65,8 @@ FONTHEIGHT      fcb 8
 
 CONSOLEX1     fcb 0
 CONSOLEY1     fcb 0
-CONSOLEX2     fcb 0
-CONSOLEY2     fcb 0
+CONSOLEX2     fcb 31
+CONSOLEY2     fcb 15
 CONSOLEW      fcb 32
 CONSOLEH      fcb 16
 CONSOLESL     fcb 0

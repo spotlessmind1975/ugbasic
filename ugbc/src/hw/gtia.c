@@ -699,6 +699,40 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
     
 }
 
+void console_update_width_in_bytes( Environment * _environment ) {
+
+    cpu_math_sub_8bit( _environment, "CURRENTTILESWIDTH", "CONSOLEW", "CONSOLESL" );
+    cpu_math_sub_8bit( _environment, "CONSOLESL", "CONSOLEX1", "CONSOLESL" );
+    cpu_inc( _environment, "CONSOLESL" );
+
+    switch( _environment->currentMode ) {
+        case BITMAP_MODE_ANTIC8:
+        case BITMAP_MODE_ANTIC10:
+        case BITMAP_MODE_ANTIC13:
+            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            break;        
+
+        case BITMAP_MODE_ANTIC9:
+        case BITMAP_MODE_ANTIC11: 
+        case BITMAP_MODE_ANTIC15:
+        case BITMAP_MODE_ANTIC12:
+        case BITMAP_MODE_ANTIC14:
+            break;
+            
+        case TILEMAP_MODE_ANTIC2:
+        case TILEMAP_MODE_ANTIC6:
+        case TILEMAP_MODE_ANTIC7:
+        case TILEMAP_MODE_ANTIC3:
+        case TILEMAP_MODE_ANTIC4:
+        case TILEMAP_MODE_ANTIC5:
+            break;
+        default:
+            CRITICAL_SCREEN_UNSUPPORTED( _environment->currentMode );
+    }
+
+}
+
+
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     int i;

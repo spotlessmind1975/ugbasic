@@ -56,6 +56,16 @@ CURRENTTILES:      .byte 255
 TEXTBLOCKREMAIN:      .byte 152
 TEXTBLOCKREMAINPW:      .byte 192
 CURRENTSL:          .byte 0
+
+CONSOLEX1:     .byte 0
+CONSOLEY1:     .byte 0
+CONSOLEX2:     .byte 39
+CONSOLEY2:     .byte 23
+CONSOLEW:      .byte 40
+CONSOLEH:      .byte 24
+CONSOLESL:     .byte 0
+
+
 FONTWIDTH:          .byte 8
 FONTHEIGHT:         .byte 8
 IMAGEX = $F0
