@@ -501,6 +501,15 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 }
 
+void console_update_width_in_bytes( Environment * _environment ) {
+
+    cpu_math_sub_8bit( _environment, "CURRENTTILESWIDTH", "CONSOLEW", "CONSOLESL" );
+    cpu_math_sub_8bit( _environment, "CONSOLESL", "CONSOLEX1", "CONSOLESL" );
+    cpu_inc( _environment, "CONSOLESL" );
+    cpu_math_mul2_const_8bit( _environment, "CONSOLESL", _environment->currentModeBW, 0 );
+
+}
+
 int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
@@ -1030,6 +1039,15 @@ void cpc_initialization( Environment * _environment ) {
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
     _environment->screenColors = 2;
+    _environment->currentModeBW = 1;
+
+    cpu_store_8bit( _environment, "CONSOLEX1", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY1", 0 );
+    cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
+    cpu_store_8bit( _environment, "CONSOLEY2", _environment->consoleTilesHeight-1 );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesWidth );
+    cpu_store_16bit( _environment, "CURRENTSL", _environment->currentModeBW );
 
 }
 

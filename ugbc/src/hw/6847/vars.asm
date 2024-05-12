@@ -63,13 +63,26 @@ CURRENTSL          fcb 32
 FONTWIDTH       fcb 8
 FONTHEIGHT      fcb 8
 
-CONSOLEX1     fcb 0
-CONSOLEY1     fcb 0
-CONSOLEX2     fcb 31
-CONSOLEY2     fcb 15
-CONSOLEW      fcb 32
-CONSOLEH      fcb 16
-CONSOLESL     fcb 0
+;       (x1,y1)  w (chars) / wb (bytes)
+;       +----------------+
+;  sa ->|*               | h (chars) / hb (bytes)
+;       |                |
+;       +----------------+ (x2, y2)
+;
+; Text mode
+;
+CONSOLEX1     fcb 0         ; <-- input from program (chars)
+CONSOLEY1     fcb 0         ; <-- input from program (chars)
+CONSOLEX2     fcb 31        ; <-- recalculated (chars)
+CONSOLEY2     fcb 15        ; <-- recalculated (chars)
+CONSOLEW      fcb 32        ; <-- calculated (chars)
+CONSOLEH      fcb 16        ; <-- calculated (chars)
+;
+; Graphic mode
+;
+CONSOLESA     fdb 0         ; <-- calculated (address)
+CONSOLEWB     fcb 32        ; <-- calculated (bytes)
+CONSOLEHB     fcb 16        ; <-- calculated (bytes)
 
 IMAGEW2 EQU $40
 IMAGEX EQU $41 ; $42
@@ -493,3 +506,29 @@ CALCPOS14
     LEAX D, X
 
     RTS
+
+CONSOLECALCULATE
+    LDA CONSOLEX1
+    STA MATHPTR0
+    LDA CONSOLEY1
+    STA MATHPTR1
+    JSR CALCPOSG
+    STX CONSOLESA
+
+    LDA CONSOLEW
+    STA CONSOLEWB
+
+    LDA CURRENTMODE
+    CMPA #8
+    BEQ CONSOLECALCULATESKIPD
+    CMPA #10
+    BEQ CONSOLECALCULATESKIPD
+    CMPA #12
+    BEQ CONSOLECALCULATESKIPD
+
+    ASL CONSOLEWB
+CONSOLECALCULATESKIPD
+    LDA CONSOLEH
+    STA CONSOLEHB
+
+    RTS    

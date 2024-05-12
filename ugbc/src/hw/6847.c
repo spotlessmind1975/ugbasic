@@ -253,11 +253,11 @@ void c6847_bank_select( Environment * _environment, int _bank ) {
 #define SET_VIDEOAT_600     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F0_SET; SAM_F1_SET; 
 #define SET_VIDEOAT_C00     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F1_SET; SAM_F2_SET; 
 
-void console_update_width_in_bytes( Environment * _environment ) {
+void console_calculate( Environment * _environment ) {
 
-    cpu_math_sub_8bit( _environment, "CURRENTTILESWIDTH", "CONSOLEW", "CONSOLESL" );
-    cpu_math_sub_8bit( _environment, "CONSOLESL", "CONSOLEX1", "CONSOLESL" );
-    cpu_inc( _environment, "CONSOLESL" );
+    int consoleSA = 0x0c00;
+    int consoleWB = _environment->consoleW;
+    int consoleHB = _environment->consoleH;
 
     switch( _environment->currentMode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
@@ -269,29 +269,48 @@ void console_update_width_in_bytes( Environment * _environment ) {
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
             break;
         case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
-            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            consoleSA += ( _environment->consoleY1 << 7 ) + ( _environment->consoleX1 << 1 );
+            consoleWB = _environment->consoleW * 2;
             break;
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+            consoleSA += ( _environment->consoleY1 << 7 ) + ( _environment->consoleX1 << 2 );
             break;
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
-            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            consoleSA += ( _environment->consoleY1 << 8 ) + ( _environment->consoleX1 << 1 );
+            consoleWB = _environment->consoleW * 2;
             break;
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+            consoleSA += ( _environment->consoleY1 << 7 ) + ( _environment->consoleX1 << 1 );
             break;
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
-            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            consoleSA += ( _environment->consoleY1 << 8 ) + ( _environment->consoleX1 << 1 );
+            consoleWB = _environment->consoleW * 2;
             break;
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+            consoleSA += ( _environment->consoleY1 << 7 ) + ( _environment->consoleX1 << 2 );
             break;
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
-            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            consoleSA += ( _environment->consoleY1 << 8 ) + ( _environment->consoleX1 << 1 );
+            consoleWB = _environment->consoleW * 2;
             break;
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            consoleSA += ( _environment->consoleY1 << 8 ) + ( _environment->consoleX1 );
+            consoleWB = _environment->consoleW * 2;
             break;
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _environment->currentMode );
     }
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "JSR CONSOLECALCULATE" );
+
 
 }
 

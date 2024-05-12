@@ -74,17 +74,64 @@ Se hai bisogno di avere le righe e le colonne dell'intero schermo, devi usare i 
 </usermanual> */
 void console( Environment * _environment, int _x1, int _y1, int _x2, int _y2 ) {
 
-    int realWidth = ( _x2 - _x1 ) > 0 ? ( ( _x2 - _x1 ) + 1 ) : ( ( _environment->screenTilesWidth - _x1 ) + 1 );
-    int realHeight = ( _x2 - _x1 ) > 0 ? ( ( _x2 - _x1 ) + 1 ) : ( ( _environment->screenTilesHeight - _y1 ) + 1 );
+	// - CONSOLE ASSIGNMENT
+	// 	 - X1 = x1
+	// 	 - X2 = x2
+	// 	 - Y1 = y1
+	// 	 - Y2 = y2
 
-    variable_store( _environment, "XCURSYS", _x1 );
-    variable_store( _environment, "YCURSYS", _y1 );
-    variable_store( _environment, "CONSOLEX1", _x1 );
-    variable_store( _environment, "CONSOLEY1", _y1 );
-    variable_store( _environment, "CONSOLEW", realWidth );
-    variable_store( _environment, "CONSOLEH", realHeight );
-    variable_store( _environment, "CONSOLEX2", _x1 + realWidth );
-    variable_store( _environment, "CONSOLEY2", _y2 + realHeight );
+    _environment->consoleX1 = _x1;
+    _environment->consoleY1 = _y1;
+    _environment->consoleX2 = _x2;
+    _environment->consoleY2 = _y2;
+
+	// - CONSOLE NORMALIZATION
+	// 	 RULE 1) x2 <> x1	->	X2 = ( SW - 1 )
+
+    if ( _environment->consoleX1 == _environment->consoleX2 ) {
+        _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    }
+
+	// 	 RULE 2) x2 > x1	->	X2 = ( SW - 1 )
+
+    if ( _environment->consoleX1 >= _environment->consoleX2 ) {
+        _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    }
+
+	// 	 RULE 3) x2 < SW	->	X2 = ( SW - 1 )
+
+    if ( _environment->consoleX2 >= _environment->screenTilesWidth ) {
+        _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    }
+
+	// 	 RULE 4) ( y2 >= y1 ) ->	Y2 = y1
+
+    if ( _environment->consoleY2 < _environment->consoleY1 ) {
+        _environment->consoleY2 = _environment->consoleY1;
+    }
+
+	// - CONSOLE COMPUTATION
+	// 	 - W = ( ( X2 - X1 ) + 1 )
+
+    _environment->consoleW = ( _environment->consoleX2 - _environment->consoleX1 ) + 1;
+    
+	// 	 - H = ( ( y2 - y1 ) + 1 )
+
+    _environment->consoleH = ( _environment->consoleY2 - _environment->consoleY1 ) + 1;
+
+	// 	(+ graphical if needed)
+
+    console_calculate( _environment );
+
+    variable_store( _environment, "XCURSYS", _environment->consoleX1 );
+    variable_store( _environment, "YCURSYS", _environment->consoleY1 );
+
+    variable_store( _environment, "CONSOLEX1", _environment->consoleX1 );
+    variable_store( _environment, "CONSOLEY1", _environment->consoleY1 );
+    variable_store( _environment, "CONSOLEX2", _environment->consoleX2);
+    variable_store( _environment, "CONSOLEY2", _environment->consoleY2 );
+    variable_store( _environment, "CONSOLEW", _environment->consoleW );
+    variable_store( _environment, "CONSOLEH", _environment->consoleH );
 
 }
 
@@ -92,83 +139,162 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     MAKE_LABEL
 
-    char consoleWPositiveLabel[MAX_TEMPORARY_STORAGE]; sprintf( consoleWPositiveLabel, "%scw", label );
-    char consoleHPositiveLabel[MAX_TEMPORARY_STORAGE]; sprintf( consoleHPositiveLabel, "%sch", label );
-    char consoleWLimitedLabel[MAX_TEMPORARY_STORAGE]; sprintf( consoleWLimitedLabel, "%sclw", label );
-    char consoleHLimitedLabel[MAX_TEMPORARY_STORAGE]; sprintf( consoleHLimitedLabel, "%sclh", label );
+    char consoleX1X2DifferentLabel[MAX_TEMPORARY_STORAGE]; sprintf( consoleX1X2DifferentLabel, "%sx1x2diff", label );
+    char consoleX1LTX2Label[MAX_TEMPORARY_STORAGE]; sprintf( consoleX1LTX2Label, "%sx1ltx2", label );
+    char consoleX1LTSWLabel[MAX_TEMPORARY_STORAGE]; sprintf( consoleX1LTSWLabel, "%sx1ltsw", label );
+    char consoleY2LTY1Label[MAX_TEMPORARY_STORAGE]; sprintf( consoleY2LTY1Label, "%sy2lty1", label );
 
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_SBYTE, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_SBYTE, 0 );
     Variable * x2 = variable_retrieve_or_define( _environment, _x2, VT_SBYTE, 0 );
     Variable * y2 = variable_retrieve_or_define( _environment, _y2, VT_SBYTE, 0 );
 
-    // ----------- CONSOLE X ----------- 
+    // _environment->consoleSA = 0;
+    // _environment->consoleWB = 0;
+    // _environment->consoleHB = 0;
 
-    // Setup left abscissa (and current cursor position).
+	// - CONSOLE ASSIGNMENT
+	// 	 - X1 = x1
+	// 	 - X2 = x2
+	// 	 - Y1 = y1
+	// 	 - Y2 = y2
+
+    // _environment->consoleX1 = _x1;
+
     variable_move( _environment, x1->name, "CONSOLEX1" );
-    variable_move( _environment, x1->name, "XCURSYS" );
 
-    // Starting width is x2 - x1
-    variable_move( _environment, variable_sub( _environment, x2->name, x1->name )->name, "CONSOLEW" );
+    // _environment->consoleY1 = _y1;
 
-    // Positive? Go on!
-    cpu_compare_and_branch_8bit_const( _environment, variable_less_than_const( _environment, "CONSOLEW", 0, 1 )->realName, 0, consoleWPositiveLabel, 1 );
+    variable_move( _environment, y1->name, "CONSOLEY1" );
 
-    // Console width is negative: so we must reset it at ( SCREEN WIDTH - x1 )
-    variable_move( _environment, variable_sub( _environment, "CURRENTTILESWIDTH", x1->name )->name, "CONSOLEW" );
+    // _environment->consoleX2 = _x2;
 
-    // Positive o resetted, the width must increased by 1 (since is 0 based)
-    cpu_label( _environment, consoleWPositiveLabel );
+    variable_move( _environment, x2->name, "CONSOLEX2" );
+
+    // _environment->consoleY2 = _y2;
+
+    variable_move( _environment, y2->name, "CONSOLEY2" );
+
+	// - CONSOLE NORMALIZATION
+	// 	 RULE 1) x2 <> x1	->	X2 = ( SW - 1 )
+
+    // if ( _environment->consoleX1 == _environment->consoleX2 ) {
+    //     _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    // }
+
+    outline0("; compare (a)");
+
+    cpu_compare_and_branch_8bit_const( 
+        _environment, 
+        variable_compare( _environment, "CONSOLEX1", "CONSOLEX2" )->realName, 
+        0, 
+        consoleX1X2DifferentLabel,
+        1 
+    );
+        variable_move( 
+            _environment, 
+            variable_sub_const( 
+                _environment, 
+                "CURRENTTILESWIDTH",
+                1 )->name, 
+            "CONSOLEX2" );
+    cpu_label( _environment, consoleX1X2DifferentLabel );
+
+    outline0("; compare (b)");
+
+	// 	 RULE 2) x2 > x1	->	X2 = ( SW - 1 )
+
+    // if ( _environment->consoleX1 >= _environment->consoleX2 ) {
+    //     _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    // }
+
+    cpu_compare_and_branch_8bit_const( 
+        _environment, 
+        variable_greater_than( _environment, "CONSOLEX1", "CONSOLEX2", 1 )->realName,
+        0, 
+        consoleX1LTX2Label,
+        1 
+    );
+        variable_move( 
+            _environment, 
+            variable_sub_const( 
+                _environment, 
+                "CURRENTTILESWIDTH",
+                1 )->name, 
+            "CONSOLEX2" );
+    cpu_label( _environment, consoleX1LTX2Label );
+
+	// 	 RULE 3) x2 < SW	->	X2 = ( SW - 1 )
+
+    // if ( _environment->consoleX2 >= _environment->screenTilesWidth ) {
+    //     _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    // }
+
+    cpu_compare_and_branch_8bit_const( 
+        _environment, 
+        variable_greater_than( _environment, "CONSOLEX2", "CURRENTTILESWIDTH", 1 )->realName,
+        0, 
+        consoleX1LTSWLabel,
+        1 
+    );
+        variable_move( 
+            _environment, 
+            variable_sub_const( 
+                _environment, 
+                "CURRENTTILESWIDTH",
+                1 )->name, 
+            "CONSOLEX2" );
+    cpu_label( _environment, consoleX1LTSWLabel );
+
+	// 	 RULE 4) ( y2 >= y1 ) ->	Y2 = y1
+
+    // if ( _environment->consoleY2 > _environment->consoleY1 ) {
+    //     _environment->consoleY2 = _environment->consoleY1;
+    // }
+
+    cpu_compare_and_branch_8bit_const( 
+        _environment, 
+        variable_less_than( _environment, "CONSOLEY2", "CONSOLEY1", 1 )->realName,
+        0, 
+        consoleY2LTY1Label,
+        1 
+    );
+        variable_move( 
+            _environment, 
+            "CONSOLEY1",
+            "CONSOLEY2" );
+    cpu_label( _environment, consoleY2LTY1Label );
+
+	// - CONSOLE COMPUTATION
+	// 	 - W = ( ( X2 - X1 ) + 1 )
+
+    // _environment->consoleW = ( _environment->consoleX2 - _environment->consoleX1 ) + 1;
+
+    variable_move( 
+        _environment, 
+        variable_sub( _environment,
+            "CONSOLEX2",
+            "CONSOLEX1" )->name,
+        "CONSOLEW" );
     cpu_inc( _environment, "CONSOLEW" );
 
-    // x1 + console width is equal or larger than screen?
-    cpu_compare_and_branch_8bit_const( _environment, variable_less_than( _environment, variable_add( _environment, "CONSOLEX1", "CONSOLEW" )->name, "CURRENTTILESWIDTH", 0 )->realName, 0, consoleWLimitedLabel, 0 );
+	// 	 - H = ( ( y2 - y1 ) + 1 )
 
-    // So we must reset it at ( SCREEN WIDTH - x1 )
-    variable_move( _environment, variable_sub( _environment, "CURRENTTILESWIDTH", x1->name )->name, "CONSOLEW" );
-    cpu_inc( _environment, "CONSOLEW" );
+    // _environment->consoleH = ( _environment->consoleY2 - _environment->consoleY1 ) + 1;
 
-    cpu_label( _environment, consoleWLimitedLabel );
-
-    // ----------- CONSOLE Y ----------- 
-
-    // Setup top ordinate (and current cursor position).
-    variable_move( _environment, x1->name, "CONSOLEY1" );
-    variable_move( _environment, x1->name, "YCURSYS" );
-
-    // Starting height is y2 - y1
-    variable_move( _environment, variable_sub( _environment, y2->name, y1->name )->name, "CONSOLEH" );
-
-    // Positive? Go on!
-    cpu_compare_and_branch_8bit_const( _environment, variable_less_than_const( _environment, "CONSOLEH", 0, 1 )->realName, 0, consoleHPositiveLabel, 1 );
-
-    // Console height is negative: so we must reset it at ( SCREEN HEIGHT - x1 )
-    variable_move( _environment, variable_sub( _environment, "CURRENTTILESHEIGHT", x1->name )->name, "CONSOLEH" );
-
-    cpu_label( _environment, consoleHPositiveLabel );
-
-    // Positive o resetted, the width must increased by 1 (since is 0 based)
+    variable_move( 
+        _environment, 
+        variable_sub( _environment,
+            "CONSOLEY2",
+            "CONSOLEY1" )->name,
+        "CONSOLEH" );
     cpu_inc( _environment, "CONSOLEH" );
 
-    // x1 + console height is equal or larger than screen?
-    cpu_compare_and_branch_8bit_const( _environment, variable_less_than( _environment, variable_add( _environment, "CONSOLEY1", "CONSOLEH" )->name, "CURRENTTILESHEIGHT", 0 )->realName, 0, consoleHLimitedLabel, 0 );
+	// 	(+ graphical if needed)
 
-    // So we must reset it at ( SCREEN HEIGHT - y1 )
-    variable_move( _environment, variable_sub( _environment, "CURRENTTILESHEIGHT", x1->name )->name, "CONSOLEH" );
+    console_calculate_vars( _environment );
 
-    // Positive o resetted, the height must increased by 1 (since is 0 based)
-    cpu_inc( _environment, "CONSOLEH" );
-
-    cpu_label( _environment, consoleHLimitedLabel );
-
-    // ----------- BOTH ----------- 
-
-    // Now we can calculate the various byte oriented sizes.
-    console_update_width_in_bytes( _environment );
-
-    // Recalculate X2 and Y2.
-
-    cpu_math_add_8bit( _environment, "CONSOLEX1", "CONSOLEW", "CONSOLEX2" );
-    cpu_math_add_8bit( _environment, "CONSOLEY1", "CONSOLEH", "CONSOLEY2" );
+    variable_move( _environment, "CONSOLEX1", "XCURSYS" );
+    variable_move( _environment, "CONSOLEY1", "YCURSYS" );
 
 }

@@ -2366,6 +2366,36 @@ typedef struct _Environment {
     int fontHeight;
 
     /**
+     * Console left corner
+     */
+    int consoleX1;
+
+    /**
+     * Console top corner
+     */
+    int consoleY1;
+
+    /**
+     * Console right corner
+     */
+    int consoleX2;
+
+    /**
+     * Console bottom corner
+     */
+    int consoleY2;
+
+    /**
+     * Console width (in chars)
+     */
+    int consoleW;
+
+    /**
+     * Console height (in chars)
+     */
+    int consoleH;
+
+    /**
      * Deployed modules.
      */
     Deployed deployed;
@@ -3860,7 +3890,8 @@ Bank * bank_find( Bank * _first, char * _name );
 
 int define_audio_target_check( Environment * _environment, int _value );
 
-void console_update_width_in_bytes( Environment * _environment );
+void console_calculate( Environment * _environment );
+void console_calculate_vars( Environment * _environment );
 
 void banks_init( Environment * _environment );
 void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count, int _allowed_size );
