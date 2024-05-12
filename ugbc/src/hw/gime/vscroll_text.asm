@@ -59,25 +59,34 @@ VSCROLLTX
     BGT VSCROLLTDOWN
 
 VSCROLLTUP
-    LDA CURRENTTILESWIDTH
+    LDB CURRENTTILESWIDTH
+    LDA CONSOLEY1
+    MUL
+    ASLB
+    ROLA
     LDX TEXTADDRESS
     LDY TEXTADDRESS
-    LEAY A, Y
-    LEAY A, Y
-
-    LDA CURRENTTILESWIDTH
-    LDB CURRENTTILESHEIGHT
-    MUL
-    LSLB
-    ROLA
-    TFR D, U
-    LDA #0
+    LEAX D, X
+    LEAY D, Y
     LDB CURRENTTILESWIDTH
-    NEGA
-    NEGB
-    SBCA #0
-    LEAU D, U
-    LEAU D, U
+    LDA #0
+    ASLB
+    ROLA
+    LEAY D, Y
+
+    ; LDA CONSOLEW
+    ; LDB CONSOLEH
+    ; MUL
+    ; LSLB
+    ; ROLA
+    ; TFR D, U
+    ; LDA #0
+    ; LDB CONSOLEW
+    ; NEGA
+    ; NEGB
+    ; SBCA #0
+    ; LEAU D, U
+    ; LEAU D, U
 
     ; The VSCROLL command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 
@@ -85,22 +94,49 @@ VSCROLLTUP
 
     JSR GIMEBANKVIDEO
 
+    LDB CONSOLEX2
+    ASLB
+    STB MATHPTR3
+
+    CLRA
+    LDB CONSOLEH
+    DECB
+    TFR D, U
+VSCROLLTUPYSCR1L1
+    LDB CONSOLEX1
+    ASLB
 VSCROLLTUPYSCR1
-    LDA ,Y+
-    STA ,X+
+    LDA B,Y
+    STA B,X
+    INCB
+    CMPB MATHPTR3
+    BLE VSCROLLTUPYSCR1
+    PSHS D
+    CLRA
+    LDB CURRENTTILESWIDTH
+    ASLB
+    LEAY D, Y
+    LEAX D, X
+    PULS D
     LEAU -1, U
     CMPU #0
-    BNE VSCROLLTUPYSCR1
+    BNE VSCROLLTUPYSCR1L1
 
     ; The VSCROLL command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 
     ; memory at the beginning of execution and bank out at the end.
 
-    JSR GIMEBANKROM
+    ; JSR GIMEBANKROM
 
     LDA #0
-    LDB CURRENTTILESWIDTH
+    LDB CONSOLEW
+    ASLB
     TFR D, U
+
+    LDA #0
+    LDB CONSOLEX1
+    ASLB
+    LEAX D, X
 
     LDA EMPTYTILE
     LDB <PLOTC
@@ -109,7 +145,7 @@ VSCROLLTUPYSCR1
     ; during video RAM operation. This routine can simply bank in video 
     ; memory at the beginning of execution and bank out at the end.
 
-    JSR GIMEBANKVIDEO
+    ; JSR GIMEBANKVIDEO
 
 VSCROLLTUPYSCR2
     STD ,X

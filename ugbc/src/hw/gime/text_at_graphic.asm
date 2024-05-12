@@ -624,8 +624,8 @@ TEXTATBMINCX
     ; of the line, we must increment the vertical position.
 
     LDA <XCURSYS
-    CMPA CURRENTTILESWIDTH
-    BEQ TEXTATBMNEXT2
+    CMPA CONSOLEX2
+    BGT TEXTATBMNEXT2
 
     ; Move to the next character to print.
 
@@ -635,7 +635,7 @@ TEXTATBMNEXT2
 
     ; Put 0 as horizontal position.
 
-    LDA #0
+    LDA CONSOLEX1
     STA <XCURSYS
 
     ; Increment the vertical position.
@@ -646,8 +646,8 @@ TEXTATBMNEXT2
     ; of the screen, we must scroll the screen.
 
     LDA <YCURSYS
-    CMPA CURRENTTILESHEIGHT
-    BEQ TEXTATBMNEXT3
+    CMPA CONSOLEY2
+    BGT TEXTATBMNEXT3
 
     ; Move to the next character to print.
 

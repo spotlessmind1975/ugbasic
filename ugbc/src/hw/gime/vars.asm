@@ -101,3 +101,49 @@ GIMEMMUCOUNT               fcb 1
 GIMEINIT1SHADOW            fcb 0
 
 GIMESCREENCURRENT          fcb $8
+
+;       (x1,y1)  w (chars) / wb (bytes)
+;       +----------------+
+;  sa ->|*               | h (chars) / hb (bytes)
+;       |                |
+;       +----------------+ (x2, y2)
+;
+; Text mode
+;
+CONSOLEX1     fcb 0         ; <-- input from program (chars)
+CONSOLEY1     fcb 0         ; <-- input from program (chars)
+CONSOLEX2     fcb 31        ; <-- recalculated (chars)
+CONSOLEY2     fcb 15        ; <-- recalculated (chars)
+CONSOLEW      fcb 32        ; <-- calculated (chars)
+CONSOLEH      fcb 16        ; <-- calculated (chars)
+;
+; Graphic mode
+;
+CONSOLESA     fdb 0         ; <-- calculated (address)
+CONSOLEWB     fcb 32        ; <-- calculated (bytes)
+CONSOLEHB     fcb 16        ; <-- calculated (bytes)
+
+CONSOLECALCULATE
+    LDA <YCURSYS
+    LDB #8
+    MUL
+    STD <PLOTY
+    LDA <XCURSYS
+    LDB #8
+    MUL
+    STD <PLOTX
+    JSR GIMECALCPOSBM
+    STX CONSOLESA
+
+    LDA CONSOLEW
+    STA CONSOLEWB
+
+    ASL CONSOLEWB
+CONSOLECALCULATESKIPD
+    LDA CONSOLEH
+    STA CONSOLEHB
+    ASL CONSOLEHB
+    ASL CONSOLEHB
+    ASL CONSOLEHB
+
+    RTS    

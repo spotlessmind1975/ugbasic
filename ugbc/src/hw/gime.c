@@ -347,6 +347,80 @@ void gime_bank_select( Environment * _environment, int _bank ) {
 #define GIME_128K( )  GIME_ADDRESS( 0x60000 )
 #define GIME_512K( )  GIME_\( 0x00000 )
 
+void console_calculate( Environment * _environment ) {
+
+    int consoleSA = 0x4000;
+    int consoleWB = _environment->consoleW * _environment->currentModeBW;
+    int consoleHB = _environment->consoleH * 8;
+
+    int bitmap = 0;
+
+    switch( _environment->currentMode ) {
+
+        case TILEMAP_MODE_32X24:
+        case TILEMAP_MODE_32X25:
+        case TILEMAP_MODE_32X28:
+        case TILEMAP_MODE_40X24:
+        case TILEMAP_MODE_40X25:
+        case TILEMAP_MODE_40X28:
+        case TILEMAP_MODE_64X24:
+        case TILEMAP_MODE_64X25:
+        case TILEMAP_MODE_64X28:
+        case TILEMAP_MODE_80X24:
+        case TILEMAP_MODE_80X25:
+        case TILEMAP_MODE_80X28:
+            bitmap = 0;
+            break;
+
+        default:
+            bitmap = 1;
+            break;
+
+    }
+
+    int currentFrameSize;
+
+    if ( bitmap ) {
+        switch( _environment->screenColors ) {
+            case 2:
+                currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight );
+                break;
+            case 4:
+                currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight ) * 2;
+                break;
+            case 16:
+            default:
+                currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight ) * 4;
+                break;
+        }
+    } else {
+        currentFrameSize =  _environment->screenTilesWidth * _environment->screenTilesHeight * 2;
+    }
+
+    if ( currentFrameSize <= 0x2000 ) {
+        consoleSA = 0xc000;
+    } else if ( currentFrameSize <= 0x4000 ) {
+        consoleSA = 0xa000;
+    } else if ( currentFrameSize <= 0x6000 ) {
+        consoleSA = 0x8000;
+    } else if ( currentFrameSize <= 0x8000 ) {
+        consoleSA = 0x6000;
+    } else {
+        consoleSA = 0x6000;
+    }
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "JSR CONSOLECALCULATE" );
+
+}
+
 int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     // deploy_preferred( gimevars, src_hw_gime_vars_asm );
