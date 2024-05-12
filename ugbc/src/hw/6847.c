@@ -257,7 +257,7 @@ void console_calculate( Environment * _environment ) {
 
     int consoleSA = 0x0c00;
     int consoleWB = _environment->consoleW;
-    int consoleHB = _environment->consoleH;
+    int consoleHB = _environment->consoleH * 8;
 
     switch( _environment->currentMode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512

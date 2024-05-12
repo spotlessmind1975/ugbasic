@@ -43,7 +43,8 @@ VSCROLLTUP:
     ; resolution, in this case). Instead, we have to calculate the number
     ; of bytes effectively to copy. The number is given by CONSOLESL.
 
-    LD A, (CONSOLESL)
+    LD A, (CONSOLEWB)
+    ADD 8
     LD IXL, A
 
     ; LD BC, 192
@@ -87,6 +88,12 @@ VSCROLLTUP:
     ; HL = HL + DE
 
     ADD HL, DE
+
+    ; If just one line, we do not scroll!
+    LD A, C
+    SUB 8
+    OR C
+    JR Z, VSCROLLREFILL
 
 VSCROLLTUPL1:
 
@@ -137,6 +144,8 @@ VSCROLLTUPL1:
     ; Repeat until finished.
 
     JP NZ, VSCROLLTUPL1
+
+VSCROLLREFILL:
 
     ; Finally, we are to fill the lower (text) line.
 

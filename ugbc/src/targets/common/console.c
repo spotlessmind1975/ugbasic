@@ -121,10 +121,10 @@ void console( Environment * _environment, int _x1, int _y1, int _x2, int _y2 ) {
 
 	// 	(+ graphical if needed)
 
-    console_calculate( _environment );
-
     variable_store( _environment, "XCURSYS", _environment->consoleX1 );
     variable_store( _environment, "YCURSYS", _environment->consoleY1 );
+
+    console_calculate( _environment );
 
     variable_store( _environment, "CONSOLEX1", _environment->consoleX1 );
     variable_store( _environment, "CONSOLEY1", _environment->consoleY1 );
@@ -292,9 +292,9 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
 	// 	(+ graphical if needed)
 
-    console_calculate_vars( _environment );
-
     variable_move( _environment, "CONSOLEX1", "XCURSYS" );
     variable_move( _environment, "CONSOLEY1", "YCURSYS" );
+
+    console_calculate_vars( _environment );
 
 }
