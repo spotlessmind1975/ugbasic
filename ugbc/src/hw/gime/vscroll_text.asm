@@ -101,6 +101,7 @@ VSCROLLTUP
     CLRA
     LDB CONSOLEH
     DECB
+    BEQ VSCROLLTUPYSCR1NO
     TFR D, U
 VSCROLLTUPYSCR1L1
     LDB CONSOLEX1
@@ -127,6 +128,8 @@ VSCROLLTUPYSCR1
     ; memory at the beginning of execution and bank out at the end.
 
     ; JSR GIMEBANKROM
+
+VSCROLLTUPYSCR1NO
 
     LDA #0
     LDB CONSOLEW
