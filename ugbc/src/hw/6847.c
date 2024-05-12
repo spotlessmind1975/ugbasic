@@ -311,7 +311,6 @@ void console_calculate_vars( Environment * _environment ) {
 
     outline0( "JSR CONSOLECALCULATE" );
 
-
 }
 
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {

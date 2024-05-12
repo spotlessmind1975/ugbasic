@@ -370,6 +370,28 @@ void ef936x_bank_select( Environment * _environment, int _bank ) {
 
 }
 
+void console_calculate( Environment * _environment ) {
+
+    #if defined(__to8__)
+        int consoleSA = 0x4000;
+    #else
+        int consoleSA = 0x0000;
+    #endif
+    int consoleWB = _environment->consoleW * _environment->currentModeBW;
+    int consoleHB = _environment->consoleH * 8;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "JSR CONSOLECALCULATE" );
+
+}
+
 int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );
