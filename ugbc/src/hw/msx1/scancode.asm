@@ -35,6 +35,44 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+ROWSTATUS:
+    DI
+    LD C, A
+    IN A, ($AA)
+    AND $F0
+    OR C
+    OUT ($AA), A
+    EI
+    IN A, ($A9)    
+    RET
+
+ROWSSTATUS:
+    LD A, 8
+    LD B, A
+ROWSSTATUSL1:
+    LD A, B
+    CALL ROWSTATUS
+    CP $FF
+    JR NZ, ROWSSTATUS1
+    DEC B
+    JR NZ, ROWSSTATUSL1
+ROWSSTATUS0:
+    LD A, 0
+    RET
+ROWSSTATUS1:
+    LD A, $FF
+    RET
+
+WAITKEY:
+    CALL ROWSSTATUS
+    CP 0
+    JR Z, WAITKEY
+WAITKEY2:
+    CALL ROWSSTATUS
+    CP 0
+    JR NZ, WAITKEY2
+    RET
+
 SCANCODERAW:
     PUSH BC
     PUSH DE

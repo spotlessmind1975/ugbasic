@@ -42,18 +42,8 @@ extern char DATATYPE_AS_STRING[][16];
 
 void wait_key( Environment * _environment ) {
 
-    MAKE_LABEL
+    deploy( scancode, src_hw_msx1_scancode_asm );
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANCODE)");
-
-    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
-
-    char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
-
-    cpu_label( _environment, repeatLabel );
-
-    msx1_scancode( _environment, pressed->realName, result->realName );
-
-    cpu_bveq( _environment, pressed->realName, repeatLabel );
+    outline0( "CALL WAITKEY" );
 
 }
