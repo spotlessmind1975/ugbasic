@@ -426,3 +426,354 @@ PLOT6XVBASEHI:
     .byte >(GTIAFBS2+(92*40)),>(GTIAFBS2+(93*40)),>(GTIAFBS2+(94*40)),>(GTIAFBS2+(95*40))
 
 @ENDIF
+
+
+CALCPOSG:
+
+@IF !vestigialConfig.screenModeUnique 
+
+    LDA CURRENTMODE
+    CMP #8
+    BNE CALCPOS8X
+    JMP CALCPOS8
+CALCPOS8X:
+    CMP #9
+    BNE CALCPOS9X
+    JMP CALCPOS9
+CALCPOS9X:
+    CMP #10
+    BNE CALCPOS10X
+    JMP CALCPOS10
+CALCPOS10X:
+    CMP #11
+    BNE CALCPOS11X
+    JMP CALCPOS11
+CALCPOS11X:
+    CMP #12
+    BNE CALCPOS12X
+    JMP CALCPOS12
+CALCPOS12X:
+    CMP #13
+    BNE CALCPOS13X
+    JMP CALCPOS13
+CALCPOS13X:
+    CMP #14
+    BNE CALCPOS14X
+    JMP CALCPOS14
+CALCPOS14X:
+    CMP #15
+    BNE CALCPOS15X
+    JMP CALCPOS15
+CALCPOS15X:
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 8 ) )
+
+CALCPOS8:
+
+    LDA #2
+    STA PATTERN
+
+    LDA MATHPTR6
+    ASL A
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA MATHPTR7
+    CLC
+    ; ADC #1
+    ASL A
+    ASL A
+    ASL A
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    LDA PLOT4VBASELO,Y          ;table of $9C40 row base addresses
+    ; ADC PLOT4LO,X              ;+ (4 * Xcell)
+    STA PLOTDEST               ;= cell address
+
+    LDA PLOT4VBASEHI,Y          ;do the high byte
+    ; ADC PLOT4HI,X
+    STA PLOTDEST+1
+
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 9 ) )
+
+CALCPOS9:
+
+    LDA #1
+    STA PATTERN
+
+    LDA MATHPTR6
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA MATHPTR7
+    CLC
+    ; ADC #1
+    ASL A
+    ASL A
+    ASL A
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT4VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT4VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 10 ) )
+
+CALCPOS10:
+
+    LDA #2
+    STA PATTERN
+
+    LDA MATHPTR6
+    ASL A
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA MATHPTR7
+    CLC
+    ; ADC #1
+    ASL A
+    ASL A
+    ASL A
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 11 ) )
+
+CALCPOS11:
+
+    LDA #1
+    STA PATTERN
+
+    LDA MATHPTR6
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA MATHPTR7
+    CLC
+    ; ADC #1
+    ASL A
+    ASL A
+    ASL A
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 12 ) )
+
+CALCPOS12:
+
+    LDA #1
+    STA PATTERN
+
+    LDA MATHPTR6
+    ; ASL A
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA MATHPTR7
+    CLC
+    ; ADC #1
+    ASL A
+    ASL A
+    ASL A
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+    
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 13 ) )
+
+CALCPOS13:
+
+    LDA #2
+    STA PATTERN
+
+    LDA MATHPTR6
+    ASL A
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA MATHPTR7
+    CLC
+    ; ADC #1
+    ASL A
+    ASL A
+    ASL A
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT6VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT6VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 14 ) )
+
+CALCPOS14:
+
+    LDA #0
+    STA PATTERN
+
+    LDA MATHPTR6
+    ; ASL A
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA MATHPTR7
+    CLC
+    ; ADC #1
+    ASL A
+    ASL A
+    ASL A
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 15 ) )
+
+CALCPOS15:
+
+    LDA #0
+    STA PATTERN
+
+    LDA MATHPTR6
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA MATHPTR7
+    CLC
+    ; ADC #1
+    ASL A
+    ASL A
+    ASL A
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT6XVBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT6XVBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    RTS
+
+@ENDIF

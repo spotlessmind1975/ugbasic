@@ -699,6 +699,24 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
     
 }
 
+void console_calculate( Environment * _environment ) {
+
+    int consoleSA = 0x4000;
+    int consoleWB = _environment->consoleW * _environment->currentModeBW;
+    int consoleHB = _environment->consoleH * 8;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "JSR CONSOLECALCULATE" );
+
+}
+
 void console_update_width_in_bytes( Environment * _environment ) {
 
     cpu_math_sub_8bit( _environment, "CURRENTTILESWIDTH", "CONSOLEW", "CONSOLESL" );
