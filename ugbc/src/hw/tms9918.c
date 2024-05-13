@@ -894,8 +894,10 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
     cpu_store_8bit( _environment, "CONSOLEY2", _environment->consoleTilesHeight-1 );
     cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
-    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesHeight );
 
+    console_calculate( _environment );
+    
 // #ifdef __coleco__
 
 //     if ( ! _environment->hasGameLoop ) {
@@ -910,6 +912,24 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 // #endif
 
     // printf("tms9918_tilemap_enable() -> screen tiles width %d\n", _environment->screenTilesWidth );
+
+}
+
+void console_calculate( Environment * _environment ) {
+
+    int consoleSA = 6 * 0x0400 + ( _environment->consoleY1 * _environment->screenTilesWidth ) + _environment->consoleX1;
+    int consoleWB = _environment->consoleW * _environment->currentModeBW;
+    int consoleHB = _environment->consoleH * 8;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "CALL CONSOLECALCULATE" );
 
 }
 
@@ -1559,6 +1579,13 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "SLICEY" );
     variable_import( _environment, "SLICEDTARGET", VT_POSITION, 0 );
     variable_global( _environment, "SLICEDTARGET" );
+
+    variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
+    variable_global( _environment, "CONSOLESA" );
+    variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEHB" );
+    variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEWB" );
 
     tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
