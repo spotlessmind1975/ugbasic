@@ -402,6 +402,14 @@ void zx_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
+void console_calculate( Environment * _environment ) {
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+}
+
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
     _environment->screenWidth = 256;
     _environment->screenHeight = 192;
