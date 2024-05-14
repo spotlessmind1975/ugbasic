@@ -581,6 +581,7 @@ TEXTATBMAT
     DECB
     ANDCC #$01
     SUBA <XCURSYS
+    ADDA CONSOLEX1
     STA <CLINEX
 
     ; The vertical delta is calculated started from
@@ -590,6 +591,7 @@ TEXTATBMAT
     DECB
     ANDCC #$01
     SUBA <YCURSYS
+    ADDA CONSOLEY1
     STA <CLINEY
 
     ; Change the position like a CMOVE.

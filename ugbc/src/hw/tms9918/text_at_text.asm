@@ -363,6 +363,9 @@ TEXTATAT:
     LD B, A
     LD A, (DE)
     SUB A, B
+    LD B, A
+    LD A, (CONSOLEX1)
+    ADD A, B
     LD (CLINEX), A
     INC DE
     DEC C
@@ -370,6 +373,9 @@ TEXTATAT:
     LD B, A
     LD A, (DE)
     SUB A, B
+    LD B, A
+    LD A, (CONSOLEY1)
+    ADD A, B
     LD (CLINEY), A
     JMP TEXTATCMOVE
 

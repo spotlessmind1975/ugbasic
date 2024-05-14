@@ -220,6 +220,9 @@ TEXTATBMAT:
     LD B, A
     LD A, (DE)
     SUB A, B
+    LD B, A
+    LD A, (CONSOLEX1)
+    ADD A, B
     LD (CLINEX), A
     INC DE
     DEC C
@@ -227,6 +230,9 @@ TEXTATBMAT:
     LD B, A
     LD A, (DE)
     SUB A, B
+    LD B, A
+    LD A, (CONSOLEY1)
+    ADD A, B
     LD (CLINEY), A
     JP TEXTATBMCMOVE
 
