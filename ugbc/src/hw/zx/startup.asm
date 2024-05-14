@@ -66,12 +66,14 @@ ZXIRQSVC:
     PUSH DE
     PUSH HL
     PUSH IX
+    PUSH IY
     EXX
     EX AF,AF'
     PUSH AF
     PUSH BC
     PUSH DE
     PUSH HL
+    PUSH IX
     PUSH IY
 
     LD HL, (ZXTIMER)
@@ -86,18 +88,19 @@ IRQVECTORSKIP:
     CALL TIMERMANAGER
 
     POP IY
+    POP IX
     POP HL
     POP DE
     POP BC
     POP AF
     EXX
     EX AF,AF'
+    POP IY
     POP IX
     POP HL
     POP DE
     POP BC
     POP AF
-    JP $0038
     EI
     RET
 
