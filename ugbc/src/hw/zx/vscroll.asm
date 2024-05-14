@@ -40,6 +40,8 @@ VSCROLL:
     PUSH BC
     PUSH DE
     PUSH HL
+    PUSH IY
+    PUSH IX
     CP $80
     JP C, VSCROLLDOWN
 
@@ -48,25 +50,67 @@ VSCROLL:
 ; ------------------------------------------------------------
 
 VSCROLLUP:
+    
+    ; Calculate offset for scrolling (B 2 complemented)
     XOR $FF
     ADD A, 1
     LD B, A
+
 VSCROLLUPL:
-    LD C, 192
+
+    ; Get the height of the window scrolling (in bytes).
+
+    LD A, (CONSOLEH)
+    SLA A
+    SLA A
+    SLA A
+    LD C, A
+
+    ; We have to scroll just the height minus 
+    ; the number of rows to scroll.
 
     LD A, C
     SUB A, B
     LD C, A
 
+    ; Lookup table will do the magic.
+
     LD IX, ROWSADDRESS
 
+    ; Lookup for first row (CONSOLEY1)
+
+    PUSH BC
+    LD A, (CONSOLEY1)
+    CP 0
+    JR Z, ROWSELECTUP
+    SLA A
+    SLA A
+    SLA A
+    LD C, A
+ROWSELECTUPC:
+    INC IX
+    INC IX
+    DEC C
+    JR NZ, ROWSELECTUPC
 ROWSELECTUP:
+    POP BC
+
+
+    PUSH IX
+ROWSELECTREPEAT:
+    POP IX
+    PUSH IX
+
+    ; Retrieve the address of the first (n-th) row in DE.
+
     LD A, (IX)
     LD E, A
     INC IX
     LD A, (IX)
     LD D, A
     INC IX
+
+    ; Now we move ahead, to take address of the "second" row.
 
     PUSH B
     DEC B
@@ -79,36 +123,40 @@ ROWSELECTUP0:
 ROWSELECTUP1:
     POP B
 
+    ; Retrieve the address of the "second" (nth+1) row in HL.
+
     LD A, (IX)
     LD L, A
     INC IX
     LD A, (IX)
     LD H, A
     INC IX
-    DEC IX
-    DEC IX
 
-    PUSH B
-    DEC B
-    JR Z, ROWSELECTUP3
-ROWSELECTUP2:
-    DEC IX
-    DEC IX
-    DEC B
-    JR NZ, ROWSELECTUP2
-ROWSELECTUP3:
-    POP B
+    ; Now we can copy the row (HL -> DE)
 
     CALL ROWCOPY
+
+    ; Move to the next row.
+    
+    POP IX
+    INC IX
+    INC IX
+    PUSH IX
+
+    ; Decrement the number of rows to copy. 
+    ; If not finished, continue with the next row.
+
     DEC C
-    JR NZ, ROWSELECTUP
+    JR NZ, ROWSELECTREPEAT
+
+    ; The last line will be cleared.
+
     PUSH HL
     POP DE
-    CALL ROWCLEAR
 
-    ;
-    ;
+;     ; Clear all lines scrolled.
 
+    LD IYL, 0
     PUSH B
     DEC B
     JR Z, ROWSELECTUP5
@@ -119,69 +167,124 @@ ROWSELECTUP4:
     LD A, (IX)
     LD D, A
     INC IX
-    CALL ROWCLEAR    
+    CALL ROWCLEAR
     DEC B
     JR NZ, ROWSELECTUP4
 ROWSELECTUP5:
     POP B
 
+    POP IX
+
     ;
-    ;
+    ; ---------------------------------------------
+
+VSCROLLUPLC:
+
+    ; Get the height of the window scrolling (in bytes).
+
+    LD A, (CONSOLEH)
+    LD C, A
+
+    ; Lookup table will do the magic.
 
     LD IX, COLRADDRESS
+
+    LD A, B
+    SRL A
+    SRL A
+    SRL A
+    LD B, A
+
+    ; Lookup for first row (CONSOLEY1)
+
+    PUSH BC
+    LD A, (CONSOLEY1)
+    CP 0
+    JR Z, ROWSELECTUPC20
+    LD C, A
+ROWSELECTUPC2:
+    INC IX
+    INC IX
+    DEC C
+    JR NZ, ROWSELECTUPC2
+ROWSELECTUPC20:
+    POP BC
+
+    ; Retrieve the address of the first row in DE.
+
+ROWCSELECTUPC:
+
+    PUSH IX
+ROWSELECTREPEATC:
+    POP IX
+    PUSH IX
 
     LD A, (IX)
     LD E, A
     INC IX
-    LD D, (IX)
-    LD E, A
+    LD A, (IX)
+    LD D, A
     INC IX
 
+    ; Now we move ahead, to take address of the "second" row.
+
     PUSH B
-    DEC B
-    JR Z, ROWCSELECTUPL2 
-ROWCSELECTUPL:
+    LD A, B
+    CP 1
+    JR Z, ROWCSELECTUP1C
+ROWCSELECTUP0C:
     INC IX
     INC IX
     DEC B
-    JR NZ, ROWCSELECTUPL
-ROWCSELECTUPL2:
+    JR NZ, ROWCSELECTUP0C
+ROWCSELECTUP1C:
     POP B
+
+    ; Retrieve the address of the "second" row in HL.
 
     LD A, (IX)
     LD L, A
     INC IX
     LD A, (IX)
     LD H, A
+    INC IX
 
-    LD A, B
+    ; Now we can copy the row (HL -> DE)
 
-    SRA A
-    SRA A
-    SRA A
-    SRA A
-    SRA A
+    CALL ROWCOPY
 
-    JR NZ, ROWCSELECTUPL3A
+    POP IX
+    INC IX
+    INC IX
+    PUSH IX
 
-    LD A, 1
+    ; Decrement the number of rows to copy. 
+    ; If not finished, continue with the next row.
 
-ROWCSELECTUPL3A:
-    PUSH HL
-    PUSH DE
-    LD HL, $280
-    LD DE, $20
-    DEC A
-    JR Z, ROWCSELECTUPL4
-ROWCSELECTUPL3:
-    SBC HL, DE
-    DEC A
-    JR NZ, ROWCSELECTUPL3
-ROWCSELECTUPL4:
-    LD BC, HL
-    POP DE
-    POP HL
-    LDIR
+    DEC C
+    JR NZ, ROWSELECTREPEATC
+
+    ; The last line will be cleared.
+
+    LD A, (_PAPER)
+    AND $7
+    SLA A
+    SLA A
+    SLA A    
+    LD IYL, A
+    LD A, (CONSOLEH)
+    CP 0
+    JR Z, ROWCSELECTUPC5
+    LD A, (IX)
+    LD E, A
+    INC IX
+    LD A, (IX)
+    LD D, A
+    INC IX
+    CALL ROWCLEAR
+ROWCSELECTUPC5:
+
+    POP IX
 
     JP VSCROLLE
 
@@ -275,8 +378,6 @@ ROWSELECTDOWN6:
 ROWSELECTDOWN7:
     POP B
 
-    CALL ROWCLEAR
-
     LD IX, COLRADDRESSL
 
     LD A, (IX)
@@ -342,9 +443,21 @@ ROWCSELECTDOWNL4:
 
 ROWCOPY:
     PUSH HL
-    PUSH DE
     PUSH BC
-    LD A, 32
+    PUSH DE
+    LD A, (CONSOLEX1)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD BC, DE
+    POP DE
+    PUSH HL
+    LD HL, DE
+    LD DE, BC
+    ADD HL, DE
+    LD DE, HL
+    POP HL
+    LD A, (CONSOLEW)
     LD B, A
 ROWCOPYL:
     LD A, (HL)
@@ -354,15 +467,14 @@ ROWCOPYL:
     DEC B
     JR NZ, ROWCOPYL
     POP BC
-    POP DE
     POP HL
     RET
 
 ROWCLEAR:
     PUSH BC
-    LD A, 32
+    LD A, (CONSOLEW)
     LD B, A
-    LD A, 0
+    LD A, IYL
 ROWCLEARL:
     LD (DE), A
     INC DE
@@ -372,6 +484,8 @@ ROWCLEARL:
     RET
 
 VSCROLLE:
+    POP IX
+    POP IY
     POP HL
     POP DE
     POP BC
@@ -575,196 +689,28 @@ ROWSADDRESSL:
 
 COLRADDRESS:
     DEFW 22528
-    DEFW 22528
-    DEFW 22528
-    DEFW 22528
-    DEFW 22528
-    DEFW 22528
-    DEFW 22528
-    DEFW 22528
-    DEFW 22560
-    DEFW 22560
-    DEFW 22560
-    DEFW 22560
-    DEFW 22560
-    DEFW 22560
-    DEFW 22560
     DEFW 22560
     DEFW 22592
-    DEFW 22592
-    DEFW 22592
-    DEFW 22592
-    DEFW 22592
-    DEFW 22592
-    DEFW 22592
-    DEFW 22592
-    DEFW 22624
-    DEFW 22624
-    DEFW 22624
-    DEFW 22624
-    DEFW 22624
-    DEFW 22624
-    DEFW 22624
     DEFW 22624
     DEFW 22656
-    DEFW 22656
-    DEFW 22656
-    DEFW 22656
-    DEFW 22656
-    DEFW 22656
-    DEFW 22656
-    DEFW 22656
-    DEFW 22688
-    DEFW 22688
-    DEFW 22688
-    DEFW 22688
-    DEFW 22688
-    DEFW 22688
-    DEFW 22688
     DEFW 22688
     DEFW 22720
-    DEFW 22720
-    DEFW 22720
-    DEFW 22720
-    DEFW 22720
-    DEFW 22720
-    DEFW 22720
-    DEFW 22720
-    DEFW 22752
-    DEFW 22752
-    DEFW 22752
-    DEFW 22752
-    DEFW 22752
-    DEFW 22752
-    DEFW 22752
     DEFW 22752
     DEFW 22784
-    DEFW 22784
-    DEFW 22784
-    DEFW 22784
-    DEFW 22784
-    DEFW 22784
-    DEFW 22784
-    DEFW 22784
-    DEFW 22816
-    DEFW 22816
-    DEFW 22816
-    DEFW 22816
-    DEFW 22816
-    DEFW 22816
-    DEFW 22816
     DEFW 22816
     DEFW 22848
-    DEFW 22848
-    DEFW 22848
-    DEFW 22848
-    DEFW 22848
-    DEFW 22848
-    DEFW 22848
-    DEFW 22848
-    DEFW 22880
-    DEFW 22880
-    DEFW 22880
-    DEFW 22880
-    DEFW 22880
-    DEFW 22880
-    DEFW 22880
     DEFW 22880
     DEFW 22912
-    DEFW 22912
-    DEFW 22912
-    DEFW 22912
-    DEFW 22912
-    DEFW 22912
-    DEFW 22912
-    DEFW 22912
-    DEFW 22944
-    DEFW 22944
-    DEFW 22944
-    DEFW 22944
-    DEFW 22944
-    DEFW 22944
-    DEFW 22944
     DEFW 22944
     DEFW 22976
-    DEFW 22976
-    DEFW 22976
-    DEFW 22976
-    DEFW 22976
-    DEFW 22976
-    DEFW 22976
-    DEFW 22976
-    DEFW 23008
-    DEFW 23008
-    DEFW 23008
-    DEFW 23008
-    DEFW 23008
-    DEFW 23008
-    DEFW 23008
     DEFW 23008
     DEFW 23040
-    DEFW 23040
-    DEFW 23040
-    DEFW 23040
-    DEFW 23040
-    DEFW 23040
-    DEFW 23040
-    DEFW 23040
-    DEFW 23072
-    DEFW 23072
-    DEFW 23072
-    DEFW 23072
-    DEFW 23072
-    DEFW 23072
-    DEFW 23072
     DEFW 23072
     DEFW 23104
-    DEFW 23104
-    DEFW 23104
-    DEFW 23104
-    DEFW 23104
-    DEFW 23104
-    DEFW 23104
-    DEFW 23104
-    DEFW 23136
-    DEFW 23136
-    DEFW 23136
-    DEFW 23136
-    DEFW 23136
-    DEFW 23136
-    DEFW 23136
     DEFW 23136
     DEFW 23168
-    DEFW 23168
-    DEFW 23168
-    DEFW 23168
-    DEFW 23168
-    DEFW 23168
-    DEFW 23168
-    DEFW 23168
-    DEFW 23200
-    DEFW 23200
-    DEFW 23200
-    DEFW 23200
-    DEFW 23200
-    DEFW 23200
-    DEFW 23200
     DEFW 23200
     DEFW 23232
-    DEFW 23232
-    DEFW 23232
-    DEFW 23232
-    DEFW 23232
-    DEFW 23232
-    DEFW 23232
-    DEFW 23232
-    DEFW 23264
-    DEFW 23264
-    DEFW 23264
-    DEFW 23264
-    DEFW 23264
-    DEFW 23264
-    DEFW 23264
     DEFW 23264
 COLRADDRESSL:
     DEFW 23296
