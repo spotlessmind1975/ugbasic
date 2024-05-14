@@ -472,6 +472,12 @@ ROWCOPYL:
 
 ROWCLEAR:
     PUSH BC
+    LD HL, DE
+    LD A, (CONSOLEX1)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD DE, HL
     LD A, (CONSOLEW)
     LD B, A
     LD A, IYL
