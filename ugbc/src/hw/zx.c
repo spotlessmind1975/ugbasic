@@ -387,6 +387,25 @@ void zx_initialization( Environment * _environment ) {
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenColors = COLOR_COUNT;
+    _environment->screenTilesWidth = _environment->screenWidth / _environment->fontWidth;
+    _environment->screenTilesHeight = _environment->screenHeight / _environment->fontHeight;
+
+    cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
+    cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
+    cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
+    cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
+    cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
+    cpu_store_8bit( _environment, "CONSOLEX1", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY1", 0 );
+    outline0(";pippo");
+    cpu_store_8bit( _environment, "CONSOLEX2", _environment->screenTilesWidth-1 );
+    cpu_store_8bit( _environment, "CONSOLEY2", _environment->screenTilesHeight-1 );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->screenTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->screenTilesHeight );
 
 }
 
