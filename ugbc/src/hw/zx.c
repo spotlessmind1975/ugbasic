@@ -399,13 +399,8 @@ void zx_initialization( Environment * _environment ) {
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
-    cpu_store_8bit( _environment, "CONSOLEX1", 0 );
-    cpu_store_8bit( _environment, "CONSOLEY1", 0 );
-    outline0(";pippo");
-    cpu_store_8bit( _environment, "CONSOLEX2", _environment->screenTilesWidth-1 );
-    cpu_store_8bit( _environment, "CONSOLEY2", _environment->screenTilesHeight-1 );
-    cpu_store_8bit( _environment, "CONSOLEW", _environment->screenTilesWidth );
-    cpu_store_8bit( _environment, "CONSOLEH", _environment->screenTilesHeight );
+
+    console_init( _environment );
 
 }
 
@@ -435,6 +430,7 @@ int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenColors = 8;
+    console_init( _environment );
 }
 
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {

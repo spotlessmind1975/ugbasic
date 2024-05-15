@@ -77,40 +77,48 @@ Alias per ''CONSOLE RESTORE''.
 </usermanual> */
 void console_restore( Environment * _environment, int _number ) {
 
+    char offset[MAX_TEMPORARY_STORAGE];
+    int displacement;
+
     if ( _number == _environment->activeConsole.id ) {
         return;
     }
 
-    char offset[MAX_TEMPORARY_STORAGE];
-    int value = ( _environment->activeConsole.id * 8 ) + 6;
-    sprintf( offset, "+%d", value++ );
-    cpu_move_8bit( _environment, "XCURSYS", address_displacement( _environment, "CONSOLES", offset ) );
-    sprintf( offset, "+%d", value++ );
-    cpu_move_8bit( _environment, "YCURSYS", address_displacement( _environment, "CONSOLES", offset ) );
+    Variable * xcursys = variable_retrieve( _environment, "XCURSYS" );
+    Variable * ycursys = variable_retrieve( _environment, "YCURSYS" );
+
+    // -----------------------
+
+    displacement = ( _environment->activeConsole.id * 8 ) + 6;
+
+    sprintf( offset, "+%d", displacement++ );
+    cpu_move_8bit( _environment, xcursys->realName, address_displacement( _environment, "CONSOLES", offset ) );
+    sprintf( offset, "+%d", displacement++ );
+    cpu_move_8bit( _environment, ycursys->realName, address_displacement( _environment, "CONSOLES", offset ) );
 
     memcpy( &_environment->activeConsole, &_environment->consoles[_number], sizeof( Console ) );
 
-    value = ( _number * 8 );
+    displacement = ( _number * 8 );
 
     cpu_store_8bit( _environment, "CONSOLEID", _number );
 
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, address_displacement( _environment, "CONSOLES", offset ), "CONSOLEX1" );
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, address_displacement( _environment, "CONSOLES", offset ), "CONSOLEY1" );
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, address_displacement( _environment, "CONSOLES", offset ), "CONSOLEX2" );
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, address_displacement( _environment, "CONSOLES", offset ), "CONSOLEY2" );
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, address_displacement( _environment, "CONSOLES", offset ), "CONSOLEW" );
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, address_displacement( _environment, "CONSOLES", offset ), "CONSOLEH" );
 
-    sprintf( offset, "+%d", value++ );
-    cpu_move_8bit( _environment, address_displacement( _environment, "CONSOLES", offset ), "XCURSYS" );
-    sprintf( offset, "+%d", value++ );
-    cpu_move_8bit( _environment, address_displacement( _environment, "CONSOLES", offset ), "YCURSYS" );
+    sprintf( offset, "+%d", displacement++ );
+    cpu_move_8bit( _environment, address_displacement( _environment, "CONSOLES", offset ), xcursys->realName );
+    sprintf( offset, "+%d", displacement++ );
+    cpu_move_8bit( _environment, address_displacement( _environment, "CONSOLES", offset ), ycursys->realName );
 
     console_calculate_vars( _environment );
 
@@ -118,30 +126,36 @@ void console_restore( Environment * _environment, int _number ) {
 
 void console_restore_vars( Environment * _environment, char * _number ) {
 
+    Variable * xcursys = variable_retrieve( _environment, "XCURSYS" );
+    Variable * ycursys = variable_retrieve( _environment, "YCURSYS" );
+
     MAKE_LABEL
     
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(consoles)" );
     cpu_addressof_16bit( _environment, "CONSOLES", address->realName  );
 
     Variable * number = variable_retrieve_or_define( _environment, _number, VT_BYTE, 0 );
-    cpu_math_mul2_const_8bit( _environment, number->realName, 3, 0 );
-    cpu_math_add_16bit_with_8bit( _environment, address->realName, number->realName, address->realName );
-
     char doNothingLabel[MAX_TEMPORARY_STORAGE]; sprintf( doNothingLabel, "%sconsole", label );
     cpu_compare_and_branch_8bit( _environment, number->realName, "CONSOLEID", doNothingLabel, 1 );
 
-    Variable * actualAddress = variable_temporary( _environment, VT_ADDRESS, "(consoles)" );
     Variable * actualNumber = variable_temporary( _environment, VT_BYTE, 0 );
-    cpu_move_8bit( _environment, number->realName, actualNumber->realName );
+    cpu_move_8bit( _environment, "CONSOLEID", actualNumber->realName );
+
     cpu_math_mul2_const_8bit( _environment, actualNumber->realName, 3, 0 );
-    cpu_math_add_16bit_with_8bit( _environment, actualAddress->realName, actualNumber->realName, actualAddress->realName );
-    cpu_math_add_16bit_const( _environment, actualAddress->realName, 6, actualAddress->realName );
-    cpu_inc_16bit( _environment, actualAddress->realName );
-    cpu_move_8bit_indirect2( _environment, actualAddress->realName, "XCURSYS" );
-    cpu_inc_16bit( _environment, actualAddress->realName );
-    cpu_move_8bit_indirect2( _environment, actualAddress->realName, "YCURSYS" );
+    cpu_math_add_16bit_with_8bit( _environment, address->realName, actualNumber->realName, address->realName );
+    cpu_math_add_16bit_const( _environment, address->realName, 6, address->realName );
+    cpu_move_8bit_indirect( _environment, xcursys->realName, address->realName );
+
+    cpu_move_8bit_indirect( _environment, xcursys->realName, address->realName );
+    cpu_inc_16bit( _environment, address->realName );
+    cpu_move_8bit_indirect( _environment, ycursys->realName, address->realName );
 
     cpu_move_8bit( _environment, number->realName, "CONSOLEID" );
+    cpu_addressof_16bit( _environment, "CONSOLES", address->realName  );
+
+    cpu_move_8bit( _environment, "CONSOLEID", actualNumber->realName );
+    cpu_math_mul2_const_8bit( _environment, actualNumber->realName, 3, 0 );
+    cpu_math_add_16bit_with_8bit( _environment, address->realName, actualNumber->realName, address->realName );
 
     cpu_move_8bit_indirect2( _environment, address->realName, "CONSOLEX1" );
     cpu_inc_16bit( _environment, address->realName );
@@ -155,9 +169,9 @@ void console_restore_vars( Environment * _environment, char * _number ) {
     cpu_inc_16bit( _environment, address->realName );
     cpu_move_8bit_indirect2( _environment, address->realName, "CONSOLEH" );
     cpu_inc_16bit( _environment, address->realName );
-    cpu_move_8bit_indirect2( _environment, address->realName, "XCURSYS" );
+    cpu_move_8bit_indirect2( _environment, address->realName, xcursys->realName );
     cpu_inc_16bit( _environment, address->realName );
-    cpu_move_8bit_indirect2( _environment, address->realName, "YCURSYS" );
+    cpu_move_8bit_indirect2( _environment, address->realName, ycursys->realName );
 
     console_calculate_vars( _environment );
 

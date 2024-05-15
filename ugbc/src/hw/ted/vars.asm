@@ -100,7 +100,7 @@ TEDTIMER: .word $0, $0
 ;       |                |
 ;       +----------------+ (x2, y2)
 ;
-CONSOLEID:    .byte 0         ; <-- actual
+CONSOLEID:    .byte $ff       ; <-- actual
 ;
 ;
 ; Text mode

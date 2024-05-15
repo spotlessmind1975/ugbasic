@@ -53,6 +53,18 @@ void console_init( Environment * _environment ) {
     }
 
     _environment->activeConsole.id = 0;
+
+    variable_store( _environment, "XCURSYS", _environment->activeConsole.x1 );
+    variable_store( _environment, "YCURSYS", _environment->activeConsole.y1 );
+
+    console_calculate( _environment );
+
+    variable_store( _environment, "CONSOLEX1", _environment->activeConsole.x1 );
+    variable_store( _environment, "CONSOLEY1", _environment->activeConsole.y1 );
+    variable_store( _environment, "CONSOLEX2", _environment->activeConsole.x2);
+    variable_store( _environment, "CONSOLEY2", _environment->activeConsole.y2 );
+    variable_store( _environment, "CONSOLEW", _environment->activeConsole.width );
+    variable_store( _environment, "CONSOLEH", _environment->activeConsole.height );
     
     console_calculate( _environment );
 

@@ -121,7 +121,7 @@ void setup_text_variables( Environment * _environment ) {
     variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
     variable_global( _environment, "YCURSYS" );
 
-    variable_import( _environment, "CONSOLEID", VT_SBYTE, 0 );
+    variable_import( _environment, "CONSOLEID", VT_SBYTE, 0xff );
     variable_global( _environment, "CONSOLEID" );
 
     variable_import( _environment, "CONSOLEX1", VT_SBYTE, 0 );

@@ -69,7 +69,7 @@ FONTHEIGHT      fcb 8
 ;       |                |
 ;       +----------------+ (x2, y2)
 ;
-CONSOLEID     fcb 0         ; <-- actual
+CONSOLEID     fcb $ff       ; <-- actual
 ;
 ; Text mode
 ;

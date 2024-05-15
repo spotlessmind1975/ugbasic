@@ -528,12 +528,8 @@ int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
-    cpu_store_8bit( _environment, "CONSOLEX1", 0 );
-    cpu_store_8bit( _environment, "CONSOLEY1", 0 );
-    cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
-    cpu_store_8bit( _environment, "CONSOLEY2", _environment->consoleTilesHeight-1 );
-    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
-    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesHeight );
+
+    console_init( _environment );
 
 }
 
@@ -883,6 +879,8 @@ void ef9345_initialization( Environment * _environment ) {
     _environment->screenColors = 8;
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
+
+    console_init( _environment );
 
 }
 

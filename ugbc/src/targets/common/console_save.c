@@ -62,44 +62,52 @@ data.
 </usermanual> */
 void console_save( Environment * _environment, int _number ) {
 
+    char offset[MAX_TEMPORARY_STORAGE];
+
+    int displacement = ( _number * 8 );
+
     _environment->activeConsole.id = _number;
 
     memcpy( &_environment->consoles[_number], &_environment->activeConsole, sizeof( Console ) );
 
-    char offset[MAX_TEMPORARY_STORAGE];
-
-    int value = ( _number * 8 );
-
     cpu_store_8bit( _environment, "CONSOLEID", _number );
 
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, "CONSOLEX1", address_displacement( _environment, "CONSOLES", offset ) );
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, "CONSOLEY1", address_displacement( _environment, "CONSOLES", offset ) );
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, "CONSOLEX2", address_displacement( _environment, "CONSOLES", offset ) );
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, "CONSOLEY2", address_displacement( _environment, "CONSOLES", offset ) );
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, "CONSOLEW", address_displacement( _environment, "CONSOLES", offset ) );
-    sprintf( offset, "+%d", value++ );
+    sprintf( offset, "+%d", displacement++ );
     cpu_move_8bit( _environment, "CONSOLEH", address_displacement( _environment, "CONSOLES", offset ) );
-    sprintf( offset, "+%d", value++ );
-    cpu_move_8bit( _environment, "XCURSYS", address_displacement( _environment, "CONSOLES", offset ) );
-    sprintf( offset, "+%d", value++ );
-    cpu_move_8bit( _environment, "YCURSYS", address_displacement( _environment, "CONSOLES", offset ) );
+    sprintf( offset, "+%d", displacement++ );
+    Variable * xcursys = variable_retrieve( _environment, "XCURSYS" );
+    cpu_move_8bit( _environment, xcursys->realName, address_displacement( _environment, "CONSOLES", offset ) );
+    sprintf( offset, "+%d", displacement++ );
+    Variable * ycursys = variable_retrieve( _environment, "YCURSYS" );
+    cpu_move_8bit( _environment, ycursys->realName, address_displacement( _environment, "CONSOLES", offset ) );
 
 }
 
 void console_save_vars( Environment * _environment, char * _number ) {
+    
+    Variable * xcursys = variable_retrieve( _environment, "XCURSYS" );
+    Variable * ycursys = variable_retrieve( _environment, "YCURSYS" );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(consoles)" );
     cpu_addressof_16bit( _environment, "CONSOLES", address->realName  );
 
     Variable * number = variable_retrieve_or_define( _environment, _number, VT_BYTE, 0 );
-    cpu_math_mul2_const_8bit( _environment, number->realName, 3, 0 );
-    cpu_math_add_16bit_with_8bit( _environment, address->realName, number->realName, address->realName );
     cpu_move_8bit( _environment, number->realName, "CONSOLEID" );
+    Variable * displacement = variable_temporary( _environment, VT_BYTE, "(displacement)" );
+
+    cpu_move_8bit( _environment, "CONSOLEID", displacement->realName );
+    cpu_math_mul2_const_8bit( _environment, displacement->realName, 3, 0 );
+    cpu_math_add_16bit_with_8bit( _environment, address->realName, displacement->realName, address->realName );
 
     cpu_move_8bit_indirect( _environment, "CONSOLEX1", address->realName );
     cpu_inc_16bit( _environment, address->realName );
@@ -113,8 +121,8 @@ void console_save_vars( Environment * _environment, char * _number ) {
     cpu_inc_16bit( _environment, address->realName );
     cpu_move_8bit_indirect( _environment, "CONSOLEH", address->realName );
     cpu_inc_16bit( _environment, address->realName );
-    cpu_move_8bit_indirect( _environment, "XCURSYS", address->realName );
+    cpu_move_8bit_indirect( _environment, xcursys->realName, address->realName );
     cpu_inc_16bit( _environment, address->realName );
-    cpu_move_8bit_indirect( _environment, "YCURSYS", address->realName );
+    cpu_move_8bit_indirect( _environment, ycursys->realName, address->realName );
 
 }

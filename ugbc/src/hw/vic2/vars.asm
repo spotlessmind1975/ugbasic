@@ -94,7 +94,7 @@ BLITR3 = $B4 ; $B5
 ;       |                |
 ;       +----------------+ (x2, y2)
 ;
-CONSOLEID:    .byte 0         ; <-- actual
+CONSOLEID:    .byte $ff       ; <-- actual
 ;
 ; Text mode
 ;
