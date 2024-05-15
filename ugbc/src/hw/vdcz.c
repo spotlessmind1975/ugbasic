@@ -740,6 +740,15 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 }
 
+void console_calculate( Environment * _environment ) {
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+}
+
+
 int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
