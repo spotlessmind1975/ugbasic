@@ -94,6 +94,8 @@ BLITR3 = $B4 ; $B5
 ;       |                |
 ;       +----------------+ (x2, y2)
 ;
+CONSOLEID:    .byte 0         ; <-- actual
+;
 ; Text mode
 ;
 CONSOLEX1:    .byte 0         ; <-- input from program (chars)
@@ -109,4 +111,6 @@ CONSOLESA:    .word 0         ; <-- calculated (address)
 CONSOLECA:    .word 0         ; <-- calculated (address)
 CONSOLEWB:    .byte 32        ; <-- calculated (bytes)
 CONSOLEHB:    .byte 16        ; <-- calculated (bytes)
+;
+CONSOLES:     .res 4*8        ; <-- storage for virtual consoles
 

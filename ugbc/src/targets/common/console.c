@@ -38,6 +38,26 @@
  * CODE SECTION 
  ****************************************************************************/
 
+void console_init( Environment * _environment ) {
+
+    _environment->activeConsole.x1 = 0;
+    _environment->activeConsole.y1 = 0;
+    _environment->activeConsole.x2 = _environment->screenTilesWidth-1;
+    _environment->activeConsole.y2 = _environment->screenTilesHeight-1;
+    _environment->activeConsole.width = _environment->screenTilesWidth;
+    _environment->activeConsole.height = _environment->screenTilesHeight;
+
+    for( int i=0; i<MAX_CONSOLES; ++i ) {
+        _environment->activeConsole.id = i;
+        memcpy( &_environment->consoles[i], &_environment->activeConsole, sizeof( Console ) );
+    }
+
+    _environment->activeConsole.id = 0;
+    
+    console_calculate( _environment );
+
+}
+
 /**
  * @brief Emit code for <strong>CONSOLE</strong>
  * 
@@ -80,58 +100,58 @@ void console( Environment * _environment, int _x1, int _y1, int _x2, int _y2 ) {
 	// 	 - Y1 = y1
 	// 	 - Y2 = y2
 
-    _environment->consoleX1 = _x1;
-    _environment->consoleY1 = _y1;
-    _environment->consoleX2 = _x2;
-    _environment->consoleY2 = _y2;
+    _environment->activeConsole.x1 = _x1;
+    _environment->activeConsole.y1 = _y1;
+    _environment->activeConsole.x2 = _x2;
+    _environment->activeConsole.y2 = _y2;
 
 	// - CONSOLE NORMALIZATION
 	// 	 RULE 1) x2 <> x1	->	X2 = ( SW - 1 )
 
-    if ( _environment->consoleX1 == _environment->consoleX2 ) {
-        _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    if ( _environment->activeConsole.x1 == _environment->activeConsole.x2 ) {
+        _environment->activeConsole.x2 = _environment->screenTilesWidth - 1;
     }
 
 	// 	 RULE 2) x2 > x1	->	X2 = ( SW - 1 )
 
-    if ( _environment->consoleX1 >= _environment->consoleX2 ) {
-        _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    if ( _environment->activeConsole.x1 >= _environment->activeConsole.x2 ) {
+        _environment->activeConsole.x2 = _environment->screenTilesWidth - 1;
     }
 
 	// 	 RULE 3) x2 < SW	->	X2 = ( SW - 1 )
 
-    if ( _environment->consoleX2 >= _environment->screenTilesWidth ) {
-        _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    if ( _environment->activeConsole.x2 >= _environment->screenTilesWidth ) {
+        _environment->activeConsole.x2 = _environment->screenTilesWidth - 1;
     }
 
 	// 	 RULE 4) ( y2 >= y1 ) ->	Y2 = y1
 
-    if ( _environment->consoleY2 < _environment->consoleY1 ) {
-        _environment->consoleY2 = _environment->consoleY1;
+    if ( _environment->activeConsole.y2 < _environment->activeConsole.y1 ) {
+        _environment->activeConsole.y2 = _environment->activeConsole.y1;
     }
 
 	// - CONSOLE COMPUTATION
 	// 	 - W = ( ( X2 - X1 ) + 1 )
 
-    _environment->consoleW = ( _environment->consoleX2 - _environment->consoleX1 ) + 1;
+    _environment->activeConsole.width = ( _environment->activeConsole.x2 - _environment->activeConsole.x1 ) + 1;
     
 	// 	 - H = ( ( y2 - y1 ) + 1 )
 
-    _environment->consoleH = ( _environment->consoleY2 - _environment->consoleY1 ) + 1;
+    _environment->activeConsole.height = ( _environment->activeConsole.y2 - _environment->activeConsole.y1 ) + 1;
 
 	// 	(+ graphical if needed)
 
-    variable_store( _environment, "XCURSYS", _environment->consoleX1 );
-    variable_store( _environment, "YCURSYS", _environment->consoleY1 );
+    variable_store( _environment, "XCURSYS", _environment->activeConsole.x1 );
+    variable_store( _environment, "YCURSYS", _environment->activeConsole.y1 );
 
     console_calculate( _environment );
 
-    variable_store( _environment, "CONSOLEX1", _environment->consoleX1 );
-    variable_store( _environment, "CONSOLEY1", _environment->consoleY1 );
-    variable_store( _environment, "CONSOLEX2", _environment->consoleX2);
-    variable_store( _environment, "CONSOLEY2", _environment->consoleY2 );
-    variable_store( _environment, "CONSOLEW", _environment->consoleW );
-    variable_store( _environment, "CONSOLEH", _environment->consoleH );
+    variable_store( _environment, "CONSOLEX1", _environment->activeConsole.x1 );
+    variable_store( _environment, "CONSOLEY1", _environment->activeConsole.y1 );
+    variable_store( _environment, "CONSOLEX2", _environment->activeConsole.x2);
+    variable_store( _environment, "CONSOLEY2", _environment->activeConsole.y2 );
+    variable_store( _environment, "CONSOLEW", _environment->activeConsole.width );
+    variable_store( _environment, "CONSOLEH", _environment->activeConsole.height );
 
 }
 
@@ -150,8 +170,8 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
     Variable * y2 = variable_retrieve_or_define( _environment, _y2, VT_SBYTE, 0 );
 
     // _environment->consoleSA = 0;
-    // _environment->consoleWB = 0;
-    // _environment->consoleHB = 0;
+    // _environment->activeConsole.widthB = 0;
+    // _environment->activeConsole.heightB = 0;
 
 	// - CONSOLE ASSIGNMENT
 	// 	 - X1 = x1
@@ -159,27 +179,27 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 	// 	 - Y1 = y1
 	// 	 - Y2 = y2
 
-    // _environment->consoleX1 = _x1;
+    // _environment->activeConsole.x1 = _x1;
 
     variable_move( _environment, x1->name, "CONSOLEX1" );
 
-    // _environment->consoleY1 = _y1;
+    // _environment->activeConsole.y1 = _y1;
 
     variable_move( _environment, y1->name, "CONSOLEY1" );
 
-    // _environment->consoleX2 = _x2;
+    // _environment->activeConsole.x2 = _x2;
 
     variable_move( _environment, x2->name, "CONSOLEX2" );
 
-    // _environment->consoleY2 = _y2;
+    // _environment->activeConsole.y2 = _y2;
 
     variable_move( _environment, y2->name, "CONSOLEY2" );
 
 	// - CONSOLE NORMALIZATION
 	// 	 RULE 1) x2 <> x1	->	X2 = ( SW - 1 )
 
-    // if ( _environment->consoleX1 == _environment->consoleX2 ) {
-    //     _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    // if ( _environment->activeConsole.x1 == _environment->activeConsole.x2 ) {
+    //     _environment->activeConsole.x2 = _environment->screenTilesWidth - 1;
     // }
 
     outline0("; compare (a)");
@@ -204,8 +224,8 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
 	// 	 RULE 2) x2 > x1	->	X2 = ( SW - 1 )
 
-    // if ( _environment->consoleX1 >= _environment->consoleX2 ) {
-    //     _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    // if ( _environment->activeConsole.x1 >= _environment->activeConsole.x2 ) {
+    //     _environment->activeConsole.x2 = _environment->screenTilesWidth - 1;
     // }
 
     cpu_compare_and_branch_8bit_const( 
@@ -226,8 +246,8 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
 	// 	 RULE 3) x2 < SW	->	X2 = ( SW - 1 )
 
-    // if ( _environment->consoleX2 >= _environment->screenTilesWidth ) {
-    //     _environment->consoleX2 = _environment->screenTilesWidth - 1;
+    // if ( _environment->activeConsole.x2 >= _environment->screenTilesWidth ) {
+    //     _environment->activeConsole.x2 = _environment->screenTilesWidth - 1;
     // }
 
     cpu_compare_and_branch_8bit_const( 
@@ -248,8 +268,8 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
 	// 	 RULE 4) ( y2 >= y1 ) ->	Y2 = y1
 
-    // if ( _environment->consoleY2 > _environment->consoleY1 ) {
-    //     _environment->consoleY2 = _environment->consoleY1;
+    // if ( _environment->activeConsole.y2 > _environment->activeConsole.y1 ) {
+    //     _environment->activeConsole.y2 = _environment->activeConsole.y1;
     // }
 
     cpu_compare_and_branch_8bit_const( 
@@ -268,7 +288,7 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 	// - CONSOLE COMPUTATION
 	// 	 - W = ( ( X2 - X1 ) + 1 )
 
-    // _environment->consoleW = ( _environment->consoleX2 - _environment->consoleX1 ) + 1;
+    // _environment->activeConsole.width = ( _environment->activeConsole.x2 - _environment->activeConsole.x1 ) + 1;
 
     variable_move( 
         _environment, 
@@ -280,7 +300,7 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
 	// 	 - H = ( ( y2 - y1 ) + 1 )
 
-    // _environment->consoleH = ( _environment->consoleY2 - _environment->consoleY1 ) + 1;
+    // _environment->activeConsole.height = ( _environment->activeConsole.y2 - _environment->activeConsole.y1 ) + 1;
 
     variable_move( 
         _environment, 

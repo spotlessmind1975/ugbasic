@@ -350,8 +350,8 @@ void gime_bank_select( Environment * _environment, int _bank ) {
 void console_calculate( Environment * _environment ) {
 
     int consoleSA = 0x4000;
-    int consoleWB = _environment->consoleW * _environment->currentModeBW;
-    int consoleHB = _environment->consoleH * 8;
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
 
     int bitmap = 0;
 

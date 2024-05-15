@@ -52,6 +52,8 @@ REGISTER1E      =   $21 + $08
 ;       |                |
 ;       +----------------+ (x2, y2)
 ;
+CONSOLEID     fcb 0         ; <-- actual
+;
 ; Text mode
 ;
 CONSOLEX1     db 0         ; <-- input from program (chars)
@@ -66,3 +68,5 @@ CONSOLEH      db 16        ; <-- calculated (chars)
 CONSOLESA     dw 0         ; <-- calculated (address)
 CONSOLEWB     db 32        ; <-- calculated (bytes)
 CONSOLEHB     db 16        ; <-- calculated (bytes)
+;
+CONSOLES      rzb 4*8        ; <-- storage for virtual consoles

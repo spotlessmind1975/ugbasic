@@ -917,9 +917,9 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
 void console_calculate( Environment * _environment ) {
 
-    int consoleSA = 6 * 0x0400 + ( _environment->consoleY1 * _environment->screenTilesWidth ) + _environment->consoleX1;
-    int consoleWB = _environment->consoleW * _environment->currentModeBW;
-    int consoleHB = _environment->consoleH * 8;
+    int consoleSA = 6 * 0x0400 + ( _environment->activeConsole.y1 * _environment->screenTilesWidth ) + _environment->activeConsole.x1;
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
 
     cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
     cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );

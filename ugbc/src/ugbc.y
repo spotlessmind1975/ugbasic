@@ -94,7 +94,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
-%token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE
+%token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5424,16 +5424,36 @@ box_definition:
 
 console_definition_simple :
     OFF {
-        console( _environment, 0, 0, ((struct _Environment *)_environment)->screenTilesWidth, ((struct _Environment *)_environment)->screenTilesHeight );
+        console( _environment, 0, 0, ((struct _Environment *)_environment)->screenTilesWidth-1, ((struct _Environment *)_environment)->screenTilesHeight-1 );
     }
     | OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr OP_COMMA OP_HASH const_expr {
         console( _environment, $2, $5, $8, $11 );        
-    };
+    }
+    | SAVE OP_HASH const_expr {
+        console_save( _environment, $3 );
+    }
+    | RESTORE OP_HASH const_expr {
+        console_restore( _environment, $3 );
+    }
+    | USE OP_HASH const_expr {
+        console_restore( _environment, $3 );
+    }
+    ;
 
 console_definition_expression :
     expr OP_COMMA expr TO expr OP_COMMA expr {
-        console_vars( _environment, $1, $3, $5, $7 );        
-    };
+        console_vars( _environment, $1, $3, $5, $7 );
+    }
+    | SAVE expr {
+        console_save_vars( _environment, $2 );
+    }
+    | RESTORE expr {
+        console_restore_vars( _environment, $2 );
+    }
+    | USE expr {
+        console_restore_vars( _environment, $2 );
+    }
+    ;
 
 console_definition:
     console_definition_simple

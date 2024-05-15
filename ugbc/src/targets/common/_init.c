@@ -121,6 +121,9 @@ void setup_text_variables( Environment * _environment ) {
     variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
     variable_global( _environment, "YCURSYS" );
 
+    variable_import( _environment, "CONSOLEID", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEID" );
+
     variable_import( _environment, "CONSOLEX1", VT_SBYTE, 0 );
     variable_global( _environment, "CONSOLEX1" );
     variable_import( _environment, "CONSOLEY1", VT_SBYTE, 0 );
@@ -135,5 +138,10 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "CONSOLEH" );
     variable_import( _environment, "CONSOLESL", VT_SWORD, 0 );
     variable_global( _environment, "CONSOLESL" );
+
+    variable_import( _environment, "CONSOLES", VT_BUFFER, MAX_CONSOLES * 8 );
+    variable_global( _environment, "CONSOLES" );
+
+    console_init( _environment );
 
 }

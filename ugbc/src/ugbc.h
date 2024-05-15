@@ -471,6 +471,7 @@ typedef struct _Resource {
 
 #define MAX_TEMPORARY_STORAGE           1024
 
+#define MAX_CONSOLES                    4
 #define MAX_ARRAY_DIMENSIONS            256
 #define MAX_PARAMETERS                  256
 #define MAX_PALETTE                     256
@@ -1778,6 +1779,18 @@ typedef struct _DataSegment {
 
 } DataSegment;
 
+typedef struct _Console {
+
+    int id;
+    int x1;
+    int y1;
+    int x2;
+    int y2;
+    int width;
+    int height;
+
+} Console;
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -2365,35 +2378,15 @@ typedef struct _Environment {
      */
     int fontHeight;
 
-    /**
-     * Console left corner
+    /*
+     * Active console.
      */
-    int consoleX1;
+    Console activeConsole;
 
-    /**
-     * Console top corner
+    /*
+     * Set of consoles.
      */
-    int consoleY1;
-
-    /**
-     * Console right corner
-     */
-    int consoleX2;
-
-    /**
-     * Console bottom corner
-     */
-    int consoleY2;
-
-    /**
-     * Console width (in chars)
-     */
-    int consoleW;
-
-    /**
-     * Console height (in chars)
-     */
-    int consoleH;
+    Console consoles[MAX_CONSOLES];
 
     /**
      * Deployed modules.
@@ -3890,6 +3883,7 @@ Bank * bank_find( Bank * _first, char * _name );
 
 int define_audio_target_check( Environment * _environment, int _value );
 
+void console_init( Environment * _environment );
 void console_calculate( Environment * _environment );
 void console_calculate_vars( Environment * _environment );
 
@@ -4077,6 +4071,10 @@ void                    colormap_clear_with_vars( Environment * _environment, ch
 void                    configure_set_value( Environment * _environment, int _name, int _parameter, int _value );
 void                    configure_set_value_var( Environment * _environment, int _name, int _parameter, char * _value );
 void                    console( Environment * _environment, int _x1, int _x2, int _x3, int _x4 );
+void                    console_save( Environment * _environment, int _number );
+void                    console_save_vars( Environment * _environment, char * _number );
+void                    console_restore( Environment * _environment, int _number );
+void                    console_restore_vars( Environment * _environment, char * _number );
 void                    console_vars( Environment * _environment, char * _x1, char * _x2, char * _x3, char * _x4 );
 Variable *              console_tiles_get_height( Environment * _environment );
 Variable *              console_tiles_get_width( Environment * _environment );

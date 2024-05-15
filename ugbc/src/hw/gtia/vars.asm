@@ -105,6 +105,8 @@ PALETTEPRESERVEUSED:
 ;       |                |
 ;       +----------------+ (x2, y2)
 ;
+CONSOLEID:     .byte 0         ; <-- actual
+;
 ; Text mode
 ;
 CONSOLEX1:     .byte 0         ; <-- input from program (chars)
@@ -119,6 +121,8 @@ CONSOLEH:      .byte 25        ; <-- calculated (chars)
 CONSOLESA:     .word 0         ; <-- calculated (address)
 CONSOLEWB:     .byte 40        ; <-- calculated (bytes)
 CONSOLEHB:     .byte 25        ; <-- calculated (bytes)
+;
+CONSOLES:      .res 4*8        ; <-- storage for virtual consoles
 
 CONSOLECALCULATE:
     LDA YCURSYS

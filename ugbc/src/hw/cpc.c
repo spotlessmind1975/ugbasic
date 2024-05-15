@@ -531,9 +531,9 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 void console_calculate( Environment * _environment ) {
 
-    int consoleSA = plotVBase[ ( _environment->consoleY1 * 8 ) ] + ( _environment->consoleX1 * _environment->currentModeBW ) ;
-    int consoleWB = _environment->consoleW * _environment->currentModeBW;
-    int consoleHB = _environment->consoleH * 8;
+    int consoleSA = plotVBase[ ( _environment->activeConsole.y1 * 8 ) ] + ( _environment->activeConsole.x1 * _environment->currentModeBW ) ;
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
 
     cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
     cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );

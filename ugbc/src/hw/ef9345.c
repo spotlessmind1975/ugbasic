@@ -472,8 +472,8 @@ void console_calculate( Environment * _environment ) {
     // #else
     //     int consoleSA = 0x0000;
     // #endif
-    // int consoleWB = _environment->consoleW * _environment->currentModeBW;
-    // int consoleHB = _environment->consoleH * 8;
+    // int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    // int consoleHB = _environment->activeConsole.height * 8;
 
     // cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
     // cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );

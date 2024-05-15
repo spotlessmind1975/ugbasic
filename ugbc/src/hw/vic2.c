@@ -1122,26 +1122,26 @@ void console_calculate( Environment * _environment ) {
 
     switch( _environment->currentMode ) {
         case BITMAP_MODE_STANDARD:
-            consoleSA = plotVBase[_environment->consoleY1*8]+plot8[_environment->consoleX1];
+            consoleSA = plotVBase[_environment->activeConsole.y1*8]+plot8[_environment->activeConsole.x1];
             _environment->currentModeBW = 1;
             break;
         case BITMAP_MODE_MULTICOLOR:
-            consoleSA = plotVBase[_environment->consoleY1*8]+plot4[_environment->consoleX1];
+            consoleSA = plotVBase[_environment->activeConsole.y1*8]+plot4[_environment->activeConsole.x1];
             _environment->currentModeBW = 2;
             break;
         case TILEMAP_MODE_STANDARD:
         case TILEMAP_MODE_MULTICOLOR:
         case TILEMAP_MODE_EXTENDED:
-            consoleSA = 0x8400 + (_environment->consoleY1*40)+_environment->consoleX1;
-            consoleCA = 0xD800 + (_environment->consoleY1*40)+_environment->consoleX1;
+            consoleSA = 0x8400 + (_environment->activeConsole.y1*40)+_environment->activeConsole.x1;
+            consoleCA = 0xD800 + (_environment->activeConsole.y1*40)+_environment->activeConsole.x1;
             _environment->currentModeBW = 1;
             break;
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _environment->currentMode );
     }
 
-    int consoleWB = _environment->consoleW * _environment->currentModeBW;
-    int consoleHB = _environment->consoleH * 8;
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
 
     cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
     cpu_store_16bit( _environment, "CONSOLECA", consoleCA );

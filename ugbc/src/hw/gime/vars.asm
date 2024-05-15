@@ -108,6 +108,8 @@ GIMESCREENCURRENT          fcb $8
 ;       |                |
 ;       +----------------+ (x2, y2)
 ;
+CONSOLEID     fcb 0         ; <-- actual
+;
 ; Text mode
 ;
 CONSOLEX1     fcb 0         ; <-- input from program (chars)
@@ -122,6 +124,8 @@ CONSOLEH      fcb 16        ; <-- calculated (chars)
 CONSOLESA     fdb 0         ; <-- calculated (address)
 CONSOLEWB     fcb 32        ; <-- calculated (bytes)
 CONSOLEHB     fcb 16        ; <-- calculated (bytes)
+;
+CONSOLES      rzb 4*8        ; <-- storage for virtual consoles
 
 CONSOLECALCULATE
     LDA <YCURSYS
