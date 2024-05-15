@@ -865,6 +865,14 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
 }
 
+void console_calculate( Environment * _environment ) {
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+}
+
 void ted_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors, 8, 8 );
