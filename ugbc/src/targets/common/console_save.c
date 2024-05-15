@@ -70,6 +70,8 @@ void console_save( Environment * _environment, int _number ) {
 
     int value = ( _number * 8 );
 
+    cpu_store_8bit( _environment, "CONSOLEID", _number );
+
     sprintf( offset, "+%d", value++ );
     cpu_move_8bit( _environment, "CONSOLEX1", address_displacement( _environment, "CONSOLES", offset ) );
     sprintf( offset, "+%d", value++ );
@@ -94,11 +96,10 @@ void console_save_vars( Environment * _environment, char * _number ) {
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(consoles)" );
     cpu_addressof_16bit( _environment, "CONSOLES", address->realName  );
 
-    if ( _number ) {
-        Variable * number = variable_retrieve_or_define( _environment, _number, VT_BYTE, 0 );
-        cpu_math_mul2_const_8bit( _environment, number->realName, 3, 0 );
-        cpu_math_add_16bit_with_8bit( _environment, address->realName, number->realName, address->realName );
-    }
+    Variable * number = variable_retrieve_or_define( _environment, _number, VT_BYTE, 0 );
+    cpu_math_mul2_const_8bit( _environment, number->realName, 3, 0 );
+    cpu_math_add_16bit_with_8bit( _environment, address->realName, number->realName, address->realName );
+    cpu_move_8bit( _environment, number->realName, "CONSOLEID" );
 
     cpu_move_8bit_indirect( _environment, "CONSOLEX1", address->realName );
     cpu_inc_16bit( _environment, address->realName );
