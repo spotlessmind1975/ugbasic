@@ -1778,6 +1778,8 @@ void vic2_initialization( Environment * _environment ) {
 
     outline0("JSR VIC2FINALIZATION");
 
+    vic2_tilemap_enable( _environment, 40, 25, 16, 8, 8 );
+    
 }
 
 static RGBi * multicolorSpritePalette[2];
