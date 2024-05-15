@@ -165,11 +165,11 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
 
+    setup_text_variables( _environment );
+
     cpc_initialization( _environment );
     ay8910_initialization( _environment );
     
-    setup_text_variables( _environment );
-
     outline0("CALL CPCSTARTUP");
 
     if ( _environment->tenLinerRulesEnforced ) {

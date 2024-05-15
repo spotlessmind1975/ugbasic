@@ -1057,12 +1057,19 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "GAVALUE", VT_BYTE, 0xfc );
     variable_global( _environment, "GAVALUE" );
 
+    variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
+    variable_global( _environment, "XCURSYS" );
+    variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
+    variable_global( _environment, "YCURSYS" );
+
     variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
     variable_global( _environment, "CONSOLESA" );
     variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
     variable_global( _environment, "CONSOLEHB" );
     variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
     variable_global( _environment, "CONSOLEWB" );
+
+    console_init( _environment );
 
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
 
@@ -1080,8 +1087,6 @@ void cpc_initialization( Environment * _environment ) {
     _environment->screenShades = 16;
     _environment->screenColors = 2;
     _environment->currentModeBW = 1;
-
-    console_init( _environment );
 
 }
 
