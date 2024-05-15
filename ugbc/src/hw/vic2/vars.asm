@@ -112,5 +112,5 @@ CONSOLECA:    .word 0         ; <-- calculated (address)
 CONSOLEWB:    .byte 32        ; <-- calculated (bytes)
 CONSOLEHB:    .byte 16        ; <-- calculated (bytes)
 ;
-CONSOLES:     .res 4*8        ; <-- storage for virtual consoles
+CONSOLES:     .res  32        ; <-- storage for virtual consoles
 

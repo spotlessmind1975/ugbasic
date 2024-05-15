@@ -136,6 +136,8 @@ void console_restore_vars( Environment * _environment, char * _number ) {
 
     Variable * number = variable_retrieve_or_define( _environment, _number, VT_BYTE, 0 );
     char doNothingLabel[MAX_TEMPORARY_STORAGE]; sprintf( doNothingLabel, "%sconsole", label );
+    char doNothingLabel2[MAX_TEMPORARY_STORAGE]; sprintf( doNothingLabel2, "%sconsole2", label );
+    cpu_compare_and_branch_8bit_const( _environment, "CONSOLEID", 0xff, doNothingLabel2, 1 );
     cpu_compare_and_branch_8bit( _environment, number->realName, "CONSOLEID", doNothingLabel, 1 );
 
     Variable * actualNumber = variable_temporary( _environment, VT_BYTE, 0 );
@@ -150,6 +152,8 @@ void console_restore_vars( Environment * _environment, char * _number ) {
     cpu_inc_16bit( _environment, address->realName );
     cpu_move_8bit_indirect( _environment, ycursys->realName, address->realName );
 
+    cpu_label( _environment, doNothingLabel2 );
+    
     cpu_move_8bit( _environment, number->realName, "CONSOLEID" );
     cpu_addressof_16bit( _environment, "CONSOLES", address->realName  );
 
