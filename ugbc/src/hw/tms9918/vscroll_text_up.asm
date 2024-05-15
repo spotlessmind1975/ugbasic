@@ -115,7 +115,10 @@ VSCROLLTUPCOMMON:
     ADD HL, DE
     POP DE
     INC B
-    
+
+VSCROLLTUPPREP:
+    PUSH HL
+    PUSH DE
 VSCROLLTUPLOOP:
 
     PUSH DE
@@ -137,33 +140,31 @@ VSCROLLTUPLOOP:
     DEC     C
     JP      NZ, VSCROLLTUPLOOP
 
+    POP DE
+    POP HL
+
     PUSH DE
-    LD A, (CONSOLEW)
-    LD E, A
-    LD D, 0
-    SBC HL, DE
     LD A, (CURRENTTILESWIDTH)
     LD E, A
     LD D, 0
     ADD HL, DE
     POP DE
+
     PUSH HL
     LD HL, DE
-    LD A, (CONSOLEW)
-    LD E, A
-    LD D, 0
-    SBC HL, DE
+    PUSH DE
     LD A, (CURRENTTILESWIDTH)
     LD E, A
     LD D, 0
     ADD HL, DE
+    POP DE
     LD DE, HL
     POP HL
-
+    
     LD A, (CONSOLEW)
     LD C, A
     DEC B
-    JR NZ, VSCROLLTUPLOOP
+    JR NZ, VSCROLLTUPPREP
 
     JMP VSCROLLTUPXX2
 
