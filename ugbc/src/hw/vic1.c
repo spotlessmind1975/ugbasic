@@ -415,9 +415,32 @@ int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
 void console_calculate( Environment * _environment ) {
 
+    int consoleSA = 0;
+    int consoleCA = 0;
+
+    switch( _environment->currentMode ) {
+        case TILEMAP_MODE_STANDARD:
+            consoleSA = 0x1000 + (_environment->activeConsole.y1*22)+_environment->activeConsole.x1;
+            consoleCA = 0x9400 + (_environment->activeConsole.y1*22)+_environment->activeConsole.x1;
+            _environment->currentModeBW = 1;
+            break;
+        default:
+            CRITICAL_SCREEN_UNSUPPORTED( _environment->currentMode );
+    }
+
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_16bit( _environment, "CONSOLECA", consoleCA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
 }
 
 void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "JSR CONSOLECALCULATE" );
 
 }
 
@@ -667,19 +690,21 @@ void vic1_cls( Environment * _environment ) {
 
 void vic1_scroll_text( Environment * _environment, int _direction ) {
 
-    deploy( vScrollText, src_hw_vic1_vscroll_text_asm );
-
-    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
-
-    outline0("JSR VSCROLLT");
+    if ( _direction > 0 ) {
+        deploy( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
+        outline0("JSR VSCROLLTDOWN");
+    } else {
+        deploy( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+        outline0("JSR VSCROLLTUP");
+    }
 
 }
 
 void vic1_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( vic1vars, src_hw_vic1_vars_asm);
-    deploy( vScrollText, src_hw_vic1_vscroll_text_asm );
+    deploy( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+    deploy( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
     deploy( cls, src_hw_vic1_cls_asm );
     deploy( textEncodedAt, src_hw_vic1_text_at_asm );
 
@@ -1786,7 +1811,8 @@ void vic1_scroll( Environment * _environment, int _dx, int _dy ) {
     deploy( vic1vars, src_hw_vic1_vars_asm);
     deploy( scroll, src_hw_vic1_scroll_asm);
     deploy( textHScroll, src_hw_vic1_hscroll_text_asm );
-    deploy( vScrollText, src_hw_vic1_vscroll_text_asm );
+    deploy( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+    deploy( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
 
     outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
     outline0("STA MATHPTR0" );
