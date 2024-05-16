@@ -52,9 +52,9 @@ void text_newline( Environment * _environment ) {
 
     MAKE_LABEL
 
-    cpu_move_8bit( _environment, "CONSOLEX1", "XCURSYS" );    
+    variable_move( _environment, "CONSOLEX1", "XCURSYS" );    
 
-    cpu_inc( _environment, "YCURSYS" );
+    variable_increment( _environment, "YCURSYS" );
 
     Variable * result = variable_greater_than( _environment, "YCURSYS", "CONSOLEY2", 0 );
 
