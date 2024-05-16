@@ -811,6 +811,8 @@ void ef936x_initialization( Environment * _environment ) {
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 4096;
 
+    console_init( _environment );
+    
     screen_mode( _environment, 0 );
 
 }

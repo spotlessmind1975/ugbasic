@@ -1069,9 +1069,9 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
     variable_global( _environment, "CONSOLEWB" );
 
-    console_init( _environment );
-
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
+
+    console_init( _environment );
 
     font_descriptors_init( _environment, 0 );
     
