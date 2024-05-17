@@ -122,15 +122,16 @@ VSCROLLTNEWUP
     STA <MATHPTR3
     JSR TEXTATCALCPOS
     TFR X, Y
-    LDA CURRENTSL
-    LEAY A, Y
-    LEAY A, Y
-    LEAY A, Y
-    LEAY A, Y
-    LEAY A, Y
-    LEAY A, Y
-    LEAY A, Y
-    LEAY A, Y
+    CLRA
+    LDB CURRENTSL
+    LEAY D, Y
+    LEAY D, Y
+    LEAY D, Y
+    LEAY D, Y
+    LEAY D, Y
+    LEAY D, Y
+    LEAY D, Y
+    LEAY D, Y
     PSHS X
     PSHS Y
     
@@ -211,7 +212,7 @@ VSCROLLTNEWUPYSCR1BL1
     
     ANDCC #$FE
     LDB CONSOLEHB
-    SUBB #8
+    CMPB #8
     BEQ VSCROLLTNEWUPYSCR1DNO
     CLRA
     TFR D, U
