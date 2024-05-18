@@ -122,7 +122,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> writing_mode_definition writing_part_definition
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
 %type <integer> const_key_scancode_definition const_key_scancode_alphadigit const_key_scancode_function_digit
-%type <integer> datatype as_datatype as_datatype_mandatory as_datatype_suffix
+%type <integer> datatype as_datatype as_datatype_mandatory as_datatype_suffix as_datatype_suffix_optional
 %type <integer> halted
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y optional_x_or_string
@@ -4620,6 +4620,14 @@ as_datatype_suffix :
     }
     ;
 
+as_datatype_suffix_optional : 
+    {
+        $$ = 0;
+    }
+    | as_datatype_suffix {
+        $$ = $1;
+    };
+
 var_definition_simple:
   Identifier as_datatype {
       variable_define( _environment, $1, $2, 0 );
@@ -8948,12 +8956,18 @@ statement2nc:
   | EXIT direct_integer IF expr  {
       exit_loop_if( _environment, $4, $2 );  
   }
-  | FOR Identifier OP_ASSIGN expr TO  {
+  | FOR Identifier as_datatype_suffix_optional OP_ASSIGN expr TO  {
+      if ( $3 > 0 ) {
+        Variable * index = variable_retrieve_or_define( _environment, $2, $3, 0 );
+        if ( index->type != $3 ) {
+            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $3 ] );
+        }
+      }
       begin_for_to_prepare( _environment );
   } expr optional_step {
-      begin_for_step_prepare( _environment, $4, $7, $8 );
-      begin_for_from( _environment, $2, $4, $7, $8 );
-      begin_for_to( _environment, $7 );
+      begin_for_step_prepare( _environment, $5, $8, $9 );
+      begin_for_from( _environment, $2, $5, $8, $9 );
+      begin_for_to( _environment, $8 );
       begin_for_identifier( _environment, $2 );
   }
   | FOR OSP Identifier CSP OP_ASSIGN expr TO {
@@ -8967,10 +8981,25 @@ statement2nc:
   | NEXT {
       end_for( _environment );
   }
-  | NEXT Identifier {
+  | NEXT Identifier as_datatype_suffix_optional {
+    if ( $3 > 0 ) {
+        Variable * index = variable_retrieve_or_define( _environment, $2, $3, 0 );
+        if ( index->type != $3 ) {
+            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $3 ] );
+        }
+      }
       end_for_identifier( _environment, $2 );
   }
-  | NEXT OSP Identifier CSP {
+  | NEXT OSP Identifier as_datatype_suffix_optional CSP {
+    if ( $4 > 0 ) {
+        Variable * index = variable_retrieve_or_define( _environment, $3, $4, 0 );
+        if ( index->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+        }
+        if ( index->arrayType != $4 ) {
+            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
+        }
+      }
       end_for_identifier( _environment, $3 );
   }
   | parallel_optional PROCEDURE Identifier on_targets {
