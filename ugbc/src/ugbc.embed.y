@@ -452,7 +452,9 @@ const_factor:
       | Identifier {
         // printf( "%s\n", $1 );
 
-        if ( strcmp( $1, "currentMode" ) == 0 ) {
+        if ( strcmp( $1, "expansionBanks" ) ) {
+            $$ = ((struct _Environment *)_environment)->expansionBanks ? 1 : 0;
+        } else if ( strcmp( $1, "currentMode" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->currentMode;
         } else if ( strcmp( $1, "outputFileType" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->outputFileType;

@@ -123,6 +123,8 @@ MO5STARTUPDONE
     ; ORB   #8
     ; STB   $2019
 
+@IF expansionBanks
+
     LDU #BANKLOAD
     LDB #0
 BANKLOADL1
@@ -185,6 +187,8 @@ BANKLOADL2
     LDA #$00
     STA $A7CB
     STA BANKSHADOW
+
+@ENDIF
 
     ANDCC #$AF
 

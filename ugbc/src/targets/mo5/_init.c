@@ -67,10 +67,6 @@ void target_initialization( Environment * _environment ) {
     int bankMax = 0;
     int bankCount = 0;
 
-    if ( ! _environment->ramSize ) {
-        _environment->ramSize = 512;
-    }
-    
     switch( _environment->ramSize ) {
         case 512:
             bankMax=32; /* 0...31 = 32 banks */
@@ -78,19 +74,28 @@ void target_initialization( Environment * _environment ) {
         case 64:
             bankMax=4; /* 0...3 = 4 banks */
             break;
+        case 0:
+            bankMax=-1; 
+            break;
         default:
             CRITICAL_INVALID_RAM_SIZE( _environment->ramSize );
             break;
     }
 
-    bankIds = malloc( sizeof( int ) * bankMax );
-    
-    for( int i=0; i<bankMax; ++i ) {
-        bankIds[i] = bankMax - ( i ) - 1;
-        ++bankCount;
-    }
+    if ( bankMax != -1 ) {
 
-    banks_init_extended( _environment, bankIds, bankCount, BANK_SIZE );
+        printf( "ram size = %d, bankMax = %d\n", _environment->ramSize, bankMax );
+
+        bankIds = malloc( sizeof( int ) * bankMax );
+        
+        for( int i=0; i<bankMax; ++i ) {
+            bankIds[i] = bankMax - ( i ) - 1;
+            ++bankCount;
+        }
+
+        banks_init_extended( _environment, bankIds, bankCount, BANK_SIZE );
+
+    }
     
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 
