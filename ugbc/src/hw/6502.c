@@ -6999,6 +6999,8 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
     int exp = 0;
     int mantissa_bits = 23;
 
+    // printf("------------------\nVALUE = %f\n", _value );
+
     memset( &right[0], 0, sizeof( int ) * 3 );
 
     // Step 1: Determine Sign
@@ -7098,7 +7100,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
             while( left == 0 ) {
 
-                // printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+                // printf("a) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
                 if ( ! right[0] && ! right[1] && ! right[2] ) {
                     left = 0x1;
@@ -7130,13 +7132,33 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         }
 
-        // printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+        // printf("a) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+
+        while( left ) {
+
+            // printf("x) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+
+            if ( ( right[0] & 0x01 ) ) {
+                right[1] = right[1] | 0x100;
+            }
+            if ( ( right[1] & 0x01 ) ) {
+                right[2] = right[2] | 0x100;
+            }
+            right[0] = right[0] >> 1;
+            right[1] = right[1] >> 1;
+            right[2] = right[2] >> 1;
+            if ( left & 0x1 ) {
+                right[0] = right[0] | 0x40;
+            }
+            left = left >> 1;
+
+        }
 
     } else {
 
         while( left ) {
 
-            // printf("left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+            // printf("b) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
             if ( ( right[0] & 0x01 ) ) {
                 right[1] = right[1] | 0x100;
