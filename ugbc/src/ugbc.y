@@ -5345,6 +5345,14 @@ line_definition_expression:
         draw( _environment, $2, $4, $8, $10, $13 );
         gr_locate( _environment, $8, $10 );
     }
+    | OP_MINUS OP expr OP_COMMA expr CP {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $3, $5, NULL );
+        gr_locate( _environment, $3, $5 );
+    }
     | OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
