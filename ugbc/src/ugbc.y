@@ -5334,6 +5334,60 @@ box_mode :
         $$ = 2;
     };
 
+line_definition_expression:
+    OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP {
+        draw( _environment, $2, $4, $8, $10, NULL );
+        gr_locate( _environment, $8, $10 );
+    }
+    | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode {
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+        gr_locate( _environment, $8, $10 );
+    }
+    | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode OP_COMMA box_mode {
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        switch( $15 ) {
+            case 0:
+                draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+            case 1:
+                box( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+            case 2:
+                bar( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+        }
+        gr_locate( _environment, $8, $10 );
+    }
+    | optional_x_or_string {
+        draw_string( _environment, $1 );
+    }
+    | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        draw( _environment, $1, $3, $5, $7, $9 );
+        gr_locate( _environment, $5, $7 );
+    }
+    | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+        draw( _environment, $1, $3, $5, $7, NULL );
+        gr_locate( _environment, $5, $7 );
+    }
+    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
+        gr_locate( _environment, $2, $4 );
+    }
+    | TO optional_x OP_COMMA optional_y  {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
+        gr_locate( _environment, $2, $4 );
+    };
+
+line_definition:
+    line_definition_expression;
+
 draw_definition_expression:
     OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP {
         draw( _environment, $2, $4, $8, $10, NULL );
@@ -8654,7 +8708,7 @@ statement2nc:
   | DRAW draw_definition
   | DTILE draw_tile_definition
   | DTILES draw_tile_definition
-  | LINE draw_definition
+  | LINE line_definition
   | PUT put_definition
   | DEFDGR defdgr_definition
   | BLIT blit_definition
