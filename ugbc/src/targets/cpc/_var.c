@@ -223,6 +223,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 case 1:
                                     outline3("%s: defs %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                     break;
+                                case 0: /* float! */
+                                    outline3("%s: defs %d, $%2.2x", variable->realName, variable->size, 0x00);
+                                    break;
                             }                             
                         } else {
                             outline2("%s: defs %d", variable->realName, variable->size);
