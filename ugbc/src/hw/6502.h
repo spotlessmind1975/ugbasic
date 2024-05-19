@@ -114,7 +114,6 @@ void cpu6502_logical_and_8bit( Environment * _environment, char * _left, char * 
 void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char * _result );
 void cpu6502_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
-void cpu6502_is_negative( Environment * _environment, char * _value, char * _result );
 void cpu6502_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_not_8bit( Environment * _environment, char * _value, char * _result );
@@ -410,7 +409,6 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_logical_and_8bit( _environment, _left, _right,  _result ) cpu6502_logical_and_8bit( _environment, _left, _right,  _result )
 #define cpu_logical_or_8bit( _environment, _left, _right,  _result ) cpu6502_logical_or_8bit( _environment, _left, _right,  _result )
 #define cpu_not_8bit( _environment, _value, _result ) cpu6502_not_8bit( _environment, _value, _result )
-#define cpu_is_negative( _environment, _value, _result ) cpu6502_is_negative( _environment, _value, _result )
 #define cpu_and_8bit( _environment, _left, _right,  _result ) cpu6502_and_8bit( _environment, _left, _right,  _result )
 #define cpu_or_8bit( _environment, _left, _right,  _result ) cpu6502_or_8bit( _environment, _left, _right,  _result )
 #define cpu_xor_8bit( _environment, _left, _right,  _result ) cpu6502_xor_8bit( _environment, _left, _right,  _result )

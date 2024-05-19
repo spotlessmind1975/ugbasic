@@ -111,7 +111,6 @@ void z80_limit_16bit( Environment * _environment, char * _variable, int _value )
 void z80_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_logical_not_8bit( Environment * _environment, char * _value, char * _result );
-void z80_is_negative( Environment * _environment, char * _value, char * _result );
 void z80_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result );
@@ -410,7 +409,6 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_logical_and_8bit( _environment, _left, _right,  _result ) z80_logical_and_8bit( _environment, _left, _right,  _result )
 #define cpu_logical_or_8bit( _environment, _left, _right,  _result ) z80_logical_or_8bit( _environment, _left, _right,  _result )
 #define cpu_logical_not_8bit( _environment, _value,  _result ) z80_logical_not_8bit( _environment, _value,  _result )
-#define cpu_is_negative( _environment, _value, _result ) z80_is_negative( _environment, _value, _result )
 #define cpu_and_8bit( _environment, _left, _right,  _result ) z80_and_8bit( _environment, _left, _right,  _result )
 #define cpu_or_8bit( _environment, _left, _right,  _result ) z80_or_8bit( _environment, _left, _right,  _result )
 #define cpu_xor_8bit( _environment, _left, _right,  _result ) z80_xor_8bit( _environment, _left, _right,  _result )
