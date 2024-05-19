@@ -5746,14 +5746,18 @@ void z80_bit_inplace_8bit_extended_indirect( Environment * _environment, char * 
         if ( _bit ) {
             if ( *_bit ) {
                 outline0("LD HL, BITMASK");
-                outline1("LD DE, (%s)", _position);
+                outline1("LD A, (%s)", _position);
+                outline0("LD E, A");
+                outline0("LD D, 0");
                 outline0("ADD HL, DE");
                 outline1("LD DE, (%s)", _address );
                 outline0("LD A, (DE)" );
                 outline0("OR (HL)");
             } else {
                 outline0("LD HL, BITMASKN");
-                outline1("LD DE, (%s)", _position);
+                outline1("LD A, (%s)", _position);
+                outline0("LD E, A");
+                outline0("LD D, 0");
                 outline0("ADD HL, DE");
                 outline1("LD DE, (%s)", _address );
                 outline0("LD A, (DE)" );
@@ -5764,7 +5768,9 @@ void z80_bit_inplace_8bit_extended_indirect( Environment * _environment, char * 
         } else {
             outline1("JR Z, %szero", label );
             outline0("LD HL, BITMASK");
-            outline1("LD DE, (%s)", _position);
+            outline1("LD A, (%s)", _position);
+            outline0("LD E, A");
+            outline0("LD D, 0");
             outline0("ADD HL, DE");
             outline1("LD DE, (%s)", _address );
             outline0("LD A, (DE)" );
@@ -5773,7 +5779,9 @@ void z80_bit_inplace_8bit_extended_indirect( Environment * _environment, char * 
             outline1("JP %sdone", label );
             outhead1("%szero:", label );
             outline0("LD HL, BITMASKN");
-            outline1("LD DE, (%s)", _position);
+            outline1("LD A, (%s)", _position);
+            outline0("LD E, A");
+            outline0("LD D, 0");
             outline0("ADD HL, DE");
             outline1("LD DE, (%s)", _address );
             outline0("LD A, (DE)" );
