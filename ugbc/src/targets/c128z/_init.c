@@ -65,6 +65,7 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_msc1_uncompress = 1;
     _environment->embedded.cpu_compare_16bit = 1;
     _environment->embedded.cpu_compare_32bit = 1;
+    _environment->embedded.cpu_bit_inplace = 1;
 
 }
 
