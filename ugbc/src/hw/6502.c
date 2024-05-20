@@ -5929,6 +5929,15 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
             outline0("LDA #$0");
             outhead1("%send:", label)
             outline1("STA %s", _result);
+        } else {
+            outline1("BEQ %szero", label);
+            outhead1("%sone:", label)
+            outline0("LDA #$ff");
+            outline1("JMP %send", label );
+            outhead1("%szero:", label)
+            outline0("LDA #$0");
+            outhead1("%send:", label)
+            outline0("ROR");
         }
 
     no_embedded( cpu_bit_check_extended )
@@ -5937,160 +5946,54 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
 
 void cpu6502_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
 
+    _environment->bitmaskNeeded = 1;
+
     MAKE_LABEL
 
-    inline( cpu_bit_inplace )
+    no_inline( cpu_bit_inplace )
 
+    embedded( cpu_bit_inplace, src_hw_6502_cpu_bit_inplace_asm );
+
+        outline1("LDA #<%s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _value );
+        outline0("STA TMPPTR+1");
+        outline1("LDA #$%2.2x", _position);
         if ( _bit ) {
-            outline1("LDA %s", _value );
             if ( *_bit ) {
-                outline1("ORA #$%2.2x", (unsigned char)( 1 << _position ) );
+                outline0("SEC");
             } else {
-                outline1("AND #$%2.2x", (unsigned char)(~( 1 << _position )) );
+                outline0("CLC");
             }
-            outline1("STA %s", _value );
-
-        } else {
-            outline1("BEQ %szero", label );
-            outline1("LDA %s", _value );
-            outline1("ORA #$%2.2x", (unsigned char)( 1 << _position ) );
-            outline1("STA %s", _value );
-            outline1("JMP %sdone", label );
-            outhead1("%szero:", label );
-            outline1("LDA %s", _value );
-            outline1("AND #$%2.2x", (unsigned char)(~( 1 << _position )) );
-            outline1("STA %s", _value );
-            outhead1("%sdone:", label );
         }
+        outline0("JSR CPUBITINPLACE");
 
-    no_embedded( cpu_bit_inplace )
+    done( )
 
 }
 
-void cpu6502_bit_inplace_8bit_extended( Environment * _environment, char * _value, char * _position, int * _bit ) {
+void cpu6502_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, char * _bit ) {
 
     _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    inline( cpu_bit_inplace )
+    no_inline( cpu_bit_inplace )
 
-        if ( _bit ) {
-            if ( *_bit ) {
-                outline1("LDY %s", _position);
-                outline0("LDA #<BITMASK");
-                outline0("STA TMPPTR");
-                outline0("LDA #>BITMASK");
-                outline0("STA TMPPTR+1");
-                outline1("LDA %s", _value );
-                outline0("ORA (TMPPTR), Y");
-            } else {
-                outline1("LDY %s", _position);
-                outline0("LDA #<BITMASKN");
-                outline0("STA TMPPTR");
-                outline0("LDA #>BITMASKN");
-                outline0("STA TMPPTR+1");
-                outline1("LDA %s", _value );
-                outline0("AND (TMPPTR), Y");
-            }
-            outline1("STA %s", _value );
-
-        } else {
-            outline1("BEQ %szero", label );
-            outline1("LDY %s", _position);
-            outline0("LDA #<BITMASK");
-            outline0("STA TMPPTR");
-            outline0("LDA #>BITMASK");
-            outline0("STA TMPPTR+1");
-            outline1("LDA %s", _value );
-            outline0("ORA (TMPPTR), Y");
-            outline1("STA %s", _value );
-            outline1("JMP %sdone", label );
-            outhead1("%szero:", label );
-            outline1("LDY %s", _position);
-            outline0("LDA #<BITMASKN");
-            outline0("STA TMPPTR");
-            outline0("LDA #>BITMASKN");
-            outline0("STA TMPPTR+1");
-            outline1("LDA %s", _value );
-            outline0("AND (TMPPTR), Y");
-            outline1("STA %s", _value );
-            outhead1("%sdone:", label );
-        }
-
-    no_embedded( cpu_bit_inplace )
-
-}
-
-void cpu6502_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, int * _bit ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    MAKE_LABEL
-
-    inline( cpu_bit_inplace )
+    embedded( cpu_bit_inplace, src_hw_6502_cpu_bit_inplace_asm );
 
         outline1("LDA %s", _address);
-        outline0("STA TMPPTR2");
+        outline0("STA TMPPTR");
         outline1("LDA %s", address_displacement( _environment, _address, "1" ) );
-        outline0("STA TMPPTR2+1");
-
+        outline0("STA TMPPTR+1");
         if ( _bit ) {
-            if ( *_bit ) {
-                outline0("LDA #<BITMASK");
-                outline0("STA TMPPTR");
-                outline0("LDA #>BITMASK");
-                outline0("STA TMPPTR+1");
-                outline0("LDY #0");
-                outline0("LDA (TMPPTR2), Y");
-                outline1("LDY %s", _position);
-                outline0("ORA (TMPPTR), Y");
-                outline0("LDY #0");
-                outline0("STA (TMPPTR2), Y");
-            } else {
-                outline1("LDY %s", _position);
-                outline0("LDA #<BITMASKN");
-                outline0("STA TMPPTR");
-                outline0("LDA #>BITMASKN");
-                outline0("STA TMPPTR+1");
-                outline0("LDY #0");
-                outline0("LDA (TMPPTR2), Y");
-                outline1("LDY %s", _position);
-                outline0("AND (TMPPTR), Y");
-                outline0("LDY #0");
-                outline0("STA (TMPPTR2), Y");
-            }
-
-        } else {
-            outline1("BEQ %szero", label );
-            outline1("LDY %s", _position);
-            outline0("LDA #<BITMASK");
-            outline0("STA TMPPTR");
-            outline0("LDA #>BITMASK");
-            outline0("STA TMPPTR+1");
-            outline0("LDY #0");
-            outline0("LDA (TMPPTR2), Y");
-            outline1("LDY %s", _position);
-            outline0("ORA (TMPPTR), Y");
-            outline0("LDY #0");
-            outline0("STA (TMPPTR2), Y");
-            outline1("JMP %sdone", label );
-            outhead1("%szero:", label );
-            outline1("LDY %s", _position);
-            outline0("LDA #<BITMASKN");
-            outline0("STA TMPPTR");
-            outline0("LDA #>BITMASKN");
-            outline0("STA TMPPTR+1");
-            outline0("LDY #0");
-            outline0("LDA (TMPPTR2), Y");
-            outline1("LDY %s", _position);
-            outline0("AND (TMPPTR), Y");
-            outline0("LDY #0");
-            outline0("STA (TMPPTR2), Y");
-            outhead1("%sdone:", label );
+            outline1("LDA %s", _bit);
+            outline0("ROR");
         }
+        outline1("LDA %s", _position);
+        outline0("JSR CPUBITINPLACE");
 
-    no_embedded( cpu_bit_inplace )
+    done( )
 
 }
 

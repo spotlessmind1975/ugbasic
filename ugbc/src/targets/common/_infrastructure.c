@@ -7001,6 +7001,9 @@ void variable_store_array_const_bit( Environment * _environment, Variable * _arr
 
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
     Variable * position = variable_temporary( _environment, VT_BYTE, "(position)");
+    Variable * value = variable_temporary( _environment, VT_BYTE, "(value)" );
+    variable_store( _environment, value->name, _value * 0xff );
+
     variable_move( _environment, offset->name, position->name );
 
     variable_and_const( _environment, position->name, 7 );
@@ -7009,7 +7012,7 @@ void variable_store_array_const_bit( Environment * _environment, Variable * _arr
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, position->realName, &_value );
+    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, position->realName, value->realName );
     
 }
 
@@ -7142,6 +7145,7 @@ void variable_move_array_bit( Environment * _environment, Variable * _array, Var
 
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
     Variable * position = variable_temporary( _environment, VT_BYTE, "(position)");
+
     variable_move( _environment, offset->name, position->name );
 
     variable_and_const( _environment, position->name, 7 );
@@ -7150,22 +7154,7 @@ void variable_move_array_bit( Environment * _environment, Variable * _array, Var
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-    MAKE_LABEL
-
-    char zeroLabel[MAX_TEMPORARY_STORAGE]; sprintf( zeroLabel,  "%szero", label );
-    int value = 0;
-
-    variable_compare_and_branch_const( _environment, _value->name, 0, zeroLabel, 1 );
-
-    value = 1;
-    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, position->realName, &value );
-    cpu_jump( _environment, label );
-
-    cpu_label( _environment, zeroLabel );
-    value = 0;
-    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, position->realName, &value );
-
-    cpu_label( _environment, label );
+    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, position->realName, _value->realName );
 
 }
 
@@ -7351,11 +7340,13 @@ Variable * variable_move_from_array_bit( Environment * _environment, Variable * 
 
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
     Variable * position = variable_temporary( _environment, VT_BYTE, "(position)");
+    outline0("; --- variable_move_from_array_bit 1");
     variable_move( _environment, offset->name, position->name );
-
+    outline0("; --- variable_move_from_array_bit 2");
     variable_and_const( _environment, position->name, 7 );
-
+    outline0("; --- variable_move_from_array_bit 3");
     offset = variable_div2_const( _environment, offset->name, 3 );
+    outline0("; --- variable_move_from_array_bit 4");
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
