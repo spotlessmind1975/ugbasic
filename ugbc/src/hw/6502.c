@@ -772,62 +772,33 @@ void cpu6502_compare_and_branch_char_const( Environment * _environment, char *_s
  */
 void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
-    MAKE_LABEL
+    no_inline( cpu_less_than_8bit )
 
-    inline( cpu_less_than_8bit )
+    embedded( cpu_less_than_8bit, src_hw_6502_cpu_less_than_8bit_asm );
+
+        outline1("LDA %s", _source);
+        outline0("STA MATHPTR0");
+        outline1("LDA %s", _destination);
+        outline0("STA MATHPTR1");
+        outline1("LDX #$%2.2X", _equal);
 
         if ( _signed ) {
-            outline1("LDA %s", _source);
-            outline0("SEC" );
-            outline1("SBC %s", _destination);
-            outline1("BVC %sv0", label );
-            outline0("EOR #$80" );
-            outhead1("%sv0:", label );
-            outline1("BMI %smi", label );
-            if ( _equal ) {
-                outline1("BEQ %smi", label );
-            }
-            outhead1("%spl:", label );
-            outline0("LDA #0" );
+            outline0("JSR CPULESSTHAN8BITSIGNED")
             if ( _other ) {
                 outline1("STA %s", _other);
             } else {
                 outline1("STA %s", _destination);
             }
-            outline1("JMP %sen", label );
-            outhead1("%smi:", label );
-            outline0("LDA #$ff" );
-            if ( _other ) {
-                outline1("STA %s", _other);
-            } else {
-                outline1("STA %s", _destination);
-            }
-            outhead1("%sen:", label);
         } else {
-            outline1("LDA %s", _source);
-            outline1("CMP %s", _destination );
-            outline1("BCC %s", label);
-            if ( _equal ) {
-                outline1("BEQ %s", label);
-            }
-            outline0("LDA #0" );
+            outline0("JSR CPULESSTHAN8BIT")
             if ( _other ) {
                 outline1("STA %s", _other);
             } else {
                 outline1("STA %s", _destination);
             }
-            outline1("JMP %s_2", label);
-            outhead1("%s:", label);
-            outline0("LDA #$FF" );
-            if ( _other ) {
-                outline1("STA %s", _other);
-            } else {
-                outline1("STA %s", _destination);
-            }
-            outhead1("%s_2:", label);
         }
 
-    no_embedded( cpu6502_less_than_8bit )
+    done( )
 
 }
 
