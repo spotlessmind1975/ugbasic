@@ -4757,94 +4757,47 @@ void cpu6809_flip( Environment * _environment, char * _source, char * _size, cha
 
 void cpu6809_bit_check( Environment * _environment, char * _value, int _position, char *_result, int _bitwidth ) {
 
-    inline( cpu_bit_check )
+    no_inline( cpu_bit_check_extended )
 
-        MAKE_LABEL
+    embedded( cpu_bit_check_extended, src_hw_6809_cpu_bit_check_extended_asm );
 
-        //outline0("STB <MATHPTR0" );
-        switch( _position ) {
-            case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24:
-                outline1("LDB %s", _value);
+        switch( _bitwidth ) {
+            case 8:
+                outline1("LDX #%s", _value);
                 break;
-            case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
-                outline1("LDB %s", address_displacement(_environment, _value, "1"));
+            case 16:
+                outline1("LDX #%s", address_displacement( _environment, _value, "1" ) );
                 break;
-            case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8: {
-                char offset[MAX_TEMPORARY_STORAGE];
-                sprintf(offset, "%d", ( _bitwidth / 8 ) - 2 );
-                outline1("LDB %s", address_displacement(_environment, _value, offset) );
+            case 32:
+                outline1("LDX #%s", address_displacement( _environment, _value, "3" ) );
                 break;
-            }
-            case 7:  case 6:  case 5:  case 4:  case 3:  case 2:  case 1: case 0: {
-                char offset[MAX_TEMPORARY_STORAGE];
-                sprintf(offset, "%d", ( _bitwidth / 8 ) - 1 );
-                outline1("LDB %s", address_displacement(_environment, _value, offset) );
-                break;
-            }
         }
-        outline1("ANDB #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
+        outline1("LDA #$%2.2x", _position );
+        outline0("JSR CPUBITCHECKEXTENDED" );
+
         if ( _result ) {
-            outline1("BEQ %send", label);
-            outline0("LDB #$ff");
-            outhead1("%send", label)
-            outline1("STB %s", _result);
+            outline1("STA %s", _result);
         }
 
-    no_embedded( cpu_bit_check )
+    done( )
 
 }
 
 void cpu6809_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth ) {
 
-    static int shift_tab = 0;
-    
-    inline( cpu_bit_check_extended )
+    no_inline( cpu_bit_check_extended )
 
-        MAKE_LABEL
-        
-        if(!shift_tab) {
-            shift_tab = 1;
-            outline0("BRA _bit_check_extended_tab_after");
-            outhead0("bit_check_extended_tab");
-            outline0("fcb 1,2,4,8,16,32,64,128");
-            outhead0("_bit_check_extended_tab_after");
-        }
-        
-        outline2("LDB %s+%d", _value, ( _bitwidth / 8 ) - 1 );
-        outline1("LDA %s", _position);
-        if(_bitwidth>8) {
-            outline0("CMPA #8");
-            outline1("BLO %seval", label);
-            outline2("LDB %s+%d", _value, ( _bitwidth / 8 ) - 2 );
-        }
-        if(_bitwidth>16) {
-            outline0("CMPA #16");
-            outline1("BLO %seval", label);
-            outline1("LDB %s", address_displacement(_environment, _value, "1"));
-            outline0("CMPA #24");
-            outline1("BLO %seval", label);
-            outline1("LDB %s", _value);
-        }
-        
-        outhead1("%seval", label );
-        outline0("LDX #bit_check_extended_tab");
-        outline1("LDA %s", _position);
-        outline0("ANDA #7");
-        outline0("ANDB A,X");
-        
+    embedded( cpu_bit_check_extended, src_hw_6809_cpu_bit_check_extended_asm );
+
+        outline1("LDX #%s", _value);
+        outline1("LDA %s", _position );
+        outline0("JSR CPUBITCHECKEXTENDED" );
+
         if ( _result ) {
-            outline1("BEQ %send", label);
-            outline0("LDB #$ff");
-            outhead1("%send", label)
-            outline1("STB %s", _result);
-        } else {
-            outline0("ANDCC #$FE");
-            outline1("BEQ %send", label);
-            outline0("ORCC #$01");
-            outhead1("%send", label)
+            outline1("STA %s", _result);
         }
-        
-    no_embedded( cpu_bit_check_extended )
+
+    done( )
 
 }
 

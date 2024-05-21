@@ -57,7 +57,8 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_msc1_uncompress = 1;
     _environment->embedded.cpu_string_sub = 1;
     _environment->embedded.cpu_bit_inplace = 1;
-
+    _environment->embedded.cpu_bit_check_extended = 1;
+    
 }
 
 void target_initialization( Environment * _environment ) {

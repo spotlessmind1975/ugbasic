@@ -7340,13 +7340,9 @@ Variable * variable_move_from_array_bit( Environment * _environment, Variable * 
 
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
     Variable * position = variable_temporary( _environment, VT_BYTE, "(position)");
-    outline0("; --- variable_move_from_array_bit 1");
     variable_move( _environment, offset->name, position->name );
-    outline0("; --- variable_move_from_array_bit 2");
     variable_and_const( _environment, position->name, 7 );
-    outline0("; --- variable_move_from_array_bit 3");
     offset = variable_div2_const( _environment, offset->name, 3 );
-    outline0("; --- variable_move_from_array_bit 4");
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 

@@ -65,7 +65,8 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_math_div2_const_16bit = 1;
     _environment->embedded.cpu_compare_16bit = 1;
     _environment->embedded.cpu_compare_32bit = 1;
-    _environment->embedded.cpu_bit_inplace = 1;
+    _env    _environment->embedded.cpu_bit_check_extended = 1;
+ironment->embedded.cpu_bit_inplace = 1;
 
 }
 

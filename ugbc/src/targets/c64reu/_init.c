@@ -61,6 +61,7 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_string_sub = 1;
     _environment->embedded.cpu_convert_string_into_16bit = 1;
     _environment->embedded.cpu_bit_inplace = 1;
+    _environment->embedded.cpu_bit_check_extended = 1;
 
 }
 

@@ -10341,7 +10341,6 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_move_16bit_indirect2 );
                         parse_embedded( p, cpu_move_32bit_indirect );
                         parse_embedded( p, cpu_move_32bit_indirect2 );
-                        parse_embedded( p, cpu_bit_check );
                         parse_embedded( p, cpu_number_to_string );
                         parse_embedded( p, cpu_move_8bit_indirect_with_offset );
                         parse_embedded( p, cpu_bits_to_string );
@@ -10586,7 +10585,6 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_move_16bit_indirect2 );
         stats_embedded( cpu_move_32bit_indirect );
         stats_embedded( cpu_move_32bit_indirect2 );
-        stats_embedded( cpu_bit_check );
         stats_embedded( cpu_number_to_string );
         stats_embedded( cpu_move_8bit_indirect_with_offset );
         stats_embedded( cpu_bits_to_string );

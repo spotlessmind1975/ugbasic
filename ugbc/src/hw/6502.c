@@ -5835,41 +5835,22 @@ void cpu6502_flip( Environment * _environment, char * _source, char * _size, cha
 
 void cpu6502_bit_check( Environment * _environment, char * _value, int _position, char *_result, int _bitwidth ) {
 
-    MAKE_LABEL
+    no_inline( cpu_bit_check_extended )
 
-    inline( cpu_bit_check )
+    embedded( cpu_bit_check_extended, src_hw_6502_cpu_bit_check_extended_asm );
 
-        _bitwidth = 0;
-        
-        outline1("LDA #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
-        outline0("STA MATHPTR0" );
-        switch( _position ) {
-            case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
-                outline1("LDA %s", address_displacement(_environment, _value, "3"));
-                break;
-            case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
-                outline1("LDA %s", address_displacement(_environment, _value, "2"));
-                break;
-            case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8:
-                outline1("LDA %s", address_displacement(_environment, _value, "1"));
-                break;
-            case 7:  case 6:  case 5:  case 4:  case 3:  case 2:  case 1: case 0:
-                outline1("LDA %s", _value);
-                break;
-        }
-        outline0("AND MATHPTR0" );
-        if ( _result) {
-            outline1("BEQ %szero", label);
-            outhead1("%sone:", label)
-            outline0("LDA #$ff");
-            outline1("JMP %send", label );
-            outhead1("%szero:", label)
-            outline0("LDA #$0");
-            outhead1("%send:", label)
+        outline1("LDA #<%s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _value );
+        outline0("STA TMPPTR+1");
+        outline1("LDA #$%2.2x", _position );
+        outline0("JSR CPUBITCHECKEXTENDED" );
+
+        if ( _result ) {
             outline1("STA %s", _result);
         }
 
-    no_embedded( cpu_bit_check )
+    done( )
 
 }
 
@@ -5877,70 +5858,22 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
 
     MAKE_LABEL
 
-    inline( cpu_bit_check_extended )
+    no_inline( cpu_bit_check_extended )
 
-        _bitwidth = 0;
-        
+    embedded( cpu_bit_check_extended, src_hw_6502_cpu_bit_check_extended_asm );
+
+        outline1("LDA #<%s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _value );
+        outline0("STA TMPPTR+1");
         outline1("LDA %s", _position );
-        outline0("AND #$07" );
-        outline1("BEQ %sl3", label );
-        outline0("TAX" );
-        outline0("LDA #$1" );
-        outhead1("%sl1:", label );
-        outline0("ASL A" );
-        outline0("DEX" );
-        outline1("BNE %sl1", label );
-        outhead1("JMP %sl2", label );
-        outhead1("%sl3:", label );
-        outline0("LDA #$1" );
-        outhead1("%sl2:", label );
-        outline0("STA MATHPTR0" );
-        outline1("LDA %s", _position );
-        outline0("CMP #8" );
-        outline1("BCC %sb0", label );
-        outline0("CMP #16" );
-        outline1("BCC %sb1", label );
-        outline0("CMP #24" );
-        outline1("BCC %sb2", label );
-        outline1("JMP %sb3", label );
-
-        outhead1("%sb0:", label );
-        outline1("LDA %s", _value );
-        outline1("JMP %sbit", label );
-        outhead1("%sb1:", label );
-        outline1("LDA %s", address_displacement(_environment, _value, "1") );
-        outline1("JMP %sbit", label );
-        outhead1("%sb2:", label );
-        outline1("LDA %s", address_displacement(_environment, _value, "2") );
-        outline1("JMP %sbit", label );
-        outhead1("%sb3:", label );
-        outline1("LDA %s", address_displacement(_environment, _value, "3") );
-        outline1("JMP %sbit", label );
-
-        outhead1("%sbit:", label );
-        outline0("AND MATHPTR0" );
+        outline0("JSR CPUBITCHECKEXTENDED" );
 
         if ( _result ) {
-            outline1("BEQ %szero", label);
-            outhead1("%sone:", label)
-            outline0("LDA #$ff");
-            outline1("JMP %send", label );
-            outhead1("%szero:", label)
-            outline0("LDA #$0");
-            outhead1("%send:", label)
             outline1("STA %s", _result);
-        } else {
-            outline1("BEQ %szero", label);
-            outhead1("%sone:", label)
-            outline0("LDA #$ff");
-            outline1("JMP %send", label );
-            outhead1("%szero:", label)
-            outline0("LDA #$0");
-            outhead1("%send:", label)
-            outline0("ROR");
         }
 
-    no_embedded( cpu_bit_check_extended )
+    done( )
 
 }
 
@@ -5954,18 +5887,24 @@ void cpu6502_bit_inplace_8bit( Environment * _environment, char * _value, int _p
 
     embedded( cpu_bit_inplace, src_hw_6502_cpu_bit_inplace_asm );
 
+        if ( !_bit ) {
+            outline0("PHA");
+        }
         outline1("LDA #<%s", _value);
         outline0("STA TMPPTR");
         outline1("LDA #>%s", _value );
         outline0("STA TMPPTR+1");
-        outline1("LDA #$%2.2x", _position);
         if ( _bit ) {
             if ( *_bit ) {
                 outline0("SEC");
             } else {
                 outline0("CLC");
             }
+        } else {
+            outline0("PLA");
+            outline0("ROR");
         }
+        outline1("LDA #$%2.2x", _position);
         outline0("JSR CPUBITINPLACE");
 
     done( )
@@ -5982,14 +5921,19 @@ void cpu6502_bit_inplace_8bit_extended_indirect( Environment * _environment, cha
 
     embedded( cpu_bit_inplace, src_hw_6502_cpu_bit_inplace_asm );
 
+        if ( !_bit ) {
+            outline0("PHA");
+        }
         outline1("LDA %s", _address);
         outline0("STA TMPPTR");
         outline1("LDA %s", address_displacement( _environment, _address, "1" ) );
         outline0("STA TMPPTR+1");
         if ( _bit ) {
             outline1("LDA %s", _bit);
-            outline0("ROR");
+        } else {
+            outline0("PLA");
         }
+        outline0("ROR");
         outline1("LDA %s", _position);
         outline0("JSR CPUBITINPLACE");
 

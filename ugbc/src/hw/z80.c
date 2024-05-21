@@ -5571,41 +5571,19 @@ void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char 
 
 void z80_bit_check( Environment * _environment, char *_value, int _position, char * _result, int _bitwidth ) {
 
-    MAKE_LABEL
+    no_inline( cpu_bit_check_extended )
 
-    _bitwidth = 0;
-    
-    outline1("LD HL, %s", _value);
-    switch( _position ) {
-        case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
-            outline0("INC HL");
-        case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
-            outline0("INC HL");
-        case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8:
-            outline0("INC HL");
-        case 7:  case 6:  case 5:  case 4:  case 3:  case 2:  case 1: case 0:
-            outline0("LD A, (HL)");
-            break;
-    }
-    outline1("BIT $%1.1x, A", ( _position & 0x07 ) );
-    if ( _result ) {
-        outline1("JR Z, %szero", label);
-        outline0("LD A, $ff");
-        outline1("LD (%s), A", _result);
-        outline1("JP %sdone", label);
-        outhead1("%szero:", label);
-        outline0("LD A, 0");
-        outline1("LD (%s), A", _result);
-        outhead1("%sdone:", label);
-    } else {
-        outline1("JR Z, %szero", label);
-        outline0("LD A, $ff");
-        outline1("JR %sdone", label);
-        outhead1("%szero:", label);
-        outline0("LD A, 0");
-        outhead1("%sdone:", label);
-        outline0("SRL A");
-    }
+    embedded( cpu_bit_check_extended, src_hw_z80_cpu_bit_check_extended_asm );
+
+        outline1("LD DE, %s", _value);
+        outline1("LD A, $%2.2x", _position );
+        outline0("CALL CPUBITCHECKEXTENDED" );
+
+        if ( _result ) {
+            outline1("LD (%s), A", _result);
+        }
+
+    done( )
 
 }
 
@@ -5613,62 +5591,19 @@ void z80_bit_check_extended( Environment * _environment, char *_value, char * _p
 
     MAKE_LABEL
 
-    _bitwidth = 0;
+    no_inline( cpu_bit_check_extended )
 
-    outline1("LD HL, %s", _value);
-    outline1("LD A, (%s)", _position);
-    outline0("SRA A");
-    outline0("SRA A");
-    outline0("SRA A");
-    outline0("CP 3");
-    outline1("JR Z,%s_3", label );
-    outline0("CP 2");
-    outline1("JR Z,%s_2", label );
-    outline0("CP 1");
-    outline1("JR Z,%s_1", label );
-    outline1("JMP %send", label );
-    outhead1("%s_3:", label );
-    outline0("INC HL" );
-    outhead1("%s_2:", label );
-    outline0("INC HL" );
-    outhead1("%s_1:", label );
-    outline0("INC HL" );
-    outhead1("%send:", label );
-    outline0("LD A, (HL)" );
+    embedded( cpu_bit_check_extended, src_hw_z80_cpu_bit_check_extended_asm );
 
-    outline0("PUSH AF" );
-    outline1("LD A, (%s)", _position);
-    outline0("AND $07" );
-    outline0("LD B, 1");
-    outline0("CP 0");
-    outline1("JR Z, %sdone2", label);
-    outhead1("%sloop2:", label);
-    outline0("SLA B");
-    outline0("DEC A");
-    outline1("JR NZ, %sloop2", label);
-    outhead1("%sdone2:", label);
-    outline0("POP AF" );
+        outline1("LD DE, %s", _value);
+        outline1("LD A, (%s)", _position );
+        outline0("CALL CPUBITCHECKEXTENDED" );
 
-    outline0("AND A, B" );
+        if ( _result ) {
+            outline1("LD (%s), A", _result);
+        }
 
-    if ( _result ) {
-        outline1("JR Z, %szero", label);
-        outline0("LD A, $ff");
-        outline1("LD (%s), A", _result);
-        outline1("JMP %sdone", label);
-        outhead1("%szero:", label);
-        outline0("LD A, 0");
-        outline1("LD (%s), A", _result);
-        outhead1("%sdone:", label);
-    } else {
-        outline1("JR Z, %szero", label);
-        outline0("LD A, $ff");
-        outline1("JR %sdone", label);
-        outhead1("%szero:", label);
-        outline0("LD A, 0");
-        outhead1("%sdone:", label);
-        outline0("SRL A");
-    }
+    done( )
     
 }
 
