@@ -5799,9 +5799,9 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
 
 void cpu6502_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
-    MAKE_LABEL
+    no_inline( cpu_flip )
 
-    inline( cpu_flip )
+    embedded( cpu_flip, src_hw_6502_cpu_flip_asm );
 
         outline1("LDA %s", _source);
         outline0("STA TMPPTR");
@@ -5813,23 +5813,10 @@ void cpu6502_flip( Environment * _environment, char * _source, char * _size, cha
         outline1("LDA %s", address_displacement(_environment, _destination, "1"));
         outline0("STA TMPPTR2+1");
 
-        outline0("CLC");
         outline1("LDA %s", _size);
-        outline0("ADC TMPPTR2");
-        outline0("STA TMPPTR2");
-        outline0("DEC TMPPTR2");
+        outline0("JSR CPUFLIP");
 
-        outline1("LDX %s", _size );
-        outline0("LDY #$0");
-        outhead1("%sx:", label);
-        outline0("LDA (TMPPTR),Y");
-        outline0("STA (TMPPTR2),Y");
-        outline0("DEC TMPPTR2");
-        outline0("INC TMPPTR");
-        outline0("DEX");
-        outline1("BNE %sx", label);
-
-    no_embedded( cpu_flip )
+    done( )
 
 }
 

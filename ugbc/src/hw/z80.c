@@ -4835,25 +4835,16 @@ void z80_fill_indirect( Environment * _environment, char * _address, char * _siz
 
 void z80_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
-    MAKE_LABEL
+    no_inline( cpu_flip )
 
-    outline1("LD HL, (%s)", _size);
-    outline0("LD H, 0");
-    outline1("LD DE, (%s)", _destination);
-    outline0("ADD HL, DE");
-    outline0("LD DE, HL");
+    embedded( cpu_flip, src_hw_z80_cpu_flip_asm );
 
-    outline1("LD HL, (%s)", _source);
-    
-    outline0("DEC DE");
+        outline1("LD HL, (%s)", _source);
+        outline1("LD DE, (%s)", _destination);
+        outline1("LD A, (%s)", _size);
+        outline0("CALL CPUFLIP");
 
-    outhead1("%sx:", label);
-    outline0("LD A, (HL)");
-    outline0("LD (DE), A");
-    outline0("DEC DE");
-    outline0("INC HL");
-    outline0("DEC C");
-    outline1("JR NZ,%sx", label);
+    done(  )
 
 }
 

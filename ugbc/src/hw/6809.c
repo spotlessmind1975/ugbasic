@@ -4735,23 +4735,16 @@ void cpu6809_fill_indirect( Environment * _environment, char * _address, char * 
 
 void cpu6809_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
-    inline( cpu_flip )
+    no_inline( cpu_flip )
 
-        MAKE_LABEL
+    embedded( cpu_flip, src_hw_6809_cpu_flip_asm );
 
         outline1("LDU %s", _source);
         outline1("LDX %s", _destination);
         outline1("LDB %s", _size);
-        outline1("BEQ %sdone", label);
-        outline0("ABX");
-        outhead1("%sx", label);
-        outline0("LDA ,U+");
-        outline0("STA ,-X");
-        outline0("DECB");
-        outline1("BNE %sx", label);
-        outhead1("%sdone", label);
+        outline0("JSR CPUFLIP");
 
-    no_embedded( cpu_flip )
+    done( )
 
 }
 
