@@ -4066,6 +4066,7 @@ void                    colormap_at_var( Environment * _environment, char * _add
 void                    colormap_clear( Environment * _environment );
 void                    colormap_clear_with( Environment * _environment, int _foreground, int _background );
 void                    colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background );
+Variable *              combine_nibble_vars( Environment * _environment, char * _low_byte, char * _high_byte );
 void                    configure_set_value( Environment * _environment, int _name, int _parameter, int _value );
 void                    configure_set_value_var( Environment * _environment, int _name, int _parameter, char * _value );
 void                    console( Environment * _environment, int _x1, int _x2, int _x3, int _x4 );
