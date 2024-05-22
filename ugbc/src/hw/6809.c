@@ -2696,19 +2696,16 @@ void cpu6809_math_and_const_32bit( Environment * _environment, char *_source, in
 
 void cpu6809_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte ) {
 
-    inline( cpu_combine_nibbles )
+    no_inline( cpu_combine_nibbles )
 
-        outline1("LDB %s", _low_nibble);
-        outline1("STB %s", _byte);
-        outline1("LDB %s", _hi_nibble);
-        outline0("LSLB");
-        outline0("LSLB");
-        outline0("LSLB");
-        outline0("LSLB");
-        outline1("ORB %s", _byte);
-        outline1("STB %s", _byte);
+    embedded( cpu_combine_nibbles, src_hw_6809_cpu_combine_nibbles_asm );
 
-    no_embedded( cpu_combine_nibbles )
+        outline1("LDX #%s", _hi_nibble );
+        outline1("LDY #%s", _low_nibble );
+        outline1("LDU #%s", _byte );
+        outline0("JSR CPUCOMBINENIBBLES" );
+
+    done( )
 
 }
 

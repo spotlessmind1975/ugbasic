@@ -3283,14 +3283,12 @@ void cpu6502_combine_nibbles( Environment * _environment, char * _low_nibble, ch
 
     inline( cpu_combine_nibbles )
 
-        outline1("LDA %s", _low_nibble);
-        outline1("STA %s", _byte);
         outline1("LDA %s", _hi_nibble);
         outline0("ASL");
         outline0("ASL");
         outline0("ASL");
         outline0("ASL");
-        outline1("ORA %s", _byte);
+        outline1("ORA %s", _low_nibble);
         outline1("STA %s", _byte);
 
     no_embedded( cpu_combine_nibbles )

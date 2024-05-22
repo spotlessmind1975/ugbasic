@@ -68,6 +68,7 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_bit_inplace = 1;
     _environment->embedded.cpu_bit_check_extended = 1;
     _environment->embedded.cpu_flip = 1;
+    _environment->embedded.cpu_combine_nibbles = 1;
 
 }
 
