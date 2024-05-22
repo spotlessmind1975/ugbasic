@@ -3549,8 +3549,8 @@ void variable_sub_inplace( Environment * _environment, char * _source, char * _d
  */
 void variable_swap( Environment * _environment, char * _source, char * _dest ) {
     
-    Variable * source = variable_retrieve_or_define( _environment, _source, _environment->defaultVariableType, 0 );
-    Variable * target = variable_retrieve_or_define( _environment, _dest, _environment->defaultVariableType, 0 );
+    Variable * source = variable_retrieve( _environment, _source );
+    Variable * target = variable_retrieve( _environment, _dest );
     if ( VT_BITWIDTH( source->type ) != VT_BITWIDTH( target->type ) ) {
         CRITICAL_SWAP_DIFFERENT_BITWIDTH(target->name);
     }
