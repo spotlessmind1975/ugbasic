@@ -3331,51 +3331,43 @@ void cpu6809_xor_32bit( Environment * _environment, char * _left, char * _right,
 
 void cpu6809_swap_8bit( Environment * _environment, char * _left, char * _right ) {
 
-    inline( cpu_swap_8bit )
+    no_inline( cpu_swap_8bit )
 
-        MAKE_LABEL
+    embedded( cpu_swap_8bit, src_hw_6809_cpu_swap_asm ); // it is not an error: swap 8/16/32 shares code
 
-        outline1("LDA %s", _right );
-        outline1("LDB %s", _left );
-        outline1("STA %s", _left );
-        outline1("STB %s", _right );
+        outline1("LDX #%s", _right );
+        outline1("LDY #%s", _left );
+        outline0("JSR CPUSWAP1" );
 
-    no_embedded( cpu_swap_8bit )
+    done( )
 
 }
 
 void cpu6809_swap_16bit( Environment * _environment, char * _left, char * _right ) {
 
-    inline( cpu_swap_16bit )
+    no_inline( cpu_swap_8bit )
 
-        MAKE_LABEL
+    embedded( cpu_swap_8bit, src_hw_6809_cpu_swap_asm ); // it is not an error: swap 8/16/32 shares code
 
-        outline1("LDD %s", _right );
-        outline1("LDU %s", _left );
-        outline1("STD %s", _left );
-        outline1("STU %s", _right );
+        outline1("LDX #%s", _right );
+        outline1("LDY #%s", _left );
+        outline0("JSR CPUSWAP2" );
 
-    no_embedded( cpu_swap_16bit )
+    done( )
 
 }
 
 void cpu6809_swap_32bit( Environment * _environment, char * _left, char * _right  ) {
 
-    inline( cpu_swap_32bit )
+    no_inline( cpu_swap_8bit )
 
-        MAKE_LABEL
+    embedded( cpu_swap_8bit, src_hw_6809_cpu_swap_asm ); // it is not an error: swap 8/16/32 shares code
 
-        outline1("LDD %s", _right );
-        outline1("LDU %s", _left );
-        outline1("STD %s", _left );
-        outline1("STU %s", _right );
+        outline1("LDX #%s", _right );
+        outline1("LDY #%s", _left );
+        outline0("JSR CPUSWAP4" );
 
-        outline1("LDD %s", address_displacement(_environment, _right, "2") );
-        outline1("LDU %s", address_displacement(_environment, _left, "2") );
-        outline1("STD %s", address_displacement(_environment, _left, "2") );
-        outline1("STU %s", address_displacement(_environment, _right, "2") );
-
-    no_embedded( cpu_swap_32bit )
+    done( )
 
 }
 

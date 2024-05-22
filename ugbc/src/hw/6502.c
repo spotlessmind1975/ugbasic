@@ -4179,23 +4179,22 @@ void cpu6502_swap_16bit( Environment * _environment, char * _left, char * _right
 
     MAKE_LABEL
 
-    inline( cpu_swap_16bit )
+    no_inline( cpu_swap_16bit )
 
-        outline1("LDA %s", _left );
-        outline0("PHA" );
-        outline1("LDA %s", _right );
-        outline1("STA %s", _left );
-        outline0("PLA" );
-        outline1("STA %s", _right);
+    embedded( cpu_swap_16bit, src_hw_6502_cpu_swap_asm );
 
-        outline1("LDA %s", address_displacement(_environment, _left, "1") );
-        outline0("PHA" );
-        outline1("LDA %s", address_displacement(_environment, _right, "1") );
-        outline1("STA %s", address_displacement(_environment, _left, "1") );
-        outline0("PLA" );
-        outline1("STA %s", address_displacement(_environment, _right, "1"));
+        outline0("LDY #1" );
+        outline1("LDA #>%s", _left );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA #<%s", _left );
+        outline0("STA TMPPTR" );
+        outline1("LDA #>%s", _right );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA #<%s", _right );
+        outline0("STA TMPPTR2" );
+        outline0("JSR CPUSWAP" );
 
-    no_embedded( cpu_swap_16bit )
+    done( )
 
 }
 
@@ -4203,37 +4202,22 @@ void cpu6502_swap_32bit( Environment * _environment, char * _left, char * _right
 
     MAKE_LABEL
 
-    inline( cpu_swap_32bit )
+    no_inline( cpu_swap_16bit ) // it is not an error, swap 16/32 share code
 
-        outline1("LDA %s", _left );
-        outline0("PHA" );
-        outline1("LDA %s", _right );
-        outline1("STA %s", _left );
-        outline0("PLA" );
-        outline1("STA %s", _right);
+    embedded( cpu_swap_16bit, src_hw_6502_cpu_swap_asm );
 
-        outline1("LDA %s", address_displacement(_environment, _left, "1") );
-        outline0("PHA" );
-        outline1("LDA %s", address_displacement(_environment, _right, "1") );
-        outline1("STA %s", address_displacement(_environment, _left, "1") );
-        outline0("PLA" );
-        outline1("STA %s", address_displacement(_environment, _right, "1"));
+        outline0("LDY #3" );
+        outline1("LDA #>%s", _left );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA #<%s", _left );
+        outline0("STA TMPPTR" );
+        outline1("LDA #>%s", _right );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA #<%s", _right );
+        outline0("STA TMPPTR2" );
+        outline0("JSR CPUSWAP" );
 
-        outline1("LDA %s", address_displacement(_environment, _left, "2") );
-        outline0("PHA" );
-        outline1("LDA %s", address_displacement(_environment, _right, "2") );
-        outline1("STA %s", address_displacement(_environment, _left, "2") );
-        outline0("PLA" );
-        outline1("STA %s", address_displacement(_environment, _right, "2"));
-
-        outline1("LDA %s", address_displacement(_environment, _left, "3") );
-        outline0("PHA" );
-        outline1("LDA %s", address_displacement(_environment, _right, "3") );
-        outline1("STA %s", address_displacement(_environment, _left, "3") );
-        outline0("PLA" );
-        outline1("STA %s", address_displacement(_environment, _right, "3"));
-
-    no_embedded( cpu_swap_32bit )
+    done( )
 
 }
 

@@ -4110,88 +4110,46 @@ void z80_xor_32bit( Environment * _environment, char * _left, char * _right, cha
 
 void z80_swap_8bit( Environment * _environment, char * _left, char * _right ) {
 
-    MAKE_LABEL
+    no_inline( cpu_swap_8bit )
 
-    outline1("LD HL, %s", _left );
-    outline1("LD DE, %s", _right );
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
+    embedded( cpu_swap_8bit, src_hw_z80_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
 
-}
+        outline1("LD HL, %s", _right );
+        outline1("LD DE, %s", _left );
+        outline0("LD B, 1" );
+        outline0("CALL CPUSWAP" );
+
+    done( )
+
+}    
 
 void z80_swap_16bit( Environment * _environment, char * _left, char * _right ) {
 
-    MAKE_LABEL
+    no_inline( cpu_swap_8bit )
 
-    outline1("LD HL, %s", _left );
-    outline1("LD DE, %s", _right );
+    embedded( cpu_swap_8bit, src_hw_z80_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
 
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
+        outline1("LD HL, %s", _right );
+        outline1("LD DE, %s", _left );
+        outline0("LD B, 2" );
+        outline0("CALL CPUSWAP" );
 
-    outline0("INC HL" );
-    outline0("INC DE" );
-
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
+    done( )
 
 }
 
 void z80_swap_32bit( Environment * _environment, char * _left, char * _right ) {
 
-    MAKE_LABEL
+    no_inline( cpu_swap_8bit )
 
-    outline1("LD HL, %s", _left );
-    outline1("LD DE, %s", _right );
+    embedded( cpu_swap_8bit, src_hw_z80_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
 
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
+        outline1("LD HL, %s", _right );
+        outline1("LD DE, %s", _left );
+        outline0("LD B, 4" );
+        outline0("CALL CPUSWAP" );
 
-    outline0("INC HL" );
-    outline0("INC DE" );
-
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
-
-    outline0("INC HL" );
-    outline0("INC DE" );
-
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
-
-    outline0("INC HL" );
-    outline0("INC DE" );
-
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
+    done( )
     
 }
 
