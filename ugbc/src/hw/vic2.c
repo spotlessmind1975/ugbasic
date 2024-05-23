@@ -1846,7 +1846,6 @@ void vic2_back( Environment * _environment ) {
 
 void vic2_cline( Environment * _environment, char * _characters ) {
 
-    deploy( textCline, src_hw_vic2_cline_asm );
     Variable * x = variable_retrieve( _environment, "XCURSYS" );
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
 
@@ -1860,7 +1859,14 @@ void vic2_cline( Environment * _environment, char * _characters ) {
     outline0("STA CLINEX" );
     outline1("LDA %s", y->realName );
     outline0("STA CLINEY");
-    outline0("JSR CLINE");
+
+    if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
+        deploy( textClineGraphic, src_hw_vic2_cline_graphic_asm );
+        outline0("JSR CLINEG");
+    } else {
+        deploy( textCline, src_hw_vic2_cline_text_asm );
+        outline0("JSR CLINE");
+    }
 
 }
 
