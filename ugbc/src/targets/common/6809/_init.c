@@ -32,64 +32,40 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__coco__) || defined(__d32__) || defined(__d64__) || defined(__mo5__)
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][16];
 
-void target_initialization( Environment * _environment ) {
+void setup_embedded( Environment * _environment ) {
 
-    cpu6809_init( _environment );
-
-    banks_init( _environment );
-    
-    _environment->dstring.count = 32;
-    _environment->dstring.space = 512;
-
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
-
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0c00 );
-    variable_global( _environment, "BITMAPADDRESS" );
-    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xa000 );
-    variable_global( _environment, "COLORMAPADDRESS" );
-    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0400 );
-    variable_global( _environment, "TEXTADDRESS" );    
-    variable_import( _environment, "EMPTYTILE", VT_TILE, 32 );
-    variable_global( _environment, "EMPTYTILE" );    
-    variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
-    variable_global( _environment, "DATAPTR" );
-
-    bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
-    bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
-    variable_import( _environment, "FREE_STRING", VT_WORD, DSTRING_DEFAULT_SPACE );
-    variable_global( _environment, "FREE_STRING" );    
-
-    // outline0("ORG $2800");
-    // outhead0("CODESTART");
-    // outline0("LDS #$7000");
-
-    deploy( vars, src_hw_d64_vars_asm);
-    deploy_deferred( startup, src_hw_d64_startup_asm);
-    bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
-
-    outline0( "JSR D64STARTUP" );
-
-    setup_text_variables( _environment );
-
-    c6847_initialization( _environment );
-
-    if ( _environment->tenLinerRulesEnforced ) {
-        shell_injection( _environment );
-    }
-
-    cpu_call( _environment, "VARINIT" );
+    _environment->embedded.cpu_fill_blocks = 1;
+    _environment->embedded.cpu_fill = 1;
+    _environment->embedded.cpu_math_div2_const_8bit = 1;
+    _environment->embedded.cpu_math_mul_8bit_to_16bit = 1;
+    _environment->embedded.cpu_math_div_8bit_to_8bit = 1;
+    _environment->embedded.cpu_math_div2_const_8bit = 1;
+    _environment->embedded.cpu_math_mul_16bit_to_32bit = 1;
+    _environment->embedded.cpu_math_div_16bit_to_16bit = 1;
+    _environment->embedded.cpu_math_div_32bit_to_16bit = 1;
+    _environment->embedded.cpu_random = 1;
+    _environment->embedded.cpu_mem_move = 1;
+    _environment->embedded.cpu_hex_to_string = 1;
+    _environment->embedded.cpu_msc1_uncompress = 1;
+    _environment->embedded.cpu_string_sub = 1;
+    _environment->embedded.cpu_bit_inplace = 1;
+    _environment->embedded.cpu_bit_check_extended = 1;
+    _environment->embedded.cpu_flip = 1;
+    _environment->embedded.cpu_combine_nibbles = 1;
+    _environment->embedded.cpu_swap_8bit = 1; // useless, cpu_swap_8bit shares code
+    _environment->embedded.cpu_swap_16bit = 1; // useless, cpu_swap_8bit shares code
+    _environment->embedded.cpu_swap_32bit = 1; // useless, cpu_swap_8bit shares code
 
 }
 
-void interleaved_instructions( Environment * _environment ) {
-
-}
+#endif
