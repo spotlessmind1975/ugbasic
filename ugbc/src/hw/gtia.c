@@ -2101,7 +2101,6 @@ void gtia_back( Environment * _environment ) {
 
 void gtia_cline( Environment * _environment, char * _characters ) {
 
-    deploy( textCline, src_hw_gtia_cline_asm );
     Variable * x = variable_retrieve( _environment, "XCURSYS" );
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
 
@@ -2115,7 +2114,14 @@ void gtia_cline( Environment * _environment, char * _characters ) {
     outline0("STA CLINEX" );
     outline1("LDA %s", y->realName );
     outline0("STA CLINEY");
-    outline0("JSR CLINE");
+
+    if ( _environment->currentMode >= 2 && _environment->currentMode <= 7 ) {
+        deploy( textCline, src_hw_gtia_cline_text_asm );
+        outline0("JSR CLINE");
+    } else {
+        deploy( textClineGraphic, src_hw_gtia_cline_graphic_asm );
+        outline0("JSR CLINEG");
+    }
 
 }
 

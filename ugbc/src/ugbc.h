@@ -1514,6 +1514,7 @@ typedef struct _Deployed {
     int clsText;
     int clsGraphic;
     int textCline;
+    int textClineGraphic;
     int textHScroll;
     int textHScrollLine;
     int textHScrollScreen;
