@@ -1124,21 +1124,27 @@ void c6847_back( Environment * _environment ) {
 
 void c6847_cline( Environment * _environment, char * _characters ) {
 
-    deploy( textCline, src_hw_6847_cline_asm );
     Variable * x = variable_retrieve( _environment, "XCURSYS" );
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
 
     if ( _characters ) {
-        outline1("LDA %s", _characters);
+        outline1("LDD %s", _characters);
     } else {
-        outline0("LDA #0");
+        outline0("LDD #0");
     }
-    outline0("STA <CHARACTERS");
+    outline0("STB <CHARACTERS");
     outline1("LDA %s", x->realName );
     outline0("STA <CLINEX" );
     outline1("LDA %s", y->realName );
     outline0("STA <CLINEY");
-    outline0("JSR CLINE");
+
+    if ( _environment->currentMode < 7 ) {
+        deploy( textCline, src_hw_6847_cline_text_asm );
+        outline0("JSR CLINE");
+    } else {
+        deploy( textClineGraphic, src_hw_6847_cline_graphic_asm );
+        outline0("JSR CLINEG");
+    }
 
 }
 
