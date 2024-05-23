@@ -1642,7 +1642,15 @@ void tms9918_back( Environment * _environment ) {
 
 void tms9918_cline( Environment * _environment, char * _characters ) {
 
-    deploy( textCline, src_hw_tms9918_cline_asm );
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+
+    Variable * x = variable_retrieve( _environment, "XCURSYS" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
+
+    outline1("LD A, (%s)", x->realName );
+    outline0("LD (CLINEX), A" );
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD (CLINEY), A");
 
     if ( _characters ) {
         outline1("LD A, (%s)", _characters);
@@ -1651,10 +1659,21 @@ void tms9918_cline( Environment * _environment, char * _characters ) {
         outline0("LD A, 0");
         outline0("LD C, A");
     }
-    if ( ! _environment->hasGameLoop ) {
-        outline0("CALL CLINE");
+
+    if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
+        deploy( textClineGraphic, src_hw_tms9918_cline_graphic_asm );
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL CLINEG");
+        } else {
+            outline0("CALL CLINEGGMI2");
+        }
     } else {
-        outline0("CALL CLINENMI2");
+        deploy( textCline, src_hw_tms9918_cline_text_asm );
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL CLINE");
+        } else {
+            outline0("CALL CLINENMI2");
+        }
     }
 
 }
