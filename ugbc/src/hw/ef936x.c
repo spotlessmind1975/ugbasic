@@ -952,7 +952,7 @@ void ef936x_cline( Environment * _environment, char * _characters ) {
     outline0("STA <CLINEX" );
     outline1("LDA %s", y->realName );
     outline0("STA <CLINEY");
-    outline0("JSR CLINE");
+    outline0("JSR CLINEG");
 
 }
 
