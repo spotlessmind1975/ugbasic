@@ -3426,11 +3426,11 @@ void cpu6809_not_32bit( Environment * _environment, char * _value, char * _resul
 }
 
 void cpu6809_di( Environment * _environment ) {
-
+    outline0( "ORCC #$50" );
 }
 
 void cpu6809_ei( Environment * _environment ) {
-
+    outline0( "ANDCC #$AF" );
 }
 
 void cpu6809_inc( Environment * _environment, char * _variable ) {
