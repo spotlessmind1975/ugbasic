@@ -5535,6 +5535,9 @@ console_definition_simple :
     | OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr OP_COMMA OP_HASH const_expr {
         console( _environment, $2, $5, $8, $11 );        
     }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        console( _environment, $2, $5, $8, $11 );        
+    }
     | SAVE OP_HASH const_expr {
         console_save( _environment, $3 );
     }
@@ -5548,6 +5551,9 @@ console_definition_simple :
 
 console_definition_expression :
     expr OP_COMMA expr TO expr OP_COMMA expr {
+        console_vars( _environment, $1, $3, $5, $7 );
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         console_vars( _environment, $1, $3, $5, $7 );
     }
     | SAVE expr {
