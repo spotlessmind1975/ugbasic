@@ -112,6 +112,10 @@ Ogni target ha uno specifico elenco di formati audio supportati.
 </usermanual> */
 void music_var( Environment * _environment, char * _music, int _loop, int _music_type ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
     Variable * music = variable_retrieve( _environment, _music );
 
     if ( _music_type == MUSIC_TYPE_AUTO ) {
