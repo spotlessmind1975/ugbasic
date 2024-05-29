@@ -4785,6 +4785,8 @@ void cpu6809_bit_check_extended( Environment * _environment, char * _value, char
 
 void cpu6809_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
 
+    _environment->bitmaskNeeded = 1;
+
     MAKE_LABEL
 
     no_inline( cpu_bit_inplace )
