@@ -44,9 +44,15 @@ COLOR BORDER WHITE
 
 CLS WHITE
 
-soundtrack := LOAD MUSIC("what_a_wonderful_world.mid")
+GLOBAL soundtrack
 
-MUSIC soundtrack
+PARALLEL PROCEDURE sountrackLoad ON VIC20
+
+	soundtrack := LOAD MUSIC("what_a_wonderful_world.mid")
+
+	MUSIC soundtrack
+
+END PROC
 
 PARALLEL PROCEDURE rotatingEarth ON VIC20
 
@@ -163,6 +169,8 @@ PARALLEL PROCEDURE printLyrics ON VIC20
 	LOOP
 
 END PROC
+
+sountrackLoad[] ON VIC20
 
 SPAWN rotatingEarth ON VIC20
 SPAWN printLyrics ON VIC20

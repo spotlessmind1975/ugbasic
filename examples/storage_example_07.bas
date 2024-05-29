@@ -18,6 +18,8 @@ STORAGE "disco" AS "disk1"
     MUSIC "what_a_wonderful_world.mid" AS "track2" TO track
 ENDSTORAGE
 
+PROCEDURE example ON ALL BUT COCO
+
     DIM song AS STRING
     DIM songName AS STRING
 
@@ -48,3 +50,7 @@ ENDSTORAGE
         ENDIF
 
     LOOP        
+
+END PROC
+
+    example[] ON ALL BUT COCO

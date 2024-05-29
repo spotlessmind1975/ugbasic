@@ -12,6 +12,8 @@ STORAGE "disco" AS "disk1"
 	MUSIC "example.mid" AS "example"
 ENDSTORAGE
 
+PROCEDURE example ON ALL BUT COCO
+
     CLS
 
     track := NEW MUSIC(1024)
@@ -20,4 +22,6 @@ ENDSTORAGE
 
     MUSIC LOOP track 
 
-    
+END PROC
+
+    example[] ON ALL BUT COCO
