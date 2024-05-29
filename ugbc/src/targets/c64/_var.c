@@ -260,10 +260,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 static void variable_cleanup_memory_mapped( Environment * _environment, Variable * _variable ) {
 
     outhead2("; %s (%4.4x)", _variable->realName, _variable->absoluteAddress );
-    outhead1("%s:", _variable->realName );
 
     switch( _variable->type ) {
         case VT_CHAR:
+            outhead1("%s:", _variable->realName );
             if ( _variable->value >= 32 ) {
                 outline1(" .byte '%c'", ( _variable->value & 0xff ) );
             } else {
@@ -274,19 +274,23 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SBYTE:
         case VT_COLOR:
         case VT_THREAD:
+            outhead1("%s:", _variable->realName );
             outline1(" .byte $%1.1x", ( _variable->value & 0xff ) );
             break;
         case VT_WORD:
         case VT_SWORD:
         case VT_POSITION:
         case VT_ADDRESS:
+            outhead1("%s:", _variable->realName );
             outline1(" .word $%2.2x", ( _variable->value & 0xffff ) );
             break;
         case VT_DWORD:
         case VT_SDWORD:
+            outhead1("%s:", _variable->realName );
             outline1(" .dword $%4.4x", ( _variable->value & 0xffff ) );
             break;
         case VT_FLOAT: {
+            outhead1("%s:", _variable->realName );
             int bytes = VT_FLOAT_BITWIDTH( _variable->precision ) >> 3;
             int * data = malloc( bytes * sizeof( int ) );
             switch( _variable->precision ) {
@@ -320,9 +324,11 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SPRITE:
         case VT_TILE:
         case VT_TILESET:
+            outhead1("%s:", _variable->realName );
             outline0("   .byte 0" );
             break;
         case VT_TILES:
+            outhead1("%s:", _variable->realName );
             outline0("   .byte 0, 0, 0, 0" );
             break;
         case VT_BLIT:
@@ -336,6 +342,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 outhead2("; relocated on bank %d (at %4.4x)", _variable->bankAssigned, _variable->absoluteAddress );
                 outhead1("%s: .byte $0", _variable->realName );
             } else {
+                outhead1("%s:", _variable->realName );
                 if ( _variable->valueBuffer && ! _variable->onStorage ) {
                     if ( _variable->printable ) {
                         char * string = malloc( _variable->size + 1 );
@@ -356,6 +363,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             }
             break;
         case VT_ARRAY: {
+            outhead1("%s:", _variable->realName );
             if ( _variable->valueBuffer ) {
                 out0("    .byte ");
                 int i=0;
@@ -367,7 +375,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 if ( _variable->value ) {
                     switch( VT_BITWIDTH( _variable->arrayType ) ) {
                         case 32: {
-                            out1("%s: .byte ", _variable->realName );
+                            out1(" .byte ", _variable->realName );
                             for( int i=0; i<(_variable->size/4)-1; ++i ) {
                                 out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x, ", (unsigned int)( _variable->value & 0xff ), (unsigned int)( ( _variable->value >> 8 ) & 0xff ), (unsigned int)( ( _variable->value >> 16 ) & 0xff ), (unsigned int)( ( _variable->value >> 24 ) & 0xff ) );
                             }
@@ -376,7 +384,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                             break;
                         }
                         case 16: {
-                            out1("%s: .byte ", _variable->realName );
+                            out1(" .byte ", _variable->realName );
                             for( int i=0; i<(_variable->size/2)-1; ++i ) {
                                 out2("$%2.2x, $%2.2x,", (unsigned int)( _variable->value & 0xff ), (unsigned int)( ( _variable->value >> 8 ) & 0xff ) );
                             }
@@ -385,10 +393,10 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                             break;
                         }
                         case 8:
-                            outline3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value&0xff) );
+                            outline2(" .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value&0xff) );
                             break;
                         case 1:
-                            outline3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value?0xff:0x00));
+                            outline2(" .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value?0xff:0x00));
                             break;
                     }                    
                 } else {
@@ -549,13 +557,6 @@ void variable_cleanup( Environment * _environment ) {
                 // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
                 // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
                 // outhead1(".segment \"%s\"", actual->name);
-                if ( _environment->bitmaskNeeded ) {
-                    outhead0("BITMASK: .byte $01,$02,$04,$08,$10,$20,$40,$80");
-                    outhead0("BITMASKN: .byte $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
-                }
-                if ( _environment->deployed.dstring ) {
-                    outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
-                }
 
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
@@ -710,6 +711,14 @@ void variable_cleanup( Environment * _environment ) {
             outhead2("BANKWINDOW%2.2x: .res %d,0", i, _environment->maxExpansionBankSize[i]);
             outhead1("BANKWINDOWID%2.2x: .byte $FF, $FF", i );
         }
+    }
+
+    if ( _environment->bitmaskNeeded ) {
+        outhead0("BITMASK: .byte $01,$02,$04,$08,$10,$20,$40,$80");
+        outhead0("BITMASKN: .byte $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
+    }
+    if ( _environment->deployed.dstring ) {
+        outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
 }
