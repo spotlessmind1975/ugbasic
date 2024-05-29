@@ -15,6 +15,8 @@ REM vedete qui è un semplice player.
 REM
 REM @include mo5
 
+PROCEDURE example ON MO5
+
     SCREEN #0
     CLS
     
@@ -99,4 +101,7 @@ REM @include mo5
         ENDIF
     LOOP
 
+END PROC
 
+	example[] ON MO5
+	
