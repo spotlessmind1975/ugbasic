@@ -46,7 +46,7 @@ void target_initialization( Environment * _environment ) {
 
     banks_init( _environment );
 
-    _environment->audioConfig.async = 1;
+    // _environment->audioConfig.async = 1;
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
