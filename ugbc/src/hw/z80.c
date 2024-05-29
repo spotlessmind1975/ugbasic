@@ -5555,6 +5555,8 @@ void z80_bit_check_extended( Environment * _environment, char *_value, char * _p
 
 void z80_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
 
+    _environment->bitmaskNeeded = 1;
+
     MAKE_LABEL
 
     no_inline( cpu_bit_inplace )
