@@ -13,6 +13,8 @@ REM le necessità di memoria dei vari elementi stoccati nelle
 REM memorie di massa, senza aver necessità di definirli 
 REM esplicitamente.
 
+GLOBAL track
+
 STORAGE "disco" AS "disk1"
 	MUSIC "example.mid" AS "track1" TO track
     MUSIC "what_a_wonderful_world.mid" AS "track2" TO track
