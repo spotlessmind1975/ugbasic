@@ -1672,9 +1672,17 @@ void vic1_put_image( Environment * _environment, Resource * _image, char * _x, c
     outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA IMAGEY+1" );
     outline1("LDA %s", _flags);
-    outline0("STA IMAGEF" );
-    outline1("LDA %s", address_displacement(_environment, _flags, "1") );
-    outline0("STA IMAGET" );
+    if ( strchr( _flags, '#' ) ) {
+        outline1("LDA #((%s)&255)", _flags+1 );
+        outline0("STA IMAGEF" );
+        outline1("LDA #(((%s)>>8)&255)", _flags+1 );
+        outline0("STA IMAGET" );
+    } else {
+        outline1("LDA %s", _flags );
+        outline0("STA IMAGEF" );
+        outline1("LDA %s", address_displacement(_environment, _flags, "1") );
+        outline0("STA IMAGET" );
+    }    
 
     outline0("JSR PUTIMAGE");
 
