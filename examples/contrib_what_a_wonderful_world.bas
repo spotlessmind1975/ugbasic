@@ -46,7 +46,7 @@ CLS WHITE
 
 GLOBAL soundtrack
 
-PARALLEL PROCEDURE sountrackLoad ON VIC20
+PROCEDURE sountrackLoad ON VIC20
 
 	soundtrack := LOAD MUSIC("what_a_wonderful_world.mid")
 
