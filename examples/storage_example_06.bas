@@ -12,7 +12,7 @@ STORAGE "disco" AS "disk1"
 	MUSIC "example.mid" AS "example"
 ENDSTORAGE
 
-PROCEDURE example ON ALL BUT COCO
+PROCEDURE example ON ALL BUT COCO, COCO3
 
     CLS
 
@@ -24,4 +24,4 @@ PROCEDURE example ON ALL BUT COCO
 
 END PROC
 
-    example[] ON ALL BUT COCO
+    example[] ON ALL BUT COCO, COCO3
