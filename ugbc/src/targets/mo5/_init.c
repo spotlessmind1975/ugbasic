@@ -65,8 +65,6 @@ void target_initialization( Environment * _environment ) {
 
     if ( bankMax != -1 ) {
 
-        printf( "ram size = %d, bankMax = %d\n", _environment->ramSize, bankMax );
-
         bankIds = malloc( sizeof( int ) * bankMax );
         
         for( int i=0; i<bankMax; ++i ) {
