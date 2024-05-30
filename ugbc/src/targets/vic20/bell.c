@@ -49,14 +49,22 @@
  */
 /* <usermanual>
 @keyword BELL
-@target c64
+@target vic20
 </usermanual> */
-void bell( Environment * _environment, int _note, int _channels ) {
+void bell( Environment * _environment, int _note, int _duration, int _channels ) {
 
     vic1_start( _environment, _channels );
     vic1_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
     vic1_set_note( _environment, _channels, _note );
 
+    long durationInTicks = ( _duration / 20 ) & 0xff;
+
+    vic1_set_duration( _environment, _channels, durationInTicks );
+
+    if ( ! _environment->audioConfig.async ) {
+        vic1_wait_duration( _environment, _channels );
+    }
+    
 }
 
 /**
@@ -72,7 +80,7 @@ void bell( Environment * _environment, int _note, int _channels ) {
 @keyword BELL
 @target c64
 </usermanual> */
-void bell_vars( Environment * _environment, char * _note, char * _channels ) {
+void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels ) {
 
     Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
     if ( _channels ) {
@@ -80,10 +88,30 @@ void bell_vars( Environment * _environment, char * _note, char * _channels ) {
         vic1_start_var( _environment, channels->realName );
         vic1_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
         vic1_set_note_vars( _environment, channels->realName, note->realName );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
+            vic1_set_duration_vars( _environment, channels->realName, duration->realName );
+        } else {
+            vic1_set_duration_vars( _environment, channels->realName, NULL );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            vic1_wait_duration_vars( _environment, channels->realName );
+        }              
     } else {
         vic1_start_var( _environment, NULL );
         vic1_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
         vic1_set_note_vars( _environment, NULL, note->realName );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
+            vic1_set_duration_vars( _environment, NULL, duration->realName );
+        } else {
+            vic1_set_duration_vars( _environment, NULL, NULL );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            vic1_wait_duration_vars( _environment, NULL );
+        }          
     }
 
 }

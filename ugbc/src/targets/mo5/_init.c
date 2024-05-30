@@ -40,30 +40,41 @@
 
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
-void setup_embedded( Environment * _environment ) {
-
-    _environment->embedded.cpu_fill_blocks = 1;
-    _environment->embedded.cpu_fill = 1;
-    _environment->embedded.cpu_math_div2_8bit = 1;
-    _environment->embedded.cpu_math_mul_8bit_to_16bit = 1;
-    _environment->embedded.cpu_math_div_8bit_to_8bit = 1;
-    _environment->embedded.cpu_math_div2_const_8bit = 1;
-    _environment->embedded.cpu_math_mul_16bit_to_32bit = 1;
-    _environment->embedded.cpu_math_div_16bit_to_16bit = 1;
-    _environment->embedded.cpu_math_div_32bit_to_16bit = 1;
-    _environment->embedded.cpu_random = 1;
-    _environment->embedded.cpu_mem_move = 1;
-    _environment->embedded.cpu_hex_to_string = 1;
-    _environment->embedded.cpu_msc1_uncompress = 1;
-    _environment->embedded.cpu_string_sub = 1;
-
-}
-
 void target_initialization( Environment * _environment ) {
 
     cpu6809_init( _environment );
 
-    banks_init( _environment );
+    int * bankIds = NULL;
+    int bankMax = 0;
+    int bankCount = 0;
+
+    switch( _environment->ramSize ) {
+        case 512:
+            bankMax=32; /* 0...31 = 32 banks */
+            break;
+        case 64:
+            bankMax=4; /* 0...3 = 4 banks */
+            break;
+        case 0:
+            bankMax=-1; 
+            break;
+        default:
+            CRITICAL_INVALID_RAM_SIZE( _environment->ramSize );
+            break;
+    }
+
+    if ( bankMax != -1 ) {
+
+        bankIds = malloc( sizeof( int ) * bankMax );
+        
+        for( int i=0; i<bankMax; ++i ) {
+            bankIds[i] = bankMax - ( i ) - 1;
+            ++bankCount;
+        }
+
+        banks_init_extended( _environment, bankIds, bankCount, BANK_SIZE );
+
+    }
     
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 

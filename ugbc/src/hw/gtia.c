@@ -699,6 +699,58 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
     
 }
 
+void console_calculate( Environment * _environment ) {
+
+    int consoleSA = 0x4000;
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "JSR CONSOLECALCULATE" );
+
+}
+
+void console_update_width_in_bytes( Environment * _environment ) {
+
+    cpu_math_sub_8bit( _environment, "CURRENTTILESWIDTH", "CONSOLEW", "CONSOLESL" );
+    cpu_math_sub_8bit( _environment, "CONSOLESL", "CONSOLEX1", "CONSOLESL" );
+    cpu_inc( _environment, "CONSOLESL" );
+
+    switch( _environment->currentMode ) {
+        case BITMAP_MODE_ANTIC8:
+        case BITMAP_MODE_ANTIC10:
+        case BITMAP_MODE_ANTIC13:
+            cpu_math_mul2_const_8bit( _environment, "CONSOLESL", 1, 0  );
+            break;        
+
+        case BITMAP_MODE_ANTIC9:
+        case BITMAP_MODE_ANTIC11: 
+        case BITMAP_MODE_ANTIC15:
+        case BITMAP_MODE_ANTIC12:
+        case BITMAP_MODE_ANTIC14:
+            break;
+            
+        case TILEMAP_MODE_ANTIC2:
+        case TILEMAP_MODE_ANTIC6:
+        case TILEMAP_MODE_ANTIC7:
+        case TILEMAP_MODE_ANTIC3:
+        case TILEMAP_MODE_ANTIC4:
+        case TILEMAP_MODE_ANTIC5:
+            break;
+        default:
+            CRITICAL_SCREEN_UNSUPPORTED( _environment->currentMode );
+    }
+
+}
+
+
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     int i;
@@ -1475,15 +1527,24 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
+    _environment->screenTilesWidth = _environment->screenWidth / _environment->fontWidth;
+    _environment->screenTilesHeight = _environment->screenHeight / _environment->fontHeight;
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
     cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
     cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
-    _environment->screenTilesWidth = _environment->screenWidth / _environment->fontWidth;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
-    _environment->screenTilesHeight = _environment->screenHeight / _environment->fontHeight;
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "CONSOLEX1", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY1", 0 );
+    cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
+    cpu_store_8bit( _environment, "CONSOLEY2", _environment->consoleTilesHeight-1 );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesHeight );
 
     cpu_store_16bit( _environment, "ORIGINX", 0) ;
     cpu_store_16bit( _environment, "ORIGINY", 0) ;
@@ -1829,13 +1890,6 @@ void gtia_get_width( Environment * _environment, char *_result ) {
 
 }
 
-void gtia_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESWIDTH" );
-    outline1("STA %s", _result );
-
-}
-
 void gtia_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTHEIGHT" );
@@ -1848,13 +1902,6 @@ void gtia_get_height( Environment * _environment, char *_result ) {
 void gtia_tiles_get( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTTILES" );
-    outline1("STA %s", _result );
-
-}
-
-void gtia_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESHEIGHT" );
     outline1("STA %s", _result );
 
 }
@@ -2054,7 +2101,6 @@ void gtia_back( Environment * _environment ) {
 
 void gtia_cline( Environment * _environment, char * _characters ) {
 
-    deploy( textCline, src_hw_gtia_cline_asm );
     Variable * x = variable_retrieve( _environment, "XCURSYS" );
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
 
@@ -2068,7 +2114,14 @@ void gtia_cline( Environment * _environment, char * _characters ) {
     outline0("STA CLINEX" );
     outline1("LDA %s", y->realName );
     outline0("STA CLINEY");
-    outline0("JSR CLINE");
+
+    if ( _environment->currentMode >= 2 && _environment->currentMode <= 7 ) {
+        deploy( textCline, src_hw_gtia_cline_text_asm );
+        outline0("JSR CLINE");
+    } else {
+        deploy( textClineGraphic, src_hw_gtia_cline_graphic_asm );
+        outline0("JSR CLINEG");
+    }
 
 }
 

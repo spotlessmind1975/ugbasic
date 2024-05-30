@@ -45,6 +45,7 @@ void pokey_set_pitch( Environment * _environment, int _channel, int _pitch );
 void pokey_set_note( Environment * _environment, int _channel, int _note );
 void pokey_stop( Environment * _environment, int _channel );
 void pokey_set_duration( Environment * _environment, int _channel, int _duration );
+void pokey_wait_duration( Environment * _environment, int _channels );
 
 void pokey_start_var( Environment * _environment, char * _channel );
 void pokey_set_volume_semi_var( Environment * _environment, char * _channel, int _volume );
@@ -55,6 +56,7 @@ void pokey_set_pitch_vars( Environment * _environment, char * _channel, char * _
 void pokey_set_note_vars( Environment * _environment, char * _channel, char * _note );
 void pokey_stop_vars( Environment * _environment, char * _channel );
 void pokey_set_duration_vars( Environment * _environment, char * _channel, char * _duration );
+void pokey_wait_duration_vars( Environment * _environment, char * _channel );
 
 void pokey_music( Environment * _environment, char * _music, int _size, int _loop );
 

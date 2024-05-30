@@ -49,11 +49,16 @@
 /* <usermanual>
 @keyword BOOM
 </usermanual> */
-void boom( Environment * _environment, int _channels ) {
+void boom( Environment * _environment, int _duration, int _channels ) {
+
+    if ( _environment->audioConfig.async ) {
+        CRITICAL_BOOM_NOT_ASYNC();
+    }
 
     sidz_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
     sidz_start( _environment, _channels );
     sidz_set_frequency( _environment, _channels, 1000 );
+    wait_milliseconds( _environment, _duration );
 
 }
 
@@ -68,7 +73,11 @@ void boom( Environment * _environment, int _channels ) {
 /* <usermanual>
 @keyword BOOM
 </usermanual> */
-void boom_var( Environment * _environment, char * _channels ) {
+void boom_var( Environment * _environment, char * _duration, char * _channels ) {
+
+    if ( _environment->audioConfig.async ) {
+        CRITICAL_BOOM_NOT_ASYNC();
+    }
 
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
@@ -77,6 +86,13 @@ void boom_var( Environment * _environment, char * _channels ) {
     } else {
         sidz_start_var( _environment, NULL );
         sidz_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
+    }
+    
+    if ( _duration ) {
+        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 1500 );
+        wait_milliseconds_var( _environment, duration->name );
+    } else {
+        wait_milliseconds( _environment, 1500 );
     }
     
 }

@@ -172,8 +172,8 @@ BANKWRITE4
 
 ; Read n byte(s) from REU to memory
 ; A : bank
-; TMPPTR: source memory address
-; TMPPTR2: destination memory address
+; <TMPPTR: source memory address
+; <TMPPTR2: destination memory address
 ; U: size
 BANKWRITE
     STA BANKSHADOW

@@ -45,3 +45,28 @@ REGISTER6       =   $26
 REGISTER7       =   $27
 REGISTERE       =   $20 + $08
 REGISTER1E      =   $21 + $08
+
+;       (x1,y1)  w (chars) / wb (bytes)
+;       +----------------+
+;  sa ->|*               | h (chars) / hb (bytes)
+;       |                |
+;       +----------------+ (x2, y2)
+;
+CONSOLEID     fcb $ff      ; <-- actual
+;
+; Text mode
+;
+CONSOLEX1     db 0         ; <-- input from program (chars)
+CONSOLEY1     db 0         ; <-- input from program (chars)
+CONSOLEX2     db 31        ; <-- recalculated (chars)
+CONSOLEY2     db 15        ; <-- recalculated (chars)
+CONSOLEW      db 32        ; <-- calculated (chars)
+CONSOLEH      db 16        ; <-- calculated (chars)
+;
+; Graphic mode
+;
+CONSOLESA     dw 0         ; <-- calculated (address)
+CONSOLEWB     db 32        ; <-- calculated (bytes)
+CONSOLEHB     db 16        ; <-- calculated (bytes)
+;
+CONSOLES      rzb 4*8        ; <-- storage for virtual consoles

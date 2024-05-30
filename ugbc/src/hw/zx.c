@@ -335,10 +335,6 @@ void zx_initialization( Environment * _environment ) {
     variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
     variable_global( _environment, "RESOLUTIONY" );
     
-    variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
-    variable_global( _environment, "XCURS" );
-    variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
-    variable_global( _environment, "YCURS" );
     variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
     variable_global( _environment, "TABCOUNT" );
 
@@ -391,6 +387,20 @@ void zx_initialization( Environment * _environment ) {
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenColors = COLOR_COUNT;
+    _environment->screenTilesWidth = _environment->screenWidth / _environment->fontWidth;
+    _environment->screenTilesHeight = _environment->screenHeight / _environment->fontHeight;
+
+    cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
+    cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
+    cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
+    cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
+    cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
+
+    console_init( _environment );
 
 }
 
@@ -406,12 +416,21 @@ void zx_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
+void console_calculate( Environment * _environment ) {
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+}
+
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
     _environment->screenWidth = 256;
     _environment->screenHeight = 192;
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenColors = 8;
+    console_init( _environment );
 }
 
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {

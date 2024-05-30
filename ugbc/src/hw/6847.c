@@ -253,6 +253,66 @@ void c6847_bank_select( Environment * _environment, int _bank ) {
 #define SET_VIDEOAT_600     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F0_SET; SAM_F1_SET; 
 #define SET_VIDEOAT_C00     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F1_SET; SAM_F2_SET; 
 
+void console_calculate( Environment * _environment ) {
+
+    int consoleSA = 0x0c00;
+    int consoleWB = _environment->activeConsole.width;
+    int consoleHB = _environment->activeConsole.height * 8;
+
+    switch( _environment->currentMode ) {
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+        case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+        case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+        case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+        case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+            break;
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+            consoleSA += ( _environment->activeConsole.y1 << 7 ) + ( _environment->activeConsole.x1 << 1 );
+            consoleWB = _environment->activeConsole.width * 2;
+            break;
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+            consoleSA += ( _environment->activeConsole.y1 << 7 ) + ( _environment->activeConsole.x1 << 2 );
+            break;
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+            consoleSA += ( _environment->activeConsole.y1 << 8 ) + ( _environment->activeConsole.x1 << 1 );
+            consoleWB = _environment->activeConsole.width * 2;
+            break;
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+            consoleSA += ( _environment->activeConsole.y1 << 7 ) + ( _environment->activeConsole.x1 << 1 );
+            break;
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+            consoleSA += ( _environment->activeConsole.y1 << 8 ) + ( _environment->activeConsole.x1 << 1 );
+            consoleWB = _environment->activeConsole.width * 2;
+            break;
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+            consoleSA += ( _environment->activeConsole.y1 << 7 ) + ( _environment->activeConsole.x1 << 2 );
+            break;
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+            consoleSA += ( _environment->activeConsole.y1 << 8 ) + ( _environment->activeConsole.x1 << 1 );
+            consoleWB = _environment->activeConsole.width * 2;
+            break;
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+            consoleSA += ( _environment->activeConsole.y1 << 8 ) + ( _environment->activeConsole.x1 );
+            consoleWB = _environment->activeConsole.width * 2;
+            break;
+        default:
+            CRITICAL_SCREEN_UNSUPPORTED( _environment->currentMode );
+    }
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "JSR CONSOLECALCULATE" );
+
+}
+
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm );
@@ -635,6 +695,9 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "ORIGINX", 0 );
     cpu_store_16bit( _environment, "ORIGINY", 0 );
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
@@ -644,6 +707,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+
+    console_init( _environment );
 
 }
 
@@ -740,9 +805,9 @@ void c6847_pset_int( Environment * _environment, int _x, int _y ) {
     deploy( plot, src_hw_6847_plot_asm );
     
     outline1("LDX %4.4x", (_x & 0xffff ) );
-    outline0("STX PLOTX");
+    outline0("STX <PLOTX");
     outline1("LDD %4.4x", ( _y & 0xffff ) );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -759,9 +824,9 @@ void c6847_pset_vars( Environment * _environment, char *_x, char *_y ) {
     deploy( plot, src_hw_6847_plot_asm );
     
     outline1("LDX %s", x->realName );
-    outline0("STX PLOTX");
+    outline0("STX <PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -778,9 +843,9 @@ void c6847_pget_color_vars( Environment * _environment, char *_x, char *_y, char
     deploy( plot, src_hw_6847_plot_asm );
     
     outline1("LDD %s", x->realName );
-    outline0("STD PLOTX");
+    outline0("STD <PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #3");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -875,24 +940,10 @@ void c6847_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void c6847_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESWIDTH" );
-    outline1("STA %s", _result );
-
-}
-
 void c6847_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDX CURRENTHEIGHT" );
     outline1("STX %s", _result );
-
-}
-
-void c6847_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESHEIGHT" );
-    outline1("STA %s", _result );
 
 }
 
@@ -910,32 +961,38 @@ void c6847_cls( Environment * _environment ) {
 
 void c6847_scroll_text( Environment * _environment, int _direction ) {
 
-    deploy( vScrollText, src_hw_6847_vscroll_text_asm );
-
-    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
-
-    outline0("JSR VSCROLLT");
+    if ( _environment->currentMode < 7 ) {
+        deploy( vScrollText, src_hw_6847_vscroll_text_asm );
+        outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+        outline0("STA <DIRECTION" );
+        outline0("JSR VSCROLLT");
+    } else {
+        deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
+        outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+        outline0("STA <DIRECTION" );
+        outline0("JSR VSCROLLG");
+    }
 
 }
 
 void c6847_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm);
-    deploy( vScrollText, src_hw_6847_vscroll_text_asm );
     deploy( textEncodedAt, src_hw_6847_text_at_asm );
 
     outline1("LDY %s", _text);
-    outline0("STY TEXTPTR" );
+    outline0("STY <TEXTPTR" );
     outline1("LDA %s", _text_size);
-    outline0("STA TEXTSIZE" );
+    outline0("STA <TEXTSIZE" );
 
     if ( _environment->currentMode < 7 ) {
         deploy( clsText, src_hw_6847_cls_text_asm );
+        deploy( vScrollText, src_hw_6847_vscroll_text_asm );
         deploy( textEncodedAtText, src_hw_6847_text_at_text_asm );
         outline0("JSR TEXTATTILEMODE");
     } else {
         deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
+        deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
         deploy( textEncodedAtGraphic, src_hw_6847_text_at_graphic_asm );
         outline0("JSR TEXTATBITMAPMODE");
     }
@@ -1018,12 +1075,16 @@ void c6847_initialization( Environment * _environment ) {
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 32;
     _environment->screenTilesHeight = 16;
+    _environment->consoleTilesWidth = 32;
+    _environment->consoleTilesHeight = 16;
     _environment->screenTiles = 128;
     _environment->screenWidth = _environment->screenTilesWidth*_environment->fontWidth;
     _environment->screenHeight = _environment->screenTilesHeight*_environment->fontHeight;
     _environment->screenShades = 4;
     _environment->screenColors = 4;
 
+    console_init( _environment );
+    
     c6847_cls( _environment );
 
 }
@@ -1038,9 +1099,9 @@ void c6847_hscroll_line( Environment * _environment, int _direction ) {
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
+    outline0("STA <DIRECTION" );
     outline1("LDA %s", y->realName );
-    outline0("STA CLINEY");
+    outline0("STA <CLINEY");
 
     outline0("JSR HSCROLLLT");    
 
@@ -1051,7 +1112,7 @@ void c6847_hscroll_screen( Environment * _environment, int _direction ) {
     deploy( textHScroll, src_hw_6847_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
+    outline0("STA <DIRECTION" );
 
     outline0("JSR HSCROLLST");    
 
@@ -1063,21 +1124,27 @@ void c6847_back( Environment * _environment ) {
 
 void c6847_cline( Environment * _environment, char * _characters ) {
 
-    deploy( textCline, src_hw_6847_cline_asm );
     Variable * x = variable_retrieve( _environment, "XCURSYS" );
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
 
     if ( _characters ) {
-        outline1("LDA %s", _characters);
+        outline1("LDD %s", _characters);
     } else {
-        outline0("LDA #0");
+        outline0("LDD #0");
     }
-    outline0("STA CHARACTERS");
+    outline0("STB <CHARACTERS");
     outline1("LDA %s", x->realName );
-    outline0("STA CLINEX" );
+    outline0("STA <CLINEX" );
     outline1("LDA %s", y->realName );
-    outline0("STA CLINEY");
-    outline0("JSR CLINE");
+    outline0("STA <CLINEY");
+
+    if ( _environment->currentMode < 7 ) {
+        deploy( textCline, src_hw_6847_cline_text_asm );
+        outline0("JSR CLINE");
+    } else {
+        deploy( textClineGraphic, src_hw_6847_cline_graphic_asm );
+        outline0("JSR CLINEG");
+    }
 
 }
 
@@ -1553,9 +1620,9 @@ void c6847_blit_image( Environment * _environment, char * _sources[], int _sourc
     }
 
     outline1("LDD %s", _x );
-    outline0("STD IMAGEX" );
+    outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
-    outline0("STD IMAGEY" );
+    outline0("STD <IMAGEY" );
 
     outline1("LDA #$%2.2x", ( _flags & 0xff ) );
     outline0("STA <IMAGEF" );
@@ -1613,9 +1680,9 @@ void c6847_put_image( Environment * _environment, Resource * _source, char * _x,
     }
     
     outline1("LDD %s", _x );
-    outline0("STD IMAGEX" );
+    outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
-    outline0("STD IMAGEY" );
+    outline0("STD <IMAGEY" );
 
     outline1("LDD %s", _flags );
     outline0("STB <IMAGEF" );
@@ -1758,11 +1825,11 @@ void c6847_get_image( Environment * _environment, char * _image, char * _x, char
     }
 
     outline1("LDD %s", _x );
-    outline0("STD IMAGEX" );
+    outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
-    outline0("STD IMAGEY" );
+    outline0("STD <IMAGEY" );
     outline1("LDA #$%2.2x", _palette );
-    outline0("STA IMAGET");
+    outline0("STA <IMAGET");
 
     outline0("JSR GETIMAGE");
 

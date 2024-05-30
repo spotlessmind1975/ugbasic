@@ -396,13 +396,6 @@ void variable_cleanup( Environment * _environment ) {
                 variable_cleanup_entry( _environment, variable );
                 variable_cleanup_entry_bit( _environment, variable );
             } else if ( actual->type == BT_TEMPORARY ) {
-                if ( _environment->bitmaskNeeded ) {
-                    outhead0("BITMASK: defm $01,$02,$04,$08,$10,$20,$40,$80");
-                    outhead0("BITMASKN: defm $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
-                }
-                if ( _environment->deployed.dstring ) {
-                    outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
-                }
 
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
@@ -487,6 +480,14 @@ void variable_cleanup( Environment * _environment ) {
             outhead2("BANKWINDOW%2.2x: defs %d", i, _environment->maxExpansionBankSize[i]);
             outhead1("BANKWINDOWID%2.2x: defb $FF, $FF", i );
         }
+    }
+
+    if ( _environment->bitmaskNeeded ) {
+        outhead0("BITMASK: defm $01,$02,$04,$08,$10,$20,$40,$80");
+        outhead0("BITMASKN: defm $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
+    }
+    if ( _environment->deployed.dstring ) {
+        outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
 }

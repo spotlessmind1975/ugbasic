@@ -59,6 +59,34 @@ static RGBi SYSTEM_PALETTE[] = {
 static RGBi * commonPalette;
 int lastUsedSlotInCommonPalette = 0;
 
+int plotVBase[] = {
+    0x6000+(0*320),0x6000+(1*320),0x6000+(2*320),0x6000+(3*320),
+    0x6000+(4*320),0x6000+(5*320),0x6000+(6*320),0x6000+(7*320),
+    0x6000+(8*320),0x6000+(9*320),0x6000+(10*320),0x6000+(11*320),
+    0x6000+(12*320),0x6000+(13*320),0x6000+(14*320),0x6000+(15*320),
+    0x6000+(16*320),0x6000+(17*320),0x6000+(18*320),0x6000+(19*320),
+    0x6000+(20*320),0x6000+(21*320),0x6000+(22*320),0x6000+(23*320),
+    0x6000+(24*320)
+};
+
+static int plot8[] = {
+    (0*8),(1*8),(2*8),(3*8),(4*8),(5*8),(6*8),(7*8),(8*8),(9*8),
+    (10*8),(11*8),(12*8),(13*8),(14*8),(15*8),(16*8),(17*8),(18*8),(19*8),
+    (20*8),(21*8),(22*8),(23*8),(24*8),(25*8),(26*8),(27*8),(28*8),(29*8),
+    (30*8),(31*8),(32*8),(33*8),(34*8),(35*8),(36*8),(37*8),(38*8),(39*8)
+};
+
+static int plot4[] = {
+    (0*4),(1*4),(2*4),(3*4),(4*4),(5*4),(6*4),(7*4),(8*4),(9*4),
+    (10*4),(11*4),(12*4),(13*4),(14*4),(15*4),(16*4),(17*4),(18*4),(19*4),
+    (20*4),(21*4),(22*4),(23*4),(24*4),(25*4),(26*4),(27*4),(28*4),(29*4),
+    (30*4),(31*4),(32*4),(33*4),(34*4),(35*4),(36*4),(37*4),(38*4),(39*4),
+    (40*4),(41*4),(42*4),(43*4),(44*4),(45*4),(46*4),(47*4),(48*4),(49*4),
+    (50*4),(51*4),(52*4),(53*4),(54*4),(55*4),(56*4),(57*4),(58*4),(59*4),
+    (60*4),(61*4),(62*4),(63*4),(64*4),(65*4),(66*4),(67*4),(68*4),(69*4),
+    (70*4),(71*4),(72*4),(73*4),(74*4),(75*4),(76*4),(77*4),(78*4),(79*4),
+};
+
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
@@ -843,6 +871,11 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
+    _environment->screenTilesWidth = _environment->screenWidth / 8;
+    _environment->screenTilesHeight = _environment->screenHeight / 8;
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "ORIGINX", 0 );
     cpu_store_16bit( _environment, "ORIGINY", 0 );
 
@@ -851,12 +884,53 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
     cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
     cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
-    _environment->screenTilesWidth = _environment->screenWidth / 8;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
-    _environment->screenTilesHeight = _environment->screenHeight / 8;
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
+
+    console_init( _environment );
+
+}
+
+void console_calculate( Environment * _environment ) {
+
+    int consoleSA = 0;
+    int consoleCA = 0;
+
+    switch( _environment->currentMode ) {
+        case BITMAP_MODE_STANDARD:
+            consoleSA = plotVBase[_environment->activeConsole.y1*8]+plot8[_environment->activeConsole.x1];
+            _environment->currentModeBW = 1;
+            break;
+        case BITMAP_MODE_MULTICOLOR:
+            consoleSA = plotVBase[_environment->activeConsole.y1*8]+plot4[_environment->activeConsole.x1];
+            _environment->currentModeBW = 2;
+            break;
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            consoleSA = 0x0c00 + (_environment->activeConsole.y1*40)+_environment->activeConsole.x1;
+            consoleCA = 0x0400 + (_environment->activeConsole.y1*40)+_environment->activeConsole.x1;
+            _environment->currentModeBW = 1;
+            break;
+        default:
+            CRITICAL_SCREEN_UNSUPPORTED( _environment->currentMode );
+    }
+
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_16bit( _environment, "CONSOLECA", consoleCA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "JSR CONSOLECALCULATE" );
 
 }
 
@@ -1139,26 +1213,12 @@ void ted_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void ted_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESWIDTH" );
-    outline1("STA %s", _result );
-
-}
-
 void ted_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTHEIGHT" );
     outline1("STA %s", _result );
     outline0("LDA CURRENTHEIGHT+1" );
     outline1("STA %s", address_displacement(_environment, _result, "1") );
-
-}
-
-void ted_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESHEIGHT" );
-    outline1("STA %s", _result );
 
 }
 
@@ -2225,6 +2285,20 @@ void ted_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
     outline0("JSR TEDFREQ2" );
 
+#define     PROGRAM_DURATION( c, d ) \
+    outline1("LDX #$%2.2x", ( d ) & 0xff ); \
+    outline1("LDY #$%2.2x", ( ( d ) >> 8 ) & 0xff ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDPROGDUR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDPROGDUR1" ); \
+
+#define     WAIT_DURATION( c ) \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDWAITDUR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDWAITDUR1" ); \
+
 #define     PROGRAM_PITCH( c, f ) \
     outline1("LDX #$%2.2x", ( f & 0xff ) ); \
     outline1("LDY #$%2.2x", ( ( f >> 8 ) & 0xff ) ); \
@@ -3020,6 +3094,59 @@ void ted_flip_image( Environment * _environment, Resource * _image, char * _fram
 
     }
 
+
+}
+
+void ted_set_duration( Environment * _environment, int _channels, int _duration ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    PROGRAM_DURATION( _channels, _duration );
+
+}
+
+void ted_wait_duration( Environment * _environment, int _channels ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    WAIT_DURATION( _channels );
+
+}
+
+void ted_set_duration_vars( Environment * _environment, char * _channels, char * _duration ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$3" );
+    }
+    if ( _duration ) {
+        outline1("LDX %s", _duration );
+    } else {
+        outline0("LDX #50" );
+    }
+    
+    outline0("JSR TEDPROGDUR");
+
+}
+
+void ted_wait_duration_vars( Environment * _environment, char * _channels ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+    
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$3" );
+    }
+
+    outline0("JSR TEDWAITDUR");
 
 }
 

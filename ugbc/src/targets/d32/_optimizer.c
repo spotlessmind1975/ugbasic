@@ -309,7 +309,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
 	if( po_buf_match( buf[0], " LDB #*", v1)
 	&&  po_buf_match( buf[1], " LDB #*", v2)) {
-	    optim( buf[1], RULE "(LDB, LDB)->(LDB)", NULL);
+	    optim( buf[0], RULE "(LDB, LDB)->(LDB)", NULL);
         ++_environment->removedAssemblyLines;
     }
 
@@ -373,7 +373,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
     if ( (po_buf_match(buf[0], " LD* ", v1) || po_buf_match(buf[0], " CLR*", v1))
     &&   po_buf_match(buf[1], " LD* *,*", v2, v3, v4)
-    &&  po_buf_strcmp(v1,v2)==0 && po_buf_strcmp(v2,v3)!=0
+    &&  po_buf_strcmp(v1,v2)==0 && po_buf_strcmp(v2,v3)!=0 && po_buf_strcmp(v1,v4)!=0
     &&  ( strcmp(v1->str,"A")!=0 && strcmp(v1->str,"B")!=0 && strcmp(v3->str,"D")!=0 ) ) {
         optim(buf[0], RULE "(LOAD/CLR,LOAD)->(LOAD)", NULL);
         ++_environment->removedAssemblyLines;
@@ -982,7 +982,8 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     // }
 
     if( po_buf_match( buf[0], " * #*",  NULL, arg)
-    ||  po_buf_match( buf[0], " * [*]", NULL, arg) ) if(vars_ok(arg)) {
+    ||  po_buf_match( buf[0], " * [*]", NULL, arg)
+    ||  po_buf_match( buf[0], " * <*", NULL, arg) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->flags |= NO_REMOVE/*|NO_DP*/;
         v->nb_rd++;
@@ -1002,11 +1003,23 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     ||  po_buf_match( buf[0], " LD* *",  NULL, arg)
     ||  po_buf_match( buf[0], " OR* *",  NULL, arg)
     ||  po_buf_match( buf[0], " SBC* *", NULL, arg)
-    ||  po_buf_match( buf[0], " SUB* *", NULL, arg) ) if(vars_ok(arg)) {
+    ||  po_buf_match( buf[0], " SUB* *", NULL, arg)
+    
+    ||  po_buf_match( buf[0], " ADD* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " ADC* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " AND* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " CMP* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " EOR* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " LD* <*",  NULL, arg)
+    ||  po_buf_match( buf[0], " OR* <*",  NULL, arg)
+    ||  po_buf_match( buf[0], " SBC* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " SUB* <*", NULL, arg)
+     ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_rd++;
     }
-    if( po_buf_match( buf[0], " ASL *", arg)
+    if( 
+        po_buf_match( buf[0], " ASL *", arg)
     ||  po_buf_match( buf[0], " ASR *", arg)
     ||  po_buf_match( buf[0], " COM *", arg)
     ||  po_buf_match( buf[0], " DEC *", arg)
@@ -1015,7 +1028,20 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     ||  po_buf_match( buf[0], " LSR *", arg)
     ||  po_buf_match( buf[0], " ROL *", arg)
     ||  po_buf_match( buf[0], " ROR *", arg)
-    ||  po_buf_match( buf[0], " TST *", arg)) if(vars_ok(arg)) {
+    ||  po_buf_match( buf[0], " TST *", arg)
+
+    ||  po_buf_match( buf[0], " ASL <*", arg)
+    ||  po_buf_match( buf[0], " ASR <*", arg)
+    ||  po_buf_match( buf[0], " COM <*", arg)
+    ||  po_buf_match( buf[0], " DEC <*", arg)
+    ||  po_buf_match( buf[0], " INC <*", arg)
+    ||  po_buf_match( buf[0], " LSL <*", arg)
+    ||  po_buf_match( buf[0], " LSR <*", arg)
+    ||  po_buf_match( buf[0], " ROL <*", arg)
+    ||  po_buf_match( buf[0], " ROR <*", arg)
+    ||  po_buf_match( buf[0], " TST< *", arg)
+
+    ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
         v->nb_rd++;

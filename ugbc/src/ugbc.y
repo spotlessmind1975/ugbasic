@@ -94,6 +94,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
+%token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -121,7 +122,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> writing_mode_definition writing_part_definition
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
 %type <integer> const_key_scancode_definition const_key_scancode_alphadigit const_key_scancode_function_digit
-%type <integer> datatype as_datatype as_datatype_mandatory as_datatype_suffix
+%type <integer> datatype as_datatype as_datatype_mandatory as_datatype_suffix as_datatype_suffix_optional
 %type <integer> halted
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y optional_x_or_string
@@ -168,6 +169,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> optional_loop
 %type <integer> configure_name
 %type <integer> option_name
+%type <integer> audio_source
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -950,9 +952,6 @@ const_factor:
       | SCREEN WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
-      | SCREEN TILES WIDTH {
-          $$ = ((Environment *)_environment)->screenTilesWidth;
-      }
       | PAGE "0" {
           $$ = DOUBLE_BUFFER_PAGE_0;
       }
@@ -965,8 +964,11 @@ const_factor:
       | PAGE "B" {
           $$ = DOUBLE_BUFFER_PAGE_1;
       }
-      | TILES WIDTH {
+      | SCREEN TILES WIDTH {
           $$ = ((Environment *)_environment)->screenTilesWidth;
+      }
+      | TILES WIDTH {
+          $$ = ((Environment *)_environment)->consoleTilesWidth;
       }
       | TILEMAP WIDTH OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
@@ -988,7 +990,7 @@ const_factor:
           $$ = ((Environment *)_environment)->screenTilesWidth;
       }
       | COLUMNS {
-          $$ = ((Environment *)_environment)->screenTilesWidth;
+          $$ = ((Environment *)_environment)->consoleTilesWidth;
       }
       | FONT WIDTH {
           $$ = ((Environment *)_environment)->fontWidth;
@@ -1116,7 +1118,7 @@ const_factor:
           $$ = ((Environment *)_environment)->screenTilesHeight;
       }
       | TILES HEIGHT {
-          $$ = ((Environment *)_environment)->screenTilesHeight;
+          $$ = ((Environment *)_environment)->consoleTilesHeight;
       }
       | TILEMAP HEIGHT OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
@@ -1138,7 +1140,7 @@ const_factor:
           $$ = ((Environment *)_environment)->screenTilesHeight;
       }
       | ROWS {
-          $$ = ((Environment *)_environment)->screenTilesHeight;
+          $$ = ((Environment *)_environment)->consoleTilesHeight;
       }
       | FONT HEIGHT {
           $$ = ((Environment *)_environment)->fontHeight;
@@ -2903,6 +2905,9 @@ exponential:
     | TAN OP expr CP {
         $$ = fp_tan( _environment, $3 )->name;
       }
+    | COMBINE NIBBLE OP expr OP_COMMA expr CP {
+        $$ = combine_nibble_vars( _environment, $4, $6 )->name;
+      }
     | NEW TILESET {
         Variable * index = variable_temporary( _environment, VT_TILESET, "(tileset)");
         cpu_store_8bit( _environment, index->realName, ((struct _Environment *)_environment )->tilesetCount );
@@ -3442,6 +3447,9 @@ exponential:
     | SCREEN TILES WIDTH {
         $$ = screen_tiles_get_width( _environment )->name;
     }
+    | TILES WIDTH {
+        $$ = console_tiles_get_width( _environment )->name;
+    }
     | TILES COUNT {
         $$ = screen_tiles_get( _environment )->name;
     }
@@ -3449,7 +3457,7 @@ exponential:
         $$ = screen_tiles_get_width( _environment )->name;
     }
     | COLUMNS {
-        $$ = screen_tiles_get_width( _environment )->name;
+        $$ = console_tiles_get_width( _environment )->name;
     }
     | FONT WIDTH {
         $$ = variable_temporary( _environment, VT_POSITION, "(FONT WIDTH)" )->name;
@@ -3527,7 +3535,7 @@ exponential:
         $$ = screen_tiles_get_height( _environment )->name;
     }
     | ROWS {
-        $$ = screen_tiles_get_height( _environment )->name;
+        $$ = console_tiles_get_height( _environment )->name;
     }
     | FONT HEIGHT {
         $$ = variable_temporary( _environment, VT_POSITION, "(FONT HEIGHT)" )->name;
@@ -4615,6 +4623,14 @@ as_datatype_suffix :
     }
     ;
 
+as_datatype_suffix_optional : 
+    {
+        $$ = 0;
+    }
+    | as_datatype_suffix {
+        $$ = $1;
+    };
+
 var_definition_simple:
   Identifier as_datatype {
       variable_define( _environment, $1, $2, 0 );
@@ -5321,6 +5337,95 @@ box_mode :
         $$ = 2;
     };
 
+line_definition_expression:
+    OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP {
+        draw( _environment, $2, $4, $8, $10, NULL );
+        gr_locate( _environment, $8, $10 );
+    }
+    | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        draw( _environment, $2, $4, $8, $10, $13 );
+        gr_locate( _environment, $8, $10 );
+    }
+    | OP_MINUS OP expr OP_COMMA expr CP {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $3, $5, NULL );
+        gr_locate( _environment, $3, $5 );
+    }
+    | OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $3, $5, $8 );
+        gr_locate( _environment, $3, $5 );
+    }
+    | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode OP_COMMA box_mode {
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        switch( $15 ) {
+            case 0:
+                draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+            case 1:
+                box( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+            case 2:
+                bar( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+        }
+        gr_locate( _environment, $8, $10 );
+    }
+    | OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode OP_COMMA box_mode {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        switch( $10 ) {
+            case 0:
+                draw( _environment, implicitX->name, implicitY->name, $3, $5, $8 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+            case 1:
+                box( _environment, implicitX->name, implicitY->name, $3, $5, $8 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+            case 2:
+                bar( _environment, implicitX->name, implicitY->name, $3, $5, $8 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                break;
+        }
+        gr_locate( _environment, $3, $5 );
+    }
+    | optional_x_or_string {
+        draw_string( _environment, $1 );
+    }
+    | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        draw( _environment, $1, $3, $5, $7, $9 );
+        gr_locate( _environment, $5, $7 );
+    }
+    | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+        draw( _environment, $1, $3, $5, $7, NULL );
+        gr_locate( _environment, $5, $7 );
+    }
+    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
+        gr_locate( _environment, $2, $4 );
+    }
+    | TO optional_x OP_COMMA optional_y  {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
+        gr_locate( _environment, $2, $4 );
+    }
+    ;
+
+line_definition:
+    line_definition_expression;
+
 draw_definition_expression:
     OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP {
         draw( _environment, $2, $4, $8, $10, NULL );
@@ -5330,6 +5435,12 @@ draw_definition_expression:
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
         draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+        gr_locate( _environment, $8, $10 );
+    }
+    | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        draw( _environment, $2, $4, $8, $10, $13 );
         gr_locate( _environment, $8, $10 );
     }
     | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode OP_COMMA box_mode {
@@ -5416,6 +5527,49 @@ box_definition_expression:
 
 box_definition:
     box_definition_expression;
+
+console_definition_simple :
+    OFF {
+        console( _environment, 0, 0, ((struct _Environment *)_environment)->screenTilesWidth-1, ((struct _Environment *)_environment)->screenTilesHeight-1 );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        console( _environment, $2, $5, $8, $11 );        
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        console( _environment, $2, $5, $8, $11 );        
+    }
+    | SAVE OP_HASH const_expr {
+        console_save( _environment, $3 );
+    }
+    | RESTORE OP_HASH const_expr {
+        console_restore( _environment, $3 );
+    }
+    | USE OP_HASH const_expr {
+        console_restore( _environment, $3 );
+    }
+    ;
+
+console_definition_expression :
+    expr OP_COMMA expr TO expr OP_COMMA expr {
+        console_vars( _environment, $1, $3, $5, $7 );
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        console_vars( _environment, $1, $3, $5, $7 );
+    }
+    | SAVE expr {
+        console_save_vars( _environment, $2 );
+    }
+    | RESTORE expr {
+        console_restore_vars( _environment, $2 );
+    }
+    | USE expr {
+        console_restore_vars( _environment, $2 );
+    }
+    ;
+
+console_definition:
+    console_definition_simple
+    | console_definition_expression;
 
 bar_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
@@ -6977,7 +7131,11 @@ music_type :
     }
     | PSG {
         $$ = MUSIC_TYPE_PSG;
-    };
+    }
+    | SJ2 {
+        $$ = MUSIC_TYPE_SJ2;
+    }
+    ;
 
 optional_loop:
     {
@@ -7036,7 +7194,12 @@ play_definition_simple :
 
 play_definition_expression : 
     expr {
-        play_vars( _environment, $1, NULL, NULL );
+        Variable * var = variable_retrieve_or_define( _environment, $1, VT_DWORD, 0 );
+        if ( var->type == VT_STRING || var->type == VT_DSTRING ) {
+            play_string( _environment, $1 );
+        } else {
+            play_vars( _environment, $1, NULL, NULL );
+        }
     }
     | expr OP_COMMA expr {
         play_vars( _environment, $1, $3, NULL );
@@ -7090,20 +7253,35 @@ volume_definition :
     ;
 
 bell_definition_simple : 
+    {
+        bell( _environment, 400, 1500, 0xffff );
+    } 
     | OP_HASH const_expr {
-        bell( _environment, $2, 0xffff );
+        bell( _environment, $2, 1500, 0xffff );
     }
     | OP_HASH const_expr ON OP_HASH const_expr {
-        bell( _environment, $2, $5 );
+        bell( _environment, $2, 1500, $5 );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        bell( _environment, $2, $5, 0xffff );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
+        bell( _environment, $2, $5, $8 );
     }
     ;
 
 bell_definition_expression : 
     expr {
-        bell_vars( _environment, $1, NULL );
+        bell_vars( _environment, $1, NULL, NULL );
     }
     | expr ON expr {
-        bell_vars( _environment, $1, $3 );
+        bell_vars( _environment, $1, NULL, $3 );
+    }
+    | expr OP_COMMA expr {
+        bell_vars( _environment, $1, $3, NULL );
+    }
+    | expr OP_COMMA expr ON expr {
+        bell_vars( _environment, $1, $3, $5 );
     }
     ;
 
@@ -7114,16 +7292,40 @@ bell_definition :
 
 boom_definition_simple : 
     {
-        boom( _environment, 0xffff );
+        boom( _environment, 1500, 0xffff );
     }
     | OP_HASH const_expr {
-        boom( _environment, $2 );
+        boom( _environment, $2, 0xffff );
+    }
+    | OP_HASH const_expr milliseconds {
+        boom( _environment, $2, 0xffff );
+    }
+    | ON OP_HASH const_expr {
+        boom( _environment, 1500, $3 );
+    }
+    | OP_HASH const_expr OP_COMMA ON OP_HASH const_expr {
+        boom( _environment, $2, $6 );
+    }
+    | OP_HASH milliseconds const_expr OP_COMMA ON OP_HASH const_expr {
+        boom( _environment, $3, $7 );
     }
     ;
 
 boom_definition_expression : 
-    ON expr {
-        boom_var( _environment, $2 );
+    expr {
+        boom_var( _environment, $1, NULL );
+    }
+    | expr milliseconds {
+        boom_var( _environment, $1, NULL );
+    }
+    | ON expr {
+        boom_var( _environment, NULL, $2 );
+    }
+    | expr ON expr {
+        boom_var( _environment, $1, $3 );
+    }
+    | expr milliseconds ON expr {
+        boom_var( _environment, $1, $4 );
     }
     ;
 
@@ -7472,8 +7674,25 @@ precision :
     }
     ;
 
+audio_source :
+    SN76489 {
+        $$ = ADN_SN76489;
+    };
+
 define_definition :
-      FONT font_schema {
+      AUDIO SYNC {
+        ((struct _Environment *)_environment)->audioConfig.async = 0;
+    }
+    | AUDIO ASYNC {
+        ((struct _Environment *)_environment)->audioConfig.async = 1;
+    }
+    | AUDIO TARGET audio_source {
+        if ( ! define_audio_target_check( _environment, $3 ) ) {
+            CRITICAL_AUDIO_TARGET_UNAVAILABLE( );
+        }
+        ((struct _Environment *)_environment)->audioConfig.target = $3;
+    }
+    | FONT font_schema {
         ((struct _Environment *)_environment)->fontConfig.schema = $2;
     }
     | STRING COUNT const_expr {
@@ -8539,7 +8758,7 @@ statement2nc:
   | DRAW draw_definition
   | DTILE draw_tile_definition
   | DTILES draw_tile_definition
-  | LINE draw_definition
+  | LINE line_definition
   | PUT put_definition
   | DEFDGR defdgr_definition
   | BLIT blit_definition
@@ -8548,6 +8767,7 @@ statement2nc:
   | GET get_definition
   | SLICE slice_definition
   | BOX box_definition
+  | CONSOLE console_definition
   | BAR bar_definition
   | POLYLINE polyline_definition
   | CLIP clip_definition
@@ -8840,12 +9060,18 @@ statement2nc:
   | EXIT direct_integer IF expr  {
       exit_loop_if( _environment, $4, $2 );  
   }
-  | FOR Identifier OP_ASSIGN expr TO  {
+  | FOR Identifier as_datatype_suffix_optional OP_ASSIGN expr TO  {
+      if ( $3 > 0 ) {
+        Variable * index = variable_retrieve_or_define( _environment, $2, $3, 0 );
+        if ( index->type != $3 ) {
+            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $3 ] );
+        }
+      }
       begin_for_to_prepare( _environment );
   } expr optional_step {
-      begin_for_step_prepare( _environment, $4, $7, $8 );
-      begin_for_from( _environment, $2, $4, $7, $8 );
-      begin_for_to( _environment, $7 );
+      begin_for_step_prepare( _environment, $5, $8, $9 );
+      begin_for_from( _environment, $2, $5, $8, $9 );
+      begin_for_to( _environment, $8 );
       begin_for_identifier( _environment, $2 );
   }
   | FOR OSP Identifier CSP OP_ASSIGN expr TO {
@@ -8859,10 +9085,25 @@ statement2nc:
   | NEXT {
       end_for( _environment );
   }
-  | NEXT Identifier {
+  | NEXT Identifier as_datatype_suffix_optional {
+    if ( $3 > 0 ) {
+        Variable * index = variable_retrieve_or_define( _environment, $2, $3, 0 );
+        if ( index->type != $3 ) {
+            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $3 ] );
+        }
+      }
       end_for_identifier( _environment, $2 );
   }
-  | NEXT OSP Identifier CSP {
+  | NEXT OSP Identifier as_datatype_suffix_optional CSP {
+    if ( $4 > 0 ) {
+        Variable * index = variable_retrieve_or_define( _environment, $3, $4, 0 );
+        if ( index->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+        }
+        if ( index->arrayType != $4 ) {
+            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
+        }
+      }
       end_for_identifier( _environment, $3 );
   }
   | parallel_optional PROCEDURE Identifier on_targets {
@@ -9258,6 +9499,12 @@ statement2nc:
   }
   | TIMER OP_ASSIGN expr {
         set_timer( _environment, $3 );
+  }
+  | ENABLE INTERRUPT {
+      cpu_ei( _environment );
+  }
+  | DISABLE INTERRUPT {
+      cpu_di( _environment );
   }
   | DOUBLE BUFFER ON {
       double_buffer( _environment, 1 );
@@ -10056,7 +10303,6 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_math_complement_const_16bit );
                         parse_embedded( p, cpu_math_complement_const_32bit );
                         parse_embedded( p, cpu_math_complement_const_8bit );
-                        parse_embedded( p, cpu_math_div2_8bit );
                         parse_embedded( p, cpu_math_div2_const_16bit );
                         parse_embedded( p, cpu_math_div2_const_32bit );
                         parse_embedded( p, cpu_math_div2_const_8bit );
@@ -10110,7 +10356,6 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_move_16bit_indirect2 );
                         parse_embedded( p, cpu_move_32bit_indirect );
                         parse_embedded( p, cpu_move_32bit_indirect2 );
-                        parse_embedded( p, cpu_bit_check );
                         parse_embedded( p, cpu_number_to_string );
                         parse_embedded( p, cpu_move_8bit_indirect_with_offset );
                         parse_embedded( p, cpu_bits_to_string );
@@ -10302,7 +10547,6 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_math_complement_const_16bit );
         stats_embedded( cpu_math_complement_const_32bit );
         stats_embedded( cpu_math_complement_const_8bit );
-        stats_embedded( cpu_math_div2_8bit );
         stats_embedded( cpu_math_div2_const_16bit );
         stats_embedded( cpu_math_div2_const_32bit );
         stats_embedded( cpu_math_div2_const_8bit );
@@ -10356,7 +10600,6 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_move_16bit_indirect2 );
         stats_embedded( cpu_move_32bit_indirect );
         stats_embedded( cpu_move_32bit_indirect2 );
-        stats_embedded( cpu_bit_check );
         stats_embedded( cpu_number_to_string );
         stats_embedded( cpu_move_8bit_indirect_with_offset );
         stats_embedded( cpu_bits_to_string );

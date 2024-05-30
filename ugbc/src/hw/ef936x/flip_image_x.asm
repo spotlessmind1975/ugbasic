@@ -230,8 +230,8 @@ FLIPIMAGEXCOMMONCL0
     LEAX -1, X
 
     ; Loop in both directions
-    ; TMPPTR ---->
-    ;        <---- TMPPTR2
+    ; <TMPPTR ---->
+    ;        <---- <TMPPTR2
 
     LDD <IMAGEW
     LSRA
@@ -256,13 +256,13 @@ FLIPIMAGEXCOMMONCL1
     PULS D
     STB , X
 
-    ; Move back the TMPPTR2 pointer.
+    ; Move back the <TMPPTR2 pointer.
 
     LEAX -1, X
 
 FLIPIMAGEXCOMMONCL1A
 
-    ; Move ahead the TMPPTR pointer.
+    ; Move ahead the <TMPPTR pointer.
 
     LEAY 1, Y
 
@@ -327,8 +327,8 @@ FLIPIMAGE2XCOMMONCL0X2
     LEAX -1, X
 
     ; Loop in both directions
-    ; TMPPTR ---->
-    ;        <---- TMPPTR2
+    ; <TMPPTR ---->
+    ;        <---- <TMPPTR2
 
     LDD <IMAGEW
     LSRA
@@ -353,13 +353,13 @@ FLIPIMAGE2XCOMMONCL1
     PULS D
     STB , X
 
-    ; Move back the TMPPTR2 pointer.
+    ; Move back the <TMPPTR2 pointer.
 
     LEAX -1, X
 
 FLIPIMAGE2XCOMMONCL1A
 
-    ; Move ahead the TMPPTR pointer.
+    ; Move ahead the <TMPPTR pointer.
 
     LEAY 1, Y
 
@@ -451,8 +451,8 @@ FLIPIMAGEX3COMMONCL0
     LEAX -1, X
 
     ; Loop in both directions
-    ; TMPPTR ---->
-    ;        <---- TMPPTR2
+    ; <TMPPTR ---->
+    ;        <---- <TMPPTR2
 
     LDD <IMAGEW
     LSRA
@@ -477,13 +477,13 @@ FLIPIMAGEX3COMMONCL1
     PULS D
     STB , X
 
-    ; Move back the TMPPTR2 pointer.
+    ; Move back the <TMPPTR2 pointer.
 
     LEAX -1, X
 
 FLIPIMAGEX3COMMONCL1A
 
-    ; Move ahead the TMPPTR pointer.
+    ; Move ahead the <TMPPTR pointer.
 
     LEAY 1, Y
 
@@ -548,8 +548,8 @@ FLIPIMAGE3XCOMMONCL0X2
     LEAX -1, X
 
     ; Loop in both directions
-    ; TMPPTR ---->
-    ;        <---- TMPPTR2
+    ; <TMPPTR ---->
+    ;        <---- <TMPPTR2
 
     LDD <IMAGEW
     LSRA
@@ -574,13 +574,13 @@ FLIPIMAGE3XCOMMONCL1
     PULS D
     STB , X
 
-    ; Move back the TMPPTR2 pointer.
+    ; Move back the <TMPPTR2 pointer.
 
     LEAX -1, X
 
 FLIPIMAGE3XCOMMONCL1A
 
-    ; Move ahead the TMPPTR pointer.
+    ; Move ahead the <TMPPTR pointer.
 
     LEAY 1, Y
 
@@ -660,13 +660,13 @@ FLIPIMAGE3XCOMMONCL1V
     STB , X
     STA , Y
 
-    ; Move back the TMPPTR2 pointer.
+    ; Move back the <TMPPTR2 pointer.
 
     LEAX 1, X
 
 FLIPIMAGE3XCOMMONCL1AV
 
-    ; Move ahead the TMPPTR pointer.
+    ; Move ahead the <TMPPTR pointer.
 
     LEAY 1, Y
 

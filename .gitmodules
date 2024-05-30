@@ -40,3 +40,6 @@
 	path = modules/atarisio
 	url = https://github.com/spotlessmind1975/AtariSIO.git
 	branch = ugbasic
+[submodule "modules/lib-spectrum"]
+	path = modules/lib-spectrum
+	url = https://github.com/spotlessmind1975/lib-spectrum.git

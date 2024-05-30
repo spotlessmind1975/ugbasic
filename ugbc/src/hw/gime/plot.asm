@@ -51,7 +51,7 @@ PLOTGO
 
 @IF optionClip
 
-    LDD PLOTY
+    LDD <PLOTY
     CMPD CLIPY2
     BLE PLOTCLIP2
     JMP PLOTP
@@ -60,7 +60,7 @@ PLOTCLIP2
     BGE PLOTCLIP3
     JMP PLOTP
 PLOTCLIP3
-    LDD PLOTX
+    LDD <PLOTX
     CMPD CLIPX2
     BLE PLOTCLIP4
     JMP PLOTP
@@ -76,7 +76,7 @@ PLOTMODE
 
     LDB _PEN
     JSR GIMESELECTPALETTE
-    STA PLOTC
+    STA <PLOTC
 
     JSR GIMECALCPOSBM
 
@@ -97,22 +97,22 @@ PLOTB16
     STA PLOTNB
 
     LDU #PLOTANDBIT8
-    LDD PLOTX
+    LDD <PLOTX
     ANDB #$1
     LEAU B, U
 
     CMPB #$1
     BEQ PLOTB16SKIP
-    LDA PLOTC
+    LDA <PLOTC
     LSLA
     LSLA
     LSLA
     LSLA
     JMP PLOTB16SKIPE
 PLOTB16SKIP
-    LDA PLOTC
+    LDA <PLOTC
 PLOTB16SKIPE
-    STA PLOTC
+    STA <PLOTC
 
     STB PLOTND
     LDA #1
@@ -126,8 +126,8 @@ PLOTB4
     LDA #2
     STA PLOTNB
 
-    LDD PLOTX
-    LDA PLOTC
+    LDD <PLOTX
+    LDA <PLOTC
     LSLA
     LSLA
     LSLA
@@ -151,9 +151,9 @@ PLOTB4
     LSRA
     LSRA
 PLOTB4SKIPE
-    STA PLOTC
+    STA <PLOTC
 
-    LDB PLOTX+1
+    LDB <PLOTX+1
     ANDB #$03
     LDU #PLOTANDBIT4
     LEAU B, U
@@ -171,17 +171,17 @@ PLOTB2
     STA PLOTNB
 
     LDY #PLOTORBIT
-    LDB PLOTX+1
+    LDB <PLOTX+1
     ANDB #$07
-    LDA PLOTC
+    LDA <PLOTC
     BEQ PLOTB2SKIPE
     LDA B, Y
-    STA PLOTC
+    STA <PLOTC
     JMP PLOTB2SFINAL
 
 PLOTB2SKIPE
     LDA #0
-    STA PLOTC
+    STA <PLOTC
         
 PLOTB2SFINAL
     LDU #PLOTANDBIT
@@ -224,7 +224,7 @@ PLOTD
 
     LDA , X           ;get row with point in it
     ANDA , U
-    ORA PLOTC
+    ORA <PLOTC
     ; ORA , Y               ;isolate AND set the point
     STA , X           ;write back to $A000
 

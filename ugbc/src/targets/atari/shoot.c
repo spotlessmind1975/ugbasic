@@ -69,6 +69,10 @@ void shoot( Environment * _environment, int _channels ) {
     pokey_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
     pokey_start( _environment, _channels );
     pokey_set_frequency( _environment, _channels, 1000 );
+    pokey_set_duration( _environment, _channels, 4 );
 
+    if ( ! _environment->audioConfig.async ) {
+        pokey_wait_duration( _environment, _channels );
+    }
 }
 

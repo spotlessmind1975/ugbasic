@@ -450,9 +450,11 @@ const_factor:
         // printf( "%s.%s == %d\n", $1, $3, $$ );
       }
       | Identifier {
-        // printf( "%s\n", $1 );
+        // printf( "*%s*\n", $1 );
 
-        if ( strcmp( $1, "currentMode" ) == 0 ) {
+        if ( strcmp( $1, "expansionBanks" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->expansionBanks ? 1 : 0;
+        } else if ( strcmp( $1, "currentMode" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->currentMode;
         } else if ( strcmp( $1, "outputFileType" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->outputFileType;
@@ -463,6 +465,7 @@ const_factor:
                 $$ = 0;
             }
         } else if ( strcmp( $1, "dataSegment" ) == 0 ) {
+            // printf( "dataSegment = %p\n", ((struct _Environment *)_environment)->dataSegment );
             if ( ((struct _Environment *)_environment)->dataSegment ) {
                 $$ = 1;
             } else {

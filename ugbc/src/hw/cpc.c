@@ -65,6 +65,34 @@ static RGBi SYSTEM_PALETTE[] = {
         { 0xff, 0xff, 0xff, 0xff, 26, "LIGHT WHITE", 0x0b },
 };
 
+static int plotVBase[] = {
+    0xC000, 0xC800, 0xD000, 0xD800, 0xE000, 0xE800, 0xF000, 0xF800,
+    0xC050, 0xC850, 0xD050, 0xD850, 0xE050, 0xE850, 0xF050, 0xF850,
+    0xC0A0, 0xC8A0, 0xD0A0, 0xD8A0, 0xE0A0, 0xE8A0, 0xF0A0, 0xF8A0,
+    0xC0F0, 0xC8F0, 0xD0F0, 0xD8F0, 0xE0F0, 0xE8F0, 0xF0F0, 0xF8F0,
+    0xC140, 0xC940, 0xD140, 0xD940, 0xE140, 0xE940, 0xF140, 0xF940,
+    0xC190, 0xC990, 0xD190, 0xD990, 0xE190, 0xE990, 0xF190, 0xF990,
+    0xC1E0, 0xC9E0, 0xD1E0, 0xD9E0, 0xE1E0, 0xE9E0, 0xF1E0, 0xF9E0,
+    0xC230, 0xCA30, 0xD230, 0xDA30, 0xE230, 0xEA30, 0xF230, 0xFA30,
+    0xC280, 0xCA80, 0xD280, 0xDA80, 0xE280, 0xEA80, 0xF280, 0xFA80,
+    0xC2D0, 0xCAD0, 0xD2D0, 0xDAD0, 0xE2D0, 0xEAD0, 0xF2D0, 0xFAD0,
+    0xC320, 0xCB20, 0xD320, 0xDB20, 0xE320, 0xEB20, 0xF320, 0xFB20,
+    0xC370, 0xCB70, 0xD370, 0xDB70, 0xE370, 0xEB70, 0xF370, 0xFB70,
+    0xC3C0, 0xCBC0, 0xD3C0, 0xDBC0, 0xE3C0, 0xEBC0, 0xF3C0, 0xFBC0,
+    0xC410, 0xCC10, 0xD410, 0xDC10, 0xE410, 0xEC10, 0xF410, 0xFC10,
+    0xC460, 0xCC60, 0xD460, 0xDC60, 0xE460, 0xEC60, 0xF460, 0xFC60,
+    0xC4B0, 0xCCB0, 0xD4B0, 0xDCB0, 0xE4B0, 0xECB0, 0xF4B0, 0xFCB0,
+    0xC500, 0xCD00, 0xD500, 0xDD00, 0xE500, 0xED00, 0xF500, 0xFD00,
+    0xC550, 0xCD50, 0xD550, 0xDD50, 0xE550, 0xED50, 0xF550, 0xFD50,
+    0xC5A0, 0xCDA0, 0xD5A0, 0xDDA0, 0xE5A0, 0xEDA0, 0xF5A0, 0xFDA0,
+    0xC5F0, 0xCDF0, 0xD5F0, 0xDDF0, 0xE5F0, 0xEDF0, 0xF5F0, 0xFDF0,
+    0xC640, 0xCE40, 0xD640, 0xDE40, 0xE640, 0xEE40, 0xF640, 0xFE40,
+    0xC690, 0xCE90, 0xD690, 0xDE90, 0xE690, 0xEE90, 0xF690, 0xFE90,
+    0xC6E0, 0xCEE0, 0xD6E0, 0xDEE0, 0xE6E0, 0xEEE0, 0xF6E0, 0xFEE0,
+    0xC730, 0xCF30, 0xD730, 0xDF30, 0xE730, 0xEF30, 0xF730, 0xFF30,
+    0xC780, 0xCF80, 0xD780, 0xDF80, 0xE780, 0xEF80, 0xF780, 0xFF80
+};
+
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
@@ -209,7 +237,7 @@ void cpc_joy( Environment * _environment, int _port, char * _value ) {
     deploy( scancode, src_hw_cpc_scancode_asm );
     deploy( joystick, src_hw_cpc_joystick_asm );
 
-    outline1("LD A, $%2.2x", (unsigned char)(_port & 0xff) );
+    outline1("LD A, 0x%2.2x", (unsigned char)(_port & 0xff) );
     outline0("LD B, A" );
     outline0("CALL JOYSTICK");
     outline1("LD (%s), A", _value );
@@ -268,7 +296,7 @@ void cpc_border_color( Environment * _environment, char * _border_color ) {
     outline0("LD BC,$7F10");
     outline0("OUT (C), C");
     outline1("LD A, (%s)", _border_color);
-    outline0("OR A, $40");
+    outline0("OR A, 0x40");
     outline0("OUT (C), A");
 
 }
@@ -288,9 +316,9 @@ void cpc_background_color( Environment * _environment, int _index, int _backgrou
     deploy( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
 
-    outline1("LD A, $%2.2x", ( _index & 0x0f ));
+    outline1("LD A, 0x%2.2x", ( _index & 0x0f ));
     outline0("LD IXH, A");
-    outline1("LD A, $%2.2x", ( _background_color & 0x0f ));
+    outline1("LD A, 0x%2.2x", ( _background_color & 0x0f ));
     outline0("LD IXL, A");
     outline0("LD A, 1");
     outline0("LD IYL, A");
@@ -341,7 +369,7 @@ void cpc_background_color_semivars( Environment * _environment, int _index, char
     MAKE_LABEL
 
     outline1("%sbackgroundcolor:", label );
-    outline1("LD A, $%2.2x", ( _index & 0x0f ));
+    outline1("LD A, 0x%2.2x", ( _index & 0x0f ));
     outline0("LD IXH, A");
     outline1("LD A, (%s)", _background_color);
     outline0("LD IXL, A");
@@ -501,6 +529,24 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 }
 
+void console_calculate( Environment * _environment ) {
+
+    int consoleSA = plotVBase[ ( _environment->activeConsole.y1 * 8 ) ] + ( _environment->activeConsole.x1 * _environment->currentModeBW ) ;
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "CALL CONSOLECALCULATE" );
+
+}
+
 int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
@@ -557,6 +603,9 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             break;
     }
 
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "CLIPX1", 0 );
     cpu_store_16bit( _environment, "CLIPX2", (_environment->screenWidth-1) );
     cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -575,7 +624,8 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
     cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );
-    
+
+    console_init( _environment );
 
 }
 
@@ -644,11 +694,11 @@ void cpc_pset_int( Environment * _environment, int _x, int _y ) {
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( plot, src_hw_cpc_plot_asm );
     
-    outline1("LD A, $%2.2x", ( _y & 0xff ) );
+    outline1("LD A, 0x%2.2x", ( _y & 0xff ) );
     outline0("LD D, A");
-    outline1("LD A, $%2.2x", ( _x & 0xff ) );
+    outline1("LD A, 0x%2.2x", ( _x & 0xff ) );
     outline0("LD E, A");
-    outline1("LD A, $%2.2x", ( ( _x >> 8 ) & 0xff ) );
+    outline1("LD A, 0x%2.2x", ( ( _x >> 8 ) & 0xff ) );
     outline0("LD IXL, A");
     outline0("LD A, 1");
     outline0("CALL PLOT");
@@ -783,7 +833,7 @@ void cpc_busy_wait( Environment * _environment, char * _timing ) {
 
     outline1("LD A, (%s)", _timing);
     outline0("LD D, A");
-    outline0("LD B, $f5");
+    outline0("LD B, 0xf5");
     outline1("%swait", label );
     outline0("IN A, (C)");
     outline0("RRA");
@@ -807,24 +857,10 @@ void cpc_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void cpc_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LD A, (CURRENTTILESWIDTH)" );
-    outline1("LD (%s), A", _result );
-
-}
-
 void cpc_get_height( Environment * _environment, char *_result ) {
 
     outline0("LD HL, (CURRENTHEIGHT)" );
     outline1("LD (%s), HL", _result );
-
-}
-
-void cpc_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LD A, (CURRENTTILESHEIGHT)" );
-    outline1("LD (%s), A", _result );
 
 }
 
@@ -922,10 +958,6 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
     variable_global( _environment, "RESOLUTIONY" );
 
-    variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
-    variable_global( _environment, "XCURSYS" );
-    variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
-    variable_global( _environment, "YCURSYS" );
     variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
     variable_global( _environment, "TABCOUNT" );
 
@@ -1025,7 +1057,21 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "GAVALUE", VT_BYTE, 0xfc );
     variable_global( _environment, "GAVALUE" );
 
+    variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
+    variable_global( _environment, "XCURSYS" );
+    variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
+    variable_global( _environment, "YCURSYS" );
+
+    variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
+    variable_global( _environment, "CONSOLESA" );
+    variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEHB" );
+    variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEWB" );
+
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
+
+    console_init( _environment );
 
     font_descriptors_init( _environment, 0 );
     
@@ -1040,6 +1086,7 @@ void cpc_initialization( Environment * _environment ) {
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
     _environment->screenColors = 2;
+    _environment->currentModeBW = 1;
 
 }
 
@@ -1056,7 +1103,7 @@ void cpc_hscroll_line( Environment * _environment, int _direction ) {
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LD A, (%s)", y->realName );
     outline0("LD B, A");
-    outline1("LD A, $%2.2x", _direction);
+    outline1("LD A, 0x%2.2x", _direction);
     outline0("CALL HSCROLLLINE");
 
 }
@@ -1067,7 +1114,7 @@ void cpc_hscroll_screen( Environment * _environment, int _direction ) {
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( textHScrollScreen, src_hw_cpc_hscroll_screen_asm );
 
-    outline1("LD A, $%2.2x", (unsigned char)(_direction));
+    outline1("LD A, 0x%2.2x", (unsigned char)(_direction));
     outline0("CALL HSCROLLSCREEN");
 
 }
@@ -1736,7 +1783,7 @@ static void cpc_load_image_address_to_hl( Environment * _environment, char * _so
     outline1("LD HL, %s", _source );
     if ( _sequence ) {
 
-        outline0("LD DE, $0003" );
+        outline0("LD DE, 0x0003" );
         outline0("ADD HL, DE" );
         if ( strlen(_sequence) == 0 ) {
 
@@ -1783,7 +1830,7 @@ static void cpc_load_image_address_to_hl( Environment * _environment, char * _so
     } else {
 
         if ( _frame ) {
-            outline0("LD DE, $0003" );
+            outline0("LD DE, 0x0003" );
             outline0("ADD HL, DE" );
             if ( strlen(_frame) == 0 ) {
 
@@ -1826,7 +1873,7 @@ static void cpc_load_image_address_to_register( Environment * _environment, char
         }
 
         if ( _sequence ) {
-            outline0("LD DE, $0003" );
+            outline0("LD DE, 0x0003" );
             outline0("ADD HL, DE" );
             if ( strlen(_sequence) == 0 ) {
 
@@ -1850,7 +1897,7 @@ static void cpc_load_image_address_to_register( Environment * _environment, char
         } else {
 
             if ( _frame ) {
-                outline0("LD DE, $0003" );
+                outline0("LD DE, 0x0003" );
                 outline0("ADD HL, DE" );
                 if ( strlen(_frame) == 0 ) {
 
@@ -1946,9 +1993,9 @@ void cpc_blit_image( Environment * _environment, char * _sources[], int _source_
     outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
-    outline1("LD A, $%2.2x", (_flags & 0Xff) );
+    outline1("LD A, 0x%2.2x", (_flags & 0Xff) );
     outline0("LD (IMAGEF), A" );
-    outline1("LD A, $%2.2x", ((_flags>>8) & 0Xff) );
+    outline1("LD A, 0x%2.2x", ((_flags>>8) & 0Xff) );
     outline0("LD (IMAGET), A" );
 
     outline0("CALL BLITIMAGE");
@@ -1962,7 +2009,7 @@ void cpc_wait_vbl( Environment * _environment, char * _raster_line ) {
 
     if ( _raster_line ) {
         Variable * raster_line = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 255 );
-        outline0("LD HL, $1000" );
+        outline0("LD HL, 0x1000" );
         outline1("LD A, (%s)", raster_line->realName );
         outline0("LD E, A" );
         outline0("LD D, 0" );
@@ -1981,7 +2028,7 @@ void cpc_wait_vbl( Environment * _environment, char * _raster_line ) {
         outline0("ADD HL, DE" );
         outline0("LD DE, HL" );
     } else {
-        outline0("LD DE, $1000" );
+        outline0("LD DE, 0x1000" );
     }
     outline0("CALL WAITVBL");
 
@@ -2098,7 +2145,7 @@ void cpc_get_image( Environment * _environment, char * _image, char * _x, char *
     outline0("LD IYH, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
-    outline1("LD A, $%2.2x", _palette );
+    outline1("LD A, 0x%2.2x", _palette );
     outline0("LD IXH, A" );
 
     outline0("CALL GETIMAGE");
@@ -2114,9 +2161,9 @@ void cpc_scroll( Environment * _environment, int _dx, int _dy ) {
     deploy( vScrollTextDown, src_hw_cpc_vscroll_text_down_asm );
     deploy( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
 
-    outline1("LD A, $%2.2x", (unsigned char)(_dx&0xff) );
+    outline1("LD A, 0x%2.2x", (unsigned char)(_dx&0xff) );
     outline0("LD B, A" );
-    outline1("LD A, $%2.2x", (unsigned char)(_dy&0xff) );
+    outline1("LD A, 0x%2.2x", (unsigned char)(_dy&0xff) );
     outline0("LD C, A" );
     outline0("CALL SCROLL");
 
@@ -2314,9 +2361,9 @@ void cpc_sys_call( Environment * _environment, int _destination ) {
     outline0("PUSH HL" );
     outline0("LD HL, SYSCALL0" );
     outline0("INC HL" );
-    outline1("LD (HL), $%2.2x", (_destination & 0xff ) );
+    outline1("LD (HL), 0x%2.2x", (_destination & 0xff ) );
     outline0("INC HL" );
-    outline1("LD (HL), $%2.2x", ((_destination>>8) & 0xff ) );
+    outline1("LD (HL), 0x%2.2x", ((_destination>>8) & 0xff ) );
     outline0("POP HL" );
     outline0("CALL SYSCALL");
 
@@ -2546,7 +2593,7 @@ void cpc_calculate_sequence_frame_offset( Environment * _environment, char * _of
         outline0("LD HL, 0" );
 
         if ( _sequence ) {
-            outline0("LD DE, $0003" );
+            outline0("LD DE, 0x0003" );
             outline0("ADD HL, DE" );
             if ( strlen(_sequence) == 0 ) {
 
@@ -2570,7 +2617,7 @@ void cpc_calculate_sequence_frame_offset( Environment * _environment, char * _of
         } else {
 
             if ( _frame ) {
-                outline0("LD DE, $0003" );
+                outline0("LD DE, 0x0003" );
                 outline0("ADD HL, DE" );
                 if ( strlen(_frame) == 0 ) {
 

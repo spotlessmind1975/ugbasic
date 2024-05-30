@@ -397,6 +397,9 @@ int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     _environment->screenWidth = _environment->screenTilesWidth * 8;
     _environment->screenHeight = _environment->screenTilesHeight * 8;
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     _environment->screenColors = 2;
     _environment->screenShades = 8;
 
@@ -405,6 +408,39 @@ int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+
+    console_init( _environment );
+
+}
+
+void console_calculate( Environment * _environment ) {
+
+    int consoleSA = 0;
+    int consoleCA = 0;
+
+    switch( _environment->currentMode ) {
+        case TILEMAP_MODE_STANDARD:
+            consoleSA = 0x1000 + (_environment->activeConsole.y1*22)+_environment->activeConsole.x1;
+            consoleCA = 0x9400 + (_environment->activeConsole.y1*22)+_environment->activeConsole.x1;
+            _environment->currentModeBW = 1;
+            break;
+        default:
+            CRITICAL_SCREEN_UNSUPPORTED( _environment->currentMode );
+    }
+
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_16bit( _environment, "CONSOLECA", consoleCA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "JSR CONSOLECALCULATE" );
 
 }
 
@@ -635,26 +671,12 @@ void vic1_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void vic1_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESWIDTH" );
-    outline1("STA %s", _result );
-
-}
-
 void vic1_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTHEIGHT" );
     outline1("STA %s", _result );
     outline0("LDA CURRENTHEIGHT+1" );
     outline1("STA %s", address_displacement(_environment, _result, "1") );
-
-}
-
-void vic1_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESHEIGHT" );
-    outline1("STA %s", _result );
 
 }
 
@@ -668,19 +690,21 @@ void vic1_cls( Environment * _environment ) {
 
 void vic1_scroll_text( Environment * _environment, int _direction ) {
 
-    deploy( vScrollText, src_hw_vic1_vscroll_text_asm );
-
-    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
-
-    outline0("JSR VSCROLLT");
+    if ( _direction > 0 ) {
+        deploy( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
+        outline0("JSR VSCROLLTDOWN");
+    } else {
+        deploy( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+        outline0("JSR VSCROLLTUP");
+    }
 
 }
 
 void vic1_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( vic1vars, src_hw_vic1_vars_asm);
-    deploy( vScrollText, src_hw_vic1_vscroll_text_asm );
+    deploy( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+    deploy( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
     deploy( cls, src_hw_vic1_cls_asm );
     deploy( textEncodedAt, src_hw_vic1_text_at_asm );
 
@@ -770,6 +794,8 @@ void vic1_initialization( Environment * _environment ) {
     _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
     _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
     _environment->screenColors = 16;
+
+    console_init( _environment );
 
     font_descriptors_init( _environment, 1 );
 
@@ -1646,9 +1672,17 @@ void vic1_put_image( Environment * _environment, Resource * _image, char * _x, c
     outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA IMAGEY+1" );
     outline1("LDA %s", _flags);
-    outline0("STA IMAGEF" );
-    outline1("LDA %s", address_displacement(_environment, _flags, "1") );
-    outline0("STA IMAGET" );
+    if ( strchr( _flags, '#' ) ) {
+        outline1("LDA #((%s)&255)", _flags+1 );
+        outline0("STA IMAGEF" );
+        outline1("LDA #(((%s)>>8)&255)", _flags+1 );
+        outline0("STA IMAGET" );
+    } else {
+        outline1("LDA %s", _flags );
+        outline0("STA IMAGEF" );
+        outline1("LDA %s", address_displacement(_environment, _flags, "1") );
+        outline0("STA IMAGET" );
+    }    
 
     outline0("JSR PUTIMAGE");
 
@@ -1785,7 +1819,8 @@ void vic1_scroll( Environment * _environment, int _dx, int _dy ) {
     deploy( vic1vars, src_hw_vic1_vars_asm);
     deploy( scroll, src_hw_vic1_scroll_asm);
     deploy( textHScroll, src_hw_vic1_hscroll_text_asm );
-    deploy( vScrollText, src_hw_vic1_vscroll_text_asm );
+    deploy( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+    deploy( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
 
     outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
     outline0("STA MATHPTR0" );
@@ -1993,6 +2028,24 @@ void vic1_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LDY #$%2.2x", 0 ); \
     outline1("LDA %s", ( c == NULL ? "#$7" : c ) ); \
     outline0("JSR VIC1FREQ2" );
+
+#define     PROGRAM_DURATION( c, d ) \
+    outline1("LDX #$%2.2x", ( ( d & 0xff ) ) ); \
+    outline1("LDY #$%2.2x", ( ( ( d >> 9 ) & 0xff ) ) ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR VIC1SETDURATION0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR VIC1SETDURATION1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR VIC1SETDURATION2" );
+
+#define     WAIT_DURATION( c ) \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR VIC1WAITDURATION0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR VIC1WAITDURATION1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR VIC1WAITDURATION2" );
 
 #define     PROGRAM_PITCH( c, f ) \
     outline1("LDX #$%2.2x", ( f & 0xff ) ); \
@@ -2763,6 +2816,59 @@ int vic1_palette_extract( Environment * _environment, char * _data, int _width, 
     memcpy( _palette, palette_remove_duplicates( _palette, paletteColorCount, &uniquePaletteCount ), paletteColorCount * sizeof( RGBi ) );
 
     return uniquePaletteCount;
+
+}
+
+void vic1_set_duration( Environment * _environment, int _channels, int _duration ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy( vic1startup, src_hw_vic1_startup_asm );
+
+    PROGRAM_DURATION( _channels, _duration );
+
+}
+
+void vic1_wait_duration( Environment * _environment, int _channels ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy( vic1startup, src_hw_vic1_startup_asm );
+
+    WAIT_DURATION( _channels );
+
+}
+
+void vic1_set_duration_vars( Environment * _environment, char * _channels, char * _duration ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy( vic1startup, src_hw_vic1_startup_asm );
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$f" );
+    }
+    if ( _duration ) {
+        outline1("LDX %s", _duration );
+    } else {
+        outline0("LDX #50" );
+    }
+    
+    outline0("JSR VIC1SETDURATION");
+
+}
+
+void vic1_wait_duration_vars( Environment * _environment, char * _channels ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy( vic1startup, src_hw_vic1_startup_asm );
+    
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$f" );
+    }
+
+    outline0("JSR VIC1WAITDURATION");
 
 }
 

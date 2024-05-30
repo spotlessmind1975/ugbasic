@@ -40,32 +40,11 @@
 
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
-void setup_embedded( Environment * _environment ) {
-
-    _environment->embedded.cpu_fill_blocks = 1;
-    _environment->embedded.cpu_fill = 1;
-    _environment->embedded.cpu_math_div2_8bit = 1;
-    _environment->embedded.cpu_math_mul_8bit_to_16bit = 1;
-    _environment->embedded.cpu_math_div_8bit_to_8bit = 1;
-    _environment->embedded.cpu_math_div2_const_8bit = 1;
-    _environment->embedded.cpu_math_mul2_const_8bit = 1;
-    _environment->embedded.cpu_math_mul_16bit_to_32bit = 1;
-    _environment->embedded.cpu_math_div_16bit_to_16bit = 1;
-    _environment->embedded.cpu_math_div_32bit_to_16bit = 1;
-    _environment->embedded.cpu_random = 1;
-    _environment->embedded.cpu_mem_move = 1;
-    _environment->embedded.cpu_uppercase = 1;
-    _environment->embedded.cpu_lowercase = 1;
-    _environment->embedded.cpu_hex_to_string = 1;
-    _environment->embedded.cpu_msc1_uncompress = 1;
-    _environment->embedded.cpu_string_sub = 1;
-    _environment->embedded.cpu_convert_string_into_16bit = 1;
-
-}
-
 void target_initialization( Environment * _environment ) {
 
     cpu6502_init( _environment );
+
+    _environment->audioConfig.async = 1;
 
     MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );
     /*MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xff00 );*/

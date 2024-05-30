@@ -115,6 +115,83 @@ MO5NTSC
 
 MO5STARTUPDONE
 
+    ORCC #$50
+
+    ; LDB   #0
+    ; STB   $2076
+    ; LDB   $2019
+    ; ORB   #8
+    ; STB   $2019
+
+@IF expansionBanks
+
+    LDU #BANKLOAD
+    LDB #0
+BANKLOADL1
+    LDA B,U
+    CMPA #$FF
+    BEQ BANKLOADL2
+    STA $A7CB
+    INCB
+
+    PSHS D,Y,X,U
+    LDX #$B000
+
+    LDA #1
+    SWI
+    FCB $22
+
+BANKLOADL1REPEAT
+
+    LDY #$EF00
+
+    LDA #1
+    LDB #0
+    SWI
+    FCB $20
+
+    CMPB #0
+    BEQ BANKLOADL1REPEAT
+    CMPB #$FF
+    BEQ BANKLOADL1END
+
+    CMPX #$B000
+    BNE BANKLOADL1MV
+
+    LEAY 6,Y
+
+    LDU #$00F9
+    JMP BANKLOADL1MV2
+
+BANKLOADL1MV
+
+    LEAY 1,Y
+    LDU #$00FE
+
+BANKLOADL1MV2
+    LDA ,Y+
+    STA ,X+
+    LEAU -1, U
+    CMPU #0
+    BNE BANKLOADL1MV2
+
+    JMP BANKLOADL1REPEAT
+
+BANKLOADL1END
+    LDA #0
+    SWI
+    FCB $22
+    PULS D,Y,X,U
+    JMP BANKLOADL1
+BANKLOADL2
+    LDA #$00
+    STA $A7CB
+    STA BANKSHADOW
+
+@ENDIF
+
+    ANDCC #$AF
+
     JSR DATAPREPARATION
 
 SYSCALLDONE

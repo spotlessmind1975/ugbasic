@@ -48,15 +48,15 @@ TEXTATBMDRAWCHAR
     ADDD #UDCCHAR
     TFR D, Y
 
-    LDA YCURSYS
+    LDA <YCURSYS
     LDB #8
     MUL
-    STD PLOTY
+    STD <PLOTY
 
-    LDA XCURSYS
+    LDA <XCURSYS
     LDB #8
     MUL
-    STD PLOTX
+    STD <PLOTX
 
     JSR GIMECALCPOSBM
 
@@ -89,7 +89,7 @@ TEXTATBMDRAWCHARB16L1
     LDU #2
     LDB #0
     STB , X
-    LDB PLOTC
+    LDB <PLOTC
 TEXTATBMDRAWCHARB16L1A
     LSRA
     BCC TEXTATBMDRAWCHARB16L1A0
@@ -110,7 +110,7 @@ TEXTATBMDRAWCHARB16L1A0
     PSHS U
     LDB #0
     STB , X
-    LDB PLOTC
+    LDB <PLOTC
     LDU #2
 TEXTATBMDRAWCHARB16L1B
     LSRA
@@ -132,7 +132,7 @@ TEXTATBMDRAWCHARB16L1B0
     PSHS U
     LDB #0
     STB , X
-    LDB PLOTC
+    LDB <PLOTC
     LDU #2
 TEXTATBMDRAWCHARB16L1C
     LSRA
@@ -154,7 +154,7 @@ TEXTATBMDRAWCHARB16L1C0
     PSHS U
     LDB #0
     STB , X
-    LDB PLOTC
+    LDB <PLOTC
     LDU #2
 TEXTATBMDRAWCHARB16L1D
     LSRA
@@ -199,7 +199,7 @@ TEXTATBMDRAWCHARB4L1
     LDU #4
     LDB #0
     STB , X
-    LDB PLOTC
+    LDB <PLOTC
 TEXTATBMDRAWCHARB4L2
     LSRA
     BCC TEXTATBMDRAWCHARB4L10
@@ -218,7 +218,7 @@ TEXTATBMDRAWCHARB4L10
     PSHS U
     LDB #0
     STB , X
-    LDB PLOTC
+    LDB <PLOTC
     LDU #4
 TEXTATBMDRAWCHARB4L2B
     LSRA
@@ -272,7 +272,7 @@ TEXTATBITMAPMODE
 
     LDB _PEN
     JSR GIMESELECTPALETTE
-    STA PLOTC
+    STA <PLOTC
 
     ; Avoid to do anything if we are in text mode.
     LDA CURRENTTILEMODE
@@ -356,7 +356,7 @@ TEXTATBMTAB
 
     ; Loop until X cursor position is greater than tab count.
 
-    LDA XCURSYS
+    LDA <XCURSYS
 TEXTATBMTAB2
     CMPA TABCOUNT
     BLO TEXTATBMTAB3
@@ -367,10 +367,10 @@ TEXTATBMTAB2
     ; Calculate the complement for tab count.
 
 TEXTATBMTAB3
-    STA TMPPTR
+    STA <TMPPTR
     LDA TABCOUNT
     ANDCC #$01
-    SUBA TMPPTR
+    SUBA <TMPPTR
     STA TABSTODRAW
 
     ; Move to the next character to print.
@@ -439,7 +439,7 @@ TEXTATBMLF
     ; back and update the address.
 
     LDA CURRENTTILESWIDTH
-    SUBA XCURSYS
+    SUBA <XCURSYS
     SUBA #1
     LEAX A,X
 
@@ -452,13 +452,6 @@ TEXTATBMLF
     ; the following writing texts.
 
 TEXTATBMPEN
-
-    ; We have to check if the current WRITING flags allows to
-    ; change the pen color.
-
-    LDA TEXTWW
-    ANDA #$2
-    BEQ TEXTATBMPENDISABLED
 
     ; Load the parameter from the next character.
     LDA , Y+
@@ -475,28 +468,10 @@ TEXTATBMPEN2
 
     JMP TEXTATBMNEXT
 
-    ; Change pen color is disabled. So we can ignore the
-    ; parameter, and move ahead.
-
-TEXTATBMPENDISABLED
-    LEAY 1,Y
-    DECB
-
-    ; Move to the next character to print.
-
-    JMP TEXTATBMNEXT
-
     ; This routine will change the current paper color, used for
     ; the following writing texts.
 
 TEXTATBMPAPER
-
-    ; We have to check if the current WRITING flags allows to
-    ; change the paper color.
-
-    LDA TEXTWW
-    ANDA #$1
-    BEQ TEXTATBMPAPERDISABLED
 
     ; Load the parameter from the next character.
     LDA , Y+
@@ -514,14 +489,6 @@ TEXTATBMPAPER2
 
     JMP TEXTATBMNEXT
 
-    ; Change paper color is disabled. So we can ignore the
-    ; parameter, and move ahead.
-
-TEXTATBMPAPERDISABLED
-    LEAY 1,Y
-    DECB
-    JMP TEXTATBMNEXT
-
     ; This routine will move the current cursor position on a relative
     ; position.
 
@@ -531,13 +498,13 @@ TEXTATBMCMOVEPREPARE
 
     LDA , Y+
     DECB
-    STA CLINEX
+    STA <CLINEX
 
     ; Load and store the delta on ordinate.
     
     LDA , Y+
     DECB
-    STA CLINEY
+    STA <CLINEY
 
     ; This routine will move the current cursor position
     ; on an absolute position.
@@ -548,8 +515,8 @@ TEXTATBMCMOVE
     ; add the delta to the current horizontal position.
 
     ANDCC #$FE
-    LDA CLINEX
-    ADDA XCURSYS
+    LDA <CLINEX
+    ADDA <XCURSYS
 
     ; If the calculated horizontal position is negative,
     ; we have nothing to do.
@@ -565,7 +532,7 @@ TEXTATBMCMOVE
 
     ; Store the new horizontal position.
 
-    STA XCURSYS
+    STA <XCURSYS
 
     ; Update the address by delta.
 
@@ -575,8 +542,8 @@ TEXTATBMCMOVESKIPX
     ; add the delta to the current vertical position.
 
     ANDCC #$FE
-    LDA CLINEY
-    ADDA YCURSYS
+    LDA <CLINEY
+    ADDA <YCURSYS
 
     ; If the calculated vertical position is negative,
     ; we have nothing to do.
@@ -592,7 +559,7 @@ TEXTATBMCMOVESKIPX
 
     ; Store the new vertical position.
 
-    STA YCURSYS
+    STA <YCURSYS
 
     ; Update the address by delta.
 
@@ -613,8 +580,9 @@ TEXTATBMAT
     LDA , Y+
     DECB
     ANDCC #$01
-    SUBA XCURSYS
-    STA CLINEX
+    SUBA <XCURSYS
+    ADDA CONSOLEX1
+    STA <CLINEX
 
     ; The vertical delta is calculated started from
     ; the current position.
@@ -622,8 +590,9 @@ TEXTATBMAT
     LDA , Y+
     DECB
     ANDCC #$01
-    SUBA YCURSYS
-    STA CLINEY
+    SUBA <YCURSYS
+    ADDA CONSOLEY1
+    STA <CLINEY
 
     ; Change the position like a CMOVE.
 
@@ -651,14 +620,14 @@ TEXTATBMINCX
 
     ; Increment the current horizontal position.
 
-    INC XCURSYS
+    INC <XCURSYS
 
     ; If the current horizontal position is at the end
     ; of the line, we must increment the vertical position.
 
-    LDA XCURSYS
-    CMPA CURRENTTILESWIDTH
-    BEQ TEXTATBMNEXT2
+    LDA <XCURSYS
+    CMPA CONSOLEX2
+    BGT TEXTATBMNEXT2
 
     ; Move to the next character to print.
 
@@ -668,19 +637,19 @@ TEXTATBMNEXT2
 
     ; Put 0 as horizontal position.
 
-    LDA #0
-    STA XCURSYS
+    LDA CONSOLEX1
+    STA <XCURSYS
 
     ; Increment the vertical position.
 
-    INC YCURSYS
+    INC <YCURSYS
 
     ; If the current vertical position is at the end
     ; of the screen, we must scroll the screen.
 
-    LDA YCURSYS
-    CMPA CURRENTTILESHEIGHT
-    BEQ TEXTATBMNEXT3
+    LDA <YCURSYS
+    CMPA CONSOLEY2
+    BGT TEXTATBMNEXT3
 
     ; Move to the next character to print.
 
@@ -691,13 +660,13 @@ TEXTATBMNEXT3
     ; Let's scroll vertically
 
     ; LDA #$FE
-    ; STA DIRECTION
+    ; STA <DIRECTION
     ; JSR VSCROLLG
 
     ; Decrement the current vertical position, since
     ; now the last line is not last anymore.
 
-    DEC YCURSYS
+    DEC <YCURSYS
 
     ; Manage for the next character to print.
 

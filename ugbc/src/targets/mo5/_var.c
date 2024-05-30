@@ -396,8 +396,6 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
-    banks_generate( _environment );
-
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {
@@ -414,13 +412,6 @@ void variable_cleanup( Environment * _environment ) {
                 // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
                 // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
                 // outhead1(".segment \"%s\"", actual->name);
-                if ( _environment->bitmaskNeeded ) {
-                    outhead0("BITMASK fcb $01,$02,$04,$08,$10,$20,$40,$80");
-                    outhead0("BITMASKN fcb $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
-                }
-                if ( _environment->deployed.dstring ) {
-                    outhead1("max_free_string equ %4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
-                }
 
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
@@ -506,11 +497,12 @@ void variable_cleanup( Environment * _environment ) {
         staticStrings = staticStrings->next;
     }
 
-    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
-        if ( _environment->maxExpansionBankSize[i] ) {
-            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
-            outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
-        }
+    if ( _environment->bitmaskNeeded ) {
+        outhead0("BITMASK fcb $01,$02,$04,$08,$10,$20,$40,$80");
+        outhead0("BITMASKN fcb $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
+    }
+    if ( _environment->deployed.dstring ) {
+        outhead1("max_free_string equ %4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
     buffered_push_output( );
@@ -522,6 +514,38 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_inplace_preferred( bank, src_hw_mo5_bank_asm );
+    
+    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
+        if ( _environment->maxExpansionBankSize[i] ) {
+            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
+            outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
+        }
+    }
+
+    if ( _environment->expansionBanks ) {
+        
+        outhead0("BANKLOAD");
+
+        Bank * bank = _environment->expansionBanks;
+
+        while( bank ) {
+
+            if ( bank->address ) {
+                int realBank = ( ( bank->id & 0xfc ) << 2 ) | ( bank->id & 0x03 );
+                realBank = realBank | 0x0c;
+                outline1("fcb $%2.2x", realBank);
+            } else {
+                outline0("fcb $ff");
+            }
+
+            bank = bank->next;
+
+        }
+
+        outline0("fcb $ff");
+    }
+
     deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );

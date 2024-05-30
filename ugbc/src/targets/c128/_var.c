@@ -260,10 +260,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 static void variable_cleanup_memory_mapped( Environment * _environment, Variable * _variable ) {
 
     outhead2("; %s (%4.4x)", _variable->realName, _variable->absoluteAddress );
-    outhead1("%s:", _variable->realName );
 
     switch( _variable->type ) {
         case VT_CHAR:
+            outhead1("%s:", _variable->realName );
             if ( _variable->value >= 32 ) {
                 outline1(" .byte '%c'", ( _variable->value & 0xff ) );
             } else {
@@ -274,19 +274,23 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SBYTE:
         case VT_COLOR:
         case VT_THREAD:
+            outhead1("%s:", _variable->realName );
             outline1(" .byte $%1.1x", ( _variable->value & 0xff ) );
             break;
         case VT_WORD:
         case VT_SWORD:
         case VT_POSITION:
         case VT_ADDRESS:
+            outhead1("%s:", _variable->realName );
             outline1(" .word $%2.2x", ( _variable->value & 0xffff ) );
             break;
         case VT_DWORD:
         case VT_SDWORD:
+            outhead1("%s:", _variable->realName );
             outline1(" .dword $%4.4x", ( _variable->value & 0xffff ) );
             break;
         case VT_FLOAT: {
+            outhead1("%s:", _variable->realName );
             int bytes = VT_FLOAT_BITWIDTH( _variable->precision ) >> 3;
             int * data = malloc( bytes * sizeof( int ) );
             switch( _variable->precision ) {
@@ -320,9 +324,11 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SPRITE:
         case VT_TILE:
         case VT_TILESET:
+            outhead1("%s:", _variable->realName );
             outline0("   .byte 0" );
             break;
         case VT_TILES:
+            outhead1("%s:", _variable->realName );
             outline0("   .byte 0, 0, 0, 0" );
             break;
         case VT_BLIT:
@@ -336,6 +342,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 outhead2("; relocated on bank %d (at %4.4x)", _variable->bankAssigned, _variable->absoluteAddress );
                 outhead1("%s: .byte $0", _variable->realName );
             } else {
+                outhead1("%s:", _variable->realName );
                 if ( _variable->valueBuffer && ! _variable->onStorage ) {
                     if ( _variable->printable ) {
                         char * string = malloc( _variable->size + 1 );

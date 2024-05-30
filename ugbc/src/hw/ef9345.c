@@ -465,6 +465,28 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 }
 
+void console_calculate( Environment * _environment ) {
+
+    // #if defined(__to8__)
+    //     int consoleSA = 0x4000;
+    // #else
+    //     int consoleSA = 0x0000;
+    // #endif
+    // int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    // int consoleHB = _environment->activeConsole.height * 8;
+
+    // cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    // cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    // cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    // outline0( "CALL CONSOLECALCULATE" );
+
+}
+
 int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
@@ -486,6 +508,9 @@ int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             break;
     }
 
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "CLIPX1", 0 );
     cpu_store_16bit( _environment, "CLIPX2", (_environment->screenWidth-1) );
     cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -503,6 +528,8 @@ int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
+
+    console_init( _environment );
 
 }
 
@@ -671,24 +698,10 @@ void ef9345_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void ef9345_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LD A, (CURRENTTILESWIDTH)" );
-    outline1("LD (%s), A", _result );
-
-}
-
 void ef9345_get_height( Environment * _environment, char *_result ) {
 
     outline0("LD HL, (CURRENTHEIGHT)" );
     outline1("LD (%s), HL", _result );
-
-}
-
-void ef9345_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LD A, (CURRENTTILESHEIGHT)" );
-    outline1("LD (%s), A", _result );
 
 }
 
@@ -778,10 +791,6 @@ void ef9345_initialization( Environment * _environment ) {
     variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
     variable_global( _environment, "RESOLUTIONY" );
     
-    variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
-    variable_global( _environment, "XCURSYS" );
-    variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
-    variable_global( _environment, "YCURSYS" );
     variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
     variable_global( _environment, "TABCOUNT" );
 
@@ -870,6 +879,8 @@ void ef9345_initialization( Environment * _environment ) {
     _environment->screenColors = 8;
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
+
+    console_init( _environment );
 
 }
 

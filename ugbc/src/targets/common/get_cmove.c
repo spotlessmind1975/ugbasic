@@ -68,7 +68,7 @@ alla posizione corrente del cursore.
 Variable * get_cmove( Environment * _environment, char * _x, char * _y ) {
     
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
-    Variable * y = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_BYTE, 0 );
 
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(get_cmove)" );
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(get_cmove)" );

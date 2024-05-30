@@ -35,9 +35,11 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc,zx,pc128op,to8
 	CLS
 	
 	FOR i = 0 TO ( range - 1 )
-		count = ( ( maxSteps - v(i) ) * height ) / maxSteps
+		count = ( ( maxSteps - v(i) ) * height )
+		count = count / maxSteps
 		FOR j = count TO height
 			LOCATE i, j: PRINT "*";
 		NEXT j
 	NEXT i
 	
+

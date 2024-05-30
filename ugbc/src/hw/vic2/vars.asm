@@ -61,7 +61,6 @@ RESOLUTIONY:      .word 0
 CURRENTTILESWIDTH:      .byte 40
 CURRENTTILESHEIGHT:      .byte 25
 CURRENTSL:          .byte 0
-TEXTWW:             .byte 3
 FONTWIDTH:          .byte 8
 FONTHEIGHT:         .byte 8
 CURRENTTILES:      .byte 255
@@ -88,3 +87,30 @@ BLITR0 = $AE ; $AF
 BLITR1 = $B0 ; $B1
 BLITR2 = $B2 ; $B3
 BLITR3 = $B4 ; $B5
+
+;       (x1,y1)  w (chars) / wb (bytes)
+;       +----------------+
+;  sa ->|*               | h (chars) / hb (bytes)
+;       |                |
+;       +----------------+ (x2, y2)
+;
+CONSOLEID:    .byte $ff       ; <-- actual
+;
+; Text mode
+;
+CONSOLEX1:    .byte 0         ; <-- input from program (chars)
+CONSOLEY1:    .byte 0         ; <-- input from program (chars)
+CONSOLEX2:    .byte 31        ; <-- recalculated (chars)
+CONSOLEY2:    .byte 15        ; <-- recalculated (chars)
+CONSOLEW:     .byte 32        ; <-- calculated (chars)
+CONSOLEH:     .byte 16        ; <-- calculated (chars)
+;
+; Graphic mode
+;
+CONSOLESA:    .word 0         ; <-- calculated (address)
+CONSOLECA:    .word 0         ; <-- calculated (address)
+CONSOLEWB:    .byte 32        ; <-- calculated (bytes)
+CONSOLEHB:    .byte 16        ; <-- calculated (bytes)
+;
+CONSOLES:     .res  32        ; <-- storage for virtual consoles
+

@@ -1101,59 +1101,6 @@ void z80_math_double_8bit( Environment * _environment, char *_source, char *_oth
 }
 
 /**
- * @brief <i>Z80</i>: emit code to halves for several times a 8 bit value 
- * 
- * @param _environment Current calling environment
- * @param _source Value to halves and destination for result
- * @param _steps Times to halves
- */
-void z80_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
-
-    inline( cpu_math_div2_8bit )
-
-        MAKE_LABEL
-
-        if ( _signed ) {
-            outline1("LD A, (%s)", _source );
-            outline0("AND $80" );
-            outline0("CP 0" );
-            outline0("PUSH AF" );
-            outline1("JR Z,%spos", label );
-            outline1("LD A, (%s)", _source );
-            outline0("XOR $FF" );
-            outline0("ADC $1" );
-            outline1("JMP %spos2", label );
-            outhead1("%spos:", label );
-            outline1("LD A, (%s)", _source );
-            outhead1("%spos2:", label );
-            while( _steps ) {
-                outline0("SRA A" );
-                --_steps;
-            }
-            outline1("LD (%s), A", _source );
-            outline0("POP AF" );
-            outline0("AND $80" );
-            outline0("CP 0" );
-            outline1("JR Z,%spos3", label );
-            outline1("LD A, (%s)", _source );
-            outline0("XOR $FF" );
-            outline0("ADC $1" );
-            outline1("LD (%s), A", _source );
-            outhead1("%spos3:", label );
-        } else {
-            outline1("LD A, (%s)", _source );
-            while( _steps ) {
-                outline0("SRA A" );
-                --_steps;
-            }
-            outline1("LD (%s), A", _source );
-        }
-
-    no_embedded( cpu_math_div2_8bit )
-
-}
-
-/**
  * @brief <i>Z80</i>: emit code to multiply two 8bit values in a 16 bit register
  * 
  * @param _environment Current calling environment
@@ -3186,19 +3133,16 @@ void z80_math_and_const_32bit( Environment * _environment, char *_source, int _m
  */
 void z80_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte ) {
 
-    inline( cpu_combine_nibbles )
+    no_inline( cpu_combine_nibbles )
+
+    embedded( cpu_combine_nibbles, src_hw_z80_cpu_combine_nibbles_asm );
 
         outline1("LD A, (%s)", _hi_nibble );
-        outline0("SLA A" );
-        outline0("SLA A" );
-        outline0("SLA A" );
-        outline0("SLA A" );
-        outline0("LD B, A" );
-        outline1("LD A, (%s)", _low_nibble );
-        outline0("OR A, B" );
-        outline1("LD (%s), A", _byte );
+        outline1("LD HL, %s", _low_nibble );
+        outline1("LD DE, %s", _byte );
+        outline0("CALL CPUCOMBINENIBBLES" );
 
-    no_embedded( cpu_combine_nibbles )
+    done( )
 
 }
 
@@ -4166,88 +4110,46 @@ void z80_xor_32bit( Environment * _environment, char * _left, char * _right, cha
 
 void z80_swap_8bit( Environment * _environment, char * _left, char * _right ) {
 
-    MAKE_LABEL
+    no_inline( cpu_swap_8bit )
 
-    outline1("LD HL, %s", _left );
-    outline1("LD DE, %s", _right );
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
+    embedded( cpu_swap_8bit, src_hw_z80_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
 
-}
+        outline1("LD HL, %s", _right );
+        outline1("LD DE, %s", _left );
+        outline0("LD B, 1" );
+        outline0("CALL CPUSWAP" );
+
+    done( )
+
+}    
 
 void z80_swap_16bit( Environment * _environment, char * _left, char * _right ) {
 
-    MAKE_LABEL
+    no_inline( cpu_swap_8bit )
 
-    outline1("LD HL, %s", _left );
-    outline1("LD DE, %s", _right );
+    embedded( cpu_swap_8bit, src_hw_z80_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
 
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
+        outline1("LD HL, %s", _right );
+        outline1("LD DE, %s", _left );
+        outline0("LD B, 2" );
+        outline0("CALL CPUSWAP" );
 
-    outline0("INC HL" );
-    outline0("INC DE" );
-
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
+    done( )
 
 }
 
 void z80_swap_32bit( Environment * _environment, char * _left, char * _right ) {
 
-    MAKE_LABEL
+    no_inline( cpu_swap_8bit )
 
-    outline1("LD HL, %s", _left );
-    outline1("LD DE, %s", _right );
+    embedded( cpu_swap_8bit, src_hw_z80_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
 
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
+        outline1("LD HL, %s", _right );
+        outline1("LD DE, %s", _left );
+        outline0("LD B, 4" );
+        outline0("CALL CPUSWAP" );
 
-    outline0("INC HL" );
-    outline0("INC DE" );
-
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
-
-    outline0("INC HL" );
-    outline0("INC DE" );
-
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
-
-    outline0("INC HL" );
-    outline0("INC DE" );
-
-    outline0("LD A, (HL)" );
-    outline0("PUSH AF" );
-    outline0("LD A, (DE)" );
-    outline0("LD (HL), A" );
-    outline0("POP AF" );
-    outline0("LD (DE), A" );
+    done( )
     
 }
 
@@ -4789,6 +4691,16 @@ void z80_lowercase( Environment * _environment, char *_source, char *_size, char
 
 }
 
+void z80_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value ) {
+
+    Variable * temp = variable_temporary( _environment, VT_WORD, "(temp)" );
+
+    z80_convert_string_into_16bit( _environment, _string, _len, temp->realName );
+
+    z80_move_8bit( _environment, temp->realName, _value );
+  
+}
+
 void z80_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
     MAKE_LABEL
@@ -4878,25 +4790,16 @@ void z80_fill_indirect( Environment * _environment, char * _address, char * _siz
 
 void z80_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
-    MAKE_LABEL
+    no_inline( cpu_flip )
 
-    outline1("LD HL, (%s)", _size);
-    outline0("LD H, 0");
-    outline1("LD DE, (%s)", _destination);
-    outline0("ADD HL, DE");
-    outline0("LD DE, HL");
+    embedded( cpu_flip, src_hw_z80_cpu_flip_asm );
 
-    outline1("LD HL, (%s)", _source);
-    
-    outline0("DEC DE");
+        outline1("LD HL, (%s)", _source);
+        outline1("LD DE, (%s)", _destination);
+        outline1("LD A, (%s)", _size);
+        outline0("CALL CPUFLIP");
 
-    outhead1("%sx:", label);
-    outline0("LD A, (HL)");
-    outline0("LD (DE), A");
-    outline0("DEC DE");
-    outline0("INC HL");
-    outline0("DEC C");
-    outline1("JR NZ,%sx", label);
+    done(  )
 
 }
 
@@ -5614,33 +5517,19 @@ void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char 
 
 void z80_bit_check( Environment * _environment, char *_value, int _position, char * _result, int _bitwidth ) {
 
-    MAKE_LABEL
+    no_inline( cpu_bit_check_extended )
 
-    _bitwidth = 0;
-    
-    outline1("LD HL, %s", _value);
-    switch( _position ) {
-        case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
-            outline0("INC HL");
-        case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
-            outline0("INC HL");
-        case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8:
-            outline0("INC HL");
-        case 7:  case 6:  case 5:  case 4:  case 3:  case 2:  case 1: case 0:
-            outline0("LD A, (HL)");
-            break;
-    }
-    outline1("BIT $%1.1x, A", ( _position & 0x07 ) );
-    if ( _result ) {
-        outline1("JR Z, %szero", label);
-        outline0("LD A, $ff");
-        outline1("LD (%s), A", _result);
-        outline1("JMP %sdone", label);
-        outhead1("%szero:", label);
-        outline0("LD A, 0");
-        outline1("LD (%s), A", _result);
-        outhead1("%sdone:", label);
-    }
+    embedded( cpu_bit_check_extended, src_hw_z80_cpu_bit_check_extended_asm );
+
+        outline1("LD DE, %s", _value);
+        outline1("LD A, $%2.2x", _position );
+        outline0("CALL CPUBITCHECKEXTENDED" );
+
+        if ( _result ) {
+            outline1("LD (%s), A", _result);
+        }
+
+    done( )
 
 }
 
@@ -5648,184 +5537,65 @@ void z80_bit_check_extended( Environment * _environment, char *_value, char * _p
 
     MAKE_LABEL
 
-    _bitwidth = 0;
+    no_inline( cpu_bit_check_extended )
 
-    outline1("LD HL, %s", _value);
-    outline1("LD A, (%s)", _position);
-    outline0("SRA A");
-    outline0("SRA A");
-    outline0("SRA A");
-    outline0("CP 3");
-    outline1("JR Z,%s_3", label );
-    outline0("CP 2");
-    outline1("JR Z,%s_2", label );
-    outline0("CP 1");
-    outline1("JR Z,%s_1", label );
-    outline1("JMP %send", label );
-    outhead1("%s_3:", label );
-    outline0("INC HL" );
-    outhead1("%s_2:", label );
-    outline0("INC HL" );
-    outhead1("%s_1:", label );
-    outline0("INC HL" );
-    outhead1("%send:", label );
-    outline0("LD A, (HL)" );
+    embedded( cpu_bit_check_extended, src_hw_z80_cpu_bit_check_extended_asm );
 
-    outline0("PUSH AF" );
-    outline1("LD A, (%s)", _position);
-    outline0("AND $07" );
-    outline0("LD B, 1");
-    outline0("CP 0");
-    outline1("JR Z, %sdone2", label);
-    outhead1("%sloop2:", label);
-    outline0("SLA B");
-    outline0("DEC A");
-    outline1("JR NZ, %sloop2", label);
-    outhead1("%sdone2:", label);
-    outline0("POP AF" );
+        outline1("LD DE, %s", _value);
+        outline1("LD A, (%s)", _position );
+        outline0("CALL CPUBITCHECKEXTENDED" );
 
-    outline0("AND A, B" );
+        if ( _result ) {
+            outline1("LD (%s), A", _result);
+        }
 
-    if ( _result ) {
-        outline1("JR Z, %szero", label);
-        outline0("LD A, $ff");
-        outline1("LD (%s), A", _result);
-        outline1("JMP %sdone", label);
-        outhead1("%szero:", label);
-        outline0("LD A, 0");
-        outline1("LD (%s), A", _result);
-        outhead1("%sdone:", label);
-    }
-
+    done( )
+    
 }
 
 void z80_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
 
-    MAKE_LABEL
-
-    inline( cpu_bit_inplace )
-
-        if ( _bit ) {
-            outline1("LD A, (%s)", _value );
-            if ( *_bit ) {
-                outline1("OR $%2.2x", (unsigned char)( 1 << _position ) );
-            } else {
-                outline1("AND $%2.2x", (unsigned char)(~( 1 << _position )) );
-            }
-            outline1("LD (%s), A", _value );
-
-        } else {
-            outline1("JR Z, %szero", label );
-            outline1("LD A, (%s)", _value );
-            outline1("OR $%2.2x", (unsigned char)( 1 << _position ) );
-            outline1("LD (%s), A", _value );
-            outline1("JP %sdone", label );
-            outhead1("%szero:", label );
-            outline1("LD A, (%s)", _value );
-            outline1("AND $%2.2x", (unsigned char)(~( 1 << _position )) );
-            outline1("LD (%s), A", _value );
-            outhead1("%sdone:", label );
-        }
-
-    no_embedded( cpu_bit_inplace )
-
-}
-
-void z80_bit_inplace_8bit_extended( Environment * _environment, char * _value, char * _position, int * _bit ) {
-
     _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    inline( cpu_bit_inplace )
+    no_inline( cpu_bit_inplace )
+
+    embedded( cpu_bit_inplace, src_hw_z80_cpu_bit_inplace_asm );
 
         if ( _bit ) {
-            if ( *_bit ) {
-                outline0("LD HL, BITMASK");
-                outline1("LD DE, (%s)", _position);
-                outline0("ADD HL, DE");
-                outline1("LD A, (%s)", _value );
-                outline0("OR (HL)");
+            if ( * _bit ) {
+                outline0("LD A, $ff" );
             } else {
-                outline0("LD HL, BITMASKN");
-                outline1("LD DE, (%s)", _position);
-                outline0("ADD HL, DE");
-                outline1("LD A, (%s)", _value );
-                outline0("AND (HL)");
+                outline0("LD A, $0" );
             }
-            outline1("LD (%s), A", _value );
-
-        } else {
-            outline1("JR Z, %szero", label );
-            outline0("LD HL, BITMASK");
-            outline1("LD DE, (%s)", _position);
-            outline0("ADD HL, DE");
-            outline1("LD A, (%s)", _value );
-            outline0("OR (HL)");
-            outline1("LD (%s), A", _value );
-            outline1("JP %sdone", label );
-            outhead1("%szero:", label );
-            outline0("LD HL, BITMASKN");
-            outline1("LD DE, (%s)", _position);
-            outline0("ADD HL, DE");
-            outline1("LD A, (%s)", _value );
-            outline0("AND (HL)");
-            outline1("LD (%s), A", _value );
-            outhead1("%sdone:", label );
+            outline0("SRL A" );
         }
+        outline1("LD DE, %s", _value );
+        outline1("LD A, $%2.2x", _position);
+        outline0("CALL CPUBITINPLACE");
 
-    no_embedded( cpu_bit_inplace )
+    done( )
 
 }
 
-void z80_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, int * _bit ) {
+void z80_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, char * _bit ) {
 
     _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
+    no_inline( cpu_bit_inplace )
 
-    inline( cpu_bit_inplace )
+    embedded( cpu_bit_inplace, src_hw_z80_cpu_bit_inplace_asm );
 
         if ( _bit ) {
-            if ( *_bit ) {
-                outline0("LD HL, BITMASK");
-                outline1("LD DE, (%s)", _position);
-                outline0("ADD HL, DE");
-                outline1("LD DE, (%s)", _address );
-                outline0("LD A, (DE)" );
-                outline0("OR (HL)");
-            } else {
-                outline0("LD HL, BITMASKN");
-                outline1("LD DE, (%s)", _position);
-                outline0("ADD HL, DE");
-                outline1("LD DE, (%s)", _address );
-                outline0("LD A, (DE)" );
-                outline0("AND (HL)");
-            }
-            outline0("LD (DE), A" );
-
-        } else {
-            outline1("JR Z, %szero", label );
-            outline0("LD HL, BITMASK");
-            outline1("LD DE, (%s)", _position);
-            outline0("ADD HL, DE");
-            outline1("LD DE, (%s)", _address );
-            outline0("LD A, (DE)" );
-            outline0("OR (HL)");
-            outline0("LD (DE), A" );
-            outline1("JP %sdone", label );
-            outhead1("%szero:", label );
-            outline0("LD HL, BITMASKN");
-            outline1("LD DE, (%s)", _position);
-            outline0("ADD HL, DE");
-            outline1("LD DE, (%s)", _address );
-            outline0("LD A, (DE)" );
-            outline0("AND (HL)");
-            outline0("LD (DE), A" );
-            outhead1("%sdone:", label );
+            outline1("LD A, (%s)", _bit );
+            outline0("SRL A" );
         }
+        outline1("LD DE, (%s)", _address );
+        outline1("LD A, (%s)", _position);
+        outline0("CALL CPUBITINPLACE");
 
-    no_embedded( cpu_bit_inplace )
+    done( )
 
 }
 
@@ -6388,28 +6158,6 @@ void z80_protothread_current( Environment * _environment, char * _current ) {
 
     outline0("LD A, (PROTOTHREADCT)" );
     outline1("LD (%s), A", _current );
-
-}
-
-void z80_is_negative( Environment * _environment, char * _value, char * _result ) {
-
-    MAKE_LABEL
-
-    inline( cpu_is_negative )
-
-        outline1("LD A, (%s)", _value);
-        outline0("AND $80");
-        outline0("CP 0" );
-        outline1("JR Z,%s", label);
-        outline0("LD A, $FF");
-        outline1("LD (%s), A", _result );
-        outline1("JMP %sdone", label);
-        outhead1("%s:", label);
-        outline0("LD A, $0");
-        outline1("LD (%s), A", _result );
-        outhead1("%sdone:", label);
-
-    no_embedded( cpu_is_negative )
 
 }
 

@@ -180,4 +180,32 @@ void sidz_music( Environment * _environment, char * _music, int _size, int _loop
 
 }
 
+void sidz_set_duration( Environment * _environment, int _channels, int _duration ) {
+
+    deploy( sidvars, src_hw_sidz_vars_asm );
+    deploy( sidstartup, src_hw_sidz_startup_asm );
+
+}
+
+void sidz_wait_duration( Environment * _environment, int _channels ) {
+
+    deploy( sidvars, src_hw_sidz_vars_asm );
+    deploy( sidstartup, src_hw_sidz_startup_asm );
+
+}
+
+void sidz_set_duration_vars( Environment * _environment, char * _channels, char * _duration ) {
+
+    deploy( sidvars, src_hw_sidz_vars_asm );
+    deploy( sidstartup, src_hw_sidz_startup_asm );
+
+}
+
+void sidz_wait_duration_vars( Environment * _environment, char * _channels ) {
+
+    deploy( sidvars, src_hw_sidz_vars_asm );
+    deploy( sidstartup, src_hw_sidz_startup_asm );
+    
+}
+
 #endif

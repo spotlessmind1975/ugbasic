@@ -41,7 +41,7 @@
 extern char BANK_TYPE_AS_STRING[][16];
 extern char DATATYPE_AS_STRING[][16];
 
-static void variable_cleanup_entry( Environment * _environment, Variable * _first ) {
+static void variable_cleanup_entry_multibyte( Environment * _environment, Variable * _first ) {
 
     Variable * variable = _first;
 
@@ -54,17 +54,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
             }
 
             switch( variable->type ) {
-                case VT_CHAR:
-                case VT_BYTE:
-                case VT_SBYTE:
-                case VT_COLOR:
-                case VT_THREAD:
-                    if ( variable->memoryArea ) {
-                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
-                    } else {
-                        outhead1("%s rzb 1", variable->realName);
-                    }   
-                    break;
                 case VT_WORD:
                 case VT_SWORD:
                 case VT_POSITION:
@@ -87,7 +76,104 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s rzb 5", variable->realName);
+                        outhead1("%s rzb 6", variable->realName);
+                    }   
+                    break;
+                case VT_IMAGE:
+                case VT_IMAGES:
+                case VT_SEQUENCE:
+                case VT_MUSIC:
+                case VT_BUFFER:
+                    if ( variable->bankAssigned != -1 ) {
+                        outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
+                        outhead1("%s fcb $0,$0", variable->realName );
+                    } else {
+                        if ( ! variable->absoluteAddress ) {
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
+                                    if ( variable->size & 0x01 ) {
+                                        outline0("fcb 0" );
+                                    }
+                                } else {
+                                    out1("%s fcb ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                            outline1("$%2.2x", variable->valueBuffer[i]);
+                                            out0("   fcb ");
+                                        } else {
+                                            out1("$%2.2x,", variable->valueBuffer[i]);
+                                        }
+                                    }
+                                    outhead1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
+                                    if ( variable->size & 0x01 ) {
+                                        outline0("fcb $0" );
+                                    }
+                                }
+                            } else {
+                                outhead2("%s rzb %d", variable->realName, variable->size);
+                                if ( variable->size & 0x01 ) {
+                                    outline0("fcb $0" );
+                                }
+                            }
+                        } else {
+                            outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
+                                } else {
+                                    out1("%scopy fcb ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        out1("%d,", variable->valueBuffer[i]);
+                                    }
+                                    outhead1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    if ( variable->size & 0x01 ) {
+                                        outline0("fcb 0" );
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        
+        variable = variable->next;
+
+    }
+
+}
+
+static void variable_cleanup_entry_byte( Environment * _environment, Variable * _first ) {
+
+    Variable * variable = _first;
+
+    while( variable ) {
+
+        if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
+
+            if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
+                fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
+            }
+
+            switch( variable->type ) {
+                case VT_CHAR:
+                case VT_BYTE:
+                case VT_SBYTE:
+                case VT_COLOR:
+                case VT_THREAD:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 1", variable->realName);
                     }   
                     break;
                 case VT_STRING:
@@ -152,58 +238,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_BLIT:
                     break;                
-                case VT_IMAGE:
-                case VT_IMAGES:
-                case VT_SEQUENCE:
-                case VT_MUSIC:
-                case VT_BUFFER:
-                    if ( variable->bankAssigned != -1 ) {
-                        outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
-                        outhead1("%s fcb $0,$0", variable->realName );
-                    } else {
-                        if ( ! variable->absoluteAddress ) {
-                            if ( variable->valueBuffer ) {
-                                if ( variable->printable ) {
-                                    char * string = malloc( variable->size + 1 );
-                                    memset( string, 0, variable->size );
-                                    memcpy( string, variable->valueBuffer, variable->size );
-                                    outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
-                                } else {
-                                    out1("%s fcb ", variable->realName);
-                                    int i=0;
-                                    for (i=0; i<(variable->size-1); ++i ) {
-                                        if ( ( ( i + 1 ) % 16 ) == 0 ) {
-                                            outline1("%d", variable->valueBuffer[i]);
-                                            out0("   fcb ");
-                                        } else {
-                                            out1("%d,", variable->valueBuffer[i]);
-                                        }
-                                    }
-                                    outhead1("%d", variable->valueBuffer[(variable->size-1)]);
-                                }
-                            } else {
-                                outhead2("%s rzb %d", variable->realName, variable->size);
-                            }
-                        } else {
-                            outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
-                            if ( variable->valueBuffer ) {
-                                if ( variable->printable ) {
-                                    char * string = malloc( variable->size + 1 );
-                                    memset( string, 0, variable->size );
-                                    memcpy( string, variable->valueBuffer, variable->size );
-                                    outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
-                                } else {
-                                    out1("%scopy fcb ", variable->realName);
-                                    int i=0;
-                                    for (i=0; i<(variable->size-1); ++i ) {
-                                        out1("%d,", variable->valueBuffer[i]);
-                                    }
-                                    outhead1("%d", variable->valueBuffer[(variable->size-1)]);
-                                }
-                            }
-                        }
-                    }
-                    break;
                 case VT_TILEMAP:
                 case VT_ARRAY: {
                     if ( variable->bankAssigned != -1 ) {
@@ -268,6 +302,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
     }
 
+}
+
+static void variable_cleanup_entry( Environment * _environment, Variable * _first ) {
+    variable_cleanup_entry_multibyte( _environment, _first );
+    variable_cleanup_entry_byte( _environment, _first );
 }
 
 static void variable_cleanup_entry_bit( Environment * _environment, Variable * _first ) {
@@ -392,6 +431,8 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
+    outline0("ALIGN $0002");
+
     banks_generate( _environment );
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
@@ -410,14 +451,6 @@ void variable_cleanup( Environment * _environment ) {
                 // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
                 // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
                 // outhead1(".segment \"%s\"", actual->name);
-                if ( _environment->bitmaskNeeded ) {
-                    outhead0("BITMASK fcb $01,$02,$04,$08,$10,$20,$40,$80");
-                    outhead0("BITMASKN fcb $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
-                }
-                if ( _environment->deployed.dstring ) {
-                    outhead1("max_free_string equ $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
-                }
-
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
                     variable_cleanup_entry( _environment, variable );
@@ -507,6 +540,14 @@ void variable_cleanup( Environment * _environment ) {
             outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
             outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
         }
+    }
+
+    if ( _environment->bitmaskNeeded ) {
+        outhead0("BITMASK fcb $01,$02,$04,$08,$10,$20,$40,$80");
+        outhead0("BITMASKN fcb $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
+    }
+    if ( _environment->deployed.dstring ) {
+        outhead1("max_free_string equ $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
     buffered_push_output( );

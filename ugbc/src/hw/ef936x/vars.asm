@@ -58,7 +58,6 @@ CURRENTTILESWIDTH      fcb 40
 CURRENTTILESHEIGHT      fcb 25
 CURRENTFRAMESIZE   fdb 40*200
 CURRENTSL          fcb 40
-TEXTWW      fcb 3
 FONTWIDTH       fcb 8
 FONTHEIGHT      fcb 8
 TILEMAPVISIBLE  fcb 0
@@ -116,3 +115,150 @@ PLOTVBASE
     fdb $1C20, $1C48, $1C70, $1C98, $1CC0, $1CE8, $1D10, $1D38, $1D60, $1D88
     fdb $1DB0, $1DD8, $1E00, $1E28, $1E50, $1E78, $1EA0, $1EC8, $1EF0, $1F18
     
+;       (x1,y1)  w (chars) / wb (bytes)
+;       +----------------+
+;  sa ->|*               | h (chars) / hb (bytes)
+;       |                |
+;       +----------------+ (x2, y2)
+;
+CONSOLEID     fcb $ff       ; <-- actual
+;
+; Text mode
+;
+CONSOLEX1     fcb 0         ; <-- input from program (chars)
+CONSOLEY1     fcb 0         ; <-- input from program (chars)
+CONSOLEX2     fcb 31        ; <-- recalculated (chars)
+CONSOLEY2     fcb 15        ; <-- recalculated (chars)
+CONSOLEW      fcb 32        ; <-- calculated (chars)
+CONSOLEH      fcb 16        ; <-- calculated (chars)
+;
+; Graphic mode
+;
+CONSOLESA     fdb 0         ; <-- calculated (address)
+CONSOLEWB     fcb 32        ; <-- calculated (bytes)
+CONSOLEHB     fcb 16        ; <-- calculated (bytes)
+;
+CONSOLES      rzb 4*8        ; <-- storage for virtual consoles
+
+CONSOLECALCULATE
+    LDA CONSOLEH
+    STA CONSOLEHB
+    ASL CONSOLEHB
+    ASL CONSOLEHB
+    ASL CONSOLEHB
+
+    LDA CONSOLEW
+    STA CONSOLEWB
+    LDA CURRENTMODE
+    CMPA #0
+    BEQ CONSOLECALCULATE0
+    CMPA #1
+    BEQ CONSOLECALCULATE1
+    CMPA #2
+    BEQ CONSOLECALCULATE2
+    CMPA #3
+    BEQ CONSOLECALCULATE3
+    CMPA #4
+    BEQ CONSOLECALCULATE4
+
+CONSOLECALCULATE3
+    ASL CONSOLEWB
+    ASL CONSOLEWB
+    ASL CONSOLEWB
+CONSOLECALCULATE0
+CONSOLECALCULATE1
+CONSOLECALCULATE2
+CONSOLECALCULATE4
+    RTS
+
+;-----------------------------------------------------------------------------
+; BITMAP MODE
+;-----------------------------------------------------------------------------
+
+TEXTATCALCPOS
+    PSHS D,Y
+
+    LDA CURRENTMODE
+    CMPA #3
+    BEQ TEXTATCALCPOS3
+
+    LDX BITMAPADDRESS
+    ANDCC #$FE
+    LDB <MATHPTR3
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    TFR D, Y
+
+    ANDCC #$FE
+    LDB <MATHPTR3
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LSLB
+    ROLA
+
+    LEAY D, Y
+    TFR Y, D
+    LEAX D, X
+
+    LDB <MATHPTR2
+    LDA #0
+    LEAX D, X
+
+    PULS D,Y
+
+    RTS
+
+TEXTATCALCPOS3
+
+    LDB <MATHPTR3
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    ADDD #PLOTVBASE
+    TFR D, X
+    LDD , X
+@IF TO8
+    ADDD BITMAPADDRESS
+@ENDIF
+    TFR D, X
+
+    LDB <MATHPTR2
+    LDA #0
+    LSLB
+    ROLA
+    LEAX B, X
+
+    PULS D,Y
+    RTS

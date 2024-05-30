@@ -43,11 +43,11 @@ CALCPOS
     ; Start from the beginning of the video RAM.
 
     LDX TEXTADDRESS
-    STX COPYOFTEXTADDRESS
+    STX <COPYOFTEXTADDRESS
 
     ; Load the number of rows to move ahead.
 
-    LDB YCURSYS
+    LDB <YCURSYS
 
     ; If zero, we can skip this step.
 
@@ -67,8 +67,11 @@ CALCPOSLOOP1
     ; and a character attribute.
 
     ANDCC #$FE
-    LEAX A, X
-    LEAX A, X
+    PSHS D
+    TFR A, B
+    ABX
+    ABX
+    PULS D
 
     ; Decrement the number of rows.
 
@@ -81,12 +84,15 @@ CALCPOSLOOP1
 CALCPOSSKIP
 
     ; Now we can add the X position. Again, twice.
-    LDA XCURSYS
-    LEAX A, X
-    LEAX A, X
+    LDA <XCURSYS
+    PSHS D
+    TFR A, B
+    ABX
+    ABX
+    PULS D    
 
     ; Store the position.
-    STX COPYOFTEXTADDRESS
+    STX <COPYOFTEXTADDRESS
 
     RTS
 
@@ -105,7 +111,7 @@ TEXTATTILEMODE
 TEXTATTILEMODEGO
 
     ; Avoid to do anything if there is no text to print.
-    LDA TEXTSIZE
+    LDA <TEXTSIZE
     BNE TEXTATGO
     RTS
 
@@ -120,11 +126,11 @@ TEXTATGO
     LSLA
     LSLA
     LSLA
-    STA PLOTC
+    STA <PLOTC
     LDB _PAPER
     JSR GIMESELECTPALETTEPAPER
-    ORA PLOTC
-    STA PLOTC
+    ORA <PLOTC
+    STA <PLOTC
 
     ; Load the starting address of the video ram
     ; in a specific location, as a copy. This makes
@@ -136,16 +142,16 @@ TEXTATGO
     ; Initialize the counter for printing tabs.
 
     LDA #0
-    STA TABSTODRAW
+    STA <TABSTODRAW
 
     ; Load in Y register the starting address of the
     ; string to print on the video RAM.
 
-    LDY TEXTPTR
+    LDY <TEXTPTR
 
     ; Load in B the size of the string.
 
-    LDB TEXTSIZE
+    LDB <TEXTSIZE
 
     ; When program reach this point, we are going to
     ; print the next character.
@@ -154,7 +160,7 @@ TEXTATLOOP2
 
     ; If there are TABs to print, we have to skip the printing.
 
-    LDA TABSTODRAW
+    LDA <TABSTODRAW
     LBNE TEXTATSKIPTAB
 
     ; Load the character from the string and move it into the
@@ -198,7 +204,7 @@ TEXTATTAB
 
     ; Loop until X cursor position is greater than tab count.
 
-    LDA XCURSYS
+    LDA <XCURSYS
 TEXTATTAB2
     CMPA TABCOUNT
     BLO TEXTATTAB3
@@ -209,11 +215,11 @@ TEXTATTAB2
     ; Calculate the complement for tab count.
 
 TEXTATTAB3
-    STA TMPPTR
+    STA <TMPPTR
     LDA TABCOUNT
     ANDCC #$01
-    SUBA TMPPTR
-    STA TABSTODRAW
+    SUBA <TMPPTR
+    STA <TABSTODRAW
 
     ; Move to the next character to print.
 
@@ -281,9 +287,12 @@ TEXTATLF
     ; back and update the address.
 
     LDA CURRENTTILESWIDTH
-    SUBA XCURSYS
+    SUBA <XCURSYS
     SUBA #1
-    LEAX A,X
+    PSHS D
+    TFR A, B
+    ABX
+    PULS D
 
     ; Move to the routine that should scroll the video if we are
     ; printing on the last line of the screen.
@@ -294,13 +303,6 @@ TEXTATLF
     ; the following writing texts.
 
 TEXTATPEN
-
-    ; We have to check if the current WRITING flags allows to
-    ; change the pen color.
-
-    LDA TEXTWW
-    ANDA #$2
-    BEQ TEXTATPENDISABLED
 
     ; Load the parameter from the next character.
     LDA , Y+
@@ -313,28 +315,17 @@ TEXTATPEN
 TEXTATPEN2
     PSHS D
     STA _PEN
-    LDA PLOTC
+    LDA <PLOTC
     ANDA #$C7
-    STA PLOTC
+    STA <PLOTC
     LDB _PEN
     JSR GIMESELECTPALETTEPEN
     LSLA
     LSLA
     LSLA
-    ORA PLOTC
-    STA PLOTC
+    ORA <PLOTC
+    STA <PLOTC
     PULS D
-
-    ; Move to the next character to print.
-
-    JMP TEXTATNEXT
-
-    ; Change pen color is disabled. So we can ignore the
-    ; parameter, and move ahead.
-
-TEXTATPENDISABLED
-    LEAY 1,Y
-    DECB
 
     ; Move to the next character to print.
 
@@ -344,13 +335,6 @@ TEXTATPENDISABLED
     ; the following writing texts.
 
 TEXTATPAPER
-
-    ; We have to check if the current WRITING flags allows to
-    ; change the paper color.
-
-    LDA TEXTWW
-    ANDA #$1
-    BEQ TEXTATPAPERDISABLED
 
     ; Load the parameter from the next character.
     LDA , Y+
@@ -364,25 +348,17 @@ TEXTATPAPER
 TEXTATPAPER2
     PSHS D
     STA _PAPER
-    LDA PLOTC
+    LDA <PLOTC
     ANDA #$F8
-    STA PLOTC
+    STA <PLOTC
     LDB _PAPER
     JSR GIMESELECTPALETTEPAPER
-    ORA PLOTC
-    STA PLOTC
+    ORA <PLOTC
+    STA <PLOTC
     PULS D
 
     ; Move to the next character to print.
 
-    JMP TEXTATNEXT
-
-    ; Change paper color is disabled. So we can ignore the
-    ; parameter, and move ahead.
-
-TEXTATPAPERDISABLED
-    LEAY 1,Y
-    DECB
     JMP TEXTATNEXT
 
     ; This routine will move the current cursor position on a relative
@@ -394,13 +370,13 @@ TEXTATCMOVEPREPARE
 
     LDA , Y+
     DECB
-    STA CLINEX
+    STA <CLINEX
 
     ; Load and store the delta on ordinate.
     
     LDA , Y+
     DECB
-    STA CLINEY
+    STA <CLINEY
 
     ; This routine will move the current cursor position
     ; on an absolute position.
@@ -411,8 +387,8 @@ TEXTATCMOVE
     ; add the delta to the current horizontal position.
 
     ANDCC #$FE
-    LDA CLINEX
-    ADDA XCURSYS
+    LDA <CLINEX
+    ADDA <XCURSYS
 
     ; If the calculated horizontal position is negative,
     ; we have nothing to do.
@@ -428,15 +404,18 @@ TEXTATCMOVE
 
     ; Store the new horizontal position.
 
-    STA XCURSYS
+    STA <XCURSYS
 
     ; Update the address by delta.
 
-    LDA CLINEX
-    ;LDX COPYOFTEXTADDRESS
-    LEAX A, X
-    LEAX A, X
-    ;STX COPYOFTEXTADDRESS
+    LDA <CLINEX
+    ;LDX <COPYOFTEXTADDRESS
+    PSHS D
+    TFR A, B
+    ABX
+    ABX
+    PULS D
+    ;STX <COPYOFTEXTADDRESS
 
 TEXTATCMOVESKIPX
 
@@ -444,8 +423,8 @@ TEXTATCMOVESKIPX
     ; add the delta to the current vertical position.
 
     ANDCC #$FE
-    LDA CLINEY
-    ADDA YCURSYS
+    LDA <CLINEY
+    ADDA <YCURSYS
 
     ; If the calculated vertical position is negative,
     ; we have nothing to do.
@@ -461,17 +440,17 @@ TEXTATCMOVESKIPX
 
     ; Store the new vertical position.
 
-    STA YCURSYS
+    STA <YCURSYS
 
     ; Update the address by delta.
 
     PSHS D
-    LDA CLINEY
+    LDA <CLINEY
     ANDA #$80
     CMPA #$80
     BEQ TEXTATCMOVELOOPYM
     LDA CURRENTTILESWIDTH
-    LDB CLINEY
+    LDB <CLINEY
     MUL
     LSLB
     ROLA
@@ -479,7 +458,7 @@ TEXTATCMOVESKIPX
     JMP TEXTATCMOVELOOPY0
 TEXTATCMOVELOOPYM
     LDA CURRENTTILESWIDTH
-    LDB CLINEY
+    LDB <CLINEY
     NEGB
     MUL
     LSLB
@@ -490,7 +469,7 @@ TEXTATCMOVELOOPYM
     LEAX D, X
     JMP TEXTATCMOVELOOPY0
 TEXTATCMOVELOOPY0
-    ; STX COPYOFTEXTADDRESS
+    ; STX <COPYOFTEXTADDRESS
     PULS D
 
 TEXTATCMOVESKIPY
@@ -510,8 +489,9 @@ TEXTATAT
     LDA , Y+
     DECB
     ANDCC #$01
-    SUBA XCURSYS
-    STA CLINEX
+    SUBA <XCURSYS
+    ADDA CONSOLEX1
+    STA <CLINEX
 
     ; The vertical delta is calculated started from
     ; the current position.
@@ -519,8 +499,9 @@ TEXTATAT
     LDA , Y+
     DECB
     ANDCC #$01
-    SUBA YCURSYS
-    STA CLINEY
+    SUBA <YCURSYS
+    ADDA CONSOLEY1
+    STA <CLINEY
 
     ; Change the position like a CMOVE.
 
@@ -533,60 +514,9 @@ TEXTATSP0
     JSR GIMEBANKVIDEO
     STA , X+
 
-    ; Check if WRITING allows to change the pen+paper color.
-    ; In such case, we are going to copy the color directly.
-    LDA TEXTWW
-    CMPA #$3
-    BEQ TEXTATSP0C
-
-    ; Check if WRITING allows to change the pen color.
-
-    LDA TEXTWW
-    ANDA #$2
-    BEQ TEXTATCNOPEN
-
-    ; Update the foreground color of the character.
-
-    LDA , X
-    ANDA #$C7
-    STA , X
-    LDA PLOTC
-    ANDA #$F8
-    ORA , X
-    STA , X
-    
-TEXTATCNOPEN
-
-    ; Check if WRITING allows to change the paper color.
-
-    LDA TEXTWW
-    ANDA #$1
-    BEQ TEXTATCNOPAPER
-
-    ; Update the background color of the character.
-    
-    LDA , X
-    ANDA #$F8
-    STA , X
-    LDA PLOTC
-    ANDA #$C7
-    ORA , X
-    STA , X
-    
-TEXTATCNOPAPER
-
-    LEAX 1, X
-
-    ; Move the current cursor position ahead by one position.
-
-    JMP TEXTATINCX
-
-    ; If the program reach this point, it means that must copy
-    ; the color directly to the screen RAM.
-
 TEXTATSP0C
 
-    LDA PLOTC
+    LDA <PLOTC
     STA , X
     LEAX 1, X
     JMP TEXTATINCX
@@ -596,7 +526,7 @@ TEXTATSP0C
     ; character, to move to the next tab marker.
 
 TEXTATSKIPTAB
-    DEC TABSTODRAW
+    DEC <TABSTODRAW
     JMP TEXTATINCX
 
     ; Go ahead by one character.
@@ -605,14 +535,14 @@ TEXTATINCX
 
     ; Increment the current horizontal position.
 
-    INC XCURSYS
+    INC <XCURSYS
 
     ; If the current horizontal position is at the end
     ; of the line, we must increment the vertical position.
 
-    LDA XCURSYS
-    CMPA CURRENTTILESWIDTH
-    BEQ TEXTATNEXT2
+    LDA <XCURSYS
+    CMPA CONSOLEX2
+    BGT TEXTATNEXT2
 
     ; Move to the next character to print.
 
@@ -622,23 +552,23 @@ TEXTATNEXT2
 
     ; Put 0 as horizontal position.
 
-    LDA #0
-    STA XCURSYS
+    LDA CONSOLEX1
+    STA <XCURSYS
 
     ; Increment the vertical position.
 
-    INC YCURSYS
+    INC <YCURSYS
 
     ; Update the video ram address.
 
-    STX COPYOFTEXTADDRESS
+    STX <COPYOFTEXTADDRESS
 
     ; If the current vertical position is at the end
     ; of the screen, we must scroll the screen.
 
-    LDA YCURSYS
-    CMPA CURRENTTILESHEIGHT
-    BEQ TEXTATNEXT3
+    LDA <YCURSYS
+    CMPA CONSOLEY2
+    BGT TEXTATNEXT3
 
     ; Move to the next character to print.
 
@@ -649,22 +579,26 @@ TEXTATNEXT3
     ; Let's scroll vertically
 
     LDA #$FE
-    STA DIRECTION
+    STA <DIRECTION
     JSR VSCROLLT
 
     ; Decrement the current vertical position, since
     ; now the last line is not last anymore.
 
-    DEC YCURSYS
+    DEC <YCURSYS
 
     ; Update the current address video RAM, as well.
 
     ANDCC #$01
     LDA #0
     SUBA CURRENTTILESWIDTH
-    LDX COPYOFTEXTADDRESS
-    LEAX A, X
-    STX COPYOFTEXTADDRESS
+    LDX <COPYOFTEXTADDRESS
+    PSHS D
+    TFR A, B
+    ABX
+    ABX
+    PULS D
+    STX <COPYOFTEXTADDRESS
 
     ; Manage for the next character to print.
 
@@ -673,7 +607,7 @@ TEXTATNEXT
     ; If there are characters to skip to reach
     ; tabs marker, move ahead and loop.
 
-    LDA TABSTODRAW
+    LDA <TABSTODRAW
     LBNE TEXTATLOOP2
 
     ; If there are still characters to print,

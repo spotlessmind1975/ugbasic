@@ -50,9 +50,9 @@
 /* <usermanual>
 @keyword BELL
 
-@target ZX
+@target zx
 </usermanual> */
-void bell( Environment * _environment, int _note, int _channels ) {
+void bell( Environment * _environment, int _note, int _duration, int _channels ) {
 
 }
 
@@ -68,6 +68,6 @@ void bell( Environment * _environment, int _note, int _channels ) {
 /* <usermanual>
 @keyword BELL
 </usermanual> */
-void bell_vars( Environment * _environment, char * _note, char * _channels ) {
+void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels ) {
 
 }

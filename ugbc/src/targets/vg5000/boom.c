@@ -49,7 +49,7 @@
 /* <usermanual>
 @keyword BOOM
 </usermanual> */
-void boom( Environment * _environment, int _channels ) {
+void boom( Environment * _environment, int _duration, int _channels ) {
 
 }
 
@@ -65,7 +65,7 @@ void boom( Environment * _environment, int _channels ) {
 @keyword BOOM
 @target vg5000
 </usermanual> */
-void boom_var( Environment * _environment, char * _channels ) {
+void boom_var( Environment * _environment, char * _duration, char * _channels ) {
     
 }
 

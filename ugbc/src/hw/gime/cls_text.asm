@@ -48,11 +48,11 @@ CLSTX
     LSLA
     LSLA
     LSLA
-    STA PLOTC
+    STA <PLOTC
     LDB _PAPER
     JSR GIMESELECTPALETTEPAPER
-    ORA PLOTC
-    STA PLOTC
+    ORA <PLOTC
+    STA <PLOTC
 
     LDA CURRENTTILESWIDTH
     LDB CURRENTTILESHEIGHT
@@ -63,7 +63,7 @@ CLSTX
     LDX TEXTADDRESS
 
     LDA EMPTYTILE
-    LDB PLOTC
+    LDB <PLOTC
 
     ; The CLS command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 

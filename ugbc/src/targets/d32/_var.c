@@ -249,10 +249,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     break;
                                 }
                                 case 8:
-                                    outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
+                                    outhead3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
                                     break;
                                 case 1:
-                                    outline3("%s: rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
+                                    outhead3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                     break;
                             }                             
                             
@@ -412,13 +412,6 @@ void variable_cleanup( Environment * _environment ) {
                 // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
                 // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
                 // outhead1(".segment \"%s\"", actual->name);
-                if ( _environment->bitmaskNeeded ) {
-                    outhead0("BITMASK fcb $01,$02,$04,$08,$10,$20,$40,$80");
-                    outhead0("BITMASKN fcb $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
-                }
-                if ( _environment->deployed.dstring ) {
-                    outhead1("max_free_string equ $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
-                }
 
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
@@ -509,6 +502,14 @@ void variable_cleanup( Environment * _environment ) {
             outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
             outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
         }
+    }
+
+    if ( _environment->bitmaskNeeded ) {
+        outhead0("BITMASK fcb $01,$02,$04,$08,$10,$20,$40,$80");
+        outhead0("BITMASKN fcb $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
+    }
+    if ( _environment->deployed.dstring ) {
+        outhead1("max_free_string equ $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
     buffered_push_output( );

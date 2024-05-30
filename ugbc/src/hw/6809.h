@@ -1,6 +1,8 @@
 #ifndef __UGBC_CPU6809__
 #define __UGBC_CPU6809__
 
+#define     cpu6809     1
+
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -113,7 +115,6 @@ void cpu6809_limit_16bit( Environment * _environment, char * _variable, int _val
 void cpu6809_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6809_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6809_logical_not_8bit( Environment * _environment, char * _value, char * _result );
-void cpu6809_is_negative( Environment * _environment, char * _value, char * _result );
 void cpu6809_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6809_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6809_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result );
@@ -143,7 +144,6 @@ void cpu6809_math_and_const_8bit( Environment * _environment, char *_source, int
 void cpu6809_math_complement_const_16bit( Environment * _environment, char *_source, int _value );
 void cpu6809_math_complement_const_32bit( Environment * _environment, char *_source, int _value );
 void cpu6809_math_complement_const_8bit( Environment * _environment, char *_source, int _value );
-void cpu6809_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed );
 void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, int _value, int _signed );
 void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, int _value, int _signed );
 void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, int _value, int _signed );
@@ -230,6 +230,7 @@ void cpu6809_greater_than_memory( Environment * _environment, char *_source, cha
 void cpu6809_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char *_result, int _equal );
 void cpu6809_uppercase( Environment * _environment, char *_source, char *_size, char *_result );
 void cpu6809_lowercase( Environment * _environment, char *_source, char *_size, char *_result );
+void cpu6809_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value );
 void cpu6809_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value );
 void cpu6809_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern );
 void cpu6809_flip( Environment * _environment, char * _source, char * _size, char * _destination );
@@ -247,8 +248,7 @@ void cpu6809_move_nbit_indirect2( Environment * _environment, int _n, char * _va
 void cpu6809_bit_check( Environment * _environment, char * _value, int _position, char *_result, int _bitwidth );
 void cpu6809_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth );
 void cpu6809_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit );
-void cpu6809_bit_inplace_8bit_extended( Environment * _environment, char * _value, char * _position, int * _bit );
-void cpu6809_bit_inplace_8bit_extended_indirect( Environment * _environment, char * address, char * _position, int * _bit );
+void cpu6809_bit_inplace_8bit_extended_indirect( Environment * _environment, char * address, char * _position, char * _bit );
 void cpu6809_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _Signed );
 void cpu6809_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
 void cpu6809_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
@@ -410,7 +410,6 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_logical_and_8bit( _environment, _left, _right,  _result ) cpu6809_logical_and_8bit( _environment, _left, _right,  _result )
 #define cpu_logical_or_8bit( _environment, _left, _right,  _result ) cpu6809_logical_or_8bit( _environment, _left, _right,  _result )
 #define cpu_not_8bit( _environment, _value, _result ) cpu6809_not_8bit( _environment, _value, _result )
-#define cpu_is_negative( _environment, _value, _result ) cpu6809_is_negative( _environment, _value, _result )
 #define cpu_and_8bit( _environment, _left, _right,  _result ) cpu6809_and_8bit( _environment, _left, _right,  _result )
 #define cpu_or_8bit( _environment, _left, _right,  _result ) cpu6809_or_8bit( _environment, _left, _right,  _result )
 #define cpu_xor_8bit( _environment, _left, _right,  _result ) cpu6809_xor_8bit( _environment, _left, _right,  _result )
@@ -440,7 +439,6 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_math_complement_const_16bit( _environment, _source, _value  ) cpu6809_math_complement_const_16bit( _environment, _source, _value  )
 #define cpu_math_complement_const_32bit( _environment, _source, _value  ) cpu6809_math_complement_const_32bit( _environment, _source, _value  )
 #define cpu_math_complement_const_8bit( _environment, _source, _value  ) cpu6809_math_complement_const_8bit( _environment, _source, _value  )
-#define cpu_math_div2_8bit( _environment, _source, _steps, _signed  ) cpu6809_math_div2_8bit( _environment, _source, _steps, _signed  )
 #define cpu_math_div2_const_16bit( _environment, _source, _value, _signed  ) cpu6809_math_div2_const_16bit( _environment, _source, _value, _signed  )
 #define cpu_math_div2_const_32bit( _environment, _source, _value, _signed  ) cpu6809_math_div2_const_32bit( _environment, _source, _value, _signed  )
 #define cpu_math_div2_const_8bit( _environment, _source, _value, _signed  ) cpu6809_math_div2_const_8bit( _environment, _source, _value, _signed  )
@@ -527,6 +525,7 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_greater_than_memory_size( _environment, _source, _destination, _size, _result, _equal ) cpu6809_greater_than_memory_size( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_uppercase( _environment, _source, _size, _result ) cpu6809_uppercase( _environment, _source, _size, _result )
 #define cpu_lowercase( _environment, _source, _size, _result ) cpu6809_lowercase( _environment, _source, _size, _result )
+#define cpu_convert_string_into_8bit( _environment, _string, _len, _value ) cpu6809_convert_string_into_8bit( _environment, _string, _len, _value )
 #define cpu_convert_string_into_16bit( _environment, _string, _len, _value ) cpu6809_convert_string_into_16bit( _environment, _string, _len, _value )
 #define cpu_fill_indirect( _environment, _address, _size, _pattern ) cpu6809_fill_indirect( _environment, _address, _size,  _pattern )
 #define cpu_flip( _environment, _source, _size, _destination ) cpu6809_flip( _environment, _source, _size, _destination )
@@ -543,7 +542,6 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_move_nbit_indirect2( _environment, _n, _value, _source ) cpu6809_move_nbit_indirect2( _environment, _n, _value, _source )
 #define cpu_bit_check( _environment, _value, _position, _result, _bitwidth ) cpu6809_bit_check( _environment, _value, _position, _result, _bitwidth )
 #define cpu_bit_inplace_8bit( _environment, _value, _position, _bit ) cpu6809_bit_inplace_8bit( _environment, _value, _position, _bit );
-#define cpu_bit_inplace_8bit_extended( _environment, _value, _position, _bit ) cpu6809_bit_inplace_8bit_extended( _environment, _value, _position, _bit );
 #define cpu_bit_inplace_8bit_extended_indirect( _environment, _address, _position, _bit ) cpu6809_bit_inplace_8bit_extended_indirect( _environment, _address, _position, _bit );
 #define cpu_number_to_string( _environment, _number, _string, _string_size, _bits, _signed ) cpu6809_number_to_string( _environment, _number, _string, _string_size, _bits, _signed )
 #define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) cpu6809_bits_to_string( _environment, _number, _string, _string_size, _bits )

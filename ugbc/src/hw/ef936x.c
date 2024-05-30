@@ -370,6 +370,28 @@ void ef936x_bank_select( Environment * _environment, int _bank ) {
 
 }
 
+void console_calculate( Environment * _environment ) {
+
+    #if defined(__to8__)
+        int consoleSA = 0x4000;
+    #else
+        int consoleSA = 0x0000;
+    #endif
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "JSR CONSOLECALCULATE" );
+
+}
+
 int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );
@@ -436,6 +458,9 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "CLIPX1", 0 );
     cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
     cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -452,6 +477,8 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+
+    console_init( _environment );
 
 }
 
@@ -632,24 +659,10 @@ void ef936x_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void ef936x_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LDB CURRENTTILESWIDTH" );
-    outline1("STB %s", _result );
-
-}
-
 void ef936x_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDD CURRENTHEIGHT" );
     outline1("STD %s", _result );
-
-}
-
-void ef936x_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LDB CURRENTTILESHEIGHT" );
-    outline1("STB %s", _result );
 
 }
 
@@ -769,6 +782,8 @@ void ef936x_initialization( Environment * _environment ) {
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 40;
     _environment->screenTilesHeight = 25;
+    _environment->consoleTilesWidth = 40;
+    _environment->consoleTilesHeight = 25;
     _environment->screenTiles = 255;
     _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
     _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
@@ -796,6 +811,8 @@ void ef936x_initialization( Environment * _environment ) {
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 4096;
 
+    console_init( _environment );
+    
     screen_mode( _environment, 0 );
 
 }
@@ -840,7 +857,7 @@ void ef936x_finalization( Environment * _environment ) {
         palette = SYSTEM_PALETTE;
     }
 
-#ifdef __to8__
+#if defined( __to8__ ) || defined( __mo5__ )
     if ( _environment->currentMode < 3 ) {
         
         RGBi * transposedPalette = malloc_palette( 16 );
@@ -935,7 +952,7 @@ void ef936x_cline( Environment * _environment, char * _characters ) {
     outline0("STA <CLINEX" );
     outline1("LDA %s", y->realName );
     outline0("STA <CLINEY");
-    outline0("JSR CLINE");
+    outline0("JSR CLINEG");
 
 }
 
@@ -1169,6 +1186,15 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
+#if defined( __mo5__ ) 
+
+    RGBi * palette = &SYSTEM_PALETTE[0];
+    int paletteColorCount = 16;
+    commonPalette = &SYSTEM_PALETTE[0];
+    lastUsedSlotInCommonPalette = 16;
+
+#else
+
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
     int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
@@ -1224,6 +1250,8 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
         adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
     }
+
+#endif
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -1346,20 +1374,23 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 if ( colorIndexes[xx] != colorBackground ) {
                     adilinepixel(colorForeground);
                     *( buffer + offset + 3) |= bitmask;
+                    if ( _environment->debugImageLoad ) {
+                        printf( "%1.1x", colorForeground );
+                    }
                     // printf("*");
                 } else {
                     adilinepixel(colorBackground);
                     *( buffer + offset + 3) &= ~bitmask;
                     // printf(" ");
+                    if ( _environment->debugImageLoad ) {
+                        printf( "%1.1x", colorBackground );
+                    }
                 }
 
                 offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
 
                 bitmask = colorForeground << 4 | ( colorBackground );
                 *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) = bitmask;
-                if ( _environment->debugImageLoad ) {
-                    printf( "%1.1x", colorForeground );
-                }
 
             }
         }
@@ -1391,6 +1422,17 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 static Variable * ef936x_image_converter_multicolor_mode4( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+#if defined( __mo5__ ) 
+
+    RGBi * palette = &SYSTEM_PALETTE[0];
+    int paletteColorCount = 16;
+    commonPalette = &SYSTEM_PALETTE[0];
+    lastUsedSlotInCommonPalette = 16;
+
+    int i;
+
+#else
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
@@ -1447,6 +1489,8 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
         adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
     }
+
+#endif
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -1572,6 +1616,17 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
+#if defined( __mo5__ ) 
+
+    RGBi * palette = &SYSTEM_PALETTE[0];
+    int paletteColorCount = 16;
+    commonPalette = &SYSTEM_PALETTE[0];
+    lastUsedSlotInCommonPalette = 16;
+
+    int i;
+    
+#else
+
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
     int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
@@ -1630,6 +1685,8 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
         adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
     }
+
+#endif
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;

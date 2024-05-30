@@ -33,10 +33,10 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; SOURCE: TMPPTR, LEN: MATHPTR0
-; PATTERN: TMPPTR2, LEN: MATHPTR1
-; DESTINATION: MATHPTR4;MATHPTR4+1
-; SCRATCH: MATHPTR2, MATHPTR3, MATHPTR6, MATHPTR7
+; SOURCE: <TMPPTR, LEN: MATHPTR0
+; <PATTERN: <TMPPTR2, LEN: <MATHPTR1
+; DESTINATION: <MATHPTR4;MATHPTR4+1
+; SCRATCH: <MATHPTR2, <MATHPTR3, <MATHPTR6, <MATHPTR7
 
 CPUSTRINGSUB
 
@@ -73,10 +73,10 @@ CPUSTRINGSUBL1
     LEAY 1, Y
 
     ; Decrement the lenght of original string
-    DEC MATHPTR2
+    DEC <MATHPTR2
 
     ; Decrement the lenght of the pattern.
-    DEC MATHPTR1
+    DEC <MATHPTR1
 
     ; If there are other characters in pattern,
     ; repeat the comparison loop.
@@ -84,7 +84,7 @@ CPUSTRINGSUBL1
 
     ; Reset the original pointer and length of the pattern
     LDX <MATHPTR6
-    STX TMPPTR2
+    STX <TMPPTR2
     LDA <MATHPTR3
     STA <MATHPTR1
 
@@ -97,7 +97,7 @@ CPUSTRINGSUBL2
 
     ; Reset the original pointer and length of the pattern
     LDX <MATHPTR6
-    STX TMPPTR2
+    STX <TMPPTR2
     LDA <MATHPTR3
     STA <MATHPTR1
 

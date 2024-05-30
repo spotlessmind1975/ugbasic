@@ -50,9 +50,22 @@
 /* <usermanual>
 @keyword BELL
 
-@target coco3
+@target coco
 </usermanual> */
-void bell( Environment * _environment, int _note, int _channels ) {
+void bell( Environment * _environment, int _note, int _duration, int _channels ) {
+
+    if ( _environment->audioConfig.async ) {
+        CRITICAL_BELL_NOT_ASYNC();
+    }
+
+    deploy( random, src_hw_6809_cpu_random_asm );
+    deploy( audio1startup, src_hw_coco3_audio1_asm );
+
+    long durationInCycles = ( _duration * 67 ) & 0xffff;
+
+    outline1( "LDB $%2.2x", _note );
+    outline1( "LDY $%4.4x", durationInCycles );
+    outline0( "JSR COCO3AUDIO1BELL" );
 
 }
 
@@ -68,6 +81,38 @@ void bell( Environment * _environment, int _note, int _channels ) {
 /* <usermanual>
 @keyword BELL
 </usermanual> */
-void bell_vars( Environment * _environment, char * _note, char * _channels ) {
+void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels ) {
+
+    if ( _environment->audioConfig.async ) {
+        CRITICAL_BELL_NOT_ASYNC();
+    }
+    
+    deploy( random, src_hw_6809_cpu_random_asm );
+    deploy( audio1startup, src_hw_coco3_audio1_asm );
+
+    if ( _duration ) {
+        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 3500 );
+
+        outline1( "LDD %s", duration->realName );
+        outline0( "ASLB" );
+        outline0( "ROLA" );
+        outline0( "ASLB" );
+        outline0( "ROLA" );
+        outline0( "ASLB" );
+        outline0( "ROLA" );
+        outline0( "TFR D, Y" );
+
+    } else {
+        
+    }
+
+    if ( _note ) {
+        Variable * note = variable_retrieve_or_define( _environment, _note, VT_BYTE, 0 );
+        outline1( "LDB %s", note->realName );
+    } else {
+        outline0( "LDB #36" );
+    }
+
+    cpu_call( _environment, "COCO3AUDIO1BELL" );
 
 }

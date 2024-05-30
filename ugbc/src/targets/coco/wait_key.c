@@ -49,18 +49,18 @@ void wait_key( Environment * _environment ) {
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
 
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
-    char repeatLabel2[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel2, "%srepeatx", label );
-
-    cpu_label( _environment, repeatLabel2 );
-
-    coco_scancode( _environment, pressed->realName, result->realName );
-
-    cpu_bvneq( _environment, pressed->realName, repeatLabel2 );
+    char repeatLabel2[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel2, "%srepeat2", label );
 
     cpu_label( _environment, repeatLabel );
 
     coco_scancode( _environment, pressed->realName, result->realName );
 
     cpu_bveq( _environment, pressed->realName, repeatLabel );
+
+    cpu_label( _environment, repeatLabel2 );
+
+    coco_scancode( _environment, pressed->realName, result->realName );
+
+    cpu_bvneq( _environment, pressed->realName, repeatLabel2 );
 
 }

@@ -37,8 +37,8 @@
 
 ; This routine will uncompress a MSC1 compressed memory block
 ; from an input stream to an output stream. Input stream must
-; be pointed by TMPPTR while the output stream must be pointed
-; by TMPPTR2.
+; be pointed by <TMPPTR while the output stream must be pointed
+; by <TMPPTR2.
 MSC1UNCOMPRESS
 
     ; Initialize the offsets for input and output streams.

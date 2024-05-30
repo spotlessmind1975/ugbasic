@@ -40,37 +40,11 @@
 
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
-void setup_embedded( Environment * _environment ) {
-
-    _environment->embedded.cpu_fill_blocks = 1;
-    _environment->embedded.cpu_fill = 1;
-    _environment->embedded.cpu_math_div2_8bit = 1;
-    _environment->embedded.cpu_math_mul_8bit_to_16bit = 1;
-    _environment->embedded.cpu_math_div_8bit_to_8bit = 1;
-    _environment->embedded.cpu_math_div2_const_8bit = 1;
-    _environment->embedded.cpu_math_mul2_const_8bit = 1;
-    _environment->embedded.cpu_math_mul_16bit_to_32bit = 1;
-    _environment->embedded.cpu_math_div_16bit_to_16bit = 1;
-    _environment->embedded.cpu_math_div_32bit_to_16bit = 1;
-    _environment->embedded.cpu_random = 1;
-    _environment->embedded.cpu_mem_move = 1;
-    _environment->embedded.cpu_uppercase = 1;
-    _environment->embedded.cpu_lowercase = 1;
-    _environment->embedded.cpu_hex_to_string = 1;
-    _environment->embedded.cpu_string_sub = 1;
-    _environment->embedded.cpu_less_than_8bit = 1;
-    _environment->embedded.cpu_less_than_16bit = 1;
-    _environment->embedded.cpu_less_than_32bit = 1;
-    _environment->embedded.cpu_math_div2_const_16bit = 1;
-    _environment->embedded.cpu_msc1_uncompress = 1;
-    _environment->embedded.cpu_compare_16bit = 1;
-    _environment->embedded.cpu_compare_32bit = 1;
-
-}
-
 void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
+
+    _environment->audioConfig.async = 1;
 
     banks_init( _environment );
 
@@ -134,6 +108,15 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
 
+    variable_import( _environment, "AY8910TIMER", VT_BUFFER, 6 );
+    variable_global( _environment, "AY8910TIMER" );    
+
+    variable_import( _environment, "CLINEX", VT_BYTE, 0 );
+    variable_global( _environment, "CLINEX" );    
+
+    variable_import( _environment, "CLINEY", VT_BYTE, 0 );
+    variable_global( _environment, "CLINEY" );    
+
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
@@ -154,11 +137,11 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
 
+    setup_text_variables( _environment );
+
     cpc_initialization( _environment );
     ay8910_initialization( _environment );
     
-    setup_text_variables( _environment );
-
     outline0("CALL CPCSTARTUP");
 
     if ( _environment->tenLinerRulesEnforced ) {

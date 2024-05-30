@@ -151,8 +151,8 @@
 
 #define DEFAULT_PAINT_BUCKET_SIZE   512
 
-#define BANK_COUNT          1
-#define BANK_SIZE           4096
+#define BANK_COUNT          0
+#define BANK_SIZE           16128
 
 #define MAX_AUDIO_CHANNELS  1
 
@@ -172,7 +172,7 @@ void mo5_busy_wait( Environment * _environment, char * _timing );
 void mo5_irq_at( Environment * _environment, char * _label );
 void mo5_follow_irq( Environment * _environment );
 int convertbintok7(Environment * _environment);
-int mo5_convertbintok7_original(Environment * _environment);
+int convertbintok7_original(Environment * _environment);
 void mo5_joystick_semivars( Environment * _environment, int _joystick, char * _result );
 void mo5_joystick_vars( Environment * _environment, char * _joystick, char * _result );
 

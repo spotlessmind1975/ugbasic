@@ -52,25 +52,38 @@
 
 @english
 This command makes the computer emit a bell-like sound. It is possible to indicate 
-on which voices the system should emit the sound. If omitted, it will be issued on all.
+the pitch, the duration and on which voices the system should emit the sound. 
+If channel is omitted, it will be issued on all. If duration is omitted, the
+duration is 3500 ms. Finally, if pitch is omitted, a C3 note frequency will be
+used.
 
 @italian
-Questo comando fa emettere al computer un suono tipo campana. E' possibile indicare su 
-quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
+Questo comando fa emettere al computer un suono tipo campana. E' possibile indicare
+il pitch, la durata e sy quali voci il sistema dovrà emettere il suono. 
+Se il canale omesso, sarà emesso su tutte. Se la durata è omessa, la durata standard
+sarà di 3500 millisecondi. Infine, se il pitch è omesso, sarà utilizzata una nota C3.
 
-@syntax BELL #note [ON #channels]
+@syntax BELL [[#note] [, #duration]] [ON #channels]
+@syntax BELL [[note] [, duration]] [ON channels]
 
-@example BELL #42
+@example BELL 42
 @example BELL #42 ON #%001
 
 @target atari
 </usermanual> */
-void bell( Environment * _environment, int _note, int _channels ) {
+void bell( Environment * _environment, int _note, int _duration, int _channels ) {
 
     pokey_start( _environment, _channels );
     pokey_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
     pokey_set_note( _environment, _channels, _note );
-    pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+
+    long durationInTicks = ( _duration / 20 ) & 0xff;
+
+    pokey_set_duration( _environment, _channels, durationInTicks );
+
+    if ( ! _environment->audioConfig.async ) {
+        pokey_wait_duration( _environment, _channels );
+    }
 
 }
 
@@ -86,11 +99,9 @@ void bell( Environment * _environment, int _note, int _channels ) {
 /* <usermanual>
 @keyword BELL
 
-@syntax BELL note [ON channels]
-
 @target atari
 </usermanual> */
-void bell_vars( Environment * _environment, char * _note, char * _channels ) {
+void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels ) {
 
     Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
     if ( _channels ) {
@@ -98,12 +109,30 @@ void bell_vars( Environment * _environment, char * _note, char * _channels ) {
         pokey_start_var( _environment, channels->realName );
         pokey_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
         pokey_set_note_vars( _environment, channels->realName, note->realName );
-        pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
+            pokey_set_duration_vars( _environment, channels->realName, duration->realName );
+        } else {
+            pokey_set_duration_vars( _environment, channels->realName, NULL );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            pokey_wait_duration_vars( _environment, channels->realName );
+        }        
     } else {
         pokey_start_var( _environment, NULL );
         pokey_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
         pokey_set_note_vars( _environment, NULL, note->realName );
-        pokey_set_duration_vars( _environment, NULL, "TICKSPERSECOND" );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
+            pokey_set_duration_vars( _environment, NULL, duration->realName );
+        } else {
+            pokey_set_duration_vars( _environment, NULL, NULL );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            pokey_wait_duration_vars( _environment, NULL );
+        }        
     }
 
 }

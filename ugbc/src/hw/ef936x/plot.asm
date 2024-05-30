@@ -831,7 +831,7 @@ PLOT4
     LSRA          ; 0/1/2/4
     RORB
     LSRB
-    LSRB          ; B = PLOTX/8
+    LSRB          ; B = <PLOTX/8
     ABX           ; adjust for X position
     
     LDY #PLOTORBIT

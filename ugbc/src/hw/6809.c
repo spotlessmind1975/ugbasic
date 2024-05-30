@@ -908,68 +908,6 @@ void cpu6809_math_double_8bit( Environment * _environment, char *_source, char *
 }
 
 /**
- * @brief <i>CPU 6809</i>: emit code to halves for several times a 8 bit value
- *
- * @param _environment Current calling environment
- * @param _source Value to halves and destination for result
- * @param _steps Times to halves
- */
-void cpu6809_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
-
-    inline( cpu_math_div2_8bit )
-
-        MAKE_LABEL
-
-        if ( _signed ) {
-            outline0("LDA #0");
-            outline0("STA <MATHPTR0");
-            outline1("LDA %s", _source);
-            outline0("AND #$80");
-            outline1("BEQ %spos", label);
-            outline0("LDA #1");
-            outline0("STA <MATHPTR0");
-            outline0("EORA #$FF");
-            outline0("ADDA #1");
-            outhead1("%spos", label);
-        } else {
-            outline1("LDA %s", _source);
-        }
-        outline1("LDB #$%2.2x", _steps);
-        outline0("CMPB #0");
-        outline1("BEQ %sdone", label);
-        outhead1("%sloop", label);
-        outline0("ASRA");
-        outline0("DECB");
-        outline0("CMPB #0");
-        outline1("BNE %sloop", label);
-        outhead1("%sdone", label);
-        if ( _signed ) {
-            outline0("PSHS A");
-            outline0("LDA <MATHPTR0");
-            outline1("BEQ %spos2", label);
-            outline0("PULS A");
-            outline0("EORA #$FF");
-            outline0("ADDA #1");
-            outhead1("%spos2", label);
-        }
-        outline1("STA %s", _source);
-
-    embedded( cpu_math_div2_8bit, src_hw_6809_cpu_math_div2_8bit_asm );
-
-        outline1("LDB %s", _source);
-        outline1("LDA #$%2.2x", _steps);
-        if ( _signed ) {
-            outline0("JSR CPUMATHDIV28BIT_SIGNED");
-        } else {
-            outline0("JSR CPUMATHDIV28BIT");
-        }
-        outline1("STB %s", _source);
-
-    done( )
-
-}
-
-/**
  * @brief <i>CPU 6809</i>: emit code to multiply two 8bit values in a 16 bit register
  *
  * @param _environment Current calling environment
@@ -1141,7 +1079,7 @@ void cpu6809_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
  */
 void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    inline( cpu_math_div2_8bit )
+    inline( cpu_math_div2_const_8bit )
 
         MAKE_LABEL
 
@@ -1176,7 +1114,7 @@ void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, in
         }
         outline1("STA %s", _source);
 
-    embedded( cpu_math_div2_8bit, src_hw_6809_cpu_math_div2_8bit_asm );
+    embedded( cpu_math_div2_const_8bit, src_hw_6809_cpu_math_div2_const_8bit_asm );
 
         outline1("LDB %s", _source);
         outline1("LDA #$%2.2x", _steps);
@@ -2758,19 +2696,16 @@ void cpu6809_math_and_const_32bit( Environment * _environment, char *_source, in
 
 void cpu6809_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte ) {
 
-    inline( cpu_combine_nibbles )
+    no_inline( cpu_combine_nibbles )
 
-        outline1("LDB %s", _low_nibble);
-        outline1("STB %s", _byte);
-        outline1("LDB %s", _hi_nibble);
-        outline0("LSLB");
-        outline0("LSLB");
-        outline0("LSLB");
-        outline0("LSLB");
-        outline1("ORB %s", _byte);
-        outline1("STB %s", _byte);
+    embedded( cpu_combine_nibbles, src_hw_6809_cpu_combine_nibbles_asm );
 
-    no_embedded( cpu_combine_nibbles )
+        outline1("LDX #%s", _hi_nibble );
+        outline1("LDY #%s", _low_nibble );
+        outline1("LDU #%s", _byte );
+        outline0("JSR CPUCOMBINENIBBLES" );
+
+    done( )
 
 }
 
@@ -3096,41 +3031,54 @@ void cpu6809_end( Environment * _environment ) {
 
 void cpu6809_random( Environment * _environment, char * _entropy ) {
 
-    inline( cpu_random )
+    if ( ! _environment->deployed.random ) {
 
-        MAKE_LABEL
+        inline( cpu_random )
 
-        srand( time( NULL ) );
+            MAKE_LABEL
 
-        if ( _entropy ) {
-            outline0("LDD CPURANDOM_SEED");
-            outline0("ASLB");
-            outline0("ASLB");
-            outline0("ROLA");
-            outline0("ADDD CPURANDOM_SEED+2");
-            outline0("LSR CPURANDOM_SEED");
-            outline0("ROR CPURANDOM_SEED+1");
-            outline0("ASLB");
-            outline0("ROLA");
-            outline1("ADDA %s", _entropy);
-            outline0("ASLB");
-            outline0("ROLA");
-            outline0("ASLB");
-            outline0("ROLA");
-            outline0("ADDD CPURANDOM_SEED+1");
-            outline0("STD CPURANDOM_SEED+1");
-        }
+            srand( time( NULL ) );
 
-    embedded( cpu_random, src_hw_6809_cpu_random_asm );
+            if ( _entropy ) {
+                outline0("LDD CPURANDOM_SEED");
+                outline0("ASLB");
+                outline0("ASLB");
+                outline0("ROLA");
+                outline0("ADDD CPURANDOM_SEED+2");
+                outline0("LSR CPURANDOM_SEED");
+                outline0("ROR CPURANDOM_SEED+1");
+                outline0("ASLB");
+                outline0("ROLA");
+                outline1("ADDA %s", _entropy);
+                outline0("ASLB");
+                outline0("ROLA");
+                outline0("ASLB");
+                outline0("ROLA");
+                outline0("ADDD CPURANDOM_SEED+1");
+                outline0("STD CPURANDOM_SEED+1");
+            }
+
+        embedded( cpu_random, src_hw_6809_cpu_random_asm );
+
+            if ( _entropy ) {
+                outline1( "LDB %s", _entropy );
+                outline0( "STB <PATTERN" );
+            }
+
+            outline0( "JSR CPURANDOM" );
+
+        done( )
+
+    } else {
 
         if ( _entropy ) {
             outline1( "LDB %s", _entropy );
             outline0( "STB <PATTERN" );
-            outline0( "JSR CPURANDOM" );
         }
 
-    done( )
+        outline0( "JSR CPURANDOM" );
 
+    }
 }
 
 void cpu6809_random_8bit( Environment * _environment, char * _entropy, char * _result ) {
@@ -3383,51 +3331,43 @@ void cpu6809_xor_32bit( Environment * _environment, char * _left, char * _right,
 
 void cpu6809_swap_8bit( Environment * _environment, char * _left, char * _right ) {
 
-    inline( cpu_swap_8bit )
+    no_inline( cpu_swap_8bit )
 
-        MAKE_LABEL
+    embedded( cpu_swap_8bit, src_hw_6809_cpu_swap_asm ); // it is not an error: swap 8/16/32 shares code
 
-        outline1("LDA %s", _right );
-        outline1("LDB %s", _left );
-        outline1("STA %s", _left );
-        outline1("STB %s", _right );
+        outline1("LDX #%s", _right );
+        outline1("LDY #%s", _left );
+        outline0("JSR CPUSWAP1" );
 
-    no_embedded( cpu_swap_8bit )
+    done( )
 
 }
 
 void cpu6809_swap_16bit( Environment * _environment, char * _left, char * _right ) {
 
-    inline( cpu_swap_16bit )
+    no_inline( cpu_swap_8bit )
 
-        MAKE_LABEL
+    embedded( cpu_swap_8bit, src_hw_6809_cpu_swap_asm ); // it is not an error: swap 8/16/32 shares code
 
-        outline1("LDD %s", _right );
-        outline1("LDU %s", _left );
-        outline1("STD %s", _left );
-        outline1("STU %s", _right );
+        outline1("LDX #%s", _right );
+        outline1("LDY #%s", _left );
+        outline0("JSR CPUSWAP2" );
 
-    no_embedded( cpu_swap_16bit )
+    done( )
 
 }
 
 void cpu6809_swap_32bit( Environment * _environment, char * _left, char * _right  ) {
 
-    inline( cpu_swap_32bit )
+    no_inline( cpu_swap_8bit )
 
-        MAKE_LABEL
+    embedded( cpu_swap_8bit, src_hw_6809_cpu_swap_asm ); // it is not an error: swap 8/16/32 shares code
 
-        outline1("LDD %s", _right );
-        outline1("LDU %s", _left );
-        outline1("STD %s", _left );
-        outline1("STU %s", _right );
+        outline1("LDX #%s", _right );
+        outline1("LDY #%s", _left );
+        outline0("JSR CPUSWAP4" );
 
-        outline1("LDD %s", address_displacement(_environment, _right, "2") );
-        outline1("LDU %s", address_displacement(_environment, _left, "2") );
-        outline1("STD %s", address_displacement(_environment, _left, "2") );
-        outline1("STU %s", address_displacement(_environment, _right, "2") );
-
-    no_embedded( cpu_swap_32bit )
+    done( )
 
 }
 
@@ -3486,11 +3426,11 @@ void cpu6809_not_32bit( Environment * _environment, char * _value, char * _resul
 }
 
 void cpu6809_di( Environment * _environment ) {
-
+    outline0( "ORCC #$50" );
 }
 
 void cpu6809_ei( Environment * _environment ) {
-
+    outline0( "ANDCC #$AF" );
 }
 
 void cpu6809_inc( Environment * _environment, char * _variable ) {
@@ -4658,6 +4598,57 @@ void cpu6809_lowercase( Environment * _environment, char *_source, char *_size, 
 
 }
 
+void cpu6809_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value ) {
+
+    inline( cpu_convert_string_into_16bit )
+
+        MAKE_LABEL
+
+        // Y = 0
+        outline1("LDB %s", _len);
+        outline1("beq %sdone", label );
+        outline0("STB ,-S");
+        outline1("LDU %s", _string);
+
+        outline0("LDX #0");
+        outhead1("%sloop", label );
+        
+        // X=X*10
+        outline0("TFR X,D");    //6
+        outline0("LSLB");       //2
+        outline0("ROLA");       //2
+        outline0("TFR D,X");    //6 D=X=2val
+        outline0("LSLB");       //2 
+        outline0("ROLA");       //2 D=4val
+        outline0("LSLB");       //2 
+        outline0("ROLA");       //2 D=8val
+        outline0("LEAX D,X");   //8 D=8val+2val=10val (32 cycles)
+                
+        // leggo carattere
+        outline0("LDB ,U+" );
+
+        // numero? no -> fine
+        outline0("SUBB #48" );
+        outline1("BMI %sdone", label );
+        outline0("CMPB #9" );
+        outline1("BHI %sdone", label );
+
+        // aggiungo il numero al registro X
+        outline0("ABX");
+        
+        // ripeti
+        outline0("DEC ,S" );
+        outline1("BNE %sloop", label );
+
+        outhead1("%sdone", label );
+        outline0("LEAS 1,S");
+        outline0("TFR X, D" );
+        outline1("STB %s", _value );
+
+    no_embedded( cpu_convert_string_into_16bit )
+
+}
+
 void cpu6809_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
     inline( cpu_convert_string_into_16bit )
@@ -4733,230 +4724,114 @@ void cpu6809_fill_indirect( Environment * _environment, char * _address, char * 
 
 void cpu6809_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
-    inline( cpu_flip )
+    no_inline( cpu_flip )
 
-        MAKE_LABEL
+    embedded( cpu_flip, src_hw_6809_cpu_flip_asm );
 
         outline1("LDU %s", _source);
         outline1("LDX %s", _destination);
         outline1("LDB %s", _size);
-        outline1("BEQ %sdone", label);
-        outline0("ABX");
-        outhead1("%sx", label);
-        outline0("LDA ,U+");
-        outline0("STA ,-X");
-        outline0("DECB");
-        outline1("BNE %sx", label);
-        outhead1("%sdone", label);
+        outline0("JSR CPUFLIP");
 
-    no_embedded( cpu_flip )
+    done( )
 
 }
 
 void cpu6809_bit_check( Environment * _environment, char * _value, int _position, char *_result, int _bitwidth ) {
 
-    inline( cpu_bit_check )
+    no_inline( cpu_bit_check_extended )
 
-        MAKE_LABEL
+    embedded( cpu_bit_check_extended, src_hw_6809_cpu_bit_check_extended_asm );
 
-        //outline0("STB <MATHPTR0" );
-        switch( _position ) {
-            case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24:
-                outline1("LDB %s", _value);
+        switch( _bitwidth ) {
+            case 8:
+                outline1("LDX #%s", _value);
                 break;
-            case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
-                outline1("LDB %s", address_displacement(_environment, _value, "1"));
+            case 16:
+                outline1("LDX #%s", address_displacement( _environment, _value, "1" ) );
                 break;
-            case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8: {
-                char offset[MAX_TEMPORARY_STORAGE];
-                sprintf(offset, "%d", ( _bitwidth / 8 ) - 2 );
-                outline1("LDB %s", address_displacement(_environment, _value, offset) );
+            case 32:
+                outline1("LDX #%s", address_displacement( _environment, _value, "3" ) );
                 break;
-            }
-            case 7:  case 6:  case 5:  case 4:  case 3:  case 2:  case 1: case 0: {
-                char offset[MAX_TEMPORARY_STORAGE];
-                sprintf(offset, "%d", ( _bitwidth / 8 ) - 1 );
-                outline1("LDB %s", address_displacement(_environment, _value, offset) );
-                break;
-            }
         }
-        outline1("ANDB #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
+        outline1("LDA #$%2.2x", _position );
+        outline0("JSR CPUBITCHECKEXTENDED" );
+
         if ( _result ) {
-            outline1("BEQ %send", label);
-            outline0("LDB #$ff");
-            outhead1("%send", label)
-            outline1("STB %s", _result);
+            outline1("STA %s", _result);
         }
 
-    no_embedded( cpu_bit_check )
+    done( )
 
 }
 
 void cpu6809_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth ) {
 
-    static int shift_tab = 0;
-    
-    inline( cpu_bit_check_extended )
+    no_inline( cpu_bit_check_extended )
 
-        MAKE_LABEL
-        
-        if(!shift_tab) {
-            shift_tab = 1;
-            outline0("BRA _bit_check_extended_tab_after");
-            outhead0("bit_check_extended_tab");
-            outline0("fcb 1,2,4,8,16,32,64,128");
-            outhead0("_bit_check_extended_tab_after");
-        }
-        
-        outline2("LDB %s+%d", _value, ( _bitwidth / 8 ) - 1 );
-        outline1("LDA %s", _position);
-        if(_bitwidth>8) {
-            outline0("CMPA #8");
-            outline1("BLO %seval", label);
-            outline2("LDB %s+%d", _value, ( _bitwidth / 8 ) - 2 );
-        }
-        if(_bitwidth>16) {
-            outline0("CMPA #16");
-            outline1("BLO %seval", label);
-            outline1("LDB %s", address_displacement(_environment, _value, "1"));
-            outline0("CMPA #24");
-            outline1("BLO %seval", label);
-            outline1("LDB %s", _value);
-        }
-        
-        outhead1("%seval", label );
-        outline0("LDX #bit_check_extended_tab");
-        outline1("LDA %s", _position);
-        outline0("ANDA #7");
-        outline0("ANDB A,X");
-        
+    embedded( cpu_bit_check_extended, src_hw_6809_cpu_bit_check_extended_asm );
+
+        outline1("LDX #%s", _value);
+        outline1("LDA %s", _position );
+        outline0("JSR CPUBITCHECKEXTENDED" );
+
         if ( _result ) {
-            outline1("BEQ %send", label);
-            outline0("LDB #$ff");
-            outhead1("%send", label)
-            outline1("STB %s", _result);
+            outline1("STA %s", _result);
         }
-        
-    no_embedded( cpu_bit_check_extended )
+
+    done( )
 
 }
 
 void cpu6809_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
 
+    _environment->bitmaskNeeded = 1;
+
     MAKE_LABEL
 
-    inline( cpu_bit_inplace )
+    no_inline( cpu_bit_inplace )
 
-        if ( _bit ) {
-            outline1("LDA %s", _value );
-            if ( *_bit ) {
-                outline1("ORA #$%2.2x", (unsigned char)( 1 << _position ) );
-            } else {
-                outline1("ANDA #$%2.2x", (unsigned char)(~( 1 << _position )) );
-            }
-            outline1("STA %s", _value );
+    embedded( cpu_bit_inplace, src_hw_6809_cpu_bit_inplace_asm );
 
-        } else {
-            outline1("BEQ %szero", label );
-            outline1("LDA %s", _value );
-            outline1("ORA #$%2.2x", (unsigned char)( 1 << _position ) );
-            outline1("STA %s", _value );
-            outline1("JMP %sdone", label );
-            outhead1("%szero", label );
-            outline1("LDA %s", _value );
-            outline1("ANDA #$%2.2x", (unsigned char)(~( 1 << _position )) );
-            outline1("STA %s", _value );
-            outhead1("%sdone", label );
+        if ( ! _bit ) {
+            outline0("PSHS CC");
         }
+        outline1("LDX #%s", _value);
+        outline1("LDA #$%2.2x", _position);
+        if ( _bit ) {
+            if ( *_bit ) {
+                outline0("ORCC #$01");
+            } else {
+                outline0("ANDCC #$FE");
+            }
+        } else {
+            outline0("PULS CC");
+        }
+        outline0("JSR CPUBITINPLACE");
 
-    no_embedded( cpu_bit_inplace )
+    done( )
 
 }
 
-void cpu6809_bit_inplace_8bit_extended( Environment * _environment, char * _value, char * _position, int * _bit ) {
+void cpu6809_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, char * _bit ) {
 
     _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    inline( cpu_bit_inplace )
+    no_inline( cpu_bit_inplace )
 
+    embedded( cpu_bit_inplace, src_hw_6809_cpu_bit_inplace_asm );
+
+        outline1("LDX %s", _address);
+        outline1("LDA %s", _position);
         if ( _bit ) {
-            if ( *_bit ) {
-                outline1("LDB %s", _position);
-                outline0("LDX #BITMASK");
-                outline1("LDA %s", _value );
-                outline0("ORA B, X");
-            } else {
-                outline1("LDB %s", _position);
-                outline0("LDX #BITMASKN");
-                outline1("LDA %s", _value );
-                outline0("ANDA B, X");
-            }
-            outline1("STA %s", _value );
-
-        } else {
-            outline1("BEQ %szero", label );
-            outline1("LDB %s", _position);
-            outline0("LDX #BITMASK");
-            outline1("LDA %s", _value );
-            outline0("ORA B, X");
-            outline1("STA %s", _value );
-            outline1("JMP %sdone", label );
-            outhead1("%szero", label );
-            outline1("LDB %s", _position);
-            outline0("LDX #BITMASKN");
-            outline1("LDA %s", _value );
-            outline0("ANDA B, X");
-            outline1("STA %s", _value );
-            outhead1("%sdone", label );
+            outline1("LDB %s", _bit);
+            outline0("RORB");
         }
+        outline0("JSR CPUBITINPLACE");
 
-    no_embedded( cpu_bit_inplace )
-
-}
-
-void cpu6809_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, int * _bit ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    MAKE_LABEL
-
-    inline( cpu_bit_inplace )
-
-        outline1("LDY %s", _address);
-
-        if ( _bit ) {
-            if ( *_bit ) {
-                outline1("LDB %s", _position);
-                outline0("LDX #BITMASK");
-                outline0("LDA , Y" );
-                outline0("ORA B, X");
-            } else {
-                outline1("LDB %s", _position);
-                outline0("LDX #BITMASKN");
-                outline0("LDA , Y" );
-                outline0("ANDA B, X");
-            }
-            outline0("STA , Y");
-        } else {
-            outline1("BEQ %szero", label );
-            outline1("LDB %s", _position);
-            outline0("LDX #BITMASK");
-            outline0("LDA , Y" );
-            outline0("ORA B, X");
-            outline0("STA , Y");
-            outline1("JMP %sdone", label );
-            outhead1("%szero", label );
-            outline1("LDB %s", _position);
-            outline0("LDX #BITMASKN");
-            outline0("LDA , Y" );
-            outline0("ANDA B, X");
-            outline0("STA , Y");
-            outhead1("%sdone", label );
-        }
-
-    no_embedded( cpu_bit_inplace )
+    done( )
 
 }
 
@@ -5368,18 +5243,6 @@ void cpu6809_protothread_current( Environment * _environment, char * _current ) 
 
     outline0("LDB PROTOTHREADCT" );
     outline1("STB %s", _current );
-
-}
-
-void cpu6809_is_negative( Environment * _environment, char * _value, char * _result ) {
-
-    inline( cpu_is_negative )
-
-        outline1("LDB %s", _value);
-        outline0("SEX");
-        outline1("STA %s", _result );
-
-    no_embedded( cpu_is_negative )
 
 }
 

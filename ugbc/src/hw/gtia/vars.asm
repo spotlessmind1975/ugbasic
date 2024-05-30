@@ -56,7 +56,7 @@ CURRENTTILES:      .byte 255
 TEXTBLOCKREMAIN:      .byte 152
 TEXTBLOCKREMAINPW:      .byte 192
 CURRENTSL:          .byte 0
-TEXTWW:             .byte 3
+
 FONTWIDTH:          .byte 8
 FONTHEIGHT:         .byte 8
 IMAGEX = $F0
@@ -98,3 +98,49 @@ BLITR3 = $E5
 ; 4     16         $02c8
 PALETTEPRESERVEUSED:
     .byte $00
+
+;       (x1,y1)  w (chars) / wb (bytes)
+;       +----------------+
+;  sa ->|*               | h (chars) / hb (bytes)
+;       |                |
+;       +----------------+ (x2, y2)
+;
+CONSOLEID:     .byte $ff       ; <-- actual
+;
+; Text mode
+;
+CONSOLEX1:     .byte 0         ; <-- input from program (chars)
+CONSOLEY1:     .byte 0         ; <-- input from program (chars)
+CONSOLEX2:     .byte 39        ; <-- recalculated (chars)
+CONSOLEY2:     .byte 24        ; <-- recalculated (chars)
+CONSOLEW:      .byte 40        ; <-- calculated (chars)
+CONSOLEH:      .byte 25        ; <-- calculated (chars)
+;
+; Graphic mode
+;
+CONSOLESA:     .word 0         ; <-- calculated (address)
+CONSOLEWB:     .byte 40        ; <-- calculated (bytes)
+CONSOLEHB:     .byte 25        ; <-- calculated (bytes)
+;
+CONSOLES:      .res 4*8        ; <-- storage for virtual consoles
+
+CONSOLECALCULATE:
+    LDA YCURSYS
+    STA MATHPTR6
+    LDA XCURSYS
+    STA MATHPTR7
+    JSR CALCPOSG
+    STX CONSOLESA
+
+    LDA CONSOLEW
+    STA CONSOLEWB
+
+    ASL CONSOLEWB
+CONSOLECALCULATESKIPD:
+    LDA CONSOLEH
+    STA CONSOLEHB
+    ASL CONSOLEHB
+    ASL CONSOLEHB
+    ASL CONSOLEHB
+
+    RTS    

@@ -70,6 +70,12 @@ the ''AS'' syntax, which allows you to load the same file several times but with
 </usermanual> */
 Variable * music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion ) {
 
+    Variable * final = variable_temporary( _environment, VT_MUSIC, 0 );
+
+    if ( _environment->emptyProcedure ) {
+        return final;
+    }
+
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD MUSIC");
     }

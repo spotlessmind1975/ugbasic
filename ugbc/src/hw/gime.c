@@ -347,6 +347,80 @@ void gime_bank_select( Environment * _environment, int _bank ) {
 #define GIME_128K( )  GIME_ADDRESS( 0x60000 )
 #define GIME_512K( )  GIME_\( 0x00000 )
 
+void console_calculate( Environment * _environment ) {
+
+    int consoleSA = 0x4000;
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
+
+    int bitmap = 0;
+
+    switch( _environment->currentMode ) {
+
+        case TILEMAP_MODE_32X24:
+        case TILEMAP_MODE_32X25:
+        case TILEMAP_MODE_32X28:
+        case TILEMAP_MODE_40X24:
+        case TILEMAP_MODE_40X25:
+        case TILEMAP_MODE_40X28:
+        case TILEMAP_MODE_64X24:
+        case TILEMAP_MODE_64X25:
+        case TILEMAP_MODE_64X28:
+        case TILEMAP_MODE_80X24:
+        case TILEMAP_MODE_80X25:
+        case TILEMAP_MODE_80X28:
+            bitmap = 0;
+            break;
+
+        default:
+            bitmap = 1;
+            break;
+
+    }
+
+    int currentFrameSize;
+
+    if ( bitmap ) {
+        switch( _environment->screenColors ) {
+            case 2:
+                currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight );
+                break;
+            case 4:
+                currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight ) * 2;
+                break;
+            case 16:
+            default:
+                currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight ) * 4;
+                break;
+        }
+    } else {
+        currentFrameSize =  _environment->screenTilesWidth * _environment->screenTilesHeight * 2;
+    }
+
+    if ( currentFrameSize <= 0x2000 ) {
+        consoleSA = 0xc000;
+    } else if ( currentFrameSize <= 0x4000 ) {
+        consoleSA = 0xa000;
+    } else if ( currentFrameSize <= 0x6000 ) {
+        consoleSA = 0x8000;
+    } else if ( currentFrameSize <= 0x8000 ) {
+        consoleSA = 0x6000;
+    } else {
+        consoleSA = 0x6000;
+    }
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "JSR CONSOLECALCULATE" );
+
+}
+
 int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     // deploy_preferred( gimevars, src_hw_gime_vars_asm );
@@ -1137,6 +1211,9 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         cpu_store_16bit( _environment, "TEXTADDRESS", 0x6000 );
     }
 
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "ORIGINX", 0 );
     cpu_store_16bit( _environment, "ORIGINY", 0 );
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
@@ -1146,6 +1223,9 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+
+    console_init( _environment );
+
     cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );
     cpu_store_16bit( _environment, "CURRENTFRAMESIZE", currentFrameSize );
     switch( _environment->screenColors ) {
@@ -1224,9 +1304,9 @@ void gime_pset_int( Environment * _environment, int _x, int _y ) {
     deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDX %4.4x", (_x & 0xffff ) );
-    outline0("STX PLOTX");
+    outline0("STX <PLOTX");
     outline1("LDD %4.4x", ( _y & 0xffff ) );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -1243,9 +1323,9 @@ void gime_pset_vars( Environment * _environment, char *_x, char *_y ) {
     deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDX %s", x->realName );
-    outline0("STX PLOTX");
+    outline0("STX <PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -1262,9 +1342,9 @@ void gime_pget_color_vars( Environment * _environment, char *_x, char *_y, char 
     deploy_preferred( plot, src_hw_gime_plot_asm );
     
     outline1("LDD %s", x->realName );
-    outline0("STD PLOTX");
+    outline0("STD <PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #3");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -1359,24 +1439,10 @@ void gime_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void gime_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESWIDTH" );
-    outline1("STA %s", _result );
-
-}
-
 void gime_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDX CURRENTHEIGHT" );
     outline1("STX %s", _result );
-
-}
-
-void gime_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LDA CURRENTTILESHEIGHT" );
-    outline1("STA %s", _result );
 
 }
 
@@ -1399,7 +1465,7 @@ void gime_scroll_text( Environment * _environment, int _direction ) {
     deploy_preferred( vScrollText, src_hw_gime_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
+    outline0("STA <DIRECTION" );
 
     outline0("JSR VSCROLLT");
 
@@ -1412,9 +1478,9 @@ void gime_text( Environment * _environment, char * _text, char * _text_size ) {
     deploy_preferred( textEncodedAt, src_hw_gime_text_at_asm );
 
     outline1("LDY %s", _text);
-    outline0("STY TEXTPTR" );
+    outline0("STY <TEXTPTR" );
     outline1("LDA %s", _text_size);
-    outline0("STA TEXTSIZE" );
+    outline0("STA <TEXTSIZE" );
 
     if ( _environment->currentMode < 0x10 ) {
         deploy_preferred( clsText, src_hw_gime_cls_text_asm );
@@ -1571,6 +1637,8 @@ void gime_initialization( Environment * _environment ) {
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 40;
     _environment->screenTilesHeight = 25;
+    _environment->consoleTilesWidth = 40;
+    _environment->consoleTilesHeight = 25;
     _environment->screenTiles = 128;
     _environment->screenWidth = _environment->screenTilesWidth*_environment->fontWidth;
     _environment->screenHeight = _environment->screenTilesHeight*_environment->fontHeight;
@@ -1597,9 +1665,9 @@ void gime_hscroll_line( Environment * _environment, int _direction ) {
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
+    outline0("STA <DIRECTION" );
     outline1("LDA %s", y->realName );
-    outline0("STA CLINEY");
+    outline0("STA <CLINEY");
 
     outline0("JSR HSCROLLLT");    
 
@@ -1611,7 +1679,7 @@ void gime_hscroll_screen( Environment * _environment, int _direction ) {
     deploy( textHScroll, src_hw_gime_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
+    outline0("STA <DIRECTION" );
 
     outline0("JSR HSCROLLST");    
 
@@ -1623,7 +1691,6 @@ void gime_back( Environment * _environment ) {
 
 void gime_cline( Environment * _environment, char * _characters ) {
 
-    deploy( textCline, src_hw_gime_cline_asm );
     Variable * x = variable_retrieve( _environment, "XCURSYS" );
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
 
@@ -1632,12 +1699,19 @@ void gime_cline( Environment * _environment, char * _characters ) {
     } else {
         outline0("LDA #0");
     }
-    outline0("STA CHARACTERS");
+    outline0("STA <CHARACTERS");
     outline1("LDA %s", x->realName );
-    outline0("STA CLINEX" );
+    outline0("STA <CLINEX" );
     outline1("LDA %s", y->realName );
-    outline0("STA CLINEY");
-    outline0("JSR CLINE");
+    outline0("STA <CLINEY");
+
+    if ( _environment->currentMode < 0x10 ) {
+        deploy( textCline, src_hw_gime_cline_text_asm );
+        outline0("JSR CLINE");
+    } else {
+        deploy( textClineGraphic, src_hw_gime_cline_graphic_asm );
+        outline0("JSR CLINEG");
+    }
 
 }
 
@@ -2675,9 +2749,9 @@ void gime_put_image( Environment * _environment, Resource * _image, char * _x, c
     }
 
     outline1("LDD %s", _x );
-    outline0("STD IMAGEX" );
+    outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
-    outline0("STD IMAGEY" );
+    outline0("STD <IMAGEY" );
 
     outline1("LDD %s", _flags );
     outline0("STB <IMAGEF" );
@@ -2784,11 +2858,11 @@ void gime_get_image( Environment * _environment, char * _image, char * _x, char 
     gime_load_image_address_to_y( _environment, _image, _sequence, _frame, _frame_size, _frame_count );
 
     outline1("LDD %s", _x );
-    outline0("STD IMAGEX" );
+    outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
-    outline0("STD IMAGEY" );
+    outline0("STD <IMAGEY" );
     outline1("LDA #$%2.2x", _palette );
-    outline0("STA IMAGET");
+    outline0("STA <IMAGET");
 
     outline0("JSR GETIMAGE");
 

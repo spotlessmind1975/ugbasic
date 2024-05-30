@@ -2039,3 +2039,35 @@ Restituisce l'indirizzo di memoria assegnato all'interno del banco di memoria es
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword ENABLE INTERRUPT
+
+@english
+Enable the interrupt at CPU level.
+
+@italian
+Abilita l'interrupt a livello di CPU.
+
+@syntax ENABLE INTERRUPT
+
+@example ENABLE INTERRUPT
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword DISABLE INTERRUPT
+
+@english
+Disable the interrupt at CPU level.
+
+@italian
+Disabilita l'interrupt a livello di CPU.
+
+@syntax DISABLE INTERRUPT
+
+@example DISABLE INTERRUPT
+
+@target all
+</usermanual> */

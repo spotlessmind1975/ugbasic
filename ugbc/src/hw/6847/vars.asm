@@ -60,9 +60,33 @@ CURRENTTILESHEIGHT      fcb 16
 CURRENTTILES            fcb 128
 CURRENTFRAMESIZE   fdb 32*16
 CURRENTSL          fcb 32
-TEXTWW      fcb 3
 FONTWIDTH       fcb 8
 FONTHEIGHT      fcb 8
+
+;       (x1,y1)  w (chars) / wb (bytes)
+;       +----------------+
+;  sa ->|*               | h (chars) / hb (bytes)
+;       |                |
+;       +----------------+ (x2, y2)
+;
+CONSOLEID     fcb $ff       ; <-- actual
+;
+; Text mode
+;
+CONSOLEX1     fcb 0         ; <-- input from program (chars)
+CONSOLEY1     fcb 0         ; <-- input from program (chars)
+CONSOLEX2     fcb 31        ; <-- recalculated (chars)
+CONSOLEY2     fcb 15        ; <-- recalculated (chars)
+CONSOLEW      fcb 32        ; <-- calculated (chars)
+CONSOLEH      fcb 16        ; <-- calculated (chars)
+;
+; Graphic mode
+;
+CONSOLESA     fdb 0         ; <-- calculated (address)
+CONSOLEWB     fcb 32        ; <-- calculated (bytes)
+CONSOLEHB     fcb 16        ; <-- calculated (bytes)
+;
+CONSOLES      rzb 4*8        ; <-- storage for virtual consoles
 
 IMAGEW2 EQU $40
 IMAGEX EQU $41 ; $42
@@ -177,4 +201,341 @@ BLITR3 EQU $60
 ;     fcb >(60*4),>(61*4),>(62*4),>(63*4),>(64*4),>(65*4),>(66*4),>(67*4),>(68*4),>(69*4)
 ;     fcb >(70*4),>(71*4),>(72*4),>(73*4),>(74*4),>(75*4),>(76*4),>(77*4),>(78*4),>(79*4)
 
+CALCPOSG
+    LDA CURRENTMODE
+    CMPA #7
+    BNE CALCPOS7X
+    JSR CALCPOS7
+    RTS
+CALCPOS7X
+    CMPA #8
+    BNE CALCPOS8X
+    JSR CALCPOS8
+    RTS
+CALCPOS8X
+    CMPA #9
+    BNE CALCPOS9X
+    JSR CALCPOS9
+    RTS
+CALCPOS9X
+    CMPA #10
+    BNE CALCPOS10X
+    JSR CALCPOS10
+    RTS
+CALCPOS10X
+    CMPA #11
+    BNE CALCPOS11X
+    JSR CALCPOS11
+    RTS
+CALCPOS11X
+    CMPA #12
+    BNE CALCPOS12X
+    JSR CALCPOS12
+    RTS
+CALCPOS12X
+    CMPA #13
+    BNE CALCPOS13X
+    JSR CALCPOS13
+    RTS
+CALCPOS13X
+    CMPA #14
+    BNE CALCPOS14X
+    JSR CALCPOS14
+    RTS
+CALCPOS14X
+    RTS
 
+CALCPOS7
+
+    LDA #1
+    STA <PATTERN
+
+    LDX BITMAPADDRESS
+    LDB <MATHPTR1
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB <MATHPTR0
+    LDA #0
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS8
+
+    LDA #0
+    STA <PATTERN
+
+    LDX BITMAPADDRESS
+    LDB <MATHPTR1
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB <MATHPTR0
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS9
+
+    LDA #1
+    STA <PATTERN
+
+    LDX BITMAPADDRESS
+    LDB <MATHPTR1
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB <MATHPTR0
+    LDA #0
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS10
+
+    LDA #0
+    STA <PATTERN
+
+    LDX BITMAPADDRESS
+    LDB <MATHPTR1
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB <MATHPTR0
+    LDA #0
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS11
+
+    LDA #1
+    STA <PATTERN
+
+    LDX BITMAPADDRESS
+    LDB <MATHPTR1
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB <MATHPTR0
+    LDA #0
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS12
+
+    LDA #0
+    STA <PATTERN
+
+    LDX BITMAPADDRESS
+    LDB <MATHPTR1
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB <MATHPTR0
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS13
+
+    LDA #1
+    STA <PATTERN
+
+    LDX BITMAPADDRESS
+    LDB <MATHPTR1
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB <MATHPTR0
+    LDA #0
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS14
+
+    LDA #0
+    STA <PATTERN
+
+    LDX BITMAPADDRESS
+    LDB <MATHPTR1
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB <MATHPTR0
+    LDA #0
+    LEAX D, X
+
+    RTS
+
+CONSOLECALCULATE
+    LDA CONSOLEX1
+    STA MATHPTR0
+    LDA CONSOLEY1
+    STA MATHPTR1
+    JSR CALCPOSG
+    STX CONSOLESA
+
+    LDA CONSOLEW
+    STA CONSOLEWB
+
+    LDA CURRENTMODE
+    CMPA #8
+    BEQ CONSOLECALCULATESKIPD
+    CMPA #10
+    BEQ CONSOLECALCULATESKIPD
+    CMPA #12
+    BEQ CONSOLECALCULATESKIPD
+
+    ASL CONSOLEWB
+CONSOLECALCULATESKIPD
+    LDA CONSOLEH
+    STA CONSOLEHB
+    ASL CONSOLEHB
+    ASL CONSOLEHB
+    ASL CONSOLEHB
+
+    RTS    

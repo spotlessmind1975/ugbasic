@@ -740,6 +740,15 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 }
 
+void console_calculate( Environment * _environment ) {
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+}
+
+
 int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
@@ -884,6 +893,9 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             break;
 
     }
+
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
 
     /////////////////////////////////////////////////////////////////
     // -- [ $00 ] --
@@ -2046,6 +2058,8 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
+    console_init( _environment );
+
     _environment->screenShades = 16;
     _environment->screenColors = 2;
 
@@ -2293,15 +2307,7 @@ void vdcz_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void vdcz_tiles_get_width( Environment * _environment, char *_result ) {
-
-}
-
 void vdcz_get_height( Environment * _environment, char *_result ) {
-
-}
-
-void vdcz_tiles_get_height( Environment * _environment, char *_result ) {
 
 }
 
@@ -2426,10 +2432,6 @@ void vdcz_initialization( Environment * _environment ) {
     variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
     variable_global( _environment, "RESOLUTIONY" );
     
-    variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
-    variable_global( _environment, "XCURSYS" );
-    variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
-    variable_global( _environment, "YCURSYS" );
     variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
     variable_global( _environment, "TABCOUNT" );
 

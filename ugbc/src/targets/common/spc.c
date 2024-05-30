@@ -39,7 +39,7 @@
  ****************************************************************************/
 
 /* <usermanual>
-@keyword TAB$
+@keyword SPC
 
 @english
 The function ''SPC'' can be used to set a number of spaces, which are printed

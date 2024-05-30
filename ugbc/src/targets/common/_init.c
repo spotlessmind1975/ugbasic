@@ -96,8 +96,6 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "windowS" );
     variable_define( _environment, "windowW", VT_BYTE, 0 );
     variable_global( _environment, "windowW" );
-    variable_import( _environment, "TEXTWW", VT_BYTE, 3 );
-    variable_global( _environment, "TEXTWW" );
     variable_define( _environment, "TAB", VT_STRING, 0 );
     variable_store_string( _environment, "TAB", "\t");
     variable_global( _environment, "TAB" );
@@ -109,6 +107,39 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "PROTOTHREADCT" );
     variable_import( _environment, "CPURANDOM_SEED", VT_DWORD, 0xffffffff );
     variable_global( _environment, "CPURANDOM_SEED" );
+    variable_define( _environment, "PLAYDURATION", VT_BYTE, 64 );
+    variable_global( _environment, "PLAYDURATION" );
+    variable_define( _environment, "PLAYOCTAVE", VT_BYTE, 2 );
+    variable_global( _environment, "PLAYOCTAVE" );
+    variable_define( _environment, "PLAYTEMPO", VT_BYTE, 2 );
+    variable_global( _environment, "PLAYTEMPO" );
+    variable_define( _environment, "PLAYVOLUME", VT_BYTE, 15 );
+    variable_global( _environment, "PLAYVOLUME" );
 
+    variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
+    variable_global( _environment, "XCURSYS" );
+    variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
+    variable_global( _environment, "YCURSYS" );
+
+    variable_import( _environment, "CONSOLEID", VT_SBYTE, 0xff );
+    variable_global( _environment, "CONSOLEID" );
+
+    variable_import( _environment, "CONSOLEX1", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEX1" );
+    variable_import( _environment, "CONSOLEY1", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEY1" );
+    variable_import( _environment, "CONSOLEX2", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEX2" );
+    variable_import( _environment, "CONSOLEY2", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEY2" );
+    variable_import( _environment, "CONSOLEW", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEW" );
+    variable_import( _environment, "CONSOLEH", VT_SBYTE, 0 );
+    variable_global( _environment, "CONSOLEH" );
+    variable_import( _environment, "CONSOLESL", VT_SWORD, 0 );
+    variable_global( _environment, "CONSOLESL" );
+
+    variable_import( _environment, "CONSOLES", VT_BUFFER, MAX_CONSOLES * 8 );
+    variable_global( _environment, "CONSOLES" );
 
 }

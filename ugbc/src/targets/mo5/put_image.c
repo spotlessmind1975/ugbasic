@@ -57,7 +57,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
     }
 
     MAKE_LABEL
-    
+
     Variable * image = variable_retrieve( _environment, _image );
 
     Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
@@ -95,10 +95,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 // cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 // cpu_label( _environment, alreadyLoadedLabel );
 
-                Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
-                variable_store( _environment, frameSize->name, image->frameSize );
-                Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
-                variable_store( _environment, bank->name, image->bankAssigned );
+                // Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
+                // variable_store( _environment, frameSize->name, image->frameSize );
+                // Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
+                // variable_store( _environment, bank->name, image->bankAssigned );
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
                 if ( !sequence ) {
@@ -115,10 +115,14 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                     }
                 }
 
-                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
-                variable_store( _environment, address->name, image->absoluteAddress );
-                variable_add_inplace_vars( _environment, address->name, offset->name );
-                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                // variable_store( _environment, address->name, image->absoluteAddress );
+                // variable_add_inplace_vars( _environment, address->name, offset->name );
+                // bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
+                bank_read_vars_bank_direct_size( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
+
+                cpu_store_16bit(_environment, bankWindowId, 0xffff );
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
@@ -163,10 +167,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 // cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 // cpu_label( _environment, alreadyLoadedLabel );
 
-                Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
-                variable_store( _environment, frameSize->name, image->frameSize );
-                Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
-                variable_store( _environment, bank->name, image->bankAssigned );
+                // Variable * frameSize = variable_temporary( _environment, VT_WORD, "(temporary)");
+                // variable_store( _environment, frameSize->name, image->frameSize );
+                // Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
+                // variable_store( _environment, bank->name, image->bankAssigned );
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
                 if ( !frame ) {
@@ -175,10 +179,13 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                     ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
                 }
 
-                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
-                variable_store( _environment, address->name, image->absoluteAddress );
-                variable_add_inplace_vars( _environment, address->name, offset->name );
-                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                // variable_store( _environment, address->name, image->absoluteAddress );
+                // variable_add_inplace_vars( _environment, address->name, offset->name );
+                cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
+                bank_read_vars_bank_direct_size( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
+
+                cpu_store_16bit(_environment, bankWindowId, 0xffff );
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
@@ -229,9 +236,12 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
 
+
 }
 
 void put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
+
+    _flags = _flags & ( ( FLAG_DOUBLE_Y << 8 ) | FLAG_TRANSPARENCY );
 
     char flagsConstantName[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
     char flagsConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags );
@@ -251,3 +261,4 @@ void put_image_vars_flags( Environment * _environment, char * _image, char * _x1
 
     put_image_vars( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, flagsConstantParameter );
 }
+

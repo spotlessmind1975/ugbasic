@@ -300,19 +300,19 @@ FLIPIMAGEXCOMMON
     LSRA
     LSRA
     LSRA
-    STA IMAGEW
+    STA <IMAGEW
     LDA 1,Y
-    STA IMAGEH
-    STA IMAGEH2
+    STA <IMAGEH
+    STA <IMAGEH2
 
     ; Move the image pointer ahead of header.
 
     LEAY 2,Y
 
     CLRA
-    LDB IMAGEW
+    LDB <IMAGEW
     LSRB
-    STB IMAGEW2
+    STB <IMAGEW2
 
     JMP FLIPIMAGEXCOMMONCL0
 
@@ -328,19 +328,19 @@ FLIPIMAGEXCOMMONC
     LDA ,Y
     LSRA
     LSRA
-    STA IMAGEW
+    STA <IMAGEW
     LDA 1,Y
-    STA IMAGEH
-    STA IMAGEH2
+    STA <IMAGEH
+    STA <IMAGEH2
 
     ; Move the image pointer ahead of header.
 
     LEAY 2,Y
 
     CLRA
-    LDB IMAGEW
+    LDB <IMAGEW
     LSRB
-    STB IMAGEW2
+    STB <IMAGEW2
 
 FLIPIMAGEXCOMMONCL0
 
@@ -348,7 +348,7 @@ FLIPIMAGEXCOMMONCL0
 
     TFR Y, X
 
-    LDB IMAGEW
+    LDB <IMAGEW
 
     ; Move ahead the ending line pointer of 2 x IMAGE WIDTH - 1
 
@@ -356,8 +356,8 @@ FLIPIMAGEXCOMMONCL0
     LEAX -1, X
 
     ; Loop in both directions
-    ; TMPPTR ---->
-    ;        <---- TMPPTR2
+    ; <TMPPTR ---->
+    ;        <---- <TMPPTR2
 
 FLIPIMAGEXCOMMONCL1
     CLRA
@@ -376,27 +376,27 @@ FLIPIMAGEXCOMMONCL1
     PULS D
     STB , X
 
-    ; Move back the TMPPTR2 pointer.
+    ; Move back the <TMPPTR2 pointer.
 
     LEAX -1, X
 
-    ; Move ahead the TMPPTR pointer.
+    ; Move ahead the <TMPPTR pointer.
 
     LEAY 1, Y
 
     ; Decrement the number of bytes to flip.
 
-    DEC IMAGEW2
+    DEC <IMAGEW2
 
     ; If not finished, repeat the loop.
 
     BNE FLIPIMAGEXCOMMONCL1
 
-    LDA IMAGEW
+    LDA <IMAGEW
     LSRA
-    STA IMAGEW2
+    STA <IMAGEW2
 
-    LDB IMAGEW
+    LDB <IMAGEW
     LSRB
     BCC FLIPIMAGEXCOMMONCNEXTLINE
 
@@ -409,16 +409,16 @@ FLIPIMAGEXCOMMONCL1
 
     ; Move to the next line.
 FLIPIMAGEXCOMMONCNEXTLINE
-    LDB IMAGEW2
+    LDB <IMAGEW2
     LEAY B, Y
 
     ; Decrement the number of line flipped.
 
-    DEC IMAGEH
+    DEC <IMAGEH
 
     ; If there are lines to flip, repeat the loop.
 
-    LDB IMAGEH
+    LDB <IMAGEH
     LBNE FLIPIMAGEXCOMMONCL0
 
     RTS

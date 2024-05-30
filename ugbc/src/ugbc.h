@@ -204,7 +204,8 @@ typedef enum _MusicType {
     MUSIC_TYPE_AUTO = 0,
     MUSIC_TYPE_IAF = 1,
     MUSIC_TYPE_MID = 2,
-    MUSIC_TYPE_PSG = 4
+    MUSIC_TYPE_PSG = 4,
+    MUSIC_TYPE_SJ2 = 5 // 2 voice squarewave
 
 } MusicType;
 
@@ -291,6 +292,18 @@ typedef enum _HardwareParameterName {
     HPN_ADDRESS = 2
 
 } HardwareParameterName;
+
+typedef enum _AudioDeviceName {
+
+    ADN_SN76489 = 1,
+    ADN_POKEY = 2,
+    ADN_SID = 3,
+    ADN_DAC1 = 4,
+    ADN_AY8910 = 5,
+    ADN_TED = 6,
+    ADN_VIC1 = 6
+
+} AudioDeviceName;
 
 /**
  * @brief Structure of a single (option) setting
@@ -458,6 +471,7 @@ typedef struct _Resource {
 
 #define MAX_TEMPORARY_STORAGE           1024
 
+#define MAX_CONSOLES                    4
 #define MAX_ARRAY_DIMENSIONS            256
 #define MAX_PARAMETERS                  256
 #define MAX_PALETTE                     256
@@ -1341,7 +1355,6 @@ typedef struct _Embedded {
     int cpu_math_complement_const_16bit;
     int cpu_math_complement_const_32bit;
     int cpu_math_complement_const_8bit;
-    int cpu_math_div2_8bit;
     int cpu_math_div2_const_16bit;
     int cpu_math_div2_const_32bit;
     int cpu_math_div2_const_8bit;
@@ -1399,7 +1412,6 @@ typedef struct _Embedded {
     int cpu_move_16bit_indirect2_8bit;
     int cpu_move_32bit_indirect;
     int cpu_move_32bit_indirect2;
-    int cpu_bit_check;
     int cpu_bit_inplace;
     int cpu_number_to_string;
     int cpu_move_8bit_indirect_with_offset;
@@ -1423,7 +1435,6 @@ typedef struct _Embedded {
     int cpu_complement2_16bit;
     int cpu_complement2_32bit;
     int cpu_sqroot;
-    int cpu_is_negative;
     int cpu_msc1_uncompress;
     int cpu_string_sub;
 
@@ -1503,6 +1514,7 @@ typedef struct _Deployed {
     int clsText;
     int clsGraphic;
     int textCline;
+    int textClineGraphic;
     int textHScroll;
     int textHScrollLine;
     int textHScrollScreen;
@@ -1530,6 +1542,8 @@ typedef struct _Deployed {
     int sn76489vars;
     int sn76489startup;
     int sn76489startup2;
+    int audio1startup;
+    int audio1bitnoirq;
 
     int draw;
     int bar;
@@ -1620,6 +1634,7 @@ typedef struct _Deployed {
     int msc1;
     int flipimagex;
     int flipimagey;
+    int random;
 
 } Deployed;
 
@@ -1660,6 +1675,13 @@ typedef struct _FontConfig {
     int schema;
 
 } FontConfig;
+
+typedef struct _AudioConfig {
+
+    int                 async;
+    AudioDeviceName     target;
+
+} AudioConfig;
 
 typedef struct _Macro {
 
@@ -1755,6 +1777,18 @@ typedef struct _DataSegment {
     struct _DataSegment * next;
 
 } DataSegment;
+
+typedef struct _Console {
+
+    int id;
+    int x1;
+    int y1;
+    int x2;
+    int y2;
+    int width;
+    int height;
+
+} Console;
 
 /**
  * @brief Structure of compilation environment
@@ -1894,6 +1928,11 @@ typedef struct _Environment {
      * 
      */
     FontConfig fontConfig;
+
+    /**
+     * 
+     */
+    AudioConfig audioConfig;
 
     /**
      * 
@@ -2319,6 +2358,16 @@ typedef struct _Environment {
     int screenTilesHeight;
 
     /**
+     * Console width in characters (statically determined)
+     */
+    int consoleTilesWidth;
+
+    /**
+     * Console height in characters (statically determined)
+     */
+    int consoleTilesHeight;
+
+    /**
      * Font width in pixels (statically determined)
      */
     int fontWidth;
@@ -2327,6 +2376,16 @@ typedef struct _Environment {
      * Font height in pixels (statically determined)
      */
     int fontHeight;
+
+    /*
+     * Active console.
+     */
+    Console activeConsole;
+
+    /*
+     * Set of consoles.
+     */
+    Console consoles[MAX_CONSOLES];
 
     /**
      * Deployed modules.
@@ -2875,6 +2934,13 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_FLIP_BANKED_IMAGE(v) CRITICAL2("E278 - cannot FLIP BANKED IMAGE", v );
 #define CRITICAL_CANNOT_FLIP_COMPRESSED_IMAGE(v) CRITICAL2("E279 - cannot FLIP COMPRESSED IMAGE(S)", v );
 #define CRITICAL_CANNOT_CAST_FLOAT_32BIT_UNSIGNED(v) CRITICAL2("E280 - cannot convert UNSIGNED DWORD to FLOAT", v );
+#define CRITICAL_BOOM_NOT_ASYNC() CRITICAL("E281 - cannot BOOM in asyncronous mode on this target" );
+#define CRITICAL_SHOOT_NOT_ASYNC() CRITICAL("E282 - cannot SHOOT in asyncronous mode on this target" );
+#define CRITICAL_BELL_NOT_ASYNC() CRITICAL("E283 - cannot BELL in asyncronous mode on this target" );
+#define CRITICAL_AUDIO_TARGET_UNAVAILABLE() CRITICAL("E284 - AUDIO SOURCE unavailable for this target" );
+#define CRITICAL_CANNOT_MUSIC_ON_AUDIO_DEVICE(v) CRITICAL2("E285 - cannot MUSIC on the given AUDIO TARGET", v );
+#define CRITICAL_MUSIC_NOT_ASYNC() CRITICAL("E283 - cannot MUSIC in asyncronous mode on this target" );
+#define CRITICAL_CANNOT_USE_STRINGS_LONGER_256_CHARS( ) CRITICAL("E284 - string too long (>256 characters)" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2888,6 +2954,7 @@ typedef struct _Environment {
 #define WARNING_IMAGE_LOAD_EXACT_IGNORED( ) WARNING("W006 - Loading of the image will ignore EXACT flag" );
 #define WARNING_DLOAD_IGNORED_SIZE( f ) WARNING2("W007 - size for DLOAD is ignored", f );
 #define WARNING_DLOAD_IGNORED_OFFSET( f ) WARNING2("W008 - offset for DLOAD is ignored", f );
+#define WARNING_DEPRECATED( k ) WARNING2("W009 - keyword has been deprecated and has no effect", k );
 
 int assemblyLineIsAComment( char * _buffer );
 
@@ -3813,6 +3880,12 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
 
+int define_audio_target_check( Environment * _environment, int _value );
+
+void console_init( Environment * _environment );
+void console_calculate( Environment * _environment );
+void console_calculate_vars( Environment * _environment );
+
 void banks_init( Environment * _environment );
 void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count, int _allowed_size );
 char * banks_get_address( Environment * _environment, int _bank );
@@ -3932,8 +4005,8 @@ void                    begin_repeat( Environment * _environment );
 void                    begin_storage( Environment * _environment, char * _name, char * _file_name );
 void                    begin_while( Environment * _environment );
 void                    begin_while_condition( Environment * _environment, char * _expression );
-void                    bell( Environment * _environment, int _note, int _channels );
-void                    bell_vars( Environment * _environment, char * _note, char * _channels );
+void                    bell( Environment * _environment, int _note, int _duration, int _channels );
+void                    bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels );
 void                    bitmap_at( Environment * _environment, int _address );
 void                    bitmap_at_var( Environment * _environment, char * _address );
 void                    bitmap_clear( Environment * _environment );
@@ -3948,8 +4021,8 @@ void                    blit_define_compound_unary( Environment * _environment, 
 void                    blit_define_compound_operand_to_register( Environment * _environment, int _register, int _source );
 void                    blit_define_end_compound( Environment * _environment, int _register );
 void                    blit_image( Environment * _environment, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _flags );
-void                    boom( Environment * _environment, int _channels );
-void                    boom_var( Environment * _environment, char * _channels );
+void                    boom( Environment * _environment, int _duration, int _channels );
+void                    boom_var( Environment * _environment, char * _duration, char * _channels );
 void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c );
 Resource *              build_resource_for_sequence( Environment * _environment, char * _image, char * _frame, char * _sequence );
 
@@ -3994,8 +4067,17 @@ void                    colormap_at_var( Environment * _environment, char * _add
 void                    colormap_clear( Environment * _environment );
 void                    colormap_clear_with( Environment * _environment, int _foreground, int _background );
 void                    colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background );
+Variable *              combine_nibble_vars( Environment * _environment, char * _low_byte, char * _high_byte );
 void                    configure_set_value( Environment * _environment, int _name, int _parameter, int _value );
 void                    configure_set_value_var( Environment * _environment, int _name, int _parameter, char * _value );
+void                    console( Environment * _environment, int _x1, int _x2, int _x3, int _x4 );
+void                    console_save( Environment * _environment, int _number );
+void                    console_save_vars( Environment * _environment, char * _number );
+void                    console_restore( Environment * _environment, int _number );
+void                    console_restore_vars( Environment * _environment, char * _number );
+void                    console_vars( Environment * _environment, char * _x1, char * _x2, char * _x3, char * _x4 );
+Variable *              console_tiles_get_height( Environment * _environment );
+Variable *              console_tiles_get_width( Environment * _environment );
 void                    const_define_numeric( Environment * _environment, char * _name, int _value );
 void                    const_define_string( Environment * _environment, char * _name, char * _value );
 void                    const_define_float( Environment * _environment, char * _name, double _value );

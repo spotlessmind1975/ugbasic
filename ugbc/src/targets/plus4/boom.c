@@ -50,11 +50,19 @@
 @keyword BOOM
 @target plus4
 </usermanual> */
-void boom( Environment * _environment, int _channels ) {
+void boom( Environment * _environment, int _duration, int _channels ) {
 
     ted_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
     ted_start( _environment, _channels );
     ted_set_frequency( _environment, _channels, 1000 );
+
+    long durationInTicks = ( _duration / 20 ) & 0xff;
+
+    ted_set_duration( _environment, _channels, durationInTicks );
+
+    if ( ! _environment->audioConfig.async ) {
+        ted_wait_duration( _environment, _channels );
+    }
 
 }
 
@@ -70,15 +78,35 @@ void boom( Environment * _environment, int _channels ) {
 @keyword BOOM
 @target plus4
 </usermanual> */
-void boom_var( Environment * _environment, char * _channels ) {
+void boom_var( Environment * _environment, char * _duration, char * _channels ) {
 
-    if ( _channels ) {
+if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         ted_start_var( _environment, channels->realName );
         ted_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
+            ted_set_duration_vars( _environment, channels->realName, duration->realName );
+        } else {
+            ted_set_duration_vars( _environment, channels->realName, NULL );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            ted_wait_duration_vars( _environment, channels->realName );
+        }        
     } else {
         ted_start_var( _environment, NULL );
         ted_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
+            ted_set_duration_vars( _environment, NULL, duration->realName );
+        } else {
+            ted_set_duration_vars( _environment, NULL, NULL );
+        }
+        if ( ! _environment->audioConfig.async ) {
+            ted_wait_duration_vars( _environment, NULL );
+        }        
     }
     
 }

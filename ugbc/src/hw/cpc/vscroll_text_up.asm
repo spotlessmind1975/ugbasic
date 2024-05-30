@@ -37,13 +37,70 @@
 
 VSCROLLTUP:
 
-    LD BC, 192
+    PUSH IX
+
+    ; On original routine, we scroll an entire line of 80 bytes (no matter
+    ; resolution, in this case). Instead, we have to calculate the number
+    ; of bytes effectively to copy. The number is given by CONSOLESL.
+
+    LD A, (CONSOLEWB)
+    ADD 8
+    LD IXL, A
+
+    ; LD BC, 192
+    ; On original routine, we scroll an entire screen of 24 x 8 = 192 lines.
+    ; In this case, however, we have to scroll a console of CONSOLEH x 8 lines.
+    
+    ; BC = CONSOLEH
+
+    LD A, (CONSOLEH)
+    LD C, A
+    LD B, 0
+
+    ; BC = BC x 8
+
+    SLA C
+    RL B
+    SLA C
+    RL B
+    SLA C
+    RL B
+
+    ; Retrieve the starting address for line addresses.
+
     LD HL, PLOTVBASE
+
+    ; Originally, we take the address of first and second text line.
+    ; In this case, we must take the address of CONSOLEY1 and CONSOLEY+1
+    ; line. 
+
+    ; DE = CONSOLEY1
+
+    LD A, (CONSOLEY1)
+    LD E, A
+    LD D, 0
+    
+    ; DE = CONSOLEY1 x 2
+
+    SLA E
+    RL D
+
+    ; HL = HL + DE
+
+    ADD HL, DE
+
+    ; If just one line, we do not scroll!
+    LD A, C
+    SUB 8
+    OR C
+    JR Z, VSCROLLREFILL
 
 VSCROLLTUPL1:
 
     PUSH BC
     PUSH HL
+
+    ; Now we take the address of CONSOLEY1 line
 
     LD A, (HL)
     LD E, A
@@ -52,7 +109,11 @@ VSCROLLTUPL1:
     LD D, A
     INC HL
 
+    ; Move forward to the address of CONSOLEY1+1 line
+
     ADD HL, 14
+
+    ; Take the address of CONSOLEY1+1 line
 
     LD A, (HL)
     LD C, A
@@ -61,16 +122,32 @@ VSCROLLTUPL1:
     LD B, A
     LD HL, BC
 
-    LD BC, $50
+    ; We copy the calculated number of bytes.
+
+    LD A, IXL
+    LD C, A
+    LD B, 0
     LDIR
 
     POP HL
     POP BC
 
+    ; Move to the next line.
+
     INC HL
     INC HL
+
+    ; Decrease the number of lines to copy.
+
     DEC C
+
+    ; Repeat until finished.
+
     JP NZ, VSCROLLTUPL1
+
+VSCROLLREFILL:
+
+    ; Finally, we are to fill the lower (text) line.
 
     LD BC, 8
 
@@ -79,6 +156,8 @@ VSCROLLTUPL2:
     PUSH BC
     PUSH HL
 
+    ; Retrieve the line to fill.
+
     LD A, (HL)
     LD C, A
     INC HL
@@ -86,20 +165,41 @@ VSCROLLTUPL2:
     LD B, A
     LD HL, BC
 
+    ; Fill with zero.
+
     LD A, 0
     LD (HL), A
+
+    ; Move to the next byte
+
     LD E, L
     LD D, H
     INC DE
-    LD BC, $0050
+
+    ; Copy the exact number of bytes needed
+
+    LD A, IXL
+    LD C, A
+    LD B, 0
+
     LDIR
 
     POP HL
     POP BC
 
+    ; Move to the next line.
+
     INC HL
     INC HL
+
+    ; Decrement the number of lines to fill.
+
     DEC C
+
+    ; Repeat until finished.
+
     JP NZ, VSCROLLTUPL2
+
+    POP IX
 
     RET

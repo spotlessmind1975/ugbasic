@@ -868,6 +868,9 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             break;
     }
 
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
     cpu_store_16bit( _environment, "CLIPX1", 0 );
     cpu_store_16bit( _environment, "CLIPX2", (_environment->screenWidth-1) );
     cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -886,7 +889,15 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
+    cpu_store_8bit( _environment, "CONSOLEX1", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY1", 0 );
+    cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
+    cpu_store_8bit( _environment, "CONSOLEY2", _environment->consoleTilesHeight-1 );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesHeight );
 
+    console_calculate( _environment );
+    
 // #ifdef __coleco__
 
 //     if ( ! _environment->hasGameLoop ) {
@@ -901,6 +912,24 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 // #endif
 
     // printf("tms9918_tilemap_enable() -> screen tiles width %d\n", _environment->screenTilesWidth );
+
+}
+
+void console_calculate( Environment * _environment ) {
+
+    int consoleSA = 6 * 0x0400 + ( _environment->activeConsole.y1 * _environment->screenTilesWidth ) + _environment->activeConsole.x1;
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
+}
+
+void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "CALL CONSOLECALCULATE" );
 
 }
 
@@ -1292,24 +1321,10 @@ void tms9918_tiles_get( Environment * _environment, char *_result ) {
 
 }
 
-void tms9918_tiles_get_width( Environment * _environment, char *_result ) {
-
-    outline0("LD A, (CURRENTTILESWIDTH)" );
-    outline1("LD (%s), A", _result );
-
-}
-
 void tms9918_get_height( Environment * _environment, char *_result ) {
 
     outline0("LD HL, (CURRENTHEIGHT)" );
     outline1("LD (%s), HL", _result );
-
-}
-
-void tms9918_tiles_get_height( Environment * _environment, char *_result ) {
-
-    outline0("LD A, (CURRENTTILESHEIGHT)" );
-    outline1("LD (%s), A", _result );
 
 }
 
@@ -1465,10 +1480,6 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
     variable_global( _environment, "RESOLUTIONY" );
     
-    variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
-    variable_global( _environment, "XCURSYS" );
-    variable_import( _environment, "YCURSYS", VT_SBYTE, 0 );
-    variable_global( _environment, "YCURSYS" );
     variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
     variable_global( _environment, "TABCOUNT" );
 
@@ -1569,6 +1580,13 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "SLICEDTARGET", VT_POSITION, 0 );
     variable_global( _environment, "SLICEDTARGET" );
 
+    variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
+    variable_global( _environment, "CONSOLESA" );
+    variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEHB" );
+    variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEWB" );
+
     tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
     font_descriptors_init( _environment, 0 );
@@ -1624,7 +1642,15 @@ void tms9918_back( Environment * _environment ) {
 
 void tms9918_cline( Environment * _environment, char * _characters ) {
 
-    deploy( textCline, src_hw_tms9918_cline_asm );
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+
+    Variable * x = variable_retrieve( _environment, "XCURSYS" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
+
+    outline1("LD A, (%s)", x->realName );
+    outline0("LD (CLINEX), A" );
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD (CLINEY), A");
 
     if ( _characters ) {
         outline1("LD A, (%s)", _characters);
@@ -1633,10 +1659,21 @@ void tms9918_cline( Environment * _environment, char * _characters ) {
         outline0("LD A, 0");
         outline0("LD C, A");
     }
-    if ( ! _environment->hasGameLoop ) {
-        outline0("CALL CLINE");
+
+    if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
+        deploy( textClineGraphic, src_hw_tms9918_cline_graphic_asm );
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL CLINEG");
+        } else {
+            outline0("CALL CLINEGGMI2");
+        }
     } else {
-        outline0("CALL CLINENMI2");
+        deploy( textCline, src_hw_tms9918_cline_text_asm );
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL CLINE");
+        } else {
+            outline0("CALL CLINENMI2");
+        }
     }
 
 }

@@ -111,7 +111,6 @@ void z80_limit_16bit( Environment * _environment, char * _variable, int _value )
 void z80_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_logical_not_8bit( Environment * _environment, char * _value, char * _result );
-void z80_is_negative( Environment * _environment, char * _value, char * _result );
 void z80_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result );
@@ -140,7 +139,6 @@ void z80_math_and_const_8bit( Environment * _environment, char *_source, int _ma
 void z80_math_complement_const_16bit( Environment * _environment, char *_source, int _value );
 void z80_math_complement_const_32bit( Environment * _environment, char *_source, int _value );
 void z80_math_complement_const_8bit( Environment * _environment, char *_source, int _value );
-void z80_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed );
 void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _value, int _signed );
 void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _value, int _signed );
 void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _value, int _signed );
@@ -235,6 +233,7 @@ void z80_math_add_16bit_with_8bit( Environment * _environment, char *_source, ch
 void z80_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other );
 void z80_uppercase( Environment * _environment, char *_source, char *_size, char *_result );
 void z80_lowercase( Environment * _environment, char *_source, char *_size, char *_result );
+void z80_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value );
 void z80_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value );
 void z80_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern );
 void z80_flip( Environment * _environment, char * _source, char * _size, char * _destination );
@@ -252,8 +251,7 @@ void z80_move_nbit_indirect2( Environment * _environment, int _n, char *_source,
 void z80_bit_check( Environment * _environment, char *_value, int _position, char * _result, int _bitwidth );
 void z80_bit_check_extended( Environment * _environment, char *_value, char * _position, char * _result, int _bitwidth );
 void z80_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit );
-void z80_bit_inplace_8bit_extended( Environment * _environment, char * _value, char * _position, int * _bit );
-void z80_bit_inplace_8bit_extended_indirect( Environment * _environment, char * address, char * _position, int * _bit );
+void z80_bit_inplace_8bit_extended_indirect( Environment * _environment, char * address, char * _position, char * _bit );
 void z80_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed );
 void z80_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void z80_dsdefine( Environment * _environment, char * _string, char * _index );
@@ -410,7 +408,6 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_logical_and_8bit( _environment, _left, _right,  _result ) z80_logical_and_8bit( _environment, _left, _right,  _result )
 #define cpu_logical_or_8bit( _environment, _left, _right,  _result ) z80_logical_or_8bit( _environment, _left, _right,  _result )
 #define cpu_logical_not_8bit( _environment, _value,  _result ) z80_logical_not_8bit( _environment, _value,  _result )
-#define cpu_is_negative( _environment, _value, _result ) z80_is_negative( _environment, _value, _result )
 #define cpu_and_8bit( _environment, _left, _right,  _result ) z80_and_8bit( _environment, _left, _right,  _result )
 #define cpu_or_8bit( _environment, _left, _right,  _result ) z80_or_8bit( _environment, _left, _right,  _result )
 #define cpu_xor_8bit( _environment, _left, _right,  _result ) z80_xor_8bit( _environment, _left, _right,  _result )
@@ -439,7 +436,6 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_math_complement_const_16bit( _environment, _source, _value  ) z80_math_complement_const_16bit( _environment, _source, _value  )
 #define cpu_math_complement_const_32bit( _environment, _source, _value  ) z80_math_complement_const_32bit( _environment, _source, _value  )
 #define cpu_math_complement_const_8bit( _environment, _source, _value  ) z80_math_complement_const_8bit( _environment, _source, _value  )
-#define cpu_math_div2_8bit( _environment, _source, _steps, _signed  ) z80_math_div2_8bit( _environment, _source, _steps, _signed  )
 #define cpu_math_div2_const_16bit( _environment, _source, _value, _signed  ) z80_math_div2_const_16bit( _environment, _source, _value, _signed  )
 #define cpu_math_div2_const_32bit( _environment, _source, _value, _signed  ) z80_math_div2_const_32bit( _environment, _source, _value, _signed  )
 #define cpu_math_div2_const_8bit( _environment, _source, _value, _signed  ) z80_math_div2_const_8bit( _environment, _source, _value, _signed  )
@@ -528,6 +524,7 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_math_sub_16bit_with_8bit( _environment, _source, _destination, _other ) z80_math_sub_16bit_with_8bit( _environment, _source, _destination, _other )
 #define cpu_uppercase( _environment, _source, _size, _result ) z80_uppercase( _environment, _source, _size, _result )
 #define cpu_lowercase( _environment, _source, _size, _result ) z80_lowercase( _environment, _source, _size, _result )
+#define cpu_convert_string_into_8bit( _environment, _string, _len, _value ) z80_convert_string_into_8bit( _environment, _string, _len, _value )
 #define cpu_convert_string_into_16bit( _environment, _string, _len, _value ) z80_convert_string_into_16bit( _environment, _string, _len, _value )
 #define cpu_fill_indirect( _environment, _address, _size, _pattern ) z80_fill_indirect( _environment, _address, _size, _pattern )
 #define cpu_flip( _environment, _source, _size, _destination ) z80_flip( _environment, _source, _size, _destination )
@@ -547,7 +544,6 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_math_div_8bit_to_8bit( _environment, _source, _destination,   _other, _other_remainder, _signed  ) z80_math_div_8bit_to_8bit( _environment, _source, _destination,  _other, _other_remainder, _signed )
 #define cpu_bit_check( _environment, _value, _position, _result, _bitwidth ) z80_bit_check( _environment, _value, _position, _result, _bitwidth )
 #define cpu_bit_inplace_8bit( _environment, _value, _position, _bit ) z80_bit_inplace_8bit( _environment, _value, _position, _bit );
-#define cpu_bit_inplace_8bit_extended( _environment, _value, _position, _bit ) z80_bit_inplace_8bit_extended( _environment, _value, _position, _bit );
 #define cpu_bit_inplace_8bit_extended_indirect( _environment, _address, _position, _bit ) z80_bit_inplace_8bit_extended_indirect( _environment, _address, _position, _bit );
 #define cpu_number_to_string( _environment, _number, _string, _string_size, _bits, _signed ) z80_number_to_string( _environment, _number, _string, _string_size, _bits, _signed )
 #define cpu_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset ) z80_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset )
