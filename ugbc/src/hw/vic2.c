@@ -1645,12 +1645,14 @@ void vic2_cls( Environment * _environment ) {
 
 void vic2_scroll_text( Environment * _environment, int _direction ) {
 
-    if ( _direction > 0 ) {
-        deploy( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm );
-        outline0("JSR VSCROLLTDOWN");
-    } else {
-        deploy( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
-        outline0("JSR VSCROLLTUP");
+    if ( _environment->currentMode == 0 || _environment->currentMode == 1 ) {
+        if ( _direction > 0 ) {
+            deploy( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm );
+            outline0("JSR VSCROLLTDOWN");
+        } else {
+            deploy( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
+            outline0("JSR VSCROLLTUP");
+        }
     }
 
 }
