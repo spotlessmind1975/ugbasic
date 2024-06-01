@@ -37,24 +37,43 @@
 #include "../ugbc.h"
 #include <math.h>
 
+// Palette from http://www.pepto.de/projects/colorvic/
+
 static RGBi SYSTEM_PALETTE[] = {
-        { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },
-        { 0xff, 0xff, 0xff, 0xff, 1, "WHITE" },
-        { 0x80, 0x00, 0x00, 0xff, 2, "RED" },
-        { 0xaa, 0xff, 0xe6, 0xff, 3, "CYAN" },
-        { 0xcc, 0x44, 0xcc, 0xff, 4, "VIOLET" },
-        { 0x00, 0xcc, 0x55, 0xff, 5, "GREEN" },
-        { 0x00, 0x00, 0xaa, 0xff, 6, "BLUE" },
-        { 0xee, 0xee, 0x77, 0xff, 7, "YELLOW" },
-        { 0xa1, 0x68, 0x3c, 0xff, 8, "ORANGE" },
-        { 0xdd, 0x88, 0x65, 0xff, 9, "BROWN" },
-        { 0xff, 0x77, 0x77, 0xff, 10, "LIGHT_RED" },
-        { 0x33, 0x33, 0x33, 0xff, 11, "DARK_GREY" },
-        { 0x77, 0x77, 0x77, 0xff, 12, "GREY" },
-        { 0xaa, 0xff, 0x66, 0xff, 13, "LIGHT GREEN" },
-        { 0x00, 0x88, 0xff, 0xff, 14, "LIGHT BLUE" },
-        { 0xbb, 0xbb, 0xbb, 0xff, 15, "LIGHT GREY" }
+//   0   0   0	0 - black
+        {    0,    0,    0, 0xff,  0, "BLACK" },
+// 255 255 255	1 - white
+        {  255,  255,  255,  0xff,  1, "WHITE" },
+// 104  55  43	2 - red
+        {  104,   55,   43,  0xff,  2, "RED" },
+// 112 164 178	3 - cyan
+        {  112,  164,  178,  0xff,  3, "CYAN" },
+// 111  61 134	4 - purple
+        {  111,   61,  134, 0xff,   4, "PURPLE" },
+//  88 141  67	5 - green
+        {   88,  141,   67, 0xff,   5, "GREEN" },
+//  53  40 121	6 - blue
+        {   53,   40,  121, 0xff,   6, "BLUE" },
+// 184 199 111	7 - yellow
+        {  184,  199,  111, 0xff,   7, "YELLOW" },
+// 111  79  37	8 - orange
+        {  111,   79,   37, 0xff,   8, "ORANGE" },
+//  67  57   0	9 - brown
+        {   67,   57,   0, 0xff,    9, "BROWN" },
+// 154 103  89	10 - light red
+        {  154,  103,  89, 0xff,   10, "LIGHT RED" },
+//  68  68  68	11 - dark grey
+        {   68,   68,  68, 0xff,   11, "DARK GREY" },
+// 108 108 108	12 - grey
+        {  108,  108, 108, 0xff,   12, "GREY" },
+// 154 210 132	13 - light green
+        {  154,  210, 132, 0xff,   13, "LIGHT GREEN" },
+// 108  94 181	14 - light blue
+        {  108,   94, 181, 0xff,   14, "LIGHT BLUE" },
+// 149 149 149	15 - light grey
+        {  149, 149, 149,  0xff,   15, "LIGHT GREY" }
 };
+
 
 static RGBi * commonPalette;
 int lastUsedSlotInCommonPalette = 0;
