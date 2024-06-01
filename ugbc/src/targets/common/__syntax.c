@@ -2071,3 +2071,147 @@ Disabilita l'interrupt a livello di CPU.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword JOY
+
+@english
+Read the value from the joystick port. 
+
+@italian
+Leggi il valore della porta del joystick.
+
+@syntax = JOY( port )
+
+@example x = JOY(0)
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword JUP
+
+@english
+Read the joystick port and check for "direction up" bit.
+
+@italian
+Leggi il valore della porta del joystick, e controlla il bit in "direzione su".
+
+@syntax = JUP( port )
+
+@example x = JUP(0)
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword JDOWN
+
+@english
+Read the joystick port and check for "direction down" bit.
+
+@italian
+Leggi il valore della porta del joystick, e controlla il bit in "direzione giù".
+
+@syntax = JDOWN( port )
+
+@example x = JDOWN(0)
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword JLEFT
+
+@english
+Read the joystick port and check for "direction left" bit.
+
+@italian
+Leggi il valore della porta del joystick, e controlla il bit in "direzione sinistra".
+
+@syntax = JLEFT( port )
+
+@example x = JLEFT(0)
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword JRIGHT
+
+@english
+Read the joystick port and check for "direction right" bit.
+
+@italian
+Leggi il valore della porta del joystick, e controlla il bit in "direzione destra".
+
+@syntax = JRIGHT( port )
+
+@example x = JRIGHT(0)
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword JFIRE
+
+@english
+Read the joystick port and check for "fire button" bit.
+
+@italian
+Leggi il valore della porta del joystick, e controlla il bit "fuoco".
+
+@syntax = JFIRE( port )
+
+@example x = JFIRE(0)
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword FIRE
+
+@english
+Read the joystick port and check for "fire button" bit.
+
+@italian
+Leggi il valore della porta del joystick, e controlla il bit "fuoco".
+
+@syntax = FIRE( port )
+
+@example x = FIRE(0)
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword JOY COUNT
+
+@english
+Read the number of joysticks installed into the system.
+
+@italian
+Recupera il numero di porte joystick installate nel sistema.
+
+@syntax = JOY COUNT
+
+@example x = JOY COUNT
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword JOYCOUNT
+
+@english
+Read the number of joysticks installed into the system.
+
+@italian
+Recupera il numero di porte joystick installate nel sistema.
+
+@syntax = JOYCOUNT
+
+@example x = JOYCOUNT
+
+@target all
+</usermanual> */
