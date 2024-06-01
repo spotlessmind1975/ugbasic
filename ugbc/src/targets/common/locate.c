@@ -114,14 +114,18 @@ void locate( Environment * _environment, char * _x, char * _y ) {
 
     if ( _x ) {
         Variable * windowCX = variable_retrieve( _environment, "XCURSYS" );
+        Variable * consoleX1 = variable_retrieve( _environment, "CONSOLEX1" );
         Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
         variable_move( _environment, x->name, windowCX->name );
+        variable_add_inplace_vars( _environment, windowCX->name, consoleX1->name );
     }
 
     if ( _y ) {
         Variable * windowCY = variable_retrieve( _environment, "YCURSYS" );
+        Variable * consoleY1 = variable_retrieve( _environment, "CONSOLEY1" );
         Variable * y = variable_retrieve_or_define( _environment, _y, VT_BYTE, 0 );
         variable_move( _environment, y->name, windowCY->name );
+        variable_add_inplace_vars( _environment, windowCY->name, consoleY1->name );
     }
 
 }
