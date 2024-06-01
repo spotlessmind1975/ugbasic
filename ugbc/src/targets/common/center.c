@@ -117,9 +117,8 @@ void center( Environment * _environment, char * _string, int _newline ) {
 
     MAKE_LABEL
     
-    Variable * y = variable_retrieve( _environment, "YCURSYS" );
     Variable * string = variable_retrieve( _environment, _string );
-    Variable * currentWidth = variable_retrieve( _environment, "CURRENTTILESWIDTH");
+    Variable * currentWidth = variable_retrieve( _environment, "CONSOLEW");
     Variable * len = variable_string_len( _environment, _string);
     Variable * result = variable_temporary( _environment, VT_BYTE, "(compare)");
     Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
@@ -136,13 +135,13 @@ void center( Environment * _environment, char * _string, int _newline ) {
     Variable * w = variable_sub( _environment, currentWidth->name, len->name );
     w = variable_div2_const( _environment, w->name, 1 );
 
-    locate( _environment, w->name, y->name );
+    locate( _environment, w->name, NULL );
 
     cpu_jump( _environment, doneLabel );
 
     cpu_label( _environment, nothingLabel );
 
-    locate( _environment, zero->name, y->name );
+    locate( _environment, zero->name, NULL );
 
     cpu_label( _environment, doneLabel );
 
