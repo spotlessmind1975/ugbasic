@@ -89,6 +89,8 @@ IRQSVC:
     JSR MUSICPLAYER
     JSR JOYSTICKMANAGER
     JSR TIMERMANAGER
+MSPRITESMANAGERADDRESS:
+    JSR MSPRITESMANAGER
     PHA
     LDA #$1
     STA $D019
@@ -134,6 +136,21 @@ C128STARTUPDONE:
     STA $0314
     LDA #>IRQSVC2
     STA $0315
+
+@IF deployed.msprite
+
+    ; msprites
+    LDA #$7f                    ;CIA interrupt off
+    STA $DC0D
+    LDA #$01                    ;Raster interrupt on
+    STA $D01A
+    LDA #37
+    STA $D011
+    LDA #IRQ1LINE               ;Line where next IRQ happens
+    STA $D012
+    LDA $DC0D
+    
+@ENDIF
 
 @IF dataSegment
     LDA #<DATAFIRSTSEGMENT

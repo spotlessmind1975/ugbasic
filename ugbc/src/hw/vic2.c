@@ -563,17 +563,35 @@ Variable * vic2_collision( Environment * _environment, char * _sprite ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
-
-    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(collision result)");
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
 
-    MAKE_LABEL
+    switch ( sprite->type) {
 
-    outline1("LDA %s", sprite->realName);
-    outline0("STA MATHPTR3");
-    outline0("JSR SPRITECOL");
-    outline1("STA %s", result->realName);
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+
+            outline1("LDA %s", sprite->realName);
+            outline0("STA MATHPTR3");
+            outline0("JSR SPRITECOL");
+            outline1("STA %s", result->realName);
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
+
+            outline1("LDA %s", sprite->realName);
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("STA MATHPTR3");
+            outline0("JSR MSPRITECOL");
+            outline1("STA %s", result->realName);
+            break;
+
+    }
+
+
 
     return result;
 
@@ -957,6 +975,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 199 );
 
+            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x87f8 );
+
             break;
         case BITMAP_MODE_MULTICOLOR:
             _environment->fontWidth = 4;
@@ -996,7 +1016,9 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPX2", 159 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 199 );
-            
+
+            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x87f8 );
+
             break;
         case TILEMAP_MODE_STANDARD:
             _environment->screenWidth = 320;
@@ -1032,6 +1054,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
 
+            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x83f8 );
+
             break;
         case TILEMAP_MODE_MULTICOLOR:
             _environment->screenWidth = 160;
@@ -1066,6 +1090,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
 
+            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x83f8 );
+
             break;
         case TILEMAP_MODE_EXTENDED:
             _environment->screenWidth = 160;
@@ -1099,6 +1125,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPX2", 39 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
+
+            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x83f8 );
 
             break;
         default:
@@ -1415,14 +1443,30 @@ void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * image = variable_retrieve_or_define( _environment, _image, VT_IMAGE, 0 );
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
-
     outline1("LDA #<%s", image->realName );
     outline0("STA MATHPTR1"  );
     outline1("LDA #>%s", image->realName );
     outline0("STA MATHPTR2"  );
-    outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITEDATAFROM" );
+
+    switch ( sprite->type) {
+
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR MSPRITEDATAFROM" );
+            break;
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
+
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR MSPRITEDATAFROM" );
+            break;
+
+    }
 
 }
 
@@ -1430,12 +1474,29 @@ void vic2_sprite_enable( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
-
     _environment->bitmaskNeeded = 1;
 
-    outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITEENABLE" );
+    switch ( sprite->type) {
+
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR SPRITEENABLE" );
+            break;
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
+
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("JSR MSPRITEENABLE" );
+            break;
+
+    }
 
 }
 
@@ -1443,32 +1504,77 @@ void vic2_sprite_disable( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
-    
     _environment->bitmaskNeeded = 1;
 
-    outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITEDISABLE" );
+    switch ( sprite->type) {
+
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR MSPRITEDISABLE" );
+            break;
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
+
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("JSR MSPRITEDISABLE" );
+            break;
+
+    }
+
 
 }
 
 void vic2_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
-    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
-    
     _environment->bitmaskNeeded = 1;
 
-    outline1("LDA %s", x->realName );
-    outline0("STA MATHPTR0"  );
-    outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
-    outline0("STA MATHPTR1"  );
-    outline1("LDX %s", y->realName );
-    outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITEAT" );
+    switch ( sprite->type) {
+
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+
+            outline1("LDA %s", x->realName );
+            outline0("LSR" );
+            outline0("STA MATHPTR0"  );
+            outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
+            outline0("STA MATHPTR1"  );
+            outline1("LDX %s", y->realName );
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR SPRITEAT" );
+            break;
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
+
+            outline1("LDA %s", x->realName );
+            outline0("STA MATHPTR0"  );
+            outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
+            outline0("STA MATHPTR1"  );
+            outline0("LSR MATHPTR1"  );
+            outline0("ROR MATHPTR0"  );
+            outline1("LDA %s", y->realName );
+            outline0("STA MATHPTR2"  );
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("JSR MSPRITEAT" );
+            break;
+
+    }
+
 
 }
 
@@ -1476,9 +1582,30 @@ void vic2_sprite_expand_vertical( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
-    outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITEEXPANDY" );
+    switch ( sprite->type) {
+
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR SPRITEEXPANDY" );
+            break;
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
+
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("JSR MSPRITEEXPANDY" );
+            break;
+
+    }
+
+
+
 
 }
 
@@ -1486,10 +1613,27 @@ void vic2_sprite_expand_horizontal( Environment * _environment, char * _sprite )
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
-    
-    outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITEEXPANDX" );
+    switch ( sprite->type) {
+
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+            
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR SPRITEEXPANDX" );
+            break;
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
+
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("JSR MSPRITEEXPANDX" );
+            break;
+
+    }
 
 }
 
@@ -1497,10 +1641,27 @@ void vic2_sprite_compress_vertical( Environment * _environment, char * _sprite )
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
+    switch ( sprite->type) {
+
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+            
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR SPRITECOMPRESSY" );
+            break;
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
     
-    outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITECOMPRESSY" );
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("JSR MSPRITECOMPRESSY" );
+            break;
+
+    }
 
 }
 
@@ -1508,10 +1669,27 @@ void vic2_sprite_compress_horizontal( Environment * _environment, char * _sprite
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
+    switch ( sprite->type) {
+
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+            
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR SPRITECOMPRESSX" );
+            break;
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
     
-    outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITECOMPRESSX" );
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("JSR MSPRITECOMPRESSX" );
+            break;
+
+    }
 
 }
 
@@ -1521,10 +1699,28 @@ void vic2_sprite_multicolor( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
+    switch ( sprite->type) {
+
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+            
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR SPRITEMULTICOLOR" );
+            break;
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
     
-    outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITEMULTICOLOR" );
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("JSR MSPRITEMULTICOLOR" );
+            break;
+
+    }
+
 
 }
 
@@ -1534,10 +1730,27 @@ void vic2_sprite_monocolor( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
+    switch ( sprite->type) {
+
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+            
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR SPRITEMONOCOLOR" );
+            break;
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
     
-    outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITEMONOCOLOR" );
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("JSR MSPRITEMONOCOLOR" );
+            break;
+
+    }
 
 }
 
@@ -1548,11 +1761,30 @@ void vic2_sprite_color( Environment * _environment, char * _sprite, char * _colo
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
 
-    deploy( sprite, src_hw_vic2_sprites_asm );
+    switch ( sprite->type) {
+
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+            
+            outline1("LDA %s", color->realName );
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR SPRITECOLOR" );
+            break;
+
+        case VT_MSPRITE:
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
     
-    outline1("LDA %s", color->realName );
-    outline1("LDY %s", sprite->realName );
-    outline0("JSR SPRITECOLOR" );
+            outline1("LDA %s", color->realName );
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("JSR MSPRITECOLOR" );
+            break;
+
+    }
+
 
 }
 
@@ -1807,6 +2039,11 @@ static RGBi * multicolorSpritePalette[2];
 
 void vic2_finalization( Environment * _environment ) {
 
+    if ( ! _environment->deployed.msprite ) {
+        outhead0("MSPRITESMANAGER:");
+        outline0("RTS");
+        outhead0("MSPRITESMANAGER2MSBOKADDRESS: .BYTE 0, 0");
+    }
     outhead0("VIC2FINALIZATION:");
 
     if ( multicolorSpritePalette[0] ) {
@@ -2611,13 +2848,16 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-Variable * vic2_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color, int _flags ) {
+Variable * vic2_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color, int _flags, int _slot_x, int _slot_y ) {
 
     RGBi palette[MAX_PALETTE];
 
     int colorUsed = vic2_palette_extract( _environment, _source, _width, _height, _depth, _flags, &palette[0] );
 
 //    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */ );
+
+    int spriteWidth = 0;
+    int spriteHeight = 0;
 
     if ( ! _color ) {
 
@@ -2632,7 +2872,15 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
         }
 
     }
-    
+
+    if ( _flags & SPRITE_FLAG_MULTICOLOR ) {
+        spriteWidth = 12;
+        spriteHeight = 21;
+    } else {
+        spriteWidth = 24;
+        spriteHeight = 21;
+    }
+
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );    
     result->originalColors = colorUsed;
 
@@ -2752,29 +3000,26 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
     // Color of the pixel to convert
     RGBi rgb;
 
+    char * source = _source + ( ( _slot_y * spriteHeight * spriteWidth ) + _slot_x * spriteWidth ) * _depth;
+
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        if ( image_y == 21 ) {
+    for (image_y = 0; image_y < spriteHeight; ++image_y) {
+        if ( ( image_y + ( _slot_y * spriteHeight ) )  == _height ) {
+            // printf( "Y" );
             break;
         }
-        for (image_x = 0; image_x < _width; ++image_x) {
-
-            if ( _flags & SPRITE_FLAG_MULTICOLOR ) {
-                if ( image_x == 12 ) {
-                    break;
-                }
-            } else {
-                if ( image_x == 24 ) {
-                    break;
-                }
+        for (image_x = _slot_x * spriteWidth; image_x < ( _slot_x * spriteWidth ) + spriteWidth; ++image_x) {
+            if ( ( image_x + ( _slot_x * spriteWidth ) )  == _width ) {
+                // printf( "X" );
+                break;
             }
 
             // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
             if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
+                rgb.alpha = *(source + 3);
             } else {
                 rgb.alpha = 255;
             }
@@ -2844,20 +3089,20 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
                 if ( i == 1 ) {
                     *( buffer + offset) |= bitmask;
-                    //printf("*");
+                    // printf("*");
                 } else {
                     *( buffer + offset) &= ~bitmask;
-                    //printf(" ");
+                    // printf(" ");
                 }
 
             }
 
-            _source += _depth;
+            source += _depth;
 
         }
 
         // printf("\n");
-        _source += _depth * ( _width - image_x );
+        source += _depth * ( _width - image_x );
 
         // printf("\n" );
 

@@ -456,7 +456,10 @@ typedef enum _VariableType {
     VT_TILEMAP = 27,
 
     /** BIT */
-    VT_BIT = 28
+    VT_BIT = 28,
+
+    /** MSPRITE (multi hardware movable objects) */
+    VT_MSPRITE = 29
 
 } VariableType;
 
@@ -1446,6 +1449,7 @@ typedef struct _Deployed {
     int joystick;
     int keyboard;
     int sprite;
+    int msprite;
     int sqr;
     int back;
     int vars;
@@ -2645,7 +2649,7 @@ typedef struct _Environment {
 #define UNIQUE_RESOURCE_ID   ((struct _Environment *)_environment)->uniqueResourceId++
 #define MAKE_LABEL  char label[32]; sprintf( label, "_label%d", UNIQUE_ID);
 
-#define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL( s ) fprintf(stderr, "%s %d\nCRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", __FILE__, __LINE__, ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4277,6 +4281,7 @@ void                    mmove_memory_memory( Environment * _environment, char * 
 void                    mmove_memory_video( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mmove_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
 void                    move_tile( Environment * _environment, char * _tile, char * _x, char * _y );
+Variable *              msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
 Variable *              music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 Variable *              music_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 Variable *              music_storage( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
@@ -4453,7 +4458,7 @@ void                    sprite_compress_horizontal( Environment * _environment, 
 void                    sprite_compress_horizontal_var( Environment * _environment, char * _sprite );
 void                    sprite_compress_vertical( Environment * _environment, int _sprite );
 void                    sprite_compress_vertical_var( Environment * _environment, char * _sprite );
-Variable *              sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _colorm, int _flags );
+Variable *              sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _colorm, int _flags, int _slot_x, int _slot_y );
 void                    sprite_data_from( Environment * _environment, int _sprite, int _address );
 void                    sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address );
 void                    sprite_disable( Environment * _environment, int _sprite );

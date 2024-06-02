@@ -40,9 +40,9 @@
 
 #if defined(__c64__) || defined(__c64reu__) || defined(__c128__)
 
-Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color, int _flags ) {
+Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color, int _flags, int _slot_x, int _slot_y ) {
 
-    return vic2_sprite_converter( _environment, _data, _width, _height, _depth, _color, _flags );
+    return vic2_sprite_converter( _environment, _data, _width, _height, _depth, _color, _flags, _slot_x, _slot_y );
 
 }
 

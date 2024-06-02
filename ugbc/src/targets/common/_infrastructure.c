@@ -90,7 +90,8 @@ char DATATYPE_AS_STRING[][16] = {
     "MUSIC",
     "BLIT",
     "FLOAT",
-    "BIT"
+    "BIT",
+    "MSPRITE",
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -914,6 +915,8 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         size *= 1;
     } else if ( var->arrayType == VT_SPRITE ) {
         size *= 1;
+    } else if ( var->arrayType == VT_MSPRITE ) {
+        size *= 2;
     } else if ( var->arrayType == VT_TILE ) {
         size *= 1;
     } else if ( var->arrayType == VT_TILES ) {
@@ -1267,6 +1270,8 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     size *= 1;
                 } else if ( destination->arrayType == VT_SPRITE ) {
                     size *= 1;
+                } else if ( destination->arrayType == VT_MSPRITE ) {
+                    size *= 2;
                 } else if ( destination->arrayType == VT_TILE ) {
                     size *= 1;
                 } else if ( destination->arrayType == VT_TILESET ) {
@@ -2612,6 +2617,17 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     break;
                             }
                             break;
+                        case VT_MSPRITE:
+                            switch( target->type ) {
+                                case VT_MSPRITE: {
+                                    cpu_move_16bit( _environment, source->realName, target->realName );
+                                    break;
+                                }
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    break;
+                            }
+                            break;
                         case VT_TILE:
                             switch( target->type ) {
                                 case VT_TILE: {
@@ -2949,6 +2965,17 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     switch( target->type ) {
                         case VT_SPRITE: {
                             cpu_move_8bit( _environment, source->realName, target->realName );
+                            break;
+                        }
+                        default:
+                            CRITICAL_MOVE_NAKED_UNSUPPORTED( DATATYPE_AS_STRING[target->type]);
+                            break;
+                    }
+                    break;
+                case VT_MSPRITE:
+                    switch( target->type ) {
+                        case VT_MSPRITE: {
+                            cpu_move_16bit( _environment, source->realName, target->realName );
                             break;
                         }
                         default:
@@ -7030,6 +7057,7 @@ void variable_store_array_const_byte( Environment * _environment, Variable * _ar
          case VT_TILE:
          case VT_TILESET:
          case VT_SPRITE:
+         case VT_MSPRITE:
          case VT_DSTRING:
             offset = variable_mul2_const( _environment, offset->name, 0 );
             break;
@@ -7056,6 +7084,9 @@ void variable_store_array_const_byte( Environment * _environment, Variable * _ar
             case VT_TILESET:
             case VT_SPRITE:
                 cpu_store_8bit( _environment, offset->realName, _value );
+                break;
+            case VT_MSPRITE:
+                cpu_store_16bit( _environment, offset->realName, _value );
                 break;
             default:
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
@@ -7089,6 +7120,10 @@ void variable_store_array_const_byte( Environment * _environment, Variable * _ar
             case VT_SPRITE:
                 cpu_store_8bit( _environment, _array->realName, _value );
                 bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 1 );
+                break;
+            case VT_MSPRITE:
+                cpu_store_16bit( _environment, _array->realName, _value );
+                bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 2 );
                 break;
             default:
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
@@ -7177,6 +7212,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
          case VT_DSTRING:
             offset = variable_mul2_const( _environment, offset->name, 0 );
             break;
+         case VT_MSPRITE:
+            offset = variable_mul2_const( _environment, offset->name, 1 );
+            break;
          case VT_TILES:
             offset = variable_mul2_const( _environment, offset->name, 2 );
             break;
@@ -7200,6 +7238,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
             case VT_TILESET:
             case VT_SPRITE:
                 cpu_move_8bit_indirect( _environment, _value->realName, offset->realName );
+                break;
+            case VT_MSPRITE:
+                cpu_move_16bit_indirect( _environment, _value->realName, offset->realName );
                 break;
             default:
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
@@ -7232,6 +7273,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
             case VT_TILESET:
             case VT_SPRITE:
                 bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 1 );
+                break;
+            case VT_MSPRITE:
+                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 2 );
                 break;
             default:
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
@@ -7409,6 +7453,17 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                     break;
 
                 }
+                case VT_MSPRITE: {
+
+                    offset = variable_mul2_const( _environment, offset->name, 1 );
+
+                    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+                    cpu_move_16bit_indirect2( _environment, offset->realName, result->realName );
+
+                    break;
+
+                }
                 case VT_DSTRING: {
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
@@ -7519,6 +7574,15 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                 offset = variable_mul2_const( _environment, offset->name, 0 );
 
                 bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, result->name, 1 );
+
+                break;
+
+            }
+            case VT_MSPRITE: {
+
+                offset = variable_mul2_const( _environment, offset->name, 1 );
+
+                bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, result->name, 2 );
 
                 break;
 

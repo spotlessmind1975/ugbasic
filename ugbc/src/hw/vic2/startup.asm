@@ -158,6 +158,12 @@ VIC2STARTUPL1:
     ORA XSCROLLPOS
     STA $D016
 
+@IF deployed.msprites
+
+    JSR MSPRITESINIT
+
+@ENDIF
+
     RTS
 
 WAITVBL:

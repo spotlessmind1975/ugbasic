@@ -53,67 +53,106 @@
 @target c128
 @target c64reu
 </usermanual> */
-Variable * msprite_init( Environment * _environment, char * _image, char * _sprite, int _x_slots, int _y_slots, int _flags ) {
+Variable * msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
-    // Variable * index;
-    // Variable * startIndex;
-    Variable * result = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );   
+    Variable * index;
+    Variable * startIndex;
+    Variable * spriteCount;
+    Variable * result = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
 
-    // Variable * spriteCount;
+    if ( _sprite ) {
+        Variable * original = variable_retrieve_or_define( _environment, _sprite, VT_MSPRITE, 0 );   
+        startIndex = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );
+        cpu_move_8bit( _environment, original->realName, startIndex->realName );
+        outline0("; ---------------------------^^^^^^^^^^");
+    } else {
+        index = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
+        startIndex = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );
+        spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+        cpu_move_8bit( _environment, spriteCount->realName, startIndex->realName );
+    }
 
-    // if ( _sprite ) {
-    //     outline0("; ---------------------------vvvvvvvv");
-    //     index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );   
-    //     startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-    //     cpu_move_8bit( _environment, index->realName, startIndex->realName );
-    //     cpu_math_and_const_8bit( _environment, startIndex->realName, 0x0f );
-    //     spriteCount = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-    //     cpu_move_8bit( _environment, index->realName, spriteCount->realName );
-    //     cpu_math_div2_const_8bit( _environment, spriteCount->realName, 4, 0 );
-    //     cpu_math_and_const_8bit( _environment, spriteCount->realName, 0x0f );
-    //     cpu_math_sub_8bit( _environment, spriteCount->realName, startIndex->realName, spriteCount->realName );
-    //     cpu_move_8bit( _environment, startIndex->realName, index->realName );
-    //     cpu_move_8bit( _environment, startIndex->realName, spriteCount->realName );
-    //     outline0("; ---------------------------^^^^^^^^^^");
-    // } else {
-    //     index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );   
-    //     startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-    //     spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
-    //     variable_move_naked( _environment, spriteCount->name, startIndex->name );
-    // }
+    Variable * image = variable_retrieve( _environment, _image );
 
-    // Variable * image = variable_retrieve( _environment, _image );
+    int i = 0;
 
-    // int i = 0;
+    //                   +---+------------- width in sprites (00 = 1, 01 = 2, 10 = 3, 11 = 4)
+    //                   |   |   +---+----- height in sprites (00 = 1, 01 = 2, 10 = 3, 11 = 4)
+    //                   |   |   |   |
+    // +---+---+---+---+---+---+---+---+ +---+---+---+---+---+---+---+---+
+    // | M | c | c | c | x | x | y | y | | n | n | n | n | n | n | n | n |
+    // +---+---+---+---+---+---+---+---+ +---+---+---+---+---+---+---+---+
+    // +-+---+---+---------------------+ +-------------------------------+
+    //   |   |   |   | (VT_MSPRITE+1)                    (VT_MSPRITE+0)
+    //   |   |   |   |
+    //   |   +---+---+-- number of colors
+    //   +-------------- multicolor (0 = no / 1 = yes)    
 
-    // for (i=0; i<image->originalColors; ++i ) {
-    //     if ( image->originalPalette[i].index == COLOR_BLACK ) continue;
-    //     variable_move_naked( _environment, spriteCount->name, index->name );
-    //     Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags );
-    //     vic2_sprite_data_from( _environment, index->name, realImage->name );
-    //     cpu_inc( _environment, spriteCount->realName );
-    //     cpu_inc( _environment, index->realName );
-    // }
+    int y_slots = ( (image->originalHeight-1) / 21 );
+    int x_slots = 0;
+    if ( _flags & SPRITE_FLAG_MULTICOLOR) {
+        x_slots = ( (image->originalWidth-1) / 12 ) + 1;
+    } else {
+        x_slots = ( (image->originalWidth-1) / 24 ) + 1;
+    }
 
-    // cpu_combine_nibbles( _environment, startIndex->realName, index->realName, result->realName );
+    printf( "%d, %d\n", x_slots, y_slots );
 
-    // if ( _flags & SPRITE_FLAG_MULTICOLOR) {
-    //     sprite_multicolor_var( _environment, result->name );
-    // } else {
-    //     sprite_monocolor_var( _environment, result->name );
-    // }
+    int c_slots = 0;
+    for (i=0; i<image->originalColors; ++i ) {
+        if ( image->originalPalette[i].index == COLOR_BLACK ) continue;
+        ++c_slots;
+        for (int y=0; y<y_slots; ++y ) {
+            for (int x=0; x<x_slots; ++x ) {
+                
+                cpu_move_8bit( _environment, spriteCount->realName, index->realName );
+                Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, x, y );
+                vic2_sprite_data_from( _environment, index->name, realImage->name );
 
-    // if ( _flags & SPRITE_FLAG_EXPAND_HORIZONTAL ) {
-    //     sprite_expand_horizontal_var( _environment, result->name );
-    // } else {
-    //     sprite_compress_horizontal_var( _environment, result->name );
-    // }
+                if ( _flags & SPRITE_FLAG_MULTICOLOR) {
+                    sprite_multicolor_var( _environment, index->name );
+                    outline1("LDA %s", address_displacement( _environment, index->realName, "1" ) );
+                    outline0("ORA #%10000000" )
+                    outline1("STA %s", address_displacement( _environment, index->realName, "1" ) );
+                } else {
+                    sprite_monocolor_var( _environment, index->name );
+                    outline1("LDA %s", address_displacement( _environment, index->realName, "1" ) );
+                    outline0("AND #%01111111" )
+                    outline1("STA %s", address_displacement( _environment, index->realName, "1" ) );
+                }
 
-    // if ( _flags & SPRITE_FLAG_EXPAND_VERTICAL) {
-    //     sprite_expand_vertical_var( _environment, result->name );
-    // } else {
-    //     sprite_compress_vertical_var( _environment, result->name );
-    // }
+                if ( _flags & SPRITE_FLAG_EXPAND_HORIZONTAL ) {
+                    sprite_expand_horizontal_var( _environment, index->name );
+                } else {
+                    sprite_compress_horizontal_var( _environment, index->name );
+                }
+
+                if ( _flags & SPRITE_FLAG_EXPAND_VERTICAL ) {
+                    sprite_expand_vertical_var( _environment, index->name );
+                } else {
+                    sprite_expand_vertical_var( _environment, index->name );
+                }
+
+                cpu_inc( _environment, spriteCount->realName );
+                cpu_inc( _environment, index->realName );
+            }
+        }
+    }
+
+    //                   +---+------------- width in sprites (00 = 1, 01 = 2, 10 = 3, 11 = 4)
+    //                   |   |   +---+----- height in sprites (00 = 1, 01 = 2, 10 = 3, 11 = 4)
+    //                   |   |   |   |
+    // +---+---+---+---+---+---+---+---+ +---+---+---+---+---+---+---+---+
+    // | M | c | c | c | x | x | y | y | | n | n | n | n | n | n | n | n |
+    // +---+---+---+---+---+---+---+---+ +---+---+---+---+---+---+---+---+
+    // +-+---+---+---------------------+ +-------------------------------+
+    //   |   |   |   | (VT_MSPRITE+1)                    (VT_MSPRITE+0)
+    //   |   |   |   |
+    //   |   +---+---+-- number of colors
+    //   +-------------- multicolor (0 = no / 1 = yes)        
+
+    outline1("LDA #$%2.2x", ( (y_slots-1) & 0x03 ) | ( ( (x_slots-1) & 0x03 ) << 2 ) | ( ( (c_slots-1) & 0x07 ) << 4 ) | ( ( _flags & SPRITE_FLAG_MULTICOLOR ) ? 0x80 : 0x00) );
+    outline1("STA %s", address_displacement( _environment, result->realName, "1" ) );
 
     return result;
 
