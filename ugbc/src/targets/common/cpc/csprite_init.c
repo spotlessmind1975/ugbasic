@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__cpc__)
 
 /**
  * @brief Emit code for <strong>SPRITE(...)</strong>
@@ -76,7 +78,7 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
 
     for (i=1; i<image->originalColors; ++i ) {
         variable_move_naked( _environment, spriteCount->name, index->name );
-        Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags );
+        Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, 0, 0 );
         cpc_sprite_data_from( _environment, index->name, realImage->name );
         cpu_inc( _environment, spriteCount->realName );
     }
@@ -87,3 +89,5 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
     return index;
 
 }
+
+#endif

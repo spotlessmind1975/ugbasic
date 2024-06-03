@@ -32,39 +32,40 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__cpc__)
+
 /**
- * @brief Emit code for <strong>SPRITE(...)</strong>
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * 
+ * This function emits a code capable of compressing horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _image image to use as SPRITE
+ * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
-/* <usermanual>
-@keyword SPRITE
+void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
+    
+}
 
-@target cpc
-</usermanual> */
-Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+/**
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * 
+ * This function emits a code capable of compressing horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Index of the sprite to compress horizontally (0...7)
+ */
+void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
 
-    Variable * index;
-    Variable * image = variable_retrieve( _environment, _image );
-    Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
-
-    if ( _sprite ) {
-        index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
-    } else {
-        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-        variable_move_naked( _environment, spriteCount->name, index->name );
-        cpu_inc( _environment, spriteCount->realName );
-    }
-
-    cpc_sprite_data_from( _environment, index->name, image->name );
-
-    return index;
+    cpc_sprite_compress_horizontal( _environment, _sprite );
 
 }
+
+#endif

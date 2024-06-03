@@ -32,38 +32,20 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>SPRITE [int] MULTICOLOR</b>
- * 
- * This function emits a code capable of enabling multicolor for a given sprite.
- * The index of sprite is given as a direct integer.
- * 
- * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which enable multicolor (0...7)
- */
-void sprite_multicolor( Environment * _environment, int _sprite ) {
+#if defined(__cpc__)
 
-    outline1("; SPRITE %d MULTICOLOR (ignored)", _sprite);
+Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color, int _flags, int _slot_x, int _slot_y ) {
+
+    Variable * result = new_image( _environment, 8, 8, BITMAP_MODE_GRAPHIC0 );
+    
+    return result;
 
 }
 
-/**
- * @brief Emit ASM code for <b>SPRITE [expression] MULTICOLOR</b>
- * 
- * This function emits a code capable of enabling multicolor for a given sprite.
- * The index of sprite is given as an expression.
- * 
- * @param _environment Current calling environment
- * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
- */
-void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
-
-    outline1("; SPRITE %s MULTICOLOR (ignored)", _sprite);
-
-}
+#endif

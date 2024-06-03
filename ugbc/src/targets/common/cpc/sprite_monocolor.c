@@ -32,40 +32,42 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__cpc__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] CPMPRESS VERTICAL</b>
+ * @brief Emit ASM code for <b>SPRITE [int] MONOCOLOR</b>
  * 
- * This function emits a code capable of compressing vertically a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of enabling monocolor for a given sprite.
+ * The index of sprite is given as direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress vertically (0...7)
+ * @param _sprite Index of the sprite for which enable monocolor (0...7)
  */
-void sprite_compress_vertical( Environment * _environment, int _sprite ) {
+void sprite_monocolor( Environment * _environment, int _sprite ) {
 
-    outline1("; SPRITE %d COMPRESS VERTICAL (ignored)", _sprite);
+    outline1("; SPRITE %d MONOCOLOR (ignored)", _sprite);
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] COMPRESS VERTICAL</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] MONOCOLOR</b>
  * 
- * This function emits a code capable of compressing vertically a given sprite.
- * The index of sprite is given as an expression.
+ * This function emits a code capable of enabling monocolor for a given sprite.
+ * The index of sprite is given as expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to compress vertically (0...7)
+ * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
  */
-void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) {
+void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
 
-    outline1("; SPRITE %s COMPRESS VERTICAL (ignored)", _sprite);
-
-    cpc_sprite_compress_vertical( _environment, _sprite );
+    outline1("; SPRITE %s MULTICOLOR (ignored)", _sprite);
 
 }
+
+#endif

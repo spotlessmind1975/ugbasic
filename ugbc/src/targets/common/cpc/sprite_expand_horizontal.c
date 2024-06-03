@@ -32,38 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__cpc__)
+
 /**
- * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
+ * @brief Emit ASM code for <b>SPRITE [int] EXPAND HORIZONTAL</b>
  * 
- * This function emits a code capable of changing the specific color
- * for a given sprite.
+ * This function emits a code capable of expanding horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which to change color
- * @param _color Index of the color
+ * @param _sprite Index of the sprite to expand horizontally (0...7)
  */
-void sprite_color( Environment * _environment, int _sprite, int _color ) {
+void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
+
+    outline1("; SPRITE %d EXPAND HORIZONTAL (ignored)", _sprite);
 
 }
 
 /**
- * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] EXPAND HORIZONTAL</b>
  * 
- * This function emits a code capable of changing the specific color
- * for a given sprite.
+ * This function emits a code capable of expanding horizontally a given sprite.
+ * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite for which to change color
- * @param _color Expression with the index of the color
+ * @param _sprite Expression with the index of the sprite to expand horizontally (0...7)
  */
-void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
+void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
 
-    cpc_sprite_color( _environment, _sprite, _color );
+    outline1("; SPRITE %s EXPAND HORIZONTAL (ignored)", _sprite);
+
+    cpc_sprite_expand_horizontal( _environment, _sprite );
 
 }
+
+#endif

@@ -32,37 +32,42 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__cpc__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] DISABLE</b>
+ * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
  * 
- * This function emits a code capable of disable the sprite _sprite.
- * This version is suitable when direct integer are used.
+ * This function emits a code capable of changing the specific color
+ * for a given sprite.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to disable (0...7)
+ * @param _sprite Index of the sprite for which to change color
+ * @param _color Index of the color
  */
-void sprite_disable( Environment * _environment, int _sprite ) {
+void sprite_color( Environment * _environment, int _sprite, int _color ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] DISABLE</b>
+ * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
  * 
- * This function emits a code capable of disable the sprite _sprite.
- * This version is suitable when an expression is used. 
+ * This function emits a code capable of changing the specific color
+ * for a given sprite.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to disable (0...7)
+ * @param _sprite Expression with the index of the sprite for which to change color
+ * @param _color Expression with the index of the color
  */
-void sprite_disable_var( Environment * _environment, char * _sprite ) {
+void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
 
-    cpc_sprite_disable( _environment, _sprite );
+    cpc_sprite_color( _environment, _sprite, _color );
 
 }
 
+#endif

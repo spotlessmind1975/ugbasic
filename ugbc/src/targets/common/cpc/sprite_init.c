@@ -32,41 +32,43 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__cpc__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] DATA FROM [int]</b>
- * 
- * This function emits a code capable of setting the starting address of the 
- * sprite _sprite to the value _address. This version is suitable when direct 
- * value is used.
+ * @brief Emit code for <strong>SPRITE(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to define (0...7)
- * @param _address Address where the sprite data begins from
+ * @param _image image to use as SPRITE
  */
-void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
+/* <usermanual>
+@keyword SPRITE
+
+@target cpc
+</usermanual> */
+Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+
+    Variable * index;
+    Variable * image = variable_retrieve( _environment, _image );
+    Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+
+    if ( _sprite ) {
+        index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
+    } else {
+        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+        variable_move_naked( _environment, spriteCount->name, index->name );
+        cpu_inc( _environment, spriteCount->realName );
+    }
+
+    cpc_sprite_data_from( _environment, index->name, image->name );
+
+    return index;
 
 }
 
-/**
- * @brief Emit ASM code for <b>SPRITE [expression] DATA FROM [expression]</b>
- * 
- * This function emits a code capable of setting the starting address of the 
- * sprite _sprite to the value _address. This version is suitable when expressions
- * are used.
- * 
- * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to define (0...7)
- * @param _address Expression with the address where the sprite data begins from
- */
-void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _image ) {
-
-    cpc_sprite_data_from( _environment, _sprite, _image );
-
-}
-
+#endif

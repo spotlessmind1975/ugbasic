@@ -32,40 +32,45 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__cpc__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] EXPAND HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [int] DATA FROM [int]</b>
  * 
- * This function emits a code capable of expanding horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when direct 
+ * value is used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to expand horizontally (0...7)
+ * @param _sprite Index of the sprite to define (0...7)
+ * @param _address Address where the sprite data begins from
  */
-void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
-
-    outline1("; SPRITE %d EXPAND HORIZONTAL (ignored)", _sprite);
+void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] EXPAND HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] DATA FROM [expression]</b>
  * 
- * This function emits a code capable of expanding horizontally a given sprite.
- * The index of sprite is given as an expression.
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when expressions
+ * are used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to expand horizontally (0...7)
+ * @param _sprite Expression with the index of the sprite to define (0...7)
+ * @param _address Expression with the address where the sprite data begins from
  */
-void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
+void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _image ) {
 
-    outline1("; SPRITE %s EXPAND HORIZONTAL (ignored)", _sprite);
-
-    cpc_sprite_expand_horizontal( _environment, _sprite );
+    cpc_sprite_data_from( _environment, _sprite, _image );
 
 }
+
+#endif
+

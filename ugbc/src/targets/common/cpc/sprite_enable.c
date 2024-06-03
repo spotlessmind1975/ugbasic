@@ -32,16 +32,40 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color, int _flags ) {
+#if defined(__cpc__)
 
-    Variable * result = new_image( _environment, 8, 8, BITMAP_MODE_GRAPHIC0 );
-    
-    return result;
+/**
+ * @brief Emit ASM code for <b>SPRITE [int] ENABLE</b>
+ * 
+ * This function emits a code capable of enable the sprite _sprite.
+ * This version is suitable when direct integer are used.
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Index of the sprite to enable (0...7)
+ */
+void sprite_enable( Environment * _environment, int _sprite ) {
 
 }
+
+/**
+ * @brief Emit ASM code for <b>SPRITE [expression] ENABLE</b>
+ * 
+ * This function emits a code capable of enable the sprite _sprite.
+ * This version is suitable when an expression is used. 
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Expression with the index of the sprite to enable (0...7)
+ */
+void sprite_enable_var( Environment * _environment, char * _sprite ) {
+
+    cpc_sprite_enable( _environment, _sprite );
+
+}
+
+#endif
