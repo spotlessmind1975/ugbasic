@@ -32,47 +32,30 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] AT ([int],[int])</b>
- * 
- * This function emits a code capable of position a sprite to the (x,y)
- * on the screen. This version is suitable when an integer number 
- * is used. 
+ * @brief Emit code for <strong>SPRITE(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to position (0...7)
- * @param _x The abscissa of the sprite
- * @param _y The ordinate of the sprite
+ * @param _image image to use as SPRITE
  */
 /* <usermanual>
-@keyword SPRITE AT
+@keyword MSPRITE
+
 </usermanual> */
-void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
+Variable * msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+
+    Variable * result = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
+
+    return result;
 
 }
 
-/**
- * @brief Emit ASM code for <b>SPRITE [expression] AT ([expression],[expression])</b>
- * 
- * This function emits a code capable of position a sprite to the (x,y)
- * on the screen. This version is suitable when an expression
- * is used. 
- * 
- * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to position (0...7)
- * @param _x Expression with the abscissa of the sprite
- * @param _y Expression with the ordinate of the sprite
- */
-/* <usermanual>
-@keyword SPRITE AT
-</usermanual> */
-void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
-
-}
-
+#endif

@@ -32,43 +32,50 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] MONOCOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [int] DATA FROM [int]</b>
  * 
- * This function emits a code capable of enabling monocolor for a given sprite.
- * The index of sprite is given as direct integer.
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when direct 
+ * value is used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which enable monocolor (0...7)
+ * @param _sprite Index of the sprite to define (0...7)
+ * @param _address Address where the sprite data begins from
  */
 /* <usermanual>
-@keyword SPRITE MONOCOLOR
+@keyword SPRITE DATA FROM
+
 @target pc128op
 </usermanual> */
-void sprite_monocolor( Environment * _environment, int _sprite ) {
+void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] MONOCOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] DATA FROM [expression]</b>
  * 
- * This function emits a code capable of enabling monocolor for a given sprite.
- * The index of sprite is given as expression.
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when expressions
+ * are used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
+ * @param _sprite Expression with the index of the sprite to define (0...7)
+ * @param _address Expression with the address where the sprite data begins from
  */
 /* <usermanual>
-@keyword SPRITE MONOCOLOR
-@target pc128op
+@keyword SPRITE DATA FROM
 </usermanual> */
-void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
+void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address ) {
 
 }
 
+#endif

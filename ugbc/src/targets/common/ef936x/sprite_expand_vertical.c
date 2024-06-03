@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] EXPAND VERTICAL</b>
@@ -49,7 +51,7 @@
  */
 /* <usermanual>
 @keyword SPRITE EXPAND
-@target to8
+@target pc128op
 </usermanual> */
 void sprite_expand_vertical( Environment * _environment, int _sprite ) {
 
@@ -71,3 +73,4 @@ void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
 
 }
 
+#endif

@@ -32,43 +32,50 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] MONOCOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [int] AT ([int],[int])</b>
  * 
- * This function emits a code capable of enabling monocolor for a given sprite.
- * The index of sprite is given as direct integer.
+ * This function emits a code capable of position a sprite to the (x,y)
+ * on the screen. This version is suitable when an integer number 
+ * is used. 
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which enable monocolor (0...7)
+ * @param _sprite Index of the sprite to position (0...7)
+ * @param _x The abscissa of the sprite
+ * @param _y The ordinate of the sprite
  */
 /* <usermanual>
-@keyword SPRITE MONOCOLOR
-@target to8
+@keyword SPRITE AT
 </usermanual> */
-void sprite_monocolor( Environment * _environment, int _sprite ) {
+void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] MONOCOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] AT ([expression],[expression])</b>
  * 
- * This function emits a code capable of enabling monocolor for a given sprite.
- * The index of sprite is given as expression.
+ * This function emits a code capable of position a sprite to the (x,y)
+ * on the screen. This version is suitable when an expression
+ * is used. 
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
+ * @param _sprite Expression with the index of the sprite to position (0...7)
+ * @param _x Expression with the abscissa of the sprite
+ * @param _y Expression with the ordinate of the sprite
  */
 /* <usermanual>
-@keyword SPRITE MONOCOLOR
-@target to8
+@keyword SPRITE AT
 </usermanual> */
-void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
+void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
 }
 
+#endif

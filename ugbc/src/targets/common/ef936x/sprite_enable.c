@@ -32,37 +32,46 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
+
 /**
- * @brief Emit code for <strong>SPRITE(...)</strong>
+ * @brief Emit ASM code for <b>SPRITE [int] ENABLE</b>
+ * 
+ * This function emits a code capable of enable the sprite _sprite.
+ * This version is suitable when direct integer are used.
  * 
  * @param _environment Current calling environment
- * @param _image image to use as SPRITE
+ * @param _sprite Index of the sprite to enable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE
+@keyword SPRITE ENABLE
 
-@target to8
+@target pc128op
 </usermanual> */
-Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+void sprite_enable( Environment * _environment, int _sprite ) {
 
-    Variable * index;
-
-    if ( _sprite ) {
-
-        index = variable_retrieve( _environment, _sprite );
-
-    } else {
-
-        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-
-    }
-
-    return index;
-    
 }
+
+/**
+ * @brief Emit ASM code for <b>SPRITE [expression] ENABLE</b>
+ * 
+ * This function emits a code capable of enable the sprite _sprite.
+ * This version is suitable when an expression is used. 
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Expression with the index of the sprite to enable (0...7)
+ */
+/* <usermanual>
+@keyword SPRITE ENABLE
+</usermanual> */
+void sprite_enable_var( Environment * _environment, char * _sprite ) {
+
+}
+
+#endif

@@ -32,42 +32,46 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] DISABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS VERTICAL</b>
  * 
- * This function emits a code capable of disable the sprite _sprite.
- * This version is suitable when direct integer are used.
+ * This function emits a code capable of compressing vertically a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to disable (0...7)
+ * @param _sprite Index of the sprite to compress vertically (0...7)
  */
 /* <usermanual>
-@keyword SPRITE DISABLE
+@keyword SPRITE COMPRESS
 
-@target mo5
+@target pc128op
 </usermanual> */
-void sprite_disable( Environment * _environment, int _sprite ) {
+void sprite_compress_vertical( Environment * _environment, int _sprite ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] DISABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] COMPRESS VERTICAL</b>
  * 
- * This function emits a code capable of disable the sprite _sprite.
- * This version is suitable when an expression is used. 
+ * This function emits a code capable of compressing vertically a given sprite.
+ * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to disable (0...7)
+ * @param _sprite Expression with the index of the sprite to compress vertically (0...7)
  */
 /* <usermanual>
-@keyword SPRITE DISABLE
+@keyword SPRITE COMPRESS
 </usermanual> */
-void sprite_disable_var( Environment * _environment, char * _sprite ) {
+void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) {
 
 }
+
+#endif

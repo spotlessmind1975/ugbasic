@@ -32,47 +32,47 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] AT ([int],[int])</b>
+ * @brief Emit ASM code for <b>SPRITE [int] MULTICOLOR</b>
  * 
- * This function emits a code capable of position a sprite to the (x,y)
- * on the screen. This version is suitable when an integer number 
- * is used. 
+ * This function emits a code capable of enabling multicolor for a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to position (0...7)
- * @param _x The abscissa of the sprite
- * @param _y The ordinate of the sprite
+ * @param _sprite Index of the sprite for which enable multicolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE AT
+@keyword SPRITE MULTICOLOR
+
+@target pc128op
 </usermanual> */
-void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
+void sprite_multicolor( Environment * _environment, int _sprite ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] AT ([expression],[expression])</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] MULTICOLOR</b>
  * 
- * This function emits a code capable of position a sprite to the (x,y)
- * on the screen. This version is suitable when an expression
- * is used. 
+ * This function emits a code capable of enabling multicolor for a given sprite.
+ * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to position (0...7)
- * @param _x Expression with the abscissa of the sprite
- * @param _y Expression with the ordinate of the sprite
+ * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE AT
+@keyword SPRITE MULTICOLOR
+@target pc128op
 </usermanual> */
-void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
+void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
 
 }
 
+#endif

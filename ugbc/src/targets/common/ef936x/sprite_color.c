@@ -32,43 +32,50 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] ENABLE</b>
+ * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
  * 
- * This function emits a code capable of enable the sprite _sprite.
- * This version is suitable when direct integer are used.
+ * This function emits a code capable of changing the specific color
+ * for a given sprite.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to enable (0...7)
+ * @param _sprite Index of the sprite for which to change color
+ * @param _color Index of the color
  */
 /* <usermanual>
-@keyword SPRITE ENABLE
+@keyword SPRITE COLOR
 
-@target mo5
+@target pc128op
 </usermanual> */
-void sprite_enable( Environment * _environment, int _sprite ) {
+void sprite_color( Environment * _environment, int _sprite, int _color ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] ENABLE</b>
+ * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
  * 
- * This function emits a code capable of enable the sprite _sprite.
- * This version is suitable when an expression is used. 
+ * This function emits a code capable of changing the specific color
+ * for a given sprite.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to enable (0...7)
+ * @param _sprite Expression with the index of the sprite for which to change color
+ * @param _color Expression with the index of the color
  */
 /* <usermanual>
-@keyword SPRITE ENABLE
+@keyword SPRITE COLOR
+
+@target pc128op
 </usermanual> */
-void sprite_enable_var( Environment * _environment, char * _sprite ) {
+void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
 
 }
 
+#endif

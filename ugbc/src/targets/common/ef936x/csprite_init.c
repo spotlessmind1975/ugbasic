@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
 
 /**
  * @brief Emit code for <strong>SPRITE(...)</strong>
@@ -58,3 +60,5 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
     return index;
 
 }
+
+#endif
