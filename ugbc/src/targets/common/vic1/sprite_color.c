@@ -32,66 +32,75 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__vic20__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
  * 
- * This function emits a code capable of compressing horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of changing the specific color
+ * for a given sprite.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
+ * @param _sprite Index of the sprite for which to change color
+ * @param _color Index of the color
  */
 /* <usermanual>
-@keyword SPRITE COMPRESS
+@keyword SPRITE COLOR
 
-@syntax SPRITE # [integer] COMPRESS HORIZONTAL
+@english
+Change specific color for a given sprite.
 
-@example SPRITE #1 COMPRESS HORIZONTAL
+@italian
+Cambia il colore specifico per un dato sprite.
+
+@syntax SPRITE # [integer] COLOR # [integer]
+
+@example SPRITE #1 COLOR #2
 
 @target vic20
 </usermanual> */
-void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
-    
-    
+void sprite_color( Environment * _environment, int _sprite, int _color ) {
 
-    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf(spriteString, "#$%2.2x", _sprite );
+    char colorString[MAX_TEMPORARY_STORAGE]; sprintf(colorString, "#$%2.2x", _color );
 
-    vic1_sprite_compress_horizontal( _environment, spriteString );
+    vic1_sprite_color( _environment, spriteString, colorString );
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
  * 
- * This function emits a code capable of compressing horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of changing the specific color
+ * for a given sprite.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
+ * @param _sprite Expression with the index of the sprite for which to change color
+ * @param _color Expression with the index of the color
  */
 /* <usermanual>
-@keyword SPRITE COMPRESS
+@keyword SPRITE COLOR
 
-@syntax SPRITE [expression] COMPRESS HORIZONTAL
+@syntax SPRITE [expression] COLOR [expression]
 
-@example SPRITE starship COMPRESS HORIZONTAL
+@example SPRITE #1 COLOR YELLOW
 
 @target vic20
 </usermanual> */
-void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
+void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
 
-    
-
-    _environment->bitmaskNeeded = 1;
-    
     Variable * sprite = variable_retrieve( _environment, _sprite );
 
-    vic1_sprite_compress_horizontal( _environment, sprite->realName );
+    Variable * color = variable_retrieve( _environment, _color );
+
+    vic1_sprite_color( _environment, sprite->realName, color->realName );
 
 }
+
+#endif

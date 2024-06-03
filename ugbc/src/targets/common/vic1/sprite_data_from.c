@@ -32,66 +32,81 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__vic20__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] EXPAND HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [int] DATA FROM [int]</b>
  * 
- * This function emits a code capable of expanding horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when direct 
+ * value is used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to expand horizontally (0...7)
+ * @param _sprite Index of the sprite to define (0...7)
+ * @param _address Address where the sprite data begins from
  */
 /* <usermanual>
-@keyword SPRITE EXPAND
+@keyword SPRITE DATA FROM
 
-@syntax SPRITE # [integer] EXPAND HORIZONTAL
+@english
+Set the starting address of the sprite's graphical data.
 
-@example SPRITE #1 EXPAND HORIZONTAL
+@italian
+Imposta l'indirizzo iniziale dei dati grafici dello sprite.
+
+@syntax SPRITE # [integer] DATA FROM # [integer]
+
+@example SPRITE #$1 DATA FROM #$0800
 
 @target vic20
 </usermanual> */
-void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
+void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 
     
 
-    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf(spriteString, "#$%2.2x", _sprite );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", (unsigned char)( _address / 0x40 ) );
 
-    vic1_sprite_expand_horizontal( _environment, spriteString );
+    vic1_sprite_data_from( _environment, spriteString, addressString );
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] EXPAND HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] DATA FROM [expression]</b>
  * 
- * This function emits a code capable of expanding horizontally a given sprite.
- * The index of sprite is given as an expression.
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when expressions
+ * are used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to expand horizontally (0...7)
+ * @param _sprite Expression with the index of the sprite to define (0...7)
+ * @param _address Expression with the address where the sprite data begins from
  */
 /* <usermanual>
-@keyword SPRITE EXPAND
+@keyword SPRITE DATA FROM
 
-@syntax SPRITE [expression] EXPAND HORIZONTAL
+@syntax SPRITE [expression] DATA FROM [expression]
 
-@example SPRITE starship EXPAND HORIZONTAL
+@example SPRITE starship DATA FROM starshipGraphicalData
 
 @target vic20
 </usermanual> */
-void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
+void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address ) {
 
     
 
-    _environment->bitmaskNeeded = 1;
-    
     Variable * sprite = variable_retrieve( _environment, _sprite );
 
-    vic1_sprite_expand_horizontal( _environment, sprite->realName );
+    Variable * address = variable_retrieve( _environment, _address );
+
+    vic1_sprite_data_from( _environment, sprite->realName, address->realName );
 
 }
+
+#endif

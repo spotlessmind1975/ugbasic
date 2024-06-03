@@ -32,71 +32,70 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__vic20__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] AT ([int],[int])</b>
+ * @brief Emit ASM code for <b>SPRITE [int] EXPAND HORIZONTAL</b>
  * 
- * This function emits a code capable of position a sprite to the (x,y)
- * on the screen. This version is suitable when an integer number 
- * is used. 
+ * This function emits a code capable of expanding horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to position (0...7)
- * @param _x The abscissa of the sprite
- * @param _y The ordinate of the sprite
+ * @param _sprite Index of the sprite to expand horizontally (0...7)
  */
 /* <usermanual>
-@keyword SPRITE AT
-</usermanual> */
-void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
+@keyword SPRITE EXPAND
 
-    outline3("; SPRITE %d AT (%d,%d)", _sprite, _x, _y);
+@syntax SPRITE # [integer] EXPAND HORIZONTAL
+
+@example SPRITE #1 EXPAND HORIZONTAL
+
+@target vic20
+</usermanual> */
+void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
+
+    
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
-    char yString[MAX_TEMPORARY_STORAGE]; sprintf( yString, "#$%2.2x", _y );
-    
-    Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
-    variable_store( _environment, x->name, _x );
 
-    vic1_sprite_at( _environment, spriteString, x->realName, yString );
+    vic1_sprite_expand_horizontal( _environment, spriteString );
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] AT ([expression],[expression])</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] EXPAND HORIZONTAL</b>
  * 
- * This function emits a code capable of position a sprite to the (x,y)
- * on the screen. This version is suitable when an expression
- * is used. 
+ * This function emits a code capable of expanding horizontally a given sprite.
+ * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to position (0...7)
- * @param _x Expression with the abscissa of the sprite
- * @param _y Expression with the ordinate of the sprite
+ * @param _sprite Expression with the index of the sprite to expand horizontally (0...7)
  */
 /* <usermanual>
-@keyword SPRITE AT
+@keyword SPRITE EXPAND
 
-@syntax SPRITE [expression] AT ( [expression], [expression] )
+@syntax SPRITE [expression] EXPAND HORIZONTAL
 
-@example SPRITE starship AT ( starshipX, starshipY )
+@example SPRITE starship EXPAND HORIZONTAL
+
+@target vic20
 </usermanual> */
-void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
+void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
 
+    
+
+    _environment->bitmaskNeeded = 1;
+    
     Variable * sprite = variable_retrieve( _environment, _sprite );
 
-    Variable * x = variable_retrieve( _environment, _x );
-
-    Variable * y = variable_retrieve( _environment, _y );
-
-    outline3("; SPRITE %s AT (%s,%s)", sprite->name, x->name, y->name);
-
-    vic1_sprite_at( _environment, sprite->realName, x->realName, y->realName );
+    vic1_sprite_expand_horizontal( _environment, sprite->realName );
 
 }
 
+#endif

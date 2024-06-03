@@ -32,70 +32,72 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__vic20__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS VERTICAL</b>
+ * @brief Emit ASM code for <b>SPRITE [int] ENABLE</b>
  * 
- * This function emits a code capable of compressing vertically a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of enable the sprite _sprite.
+ * This version is suitable when direct integer are used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress vertically (0...7)
+ * @param _sprite Index of the sprite to enable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE COMPRESS
+@keyword SPRITE ENABLE
 
 @english
-Compress a given sprite, vertically or horizontally,
+Enable the sprite.
 
 @italian
-Comprime un dato sprite, verticalmente oppure orizzontalmente.
+Abilita lo sprite.
 
-@syntax SPRITE # [integer] COMPRESS VERTICAL
+@syntax SPRITE # [integer] ENABLE
 
-@example SPRITE #1 COMPRESS VERTICAL
+@example SPRITE #1 ENABLE
 
 @target vic20
 </usermanual> */
-void sprite_compress_vertical( Environment * _environment, int _sprite ) {
+void sprite_enable( Environment * _environment, int _sprite ) {
 
     
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
-    vic1_sprite_compress_vertical( _environment, spriteString );
+    vic1_sprite_enable( _environment, spriteString );
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] COMPRESS VERTICAL</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] ENABLE</b>
  * 
- * This function emits a code capable of compressing vertically a given sprite.
- * The index of sprite is given as an expression.
+ * This function emits a code capable of enable the sprite _sprite.
+ * This version is suitable when an expression is used. 
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to compress vertically (0...7)
+ * @param _sprite Expression with the index of the sprite to enable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE COMPRESS
+@keyword SPRITE ENABLE
 
-@syntax SPRITE [expression] COMPRESS VERTICAL
+@syntax SPRITE [expression] ENABLE
 
-@example SPRITE #1 COMPRESS VERTICAL
-
-@target vic20
+@example SPRITE starship ENABLE
 </usermanual> */
-void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) {
+void sprite_enable_var( Environment * _environment, char * _sprite ) {
 
-    _environment->bitmaskNeeded = 1;
     
+
     Variable * sprite = variable_retrieve( _environment, _sprite );
 
-    vic1_sprite_compress_vertical( _environment, sprite->realName );
+    vic1_sprite_enable( _environment, sprite->realName );
 
 }
+
+#endif

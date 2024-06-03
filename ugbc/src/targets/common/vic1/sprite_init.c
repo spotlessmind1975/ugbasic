@@ -32,73 +32,41 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>SPRITE [int] EXPAND VERTICAL</b>
- * 
- * This function emits a code capable of expanding vertically a given sprite.
- * The index of sprite is given as a direct integer.
- * 
- * @param _environment Current calling environment
- * @param _sprite Index of the sprite to expand vertically (0...7)
- */
-/* <usermanual>
-@keyword SPRITE EXPAND
-
-@english
-Expand a given sprite, vertically or horizontally,
-
-@italian
-Espande un dato sprite, verticalmente oppure orizzontalmente.
-
-@syntax SPRITE # [integer] EXPAND VERTICAL
-
-@example SPRITE #1 EXPAND VERTICAL
-
-@target vic20
-</usermanual> */
-void sprite_expand_vertical( Environment * _environment, int _sprite ) {
-
-    
-
-    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
-
-    vic1_sprite_expand_vertical( _environment, spriteString );
-
-}
+#if defined(__vic20__)
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] EXPAND VERTICAL</b>
- * 
- * This function emits a code capable of expanding vertically a given sprite.
- * The index of sprite is given as an expression.
+ * @brief Emit code for <strong>SPRITE(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to expand vertically (0...7)
+ * @param _image image to use as SPRITE
  */
 /* <usermanual>
-@keyword SPRITE EXPAND
+@keyword SPRITE
 
-@syntax SPRITE [expression] EXPAND VERTICAL
-
-@example SPRITE sharship EXPAND VERTICAL
-
-@target vic20
+@target c64
 </usermanual> */
-void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
+Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
+    Variable * index;
+
+    if ( _sprite ) {
+
+        index = variable_retrieve( _environment, _sprite );
+
+    } else {
+
+        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+
+    }
+
+    return index;
     
-
-    _environment->bitmaskNeeded = 1;
-    
-    Variable * sprite = variable_retrieve( _environment, _sprite );
-
-    vic1_sprite_expand_vertical( _environment, sprite->realName );
-
 }
 
+#endif

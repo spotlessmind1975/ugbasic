@@ -32,69 +32,70 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__vic20__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] ENABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
  * 
- * This function emits a code capable of enable the sprite _sprite.
- * This version is suitable when direct integer are used.
+ * This function emits a code capable of compressing horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to enable (0...7)
+ * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
 /* <usermanual>
-@keyword SPRITE ENABLE
+@keyword SPRITE COMPRESS
 
-@english
-Enable the sprite.
+@syntax SPRITE # [integer] COMPRESS HORIZONTAL
 
-@italian
-Abilita lo sprite.
-
-@syntax SPRITE # [integer] ENABLE
-
-@example SPRITE #1 ENABLE
+@example SPRITE #1 COMPRESS HORIZONTAL
 
 @target vic20
 </usermanual> */
-void sprite_enable( Environment * _environment, int _sprite ) {
-
+void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
+    
     
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
-    vic1_sprite_enable( _environment, spriteString );
+    vic1_sprite_compress_horizontal( _environment, spriteString );
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] ENABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
  * 
- * This function emits a code capable of enable the sprite _sprite.
- * This version is suitable when an expression is used. 
+ * This function emits a code capable of compressing horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to enable (0...7)
+ * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
 /* <usermanual>
-@keyword SPRITE ENABLE
+@keyword SPRITE COMPRESS
 
-@syntax SPRITE [expression] ENABLE
+@syntax SPRITE [expression] COMPRESS HORIZONTAL
 
-@example SPRITE starship ENABLE
+@example SPRITE starship COMPRESS HORIZONTAL
+
+@target vic20
 </usermanual> */
-void sprite_enable_var( Environment * _environment, char * _sprite ) {
+void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
 
     
 
+    _environment->bitmaskNeeded = 1;
+    
     Variable * sprite = variable_retrieve( _environment, _sprite );
 
-    vic1_sprite_enable( _environment, sprite->realName );
+    vic1_sprite_compress_horizontal( _environment, sprite->realName );
 
 }
 
+#endif

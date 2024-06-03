@@ -32,68 +32,74 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__vic20__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] DISABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [int] AT ([int],[int])</b>
  * 
- * This function emits a code capable of disable the sprite _sprite.
- * This version is suitable when direct integer are used.
+ * This function emits a code capable of position a sprite to the (x,y)
+ * on the screen. This version is suitable when an integer number 
+ * is used. 
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to disable (0...7)
+ * @param _sprite Index of the sprite to position (0...7)
+ * @param _x The abscissa of the sprite
+ * @param _y The ordinate of the sprite
  */
 /* <usermanual>
-@keyword SPRITE DISABLE
-
-@english
-Disable the sprite.
-
-@italian
-Disabilita lo sprite.
-
-@syntax SPRITE # [integer] DISABLE
-
-@example SPRITE #1 DISABLE
-
-@target vic20
+@keyword SPRITE AT
 </usermanual> */
-void sprite_disable( Environment * _environment, int _sprite ) {
+void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 
-    
+    outline3("; SPRITE %d AT (%d,%d)", _sprite, _x, _y);
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char yString[MAX_TEMPORARY_STORAGE]; sprintf( yString, "#$%2.2x", _y );
+    
+    Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
+    variable_store( _environment, x->name, _x );
 
-    vic1_sprite_disable( _environment, spriteString );
+    vic1_sprite_at( _environment, spriteString, x->realName, yString );
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] DISABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] AT ([expression],[expression])</b>
  * 
- * This function emits a code capable of disable the sprite _sprite.
- * This version is suitable when an expression is used. 
+ * This function emits a code capable of position a sprite to the (x,y)
+ * on the screen. This version is suitable when an expression
+ * is used. 
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to disable (0...7)
+ * @param _sprite Expression with the index of the sprite to position (0...7)
+ * @param _x Expression with the abscissa of the sprite
+ * @param _y Expression with the ordinate of the sprite
  */
 /* <usermanual>
-@keyword SPRITE DISABLE
+@keyword SPRITE AT
 
-@syntax SPRITE [expression] DISABLE
+@syntax SPRITE [expression] AT ( [expression], [expression] )
 
-@example SPRITE starship DISABLE
+@example SPRITE starship AT ( starshipX, starshipY )
 </usermanual> */
-void sprite_disable_var( Environment * _environment, char * _sprite ) {
+void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
-    _environment->bitmaskNeeded = 1;
-    
     Variable * sprite = variable_retrieve( _environment, _sprite );
 
-    vic1_sprite_disable( _environment, sprite->realName );
+    Variable * x = variable_retrieve( _environment, _x );
+
+    Variable * y = variable_retrieve( _environment, _y );
+
+    outline3("; SPRITE %s AT (%s,%s)", sprite->name, x->name, y->name);
+
+    vic1_sprite_at( _environment, sprite->realName, x->realName, y->realName );
 
 }
+
+#endif

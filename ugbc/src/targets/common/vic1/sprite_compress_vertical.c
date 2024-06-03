@@ -32,73 +32,74 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__vic20__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] MONOCOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS VERTICAL</b>
  * 
- * This function emits a code capable of enabling monocolor for a given sprite.
- * The index of sprite is given as direct integer.
+ * This function emits a code capable of compressing vertically a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which enable monocolor (0...7)
+ * @param _sprite Index of the sprite to compress vertically (0...7)
  */
 /* <usermanual>
-@keyword SPRITE MONOCOLOR
+@keyword SPRITE COMPRESS
 
 @english
-Disable multicolor for sprite.
+Compress a given sprite, vertically or horizontally,
 
 @italian
-Disabilita il multicolor per lo sprite dato.
+Comprime un dato sprite, verticalmente oppure orizzontalmente.
 
-@syntax SPRITE # [integer] MONOCOLOR
+@syntax SPRITE # [integer] COMPRESS VERTICAL
 
-@example SPRITE #1 MONOCOLOR
+@example SPRITE #1 COMPRESS VERTICAL
 
 @target vic20
 </usermanual> */
-void sprite_monocolor( Environment * _environment, int _sprite ) {
+void sprite_compress_vertical( Environment * _environment, int _sprite ) {
 
     
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
-    vic1_sprite_monocolor( _environment, spriteString );
+    vic1_sprite_compress_vertical( _environment, spriteString );
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] MONOCOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] COMPRESS VERTICAL</b>
  * 
- * This function emits a code capable of enabling monocolor for a given sprite.
- * The index of sprite is given as expression.
+ * This function emits a code capable of compressing vertically a given sprite.
+ * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
+ * @param _sprite Expression with the index of the sprite to compress vertically (0...7)
  */
 /* <usermanual>
-@keyword SPRITE MONOCOLOR
+@keyword SPRITE COMPRESS
 
-@syntax SPRITE [expression] MONOCOLOR
+@syntax SPRITE [expression] COMPRESS VERTICAL
 
-@example SPRITE starship MONOCOLOR
+@example SPRITE #1 COMPRESS VERTICAL
 
 @target vic20
 </usermanual> */
-void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
-
-    
+void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) {
 
     _environment->bitmaskNeeded = 1;
     
     Variable * sprite = variable_retrieve( _environment, _sprite );
 
-    vic1_sprite_monocolor( _environment, sprite->realName );
+    vic1_sprite_compress_vertical( _environment, sprite->realName );
 
 }
 
+#endif

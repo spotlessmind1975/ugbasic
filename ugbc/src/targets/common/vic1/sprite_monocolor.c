@@ -32,65 +32,67 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__vic20__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] MULTICOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [int] MONOCOLOR</b>
  * 
- * This function emits a code capable of enabling multicolor for a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of enabling monocolor for a given sprite.
+ * The index of sprite is given as direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which enable multicolor (0...7)
+ * @param _sprite Index of the sprite for which enable monocolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE MULTICOLOR
+@keyword SPRITE MONOCOLOR
 
 @english
-Enable multicolor for sprite.
+Disable multicolor for sprite.
 
 @italian
-Abilita il multicolor per lo sprite dato.
+Disabilita il multicolor per lo sprite dato.
 
-@syntax SPRITE # [integer] MULTICOLOR
+@syntax SPRITE # [integer] MONOCOLOR
 
-@example SPRITE #1 MULTICOLOR
+@example SPRITE #1 MONOCOLOR
 
 @target vic20
 </usermanual> */
-void sprite_multicolor( Environment * _environment, int _sprite ) {
+void sprite_monocolor( Environment * _environment, int _sprite ) {
 
     
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
-    vic1_sprite_multicolor( _environment, spriteString );
+    vic1_sprite_monocolor( _environment, spriteString );
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] MULTICOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] MONOCOLOR</b>
  * 
- * This function emits a code capable of enabling multicolor for a given sprite.
- * The index of sprite is given as an expression.
+ * This function emits a code capable of enabling monocolor for a given sprite.
+ * The index of sprite is given as expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
+ * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE MULTICOLOR
+@keyword SPRITE MONOCOLOR
 
-@syntax SPRITE [expression] MULTICOLOR
+@syntax SPRITE [expression] MONOCOLOR
 
-@example SPRITE starship MULTICOLOR
+@example SPRITE starship MONOCOLOR
 
 @target vic20
 </usermanual> */
-void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
+void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
 
     
 
@@ -98,7 +100,8 @@ void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
     
     Variable * sprite = variable_retrieve( _environment, _sprite );
 
-    vic1_sprite_multicolor( _environment, sprite->realName );
+    vic1_sprite_monocolor( _environment, sprite->realName );
 
 }
 
+#endif

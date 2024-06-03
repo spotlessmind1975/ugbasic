@@ -32,37 +32,72 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__vic20__)
+
 /**
- * @brief Emit code for <strong>SPRITE(...)</strong>
+ * @brief Emit ASM code for <b>SPRITE [int] DISABLE</b>
+ * 
+ * This function emits a code capable of disable the sprite _sprite.
+ * This version is suitable when direct integer are used.
  * 
  * @param _environment Current calling environment
- * @param _image image to use as SPRITE
+ * @param _sprite Index of the sprite to disable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE
+@keyword SPRITE DISABLE
 
-@target c64
+@english
+Disable the sprite.
+
+@italian
+Disabilita lo sprite.
+
+@syntax SPRITE # [integer] DISABLE
+
+@example SPRITE #1 DISABLE
+
+@target vic20
 </usermanual> */
-Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+void sprite_disable( Environment * _environment, int _sprite ) {
 
-    Variable * index;
-
-    if ( _sprite ) {
-
-        index = variable_retrieve( _environment, _sprite );
-
-    } else {
-
-        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-
-    }
-
-    return index;
     
+
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
+
+    vic1_sprite_disable( _environment, spriteString );
+
 }
+
+/**
+ * @brief Emit ASM code for <b>SPRITE [expression] DISABLE</b>
+ * 
+ * This function emits a code capable of disable the sprite _sprite.
+ * This version is suitable when an expression is used. 
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Expression with the index of the sprite to disable (0...7)
+ */
+/* <usermanual>
+@keyword SPRITE DISABLE
+
+@syntax SPRITE [expression] DISABLE
+
+@example SPRITE starship DISABLE
+</usermanual> */
+void sprite_disable_var( Environment * _environment, char * _sprite ) {
+
+    _environment->bitmaskNeeded = 1;
+    
+    Variable * sprite = variable_retrieve( _environment, _sprite );
+
+    vic1_sprite_disable( _environment, sprite->realName );
+
+}
+
+#endif
