@@ -32,38 +32,43 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] MULTICOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [int] MONOCOLOR</b>
  * 
- * This function emits a code capable of enabling multicolor for a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of enabling monocolor for a given sprite.
+ * The index of sprite is given as direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which enable multicolor (0...7)
+ * @param _sprite Index of the sprite for which enable monocolor (0...7)
  */
-void sprite_multicolor( Environment * _environment, int _sprite ) {
+void sprite_monocolor( Environment * _environment, int _sprite ) {
 
-    outline1("; SPRITE %d MULTICOLOR (ignored)", _sprite);
+    outline1("; SPRITE %d MONOCOLOR (ignored)", _sprite);
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] MULTICOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] MONOCOLOR</b>
  * 
- * This function emits a code capable of enabling multicolor for a given sprite.
- * The index of sprite is given as an expression.
+ * This function emits a code capable of enabling monocolor for a given sprite.
+ * The index of sprite is given as expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
+ * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
  */
-void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
+void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
 
     outline1("; SPRITE %s MULTICOLOR (ignored)", _sprite);
 
 }
+
+#endif
+

@@ -32,41 +32,19 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>SPRITE [int] EXPAND VERTICAL</b>
- * 
- * This function emits a code capable of expanding vertically a given sprite.
- * The index of sprite is given as a direct integer.
- * 
- * @param _environment Current calling environment
- * @param _sprite Index of the sprite to expand vertically (0...7)
- */
-void sprite_expand_vertical( Environment * _environment, int _sprite ) {
+#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
 
-    outline1("; SPRITE %d EXPAND VERTICAL (ignored)", _sprite);
+Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color, int _flags, int _slot_x, int _slot_y ) {
+
+    return tms9918_sprite_converter( _environment, _data, _width, _height, _depth, _color, _slot_x, _slot_y );
 
 }
 
-/**
- * @brief Emit ASM code for <b>SPRITE [expression] EXPAND VERTICAL</b>
- * 
- * This function emits a code capable of expanding vertically a given sprite.
- * The index of sprite is given as an expression.
- * 
- * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to expand vertically (0...7)
- */
-void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
-
-    outline1("; SPRITE %s EXPAND VERTICAL (ignored)", _sprite);
-
-    tms9918_sprite_expand_vertical( _environment, _sprite );
-
-}
+#endif
 

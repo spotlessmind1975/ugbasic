@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
 
 /**
  * @brief Emit code for <strong>SPRITE(...)</strong>
@@ -78,7 +80,7 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
         if ( image->originalPalette[i].index == COLOR_TRANSPARENT ) continue;
         ++c;
         variable_move_naked( _environment, spriteCount->name, index->name );
-        Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags );
+        Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, 0, 0 );
         tms9918_sprite_data_from( _environment, index->name, realImage->name );
         cpu_inc( _environment, spriteCount->realName );
     }
@@ -98,3 +100,5 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
     return index;
 
 }
+
+#endif

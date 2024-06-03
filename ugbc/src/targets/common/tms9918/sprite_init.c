@@ -32,40 +32,46 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] EXPAND HORIZONTAL</b>
- * 
- * This function emits a code capable of expanding horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * @brief Emit code for <strong>SPRITE(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to expand horizontally (0...7)
+ * @param _image image to use as SPRITE
  */
-void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
+/* <usermanual>
+@keyword SPRITE
 
-    outline1("; SPRITE %d EXPAND HORIZONTAL (ignored)", _sprite);
+@target coleco
+</usermanual> */
+Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+
+    Variable * index;
+    Variable * image = variable_retrieve( _environment, _image );
+    Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+
+    Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[1], _flags, 0, 0 );
+
+    if ( _sprite ) {
+        index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
+    } else {
+        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+        variable_move_naked( _environment, spriteCount->name, index->name );
+        cpu_inc( _environment, spriteCount->realName );
+    }
+
+    tms9918_sprite_data_from( _environment, index->name, realImage->name );
+
+    return index;
 
 }
 
-/**
- * @brief Emit ASM code for <b>SPRITE [expression] EXPAND HORIZONTAL</b>
- * 
- * This function emits a code capable of expanding horizontally a given sprite.
- * The index of sprite is given as an expression.
- * 
- * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to expand horizontally (0...7)
- */
-void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
+#endif
 
-    outline1("; SPRITE %s EXPAND HORIZONTAL (ignored)", _sprite);
-
-    tms9918_sprite_expand_horizontal( _environment, _sprite );
-
-}

@@ -32,41 +32,45 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] DATA FROM [int]</b>
+ * @brief Emit ASM code for <b>SPRITE [int] EXPAND VERTICAL</b>
  * 
- * This function emits a code capable of setting the starting address of the 
- * sprite _sprite to the value _address. This version is suitable when direct 
- * value is used.
+ * This function emits a code capable of expanding vertically a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to define (0...7)
- * @param _address Address where the sprite data begins from
+ * @param _sprite Index of the sprite to expand vertically (0...7)
  */
-void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
+void sprite_expand_vertical( Environment * _environment, int _sprite ) {
+
+    outline1("; SPRITE %d EXPAND VERTICAL (ignored)", _sprite);
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] DATA FROM [expression]</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] EXPAND VERTICAL</b>
  * 
- * This function emits a code capable of setting the starting address of the 
- * sprite _sprite to the value _address. This version is suitable when expressions
- * are used.
+ * This function emits a code capable of expanding vertically a given sprite.
+ * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to define (0...7)
- * @param _address Expression with the address where the sprite data begins from
+ * @param _sprite Expression with the index of the sprite to expand vertically (0...7)
  */
-void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _image ) {
+void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
 
-    tms9918_sprite_data_from( _environment, _sprite, _image );
+    outline1("; SPRITE %s EXPAND VERTICAL (ignored)", _sprite);
+
+    tms9918_sprite_expand_vertical( _environment, _sprite );
 
 }
+
+#endif
 

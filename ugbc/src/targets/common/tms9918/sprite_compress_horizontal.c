@@ -32,14 +32,40 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color, int _flags ) {
+#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
 
-    return tms9918_sprite_converter( _environment, _data, _width, _height, _depth, _color );
+/**
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * 
+ * This function emits a code capable of compressing horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Index of the sprite to compress horizontally (0...7)
+ */
+void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
+    
+}
+
+/**
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * 
+ * This function emits a code capable of compressing horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Index of the sprite to compress horizontally (0...7)
+ */
+void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
+
+    tms9918_sprite_compress_horizontal( _environment, _sprite );
 
 }
+
+#endif

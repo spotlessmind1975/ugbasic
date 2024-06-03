@@ -1819,7 +1819,7 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
 
 }
 
-Variable * tms9918_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color ) {
+Variable * tms9918_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color, int _slot_x, int _slot_y ) {
 
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
 
@@ -1884,22 +1884,29 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
     // Color of the pixel to convert
     RGBi rgb;
 
+    int spriteWidth = 16;
+    int spriteHeight = 16;
+
+    char * source = _source + ( ( _slot_y * spriteHeight * spriteWidth ) + _slot_x * spriteWidth ) * _depth;
+
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        if ( image_y == 16 ) {
+    for (image_y = 0; image_y < spriteHeight; ++image_y) {
+        if ( ( image_y + ( _slot_y * spriteHeight ) )  == _height ) {
+            // printf( "Y" );
             break;
         }
-        for (image_x = 0; image_x < _width; ++image_x) {
-            if ( image_x == 16 ) {
+        for (image_x = _slot_x * spriteWidth; image_x < ( _slot_x * spriteWidth ) + spriteWidth; ++image_x) {
+            if ( ( image_x + ( _slot_x * spriteWidth ) )  == _width ) {
+                // printf( "X" );
                 break;
             }
 
             // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
             if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
+                rgb.alpha = *(source + 3);
             } else {
                 rgb.alpha = 255;
             }

@@ -32,36 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [int] DATA FROM [int]</b>
  * 
- * This function emits a code capable of compressing horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when direct 
+ * value is used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
+ * @param _sprite Index of the sprite to define (0...7)
+ * @param _address Address where the sprite data begins from
  */
-void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
-    
+void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
+
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] DATA FROM [expression]</b>
  * 
- * This function emits a code capable of compressing horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when expressions
+ * are used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
+ * @param _sprite Expression with the index of the sprite to define (0...7)
+ * @param _address Expression with the address where the sprite data begins from
  */
-void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
+void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _image ) {
 
-    tms9918_sprite_compress_horizontal( _environment, _sprite );
+    tms9918_sprite_data_from( _environment, _sprite, _image );
 
 }
+
+#endif
