@@ -32,17 +32,30 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-void sprite_enable( Environment * _environment, int _sprite ) {
+#if defined(__plus4__)
+
+/**
+ * @brief Emit code for <strong>SPRITE(...)</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _image image to use as SPRITE
+ */
+/* <usermanual>
+@keyword MSPRITE
+
+</usermanual> */
+Variable * msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+
+    Variable * result = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
+
+    return result;
 
 }
 
-void sprite_enable_var( Environment * _environment, char * _sprite ) {
-
-}
-
+#endif

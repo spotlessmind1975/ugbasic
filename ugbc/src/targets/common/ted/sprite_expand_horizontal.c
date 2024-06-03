@@ -32,17 +32,20 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__plus4__)
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
+void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
 
 }
 
-void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address ) {
+void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
 
 }
 
+#endif

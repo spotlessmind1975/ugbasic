@@ -32,7 +32,9 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__plus4__)
 
 /****************************************************************************
  * CODE SECTION 
@@ -45,3 +47,5 @@ void sprite_color( Environment * _environment, int _sprite, int _color ) {
 void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
 
 }
+
+#endif

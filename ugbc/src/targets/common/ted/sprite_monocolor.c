@@ -32,16 +32,20 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__plus4__)
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-void sprite_compress_vertical( Environment * _environment, int _sprite ) {
+void sprite_monocolor( Environment * _environment, int _sprite ) {
 
 }
 
-void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) {
+void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
 
 }
+
+#endif

@@ -32,17 +32,41 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__plus4__)
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
+/**
+ * @brief Emit code for <strong>SPRITE(...)</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _image image to use as SPRITE
+ */
+/* <usermanual>
+@keyword SPRITE
 
+@target c64
+</usermanual> */
+Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+
+    Variable * index;
+
+    if ( _sprite ) {
+
+        index = variable_retrieve( _environment, _sprite );
+
+    } else {
+
+        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+
+    }
+
+    return index;
+    
 }
 
-void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
-
-}
-
+#endif

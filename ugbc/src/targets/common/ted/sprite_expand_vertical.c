@@ -32,16 +32,28 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__plus4__)
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-void sprite_disable( Environment * _environment, int _sprite ) {
+void sprite_expand_vertical( Environment * _environment, int _sprite ) {
 
 }
 
-void sprite_disable_var( Environment * _environment, char * _sprite ) {
+void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
+
+    
+
+    _environment->bitmaskNeeded = 1;
+    
+    Variable * sprite = variable_retrieve( _environment, _sprite );
+
+    ted_sprite_expand_vertical( _environment, sprite->realName );
 
 }
+
+#endif
