@@ -32,41 +32,30 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__atari__) || defined(__atarixl__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] MULTICOLOR</b>
- * 
- * This function emits a code capable of enabling multicolor for a given sprite.
- * The index of sprite is given as a direct integer.
+ * @brief Emit code for <strong>SPRITE(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which enable multicolor (0...7)
+ * @param _image image to use as SPRITE
  */
 /* <usermanual>
-@keyword SPRITE MULTICOLOR
+@keyword MSPRITE
+
 </usermanual> */
-void sprite_multicolor( Environment * _environment, int _sprite ) {
+Variable * msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+
+    Variable * result = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
+
+    return result;
 
 }
 
-/**
- * @brief Emit ASM code for <b>SPRITE [expression] MULTICOLOR</b>
- * 
- * This function emits a code capable of enabling multicolor for a given sprite.
- * The index of sprite is given as an expression.
- * 
- * @param _environment Current calling environment
- * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
- */
-/* <usermanual>
-@keyword SPRITE MULTICOLOR
-</usermanual> */
-void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
-
-}
-
+#endif

@@ -32,41 +32,48 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__atari__) || defined(__atarixl__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] ENABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [int] DATA FROM [int]</b>
  * 
- * This function emits a code capable of enable the sprite _sprite.
- * This version is suitable when direct integer are used.
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when direct 
+ * value is used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to enable (0...7)
+ * @param _sprite Index of the sprite to define (0...7)
+ * @param _address Address where the sprite data begins from
  */
 /* <usermanual>
-@keyword SPRITE ENABLE
+@keyword SPRITE DATA FROM
 </usermanual> */
-void sprite_enable( Environment * _environment, int _sprite ) {
+void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] ENABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] DATA FROM [expression]</b>
  * 
- * This function emits a code capable of enable the sprite _sprite.
- * This version is suitable when an expression is used. 
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when expressions
+ * are used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to enable (0...7)
+ * @param _sprite Expression with the index of the sprite to define (0...7)
+ * @param _address Expression with the address where the sprite data begins from
  */
 /* <usermanual>
-@keyword SPRITE ENABLE
+@keyword SPRITE DATA FROM
 </usermanual> */
-void sprite_enable_var( Environment * _environment, char * _sprite ) {
+void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address ) {
 
 }
 
+#endif

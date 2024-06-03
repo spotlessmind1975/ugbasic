@@ -32,42 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__atari__) || defined(__atarixl__)
+
 /**
- * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
+ * @brief Emit ASM code for <b>SPRITE [int] MULTICOLOR</b>
  * 
- * This function emits a code capable of changing the specific color
- * for a given sprite.
+ * This function emits a code capable of enabling multicolor for a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which to change color
- * @param _color Index of the color
+ * @param _sprite Index of the sprite for which enable multicolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE COLOR
+@keyword SPRITE MULTICOLOR
 </usermanual> */
-void sprite_color( Environment * _environment, int _sprite, int _color ) {
+void sprite_multicolor( Environment * _environment, int _sprite ) {
 
 }
 
 /**
- * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] MULTICOLOR</b>
  * 
- * This function emits a code capable of changing the specific color
- * for a given sprite.
+ * This function emits a code capable of enabling multicolor for a given sprite.
+ * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite for which to change color
- * @param _color Expression with the index of the color
+ * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE COLOR
+@keyword SPRITE MULTICOLOR
 </usermanual> */
-void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
+void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
 
 }
+
+#endif

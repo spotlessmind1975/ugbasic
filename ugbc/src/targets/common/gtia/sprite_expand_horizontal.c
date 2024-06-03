@@ -32,41 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__atari__) || defined(__atarixl__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] EXPAND VERTICAL</b>
+ * @brief Emit ASM code for <b>SPRITE [int] EXPAND HORIZONTAL</b>
  * 
- * This function emits a code capable of expanding vertically a given sprite.
+ * This function emits a code capable of expanding horizontally a given sprite.
  * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to expand vertically (0...7)
+ * @param _sprite Index of the sprite to expand horizontally (0...7)
  */
 /* <usermanual>
 @keyword SPRITE EXPAND
 </usermanual> */
-void sprite_expand_vertical( Environment * _environment, int _sprite ) {
+void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] EXPAND VERTICAL</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] EXPAND HORIZONTAL</b>
  * 
- * This function emits a code capable of expanding vertically a given sprite.
+ * This function emits a code capable of expanding horizontally a given sprite.
  * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to expand vertically (0...7)
+ * @param _sprite Expression with the index of the sprite to expand horizontally (0...7)
  */
 /* <usermanual>
 @keyword SPRITE EXPAND
 </usermanual> */
-void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
+void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
 
 }
 
+#endif

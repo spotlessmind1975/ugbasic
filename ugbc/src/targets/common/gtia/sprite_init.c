@@ -32,41 +32,39 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__atari__) || defined(__atarixl__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] MONOCOLOR</b>
- * 
- * This function emits a code capable of enabling monocolor for a given sprite.
- * The index of sprite is given as direct integer.
+ * @brief Emit code for <strong>SPRITE(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which enable monocolor (0...7)
+ * @param _image image to use as SPRITE
  */
 /* <usermanual>
-@keyword SPRITE MONOCOLOR
+@keyword SPRITE
 </usermanual> */
-void sprite_monocolor( Environment * _environment, int _sprite ) {
+Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+
+    Variable * index;
+
+    if ( _sprite ) {
+
+        index = variable_retrieve( _environment, _sprite );
+
+    } else {
+
+        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+
+    }
+
+    return index;
 
 }
 
-/**
- * @brief Emit ASM code for <b>SPRITE [expression] MONOCOLOR</b>
- * 
- * This function emits a code capable of enabling monocolor for a given sprite.
- * The index of sprite is given as expression.
- * 
- * @param _environment Current calling environment
- * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
- */
-/* <usermanual>
-@keyword SPRITE MONOCOLOR
-</usermanual> */
-void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
-
-}
-
+#endif

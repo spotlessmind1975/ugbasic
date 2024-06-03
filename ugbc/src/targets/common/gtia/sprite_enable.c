@@ -32,40 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__atari__) || defined(__atarixl__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] DISABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [int] ENABLE</b>
  * 
- * This function emits a code capable of disable the sprite _sprite.
+ * This function emits a code capable of enable the sprite _sprite.
  * This version is suitable when direct integer are used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to disable (0...7)
+ * @param _sprite Index of the sprite to enable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE DISABLE
+@keyword SPRITE ENABLE
 </usermanual> */
-void sprite_disable( Environment * _environment, int _sprite ) {
+void sprite_enable( Environment * _environment, int _sprite ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] DISABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] ENABLE</b>
  * 
- * This function emits a code capable of disable the sprite _sprite.
+ * This function emits a code capable of enable the sprite _sprite.
  * This version is suitable when an expression is used. 
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to disable (0...7)
+ * @param _sprite Expression with the index of the sprite to enable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE DISABLE
+@keyword SPRITE ENABLE
 </usermanual> */
-void sprite_disable_var( Environment * _environment, char * _sprite ) {
+void sprite_enable_var( Environment * _environment, char * _sprite ) {
 
 }
+
+#endif

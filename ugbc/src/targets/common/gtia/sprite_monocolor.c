@@ -32,40 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__atari__) || defined(__atarixl__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [int] MONOCOLOR</b>
  * 
- * This function emits a code capable of compressing horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of enabling monocolor for a given sprite.
+ * The index of sprite is given as direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
+ * @param _sprite Index of the sprite for which enable monocolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE COMPRESS
+@keyword SPRITE MONOCOLOR
 </usermanual> */
-void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
+void sprite_monocolor( Environment * _environment, int _sprite ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] MONOCOLOR</b>
  * 
- * This function emits a code capable of compressing horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of enabling monocolor for a given sprite.
+ * The index of sprite is given as expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
+ * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE COMPRESS
+@keyword SPRITE MONOCOLOR
 </usermanual> */
-void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
+void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
 
 }
+
+#endif

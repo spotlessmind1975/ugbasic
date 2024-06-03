@@ -32,45 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__atari__) || defined(__atarixl__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] DATA FROM [int]</b>
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
  * 
- * This function emits a code capable of setting the starting address of the 
- * sprite _sprite to the value _address. This version is suitable when direct 
- * value is used.
+ * This function emits a code capable of compressing horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to define (0...7)
- * @param _address Address where the sprite data begins from
+ * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
 /* <usermanual>
-@keyword SPRITE DATA FROM
+@keyword SPRITE COMPRESS
 </usermanual> */
-void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
+void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] DATA FROM [expression]</b>
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
  * 
- * This function emits a code capable of setting the starting address of the 
- * sprite _sprite to the value _address. This version is suitable when expressions
- * are used.
+ * This function emits a code capable of compressing horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to define (0...7)
- * @param _address Expression with the address where the sprite data begins from
+ * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
 /* <usermanual>
-@keyword SPRITE DATA FROM
+@keyword SPRITE COMPRESS
 </usermanual> */
-void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address ) {
+void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
 
 }
 
+#endif
