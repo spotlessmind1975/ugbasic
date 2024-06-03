@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__coco__) || defined(__d32__) || defined(__d64__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] AT ([int],[int])</b>
@@ -76,3 +78,4 @@ void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char
 
 }
 
+#endif

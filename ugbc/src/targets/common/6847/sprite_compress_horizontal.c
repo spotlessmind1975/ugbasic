@@ -32,43 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__coco__) || defined(__d32__) || defined(__d64__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] ENABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
  * 
- * This function emits a code capable of enable the sprite _sprite.
- * This version is suitable when direct integer are used.
+ * This function emits a code capable of compressing horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to enable (0...7)
+ * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
 /* <usermanual>
-@keyword SPRITE ENABLE
-
-@target d32
+@keyword SPRITE COMPRESS
 </usermanual> */
-void sprite_enable( Environment * _environment, int _sprite ) {
+void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] ENABLE</b>
+ * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
  * 
- * This function emits a code capable of enable the sprite _sprite.
- * This version is suitable when an expression is used. 
+ * This function emits a code capable of compressing horizontally a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to enable (0...7)
+ * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
 /* <usermanual>
-@keyword SPRITE ENABLE
+@keyword SPRITE COMPRESS
 </usermanual> */
-void sprite_enable_var( Environment * _environment, char * _sprite ) {
+void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
 
 }
 
+#endif

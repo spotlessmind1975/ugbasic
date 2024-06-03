@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__coco__) || defined(__d32__) || defined(__d64__)
 
 /**
  * @brief Emit code for <strong>SPRITE(...)</strong>
@@ -46,8 +48,6 @@
  */
 /* <usermanual>
 @keyword SPRITE
-
-@target coleco
 </usermanual> */
 Variable * csprite_init( Environment * _environment, char * _image, char *_sprite, int _flags ) {
 
@@ -58,3 +58,5 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
     return index;
 
 }
+
+#endif

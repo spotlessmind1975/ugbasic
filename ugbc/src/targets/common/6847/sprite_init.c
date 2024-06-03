@@ -32,42 +32,39 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__coco__) || defined(__d32__) || defined(__d64__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] DISABLE</b>
- * 
- * This function emits a code capable of disable the sprite _sprite.
- * This version is suitable when direct integer are used.
+ * @brief Emit code for <strong>SPRITE(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to disable (0...7)
+ * @param _image image to use as SPRITE
  */
 /* <usermanual>
-@keyword SPRITE DISABLE
-
-@target d64
+@keyword SPRITE
 </usermanual> */
-void sprite_disable( Environment * _environment, int _sprite ) {
+Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+
+    Variable * index;
+
+    if ( _sprite ) {
+
+        index = variable_retrieve( _environment, _sprite );
+
+    } else {
+
+        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+
+    }
+
+    return index;
 
 }
 
-/**
- * @brief Emit ASM code for <b>SPRITE [expression] DISABLE</b>
- * 
- * This function emits a code capable of disable the sprite _sprite.
- * This version is suitable when an expression is used. 
- * 
- * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to disable (0...7)
- */
-/* <usermanual>
-@keyword SPRITE DISABLE
-</usermanual> */
-void sprite_disable_var( Environment * _environment, char * _sprite ) {
-
-}
+#endif

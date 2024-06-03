@@ -32,47 +32,45 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__coco__) || defined(__d32__) || defined(__d64__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] AT ([int],[int])</b>
+ * @brief Emit ASM code for <b>SPRITE [int] DISABLE</b>
  * 
- * This function emits a code capable of position a sprite to the (x,y)
- * on the screen. This version is suitable when an integer number 
- * is used. 
+ * This function emits a code capable of disable the sprite _sprite.
+ * This version is suitable when direct integer are used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to position (0...7)
- * @param _x The abscissa of the sprite
- * @param _y The ordinate of the sprite
+ * @param _sprite Index of the sprite to disable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE AT
+@keyword SPRITE DISABLE
 </usermanual> */
-void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
+void sprite_disable( Environment * _environment, int _sprite ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] AT ([expression],[expression])</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] DISABLE</b>
  * 
- * This function emits a code capable of position a sprite to the (x,y)
- * on the screen. This version is suitable when an expression
- * is used. 
+ * This function emits a code capable of disable the sprite _sprite.
+ * This version is suitable when an expression is used. 
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to position (0...7)
- * @param _x Expression with the abscissa of the sprite
- * @param _y Expression with the ordinate of the sprite
+ * @param _sprite Expression with the index of the sprite to disable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE AT
+@keyword SPRITE DISABLE
 </usermanual> */
-void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
+void sprite_disable_var( Environment * _environment, char * _sprite ) {
 
 }
+
+#endif
 
