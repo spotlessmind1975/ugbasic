@@ -32,38 +32,42 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__zx__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] CPMPRESS VERTICAL</b>
+ * @brief Emit ASM code for <b>SPRITE [int] EXPAND HORIZONTAL</b>
  * 
- * This function emits a code capable of compressing vertically a given sprite.
+ * This function emits a code capable of expanding horizontally a given sprite.
  * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress vertically (0...7)
+ * @param _sprite Index of the sprite to expand horizontally (0...7)
  */
-void sprite_compress_vertical( Environment * _environment, int _sprite ) {
+void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
 
-    outline1("; SPRITE %d COMPRESS VERTICAL (ignored)", _sprite);
+    outline1("; SPRITE %d EXPAND HORIZONTAL (ignored)", _sprite);
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] COMPRESS VERTICAL</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] EXPAND HORIZONTAL</b>
  * 
- * This function emits a code capable of compressing vertically a given sprite.
+ * This function emits a code capable of expanding horizontally a given sprite.
  * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to compress vertically (0...7)
+ * @param _sprite Expression with the index of the sprite to expand horizontally (0...7)
  */
-void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) {
+void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
 
-    outline1("; SPRITE %s COMPRESS VERTICAL (ignored)", _sprite);
+    outline1("; SPRITE %s EXPAND HORIZONTAL (ignored)", _sprite);
 
 }
+
+#endif

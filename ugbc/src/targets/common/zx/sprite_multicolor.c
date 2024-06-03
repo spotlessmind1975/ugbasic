@@ -32,38 +32,42 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__zx__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] MONOCOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [int] MULTICOLOR</b>
  * 
- * This function emits a code capable of enabling monocolor for a given sprite.
- * The index of sprite is given as direct integer.
+ * This function emits a code capable of enabling multicolor for a given sprite.
+ * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which enable monocolor (0...7)
+ * @param _sprite Index of the sprite for which enable multicolor (0...7)
  */
-void sprite_monocolor( Environment * _environment, int _sprite ) {
+void sprite_multicolor( Environment * _environment, int _sprite ) {
 
-    outline1("; SPRITE %d MONOCOLOR (ignored)", _sprite);
+    outline1("; SPRITE %d MULTICOLOR (ignored)", _sprite);
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] MONOCOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] MULTICOLOR</b>
  * 
- * This function emits a code capable of enabling monocolor for a given sprite.
- * The index of sprite is given as expression.
+ * This function emits a code capable of enabling multicolor for a given sprite.
+ * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
+ * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
  */
-void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
+void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
 
     outline1("; SPRITE %s MULTICOLOR (ignored)", _sprite);
 
 }
+
+#endif

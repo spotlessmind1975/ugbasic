@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__zx__)
 
 /**
  * @brief Emit code for <strong>SPRITE(...)</strong>
@@ -45,24 +47,15 @@
  * @param _image image to use as SPRITE
  */
 /* <usermanual>
-@keyword SPRITE
+@keyword MSPRITE
 
-@target c64
 </usermanual> */
-Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+Variable * msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
-    Variable * index;
+    Variable * result = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
 
-    if ( _sprite ) {
+    return result;
 
-        index = variable_retrieve( _environment, _sprite );
-
-    } else {
-
-        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-        
-    }
-
-    return index;
-    
 }
+
+#endif

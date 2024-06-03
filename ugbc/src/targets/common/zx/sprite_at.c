@@ -32,36 +32,48 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__zx__)
+
 /**
- * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
+ * @brief Emit ASM code for <b>SPRITE [int] AT ([int],[int])</b>
  * 
- * This function emits a code capable of changing the specific color
- * for a given sprite.
+ * This function emits a code capable of position a sprite to the (x,y)
+ * on the screen. This version is suitable when an integer number 
+ * is used. 
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which to change color
- * @param _color Index of the color
+ * @param _sprite Index of the sprite to position (0...7)
+ * @param _x The abscissa of the sprite
+ * @param _y The ordinate of the sprite
  */
-void sprite_color( Environment * _environment, int _sprite, int _color ) {
+void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
+
+    outline3("; SPRITE %d AT (%d,%d) (ignored)", _sprite, _x, _y);
 
 }
 
 /**
- * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] AT ([expression],[expression])</b>
  * 
- * This function emits a code capable of changing the specific color
- * for a given sprite.
+ * This function emits a code capable of position a sprite to the (x,y)
+ * on the screen. This version is suitable when an expression
+ * is used. 
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite for which to change color
- * @param _color Expression with the index of the color
+ * @param _sprite Expression with the index of the sprite to position (0...7)
+ * @param _x Expression with the abscissa of the sprite
+ * @param _y Expression with the ordinate of the sprite
  */
-void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
+void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
+
+    outline3("; SPRITE %s AT (%s,%s) (ignored)", _sprite, _x, _y);
 
 }
+
+#endif

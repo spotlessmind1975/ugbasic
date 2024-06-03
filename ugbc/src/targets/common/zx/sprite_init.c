@@ -32,39 +32,41 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__zx__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] EXPAND VERTICAL</b>
- * 
- * This function emits a code capable of expanding vertically a given sprite.
- * The index of sprite is given as a direct integer.
+ * @brief Emit code for <strong>SPRITE(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to expand vertically (0...7)
+ * @param _image image to use as SPRITE
  */
-void sprite_expand_vertical( Environment * _environment, int _sprite ) {
+/* <usermanual>
+@keyword SPRITE
 
-    outline1("; SPRITE %d EXPAND VERTICAL (ignored)", _sprite);
+@target zx
+</usermanual> */
+Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+
+    Variable * index;
+    Variable * image = variable_retrieve( _environment, _image );
+    Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+
+    if ( _sprite ) {
+        index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
+    } else {
+        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+        variable_move_naked( _environment, spriteCount->name, index->name );
+        cpu_inc( _environment, spriteCount->realName );
+    }
+
+    return index;
 
 }
 
-/**
- * @brief Emit ASM code for <b>SPRITE [expression] EXPAND VERTICAL</b>
- * 
- * This function emits a code capable of expanding vertically a given sprite.
- * The index of sprite is given as an expression.
- * 
- * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to expand vertically (0...7)
- */
-void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
-
-    outline1("; SPRITE %s EXPAND VERTICAL (ignored)", _sprite);
-
-}
-
+#endif

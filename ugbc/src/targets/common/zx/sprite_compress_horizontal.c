@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__zx__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
@@ -63,3 +65,5 @@ void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
 void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
 
 }
+
+#endif

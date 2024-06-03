@@ -32,38 +32,42 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__zx__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] MULTICOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [int] EXPAND VERTICAL</b>
  * 
- * This function emits a code capable of enabling multicolor for a given sprite.
+ * This function emits a code capable of expanding vertically a given sprite.
  * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite for which enable multicolor (0...7)
+ * @param _sprite Index of the sprite to expand vertically (0...7)
  */
-void sprite_multicolor( Environment * _environment, int _sprite ) {
+void sprite_expand_vertical( Environment * _environment, int _sprite ) {
 
-    outline1("; SPRITE %d MULTICOLOR (ignored)", _sprite);
+    outline1("; SPRITE %d EXPAND VERTICAL (ignored)", _sprite);
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] MULTICOLOR</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] EXPAND VERTICAL</b>
  * 
- * This function emits a code capable of enabling multicolor for a given sprite.
+ * This function emits a code capable of expanding vertically a given sprite.
  * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
+ * @param _sprite Expression with the index of the sprite to expand vertically (0...7)
  */
-void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
+void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
 
-    outline1("; SPRITE %s MULTICOLOR (ignored)", _sprite);
+    outline1("; SPRITE %s EXPAND VERTICAL (ignored)", _sprite);
 
 }
+
+#endif
