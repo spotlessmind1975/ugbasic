@@ -124,6 +124,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: .res 1,0", variable->realName);
                     }
                     break;
+                case VT_MSPRITE:
+                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: .res 2,0", variable->realName);
+                    }
+                    break;
                 case VT_TILES:
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -321,6 +328,9 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_TILE:
         case VT_TILESET:
             outline0("   .byte 0" );
+            break;
+        case VT_MSPRITE:
+            outline0("   .byte 0, 0" );
             break;
         case VT_TILES:
             outline0("   .byte 0, 0, 0, 0" );
@@ -720,4 +730,9 @@ void variable_cleanup( Environment * _environment ) {
         outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
+    if ( ! _environment->deployed.joystick ) {
+        cpu_label( _environment, "JOYSTICKMANAGER" );
+        outline0( "RTS" );
+    }
+    
 }
