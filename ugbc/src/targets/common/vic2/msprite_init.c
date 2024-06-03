@@ -96,8 +96,6 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
         x_slots = ( (image->originalWidth-1) / 24 ) + 1;
     }
 
-    printf( "%d, %d\n", x_slots, y_slots );
-
     int c_slots = 0;
     for (i=0; i<image->originalColors; ++i ) {
         if ( image->originalPalette[i].index == COLOR_BLACK ) continue;
