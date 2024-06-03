@@ -91,10 +91,6 @@ IRQSVC:
     JSR TIMERMANAGER
 MSPRITESMANAGERADDRESS:
     JSR MSPRITESMANAGER
-    PHA
-    LDA #$1
-    STA $D019
-    PLA
     JMP ($0314)    
 
 IRQSVC2:
@@ -137,7 +133,7 @@ C128STARTUPDONE:
     LDA #>IRQSVC2
     STA $0315
 
-@IF deployed.msprite
+@IF deployed.msprites
 
     ; msprites
     LDA #$7f                    ;CIA interrupt off
