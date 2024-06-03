@@ -122,9 +122,9 @@ SCANCODEFULLL2:
 	; KERNAL ROM expects this row to be active so it can check for STOP key pressed by 
 	; simply reading $DC01.
 
-	LDA $7F
+	LDA #$7F
 	STA $DC00
-	LDA $FF
+	LDA #$FF
 	STA $D02F
 
 	RTS
