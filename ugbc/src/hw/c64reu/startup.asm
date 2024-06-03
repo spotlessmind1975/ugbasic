@@ -85,7 +85,10 @@ NMISVC:
 IRQSVC:
     JSR JIFFYUPDATE
     JSR MUSICPLAYER
+    JSR JOYSTICKMANAGER
     JSR TIMERMANAGER
+MSPRITESMANAGERADDRESS:
+    JSR MSPRITESMANAGER
     JMP ($0314)    
 
 IRQSVC2:
@@ -122,37 +125,6 @@ C64REUSTARTUPDONE:
     SEI
 
     JSR SAVESYSTEMIRQVECTORS
-
-    LDA #<NMISVC
-    STA $FFFA
-    LDA #>NMISVC
-    STA $FFFB
-
-    LDA #<IRQSVC
-    STA $FFFE
-    LDA #>IRQSVC
-    STA $FFFF
-
-    LDA #<IRQSVC2
-    STA $0314
-    LDA #>IRQSVC2
-    STA $0315
-
-@IF dataSegment
-    LDA #<DATAFIRSTSEGMENT
-    STA DATAPTR
-    LDA #>DATAFIRSTSEGMENT
-    STA DATAPTR+1
-    LDY #0
-    STY DATAPTRY
-@ENDIF
-
-    PHA
-    LDA #$35
-    STA $01
-    PLA
-
-    JSR SAVEUGBASICIRQVECTORS
 
     PHA
     LDA #$37
@@ -197,10 +169,55 @@ C64REUSTARTUPDONE:
     PLA
 
     LDA #0
-    STA $C6
-    
-    CLI
+    STA KEYBLEN
 
+
+    LDA #<NMISVC
+    STA $FFFA
+    LDA #>NMISVC
+    STA $FFFB
+
+    LDA #<IRQSVC
+    STA $FFFE
+    LDA #>IRQSVC
+    STA $FFFF
+
+    LDA #<IRQSVC2
+    STA $0314
+    LDA #>IRQSVC2
+    STA $0315
+
+@IF deployed.msprites
+
+    ; msprites
+    LDA #$7f                    ;CIA interrupt off
+    STA $DC0D
+    LDA #$01                    ;Raster interrupt on
+    STA $D01A
+    LDA #$37
+    STA $D011
+    LDA #IRQ1LINE               ;Line where next IRQ happens
+    STA $D012
+    LDA $DC0D
+    
+@ENDIF
+
+@IF dataSegment
+    LDA #<DATAFIRSTSEGMENT
+    STA DATAPTR
+    LDA #>DATAFIRSTSEGMENT
+    STA DATAPTR+1
+    LDY #0
+    STY DATAPTRY
+@ENDIF
+
+    PHA
+    LDA #$35
+    STA $01
+    PLA
+
+    JSR SAVEUGBASICIRQVECTORS
+    CLI
 SYSCALLDONE:
     SEI
 
@@ -213,6 +230,9 @@ SYSCALLDONE:
 
     CLI
 
+    ; LDA #0
+    ; STA $C6
+    
     RTS
 SYSCALL:
     SEI

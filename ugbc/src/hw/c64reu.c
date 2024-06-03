@@ -120,7 +120,7 @@ void c64reu_scancode( Environment * _environment, char * _pressed, char * _scanc
 
     outline0("JSR SCANCODE");
 
-    outline0("LDY $c5");
+    outline0("LDY KEYBPREV");
     outline0("CPY #$40");
     outline1("BEQ %snokey", label );
 
