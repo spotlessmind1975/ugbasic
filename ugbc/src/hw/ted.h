@@ -96,13 +96,6 @@
 #define SCREEN_BORDER_X             0
 #define SCREEN_BORDER_Y             0
 
-#define SPRITE_FLAG_MULTICOLOR          0x0010
-#define SPRITE_FLAG_MONOCOLOR           0x0000
-#define SPRITE_FLAG_EXPAND_VERTICAL     0x0040
-#define SPRITE_FLAG_COMPRESS_VERTICAL   0x0000
-#define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
-#define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
-
 #define IMAGE_WIDTH_SIZE                2
 #define IMAGE_WIDTH_OFFSET              0
 #define IMAGE_HEIGHT_SIZE               1
