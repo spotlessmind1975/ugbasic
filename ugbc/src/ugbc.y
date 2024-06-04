@@ -1784,6 +1784,9 @@ sprite_flag :
     }
     | COMPRESS HORIZONTAL {
         $$ = SPRITE_FLAG_COMPRESS_HORIZONTAL;
+    }
+    | IGNORE COLOR const_expr {
+        $$ = SPRITE_FLAG_TRANSPARENCY_COLOR | ( $3 & 0x000f );
     };
 
 sprite_flags1 :

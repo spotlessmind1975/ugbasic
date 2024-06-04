@@ -96,9 +96,15 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
         x_slots = ( (image->originalWidth-1) / 24 ) + 1;
     }
 
+    int colorTransparency = COLOR_BLACK;
+
+    if ( _flags & SPRITE_FLAG_TRANSPARENCY_COLOR ) {
+        colorTransparency = _flags & 0x000f;
+    }
+
     int c_slots = 0;
     for (i=0; i<image->originalColors; ++i ) {
-        if ( image->originalPalette[i].index == COLOR_BLACK ) continue;
+        if ( image->originalPalette[i].index == colorTransparency ) continue;
         ++c_slots;
         for (int y=0; y<y_slots; ++y ) {
             for (int x=0; x<x_slots; ++x ) {
