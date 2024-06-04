@@ -261,6 +261,21 @@ Variable * zx_new_images( Environment * _environment, int _frames, int _width, i
 Variable * zx_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode );
 void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count,  int _palette );
 
+void zx_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void zx_sprite_enable( Environment * _environment, char *_sprite );
+void zx_sprite_disable( Environment * _environment, char * _sprite );
+void zx_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
+void zx_sprite_expand_vertical( Environment * _environment, char * _sprite );
+void zx_sprite_expand_horizontal( Environment * _environment, char * _sprite );
+void zx_sprite_compress_vertical( Environment * _environment, char * _sprite );
+void zx_sprite_compress_horizontal( Environment * _environment, char * _sprite );
+void zx_sprite_multicolor( Environment * _environment, char * _sprite );
+void zx_sprite_monocolor( Environment * _environment, char * _sprite );
+void zx_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void zx_vertical_scroll( Environment * _environment, char * _displacement );
+void zx_horizontal_scroll( Environment * _environment, char * _displacement );
+void zx_busy_wait( Environment * _environment, char * _timing );
+
 void zx_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
 void zx_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void zx_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
