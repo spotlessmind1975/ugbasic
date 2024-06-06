@@ -32,42 +32,30 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__coco3__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS VERTICAL</b>
- * 
- * This function emits a code capable of compressing vertically a given sprite.
- * The index of sprite is given as a direct integer.
+ * @brief Emit code for <strong>SPRITE(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress vertically (0...7)
+ * @param _image image to use as SPRITE
  */
 /* <usermanual>
-@keyword SPRITE COMPRESS
+@keyword MSPRITE
 
-@target coco3
 </usermanual> */
-void sprite_compress_vertical( Environment * _environment, int _sprite ) {
+Variable * msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
+
+    Variable * result = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
+
+    return result;
 
 }
 
-/**
- * @brief Emit ASM code for <b>SPRITE [expression] COMPRESS VERTICAL</b>
- * 
- * This function emits a code capable of compressing vertically a given sprite.
- * The index of sprite is given as an expression.
- * 
- * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to compress vertically (0...7)
- */
-/* <usermanual>
-@keyword SPRITE COMPRESS
-</usermanual> */
-void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) {
-
-}
+#endif

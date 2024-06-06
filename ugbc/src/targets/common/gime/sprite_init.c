@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__coco3__)
 
 /**
  * @brief Emit code for <strong>SPRITE(...)</strong>
@@ -46,8 +48,6 @@
  */
 /* <usermanual>
 @keyword SPRITE
-
-@target c64
 </usermanual> */
 Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
@@ -64,5 +64,7 @@ Variable * sprite_init( Environment * _environment, char * _image, char * _sprit
     }
 
     return index;
-        
+
 }
+
+#endif

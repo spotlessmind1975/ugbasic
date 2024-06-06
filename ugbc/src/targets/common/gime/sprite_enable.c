@@ -32,11 +32,13 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#if defined(__coco3__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] ENABLE</b>
@@ -49,8 +51,6 @@
  */
 /* <usermanual>
 @keyword SPRITE ENABLE
-
-@target coco3
 </usermanual> */
 void sprite_enable( Environment * _environment, int _sprite ) {
 
@@ -72,3 +72,4 @@ void sprite_enable_var( Environment * _environment, char * _sprite ) {
 
 }
 
+#endif

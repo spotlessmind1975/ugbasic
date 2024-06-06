@@ -32,44 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__coco3__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [int] MULTICOLOR</b>
  * 
- * This function emits a code capable of compressing horizontally a given sprite.
+ * This function emits a code capable of enabling multicolor for a given sprite.
  * The index of sprite is given as a direct integer.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
+ * @param _sprite Index of the sprite for which enable multicolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE COMPRESS
-
-@target coco3
+@keyword SPRITE MULTICOLOR
 </usermanual> */
-void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
-   
+void sprite_multicolor( Environment * _environment, int _sprite ) {
+
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] MULTICOLOR</b>
  * 
- * This function emits a code capable of compressing horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of enabling multicolor for a given sprite.
+ * The index of sprite is given as an expression.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
+ * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE COMPRESS
-
-@target coco3
+@keyword SPRITE MULTICOLOR
 </usermanual> */
-void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
+void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
 
 }
+
+#endif

@@ -32,42 +32,45 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__coco3__)
+
 /**
- * @brief Emit ASM code for <b>SPRITE [int] EXPAND HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [int] DISABLE</b>
  * 
- * This function emits a code capable of expanding horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * This function emits a code capable of disable the sprite _sprite.
+ * This version is suitable when direct integer are used.
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to expand horizontally (0...7)
+ * @param _sprite Index of the sprite to disable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE EXPAND
-
-@target coco3
+@keyword SPRITE DISABLE
 </usermanual> */
-void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
+void sprite_disable( Environment * _environment, int _sprite ) {
 
 }
 
 /**
- * @brief Emit ASM code for <b>SPRITE [expression] EXPAND HORIZONTAL</b>
+ * @brief Emit ASM code for <b>SPRITE [expression] DISABLE</b>
  * 
- * This function emits a code capable of expanding horizontally a given sprite.
- * The index of sprite is given as an expression.
+ * This function emits a code capable of disable the sprite _sprite.
+ * This version is suitable when an expression is used. 
  * 
  * @param _environment Current calling environment
- * @param _sprite Expression with the index of the sprite to expand horizontally (0...7)
+ * @param _sprite Expression with the index of the sprite to disable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE EXPAND
+@keyword SPRITE DISABLE
 </usermanual> */
-void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
+void sprite_disable_var( Environment * _environment, char * _sprite ) {
 
 }
+
+#endif
+
