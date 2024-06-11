@@ -88,7 +88,7 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
     //   |   +---+---+-- number of colors
     //   +-------------- multicolor (0 = no / 1 = yes)    
 
-    int y_slots = ( (image->originalHeight-1) / 21 );
+    int y_slots = 1 + ( (image->originalHeight-1) / 21 );
     int x_slots = 0;
     if ( _flags & SPRITE_FLAG_MULTICOLOR) {
         x_slots = ( (image->originalWidth-1) / 12 ) + 1;
