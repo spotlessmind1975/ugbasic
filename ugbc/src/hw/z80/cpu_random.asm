@@ -37,58 +37,24 @@
 
 CPURANDOM32:
     LD HL, (CPURANDOM_SEED)
-    LD B, (HL)
-    INC HL
-    LD A, (HL)
-    XOR B
-    ; LD DE, (MATHPTR0)
-    PUSH DE
+    LD B, H
     LD C, L
     ADD HL, HL
-    RL E
-    RL D
-    ADD HL, DE
-    RL E
-    RL D
+    ADD HL, HL
     INC L
     ADD HL, BC
     LD (CPURANDOM_SEED), HL
     LD HL, (CPURANDOM_SEED+2)
-    ADD HL, DE
-    LD (CPURANDOM_SEED+1), HL
-    EX DE, HL
-    LD HL, (CPURANDOM_SEED)
-    ; LD DE, (MATHPTR0)
-    POP DE
     ADD HL, HL
-    RL C
-    RL B
-    LD (CPURANDOM_SEED+1), BC
     SBC A, A
-    AND %11000101
+    AND %00101101
     XOR L
     LD L, A
-    LD (CPURANDOM_SEED+1), HL
-    EX DE, HL
+    LD (CPURANDOM_SEED+2), HL
     ADD HL, BC
     RET
 
 CPURANDOM16:
-    LD HL, (CPURANDOM_SEED)
-    LD B, (HL)
-    INC HL
-    LD A, (HL)
-    XOR B
-    ; LD DE, (MATHPTR0)
-    LD C, L
-    ADD HL, HL
-    RL E
-    RL D
-    ADD HL, DE
-    RL E
-    RL D
-    INC L
-    ADD HL, BC
-    LD (CPURANDOM_SEED), HL
+    CALL CPURANDOM32
     RET
     
