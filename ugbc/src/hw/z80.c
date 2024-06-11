@@ -3816,7 +3816,6 @@ void z80_random_8bit( Environment * _environment, char * _entropy, char * _resul
     z80_random( _environment, _entropy );
 
     if ( _result ) {
-        outline1("LD DE, (%s)", _entropy );
         outline0("CALL CPURANDOM16" );
         outline0("LD A, H" );
         outline1("LD (%s), A", _result );
@@ -3829,7 +3828,6 @@ void z80_random_16bit( Environment * _environment, char * _entropy, char * _resu
     z80_random( _environment, _entropy );
 
     if ( _result ) {
-        outline1("LD DE, (%s)", _entropy );
         outline0("CALL CPURANDOM16" );
         outline1("LD (%s), HL", _result );
     }
@@ -3841,7 +3839,6 @@ void z80_random_32bit( Environment * _environment, char * _entropy, char * _resu
     z80_random( _environment, _entropy );
 
     if ( _result ) {
-        outline1("LD DE, (%s)", _entropy );
         outline0("CALL CPURANDOM32" );
         outline1("LD (%s), HL", _result );
         outline1("LD (%s), BC", address_displacement( _environment, _result, "2" ) );

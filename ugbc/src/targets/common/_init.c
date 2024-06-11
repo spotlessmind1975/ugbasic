@@ -105,7 +105,7 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "windowMY" );
     variable_import( _environment, "PROTOTHREADCT", VT_BYTE, 0 );
     variable_global( _environment, "PROTOTHREADCT" );
-    variable_import( _environment, "CPURANDOM_SEED", VT_DWORD, 0xffffffff );
+    variable_import( _environment, "CPURANDOM_SEED", VT_DWORD, 0xffeaff42 );
     variable_global( _environment, "CPURANDOM_SEED" );
     variable_define( _environment, "PLAYDURATION", VT_BYTE, 64 );
     variable_global( _environment, "PLAYDURATION" );
