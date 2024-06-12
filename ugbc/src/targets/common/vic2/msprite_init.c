@@ -70,6 +70,7 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
         startIndex = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );
         spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
         cpu_move_8bit( _environment, spriteCount->realName, startIndex->realName );
+        cpu_move_8bit( _environment, spriteCount->realName, result->realName );
     }
 
     Variable * image = variable_retrieve( _environment, _image );
