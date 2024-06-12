@@ -60,15 +60,15 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
     Variable * spriteCount;
     Variable * result = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
 
+    index = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
+    spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+    startIndex = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );
+
     if ( _sprite ) {
         Variable * original = variable_retrieve_or_define( _environment, _sprite, VT_MSPRITE, 0 );   
-        startIndex = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );
         cpu_move_8bit( _environment, original->realName, startIndex->realName );
-        outline0("; ---------------------------^^^^^^^^^^");
+        cpu_move_8bit( _environment, original->realName, result->realName );
     } else {
-        index = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
-        startIndex = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );
-        spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
         cpu_move_8bit( _environment, spriteCount->realName, startIndex->realName );
         cpu_move_8bit( _environment, spriteCount->realName, result->realName );
     }
@@ -110,7 +110,7 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
         for (int y=0; y<y_slots; ++y ) {
             for (int x=0; x<x_slots; ++x ) {
                 
-                cpu_move_8bit( _environment, spriteCount->realName, index->realName );
+                cpu_move_8bit( _environment, startIndex->realName, index->realName );
                 Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, x, y );
                 vic2_sprite_data_from( _environment, index->name, realImage->name );
 
@@ -138,7 +138,10 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
                     sprite_expand_vertical_var( _environment, index->name );
                 }
 
-                cpu_inc( _environment, spriteCount->realName );
+                if ( ! _sprite ) {
+                    cpu_inc( _environment, spriteCount->realName );
+                }
+                cpu_inc( _environment, startIndex->realName );
                 cpu_inc( _environment, index->realName );
             }
         }
