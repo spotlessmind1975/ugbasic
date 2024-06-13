@@ -53,6 +53,10 @@
 </usermanual> */
 Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
+    if ( _environment->deployed.msprite ) {
+        CRITICAL_CANNOT_MIX_SPRITES_MSPRITES();
+    }
+
     Variable * index;
 
     if ( _sprite ) {

@@ -55,6 +55,10 @@
 </usermanual> */
 Variable * csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
+    if ( _environment->deployed.msprite ) {
+        CRITICAL_CANNOT_MIX_SPRITES_MSPRITES();
+    }
+    
     Variable * index;
     Variable * startIndex;
     Variable * result = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );   
