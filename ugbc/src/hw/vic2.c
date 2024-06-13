@@ -1443,6 +1443,8 @@ void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * image = variable_retrieve_or_define( _environment, _image, VT_IMAGE, 0 );
 
+    image->usedImage = 1;
+    
     outline1("LDA #<%s", image->realName );
     outline0("STA MATHPTR1"  );
     outline1("LDA #>%s", image->realName );

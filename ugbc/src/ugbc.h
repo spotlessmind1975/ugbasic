@@ -997,6 +997,11 @@ typedef struct _Variable {
      */
     Offsetting * offsettingSequences;
 
+    /**
+     *
+     */
+    int usedImage;
+
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
 

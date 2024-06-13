@@ -89,6 +89,8 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
     
     Variable * image = variable_retrieve( _environment, _image );
 
+    image->usedImage = 1;
+    
     Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
 
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
