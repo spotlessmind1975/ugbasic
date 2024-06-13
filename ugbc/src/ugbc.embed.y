@@ -434,6 +434,12 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "multiplexingSpriteConfig" ) == 0 ) {
+            if ( strcmp( $3, "async" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->multiplexingSpriteConfig.async;
+            } else {
+                $$ = 0;
+            }
         } else if ( strcmp( $1, "deployed" ) == 0 ) {
             if ( strcmp( $3, "dload" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.dload;
@@ -584,6 +590,13 @@ embed2:
         }
         if ( strcmp( $3, "frameBufferStart2" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart );
+        }
+        if ( strcmp( $3, "waitSpriteUpdateFlag" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->multiplexingSpriteConfig.async ) {
+                vars_emit_constant_integer( _environment, $5, 0 );
+            } else {
+                vars_emit_constant_integer( _environment, $5, 0xff );
+            }
         }
         ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }

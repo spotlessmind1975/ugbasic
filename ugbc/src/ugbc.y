@@ -94,7 +94,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
-%token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE
+%token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -4326,7 +4326,8 @@ sprite_definition_action_simple:
   }
   | HORIZONTAL COMPRESS {
       sprite_compress_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  };
+  }
+  ;
 
 sprite_definition_simple:
     sprite_definition_action_simple
@@ -7698,6 +7699,12 @@ define_definition :
     | AUDIO ASYNC {
         ((struct _Environment *)_environment)->audioConfig.async = 1;
     }
+    | MSPRITE SYNC {
+        ((struct _Environment *)_environment)->multiplexingSpriteConfig.async = 0;
+    }
+    | MSPRITE ASYNC {
+        ((struct _Environment *)_environment)->multiplexingSpriteConfig.async = 1;
+    }
     | AUDIO TARGET audio_source {
         if ( ! define_audio_target_check( _environment, $3 ) ) {
             CRITICAL_AUDIO_TARGET_UNAVAILABLE( );
@@ -8754,6 +8761,9 @@ statement2nc:
   | SPRITE sprite_definition
   | CSPRITE sprite_definition
   | MSPRITE sprite_definition
+  | MSPRITE UPDATE {
+      msprite_update( _environment );
+  }
   | BITMAP bitmap_definition
   | TEXTMAP textmap_definition
   | TILEMAP tilemap_definition
