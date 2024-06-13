@@ -87,15 +87,15 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
     //   |   |   |   | (VT_MSPRITE+1)                    (VT_MSPRITE+0)
     //   |   |   |   |
     //   |   +---+---+-- number of colors
-    //   +-------------- multicolor (0 = no / 1 = yes)    
+    //   +-------------- multicolor (0 = no / 1 = yes) [UNUSED]
 
     int y_slots = 1 + ( (image->originalHeight-1) / 21 );
     int x_slots = 0;
-    if ( _flags & SPRITE_FLAG_MULTICOLOR) {
-        x_slots = ( (image->originalWidth-1) / 12 ) + 1;
-    } else {
+    // if ( _flags & SPRITE_FLAG_MULTICOLOR) {
+    //     x_slots = ( (image->originalWidth-1) / 12 ) + 1;
+    // } else {
         x_slots = ( (image->originalWidth-1) / 24 ) + 1;
-    }
+    // }
 
     int colorTransparency = COLOR_BLACK;
 
@@ -114,29 +114,29 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
                 Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, x, y );
                 vic2_sprite_data_from( _environment, index->name, realImage->name );
 
-                if ( _flags & SPRITE_FLAG_MULTICOLOR) {
-                    sprite_multicolor_var( _environment, index->name );
-                    outline1("LDA %s", address_displacement( _environment, index->realName, "1" ) );
-                    outline0("ORA #%10000000" )
-                    outline1("STA %s", address_displacement( _environment, index->realName, "1" ) );
-                } else {
+                // if ( _flags & SPRITE_FLAG_MULTICOLOR) {
+                //     sprite_multicolor_var( _environment, index->name );
+                //     outline1("LDA %s", address_displacement( _environment, index->realName, "1" ) );
+                //     outline0("ORA #%10000000" )
+                //     outline1("STA %s", address_displacement( _environment, index->realName, "1" ) );
+                // } else {
                     sprite_monocolor_var( _environment, index->name );
-                    outline1("LDA %s", address_displacement( _environment, index->realName, "1" ) );
-                    outline0("AND #%01111111" )
-                    outline1("STA %s", address_displacement( _environment, index->realName, "1" ) );
-                }
+                //     outline1("LDA %s", address_displacement( _environment, index->realName, "1" ) );
+                //     outline0("AND #%01111111" )
+                //     outline1("STA %s", address_displacement( _environment, index->realName, "1" ) );
+                // }
 
-                if ( _flags & SPRITE_FLAG_EXPAND_HORIZONTAL ) {
-                    sprite_expand_horizontal_var( _environment, index->name );
-                } else {
-                    sprite_compress_horizontal_var( _environment, index->name );
-                }
+                // if ( _flags & SPRITE_FLAG_EXPAND_HORIZONTAL ) {
+                //     sprite_expand_horizontal_var( _environment, index->name );
+                // } else {
+                //     sprite_compress_horizontal_var( _environment, index->name );
+                // }
 
-                if ( _flags & SPRITE_FLAG_EXPAND_VERTICAL ) {
-                    sprite_expand_vertical_var( _environment, index->name );
-                } else {
-                    sprite_expand_vertical_var( _environment, index->name );
-                }
+                // if ( _flags & SPRITE_FLAG_EXPAND_VERTICAL ) {
+                //     sprite_expand_vertical_var( _environment, index->name );
+                // } else {
+                //     sprite_expand_vertical_var( _environment, index->name );
+                // }
 
                 if ( ! _sprite ) {
                     cpu_inc( _environment, spriteCount->realName );
@@ -157,7 +157,7 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
     //   |   |   |   | (VT_MSPRITE+1)                    (VT_MSPRITE+0)
     //   |   |   |   |
     //   |   +---+---+-- number of colors
-    //   +-------------- multicolor (0 = no / 1 = yes)        
+    //   +-------------- multicolor (0 = no / 1 = yes) [unused]
 
     outline1("LDA #$%2.2x", ( (y_slots-1) & 0x03 ) | ( ( (x_slots-1) & 0x03 ) << 2 ) | ( ( (c_slots-1) & 0x07 ) << 4 ) | ( ( _flags & SPRITE_FLAG_MULTICOLOR ) ? 0x80 : 0x00) );
     outline1("STA %s", address_displacement( _environment, result->realName, "1" ) );
