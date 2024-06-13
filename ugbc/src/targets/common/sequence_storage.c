@@ -73,7 +73,7 @@ lo stesso nome, è possibile indicare un alias (''AS target'').
 @target all
 @verified
 </usermanual> */
-Variable * sequence_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
+Variable * sequence_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y ) {
 
     file_storage( _environment, _source_name, _target_name );
 
@@ -104,8 +104,8 @@ Variable * sequence_storage( Environment * _environment, char * _source_name, ch
         CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_HEIGHT( _frame_height );
     }
 
-    int wc = ( width / _frame_width );
-    int hc = ( height / _frame_height );
+    int wc = ( width / (_frame_width+_offset_x) );
+    int hc = ( height / (_frame_height+_offset_y) );
 
     Variable * firstImage = NULL;
     Variable * lastImage = NULL;

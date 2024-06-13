@@ -50,8 +50,11 @@
 
 @english
 The ''LOAD IMAGES'' command allows you to load an image and to convert 
-in an array of images. Each image will be of ''[w]x[h]'' pixels. Offset 
-will be calculated automatically on the base of the original image. 
+in an array of images. Each image will be of ''[w]x[h]'' pixels. The 
+offset of each frame is automatically calculated based on the original 
+image, with the possible addition of an offset equal to ''(dx,dy)'' 
+with the use of the keyword ''OFFSET''. It is possible to start 
+cropping images from the ''(x,y)'' position using the ''ORIGIN'' keyword.
 
 The command support a set of modern image format, like:
 
@@ -84,7 +87,10 @@ the ''AS'' syntax, which allows you to load the same file several times but with
 @italian
 Il comando ''LOAD IMAGES'' permette di caricare un'immagine e di convertirla
 in una serie di immagini. Ogni immagine sarà di ''[w]x[h]'' pixel. Lo scostamentto
-di ogni fotogramma è calcolato automaticamente sulla base dell'immagine originale. 
+di ogni fotogramma è calcolato automaticamente sulla base dell'immagine originale,
+con l'eventuale aggiunta di uno scostamento pari a ''(dx,dy)'' con l'uso della
+parola chiave ''OFFSET''. E' possibile far partire il ritaglio delle immagini
+dalla posizione ''(x,y)'' utilizando la parola chiave ''ORIGIN''.
 
 Il comando supporta una serie di formati moderni:
 
@@ -115,18 +121,18 @@ Dal momento in cui è possibile caricare un solo file dello stesso tipo alla vol
 esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
 ma con nomi diversi.
 
-@syntax = LOAD IMAGES(filename) FRAME SIZE (w,h)
-@syntax = LOAD IMAGES(filename AS alias) FRAME SIZE (w,h)
+@syntax = LOAD IMAGES(filename) FRAME SIZE (w,h) [ OFFSET(dx,dy) [ ORIGIN(x,y) ] ]
+@syntax = LOAD IMAGES(filename AS alias) FRAME SIZE (w,h) [ OFFSET(dx,dy) [ ORIGIN(x,y) ] ]
 
 @example starship = LOAD IMAGES("starship.png") FRAME SIZE (8,8)
-@example alienAt11 = LOAD IMAGES("alien.png") FRAME SIZE (16,16)
-@example alien2 = LOAD IMAGES("alien.png" AS "alien2") FRAME SIZE (16,16)
+@example alienAt11 = LOAD IMAGES("alien.png") FRAME SIZE (16,16) OFFSET(1,1)
+@example alien2 = LOAD IMAGES("alien.png" AS "alien2") FRAME SIZE (16,16) OFFSET(1,1) ORIGIN(1,1)
 
 @usedInExample images_loading_01.bas
 
 @target all
 </usermanual> */
-Variable * images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
+Variable * images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y ) {
 
     Variable * final = variable_temporary( _environment, VT_IMAGES, 0 );
 
@@ -170,6 +176,12 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     int layout_mode = 0;
 
     if ( stbi_is_animated_gif( lookedFilename ) ) {
+        if ( _origin_x || _origin_y ) {
+            CRITICAL_IMAGES_LOAD_INVALID_ORIGIN_WITH_GIF( _filename );            
+        }
+        if ( _offset_x || _offset_y ) {
+            CRITICAL_IMAGES_LOAD_INVALID_OFFSET_WITH_GIF( _filename );            
+        }
         source = stbi_xload(lookedFilename, &width, &height, &frames);
         depth = 4;
         layout_mode = 1;
@@ -181,6 +193,10 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         frames = 0;
         layout_mode = 0;
     }
+
+    source += ( ( _origin_y * width ) + _origin_x ) * depth;
+    width -= _origin_x;
+    height -= _origin_y;
 
     originalSource = source;
 
@@ -196,12 +212,16 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _filename );
     }
 
-    if ( width % _frame_width ) {
-        CRITICAL_IMAGES_LOAD_INVALID_FRAME_WIDTH( _frame_width );
+    if ( !_offset_x ) {
+        if ( width % _frame_width ) {
+            CRITICAL_IMAGES_LOAD_INVALID_FRAME_WIDTH( _frame_width );
+        }
     }
 
-    if ( height % _frame_height ) {
-        CRITICAL_IMAGES_LOAD_INVALID_FRAME_HEIGHT( _frame_height );
+    if ( !_offset_y ) {
+        if ( height % _frame_height ) {
+            CRITICAL_IMAGES_LOAD_INVALID_FRAME_HEIGHT( _frame_height );
+        }
     }
 
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_STANDARD );
@@ -214,15 +234,15 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
 
     if ( layout_mode == 0 ) {
 
-        int wc = ( width / _frame_width );
-        int hc = ( height / _frame_height );
+        int wc = ( width / (_frame_width+_offset_x) );
+        int hc = ( height / (_frame_height+_offset_y) );
         int a = 1;
         frames = wc*hc;
 
         int i,di,x=0,y=0,z=0;
 
         if( _flags & FLAG_ROLL_X ) {
-            a = (_frame_width - 1);
+            a = ((_frame_width+_offset_x) - 1);
         }
 
         realFramesCount = (a*hc*wc);
@@ -243,10 +263,10 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         }
 
         for( z=0; z<a; ++z ) {
-            for( y=0; y<height; y+=_frame_height ) {
-                for( x=0; x<width; x+=_frame_width ) {
+            for( y=0; y<height; y+=(_frame_height+_offset_y) ) {
+                for( x=0; x<width; x+=(_frame_width+_offset_x) ) {
                     Variable * partial = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
-                    if ( ! firstImage && !lastImage ) {
+                    if ( !firstImage && !lastImage ) {
                         firstImage = partial;
                         lastImage = firstImage;
                     } else {

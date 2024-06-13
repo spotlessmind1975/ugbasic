@@ -94,7 +94,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RESTORE SAFE PAGE PMODE PCLS PRESET PSET BF PAINT SPC UNSIGNED NARROW WIDE AFTER STRPTR ERROR
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
-%token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE
+%token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2543,15 +2543,53 @@ load_images : LOAD images_or_atlas | images_or_atlas LOAD;
 load_sequence : LOAD SEQUENCE | SEQUENCE LOAD;
 load_tileset  : LOAD TILESET | TILESET LOAD;
 load_tilemap  : LOAD TILEMAP | TILEMAP LOAD;
-frame_size : 
-    FRAME SIZE OP const_expr OP_COMMA const_expr CP {
+
+frame_offset : 
+    OFFSET OP const_expr OP_COMMA const_expr CP {
+        ((struct _Environment *)_environment)->frameOffsetX = $3;
+        ((struct _Environment *)_environment)->frameOffsetY = $5;
+    }
+    |
+    {
+        ((struct _Environment *)_environment)->frameOffsetX = 0;
+        ((struct _Environment *)_environment)->frameOffsetY = 0;
+    }
+    ;
+
+frame_origin : 
+    ORIGIN OP const_expr OP_COMMA const_expr CP {
+        ((struct _Environment *)_environment)->frameOriginX = $3;
+        ((struct _Environment *)_environment)->frameOriginY = $5;
+    }
+    |
+    {
+        ((struct _Environment *)_environment)->frameOriginX = 0;
+        ((struct _Environment *)_environment)->frameOriginY = 0;
+    }
+    ;
+
+frame_size_explicit :
+    FRAME SIZE OP const_expr OP_COMMA const_expr CP frame_offset frame_origin {
         ((struct _Environment *)_environment)->frameWidth = $4;
         ((struct _Environment *)_environment)->frameHeight = $6;
-    } 
-    | FRAME SIZE AUTO {
+    };
+
+frame_size_auto : 
+    FRAME SIZE AUTO {
         ((struct _Environment *)_environment)->frameWidth = -1;
         ((struct _Environment *)_environment)->frameHeight = -1;
     };
+
+frame_size_definition :
+      frame_size_auto 
+    | frame_size_explicit;
+
+frame_size : {
+        ((struct _Environment *)_environment)->frameOffsetX = 0;
+        ((struct _Environment *)_environment)->frameOffsetY = 0;
+        ((struct _Environment *)_environment)->frameOriginX = 0;
+        ((struct _Environment *)_environment)->frameOriginY = 0;
+    } frame_size_definition;
 
 exponential:
     Identifier {
@@ -2955,22 +2993,52 @@ exponential:
         $$ = music_load( _environment, $4, $6, $8 )->name;
       }
     | load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
-        Variable * sequence = sequence_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $10, $12, $14, $15+$16, $17, $18 );
+        Variable * sequence = sequence_load( 
+            _environment, 
+            $3, $5, 
+            ((struct _Environment *)_environment)->currentMode, 
+            $10, $12, 
+            $14, $15+$16, 
+            $17, $18, 
+            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
         sequence->readonly = $19;
         $$ = sequence->name;
       }
     | load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {        
-        Variable * sequence = sequence_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 );
+        Variable * sequence = sequence_load( 
+            _environment, 
+            $3, NULL, 
+            ((struct _Environment *)_environment)->currentMode, 
+            $8, $10, 
+            $12, $13+$14, 
+            $15, $16, 
+            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
         sequence->readonly = $17;
         $$ = sequence->name;
       }
     | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
-        Variable * images = images_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $7+$8, $9, $10 );
+        Variable * images = images_load( _environment, 
+            $3, NULL, 
+            ((struct _Environment *)_environment)->currentMode, 
+            ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, 
+            $8, $7+$8, 
+            $9, $10, 
+            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
         images->readonly = $11;
         $$ = images->name;
       }
     | load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
-        Variable * images = images_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $8, $9+$10, $11, $12 );
+        Variable * images = images_load( _environment, 
+            $3, $5, 
+            ((struct _Environment *)_environment)->currentMode, 
+            ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight,
+            $8, $9+$10, 
+            $11, $12, 
+            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
         images->readonly = $13;
         $$ = images->name;
       }
@@ -9359,28 +9427,60 @@ statement2nc:
         variable_temporary_remove( _environment, v->name );
   }
   | images_or_atlas const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
-        Variable * v = images_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $5+$6, $7, $8 );
+        Variable * v = images_storage( 
+            _environment, 
+            $2, NULL, 
+            ((struct _Environment *)_environment)->currentMode, 
+            ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight,
+            $6, $5+$6, 
+            $7, $8, 
+            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
         if ( $9 ) {
             prepare_variable_storage( _environment, $9, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
   | images_or_atlas const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
-        Variable * v = images_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, $6, $7+$8, $9, $10 );
+        Variable * v = images_storage( 
+            _environment, 
+            $2, $4, 
+            ((struct _Environment *)_environment)->currentMode, 
+            ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight,
+            $6, $7+$8, 
+            $9, $10, 
+            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
         if ( $11 ) {
             prepare_variable_storage( _environment, $11, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
   | SEQUENCE const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank to_variable{
-        Variable * v = sequence_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $8, $10, $12, $13+$14, $15, $16 );
+        Variable * v = sequence_storage( 
+            _environment, 
+            $2, $4, 
+            ((struct _Environment *)_environment)->currentMode, 
+            $8, $10, 
+            $12, $13+$14, 
+            $15, $16, 
+            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
         if ( $17 ) {
             prepare_variable_storage( _environment, $17, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
   | SEQUENCE const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank to_variable {
-        Variable * v = sequence_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $6, $8, $10, $11+$12, $13, $14 );
+        Variable * v = sequence_storage( 
+            _environment, 
+            $2, NULL, 
+            ((struct _Environment *)_environment)->currentMode, 
+            $6, $8, 
+            $10, $11+$12, 
+            $13, $14, 
+            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
         if ( $15 ) {
             prepare_variable_storage( _environment, $15, v );
         }

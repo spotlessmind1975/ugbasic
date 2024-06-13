@@ -73,7 +73,7 @@ lo stesso nome, è possibile indicare un alias (''AS target'').
 @target all
 @verified
 </usermanual> */
-Variable * images_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
+Variable * images_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y ) {
 
     file_storage( _environment, _source_name, _target_name );
 
@@ -95,6 +95,12 @@ Variable * images_storage( Environment * _environment, char * _source_name, char
     int layout_mode = 0;
 
     if ( stbi_is_animated_gif( lookedFilename ) ) {
+        if ( _origin_x || _origin_y ) {
+            CRITICAL_IMAGES_LOAD_INVALID_ORIGIN_WITH_GIF( _source_name );            
+        }
+        if ( _offset_x || _offset_y ) {
+            CRITICAL_IMAGES_LOAD_INVALID_OFFSET_WITH_GIF( _source_name );            
+        }        
         source = stbi_xload(lookedFilename, &width, &height, &frames);
         depth = 4;
         layout_mode = 1;
@@ -106,6 +112,10 @@ Variable * images_storage( Environment * _environment, char * _source_name, char
         frames = 0;
         layout_mode = 0;
     }
+
+    source += ( ( _origin_y * width ) + _origin_x ) * depth;
+    width -= _origin_x;
+    height -= _origin_y;
 
     originalSource = source;
 
@@ -137,15 +147,15 @@ Variable * images_storage( Environment * _environment, char * _source_name, char
 
     if ( layout_mode == 0 ) {
 
-        int wc = ( width / _frame_width );
-        int hc = ( height / _frame_height );
+        int wc = ( width / (_frame_width+_offset_x) );
+        int hc = ( height / (_frame_height+_offset_y) );
         int a = 1;
         frames = wc*hc;
 
         int i,di,x=0,y=0,z=0;
 
         if( _flags & FLAG_ROLL_X ) {
-            a = (_frame_width - 1);
+            a = ((_frame_width+_offset_x) - 1);
         }
 
         realFramesCount = (a*hc*wc);
@@ -164,8 +174,8 @@ Variable * images_storage( Environment * _environment, char * _source_name, char
         }
 
         for( z=0; z<a; ++z ) {
-            for( y=0; y<height; y+=_frame_height ) {
-                for( x=0; x<width; x+=_frame_width ) {
+            for( y=0; y<height; y+=(_frame_height+_offset_y) ) {
+                for( x=0; x<width; x+=(_frame_width+_offset_x) ) {
                     Variable * partial = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
                     if ( ! firstImage && ! lastImage ) {
                         firstImage = partial;

@@ -128,7 +128,7 @@ ma con nomi diversi.
 
 @target all
 </usermanual> */
-Variable * sequence_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
+Variable * sequence_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y ) {
 
     Variable * final = variable_temporary( _environment, VT_SEQUENCE, 0 );
 
@@ -181,8 +181,12 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
         CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_HEIGHT( _frame_height );
     }
 
-    int wc = ( width / _frame_width );
-    int hc = ( height / _frame_height );
+    source += ( ( _origin_y * width ) + _origin_x ) * depth;
+    width -= _origin_x;
+    height -= _origin_y;
+
+    int wc = ( width / (_frame_width+_offset_x) );
+    int hc = ( height / (_frame_height+_offset_x) );
 
     Variable * firstImage = NULL;
     Variable * lastImage = NULL;
@@ -206,8 +210,8 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
         _flags |= FLAG_TRANSPARENCY;
     }
 
-    for( y=0; y<height; y+=_frame_height ) {
-        for( x=0; x<width; x+=_frame_width ) {
+    for( y=0; y<height; y+=(_frame_height+_offset_y) ) {
+        for( x=0; x<width; x+=(_frame_width+_offset_x) ) {
             Variable * partial = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
             if ( ! firstImage && ! lastImage ) {
                 firstImage = partial;
