@@ -120,7 +120,7 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
                 //     outline0("ORA #%10000000" )
                 //     outline1("STA %s", address_displacement( _environment, index->realName, "1" ) );
                 // } else {
-                    sprite_monocolor_var( _environment, index->name );
+                    // sprite_monocolor_var( _environment, index->name );
                 //     outline1("LDA %s", address_displacement( _environment, index->realName, "1" ) );
                 //     outline0("AND #%01111111" )
                 //     outline1("STA %s", address_displacement( _environment, index->realName, "1" ) );
