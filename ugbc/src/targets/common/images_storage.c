@@ -85,10 +85,7 @@ Variable * images_storage( Environment * _environment, char * _source_name, char
 
     char * lookedFilename = resource_load_asserts( _environment, _source_name );
 
-    FILE * lookedFileHandle = fopen( lookedFilename, "rb" );
-    fseek( lookedFileHandle, 0, SEEK_END );
-    long fileSize = ftell( lookedFileHandle );
-    fclose( lookedFileHandle );
+    long fileSize = file_get_size( _environment, lookedFilename );
 
     int frames = 0;
     unsigned char * originalSource, * source;

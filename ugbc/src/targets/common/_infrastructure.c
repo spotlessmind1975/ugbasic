@@ -10656,3 +10656,13 @@ char * generate_storage_filename( Environment * _environment, char * _prefix, ch
     return strdup( filename );
 
 }
+
+int file_get_size( Environment * _environment, char * _filename ) {
+
+    FILE * lookedFileHandle = fopen( _filename, "rb" );
+    fseek( lookedFileHandle, 0, SEEK_END );
+    int fileSize = ftell( lookedFileHandle );
+    fclose( lookedFileHandle );
+    return fileSize;
+
+}

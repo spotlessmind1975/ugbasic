@@ -113,10 +113,7 @@ Variable * tileset_storage( Environment * _environment, char * _source_name, cha
 
     lookedFilename = resource_load_asserts( _environment, filenameWithPath );
 
-    FILE * lookedFileHandle = fopen( lookedFilename, "rb" );
-    fseek( lookedFileHandle, 0, SEEK_END );
-    long fileSize = ftell( lookedFileHandle );
-    fclose( lookedFileHandle );
+    long fileSize = file_get_size( _environment, lookedFilename );
 
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
     

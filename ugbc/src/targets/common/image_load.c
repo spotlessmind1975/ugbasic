@@ -176,10 +176,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     char * lookedFilename = resource_load_asserts( _environment, _filename );
 
     // If present, we can calculate the effective size.
-    FILE * lookedFileHandle = fopen( lookedFilename, "rb" );
-    fseek( lookedFileHandle, 0, SEEK_END );
-    long fileSize = ftell( lookedFileHandle );
-    fclose( lookedFileHandle );
+    long fileSize = file_get_size( _environment, lookedFilename );
 
     // Now we can decode the image using the external library.
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);

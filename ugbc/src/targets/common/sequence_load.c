@@ -162,10 +162,7 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
 
     char * lookedFilename = resource_load_asserts( _environment, _filename );
 
-    FILE * lookedFileHandle = fopen( lookedFilename, "rb" );
-    fseek( lookedFileHandle, 0, SEEK_END );
-    long fileSize = ftell( lookedFileHandle );
-    fclose( lookedFileHandle );
+    long fileSize = file_get_size( _environment, lookedFilename );
 
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
 
