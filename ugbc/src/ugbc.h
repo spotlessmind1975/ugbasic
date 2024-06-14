@@ -776,6 +776,41 @@ typedef struct _Offsetting {
 
 } Offsetting;
 
+typedef struct _ImageDescriptor {
+
+    char *                      data;
+    int                         width;
+    int                         height;
+    int                         depth;
+    int                         size;
+    int                         fileSize;
+    RGBi                    *   colors;
+    int                         colorsCount;
+    struct _ImageDescriptor *   next;
+
+} ImageDescriptor;
+
+typedef struct _AtlasDescriptor {
+
+    struct _ImageDescriptor *   image;
+
+    int                         frameWidth;
+    int                         frameHeight;
+
+    int                         originX;
+    int                         originY;
+
+    int                         offsetX;
+    int                         offsetY;
+
+    int                         horizontal;
+    int                         vertical;
+
+    struct _ImageDescriptor *   frames;
+    int                         count;
+
+} AtlasDescriptor;
+
 /**
  * @brief Structure of a single variable
  */
@@ -3969,6 +4004,16 @@ int po_buf_is_hex(POBuffer _s);
 #define TMP_BUF         tmp_buf(__FILE__, __LINE__)
 #define TMP_BUF_CLR     tmp_buf_clr(__FILE__)
 
+ImageDescriptor * image_descriptor_create( Environment * _environment, char * _filename, int _flags );
+ImageDescriptor * image_descriptor_flip_x( Environment * _environment, ImageDescriptor * _source );
+ImageDescriptor * image_descriptor_flip_y( Environment * _environment, ImageDescriptor * _source );
+ImageDescriptor * image_descriptor_roll_x_right( Environment * _environment, ImageDescriptor * _source );
+ImageDescriptor * image_descriptor_roll_x_left( Environment * _environment, ImageDescriptor * _source );
+ImageDescriptor * image_descriptor_roll_y_down( Environment * _environment, ImageDescriptor * _source );
+
+AtlasDescriptor * atlas_descriptor_create( Environment * _environment, char * _filename, int _flags, int _image_origin_x, int _image_origin_y, int _frame_width, int _frame_height, int _frame_offset_x, int _frame_offset_y );
+
+int file_get_size( Environment * _environment, char * _filename );
 char * get_default_temporary_path( );
 char * find_last_path_separator( char * _path );
 char * generate_storage_filename( Environment * _environment, char * _prefix, char * _suffix, int _number );
