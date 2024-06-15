@@ -357,6 +357,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     } else {
         Variable * ptileset = variable_retrieve( _environment, ptilemap->tileset->name );
         cpu_addressof_16bit( _environment, ptileset->realName, vtileset->realName );
+        ptileset->usedImage = 1;
     }
 
     Variable * vdx = variable_retrieve( _environment, "puttilemap__dx" );
