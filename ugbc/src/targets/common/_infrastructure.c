@@ -1236,8 +1236,6 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
     
     Variable * destination = variable_retrieve( _environment, _destination );
 
-    printf( "%s (%d), da %d a %d\n", _destination, destination->initializedByConstant, destination->value, _value );
-    
     if ( !destination->initializedByConstant ) {
         destination->value = _value;
     }
