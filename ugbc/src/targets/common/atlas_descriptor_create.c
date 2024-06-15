@@ -53,6 +53,8 @@ static ImageDescriptor * cut_frame_from_atlas( Environment * _environment, Atlas
     frame->data = malloc( frame->size );
     memset( frame->data, 0, frame->size );
 
+    printf( "  %d bytes at %p\n", frame->size, frame->data );
+
     frame->colors = malloc( sizeof( RGBi ) * frame->colorsCount );
     memcpy( frame->colors, _atlas->image->colors, sizeof( RGBi ) * frame->colorsCount );
     frame->colorsCount = _atlas->image->colorsCount;
@@ -70,6 +72,7 @@ static ImageDescriptor * cut_frame_from_atlas( Environment * _environment, Atlas
     int frameHeight = frame->height;
 
     while( frameHeight ) {
+        printf( "  cutting %d\n", frameHeight );
         memcpy( destination, source, frame->width * frame->depth );
         source += _atlas->image->width * frame->depth;
         destination += frame->width * frame->depth;
@@ -160,8 +163,20 @@ AtlasDescriptor * atlas_descriptor_create( Environment * _environment, char * _f
         result->count = 0;
         result->frameWidth = _frame_width;
         result->frameHeight = _frame_height;
-        result->horizontal = ( ( result->image->width - result->originX) / (result->frameWidth+result->offsetX) ) + 1;
-        result->vertical = ( ( result->image->height - result->originY) / (result->frameHeight+result->offsetY) );
+        result->horizontal = 0; // ( ( result->image->width - result->originX) / (result->frameWidth+result->offsetX) ) + 1;
+        int w = result->image->width - result->originX;
+        while ( w >= result->frameWidth ) {
+            ++result->horizontal;
+            w -= result->frameWidth;
+            w -= result->offsetX;
+        }
+        result->vertical = 0 ; // ( ( result->image->height - result->originY) / (result->frameHeight+result->offsetY) );
+        int h = result->image->height - result->originY;
+        while ( h >= result->frameHeight ) {
+            ++result->vertical;
+            h -= result->frameHeight;
+            h -= result->offsetY;
+        }
         layout_mode = 0;
     }
 

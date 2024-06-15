@@ -111,97 +111,49 @@ Variable * tileset_storage( Environment * _environment, char * _source_name, cha
     }
     strcat( filenameWithPath, tsxImage->source );
 
-    lookedFilename = resource_load_asserts( _environment, filenameWithPath );
+    AtlasDescriptor * atlasDescriptor = atlas_descriptor_create( _environment, filenameWithPath, _flags, tileset->margin, tileset->margin, tileset->tilewidth, tileset->tileheight, tileset->spacing, tileset->spacing );
 
-    long fileSize = file_get_size( _environment, lookedFilename );
-
-    unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
-    
-    if ( !source ) {
-        CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( tsxImage->source );
-    }
-
-    if ( width % tileset->tilewidth ) {
-        CRITICAL_IMAGES_LOAD_INVALID_FRAME_WIDTH( tileset->tilewidth );
-    }
-
-    if ( height % tileset->tileheight ) {
-        CRITICAL_IMAGES_LOAD_INVALID_FRAME_HEIGHT( tileset->tileheight );
-    }
-
-    int wc = ( width / tileset->tilewidth );
-    int hc = ( height / tileset->tileheight );
-    int a = 1;
-
-    if( _flags & FLAG_ROLL_X ) {
-        a = (tileset->tilewidth - 1);
-    }
-
-    int realFramesCount = (a*hc*wc);
-    i = 0;
-    di = 1;
-
-    if( _flags & FLAG_FLIP_X ) {
-        source = image_flip_x( _environment, source, width, height, depth );
-    }
-    if( _flags & FLAG_FLIP_Y ) {
-        source = image_flip_y( _environment, source, width, height, depth );
-    }
-
-    if ( _transparent_color != -1 ) {
-        _flags |= FLAG_TRANSPARENCY;
-    }
-
-    for( z=0; z<a; ++z ) {
-        for( y=0; y<height; y+=tileset->tileheight ) {
-            for( x=0; x<width; x+=tileset->tilewidth ) {
-                result[i] = image_converter( _environment, source, width, height, depth, x, y, tileset->tilewidth, tileset->tileheight, _mode, _transparent_color, _flags );
-                bufferSize += result[i]->size;
-                i += di;
-            }
-        }
-        if( _flags & FLAG_ROLL_X ) {
-            if ( _flags & FLAG_FLIP_X ) {
-                source = image_roll_x_left( _environment, source, width, height );
-            } else {
-                source = image_roll_x_right( _environment, source, width, height );
-            }
-        }
+    ImageDescriptor * frame = atlasDescriptor->frames;
+    for( int i=0; i<atlasDescriptor->count; ++i ) {
+        result[i] = image_converter( _environment, frame->data, frame->width, frame->height, frame->depth, 0, 0, tileset->tilewidth, tileset->tileheight, _mode, _transparent_color, _flags );
+        bufferSize += result[i]->size;
+        frame = frame->next;
     }
 
     bufferSize += 3;
 
     char * buffer = malloc( bufferSize );
     char * ptr = buffer;
-    ptr[0] = wc*hc;
+    ptr[0] = atlasDescriptor->count;
     ptr[1] = ( tileset->tilewidth & 0xff );
     ptr[2] = ( tileset->tilewidth >> 8 ) & 0xff;
 
-    if ( ( result[0]->size * realFramesCount ) > 0xffff ) {
+    if ( ( result[0]->size * atlasDescriptor->count ) > 0xffff ) {
         CRITICAL_TILESET_LOAD_IMAGE_TOO_BIG( _source_name );
     }
 
-    final->offsettingFrames = offsetting_size_count( _environment, result[0]->size, realFramesCount );
+    final->offsettingFrames = offsetting_size_count( _environment, result[0]->size, atlasDescriptor->count );
     offsetting_add_variable_reference( _environment, final->offsettingFrames, final, 0 );
 
     ptr += 3;
-    for(i=0; i<realFramesCount; ++i ) {
+    for(int i=0; i<atlasDescriptor->count; ++i ) {
         memcpy( ptr, result[i]->valueBuffer, result[i]->size );
         ptr += result[i]->size;
     }
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
-    final->originalBitmap = source;
-    final->originalWidth = width;
-    final->originalHeight = height;
-    final->originalDepth = depth;
-    final->originalColors = palette_extract( _environment, final->originalBitmap, final->originalWidth, final->originalHeight, final->originalDepth, _flags, final->originalPalette );
+    final->originalBitmap = atlasDescriptor->image->data;
+    final->originalWidth = atlasDescriptor->image->width;
+    final->originalHeight = atlasDescriptor->image->height;
+    final->originalDepth = atlasDescriptor->image->depth;
+    final->originalColors = atlasDescriptor->image->colorsCount;
+    memcpy( final->originalPalette, atlasDescriptor->image->colors, MAX_PALETTE * sizeof( RGBi ) );
     final->frameWidth = tileset->tilewidth;
     final->frameHeight = tileset->tileheight;
     final->firstGid = tileset->firstgid;
     final->frameSize = result[0]->size;
-    final->frameCount = realFramesCount;
+    final->frameCount = atlasDescriptor->count;
 
-    for(i=0; i<realFramesCount; ++i ) {
+    for(int i=0; i<atlasDescriptor->count; ++i ) {
         variable_temporary_remove( _environment, result[i]->name );
     }
 

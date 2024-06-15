@@ -3056,6 +3056,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     target->originalHeight = source->originalHeight;
                     target->originalDepth = source->originalDepth;
                     target->originalColors = source->originalColors;
+                    memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
                     target->originalTileset = source->originalTileset;
                     target->bankAssigned = source->bankAssigned;
                     target->residentAssigned = source->residentAssigned;
@@ -3064,7 +3065,6 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                         target->absoluteAddress = source->absoluteAddress;
                         target->variableUniqueId = source->variableUniqueId;
                     }
-                    memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
                 case VT_IMAGES: {
                     target->frameWidth = source->frameWidth;
                     target->frameHeight = source->frameHeight;
@@ -10144,6 +10144,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     var->mapLayers = expr->mapLayers;
     var->originalDepth = expr->originalDepth;
     var->originalColors = expr->originalColors;
+    memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
     var->originalTileset = expr->originalTileset;
     var->originalTilemap = expr->originalTilemap;
     var->bitPosition = expr->bitPosition;
@@ -10156,7 +10157,6 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
         var->absoluteAddress = expr->absoluteAddress;
         var->variableUniqueId = expr->variableUniqueId;
     }
-    memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
     var->memoryArea = expr->memoryArea;
     var->arrayDimensions = expr->arrayDimensions;
     memcpy( var->arrayDimensionsEach, expr->arrayDimensionsEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );

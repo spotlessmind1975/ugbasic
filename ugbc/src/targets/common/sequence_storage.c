@@ -79,109 +79,63 @@ Variable * sequence_storage( Environment * _environment, char * _source_name, ch
 
     Variable * final = variable_temporary( _environment, VT_SEQUENCE, 0 );
 
-    int width = 0;
-    int height = 0;
-    int depth = 0;
+    AtlasDescriptor * atlasDescriptor = atlas_descriptor_create( _environment, _source_name, _flags, _origin_x, _origin_y, _frame_width, _frame_height, _offset_x, _offset_y );
 
-    char * lookedFilename = resource_load_asserts( _environment, _source_name );
-
-    long fileSize = file_get_size( _environment, lookedFilename );
-
-    unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
-
-    if ( !source ) {
-        CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _source_name );
-    }
-
-    if ( width % _frame_width ) {
-        CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_WIDTH( _frame_width );
-    }
-
-    if ( height % _frame_height ) {
-        CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_HEIGHT( _frame_height );
-    }
-
-    int wc = ( width / (_frame_width+_offset_x) );
-    int hc = ( height / (_frame_height+_offset_y) );
-
+    int bufferSize = 0;
     Variable * firstImage = NULL;
     Variable * lastImage = NULL;
-    int i,di,x=0,y=0,z=0;
-    int bufferSize = 0;
 
-    int realFramesCount = (hc*wc);
-    i = 0;
-    di = 1;
-
-    if( _flags & FLAG_FLIP_X ) {
-        source = image_flip_x( _environment, source, width, height, depth );
-    }
-    if( _flags & FLAG_FLIP_Y ) {
-        source = image_flip_y( _environment, source, width, height, depth );
-    }
-
-    if ( _transparent_color != -1 ) {
-        _flags |= FLAG_TRANSPARENCY;
-    }
-
-    int base = ( 3*width*height ) - 6;
-    for( y=0; y<height; y+=_frame_height ) {
-        for( x=0; x<width; x+=_frame_width ) {
-            Variable * partial = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
-            if ( ! firstImage && ! lastImage ) {
-                firstImage = partial;
-                lastImage = firstImage;
-            } else {
-                lastImage->next = partial;
-                lastImage = lastImage->next;
-            }
-            bufferSize += partial->size;
-            i += di;
+    ImageDescriptor * frame = atlasDescriptor->frames;
+    for(int i=0; i<atlasDescriptor->count; ++i) {
+        Variable * partial = image_converter( _environment, frame->data, frame->width, frame->height, frame->depth, 0, 0, frame->width, frame->height, _mode, _transparent_color, _flags );
+        if ( ! firstImage && ! lastImage ) {
+            firstImage = partial;
+            lastImage = partial;
+        } else {
+            lastImage->next = partial;
+            lastImage = lastImage->next;
         }
+        bufferSize += partial->size;
+        frame = frame->next;
     }
 
     bufferSize += 3;
 
     char * buffer = malloc( bufferSize );
     char * ptr = buffer;
-    ptr[0] = wc*1;
+    ptr[0] = atlasDescriptor->horizontal;
     ptr[1] = _frame_width;
-    ptr[2] = hc;
+    ptr[2] = atlasDescriptor->horizontal;
 
-    if ( ( firstImage->size * wc ) > 0xffff ) {
+    if ( ( firstImage->size * atlasDescriptor->count ) > 0xffff ) {
         CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _source_name );
     }
 
-    final->offsettingFrames = offsetting_size_count( _environment, firstImage->size, wc );
+    final->offsettingFrames = offsetting_size_count( _environment, firstImage->size, atlasDescriptor->horizontal );
     offsetting_add_variable_reference( _environment, final->offsettingFrames, final, 0 );
 
-    if ( ( wc*firstImage->size ) > 0xffff ) {
-        CRITICAL_SEQUENCE_LOAD_IMAGE_TOO_BIG( _source_name );
-    }
-
-    final->offsettingSequences = offsetting_size_count( _environment, wc*firstImage->size, hc );
+    final->offsettingSequences = offsetting_size_count( _environment, atlasDescriptor->horizontal*firstImage->size, atlasDescriptor->horizontal );
     offsetting_add_variable_reference( _environment, final->offsettingSequences, final, 1 );
 
     ptr += 3;
     lastImage = firstImage;
-    for(int i=0;i<hc;++i) {
-        for(i=0; i<realFramesCount; ++i ) {
-            memcpy( ptr, lastImage->valueBuffer, lastImage->size );
-            ptr += lastImage->size;
-            lastImage = lastImage->next;
-        }
+    for(int i=0; i<atlasDescriptor->count; ++i ) {
+        memcpy( ptr, lastImage->valueBuffer, lastImage->size );
+        ptr += lastImage->size;
+        lastImage = lastImage->next;
     }
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
-    final->originalBitmap = source;
-    final->originalWidth = width;
-    final->originalHeight = height;
-    final->originalDepth = depth;
-    final->originalColors = palette_extract( _environment, final->originalBitmap, final->originalWidth, final->originalHeight, final->originalDepth, _flags, final->originalPalette );
+    final->originalBitmap = atlasDescriptor->image->data;
+    final->originalWidth = atlasDescriptor->image->width;
+    final->originalHeight = atlasDescriptor->image->height;
+    final->originalDepth = atlasDescriptor->image->depth;
+    final->originalColors = atlasDescriptor->image->colorsCount;
+    memcpy( final->originalPalette, atlasDescriptor->image->colors, MAX_PALETTE * sizeof( RGBi ) );
     final->frameSize = firstImage->size;
-    final->frameCount = wc;
+    final->frameCount = atlasDescriptor->horizontal;
 
     lastImage = firstImage;
-    for(i=0; i<realFramesCount; ++i ) {
+    for(int i=0; i<atlasDescriptor->count; ++i ) {
         variable_temporary_remove( _environment, lastImage->name );
         lastImage = lastImage->next;
     }

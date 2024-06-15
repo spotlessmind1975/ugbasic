@@ -74,9 +74,9 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
 
     }
 
-    int i = 0, c = 0;
+    int c = 0;
 
-    for (i=0; i<image->originalColors; ++i ) {
+    for (int i=0; i<image->originalColors; ++i ) {
         if ( image->originalPalette[i].index == COLOR_TRANSPARENT ) continue;
         ++c;
         variable_move_naked( _environment, spriteCount->name, index->name );

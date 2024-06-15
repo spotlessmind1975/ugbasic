@@ -88,14 +88,13 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
 
     Variable * image = variable_retrieve( _environment, _image );
 
-    int i = 0;
     int colorTransparency = COLOR_BLACK;
 
     if ( _flags & SPRITE_FLAG_TRANSPARENCY_COLOR ) {
         colorTransparency = _flags & 0x000f;
     }
 
-    for (i=0; i<image->originalColors; ++i ) {
+    for (int i=0; i<image->originalColors; ++i ) {
         if ( image->originalPalette[i].index == colorTransparency ) continue;
         variable_move_naked( _environment, spriteCount->name, index->name );
         Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, 0, 0 );

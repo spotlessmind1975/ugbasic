@@ -79,195 +79,43 @@ Variable * images_storage( Environment * _environment, char * _source_name, char
 
     Variable * final = variable_temporary( _environment, VT_IMAGES, 0 );
 
-    int width = 0;
-    int height = 0;
-    int depth = 0;
-
-    char * lookedFilename = resource_load_asserts( _environment, _source_name );
-
-    long fileSize = file_get_size( _environment, lookedFilename );
-
-    int frames = 0;
-    unsigned char * originalSource, * source;
-    int layout_mode = 0;
-
-    if ( stbi_is_animated_gif( lookedFilename ) ) {
-        if ( _origin_x || _origin_y ) {
-            CRITICAL_IMAGES_LOAD_INVALID_ORIGIN_WITH_GIF( _source_name );            
-        }
-        if ( _offset_x || _offset_y ) {
-            CRITICAL_IMAGES_LOAD_INVALID_OFFSET_WITH_GIF( _source_name );            
-        }        
-        source = stbi_xload(lookedFilename, &width, &height, &frames);
-        depth = 4;
-        layout_mode = 1;
-    } else {
-        if ( _frame_height < 0 || _frame_width < 0 ) {
-            CRITICAL_IMAGES_LOAD_INVALID_AUTO_WITHOUT_GIF( _source_name );            
-        }
-        source = stbi_load(lookedFilename, &width, &height, &depth, 0);
-        frames = 0;
-        layout_mode = 0;
-    }
-
-    source += ( ( _origin_y * width ) + _origin_x ) * depth;
-    width -= _origin_x;
-    height -= _origin_y;
-
-    originalSource = source;
-
-    if ( _frame_width < 0 ) {
-        _frame_width = width;
-    }
-
-    if ( _frame_height < 0 ) {
-        _frame_height = height;
-    }
-
-    if ( !source ) {
-        CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _source_name );
-    }
-
-    if ( width % _frame_width ) {
-        CRITICAL_IMAGES_LOAD_INVALID_FRAME_WIDTH( _frame_width );
-    }
-
-    if ( height % _frame_height ) {
-        CRITICAL_IMAGES_LOAD_INVALID_FRAME_HEIGHT( _frame_height );
-    }
+    AtlasDescriptor * atlasDescriptor = atlas_descriptor_create( _environment, _source_name, _flags, _origin_x, _origin_y, _frame_width, _frame_height, _offset_x, _offset_y );
 
     int bufferSize = 0;
-    int realFramesCount;
-    int i;
     Variable * firstImage = NULL;
     Variable * lastImage = NULL;
 
-    if ( layout_mode == 0 ) {
-
-        int wc = ( width / (_frame_width+_offset_x) );
-        int hc = ( height / (_frame_height+_offset_y) );
-        int a = 1;
-        frames = wc*hc;
-
-        int i,di,x=0,y=0,z=0;
-
-        if( _flags & FLAG_ROLL_X ) {
-            a = ((_frame_width+_offset_x) - 1);
+    ImageDescriptor * frame = atlasDescriptor->frames;
+    for(int i=0; i<atlasDescriptor->count; ++i ) {
+        Variable * partial = image_converter( _environment, frame->data, frame->width, frame->height, frame->depth, 0, 0, frame->width, frame->height, _mode, _transparent_color, _flags );
+        if ( !firstImage && !lastImage ) {
+            firstImage = partial;
+            lastImage = firstImage;
+        } else {
+            lastImage->next = partial;
+            lastImage = lastImage->next;
         }
-
-        realFramesCount = (a*hc*wc);
-        i = 0;
-        di = 1;
-
-        if( _flags & FLAG_FLIP_X ) {
-            source = image_flip_x( _environment, source, width, height, depth );
-        }
-        if( _flags & FLAG_FLIP_Y ) {
-            source = image_flip_y( _environment, source, width, height, depth );
-        }
-
-        if ( _transparent_color != -1 ) {
-            _flags |= FLAG_TRANSPARENCY;
-        }
-
-        for( z=0; z<a; ++z ) {
-            for( y=0; y<height; y+=(_frame_height+_offset_y) ) {
-                for( x=0; x<width; x+=(_frame_width+_offset_x) ) {
-                    Variable * partial = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
-                    if ( ! firstImage && ! lastImage ) {
-                        firstImage = partial;
-                        lastImage = firstImage;
-                    } else {
-                        lastImage->next = partial;
-                        lastImage = lastImage->next;
-                    }
-                    bufferSize += partial->size;
-                    i += di;
-                }
-            }
-            if( _flags & FLAG_ROLL_X ) {
-                if ( _flags & FLAG_FLIP_X ) {
-                    source = image_roll_x_left( _environment, source, width, height );
-                } else {
-                    source = image_roll_x_right( _environment, source, width, height );
-                }
-            }
-        }
-
-    } else {
-
-        int z;
-
-        // if( _flags & FLAG_ROLL_X ) {
-        //     a = (_frame_width - 1);
-        // }
-
-        realFramesCount = frames;
-        i = 0;
-        
-        // if( _flags & FLAG_FLIP_X ) {
-        //     source = image_flip_x( _environment, source, width, height, depth );
-        // }
-        // if( _flags & FLAG_FLIP_Y ) {
-        //     source = image_flip_y( _environment, source, width, height, depth );
-        // }
-
-        if ( _transparent_color != -1 ) {
-            _flags |= FLAG_TRANSPARENCY;
-        }
-
-        for( z=0; z<frames; ++z ) {
-            // for( y=0; y<height; y+=_frame_height ) {
-            //     for( x=0; x<width; x+=_frame_width ) {
-                    Variable * partial = image_converter( _environment, source, width, height, depth, 0, 0, _frame_width, _frame_height, _mode, _transparent_color, _flags );
-                    if ( ! firstImage && ! lastImage ) {
-                        firstImage = partial;
-                        lastImage = firstImage;
-                    } else {
-                        lastImage->next = partial;
-                        lastImage = lastImage->next;
-                    }
-                    bufferSize += partial->size;
-                    ++i;
-                    source += (width*height*depth)+2;
-            //     }
-            // }
-            // if( _flags & FLAG_ROLL_X ) {
-            //     if ( _flags & FLAG_FLIP_X ) {
-            //         source = image_roll_x_left( _environment, source, width, height );
-            //     } else {
-            //         source = image_roll_x_right( _environment, source, width, height );
-            //     }
-            // }
-        }
-
-        // Number of frames is returned through frames parameter.
-        // The delay for each frame is a 2 bytes little endian unsigned integer.
-        // All frames are given in RGBA format.
-        // All frames have the same width and height returned through x, y parameters.
-        // A single image buffer (with no delay info) is returned for non-gif files and for gifs that have 1 frame.
-        // The loading skips an y-flip check stb_image does.
-
+        frame = frame->next;
     }
 
     bufferSize += 3;
 
     char * buffer = malloc( bufferSize );
     char * ptr = buffer;
-    ptr[0] = frames;
+    ptr[0] = atlasDescriptor->count;
     ptr[1] = ( _frame_width & 0xff );
     ptr[2] = ( _frame_width >> 8 ) & 0xff;
 
-    if ( ( firstImage->size * realFramesCount ) > 0xffff ) {
+    if ( ( firstImage->size * atlasDescriptor->count ) > 0xffff ) {
         CRITICAL_IMAGES_LOAD_IMAGE_TOO_BIG( _source_name );
     }
 
-    final->offsettingFrames = offsetting_size_count( _environment, firstImage->size, realFramesCount );
+    final->offsettingFrames = offsetting_size_count( _environment, firstImage->size, atlasDescriptor->count );
     offsetting_add_variable_reference( _environment, final->offsettingFrames, final, 0 );
 
     ptr += 3;
     lastImage = firstImage;
-    for(i=0; i<realFramesCount; ++i ) {
+    for(int i=0; i<atlasDescriptor->count; ++i ) {
         memcpy( ptr, lastImage->valueBuffer, lastImage->size );
         ptr += lastImage->size;
         lastImage = lastImage->next;
@@ -275,7 +123,7 @@ Variable * images_storage( Environment * _environment, char * _source_name, char
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
 
     lastImage = firstImage;
-    for(i=0; i<realFramesCount; ++i ) {
+    for(int i=0; i<atlasDescriptor->count; ++i ) {
         variable_temporary_remove( _environment, lastImage->name );
         lastImage = lastImage->next;
     }
@@ -319,7 +167,7 @@ Variable * images_storage( Environment * _environment, char * _source_name, char
     }
 
     lastImage = firstImage;
-    for(i=0; i<realFramesCount; ++i ) {
+    for(int i=0; i<atlasDescriptor->count; ++i ) {
         variable_temporary_remove( _environment, lastImage->name );
         lastImage = lastImage->next;
     }

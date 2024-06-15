@@ -168,33 +168,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
 
     // No we are going to load the image from the PC.
     // Those variables will maintain the data of the original image.
-    int width = 0;
-    int height = 0;
-    int depth = 0;
-
-    // We must load the target dependent version of the images.
-    char * lookedFilename = resource_load_asserts( _environment, _filename );
-
-    // If present, we can calculate the effective size.
-    long fileSize = file_get_size( _environment, lookedFilename );
-
-    // Now we can decode the image using the external library.
-    unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
-
-    // If we are unable to decode the iamge, we stop the compilation.
-    if ( !source ) {
-        CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _filename );
-    }
-
-    // If the image has to be post processed, we do it:
-    //  - X FLIP
-    if( _flags & FLAG_FLIP_X ) {
-        source = image_flip_x( _environment, source, width, height, depth );
-    }
-    //  - Y FLIP
-    if( _flags & FLAG_FLIP_Y ) {
-        source = image_flip_y( _environment, source, width, height, depth );
-    }
+    ImageDescriptor * imageDescriptor = image_descriptor_create( _environment, _filename, _flags );
 
     // This is a workaround. In a previous release of ugBASIC, we must give
     // the color index to be used as transparency. If given, we active the
@@ -203,23 +177,20 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         _flags |= FLAG_TRANSPARENCY;
     }
 
-    // ADI INFO
-    adiline4("LI:%s:%s:%lx:%x", _filename, lookedFilename, fileSize, result->size );
-
     // Now we are able to convert the image from the original format to the
     // custom format of the target. This is a time efficient mode to store
     // the image, but not a space efficient (no compression is done).
     // Space efficiency can be applied after, if a bank is present.
-    result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
+    result = image_converter( _environment, imageDescriptor->data, imageDescriptor->width, imageDescriptor->height, imageDescriptor->depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
 
     // ADI INFO
     adiline1("LI2:%x", result->size );
 
     // We can now store the data of the image directly into the variable.
-    result->originalBitmap = source;
-    result->originalWidth = width;
-    result->originalHeight = height;
-    result->originalDepth = depth;
+    result->originalBitmap = imageDescriptor->data;
+    result->originalWidth = imageDescriptor->width;
+    result->originalHeight = imageDescriptor->height;
+    result->originalDepth = imageDescriptor->depth;
 
     // If a bank expasion has been requested, and there is at least one bank...
     if ( _bank_expansion && _environment->expansionBanks ) {
