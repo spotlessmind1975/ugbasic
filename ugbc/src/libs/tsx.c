@@ -83,8 +83,10 @@ TsxTileset * tsx_load( char * _filename ) {
                             result->tilecount = atoi( value );
                         } else if ( strcmp( properties->name, "columns") == 0 ) {
                             result->columns = atoi( value );
-                        } else if ( strcmp( properties->name, "columns") == 0 ) {
-                            result->columns = atoi( value );
+                        } else if ( strcmp( properties->name, "spacing") == 0 ) {
+                            result->spacing = atoi( value );
+                        } else if ( strcmp( properties->name, "margin") == 0 ) {
+                            result->margin = atoi( value );
                         } else if ( strcmp( properties->name, "objectalignment") == 0 ) {
                             
                             // Object Alignment

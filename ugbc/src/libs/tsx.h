@@ -64,6 +64,8 @@ typedef struct _TsxTileset {
     int                     tilecount;
     int                     columns;
     int                     firstgid;
+    int                     margin;
+    int                     spacing;
 
     struct _TsxImage *      image;
 
