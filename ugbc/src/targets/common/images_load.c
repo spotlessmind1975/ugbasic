@@ -134,8 +134,6 @@ ma con nomi diversi.
 </usermanual> */
 Variable * images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y ) {
 
-    printf( "-> %s\n", _filename );
-    
     Variable * final = variable_temporary( _environment, VT_IMAGES, 0 );
 
     if ( _environment->emptyProcedure ) {
@@ -181,10 +179,9 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
             lastImage->next = partial;
             lastImage = lastImage->next;
         }
+        bufferSize += partial->size;
         frame = frame->next;
     }
-
-    bufferSize += partial->size;
 
     bufferSize += 3;
 
@@ -210,6 +207,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         ptr += lastImage->size;
         lastImage = lastImage->next;
     }
+
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
     final->originalBitmap = atlasDescriptor->image->data;
     final->originalWidth = atlasDescriptor->image->width;
