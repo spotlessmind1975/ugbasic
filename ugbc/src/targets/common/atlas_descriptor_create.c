@@ -53,14 +53,10 @@ static ImageDescriptor * cut_frame_from_atlas( Environment * _environment, Atlas
     frame->data = malloc( frame->size );
     memset( frame->data, 0, frame->size );
 
-    printf( "  %d bytes at %p\n", frame->size, frame->data );
-
     frame->colors = malloc( sizeof( RGBi ) * frame->colorsCount );
     memcpy( frame->colors, _atlas->image->colors, sizeof( RGBi ) * frame->colorsCount );
     frame->colorsCount = _atlas->image->colorsCount;
     
-    printf( " (%d,%d)\n", _x, _y );
-
     char * source = _atlas->image->data + 
                         ( _atlas->originX * _atlas->image->depth ) +
                         ( _atlas->originY * _atlas->image->width * _atlas->image->depth ) +
@@ -72,7 +68,6 @@ static ImageDescriptor * cut_frame_from_atlas( Environment * _environment, Atlas
     int frameHeight = frame->height;
 
     while( frameHeight ) {
-        printf( "  cutting %d\n", frameHeight );
         memcpy( destination, source, frame->width * frame->depth );
         source += _atlas->image->width * frame->depth;
         destination += frame->width * frame->depth;
@@ -219,8 +214,6 @@ AtlasDescriptor * atlas_descriptor_create( Environment * _environment, char * _f
         // if ( _transparent_color != -1 ) {
         //     _flags |= FLAG_TRANSPARENCY;
         // }
-
-        printf( " (%dx%d)\n", result->horizontal, result->vertical );
 
         for( z=0; z<a; ++z ) {
             for( y=0; y<result->vertical; ++y ) {
