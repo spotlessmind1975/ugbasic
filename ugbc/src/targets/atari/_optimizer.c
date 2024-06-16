@@ -1092,7 +1092,7 @@ static int optim_remove_unused_temporary( Environment * _environment ) {
                 if ( ! result ) result = po_buf_match(buf[0], " AND *", v1 );
                 if ( ! result ) result = po_buf_match(buf[0], " EOR *", v1 );
                 if ( ! result ) result = po_buf_match(buf[0], " LD* *", v2, v1 );
-                if ( ! result ) result = po_buf_match(buf[0], " ORA *", v2, v1 );
+                if ( ! result ) result = po_buf_match(buf[0], " ORA *", v1 );
                 if ( ! result ) result = po_buf_match(buf[0], " SBC *", v1 );
                 if ( ! result ) result = po_buf_match(buf[0], " CMP *", v1 );
                 if ( ! result ) result = po_buf_match(buf[0], " CPX *", v1 );
