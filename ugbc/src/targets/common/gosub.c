@@ -76,6 +76,8 @@ continuerà all'istruzione successiva a qeusta.
 </usermanual> */
 void gosub_label( Environment * _environment, char * _label ) {
 
+    label_referred_define_named( _environment, _label );
+
     cpu_call( _environment, _label );
 
 }
@@ -99,6 +101,8 @@ void gosub_label( Environment * _environment, char * _label ) {
 
 </usermanual> */
 void gosub_number( Environment * _environment, int _number ) {
+
+    label_referred_define_numeric( _environment, _number );
 
     char label[MAX_TEMPORARY_STORAGE]; sprintf( label, "_linenumber%d", _number );
 

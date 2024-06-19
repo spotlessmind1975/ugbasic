@@ -71,7 +71,7 @@ successivamente.
 </usermanual> */
 void goto_label( Environment * _environment, char * _label ) {
 
-    
+    label_referred_define_named( _environment, _label );
 
     cpu_jump( _environment, _label );
 
@@ -97,6 +97,8 @@ void goto_label( Environment * _environment, char * _label ) {
 @example GOTO 42
 </usermanual> */
 void goto_number( Environment * _environment, int _number ) {
+
+    label_referred_define_numeric( _environment, _number );
 
     char label[MAX_TEMPORARY_STORAGE]; sprintf( label, "_linenumber%d", _number );
 
