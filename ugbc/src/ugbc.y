@@ -4641,6 +4641,7 @@ var_definition_simple:
   }
   | Identifier as_datatype OP_ASSIGN const_expr {
       variable_define( _environment, $1, $2, $4 );
+      variable_store( _environment, $1, $4 );
   }
   | Identifier ON Identifier {
       variable_define( _environment, $1, VT_BYTE, 0 );
@@ -4650,6 +4651,7 @@ var_definition_simple:
   }
   | Identifier ON Identifier OP_ASSIGN direct_integer {
       variable_define( _environment, $1, VT_BYTE, $5 );
+      variable_store( _environment, $1, $5 );
   }
   | Identifier ON Identifier OP_ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $5 );
