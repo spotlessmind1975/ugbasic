@@ -67,6 +67,20 @@ void end_compilation( Environment * _environment ) {
 
     halt( _environment );
 
+    Label * first = _environment->referredLabels;
+    while( first ) {
+        if ( first->name ) {
+            if ( !label_exists_named( _environment, first->name ) ) {
+                CRITICAL_MISSING_LABEL_NAMED( first->name );
+            }
+        } else {
+            if ( !label_exists_numeric( _environment, first->number ) ) {
+                CRITICAL_MISSING_LABEL_NUMBER( first->number );
+            }
+        }
+        first = first->next;
+    }
+    
     if ( _environment->conditionals ) {
 
         switch( _environment->conditionals->type ) {

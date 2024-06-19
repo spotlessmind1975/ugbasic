@@ -705,10 +705,10 @@ typedef struct _Constant {
  */
 typedef struct _Label {
 
-    /** Name of the label (if not numeri) */
+    /** Name of the label (if not numeric) */
     char * name;
 
-    /** Line numberf (if numeric) */
+    /** Line number (if numeric) */
     int number;
 
     /** Link to the next constant (NULL if this is the last one) */
@@ -2039,9 +2039,14 @@ typedef struct _Environment {
     FileStorage * currentFileStorage;
 
     /**
-     * List of labels.
+     * List of defined labels.
      */
     Label * labels;
+
+    /**
+     * List of referred labels.
+     */
+    Label * referredLabels;
 
     /**
      * List of dataSegments.
@@ -2941,6 +2946,8 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_MUSIC_ON_AUDIO_DEVICE(v) CRITICAL2("E285 - cannot MUSIC on the given AUDIO TARGET", v );
 #define CRITICAL_MUSIC_NOT_ASYNC() CRITICAL("E283 - cannot MUSIC in asyncronous mode on this target" );
 #define CRITICAL_CANNOT_USE_STRINGS_LONGER_256_CHARS( ) CRITICAL("E284 - string too long (>256 characters)" );
+#define CRITICAL_MISSING_LABEL_NAMED(v) CRITICAL2("E285 - missing label", v );
+#define CRITICAL_MISSING_LABEL_NUMBER(v) CRITICAL2i("E286 - missing line number", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -4257,6 +4264,10 @@ void                    label_define_numeric( Environment * _environment, int _l
 void                    label_define_named( Environment * _environment, char * _label );
 int                     label_exists_named( Environment * _environment, char * _label );
 int                     label_exists_numeric( Environment * _environment, int _label );
+void                    label_referred_define_numeric( Environment * _environment, int _label );
+void                    label_referred_define_named( Environment * _environment, char * _label );
+int                     label_referred_exists_named( Environment * _environment, char * _label );
+int                     label_referred_exists_numeric( Environment * _environment, int _label );
 Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion, int _flags );
 void                    locate( Environment * _environment, char * _x, char * _y );
 void                    loop( Environment * _environment, char *_label );
