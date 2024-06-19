@@ -1239,9 +1239,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
     
     Variable * destination = variable_retrieve( _environment, _destination );
 
-    if ( !destination->initializedByConstant ) {
-        destination->value = _value;
-    }
+    destination->value = _value;
 
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:

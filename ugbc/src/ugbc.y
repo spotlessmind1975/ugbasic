@@ -4718,8 +4718,8 @@ var_definition_simple:
       variable_define( _environment, $1, $2, 0 );
   }
   | Identifier as_datatype OP_ASSIGN const_expr {
-      Variable * d = variable_define( _environment, $1, $2, $4 );
-      d->initializedByConstant = 1;
+      variable_define( _environment, $1, $2, $4 );
+      variable_store( _environment, $1, $4 );
   }
   | Identifier ON Identifier {
       variable_define( _environment, $1, VT_BYTE, 0 );
@@ -4728,8 +4728,8 @@ var_definition_simple:
       variable_define( _environment, $1, VT_DSTRING, 0 );
   }
   | Identifier ON Identifier OP_ASSIGN direct_integer {
-      Variable * d = variable_define( _environment, $1, VT_BYTE, $5 );
-      d->initializedByConstant = 1;
+      variable_define( _environment, $1, VT_BYTE, $5 );
+      variable_store( _environment, $1, $5 );
   }
   | Identifier ON Identifier OP_ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $5 );
