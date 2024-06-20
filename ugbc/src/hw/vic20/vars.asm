@@ -118,6 +118,8 @@ YCURSYS = $D6
 DATAPTR = $AA
 DATAPTRY:    .BYTE $0
 
+@IF deployed.timer
+
 TIMERP0 = $2D
 TIMERP1 = $2B
 
@@ -126,6 +128,8 @@ TIMERSTATUS:    .BYTE   $0
 TIMERCOUNTER:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERINIT:      .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERADDRESS:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
+
+@ENDIF
 
 DLOADERROR:     .BYTE   $0  
 DSAVEERROR:     .BYTE   $0  

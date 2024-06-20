@@ -126,6 +126,8 @@ BANKSHADOW: .BYTE 0
 DATAPTR = $AA
 DATAPTRY:    .BYTE $0
 
+@IF deployed.timer
+
 TIMERP0 = $1E
 TIMERP1 = $1c
 
@@ -134,6 +136,8 @@ TIMERSTATUS:    .BYTE   $0
 TIMERCOUNTER:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERINIT:      .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERADDRESS:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
+
+@ENDIF
 
 NMISVC_SYSTEM:      .WORD   $0
 IRQSVC_SYSTEM:      .WORD   $0

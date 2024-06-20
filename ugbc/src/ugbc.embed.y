@@ -449,6 +449,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.dcommon;
             } else if ( strcmp( $3, "msprites" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.msprite;
+            } else if ( strcmp( $3, "timer" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.timer;
             } else {
                 $$ = 0;
             }
