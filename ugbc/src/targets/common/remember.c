@@ -38,13 +38,48 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword REMEMBER
+
+@english
+The ''REMEMBER'' command restores the cursor position previously stored by 
+the ''MEMORIZE'' command. The ''REMEMBER'' command can be executed multiple
+times, and this will restore the cursor position to the last stored position. 
+Note that the stored position refers to the current console. If there are no 
+consoles defined, one equal to full screen will be defined.
+
+@italian
+Il comando ''REMEMBER'' ripristina la posizione del cursore precedentemente 
+memorizzata dal comando ''MEMORIZE''. Il comando ''REMEMBER'' può essere 
+eseguito più volte, e questo ripristinerà la posizione del cursore alla 
+posizione memorizzata per ultima. Da notare che la posizione memorizzata 
+è riferita alla console attuale. Se non vi sono console definite, ne 
+sarà definita una pari allo schermo intero.
+
+@syntax REMEMBER
+
+@example REMEMBER
+
+@usedInExample texts_tracking_02.bas
+
+@seeAlso MEMORIZE
+@target all
+</usermanual> */
 void remember( Environment * _environment ) {
     
+    MAKE_LABEL
+
+    char doNothingLabel2[MAX_TEMPORARY_STORAGE];
+    sprintf( doNothingLabel2, "%sdonothing", label );
+    
+    cpu_compare_and_branch_8bit_const( _environment, "CONSOLEID", 0xff, doNothingLabel2, 0 );
+    console( _environment, 0, 0, _environment->screenTilesWidth - 1, _environment->screenTilesHeight - 1 );
+    console_save( _environment, 0 );
+    cpu_label( _environment, doNothingLabel2 );
+
     Variable * xcursys = variable_retrieve( _environment, "XCURSYS" );
     Variable * ycursys = variable_retrieve( _environment, "YCURSYS" );
 
-    MAKE_LABEL
-    
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(consoles)" );
     cpu_addressof_16bit( _environment, "CONSOLES", address->realName  );
 

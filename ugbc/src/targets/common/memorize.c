@@ -38,6 +38,33 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword MEMORIZE
+
+@english
+The ''MEMORIZE'' command allows you to store the current position of the cursor, 
+in terms of coordinates, relative to the current console. The cursor coordinates
+can be restored with the ''REMEMBER'' command. Note that the two commands operate on 
+the current console. If there are no consoles defined, using this method implicitly 
+defines ''CONSOLE 0'' as the entire screen.
+
+@italian
+Il comando ''MEMORIZE'' permette di memorizzare l'attuale posizione del cursore, 
+in termini di coordinate, relativo alla console attuale. Le coordinate del cursorse
+possono essere ripristinate con il comando ''REMEMBER''. Da notare che i due comandi
+operano sulla console attuale. Se non vi sono console definite, usare questo metodo
+definisce in modo implicito la ''CONSOLE 0''.
+
+@syntax MEMORIZE
+
+@example MEMORIZE
+
+@usedInExample texts_tracking_02.bas
+
+@seeAlso REMEMBER
+@target all
+</usermanual> */
+
 void memorize( Environment * _environment ) {
 
     MAKE_LABEL
