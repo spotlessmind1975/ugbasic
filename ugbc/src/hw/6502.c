@@ -6299,7 +6299,7 @@ void cpu6502_dstring_vars( Environment * _environment ) {
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, 2 );
-    outhead1("FREE_STRING:                  .WORD %d,0", space );
+    outhead1("FREE_STRING:                  .WORD %d", space );
     outhead0(".segment \"CODE\"" );
 
 
