@@ -107,13 +107,13 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "PROTOTHREADCT" );
     variable_import( _environment, "CPURANDOM_SEED", VT_DWORD, 0xffeaff42 );
     variable_global( _environment, "CPURANDOM_SEED" );
-    variable_define( _environment, "PLAYDURATION", VT_BYTE, 64 );
+    variable_import( _environment, "PLAYDURATION", VT_BYTE, 64 );
     variable_global( _environment, "PLAYDURATION" );
-    variable_define( _environment, "PLAYOCTAVE", VT_BYTE, 2 );
+    variable_import( _environment, "PLAYOCTAVE", VT_BYTE, 2 );
     variable_global( _environment, "PLAYOCTAVE" );
-    variable_define( _environment, "PLAYTEMPO", VT_BYTE, 2 );
+    variable_import( _environment, "PLAYTEMPO", VT_BYTE, 2 );
     variable_global( _environment, "PLAYTEMPO" );
-    variable_define( _environment, "PLAYVOLUME", VT_BYTE, 15 );
+    variable_import( _environment, "PLAYVOLUME", VT_BYTE, 15 );
     variable_global( _environment, "PLAYVOLUME" );
 
     variable_import( _environment, "XCURSYS", VT_SBYTE, 0 );
@@ -146,7 +146,7 @@ void setup_text_variables( Environment * _environment ) {
 
 void finalize_text_variables( Environment * _environment ) {
 
-    if ( _environment->deployed.draw ) {
+    if ( _environment->deployed.draw_string ) {
         variable_define( _environment, "DRAWSCALE", VT_BYTE, 4 );
         variable_define( _environment, "DRAWANGLE", VT_BYTE, 0 );
         variable_define( _environment, "DRAWUCOMMAND", VT_CHAR, 'U' );
@@ -157,6 +157,13 @@ void finalize_text_variables( Environment * _environment ) {
         variable_define( _environment, "DRAWFCOMMAND", VT_CHAR, 'F' );
         variable_define( _environment, "DRAWGCOMMAND", VT_CHAR, 'G' );
         variable_define( _environment, "DRAWHCOMMAND", VT_CHAR, 'H' );
+    }
+
+    if ( _environment->deployed.play_string ) {
+        variable_define( _environment, "PLAYDURATION", VT_BYTE, 64 );
+        variable_define( _environment, "PLAYOCTAVE", VT_BYTE, 2 );
+        variable_define( _environment, "PLAYTEMPO", VT_BYTE, 2 );
+        variable_define( _environment, "PLAYVOLUME", VT_BYTE, 15 );
     }
 
 }
