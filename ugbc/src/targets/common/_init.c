@@ -70,25 +70,25 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "PEN" );
     variable_define( _environment, "PAPER", VT_COLOR, DEFAULT_PAPER_COLOR );
     variable_global( _environment, "PAPER" );
-    variable_define( _environment, "DRAWSCALE", VT_BYTE, 4 );
+    variable_import( _environment, "DRAWSCALE", VT_BYTE, 4 );
     variable_global( _environment, "DRAWSCALE" );
-    variable_define( _environment, "DRAWANGLE", VT_BYTE, 0 );
+    variable_import( _environment, "DRAWANGLE", VT_BYTE, 0 );
     variable_global( _environment, "DRAWANGLE" );
-    variable_define( _environment, "DRAWUCOMMAND", VT_CHAR, 'U' );
+    variable_import( _environment, "DRAWUCOMMAND", VT_CHAR, 'U' );
     variable_global( _environment, "DRAWUCOMMAND" );
-    variable_define( _environment, "DRAWDCOMMAND", VT_CHAR, 'D' );
+    variable_import( _environment, "DRAWDCOMMAND", VT_CHAR, 'D' );
     variable_global( _environment, "DRAWDCOMMAND" );
-    variable_define( _environment, "DRAWLCOMMAND", VT_CHAR, 'L' );
+    variable_import( _environment, "DRAWLCOMMAND", VT_CHAR, 'L' );
     variable_global( _environment, "DRAWLCOMMAND" );
-    variable_define( _environment, "DRAWRCOMMAND", VT_CHAR, 'R' );
+    variable_import( _environment, "DRAWRCOMMAND", VT_CHAR, 'R' );
     variable_global( _environment, "DRAWRCOMMAND" );
-    variable_define( _environment, "DRAWECOMMAND", VT_CHAR, 'E' );
+    variable_import( _environment, "DRAWECOMMAND", VT_CHAR, 'E' );
     variable_global( _environment, "DRAWECOMMAND" );
-    variable_define( _environment, "DRAWFCOMMAND", VT_CHAR, 'F' );
+    variable_import( _environment, "DRAWFCOMMAND", VT_CHAR, 'F' );
     variable_global( _environment, "DRAWFCOMMAND" );
-    variable_define( _environment, "DRAWGCOMMAND", VT_CHAR, 'G' );
+    variable_import( _environment, "DRAWGCOMMAND", VT_CHAR, 'G' );
     variable_global( _environment, "DRAWGCOMMAND" );
-    variable_define( _environment, "DRAWHCOMMAND", VT_CHAR, 'H' );
+    variable_import( _environment, "DRAWHCOMMAND", VT_CHAR, 'H' );
     variable_global( _environment, "DRAWHCOMMAND" );
     variable_define( _environment, "windowE", VT_BYTE, 0 );
     variable_global( _environment, "windowE" );
@@ -141,5 +141,22 @@ void setup_text_variables( Environment * _environment ) {
 
     variable_import( _environment, "CONSOLES", VT_BUFFER, MAX_CONSOLES * 8 );
     variable_global( _environment, "CONSOLES" );
+
+}
+
+void finalize_text_variables( Environment * _environment ) {
+
+    if ( _environment->deployed.draw ) {
+        variable_define( _environment, "DRAWSCALE", VT_BYTE, 4 );
+        variable_define( _environment, "DRAWANGLE", VT_BYTE, 0 );
+        variable_define( _environment, "DRAWUCOMMAND", VT_CHAR, 'U' );
+        variable_define( _environment, "DRAWDCOMMAND", VT_CHAR, 'D' );
+        variable_define( _environment, "DRAWLCOMMAND", VT_CHAR, 'L' );
+        variable_define( _environment, "DRAWRCOMMAND", VT_CHAR, 'R' );
+        variable_define( _environment, "DRAWECOMMAND", VT_CHAR, 'E' );
+        variable_define( _environment, "DRAWFCOMMAND", VT_CHAR, 'F' );
+        variable_define( _environment, "DRAWGCOMMAND", VT_CHAR, 'G' );
+        variable_define( _environment, "DRAWHCOMMAND", VT_CHAR, 'H' );
+    }
 
 }

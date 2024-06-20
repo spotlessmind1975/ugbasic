@@ -3969,6 +3969,7 @@ void linker_cleanup( Environment * _environment );
 void linker_setup( Environment * _environment );
 int pattern_match( char * _pattern, char * _value );
 void setup_text_variables( Environment * _environment );
+void finalize_text_variables( Environment * _environment );
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );

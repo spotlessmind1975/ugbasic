@@ -116,6 +116,8 @@ void end_compilation( Environment * _environment ) {
         }
     }
     
+    finalize_text_variables( _environment );
+
     int j=0;
     for( j=0; j<MAX_TEMPORARY_STORAGE; ++j ) {
         if ( _environment->deferredEmbedded[j] ) {
