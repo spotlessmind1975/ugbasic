@@ -45,7 +45,7 @@ static ImageDescriptor * cut_frame_from_atlas( Environment * _environment, Atlas
     memset( frame, 0, sizeof( ImageDescriptor ) );
 
     frame->width = _atlas->frameWidth;
-    frame->height = _atlas->frameWidth;
+    frame->height = _atlas->frameHeight;
     frame->depth = _atlas->image->depth;
 
     frame->size = frame->width * frame->height * frame->depth;
