@@ -93,36 +93,6 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
     
 }
 
-void text_inverse( Environment * _environment, int _value ) {
-
-    setup_text_variables( _environment );
-
-    Variable * inverse = variable_retrieve( _environment, "windowS" );
-
-    variable_store( _environment, inverse->name, _value );
-    
-}
-
-void text_shade( Environment * _environment, int _value ) {
-
-    setup_text_variables( _environment );
-
-    Variable * shade = variable_retrieve( _environment, "windowS" );
-
-    variable_store( _environment, shade->name, _value );
-    
-}
-
-void text_under( Environment * _environment, int _value ) {
-
-    setup_text_variables( _environment );
-
-    Variable * under = variable_retrieve( _environment, "windowS" );
-
-    variable_store( _environment, under->name, _value );
-    
-}
-
 Variable * text_get_xcurs( Environment * _environment ) {
     
     return variable_retrieve( _environment, "XCURSYS");

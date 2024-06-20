@@ -90,12 +90,6 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "DRAWGCOMMAND" );
     variable_import( _environment, "DRAWHCOMMAND", VT_CHAR, 'H' );
     variable_global( _environment, "DRAWHCOMMAND" );
-    variable_define( _environment, "windowE", VT_BYTE, 0 );
-    variable_global( _environment, "windowE" );
-    variable_define( _environment, "windowS", VT_BYTE, 0 );
-    variable_global( _environment, "windowS" );
-    variable_define( _environment, "windowW", VT_BYTE, 0 );
-    variable_global( _environment, "windowW" );
     variable_define( _environment, "TAB", VT_STRING, 0 );
     variable_store_string( _environment, "TAB", "\t");
     variable_global( _environment, "TAB" );

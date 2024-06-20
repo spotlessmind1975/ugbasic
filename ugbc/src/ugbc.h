@@ -4605,10 +4605,8 @@ void                    text_hscroll_screen( Environment * _environment, int _di
 void                    text_newline( Environment * _environment );
 void                    text_question_mark( Environment * _environment );
 void                    text_set_tab( Environment * _environment, char * _net_tab );
-void                    text_shade( Environment * _environment, int _value );
 void                    text_tab( Environment * _environment );
 void                    text_text( Environment * _environment, char * _text );
-void                    text_under( Environment * _environment, int _value );
 void                    text_vscroll( Environment * _environment );
 void                    text_vscroll_screen( Environment * _environment, int _direction );
 void                    textmap_at( Environment * _environment, int _address );
