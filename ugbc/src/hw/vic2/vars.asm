@@ -113,4 +113,5 @@ CONSOLEWB:    .byte 32        ; <-- calculated (bytes)
 CONSOLEHB:    .byte 16        ; <-- calculated (bytes)
 ;
 CONSOLES:     .res  32        ; <-- storage for virtual consoles
+CONSOLES2:    .res   8        ; <-- storage for memorize / remember
 

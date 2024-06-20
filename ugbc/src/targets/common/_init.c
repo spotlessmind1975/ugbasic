@@ -135,6 +135,8 @@ void setup_text_variables( Environment * _environment ) {
 
     variable_import( _environment, "CONSOLES", VT_BUFFER, MAX_CONSOLES * 8 );
     variable_global( _environment, "CONSOLES" );
+    variable_import( _environment, "CONSOLES2", VT_BUFFER, MAX_CONSOLES * 2 );
+    variable_global( _environment, "CONSOLES2" );
 
 }
 

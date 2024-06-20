@@ -70,3 +70,4 @@ CONSOLEWB     db 32        ; <-- calculated (bytes)
 CONSOLEHB     db 16        ; <-- calculated (bytes)
 ;
 CONSOLES      rzb 4*8        ; <-- storage for virtual consoles
+CONSOLES2     rzb 4*2        ; <-- storage for memorize / remember on console

@@ -40,16 +40,22 @@
 
 void remember( Environment * _environment ) {
     
-    setup_text_variables( _environment );
+    Variable * xcursys = variable_retrieve( _environment, "XCURSYS" );
+    Variable * ycursys = variable_retrieve( _environment, "YCURSYS" );
 
-    Variable * x = variable_retrieve( _environment, "XCURSYS" );
-    Variable * y = variable_retrieve( _environment, "YCURSYS" );
-    Variable * mx = variable_retrieve( _environment, "windowMX" );
-    Variable * my = variable_retrieve( _environment, "windowMY" );
+    MAKE_LABEL
+    
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(consoles)" );
+    cpu_addressof_16bit( _environment, "CONSOLES", address->realName  );
 
-    variable_move_naked( _environment, mx->name, x->name );
-    variable_move_naked( _environment, my->name, y->name );
-    variable_store( _environment, mx->name, 0 );
-    variable_store( _environment, my->name, 0 );
+    Variable * actualNumber = variable_temporary( _environment, VT_BYTE, 0 );
+    cpu_addressof_16bit( _environment, "CONSOLES", address->realName  );
+    cpu_move_8bit( _environment, "CONSOLEID", actualNumber->realName );
+    cpu_math_mul2_const_8bit( _environment, actualNumber->realName, 1, 0 );
+    cpu_math_add_16bit_with_8bit( _environment, address->realName, actualNumber->realName, address->realName );
+
+    cpu_move_8bit_indirect2( _environment, address->realName, xcursys->realName );
+    cpu_inc_16bit( _environment, address->realName );
+    cpu_move_8bit_indirect2( _environment, address->realName, ycursys->realName );
 
 }

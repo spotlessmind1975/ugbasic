@@ -126,6 +126,7 @@ CONSOLEWB     fcb 32        ; <-- calculated (bytes)
 CONSOLEHB     fcb 16        ; <-- calculated (bytes)
 ;
 CONSOLES      rzb 4*8        ; <-- storage for virtual consoles
+CONSOLES2     rzb 4*2        ; <-- storage for memorize / remember on console
 
 CONSOLECALCULATE
     LDA <YCURSYS

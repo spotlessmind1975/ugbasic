@@ -40,14 +40,30 @@
 
 void memorize( Environment * _environment ) {
 
-    setup_text_variables( _environment );
+    MAKE_LABEL
 
-    Variable * x = variable_retrieve( _environment, "XCURSYS" );
-    Variable * y = variable_retrieve( _environment, "YCURSYS" );
-    Variable * mx = variable_retrieve( _environment, "windowMX" );
-    Variable * my = variable_retrieve( _environment, "windowMY" );
+    char doNothingLabel2[MAX_TEMPORARY_STORAGE];
+    sprintf( doNothingLabel2, "%sdonothing", label );
+    
+    cpu_compare_and_branch_8bit_const( _environment, "CONSOLEID", 0xff, doNothingLabel2, 0 );
+    console( _environment, 0, 0, _environment->screenTilesWidth - 1, _environment->screenTilesHeight - 1 );
+    console_save( _environment, 0 );
+    cpu_label( _environment, doNothingLabel2 );
 
-    variable_move_naked( _environment, x->name, mx->name );
-    variable_move_naked( _environment, y->name, my->name );
+    Variable * xcursys = variable_retrieve( _environment, "XCURSYS" );
+    Variable * ycursys = variable_retrieve( _environment, "YCURSYS" );
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(consoles)" );
+    cpu_addressof_16bit( _environment, "CONSOLES2", address->realName  );
+
+    Variable * displacement = variable_temporary( _environment, VT_BYTE, "(displacement)" );
+
+    cpu_move_8bit( _environment, "CONSOLEID", displacement->realName );
+    cpu_math_mul2_const_8bit( _environment, displacement->realName, 1, 0 );
+    cpu_math_add_16bit_with_8bit( _environment, address->realName, displacement->realName, address->realName );
+
+    cpu_move_8bit_indirect( _environment, xcursys->realName, address->realName );
+    cpu_inc_16bit( _environment, address->realName );
+    cpu_move_8bit_indirect( _environment, ycursys->realName, address->realName );
 
 }
