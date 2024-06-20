@@ -6271,7 +6271,7 @@ void cpu6502_dstring_vars( Environment * _environment ) {
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
     emit_segment_if_enough_space( _environment, 1 );
-    outhead1("MAXSTRINGS:                   .BYTE %d,0", count );
+    outhead1("MAXSTRINGS:                   .BYTE %d", count );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, count );
