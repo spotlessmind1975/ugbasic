@@ -3356,6 +3356,9 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
 
 void vic2_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
     deploy( putimageram, src_hw_vic2_put_image_ram_asm );
@@ -3369,14 +3372,24 @@ void vic2_put_image( Environment * _environment, Resource * _image, char * _x, c
 
     vic2_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
 
-    outline1("LDA %s", _x );
+    if ( x->initializedByConstant ) {
+        outline1("LDA #$%2.2x", (x->value&0xff) );    
+    } else {
+        outline1("LDA %s", x->realName );    
+    }
     outline0("STA IMAGEX" );
-    outline1("LDA %s", address_displacement(_environment, _x, "1") );
+    if ( x->initializedByConstant ) {
+        outline1("LDA #$%2.2x", ((x->value>>8)&0xff) );    
+    } else {
+        outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
+    }
     outline0("STA IMAGEX+1" );
-    outline1("LDA %s", _y );
+    if ( y->initializedByConstant ) {
+        outline1("LDA #$%2.2x", ((y->value>>8)&0xff) );    
+    } else {
+        outline1("LDA %s", y->realName );
+    }
     outline0("STA IMAGEY" );
-    outline1("LDA %s", address_displacement(_environment, _y, "1") );
-    outline0("STA IMAGEY+1" );
     if ( strchr( _flags, '#' ) ) {
         outline1("LDA #((%s)&255)", _flags+1 );
         outline0("STA IMAGEF" );
