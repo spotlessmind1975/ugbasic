@@ -4376,26 +4376,9 @@ void cpu6809_move_8bit_with_offset2( Environment * _environment, char *_source, 
 
         MAKE_LABEL
 
-        outline1("LDX %s", _value);
-
-        outline1("LDA %s", _offset);
-        outline0("ANDA #$80");
-        outline1("BEQ %ssimple", label);
-
-        outline0("LEAX 127,X" );
-        outline0("LEAX 1,X" );
-        outline1("LDA %s", _offset);
-        outline0("ANDA #$7f");
-        outline0("LEAX A,X" );
-        outline1("JMP %sdone", label);
-
-        outhead1("%ssimple", label);
-        outline1("LDA %s", _offset);
-        outline0("ANDA #$7f");
-        outline0("LEAX A,X" );
-
-        outhead1("%sdone", label);
-
+        outline1("LDX #%s", _value);
+        outline1("LDB %s", _offset);
+        outline0("ABX");
         outline1("LDA %s", _source);
         outline0("STA ,X");
 
@@ -4423,9 +4406,8 @@ void cpu6809_move_8bit_indirect2_8bit( Environment * _environment, char * _value
         MAKE_LABEL
 
         outline1("LDX #%s", _value);
-        outline0("LDA #$0");
         outline1("LDB %s", _offset);
-        outline0("LEAX D,X");
+        outline0("ABX");
         outline0("LDA ,X");
         outline1("STA %s", _source);
 
@@ -4482,10 +4464,9 @@ void cpu6809_move_16bit_indirect2_8bit( Environment * _environment, char * _valu
         MAKE_LABEL
 
         outline1("LDX #%s", _value);
-        outline0("LDA #$0");
         outline1("LDB %s", _offset);
-        outline0("LEAX D,X");
-        outline0("LEAX D,X");
+        outline0("ABX");
+        outline0("ABX");
         outline0("LDD ,X");
         outline1("STD %s", _source);
 
