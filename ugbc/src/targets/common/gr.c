@@ -69,21 +69,33 @@ grafiche. Se la componente viene omessa, rimarrà quella attuale.
 void gr_locate( Environment * _environment, char * _x, char * _y ) {
 
     if ( _x ) {
-        Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+        Variable * x = variable_retrieve( _environment, _x );
         if ( x->reflected ) {
-            x = variable_retrieve( _environment, x->reflected );
+            Variable * xgr = variable_retrieve( _environment, "XGR" );
+            variable_move( _environment, x->name, xgr->name );
+        } else {
+            Variable * xgr = variable_retrieve( _environment, "XGR" );
+            if ( x->initializedByConstant ) {
+                variable_store( _environment, xgr->name, x->value );
+            } else {
+                variable_move( _environment, x->name, xgr->name );
+            }
         }
-        Variable * xgr = variable_retrieve( _environment, "XGR" );
-        variable_move( _environment, x->name, xgr->name );
     }
 
     if ( _y ) {
-        Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+        Variable * y = variable_retrieve( _environment, _y );
         if ( y->reflected ) {
-            y = variable_retrieve( _environment, y->reflected );
+            Variable * ygr = variable_retrieve( _environment, "YGR" );
+            variable_move( _environment, y->name, ygr->name );
+        } else {
+            Variable * ygr = variable_retrieve( _environment, "YGR" );
+            if ( y->initializedByConstant ) {
+                variable_store( _environment, ygr->name, y->value );
+            } else {
+                variable_move( _environment, y->name, ygr->name );
+            }
         }
-        Variable * ygr = variable_retrieve( _environment, "YGR" );
-        variable_move( _environment, y->name, ygr->name );
     }
 
 }
