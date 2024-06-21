@@ -93,10 +93,6 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "TAB", VT_STRING, 0 );
     variable_store_string( _environment, "TAB", "\t");
     variable_global( _environment, "TAB" );
-    variable_define( _environment, "windowMX", VT_SBYTE, 0 );
-    variable_global( _environment, "windowMX" );
-    variable_define( _environment, "windowMY", VT_SBYTE, 0 );                
-    variable_global( _environment, "windowMY" );
     variable_import( _environment, "PROTOTHREADCT", VT_BYTE, 0 );
     variable_global( _environment, "PROTOTHREADCT" );
     variable_import( _environment, "CPURANDOM_SEED", VT_DWORD, 0xffeaff42 );
