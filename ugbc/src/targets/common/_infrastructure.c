@@ -7020,6 +7020,54 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 }
 
 // @bit2: ok
+static Variable * calculate_offset_in_array_byte( Environment * _environment, char * _array ) {
+
+    Variable * array = variable_retrieve( _environment, _array );
+
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
+    }
+
+    Variable * base = variable_temporary( _environment, VT_BYTE, "(base in array)");
+    Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset in array)");
+
+    variable_store( _environment, offset->name, 0 );
+
+    int i,j;
+
+    if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
+        if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] == NULL ) {
+            variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
+        } else {
+            Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0]);
+            variable_add_inplace_vars( _environment, offset->name, index->name );
+        }
+    } else {
+        for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
+            int baseValue = 1;
+            for( j=0; j<(_environment->arrayIndexes[_environment->arrayNestedIndex]-i-1); ++j ) {
+                baseValue *= array->arrayDimensionsEach[j];
+            }
+            if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] == NULL ) {
+                variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] * baseValue );
+            } else {
+                Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
+                if(baseValue!=1) {
+                    variable_store( _environment, base->name, baseValue );
+                    Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
+                    variable_add_inplace_vars( _environment, offset->name, additionalOffset->name );
+                } else {
+                    variable_add_inplace_vars( _environment, offset->name, index->name );
+                }
+            }
+        }
+    }
+
+    return offset;
+
+}
+
+// @bit2: ok
 void variable_store_array_const_bit( Environment * _environment, Variable * _array, int _value  ) {
 
     if ( _array->bankAssigned != -1 ) {
@@ -7196,6 +7244,12 @@ void variable_move_array_bit( Environment * _environment, Variable * _array, Var
 void variable_move_array_byte( Environment * _environment, Variable * _array, Variable * _value ) {
 
     MAKE_LABEL;
+
+    if ( _array->bankAssigned == -1 && _array->size < 256 && VT_BITWIDTH( _array->arrayType ) == 8 ) {
+        Variable * offset = calculate_offset_in_array_byte( _environment, _array->name );
+        cpu_move_8bit_with_offset2( _environment, _value->realName, _array->realName, offset->realName );
+        return;
+    }
 
     // @bit2: ok
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
@@ -7417,6 +7471,13 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
         } else if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 16 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
             Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
             cpu_move_16bit_indirect2_8bit( _environment, _array->realName, index->realName, result->realName );
+        } else if ( _array->size < 256 && VT_BITWIDTH( _array->arrayType ) == 8 ) {
+            Variable * offset = calculate_offset_in_array_byte( _environment, _array->name );
+            cpu_move_8bit_indirect2_8bit( _environment, _array->realName, offset->realName, result->realName );
+        } else if ( _array->size < 256 && VT_BITWIDTH( _array->arrayType ) == 16 ) {
+            Variable * offset = calculate_offset_in_array_byte( _environment, _array->name );
+            cpu_math_mul2_const_8bit( _environment, offset->realName, 1, 0 );
+            cpu_move_8bit_indirect2_16bit( _environment, _array->realName, offset->realName, result->realName );
         } else {
 
             // @bit2: ok
