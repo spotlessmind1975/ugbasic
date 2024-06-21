@@ -3385,7 +3385,7 @@ void vic2_put_image( Environment * _environment, Resource * _image, char * _x, c
     }
     outline0("STA IMAGEX+1" );
     if ( y->initializedByConstant ) {
-        outline1("LDA #$%2.2x", ((y->value>>8)&0xff) );    
+        outline1("LDA #$%2.2x", (y->value&0xff) );    
     } else {
         outline1("LDA %s", y->realName );
     }
