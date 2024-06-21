@@ -37,6 +37,13 @@
 
 TEXTATBITMAPMODE:
 
+    LDA _PEN
+    ASL
+    ASL
+    ASL
+    ASL
+    STA MATHPTR6
+    
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
 
     LDA TEXTSIZE
@@ -158,8 +165,13 @@ TEXTATBMPEN:
     CMP #$FF
     BNE TEXTATBMPEN2
     LDA #$0
-TEXTATBMPEN2:    
+TEXTATBMPEN2:
     STA _PEN
+    ASL
+    ASL
+    ASL
+    ASL
+    STA MATHPTR6
     INC TEXTPTR
     DEY
     JMP TEXTATBMNEXT
@@ -315,7 +327,7 @@ TEXTATBMSP0L1X:
     LDY #0
     LDA (PLOTCDEST),Y
     AND #$0F
-    ORA _PEN
+    ORA MATHPTR6
     STA (PLOTCDEST),Y
     LDA (PLOTCDEST),Y
     AND #$f0
@@ -325,15 +337,11 @@ TEXTATBMSP0L1X:
 
 TEXTATBMC3:
     LDY #0
-    LDA _PEN
+    LDA MATHPTR6
     STA (PLOTC2DEST),Y
     LDA #0
     STA (PLOTCDEST),Y
-    LDA _PEN
-    ASL
-    ASL
-    ASL
-    ASL
+    LDA MATHPTR6
     ORA (PLOTCDEST),Y
     STA (PLOTCDEST),Y
     JMP TEXTATBMF
