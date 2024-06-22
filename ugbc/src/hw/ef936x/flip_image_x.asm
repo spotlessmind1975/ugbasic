@@ -194,6 +194,8 @@ FLIPIMAGEX4
 FLIPIMAGEX0
 FLIPIMAGEX2
 
+    ORCC #$50
+
     ; Retrieve the precalculated matrix for 2 bit colors
 
     LDU #FLIPIMAGEDATA1
@@ -407,6 +409,9 @@ FLIPIMAGE2XCOMMONCNEXTLINE
     JMP FLIPIMAGE2XCOMMONCL0X2
 
 FLIPIMAGE2XCOMMONCL0X
+
+    ANDCC #$AF
+
     RTS
 
 @ENDIF
@@ -415,6 +420,8 @@ FLIPIMAGE2XCOMMONCL0X
 
 FLIPIMAGEX3
 
+    ORCC #$50
+    
     PSHS Y
 
     ; Retrieve the precalculated matrix for 2 bit colors

@@ -89,6 +89,8 @@ FLIPIMAGEY4
 FLIPIMAGEY0
 FLIPIMAGEY2
 
+    ORCC #$50
+    
     ; Retrieve the width (in bytes) and the height 
     ; (in bytes) of the image to flip horizontally.
 
