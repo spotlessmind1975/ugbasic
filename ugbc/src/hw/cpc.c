@@ -1501,8 +1501,8 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
             
             adilinepixel(colorIndex);
 
-            bitmask = ( ( colorIndex & 0x1 ) ) << (3 - ((image_x & 0x3)));
-            bitmask |= ( ( ( colorIndex & 0x2 ) ) << 3 ) << (3 - ((image_x & 0x3)));
+            bitmask = ( ( colorIndex & 0x2 ) >> 1 ) << (3 - ((image_x & 0x3)));
+            bitmask |= ( ( ( colorIndex & 0x1 ) ) << 4 ) << (3 - ((image_x & 0x3)));
 
             *(buffer + 3 + offset) |= bitmask;
 
