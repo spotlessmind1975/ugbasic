@@ -4810,7 +4810,7 @@ void z80_move_8bit_indirect( Environment * _environment, char *_source, char * _
 
 void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
-    outline1("LD HL, (%s)", _value);
+    outline1("LD HL, %s", _value);
     outline1("LD DE, (%s)", _offset );
     outline0("ADD HL, DE" );
     outline1("LD A, (%s)", _source);
