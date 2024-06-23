@@ -243,7 +243,7 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
     deploy_preferred( bank, src_hw_pc128op_bank_asm );
 
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * address2 = variable_retrieve( _environment, _address2 );
 
     outline0("; bank read rvd")
     outline1("LDU #$%4.4x", _bank );
