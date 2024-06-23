@@ -1548,14 +1548,14 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
     } else {
         hwIndex = 0xff;
     }
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = hwIndex;
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = hwIndex;
 
     if ( lastUsedSlotInCommonPalette > 2 ) {
         hwIndex = commonPalette[2].hardwareIndex;
     } else {
         hwIndex = 0xff;
     }
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = hwIndex;
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = hwIndex;
 
     if ( lastUsedSlotInCommonPalette > 3 ) {
         hwIndex = commonPalette[3].hardwareIndex;
