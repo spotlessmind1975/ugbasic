@@ -380,10 +380,10 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // 64 x 32 elements is available in the display area. The element area is four
         // dot-clocks wide by six lines high.
         case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
-            _environment->screenWidth = 64*4;
-            _environment->screenHeight = 32*6;
-            _environment->screenTilesWidth = 64;
-            _environment->screenTilesHeight = 32;
+            _environment->screenWidth = 64;
+            _environment->screenHeight = 32;
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
             // Semigraphic-4 0 X X 0 0 0 0 32x16 ch, 64x32 pixels
             SET_VIDEOAT_400;
@@ -406,10 +406,10 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // one of four colors in the display box. A 512 byte display memory is required. 
         // The element area is four dot-clocks wide by four lines high.
         case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
-            _environment->screenWidth = 64*8;
-            _environment->screenHeight = 48*12;
-            _environment->screenTilesWidth = 64;
-            _environment->screenTilesHeight = 48;
+            _environment->screenWidth = 64;
+            _environment->screenHeight = 48;
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
             // Semigraphic-6 0 X X 1 0 0 0 64x48 pixels
             SET_VIDEOAT_400;
@@ -433,10 +433,10 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // available in the display area. The element area is four dot-clocks wide 
         // by three lines high.
         case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
-            _environment->screenWidth = 64*8;
-            _environment->screenHeight = 64*12;
-            _environment->screenTilesWidth = 64;
-            _environment->screenTilesHeight = 64;
+            _environment->screenWidth = 64;
+            _environment->screenHeight = 64;
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
@@ -450,10 +450,10 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // display memory is required. A density of 64 x 96 elements is available in the
         // display area. The element area is four dot-clocks wide by two lineshigh.
         case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
-            _environment->screenWidth = 64*8;
-            _environment->screenHeight = 96*12;
-            _environment->screenTilesWidth = 64;
-            _environment->screenTilesHeight = 96;
+            _environment->screenWidth = 64;
+            _environment->screenHeight = 96;
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
@@ -468,10 +468,10 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // elements is available in the display are. The element area is four 
         // dot-clocks wide by one line high.
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
-            _environment->screenWidth = 64*8;
-            _environment->screenHeight = 96*12;
-            _environment->screenTilesWidth = 64;
-            _environment->screenTilesHeight = 96;
+            _environment->screenWidth = 64;
+            _environment->screenHeight = 96;
+            _environment->screenTilesWidth = 32;
+            _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
