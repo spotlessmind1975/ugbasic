@@ -38,6 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
+void target_prepare_finalization( Environment * _environment ) {
+
+}
+
 void target_finalization( Environment * _environment ) {
 
     tms9918_finalization( _environment );

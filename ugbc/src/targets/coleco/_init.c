@@ -50,17 +50,6 @@ void target_initialization( Environment * _environment ) {
     _environment->dstring.count = 32;
     _environment->dstring.space = 128;
 
-    variable_import( _environment, "TIMERRUNNING", VT_BYTE, 0 );
-    variable_global( _environment, "TIMERRUNNING" );
-    variable_import( _environment, "TIMERSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "TIMERSTATUS" );
-    variable_import( _environment, "TIMERCOUNTER", VT_BUFFER, 16 );
-    variable_global( _environment, "TIMERCOUNTER" );
-    variable_import( _environment, "TIMERINIT", VT_BUFFER, 16 );
-    variable_global( _environment, "TIMERINIT" );
-    variable_import( _environment, "TIMERADDRESS", VT_BUFFER, 16 );
-    variable_global( _environment, "TIMERADDRESS" );
-
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0000 );

@@ -3953,6 +3953,7 @@ void setup_embedded( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
 void shell_injection( Environment * _environment );
+void target_prepare_finalization( Environment * _environment );
 void target_finalization( Environment * _environment );
 void target_analysis( Environment * _environment );
 void target_deep_analyzer( Environment * _environment );

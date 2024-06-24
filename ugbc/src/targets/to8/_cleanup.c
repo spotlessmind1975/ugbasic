@@ -38,6 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
+void target_prepare_finalization( Environment * _environment ) {
+
+}
+
 void target_finalization( Environment * _environment ) {
 
     ef936x_finalization( _environment );
