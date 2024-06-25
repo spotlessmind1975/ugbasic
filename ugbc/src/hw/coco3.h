@@ -139,7 +139,7 @@
 #define JOY_DOWN            0
 #define JOY_LEFT            2
 #define JOY_RIGHT           3
-#define JOY_FIRE            4
+#define JOY_FIRE            5
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
