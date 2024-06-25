@@ -6034,7 +6034,7 @@ void z80_dstring_vars( Environment * _environment ) {
     outhead1("DESCRIPTORS:                  DEFS %d", count * 4 );
     outhead1("WORKING:                      DEFS %d", space );
     outhead1("TEMPORARY:                    DEFS %d", space );
-    outhead1("FREE_STRING:                  DB $ff, $%2.2x", ((space)>>8)& 0xff );
+    outhead2("FREE_STRING:                  DB $%2.2X, $%2.2x", ((space-1)& 0xff), ((space-1)>>8)& 0xff );
 #if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
     outhead0("section code_user" );
 #endif
