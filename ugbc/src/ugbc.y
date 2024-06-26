@@ -9573,13 +9573,13 @@ statement2nc:
   }
   | const_instruction POSITIVE Identifier OP_ASSIGN const_expr {
         if ( $5 < 0 ) {
-            CRITICAL_NEGATIVE_CONSTANT( $3 );
+            CRITICAL_NEGATIVE_CONSTANT( $3, $5 );
         }
         const_define_numeric( _environment, $3, $5 );
   }
   | POSITIVE const_instruction Identifier OP_ASSIGN const_expr {
         if ( $5 < 0 ) {
-            CRITICAL_NEGATIVE_CONSTANT( $3 );
+            CRITICAL_NEGATIVE_CONSTANT( $3, $5 );
         }
         const_define_numeric( _environment, $3, $5 );
   }
