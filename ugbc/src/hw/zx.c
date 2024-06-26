@@ -389,6 +389,8 @@ void zx_initialization( Environment * _environment ) {
     _environment->screenColors = COLOR_COUNT;
     _environment->screenTilesWidth = _environment->screenWidth / _environment->fontWidth;
     _environment->screenTilesHeight = _environment->screenHeight / _environment->fontHeight;
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
