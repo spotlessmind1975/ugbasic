@@ -2721,7 +2721,7 @@ typedef struct _Environment {
 #define CRITICAL_UNABLE_TO_INLINE( v ) CRITICAL2("E068 - unable to inline call, only library available", v );
 #define CRITICAL_NOT_IMAGE( v ) CRITICAL2("E069 - variable is not an image", v );
 #define CRITICAL_NOT_ASSIGNED_IMAGE( v ) CRITICAL2("E070 - variable is not an loaded image, please use assign operator", v );
-#define CRITICAL_NEGATIVE_CONSTANT( v ) CRITICAL2("E071 - negative constant is not allowed", v);
+#define CRITICAL_NEGATIVE_CONSTANT( v, a ) CRITICAL3i("E071 - negative constant is not allowed", v, a);
 #define CRITICAL_TOO_LITTLE_CONSTANT( v ) CRITICAL2("E072 - constant value under the minimum limit", v);
 #define CRITICAL_TOO_BIG_CONSTANT( v ) CRITICAL2("E073 - constant value over the maximum limit", v);
 #define CRITICAL_INVALID_STRING_COUNT( d ) CRITICAL2i("E074 - invalid maximum number of strings", d);
