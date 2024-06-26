@@ -143,14 +143,18 @@ void mo5_key_pressed( Environment * _environment, char *_scancode, char * _resul
 
     MAKE_LABEL
 
+    deploy( scancode, src_hw_mo5_scancode_asm );
+
     char nokeyLabel[MAX_TEMPORARY_STORAGE];
     sprintf( nokeyLabel, "%slabel", label );
     
     Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
 
-    mo5_scancode( _environment, temp->realName, _result );
-    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
+    cpu_call( _environment, "SCANCODE" );
+
+    outline1("STB %s", _result );
+    cpu_compare_and_branch_8bit_const( _environment, _result, 0, nokeyLabel, 1 );
+    cpu_compare_and_branch_8bit( _environment, _result, _scancode, nokeyLabel, 0 );
     cpu_store_8bit( _environment, _result, 0xff );
     cpu_jump( _environment, label );
     cpu_label( _environment, nokeyLabel );
@@ -229,9 +233,13 @@ void mo5_follow_irq( Environment * _environment ) {
 
 void mo5_joystick_semivars( Environment * _environment, int _joystick, char * _result ) {
 
+    cpu_store_8bit( _environment, _result, 0 );
+
 }
 
 void mo5_joystick_vars( Environment * _environment, char * _joystick, char * _result ) {
+
+    cpu_store_8bit( _environment, _result, 0 );
 
 }
 

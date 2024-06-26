@@ -95,7 +95,7 @@
 #define KEY_S						'S'
 #define KEY_SEMICOLON				';'
 #define KEY_SLASH					'/'
-#define KEY_SPACE					' '
+#define KEY_SPACE					0x40
 #define KEY_T						'T'
 #define KEY_U						'U'
 #define KEY_UP_ARROW				0x92
@@ -124,10 +124,10 @@
 #define KEY_RET                      0x0d
 #define KEY_INS                      0x89
 #define KEY_DEL                      0x90
-#define KEY_LEFT                     0x91
-#define KEY_UP                       0x92
-#define KEY_DOWN                     0x93
-#define KEY_RIGHT                    0x94
+#define KEY_LEFT                     0x52
+#define KEY_UP                       0x62
+#define KEY_DOWN                     0x42
+#define KEY_RIGHT                    0x32
 #define KEY_DIVISION                 '/'
 
 
