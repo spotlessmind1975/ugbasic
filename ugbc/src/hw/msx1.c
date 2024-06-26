@@ -125,6 +125,8 @@ void msx1_scancode( Environment * _environment, char * _pressed, char * _scancod
 
 void msx1_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
+    deploy( scancode, src_hw_msx1_scancode_asm );
+
     MAKE_LABEL
 
     char nokeyLabel[MAX_TEMPORARY_STORAGE];
@@ -132,7 +134,9 @@ void msx1_key_pressed( Environment * _environment, char *_scancode, char * _resu
     
     Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
 
-    msx1_scancode( _environment, temp->realName, _result );
+    cpu_call( _environment, "SCANCODEKEYPRESS" );
+    outline0( "LD A, B" );
+    outline1( "LD (%s), A", _result );
     cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
     cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
     cpu_store_8bit( _environment, _result, 0xff );
