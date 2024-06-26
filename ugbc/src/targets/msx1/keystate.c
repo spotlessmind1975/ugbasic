@@ -46,8 +46,8 @@ Variable * keystate( Environment * _environment, char * _scancode ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
 
-    Variable * key = scancode( _environment );
+    msx1_key_pressed( _environment, s->realName, result->realName );
 
-    return variable_compare( _environment, s->name, key->name );
+    return result;
 
 }
