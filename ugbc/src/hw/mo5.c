@@ -233,9 +233,13 @@ void mo5_follow_irq( Environment * _environment ) {
 
 void mo5_joystick_semivars( Environment * _environment, int _joystick, char * _result ) {
 
+    cpu_store_8bit( _environment, _result, 0 );
+
 }
 
 void mo5_joystick_vars( Environment * _environment, char * _joystick, char * _result ) {
+
+    cpu_store_8bit( _environment, _result, 0 );
 
 }
 
