@@ -56,7 +56,7 @@ void cline( Environment * _environment, char * _characters ) {
         characters = variable_retrieve( _environment, _characters );
         ef936x_cline( _environment, characters->realName );
     } else {
-        ef936x_cline( _environment, NULL );
+        ef936x_cline( _environment, "CONSOLEW" );
     }
 
 }
