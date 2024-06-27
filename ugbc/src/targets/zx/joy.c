@@ -44,6 +44,8 @@ Variable * joy_vars( Environment * _environment, char * _port ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
+    variable_store( _environment, result->name, 0 );
+
     return result;
 
 }
@@ -53,6 +55,8 @@ Variable * joy( Environment * _environment, int _port ) {
     MAKE_LABEL
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
+
+    variable_store( _environment, result->name, 0 );
 
     return result;
 
