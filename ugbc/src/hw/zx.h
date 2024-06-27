@@ -165,10 +165,10 @@
 #define KEY_RET                      0x0d
 #define KEY_INS                      0x89
 #define KEY_DEL                      0x90
-#define KEY_LEFT                     0x91
-#define KEY_UP                       0x92
-#define KEY_DOWN                     0x93
-#define KEY_RIGHT                    0x94
+#define KEY_LEFT                     53
+#define KEY_UP                       55
+#define KEY_DOWN                     54
+#define KEY_RIGHT                    56
 #define KEY_DIVISION                 '/'
 
 #define INPUT_DEFAULT_SEPARATOR     ','
