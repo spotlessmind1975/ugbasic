@@ -91,10 +91,12 @@ CLINECL2:
     ADD HL, BC
     LD DE, HL
 
-    INC HL
-
     LD A, 0
+    LD (DE),A
     LD (HL),A
+    INC DE
+    LD (DE),A
+
 
     POP BC
     POP BC

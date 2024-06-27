@@ -3021,11 +3021,11 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_MUSIC_ON_AUDIO_DEVICE(v) CRITICAL2("E285 - cannot MUSIC on the given AUDIO TARGET", v );
 #define CRITICAL_MUSIC_NOT_ASYNC() CRITICAL("E283 - cannot MUSIC in asyncronous mode on this target" );
 #define CRITICAL_CANNOT_USE_STRINGS_LONGER_256_CHARS( ) CRITICAL("E284 - string too long (>256 characters)" );
-#define CRITICAL_IMAGES_LOAD_INVALID_ORIGIN_WITH_GIF(f) CRITICAL2("E285 - cannot use ORIGIN with GIF images", f );
-#define CRITICAL_IMAGES_LOAD_INVALID_OFFSET_WITH_GIF(f) CRITICAL2("E286 - cannot use OFFSET with GIF images", f );
-#define CRITICAL_CANNOT_MIX_SPRITES_MSPRITES() CRITICAL("E287 - cannot mix (C)SPRITE with MSPRITE" );
-#define CRITICAL_MISSING_LABEL_NAMED(v) CRITICAL2("E288 - missing label", v );
-#define CRITICAL_MISSING_LABEL_NUMBER(v) CRITICAL2i("E289 - missing line number", v );
+#define CRITICAL_MISSING_LABEL_NAMED(v) CRITICAL2("E285 - missing label", v );
+#define CRITICAL_MISSING_LABEL_NUMBER(v) CRITICAL2i("E286 - missing line number", v );
+#define CRITICAL_IMAGES_LOAD_INVALID_ORIGIN_WITH_GIF(f) CRITICAL2("E287 - cannot use ORIGIN with GIF images", f );
+#define CRITICAL_IMAGES_LOAD_INVALID_OFFSET_WITH_GIF(f) CRITICAL2("E288 - cannot use OFFSET with GIF images", f );
+#define CRITICAL_CANNOT_MIX_SPRITES_MSPRITES() CRITICAL("E289 - cannot mix (C)SPRITE with MSPRITE" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
