@@ -77,6 +77,11 @@ espressione come il risultato della chiamata.
 @target all
 </usermanual> */
 void return_procedure( Environment * _environment, char * _value ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
     char paramName[MAX_TEMPORARY_STORAGE]; sprintf(paramName,"%s__PARAM", _environment->procedureName );
     Variable * param = NULL;
     Variable * value = variable_retrieve_or_define( _environment, _value, _environment->defaultVariableType, 0 );
