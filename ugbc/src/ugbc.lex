@@ -269,6 +269,8 @@ AUDIO { RETURN(AUDIO,1); }
 Aud { RETURN(AUDIO,1); }
 AUTO { RETURN(AUTO,1); }
 Au { RETURN(AUTO,1); }
+AVAILABLE { RETURN(AVAILABLE,1); }
+Av { RETURN(AVAILABLE,1); }
 
 %{ /* --------------------------------- B --------------------------------- */ %}
 
@@ -763,6 +765,8 @@ JUP { RETURN(JUP,1); }
 Ju { RETURN(JUP,1); }
 JOY { RETURN(JOY,1); }
 Jy { RETURN(JOY,1); }
+JOYSTICK { RETURN(JOYSTICK,1); }
+Jyt { RETURN(JOYSTICK,1); }
 JOYCOUNT { RETURN(JOYCOUNT,1); }
 Jyc { RETURN(JOYCOUNT,1); }
 
