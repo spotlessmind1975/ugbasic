@@ -54,10 +54,15 @@ static RGBi SYSTEM_PALETTE[] = {
 
 void sg1000_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
+    cpu_store_8bit( _environment, _pressed, 0 );
+    cpu_store_8bit( _environment, _key, 0 );
   
 }
 
 void sg1000_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+
+    cpu_store_8bit( _environment, _pressed, 0 );
+    cpu_store_8bit( _environment, _scancode, 0 );
 
 }
 
@@ -84,9 +89,13 @@ void sg1000_key_pressed( Environment * _environment, char *_scancode, char * _re
 
 void sg1000_scanshift( Environment * _environment, char * _shifts ) {
 
+    cpu_store_8bit( _environment, _shifts, 0 );
+
 }
 
 void sg1000_keyshift( Environment * _environment, char * _shifts ) {
+
+    cpu_store_8bit( _environment, _shifts, 0 );
 
 }
 
