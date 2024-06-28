@@ -1163,9 +1163,6 @@ typedef struct _Conditional {
     /** In case of CT_SELECT_CASE, case else has been emitted?. */
     int caseElse;
 
-    /** Is the condition fixed as constant? */
-    int constant;
-
     /** Next conditional */
     struct _Conditional * next;
 
