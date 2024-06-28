@@ -1163,6 +1163,9 @@ typedef struct _Conditional {
     /** In case of CT_SELECT_CASE, case else has been emitted?. */
     int caseElse;
 
+    /** Is the condition fixed as constant? */
+    int constant;
+
     /** Next conditional */
     struct _Conditional * next;
 
@@ -3026,6 +3029,7 @@ typedef struct _Environment {
 #define CRITICAL_IMAGES_LOAD_INVALID_ORIGIN_WITH_GIF(f) CRITICAL2("E287 - cannot use ORIGIN with GIF images", f );
 #define CRITICAL_IMAGES_LOAD_INVALID_OFFSET_WITH_GIF(f) CRITICAL2("E288 - cannot use OFFSET with GIF images", f );
 #define CRITICAL_CANNOT_MIX_SPRITES_MSPRITES() CRITICAL("E289 - cannot mix (C)SPRITE with MSPRITE" );
+#define CRITICAL_CASE_ELSE_ALREADY_EMITTED() CRITICAL("E290 - CASE ELSE already used" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

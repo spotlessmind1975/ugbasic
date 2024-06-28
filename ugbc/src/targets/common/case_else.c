@@ -63,6 +63,9 @@ void case_else( Environment * _environment ) {
         CRITICAL_CASE_ELSE_WITHOUT_SELECT_CASE();
     }
 
+    if ( conditional->caseElse ) {
+        CRITICAL_CASE_ELSE_ALREADY_EMITTED();
+    }
     conditional->caseElse = 1;
 
 }
