@@ -138,7 +138,7 @@
 
 #define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
 
-#define JOY_COUNT           2
+#define JOY_COUNT           0
 
 #define JOY_UP              0
 #define JOY_DOWN            1

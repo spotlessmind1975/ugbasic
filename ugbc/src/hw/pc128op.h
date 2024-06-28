@@ -130,10 +130,10 @@
 #define KEY_DEL                      0xf9
 #define KEY_DIVISION                 KEY_SLASH
 
-#define         JOY_COUNT           2
+#define         JOY_COUNT           0
 #define JOYSTICK_0					0
 #define JOYSTICK_1					1
-#define JOYSTICK_COUNT				2
+#define JOYSTICK_COUNT				0
 
 #define JOY_UP              1
 #define JOY_DOWN            2
