@@ -2305,7 +2305,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
     lastUsedSlotInCommonPalette = paletteColorCount;
     adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
+    adilinepalette( "CPMS:%d", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -2371,7 +2371,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
     lastUsedSlotInCommonPalette = paletteColorCount;
     adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
+    adilinepalette( "CPMS:%d", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -2424,7 +2424,7 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
     commonPalette = palette_remove_duplicates( commonPalette, colorUsed, &colorUsed );
     adilinepalette( "CPM1:%d", colorUsed, commonPalette );
 
-    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
+    adilinepalette( "CPMS:%d", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
@@ -2617,7 +2617,7 @@ static Variable * vic2_image_converter_tilemap_mode_multicolor( Environment * _e
     commonPalette = palette_remove_duplicates( commonPalette, colorUsed, &colorUsed );
     adilinepalette( "CPM1:%d", colorUsed, commonPalette );
 
-    adilinepalette( "CPMS:%ld", ( sizeof(SYSTEM_PALETTE) / sizeof(RGBi) ) / 2, SYSTEM_PALETTE );
+    adilinepalette( "CPMS:%d", ( sizeof(SYSTEM_PALETTE) / sizeof(RGBi) ) / 2, SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
