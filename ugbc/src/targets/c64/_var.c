@@ -211,7 +211,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             }
                             outline1("$%2.2x", (unsigned char) ( variable->valueBuffer[(variable->size-1)] & 0xff ) );
                         } else if ( variable->memoryArea && ! variable->value ) {
-                            // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                            outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                         } else {
                             if ( variable->value ) {
                                 switch( VT_BITWIDTH( variable->arrayType ) ) {
