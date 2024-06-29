@@ -474,7 +474,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                     }
                     outline1("$%2.2x", (unsigned char) ( _variable->valueBuffer[(_variable->size-1)] & 0xff ) );
                 } else if ( _variable->memoryArea && ! _variable->value ) {
-                    // outline2("%s = $%4.4x", _variable->realName, _variable->absoluteAddress);
+                    outline2("%s = $%4.4x", _variable->realName, _variable->absoluteAddress);
                 } else {
                     if ( _variable->value ) {
                         switch( VT_BITWIDTH( _variable->arrayType ) ) {
