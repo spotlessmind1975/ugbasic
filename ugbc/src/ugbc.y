@@ -1203,6 +1203,12 @@ const_factor:
         }
         $$ = 0;
       }
+      | JOY COUNT {
+            $$ = JOY_COUNT;
+        }
+      | JOYCOUNT {
+            $$ = JOY_COUNT;
+        }
       | LEN OP Identifier CP {
           Constant * c = constant_find( ((Environment *)_environment)->constants, $3 );
           if ( c == NULL ) {
