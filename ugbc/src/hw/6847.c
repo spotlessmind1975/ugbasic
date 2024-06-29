@@ -1262,7 +1262,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     lastUsedSlotInCommonPalette = paletteColorCount;
     adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi), SYSTEM_PALETTE );
+    adilinepalette( "CPMS:%d", (int)(sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi)), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -1397,7 +1397,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
     lastUsedSlotInCommonPalette = paletteColorCount;
     adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi), SYSTEM_PALETTE );
+    adilinepalette( "CPMS:%d", (int)(sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi)), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
