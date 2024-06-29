@@ -4811,7 +4811,7 @@ void cpu6809_bit_inplace_8bit_extended_indirect( Environment * _environment, cha
             outline1("LDB %s", _bit);
             outline1("BEQ %s", label );
             outline0("ORCC #$01");
-            outhead1("%s" );
+            outhead1("%s", label );
         }
         outline0("JSR CPUBITINPLACE");
 
