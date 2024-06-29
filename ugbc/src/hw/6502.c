@@ -5902,7 +5902,9 @@ void cpu6502_bit_inplace_8bit_extended_indirect( Environment * _environment, cha
         } else {
             outline0("PLA");
         }
-        outline0("ROR");
+        outline1("BEQ %s", label);
+        outline0("SEC");
+        outhead1("%s:", label);
         outline1("LDA %s", _position);
         outline0("JSR CPUBITINPLACE");
 
