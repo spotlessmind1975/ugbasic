@@ -73,13 +73,14 @@ DSWRITE:
     CALL DSDESCRIPTOR
     LD A, (IX+3)
     AND $80
+    CP $0
     JR Z, DSWRITED
+    CALL DSCHECKFREE
     LD A, (IX+3)
     AND $7F
     LD (IX+3),A
     LD D, B
     LD C, (IX)
-    CALL DSCHECKFREE
 DSWRITEOK:
     LD C, (IX+1)
     LD B, (IX+2)
@@ -144,9 +145,11 @@ DSGCLOOP:
     CALL DSDESCRIPTOR
     LD A, (IX+3)
     AND $80
+    CP $0
     JR NZ, DSGCLOOP2
     LD A, (IX+3)
     AND $40
+    CP $0
     JR Z, DSGCLOOP2
     LD A, (IX)
     CP 0
@@ -195,6 +198,7 @@ DSFINDFREEL:
     CALL DSDESCRIPTOR
     LD A, (IX+3)
     AND $40
+    CP $0
     JR Z, DSFINDFREEN
     INC B
     LD A, B
