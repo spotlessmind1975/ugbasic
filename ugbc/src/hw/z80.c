@@ -5582,13 +5582,19 @@ void z80_bit_inplace_8bit_extended_indirect( Environment * _environment, char * 
 
     _environment->bitmaskNeeded = 1;
 
+    MAKE_LABEL
+
     no_inline( cpu_bit_inplace )
 
     embedded( cpu_bit_inplace, src_hw_z80_cpu_bit_inplace_asm );
 
         if ( _bit ) {
             outline1("LD A, (%s)", _bit );
+            outline0("CP $0" );
+            outline1("JR Z, %s", label );
+            outline0("LD A, 1" );;
             outline0("SRL A" );
+            outhead1("%s:", label );
         }
         outline1("LD DE, (%s)", _address );
         outline1("LD A, (%s)", _position);
