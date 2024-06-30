@@ -40,5 +40,22 @@
 
 void cline( Environment * _environment, char * _characters ) {
 
-   
+    Variable * space = variable_temporary( _environment, VT_CHAR, "(space)");
+    variable_store( _environment, space->name, 32 );
+    
+    Variable * characters = NULL;
+    if ( _characters ) {
+        characters = variable_retrieve( _environment, _characters );
+    } else {
+        characters = variable_temporary( _environment, VT_BYTE, "(characters)" );
+        cpu_move_8bit( _environment, "CONSOLEW", characters->realName );
+        cpu_math_add_8bit( _environment, characters->realName, "CONSOLEX1", characters->realName );
+        cpu_math_sub_8bit( _environment, characters->realName, "XCURSYS", characters->realName );
+    }
+    MAKE_LABEL
+    cpu_label( _environment, label );
+    print( _environment, space->name, 0 );
+    cpu_dec( _environment, characters->realName );
+    cpu_compare_and_branch_8bit_const( _environment, characters->realName, 0, label, 0 );
+
 }
