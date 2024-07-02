@@ -564,6 +564,16 @@ typedef struct _Resource {
 #define VT_UNSIGN_16BIT( t, v ) ( VT_SIGNED(t) ? VT_USIGN_16BIT(v) : (v) ) 
 #define VT_UNSIGN_32BIT( t, v ) ( VT_SIGNED(t) ? VT_USIGN_32BIT(v) : (v) ) 
 
+#define VT_DIRECT_ASSIGN( t ) ( \
+        ( t == VT_BUFFER ) + \
+        ( t == VT_IMAGE ) + \
+        ( t == VT_IMAGES ) + \
+        ( t == VT_TILESET ) + \
+        ( t == VT_SEQUENCE ) + \
+        ( t == VT_MUSIC ) + \
+        ( t == VT_TILEMAP ) \
+    )
+
 /**
  * @brief Maximum number of variable types
  */
@@ -3027,6 +3037,7 @@ typedef struct _Environment {
 #define CRITICAL_IMAGES_LOAD_INVALID_OFFSET_WITH_GIF(f) CRITICAL2("E288 - cannot use OFFSET with GIF images", f );
 #define CRITICAL_CANNOT_MIX_SPRITES_MSPRITES() CRITICAL("E289 - cannot mix (C)SPRITE with MSPRITE" );
 #define CRITICAL_CASE_ELSE_ALREADY_EMITTED() CRITICAL("E290 - CASE ELSE already used" );
+#define CRITICAL_VARIABLE_CANNOT_DIRECT_ASSIGN_WRONG_TYPE( v, t ) CRITICAL3("E291 - cannot direct assign this type", v, t );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

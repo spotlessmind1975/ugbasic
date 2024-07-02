@@ -63,7 +63,7 @@ char BANK_TYPE_AS_STRING[][16] = {
 };
 
 char DATATYPE_AS_STRING[][16] = {
-    "",
+    "(undef)",
     "BYTE",
     "SBYTE",
     "WORD",
@@ -73,11 +73,11 @@ char DATATYPE_AS_STRING[][16] = {
     "ADDRESS",
     "POSITION",
     "COLOR",
-    "STATIC STRING",
+    "STRING",
     "BUFFER",
     "ARRAY",
-    "DYNAMIC STRING",   
-    "MOB",  // deprecated
+    "DSTRING",
+    "MOB",
     "IMAGE",
     "THREAD",
     "IMAGES",
@@ -90,8 +90,9 @@ char DATATYPE_AS_STRING[][16] = {
     "MUSIC",
     "BLIT",
     "FLOAT",
+    "TILEMAP",
     "BIT",
-    "MSPRITE",
+    "MSPRITE"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -10288,6 +10289,11 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
         } else {
             CRITICAL_VARIABLE_UNDEFINED( _var );
         }
+    }
+
+    if ( ! VT_DIRECT_ASSIGN( expr->type ) ) {
+        printf( "%d = %d\n", var->type, expr->type );
+        CRITICAL_VARIABLE_CANNOT_DIRECT_ASSIGN_WRONG_TYPE( _var, DATATYPE_AS_STRING[expr->type] );
     }
 
     var->value = expr->value;
