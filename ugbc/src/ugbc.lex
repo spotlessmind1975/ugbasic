@@ -206,6 +206,10 @@ _[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
 16BIT { RETURN(WORD,1); }
 32BIT { RETURN(DWORD,1); }
 
+REM { RETURN(Remark,1);  }
+"REM "[^\x0a\x0d]* { RETURN(Remark,1);  }
+"'"[^\x0a\x0d]* { RETURN(Remark,1);  }
+
 %{ /********************************* KEYWORDS *********************************/ %}
 
 %{ /* --------------------------------- A --------------------------------- */ %}
@@ -1427,11 +1431,6 @@ Yp { RETURN(YPEN,1); }
 
 Z { RETURN(Z,1); }
 ZX { RETURN(ZX,1); }
-
-"REM "[^\x0a\x0d]* { RETURN(Remark,1);  }
-"REM"[\x0a\x0d]? { RETURN(Remark,1);  }
-"'"[^\x0a\x0d]* { RETURN(Remark,1);  }
-"'"[\x0a\x0d]? { RETURN(Remark,1);  }
 
 \"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; RETURN(String,1);  }
 #\"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+2,strlen(yylval.string)-2); yylval.string[strlen(yylval.string)-3]=0; RETURN(RawString,1);  }
