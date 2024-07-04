@@ -1057,6 +1057,9 @@ typedef struct _Procedure {
     /** Name of the procedure (in the program) */
     char * name;
 
+    /** Name of the procedure (in the assembly source) */
+    char * realName;
+
     /**
      * Parameters definition
      */

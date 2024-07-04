@@ -99,15 +99,13 @@ Variable * spawn_procedure( Environment * _environment, char * _name, int _halte
     }
     _environment->parameters = 0;
 
-    char procedureLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureLabel, "%s", _name );
-
     _environment->anyProtothread = 1;
 
     if ( _environment->protothreadForbid ) {
         CRITICAL_MULTITASKING_FORBIDDEN();
     }
 
-    cpu_protothread_register( _environment, procedureLabel, threadId->realName );
+    cpu_protothread_register( _environment, procedure->realName, threadId->realName );
     cpu_protothread_set_state( _environment, threadId->realName, _halted ? PROTOTHREAD_STATUS_ENDED : PROTOTHREAD_STATUS_WAITING );
     cpu_protothread_save( _environment, threadId->realName, 0 );
     

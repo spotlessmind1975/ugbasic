@@ -119,6 +119,10 @@ void begin_procedure( Environment * _environment, char * _name ) {
     memset(procedure, 0, sizeof( Procedure ) );
 
     procedure->name = strdup( _name );
+    procedure->realName = malloc( strlen( _name ) + 6 );
+    memset(procedure->realName, 0, strlen( _name ) + 6 );
+    strcpy( procedure->realName, "PROC" );
+    strcat( procedure->realName, _name );
     
     int i = 0;
     for( i=0; i<_environment->parameters; ++i ) {
@@ -145,11 +149,10 @@ void begin_procedure( Environment * _environment, char * _name ) {
     ++_environment->currentProcedure;
 
     char procedureAfterLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureAfterLabel, "%safter", _environment->procedureName );
-    char procedureLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureLabel, "%s", _environment->procedureName );
 
     cpu_jump( _environment, procedureAfterLabel  );
 
-    cpu_label( _environment, procedureLabel );
+    cpu_label( _environment, procedure->realName );
 
     if ( procedure->protothread ) {
         _environment->anyProtothread = 1;

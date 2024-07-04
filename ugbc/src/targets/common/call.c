@@ -185,9 +185,7 @@ void call_procedure( Environment * _environment, char * _name ) {
         }
         _environment->parameters = 0;
 
-        char procedureLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureLabel, "%s", _name );
-
-        cpu_call( _environment, procedureLabel );
+        cpu_call( _environment, procedure->realName );
 
     }
 
