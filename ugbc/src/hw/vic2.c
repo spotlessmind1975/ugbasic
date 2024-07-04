@@ -3002,7 +3002,9 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
     // Color of the pixel to convert
     RGBi rgb;
 
-    char * source = _source + ( ( _slot_y * spriteHeight * spriteWidth ) + _slot_x * spriteWidth ) * _depth;
+    char * source = _source + ( ( _slot_y * spriteHeight * _width ) + _slot_x * spriteWidth ) * _depth;
+
+    // printf("\n");
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < spriteHeight; ++image_y) {
@@ -3010,8 +3012,8 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
             // printf( "Y" );
             break;
         }
-        for (image_x = _slot_x * spriteWidth; image_x < ( _slot_x * spriteWidth ) + spriteWidth; ++image_x) {
-            if ( ( image_x + ( _slot_x * spriteWidth ) )  == _width ) {
+        for (image_x = 0; image_x < spriteWidth; ++image_x) {
+            if ( ( image_x + ( _slot_x * spriteWidth ) ) == _width ) {
                 // printf( "X" );
                 break;
             }
@@ -3104,7 +3106,11 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
         }
 
         // printf("\n");
-        source += _depth * ( _width - image_x );
+        if ( ( image_x + ( _slot_x * spriteWidth ) ) == _width ) {
+            source += _depth * (_width - image_x );
+        } else {
+            source += _depth * ( _width - spriteWidth );
+        }
 
         // printf("\n" );
 
