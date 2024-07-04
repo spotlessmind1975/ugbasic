@@ -126,7 +126,7 @@ void on_proc_index( Environment * _environment, char * _label ) {
 
     cpu_bveq( _environment, variable_compare( _environment, expression->name, index->name )->realName, newLabel );
 
-    cpu_call( _environment, _label );
+    call_procedure( _environment, _label );
 
     char newLabel2[MAX_TEMPORARY_STORAGE]; sprintf(newLabel2, "%sfinal", conditional->label );
 

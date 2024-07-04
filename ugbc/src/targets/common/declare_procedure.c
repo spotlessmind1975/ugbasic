@@ -258,6 +258,7 @@ void declare_procedure( Environment * _environment, char * _name, int _address, 
     Procedure * procedure = malloc( sizeof( Procedure ) );
     memset( procedure, 0, sizeof( Procedure ) );
     procedure->name = strdup( _name );
+    procedure->realName = strdup( _name );
     procedure->declared = 1;
     procedure->address = _address;
     procedure->system = _system;
