@@ -51,18 +51,15 @@
  */
 /* <usermanual>
 @keyword SPRITE DISABLE
-
-@english
-Disable the sprite.
-
-@italian
-Disabilita lo sprite.
-
-@syntax SPRITE # [integer] DISABLE
-
-@example SPRITE #1 DISABLE
-
 @target c128
+@target c64
+@target c64reu
+</usermanual> */
+/* <usermanual>
+@keyword SPRITE OFF
+@target c128
+@target c64
+@target c64reu
 </usermanual> */
 void sprite_disable( Environment * _environment, int _sprite ) {
 
@@ -77,13 +74,6 @@ void sprite_disable( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with the index of the sprite to disable (0...7)
  */
-/* <usermanual>
-@keyword SPRITE DISABLE
-
-@syntax SPRITE [expression] DISABLE
-
-@example SPRITE starship DISABLE
-</usermanual> */
 void sprite_disable_var( Environment * _environment, char * _sprite ) {
 
     vic2_sprite_disable( _environment, _sprite );

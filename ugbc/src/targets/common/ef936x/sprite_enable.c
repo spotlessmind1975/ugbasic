@@ -51,8 +51,6 @@
  */
 /* <usermanual>
 @keyword SPRITE ENABLE
-
-@target pc128op
 </usermanual> */
 void sprite_enable( Environment * _environment, int _sprite ) {
 

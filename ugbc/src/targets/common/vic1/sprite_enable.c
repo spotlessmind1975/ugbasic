@@ -53,16 +53,33 @@
 @keyword SPRITE ENABLE
 
 @english
-Enable the sprite.
+Enable the sprite given (by its number). If the number is omitted, 
+all sprites will be enabled.
 
 @italian
-Abilita lo sprite.
+Abilita lo sprite (per numero). Se il numero è omesso, abilita
+tutti gli sprite.
 
 @syntax SPRITE # [integer] ENABLE
 
 @example SPRITE #1 ENABLE
 
-@target vic20
+@alias SPRITE ON
+</usermanual> */
+/* <usermanual>
+@keyword SPRITE ON
+
+@english
+Enable the sprite, alias of ''SPRITE ENABLE''.
+
+@italian
+Abilita lo sprite, alias di ''SPRITE ENABLE''.
+
+@syntax SPRITE # [integer] ON
+
+@example SPRITE #1 ON
+
+@alias SPRITE ENABLE
 </usermanual> */
 void sprite_enable( Environment * _environment, int _sprite ) {
 
@@ -89,6 +106,13 @@ void sprite_enable( Environment * _environment, int _sprite ) {
 @syntax SPRITE [expression] ENABLE
 
 @example SPRITE starship ENABLE
+</usermanual> */
+/* <usermanual>
+@keyword SPRITE ON
+
+@syntax SPRITE [expression] ON
+
+@example SPRITE starship ON
 </usermanual> */
 void sprite_enable_var( Environment * _environment, char * _sprite ) {
 

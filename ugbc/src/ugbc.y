@@ -4374,7 +4374,13 @@ sprite_definition_action_simple:
   | ENABLE {
       sprite_enable( _environment, ((Environment *)_environment)->currentSpriteNumber );
   }
+  | ON {
+      sprite_enable( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
   | DISABLE {
+      sprite_disable( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | OFF {
       sprite_disable( _environment, ((Environment *)_environment)->currentSpriteNumber );
   }
   | EXPAND VERTICAL {
@@ -4407,6 +4413,32 @@ sprite_definition_simple:
     sprite_definition_action_simple
     | sprite_definition_action_simple sprite_definition_simple;
 
+sprite_definition_all_action_simple:
+  | ENABLE {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_enable( _environment, i );
+    }
+  }
+  | ON {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_enable( _environment, i );
+    }
+  }
+  | DISABLE {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_disable( _environment, i );
+    }
+  }
+  | OFF {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_disable( _environment, i );
+    }
+  }
+  ;
+
+sprite_definition_all_simple:
+    sprite_definition_all_action_simple;
+
 sprite_definition_action_expression:
     MULTICOLOR {
       sprite_multicolor_var( _environment, ((Environment *)_environment)->currentSprite );
@@ -4432,7 +4464,13 @@ sprite_definition_action_expression:
   | ENABLE {
       sprite_enable_var( _environment, ((Environment *)_environment)->currentSprite );
   }
+  | ON {
+      sprite_enable_var( _environment, ((Environment *)_environment)->currentSprite );
+  }
   | DISABLE {
+      sprite_disable_var( _environment, ((Environment *)_environment)->currentSprite );
+  }
+  | OFF {
       sprite_disable_var( _environment, ((Environment *)_environment)->currentSprite );
   }
   | EXPAND VERTICAL {
@@ -4476,7 +4514,8 @@ sprite_definition:
     } sprite_definition_simple
   | expr {
         ((Environment *)_environment)->currentSprite = strdup($1);
-    } sprite_definition_expression;
+    } sprite_definition_expression
+  | sprite_definition_all_simple;
 
 optional_integer : 
     Integer {

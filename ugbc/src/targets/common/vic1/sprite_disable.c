@@ -53,17 +53,37 @@
 @keyword SPRITE DISABLE
 
 @english
-Disable the sprite.
+Disable the sprite (by its number). If the number is omitted, all sprites
+will be disable.
 
 @italian
-Disabilita lo sprite.
+Disabilita lo sprite (per numero). Se il numero viene omesso,
+tutti gli sprite saranno disabilitati.
 
-@syntax SPRITE # [integer] DISABLE
+@syntax SPRITE #number DISABLE
+@syntax SPRITE DISABLE
 
 @example SPRITE #1 DISABLE
 
-@target vic20
+@alias SPRITE OFF
 </usermanual> */
+/* <usermanual>
+@keyword SPRITE OFF
+
+@english
+Disable the sprite, alias di ''SPRITE DISABLE''.
+
+@italian
+Disabilita lo sprite, alias di ''SPRITE DISABLE''.
+
+@syntax SPRITE #number OFF
+@syntax SPRITE OFF
+
+@example SPRITE #1 OFF
+
+@alias SPRITE DISABLE
+</usermanual> */
+
 void sprite_disable( Environment * _environment, int _sprite ) {
 
     
@@ -86,9 +106,16 @@ void sprite_disable( Environment * _environment, int _sprite ) {
 /* <usermanual>
 @keyword SPRITE DISABLE
 
-@syntax SPRITE [expression] DISABLE
+@syntax SPRITE sprite DISABLE
 
 @example SPRITE starship DISABLE
+</usermanual> */
+/* <usermanual>
+@keyword SPRITE OFF
+
+@syntax SPRITE sprite OFF
+
+@example SPRITE starship OFF
 </usermanual> */
 void sprite_disable_var( Environment * _environment, char * _sprite ) {
 

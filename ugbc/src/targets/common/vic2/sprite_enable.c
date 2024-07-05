@@ -51,18 +51,15 @@
  */
 /* <usermanual>
 @keyword SPRITE ENABLE
-
-@english
-Enable the sprite.
-
-@italian
-Abilita lo sprite.
-
-@syntax SPRITE # [integer] ENABLE
-
-@example SPRITE #1 ENABLE
-
 @target c128
+@target c64
+@target c64reu
+</usermanual> */
+/* <usermanual>
+@keyword SPRITE ON
+@target c128
+@target c64
+@target c64reu
 </usermanual> */
 void sprite_enable( Environment * _environment, int _sprite ) {
 
@@ -77,13 +74,6 @@ void sprite_enable( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with the index of the sprite to enable (0...7)
  */
-/* <usermanual>
-@keyword SPRITE ENABLE
-
-@syntax SPRITE [expression] ENABLE
-
-@example SPRITE starship ENABLE
-</usermanual> */
 void sprite_enable_var( Environment * _environment, char * _sprite ) {
 
     vic2_sprite_enable( _environment, _sprite );
