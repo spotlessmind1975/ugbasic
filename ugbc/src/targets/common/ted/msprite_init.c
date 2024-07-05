@@ -48,7 +48,6 @@
  */
 /* <usermanual>
 @keyword MSPRITE
-
 </usermanual> */
 Variable * msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 

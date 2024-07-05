@@ -48,8 +48,6 @@
  */
 /* <usermanual>
 @keyword SPRITE
-
-@target c64
 </usermanual> */
 Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 

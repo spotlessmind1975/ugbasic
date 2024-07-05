@@ -46,10 +46,6 @@
  */
 /* <usermanual>
 @keyword MSPRITE
-
-@target c64
-@target c128
-@target c64reu
 </usermanual> */
 Variable * msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 

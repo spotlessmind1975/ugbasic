@@ -48,8 +48,6 @@
  */
 /* <usermanual>
 @keyword SPRITE
-
-@target cpc
 </usermanual> */
 Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
