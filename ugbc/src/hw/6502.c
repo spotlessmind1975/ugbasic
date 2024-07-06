@@ -6766,7 +6766,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
     int exp = 0;
     int mantissa_bits = 23;
 
-    // printf("------------------\nVALUE = %f\n", _value );
+    //printf("------------------\nVALUE = %f\n", _value );
 
     memset( &right[0], 0, sizeof( int ) * 3 );
 
@@ -6794,7 +6794,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     left = (unsigned int) integral;
 
-    // printf("left = %d\n", left );
+    //printf("left = %d\n", left );
 
     // Step 3: Convert the Fractional Portion to Binary
     // The fractional portion of the number must also be converted to binary, though the conversion process 
@@ -6814,7 +6814,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     while( ( fractional != 1.0 ) && ( steps < mantissa_bits ) ) {
 
-        // printf("%f %d %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+        //printf("0) %f %d %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
         right[2] = right[2] << 1;
         right[1] = right[1] << 1;
@@ -6867,7 +6867,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
             while( left == 0 ) {
 
-                // printf("a) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+                //printf("a) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
                 if ( ! right[0] && ! right[1] && ! right[2] ) {
                     left = 0x1;
@@ -6899,11 +6899,11 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         }
 
-        // printf("a) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+        //printf("ax) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
         while( left ) {
 
-            // printf("x) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+            //printf("ay) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
             if ( ( right[0] & 0x01 ) ) {
                 right[1] = right[1] | 0x100;
@@ -6925,7 +6925,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         while( left ) {
 
-            // printf("b) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+            //printf("bx) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
             if ( ( right[0] & 0x01 ) ) {
                 right[1] = right[1] | 0x100;
@@ -6942,8 +6942,10 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
             left = left >> 1;
             ++exp;
         }
+        //printf("bx) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
         --exp;
-        // left = 1;
+        --exp;
+        left = 1;
         // right[2] = right[2] << 1;
         // right[1] = right[1] << 1;
         // right[0] = right[0] << 1;
@@ -6970,7 +6972,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     exp += 128;
 
-    // printf("exp = %2.2x\n", exp );
+    //printf("exp = %2.2x\n", exp );
 
     // Step 6: Convert the Biased Exponent to Unsigned Binary
     // The biased exponent value from the previous step must be converted into unsigned binary, using the usual process.
@@ -6980,7 +6982,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     exp = exp & 0xff;
 
-    // printf("exp = %2.2x\n", exp );
+    //printf("exp = %2.2x\n", exp );
 
     // Step 7: Determine the Final Bits for the Mantissa
     // After step 4, there are a bunch of bits after the normalized decimal point. These bits will become the 
@@ -7006,7 +7008,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
     _result[2] = ( right[1] );
     _result[3] = ( right[2] );
 
-    // printf( "%f = %2.2x %2.2x %2.2x %2.2x\n", _value, _result[0], _result[1], _result[2], _result[3] );
+    //printf( "%f = %2.2x %2.2x %2.2x %2.2x\n", _value, _result[0], _result[1], _result[2], _result[3] );
 
 }
 
@@ -7059,9 +7061,23 @@ void cpu6502_float_fast_from_8( Environment * _environment, char * _value, char 
 
 void cpu6502_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    MAKE_LABEL
+
     deploy( fp_vars, src_hw_6502_fp_routines_asm );
 
-    outline0( "LDA #$0" );
+    if ( _signed ) {
+        outline1( "LDA %s", address_displacement( _environment, _value, "0" ) );
+        outline0( "AND #$80" );
+        outline1( "BEQ %s", label );
+        outline0( "LDA #$ff" );
+        outline1( "JMP %sdone", label );
+        outhead1( "%s:", label );
+        outline0( "LDA #$0" );
+        outline1( "JMP %sdone", label );
+        outhead1( "%sdone:", label );
+    } else {
+        outline0( "LDA #$0" );
+    }
     outline0( "STA M1" );
     outline1( "LDA %s", address_displacement( _environment, _value, "0" ) );
     outline0( "STA M1+1" );
@@ -7493,6 +7509,38 @@ void cpu6502_float_single_tan( Environment * _environment, char * _angle, char *
     outline0( "STA M1+2" );
 
     outline0( "JSR FTAN");
+
+    outline0( "LDA X1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
+    outline0( "LDA M1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
+    outline0( "LDA M1+1" );
+    outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
+    outline0( "LDA M1+2" );
+    outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
+
+}
+
+void cpu6502_float_fast_atan( Environment * _environment, char * _value, char * _result ) {
+    cpu6502_float_single_atan( _environment, _value, _result );
+}
+
+void cpu6502_float_single_atan( Environment * _environment, char * _value, char * _result ) {
+    
+    MAKE_LABEL
+    
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+
+    outline1( "LDA %s", address_displacement( _environment, _value, "0" ) );
+    outline0( "STA X1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
+    outline0( "STA M1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "2" ) );
+    outline0( "STA M1+1" );
+    outline1( "LDA %s", address_displacement( _environment, _value, "3" ) );
+    outline0( "STA M1+2" );
+
+    outline0( "JSR FATAN");
 
     outline0( "LDA X1" );
     outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
