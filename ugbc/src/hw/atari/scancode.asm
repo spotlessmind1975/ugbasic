@@ -73,9 +73,12 @@ SCANCODEWITHDELAYNO:
     RTS
 
 SCANCODE:
+    LDX #0
     LDY $2FC
     CPY #$FF
     BEQ SCANCODENO
+    LDX #$FF
+    STX $2FC
     RTS
 
 INKEY:
