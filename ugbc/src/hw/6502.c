@@ -6766,7 +6766,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
     int exp = 0;
     int mantissa_bits = 23;
 
-    //printf("------------------\nVALUE = %f\n", _value );
+    // printf("------------------\nVALUE = %f\n", _value );
 
     memset( &right[0], 0, sizeof( int ) * 3 );
 
@@ -6794,7 +6794,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     left = (unsigned int) integral;
 
-    //printf("left = %d\n", left );
+    // printf("left = %d\n", left );
 
     // Step 3: Convert the Fractional Portion to Binary
     // The fractional portion of the number must also be converted to binary, though the conversion process 
@@ -6814,7 +6814,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     while( ( fractional != 1.0 ) && ( steps < mantissa_bits ) ) {
 
-        //printf("0) %f %d %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+        // printf("0) %f %d %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
         right[2] = right[2] << 1;
         right[1] = right[1] << 1;
@@ -6867,7 +6867,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
             while( left == 0 ) {
 
-                //printf("a) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+                // printf("a) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
                 if ( ! right[0] && ! right[1] && ! right[2] ) {
                     left = 0x1;
@@ -6899,11 +6899,11 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         }
 
-        //printf("ax) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+        // printf("ax) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
         while( left ) {
 
-            //printf("ay) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+            // printf("ay) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
             if ( ( right[0] & 0x01 ) ) {
                 right[1] = right[1] | 0x100;
@@ -6925,7 +6925,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         while( left ) {
 
-            //printf("bx) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+            // printf("bx) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
 
             if ( ( right[0] & 0x01 ) ) {
                 right[1] = right[1] | 0x100;
@@ -6942,9 +6942,19 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
             left = left >> 1;
             ++exp;
         }
-        //printf("bx) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+        // printf("bx) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
         --exp;
-        --exp;
+        if ( sign ) {
+            --exp;
+            right[2] = right[2] << 1;
+            right[1] = right[1] << 1;
+            right[0] = right[0] << 1;
+            right[1] |= ( right[2] & 0x100 ) >> 8;
+            right[0] |= ( right[1] & 0x100 ) >> 8;
+            right[2] = right[2] & 0xff;
+            right[1] = right[1] & 0xff;
+            right[0] = right[0] & 0xff;
+        }
         left = 1;
         // right[2] = right[2] << 1;
         // right[1] = right[1] << 1;
@@ -6972,7 +6982,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     exp += 128;
 
-    //printf("exp = %2.2x\n", exp );
+    // printf("exp = %2.2x\n", exp );
 
     // Step 6: Convert the Biased Exponent to Unsigned Binary
     // The biased exponent value from the previous step must be converted into unsigned binary, using the usual process.
@@ -6982,7 +6992,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     exp = exp & 0xff;
 
-    //printf("exp = %2.2x\n", exp );
+    // printf("exp = %2.2x\n", exp );
 
     // Step 7: Determine the Final Bits for the Mantissa
     // After step 4, there are a bunch of bits after the normalized decimal point. These bits will become the 
@@ -7008,7 +7018,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
     _result[2] = ( right[1] );
     _result[3] = ( right[2] );
 
-    //printf( "%f = %2.2x %2.2x %2.2x %2.2x\n", _value, _result[0], _result[1], _result[2], _result[3] );
+    // printf( "========== %f = %2.2x %2.2x %2.2x %2.2x\n", _value, _result[0], _result[1], _result[2], _result[3] );
 
 }
 
