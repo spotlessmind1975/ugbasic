@@ -713,7 +713,9 @@ void console_calculate( Environment * _environment ) {
 
 void console_calculate_vars( Environment * _environment ) {
 
-    outline0( "JSR CONSOLECALCULATE" );
+    if ( _environment->currentMode >= 2 && _environment->currentMode <= 7 ) {
+        outline0( "JSR CONSOLECALCULATE" );
+    }
 
 }
 

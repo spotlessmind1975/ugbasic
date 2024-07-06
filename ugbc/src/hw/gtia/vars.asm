@@ -124,23 +124,4 @@ CONSOLEHB:     .byte 25        ; <-- calculated (bytes)
 ;
 CONSOLES:      .res 4*8        ; <-- storage for virtual consoles
 
-CONSOLECALCULATE:
-    LDA YCURSYS
-    STA MATHPTR6
-    LDA XCURSYS
-    STA MATHPTR7
-    JSR CALCPOSG
-    STX CONSOLESA
-
-    LDA CONSOLEW
-    STA CONSOLEWB
-
-    ASL CONSOLEWB
-CONSOLECALCULATESKIPD:
-    LDA CONSOLEH
-    STA CONSOLEHB
-    ASL CONSOLEHB
-    ASL CONSOLEHB
-    ASL CONSOLEHB
-
     RTS    
