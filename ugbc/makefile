@@ -766,9 +766,25 @@ SOURCESTEST += $(wildcard src/libs/*.c)
 SOURCESTEST += $(wildcard src/targets/*.c)
 SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
+SOURCESTEST += $(wildcard src/targets/common/6502/*.c)
+SOURCESTEST += $(wildcard src/targets/common/6809/*.c)
+SOURCESTEST += $(wildcard src/targets/common/z80/*.c)
+SOURCESTEST += $(wildcard src/targets/common/k7mo/*.c)
+SOURCESTEST += $(wildcard src/targets/common/sid/*.c)
+SOURCESTEST += $(wildcard src/targets/common/sn76489z/*.c)
+SOURCESTEST += $(wildcard src/targets/common/vic2/*.c)
+SOURCESTEST += $(wildcard src/targets/common/gtia/*.c)
+SOURCESTEST += $(wildcard src/targets/common/6847/*.c)
+SOURCESTEST += $(wildcard src/targets/common/tms9918/*.c)
+SOURCESTEST += $(wildcard src/targets/common/cpc/*.c)
+SOURCESTEST += $(wildcard src/targets/common/ef936x/*.c)
+SOURCESTEST += $(wildcard src/targets/common/ted/*.c)
+SOURCESTEST += $(wildcard src/targets/common/vic1/*.c)
+SOURCESTEST += $(wildcard src/targets/common/zx/*.c)
+SOURCESTEST += $(wildcard src/targets/common/gime/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_coco.c src-test/tester_coco3.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c src-test/tester_c128.c
+SOURCESTEST += src-generated/modules_$(target).c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_coco.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c src-test/tester_c128.c
 
 paths:
 	@mkdir -p src-generated
@@ -785,7 +801,7 @@ objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-gen
 	@$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
 
 tester: $(SOURCESTEST)
-	@$(CC) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target)$(UGBCEXESUFFIX) -lm
+	@$(CC) $(LFLAGS) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target)$(UGBCEXESUFFIX) -lm $(LIBS)
 
 clean:
 	@rm -rf objs.$(target)/*
