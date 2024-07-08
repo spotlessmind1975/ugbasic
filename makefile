@@ -282,7 +282,7 @@ compiler:
 test:
 	@cd ugbc && $(MAKE) target=$(target) test
 	@echo "--- START TEST ---"
-	@ugbc/exe-test/ugbc.$(target)
+	@ugbc/exe-test/ugbc.$(target)$(UGBCEXESUFFIX)
 	@echo
 	@echo "--- END TEST ---"
 
