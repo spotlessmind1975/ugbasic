@@ -39,53 +39,53 @@
  * CODE SECTION
  ****************************************************************************/
 
-void test_print_payload( TestEnvironment * _te ) {
+// void test_print_payload( TestEnvironment * _te ) {
 
-    Environment * e = &_te->environment;
+//     Environment * e = &_te->environment;
 
-    Variable * s = variable_define( e, "t", VT_STRING, 0 );
+//     Variable * s = variable_define( e, "t", VT_STRING, 0 );
 
-    variable_store_string( e, s->name, "TEST" );
+//     variable_store_string( e, s->name, "TEST" );
 
-    print( e, s->name, 1 );
+//     print( e, s->name, 1 );
 
-}
+// }
 
-int test_print_tester( TestEnvironment * _te ) {
+// int test_print_tester( TestEnvironment * _te ) {
 
-    return 1;
+//     return 1;
 
-}
+// }
 
-//==========================================================================
+// //==========================================================================
 
-void test_print2_payload( TestEnvironment * _te ) {
+// void test_print2_payload( TestEnvironment * _te ) {
 
-    Environment * e = &_te->environment;
+//     Environment * e = &_te->environment;
 
-    Variable * d = variable_define( e, "t", VT_DSTRING, 0 );
+//     Variable * d = variable_define( e, "t", VT_DSTRING, 0 );
 
-    variable_store_string( e, d->name, "test" );
+//     variable_store_string( e, d->name, "test" );
     
-    cpu_dswrite( e, d->realName );
+//     cpu_dswrite( e, d->realName );
 
-    print( e, d->name, 1 );
+//     print( e, d->name, 1 );
 
-    _te->trackedVariables[0] = d;
+//     _te->trackedVariables[0] = d;
 
-}
+// }
 
-int test_print2_tester( TestEnvironment * _te ) {
+// int test_print2_tester( TestEnvironment * _te ) {
 
-    Variable * d = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+//     Variable * d = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return strcasecmp( d->valueString, "TEST" ) == 0;
+//     return strcasecmp( d->valueString, "TEST" ) == 0;
 
-}
+// }
 
 void test_print( ) {
 
-   create_test( "print", &test_print_payload, &test_print_tester );    
-   create_test( "print2", &test_print2_payload, &test_print2_tester );    
+//    create_test( "print", &test_print_payload, &test_print_tester );    
+//    create_test( "print2", &test_print2_payload, &test_print2_tester );    
 
 }

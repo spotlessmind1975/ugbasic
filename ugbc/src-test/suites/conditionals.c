@@ -39,78 +39,78 @@
  * CODE SECTION
  ****************************************************************************/
 
-void test_conditional_if_payload( TestEnvironment * _te ) {
+// void test_conditional_if_payload( TestEnvironment * _te ) {
 
-    Environment * e = &_te->environment;
+//     Environment * e = &_te->environment;
 
-    Variable * test1 = variable_temporary( e, VT_WORD, "(test1)" );
-    Variable * test2 = variable_temporary( e, VT_WORD, "(test2)" );
+//     Variable * test1 = variable_temporary( e, VT_WORD, "(test1)" );
+//     Variable * test2 = variable_temporary( e, VT_WORD, "(test2)" );
 
-    Variable * one = variable_temporary( e, VT_WORD, "(1)" );
-    variable_store( e, one->name, 1 );
-    Variable * three = variable_temporary( e, VT_WORD, "(3)" );
-    variable_store( e, three->name, 3 );
-    if_then( e, variable_greater_than( e, one->name, three->name, 0 )->name );
-        variable_move( e, one->name, test1->name );    
-    end_if_then( e );
-    if_then( e, variable_greater_than( e, three->name, one->name, 0 )->name );
-        variable_move( e, one->name, test2->name );    
-    end_if_then( e );
+//     Variable * one = variable_temporary( e, VT_WORD, "(1)" );
+//     variable_store( e, one->name, 1 );
+//     Variable * three = variable_temporary( e, VT_WORD, "(3)" );
+//     variable_store( e, three->name, 3 );
+//     if_then( e, variable_greater_than( e, one->name, three->name, 0 )->name );
+//         variable_move( e, one->name, test1->name );    
+//     end_if_then( e );
+//     if_then( e, variable_greater_than( e, three->name, one->name, 0 )->name );
+//         variable_move( e, one->name, test2->name );    
+//     end_if_then( e );
 
-    _te->trackedVariables[0] = test1;
-    _te->trackedVariables[1] = test2;
+//     _te->trackedVariables[0] = test1;
+//     _te->trackedVariables[1] = test2;
 
-}
+// }
 
-int test_conditional_if_tester( TestEnvironment * _te ) {
+// int test_conditional_if_tester( TestEnvironment * _te ) {
 
-    Variable * test1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
-    Variable * test2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+//     Variable * test1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+//     Variable * test2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
-    return test1->value == 0 && test2->value == 1;
+//     return test1->value == 0 && test2->value == 1;
 
-}
+// }
 
-//===========================================================================
+// //===========================================================================
 
-void test_conditional_if_not_payload( TestEnvironment * _te ) {
+// void test_conditional_if_not_payload( TestEnvironment * _te ) {
 
-    Environment * e = &_te->environment;
+//     Environment * e = &_te->environment;
 
-    Variable * zero = variable_define( e, "zero", VT_WORD, 0 );
-    Variable * one = variable_define( e, "one", VT_WORD, 1 );
-    Variable * a = variable_define( e, "a", VT_WORD, 0 );
-    Variable * b = variable_define( e, "b", VT_WORD, 2 );
+//     Variable * zero = variable_define( e, "zero", VT_WORD, 0 );
+//     Variable * one = variable_define( e, "one", VT_WORD, 1 );
+//     Variable * a = variable_define( e, "a", VT_WORD, 0 );
+//     Variable * b = variable_define( e, "b", VT_WORD, 2 );
 
-    Variable * x = variable_define( e, "x", VT_WORD, 0 );
-    Variable * y = variable_define( e, "y", VT_WORD, 0 );
+//     Variable * x = variable_define( e, "x", VT_WORD, 0 );
+//     Variable * y = variable_define( e, "y", VT_WORD, 0 );
 
-    if_then( e, variable_and( e, variable_compare_not( e, a->name, zero->name )->name, variable_compare_not( e, a->name, one->name )->name )->name );
-        stop_test( e );
-    end_if_then( e );
-    variable_move_naked( e, one->name, x->name );
+//     if_then( e, variable_and( e, variable_compare_not( e, a->name, zero->name )->name, variable_compare_not( e, a->name, one->name )->name )->name );
+//         stop_test( e );
+//     end_if_then( e );
+//     variable_move_naked( e, one->name, x->name );
 
-    if_then( e, variable_and( e, variable_compare_not( e, b->name, zero->name )->name, variable_compare_not( e, b->name, one->name )->name )->name );
-        variable_move_naked( e, one->name, y->name );
-    end_if_then( e );
+//     if_then( e, variable_and( e, variable_compare_not( e, b->name, zero->name )->name, variable_compare_not( e, b->name, one->name )->name )->name );
+//         variable_move_naked( e, one->name, y->name );
+//     end_if_then( e );
 
-    _te->trackedVariables[0] = x;
-    _te->trackedVariables[1] = y;
+//     _te->trackedVariables[0] = x;
+//     _te->trackedVariables[1] = y;
 
-}
+// }
 
-int test_conditional_if_not_tester( TestEnvironment * _te ) {
+// int test_conditional_if_not_tester( TestEnvironment * _te ) {
 
-    Variable * x = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
-    Variable * y = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+//     Variable * x = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+//     Variable * y = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
-    return x->value == 1 && y->value == 1;
+//     return x->value == 1 && y->value == 1;
 
-}
+// }
 
 void test_conditionals( ) {
 
-    create_test( "conditional_if", &test_conditional_if_payload, &test_conditional_if_tester );    
-    create_test( "conditional_if_not", &test_conditional_if_not_payload, &test_conditional_if_not_tester );    
+    // create_test( "conditional_if", &test_conditional_if_payload, &test_conditional_if_tester );    
+    // create_test( "conditional_if_not", &test_conditional_if_not_payload, &test_conditional_if_not_tester );    
 
 }

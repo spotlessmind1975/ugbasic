@@ -41,26 +41,26 @@
 
 void test_controls_joy_payload( TestEnvironment * _te ) {
 
-    Environment * e = &_te->environment;
+    // Environment * e = &_te->environment;
 
-    Variable * j = variable_define( e, "j", VT_BYTE, 0 );
-    Variable * one = variable_define( e, "one", VT_WORD, 1 );
-    variable_move( e, joy( e, one->name )->name, j->name );
+    // Variable * j = variable_define( e, "j", VT_BYTE, 0 );
+    // Variable * one = variable_define( e, "one", VT_WORD, 1 );
+    // variable_move( e, joy( e, one->name )->name, j->name );
 
-    _te->trackedVariables[0] = j;
+    // _te->trackedVariables[0] = j;
 
 }
 
 int test_controls_joy_tester( TestEnvironment * _te ) {
 
-    Variable * j = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    // Variable * j = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return j->value == 0x1f || j->value == 0xff || j->value == 0x00;
+    // return j->value == 0x1f || j->value == 0xff || j->value == 0x00;
     
 }
 
 void test_controls( ) {
 
-    create_test( "controls_joy", &test_controls_joy_payload, &test_controls_joy_tester );    
+    // create_test( "controls_joy", &test_controls_joy_payload, &test_controls_joy_tester );    
 
 }

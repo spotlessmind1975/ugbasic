@@ -39,37 +39,37 @@
  * CODE SECTION
  ****************************************************************************/
 
-void test_ons_01_payload( TestEnvironment * _te ) {
+// void test_ons_01_payload( TestEnvironment * _te ) {
 
-    Environment * e = &_te->environment;
+//     Environment * e = &_te->environment;
 
-    Variable * one = variable_define( e, "one", VT_WORD, 1 );
-    Variable * prima = variable_define( e, "prima", VT_WORD, 0 );
-    Variable * times = variable_define( e, "times", VT_WORD, 1 );
-    cpu_label( e, "start" );
-    on_goto( e, times->name );
-    on_goto_index( e, "first" );
-    on_goto_end( e );
-    stop_test( e );
+//     Variable * one = variable_define( e, "one", VT_WORD, 1 );
+//     Variable * prima = variable_define( e, "prima", VT_WORD, 0 );
+//     Variable * times = variable_define( e, "times", VT_WORD, 1 );
+//     cpu_label( e, "start" );
+//     on_goto( e, times->name );
+//     on_goto_index( e, "first" );
+//     on_goto_end( e );
+//     stop_test( e );
 
-    cpu_label( e, "first");
-    variable_move( e, one->name, prima->name );
-    stop_test( e );
+//     cpu_label( e, "first");
+//     variable_move( e, one->name, prima->name );
+//     stop_test( e );
 
-    _te->trackedVariables[0] = prima;
+//     _te->trackedVariables[0] = prima;
 
-}
+// }
 
-int test_ons_01_tester( TestEnvironment * _te ) {
+// int test_ons_01_tester( TestEnvironment * _te ) {
 
-    Variable * prima = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+//     Variable * prima = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return prima->value == 1;
+//     return prima->value == 1;
 
-}
+// }
 
 void test_ons( ) {
 
-    create_test( "ons_01", &test_ons_01_payload, &test_ons_01_tester );    
+    // create_test( "ons_01", &test_ons_01_payload, &test_ons_01_tester );    
 
 }

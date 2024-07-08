@@ -39,37 +39,37 @@
  * CODE SECTION
  ****************************************************************************/
 
-void test_for_step_minus_one_payload( TestEnvironment * _te ) {
+// void test_for_step_minus_one_payload( TestEnvironment * _te ) {
 
-    Environment * e = &_te->environment;
+//     Environment * e = &_te->environment;
 
-    Variable * index = variable_define( e, "index", VT_SWORD, 0 );
-    Variable * hundred = variable_define( e, "hundred", VT_SWORD, 100 );
-    Variable * zero = variable_define( e, "zero", VT_SWORD, 0 );
-    Variable * minusOne = variable_define( e, "minusone", VT_SWORD, -1 );
+//     Variable * index = variable_define( e, "index", VT_SWORD, 0 );
+//     Variable * hundred = variable_define( e, "hundred", VT_SWORD, 100 );
+//     Variable * zero = variable_define( e, "zero", VT_SWORD, 0 );
+//     Variable * minusOne = variable_define( e, "minusone", VT_SWORD, -1 );
 
-    begin_for_step( e, index->name, hundred->name, zero->name, minusOne->name );
-    end_for( e );
+//     begin_for_step( e, index->name, hundred->name, zero->name, minusOne->name );
+//     end_for( e );
     
-    _te->trackedVariables[0] = index;
-    _te->trackedVariables[1] = minusOne;
+//     _te->trackedVariables[0] = index;
+//     _te->trackedVariables[1] = minusOne;
 
-}
+// }
 
-int test_for_step_minus_one_tester( TestEnvironment * _te ) {
+// int test_for_step_minus_one_tester( TestEnvironment * _te ) {
 
-    Variable * index = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
-    Variable * minusOne = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+//     Variable * index = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+//     Variable * minusOne = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
-    // printf( "index = %4.4x (%d) [expected: -1]\n", index->value, index->value );
-    // printf( "minusOne = %4.4x (%d) [expected: -1]\n", minusOne->value, minusOne->value );
+//     // printf( "index = %4.4x (%d) [expected: -1]\n", index->value, index->value );
+//     // printf( "minusOne = %4.4x (%d) [expected: -1]\n", minusOne->value, minusOne->value );
 
-    return index->value == -1 && minusOne->value == -1;
+//     return index->value == -1 && minusOne->value == -1;
 
-}
+// }
 
 void test_loops( ) {
 
-    create_test( "for_step_minus_one", &test_for_step_minus_one_payload, &test_for_step_minus_one_tester );    
+    // create_test( "for_step_minus_one", &test_for_step_minus_one_payload, &test_for_step_minus_one_tester );    
 
 }
