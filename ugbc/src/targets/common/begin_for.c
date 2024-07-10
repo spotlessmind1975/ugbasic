@@ -123,27 +123,26 @@ void begin_for_step_prepare( Environment * _environment, char * _from, char * _t
     // Calculate the maximum rappresentable size for the index, based on from and to.
     int maxType = VT_MAX_BITWIDTH_TYPE( from->type, to->type );
 
-    if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) ) {
-        maxType = VT_SIGN( maxType );
-    }
-
-    Variable * step = NULL;
     Variable * stepResident = NULL;
-
-    if ( ! _step ) {
+    if ( _step ) {
+        Variable * step = variable_retrieve( _environment, _step );
+        if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) || VT_SIGNED( step->type ) ) {
+            maxType = VT_SIGN( maxType );
+        }
+        // In this version, the step is given
+        stepResident = variable_resident( _environment, maxType, "(step)" );
+        variable_move( _environment, step->name, stepResident->name );
+        if ( step ) {
+            loop->step = step;
+            loop->step->locked = 1;
+        }
+    } else {
+        if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) ) {
+            maxType = VT_SIGN( maxType );
+        }
         // In this version, the step is not given - by default, step = 1
         stepResident = variable_resident( _environment, maxType, "(step 1)" );
         variable_store( _environment, stepResident->name, 1 );
-    } else {
-        // In this version, the step is given
-        step = variable_retrieve( _environment, _step );
-        stepResident = variable_resident( _environment, maxType, "(step)" );
-        variable_move( _environment, step->name, stepResident->name );
-    }    
-
-    if ( step ) {
-        loop->step = step;
-        loop->step->locked = 1;
     }
 
     loop->stepResident = stepResident;
@@ -235,9 +234,18 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
     Variable * to = loop->toResident;
     Variable * step = loop->stepResident;
 
+    unsigned char backwardFor[MAX_TEMPORARY_STORAGE]; sprintf(backwardFor, "%sback", loop->label );
+    unsigned char forwardFor[MAX_TEMPORARY_STORAGE]; sprintf(forwardFor, "%sforw", loop->label );
+    unsigned char continueFor[MAX_TEMPORARY_STORAGE]; sprintf(continueFor, "%scont", loop->label );
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
     Variable * isLastStep;
+
+    cpu_bvneq( _environment, variable_greater_than_const( _environment, loop->step->name, 0, 0)->realName, forwardFor );
+
+    cpu_jump( _environment, backwardFor );
+
+    cpu_label( _environment, forwardFor );
 
     // Finish the loop if the index is less than lower bound.
     isLastStep = variable_less_than( _environment, index->name, loop->from->name, 0 );
@@ -246,6 +254,20 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
     // Finish the loop if the index is less than upper bound.
     isLastStep = variable_greater_than( _environment, index->name, loop->to->name, 0 );
     cpu_bvneq( _environment, isLastStep->realName, endFor );
+
+    cpu_jump( _environment, continueFor );
+
+    cpu_label( _environment, backwardFor );
+
+    // Finish the loop if the index is less than lower bound.
+    isLastStep = variable_greater_than( _environment, index->name, loop->from->name, 0 );
+    cpu_bvneq( _environment, isLastStep->realName, endFor );
+
+    // Finish the loop if the index is less than upper bound.
+    isLastStep = variable_less_than( _environment, index->name, loop->to->name, 0 );
+    cpu_bvneq( _environment, isLastStep->realName, endFor );
+
+    cpu_label( _environment, continueFor );
 
     loop->index = index;
 
