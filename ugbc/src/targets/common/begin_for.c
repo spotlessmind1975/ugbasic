@@ -84,7 +84,7 @@ per modificare la dimensione dell'incremento del valore dell'indice.
 @syntax NEXT
 
 @example i = 0
-@example FOR i = 1 to 100 STEP 2
+@example FOR i = 1 TO 100 STEP 2
 @example    PRINT i
 @example NEXT
 
