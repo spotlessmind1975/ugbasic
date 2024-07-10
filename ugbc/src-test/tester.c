@@ -185,11 +185,20 @@ int test_fp( Environment * _environment ) {
 
 }
 
+int test_fp_add( Environment * _environment ) {
+    
+    char executableName[MAX_TEMPORARY_STORAGE];
+    BUILD_TOOLCHAIN_CC65_GET_EXECUTABLE( _environment, executableName );
+
+}
+
 int main( int _argc, char *_argv[] ) {
 
     Environment * environment = malloc( sizeof( Environment ) );
     memset( environment, 0, sizeof( Environment ) );
 
     test_fp( environment );
+
+    test_fp_add( environment );
 
 }
