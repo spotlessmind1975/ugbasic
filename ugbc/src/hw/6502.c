@@ -7272,32 +7272,32 @@ void cpu6502_float_single_add( Environment * _environment, char * _x, char * _y,
     deploy( fp_vars, src_hw_6502_fp_routines_asm );
 
     outline1( "LDA %s", address_displacement( _environment, _x, "0" ) );
-    outline0( "STA X1" );
+    outline0( "STA FP1X" );
     outline1( "LDA %s", address_displacement( _environment, _x, "1" ) );
-    outline0( "STA M1" );
+    outline0( "STA FP1M" );
     outline1( "LDA %s", address_displacement( _environment, _x, "2" ) );
-    outline0( "STA M1+1" );
+    outline0( "STA FP1M+1" );
     outline1( "LDA %s", address_displacement( _environment, _x, "3" ) );
-    outline0( "STA M1+2" );
+    outline0( "STA FP1M+2" );
 
     outline1( "LDA %s", address_displacement( _environment, _y, "0" ) );
-    outline0( "STA X2" );
+    outline0( "STA FP2X" );
     outline1( "LDA %s", address_displacement( _environment, _y, "1" ) );
-    outline0( "STA M2" );
+    outline0( "STA FP2M" );
     outline1( "LDA %s", address_displacement( _environment, _y, "2" ) );
-    outline0( "STA M2+1" );
+    outline0( "STA FP2M+1" );
     outline1( "LDA %s", address_displacement( _environment, _y, "3" ) );
-    outline0( "STA M2+2" );
+    outline0( "STA FP2M+2" );
 
     outline0( "JSR FADD");
 
-    outline0( "LDA X1" );
+    outline0( "LDA FP1X" );
     outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
-    outline0( "LDA M1" );
+    outline0( "LDA FP1M" );
     outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
-    outline0( "LDA M1+1" );
+    outline0( "LDA FP1M+1" );
     outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
-    outline0( "LDA M1+2" );
+    outline0( "LDA FP1M+2" );
     outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
 
 }
