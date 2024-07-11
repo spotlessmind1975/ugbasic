@@ -185,10 +185,26 @@ int test_fp( Environment * _environment ) {
 
 }
 
-int test_fp_add( Environment * _environment ) {
-    
-    char executableName[MAX_TEMPORARY_STORAGE];
-    BUILD_TOOLCHAIN_CC65_GET_EXECUTABLE( _environment, executableName );
+Variable * execute6502( Environment * _environment, char * _asm_filename ) {
+
+    char * binaryFileName = get_temporary_filename( _environment );
+    char * mapFileName = get_temporary_filename( _environment );
+
+    system( "cl65 -g -Ln %s --start-addr 32768 -t none -o %s %s", mapFileName, binaryFileName, _asm_filename );
+    system( "run6502 -l 8000 %s -R 8000 -X 0000 -D", binaryFileName );
+
+    FILE * mapFile = fopen( mapFileName, "r" );
+    while( ! feof( mapFile ) ) {
+        char type[32];
+        int address;
+        char name[256];
+
+        fscanf( mapFile, "%s %x %s", type, address, name );
+
+    }
+
+    remove( binaryFileName );
+    remove( mapFileName );
 
 }
 
@@ -198,7 +214,5 @@ int main( int _argc, char *_argv[] ) {
     memset( environment, 0, sizeof( Environment ) );
 
     test_fp( environment );
-
-    test_fp_add( environment );
 
 }
