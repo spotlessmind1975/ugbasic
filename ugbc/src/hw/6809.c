@@ -5136,7 +5136,7 @@ void cpu6809_dstring_vars( Environment * _environment ) {
 
 void cpu6809_protothread_vars( Environment * _environment ) {
 
-    int count = _environment->protothreadConfig.count == 0 ? PROTOTHREAD_DEFAULT_COUNT : _environment->protothreadConfig.count;
+    int count = _environment->protothreadConfig.count;
 
     outhead1("PROTOTHREADLC       rzb        %d", count );
     outhead1("PROTOTHREADST       rzb        %d", count );

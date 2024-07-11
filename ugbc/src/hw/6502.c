@@ -6309,7 +6309,7 @@ void cpu6502_dstring_vars( Environment * _environment ) {
 
 void cpu6502_protothread_vars( Environment * _environment ) {
 
-    int count = _environment->protothreadConfig.count == 0 ? PROTOTHREAD_DEFAULT_COUNT : _environment->protothreadConfig.count;
+    int count = _environment->protothreadConfig.count;
 
     outhead1("PROTOTHREADLC:      .RES        %d,0", count );
     outhead1("PROTOTHREADST:      .RES        %d,0", count );
