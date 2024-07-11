@@ -4105,6 +4105,24 @@ void                    bank_write_semi_var( Environment * _environment, char * 
 void                    bank_write_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size );
 void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
+void                    begin_for_prepare( Environment * _environment );  
+void                    begin_for_from_prepare( Environment * _environment );  
+void                    begin_for_from_assign( Environment * _environment, char * _from );
+void                    begin_for_to_prepare( Environment * _environment );
+void                    begin_for_to_assign( Environment * _environment, char * _to );
+void                    begin_for_step_prepare( Environment * _environment );
+void                    begin_for_step_assign( Environment * _environment, char * _step );
+void                    begin_for_identifier( Environment * _environment, char * _index );
+
+void                    begin_for_prepare_mt( Environment * _environment );  
+void                    begin_for_from_prepare_mt( Environment * _environment );  
+void                    begin_for_from_assign_mt( Environment * _environment, char * _from );
+void                    begin_for_to_prepare_mt( Environment * _environment );
+void                    begin_for_to_assign_mt( Environment * _environment, char * _to );
+void                    begin_for_step_prepare_mt( Environment * _environment );
+void                    begin_for_step_assign_mt( Environment * _environment, char * _step );
+void                    begin_for_identifier_mt( Environment * _environment, char * _index );
+
 void                    begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_from( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
 void                    begin_for_from_mt( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
@@ -4113,11 +4131,8 @@ void                    begin_for_identifier_mt( Environment * _environment, cha
 void                    begin_for_mt( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_mt_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
 void                    begin_for_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
-void                    begin_for_step_prepare( Environment * _environment, char * _from, char * _to, char * _step );
-void                    begin_for_step_prepare_mt( Environment * _environment, char * _from, char * _to, char * _step );
 void                    begin_for_to( Environment * _environment, char *_to );
 void                    begin_for_to_prepare( Environment * _environment );
-void                    begin_for_to_prepare_mt( Environment * _environment );
 void                    begin_for_to_mt( Environment * _environment, char *_to );
 void                    begin_gameloop( Environment * _environment );
 void                    begin_loop( Environment * _environment );

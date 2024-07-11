@@ -6049,7 +6049,7 @@ void z80_dstring_vars( Environment * _environment ) {
 
 void z80_protothread_vars( Environment * _environment ) {
 
-    int count = _environment->protothreadConfig.count == 0 ? PROTOTHREAD_DEFAULT_COUNT : _environment->protothreadConfig.count;
+    int count = _environment->protothreadConfig.count;
 
     variable_import( _environment, "PROTOTHREADLC", VT_BUFFER, count );
     // outhead1("PROTOTHREADLC:      DEFS        %d", count );

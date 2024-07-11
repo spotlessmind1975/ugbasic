@@ -1089,9 +1089,22 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
 }
 
 Variable * variable_resident( Environment * _environment, VariableType _type, char * _meaning ) {
+
+    // Make a rational way to define resident variables.
+
+    Variable * var = NULL;
+
+    // The set of resident.
+
+    Variable ** variableSet = NULL;
+
+    // Take the set of resident variables inside the program.
+
+    variableSet = &_environment->tempResidentVariables;
+
+    // Calculate the name of the resident variable.
+
     char * name = malloc(MAX_TEMPORARY_STORAGE);
-    Variable * var = malloc( sizeof( Variable ) );
-    memset( var, 0, sizeof( Variable ) );
     if ( _type == VT_STRING ) {
         sprintf(name, "Tstr%d", UNIQUE_ID);
     } else if ( _type == VT_BUFFER ) {
@@ -1111,29 +1124,50 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
     } else {
         sprintf(name, "TRtmp%d", UNIQUE_ID);
     }
-    var->name = name;
-    var->realName = malloc( strlen( var->name ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
-    var->meaningName = _meaning;
-    var->type = _type;
-    var->bankAssigned = -1;
-    var->bank = _environment->banks[BT_TEMPORARY];
-    var->precision = _environment->floatType.precision;
-    Variable * varLast = _environment->tempResidentVariables;
-    if ( varLast ) {
-        while( varLast->next ) {
-            varLast = varLast->next;
-        }
-        varLast->next = var;
-    } else {
-        _environment->tempResidentVariables = var;
-    }
-    memory_area_assign( _environment->memoryAreas, var );
-    if ( var->meaningName ) {
-        outline2("; %s <-> %s (resident)", var->realName, var->meaningName );
-    }
-    return var;
-}
 
+    // Allocate the variable.
+
+    var = variable_define_internal( _environment, variableSet, name, NULL, _type, 0 );
+
+    // Make it "locked" if the correct type.
+    
+    if ( _type == VT_STRING ) {
+        var->locked = 1;
+    } else if ( _type == VT_BUFFER ) {
+        var->locked = 1;
+    } else if ( _type == VT_IMAGE ) {
+        var->locked = 1;
+    } else if ( _type == VT_IMAGES ) {
+        var->locked = 1;
+    } else if ( _type == VT_SEQUENCE ) {
+        var->locked = 1;
+    } else if ( _type == VT_MUSIC ) {
+        var->locked = 1;
+    } else {
+
+    }
+
+    // Update the meaning of this temporary variable.
+
+    var->meaningName = _meaning ? strdup( _meaning ) : NULL;
+
+    // Assign the correct bank.
+
+    var->bank = _environment->banks[BT_TEMPORARY];
+
+    // Assign the correct memory ara.
+
+    memory_area_assign( _environment->memoryAreas, var );
+
+    // Mark this variable as used and temporary.
+
+    var->used = 1;
+    var->temporary = 1;
+    var->initializedByConstant = 0;
+
+    return var;
+
+}
 
 /**
  * @brief Cast a variable from a type to another

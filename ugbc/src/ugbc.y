@@ -9230,28 +9230,47 @@ statement2nc:
   | EXIT direct_integer IF expr  {
       exit_loop_if( _environment, $4, $2 );  
   }
-  | FOR Identifier as_datatype_suffix_optional OP_ASSIGN expr TO  {
+  | FOR Identifier as_datatype_suffix_optional OP_ASSIGN {
       if ( $3 > 0 ) {
         Variable * index = variable_retrieve_or_define( _environment, $2, $3, 0 );
         if ( index->type != $3 ) {
             CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $3 ] );
         }
       }
+      begin_for_prepare( _environment );
+      begin_for_from_prepare( _environment );
+  } expr { 
+      begin_for_from_assign( _environment, $6 );
+  } TO {
       begin_for_to_prepare( _environment );
-  } expr optional_step {
-      begin_for_step_prepare( _environment, $5, $8, $9 );
-      begin_for_from( _environment, $2, $5, $8, $9 );
-      begin_for_to( _environment, $8 );
+  } expr {
+      begin_for_to_assign( _environment, $10 );
+      begin_for_step_prepare( _environment );
+  }   optional_step {
+      begin_for_step_assign( _environment, $12 );
       begin_for_identifier( _environment, $2 );
   }
-  | FOR OSP Identifier CSP OP_ASSIGN expr TO {
+  | FOR OSP Identifier CSP as_datatype_suffix_optional OP_ASSIGN {
+      if ( $5 > 0 ) {
+        Variable * index = variable_retrieve_or_define( _environment, $3, $5, 0 );
+        if ( index->type != VT_ARRAY || index->arrayType != $5 ) {
+            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $5 ] );
+        }
+      }
+      begin_for_prepare_mt( _environment );
+      begin_for_from_prepare_mt( _environment );
+  } expr { 
+      begin_for_from_assign_mt( _environment, $8 );
+  } TO {
       begin_for_to_prepare_mt( _environment );
-  } expr optional_step {
-      begin_for_step_prepare_mt( _environment, $6, $9, $10 );
-      begin_for_from_mt( _environment, $3, $6, $9, $10 );
-      begin_for_to_mt( _environment, $9 );
+  } expr {
+      outline1("; to assign = %s", $12 );
+      begin_for_to_assign_mt( _environment, $12 );
+      begin_for_step_prepare_mt( _environment );
+  }   optional_step {
+      begin_for_step_assign_mt( _environment, $14 );
       begin_for_identifier_mt( _environment, $3 );
-  } 
+  }
   | NEXT {
       end_for( _environment );
   }
@@ -10235,6 +10254,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->floatType.precision = FT_FAST;
 
     _environment->temporaryPath = get_default_temporary_path( );
+
+    _environment->protothreadConfig.count = PROTOTHREAD_DEFAULT_COUNT;
 
 #if defined(__atari__) 
     _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
