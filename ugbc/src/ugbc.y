@@ -9082,14 +9082,27 @@ statement2nc:
       begin_for_step_assign( _environment, $12 );
       begin_for_identifier( _environment, $2 );
   }
-  | FOR OSP Identifier CSP OP_ASSIGN expr TO {
+  | FOR OSP Identifier CSP as_datatype_suffix_optional OP_ASSIGN {
+      if ( $5 > 0 ) {
+        Variable * index = variable_retrieve_or_define( _environment, $3, $5, 0 );
+        if ( index->type != VT_ARRAY || index->arrayType != $5 ) {
+            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $5 ] );
+        }
+      }
+      begin_for_prepare_mt( _environment );
+      begin_for_from_prepare_mt( _environment );
+  } expr { 
+      begin_for_from_assign_mt( _environment, $8 );
+  } TO {
       begin_for_to_prepare_mt( _environment );
-  } expr optional_step {
-      begin_for_step_prepare_mt( _environment, $6, $9, $10 );
-      begin_for_from_mt( _environment, $3, $6, $9, $10 );
-      begin_for_to_mt( _environment, $9 );
+  } expr {
+      outline1("; to assign = %s", $12 );
+      begin_for_to_assign_mt( _environment, $12 );
+      begin_for_step_prepare_mt( _environment );
+  }   optional_step {
+      begin_for_step_assign_mt( _environment, $14 );
       begin_for_identifier_mt( _environment, $3 );
-  } 
+  }
   | NEXT {
       end_for( _environment );
   }
