@@ -185,26 +185,117 @@ int test_fp( Environment * _environment ) {
 
 }
 
-Variable * execute6502( Environment * _environment, char * _asm_filename ) {
+void execute6502( Environment * _environment, char * _asm_filename, Variable * _variable ) {
 
-    char * binaryFileName = get_temporary_filename( _environment );
-    char * mapFileName = get_temporary_filename( _environment );
+    char * binaryFileNameRoot = get_temporary_filename( _environment );
+    char * mapFileNameRoot = get_temporary_filename( _environment );
 
-    system( "cl65 -g -Ln %s --start-addr 32768 -t none -o %s %s", mapFileName, binaryFileName, _asm_filename );
-    system( "run6502 -l 8000 %s -R 8000 -X 0000 -D", binaryFileName );
+    char binaryFileName[MAX_TEMPORARY_STORAGE];
+    sprintf( binaryFileName, "%s.bin", binaryFileNameRoot );
+    char mapFileName[MAX_TEMPORARY_STORAGE];
+    sprintf( mapFileName, "%s.lbl", mapFileNameRoot );
+
+    char commandLine[MAX_TEMPORARY_STORAGE];
+    sprintf( commandLine, "cl65 -g -Ln %s --start-addr 32768 -t none -o %s %s", mapFileName, binaryFileName, _asm_filename );
+    printf( "%s\n", commandLine );
+    system( commandLine );
+    sprintf( commandLine, "run6502 -l 8000 %s -R 8000 -X 0000 -D", binaryFileName );
+    printf( "%s\n", commandLine );
+    system( commandLine );
+
+    unsigned char memory[0xffff];
+    memset( memory, 0, 0xffff );
+
+    FILE * dumpFile = fopen( "run6502.dump", "rb" );
+    if ( dumpFile ) {
+        fread( &memory[0], 1, 0xffff, dumpFile );
+        fclose( dumpFile );
+    }
 
     FILE * mapFile = fopen( mapFileName, "r" );
-    while( ! feof( mapFile ) ) {
-        char type[32];
-        int address;
-        char name[256];
+    if ( mapFile ) {
+        while( ! feof( mapFile ) ) {
+            char type[32];
+            unsigned int address;
+            char name[256];
 
-        fscanf( mapFile, "%s %x %s", type, address, name );
+            fscanf( mapFile, "%s %x .%s", type, &address, name );
 
+            Variable * v = _variable;
+            while ( v->next ) {
+                if ( strcmp( v->name, name ) ) {
+                    switch( VT_BITWIDTH( v->type ) ) {
+                        case 0: {
+                            switch( v->type ) {
+                                case VT_FLOAT:
+                            
+                            }
+
+                            }
+                            break;
+                        case 8:
+                            v->value = memory[address];
+                            break;
+                        case 16:
+                            v->value = memory[address] | ( memory[address+1] << 8 );
+                            break;
+                        case 24:
+                            v->value = memory[address] | ( memory[address+1] << 8 ) | ( memory[address+2] << 16 );
+                            break;
+                        case 32:
+                            v->value = memory[address] | ( memory[address+1] << 8 ) | ( memory[address+2] << 16 ) | ( memory[address+3] << 24 );
+                            break;
+                    }
+                }
+                v = v->next;
+            }
+
+            printf( "%s = %x [%2.2x]\n", name, address, (unsigned char) memory[address] );
+
+        }
     }
 
     remove( binaryFileName );
     remove( mapFileName );
+
+}
+
+int test_fp_6502( Environment * _environment ) {
+
+    char * asmFileNameRoot = get_temporary_filename( _environment );
+    char asmFileName[MAX_TEMPORARY_STORAGE];
+    sprintf( asmFileName, "%s.asm", asmFileNameRoot );
+
+    _environment->asmFile = fopen( asmFileName, "wt");
+    deploy( vars, src_hw_atari_vars_asm);
+    setup_text_variables( _environment );
+    deploy( startup, src_hw_atari_startup_asm);
+    deploy( fp_vars, src_hw_6502_fp_routines_asm );
+    int result[4];
+    cpu_float_single_from_double_to_int_array( _environment, 0.1, &result[0] );
+    outline1("LDA #$%2.2x", result[0] );
+    outline0("STA FP1X" );
+    outline1("LDA #$%2.2x", result[1] );
+    outline0("STA FP1M" );
+    outline1("LDA #$%2.2x", result[2] );
+    outline0("STA FP1M+1" );
+    outline1("LDA #$%2.2x", result[3] );
+    outline0("STA FP1M+2" );
+    cpu_float_single_from_double_to_int_array( _environment, 0.2, &result[0] );
+    outline1("LDA #$%2.2x", result[0] );
+    outline0("STA FP2X" );
+    outline1("LDA #$%2.2x", result[1] );
+    outline0("STA FP2M" );
+    outline1("LDA #$%2.2x", result[2] );
+    outline0("STA FP2M+1" );
+    outline1("LDA #$%2.2x", result[3] );
+    outline0("STA FP2M+2" );
+    outline0("JSR FPADD" );
+    outline0("BRK" );
+    buffered_output( _environment->asmFile );
+    fclose( _environment->asmFile );
+    execute6502( _environment, asmFileName );
+//    remove( asmFileName );
 
 }
 
@@ -213,6 +304,7 @@ int main( int _argc, char *_argv[] ) {
     Environment * environment = malloc( sizeof( Environment ) );
     memset( environment, 0, sizeof( Environment ) );
 
-    test_fp( environment );
+    // test_fp( environment );
+    test_fp_6502( environment );
 
 }

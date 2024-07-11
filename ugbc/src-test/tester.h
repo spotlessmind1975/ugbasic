@@ -48,44 +48,4 @@
  * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
-void test_msc1( );
-
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#elif defined( __vic20__ )
-    #include "tester_vic20.h"
-#elif defined( __msx1__ )
-    #include "tester_msx1.h"
-#elif defined( __coleco__ )
-    #include "tester_coleco.h"
-#elif defined( __cpc__ )
-    #include "tester_cpc.h"
-#elif defined( __c128__ )
-    #include "tester_c128.h"
-#endif
-
 #endif

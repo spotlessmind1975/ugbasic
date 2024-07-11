@@ -783,7 +783,6 @@ SOURCESTEST += $(wildcard src/targets/common/vic1/*.c)
 SOURCESTEST += $(wildcard src/targets/common/zx/*.c)
 SOURCESTEST += $(wildcard src/targets/common/gime/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
-SOURCESTEST += $(wildcard src-test/suites/*.c)
 SOURCESTEST += src-generated/modules_$(target).c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-test/tester.c
 
 paths:
