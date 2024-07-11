@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void begin_for_to_prepare_mt( Environment * _environment ) {
+void begin_for_prepare_mt( Environment * _environment ) {
 
     MAKE_LABEL
 
