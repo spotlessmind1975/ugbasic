@@ -241,7 +241,7 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
 
     Variable * isLastStep;
 
-    cpu_bvneq( _environment, variable_greater_than_const( _environment, loop->step->name, 0, 0)->realName, forwardFor );
+    cpu_bvneq( _environment, variable_greater_than_const( _environment, loop->stepResident->name, 0, 0)->realName, forwardFor );
 
     cpu_jump( _environment, backwardFor );
 
