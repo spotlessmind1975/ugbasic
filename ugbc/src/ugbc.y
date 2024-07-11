@@ -9062,18 +9062,24 @@ statement2nc:
   | EXIT direct_integer IF expr  {
       exit_loop_if( _environment, $4, $2 );  
   }
-  | FOR Identifier as_datatype_suffix_optional OP_ASSIGN expr TO  {
+  | FOR Identifier as_datatype_suffix_optional OP_ASSIGN {
       if ( $3 > 0 ) {
         Variable * index = variable_retrieve_or_define( _environment, $2, $3, 0 );
         if ( index->type != $3 ) {
             CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $3 ] );
         }
       }
+      begin_for_prepare( _environment );
+      begin_for_from_prepare( _environment );
+  } expr { 
+      begin_for_from_assign( _environment, $6 );
+  } TO {
       begin_for_to_prepare( _environment );
-  } expr optional_step {
-      begin_for_step_prepare( _environment, $5, $8, $9 );
-      begin_for_from( _environment, $2, $5, $8, $9 );
-      begin_for_to( _environment, $8 );
+  } expr {
+      begin_for_to_assign( _environment, $10 );
+      begin_for_step_prepare( _environment );
+  }   optional_step {
+      begin_for_step_assign( _environment, $12 );
       begin_for_identifier( _environment, $2 );
   }
   | FOR OSP Identifier CSP OP_ASSIGN expr TO {

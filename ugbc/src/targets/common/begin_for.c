@@ -94,7 +94,7 @@ per modificare la dimensione dell'incremento del valore dell'indice.
 @target all
 </usermanual> */
 
-void begin_for_to_prepare( Environment * _environment ) {
+void begin_for_prepare( Environment * _environment ) {
 
     MAKE_LABEL
 
@@ -105,20 +105,86 @@ void begin_for_to_prepare( Environment * _environment ) {
     loop->next = _environment->loops;
     _environment->loops = loop;
 
-    unsigned char beginForPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepare, "%sprep", label );
     unsigned char beginForPrepareAfter[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepareAfter, "%sprepa", label );
 
     cpu_jump( _environment, beginForPrepareAfter );
-    cpu_label( _environment, beginForPrepare );
 
 }
 
-void begin_for_step_prepare( Environment * _environment, char * _from, char * _to, char * _step ) {
+void begin_for_from_prepare( Environment * _environment ) {
+
+    Loop * loop = _environment->loops;
+
+    unsigned char beginForFromPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForFromPrepare, "%sprepfrom", loop->label );
+
+    cpu_label( _environment, beginForFromPrepare );
+
+}
+
+void begin_for_from_assign( Environment * _environment, char * _from ) {
 
     Loop * loop = _environment->loops;
 
     Variable * from = variable_retrieve( _environment, _from );
+    Variable * fromResident = variable_resident( _environment, from->type, "(from)" );
+
+    variable_move( _environment, from->name, fromResident->name );
+
+    cpu_return( _environment );
+
+    loop->from = from;
+    loop->from->locked = 1;
+    loop->fromResident = fromResident;
+    loop->fromResident->locked = 1;
+
+    loop->to = NULL;
+
+}
+
+void begin_for_to_prepare( Environment * _environment ) {
+
+    Loop * loop = _environment->loops;
+
+    unsigned char beginForToPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForToPrepare, "%sprepto", loop->label );
+
+    cpu_label( _environment, beginForToPrepare );
+
+}
+
+void begin_for_to_assign( Environment * _environment, char * _to ) {
+
+    Loop * loop = _environment->loops;
     Variable * to = variable_retrieve( _environment, _to );
+    Variable * toResident = variable_resident( _environment, to->type, "(to)" );
+
+    variable_move( _environment, to->name, toResident->name );
+
+    cpu_return( _environment );
+
+    loop->to = to;
+    loop->to->locked = 1;
+    loop->toResident = toResident;
+    loop->toResident->locked = 1;
+
+}
+
+void begin_for_step_prepare( Environment * _environment ) {
+
+    Loop * loop = _environment->loops;
+
+    unsigned char beginForStepPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForStepPrepare, "%sprepstep", loop->label );
+
+    cpu_label( _environment, beginForStepPrepare );
+
+}
+
+void begin_for_step_assign( Environment * _environment, char * _step ) {
+
+    Loop * loop = _environment->loops;
+    Variable * step = variable_retrieve( _environment, _step );
+
+    Variable * from = loop->from;
+    Variable * to = loop->to;
 
     // Calculate the maximum rappresentable size for the index, based on from and to.
     int maxType = VT_MAX_BITWIDTH_TYPE( from->type, to->type );
@@ -148,85 +214,29 @@ void begin_for_step_prepare( Environment * _environment, char * _from, char * _t
     loop->stepResident = stepResident;
     loop->stepResident->locked = 1;
 
-}
-
-void begin_for_from( Environment * _environment, char * _index, char * _from, char * _to, char * _step ) {
-
-    Loop * loop = _environment->loops;
-    unsigned char beginForPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepare, "%sprep", loop->label );
-    unsigned char beginForPrepareAfter[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepareAfter, "%sprepa", loop->label );
-
     cpu_return( _environment );
-    cpu_label( _environment, beginForPrepareAfter );
 
-    // Retrieve index and extremes. 
-    Variable * index = NULL;
-    Variable * from = variable_retrieve( _environment, _from );
-    Variable * to = variable_retrieve( _environment, _to );
+    loop->step = step;
+    loop->step->locked = 1;
+    loop->stepResident = stepResident;
+    loop->stepResident->locked = 1;
 
-    // Calculate the maximum rappresentable size for the index, based on from and to.
-    int maxType = VT_MAX_BITWIDTH_TYPE( from->type, to->type );
-
-    if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) ) {
-        maxType = VT_SIGN( maxType );
-    }
-
-    if ( variable_exists( _environment, _index ) ) {
-        index = variable_retrieve( _environment, _index );
-    } else {
-        index = variable_retrieve_or_define( _environment, _index, maxType, 0 );
-    }
-
-    // Start by copying the from to index.
-    variable_move( _environment, from->name, index->name );
-
-    // --- --- --- START OF LOOP --- --- ---
-    
-    unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
-    unsigned char assignStep[MAX_TEMPORARY_STORAGE]; sprintf(assignStep, "%sas", loop->label );
-    unsigned char assignStepAfter[MAX_TEMPORARY_STORAGE]; sprintf(assignStepAfter, "%sasa", loop->label );
-    cpu_label( _environment, beginFor );
-
-    cpu_call( _environment, beginForPrepare );
-
-    // Update the resident version of from and step at each loop.
-    Variable * fromResident = variable_resident( _environment, from->type, "(from)" );
-    variable_move( _environment, from->name, fromResident->name );
-    if ( loop->step ) {
-        cpu_jump( _environment, assignStepAfter );
-        cpu_label( _environment, assignStep );
-        variable_move( _environment, loop->step->name, loop->stepResident->name );
-        cpu_return( _environment );
-        cpu_label( _environment, assignStepAfter );
-    }
-    
-    loop->from = from;
-    loop->from->locked = 1;
-    loop->fromResident = fromResident;
-    loop->fromResident->locked = 1;
-    loop->to = NULL;
-    _environment->loops = loop;
-
-}
-
-void begin_for_to( Environment * _environment, char *_to ) {
-
-    Variable * to = variable_retrieve( _environment, _to );
-    Variable * toResident = variable_resident( _environment, to->type, "(to)" );
-
-    // Update the resident version of to at each loop.
-    variable_move( _environment, to->name, toResident->name );
-    
-    Loop * loop = _environment->loops;
-    loop->to = to;
-    loop->to->locked = 1;
-    loop->to = toResident;
-    loop->to->locked = 1;
 }
 
 void begin_for_identifier( Environment * _environment, char * _index ) {
 
     Loop * loop = _environment->loops;
+
+    unsigned char beginForPrepareAfter[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepareAfter, "%sprepa", loop->label );
+    unsigned char beginForFromPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForFromPrepare, "%sprepfrom", loop->label );
+    unsigned char beginForToPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForToPrepare, "%sprepto", loop->label );
+    unsigned char beginForStepPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForStepPrepare, "%sprepstep", loop->label );
+
+    cpu_label( _environment, beginForPrepareAfter );
+
+    cpu_call( _environment, beginForFromPrepare );
+    cpu_call( _environment, beginForToPrepare );
+    cpu_call( _environment, beginForStepPrepare );
 
     Variable * index = variable_retrieve( _environment, _index );
 
@@ -234,12 +244,17 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
     Variable * to = loop->toResident;
     Variable * step = loop->stepResident;
 
+    unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
     unsigned char backwardFor[MAX_TEMPORARY_STORAGE]; sprintf(backwardFor, "%sback", loop->label );
     unsigned char forwardFor[MAX_TEMPORARY_STORAGE]; sprintf(forwardFor, "%sforw", loop->label );
     unsigned char continueFor[MAX_TEMPORARY_STORAGE]; sprintf(continueFor, "%scont", loop->label );
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
     Variable * isLastStep;
+
+    variable_move( _environment, loop->fromResident->name, index->name );
+
+    cpu_label( _environment, beginFor );
 
     cpu_bvneq( _environment, variable_greater_than_const( _environment, loop->stepResident->name, 0, 0)->realName, forwardFor );
 
@@ -248,11 +263,11 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
     cpu_label( _environment, forwardFor );
 
     // Finish the loop if the index is less than lower bound.
-    isLastStep = variable_less_than( _environment, index->name, loop->from->name, 0 );
+    isLastStep = variable_less_than( _environment, index->name, loop->fromResident->name, 0 );
     cpu_bvneq( _environment, isLastStep->realName, endFor );
 
     // Finish the loop if the index is less than upper bound.
-    isLastStep = variable_greater_than( _environment, index->name, loop->to->name, 0 );
+    isLastStep = variable_greater_than( _environment, index->name, loop->toResident->name, 0 );
     cpu_bvneq( _environment, isLastStep->realName, endFor );
 
     cpu_jump( _environment, continueFor );
@@ -260,11 +275,11 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
     cpu_label( _environment, backwardFor );
 
     // Finish the loop if the index is less than lower bound.
-    isLastStep = variable_greater_than( _environment, index->name, loop->from->name, 0 );
+    isLastStep = variable_greater_than( _environment, index->name, loop->fromResident->name, 0 );
     cpu_bvneq( _environment, isLastStep->realName, endFor );
 
     // Finish the loop if the index is less than upper bound.
-    isLastStep = variable_less_than( _environment, index->name, loop->to->name, 0 );
+    isLastStep = variable_less_than( _environment, index->name, loop->toResident->name, 0 );
     cpu_bvneq( _environment, isLastStep->realName, endFor );
 
     cpu_label( _environment, continueFor );

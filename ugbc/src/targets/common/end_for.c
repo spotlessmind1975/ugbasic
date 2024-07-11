@@ -76,28 +76,26 @@ void end_for( Environment * _environment ) {
         CRITICAL_NEXT_WITHOUT_FOR();
     }
 
-    unsigned char assignStep[MAX_TEMPORARY_STORAGE]; sprintf(assignStep, "%sas", loop->label );
-
-    Variable * step = loop->stepResident;
-
-    if ( ! loop ) {
-        CRITICAL_NEXT_WITHOUT_FOR();
-    }
-
     if ( loop->type != LT_FOR && loop->type != LT_FOR_MT ) {
         CRITICAL_NEXT_WITHOUT_FOR();
     }
+
+    unsigned char beginForFromPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForFromPrepare, "%sprepfrom", loop->label );
+    unsigned char beginForToPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForToPrepare, "%sprepto", loop->label );
+    unsigned char beginForStepPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForStepPrepare, "%sprepstep", loop->label );
+
+    unsigned char assignStep[MAX_TEMPORARY_STORAGE]; sprintf(assignStep, "%sas", loop->label );
+
+    Variable * step = loop->stepResident;
 
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
     unsigned char beginForPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepare, "%sprep", loop->label );
 
     if ( !loop->statical ) {
-        cpu_call( _environment, beginForPrepare );
-    }
-
-    if ( loop->step && !loop->statical ) {
-        cpu_call( _environment, assignStep );
+        cpu_call( _environment, beginForFromPrepare );
+        cpu_call( _environment, beginForToPrepare );
+        cpu_call( _environment, beginForStepPrepare );
     }
 
     if ( loop->type == LT_FOR ) {
