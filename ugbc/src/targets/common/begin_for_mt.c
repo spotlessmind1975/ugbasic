@@ -194,8 +194,10 @@ void begin_for_step_assign_mt( Environment * _environment, char * _step ) {
 
     cpu_return( _environment );
 
-    loop->step = step;
-    loop->step->locked = 1;
+    if ( step ) {
+        loop->step = step;
+        loop->step->locked = 1;
+    }
     loop->stepResident = stepResident;
     loop->stepResident->locked = 1;
 
