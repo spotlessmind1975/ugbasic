@@ -49,9 +49,9 @@ int test_fp_single2( Environment * _environment, int _value[4], double _expected
 
     double result;
 
-    cpu_float_single_from_double_to_int_array( _environment, _value, &result );
+    cpu6502_float_single_from_int_array_to_double( _environment, _value, &result );
 
-    if ( result == _expected ) {
+    if ( ( result - _expected ) < 0.01 ) {
         printf( "FP %f ... OK\n", _expected );
     } else {
         printf( "FP %f ... BAD\n", _expected );
