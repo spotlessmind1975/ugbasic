@@ -45,6 +45,21 @@ int test_fp_single( Environment * _environment, double _val, int _expected[4] ) 
 
 }
 
+int test_fp_single2( Environment * _environment, int _value[4], double _expected ) {
+
+    double result;
+
+    cpu_float_single_from_double_to_int_array( _environment, _value, &result );
+
+    if ( result == _expected ) {
+        printf( "FP %f ... OK\n", _expected );
+    } else {
+        printf( "FP %f ... BAD\n", _expected );
+        printf( "    got: %f\n", result );
+    }
+
+}
+
 int test_fp( Environment * _environment ) {
 
     int expectedm1p1[][4] = {
@@ -113,6 +128,7 @@ int test_fp( Environment * _environment ) {
     for( int i=-10; i<10; ++i ) {
         double val = (double) i / 10.0;
         test_fp_single( _environment, val, &expectedm1p1[10+i][0] );
+        test_fp_single2( _environment, &expectedm1p1[10+i][0], val  );
     }
 
     int expectedm1010p1010[][4] = {
@@ -181,6 +197,7 @@ int test_fp( Environment * _environment ) {
     for( int i=-10; i<10; ++i ) {
         double val = (double) ( i / 10.0 ) + (double) (i);
         test_fp_single( _environment, val, &expectedm1010p1010[10+i][0] );
+        test_fp_single2( _environment, &expectedm1010p1010[10+i][0], val );
     }
 
 }
@@ -222,15 +239,21 @@ void execute6502( Environment * _environment, char * _asm_filename, Variable * _
             fscanf( mapFile, "%s %x .%s", type, &address, name );
 
             Variable * v = _variable;
-            while ( v->next ) {
-                if ( strcmp( v->name, name ) ) {
+            while ( v ) {
+                if ( strcmp( v->name, name ) == 0 ) {
                     switch( VT_BITWIDTH( v->type ) ) {
                         case 0: {
-                            switch( v->type ) {
-                                case VT_FLOAT:
-                            
-                            }
-
+                                switch( v->type ) {
+                                    case VT_FLOAT: {
+                                        int value[4];
+                                        value[0] = memory[0];
+                                        value[1] = memory[1];
+                                        value[2] = memory[2];
+                                        value[3] = memory[3];
+                                        cpu_float_single_from_int_array_to_double( _environment, &value[0], &v->valueFloating );
+                                        break;
+                                    }
+                                }
                             }
                             break;
                         case 8:
@@ -250,7 +273,7 @@ void execute6502( Environment * _environment, char * _asm_filename, Variable * _
                 v = v->next;
             }
 
-            printf( "%s = %x [%2.2x]\n", name, address, (unsigned char) memory[address] );
+            // printf( "%s = %x [%2.2x]\n", name, address, (unsigned char) memory[address] );
 
         }
     }
@@ -292,9 +315,15 @@ int test_fp_6502( Environment * _environment ) {
     outline0("STA FP2M+2" );
     outline0("JSR FPADD" );
     outline0("BRK" );
+    Variable * v = malloc( sizeof( Variable ) );
+    memset( v, 0, sizeof( Variable ) );
+    v->type = VT_FLOAT;
+    v->name = strdup( "FP1X" );
     buffered_output( _environment->asmFile );
     fclose( _environment->asmFile );
-    execute6502( _environment, asmFileName );
+    execute6502( _environment, asmFileName, v );
+    printf( "v->floating = %f\n", v->valueFloating );
+
 //    remove( asmFileName );
 
 }
@@ -304,7 +333,7 @@ int main( int _argc, char *_argv[] ) {
     Environment * environment = malloc( sizeof( Environment ) );
     memset( environment, 0, sizeof( Environment ) );
 
-    // test_fp( environment );
-    test_fp_6502( environment );
+    test_fp( environment );
+    // test_fp_6502( environment );
 
 }

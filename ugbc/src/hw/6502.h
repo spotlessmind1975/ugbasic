@@ -304,6 +304,7 @@ void cpu6502_address_table_call( Environment * _environment, char * _table, char
 // FAST FP (24 bit)
 
 void cpu6502_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] );
+void cpu6502_float_fast_from_int_array_to_double( Environment * _environment, int _value[], double * _result );
 void cpu6502_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size );
 void cpu6502_float_fast_from_16( Environment * _environment, char * _value, char * _result, int _signed );
 void cpu6502_float_fast_from_8( Environment * _environment, char * _value, char * _result, int _signed );
@@ -323,6 +324,7 @@ void cpu6502_float_fast_exp( Environment * _environment, char * _value, char * _
 // SINGLE FP (32 bit) IEEE-754
 
 void cpu6502_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] );
+void cpu6502_float_single_from_int_array_to_double( Environment * _environment, int _value[], double * _result );
 void cpu6502_float_single_to_string( Environment * _environment, char * _x, char * _string, char * _string_size );
 void cpu6502_float_single_from_16( Environment * _environment, char * _value, char * _result, int _signed );
 void cpu6502_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed );
@@ -600,6 +602,9 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 
 #define cpu_float_fast_from_double_to_int_array( _environment, _value, _result ) cpu6502_float_fast_from_double_to_int_array( _environment, _value, _result )
 #define cpu_float_single_from_double_to_int_array( _environment, _value, _result ) cpu6502_float_single_from_double_to_int_array( _environment, _value, _result )
+
+#define cpu_float_fast_from_int_array_to_double( _environment, _value, _result ) cpu6502_fast_single_from_int_array_to_double( _environment, _value, _result )
+#define cpu_float_single_from_int_array_to_double( _environment, _value, _result ) cpu6502_float_single_from_int_array_to_double( _environment, _value, _result )
 
 #define cpu_float_fast_to_string( _environment, _x, _string, _string_size ) cpu6502_float_fast_to_string( _environment, _x, _string, _string_size ) 
 #define cpu_float_single_to_string( _environment, _x, _string, _string_size ) cpu6502_float_single_to_string( _environment, _x, _string, _string_size ) 

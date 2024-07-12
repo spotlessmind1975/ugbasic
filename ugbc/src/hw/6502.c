@@ -7068,6 +7068,46 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
     // }
     
 }
+void cpu6502_float_fast_from_int_array_to_double( Environment * _environment, int _value[], double * _result ) {
+    cpu6502_float_single_from_int_array_to_double( _environment,  _value, _result );
+}
+
+void cpu6502_float_single_from_int_array_to_double( Environment * _environment, int _value[], double * _result ) {
+    
+    int exp = ( _value[0] << 1 ) && ( ( _value[1] & 0x80 ) ? 0x01 : 0x00 );
+    exp = exp - 127;
+
+    int mantissa = ( ( _value[1] & 0x7f ) | _value[2] | _value[3] ) << 1;
+
+    *_result = 0.0;
+
+    double step = 0.5;
+
+    for( int i=0; i<24; ++i ) {
+        if ( mantissa & 0x800000 ) {
+            *_result += step;
+        }
+        step = step / 2;
+        mantissa = mantissa & 0x7fffff;
+    }
+
+    if ( exp > 0 ) {
+
+        for( int i=0; i<exp; ++i ) {
+            *_result = *_result * 2;
+        }
+
+    } else if ( exp < 0 ) {
+
+        exp = -exp;
+
+        for( int i=0; i<exp; ++i ) {
+            *_result = *_result / 2;
+        }
+
+    }
+    
+}
 
 void cpu6502_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
     cpu6502_float_single_to_string( _environment, _x, _string, _string_size );
