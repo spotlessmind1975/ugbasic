@@ -181,7 +181,6 @@ void begin_for_step_prepare( Environment * _environment ) {
 void begin_for_step_assign( Environment * _environment, char * _step ) {
 
     Loop * loop = _environment->loops;
-    Variable * step = variable_retrieve( _environment, _step );
 
     Variable * from = loop->from;
     Variable * to = loop->to;
@@ -198,10 +197,8 @@ void begin_for_step_assign( Environment * _environment, char * _step ) {
         // In this version, the step is given
         stepResident = variable_resident( _environment, maxType, "(step)" );
         variable_move( _environment, step->name, stepResident->name );
-        if ( step ) {
-            loop->step = step;
-            loop->step->locked = 1;
-        }
+        loop->step = step;
+        loop->step->locked = 1;
     } else {
         if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) ) {
             maxType = VT_SIGN( maxType );
@@ -215,11 +212,6 @@ void begin_for_step_assign( Environment * _environment, char * _step ) {
     loop->stepResident->locked = 1;
 
     cpu_return( _environment );
-
-    loop->step = step;
-    loop->step->locked = 1;
-    loop->stepResident = stepResident;
-    loop->stepResident->locked = 1;
 
 }
 
