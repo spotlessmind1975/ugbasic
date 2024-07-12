@@ -7074,27 +7074,40 @@ void cpu6502_float_fast_from_int_array_to_double( Environment * _environment, in
 
 void cpu6502_float_single_from_int_array_to_double( Environment * _environment, int _value[], double * _result ) {
     
-    int exp = ( _value[0] << 1 ) && ( ( _value[1] & 0x80 ) ? 0x01 : 0x00 );
+    // printf( "  value = %2.2x%2.2x%2.2x%2.2x\n", _value[0], _value[1], _value[2], _value[3] );
+
+    int sign = ( ( _value[0] & 0x80 ) ? -1 : 1 );
+
+    int exp = ( ( _value[0] << 1 ) & 0xff ) | ( ( _value[1] & 0x80 ) ? 0x01 : 0x00 );
     exp = exp - 127;
 
-    int mantissa = ( ( _value[1] & 0x7f ) | _value[2] | _value[3] ) << 1;
+    // printf( "  exp      = %d\n", exp );
 
-    *_result = 0.0;
+    int mantissa = ( (( _value[1] & 0x7f ) << 16) | (_value[2] << 8 ) | _value[3] ) << 1;
+
+    // printf( "  mantissa = %d\n", mantissa );
+
+    *_result = 1.0 * sign;
 
     double step = 0.5;
 
     for( int i=0; i<24; ++i ) {
+        // printf( "  %i) %f ->", i, *_result );
         if ( mantissa & 0x800000 ) {
-            *_result += step;
+            *_result += (sign * step);
         }
+        // printf( "  %f\n", *_result );
         step = step / 2;
         mantissa = mantissa & 0x7fffff;
+        mantissa = mantissa << 1;
     }
 
     if ( exp > 0 ) {
 
         for( int i=0; i<exp; ++i ) {
+            // printf( "  x %i) %f ->", i, *_result );
             *_result = *_result * 2;
+            // printf( " %f\n", *_result );
         }
 
     } else if ( exp < 0 ) {
@@ -7102,7 +7115,9 @@ void cpu6502_float_single_from_int_array_to_double( Environment * _environment, 
         exp = -exp;
 
         for( int i=0; i<exp; ++i ) {
+            // printf( "  x %i) %f ->", i, *_result );
             *_result = *_result / 2;
+            // printf( " %f\n", *_result );
         }
 
     }
