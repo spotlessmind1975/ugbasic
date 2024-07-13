@@ -6,7 +6,7 @@ int suite_fp( Environment * _environment ) {
 
     printf( "--- FLOAT <-> BYTES conversion\n" );
 
-    double values[] = { 10.0, 1.0, 0.1, 0.0, /*-0.1,*/ -1.0 -10.0 };
+    double values[] = { 10.0, 1.0, 0.1, 0.0, /*-0.1,*/ -1.0, -10.0, -0.3 };
 
     int expected[][4] = {
         // 10.0
@@ -36,6 +36,10 @@ int suite_fp( Environment * _environment ) {
         // -10.0
         {
             0x83, 0xB0, 0x00, 0x00
+        },
+        // -0.3
+        {
+            0x00, 0x00, 0x00, 0x00
         }
     };
      

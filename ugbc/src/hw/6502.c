@@ -6754,7 +6754,7 @@ void cpu6502_float_fast_from_double_to_int_array( Environment * _environment, do
     cpu6502_float_single_from_double_to_int_array( _environment, _value, _result );
 }
 
-const double sonda = -0.100000;
+const double sonda = 1.0;
 
 void cpu6502_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
     
@@ -6823,7 +6823,12 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         if ( fractional != 0.0 ) {
 
-            exp = -1;
+            if ( fractional != 1.0 ) {
+                exp = -1;
+            } else {
+                exp = -2;
+            }
+        
             // mantissaScaled = 1;
 
             if ( _value == sonda ) {
@@ -6972,7 +6977,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
                 }
                 left = left >> 1;
 
-                exp = exp + 1;
+                if( left ) {
+                    exp = exp + 1;
+                }
 
             }
 
@@ -7008,6 +7015,14 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
             }
 
+            if ( !sign ) {
+                --exp;
+            }
+
+            if ( integral == 1.0 && !sign ) {
+                --exp;
+            }
+
             if ( _value == sonda ) {
                 printf("bx*) exp = %d left = %8.8x right = %2.2x %2.2x %2.2x\n", exp, left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
             }
@@ -7025,7 +7040,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         // IEEE-754
         // exp += 127;
-        exp += 128;
+        exp += 129;
 
         if ( _value == sonda ) {
             printf("exp = %2.2x\n", exp );
@@ -7105,18 +7120,26 @@ void cpu6502_float_single_from_int_array_to_double( Environment * _environment, 
 
     // printf( "  mantissa = %6.6x\n", mantissa );
 
-    *_result = 0 * sign;
+    // IEEE-754
+    // *_result = 0 * sign;
+    if ( mantissa == 0 ) {
+        *_result = 2.0 * sign;
+    } else {
+        *_result = 1.0 * sign;
+    }
 
     double step = 0.5;
 
     for( int i=0; i<24; ++i ) {
         // printf( "  %i) %f ->", i, *_result );
-        if ( mantissa & 0x800000 ) {
+        // IEEE-754
+        // if ( mantissa & 0x800000 ) {
+        if ( mantissa & 0x400000 ) {
             *_result += (sign * step);
         }
         // printf( "  %f\n", *_result );
         step = step / 2;
-        mantissa = mantissa & 0x7fffff;
+        mantissa = mantissa & 0x3fffff;
         mantissa = mantissa << 1;
     }
 
