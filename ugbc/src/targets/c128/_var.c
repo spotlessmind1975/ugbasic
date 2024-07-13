@@ -759,7 +759,7 @@ void variable_cleanup( Environment * _environment ) {
 
     }    
 
-    buffered_push_output( );
+    buffered_push_output( _environment );
 
     outhead0(".segment \"BASIC\"");
     outline0(".byte $01,$1c,$0b,$1c,$00,$00,$9e,$37,$31,$38,$31,$00,$00,$00" );

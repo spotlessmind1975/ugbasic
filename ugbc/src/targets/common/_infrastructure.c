@@ -10641,62 +10641,58 @@ DataSegment * data_segment_define_or_retrieve_numeric( Environment * _environmen
 
 }
 
-int currentBufferOutput = 0;
-char * bufferOutput[16];
-int bufferOutputSize[16];
-
-static void buffered_realloc( const char * _ptr, int _size ) {
-    if ( bufferOutput[currentBufferOutput] ) {
-        bufferOutput[currentBufferOutput] = realloc( bufferOutput[currentBufferOutput], bufferOutputSize[currentBufferOutput] + _size );
+static void buffered_realloc( Environment * _environment, const char * _ptr, int _size ) {
+    if ( _environment->bufferOutput[_environment->currentBufferOutput] ) {
+        _environment->bufferOutput[_environment->currentBufferOutput] = realloc( _environment->bufferOutput[_environment->currentBufferOutput], _environment->bufferOutputSize[_environment->currentBufferOutput] + _size );
     } else {
-        bufferOutput[currentBufferOutput] = malloc( _size );
+        _environment->bufferOutput[_environment->currentBufferOutput] = malloc( _size );
     }
-    memcpy( bufferOutput[currentBufferOutput] + bufferOutputSize[currentBufferOutput], _ptr , _size );
-    bufferOutputSize[currentBufferOutput] += _size;
+    memcpy( _environment->bufferOutput[_environment->currentBufferOutput] + _environment->bufferOutputSize[_environment->currentBufferOutput], _ptr , _size );
+    _environment->bufferOutputSize[_environment->currentBufferOutput] += _size;
 }
 
-void buffered_fprintf( FILE * _stream, const char * _format, ... ) {
+void buffered_fprintf( Environment * _environment, FILE * _stream, const char * _format, ... ) {
     char temporaryBuffer[ MAX_TEMPORARY_STORAGE * 16 ];
     va_list args;
     va_start( args, _format );
     // vfprintf( _stream, _format, args );
     vsprintf( temporaryBuffer, _format, args );
-    buffered_realloc( temporaryBuffer, strlen( temporaryBuffer ) );
+    buffered_realloc( _environment, temporaryBuffer, strlen( temporaryBuffer ) );
     va_end( args );
 }
 
-int buffered_fputs( const char * _string, FILE * _stream ) {
+int buffered_fputs( Environment * _environment, const char * _string, FILE * _stream ) {
     // fputs( _string, _stream );
-    buffered_realloc( _string, strlen( _string ) );
+    buffered_realloc( _environment, _string, strlen( _string ) );
 }
 
-size_t buffered_fwrite( void * _data, size_t _size, size_t _count, FILE * _stream ) {
+size_t buffered_fwrite( Environment * _environment, void * _data, size_t _size, size_t _count, FILE * _stream ) {
     // fwrite( _data, _size, _count, _stream );
-    buffered_realloc( _data, _size * _count );
+    buffered_realloc( _environment, _data, _size * _count );
 }
 
-void buffered_push_output( ) {
-    ++currentBufferOutput;
+void buffered_push_output( Environment * _environment ) {
+    ++_environment->currentBufferOutput;
 }
 
-void buffered_pop_output( ) {
-    bufferOutput[currentBufferOutput] = NULL;
-    bufferOutputSize[currentBufferOutput] = 0;
-    --currentBufferOutput;
+void buffered_pop_output( Environment * _environment ) {
+    _environment->bufferOutput[_environment->currentBufferOutput] = NULL;
+    _environment->bufferOutputSize[_environment->currentBufferOutput] = 0;
+    --_environment->currentBufferOutput;
 }
 
-void buffered_prepend_output( ) {
-    char * p = malloc( bufferOutputSize[currentBufferOutput-1] + bufferOutputSize[currentBufferOutput] );
-    memset( p, 0, bufferOutputSize[currentBufferOutput-1] + bufferOutputSize[currentBufferOutput] );
-    memcpy( p, bufferOutput[currentBufferOutput], bufferOutputSize[currentBufferOutput] );
-    memcpy( p + bufferOutputSize[currentBufferOutput], bufferOutput[currentBufferOutput-1], bufferOutputSize[currentBufferOutput-1] );
-    bufferOutput[currentBufferOutput-1] = p;
-    bufferOutputSize[currentBufferOutput-1] = bufferOutputSize[currentBufferOutput-1] + bufferOutputSize[currentBufferOutput];
-    buffered_pop_output( );
+void buffered_prepend_output( Environment * _environment ) {
+    char * p = malloc( _environment->bufferOutputSize[_environment->currentBufferOutput-1] + _environment->bufferOutputSize[_environment->currentBufferOutput] );
+    memset( p, 0, _environment->bufferOutputSize[_environment->currentBufferOutput-1] + _environment->bufferOutputSize[_environment->currentBufferOutput] );
+    memcpy( p, _environment->bufferOutput[_environment->currentBufferOutput], _environment->bufferOutputSize[_environment->currentBufferOutput] );
+    memcpy( p + _environment->bufferOutputSize[_environment->currentBufferOutput], _environment->bufferOutput[_environment->currentBufferOutput-1], _environment->bufferOutputSize[_environment->currentBufferOutput-1] );
+    _environment->bufferOutput[_environment->currentBufferOutput-1] = p;
+    _environment->bufferOutputSize[_environment->currentBufferOutput-1] = _environment->bufferOutputSize[_environment->currentBufferOutput-1] + _environment->bufferOutputSize[_environment->currentBufferOutput];
+    buffered_pop_output( _environment );
 }
 
-void buffered_output( FILE * _stream ) {
-    fwrite( bufferOutput[currentBufferOutput], 1, bufferOutputSize[currentBufferOutput], _stream );
+void buffered_output( Environment * _environment, FILE * _stream ) {
+    fwrite( _environment->bufferOutput[_environment->currentBufferOutput], 1, _environment->bufferOutputSize[_environment->currentBufferOutput], _stream );
 }
 
 void get_image_overwrite_size( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2 ) {

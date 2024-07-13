@@ -155,9 +155,9 @@ void end_compilation( Environment * _environment ) {
                 line = strtok( NULL, "\x0a" );
             }
             free( _environment->deferredEmbedded[j] );
-            buffered_fwrite( parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile );
+            buffered_fwrite( _environment, parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile );
             free( parsed );
-            buffered_fputs( "\n", ((Environment *)_environment)->asmFile );
+            buffered_fputs( _environment,"\n", ((Environment *)_environment)->asmFile );
         }
     }
 
@@ -180,7 +180,7 @@ void end_compilation( Environment * _environment ) {
         fclose(_environment->debuggerLabelsFile);
     }
     
-    buffered_output( _environment->asmFile );
+    buffered_output( _environment, _environment->asmFile );
     
     fclose(_environment->asmFile);
 

@@ -47,7 +47,7 @@ void target_finalization( Environment * _environment ) {
     vic2_finalization( _environment );
     sid_finalization( _environment );
 
-    buffered_prepend_output( );
+    buffered_prepend_output( _environment );
 
 }
 

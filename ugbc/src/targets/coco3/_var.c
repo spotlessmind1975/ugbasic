@@ -562,7 +562,7 @@ void variable_cleanup( Environment * _environment ) {
 
     ////////////////////
 
-    buffered_push_output( );
+    buffered_push_output( _environment );
 
     outline0("ORG $2A00");
     outline0("STA $FFDF");
@@ -647,6 +647,6 @@ void variable_cleanup( Environment * _environment ) {
         outhead1("max_free_string equ $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
-    buffered_prepend_output( );
+    buffered_prepend_output( _environment );
 
 }
