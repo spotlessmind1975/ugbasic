@@ -36,7 +36,24 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ;-----------------------------------------------------------------------------
-; FP1TOSCRATCH1
+; FPFP1ZERO
+;-----------------------------------------------------------------------------
+; Routine to put register FP1 to zero.
+;
+; INPUT:  -
+; OUTPUT: FS1
+;
+
+FPFP1ZERO:
+       LDA #0
+       STA FP1X
+       STA FP1M
+       STA FP1M+1
+       STA FP1M+2
+       RTS
+
+;-----------------------------------------------------------------------------
+; FPFP1TOFS1
 ;-----------------------------------------------------------------------------
 ; Routine to convert IEEE-754 floating point register FP1 to 
 ; internal representation to floating point register FS1.
@@ -54,7 +71,7 @@
 ; INPUT:  FP1
 ; OUTPUT: FS1
 
-FP1TOSCRATCH1:
+FPFP1TOFS1:
 
        ; FP1 X (SEEEEEEE) -> FS1 X (EEEEEEE0)
        LDA FP1X
@@ -84,11 +101,12 @@ FP1TOSCRATCH1:
        LDA FP1X
        AND #$80
        ORA FS1M
+       STA FS1M
 
        RTS
 
 ;-----------------------------------------------------------------------------
-; FP1FROMSCRATCH1
+; FPFS1TOFP1
 ;-----------------------------------------------------------------------------
 ; Routine to convert internal representation to floating point register FS1
 ; to IEEE-754 floating point register FP1.
@@ -106,15 +124,17 @@ FP1TOSCRATCH1:
 ; INPUT:  FS1
 ; OUTPUT: FP1
 
-FP1FROMSCRATCH1:
+FPFS1TOFP1:
+
+       JSR FPFP1ZERO
 
        ; FS1 X (EEEEEEEE) -> FP1 X (0EEEEEEE)
        LDA FS1X
        LSR
        STA FP1X
 
-       ; FP1 M (SMMMMMMM) -> A (S0000000)
-       LDA FP1M
+       ; FS1 M (SMMMMMMM) -> A (S0000000)
+       LDA FS1M
        AND #$80
 
        ; FP1 X (SEEEEEEE)
@@ -135,13 +155,14 @@ FP1FROMSCRATCH1:
        AND #$01
        ROR
        ROR
+       AND #$80
        ORA FP1M
        STA FP1M
 
        RTS
 
 ;-----------------------------------------------------------------------------
-; FP2TOSCRATCH2
+; FPFP2TOFS2
 ;-----------------------------------------------------------------------------
 ; Routine to convert IEEE-754 floating point register FP2 to 
 ; internal representation to floating point register FS2.
@@ -149,7 +170,7 @@ FP1FROMSCRATCH1:
 ; INPUT:  FP2
 ; OUTPUT: FS2
 
-FP2TOSCRATCH2:
+FPFP2TOFS2:
 
        LDA FP2X
        STA FS2X
@@ -174,123 +195,221 @@ FP2TOSCRATCH2:
        LDA FP2X
        AND #$80
        ORA FS2M
+       STA FS2M
 
        RTS
 
 ;-----------------------------------------------------------------------------
-; FPNORMALIZE
+; FPFS1FS2ALIGN
 ;-----------------------------------------------------------------------------
-; Routine to normalize the second FS2 register in respect of the
-; FS1 register. Normalization means that the FS2 will be "scaled"
-; to the same magnitude of FS1 (in term of exponent), and they
-; will have first bit put to one.
+; Routine to align the exponents of both FS1 and FS2 registers. Alignment means
+; that the FS2 will be "scaled" to the same magnitude of FS1 (in term of 
+; exponent). If FS1 or FS2 has 0 as exponent, nothing is done.
 ;
 ; INPUT:  FS1 FS2
 ; OUTPUT: FS1 FS2
 ;
-FPNORMALIZE:
+FPFS1FS2ALIGN:
+
+       ; Check if the exponent of FS1 is zero:
+       ; if it is so, nothing is done.
+       LDA FS1X
+       BNE FPFS1FS2ALIGN0
+
+       ; Check if the exponent of FS2 is zero:
+       ; if it is so, nothing is done.
+       LDA FS2X
+       BNE FPFS1FS2ALIGN0
+
+FPFS1FS2ALIGNR:
 
        ; Check if the exponent of FS2 is the same of FS1.
-       ; In that case, we have finished!
-
+       ; In that case, we have finished
        LDA FS1X
        CMP FS2X 
-       BNE FPNORMALIZEL1
+       BNE FPFS1FS2ALIGNL1
 
+FPFS1FS2ALIGN0:
        RTS
 
-FPNORMALIZEL1:
+FPFS1FS2ALIGNL1:
 
        ; X2 - X1 > 0 => X2 > X1 ?
-       BCS FPNORMALIZEG
+       BCS FPFS1FS2ALIGNG
 
-       JSR FPSCALEUPX1
-       JMP FPNORMALIZE
+       JSR FPFS1SCALEUP
+       JMP FPFS1FS2ALIGNR
 
-FPNORMALIZEG:
-       JSR FPSCALEUPX2
-       JMP FPNORMALIZE
+FPFS1FS2ALIGNG:
+       JSR FPFS2SCALEUP
+       JMP FPFS1FS2ALIGNR
 
 ;-----------------------------------------------------------------------------
-; FPSCALEUPX1
+; FPFS1SCALEUP
 ;-----------------------------------------------------------------------------
-; Routine to scale up register FS1. This means that the number will be
-; doubled and, if mantissa will arrive to zero, a 1 will be put at the
-; very beginning of the mantissa.
+; Routine to scale up register FS1. This means that the number will be doubled.
 ;
 ; INPUT:  FS1
 ; OUTPUT: FS1
 ;
 
-FPSCALEUPX1:
+FPFS1SCALEUP:
 
        ; Increase exponent.
        INC FS1X
+
+       ; Preserve the sign
+       LDA FS1M
+       AND #$80
+       PHA
 
        ; Halve the mantissa.
        LSR FS1M
        ROR FS1M+1
        ROR FS1M+2
 
-       ; Check if mantissa is zero.
-       LDA FS1M
-       ORA FS1M+1
-       ORA FS1M+2
-       BNE FPSCALEUPX1DONE
-
-       ; Mantissa is zero: put a 1 on 
-       ; the first mantissa's bit
-       LDA #$40
+       ; Preserve the sign
+       PLA
+       ORA FS1M
        STA FS1M
 
-FPSCALEUPX1DONE:
-       ; Next step!
        RTS
 
 ;-----------------------------------------------------------------------------
-; FPSCALEUPX2
+; FPFS2SCALEUP
 ;-----------------------------------------------------------------------------
-; Routine to scale up register FS2. This means that the number will be
-; doubled and, if mantissa will arrive to zero, a 1 will be put at the
-; very beginning of the mantissa.
+; Routine to scale up register FS2. This means that the number will be doubled.
 ;
 ; INPUT:  FS2
 ; OUTPUT: FS2
 ;
 
-FPSCALEUPX2:
+FPFS2SCALEUP:
 
        ; Increase exponent.
        INC FS2X
+
+       ; Preserve the sign
+       LDA FS2M
+       AND #$80
+       PHA
 
        ; Halve the mantissa.
        LSR FS2M
        ROR FS2M+1
        ROR FS2M+2
 
-       ; Check if mantissa is zero.
-       LDA FS2M
-       ORA FS2M+1
-       ORA FS2M+2
-       BNE FPSCALEUPX2DONE
-
-       ; Mantissa is zero: put a 1 on 
-       ; the first mantissa's bit
-       LDA #$40
+       ; Preserve the sign
+       PLA
+       ORA FS2M
        STA FS2M
 
-FPSCALEUPX2DONE:
-       ; Next step!
+       RTS
+
+;-----------------------------------------------------------------------------
+; FPFS1PREPEND
+;-----------------------------------------------------------------------------
+; Routine to prepend a '1' in front of the mantissa, retaining the sign.
+;
+; INPUT:  FS1
+; OUTPUT: FS1, C
+;
+
+FPFS1PREPEND:
+
+       ; Preserve the sign
+       LDA FS1M
+       AND #$80
+       PHA
+
+       ; Exponent is zero?
+       LDA FS1X
+       BEQ FPFS1PREPENDL1
+
+       ; Put 1 in front of mantissa
+       LDA FS1M
+       ORA #$80
+       STA FS1M
+
+FPFS1PREPENDL1:
+       ; Retrieve the sign
+       PLA
+       ROL
+
+       RTS
+
+;-----------------------------------------------------------------------------
+; FPFS2PREPEND
+;-----------------------------------------------------------------------------
+; Routine to prepend a '1' in front of the mantissa, retaining the sign.
+;
+; INPUT:  FS2
+; OUTPUT: FS2, C
+;
+
+FPFS2PREPEND:
+
+       ; Preserve the sign
+       LDA FS2M
+       AND #$80
+       PHA
+
+       ; Exponent is zero?
+       LDA FS2X
+       BEQ FPFS2PREPENDL1
+
+       ; Put 1 in front of mantissa
+       LDA FS2M
+       ORA #$80
+       STA FS2M
+
+FPFS2PREPENDL1:
+
+       ; Retrieve the sign
+       PLA
+       ROL
+
+       RTS
+
+;-----------------------------------------------------------------------------
+; FPFS1NORMALIZE
+;-----------------------------------------------------------------------------
+; Routine to normalize FS1. It can happen that after adding, the binary point 
+; no longer appears after the first 1. In this case, the binary point must be 
+; shifted behind the first 1 again and the exponent is adjusted accordingly.
+;
+; INPUT:  FS1
+; OUTPUT: FS1
+;
+
+FPFS1NORMALIZE:
+
+       ; Check if carry bit is 1.
+       BCS FPFS1NORMALIZEL1
+       RTS
+
+FPFS1NORMALIZEL1:
+
+       JSR FPFS1SCALEUP
        RTS
 
 BEGIN:
 
 FADD:
 FPADD:
-       JSR FP1TOSCRATCH1
-       JSR FP2TOSCRATCH2
-       JSR FPNORMALIZE
+       ; 1. Convert exponents to decimal numbers, or:
+       ;    convert IEEE-754 into internal rappresentation.
+       JSR FPFP1TOFS1
+       JSR FPFP2TOFS2
 
+       ; 2. Prepend implicit 1 to mantissas:
+       JSR FPFS1PREPEND
+       JSR FPFS2PREPEND
+
+       ; 3. Shift binary point to align exponents:
+       JSR FPFS1FS2ALIGN
+
+       ; 4. Add mantissas:
        CLC
        LDA FS2M+2
        ADC FS1M+2
@@ -302,8 +421,17 @@ FPADD:
        ADC FS1M
        STA FS1M
 
-       JSR FP1FROMSCRATCH1
+       ; 5. Normalization:
+       JSR FPFS1NORMALIZE
+
+       ; 6. Rounding:
+       ; 7. Convert exponent to binary number
+       ; 8. Assemble floating point number:
+       ; convert internal rappresentation to IEEE-754
+       JSR FPFS1TOFP1
+
        RTS
+
 FCMP:
 FCOS:
 FDIV:
