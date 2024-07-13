@@ -48,4 +48,19 @@
  * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
 
+// WORKERS
+
+void execute6502( Environment * _environment, char * _asm_filename, Variable * _variable );
+
+// TESTS
+
+void test_fp_conversion_to_bytes( Environment * _environment, double _value, int _expected[4] );
+void test_fp_conversion_to_double( Environment * _environment, int _value[4], double _expected );
+void test_fp_6502_add( Environment * _environment, double _first, double _second, double _expected );
+
+// SUITES
+
+int suite_fp_6502( Environment * _environment );
+int suite_fp( Environment * _environment );
+
 #endif
