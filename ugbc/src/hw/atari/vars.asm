@@ -100,22 +100,16 @@ DEXP   = OVFLO+23        ; current value of the decimal exponent.
 BCDA   = OVFLO+32        ; BCD accumulator (5 bytes)
 BCDN   = OVFLO+37        ; ???
 
-; ----------------------------------------------------------------------------
-; FLOATING POINT ZERO PAGED REGISTERS
-; ----------------------------------------------------------------------------
-; --- FIRST FP REGISTER (FP1) --- 
-FP1X: .byte $00
-FP1M: .byte $00, $00, $00
-; --- SECOND FP REGISTER (FP1) --- 
-FP2X: .byte $00
-FP2M: .byte $00, $00, $00
-; --- FIRST SCRATCH FP REGISTER (FS1) --- 
-FS1X: .byte $00
-FS1M: .byte $00, $00, $00
-; --- SECOND SCRATCH FP REGISTER (FS2) --- 
-FS2X: .byte $00
-FS2M: .byte $00, $00, $00
-; ----------------------------------------------------------------------------
+SIGN = $DC
+X2   = SIGN+1        ; EXPONENT 2
+M2   = X2+1          ; MANTISSA 2
+X1   = M2+3          ; EXPONENT 1
+M1   = X1+1          ; MANTISSA 1
+E    = M1+3          ; SCRATCH
+ZZ   = E+4
+T    = ZZ+4
+SEXP = T+4
+INT  = SEXP+4
 
 DIRECTION = $92
 CHARACTERS = $93

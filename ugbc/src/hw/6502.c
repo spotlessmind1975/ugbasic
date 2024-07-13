@@ -6754,7 +6754,7 @@ void cpu6502_float_fast_from_double_to_int_array( Environment * _environment, do
     cpu6502_float_single_from_double_to_int_array( _environment, _value, _result );
 }
 
-// const double sonda = -1;
+const double sonda = -0.100000;
 
 void cpu6502_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
     
@@ -6800,10 +6800,10 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         left = (unsigned int) integral;
 
-        // if ( _value == sonda ) {
-        //     printf("============================\n" );
-        //     printf("value = %f, left = %d, integral = %f, fractional = %f\n", value, left, integral, fractional );
-        // }
+        if ( _value == sonda ) {
+            printf("============================\n" );
+            printf("value = %f, left = %d, integral = %f, fractional = %f\n", value, left, integral, fractional );
+        }
 
         // Step 3: Convert the Fractional Portion to Binary
         // The fractional portion of the number must also be converted to binary, though the conversion process 
@@ -6826,9 +6826,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
             exp = -1;
             // mantissaScaled = 1;
 
-            // if ( _value == sonda ) {
-            //     printf("%d-) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
-            // }
+            if ( _value == sonda ) {
+                printf("%d-) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
+            }
 
             // fractional = fractional * 2;
 
@@ -6853,9 +6853,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
                     ++steps;
 
-                    // if ( _value == sonda ) {
-                    //     printf("%d) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
-                    // }
+                    if ( _value == sonda ) {
+                        printf("%d) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
+                    }
 
                     // if (  ( fractional != 1.0 ) && ( steps < mantissa_bits )  ) {
 
@@ -6878,9 +6878,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
             }
 
-            // if ( _value == sonda ) {
-            //     printf("%d*) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
-            // }
+            if ( _value == sonda ) {
+                printf("%d*) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
+            }
 
         }
 
@@ -6911,9 +6911,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
                 while( left == 0 ) {
 
-                    // if ( _value == sonda ) {
-                    //     printf("a) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x fractional = %f\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
-                    // }
+                    if ( _value == sonda ) {
+                        printf("a) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x fractional = %f\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
+                    }
 
                     if ( ! right[0] && ! right[1] && ! right[2] ) {
                         left = 0x1;
@@ -6945,15 +6945,15 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
             }
 
-            // if ( _value == sonda ) {
-            //     printf("ax) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-            // }
+            if ( _value == sonda ) {
+                printf("ax) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+            }
 
             while( left ) {
 
-                // if ( _value == sonda ) {
-                //     printf("ay) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-                // }
+                if ( _value == sonda ) {
+                    printf("ay) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+                }
 
                 if ( ( right[0] & 0x01 ) ) {
                     right[1] = right[1] | 0x100;
@@ -6964,7 +6964,10 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
                 right[0] = right[0] >> 1;
                 right[1] = right[1] >> 1;
                 right[2] = right[2] >> 1;
-                if ( ( left & 0x1 ) && left != 1 ) {
+
+                // IEEE-754
+                // if ( ( left & 0x1 ) && left != 1 ) {
+                if ( ( left & 0x1 ) ) {
                     right[0] = right[0] | 0x80;
                 }
                 left = left >> 1;
@@ -6973,6 +6976,7 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
             }
 
+            // IEEE-754
             // ++exp;
 
         } else {
@@ -6980,9 +6984,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
             if ( left > 1 ) {
                 while( left > 1 ) {
 
-                    // if ( _value == sonda ) {
-                    //     printf("bx) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-                    // }
+                    if ( _value == sonda ) {
+                        printf("bx) exp = %d left = %8.8x right = %2.2x %2.2x %2.2x\n", exp, left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+                    }
 
                     if ( ( right[0] & 0x01 ) ) {
                         right[1] = right[1] | 0x100;
@@ -7000,13 +7004,13 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
                     ++exp;
                 }
 
-                ++exp;
+                // ++exp;
 
             }
 
-            // if ( _value == sonda ) {
-            //     printf("bx*) exp = %d left = %8.8x right = %2.2x %2.2x %2.2x\n", exp, left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-            // }
+            if ( _value == sonda ) {
+                printf("bx*) exp = %d left = %8.8x right = %2.2x %2.2x %2.2x\n", exp, left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+            }
         
         }
 
@@ -7019,11 +7023,13 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
         // exponent field of the IEEE-754 number. As such, in this step, we need to add 127 to the normalized exponent value 
         // from the previous step.
 
-        exp += 127;
+        // IEEE-754
+        // exp += 127;
+        exp += 128;
 
-        // if ( _value == sonda ) {
-        //     printf("exp = %2.2x\n", exp );
-        // }
+        if ( _value == sonda ) {
+            printf("exp = %2.2x\n", exp );
+        }
 
         // Step 6: Convert the Biased Exponent to Unsigned Binary
         // The biased exponent value from the previous step must be converted into unsigned binary, using the usual process.
@@ -7033,9 +7039,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         exp = exp & 0xff;
 
-        // if ( _value == sonda ) {
-        //     printf("exp = %d\n", exp );
-        // }
+        if ( _value == sonda ) {
+            printf("exp = %d\n", exp );
+        }
 
         // Step 7: Determine the Final Bits for the Mantissa
         // After step 4, there are a bunch of bits after the normalized decimal point. These bits will become the 
@@ -7056,16 +7062,23 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
         //                  [0]      [1]      [2]      [3]      [4]      [5]      [6]      [7]      [8]      [9]
         // SINGLE	(32)  	seeeeeee emmmmmmm mmmmmmmm mmmmmmmm
 
-        _result[0] = ( sign << 7 ) | ( exp >> 1 );
-        _result[1] = ( ( exp & 0x01 ) << 7 ) | ( right[0] >> 1 );
+        // IEEE-754 format
+        // _result[0] = ( sign << 7 ) | ( exp >> 1 );
+        // _result[1] = ( ( exp & 0x01 ) << 7 ) | ( right[0] >> 1 );
+        // _result[2] = ( ( right[0] & 0x01 ) << 7 ) | ( right[1] >> 1 );
+        // _result[3] = ( ( right[1] & 0x01 ) << 7 ) | ( right[2] >> 1 );
+
+        // WOZNIAK format
+        _result[0] = exp;
+        _result[1] = ( ( sign & 0x01 ) << 7 ) | ( right[0] >> 1 );
         _result[2] = ( ( right[0] & 0x01 ) << 7 ) | ( right[1] >> 1 );
         _result[3] = ( ( right[1] & 0x01 ) << 7 ) | ( right[2] >> 1 );
 
     }
 
-    // if ( _value == sonda ) {
-    //     printf( "--------------> %f %2.2x %2.2x %2.2x %2.2x\n\n", _value, _result[0], _result[1], _result[2], _result[3] );
-    // }
+    if ( _value == sonda ) {
+        printf( "--------------> %f %2.2x %2.2x %2.2x %2.2x\n\n", _value, _result[0], _result[1], _result[2], _result[3] );
+    }
     
 }
 void cpu6502_float_fast_from_int_array_to_double( Environment * _environment, int _value[], double * _result ) {
@@ -7076,18 +7089,23 @@ void cpu6502_float_single_from_int_array_to_double( Environment * _environment, 
     
     // printf( "  value = %2.2x%2.2x%2.2x%2.2x\n", _value[0], _value[1], _value[2], _value[3] );
 
-    int sign = ( ( _value[0] & 0x80 ) ? -1 : 1 );
+    // IEEE-754
+    // int sign = ( ( _value[0] & 0x80 ) ? -1 : 1 );
+    int sign = ( ( _value[1] & 0x80 ) ? -1 : 1 );
 
-    int exp = ( ( _value[0] << 1 ) & 0xff ) | ( ( _value[1] & 0x80 ) ? 0x01 : 0x00 );
-    exp = exp - 127;
+    // IEEE-754
+    // int exp = ( ( _value[0] << 1 ) & 0xff ) | ( ( _value[1] & 0x80 ) ? 0x01 : 0x00 );
+    // exp = exp - 127;
+    int exp = _value[0] & 0xff;
+    exp = exp - 128;
 
     // printf( "  exp      = %d\n", exp );
 
     int mantissa = ( (( _value[1] & 0x7f ) << 16) | (_value[2] << 8 ) | _value[3] ) << 1;
 
-    // printf( "  mantissa = %d\n", mantissa );
+    // printf( "  mantissa = %6.6x\n", mantissa );
 
-    *_result = 1.0 * sign;
+    *_result = 0 * sign;
 
     double step = 0.5;
 
@@ -7327,32 +7345,32 @@ void cpu6502_float_single_add( Environment * _environment, char * _x, char * _y,
     deploy( fp_vars, src_hw_6502_fp_routines_asm );
 
     outline1( "LDA %s", address_displacement( _environment, _x, "0" ) );
-    outline0( "STA FP1X" );
+    outline0( "STA X1" );
     outline1( "LDA %s", address_displacement( _environment, _x, "1" ) );
-    outline0( "STA FP1M" );
+    outline0( "STA M1" );
     outline1( "LDA %s", address_displacement( _environment, _x, "2" ) );
-    outline0( "STA FP1M+1" );
+    outline0( "STA M1+1" );
     outline1( "LDA %s", address_displacement( _environment, _x, "3" ) );
-    outline0( "STA FP1M+2" );
+    outline0( "STA M1+2" );
 
     outline1( "LDA %s", address_displacement( _environment, _y, "0" ) );
-    outline0( "STA FP2X" );
+    outline0( "STA X2" );
     outline1( "LDA %s", address_displacement( _environment, _y, "1" ) );
-    outline0( "STA FP2M" );
+    outline0( "STA M2" );
     outline1( "LDA %s", address_displacement( _environment, _y, "2" ) );
-    outline0( "STA FP2M+1" );
+    outline0( "STA M2+1" );
     outline1( "LDA %s", address_displacement( _environment, _y, "3" ) );
-    outline0( "STA FP2M+2" );
+    outline0( "STA M2+2" );
 
     outline0( "JSR FADD");
 
-    outline0( "LDA FP1X" );
+    outline0( "LDA X1" );
     outline1( "STA %s", address_displacement( _environment, _result, "0" ) );
-    outline0( "LDA FP1M" );
+    outline0( "LDA M1" );
     outline1( "STA %s", address_displacement( _environment, _result, "1" ) );
-    outline0( "LDA FP1M+1" );
+    outline0( "LDA M1+1" );
     outline1( "STA %s", address_displacement( _environment, _result, "2" ) );
-    outline0( "LDA FP1M+2" );
+    outline0( "LDA M1+2" );
     outline1( "STA %s", address_displacement( _environment, _result, "3" ) );
 
 }
