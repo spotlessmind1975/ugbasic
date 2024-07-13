@@ -11,10 +11,10 @@ void execute6502( Environment * _environment, char * _asm_filename, Variable * _
     sprintf( mapFileName, "%s.lbl", mapFileNameRoot );
 
     char commandLine[4*MAX_TEMPORARY_STORAGE];
-    sprintf( commandLine, "cl65 -g -Ln %s --start-addr 32768 -t none -o %s %s >/dev/null", mapFileName, binaryFileName, _asm_filename );
+    sprintf( commandLine, "cl65 -g -Ln %s --start-addr 32768 -t none -o %s %s", mapFileName, binaryFileName, _asm_filename );
     // printf( "%s\n", commandLine );
     (void)!system( commandLine );
-    sprintf( commandLine, "run6502 -l 8000 %s -R 8000 -X 0000 -D >/dev/null 2>/dev/null", binaryFileName );
+    sprintf( commandLine, "run6502 -l 8000 %s -R 8000 -X 0000 -D", binaryFileName );
     // printf( "%s\n", commandLine );
     (void)!system( commandLine );
 

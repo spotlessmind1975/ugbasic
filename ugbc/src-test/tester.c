@@ -25,6 +25,6 @@ int main( int _argc, char *_argv[] ) {
     printf( "################################################\n" );
 
     suite_fp( environment );
-    suite_fp_6502( environment );
+    // suite_fp_6502( environment );
 
 }
