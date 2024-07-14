@@ -47,7 +47,7 @@
  */
 void linker_setup( Environment * _environment ) {
 
-    IF ( _environment->program.startingAddress < 0X1c0e ) {
+    if ( _environment->program.startingAddress < 0x1c0e ) {
         CRITICAL_INVALID_PROGRAM_START( _environment->program.startingAddress );
     }
 
