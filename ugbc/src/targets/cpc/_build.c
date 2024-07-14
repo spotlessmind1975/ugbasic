@@ -166,8 +166,10 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
     TRACE1( "exeFileName = %s", _environment->exeFileName );
     TRACE1( "diskName    = %s", diskName );
 
-    sprintf( commandLine, "\"%s\" +cpc --org 256 --exec 256 --disk -b \"%s\" -o \"%s\" %s",
+    sprintf( commandLine, "\"%s\" +cpc --org %d --exec %d --disk -b \"%s\" -o \"%s\" %s",
         executableName,
+        _environment->program.startingAddress,
+        _environment->program.startingAddress,
         binaryName,
         diskName,
         pipes );
@@ -356,8 +358,10 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
 
     if ( !storage ) {
 
-        sprintf( commandLine, "\"%s\" +cpc --org 256 --exec 256 --disk --blockname \"%s\" -b \"%s\" -o \"%s\" %s",
+        sprintf( commandLine, "\"%s\" +cpc --org %d --exec %d --disk --blockname \"%s\" -b \"%s\" -o \"%s\" %s",
             executableName,
+            _environment->program.startingAddress,
+            _environment->program.startingAddress,
             basename(binaryName),
             binaryName,
             diskName,
@@ -416,9 +420,11 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
                 fileStorage = fileStorage->next;
             }
 
-            sprintf( commandLine, "\"%s\" +cpc --afile %s --org 256 --exec 256 --disk --blockname \"%s\" -b \"%s\" -o \"%s\" %s",
+            sprintf( commandLine, "\"%s\" +cpc --afile %s --org %d --exec %d --disk --blockname \"%s\" -b \"%s\" -o \"%s\" %s",
                 executableName,
                 additionalFiles,
+                _environment->program.startingAddress,
+                _environment->program.startingAddress,
                 basename( binaryName ),
                 binaryName,
                 diskName,
@@ -444,18 +450,18 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
                     if ( storage->fileName ) {
                         strcat( basePath, storage->fileName );
                     } else {
-                        strcat( basePath, "disk%d.atr" );
+                        strcat( basePath, "disk%d.dsk" );
                     }
                 } else {
                     if ( storage->fileName ) {
                         strcpy( filemask, storage->fileName );
                     } else {
-                        strcpy( filemask, "disk%d.atr" );
+                        strcpy( filemask, "disk%d.dsk" );
                     }
                 }
                 sprintf( diskName, filemask, i );
-                if ( !strstr( diskName, ".atr" ) ) {
-                    strcat( diskName, ".atr" );
+                if ( !strstr( diskName, ".dsk" ) ) {
+                    strcat( diskName, ".dsk" );
                 }
 
             #ifdef _WIN32

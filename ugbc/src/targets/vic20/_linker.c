@@ -63,7 +63,7 @@ void linker_setup( Environment * _environment ) {
     cfgline0("DATA:     load = MAIN,  type = rw,  optional = yes;");
     cfgline0("BSS:      load = MAIN,  type = bss, optional = yes;");
     cfgline0("UDCCHAR:  load = MAIN, type = overwrite,  optional = yes, start = $1800;");
-    cfgline0("CODE:     load = MAIN,  type = overwrite,  optional = yes, start = $2000;");
+    cfgline1("CODE:     load = MAIN,  type = overwrite,  optional = yes, start = $%4.4x;", _environment->program.startingAddress);
 
 }
 

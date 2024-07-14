@@ -80,7 +80,7 @@ void linker_setup( Environment * _environment ) {
     // cfgline0("EXEHDR:   load = MAIN,     type = ro,  optional = yes;");
 
     cfgline0("BASIC:    load = MAIN,     type = ro,  optional = no;");
-    cfgline0("CODE:     load = MAIN,     type = rw;");
+    cfgline1("CODE:     load = MAIN,     type = rw,  start = $%4.4x;", _environment->program.startingAddress);
     cfgline0("RODATA:   load = MAIN,     type = ro,  optional = yes;");
     cfgline0("DATA:     load = MAIN,     type = rw,  optional = yes;");
     cfgline0("BSS:      load = MAIN,     type = bss, optional = yes, define = yes;");

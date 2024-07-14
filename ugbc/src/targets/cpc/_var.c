@@ -417,6 +417,17 @@ void variable_cleanup( Environment * _environment ) {
 
     variable_on_memory_init( _environment, 1 );
 
+    buffered_push_output( _environment );
+
+    // outhead0("SECTION code_user");
+    outhead1("ORG $%4.4x", _environment->program.startingAddress);
+    outline0("JP CODESTART");
+    // outhead0("SECTION data_user");
+    // outhead0("ORG $7030");
+    // outhead0("SECTION code_user");
+
+    deploy( startup, src_hw_cpc_startup_asm);
+
     DataSegment * dataSegment = _environment->dataSegment;
     while( dataSegment ) {
         int i=0;

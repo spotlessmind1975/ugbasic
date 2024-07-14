@@ -42,6 +42,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
+    _environment->program.startingAddress = 0x2001;
+
     cpu6502_init( _environment );
 
     banks_init( _environment );
@@ -83,9 +85,9 @@ void target_initialization( Environment * _environment ) {
         exit(EXIT_FAILURE);
     }
 
-    outhead0(".segment \"BASIC\"");
-    outline0(".byte $01, $12, $0B, $12, $00, $00, $9E, $38, $31, $39, $32, $00, $00, $00, $00");
-    outhead0(".segment \"CODE\"");
+    // outhead0(".segment \"BASIC\"");
+    // outline0(".byte $01, $12, $0B, $12, $00, $00, $9E, $38, $31, $39, $32, $00, $00, $00, $00");
+    // outhead0(".segment \"CODE\"");
 
     outhead0("CODESTART:");
 

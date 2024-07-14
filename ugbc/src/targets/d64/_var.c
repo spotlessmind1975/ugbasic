@@ -511,7 +511,15 @@ void variable_cleanup( Environment * _environment ) {
 
     buffered_push_output( _environment );
 
+    if ( ( _environment->program.startingAddress < 0x2800 ) ) {
+        CRITICAL_INVALID_PROGRAM_START( _environment->program.startingAddress );
+    }
+
     outline0("ORG $2800");
+    if ( ( _environment->program.startingAddress - 0x2800 ) > 0 ) {
+        outline0("JMP CODESTART" );
+        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2800 ) );
+    }
     outhead0("CODESTART");
     outline0("LDS #$7000");
     outline0("JMP CODESTART2");

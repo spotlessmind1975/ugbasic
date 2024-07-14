@@ -42,6 +42,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
+    _environment->program.startingAddress = 0x080e;
+
     cpu6502_init( _environment );
 
     _environment->audioConfig.async = 1;

@@ -384,6 +384,29 @@ void variable_cleanup( Environment * _environment ) {
         c = c->next;
     }
 
+    int startingAddressLo = ( _environment->program.startingAddress & 0xff );
+    int startingAddressHi = ( (_environment->program.startingAddress >> 8 ) & 0xff );
+
+    if ( _environment->program.startingAddress < 0x1c2f ) {
+        CRITICAL_INVALID_PROGRAM_START( _environment->program.startingAddress );
+    }
+
+    buffered_push_output( _environment );
+    outhead0("ORG $1BFF");
+    outhead0("DEFB $01, $1C, $0F, $1C, $00, $00, $FE, $02" );
+    outhead0("DEFB $30, $3A, $9E, $37, $31, $38, $35, $00" );
+    outhead0("DEFB $00, $00, $78, $A9, $C3, $8D, $EE, $FF" );
+    outhead2("DEFB $A9, $%2.2x, $8D, $EF, $FF, $A9, $%2.2x, $8D", startingAddressLo, startingAddressHi );
+    outhead0("DEFB $F0, $FF, $A9, $3E, $8D, $00, $FF, $A9" );
+    outhead0("DEFB $B0, $8D, $05, $D5, $EA, $EA, $EA, $EA" );
+    if ( ( _environment->program.startingAddress - 0x1c2f ) > 0 ) {
+        outhead1("DEFS %d, 0", ( _environment->program.startingAddress - 0x1c2f ) );
+    }
+    outhead0("JP CODESTART" );
+
+    deploy_inplace( startup, src_hw_c128z_startup_asm);
+    deploy( startup, src_hw_c128z_startup2_asm);
+
     banks_generate( _environment );
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {

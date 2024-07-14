@@ -46,6 +46,8 @@ void target_finalization( Environment * _environment ) {
 
     vic1_finalization( _environment );
 
+    buffered_prepend_output( _environment );
+
 }
 
 void target_analysis( Environment * _environment ) {

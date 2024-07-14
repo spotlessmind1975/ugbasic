@@ -42,6 +42,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
+    _environment->program.startingAddress = 0x1c2f;
+
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
     banks_init( _environment );
@@ -110,10 +112,9 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
     // outhead0("SECTION code_user");
-    outhead0("ORG $1BFF");
-
-    deploy_inplace( startup, src_hw_c128z_startup_asm);
-    deploy_deferred( startup, src_hw_c128z_startup2_asm);
+    // outhead0("ORG $1BFF");
+    // deploy_inplace( startup, src_hw_c128z_startup_asm);
+    // deploy_deferred( startup, src_hw_c128z_startup2_asm);
 
     outhead0("CODESTART:")
 

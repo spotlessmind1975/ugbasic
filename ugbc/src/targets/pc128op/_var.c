@@ -689,7 +689,7 @@ void variable_cleanup( Environment * _environment ) {
 
     buffered_push_output( _environment );
 
-    outline0("ORG $3000");
+    outline1("ORG $%4.4x", _environment->program.startingAddress );
     outhead0("CODESTART");
     outline0("LDS #$2FFF");
     outline0("JMP CODESTART2");

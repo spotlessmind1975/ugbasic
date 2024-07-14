@@ -761,8 +761,19 @@ void variable_cleanup( Environment * _environment ) {
 
     buffered_push_output( _environment );
 
+    char buffer[32];
+    sprintf( buffer, "%5.5d", _environment->program.startingAddress );
+
     outhead0(".segment \"BASIC\"");
-    outline0(".byte $01,$1c,$0b,$1c,$00,$00,$9e,$37,$31,$38,$31,$00,$00,$00" );
+    outline0(".byte $01,$1c,$0b,$1c,$00,$00,$9e");
+    outline5(".byte $%2.2x,$%2.2x,$%2.2x,$%2.2x,$%2.2x",
+        buffer[0],
+        buffer[1],
+        buffer[2],
+        buffer[3],
+        buffer[4]
+    );
+    outline0(".byte $00,$00,$00" );
     outhead0(".segment \"CODE\"");
     outline0("NOP");
     outline0("NOP");

@@ -47,10 +47,18 @@
  */
 void linker_setup( Environment * _environment ) {
 
-    int size = _environment->frameBufferStart - 0x2000;
+    if ( _environment->program.startingAddress < 0x2000 ) {
+        CRITICAL_INVALID_PROGRAM_START( _environment->program.startingAddress );
+    }
+
+    int size = _environment->frameBufferStart - _environment->program.startingAddress;
+
+    if ( size < 0 ) {
+        CRITICAL_INVALID_PROGRAM_START( _environment->program.startingAddress );
+    }
 
     cfghead0("FEATURES {");
-    cfgline0("STARTADDRESS: default = $2000;");
+    cfgline1("STARTADDRESS: default = $%4.4x;", _environment->program.startingAddress);
     cfghead0("}");
 
     cfghead0("SYMBOLS {");

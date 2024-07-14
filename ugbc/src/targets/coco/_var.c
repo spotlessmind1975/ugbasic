@@ -552,8 +552,15 @@ void variable_cleanup( Environment * _environment ) {
 
     buffered_push_output( _environment );
 
-    outline0("ORG $2A00");
+    if ( ( _environment->program.startingAddress < 0x2a00 ) ) {
+        CRITICAL_INVALID_PROGRAM_START( _environment->program.startingAddress );
+    }
+
+    outline0("ORG $2A00" );
     outline0("JMP CODESTART");
+    if ( ( _environment->program.startingAddress - 0x2a00 ) > 0 ) {
+        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - 512 );
+    }
     outhead0("IRQSTACK rzb 512");
     outhead0("CODESTART");
     outline0("LDS #IRQSTACK");

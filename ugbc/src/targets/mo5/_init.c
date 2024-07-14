@@ -42,6 +42,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
+    _environment->program.startingAddress = 0x3000;
+
     cpu6809_init( _environment );
 
     int * bankIds = NULL;

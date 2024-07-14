@@ -121,9 +121,9 @@ static void write_bytes(FILE *f, void *array, int len)
 
 int convertbintok7(Environment * _environment)
 {
-    unsigned short start=0x3000;
+    unsigned short start=_environment->program.startingAddress;
     unsigned short size;
-    unsigned short runaddr=0x3000;
+    unsigned short runaddr=_environment->program.startingAddress;
     FILE *fr,*fw;
     char nome[12];
     char source[20];

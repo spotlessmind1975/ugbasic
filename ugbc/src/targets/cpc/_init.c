@@ -42,6 +42,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
+    _environment->program.startingAddress = 0x100;
+
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
     _environment->audioConfig.async = 1;
@@ -119,14 +121,6 @@ void target_initialization( Environment * _environment ) {
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
-
-    // outhead0("SECTION code_user");
-    outhead0("ORG $100");
-    // outhead0("SECTION data_user");
-    // outhead0("ORG $7030");
-    // outhead0("SECTION code_user");
-
-    deploy_deferred( startup, src_hw_cpc_startup_asm);
 
     outhead0("CODESTART:")
     outline0("LD SP, $C000");

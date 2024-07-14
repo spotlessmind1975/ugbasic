@@ -67,6 +67,8 @@ void target_finalization( Environment * _environment ) {
 
     outhead0("CODEEND:");
 
+    buffered_prepend_output( _environment );
+
 }
 
 void target_analysis( Environment * _environment ) {
