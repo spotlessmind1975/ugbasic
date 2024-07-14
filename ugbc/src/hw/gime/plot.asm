@@ -126,7 +126,7 @@ PLOTB4
     LDA #2
     STA PLOTNB
 
-    LDD <PLOTX
+    LDB <(PLOTX+1)
     LDA <PLOTC
     LSLA
     LSLA
@@ -349,10 +349,10 @@ PLOTORBIT43
     fcb %00000011
 
 PLOTANDBIT4
-    fcb %11111100
-    fcb %11110011
-    fcb %11001111
     fcb %00111111
+    fcb %11001111
+    fcb %11110011
+    fcb %11111100
 
 PLOTORBIT8
     fcb %11110000

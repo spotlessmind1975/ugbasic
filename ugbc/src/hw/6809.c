@@ -4752,7 +4752,17 @@ void cpu6809_bit_check_extended( Environment * _environment, char * _value, char
 
     embedded( cpu_bit_check_extended, src_hw_6809_cpu_bit_check_extended_asm );
 
-        outline1("LDX #%s", _value);
+        switch( _bitwidth ) {
+            case 8:
+                outline1("LDX #%s", _value);
+                break;
+            case 16:
+                outline1("LDX #(%s)", address_displacement( _environment, _value, "1" ) );
+                break;
+            case 32:
+                outline1("LDX #(%s)", address_displacement( _environment, _value, "3" ) );
+                break;
+        }
         outline1("LDA %s", _position );
         outline0("JSR CPUBITCHECKEXTENDED" );
 
