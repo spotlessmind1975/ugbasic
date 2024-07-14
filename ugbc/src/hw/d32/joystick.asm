@@ -57,6 +57,8 @@ PIA1CRA		EQU		DPPIA1CRA+IO	; Side A Control.
 PIA1DB		EQU		DPPIA1DB+IO	; Side A Data/DDR
 PIA1CRB		EQU		DPPIA1CRB+IO	; Side A Control.
 
+@EMIT joystickConfig.retries AS JOYSTICKRETRIES
+
 TEMPJOYSTICK       
     fcb 0, 0, 0, 0
 
@@ -109,7 +111,7 @@ LBD52
     LDB     #$03			; get values for 3+1 joystick axies
 	
 LBD59   
-    LDA     #$0A			; 10 retries to get a stable value
+    LDA     JOYSTICKRETRIES			; 10 retries to get a stable value
     STD     1,S			; store joystic axis number and try number on stack
     JSR     SELJOYSTICK 		; select the joystick to read
 

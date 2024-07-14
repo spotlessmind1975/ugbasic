@@ -434,6 +434,12 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "joystickConfig" ) == 0 ) {
+            if ( strcmp( $3, "retries" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->joystickConfig.retries;
+            } else {
+                $$ = 0;
+            }
         } else if ( strcmp( $1, "multiplexingSpriteConfig" ) == 0 ) {
             if ( strcmp( $3, "async" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->multiplexingSpriteConfig.async;
@@ -585,6 +591,15 @@ embed2:
             vars_emit_constant_integer( _environment, $9, value );
             ((struct _Environment *)_environment)->embedResult.conditional = 1;
         }
+  }
+  | OP_AT EMIT Identifier OP_POINT Identifier AS Identifier {
+
+        if ( strcmp( $3, "joystickConfig" ) == 0 ) {
+            if ( strcmp( $5, "retries" ) == 0 ) {
+                vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->joystickConfig.retries );
+            }
+        }
+        ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }
   | OP_AT EMIT Identifier AS Identifier {
         if ( strcmp( $3, "frameBufferStart" ) == 0 ) {

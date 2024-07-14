@@ -95,7 +95,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
-%token PROGRAM START JOYX JOYY
+%token PROGRAM START JOYX JOYY RETRIES
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -7853,6 +7853,15 @@ define_definition :
     }
     | FONT font_schema {
         ((struct _Environment *)_environment)->fontConfig.schema = $2;
+    }
+    | JOYSTICK RETRIES const_expr {
+        if ( $3 < 0 ) {
+            CRITICAL_INVALID_JOYSTICK_RETRIES( $3 );
+        }
+        if ( $3 > 255 ) {
+            CRITICAL_INVALID_JOYSTICK_RETRIES( $3 );
+        }
+        ((struct _Environment *)_environment)->joystickConfig.retries = $3;
     }
     | PROGRAM START const_expr {
         if ( $3 < 0 ) {
