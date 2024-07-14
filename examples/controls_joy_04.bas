@@ -12,11 +12,13 @@ REM analogici, lungo le direzioni orizzontali e verticali.
 REM
 REM @include coco coco3 d32 d64
 
-   CLS
-
-   DO
-   		HOME
-   		CLINE : PRINT "HZ = ";JOY X(0);" ";JLEFT(0)
-   		CLINE : PRINT "VT = ";JOY Y(0);" ";JUP(0)
-   LOOP
+	DEFINE JOYSTICK RETRIES 1
+	
+	CLS
+	
+	DO
+		HOME
+		CLINE : PRINT "HZ = ";JOY X(0);" ";JLEFT(0)
+		CLINE : PRINT "VT = ";JOY Y(0);" ";JUP(0)
+	LOOP
 
