@@ -1854,6 +1854,12 @@ typedef struct _Console {
 
 } Console;
 
+typedef struct _Program {
+
+    int startingAddress;
+
+} Program;
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -2702,6 +2708,8 @@ typedef struct _Environment {
 
     ConfigureParameters     configureParameters;
 
+    Program program;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3056,6 +3064,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_MIX_SPRITES_MSPRITES() CRITICAL("E289 - cannot mix (C)SPRITE with MSPRITE" );
 #define CRITICAL_CASE_ELSE_ALREADY_EMITTED() CRITICAL("E290 - CASE ELSE already used" );
 #define CRITICAL_VARIABLE_CANNOT_DIRECT_ASSIGN_WRONG_TYPE( v, t ) CRITICAL3("E291 - cannot direct assign this type", v, t );
+#define CRITICAL_INVALID_PROGRAM_START( a ) CRITICAL2i("E292 - invalid address for DEFINE PROGRAM START", a );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
