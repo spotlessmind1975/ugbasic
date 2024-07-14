@@ -95,7 +95,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
-%token PROGRAM START
+%token PROGRAM START JOYX JOYY
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3856,6 +3856,30 @@ exponential:
     }
     | JOY OP expr CP {
         $$ = joy_vars( _environment, $3 )->name;
+    }
+    | JOYX OP OP_HASH const_expr CP {
+        $$ = joyx( _environment, $4 )->name;
+    }
+    | JOYX OP expr CP {
+        $$ = joyx_vars( _environment, $3 )->name;
+    }
+    | JOY X OP OP_HASH const_expr CP {
+        $$ = joyx( _environment, $5 )->name;
+    }
+    | JOY X OP expr CP {
+        $$ = joyx_vars( _environment, $4 )->name;
+    }
+    | JOYY OP OP_HASH const_expr CP {
+        $$ = joyy( _environment, $4 )->name;
+    }
+    | JOYY OP expr CP {
+        $$ = joyy_vars( _environment, $3 )->name;
+    }
+    | JOY Y OP OP_HASH const_expr CP {
+        $$ = joyy( _environment, $5 )->name;
+    }
+    | JOY Y OP expr CP {
+        $$ = joyy_vars( _environment, $4 )->name;
     }
     | JUP OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_UP )->name;

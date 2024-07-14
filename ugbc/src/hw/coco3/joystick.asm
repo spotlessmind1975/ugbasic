@@ -209,3 +209,20 @@ JOYSTICKDONE
 
     RTS
 
+JOYY
+    JSR JOYSTICK
+    LDX #TEMPJOYSTICK
+    LDB <PORT
+    LSLB
+    LDA B,X
+    RTS
+
+JOYX
+    JSR JOYSTICK
+    LDX #TEMPJOYSTICK
+    LDB <PORT
+    LSLB
+    INCB
+    LDA B,X
+    RTS
+    

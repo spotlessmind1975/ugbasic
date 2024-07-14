@@ -2215,3 +2215,91 @@ Recupera il numero di porte joystick installate nel sistema.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword JOY X
+
+@english
+Read the horizontal axys of an analogical joystick, if it is present.
+A negative value means "left" while a positive one means "right".
+The value near 0 means "no direction".
+
+@italian
+Legge il valore dell'asse orizzontale di un joystick analogico, se presente.
+Un valore negativo indica "sinistra" mentre un valore positivo indica "destra".
+Un valore prossimo allo 0 significa "nessuna direzione".
+
+@syntax = JOY X( port )
+
+@example x = JOY X(0)
+
+@target coco
+@target coco3
+@target d32
+@target d64
+</usermanual> */
+
+/* <usermanual>
+@keyword JOYX
+
+@english
+Alias per ''JOY X''.
+
+@italian
+Alias di ''JOY X''
+
+@syntax = JOYX( port )
+
+@example x = JOYX(0)
+
+@alias JOY X
+
+@target coco
+@target coco3
+@target d32
+@target d64
+</usermanual> */
+
+/* <usermanual>
+@keyword JOYY
+
+@english
+Read the vertical axys of an analogical joystick, if it is present.
+A negative value means "up" while a positive one means "down".
+The value near 0 means "no direction".
+
+@italian
+Legge il valore dell'asse verticale di un joystick analogico, se presente.
+Un valore negativo indica "su" mentre un valore positivo indica "giù".
+Un valore prossimo allo 0 significa "nessuna direzione".
+
+@syntax = JOY Y( port )
+
+@example y = JOY Y(0)
+
+@target coco
+@target coco3
+@target d32
+@target d64
+</usermanual> */
+
+/* <usermanual>
+@keyword JOYY
+
+@english
+Alias per ''JOY Y''.
+
+@italian
+Alias di ''JOY Y''
+
+@syntax = JOYY( port )
+
+@example y = JOYY(0)
+
+@alias JOY Y
+
+@target coco
+@target coco3
+@target d32
+@target d64
+</usermanual> */
