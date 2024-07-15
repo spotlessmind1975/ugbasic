@@ -669,6 +669,69 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
     return var;
 }
 
+Variable * variable_export( Environment * _environment, char * _name, VariableType _type, int _size_or_value ) {
+
+    Variable * var = variable_find( _environment->variables, _name );
+    if ( var ) {
+        if ( var->type != _type ) {
+            CRITICAL_VARIABLE_IMPORTED_DIFFERENT_TYPE( _name );
+        }
+    } else {
+        var = malloc( sizeof( Variable ) );
+        memset( var, 0, sizeof( Variable ) );
+        var->name = strdup( _name );
+        var->bankAssigned = -1;
+#if defined(cpu6809)
+        if ( 
+            strcmp( _name, "PEN" ) == 0 ||
+            strcmp( _name, "XCURSYS" ) == 0 ||
+            strcmp( _name, "YCURSYS" ) == 0
+         ) {
+            var->realName = malloc( strlen( _name ) + 2 );
+            strcpy( var->realName, "<" ); 
+            strcat( var->realName, var->name );
+         } else {
+            var->realName = strdup( _name );
+         }
+#else
+        var->realName = strdup( _name );
+#endif
+
+        var->type = _type;
+        if ( var->type == VT_BUFFER ) {
+            var->size = _size_or_value;
+        } else {
+            var->value = _size_or_value;
+        }
+        var->precision = _environment->floatType.precision;
+
+        if ( var->type == VT_BIT ) {
+            var->bitPosition = _environment->bitPosition;
+            var->bitByte = _environment->bitByte;
+            ++_environment->bitPosition;
+            if ( _environment->bitPosition == 8 ) {
+                _environment->bitPosition = 0;
+                ++_environment->bitByte;
+            }
+        }
+
+        var->bank = NULL;
+        Variable * varLast = _environment->variables;
+        if ( varLast ) {
+            while( varLast->next ) {
+                varLast = varLast->next;
+            }
+            varLast->next = var;
+        } else {
+            _environment->variables = var;
+        }
+    }
+    var->imported = 0;
+    var->used = 1;
+    var->locked = 1;
+    return var;
+}
+
 Variable * variable_define_no_init( Environment * _environment, char * _name, VariableType _type ) {
 
     if (_environment->constants) {

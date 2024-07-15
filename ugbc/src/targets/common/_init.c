@@ -139,23 +139,23 @@ void setup_text_variables( Environment * _environment ) {
 void finalize_text_variables( Environment * _environment ) {
 
     if ( _environment->deployed.draw_string ) {
-        variable_define( _environment, "DRAWSCALE", VT_BYTE, 4 );
-        variable_define( _environment, "DRAWANGLE", VT_BYTE, 0 );
-        variable_define( _environment, "DRAWUCOMMAND", VT_CHAR, 'U' );
-        variable_define( _environment, "DRAWDCOMMAND", VT_CHAR, 'D' );
-        variable_define( _environment, "DRAWLCOMMAND", VT_CHAR, 'L' );
-        variable_define( _environment, "DRAWRCOMMAND", VT_CHAR, 'R' );
-        variable_define( _environment, "DRAWECOMMAND", VT_CHAR, 'E' );
-        variable_define( _environment, "DRAWFCOMMAND", VT_CHAR, 'F' );
-        variable_define( _environment, "DRAWGCOMMAND", VT_CHAR, 'G' );
-        variable_define( _environment, "DRAWHCOMMAND", VT_CHAR, 'H' );
+        variable_export( _environment, "DRAWSCALE", VT_BYTE, 4 );
+        variable_export( _environment, "DRAWANGLE", VT_BYTE, 0 );
+        variable_export( _environment, "DRAWUCOMMAND", VT_CHAR, 'U' );
+        variable_export( _environment, "DRAWDCOMMAND", VT_CHAR, 'D' );
+        variable_export( _environment, "DRAWLCOMMAND", VT_CHAR, 'L' );
+        variable_export( _environment, "DRAWRCOMMAND", VT_CHAR, 'R' );
+        variable_export( _environment, "DRAWECOMMAND", VT_CHAR, 'E' );
+        variable_export( _environment, "DRAWFCOMMAND", VT_CHAR, 'F' );
+        variable_export( _environment, "DRAWGCOMMAND", VT_CHAR, 'G' );
+        variable_export( _environment, "DRAWHCOMMAND", VT_CHAR, 'H' );
     }
 
     if ( _environment->deployed.play_string ) {
-        variable_define( _environment, "PLAYDURATION", VT_BYTE, 64 );
-        variable_define( _environment, "PLAYOCTAVE", VT_BYTE, 2 );
-        variable_define( _environment, "PLAYTEMPO", VT_BYTE, 2 );
-        variable_define( _environment, "PLAYVOLUME", VT_BYTE, 15 );
+        variable_export( _environment, "PLAYDURATION", VT_BYTE, 64 );
+        variable_export( _environment, "PLAYOCTAVE", VT_BYTE, 2 );
+        variable_export( _environment, "PLAYTEMPO", VT_BYTE, 2 );
+        variable_export( _environment, "PLAYVOLUME", VT_BYTE, 15 );
     }
 
 }
