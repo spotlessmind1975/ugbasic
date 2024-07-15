@@ -43,8 +43,6 @@ void target_finalization( Environment * _environment ) {
     gtia_finalization( _environment );
     pokey_finalization( _environment );
 
-    deploy( vars2, src_hw_atari_vars2_asm);
-
     outhead0(".segment \"CODE\"");
     outhead0("MAINEND:");
     outhead0(".endproc");
