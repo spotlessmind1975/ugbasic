@@ -55,6 +55,8 @@ Variable * new_image( Environment * _environment, int _width, int _height, int _
 
     Variable * result = vic2_new_image( _environment, _width, _height, _mode );
 
+    result->usedImage = 1;
+    
     return result;
 
 }
