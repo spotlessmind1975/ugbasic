@@ -128,7 +128,7 @@ void print( Environment * _environment, char * _value, int _new_line ) {
     MAKE_LABEL
 
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_DSTRING, 0 );
-    
+
     if ( value->type != VT_DSTRING && value->type != VT_STRING && value->type != VT_CHAR ) {
         switch( VT_BITWIDTH( value->type ) ) {
             case 32:
@@ -217,6 +217,8 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                         Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
                         variable_store_string( _environment, tmp->name, bufferName );
 
+                        value->usedImage = 1;
+                        
                         value = tmp;
 
                         break;
@@ -226,6 +228,8 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                         sprintf(bufferName, "@images(%s)", value->name);
                         Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
                         variable_store_string( _environment, tmp->name, bufferName );
+
+                        value->usedImage = 1;
 
                         value = tmp;
 
@@ -277,6 +281,8 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                         Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
                         variable_store_string( _environment, tmp->name, bufferName );
 
+                        value->usedImage = 1;
+
                         value = tmp;
 
                         break;
@@ -286,6 +292,8 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                         sprintf(bufferName, "@tilemap(%s)", value->name);
                         Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
                         variable_store_string( _environment, tmp->name, bufferName );
+
+                        value->usedImage = 1;
 
                         value = tmp;
 
