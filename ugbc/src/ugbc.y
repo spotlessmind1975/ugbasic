@@ -3332,6 +3332,9 @@ exponential:
     | CAN SCREEN direct_integer {
         $$ = screen_can( _environment, $3 )->name;
     }
+    | CAN DOUBLE BUFFER {
+        $$ = screen_can_double_buffer( _environment )->name;
+    }
     | TILEMAP {
         $$ = variable_temporary( _environment, VT_BYTE, "(TILEMAP)" )->name;
         variable_store( _environment, $$, TILEMAP_NATIVE );
