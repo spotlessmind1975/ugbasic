@@ -95,6 +95,7 @@ Variable * images_storage( Environment * _environment, char * _source_name, char
             lastImage->next = partial;
             lastImage = lastImage->next;
         }
+        bufferSize += partial->size;
         frame = frame->next;
     }
 
