@@ -140,7 +140,7 @@ void gtia_background_color( Environment * _environment, int _index, int _backgro
         case BITMAP_MODE_ANTIC8:
         case BITMAP_MODE_ANTIC10:
         case BITMAP_MODE_ANTIC13:
-            outline1("LDA #$%2.2x", _background_color );
+            outline1("LDA #$%2.2x", (unsigned char)(_background_color) );
             outline0("AND #$0f" );
             switch( _index ) {
                 case 0:
@@ -423,13 +423,13 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
             break;
 
         case BITMAP_MODE_ANTIC9:
-            outline1("LDA #$%2.2x", _background_color );
+            outline1("LDA %s", _background_color );
             outline0("AND #$0f" );
             outline0("STA $02C8" )
             break;
 
         case BITMAP_MODE_ANTIC11:
-            outline1("LDA #$%2.2x", _background_color );
+            outline1("LDA %s", _background_color );
             outline0("AND #$0f" );
             outline0("STA $02C4" )
             break;
@@ -476,7 +476,7 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
             break;
 
         case BITMAP_MODE_ANTIC12:
-            outline1("LDA #$%2.2x", _background_color );
+            outline1("LDA %s", _background_color );
             outline0("AND #$0f" );
             outline0("STA $02C6" )
             break;
