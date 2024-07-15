@@ -74,7 +74,6 @@ void begin_for_from_assign_mt( Environment * _environment, char * _from ) {
     _environment->arrayDimensionsEach[0] = _environment->protothreadConfig.count;
     _environment->arrayDimensions = 1;
     variable_array_type( _environment, fromResident->name, from->type );
-    printf( "count = %d, type = %d, size = %d\n", _environment->protothreadConfig.count, from->type, fromResident->size );
 
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
