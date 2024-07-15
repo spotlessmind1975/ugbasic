@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM FLOW CONTROL USING AFTER..CALL
 REM
 REM This example will use the ''AFTER...CALL'' keywords to change,
@@ -12,6 +12,12 @@ REM dopo ''TICKS PER SECOND' ticks, il testo sullo schermo.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
+PROCEDURE changeText
+
+   HOME: PRINT "Text index #"; textIndex
+   
+END PROC
+
    CLS
 
    textIndex = 0
@@ -20,8 +26,4 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
    HALT
 
-PROCEDURE changeText
 
-   HOME: PRINT "Text index #"; textIndex
-   
-END PROC
