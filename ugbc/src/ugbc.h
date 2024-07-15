@@ -1452,7 +1452,6 @@ typedef struct _Deployed {
     int sqr;
     int back;
     int vars;
-    int vars2;
     int startup;
     int c6847startup;
     int c6847vars;
@@ -4605,7 +4604,6 @@ void                    variable_global( Environment * _environment, char * _pat
 Variable *              variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable *              variable_greater_than_const( Environment * _environment, char * _source, int _dest, int _equal );
 Variable *              variable_hex( Environment * _environment, char * _value );
-Variable *              variable_export( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 Variable *              variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 void                    variable_increment( Environment * _environment, char * _source );
 void                    variable_increment_array( Environment * _environment, char * _source );
