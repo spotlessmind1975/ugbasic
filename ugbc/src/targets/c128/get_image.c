@@ -73,6 +73,8 @@ void get_image( Environment * _environment, char * _image, char * _x1, char * _y
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
     }
 
+    image->usedImage = 1;
+
     switch( image->type ) {
         case VT_SEQUENCE:
             if ( !sequence ) {
