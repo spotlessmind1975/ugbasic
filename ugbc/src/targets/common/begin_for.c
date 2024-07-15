@@ -230,7 +230,12 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
     cpu_call( _environment, beginForToPrepare );
     cpu_call( _environment, beginForStepPrepare );
 
-    Variable * index = variable_retrieve_or_define( _environment, _index, _environment->defaultVariableType, 0 );
+    Variable * index = NULL;
+    if ( variable_exists( _environment, _index ) ) {
+        index = variable_retrieve( _environment, _index );
+    } else {
+        index = variable_retrieve_or_define( _environment, _index, _environment->defaultVariableType, 0 );
+    }
 
     Variable * from = loop->fromResident;
     Variable * to = loop->toResident;
