@@ -3645,6 +3645,12 @@ exponential:
     | SCREEN PAGE {
         $$ = screen_page( _environment )->name;
     }
+    | SCREEN SHOW {
+        $$ = screen_show( _environment )->name;
+    }
+    | SCREEN PAGE COUNT {
+        $$ = screen_page_count( _environment )->name;
+    }
     | VOLUME MIN {
         $$ = variable_temporary( _environment, VT_WORD, "(volume min)" )->name;
         variable_store( _environment, $$, 0 );
@@ -4717,6 +4723,12 @@ screen_definition_simple:
   | OFF {
       screen_off( _environment );
   }
+  | PAGE direct_integer {
+      screen_page_set( _environment, $2 );
+  }
+  | SHOW direct_integer {
+      screen_show_set( _environment, $2 );
+  }
   | ROWS direct_integer {
       screen_rows( _environment, $2 );
   }
@@ -4742,7 +4754,14 @@ screen_definition_expression:
   }
   | HORIZONTAL SCROLL expr {
       screen_horizontal_scroll_var( _environment, $3 );
-  };
+  }
+  | PAGE expr {
+      screen_page_set_vars( _environment, $2 );
+  }
+  | SHOW expr {
+      screen_show_set_vars( _environment, $2 );
+  }
+  ;
 
 screen_definition:
     screen_definition_simple
