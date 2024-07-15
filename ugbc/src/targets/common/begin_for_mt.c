@@ -139,7 +139,7 @@ void begin_for_step_prepare_mt( Environment * _environment ) {
 void begin_for_step_assign_mt( Environment * _environment, char * _step ) {
 
     Loop * loop = _environment->loops;
-    Variable * step = variable_retrieve( _environment, _step );
+    Variable * step = NULL;
 
     Variable * from = loop->from;
     Variable * to = loop->to;
@@ -149,7 +149,7 @@ void begin_for_step_assign_mt( Environment * _environment, char * _step ) {
 
     Variable * stepResident = NULL;
     if ( _step ) {
-        Variable * step = variable_retrieve( _environment, _step );
+        step = variable_retrieve( _environment, _step );
         if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) || VT_SIGNED( step->type ) ) {
             maxType = VT_SIGN( maxType );
         }
@@ -175,7 +175,7 @@ void begin_for_step_assign_mt( Environment * _environment, char * _step ) {
             maxType = VT_SIGN( maxType );
         }
         // In this version, the step is not given - by default, step = 1
-        Variable * step = variable_temporary( _environment, _environment->defaultVariableType, "(step 1)" );
+        step = variable_temporary( _environment, _environment->defaultVariableType, "(step 1)" );
         variable_store( _environment, step->name, 1 );
 
         stepResident = variable_resident( _environment, VT_ARRAY, "(to)" );
