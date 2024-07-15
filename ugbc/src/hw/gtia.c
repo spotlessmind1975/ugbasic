@@ -1980,6 +1980,10 @@ void gtia_initialization( Environment * _environment ) {
     deploy( gtiavars, src_hw_gtia_vars_asm );
     deploy( gtiastartup, src_hw_gtia_startup_asm );
 
+    variable_import( _environment, "CURRENTPAGE", VT_BYTE, 0 );
+    variable_global( _environment, "CURRENTPAGE" );
+    variable_import( _environment, "CURRENTSHOW", VT_BYTE, 0 );
+    variable_global( _environment, "CURRENTSHOW" );
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 320 );
     variable_global( _environment, "CURRENTWIDTH" );
     variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 199  );
