@@ -71,6 +71,7 @@ void blit_image( Environment * _environment, char * _blit, char * _x, char * _y,
         }
         if ( image ) {
             sources[i] = strdup( image->realName );
+            image->usedImage = 1;
         }
     }
 
