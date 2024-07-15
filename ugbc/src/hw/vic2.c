@@ -1457,7 +1457,7 @@ void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _
             deploy( sprite, src_hw_vic2_sprites_asm );
 
             outline1("LDY %s", sprite->realName );
-            outline0("JSR MSPRITEDATAFROM" );
+            outline0("JSR SPRITEDATAFROM" );
             break;
 
         case VT_MSPRITE:
