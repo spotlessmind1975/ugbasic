@@ -56,8 +56,6 @@ CURRENTTILES:      .byte 255
 TEXTBLOCKREMAIN:      .byte 152
 TEXTBLOCKREMAINPW:      .byte 192
 CURRENTSL:          .byte 0
-CURRENTPAGE:        .byte 0
-CURRENTSHOW:        .byte 0
 
 FONTWIDTH:          .byte 8
 FONTHEIGHT:         .byte 8
