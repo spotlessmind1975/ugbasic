@@ -39,13 +39,44 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>SCREEN PAGE</strong>
+ * @brief Emit code for <strong>SCREEN SWAP</strong>
  * 
  * @param _environment Current calling environment
  */
 /* <usermanual>
-@keyword SCREEN PAGE (function)
+@keyword SCREEN PAGE
+
+@english
+
+The semantics of this keyword is different, depending on whether double buffering 
+is enabled or not. If double buffering is enabled, the ''SCREEN PAGE'' function
+allows to know which page the program is on. There are two pages, page 0 (''PAGE 0'' 
+or ''PAGE A'') and page 1 (''PAGE 1'' or ''PAGE B''). When you draw on page 0, 
+page 1 is visible, and vice versa.
+
+On the other hand, if doube buffering is not enabled, this function will return
+the actual screen page in use, as set by ''SCREEN PAGE'' command.
+
+@italian
+
+La semantica di questa funzione cambia, a seconda se è abilitato o meno il
+double buffering. Se è abilitato, la funzione ''SCREEN PAGE'' permette di
+sapere su quale pagina (delle due) ci si trova. Le pagine sono due, 
+la pagina 0 (''PAGE 0'' or ''PAGE A'') e la pagina 1 (''PAGE 1'' or ''PAGE B''). 
+Quando si disegna sulla pagina 0, la pagina 1 è visibile, e viceversa.
+
+D'altra parte, se il double buffering non è abilitato, questa funzione
+restituirà la pagina attuale in uso, così come impostata dal comando 
+''SCREEN PAGE''.
+
+@syntax = SCREEN PAGE
+
+@example IF SCREEN PAGE = PAGE 0 THEN
+@example    PRINT "first page"
+@example ENDIF
+
 @target coco3
+@version
 </usermanual> */
 Variable * screen_page( Environment * _environment ) {
 
