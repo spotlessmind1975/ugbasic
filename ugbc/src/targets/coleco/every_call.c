@@ -92,7 +92,24 @@ l'interruzione con priorità più alta.
 
 @target coleco
 </usermanual> */
-void every_ticks_call( Environment * _environment, char * _timing, char * _label, char * _timer ) {
+void every_ticks_call( Environment * _environment, char * _timing, char * _name, char * _timer ) {
+
+    Procedure * procedure = _environment->procedures;
+
+    while( procedure ) {
+        if ( strcmp( procedure->name, _name ) == 0 ) {
+            break;
+        }
+        procedure = procedure->next;
+    }
+
+    if ( !procedure ) {
+        CRITICAL_PROCEDURE_MISSING(_name);
+    }
+
+    if ( procedure->protothread ) {
+        CRITICAL_PARALLEL_PROCEDURE_CANNOT_BE_CALLED(_name);
+    }
 
     Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
     Variable * timer = NULL;
@@ -102,7 +119,7 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _label
         timerRealName = timer->realName;
     }
 
-    coleco_timer_set_address( _environment, timerRealName, _label );
+    coleco_timer_set_address( _environment, timerRealName, procedure->realName );
     coleco_timer_set_counter( _environment, timerRealName, NULL );
     coleco_timer_set_init( _environment, timerRealName, timing->realName );
 
