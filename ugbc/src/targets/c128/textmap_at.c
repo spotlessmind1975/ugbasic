@@ -87,16 +87,22 @@ indefiniti. Se vuoi assegnare un valore valido usa il comando [[TEXTMAP AT]].
 @keyword TEXTMAP AT
 
 @english
-Set the starting address, in memory, for the textmap. The input parameter 
-is decoded and declined according to the hardware limits. So it is not
-said that exactly the given address is set.
+This command can be used to change the starting address of the text screen, 
+i.e. the video memory used by the chipset to print the "character" (or tile) 
+mode. On some chipsets it is possible to define the address freely, while 
+on others only for specific addresses and, finally, still others do not even
+have text mode. For this reason, each platform will decline this value according
+to the set of possible values.
 
 @italian
-Imposta l'indirizzo di partenza, in memoria, per la textmap. Il parametro 
-di input viene decodificato e declinato in base ai limiti hardware. Quindi 
-non è detto che sia impostato esattamente con l'indirizzo specificato.
+Questo comando può essere adoperato per cambiare l'indirizzo di partenza della
+schermata testuale, cioè ldella memoria video utilizzata dal chipset per stampare
+la modalità "a caratteri" (o tiles). Su alcuni chipset è possibile definire
+l'indirizzo liberamente, mentre su altri solo per specifici indirizzi e, infine,
+altri ancora non hanno neanche la modalità testuale. Per tale ragione, ogni
+piattaforma declinerà tale valore secondo l'insieme dei valori possibili.
 
-@syntax TEXTMAP AT # [integer]
+@syntax TEXTMAP AT #address
 
 @example TEXTMAP AT #$8400
 
@@ -137,7 +143,7 @@ void textmap_at( Environment * _environment, int _address ) {
 /* <usermanual>
 @keyword TEXTMAP AT
 
-@syntax TEXTMAP AT [expression]
+@syntax TEXTMAP AT expression
 
 @example TEXTMAP AT newTextmapAddress
 
