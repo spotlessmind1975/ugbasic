@@ -58,20 +58,24 @@
 @keyword BITMAP AT
 
 @english
-Set the starting address, in memory, for the bitmap. The input parameter 
-is decoded and declined according to the hardware limits. So it is not 
-said that exactly the  given address is set.
+This command can be used to change the starting address of the graphic screen, 
+i.e. the video memory used by the chipset to draw graphics. On some chipsets
+it is possible to define the address freely, while on others only for specific 
+addresses and, finally, still others do not even
+have bitmap graphics. For this reason, each platform will decline this value 
+according to the set of possible values.
 
 @italian
-Imposta l'indirizzo di partenza, in memoria, per la bitmap. Il parametro 
-di input viene decodificato e declinato in base ai limiti hardware. 
-Quindi non èdetto che sia impostato esattamente l'indirizzo specificato.
+Questo comando può essere utilizzato per modificare l'indirizzo iniziale della 
+schermata grafica, ovvero la memoria video utilizzata dal chipset per disegnare
+la grafica. Su alcuni chipset è possibile definire liberamente l'indirizzo,
+mentre su altri solo per indirizzi specifici e, infine, altri ancora non 
+dispongono nemmeno della grafica bitmap. Per questo motivo ogni piattaforma
+declinerà questo valore in base all'insieme dei valori possibili.
 
-@syntax BITMAP AT #addr
+@syntax BITMAP AT #address
 
-@example BITMAP AT #$0000
-
-@seeAlso BITMAP ENABLE
+@example BITMAP AT #$8400
 
 @target c128
 </usermanual> */
