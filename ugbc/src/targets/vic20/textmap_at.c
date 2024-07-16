@@ -86,23 +86,7 @@ indefiniti. Se vuoi assegnare un valore valido usa il comando [[TEXTMAP AT]].
 /* <usermanual>
 @keyword TEXTMAP AT
 
-@english
-Set the starting address, in memory, for the textmap. The input parameter 
-is decoded and declined according to the hardware limits. So it is not
-said that exactly the given address is set.
-
-@italian
-Imposta l'indirizzo di partenza, in memoria, per la textmap. Il parametro 
-di input viene decodificato e declinato in base ai limiti hardware. Quindi 
-non è detto che sia impostato esattamente con l'indirizzo specificato.
-
-@syntax TEXTMAP AT # [integer]
-
-@example TEXTMAP AT #$8400
-
 @target vic20
-
-@seealso TEXTADDRESS
 </usermanual> */
 void textmap_at( Environment * _environment, int _address ) {
 
