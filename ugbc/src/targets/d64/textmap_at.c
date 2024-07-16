@@ -60,15 +60,11 @@
  */
 /* <usermanual>
 @keyword TEXTMAP AT
+@target d64
 </usermanual> */
 void textmap_at( Environment * _environment, int _address ) {
 
-    // Let's define the special variable bitmapAddress, and update
-    // it with the requested value.
-    Variable * bitmapAddress = variable_retrieve( _environment, "TEXTADDRESS" );
-    variable_store( _environment, "TEXTADDRESS", ( ( _address >> 10 ) ) * 0x200 );
-
-    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 10 ) );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%4.4x", _address );
 
     c6847_textmap_at( _environment, addressString );
 
@@ -91,18 +87,12 @@ void textmap_at( Environment * _environment, int _address ) {
  */
 /* <usermanual>
 @keyword TEXTMAP AT
+@target d64
 </usermanual> */
 void textmap_at_var( Environment * _environment, char * _address ) {
 
-    // Let's define the special variable bitmapAddress, and update
-    // it with the requested value.    
-    Variable * bitmapAddress = variable_retrieve( _environment, "TEXTADDRESS" );
-    Variable * address = variable_retrieve( _environment, _address );
+    Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0xc00 );
 
-    variable_move_naked( _environment, address->name, bitmapAddress->name );
-
-    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s", address->realName );
-
-    c6847_textmap_at( _environment, addressString );
+    c6847_textmap_at( _environment, address->realName );
 
 }

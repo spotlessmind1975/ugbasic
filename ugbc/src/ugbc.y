@@ -4448,6 +4448,12 @@ bitmap_definition:
 
 textmap_definition_simple:
     AT direct_integer {
+        if ( $2 < 0 ) {
+            CRITICAL_TEXTMAP_ADDRESS_NOT_VALID( $2 );
+        }
+        if ( $2 > 0xffff ) {
+            CRITICAL_TEXTMAP_ADDRESS_NOT_VALID( $2 );
+        }
       textmap_at( _environment, $2 );
   };
 

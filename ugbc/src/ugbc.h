@@ -2951,6 +2951,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_STRINGS_LONGER_256_CHARS( ) CRITICAL("E284 - string too long (>256 characters)" );
 #define CRITICAL_MISSING_LABEL_NAMED(v) CRITICAL2("E285 - missing label", v );
 #define CRITICAL_MISSING_LABEL_NUMBER(v) CRITICAL2i("E286 - missing line number", v );
+#define CRITICAL_TEXTMAP_ADDRESS_NOT_VALID(a) CRITICAL2i("E287 - textmap address not valid", a );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
