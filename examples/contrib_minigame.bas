@@ -19,7 +19,7 @@ REM originale è stato aggiunto come commento.
 REM 
 REM @url https://www.facebook.com/groups/2057165187928233/posts/3681144192196983/
 REM
-REM @include atari
+REM @include atari,atarixl,c128,c64,c64reu,coco,coco3,d32,d64,msx1,pc128op,coleco,mo5,to8,sg1000,sc3000,cpc,zx
 
 ' It is necessary to apply some techniques to reduce the memory actually 
 ' used, so that the game can run even on rather limited platforms, 
