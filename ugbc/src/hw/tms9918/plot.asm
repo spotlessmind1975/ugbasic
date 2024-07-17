@@ -70,7 +70,7 @@ PLOTNMI2:
 
     LD A, (CURRENTTILEMODE)
     CP 1
-    RET Z
+    JP Z, PLOTDONE
 
 @IF optionClip
 
