@@ -260,6 +260,8 @@ DO
 	
 	' Print the score and ends.
 	
+	BELL
+	
 	LOCATE , r2
 	CENTER final+STR$(s);
 	
