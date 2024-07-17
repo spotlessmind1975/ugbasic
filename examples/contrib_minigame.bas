@@ -64,12 +64,6 @@ END PROC
 
 BITMAP ENABLE
 
-' With this instruction we clear the screen, using (if possible) the color 
-' black. Remembering that ugBASIC is an isomorphic language, it is possible 
-' that the color indication is ignored, or a similar one is chosen.
-
-CLS BLACK
-
 ' We set the border color to black, at least for those targets for 
 ' which this instruction makes sense. Since ugBASIC is an isomorphic 
 ' language, it does not provide an abstraction of the concept of 
@@ -108,154 +102,169 @@ POSITIVE CONST r2 = ROWS-2
 CONST instructions = IF(COLUMNS < 40, "press to turn", "GAME: press to turn direction")
 CONST final = IF(COLUMNS < 40, "SCORE: ", "YOUR SCORE: ")
 
-' Let's memorize the status of fire and the previous state itself.
-' This allow to track the fact that the fire has been released.
-
-joy = FALSE: joyp = FALSE
-
-' ----------------------------------------------------------
-' 110 SET INK 2:PLOT 500,200;800,200;800,500;500,500;500,200
-' ----------------------------------------------------------
-
-' Let's draw the yellow box as playfield.
-
-BOX x1,y1 TO x2,y2,YELLOW
-
-' ------------------------------------------------------------
-' 120 PRINT #101,AT 2,2:"GAME: press a key to turn direction."
-' ------------------------------------------------------------
-
-' Let's print the intructions at the center of the line.
-
-LOCATE ,r1
-CENTER instructions;
-
-' -------------------------------------------------
-' 130 SET INK 3:LET I=0:LET X=550:LET Y=220:LET S=0
-' -------------------------------------------------
-
-i = 0
-x = x1+x1
-y = y1+y1
-s = 0
-
-'            +---------+
-'            | * (x,y) |
-'            |         |
-'            +---------+
-
-' Forever loop until finish.
+' Repeat forever
 
 DO
 
-' ---------------------------
-' 140 LET I$=INKEY$:LET S=S+1
-' ---------------------------
-
-	' Slow down the program a bit, to make it playable.
+	' With this instruction we clear the screen, using (if possible) the color 
+	' black. Remembering that ugBASIC is an isomorphic language, it is possible 
+	' that the color indication is ignored, or a similar one is chosen.
 	
-	WAIT 25 MS
-
-	' Let's record if the button has been pressed AND released.
-
-	IF joy THEN
-		IF control[] = 0 THEN
-			joyp = TRUE
-			joy = FALSE
+	CLS BLACK
+	
+	' Let's memorize the status of fire and the previous state itself.
+	' This allow to track the fact that the fire has been released.
+	
+	joy = FALSE: joyp = FALSE
+	
+	' ----------------------------------------------------------
+	' 110 SET INK 2:PLOT 500,200;800,200;800,500;500,500;500,200
+	' ----------------------------------------------------------
+	
+	' Let's draw the yellow box as playfield.
+	
+	BOX x1,y1 TO x2,y2,YELLOW
+	
+	' ------------------------------------------------------------
+	' 120 PRINT #101,AT 2,2:"GAME: press a key to turn direction."
+	' ------------------------------------------------------------
+	
+	' Let's print the intructions at the center of the line.
+	
+	LOCATE ,r1
+	CENTER instructions;
+	
+	' -------------------------------------------------
+	' 130 SET INK 3:LET I=0:LET X=550:LET Y=220:LET S=0
+	' -------------------------------------------------
+	
+	i = 0
+	x = x1+x1
+	y = y1+y1
+	s = 0
+	
+	'            +---------+
+	'            | * (x,y) |
+	'            |         |
+	'            +---------+
+	
+	' Forever loop until finish.
+	
+	DO
+	
+	' ---------------------------
+	' 140 LET I$=INKEY$:LET S=S+1
+	' ---------------------------
+	
+		' Slow down the program a bit, to make it playable.
+		
+		WAIT 25 MS
+	
+		' Let's record if the button has been pressed AND released.
+	
+		IF joy THEN
+			IF control[] = 0 THEN
+				joyp = TRUE
+				joy = FALSE
+			ENDIF
+		ELSE
+			joy = control[]
 		ENDIF
-	ELSE
-		joy = control[]
-	ENDIF
+		
+		' Increment the score!
+		
+		INC s
 	
-	' Increment the score!
+		' -------------
+		' 150 PLOT X,Y,
+		' 160 LOOK A
+		' -------------
+		
+		' Take the color of destination pixel.
+		
+		a = POINT(x,y)
 	
-	INC s
-
-	' -------------
-	' 150 PLOT X,Y,
-	' 160 LOOK A
-	' -------------
+		' Draw a pixel on it.
+		
+		PLOT x,y,WHITE
 	
-	' Take the color of destination pixel.
+		' ---------------------------------------
+		' 170 PLOT X,Y
+		' 180 IF I$ ≠ "" THEN LET I= (I+1) BAND 3
+		' ---------------------------------------
+		
+		' Each time the fire / space bar is pressed, the
+		' direction will be changed, in a clockwise manner.
+		' The (i+1) increment the direction, while the AND
+		' 3 will limit the value from 0 to 3.
+		'
+		'             3
+		'             ^
+		'         2 <-+-> 0
+		'             v
+		'             1
+		
+		IF joyp THEN i = (i+1) AND 3
 	
-	a = POINT(x,y)
-
-	' Draw a pixel on it.
+		' Reset the button.
+		
+		joyp = FALSE
 	
-	PLOT x,y,WHITE
-
+		' -----------------------------------
+		' 190 IF I=0 THEN LET X=X+4:LET Y=Y+0
+		' -----------------------------------
+		
+		' Move the point to the right.
+		
+		IF i=0 THEN INC x
+	
+		' -----------------------------------
+		' 200 IF I=1 THEN LET X=X+0:LET Y=Y+4
+		' -----------------------------------
+	
+		' Move the point down.
+		
+		IF i=1 THEN INC y
+	
+		' -----------------------------------
+		' 210 IF I=2 THEN LET X=X-4:LET Y=Y+0
+		' -----------------------------------
+	
+		' Move the point to the left.
+	
+		IF i=2 THEN DEC x
+	
+		' -----------------------------------
+		' 220 IF I=3 THEN LET X=X+0:LET Y=Y-4
+		' -----------------------------------
+	
+		' Move the point to the right.
+		
+		IF i=3 THEN DEC y
+	
+		' ------------------------
+		' 230 IF A=0 THEN GOTO 140
+		' ------------------------
+	
+		' If the underlying pixel is black, we can move
+		' to the next position along the selected direction.
+		' Oherwise, we can exit.
+		
+		EXIT IF a<>BLACK
+	
+	LOOP
+	
 	' ---------------------------------------
-	' 170 PLOT X,Y
-	' 180 IF I$ ≠ "" THEN LET I= (I+1) BAND 3
+	' 240 PRINT #101,AT 19,12:"YOUR SCORE:";S
 	' ---------------------------------------
 	
-	' Each time the fire / space bar is pressed, the
-	' direction will be changed, in a clockwise manner.
-	' The (i+1) increment the direction, while the AND
-	' 3 will limit the value from 0 to 3.
-	'
-	'             3
-	'             ^
-	'         2 <-+-> 0
-	'             v
-	'             1
+	' Print the score and ends.
 	
-	IF joyp THEN i = (i+1) AND 3
-
-	' Reset the button.
+	LOCATE , r2
+	CENTER final+STR$(s);
 	
-	joyp = FALSE
-
-	' -----------------------------------
-	' 190 IF I=0 THEN LET X=X+4:LET Y=Y+0
-	' -----------------------------------
+	' Wait a key / fire to restart
 	
-	' Move the point to the right.
+	WAIT KEY OR FIRE RELEASE
 	
-	IF i=0 THEN INC x
-
-	' -----------------------------------
-	' 200 IF I=1 THEN LET X=X+0:LET Y=Y+4
-	' -----------------------------------
-
-	' Move the point down.
-	
-	IF i=1 THEN INC y
-
-	' -----------------------------------
-	' 210 IF I=2 THEN LET X=X-4:LET Y=Y+0
-	' -----------------------------------
-
-	' Move the point to the left.
-
-	IF i=2 THEN DEC x
-
-	' -----------------------------------
-	' 220 IF I=3 THEN LET X=X+0:LET Y=Y-4
-	' -----------------------------------
-
-	' Move the point to the right.
-	
-	IF i=3 THEN DEC y
-
-	' ------------------------
-	' 230 IF A=0 THEN GOTO 140
-	' ------------------------
-
-	' If the underlying pixel is black, we can move
-	' to the next position along the selected direction.
-	' Oherwise, we can exit.
-	
-	EXIT IF a<>BLACK
-
 LOOP
-
-' ---------------------------------------
-' 240 PRINT #101,AT 19,12:"YOUR SCORE:";S
-' ---------------------------------------
-
-' Print the score and ends.
-
-LOCATE , r2
-CENTER final+STR$(s);
-
