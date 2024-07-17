@@ -1055,6 +1055,8 @@ void tms9918_pget_color_vars( Environment * _environment, char *_x, char *_y, ch
     outline0("LD D, A");
     outline1("LD A, (%s)", x->realName );
     outline0("LD E, A");
+    outline1("LD A, (%s)", address_displacement( _environment, x->realName, "1" ) );
+    outline0("LD IXH, A");
     outline0("LD A, 3");
     if ( ! _environment->hasGameLoop ) {
         outline0("CALL PLOT");
