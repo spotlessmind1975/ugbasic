@@ -119,29 +119,13 @@ PLOTSET:
 
     POP BC
 
-    LD A, B
-    LD L, A
-    LD A, 0
+    LD A, H
+    AND $18
+    RRCA
+    RRCA
+    RRCA
+    OR $58
     LD H, A
-    SRA H
-    RR L
-    SRA H
-    RR L
-    SRA H
-    RR L
-    LD DE,HL
-
-    LD A, C
-    LD L, A
-    LD A, 0
-    LD H, A
-    SLA L
-    RL H
-    SLA L
-    RL H
-    ADD HL, DE
-    LD DE, (COLORMAPADDRESS)
-    ADD HL, DE
 
     LD A, (_PEN)
     AND $07
@@ -149,13 +133,6 @@ PLOTSET:
     LD A, (HL)
     AND $F8
     OR A, B
-    ; LD B, A
-    ; LD A, (_PEN)
-    ; AND $08
-    ; SLA A
-    ; SLA A
-    ; SLA A
-    ; OR A, B
     LD (HL), A
     RET
 
@@ -169,29 +146,13 @@ PLOTRESET:
 
     POP BC
 
-    LD A, B
-    LD L, A
-    LD A, 0
+    LD A, H
+    AND $18
+    RRCA
+    RRCA
+    RRCA
+    OR $58
     LD H, A
-    SRA H
-    RR L
-    SRA H
-    RR L
-    SRA H
-    RR L
-    LD DE,HL
-
-    LD A, C
-    LD L, A
-    LD A, 0
-    LD H, A
-    SLA L
-    RL H
-    SLA L
-    RL H
-    ADD HL, DE
-    LD DE, (COLORMAPADDRESS)
-    ADD HL, DE
 
     LD A, (_PAPER)
     AND $07
@@ -284,29 +245,13 @@ PLOTGLOOP2:
 
     PUSH AF
 
-    LD A, B
-    LD L, A
-    LD A, 0
+    LD A, H
+    AND $18
+    RRCA
+    RRCA
+    RRCA
+    OR $58
     LD H, A
-    SRA H
-    RR L
-    SRA H
-    RR L
-    SRA H
-    RR L
-    LD DE,HL
-
-    LD A, C
-    LD L, A
-    LD A, 0
-    LD H, A
-    SLA L
-    RL H
-    SLA L
-    RL H
-    ADD HL, DE
-    LD DE, (COLORMAPADDRESS)
-    ADD HL, DE
 
     POP AF
 
