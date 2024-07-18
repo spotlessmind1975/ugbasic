@@ -7575,7 +7575,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
         } else if ( _array->size < 256 && VT_BITWIDTH( _array->arrayType ) == 16 ) {
             Variable * offset = calculate_offset_in_array_byte( _environment, _array->name );
             cpu_math_mul2_const_8bit( _environment, offset->realName, 1, 0 );
-            cpu_move_8bit_indirect2_16bit( _environment, _array->realName, offset->realName, result->realName );
+            cpu_move_8bit_indirect2_8bit( _environment, _array->realName, offset->realName, result->realName );
         } else {
 
             // @bit2: ok
