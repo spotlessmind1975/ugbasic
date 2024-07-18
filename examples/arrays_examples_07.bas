@@ -17,6 +17,17 @@ PRINT "integers(1) should be 42: ";integers(1)
 DIM integers2(3,2) = #{ 10, 20, 30, 40, 50, 60 }
 PRINT "integers2(1,0) should be 30: ";integers2(1,0)
 
-DIM integers3(3,2) = #[0010002000030004000500060]
-PRINT "integers3(1,0) should be 48: ";integers3(1,0)
+DIM integers3(3,2) = #[001000203000004000300060]
+
+CONST littleEndian = LITTLE ENDIAN
+
+IF littleEndian THEN
+	PRINT "integers3(1,0) should be 48: ";integers3(1,0)
+	PRINT "integers3(2,0) should be 0: ";integers3(2,0)
+ELSE
+	PRINT "integers3(1,0) should be 0: ";integers3(1,0)
+	PRINT "integers3(2,0) should be 48: ";integers3(2,0)
+ENDIF
+
+
 
