@@ -47,6 +47,8 @@ void target_finalization( Environment * _environment ) {
     vic2_finalization( _environment );
     sid_finalization( _environment );
 
+    deploy( vars2, src_hw_c128_vars2_asm);
+
     buffered_prepend_output( _environment );
 
 }
