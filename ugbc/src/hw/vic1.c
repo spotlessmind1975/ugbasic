@@ -794,6 +794,8 @@ void vic1_initialization( Environment * _environment ) {
     _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
     _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
     _environment->screenColors = 16;
+    _environment->consoleTilesWidth = 22;
+    _environment->consoleTilesHeight = 23;
 
     console_init( _environment );
 
