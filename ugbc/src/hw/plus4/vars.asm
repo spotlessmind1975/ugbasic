@@ -119,15 +119,5 @@ INT  = SEXP+4
 DATAPTR = $AA
 DATAPTRY:    .BYTE $0
 
-@IF deployed.timer
-
 TIMERP0 = $2A
 TIMERP1 = $3B
-
-TIMERRUNNING:   .BYTE   $0
-TIMERSTATUS:    .BYTE   $0
-TIMERCOUNTER:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
-TIMERINIT:      .WORD   $0, $0, $0, $0, $0, $0, $0, $0
-TIMERADDRESS:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
-
-@ENDIF

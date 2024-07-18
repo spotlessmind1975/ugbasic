@@ -46,6 +46,8 @@ void target_finalization( Environment * _environment ) {
 
     ted_finalization( _environment );
 
+    deploy( vars2, src_hw_plus4_vars2_asm);
+
 }
 
 void target_analysis( Environment * _environment ) {
