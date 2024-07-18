@@ -103,16 +103,6 @@ BANKSHADOW fcb  0
 
 DATAPTR fdb  0
 
-@IF deployed.timer
-
-TIMERRUNNING   fcb   $0
-TIMERSTATUS    fcb   $0
-TIMERCOUNTER   fdb   $0, $0, $0, $0, $0, $0, $0, $0
-TIMERINIT      fdb   $0, $0, $0, $0, $0, $0, $0, $0
-TIMERADDRESS   fdb   $0, $0, $0, $0, $0, $0, $0, $0
-
-@ENDIF
-
 COCODCOMMONSAVEDERROR     fcb   $0, $0, $0
 COCODCOMMONDISKOPEN       fcb   $0, $0
 COCODCOMMONERRORHANDLER   fcb   $0, $0
