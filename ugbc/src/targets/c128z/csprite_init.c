@@ -51,7 +51,7 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
 
     Variable * index;
 
-    index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
+    index = variable_retrieve_or_define( _environment, _image, VT_SPRITE, 0 );
 
     return index;
 
