@@ -35,66 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTADDRESS         fdb     $0000
-BITMAPADDRESS       fdb     $0000
-COLORMAPADDRESS     fdb     $0000
-CURRENTMODE         fcb     $0
-CURRENTTILEMODE     fcb     0
-EVERYSTATUS        fcb     0
+@IF deployed.timer
 
-TABCOUNT            fcb     4
-XCURS               fcb     0
-YCURS               fcb     0
-EMPTYTILE           fcb     $60
-KBDRATE             fcb     16
-TICKSPERSECOND      fcb     $0
+TIMERRUNNING   fcb   $0
+TIMERSTATUS    fcb   $0
+TIMERCOUNTER   fdb   $0, $0, $0, $0, $0, $0, $0, $0
+TIMERINIT      fdb   $0, $0, $0, $0, $0, $0, $0, $0
+TIMERADDRESS   fdb   $0, $0, $0, $0, $0, $0, $0, $0
 
-TMPPTR equ $10    ; $23
-TMPPTR2 equ $12    ; $25
-
-MATHPTR0 equ $14
-MATHPTR1 equ $15
-MATHPTR2 equ $16
-MATHPTR3 equ $17
-MATHPTR4 equ $18
-MATHPTR5 equ $19
-MATHPTR6 equ $1a
-MATHPTR7 equ $1b
-MATHPTR8 equ $1c
-MATHPTRB0 equ $1d
-MATHPTRB1 equ $1e
-MATHPTRB2 equ $1f
-MATHPTRB3 equ $20
-MATHPTRB4 equ $21
-MATHPTRB5 equ $22
-MATHPTRB6 equ $23
-MATHPTRB7 equ $24
-MATHPTRB8 equ $25
-
-DSSTATUS equ $3b
-DSSIZE equ $3c
-DSADDRLO equ $3d
-DSADDRHI equ $3e
-DSBANKLO equ $3f
-DSBANKHI equ $40
-
-COPYOFTEXTADDRESS equ $41
-COPYOFBITMAPADDRESS equ $43
-COPYOFCOLORMAPADDRESS equ $45
-COPYOFTEXTADDRESS2 equ $47
-COPYOFCOLORMAPADDRESS2 equ $49
-
-DIRECTION equ $4a
-PATTERN equ $4a
-CHARACTERS equ $4a
-CLINEX equ $4b
-CLINEY equ $4c
-
-BITSTOCONVERT equ $4a
-
-XCURSYS equ $4d
-YCURSYS equ $4e
-
-BANKSHADOW      fcb     $00
-
-DATAPTR fdb  0
+@ENDIF

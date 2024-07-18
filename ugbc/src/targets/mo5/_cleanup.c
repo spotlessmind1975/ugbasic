@@ -45,7 +45,9 @@ void target_prepare_finalization( Environment * _environment ) {
 void target_finalization( Environment * _environment ) {
 
     ef936x_finalization( _environment );
-    
+
+    deploy( vars2, src_hw_mo5_vars2_asm);
+
     if ( _environment->dataSegment ) {
         outhead0( "DATAPREPARATION" );
         outline0( "LDD #DATAFIRSTSEGMENT" );
