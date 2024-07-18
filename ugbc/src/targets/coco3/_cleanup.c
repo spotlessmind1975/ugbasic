@@ -51,6 +51,8 @@ void target_finalization( Environment * _environment ) {
     }
     sn76489m_finalization( _environment );
 
+    deploy( vars2, src_hw_coco3_vars2_asm);
+
 }
 
 void target_analysis( Environment * _environment ) {
