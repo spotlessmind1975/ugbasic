@@ -465,6 +465,8 @@ void variable_cleanup( Environment * _environment ) {
     outline0("NOP");
     outline0("JMP CODESTART")
 
+    deploy_inplace( vars, src_hw_vic20_vars_asm);
+
     variable_on_memory_init( _environment, 0 );
 
     DataSegment * dataSegment = _environment->dataSegment;

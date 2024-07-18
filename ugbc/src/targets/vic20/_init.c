@@ -91,8 +91,6 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("CODESTART:");
 
-    deploy( vars, src_hw_vic20_vars_asm);
-
     setup_text_variables( _environment );
 
     vic1_initialization( _environment );
