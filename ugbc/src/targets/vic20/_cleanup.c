@@ -46,6 +46,8 @@ void target_finalization( Environment * _environment ) {
 
     vic1_finalization( _environment );
 
+    deploy( vars2, src_hw_vic20_vars2_asm);
+
     buffered_prepend_output( _environment );
 
 }
