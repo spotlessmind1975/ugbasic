@@ -53,35 +53,7 @@
 </usermanual> */
 Variable * csprite_init( Environment * _environment, char * _image, char *_sprite, int _flags ) {
 
-    Variable * index;
-    Variable * startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-    Variable * image = variable_retrieve( _environment, _image );
-    Variable * spriteCount;
-
-    if ( _sprite ) {
-
-        index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
-        cpu_move_8bit( _environment, index->realName, startIndex->realName );
-        cpu_math_and_const_8bit( _environment, startIndex->realName, 0x1f );
-        spriteCount = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-        cpu_move_8bit( _environment, startIndex->realName, spriteCount->realName );
-
-    } else {
-
-        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-        spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
-        variable_move_naked( _environment, spriteCount->name, startIndex->name );
-
-    }
-
-    for (int i=1; i<image->originalColors; ++i ) {
-        variable_move_naked( _environment, spriteCount->name, index->name );
-        Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, 0, 0 );
-        cpu_inc( _environment, spriteCount->realName );
-    }
-
-    cpu_store_8bit( _environment, index->realName, ( image->originalColors - 1 ) << 5 );
-    cpu_math_add_8bit( _environment, index->realName, startIndex->realName, index->realName );
+    Variable * index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
 
     return index;
 
