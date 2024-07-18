@@ -44,6 +44,8 @@ void target_prepare_finalization( Environment * _environment ) {
 
 void target_finalization( Environment * _environment ) {
 
+    deploy( vars2, src_hw_d64_vars2_asm);
+
     c6847_finalization( _environment );
 
 }
