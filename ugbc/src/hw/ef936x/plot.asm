@@ -549,16 +549,16 @@ PLOTD3HIDB
     LDA , X
     ORA <MATHPTR5
     STA , X
-    LDA $2000, X
-    ORA <MATHPTR5
-    STA $2000, X
+    ; LDA $2000, X
+    ; ORA <MATHPTR5
+    ; STA $2000, X
     JMP PLOTD3FDB
 
 PLOTD3LODB
 
-    LDA , X
-    ORA <MATHPTR5
-    STA , X
+    ; LDA , X
+    ; ORA <MATHPTR5
+    ; STA , X
     LDA $2000, X
     ORA <MATHPTR5
     STA $2000, X
