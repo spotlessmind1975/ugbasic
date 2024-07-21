@@ -759,7 +759,8 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
     deploy_inplace_preferred( scancode, src_hw_pc128op_scancode_asm );
-    
+    deploy_inplace_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
+
     outhead0("CODESTART2");
     outline0("LDS #STACKEND");
 

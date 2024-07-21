@@ -690,7 +690,7 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size ) 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
     deploy( cls, src_hw_ef936x_cls_asm );
-    deploy( textEncodedAt, src_hw_ef936x_text_at_asm );
+    deploy_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
 
     if( ! _environment->descriptors ) {
         font_descriptors_init( _environment, 0 );
