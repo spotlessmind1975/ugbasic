@@ -38,6 +38,33 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword RESTORE
+
+@english
+
+The ''RESTORE'' sets the internal DATA pointer to a desired
+BASIC line ''label''. If the ''label'' is omitted, the command completely 
+resets the ''DATA'' pointer to the beginning. When using ''RESTORE'' without
+''label'', unwanted ''DATA'' information may first have to be read over in a loop.
+
+@italian
+
+Il ''RESTORE'' imposta il puntatore ''DATA'' interno su una ''etichetta'' della linea 
+BASIC desiderata. Se l'''etichetta'' viene omessa, il comando reimposta 
+il puntatore ''DATA'' all'inizio. Quando si utilizza ''RESTORE'' senza ''label'', 
+è possibile che le informazioni ''DATA'' indesiderate debbano prima essere lette 
+in loop.
+
+@syntax RESTORE [label]
+
+@example RESTORE inizio
+
+@usedInExample data_example_03.bas
+
+@target all
+</usermanual> */
+
 void restore_label( Environment * _environment, char * _label ) {
 
     if ( !_label || label_exists_named( _environment, _label ) ) {
