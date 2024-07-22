@@ -95,7 +95,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
-%token PROGRAM START JOYX JOYY RETRIES PALETTE1
+%token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -127,6 +127,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> halted
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y optional_x_or_string
+%type <string> mandatory_x mandatory_y
 %type <integer> target targets
 %type <integer> parallel_optional
 %type <integer> on_targets
@@ -4897,6 +4898,16 @@ optional_x_or_string:
     }
     ;
 
+mandatory_x:
+    relative_option expr {
+        $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name;
+    };
+
+mandatory_y:
+    relative_option expr {
+        $$ = origin_resolution_relative_transform_y( _environment, $2, $1 )->name;
+    };
+
 optional_x:
     relative_option expr {
         $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name;
@@ -5729,7 +5740,7 @@ console_definition:
     | console_definition_expression;
 
 bar_definition_expression:
-      optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         bar( _environment, $1, $3, $5, $7, $9 );
         gr_locate( _environment, $5, $7 );
     }
@@ -5752,6 +5763,16 @@ bar_definition_expression:
 
 bar_definition:
     bar_definition_expression;
+
+block_definition_expression:
+    mandatory_x OP_COMMA mandatory_y OP_COMMA mandatory_x OP_COMMA mandatory_y OP_COMMA expr  {
+        Variable * color = color_get_vars( _environment, $9 );
+        bar( _environment, $1, $3, $5, $7, color->name );
+        gr_locate( _environment, $5, $7 );
+    };
+
+block_definition:
+    block_definition_expression;
 
 clip_definition_expression:
       expr OP_COMMA expr TO expr OP_COMMA expr {
@@ -8993,6 +9014,7 @@ statement2nc:
   | BOX box_definition
   | CONSOLE console_definition
   | BAR bar_definition
+  | BLOCK block_definition
   | POLYLINE polyline_definition
   | CLIP clip_definition
   | USE use_definition
