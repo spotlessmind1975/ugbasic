@@ -661,6 +661,10 @@ void vic2_background_color( Environment * _environment, int _index, int _backgro
     outline1("LDA #$%2.2x", _background_color );
     outline0("AND #$0f" );
     outline1("STA $d021+%d", ( _index & 0x03 ) );
+
+    if ( _index == 0 ) {
+        outline0("STA _PAPER" );
+    }
 }
 
 /**
@@ -675,12 +679,19 @@ void vic2_background_color( Environment * _environment, int _index, int _backgro
  */
 void vic2_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
  
+    MAKE_LABEL
+
     outline1("LDA %s", _index);
     outline0("AND #$03");
+    outline1("BNE %s", label);
+    outline1("LDA %s", _background_color );
+    outline0("STA _PAPER");
+    outhead1("%s:", label);    
     outline0("TAX");
     outline1("LDA %s", _background_color );
     outline0("AND #$0f" );
     outline0("STA $d021,X");
+
 }
 
 /**
@@ -701,6 +712,10 @@ void vic2_background_color_semivars( Environment * _environment, int _index, cha
     outline1("LDA %s", _background_color );
     outline0("AND #$0f" );
     outline0("STA $d021,X");
+    if ( _index == 0 ) {
+        outline0("STA _PAPER" );
+    }
+
 }
 
 /**
