@@ -2303,3 +2303,44 @@ Alias di ''JOY Y''
 @target d32
 @target d64
 </usermanual> */
+
+/* <usermanual>
+@keyword BLOCK
+
+@english
+
+''BLOCK'' draws a filled rectangle. The location of the top left corner is determined by the first 
+two parameters ''x1'' and ''y1'', the coordinates of the bottom right corner of the rectangle 
+are determined by parameters three and four (''x2'' and ''y2'', where ''x2=x1+width'' and 
+''y2=y1+height'', important for ''REC''). The color of the rectangle is determined by the 
+last parameter (''fq'', color source). Permissible values ​​are 0..''SCREEN WIDTH'' for ''x1''
+and ''x2' . For ''y1'' and ''y2'', values ​​from 0 to ''SCREEN HEIGHT'' are permitted in both cases. 
+The color also depends on the graphics mode and refers to the color specifications behind ''HIRES''
+on the one hand and ''MULTI'' and ''LOW COL'' on the other. The point 0,0 is in the top left corner.
+
+Note: Unfortunately, the parameter types of ''REC'' and ''BLOCK'' do not match, which makes 
+programming a little more complicated (see program example). 
+
+@italian
+
+''BLOCK'' disegna un rettangolo pieno. La posizione dell'angolo in alto a sinistra è determinata
+dai primi due parametri ''x1'' e ''y1'', le coordinate dell'angolo in basso a destra del rettangolo
+sono determinate dai parametri tre e quattro (''x2'' e ''y2'', dove ''x2=x1+larghezza'' e 
+''y2=y1+altezza'', importante per ''REC''). Il colore del rettangolo è determinato dall'ultimo 
+parametro (''fq'', fonte colore). I valori consentiti sono 0..''SCREEN WIDTH'' per ''x1'' e ''x2'.
+Per ''y1'' e ''y2'' sono ammessi in entrambi i casi i valori da 0 a ''SCREEN HEIGHT''. Il colore 
+dipende anche dalla modalità grafica e si riferisce alle specifiche del colore dietro ''HIRES''
+da un lato e ''MULTI'' e ''LOW COL'' dall'altro. Il punto 0,0 si trova nell'angolo in alto a sinistra.
+
+Nota: Sfortunatamente i tipi di parametri di ''REC'' e ''BLOCK'' non corrispondono, il che rende 
+la programmazione un po' più complicata (vedi esempio di programma).
+
+@syntax BLOCK x1, y1, x2, y2, fq
+
+@example BLOCK x, y, x+29, y+19, 0
+
+@usedInExample tsb_block_rec_01.bas
+
+@target c128
+@project tsb
+</usermanual> */
