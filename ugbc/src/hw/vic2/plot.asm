@@ -407,6 +407,16 @@ PLOTCOMMON:
     ;depending on PLOTM, routine draws or erases
     ;----------------------------------------------
 
+    ; If PEN color is equal to background, we are clearing the pixel
+    
+    LDA $D021
+    AND #$0F
+    CMP _PEN
+    BNE PLOTCOMMON2
+    LDA #0
+    STA PLOTM
+
+PLOTCOMMON2:
     LDA PLOTM                  ;(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
     CMP #0
     BEQ PLOTE                  ;if = 0 then branch to clear the point
