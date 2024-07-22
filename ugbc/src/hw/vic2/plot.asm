@@ -408,8 +408,8 @@ PLOTCOMMON:
     ;----------------------------------------------
 
     ; If PEN color is equal to background, we are clearing the pixel
-    
-    LDA $D021
+
+    LDA _PAPER
     AND #$0F
     CMP _PEN
     BNE PLOTCOMMON2
