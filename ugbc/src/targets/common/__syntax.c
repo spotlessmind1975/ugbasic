@@ -2344,3 +2344,45 @@ la programmazione un po' più complicata (vedi esempio di programma).
 @target c128
 @project tsb
 </usermanual> */
+
+/* <usermanual>
+@keyword REC
+
+@english
+
+''REC'' draws a rectangle. The location of the top left corner is determined by the first two 
+parameters ''x'' and ''y'', the width and height of the rectangle by parameters three and four 
+(''sa'' and ''sb''). The color of the edge lines is determined by the last parameter (''fq'', 
+color source). The four corners of the rectangle are always drawn.
+
+Permissible values ​​are 0..''SCREEN WIDTH'' for ''x'' and ''sa''. 
+For ''y'' or ''sb'', values ​​from 0 to ''SCREEN HEIGHT'' are permitted in both cases. The color also depends on
+the graphics mode and refers to the color specifications behind ''HIRES'' on the one hand and 
+''MULTI'' and ''LOW COL'' on the other. The point 0,0 is in the top left corner.
+
+Note: If the edge lengths of the rectangle exceed the screen limits, rectangle will be clipped.
+
+@italian
+
+''REC'' disegna un rettangolo. La posizione dell'angolo in alto a sinistra è determinata dai
+primi due parametri ''x'' e ''y'', la larghezza e l'altezza del rettangolo dai parametri tre e 
+quattro (''sa'' e ''sb'' ). Il colore delle linee del bordo è determinato dall'ultimo parametro 
+(''fq'', sorgente colore). Vengono sempre disegnati i quattro angoli del rettangolo.
+
+I valori consentiti sono 0..''SCREEN WIDTH'' per ''x'' e ''sa''. Per ''y'' o ''sb'' sono ammessi 
+in entrambi i casi i valori da 0 a ''SCREEN HEIGHT''. Il colore dipende anche dalla modalità 
+grafica e si riferisce alle specifiche del colore date al comando ''HIRES'' da un lato e 
+''MULTI'' e ''LOW COL'' dall'altro. Il punto 0,0 si trova nell'angolo in alto a sinistra.
+
+Nota: se la lunghezza dei bordi del rettangolo supera i limiti dello schermo, il rettangolo
+sarà ritagliato
+
+@syntax REC x, y, sa, sb, fq
+
+@example REC x, y, 29, 19, 1
+
+@usedInExample tsb_block_rec_01.bas
+
+@target c128
+@project tsb
+</usermanual> */
