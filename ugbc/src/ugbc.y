@@ -95,7 +95,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
-%token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK
+%token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5672,7 +5672,7 @@ draw_tile_definition:
     draw_tile_definition_expression;
 
 box_definition_expression:
-      optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         box( _environment, $1, $3, $5, $7, $9 );
         gr_locate( _environment, $5, $7 );
     }
@@ -5695,6 +5695,18 @@ box_definition_expression:
 
 box_definition:
     box_definition_expression;
+
+rec_definition_expression:
+    mandatory_x OP_COMMA mandatory_y OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
+        Variable * color = color_get_vars( _environment, $9 );
+        Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
+        Variable * y2 = variable_add( _environment, $3, variable_retrieve_or_define( _environment, $7, VT_POSITION, 0 )->name );
+        box( _environment, $1, $3, x2->name, y2->name, color->name );
+        gr_locate( _environment, x2->name, y2->name );
+    };
+
+rec_definition:
+    rec_definition_expression;
 
 console_definition_simple :
     OFF {
@@ -9012,6 +9024,7 @@ statement2nc:
   | GET get_definition
   | SLICE slice_definition
   | BOX box_definition
+  | REC rec_definition
   | CONSOLE console_definition
   | BAR bar_definition
   | BLOCK block_definition
