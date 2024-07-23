@@ -477,6 +477,8 @@ CYMBAL { RETURN(CYMBAL,1); }
 
 %{ /* --------------------------------- D --------------------------------- */ %}
 
+D!PEEK { RETURN(PEEKW,1); }
+D!p { RETURN(PEEKW,1); }
 D { RETURN(D,1); }
 DARK { RETURN(DARK,1); }
 Dk { RETURN(DARK,1); }
