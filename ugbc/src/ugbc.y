@@ -8981,9 +8981,8 @@ spawn_definition :
 hires_definition_expression :
     expr OP_COMMA expr {
         bitmap_enable( _environment, 0, 0, 0 );
-        sbpen_set( _environment, 0, $1 );
-        sbpaper_set( _environment, $3 );
-        pen( _environment, $1 );
+        sbpen_set( _environment, 1, $1 );
+        sbpen_set( _environment, 0, $3 );
         paper( _environment, $3 );
     };
 

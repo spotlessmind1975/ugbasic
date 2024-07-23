@@ -76,8 +76,8 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "SBINK1" );
     variable_define( _environment, "SBINK2", VT_COLOR, DEFAULT_PEN_COLOR );
     variable_global( _environment, "SBINK2" );
-    variable_define( _environment, "SBPAPER", VT_COLOR, DEFAULT_PAPER_COLOR );
-    variable_global( _environment, "SBPAPER" );
+    variable_define( _environment, "SBINK3", VT_COLOR, DEFAULT_PEN_COLOR );
+    variable_global( _environment, "SBINK3" );
     variable_import( _environment, "DRAWSCALE", VT_BYTE, 4 );
     variable_global( _environment, "DRAWSCALE" );
     variable_import( _environment, "DRAWANGLE", VT_BYTE, 0 );

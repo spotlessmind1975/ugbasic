@@ -4594,9 +4594,7 @@ void                    run_parallel( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    sbpen_set( Environment * _environment, int _index, char * _color );
-void                    sbpaper_set( Environment * _environment, char * _color );
 Variable *              sbpen_get( Environment * _environment, char * _index );
-Variable *              sbpaper_get( Environment * _environment );
 Variable *              scancode( Environment * _environment );
 Variable *              scanshift( Environment * _environment );
 Variable *              screen_can( Environment * _environment, int _mode );

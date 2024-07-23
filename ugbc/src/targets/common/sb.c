@@ -50,15 +50,12 @@ void sbpen_set( Environment * _environment, int _index, char * _color ) {
         case 2:
             sbink = variable_retrieve( _environment, "SBINK2" );
             break;
+        case 3:
+            sbink = variable_retrieve( _environment, "SBINK3" );
+            break;
     }
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
     variable_move( _environment, color->name, sbink->name );
-}
-
-void sbpaper_set( Environment * _environment, char * _color ) {
-    Variable * sbpaper = variable_retrieve( _environment, "SBPAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
-    variable_move( _environment, color->name, sbpaper->name );
 }
 
 Variable * sbpen_get( Environment * _environment, char * _index ) {
@@ -71,10 +68,12 @@ Variable * sbpen_get( Environment * _environment, char * _index ) {
     char sbpenGet0Label[MAX_TEMPORARY_STORAGE]; sprintf( sbpenGet0Label, "%sl0", label );
     char sbpenGet1Label[MAX_TEMPORARY_STORAGE]; sprintf( sbpenGet1Label, "%sl1", label );
     char sbpenGet2Label[MAX_TEMPORARY_STORAGE]; sprintf( sbpenGet2Label, "%sl2", label );
+    char sbpenGet3Label[MAX_TEMPORARY_STORAGE]; sprintf( sbpenGet3Label, "%sl3", label );
     char sbpenGetDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( sbpenGetDoneLabel, "%sld", label );
 
-    cpu_compare_8bit_const( _environment, index->realName, 1, sbpenGet1Label, 1 );
-    cpu_compare_8bit_const( _environment, index->realName, 2, sbpenGet2Label, 1 );
+    cpu_compare_and_branch_8bit_const( _environment, index->realName, 1, sbpenGet1Label, 1 );
+    cpu_compare_and_branch_8bit_const( _environment, index->realName, 2, sbpenGet2Label, 1 );
+    cpu_compare_and_branch_8bit_const( _environment, index->realName, 3, sbpenGet3Label, 1 );
 
     cpu_label( _environment, sbpenGet0Label );
     variable_move( _environment, "SBINK0", color->name );
@@ -88,11 +87,11 @@ Variable * sbpen_get( Environment * _environment, char * _index ) {
     variable_move( _environment, "SBINK2", color->name );
     cpu_jump( _environment, sbpenGetDoneLabel );
 
+    cpu_label( _environment, sbpenGet3Label );
+    variable_move( _environment, "SBINK3", color->name );
+    cpu_jump( _environment, sbpenGetDoneLabel );
+
     cpu_label( _environment, sbpenGetDoneLabel );
 
     return color;
-}
-
-Variable * sbpaper_get( Environment * _environment ) {
-    return variable_retrieve( _environment, "SBPAPER" );
 }
