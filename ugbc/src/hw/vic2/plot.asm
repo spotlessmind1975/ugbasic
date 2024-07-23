@@ -20,7 +20,7 @@ PLOTY    = $BC ; $BD
 PLOTM    = $BE
 PLOTOMA  = $C0
 PLOTAMA  = $BF
-PLOTCPE    = $C1
+PLOTCPE    = $BB
 
 ;--------------
 

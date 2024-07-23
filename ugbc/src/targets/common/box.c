@@ -79,11 +79,11 @@ bitmask di 16 bit con il comando ''SET LINE''.
 
 @target all
 </usermanual> */
-void box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c ) {
+void box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c, int _preserve_color ) {
 
-    draw( _environment, _x1, _y1, _x2, _y1, _c );
-    draw( _environment, _x1, _y1, _x1, _y2, _c );
-    draw( _environment, _x1, _y2, _x2, _y2, _c );
-    draw( _environment, _x2, _y1, _x2, _y2, _c );
+    draw( _environment, _x1, _y1, _x2, _y1, _c, _preserve_color );
+    draw( _environment, _x1, _y1, _x1, _y2, _c, _preserve_color );
+    draw( _environment, _x1, _y2, _x2, _y2, _c, _preserve_color );
+    draw( _environment, _x2, _y1, _x2, _y2, _c, _preserve_color );
 
 }

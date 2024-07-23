@@ -4141,7 +4141,7 @@ void                    bank_write_vars( Environment * _environment, char * _ban
 void                    bank_write_semi_var( Environment * _environment, char * _address2, int _bank, int _address1, int _size );
 void                    bank_write_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size );
-void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
+void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
 void                    begin_for_prepare( Environment * _environment );  
 void                    begin_for_from_prepare( Environment * _environment );  
 void                    begin_for_from_assign( Environment * _environment, char * _from );
@@ -4196,7 +4196,7 @@ void                    blit_define_end_compound( Environment * _environment, in
 void                    blit_image( Environment * _environment, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _flags );
 void                    boom( Environment * _environment, int _duration, int _channels );
 void                    boom_var( Environment * _environment, char * _duration, char * _channels );
-void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c );
+void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c, int _preserve_color );
 Resource *              build_resource_for_sequence( Environment * _environment, char * _image, char * _frame, char * _sequence );
 
 //----------------------------------------------------------------------------
@@ -4276,7 +4276,7 @@ void                    defdgr_vars( Environment * _environment, char * _charact
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    double_buffer( Environment * _environment, int _enabled );
-void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
+void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
 void                    draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color );
 void                    draw_string( Environment * _environment, char * _string );
