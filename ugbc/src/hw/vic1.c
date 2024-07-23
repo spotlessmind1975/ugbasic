@@ -498,11 +498,18 @@ void vic1_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void vic1_pset_int( Environment * _environment, int _x, int _y ) {
+void vic1_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( vic1vars, src_hw_vic1_vars_asm);
     deploy( plot, src_hw_vic1_plot_asm );
     
+    if ( _c ) {
+        outline1("LDA #$%2.2x", ( *_c & 0xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("LDA %s", c->realName );
+    }
+    outline0("STA PLOTCPE");
     outline1("LDA %2.2x", (_x & 0xff ) );
     outline0("STA PLOTX");
     outline1("LDA %2.2x", ( ( _x >> 8 ) & 0xff ) );
@@ -515,14 +522,23 @@ void vic1_pset_int( Environment * _environment, int _x, int _y ) {
 
 }
 
-void vic1_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void vic1_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * y = variable_retrieve( _environment, _y );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
 
     deploy( vic1vars, src_hw_vic1_vars_asm);
     deploy( plot, src_hw_vic1_plot_asm );
     
+    outline1("LDA %s", c->realName );
+    outline0("STA PLOTCPE");
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
     if ( VT_BITWIDTH( x->type ) > 8 ) {

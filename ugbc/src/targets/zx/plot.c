@@ -43,11 +43,7 @@
 
 @target zx
  </usermanual> */
-void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
-
-    if ( _c ) {
-        pen( _environment, _c );
-    }
+void plot( Environment * _environment, char * _x, char * _y, char *_c, int _preserve_color ) {
 
     if ( !_x ) {
         _x = variable_retrieve( _environment, "XGR" )->name;
@@ -57,6 +53,35 @@ void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
         _y = variable_retrieve( _environment, "YGR" )->name;
     }
 
-    point_at_vars( _environment, _x, _y );
+    MAKE_LABEL
+
+    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( plot, src_hw_zx_plot_asm );
+
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
+
+    outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
+    outline0("CP 0");
+    outline1("JR NZ, %s", label );
+    outline1("LD A, (%s)", x->realName );
+    outline0("LD H, A");
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD L, A");
+    outline1("LD A, (%s)", c->realName );
+    outline0("LD (PLOTCPE), A");
+    outline0("CALL PLOT");
+    outhead1("%s:", label );
+    
+    if ( _c && !_preserve_color ) {
+        pen( _environment, _c );
+    }
 
 }

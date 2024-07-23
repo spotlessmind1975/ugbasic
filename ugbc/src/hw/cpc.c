@@ -688,7 +688,7 @@ void cpc_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void cpc_pset_int( Environment * _environment, int _x, int _y ) {
+void cpc_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
@@ -700,15 +700,29 @@ void cpc_pset_int( Environment * _environment, int _x, int _y ) {
     outline0("LD E, A");
     outline1("LD A, 0x%2.2x", ( ( _x >> 8 ) & 0xff ) );
     outline0("LD IXL, A");
+    if ( _c ) {
+        outline1("LD A, $%2.2x", ( *_c & 0Xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("LD A, (%s)", c->realName );
+    }
+    outline0("LD (PLOTCPE), A");
     outline0("LD A, 1");
     outline0("CALL PLOT");
 
 }
 
-void cpc_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void cpc_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * y = variable_retrieve( _environment, _y );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
 
     deploy( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
@@ -718,6 +732,8 @@ void cpc_pset_vars( Environment * _environment, char *_x, char *_y ) {
     outline0("LD D, A");
     outline1("LD A, (%s)", x->realName );
     outline0("LD E, A");
+    outline1("LD A, (%s)", c->realName );
+    outline0("LD (PLOTCPE), A");
     if ( VT_BITWIDTH( x->type ) > 8 ) {
         outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
     } else {

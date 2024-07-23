@@ -1298,7 +1298,7 @@ void gime_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void gime_pset_int( Environment * _environment, int _x, int _y ) {
+void gime_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy_preferred( gimevars, src_hw_gime_vars_asm );
     deploy_preferred( plot, src_hw_gime_plot_asm );
@@ -1307,6 +1307,13 @@ void gime_pset_int( Environment * _environment, int _x, int _y ) {
     outline0("STX <PLOTX");
     outline1("LDD %4.4x", ( _y & 0xffff ) );
     outline0("STD <PLOTY");
+    if ( _c ) {
+        outline1("LDB #$%2.2x", ( *_c & 0xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("LDB %s", c->realName );
+    }
+    outline0("STB <PLOTCPE");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -1314,10 +1321,17 @@ void gime_pset_int( Environment * _environment, int _x, int _y ) {
 
 }
 
-void gime_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void gime_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
 
     deploy_preferred( gimevars, src_hw_gime_vars_asm );
     deploy_preferred( plot, src_hw_gime_plot_asm );
@@ -1326,6 +1340,8 @@ void gime_pset_vars( Environment * _environment, char *_x, char *_y ) {
     outline0("STX <PLOTX");
     outline1("LDD %s", y->realName );
     outline0("STD <PLOTY");
+    outline1("LDB %s", c->realName );
+    outline0("STB <PLOTCPE");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");

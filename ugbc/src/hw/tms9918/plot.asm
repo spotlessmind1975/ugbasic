@@ -188,7 +188,7 @@ PLOTD:
 
     EXX
 
-    LD A, (_PEN)
+    LD A, (PLOTCPE)
     SLA A
     SLA A
     SLA A

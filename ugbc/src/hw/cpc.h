@@ -335,8 +335,8 @@ void cpc_tiles_get( Environment * _environment, char * _result );
 void cpc_get_width( Environment * _environment, char * _result );
 void cpc_get_height( Environment * _environment, char * _result );
 
-void cpc_pset_int( Environment * _environment, int _x, int _y );
-void cpc_pset_vars( Environment * _environment, char *_x, char *_y );
+void cpc_pset_int( Environment * _environment, int _x, int _y, int *_c );
+void cpc_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void cpc_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void cpc_cls( Environment * _environment );
 void cpc_scroll_text( Environment * _environment, int _direction );

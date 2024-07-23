@@ -20,6 +20,7 @@ PLOTY    = $BC ; $BD
 PLOTM    = $BE
 PLOTOMA  = $C0
 PLOTAMA  = $BF
+PLOTCPE    = $C1
 
 ;--------------
 
@@ -267,7 +268,7 @@ PLOT3XXX:
 PLOT3XXX2:
     LDA $D021
     AND #$0f
-    CMP _PEN
+    CMP PLOTCPE
     BEQ PLOT3C0
     LDY #0
     LDA (PLOTCDEST),Y
@@ -275,16 +276,16 @@ PLOT3XXX2:
     LSR
     LSR
     LSR
-    CMP _PEN
+    CMP PLOTCPE
     BEQ PLOT3C1
     LDY #0
     LDA (PLOTCDEST),Y
     AND #$0F
-    CMP _PEN
+    CMP PLOTCPE
     BEQ PLOT3C2
     LDA (PLOTC2DEST),Y
     AND #$0F
-    CMP _PEN
+    CMP PLOTCPE
     BEQ PLOT3C3
 
     LDA LASTCOLOR
@@ -308,7 +309,7 @@ PLOT3SC1:
     LDA (PLOTCDEST),Y
     AND #$0f
     STA (PLOTCDEST),Y
-    LDA _PEN
+    LDA PLOTCPE
     ASL
     ASL
     ASL
@@ -328,7 +329,7 @@ PLOT3SC2:
     LDA (PLOTCDEST),Y
     AND #$f0
     STA (PLOTCDEST),Y
-    LDA _PEN
+    LDA PLOTCPE
     ORA (PLOTCDEST),Y
     STA (PLOTCDEST),Y
     LDA #2
@@ -341,7 +342,7 @@ PLOT3C2:
     JMP PLOT3PEN
 
 PLOT3SC3:
-    LDA _PEN
+    LDA PLOTCPE
     LDY #0
     STA (PLOTC2DEST),Y
     LDA #1
@@ -411,7 +412,7 @@ PLOTCOMMON:
 
     LDA _PAPER
     AND #$0F
-    CMP _PEN
+    CMP PLOTCPE
     BNE PLOTCOMMON2
     LDA #0
     STA PLOTM
@@ -443,7 +444,7 @@ PLOTD:
     LDA (PLOTCDEST),Y          ;get row with point in it
     AND #$0f                   ;isolate AND set the point
     STA (PLOTCDEST),Y          ;get row with point in it
-    LDA _PEN
+    LDA PLOTCPE
     ASL
     ASL
     ASL

@@ -996,12 +996,19 @@ void tms9918_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void tms9918_pset_int( Environment * _environment, int _x, int _y ) {
+void tms9918_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( plot, src_hw_tms9918_plot_asm );
     
+    if ( _c ) {
+        outline1("LD A, #$%2.2x", ( *_c & 0xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("LD A, (%s)", c->realName );
+    }
+    outline0("LD (PLOTCPE), A");
     outline1("LD A, $%2.2x", ( _y & 0xff ) );
     outline0("LD D, A");
     outline1("LD A, $%2.2x", ( _x & 0xff ) );
@@ -1017,15 +1024,24 @@ void tms9918_pset_int( Environment * _environment, int _x, int _y ) {
 
 }
 
-void tms9918_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void tms9918_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * y = variable_retrieve( _environment, _y );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( plot, src_hw_tms9918_plot_asm );
     
+    outline1("LD A, (%s)", c->realName );
+    outline0("LD (PLOTCPE), A");
     outline1("LD A, (%s)", y->realName );
     outline0("LD D, A");
     outline1("LD A, (%s)", x->realName );
@@ -1493,6 +1509,9 @@ void tms9918_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CLINEY", VT_BYTE, 0 );
     variable_global( _environment, "CLINEY" );
+
+    variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTCPE" );
 
     variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
     variable_global( _environment, "TABSTODRAW" );

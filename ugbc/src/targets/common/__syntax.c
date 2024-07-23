@@ -2386,3 +2386,43 @@ sarà ritagliato
 @target c128
 @project tsb
 </usermanual> */
+
+/* <usermanual>
+@keyword HIRES
+
+@english
+
+`HIRES` is used to switch from text to high-resolution graphics mode and to use the specified colors: 
+''ink'' for the writing color and ''paper'' for the background color (both with values ​​from 0 to ''SCREEN COLORS'').
+The graphics memory is deleted and preset with the specified colors. The color of the screen frame 
+remains unaffected. The selected mode remains active until it is switched off or changed by a command 
+(''MULTI'', ''CSET'' or ''NRM''). Important: the color specifications of almost all other graphics 
+commands that use ''fg'' as color parameter refers to the colors specified here. If the color source ''0'' is specified in a graphics 
+command, the color specified for ''paper'' is selected; if ''1'' is specified, the color for ''ink''
+is selected; the color specification ''2'' inverts the controlled pixel (if in hires mode, 
+otherwise see ''MULTI''). 
+
+@italian
+
+''HIRES'' serve per passare dalla modalità testo a quella grafica ad alta risoluzione e per
+utilizzare i colori specificati: ''ink'' per il colore della scrittura e ''paper'' per il colore
+dello sfondo (entrambi con valori da 0 a ''SCREEN COLORS''). La memoria grafica viene cancellata e
+preimpostata con i colori specificati. Il colore della cornice dello schermo rimane inalterato. 
+La modalità selezionata rimane attiva finché non viene spenta o modificata tramite un comando 
+(''MULTI'', ''CSET'' o ''NRM''). Importante: le specifiche dei colori di quasi tutti gli altri
+comandi grafici che usano ''fg'' come parametro del colore si riferiscono ai colori qui specificati. 
+Se in un comando grafico viene specificata l'origine colore ''0'', viene selezionato il colore 
+specificato per ''paper''; se viene specificato ''1'', viene selezionato il colore per 
+''ink''; la specifica colore ''2'' inverte il pixel controllato (se in modalità ''HIRES'', altrimenti
+vedi ''MULTI'').
+
+@syntax HIRES ink, paper
+
+@example HIRES 0, 1
+
+@usedInExample tsb_block_rec_01.bas
+
+@target c128
+@project tsb
+</usermanual> */
+

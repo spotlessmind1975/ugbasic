@@ -190,7 +190,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
         variable_move_naked( _environment, dx->name, dx2->name );
         dx2 = variable_mul2_const( _environment, dx2->name, 1 );
         if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
-            plot( _environment, x->name, y->name, c->name );
+            plot( _environment, x->name, y->name, c->name, 0 );
         end_if_then( _environment );
         variable_increment( _environment, bit->name );
         if_then( _environment, variable_compare_const( _environment, bit->name, 16 )->name );
@@ -207,7 +207,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
                 end_if_then( _environment );
                 variable_move( _environment, variable_add( _environment, fraction->name, dy2->name )->name, fraction->name );
                 if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
-                    plot( _environment, x->name, y->name, c->name );
+                    plot( _environment, x->name, y->name, c->name, 0 );
                 end_if_then( _environment );
                 variable_increment( _environment, bit->name );
                 if_then( _environment, variable_compare_const( _environment, bit->name, 16 )->name );
@@ -226,7 +226,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
                 variable_move( _environment, variable_add( _environment, y->name, stepy->name )->name, y->name );
                 variable_move( _environment, variable_add( _environment, fraction->name, dx2->name )->name, fraction->name );
                 if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
-                    plot( _environment, x->name, y->name, c->name );
+                    plot( _environment, x->name, y->name, c->name, 0 );
                 end_if_then( _environment );
                 variable_increment( _environment, bit->name );
                 if_then( _environment, variable_compare_const( _environment, bit->name, 16 )->name );

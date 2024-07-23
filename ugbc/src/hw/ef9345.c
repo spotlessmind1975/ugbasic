@@ -596,11 +596,11 @@ void ef9345_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void ef9345_pset_int( Environment * _environment, int _x, int _y ) {
+void ef9345_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
 }
 
-void ef9345_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void ef9345_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
 }
 

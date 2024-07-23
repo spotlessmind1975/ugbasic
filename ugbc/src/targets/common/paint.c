@@ -272,7 +272,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
             cpu_call( _environment, pushQueue );
 
             // Color the pixel with the new color
-            plot( _environment, x->name, y->name, paintC->name );
+            plot( _environment, x->name, y->name, paintC->name, 0 );
 
             // ------------------------------[ BEGIN FLOOD FILL LOOP ]
             cpu_label( _environment, loopPaintLabel );
@@ -306,7 +306,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
                 cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0x00, skip1PaintLabel, 1 );
                 // Color with newC
                 // if valid and enqueue
-                plot( _environment, x->name, y->name, paintC->name );
+                plot( _environment, x->name, y->name, paintC->name, 0 );
                 // variable_move( _environment, 
                 //     variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
                 //     isValid->name );
@@ -334,7 +334,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
                 cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0x00, skip2PaintLabel, 1 );
                 // Color with newC
                 // if valid and enqueue
-                plot( _environment, x->name, y->name, paintC->name );
+                plot( _environment, x->name, y->name, paintC->name, 0 );
                 // variable_move( _environment, 
                 //     variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
                 //     isValid->name );
@@ -362,7 +362,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
                 cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0x00, skip3PaintLabel, 1 );
                 // Color with newC
                 // if valid and enqueue
-                plot( _environment, x->name, y->name, paintC->name );
+                plot( _environment, x->name, y->name, paintC->name, 0 );
                 // variable_move( _environment, 
                 //     variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
                 //     isValid->name );
@@ -390,7 +390,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
                 cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0x00, skip4PaintLabel, 1 );
                 // Color with newC
                 // if valid and enqueue
-                plot( _environment, x->name, y->name, paintC->name );
+                plot( _environment, x->name, y->name, paintC->name, 0 );
                 // variable_move( _environment, 
                 //     variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
                 //     isValid->name );

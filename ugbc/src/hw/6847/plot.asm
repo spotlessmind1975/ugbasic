@@ -43,6 +43,7 @@ PLOTAMA EQU $47
 PLOTNB  EQU $48
 PLOTNC  EQU $49
 PLOTND  EQU $50
+PLOTCPE  EQU $51
 
 ;--------------
 
@@ -209,7 +210,7 @@ PLOT7
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB _PEN
+    LDB PLOTCPE
     ANDB #$03
     LSLB
     LSLB
@@ -305,7 +306,7 @@ PLOT9
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB _PEN
+    LDB PLOTCPE
     ANDB #$03
     LSLB
     LSLB
@@ -401,7 +402,7 @@ PLOT11
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB _PEN
+    LDB PLOTCPE
     ANDB #$03
     LSLB
     LSLB
@@ -497,7 +498,7 @@ PLOT13
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB _PEN
+    LDB PLOTCPE
     ANDB #$03
     LSLB
     LSLB

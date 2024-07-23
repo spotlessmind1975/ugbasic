@@ -4530,7 +4530,7 @@ void                    play_vars( Environment * _environment, char * _note, cha
 void                    play_off( Environment * _environment, int _channels );
 void                    play_off_var( Environment * _environment, char * _channels );
 void                    play_string( Environment * _environment, char * _string );
-void                    plot( Environment * _environment, char * _x, char * _y, char *_c );
+void                    plot( Environment * _environment, char * _x, char * _y, char *_c, int _preserve_color );
 void                    pmode( Environment * _environment, int _mode, int _start_page );
 Variable *              point( Environment * _environment, char * _x, char * _y );
 void                    point_at( Environment * _environment, int _x, int _y );
@@ -4593,6 +4593,10 @@ void                    run_parallel( Environment * _environment );
 // *S*
 //----------------------------------------------------------------------------
 
+void                    sbpen_set( Environment * _environment, int _index, char * _color );
+void                    sbpaper_set( Environment * _environment, char * _color );
+Variable *              sbpen_get( Environment * _environment, char * _index );
+Variable *              sbpaper_get( Environment * _environment );
 Variable *              scancode( Environment * _environment );
 Variable *              scanshift( Environment * _environment );
 Variable *              screen_can( Environment * _environment, int _mode );

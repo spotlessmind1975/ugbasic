@@ -43,11 +43,7 @@
 
 @target sc3000
  </usermanual> */
-void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
-
-    if ( _c ) {
-        pen( _environment, _c );
-    }
+void plot( Environment * _environment, char * _x, char * _y, char *_c, int _preserve_color ) {
 
     if ( !_x ) {
         _x = variable_retrieve( _environment, "XGR" )->name;
@@ -57,6 +53,10 @@ void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
         _y = variable_retrieve( _environment, "YGR" )->name;
     }
 
-    tms9918_pset_vars( _environment, _x, _y );
+    tms9918_pset_vars( _environment, _x, _y, _c );
+
+    if ( _c && !_preserve_color ) {
+        pen( _environment, _c );
+    }
 
 }

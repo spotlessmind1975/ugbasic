@@ -2124,12 +2124,19 @@ void vdcz_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void vdcz_pset_int( Environment * _environment, int _x, int _y ) {
+void vdcz_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( plot, src_hw_vdcz_plot_asm );
 
+    if ( _c ) {
+        outline1("LD A, $%2.2x", ( *_c & 0xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("LD A, (%s)", c->realName );
+    }
+    outline0( "LD (PLOTCPE), A" );
     outline1( "LD A, $%2.2x", ( _x & 0xff ) );
     outline0( "LD E, A" );
     outline1( "LD A, $%2.2x", ( ( _x >> 8 ) & 0xff ) );
@@ -2143,15 +2150,24 @@ void vdcz_pset_int( Environment * _environment, int _x, int _y ) {
 
 }
 
-void vdcz_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void vdcz_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
 
     deploy( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( plot, src_hw_vdcz_plot_asm );
 
+    outline1( "LD A, (%s)", c->realName );
+    outline0( "LD (PLOTCPE), A" );
     outline1( "LD A, (%s)", x->realName );
     outline0( "LD E, A" );
     outline1( "LD A, (%s+1)", x->realName );

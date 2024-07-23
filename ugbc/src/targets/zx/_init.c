@@ -63,6 +63,9 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "EMPTYTILE" );    
     variable_import( _environment, "USING", VT_BYTE, 0 );
 
+    variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTCPE" );    
+
     variable_import( _environment, "IMAGEX", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEX" );    
     variable_import( _environment, "IMAGEY", VT_BYTE, 0 );
