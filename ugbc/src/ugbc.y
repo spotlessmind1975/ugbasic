@@ -95,7 +95,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
-%token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES
+%token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -7873,7 +7873,13 @@ audio_source :
     };
 
 define_definition :
-      AUDIO SYNC {
+      CLS IMPLICIT {
+        ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 1;
+    }
+    | CLS EXPLICIT {
+        ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 0;
+    }
+    | AUDIO SYNC {
         ((struct _Environment *)_environment)->audioConfig.async = 0;
     }
     | AUDIO ASYNC {
@@ -8984,6 +8990,7 @@ hires_definition_expression :
         sbpen_set( _environment, 1, $1 );
         sbpen_set( _environment, 0, $3 );
         paper( _environment, $3 );
+        cls( _environment, NULL );
     };
 
 hires_definition : 

@@ -1732,6 +1732,7 @@ typedef struct _VestigialConfig {
     char doubleBufferSelected;
     char doubleBuffer;
     char palettePreserve;
+    char clsImplicit;
 
 } VestigialConfig;
 

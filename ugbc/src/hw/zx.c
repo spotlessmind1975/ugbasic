@@ -433,6 +433,10 @@ int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
     _environment->fontHeight = 8;
     _environment->screenColors = 8;
     console_init( _environment );
+    if (_environment->vestigialConfig.clsImplicit ) {
+        zx_cls( _environment );
+    }
+
 }
 
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {

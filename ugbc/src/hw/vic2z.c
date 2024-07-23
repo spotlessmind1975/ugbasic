@@ -1034,6 +1034,10 @@ int vic2z_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        vic2z_cls( _environment );
+    }
+
 }
 
 void vic2z_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {

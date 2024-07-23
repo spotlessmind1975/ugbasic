@@ -710,6 +710,10 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        c6847_cls( _environment );
+    }
+
 }
 
 void c6847_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {

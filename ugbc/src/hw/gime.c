@@ -1243,6 +1243,10 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_call( _environment, "GIMERESETPALETTE" );
     cpu_call( _environment, "GIMERAM" );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        gime_cls( _environment );
+    }
+
 }
 
 void gime_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {

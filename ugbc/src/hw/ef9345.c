@@ -531,6 +531,10 @@ int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        ef9345_cls( _environment );
+    }
+
 }
 
 void ef9345_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {

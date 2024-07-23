@@ -2063,6 +2063,10 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     _environment->screenShades = 16;
     _environment->screenColors = 2;
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        vdcz_cls( _environment );
+    }
+
 }
 
 void vdcz_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {

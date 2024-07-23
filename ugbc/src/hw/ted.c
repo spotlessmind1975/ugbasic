@@ -891,6 +891,10 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        ted_cls( _environment );
+    }
+
 }
 
 void console_calculate( Environment * _environment ) {

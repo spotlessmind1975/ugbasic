@@ -411,6 +411,10 @@ int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        vic1_cls( _environment );
+    }
+
 }
 
 void console_calculate( Environment * _environment ) {

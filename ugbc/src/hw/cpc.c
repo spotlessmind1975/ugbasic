@@ -627,6 +627,10 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        cpc_cls( _environment );
+    }
+
 }
 
 void cpc_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {

@@ -913,6 +913,10 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
     // printf("tms9918_tilemap_enable() -> screen tiles width %d\n", _environment->screenTilesWidth );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        tms9918_cls( _environment );
+    }
+
 }
 
 void console_calculate( Environment * _environment ) {

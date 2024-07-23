@@ -1646,7 +1646,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         outline0("STA PALETTEPRESERVEUSED");
         outline0("STA LASTCOLOR");
     }
-    
+
+    if (_environment->vestigialConfig.clsImplicit ) {
+        gtia_cls( _environment );
+    }
+
 }
 
 void gtia_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
