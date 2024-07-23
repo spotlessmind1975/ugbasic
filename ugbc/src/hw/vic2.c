@@ -1171,8 +1171,6 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     outline0( "LDA $D018" );
     outline0( "STA OLDD018" );
     
-    printf( "_environment->vestigialConfig.clsImplicit = %d\n", _environment->vestigialConfig.clsImplicit );
-
 }
 
 void console_calculate( Environment * _environment ) {
