@@ -2426,3 +2426,28 @@ vedi ''MULTI'').
 @project tsb
 </usermanual> */
 
+/* <usermanual>
+@keyword DO NULL
+
+@english
+
+Wait for a keystroke. If a program comes to a ''DO NULL'' instruction, it waits until the user presses
+a key. Differently from TSB, further commands can follow on the same BASIC line in the progra,
+and it can be used in an ''IF'' line (after ''THEN'' or ''ELSE''). 
+
+@italian
+
+Aspetta la sequenza di tasti. Se un programma arriva a un'istruzione ''DO NULL'', attende finché l'utente
+preme un tasto. A differenza di TSB, ulteriori comandi possono seguire sulla stessa riga BASIC nel programma,
+e può essere utilizzata in una riga ''IF'' (dopo ''THEN'' o ''ELSE'').
+
+@syntax DO NULL
+
+@example DO NULL
+
+@usedInExample tsb_block_rec_01.bas
+
+@target c128
+@project tsb
+</usermanual> */
+
