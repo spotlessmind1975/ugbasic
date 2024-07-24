@@ -1359,16 +1359,18 @@ expr_math :
 expr_math2: 
       term
     | expr_math2 OP_PLUS term {
+        Variable * v = variable_retrieve( _environment, $1 );
         Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
+        if ( expr->initializedByConstant && VT_BITWIDTH(v->type)>1 ) {
             $$ = variable_add_const( _environment, $1, expr->value )->name;
         } else {
             $$ = variable_add( _environment, $1, $3 )->name;
         }
     }
     | expr_math2 OP_MINUS term {
+        Variable * v = variable_retrieve( _environment, $1 );
         Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
+        if ( expr->initializedByConstant && VT_BITWIDTH(v->type)>1 ) {
             $$ = variable_sub_const( _environment, $1, expr->value )->name;
         } else {
             $$ = variable_sub( _environment, $1, $3 )->name;
@@ -3318,7 +3320,22 @@ exponential:
         $$ = $2;
     }
     | RND OP expr CP {
-        $$ = rnd( _environment, $3 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            switch( expr->value ) {
+                case 0:
+                    $$ = rnd0( _environment )->name;
+                    break;
+                case 1:
+                    $$ = rnd1( _environment )->name;
+                    break;
+                default:
+                    $$ = rnd( _environment, $3 )->name;
+                    break;
+            }
+        } else {
+            $$ = rnd( _environment, $3 )->name;
+        }
     }
     | OP expr CP {
         $$ = $2;
