@@ -8704,8 +8704,12 @@ pmode_definition :
         pmode( _environment, $2, $5 );
     };
 
-paint_definition : 
-    OP expr OP_COMMA expr CP {
+paint_definition :
+    expr OP_COMMA expr OP_COMMA expr  {
+        Variable * color = sbpen_get( _environment, $5 );
+        paint_vars( _environment, $1, $3, color->name, NULL );
+    } 
+    | OP expr OP_COMMA expr CP {
         paint_vars( _environment, $2, $4, NULL, NULL );
     }
     | OP expr OP_COMMA expr CP OP_COMMA expr {
