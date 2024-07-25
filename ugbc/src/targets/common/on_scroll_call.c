@@ -54,10 +54,14 @@
 This command is used to force a procedure call 
 when the screen is scrolled down by an entire row or column. 
 
+Important: this command does not follow the ''OPTION CALL AS GOTO'' pragma.
+
 @italian
 Questo comando viene utilizzato per forzare la chiamata
 a una procedura, laddove lo schermo sia fatto scorrere
 da una intera riga o colonna.
+
+Importante: questo comando non segue il pragma ''OPTION CALL AS GOTO''.
 
 @syntax ON SCROLL UP ROW CALL label
 @syntax ON SCROLL DOWN ROW CALL label

@@ -53,6 +53,10 @@ then followed by a list of parameters and the procedure must be ended
 with an ''END PROC'' command. ''PROCEDURE'' and ''END PROC'' commands 
 should be placed on their own individual lines, but it is not mandatory.
 
+Following the convention in other BASICs of the time, such as Simon's BASIC 
+or Tuned Simon's BASIC, the procedure name can also contain spaces. In this 
+case, the trailing space will not be considered as part of the name.
+
 It is possible to place the procedure definition anywhere in the program. 
 When ugBASIC encounters a procedure statement, the procedure is recognised 
 and a jump is made to the final ''END PROC''. In this way, there is no 
@@ -72,6 +76,11 @@ Questa coppia di parole chiave crea una procedura assegnandole un nome.
 Il nome è quindi seguito da un elenco di parametri e la procedura deve 
 terminare con i comandi ''END PROC''. I comandi dovrebbero essere 
 posti su singole righe, ma non è obbligatorio.
+
+Seguendo la convenzione in essere su altri BASIC dell'epoca, come il
+Simon's BASIC o il Tuned Simon's BASIC, il nome della procedura può
+anche contenere spazi. In tal caso, lo spazio finale non sarà considerato
+come parte del nome.
 
 È possibile posizionare la definizione della procedura ovunque nel programma. 
 Quando ugBASIC incontra una definizione di procedura, la procedura viene 

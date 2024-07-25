@@ -70,6 +70,23 @@ extern char * importPath;
 
 int yyconcatlineno;
 
+static char * translate_spaces( char * _original ) {
+
+    char * translated = strdup( _original );
+
+    char * p = translated;
+
+    while ( *p ) {
+        if ( *p == ' ' ) {
+            *p = '_';
+        }
+        ++p;
+    }
+
+    return translated;
+
+}
+
 %}
 
 %x incl
@@ -1483,6 +1500,7 @@ ZX { RETURN(ZX,1); }
 [ \t]+ { yycolno = (yycolno + yyleng); yyposno = (yyposno + yyleng); }
 
 [a-z\_][A-Za-z0-9\_]* { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
+[a-z\_][A-Za-z0-9\_ ]*[A-Za-z0-9\_] { yylval.string = translate_spaces(yytext); RETURN(IdentifierSpaced,1);  }
 
 REG\([A-Z][A-Z]*\) { yylval.string = strdup(yytext+4); yylval.string[strlen(yylval.string)-1] = 0; RETURN(Register,1);  }
 REG\([0-9]+\) { yylval.string = strdup(yytext+4); yylval.string[strlen(yylval.string)-1] = 0; RETURN(Register,1);  }

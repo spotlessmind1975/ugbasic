@@ -2521,6 +2521,11 @@ typedef struct _Environment {
     VariableType defaultVariableType;
 
     /**
+     *
+     */
+    int optionCallAsGoto;
+    
+    /**
      * Current palette selection.
      */
     int paletteSelected;

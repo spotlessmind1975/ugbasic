@@ -61,6 +61,9 @@ main programm is paused. It is important to know or realise that
 low-priority-procedures which occurs simultanously to higher-priority-procedures 
 are not lost. Their task remains or handled again after finishing the higher-prio interrupt.
 
+Important: the meaning of this command is not altered by ''OPTION CALL'' pragma,
+so this is always a ''GOSUB'' and not a ''GOTO''.
+
 @italian
 Introduce la chiamata di una procedura a intervalli regolari, senza interferire 
 con il programma principale. È necessario specificare l'intervallo di tempo tra
@@ -81,6 +84,9 @@ ciclo/programma principale, anche se il programma principale è in pausa.
 verificano contemporaneamente alle procedure a priorità più alta non vanno perse. 
 Il loro compito rimane o viene gestito nuovamente dopo aver terminato 
 l'interruzione con priorità più alta.
+
+ImportantE: la semantica di questo comando non viene modificata dal pragma ''OPTION CALL'',
+quindi è sempre un ''GOSUB'' e mai un ''GOTO''.
 
 @syntax EVERY value[,timer] TICKS CALL identifier
 

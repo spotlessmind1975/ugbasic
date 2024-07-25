@@ -105,6 +105,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token LAVENDER GOLD TURQUOISE TAN PINK PEACH OLIVE
 
 %token <string> Identifier
+%token <string> IdentifierSpaced
 %token <string> String
 %token <integer> Integer
 %token <string> BufferDefinitionHex
@@ -3358,7 +3359,23 @@ exponential:
             $$ = var->name;
         }
     }
+    | PARAM OP IdentifierSpaced on_targets CP  {
+        if ( $4 ) {
+            $$ = param_procedure( _environment, $3 )->name;
+        } else {
+            Variable * var = variable_temporary( _environment, VT_WORD, "(temp)" );
+            $$ = var->name;
+        }
+    }
     | PARAM OP_DOLLAR OP Identifier on_targets CP  {
+        if ( $5 ) {
+            $$ = param_procedure( _environment, $4 )->name;
+        } else {
+            Variable * var = variable_temporary( _environment, VT_WORD, "(temp)" );
+            $$ = var->name;
+        }
+    }
+    | PARAM OP_DOLLAR OP IdentifierSpaced on_targets CP  {
         if ( $5 ) {
             $$ = param_procedure( _environment, $4 )->name;
         } else {
@@ -3372,7 +3389,18 @@ exponential:
       call_procedure( _environment, $1 );
       $$ = param_procedure( _environment, $1 )->name;
     }
+    | IdentifierSpaced OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP {
+      call_procedure( _environment, $1 );
+      $$ = param_procedure( _environment, $1 )->name;
+    }
     | Identifier OSP CSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+      call_procedure( _environment, $1 );
+      $$ = param_procedure( _environment, $1 )->name;
+    }
+    | IdentifierSpaced OSP CSP {
       ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $1 );
       $$ = param_procedure( _environment, $1 )->name;
@@ -3381,7 +3409,16 @@ exponential:
       ((struct _Environment *)_environment)->parameters = 0;
       $$ = spawn_procedure( _environment, $3, $1 )->name;
     }
+    | halted SPAWN IdentifierSpaced {
+      ((struct _Environment *)_environment)->parameters = 0;
+      $$ = spawn_procedure( _environment, $3, $1 )->name;
+    }
     | halted SPAWN Identifier OSP {
+        ((struct _Environment *)_environment)->parameters = 0;
+        } values CSP {
+      $$ = spawn_procedure( _environment, $3, $1 )->name;
+    }
+    | halted SPAWN IdentifierSpaced OSP {
         ((struct _Environment *)_environment)->parameters = 0;
         } values CSP {
       $$ = spawn_procedure( _environment, $3, $1 )->name;
@@ -3390,7 +3427,15 @@ exponential:
         ((struct _Environment *)_environment)->parameters = 0;
       $$ = spawn_procedure( _environment, $3, $1 )->name;
     }
+    | halted SPAWN IdentifierSpaced OSP CSP {
+        ((struct _Environment *)_environment)->parameters = 0;
+      $$ = spawn_procedure( _environment, $3, $1 )->name;
+    }
     | RESPAWN Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      $$ = respawn_procedure( _environment, $2 )->name;
+    }
+    | RESPAWN IdentifierSpaced {
       ((struct _Environment *)_environment)->parameters = 0;
       $$ = respawn_procedure( _environment, $2 )->name;
     }
@@ -5916,6 +5961,10 @@ on_proc_definition:
           on_proc_index( _environment, $1 );
           on_proc_end( _environment );
       }
+      | IdentifierSpaced {
+          on_proc_index( _environment, $1 );
+          on_proc_end( _environment );
+      }
     | Identifier {
           on_proc_index( _environment, $1 );
     } OP_COMMA on_proc_definition;
@@ -5941,7 +5990,15 @@ on_definition:
         scroll( _environment, 0, 0 );
         on_scroll_call( _environment, -1, 0, $5 );
     }
+    | SCROLL LEFT COLUMN CALL IdentifierSpaced {
+        scroll( _environment, 0, 0 );
+        on_scroll_call( _environment, -1, 0, $5 );
+    }
     | SCROLL RIGHT COLUMN CALL Identifier {
+        scroll( _environment, 0, 0 );
+        on_scroll_call( _environment, 1, 0, $5 );
+    }
+    | SCROLL RIGHT COLUMN CALL IdentifierSpaced {
         scroll( _environment, 0, 0 );
         on_scroll_call( _environment, 1, 0, $5 );
     }
@@ -5949,7 +6006,15 @@ on_definition:
         scroll( _environment, 0, 0 );
         on_scroll_call( _environment, 0, -1, $5 );
     }
+    | SCROLL UP ROW CALL IdentifierSpaced {
+        scroll( _environment, 0, 0 );
+        on_scroll_call( _environment, 0, -1, $5 );
+    }
     | SCROLL DOWN ROW CALL Identifier {
+        scroll( _environment, 0, 0 );
+        on_scroll_call( _environment, 0, 1, $5 );
+    }
+    | SCROLL DOWN ROW CALL IdentifierSpaced {
         scroll( _environment, 0, 0 );
         on_scroll_call( _environment, 0, 1, $5 );
     }
@@ -5990,6 +6055,11 @@ every_definition :
           every_ticks_call( _environment, $1, $5, $3 );
         }
     }
+    | expr ticks timer_number_comma CALL IdentifierSpaced on_targets {
+        if ( $6 ) {
+          every_ticks_call( _environment, $1, $5, $3 );
+        }
+    }
     | ON timer_number on_targets {
         if ( $3 ) {
           every_on( _environment, $2 );
@@ -6009,6 +6079,12 @@ after_definition :
         }
     }
     | expr ticks timer_number_comma CALL Identifier on_targets {
+        if ( $6 ) {
+          every_ticks_call( _environment, $1, $5, $3 );
+          every_on( _environment, $3 );
+        }
+    };
+    | expr ticks timer_number_comma CALL IdentifierSpaced on_targets {
         if ( $6 ) {
           every_ticks_call( _environment, $1, $5, $3 );
           every_on( _environment, $3 );
@@ -8525,7 +8601,13 @@ option_read :
     };
 
 option_definitions :
-     TYPE WIDE {
+     CALL AS GOSUB {
+        ((struct _Environment *)_environment)->optionCallAsGoto = 0;
+    }
+    | CALL AS GOTO {
+        ((struct _Environment *)_environment)->optionCallAsGoto = 1;
+    }
+    | TYPE WIDE {
         ((struct _Environment *)_environment)->defaultNarrowType = 0;
     }
     | TYPE NARROW {
@@ -8928,7 +9010,20 @@ spawn_definition :
         spawn_procedure( _environment, $1, 0 );
       }
   }
+  | IdentifierSpaced on_targets {
+      if ( $2 ) {
+        ((struct _Environment *)_environment)->parameters = 0;
+        spawn_procedure( _environment, $1, 0 );
+      }
+  }
   | Identifier OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP on_targets {
+      if ( $6 ) {
+          spawn_procedure( _environment, $1, 0 );
+      }
+  }
+  | IdentifierSpaced OSP {
       ((struct _Environment *)_environment)->parameters = 0;
     } values CSP on_targets {
       if ( $6 ) {
@@ -8941,7 +9036,29 @@ spawn_definition :
           spawn_procedure( _environment, $1, 0 );
       }
   }
+  | IdentifierSpaced OSP CSP on_targets {
+      ((struct _Environment *)_environment)->parameters = 0;
+      if ( $4 ) {
+          spawn_procedure( _environment, $1, 0 );
+      }
+  }
   | Identifier OP_COMMA Identifier on_targets {
+        if ( $4 ) {
+            Variable * variable = variable_retrieve( _environment, $1 );
+            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+            } else {
+                for( int i=0; i<variable->size; ++i ) {
+                    parser_array_init( _environment );
+                    parser_array_index_numeric( _environment, i );
+                    ((struct _Environment *)_environment)->parameters = 0;
+                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                }
+            }
+        }
+  }
+  | IdentifierSpaced OP_COMMA Identifier on_targets {
         if ( $4 ) {
             Variable * variable = variable_retrieve( _environment, $1 );
             if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
@@ -8975,7 +9092,42 @@ spawn_definition :
             }
       }
   }
+  | IdentifierSpaced OP_COMMA Identifier OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP on_targets {
+      if ( $8 ) {
+            Variable * variable = variable_retrieve( _environment, $1 );
+            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+            } else {
+                for( int i=0; i<variable->size; ++i ) {
+                    parser_array_init( _environment );
+                    parser_array_index_numeric( _environment, i );
+                    ((struct _Environment *)_environment)->parameters = 0;
+                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                }
+            }
+      }
+  }
   | Identifier OP_COMMA Identifier OSP CSP on_targets {
+      ((struct _Environment *)_environment)->parameters = 0;
+      if ( $6 ) {
+            Variable * variable = variable_retrieve( _environment, $1 );
+            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+            } else {
+                for( int i=0; i<variable->size; ++i ) {
+                    parser_array_init( _environment );
+                    parser_array_index_numeric( _environment, i );
+                    ((struct _Environment *)_environment)->parameters = 0;
+                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                }
+            }
+      }
+  };
+  | IdentifierSpaced OP_COMMA Identifier OSP CSP on_targets {
       ((struct _Environment *)_environment)->parameters = 0;
       if ( $6 ) {
             Variable * variable = variable_retrieve( _environment, $1 );
@@ -9435,7 +9587,20 @@ statement2nc:
         ((struct _Environment *)_environment)->emptyProcedure = !$4;
         begin_procedure( _environment, $3 );
   }
+  | parallel_optional PROCEDURE IdentifierSpaced on_targets {
+        ((struct _Environment *)_environment)->parameters = 0;
+      ((struct _Environment *)_environment)->protothread = $1;
+        ((struct _Environment *)_environment)->emptyProcedure = !$4;
+        begin_procedure( _environment, $3 );
+  }
   | parallel_optional PROCEDURE Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      ((struct _Environment *)_environment)->protothread = $1;
+    } OSP parameters CSP on_targets {
+      ((struct _Environment *)_environment)->emptyProcedure = !$8;
+      begin_procedure( _environment, $3 );
+  }
+  | parallel_optional PROCEDURE IdentifierSpaced {
       ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->protothread = $1;
     } OSP parameters CSP on_targets {
@@ -9468,6 +9633,10 @@ statement2nc:
       ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $2 );
   }
+  | PROC IdentifierSpaced {
+      ((struct _Environment *)_environment)->parameters = 0;
+      call_procedure( _environment, $2 );
+  }  
   | EXEC sys_definition
   | SYS sys_definition
   | on_targets AsmSnippet on_targets {
@@ -9484,7 +9653,20 @@ statement2nc:
         call_procedure( _environment, $2 );
       }
   }
+  | CALL IdentifierSpaced on_targets {
+      if ( $3 ) {
+        ((struct _Environment *)_environment)->parameters = 0;
+        call_procedure( _environment, $2 );
+      }
+  }
   | Identifier OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP on_targets {
+      if ( $6 ) {
+          call_procedure( _environment, $1 );
+      }
+  }
+  | IdentifierSpaced OSP {
       ((struct _Environment *)_environment)->parameters = 0;
     } values CSP on_targets {
       if ( $6 ) {
@@ -9497,7 +9679,20 @@ statement2nc:
          call_procedure( _environment, $1 );
       }
   }
+  | IdentifierSpaced OSP CSP on_targets {
+      if ( $4) {
+         ((struct _Environment *)_environment)->parameters = 0;
+         call_procedure( _environment, $1 );
+      }
+  }
   | PROC Identifier OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP on_targets {
+        if ( $7 ) {
+          call_procedure( _environment, $2 );
+        }
+  }
+  | PROC IdentifierSpaced OSP {
       ((struct _Environment *)_environment)->parameters = 0;
     } values CSP on_targets {
         if ( $7 ) {
@@ -9511,7 +9706,20 @@ statement2nc:
           call_procedure( _environment, $2 );
         }
   }
+  | CALL IdentifierSpaced OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP on_targets {
+        if ( $7 ) {
+          call_procedure( _environment, $2 );
+        }
+  }
   | CALL Identifier OSP CSP on_targets {
+      if ( $5 ) {
+          ((struct _Environment *)_environment)->parameters = 0;
+          call_procedure( _environment, $2 );
+      }
+  }
+  | CALL IdentifierSpaced OSP CSP on_targets {
       if ( $5 ) {
           ((struct _Environment *)_environment)->parameters = 0;
           call_procedure( _environment, $2 );

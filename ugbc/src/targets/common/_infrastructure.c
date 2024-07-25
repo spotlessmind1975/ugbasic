@@ -10888,3 +10888,4 @@ int file_get_size( Environment * _environment, char * _filename ) {
     return fileSize;
 
 }
+
