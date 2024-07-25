@@ -59,9 +59,11 @@
  ****************************************************************************/
 
 #ifdef _WIN32
-    #define PATH_SEPARATOR          '\\'
+    #define PATH_SEPARATOR              '\\'
+    #define PATH_SEPARATOR_AS_STRING    "\\"
 #else
-    #define PATH_SEPARATOR          '/'
+    #define PATH_SEPARATOR              '/'
+    #define PATH_SEPARATOR_AS_STRING    "/"
 #endif
 
 #ifdef _DEBUG

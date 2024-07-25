@@ -8599,59 +8599,60 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
     check_if_filename_is_valid( _environment,  _filename );
 
     strcpy( lookedFilename, _filename );
-    char * c = strrchr( lookedFilename, '/' );
+    char * c = strrchr( lookedFilename, PATH_SEPARATOR );
     if ( c ) {
         strcpy( lookedExtension, c );
         *c = 0;
     } else {
         strcpy( lookedFilename, "." );
-        strcpy( lookedExtension, "/" );
+        strcpy( lookedExtension, PATH_SEPARATOR_AS_STRING );
         strcat( lookedExtension, _filename );
     }
+    strcat( lookedFilename, PATH_SEPARATOR_AS_STRING );
 #if defined(__atari__) 
-    strcat( lookedFilename, "/atari" );
+    strcat( lookedFilename, "atari" );
 #elif defined(__atarixl__) 
-    strcat( lookedFilename, "/atarixl" );
+    strcat( lookedFilename, "atarixl" );
 #elif __c64__
-    strcat( lookedFilename, "/c64" );
+    strcat( lookedFilename, "c64" );
 #elif __plus4__
-    strcat( lookedFilename, "/plus4" );
+    strcat( lookedFilename, "plus4" );
 #elif __zx__
-    strcat( lookedFilename, "/zx" );
+    strcat( lookedFilename, "zx" );
 #elif __d32__ 
-    strcat( lookedFilename, "/d32" );
+    strcat( lookedFilename, "d32" );
 #elif __d64__ 
-    strcat( lookedFilename, "/d64" );
+    strcat( lookedFilename, "d64" );
 #elif __pc128op__ 
-    strcat( lookedFilename, "/pc128op" );
+    strcat( lookedFilename, "pc128op" );
 #elif __to8__ 
-    strcat( lookedFilename, "/to8" );
+    strcat( lookedFilename, "to8" );
 #elif __mo5__ 
-    strcat( lookedFilename, "/mo5" );
+    strcat( lookedFilename, "mo5" );
 #elif __vic20__ 
-    strcat( lookedFilename, "/vic20" );
+    strcat( lookedFilename, "vic20" );
 #elif __msx1__
-    strcat( lookedFilename, "/msx1" );
+    strcat( lookedFilename, "msx1" );
 #elif __coleco__
-    strcat( lookedFilename, "/coleco" );
+    strcat( lookedFilename, "coleco" );
 #elif __sc3000__
-    strcat( lookedFilename, "/sc3000" );
+    strcat( lookedFilename, "sc3000" );
 #elif __sg1000__
-    strcat( lookedFilename, "/sg1000" );
+    strcat( lookedFilename, "sg1000" );
 #elif __cpc__
-    strcat( lookedFilename, "/cpc" );
+    strcat( lookedFilename, "cpc" );
 #elif __c128__
-    strcat( lookedFilename, "/c128" );
+    strcat( lookedFilename, "c128" );
 #elif __c128z__
-    strcat( lookedFilename, "/c128z" );
+    strcat( lookedFilename, "c128z" );
 #elif __vg5000__
-    strcat( lookedFilename, "/vg5000" );
+    strcat( lookedFilename, "vg5000" );
 #elif __coco__
-    strcat( lookedFilename, "/coco" );
+    strcat( lookedFilename, "coco" );
 #elif __coco3__
-    strcat( lookedFilename, "/coco3" );
+    strcat( lookedFilename, "coco3" );
 #elif __c64reu__
-    strcat( lookedFilename, "/c64reu" );
+    strcat( lookedFilename, "c64reu" );
 #endif
 
     if ( strlen( lookedExtension ) ) {
@@ -9027,12 +9028,6 @@ char * image_roll_x_right( Environment * _environment, char * _source, int _widt
 
     int x,y;
 
-    // FILE * f = fopen("/tmp/picture1.bin", "wb" );
-    // fwrite( _source, _width * _height * 3, 1, f );
-    // fclose( f );
-
-    // printf("*** %d,%d\n", _width, _height );
-
     for( y=0; y<_height; ++y ) {
 
         unsigned char * pixel2r = _source + ( y * _width * 3 ) + ( (_width-1) * 3 );
@@ -9070,10 +9065,6 @@ char * image_roll_x_right( Environment * _environment, char * _source, int _widt
         *pixel1b = b;
     }
 
-    // f = fopen("/tmp/picture2.bin", "wb" );
-    // fwrite( _source, _width * _height * 3, 1, f );
-    // fclose( f );
-
     return _source;
 
 }
@@ -9081,12 +9072,6 @@ char * image_roll_x_right( Environment * _environment, char * _source, int _widt
 char * image_roll_x_left( Environment * _environment, char * _source, int _width, int _height ) {
 
     int x,y;
-
-    // FILE * f = fopen("/tmp/picture1.bin", "wb" );
-    // fwrite( _source, _width * _height * 3, 1, f );
-    // fclose( f );
-
-    // printf("*** %d,%d\n", _width, _height );
 
     for( y=0; y<_height; ++y ) {
 
@@ -9125,10 +9110,6 @@ char * image_roll_x_left( Environment * _environment, char * _source, int _width
         *pixel1b = b;
     }
 
-    // f = fopen("/tmp/picture2.bin", "wb" );
-    // fwrite( _source, _width * _height * 3, 1, f );
-    // fclose( f );
-
     return _source;
 
 }
@@ -9136,12 +9117,6 @@ char * image_roll_x_left( Environment * _environment, char * _source, int _width
 char * image_roll_y_down( Environment * _environment, char * _source, int _width, int _height ) {
 
     int x,y;
-
-    // FILE * f = fopen("/tmp/picture1.bin", "wb" );
-    // fwrite( _source, _width * _height * 3, 1, f );
-    // fclose( f );
-
-    // printf("*** %d,%d\n", _width, _height );
 
     for( x=0; x < _width; ++x ) {
 
@@ -9180,10 +9155,6 @@ char * image_roll_y_down( Environment * _environment, char * _source, int _width
         *pixel1b = b;
     }
 
-    // f = fopen("/tmp/picture2.bin", "wb" );
-    // fwrite( _source, _width * _height * 3, 1, f );
-    // fclose( f );
-
     return _source;
 
 }
@@ -9195,12 +9166,6 @@ char * image_enlarge_right( Environment * _environment, char * _source, int _wid
     int size = ( _width + _delta ) * 3 * _height;
     char * destination = malloc( size );
     memset( destination, 0, size );
-
-    // FILE * f = fopen("/tmp/picture1.bin", "wb" );
-    // fwrite( _source, _width * _height * 3, 1, f );
-    // fclose( f );
-
-    // printf("*** %d,%d\n", _width, _height );
 
     for( y=0; y<_height; ++y ) {
         for( x=0; x < _width; ++x ) {
@@ -9218,10 +9183,6 @@ char * image_enlarge_right( Environment * _environment, char * _source, int _wid
             *pixel2b = (unsigned char) *pixel1b;
         }
     }
-
-    // f = fopen("/tmp/picture2.bin", "wb" );
-    // fwrite( _source, _width * _height * 3, 1, f );
-    // fclose( f );
 
     return destination;
 
@@ -9454,7 +9415,7 @@ char * get_temporary_filename( Environment * _environment ) {
 
     if ( _environment->temporaryPath ) {
         strcpy( temporaryFilename, _environment->temporaryPath );
-        strcat( temporaryFilename, "/" );
+        strcat( temporaryFilename, PATH_SEPARATOR_AS_STRING );
         strcat( temporaryFilename, temp );
     } else {
         strcpy( temporaryFilename, temp );
@@ -10828,6 +10789,10 @@ char * get_default_temporary_path( ) {
     // Windows: The path reported by the Windows GetTempPath API function.
 
     GetTempPathA( MAX_TEMPORARY_STORAGE, result );
+
+    if ( result[strlen(result)-1] == '\\' || result[strlen(result)-1] == '/' ) {
+        result[strlen(result)-1] = 0;
+    }
 
 #else
 
