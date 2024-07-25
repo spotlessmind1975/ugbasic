@@ -2451,3 +2451,27 @@ e può essere utilizzata in una riga ''IF'' (dopo ''THEN'' o ''ELSE'').
 @project tsb
 </usermanual> */
 
+/* <usermanual>
+@keyword HIRES
+
+@english
+
+''NRM'' resets the chipset to its default values: the graphic mode is switched off,
+uppercase and lowercase font is activated, the extended color mode is switched off.
+
+@italian
+
+''NRM'' ripristina il chipset ai suoi valori predefiniti: la modalità grafica è 
+disattivata, i caratteri maiuscoli e minuscoli sono attivati, la modalità colore 
+estesa è disattivata.
+
+@syntax NRM
+
+@example NRM
+
+@usedInExample tsb_block_rec_01.bas
+
+@target c128
+@project tsb
+</usermanual> */
+
