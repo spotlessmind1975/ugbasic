@@ -147,7 +147,7 @@ void center( Environment * _environment, char * _string, int _newline ) {
 
     text_text( _environment, string->name );
 
-    if ( _newline ) {
+    if ( _newline && ( _environment->centerWithoutNewLine == 0 ) ) {
         text_newline( _environment );
     }
 
