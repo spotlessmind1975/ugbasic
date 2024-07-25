@@ -3689,6 +3689,11 @@ void variable_swap( Environment * _environment, char * _source, char * _dest ) {
     
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _dest );
+
+    if ( source->type != target->type ) {
+        CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
+    }
+
     if ( VT_BITWIDTH( source->type ) != VT_BITWIDTH( target->type ) ) {
         CRITICAL_SWAP_DIFFERENT_BITWIDTH(target->name);
     }
@@ -3712,6 +3717,12 @@ void variable_swap( Environment * _environment, char * _source, char * _dest ) {
         }
         case 0:
             switch( source->type ) {
+                case VT_DSTRING: {
+                    cpu_xor_8bit( _environment, source->realName, target->realName, source->realName );
+                    cpu_xor_8bit( _environment, source->realName, target->realName, target->realName );
+                    cpu_xor_8bit( _environment, source->realName, target->realName, source->realName );
+                    break; 
+                }
                 case VT_FLOAT: {
                     Variable * temp = variable_temporary( _environment, VT_FLOAT, "(temp)" );
                     cpu_move_nbit( _environment, VT_FLOAT_BITWIDTH( source->precision ), source->realName, temp->realName );
