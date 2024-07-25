@@ -55,13 +55,6 @@ ImageDescriptor * image_descriptor_roll_x_right( Environment * _environment, Ima
 
     int x,y;
 
-
-    // FILE * f = fopen("/tmp/picture1.bin", "wb" );
-    // fwrite( source, copy->width * copy->height * 3, 1, f );
-    // fclose( f );
-
-    // printf("*** %d,%d\n", copy->width, copy->height );
-
     for( y=0; y<copy->height; ++y ) {
 
         unsigned char * pixel2r = source + ( y * copy->width * 3 ) + ( (copy->width-1) * 3 );

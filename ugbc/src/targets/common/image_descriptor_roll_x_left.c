@@ -92,10 +92,6 @@ ImageDescriptor * image_descriptor_roll_x_left( Environment * _environment, Imag
         *pixel1b = b;
     }
 
-    // f = fopen("/tmp/picture2.bin", "wb" );
-    // fwrite( source, copy->width * copy->height * 3, 1, f );
-    // fclose( f );
-
     return copy;
     
 }
