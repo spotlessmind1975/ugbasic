@@ -6129,8 +6129,11 @@ add_definition :
     ;
 
 swap_definition :
-    Identifier OP_COMMA Identifier {
-        variable_swap( _environment, $1, $3 );
+    Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional {
+        if ( $2 != $5 ) {
+            CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( $1, $4 );
+        }
+        variable_swap( _environment, $1, $4 );
     }
     ;
 
@@ -9170,6 +9173,26 @@ keyget_definition :
         variable_move( _environment, k->name, p->name );
     };
 
+at_definition :
+    OP Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional CP {
+        if ( ($3 != 0) && ($6 != 0) && ($3 != $6) ) {
+            CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( DATATYPE_AS_STRING[$3], DATATYPE_AS_STRING[$6] );
+        }
+        if ( $3 != VT_DSTRING ) {
+            Variable * v1 = variable_retrieve( _environment, $2 );
+            if ( v1->type != VT_DSTRING ) {
+                CRITICAL_AT_UNSUPPORTED( v1->name, DATATYPE_AS_STRING[v1->type]);
+            }
+        }
+        if ( $6 != VT_DSTRING ) {
+            Variable * v2 = variable_retrieve( _environment, $5 );
+            if ( v2->type != VT_DSTRING ) {
+                CRITICAL_AT_UNSUPPORTED( v2->name, DATATYPE_AS_STRING[v2->type]);
+            }
+        }
+        variable_swap( _environment, $2, $5 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -9262,6 +9285,7 @@ statement2nc:
   | CLEAR clear_definition
   | PMODE pmode_definition
   | PAINT paint_definition
+  | AT at_definition
   | PRINT print_definition
   | BORDER border_definition
   | PRINT BUFFER print_buffer_definition

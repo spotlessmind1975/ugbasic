@@ -2524,7 +2524,7 @@ typedef struct _Environment {
      *
      */
     int optionCallAsGoto;
-    
+
     /**
      * Current palette selection.
      */
@@ -3085,6 +3085,8 @@ typedef struct _Environment {
 #define CRITICAL_GET_NEED_STRING( v ) CRITICAL2i("E295 - GET needs variable of string type", v );
 #define CRITICAL_KEYGET_NEED_STRING( v ) CRITICAL2i("E296 - KEYGET needs variable of string type", v );
 #define CRITICAL_ARRAY_DATATYPE_WRONG( v ) CRITICAL2("E297 - wrong datatype of array", v );
+#define CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( v1, v2 ) CRITICAL3("E298 - cannot SWAP variables of different type", v1, v2 );
+#define CRITICAL_AT_UNSUPPORTED( v1, v2 ) CRITICAL3("E298 - cannot AT variables of not string type", v1, v2 );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
