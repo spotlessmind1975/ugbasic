@@ -1048,6 +1048,9 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("LDA $D016" );
             outline0("AND #%11101111");
             outline0("STA $D016" );
+            outline0("LDA $D018" );
+            outline0("AND #%11110111");
+            outline0("STA $D018" );
 
             // // This fix is necessary to reset the lookup for rom character.
             // outline0("LDA $D018" );
@@ -1085,7 +1088,10 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("LDA $D016" );
             outline0("ORA #%00010000");
             outline0("STA $D016" );
-
+            outline0("LDA $D018" );
+            outline0("AND #%11110111");
+            outline0("STA $D018" );
+            
             // // This fix is necessary to reset the lookup for rom character.
             // outline0("LDA $D018" );
             // outline0("AND #%11110000");
