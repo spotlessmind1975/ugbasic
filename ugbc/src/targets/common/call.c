@@ -94,24 +94,6 @@ alle chiamate di sistema.
 
 @target all
 </usermanual> */
-/* <usermanual>
-@keyword PROC
-
-@english
-This keyword will invoke a procedure. 
-
-@italian
-Questa parola chiave invoca una funzione.
-
-@syntax PROC name [(par1[, par2[, ... ]])]
-
-@example PROC factorial[42]
-
-@usedInExample procedures_param_01.bas
-@usedInExample procedures_param_02.bas
-
-@target all
-</usermanual> */
 void call_procedure( Environment * _environment, char * _name ) {
 
     if ( _environment->emptyProcedure ) {

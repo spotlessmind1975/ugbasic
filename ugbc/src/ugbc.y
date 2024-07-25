@@ -9662,11 +9662,11 @@ statement2nc:
   }
   | PROC Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
-      call_procedure( _environment, $2 );
+      proc( _environment, $2 );
   }
   | PROC IdentifierSpaced {
       ((struct _Environment *)_environment)->parameters = 0;
-      call_procedure( _environment, $2 );
+      proc( _environment, $2 );
   }  
   | EXEC sys_definition
   | SYS sys_definition

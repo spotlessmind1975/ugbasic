@@ -4558,6 +4558,7 @@ void                    print_buffer( Environment * _environment, char * _buffer
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
+void                    proc( Environment * _environment, char * _label );
 void                    put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
 void                    put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags );
 void                    put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
