@@ -2526,6 +2526,11 @@ typedef struct _Environment {
     int optionCallAsGoto;
 
     /**
+     *
+     */
+    int centerWithoutNewLine;
+    
+    /**
      * Current palette selection.
      */
     int paletteSelected;
