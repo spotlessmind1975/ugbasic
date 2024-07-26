@@ -49,19 +49,13 @@
 
 @english
 
-The ''CHAR'' command allows you to display character-by-character text character in 
-high-resolution and multi-color modes. The parameters ''x'' and ''y'' specify the 
-position of the character on the screen. The next one parameter represents the poke code of that character (see list of the poke codes in the User Guide of your COMMODORE 64). The plot type was described in paragraph 6.4. The last parameter of this command specifies the height of the character, in the range from 1 to 8. The value 1 indicates a normal-sized character, i.e. 8 pixels tall. Increasing the parameter increases the character height proportionally. For example, for a value of 3, the character is 24 pixels tall. The character width CANNOT be changed.
-
 @italian
 
 @syntax 
 
 @example
-@example
 
 @target all
-@verified
 </usermanual> */
 
 void char_at( Environment * _environment, char *_x, char *_y, char *_code, char *_type, char *_size ) {
