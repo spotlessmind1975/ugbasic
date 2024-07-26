@@ -10865,3 +10865,238 @@ int file_get_size( Environment * _environment, char * _filename ) {
 
 }
 
+static int show_troubleshooting_accessing_path( Environment * _environment, char * _path, int _mode, int _create ) {
+
+    int check = 0;
+
+    if ( _create ) {
+        FILE * fh = fopen( _path, "wt" );
+        fprintf( fh, "test" );
+        fclose( fh );
+    }
+
+    if ( ( _mode & R_OK ) && access( _path, R_OK ) ) {
+        perror( "#####> It cannot be read");
+        check |= R_OK;
+    }
+    if ( ( _mode & W_OK ) && access( _path, W_OK ) ) {
+        perror( "#####> It cannot be write");
+        check |= W_OK;
+    }
+    if ( ( _mode & X_OK ) && access( _path, X_OK ) ) {
+        perror( "#####> It cannot be executed");
+        check |= X_OK;
+    }
+    if ( ( _mode & F_OK ) && access( _path, F_OK ) ) {
+        perror( "#####> It does not exists");
+        check |= F_OK;
+    }
+
+    if ( _create ) {
+        remove( _path );
+    }
+
+    return check;
+
+}
+
+static int show_troubleshooting_try_exec( Environment * _environment, char * _path ) {
+
+    char mutedExecutable[2*MAX_TEMPORARY_STORAGE]; sprintf( mutedExecutable, "%s >/dev/null 2>/dev/null", _path );
+    
+    int check = 0;
+
+    if ( system( mutedExecutable ) < 0 ) {
+        perror( "#####> It cannot be executed");
+        check = 1;
+    }
+
+    return check;
+
+}
+
+int show_troubleshooting_and_exit( Environment * _environment, int _argc, char * _argv[] ) {
+
+    int check = 0;
+
+    printf( "========================\n");
+    printf( "=== TROUBLE SHOOTING ===\n");
+    printf( "========================\n\n");
+
+    printf( "Below you will find a brief analysis of the execution environment of\n" );
+    printf( "the following compiler: \"%s\".\n", _argv[0] );
+    printf( "For each entry, the outcome of a brief testing is reported,  where the possible\n" );
+    printf( "cause is also indicated. Please follow the preliminary indications contained\n" );
+    printf( "here and, in case you are not successful in producing an assembly listing or\n" );
+    printf( "an executable / binary file, please contact the author via GitHub here:\n" );
+    printf( "https://github.com/spotlessmind1975/ugbasic/issues/new\n\n" );
+
+    char temporaryPath[MAX_TEMPORARY_STORAGE];
+
+#ifdef _WIN32
+
+    // Windows: The path reported by the Windows GetTempPath API function.
+
+    GetTempPathA( MAX_TEMPORARY_STORAGE, temporaryPath );
+
+#else
+
+    // ISO/IEC 9945 (POSIX): The path supplied by the first environment 
+    // variable found in the list TMPDIR, TMP, TEMP, TEMPDIR. If none of these are 
+    // found, "/tmp", or, if macro __ANDROID__ is defined, "/data/local/tmp"
+
+    char * tmp = getenv( "TMPDIR" );
+    if ( !tmp ) {
+        tmp = getenv( "TMP" );
+    }
+    if ( !tmp ) {
+        tmp = getenv( "TEMP" );
+    }
+    if ( !tmp ) {
+        tmp = getenv( "TEMPDIR" );
+    }
+    if ( !tmp ) {
+        tmp = strdup( "/tmp" );
+    }
+    strcpy( temporaryPath, tmp );
+
+#endif
+
+    printf( "[P01] TEMPORARY PATH : \"%s\"\n", temporaryPath );
+    check = show_troubleshooting_accessing_path( _environment, temporaryPath, R_OK | W_OK | F_OK, 0 );
+
+    if ( (check & R_OK) | (check & W_OK) | (check & X_OK) ) {
+        printf( "##### There is a problem in accessing the temporary path. Please, check the above\n" );
+        printf( "##### path, or use the '-T' parameter to set it in an explicit way.\n\n" );
+    }
+
+    char temporaryFileName[MAX_TEMPORARY_STORAGE];
+    strcpy( temporaryFileName, get_temporary_filename( _environment ) );
+    printf( "[P02] TEMPORARY FILENAME : \"%s\"\n", temporaryFileName );
+    check = show_troubleshooting_accessing_path( _environment, temporaryFileName, R_OK | W_OK | F_OK, 1 );
+
+    if ( (check & R_OK) | (check & W_OK) | (check & F_OK) ) {
+        printf( "##### There is a problem in creating a temporary file. Please, check the above\n" );
+        printf( "##### path, or use the '-T' parameter to set a different temporary path.\n\n" );
+    }
+
+    char workingDirectory[MAX_TEMPORARY_STORAGE];
+    (void)!getcwd(workingDirectory, MAX_TEMPORARY_STORAGE);
+    printf( "[P03] WORKING DIRECTORY: \"%s\"\n", workingDirectory );
+    check = show_troubleshooting_accessing_path( _environment, workingDirectory, R_OK | W_OK | F_OK, 0 );
+
+    if ( (check & R_OK) | (check & W_OK) | (check & F_OK) ) {
+        printf( "##### There is a problem in accessing the current (working) directory.\n" );
+        printf( "##### Please, check the permissions or use an explicit path with '-o'\n" );
+        printf( "##### option, otherwise the binary file cannot be created.\n" );
+    }
+
+#ifdef cpu6809
+
+    char executableName[MAX_TEMPORARY_STORAGE];
+    BUILD_TOOLCHAIN_ASM6809_GET_EXECUTABLE( _environment, executableName );
+    printf( "[P04] EXECUTABLE NAME FOR ASM6809: \"%s\"\n", executableName );
+    check = show_troubleshooting_try_exec( _environment, executableName );
+    if ( check ) {
+        printf( "##### The assembler for the 6809 processor does not appear to be present\n" );
+        printf( "##### or executable. Please check the path or specify it using the \n" );
+        printf( "##### '-C' option.\n" );
+    }
+
+    #ifdef _WIN32
+
+        // First of all, we will create a temporary batch file
+        // to call in place of the original command line.
+
+        char asmFileName[MAX_TEMPORARY_STORAGE];
+        sprintf( asmFileName, "%s.asm", get_temporary_filename( _environment ) );        
+        printf( "[P05] ASSEMBLY EXAMPLE (on temp path): \"%s\"\n", asmFileName );
+        check = show_troubleshooting_accessing_path( _environment, asmFileName, W_OK, 1 );
+        if ( (check & W_OK) ) {
+            printf( "##### The sample assembly file cannot be created. This could be related \n" );
+            printf( "##### to any temporary path problem, so check the previous messages. \n" );
+        }
+
+        FILE * fh = fopen( asmFileName, "wt" );
+        if ( fh ) {
+            fprintf( fh, "TEST\n JMP TEST\n" );
+            fclose( fh );
+        }
+
+        char binaryFileName[MAX_TEMPORARY_STORAGE];
+        sprintf( binaryFileName, "%s.bin", get_temporary_filename( _environment ) );        
+        printf( "[P06] BINARY EXAMPLE (on temp path): \"%s\"\n", binaryFileName );
+        check = show_troubleshooting_accessing_path( _environment, binaryFileName, W_OK, 1 );
+        if ( (check & W_OK) ) {
+            printf( "##### The sample binary file cannot be created. This could be related \n" );
+            printf( "##### to any temporary path problem, so check the previous messages. \n" );
+        }
+
+        char batchFileName[MAX_TEMPORARY_STORAGE];
+        sprintf( batchFileName, "%s.bat", get_temporary_filename( _environment ) );        
+        printf( "[P07] AUXILIARY BATCH FILE: \"%s\"\n", batchFileName );
+        check = show_troubleshooting_accessing_path( _environment, batchFileName, W_OK | X_OK, 1 );
+        if ( (check & W_OK) || (check & X_OK)) {
+            printf( "##### The auxiliary batch file cannot be created or executed. This could be related \n" );
+            printf( "##### to any temporary path problem, so check the previous messages. Anyway, if the\n" );
+            printf( "##### file cannot be executed, the binary / disk image cannot be built.\n" );
+        }
+
+        fh = fopen( batchFileName, "w+t" );
+        if ( fh ) {
+            fprintf( fh, "@echo off\n\"%s\" -o \"%s\" \"%s\"\n", executableName, binaryFileName, asmFileName );
+            fclose( fh );
+        }
+
+        char batchFileName2[MAX_TEMPORARY_STORAGE];
+        sprintf( batchFileName2, "cmd.exe /C \"%s\"", batchFileName );
+        printf( "[P08] BATCH LAUNCHER COMMAND LINE: %s\n", batchFileName2 );
+
+        // Now we can exec the batch file.
+
+        int esito = system( batchFileName2 );
+
+        // If command is not a null pointer, system() shall return the
+        // termination status of the command language interpreter in 
+        // the format specified by waitpid(). 
+        
+        // The termination status shall be as defined for the sh 
+        // utility; otherwise, the termination status is unspecified. 
+        
+        switch( esito ) {
+
+            // If some error prevents the command language interpreter 
+            // from executing after the child process is created, the 
+            // return value from system() shall be as if the command 
+            // language interpreter had terminated using exit(127) 
+            // or _exit(127). 
+            case 127:
+                printf( "##### It is like some error prevents the command language interpreter \n" );
+                printf( "##### from executing after the child process is created.\n" );
+                break;
+
+            // If a child process cannot be created, or if the termination 
+            // status for the command language interpreter cannot be obtained, 
+            // system() shall return -1 and set errno to indicate the error.
+            case -1:
+                printf( "##### It is like the child process cannot be created, or if the\n" );
+                printf( "##### termination status for the command language interpreter\n" );
+                printf( "##### cannot be obtained (errno = %d).\n\n", errno );
+                perror( "##### Error from execution:");
+                break;
+
+            case 0:
+                break;
+
+            default:
+                printf( "##### It is like some error occurrend in execution.\n\n" );
+                break;
+        }
+        
+    #endif
+
+#endif
+
+    exit(0);
+    
+}

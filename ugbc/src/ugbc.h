@@ -4097,6 +4097,8 @@ char * get_default_temporary_path( );
 char * find_last_path_separator( char * _path );
 char * generate_storage_filename( Environment * _environment, char * _prefix, char * _suffix, int _number );
 
+int show_troubleshooting_and_exit( Environment * _environment, int _argc, char * _argv[] );
+
 //----------------------------------------------------------------------------
 // Common functions used by parser only
 //----------------------------------------------------------------------------

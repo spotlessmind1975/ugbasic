@@ -10699,8 +10699,10 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "1a:A:b:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:R:st:T:VvWX:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "@1a:A:b:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:R:st:T:VvWX:")) != -1) {
         switch (opt) {
+                case '@':
+                    show_troubleshooting_and_exit( _environment, _argc, _argv );
                 case 'a':
                     if ( ! _environment->listingFileName ) {
                         char listingFileName[MAX_TEMPORARY_STORAGE];
