@@ -4234,6 +4234,7 @@ void                    case_equals( Environment * _environment, int _value );
 void                    case_equals_var( Environment * _environment, char * _value );
 void                    case_equals_label( Environment * _environment );
 void                    center( Environment * _environment, char * _string, int _newline );
+void                    char_at( Environment * _environment, char *_x, char *_y, char *_code, char *_type, char *_size );
 int                     check_if_filename_is_valid( Environment * _environment,  char * _filename );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
 void                    clear( Environment * _environment );

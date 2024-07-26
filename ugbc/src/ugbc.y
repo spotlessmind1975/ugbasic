@@ -9205,6 +9205,11 @@ nrm_definition :
         cls( _environment, NULL );
     };
 
+char_definition :
+    mandatory_x OP_COMMA mandatory_y OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        char_at( _environment, $1, $3, $5, $7, $9 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -9299,6 +9304,7 @@ statement2nc:
   | PMODE pmode_definition
   | PAINT paint_definition
   | AT at_definition
+  | CHAR char_definition
   | PRINT print_definition
   | BORDER border_definition
   | PRINT BUFFER print_buffer_definition
