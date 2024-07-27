@@ -11149,7 +11149,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         char asmFileName[MAX_TEMPORARY_STORAGE];
         sprintf( asmFileName, "%s.asm", get_temporary_filename( _environment ) );        
         printf( "[P05] ASSEMBLY EXAMPLE (on temp path): \"%s\"\n", asmFileName );
-        check = show_troubleshooting_accessing_path( _environment, asmFileName, W_OK, 1 );
+        check = show_troubleshooting_accessing_path( _environment, asmFileName, W_OK, 1, 1 );
         if ( (check & W_OK) ) {
             printf( "##### The sample assembly file cannot be created. This could be related \n" );
             printf( "##### to any temporary path problem, so check the previous messages. \n" );
