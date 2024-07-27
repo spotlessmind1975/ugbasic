@@ -32,18 +32,19 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#ifdef _WIN32
+    #include <windows.h>
+    #include <fileapi.h>
+    #undef VT_ARRAY
+#endif
+
 #include <math.h>
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifdef _WIN32
-    #include <windows.h>
-    #include <fileapi.h>
-    #undef VT_ARRAY
-#endif
+#include "../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
