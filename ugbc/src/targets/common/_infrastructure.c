@@ -36,6 +36,7 @@
     #include <windows.h>
     #include <fileapi.h>
     #include <sysinfoapi.h>
+    #include <errhandlingapi.h>
 #endif
 
 #include <math.h>
@@ -10940,8 +10941,16 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
 #ifdef _WIN32
 
     char systemDirectoryPath[MAX_TEMPORARY_STORAGE];
-    GetSystemDirectoryA( systemDirectoryPath, MAX_TEMPORARY_STORAGE );
-    printf( "[PA0] SYSTEM DIRECTORY PATH = \"%S\"\n", systemDirectoryPath );
+    check = GetSystemDirectoryA( systemDirectoryPath, MAX_TEMPORARY_STORAGE );
+    if ( check ) {
+        systemDirectoryPath[check] = 0;
+        printf( "[PA0] SYSTEM DIRECTORY PATH = \"%S\"\n", systemDirectoryPath );
+    } else {
+        printf( "[PA0] SYSTEM DIRECTORY PATH: (unable to retrieve)\n" );
+        printf( "##### An error occurred while the program tried to \n" );
+        printf( "##### retrieve the name of the system directory: %d\n", getLatError( ) );
+        break;
+    }
 
     char systemDirectoryCmdPath[MAX_TEMPORARY_STORAGE];
     sprintf( systemDirectoryCmdPath, "%s\\cmd.exe", systemDirectoryPath );
@@ -10952,23 +10961,31 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     }
 
     char systemPath[MAX_TEMPORARY_STORAGE];
-    GetEnvironmentVariable( "Path", systemPath, MAX_TEMPORARY_STORAGE );
-    printf( "[PA2] ENVIRONMENT PATH: \"%s\"\n", systemPath );
+    check = GetEnvironmentVariable( "Path", systemPath, MAX_TEMPORARY_STORAGE );
+    if ( check ) {
+        systemPath[check] = 0;
+        printf( "[PA2] ENVIRONMENT PATH = \"%s\"\n", systemPath );
+    } else {
+        printf( "[PA2] ENVIRONMENT PATH: (unable to retrieve)\n" );
+        printf( "##### An error occurred while the program tried to \n" );
+        printf( "##### retrieve the variable Path: %d\n", getLatError( ) );
+        break;
+    }
 
-    printf( "[PA1] IS CMD.EXE IN PATH?\n" );
+    printf( "[PA3] IS CMD.EXE IN PATH?\n" );
     char * t = strtok( systemPath, ";");
     while( t ) {
         char systemFileName[MAX_TEMPORARY_STORAGE];
         sprintf( systemFileName, "%s\\cmd.exe", t );
         check = show_troubleshooting_accessing_path( _environment, systemFileName, F_OK, 0 );
         if ( (check & F_OK) ) {
-            printf( "[PA2] IS CMD.EXE IN PATH %s: yes\n", systemFileName );
+            printf( "[PA4] IS CMD.EXE IN PATH %s: yes\n", systemFileName );
         } else {
-            printf( "[PA2] IS CMD.EXE IN PATH %s: no\n", systemFileName );
+            printf( "[PA4] IS CMD.EXE IN PATH %s: no\n", systemFileName );
         }
     }
 
-    printf( "[PA1] IS COMMAND CMD.EXE EXECUTABLE? \n" );
+    printf( "[PA5] IS COMMAND CMD.EXE EXECUTABLE? \n" );
 
     // Now we can exec the batch file.
 
