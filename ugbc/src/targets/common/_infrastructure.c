@@ -40,7 +40,7 @@
 #include <stdarg.h>
 
 #ifdef _WIN32
-    #include <winbase.h>
+    #include <windows.h>
     #include <fileapi.h>
 #endif
 
