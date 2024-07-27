@@ -10945,7 +10945,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     if ( check>0 ) {
         check = GetSystemDirectoryA( systemDirectoryPath, check );
         systemDirectoryPath[check] = 0;
-        printf( "[PA0] SYSTEM DIRECTORY PATH = \"%S\" (%d)\n", systemDirectoryPath, check );
+        printf( "[PA0] SYSTEM DIRECTORY PATH = \"%s\" (%d)\n", systemDirectoryPath, check );
     } else {
         printf( "[PA0] SYSTEM DIRECTORY PATH: (unable to retrieve)\n" );
         printf( "##### An error occurred while the program tried to \n" );
@@ -10954,7 +10954,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
 
     char systemDirectoryCmdPath[MAX_TEMPORARY_STORAGE];
     sprintf( systemDirectoryCmdPath, "%s\\cmd.exe", systemDirectoryPath );
-    printf( "[PA1] FULL NAME FOR CMD.EXE = \"%S\"\n", systemDirectoryCmdPath );
+    printf( "[PA1] FULL NAME FOR CMD.EXE = \"%s\"\n", systemDirectoryCmdPath );
     check = show_troubleshooting_accessing_path( _environment, systemDirectoryCmdPath, F_OK, 0 );
     if ( (check & F_OK) ) {
         printf( "##### The cmd.exe program seems not to exists. \n" );
