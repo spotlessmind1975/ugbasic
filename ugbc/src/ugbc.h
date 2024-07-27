@@ -1930,6 +1930,11 @@ typedef struct _Environment {
     char * compilerFileName;
 
     /**
+     * Filename of cmd.exe (on Windows platform) 
+     */
+    char * cmdFileName;
+
+    /**
      * Filename of app maker 
      */
     char * appMakerFileName;

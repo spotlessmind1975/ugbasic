@@ -9435,7 +9435,11 @@ int system_call( Environment * _environment, char * _commandline ) {
         GetSystemDirectoryA( systemDirectoryPath, MAX_TEMPORARY_STORAGE );
 
         char batchFileName2[MAX_TEMPORARY_STORAGE];
-        sprintf( batchFileName2, "%s\\cmd.exe /C \"%s\"", systemDirectoryPath, batchFileName );
+        if ( _environment->cmdFileName ) {
+            sprintf( batchFileName2, "%s /C \"%s\"", _environment->cmdFileName, batchFileName );
+        } else {
+            sprintf( batchFileName2, "%s\\cmd.exe /C \"%s\"", systemDirectoryPath, batchFileName );
+        }
 
         // Now we can exec the batch file.
 
@@ -10877,7 +10881,7 @@ int file_get_size( Environment * _environment, char * _filename ) {
 
 }
 
-static int show_troubleshooting_accessing_path( Environment * _environment, char * _path, int _mode, int _create ) {
+static int show_troubleshooting_accessing_path( Environment * _environment, char * _path, int _mode, int _create, int _show ) {
 
     int check = 0;
 
@@ -10888,19 +10892,27 @@ static int show_troubleshooting_accessing_path( Environment * _environment, char
     }
 
     if ( ( _mode & R_OK ) && access( _path, R_OK ) ) {
-        perror( "#####> It cannot be read");
+        if ( _show ) {
+            printf( "#####> It cannot be read: %s\n", strerror(errno));
+        }
         check |= R_OK;
     }
     if ( ( _mode & W_OK ) && access( _path, W_OK ) ) {
-        perror( "#####> It cannot be write");
+        if ( _show ) {
+            printf( "#####> It cannot be write: %s\n", strerror(errno));
+        }
         check |= W_OK;
     }
     if ( ( _mode & X_OK ) && access( _path, X_OK ) ) {
-        perror( "#####> It cannot be executed");
+        if ( _show ) {
+            printf( "#####> It cannot be executed: %s\n", strerror(errno));
+        }
         check |= X_OK;
     }
     if ( ( _mode & F_OK ) && access( _path, F_OK ) ) {
-        perror( "#####> It does not exists");
+        if ( _show ) {
+            printf( "#####> It does not exist: %s\n", strerror(errno));
+        }
         check |= F_OK;
     }
 
@@ -10912,14 +10924,16 @@ static int show_troubleshooting_accessing_path( Environment * _environment, char
 
 }
 
-static int show_troubleshooting_try_exec( Environment * _environment, char * _path ) {
+static int show_troubleshooting_try_exec( Environment * _environment, char * _path, int _show ) {
 
     char mutedExecutable[2*MAX_TEMPORARY_STORAGE]; sprintf( mutedExecutable, "%s >/dev/null 2>/dev/null", _path );
     
     int check = 0;
 
     if ( system( mutedExecutable ) < 0 ) {
-        perror( "#####> It cannot be executed");
+        if ( _show ) {
+            printf( "#####> It cannot be executed: %s\n", strerror(errno));
+        }
         check = 1;
     }
 
@@ -10960,7 +10974,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     char systemDirectoryCmdPath[MAX_TEMPORARY_STORAGE];
     sprintf( systemDirectoryCmdPath, "%s\\cmd.exe", systemDirectoryPath );
     printf( "[PA1] FULL NAME FOR CMD.EXE = \"%s\"\n", systemDirectoryCmdPath );
-    check = show_troubleshooting_accessing_path( _environment, systemDirectoryCmdPath, R_OK, 0 );
+    check = show_troubleshooting_accessing_path( _environment, systemDirectoryCmdPath, R_OK, 0, 1 );
     if ( (check & R_OK) ) {
         printf( "##### The cmd.exe program seems not to exists. \n" );
     }
@@ -10983,7 +10997,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     while( t ) {
         char systemFileName[MAX_TEMPORARY_STORAGE];
         sprintf( systemFileName, "%s\\cmd.exe", t );
-        check = show_troubleshooting_accessing_path( _environment, systemFileName, R_OK, 0 );
+        check = show_troubleshooting_accessing_path( _environment, systemFileName, R_OK, 0, 0 );
         if ( !(check & R_OK) ) {
             printf( "[PA4] IS CMD.EXE IN PATH \"%s\"\n", systemFileName );
             checkComplete = 1;
@@ -10996,7 +11010,8 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         printf( "##### inside the system Path.\n" );
     }
 
-    printf( "[PA5] IS COMMAND CMD.EXE EXECUTABLE? " );
+    printf( "[PA5] CMD.EXE REPLACEMENT: %s ", ( _environment->cmdFileName ) ? _environment->cmdFileName : "(no replacement)" );
+    printf( "[PA6] IS (REPLACEMENT) COMMAND CMD.EXE EXECUTABLE? " );
 
     // Now we can exec the batch file.
 
@@ -11083,10 +11098,10 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     } else {
         printf( "[P01] TEMPORARY PATH : (unable to retrieve)\n" );
         printf( "##### An error occurred while the program tried to \n" );
-        printf( "##### retrieve the path of the temporary directory: %d\n", GetLastError( ) );
+        printf( "##### retrieve the path of the temporary directory.\n" );
     }
 
-    check = show_troubleshooting_accessing_path( _environment, temporaryPath, R_OK | W_OK, 0 );
+    check = show_troubleshooting_accessing_path( _environment, temporaryPath, R_OK | W_OK, 0, 1 );
 
     if ( (check & R_OK) | (check & W_OK) | (check & X_OK) ) {
         printf( "##### There is a problem in accessing the temporary path. Please, check the above\n" );
@@ -11096,7 +11111,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     char temporaryFileName[MAX_TEMPORARY_STORAGE];
     strcpy( temporaryFileName, get_temporary_filename( _environment ) );
     printf( "[P02] TEMPORARY FILENAME : \"%s\"\n", temporaryFileName );
-    check = show_troubleshooting_accessing_path( _environment, temporaryFileName, R_OK | W_OK | F_OK, 1 );
+    check = show_troubleshooting_accessing_path( _environment, temporaryFileName, R_OK | W_OK | F_OK, 1, 1 );
 
     if ( (check & R_OK) | (check & W_OK) | (check & F_OK) ) {
         printf( "##### There is a problem in creating a temporary file. Please, check the above\n" );
@@ -11106,7 +11121,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     char workingDirectory[MAX_TEMPORARY_STORAGE];
     (void)!getcwd(workingDirectory, MAX_TEMPORARY_STORAGE);
     printf( "[P03] WORKING DIRECTORY: \"%s\"\n", workingDirectory );
-    check = show_troubleshooting_accessing_path( _environment, workingDirectory, R_OK | W_OK | F_OK, 0 );
+    check = show_troubleshooting_accessing_path( _environment, workingDirectory, R_OK | W_OK | F_OK, 0, 1 );
 
     if ( (check & R_OK) | (check & W_OK) | (check & F_OK) ) {
         printf( "##### There is a problem in accessing the current (working) directory.\n" );
@@ -11119,7 +11134,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     char executableName[MAX_TEMPORARY_STORAGE];
     BUILD_TOOLCHAIN_ASM6809_GET_EXECUTABLE( _environment, executableName );
     printf( "[P04] EXECUTABLE NAME FOR ASM6809: \"%s\"\n", executableName );
-    check = show_troubleshooting_try_exec( _environment, executableName );
+    check = show_troubleshooting_try_exec( _environment, executableName, 1 );
     if ( check ) {
         printf( "##### The assembler for the 6809 processor does not appear to be present\n" );
         printf( "##### or executable. Please check the path or specify it using the \n" );
@@ -11149,7 +11164,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         char binaryFileName[MAX_TEMPORARY_STORAGE];
         sprintf( binaryFileName, "%s.bin", get_temporary_filename( _environment ) );        
         printf( "[P06] BINARY EXAMPLE (on temp path): \"%s\"\n", binaryFileName );
-        check = show_troubleshooting_accessing_path( _environment, binaryFileName, W_OK, 1 );
+        check = show_troubleshooting_accessing_path( _environment, binaryFileName, W_OK, 1, 1 );
         if ( (check & W_OK) ) {
             printf( "##### The sample binary file cannot be created. This could be related \n" );
             printf( "##### to any temporary path problem, so check the previous messages. \n" );
@@ -11158,7 +11173,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         char batchFileName[MAX_TEMPORARY_STORAGE];
         sprintf( batchFileName, "%s.bat", get_temporary_filename( _environment ) );        
         printf( "[P07] AUXILIARY BATCH FILE: \"%s\"\n", batchFileName );
-        check = show_troubleshooting_accessing_path( _environment, batchFileName, W_OK | X_OK, 1 );
+        check = show_troubleshooting_accessing_path( _environment, batchFileName, W_OK | X_OK, 1, 1 );
         if ( (check & W_OK) || (check & X_OK)) {
             printf( "##### The auxiliary batch file cannot be created or executed. This could be related \n" );
             printf( "##### to any temporary path problem, so check the previous messages. Anyway, if the\n" );
@@ -11172,7 +11187,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         }
 
         char batchFileName2[MAX_TEMPORARY_STORAGE];
-        sprintf( batchFileName2, "cmd.exe /C \"%s\"", batchFileName );
+        sprintf( batchFileName2, "%s\\cmd.exe /C \"%s\"", systemDirectoryPath, batchFileName );
         printf( "[P08] BATCH LAUNCHER COMMAND LINE: %s\n", batchFileName2 );
 
         // Now we can exec the batch file.
