@@ -10996,7 +10996,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         printf( "##### inside the system Path.\n" );
     }
 
-    printf( "[PA5] IS COMMAND CMD.EXE EXECUTABLE? \n" );
+    printf( "[PA5] IS COMMAND CMD.EXE EXECUTABLE? " );
 
     // Now we can exec the batch file.
 
@@ -11017,7 +11017,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         // language interpreter had terminated using exit(127) 
         // or _exit(127). 
         case 127:
-            printf( "##### It is like some error prevents the cmd.exe \n" );
+            printf( "\n##### It is like some error prevents the cmd.exe \n" );
             printf( "##### from executing after the child process is created.\n" );
             break;
 
@@ -11025,17 +11025,18 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         // status for the command language interpreter cannot be obtained, 
         // system() shall return -1 and set errno to indicate the error.
         case -1:
-            printf( "##### It is like the cmd.exe cannot be created, or if the\n" );
+            printf( "\n##### It is like the cmd.exe cannot be created, or if the\n" );
             printf( "##### termination status for the cmd.exe\n" );
             printf( "##### cannot be obtained (errno = %d).\n\n", errno );
             perror( "##### Error from execution:");
             break;
 
         case 0:
+            printf( "yes, it is.\n");
             break;
 
         default:
-            printf( "##### It is like some error occurrend in execution of cmd.exe (%d).\n\n", cmdEsito );
+            printf( "\n##### It is like some error occurrend in execution of cmd.exe (%d).\n\n", cmdEsito );
             break;
     }
 
