@@ -10955,13 +10955,13 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     char systemDirectoryCmdPath[MAX_TEMPORARY_STORAGE];
     sprintf( systemDirectoryCmdPath, "%s\\cmd.exe", systemDirectoryPath );
     printf( "[PA1] FULL NAME FOR CMD.EXE = \"%s\"\n", systemDirectoryCmdPath );
-    check = show_troubleshooting_accessing_path( _environment, systemDirectoryCmdPath, F_OK, 0 );
-    if ( (check & F_OK) ) {
+    check = show_troubleshooting_accessing_path( _environment, systemDirectoryCmdPath, R_OK, 0 );
+    if ( (check & R_OK) ) {
         printf( "##### The cmd.exe program seems not to exists. \n" );
     }
 
-    char systemPath[2*MAX_TEMPORARY_STORAGE];
-    check = GetEnvironmentVariable( "Path", systemPath, 2*MAX_TEMPORARY_STORAGE );
+    char systemPath[8*MAX_TEMPORARY_STORAGE];
+    check = GetEnvironmentVariable( "Path", systemPath, 8*MAX_TEMPORARY_STORAGE );
     if ( check>0 ) {
         check = GetEnvironmentVariable( "Path", systemPath, check );
         systemPath[check] = 0;
@@ -10977,8 +10977,8 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     while( t ) {
         char systemFileName[MAX_TEMPORARY_STORAGE];
         sprintf( systemFileName, "%s\\cmd.exe", t );
-        check = show_troubleshooting_accessing_path( _environment, systemFileName, F_OK, 0 );
-        if ( (check & F_OK) ) {
+        check = show_troubleshooting_accessing_path( _environment, systemFileName, R_OK, 0 );
+        if ( (check & R_OK) ) {
             printf( "[PA4] IS CMD.EXE IN PATH \"%s\"\n", systemFileName );
         }
         t = strtok( NULL, ";" );
@@ -11035,7 +11035,11 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
 
     // Windows: The path reported by the Windows GetTempPath API function.
 
-    GetTempPathA( MAX_TEMPORARY_STORAGE, temporaryPath );
+    check = GetTempPathA( MAX_TEMPORARY_STORAGE, temporaryPath );
+    if ( check > 0 ) {
+        temporaryPath[check] = 0;
+        GetTempPathA( MAX_TEMPORARY_STORAGE, check );
+    }
 
 #else
 
@@ -11057,11 +11061,19 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         tmp = strdup( "/tmp" );
     }
     strcpy( temporaryPath, tmp );
+    check = strlen(temporaryPath);
 
 #endif
 
-    printf( "[P01] TEMPORARY PATH : \"%s\"\n", temporaryPath );
-    check = show_troubleshooting_accessing_path( _environment, temporaryPath, R_OK | W_OK | F_OK, 0 );
+    if ( check ) {
+        printf( "[P01] TEMPORARY PATH : \"%s\"\n", temporaryPath );
+    } else {
+        printf( "[P01] TEMPORARY PATH : (unable to retrieve)\n" );
+        printf( "##### An error occurred while the program tried to \n" );
+        printf( "##### retrieve the path of the temporary directory: %d\n", GetLastError( ) );
+    }
+
+    check = show_troubleshooting_accessing_path( _environment, temporaryPath, R_OK | W_OK, 0 );
 
     if ( (check & R_OK) | (check & W_OK) | (check & X_OK) ) {
         printf( "##### There is a problem in accessing the temporary path. Please, check the above\n" );
