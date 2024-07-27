@@ -10979,9 +10979,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         sprintf( systemFileName, "%s\\cmd.exe", t );
         check = show_troubleshooting_accessing_path( _environment, systemFileName, F_OK, 0 );
         if ( (check & F_OK) ) {
-            printf( "[PA4] IS CMD.EXE IN PATH %s: yes\n", systemFileName );
-        } else {
-            printf( "[PA4] IS CMD.EXE IN PATH %s: no\n", systemFileName );
+            printf( "[PA4] IS CMD.EXE IN PATH \"%s\"\n", systemFileName );
         }
         t = strtok( NULL, ";" );
     }
