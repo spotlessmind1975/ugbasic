@@ -10940,9 +10940,10 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
 
 #ifdef _WIN32
 
-    char systemDirectoryPath[MAX_TEMPORARY_STORAGE];
+    char systemDirectoryPath[2*MAX_TEMPORARY_STORAGE];
     check = GetSystemDirectoryA( systemDirectoryPath, MAX_TEMPORARY_STORAGE );
-    if ( check ) {
+    if ( check>0 ) {
+        check = GetSystemDirectoryA( systemDirectoryPath, check )
         systemDirectoryPath[check] = 0;
         printf( "[PA0] SYSTEM DIRECTORY PATH = \"%S\" (%d)\n", systemDirectoryPath, check );
     } else {
@@ -10959,9 +10960,10 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         printf( "##### The cmd.exe program seems not to exists. \n" );
     }
 
-    char systemPath[MAX_TEMPORARY_STORAGE];
-    check = GetEnvironmentVariable( "Path", systemPath, MAX_TEMPORARY_STORAGE );
-    if ( check ) {
+    char systemPath[2*MAX_TEMPORARY_STORAGE];
+    check = GetEnvironmentVariable( "Path", systemPath, 2*MAX_TEMPORARY_STORAGE );
+    if ( check>0 ) {
+        check = GetEnvironmentVariable( "Path", systemPath, check );
         systemPath[check] = 0;
         printf( "[PA2] ENVIRONMENT PATH = \"%s\" (%d)\n", systemPath, check );
     } else {
