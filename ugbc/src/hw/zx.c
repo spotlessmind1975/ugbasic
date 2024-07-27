@@ -178,12 +178,16 @@ void zx_scancode( Environment * _environment, char * _pressed, char * _scancode 
     deploy( scancode, src_hw_zx_scancode_asm );
 
     outline0("LD A, 0");
-    outline1("LD (%s), A", _scancode );
+    if( _scancode ){
+        outline1("LD (%s), A", _scancode );
+    }
     outline1("LD (%s), A", _pressed );
     outline0("CALL SCANCODE");
     outline0("CP 0");
     outline1("JR Z,%snokey", label);
-    outline1("LD (%s), A", _scancode );
+    if( _scancode ){
+        outline1("LD (%s), A", _scancode );
+    }
     outline0("LD A, $FF");
     outline1("LD (%s), A", _pressed );
     outhead1("%snokey:", label );

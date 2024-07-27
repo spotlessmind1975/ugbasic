@@ -47,6 +47,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     Variable * result = variable_retrieve_or_define( _environment, _variable, _default_type, 0 );
 
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
+    char repeatLabel2[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel2, "%srepeat2", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
     char backspaceLabel[MAX_TEMPORARY_STORAGE]; sprintf(backspaceLabel, "%sbackspace", label );
 
@@ -63,9 +64,9 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     Variable * key = variable_temporary( _environment, VT_CHAR, "(key pressed)");
     Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
 
-    cpu_store_8bit( _environment, enter->realName, 13 );
+    cpu_store_8bit( _environment, enter->realName, 0x23 );
     cpu_store_8bit( _environment, offset->realName, 0 );
-    cpu_store_8bit( _environment, backspace->realName, 12 );
+    cpu_store_8bit( _environment, backspace->realName, 0xf1 );
     cpu_store_8bit( _environment, space->realName, 32 );
     cpu_store_8bit( _environment, zero->realName, 0 );
 
@@ -83,10 +84,15 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     print( _environment, underscore->name, 0 );
     cmove_direct( _environment, -1, 0 );
 
-    zx_inkey( _environment, pressed->realName, key->realName );
+    zx_scancode( _environment, pressed->realName, key->realName );
 
     cpu_bveq( _environment, pressed->realName, repeatLabel );
     cpu_bveq( _environment, key->realName, repeatLabel );
+
+    cpu_label( _environment, repeatLabel2 );
+    zx_scancode( _environment, pressed->realName, NULL );
+
+    cpu_bvneq( _environment, pressed->realName, repeatLabel2 );
 
     cpu_compare_8bit( _environment, key->realName, backspace->realName, pressed->realName, 1 );
 
