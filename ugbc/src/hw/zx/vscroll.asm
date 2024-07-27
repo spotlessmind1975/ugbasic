@@ -184,6 +184,7 @@ VSCROLLUPLC:
 
     LD A, (CONSOLEH)
     LD C, A
+    DEC C
 
     ; Lookup table will do the magic.
 
