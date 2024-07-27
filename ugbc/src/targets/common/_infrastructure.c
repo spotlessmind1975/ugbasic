@@ -10948,7 +10948,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     } else {
         printf( "[PA0] SYSTEM DIRECTORY PATH: (unable to retrieve)\n" );
         printf( "##### An error occurred while the program tried to \n" );
-        printf( "##### retrieve the name of the system directory: %d\n", getLatError( ) );
+        printf( "##### retrieve the name of the system directory: %d\n", GetLastError( ) );
         break;
     }
 
@@ -10968,7 +10968,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     } else {
         printf( "[PA2] ENVIRONMENT PATH: (unable to retrieve)\n" );
         printf( "##### An error occurred while the program tried to \n" );
-        printf( "##### retrieve the variable Path: %d\n", getLatError( ) );
+        printf( "##### retrieve the variable Path: %d\n", GetLastError( ) );
         break;
     }
 
