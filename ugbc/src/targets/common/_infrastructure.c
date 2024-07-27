@@ -11010,7 +11010,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         printf( "##### inside the system Path.\n" );
     }
 
-    printf( "[PA5] CMD.EXE REPLACEMENT: %s ", ( _environment->cmdFileName ) ? _environment->cmdFileName : "(no replacement)" );
+    printf( "[PA5] CMD.EXE REPLACEMENT: %s\n", ( _environment->cmdFileName ) ? _environment->cmdFileName : "(no replacement)" );
     printf( "[PA6] IS (REPLACEMENT) COMMAND CMD.EXE EXECUTABLE? " );
 
     // Now we can exec the batch file.
