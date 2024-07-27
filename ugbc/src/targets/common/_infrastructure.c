@@ -10931,6 +10931,76 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     printf( "an executable / binary file, please contact the author via GitHub here:\n" );
     printf( "https://github.com/spotlessmind1975/ugbasic/issues/new\n\n" );
 
+#ifdef _WIN32
+
+    printf( "[PA0] IS CMD.EXE IN SYSTEM?\n" );
+    check = show_troubleshooting_accessing_path( _environment, "C:\Windows\System32\cmd.exe", F_OK, 0 );
+    if ( (check & F_OK) ) {
+        printf( "##### The cmd.exe program seems not to exists. \n" );
+    }
+
+    char systemPath[MAX_TEMPORARY_STORAGE];
+    GetEnvironmentVariable( "PATH", systemPath, MAX_TEMPORARY_STORAGE );
+    printf( "[PA1] SYSTEM PATH: \"%s\"\n", systemPath );
+
+    printf( "[PA1] IS CMD.EXE IN PATH?\n" );
+    char * t = strtok( systemPath, ";");
+    while( t ) {
+        char systemFileName[MAX_TEMPORARY_STORAGE];
+        sprintf( systemFileName, "%s\\cmd.exe", t ):
+        check = show_troubleshooting_accessing_path( _environment, systemFileName, F_OK, 0 );
+        if ( (check & F_OK) ) {
+            printf( "[PA2] IS CMD.EXE IN PATH %s: yes\n", systemFileName );
+        } else {
+            printf( "[PA2] IS CMD.EXE IN PATH %s: no\n", systemFileName );
+        }
+    }
+
+    printf( "[PA1] IS COMMAND CMD.EXE EXECUTABLE? \n" );
+
+    // Now we can exec the batch file.
+
+    int cmdEsito = system( "cmd.exe /C" );
+
+    // If command is not a null pointer, system() shall return the
+    // termination status of the command language interpreter in 
+    // the format specified by waitpid(). 
+    
+    // The termination status shall be as defined for the sh 
+    // utility; otherwise, the termination status is unspecified. 
+    
+    switch( cmdEsito ) {
+
+        // If some error prevents the command language interpreter 
+        // from executing after the child process is created, the 
+        // return value from system() shall be as if the command 
+        // language interpreter had terminated using exit(127) 
+        // or _exit(127). 
+        case 127:
+            printf( "##### It is like some error prevents the cmd.exe \n" );
+            printf( "##### from executing after the child process is created.\n" );
+            break;
+
+        // If a child process cannot be created, or if the termination 
+        // status for the command language interpreter cannot be obtained, 
+        // system() shall return -1 and set errno to indicate the error.
+        case -1:
+            printf( "##### It is like the cmd.exe cannot be created, or if the\n" );
+            printf( "##### termination status for the cmd.exe\n" );
+            printf( "##### cannot be obtained (errno = %d).\n\n", errno );
+            perror( "##### Error from execution:");
+            break;
+
+        case 0:
+            break;
+
+        default:
+            printf( "##### It is like some error occurrend in execution of cmd.exe (%d).\n\n", cmdEsito );
+            break;
+    }
+
+#endif
+
     char temporaryPath[MAX_TEMPORARY_STORAGE];
 
 #ifdef _WIN32
