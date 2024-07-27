@@ -10763,7 +10763,7 @@ char * get_default_temporary_path( ) {
 
     // Windows: The path reported by the Windows GetTempPath API function.
 
-    GetTempPathA( MAX_TEMPORARY_STORAGE, result );
+    GetTempPathA( result, MAX_TEMPORARY_STORAGE );
 
     if ( result[strlen(result)-1] == '\\' || result[strlen(result)-1] == '/' ) {
         result[strlen(result)-1] = 0;
@@ -11035,10 +11035,10 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
 
     // Windows: The path reported by the Windows GetTempPath API function.
 
-    check = GetTempPathA( MAX_TEMPORARY_STORAGE, temporaryPath );
+    check = GetTempPathA( temporaryPath, MAX_TEMPORARY_STORAGE );
     if ( check > 0 ) {
         temporaryPath[check] = 0;
-        GetTempPathA( MAX_TEMPORARY_STORAGE, check );
+        GetTempPathA( temporaryPath, check );
     }
 
 #else
