@@ -139,7 +139,7 @@ void add_complex_mt( Environment * _environment, char * _variable, char * _expre
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _variable );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _variable );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -150,7 +150,7 @@ void add_complex_mt( Environment * _environment, char * _variable, char * _expre
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     array = variable_retrieve( _environment, _variable );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _variable );
     }
     variable_move_array( _environment, array->name, value->name );
@@ -175,7 +175,7 @@ void add_complex_mt( Environment * _environment, char * _variable, char * _expre
 void add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
 
     Variable * array = variable_retrieve( _environment, _variable );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _variable );
     }
     Variable * value = variable_move_from_array( _environment, array->name );

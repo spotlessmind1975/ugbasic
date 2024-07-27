@@ -97,7 +97,7 @@ void get_image( Environment * _environment, char * _image, char * _x1, char * _y
             }
             break;
         case VT_IMAGE:
-        case VT_ARRAY:
+        case VT_TARRAY:
             tms9918_get_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, _palette );
             break;
         default:

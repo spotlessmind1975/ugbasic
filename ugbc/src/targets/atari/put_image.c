@@ -195,7 +195,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
             }
             break;
         case VT_IMAGE:
-        case VT_ARRAY:
+        case VT_TARRAY:
             if ( image->bankAssigned != -1 ) {
 
                 char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];

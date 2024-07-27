@@ -169,7 +169,7 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
         memcpy( &bank->data[bank->address], _variable->valueBuffer, _variable->size );
     } else {
         if ( _variable->value ) {
-            if ( _variable->type == VT_ARRAY ) {
+            if ( _variable->type == VT_TARRAY ) {
                 switch( VT_BITWIDTH( _variable->arrayType ) ) {
                     case 32: {
                         for( int i=0; i<(_variable->size); i+=4 ) {

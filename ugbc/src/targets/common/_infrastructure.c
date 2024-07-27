@@ -35,7 +35,6 @@
 #ifdef _WIN32
     #include <windows.h>
     #include <fileapi.h>
-    #undef VT_ARRAY
 #endif
 
 #include <math.h>
@@ -116,7 +115,7 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
 
     int neededSpace = 0;
 
-    if ( _variable->type == VT_ARRAY ) {
+    if ( _variable->type == VT_TARRAY ) {
         neededSpace = _variable->size;
     } else if ( _variable->type == VT_DSTRING ) {
         neededSpace = 1;
@@ -495,7 +494,7 @@ static Variable * variable_define_internal( Environment * _environment, Variable
         *_variables = var;
     }
 
-    if ( var->type == VT_ARRAY ) {
+    if ( var->type == VT_TARRAY ) {
         memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
         var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
     }
@@ -587,7 +586,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
     // very same type. This is allowed in BASIC programs.
 
     if ( var ) {
-        if ( ( var->type != _type ) || ( var->type == VT_ARRAY && var->arrayType != _type ) ) {
+        if ( ( var->type != _type ) || ( var->type == VT_TARRAY && var->arrayType != _type ) ) {
             CRITICAL_VARIABLE_REDEFINED_DIFFERENT_TYPE( _name );
         } else {
             return var;
@@ -795,7 +794,7 @@ Variable * variable_define_no_init( Environment * _environment, char * _name, Va
         } else {
             _environment->variables = var;
         }
-        if ( var->type == VT_ARRAY ) {
+        if ( var->type == VT_TARRAY ) {
             memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
             var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
         }
@@ -1378,7 +1377,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
             cpu_bit_inplace_8bit( _environment, destination->realName, destination->bitPosition, &_value );
             break;
         case 0:
-            if ( destination->type == VT_ARRAY ) {
+            if ( destination->type == VT_TARRAY ) {
                 int i=0,size=1;
                 for( i=0; i<destination->arrayDimensions; ++i ) {
                     size *= destination->arrayDimensionsEach[i];
@@ -1681,7 +1680,7 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
 Variable * variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at ) {
     Variable * destination = variable_retrieve( _environment, _destination );
     switch( destination->type ) {
-        case VT_ARRAY:
+        case VT_TARRAY:
             if ( ! destination->valueBuffer ) {
                 destination->valueBuffer = malloc( _size );
                 memcpy( destination->valueBuffer, _buffer, _size );
@@ -3199,7 +3198,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                 }
                 case VT_SEQUENCE:
                 case VT_MUSIC:
-                case VT_ARRAY:
+                case VT_TARRAY:
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -3445,7 +3444,7 @@ void variable_add_inplace_vars( Environment * _environment, char * _source, char
 void variable_add_inplace_array( Environment * _environment, char * _source, char * _destination ) {
 
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -3477,7 +3476,7 @@ void variable_add_inplace_mt( Environment * _environment, char * _source, char *
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -3488,7 +3487,7 @@ void variable_add_inplace_mt( Environment * _environment, char * _source, char *
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     variable_move_array( _environment, array->name, value->name );
@@ -4074,7 +4073,7 @@ void variable_increment_array( Environment * _environment, char * _source ) {
     }
 
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -4100,7 +4099,7 @@ void variable_store_mt( Environment * _environment, char * _source, unsigned int
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     variable_store_array_const( _environment, array->name, _value );
@@ -4121,7 +4120,7 @@ Variable * variable_move_from_mt( Environment * _environment, char * _source, ch
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -4143,7 +4142,7 @@ Variable * variable_move_to_mt( Environment * _environment, char * _source, char
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _destination );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _destination );
     }
     variable_move_array( _environment, array->name, source->name );
@@ -4169,7 +4168,7 @@ void variable_increment_mt( Environment * _environment, char * _source ) {
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -4180,7 +4179,7 @@ void variable_increment_mt( Environment * _environment, char * _source ) {
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     variable_move_array( _environment, array->name, value->name );
@@ -4236,7 +4235,7 @@ void variable_decrement_array( Environment * _environment, char * _source ) {
     }
 
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -4265,7 +4264,7 @@ void variable_decrement_mt( Environment * _environment, char * _source ) {
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -4276,7 +4275,7 @@ void variable_decrement_mt( Environment * _environment, char * _source ) {
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     variable_move_array( _environment, array->name, value->name );
@@ -7796,7 +7795,7 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
     Variable * array = variable_retrieve( _environment, _array );
     Variable * result = NULL;
 
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _array );
     }
 
@@ -8460,7 +8459,7 @@ void variable_array_fill( Environment * _environment, char * _name, int _value )
     
     Variable * array = variable_retrieve( _environment, _name );
 
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( array->name );
     }
 

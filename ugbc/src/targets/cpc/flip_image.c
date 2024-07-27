@@ -198,7 +198,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
             }
             break;
         case VT_IMAGE:
-        case VT_ARRAY:
+        case VT_TARRAY:
             if ( image->residentAssigned ) {
 
                 char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];

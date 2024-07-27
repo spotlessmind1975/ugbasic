@@ -64,7 +64,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_SEQUENCE:
                 case VT_TILEMAP:
                 case VT_MUSIC:
-                case VT_ARRAY:
+                case VT_TARRAY:
                 case VT_BLIT:
                 case VT_FLOAT:
                     break;

@@ -165,7 +165,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     }
                     break;
                 case VT_TILEMAP:
-                case VT_ARRAY: {
+                case VT_TARRAY: {
                     if ( variable->bankAssigned == -1 ) {
 
                         if ( variable->valueBuffer ) {
@@ -219,7 +219,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                         }
 
                     } else {
-                        if ( variable->type == VT_ARRAY ) {
+                        if ( variable->type == VT_TARRAY ) {
                             if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
                                 CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
                             }

@@ -95,7 +95,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
             }
             break;
         case VT_IMAGE:
-        case VT_ARRAY:
+        case VT_TARRAY:
             c6847_flip_image( _environment, resource, NULL, NULL, 0, 0, _direction );
             break;
         default:

@@ -410,7 +410,7 @@ typedef enum _VariableType {
     VT_BUFFER = 11,
 
     /** Array of any kind */
-    VT_ARRAY = 12,
+    VT_TARRAY = 12,
 
     /** Strings (dynamic) */
     VT_DSTRING = 13,

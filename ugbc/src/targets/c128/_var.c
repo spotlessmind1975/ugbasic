@@ -243,10 +243,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_TILEMAP:
-                case VT_ARRAY: {
+                case VT_TARRAY: {
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
-                        if ( variable->type == VT_ARRAY ) {
+                        if ( variable->type == VT_TARRAY ) {
                             if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
                                 CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
                             }
@@ -449,10 +449,10 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 }
             }
             break;
-        case VT_ARRAY: {
+        case VT_TARRAY: {
             if ( _variable->bankAssigned != -1 ) {
                 outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", _variable->bankAssigned, _variable->absoluteAddress, _variable->size, _variable->uncompressedSize );
-                if ( _variable->type == VT_ARRAY ) {
+                if ( _variable->type == VT_TARRAY ) {
                     if (VT_BITWIDTH( _variable->arrayType ) == 0 ) {
                         CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ _variable->arrayType ] );
                     }

@@ -1169,14 +1169,14 @@ const_factor:
       }
       | UBOUND OP Identifier CP {
           Variable * array = variable_retrieve( _environment, $3 );
-          if ( array->type != VT_ARRAY ) {
+          if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
           }
           $$ = array->arrayDimensionsEach[array->arrayDimensions-1];
       }
       | UBOUND OP Identifier OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
@@ -1189,14 +1189,14 @@ const_factor:
       }
       | LBOUND OP Identifier CP {
           Variable * array = variable_retrieve( _environment, $3 );
-          if ( array->type != VT_ARRAY ) {
+          if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
           }
           $$ = 0;
       }
       | LBOUND OP Identifier OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
@@ -2617,13 +2617,13 @@ exponential:
             if ( ((struct _Environment *)_environment)->optionExplicit ) {
                 CRITICAL_VARIABLE_UNDEFINED( $1 );
             } else {
-                array = variable_define( _environment, $1, VT_ARRAY, 0 );
+                array = variable_define( _environment, $1, VT_TARRAY, 0 );
                 array->arrayType = vt;
                 array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
             }
         }        
         array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
         $$ = variable_move_from_array( _environment, $1 )->name;
@@ -2644,13 +2644,13 @@ exponential:
             if ( ((struct _Environment *)_environment)->optionExplicit ) {
                 CRITICAL_VARIABLE_UNDEFINED( $2 );
             } else {
-                array = variable_define( _environment, $2, VT_ARRAY, 0 );
+                array = variable_define( _environment, $2, VT_TARRAY, 0 );
                 array->arrayType = vt;
                 array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
             }
         }        
         array = variable_retrieve( _environment, $2 );        
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
         if ( array->arrayType != vt ) {
@@ -3244,7 +3244,7 @@ exponential:
     }
     | UBOUND OP expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         Variable * value = variable_temporary( _environment, VT_WORD, "(ubound)" );
@@ -3253,7 +3253,7 @@ exponential:
     }
     | UBOUND OP expr OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
@@ -3268,7 +3268,7 @@ exponential:
     }
     | LBOUND OP expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         Variable * value = variable_temporary( _environment, VT_WORD, "(lbound)" );
@@ -3277,7 +3277,7 @@ exponential:
     }
     | LBOUND OP expr OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
@@ -6722,7 +6722,7 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
     } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
@@ -6739,7 +6739,7 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
     } as_datatype {
         if ( $2 ) {
             variable_array_type( _environment, $1, $2 );
@@ -6759,7 +6759,7 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
         ((struct _Environment *)_environment)->currentArray->value = $4;
         variable_array_type( _environment, $1, $2 );
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
@@ -6781,7 +6781,7 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP as_datatype {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
         variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
     } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
@@ -6796,7 +6796,7 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
         ((struct _Environment *)_environment)->currentArray->value = $4;
         variable_array_type( _environment, $1, $2 );
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
@@ -7663,7 +7663,7 @@ read_definition_single :
         parser_array_init( _environment );
     } OP indexes CP {
         Variable * a = variable_retrieve( _environment, $2 );
-        if ( a->type != VT_ARRAY ) {
+        if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
         Variable * read = variable_temporary( _environment, a->arrayType, "(temp for array)" );
@@ -7679,7 +7679,7 @@ read_definition_single :
         parser_array_init( _environment );
     } OP indexes CP {
         Variable * a = variable_retrieve( _environment, $2 );
-        if ( a->type != VT_ARRAY ) {
+        if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
         if ( a->arrayType != VT_DSTRING ) {
@@ -8909,7 +8909,7 @@ flip_definition:
 thread_identifiers :
     expr {
         Variable * array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_ARRAY || array->arrayType != VT_THREAD ) {
+        if ( array->type != VT_TARRAY || array->arrayType != VT_THREAD ) {
             ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
             ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
         } else {
@@ -8923,7 +8923,7 @@ thread_identifiers :
     }
     | expr OP_COMMA thread_identifiers {
         Variable * array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_ARRAY || array->arrayType != VT_THREAD ) {
+        if ( array->type != VT_TARRAY || array->arrayType != VT_THREAD ) {
             ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
             ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
         } else {
@@ -8970,7 +8970,7 @@ spawn_definition :
   | Identifier OP_COMMA Identifier on_targets {
         if ( $4 ) {
             Variable * variable = variable_retrieve( _environment, $1 );
-            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+            if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
                 ((struct _Environment *)_environment)->parameters = 0;
                 variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
             } else {
@@ -8988,7 +8988,7 @@ spawn_definition :
     } values CSP on_targets {
       if ( $8 ) {
             Variable * variable = variable_retrieve( _environment, $1 );
-            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+            if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
                 ((struct _Environment *)_environment)->parameters = 0;
                 variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
             } else {
@@ -9005,7 +9005,7 @@ spawn_definition :
       ((struct _Environment *)_environment)->parameters = 0;
       if ( $6 ) {
             Variable * variable = variable_retrieve( _environment, $1 );
-            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+            if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
                 ((struct _Environment *)_environment)->parameters = 0;
                 variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
             } else {
@@ -9457,10 +9457,10 @@ statement2nc:
      if ( variable_exists( _environment, $3 ) ) {
         index = variable_retrieve( _environment, $3 );
      } else {
-        index = variable_define( _environment, $3, VT_ARRAY, 0 );
+        index = variable_define( _environment, $3, VT_TARRAY, 0 );
         variable_array_type( _environment, $3, vt );
      }
-     if ( index->type != VT_ARRAY || index->arrayType != vt ) {
+     if ( index->type != VT_TARRAY || index->arrayType != vt ) {
          CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
      }
      begin_for_prepare_mt( _environment );
@@ -9492,7 +9492,7 @@ statement2nc:
   | NEXT OSP Identifier as_datatype_suffix_optional CSP {
     if ( $4 > 0 ) {
         Variable * index = variable_retrieve_or_define( _environment, $3, $4, 0 );
-        if ( index->type != VT_ARRAY ) {
+        if ( index->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         if ( index->arrayType != $4 ) {
@@ -10013,7 +10013,7 @@ statement2nc:
                 }
             }
         } else {
-            if ( variable->type == VT_ARRAY ) {
+            if ( variable->type == VT_TARRAY ) {
                 if ( expr->type != VT_BUFFER ) {
                     CRITICAL_CANNOT_ASSIGN_TO_ARRAY( $1, DATATYPE_AS_STRING[expr->type] );
                 }
@@ -10073,7 +10073,7 @@ statement2nc:
       
     } OP_ASSIGN {
       Variable * var = variable_retrieve( _environment, $2 );
-      if ( var->type != VT_ARRAY ) {
+      if ( var->type != VT_TARRAY ) {
           CRITICAL_NOT_ARRAY( $2 );
       }
       ((struct _Environment *)_environment)->currentArray = var;
@@ -10082,7 +10082,7 @@ statement2nc:
       
     } OP_ASSIGN_DIRECT {
       Variable * var = variable_retrieve( _environment, $2 );
-      if ( var->type != VT_ARRAY ) {
+      if ( var->type != VT_TARRAY ) {
           CRITICAL_NOT_ARRAY( $2 );
       }
       ((struct _Environment *)_environment)->currentArray = var;
@@ -10092,7 +10092,7 @@ statement2nc:
     }    
       OP indexes CP OP_ASSIGN expr {
         Variable * array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
         Variable * expr = variable_retrieve_or_define( _environment, $7, array->arrayType, 0 );
@@ -10107,8 +10107,8 @@ statement2nc:
         if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_DSTRING] );
         }
-        if ( a->type != VT_ARRAY ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_ARRAY] );
+        if ( a->type != VT_TARRAY ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_TARRAY] );
         }
         if ( a->arrayType != VT_DSTRING ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
@@ -10124,7 +10124,7 @@ statement2nc:
         if ( x->type != $3 ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[$3] );
         }
-        if ( a->type != VT_ARRAY ) {
+        if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
         if ( a->arrayType != $3 ) {
@@ -10139,7 +10139,7 @@ statement2nc:
       OP_ASSIGN expr {
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * array = variable_retrieve( _environment, $2 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
         Variable * expr = variable_retrieve_or_define( _environment, $6, array->arrayType, 0 );
@@ -10155,8 +10155,8 @@ statement2nc:
         if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_DSTRING] );
         }
-        if ( a->type != VT_ARRAY ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_ARRAY] );
+        if ( a->type != VT_TARRAY ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_TARRAY] );
         }
         if ( a->arrayType != VT_DSTRING ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
@@ -10173,7 +10173,7 @@ statement2nc:
         if ( x->type != $5 ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[$5] );
         }
-        if ( a->type != VT_ARRAY ) {
+        if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
         if ( a->arrayType != $5 ) {
