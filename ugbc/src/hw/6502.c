@@ -6754,7 +6754,7 @@ void cpu6502_float_fast_from_double_to_int_array( Environment * _environment, do
     cpu6502_float_single_from_double_to_int_array( _environment, _value, _result );
 }
 
-const double sonda = 1.0;
+// const double sonda = 1.0;
 
 void cpu6502_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
     
@@ -6800,10 +6800,10 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         left = (unsigned int) integral;
 
-        if ( _value == sonda ) {
-            printf("============================\n" );
-            printf("value = %f, left = %d, integral = %f, fractional = %f\n", value, left, integral, fractional );
-        }
+        // if ( _value == sonda ) {
+        //     printf("============================\n" );
+        //     printf("value = %f, left = %d, integral = %f, fractional = %f\n", value, left, integral, fractional );
+        // }
 
         // Step 3: Convert the Fractional Portion to Binary
         // The fractional portion of the number must also be converted to binary, though the conversion process 
@@ -6831,9 +6831,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
         
             // mantissaScaled = 1;
 
-            if ( _value == sonda ) {
-                printf("%d-) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
-            }
+            // if ( _value == sonda ) {
+            //     printf("%d-) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
+            // }
 
             // fractional = fractional * 2;
 
@@ -6858,9 +6858,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
                     ++steps;
 
-                    if ( _value == sonda ) {
-                        printf("%d) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
-                    }
+                    // if ( _value == sonda ) {
+                    //     printf("%d) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
+                    // }
 
                     // if (  ( fractional != 1.0 ) && ( steps < mantissa_bits )  ) {
 
@@ -6883,9 +6883,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
             }
 
-            if ( _value == sonda ) {
-                printf("%d*) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
-            }
+            // if ( _value == sonda ) {
+            //     printf("%d*) exp = %d right = %2.2x %2.2x %2.2x fractional = %f\n", steps, exp, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
+            // }
 
         }
 
@@ -6916,9 +6916,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
                 while( left == 0 ) {
 
-                    if ( _value == sonda ) {
-                        printf("a) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x fractional = %f\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
-                    }
+                    // if ( _value == sonda ) {
+                    //     printf("a) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x fractional = %f\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], fractional );
+                    // }
 
                     if ( ! right[0] && ! right[1] && ! right[2] ) {
                         left = 0x1;
@@ -6950,15 +6950,15 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
             }
 
-            if ( _value == sonda ) {
-                printf("ax) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-            }
+            // if ( _value == sonda ) {
+            //     printf("ax) exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+            // }
 
             while( left ) {
 
-                if ( _value == sonda ) {
-                    printf("ay) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-                }
+                // if ( _value == sonda ) {
+                //     printf("ay) left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+                // }
 
                 if ( ( right[0] & 0x01 ) ) {
                     right[1] = right[1] | 0x100;
@@ -6991,9 +6991,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
             if ( left > 1 ) {
                 while( left > 1 ) {
 
-                    if ( _value == sonda ) {
-                        printf("bx) exp = %d left = %8.8x right = %2.2x %2.2x %2.2x\n", exp, left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-                    }
+                    // if ( _value == sonda ) {
+                    //     printf("bx) exp = %d left = %8.8x right = %2.2x %2.2x %2.2x\n", exp, left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+                    // }
 
                     if ( ( right[0] & 0x01 ) ) {
                         right[1] = right[1] | 0x100;
@@ -7023,9 +7023,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
                 --exp;
             }
 
-            if ( _value == sonda ) {
-                printf("bx*) exp = %d left = %8.8x right = %2.2x %2.2x %2.2x\n", exp, left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-            }
+            // if ( _value == sonda ) {
+            //     printf("bx*) exp = %d left = %8.8x right = %2.2x %2.2x %2.2x\n", exp, left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
+            // }
         
         }
 
@@ -7042,9 +7042,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
         // exp += 127;
         exp += 129;
 
-        if ( _value == sonda ) {
-            printf("exp = %2.2x\n", exp );
-        }
+        // if ( _value == sonda ) {
+        //     printf("exp = %2.2x\n", exp );
+        // }
 
         // Step 6: Convert the Biased Exponent to Unsigned Binary
         // The biased exponent value from the previous step must be converted into unsigned binary, using the usual process.
@@ -7054,9 +7054,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
         exp = exp & 0xff;
 
-        if ( _value == sonda ) {
-            printf("exp = %d\n", exp );
-        }
+        // if ( _value == sonda ) {
+        //     printf("exp = %d\n", exp );
+        // }
 
         // Step 7: Determine the Final Bits for the Mantissa
         // After step 4, there are a bunch of bits after the normalized decimal point. These bits will become the 
@@ -7091,9 +7091,9 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
 
     }
 
-    if ( _value == sonda ) {
-        printf( "--------------> %f %2.2x %2.2x %2.2x %2.2x\n\n", _value, _result[0], _result[1], _result[2], _result[3] );
-    }
+    // if ( _value == sonda ) {
+    //     printf( "--------------> %f %2.2x %2.2x %2.2x %2.2x\n\n", _value, _result[0], _result[1], _result[2], _result[3] );
+    // }
     
 }
 void cpu6502_float_fast_from_int_array_to_double( Environment * _environment, int _value[], double * _result ) {
