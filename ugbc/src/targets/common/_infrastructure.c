@@ -10978,15 +10978,22 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     }
 
     printf( "[PA3] IS CMD.EXE IN PATH?\n" );
+    int checkComplete = 0;
     char * t = strtok( systemPath, ";");
     while( t ) {
         char systemFileName[MAX_TEMPORARY_STORAGE];
         sprintf( systemFileName, "%s\\cmd.exe", t );
         check = show_troubleshooting_accessing_path( _environment, systemFileName, R_OK, 0 );
-        if ( (check & R_OK) ) {
+        if ( !(check & R_OK) ) {
             printf( "[PA4] IS CMD.EXE IN PATH \"%s\"\n", systemFileName );
+            checkComplete = 1;
         }
         t = strtok( NULL, ";" );
+    }
+
+    if ( !checkComplete ) {
+        printf( "##### The cmd.exe does not seem to be present or reachable\n" );
+        printf( "##### inside the system Path.\n" );
     }
 
     printf( "[PA5] IS COMMAND CMD.EXE EXECUTABLE? \n" );
