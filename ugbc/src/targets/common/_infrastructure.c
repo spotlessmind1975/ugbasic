@@ -10934,7 +10934,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
 #ifdef _WIN32
 
     printf( "[PA0] IS CMD.EXE IN SYSTEM?\n" );
-    check = show_troubleshooting_accessing_path( _environment, "C:\Windows\System32\cmd.exe", F_OK, 0 );
+    check = show_troubleshooting_accessing_path( _environment, "C:\\Windows\\System32\\cmd.exe", F_OK, 0 );
     if ( (check & F_OK) ) {
         printf( "##### The cmd.exe program seems not to exists. \n" );
     }
