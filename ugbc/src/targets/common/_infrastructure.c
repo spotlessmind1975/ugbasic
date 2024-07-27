@@ -10983,6 +10983,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         } else {
             printf( "[PA4] IS CMD.EXE IN PATH %s: no\n", systemFileName );
         }
+        t = strtok( NULL, ";" );
     }
 
     printf( "[PA5] IS COMMAND CMD.EXE EXECUTABLE? \n" );
