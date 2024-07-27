@@ -63,7 +63,17 @@ KEYBOARDMAP:
 SCANCODEREAD:
 	.BYTE $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
-SCANCODEFULL:
+SCANCODEPTR = $9
+
+KEYBOARDMANAGER:
+	PHA
+	TYA
+	PHA
+
+	LDA #<SCANCODEREAD
+	STA SCANCODEPTR
+	LDA #>SCANCODEREAD
+	STA SCANCODEPTR+1
 
 	; Also note you must store $FF in the "row select register" you are not using. 
 	; This means if you want to read from any 8 of the $DC00 rows (top 8 rows), 
@@ -86,7 +96,7 @@ SCANCODEFULLL1:
 	STA $DC00
 	PHA
 	LDA $DC01
-	STA (TMPPTR),Y
+	STA (SCANCODEPTR),Y
 	PLA
 	SEC
 	ROL A
@@ -110,7 +120,7 @@ SCANCODEFULLL2:
 	STA $D02F
 	PHA
 	LDA $DC01
-	STA (TMPPTR),Y
+	STA (SCANCODEPTR),Y
 	PLA
 	ROL A
 	INY
@@ -127,6 +137,10 @@ SCANCODEFULLL2:
 	LDA #$FF
 	STA $D02F
 
+	PLA
+	TAY
+	PLA
+
 	RTS
 
 SCANCODE:
@@ -135,8 +149,6 @@ SCANCODE:
 	STA TMPPTR
 	LDA #>SCANCODEREAD
 	STA TMPPTR+1
-
-	JSR SCANCODEFULL
 
 	LDX #0
 	LDY #0

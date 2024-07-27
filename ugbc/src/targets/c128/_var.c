@@ -796,6 +796,11 @@ void variable_cleanup( Environment * _environment ) {
         outline0( "RTS" );
     }
 
+    if ( ! _environment->deployed.scancode ) {
+        cpu_label( _environment, "KEYBOARDKMANAGER" );
+        outline0( "RTS" );
+    }
+
     // outhead0(".segment \"CODE\"" );
 
     variable_on_memory_init( _environment, 0 );
