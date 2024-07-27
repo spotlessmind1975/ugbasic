@@ -10949,7 +10949,6 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         printf( "[PA0] SYSTEM DIRECTORY PATH: (unable to retrieve)\n" );
         printf( "##### An error occurred while the program tried to \n" );
         printf( "##### retrieve the name of the system directory: %d\n", GetLastError( ) );
-        break;
     }
 
     char systemDirectoryCmdPath[MAX_TEMPORARY_STORAGE];
