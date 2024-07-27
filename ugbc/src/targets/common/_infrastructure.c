@@ -10968,7 +10968,6 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         printf( "[PA2] ENVIRONMENT PATH: (unable to retrieve)\n" );
         printf( "##### An error occurred while the program tried to \n" );
         printf( "##### retrieve the variable Path: %d\n", GetLastError( ) );
-        break;
     }
 
     printf( "[PA3] IS CMD.EXE IN PATH?\n" );
