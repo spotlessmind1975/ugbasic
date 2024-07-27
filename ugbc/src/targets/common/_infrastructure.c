@@ -35,6 +35,7 @@
 #ifdef _WIN32
     #include <windows.h>
     #include <fileapi.h>
+    #include <sysinfoapi.h>
 #endif
 
 #include <math.h>
@@ -9429,8 +9430,11 @@ int system_call( Environment * _environment, char * _commandline ) {
         // Add quotes around the executable filename, 
         // in order to avoid wrong execution.
 
+        char systemDirectoryPath[MAX_TEMPORARY_STORAGE];
+        GetSystemDirectoryA( systemDirectoryPath, MAX_TEMPORARY_STORAGE );
+
         char batchFileName2[MAX_TEMPORARY_STORAGE];
-        sprintf( batchFileName2, "cmd.exe /C \"%s\"", batchFileName );
+        sprintf( batchFileName2, "%s\\cmd.exe /C \"%s\"", systemDirectoryPath, batchFileName );
 
         // Now we can exec the batch file.
 
@@ -10935,15 +10939,21 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
 
 #ifdef _WIN32
 
-    printf( "[PA0] IS CMD.EXE IN SYSTEM?\n" );
-    check = show_troubleshooting_accessing_path( _environment, "C:\\Windows\\System32\\cmd.exe", F_OK, 0 );
+    char systemDirectoryPath[MAX_TEMPORARY_STORAGE];
+    GetSystemDirectoryA( systemDirectoryPath, MAX_TEMPORARY_STORAGE );
+    printf( "[PA0] SYSTEM DIRECTORY PATH = \"%S\"\n", systemDirectoryPath );
+
+    char systemDirectoryCmdPath[MAX_TEMPORARY_STORAGE];
+    sprintf( systemDirectoryCmdPath, "%s\\cmd.exe", systemDirectoryPath );
+    printf( "[PA1] FULL NAME FOR CMD.EXE = \"%S\"\n", systemDirectoryCmdPath );
+    check = show_troubleshooting_accessing_path( _environment, systemDirectoryCmdPath, F_OK, 0 );
     if ( (check & F_OK) ) {
         printf( "##### The cmd.exe program seems not to exists. \n" );
     }
 
     char systemPath[MAX_TEMPORARY_STORAGE];
-    GetEnvironmentVariable( "PATH", systemPath, MAX_TEMPORARY_STORAGE );
-    printf( "[PA1] SYSTEM PATH: \"%s\"\n", systemPath );
+    GetEnvironmentVariable( "Path", systemPath, MAX_TEMPORARY_STORAGE );
+    printf( "[PA2] ENVIRONMENT PATH: \"%s\"\n", systemPath );
 
     printf( "[PA1] IS CMD.EXE IN PATH?\n" );
     char * t = strtok( systemPath, ";");
