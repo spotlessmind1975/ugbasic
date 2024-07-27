@@ -10943,7 +10943,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     char systemDirectoryPath[2*MAX_TEMPORARY_STORAGE];
     check = GetSystemDirectoryA( systemDirectoryPath, MAX_TEMPORARY_STORAGE );
     if ( check>0 ) {
-        check = GetSystemDirectoryA( systemDirectoryPath, check )
+        check = GetSystemDirectoryA( systemDirectoryPath, check );
         systemDirectoryPath[check] = 0;
         printf( "[PA0] SYSTEM DIRECTORY PATH = \"%S\" (%d)\n", systemDirectoryPath, check );
     } else {
