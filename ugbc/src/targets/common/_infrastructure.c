@@ -10944,7 +10944,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     check = GetSystemDirectoryA( systemDirectoryPath, MAX_TEMPORARY_STORAGE );
     if ( check ) {
         systemDirectoryPath[check] = 0;
-        printf( "[PA0] SYSTEM DIRECTORY PATH = \"%S\"\n", systemDirectoryPath );
+        printf( "[PA0] SYSTEM DIRECTORY PATH = \"%S\" (%d)\n", systemDirectoryPath, check );
     } else {
         printf( "[PA0] SYSTEM DIRECTORY PATH: (unable to retrieve)\n" );
         printf( "##### An error occurred while the program tried to \n" );
@@ -10963,7 +10963,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     check = GetEnvironmentVariable( "Path", systemPath, MAX_TEMPORARY_STORAGE );
     if ( check ) {
         systemPath[check] = 0;
-        printf( "[PA2] ENVIRONMENT PATH = \"%s\"\n", systemPath );
+        printf( "[PA2] ENVIRONMENT PATH = \"%s\" (%d)\n", systemPath, check );
     } else {
         printf( "[PA2] ENVIRONMENT PATH: (unable to retrieve)\n" );
         printf( "##### An error occurred while the program tried to \n" );
