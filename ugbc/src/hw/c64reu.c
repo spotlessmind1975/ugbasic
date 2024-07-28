@@ -76,7 +76,7 @@ void c64reu_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("LDA #$0");
     outline1("STA %s", _key );
 
-    outline0("JSR SCANCODE");
+    // outline0("JSR SCANCODE");
 
     outline0("LDX $c6");
     outline0("CPX #$0");
@@ -118,7 +118,7 @@ void c64reu_scancode( Environment * _environment, char * _pressed, char * _scanc
     outline0("LDA #$0");
     outline1("STA %s", _scancode );
 
-    outline0("JSR SCANCODE");
+    // outline0("JSR SCANCODE");
 
     outline0("LDY KEYBPREV");
     outline0("CPY #$40");
@@ -185,7 +185,7 @@ void c64reu_keyshift( Environment * _environment, char * _shifts ) {
 
     MAKE_LABEL
 
-    outline0("JSR SCANCODE");
+    // outline0("JSR SCANCODE");
 
     outline0("LDA #0");
     outline1("STA %s", _shifts);
