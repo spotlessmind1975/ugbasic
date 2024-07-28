@@ -88,10 +88,10 @@ void d64_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline1("LDA %s", _pressed );
     outline0("CMPA #0" );
     outline1("BEQ %sskip", label );
-    outline1("LDA %s", _key );
-    outline0("ANDA #$80" );
-    outline0("CMPA #0" );
-    outline1("BNE %snoascii", label );
+    // outline1("LDA %s", _key );
+    // outline0("ANDA #$80" );
+    // outline0("CMPA #0" );
+    // outline1("BNE %snoascii", label );
     outline1("LDA %s", _key );
     outline0("CMPA $011d" );
     outline1("BNE %sdifferent", label );
@@ -128,7 +128,7 @@ void d64_scancode( Environment * _environment, char * _pressed, char * _scancode
     outline1("STA %s", _pressed );
     outline1("STA %s", _scancode );
 
-    outline0("JSR SCANCODE" );
+    outline0("LDA KEYPRESS" );
     outline0("CMPA #0" );
     outline1("BEQ %snokey", label );
     outline1("STA %s", _scancode );

@@ -35,7 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-SCANCODE
+KEYBOARDMANAGER
+    PSHS D
+    PSHS X
     ; CLR $FF01
     ; CLR $FF00
     ; CLR $FF03
@@ -56,6 +58,7 @@ SCANCODENEXT2A
     ANDA #1
     CMPA #1
     BNE SCANCODENEXT2
+pippero
     LDA , X
     JMP SCANCODEE
 SCANCODENEXT2
@@ -74,6 +77,10 @@ SCANCODENEXT
     BLS SCANCODE0
     LDA #0
 SCANCODEE
+    STA KEYPRESS
+    PULS X
+    PULS D
+
     RTS
 
 SCANCODEMATRIX
