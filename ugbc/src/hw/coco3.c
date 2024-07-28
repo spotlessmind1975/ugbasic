@@ -129,7 +129,7 @@ void coco3_scancode( Environment * _environment, char * _pressed, char * _scanco
     outline1("STA %s", _pressed );
     outline1("STA %s", _scancode );
 
-    outline0("JSR SCANCODE" );
+    outline0("LDA KEYPRESS" );
     outline0("CMPA #0" );
     outline1("BEQ %snokey", label );
     outline1("STA %s", _scancode );

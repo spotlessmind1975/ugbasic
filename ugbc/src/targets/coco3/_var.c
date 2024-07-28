@@ -598,6 +598,15 @@ void variable_cleanup( Environment * _environment ) {
         cpu_label( _environment, "TIMERMANAGER" );
         outline0( "RTS" );
     }
+    if ( ! _environment->deployed.joystick ) {
+        cpu_label( _environment, "JOYSTICKMANAGER" );
+        outline0( "RTS" );
+    }
+
+    if ( ! _environment->deployed.scancode ) {
+        cpu_label( _environment, "KEYBOARDKMANAGER" );
+        outline0( "RTS" );
+    }
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
