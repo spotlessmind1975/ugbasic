@@ -337,7 +337,7 @@ TEXTATNEXT3
     NEGA
     NEGB
     SBCA #0
-    ADDD #1
+    ; ADDD #1
     LEAX D, X
     PULS D
 

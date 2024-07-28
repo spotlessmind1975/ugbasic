@@ -46,29 +46,6 @@
  */
 /* <usermanual>
 @keyword CLS
-
-@english
-The ''CLS'' command clears the screen, setting it (possibly) to a given background color. 
-The clearing occurs with respect to the selected mode, so it will be a "pixel by pixel" 
-clearing (if in bitmap mode) or "tile by tile" (if in tile mode). In the second case, the 
-value of the ''EMPTYTILE'' variable will be used, possibly overridden.
-
-@italian
-Il comando ''CLS'' cancella lo schermo, impostandolo (eventualmente) a un dato colore
-di sfondo. La cancellazione avviene rispetto alla modalità selezionata, quindi sarà una 
-cancellazione "pixel per pixel" (se in modalità bitmap) oppure "tile per tile" (se in 
-modalità tile). Nel secondo caso, sarà utilizzato il valore della variabile ''EMPTYTILE'', 
-eventualmente prevalorizzato.
-
-@syntax CLS
-@syntax CLS [color]
-
-@example CLS
-@example CLS WHITE
-
-@usedInExample texts_position_01.bas
-@usedInExample texts_position_02.bas
-
 @target c64
 </usermanual> */
 void cls( Environment * _environment, char * _paper ) {
