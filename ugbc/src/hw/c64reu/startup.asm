@@ -197,7 +197,7 @@ C64REUSTARTUPDONE:
     STA $DC0D
     LDA #$01                    ;Raster interrupt on
     STA $D01A
-    LDA #$37
+    LDA #$33
     STA $D011
     LDA #IRQ1LINE               ;Line where next IRQ happens
     STA $D012
