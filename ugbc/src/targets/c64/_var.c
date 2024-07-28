@@ -777,6 +777,17 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
     deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
 
+    // Moved here for banking reasons.
+    if ( ! _environment->deployed.joystick ) {
+        cpu_label( _environment, "JOYSTICKMANAGER" );
+        outline0( "RTS" );
+    }
+
+    if ( ! _environment->deployed.scancode ) {
+        cpu_label( _environment, "KEYBOARDKMANAGER" );
+        outline0( "RTS" );
+    }
+
     // outhead0(".segment \"CODE\"" );
 
     variable_on_memory_init( _environment, 0 );
@@ -839,10 +850,6 @@ void variable_cleanup( Environment * _environment ) {
     }
     if ( _environment->deployed.dstring ) {
         outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
-    }
-    if ( ! _environment->deployed.joystick ) {
-        cpu_label( _environment, "JOYSTICKMANAGER" );
-        outline0( "RTS" );
     }
     
 }
