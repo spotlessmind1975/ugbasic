@@ -55,6 +55,7 @@ VSCROLLTUP:
 
     LD A, (CONSOLEH)
     LD C, A
+    DEC C
     LD B, 0
 
     ; BC = BC x 8
