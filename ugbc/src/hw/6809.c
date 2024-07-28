@@ -3060,6 +3060,8 @@ void cpu6809_random( Environment * _environment, char * _entropy ) {
 
         embedded( cpu_random, src_hw_6809_cpu_random_asm );
 
+            _environment->deployed.random = 1;
+            
             if ( _entropy ) {
                 outline1( "LDB %s", _entropy );
                 outline0( "STB <PATTERN" );
