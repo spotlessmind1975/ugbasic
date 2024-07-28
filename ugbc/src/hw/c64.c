@@ -78,7 +78,7 @@ void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
     outline0("JSR SCANCODE");
 
-    outline0("LDX $c6");
+    outline0("LDX KEYBLEN");
     outline0("CPX #$0");
     outline1("BEQ %snokey", label );
 
@@ -94,9 +94,9 @@ void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("LDA $0278,X" );
     outline0("STA $0277,X" );
     outline0("INX");
-    outline0("CPX $c6");
+    outline0("CPX KEYBLEN");
     outline1("BNE %sclkeys", label);
-    outline0("DEC $c6");
+    outline0("DEC KEYBLEN");
 
     outline1("JMP %snokey", label );
 
