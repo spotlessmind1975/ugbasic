@@ -9232,6 +9232,7 @@ statement2nc:
   }
   | CLS {
       cls( _environment, NULL );
+      home( _environment );
   }
   | CLS expr {
       cls( _environment, $2 );
