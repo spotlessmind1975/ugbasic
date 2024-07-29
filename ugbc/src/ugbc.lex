@@ -219,6 +219,7 @@ _[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
 "@" { RETURN(OP_AT,1); }
 "%" { RETURN(OP_PERC,1); }
 "&" { RETURN(OP_AMPERSAND,1); }
+"%%" { RETURN(OP_PERC2,1); }
 
 8BIT { RETURN(BYTE,1); }
 16BIT { RETURN(WORD,1); }
