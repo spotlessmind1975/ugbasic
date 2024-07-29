@@ -182,7 +182,7 @@ void zx_scancode( Environment * _environment, char * _pressed, char * _scancode 
         outline1("LD (%s), A", _scancode );
     }
     outline1("LD (%s), A", _pressed );
-    outline0("CALL SCANCODE");
+    outline0("LD A, (KEYPRESS)");
     outline0("CP 0");
     outline1("JR Z,%snokey", label);
     if( _scancode ){
@@ -230,7 +230,7 @@ void zx_scanshift( Environment * _environment, char * _shifts ) {
 
     deploy( scancode, src_hw_zx_scancode_asm );
 
-    outline0("CALL SCANCODE");
+    outline0("LD A, (KEYPRESS)");
     outline0("CP $f1");
     outline1("JR NZ,%snokey", label);
     outline0("LD A, $03");
@@ -249,7 +249,7 @@ void zx_keyshift( Environment * _environment, char * _shifts ) {
 
     deploy( scancode, src_hw_zx_scancode_asm );
 
-    outline0("CALL SCANCODE");
+    outline0("LD A, (KEYPRESS)");
     outline0("CP $f1");
     outline1("JR NZ,%snokey", label);
     outline0("LD A, $03");

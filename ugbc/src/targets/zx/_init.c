@@ -55,6 +55,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "TIMERADDRESS", VT_BUFFER, 16 );
     variable_global( _environment, "TIMERADDRESS" );
 
+    variable_import( _environment, "KEYPRESS", VT_BYTE, 0 );
+    variable_global( _environment, "KEYPRESS" );    
+
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x4000 );
     variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x5800 );
