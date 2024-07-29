@@ -214,6 +214,7 @@ _[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
 "{" { RETURN(OGP,1); }
 "}" { RETURN(CGP,1); }
 "?" { RETURN(QM,1); }
+"$$" { RETURN(OP_DOLLAR2,1); }
 
 "@" { RETURN(OP_AT,1); }
 "%" { RETURN(OP_PERC,1); }

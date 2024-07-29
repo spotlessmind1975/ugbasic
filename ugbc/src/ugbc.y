@@ -48,7 +48,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token NewLine 
 %token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS OP_INC OP_DEC OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
 %token OP_DISEQUAL OP_MULTIPLICATION OP_MULTIPLICATION2 OP_DOLLAR OP_DIVISION OP_DIVISION2 QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
-%token OP_EXCLAMATION
+%token OP_EXCLAMATION OP_DOLLAR2
 
 %token RASTER DONE AT COLOR COLOUR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -3219,6 +3219,9 @@ exponential:
         $$ = variable_string_lower( _environment, $3 )->name;
     }
     | HEX OP expr CP {
+        $$ = variable_hex( _environment, $3 )->name;
+    }
+    | OP_DOLLAR2 OP expr CP {
         $$ = variable_hex( _environment, $3 )->name;
     }
     | STR OP expr CP {
