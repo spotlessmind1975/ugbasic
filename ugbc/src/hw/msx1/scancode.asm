@@ -73,10 +73,11 @@ WAITKEY2:
     JR NZ, WAITKEY2
     RET
 
-SCANCODERAW:
+KEYBOARDMANAGER:
     PUSH BC
     PUSH DE
     PUSH HL
+    PUSH AF
     LD HL,SCANCODEKM
     LD D, 10
     LD B, 0
@@ -97,6 +98,8 @@ SCANCODE1:
     DEC D
     JR NZ,SCANCODEROW
     AND A
+    LD (KEYPRESS), A
+    POP AF
     POP HL
     POP DE
     POP BC
@@ -113,18 +116,21 @@ SCANCODE2L2:
     DEC D
     JR NZ, SCANCODE2L2
     LD A, (HL)
+pippero:
+    LD (KEYPRESS), A
+    POP AF
     POP HL
     POP DE
     POP BC
     RET
 
 SCANCODEKEYPRESS:
-    CALL SCANCODERAW
+    LD A, (KEYPRESS)
     LD B, A
     RET
 
 SCANCODE:
-    CALL SCANCODERAW
+    LD A, (KEYPRESS)
     LD B, A
 
 SCANCODEKEYPRESSED:
@@ -192,7 +198,7 @@ SCANCODEKM:
     DB "k", "l", "m", "n", "o", "p", "q", "r"
     DB "s", "t", "u", "v", "w", "x", "y", "z"
     DB $81, $82, $83, $84, $85, $F1, $F2, $F3
-    DB $F4, $F5, $27, $09, $08, $86, $87, $0D
+    DB $F4, $F5, $27, $09, $86, $08, $87, $0D
     DB " ", $88, $89, $90, $91, $92, $93, $94
     DB "*", "+", "/", "0", "1", "2", "3", "4"
     DB "5", "6", "7", "8", "9", "-", ",", "."

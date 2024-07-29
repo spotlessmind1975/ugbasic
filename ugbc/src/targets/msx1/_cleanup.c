@@ -56,6 +56,11 @@ void target_finalization( Environment * _environment ) {
         outline0("RET");
     }
 
+    if ( ! _environment->deployed.scancode ) {
+        outhead0("KEYBOARDMANAGER:" );
+        outline0("RET");
+    }
+
     outhead0("VARINIT2:");
     outline0("LD HL, CODEEND");
     outline0("LD DE, $C000");
