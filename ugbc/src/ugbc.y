@@ -9075,6 +9075,22 @@ char_definition :
         char_at( _environment, $1, $3, $5, $7, $9 );
     };
 
+center_definition : 
+  | expr OP_SEMICOLON {
+      center( _environment, $1, 0, NULL);
+  }
+  | expr {
+      center( _environment, $1, 1, NULL );
+  }
+  | expr OP_COMMA expr {
+      center( _environment, $1, 1, $3 );
+  }
+  | AT OP expr OP_COMMA expr CP expr OP_COMMA expr {
+      locate( _environment, $3, $5 );
+      center( _environment, $7, 0, $9 );
+  }
+  ;
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -9218,18 +9234,8 @@ statement2nc:
   | SET TAB expr {
       text_set_tab( _environment, $3 );
   }
-  | CENTER expr OP_SEMICOLON {
-      center( _environment, $2, 0 );
-  }
-  | CENTRE expr OP_SEMICOLON {
-      center( _environment, $2, 0 );
-  }
-  | CENTER expr {
-      center( _environment, $2, 1 );
-  }
-  | CENTRE expr {
-      center( _environment, $2, 1 );
-  }
+  | CENTRE center_definition
+  | CENTER center_definition
   | CLS {
       cls( _environment, NULL );
       home( _environment );

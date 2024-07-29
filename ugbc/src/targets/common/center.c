@@ -113,12 +113,19 @@ riga successiva.
 @verified
 </usermanual> */
 
-void center( Environment * _environment, char * _string, int _newline ) {
+void center( Environment * _environment, char * _string, int _newline, char * _width ) {
 
     MAKE_LABEL
     
     Variable * string = variable_retrieve( _environment, _string );
-    Variable * currentWidth = variable_retrieve( _environment, "CONSOLEW");
+    Variable * currentWidth;
+    
+    if ( _width ) {
+         currentWidth = variable_retrieve( _environment, _width);
+    } else {
+         currentWidth = variable_retrieve( _environment, "CONSOLEW");
+    }
+    
     Variable * len = variable_string_len( _environment, _string);
     Variable * result = variable_temporary( _environment, VT_BYTE, "(compare)");
     Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
