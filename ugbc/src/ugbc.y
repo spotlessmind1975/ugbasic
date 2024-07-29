@@ -2630,10 +2630,6 @@ exponential:
         parser_array_cleanup( _environment );
     }
     | OSP Identifier as_datatype_suffix_optional CSP {
-        VariableType vt = $3;
-        if ( vt == 0 ) {
-            vt = ((struct _Environment *)_environment)->defaultVariableType;
-        }
         if ( !((struct _Environment *)_environment)->procedureName ) {
             CRITICAL_CANNOT_USE_MULTITASKED_ARRAY($2);
         }
@@ -2641,6 +2637,10 @@ exponential:
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * array;
         if ( ! variable_exists( _environment, $2 ) ) {
+            VariableType vt = $3;
+            if ( vt == 0 ) {
+                vt = ((struct _Environment *)_environment)->defaultVariableType;
+            }
             if ( ((struct _Environment *)_environment)->optionExplicit ) {
                 CRITICAL_VARIABLE_UNDEFINED( $2 );
             } else {
@@ -2653,8 +2653,11 @@ exponential:
         if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
-        if ( array->arrayType != vt ) {
-            CRITICAL_ARRAY_DATATYPE_WRONG( $2 );
+        VariableType vt = $3;
+        if ( vt != 0 ) {
+            if ( array->arrayType != vt ) {
+                CRITICAL_ARRAY_DATATYPE_WRONG( $2 );
+            }
         }
         $$ = variable_move_from_array( _environment, $2 )->name;
         parser_array_cleanup( _environment );
@@ -6758,6 +6761,28 @@ dim_definition :
             };
         }        
     }
+    | Identifier WITH const_expr {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } OP dimensions CP {
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment,  $1, VT_TARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray->value = $3;
+        variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
+      } readonly_optional on_bank {
+        Variable * array = variable_retrieve( _environment, $1 );
+        array->readonly = $9;
+        if ( $10 ) {
+            if ( ! banks_store( _environment, array, $10 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
+        }        
+    }
     | Identifier datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
@@ -9459,19 +9484,25 @@ statement2nc:
       begin_for_identifier( _environment, $2 );
   }
   | FOR OSP Identifier as_datatype_suffix_optional CSP OP_ASSIGN {
-     VariableType vt = $4;
-     if ( vt == 0 ) {
-         vt = ((struct _Environment *)_environment)->defaultVariableType;
-     }
      Variable * index;
      if ( variable_exists( _environment, $3 ) ) {
         index = variable_retrieve( _environment, $3 );
+        if ( index->type != VT_TARRAY ) {
+            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
+        }
+        VariableType vt = $4;
+        if ( vt != 0 ) {
+            if ( index->arrayType != vt ) {
+                CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
+            }
+        }
      } else {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
         index = variable_define( _environment, $3, VT_TARRAY, 0 );
         variable_array_type( _environment, $3, vt );
-     }
-     if ( index->type != VT_TARRAY || index->arrayType != vt ) {
-         CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
      }
      begin_for_prepare_mt( _environment );
      begin_for_from_prepare_mt( _environment );
