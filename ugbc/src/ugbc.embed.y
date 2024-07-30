@@ -437,6 +437,8 @@ const_factor:
         } else if ( strcmp( $1, "joystickConfig" ) == 0 ) {
             if ( strcmp( $3, "retries" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->joystickConfig.retries;
+            } else if ( strcmp( $3, "values" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->joystickConfig.values;
             } else {
                 $$ = 0;
             }
@@ -597,6 +599,8 @@ embed2:
         if ( strcmp( $3, "joystickConfig" ) == 0 ) {
             if ( strcmp( $5, "retries" ) == 0 ) {
                 vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->joystickConfig.retries );
+            } else if ( strcmp( $5, "values" ) == 0 ) {
+                vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->joystickConfig.values );
             }
         }
         ((struct _Environment *)_environment)->embedResult.conditional = 1;

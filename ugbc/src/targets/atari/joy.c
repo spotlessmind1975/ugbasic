@@ -42,74 +42,24 @@ Variable * joy_vars( Environment * _environment, char * _port ) {
 
     MAKE_LABEL
 
+    deploy( joystick, src_hw_atari_joystick_asm);
+
     Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    outline1("LDA %s", port->realName );
-    outline0("CMP #0" );
-    outline1("BEQ %sjoy0", label );
-    outline0("CMP #1" );
-    outline1("BEQ %sjoy1", label );
-    outline0("CMP #2" );
-    outline1("BEQ %sjoy2", label );
-    outline0("CMP #3" );
-    outline1("BEQ %sjoy3", label );
-    outline1("JMP %send2", label );
+    // 0 128 
+    // 1 129 N 
+    // 2 130 NO 
+    // 3 131 O 
+    // 4 132 SO 
+    // 5 133 S 
+    // 6 134 SW 
+    // 7 135 W 
+    // 8 136 NW
 
-    outhead1("%sjoy0:", label );
-    outline0("LDA $D300");
-    outline0("AND #$0F");
-    outline0("ASL A");
+    outline1("LDX %s", port->realName );
+    outline0("JSR JOYSTICK" );
     outline1("STA %s", result->realName);
-    outline0("LDA $D010");
-    outline0("AND #$01");
-    outline1("ORA %s", result->realName);
-    outline1("STA %s", result->realName);
-    outline1("JMP %send", label );
-
-    outhead1("%sjoy1:", label );
-    outline0("LDA $D300");
-    outline0("AND #$F0");
-    outline0("LSR A");
-    outline0("LSR A");
-    outline0("LSR A");
-    outline1("STA %s", result->realName);
-    outline0("LDA $D011");
-    outline0("AND #$01");
-    outline1("ORA %s", result->realName);
-    outline1("STA %s", result->realName);
-    outline1("JMP %send", label );
-
-    outhead1("%sjoy2:", label );
-    outline0("LDA $D301");
-    outline0("AND #$0F");
-    outline0("ASL A");
-    outline1("STA %s", result->realName);
-    outline0("LDA $D012");
-    outline0("AND #$01");
-    outline1("ORA %s", result->realName);
-    outline1("STA %s", result->realName);
-    outline1("JMP %send", label );
-
-    outhead1("%sjoy3:", label );
-    outline0("LDA $D301");
-    outline0("AND #$F0");
-    outline0("LSR A");
-    outline0("LSR A");
-    outline0("LSR A");
-    outline1("STA %s", result->realName);
-    outline0("LDA $D013");
-    outline0("AND #$01");
-    outline1("ORA %s", result->realName);
-    outline1("STA %s", result->realName);
-    outline1("JMP %send", label );
-
-    outhead1("%send:", label );
-    outline1("LDA %s", result->realName);
-    outline0("EOR #$ff");
-    outline0("AND #$1f");
-    outline1("STA %s", result->realName);
-    outhead1("%send2:", label );
 
     return result;
     
@@ -119,62 +69,22 @@ Variable * joy( Environment * _environment, int _port ) {
 
     MAKE_LABEL
 
+    deploy( joystick, src_hw_atari_joystick_asm);
+
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    switch( _port ) {
-        case 0:
-            outline0("LDA $D300");
-            outline0("AND #$0F");
-            outline0("ASL A");
-            outline1("STA %s", result->realName);
-            outline0("LDA $D010");
-            outline0("AND #$01");
-            outline1("ORA %s", result->realName);
-            outline1("STA %s", result->realName);
-            break;
+    // 0 128 
+    // 1 129 N 
+    // 2 130 NO 
+    // 3 131 O 
+    // 4 132 SO 
+    // 5 133 S 
+    // 6 134 SW 
+    // 7 135 W 
+    // 8 136 NW
 
-        case 1:
-            outline0("LDA $D300");
-            outline0("AND #$F0");
-            outline0("LSR A");
-            outline0("LSR A");
-            outline0("LSR A");
-            outline1("STA %s", result->realName);
-            outline0("LDA $D011");
-            outline0("AND #$01");
-            outline1("ORA %s", result->realName);
-            outline1("STA %s", result->realName);
-            break;
-
-        case 2:
-            outline0("LDA $D301");
-            outline0("AND #$0F");
-            outline0("ASL A");
-            outline1("STA %s", result->realName);
-            outline0("LDA $D012");
-            outline0("AND #$01");
-            outline1("ORA %s", result->realName);
-            outline1("STA %s", result->realName);
-            break;
-
-        case 3:
-            outline0("LDA $D301");
-            outline0("AND #$F0");
-            outline0("LSR A");
-            outline0("LSR A");
-            outline0("LSR A");
-            outline1("STA %s", result->realName);
-            outline0("LDA $D013");
-            outline0("AND #$01");
-            outline1("ORA %s", result->realName);
-            outline1("STA %s", result->realName);
-            break;
-
-    }
-
-    outline1("LDA %s", result->realName);
-    outline0("EOR #$ff");
-    outline0("AND #$1f");
+    outline1("LDX #%d", _port );
+    outline0("JSR JOYSTICK" );
     outline1("STA %s", result->realName);
 
     return result;

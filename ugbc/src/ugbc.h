@@ -1725,6 +1725,7 @@ typedef struct _InputConfig {
 typedef struct _JoystickConfig {
 
     int retries;
+    int values;
 
 } JoystickConfig;
 
@@ -2533,7 +2534,7 @@ typedef struct _Environment {
     int optionCallAsGoto;
 
     int optionExecAsGosub;
-    
+
     /**
      *
      */
