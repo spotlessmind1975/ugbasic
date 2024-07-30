@@ -223,24 +223,39 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value ) {
     deploy( scancode, src_hw_cpc_scancode_asm );
     deploy( joystick, src_hw_cpc_joystick_asm );
 
-    outline1("LD A, (%s)", _port );
-    outline0("LD B, A" );
-    outline0("CALL JOYSTICK");
-    outline1("LD (%s), A", _value );
+    MAKE_LABEL
+
+    outline1("LD A, (%s)", _port);
+    outline0("CP 0");
+    outline1("JR NZ, %spt1", label );
+    outline0("LD A, (JOYSTICK0)");
+    outline1("LD (%s), A", _value);
+    outline1("JR %sptx", label );
+    outhead1("%spt1:", label);
+    outline0("LD A, (JOYSTICK1)");
+    outline1("LD (%s), A", _value);
+    outline1("JR %sptx", label );
+    outhead1("%sptx:", label);
 
 }
 
 void cpc_joy( Environment * _environment, int _port, char * _value ) {
 
     _environment->bitmaskNeeded = 1;
-
+    
     deploy( scancode, src_hw_cpc_scancode_asm );
     deploy( joystick, src_hw_cpc_joystick_asm );
 
-    outline1("LD A, 0x%2.2x", (unsigned char)(_port & 0xff) );
-    outline0("LD B, A" );
-    outline0("CALL JOYSTICK");
-    outline1("LD (%s), A", _value );
+    switch ( _port ) {
+        case 0:
+            outline0("LD A, (JOYSTICK0)");
+            outline1("LD (%s), A", _value);
+            break;
+        case 1:
+            outline0("LD A, (JOYSTICK1)");
+            outline1("LD (%s), A", _value);
+            break;
+    }
 
 }
 
