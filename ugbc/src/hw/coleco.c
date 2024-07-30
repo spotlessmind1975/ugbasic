@@ -162,10 +162,19 @@ void coleco_joy_vars( Environment * _environment, char * _port, char * _value ) 
 
     deploy( joystick, src_hw_coleco_joystick_asm );
 
+    MAKE_LABEL
+
     outline1("LD A, (%s)", _port);
-    outline0("LD B, A");
-    outline0("CALL JOYSTICK");
-    outline1("LD (%s), A", _value );
+    outline0("CP 0");
+    outline1("JR NZ, %spt1", label );
+    outline0("LD A, (JOYSTICK0)");
+    outline1("LD (%s), A", _value);
+    outline1("JR %sptx", label );
+    outhead1("%spt1:", label);
+    outline0("LD A, (JOYSTICK1)");
+    outline1("LD (%s), A", _value);
+    outline1("JR %sptx", label );
+    outhead1("%sptx:", label);
 
 }
 
@@ -173,10 +182,16 @@ void coleco_joy( Environment * _environment, int _port, char * _value ) {
 
     deploy( joystick, src_hw_coleco_joystick_asm );
 
-    outline1("LD A, $%2.2x", _port);
-    outline0("LD B, A");
-    outline0("CALL JOYSTICK");
-    outline1("LD (%s), A", _value );
+    switch ( _port ) {
+        case 0:
+            outline0("LD A, (JOYSTICK0)");
+            outline1("LD (%s), A", _value);
+            break;
+        case 1:
+            outline0("LD A, (JOYSTICK1)");
+            outline1("LD (%s), A", _value);
+            break;
+    }
 
 }
 
