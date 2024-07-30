@@ -3387,11 +3387,6 @@ exponential:
       call_procedure( _environment, $1 );
       $$ = param_procedure( _environment, $1 )->name;
     }
-    | IdentifierSpaced {
-      ((struct _Environment *)_environment)->parameters = 0;
-      call_procedure( _environment, $1 );
-      $$ = param_procedure( _environment, $1 )->name;
-    }
     | halted SPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
       $$ = spawn_procedure( _environment, $3, $1 )->name;
@@ -8576,6 +8571,12 @@ option_read :
     };
 
 option_definitions :
+     EXEC AS GOSUB {
+        ((struct _Environment *)_environment)->optionExecAsGosub = 1;
+    }
+    | EXEC AS GOTO {
+        ((struct _Environment *)_environment)->optionExecAsGosub = 0;
+    }
      CALL AS GOSUB {
         ((struct _Environment *)_environment)->optionCallAsGoto = 0;
     }
@@ -8674,6 +8675,16 @@ sys_definition :
         }
     }
     ;
+
+exec_definition :
+    sys_definition
+    | IdentifierSpaced {
+        if (  ((struct _Environment *)_environment)->optionExecAsGosub ) {
+            call_procedure( _environment, $1 );
+        } else {
+            goto_label( _environment, $1 );
+        }
+    };
 
 data_definition_single :
     const_expr {
@@ -9588,7 +9599,7 @@ statement2nc:
       ((struct _Environment *)_environment)->parameters = 0;
       proc( _environment, $2 );
   }  
-  | EXEC sys_definition
+  | EXEC exec_definition
   | SYS sys_definition
   | on_targets AsmSnippet on_targets {
     if ( ((struct _Environment *)_environment)->tenLinerRulesEnforced ) {

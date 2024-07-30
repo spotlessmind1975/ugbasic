@@ -2532,6 +2532,8 @@ typedef struct _Environment {
      */
     int optionCallAsGoto;
 
+    int optionExecAsGosub;
+    
     /**
      *
      */
