@@ -488,7 +488,7 @@ typedef enum _D64ErrorCode {
     // $01	00	N/A	*	No error.
     // Code : $01 Error : 00 Type : N/A Message : No error.
     // Self explanatory. No errors were detected in the reading and decoding of the sector.
-    NO_ERROR = 1,
+    NO_ERRORX = 1,
 
     // $02	20	Seek	*	Header block not found / Header descriptor byte not found
     // Code : $02 Error : 20 Type : Seek Message : Header descriptor byte not found (HEX $08, GCR $52)
