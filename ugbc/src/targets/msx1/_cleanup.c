@@ -61,6 +61,11 @@ void target_finalization( Environment * _environment ) {
         outline0("RET");
     }
 
+    if ( ! _environment->deployed.joystick ) {
+        outhead0("JOYSTICKMANAGER:" );
+        outline0("RET");
+    }
+
     outhead0("VARINIT2:");
     outline0("LD HL, CODEEND");
     outline0("LD DE, $C000");
