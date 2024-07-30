@@ -57,6 +57,9 @@ KEYPRESS            fcb     $0
 TMPPTR equ $10    ; $23
 TMPPTR2 equ $12    ; $25
 
+JOYSTICK0 fcb  0
+JOYSTICK1 fcb  0
+
 MATHPTR0 equ $14
 MATHPTR1 equ $15
 MATHPTR2 equ $16
