@@ -115,6 +115,9 @@ DSAVEERROR      fcb  $0
 
 RAMENABLED      fcb  $1
 
+JOYSTICK0       fcb  $0
+JOYSTICK1       fcb  $0
+
 PIA0AD     equ   $FF00
 PIA0AC     equ   $FF01
 PIA0BD     equ   $FF02

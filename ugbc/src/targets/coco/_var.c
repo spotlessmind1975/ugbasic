@@ -569,11 +569,6 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
-
-    if ( ! _environment->deployed.timer ) {
-        cpu_label( _environment, "TIMERMANAGER" );
-        outline0( "RTS" );
-    }
     
     if ( ! _environment->deployed.joystick ) {
         cpu_label( _environment, "JOYSTICKMANAGER" );
@@ -581,7 +576,7 @@ void variable_cleanup( Environment * _environment ) {
     }
 
     if ( ! _environment->deployed.scancode ) {
-        cpu_label( _environment, "KEYBOARDKMANAGER" );
+        cpu_label( _environment, "KEYBOARDMANAGER" );
         outline0( "RTS" );
     }
 
