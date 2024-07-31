@@ -3249,7 +3249,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
         CRITICAL_VARIABLE(_destination);
     }
 
-    if ( source->type == VT_STRING ) {
+    if ( source->type == VT_STRING || source->type == VT_DSTRING) {
 
     } else {
 
@@ -5705,6 +5705,9 @@ utilizzare la funzione ''LEN''.
 @verified
  </usermanual> */
 Variable * variable_string_left( Environment * _environment, char * _string, char * _position ) {
+
+    outline0( "; variable_string_left" );
+
     Variable * string = variable_retrieve( _environment, _string );
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of left)" );
@@ -10878,6 +10881,26 @@ int file_get_size( Environment * _environment, char * _filename ) {
     int fileSize = ftell( lookedFileHandle );
     fclose( lookedFileHandle );
     return fileSize;
+
+}
+
+Variable * variable_string_insert( Environment * _environment, char * _string, char * _altstring, char * _pos ) {
+
+    Variable * string = variable_retrieve_or_define( _environment, _string, VT_DSTRING, 0 );
+    Variable * altstring = variable_retrieve_or_define( _environment, _altstring, VT_DSTRING, 0 );
+    Variable * pos = variable_retrieve_or_define( _environment, _pos, VT_BYTE, 0 );
+    Variable * pos1 = variable_temporary( _environment, VT_BYTE, 0 );
+
+    variable_move( _environment, pos->name, pos1->name );
+    variable_increment( _environment, pos1->name );
+
+    Variable * left = variable_string_left( _environment, altstring->name, pos1->name );
+    variable_increment( _environment, pos1->name );
+    Variable * right = variable_string_mid( _environment, altstring->name, pos1->name, NULL );
+
+    Variable * result =variable_add( _environment, variable_add( _environment, left->name, string->name )->name, right->name );
+
+    return result;
 
 }
 

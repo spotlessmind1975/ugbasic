@@ -3204,6 +3204,9 @@ exponential:
     | BANK SIZE OP expr CP {
         $$ = bank_get_size_var( _environment, $4 )->name;
     }
+    | INSERT OP expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = variable_string_insert( _environment, $3, $5, $7 )->name;
+    }
     | MID OP expr OP_COMMA expr CP {
         $$ = variable_string_mid( _environment, $3, $5, NULL )->name;
     }

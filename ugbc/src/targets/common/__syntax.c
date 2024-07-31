@@ -2452,7 +2452,7 @@ e può essere utilizzata in una riga ''IF'' (dopo ''THEN'' o ''ELSE'').
 </usermanual> */
 
 /* <usermanual>
-@keyword HIRES
+@keyword NRM
 
 @english
 
@@ -2475,3 +2475,29 @@ estesa è disattivata.
 @project tsb
 </usermanual> */
 
+/* <usermanual>
+@keyword INSERT
+
+@english
+
+''INSERT'' inserts the character string ''<string>'' (first argument) into the character string 
+''<altstring>'' (second argument) starting at the position ''<pos>'' (third argument), whereby 
+the counting starts with ''1''. The resulting character string is as long as the sum of the two 
+individual character strings.
+
+@italian
+
+''INSERT'' inserisce la stringa di caratteri ''<string>'' (primo argomento) nella stringa di 
+caratteri ''<altstring>'' (secondo argomento) a partire dalla posizione ''<pos>'' (terzo argomento), 
+per cui il conteggio inizia con ''1''. La stringa di caratteri risultante è lunga quanto la somma 
+delle due stringhe di caratteri individuali.
+
+@syntax = INSERT(<string>,<altstring>,<pos>) 
+
+@example c$=INSERT(a$,b$,9)
+
+@usedInExample tsb_insert_01.bas
+
+@target c128
+@project tsb
+</usermanual> */
