@@ -4423,6 +4423,7 @@ Variable *              image_storage( Environment * _environment, char * _sourc
 Variable *              images_storage( Environment * _environment, char * _source_name, char *_target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y );
 Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y );
 Variable *              images_load_from_buffer( Environment * _environment, char * _buffer, int _buffer_size );
+void                    insert( Environment * _environment, char * _string, char * _x, char * _y, char * _w, char * _h, char * _color );
 Variable *              in_var( Environment * _environment, char * _port );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
@@ -4840,6 +4841,7 @@ Variable *              variable_string_len( Environment * _environment, char * 
 Variable *              variable_string_lower( Environment * _environment, char * _string );
 Variable *              variable_string_mid( Environment * _environment, char * _string, char * _position, char * _len );
 void                    variable_string_mid_assign( Environment * _environment, char * _string, char * _position, char * _len, char * _expression );
+Variable *              variable_string_pick( Environment * _environment, char * _string, int _position );
 Variable *              variable_string_right( Environment * _environment, char * _string, char * _position );
 void                    variable_string_right_assign( Environment * _environment, char * _string, char * _position, char * _expression );
 Variable *              variable_string_space( Environment * _environment, char * _repetitions  );

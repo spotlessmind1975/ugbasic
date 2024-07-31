@@ -10898,7 +10898,32 @@ Variable * variable_string_insert( Environment * _environment, char * _string, c
     variable_increment( _environment, pos1->name );
     Variable * right = variable_string_mid( _environment, altstring->name, pos1->name, NULL );
 
-    Variable * result =variable_add( _environment, variable_add( _environment, left->name, string->name )->name, right->name );
+    Variable * result = variable_add( _environment, variable_add( _environment, left->name, string->name )->name, right->name );
+
+    return result;
+
+}
+
+Variable * variable_string_pick( Environment * _environment, char * _string, int _position ) {
+
+    Variable * result = variable_temporary( _environment, VT_CHAR, "(char)");
+
+    Variable * source = variable_retrieve( _environment, _string );
+    Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING1)");
+    Variable * sourceSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING1)");
+
+    switch( source->type ) {
+        case VT_STRING:
+            cpu_addressof_16bit( _environment, source->realName, sourceAddress->realName );
+            cpu_math_add_16bit_const( _environment, sourceAddress->realName, _position+1, sourceAddress->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, source->realName, sourceAddress->realName, sourceSize->realName );
+            cpu_math_add_16bit_const( _environment, sourceAddress->realName, _position, sourceAddress->realName );
+            break;
+    }
+
+    cpu_move_8bit_indirect2( _environment,  sourceAddress->realName, result->realName );
 
     return result;
 

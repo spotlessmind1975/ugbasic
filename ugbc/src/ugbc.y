@@ -3252,6 +3252,9 @@ exponential:
     | CHR OP expr CP {
         $$ = variable_string_chr( _environment, $3 )->name;
     }
+    | PICK OP expr OP_COMMA const_expr CP {
+        $$ = variable_string_pick( _environment, $3, $5 )->name;
+    }    
     | ASC OP expr CP {
         $$ = variable_string_asc( _environment, $3 )->name;
     }
@@ -9151,6 +9154,11 @@ center_definition :
   }
   ;
 
+insert_definition : 
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        insert( _environment, $1, $3, $5, $7, $9, $11 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -9246,6 +9254,7 @@ statement2nc:
   | PAINT paint_definition
   | AT at_definition
   | CHAR char_definition
+  | INSERT insert_definition
   | PRINT print_definition
   | BORDER border_definition
   | PRINT BUFFER print_buffer_definition
