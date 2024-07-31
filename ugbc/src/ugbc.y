@@ -4961,7 +4961,7 @@ optional_expr:
 
 plot_definition_expression:
       optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        plot( _environment, $1, $3, $5, 0 );
+        plot( _environment, $1, $3, resolve_color( _environment, $5 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
     }
     | optional_x OP_COMMA optional_y {
@@ -4974,7 +4974,7 @@ plot_definition:
 
 circle_definition_expression:
       optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
-        circle( _environment, $1, $3, $5, $7 );
+        circle( _environment, $1, $3, $5, resolve_color( _environment, $7 ) );
         gr_locate( _environment, $1, $3 );
     }
     | optional_x OP_COMMA optional_y OP_COMMA expr {
@@ -4987,7 +4987,7 @@ circle_definition:
 
 ellipse_definition_expression:
       optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
-        ellipse( _environment, $1, $3, $5, $7, $9 );
+        ellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ) );
         gr_locate( _environment, $1, $3 );
     }
     | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr {
@@ -5548,7 +5548,7 @@ line_definition_expression:
     | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
-        draw( _environment, $2, $4, $8, $10, $13, 0 );
+        draw( _environment, $2, $4, $8, $10, resolve_color( _environment, $13 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $8, $10 );
     }
     | OP_MINUS OP expr OP_COMMA expr CP {
@@ -5564,7 +5564,7 @@ line_definition_expression:
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $3, $5, $8, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $3, $5, resolve_color( _environment, $8 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $3, $5 );
     }
     | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode OP_COMMA box_mode {
@@ -5605,7 +5605,7 @@ line_definition_expression:
         draw_string( _environment, $1 );
     }
     | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        draw( _environment, $1, $3, $5, $7, $9, 0 );
+        draw( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     }
     | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
@@ -5615,7 +5615,7 @@ line_definition_expression:
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
@@ -5643,7 +5643,7 @@ draw_definition_expression:
     | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
-        draw( _environment, $2, $4, $8, $10, $13, 0 );
+        draw( _environment, $2, $4, $8, $10, resolve_color( _environment, $13 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $8, $10 );
     }
     | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode OP_COMMA box_mode {
@@ -5666,7 +5666,7 @@ draw_definition_expression:
         draw_string( _environment, $1 );
     }
     | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        draw( _environment, $1, $3, $5, $7, $9, 0 );
+        draw( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     }
     | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
@@ -5676,7 +5676,7 @@ draw_definition_expression:
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
@@ -5708,7 +5708,7 @@ draw_tile_definition:
 
 box_definition_expression:
     optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        box( _environment, $1, $3, $5, $7, $9, 0 );
+        box( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     }
     | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
@@ -5718,7 +5718,7 @@ box_definition_expression:
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        box( _environment, implicitX->name, implicitY->name, $2, $4, $6, 0 );
+        box( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
@@ -5733,10 +5733,9 @@ box_definition:
 
 rec_definition_expression:
     mandatory_x OP_COMMA mandatory_y OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
-        Variable * color = sbpen_get( _environment, $9 );
         Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
         Variable * y2 = variable_add( _environment, $3, variable_retrieve_or_define( _environment, $7, VT_POSITION, 0 )->name );
-        box( _environment, $1, $3, x2->name, y2->name, color->name, 1 );
+        box( _environment, $1, $3, x2->name, y2->name, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, x2->name, y2->name );
     };
 
@@ -5788,7 +5787,7 @@ console_definition:
 
 bar_definition_expression:
     optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        bar( _environment, $1, $3, $5, $7, $9, 0 );
+        bar( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     }
     | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
@@ -5798,7 +5797,7 @@ bar_definition_expression:
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        bar( _environment, implicitX->name, implicitY->name, $2, $4, $6, 0 );
+        bar( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
@@ -5813,8 +5812,7 @@ bar_definition:
 
 block_definition_expression:
     mandatory_x OP_COMMA mandatory_y OP_COMMA mandatory_x OP_COMMA mandatory_y OP_COMMA expr  {
-        Variable * color = sbpen_get( _environment, $9 );
-        bar( _environment, $1, $3, $5, $7, color->name, 1 );
+        bar( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     };
 
@@ -5836,7 +5834,7 @@ polyline_definition_expression_continue:
       TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
@@ -5854,7 +5852,7 @@ polyline_definition_expression_continue:
 
 polyline_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        draw( _environment, $1, $3, $5, $7, $9, 0 );
+        draw( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     }
     | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
@@ -5868,7 +5866,7 @@ polyline_definition_expression:
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
@@ -7922,7 +7920,13 @@ audio_source :
     };
 
 define_definition :
-      CENTER WITH NEWLINE {
+      COLOR IMPLICIT {
+        ((struct _Environment *)_environment)->colorImplicit = 1;
+    }
+    | COLOR EXPLICIT {
+        ((struct _Environment *)_environment)->colorImplicit = 1;
+    }
+    | CENTER WITH NEWLINE {
         ((struct _Environment *)_environment)->centerWithoutNewLine = 0;
     }
     | CENTER WITHOUT NEWLINE {

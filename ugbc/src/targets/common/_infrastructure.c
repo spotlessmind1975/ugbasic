@@ -10904,6 +10904,22 @@ Variable * variable_string_insert( Environment * _environment, char * _string, c
 
 }
 
+char * resolve_color( Environment * _environment, char * _color ) {
+
+    if ( _color ) {
+        Variable * color = NULL;
+        if (_environment->colorImplicit ) {
+            color = sbpen_get( _environment, _color );
+        } else {
+            color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
+        }
+        return color->name;
+    } else {
+        return NULL;
+    }
+
+}
+
 static int show_troubleshooting_accessing_path( Environment * _environment, char * _path, int _mode, int _create, int _show ) {
 
     int check = 0;
