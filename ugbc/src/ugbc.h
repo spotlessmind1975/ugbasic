@@ -4246,7 +4246,7 @@ void                    case_equals_label( Environment * _environment );
 void                    center( Environment * _environment, char * _string, int _newline, char * _width );
 void                    char_at( Environment * _environment, char *_x, char *_y, char *_code, char *_type, char *_size );
 int                     check_if_filename_is_valid( Environment * _environment,  char * _filename );
-void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
+void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c, int _preserve_color );
 void                    clear( Environment * _environment );
 Variable *              clear_key( Environment * _environment );
 void                    cline( Environment * _environment, char * _characters );
@@ -4318,7 +4318,7 @@ void                    dstring_cleanup( Environment * _Environment );
 // *E*
 //----------------------------------------------------------------------------
 
-void                    ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c );
+void                    ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color );
 void                    else_if_then( Environment * _environment, char * _expression );
 void                    else_if_then_label( Environment * _environment );
 void                    end( Environment * _environment );

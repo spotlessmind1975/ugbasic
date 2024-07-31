@@ -76,7 +76,7 @@ l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
 
 @target all
 </usermanual> */
-void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c ) {
+void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color ) {
 
     Variable * six = variable_temporary( _environment, VT_POSITION, "(6)");
     variable_store( _environment, six->name, 6 );
@@ -129,10 +129,10 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
             )->name
     );
 
-        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, 0 );
-        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, 0 );
-        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, 0 );
-        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, 0 );
+        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, _preserve_color );
+        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, _preserve_color );
+        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, _preserve_color );
+        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, _preserve_color );
 
         if_then( _environment, variable_greater_than( _environment, sigma->name, zero->name, 1 ) ->name );
         variable_move( _environment,
@@ -187,10 +187,10 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
             )->name
     );
 
-        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, 0 );
-        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, 0 );
-        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, 0 );
-        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, 0 );
+        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, _preserve_color );
+        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, _preserve_color );
+        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, _preserve_color );
+        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, _preserve_color );
 
         if_then( _environment, variable_greater_than( _environment, sigma->name, zero->name, 1 ) ->name );
         variable_move( _environment,

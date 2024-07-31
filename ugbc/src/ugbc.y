@@ -4974,15 +4974,15 @@ plot_definition:
 
 circle_definition_expression:
     optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
-        ellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ) );
+        ellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
     }
     | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
-        circle( _environment, $1, $3, $5, resolve_color( _environment, $7 ) );
+        circle( _environment, $1, $3, $5, resolve_color( _environment, $7 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
     }
     | optional_x OP_COMMA optional_y OP_COMMA expr {
-        circle( _environment, $1, $3, $5, NULL );
+        circle( _environment, $1, $3, $5, NULL, 0 );
         gr_locate( _environment, $1, $3 );
     };
 
@@ -4991,11 +4991,11 @@ circle_definition:
 
 ellipse_definition_expression:
       optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
-        ellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ) );
+        ellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
     }
     | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr {
-        ellipse( _environment, $1, $3, $5, $7, NULL );
+        ellipse( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $1, $3 );
     };
 
