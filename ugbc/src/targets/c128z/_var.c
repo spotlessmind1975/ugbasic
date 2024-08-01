@@ -407,6 +407,8 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace( startup, src_hw_c128z_startup_asm);
     deploy( startup, src_hw_c128z_startup2_asm);
 
+    generate_cgoto_address_table( _environment );
+
     banks_generate( _environment );
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {

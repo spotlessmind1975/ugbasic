@@ -1378,6 +1378,7 @@ typedef struct _Embedded {
     int cpu_jump;
     int cpu_call;
     int cpu_call_indirect;
+    int cpu_jump_indirect;
     int cpu_return;
     int cpu_pop;
     int cpu_label;
@@ -2229,6 +2230,8 @@ typedef struct _Environment {
      * at least once.
      */
     int runParallel;
+
+    int hasCGoto;
 
     /**
      * This flag marks if the program needs a BITMASK/BITMASKN temporary variable.
@@ -4244,6 +4247,7 @@ void                    case_equals( Environment * _environment, int _value );
 void                    case_equals_var( Environment * _environment, char * _value );
 void                    case_equals_label( Environment * _environment );
 void                    center( Environment * _environment, char * _string, int _newline, char * _width );
+void                    cgoto( Environment * _environment, char * _expression );
 void                    char_at( Environment * _environment, char *_x, char *_y, char *_code, char *_type, char *_size );
 int                     check_if_filename_is_valid( Environment * _environment,  char * _filename );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c, int _preserve_color );
@@ -4367,6 +4371,7 @@ Variable *              fp_exp( Environment * _environment, char * _value );
 // *G*
 //----------------------------------------------------------------------------
 
+void                    generate_cgoto_address_table( Environment * _environment );
 Variable *              get_at( Environment * _environment, char * _x, char * _y );
 Variable *              get_cmove( Environment * _environment, char * _x, char * _y );
 Variable *              get_cmove_direct( Environment * _environment, int _x, int _y );

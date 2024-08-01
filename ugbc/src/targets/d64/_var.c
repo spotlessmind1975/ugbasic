@@ -391,6 +391,8 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
+    generate_cgoto_address_table( _environment );
+
     banks_generate( _environment );
 
     for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {

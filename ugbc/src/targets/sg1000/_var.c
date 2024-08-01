@@ -417,6 +417,8 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
+    generate_cgoto_address_table( _environment );
+
     banks_generate( _environment );
     
     Constant * c = _environment->constants;

@@ -437,6 +437,8 @@ void variable_cleanup( Environment * _environment ) {
         staticStrings = staticStrings->next;
     }
 
+    generate_cgoto_address_table( _environment );
+
     banks_generate( _environment );
 
     if ( _environment->descriptors ) {

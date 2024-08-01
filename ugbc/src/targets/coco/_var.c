@@ -433,6 +433,8 @@ void variable_cleanup( Environment * _environment ) {
 
     outline0("ALIGN $0002");
 
+    generate_cgoto_address_table( _environment );
+
     banks_generate( _environment );
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {

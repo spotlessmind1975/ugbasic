@@ -78,3 +78,44 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
     cpu_return( _environment );
 
 }
+
+void generate_cgoto_address_table( Environment * _environment ) {
+
+    if ( _environment->hasCGoto ) {
+
+        int numericLabels = 0;
+        Label * first = _environment->labels;
+        while( first ) {
+            if ( first->number ) {
+                ++numericLabels;
+            }
+            first = first->next;
+        }
+
+        if ( numericLabels ) {
+
+            int * values = malloc( numericLabels * sizeof( int ) );
+            char ** address = malloc( numericLabels * sizeof( char * ) );
+
+            int i = 0;
+            first = _environment->labels;
+            while( first ) {
+                if ( first->number ) {
+                    values[i] = first->number;
+                    char lineNumber[MAX_TEMPORARY_STORAGE];
+                    sprintf(lineNumber, "_linenumber%d", first->number );                    
+                    address[i] = strdup( lineNumber );
+                    ++i;
+                }
+                first = first->next;
+            }
+
+            cpu_address_table_build( _environment, "CGOTOADDRESS", values, address, numericLabels );
+
+            cpu_address_table_lookup( _environment, "CGOTOADDRESS", numericLabels );
+
+        }
+    }
+
+}
+
