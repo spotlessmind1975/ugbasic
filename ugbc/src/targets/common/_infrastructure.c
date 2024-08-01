@@ -10904,6 +10904,30 @@ Variable * variable_string_insert( Environment * _environment, char * _string, c
 
 }
 
+Variable * variable_string_inst( Environment * _environment, char * _string, char * _altstring, char * _pos ) {
+
+    // INST overwrites the characters of the string <altstring> with the string <string> (first argument) 
+    // in the string <altstring> (second argument) from the position <pos> (third argument), whereby the 
+    // counting starts with 1, unlike in Simons' Basic (1 = first character; Simons' Basic: 0!). The length 
+    // of the string <altstring> does not change.
+
+    Variable * string = variable_retrieve_or_define( _environment, _string, VT_DSTRING, 0 );
+    Variable * altstring = variable_retrieve_or_define( _environment, _altstring, VT_DSTRING, 0 );
+    Variable * pos = variable_retrieve_or_define( _environment, _pos, VT_BYTE, 0 );
+    Variable * pos1 = variable_temporary( _environment, VT_BYTE, 0 );
+    variable_move( _environment, pos->name, pos1->name );
+
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result)");
+
+    variable_move( _environment, altstring->name, result->name );
+
+    Variable * stringLen = variable_string_len( _environment, string->name  );
+    variable_string_mid_assign( _environment, result->name, pos->name, stringLen->name, string->name );
+
+    return result;
+
+}
+
 Variable * variable_string_pick( Environment * _environment, char * _string, int _position ) {
 
     Variable * result = variable_temporary( _environment, VT_CHAR, "(char)");

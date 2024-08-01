@@ -4835,6 +4835,7 @@ Variable *              variable_string_asc( Environment * _environment, char * 
 Variable *              variable_string_chr( Environment * _environment, char * _ascii  );
 Variable *              variable_string_flip( Environment * _environment, char * _string  );
 Variable *              variable_string_insert( Environment * _environment, char * _string, char * _altstring, char * _pos );
+Variable *              variable_string_inst( Environment * _environment, char * _string, char * _altstring, char * _pos );
 Variable *              variable_string_instr( Environment * _environment, char * _search, char * _searched, char * _start );
 Variable *              variable_string_left( Environment * _environment, char * _string, char * _position );
 void                    variable_string_left_assign( Environment * _environment, char * _string, char * _position, char * _expression );
