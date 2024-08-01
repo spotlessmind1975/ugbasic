@@ -4337,6 +4337,7 @@ void                    end_repeat_condition( Environment * _environment, char *
 void                    end_select_case( Environment * _environment );
 void                    end_storage( Environment * _environment );
 void                    end_while( Environment * _environment );
+void                    envelope( Environment * _environment, char * _voice, char * _attack, char * _decay, char * _sustain, char * _release );
 char *                  escape_newlines( char * _string );
 void                    every_cleanup( Environment * _environment );
 void                    every_off( Environment * _environment, char * _timer );

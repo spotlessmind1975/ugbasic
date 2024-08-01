@@ -60,4 +60,6 @@ void sid_wait_duration_vars( Environment * _environment, char * _channel );
 
 void sid_music( Environment * _environment, char * _music, int _size, int _loop );
 
+void sid_attack_decay_sustain_release( Environment * _environment, char * _voice, char * _attack, char * _decay, char * _sustain, char * _release );
+
 #endif

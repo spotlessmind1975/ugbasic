@@ -258,6 +258,13 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
     if ( ( c & 0x04 ) ) \
         outline0("JSR SIDWAITDURATION2" ); \
 
+void sid_attack_decay_sustain_release( Environment * _environment, char * _voice, char * _attack, char * _decay, char * _sustain, char * _release ) {
+
+    PROGRAM_ATTACK_DECAY_V( _voice, _attack, _decay );
+    PROGRAM_SUSTAIN_RELEASE_V( _voice, _sustain, _release );
+
+}
+
 void sid_set_program( Environment * _environment, int _channels, int _program ) {
 
     deploy( sidvars, src_hw_sid_vars_asm );
