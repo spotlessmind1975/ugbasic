@@ -3418,6 +3418,33 @@ void cpu6502_call_indirect( Environment * _environment, char * _value ) {
 
 }
 
+void cpu6502_jump_indirect( Environment * _environment, char * _value ) {
+
+
+    inline( cpu_jump_indirect )
+
+        MAKE_LABEL
+
+        char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
+
+        cpu6502_jump( _environment, label );
+        cpu6502_label( _environment, indirectLabel );
+        // We must use self-modifying code in order to avoid
+        // a 6502/6510 bug when using indirect addressing.
+        outline0( "JMP $0000" );
+        cpu6502_label( _environment, label );
+        outline0( "PHA" );
+        outline1( "LDA %s", _value );
+        outline1( "STA %s", address_displacement( _environment, indirectLabel, "1" ) );
+        outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
+        outline1( "STA %s", address_displacement( _environment, indirectLabel, "2" ) );
+        outline0( "PLA" );
+        cpu6502_jump( _environment, indirectLabel );
+
+    no_embedded( cpu_jump_indirect )
+
+}
+
 int cpu6502_register_decode( Environment * _environment, char * _register ) {
 
     CPU6502Register result = REGISTER_NONE;
