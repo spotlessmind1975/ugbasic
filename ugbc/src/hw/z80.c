@@ -3173,6 +3173,13 @@ void z80_call_indirect( Environment * _environment, char * _value ) {
 
 }
 
+void z80_jump_indirect( Environment * _environment, char * _value ) {
+
+    outline1( "LD HL, (%s)", _value )
+    outline0( "JP (HL)" );
+
+}
+
 int z80_register_decode( Environment * _environment, char * _register ) {
 
     Z80Register result = REGISTER_NONE;
