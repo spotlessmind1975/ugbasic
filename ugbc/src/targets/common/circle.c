@@ -55,18 +55,24 @@ This command allows you to draw a circle with starting coordinates in ''(x,y)''
 and radius ''r''. The color is indicated by the parameter ''c''. If the abscissa 
 and/or ordinate is omitted, the last graphic position drawn will be used. In 
 addition, the color can also be omitted and, if necessary, the last color set with the 
-''PEN'' or ''INK'' command will be used.
+''PEN'' or ''INK'' command will be used. There is also another syntax, that can be used 
+to draw ellipses: you can give both the radii ''rx'' and ''ry'' in the color determined 
+by ''fq'' (see ''HIRES''). 
 
 @italian
 Questo comando consente di disegnare un cerchio avente coordinate di partenza in 
 ''(x,y)'' e raggio ''r''. Il colore viene indicato dal parametro ''c''. Se 
 l'ascissa e/o l'ordinata viene omessa, sarà utilizzata l'ultima posizione grafica 
 disegnata. In più, anche il colore può essere omesso e, nel caso, sarà utilizzato 
-l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
+l'ultimo colore impostato con il comando ''PEN'' o ''INK''. Esiste anche un'altra 
+sintassi che può essere utilizzata per disegnare ellissi: è possibile specificare sia i 
+raggi ''rx'' che ''ry'' nel colore determinato da ''fq'' (vedere ''HIRES'').
 
 @syntax CIRCLE [x], [y], r[, c]
+@syntax CIRCLE x, y, rx, ry[, c]
 
 @example CIRCLE 100,100,42
+@example CIRCLE 100,100,21,42
 @example CIRCLE ,,21,RED
 @usedInExample graphics_position_01.bas
 @usedInExample graphics_position_02.bas
