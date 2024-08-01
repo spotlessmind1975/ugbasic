@@ -4349,6 +4349,7 @@ void                    exit_procedure( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
+void                    fill( Environment * _environment, char * _x, char * _y, char * _w, char * _h, char * _char, char * _color );
 int                     find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
 void                    flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction );
 void                    flip_image_vars_direction( Environment * _environment, char * _image, char * _frame, char * _sequence, int _direction );

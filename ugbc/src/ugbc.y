@@ -6857,18 +6857,24 @@ dim_definitions :
     | dim_definition OP_COMMA dim_definitions
     ;
 
-fill_definition :
-      Identifier {
-        variable_array_fill( _environment, $1, 0 );
-    }
-    | Identifier WITH const_expr {
+fill_definition_array :
+    Identifier WITH const_expr {
         variable_array_fill( _environment, $1, $3 );
     }
     ;
 
+fill_definitions_array :
+      fill_definition_array
+    | fill_definition_array OP_COMMA fill_definitions_array
+
+fill_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        fill( _environment, $1, $3, $5, $7, $9, $11 );
+    };
+
 fill_definitions :
-      fill_definition
-    | fill_definition OP_COMMA fill_definitions
+    fill_definitions_array
+    | fill_definition
     ;
 
 indexes :
