@@ -4838,6 +4838,7 @@ Variable *              variable_store_string( Environment * _environment, char 
 Variable *              variable_store_float( Environment * _environment, char * _destination, double _value );
 Variable *              variable_string_asc( Environment * _environment, char * _char );
 Variable *              variable_string_chr( Environment * _environment, char * _ascii  );
+Variable *              variable_string_dup( Environment * _environment, char * _string, char * _repetitions  );
 Variable *              variable_string_flip( Environment * _environment, char * _string  );
 Variable *              variable_string_insert( Environment * _environment, char * _string, char * _altstring, char * _pos );
 Variable *              variable_string_inst( Environment * _environment, char * _string, char * _altstring, char * _pos );

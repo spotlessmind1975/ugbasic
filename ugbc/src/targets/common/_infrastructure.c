@@ -6788,6 +6788,52 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     
 }
 
+Variable * variable_string_dup( Environment * _environment, char * _string, char * _repetitions  ) {
+
+    MAKE_LABEL
+
+    Variable * string = variable_retrieve( _environment, _string );
+    Variable * stringAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * stringLen = variable_temporary( _environment, VT_BYTE, "(len)" );
+    Variable * repetitions = variable_retrieve_or_define( _environment, _repetitions, VT_BYTE, 0 );
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of STRING)");
+    Variable * resultAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * resultLen = variable_temporary( _environment, VT_BYTE, "(len)" );
+
+    outhead0("pippero1:");
+    switch( string->type ) {
+        case VT_STRING: {
+            cpu_move_8bit( _environment, string->realName, stringLen->realName );
+            cpu_addressof_16bit( _environment, string->realName, stringAddress->realName );
+            cpu_inc_16bit( _environment, stringAddress->realName );
+            break;
+        }
+        case VT_DSTRING: {
+            cpu_dsdescriptor( _environment, string->realName, stringAddress->realName, stringLen->realName );
+            break;
+        }
+        default:
+            CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
+    }
+
+    Variable * repetitionsLen = variable_mul( _environment, repetitions->name, stringLen->name );
+
+    outhead0("pippero2:");
+    cpu_dsalloc( _environment, repetitionsLen->realName, result->realName );
+    outhead0("pippero3:");
+    cpu_dsdescriptor( _environment, result->realName, resultAddress->realName, resultLen->realName );
+    
+    outhead0("pippero4:");
+    cpu_label( _environment, label );
+    cpu_mem_move( _environment, stringAddress->realName, resultAddress->realName, stringLen->realName );
+    cpu_math_add_16bit_with_8bit( _environment, resultAddress->realName, stringLen->realName, resultAddress->realName );
+    cpu_dec( _environment, repetitions->realName );
+    cpu_compare_and_branch_8bit_const( _environment, repetitions->realName, 0, label, 0 );
+
+    return result;
+    
+}
+
 /**
  * @brief Emit code for <b>= SPACE( ... )</b>
  * 

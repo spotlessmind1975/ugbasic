@@ -96,7 +96,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
-%token VALUES INST CGOTO
+%token VALUES INST CGOTO DUP
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3311,6 +3311,9 @@ exponential:
     }
     | LEN OP expr CP {
         $$ = variable_string_len( _environment, $3 )->name;
+    }
+    | DUP OP expr OP_COMMA expr CP {
+        $$ = variable_string_dup( _environment, $3, $5 )->name;
     }
     | STRING OP expr OP_COMMA expr CP {
         $$ = variable_string_string( _environment, $3, $5 )->name;
