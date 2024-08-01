@@ -608,7 +608,11 @@ void cpu6502_store_char( Environment * _environment, char *_destination, int _va
 
     inline( cpu_store_char )
 
-        outline1("LDA #'%c'", (_value & 0xff));
+        if ( _value >=32 ) {
+            outline1("LDA #'%c'", (_value & 0xff));
+        } else {
+            outline1("LDA #$%2.2x", (_value & 0xff));
+        }
         outline1("STA %s", _destination);
 
     no_embedded( cpu_store_char )
