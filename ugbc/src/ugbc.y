@@ -9181,6 +9181,15 @@ envelope_definition :
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         envelope( _environment, $1, $3, $5, $7, $9 );
     }
+
+pause_definition :
+    expr {
+        pause_seconds( _environment, NULL, $1 );
+    }
+    | expr OP_COMMA expr {
+        pause_seconds( _environment, $1, $3 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -9194,6 +9203,7 @@ statement2nc:
       ((struct _Environment *)_environment)->paletteIndex = 0;
       color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
   } palette_definition
+  | PAUSE pause_definition
   | WAIT wait_definition
   | SPRITE sprite_definition
   | CSPRITE sprite_definition

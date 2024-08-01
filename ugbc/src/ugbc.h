@@ -4560,6 +4560,7 @@ void                    paper( Environment * _environment, char * _paper );
 Variable *              param_procedure( Environment * _environment, char * _name );
 char *                  parse_buffer( Environment * _environment, char * _buffer, int * _size, int _hex_only );
 Variable *              parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type, int _hex_only );
+void                    pause_seconds( Environment * _environment, char * _string, char * _duration );
 Variable *              peek_var( Environment * _environment, char * _location );
 Variable *              peekw_var( Environment * _environment, char * _location );
 Variable *              peekd_var( Environment * _environment, char * _location );
