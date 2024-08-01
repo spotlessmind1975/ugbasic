@@ -2747,6 +2747,16 @@ void cpu6809_call_indirect( Environment * _environment, char * _value ) {
 
 }
 
+void cpu6809_jump_indirect( Environment * _environment, char * _value ) {
+
+    inline( cpu_jump_indirect )
+
+        outline1( "JMP [%s]", _value );
+
+    no_embedded( cpu_jump_indirect )
+
+}
+
 int cpu6809_register_decode( Environment * _environment, char * _register ) {
 
     CPU6809Register result = REGISTER_NONE;
