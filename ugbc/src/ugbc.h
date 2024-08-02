@@ -85,6 +85,17 @@
 #endif
 
 /**
+ * @brief Type of dialects
+ */
+typedef enum _Dialect {
+
+    DI_UGBASIC = 0,
+
+    DI_TSB = 1,
+
+} Dialect;
+
+/**
  * @brief Type of memory banks
  */
 typedef enum _BankType {
@@ -2744,6 +2755,8 @@ typedef struct _Environment {
     ConfigureParameters     configureParameters;
 
     Program program;
+
+    Dialect dialect;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
