@@ -59,5 +59,10 @@ void option_dialect( Environment * _environment, Dialect _dialect ) {
             break;
     }
 
+    if ( !_environment->clsCalledOnce ) {
+        _environment->clsCalledOnce = 1;
+        cls( _environment, NULL );
+    }
+
 }
 
