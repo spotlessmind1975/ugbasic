@@ -2758,6 +2758,8 @@ typedef struct _Environment {
 
     Dialect dialect;
 
+    int clsCalledOnce;
+    
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -4283,6 +4285,7 @@ void                    color_border( Environment * _environment, int _border_co
 void                    color_border_var( Environment * _environment, char * _border_color );
 void                    color_sprite( Environment * _environment, int _index, int _color );
 void                    color_sprite_vars( Environment * _environment, char * _sprite, char * _color );
+void                    color_tsb( Environment * _environment, char *_border, char *_background, char *_cursor );
 void                    colormap_at( Environment * _environment, int _address );
 void                    colormap_at_var( Environment * _environment, char * _address );
 void                    colormap_clear( Environment * _environment );
@@ -4552,6 +4555,7 @@ void                    on_proc_end( Environment * _environment );
 void                    on_proc_index( Environment * _environment, char * _label );
 void                    on_scroll_call( Environment * _environment, int _x, int _y, char * _label );
 void                    on_scroll_gosub( Environment * _environment, int _x, int _y, char * _label );
+void                    option_dialect( Environment * _environment, Dialect _dialect );
 Variable *              origin_resolution_relative_transform_x( Environment * _environment, char * _x, int _is_relative );
 Variable *              origin_resolution_relative_transform_y( Environment * _environment, char * _y, int _is_relative );
 void                    out_var( Environment * _environment, char * _port, char * _value );

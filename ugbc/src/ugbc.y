@@ -4244,9 +4244,25 @@ color_definition_simple:
       color_sprite( _environment, $2, $4 );
   };
 
-color_definition_expression:
+color_definition_expression :
+  expr OP_COMMA expr OP_COMMA expr {
+      color_tsb( _environment, $1, $3, $5 );
+  }
+  | 
   expr OP_COMMA expr {
-      color_vars( _environment, $1, $3 );
+      if ( ((Environment *)_environment)->dialect == DI_TSB ) {
+          color_tsb( _environment, $1, $3, NULL );
+      } else {
+          color_vars( _environment, $1, $3 );
+      }
+  }
+  |
+  OP_COMMA expr {
+      color_tsb( _environment, NULL, NULL, $2 );
+  }
+  |
+  expr {
+      color_tsb( _environment, $1, NULL, NULL );
   }
   | BORDER expr {
       color_border_var( _environment, $2 );
@@ -10660,7 +10676,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "@1a:A:b:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:R:st:T:VvWw:X:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:R:st:T:VvWw:X:")) != -1) {
         switch (opt) {
                 case '@':
                     show_troubleshooting_and_exit( _environment, _argc, _argv );
@@ -10674,6 +10690,15 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
+                    break;
+                case 'B':
+                    if ( strcmp( optarg, "UGBASIC" ) ) {
+                        _environment->dialect = DI_UGBASIC;    
+                    } else if ( strcmp( optarg, "TSB" ) ) {
+                        _environment->dialect = DI_TSB;    
+                    } else {
+                        CRITICAL("Unknown dialect.");
+                    }
                     break;
                 case 'C':
                     _environment->compilerFileName = strdup(optarg);
