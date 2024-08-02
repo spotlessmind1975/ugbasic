@@ -4228,10 +4228,7 @@ next_raster_definition:
   | next_raster_definition_expression;
 
 color_definition_simple:
-  expr OP_COMMA expr {
-      color_vars( _environment, $1, $3 );
-  }
-  | OP_HASH const_expr OP_COMMA expr {
+  OP_HASH const_expr OP_COMMA expr {
       color_semivars( _environment, $2, $4 );
   }
   | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
@@ -4248,7 +4245,10 @@ color_definition_simple:
   };
 
 color_definition_expression:
-    BORDER expr {
+  expr OP_COMMA expr {
+      color_vars( _environment, $1, $3 );
+  }
+  | BORDER expr {
       color_border_var( _environment, $2 );
   }
   | BACK expr {
