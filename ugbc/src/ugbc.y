@@ -9134,6 +9134,16 @@ hires_definition_expression :
 hires_definition : 
     hires_definition_expression;
 
+mod_definition_expression :
+    expr OP_COMMA expr {
+        sbpen_set( _environment, 1, $1 );
+        sbpen_set( _environment, 0, $3 );
+        paper( _environment, $3 );
+    };
+
+mod_definition : 
+    mod_definition_expression;
+
 keyget_definition :
     Identifier as_datatype_suffix_optional {
         if ( $2 != 0 ) {
@@ -9241,6 +9251,7 @@ statement2nc:
       msprite_update( _environment );
   }
   | NRM nrm_definition
+  | MOD mod_definition
   | HIRES hires_definition
   | KEYGET keyget_definition
   | BITMAP bitmap_definition
