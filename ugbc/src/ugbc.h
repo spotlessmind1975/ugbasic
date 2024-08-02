@@ -4890,6 +4890,7 @@ void                    wait_until_condition( Environment * _environment, char *
 void                    wait_while( Environment * _environment );
 void                    wait_while_condition( Environment * _environment, char * _condition );
 void                    wait_parallel( Environment * _environment, char * _thread );
+void                    wave( Environment * _environment, char * _voice, char * _bits, char * _pulse );
 void                    writing( Environment * _environment, char * _mode, char * _parts );
 
 //----------------------------------------------------------------------------

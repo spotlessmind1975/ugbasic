@@ -173,7 +173,12 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     PROGRAM_WAVEFORM_V( c, w, p ) \
     outline1("LDA %s", ( c == NULL ? "#$7" : c ) ); \
-    outline0("LDX #$%2.2x", w ); \
+    outline1("LDX #$%2.2x", w ); \
+    outline0("JSR SIDPROGCTR" );
+
+#define     PROGRAM_WAVEFORM_VV( c, w, p ) \
+    outline1("LDA %s", ( c == NULL ? "#$7" : c ) ); \
+    outline1("LDX %s", w ); \
     outline0("JSR SIDPROGCTR" );
 
 #define     PROGRAM_WAVEFORM_SV( c, w ) \
@@ -262,6 +267,16 @@ void sid_attack_decay_sustain_release( Environment * _environment, char * _voice
 
     PROGRAM_ATTACK_DECAY_V( _voice, _attack, _decay );
     PROGRAM_SUSTAIN_RELEASE_V( _voice, _sustain, _release );
+
+}
+
+void sid_wave( Environment * _environment, char * _voice, char * _bits, char * _pulse ) {
+
+    PROGRAM_WAVEFORM_VV( _voice, _bits, NULL );
+
+    if ( _pulse ) {
+        PROGRAM_PULSE_V( _voice, _pulse );
+    }
 
 }
 
