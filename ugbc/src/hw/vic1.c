@@ -824,6 +824,10 @@ void vic1_initialization( Environment * _environment ) {
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 8;
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        vic1_cls( _environment );
+    }
+    
 }
 
 void vic1_finalization( Environment * _environment ) {

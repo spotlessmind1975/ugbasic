@@ -950,7 +950,9 @@ void tms9918_bitmap_enable( Environment * _environment, int _width, int _height,
         _environment->currentMode = mode->id;
         _environment->currentTileMode = 0;
 
-        tms9918_cls( _environment );
+        if (_environment->vestigialConfig.clsImplicit ) {
+            tms9918_cls( _environment );
+        }
 
     } else {
         WARNING_SCREEN_MODE( -1 );
@@ -979,7 +981,9 @@ void tms9918_tilemap_enable( Environment * _environment, int _width, int _height
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
         cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
 
-        tms9918_cls( _environment );
+        if (_environment->vestigialConfig.clsImplicit ) {
+            tms9918_cls( _environment );
+        }
 
     } else {
         // printf("tms9918_tilemap_enable() -> -1\n" );

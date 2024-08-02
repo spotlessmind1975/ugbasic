@@ -408,6 +408,10 @@ void zx_initialization( Environment * _environment ) {
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        zx_cls( _environment, NULL, NULL );
+    }
+    
 }
 
 void zx_finalization( Environment * _environment ) {

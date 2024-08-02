@@ -1671,8 +1671,6 @@ void gime_initialization( Environment * _environment ) {
 
     font_descriptors_init( _environment, 0 );
 
-    gime_cls( _environment );
-
 }
 
 void gime_finalization( Environment * _environment ) {

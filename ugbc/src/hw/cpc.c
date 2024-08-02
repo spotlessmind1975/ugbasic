@@ -661,7 +661,9 @@ void cpc_bitmap_enable( Environment * _environment, int _width, int _height, int
         _environment->currentMode = mode->id;
         _environment->currentTileMode = 0;
 
-        cpc_cls( _environment );
+        if (_environment->vestigialConfig.clsImplicit ) {
+            cpc_cls( _environment );
+        }
 
     } else {
         WARNING_SCREEN_MODE( -1 );
@@ -686,7 +688,9 @@ void cpc_tilemap_enable( Environment * _environment, int _width, int _height, in
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
         cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
 
-        cpc_cls( _environment );
+        if (_environment->vestigialConfig.clsImplicit ) {
+            cpc_cls( _environment );
+        }
 
     } else {
         // printf("cpc_tilemap_enable() -> -1\n" );

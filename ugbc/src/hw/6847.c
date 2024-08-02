@@ -1080,7 +1080,9 @@ void c6847_initialization( Environment * _environment ) {
 
     console_init( _environment );
     
-    c6847_cls( _environment );
+    if ( _environment->clsImplicit ) {
+        c6847_cls( _environment );
+    }
 
 }
 

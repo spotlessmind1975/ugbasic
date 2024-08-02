@@ -886,6 +886,10 @@ void ef9345_initialization( Environment * _environment ) {
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        ef9345_cls( _environment );
+    }
+
 }
 
 void ef9345_finalization( Environment * _environment ) {

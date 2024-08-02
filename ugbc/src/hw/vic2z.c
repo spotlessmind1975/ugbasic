@@ -1649,6 +1649,10 @@ void vic2z_initialization( Environment * _environment ) {
 
     outline0("JSR VIC2ZFINALIZATION");
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        vic2z_cls( _environment );
+    }
+
 }
 
 static RGBi * multicolorSpritePalette[2];
