@@ -6800,7 +6800,6 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
     Variable * resultAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     Variable * resultLen = variable_temporary( _environment, VT_BYTE, "(len)" );
 
-    outhead0("pippero1:");
     switch( string->type ) {
         case VT_STRING: {
             cpu_move_8bit( _environment, string->realName, stringLen->realName );
@@ -6818,12 +6817,9 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
 
     Variable * repetitionsLen = variable_mul( _environment, repetitions->name, stringLen->name );
 
-    outhead0("pippero2:");
     cpu_dsalloc( _environment, repetitionsLen->realName, result->realName );
-    outhead0("pippero3:");
     cpu_dsdescriptor( _environment, result->realName, resultAddress->realName, resultLen->realName );
     
-    outhead0("pippero4:");
     cpu_label( _environment, label );
     cpu_mem_move( _environment, stringAddress->realName, resultAddress->realName, stringLen->realName );
     cpu_math_add_16bit_with_8bit( _environment, resultAddress->realName, stringLen->realName, resultAddress->realName );
