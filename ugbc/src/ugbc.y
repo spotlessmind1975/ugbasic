@@ -3732,7 +3732,10 @@ exponential:
         $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN BORDER Y)" )->name;
         variable_store( _environment, $$, SCREEN_BORDER_Y );
     }
-    | ticks PER SECOND {
+    | TICK PER SECOND {
+        $$ = get_ticks_per_second( _environment )->name;
+    }
+    | TICKS PER SECOND {
         $$ = get_ticks_per_second( _environment )->name;
     }
     | SPRITE X MIN {
