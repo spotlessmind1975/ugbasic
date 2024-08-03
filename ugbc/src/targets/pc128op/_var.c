@@ -629,6 +629,8 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
+    generate_cgoto_address_table( _environment );
+
     variable_on_memory_init( _environment, 0 );
 
     DataSegment * dataSegment = _environment->dataSegment;
