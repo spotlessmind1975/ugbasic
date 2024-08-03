@@ -217,8 +217,8 @@ void finalize_text_variables( Environment * _environment ) {
         variable_store( _environment, "DRAWDDCOMMAND", '7' );
         variable_export( _environment, "DRAWLDCOMMAND", VT_CHAR, '8' );
         variable_store( _environment, "DRAWLDCOMMAND", '8' );
-        variable_export( _environment, "DRAWRDCOMMAND", VT_CHAR, '0' );
-        variable_store( _environment, "DRAWRDCOMMAND", '0' );
+        variable_export( _environment, "DRAWRDCOMMAND", VT_CHAR, '5' );
+        variable_store( _environment, "DRAWRDCOMMAND", '5' );
         variable_export( _environment, "DRAWEDCOMMAND", VT_CHAR, 'x' );
         variable_store( _environment, "DRAWEDCOMMAND", 'x' );
         variable_export( _environment, "DRAWFDCOMMAND", VT_CHAR, 'x' );

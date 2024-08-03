@@ -130,9 +130,10 @@ void draw_tsb_string( Environment * _environment, char * _string, char * _x, cha
 
         cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
 
+        gr_locate( _environment, startingX->name, startingY->name );
         // Take starting x and y
-        variable_move( _environment, origin_resolution_relative_transform_x( _environment, startingX->name, 0 )->name, x->name );
-        variable_move( _environment, origin_resolution_relative_transform_y( _environment, startingY->name, 0 )->name, y->name );
+        variable_move( _environment, startingX->name, x->name );
+        variable_move( _environment, startingY->name, y->name );
 
         // ------------------------------------ FETCH AND DECODE LOOP
         begin_loop( _environment );
@@ -206,8 +207,10 @@ void draw_tsb_string( Environment * _environment, char * _string, char * _x, cha
             variable_store( _environment, blank->name, 0 );
             cpu_label( _environment, upCommandLabel );
 
+            cpu_store_8bit( _environment, dy->realName, 1 );
+
             variable_move( _environment, origin_resolution_relative_transform_y( _environment, dy->name, 0 )->name, dy->name );
-            variable_move( _environment, variable_mul( _environment, dy->name, scale->name )->name, dy->name );
+            variable_move( _environment, variable_mul( _environment, dy->name, scale->name )->name, ds->name );
 
             variable_move( _environment, 
                 variable_sub( _environment, y->name, 
@@ -222,8 +225,10 @@ void draw_tsb_string( Environment * _environment, char * _string, char * _x, cha
             variable_store( _environment, blank->name, 0 );
             cpu_label( _environment, downCommandLabel );
 
+            cpu_store_8bit( _environment, dy->realName, 1 );
+
             variable_move( _environment, origin_resolution_relative_transform_y( _environment, dy->name, 0 )->name, dy->name );
-            variable_move( _environment, variable_mul( _environment, dy->name, scale->name )->name, dy->name );
+            variable_move( _environment, variable_mul( _environment, dy->name, scale->name )->name, ds->name );
 
             variable_move( _environment, 
                 variable_add( _environment, y->name, 
@@ -241,7 +246,7 @@ void draw_tsb_string( Environment * _environment, char * _string, char * _x, cha
             cpu_store_8bit( _environment, dx->realName, 1 );
 
             variable_move( _environment, origin_resolution_relative_transform_x( _environment, dx->name, 0 )->name, dx->name );
-            variable_move( _environment, variable_mul( _environment, dx->name, scale->name )->name, dx->name );
+            variable_move( _environment, variable_mul( _environment, dx->name, scale->name )->name, ds->name );
 
             variable_move( _environment, 
                 variable_sub( _environment, x->name, 
@@ -256,8 +261,10 @@ void draw_tsb_string( Environment * _environment, char * _string, char * _x, cha
             variable_store( _environment, blank->name, 0 );
             cpu_label( _environment, rightCommandLabel );
 
+            cpu_store_8bit( _environment, dx->realName, 1 );
+
             variable_move( _environment, origin_resolution_relative_transform_x( _environment, dx->name, 0 )->name, dx->name );
-            variable_move( _environment, variable_mul( _environment, dx->name, scale->name )->name, dx->name );
+            variable_move( _environment, variable_mul( _environment, dx->name, scale->name )->name, ds->name );
 
             variable_move( _environment, 
                 variable_add( _environment, x->name, 
@@ -273,8 +280,11 @@ void draw_tsb_string( Environment * _environment, char * _string, char * _x, cha
             variable_store( _environment, blank->name, 0 );
             cpu_label( _environment, angleCommandLabel );
 
+            cpu_store_8bit( _environment, dx->realName, 1 );
+            cpu_store_8bit( _environment, dy->realName, 1 );
+
             variable_move( _environment, origin_resolution_relative_transform_x( _environment, dx->name, 0 )->name, dx->name );
-            variable_move( _environment, variable_mul( _environment, dx->name, scale->name )->name, dx->name );
+            variable_move( _environment, variable_mul( _environment, dx->name, scale->name )->name, ds->name );
 
             cpu_compare_and_branch_8bit( _environment, command->realName, drawFCommandLetter->realName, angle45CommandLabel, 1 );
 
@@ -355,14 +365,14 @@ void draw_tsb_string( Environment * _environment, char * _string, char * _x, cha
                 origin_resolution_relative_transform_x( _environment, NULL, 0 )->name, 
                 origin_resolution_relative_transform_y( _environment, NULL, 0 )->name, 
                 x->name, y->name, color->name, _preserve_color );
-            gr_locate( _environment, x->name, y->name );
-            
+
             // Update current position (this is done also if nothing is drawn!)
             cpu_label( _environment, move5CommandLabel );
+            gr_locate( _environment, x->name, y->name );
 
             // Move to the next character of the drawing commands string.
-            cpu_inc( _environment, size->realName );
-            cpu_dec_16bit( _environment, address->realName );
+            // cpu_inc( _environment, size->realName );
+            // cpu_dec_16bit( _environment, address->realName );
             cpu_store_16bit( _environment, dx->realName, 0 );
             cpu_store_16bit( _environment, dy->realName, 0 );
             cpu_store_16bit( _environment, ds->realName, 0 );

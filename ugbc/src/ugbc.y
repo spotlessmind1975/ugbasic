@@ -96,7 +96,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
-%token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET
+%token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -9268,6 +9268,11 @@ cset_definition :
         cset( _environment, $1 );
     };
 
+rot_definition :
+    expr OP_COMMA expr {
+        rot( _environment, $1, $3 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -9310,6 +9315,7 @@ statement2nc:
   | CIRCLE circle_definition
   | ELLIPSE ellipse_definition
   | DRAW draw_definition
+  | ROT rot_definition
   | DTILE draw_tile_definition
   | DTILES draw_tile_definition
   | LINE line_definition
