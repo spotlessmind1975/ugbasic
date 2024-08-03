@@ -126,7 +126,6 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
 %type <integer> const_key_scancode_definition const_key_scancode_alphadigit const_key_scancode_function_digit
 %type <integer> datatype as_datatype as_datatype_mandatory as_datatype_suffix as_datatype_suffix_optional
-%type <integer> halted
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y optional_x_or_string
 %type <string> mandatory_x mandatory_y
@@ -1860,13 +1859,6 @@ random_definition_simple:
         $$ = random_height( _environment )->name;
     };
 
-halted:
-    {
-        $$ = 0;
-    } | HALTED {
-        $$ = 1;
-    };
-
 random_definition:
       random_definition_simple {
           $$ = $1;
@@ -3400,18 +3392,44 @@ exponential:
       call_procedure( _environment, $1 );
       $$ = param_procedure( _environment, $1 )->name;
     }
-    | halted SPAWN Identifier {
+    | SPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
-      $$ = spawn_procedure( _environment, $3, $1 )->name;
+      $$ = spawn_procedure( _environment, $2, 0 )->name;
     }
-    | halted SPAWN Identifier OSP {
+    | SPAWN Identifier OSP {
         ((struct _Environment *)_environment)->parameters = 0;
         } values CSP {
-      $$ = spawn_procedure( _environment, $3, $1 )->name;
+      $$ = spawn_procedure( _environment, $2, 0 )->name;
     }
-    | halted SPAWN Identifier OSP CSP {
+    | SPAWN Identifier OSP CSP {
         ((struct _Environment *)_environment)->parameters = 0;
-      $$ = spawn_procedure( _environment, $3, $1 )->name;
+      $$ = spawn_procedure( _environment, $2, 0 )->name;
+    }
+    | HALTED SPAWN Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      $$ = spawn_procedure( _environment, $3, 1 )->name;
+    }
+    | HALTED SPAWN Identifier OSP {
+        ((struct _Environment *)_environment)->parameters = 0;
+        } values CSP {
+      $$ = spawn_procedure( _environment, $3, 1 )->name;
+    }
+    | HALTED SPAWN Identifier OSP CSP {
+        ((struct _Environment *)_environment)->parameters = 0;
+      $$ = spawn_procedure( _environment, $3, 1 )->name;
+    }
+    | SPAWN Identifier HALTED {
+      ((struct _Environment *)_environment)->parameters = 0;
+      $$ = spawn_procedure( _environment, $2, 1 )->name;
+    }
+    | SPAWN Identifier OSP {
+        ((struct _Environment *)_environment)->parameters = 0;
+        } values CSP HALTED {
+      $$ = spawn_procedure( _environment, $2, 1 )->name;
+    }
+    | SPAWN Identifier OSP CSP HALTED {
+        ((struct _Environment *)_environment)->parameters = 0;
+      $$ = spawn_procedure( _environment, $2, 1 )->name;
     }
     | RESPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
@@ -5695,6 +5713,9 @@ draw_definition_expression:
         gr_locate( _environment, $8, $10 );
     }
     | optional_x_or_string {
+        draw_string( _environment, $1 );
+    }
+    | optional_x_or_string OP_COMMA exponential {
         draw_string( _environment, $1 );
     }
     | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
