@@ -784,6 +784,8 @@ void variable_cleanup( Environment * _environment ) {
 
     // outhead0(".segment \"CODE\"" );
 
+    generate_cgoto_address_table( _environment );
+
     variable_on_memory_init( _environment, 0 );
 
     if ( _environment->outputFileType == OUTPUT_FILE_TYPE_D64 ) {
