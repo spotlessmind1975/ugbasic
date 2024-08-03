@@ -5636,9 +5636,6 @@ line_definition_expression:
         }
         gr_locate( _environment, $3, $5 );
     }
-    | optional_x_or_string {
-        draw_string( _environment, $1 );
-    }
     | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         draw( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
