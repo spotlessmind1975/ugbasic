@@ -3587,7 +3587,11 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
         variable_store( _environment, $$, frames( _environment, $4 ) );
     }
-    | frame COUNT OP expr CP {
+    | FRAME COUNT OP expr CP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
+        variable_store( _environment, $$, frames( _environment, $4 ) );
+    }
+    | TILE COUNT OP expr CP {
         $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
         variable_store( _environment, $$, frames( _environment, $4 ) );
     }
