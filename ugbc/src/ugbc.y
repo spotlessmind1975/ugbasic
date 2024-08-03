@@ -3418,19 +3418,6 @@ exponential:
         ((struct _Environment *)_environment)->parameters = 0;
       $$ = spawn_procedure( _environment, $3, 1 )->name;
     }
-    | SPAWN Identifier HALTED {
-      ((struct _Environment *)_environment)->parameters = 0;
-      $$ = spawn_procedure( _environment, $2, 1 )->name;
-    }
-    | SPAWN Identifier OSP {
-        ((struct _Environment *)_environment)->parameters = 0;
-        } values CSP HALTED {
-      $$ = spawn_procedure( _environment, $2, 1 )->name;
-    }
-    | SPAWN Identifier OSP CSP HALTED {
-        ((struct _Environment *)_environment)->parameters = 0;
-      $$ = spawn_procedure( _environment, $2, 1 )->name;
-    }
     | RESPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
       $$ = respawn_procedure( _environment, $2 )->name;
@@ -5720,9 +5707,6 @@ draw_definition_expression:
         gr_locate( _environment, $8, $10 );
     }
     | optional_x_or_string {
-        draw_string( _environment, $1 );
-    }
-    | optional_x_or_string OP_COMMA exponential {
         draw_string( _environment, $1 );
     }
     | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
