@@ -571,7 +571,7 @@ void ef936x_pset_vars( Environment * _environment, char *_x, char *_y, char * _c
     outline1("LDX %s", x->realName );
     outline1("LDU %s", y->realName );
     outline1("LDB %s", c->realName );
-    outline0("STB <PLOTB" );
+    outline0("STB <PLOTCPE" );
     outline0("JSR PLOT");
 
 }
