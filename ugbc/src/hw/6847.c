@@ -1080,7 +1080,7 @@ void c6847_initialization( Environment * _environment ) {
 
     console_init( _environment );
     
-    if ( _environment->clsImplicit ) {
+    if ( _environment->vestigialConfig.clsImplicit ) {
         c6847_cls( _environment );
     }
 
