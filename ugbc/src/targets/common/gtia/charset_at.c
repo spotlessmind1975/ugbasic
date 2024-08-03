@@ -47,6 +47,8 @@
 </usermanual> */
 void charset_at( Environment * _environment, int _address ) {
 
+    outline0( "LDA #$%2.2x", _address >> 8 );
+    outline0( "STA $2F4" );
 
 }
 
@@ -54,6 +56,9 @@ void charset_at( Environment * _environment, int _address ) {
 @keyword CHARSET AT
 </usermanual> */
 void charset_at_var( Environment * _environment, char * _address ) {
+
+    outline0( "LDA %s", address_displacement( _environment, _address, "1" ) );
+    outline0( "STA $2F4" );
 
 }
 

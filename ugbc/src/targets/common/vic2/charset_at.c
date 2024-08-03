@@ -63,6 +63,11 @@
 </usermanual> */
 void charset_at( Environment * _environment, int _address ) {
 
+    outline0("LDA $d018" );
+    outline0("AND #$f1" );
+    outline1("ORA #$%2.2x", ( ( _address >> 11 ) & 0x07 ) << 1 );
+    outline0("STA $d018" );
+
 }
 
 /**
@@ -85,6 +90,18 @@ void charset_at( Environment * _environment, int _address ) {
 @keyword BITMAP AT
 </usermanual> */
 void charset_at_var( Environment * _environment, char * _address ) {
+
+    outline1("LDA %s", address_displacement( _environment, _address, "1" ));
+    outline0("LSR" );
+    outline0("LSR" );
+    outline0("LSR" );
+    outline0("AND #$07" );
+    outline0("ASL" );
+    outline0("STA MATHPTR0" );
+    outline0("LDA $d018" );
+    outline0("AND #$f1" );
+    outline0("ORA MATHPTR0" );
+    outline0("STA $d018" );
 
 }
 
