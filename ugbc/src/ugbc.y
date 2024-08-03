@@ -2544,7 +2544,7 @@ const_key_scancode_definition :
     };
 
 load_image  : LOAD IMAGE | IMAGE LOAD;
-load_images : LOAD images_or_atlas | images_or_atlas LOAD;
+load_images : LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
 load_sequence : LOAD SEQUENCE | SEQUENCE LOAD;
 load_tileset  : LOAD TILESET | TILESET LOAD;
 load_tilemap  : LOAD TILEMAP | TILEMAP LOAD;
