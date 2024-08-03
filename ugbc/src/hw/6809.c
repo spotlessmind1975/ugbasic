@@ -3290,7 +3290,7 @@ void cpu6809_xor_8bit( Environment * _environment, char * _left, char * _right, 
         MAKE_LABEL
 
         outline1("LDB %s", _right );
-        outline1("XOR %s", _left );
+        outline1("EORB %s", _left );
         outline1("STB %s", _result);
 
     no_embedded( cpu_xor_8bit )
