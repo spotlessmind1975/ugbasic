@@ -107,11 +107,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     cpu_bveq( _environment, pressed->realName, repeatLabel );
     cpu_bveq( _environment, key->realName, repeatLabel );
 
-outhead0("plutero1");
-
     cpu_compare_8bit( _environment, key->realName, backspace->realName, pressed->realName, 1 );
-
-outhead0("plutero2");
 
     cpu_bvneq( _environment, pressed->realName, backspaceLabel );
 
