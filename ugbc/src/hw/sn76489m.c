@@ -171,11 +171,11 @@ void sn76489m_set_volume( Environment * _environment, int _channels, int _volume
 #define     PROGRAM_PITCH( c, f ) \
     outline1("LDU $%4.4x", ( f & 0xff ) ); \
     if ( ( c & 0x01 ) ) \
-        outline0("CALL SN76489PROGFREQ0" ); \
+        outline0("JSR SN76489PROGFREQ0" ); \
     if ( ( c & 0x02 ) ) \
-        outline0("CALL SN76489PROGFREQ1" ); \
+        outline0("JSR SN76489PROGFREQ1" ); \
     if ( ( c & 0x04 ) ) \
-        outline0("CALL SN76489PROGFREQ2" );
+        outline0("JSR SN76489PROGFREQ2" );
 
 #define     PROGRAM_PITCH_V( c, f ) \
     outline1("LDU %s", f ); \
@@ -184,7 +184,7 @@ void sn76489m_set_volume( Environment * _environment, int _channels, int _volume
     } else { \
         outline1("LDA %s", c ); \
     } \
-    outline0("CALL SN76489PROGFREQ" );
+    outline0("JSR SN76489PROGFREQ" );
 
 #define     PROGRAM_PITCH_SV( c, f ) \
     outline1("LDU #$%4.4x", f); \
@@ -193,7 +193,7 @@ void sn76489m_set_volume( Environment * _environment, int _channels, int _volume
     } else { \
         outline1("LDA %s", c ); \
     } \
-    outline0("CALL SN76489PROGFREQ" );
+    outline0("JSR SN76489PROGFREQ" );
 
 #define     STOP_FREQUENCY( c ) \
     if ( ( c & 0x01 ) ) \
