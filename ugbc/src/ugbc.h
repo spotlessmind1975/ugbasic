@@ -1694,6 +1694,7 @@ typedef struct _Deployed {
     int read_data_unsafe;
     int irq;
     int draw_string;
+    int draw_tsb_string;
     int paint;
     int play_string;
     int put_tilemap;
@@ -2760,6 +2761,9 @@ typedef struct _Environment {
 
     int clsCalledOnce;
     
+    char * optionalX;
+    char * optionalY;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -4335,7 +4339,8 @@ void                    double_buffer( Environment * _environment, int _enabled 
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
 void                    draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color );
-void                    draw_string( Environment * _environment, char * _string );
+void                    draw_string( Environment * _environment, char * _string, int _preserve_color );
+void                    draw_tsb_string( Environment * _environment, char * _string, char * _x, char * _y, char * _c, int _preserve_color  );
 void                    dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    dstring_cleanup( Environment * _Environment );
 

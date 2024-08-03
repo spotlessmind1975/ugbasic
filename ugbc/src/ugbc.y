@@ -5673,6 +5673,28 @@ line_definition_expression:
 line_definition:
     line_definition_expression;
 
+draw_optional_string2:
+    OP_COMMA expr OP_COMMA expr {
+        draw_tsb_string( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, $4, ((Environment *)_environment)->colorImplicit );
+    }
+    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        draw( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $2, $4 );
+    }
+    | TO optional_x OP_COMMA optional_y  {
+        draw( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, $4, NULL, 0 );
+        gr_locate( _environment, $2, $4 );
+    };
+
+draw_optional_string :
+    {
+        draw_string( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->colorImplicit );
+    }
+    | OP_COMMA optional_y {
+         ((Environment *)_environment)->optionalY = $2;
+    } draw_optional_string2;
+
+
 draw_definition_expression:
     OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP {
         draw( _environment, $2, $4, $8, $10, NULL, 0 );
@@ -5707,16 +5729,8 @@ draw_definition_expression:
         gr_locate( _environment, $8, $10 );
     }
     | optional_x_or_string {
-        draw_string( _environment, $1 );
-    }
-    | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        draw( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
-        gr_locate( _environment, $5, $7 );
-    }
-    | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
-        draw( _environment, $1, $3, $5, $7, NULL, 0 );
-        gr_locate( _environment, $5, $7 );
-    }
+        ((Environment *)_environment)->optionalX = $1;
+    } draw_optional_string
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );

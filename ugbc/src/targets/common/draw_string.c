@@ -132,7 +132,7 @@ come nuova posizione.
 
 @target all
 </usermanual> */
-void draw_string( Environment * _environment, char * _string ) {
+void draw_string( Environment * _environment, char * _string, int _preserve_color ) {
 
     deploy_begin( draw_string );
 
@@ -635,7 +635,7 @@ void draw_string( Environment * _environment, char * _string ) {
             draw( _environment, 
                 origin_resolution_relative_transform_x( _environment, NULL, 0 )->name, 
                 origin_resolution_relative_transform_y( _environment, NULL, 0 )->name, 
-                x->name, y->name, c->name, 0 );
+                x->name, y->name, c->name, _preserve_color );
 
             // Update current position (this is done also if nothing is drawn!)
             cpu_label( _environment, move5CommandLabel );
