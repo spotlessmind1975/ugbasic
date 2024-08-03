@@ -4339,7 +4339,7 @@ void                    double_buffer( Environment * _environment, int _enabled 
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
 void                    draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color );
-void                    draw_string( Environment * _environment, char * _string, int _preserve_color );
+void                    draw_string( Environment * _environment, char * _string );
 void                    draw_tsb_string( Environment * _environment, char * _string, char * _x, char * _y, char * _c, int _preserve_color  );
 void                    dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    dstring_cleanup( Environment * _Environment );
@@ -4658,6 +4658,7 @@ int                     rgbi_distance( RGBi * _source, RGBi * _destination );
 Variable *              rnd( Environment * _environment, char * _value );
 Variable *              rnd0( Environment * _environment );
 Variable *              rnd1( Environment * _environment );
+void                    rot( Environment * _environment, char * _angle, char * _step );
 void                    run( Environment * _environment );
 void                    run_parallel( Environment * _environment );
 

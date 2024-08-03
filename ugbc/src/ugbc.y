@@ -5675,7 +5675,7 @@ line_definition:
 
 draw_optional_string2:
     OP_COMMA expr OP_COMMA expr {
-        draw_tsb_string( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, $4, ((Environment *)_environment)->colorImplicit );
+        draw_tsb_string( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, resolve_color( _environment, $4 ), ((Environment *)_environment)->colorImplicit );
     }
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         draw( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
@@ -5688,7 +5688,7 @@ draw_optional_string2:
 
 draw_optional_string :
     {
-        draw_string( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->colorImplicit );
+        draw_string( _environment, ((Environment *)_environment)->optionalX );
     }
     | OP_COMMA optional_y {
          ((Environment *)_environment)->optionalY = $2;
