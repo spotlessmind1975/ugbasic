@@ -126,6 +126,7 @@ void ted_bitmap_disable( Environment * _environment );
 void ted_bitmap_at( Environment * _environment, char * _address );
 void ted_colormap_at( Environment * _environment, char * _address );
 void ted_textmap_at( Environment * _environment, char * _address );
+void ted_charset_at( Environment * _environment, char * _address );
 void ted_tiles_at( Environment * _environment, char * _address );
 void ted_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 

@@ -4264,6 +4264,8 @@ void                    case_equals_label( Environment * _environment );
 void                    center( Environment * _environment, char * _string, int _newline, char * _width );
 void                    cgoto( Environment * _environment, char * _expression );
 void                    char_at( Environment * _environment, char *_x, char *_y, char *_code, char *_type, char *_size );
+void                    charset_at( Environment * _environment, int _value );
+void                    charset_at_var( Environment * _environment, char * _value );
 int                     check_if_filename_is_valid( Environment * _environment,  char * _filename );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c, int _preserve_color );
 void                    clear( Environment * _environment );
@@ -4308,6 +4310,7 @@ void                    const_define_float( Environment * _environment, char * _
 void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
 Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
+void                    cset( Environment * _environment, char * _value );
 
 //----------------------------------------------------------------------------
 // *D*
@@ -4416,6 +4419,7 @@ void                    gr_locate( Environment * _environment, char * _x, char *
 void                    halt( Environment * _environment );
 Variable *              hit_to( Environment * _environment, int _sprite );
 Variable *              hit_to_vars( Environment * _environment, char * _sprite );
+void                    hires( Environment * _environment, char * _foreground, char * _background );
 void                    home( Environment * _environment );
 
 //----------------------------------------------------------------------------

@@ -96,7 +96,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
-%token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI
+%token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -9124,11 +9124,7 @@ spawn_definition :
 
 hires_definition_expression :
     expr OP_COMMA expr {
-        bitmap_enable( _environment, 0, 0, 0 );
-        sbpen_set( _environment, 1, $1 );
-        sbpen_set( _environment, 0, $3 );
-        paper( _environment, $3 );
-        cls( _environment, NULL );
+        hires( _environment, $1, $3 );
     };
 
 hires_definition : 
@@ -9243,6 +9239,12 @@ wave_definition :
     | expr OP_COMMA expr OP_COMMA expr {
         wave( _environment, $1, $3, $5 );
     }
+
+cset_definition : 
+    expr {
+        cset( _environment, $1 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -9259,6 +9261,7 @@ statement2nc:
   | PAUSE pause_definition
   | WAIT wait_definition
   | SPRITE sprite_definition
+  | CSET cset_definition
   | CSPRITE sprite_definition
   | MSPRITE sprite_definition
   | MSPRITE UPDATE {

@@ -999,6 +999,10 @@ void ted_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
+void ted_charset_at( Environment * _environment, char * _address ) {
+
+}
+
 void ted_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
