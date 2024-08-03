@@ -4266,6 +4266,8 @@ void                    cgoto( Environment * _environment, char * _expression );
 void                    char_at( Environment * _environment, char *_x, char *_y, char *_code, char *_type, char *_size );
 void                    charset_at( Environment * _environment, int _value );
 void                    charset_at_var( Environment * _environment, char * _value );
+void                    charset_uppercase( Environment * _environment );
+void                    charset_lowercase( Environment * _environment );
 int                     check_if_filename_is_valid( Environment * _environment,  char * _filename );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c, int _preserve_color );
 void                    clear( Environment * _environment );

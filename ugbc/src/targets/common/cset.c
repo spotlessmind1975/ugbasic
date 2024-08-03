@@ -55,17 +55,17 @@ void cset( Environment * _environment, char * _value ) {
 
     cpu_label( _environment, l1Label );
     if ( _environment->fontConfig.schema || _environment->descriptors ) {
-        charset_at( _environment, 0x1800 );
+        charset_uppercase( _environment );
     } else {
-        charset_at( _environment, 0x3800 );
+        charset_lowercase( _environment );
     }
     cpu_jump( _environment, label );
 
     cpu_label( _environment, l2Label );
     if ( _environment->fontConfig.schema || _environment->descriptors ) {
-        charset_at( _environment, 0x3800 );
+        charset_lowercase( _environment );
     } else {
-        charset_at( _environment, 0x1800 );
+        charset_uppercase( _environment );
     }
     cpu_jump( _environment, label );
 

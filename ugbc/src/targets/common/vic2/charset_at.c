@@ -105,4 +105,12 @@ void charset_at_var( Environment * _environment, char * _address ) {
 
 }
 
+void charset_uppercase( Environment * _environment ) {
+    charset_at( _environment, 0x1800 );
+}
+
+void charset_lowercase( Environment * _environment ) {
+    charset_at( _environment, 0x3800 );
+}
+
 #endif
