@@ -446,7 +446,9 @@ void variable_cleanup( Environment * _environment ) {
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[_environment->descriptors->first+i].data[j]) );
         }
     }
-    
+
+    generate_cgoto_address_table( _environment );
+
     variable_on_memory_init( _environment, 0 );
 
     DataSegment * dataSegment = _environment->dataSegment;
