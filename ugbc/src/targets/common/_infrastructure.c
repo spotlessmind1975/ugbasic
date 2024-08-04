@@ -882,10 +882,8 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
 
     if ( var ) {
 
-        if ( var->initializedByConstant && ( _type != VT_DSTRING && _type != VT_STRING && _type != VT_FLOAT ) ) {
+        if ( var->initializedByConstant && ( _type != VT_DSTRING && _type != VT_STRING && _type != VT_FLOAT && _type != VT_BIT ) ) {
             if ( 
-                ( VT_BITWIDTH( var->type ) != 1 ) 
-                && 
                 ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) ) 
             ) {
                 Variable * varNew = variable_temporary( _environment, _type, "(temp)");
@@ -895,8 +893,6 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
             }
         } else {
             if ( 
-                ( VT_BITWIDTH( var->type ) != 1 ) 
-                && 
                 ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) ) 
                 && 
                 ( ( VT_BITWIDTH( _type ) > 0 ) || ( _type == VT_FLOAT ) ) 

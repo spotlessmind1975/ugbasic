@@ -107,8 +107,8 @@ verrà eseguito il codice seguente (fino a ''ENDIF'').
 void if_then( Environment * _environment, char * _expression ) {
 
     MAKE_LABEL
-
-    Variable * expression = variable_retrieve_or_define( _environment, _expression, VT_BYTE, 0 );
+    
+    Variable * expression = variable_retrieve_or_define( _environment, _expression, VT_SBYTE, 0 );
 
     Conditional * conditional = malloc( sizeof( Conditional ) );
     memset( conditional, 0, sizeof( Conditional ) );
