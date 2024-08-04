@@ -40,10 +40,14 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-void wait_key( Environment * _environment ) {
+void wait_key( Environment * _environment, int _release ) {
 
     deploy( scancode, src_hw_msx1_scancode_asm );
 
-    outline0( "CALL WAITKEY" );
+    if ( _release ) {
+        outline0( "CALL WAITKEYRELEASE" );
+    } else {
+        outline0( "CALL WAITKEY" );
+    }
 
 }

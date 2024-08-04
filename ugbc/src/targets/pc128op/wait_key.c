@@ -40,7 +40,7 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-void wait_key( Environment * _environment ) {
+void wait_key( Environment * _environment, int _release ) {
 
     MAKE_LABEL
 
@@ -50,5 +50,16 @@ void wait_key( Environment * _environment ) {
     outline0( "SWI" );
     outline0( "FCB $0a" );
     outline1( "BEQ %s", repeatLabel );
+
+    if ( _release ) {
+
+        char repeatLabel2[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat2", label );
+
+        cpu_label( _environment, repeatLabel2 );
+        outline0( "SWI" );
+        outline0( "FCB $0a" );
+        outline1( "BNE %s", repeatLabel2 );
+
+    }    
     
 }

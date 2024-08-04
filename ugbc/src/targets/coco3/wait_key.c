@@ -40,7 +40,7 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-void wait_key( Environment * _environment ) {
+void wait_key( Environment * _environment, int _release ) {
 
     MAKE_LABEL
 
@@ -57,10 +57,16 @@ void wait_key( Environment * _environment ) {
 
     cpu_bvneq( _environment, pressed->realName, repeatLabel2 );
 
-    cpu_label( _environment, repeatLabel );
+    if ( _release ) {
 
-    coco3_scancode( _environment, pressed->realName, result->realName );
+        char repeatLabel2[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel2, "%srepeat2", label );
 
-    cpu_bveq( _environment, pressed->realName, repeatLabel );
+        cpu_label( _environment, repeatLabel2 );
+
+        coco3_scancode( _environment, pressed->realName, result->realName );
+
+        cpu_bvneq( _environment, pressed->realName, repeatLabel2 );
+
+    }
 
 }

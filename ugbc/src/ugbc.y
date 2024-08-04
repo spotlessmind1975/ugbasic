@@ -4363,21 +4363,7 @@ wait_definition_simple:
         }
     }
     | KEY release {
-        wait_key( _environment );
-        if ( $2 ) {
-            begin_loop( _environment );
-                Variable * noKey = variable_temporary( _environment, VT_BYTE, "nokey" );
-                variable_move( _environment, scancode( _environment )->name, noKey->name );
-                exit_loop_if( _environment, 
-                    variable_not( _environment, 
-                        variable_compare( _environment, 
-                            scancode( _environment )->name, 
-                            noKey->name 
-                        )->name 
-                    )->name, 0 
-                );
-            end_loop( _environment );
-        }
+        wait_key( _environment, $2 );
     }
     | VBL {
       wait_vbl( _environment, NULL );
@@ -5052,7 +5038,7 @@ get_definition_expression:
                 CRITICAL_GET_NEED_STRING( $2 );
             }
         }
-        wait_key( _environment );
+        wait_key( _environment, 0 );
         Variable * p = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
         Variable * k = inkey( _environment );
         variable_move( _environment, k->name, p->name );
@@ -9184,7 +9170,7 @@ keyget_definition :
                 CRITICAL_GET_NEED_STRING( $2 );
             }
         }
-        wait_key( _environment );
+        wait_key( _environment, 0 );
         Variable * p = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
         Variable * k = inkey( _environment );
         variable_move( _environment, k->name, p->name );
@@ -9548,7 +9534,7 @@ statement2nc:
       end_select_case( _environment );  
   }
   | DO NULLkw {
-      wait_key( _environment );
+      wait_key( _environment, 1 );
   }
   | DO {
       begin_loop( _environment );  

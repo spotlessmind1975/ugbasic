@@ -40,14 +40,14 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-void wait_key( Environment * _environment ) {
+void wait_key( Environment * _environment, int _release ) {
 
     deploy_preferred( scancode, src_hw_to8_scancode_asm );
 
-    MAKE_LABEL
-
-    char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
-
-    outline0( "JSR WAITKEY" );
+    if ( _release ) {
+        outline0( "JSR WAITKEYRELEASE" );
+    } else {
+        outline0( "JSR WAITKEY" );
+    }
     
 }
