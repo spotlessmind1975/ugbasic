@@ -35,64 +35,71 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; IRQTIMERVOID:
-; 	RET
+ALIGN $100, $00
+    
+C128ZIM2TABLEDUMMY:
+    DB $00
+C128ZIM2TABLE:
+    DEFS    257, 0
 
-; C128ZISVC:
-; 	PUSH	AF
-; 	PUSH	BC
-; 	PUSH	DE
-; 	PUSH	HL
-; 	PUSH	IX
-; 	PUSH	IY
-; 	EX	AF,AF'
-; 	PUSH	AF
-; 	EXX
-; 	PUSH	BC
-; 	PUSH	DE
-; 	PUSH	HL
-;     LD A, (C128ZTIMER2)
-;     DEC A
-;     LD (C128ZTIMER2), A
-;     CP 0
-;     JR NZ,IRQVECTORSKIP
-;     LD A,6
-;     LD (C128ZTIMER2), A
-;     LD HL,(C128ZTIMER)
-;     INC HL
-;     LD (C128ZTIMER),HL
-; 	CALL MUSICPLAYER
-; 	LD A, (EVERYCOUNTER)
-; 	CP 0
-; 	JR Z, IRQTIMERADDR2
-; 	DEC A
-; 	LD (EVERYCOUNTER), A
-; 	JP IRQVECTORSKIP
-; IRQTIMERADDR2:
-; 	LD A, (EVERYSTATUS)
-; 	CP 0
-; 	JR Z, IRQVECTORSKIP
-; 	LD A, (EVERYTIMING)
-; 	LD (EVERYCOUNTER), A
-; IRQTIMERADDR:
-; 	CALL IRQTIMERVOID
-; IRQVECTORSKIP:
-; 	POP	HL
-; 	POP	DE
-; 	POP	BC
-; 	EXX
-; 	POP	AF
-; 	EX	AF,AF'
-; 	POP	IY
-; 	POP	IX
-; 	POP	HL
-; 	POP	DE
-; 	POP	BC
-; 	POP	AF
-;     EI
-;     RET   
+IRQSVC:
+    PUSH AF
+    PUSH BC
+    LD BC, $D019
+    LD A, $FF
+    OUT (C), A
+    POP BC
+    POP AF
+    EI
+    RETI
 
 C128ZSTARTUP:
+
+    LD A, $7F
+    LD BC, $DC0D
+    OUT (C), A
+
+    LD BC, $D01A
+    IN A, (C)
+    OR $012
+    OUT (C), A
+
+    LD BC, $D011
+    IN A, (C)
+    AND $7F
+    OUT (C), A
+
+    LD HL, C128ZIM2TABLE
+    LD A, $ff
+    LD B, A
+    LD A, H
+C128ZSTARTUPL1:
+    LD (HL), A
+    INC HL
+    DEC B
+    JR NZ, C128ZSTARTUPL1
+    LD (HL), A
+
+    LD DE, IRQSVC
+
+    LD L, A
+    LD A, $C3
+    LD (HL), A
+    INC HL
+    LD A, E
+    LD (HL), A
+    INC HL
+    LD A, D
+    LD (HL), A
+
+    LD HL, C128ZIM2TABLE
+    LD A, H
+    LD I, A
+    IM 2
+    LD BC, $D012
+    LD A, 148
+    OUT (C), A
+    EI
 
     LD A, ($0A03)
     CMP 0
