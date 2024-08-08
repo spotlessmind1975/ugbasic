@@ -66,7 +66,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_store_8bit( _environment, enter->realName, 0x23 );
     cpu_store_8bit( _environment, offset->realName, 0 );
-    cpu_store_8bit( _environment, backspace->realName, 0xf1 );
+    cpu_store_8bit( _environment, backspace->realName, 8 );
     cpu_store_8bit( _environment, space->realName, 32 );
     cpu_store_8bit( _environment, zero->realName, 0 );
 
@@ -84,15 +84,9 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     print( _environment, underscore->name, 0 );
     cmove_direct( _environment, -1, 0 );
 
-    zx_scancode( _environment, pressed->realName, key->realName );
+    zx_inkey( _environment, key->realName );
 
-    cpu_bveq( _environment, pressed->realName, repeatLabel );
     cpu_bveq( _environment, key->realName, repeatLabel );
-
-    cpu_label( _environment, repeatLabel2 );
-    zx_scancode( _environment, pressed->realName, NULL );
-
-    cpu_bvneq( _environment, pressed->realName, repeatLabel2 );
 
     cpu_compare_8bit( _environment, key->realName, backspace->realName, pressed->realName, 1 );
 

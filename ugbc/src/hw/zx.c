@@ -148,49 +148,54 @@ void zx_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 }
 
-void zx_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void zx_inkey( Environment * _environment, char * _key ) {
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_zx_keyboard_asm);
 
-    outhead1("zxinkey%s:",label);
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _pressed );
-    outline1("LD (%s), A", _key );
-    outline0("LD A, ($5C3B)");
-    outline0("AND $20");
-    outline0("CP $20");
-    outline1("JR NZ, %snokey", label);
-    outline0("LD A, ($5C08)");
-    outline1("LD (%s), A", _key );
-    outline0("LD A, $FF");
-    outline1("LD (%s), A", _pressed );
-    outline0("LD A, ($5C3B)");
-    outline0("AND $DF");
-    outline0("LD ($5C3B), A");
-    outhead1("%snokey:", label );
+    outline0("CALL INKEY");
+    outline1("LD (%s), A", _key);
+
+}
+
+void zx_wait_key( Environment * _environment, int _release ) {
+
+    deploy( keyboard, src_hw_zx_keyboard_asm );
+
+    if ( _release ) {
+        outline0("CALL WAITKEYRELEASE");
+    } else {
+        outline0("CALL WAITKEY");
+    }
    
 }
 
-void zx_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void zx_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( scancode, src_hw_zx_scancode_asm );
+    deploy( keyboard, src_hw_zx_keyboard_asm );
 
-    outline0("LD A, 0");
-    if( _scancode ){
-        outline1("LD (%s), A", _scancode );
-    }
-    outline1("LD (%s), A", _pressed );
-    outline0("LD A, (KEYPRESS)");
-    outline0("CP 0");
-    outline1("JR Z,%snokey", label);
-    if( _scancode ){
-        outline1("LD (%s), A", _scancode );
-    }
-    outline0("LD A, $FF");
-    outline1("LD (%s), A", _pressed );
-    outhead1("%snokey:", label );
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYSTATE");
+    cpu_ctoa( _environment );
+
+}
+
+void zx_scancode( Environment * _environment, char * _result ) {
+
+    deploy( keyboard, src_hw_zx_keyboard_asm);
+
+    outline0("CALL SCANCODE");
+    outline1("LD (%s), A", _result );
+   
+}
+
+void zx_asciicode( Environment * _environment, char * _result ) {
+
+    deploy( keyboard, src_hw_zx_keyboard_asm);
+
+    outline0("CALL ASCIICODE");
+    outline1("LD A, (%s)", _result );
    
 }
 
@@ -198,19 +203,11 @@ void zx_key_pressed( Environment * _environment, char *_scancode, char * _result
 
     MAKE_LABEL
 
-    char nokeyLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( nokeyLabel, "%slabel", label );
-    
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    deploy( keyboard, src_hw_zx_keyboard_asm );
 
-    zx_scancode( _environment, temp->realName, _result );
-    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
-    cpu_store_8bit( _environment, _result, 0xff );
-    cpu_jump( _environment, label );
-    cpu_label( _environment, nokeyLabel );
-    cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_label( _environment, label );
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYPRESSED");
+    cpu_ctoa( _environment );
 
 }
 

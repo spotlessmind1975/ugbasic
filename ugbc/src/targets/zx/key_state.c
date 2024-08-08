@@ -38,26 +38,16 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void target_prepare_finalization( Environment * _environment ) {
+extern char DATATYPE_AS_STRING[][16];
 
-}
+Variable * key_state( Environment * _environment, char * _scancode ) {
 
-void target_finalization( Environment * _environment ) {
+    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
 
-    zx_finalization( _environment );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
 
-    if ( ! _environment->anyProtothread ) {
-        outhead0("PROTOTHREADINIT:" );
-        outline0("RET");
-    }
+    Variable * key = scancode( _environment );
 
-    if ( ! _environment->deployed.keyboard ) {
-        outhead0("KEYBOARDMANAGER:" );
-        outline0("RET");
-    }
+    return variable_compare( _environment, s->name, key->name );
 
-}
-
-void target_analysis( Environment * _environment ) {
-    
 }

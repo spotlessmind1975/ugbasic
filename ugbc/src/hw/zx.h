@@ -227,9 +227,14 @@ void zx_tilemap_enable( Environment * _environment, int _width, int _height, int
 void zx_vscroll( Environment * _environment, int _displacement );
 void zx_text( Environment * _environment, char * _text, char * _text_size );
 void zx_cls( Environment * _environment, char * _pen, char * _paper );
-void zx_inkey( Environment * _environment, char * _pressed, char * _key );
-void zx_scancode( Environment * _environment, char * _pressed, char * _scacode );
+
+void zx_wait_key( Environment * _environment, int _release );
+void zx_key_state( Environment * _environment, char *_scancode, char * _result );
+void zx_scancode( Environment * _environment, char * _scacode );
+void zx_asciicode( Environment * _environment, char * _asciicode );
+void zx_inkey( Environment * _environment, char * _key );
 void zx_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void zx_scanshift( Environment * _environment, char * _shifts );
 void zx_keyshift( Environment * _environment, char * _shifts );
 void zx_clear_key( Environment * _environment );
