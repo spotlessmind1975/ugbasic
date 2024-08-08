@@ -79,85 +79,69 @@ void d32_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 }
 
-void d32_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void d32_inkey( Environment * _environment, char * _key ) {
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_d32_keyboard_asm);
 
-    d32_scancode( _environment, _pressed, _key );
-
-    outline1("LDA %s", _pressed );
-    outline0("CMPA #0" );
-    outline1("BEQ %sskip", label );
-    // outline1("LDA %s", _key );
-    // outline0("ANDA #$80" );
-    // outline0("CMPA #0" );
-    // outline1("BNE %snoascii", label );
-    outline1("LDA %s", _key );
-    outline0("CMPA $011d" );
-    outline1("BNE %sdifferent", label );
-    outline0("INC $011f" );
-    outline0("LDB $011f" );
-    outline0("CMPB KBDRATE" );
-    outline1("BEQ %sascii", label );
-    outline0("LDA #0" );
-    outline1("STA %s", _pressed );
-    outline1("JMP %sdone", label );
-    outhead1("%snoascii", label );
-    outline0("LDA #0" );
-    outline1("STA %s", _key );
-    outline1("JMP %sdone", label );
-    outhead1("%sdifferent", label );
-    outline0("STA $011d" );
-    outhead1("%sascii", label );
-    outline0("LDB #0" );
-    outline0("STB $011f" );
-    outline1("JMP %sdone", label );
-    outhead1("%sskip", label );
-    outline0("LDA #0" );
-    outline0("STA $011d" );
-    outhead1("%sdone", label );
+    outline0("JSR INKEY");
+    outline1("STA %s", _key);
 
 }
 
-void d32_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void d32_wait_key( Environment * _environment, int _release ) {
+
+    deploy( keyboard, src_hw_d32_keyboard_asm );
+
+    if ( _release ) {
+        outline0("JSR WAITKEYRELEASE");
+    } else {
+        outline0("JSR WAITKEY");
+    }
+   
+}
+
+void d32_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( scancode, src_hw_d32_scancode_asm );
+    deploy( keyboard, src_hw_d32_keyboard_asm );
 
-    outline0("LDA #0" );
-    outline1("STA %s", _pressed );
-    outline1("STA %s", _scancode );
+    outline1("LDA %s", _scancode);
+    outline0("JSR KEYSTATE");
+    cpu_ctoa( _environment );
 
-    outline0("LDA KEYPRESS" );
-    outline0("CMPA #0" );
-    outline1("BEQ %snokey", label );
-    outline1("STA %s", _scancode );
-    outline0("LDA #$FF" );
-    outline1("STA %s", _pressed );
-    outhead1("%snokey", label );
+}
 
+void d32_scancode( Environment * _environment, char * _result ) {
+
+    deploy( keyboard, src_hw_d32_keyboard_asm);
+
+    outline0("JSR SCANCODE");
+    outline1("STA %s", _result );
+   
+}
+
+void d32_asciicode( Environment * _environment, char * _result ) {
+
+    deploy( keyboard, src_hw_d32_keyboard_asm);
+
+    outline0("JSR ASCIICODE");
+    outline1("STA %s", _result );
+   
 }
 
 void d32_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
     MAKE_LABEL
 
-    char nokeyLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( nokeyLabel, "%slabel", label );
-    
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    deploy( keyboard, src_hw_d32_keyboard_asm );
 
-    d32_scancode( _environment, temp->realName, _result );
-    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
-    cpu_store_8bit( _environment, _result, 0xff );
-    cpu_jump( _environment, label );
-    cpu_label( _environment, nokeyLabel );
-    cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_label( _environment, label );
+    outline1("LDA %s", _scancode);
+    outline0("JSR KEYPRESSED");
+    cpu_ctoa( _environment );
 
 }
+
 
 void d32_scanshift( Environment * _environment, char * _shifts ) {
 
@@ -169,12 +153,11 @@ void d32_keyshift( Environment * _environment, char * _shifts ) {
 
     MAKE_LABEL
 
-    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(pressed)" );
     Variable * scancode = variable_temporary( _environment, VT_BYTE, "(scancode)" );
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)");
     
-    d32_scancode( _environment, pressed->realName, scancode->realName );
+    d32_scancode( _environment, scancode->realName );
 
     outline1("LDA %s", result->realName );
     outline1("CMPA #$%2.2x", (unsigned char) KEY_SHIFT);

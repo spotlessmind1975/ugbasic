@@ -157,9 +157,14 @@
 
 void d32_xpen( Environment * _environment, char * _destination );
 void d32_ypen( Environment * _environment, char * _destination );
-void d32_inkey( Environment * _environment, char * _pressed, char * _key );
-void d32_scancode( Environment * _environment, char * _pressed, char * _scacode );
+
+void d32_wait_key( Environment * _environment, int _release );
+void d32_key_state( Environment * _environment, char *_scancode, char * _result );
+void d32_scancode( Environment * _environment, char * _scacode );
+void d32_asciicode( Environment * _environment, char * _asciicode );
+void d32_inkey( Environment * _environment, char * _key );
 void d32_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void d32_scanshift( Environment * _environment, char * _shifts );
 void d32_keyshift( Environment * _environment, char * _shifts );
 void d32_clear_key( Environment * _environment );
