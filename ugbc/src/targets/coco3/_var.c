@@ -605,7 +605,7 @@ void variable_cleanup( Environment * _environment ) {
         outline0( "RTS" );
     }
 
-    if ( ! _environment->deployed.scancode ) {
+    if ( ! _environment->deployed.keyboard ) {
         cpu_label( _environment, "KEYBOARDMANAGER" );
         outline0( "RTS" );
     }

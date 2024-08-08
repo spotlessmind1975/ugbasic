@@ -40,40 +40,13 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-Variable * inkey( Environment * _environment ) {
+Variable * key_state( Environment * _environment, char * _scancode ) {
 
-    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of INKEY$)");
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of temporary string)");
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)");
-    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
-    Variable * key = variable_temporary( _environment, VT_CHAR, "(key pressed)");
+    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
 
-    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, " " );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
 
-    variable_store_string(_environment, result->name, resultString );
-    cpu_dswrite( _environment, result->realName );
-    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+    coco3_key_state( _environment, s->realName, result->realName );
 
-    MAKE_LABEL
-
-    char noKeyPressedLabel[MAX_TEMPORARY_STORAGE]; sprintf(noKeyPressedLabel, "%snokeyPressed", label );
-    char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
-
-    coco3_inkey( _environment, key->realName );
-
-    cpu_bveq( _environment, key->realName, noKeyPressedLabel );
-
-    cpu_move_8bit_indirect(_environment, key->realName, address->realName );
-    cpu_dsresize_size(_environment, result->realName, 1 );
-
-    cpu_jump( _environment, finishedLabel );
-
-    cpu_label( _environment, noKeyPressedLabel );
-
-    cpu_dsresize_size(_environment, result->realName, 0 );
-
-    cpu_label( _environment, finishedLabel );
-    
-    return result;
-    
 }
+

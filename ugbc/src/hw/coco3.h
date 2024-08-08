@@ -157,9 +157,14 @@
 
 void coco3_xpen( Environment * _environment, char * _destination );
 void coco3_ypen( Environment * _environment, char * _destination );
-void coco3_inkey( Environment * _environment, char * _pressed, char * _key );
-void coco3_scancode( Environment * _environment, char * _pressed, char * _scacode );
+
+void coco3_wait_key( Environment * _environment, int _release );
+void coco3_key_state( Environment * _environment, char *_scancode, char * _result );
+void coco3_scancode( Environment * _environment, char * _scacode );
+void coco3_asciicode( Environment * _environment, char * _asciicode );
+void coco3_inkey( Environment * _environment, char * _key );
 void coco3_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void coco3_scanshift( Environment * _environment, char * _shifts );
 void coco3_keyshift( Environment * _environment, char * _shifts );
 void coco3_clear_key( Environment * _environment );

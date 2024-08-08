@@ -52,8 +52,6 @@ COCO3TIMER          fdb     $0
 COCO3TIMER2         fdb     $0
 TICKSPERSECOND      fcb     $0
 
-KEYPRESS            fcb     $0
-
 TMPPTR equ $10    ; $23
 TMPPTR2 equ $12    ; $25
 
