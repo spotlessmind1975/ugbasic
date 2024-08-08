@@ -40,11 +40,11 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-Variable * scancode( Environment * _environment ) {
+Variable * asciicode( Environment * _environment ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANCODE)");
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of ASCIICODE)");
 
-    c64_scancode( _environment, result->realName );
+    c64_asciicode( _environment, result->realName );
 
     return result;
 
