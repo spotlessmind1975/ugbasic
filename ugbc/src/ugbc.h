@@ -1351,6 +1351,7 @@ typedef struct _ScreenMode {
 
 typedef struct _Embedded {
 
+    int cpu_ctoa;
     int cpu_beq;
     int cpu_bneq;
     int cpu_busy_wait;
@@ -1731,6 +1732,8 @@ typedef struct _InputConfig {
     int size;
     char cursor;
     char rate;
+    char latency;
+    char release;
     char delay;
 
 } InputConfig;
@@ -3126,6 +3129,11 @@ typedef struct _Environment {
 #define CRITICAL_ARRAY_DATATYPE_WRONG( v ) CRITICAL2("E297 - wrong datatype of array", v );
 #define CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( v1, v2 ) CRITICAL3("E298 - cannot SWAP variables of different type", v1, v2 );
 #define CRITICAL_AT_UNSUPPORTED( v1, v2 ) CRITICAL3("E298 - cannot AT variables of not string type", v1, v2 );
+#define CRITICAL_INVALID_INPUT_LATENCY( v ) CRITICAL2i("E299 - invalid value for INPUT LATENCY", v );
+#define CRITICAL_INVALID_INPUT_LATENCY_MS( v ) CRITICAL2i("E300 - invalid milliseconds for INPUT LATENCY", v );
+#define CRITICAL_INVALID_INPUT_DELAY_MS( v ) CRITICAL2i("E301 - invalid milliseconds for INPUT DELAY", v );
+#define CRITICAL_INVALID_INPUT_RELEASE( v ) CRITICAL2i("E302 - invalid value for INPUT RELEASE", v );
+#define CRITICAL_INVALID_INPUT_RELEASE_MS( v ) CRITICAL2i("E303 - invalid milliseconds for INPUT RELEASE", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -4166,6 +4174,7 @@ void                    add_complex_array( Environment * _environment, char * _v
 void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 char *                  address_displacement( Environment * _environment, char * _address, char * _displacement );
 void                    allow( Environment * _environment );
+Variable *              asciicode( Environment * _environment );
 
 //----------------------------------------------------------------------------
 // *B*
@@ -4485,7 +4494,7 @@ Variable *              joyy_vars( Environment * _environment, char * _port );
 // *K*
 //----------------------------------------------------------------------------
 
-Variable *              keystate( Environment * _environment, char * _scancode );
+Variable *              key_state( Environment * _environment, char * _scancode );
 Variable *              keyshift( Environment * _environment );
 Variable *              key_pressed( Environment * _environment, int _scancode );
 Variable *              key_pressed_var( Environment * _environment, char * _scancode );

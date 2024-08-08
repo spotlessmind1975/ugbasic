@@ -264,6 +264,10 @@ AS { RETURN(AS,1); }
 As { RETURN(AS,1); }
 ASC { RETURN(ASC,1); }
 Ax { RETURN(ASC,1); }
+ASCII { RETURN(ASCII,1); }
+Ascii { RETURN(ASCII,1); }
+ASCIICODE { RETURN(ASCIICODE,1); }
+Ascx { RETURN(ASCII,1); }
 ASM { RETURN(ASM,1); }
 Asm { RETURN(ASM,1); }
 ATLAS { RETURN(ATLAS,1); }
@@ -840,6 +844,8 @@ KOTO { RETURN(KOTO,1); }
 %{ /* --------------------------------- L --------------------------------- */ %}
 
 L { RETURN(L,1); }
+LATENCY { RETURN(LATENCY,1); }
+Lay { RETURN(LATENCY,1); }
 LAVENDER { RETURN(LAVENDER,1); }
 La { RETURN(LAVENDER,1); }
 LAYER { RETURN(LAYER,1); }

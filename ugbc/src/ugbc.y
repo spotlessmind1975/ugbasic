@@ -96,7 +96,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
-%token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT
+%token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -4019,6 +4019,12 @@ exponential:
     | SCAN CODE {
         $$ = scancode( _environment )->name;
     }
+    | ASCIICODE {
+        $$ = asciicode( _environment )->name;
+    }
+    | ASCII CODE {
+        $$ = asciicode( _environment )->name;
+    }
     | KEY PRESSED OP OP_HASH const_expr CP {
         $$ = key_pressed( _environment, $5 )->name;
     }
@@ -4026,10 +4032,10 @@ exponential:
         $$ = key_pressed_var( _environment, $4 )->name;
     }
     | KEY STATE OP expr CP {
-        $$ = keystate( _environment, $4 )->name;
+        $$ = key_state( _environment, $4 )->name;
     }
     | KEYSTATE OP expr CP {
-        $$ = keystate( _environment, $3 )->name;
+        $$ = key_state( _environment, $3 )->name;
     }
     | SCANSHIFT {
         $$ = scanshift( _environment )->name;
@@ -8076,6 +8082,19 @@ define_definition :
         }
         ((struct _Environment *)_environment)->inputConfig.cursor = $3;
     }    
+    | INPUT LATENCY const_expr  {
+        if ( $3 <= 0 || $3 >= 256 ) {
+            CRITICAL_INVALID_INPUT_LATENCY( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.latency = $3;
+    }
+    | INPUT LATENCY const_expr milliseconds {
+        int latency = $3 / 20;
+        if ( latency <= 0 || latency >= 256 ) {
+            CRITICAL_INVALID_INPUT_LATENCY_MS( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.latency = latency;
+    }
     | INPUT RATE const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_RATE( $3 );
@@ -8083,10 +8102,30 @@ define_definition :
         ((struct _Environment *)_environment)->inputConfig.rate = $3;
     }
     | INPUT DELAY const_expr {
-        if ( $3 <= 0 ) {
+        if ( $3 <= 0 || $3 >= 256 ) {
             CRITICAL_INVALID_INPUT_DELAY( $3 );
         }
         ((struct _Environment *)_environment)->inputConfig.delay = $3;
+    }
+    | INPUT DELAY const_expr milliseconds {
+        int delay = $3 / 20;
+        if ( delay <= 0 || delay >= 256 ) {
+            CRITICAL_INVALID_INPUT_DELAY_MS( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.delay = delay;
+    }
+    | INPUT RELEASE const_expr {
+        if ( $3 <= 0 || $3 >= 256 ) {
+            CRITICAL_INVALID_INPUT_RELEASE( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.release = $3;
+    }
+    | INPUT RELEASE const_expr milliseconds {
+        int release = $3 / 20;
+        if ( release <= 0 || release >= 256 ) {
+            CRITICAL_INVALID_INPUT_RELEASE_MS( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.release = release;
     }
     | SCREEN MODE UNIQUE {
         ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 1;
@@ -10673,6 +10712,10 @@ int main( int _argc, char *_argv[] ) {
     _environment->temporaryPath = get_default_temporary_path( );
 
     _environment->protothreadConfig.count = PROTOTHREAD_DEFAULT_COUNT;
+
+    _environment->inputConfig.latency = 350 / 20;
+    _environment->inputConfig.delay = 75 / 20;
+    _environment->inputConfig.release = 75 / 20;
 
 #if defined(__atari__) 
     _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
