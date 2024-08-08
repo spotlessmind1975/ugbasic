@@ -132,9 +132,14 @@
 
 void c64reu_xpen( Environment * _environment, char * _destination );
 void c64reu_ypen( Environment * _environment, char * _destination );
-void c64reu_inkey( Environment * _environment, char * _pressed, char * _key );
-void c64reu_scancode( Environment * _environment, char * _pressed, char * _scacode );
+
+void c64reu_wait_key( Environment * _environment, int _release );
+void c64reu_key_state( Environment * _environment, char *_scancode, char * _result );
+void c64reu_scancode( Environment * _environment, char * _scacode );
+void c64reu_asciicode( Environment * _environment, char * _asciicode );
+void c64reu_inkey( Environment * _environment, char * _key );
 void c64reu_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void c64reu_scanshift( Environment * _environment, char * _shifts );
 void c64reu_keyshift( Environment * _environment, char * _shifts );
 void c64reu_clear_key( Environment * _environment );
