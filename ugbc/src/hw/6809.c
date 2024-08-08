@@ -217,6 +217,23 @@ static void cpu6809_greater_than_const( Environment * _environment, char *_sourc
     outline1("STB %s", _other );
 }
 
+void cpu_ctoa( Environment * _environment ) {
+    
+    MAKE_LABEL
+
+    inline( cpu_ctoa )
+
+        outline1("BCS %syes", label );
+        outline0("LDA #0");
+        outline1("JMP %s", label );
+        outhead1("%syes:", label );
+        outline0("LDA #$ff");
+        outhead1("%s:", label );
+
+    no_embedded( cpu_ctoa );
+
+}
+
 /**
  * @brief <i>CPU 6809</i>: emit code to make long conditional jump
  *
