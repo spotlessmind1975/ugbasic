@@ -153,9 +153,13 @@
 
 #define MAX_AUDIO_CHANNELS  3
 
-void msx1_inkey( Environment * _environment, char * _pressed, char * _key );
-void msx1_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void msx1_wait_key( Environment * _environment, int _release );
+void msx1_key_state( Environment * _environment, char *_scancode, char * _result );
+void msx1_scancode( Environment * _environment, char * _scacode );
+void msx1_asciicode( Environment * _environment, char * _asciicode );
+void msx1_inkey( Environment * _environment, char * _key );
 void msx1_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void msx1_scanshift( Environment * _environment, char * _shifts );
 void msx1_keyshift( Environment * _environment, char * _shifts );
 void msx1_clear_key( Environment * _environment );

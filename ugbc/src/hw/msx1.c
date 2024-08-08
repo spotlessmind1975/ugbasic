@@ -52,30 +52,21 @@ static RGBi SYSTEM_PALETTE[] = {
 
 #ifdef __msx1__
 
-void msx1_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void msx1_joy( Environment * _environment, int _port, char * _value ) {
 
-    MAKE_LABEL
+    deploy( joystick, src_hw_msx1_joystick_asm );
 
-    deploy( scancode, src_hw_msx1_scancode_asm );
+    switch ( _port ) {
+        case 0:
+            outline0("LD A, (JOYSTICK0)");
+            outline1("LD (%s), A", _value);
+            break;
+        case 1:
+            outline0("LD A, (JOYSTICK1)");
+            outline1("LD (%s), A", _value);
+            break;
+    }
 
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _pressed );
-    outline1("LD (%s), A", _key );
-    outline0("CALL SCANCODE");
-    outline0("CP 0");
-    outline1("JR Z, %snokey", label );
-    outline0("LD B, A");
-    outline1("LD (%s), A", _key );
-    outline0("LD A, $FF");
-    outline1("LD (%s), A", _pressed );
-    // outhead1("%srelease:", label );
-    // outline0("CALL SCANCODE");
-    // outline0("CP B");
-    // outline1("JR Z, %srelease", label );
-    // outhead1("%snopkey:", label );
-    // outline0("NOP");
-    outhead1("%snokey:", label );
-   
 }
 
 void msx1_joy_vars( Environment * _environment, char * _port, char * _value ) {
@@ -98,65 +89,69 @@ void msx1_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
 }
 
-void msx1_joy( Environment * _environment, int _port, char * _value ) {
+void msx1_inkey( Environment * _environment, char * _key ) {
 
-    deploy( joystick, src_hw_msx1_joystick_asm );
+    deploy( keyboard, src_hw_msx1_keyboard_asm);
 
-    switch ( _port ) {
-        case 0:
-            outline0("LD A, (JOYSTICK0)");
-            outline1("LD (%s), A", _value);
-            break;
-        case 1:
-            outline0("LD A, (JOYSTICK1)");
-            outline1("LD (%s), A", _value);
-            break;
-    }
+    outline0("CALL INKEY");
+    outline1("LD (%s), A", _key);
 
 }
 
-void msx1_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void msx1_wait_key( Environment * _environment, int _release ) {
+
+    deploy( keyboard, src_hw_msx1_keyboard_asm );
+
+    if ( _release ) {
+        outline0("CALL WAITKEYRELEASE");
+    } else {
+        outline0("CALL WAITKEY");
+    }
+   
+}
+
+void msx1_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( scancode, src_hw_msx1_scancode_asm );
+    deploy( keyboard, src_hw_msx1_keyboard_asm );
 
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _scancode );
-    outline1("LD (%s), A", _pressed );
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYSTATE");
+    cpu_ctoa( _environment );
+
+}
+
+void msx1_scancode( Environment * _environment, char * _result ) {
+
+    deploy( keyboard, src_hw_msx1_keyboard_asm);
+
     outline0("CALL SCANCODE");
-    outline0("CP 0");
-    outline1("JR Z,%snokey", label);
-    outline1("LD (%s), A", _scancode );
-    outline0("LD A, $FF");
-    outline1("LD (%s), A", _pressed );
-    outhead1("%snokey:", label );
+    outline1("LD (%s), A", _result );
+   
+}
+
+void msx1_asciicode( Environment * _environment, char * _result ) {
+
+    deploy( keyboard, src_hw_msx1_keyboard_asm);
+
+    outline0("CALL ASCIICODE");
+    outline1("LD A, (%s)", _result );
    
 }
 
 void msx1_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
-    deploy( scancode, src_hw_msx1_scancode_asm );
-
     MAKE_LABEL
 
-    char nokeyLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( nokeyLabel, "%slabel", label );
-    
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    deploy( keyboard, src_hw_msx1_keyboard_asm );
 
-    cpu_call( _environment, "SCANCODEKEYPRESS" );
-    outline0( "LD A, B" );
-    outline1( "LD (%s), A", _result );
-    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
-    cpu_store_8bit( _environment, _result, 0xff );
-    cpu_jump( _environment, label );
-    cpu_label( _environment, nokeyLabel );
-    cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_label( _environment, label );
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYPRESSED");
+    cpu_ctoa( _environment );
 
 }
+
 
 void msx1_scanshift( Environment * _environment, char * _shifts ) {
 

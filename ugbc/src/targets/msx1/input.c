@@ -102,9 +102,8 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     print( _environment, underscore->name, 0 );
     cmove_direct( _environment, -1, 0 );
 
-    msx1_inkey( _environment, pressed->realName, key->realName );
+    msx1_inkey( _environment, key->realName );
 
-    cpu_bveq( _environment, pressed->realName, repeatLabel );
     cpu_bveq( _environment, key->realName, repeatLabel );
 
     cpu_compare_8bit( _environment, key->realName, backspace->realName, pressed->realName, 1 );

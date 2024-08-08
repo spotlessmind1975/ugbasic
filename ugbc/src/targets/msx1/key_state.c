@@ -40,40 +40,11 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-Variable * input_string( Environment * _environment, char * _size ) {
+Variable * key_state( Environment * _environment, char * _scancode ) {
 
-    MAKE_LABEL
-    
-    char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
+    Variable * scancode = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0);
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY STATE)");
 
-    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of INPUT$)");
-    Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset inside INPUT$)");
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of result of INPUT$)");
-    Variable * size = variable_retrieve_or_define( _environment, _size, VT_BYTE, 0 );
-    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
-    Variable * key = variable_temporary( _environment, VT_CHAR, "(key pressed)");
-
-    cpu_dsdescriptor( _environment, result->realName, address->realName, pressed->realName );
-
-    cpu_store_8bit( _environment, offset->realName, 0 );
-
-    cpu_move_8bit( _environment, size->realName, result->realName );
-
-    cpu_label( _environment, repeatLabel );
-
-    msx1_inkey( _environment, key->realName );
-
-    cpu_bveq( _environment, key->realName, repeatLabel );
-
-    cpu_move_8bit_indirect_with_offset2( _environment, key->realName, address->realName, offset->realName );
-
-    cpu_inc( _environment, offset->realName );
-
-    cpu_compare_8bit( _environment, offset->realName, size->realName, pressed->realName, 1 );
-
-    cpu_bveq( _environment, pressed->realName, repeatLabel );
-
-    return result;
+    msx1_key_state( _environment, scancode->realName, result->realName );
 
 }
-
