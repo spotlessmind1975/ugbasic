@@ -48,6 +48,7 @@ PC128TIMER  set *-2       ; (variable within code)
     TFR   A,DP            ; for ugbc routines
     JSR   MUSICPLAYER
     JSR   TIMERMANAGER
+    JSR KEYBOARDMANAGER
     PULS  D
     JMP   >PC128IRQDEF    ; jump to next ISR
 PC128IRQN   set *-2       ; (variable within code)

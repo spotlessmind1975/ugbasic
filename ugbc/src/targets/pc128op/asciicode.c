@@ -40,9 +40,12 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-Variable * keystate( Environment * _environment, char * _scancode ) {
+Variable * asciicode( Environment * _environment ) {
 
-    return key_pressed_var( _environment, _scancode );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of ASCIICODE)");
 
+    pc128op_asciicode( _environment, result->realName );
+
+    return result;
+    
 }
-

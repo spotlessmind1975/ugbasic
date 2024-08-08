@@ -161,11 +161,16 @@
 
 void pc128op_xpen( Environment * _environment, char * _destination );
 void pc128op_ypen( Environment * _environment, char * _destination );
-void pc128op_inkey( Environment * _environment, char * _pressed, char * _key );
-void pc128op_scancode( Environment * _environment, char * _pressed, char * _scacode );
+
+void pc128op_wait_key( Environment * _environment, int _release );
+void pc128op_key_state( Environment * _environment, char *_scancode, char * _result );
+void pc128op_scancode( Environment * _environment, char * _scacode );
+void pc128op_asciicode( Environment * _environment, char * _asciicode );
+void pc128op_inkey( Environment * _environment, char * _key );
+void pc128op_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void pc128op_scanshift( Environment * _environment, char * _shifts );
 void pc128op_keyshift( Environment * _environment, char * _shifts );
-void pc128op_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void pc128op_clear_key( Environment * _environment );
 void pc128op_busy_wait( Environment * _environment, char * _timing );
 void pc128op_irq_at( Environment * _environment, char * _label );

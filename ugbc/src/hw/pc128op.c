@@ -79,76 +79,81 @@ void pc128op_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 }
 
-void pc128op_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void pc128op_inkey( Environment * _environment, char * _key ) {
 
-    deploy_preferred( scancode, src_hw_pc128op_scancode_asm );
+   _environment->bitmaskNeeded = 1;
+
+    deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm);
+
+    outline0("JSR INKEY");
+    outline1("STA %s", _key);
+
+}
+
+void pc128op_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm );
+
+    if ( _release ) {
+        outline0("JSR WAITKEYRELEASE");
+    } else {
+        outline0("JSR WAITKEY");
+    }
+   
+}
+
+void pc128op_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    outline0("LDA #0" );
-    outline1("STA %s", _pressed );
-    outline1("STA %s", _key );
+    deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm );
 
-    outline0("JSR INKEY" );
-    outline0("CMPB #$00" );
-    outline1("BEQ %snokey", label );
-    outline1("STB %s", _key );
-    outline0("LDA #$FF" );
-    outline1("STA %s", _pressed );
-    outhead1("%snokey", label );
+    outline1("LDA %s", _scancode);
+    outline0("JSR KEYSTATE");
+    cpu_ctoa( _environment );
 
-    outline1("LDA %s", _pressed );
-    outline0("CMPA #0" );
-    outline1("BEQ %sskip", label );
-    outline1("LDA %s", _key );
-    outline0("ANDA #$80" );
-    outline0("CMPA #0" );
-    outline1("BNE %snoascii", label );
-    outline1("LDA %s", _key );
-    outline0("CMPA $011d" );
-    outline1("BNE %sdifferent", label );
-    outline0("INC $011f" );
-    outline0("LDB $011f" );
-    outline0("CMPB #$7f" );
-    outline1("BEQ %sascii", label );
-    outline0("LDA #0" );
-    outline1("STA %s", _pressed );
-    outline1("JMP %sdone", label );
-    outhead1("%snoascii", label );
-    outline0("LDA #0" );
-    outline1("STA %s", _key );
-    outline1("JMP %sdone", label );
-    outhead1("%sdifferent", label );
-    outline0("STA $011d" );
-    outhead1("%sascii", label );
-    outline0("LDB #0" );
-    outline0("STB $011f" );
-    outline1("JMP %sdone", label );
-    outhead1("%sskip", label );
-    outline0("LDA #0" );
-    outline0("STA $011d" );
-    outhead1("%sdone", label );
 }
 
-void pc128op_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void pc128op_scancode( Environment * _environment, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm);
+
+    outline0("JSR SCANCODE");
+    outline1("STA %s", _result );
+   
+}
+
+void pc128op_asciicode( Environment * _environment, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm);
+
+    outline0("JSR ASCIICODE");
+    outline1("STA %s", _result );
+   
+}
+
+void pc128op_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    deploy_preferred( scancode, src_hw_pc128op_scancode_asm );
+    deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm );
 
-    outline0("LDA #0" );
-    outline1("STA %s", _pressed );
-    outline1("STA %s", _scancode );
-
-    outline0("JSR SCANCODE" );
-    outline0("CMPB #$FF" );
-    outline1("BEQ %snokey", label );
-    outline1("STB %s", _scancode );
-    outline0("LDA #$FF" );
-    outline1("STA %s", _pressed );
-    outhead1("%snokey", label );
+    outline1("LDA %s", _scancode);
+    outline0("JSR KEYPRESSED");
+    cpu_ctoa( _environment );
 
 }
+
 
 void pc128op_scanshift( Environment * _environment, char * _shifts ) {
 
@@ -160,12 +165,9 @@ void pc128op_keyshift( Environment * _environment, char * _shifts ) {
 
     MAKE_LABEL
 
-    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(pressed)" );
     Variable * scancode = variable_temporary( _environment, VT_BYTE, "(scancode)" );
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)");
-    
-    pc128op_scancode( _environment, pressed->realName, scancode->realName );
+    pc128op_scancode( _environment, scancode->realName );
 
 }
 
@@ -217,25 +219,6 @@ void pc128op_follow_irq( Environment * _environment ) {
 
     outline0("JMP [PC128IRQO]" );
     
-}
-
-void pc128op_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
-
-    MAKE_LABEL
-
-    deploy_preferred( scancode, src_hw_pc128op_scancode_asm );
-
-    outline1("LDA %s", _scancode );
-    outline0("JSR KEYPRESSED");
-    outline1("BEQ %snopressed", label );
-    outline0("LDA #$ff" );
-    outline1("STA %s", _result );
-    outline1("BRA %sfinish", label );
-    outhead1("%snopressed", label );
-    outline0("LDA #0" );
-    outline1("STA %s", _result );
-    outhead1("%sfinish", label );
-
 }
 
 void pc128op_joystick_semivars( Environment * _environment, char * _joystick, char * _result ) {
