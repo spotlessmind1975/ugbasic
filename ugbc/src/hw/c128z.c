@@ -41,71 +41,66 @@
 
 #ifdef __c128z__
 
-void c128z_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void c128z_inkey( Environment * _environment, char * _key ) {
 
-    deploy( scancode, src_hw_c128z_scancode_asm);
-
-    MAKE_LABEL
-
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _pressed );
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _key );
+    deploy( keyboard, src_hw_c128z_keyboard_asm);
 
     outline0("CALL INKEY");
-
-    outline0("CMP 0");
-    outline1("JR Z, %snokey", label );
-
-    outline1("LD (%s), A", _key );
-    outline0("LD A, $ff");
-    outline1("LD (%s), A", _pressed );
-    
-    outhead1("%snokey:", label );
+    outline1("LD (%s), A", _key);
 
 }
 
-void c128z_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void c128z_wait_key( Environment * _environment, int _release ) {
 
-    deploy( scancode, src_hw_c128z_scancode_asm);
+    deploy( keyboard, src_hw_c128z_keyboard_asm );
+
+    if ( _release ) {
+        outline0("CALL WAITKEYRELEASE");
+    } else {
+        outline0("CALL WAITKEY");
+    }
+   
+}
+
+void c128z_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
     MAKE_LABEL
 
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _pressed );
-    outline0("LD A, $0");
-    outline1("LD (%s), A", _scancode );
+    deploy( keyboard, src_hw_c128z_keyboard_asm );
+
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYSTATE");
+    cpu_ctoa( _environment );
+
+}
+
+void c128z_scancode( Environment * _environment, char * _result ) {
+
+    deploy( keyboard, src_hw_c128z_keyboard_asm);
 
     outline0("CALL SCANCODE");
+    outline1("LD (%s), A", _result );
+   
+}
 
-    outline0("CMP 0");
-    outline1("JR Z, %snokey", label );
+void c128z_asciicode( Environment * _environment, char * _result ) {
 
-    outline1("LD (%s), A", _scancode );
-    outline0("LD A, $ff");
-    outline1("LD (%s), A", _pressed );
-    
-    outhead1("%snokey:", label );
+    deploy( keyboard, src_hw_c128z_keyboard_asm);
 
+    outline0("CALL ASCIICODE");
+    outline1("LD A, (%s)", _result );
+   
 }
 
 void c128z_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
     MAKE_LABEL
 
-    char nokeyLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( nokeyLabel, "%slabel", label );
-    
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    deploy( keyboard, src_hw_c128z_keyboard_asm );
 
-    c128z_scancode( _environment, temp->realName, _result );
-    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
-    cpu_store_8bit( _environment, _result, 0xff );
-    cpu_jump( _environment, label );
-    cpu_label( _environment, nokeyLabel );
-    cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_label( _environment, label );
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYPRESSED");
+    cpu_ctoa( _environment );
 
 }
 

@@ -153,11 +153,15 @@
 
 #define MAX_AUDIO_CHANNELS  3
 
-void c128z_inkey( Environment * _environment, char * _pressed, char * _key );
-void c128z_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void c128z_wait_key( Environment * _environment, int _release );
+void c128z_key_state( Environment * _environment, char *_scancode, char * _result );
+void c128z_scancode( Environment * _environment, char * _scacode );
+void c128z_asciicode( Environment * _environment, char * _asciicode );
+void c128z_inkey( Environment * _environment, char * _key );
+void c128z_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void c128z_scanshift( Environment * _environment, char * _shifts );
 void c128z_keyshift( Environment * _environment, char * _shifts );
-void c128z_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void c128z_clear_key( Environment * _environment );
 void c128z_irq_at( Environment * _environment, char * _label );
 void c128z_follow_irq( Environment * _environment );

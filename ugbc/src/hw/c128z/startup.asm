@@ -45,6 +45,11 @@ C128ZIM2TABLE:
 IRQSVC:
     PUSH AF
     PUSH BC
+
+@IF deployed.keyboard
+    CALL KEYBOARDMANAGER
+@ENDIF
+
     LD BC, $D019
     LD A, $FF
     OUT (C), A
