@@ -76,6 +76,23 @@ void z80_init( Environment * _environment ) {
 
 }
 
+void z80_ctoa( Environment * _environment ) {
+
+    inline( cpu_beq )
+
+        MAKE_LABEL
+
+        outline1("JR C, %syes", label );
+        outline0("LD A, 0");
+        outline1("JP %s", label );
+        outhead1("%syes:", label );
+        outline0("LD A, $ff");
+        outhead1("%s:", label );
+
+    no_embedded( cpu_beq )
+
+}
+
 /**
  * @brief <i>Z80</i>: emit code to make long conditional jump
  * 

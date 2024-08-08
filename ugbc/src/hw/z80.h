@@ -53,6 +53,7 @@
 
 void z80_init( Environment * _environment );
 
+void z80_ctoa( Environment * _environment );
 void z80_beq( Environment * _environment, char * _label );
 void z80_bneq( Environment * _environment, char * _label );
 void z80_busy_wait( Environment * _environment, char * _timing );
@@ -351,6 +352,7 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 void z80_float_single_log( Environment * _environment, char * _value, char * _result );
 void z80_float_single_exp( Environment * _environment, char * _value, char * _result );
 
+#define cpu_ctoa( _environment ) z80_ctoa( _environment )
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_busy_wait( _environment,  _timing  ) z80_busy_wait( _environment,  _timing  )
