@@ -40,7 +40,7 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-Variable * keystate( Environment * _environment, char * _scancode ) {
+Variable * key_state( Environment * _environment, char * _scancode ) {
 
     return key_pressed_var( _environment, _scancode );
 
