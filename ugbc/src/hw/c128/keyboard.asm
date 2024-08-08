@@ -40,6 +40,60 @@ SCANCODEREAD:
 
 SCANCODEPTR = $9
 
+KEYBOARDQUEUE:          .RES 10,$FF
+KEYBOARDQUEUERPOS:       .BYTE $00
+KEYBOARDQUEUEWPOS:       .BYTE $00
+KEYBOARDACTUAL:         .BYTE $FF
+
+; ----------------------------------------------------------------------------
+; KEYBOARDPUSH
+; ----------------------------------------------------------------------------
+; This routine can be called to push a character in front of the keyboard
+; queue. This will put the character in the actual KEYBOARDQUEUEWPOS position
+; and increment the KEYBOARDQUEUEWPOS by 1. If the KEYBOARDQUEUEWPOS reachs the
+; end of the queue, it will return to 0. Moreover, if it is already 
+; KEYBOARDQUEUERPOS then nothing will be done, and the character will be lost.
+;
+
+KEYBOARDPUSH:
+    LDX KEYBOARDQUEUEWPOS
+    ; CPX KEYBOARDQUEUERPOS
+    ; BEQ KEYBOARDPUSHLOST
+    STA KEYBOARDQUEUE, X
+    INX
+    CPX #$0A
+    BNE KEYBOARDPUSHDONE
+    LDX #0
+KEYBOARDPUSHDONE:
+    STX KEYBOARDQUEUEWPOS
+KEYBOARDPUSHLOST:
+    RTS
+
+; ----------------------------------------------------------------------------
+; KEYBOARDPOP
+; ----------------------------------------------------------------------------
+; This routine can be called to pop a character from the keyboard queue. This 
+; will get the character from the actual KEYBOARDQUEUERPOS position
+; and increment the KEYBOARDQUEUERPOS by 1. If the KEYBOARDQUEUERPOS reachs the
+; end of the queue, it will return to 0. Moreover, if it is already 
+; KEYBOARDQUEUEWPOS then nothing will be get and it will be returned a $FF.
+
+KEYBOARDPOP:
+    LDX KEYBOARDQUEUERPOS
+    CPX KEYBOARDQUEUEWPOS
+    BEQ KEYBOARDPOPNONE
+    LDA KEYBOARDQUEUE, X
+    INX
+    CPX #$0A
+    BNE KEYBOARDPOPGOT
+    LDX #0
+KEYBOARDPOPGOT:
+    STX KEYBOARDQUEUERPOS
+    RTS
+KEYBOARDPOPNONE:
+    LDA #$FF
+    RTS
+
 ; ----------------------------------------------------------------------------
 ; KEYBOARDMANAGER
 ; ----------------------------------------------------------------------------
@@ -54,7 +108,7 @@ SCANCODEPTR = $9
 ;   Input: A - bitmap of key pressed
 ;          X - starting value of key pressed
 ;   Ouput: -
-;   Changes: KEYBOARDACTUAL, KEYBOARDPREVIOUS, KEYBOARDASFSTATE
+;   Changes: KEYBOARDACTUAL, KEYBOARDASFSTATE
 
 KEYBOARDPRESSED: .BYTE 0
 
@@ -85,21 +139,18 @@ KEYBOARDMANAGERSINGLEKEYL1:
     
     ; No key has been detected, really.
 
-    LDA #$FF
-    STA KEYBOARDACTUAL
+    ; LDA #$FF
+    ; STA KEYBOARDACTUAL
 
     RTS
 
 KEYBOARDMANAGERSINGLEKEYPRESSED:
 
-    ; Save the previous key pressed.
-
-    LDA KEYBOARDACTUAL
-    STA KEYBOARDPREVIOUS 
-
-    ; Save the actual key pressed.
+    ; Save the actual key pressed
+    ; in the keyboard queue.
     
-    STX KEYBOARDACTUAL
+    TXA
+    JSR KEYBOARDPUSH
 
     INC KEYBOARDPRESSED
 
@@ -216,19 +267,37 @@ SCANCODEFULLL22:
 	LDA #$FF
 	STA $D02F
 
+    ; Increase the elapsed timer.
+
+    INC KEYBOARDELAPSED
+
+    ; If is present one key in the
+    ; queue, we ignore the pressing key and
+    ; try to consume the queue in a rapid way.
+
+    SEC
+    LDA KEYBOARDQUEUEWPOS
+    SBC KEYBOARDQUEUERPOS
+    BEQ KEYBOARDMANAGERDONE2
+
+    JSR KEYBOARDPOP
+    STA KEYBOARDACTUAL
+    LDA #2
+    STA KEYBOARDASFSTATE
+    LDA #$FF
+    STA KEYBOARDELAPSED
+    JMP KEYBOARDMANAGERDONEYES
+
+KEYBOARDMANAGERDONE2:
+
     ; If no key has been pressed, reset the KEYBOARDACTUAL
 
     LDA KEYBOARDPRESSED
     BNE SCANCODEFULL23
-    LDA KEYBOARDACTUAL
-    STA KEYBOARDPREVIOUS
     LDA #$FF
     STA KEYBOARDACTUAL
 SCANCODEFULL23:
-
-    ; Increase the elapsed timer.
-
-    INC KEYBOARDELAPSED
+KEYBOARDMANAGERDONEYES:
 
     ; Update the ASF.
 
@@ -243,9 +312,6 @@ SCANCODEFULL23:
 	PLA
 
 	RTS
-
-KEYBOARDACTUAL:          .BYTE $FF
-KEYBOARDPREVIOUS:        .BYTE $FF
 
 ; ----------------------------------------------------------------------------
 ; KEYBOARDDETECT
@@ -272,11 +338,6 @@ KEYBOARDDETECT:
     CMP #$FF
     BEQ KEYBOARDDETECTNONE
 
-    ; A key has been pressed. Set the carry flag and check
-    ; if it is the same as the previous pressed.
-
-    ; CMP KEYBOARDPREVIOUS
-    
     SEC
 
     RTS
