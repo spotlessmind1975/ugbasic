@@ -145,9 +145,14 @@
 
 void atari_xpen( Environment * _environment, char * _destination );
 void atari_ypen( Environment * _environment, char * _destination );
-void atari_inkey( Environment * _environment, char * _pressed, char * _key );
-void atari_scancode( Environment * _environment, char * _pressed, char * _scacode );
+
+void atari_wait_key( Environment * _environment, int _release );
+void atari_key_state( Environment * _environment, char *_scancode, char * _result );
+void atari_scancode( Environment * _environment, char * _scacode );
+void atari_asciicode( Environment * _environment, char * _asciicode );
+void atari_inkey( Environment * _environment, char * _key );
 void atari_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void atari_scanshift( Environment * _environment, char * _shifts );
 void atari_keyshift( Environment * _environment, char * _shifts );
 void atari_clear_key( Environment * _environment );

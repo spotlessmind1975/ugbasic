@@ -69,7 +69,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_store_8bit( _environment, enter->realName, 155 );
     cpu_store_8bit( _environment, offset->realName, 0 );
-    cpu_store_8bit( _environment, backspace->realName, 126 );
+    cpu_store_8bit( _environment, backspace->realName, 8 );
     cpu_store_8bit( _environment, space->realName, 32 );
     cpu_store_8bit( _environment, zero->realName, 0 );
     cpu_store_8bit( _environment, comma->realName, _environment->inputConfig.separator == 0 ? INPUT_DEFAULT_SEPARATOR : _environment->inputConfig.separator );
@@ -101,9 +101,8 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     print( _environment, underscore->name, 0 );
     cmove_direct( _environment, -1, 0 );
 
-    atari_inkey( _environment, pressed->realName, key->realName );
+    atari_inkey( _environment, key->realName );
 
-    cpu_bveq( _environment, pressed->realName, repeatLabel );
     cpu_bveq( _environment, key->realName, repeatLabel );
 
     cpu_compare_8bit( _environment, key->realName, backspace->realName, pressed->realName, 1 );

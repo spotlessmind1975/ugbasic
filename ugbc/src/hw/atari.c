@@ -63,54 +63,76 @@ void atari_ypen( Environment * _environment, char * _destination ) {
    
 }
 
-void atari_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void atari_inkey( Environment * _environment, char * _key ) {
 
-    MAKE_LABEL
+    _environment->bitmaskNeeded = 1;
 
-    deploy( scancode, src_hw_atari_scancode_asm);
+    deploy( keyboard, src_hw_atari_keyboard_asm);
 
     outline0("JSR INKEY");
-
-    outline1("STX %s", _pressed );
-    outline1("STA %s", _key );
+    outline1("STA %s", _key);
 
 }
 
-void atari_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void atari_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_atari_keyboard_asm );
+
+    if ( _release ) {
+        outline0("JSR WAITKEYRELEASE");
+    } else {
+        outline0("JSR WAITKEY");
+    }
+   
+}
+
+void atari_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    deploy( scancode, src_hw_atari_scancode_asm);
+    deploy( keyboard, src_hw_atari_keyboard_asm );
+
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYSTATE");
+    cpu_ctoa( _environment );
+
+}
+
+void atari_scancode( Environment * _environment, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_atari_keyboard_asm);
 
     outline0("JSR SCANCODE");
+    outline1("STA %s", _result );
+   
+}
 
-    outline1("STX %s", _pressed );
-    outline1("STY %s", _scancode );
+void atari_asciicode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_atari_keyboard_asm);
+
+    outline0("JSR ASCIICODE");
+    outline1("STA %s", _result );
+   
 }
 
 void atari_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
-    deploy( scancode, src_hw_atari_scancode_asm);
-
     MAKE_LABEL
 
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    deploy( keyboard, src_hw_atari_keyboard_asm );
 
-    outline0("JSR SCANCODEWITHDELAY");
-
-    outline1("STY %s", temp->realName );    
-
-    char nokeyLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( nokeyLabel, "%slabel", label );
-    
-    cpu_compare_8bit( _environment, temp->realName, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
-    cpu_store_8bit( _environment, _result, 0xff );
-    cpu_jump( _environment, label );
-    cpu_label( _environment, nokeyLabel );
-    cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_label( _environment, label );
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYPRESSED");
+    cpu_ctoa( _environment );
 
 }
 

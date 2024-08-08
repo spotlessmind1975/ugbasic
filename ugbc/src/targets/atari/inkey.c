@@ -59,7 +59,7 @@ Variable * inkey( Environment * _environment ) {
     char noKeyPressedLabel[MAX_TEMPORARY_STORAGE]; sprintf(noKeyPressedLabel, "%snokeyPressed", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
 
-    atari_inkey( _environment, pressed->realName, key->realName );
+    atari_inkey( _environment, key->realName );
 
     cpu_bveq( _environment, pressed->realName, noKeyPressedLabel );
 

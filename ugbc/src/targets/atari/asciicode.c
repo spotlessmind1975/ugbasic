@@ -40,25 +40,10 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-Variable * keystate( Environment * _environment, char * _scancode ) {
+Variable * asciicode( Environment * _environment ) {
 
-    MAKE_LABEL
-
-    char keystateLabel[MAX_TEMPORARY_STORAGE]; sprintf( keystateLabel, "%sclr", label );
-
-    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
-
-    Variable * key = scancode( _environment );
-
-    Variable * result = variable_compare( _environment, s->name, key->name );
-
-    variable_compare_and_branch_const( _environment, result->name, 0x00, keystateLabel, 1 );
-
-    cpu_call( _environment, "SCANCODECLEAR" );
-
-    cpu_label( _environment, keystateLabel );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of ASCIICODE)");
 
     return result;
 
 }
-
