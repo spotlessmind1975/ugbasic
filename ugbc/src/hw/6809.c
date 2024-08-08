@@ -217,7 +217,7 @@ static void cpu6809_greater_than_const( Environment * _environment, char *_sourc
     outline1("STB %s", _other );
 }
 
-void cpu_ctoa( Environment * _environment ) {
+void cpu6809_ctoa( Environment * _environment ) {
     
     MAKE_LABEL
 
