@@ -157,9 +157,14 @@
 
 void d64_xpen( Environment * _environment, char * _destination );
 void d64_ypen( Environment * _environment, char * _destination );
-void d64_inkey( Environment * _environment, char * _pressed, char * _key );
-void d64_scancode( Environment * _environment, char * _pressed, char * _scacode );
+
+void d64_wait_key( Environment * _environment, int _release );
+void d64_key_state( Environment * _environment, char *_scancode, char * _result );
+void d64_scancode( Environment * _environment, char * _scacode );
+void d64_asciicode( Environment * _environment, char * _asciicode );
+void d64_inkey( Environment * _environment, char * _key );
 void d64_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void d64_scanshift( Environment * _environment, char * _shifts );
 void d64_keyshift( Environment * _environment, char * _shifts );
 void d64_clear_key( Environment * _environment );
