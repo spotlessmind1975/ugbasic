@@ -54,14 +54,25 @@ KEYBOARDBUFFERRESETL1:
 
 VKEYDREPLACEMENT:
 
+    TXA
+    PHA
+    TYA
+    PHA
+
+VKEYDREPLACEMENTL1:
+
     ; First of all, save the key "as is", and preserve
     ; the previous key pressed.
 
-    LDA KEYBOARDACTUAL
-    STA KEYBOARDPREVIOUS
     LDA $D209
     AND #$3F
-    STA KEYBOARDACTUAL
+
+    JSR KEYBOARDPUSH
+
+    CMP $D209
+    BNE VKEYDREPLACEMENTL1
+
+    PHA
 
     ; Then calculate what bitmask to use.
 
@@ -72,7 +83,7 @@ VKEYDREPLACEMENT:
 
     ; Now we calculate the offset for the keyboard buffer.
 
-    LDA KEYBOARDACTUAL
+    PLA
     LSR
     LSR
     LSR
@@ -90,6 +101,10 @@ VKEYDREPLACEMENT:
 VKEYDREPLACEMENTDONE:
 
     PLA
+    TAY
+    PLA
+    TAX
+    PLA
     RTI
     
 ; ----------------------------------------------------------------------------
@@ -106,7 +121,7 @@ VKEYDREPLACEMENTDONE:
 ;   Input: A - bitmap of key pressed
 ;          X - starting value of key pressed
 ;   Ouput: -
-;   Changes: KEYBOARDACTUAL, KEYBOARDPREVIOUS, KEYBOARDASFSTATE
+;   Changes: KEYBOARDACTUAL, KEYBOARDASFSTATE
 
 KEYBOARDPRESSED: .BYTE 0
 
@@ -126,14 +141,32 @@ KEYBOARDMANAGERDONE:
 
     INC KEYBOARDELAPSED
 
-    ; Check if key is still pressed.
+    ; If is present one key in the
+    ; queue, we ignore the pressing key and
+    ; try to consume the queue in a rapid way.
 
+    SEC
+    LDA KEYBOARDQUEUEWPOS
+    SBC KEYBOARDQUEUERPOS
+    BEQ KEYBOARDMANAGERDONE2
+
+    JSR KEYBOARDPOP
+    STA KEYBOARDACTUAL
+    LDA #2
+    STA KEYBOARDASFSTATE
+    LDA #$FF
+    STA KEYBOARDELAPSED
+    JMP KEYBOARDMANAGERDONEYES
+
+KEYBOARDMANAGERDONE2:
+
+    ; Check if key is still pressed.
     LDA $D20F
     AND #$04
     BEQ KEYBOARDMANAGERDONEYES
 
-    LDA KEYBOARDACTUAL
-    STA KEYBOARDPREVIOUS
+KEYBOARDMANAGERDONEYES0:
+
     LDA #$FF
     STA KEYBOARDACTUAL
 
@@ -156,8 +189,59 @@ KEYBOARDMANAGERDONEYES:
 
 OLDSVC0222: .WORD $0
 
-KEYBOARDACTUAL:          .BYTE $FF
-KEYBOARDPREVIOUS:        .BYTE $FF
+KEYBOARDQUEUE:          .RES 10,$FF
+KEYBOARDQUEUERPOS:       .BYTE $00
+KEYBOARDQUEUEWPOS:       .BYTE $00
+KEYBOARDACTUAL:         .BYTE $FF
+
+; ----------------------------------------------------------------------------
+; KEYBOARDPUSH
+; ----------------------------------------------------------------------------
+; This routine can be called to push a character in front of the keyboard
+; queue. This will put the character in the actual KEYBOARDQUEUEWPOS position
+; and increment the KEYBOARDQUEUEWPOS by 1. If the KEYBOARDQUEUEWPOS reachs the
+; end of the queue, it will return to 0. Moreover, if it is already 
+; KEYBOARDQUEUERPOS then nothing will be done, and the character will be lost.
+;
+
+KEYBOARDPUSH:
+    LDX KEYBOARDQUEUEWPOS
+    ; CPX KEYBOARDQUEUERPOS
+    ; BEQ KEYBOARDPUSHLOST
+    STA KEYBOARDQUEUE, X
+    INX
+    CPX #$0A
+    BNE KEYBOARDPUSHDONE
+    LDX #0
+KEYBOARDPUSHDONE:
+    STX KEYBOARDQUEUEWPOS
+KEYBOARDPUSHLOST:
+    RTS
+
+; ----------------------------------------------------------------------------
+; KEYBOARDPOP
+; ----------------------------------------------------------------------------
+; This routine can be called to pop a character from the keyboard queue. This 
+; will get the character from the actual KEYBOARDQUEUERPOS position
+; and increment the KEYBOARDQUEUERPOS by 1. If the KEYBOARDQUEUERPOS reachs the
+; end of the queue, it will return to 0. Moreover, if it is already 
+; KEYBOARDQUEUEWPOS then nothing will be get and it will be returned a $FF.
+
+KEYBOARDPOP:
+    LDX KEYBOARDQUEUERPOS
+    CPX KEYBOARDQUEUEWPOS
+    BEQ KEYBOARDPOPNONE
+    LDA KEYBOARDQUEUE, X
+    INX
+    CPX #$0A
+    BNE KEYBOARDPOPGOT
+    LDX #0
+KEYBOARDPOPGOT:
+    STX KEYBOARDQUEUERPOS
+    RTS
+KEYBOARDPOPNONE:
+    LDA #$FF
+    RTS
 
 ; ----------------------------------------------------------------------------
 ; KEYBOARDDETECT
@@ -184,11 +268,6 @@ KEYBOARDDETECT:
     CMP #$FF
     BEQ KEYBOARDDETECTNONE
 
-    ; A key has been pressed. Set the carry flag and check
-    ; if it is the same as the previous pressed.
-
-    ; CMP KEYBOARDPREVIOUS
-    
     SEC
 
     RTS
