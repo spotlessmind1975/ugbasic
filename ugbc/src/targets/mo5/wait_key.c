@@ -42,30 +42,6 @@ extern char DATATYPE_AS_STRING[][16];
 
 void wait_key( Environment * _environment, int _release ) {
 
-    MAKE_LABEL
-
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANCODE)");
-
-    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
-
-    char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
-
-    cpu_label( _environment, repeatLabel );
-
-    mo5_scancode( _environment, pressed->realName, result->realName );
-
-    cpu_bvneq( _environment, pressed->realName, repeatLabel2 );
-
-    if ( _release ) {
-
-        char repeatLabel2[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel2, "%srepeat2", label );
-
-        cpu_label( _environment, repeatLabel2 );
-        
-        mo5_scancode( _environment, pressed->realName, result->realName );
-
-        cpu_bvneq( _environment, pressed->realName, repeatLabel2 );
-
-    }
+    mo5_wait_key( _environment, _release );
 
 }

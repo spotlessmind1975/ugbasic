@@ -46,6 +46,9 @@ MO5TIMER  set *-2       ; (variable within code)
     LDA   #PAGE0        ; sets the direct page
     TFR   A,DP          ; for ugbc routines
     JSR   TIMERMANAGER
+@IF deployed.keyboard
+    JSR   KEYBOARDMANAGER
+@ENDIF
     JMP   >MO5IRQDEF    ; jump to next ISR
 MO5IRQN   set *-2       ; (variable within code)
 
