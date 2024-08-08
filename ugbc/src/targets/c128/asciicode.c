@@ -40,8 +40,12 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-void wait_key( Environment * _environment, int _release ) {
+Variable * asciicode( Environment * _environment ) {
 
-    c128_wait_key( _environment, _release );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of ASCIICODE)");
+
+    c128_asciicode( _environment, result->realName );
+
+    return result;
 
 }

@@ -40,8 +40,12 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-void wait_key( Environment * _environment, int _release ) {
+Variable * key_state( Environment * _environment, char * _scancode ) {
 
-    c128_wait_key( _environment, _release );
+    Variable * scancode = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0);
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY STATE)");
+
+    c128_key_state( _environment, scancode->realName, result->realName );
 
 }
+

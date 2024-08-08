@@ -134,9 +134,14 @@
 
 void c128_xpen( Environment * _environment, char * _destination );
 void c128_ypen( Environment * _environment, char * _destination );
-void c128_inkey( Environment * _environment, char * _pressed, char * _key );
-void c128_scancode( Environment * _environment, char * _pressed, char * _scacode );
+
+void c128_wait_key( Environment * _environment, int _release );
+void c128_key_state( Environment * _environment, char *_scancode, char * _result );
+void c128_scancode( Environment * _environment, char * _scacode );
+void c128_asciicode( Environment * _environment, char * _asciicode );
+void c128_inkey( Environment * _environment, char * _key );
 void c128_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void c128_scanshift( Environment * _environment, char * _shifts );
 void c128_keyshift( Environment * _environment, char * _shifts );
 void c128_clear_key( Environment * _environment );

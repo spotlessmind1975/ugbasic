@@ -65,51 +65,54 @@ void c128_ypen( Environment * _environment, char * _destination ) {
    
 }
 
-void c128_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void c128_inkey( Environment * _environment, char * _key ) {
 
-    deploy( scancode, src_hw_c128_scancode_asm);
-
-    MAKE_LABEL
-
-    outline0("LDA #$0");
-    outline1("STA %s", _pressed );
-    outline0("LDA #$0");
-    outline1("STA %s", _key );
+    deploy( keyboard, src_hw_c128_keyboard_asm);
 
     outline0("JSR INKEY");
-
-    outline0("CMP #$0");
-    outline1("BEQ %snokey", label );
-
-    outline1("STA %s", _key );
-    outline0("LDA #$ff");
-    outline1("STA %s", _pressed );
-    
-    outhead1("%snokey:", label );
+    outline1("STA %s", _key);
 
 }
 
-void c128_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void c128_wait_key( Environment * _environment, int _release ) {
 
-    deploy( scancode, src_hw_c128_scancode_asm);
+    deploy( keyboard, src_hw_c128_keyboard_asm );
+
+    if ( _release ) {
+        outline0("JSR WAITKEYRELEASE");
+    } else {
+        outline0("JSR WAITKEY");
+    }
+   
+}
+
+void c128_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
     MAKE_LABEL
 
-    outline0("LDA #$0");
-    outline1("STA %s", _pressed );
-    outline0("LDA #$0");
-    outline1("STA %s", _scancode );
+    deploy( keyboard, src_hw_c128_keyboard_asm );
+
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYSTATE");
+    cpu_ctoa( _environment );
+
+}
+
+void c128_scancode( Environment * _environment, char * _result ) {
+
+    deploy( keyboard, src_hw_c128_keyboard_asm);
 
     outline0("JSR SCANCODE");
+    outline1("STA %s", _result );
+   
+}
 
-    outline0("CMP #$0");
-    outline1("BEQ %snokey", label );
+void c128_asciicode( Environment * _environment, char * _result ) {
 
-    outline1("STA %s", _scancode );
-    outline0("LDA #$ff");
-    outline1("STA %s", _pressed );
-    
-    outhead1("%snokey:", label );
+    deploy( keyboard, src_hw_c128_keyboard_asm);
+
+    outline0("JSR ASCIICODE");
+    outline1("STA %s", _result );
    
 }
 
@@ -117,19 +120,11 @@ void c128_key_pressed( Environment * _environment, char *_scancode, char * _resu
 
     MAKE_LABEL
 
-    char nokeyLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( nokeyLabel, "%slabel", label );
-    
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    deploy( keyboard, src_hw_c128_keyboard_asm );
 
-    c128_scancode( _environment, temp->realName, _result );
-    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
-    cpu_store_8bit( _environment, _result, 0xff );
-    cpu_jump( _environment, label );
-    cpu_label( _environment, nokeyLabel );
-    cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_label( _environment, label );
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYPRESSED");
+    cpu_ctoa( _environment );
 
 }
 
