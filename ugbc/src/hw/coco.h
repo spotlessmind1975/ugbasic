@@ -157,9 +157,14 @@
 
 void coco_xpen( Environment * _environment, char * _destination );
 void coco_ypen( Environment * _environment, char * _destination );
-void coco_inkey( Environment * _environment, char * _pressed, char * _key );
-void coco_scancode( Environment * _environment, char * _pressed, char * _scacode );
+
+void coco_wait_key( Environment * _environment, int _release );
+void coco_key_state( Environment * _environment, char *_scancode, char * _result );
+void coco_scancode( Environment * _environment, char * _scacode );
+void coco_asciicode( Environment * _environment, char * _asciicode );
+void coco_inkey( Environment * _environment, char * _key );
 void coco_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void coco_scanshift( Environment * _environment, char * _shifts );
 void coco_keyshift( Environment * _environment, char * _shifts );
 void coco_clear_key( Environment * _environment );
