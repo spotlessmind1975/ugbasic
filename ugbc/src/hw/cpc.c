@@ -102,63 +102,54 @@ static int plotVBase[] = {
 static RGBi * commonPalette;
 static int lastUsedSlotInCommonPalette = 0;
 
-void cpc_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void cpc_inkey( Environment * _environment, char * _key ) {
 
-    MAKE_LABEL
-
-    _environment->bitmaskNeeded = 1;
-
-    deploy( scancode, src_hw_cpc_scancode_asm );
+    deploy( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL INKEY");
-    outline0("CP 0");
-    outline1("JR NZ, %skey", label);
-    outhead1("%snokey:", label);
-    outline1("LD (%s), A", _pressed);
     outline1("LD (%s), A", _key);
-    outline1("JP %sdone", label);
-    outhead1("%skey:", label);
-    outline1("LD (%s), A", _key);
-    outline0("LD B, A");
-    outline0("LD A, 1");
-    outline1("LD (%s), A", _pressed);
-    // outhead1("%srelease:", label);
-    // outline0("PUSH BC");
-    // outline0("CALL INKEY");
-    // outline0("POP BC");
-    // outline0("CP B");
-    // outline1("JR Z, %sequal", label);
-    // outline1("JP %sdone", label);
-    // outhead1("%sequal:", label);
-    // outline0("NOP");
-    // outline1("JP %srelease", label);
-    outhead1("%sdone:", label);
 
 }
 
-void cpc_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void cpc_wait_key( Environment * _environment, int _release ) {
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
+
+    if ( _release ) {
+        outline0("CALL WAITKEYRELEASE");
+    } else {
+        outline0("CALL WAITKEY");
+    }
+   
+}
+
+void cpc_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
     MAKE_LABEL
 
-    _environment->bitmaskNeeded = 1;
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
 
-    deploy( scancode, src_hw_cpc_scancode_asm );
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYSTATE");
+    cpu_ctoa( _environment );
+
+}
+
+void cpc_scancode( Environment * _environment, char * _result ) {
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL SCANCODE");
-    outline0("LD A, E");
-    outline0("CP 0");
-    outline1("JR NZ, %skey", label);
-    outhead1("%snokey:", label);
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _pressed);
-    outline1("LD (%s), A", _scancode);
-    outline1("JP %sdone", label);
-    outhead1("%skey:", label);
-    outline0("LD A, 1");
-    outline1("LD (%s), A", _pressed);
-    outline0("LD A, E");
-    outline1("LD (%s), A", _scancode);
-    outhead1("%sdone:", label);
+    outline1("LD (%s), A", _result );
+   
+}
+
+void cpc_asciicode( Environment * _environment, char * _result ) {
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm);
+
+    outline0("CALL ASCIICODE");
+    outline1("LD A, (%s)", _result );
    
 }
 
@@ -166,22 +157,11 @@ void cpc_key_pressed( Environment * _environment, char *_scancode, char * _resul
 
     MAKE_LABEL
 
-    _environment->bitmaskNeeded = 1;
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
 
-    deploy( scancode, src_hw_cpc_scancode_asm );
-
-    outline1("LD HL, (%s)", _scancode);
-    outline0("LD DE, HL");
-    outline0("CALL SCANCODEPRECISE");
-    outline1("JR NZ, %skey", label);
-    outhead1("%snokey:", label);
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _result);
-    outline1("JP %sdone", label);
-    outhead1("%skey:", label);
-    outline0("LD A, 1");
-    outline1("LD (%s), A", _result);
-    outhead1("%sdone:", label);
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYPRESSED");
+    cpu_ctoa( _environment );
 
 }
 

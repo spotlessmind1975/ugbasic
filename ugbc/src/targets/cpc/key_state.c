@@ -38,49 +38,13 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void target_prepare_finalization( Environment * _environment ) {
+extern char DATATYPE_AS_STRING[][16];
 
-}
+Variable * key_state( Environment * _environment, char * _scancode ) {
 
-void target_finalization( Environment * _environment ) {
+    Variable * scancode = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0);
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY STATE)");
 
-    // outhead0("section data_user");
-    // outhead0("LASTVAR: db $42");
-    // outhead0("section code_user");
+    cpc_key_state( _environment, scancode->realName, result->realName );
 
-    ay8910_finalization( _environment );
-
-    if ( ! _environment->anyProtothread ) {
-        outhead0("PROTOTHREADINIT:" );
-        outline0("RET");
-    }
-
-    if ( ! _environment->deployed.keyboard ) {
-        outhead0("KEYBOARDMANAGER:" );
-        outline0("RET");
-    }
-
-    if ( ! _environment->deployed.joystick ) {
-        outhead0("JOYSTICKMANAGER:" );
-        outline0("RET");
-    }
-
-    // outhead0("VARINIT2:");
-
-    // outhead0("if (LASTVAR) < ( 1024 - 128 )"); 
-    // outline0("LD HL, CODEEND");
-    // outline0("LD DE, $7030");
-    // outline0("LD BC, LASTVAR - $7030 + 1" );
-    // outline0("LDIR" );
-    // outhead0("endif"); 
-    // outline0("RET");
-
-    outhead0("CODEEND:");
-
-    buffered_prepend_output( _environment );
-
-}
-
-void target_analysis( Environment * _environment ) {
-    
 }

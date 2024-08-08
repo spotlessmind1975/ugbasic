@@ -151,11 +151,15 @@
 #define BANK_COUNT          0
 #define BANK_SIZE           0
 
-void cpc_inkey( Environment * _environment, char * _pressed, char * _key );
-void cpc_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void cpc_wait_key( Environment * _environment, int _release );
+void cpc_key_state( Environment * _environment, char *_scancode, char * _result );
+void cpc_scancode( Environment * _environment, char * _scacode );
+void cpc_asciicode( Environment * _environment, char * _asciicode );
+void cpc_inkey( Environment * _environment, char * _key );
+void cpc_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void cpc_scanshift( Environment * _environment, char * _shifts );
 void cpc_keyshift( Environment * _environment, char * _shifts );
-void cpc_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void cpc_clear_key( Environment * _environment );
 void cpc_irq_at( Environment * _environment, char * _label );
 void cpc_follow_irq( Environment * _environment );
