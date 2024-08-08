@@ -999,7 +999,7 @@ void ted_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-ted_charset_uppercase( Environment * _environment ) {
+void ted_charset_uppercase( Environment * _environment ) {
 
 }
 
