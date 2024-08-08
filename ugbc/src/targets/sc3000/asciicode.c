@@ -40,14 +40,10 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-Variable * keystate( Environment * _environment, char * _scancode ) {
+Variable * asciicode( Environment * _environment ) {
 
-    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANCODE)");
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
-
-    Variable * key = scancode( _environment );
-
-    return variable_compare( _environment, s->name, key->name );
+    return result;
 
 }
