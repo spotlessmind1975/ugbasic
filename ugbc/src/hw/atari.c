@@ -99,6 +99,7 @@ void atari_key_state( Environment * _environment, char *_scancode, char * _resul
     outline1("LDX %s", _scancode);
     outline0("JSR KEYSTATE");
     cpu_ctoa( _environment );
+    outline1("STA %s", _result);
 
 }
 
@@ -133,6 +134,7 @@ void atari_key_pressed( Environment * _environment, char *_scancode, char * _res
     outline1("LDX %s", _scancode);
     outline0("JSR KEYPRESSED");
     cpu_ctoa( _environment );
+    outline1("STA %s", _result);
 
 }
 

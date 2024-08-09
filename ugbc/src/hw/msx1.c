@@ -119,6 +119,7 @@ void msx1_key_state( Environment * _environment, char *_scancode, char * _result
     outline1("LD A, (%s)", _scancode);
     outline0("CALL KEYSTATE");
     cpu_ctoa( _environment );
+    outline1("LD (%s), A", _result);
 
 }
 
@@ -149,6 +150,7 @@ void msx1_key_pressed( Environment * _environment, char *_scancode, char * _resu
     outline1("LD A, (%s)", _scancode);
     outline0("CALL KEYPRESSED");
     cpu_ctoa( _environment );
+    outline1("LD (%s), A", _result);
 
 }
 

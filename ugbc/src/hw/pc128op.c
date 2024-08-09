@@ -115,6 +115,7 @@ void pc128op_key_state( Environment * _environment, char *_scancode, char * _res
     outline1("LDA %s", _scancode);
     outline0("JSR KEYSTATE");
     cpu_ctoa( _environment );
+    outline1("STA %s", _result);
 
 }
 
@@ -151,6 +152,7 @@ void pc128op_key_pressed( Environment * _environment, char *_scancode, char * _r
     outline1("LDA %s", _scancode);
     outline0("JSR KEYPRESSED");
     cpu_ctoa( _environment );
+    outline1("STA %s", _result);
 
 }
 
