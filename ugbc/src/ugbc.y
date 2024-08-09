@@ -7698,25 +7698,27 @@ vscroll_definition :
     ;
     
 input_definition2 :
-      Identifier {
-        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+      Identifier as_datatype_suffix_optional {
+        VariableType vt = $2;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
+        input( _environment, $1, vt );
         print_newline( _environment );
       }
-    | Identifier OP_DOLLAR {
-        input( _environment, $1, VT_DSTRING );
-        print_newline( _environment );
+    | Identifier as_datatype_suffix_optional OP_SEMICOLON {
+        VariableType vt = $2;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
+        input( _environment, $1, vt );
       }
-    | Identifier OP_SEMICOLON {
-        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
-      }
-    | Identifier OP_DOLLAR OP_SEMICOLON {
-        input( _environment, $1, VT_DSTRING );
-      }
-    | Identifier {
-        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
-      } OP_COMMA input_definition2
-    | Identifier OP_DOLLAR {
-        input( _environment, $1, VT_DSTRING );
+    | Identifier as_datatype_suffix_optional {
+        VariableType vt = $2;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
+        input( _environment, $1, vt );
       } OP_COMMA input_definition2
     ;
 
