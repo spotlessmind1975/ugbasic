@@ -215,6 +215,7 @@ _[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
 "}" { RETURN(CGP,1); }
 "?" { RETURN(QM,1); }
 "$$" { RETURN(OP_DOLLAR2,1); }
+"!" { RETURN(OP_EXCLAMATION,1); }
 
 "@" { RETURN(OP_AT,1); }
 "%" { RETURN(OP_PERC,1); }
