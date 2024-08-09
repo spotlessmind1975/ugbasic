@@ -48,5 +48,7 @@ Variable * key_state( Environment * _environment, char * _scancode ) {
 
     atari_key_state( _environment, s->realName, result->realName );
 
+    return result;
+    
 }
 
