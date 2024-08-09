@@ -7780,19 +7780,11 @@ read_definition :
     | read_definition_single OP_COMMA read_definition;
 
 input_definition :
-      String op_comma_or_semicolon Identifier {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
+    String op_comma_or_semicolon Identifier as_datatype_suffix_optional {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
         }
-        print( _environment, string->name, 0 );
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
-        print_newline( _environment );
-    }
-    | String op_comma_or_semicolon Identifier OP_DOLLAR {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
@@ -7801,11 +7793,15 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
+        Variable * var = variable_retrieve_or_define( _environment, $3, vt, 0 );
         input( _environment, var->name, VT_DSTRING );
         print_newline( _environment );
     }
-    | String op_comma_or_semicolon Identifier OP_SEMICOLON {
+    | String op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
@@ -7814,9 +7810,13 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
+        input( _environment, $3, vt );
     }
-    | String op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
+    | String op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
@@ -7825,34 +7825,11 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name, VT_DSTRING );
-    }
-    | String op_comma_or_semicolon Identifier OP_SEMICOLON {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
-        }
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
-    }  input_definition2
-    | String op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
-        }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name, VT_DSTRING );
+        input( _environment, $3, vt );
     }  input_definition2
     | input_definition2
-    | RawString op_comma_or_semicolon Identifier {
+    | RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional {
+        VariableType vt = ((struct _Environment *)_environment)->defaultVariableType;
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
@@ -7862,10 +7839,14 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
+        input( _environment, $3, vt );
         print_newline( _environment );
     }
-    | RawString op_comma_or_semicolon Identifier OP_DOLLAR {
+    | RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
@@ -7875,11 +7856,13 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name, VT_DSTRING );
-        print_newline( _environment );
+        input( _environment, $3, vt );
     }
-    | RawString op_comma_or_semicolon Identifier OP_SEMICOLON {
+    | RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
@@ -7889,45 +7872,7 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
-    }
-    | RawString op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        string->printable = 1;
-        print( _environment, string->name, 0 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
-        }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name, VT_DSTRING );
-    }
-    | RawString op_comma_or_semicolon Identifier OP_SEMICOLON {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        string->printable = 1;
-        print( _environment, string->name, 0 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
-        }
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
-    }  input_definition2
-    | RawString op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        string->printable = 1;
-        print( _environment, string->name, 0 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
-        }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name, VT_DSTRING );
+        input( _environment, $3, vt );
     }  input_definition2
   ;
 
