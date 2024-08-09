@@ -67,7 +67,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     Variable * key = variable_temporary( _environment, VT_CHAR, "(key pressed)");
     Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
 
-    cpu_store_8bit( _environment, enter->realName, 155 );
+    cpu_store_8bit( _environment, enter->realName, 13 );
     cpu_store_8bit( _environment, offset->realName, 0 );
     cpu_store_8bit( _environment, backspace->realName, 8 );
     cpu_store_8bit( _environment, space->realName, 32 );
