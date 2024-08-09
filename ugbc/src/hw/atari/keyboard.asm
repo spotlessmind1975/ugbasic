@@ -66,10 +66,15 @@ VKEYDREPLACEMENTL1:
     ; the previous key pressed.
 
     LDA $D209
+
+    PHA
+    AND #$C0
+    STA KEYBOARDSHIFT
+    PLA
+    PHA
     AND #$3F
-
     JSR KEYBOARDPUSH
-
+    PLA
     CMP $D209
     BNE VKEYDREPLACEMENTL1
 
@@ -197,7 +202,8 @@ OLDSVC0222: .WORD $0
 KEYBOARDQUEUE:          .RES 10,$FF
 KEYBOARDQUEUERPOS:       .BYTE $00
 KEYBOARDQUEUEWPOS:       .BYTE $00
-KEYBOARDACTUAL:         .BYTE $FF
+KEYBOARDACTUAL:          .BYTE $FF
+KEYBOARDSHIFT:           .BYTE $00
 
 ; ----------------------------------------------------------------------------
 ; KEYBOARDPUSH
@@ -786,3 +792,42 @@ INKEY0:
     LDA #0
     RTS
 
+; ----------------------------------------------------------------------------
+; KEY SHIFT
+; ----------------------------------------------------------------------------
+; This routine can be called to retrieve the status of key / control buttons.
+;
+; Return values:
+; - A : bitmap of key pressed
+;           0	Left SHIFT
+;           1	Right SHIFT
+;           2	CAPS LOCK
+;           3	CONTROL
+;           4	Left ALT
+;           5	Right ALT
+
+KEYSHIFT:
+    LDA #0
+    STA MATHPTR0
+    ; ATARI BITMAP:
+    ;    7 = CTRL
+    LDA KEYBOARDSHIFT
+    AND #$80
+    CMP #$80
+    BNE KEYSHIFT1
+    LDA #$08
+    STA MATHPTR0
+KEYSHIFT1:
+    ; ATARI BITMAP:
+    ;    4 = CTRL
+    LDA $D20F
+    EOR #$FF
+    AND #$08
+    CMP #$08
+    BNE KEYSHIFT2
+    LDA #$03
+    ORA MATHPTR0
+    STA MATHPTR0
+KEYSHIFT2:
+    LDA MATHPTR0
+    RTS

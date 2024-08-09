@@ -159,40 +159,12 @@ void atari_scanshift( Environment * _environment, char * _shifts ) {
 
 void atari_keyshift( Environment * _environment, char * _shifts ) {
 
+    _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_atari_keyboard_asm );
 
-    outline0("LDA #0" );
+    outline0("JSR KEYSHIFT" );
     outline1("STA %s", _shifts );
-
-    outline0("LDA $02F2" );
-    outline0("AND #$40");
-    outline1("BNE %snoshifts", label );
-
-    outline0("LDA #3" );
-    outline1("STA %s", _shifts );
-   
-    outhead1("%snoshifts:", label );
-
-    outline0("LDA $02BE" );
-    outline0("AND #$40");
-    outline1("BEQ %snocaps", label );
-
-    outline1("LDA %s", _shifts);
-    outline0("ORA #4");
-    outline1("STA %s", _shifts);
-
-    outhead1("%snocaps:", label );
-
-    outline0("LDA $02BE" );
-    outline0("AND #$80");
-    outline1("BEQ %snoctrl", label );
-
-    outline1("LDA %s", _shifts);
-    outline0("ORA #8");
-    outline1("STA %s", _shifts);
-
-    outhead1("%snoctrl:", label );
 
 }
 
