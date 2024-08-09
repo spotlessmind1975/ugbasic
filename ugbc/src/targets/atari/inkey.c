@@ -61,7 +61,7 @@ Variable * inkey( Environment * _environment ) {
 
     atari_inkey( _environment, key->realName );
 
-    cpu_bveq( _environment, pressed->realName, noKeyPressedLabel );
+    cpu_bveq( _environment, key->realName, noKeyPressedLabel );
 
     cpu_move_8bit_indirect(_environment, key->realName, address->realName );
     cpu_dsresize_size(_environment, result->realName, 1 );
