@@ -619,30 +619,31 @@ WAITKEYRELEASE0:
 
 KEYSTATE:
 
+    TXA
+    PHA
+    AND #$07
+    TAX
+    LDA BITMASK, X
+    STA MATHPTR0
+    
 	LDA #<SCANCODEREAD
 	STA TMPPTR
 	LDA #>SCANCODEREAD
 	STA TMPPTR+1
 
-    TXA
+    PLA
     LSR
     LSR
     LSR
     TAY
-    TXA
-    AND #$07
-    TAX
     LDA (TMPPTR), Y
-
-KEYSTATEL1:
-    LSR
-    BCS KEYSTATE10
-    CPX #0
-    BEQ KEYSTATE10
-    DEX
-    JMP KEYSTATEL1
-
+    AND MATHPTR0
+    BNE KEYSTATE11
 KEYSTATE10:
+    CLC
+    RTS
+KEYSTATE11:
+    SEC
     RTS
 
 ; ----------------------------------------------------------------------------
