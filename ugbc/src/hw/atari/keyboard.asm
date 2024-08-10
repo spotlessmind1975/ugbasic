@@ -240,11 +240,12 @@ KEYBOARDMANAGERDONEYES:
 
 OLDSVC0222: .WORD $0
 
-KEYBOARDQUEUE:          .RES 10,$FF
+KEYBOARDQUEUE:           .RES 10,$FF
 KEYBOARDQUEUERPOS:       .BYTE $00
 KEYBOARDQUEUEWPOS:       .BYTE $00
 KEYBOARDACTUAL:          .BYTE $FF
 KEYBOARDSHIFT:           .BYTE $00
+KEYBOARDINKEY:           .BYTE $FF
 
 ; ----------------------------------------------------------------------------
 ; KEYBOARDPUSH
@@ -704,7 +705,13 @@ KEYSTATE11:
 ; - A : KEYBOARDACTUAL
 
 SCANCODE:
+    LDA KEYBOARDINKEY
+    CMP #$FF
+    BNE SCANCODEDONE
     LDA KEYBOARDACTUAL
+SCANCODEDONE:
+    LDX #$FF
+    STX KEYBOARDINKEY
     RTS
 
 ; ----------------------------------------------------------------------------
@@ -832,6 +839,7 @@ INKEY:
     JSR KEYPRESSED
     CMP #$FF
     BEQ INKEY0
+    STA KEYBOARDINKEY
     TAY
 	LDA #<KEYBOARDMAP
 	STA TMPPTR
