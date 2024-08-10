@@ -170,8 +170,7 @@ void atari_keyshift( Environment * _environment, char * _shifts ) {
 
 void atari_clear_key( Environment * _environment ) {
 
-    outline0("LDA #$FF");
-    outline0("STA $02F2");
+    outline0("JSR CLEARKEY");
    
 }
 
