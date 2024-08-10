@@ -9458,6 +9458,9 @@ statement2nc:
   | CLEAR KEY {
       clear_key( _environment );
   }
+  | PUT KEY expr {
+      put_key( _environment, $3 );
+  }
   | OP_INC Identifier {
       variable_increment( _environment, $2 );
   }

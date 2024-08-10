@@ -435,4 +435,15 @@ void atari_dsave( Environment * _environment, char * _filename, char * _offset, 
 
 }
 
+void atari_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    outline1("LDA %s", _string );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _string, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDX %s", _size );
+    outline0("JSR PUTKEY" );
+
+}
+
 #endif

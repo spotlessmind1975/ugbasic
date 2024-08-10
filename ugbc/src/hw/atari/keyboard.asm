@@ -68,12 +68,26 @@ VKEYDREPLACEMENTL1:
     LDA $D209
 
     PHA
-    AND #$C0
+    AND #$80
     STA KEYBOARDSHIFT
     PLA
     PHA
-    AND #$3F
+    AND #$7F
+
+    CMP #$60
+    BEQ VKEYDREPLACEMENTL1CAPS
+    CMP #$7C
+    BEQ VKEYDREPLACEMENTL1CAPS
+    JMP VKEYDREPLACEMENTL1B
+
+VKEYDREPLACEMENTL1CAPS:
+    LDA KEYBOARDSHIFT
+    EOR $FE
+    STA KEYBOARDSHIFT
+    JMP VKEYDREPLACEMENTL1C    
+VKEYDREPLACEMENTL1B:
     JSR KEYBOARDPUSH
+VKEYDREPLACEMENTL1C:
     PLA
     CMP $D209
     BNE VKEYDREPLACEMENTL1
@@ -155,6 +169,12 @@ KEYBOARDMANAGERDONE:
     LDA KEYBOARDQUEUEWPOS
     SBC KEYBOARDQUEUERPOS
     BEQ KEYBOARDMANAGERDONE2
+
+    LDA KEYBOARDASFSTATE
+    CMP #3
+    BEQ KEYBOARDMANAGERDONEYES
+    CMP #1
+    BEQ KEYBOARDMANAGERDONEYES
 
     JSR KEYBOARDPOP
     STA KEYBOARDACTUAL
@@ -695,6 +715,17 @@ KEYBOARDMAP:
     .BYTE   '9',    $00,    '0',    '7',    $08,    '8',    '<',    '>'
     .BYTE   'F',    'H',    'D',    $00,    $89,    'G',    'S',    'A'
 
+    .BYTE   'l',    'j',    ';',    $81,    $82,    'k',    '+',    '*'
+    .BYTE   'o',    $00,    'p',    'u',     13,    'i',    '-',    '='
+    .BYTE   'v',    $88,    'c',    $83,    $84,    'b',    'x',    'z'
+    .BYTE   '4',    'o',    '3',    '6',    $89,    '5',    '2',    '1'
+    .BYTE   ',',    ' ',    '.',    'n',    $00,    'm',    '/',    $00
+    .BYTE   'r',    $00,    'e',    'y',    $09,    't',    'w',    'q'
+    .BYTE   '9',    $00,    '0',    '7',    $08,    '8',    '<',    '>'
+    .BYTE   'f',    'h',    'd',    $00,    $89,    'g',    's',    'a'
+    
+    .BYTE   $FF
+
 ; ----------------------------------------------------------------------------
 ; KEYPRESS
 ; ----------------------------------------------------------------------------
@@ -847,3 +878,46 @@ CLEARKEY:
     STA KEYBOARDACTUAL
     RTS
 
+; ----------------------------------------------------------------------------
+; PUT KEY
+; ----------------------------------------------------------------------------
+; This routine can be called to put a string into the keyboard queue.
+;
+; Input:
+;      TMPPTR: address of string
+;      X: size of the string
+
+PUTKEY:
+    LDY #0
+    LDA #<KEYBOARDMAP
+    STA TMPPTR2
+    LDA #>KEYBOARDMAP
+    STA TMPPTR2+1
+    SEI
+PUTKEYL1:
+    LDA (TMPPTR), Y
+    STA MATHPTR0
+    STY MATHPTR1
+    LDY #0
+PUTKEYL2:    
+    LDA (TMPPTR2), Y
+    CMP MATHPTR0
+    BEQ PUTKEYL2T
+    CMP #$FF
+    BEQ PUTKEYL2E
+    INY
+    JMP PUTKEYL2
+PUTKEYL2T:
+    TXA
+    PHA
+    TYA
+    JSR KEYBOARDPUSH
+    PLA
+    TAX
+    LDY MATHPTR1
+    INY
+    DEX
+    BNE PUTKEYL1
+PUTKEYL2E:
+    CLI
+    RTS
