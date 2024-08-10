@@ -2702,6 +2702,7 @@ typedef struct _Environment {
      */
     int frameBufferStart2;
 
+    int lineInput;
 
     /**
      * 
