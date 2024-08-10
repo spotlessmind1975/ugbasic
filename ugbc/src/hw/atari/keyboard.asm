@@ -65,10 +65,15 @@ VKEYDREPLACEMENTL1:
     ; First of all, save the key "as is", and preserve
     ; the previous key pressed.
 
+    LDA KEYBOARDSHIFT
+    AND #$7F
+    STA KEYBOARDSHIFT
+
     LDA $D209
 
     PHA
     AND #$80
+    ORA KEYBOARDSHIFT
     STA KEYBOARDSHIFT
     PLA
     PHA
