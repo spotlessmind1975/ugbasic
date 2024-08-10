@@ -145,6 +145,7 @@ void c128_key_pressed( Environment * _environment, char *_scancode, char * _resu
 void c128_scanshift( Environment * _environment, char * _shifts );
 void c128_keyshift( Environment * _environment, char * _shifts );
 void c128_clear_key( Environment * _environment );
+void c128_put_key(  Environment * _environment, char *_string, char * _size );
 
 void c128_sys_call( Environment * _environment, int _destination );
 

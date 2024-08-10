@@ -41,9 +41,10 @@ SCANCODEREAD:
 SCANCODEPTR = $9
 
 KEYBOARDQUEUE:          .RES 10,$FF
-KEYBOARDQUEUERPOS:       .BYTE $00
-KEYBOARDQUEUEWPOS:       .BYTE $00
+KEYBOARDQUEUERPOS:      .BYTE $00
+KEYBOARDQUEUEWPOS:      .BYTE $00
 KEYBOARDACTUAL:         .BYTE $FF
+KEYBOARDINKEY:          .BYTE $FF
 
 ; ----------------------------------------------------------------------------
 ; KEYBOARDPUSH
@@ -698,17 +699,13 @@ KEYSTATE:
     TXA
     AND #$07
     TAX
-    LDA (TMPPTR), Y
-
-KEYSTATEL1:
-    LSR
-    BCS KEYSTATE10
-    CPX #0
-    BEQ KEYSTATE10
-    DEX
-    JMP KEYSTATEL1
-
-KEYSTATE10:
+    LDA BITMASK, X
+    AND (TMPPTR), Y
+    BEQ KEYSTATEL0
+    SEC
+    RTS
+KEYSTATEL0:
+    CLC
     RTS
 
 ; ----------------------------------------------------------------------------
@@ -721,7 +718,13 @@ KEYSTATE10:
 ; - A : KEYBOARDACTUAL
 
 SCANCODE:
+    LDA KEYBOARDINKEY
+    CMP #$FF
+    BNE SCANCODEDONE
     LDA KEYBOARDACTUAL
+SCANCODEDONE:
+    LDX #$FF
+    STX KEYBOARDINKEY
     RTS
 
 ; ----------------------------------------------------------------------------
@@ -852,6 +855,7 @@ INKEY:
     JSR KEYPRESSED
     CMP #$FF
     BEQ INKEY0
+    STA KEYBOARDINKEY
     TAY
 	LDA #<KEYBOARDMAP
 	STA TMPPTR
@@ -864,3 +868,61 @@ INKEY0:
     LDA #0
     RTS
 
+; ----------------------------------------------------------------------------
+; CLEAR KEY
+; ----------------------------------------------------------------------------
+; This routine can be called to clear the keyboard queue.
+
+CLEARKEY:
+    LDA #0
+    STA KEYBOARDQUEUEWPOS
+    STA KEYBOARDQUEUERPOS
+    STA KEYBOARDASFSTATE
+    STA KEYBOARDELAPSED
+    LDA #$FF
+    STA KEYBOARDACTUAL
+    RTS
+
+; ----------------------------------------------------------------------------
+; PUT KEY
+; ----------------------------------------------------------------------------
+; This routine can be called to put a string into the keyboard queue.
+;
+; Input:
+;      TMPPTR: address of string
+;      X: size of the string
+
+PUTKEY:
+    LDY #0
+    LDA #<KEYBOARDMAP
+    STA TMPPTR2
+    LDA #>KEYBOARDMAP
+    STA TMPPTR2+1
+    SEI
+PUTKEYL1:
+    LDA (TMPPTR), Y
+    STA MATHPTR0
+    STY MATHPTR1
+    LDY #0
+PUTKEYL2:    
+    LDA (TMPPTR2), Y
+    CMP MATHPTR0
+    BEQ PUTKEYL2T
+    CMP #$FF
+    BEQ PUTKEYL2E
+    INY
+    JMP PUTKEYL2
+PUTKEYL2T:
+    TXA
+    PHA
+    TYA
+    JSR KEYBOARDPUSH
+    PLA
+    TAX
+    LDY MATHPTR1
+    INY
+    DEX
+    BNE PUTKEYL1
+PUTKEYL2E:
+    CLI
+    RTS
