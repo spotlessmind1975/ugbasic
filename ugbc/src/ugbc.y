@@ -5660,6 +5660,9 @@ line_definition_expression:
         draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     }
+    | INPUT {
+        ((Environment *)_environment)->lineInput = 1;
+    } input_definition;
     ;
 
 line_definition:
@@ -7814,7 +7817,7 @@ input_definition :
         }
         input( _environment, $3, vt );
     }
-    | String op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
+    | String op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_COMMA {
         VariableType vt = $4;
         if ( vt == 0 ) {
             vt = ((struct _Environment *)_environment)->defaultVariableType;
@@ -7860,7 +7863,7 @@ input_definition :
         }
         input( _environment, $3, vt );
     }
-    | RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
+    | RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_COMMA {
         VariableType vt = $4;
         if ( vt == 0 ) {
             vt = ((struct _Environment *)_environment)->defaultVariableType;
@@ -9357,7 +9360,9 @@ statement2nc:
   | DEBUG expr {
       print( _environment, $2, 0 );
   }
-  | INPUT input_definition
+  | INPUT {
+        ((Environment *)_environment)->lineInput = 0;
+  } input_definition
   | QM print_definition
   | QM {
       print_newline( _environment );
