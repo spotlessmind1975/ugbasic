@@ -170,6 +170,8 @@ void atari_keyshift( Environment * _environment, char * _shifts ) {
 
 void atari_clear_key( Environment * _environment ) {
 
+    deploy( keyboard, src_hw_atari_keyboard_asm );
+
     outline0("JSR CLEARKEY");
    
 }
