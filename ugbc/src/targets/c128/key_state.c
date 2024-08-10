@@ -47,5 +47,7 @@ Variable * key_state( Environment * _environment, char * _scancode ) {
 
     c128_key_state( _environment, scancode->realName, result->realName );
 
+    return result;
+    
 }
 
