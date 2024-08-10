@@ -47,6 +47,8 @@ KEYBOARDACTUAL:         .BYTE $FF
 KEYBOARDSHIFT:          .BYTE $00
 KEYBOARDINKEY:          .BYTE $FF
 
+KEYBOARDTEMP:           .BYTE $00
+
 ; ----------------------------------------------------------------------------
 ; KEYBOARDPUSH
 ; ----------------------------------------------------------------------------
@@ -115,24 +117,35 @@ KEYBOARDPOPNONE:
 KEYBOARDPRESSED: .BYTE 0
 
 KEYBOARDMANAGERSINGLEKEYPRESSEDLSHIFT:
+    PHA
     LDA #$01
     ORA KEYBOARDSHIFT
     STA KEYBOARDSHIFT
+    PLA
     JMP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
 
 KEYBOARDMANAGERSINGLEKEYPRESSEDRSHIFT:
+    PHA
     LDA #$02
     ORA KEYBOARDSHIFT
     STA KEYBOARDSHIFT
+    PLA
     JMP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
 
 KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL:
+    PHA
     LDA #$08
     ORA KEYBOARDSHIFT
     STA KEYBOARDSHIFT
+    PLA
     JMP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
 
 KEYBOARDMANAGERSINGLEKEY:
+
+    STA KEYBOARDTEMP
+    TXA
+    PHA
+    LDA KEYBOARDTEMP
 
     ; This loop will be repeated for each bit
     ; into the A register.
@@ -165,6 +178,8 @@ KEYBOARDMANAGERSINGLEKEYL1CONTINUE:
     ; LDA #$FF
     ; STA KEYBOARDACTUAL
 
+    PLA
+    TAX
     RTS
 
 KEYBOARDMANAGERSINGLEKEYPRESSED:
@@ -178,6 +193,12 @@ KEYBOARDMANAGERSINGLEKEYPRESSED:
     CPX #$34
     BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDRSHIFT
 
+    CPX #$36
+    BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDRSHIFT
+
+    CPX #$38
+    BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDRSHIFT
+
     CPX #$3A
     BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL
 
@@ -186,6 +207,8 @@ KEYBOARDMANAGERSINGLEKEYPRESSED:
 
     INC KEYBOARDPRESSED
 
+    PLA
+    TAX
     RTS
 
 KEYBOARDMANAGER:
@@ -772,6 +795,21 @@ SCANCODEDONE:
 
 ASCIICODE:
     JSR SCANCODE
+    PHA
+    LDA KEYBOARDSHIFT
+    AND #$3
+    CMP #0
+    BNE ASCIICODE2
+    PLA
+    TAY
+	LDA #<KEYBOARDMAP2
+	STA TMPPTR
+	LDA #>KEYBOARDMAP2
+	STA TMPPTR+1
+	LDA (TMPPTR),Y
+    RTS
+ASCIICODE2:
+    PLA
     TAY
 	LDA #<KEYBOARDMAP
 	STA TMPPTR
@@ -794,7 +832,7 @@ KEYBOARDMAP:
 	;              +,    P,       L,      -, >/., [/:, @/<,      ,
 	.BYTE        '+',  'P',     'L',    '-', '.', ':', '<',    ','
 	;              £,    *,     ]/;,     CH,  RS,  =,    ^,   ?//
-	.BYTE        'L',  '*',     ';',    $00, $00, '=', '^',    '/'
+	.BYTE        'E',  '*',     ';',    $00, $00, '=', '^',    '/'
 	;            !/1,   <-,    CTRL,    "/2, SPC,  C=,   Q, RUN STOP
 	.BYTE        '1',  $00,     $00,    '2', ' ', $00, 'Q',    $00
 	;           HELP,    8,       5,    TAB,   2,   4,   7,      1
@@ -803,6 +841,32 @@ KEYBOARDMAP:
 	.BYTE         27,  '+',     '-',    $00,$0d,  '6', '9',    '3'
 	;            ALT,    0,       .,     UP,DWN, LFT, RGT, NOSCROLL
 	.BYTE        $00,  '0',     '.',    $00,$00, $00, $00, $00
+    .BYTE        $FF
+
+KEYBOARDMAP2:
+	; 		INST/DEL, Return, CRSR =>,  F7,  ' ',  F3,  F5,  CRSR|V
+	.BYTE 	     $08,    $0d,     $00, $00,  ' ', $00, $00,     $00
+	; 		     #/3,    W,       A,    $/4,   Z,   S,   E,   Left Shift/Shift Lock
+	.BYTE        '3',  'w',     'a',    '4', 'z', 's', 'e',    $00
+	;            %/5,    R,       D,    &/6,   C,   F,   T,      X
+	.BYTE        '5',  'r',     'd',    '6', 'c', 'f', 't',    'x'
+	;            '/7,    Y,       G,    (/8,   B,   H,   U,      V
+	.BYTE        '7',  'y',     'g',    '8', 'b', 'h', 'u',    'v'
+	;	         )/9,    I,       J,      0,   M,   K,   O,      N
+	.BYTE        '9',  'i',     'j',    '0', 'm', 'k', 'o',    'n'
+	;              +,    P,       L,      -, >/., [/:, @/<,      ,
+	.BYTE        '+',  'p',     'l',    '-', '.', ':', '<',    ','
+	;              £,    *,     ]/;,     CH,  RS,  =,    ^,   ?//
+	.BYTE        'e',  '*',     ';',    $00, $00, '=', '^',    '/'
+	;            !/1,   <-,    CTRL,    "/2, SPC,  C=,   Q, RUN STOP
+	.BYTE        '1',  $00,     $00,    '2', ' ', $00, 'q',    $00
+	;           HELP,    8,       5,    TAB,   2,   4,   7,      1
+	.BYTE		 $00,  '8',     '5',      9, '2', '4', '7',    '1'
+	;            ESC,    +,       -,     LF, CR,    6,   9,      3
+	.BYTE         27,  '+',     '-',    $00,$0d,  '6', '9',    '3'
+	;            ALT,    0,       .,     UP,DWN, LFT, RGT, NOSCROLL
+	.BYTE        $00,  '0',     '.',    $00,$00, $00, $00, $00
+    .BYTE        $FF
 
 ; ----------------------------------------------------------------------------
 ; KEYPRESS
@@ -890,6 +954,22 @@ INKEY:
     CMP #$FF
     BEQ INKEY0
     STA KEYBOARDINKEY
+    PHA
+    LDA KEYBOARDSHIFT
+    AND #$3
+    CMP #0
+    BNE INKEY2
+    PLA
+    TAY
+	LDA #<KEYBOARDMAP2
+	STA TMPPTR
+	LDA #>KEYBOARDMAP2
+	STA TMPPTR+1
+	LDA (TMPPTR),Y
+    JSR WAITKEY02
+    RTS
+INKEY2:
+    PLA
     TAY
 	LDA #<KEYBOARDMAP
 	STA TMPPTR
@@ -976,5 +1056,36 @@ PUTKEYL2T:
     DEX
     BNE PUTKEYL1
 PUTKEYL2E:
+    LDY #0
+    LDA #<KEYBOARDMAP2
+    STA TMPPTR2
+    LDA #>KEYBOARDMAP2
+    STA TMPPTR2+1
+    SEI
+PUTKEYLE1:
+    LDA (TMPPTR), Y
+    STA MATHPTR0
+    STY MATHPTR1
+    LDY #0
+PUTKEYLE2:    
+    LDA (TMPPTR2), Y
+    CMP MATHPTR0
+    BEQ PUTKEYL2ET
+    CMP #$FF
+    BEQ PUTKEYL2EE
+    INY
+    JMP PUTKEYLE2
+PUTKEYL2ET:
+    TXA
+    PHA
+    TYA
+    JSR KEYBOARDPUSH
+    PLA
+    TAX
+    LDY MATHPTR1
+    INY
+    DEX
+    BNE PUTKEYL1
+PUTKEYL2EE:
     CLI
     RTS

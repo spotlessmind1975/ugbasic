@@ -67,6 +67,8 @@ void c128_ypen( Environment * _environment, char * _destination ) {
 
 void c128_inkey( Environment * _environment, char * _key ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_c128_keyboard_asm);
 
     outline0("JSR INKEY");
@@ -75,6 +77,8 @@ void c128_inkey( Environment * _environment, char * _key ) {
 }
 
 void c128_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
 
     deploy( keyboard, src_hw_c128_keyboard_asm );
 
@@ -178,6 +182,8 @@ void c128_keyshift( Environment * _environment, char * _shifts ) {
 
 
 void c128_clear_key( Environment * _environment ) {
+
+    _environment->bitmaskNeeded = 1;
 
     deploy( keyboard, src_hw_c128_keyboard_asm );
 
