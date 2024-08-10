@@ -44,6 +44,7 @@ KEYBOARDQUEUE:          .RES 10,$FF
 KEYBOARDQUEUERPOS:      .BYTE $00
 KEYBOARDQUEUEWPOS:      .BYTE $00
 KEYBOARDACTUAL:         .BYTE $FF
+KEYBOARDSHIFT:          .BYTE $00
 KEYBOARDINKEY:          .BYTE $FF
 
 ; ----------------------------------------------------------------------------
@@ -113,6 +114,24 @@ KEYBOARDPOPNONE:
 
 KEYBOARDPRESSED: .BYTE 0
 
+KEYBOARDMANAGERSINGLEKEYPRESSEDLSHIFT:
+    LDA #$01
+    ORA KEYBOARDSHIFT
+    STA KEYBOARDSHIFT
+    JMP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
+
+KEYBOARDMANAGERSINGLEKEYPRESSEDRSHIFT:
+    LDA #$02
+    ORA KEYBOARDSHIFT
+    STA KEYBOARDSHIFT
+    JMP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
+
+KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL:
+    LDA #$08
+    ORA KEYBOARDSHIFT
+    STA KEYBOARDSHIFT
+    JMP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
+
 KEYBOARDMANAGERSINGLEKEY:
 
     ; This loop will be repeated for each bit
@@ -128,6 +147,8 @@ KEYBOARDMANAGERSINGLEKEYL1:
 
 	BCS KEYBOARDMANAGERSINGLEKEYPRESSED
 
+KEYBOARDMANAGERSINGLEKEYL1CONTINUE:
+
     ; Increment the position to check.
 
 	INX
@@ -137,7 +158,8 @@ KEYBOARDMANAGERSINGLEKEYL1:
 
 	CMP #$0
 	BNE KEYBOARDMANAGERSINGLEKEYL1
-    
+
+
     ; No key has been detected, really.
 
     ; LDA #$FF
@@ -150,6 +172,15 @@ KEYBOARDMANAGERSINGLEKEYPRESSED:
     ; Save the actual key pressed
     ; in the keyboard queue.
     
+    CPX #$0F
+    BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDLSHIFT
+
+    CPX #$34
+    BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDRSHIFT
+
+    CPX #$3A
+    BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL
+
     TXA
     JSR KEYBOARDPUSH
 
@@ -171,6 +202,9 @@ KEYBOARDMANAGER:
 
     LDA #0
     STA KEYBOARDPRESSED
+
+    LDA #0
+    STA KEYBOARDSHIFT
 
     ; Prepare to store values into memory.
 
@@ -866,6 +900,24 @@ INKEY:
     RTS
 INKEY0:
     LDA #0
+    RTS
+
+; ----------------------------------------------------------------------------
+; KEY SHIFT
+; ----------------------------------------------------------------------------
+; This routine can be called to retrieve the status of key / control buttons.
+;
+; Return values:
+; - A : bitmap of key pressed
+;           0	Left SHIFT
+;           1	Right SHIFT
+;           2	CAPS LOCK
+;           3	CONTROL
+;           4	Left ALT
+;           5	Right ALT
+
+KEYSHIFT:
+    LDA KEYBOARDSHIFT
     RTS
 
 ; ----------------------------------------------------------------------------
