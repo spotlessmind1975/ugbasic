@@ -50,6 +50,21 @@ KEYBOARDINKEY:          .BYTE $FF
 KEYBOARDTEMP:           .BYTE $00
 
 ; ----------------------------------------------------------------------------
+; KEYBOARDEMPTY
+; ----------------------------------------------------------------------------
+; This routine can be called to understand if the keyboard queue is empty.
+
+KEYBOARDEMPTY:
+    LDX KEYBOARDQUEUEWPOS
+    CPX KEYBOARDQUEUERPOS
+    BEQ KEYBOARDEMPTY1
+    CLC
+    RTS
+KEYBOARDEMPTY1:
+    SEC
+    RTS
+
+; ----------------------------------------------------------------------------
 ; KEYBOARDPUSH
 ; ----------------------------------------------------------------------------
 ; This routine can be called to push a character in front of the keyboard
@@ -203,7 +218,7 @@ KEYBOARDMANAGERSINGLEKEYPRESSED:
     BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL
 
     TXA
-    JSR KEYBOARDPUSH
+    STA KEYBOARDACTUAL
 
     INC KEYBOARDPRESSED
 
@@ -220,6 +235,9 @@ KEYBOARDMANAGER:
 	PHA
 	TXA
 	PHA
+
+    JSR KEYBOARDEMPTY
+    BCC KEYBOARDMANAGERDONEYES
 
     ; Reset the key press detector.
 
@@ -325,29 +343,6 @@ SCANCODEFULLL22:
 	LDA #$FF
 	STA $D02F
 
-    ; Increase the elapsed timer.
-
-    INC KEYBOARDELAPSED
-
-    ; If is present one key in the
-    ; queue, we ignore the pressing key and
-    ; try to consume the queue in a rapid way.
-
-    SEC
-    LDA KEYBOARDQUEUEWPOS
-    SBC KEYBOARDQUEUERPOS
-    BEQ KEYBOARDMANAGERDONE2
-
-    JSR KEYBOARDPOP
-    STA KEYBOARDACTUAL
-    LDA #2
-    STA KEYBOARDASFSTATE
-    LDA #$FF
-    STA KEYBOARDELAPSED
-    JMP KEYBOARDMANAGERDONEYES
-
-KEYBOARDMANAGERDONE2:
-
     ; If no key has been pressed, reset the KEYBOARDACTUAL
 
     LDA KEYBOARDPRESSED
@@ -357,12 +352,17 @@ KEYBOARDMANAGERDONE2:
 SCANCODEFULL23:
 KEYBOARDMANAGERDONEYES:
 
+    ; Increase the elapsed timer.
+
+    INC KEYBOARDELAPSED
+
     ; Update the ASF.
 
     JSR KEYBOARDASF
 
     ; Restore the used registers.
 
+KEYBOARDMANAGERDONE:
 	PLA
 	TAX
 	PLA
@@ -503,6 +503,12 @@ KEYBOARDASF:
 
 KEYBOARDASF0:
 
+    JSR KEYBOARDEMPTY
+    BCS KEYBOARDASF0B
+    JSR KEYBOARDPOP
+    STA KEYBOARDACTUAL
+
+KEYBOARDASF0B:
     ; We just check for detection of a key.
     ; It means both a key pressed (KEYBOARDDETECT green) 
     ; and a different key pressed from the previous
@@ -537,6 +543,12 @@ KEYBOARDASFTO1:
     ; -----------------
 
 KEYBOARDASF1:
+
+    JSR KEYBOARDEMPTY
+    BCS KEYBOARDASF1B
+    JMP KEYBOARDASFTO0
+
+KEYBOARDASF1B:
 
     ; We just check for detection of a key.
     ; It means both a key pressed (KEYBOARDDETECT green) 
@@ -1035,6 +1047,7 @@ PUTKEYL1:
     LDA (TMPPTR), Y
     STA MATHPTR0
     STY MATHPTR1
+    STX MATHPTR2
     LDY #0
 PUTKEYL2:    
     LDA (TMPPTR2), Y
@@ -1044,48 +1057,28 @@ PUTKEYL2:
     BEQ PUTKEYL2E
     INY
     JMP PUTKEYL2
-PUTKEYL2T:
-    TXA
-    PHA
-    TYA
-    JSR KEYBOARDPUSH
-    PLA
-    TAX
-    LDY MATHPTR1
-    INY
-    DEX
-    BNE PUTKEYL1
 PUTKEYL2E:
     LDY #0
     LDA #<KEYBOARDMAP2
     STA TMPPTR2
     LDA #>KEYBOARDMAP2
     STA TMPPTR2+1
-    SEI
-PUTKEYLE1:
-    LDA (TMPPTR), Y
-    STA MATHPTR0
-    STY MATHPTR1
-    LDY #0
-PUTKEYLE2:    
+PUTKEYL2EL1:    
     LDA (TMPPTR2), Y
     CMP MATHPTR0
-    BEQ PUTKEYL2ET
+    BEQ PUTKEYL2T
     CMP #$FF
-    BEQ PUTKEYL2EE
+    BEQ PUTKEYL2E2
     INY
-    JMP PUTKEYLE2
-PUTKEYL2ET:
-    TXA
-    PHA
+    JMP PUTKEYL2EL1
+PUTKEYL2T:
     TYA
     JSR KEYBOARDPUSH
-    PLA
-    TAX
     LDY MATHPTR1
+    LDX MATHPTR2
     INY
     DEX
     BNE PUTKEYL1
-PUTKEYL2EE:
+PUTKEYL2E2:
     CLI
     RTS
