@@ -408,6 +408,10 @@ void c64_timer_set_address( Environment * _environment, char * _timer, char * _a
 
 void c64_put_key(  Environment * _environment, char *_string, char * _size ) {
 
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_c64_keyboard_asm);
+
     outline1("LDA %s", _string );
     outline0("STA TMPPTR" );
     outline1("LDA %s", address_displacement( _environment, _string, "1" ) );

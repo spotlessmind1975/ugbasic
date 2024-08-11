@@ -159,63 +159,20 @@ void c64reu_scanshift( Environment * _environment, char * _shifts ) {
 
 void c64reu_keyshift( Environment * _environment, char * _shifts ) {
 
-    deploy( scancode, src_hw_c64reu_scancode_asm);
+    _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_c64reu_keyboard_asm );
 
-    // outline0("JSR SCANCODE");
-
-    outline0("LDA #0");
-    outline1("STA %s", _shifts);
-    outline0("LDA #$10");
-    outline0("STA $DC00");
-    outline0("LDA $DC01");
-    outline0("AND #$80");
-    outline1("BNE %snoleft", label);
-    outline0("LDA #1");
-    outline1("STA %s", _shifts);
-    outhead1("%snoleft:", label );
-
-    outline0("LDA #$20");
-    outline0("STA $DC00");
-    outline0("LDA $DC01");
-    outline0("AND #$10");
-    outline1("BNE %snoright", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #2");
-    outline1("STA %s", _shifts);
-    outhead1("%snoright:", label );
-
-    outline0("LDA $028D");
-    outline0("AND #$01");
-    outline1("BEQ %snocaps", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #4");
-    outline1("STA %s", _shifts);
-    outhead1("%snocaps:", label );
-
-    outline0("LDA $028D");
-    outline0("AND #$04");
-    outline1("BEQ %snocontrol", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #8");
-    outline1("STA %s", _shifts);
-    outhead1("%snocontrol:", label );
-
-    outline0("LDA $028D");
-    outline0("AND #$02");
-    outline1("BEQ %snoalt", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #$30");
-    outline1("STA %s", _shifts);
-    outhead1("%snoalt:", label );
+    outline0("JSR KEYSHIFT" );
+    outline1("STA %s", _shifts );
 
 }
 
 void c64reu_clear_key( Environment * _environment ) {
 
-    outline0("LDA #$0");
-    outline0("STA $c6");
+    _environment->bitmaskNeeded = 1;
+
+    outline0("JSR CLEARKEY");
    
 }
 
@@ -432,6 +389,21 @@ void c64reu_timer_set_address( Environment * _environment, char * _timer, char *
     outline1("LDA #>%s", _address );
     outline0("STA MATHPTR3");
     outline0("JSR TIMERSETADDRESS" );
+
+}
+
+void c64reu_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_c64reu_keyboard_asm);
+
+    outline1("LDA %s", _string );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _string, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDX %s", _size );
+    outline0("JSR PUTKEY" );
 
 }
 
