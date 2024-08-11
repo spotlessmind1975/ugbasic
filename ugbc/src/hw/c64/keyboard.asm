@@ -40,6 +40,79 @@ SCANCODEREAD:
 
 SCANCODEPTR = $9
 
+KEYBOARDQUEUE:          .RES 10,$FF
+KEYBOARDQUEUERPOS:      .BYTE $00
+KEYBOARDQUEUEWPOS:      .BYTE $00
+KEYBOARDACTUAL:         .BYTE $FF
+KEYBOARDSHIFT:          .BYTE $00
+KEYBOARDINKEY:          .BYTE $FF
+
+KEYBOARDTEMP:           .BYTE $00
+
+; ----------------------------------------------------------------------------
+; KEYBOARDEMPTY
+; ----------------------------------------------------------------------------
+; This routine can be called to understand if the keyboard queue is empty.
+
+KEYBOARDEMPTY:
+    LDX KEYBOARDQUEUEWPOS
+    CPX KEYBOARDQUEUERPOS
+    BEQ KEYBOARDEMPTY1
+    CLC
+    RTS
+KEYBOARDEMPTY1:
+    SEC
+    RTS
+
+; ----------------------------------------------------------------------------
+; KEYBOARDPUSH
+; ----------------------------------------------------------------------------
+; This routine can be called to push a character in front of the keyboard
+; queue. This will put the character in the actual KEYBOARDQUEUEWPOS position
+; and increment the KEYBOARDQUEUEWPOS by 1. If the KEYBOARDQUEUEWPOS reachs the
+; end of the queue, it will return to 0. Moreover, if it is already 
+; KEYBOARDQUEUERPOS then nothing will be done, and the character will be lost.
+;
+
+KEYBOARDPUSH:
+    LDX KEYBOARDQUEUEWPOS
+    ; CPX KEYBOARDQUEUERPOS
+    ; BEQ KEYBOARDPUSHLOST
+    STA KEYBOARDQUEUE, X
+    INX
+    CPX #$0A
+    BNE KEYBOARDPUSHDONE
+    LDX #0
+KEYBOARDPUSHDONE:
+    STX KEYBOARDQUEUEWPOS
+KEYBOARDPUSHLOST:
+    RTS
+
+; ----------------------------------------------------------------------------
+; KEYBOARDPOP
+; ----------------------------------------------------------------------------
+; This routine can be called to pop a character from the keyboard queue. This 
+; will get the character from the actual KEYBOARDQUEUERPOS position
+; and increment the KEYBOARDQUEUERPOS by 1. If the KEYBOARDQUEUERPOS reachs the
+; end of the queue, it will return to 0. Moreover, if it is already 
+; KEYBOARDQUEUEWPOS then nothing will be get and it will be returned a $FF.
+
+KEYBOARDPOP:
+    LDX KEYBOARDQUEUERPOS
+    CPX KEYBOARDQUEUEWPOS
+    BEQ KEYBOARDPOPNONE
+    LDA KEYBOARDQUEUE, X
+    INX
+    CPX #$0A
+    BNE KEYBOARDPOPGOT
+    LDX #0
+KEYBOARDPOPGOT:
+    STX KEYBOARDQUEUERPOS
+    RTS
+KEYBOARDPOPNONE:
+    LDA #$FF
+    RTS
+
 ; ----------------------------------------------------------------------------
 ; KEYBOARDMANAGER
 ; ----------------------------------------------------------------------------
@@ -54,11 +127,40 @@ SCANCODEPTR = $9
 ;   Input: A - bitmap of key pressed
 ;          X - starting value of key pressed
 ;   Ouput: -
-;   Changes: KEYBOARDACTUAL, KEYBOARDPREVIOUS, KEYBOARDASFSTATE
+;   Changes: KEYBOARDACTUAL, KEYBOARDASFSTATE
 
 KEYBOARDPRESSED: .BYTE 0
 
+KEYBOARDMANAGERSINGLEKEYPRESSEDLSHIFT:
+    PHA
+    LDA #$01
+    ORA KEYBOARDSHIFT
+    STA KEYBOARDSHIFT
+    PLA
+    JMP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
+
+KEYBOARDMANAGERSINGLEKEYPRESSEDRSHIFT:
+    PHA
+    LDA #$02
+    ORA KEYBOARDSHIFT
+    STA KEYBOARDSHIFT
+    PLA
+    JMP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
+
+KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL:
+    PHA
+    LDA #$08
+    ORA KEYBOARDSHIFT
+    STA KEYBOARDSHIFT
+    PLA
+    JMP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
+
 KEYBOARDMANAGERSINGLEKEY:
+
+    STA KEYBOARDTEMP
+    TXA
+    PHA
+    LDA KEYBOARDTEMP
 
     ; This loop will be repeated for each bit
     ; into the A register.
@@ -73,6 +175,8 @@ KEYBOARDMANAGERSINGLEKEYL1:
 
 	BCS KEYBOARDMANAGERSINGLEKEYPRESSED
 
+KEYBOARDMANAGERSINGLEKEYL1CONTINUE:
+
     ; Increment the position to check.
 
 	INX
@@ -82,27 +186,41 @@ KEYBOARDMANAGERSINGLEKEYL1:
 
 	CMP #$0
 	BNE KEYBOARDMANAGERSINGLEKEYL1
-    
+
+
     ; No key has been detected, really.
 
-    LDA #$FF
-    STA KEYBOARDACTUAL
+    ; LDA #$FF
+    ; STA KEYBOARDACTUAL
 
+    PLA
+    TAX
     RTS
 
 KEYBOARDMANAGERSINGLEKEYPRESSED:
 
-    ; Save the previous key pressed.
-
-    LDA KEYBOARDACTUAL
-    STA KEYBOARDPREVIOUS 
-
-    ; Save the actual key pressed.
+    ; Save the actual key pressed
+    ; in the keyboard queue.
     
-    STX KEYBOARDACTUAL
+    CPX #$0F
+    BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDLSHIFT
+
+    CPX #$34
+    BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDRSHIFT
+
+    CPX #$36
+    BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDRSHIFT
+
+    CPX #$3A
+    BEQ KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL
+
+    TXA
+    STA KEYBOARDACTUAL
 
     INC KEYBOARDPRESSED
 
+    PLA
+    TAX
     RTS
 
 KEYBOARDMANAGER:
@@ -115,10 +233,16 @@ KEYBOARDMANAGER:
 	TXA
 	PHA
 
+    JSR KEYBOARDEMPTY
+    BCC KEYBOARDMANAGERDONEYES
+
     ; Reset the key press detector.
 
     LDA #0
     STA KEYBOARDPRESSED
+
+    LDA #0
+    STA KEYBOARDSHIFT
 
     ; Prepare to store values into memory.
 
@@ -182,11 +306,10 @@ SCANCODEFULLL12:
 
     LDA KEYBOARDPRESSED
     BNE SCANCODEFULL23
-    LDA KEYBOARDACTUAL
-    STA KEYBOARDPREVIOUS
     LDA #$FF
     STA KEYBOARDACTUAL
 SCANCODEFULL23:
+KEYBOARDMANAGERDONEYES:
 
     ; Increase the elapsed timer.
 
@@ -198,6 +321,7 @@ SCANCODEFULL23:
 
     ; Restore the used registers.
 
+KEYBOARDMANAGERDONE:
 	PLA
 	TAX
 	PLA
@@ -205,9 +329,6 @@ SCANCODEFULL23:
 	PLA
 
 	RTS
-
-KEYBOARDACTUAL:          .BYTE $FF
-KEYBOARDPREVIOUS:        .BYTE $FF
 
 ; ----------------------------------------------------------------------------
 ; KEYBOARDDETECT
@@ -234,11 +355,6 @@ KEYBOARDDETECT:
     CMP #$FF
     BEQ KEYBOARDDETECTNONE
 
-    ; A key has been pressed. Set the carry flag and check
-    ; if it is the same as the previous pressed.
-
-    ; CMP KEYBOARDPREVIOUS
-    
     SEC
 
     RTS
@@ -346,6 +462,12 @@ KEYBOARDASF:
 
 KEYBOARDASF0:
 
+    JSR KEYBOARDEMPTY
+    BCS KEYBOARDASF0B
+    JSR KEYBOARDPOP
+    STA KEYBOARDACTUAL
+
+KEYBOARDASF0B:
     ; We just check for detection of a key.
     ; It means both a key pressed (KEYBOARDDETECT green) 
     ; and a different key pressed from the previous
@@ -380,6 +502,12 @@ KEYBOARDASFTO1:
     ; -----------------
 
 KEYBOARDASF1:
+
+    JSR KEYBOARDEMPTY
+    BCS KEYBOARDASF1B
+    JMP KEYBOARDASFTO0
+
+KEYBOARDASF1B:
 
     ; We just check for detection of a key.
     ; It means both a key pressed (KEYBOARDDETECT green) 
@@ -599,17 +727,13 @@ KEYSTATE:
     TXA
     AND #$07
     TAX
-    LDA (TMPPTR), Y
-
-KEYSTATEL1:
-    LSR
-    BCS KEYSTATE10
-    CPX #0
-    BEQ KEYSTATE10
-    DEX
-    JMP KEYSTATEL1
-
-KEYSTATE10:
+    LDA BITMASK, X
+    AND (TMPPTR), Y
+    BEQ KEYSTATEL0
+    SEC
+    RTS
+KEYSTATEL0:
+    CLC
     RTS
 
 ; ----------------------------------------------------------------------------
@@ -622,7 +746,13 @@ KEYSTATE10:
 ; - A : KEYBOARDACTUAL
 
 SCANCODE:
+    LDA KEYBOARDINKEY
+    CMP #$FF
+    BNE SCANCODEDONE
     LDA KEYBOARDACTUAL
+SCANCODEDONE:
+    LDX #$FF
+    STX KEYBOARDINKEY
     RTS
 
 ; ----------------------------------------------------------------------------
@@ -636,10 +766,25 @@ SCANCODE:
 
 ASCIICODE:
     JSR SCANCODE
+    PHA
+    LDA KEYBOARDSHIFT
+    AND #$3
+    CMP #0
+    BNE ASCIICODE2
+    PLA
     TAY
 	LDA #<KEYS_STANDARD
 	STA TMPPTR
 	LDA #>KEYS_STANDARD
+	STA TMPPTR+1
+	LDA (TMPPTR),Y
+    RTS
+ASCIICODE2:
+    PLA
+    TAY
+	LDA #<KEYS_SHIFTED
+	STA TMPPTR
+	LDA #>KEYS_SHIFTED
 	STA TMPPTR+1
 	LDA (TMPPTR),Y
     RTS
@@ -661,16 +806,16 @@ KEYS_STANDARD:
 	.byte	$31,$5F,$04,$32,$20,$02,$51,$03
 	.byte	$FF
 
-; KEYS_SHIFTED:
-; 	.byte	$94,$8D,$9D,$8C,$89,$8A,$8B,$91
-; 	.byte	$23,$D7,$C1,$24,$DA,$D3,$C5,$01
-; 	.byte	$25,$D2,$C4,$26,$C3,$C6,$D4,$D8
-; 	.byte	$27,$D9,$C7,$28,$C2,$C8,$D5,$D6
-; 	.byte	$29,$C9,$CA,$30,$CD,$CB,$CF,$CE
-; 	.byte	$DB,$D0,$CC,$DD,$3E,$5B,$BA,$3C
-; 	.byte	$A9,$C0,$5D,$93,$01,$3D,$DE,$3F
-; 	.byte	$21,$5F,$04,$22,$A0,$02,$D1,$83
-; 	.byte	$FF
+KEYS_SHIFTED:
+	.byte	$94,$8D,$9D,$8C,$89,$8A,$8B,$91
+	.byte	$23,$D7,$C1,$24,$DA,$D3,$C5,$01
+	.byte	$25,$D2,$C4,$26,$C3,$C6,$D4,$D8
+	.byte	$27,$D9,$C7,$28,$C2,$C8,$D5,$D6
+	.byte	$29,$C9,$CA,$30,$CD,$CB,$CF,$CE
+	.byte	$DB,$D0,$CC,$DD,$3E,$5B,$BA,$3C
+	.byte	$A9,$C0,$5D,$93,$01,$3D,$DE,$3F
+	.byte	$21,$5F,$04,$22,$A0,$02,$D1,$83
+	.byte	$FF
 
 ; KEYS_CBM:
 ; 	.byte	$94,$8D,$9D,$8C,$89,$8A,$8B,$91
@@ -779,6 +924,13 @@ INKEY:
     JSR KEYPRESSED
     CMP #$FF
     BEQ INKEY0
+    STA KEYBOARDINKEY
+    PHA
+    LDA KEYBOARDSHIFT
+    AND #$3
+    CMP #0
+    BNE INKEY2
+    PLA
     TAY
 	LDA #<KEYS_STANDARD
 	STA TMPPTR
@@ -787,7 +939,105 @@ INKEY:
 	LDA (TMPPTR),Y
     JSR WAITKEY02
     RTS
+INKEY2:
+    PLA
+    TAY
+	LDA #<KEYS_SHIFTED
+	STA TMPPTR
+	LDA #>KEYS_SHIFTED
+	STA TMPPTR+1
+	LDA (TMPPTR),Y
+    JSR WAITKEY02
+    RTS
 INKEY0:
     LDA #0
     RTS
 
+; ----------------------------------------------------------------------------
+; KEY SHIFT
+; ----------------------------------------------------------------------------
+; This routine can be called to retrieve the status of key / control buttons.
+;
+; Return values:
+; - A : bitmap of key pressed
+;           0	Left SHIFT
+;           1	Right SHIFT
+;           2	CAPS LOCK
+;           3	CONTROL
+;           4	Left ALT
+;           5	Right ALT
+
+KEYSHIFT:
+    LDA KEYBOARDSHIFT
+    RTS
+
+; ----------------------------------------------------------------------------
+; CLEAR KEY
+; ----------------------------------------------------------------------------
+; This routine can be called to clear the keyboard queue.
+
+CLEARKEY:
+    LDA #0
+    STA KEYBOARDQUEUEWPOS
+    STA KEYBOARDQUEUERPOS
+    STA KEYBOARDASFSTATE
+    STA KEYBOARDELAPSED
+    LDA #$FF
+    STA KEYBOARDACTUAL
+    RTS
+
+; ----------------------------------------------------------------------------
+; PUT KEY
+; ----------------------------------------------------------------------------
+; This routine can be called to put a string into the keyboard queue.
+;
+; Input:
+;      TMPPTR: address of string
+;      X: size of the string
+
+PUTKEY:
+    LDY #0
+    SEI
+PUTKEYL1:
+    LDA #<KEYS_STANDARD
+    STA TMPPTR2
+    LDA #>KEYS_STANDARD
+    STA TMPPTR2+1
+    LDA (TMPPTR), Y
+    STA MATHPTR0
+    STY MATHPTR1
+    STX MATHPTR2
+    LDY #0
+PUTKEYL2:    
+    LDA (TMPPTR2), Y
+    CMP MATHPTR0
+    BEQ PUTKEYL2T
+    CMP #$FF
+    BEQ PUTKEYL2E
+    INY
+    JMP PUTKEYL2
+PUTKEYL2E:
+    LDY #0
+    LDA #<KEYS_SHIFTED
+    STA TMPPTR2
+    LDA #>KEYS_SHIFTED
+    STA TMPPTR2+1
+PUTKEYL2EL1:    
+    LDA (TMPPTR2), Y
+    CMP MATHPTR0
+    BEQ PUTKEYL2T
+    CMP #$FF
+    BEQ PUTKEYL2E2
+    INY
+    JMP PUTKEYL2EL1
+PUTKEYL2T:
+    TYA
+    JSR KEYBOARDPUSH
+    LDY MATHPTR1
+    LDX MATHPTR2
+    INY
+    DEX
+    BNE PUTKEYL1
+PUTKEYL2E2:
+    CLI
+    RTS

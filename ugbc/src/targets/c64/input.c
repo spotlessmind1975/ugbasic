@@ -108,6 +108,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf(doneLabel, "%sdone", label );
     char backspaceLabel[MAX_TEMPORARY_STORAGE]; sprintf(backspaceLabel, "%sbackspace", label );
 
     Variable * temporary = variable_temporary( _environment, VT_DSTRING, "(temporary storage for input)");
@@ -129,7 +130,12 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     cpu_store_8bit( _environment, space->realName, 32 );
     cpu_store_8bit( _environment, zero->realName, 0 );
 
-    cpu_store_8bit( _environment, comma->realName, _environment->inputConfig.separator == 0 ? INPUT_DEFAULT_SEPARATOR : _environment->inputConfig.separator );
+    if ( _environment->lineInput ) {
+        cpu_store_8bit( _environment, comma->realName, 13 );
+    } else {
+        cpu_store_8bit( _environment, comma->realName, _environment->inputConfig.separator == 0 ? INPUT_DEFAULT_SEPARATOR : _environment->inputConfig.separator );
+    }
+
     cpu_store_8bit( _environment, size->realName, _environment->inputConfig.size == 0 ? INPUT_DEFAULT_SIZE : _environment->inputConfig.size );
     cpu_store_8bit( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor );
 
@@ -194,6 +200,13 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     print( _environment, space->name, 0 );
     cmove_direct( _environment, -1, 0 );
     
+    cpu_compare_8bit( _environment, comma->realName, enter->realName, pressed->realName, 1 );
+    cpu_bveq( _environment, pressed->realName, doneLabel );
+
+    print_newline( _environment );
+
+    cpu_label( _environment, doneLabel );
+
     cpu_dsresize( _environment, temporary->realName, offset->realName );
 
     switch( VT_BITWIDTH( result->type ) ) {

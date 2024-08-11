@@ -139,10 +139,12 @@ void c64_scancode( Environment * _environment, char * _scacode );
 void c64_asciicode( Environment * _environment, char * _asciicode );
 void c64_inkey( Environment * _environment, char * _key );
 void c64_key_pressed( Environment * _environment, char *_scancode, char * _result );
-
-void c64_scanshift( Environment * _environment, char * _shifts );
 void c64_keyshift( Environment * _environment, char * _shifts );
 void c64_clear_key( Environment * _environment );
+void c64_put_key(  Environment * _environment, char *_string, char * _size );
+
+void c64_scanshift( Environment * _environment, char * _shifts );
+
 void c64_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void c64_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void c64_sys_call( Environment * _environment, int _destination );
