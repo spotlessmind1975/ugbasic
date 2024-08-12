@@ -42,6 +42,8 @@ BINTOSTR:
 
     PHA
 
+    SEC
+    SBC #1
     ; Move the destination string to the last bit to write.
 
     CLC
