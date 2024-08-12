@@ -409,6 +409,8 @@ void c128_dsave( Environment * _environment, char * _filename, char * _offset, c
 
 void c128_put_key(  Environment * _environment, char *_string, char * _size ) {
 
+    _environment->bitmaskNeeded = 1;
+
     outline1("LDA %s", _string );
     outline0("STA TMPPTR" );
     outline1("LDA %s", address_displacement( _environment, _string, "1" ) );

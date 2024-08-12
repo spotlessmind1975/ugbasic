@@ -43,6 +43,8 @@
 
 void c128z_inkey( Environment * _environment, char * _key ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_c128z_keyboard_asm);
 
     outline0("CALL INKEY");
@@ -51,6 +53,8 @@ void c128z_inkey( Environment * _environment, char * _key ) {
 }
 
 void c128z_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
 
     deploy( keyboard, src_hw_c128z_keyboard_asm );
 
@@ -63,6 +67,8 @@ void c128z_wait_key( Environment * _environment, int _release ) {
 }
 
 void c128z_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
@@ -77,6 +83,8 @@ void c128z_key_state( Environment * _environment, char *_scancode, char * _resul
 
 void c128z_scancode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_c128z_keyboard_asm);
 
     outline0("CALL SCANCODE");
@@ -86,6 +94,8 @@ void c128z_scancode( Environment * _environment, char * _result ) {
 
 void c128z_asciicode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_c128z_keyboard_asm);
 
     outline0("CALL ASCIICODE");
@@ -94,6 +104,8 @@ void c128z_asciicode( Environment * _environment, char * _result ) {
 }
 
 void c128z_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
@@ -139,60 +151,22 @@ void c128z_scanshift( Environment * _environment, char * _shifts ) {
 
 void c128z_keyshift( Environment * _environment, char * _shifts ) {
 
-    deploy( scancode, src_hw_c128z_scancode_asm);
+    _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_c128z_keyboard_asm );
 
-    outline0("CALL SCANCODE");
-
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _shifts);
-    outline0("LD A, $10");
-    outline0("LD ($DC00), A");
-    outline0("LD A, ($DC01)");
-    outline0("AND $80");
-    outline1("JR NZ, %snoleft", label);
-    outline0("LD A, 1");
-    outline1("LD (%s), A", _shifts);
-    outhead1("%snoleft:", label );
-
-    outline0("LD A, $20");
-    outline0("LD ($DC00), A");
-    outline0("LD A, ($DC01)");
-    outline0("AND $10");
-    outline1("JR NZ, %snoright", label);
-    outline1("LD A, (%s)", _shifts);
-    outline0("OR 2");
-    outline1("LD (%s), A", _shifts);
-    outhead1("%snoright:", label );
-
-    outline0("LD A, ($028D)");
-    outline0("AND $01");
-    outline1("JR Z, %snocaps", label);
-    outline1("LD A, (%s)", _shifts);
-    outline0("OR 4");
-    outline1("LD (%s), A", _shifts);
-    outhead1("%snocaps:", label );
-
-    outline0("LD A, ($028D)");
-    outline0("AND $4");
-    outline1("JR Z, %snocontrol", label);
-    outline1("LD A, (%s)", _shifts);
-    outline0("OR 8");
-    outline1("LD (%s), A", _shifts);
-    outhead1("%snocontrol:", label );
-
-    outline0("LD A, ($028D)");
-    outline0("AND $02");
-    outline1("JR Z, %snoalt", label);
-    outline1("LD A, (%s)", _shifts);
-    outline0("OR $30");
-    outline1("LD A, (%s)", _shifts);
-    outhead1("%snoalt:", label );
+    outline0("CALL KEYSHIFT" );
+    outline1("LD (%s), A", _shifts );
 
 }
 
 void c128z_clear_key( Environment * _environment ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_c128z_keyboard_asm );
+
+    outline0("JSR CLEARKEY" );
 
 }
 
@@ -246,6 +220,19 @@ void c128z_timer_set_init( Environment * _environment, char * _timer, char * _in
 }
 
 void c128z_timer_set_address( Environment * _environment, char * _timer, char * _address ) {
+
+}
+
+void c128z_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_c128z_keyboard_asm);
+
+    outline1("LD HL, (%s)", _string );
+    outline1("LD A, (%s)", _size );
+    outline0("LD C, A" );
+    outline0("CALL PUTKEY" );
 
 }
 
