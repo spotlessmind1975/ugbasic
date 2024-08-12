@@ -226,9 +226,9 @@ void cpu6809_ctoa( Environment * _environment ) {
         outline1("BCS %syes", label );
         outline0("LDA #0");
         outline1("JMP %s", label );
-        outhead1("%syes:", label );
+        outhead1("%syes", label );
         outline0("LDA #$ff");
-        outhead1("%s:", label );
+        outhead1("%s", label );
 
     no_embedded( cpu_ctoa );
 

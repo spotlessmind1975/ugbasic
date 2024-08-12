@@ -351,7 +351,7 @@ void cpu6809_f32log10( char * _x, char * _result );
 void cpu6809_f32mul( char * _x, char * _y, char * _result );
 void cpu6809_f32sub( char * _x, char * _y, char * _result );
 
-#define cpu_ctoa( _environment,  _label  ) cpu6809_ctoa( _environment,  _label  )
+#define cpu_ctoa( _environment  ) cpu6809_ctoa( _environment  )
 #define cpu_beq( _environment,  _label  ) cpu6809_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6809_beq( _environment,  _label  )
 #define cpu_busy_wait( _environment,  _timing  ) cpu6809_busy_wait( _environment,  _timing  )
