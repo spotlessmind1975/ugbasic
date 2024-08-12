@@ -839,3 +839,18 @@ KEYBOARDPOPNONE
 KEYSHIFT
     LDA KEYBOARDSHIFT
     RTS
+
+; ----------------------------------------------------------------------------
+; CLEAR KEY
+; ----------------------------------------------------------------------------
+; This routine can be called to clear the keyboard queue.
+
+CLEARKEY
+    LDA #0
+    STA KEYBOARDQUEUEWPOS
+    STA KEYBOARDQUEUERPOS
+    STA KEYBOARDASFSTATE
+    STA KEYBOARDELAPSED
+    LDA #$FF
+    STA KEYBOARDACTUAL
+    RTS
