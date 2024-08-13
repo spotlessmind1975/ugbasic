@@ -104,6 +104,8 @@ static int lastUsedSlotInCommonPalette = 0;
 
 void cpc_inkey( Environment * _environment, char * _key ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL INKEY");
@@ -112,6 +114,8 @@ void cpc_inkey( Environment * _environment, char * _key ) {
 }
 
 void cpc_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
 
     deploy( keyboard, src_hw_cpc_keyboard_asm );
 
@@ -124,6 +128,8 @@ void cpc_wait_key( Environment * _environment, int _release ) {
 }
 
 void cpc_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
@@ -138,6 +144,8 @@ void cpc_key_state( Environment * _environment, char *_scancode, char * _result 
 
 void cpc_scancode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL SCANCODE");
@@ -147,6 +155,8 @@ void cpc_scancode( Environment * _environment, char * _result ) {
 
 void cpc_asciicode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL ASCIICODE");
@@ -155,6 +165,8 @@ void cpc_asciicode( Environment * _environment, char * _result ) {
 }
 
 void cpc_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
@@ -173,9 +185,22 @@ void cpc_scanshift( Environment * _environment, char * _shifts ) {
 
 void cpc_keyshift( Environment * _environment, char * _shifts ) {
 
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
+
+    outline0("CALL KEYSHIFT" );
+    outline1("LD (%s), A", _shifts );
+
 }
 
 void cpc_clear_key( Environment * _environment ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
+
+    outline0("CALL CLEARKEY" );
 
 }
 
@@ -2675,6 +2700,20 @@ void cpc_flip_image( Environment * _environment, Resource * _image, char * _fram
     //     deploy( flipimagey, src_hw_cpc_flip_image_y_asm );
     //     outline0("CALL FLIPIMAGEY");
     // }
+
+}
+
+
+void cpc_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm);
+
+    outline1("LD HL, (%s)", _string );
+    outline1("LD A, (%s)", _size );
+    outline0("LD C, A" );
+    outline0("CALL PUTKEY" );
 
 }
 

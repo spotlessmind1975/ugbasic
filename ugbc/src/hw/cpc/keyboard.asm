@@ -38,6 +38,115 @@
 SCANCODEREAD:
 	DB $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
+KEYBOARDQUEUE:          DS 10,$FF
+KEYBOARDQUEUERPOS:      DB $00
+KEYBOARDQUEUEWPOS:      DB $00
+KEYBOARDACTUAL:         DB $FF
+KEYBOARDSHIFT:          DB $00
+KEYBOARDINKEY:          DB $FF
+
+KEYBOARDTEMP:           DB $00
+
+; ----------------------------------------------------------------------------
+; KEYBOARDEMPTY
+; ----------------------------------------------------------------------------
+; This routine can be called to understand if the keyboard queue is empty.
+
+KEYBOARDEMPTY:
+    PUSH AF
+    PUSH BC
+    LD A, (KEYBOARDQUEUEWPOS)
+    LD B, A
+    LD A, (KEYBOARDQUEUERPOS)
+    CP B
+    JR Z, KEYBOARDEMPTY1
+    POP BC
+    POP AF
+    SCF
+    CCF
+    RET
+KEYBOARDEMPTY1:
+    POP BC
+    POP AF
+    SCF
+    RET
+
+; ----------------------------------------------------------------------------
+; KEYBOARDPUSH
+; ----------------------------------------------------------------------------
+; This routine can be called to push a character in front of the keyboard
+; queue. This will put the character in the actual KEYBOARDQUEUEWPOS position
+; and increment the KEYBOARDQUEUEWPOS by 1. If the KEYBOARDQUEUEWPOS reachs the
+; end of the queue, it will return to 0. Moreover, if it is already 
+; KEYBOARDQUEUERPOS then nothing will be done, and the character will be lost.
+;
+
+KEYBOARDPUSH:
+    PUSH HL
+    PUSH DE
+    PUSH AF
+    LD A,  (KEYBOARDQUEUEWPOS)
+    LD E, A
+    LD D, 0
+    LD HL, KEYBOARDQUEUE
+    ADD HL, DE
+    POP AF
+    LD (HL), A
+    LD A,  (KEYBOARDQUEUEWPOS)
+    ADD 1
+    CP $0A
+    JR NZ, KEYBOARDPUSHDONE
+    LD A, 0
+KEYBOARDPUSHDONE:
+    LD (KEYBOARDQUEUEWPOS), A
+KEYBOARDPUSHLOST:
+    POP DE
+    POP HL
+    RET
+
+; ----------------------------------------------------------------------------
+; KEYBOARDPOP
+; ----------------------------------------------------------------------------
+; This routine can be called to pop a character from the keyboard queue. This 
+; will get the character from the actual KEYBOARDQUEUERPOS position
+; and increment the KEYBOARDQUEUERPOS by 1. If the KEYBOARDQUEUERPOS reachs the
+; end of the queue, it will return to 0. Moreover, if it is already 
+; KEYBOARDQUEUEWPOS then nothing will be get and it will be returned a $FF.
+
+KEYBOARDPOP:
+    PUSH HL
+    PUSH DE
+    PUSH BC
+    LD A, (KEYBOARDQUEUEWPOS) 
+    LD B, A
+    LD A, (KEYBOARDQUEUERPOS) 
+    CP B
+    JR Z, KEYBOARDPOPNONE
+    LD E, A
+    LD D, 0
+    LD HL, KEYBOARDQUEUE
+    ADD HL, DE
+    LD A, (HL)
+    PUSH AF
+    LD A, (KEYBOARDQUEUERPOS)
+    ADD 1
+    CP $0A
+    JR NZ, KEYBOARDPOPGOT
+    LD A, 0
+KEYBOARDPOPGOT:
+    LD (KEYBOARDQUEUERPOS), A
+    POP AF
+    POP BC
+    POP DE
+    POP HL
+    RET
+KEYBOARDPOPNONE:
+    LD A, $FF
+    POP BC
+    POP DE
+    POP HL
+    RET
+
 ; ----------------------------------------------------------------------------
 ; KEYBOARDMANAGER
 ; ----------------------------------------------------------------------------
@@ -52,9 +161,34 @@ SCANCODEREAD:
 ;   Input: A - bitmap of key pressed
 ;          X - starting value of key pressed
 ;   Ouput: -
-;   Changes: KEYBOARDACTUAL, KEYBOARDPREVIOUS, KEYBOARDASFSTATE
+;   Changes: KEYBOARDACTUAL, KEYBOARDASFSTATE
 
 KEYBOARDPRESSED: DB 0
+
+KEYBOARDMANAGERSINGLEKEYPRESSEDSHIFT:
+    PUSH AF
+    LD A, (KEYBOARDSHIFT)
+    OR $03
+    LD (KEYBOARDSHIFT), A
+    POP AF
+    JP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
+
+KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL:
+    PUSH AF
+    LD A, (KEYBOARDSHIFT)
+    OR $08
+    LD (KEYBOARDSHIFT), A
+    POP AF
+    JP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
+
+KEYBOARDMANAGERSINGLEKEYPRESSECAPSLOCK:
+    PUSH AF
+    LD A, (KEYBOARDSHIFT)
+    OR $04
+    LD (KEYBOARDSHIFT), A
+    POP AF
+    JP KEYBOARDMANAGERSINGLEKEYL1CONTINUE
+
 
 KEYBOARDMANAGER:
 
@@ -62,6 +196,9 @@ KEYBOARDMANAGER:
     PUSH BC
     PUSH DE
     PUSH AF
+
+    CALL KEYBOARDEMPTY
+    JP NC, KEYBOARDMANAGERDONEYES
 
     LD IXL, 0
     LD A, 0
@@ -95,14 +232,21 @@ SCANCODEENTIREL1:
     CP 0
     JR Z, SCANCODEENTIREL1B
 
+    CP 21
+    JR Z, KEYBOARDMANAGERSINGLEKEYPRESSEDSHIFT
+
+    CP 23
+    JR Z, KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL
+
+    CP 40
+    JR Z, KEYBOARDMANAGERSINGLEKEYPRESSECAPSLOCK
+
 SCANCODEENTIREL1BL1:
     CP 0
     JR Z, SCANCODEENTIREL1B
     SRL A
     JR NC, SCANCODEENTIREL1BL2
 
-    LD A, (KEYBOARDACTUAL)
-    LD (KEYBOARDPREVIOUS), A
     LD A, IXL
     LD (KEYBOARDACTUAL), A
     LD A, 1
@@ -114,6 +258,7 @@ SCANCODEENTIREL1BL2:
     JR SCANCODEENTIREL1BL1
 
 SCANCODEENTIREL1B:
+KEYBOARDMANAGERSINGLEKEYL1CONTINUE:
     POP AF
 
     INC IXL
@@ -135,12 +280,11 @@ SCANCODEENTIREL1B:
     CP 1
     JR Z, SCANCODEENTIREL1XX
 
-    LD A, (KEYBOARDACTUAL)
-    LD (KEYBOARDPREVIOUS), A
     LD A, $FF
     LD (KEYBOARDACTUAL), A
 
 SCANCODEENTIREL1XX:
+KEYBOARDMANAGERDONEYES:
 
     ; Increase the elapsed timer.
 
@@ -158,9 +302,6 @@ SCANCODEENTIREL1XX:
     POP HL
 
 	RET
-
-KEYBOARDACTUAL:          DB $FF
-KEYBOARDPREVIOUS:        DB $FF
 
 ; ----------------------------------------------------------------------------
 ; KEYBOARDDETECT
@@ -187,11 +328,6 @@ KEYBOARDDETECT:
     CP $FF
     JR Z, KEYBOARDDETECTNONE
 
-    ; A key has been pressed. Set the carry flag and check
-    ; if it is the same as the previous pressed.
-
-    ; CMP KEYBOARDPREVIOUS
-    
     SCF
 
     RET
@@ -302,6 +438,13 @@ KEYBOARDASF:
 
 KEYBOARDASF0:
 
+    CALL KEYBOARDEMPTY
+    JR C, KEYBOARDASF0B
+    CALL KEYBOARDPOP
+    LD (KEYBOARDACTUAL), A
+
+KEYBOARDASF0B:
+
     ; We just check for detection of a key.
     ; It means both a key pressed (KEYBOARDDETECT green) 
     ; and a different key pressed from the previous
@@ -336,6 +479,12 @@ KEYBOARDASFTO1:
     ; -----------------
 
 KEYBOARDASF1:
+
+    CALL KEYBOARDEMPTY
+    JR C, KEYBOARDASF1B
+    JMP KEYBOARDASFTO0
+
+KEYBOARDASF1B:
 
     ; We just check for detection of a key.
     ; It means both a key pressed (KEYBOARDDETECT green) 
@@ -582,6 +731,11 @@ KEYSTATE10:
 ; - A : KEYBOARDACTUAL
 
 SCANCODE:
+    LD A, (KEYBOARDINKEY)
+    CP $FF
+    JR Z, SCANCODE0
+    RET
+SCANCODE0:
     LD A, (KEYBOARDACTUAL)
     RET
 
@@ -616,19 +770,47 @@ KEYBOARDMAP:
     DB      0, 00,  0, 00, 00, '-',  0,'P',  0,  0
     ; 3
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0, '.','+','9','O','I','L','K','M',','
+    DB      0, '.','0','9','O','I','L','K','M',','
     ; 4
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     '0','7','U','Y','H','J','N',' ', '8','5'
+    DB     '8','7','U','Y','H','J','N',' ', '6','5'
     ; 5
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     'R','T','G','F','B','V','6','3','E','W'
+    DB     'R','T','G','F','B','V','4','3','E','W'
     ; 6
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     'S','D','C','X','4','2', 27,'Q',  9,'A'
+    DB     'S','D','C','X','1','2', 27,'Q',  9,'A'
     ; 7
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     00,'Z','1',  0,  0,  0,  0,  0,  0,  8
+    DB     00,'Z','8',  0,  0,  0,  0,  0,  0,  8
+    DB     $FF
+
+KEYBOARDMAP2:
+    ; 0
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, 00, 00,  0,  0,'v',  0,  0, 00,  0
+    ; 1
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0,  0,  0,  0,  0,  0, 00,  0, 13,'\\'
+    ; 2
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, 00,  0, 00, 00, '-',  0,'p',  0,  0
+    ; 3
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, '.','0','9','o','i','l','k','m',','
+    ; 4
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     '8','7','u','y','h','j','n',' ', '6','5'
+    ; 5
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     'r','t','g','f','b','v','4','3','e','w'
+    ; 6
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     's','d','c','x','1','2', 27,'q',  9,'a'
+    ; 7
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     00,'z','8',  0,  0,  0,  0,  0,  0,  8
+    DB    $FF
 
 ; ----------------------------------------------------------------------------
 ; KEYPRESS
@@ -724,6 +906,7 @@ INKEY:
     CALL KEYPRESSED
     CP $FF
     JR Z, INKEY0
+    LD (KEYBOARDINKEY), A
     LD HL, KEYBOARDMAP
     LD E, A
     LD A, 0
@@ -734,4 +917,90 @@ INKEY:
     RET
 INKEY0:
     LD A, 0
+    RET
+
+; ----------------------------------------------------------------------------
+; KEY SHIFT
+; ----------------------------------------------------------------------------
+; This routine can be called to retrieve the status of key / control buttons.
+;
+; Return values:
+; - A : bitmap of key pressed
+;           0	Left SHIFT
+;           1	Right SHIFT
+;           2	CAPS LOCK
+;           3	CONTROL
+;           4	Left ALT
+;           5	Right ALT
+
+KEYSHIFT:
+    LD A, (KEYBOARDSHIFT)
+    RET
+
+; ----------------------------------------------------------------------------
+; CLEAR KEY
+; ----------------------------------------------------------------------------
+; This routine can be called to clear the keyboard queue.
+
+CLEARKEY:
+    LD A, 0
+    LD (KEYBOARDQUEUEWPOS), A
+    LD (KEYBOARDQUEUERPOS), A
+    LD (KEYBOARDASFSTATE), A
+    LD (KEYBOARDELAPSED), A
+    LD A, $FF
+    LD (KEYBOARDACTUAL), A
+    RET
+
+; ----------------------------------------------------------------------------
+; PUT KEY
+; ----------------------------------------------------------------------------
+; This routine can be called to put a string into the keyboard queue.
+;
+; Input:
+;      HL: address of string
+;      C: size of the string
+
+PUTKEY:
+    PUSH HL
+    PUSH DE
+    DI
+PUTKEYL1:
+    PUSH BC
+    LD C, 0
+    LD A, (HL)
+    LD DE, KEYBOARDMAP
+    LD B, A
+PUTKEYL2:
+    LD A, (DE)
+    CP B
+    JR Z, PUTKEYL2T
+    CP $FF
+    JR Z, PUTKEYL2E
+    INC DE
+    INC C
+    JP PUTKEYL2
+PUTKEYL2E:
+    LD DE, KEYBOARDMAP2
+    LD C, 0
+PUTKEYL2EL1:    
+    LD A, (DE)
+    CP B
+    JR Z, PUTKEYL2T
+    CP $FF
+    JR Z, PUTKEYL2E2
+    INC DE
+    INC C
+    JP PUTKEYL2EL1
+PUTKEYL2T:
+    LD A, C
+    CALL KEYBOARDPUSH
+    POP BC
+    DEC C
+    INC HL
+    JR NZ, PUTKEYL1
+PUTKEYL2E2:
+    POP DE
+    POP HL
+    EI
     RET
