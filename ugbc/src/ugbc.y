@@ -4026,16 +4026,24 @@ exponential:
         $$ = asciicode( _environment )->name;
     }
     | KEY PRESSED OP OP_HASH const_expr CP {
-        $$ = key_pressed( _environment, $5 )->name;
+        if ( ((Environment *)_environment)->keyPressDutyCycle ) {
+            $$ = key_pressed( _environment, $5 )->name;
+        } else {
+            $$ = key_state( _environment, $5 )->name;
+        }
     }
     | KEY PRESSED OP expr CP {
-        $$ = key_pressed_var( _environment, $4 )->name;
+        if ( ((Environment *)_environment)->keyPressDutyCycle ) {
+            $$ = key_pressed_var( _environment, $4 )->name;
+        } else {
+            $$ = key_state_var( _environment, $4 )->name;
+        }
     }
     | KEY STATE OP expr CP {
-        $$ = key_state( _environment, $4 )->name;
+        $$ = key_state_var( _environment, $4 )->name;
     }
     | KEYSTATE OP expr CP {
-        $$ = key_state( _environment, $3 )->name;
+        $$ = key_state_var( _environment, $3 )->name;
     }
     | SCANSHIFT {
         $$ = scanshift( _environment )->name;
@@ -7955,6 +7963,9 @@ define_definition :
     }
     | MSPRITE ASYNC {
         ((struct _Environment *)_environment)->multiplexingSpriteConfig.async = 1;
+    }
+    | KEY PRESSED SYNC {
+        ((Environment *)_environment)->keyPressDutyCycle = 1;
     }
     | AUDIO TARGET audio_source {
         if ( ! define_audio_target_check( _environment, $3 ) ) {

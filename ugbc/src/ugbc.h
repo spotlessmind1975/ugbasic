@@ -2704,6 +2704,8 @@ typedef struct _Environment {
 
     int lineInput;
 
+    int keyPressDutyCycle;
+
     /**
      * 
      */
@@ -4495,7 +4497,8 @@ Variable *              joyy_vars( Environment * _environment, char * _port );
 // *K*
 //----------------------------------------------------------------------------
 
-Variable *              key_state( Environment * _environment, char * _scancode );
+Variable *              key_state( Environment * _environment, int _scancode );
+Variable *              key_state_var( Environment * _environment, char * _scancode );
 Variable *              keyshift( Environment * _environment );
 Variable *              key_pressed( Environment * _environment, int _scancode );
 Variable *              key_pressed_var( Environment * _environment, char * _scancode );

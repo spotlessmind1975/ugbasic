@@ -40,7 +40,19 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-Variable * key_state( Environment * _environment, char * _scancode ) {
+Variable * key_state( Environment * _environment, int _scancode ) {
+
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY PRESSED)");
+
+    char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "#$%2.2x", _scancode );
+
+    d32_key_state( _environment, value, result->realName );
+
+    return result;
+    
+}
+
+Variable * key_state_var( Environment * _environment, char * _scancode ) {
 
     Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
 
@@ -51,4 +63,3 @@ Variable * key_state( Environment * _environment, char * _scancode ) {
     return result;
     
 }
-
