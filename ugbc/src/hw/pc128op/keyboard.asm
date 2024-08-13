@@ -525,7 +525,8 @@ KEYSTATE
     ANDB #$07
     LDB B, X
 
-    ANDA B
+    STB <MATHPTR0
+    ANDA <MATHPTR0
     BEQ KEYSTATEL0
     
     ORCC #$1

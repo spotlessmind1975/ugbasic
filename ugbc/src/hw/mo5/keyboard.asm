@@ -36,7 +36,8 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 SCANCODEREAD
-	FCB $00, $00, $00, $00, $00, $00, $00, $00, $00
+	FCB $00, $00, $00, $00, $00, $00, $00, $00
+	FCB $00, $00, $00, $00, $00, $00, $00, $00
 SCANCODEREADE
 
 SCANCODETBL
@@ -50,6 +51,21 @@ SCANCODETBL
     FCB $72, $12, $02, $40
 
     FCB     $FF
+
+KEYBOARDBUFFERRESET
+    PSHS X
+    PSHS D
+    LDX #SCANCODEREAD
+    LDB #15
+    LDA #$00
+KEYBOARDBUFFERRESETL1
+    STA , X+
+    DECB
+    CMPB #$FF
+    BNE KEYBOARDBUFFERRESETL1
+    PULS D
+    PULS X
+    RTS
 
 ; ----------------------------------------------------------------------------
 ; KEYBOARDMANAGER
@@ -65,10 +81,24 @@ SCANCODETBL
 ;   Input: A - bitmap of key pressed
 ;          X - starting value of key pressed
 ;   Ouput: -
-;   Changes: KEYBOARDACTUAL, KEYBOARDPREVIOUS, KEYBOARDASFSTATE
+;   Changes: KEYBOARDACTUAL, KEYBOARDASFSTATE
 
+    ALIGN 2
 KEYBOARDPRESSED FCB 0
+    ALIGN 2
 KEYBOARDTEMP FCB 0
+
+KEYBOARDSHIFTPRESSED
+    LDA #$03
+    ORA KEYBOARDSHIFT
+    STA KEYBOARDSHIFT
+    JMP SCANCODENEXT2AB
+
+KEYBOARDCTRLPRESSED
+    LDA #$08
+    ORA KEYBOARDSHIFT
+    STA KEYBOARDSHIFT
+    JMP SCANCODENEXT2AB
 
 KEYBOARDMANAGER
 
@@ -76,6 +106,12 @@ KEYBOARDMANAGER
     PSHS X
     PSHS Y
 
+    JSR KEYBOARDEMPTY
+    LBCC KEYBOARDMANAGERDONEYES
+
+    ; Reset the key press detector.
+
+    CLR KEYBOARDSHIFT
     CLR KEYBOARDPRESSED
 
     LDX #SCANCODETBL
@@ -89,10 +125,14 @@ SCANCODEL1
     ANDA #$80
     CMPA #$80
     BEQ SCANCODEL2
-    
+
+    CMPB #$0f
+    BEQ KEYBOARDCTRLPRESSED
+
+    CMPB #$36
+    BEQ KEYBOARDSHIFTPRESSED
+
     INC KEYBOARDPRESSED
-    LDA KEYBOARDACTUAL
-    STA KEYBOARDPREVIOUS
     STB KEYBOARDACTUAL
 
     PSHS X
@@ -102,8 +142,10 @@ SCANCODEL1
     LDA A, X
     PULS X
     ORA ,Y
+    STA ,Y
 
 SCANCODEL2
+SCANCODENEXT2AB
     INCB
     TFR B, A
     ANDA #7
@@ -116,12 +158,11 @@ SCANCODEL22
 
     LDA KEYBOARDPRESSED
     BNE SCANCODEL22Q
-    LDA KEYBOARDACTUAL
-    STA KEYBOARDPREVIOUS
     LDB #$FF
     STB KEYBOARDACTUAL
 
 SCANCODEL22Q
+KEYBOARDMANAGERDONEYES
     ; Increase the elapsed timer.
 
     INC KEYBOARDELAPSED
@@ -136,9 +177,6 @@ SCANCODEL22Q
     PULS X
     PULS D
     RTS
-
-KEYBOARDACTUAL          FCB $FF
-KEYBOARDPREVIOUS        FCB $FF
 
 ; ----------------------------------------------------------------------------
 ; KEYBOARDDETECT
@@ -165,11 +203,6 @@ KEYBOARDDETECT
     CMPA #$FF
     BEQ KEYBOARDDETECTNONE
 
-    ; A key has been pressed. Set the carry flag and check
-    ; if it is the same as the previous pressed.
-
-    ; CMP KEYBOARDPREVIOUS
-    
     ORCC #$01
     RTS
 
@@ -275,6 +308,15 @@ KEYBOARDASF
 
 KEYBOARDASF0
 
+    JSR KEYBOARDEMPTY
+    BCS KEYBOARDASF0B
+    JSR KEYBOARDPOP
+    STB KEYBOARDACTUAL
+
+KEYBOARDASF0B
+
+    JSR KEYBOARDBUFFERRESET
+
     ; We just check for detection of a key.
     ; It means both a key pressed (KEYBOARDDETECT green) 
     ; and a different key pressed from the previous
@@ -376,6 +418,12 @@ KEYBOARDASFTO2
 
 KEYBOARDASF2
 
+    JSR KEYBOARDEMPTY
+    BCS KEYBOARDASF2B
+    JMP KEYBOARDASFTO0
+
+KEYBOARDASF2B
+
     ; We just check for detection of a key.
     ; It means both a key pressed (KEYBOARDDETECT green) 
     ; and a different key pressed from the previous
@@ -388,7 +436,7 @@ KEYBOARDASF2
 
     BCC KEYBOARDASFTO0
 
-    ; ; If a different key has been pressed, 
+    ; ; If a different key has been pressed,
     ; ; we go back to state 0.
 
     ; BEQ KEYBOARDASFTO0
@@ -513,7 +561,6 @@ WAITKEYRELEASE0
 ; - C : key pressed (1) or not (0)
 
 KEYSTATE
-
     TFR A, B
     LSRA
     LSRA
@@ -525,7 +572,8 @@ KEYSTATE
     ANDB #$07
     LDB B, X
 
-    ANDA B
+    STB <MATHPTR0
+    ANDA <MATHPTR0
     BEQ KEYSTATEL0
     
     ORCC #$1
@@ -545,6 +593,11 @@ KEYSTATEL0
 ; - A : KEYBOARDACTUAL
 
 SCANCODE
+    LDA KEYBOARDINKEY
+    CMPA #$FF
+    BEQ SCANCODEB
+    RTS
+SCANCODEB
     LDA KEYBOARDACTUAL
     RTS
 
@@ -573,7 +626,17 @@ KEYBOARDMAP
     FCB     'K',    'J',     13,     $00,    $00,    'W',    'X',    'C'
     FCB     'V',    'B',    'N',     ',',    '.',    $00,    $88,    $00
     FCB       8,    ' ',    $00,     $00,    $00,    $00,    $00,    $00
-    
+KEYBOARDMAP2
+    FCB     $00,    '1',    '2',     '3',    '4',    '5',    '6',    $00
+    FCB     $00,    $00,    '0',     '9',    '8',    '7',    $00,    $00
+    FCB     'a',    'z',    'e',     'r',    't',    'y',    $00,    $00
+    FCB     'p',    'o',    'i',     'u',    $00,    $00,    $00,    $00
+    FCB     'q',    's',    'd',     'f',    'g',    'h',    'm',    'l'
+    FCB     'k',    'j',     13,     $00,    $00,    'w',    'x',    'c'
+    FCB     'v',    'b',    'n',     ',',    '.',    $00,    $88,    $00
+    FCB       8,    ' ',    $00,     $00,    $00,    $00,    $00,    $00
+KEYBOARDMAPE
+
 ; ----------------------------------------------------------------------------
 ; KEYPRESS
 ; ----------------------------------------------------------------------------
@@ -660,6 +723,7 @@ INKEY
     JSR KEYPRESSED
     CMPA #$FF
     BEQ INKEY0
+    STA KEYBOARDINKEY
 	LDX #KEYBOARDMAP
     LDB A, X
     TFR B, A
@@ -667,4 +731,156 @@ INKEY
     RTS
 INKEY0
     LDA #0
+    RTS
+
+KEYBOARDQUEUE           FCB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+KEYBOARDQUEUERPOS       FCB $00
+KEYBOARDQUEUEWPOS       FCB $00
+KEYBOARDACTUAL          FCB $00
+KEYBOARDINKEY           FCB $00
+
+    ALIGN 2
+KEYBOARDSHIFT           FCB $00
+
+; ----------------------------------------------------------------------------
+; PUT KEY
+; ----------------------------------------------------------------------------
+; This routine can be called to put a string into the keyboard queue.
+;
+; Input:
+;      X: address of string
+;      B: size of the string
+
+PUTKEY
+
+PUTKEYL1
+    LDA , X
+    LDY #KEYBOARDMAP
+    PSHS D
+    LDU #0
+PUTKEYL1A
+    CMPA , Y
+    BEQ PUTKEYL1T
+    LEAY 1, Y
+    LEAU 1, U
+    CMPY #KEYBOARDMAP2
+    BNE PUTKEYL1A
+    LDU #0
+PUTKEYL1B
+    CMPA , Y
+    BEQ PUTKEYL1T
+    LEAY 1, Y
+    LEAU 1, U
+    CMPY #KEYBOARDMAPE
+    BNE PUTKEYL1B
+PUTKEYL2
+    PULS D    
+    LEAX 1, X
+    DECB
+    BNE PUTKEYL1
+    RTS
+PUTKEYL1T
+    TFR U, D
+    BSR KEYBOARDPUSH
+    BRA PUTKEYL2
+
+; ----------------------------------------------------------------------------
+; KEYBOARDEMPTY
+; ----------------------------------------------------------------------------
+; This routine can be called to understand if the keyboard queue is empty.
+
+KEYBOARDEMPTY
+    LDA KEYBOARDQUEUEWPOS
+    CMPA KEYBOARDQUEUERPOS
+    BEQ KEYBOARDEMPTY1
+    ANDCC #$FE
+    RTS
+KEYBOARDEMPTY1
+    ORCC #$01
+    RTS
+
+; ----------------------------------------------------------------------------
+; KEYBOARDPUSH
+; ----------------------------------------------------------------------------
+; This routine can be called to push a character in front of the keyboard
+; queue. This will put the character in the actual KEYBOARDQUEUEWPOS position
+; and increment the KEYBOARDQUEUEWPOS by 1. If the KEYBOARDQUEUEWPOS reachs the
+; end of the queue, it will return to 0. Moreover, if it is already 
+; KEYBOARDQUEUERPOS then nothing will be done, and the character will be lost.
+;
+
+KEYBOARDPUSH
+    PSHS X
+    PSHS D
+    LDX #KEYBOARDQUEUE
+    LDA KEYBOARDQUEUEWPOS
+    STB A, X
+    INCA
+    CMPA #$0a
+    BNE KEYBOARDPUSHDONE
+    LDA #0
+KEYBOARDPUSHDONE
+    STA KEYBOARDQUEUEWPOS
+KEYBOARDPUSHLOST
+    PULS D
+    PULS X
+    RTS
+
+; ----------------------------------------------------------------------------
+; KEYBOARDPOP
+; ----------------------------------------------------------------------------
+; This routine can be called to pop a character from the keyboard queue. This 
+; will get the character from the actual KEYBOARDQUEUERPOS position
+; and increment the KEYBOARDQUEUERPOS by 1. If the KEYBOARDQUEUERPOS reachs the
+; end of the queue, it will return to 0. Moreover, if it is already 
+; KEYBOARDQUEUEWPOS then nothing will be get and it will be returned a $FF.
+
+KEYBOARDPOP
+    LDA KEYBOARDQUEUERPOS
+    CMPA KEYBOARDQUEUEWPOS
+    BEQ KEYBOARDPOPNONE
+    LDX #KEYBOARDQUEUE
+    LDB A, X
+    INCA
+    CMPA #$0A
+    BNE KEYBOARDPOPGOT
+    LDA #0
+KEYBOARDPOPGOT
+    STA KEYBOARDQUEUERPOS
+    RTS
+KEYBOARDPOPNONE
+    LDB #$FF
+    RTS
+
+; ----------------------------------------------------------------------------
+; KEY SHIFT
+; ----------------------------------------------------------------------------
+; This routine can be called to retrieve the status of key / control buttons.
+;
+; Return values:
+; - A : bitmap of key pressed
+;           0	Left SHIFT
+;           1	Right SHIFT
+;           2	CAPS LOCK
+;           3	CONTROL
+;           4	Left ALT
+;           5	Right ALT
+
+KEYSHIFT
+    LDA KEYBOARDSHIFT
+    RTS
+
+; ----------------------------------------------------------------------------
+; CLEAR KEY
+; ----------------------------------------------------------------------------
+; This routine can be called to clear the keyboard queue.
+
+CLEARKEY
+    LDA #0
+    STA KEYBOARDQUEUEWPOS
+    STA KEYBOARDQUEUERPOS
+    STA KEYBOARDASFSTATE
+    STA KEYBOARDELAPSED
+    LDA #$FF
+    STA KEYBOARDACTUAL
     RTS

@@ -165,13 +165,12 @@ void mo5_scanshift( Environment * _environment, char * _shifts ) {
 
 void mo5_keyshift( Environment * _environment, char * _shifts ) {
 
-    MAKE_LABEL
+    _environment->bitmaskNeeded = 1;
 
-    Variable * scancode = variable_temporary( _environment, VT_BYTE, "(scancode)" );
+    deploy( keyboard, src_hw_mo5_keyboard_asm );
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)");
-    
-    mo5_scancode( _environment, scancode->realName );
+    outline0("JSR KEYSHIFT" );
+    outline1("STA %s", _shifts );
 
 }
 
@@ -322,6 +321,18 @@ void mo5_timer_set_address( Environment * _environment, char * _timer, char * _a
         outline0("LDB #0" );
     }
     outline0("JSR TIMERSETADDRESS" );
+
+}
+
+void mo5_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_mo5_keyboard_asm);
+
+    outline1("LDX %s", _string );
+    outline1("LDB %s", _size );
+    outline0("JSR PUTKEY" );
 
 }
 
