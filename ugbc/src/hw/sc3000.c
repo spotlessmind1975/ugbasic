@@ -240,4 +240,8 @@ void sc3000_timer_set_address( Environment * _environment, char * _timer, char *
 
 }
 
+void sc3000_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+}
+
 #endif

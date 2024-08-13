@@ -161,6 +161,7 @@ void sc3000_keyshift( Environment * _environment, char * _shifts );
 void sc3000_clear_key( Environment * _environment );
 void sc3000_irq_at( Environment * _environment, char * _label );
 void sc3000_follow_irq( Environment * _environment );
+void sc3000_put_key(  Environment * _environment, char *_string, char * _size );
 
 void sc3000_sys_call( Environment * _environment, int _destination );
 
