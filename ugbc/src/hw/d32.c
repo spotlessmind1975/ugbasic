@@ -81,6 +81,8 @@ void d32_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 void d32_inkey( Environment * _environment, char * _key ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_d32_keyboard_asm);
 
     outline0("JSR INKEY");
@@ -89,6 +91,8 @@ void d32_inkey( Environment * _environment, char * _key ) {
 }
 
 void d32_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
 
     deploy( keyboard, src_hw_d32_keyboard_asm );
 
@@ -101,6 +105,8 @@ void d32_wait_key( Environment * _environment, int _release ) {
 }
 
 void d32_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
@@ -115,6 +121,8 @@ void d32_key_state( Environment * _environment, char *_scancode, char * _result 
 
 void d32_scancode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_d32_keyboard_asm);
 
     outline0("JSR SCANCODE");
@@ -124,6 +132,8 @@ void d32_scancode( Environment * _environment, char * _result ) {
 
 void d32_asciicode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_d32_keyboard_asm);
 
     outline0("JSR ASCIICODE");
@@ -132,6 +142,8 @@ void d32_asciicode( Environment * _environment, char * _result ) {
 }
 
 void d32_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
@@ -153,37 +165,23 @@ void d32_scanshift( Environment * _environment, char * _shifts ) {
 
 void d32_keyshift( Environment * _environment, char * _shifts ) {
 
-    MAKE_LABEL
+    _environment->bitmaskNeeded = 1;
 
-    Variable * scancode = variable_temporary( _environment, VT_BYTE, "(scancode)" );
+    deploy( keyboard, src_hw_d32_keyboard_asm );
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)");
-    
-    d32_scancode( _environment, scancode->realName );
-
-    outline1("LDA %s", result->realName );
-    outline1("CMPA #$%2.2x", (unsigned char) KEY_SHIFT);
-    outline0("BEQ %sshift");
-    outline0("LDA #0");
-    outline1("STA %s", _shifts);
-    outline1("JMP %sdone", label );
-    outhead1("%sshift", label);
-    outline0("LDA #3");
-    outline1("STA %s", _shifts);
-    outline1("JMP %sdone", label );
-    outhead1("%sdone", label );
+    outline0("JSR KEYSHIFT" );
+    outline1("STA %s", _shifts );
 
 
 }
 
 void d32_clear_key( Environment * _environment ) {
 
-    outline0("LDA #$0");
-    outline0("LDX $35");
-    outline0("STA ,X");
+    _environment->bitmaskNeeded = 1;
 
-    outline0("LDA #$0");
-    outline0("sta $87");
+    deploy( keyboard, src_hw_d32_keyboard_asm );
+
+    outline0("JSR CLEARKEY");
 
 }
 
@@ -328,6 +326,19 @@ void d32_timer_set_address( Environment * _environment, char * _timer, char * _a
         outline0("LDB #0" );
     }
     outline0("JSR TIMERSETADDRESS" );
+
+}
+
+void d32_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_d32_keyboard_asm);
+
+    outline1("LDX %s", _string );
+    outline1("LDB %s", _size );
+    outline0("JSR PUTKEY" );
+
 
 }
 

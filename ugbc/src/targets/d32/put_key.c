@@ -40,15 +40,27 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-Variable * key_state( Environment * _environment, char * _scancode ) {
+void put_key( Environment * _environment, char * _string ) {
 
-    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
+    Variable * string = variable_retrieve( _environment, _string );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
+    switch( string->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, string->realName, size->realName );
+            cpu_addressof_16bit( _environment, string->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+            break;
+        case VT_CHAR:
+            cpu_addressof_16bit( _environment, string->realName, address->realName );
+            cpu_store_8bit( _environment, size->realName, 1 );
+            break;
+    }
 
-    d32_key_state( _environment, s->realName, result->realName );
+    d32_put_key( _environment, address->realName, size->realName );
 
-    return result;
-    
 }
-

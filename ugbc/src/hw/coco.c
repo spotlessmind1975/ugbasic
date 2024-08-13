@@ -422,6 +422,10 @@ void coco_dsave( Environment * _environment, char * _filename, char * _offset, c
 
 void coco_put_key(  Environment * _environment, char *_string, char * _size ) {
 
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_d32_keyboard_asm);
+
     outline1("LDX %s", _string );
     outline1("LDB %s", _size );
     outline0("JSR PUTKEY" );

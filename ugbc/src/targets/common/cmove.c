@@ -47,7 +47,7 @@ void cmove_direct( Environment * _environment, int _dx, int _dy ) {
         Variable * windowCX = variable_retrieve( _environment, "XCURSYS" );
         Variable * dx = variable_temporary( _environment, VT_SBYTE, "(cmove hz)" );
         variable_store( _environment, dx->name, _dx );
-        Variable * screenWidth = variable_retrieve( _environment, "CURRENTTILESWIDTH" );
+        Variable * screenWidth = console_tiles_get_width( _environment );
         add_complex_vars( _environment, windowCX->name, dx->name, zero->name, screenWidth->name );
     }
 
@@ -55,7 +55,7 @@ void cmove_direct( Environment * _environment, int _dx, int _dy ) {
         Variable * windowCY = variable_retrieve( _environment, "YCURSYS" );
         Variable * dy = variable_temporary( _environment, VT_SBYTE, "(cmove vt)" );
         variable_store( _environment, dy->name, _dy );
-        Variable * screenHeight = variable_retrieve( _environment, "CURRENTTILESHEIGHT" );
+        Variable * screenHeight = console_tiles_get_height( _environment );
         add_complex_vars( _environment, windowCY->name, dy->name, zero->name, screenHeight->name );
     }
 

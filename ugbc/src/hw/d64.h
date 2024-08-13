@@ -164,6 +164,7 @@ void d64_scancode( Environment * _environment, char * _scacode );
 void d64_asciicode( Environment * _environment, char * _asciicode );
 void d64_inkey( Environment * _environment, char * _key );
 void d64_key_pressed( Environment * _environment, char *_scancode, char * _result );
+void d64_put_key(  Environment * _environment, char *_string, char * _size );
 
 void d64_scanshift( Environment * _environment, char * _shifts );
 void d64_keyshift( Environment * _environment, char * _shifts );
