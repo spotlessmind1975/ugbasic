@@ -165,11 +165,12 @@ void pc128op_scanshift( Environment * _environment, char * _shifts ) {
 
 void pc128op_keyshift( Environment * _environment, char * _shifts ) {
 
-    MAKE_LABEL
+    _environment->bitmaskNeeded = 1;
 
-    Variable * scancode = variable_temporary( _environment, VT_BYTE, "(scancode)" );
+    deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm );
 
-    pc128op_scancode( _environment, scancode->realName );
+    outline0("JSR KEYSHIFT" );
+    outline1("STA %s", _shifts );
 
 }
 
@@ -333,6 +334,18 @@ void pc128op_timer_set_address( Environment * _environment, char * _timer, char 
         outline0("LDB #0" );
     }
     outline0("JSR TIMERSETADDRESS" );
+
+}
+
+void pc128op_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_pc128op_keyboard_asm);
+
+    outline1("LDX %s", _string );
+    outline1("LDB %s", _size );
+    outline0("JSR PUTKEY" );
 
 }
 
