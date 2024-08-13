@@ -46,7 +46,7 @@ Variable * key_state( Environment * _environment, int _scancode ) {
 
     char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "$%2.2x", _scancode );
 
-    cpc_key_state( _environment, value, result->realName );
+    msx1_key_state( _environment, value, result->realName );
 
     return result;
     

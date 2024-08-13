@@ -48,7 +48,7 @@ Variable * key_state( Environment * _environment, int _scancode ) {
 
     c64reu_key_state( _environment, value, result->realName );
 
-    return resut;
+    return result;
 
 }
 
@@ -59,6 +59,6 @@ Variable * key_state_var( Environment * _environment, char * _scancode ) {
 
     c64reu_key_state( _environment, scancode->realName, result->realName );
 
-    return resut;
+    return result;
     
 }

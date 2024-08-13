@@ -424,7 +424,7 @@ void coco_put_key(  Environment * _environment, char *_string, char * _size ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_d32_keyboard_asm);
+    deploy( keyboard, src_hw_coco_keyboard_asm);
 
     outline1("LDX %s", _string );
     outline1("LDB %s", _size );
