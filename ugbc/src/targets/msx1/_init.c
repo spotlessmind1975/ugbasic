@@ -139,9 +139,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "KEYBOARDACTUAL", VT_BYTE, 0xff );
     variable_global( _environment, "KEYBOARDACTUAL" );
 
-    variable_import( _environment, "KEYBOARDPREVIOUS", VT_BYTE, 0xff );
-    variable_global( _environment, "KEYBOARDPREVIOUS" );
-
     variable_import( _environment, "KEYBOARDELAPSED", VT_BYTE, 0 );
     variable_global( _environment, "KEYBOARDELAPSED" );
 
