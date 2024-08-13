@@ -166,7 +166,7 @@ void c128z_clear_key( Environment * _environment ) {
 
     deploy( keyboard, src_hw_c128z_keyboard_asm );
 
-    outline0("JSR CLEARKEY" );
+    outline0("CALL CLEARKEY" );
 
 }
 
