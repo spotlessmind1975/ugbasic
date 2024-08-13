@@ -53,11 +53,11 @@ Variable * input_string( Environment * _environment, char * _size ) {
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
     Variable * key = variable_temporary( _environment, VT_CHAR, "(key pressed)");
 
+    cpu_dsfree( _environment, result->realName );
+    cpu_dsalloc( _environment, size->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, pressed->realName );
 
     cpu_store_8bit( _environment, offset->realName, 0 );
-
-    cpu_move_8bit( _environment, size->realName, result->realName );
 
     cpu_label( _environment, repeatLabel );
 

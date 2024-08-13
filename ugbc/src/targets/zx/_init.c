@@ -100,7 +100,7 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "ZXTIMER", VT_WORD, 0 );
     variable_global( _environment, "ZXTIMER" );    
 
-    variable_import( _environment, "SCANCODEREAD", VT_BUFFER, 10 );
+    variable_import( _environment, "SCANCODEREAD", VT_BUFFER, 16 );
     variable_global( _environment, "SCANCODEREAD" );
 
     variable_import( _environment, "KEYBOARDPRESSED", VT_BYTE, 0 );
@@ -109,14 +109,26 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "KEYBOARDACTUAL", VT_BYTE, 0xff );
     variable_global( _environment, "KEYBOARDACTUAL" );
 
-    variable_import( _environment, "KEYBOARDPREVIOUS", VT_BYTE, 0xff );
-    variable_global( _environment, "KEYBOARDPREVIOUS" );
-
     variable_import( _environment, "KEYBOARDELAPSED", VT_BYTE, 0 );
     variable_global( _environment, "KEYBOARDELAPSED" );
 
     variable_import( _environment, "KEYBOARDASFSTATE", VT_BYTE, 0 );
     variable_global( _environment, "KEYBOARDASFSTATE" );
+
+    variable_import( _environment, "KEYBOARDQUEUEWPOS", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDQUEUEWPOS" );
+
+    variable_import( _environment, "KEYBOARDQUEUERPOS", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDQUEUERPOS" );
+
+    variable_import( _environment, "KEYBOARDQUEUE", VT_BUFFER, 10 );
+    variable_global( _environment, "KEYBOARDQUEUE" );
+
+    variable_import( _environment, "KEYBOARDINKEY", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDINKEY" );
+
+    variable_import( _environment, "KEYBOARDSHIFT", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDSHIFT" );
 
     outhead0("org 32768");
 

@@ -74,102 +74,113 @@
 #define TEXT_COLUMNS_COUNT          32
 #define TEXT_ROWS_COUNT             24
 
-#define KEY_NONE					0x00
-#define KEY_0						'0'
-#define KEY_1						'1'
-#define KEY_2						'2'
-#define KEY_3						'3'
-#define KEY_4						'4'
-#define KEY_5						'5'
-#define KEY_6						'6'
-#define KEY_7						'7'
-#define KEY_8						'8'
-#define KEY_9						'9'
-#define KEY_A						'A'
-#define KEY_ASTERISK				'*'
-#define KEY_AT						'@'
-#define KEY_B						'B'
-#define KEY_C						'C'
-#define KEY_CLEAR					0xf9
-#define KEY_COLON					':'
-#define KEY_COMMA					','
-#define KEY_COMMODORE				0x00
-#define KEY_CONTROL					0x00
-#define KEY_CRSR_LEFT_RIGHT			0x00
-#define KEY_CRSR_UP_DOWN			0x00
-#define KEY_D						'D'
-#define KEY_DELETE					0x90
-#define KEY_E						'E'
-#define KEY_EQUAL					'='
-#define KEY_F						'F'
-#define KEY_F1						0x00
-#define KEY_F2						0x00
-#define KEY_F3						0x00
-#define KEY_F4						0x00
-#define KEY_F5						0x00
-#define KEY_F6						0x00
-#define KEY_F7						0x00
-#define KEY_F8						0x00
-#define KEY_G						'G'
-#define KEY_H						'H'
-#define KEY_HOME					0x88
-#define KEY_I						'I'
-#define KEY_INSERT					0x89
-#define KEY_J						'J'
-#define KEY_K						'K'
-#define KEY_L						'L'
-#define KEY_LEFT_ARROW				0x91
-#define KEY_LEFT_SHIFT				0x81
-#define KEY_M						'M'
-#define KEY_MINUS					'-'
-#define KEY_N						'N'
-#define KEY_O						'O'
-#define KEY_P						'P'
-#define KEY_PERIOD					'.'
-#define KEY_PLUS					'+'
-#define KEY_POUND					0x00
-#define KEY_Q						'Q'
-#define KEY_R						'R'
-#define KEY_RETURN					0x0d
-#define KEY_RIGHT_SHIFT				0x81
-#define KEY_RUNSTOP					0x86
-#define KEY_S						'S'
-#define KEY_SEMICOLON				';'
-#define KEY_SLASH					'/'
-#define KEY_SPACE					' '
-#define KEY_T						'T'
-#define KEY_U						'U'
-#define KEY_UP_ARROW				0x92
-#define KEY_V						'V'
-#define KEY_W						'W'
-#define KEY_X						'X'
-#define KEY_Y						'Y'
-#define KEY_Z						'Z'
-#define KEY_BACKSLASH                '\\'
-#define KEY_SQUARE_OPEN              0x00
-#define KEY_SQUARE_CLOSED            0x00
-#define KEY_SEMICOMMA                ';'
-#define KEY_QUOTE                    '"'
-#define KEY_APIX                     0x00
-#define KEY_DEAD                     0x00
-#define KEY_SHIFT                    0x81
-#define KEY_CTRL                     0x82
-#define KEY_GRAPH                    0x83
-#define KEY_CAPS                     0x84
-#define KEY_CODE                     0x85
-#define KEY_ESC                      0x27
-#define KEY_TAB                      0x09
-#define KEY_STOP                     0x86
-#define KEY_BS                       0x08
-#define KEY_SELECT                   0x87
-#define KEY_RET                      0x0d
-#define KEY_INS                      0x89
-#define KEY_DEL                      0x90
-#define KEY_LEFT                     53
-#define KEY_UP                       55
-#define KEY_DOWN                     54
-#define KEY_RIGHT                    56
-#define KEY_DIVISION                 '/'
+#define KEY_NONE					0xff
+
+#define KEY_BS                      0
+#define KEY_Z                       1
+#define KEY_X                       2
+#define KEY_C                       3
+#define KEY_V                       4
+
+#define KEY_A                       5
+#define KEY_S                       6
+#define KEY_D                       7
+#define KEY_F                       8
+#define KEY_G                       9
+
+#define KEY_Q                      10
+#define KEY_W                      11
+#define KEY_E                      12
+#define KEY_R                      13
+#define KEY_T                      14
+
+#define KEY_1                      15
+#define KEY_2                      16
+#define KEY_3                      17
+#define KEY_4                      18
+#define KEY_5                      19
+
+#define KEY_0                      20
+#define KEY_9                      21
+#define KEY_8                      22
+#define KEY_7                      23
+#define KEY_6                      24
+
+#define KEY_P                      25
+#define KEY_O                      26
+#define KEY_I                      27
+#define KEY_U                      28
+#define KEY_Y                      29
+
+#define KEY_RETURN                 30
+#define KEY_L                      31
+#define KEY_K                      32
+#define KEY_J                      33
+#define KEY_H                      34
+
+#define KEY_SPACE                  35
+
+#define KEY_M                      36
+#define KEY_N                      37
+#define KEY_B                      38
+
+#define KEY_ASTERISK			    0
+#define KEY_AT						0
+#define KEY_CLEAR					0
+#define KEY_COLON					0
+#define KEY_COMMA					0
+#define KEY_COMMODORE				0
+#define KEY_CONTROL					0
+#define KEY_CRSR_LEFT_RIGHT			0
+#define KEY_CRSR_UP_DOWN			0
+#define KEY_DELETE					0
+#define KEY_EQUAL					0
+#define KEY_F1						0
+#define KEY_F2						0
+#define KEY_F3						0
+#define KEY_F4						0
+#define KEY_F5						0
+#define KEY_F6						0
+#define KEY_F7						0
+#define KEY_F8						0
+#define KEY_HOME					0
+#define KEY_INSERT					0
+#define KEY_LEFT_ARROW				0
+#define KEY_LEFT_SHIFT				0
+#define KEY_MINUS					0
+#define KEY_PERIOD					0
+#define KEY_PLUS					0
+#define KEY_POUND					0
+#define KEY_RIGHT_SHIFT				0
+#define KEY_RUNSTOP					0
+#define KEY_SEMICOLON				0
+#define KEY_SLASH					0
+#define KEY_UP_ARROW				0
+#define KEY_BACKSLASH               0
+#define KEY_SQUARE_OPEN             0
+#define KEY_SQUARE_CLOSED           0
+#define KEY_SEMICOMMA               0
+#define KEY_QUOTE                   0
+#define KEY_APIX                    0
+#define KEY_DEAD                    0
+#define KEY_SHIFT                   0
+#define KEY_CTRL                    0
+#define KEY_GRAPH                   0
+#define KEY_CAPS                    0
+#define KEY_CODE                    0
+#define KEY_ESC                     0
+#define KEY_TAB                     0
+#define KEY_STOP                    0
+#define KEY_BS                      0
+#define KEY_SELECT                  0
+#define KEY_RET                     0
+#define KEY_INS                     0
+#define KEY_DEL                     0
+#define KEY_LEFT                    0
+#define KEY_UP                      0
+#define KEY_DOWN                    0
+#define KEY_RIGHT                   0
+#define KEY_DIVISION                0
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
@@ -234,6 +245,7 @@ void zx_scancode( Environment * _environment, char * _scacode );
 void zx_asciicode( Environment * _environment, char * _asciicode );
 void zx_inkey( Environment * _environment, char * _key );
 void zx_key_pressed( Environment * _environment, char *_scancode, char * _result );
+void zx_put_key(  Environment * _environment, char *_string, char * _size );
 
 void zx_scanshift( Environment * _environment, char * _shifts );
 void zx_keyshift( Environment * _environment, char * _shifts );

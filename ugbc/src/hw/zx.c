@@ -150,6 +150,8 @@ void zx_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 void zx_inkey( Environment * _environment, char * _key ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_zx_keyboard_asm);
 
     outline0("CALL INKEY");
@@ -158,6 +160,8 @@ void zx_inkey( Environment * _environment, char * _key ) {
 }
 
 void zx_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
 
     deploy( keyboard, src_hw_zx_keyboard_asm );
 
@@ -170,6 +174,8 @@ void zx_wait_key( Environment * _environment, int _release ) {
 }
 
 void zx_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
@@ -184,6 +190,8 @@ void zx_key_state( Environment * _environment, char *_scancode, char * _result )
 
 void zx_scancode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_zx_keyboard_asm);
 
     outline0("CALL SCANCODE");
@@ -193,6 +201,8 @@ void zx_scancode( Environment * _environment, char * _result ) {
 
 void zx_asciicode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_zx_keyboard_asm);
 
     outline0("CALL ASCIICODE");
@@ -201,6 +211,8 @@ void zx_asciicode( Environment * _environment, char * _result ) {
 }
 
 void zx_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
@@ -215,49 +227,28 @@ void zx_key_pressed( Environment * _environment, char *_scancode, char * _result
 
 void zx_scanshift( Environment * _environment, char * _shifts ) {
 
-    // 653	
-    // Shift key indicator. Bits:
-    // Bit #0: 1 = One or more of left Shift, right Shift or Shift Lock is currently being pressed or locked.
-    // Bit #1: 1 = Commodore is currently being pressed.
-    // Bit #2: 1 = Control is currently being pressed.
-    // NO SHIFT (0) - if no SHIFT key pressed;
-    // LEFT SHIFT (1) - if the left SHIFT pressed;
-    // RIGHT SHIFT (2) - if the right SHIFT pressed;
-    // BOTH SHIFTS (3) - if both keys pressed.
-
-    MAKE_LABEL
-
-    deploy( scancode, src_hw_zx_scancode_asm );
-
-    outline0("LD A, (KEYPRESS)");
-    outline0("CP $f1");
-    outline1("JR NZ,%snokey", label);
-    outline0("LD A, $03");
-    outline1("LD (%s), A", _shifts );
-    outhead1("%snokey:", label );
+    zx_keyshift( _environment, _shifts );
 
 }
 
 void zx_keyshift( Environment * _environment, char * _shifts ) {
 
-    // On the same way, KEY SHIFT is used to report the current status of those keys 
-    // which cannot be detected by either INKEY$ or SCANCODE because they do not 
-    // carry the relevant codes. These control keys cannot be tested individually, or a test can be set up for any combination of such keys pressed together. A single call to the KEY SHIFT function can test for all eventualities, by examining a bit map in the following format:
+    _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_zx_keyboard_asm );
 
-    deploy( scancode, src_hw_zx_scancode_asm );
-
-    outline0("LD A, (KEYPRESS)");
-    outline0("CP $f1");
-    outline1("JR NZ,%snokey", label);
-    outline0("LD A, $03");
+    outline0("CALL KEYSHIFT" );
     outline1("LD (%s), A", _shifts );
-    outhead1("%snokey:", label );
 
 }
 
 void zx_clear_key( Environment * _environment ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_zx_keyboard_asm );
+
+    outline0("CALL CLEARKEY" );
 
 }
 
@@ -1479,5 +1470,18 @@ void zx_timer_set_address( Environment * _environment, char * _timer, char * _ad
     outline0("CALL TIMERSETADDRESS" );
 
 }
+
+void zx_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_zx_keyboard_asm);
+
+    outline1("LD HL, (%s)", _string );
+    outline1("LD A, (%s)", _size );
+    outline0("CALL PUTKEY" );
+
+}
+    
 
 #endif
