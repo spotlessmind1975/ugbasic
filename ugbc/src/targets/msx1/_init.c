@@ -130,7 +130,7 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
 
-    variable_import( _environment, "SCANCODEREAD", VT_BUFFER, 10 );
+    variable_import( _environment, "SCANCODEREAD", VT_BUFFER, 16 );
     variable_global( _environment, "SCANCODEREAD" );
 
     variable_import( _environment, "KEYBOARDPRESSED", VT_BYTE, 0 );
@@ -147,6 +147,21 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "KEYBOARDASFSTATE", VT_BYTE, 0 );
     variable_global( _environment, "KEYBOARDASFSTATE" );
+
+    variable_import( _environment, "KEYBOARDQUEUEWPOS", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDQUEUEWPOS" );
+
+    variable_import( _environment, "KEYBOARDQUEUERPOS", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDQUEUERPOS" );
+
+    variable_import( _environment, "KEYBOARDQUEUE", VT_BUFFER, 10 );
+    variable_global( _environment, "KEYBOARDQUEUE" );
+
+    variable_import( _environment, "KEYBOARDINKEY", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDINKEY" );
+
+    variable_import( _environment, "KEYBOARDSHIFT", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDSHIFT" );
 
     for( int i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
