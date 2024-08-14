@@ -38,6 +38,9 @@ void color_sprite( Environment * _environment, int _index, int _common_color ) {
 
 }
 
+void color_sprite_semi_vars( Environment * _environment, int _index, char * _common_color ) {
+
+}
 
 void color_sprite_vars( Environment * _environment, char * _index, char * _common_color ) {
 

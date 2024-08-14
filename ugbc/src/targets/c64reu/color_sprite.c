@@ -57,6 +57,15 @@ void color_sprite( Environment * _environment, int _index, int _common_color ) {
 
 }
 
+void color_sprite_semi_vars( Environment * _environment, int _index, char * _common_color ) {
+
+    char index[MAX_TEMPORARY_STORAGE]; sprintf(index, "#$%2.2x", _index);
+    Variable * common_color = variable_retrieve( _environment, _common_color );
+
+    vic2_sprite_common_color( _environment, index, common_color->realName );
+
+}
+
 /**
  * @brief Emit ASM code for instruction <b>COLOR SPRITE [expression] TO [expression]</b>
  * 

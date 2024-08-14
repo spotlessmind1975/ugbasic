@@ -4309,6 +4309,7 @@ void                    color_background_vars( Environment * _environment, char 
 void                    color_border( Environment * _environment, int _border_color );
 void                    color_border_var( Environment * _environment, char * _border_color );
 void                    color_sprite( Environment * _environment, int _index, int _color );
+void                    color_sprite_semi_vars( Environment * _environment, int _index, char * _color );
 void                    color_sprite_vars( Environment * _environment, char * _sprite, char * _color );
 void                    color_tsb( Environment * _environment, char *_border, char *_background, char *_cursor );
 void                    colormap_at( Environment * _environment, int _address );

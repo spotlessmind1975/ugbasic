@@ -97,7 +97,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
-%token MOB
+%token MOB CMOB
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -9323,6 +9323,12 @@ mob_definition :
     }
     ;
 
+cmob_definition :
+    expr OP_COMMA expr {
+        color_sprite_semi_vars( _environment, 0, $1 );
+        color_sprite_semi_vars( _environment, 1, $3 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -9338,6 +9344,7 @@ statement2nc:
   } palette_definition
   | PAUSE pause_definition
   | WAIT wait_definition
+  | CMOB cmob_definition
   | MOB mob_definition
   | SPRITE sprite_definition
   | CSET cset_definition

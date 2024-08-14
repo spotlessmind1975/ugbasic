@@ -53,6 +53,10 @@ void color_sprite( Environment * _environment, int _index, int _common_color ) {
 
 }
 
+void color_sprite_semi_vars( Environment * _environment, int _index, char * _common_color ) {
+
+}
+
 /**
  * @brief Emit ASM code for instruction <b>COLOR SPRITE [expression] TO [expression]</b>
  * 
