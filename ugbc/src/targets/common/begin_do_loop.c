@@ -90,25 +90,8 @@ di strutture di controllo l'una nell'altra.
 
 @target all
 </usermanual> */
-void begin_loop( Environment * _environment, int _do ) {
+void begin_do_loop( Environment * _environment ) {
 
-    MAKE_LABEL
-
-    Loop * loop = malloc( sizeof( Loop ) );
-    memset( loop, 0, sizeof( Loop ) );
-    loop->label = strdup( label );
-    if ( _do ) {
-        loop->type = LT_DO;
-    } else {
-        loop->type = LT_LOOP;
-    }
-    loop->next = _environment->loops;
-    _environment->loops = loop;
-
-    cpu_label( _environment, loop->label );
-
-    if ( _environment->procedureName && _environment->protothread && ! _environment->protothreadForbid ) {
-        yield( _environment );
-    }
+    begin_loop( _environment, 1 );
 
 }

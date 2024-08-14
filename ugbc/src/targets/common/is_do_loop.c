@@ -49,34 +49,18 @@
 /* <usermanual>
 @keyword DO...LOOP
 </usermanual> */
-void end_loop( Environment * _environment, int _do ) {
+int is_do_loop( Environment * _environment ) {
 
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
-        CRITICAL_LOOP_WITHOUT_DO();
+        return 0;
     }
 
-    if ( _do ) {
-        if ( loop->type != LT_DO ) {
-            CRITICAL_LOOP_WITHOUT_DO();
-        }
+    if ( loop->type == LT_LOOP ) {
+        return 0;
     } else {
-        if ( loop->type != LT_LOOP ) {
-            CRITICAL_END_LOOP_WITHOUT_LOOP();
-        }
+        return 1;
     }
 
-    _environment->loops = _environment->loops->next;
-
-    if ( _environment->procedureName && _environment->protothread && ! _environment->protothreadForbid ) {
-        yield( _environment );
-    }
-
-    cpu_jump( _environment, loop->label );
-
-    unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
-
-    cpu_label( _environment, newLabel );
-
-};
+}

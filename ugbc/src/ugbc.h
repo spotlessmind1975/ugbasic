@@ -1215,7 +1215,10 @@ typedef enum _LoopType {
     LT_FOR_MT = 4,
 
     /** BEGIN...END GAMELOOP */
-    LT_GAMELOOP = 5
+    LT_GAMELOOP = 5,
+
+    /** LOOP...END LOOP */
+    LT_LOOP = 6
 
 } LoopType;
 
@@ -3137,6 +3140,7 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_INPUT_DELAY_MS( v ) CRITICAL2i("E301 - invalid milliseconds for INPUT DELAY", v );
 #define CRITICAL_INVALID_INPUT_RELEASE( v ) CRITICAL2i("E302 - invalid value for INPUT RELEASE", v );
 #define CRITICAL_INVALID_INPUT_RELEASE_MS( v ) CRITICAL2i("E303 - invalid milliseconds for INPUT RELEASE", v );
+#define CRITICAL_END_LOOP_WITHOUT_LOOP( ) CRITICAL("E304 - END LOOP without LOOP" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -4236,7 +4240,8 @@ void                    begin_for_to( Environment * _environment, char *_to );
 void                    begin_for_to_prepare( Environment * _environment );
 void                    begin_for_to_mt( Environment * _environment, char *_to );
 void                    begin_gameloop( Environment * _environment );
-void                    begin_loop( Environment * _environment );
+void                    begin_do_loop( Environment * _environment );
+void                    begin_loop( Environment * _environment, int _do );
 void                    begin_procedure( Environment * _environment, char * _name );
 void                    begin_repeat( Environment * _environment );
 void                    begin_storage( Environment * _environment, char * _name, char * _file_name );
@@ -4368,7 +4373,8 @@ void                    end_for( Environment * _environment );
 void                    end_for_identifier( Environment * _environment, char * _identifier );
 void                    end_gameloop( Environment * _environment );
 void                    end_if_then( Environment * _environment  );
-void                    end_loop( Environment * _environment );
+void                    end_do_loop( Environment * _environment );
+void                    end_loop( Environment * _environment, int _do );
 void                    end_procedure( Environment * _environment, char * _value );
 void                    end_repeat( Environment * _environment );
 void                    end_repeat_condition( Environment * _environment, char * _expression );
@@ -4478,7 +4484,7 @@ Variable *              input_string( Environment * _environment, char * _size )
 void                    instrument( Environment * _environment, int _instrument, int _channels );
 void                    instrument_semi_var( Environment * _environment, int _instrument, char * _channels );
 void                    interleaved_instructions( Environment * _environment );
-
+int                     is_do_loop( Environment * _environment );
 
 //----------------------------------------------------------------------------
 // *J*

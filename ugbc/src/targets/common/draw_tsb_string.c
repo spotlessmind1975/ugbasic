@@ -136,7 +136,7 @@ void draw_tsb_string( Environment * _environment, char * _string, char * _x, cha
         variable_move( _environment, startingY->name, y->name );
 
         // ------------------------------------ FETCH AND DECODE LOOP
-        begin_loop( _environment );
+        begin_do_loop( _environment );
 
             variable_store( _environment, blank->name, 0xff );
 
@@ -380,7 +380,7 @@ void draw_tsb_string( Environment * _environment, char * _string, char * _x, cha
             // Move to the next character of the drawing commands string.
             cpu_label( _environment, doneCommandLabel );
 
-        end_loop( _environment );
+        end_do_loop( _environment );
         // ------------------------------------ FETCH AND DECODE LOOP (end)
 
         cpu_label( _environment, label );

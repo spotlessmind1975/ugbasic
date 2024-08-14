@@ -4335,45 +4335,45 @@ wait_definition_simple:
       wait_milliseconds( _environment, $1 );
     }
     | FIRE release {
-        begin_loop( _environment );
+        begin_do_loop( _environment );
             exit_loop_if( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, 0 );
-        end_loop( _environment );
+        end_do_loop( _environment );
         if ( $2 ) {
-            begin_loop( _environment );
+            begin_do_loop( _environment );
                 exit_loop_if( _environment, variable_not( _environment, joy_direction( _environment, 0, JOY_FIRE )->name )->name, 0 );
-            end_loop( _environment );
+            end_do_loop( _environment );
         }
     }
     | FIRE OP OP_HASH const_expr CP release {
-        begin_loop( _environment );
+        begin_do_loop( _environment );
             exit_loop_if( _environment, joy_direction( _environment, $4, JOY_FIRE )->name, 0 );
-        end_loop( _environment );
+        end_do_loop( _environment );
         if ( $6 ) {
-            begin_loop( _environment );
+            begin_do_loop( _environment );
                 exit_loop_if( _environment, variable_not( _environment, joy_direction( _environment, 0, JOY_FIRE )->name )->name, 0 );
-            end_loop( _environment );
+            end_do_loop( _environment );
         }
     }
     | KEY OR FIRE release {
-        begin_loop( _environment );
+        begin_do_loop( _environment );
             exit_loop_if( _environment, scancode( _environment )->name, 0 );
             exit_loop_if( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, 0 );
-        end_loop( _environment );
+        end_do_loop( _environment );
         if ( $4 ) {
-            begin_loop( _environment );
+            begin_do_loop( _environment );
                 exit_loop_if( _environment, variable_not( _environment, variable_or( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, scancode( _environment )->name )->name )->name, 0 );
-            end_loop( _environment );
+            end_do_loop( _environment );
         }
     }
     | KEY OR FIRE OP OP_HASH const_expr CP release {
-        begin_loop( _environment );
+        begin_do_loop( _environment );
             exit_loop_if( _environment, scancode( _environment )->name, 0 );
             exit_loop_if( _environment, joy_direction( _environment, $6, JOY_FIRE )->name, 0 );
-        end_loop( _environment );
+        end_do_loop( _environment );
         if ( $8 ) {
-            begin_loop( _environment );
+            begin_do_loop( _environment );
                 exit_loop_if( _environment, variable_not( _environment, variable_or( _environment, joy_direction( _environment, $6, JOY_FIRE )->name, scancode( _environment )->name )->name )->name, 0 );
-            end_loop( _environment );
+            end_do_loop( _environment );
         }
     }
     | KEY release {
@@ -4398,13 +4398,13 @@ wait_definition_expression:
       wait_milliseconds_var( _environment, $1 );
     }
     | FIRE OP expr CP release {
-        begin_loop( _environment );
+        begin_do_loop( _environment );
             exit_loop_if( _environment, joy_direction_semivars( _environment, $3, JOY_FIRE )->name, 0 );
-        end_loop( _environment );
+        end_do_loop( _environment );
         if ( $5 ) {
-            begin_loop( _environment );
+            begin_do_loop( _environment );
                 exit_loop_if( _environment, variable_not( _environment, joy_direction_semivars( _environment, $3, JOY_FIRE )->name )->name, 0 );
-            end_loop( _environment );
+            end_do_loop( _environment );
         }
     }
     | UNTIL { 
@@ -9588,10 +9588,17 @@ statement2nc:
       wait_key( _environment, 1 );
   }
   | DO {
-      begin_loop( _environment );  
+      begin_loop( _environment, 1 );  
   }
   | LOOP {
-      end_loop( _environment );  
+      if ( is_do_loop( _environment ) ) {
+          end_loop( _environment, 1 );  
+      } else {
+          begin_loop( _environment, 0 );  
+      }
+  }
+  | END LOOP {
+      end_loop( _environment, 0 );  
   }
   | WHILE { 
       begin_while( _environment );  
