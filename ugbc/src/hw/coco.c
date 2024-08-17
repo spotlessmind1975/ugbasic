@@ -432,4 +432,141 @@ void coco_put_key(  Environment * _environment, char *_string, char * _size ) {
 
 }
 
+
+void coco_dojo_ready( Environment * _environment, char * _value ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline0("JSR DOJOISREADY" );
+    outline1("STA %s", _value );
+
+}
+
+void coco_dojo_read_byte( Environment * _environment, char * _value ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline0("JSR DOJOREADBYTE" );
+    outline1("STA %s", _value );
+
+}
+
+void coco_dojo_write_byte( Environment * _environment, char * _value ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline1("LDA %s", _value );
+    outline0("JSR DOJOWRITEBYTE" );
+
+}
+
+void coco_dojo_login( Environment * _environment, char * _username, char * _size, char * _password, char * _password_size, char * _session_id ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline1("LDX %s", _username );
+    outline1("LDB %s", _size );
+    outline1("LDY %s", _password );
+    outline1("LDA %s", _password_size );
+    outline1("LDU #%s", _session_id );
+    outline0("JSR DOJOLOGIN" );
+
+}
+
+void coco_dojo_success( Environment * _environment, char * _id, char * _result ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline1("LDX #%s", _id );
+    outline0("JSR DOJOSUCCESS" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
+void coco_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline1("LDX %s", _application );
+    outline1("LDB %s", _size );
+    outline1("LDY #%s", _session_id );
+    outline1("LDU #%s", _port_id );
+    outline0("JSR DOJOCREATEPORT" );
+
+}
+
+void coco_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline1("LDX #%s", _port_id );
+    outline0("JSR DOJODESTROYPORT" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
+void coco_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _public_id ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline1("LDX %s", _username );
+    outline1("LDB %s", _size );
+    outline1("LDY %s", _application );
+    outline1("LDA %s", _application_size );
+    outline1("LDU #%s", _public_id );
+    outline0("PSHS U" );
+    outline1("LDU #%s", _session_id );
+    outline0("JSR DOJOFINDPORT" );
+    outline0("PULS U" );
+
+}
+
+void coco_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline1("LDX %s", _message );
+    outline1("LDB %s", _size );
+    outline1("LDY #%s", _port_id );
+    outline0("JSR DOJOPUTMESSAGE" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
+void coco_dojo_peek_message( Environment * _environment, char * _port_id, char * _result ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline1("LDY #%s", _port_id );
+    outline0("JSR DOJOPEEKMESSAGE" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
+void coco_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline1("LDY #%s", _port_id );
+    outline0("JSR DOJOGETMESSAGE" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
+    outline1("STB %s", _message );
+
+}
+
+void coco_dojo_ping( Environment * _environment, char * _result ) {
+
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline0("JSR DOJOPING" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
 #endif

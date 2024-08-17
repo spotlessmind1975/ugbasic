@@ -97,7 +97,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
-%token MOB CMOB PLACE
+%token MOB CMOB PLACE DOJO READY LOGIN PASSWORD DOJOKA GAME HISCORE CREATE PORT DESTROY FIND MESSAGE PING
+%token SUCCESS
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -175,6 +176,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> option_name
 %type <integer> audio_source
 %type <integer> PALETTE1
+%type <string> dojo_functions
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -2597,6 +2599,41 @@ frame_size : {
         ((struct _Environment *)_environment)->frameOriginY = 0;
     } frame_size_definition;
 
+dojo_functions : 
+    READ OP CP {
+        $$ = dojo_read( _environment )->name;
+    }
+    | READY {
+        $$ = dojo_ready( _environment )->name;
+    }
+    | READY OP CP {
+        $$ = dojo_ready( _environment )->name;
+    }
+    | PING {
+        $$ = dojo_ping( _environment )->name;
+    }
+    | PING OP CP {
+        $$ = dojo_ping( _environment )->name;
+    }
+    | LOGIN OP expr OP_COMMA expr CP {
+        $$ = dojo_login( _environment, $3, $5 )->name;
+    }
+    | SUCCESS OP expr CP {
+        $$ = dojo_success( _environment, $3 )->name;
+    }
+    | CREATE PORT OP expr OP_COMMA expr CP {
+        $$ = dojo_create_port( _environment, $4, $6 )->name;
+    }
+    | FIND PORT OP expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = dojo_find_port( _environment, $4, $6, $8 )->name;
+    }
+    | PEEK MESSAGE OP expr CP {
+        $$ = dojo_peek_message( _environment, $4 )->name;
+    }
+    | GET MESSAGE OP expr CP {
+        $$ = dojo_get_message( _environment, $4 )->name;
+    };
+
 exponential:
     Identifier as_datatype_suffix_optional {
         parser_array_init( _environment );
@@ -3107,6 +3144,10 @@ exponential:
     | READ END {
         $$ = read_end( _environment )->name;
       }
+    | dojo_functions
+    | DOJO dojo_functions {
+        $$ = $2;
+    }
     | PEEK OP expr CP {
         $$ = peek_var( _environment, $3 )->name;
       }
@@ -6273,6 +6314,9 @@ datatype :
     | BUFFER {
         $$ = VT_BUFFER;
     }
+    | DOJOKA {
+        $$ = VT_DOJOKA;
+    }
     | TASK {
         $$ = VT_THREAD;
     }
@@ -9332,6 +9376,17 @@ cmob_definition :
         color_sprite_semi_vars( _environment, 1, $3 );
     };
 
+dojo_definition :
+    WRITE expr {
+        dojo_write( _environment, $2 );
+    }
+    | DESTROY PORT expr {
+        dojo_destroy_port( _environment, $3 );
+    }
+    | PUT MESSAGE expr OP_COMMA expr {
+        dojo_put_message( _environment, $3, $5 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -9438,6 +9493,8 @@ statement2nc:
   | ENVELOPE envelope_definition
   | INSERT insert_definition
   | CHECK check_definition
+  | DOJO dojo_definition
+  | dojo_definition
   | PRINT print_definition
   | BORDER border_definition
   | PRINT BUFFER print_buffer_definition

@@ -472,7 +472,10 @@ typedef enum _VariableType {
     VT_BIT = 28,
 
     /** MSPRITE (multi hardware movable objects) */
-    VT_MSPRITE = 29
+    VT_MSPRITE = 29,
+
+    /** DOJOKA (handle of logged dojo connection) */
+    VT_DOJOKA = 30
 
 } VariableType;
 
@@ -585,7 +588,8 @@ typedef struct _Resource {
         ( t == VT_TILESET ) + \
         ( t == VT_SEQUENCE ) + \
         ( t == VT_MUSIC ) + \
-        ( t == VT_TILEMAP ) \
+        ( t == VT_TILEMAP ) + \
+        ( t == VT_DOJOKA ) \
     )
 
 /**
@@ -1354,6 +1358,7 @@ typedef struct _ScreenMode {
 
 typedef struct _Embedded {
 
+    int cpu_ztoa;
     int cpu_ctoa;
     int cpu_beq;
     int cpu_bneq;
@@ -1713,6 +1718,7 @@ typedef struct _Deployed {
     int flipimagex;
     int flipimagey;
     int random;
+    int dojo;
 
 } Deployed;
 
@@ -2825,7 +2831,7 @@ typedef struct _Environment {
 #define MAKE_LABEL  char label[32]; sprintf( label, "_label%d", UNIQUE_ID);
 
 #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL2( s, v ) fprintf(stderr, "%s %d CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", __FILE__, __LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "%s %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", __FILE__, __LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4354,6 +4360,18 @@ void                    defdgr_vars( Environment * _environment, char * _charact
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    double_buffer( Environment * _environment, int _enabled );
+Variable *              dojo_create_port( Environment * _environment, char * _session_id, char * _application );
+Variable *              dojo_destroy_port( Environment * _environment, char * _port_id );
+Variable *              dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _application );
+Variable *              dojo_put_message( Environment * _environment, char * _port_id, char *_message );
+Variable *              dojo_peek_message( Environment * _environment, char * _port_id );
+Variable *              dojo_get_message( Environment * _environment, char * _port_id );
+Variable *              dojo_login( Environment * _environment, char * _username, char * _password );
+Variable *              dojo_success( Environment * _environment, char * _id );
+Variable *              dojo_ping( Environment * _environment );
+Variable *              dojo_ready( Environment * _environment );
+Variable *              dojo_read( Environment * _environment );
+void                    dojo_write( Environment * _environment, char * _value );
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
 void                    draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color );
