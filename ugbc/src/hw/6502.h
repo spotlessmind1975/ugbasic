@@ -53,6 +53,7 @@
 
 void cpu6502_init( Environment * _environment );
 
+void cpu6502_ztoa( Environment * _environment );
 void cpu6502_ctoa( Environment * _environment );
 void cpu6502_beq( Environment * _environment, char * _label );
 void cpu6502_bneq( Environment * _environment, char * _label );
@@ -351,6 +352,7 @@ void cpu6502_f32log10( char * _x, char * _result );
 void cpu6502_f32mul( char * _x, char * _y, char * _result );
 void cpu6502_f32sub( char * _x, char * _y, char * _result );
 
+#define cpu_ztoa( _environment ) cpu6502_ztoa( _environment )
 #define cpu_ctoa( _environment ) cpu6502_ctoa( _environment )
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )

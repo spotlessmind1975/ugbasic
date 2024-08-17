@@ -48,6 +48,23 @@ void cpu6502_init( Environment * _environment ) {
 
 }
 
+void cpu_ztoa( Environment * _environment ) {
+    
+    MAKE_LABEL
+
+    inline( cpu_ztoa )
+
+        outline1("BEQ %syes", label );
+        outline0("LDA #0");
+        outline1("JMP %s", label );
+        outhead1("%syes:", label );
+        outline0("LDA #$ff");
+        outhead1("%s:", label );
+
+    no_embedded( cpu_ztoa );
+
+}
+
 void cpu_ctoa( Environment * _environment ) {
     
     MAKE_LABEL
