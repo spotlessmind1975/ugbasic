@@ -76,9 +76,26 @@ void z80_init( Environment * _environment ) {
 
 }
 
+void z80_ztoa( Environment * _environment ) {
+
+    inline( cpu_ztoa )
+
+        MAKE_LABEL
+
+        outline1("JR Z, %syes", label );
+        outline0("LD A, 0");
+        outline1("JP %s", label );
+        outhead1("%syes:", label );
+        outline0("LD A, $ff");
+        outhead1("%s:", label );
+
+    no_embedded( cpu_ztoa )
+
+}
+
 void z80_ctoa( Environment * _environment ) {
 
-    inline( cpu_beq )
+    inline( cpu_ctoa )
 
         MAKE_LABEL
 
@@ -89,7 +106,7 @@ void z80_ctoa( Environment * _environment ) {
         outline0("LD A, $ff");
         outhead1("%s:", label );
 
-    no_embedded( cpu_beq )
+    no_embedded( cpu_ctoa )
 
 }
 
