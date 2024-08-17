@@ -47,6 +47,8 @@ DOJO_CMD_GET_MESSAGE    EQU $07         ; GET MESSAGE portId
     ALIGN 2
 DOJOCURRENTID           FCB $0          ; Current packet ID
 
+DOJOHELLOSTRING         FCB "**DP**10"
+
 ; ============================================================================
 ; DOJO PRIMITIVES
 ; ============================================================================
@@ -175,6 +177,16 @@ DOJOSKIPPACKET0
 
 DOJOPING
     
+    LDX #DOJOHELLOSTRING
+
+    LDB #8
+
+DOJOPINGL3
+    LDA ,X+
+    JSR DOJOWRITEBYTE
+    DECB
+    BNE DOJOPINGL3
+
     ; Send ID
 
     INC DOJOCURRENTID
