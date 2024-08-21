@@ -47,7 +47,7 @@ DOJO_CMD_GET_MESSAGE    EQU $07         ; GET MESSAGE portId
     ALIGN 2
 DOJOCURRENTID           FCB $0          ; Current packet ID
 
-DOJOHELLOSTRING         FCB "**DP**10"
+DOJOHELLOSTRING         FCB "****9910"
 
 ; ============================================================================
 ; DOJO PRIMITIVES
@@ -186,6 +186,11 @@ DOJOPINGL3
     JSR DOJOWRITEBYTE
     DECB
     BNE DOJOPINGL3
+
+DOJOPINGL3A
+    JSR DOJOREADBYTE
+    CMPA #$18
+    BNE DOJOPINGL3A
 
     ; Send ID
 
