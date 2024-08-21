@@ -139,6 +139,7 @@ void c64reu_scancode( Environment * _environment, char * _scacode );
 void c64reu_asciicode( Environment * _environment, char * _asciicode );
 void c64reu_inkey( Environment * _environment, char * _key );
 void c64reu_key_pressed( Environment * _environment, char *_scancode, char * _result );
+void c64reu_put_key(  Environment * _environment, char *_string, char * _size );
 
 void c64reu_scanshift( Environment * _environment, char * _shifts );
 void c64reu_keyshift( Environment * _environment, char * _shifts );
@@ -152,5 +153,19 @@ void c64reu_timer_set_status_off( Environment * _environment, char * _timer );
 void c64reu_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
 void c64reu_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void c64reu_timer_set_address( Environment * _environment, char * _timer, char * _address );
+
+void c64reu_dojo_ready( Environment * _environment, char * _value );
+void c64reu_dojo_read_byte( Environment * _environment, char * _value );
+void c64reu_dojo_write_byte( Environment * _environment, char * _value );
+
+void c64reu_dojo_ping( Environment * _environment, char * _result );
+void c64reu_dojo_login( Environment * _environment, char * _name, char * _name_size, char * _password, char * _size, char * _unique_id );
+void c64reu_dojo_success( Environment * _environment, char * _id, char * _result );
+void c64reu_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id );
+void c64reu_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _port_id );
+void c64reu_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result );
+void c64reu_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
+void c64reu_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
+void c64reu_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
 
 #endif
