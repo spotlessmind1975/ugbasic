@@ -65,6 +65,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: .res 1,0", variable->realName);
                     }        
                     break;
+                case VT_DOJOKA:
+                    if ( variable->memoryArea ) {
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: .res 8,0", variable->realName);
+                    }        
+                    break;
                 case VT_WORD:
                 case VT_SWORD:
                 case VT_POSITION:
@@ -269,6 +276,9 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_COLOR:
         case VT_THREAD:
             outline1(" .byte $%1.1x", ( _variable->value & 0xff ) );
+            break;
+        case VT_DOJOKA:
+            outline0(" .res 8, 0");
             break;
         case VT_WORD:
         case VT_SWORD:
