@@ -426,6 +426,7 @@ void c64_dojo_ready( Environment * _environment, char * _value ) {
     deploy( dojo, src_hw_c64_dojo_asm);
 
     outline0("JSR DOJOISREADY" );
+    cpu_ztoa(_environment);
     outline1("STA %s", _value );
 
 }
@@ -452,9 +453,9 @@ void c64_dojo_login( Environment * _environment, char * _username, char * _size,
 
     deploy( dojo, src_hw_c64_dojo_asm);
 
-    outline1("LDA %s", _session_id );
+    outline1("LDA #<%s", _session_id );
     outline0("STA DOJOCURRENTKAPTR" );
-    outline1("LDA %s", address_displacement( _environment, _session_id, "1" ) );
+    outline1("LDA #>%s", _session_id );
     outline0("STA DOJOCURRENTKAPTR+1" );
     outline1("LDA %s", _username );
     outline0("STA TMPPTR" );
@@ -474,9 +475,9 @@ void c64_dojo_success( Environment * _environment, char * _id, char * _result ) 
 
     deploy( dojo, src_hw_c64_dojo_asm);
 
-    outline1("LDA %s", _id );
+    outline1("LDA #<%s", _id );
     outline0("STA TMPPTR" );
-    outline1("LDA %s", address_displacement( _environment, _id, "1" ) );
+    outline1("LDA #>%s", _id );
     outline0("STA TMPPTR+1" );
     outline0("JSR DOJOSUCCESS" );
     cpu_ctoa( _environment );
@@ -488,18 +489,18 @@ void c64_dojo_create_port( Environment * _environment, char * _session_id, char 
 
     deploy( dojo, src_hw_c64_dojo_asm);
 
-    outline1("LDA %s", _port_id );
+    outline1("LDA #<%s", _port_id );
     outline0("STA DOJOCURRENTKAPTR" );
-    outline1("LDA %s", address_displacement( _environment, _port_id, "1" ) );
+    outline1("LDA #>%s", _port_id );
     outline0("STA DOJOCURRENTKAPTR+1" );
     outline1("LDA %s", _application );
     outline0("STA TMPPTR" );
     outline1("LDA %s", address_displacement( _environment, _application, "1" ) );
     outline0("STA TMPPTR+1" );
     outline1("LDX %s", _size );
-    outline1("LDA %s", _session_id );
+    outline1("LDA #<%s", _session_id );
     outline0("STA TMPPTR2" );
-    outline1("LDA %s", address_displacement( _environment, _session_id, "1" ) );
+    outline1("LDA #>%s", _session_id );
     outline0("STA TMPPTR2+1" );
     outline0("JSR DOJOCREATEPORT" );
 
@@ -509,9 +510,9 @@ void c64_dojo_destroy_port( Environment * _environment, char * _port_id, char * 
 
     deploy( dojo, src_hw_c64_dojo_asm);
 
-    outline1("LDA %s", _port_id );
+    outline1("LDA #<%s", _port_id );
     outline0("STA TMPPTR" );
-    outline1("LDA %s", address_displacement( _environment, _port_id, "1" ) );
+    outline1("LDA #>%s", _port_id );
     outline0("STA TMPPTR+1" );
     outline0("JSR DOJODESTROYPORT" );
     cpu_ctoa( _environment );
@@ -523,13 +524,13 @@ void c64_dojo_find_port( Environment * _environment, char * _session_id, char * 
 
     deploy( dojo, src_hw_c64_dojo_asm);
 
-    outline1("LDA %s", _session_id );
+    outline1("LDA #<%s", _session_id );
     outline0("STA DOJOCURRENTKAPTR" );
-    outline1("LDA %s", address_displacement( _environment, _session_id, "1" ) );
+    outline1("LDA #>%s", _session_id );
     outline0("STA DOJOCURRENTKAPTR+1" );
-    outline1("LDA %s", _public_id );
+    outline1("LDA #<%s", _public_id );
     outline0("STA DOJOCURRENTKAPTR2" );
-    outline1("LDA %s", address_displacement( _environment, _public_id, "1" ) );
+    outline1("LDA #>%s", _public_id );
     outline0("STA DOJOCURRENTKAPTR2+1" );
     outline1("LDA %s", _username );
     outline0("STA TMPPTR" );
@@ -556,9 +557,9 @@ void c64_dojo_put_message( Environment * _environment, char * _port_id, char * _
     outline0("STA TMPPTR+1" );
     outline1("LDX %s", _size );
 
-    outline1("LDA %s", _port_id );
+    outline1("LDA #<%s", _port_id );
     outline0("STA TMPPTR2" );
-    outline1("LDA %s", address_displacement( _environment, _port_id, "1" ) );
+    outline1("LDA #>%s", _port_id );
     outline0("STA TMPPTR2+1" );
     outline0("JSR DOJOPUTMESSAGE" );
     cpu_ctoa( _environment );
@@ -570,9 +571,9 @@ void c64_dojo_peek_message( Environment * _environment, char * _port_id, char * 
 
     deploy( dojo, src_hw_c64_dojo_asm);
 
-    outline1("LDA %s", _port_id );
+    outline1("LDA #<%s", _port_id );
     outline0("STA TMPPTR" );
-    outline1("LDA %s", address_displacement( _environment, _port_id, "1" ) );
+    outline1("LDA #>%s", _port_id );
     outline0("STA TMPPTR+1" );
     outline0("JSR DOJOPEEKMESSAGE" );
     cpu_ctoa( _environment );
@@ -584,9 +585,9 @@ void c64_dojo_get_message( Environment * _environment, char * _port_id, char * _
 
     deploy( dojo, src_hw_c64_dojo_asm);
 
-    outline1("LDA %s", _port_id );
+    outline1("LDA #<%s", _port_id );
     outline0("STA TMPPTR2" );
-    outline1("LDA %s", address_displacement( _environment, _port_id, "1" ) );
+    outline1("LDA #>%s", _port_id );
     outline0("STA TMPPTR2+1" );
     outline0("JSR DOJOGETMESSAGE" );
     cpu_ctoa( _environment );
