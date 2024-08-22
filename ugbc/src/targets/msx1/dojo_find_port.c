@@ -38,70 +38,44 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>WAIT # [integer] TICKS</b>
- * 
- * This function outputs a code that engages the CPU in a busy wait.
- * 
- * @param _environment Current calling environment
- * @param _timing Number of cycles to wait
- */
-void wait_ticks( Environment * _environment, int _timing ) {
+Variable * dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _application ) {
 
-    MAKE_LABEL
+    Variable * sessionId = variable_retrieve( _environment, _session_id );
 
-    outline0("LD HL, ($FC9E)");
-    outline0("LD DE, HL");
-    outhead1("%s:", label);
-    outline0("LD HL, ($FC9E)");
-    outline0("SBC HL, DE");
-    outline0("INC HL");
-    outline0("LD A, H");
-    outline1("CP $%2.2x", (_timing >> 8) );
-    outline1("JR Z, %sd1", label );
-    outline1("JR C, %s", label );
-    outhead1("%sd1:", label);
-    outline0("LD A, L");
-    outline1("CP $%2.2x", (_timing & 0xff) );
-    outline1("JR Z, %s2d", label );
-    outline1("JR C, %s", label );
-    outhead1("%s2d:", label);
+    Variable * username = variable_retrieve( _environment, _username );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
 
-}
+    Variable * application = variable_retrieve( _environment, _application );
+    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size)" );
 
-/**
- * @brief Emit ASM code for <b>WAIT [expression] TICKS</b>
- * 
- * This function outputs a code that engages the CPU in a busy wait.
- * 
- * @param _environment Current calling environment
- * @param _timing Number of cycles to wait
- */
-void wait_ticks_var( Environment * _environment, char * _timing ) {
+    Variable * result = variable_temporary( _environment, VT_DOJOKA, "(result)" );
 
-    MAKE_LABEL
+    switch( username->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, username->realName, size->realName );
+            cpu_addressof_16bit( _environment, username->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, username->realName, address->realName, size->realName );
+            break;
+    }
 
-    Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
-    
-    outline0("LD HL, ($FC9E)");
-    outline0("LD DE, HL");
-    outhead1("%s:", label);
-    outline0("LD HL, ($FC9E)");
-    outline0("SBC HL, DE");
-    outline0("INC HL");
-    outline1("LD A, (%s)", address_displacement(_environment, timing->realName, "1"));
-    outline0("LD B, A");
-    outline0("LD A, H");
-    outline0("CP B" );
-    outline1("JR Z, %sd1", label );
-    outline1("JR C, %s", label );
-    outhead1("%sd1:", label);
-    outline1("LD A, (%s)", timing->realName);
-    outline0("LD B, A");
-    outline0("LD A, L");
-    outline0("CP B" );
-    outline1("JR Z, %s2d", label );
-    outline1("JR C, %s", label );
-    outhead1("%s2d:", label);
+    switch( application->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, application->realName, size2->realName );
+            cpu_addressof_16bit( _environment, application->realName, address2->realName );
+            cpu_inc_16bit( _environment, address2->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, application->realName, address2->realName, size2->realName );
+            break;
+    }
+
+    msx1_dojo_find_port( _environment, sessionId->realName, address->realName, size->realName, address2->realName, size2->realName, result->realName );
+
+    return result;
 
 }

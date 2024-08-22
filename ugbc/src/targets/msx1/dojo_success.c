@@ -38,70 +38,13 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>WAIT # [integer] TICKS</b>
- * 
- * This function outputs a code that engages the CPU in a busy wait.
- * 
- * @param _environment Current calling environment
- * @param _timing Number of cycles to wait
- */
-void wait_ticks( Environment * _environment, int _timing ) {
+Variable * dojo_success( Environment * _environment, char * _id ) {
 
-    MAKE_LABEL
+    Variable * id = variable_retrieve( _environment, _id );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result)" );
 
-    outline0("LD HL, ($FC9E)");
-    outline0("LD DE, HL");
-    outhead1("%s:", label);
-    outline0("LD HL, ($FC9E)");
-    outline0("SBC HL, DE");
-    outline0("INC HL");
-    outline0("LD A, H");
-    outline1("CP $%2.2x", (_timing >> 8) );
-    outline1("JR Z, %sd1", label );
-    outline1("JR C, %s", label );
-    outhead1("%sd1:", label);
-    outline0("LD A, L");
-    outline1("CP $%2.2x", (_timing & 0xff) );
-    outline1("JR Z, %s2d", label );
-    outline1("JR C, %s", label );
-    outhead1("%s2d:", label);
+    msx1_dojo_success( _environment, id->realName, result->realName );
 
-}
-
-/**
- * @brief Emit ASM code for <b>WAIT [expression] TICKS</b>
- * 
- * This function outputs a code that engages the CPU in a busy wait.
- * 
- * @param _environment Current calling environment
- * @param _timing Number of cycles to wait
- */
-void wait_ticks_var( Environment * _environment, char * _timing ) {
-
-    MAKE_LABEL
-
-    Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
-    
-    outline0("LD HL, ($FC9E)");
-    outline0("LD DE, HL");
-    outhead1("%s:", label);
-    outline0("LD HL, ($FC9E)");
-    outline0("SBC HL, DE");
-    outline0("INC HL");
-    outline1("LD A, (%s)", address_displacement(_environment, timing->realName, "1"));
-    outline0("LD B, A");
-    outline0("LD A, H");
-    outline0("CP B" );
-    outline1("JR Z, %sd1", label );
-    outline1("JR C, %s", label );
-    outhead1("%sd1:", label);
-    outline1("LD A, (%s)", timing->realName);
-    outline0("LD B, A");
-    outline0("LD A, L");
-    outline0("CP B" );
-    outline1("JR Z, %s2d", label );
-    outline1("JR C, %s", label );
-    outhead1("%s2d:", label);
+    return result;
 
 }
