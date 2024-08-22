@@ -38,24 +38,40 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+Variable * dojo_login( Environment * _environment, char * _name, char * _password ) {
 
-Variable * key_state( Environment * _environment, int _scancode ) {
+    Variable * name = variable_retrieve( _environment, _name );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
+    Variable * password = variable_retrieve( _environment, _password );
+    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address2)" );
+    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size2)" );
+    Variable * result = variable_temporary( _environment, VT_DOJOKA, "(result)" );
 
-    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY PRESSED)");
+    switch( name->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, name->realName, size->realName );
+            cpu_addressof_16bit( _environment, name->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, name->realName, address->realName, size->realName );
+            break;
+    }
+
+    switch( password->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, password->realName, size2->realName );
+            cpu_addressof_16bit( _environment, password->realName, address2->realName );
+            cpu_inc_16bit( _environment, address2->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, password->realName, address2->realName, size2->realName );
+            break;
+    }
+
+    sg1000_dojo_login( _environment, address->realName, size->realName, address2->realName, size2->realName, result->realName );
 
     return result;
-
-}
-
-Variable * key_state_var( Environment * _environment, char * _scancode ) {
-
-    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
-
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
-
-    Variable * key = scancode( _environment );
-
-    return variable_compare( _environment, s->name, key->name );
 
 }

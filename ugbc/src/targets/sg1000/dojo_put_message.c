@@ -38,24 +38,29 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+Variable * dojo_put_message( Environment * _environment, char * _port_id, char * _message ) {
 
-Variable * key_state( Environment * _environment, int _scancode ) {
+    Variable * portId = variable_retrieve( _environment, _port_id );
 
-    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY PRESSED)");
+    Variable * message = variable_retrieve( _environment, _message );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
+
+    Variable * result = variable_temporary( _environment, VT_DOJOKA, "(result)" );
+
+    switch( message->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, message->realName, size->realName );
+            cpu_addressof_16bit( _environment, message->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, message->realName, address->realName, size->realName );
+            break;
+    }
+
+    sg1000_dojo_put_message( _environment, portId->realName, address->realName, size->realName, result->realName );
 
     return result;
-
-}
-
-Variable * key_state_var( Environment * _environment, char * _scancode ) {
-
-    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
-
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
-
-    Variable * key = scancode( _environment );
-
-    return variable_compare( _environment, s->name, key->name );
 
 }

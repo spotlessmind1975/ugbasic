@@ -61,6 +61,15 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead0("section code_user");
                     }
                     break;
+                case VT_DOJOKA:
+                    if ( variable->memoryArea ) {
+                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead0("section data_user");
+                        outline1("%s: defs 8", variable->realName);
+                        outhead0("section code_user");
+                    }
+                    break;
                 case VT_WORD:
                 case VT_SWORD:
                 case VT_POSITION:

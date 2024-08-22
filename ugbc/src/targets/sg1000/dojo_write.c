@@ -38,24 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+void dojo_write( Environment * _environment, char * _value ) {
 
-Variable * key_state( Environment * _environment, int _scancode ) {
-
-    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY PRESSED)");
-
-    return result;
-
-}
-
-Variable * key_state_var( Environment * _environment, char * _scancode ) {
-
-    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
-
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
-
-    Variable * key = scancode( _environment );
-
-    return variable_compare( _environment, s->name, key->name );
+    Variable * value = variable_retrieve_or_define( _environment, _value, VT_BYTE, 0 );
+    
+    sg1000_dojo_write_byte( _environment, value->realName );
 
 }

@@ -38,24 +38,44 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+Variable * dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _application ) {
 
-Variable * key_state( Environment * _environment, int _scancode ) {
+    Variable * sessionId = variable_retrieve( _environment, _session_id );
 
-    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY PRESSED)");
+    Variable * username = variable_retrieve( _environment, _username );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
+
+    Variable * application = variable_retrieve( _environment, _application );
+    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size)" );
+
+    Variable * result = variable_temporary( _environment, VT_DOJOKA, "(result)" );
+
+    switch( username->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, username->realName, size->realName );
+            cpu_addressof_16bit( _environment, username->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, username->realName, address->realName, size->realName );
+            break;
+    }
+
+    switch( application->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, application->realName, size2->realName );
+            cpu_addressof_16bit( _environment, application->realName, address2->realName );
+            cpu_inc_16bit( _environment, address2->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, application->realName, address2->realName, size2->realName );
+            break;
+    }
+
+    sg1000_dojo_find_port( _environment, sessionId->realName, address->realName, size->realName, address2->realName, size2->realName, result->realName );
 
     return result;
-
-}
-
-Variable * key_state_var( Environment * _environment, char * _scancode ) {
-
-    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
-
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
-
-    Variable * key = scancode( _environment );
-
-    return variable_compare( _environment, s->name, key->name );
 
 }

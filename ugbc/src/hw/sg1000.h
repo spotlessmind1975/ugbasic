@@ -171,4 +171,18 @@ void sg1000_timer_set_counter( Environment * _environment, char * _timer, char *
 void sg1000_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void sg1000_timer_set_address( Environment * _environment, char * _timer, char * _address );
 
+void sg1000_dojo_ready( Environment * _environment, char * _value );
+void sg1000_dojo_read_byte( Environment * _environment, char * _value );
+void sg1000_dojo_write_byte( Environment * _environment, char * _value );
+
+void sg1000_dojo_ping( Environment * _environment, char * _result );
+void sg1000_dojo_login( Environment * _environment, char * _name, char * _name_size, char * _password, char * _size, char * _unique_id );
+void sg1000_dojo_success( Environment * _environment, char * _id, char * _result );
+void sg1000_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id );
+void sg1000_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _port_id );
+void sg1000_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result );
+void sg1000_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
+void sg1000_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
+void sg1000_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
+
 #endif
