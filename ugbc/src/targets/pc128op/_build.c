@@ -170,7 +170,7 @@ static unsigned char cmpl(unsigned int n)
 	return 0x100- ((unsigned char)n);
 }
 
-int mo5_convertbintok7_original(Environment * _environment)
+int pc128op_convertbintok7_original(Environment * _environment)
 {
 	// if(argc==1)
 	// {
