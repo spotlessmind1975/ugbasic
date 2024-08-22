@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * dojo_read( Environment * _environment ) {
+Variable * dojo_receive( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 

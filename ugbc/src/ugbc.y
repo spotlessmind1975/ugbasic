@@ -2600,8 +2600,11 @@ frame_size : {
     } frame_size_definition;
 
 dojo_functions : 
-    READ OP CP {
-        $$ = dojo_read( _environment )->name;
+    RECEIVE {
+        $$ = dojo_receive( _environment )->name;
+    }
+    | RECEIVE OP CP {
+        $$ = dojo_receive( _environment )->name;
     }
     | READY {
         $$ = dojo_ready( _environment )->name;
@@ -9377,8 +9380,8 @@ cmob_definition :
     };
 
 dojo_definition :
-    WRITE expr {
-        dojo_write( _environment, $2 );
+    SEND expr {
+        dojo_send( _environment, $2 );
     }
     | DESTROY PORT expr {
         dojo_destroy_port( _environment, $3 );

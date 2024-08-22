@@ -4370,8 +4370,8 @@ Variable *              dojo_login( Environment * _environment, char * _username
 Variable *              dojo_success( Environment * _environment, char * _id );
 Variable *              dojo_ping( Environment * _environment );
 Variable *              dojo_ready( Environment * _environment );
-Variable *              dojo_read( Environment * _environment );
-void                    dojo_write( Environment * _environment, char * _value );
+Variable *              dojo_receive( Environment * _environment );
+void                    dojo_send( Environment * _environment, char * _value );
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
 void                    draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color );
