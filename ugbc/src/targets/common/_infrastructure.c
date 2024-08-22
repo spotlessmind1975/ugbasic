@@ -96,7 +96,8 @@ char DATATYPE_AS_STRING[][16] = {
     "FLOAT",
     "TILEMAP",
     "BIT",
-    "MSPRITE"
+    "MSPRITE",
+    "DOJOKA"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -999,6 +1000,8 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         size *= 1;
     } else if ( var->arrayType == VT_MSPRITE ) {
         size *= 2;
+    } else if ( var->arrayType == VT_DOJOKA ) {
+        size *= 8;
     } else if ( var->arrayType == VT_TILE ) {
         size *= 1;
     } else if ( var->arrayType == VT_TILES ) {
@@ -1107,6 +1110,8 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
             sprintf(name, "Tstr%d", UNIQUE_ID);
         } else if ( _type == VT_BUFFER ) {
             sprintf(name, "Tbuf%d", UNIQUE_ID);
+        } else if ( _type == VT_DOJOKA ) {
+            sprintf(name, "Tdoj%d", UNIQUE_ID);
         } else if ( _type == VT_IMAGE ) {
             sprintf(name, "Timg%d", UNIQUE_ID);
         } else if ( _type == VT_IMAGES ) {
@@ -1132,6 +1137,8 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         if ( _type == VT_STRING ) {
             var->locked = 1;
         } else if ( _type == VT_BUFFER ) {
+            var->locked = 1;
+        } else if ( _type == VT_DOJOKA ) {
             var->locked = 1;
         } else if ( _type == VT_IMAGE ) {
             var->locked = 1;
@@ -1190,6 +1197,8 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
         sprintf(name, "Tstr%d", UNIQUE_ID);
     } else if ( _type == VT_BUFFER ) {
         sprintf(name, "Tbuf%d", UNIQUE_ID);
+    } else if ( _type == VT_DOJOKA ) {
+        sprintf(name, "Tdoj%d", UNIQUE_ID);
     } else if ( _type == VT_IMAGE ) {
         sprintf(name, "Timg%d", UNIQUE_ID);
     } else if ( _type == VT_IMAGES ) {
@@ -1215,6 +1224,8 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
     if ( _type == VT_STRING ) {
         var->locked = 1;
     } else if ( _type == VT_BUFFER ) {
+        var->locked = 1;
+    } else if ( _type == VT_DOJOKA ) {
         var->locked = 1;
     } else if ( _type == VT_IMAGE ) {
         var->locked = 1;
@@ -1388,6 +1399,8 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     size *= 1;
                 } else if ( destination->arrayType == VT_MSPRITE ) {
                     size *= 2;
+                } else if ( destination->arrayType == VT_DOJOKA ) {
+                    size *= 8;
                 } else if ( destination->arrayType == VT_TILE ) {
                     size *= 1;
                 } else if ( destination->arrayType == VT_TILESET ) {
@@ -2934,6 +2947,20 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
                             break;
+                        case VT_DOJOKA:
+                            switch( target->type ) {
+                                case VT_DOJOKA:
+                                    if ( target->size == 0 ) {
+                                        target->size = source->size;
+                                        target->valueBuffer = malloc( 8 );
+                                        memset( target->valueBuffer, 0, 8 );
+                                    }
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 8 );
+                                    break;
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                            }
+                            break;
                         case VT_BUFFER:
                             switch( target->type ) {
                                 case VT_DSTRING: {
@@ -3192,6 +3219,13 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                         CRITICAL_BUFFER_SIZE_MISMATCH(_source, _destination);
                     }
                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                    break;
+                }
+                case VT_DOJOKA: {
+                    if ( target->size == 0 ) {
+                        target->size = 8;
+                    }
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 8 );
                     break;
                 }
                 case VT_SEQUENCE:
