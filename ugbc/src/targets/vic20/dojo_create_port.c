@@ -38,28 +38,29 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+Variable * dojo_create_port( Environment * _environment, char * _session_id, char * _application ) {
 
-Variable * key_state( Environment * _environment, int _scancode ) {
+    Variable * sessionId = variable_retrieve( _environment, _session_id );
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
+    Variable * application = variable_retrieve( _environment, _application );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
 
-    Variable * key = scancode( _environment );
+    Variable * result = variable_temporary( _environment, VT_DOJOKA, "(result)" );
 
-    return variable_compare_const( _environment, key->name, _scancode );
+    switch( application->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, application->realName, size->realName );
+            cpu_addressof_16bit( _environment, application->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, application->realName, address->realName, size->realName );
+            break;
+    }
+
+    vic20_dojo_create_port( _environment, sessionId->realName, address->realName, size->realName, result->realName );
+
+    return result;
 
 }
-
-
-Variable * key_state_var( Environment * _environment, char * _scancode ) {
-
-    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
-
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
-
-    Variable * key = scancode( _environment );
-
-    return variable_compare( _environment, s->name, key->name );
-
-}
-

@@ -38,28 +38,14 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+Variable * dojo_peek_message( Environment * _environment, char * _port_id ) {
 
-Variable * key_state( Environment * _environment, int _scancode ) {
+    Variable * portId = variable_retrieve( _environment, _port_id );
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result)" );
 
-    Variable * key = scancode( _environment );
+    vic20_dojo_peek_message( _environment, portId->realName, result->realName );
 
-    return variable_compare_const( _environment, key->name, _scancode );
-
-}
-
-
-Variable * key_state_var( Environment * _environment, char * _scancode ) {
-
-    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
-
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
-
-    Variable * key = scancode( _environment );
-
-    return variable_compare( _environment, s->name, key->name );
+    return result;
 
 }
-

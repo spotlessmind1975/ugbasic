@@ -38,28 +38,12 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+Variable * dojo_ping( Environment * _environment ) {
 
-Variable * key_state( Environment * _environment, int _scancode ) {
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result)" );
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
+    vic20_dojo_ping( _environment, result->realName );
 
-    Variable * key = scancode( _environment );
-
-    return variable_compare_const( _environment, key->name, _scancode );
+    return result;
 
 }
-
-
-Variable * key_state_var( Environment * _environment, char * _scancode ) {
-
-    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
-
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
-
-    Variable * key = scancode( _environment );
-
-    return variable_compare( _environment, s->name, key->name );
-
-}
-
