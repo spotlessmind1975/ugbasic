@@ -211,6 +211,7 @@ void play_string( Environment * _environment, char * _string ) {
         Variable * command = variable_temporary( _environment, VT_BYTE, "(command)" );
 
         // Note
+        Variable * note8 = variable_temporary( _environment, VT_BYTE, "(note8)" );
         Variable * note16 = variable_temporary( _environment, VT_WORD, "(note16)" );
         Variable * duration16 = variable_temporary( _environment, VT_WORD, "(duration16)" );
 
@@ -493,8 +494,8 @@ void play_string( Environment * _environment, char * _string ) {
             cpu_jump( _environment, note2CommandLabel );
 
             cpu_label( _environment, note2CommandLabel );
-            cpu_store_8bit( _environment, note16->realName, 12 );
-            cpu_math_mul_8bit_to_16bit( _environment, note16->realName, octave->realName, note16->realName, 0  );
+            cpu_store_8bit( _environment, note8->realName, 12 );
+            cpu_math_mul_8bit_to_16bit( _environment, note8->realName, octave->realName, note16->realName, 0  );
             cpu_math_add_16bit_with_8bit( _environment, note16->realName, temp->realName, note16->realName );
             cpu_math_mul_8bit_to_16bit( _environment, duration->realName, periodEquivalent->realName, duration16->realName, 0  );
 
