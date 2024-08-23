@@ -124,7 +124,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
         pokey_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
         pokey_set_note_vars( _environment, NULL, note->realName );
         if ( _duration ) {
-            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 100 );
             cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
             pokey_set_duration_vars( _environment, NULL, duration->realName );
         } else {
