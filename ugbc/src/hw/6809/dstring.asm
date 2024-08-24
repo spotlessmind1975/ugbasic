@@ -35,8 +35,61 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+; DSEQUAL(X=descriptor,Y=string) -> C / NC
+DSEQUAL
+    PSHS D
+    PSHS Y
+    LEAY 1, Y
+    LDB , X
+    LDD 1, X
+    TFR D, X
+DSEQUALL1
+    LDA , Y
+    STA <MATHPTR0
+    LDA , X+
+    CMPA , Y+
+    BNE DSEQUALNO
+    DECB
+    BNE DSEQUALL1
+DSEQUALYES
+    PULS Y
+    PULS D
+    ORCC #$01
+    RTS
+DSEQUALNO
+    PULS Y
+    PULS D
+    ANDCC #$FE
+    RTS
+
+; DSFINDEQUAL(Y) -> B / 0
+DSFINDEQUAL
+    PSHS  A
+    LDB   #1; // fix denote 0 as "unused slot"
+DSFINDEQUALL
+    JSR   DSDESCRIPTOR
+    LDA   3,X
+    ANDA  #$C0
+    CMPA  #$C0
+    BEQ   DSFINDEQUALF1
+DSFINDEQUALF2
+    INCB
+    CMPB  #MAXSTRINGS
+    BNE   DSFINDEQUALL
+DSFINDEQUALNO
+    LDB #0
+    PULS  A,PC
+DSFINDEQUALF1
+    JSR DSEQUAL
+    BCC DSFINDEQUALF2
+DSFINDEQUALYES
+    PULS  A,PC
+
 ; DSDEFINE(Y) -> B
 DSDEFINE
+    BSR   DSFINDEQUAL
+    CMPB  #0
+    BNE   DSDEFINEE
     BSR   DSFINDFREE
     BSR   DSDESCRIPTOR
     LDA   ,Y+
@@ -44,6 +97,7 @@ DSDEFINE
     STY 1, X
     LDA #$C0
     STA 3, X
+DSDEFINEE
     RTS
 
 OUT_OF_MEMORY
