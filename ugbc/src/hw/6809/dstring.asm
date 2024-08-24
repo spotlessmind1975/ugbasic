@@ -44,8 +44,6 @@ DSEQUAL
     LDD 1, X
     TFR D, X
 DSEQUALL1
-    LDA , Y
-    STA <MATHPTR0
     LDA , X+
     CMPA , Y+
     BNE DSEQUALNO
