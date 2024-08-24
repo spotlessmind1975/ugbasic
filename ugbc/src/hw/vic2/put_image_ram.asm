@@ -1990,6 +1990,14 @@ PUTIMAGE3:
         ADC #0
         STA PLOTCDEST+1
 
+        CLC
+        LDA PLOTCDEST
+        ADC CURRENTTILESWIDTH
+        STA PLOTCDEST
+        LDA PLOTCDEST+1
+        ADC #0
+        STA PLOTCDEST+1
+
         ; Reload the width and repeat the drawing.
 
         LDA IMAGEW
@@ -2023,6 +2031,14 @@ PUTIMAGE3:
 
         ; Move ahead in the colour video map.
         
+        CLC
+        LDA PLOTCDEST
+        ADC CURRENTTILESWIDTH
+        STA PLOTCDEST
+        LDA PLOTCDEST+1
+        ADC #0
+        STA PLOTCDEST+1
+
         CLC
         LDA PLOTCDEST
         ADC CURRENTTILESWIDTH
@@ -2164,6 +2180,14 @@ PUTIMAGE3:
         ADC #0
         STA PLOTDEST+1
 
+        CLC
+        LDA PLOTDEST
+        ADC CURRENTTILESWIDTH
+        STA PLOTDEST
+        LDA PLOTDEST+1
+        ADC #0
+        STA PLOTDEST+1
+        
         ; ... and recopy another time the same colour.
 
         LDA IMAGEW
