@@ -35,8 +35,70 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+; DSEQUAL(IX=descriptor,HL=string) -> C / NC
+DSEQUAL:
+    PUSH BC
+    PUSH DE
+    PUSH HL
+    INC HL
+    LD A, (IX)
+    LD B, A
+    LD E, (IX+1)
+    LD D, (IX+2)
+DSEQUALL1:
+    LD A, (DE)
+    CP (HL)
+    INC HL
+    INC DE
+    JR NZ, DSEQUALNO
+    DEC B
+    JR NZ, DSEQUALL1
+DSEQUALYES:
+    POP HL
+    POP DE
+    POP BC
+    SCF
+    RET
+DSEQUALNO:
+    POP HL
+    POP DE
+    POP BC
+    SCF
+    CCF
+    RET
+
+; DSFINDEQUAL(HL) -> B / 0
+DSFINDEQUAL:
+    LD B, 1
+DSFINDEQUALL:
+    CALL DSDESCRIPTOR
+    LD A, (IX+3)
+    AND $C0
+    CP $C0
+    JR Z, DSFINDEQUALF1
+DSFINDEQUALF2:
+    INC B
+    LD A, B
+    PUSH HL
+	LD HL, MAXSTRINGS
+    CP (HL)
+    POP HL
+    JR NZ, DSFINDEQUALL
+DSFINDEQUALNO:
+    LD B, 0
+    RET
+DSFINDEQUALF1:
+    CALL DSEQUAL
+    JR NC, DSFINDEQUALF2
+DSFINDEQUALYES:
+    RET
+
 ; DSDEFINE(HL) -> B
 DSDEFINE:
+    CALL DSFINDEQUAL
+    LD A, B
+    CP 0
+    JR NZ, DSDEFINEE
     CALL DSFINDFREE
     CALL DSDESCRIPTOR
     LD A, (HL)
@@ -46,6 +108,7 @@ DSDEFINE:
     LD (IX+2),H
     LD A, $C0
     LD (IX+3),A
+DSDEFINEE:
     RET
 
 ; DSALLOC(C) -> B
