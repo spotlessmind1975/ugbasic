@@ -6137,6 +6137,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
             break;
         }
         case VT_DSTRING: {            
+
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
@@ -6148,6 +6149,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
 
             cpu_math_add_16bit_with_8bit( _environment, address->realName, position->realName, address->realName );
             cpu_dec_16bit( _environment, address->realName );
+
             if ( _len ) {
                 len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
                 cpu_move_8bit( _environment, len->realName, copyofLen->realName );
@@ -6155,7 +6157,6 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
                 cpu_move_8bit( _environment, len->realName, temp->realName );
                 cpu_math_add_8bit( _environment, position->realName, temp->realName, temp->realName );
                 cpu_greater_than_8bit( _environment, temp->realName, size->realName, temp->realName, 0, 0 );
-
                 char unlimitedLenLabel[MAX_TEMPORARY_STORAGE]; sprintf( unlimitedLenLabel, "%sunlim", label );
                 cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, unlimitedLenLabel, 1 );
                 cpu_move_8bit( _environment, size->realName, temp->realName );
@@ -6845,7 +6846,7 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
             CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
-    Variable * repetitionsLen = variable_mul( _environment, repetitions->name, stringLen->name );
+    Variable * repetitionsLen = variable_cast( _environment, variable_mul( _environment, repetitions->name, stringLen->name )->name, VT_BYTE );
 
     cpu_dsalloc( _environment, repetitionsLen->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, resultAddress->realName, resultLen->realName );
