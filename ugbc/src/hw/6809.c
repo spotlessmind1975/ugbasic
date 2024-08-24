@@ -2317,13 +2317,14 @@ void cpu6809_math_add_32bit_const( Environment * _environment, char *_source, in
         MAKE_LABEL
 
         outline1("LDD %s", address_displacement(_environment, _source, "2"));
-        outline1("LDX #$%4.4x", ( _destination & 0xffff ) );
-        outline0("LEAX D,X");
-        outline1("STX %s", address_displacement(_environment, _other, "2"));
+        outline1("ADDD #$%4.4x", ( _destination & 0xffff ) );
+        outline1("STD %s", address_displacement(_environment, _other, "2"));
         outline1("LDD %s", _source);
-        outline1("LDX #$%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
-        outline0("LEAX D,X");
-        outline1("STX %s", _other ? _other : ",X" );
+        outline1("ADDD #$%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
+        if ( ( ( _destination >> 16 ) & 0x8000 ) ) {
+            outline0("ADDD #1" );
+        }
+        outline1("STD %s", _other ? _other : ",X" );
 
     no_embedded( cpu_math_add_32bit_const )
 
