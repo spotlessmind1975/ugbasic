@@ -994,7 +994,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             break;
         case BITMAP_MODE_MULTICOLOR:
-            _environment->fontWidth = 4;
+            _environment->fontWidth = 8;
             _environment->screenWidth = 160;
             _environment->screenHeight = 200;
             _environment->screenColors = 4;
@@ -1154,7 +1154,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
-    _environment->screenTilesWidth = 40;
+    _environment->screenTilesWidth = _environment->screenWidth / _environment->fontWidth;
     _environment->screenTilesHeight = 25;
     _environment->consoleTilesWidth = _environment->screenTilesWidth;
     _environment->consoleTilesHeight = _environment->screenTilesHeight;
