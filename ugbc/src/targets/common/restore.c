@@ -96,7 +96,7 @@ void restore_label( Environment * _environment, char * _label ) {
 
         _environment->restoreDynamic = 1;
 
-        Variable * variable = variable_retrieve( _environment, _label );
+        Variable * variable = variable_retrieve_or_define( _environment, _label, VT_WORD, 0 );
         Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
         Variable * lineNumber = variable_temporary( _environment, VT_WORD, "(line number)");
         Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)");
