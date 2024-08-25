@@ -6827,6 +6827,7 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
     Variable * stringAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     Variable * stringLen = variable_temporary( _environment, VT_BYTE, "(len)" );
     Variable * repetitions = variable_retrieve_or_define( _environment, _repetitions, VT_BYTE, 0 );
+    Variable * copyOfRepetitions = variable_temporary( _environment, VT_BYTE, "(copy repetitions)" );
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of STRING)");
     Variable * resultAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     Variable * resultLen = variable_temporary( _environment, VT_BYTE, "(len)" );
@@ -6850,12 +6851,14 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
 
     cpu_dsalloc( _environment, repetitionsLen->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, resultAddress->realName, resultLen->realName );
+
+    variable_move( _environment, repetitions->name, copyOfRepetitions->name );
     
     cpu_label( _environment, label );
     cpu_mem_move( _environment, stringAddress->realName, resultAddress->realName, stringLen->realName );
     cpu_math_add_16bit_with_8bit( _environment, resultAddress->realName, stringLen->realName, resultAddress->realName );
-    cpu_dec( _environment, repetitions->realName );
-    cpu_compare_and_branch_8bit_const( _environment, repetitions->realName, 0, label, 0 );
+    cpu_dec( _environment, copyOfRepetitions->realName );
+    cpu_compare_and_branch_8bit_const( _environment, copyOfRepetitions->realName, 0, label, 0 );
 
     return result;
     
