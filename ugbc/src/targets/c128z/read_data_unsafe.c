@@ -115,7 +115,6 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
                     case VT_DSTRING: {
                         Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
                         Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
-                        cpu_inc_16bit( _environment, dataptr->realName );
                         cpu_move_8bit_indirect2( _environment, dataptr->realName, size->realName );
                         cpu_inc_16bit( _environment, dataptr->realName );
                         cpu_dsfree( _environment, variable->realName );
