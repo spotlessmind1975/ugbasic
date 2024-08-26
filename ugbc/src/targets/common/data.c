@@ -245,7 +245,9 @@ void data_string( Environment * _environment, char * _value ) {
 
     VariableType type = VT_STRING;
 
-    int bytes = strlen( _value );
+    int bytes;
+
+    char * value = unescape_string( _environment, _value, 0, &bytes );
 
     DataSegment * data;
 
@@ -265,7 +267,7 @@ void data_string( Environment * _environment, char * _value ) {
     dataDataSegment->data = malloc( bytes + 1 );
     memset( dataDataSegment->data, 0, bytes + 1 );
     dataDataSegment->type = type;
-    memcpy( dataDataSegment->data, _value, bytes );
+    memcpy( dataDataSegment->data, value, bytes );
 
     if (  _environment->dataDataType ) {
         data->type = _environment->dataDataType;

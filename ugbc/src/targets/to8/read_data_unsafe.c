@@ -99,7 +99,7 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
                 break;
             case 0:
                 switch( variable->type ) {
-                    case VT_STRING: {
+                    case VT_DSTRING: {
                         Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
                         Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
                         cpu_inc_16bit( _environment, dataptr->realName );
