@@ -183,11 +183,8 @@ void generate_dsk( Environment * _environment ) {
     sprintf( outputFileName, "%sprogram.exe", temporaryPath);
     fh = fopen( outputFileName, "wb" );
     fputc( 0x00, fh );
-    printf( "%2.2x", 0x00 );
     fputc( programExeSize >> 8, fh );
-    printf( "%2.2x", programExeSize >> 8 );
     fputc( programExeSize & 0xff, fh );
-    printf( "%2.2x\n", programExeSize & 0xff );
     fputc( _environment->program.startingAddress >> 8, fh );
     fputc( _environment->program.startingAddress & 0xff, fh );
     fwrite( programExe, 1, programExeSize, fh );
