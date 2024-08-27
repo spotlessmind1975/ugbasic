@@ -438,7 +438,7 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
-    outline0("ALIGN $0002");
+    outline0("ALIGN $0002, $00");
 
     generate_cgoto_address_table( _environment );
 

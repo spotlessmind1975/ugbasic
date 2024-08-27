@@ -44,7 +44,7 @@ DOJO_CMD_PUT_MESSAGE    EQU $05         ; PUT MESSAGE message portId
 DOJO_CMD_PEEK_MESSAGE   EQU $06         ; PEEK MESSAGE portId
 DOJO_CMD_GET_MESSAGE    EQU $07         ; GET MESSAGE portId
 
-    ALIGN 2
+    ALIGN 2, $00
 DOJOCURRENTID           FCB $0          ; Current packet ID
 
 DOJOHELLOSTRING         FCB "****9910"

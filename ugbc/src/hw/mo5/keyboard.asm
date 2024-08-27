@@ -83,9 +83,9 @@ KEYBOARDBUFFERRESETL1
 ;   Ouput: -
 ;   Changes: KEYBOARDACTUAL, KEYBOARDASFSTATE
 
-    ALIGN 2
+    ALIGN 2, $00
 KEYBOARDPRESSED FCB 0
-    ALIGN 2
+    ALIGN 2, $00
 KEYBOARDTEMP FCB 0
 
 KEYBOARDSHIFTPRESSED
@@ -739,7 +739,7 @@ KEYBOARDQUEUEWPOS       FCB $00
 KEYBOARDACTUAL          FCB $00
 KEYBOARDINKEY           FCB $00
 
-    ALIGN 2
+    ALIGN 2, $00
 KEYBOARDSHIFT           FCB $00
 
 ; ----------------------------------------------------------------------------
