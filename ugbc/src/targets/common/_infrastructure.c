@@ -4825,13 +4825,13 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
 
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
-            cpu_math_mul2_const_32bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
+            cpu_math_mul2_const_32bit( _environment, result->realName, (int)log2(_steps), VT_SIGNED( destination->type ) );
             break;
         case 16:
-            cpu_math_mul2_const_16bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
+            cpu_math_mul2_const_16bit( _environment, result->realName, (int)log2(_steps), VT_SIGNED( destination->type ) );
             break;
         case 8:
-            cpu_math_mul2_const_8bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
+            cpu_math_mul2_const_8bit( _environment, result->realName, (int)log2(_steps), VT_SIGNED( destination->type ) );
             break;
         case 1:
         case 0:
