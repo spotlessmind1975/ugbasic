@@ -323,7 +323,7 @@ void generate_dsk( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
     };
 
-    // remove( basFileName );
+    remove( basFileName );
 
     sprintf( commandLine, "\"%s\" copy -2 \"%sprogram.exe\" \"%s,PROGRAM.EXE\"",
         executableName, 
@@ -334,7 +334,7 @@ void generate_dsk( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
     };
 
-    // remove( tempFileName );
+    remove( tempFileName );
 
     if ( programDataCount ) {
         for( int i=0; i<programDataCount; ++i ) {
@@ -351,7 +351,7 @@ void generate_dsk( Environment * _environment ) {
         }
     }
 
-    // remove( tempFileName );
+    remove( tempFileName );
 
     if ( !storage ) {
 
@@ -443,7 +443,7 @@ void generate_dsk( Environment * _environment ) {
 
     }
 
-    // remove( originalBinaryFile );
+    remove( originalBinaryFile );
 
 }
 
