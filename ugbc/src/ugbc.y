@@ -2680,10 +2680,14 @@ exponential:
             }
         } else {
             if ( !variable_exists( _environment, $1 ) ) {
-                if ( ((struct _Environment *)_environment)->optionExplicit ) {
-                    CRITICAL_VARIABLE_UNDEFINED( $1 );
+                if ( label_exists_named( _environment, $1 ) ) {
+                    $$ = $1;
                 } else {
-                    $$ = variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 )->name;
+                    if ( ((struct _Environment *)_environment)->optionExplicit ) {
+                        CRITICAL_VARIABLE_UNDEFINED( $1 );
+                    } else {
+                        $$ = variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 )->name;
+                    }
                 }
             } else {
                 $$ = variable_retrieve( _environment, $1 )->name;
