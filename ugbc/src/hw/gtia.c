@@ -779,6 +779,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     _environment->screenShades = 256;
     _environment->screenTiles = 255;
+    _environment->currentMode = _screen_mode->id;
 
     switch( _screen_mode->id ) {
         // Graphics 3 (ANTIC 8)
