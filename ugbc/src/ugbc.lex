@@ -143,6 +143,14 @@ INCLUDE             BEGIN(incl);
         fprintf(stderr, "Missing include file %s\n", yytext );
         exit(1);
     }
+
+    unsigned char utf8check = fgetc( yyin );
+    if ( utf8check == 0xef ) {
+        fseek(yyin, 3, SEEK_SET );
+    } else {
+        fseek(yyin, 0, SEEK_SET );
+    }
+
     yylinenostacked[stacked] = yylineno;
     yycolnostacked[stacked] = yycolno;
     yyposnostacked[stacked] = yyposno;
