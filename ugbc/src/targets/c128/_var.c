@@ -806,10 +806,25 @@ void variable_cleanup( Environment * _environment ) {
         out1("%s: .BYTE ", dataSegment->realName );
         DataDataSegment * dataDataSegment = dataSegment->data;
         while( dataDataSegment ) {
+            int binary = 0;
+            for(int j=0; j<dataDataSegment->size; ++j  ) {
+                if (dataDataSegment->data[j] == 34 || dataDataSegment->data[j] < 32 || dataDataSegment->data[j] > 128 ) {
+                    binary = 1;
+                    break;
+                }
+            }
             if ( dataSegment->type ) {
                 if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
-                    out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
-                    out1("\"%s\"", dataDataSegment->data );
+                    if ( binary ) {
+                        out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
+                        for( i=0; i<(dataDataSegment->size-1); ++i ) {
+                            out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                        }
+                        out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                    } else {
+                        out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
+                        out1("\"%s\"", dataDataSegment->data );
+                    }
                 } else {
                     for( i=0; i<(dataDataSegment->size-1); ++i ) {
                         out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
@@ -818,9 +833,18 @@ void variable_cleanup( Environment * _environment ) {
                 }
             } else {
                 if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
-                    out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
-                    out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
-                    out1("\"%s\"", dataDataSegment->data );
+                    if ( binary ) {
+                        out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
+                        out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
+                        for( i=0; i<(dataDataSegment->size-1); ++i ) {
+                            out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                        }
+                        out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                    } else {
+                        out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
+                        out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
+                        out1("\"%s\"", dataDataSegment->data );
+                    }
                 } else {
                     out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
                     for( i=0; i<(dataDataSegment->size-1); ++i ) {
