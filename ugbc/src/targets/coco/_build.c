@@ -334,7 +334,8 @@ void generate_dsk( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
     };
 
-    remove( tempFileName );
+    sprintf( commandLine, "%sprogram.exe", temporaryPath);
+    remove( commandLine );
 
     if ( programDataCount ) {
         for( int i=0; i<programDataCount; ++i ) {
@@ -348,10 +349,10 @@ void generate_dsk( Environment * _environment ) {
                 printf("The compilation of assembly program failed.\n\n"); 
                 printf("Please use option '-I' to install chain tool.\n\n");
             };
+            sprintf( commandLine, "%sprogram.%03d", temporaryPath, i);
+            remove( commandLine );            
         }
     }
-
-    remove( tempFileName );
 
     if ( !storage ) {
 
