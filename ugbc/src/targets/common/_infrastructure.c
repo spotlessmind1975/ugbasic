@@ -8595,7 +8595,7 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
     check_if_filename_is_valid( _environment,  _filename );
 
     strcpy( lookedFilename, _filename );
-    char * c = strrchr( lookedFilename, PATH_SEPARATOR );
+    char * c = strrchr( lookedFilename, '/' );
     if ( c ) {
         strcpy( lookedExtension, c );
         *c = 0;
