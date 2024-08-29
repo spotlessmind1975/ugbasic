@@ -110,22 +110,34 @@ static char * translate_spaces( char * _original ) {
             sprintf(importDeclaresFilename, "imports/%s.bas", targetName);
         }
         if( access( importDeclaresFilename, F_OK ) != 0 ) {
-            fprintf(stderr, "Missing import file %s\n", importDeclaresFilename );
-            exit(1);
+            if ( stacked == 0 ) {
+                fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1));
+            } else {
+                fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d, %s)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+            }
+            exit(EXIT_FAILURE);
         }
     }
     yyin = fopen( importDeclaresFilename, "rt" );
     if ( ! yyin ) {
-        fprintf(stderr, "Missing import file %s\n", importDeclaresFilename );
-        exit(1);
+        if ( stacked == 0 ) {
+            fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1));
+        } else {
+            fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d, %s)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+        }
+        exit(EXIT_FAILURE);
     }
     yylinenostacked[stacked] = yylineno;
     yycolnostacked[stacked] = yycolno;
     yyposnostacked[stacked] = yyposno;
     ++stacked;
     if ( stacked == 256 ) {
-        fprintf(stderr, "Maximum number of stacked include files reached (256).\n" );
-        exit(1);
+        if ( stacked == 0 ) {
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d)\n", yylineno, (yycolno+1), (yyposno+1));
+        } else {
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d, %s)\n", yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+        }
+        exit(EXIT_FAILURE);
     }
     filenamestacked[stacked] = strdup( yytext );
     yylineno = 1;
@@ -140,8 +152,12 @@ INCLUDE             BEGIN(incl);
 <incl>[^ \t\n\r]+     { /* got the include file name */
     yyin = fopen( yytext, "rt" );
     if ( ! yyin ) {
-        fprintf(stderr, "Missing include file %s\n", yytext );
-        exit(1);
+        if ( stacked == 0 ) {
+            fprintf(stderr,  "*** ERROR: Missing include file %s at %d column %d (%d)\n", yytext, yylineno, (yycolno+1), (yyposno+1));
+        } else {
+            fprintf(stderr,  "*** ERROR: Missing include file %s at %d column %d (%d, %s)\n", yytext, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+        }
+        exit(EXIT_FAILURE);
     }
 
     unsigned char utf8check = fgetc( yyin );
@@ -156,8 +172,12 @@ INCLUDE             BEGIN(incl);
     yyposnostacked[stacked] = yyposno;
     ++stacked;
     if ( stacked == 256 ) {
-        fprintf(stderr, "Maximum number of stacked include files reached (256).\n" );
-        exit(1);
+        if ( stacked == 0 ) {
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d)\n",  yylineno, (yycolno+1), (yyposno+1));
+        } else {
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d, %s)\n", yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+        }
+        exit(EXIT_FAILURE);
     }
     filenamestacked[stacked] = strdup( yytext );
     yylineno = 1;
