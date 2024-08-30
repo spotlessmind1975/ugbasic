@@ -469,6 +469,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.msprite;
             } else if ( strcmp( $3, "timer" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.timer;
+            } else if ( strcmp( $3, "music" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.music;
             } else if ( strcmp( $3, "keyboard" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.keyboard;
             } else {

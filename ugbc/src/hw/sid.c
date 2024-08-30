@@ -838,6 +838,7 @@ void sid_music( Environment * _environment, char * _music, int _size, int _loop 
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
+    deploy( music, src_hw_sid_music_asm );
 
     outline0("SEI");
     outline1("LDA #<%s", _music);
@@ -859,7 +860,7 @@ void sid_set_duration( Environment * _environment, int _channels, int _duration 
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
-
+    
     PROGRAM_DURATION( _channels, _duration );
 
 }

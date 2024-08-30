@@ -1720,6 +1720,7 @@ typedef struct _Deployed {
     int random;
     int dojo;
     int console;
+    int music;
 
 } Deployed;
 
