@@ -630,19 +630,19 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
 
-    if(name->str[0]=='_')      return 1;
-    if(po_buf_match(name, "CLIP"))    return 1;
-    if(po_buf_match(name, "XCUR"))    return 1;
-    if(po_buf_match(name, "YCUR"))    return 1;
-    if(po_buf_match(name, "CURRENT")) return 1;
-    if(po_buf_match(name, "FONT"))    return 1;
-    if(po_buf_match(name, "TEXT"))    return 1;
-    if(po_buf_match(name, "LAST"))    return 1;
-    if(po_buf_match(name, "XGR"))     return 1;
-    if(po_buf_match(name, "YGR"))     return 1;
-    if(po_buf_match(name, "FREE_"))   return 1;
+    // if(name->str[0]=='_')      return 1;
+    // if(po_buf_match(name, "CLIP"))    return 1;
+    // if(po_buf_match(name, "XCUR"))    return 1;
+    // if(po_buf_match(name, "YCUR"))    return 1;
+    // if(po_buf_match(name, "CURRENT")) return 1;
+    // if(po_buf_match(name, "FONT"))    return 1;
+    // if(po_buf_match(name, "TEXT"))    return 1;
+    // if(po_buf_match(name, "LAST"))    return 1;
+    // if(po_buf_match(name, "XGR"))     return 1;
+    // if(po_buf_match(name, "YGR"))     return 1;
+    // if(po_buf_match(name, "FREE_"))   return 1;
 
-    return 0;
+    return 1;
 }
 
 /* look for variable uses and collect data about he variables */
@@ -691,6 +691,28 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     if( 
         po_buf_match( buf[0], " LD* #<*",  tmp, arg ) && 
         strstr("A X Y", tmp->str)!=NULL
+     ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+        };
+
+    if( 
+        po_buf_match( buf[0], " CP* *",  tmp, arg ) && 
+        strstr("A X Y", tmp->str)!=NULL
+     ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+        };
+
+    if( 
+        po_buf_match( buf[0], " CMP *",  arg )
+     ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+        };
+
+    if( 
+        po_buf_match( buf[0], " CMP (*)",  arg )
      ) if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_rd++;
@@ -919,7 +941,7 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
    if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) ) {
         struct var *v = vars_get(var);
         // printf( "%s rechecking (offset=%d, size=%d, chg_reg2=%d)\n", v->name, v->offset, v->size, chg_reg2(buf[0]) );
-        if( v->offset == -1 && v->size == 1 ) {
+        if( v->offset == -1 && v->size == 1 && chg_reg2(op) ) {
             // printf( "%s trying to inline\n", v->name);
             if ( strstr( var->str, "+" ) == NULL ) {
                 v->offset = -2;
