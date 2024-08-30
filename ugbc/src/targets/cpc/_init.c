@@ -98,14 +98,6 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "KBDCHAR", VT_BYTE, 0 );
     variable_global( _environment, "KBDCHAR" );
-    variable_import( _environment, "KBDRATE", VT_BYTE, 16 );
-    variable_global( _environment, "KBDRATE" );
-    variable_import( _environment, "KBDDELAY", VT_BYTE, 16 );
-    variable_global( _environment, "KBDDELAY" );
-    variable_import( _environment, "KBDRATEC", VT_BYTE, 16 );
-    variable_global( _environment, "KBDRATEC" );
-    variable_import( _environment, "KBDDELAYC", VT_BYTE, 16 );
-    variable_global( _environment, "KBDDELAYC" );
 
     variable_import( _environment, "JOYSTICK0", VT_BYTE, 0 );
     variable_global( _environment, "JOYSTICK0" );
