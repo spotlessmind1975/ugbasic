@@ -41,3 +41,19 @@ VBL2:
     CMP $d012
     BNE VBL2
     RTS
+
+WAITVBL:
+    LDA $D011
+    AND #$80
+    CMP #$80
+    BEQ WAITVBL
+WAITVBL2:    
+    LDA $D011
+    AND #$80
+    CMP #$80
+    BNE WAITVBL2
+WAITVBL3:
+    LDA $D012
+    CMP #$29
+    BCC WAITVBL3
+    RTS    

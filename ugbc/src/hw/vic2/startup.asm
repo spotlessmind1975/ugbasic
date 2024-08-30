@@ -169,22 +169,6 @@ VIC2STARTUPL1:
 
     RTS
 
-WAITVBL:
-    LDA $D011
-    AND #$80
-    CMP #$80
-    BEQ WAITVBL
-WAITVBL2:    
-    LDA $D011
-    AND #$80
-    CMP #$80
-    BNE WAITVBL2
-WAITVBL3:
-    LDA $D012
-    CMP #$29
-    BCC WAITVBL3
-    RTS    
-
 DOUBLEBUFFERINIT:
 
 @IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
