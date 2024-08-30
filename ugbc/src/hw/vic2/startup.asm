@@ -59,11 +59,15 @@ CPUMEMMOVER2:
     BNE CPUMEMMOVER2
     RTS
     
+@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
+
 ONSWITCHTILEMAPVOID:
     RTS
 
 ONSWITCHTILEMAP:
     JMP ONSWITCHTILEMAPVOID
+
+@ENDIF
 
 VIC2STARTUP:
 
@@ -169,36 +173,23 @@ VIC2STARTUPL1:
 
     RTS
 
-DOUBLEBUFFERINIT:
-
 @IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
+
+DOUBLEBUFFERINIT:
 
     LDA #0
     STA TILEMAPVISIBLE
     JSR COPYTILEMAP01
 
-@ENDIF
-
     RTS
 
 DOUBLEBUFFERCLEANUP:
-
-@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     LDA TILEMAPVISIBLE
     BEQ DOUBLEBUFFERCLEANUP2
     JSR SWITCHTILEMAP0
 
-@ELSE
-
-    RTS
-
-@ENDIF
-
-
 DOUBLEBUFFERCLEANUP2:
-
-@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     LDA $d018
     AND #$0f
@@ -211,12 +202,7 @@ DOUBLEBUFFERCLEANUP2:
     STA TEXTADDRESS+1
     RTS
 
-@ENDIF
-
-
 COPYTILEMAP01:
-
-@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     LDX #<(40*25)
     STX MATHPTR0
@@ -231,13 +217,9 @@ COPYTILEMAP01:
     LDA #$88
     STA TMPPTR2+1
     JMP CPUMEMMOVE
-
-@ENDIF
 
 COPYTILEMAP10:
 
-@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
-
     LDX #<(40*25)
     STX MATHPTR0
     LDX #>(40*25)
@@ -252,11 +234,7 @@ COPYTILEMAP10:
     STA TMPPTR2+1
     JMP CPUMEMMOVE
 
-@ENDIF
-
 SWITCHTILEMAP:
-
-@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     LDA TILEMAPVISIBLE
     BEQ SWITCHTILEMAP1
@@ -291,10 +269,6 @@ SWITCHTILEMAP1:
 
     RTS
     
-@ELSE
-
-    RTS
-
 @ENDIF
 
 CONSOLECALCULATE:
