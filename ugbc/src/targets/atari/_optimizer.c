@@ -656,6 +656,7 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         // v->flags |= NO_INLINE;
     // }
 
+
     if( 
         po_buf_match( buf[0], " JMP (*)",  arg ) 
      ) if(vars_ok(arg)) {
@@ -765,23 +766,51 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
             v->nb_wr++;
         };
 
-    if( po_buf_match( buf[0], " *: .byte *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
+    if( po_buf_match( buf[0], "*: .byte *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL ) {
         struct var *v = vars_get(tmp);
         v->size = 1;
         v->init = strdup(isZero(arg->str) ? "1-1" : arg->str);
     }
 
-    if( po_buf_match(buf[0], " *: .word *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
+    if( po_buf_match(buf[0], "*: .word *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL ) {
         struct var *v = vars_get(tmp);
         v->size = 2;
         v->init = strdup(arg->str);
     }
 
-    if( po_buf_match(buf[0], " *: .res *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
+    if( po_buf_match(buf[0], "*: .res *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL ) {
         struct var *v = vars_get(tmp);
         v->size = atoi( arg->str );
         v->init = NULL;
     }
+
+    if( po_buf_match(buf[0], " * *",   tmp, arg) ) if(vars_ok(arg)) {
+        struct var *v = vars_get(arg);
+        // printf( "%s checking (%d:%d)\n", v->name, v->offset, v->size);
+        if ( (v->offset > -2) && (v->size == 1) ) {
+            // printf( "%s candidate for inlining\n", v->name);
+            v->offset = -1; /* candidate for inlining */
+        }
+    }
+
+    // if( po_buf_match(buf[0], "*: .word *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
+    //     struct var *v = vars_get(tmp);
+    //     v->size = 2;
+    //     v->init = strdup(arg->str);
+    // }
+
+    /* variable in RAMs are not eligibile to inlining */
+    if( po_buf_match(buf[0], "* = *", tmp, arg) ) {
+        struct var *v = vars_get(tmp);
+        if ( v ) {
+            // printf( "%s checking\n", v->name);
+            if ( v->offset == -1 ) {
+                // printf( "%s excluding for inlining\n", v->name);
+                v->offset = -3;
+            }
+        }
+    }
+
 }
 
 /* compares two variables according to their access-count */
@@ -812,16 +841,22 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     }
 
     /* remove changed variables */
-    if(po_buf_match( buf[0], " *: .byte ", var)
-    || po_buf_match( buf[0], " *: .word ", var)
-    || po_buf_match( buf[0], " *: .res ", var)
+    if(po_buf_match( buf[0], "*: .byte ", var)
+    || po_buf_match( buf[0], "*: .word ", var)
+    || po_buf_match( buf[0], "*: .res ", var)
     ) if(vars_ok(var)) {
         struct var *v = vars_get(var);
-        if(v->nb_rd==0 && 0<v->size && v->size<=4 && 0==(v->flags & NO_REMOVE) && v->offset!=-2) {
-            optim(buf[0], "unread",NULL);
-            ++_environment->removedAssemblyLines;
-            ++num_unread;
-        }             
+        if ( v->offset==-2  ) {
+            // printf( "%s inlining (offset=%d, size=%d)\n", v->name, v->offset, v->size );
+            optim(buf[0], "inlined",NULL);
+            v->offset=-2;
+        } else {
+            if(v->nb_rd==0 && 0<v->size && v->size<=4 && 0==(v->flags & NO_REMOVE)) {
+                optim(buf[0], "unread",NULL);
+                ++_environment->removedAssemblyLines;
+                ++num_unread;
+            }             
+        }
     }
 }            
 
@@ -861,6 +896,127 @@ static void fixes_indexed_syntax(POBuffer buf) {
 
 }
 
+/* returns true if buf matches any op using the ALU between memory and a register */
+static int chg_reg2(POBuffer buf) {
+    if(po_buf_match(buf, "ADD")) return 1;
+    if(po_buf_match(buf, "AND")) return 1;
+    if(po_buf_match(buf, "CMP")) return 1;
+    if(po_buf_match(buf, "EOR")) return 1;
+    if(po_buf_match(buf, "LDA")) return 1;
+    if(po_buf_match(buf, "ORA")) return 1;
+    if(po_buf_match(buf, "SBC")) return 1;
+
+    return 0;
+}
+
+/* performs optimizations related to variables relocation */
+static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
+    POBuffer REG = TMP_BUF;
+    POBuffer var = TMP_BUF;
+    POBuffer op  = TMP_BUF;
+    
+    /* inlined */
+   if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) ) {
+        struct var *v = vars_get(var);
+        // printf( "%s rechecking (offset=%d, size=%d, chg_reg2=%d)\n", v->name, v->offset, v->size, chg_reg2(buf[0]) );
+        if( v->offset == -1 && v->size == 1 ) {
+            // printf( "%s trying to inline\n", v->name);
+            if ( strstr( var->str, "+" ) == NULL ) {
+                v->offset = -2;
+                v->flags |= NO_REMOVE;
+                optim(buf[0], "inlined1", "\t%s #%s%s\n%s = *-%d", op->str,
+                    v->init==NULL ? "*" : v->init,
+                    v->init==NULL ? (v->size==2 ? "" : "&255") : "",
+                    var->str, v->size);
+            }
+        }            
+    }
+
+    /* remove changed variables */
+    if(po_buf_match( buf[0], "*: .res ", var)
+    || po_buf_match( buf[0], "*: .byte ", var)
+    || po_buf_match( buf[0], "*: .word ", var) ) if(vars_ok(var)) {
+        struct var *v = vars_get(var);
+        if(v->offset == -2) {
+            optim(buf[0], "inlined3", NULL);
+            ++_environment->removedAssemblyLines;
+            ++num_inlined;
+         }            
+     }
+}            
+
+/* decide which variable goes in direct-page, which will be inlined */
+static void vars_prepare_relocation(void) {
+    int i;
+
+    num_dp      = 0;
+    num_inlined = 0;
+
+    qsort(vars.tab, vars.size, sizeof(*vars.tab), vars_cmp);
+
+    for(i = 0; i<vars.size; ++i) {
+        struct var *v = &vars.tab[i];
+
+        /* skip over unknown size var  */
+        if(v->size == 0)  continue;
+
+        /* skip over unread variables */
+        if(v->nb_rd == 0) continue;
+
+        /* flagged as not inline */
+        if(v->flags & NO_INLINE) v->offset = 0;
+        if(!DO_INLINE)           v->offset = 0;
+
+        /* can't inline > 1 byte */
+        if(v->offset == -1 && v->size>2) v->offset = 0;
+
+        // /* check if inlining is good */
+        // if(v->offset == -1) {
+        //     /* LDA: imm=2, dp=4, extended=5
+        //        LDD: imm=3, dp=5, extended=6 */
+        //     int dp_cost     = (3+v->size)*(v->nb_rd + v->nb_wr);
+        //     int inline_cost = (4+v->size)*(v->nb_rd + v->nb_wr - 1)+(1+v->size);
+            
+        //     if( (v->init==NULL || isZero(v->init) || 0==strcmp("1-1", v->init)) &&  dp_cost < inline_cost ) {
+        //         if(DO_DIRECT_PAGE) v->offset = 0;
+        //     } 
+        // }
+        // if(DO_DIRECT_PAGE 
+        // && 0==v->offset
+        // && 0==(v->flags && NO_DP)
+        // && v->size<=4 /* not too big to let room for others */
+        // && vars.page0_max + v->size <= 256
+        // ) {
+            
+        //     if ( vars.page0_max == 0xd8 )
+        //         ++vars.page0_max;
+        //     if ( vars.page0_max == 0xa3 )
+        //         ++vars.page0_max;
+        //     if ( vars.page0_max == 0xd5 )
+        //         ++vars.page0_max;
+        //     if ( vars.page0_max == 0xe3 )
+        //         ++vars.page0_max;
+        //     if ( vars.page0_max == 0xef )
+        //         ++vars.page0_max;
+        //     while ( vars.page0_max < 0xf0 )
+        //         ++vars.page0_max;
+        //     if ( vars.page0_max == 0xf0 )
+        //         ++vars.page0_max;
+        //     if ( vars.page0_max == 0xf1 )
+        //         ++vars.page0_max;
+        //     if ( vars.page0_max == 0xf2 )
+        //         ++vars.page0_max;
+        //     if ( vars.page0_max == 0xf6 )
+        //         ++vars.page0_max;
+
+        //     v->offset = vars.page0_max;
+        //     vars.page0_max += v->size;
+        // }
+
+        // printf("%s %d/%d %d %d %d\n", v->name, v->nb_rd, v->nb_wr, v->offset, v->size, vars.page0_max);
+    }
+}
+
 /* various kind of optimization */
 static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], PeepHoleOptimizationKind kind) {
     char fileNameOptimized[MAX_TEMPORARY_STORAGE];
@@ -890,7 +1046,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
         
         case RELOCATION1:
         ++peephole_pass;
-        // vars_prepare_relocation();
+        vars_prepare_relocation();
         break;
         
         case RELOCATION2:
@@ -898,7 +1054,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
         
         case PEEPHOLE:
         ++peephole_pass;
-        // vars_clear();
+        vars_clear();
         break;
     }
 
@@ -968,7 +1124,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
             
             case RELOCATION1:
             case RELOCATION2:
-            // vars_relocate(buf);
+            vars_relocate(_environment, buf);
             break;
         }
 
@@ -1228,6 +1384,7 @@ void target_peephole_optimizer( Environment * _environment ) {
         int optimization_limit_count = _environment->peepholeOptimizationLimit;
 
         do {
+            printf("---------------------------\n---------------------------\n---------------------------\n");
             while(optim_pass(_environment, buf, PEEPHOLE)&&optimization_limit_count) {
                 --optimization_limit_count;
             };
