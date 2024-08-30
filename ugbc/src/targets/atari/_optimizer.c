@@ -789,20 +789,20 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
             v->nb_wr++;
         };
 
-    if( po_buf_match( buf[0], "*: .byte *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL ) {
+    if( po_buf_match( buf[0], "*: .byte *", tmp, arg) && vars_ok(tmp) && strchr(arg->str,',')==NULL ) {
         struct var *v = vars_get(tmp);
         v->size = 1;
         v->init = strdup(isZero(arg->str) ? "1-1" : arg->str);
         //printf( "%s detecting (size=%d)\n", v->name, v->size);
     }
 
-    if( po_buf_match(buf[0], "*: .word *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL ) {
+    if( po_buf_match(buf[0], "*: .word *", tmp, arg) && vars_ok(tmp) && strchr(arg->str,',')==NULL ) {
         struct var *v = vars_get(tmp);
         v->size = 2;
         v->init = strdup(arg->str);
     }
 
-    if( po_buf_match(buf[0], "*: .res *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL ) {
+    if( po_buf_match(buf[0], "*: .res *", tmp, arg) && vars_ok(tmp) && strchr(arg->str,',')==NULL ) {
         struct var *v = vars_get(tmp);
         v->size = atoi( arg->str );
         v->init = NULL;
