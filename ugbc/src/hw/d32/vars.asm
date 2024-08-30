@@ -46,7 +46,6 @@ TABCOUNT            fcb     4
 XCURS               fcb     0
 YCURS               fcb     0
 EMPTYTILE           fcb     $60
-KBDRATE             fcb     16
 
 DRGTIMER            fdb     $0
 DRGTIMER2           fdb     $0
