@@ -59,8 +59,6 @@ void pokey_finalization( Environment * _environment ) {
     if ( ! _environment->deployed.pokeystartup ) {
         cpu_label( _environment, "POKEYSTARTUP" );
         outline0( "RTS" );
-        cpu_label( _environment, "MUSICPLAYER" );
-        outline0( "RTS" );
     }
 
 }

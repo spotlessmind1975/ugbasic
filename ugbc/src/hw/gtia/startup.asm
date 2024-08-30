@@ -62,7 +62,9 @@ CPUMEMMOVER2:
 GTIAVBLIRQPREV: .word $0
 
 GTIAVBLIRQ:
+@IF deployed.music
     JSR MUSICPLAYER
+@ENDIF
 @IF deployed.timer
     JSR TIMERMANAGER
 @ENDIF
