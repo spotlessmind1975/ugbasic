@@ -79,7 +79,7 @@ JOYSTICKMANAGER:
     PUSH HL
     PUSH AF
 
-    LD HL, KEYMAP
+    LD HL, SCANCODEREAD
     ADD HL, 9
     CALL JOYSTICKC
 @IF joystickConfig.values
@@ -87,7 +87,7 @@ JOYSTICKMANAGER:
 @ENDIF    
     LD (JOYSTICK0), A
 
-    LD HL, KEYMAP
+    LD HL, SCANCODEREAD
     ADD HL, 6
     CALL JOYSTICKC
 @IF joystickConfig.values
