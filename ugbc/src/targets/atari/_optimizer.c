@@ -1384,7 +1384,6 @@ void target_peephole_optimizer( Environment * _environment ) {
         int optimization_limit_count = _environment->peepholeOptimizationLimit;
 
         do {
-            printf("---------------------------\n---------------------------\n---------------------------\n");
             while(optim_pass(_environment, buf, PEEPHOLE)&&optimization_limit_count) {
                 --optimization_limit_count;
             };
