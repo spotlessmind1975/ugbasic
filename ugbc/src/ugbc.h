@@ -1719,6 +1719,7 @@ typedef struct _Deployed {
     int flipimagey;
     int random;
     int dojo;
+    int console;
 
 } Deployed;
 

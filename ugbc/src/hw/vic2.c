@@ -1216,6 +1216,8 @@ void console_calculate( Environment * _environment ) {
 
 void console_calculate_vars( Environment * _environment ) {
 
+    deploy( console, src_hw_vic2_console_asm );
+
     outline0( "JSR CONSOLECALCULATE" );
 
 }
