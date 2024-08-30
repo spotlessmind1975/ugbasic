@@ -630,6 +630,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
     if(po_buf_match(name, "$"))  return 0;
+    if(po_buf_match(name, "("))  return 0;
 
     // if(name->str[0]=='_')      return 1;
     // if(po_buf_match(name, "CLIP"))    return 1;
@@ -933,6 +934,8 @@ static int chg_reg2(POBuffer buf) {
     if(po_buf_match(buf, "CPY")) return 1;
     if(po_buf_match(buf, "ORA")) return 1;
     if(po_buf_match(buf, "SBC")) return 1;
+    if(po_buf_match(buf, "ADC")) return 1;
+    if(po_buf_match(buf, "SUB")) return 1;
 
     return 0;
 }
