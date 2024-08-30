@@ -49,22 +49,4 @@ SN76489FREQTABLE
     fdb 4,          4,          3,          3,          3,          3,          3,          2,          2,          2
     fdb 2,          2,          2,          2,          1,          1,          1,          1,          1           
     
-SN76489MUSICTYPE        fcb $0
-SN76489MUSICREADY       fcb $0
-SN76489MUSICPAUSE       fcb $0
-SN76489BLOCKS           fdb $0
-SN76489LASTBLOCK        fcb $0
-SN76489MUSICLOOP        fcb $0
-
-SN76489TMPPTR2          fdb $0
-SN76489TMPPTR           fdb $0
-SN76489TMPOFS           fdb $0
-SN76489TMPLEN           fdb $0
-SN76489JIFFIES          fdb $0
-SN76489BANK             fdb $0
-
-SN76489TMPPTR_BACKUP    fdb $0
-SN76489LASTBLOCK_BACKUP fdb $0
-SN76489BLOCKS_BACKUP    fdb $0
-
 SN76489TIMER            fdb $0, $0, $0
