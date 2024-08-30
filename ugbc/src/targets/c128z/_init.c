@@ -50,8 +50,6 @@ void target_initialization( Environment * _environment ) {
 
     // _environment->audioConfig.async = 1;
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
     variable_import( _environment, "EVERYCOUNTER", VT_WORD, 0 );
     variable_global( _environment, "EVERYCOUNTER" );
     variable_import( _environment, "EVERYTIMING", VT_WORD, 0 );

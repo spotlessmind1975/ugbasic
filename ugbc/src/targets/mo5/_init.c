@@ -82,9 +82,6 @@ void target_initialization( Environment * _environment ) {
 
     outhead1("BASE_SEGMENT EQU $%4.4x", 0x0100 * BASE_SEGMENT );
     
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
-
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0000 );

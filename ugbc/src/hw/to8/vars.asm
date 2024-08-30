@@ -40,7 +40,6 @@ BITMAPADDRESS       fdb     $4000
 COLORMAPADDRESS     fdb     $0000
 CURRENTMODE         fcb     $0
 CURRENTTILEMODE     fcb     0
-EVERYSTATUS        fcb     0
 
 TABCOUNT            fcb     4
 XCURS               fcb     0

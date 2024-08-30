@@ -1079,8 +1079,6 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "CPCTIMER2", VT_BYTE, 6 );
     variable_global( _environment, "CPCTIMER2" );
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
     variable_import( _environment, "EVERYCOUNTER", VT_BYTE, 0 );
     variable_global( _environment, "EVERYCOUNTER" );
     variable_import( _environment, "EVERYTIMING", VT_BYTE, 0 );

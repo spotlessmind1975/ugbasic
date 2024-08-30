@@ -41,7 +41,6 @@
 ; XCURS:      DEFB    0
 ; YCURS:      DEFB    0
 ; EMPTYTILE:  DEFB   32
-; EVERYSTATUS:DEFB   0
 ; XCURSYS:      DEFB    0
 ; YCURSYS:      DEFB    0
 

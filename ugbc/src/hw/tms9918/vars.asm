@@ -48,7 +48,6 @@
 ; XCURSYS:      DEFB    0
 ; YCURSYS:      DEFB    0
 ; EMPTYTILE:  DEFB   0
-; EVERYSTATUS:DEFB   0
 ; XCURSYS:      DEFB    0
 ; YCURSYS:      DEFB    0
 ; CLINEX:      DEFB    0
@@ -98,7 +97,6 @@
 ;     LD A, 0
 ;     LD (XCURSYS), A
 ;     LD (YCURSYS), A
-;     LD (EVERYSTATUS), A
 ;     LD (XCURSYS), A
 ;     LD (YCURSYS), A
 ;     LD (CLINEX), A

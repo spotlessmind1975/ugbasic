@@ -51,9 +51,6 @@ void target_initialization( Environment * _environment ) {
     _environment->dstring.count = 32;
     _environment->dstring.space = 512;
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
-
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0c00 );
     variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xa000 );
