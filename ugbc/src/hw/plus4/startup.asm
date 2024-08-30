@@ -167,11 +167,18 @@ PLUS4STARTUPDONENOIRQ:
     STY DATAPTRY
 @ENDIF
 
+@IF sysCallUsed
+
 SYSCALLDONE:
+
+@ENDIF
+
     ; LDA #$42
     ; STA $FF3F
     ; CLI
-    
+
+@IF sysCallUsed
+
     RTS
 SYSCALL:
     SEI
@@ -180,3 +187,5 @@ SYSCALL:
 SYSCALL0:
     JSR $0000
     JMP SYSCALLDONE
+
+@ENDIF

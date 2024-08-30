@@ -507,6 +507,12 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "sysCallUsed" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->sysCallUsed ) {
+                $$ = 1;
+            } else {
+                $$ = 0;
+            }
         } else {
             $$ = 0;
         }

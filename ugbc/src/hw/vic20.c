@@ -245,6 +245,8 @@ void vic20_clear_key( Environment * _environment ) {
 
 void vic20_sys_call( Environment * _environment, int _destination ) {
 
+    _environment->sysCallUsed = 1;
+
     outline0("PHA" );
     outline1("LDA #$%2.2x", (_destination & 0xff ) );
     outline0("STA SYSCALL0+1");
@@ -342,6 +344,8 @@ void vic20_timer_set_address( Environment * _environment, char * _timer, char * 
 
 void vic20_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
+    _environment->sysCallUsed = 1;
+
     deploy( dload, src_hw_vic20_dload_asm);
 
     MAKE_LABEL
@@ -393,6 +397,8 @@ void vic20_dload( Environment * _environment, char * _filename, char * _offset, 
 }
 
 void vic20_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+
+    _environment->sysCallUsed = 1;
 
     deploy( dsave, src_hw_vic20_dsave_asm);
 

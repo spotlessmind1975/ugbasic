@@ -2755,6 +2755,8 @@ typedef struct _Environment {
      */
     int bitByte;
 
+    int sysCallUsed;
+
     /**
      * Size of the paint bucket
      */

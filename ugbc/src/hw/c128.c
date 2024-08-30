@@ -193,6 +193,8 @@ void c128_clear_key( Environment * _environment ) {
 
 void c128_sys_call( Environment * _environment, int _destination ) {
 
+    _environment->sysCallUsed = 1;
+
     outline0("PHA");
     outline1("LDA #$%2.2x", (_destination & 0xff ) );
     outline0("STA SYSCALL0+1");
@@ -290,6 +292,8 @@ void c128_timer_set_address( Environment * _environment, char * _timer, char * _
 
 void c128_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
+    _environment->sysCallUsed = 1;
+
     deploy( dload, src_hw_c128_dload_asm);
 
     MAKE_LABEL
@@ -341,6 +345,8 @@ void c128_dload( Environment * _environment, char * _filename, char * _offset, c
 }
 
 void c128_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+
+    _environment->sysCallUsed = 1;
 
     deploy( dsave, src_hw_c128_dsave_asm);
 

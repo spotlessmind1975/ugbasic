@@ -237,6 +237,8 @@ void coco3_follow_irq( Environment * _environment ) {
 
 void coco3_sys_call( Environment * _environment, int _destination ) {
 
+    _environment->sysCallUsed = 1;
+
     outline0("PSHS D");
     outline1("LDD #$%4.4x", _destination );
     outline0("STD SYSCALL0+1");

@@ -178,6 +178,8 @@ void c64reu_clear_key( Environment * _environment ) {
 
 void c64reu_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
+    _environment->sysCallUsed = 1;
+
     deploy( dload, src_hw_c64reu_dload_asm);
 
     MAKE_LABEL
@@ -229,6 +231,8 @@ void c64reu_dload( Environment * _environment, char * _filename, char * _offset,
 }
 
 void c64reu_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+
+    _environment->sysCallUsed = 1;
 
     deploy( dsave, src_hw_c64reu_dsave_asm);
 
@@ -296,6 +300,8 @@ void c64reu_dsave( Environment * _environment, char * _filename, char * _offset,
 }
 
 void c64reu_sys_call( Environment * _environment, int _destination ) {
+
+    _environment->sysCallUsed = 1;
 
     outline0("PHA");
     outline1("LDA #$%2.2x", (_destination & 0xff ) );

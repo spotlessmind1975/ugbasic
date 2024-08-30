@@ -188,6 +188,8 @@ void c128z_joy( Environment * _environment, int _port, char * _value ) {
 
 void c128z_sys_call( Environment * _environment, int _destination ) {
 
+    _environment->sysCallUsed = 1;
+
     outline0("PUSH HL" );
     outline0("LD HL, SYSCALL0" );
     outline0("INC HL" );

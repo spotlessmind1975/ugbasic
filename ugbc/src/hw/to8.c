@@ -216,6 +216,8 @@ void to8_joystick( Environment * _environment, int _joystick, char * _result ) {
 
 void to8_sys_call( Environment * _environment, int _destination ) {
 
+    _environment->sysCallUsed = 1;
+
     outline0("PSHS D");
     outline1("LDD #$%4.4x", _destination );
     outline0("STD SYSCALL0+1");
