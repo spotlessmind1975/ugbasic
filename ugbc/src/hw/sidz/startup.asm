@@ -201,8 +201,3 @@ SIDZPROGSR:
 SIDZSTOP:
     RET
 
-; This is the entry point for music play routine
-; using the interrupt. 
-MUSICPLAYER:
-    RET
-
