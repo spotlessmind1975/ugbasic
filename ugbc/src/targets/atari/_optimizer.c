@@ -629,6 +629,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "^_Tstr"))   return 0;
     if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
+    if(po_buf_match(name, "$"))  return 0;
 
     // if(name->str[0]=='_')      return 1;
     // if(po_buf_match(name, "CLIP"))    return 1;
@@ -792,6 +793,7 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         struct var *v = vars_get(tmp);
         v->size = 1;
         v->init = strdup(isZero(arg->str) ? "1-1" : arg->str);
+        //printf( "%s detecting (size=%d)\n", v->name, v->size);
     }
 
     if( po_buf_match(buf[0], "*: .word *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL ) {
@@ -808,9 +810,9 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
 
     if( po_buf_match(buf[0], " * *",   tmp, arg) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
-        // printf( "%s checking (%d:%d)\n", v->name, v->offset, v->size);
+        //printf( "%s checking (%d:%d)\n", v->name, v->offset, v->size);
         if ( (v->offset > -2) && (v->size == 1) ) {
-            // printf( "%s candidate for inlining\n", v->name);
+            //printf( "%s candidate for inlining\n", v->name);
             v->offset = -1; /* candidate for inlining */
         }
     }
@@ -925,6 +927,10 @@ static int chg_reg2(POBuffer buf) {
     if(po_buf_match(buf, "CMP")) return 1;
     if(po_buf_match(buf, "EOR")) return 1;
     if(po_buf_match(buf, "LDA")) return 1;
+    if(po_buf_match(buf, "LDX")) return 1;
+    if(po_buf_match(buf, "LDY")) return 1;
+    if(po_buf_match(buf, "CPX")) return 1;
+    if(po_buf_match(buf, "CPY")) return 1;
     if(po_buf_match(buf, "ORA")) return 1;
     if(po_buf_match(buf, "SBC")) return 1;
 
@@ -940,9 +946,9 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
     /* inlined */
    if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) ) {
         struct var *v = vars_get(var);
-        // printf( "%s rechecking (offset=%d, size=%d, chg_reg2=%d)\n", v->name, v->offset, v->size, chg_reg2(buf[0]) );
+        //printf( "%s rechecking (offset=%d, size=%d, chg_reg2=%d)\n", v->name, v->offset, v->size, chg_reg2(buf[0]) );
         if( v->offset == -1 && v->size == 1 && chg_reg2(op) ) {
-            // printf( "%s trying to inline\n", v->name);
+            //printf( "%s trying to inline\n", v->name);
             if ( strstr( var->str, "+" ) == NULL ) {
                 v->offset = -2;
                 v->flags |= NO_REMOVE;
