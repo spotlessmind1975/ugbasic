@@ -8115,7 +8115,7 @@ define_definition :
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_RATE( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.rate = $3;
+        ((struct _Environment *)_environment)->inputConfig.delay = 255 - $3;
     }
     | INPUT DELAY const_expr {
         if ( $3 <= 0 || $3 >= 256 ) {
@@ -8165,7 +8165,7 @@ define_definition :
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_RATE( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.rate = $3;
+        ((struct _Environment *)_environment)->inputConfig.delay = 255 - $3;
     }
     | KEYBOARD DELAY const_expr {
         if ( $3 <= 0 ) {
