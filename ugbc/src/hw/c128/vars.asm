@@ -46,7 +46,6 @@ TABCOUNT:   .BYTE    4
 XCURS:      .BYTE    0
 YCURS:      .BYTE    0
 EMPTYTILE:  .BYTE   32
-KBDCHAR:      .BYTE   0
 KBDRATE:      .BYTE   16
 KBDDELAY:      .BYTE   64
 
