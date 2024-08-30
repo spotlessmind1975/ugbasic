@@ -40,7 +40,9 @@ ISRSVC:
     INC SP
     INC SP
     INC SP
+@IF deployed.timer
     CALL TIMERMANAGER
+@ENDIF
     RET
 
 VG5000STARTUP:

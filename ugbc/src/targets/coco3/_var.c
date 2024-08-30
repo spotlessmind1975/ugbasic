@@ -716,10 +716,6 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( dsave, src_hw_coco3_dsave_asm);
     
     // Moved here for banking reasons.
-    if ( ! _environment->deployed.timer ) {
-        cpu_label( _environment, "TIMERMANAGER" );
-        outline0( "RTS" );
-    }
     if ( ! _environment->deployed.joystick ) {
         cpu_label( _environment, "JOYSTICKMANAGER" );
         outline0( "RTS" );

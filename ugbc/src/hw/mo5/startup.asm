@@ -45,7 +45,9 @@ MO5TIMER  set *-2       ; (variable within code)
     STD   MO5TIMER      ; write result to TI variable
     LDA   #PAGE0        ; sets the direct page
     TFR   A,DP          ; for ugbc routines
+@IF deployed.timer
     JSR   TIMERMANAGER
+@ENDIF
 @IF deployed.keyboard
     JSR   KEYBOARDMANAGER
 @ENDIF

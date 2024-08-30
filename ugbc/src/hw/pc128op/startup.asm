@@ -47,7 +47,9 @@ PC128TIMER  set *-2       ; (variable within code)
     LDA   #PAGE0          ; sets the direct page
     TFR   A,DP            ; for ugbc routines
     JSR   MUSICPLAYER
+@IF deployed.timer
     JSR   TIMERMANAGER
+@ENDIF
     JSR KEYBOARDMANAGER
     PULS  D
     JMP   >PC128IRQDEF    ; jump to next ISR
