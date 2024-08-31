@@ -60,16 +60,16 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_COLOR:
                 case VT_THREAD:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 1,0", variable->realName);
+                        outhead1("%s: .res 1,0", variable->realName);
                     }        
                     break;
                 case VT_DOJOKA:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 8,0", variable->realName);
+                        outhead1("%s: .res 8,0", variable->realName);
                     }        
                     break;
                 case VT_WORD:
@@ -77,29 +77,29 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_POSITION:
                 case VT_ADDRESS:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 2,0", variable->realName);
+                        outhead1("%s: .res 2,0", variable->realName);
                     }
                     break;
                 case VT_DWORD:
                 case VT_SDWORD:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 4,0", variable->realName);
+                        outhead1("%s: .res 4,0", variable->realName);
                     }
                     break;
                case VT_FLOAT:
                     if ( variable->memoryArea && !variable->bankAssigned != -1 ) {
-                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 4,0", variable->realName);
+                        outhead1("%s: .res 4,0", variable->realName);
                     }
                     break;
                 case VT_STRING:
                     // if ( variable->memoryArea ) {
-                    //     outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    //     outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     // } else {
                     //     if ( variable->printable ) {
                     //         int c = strlen(variable->valueString->value);
@@ -113,41 +113,41 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     //         outline3("%s: .byte %d,%s", variable->realName, (int)strlen(variable->valueString->value), escape_newlines( variable->valueString->value ) );
                     //     }
                     // }
-                    outline2("%s = cstring%d", variable->realName, variable->valueString->id );
+                    outhead2("%s = cstring%d", variable->realName, variable->valueString->id );
                     break;
                 case VT_DSTRING:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 1,0", variable->realName);
+                        outhead1("%s: .res 1,0", variable->realName);
                     }
                     break;
                 case VT_SPRITE:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 1,0", variable->realName);
+                        outhead1("%s: .res 1,0", variable->realName);
                     }
                     break;
                 case VT_TILE:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 1,0", variable->realName);
+                        outhead1("%s: .res 1,0", variable->realName);
                     }
                     break;
                 case VT_TILESET:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 1,0", variable->realName);
+                        outhead1("%s: .res 1,0", variable->realName);
                     }
                     break;
                 case VT_TILES:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 4,0", variable->realName);
+                        outhead1("%s: .res 4,0", variable->realName);
                     }
                     break;
                 case VT_BLIT:
@@ -167,7 +167,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     char * string = malloc( variable->size + 1 );
                                     memset( string, 0, variable->size );
                                     memcpy( string, variable->valueBuffer, variable->size );
-                                    outline2("%s: .byte %s", variable->realName, escape_newlines( string ) );
+                                    outhead2("%s: .byte %s", variable->realName, escape_newlines( string ) );
                                 } else {
                                     out1("%s: .byte ", variable->realName);
                                     int i=0;
@@ -182,16 +182,16 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                 }
                             } else {
-                                outline2("%s: .res %d,0", variable->realName, variable->size);
+                                outhead2("%s: .res %d,0", variable->realName, variable->size);
                             }
                         } else {
-                            outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                            outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                             if ( variable->valueBuffer ) {
                                 if ( variable->printable ) {
                                     char * string = malloc( variable->size + 1 );
                                     memset( string, 0, variable->size );
                                     memcpy( string, variable->valueBuffer, variable->size );
-                                    outline2("%scopy: .byte %s", variable->realName, escape_newlines( string ) );
+                                    outhead2("%scopy: .byte %s", variable->realName, escape_newlines( string ) );
                                 } else {
                                     out1("%scopy: .byte ", variable->realName);
                                     int i=0;
@@ -231,7 +231,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             }
                             outline1("%d", variable->valueBuffer[(variable->size-1)]);
                         } else if ( variable->memoryArea && ! variable->value ) {
-                            outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                            outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                         } else {
                             if ( variable->value ) {
 
@@ -263,7 +263,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 }                    
                                 
                             } else {
-                                outline2("%s: .res %d, 0", variable->realName, variable->size);
+                                outhead2("%s: .res %d, 0", variable->realName, variable->size);
                             }
                         }
 
@@ -295,9 +295,9 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
             switch( variable->type ) {
                 case VT_BIT:
                     if ( variable->memoryArea ) {
-                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s:", variable->realName);
+                        outhead1("%s:", variable->realName);
                     }
                     ++bitCount;
                     if ( bitCount == 8 ) {
