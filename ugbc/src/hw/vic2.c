@@ -2080,11 +2080,6 @@ static RGBi * multicolorSpritePalette[2];
 
 void vic2_finalization( Environment * _environment ) {
 
-    if ( ! _environment->deployed.msprite ) {
-        outhead0("MSPRITESMANAGER:");
-        outline0("RTS");
-        outhead0("MSPRITESMANAGER2MSBOKADDRESS: .BYTE 0, 0");
-    }
     outhead0("VIC2FINALIZATION:");
 
     if ( multicolorSpritePalette[0] ) {
