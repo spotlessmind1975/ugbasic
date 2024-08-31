@@ -483,8 +483,11 @@ void variable_cleanup( Environment * _environment ) {
         outline0("");
         dataSegment = dataSegment->next;
     }
-    outhead0("DATAPTRE:");
 
+    if ( _environment->dataNeeded ) {
+        outhead0("DATAPTRE:");
+    }
+    
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
         outline3("cstring%d: db %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );

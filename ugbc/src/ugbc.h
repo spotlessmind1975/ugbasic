@@ -2168,6 +2168,8 @@ typedef struct _Environment {
      */
     Label * referredLabels;
 
+    int dataNeeded;
+
     /**
      * List of dataSegments.
      */

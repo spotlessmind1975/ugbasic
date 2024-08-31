@@ -671,8 +671,11 @@ void variable_cleanup( Environment * _environment ) {
         outline0("");
         dataSegment = dataSegment->next;
     }
-    outhead0("DATAPTRE");
 
+    if ( _environment->dataNeeded ) {
+        outhead0("DATAPTRE:");
+    }
+    
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
         outhead2("cstring%d fcb %d", staticStrings->id, (int)strlen(staticStrings->value) );

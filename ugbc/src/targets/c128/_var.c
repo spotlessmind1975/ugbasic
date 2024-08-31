@@ -863,7 +863,10 @@ void variable_cleanup( Environment * _environment ) {
         outline0("");
         dataSegment = dataSegment->next;
     }
-    outhead0("DATAPTRE:");
+
+    if ( _environment->dataNeeded ) {
+        outhead0("DATAPTRE:");
+    }
 
     // if ( _environment->storageTransientMemoryArea && !_environment->storageTransientMemoryArea->assigned ) {
     //     outline2("%s: .res %d", _environment->storageTransientMemoryArea->realName, _environment->storageTransientMemoryArea->size);
