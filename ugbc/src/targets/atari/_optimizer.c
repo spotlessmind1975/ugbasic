@@ -852,15 +852,21 @@ static int vars_cmp(const void *_a, const void *_b) {
 static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     POBuffer var = TMP_BUF;
     POBuffer op  = TMP_BUF;
+    POBuffer var2 = TMP_BUF;
+    POBuffer op2  = TMP_BUF;
     
     if(!DO_UNREAD) return;
     
     /* unread */
-    if(po_buf_match( buf[0], " ST* *", op, var) && vars_ok(var)) {
+    if(po_buf_match( buf[1], " ST* *", op, var) && vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd == 0 && v->offset!=-2) {
             v->offset = 0;
-            optim(buf[0], "unread", NULL);
+            if(po_buf_match( buf[0], " LD* *", op2, var2) && strcmp( op->str, op2->str ) == 0 ) {
+                optim(buf[0], "unread", NULL);
+                ++_environment->removedAssemblyLines;
+            }
+            optim(buf[1], "unread", NULL);
             ++_environment->removedAssemblyLines;
         }
     }
