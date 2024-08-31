@@ -95,6 +95,9 @@ void generate_prg( Environment * _environment ) {
 void generate_d64( Environment * _environment ) {
 
     FILE * prgHandle = fopen(_environment->exeFileName, "rb");
+    if ( ! prgHandle ) {
+        CRITICAL("Cannot generate d64 file");
+    }
     fseek( prgHandle, 0, SEEK_END );
     int prgSize = ftell( prgHandle );
     fseek( prgHandle, 0, SEEK_SET );
