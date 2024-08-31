@@ -79,7 +79,9 @@ ISVCIRQ
 @IF deployed.timer
     JSR TIMERMANAGER
 @ENDIF
+@IF deployed.keyboard
     JSR KEYBOARDMANAGER
+@ENDIF
 @IF deployed.joystick
     JSR JOYSTICKMANAGER
 @ENDIF

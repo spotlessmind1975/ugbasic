@@ -791,10 +791,6 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
 
     // Moved here for banking reasons.
-    if ( ! _environment->deployed.keyboard ) {
-        cpu_label( _environment, "KEYBOARDMANAGER" );
-        outline0( "RTS" );
-    }
 
     // outhead0(".segment \"CODE\"" );
 

@@ -76,11 +76,15 @@ ATARISTARTUPDONE:
     LDA $0223
     STA OLDSVC0222+1
 
+@IF deployed.keyboard
+
     LDA #<KEYBOARDMANAGER
     STA $0222
     LDA #>KEYBOARDMANAGER
     STA $0223
     
+@ENDIF
+
     CLI
 
 @ENDIF

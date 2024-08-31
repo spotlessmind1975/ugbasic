@@ -51,11 +51,6 @@ void target_finalization( Environment * _environment ) {
         outline0("RET");
     }
 
-    if ( ! _environment->deployed.keyboard ) {
-        outhead0("KEYBOARDMANAGER:" );
-        outline0("RET");
-    }
-
 }
 
 void target_analysis( Environment * _environment ) {

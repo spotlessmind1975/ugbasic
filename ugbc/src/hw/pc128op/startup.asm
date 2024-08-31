@@ -52,7 +52,9 @@ PC128TIMER  set *-2       ; (variable within code)
 @IF deployed.timer
     JSR   TIMERMANAGER
 @ENDIF
+@IF deployed.keyboard
     JSR KEYBOARDMANAGER
+@ENDIF
     PULS  D
     JMP   >PC128IRQDEF    ; jump to next ISR
 PC128IRQN   set *-2       ; (variable within code)

@@ -784,11 +784,6 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
     deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
 
-    if ( ! _environment->deployed.keyboard ) {
-        cpu_label( _environment, "KEYBOARDMANAGER" );
-        outline0( "RTS" );
-    }
-
     // outhead0(".segment \"CODE\"" );
 
     generate_cgoto_address_table( _environment );
