@@ -580,6 +580,10 @@ Variable * vic2_collision( Environment * _environment, char * _sprite ) {
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
 
             outline1("LDA %s", sprite->realName);
@@ -990,7 +994,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 199 );
 
-            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x87f8 );
+            _environment->mspriteMsbokAddress = 0x87f8;
 
             break;
         case BITMAP_MODE_MULTICOLOR:
@@ -1032,7 +1036,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 199 );
 
-            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x87f8 );
+            _environment->mspriteMsbokAddress = 0x87f8;
 
             break;
         case TILEMAP_MODE_STANDARD:
@@ -1072,7 +1076,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
 
-            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x83f8 );
+            _environment->mspriteMsbokAddress = 0x83f8;
 
             break;
         case TILEMAP_MODE_MULTICOLOR:
@@ -1111,7 +1115,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
 
-            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x83f8 );
+            _environment->mspriteMsbokAddress = 0x83f8;
 
             break;
         case TILEMAP_MODE_EXTENDED:
@@ -1147,7 +1151,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
 
-            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x83f8 );
+            _environment->mspriteMsbokAddress = 0x83f8;
 
             break;
         default:
@@ -1501,6 +1505,10 @@ void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
 
             outline1("LDY %s", sprite->realName );
@@ -1529,6 +1537,10 @@ void vic2_sprite_enable( Environment * _environment, char * _sprite ) {
             break;
 
         case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
 
             deploy( msprite, src_hw_vic2_msprites_asm );
 
@@ -1559,6 +1571,10 @@ void vic2_sprite_disable( Environment * _environment, char * _sprite ) {
             break;
 
         case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
 
             deploy( msprite, src_hw_vic2_msprites_asm );
 
@@ -1599,6 +1615,10 @@ void vic2_sprite_at( Environment * _environment, char * _sprite, char * _x, char
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
 
             outline1("LDA %s", x->realName );
@@ -1636,6 +1656,10 @@ void vic2_sprite_expand_vertical( Environment * _environment, char * _sprite ) {
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
 
             outline1("LDY %s", sprite->realName );
@@ -1667,6 +1691,10 @@ void vic2_sprite_expand_horizontal( Environment * _environment, char * _sprite )
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
 
             outline1("LDY %s", sprite->realName );
@@ -1695,6 +1723,10 @@ void vic2_sprite_compress_vertical( Environment * _environment, char * _sprite )
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
     
             outline1("LDY %s", sprite->realName );
@@ -1722,6 +1754,10 @@ void vic2_sprite_compress_horizontal( Environment * _environment, char * _sprite
             break;
 
         case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
 
             deploy( msprite, src_hw_vic2_msprites_asm );
     
@@ -1752,6 +1788,10 @@ void vic2_sprite_multicolor( Environment * _environment, char * _sprite ) {
             break;
 
         case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
 
             deploy( msprite, src_hw_vic2_msprites_asm );
     
@@ -1784,6 +1824,10 @@ void vic2_sprite_monocolor( Environment * _environment, char * _sprite ) {
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
     
             outline1("LDY %s", sprite->realName );
@@ -1815,6 +1859,10 @@ void vic2_sprite_color( Environment * _environment, char * _sprite, char * _colo
             break;
 
         case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
 
             deploy( msprite, src_hw_vic2_msprites_asm );
     

@@ -2170,6 +2170,8 @@ typedef struct _Environment {
 
     int dataNeeded;
 
+    int mspriteMsbokAddress;
+    
     /**
      * List of dataSegments.
      */
