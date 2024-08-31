@@ -453,11 +453,56 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
     if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) && 
-        po_buf_match( buf[0], " LD* *", v1, v2 ) && chg_write( buf[1], v1->str) && po_buf_match( buf[2], " LD* *", v3, v4 )
+        po_buf_match( buf[0], " LD* *", v1, v2 ) && 
+        chg_write( buf[1], v1->str) && 
+        po_buf_match( buf[2], " LD* *", v3, v4 )
         && strcmp( v1->str, v3->str ) == 0 && strcmp( v2->str, v4->str ) == 0 ) {
         optim( buf[2], RULE "(LD x, |STx, LD y)->(LD y)", NULL );
         ++_environment->removedAssemblyLines;
     }
+    if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) && 
+        po_buf_match( buf[0], " LD* *", v1, v2 ) && 
+        chg_write( buf[1], v1->str) && 
+        chg_write( buf[2], v1->str) && 
+        po_buf_match( buf[3], " LD* *", v3, v4 )
+        && strcmp( v1->str, v3->str ) == 0 && strcmp( v2->str, v4->str ) == 0 ) {
+        optim( buf[3], RULE "(2) (LD x, |STx, LD y)->(LD y)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+    if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) && 
+        po_buf_match( buf[0], " LD* *", v1, v2 ) && 
+        chg_write( buf[1], v1->str) && 
+        chg_write( buf[2], v1->str) && 
+        chg_write( buf[3], v1->str) && 
+        po_buf_match( buf[4], " LD* *", v3, v4 )
+        && strcmp( v1->str, v3->str ) == 0 && strcmp( v2->str, v4->str ) == 0 ) {
+        optim( buf[4], RULE "(2) (LD x, |STx, LD y)->(LD y)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+    if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) && 
+        po_buf_match( buf[0], " LD* *", v1, v2 ) && 
+        chg_write( buf[1], v1->str) && 
+        chg_write( buf[2], v1->str) && 
+        chg_write( buf[3], v1->str) && 
+        chg_write( buf[4], v1->str) && 
+        po_buf_match( buf[5], " LD* *", v3, v4 )
+        && strcmp( v1->str, v3->str ) == 0 && strcmp( v2->str, v4->str ) == 0 ) {
+        optim( buf[5], RULE "(2) (LD x, |STx, LD y)->(LD y)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+    if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) && 
+        po_buf_match( buf[0], " LD* *", v1, v2 ) && 
+        chg_write( buf[1], v1->str) && 
+        chg_write( buf[2], v1->str) && 
+        chg_write( buf[3], v1->str) && 
+        chg_write( buf[4], v1->str) && 
+        chg_write( buf[5], v1->str) && 
+        po_buf_match( buf[6], " LD* *", v3, v4 )
+        && strcmp( v1->str, v3->str ) == 0 && strcmp( v2->str, v4->str ) == 0 ) {
+        optim( buf[6], RULE "(2) (LD x, |STx, LD y)->(LD y)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
     if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) && 
         po_buf_match( buf[0], " ST* *", v1, v2 ) && po_buf_match( buf[1], " LD* *", v3, v4 )
         && strcmp( v1->str, v3->str ) == 0 && strcmp( v2->str, v4->str ) == 0 ) {
