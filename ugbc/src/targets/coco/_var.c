@@ -728,8 +728,10 @@ void variable_cleanup( Environment * _environment ) {
     outline0("STA $FFDF");
     outline0("JMP CODESTART2");
 
+    deploy_inplace_preferred( irq, src_hw_coco_irq_asm );
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_inplace_preferred( startup, src_hw_coco_startup_asm);
     
     outhead0("CODESTART2");
 

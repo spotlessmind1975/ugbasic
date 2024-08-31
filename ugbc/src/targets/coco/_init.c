@@ -75,8 +75,8 @@ void target_initialization( Environment * _environment ) {
     // outline0("STA $FFDF");
 
     deploy( vars, src_hw_coco_vars_asm);
-    deploy( irq, src_hw_coco_irq_asm);
-    deploy_deferred( startup, src_hw_coco_startup_asm);
+    deploy_preferred( irq, src_hw_coco_irq_asm);
+    deploy_preferred( startup, src_hw_coco_startup_asm);
     bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
 
     outline0( "JSR COCOSTARTUP" );
