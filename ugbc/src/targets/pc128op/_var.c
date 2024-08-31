@@ -768,6 +768,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("fcb $ff");
 
     deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_inplace_preferred( startup, src_hw_pc128op_startup_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
     deploy_inplace_preferred( keyboard, src_hw_pc128op_keyboard_asm );
