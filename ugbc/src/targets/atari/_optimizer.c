@@ -772,6 +772,13 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
             v->nb_rd++;
         };
 
+    if( po_buf_match( buf[0], " * *, X", cmd, arg ) &&
+        chg_read(cmd) 
+    ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+        };
+
     if( po_buf_match( buf[0], " ST* *",  tmp, arg ) && strstr("A X Y", tmp->str)!=NULL ) 
         if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
@@ -854,11 +861,12 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     POBuffer op  = TMP_BUF;
     POBuffer var2 = TMP_BUF;
     POBuffer op2  = TMP_BUF;
+    POBuffer tmp = TMP_BUF;
     
     if(!DO_UNREAD) return;
     
     /* unread */
-    if(po_buf_match( buf[1], " ST* *", op, var) && vars_ok(var)) {
+    if(po_buf_match( buf[1], " ST* *, *", op, var, tmp) && vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd == 0 && v->offset!=-2) {
             v->offset = 0;
@@ -869,7 +877,18 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
             optim(buf[1], "unread", NULL);
             ++_environment->removedAssemblyLines;
         }
-    }
+    } else if(po_buf_match( buf[1], " ST* *", op, var) && vars_ok(var)) {
+        struct var *v = vars_get(var);
+        if(v->nb_rd == 0 && v->offset!=-2) {
+            v->offset = 0;
+            if(po_buf_match( buf[0], " LD* *", op2, var2) && strcmp( op->str, op2->str ) == 0 ) {
+                optim(buf[0], "unread", NULL);
+                ++_environment->removedAssemblyLines;
+            }
+            optim(buf[1], "unread", NULL);
+            ++_environment->removedAssemblyLines;
+        }
+    } 
 
     /* remove changed variables */
     if(po_buf_match( buf[0], "*: .byte ", var)
