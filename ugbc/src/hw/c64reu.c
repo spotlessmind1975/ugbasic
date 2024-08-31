@@ -67,6 +67,8 @@ void c64reu_ypen( Environment * _environment, char * _destination ) {
 
 void c64reu_inkey( Environment * _environment, char * _key ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_c64reu_keyboard_asm);
 
     outline0("JSR INKEY");
@@ -75,6 +77,8 @@ void c64reu_inkey( Environment * _environment, char * _key ) {
 }
 
 void c64reu_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
 
     deploy( keyboard, src_hw_c64reu_keyboard_asm );
 
@@ -87,6 +91,8 @@ void c64reu_wait_key( Environment * _environment, int _release ) {
 }
 
 void c64reu_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
@@ -101,6 +107,8 @@ void c64reu_key_state( Environment * _environment, char *_scancode, char * _resu
 
 void c64reu_scancode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_c64reu_keyboard_asm);
 
     outline0("JSR SCANCODE");
@@ -110,6 +118,8 @@ void c64reu_scancode( Environment * _environment, char * _result ) {
 
 void c64reu_asciicode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     deploy( keyboard, src_hw_c64reu_keyboard_asm);
 
     outline0("JSR ASCIICODE");
@@ -118,6 +128,8 @@ void c64reu_asciicode( Environment * _environment, char * _result ) {
 }
 
 void c64reu_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
