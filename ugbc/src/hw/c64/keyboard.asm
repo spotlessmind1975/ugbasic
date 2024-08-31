@@ -251,6 +251,10 @@ KEYBOARDMANAGER:
 	LDA #>SCANCODEREAD
 	STA SCANCODEPTR+1
 
+    ; Needed to avoid peephole optimization.
+
+    LDY SCANCODEPTR
+
 	; Also note you must store $FF in the "row select register" you are not using. 
 	; This means if you want to read from any 8 of the $DC00 rows (top 8 rows), 
 	; you store $FF in $D02F because you are not using $D02F now. 
