@@ -70,7 +70,9 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_FLOAT:
                     break;
                 default:
-                    variable_store( _environment, variable->name, variable->value );
+                    if ( variable->value != 0 ) {
+                        variable_store( _environment, variable->name, variable->value );
+                    }
             }
         }
         variable = variable->next;
