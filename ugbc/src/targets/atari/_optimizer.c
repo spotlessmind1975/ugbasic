@@ -218,6 +218,7 @@ static int chg_read(POBuffer buf) {
     if(po_buf_match(buf, "ORA")) return 1;
     if(po_buf_match(buf, "SBC")) return 1;
     if(po_buf_match(buf, "CMP")) return 1;
+    if(po_buf_match(buf, "BIT")) return 1;
     return 0;
 }
 
