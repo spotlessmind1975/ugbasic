@@ -70,9 +70,10 @@ SYSCALLDONE:
 
     CLI
 
+    RTS
+
 @IF sysCallUsed
 
-    RTS
 SYSCALL:
     SEI
 SYSCALL0:
