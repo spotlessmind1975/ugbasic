@@ -94,8 +94,9 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.joystick
     JSR JOYSTICKMANAGER
 @ENDIF
+@IF deployed.keyboard
     JSR KEYBOARDMANAGER
-
+@ENDIF
 @IF deployed.timer
     JSR TIMERMANAGER
 @ENDIF
