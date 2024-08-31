@@ -701,6 +701,7 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     POBuffer tmp = TMP_BUF;
     POBuffer arg = TMP_BUF;
     POBuffer cmd = TMP_BUF;
+    POBuffer arg2 = TMP_BUF;
 
     // if( match( buf[0], " * _*+", NULL, buf) ) {
         // struct var *v = vars_get(buf);
@@ -859,17 +860,28 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         v->init = strdup(arg->str);
     }
 
-    if( po_buf_match(buf[0], "*: .res *", tmp, arg) && vars_ok(tmp) ) {
+    if( po_buf_match(buf[0], "*: .res *,*", tmp, arg, arg2) && vars_ok(tmp) ) {
+        struct var *v = vars_get(tmp);
+        v->size = atoi( arg->str );
+        v->init = strdup( arg2->str );
+        //printf( "sizing %s size = %d\n", v->name, v->size );
+    } else if( po_buf_match(buf[0], "*: .res *,*", tmp, arg, arg2) && vars_ok(tmp) ) {
+        struct var *v = vars_get(tmp);
+        v->size = atoi( arg->str );
+        v->init = strdup( arg2->str );
+        //printf( "sizing %s size = %d\n", v->name, v->size );
+    } else if( po_buf_match(buf[0], "*: .res *", tmp, arg) && vars_ok(tmp) ) {
         struct var *v = vars_get(tmp);
         v->size = atoi( arg->str );
         v->init = NULL;
+        //printf( "sizing %s size = %d\n", v->name, v->size );
     }
 
     if( po_buf_match(buf[0], " * *",   tmp, arg) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
-        //printf( "%s checking (%d:%d)\n", v->name, v->offset, v->size);
-        if ( (v->offset > -2) && (v->size == 1) ) {
-            //printf( "%s candidate for inlining\n", v->name);
+        // printf( "%s checking (%d:%d)\n", v->name, v->offset, v->size);
+        if ( (v->offset > -2) ) {
+            // printf( "%s candidate for inlining\n", v->name);
             v->offset = -1; /* candidate for inlining */
         }
     }
@@ -945,7 +957,10 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     || po_buf_match( buf[0], "*: .res ", var)
     ) if(vars_ok(var)) {
         struct var *v = vars_get(var);
+        //printf( "try inlined: %s\n", v->name );
+        //printf( " offset: %d\n", v->offset );
         if ( v->offset==-2  ) {
+            //printf( " INLINED!\n" );
             // printf( "%s inlining (offset=%d, size=%d)\n", v->name, v->offset, v->size );
             optim(buf[0], "inlined",NULL);
             v->offset=-2;
