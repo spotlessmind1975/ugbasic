@@ -95,11 +95,12 @@ void target_initialization( Environment * _environment ) {
     deploy_deferred( startup, src_hw_vic20_startup_asm);
     cpu_call( _environment, "VIC20STARTUP" );
 
+    cpu_call( _environment, "VARINIT" );
+
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
+        cpu_call( _environment, "VARINIT" );
     }
-
-    cpu_call( _environment, "VARINIT" );
 
 }
 

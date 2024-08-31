@@ -111,9 +111,11 @@ void target_initialization( Environment * _environment ) {
             outline0("STA PALETTEPRESERVEUSED");
             outline0("STA LASTCOLOR");
         }
+
+        cpu_call( _environment, "VARINIT" );
+
     }
     
-    cpu_call( _environment, "VARINIT" );
 
 }
 

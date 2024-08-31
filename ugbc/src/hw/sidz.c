@@ -58,8 +58,6 @@ void sidz_finalization( Environment * _environment ) {
     if ( ! _environment->deployed.sidstartup ) {
         cpu_label( _environment, "SIDZSTARTUP" );
         outline0( "RET" );
-        cpu_label( _environment, "MUSICPLAYER" );
-        outline0( "RET" );
     }
 
 }

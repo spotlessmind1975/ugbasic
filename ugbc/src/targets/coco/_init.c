@@ -87,11 +87,13 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "COCOAUDIO1STARTUP" );
     sn76489m_initialization( _environment );
 
+    cpu_call( _environment, "VARINIT" );
+
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
-    }
 
-    cpu_call( _environment, "VARINIT" );
+        cpu_call( _environment, "VARINIT" );
+    }
 
 }
 

@@ -243,6 +243,7 @@ void target_initialization( Environment * _environment ) {
     
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
+        outline0("CALL VARINIT2");
     }
 
 }

@@ -112,14 +112,12 @@ void target_initialization( Environment * _environment ) {
 
     ef936x_initialization( _environment );
 
-    if ( _environment->tenLinerRulesEnforced ) {
-        
-        cpu_call( _environment, "VARINIT" );
-
-        shell_injection( _environment );
-    }
-
     cpu_call( _environment, "VARINIT" );
+
+    if ( _environment->tenLinerRulesEnforced ) {
+        shell_injection( _environment );
+        cpu_call( _environment, "VARINIT" );
+    }
 
 }
 

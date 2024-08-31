@@ -107,16 +107,16 @@ void target_initialization( Environment * _environment ) {
 
     ef936x_initialization( _environment );
 
+    cpu_call( _environment, "VARINIT" );
     if ( _environment->tenLinerRulesEnforced ) {
-        cpu_call( _environment, "VARINIT" );
         outline0("LDS #$2FFF");
         if ( _environment->tenLinerRulesEnforced ) {
             shell_injection( _environment );
         }
         outline0("LDS #$A000");
+        cpu_call( _environment, "VARINIT" );
     }
 
-    cpu_call( _environment, "VARINIT" );
 
 }
 
