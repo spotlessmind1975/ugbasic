@@ -9510,7 +9510,7 @@ int system_remove_safe( Environment * _environment, char * _filename ) {
 
 char * escape_newlines( char * _string ) {
 
-    char * result = malloc( 6 * strlen( _string ) + 2 );
+    char * result = malloc( 6 * strlen( _string ) + 2 + MAX_TEMPORARY_STORAGE );
 
     memset( result, 0, 6 * strlen( _string ) + 2 );
 
@@ -9623,7 +9623,7 @@ char * escape_newlines( char * _string ) {
     }
 
     char * result2 = malloc( 2 * strlen( result ) + MAX_TEMPORARY_STORAGE );
-
+    
     if ( escaped ) {
         sprintf( result2, "\"%s", result );
         close_escaped = ! close_escaped;
