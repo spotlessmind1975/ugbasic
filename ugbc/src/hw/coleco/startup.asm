@@ -94,7 +94,9 @@ IRQVECTORSKIP:
 @IF deployed.timer
     CALL TIMERMANAGER
 @ENDIF
+@IF deployed.joystick
     CALL JOYSTICKMANAGER
+@ENDIF
 	POP	HL
 	POP	DE
 	POP	BC

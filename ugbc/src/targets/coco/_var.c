@@ -728,11 +728,6 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
     
-    if ( ! _environment->deployed.joystick ) {
-        cpu_label( _environment, "JOYSTICKMANAGER" );
-        outline0( "RTS" );
-    }
-
     if ( ! _environment->deployed.keyboard ) {
         cpu_label( _environment, "KEYBOARDMANAGER" );
         outline0( "RTS" );

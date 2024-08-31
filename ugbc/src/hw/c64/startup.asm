@@ -91,7 +91,9 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.music
     JSR MUSICPLAYER
 @ENDIF
+@IF deployed.joystick
     JSR JOYSTICKMANAGER
+@ENDIF
     JSR KEYBOARDMANAGER
 
 @IF deployed.timer
