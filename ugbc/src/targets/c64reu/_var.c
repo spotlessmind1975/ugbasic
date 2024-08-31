@@ -659,6 +659,8 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
+    generate_cgoto_address_table( _environment );
+
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {
@@ -761,7 +763,7 @@ void variable_cleanup( Environment * _environment ) {
     }    
 
     buffered_push_output( _environment );
-    
+
     char buffer[32];
     sprintf( buffer, "%5.5d", _environment->program.startingAddress );
 
@@ -785,8 +787,6 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
 
     // outhead0(".segment \"CODE\"" );
-
-    generate_cgoto_address_table( _environment );
 
     variable_on_memory_init( _environment, 0 );
 
