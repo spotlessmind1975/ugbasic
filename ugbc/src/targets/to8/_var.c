@@ -671,7 +671,7 @@ void variable_cleanup( Environment * _environment ) {
         dataSegment = dataSegment->next;
     }
 
-    if ( _environment->dataNeeded ) {
+    if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
         outhead0("DATAPTRE:");
     }
         
