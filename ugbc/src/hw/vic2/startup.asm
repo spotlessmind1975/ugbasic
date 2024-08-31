@@ -110,8 +110,6 @@ VIC2STARTUPL1:
     STA $01
 @ENDIF
 
-    CLI
-
 ;     ; SET_DATA_DIRECTION();
     LDA $dd02
     ORA #$03
@@ -170,6 +168,8 @@ VIC2STARTUPL1:
     JSR MSPRITESINIT
 
 @ENDIF
+
+    CLI
 
     RTS
 
