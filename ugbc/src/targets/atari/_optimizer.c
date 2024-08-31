@@ -803,7 +803,7 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         v->init = strdup(arg->str);
     }
 
-    if( po_buf_match(buf[0], "*: .res *", tmp, arg) && vars_ok(tmp) && strchr(arg->str,',')==NULL ) {
+    if( po_buf_match(buf[0], "*: .res *", tmp, arg) && vars_ok(tmp) ) {
         struct var *v = vars_get(tmp);
         v->size = atoi( arg->str );
         v->init = NULL;
