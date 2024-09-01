@@ -957,7 +957,7 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
             optim(buf[0], "inlined",NULL);
             v->offset=-2;
         } else {
-            if(v->nb_rd==0 && 0<v->size && v->size<=4 && 0==(v->flags & NO_REMOVE)) {
+            if(v->nb_rd==0 && 0<v->size /*&& v->size<=4*/ && 0==(v->flags & NO_REMOVE)) {
                 optim(buf[0], "unread",NULL);
                 ++_environment->removedAssemblyLines;
                 ++num_unread;
