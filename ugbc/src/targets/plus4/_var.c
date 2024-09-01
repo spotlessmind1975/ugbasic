@@ -435,7 +435,9 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 
     }
 
-    outline0("   .res 1,0");
+    if ( variable ) {
+        outline0("   .res 1,0");
+    }
 
 }
 
