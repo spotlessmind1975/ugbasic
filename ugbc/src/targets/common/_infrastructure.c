@@ -4794,13 +4794,19 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
 
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
-            cpu_math_mul2_const_32bit( _environment, result->realName, (int)log2(_steps), VT_SIGNED( destination->type ) );
+            if ( (int)log2(_steps) > 0 ) {
+                cpu_math_mul2_const_32bit( _environment, result->realName, (int)log2(_steps), VT_SIGNED( destination->type ) );
+            }
             break;
         case 16:
-            cpu_math_mul2_const_16bit( _environment, result->realName, (int)log2(_steps), VT_SIGNED( destination->type ) );
+            if ( (int)log2(_steps) > 0 ) {
+                cpu_math_mul2_const_16bit( _environment, result->realName, (int)log2(_steps), VT_SIGNED( destination->type ) );
+            }
             break;
         case 8:
-            cpu_math_mul2_const_8bit( _environment, result->realName, (int)log2(_steps), VT_SIGNED( destination->type ) );
+            if ( (int)log2(_steps) > 0 ) {
+                cpu_math_mul2_const_8bit( _environment, result->realName, (int)log2(_steps), VT_SIGNED( destination->type ) );
+            }
             break;
         case 1:
         case 0:
@@ -10391,6 +10397,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     var->frameSize = expr->frameSize;
     var->frameCount = expr->frameCount;
     var->readonly = expr->readonly;
+    var->compression = expr->compression;
     expr->assigned = 1;
     var->offsettingFrames = expr->offsettingFrames;
     if ( var->offsettingFrames ) {
@@ -10746,6 +10753,7 @@ Resource * build_resource_for_sequence( Environment * _environment, char * _imag
 
     resource->realName = image->realName;
     resource->type = image->type;
+    resource->compression = image->compression;
 
     if ( resource->type == VT_ADDRESS ) {
         resource->isAddress = 1;
