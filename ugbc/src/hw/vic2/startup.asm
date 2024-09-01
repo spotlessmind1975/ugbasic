@@ -271,3 +271,101 @@ SWITCHTILEMAP1:
     
 @ENDIF
 
+
+    ; Decompress RLE encoded images.
+    ;
+    ; Input: 
+    ;   - TMPPTR: pointer to the data to read
+    ; Output:
+    ;   - A: next byte read
+    ;   - C: if EOB
+    ;
+    ;
+
+RLEY:           .BYTE $0
+RLECURRENT:     .BYTE $0
+RLECOUNT:       .BYTE $0
+
+RLEREADCHAR:
+    LDY #0
+    LDA (TMPPTR), Y
+    INC TMPPTR
+    BNE RLEREADCHARA1
+    INC TMPPTR+1
+RLEREADCHARA1:
+    STA RLECURRENT
+    RTS
+
+RLEDECOMPRESSDONE:
+    SEC
+    LDY RLEY
+    RTS
+
+RLEDECOMPRESS:
+
+    STY RLEY
+
+    LDA RLECOUNT
+
+    BEQ RLEDECOMPRESS2
+    
+    DEC RLECOUNT
+
+    LDA #1
+    BNE RLEDECOMPRESSVALUE
+
+RLEDECOMPRESS2:
+
+    ; // Take the current token from the input stream
+    ; // and move to the next element of the stream.
+
+    JSR RLEREADCHAR
+
+    ; // A token of zero (0xfe) means "end of block".
+    ; // Nothing must be done.
+
+    CMP #$FE
+    BEQ RLEDECOMPRESSDONE
+
+    ; // If the value of token is 0xff...
+
+    CMP #$FF
+    BEQ RLEDECOMPRESSFF
+
+RLEDECOMPRESSVALUEASIS:
+    LDY RLEY
+    LDA RLECURRENT
+    CLC
+    RTS
+
+RLEDECOMPRESSFF:
+
+    ; // Read the next.
+
+    JSR RLEREADCHAR
+
+    ; // If it is 0xff, it means that is 0xff, actually!
+
+    CMP #$FF
+    BEQ RLEDECOMPRESSVALUEASIS
+
+    ; // Store the count
+
+    STA RLECOUNT
+
+    ; // Read the next.
+
+    JSR RLEREADCHAR
+
+    ; // Decrement the count
+
+    DEC RLECOUNT
+
+RLEDECOMPRESSVALUE:
+    LDY RLEY
+    LDA RLECURRENT
+    CLC
+    RTS
+
+
+

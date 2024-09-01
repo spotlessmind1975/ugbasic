@@ -39,11 +39,18 @@
 ; - Put image on bitmap
 ; ----------------------------------------------------------------------------
 
+RLEUSE: .BYTE $0
+
 PUTIMAGE:
 
 @IF C64REU
     LDA BANKUSE
     BNE PUTIMAGEREU
+@ENDIF
+
+@IF C128
+    LDA RLEUSE
+    BNE PUTIMAGERAMRLE
 @ENDIF
 
     JMP PUTIMAGERAM

@@ -3229,6 +3229,9 @@ static void vic2_load_image_address_to_other_register( Environment * _environmen
     outline0("STA BANKPTR" );
     outline0("STA BANKUSE" );
 #endif
+#ifdef __c128__
+    outline0("STA RLEUSE" );
+#endif
 
     if ( _sequence ) {
 
@@ -3336,6 +3339,17 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
                 outline0("STA BANKUSE" );
             }
 #endif
+
+#ifdef __c128__
+        if ( _source->compression == CMP_RLE ) {
+            outline0("LDA #1" );
+            outline0("STA RLEUSE" );
+        } else {
+            outline0("LDA #0" );
+            outline0("STA RLEUSE" );
+        }
+#endif
+
         } else {
             outline1("LDA #<%s", _source->realName );
             outline1("STA %s", _register );
@@ -3346,6 +3360,16 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline0("STA BANKPTR" );
             outline0("STA BANKUSE" );
 #endif
+#ifdef __c128__
+        if ( _source->compression == CMP_RLE ) {
+            outline0("LDA #1" );
+            outline0("STA RLEUSE" );
+        } else {
+            outline0("LDA #0" );
+            outline0("STA RLEUSE" );
+        }
+#endif
+
         }
     } else {
         if ( _source->isAddress ) {
@@ -3366,6 +3390,16 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
                 outline0("STA BANKUSE" );
             }
 #endif
+#ifdef __c128__
+        if ( _source->compression == CMP_RLE ) {
+            outline0("LDA #1" );
+            outline0("STA RLEUSE" );
+        } else {
+            outline0("LDA #0" );
+            outline0("STA RLEUSE" );
+        }
+#endif
+
         } else {
             outline1("LDA #<%s", _source->realName );
             outline0("STA TMPPTR" );
@@ -3375,6 +3409,15 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline0("LDA #0" );
             outline0("STA BANKPTR" );
             outline0("STA BANKUSE" );
+#endif
+#ifdef __c128__
+        if ( _source->compression == CMP_RLE ) {
+            outline0("LDA #1" );
+            outline0("STA RLEUSE" );
+        } else {
+            outline0("LDA #0" );
+            outline0("STA RLEUSE" );
+        }
 #endif
         }
 
@@ -3454,6 +3497,10 @@ void vic2_put_image( Environment * _environment, Resource * _image, char * _x, c
 #ifdef __c64reu__
     deploy_embedded( cpu_math_mul_8bit_to_16bit, src_hw_6502_cpu_math_mul_8bit_to_16bit_asm )
     deploy( putimagereu, src_hw_vic2_put_image_reu_asm );
+#endif
+
+#ifdef __c128__
+    deploy( putimageramrle, src_hw_vic2_put_image_ram_rle_asm );
 #endif
 
     MAKE_LABEL
