@@ -98,7 +98,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
 %token MOB CMOB PLACE DOJO READY LOGIN PASSWORD DOJOKA GAME HISCORE CREATE PORT DESTROY FIND MESSAGE PING
-%token SUCCESS RECEIVE SEND
+%token SUCCESS RECEIVE SEND COMPRESSION RLE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -7994,6 +7994,12 @@ define_definition :
     }
     | COLOR EXPLICIT {
         ((struct _Environment *)_environment)->colorImplicit = 1;
+    }
+    | COMPRESSION RLE ON {
+        ((struct _Environment *)_environment)->enableRle = 1;
+    }
+    | COMPRESSION RLE OFF {
+        ((struct _Environment *)_environment)->enableRle = 0;
     }
     | CENTER WITH NEWLINE {
         ((struct _Environment *)_environment)->centerWithoutNewLine = 0;

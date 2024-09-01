@@ -497,6 +497,7 @@ typedef struct _Resource {
     char        *   realName;
     int             bankNumber;
     int             isAddress;
+    int             compression;
     VariableType    type;
 
 } Resource;
@@ -1623,6 +1624,7 @@ typedef struct _Deployed {
     int putimage;
     int putimagereu;
     int putimageram;
+    int putimageramrle;
     int getimage;
     int puttilemap;
     int blitimage;
@@ -2190,6 +2192,8 @@ typedef struct _Environment {
 
     int lineNeeded;
 
+    int enableRle;
+    
     int mspriteMsbokAddress;
     
     /**
