@@ -735,4 +735,19 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
+    buffered_push_output( _environment );
+
+    outhead0(".segment \"CODE\"");
+    outhead0(".proc MAINENTRY");
+    outline0("JMP CODESTART2");
+
+    deploy_inplace_preferred( vars, src_hw_atari_vars_asm);
+    deploy_inplace_preferred( startup, src_hw_atari_startup_asm);
+    deploy_inplace_preferred( gtiavars, src_hw_gtia_vars_asm );
+    deploy_inplace_preferred( gtiastartup, src_hw_gtia_startup_asm );
+    
+    outhead0("CODESTART2:");
+
+    buffered_prepend_output( _environment );
+
 }

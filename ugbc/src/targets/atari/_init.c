@@ -82,12 +82,12 @@ void target_initialization( Environment * _environment ) {
         exit(EXIT_FAILURE);
     }
 
-    outhead0(".segment \"CODE\"");
-    outhead0(".proc MAINENTRY");
+    // outhead0(".segment \"CODE\"");
+    // outhead0(".proc MAINENTRY");
 
-    outhead0("CODESTART:");
+    // outhead0("CODESTART:");
 
-    deploy( vars, src_hw_atari_vars_asm);
+    deploy_preferred( vars, src_hw_atari_vars_asm);
 
     bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
@@ -95,7 +95,7 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    deploy_deferred( startup, src_hw_atari_startup_asm);
+    deploy_preferred( startup, src_hw_atari_startup_asm);
     cpu_call( _environment, "ATARISTARTUP" );
 
     antic_initialization( _environment );

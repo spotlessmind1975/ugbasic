@@ -62,6 +62,9 @@ CPUMEMMOVER2:
 GTIAVBLIRQPREV: .word $0
 
 GTIAVBLIRQ:
+@IF deployed.pokeystartup
+    JSR POKEYTIMERMANAGER
+@ENDIF
 @IF deployed.music
     JSR MUSICPLAYER
 @ENDIF

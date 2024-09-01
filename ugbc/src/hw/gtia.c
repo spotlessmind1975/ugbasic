@@ -1998,8 +1998,8 @@ void gtia_initialization( Environment * _environment ) {
 
     _environment->vestigialConfig.palettePreserve = 1;
     
-    deploy( gtiavars, src_hw_gtia_vars_asm );
-    deploy( gtiastartup, src_hw_gtia_startup_asm );
+    deploy_preferred( gtiavars, src_hw_gtia_vars_asm );
+    deploy_preferred( gtiastartup, src_hw_gtia_startup_asm );
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 320 );
     variable_global( _environment, "CURRENTWIDTH" );
