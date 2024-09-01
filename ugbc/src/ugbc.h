@@ -96,6 +96,19 @@ typedef enum _Dialect {
 } Dialect;
 
 /**
+ * @brief Type of compression
+ */
+typedef enum _Compression {
+
+    CMP_NONE = 0,
+
+    CMP_MSC1 = 1,
+
+    CMP_RLE = 2
+
+} Compression;
+
+/**
  * @brief Type of memory banks
  */
 typedef enum _BankType {
@@ -938,6 +951,11 @@ typedef struct _Variable {
      * The size of the (uncompressed) static buffer (in bytes).
      */
     int uncompressedSize;
+
+    /** 
+     * The type of compressor.
+     */
+    Compression compression;
 
     /** 
      * The absolute address of this variable (if any).
@@ -2170,6 +2188,8 @@ typedef struct _Environment {
 
     int dataNeeded;
 
+    int lineNeeded;
+
     int mspriteMsbokAddress;
     
     /**
@@ -3171,6 +3191,8 @@ typedef struct _Environment {
 #define WARNING_DEPRECATED( k ) WARNING2("W009 - keyword has been deprecated and has no effect", k );
 
 int assemblyLineIsAComment( char * _buffer );
+
+typedef unsigned char MemoryBlock;
 
 typedef struct _Environment Environment;
 

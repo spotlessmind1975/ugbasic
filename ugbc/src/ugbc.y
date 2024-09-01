@@ -9458,6 +9458,7 @@ statement2nc:
   | CLIP clip_definition
   | USE use_definition
   | SET LINE expr {
+      ((Environment *)_environment)->lineNeeded = 1;
       variable_move( _environment, $3, "LINE" );
   }
   | INK ink_definition
