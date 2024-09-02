@@ -789,6 +789,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("NOP");
     outline0("JMP CODESTART")
     deploy_inplace_preferred( vars, src_hw_c64_vars_asm);
+    deploy_inplace_preferred( startup, src_hw_c64_startup_asm);
     deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
     deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
 
