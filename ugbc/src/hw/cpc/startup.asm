@@ -88,6 +88,9 @@ CPCISVC:
 @IF deployed.music
 	CALL MUSICPLAYER
 @ENDIF
+@IF deployed.ay8910startup
+	CALL AY8910MANAGER
+@ENDIF
 @IF deployed.keyboard
 	CALL KEYBOARDMANAGER
 @ENDIF
