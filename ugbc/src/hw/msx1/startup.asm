@@ -69,7 +69,9 @@ ISRSVC:
 @IF deployed.music
     CALL MUSICPLAYER
 @ENDIF
+@IF deployed.keyboard
     CALL KEYBOARDMANAGER
+@ENDIF
 @IF deployed.joystick
     CALL JOYSTICKMANAGER
 @ENDIF
