@@ -55,6 +55,10 @@ void target_initialization( Environment * _environment ) {
     int * bankIds = NULL;
     int bankSize = 0x10000;
 
+    if ( _environment->ramSize == 0 ) {
+        _environment->ramSize = 256;
+    }
+
     switch( _environment->ramSize ) {
         case 128:
             bankCount = 2;
