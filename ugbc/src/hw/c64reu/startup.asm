@@ -79,7 +79,6 @@ JIFFYDAY:
 NMISVC:
     PHA
     LDA $DC0D
-    DEC $D019
     PLA
     RTI
 
@@ -95,7 +94,6 @@ MSPRITESMANAGERADDRESS:
 IRQSVC2:
     PHA
     LDA $DC0D
-    DEC $D019
     PLA
     RTI
 
