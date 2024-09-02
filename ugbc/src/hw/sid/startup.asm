@@ -35,6 +35,29 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+SIDMANAGER:
+    PHA
+    LDA SIDTIMER
+    BEQ SIDMANAGER0
+    DEC SIDTIMER
+    BNE SIDMANAGER0
+    JSR SIDSTOP0
+SIDMANAGER0:
+    LDA SIDTIMER+1
+    BEQ SIDMANAGER1
+    DEC SIDTIMER+1
+    BNE SIDMANAGER1
+    JSR SIDSTOP1
+SIDMANAGER1:
+    LDA SIDTIMER+2
+    BEQ SIDMANAGER2
+    DEC SIDTIMER+2
+    BNE SIDMANAGER2
+    JSR SIDSTOP2
+SIDMANAGER2:
+    PLA
+    RTS
+
 SIDSTARTUP:
     LDA #$7
     LDX #$32

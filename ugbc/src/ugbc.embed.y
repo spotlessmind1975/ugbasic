@@ -471,8 +471,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.timer;
             } else if ( strcmp( $3, "music" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.music;
-            } else if ( strcmp( $3, "joystick" ) == 0 ) {
-                $$ = ((struct _Environment *)_environment)->deployed.joystick;
+            } else if ( strcmp( $3, "sidstartup" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.sidstartup;
             } else if ( strcmp( $3, "pokeystartup" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.pokeystartup;
             } else if ( strcmp( $3, "keyboard" ) == 0 ) {
