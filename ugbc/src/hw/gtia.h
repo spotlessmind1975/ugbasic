@@ -237,6 +237,12 @@
 #define DOUBLE_BUFFER_PAGE_0        0
 #define DOUBLE_BUFFER_PAGE_1        1
 
+#if defined(__atari__)
+    #define FRAME_BUFFER_ADDRESS    0xbf00
+#else
+    #define FRAME_BUFFER_ADDRESS    0x9f0f
+#endif
+
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void gtia_initialization( Environment * _environment );

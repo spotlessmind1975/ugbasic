@@ -794,8 +794,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC8:
 
             // 8	3	4	8	40	10	240
-            if ( _environment->frameBufferStart > ( 0xbfff - 240 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 240 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 240 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 240 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -847,8 +847,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC9:
 
             // 9	4	2	4	80	10	480
-            if ( _environment->frameBufferStart > ( 0xbfff - 480 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 480 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 480 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 480 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -897,8 +897,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC10:
 
             // A	5	4	4	80	20	960
-            if ( _environment->frameBufferStart > ( 0xbfff - 960 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 960 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 960 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 960 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -947,8 +947,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC11: 
 
             // B	6	2	2	160	20	1920
-            if ( _environment->frameBufferStart > ( 0xbfff - 1920 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 1920 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 1920 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 1920 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -999,8 +999,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC13:
 
             // D	7	4	2	160	40	3840
-            if ( _environment->frameBufferStart > ( 0xbfff - 3840 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 3840 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 3840 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 3840 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -1058,8 +1058,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC15:
 
             // F	8	2	1	320	40	7680
-            if ( _environment->frameBufferStart > ( 0xbfff - 7680 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 7680 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 7680 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 7680 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -1125,8 +1125,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC12:
 
             // C	none	2	1	160	20	3840
-            if ( _environment->frameBufferStart > ( 0xbfff - 3840 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 3840 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 3840 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 3840 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -1176,8 +1176,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC14:
 
             // E	none	4	1	160	40	7680
-            if ( _environment->frameBufferStart > ( 0xbfff - 7680 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 7680 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 7680 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 7680 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -1231,8 +1231,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC2:
 
             // 2	0	2	8	40	40	960
-            if ( _environment->frameBufferStart > ( 0xbfff - 960 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 960 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 960 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 960 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -1286,8 +1286,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC6:
 
             // 6	1	5	8	20	20	480
-            if ( _environment->frameBufferStart > ( 0xbfff - 480 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 480 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 480 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 480 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -1334,8 +1334,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC7:
 
             // 7	2	5	16	20	20	240
-            if ( _environment->frameBufferStart > ( 0xbfff - 240 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 240 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 240 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 240 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -1384,8 +1384,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC3:
 
             // 3	none	2	10	40	40	760
-            if ( _environment->frameBufferStart > ( 0xbfff - 760 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 760 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 760 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 760 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -1437,8 +1437,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC4:
 
             // 4	none	4	8	40	40	960
-            if ( _environment->frameBufferStart > ( 0xbfff - 960 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 960 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 960 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 960 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -1485,8 +1485,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC5:
 
             // 5	none	4	16	40	40	480
-            if ( _environment->frameBufferStart > ( 0xbfff - 480 ) ) {
-                _environment->frameBufferStart = ( 0xbfff - 480 );
+            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 480 ) ) {
+                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 480 );
             }
             _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
 
@@ -2079,7 +2079,11 @@ void gtia_initialization( Environment * _environment ) {
     _environment->currentTileMode = 1;
 
     _environment->currentRgbConverterFunction = rgbConverterFunction;
+#if defined(__atari__)
     _environment->frameBufferStart = 0xbf00; // 256 byte boundary alignment
+#else
+    _environment->frameBufferStart = 0x9000; // 256 byte boundary alignment
+#endif
 
     gtia_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
