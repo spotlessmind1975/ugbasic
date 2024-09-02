@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+SIDTMPPTR2 = $03 ; $04
+
 SIDMANAGER:
     PHA
     LDA SIDTIMER
@@ -74,11 +76,13 @@ SIDSTARTUP:
     STA SIDTMPPTR2
     LDA #>SIDFREQTABLE
     STA SIDTMPPTR2+1
+@IF deployed.music
     LDA #$0
     STA SIDTMPPTR
     STA SIDTMPPTR+1
     STA SIDJIFFIES
     STA SIDJIFFIES+1
+@ENDIF
     RTS
 
 SIDSTART:
