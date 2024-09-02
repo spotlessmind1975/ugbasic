@@ -93,7 +93,8 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
     ay8910_start( _environment, _channels );
     ay8910_set_frequency( _environment, _channels, chipsetFrequency );
     if ( _delay ) {
-        wait_milliseconds( _environment, _delay );
+        ay8910_set_duration( _environment, _channels, _delay / 50 /* approx! */ );
+        ay8910_wait_duration( _environment, _channels );
     }
 
 }
@@ -122,7 +123,7 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 </usermanual> */
 void sound_vars( Environment * _environment, char * _freq, char * _delay, char * _channels ) {
 
-    Variable * freq = variable_retrieve_or_define( _environment, _freq, VT_WORD, 440 );
+ Variable * freq = variable_retrieve_or_define( _environment, _freq, VT_WORD, 440 );
 
     Variable * cpuFrequency = variable_temporary( _environment, VT_DWORD, "(chipsetFrequency)" );
     variable_store( _environment, cpuFrequency->name, 3576000 );
@@ -143,12 +144,21 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         ay8910_start_var( _environment, channels->realName );
         ay8910_set_frequency_vars( _environment, channels->realName, chipsetFrequency->realName );
+        if ( _delay ) {
+            Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
+            Variable * delayScaled = variable_mul2_const( _environment, delay->name, 6 /* approx! */ );
+            ay8910_set_duration_vars( _environment, channels->realName, delayScaled->realName );
+            ay8910_wait_duration_vars( _environment, channels->realName );
+        }        
     } else {
         ay8910_start_var( _environment, NULL );
         ay8910_set_frequency_vars( _environment, NULL, chipsetFrequency->realName );
-    }
-    if ( _delay ) {
-        wait_milliseconds_var( _environment, _delay );
+        if ( _delay ) {
+            Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
+            Variable * delayScaled = variable_mul2_const( _environment, delay->name, 6 /* approx! */ );
+            ay8910_set_duration_vars( _environment, NULL, delayScaled->realName );
+            ay8910_wait_duration_vars( _environment, NULL );
+        }        
     }
 
 }

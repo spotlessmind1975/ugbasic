@@ -63,6 +63,9 @@ VDPLOOPDQ0:
     RET
 
 ISRSVC:
+@IF deployed.ay8910startup
+	CALL AY8910MANAGER
+@ENDIF
 @IF deployed.music
     CALL MUSICPLAYER
 @ENDIF
