@@ -11220,6 +11220,14 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->sourceFileName = strdup(_argv[optind] );
 
+    /* retrocompatible hacks */
+    // If we are compiling "Cocon" game with a recent
+    // version of the compiler (>1.16.3), we must use the disruptive
+    // optimization rule to reduce executable size.
+    if ( strstr( _environment->sourceFileName, "cocon.bas") != NULL ) {
+        _environment->vestigialConfig.rchack_cocon_1163 = 1;
+    }
+
     if ( _environment->tenLinerRulesEnforced ) {
         FILE * fh = fopen( _environment->sourceFileName, "rb" );
         fseek( fh, 0, SEEK_END );
