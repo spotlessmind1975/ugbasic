@@ -81,7 +81,8 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
     vic1_start( _environment, _channels );
     vic1_set_frequency( _environment, _channels, _freq );
     if ( _delay ) {
-        wait_milliseconds( _environment, _delay );
+        vic1_set_duration( _environment, _channels, _delay / 50 /* approx! */ );
+        vic1_wait_duration( _environment, _channels );
     }
 
 }
@@ -115,12 +116,21 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         vic1_start_var( _environment, channels->realName );
         vic1_set_frequency_vars( _environment, channels->realName, freq->realName );
+        if ( _delay ) {
+            Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
+            Variable * delayScaled = variable_mul2_const( _environment, delay->name, 6 /* approx! */ );
+            vic1_set_duration_vars( _environment, channels->realName, delayScaled->realName );
+            vic1_wait_duration_vars( _environment, channels->realName );
+        }
     } else {
         vic1_start_var( _environment, NULL );
         vic1_set_frequency_vars( _environment, NULL, freq->realName );
-    }
-    if ( _delay ) {
-        wait_milliseconds_var( _environment, _delay );
+        if ( _delay ) {
+            Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
+            Variable * delayScaled = variable_mul2_const( _environment, delay->name, 6 /* approx! */ );
+            vic1_set_duration_vars( _environment, NULL, delayScaled->realName );
+            vic1_wait_duration_vars( _environment, NULL );
+        }
     }
 
 }
