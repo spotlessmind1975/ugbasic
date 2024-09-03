@@ -42,7 +42,6 @@ SN76489BLOCKS           fdb $0
 SN76489LASTBLOCK        fcb $0
 SN76489MUSICLOOP        fcb $0
 
-SN76489TMPPTR2          fdb $0
 SN76489TMPPTR           fdb $0
 SN76489TMPOFS           fdb $0
 SN76489TMPLEN           fdb $0

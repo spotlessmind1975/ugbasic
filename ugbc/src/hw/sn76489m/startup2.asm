@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+SN76489TMPPTR2          fdb $0
+
 @IF COCO || COCO3
 @IF gmc.slot.static || gmc.slot.dynamic
 @EMIT gmc.slot.value AS GMC_SLOT_STATIC
@@ -94,12 +96,15 @@ SN76489STARTUP
 
     LDX #SN76489FREQTABLE
     STX SN76489TMPPTR2
+
+@IF deployed.music
     LDX #SN76489TMPPTR
     CLRA
     CLRB
     STD ,X
     LDX #SN76489JIFFIES
     STA ,X
+@ENDIF
 
 @IF COCO || COCO3
 
