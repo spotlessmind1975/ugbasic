@@ -6863,11 +6863,37 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
     } as_datatype {
-        if ( $2 ) {
-            variable_array_type( _environment, $1, $2 );
-        } else {
-            variable_array_type( _environment, $1, $8 );
+
+        int followRchackCocon1163;
+
+        /* retrocompatible hacks */
+
+        // If we are compiling "Cocon" game with a recent
+        // version of the compiler, arrays "til", "sts", 
+        // "bkg", "win" and "ugb" will be defined as BYTE, 
+        // to reduce to half the memory occupation.        
+        if ( ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163 ) {
+            if ( 
+                strcmp( $1, "til" ) == 0 || 
+                strcmp( $1, "sts" ) == 0 || 
+                strcmp( $1, "bkg" ) == 0 ||
+                strcmp( $1, "win" ) == 0 ||
+                strcmp( $1, "ugb" ) == 0
+                 ) {
+                followRchackCocon1163 = 1;
+            }
         }
+
+        if ( followRchackCocon1163 ) {
+            variable_array_type( _environment, $1, VT_BYTE );
+        } else {
+            if ( $2 ) {
+                variable_array_type( _environment, $1, $2 );
+            } else {
+                variable_array_type( _environment, $1, $8 );
+            }
+        }
+
     } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $11;
@@ -6926,28 +6952,7 @@ dim_definition :
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP as_datatype {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
-        
-        /* retrocompatible hacks */
-
-        // If we are compiling "Cocon" game with a recent
-        // version of the compiler, arrays "til", "sts", 
-        // "bkg", "win" and "ugb" will be defined as BYTE, 
-        // to reduce to half the memory occupation.        
-        if ( ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163 ) {
-            if ( 
-                strcmp( $1, "til" ) == 0 || 
-                strcmp( $1, "sts" ) == 0 || 
-                strcmp( $1, "bkg" ) == 0 ||
-                strcmp( $1, "win" ) == 0 ||
-                strcmp( $1, "ugb" ) == 0
-                 ) {
-                variable_array_type( _environment, $1, VT_BYTE );
-            } else {
-                variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
-            }
-        } else {
-            variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
-        }
+        variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
     } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
