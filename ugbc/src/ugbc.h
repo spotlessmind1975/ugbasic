@@ -1735,6 +1735,13 @@ typedef struct _VestigialConfig {
     char doubleBuffer;
     char palettePreserve;
 
+    /* retrocompatible hacks */
+
+    // If 1 we are compiling "Cocon" game with a recent
+    // version of the compiler, that use the disruptive
+    // optimization rule to reduce executable size.
+    char rchack_cocon_1163;
+
 } VestigialConfig;
 
 typedef struct _FontConfig {

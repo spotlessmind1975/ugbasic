@@ -602,8 +602,18 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     &&  po_buf_match(buf[1], " LDB *", v2)
     &&  po_buf_match(buf[2], " STB *", v3)
     && po_buf_strcmp(v1, v2)==0 ) {
-        optim(buf[1], RULE "(STBa,LDBa,STBb)->(STBb)", NULL );
-        ++_environment->removedAssemblyLines;
+        // If we are compiling "Cocon" game with a recent
+        // version of the compiler (>1.16.3), we must use the disruptive
+        // optimization rule to reduce executable size.
+        if ( _environment->vestigialConfig.rchack_cocon_1163 ) {
+            optim(buf[0], RULE "(STBa,LDBa,STBb)->(STBb)", NULL );
+            optim(buf[1], NULL, NULL);
+            ++_environment->removedAssemblyLines;
+            ++_environment->removedAssemblyLines;
+        } else {
+            optim(buf[1], RULE "(STBa,LDBa,STBb)->(STBb)", NULL );
+            ++_environment->removedAssemblyLines;
+        }
     }
 
     if( po_buf_match(buf[0], " STD *", v1)
