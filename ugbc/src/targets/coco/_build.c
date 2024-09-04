@@ -148,7 +148,7 @@ void generate_dsk( Environment * _environment ) {
 
     if ( executableBinaryFileSize ) {
         char * originalBinaryFileContentPtr = originalBinaryFileContent + programExeSize;
-        int blockSize = 0x1000;
+        int blockSize = 0x2000;
         while( executableBinaryFileSize ) {
             if ( blockSize > executableBinaryFileSize ) {
                 blockSize = executableBinaryFileSize;
@@ -213,7 +213,7 @@ void generate_dsk( Environment * _environment ) {
             fputc( 0x00, fh );
             fputc( programDatsSize[i] >> 8, fh );
             fputc( programDatsSize[i] & 0xff, fh );
-            fputc( 0x30, fh );
+            fputc( 0x2a, fh );
             fputc( 0x00, fh );
             fwrite( programDats[i], 1, programDatsSize[i], fh );
             fputc( 0xff, fh );
@@ -230,28 +230,32 @@ void generate_dsk( Environment * _environment ) {
 
     char basFileName[MAX_TEMPORARY_STORAGE];
 
+    // 206	16	0
+
     sprintf( basFileName, "%sloader.bas", temporaryPath);
     fh = fopen( basFileName, "wb" );
-    fprintf( fh, "1 REM ugBASIC loader\n" );
-    fprintf( fh, "2 REM --[ PROLOGUE ]--\n" );
-    fprintf( fh, "3 DATA 26,80,52,16,52,6,142,14,0,159,31,31\n" );
-    fprintf( fh, "4 DATA 65,16,206,15,0,16,223,33,198,255,166\n" );
-    fprintf( fh, "5 DATA 133,167,229,90,38,249,53,6,53,16,28\n" );
-    fprintf( fh, "6 DATA 159,57,26,80,142,48,0,16,142,42,0\n" );
-    fprintf( fh, "7 DATA 183,255,223,206,16,0,166,128,167,160\n" );
-    fprintf( fh, "8 DATA 51,95,17,131,0,0,38,244,183,255,222\n" );
-    fprintf( fh, "9 DATA 28,159,57\n" );
-    fprintf( fh, "11FORA=&HE00 TO &HE44:READX:POKEA,X:NEXTA\n" );
-    fprintf( fh, "12REM --[ MAIN ]--\n" );
-    fprintf( fh, "13CLEAR 999: EXEC 3584: PRINT \"LOADING, PLEASE WAIT\";\n" );
+    fprintf( fh, "1REM ugBASIC %s\n", UGBASIC_VERSION );
+    fprintf( fh, "2DATA26,80,52,16,52,6,142,14,0,159,31,31\n" );
+    fprintf( fh, "3DATA65,16,206,15,0,16,223,33,198,255,166\n" );
+    fprintf( fh, "4DATA133,167,229,90,38,249,53,6,53,16,28\n" );
+    fprintf( fh, "5DATA159,57,26,80,142,42,0,16,142,42,0\n" );
+    fprintf( fh, "6DATA183,255,223,206,16,0,166,128,167,160\n" );
+    fprintf( fh, "7DATA51,95,17,131,0,0,38,244,183,255,222\n" );
+    fprintf( fh, "9DATA28,159,57\n" );
+    fprintf( fh, "10FORA=&HE00 TO&HE44:READX:POKEA,X:NEXTA\n" );
+    fprintf( fh, "11POKE27,12:POKE28,0:POKE29,12:POKE30,172\n");
+    fprintf( fh, "12POKE31,13:POKE32,0:POKE33,13:POKE34,64:POKE35,13:POKE36,172\n" );
+    fprintf( fh, "13POKE37,13:POKE38,172:POKE39,13:POKE40,250:EXEC3584:? \"WAIT\";\n" );
     for( int i=0; i<programDataCount; ++i ) {
         int lineNr = 14 + i*2;
-        fprintf( fh, "%dLOADM\"PROGRAM.%03d\":PRINT\".\";\n", lineNr, i);
+        fprintf( fh, "%dLOADM\"P.%02d\":?\".\";\n", lineNr, i);
         lineNr = 15 + i*2;
-        int address = 0x4d + i*16;
-        fprintf( fh, "%dPOKE 3627, %d: EXEC 3620\n", lineNr, address );
+        int address = 0x4d + i*32;
+        int sizeHi = ( programDatsSize[i] >> 8 ) & 0xff;
+        int sizeLo = ( programDatsSize[i] ) & 0xff;
+        fprintf( fh, "%dPOKE3627,%d:POKE3633,%d:POKE3634,%d:EXEC3620\n", lineNr, address, sizeHi, sizeLo );
     }
-    fprintf( fh, "90PRINT \"...\";: LOADM\"PROGRAM.EXE\": PRINT \"...\": EXEC\n" );
+    fprintf( fh, "90?\"*\";:LOADM\"P.\":?\".\":EXEC10752\n" );
     fclose( fh );
 
     // char executableName[MAX_TEMPORARY_STORAGE];
@@ -325,7 +329,7 @@ void generate_dsk( Environment * _environment ) {
 
     remove( basFileName );
 
-    sprintf( commandLine, "\"%s\" copy -2 \"%sprogram.exe\" \"%s,PROGRAM.EXE\"",
+    sprintf( commandLine, "\"%s\" copy -2 \"%sprogram.exe\" \"%s,P\"",
         executableName, 
         temporaryPath, 
         _environment->exeFileName );
@@ -339,7 +343,7 @@ void generate_dsk( Environment * _environment ) {
 
     if ( programDataCount ) {
         for( int i=0; i<programDataCount; ++i ) {
-            sprintf( commandLine, "\"%s\" copy -2 \"%sprogram.%03d\" \"%s,PROGRAM.%03d\"",
+            sprintf( commandLine, "\"%s\" copy -2 \"%sprogram.%03d\" \"%s,P.%02d\"",
                 executableName, 
                 temporaryPath,
                 i, 
