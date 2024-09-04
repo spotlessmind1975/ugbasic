@@ -6864,7 +6864,7 @@ dim_definition :
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
     } as_datatype {
 
-        int followRchackCocon1163;
+        int followRchackCocon1163 = 0;
 
         /* retrocompatible hacks */
 
