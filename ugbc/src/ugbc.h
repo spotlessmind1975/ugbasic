@@ -1740,6 +1740,10 @@ typedef struct _VestigialConfig {
     // If 1 we are compiling "Cocon" game with a recent
     // version of the compiler, that use the disruptive
     // optimization rule to reduce executable size.
+    // Moreover, arrays "til", "sts", "bkg", "win" and
+    // "ugb" will be defined as BYTE, to reduce to half
+    // the memory occupation.
+    
     char rchack_cocon_1163;
 
 } VestigialConfig;
