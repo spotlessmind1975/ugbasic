@@ -275,7 +275,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             }
                             outline1("$%2.2x", (unsigned char) ( variable->valueBuffer[(variable->size-1)] & 0xff ) );
                         } else if ( variable->memoryArea && ! variable->value ) {
-                            outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, 0 );
+                            outhead3("%s: .res %d, $%2.2x", variable->realName, variable->size, 0 );
                         } else {
                             if ( variable->value ) {
                                 switch( VT_BITWIDTH( variable->arrayType ) ) {
@@ -298,10 +298,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                         break;
                                     }
                                     case 8:
-                                        outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
+                                        outhead3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
                                         break;
                                     case 1:
-                                        outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
+                                        outhead3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                         break;
                                 }                    
 
@@ -485,7 +485,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                     }
                     outline1("$%2.2x", (unsigned char) ( _variable->valueBuffer[(_variable->size-1)] & 0xff ) );
                 } else if ( _variable->memoryArea && ! _variable->value ) {
-                    outline3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, 0 );
+                    outhead3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, 0 );
                 } else {
                     if ( _variable->value ) {
                         switch( VT_BITWIDTH( _variable->arrayType ) ) {
@@ -508,10 +508,10 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                                 break;
                             }
                             case 8:
-                                outline3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value&0xff) );
+                                outhead3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value&0xff) );
                                 break;
                             case 1:
-                                outline3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value?0xff:0x00));
+                                outhead3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value?0xff:0x00));
                                 break;
                         }                    
 
@@ -855,7 +855,7 @@ void variable_cleanup( Environment * _environment ) {
     
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
-        outline3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
+        outhead3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
         staticStrings = staticStrings->next;
     }
 
