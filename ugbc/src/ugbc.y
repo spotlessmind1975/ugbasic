@@ -7009,6 +7009,36 @@ fill_definition :
 
 fill_definitions :
     fill_definitions_array
+    | expr {
+        /* retrocompatible hacks */
+        variable_array_fill( _environment, $1, 0 );
+    }
+    | expr OP_COMMA expr {
+        /* retrocompatible hacks */
+        variable_array_fill( _environment, $1, 0 );
+        variable_array_fill( _environment, $3, 0 );
+    }
+    | expr OP_COMMA expr OP_COMMA expr {
+        /* retrocompatible hacks */
+        variable_array_fill( _environment, $1, 0 );
+        variable_array_fill( _environment, $3, 0 );
+        variable_array_fill( _environment, $5, 0 );
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        /* retrocompatible hacks */
+        variable_array_fill( _environment, $1, 0 );
+        variable_array_fill( _environment, $3, 0 );
+        variable_array_fill( _environment, $5, 0 );
+        variable_array_fill( _environment, $7, 0 );
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        /* retrocompatible hacks */
+        variable_array_fill( _environment, $1, 0 );
+        variable_array_fill( _environment, $3, 0 );
+        variable_array_fill( _environment, $5, 0 );
+        variable_array_fill( _environment, $7, 0 );
+        variable_array_fill( _environment, $9, 0 );
+    }
     | fill_definition
     ;
 
