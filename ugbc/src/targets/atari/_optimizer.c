@@ -649,6 +649,12 @@ struct var *vars_get(POBuffer _name) {
 
     char *s=strchr(name,'+');
     if(s) *s='\0';
+    
+    s=strstr(name,"#<");
+    if(s) memmove( s, s+2, strlen(name)-2);
+
+    s=strstr(name,"#>");
+    if(s) memmove( s, s+2, strlen(name)-2);
 
     for(i=0; i<vars.size ; ++i) {
         if(strcmp(vars.tab[i].name, name)==0) {
@@ -727,21 +733,15 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     if( 
         po_buf_match( buf[0], " LD* *",  tmp, arg ) && 
         strstr("A X Y", tmp->str)!=NULL
-     ) if(vars_ok(arg)) {
+     ){
+        if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_rd++;
         };
+     }
 
     if( 
         po_buf_match( buf[0], " LD* (*)",  tmp, arg ) && 
-        strstr("A X Y", tmp->str)!=NULL
-     ) if(vars_ok(arg)) {
-            struct var *v = vars_get(arg);
-            v->nb_rd++;
-        };
-
-    if( 
-        po_buf_match( buf[0], " LD* #<*",  tmp, arg ) && 
         strstr("A X Y", tmp->str)!=NULL
      ) if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
