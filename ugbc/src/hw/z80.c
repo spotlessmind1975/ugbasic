@@ -4711,7 +4711,7 @@ void z80_lowercase( Environment * _environment, char *_source, char *_size, char
     outline0("CP 65");
     outline1("JR C, %snext", label);
 
-    outline0("CP 90");
+    outline0("CP 91");
     outline1("JR NC, %snext", label);
 
     outline0("ADC A, 31");
