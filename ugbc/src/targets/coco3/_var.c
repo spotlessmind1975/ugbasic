@@ -247,7 +247,7 @@ static void variable_cleanup_entry_byte( Environment * _environment, Variable * 
                         outhead1("%s rzb 4", variable->realName);
                     }   
                     break;
-                }
+
             }
         }
         
