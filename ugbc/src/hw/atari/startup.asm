@@ -72,14 +72,16 @@ ATARISTARTUPDONE:
     STA $0209
 
     LDA $0222
-    STA OLDSVC0222
-    LDA $0223
     STA OLDSVC0222+1
+    LDA $0223
+    STA OLDSVC0222+2
 
     LDA #<KEYBOARDMANAGER
     STA $0222
     LDA #>KEYBOARDMANAGER
     STA $0223
+    
+    LDA OLDSVC0222      ; this read is needed to avoid peep-hole optimization
     
     CLI
 

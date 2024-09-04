@@ -235,10 +235,15 @@ KEYBOARDMANAGERDONEYES:
 	TAY
 	PLA
 
-    JMP (OLDSVC0222)
+    ; We must use self-modifying code in order to avoid
+    ; a 6502/6510 bug when using indirect addressing.
+
+OLDSVC0222:
+    JMP $0000
+
 	RTS
 
-OLDSVC0222: .WORD $0
+: .WORD $0
 
 KEYBOARDQUEUE:           .RES 10,$FF
 KEYBOARDQUEUERPOS:       .BYTE $00
