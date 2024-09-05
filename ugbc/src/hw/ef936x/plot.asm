@@ -393,7 +393,7 @@ PLOTD1DB
 PLOTD4DB
 
     ANDCC #$FE
-    LDA PLOTCPE
+    LDA <PLOTCPE
     ANDA #$0F
     ASLA
     ASLA
@@ -447,7 +447,7 @@ PLOTD4DB
 
 PLOTD2DB
 
-    LDA PLOTCPE
+    LDA <PLOTCPE
     ANDA #$03
     STA <MATHPTR5
 
@@ -526,7 +526,7 @@ PLOTD25DB
 
 PLOTD3DB
 
-    LDA PLOTCPE
+    LDA <PLOTCPE
     ANDA #$0F
     STA <MATHPTR5
 
@@ -779,12 +779,12 @@ PLOTD             ; plot draw (placed here to keep the jump small)
 PLOTD0
 PLOTD1
 PLOTD4     
-    LDA PLOTCPE      ; other modes - asked color
+    LDA <PLOTCPE      ; other modes - asked color
     EORA ,X       ; compare with bg colo
     ANDA #$0F
     BEQ PLOTE     ; equal ? yes ==> erase pixel
     
-    LDA PLOTCPE      ; no ==> regular plot
+    LDA <PLOTCPE      ; no ==> regular plot
     LSLA          
     LSLA
     LSLA
@@ -959,7 +959,7 @@ PLOTD25
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 3) )
 
 PLOTD3
-    LDA PLOTCPE      ; Draw point in mode 3
+    LDA <PLOTCPE      ; Draw point in mode 3
     ANDA #$0F     ; isolate color
     LDB <(PLOTX+1)
     LSRB          ; odd column ?
