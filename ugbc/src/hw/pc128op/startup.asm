@@ -46,6 +46,9 @@ PC128TIMER  set *-2       ; (variable within code)
     STD   PC128TIMER      ; write result to TI variable
     LDA   #PAGE0          ; sets the direct page
     TFR   A,DP            ; for ugbc routines
+@IF deployed.sn76489mstartup
+    JSR   SN76489TIMERMANAGER
+@ENDIF
 @IF deployed.music
     JSR   MUSICPLAYER
 @ENDIF
