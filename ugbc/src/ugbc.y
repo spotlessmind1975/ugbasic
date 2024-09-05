@@ -1023,7 +1023,15 @@ const_factor:
             if ( !v->valueBuffer ) {
                 CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
             }
-            IMAGE_GET_WIDTH( v->valueBuffer, overallOffset, $$ );
+            switch( v->type ) {
+                case VT_IMAGE:
+                    $$ = v->originalWidth;
+                    break;
+                case VT_IMAGES:
+                case VT_SEQUENCE:
+                    $$ = v->frameWidth;
+                    break;
+            }
           } else {
             $$ = 0;
           }
@@ -1165,7 +1173,15 @@ const_factor:
             if ( !v->valueBuffer ) {
                 CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
             }        
-            IMAGE_GET_HEIGHT( v->valueBuffer, overallOffset, $$ );
+            switch( v->type ) {
+                case VT_IMAGE:
+                    $$ = v->originalHeight;
+                    break;
+                case VT_IMAGES:
+                case VT_SEQUENCE:
+                    $$ = v->frameHeight;
+                    break;
+            }
           } else {
             $$ = 0;
           }
