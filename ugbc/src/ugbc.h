@@ -1785,7 +1785,7 @@ typedef struct _VestigialConfig {
     char doubleBuffer;
     char palettePreserve;
     char clsImplicit;
-
+    
     /* retrocompatible hacks */
 
     // If 1 we are compiling "Cocon" game with a recent
@@ -2592,6 +2592,8 @@ typedef struct _Environment {
      * Debug during LOAD IMAGE.
      */
     int debugImageLoad;
+    
+    int bankedLoadDefault;
     
     /**
      * Default type for variables.

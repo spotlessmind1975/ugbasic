@@ -1772,7 +1772,7 @@ sequence_load_flags :
 
 on_bank :
     {
-        $$ = 0;
+        $$ = ((struct _Environment *)_environment)->bankedLoadDefault;
     }
     | BANKED {
         $$ = 1;
@@ -8081,6 +8081,12 @@ define_definition :
     | MSPRITE ASYNC {
         ((struct _Environment *)_environment)->multiplexingSpriteConfig.async = 1;
     }
+    | LOAD BANKED ON {
+        ((struct _Environment *)_environment)->bankedLoadDefault = 1;
+    }
+    | LOAD BANKED OFF {
+        ((struct _Environment *)_environment)->bankedLoadDefault = 0;
+    }
     | KEY PRESSED SYNC {
         ((Environment *)_environment)->keyPressDutyCycle = 1;
     }
@@ -10893,6 +10899,10 @@ int main( int _argc, char *_argv[] ) {
     _environment->inputConfig.latency = 350 / 20;
     _environment->inputConfig.delay = 75 / 20;
     _environment->inputConfig.release = 75 / 20;
+
+#if defined(__pc128op__)
+    _environment->bankedLoadDefault = 1;
+#endif
 
 #if defined(__atari__) 
     _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
