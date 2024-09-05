@@ -477,6 +477,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.pokeystartup;
             } else if ( strcmp( $3, "ay8910startup" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.ay8910startup;
+            } else if ( strcmp( $3, "sn76489mstartup" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.sn76489startup;
             } else if ( strcmp( $3, "keyboard" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.keyboard;
             } else {
