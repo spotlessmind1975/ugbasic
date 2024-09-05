@@ -50,21 +50,31 @@ Variable * image_get_height( Environment * _environment, char * _image ) {
     Variable * result = variable_temporary( _environment, VT_BYTE, "(image height)" );
 
     if ( image->bankAssigned != -1 ) {
-        CRITICAL_IMAGE_GET_HEIGHT_ON_BANKED(_image);
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline1("LDA #$%2.2x", image->originalHeight );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline1("LDA #$%2.2x", image->frameHeight );
+                break;
+            default:
+                CRITICAL_NOT_IMAGE( _image );
+        }    
+    } else {
+        outline1("LDY #%s", image->realName );
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline0("LDA 2,Y" );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline0("LDA 5,Y" );
+                break;
+            default:
+                CRITICAL_NOT_IMAGE( _image );
+        }    
     }
-
-    outline1("LDY #%s", image->realName );
-    switch( image->type ) {
-        case VT_IMAGE:
-            outline0("LDA 2,Y" );
-            break;
-        case VT_IMAGES:
-        case VT_SEQUENCE:
-            outline0("LDA 5,Y" );
-            break;
-        default:
-            CRITICAL_NOT_IMAGE( _image );
-    }    
     outline1("STA %s", result->realName );
 
     return result;

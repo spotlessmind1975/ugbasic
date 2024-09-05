@@ -50,20 +50,30 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     Variable * result = variable_temporary( _environment, VT_WORD, "(image width)" );
 
     if ( image->bankAssigned != -1 ) {
-        CRITICAL_IMAGE_GET_WIDTH_ON_BANKED(_image);
-    }
-
-    outline1("LDY #%s", image->realName );
-    switch( image->type ) {
-        case VT_IMAGE:
-            outline0("LDD ,Y" );
-            break;
-        case VT_IMAGES:
-        case VT_SEQUENCE:
-            outline0("LDD 3,Y" );
-            break;
-        default:
-            CRITICAL_NOT_IMAGE( _image );
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline1("LDD #$%4.4x", image->originalWidth );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline1("LDD #$%4.4x", image->frameWidth );
+                break;
+            default:
+                CRITICAL_NOT_IMAGE( _image );
+        }    
+    } else {
+        outline1("LDY #%s", image->realName );
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline0("LDD ,Y" );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline0("LDD 3,Y" );
+                break;
+            default:
+                CRITICAL_NOT_IMAGE( _image );
+        }
     }    
     outline1("STD %s", result->realName );
 

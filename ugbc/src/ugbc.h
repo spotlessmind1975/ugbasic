@@ -3194,8 +3194,6 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_INPUT_RELEASE( v ) CRITICAL2i("E302 - invalid value for INPUT RELEASE", v );
 #define CRITICAL_INVALID_INPUT_RELEASE_MS( v ) CRITICAL2i("E303 - invalid milliseconds for INPUT RELEASE", v );
 #define CRITICAL_END_LOOP_WITHOUT_LOOP( ) CRITICAL("E304 - END LOOP without LOOP" );
-#define CRITICAL_IMAGE_GET_HEIGHT_ON_BANKED( v ) CRITICAL2("E305 - IMAGE HEIGHT cannot be called on BANKED image", v );
-#define CRITICAL_IMAGE_GET_WIDTH_ON_BANKED( v ) CRITICAL2("E306 - IMAGE WIDTH cannot be called on BANKED image", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
