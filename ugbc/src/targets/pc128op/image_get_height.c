@@ -49,6 +49,10 @@ Variable * image_get_height( Environment * _environment, char * _image ) {
     Variable * image = variable_retrieve( _environment, _image );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(image height)" );
 
+    if ( image->bankAssigned != -1 ) {
+        CRITICAL_IMAGE_GET_HEIGHT_ON_BANKED(_image);
+    }
+
     outline1("LDY #%s", image->realName );
     switch( image->type ) {
         case VT_IMAGE:
