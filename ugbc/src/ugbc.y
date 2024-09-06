@@ -10916,7 +10916,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->inputConfig.delay = 75 / 20;
     _environment->inputConfig.release = 75 / 20;
 
-#if defined(__pc128op__)
+#if defined(__pc128op__) || defined(__to8__)
     _environment->bankedLoadDefault = 1;
 #endif
 
