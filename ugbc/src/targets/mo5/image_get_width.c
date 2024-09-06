@@ -64,15 +64,16 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     } else {
         outline1("LDY #%s", image->realName );
         switch( image->type ) {
-        case VT_IMAGE:
-            outline0("LDD ,Y" );
-            break;
-        case VT_IMAGES:
-        case VT_SEQUENCE:
-            outline0("LDD 3,Y" );
-            break;
-        default:
-            CRITICAL_NOT_IMAGE( _image );
+            case VT_IMAGE:
+                outline0("LDD ,Y" );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline0("LDD 3,Y" );
+                break;
+            default:
+                CRITICAL_NOT_IMAGE( _image );
+        }
     }    
     outline1("STD %s", result->realName );
 
