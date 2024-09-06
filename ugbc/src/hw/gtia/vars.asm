@@ -76,9 +76,9 @@ YSCROLL:            .byte 0
 YSCROLLOFFSET:  .byte 4, 3, 2, 1, 0, 7, 6, 5
 XSCROLLOFFSET:  .byte 0, 1, 2, 3, 4, 5, 6, 7
 
-PLOTDEST = $8c ; $8d
-PLOTCDEST= $8d ; $8e
-PLOTLDEST= $8f ; $90
+PLOTDEST = $8a ; $8b
+PLOTCDEST= $8c ; $8d
+PLOTLDEST= $8e ; $8f
 
 BLITTMPPTR = $EE ; $EF
 BLITTMPPTR2 = $EC ; $ED
