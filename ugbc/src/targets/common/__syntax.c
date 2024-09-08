@@ -2303,3 +2303,41 @@ Alias di ''JOY Y''
 @target d32
 @target d64
 </usermanual> */
+
+/* <usermanual>
+@keyword DEFINE AUDIO
+
+@english
+
+This pragma allows you to indicate whether the sound should be played 
+synchronously or asynchronously with the execution of subsequent instructions. 
+
+Specifically, with ''DEFINE AUDIO SYNC'', effects and notes are played 
+synchronously, so you do not have to wait for completion to execute the next 
+command. On the contrary, with ''DEFINE AUDIO ASYNC'', effects and notes are
+played asynchronously, so you must wait for completion otherwise subsequent 
+commands will be executed during the sound effect/note.
+
+Note that not all targets support both modes.
+
+@italian
+
+Questa pragma consente di indicare se il suono deve essere riprodotto in
+modo sincrono o asincrono con l'esecuzione delle istruzioni successive.
+
+In particolare, con ''DEFINE AUDIO SYNC'', effetti e note vengono riprodotti
+in modo sincrono, quindi non è necessario attendere il completamento per eseguire 
+il comando successivo. Al contrario, con ''DEFINE AUDIO ASYNC'', effetti e 
+note vengono riprodotti in modo asincrono, quindi è necessario attendere il
+completamento, altrimenti i comandi successivi verranno eseguiti durante 
+l'effetto sonoro/nota.
+
+Nota che non tutti i target supportano entrambe le modalità.
+
+@syntax DEFINE AUDIO SYNC
+@syntax DEFINE AUDIO ASYNC
+
+@example DEFINE AUDIO SYNC
+
+@target all
+</usermanual> */
