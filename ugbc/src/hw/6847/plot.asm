@@ -70,6 +70,8 @@ PLOTCLIP4
 PLOTCLIP5
 @ENDIF
 
+@IF !vestigialConfig.screenModeUnique
+
 PLOTMODE
     LDA CURRENTMODE
     CMPA #0
@@ -134,9 +136,17 @@ PLOT13X
 PLOT14X
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 0) || (currentMode == 1) )
+
 PLOT0
 PLOT1
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 2) )
 
 ; The ALPHA SEMIGRAPHICS – 4 mode translates bits 0 through 3 into a 4 x 6 dot 
 ; element in the standard 8 x 12 dot box. Three data bits may be used to select
@@ -147,6 +157,10 @@ PLOT1
 PLOT2
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 3) )
+
 ; The ALPHA SEMIGRAPHICS – 6 mode maps six 4 x 4 dot elements into the standard
 ; 8 x 12 dot alphanumeric box, a screen density of 64 x 48 elements is available. 
 ; Six bits are used to generate this map and two data bits may be used to select 
@@ -154,6 +168,10 @@ PLOT2
 ; The element area is four dot-clocks wide by four lines high.
 PLOT3
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 4) )
 
 ; The ALPHA SEMIGRAPHICS – 8 mode maps eight 4 x 3 dot elements into the 
 ; standard 8 x 12 dot box. This mode requires four memory locations per box 
@@ -164,6 +182,10 @@ PLOT3
 PLOT4
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 5) )
+
 ; The ALPHA SEMIGRAPHICS – 12 mode maps twelve 4 x 2 dot elements into the 
 ; standard 8 x 12 dot box. This mode requires six memory locations per box and 
 ; each memory location may specify one of eight colors or black. A 3072 byte 
@@ -171,6 +193,10 @@ PLOT4
 ; display area. The element area is four dot-clocks wide by two lineshigh.
 PLOT5
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 6) )
 
 ; The ALPHA SEMIGRAPHICS – 24 mode maps twenty-four 4 x 1 dot elements into 
 ; the standard 8 x 12 dot box. This mode requires twelve memory locations 
@@ -180,6 +206,10 @@ PLOT5
 ; dot-clocks wide by one line high.
 PLOT6
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 7) )
 
 ; The 64 x 64 Color Graphics mode generates a display matrix of 64 
 ; elements wide by 64 elements high. Each element may be one of four 
@@ -229,6 +259,10 @@ PLOT7
 
     JMP PLOTCOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 8) )
+
 ; The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
 ; by 64 elements high. Each element may be either ON or OFF. However, 
 ; the entire display may be one of two colors, selected by using the 
@@ -274,6 +308,10 @@ PLOT8
     STA PLOTND
 
     JMP PLOTCOMMON
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 9) )
 
 ; The 128 x 64 Color Graphics mode generates a display matrix 128 
 ; elements wide by 64 elements high. Each element may be one of four 
@@ -325,6 +363,10 @@ PLOT9
 
     JMP PLOTCOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 10) )
+
 ; The 128 x 96 Graphics mode generates a display matrix 128 
 ; elements wide by 96 elements high. Each element may be either 
 ; ON or OFF. However, the entire display may be one of two colors
@@ -370,6 +412,10 @@ PLOT10
     STA PLOTND
 
     JMP PLOTCOMMON
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 11) )
 
 ; The 128 x 96 Color Graphics mode generates a display 128 elements 
 ; wide by 96 elements high. Each element may be one of four colors. 
@@ -421,6 +467,10 @@ PLOT11
 
     JMP PLOTCOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 12) )
+
 ; The 128 x 192 Graphics mode generates a display matrix 128 elements 
 ; wide by 192 elements high. Each element may be either ON or OFF,
 ; but the ON elements may be one of two colors selected with color 
@@ -466,6 +516,10 @@ PLOT12
     STA PLOTND
 
     JMP PLOTCOMMON
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 13) )
 
 ;  The 128 x 192 Color Graphics mode generates a display 128 elements 
 ;  wide by 192 elements high. Each element may be one of four colors.
@@ -517,6 +571,10 @@ PLOT13
 
     JMP PLOTCOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 14) )
+
 ; The 256 x 192 Graphics mode generates a display 256 elements wide by 
 ; 192 elements high. Each element may be either ON or OFF, but the ON 
 ; element may be one of two colors selected with the color set select pin. 
@@ -566,6 +624,8 @@ PLOT14
     JMP PLOTCOMMON
 
     RTS
+
+@ENDIF
 
 PLOTCOMMON
 
