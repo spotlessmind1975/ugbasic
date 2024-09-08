@@ -88,7 +88,10 @@ IRQVECTORSKIP:
 @IF deployed.timer
     CALL TIMERMANAGER
 @ENDIF
+@IF deployed.keyboard
     CALL KEYBOARDMANAGER
+@ENDIF
+
 
     POP IY
     POP IX
