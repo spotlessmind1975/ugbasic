@@ -533,7 +533,7 @@ void variable_cleanup( Environment * _environment ) {
         outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2800 ) );
     }
     outhead0("CODESTART");
-    outline0("LDS #$7000");
+    outline0("LDS #$8000");
     outline0("JMP CODESTART2");
 
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
