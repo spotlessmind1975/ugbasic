@@ -651,10 +651,16 @@ struct var *vars_get(POBuffer _name) {
     if(s) *s='\0';
     
     s=strstr(name,"#<");
-    if(s) memmove( s, s+2, strlen(name)-2);
+    if(s) {
+        memmove( s, s+2, strlen(name)-2);
+        *(name+strlen(name)-2) = 0;
+    }
 
     s=strstr(name,"#>");
-    if(s) memmove( s, s+2, strlen(name)-2);
+    if(s) {
+        memmove( s, s+2, strlen(name)-2);
+        *(name+strlen(name)-2) = 0;
+    }
 
     for(i=0; i<vars.size ; ++i) {
         if(strcmp(vars.tab[i].name, name)==0) {
@@ -765,6 +771,13 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
 
     if( 
         po_buf_match( buf[0], " CMP (*)",  arg )
+     ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+        };
+
+    if( 
+        po_buf_match( buf[0], " ADC *", arg )
      ) if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_rd++;
@@ -1028,7 +1041,7 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
     POBuffer op  = TMP_BUF;
     
     /* inlined */
-   if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) ) {
+   if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) && strstr( buf[0]->str, "#<") == NULL && strstr( buf[0]->str, "#>") == NULL ) {
         struct var *v = vars_get(var);
         //printf( "%s rechecking (offset=%d, size=%d, chg_reg2=%d)\n", v->name, v->offset, v->size, chg_reg2(buf[0]) );
         if( v->offset == -1 && v->size == 1 && chg_reg2(op) ) {
