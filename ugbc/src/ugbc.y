@@ -6967,7 +6967,7 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP as_datatype {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
         
         /* retrocompatible hacks */
 
