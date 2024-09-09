@@ -110,7 +110,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         //     }
                         //     outline1("$%2.2x", (unsigned char)variable->valueString->value[(c-1)]);                        
                         // } else {
-                        //     outline3("%s: .byte %d,%s", variable->realName, (int)strlen(variable->valueString->value), escape_newlines( variable->valueString->value ) );
+                        //     outhead3("%s: .byte %d,%s", variable->realName, (int)strlen(variable->valueString->value), escape_newlines( variable->valueString->value ) );
                         // }
                         outhead2("%s = cstring%d", variable->realName, variable->valueString->id );
                     }
@@ -242,10 +242,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                         break;
                                     }
                                     case 8:
-                                        outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
+                                        outhead3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
                                         break;
                                     case 1:
-                                        outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
+                                        outhead3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                         break;
                                 }                    
 
@@ -316,7 +316,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             //     }
             //     outline1("$%2.2x", (unsigned char)_variable->valueString->value[(c-1)]);                        
             // } else {
-            //     outline2("   .byte %d,%s", (int)strlen(_variable->valueString->value), escape_newlines( _variable->valueString->value ) );
+            //     outhead2("   .byte %d,%s", (int)strlen(_variable->valueString->value), escape_newlines( _variable->valueString->value ) );
             // }
             break;
         case VT_DSTRING:
@@ -388,10 +388,10 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                             break;
                         }
                         case 8:
-                            outline3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value&0xff) );
+                            outhead3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value&0xff) );
                             break;
                         case 1:
-                            outline3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value?0xff:0x00));
+                            outhead3("%s: .res %d, $%2.2x", _variable->realName, _variable->size, (unsigned char)(_variable->value?0xff:0x00));
                             break;
                     }                    
                 } else {
@@ -465,7 +465,7 @@ void variable_cleanup( Environment * _environment ) {
             DataSegment * actual = _environment->dataSegment;
             while( actual ) {
                 if ( actual->isNumeric ) {
-                    outline2( ".word $%4.4x, %s", actual->lineNumber, actual->realName );
+                    outhead2( ".word $%4.4x, %s", actual->lineNumber, actual->realName );
                 }
                 actual = actual->next;
             }
@@ -590,7 +590,7 @@ void variable_cleanup( Environment * _environment ) {
         outhead0("UDCCHAR:" );
         int i=0,j=0;
         for(i=0;i<_environment->descriptors->count;++i) {
-            outline1("; $%2.2x ", i);
+            outhead1("; $%2.2x ", i);
             out0(".byte " );
             for(j=0;j<7;++j) {
                 out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[_environment->descriptors->first+i].data[j]) );
@@ -726,7 +726,7 @@ void variable_cleanup( Environment * _environment ) {
 
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
-        outline3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
+        outhead3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
         staticStrings = staticStrings->next;
     }
 
@@ -741,14 +741,15 @@ void variable_cleanup( Environment * _environment ) {
 
     outhead0(".segment \"CODE\"");
     outhead0(".proc MAINENTRY");
-    outline0("JMP CODESTART2");
+    outline0("JMP CODESTART");
 
     deploy_inplace_preferred( vars, src_hw_atari_vars_asm);
     deploy_inplace_preferred( startup, src_hw_atari_startup_asm);
     deploy_inplace_preferred( gtiavars, src_hw_gtia_vars_asm );
     deploy_inplace_preferred( gtiastartup, src_hw_gtia_startup_asm );
+    deploy_inplace_preferred( pokeystartup, src_hw_pokey_startup_asm );
     
-    outhead0("CODESTART2:");
+    outhead0("CODESTART:");
 
     buffered_prepend_output( _environment );
 
