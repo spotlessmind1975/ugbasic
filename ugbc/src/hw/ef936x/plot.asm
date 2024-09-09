@@ -41,6 +41,7 @@ PLOTY   EQU $43
 PLOTM   EQU $45
 PLOTOMA EQU $46
 PLOTAMA EQU $47
+PLOTCPE   EQU $48
 
 ;--------------
 
@@ -392,7 +393,7 @@ PLOTD1DB
 PLOTD4DB
 
     ANDCC #$FE
-    LDA _PEN
+    LDA <PLOTCPE
     ANDA #$0F
     ASLA
     ASLA
@@ -446,7 +447,7 @@ PLOTD4DB
 
 PLOTD2DB
 
-    LDA _PEN
+    LDA <PLOTCPE
     ANDA #$03
     STA <MATHPTR5
 
@@ -525,7 +526,7 @@ PLOTD25DB
 
 PLOTD3DB
 
-    LDA _PEN
+    LDA <PLOTCPE
     ANDA #$0F
     STA <MATHPTR5
 
@@ -549,16 +550,16 @@ PLOTD3HIDB
     LDA , X
     ORA <MATHPTR5
     STA , X
-    LDA $2000, X
-    ORA <MATHPTR5
-    STA $2000, X
+    ; LDA $2000, X
+    ; ORA <MATHPTR5
+    ; STA $2000, X
     JMP PLOTD3FDB
 
 PLOTD3LODB
 
-    LDA , X
-    ORA <MATHPTR5
-    STA , X
+    ; LDA , X
+    ; ORA <MATHPTR5
+    ; STA , X
     LDA $2000, X
     ORA <MATHPTR5
     STA $2000, X
@@ -778,12 +779,12 @@ PLOTD             ; plot draw (placed here to keep the jump small)
 PLOTD0
 PLOTD1
 PLOTD4     
-    LDA _PEN      ; other modes - asked color
+    LDA <PLOTCPE      ; other modes - asked color
     EORA ,X       ; compare with bg colo
     ANDA #$0F
     BEQ PLOTE     ; equal ? yes ==> erase pixel
     
-    LDA _PEN      ; no ==> regular plot
+    LDA <PLOTCPE      ; no ==> regular plot
     LSLA          
     LSLA
     LSLA
@@ -931,7 +932,7 @@ PLOTCOMMON
 
 PLOTD2            ; Draw point with mode 2 (we are in plane0)
     LDA ,X        ; get row with point in it
-    LDB _PEN      
+    LDB PLOTCPE      
     LSRB          ; b0 of PEN set ?
     BCC PLOTD21   ; no => clear bit
     ORA ,Y        ; yes => set bit
@@ -958,7 +959,7 @@ PLOTD25
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 3) )
 
 PLOTD3
-    LDA _PEN      ; Draw point in mode 3
+    LDA <PLOTCPE      ; Draw point in mode 3
     ANDA #$0F     ; isolate color
     LDB <(PLOTX+1)
     LSRB          ; odd column ?

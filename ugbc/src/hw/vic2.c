@@ -580,6 +580,10 @@ Variable * vic2_collision( Environment * _environment, char * _sprite ) {
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
 
             outline1("LDA %s", sprite->realName);
@@ -990,7 +994,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 199 );
 
-            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x87f8 );
+            _environment->mspriteMsbokAddress = 0x87f8;
 
             break;
         case BITMAP_MODE_MULTICOLOR:
@@ -1032,7 +1036,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 199 );
 
-            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x87f8 );
+            _environment->mspriteMsbokAddress = 0x87f8;
 
             break;
         case TILEMAP_MODE_STANDARD:
@@ -1072,7 +1076,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
 
-            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x83f8 );
+            _environment->mspriteMsbokAddress = 0x83f8;
 
             break;
         case TILEMAP_MODE_MULTICOLOR:
@@ -1111,7 +1115,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
 
-            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x83f8 );
+            _environment->mspriteMsbokAddress = 0x83f8;
 
             break;
         case TILEMAP_MODE_EXTENDED:
@@ -1147,7 +1151,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
 
-            cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", 0x83f8 );
+            _environment->mspriteMsbokAddress = 0x83f8;
 
             break;
         default:
@@ -1215,6 +1219,8 @@ void console_calculate( Environment * _environment ) {
 }
 
 void console_calculate_vars( Environment * _environment ) {
+
+    deploy( console, src_hw_vic2_console_asm );
 
     outline0( "JSR CONSOLECALCULATE" );
 
@@ -1334,7 +1340,7 @@ void vic2_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void vic2_pset_int( Environment * _environment, int _x, int _y ) {
+void vic2_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
@@ -1346,16 +1352,30 @@ void vic2_pset_int( Environment * _environment, int _x, int _y ) {
     outline0("STA PLOTX+1");
     outline1("LDA %2.2x", ( _y & 0xff ) );
     outline0("STA PLOTY");
+    if ( _c ) {
+        outline1("LDA #$%2.2x", ( *_c & 0xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("LDA %s", c->realName );
+    }
+    outline0("STA PLOTCPE");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
 
 }
 
-void vic2_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void vic2_pset_vars( Environment * _environment, char *_x, char *_y, char * _c ) {
 
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * y = variable_retrieve( _environment, _y );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
@@ -1371,6 +1391,8 @@ void vic2_pset_vars( Environment * _environment, char *_x, char *_y ) {
     outline0("STA PLOTX+1");
     outline1("LDA %s", y->realName );
     outline0("STA PLOTY");
+    outline1("LDA %s", c->realName );
+    outline0("STA PLOTCPE");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -1483,6 +1505,10 @@ void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
 
             outline1("LDY %s", sprite->realName );
@@ -1511,6 +1537,10 @@ void vic2_sprite_enable( Environment * _environment, char * _sprite ) {
             break;
 
         case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
 
             deploy( msprite, src_hw_vic2_msprites_asm );
 
@@ -1541,6 +1571,10 @@ void vic2_sprite_disable( Environment * _environment, char * _sprite ) {
             break;
 
         case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
 
             deploy( msprite, src_hw_vic2_msprites_asm );
 
@@ -1581,6 +1615,10 @@ void vic2_sprite_at( Environment * _environment, char * _sprite, char * _x, char
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
 
             outline1("LDA %s", x->realName );
@@ -1618,6 +1656,10 @@ void vic2_sprite_expand_vertical( Environment * _environment, char * _sprite ) {
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
 
             outline1("LDY %s", sprite->realName );
@@ -1649,6 +1691,10 @@ void vic2_sprite_expand_horizontal( Environment * _environment, char * _sprite )
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
 
             outline1("LDY %s", sprite->realName );
@@ -1677,6 +1723,10 @@ void vic2_sprite_compress_vertical( Environment * _environment, char * _sprite )
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
     
             outline1("LDY %s", sprite->realName );
@@ -1704,6 +1754,10 @@ void vic2_sprite_compress_horizontal( Environment * _environment, char * _sprite
             break;
 
         case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
 
             deploy( msprite, src_hw_vic2_msprites_asm );
     
@@ -1734,6 +1788,10 @@ void vic2_sprite_multicolor( Environment * _environment, char * _sprite ) {
             break;
 
         case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
 
             deploy( msprite, src_hw_vic2_msprites_asm );
     
@@ -1766,6 +1824,10 @@ void vic2_sprite_monocolor( Environment * _environment, char * _sprite ) {
 
         case VT_MSPRITE:
 
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
             deploy( msprite, src_hw_vic2_msprites_asm );
     
             outline1("LDY %s", sprite->realName );
@@ -1797,6 +1859,10 @@ void vic2_sprite_color( Environment * _environment, char * _sprite, char * _colo
             break;
 
         case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
 
             deploy( msprite, src_hw_vic2_msprites_asm );
     
@@ -1991,8 +2057,8 @@ void vic2_initialization( Environment * _environment ) {
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, 8, 8, "Standard Bitmap Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, 8, 8, "Multicolor Bitmap Mode"  );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 2, 8, 8, "Standard Character Mode" );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_MULTICOLOR, 0, 40, 25, 16, 8, 8, "Multicolor Character Mode" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 16, 8, 8, "Standard Character Mode" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_MULTICOLOR, 0, 40, 25, 32, 8, 8, "Multicolor Character Mode" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTENDED, 0, 40, 25, 20, 8, 8, "Extended Multicolor Character Mode" );
 
     outline0("JSR VIC2STARTUP");
@@ -2062,11 +2128,6 @@ static RGBi * multicolorSpritePalette[2];
 
 void vic2_finalization( Environment * _environment ) {
 
-    if ( ! _environment->deployed.msprite ) {
-        outhead0("MSPRITESMANAGER:");
-        outline0("RTS");
-        outhead0("MSPRITESMANAGER2MSBOKADDRESS: .BYTE 0, 0");
-    }
     outhead0("VIC2FINALIZATION:");
 
     if ( multicolorSpritePalette[0] ) {
@@ -3168,6 +3229,9 @@ static void vic2_load_image_address_to_other_register( Environment * _environmen
     outline0("STA BANKPTR" );
     outline0("STA BANKUSE" );
 #endif
+#ifdef __c128__
+    outline0("STA RLEUSE" );
+#endif
 
     if ( _sequence ) {
 
@@ -3275,6 +3339,17 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
                 outline0("STA BANKUSE" );
             }
 #endif
+
+#ifdef __c128__
+        if ( _source->compression == CMP_RLE ) {
+            outline0("LDA #1" );
+            outline0("STA RLEUSE" );
+        } else {
+            outline0("LDA #0" );
+            outline0("STA RLEUSE" );
+        }
+#endif
+
         } else {
             outline1("LDA #<%s", _source->realName );
             outline1("STA %s", _register );
@@ -3285,6 +3360,16 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline0("STA BANKPTR" );
             outline0("STA BANKUSE" );
 #endif
+#ifdef __c128__
+        if ( _source->compression == CMP_RLE ) {
+            outline0("LDA #1" );
+            outline0("STA RLEUSE" );
+        } else {
+            outline0("LDA #0" );
+            outline0("STA RLEUSE" );
+        }
+#endif
+
         }
     } else {
         if ( _source->isAddress ) {
@@ -3305,6 +3390,16 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
                 outline0("STA BANKUSE" );
             }
 #endif
+#ifdef __c128__
+        if ( _source->compression == CMP_RLE ) {
+            outline0("LDA #1" );
+            outline0("STA RLEUSE" );
+        } else {
+            outline0("LDA #0" );
+            outline0("STA RLEUSE" );
+        }
+#endif
+
         } else {
             outline1("LDA #<%s", _source->realName );
             outline0("STA TMPPTR" );
@@ -3314,6 +3409,15 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
             outline0("LDA #0" );
             outline0("STA BANKPTR" );
             outline0("STA BANKUSE" );
+#endif
+#ifdef __c128__
+        if ( _source->compression == CMP_RLE ) {
+            outline0("LDA #1" );
+            outline0("STA RLEUSE" );
+        } else {
+            outline0("LDA #0" );
+            outline0("STA RLEUSE" );
+        }
 #endif
         }
 
@@ -3393,6 +3497,10 @@ void vic2_put_image( Environment * _environment, Resource * _image, char * _x, c
 #ifdef __c64reu__
     deploy_embedded( cpu_math_mul_8bit_to_16bit, src_hw_6502_cpu_math_mul_8bit_to_16bit_asm )
     deploy( putimagereu, src_hw_vic2_put_image_reu_asm );
+#endif
+
+#ifdef __c128__
+    deploy( putimageramrle, src_hw_vic2_put_image_ram_rle_asm );
 #endif
 
     MAKE_LABEL

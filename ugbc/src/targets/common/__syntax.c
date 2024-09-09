@@ -2340,4 +2340,202 @@ Nota che non tutti i target supportano entrambe le modalità.
 @example DEFINE AUDIO SYNC
 
 @target all
+*/
+
+/* <usermanual>
+@keyword BLOCK
+
+@english
+
+''BLOCK'' draws a filled rectangle. The location of the top left corner is determined by the first 
+two parameters ''x1'' and ''y1'', the coordinates of the bottom right corner of the rectangle 
+are determined by parameters three and four (''x2'' and ''y2'', where ''x2=x1+width'' and 
+''y2=y1+height'', important for ''REC''). The color of the rectangle is determined by the 
+last parameter (''fq'', color source). Permissible values ​​are 0..''SCREEN WIDTH'' for ''x1''
+and ''x2' . For ''y1'' and ''y2'', values ​​from 0 to ''SCREEN HEIGHT'' are permitted in both cases. 
+The color also depends on the graphics mode and refers to the color specifications behind ''HIRES''
+on the one hand and ''MULTI'' and ''LOW COL'' on the other. The point 0,0 is in the top left corner.
+
+Note: Unfortunately, the parameter types of ''REC'' and ''BLOCK'' do not match, which makes 
+programming a little more complicated (see program example). 
+
+@italian
+
+''BLOCK'' disegna un rettangolo pieno. La posizione dell'angolo in alto a sinistra è determinata
+dai primi due parametri ''x1'' e ''y1'', le coordinate dell'angolo in basso a destra del rettangolo
+sono determinate dai parametri tre e quattro (''x2'' e ''y2'', dove ''x2=x1+larghezza'' e 
+''y2=y1+altezza'', importante per ''REC''). Il colore del rettangolo è determinato dall'ultimo 
+parametro (''fq'', fonte colore). I valori consentiti sono 0..''SCREEN WIDTH'' per ''x1'' e ''x2'.
+Per ''y1'' e ''y2'' sono ammessi in entrambi i casi i valori da 0 a ''SCREEN HEIGHT''. Il colore 
+dipende anche dalla modalità grafica e si riferisce alle specifiche del colore dietro ''HIRES''
+da un lato e ''MULTI'' e ''LOW COL'' dall'altro. Il punto 0,0 si trova nell'angolo in alto a sinistra.
+
+Nota: Sfortunatamente i tipi di parametri di ''REC'' e ''BLOCK'' non corrispondono, il che rende 
+la programmazione un po' più complicata (vedi esempio di programma).
+
+@syntax BLOCK x1, y1, x2, y2, fq
+
+@example BLOCK x, y, x+29, y+19, 0
+
+@usedInExample tsb_block_rec_01.bas
+
+@target c128
+@project tsb
+</usermanual> */
+
+/* <usermanual>
+@keyword REC
+
+@english
+
+''REC'' draws a rectangle. The location of the top left corner is determined by the first two 
+parameters ''x'' and ''y'', the width and height of the rectangle by parameters three and four 
+(''sa'' and ''sb''). The color of the edge lines is determined by the last parameter (''fq'', 
+color source). The four corners of the rectangle are always drawn.
+
+Permissible values ​​are 0..''SCREEN WIDTH'' for ''x'' and ''sa''. 
+For ''y'' or ''sb'', values ​​from 0 to ''SCREEN HEIGHT'' are permitted in both cases. The color also depends on
+the graphics mode and refers to the color specifications behind ''HIRES'' on the one hand and 
+''MULTI'' and ''LOW COL'' on the other. The point 0,0 is in the top left corner.
+
+Note: If the edge lengths of the rectangle exceed the screen limits, rectangle will be clipped.
+
+@italian
+
+''REC'' disegna un rettangolo. La posizione dell'angolo in alto a sinistra è determinata dai
+primi due parametri ''x'' e ''y'', la larghezza e l'altezza del rettangolo dai parametri tre e 
+quattro (''sa'' e ''sb'' ). Il colore delle linee del bordo è determinato dall'ultimo parametro 
+(''fq'', sorgente colore). Vengono sempre disegnati i quattro angoli del rettangolo.
+
+I valori consentiti sono 0..''SCREEN WIDTH'' per ''x'' e ''sa''. Per ''y'' o ''sb'' sono ammessi 
+in entrambi i casi i valori da 0 a ''SCREEN HEIGHT''. Il colore dipende anche dalla modalità 
+grafica e si riferisce alle specifiche del colore date al comando ''HIRES'' da un lato e 
+''MULTI'' e ''LOW COL'' dall'altro. Il punto 0,0 si trova nell'angolo in alto a sinistra.
+
+Nota: se la lunghezza dei bordi del rettangolo supera i limiti dello schermo, il rettangolo
+sarà ritagliato
+
+@syntax REC x, y, sa, sb, fq
+
+@example REC x, y, 29, 19, 1
+
+@usedInExample tsb_block_rec_01.bas
+
+@target c128
+@project tsb
+</usermanual> */
+
+/* <usermanual>
+@keyword HIRES
+
+@english
+
+`HIRES` is used to switch from text to high-resolution graphics mode and to use the specified colors: 
+''ink'' for the writing color and ''paper'' for the background color (both with values ​​from 0 to ''SCREEN COLORS'').
+The graphics memory is deleted and preset with the specified colors. The color of the screen frame 
+remains unaffected. The selected mode remains active until it is switched off or changed by a command 
+(''MULTI'', ''CSET'' or ''NRM''). Important: the color specifications of almost all other graphics 
+commands that use ''fg'' as color parameter refers to the colors specified here. If the color source ''0'' is specified in a graphics 
+command, the color specified for ''paper'' is selected; if ''1'' is specified, the color for ''ink''
+is selected; the color specification ''2'' inverts the controlled pixel (if in hires mode, 
+otherwise see ''MULTI''). 
+
+@italian
+
+''HIRES'' serve per passare dalla modalità testo a quella grafica ad alta risoluzione e per
+utilizzare i colori specificati: ''ink'' per il colore della scrittura e ''paper'' per il colore
+dello sfondo (entrambi con valori da 0 a ''SCREEN COLORS''). La memoria grafica viene cancellata e
+preimpostata con i colori specificati. Il colore della cornice dello schermo rimane inalterato. 
+La modalità selezionata rimane attiva finché non viene spenta o modificata tramite un comando 
+(''MULTI'', ''CSET'' o ''NRM''). Importante: le specifiche dei colori di quasi tutti gli altri
+comandi grafici che usano ''fg'' come parametro del colore si riferiscono ai colori qui specificati. 
+Se in un comando grafico viene specificata l'origine colore ''0'', viene selezionato il colore 
+specificato per ''paper''; se viene specificato ''1'', viene selezionato il colore per 
+''ink''; la specifica colore ''2'' inverte il pixel controllato (se in modalità ''HIRES'', altrimenti
+vedi ''MULTI'').
+
+@syntax HIRES ink, paper
+
+@example HIRES 0, 1
+
+@usedInExample tsb_block_rec_01.bas
+
+@target c128
+@project tsb
+</usermanual> */
+
+/* <usermanual>
+@keyword DO NULL
+
+@english
+
+Wait for a keystroke. If a program comes to a ''DO NULL'' instruction, it waits until the user presses
+a key. Differently from TSB, further commands can follow on the same BASIC line in the progra,
+and it can be used in an ''IF'' line (after ''THEN'' or ''ELSE''). 
+
+@italian
+
+Aspetta la sequenza di tasti. Se un programma arriva a un'istruzione ''DO NULL'', attende finché l'utente
+preme un tasto. A differenza di TSB, ulteriori comandi possono seguire sulla stessa riga BASIC nel programma,
+e può essere utilizzata in una riga ''IF'' (dopo ''THEN'' o ''ELSE'').
+
+@syntax DO NULL
+
+@example DO NULL
+
+@usedInExample tsb_block_rec_01.bas
+
+@target c128
+@project tsb
+</usermanual> */
+
+/* <usermanual>
+@keyword NRM
+
+@english
+
+''NRM'' resets the chipset to its default values: the graphic mode is switched off,
+uppercase and lowercase font is activated, the extended color mode is switched off.
+
+@italian
+
+''NRM'' ripristina il chipset ai suoi valori predefiniti: la modalità grafica è 
+disattivata, i caratteri maiuscoli e minuscoli sono attivati, la modalità colore 
+estesa è disattivata.
+
+@syntax NRM
+
+@example NRM
+
+@usedInExample tsb_block_rec_01.bas
+
+@target c128
+@project tsb
+</usermanual> */
+
+/* <usermanual>
+@keyword INSERT
+
+@english
+
+''INSERT'' inserts the character string ''<string>'' (first argument) into the character string 
+''<altstring>'' (second argument) starting at the position ''<pos>'' (third argument), whereby 
+the counting starts with ''1''. The resulting character string is as long as the sum of the two 
+individual character strings.
+
+@italian
+
+''INSERT'' inserisce la stringa di caratteri ''<string>'' (primo argomento) nella stringa di 
+caratteri ''<altstring>'' (secondo argomento) a partire dalla posizione ''<pos>'' (terzo argomento), 
+per cui il conteggio inizia con ''1''. La stringa di caratteri risultante è lunga quanto la somma 
+delle due stringhe di caratteri individuali.
+
+@syntax = INSERT(<string>,<altstring>,<pos>) 
+
+@example c$=INSERT(a$,b$,9)
+
+@usedInExample tsb_insert_01.bas
+
+@target c128
+@project tsb
 </usermanual> */

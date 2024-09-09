@@ -33,102 +33,113 @@
 
 #include "../ugbc.h"
 
-#define KEY_NONE					64
-#define KEY_0						'0'
-#define KEY_1						'1'
-#define KEY_2						'2'
-#define KEY_3						'3'
-#define KEY_4						'4'
-#define KEY_5						'5'
-#define KEY_6						'6'
-#define KEY_7						'7'
-#define KEY_8						'8'
-#define KEY_9						'9'
-#define KEY_A						'A'
-#define KEY_ASTERISK				'*'
-#define KEY_AT						'@'
-#define KEY_B						'B'
-#define KEY_C						'C'
-#define KEY_CLEAR					0xf9
-#define KEY_COLON					':'
-#define KEY_COMMA					','
-#define KEY_COMMODORE				0x00
-#define KEY_CONTROL					0x00
-#define KEY_CRSR_LEFT_RIGHT			0x00
-#define KEY_CRSR_UP_DOWN			0x00
-#define KEY_D						'D'
-#define KEY_DELETE					0xf9
-#define KEY_E						'E'
-#define KEY_EQUAL					'='
-#define KEY_F						'F'
-#define KEY_F1						0x00
-#define KEY_F2						0x00
-#define KEY_F3						0x00
-#define KEY_F4						0x00
-#define KEY_F5						0x00
-#define KEY_F6						0x00
-#define KEY_F7						0x00
-#define KEY_F8						0x00
-#define KEY_G						'G'
-#define KEY_H						'H'
-#define KEY_HOME					0x00
-#define KEY_I						'I'
-#define KEY_INSERT					0x00
-#define KEY_J						'J'
-#define KEY_K						'K'
-#define KEY_L						'L'
-#define KEY_LEFT_ARROW				0xfc
-#define KEY_LEFT_SHIFT				0xfe
-#define KEY_M						'M'
-#define KEY_MINUS					'-'
-#define KEY_N						'N'
-#define KEY_O						'O'
-#define KEY_P						'P'
-#define KEY_PERIOD					'.'
-#define KEY_PLUS					'+'
-#define KEY_POUND					0x00
-#define KEY_Q						'Q'
-#define KEY_R						'R'
-#define KEY_RETURN					0x0d
-#define KEY_RIGHT_SHIFT				0xfe
-#define KEY_RUNSTOP					0x00
-#define KEY_S						'S'
-#define KEY_SEMICOLON				';'
-#define KEY_SLASH					'/'
-#define KEY_SPACE					' '
-#define KEY_T						'T'
-#define KEY_U						'U'
-#define KEY_UP_ARROW				0xfa
-#define KEY_V						'V'
-#define KEY_W						'W'
-#define KEY_X						'X'
-#define KEY_Y						'Y'
-#define KEY_Z						'Z'
-#define KEY_BACKSLASH                '\\'
-#define KEY_SQUARE_OPEN              0x00
-#define KEY_SQUARE_CLOSED            0x00
-#define KEY_SEMICOMMA                ';'
-#define KEY_QUOTE                    '"'
-#define KEY_APIX                     0x00
-#define KEY_DEAD                     0x00
-#define KEY_SHIFT                    0xfe
-#define KEY_CTRL                     0x00
-#define KEY_GRAPH                    0x00
-#define KEY_CAPS                     0x00
-#define KEY_CODE                     0x00
-#define KEY_ESC                      0x00
-#define KEY_TAB                      0x00
-#define KEY_STOP                     0x00
-#define KEY_BS                       0xf9
-#define KEY_SELECT                   0x00
-#define KEY_RET                      0x0d
-#define KEY_INS                      0x00
-#define KEY_DEL                      0xf9
-#define KEY_LEFT                     0xfc
-#define KEY_UP                       0xfa
-#define KEY_DOWN                     0xfb
-#define KEY_RIGHT                    0xfd
-#define KEY_DIVISION                 '/'
+#define KEY_NONE					255
+#define KEY_0                       0
+#define KEY_8                       1
+#define KEY_AT                      2
+#define KEY_H                       3
+#define KEY_P                       4
+#define KEY_X                       5
+#define KEY_RETURN                  6
+
+#define KEY_1                       8
+#define KEY_9                       9
+#define KEY_A                      10
+#define KEY_I                      11
+#define KEY_Q                      12
+#define KEY_Y                      13
+#define KEY_CLEAR                  14
+
+#define KEY_2                      16
+#define KEY_ASTERISK               17
+#define KEY_B                      18
+#define KEY_J                      19
+#define KEY_R                      20
+#define KEY_Z                      21
+
+#define KEY_3                      24
+#define KEY_COMMA                  25
+#define KEY_C                      26
+#define KEY_K                      27
+#define KEY_S                      28
+#define KEY_UP                     29
+
+#define KEY_4                      32
+#define KEY_MINUS                  33
+#define KEY_D                      34
+#define KEY_L                      35
+#define KEY_T                      36
+#define KEY_DOWN                   37
+
+#define KEY_5                      40
+
+#define KEY_E                      42
+#define KEY_M                      43
+#define KEY_U                      44
+#define KEY_LEFT                   45
+
+#define KEY_6                      48
+#define KEY_SLASH                  49
+#define KEY_F                      50
+#define KEY_N                      51
+#define KEY_V                      52
+#define KEY_RIGHT                  53
+
+#define KEY_7                      56
+
+#define KEY_G                      58
+#define KEY_O                      59
+#define KEY_W                      60
+#define KEY_SPACE                  61
+
+#define KEY_SHIFT                  63
+
+#define KEY_COLON				    0
+#define KEY_COMMODORE				0
+#define KEY_CONTROL					0
+#define KEY_CRSR_LEFT_RIGHT			0
+#define KEY_CRSR_UP_DOWN			0
+#define KEY_DELETE					0
+#define KEY_EQUAL					0
+#define KEY_F1						0
+#define KEY_F2						0
+#define KEY_F3						0
+#define KEY_F4						0
+#define KEY_F5						0
+#define KEY_F6						0
+#define KEY_F7						0
+#define KEY_F8						0
+#define KEY_HOME					0
+#define KEY_INSERT					0
+#define KEY_LEFT_ARROW				0
+#define KEY_LEFT_SHIFT				0
+#define KEY_PERIOD					0
+#define KEY_PLUS					0
+#define KEY_POUND					0
+#define KEY_RIGHT_SHIFT				0
+#define KEY_RUNSTOP					0
+#define KEY_SEMICOLON				0
+#define KEY_UP_ARROW				0
+#define KEY_BACKSLASH               0
+#define KEY_SQUARE_OPEN             0
+#define KEY_SQUARE_CLOSED           0
+#define KEY_SEMICOMMA               0
+#define KEY_QUOTE                   0
+#define KEY_APIX                    0
+#define KEY_DEAD                    0
+#define KEY_CTRL                    0
+#define KEY_GRAPH                   0
+#define KEY_CAPS                    0
+#define KEY_CODE                    0
+#define KEY_ESC                     0
+#define KEY_TAB                     0
+#define KEY_STOP                    0
+#define KEY_BS                      0
+#define KEY_SELECT                  0
+#define KEY_RET                     0
+#define KEY_INS                     0
+#define KEY_DEL                     0
+#define KEY_DIVISION                0
 
 #define         JOY_COUNT           2
 #define JOYSTICK_0					0
@@ -157,9 +168,15 @@
 
 void d32_xpen( Environment * _environment, char * _destination );
 void d32_ypen( Environment * _environment, char * _destination );
-void d32_inkey( Environment * _environment, char * _pressed, char * _key );
-void d32_scancode( Environment * _environment, char * _pressed, char * _scacode );
+
+void d32_wait_key( Environment * _environment, int _release );
+void d32_key_state( Environment * _environment, char *_scancode, char * _result );
+void d32_scancode( Environment * _environment, char * _scacode );
+void d32_asciicode( Environment * _environment, char * _asciicode );
+void d32_inkey( Environment * _environment, char * _key );
 void d32_key_pressed( Environment * _environment, char *_scancode, char * _result );
+void d32_put_key(  Environment * _environment, char *_string, char * _size );
+
 void d32_scanshift( Environment * _environment, char * _shifts );
 void d32_keyshift( Environment * _environment, char * _shifts );
 void d32_clear_key( Environment * _environment );
@@ -174,5 +191,19 @@ void d32_timer_set_status_off( Environment * _environment, char * _timer );
 void d32_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
 void d32_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void d32_timer_set_address( Environment * _environment, char * _timer, char * _address );
+
+void d32_dojo_ready( Environment * _environment, char * _value );
+void d32_dojo_read_byte( Environment * _environment, char * _value );
+void d32_dojo_write_byte( Environment * _environment, char * _value );
+
+void d32_dojo_ping( Environment * _environment, char * _result );
+void d32_dojo_login( Environment * _environment, char * _name, char * _name_size, char * _password, char * _size, char * _unique_id );
+void d32_dojo_success( Environment * _environment, char * _id, char * _result );
+void d32_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id );
+void d32_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _port_id );
+void d32_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result );
+void d32_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
+void d32_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
+void d32_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
 
 #endif

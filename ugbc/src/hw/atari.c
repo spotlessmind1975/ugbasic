@@ -63,54 +63,78 @@ void atari_ypen( Environment * _environment, char * _destination ) {
    
 }
 
-void atari_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void atari_inkey( Environment * _environment, char * _key ) {
 
-    MAKE_LABEL
+    _environment->bitmaskNeeded = 1;
 
-    deploy( scancode, src_hw_atari_scancode_asm);
+    deploy( keyboard, src_hw_atari_keyboard_asm);
 
     outline0("JSR INKEY");
-
-    outline1("STX %s", _pressed );
-    outline1("STA %s", _key );
+    outline1("STA %s", _key);
 
 }
 
-void atari_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void atari_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_atari_keyboard_asm );
+
+    if ( _release ) {
+        outline0("JSR WAITKEYRELEASE");
+    } else {
+        outline0("JSR WAITKEY");
+    }
+   
+}
+
+void atari_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    deploy( scancode, src_hw_atari_scancode_asm);
+    deploy( keyboard, src_hw_atari_keyboard_asm );
+
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYSTATE");
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result);
+
+}
+
+void atari_scancode( Environment * _environment, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_atari_keyboard_asm);
 
     outline0("JSR SCANCODE");
+    outline1("STA %s", _result );
+   
+}
 
-    outline1("STX %s", _pressed );
-    outline1("STY %s", _scancode );
+void atari_asciicode( Environment * _environment, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_atari_keyboard_asm);
+
+    outline0("JSR ASCIICODE");
+    outline1("STA %s", _result );
+   
 }
 
 void atari_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
-    deploy( scancode, src_hw_atari_scancode_asm);
-
     MAKE_LABEL
 
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    deploy( keyboard, src_hw_atari_keyboard_asm );
 
-    outline0("JSR SCANCODEWITHDELAY");
-
-    outline1("STY %s", temp->realName );    
-
-    char nokeyLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( nokeyLabel, "%slabel", label );
-    
-    cpu_compare_8bit( _environment, temp->realName, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
-    cpu_store_8bit( _environment, _result, 0xff );
-    cpu_jump( _environment, label );
-    cpu_label( _environment, nokeyLabel );
-    cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_label( _environment, label );
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYPRESSED");
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result);
 
 }
 
@@ -135,47 +159,20 @@ void atari_scanshift( Environment * _environment, char * _shifts ) {
 
 void atari_keyshift( Environment * _environment, char * _shifts ) {
 
+    _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_atari_keyboard_asm );
 
-    outline0("LDA #0" );
+    outline0("JSR KEYSHIFT" );
     outline1("STA %s", _shifts );
-
-    outline0("LDA $02F2" );
-    outline0("AND #$40");
-    outline1("BNE %snoshifts", label );
-
-    outline0("LDA #3" );
-    outline1("STA %s", _shifts );
-   
-    outhead1("%snoshifts:", label );
-
-    outline0("LDA $02BE" );
-    outline0("AND #$40");
-    outline1("BEQ %snocaps", label );
-
-    outline1("LDA %s", _shifts);
-    outline0("ORA #4");
-    outline1("STA %s", _shifts);
-
-    outhead1("%snocaps:", label );
-
-    outline0("LDA $02BE" );
-    outline0("AND #$80");
-    outline1("BEQ %snoctrl", label );
-
-    outline1("LDA %s", _shifts);
-    outline0("ORA #8");
-    outline1("STA %s", _shifts);
-
-    outhead1("%snoctrl:", label );
 
 }
 
 void atari_clear_key( Environment * _environment ) {
 
-    outline0("LDA #$FF");
-    outline0("STA $02F2");
+    deploy( keyboard, src_hw_atari_keyboard_asm );
+
+    outline0("JSR CLEARKEY");
    
 }
 
@@ -438,6 +435,65 @@ void atari_dsave( Environment * _environment, char * _filename, char * _offset, 
 
     outline0("JSR ATARIDSAVE");
 
+}
+
+void atari_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    outline1("LDA %s", _string );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _string, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDX %s", _size );
+    outline0("JSR PUTKEY" );
+
+}
+
+void atari_dojo_ready( Environment * _environment, char * _value ) {
+
+}
+
+void atari_dojo_read_byte( Environment * _environment, char * _value ) {
+
+}
+
+void atari_dojo_write_byte( Environment * _environment, char * _value ) {
+
+}
+
+void atari_dojo_ping( Environment * _environment, char * _result ) {
+
+}
+
+void atari_dojo_login( Environment * _environment, char * _name, char * _name_size, char * _password, char * _size, char * _unique_id ) {
+
+}
+
+void atari_dojo_success( Environment * _environment, char * _id, char * _result ) {
+
+}
+
+void atari_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id ) {
+
+}
+
+void atari_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _port_id ) {
+
+}
+
+void atari_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result ) {
+
+}
+
+void atari_dojo_peek_message( Environment * _environment, char * _port_id, char * _result ) {
+
+}
+
+void atari_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message ) {
+
+}
+
+void atari_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result ) {
+    
 }
 
 #endif

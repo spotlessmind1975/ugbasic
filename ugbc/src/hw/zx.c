@@ -148,117 +148,107 @@ void zx_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 }
 
-void zx_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void zx_inkey( Environment * _environment, char * _key ) {
 
-    MAKE_LABEL
+    _environment->bitmaskNeeded = 1;
 
-    outhead1("zxinkey%s:",label);
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _pressed );
-    outline1("LD (%s), A", _key );
-    outline0("LD A, ($5C3B)");
-    outline0("AND $20");
-    outline0("CP $20");
-    outline1("JR NZ, %snokey", label);
-    outline0("LD A, ($5C08)");
-    outline1("LD (%s), A", _key );
-    outline0("LD A, $FF");
-    outline1("LD (%s), A", _pressed );
-    outline0("LD A, ($5C3B)");
-    outline0("AND $DF");
-    outline0("LD ($5C3B), A");
-    outhead1("%snokey:", label );
+    deploy( keyboard, src_hw_zx_keyboard_asm);
+
+    outline0("CALL INKEY");
+    outline1("LD (%s), A", _key);
+
+}
+
+void zx_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_zx_keyboard_asm );
+
+    if ( _release ) {
+        outline0("CALL WAITKEYRELEASE");
+    } else {
+        outline0("CALL WAITKEY");
+    }
    
 }
 
-void zx_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void zx_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    deploy( scancode, src_hw_zx_scancode_asm );
+    deploy( keyboard, src_hw_zx_keyboard_asm );
 
-    outline0("LD A, 0");
-    if( _scancode ){
-        outline1("LD (%s), A", _scancode );
-    }
-    outline1("LD (%s), A", _pressed );
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYSTATE");
+    cpu_ctoa( _environment );
+    outline1("LD (%s), A", _result);
+
+}
+
+void zx_scancode( Environment * _environment, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_zx_keyboard_asm);
+
     outline0("CALL SCANCODE");
-    outline0("CP 0");
-    outline1("JR Z,%snokey", label);
-    if( _scancode ){
-        outline1("LD (%s), A", _scancode );
-    }
-    outline0("LD A, $FF");
-    outline1("LD (%s), A", _pressed );
-    outhead1("%snokey:", label );
+    outline1("LD (%s), A", _result );
+   
+}
+
+void zx_asciicode( Environment * _environment, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_zx_keyboard_asm);
+
+    outline0("CALL ASCIICODE");
+    outline1("LD A, (%s)", _result );
    
 }
 
 void zx_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     MAKE_LABEL
 
-    char nokeyLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( nokeyLabel, "%slabel", label );
-    
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    deploy( keyboard, src_hw_zx_keyboard_asm );
 
-    zx_scancode( _environment, temp->realName, _result );
-    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
-    cpu_store_8bit( _environment, _result, 0xff );
-    cpu_jump( _environment, label );
-    cpu_label( _environment, nokeyLabel );
-    cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_label( _environment, label );
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYPRESSED");
+    cpu_ctoa( _environment );
+    outline1("LD (%s), A", _result);
 
 }
 
 void zx_scanshift( Environment * _environment, char * _shifts ) {
 
-    // 653	
-    // Shift key indicator. Bits:
-    // Bit #0: 1 = One or more of left Shift, right Shift or Shift Lock is currently being pressed or locked.
-    // Bit #1: 1 = Commodore is currently being pressed.
-    // Bit #2: 1 = Control is currently being pressed.
-    // NO SHIFT (0) - if no SHIFT key pressed;
-    // LEFT SHIFT (1) - if the left SHIFT pressed;
-    // RIGHT SHIFT (2) - if the right SHIFT pressed;
-    // BOTH SHIFTS (3) - if both keys pressed.
-
-    MAKE_LABEL
-
-    deploy( scancode, src_hw_zx_scancode_asm );
-
-    outline0("CALL SCANCODE");
-    outline0("CP $f1");
-    outline1("JR NZ,%snokey", label);
-    outline0("LD A, $03");
-    outline1("LD (%s), A", _shifts );
-    outhead1("%snokey:", label );
+    zx_keyshift( _environment, _shifts );
 
 }
 
 void zx_keyshift( Environment * _environment, char * _shifts ) {
 
-    // On the same way, KEY SHIFT is used to report the current status of those keys 
-    // which cannot be detected by either INKEY$ or SCANCODE because they do not 
-    // carry the relevant codes. These control keys cannot be tested individually, or a test can be set up for any combination of such keys pressed together. A single call to the KEY SHIFT function can test for all eventualities, by examining a bit map in the following format:
+    _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_zx_keyboard_asm );
 
-    deploy( scancode, src_hw_zx_scancode_asm );
-
-    outline0("CALL SCANCODE");
-    outline0("CP $f1");
-    outline1("JR NZ,%snokey", label);
-    outline0("LD A, $03");
+    outline0("CALL KEYSHIFT" );
     outline1("LD (%s), A", _shifts );
-    outhead1("%snokey:", label );
 
 }
 
 void zx_clear_key( Environment * _environment ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_zx_keyboard_asm );
+
+    outline0("CALL CLEARKEY" );
 
 }
 
@@ -408,6 +398,10 @@ void zx_initialization( Environment * _environment ) {
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        zx_cls( _environment, NULL, NULL );
+    }
+    
 }
 
 void zx_finalization( Environment * _environment ) {
@@ -437,6 +431,10 @@ int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
     _environment->fontHeight = 8;
     _environment->screenColors = 8;
     console_init( _environment );
+    if (_environment->vestigialConfig.clsImplicit ) {
+        zx_cls( _environment, NULL, NULL );
+    }
+
 }
 
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -461,7 +459,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
     (void)!_transparent_color;
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
@@ -1470,6 +1468,67 @@ void zx_timer_set_address( Environment * _environment, char * _timer, char * _ad
         outline0("LD B, 0" );
     }
     outline0("CALL TIMERSETADDRESS" );
+
+}
+
+void zx_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_zx_keyboard_asm);
+
+    outline1("LD HL, (%s)", _string );
+    outline1("LD A, (%s)", _size );
+    outline0("CALL PUTKEY" );
+
+}
+    
+
+void zx_dojo_ready( Environment * _environment, char * _value ) {
+
+}
+
+void zx_dojo_read_byte( Environment * _environment, char * _value ) {
+
+}
+
+void zx_dojo_write_byte( Environment * _environment, char * _value ) {
+
+}
+
+void zx_dojo_login( Environment * _environment, char * _username, char * _size, char * _password, char * _password_size, char * _session_id ) {
+
+}
+
+void zx_dojo_success( Environment * _environment, char * _id, char * _result ) {
+
+}
+
+void zx_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id ) {
+
+}
+
+void zx_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result ) {
+
+}
+
+void zx_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _public_id ) {
+
+}
+
+void zx_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result ) {
+
+}
+
+void zx_dojo_peek_message( Environment * _environment, char * _port_id, char * _result ) {
+
+}
+
+void zx_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message ) {
+
+}
+
+void zx_dojo_ping( Environment * _environment, char * _result ) {
 
 }
 

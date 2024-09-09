@@ -65,90 +65,80 @@ void c64reu_ypen( Environment * _environment, char * _destination ) {
    
 }
 
-void c64reu_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void c64reu_inkey( Environment * _environment, char * _key ) {
 
-    deploy( scancode, src_hw_c64reu_scancode_asm);
+    _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_c64reu_keyboard_asm);
 
-    outline0("LDA #$0");
-    outline1("STA %s", _pressed );
-    outline0("LDA #$0");
-    outline1("STA %s", _key );
+    outline0("JSR INKEY");
+    outline1("STA %s", _key);
 
-    outline0("JSR SCANCODE");
+}
 
-    outline0("LDX $c6");
-    outline0("CPX #$0");
-    outline1("BEQ %snokey", label );
+void c64reu_wait_key( Environment * _environment, int _release ) {
 
-    outline0("LDA $0277" );
-    outline0("CMP #$FF");
-    outline1("BEQ %snopetscii", label );
-    outline1("STA %s", _key );
-    outline0("LDA #$FF");
-    outline1("STA %s", _pressed );
+    _environment->bitmaskNeeded = 1;
 
-    outline0("LDX #0");
-    outhead1("%sclkeys:", label);
-    outline0("LDA $0278,X" );
-    outline0("STA $0277,X" );
-    outline0("INX");
-    outline0("CPX $c6");
-    outline1("BNE %sclkeys", label);
-    outline0("DEC $c6");
+    deploy( keyboard, src_hw_c64reu_keyboard_asm );
 
-    outline1("JMP %snokey", label );
-
-    outhead1("%snopetscii:", label );
-    outline0("LDA #0");
-    outline1("STA %s", _key );
-    outhead1("%snokey:", label );
+    if ( _release ) {
+        outline0("JSR WAITKEYRELEASE");
+    } else {
+        outline0("JSR WAITKEY");
+    }
    
 }
 
-void c64reu_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void c64reu_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
-    deploy( scancode, src_hw_c64reu_scancode_asm);
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    outline0("LDA #$0");
-    outline1("STA %s", _pressed );
-    outline0("LDA #$0");
-    outline1("STA %s", _scancode );
+    deploy( keyboard, src_hw_c64reu_keyboard_asm );
+
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYSTATE");
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result);
+
+}
+
+void c64reu_scancode( Environment * _environment, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_c64reu_keyboard_asm);
 
     outline0("JSR SCANCODE");
+    outline1("STA %s", _result );
+   
+}
 
-    outline0("LDY KEYBPREV");
-    outline0("CPY #$40");
-    outline1("BEQ %snokey", label );
+void c64reu_asciicode( Environment * _environment, char * _result ) {
 
-    outline1("STY %s", _scancode );
-    outline0("LDA #$ff");
-    outline1("STA %s", _pressed );
+    _environment->bitmaskNeeded = 1;
 
-    outhead1("%snokey:", label );
+    deploy( keyboard, src_hw_c64reu_keyboard_asm);
+
+    outline0("JSR ASCIICODE");
+    outline1("STA %s", _result );
    
 }
 
 void c64reu_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     MAKE_LABEL
 
-    char nokeyLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( nokeyLabel, "%slabel", label );
-    
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    deploy( keyboard, src_hw_c64reu_keyboard_asm );
 
-    c64reu_scancode( _environment, temp->realName, _result );
-    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
-    cpu_store_8bit( _environment, _result, 0xff );
-    cpu_jump( _environment, label );
-    cpu_label( _environment, nokeyLabel );
-    cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_label( _environment, label );
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYPRESSED");
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result);
 
 }
 
@@ -181,67 +171,26 @@ void c64reu_scanshift( Environment * _environment, char * _shifts ) {
 
 void c64reu_keyshift( Environment * _environment, char * _shifts ) {
 
-    deploy( scancode, src_hw_c64reu_scancode_asm);
+    _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_c64reu_keyboard_asm );
 
-    outline0("JSR SCANCODE");
-
-    outline0("LDA #0");
-    outline1("STA %s", _shifts);
-    outline0("LDA #$10");
-    outline0("STA $DC00");
-    outline0("LDA $DC01");
-    outline0("AND #$80");
-    outline1("BNE %snoleft", label);
-    outline0("LDA #1");
-    outline1("STA %s", _shifts);
-    outhead1("%snoleft:", label );
-
-    outline0("LDA #$20");
-    outline0("STA $DC00");
-    outline0("LDA $DC01");
-    outline0("AND #$10");
-    outline1("BNE %snoright", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #2");
-    outline1("STA %s", _shifts);
-    outhead1("%snoright:", label );
-
-    outline0("LDA $028D");
-    outline0("AND #$01");
-    outline1("BEQ %snocaps", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #4");
-    outline1("STA %s", _shifts);
-    outhead1("%snocaps:", label );
-
-    outline0("LDA $028D");
-    outline0("AND #$04");
-    outline1("BEQ %snocontrol", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #8");
-    outline1("STA %s", _shifts);
-    outhead1("%snocontrol:", label );
-
-    outline0("LDA $028D");
-    outline0("AND #$02");
-    outline1("BEQ %snoalt", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #$30");
-    outline1("STA %s", _shifts);
-    outhead1("%snoalt:", label );
+    outline0("JSR KEYSHIFT" );
+    outline1("STA %s", _shifts );
 
 }
 
 void c64reu_clear_key( Environment * _environment ) {
 
-    outline0("LDA #$0");
-    outline0("STA $c6");
+    _environment->bitmaskNeeded = 1;
+
+    outline0("JSR CLEARKEY");
    
 }
 
 void c64reu_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+
+    _environment->sysCallUsed = 1;
 
     deploy( dload, src_hw_c64reu_dload_asm);
 
@@ -294,6 +243,8 @@ void c64reu_dload( Environment * _environment, char * _filename, char * _offset,
 }
 
 void c64reu_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+
+    _environment->sysCallUsed = 1;
 
     deploy( dsave, src_hw_c64reu_dsave_asm);
 
@@ -361,6 +312,8 @@ void c64reu_dsave( Environment * _environment, char * _filename, char * _offset,
 }
 
 void c64reu_sys_call( Environment * _environment, int _destination ) {
+
+    _environment->sysCallUsed = 1;
 
     outline0("PHA");
     outline1("LDA #$%2.2x", (_destination & 0xff ) );
@@ -454,6 +407,206 @@ void c64reu_timer_set_address( Environment * _environment, char * _timer, char *
     outline1("LDA #>%s", _address );
     outline0("STA MATHPTR3");
     outline0("JSR TIMERSETADDRESS" );
+
+}
+
+void c64reu_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_c64reu_keyboard_asm);
+
+    outline1("LDA %s", _string );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _string, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDX %s", _size );
+    outline0("JSR PUTKEY" );
+
+}
+
+void c64reu_dojo_ready( Environment * _environment, char * _value ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline0("JSR DOJOISREADY" );
+    cpu_ztoa(_environment);
+    outline1("STA %s", _value );
+
+}
+
+void c64reu_dojo_read_byte( Environment * _environment, char * _value ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline0("JSR DOJOREADBYTE" );
+    outline1("STA %s", _value );
+
+}
+
+void c64reu_dojo_write_byte( Environment * _environment, char * _value ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline1("LDA %s", _value );
+    outline0("JSR DOJOWRITEBYTE" );
+
+}
+
+void c64reu_dojo_login( Environment * _environment, char * _username, char * _size, char * _password, char * _password_size, char * _session_id ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline1("LDA #<%s", _session_id );
+    outline0("STA DOJOCURRENTKAPTR" );
+    outline1("LDA #>%s", _session_id );
+    outline0("STA DOJOCURRENTKAPTR+1" );
+    outline1("LDA %s", _username );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _username, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDX %s", _size );
+    outline1("LDA %s", _password );
+    outline0("STA TMPPTR2" );
+    outline1("LDA %s", address_displacement( _environment, _password, "1" ) );
+    outline0("STA TMPPTR2+1" );
+    outline1("LDY %s", _password_size );
+    outline0("JSR DOJOLOGIN" );
+
+}
+
+void c64reu_dojo_success( Environment * _environment, char * _id, char * _result ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline1("LDA #<%s", _id );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _id );
+    outline0("STA TMPPTR+1" );
+    outline0("JSR DOJOSUCCESS" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
+void c64reu_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline1("LDA #<%s", _port_id );
+    outline0("STA DOJOCURRENTKAPTR" );
+    outline1("LDA #>%s", _port_id );
+    outline0("STA DOJOCURRENTKAPTR+1" );
+    outline1("LDA %s", _application );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _application, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDX %s", _size );
+    outline1("LDA #<%s", _session_id );
+    outline0("STA TMPPTR2" );
+    outline1("LDA #>%s", _session_id );
+    outline0("STA TMPPTR2+1" );
+    outline0("JSR DOJOCREATEPORT" );
+
+}
+
+void c64reu_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline1("LDA #<%s", _port_id );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _port_id );
+    outline0("STA TMPPTR+1" );
+    outline0("JSR DOJODESTROYPORT" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
+void c64reu_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _public_id ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline1("LDA #<%s", _session_id );
+    outline0("STA DOJOCURRENTKAPTR" );
+    outline1("LDA #>%s", _session_id );
+    outline0("STA DOJOCURRENTKAPTR+1" );
+    outline1("LDA #<%s", _public_id );
+    outline0("STA DOJOCURRENTKAPTR2" );
+    outline1("LDA #>%s", _public_id );
+    outline0("STA DOJOCURRENTKAPTR2+1" );
+    outline1("LDA %s", _username );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _username, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDX %s", _size );
+
+    outline1("LDA %s", _application );
+    outline0("STA TMPPTR2" );
+    outline1("LDA %s", address_displacement( _environment, _application, "1" ) );
+    outline0("STA TMPPTR2+1" );
+    outline1("LDY %s", _application_size );
+    outline0("JSR DOJOFINDPORT" );
+
+}
+
+void c64reu_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline1("LDA %s", _message );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _message, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDX %s", _size );
+
+    outline1("LDA #<%s", _port_id );
+    outline0("STA TMPPTR2" );
+    outline1("LDA #>%s", _port_id );
+    outline0("STA TMPPTR2+1" );
+    outline0("JSR DOJOPUTMESSAGE" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
+void c64reu_dojo_peek_message( Environment * _environment, char * _port_id, char * _result ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline1("LDA #<%s", _port_id );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _port_id );
+    outline0("STA TMPPTR+1" );
+    outline0("JSR DOJOPEEKMESSAGE" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
+void c64reu_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline1("LDA #<%s", _port_id );
+    outline0("STA TMPPTR2" );
+    outline1("LDA #>%s", _port_id );
+    outline0("STA TMPPTR2+1" );
+    outline0("JSR DOJOGETMESSAGE" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
+    outline1("STX %s", _message );
+
+}
+
+void c64reu_dojo_ping( Environment * _environment, char * _result ) {
+
+    deploy( dojo, src_hw_c64reu_dojo_asm);
+
+    outline0("JSR DOJOPING" );
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result );
 
 }
 

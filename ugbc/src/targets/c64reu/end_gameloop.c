@@ -82,7 +82,10 @@ void end_gameloop( Environment * _environment ) {
         if ( _environment->anyProtothread ) {
             run_parallel( _environment );
         }
+        
+        deploy( vbl, src_hw_vic2_vbl_asm);
         outline0( "JSR WAITVBL");
+
         deploy_embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
         if ( _environment->doubleBufferEnabled ) {
             outline0( "JSR SWITCHTILEMAP");

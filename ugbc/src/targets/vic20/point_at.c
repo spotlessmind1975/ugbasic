@@ -55,7 +55,7 @@ void point_at( Environment * _environment, int _x, int _y ) {
 
     outline2("; POINT AT (%d,%d)", _x, _y);
 
-    vic1_pset_int( _environment, _x, _y );    
+    vic1_pset_int( _environment, _x, _y, NULL );    
 
 }
 
@@ -81,6 +81,6 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
 
     outline2("; POINT AT (%s,%s)", _x, _y);
 
-    vic1_pset_vars( _environment, _x, _y );
+    vic1_pset_vars( _environment, _x, _y, NULL );
 
 }

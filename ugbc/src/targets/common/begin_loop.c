@@ -90,14 +90,18 @@ di strutture di controllo l'una nell'altra.
 
 @target all
 </usermanual> */
-void begin_loop( Environment * _environment ) {
+void begin_loop( Environment * _environment, int _do ) {
 
     MAKE_LABEL
 
     Loop * loop = malloc( sizeof( Loop ) );
     memset( loop, 0, sizeof( Loop ) );
     loop->label = strdup( label );
-    loop->type = LT_DO;
+    if ( _do ) {
+        loop->type = LT_DO;
+    } else {
+        loop->type = LT_LOOP;
+    }
     loop->next = _environment->loops;
     _environment->loops = loop;
 

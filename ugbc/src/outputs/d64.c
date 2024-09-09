@@ -512,7 +512,7 @@ static void d64_write_error( D64Handle * _handle, D64Track _track, D64Sector _se
         // Memory needed is of 1 byte for each sector.
         _handle->errorsSize = sizeof( _handle->sectors ) * sizeof( D64ErrorCode );
         _handle->errors = malloc( _handle->errorsSize );
-        memset( _handle->errors, NO_ERROR, sizeof( _handle->sectors ) * sizeof( D64ErrorCode ) );
+        memset( _handle->errors, NO_ERRORX, sizeof( _handle->sectors ) * sizeof( D64ErrorCode ) );
     }
 
     // Calculate the offset (in sectors) for the given track/sector.

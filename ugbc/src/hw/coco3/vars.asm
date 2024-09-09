@@ -46,11 +46,10 @@ TABCOUNT            fcb     4
 XCURS               fcb     0
 YCURS               fcb     0
 EMPTYTILE           fcb     32
-KBDRATE             fcb     16
 
-COCO3TIMER           fdb     $0
-COCO3TIMER2           fdb     $0
-TICKSPERSECOND       fcb     $0
+COCO3TIMER          fdb     $0
+COCO3TIMER2         fdb     $0
+TICKSPERSECOND      fcb     $0
 
 TMPPTR equ $10    ; $23
 TMPPTR2 equ $12    ; $25
@@ -113,6 +112,9 @@ DLOADERROR      fcb  $0
 DSAVEERROR      fcb  $0
 
 RAMENABLED      fcb  $1
+
+JOYSTICK0       fcb  $0
+JOYSTICK1       fcb  $0
 
 PIA0AD     equ   $FF00
 PIA0AC     equ   $FF01

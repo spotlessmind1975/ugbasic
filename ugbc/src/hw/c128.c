@@ -65,71 +65,80 @@ void c128_ypen( Environment * _environment, char * _destination ) {
    
 }
 
-void c128_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void c128_inkey( Environment * _environment, char * _key ) {
 
-    deploy( scancode, src_hw_c128_scancode_asm);
+    _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
-
-    outline0("LDA #$0");
-    outline1("STA %s", _pressed );
-    outline0("LDA #$0");
-    outline1("STA %s", _key );
+    deploy( keyboard, src_hw_c128_keyboard_asm);
 
     outline0("JSR INKEY");
-
-    outline0("CMP #$0");
-    outline1("BEQ %snokey", label );
-
-    outline1("STA %s", _key );
-    outline0("LDA #$ff");
-    outline1("STA %s", _pressed );
-    
-    outhead1("%snokey:", label );
+    outline1("STA %s", _key);
 
 }
 
-void c128_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void c128_wait_key( Environment * _environment, int _release ) {
 
-    deploy( scancode, src_hw_c128_scancode_asm);
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_c128_keyboard_asm );
+
+    if ( _release ) {
+        outline0("JSR WAITKEYRELEASE");
+    } else {
+        outline0("JSR WAITKEY");
+    }
+   
+}
+
+void c128_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    outline0("LDA #$0");
-    outline1("STA %s", _pressed );
-    outline0("LDA #$0");
-    outline1("STA %s", _scancode );
+    deploy( keyboard, src_hw_c128_keyboard_asm );
+
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYSTATE");
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result);
+
+}
+
+void c128_scancode( Environment * _environment, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_c128_keyboard_asm);
 
     outline0("JSR SCANCODE");
+    outline1("STA %s", _result );
+   
+}
 
-    outline0("CMP #$0");
-    outline1("BEQ %snokey", label );
+void c128_asciicode( Environment * _environment, char * _result ) {
 
-    outline1("STA %s", _scancode );
-    outline0("LDA #$ff");
-    outline1("STA %s", _pressed );
-    
-    outhead1("%snokey:", label );
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_c128_keyboard_asm);
+
+    outline0("JSR ASCIICODE");
+    outline1("STA %s", _result );
    
 }
 
 void c128_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     MAKE_LABEL
 
-    char nokeyLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( nokeyLabel, "%slabel", label );
-    
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    deploy( keyboard, src_hw_c128_keyboard_asm );
 
-    c128_scancode( _environment, temp->realName, _result );
-    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
-    cpu_store_8bit( _environment, _result, 0xff );
-    cpu_jump( _environment, label );
-    cpu_label( _environment, nokeyLabel );
-    cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_label( _environment, label );
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYPRESSED");
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result);
 
 }
 
@@ -162,67 +171,29 @@ void c128_scanshift( Environment * _environment, char * _shifts ) {
 
 void c128_keyshift( Environment * _environment, char * _shifts ) {
 
-    deploy( scancode, src_hw_c128_scancode_asm);
+    _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_c128_keyboard_asm );
 
-    outline0("JSR SCANCODE");
-
-    outline0("LDA #0");
-    outline1("STA %s", _shifts);
-    outline0("LDA #$10");
-    outline0("STA $DC00");
-    outline0("LDA $DC01");
-    outline0("AND #$80");
-    outline1("BNE %snoleft", label);
-    outline0("LDA #1");
-    outline1("STA %s", _shifts);
-    outhead1("%snoleft:", label );
-
-    outline0("LDA #$20");
-    outline0("STA $DC00");
-    outline0("LDA $DC01");
-    outline0("AND #$10");
-    outline1("BNE %snoright", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #2");
-    outline1("STA %s", _shifts);
-    outhead1("%snoright:", label );
-
-    outline0("LDA $028D");
-    outline0("AND #$01");
-    outline1("BEQ %snocaps", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #4");
-    outline1("STA %s", _shifts);
-    outhead1("%snocaps:", label );
-
-    outline0("LDA $028D");
-    outline0("AND #$04");
-    outline1("BEQ %snocontrol", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #8");
-    outline1("STA %s", _shifts);
-    outhead1("%snocontrol:", label );
-
-    outline0("LDA $028D");
-    outline0("AND #$02");
-    outline1("BEQ %snoalt", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #$30");
-    outline1("STA %s", _shifts);
-    outhead1("%snoalt:", label );
+    outline0("JSR KEYSHIFT" );
+    outline1("STA %s", _shifts );
 
 }
 
+
 void c128_clear_key( Environment * _environment ) {
 
-    outline0("LDA #$0");
-    outline0("STA $c6");
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_c128_keyboard_asm );
+
+    outline0("JSR CLEARKEY");
    
 }
 
 void c128_sys_call( Environment * _environment, int _destination ) {
+
+    _environment->sysCallUsed = 1;
 
     outline0("PHA");
     outline1("LDA #$%2.2x", (_destination & 0xff ) );
@@ -321,6 +292,8 @@ void c128_timer_set_address( Environment * _environment, char * _timer, char * _
 
 void c128_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
+    _environment->sysCallUsed = 1;
+
     deploy( dload, src_hw_c128_dload_asm);
 
     MAKE_LABEL
@@ -372,6 +345,8 @@ void c128_dload( Environment * _environment, char * _filename, char * _offset, c
 }
 
 void c128_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+
+    _environment->sysCallUsed = 1;
 
     deploy( dsave, src_hw_c128_dsave_asm);
 
@@ -435,6 +410,67 @@ void c128_dsave( Environment * _environment, char * _filename, char * _offset, c
     }
 
     outline0("JSR C128DSAVE");
+
+}
+
+void c128_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    outline1("LDA %s", _string );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _string, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDX %s", _size );
+    outline0("JSR PUTKEY" );
+
+}
+
+void c128_dojo_ready( Environment * _environment, char * _value ) {
+
+}
+
+void c128_dojo_read_byte( Environment * _environment, char * _value ) {
+
+}
+
+void c128_dojo_write_byte( Environment * _environment, char * _value ) {
+
+}
+
+void c128_dojo_login( Environment * _environment, char * _username, char * _size, char * _password, char * _password_size, char * _session_id ) {
+
+}
+
+void c128_dojo_success( Environment * _environment, char * _id, char * _result ) {
+
+}
+
+void c128_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id ) {
+
+}
+
+void c128_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result ) {
+
+}
+
+void c128_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _public_id ) {
+
+}
+
+void c128_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result ) {
+
+}
+
+void c128_dojo_peek_message( Environment * _environment, char * _port_id, char * _result ) {
+
+}
+
+void c128_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message ) {
+
+}
+
+void c128_dojo_ping( Environment * _environment, char * _result ) {
 
 }
 

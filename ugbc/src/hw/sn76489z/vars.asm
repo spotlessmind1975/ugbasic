@@ -49,12 +49,3 @@ SN76489FREQTABLE:
     DW 4,          4,          3,          3,          3,          3,          3,          2,          2,          2
     DW 2,          2,          2,          2,          1,          1,          1,          1,          1           
     
-; SN76489MUSICREADY: .byte $0
-; SN76489BLOCKS: .word $0
-; SN76489LASTBLOCK: .byte $0
-
-; SN76489TMPPTR2 = $03 ; $04
-; SN76489TMPPTR = $05 ; $06
-; SN76489TMPOFS = $07
-; SN76489TMPLEN = $08
-; SN76489JIFFIES = $09 ; $0A

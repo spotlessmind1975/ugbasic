@@ -40,6 +40,9 @@
 ; ----------------------------------------------------------------------------
 
 PUTIMAGE
+
+@IF !vestigialConfig.screenModeUnique
+
     LDA CURRENTMODE
     CMPA #0
     BNE PUTIMAGE0X
@@ -103,9 +106,17 @@ PUTIMAGE13X
 PUTIMAGE14X
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 0) || (currentMode == 1) )
+
 PUTIMAGE0
 PUTIMAGE1
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 2) )
 
 ; The ALPHA SEMIGRAPHICS – 4 mode translates bits 0 through 3 into a 4 x 6 dot 
 ; element in the standard 8 x 12 dot box. Three data bits may be used to select
@@ -116,6 +127,10 @@ PUTIMAGE1
 PUTIMAGE2
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 3) )
+
 ; The ALPHA SEMIGRAPHICS – 6 mode maps six 4 x 4 dot elements into the standard
 ; 8 x 12 dot alphanumeric box, a screen density of 64 x 48 elements is available. 
 ; Six bits are used to generate this map and two data bits may be used to select 
@@ -123,6 +138,10 @@ PUTIMAGE2
 ; The element area is four dot-clocks wide by four lines high.
 PUTIMAGE3
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 4) )
 
 ; The ALPHA SEMIGRAPHICS – 8 mode maps eight 4 x 3 dot elements into the 
 ; standard 8 x 12 dot box. This mode requires four memory locations per box 
@@ -133,6 +152,10 @@ PUTIMAGE3
 PUTIMAGE4
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 5) )
+
 ; The ALPHA SEMIGRAPHICS – 12 mode maps twelve 4 x 2 dot elements into the 
 ; standard 8 x 12 dot box. This mode requires six memory locations per box and 
 ; each memory location may specify one of eight colors or black. A 3072 byte 
@@ -140,6 +163,10 @@ PUTIMAGE4
 ; display area. The element area is four dot-clocks wide by two lineshigh.
 PUTIMAGE5
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 6) )
 
 ; The ALPHA SEMIGRAPHICS – 24 mode maps twenty-four 4 x 1 dot elements into 
 ; the standard 8 x 12 dot box. This mode requires twelve memory locations 
@@ -149,6 +176,10 @@ PUTIMAGE5
 ; dot-clocks wide by one line high.
 PUTIMAGE6
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 7) )
 
 ; The 64 x 64 Color Graphics mode generates a display matrix of 64 
 ; elements wide by 64 elements high. Each element may be one of four 
@@ -176,6 +207,10 @@ PUTIMAGE7
     LEAX D, X
 
     JMP PUTIMAGECOMMONC
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 8) )
 
 ; The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
 ; by 64 elements high. Each element may be either ON or OFF. However, 
@@ -206,6 +241,10 @@ PUTIMAGE8
 
     JMP PUTIMAGECOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 9) )
+
 ; The 128 x 64 Color Graphics mode generates a display matrix 128 
 ; elements wide by 64 elements high. Each element may be one of four 
 ; colors. A 2K x 8 display memory is required. Each pixel equals
@@ -234,6 +273,10 @@ PUTIMAGE9
     LEAX D, X
 
     JMP PUTIMAGECOMMONC
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 10) )
 
 ; The 128 x 96 Graphics mode generates a display matrix 128 
 ; elements wide by 96 elements high. Each element may be either 
@@ -265,6 +308,10 @@ PUTIMAGE10
 
     JMP PUTIMAGECOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 11) )
+
 ; The 128 x 96 Color Graphics mode generates a display 128 elements 
 ; wide by 96 elements high. Each element may be one of four colors. 
 ; A 3K x 8 display memory is required. Each pixel equals two 
@@ -293,6 +340,10 @@ PUTIMAGE11
     LEAX D, X
 
     JMP PUTIMAGECOMMONC
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 12) )
 
 ; The 128 x 192 Graphics mode generates a display matrix 128 elements 
 ; wide by 192 elements high. Each element may be either ON or OFF,
@@ -324,6 +375,10 @@ PUTIMAGE12
 
     JMP PUTIMAGECOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 13) )
+
 ;  The 128 x 192 Color Graphics mode generates a display 128 elements 
 ;  wide by 192 elements high. Each element may be one of four colors.
 ;  A 6K x 8 display memory is required. Each pixel equals two dot-clocks 
@@ -352,6 +407,10 @@ PUTIMAGE13
     LEAX D, X
 
     JMP PUTIMAGECOMMONC
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 14) )
 
 ; The 256 x 192 Graphics mode generates a display 256 elements wide by 
 ; 192 elements high. Each element may be either ON or OFF, but the ON 
@@ -384,6 +443,8 @@ PUTIMAGE14
     LEAX D, X
 
     JMP PUTIMAGECOMMON
+
+@ENDIF
 
 PUTIMAGECOMMON
 

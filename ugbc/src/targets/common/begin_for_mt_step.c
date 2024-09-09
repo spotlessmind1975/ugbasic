@@ -54,7 +54,7 @@ void begin_for_mt_step( Environment * _environment, char * _index, char * _from,
 
     Variable * index = variable_retrieve( _environment, _index );
 
-    if ( index->type != VT_ARRAY ) {
+    if ( index->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( index->name );
     }
 
@@ -91,7 +91,7 @@ void begin_for_mt_step( Environment * _environment, char * _index, char * _from,
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, index->name );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( index->name );
     }
     variable_move_array( _environment, index->name, from->name );
@@ -107,8 +107,8 @@ void begin_for_mt_step( Environment * _environment, char * _index, char * _from,
 
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-    array = variable_retrieve_or_define( _environment, index->name, VT_ARRAY, 0 );
-    if ( array->type != VT_ARRAY ) {
+    array = variable_retrieve_or_define( _environment, index->name, VT_TARRAY, 0 );
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( index->name );
     }
     Variable * value = variable_move_from_array( _environment, index->name );

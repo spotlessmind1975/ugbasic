@@ -95,7 +95,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
             }
             break;
         case VT_IMAGE:
-        case VT_ARRAY:
+        case VT_TARRAY:
             tms9918_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
             break;
         default:

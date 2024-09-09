@@ -63,9 +63,9 @@ void wait_ticks( Environment * _environment, int _timing ) {
     outhead1("%sd1:", label);
     outline0("LD A, L");
     outline1("CP $%2.2x", (_timing & 0xff) );
-    outline1("JR Z, %s2", label );
+    outline1("JR Z, %s2d", label );
     outline1("JR C, %s", label );
-    outhead1("%s2:", label);
+    outhead1("%s2d:", label);
 
 }
 
@@ -100,8 +100,8 @@ void wait_ticks_var( Environment * _environment, char * _timing ) {
     outline0("LD B, A");
     outline0("LD A, L");
     outline0("CP B" );
-    outline1("JR Z, %s2", label );
+    outline1("JR Z, %s2d", label );
     outline1("JR C, %s", label );
-    outhead1("%s2:", label);
+    outhead1("%s2d:", label);
 
 }

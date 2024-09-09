@@ -40,6 +40,7 @@ PLOTY    = $24
 PLOTM    = $25
 PLOTOMA  = $26
 PLOTAMA  = $27
+PLOTCPE  = $28
 
 ;--------------
 
@@ -309,7 +310,7 @@ PLOT3:
     LDY #0
     LDA (PLOTCDEST),Y
     AND #$0F
-    CMP _PEN
+    CMP PLOTCPE
     BEQ PLOT3C1
     LDY #0
     LDA (PLOTCDEST),Y
@@ -317,11 +318,11 @@ PLOT3:
     LSR
     LSR
     LSR
-    CMP _PEN
+    CMP PLOTCPE
     BEQ PLOT3C2
     LDA (PLOTC2DEST),Y
     AND #$0F
-    CMP _PEN
+    CMP PLOTCPE
     BEQ PLOT3C3
 
     LDA LASTCOLOR
@@ -336,7 +337,7 @@ PLOT3SC1:
     LDA (PLOTCDEST),Y
     AND #$0F
     STA (PLOTCDEST),Y
-    LDA _PEN
+    LDA PLOTCPE
     ASL
     ASL
     ASL
@@ -356,7 +357,7 @@ PLOT3SC2:
     LDA (PLOTCDEST),Y
     AND #$F0
     STA (PLOTCDEST),Y
-    LDA _PEN
+    LDA PLOTCPE
     ORA (PLOTCDEST),Y
     STA (PLOTCDEST),Y
     LDA #2
@@ -369,7 +370,7 @@ PLOT3C2:
     JMP PLOT3PEN
 
 PLOT3SC3:
-    LDA _PEN
+    LDA PLOTCPE
     LDY #0
     STA (PLOTC2DEST),Y
     LDA #3
@@ -453,7 +454,7 @@ PLOTD:
     LDY #0
     LDA (PLOTCDEST),y          ;get row with point in it
     AND #$f0                   ;isolate AND set the point
-    ORA _PEN                   ;isolate OR set the point
+    ORA PLOTCPE                   ;isolate OR set the point
     STA (PLOTCDEST),y          ;write back to $A000    
 
     LDY #0

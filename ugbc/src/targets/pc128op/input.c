@@ -76,8 +76,6 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     cpu_store_8bit( _environment, comma->realName, _environment->inputConfig.separator == 0 ? INPUT_DEFAULT_SEPARATOR : _environment->inputConfig.separator );
     cpu_store_8bit( _environment, size->realName, _environment->inputConfig.size == 0 ? INPUT_DEFAULT_SIZE : _environment->inputConfig.size );
     cpu_store_8bit( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor );
-    cpu_store_8bit( _environment, "KBDRATE", ( _environment->inputConfig.rate == 0 ? INPUT_DEFAULT_RATE : _environment->inputConfig.rate ) );
-    // cpu_store_8bit( _environment, "KBDDELAY", _environment->inputConfig.delay == 0 ? INPUT_DEFAULT_DELAY : _environment->inputConfig.delay );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     cpu_dsfree( _environment, temporary->realName );
@@ -102,9 +100,8 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     print( _environment, underscore->name, 0 );
     cmove_direct( _environment, -1, 0 );
 
-    pc128op_inkey( _environment, pressed->realName, key->realName );
+    pc128op_inkey( _environment, key->realName );
 
-    cpu_bveq( _environment, pressed->realName, repeatLabel );
     cpu_bveq( _environment, key->realName, repeatLabel );
 
     cpu_compare_8bit( _environment, key->realName, backspace->realName, pressed->realName, 1 );

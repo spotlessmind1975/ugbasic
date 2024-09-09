@@ -179,6 +179,7 @@ void target_initialization( Environment * _environment ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
+        cpu_call( _environment, "VARINIT" );
     }
 
 }

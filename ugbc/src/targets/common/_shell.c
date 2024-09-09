@@ -61,7 +61,7 @@ void shell_injection( Environment * _environment ) {
 
     print( _environment, presentationLine->name, 1 );
 
-    begin_loop( _environment );
+    begin_do_loop( _environment );
 
         cpu_label( _environment, "SHELLPROMPT" );
 
@@ -91,7 +91,7 @@ void shell_injection( Environment * _environment ) {
         cpu_dsfree( _environment, loweredCommand->realName );
         cpu_dsfree( _environment, command->realName );
 
-    end_loop( _environment );
+    end_do_loop( _environment );
 
     cpu_label( _environment, "PROGLIST" );
 

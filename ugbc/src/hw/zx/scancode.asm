@@ -35,7 +35,11 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-SCANCODE:
+KEYBOARDMANAGER:
+    PUSH HL
+    PUSH BC
+    PUSH DE
+    PUSH AF    
     LD HL,SCANCODEKM
     LD D,8
     LD C,$FE
@@ -54,9 +58,23 @@ SCANCODE1:
     DEC D
     JR NZ,SCANCODE0
     AND A
+    LD (KEYPRESS), A
+
+    POP AF
+    POP DE
+    POP BC
+    POP HL
+
     RET
 SCANCODE2:
     LD A, (HL)
+    LD (KEYPRESS), A
+
+    POP AF
+    POP DE
+    POP BC
+    POP HL
+    
     RET
  
 SCANCODEKM:

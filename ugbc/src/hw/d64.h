@@ -157,9 +157,15 @@
 
 void d64_xpen( Environment * _environment, char * _destination );
 void d64_ypen( Environment * _environment, char * _destination );
-void d64_inkey( Environment * _environment, char * _pressed, char * _key );
-void d64_scancode( Environment * _environment, char * _pressed, char * _scacode );
+
+void d64_wait_key( Environment * _environment, int _release );
+void d64_key_state( Environment * _environment, char *_scancode, char * _result );
+void d64_scancode( Environment * _environment, char * _scacode );
+void d64_asciicode( Environment * _environment, char * _asciicode );
+void d64_inkey( Environment * _environment, char * _key );
 void d64_key_pressed( Environment * _environment, char *_scancode, char * _result );
+void d64_put_key(  Environment * _environment, char *_string, char * _size );
+
 void d64_scanshift( Environment * _environment, char * _shifts );
 void d64_keyshift( Environment * _environment, char * _shifts );
 void d64_clear_key( Environment * _environment );
@@ -174,5 +180,19 @@ void d64_timer_set_status_off( Environment * _environment, char * _timer );
 void d64_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
 void d64_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void d64_timer_set_address( Environment * _environment, char * _timer, char * _address );
+
+void d64_dojo_ready( Environment * _environment, char * _value );
+void d64_dojo_read_byte( Environment * _environment, char * _value );
+void d64_dojo_write_byte( Environment * _environment, char * _value );
+
+void d64_dojo_ping( Environment * _environment, char * _result );
+void d64_dojo_login( Environment * _environment, char * _name, char * _name_size, char * _password, char * _size, char * _unique_id );
+void d64_dojo_success( Environment * _environment, char * _id, char * _result );
+void d64_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id );
+void d64_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _port_id );
+void d64_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result );
+void d64_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
+void d64_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
+void d64_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
 
 #endif

@@ -216,6 +216,8 @@ void to8_joystick( Environment * _environment, int _joystick, char * _result ) {
 
 void to8_sys_call( Environment * _environment, int _destination ) {
 
+    _environment->sysCallUsed = 1;
+
     outline0("PSHS D");
     outline1("LDD #$%4.4x", _destination );
     outline0("STD SYSCALL0+1");
@@ -300,6 +302,54 @@ void to8_timer_set_address( Environment * _environment, char * _timer, char * _a
         outline0("LDB #0" );
     }
     outline0("JSR TIMERSETADDRESS" );
+
+}
+
+void to8_dojo_ready( Environment * _environment, char * _value ) {
+
+}
+
+void to8_dojo_read_byte( Environment * _environment, char * _value ) {
+
+}
+
+void to8_dojo_write_byte( Environment * _environment, char * _value ) {
+
+}
+
+void to8_dojo_login( Environment * _environment, char * _username, char * _size, char * _password, char * _password_size, char * _session_id ) {
+
+}
+
+void to8_dojo_success( Environment * _environment, char * _id, char * _result ) {
+
+}
+
+void to8_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id ) {
+
+}
+
+void to8_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result ) {
+
+}
+
+void to8_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _public_id ) {
+
+}
+
+void to8_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result ) {
+
+}
+
+void to8_dojo_peek_message( Environment * _environment, char * _port_id, char * _result ) {
+
+}
+
+void to8_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message ) {
+
+}
+
+void to8_dojo_ping( Environment * _environment, char * _result ) {
 
 }
 

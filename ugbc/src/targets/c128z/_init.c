@@ -50,8 +50,6 @@ void target_initialization( Environment * _environment ) {
 
     // _environment->audioConfig.async = 1;
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
     variable_import( _environment, "EVERYCOUNTER", VT_WORD, 0 );
     variable_global( _environment, "EVERYCOUNTER" );
     variable_import( _environment, "EVERYTIMING", VT_WORD, 0 );
@@ -91,19 +89,14 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
     variable_global( _environment, "TICKSPERSECOND" );   
 
+    variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTCPE" );   
+
     variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
     variable_global( _environment, "FPSCRAP" );
 
     variable_import( _environment, "KBDCHAR", VT_BYTE, 0 );
     variable_global( _environment, "KBDCHAR" );
-    variable_import( _environment, "KBDRATE", VT_BYTE, 16 );
-    variable_global( _environment, "KBDRATE" );
-    variable_import( _environment, "KBDDELAY", VT_BYTE, 64 );
-    variable_global( _environment, "KBDDELAY" );
-    variable_import( _environment, "KBDRATEC", VT_BYTE, 16 );
-    variable_global( _environment, "KBDRATEC" );
-    variable_import( _environment, "KBDDELAYC", VT_BYTE, 64 );
-    variable_global( _environment, "KBDDELAYC" );
 
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
@@ -134,6 +127,7 @@ void target_initialization( Environment * _environment ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
+        cpu_call( _environment, "VARINIT" );
     }
 
 }

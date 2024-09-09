@@ -217,7 +217,7 @@ void draw_string( Environment * _environment, char * _string ) {
         // with a ',' so we are looking for that character, or for the end
         // of the original string, as well -- note that the end of the string
         // means end of the parameter itself.
-        begin_loop( _environment );
+        begin_do_loop( _environment );
 
             // Exit if drawing string is ended
             cpu_compare_and_branch_8bit_const( _environment, size->realName, 0, readParameter2Label, 1 );
@@ -235,7 +235,7 @@ void draw_string( Environment * _environment, char * _string ) {
             // drawing commands string
             cpu_inc( _environment, psize->realName );
 
-        end_loop( _environment );
+        end_do_loop( _environment );
 
         cpu_label( _environment, readParameter3Label );
         // cpu_dec_16bit( _environment, address->realName );
@@ -291,7 +291,7 @@ void draw_string( Environment * _environment, char * _string ) {
         cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
 
         // ------------------------------------ FETCH AND DECODE LOOP
-        begin_loop( _environment );
+        begin_do_loop( _environment );
 
             // Starting with current position on x and y
             variable_move( _environment, origin_resolution_relative_transform_x( _environment, NULL, 0 )->name, x->name );
@@ -635,7 +635,7 @@ void draw_string( Environment * _environment, char * _string ) {
             draw( _environment, 
                 origin_resolution_relative_transform_x( _environment, NULL, 0 )->name, 
                 origin_resolution_relative_transform_y( _environment, NULL, 0 )->name, 
-                x->name, y->name, c->name );
+                x->name, y->name, c->name, 0 );
 
             // Update current position (this is done also if nothing is drawn!)
             cpu_label( _environment, move5CommandLabel );
@@ -660,7 +660,7 @@ void draw_string( Environment * _environment, char * _string ) {
             // Move to the next character of the drawing commands string.
             cpu_label( _environment, doneCommandLabel );
 
-        end_loop( _environment );
+        end_do_loop( _environment );
         // ------------------------------------ FETCH AND DECODE LOOP (end)
 
         cpu_label( _environment, label );

@@ -61,6 +61,10 @@ expression does not begin with an identifier.
 
 If the procedure returns a value, the calling statement deletes it.
 
+Important: if the ''OPTION CALL AS GOTO'' pragma is in effect, the instruction
+will be considered as a ''GOTO'' rather than a ''GOSUB''. So, no return value and
+no return, at all. This not applies to system calls.
+
 @italian
 La parola chiave ''CALL'' Trasferisce il controllo a una routine. Il primo 
 parametro è la procedura da chiamare. La procedura può essere chiamata utilizzando 
@@ -75,28 +79,15 @@ l'espressione non inizia con un identificatore.
 
 Se la procedura restituisce un valore, l'istruzione chiamante lo elimina.
 
+Importante: se il pragma ''OPTION CALL AS GOTO'' è attivo, l'istruzione
+sarà considerata un ''GOTO'' piuttosto che un ''GOSUB''. Quindi, nessun
+valore di ritorno e, anzi, nessun ritorno sarà previsto. Questo non si applica
+alle chiamate di sistema.
+
 @syntax CALL name
 @syntax CALL name[par1 [,par 2 [, ....]]]
 
 @example CALL factorial(42)
-
-@usedInExample procedures_param_01.bas
-@usedInExample procedures_param_02.bas
-
-@target all
-</usermanual> */
-/* <usermanual>
-@keyword PROC
-
-@english
-This keyword will invoke a procedure. 
-
-@italian
-Questa parola chiave invoca una funzione.
-
-@syntax PROC name [(par1[, par2[, ... ]])]
-
-@example PROC factorial[42]
 
 @usedInExample procedures_param_01.bas
 @usedInExample procedures_param_02.bas
@@ -185,7 +176,11 @@ void call_procedure( Environment * _environment, char * _name ) {
         }
         _environment->parameters = 0;
 
-        cpu_call( _environment, procedure->realName );
+        if ( _environment->optionCallAsGoto ) {
+            cpu_jump( _environment, procedure->realName );
+        } else {
+            cpu_call( _environment, procedure->realName );
+        }
 
     }
 

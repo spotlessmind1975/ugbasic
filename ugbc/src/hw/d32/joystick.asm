@@ -57,6 +57,17 @@ PIA1CRA		EQU		DPPIA1CRA+IO	; Side A Control.
 PIA1DB		EQU		DPPIA1DB+IO	; Side A Data/DDR
 PIA1CRB		EQU		DPPIA1CRB+IO	; Side A Control.
 
+@IF joystickConfig.values
+
+JOYSTICKTSBREMAP
+
+    fcb     $0, $1, $5, $0
+    fcb     $7, $8, $6, $0
+    fcb     $3, $2, $4, $0
+    fcb     $0, $0, $0, $0
+
+@ENDIF
+
 @EMIT joystickConfig.retries AS JOYSTICKRETRIES
 
 TEMPJOYSTICK       
@@ -74,6 +85,52 @@ LBD46
     ORA     #$08			; set bit in control register
 LBD4F
     STA     ,U++			; save it back and select side B control
+    RTS
+
+@IF joystickConfig.values
+JOYSTICKTSB
+    PSHS D
+    PSHS X
+    LDX #JOYSTICKTSBREMAP
+    LDA <DIRECTION    
+    ANDA #$0F
+    LDB A, X
+    LDA <DIRECTION    
+    ANDA #$20
+    BEQ JOYSTICKNOFIRE0
+    ORB #$80
+JOYSTICKNOFIRE0
+    STB <DIRECTION
+    PULS X
+    PULS D
+    RTS
+@ENDIF
+
+JOYSTICKMANAGER
+    PSHS D
+    PSHS U
+
+    LDA #0
+    STA <PORT
+    JSR JOYSTICK
+@IF joystickConfig.values
+    JSR JOYSTICKTSB    
+@ENDIF
+    LDA <DIRECTION
+    STA JOYSTICK0
+
+    LDA #1
+    STA <PORT
+    JSR JOYSTICK
+@IF joystickConfig.values
+    JSR JOYSTICKTSB    
+@ENDIF
+    LDA <DIRECTION
+    STA JOYSTICK1
+
+    PULS U
+    PULS D
+
     RTS
 
 JOYSTICK

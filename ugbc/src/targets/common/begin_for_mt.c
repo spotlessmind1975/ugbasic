@@ -70,7 +70,7 @@ void begin_for_from_assign_mt( Environment * _environment, char * _from ) {
     Loop * loop = _environment->loops;
 
     Variable * from = variable_retrieve( _environment, _from );
-    Variable * fromResident = variable_resident( _environment, VT_ARRAY, "(from)" );
+    Variable * fromResident = variable_resident( _environment, VT_TARRAY, "(from)" );
     _environment->arrayDimensionsEach[0] = _environment->protothreadConfig.count;
     _environment->arrayDimensions = 1;
     variable_array_type( _environment, fromResident->name, from->type );
@@ -106,7 +106,7 @@ void begin_for_to_assign_mt( Environment * _environment, char * _to ) {
     Loop * loop = _environment->loops;
     Variable * to = variable_retrieve( _environment, _to );
 
-    Variable * toResident = variable_resident( _environment, VT_ARRAY, "(to)" );
+    Variable * toResident = variable_resident( _environment, VT_TARRAY, "(to)" );
     _environment->arrayDimensionsEach[0] = _environment->protothreadConfig.count;
     _environment->arrayDimensions = 1;
     variable_array_type( _environment, toResident->name, to->type );
@@ -154,7 +154,7 @@ void begin_for_step_assign_mt( Environment * _environment, char * _step ) {
         }
 
         // In this version, the step is given
-        stepResident = variable_resident( _environment, VT_ARRAY, "(to)" );
+        stepResident = variable_resident( _environment, VT_TARRAY, "(to)" );
         _environment->arrayDimensionsEach[0] = _environment->protothreadConfig.count;
         _environment->arrayDimensions = 1;
         variable_array_type( _environment, stepResident->name, step->type );
@@ -177,7 +177,7 @@ void begin_for_step_assign_mt( Environment * _environment, char * _step ) {
         step = variable_temporary( _environment, _environment->defaultVariableType, "(step 1)" );
         variable_store( _environment, step->name, 1 );
 
-        stepResident = variable_resident( _environment, VT_ARRAY, "(to)" );
+        stepResident = variable_resident( _environment, VT_TARRAY, "(to)" );
         _environment->arrayDimensionsEach[0] = _environment->protothreadConfig.count;
         _environment->arrayDimensions = 1;
         variable_array_type( _environment, stepResident->name, _environment->defaultVariableType );

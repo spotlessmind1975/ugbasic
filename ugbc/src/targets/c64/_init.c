@@ -46,7 +46,7 @@ void target_initialization( Environment * _environment ) {
 
     cpu6502_init( _environment );
 
-    MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );
+    /*MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );*/
     /*MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xff00 );*/
 
     banks_init( _environment );
@@ -59,9 +59,6 @@ void target_initialization( Environment * _environment ) {
             memory_area_assign( _environment->memoryAreas, source );
         }
     }
-
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
 
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0xa000 );
     variable_global( _environment, "BITMAPADDRESS" );
@@ -110,11 +107,15 @@ void target_initialization( Environment * _environment ) {
     vic2_initialization( _environment );
     sid_initialization( _environment );
 
+    cpu_call( _environment, "VARINIT" );
+
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
+
+        cpu_call( _environment, "VARINIT" );
+
     }
 
-    cpu_call( _environment, "VARINIT" );
     
 }
 

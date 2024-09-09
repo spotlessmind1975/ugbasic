@@ -59,6 +59,10 @@ To work properly, the expression must have a value from 1 up to the number of
 the highest possible destination. If the expression has a value of 0 or 
 greater than the highest possibile destination, no call will be performed.
 
+Important: if the ''OPTION CALL AS GOTO'' pragma is in effect, the instruction
+will be considered as a ''GOTO'' rather than a ''GOSUB''. So, no return value and
+no return, at all. This not applies to system calls.
+
 @italian
 Questo comando viene utilizzato per forzare una chiamata a subroutine,
 calcolata da un'espressione. La scelta è tra le posizioni
@@ -68,6 +72,11 @@ calcolata.
 Per funzionare correttamente, l'espressione deve avere un valore compreso 
 tra 1 e il numero di destinazioni. Se l'espressione ha un valore di 0 o
 maggiore della destinazione più alta possibile, non sarà eseguito alcun salto.
+
+Importante: se il pragma ''OPTION CALL AS GOTO'' è attivo, l'istruzione
+sarà considerata un ''GOTO'' piuttosto che un ''GOSUB''. Quindi, nessun
+valore di ritorno e, anzi, nessun ritorno sarà previsto. Questo non si applica
+alle chiamate di sistema.
 
 @syntax ON expression PROC name1[, name2 [, ... ] ]
 

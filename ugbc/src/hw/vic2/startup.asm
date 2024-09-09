@@ -59,11 +59,15 @@ CPUMEMMOVER2:
     BNE CPUMEMMOVER2
     RTS
     
+@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
+
 ONSWITCHTILEMAPVOID:
     RTS
 
 ONSWITCHTILEMAP:
     JMP ONSWITCHTILEMAPVOID
+
+@ENDIF
 
 VIC2STARTUP:
 
@@ -169,52 +173,23 @@ VIC2STARTUPL1:
 
     RTS
 
-WAITVBL:
-    LDA $D011
-    AND #$80
-    CMP #$80
-    BEQ WAITVBL
-WAITVBL2:    
-    LDA $D011
-    AND #$80
-    CMP #$80
-    BNE WAITVBL2
-WAITVBL3:
-    LDA $D012
-    CMP #$29
-    BCC WAITVBL3
-    RTS    
+@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
 DOUBLEBUFFERINIT:
-
-@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     LDA #0
     STA TILEMAPVISIBLE
     JSR COPYTILEMAP01
 
-@ENDIF
-
     RTS
 
 DOUBLEBUFFERCLEANUP:
-
-@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     LDA TILEMAPVISIBLE
     BEQ DOUBLEBUFFERCLEANUP2
     JSR SWITCHTILEMAP0
 
-@ELSE
-
-    RTS
-
-@ENDIF
-
-
 DOUBLEBUFFERCLEANUP2:
-
-@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     LDA $d018
     AND #$0f
@@ -227,12 +202,7 @@ DOUBLEBUFFERCLEANUP2:
     STA TEXTADDRESS+1
     RTS
 
-@ENDIF
-
-
 COPYTILEMAP01:
-
-@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     LDX #<(40*25)
     STX MATHPTR0
@@ -247,13 +217,9 @@ COPYTILEMAP01:
     LDA #$88
     STA TMPPTR2+1
     JMP CPUMEMMOVE
-
-@ENDIF
 
 COPYTILEMAP10:
 
-@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
-
     LDX #<(40*25)
     STX MATHPTR0
     LDX #>(40*25)
@@ -268,11 +234,7 @@ COPYTILEMAP10:
     STA TMPPTR2+1
     JMP CPUMEMMOVE
 
-@ENDIF
-
 SWITCHTILEMAP:
-
-@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     LDA TILEMAPVISIBLE
     BEQ SWITCHTILEMAP1
@@ -307,92 +269,103 @@ SWITCHTILEMAP1:
 
     RTS
     
-@ELSE
-
-    RTS
-
 @ENDIF
 
-CONSOLECALCULATE:
-    LDA CURRENTMODE
-    CMP #0
-    BEQ CONSOLECALCULATE0
-    CMP #1
-    BEQ CONSOLECALCULATE1
-    ; CMP #2
-    ; BEQ CONSOLECALCULATE2
-    ; CMP #3
-    ; BEQ CONSOLECALCULATE3
+
+    ; Decompress RLE encoded images.
+    ;
+    ; Input: 
+    ;   - TMPPTR: pointer to the data to read
+    ; Output:
+    ;   - A: next byte read
+    ;   - C: if EOB
+    ;
+    ;
+
+RLEY:           .BYTE $0
+RLECURRENT:     .BYTE $0
+RLECOUNT:       .BYTE $0
+
+RLEREADCHAR:
+    LDY #0
+    LDA (TMPPTR), Y
+    INC TMPPTR
+    BNE RLEREADCHARA1
+    INC TMPPTR+1
+RLEREADCHARA1:
+    STA RLECURRENT
     RTS
 
-CONSOLECALCULATE0:
-CONSOLECALCULATE1:
-    LDA TEXTADDRESS
-    STA MATHPTR0
-    LDA TEXTADDRESS+1
-    STA MATHPTR1
-    LDX CONSOLEY1
-    CPX #0
-    BEQ CONSOLECALCULATEL1N
-CONSOLECALCULATEL1:
-    CLC
-    LDA MATHPTR0
-    ADC CURRENTTILESWIDTH
-    STA MATHPTR0
-    LDA MATHPTR1
-    ADC #0
-    STA MATHPTR1
-    DEX
-    BNE CONSOLECALCULATEL1
-CONSOLECALCULATEL1N:
-    CLC
-    LDA MATHPTR0
-    ADC CONSOLEX1
-    STA MATHPTR0
-    LDA MATHPTR1
-    ADC #0
-    STA MATHPTR1
-    LDA MATHPTR0
-    STA CONSOLESA
-    LDA MATHPTR1
-    STA CONSOLESA+1
-    LDA CONSOLEW
-    STA CONSOLEWB
-    LDA CONSOLEH
-    STA CONSOLEHB
-
-    LDA COLORMAPADDRESS
-    STA MATHPTR0
-    LDA COLORMAPADDRESS+1
-    STA MATHPTR1
-    LDX CONSOLEY1
-    CPX #0
-    BNE CONSOLECALCULATECL1N
-CONSOLECALCULATECL1:
-    CLC
-    LDA MATHPTR0
-    ADC CURRENTTILESWIDTH
-    STA MATHPTR0
-    LDA MATHPTR1
-    ADC #0
-    STA MATHPTR1
-    DEX
-    BNE CONSOLECALCULATECL1
-CONSOLECALCULATECL1N:
-    CLC
-    LDA MATHPTR0
-    ADC CONSOLEX1
-    STA MATHPTR0
-    LDA MATHPTR1
-    ADC #0
-    STA MATHPTR1
-    LDA MATHPTR0
-    STA CONSOLECA
-    LDA MATHPTR1
-    STA CONSOLECA+1
-
+RLEDECOMPRESSDONE:
+    SEC
+    LDY RLEY
     RTS
 
-; CONSOLECALCULATE2:
-; CONSOLECALCULATE3:
-;     RTS
+RLEDECOMPRESS:
+
+    STY RLEY
+
+    LDA RLECOUNT
+
+    BEQ RLEDECOMPRESS2
+    
+    DEC RLECOUNT
+
+    LDA #1
+    BNE RLEDECOMPRESSVALUE
+
+RLEDECOMPRESS2:
+
+    ; // Take the current token from the input stream
+    ; // and move to the next element of the stream.
+
+    JSR RLEREADCHAR
+
+    ; // A token of zero (0xfe) means "end of block".
+    ; // Nothing must be done.
+
+    CMP #$FE
+    BEQ RLEDECOMPRESSDONE
+
+    ; // If the value of token is 0xff...
+
+    CMP #$FF
+    BEQ RLEDECOMPRESSFF
+
+RLEDECOMPRESSVALUEASIS:
+    LDY RLEY
+    LDA RLECURRENT
+    CLC
+    RTS
+
+RLEDECOMPRESSFF:
+
+    ; // Read the next.
+
+    JSR RLEREADCHAR
+
+    ; // If it is 0xff, it means that is 0xff, actually!
+
+    CMP #$FF
+    BEQ RLEDECOMPRESSVALUEASIS
+
+    ; // Store the count
+
+    STA RLECOUNT
+
+    ; // Read the next.
+
+    JSR RLEREADCHAR
+
+    ; // Decrement the count
+
+    DEC RLECOUNT
+
+RLEDECOMPRESSVALUE:
+    LDY RLEY
+    LDA RLECURRENT
+    CLC
+    RTS
+
+
+

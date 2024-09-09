@@ -48,10 +48,14 @@ Variable * joy_vars( Environment * _environment, char * _port ) {
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
     outline1("LDA %s", port->realName);
-    outline0("STA <PORT");
-    outline0("JSR JOYSTICK");
-    outline0("LDA <DIRECTION");
+    outline1("BNE %spt1", label );
+    outline0("LDA JOYSTICK0");
     outline1("STA %s", result->realName);
+    outline1("JMP %sptx", label);
+    outhead1("%spt1", label);
+    outline0("LDA JOYSTICK1");
+    outline1("STA %s", result->realName);
+    outhead1("%sptx", label);
 
     return result;
 
@@ -65,11 +69,16 @@ Variable * joy( Environment * _environment, int _port ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    outline1("LDA #$%2.2x", _port);
-    outline0("STA <PORT");
-    outline0("JSR JOYSTICK");
-    outline0("LDA <DIRECTION");
-    outline1("STA %s", result->realName);
+    switch( _port ) {
+        case 0:
+            outline0("LDA JOYSTICK0");
+            outline1("STA %s", result->realName);
+            break;
+        case 1:
+            outline0("LDA JOYSTICK1");
+            outline1("STA %s", result->realName);
+            break;
+    }
 
     return result;
 

@@ -50,9 +50,6 @@ void target_initialization( Environment * _environment ) {
 
     _environment->audioConfig.async = 1;
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
-
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x6000 );
     variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x5800 );
@@ -95,11 +92,12 @@ void target_initialization( Environment * _environment ) {
 
     ted_initialization( _environment );
 
+    cpu_call( _environment, "VARINIT" );
+
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
+        outline0("CALL VARINIT");
     }
-
-    cpu_call( _environment, "VARINIT" );
 
 }
 

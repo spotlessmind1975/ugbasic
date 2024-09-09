@@ -106,7 +106,7 @@ PLOTLOOP2:
     OR L
     LD L, A
 
-    LD A, (_PEN)
+    LD A, (PLOTCPE)
     LD B, A
     LD A, (_PAPER)
     CP B

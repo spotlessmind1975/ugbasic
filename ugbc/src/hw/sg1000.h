@@ -161,6 +161,7 @@ void sg1000_keyshift( Environment * _environment, char * _shifts );
 void sg1000_clear_key( Environment * _environment );
 void sg1000_irq_at( Environment * _environment, char * _label );
 void sg1000_follow_irq( Environment * _environment );
+void sg1000_put_key(  Environment * _environment, char *_string, char * _size );
 
 void sg1000_sys_call( Environment * _environment, int _destination );
 
@@ -169,5 +170,19 @@ void sg1000_timer_set_status_off( Environment * _environment, char * _timer );
 void sg1000_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
 void sg1000_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void sg1000_timer_set_address( Environment * _environment, char * _timer, char * _address );
+
+void sg1000_dojo_ready( Environment * _environment, char * _value );
+void sg1000_dojo_read_byte( Environment * _environment, char * _value );
+void sg1000_dojo_write_byte( Environment * _environment, char * _value );
+
+void sg1000_dojo_ping( Environment * _environment, char * _result );
+void sg1000_dojo_login( Environment * _environment, char * _name, char * _name_size, char * _password, char * _size, char * _unique_id );
+void sg1000_dojo_success( Environment * _environment, char * _id, char * _result );
+void sg1000_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id );
+void sg1000_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _port_id );
+void sg1000_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result );
+void sg1000_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
+void sg1000_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
+void sg1000_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
 
 #endif

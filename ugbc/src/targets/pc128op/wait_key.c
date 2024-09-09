@@ -40,15 +40,8 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-void wait_key( Environment * _environment ) {
+void wait_key( Environment * _environment, int _release ) {
 
-    MAKE_LABEL
-
-    char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
-
-    cpu_label( _environment, repeatLabel );
-    outline0( "SWI" );
-    outline0( "FCB $0a" );
-    outline1( "BEQ %s", repeatLabel );
+    pc128op_wait_key( _environment, _release );
     
 }

@@ -126,6 +126,9 @@ void ted_bitmap_disable( Environment * _environment );
 void ted_bitmap_at( Environment * _environment, char * _address );
 void ted_colormap_at( Environment * _environment, char * _address );
 void ted_textmap_at( Environment * _environment, char * _address );
+void ted_charset_at( Environment * _environment, char * _address );
+void ted_charset_uppercase( Environment * _environment );
+void ted_charset_lowercase( Environment * _environment );
 void ted_tiles_at( Environment * _environment, char * _address );
 void ted_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
@@ -158,8 +161,8 @@ void ted_tiles_get( Environment * _environment, char * _result );
 void ted_get_width( Environment * _environment, char * _result );
 void ted_get_height( Environment * _environment, char * _result );
 
-void ted_pset_int( Environment * _environment, int _x, int _y );
-void ted_pset_vars( Environment * _environment, char *_x, char *_y );
+void ted_pset_int( Environment * _environment, int _x, int _y, int *_c );
+void ted_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void ted_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void ted_cls( Environment * _environment );
 void ted_scroll_text( Environment * _environment, int _direction );

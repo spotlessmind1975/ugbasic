@@ -138,7 +138,7 @@ bitmask di 16 bit con il comando ''SET LINE''.
 
 @target all
 </usermanual> */
-void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c ) {
+void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color ) {
 
     deploy_begin( draw );
 
@@ -189,9 +189,13 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
         dy2 = variable_mul2_const( _environment, dy2->name, 1 );
         variable_move_naked( _environment, dx->name, dx2->name );
         dx2 = variable_mul2_const( _environment, dx2->name, 1 );
-        if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
-            plot( _environment, x->name, y->name, c->name );
-        end_if_then( _environment );
+        if ( _environment->lineNeeded ) {
+            if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
+        }        
+               plot( _environment, x->name, y->name, c->name, _preserve_color );
+        if ( _environment->lineNeeded ) {
+            end_if_then( _environment );
+        }
         variable_increment( _environment, bit->name );
         if_then( _environment, variable_compare_const( _environment, bit->name, 16 )->name );
             variable_store( _environment, bit->name, 0 );
@@ -206,9 +210,13 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
                     variable_move( _environment, variable_sub( _environment, fraction->name, dx2->name )->name, fraction->name );
                 end_if_then( _environment );
                 variable_move( _environment, variable_add( _environment, fraction->name, dy2->name )->name, fraction->name );
-                if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
-                    plot( _environment, x->name, y->name, c->name );
-                end_if_then( _environment );
+                if ( _environment->lineNeeded ) {
+                    if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
+                }
+                        plot( _environment, x->name, y->name, c->name, _preserve_color );
+                if ( _environment->lineNeeded ) {
+                    end_if_then( _environment );
+                }
                 variable_increment( _environment, bit->name );
                 if_then( _environment, variable_compare_const( _environment, bit->name, 16 )->name );
                     variable_store( _environment, bit->name, 0 );
@@ -225,9 +233,13 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
                 end_if_then( _environment );
                 variable_move( _environment, variable_add( _environment, y->name, stepy->name )->name, y->name );
                 variable_move( _environment, variable_add( _environment, fraction->name, dx2->name )->name, fraction->name );
-                if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
-                    plot( _environment, x->name, y->name, c->name );
-                end_if_then( _environment );
+                if ( _environment->lineNeeded ) {
+                    if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
+                }
+                       plot( _environment, x->name, y->name, c->name, _preserve_color );
+                if ( _environment->lineNeeded ) {
+                    end_if_then( _environment );
+                }
                 variable_increment( _environment, bit->name );
                 if_then( _environment, variable_compare_const( _environment, bit->name, 16 )->name );
                     variable_store( _environment, bit->name, 0 );

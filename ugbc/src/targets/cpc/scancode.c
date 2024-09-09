@@ -44,9 +44,7 @@ Variable * scancode( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANCODE)");
 
-    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
-
-    cpc_scancode( _environment, pressed->realName, result->realName );
+    cpc_scancode( _environment, result->realName );
 
     return result;
 

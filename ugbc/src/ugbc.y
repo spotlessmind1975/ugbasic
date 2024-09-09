@@ -48,7 +48,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token NewLine 
 %token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS OP_INC OP_DEC OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
 %token OP_DISEQUAL OP_MULTIPLICATION OP_MULTIPLICATION2 OP_DOLLAR OP_DIVISION OP_DIVISION2 QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
-%token OP_EXCLAMATION
+%token OP_EXCLAMATION OP_DOLLAR2
 
 %token RASTER DONE AT COLOR COLOUR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -85,7 +85,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RING ROCK SAWTOOTH SAX SCI SEASHORE SECTION SHAKUHACHI SHAMISEN SHANAI SITAR SLAP SOPRANO SOUNDTRACK
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
-%token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
+%token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_PERC2 OP_AMPERSAND OP_AT
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
 %token LBOUND UBOUND BINARY C128Z FLOAT FAST SINGLE PRECISION DEGREE RADIAN PI SIN COS BITMAPS OPACITY
@@ -95,7 +95,10 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token POKEW PEEKW POKED PEEKD DSAVE DEFDGR FORBID ALLOW C64REU LITTLE BIG ENDIAN NTSC PAL VARBANK VARBANKPTR
 %token IAF PSG MIDI ATLAS PAUSE RESUME SEEK DIRECTION CONFIGURE STATIC DYNAMIC GMC SLOT SN76489 LOG EXP TO8
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
-%token PROGRAM START JOYX JOYY RETRIES PALETTE1
+%token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
+%token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
+%token MOB CMOB PLACE DOJO READY LOGIN PASSWORD DOJOKA GAME HISCORE CREATE PORT DESTROY FIND MESSAGE PING
+%token SUCCESS RECEIVE SEND COMPRESSION RLE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -105,6 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token LAVENDER GOLD TURQUOISE TAN PINK PEACH OLIVE
 
 %token <string> Identifier
+%token <string> IdentifierSpaced
 %token <string> String
 %token <integer> Integer
 %token <string> BufferDefinitionHex
@@ -124,9 +128,9 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
 %type <integer> const_key_scancode_definition const_key_scancode_alphadigit const_key_scancode_function_digit
 %type <integer> datatype as_datatype as_datatype_mandatory as_datatype_suffix as_datatype_suffix_optional
-%type <integer> halted
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y optional_x_or_string
+%type <string> mandatory_x mandatory_y
 %type <integer> target targets
 %type <integer> parallel_optional
 %type <integer> on_targets
@@ -172,6 +176,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> option_name
 %type <integer> audio_source
 %type <integer> PALETTE1
+%type <string> dojo_functions
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -1018,7 +1023,15 @@ const_factor:
             if ( !v->valueBuffer ) {
                 CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
             }
-            IMAGE_GET_WIDTH( v->valueBuffer, overallOffset, $$ );
+            switch( v->type ) {
+                case VT_IMAGE:
+                    $$ = v->originalWidth;
+                    break;
+                case VT_IMAGES:
+                case VT_SEQUENCE:
+                    $$ = v->frameWidth;
+                    break;
+            }
           } else {
             $$ = 0;
           }
@@ -1160,21 +1173,29 @@ const_factor:
             if ( !v->valueBuffer ) {
                 CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
             }        
-            IMAGE_GET_HEIGHT( v->valueBuffer, overallOffset, $$ );
+            switch( v->type ) {
+                case VT_IMAGE:
+                    $$ = v->originalHeight;
+                    break;
+                case VT_IMAGES:
+                case VT_SEQUENCE:
+                    $$ = v->frameHeight;
+                    break;
+            }
           } else {
             $$ = 0;
           }
       }
       | UBOUND OP Identifier CP {
           Variable * array = variable_retrieve( _environment, $3 );
-          if ( array->type != VT_ARRAY ) {
+          if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
           }
           $$ = array->arrayDimensionsEach[array->arrayDimensions-1];
       }
       | UBOUND OP Identifier OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
@@ -1187,14 +1208,14 @@ const_factor:
       }
       | LBOUND OP Identifier CP {
           Variable * array = variable_retrieve( _environment, $3 );
-          if ( array->type != VT_ARRAY ) {
+          if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
           }
           $$ = 0;
       }
       | LBOUND OP Identifier OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
@@ -1358,16 +1379,18 @@ expr_math :
 expr_math2: 
       term
     | expr_math2 OP_PLUS term {
+        Variable * v = variable_retrieve( _environment, $1 );
         Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
+        if ( expr->initializedByConstant && VT_BITWIDTH(v->type)>1 ) {
             $$ = variable_add_const( _environment, $1, expr->value )->name;
         } else {
             $$ = variable_add( _environment, $1, $3 )->name;
         }
     }
     | expr_math2 OP_MINUS term {
+        Variable * v = variable_retrieve( _environment, $1 );
         Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
+        if ( expr->initializedByConstant && VT_BITWIDTH(v->type)>1 ) {
             $$ = variable_sub_const( _environment, $1, expr->value )->name;
         } else {
             $$ = variable_sub( _environment, $1, $3 )->name;
@@ -1765,7 +1788,7 @@ sequence_load_flags :
 
 on_bank :
     {
-        $$ = 0;
+        $$ = ((struct _Environment *)_environment)->bankedLoadDefault;
     }
     | BANKED {
         $$ = 1;
@@ -1853,13 +1876,6 @@ random_definition_simple:
     }
     | HEIGHT {
         $$ = random_height( _environment )->name;
-    };
-
-halted:
-    {
-        $$ = 0;
-    } | HALTED {
-        $$ = 1;
     };
 
 random_definition:
@@ -2547,7 +2563,7 @@ const_key_scancode_definition :
     };
 
 load_image  : LOAD IMAGE | IMAGE LOAD;
-load_images : LOAD images_or_atlas | images_or_atlas LOAD;
+load_images : LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
 load_sequence : LOAD SEQUENCE | SEQUENCE LOAD;
 load_tileset  : LOAD TILESET | TILESET LOAD;
 load_tilemap  : LOAD TILEMAP | TILEMAP LOAD;
@@ -2599,65 +2615,100 @@ frame_size : {
         ((struct _Environment *)_environment)->frameOriginY = 0;
     } frame_size_definition;
 
+dojo_functions : 
+    RECEIVE {
+        $$ = dojo_receive( _environment )->name;
+    }
+    | RECEIVE OP CP {
+        $$ = dojo_receive( _environment )->name;
+    }
+    | READY {
+        $$ = dojo_ready( _environment )->name;
+    }
+    | READY OP CP {
+        $$ = dojo_ready( _environment )->name;
+    }
+    | PING {
+        $$ = dojo_ping( _environment )->name;
+    }
+    | PING OP CP {
+        $$ = dojo_ping( _environment )->name;
+    }
+    | LOGIN OP expr OP_COMMA expr CP {
+        $$ = dojo_login( _environment, $3, $5 )->name;
+    }
+    | SUCCESS OP expr CP {
+        $$ = dojo_success( _environment, $3 )->name;
+    }
+    | CREATE PORT OP expr OP_COMMA expr CP {
+        $$ = dojo_create_port( _environment, $4, $6 )->name;
+    }
+    | FIND PORT OP expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = dojo_find_port( _environment, $4, $6, $8 )->name;
+    }
+    | PEEK MESSAGE OP expr CP {
+        $$ = dojo_peek_message( _environment, $4 )->name;
+    }
+    | GET MESSAGE OP expr CP {
+        $$ = dojo_get_message( _environment, $4 )->name;
+    };
+
 exponential:
-    Identifier {
+    Identifier as_datatype_suffix_optional {
         parser_array_init( _environment );
     }
       OP indexes CP {
+        VariableType vt = $2;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
         Variable * array;
         if ( ! variable_exists( _environment, $1 ) ) {
             if ( ((struct _Environment *)_environment)->optionExplicit ) {
                 CRITICAL_VARIABLE_UNDEFINED( $1 );
             } else {
-                array = variable_define( _environment, $1, VT_ARRAY, 0 );
-                array->arrayType = ((struct _Environment *)_environment)->defaultVariableType;
+                array = variable_define( _environment, $1, VT_TARRAY, 0 );
+                array->arrayType = vt;
                 array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
             }
         }        
         array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
         $$ = variable_move_from_array( _environment, $1 )->name;
         parser_array_cleanup( _environment );
     }
-    | Identifier OP_DOLLAR {
-        parser_array_init( _environment );
-     } 
-      OP indexes CP {
-        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        if ( array->type != VT_ARRAY ) {
-            CRITICAL_NOT_ARRAY( $1 );
-        }
-        if ( array->arrayType != VT_STRING && array->arrayType != VT_DSTRING ) {
-            CRITICAL_NOT_STRING_ARRAY( $1 );
-        }        
-        $$ = variable_move_from_array( _environment, $1 )->name;
-        parser_array_cleanup( _environment );
-    }
-    | OSP Identifier CSP {
+    | OSP Identifier as_datatype_suffix_optional CSP {
         if ( !((struct _Environment *)_environment)->procedureName ) {
             CRITICAL_CANNOT_USE_MULTITASKED_ARRAY($2);
         }
         parser_array_init( _environment );
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-        Variable * array = variable_retrieve_or_define( _environment, $2, VT_ARRAY, 0 );
-        if ( array->type != VT_ARRAY ) {
-            CRITICAL_NOT_ARRAY( $2 );
-        }
-        $$ = variable_move_from_array( _environment, $2 )->name;
-        parser_array_cleanup( _environment );
-    }
-    | OSP Identifier OP_DOLLAR CSP {
-        parser_array_init( _environment );
-        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-        Variable * array = variable_retrieve_or_define( _environment, $2, VT_ARRAY, 0 );
-        if ( array->type != VT_ARRAY ) {
-            CRITICAL_NOT_ARRAY( $2 );
-        }
-        if ( array->arrayType != VT_STRING && array->arrayType != VT_DSTRING ) {
-            CRITICAL_NOT_STRING_ARRAY( $2 );
+        Variable * array;
+        if ( ! variable_exists( _environment, $2 ) ) {
+            VariableType vt = $3;
+            if ( vt == 0 ) {
+                vt = ((struct _Environment *)_environment)->defaultVariableType;
+            }
+            if ( ((struct _Environment *)_environment)->optionExplicit ) {
+                CRITICAL_VARIABLE_UNDEFINED( $2 );
+            } else {
+                array = variable_define( _environment, $2, VT_TARRAY, 0 );
+                array->arrayType = vt;
+                array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
+            }
         }        
+        array = variable_retrieve( _environment, $2 );        
+        if ( array->type != VT_TARRAY ) {
+            CRITICAL_NOT_ARRAY( $2 );
+        }
+        VariableType vt = $3;
+        if ( vt != 0 ) {
+            if ( array->arrayType != vt ) {
+                CRITICAL_ARRAY_DATATYPE_WRONG( $2 );
+            }
+        }
         $$ = variable_move_from_array( _environment, $2 )->name;
         parser_array_cleanup( _environment );
     }
@@ -2727,18 +2778,6 @@ exponential:
             }
         }
     }
-    | Identifier OP_DOLLAR { 
-        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
-        if ( c ) {
-            if ( c->type != CT_STRING ) {
-                CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $1 );
-            }
-            $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
-            variable_store_string( _environment, $$, c->valueString->value );
-        } else {
-            $$ = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
-        }
-      }
     | Integer { 
         $$ = parser_adapted_numeric( _environment, $1 )->name;
       }
@@ -3128,6 +3167,10 @@ exponential:
     | READ END {
         $$ = read_end( _environment )->name;
       }
+    | dojo_functions
+    | DOJO dojo_functions {
+        $$ = $2;
+    }
     | PEEK OP expr CP {
         $$ = peek_var( _environment, $3 )->name;
       }
@@ -3218,11 +3261,20 @@ exponential:
     | BANK SIZE OP expr CP {
         $$ = bank_get_size_var( _environment, $4 )->name;
     }
+    | INST OP expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = variable_string_inst( _environment, $3, $5, $7 )->name;
+    }
+    | INSERT OP expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = variable_string_insert( _environment, $3, $5, $7 )->name;
+    }
     | MID OP expr OP_COMMA expr CP {
         $$ = variable_string_mid( _environment, $3, $5, NULL )->name;
     }
     | MID OP expr OP_COMMA expr OP_COMMA expr CP {
         $$ = variable_string_mid( _environment, $3, $5, $7 )->name;
+    }
+    | PLACE OP expr OP_COMMA expr CP {
+        $$ = variable_string_instr( _environment, $5, $3, NULL )->name;
     }
     | INSTR OP expr OP_COMMA expr CP {
         $$ = variable_string_instr( _environment, $3, $5, NULL )->name;
@@ -3239,8 +3291,14 @@ exponential:
     | HEX OP expr CP {
         $$ = variable_hex( _environment, $3 )->name;
     }
+    | OP_DOLLAR2 OP expr CP {
+        $$ = variable_hex( _environment, $3 )->name;
+    }
     | STR OP expr CP {
         $$ = variable_string_str( _environment, $3 )->name;
+    }
+    | OP_PERC2 OP expr CP {
+        $$ = variable_bin( _environment, $3, NULL )->name;
     }
     | BIN OP expr CP {
         $$ = variable_bin( _environment, $3, NULL )->name;
@@ -3257,12 +3315,15 @@ exponential:
     | CHR OP expr CP {
         $$ = variable_string_chr( _environment, $3 )->name;
     }
+    | PICK OP expr OP_COMMA const_expr CP {
+        $$ = variable_string_pick( _environment, $3, $5 )->name;
+    }    
     | ASC OP expr CP {
         $$ = variable_string_asc( _environment, $3 )->name;
     }
     | UBOUND OP expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         Variable * value = variable_temporary( _environment, VT_WORD, "(ubound)" );
@@ -3271,7 +3332,7 @@ exponential:
     }
     | UBOUND OP expr OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
@@ -3286,7 +3347,7 @@ exponential:
     }
     | LBOUND OP expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         Variable * value = variable_temporary( _environment, VT_WORD, "(lbound)" );
@@ -3295,7 +3356,7 @@ exponential:
     }
     | LBOUND OP expr OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
@@ -3311,6 +3372,9 @@ exponential:
     | LEN OP expr CP {
         $$ = variable_string_len( _environment, $3 )->name;
     }
+    | DUP OP expr OP_COMMA expr CP {
+        $$ = variable_string_dup( _environment, $3, $5 )->name;
+    }
     | STRING OP expr OP_COMMA expr CP {
         $$ = variable_string_string( _environment, $3, $5 )->name;
     }
@@ -3321,7 +3385,22 @@ exponential:
         $$ = $2;
     }
     | RND OP expr CP {
-        $$ = rnd( _environment, $3 )->name;
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            switch( expr->value ) {
+                case 0:
+                    $$ = rnd0( _environment )->name;
+                    break;
+                case 1:
+                    $$ = rnd1( _environment )->name;
+                    break;
+                default:
+                    $$ = rnd( _environment, $3 )->name;
+                    break;
+            }
+        } else {
+            $$ = rnd( _environment, $3 )->name;
+        }
     }
     | OP expr CP {
         $$ = $2;
@@ -3381,18 +3460,31 @@ exponential:
       call_procedure( _environment, $1 );
       $$ = param_procedure( _environment, $1 )->name;
     }
-    | halted SPAWN Identifier {
+    | SPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
-      $$ = spawn_procedure( _environment, $3, $1 )->name;
+      $$ = spawn_procedure( _environment, $2, 0 )->name;
     }
-    | halted SPAWN Identifier OSP {
+    | SPAWN Identifier OSP {
         ((struct _Environment *)_environment)->parameters = 0;
         } values CSP {
-      $$ = spawn_procedure( _environment, $3, $1 )->name;
+      $$ = spawn_procedure( _environment, $2, 0 )->name;
     }
-    | halted SPAWN Identifier OSP CSP {
+    | SPAWN Identifier OSP CSP {
         ((struct _Environment *)_environment)->parameters = 0;
-      $$ = spawn_procedure( _environment, $3, $1 )->name;
+      $$ = spawn_procedure( _environment, $2, 0 )->name;
+    }
+    | HALTED SPAWN Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      $$ = spawn_procedure( _environment, $3, 1 )->name;
+    }
+    | HALTED SPAWN Identifier OSP {
+        ((struct _Environment *)_environment)->parameters = 0;
+        } values CSP {
+      $$ = spawn_procedure( _environment, $3, 1 )->name;
+    }
+    | HALTED SPAWN Identifier OSP CSP {
+        ((struct _Environment *)_environment)->parameters = 0;
+      $$ = spawn_procedure( _environment, $3, 1 )->name;
     }
     | RESPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
@@ -3550,7 +3642,11 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
         variable_store( _environment, $$, frames( _environment, $4 ) );
     }
-    | frame COUNT OP expr CP {
+    | FRAME COUNT OP expr CP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
+        variable_store( _environment, $$, frames( _environment, $4 ) );
+    }
+    | TILE COUNT OP expr CP {
         $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
         variable_store( _environment, $$, frames( _environment, $4 ) );
     }
@@ -3691,7 +3787,10 @@ exponential:
         $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN BORDER Y)" )->name;
         variable_store( _environment, $$, SCREEN_BORDER_Y );
     }
-    | ticks PER SECOND {
+    | TICK PER SECOND {
+        $$ = get_ticks_per_second( _environment )->name;
+    }
+    | TICKS PER SECOND {
         $$ = get_ticks_per_second( _environment )->name;
     }
     | SPRITE X MIN {
@@ -3988,17 +4087,31 @@ exponential:
     | SCAN CODE {
         $$ = scancode( _environment )->name;
     }
+    | ASCIICODE {
+        $$ = asciicode( _environment )->name;
+    }
+    | ASCII CODE {
+        $$ = asciicode( _environment )->name;
+    }
     | KEY PRESSED OP OP_HASH const_expr CP {
-        $$ = key_pressed( _environment, $5 )->name;
+        if ( ((Environment *)_environment)->keyPressDutyCycle ) {
+            $$ = key_pressed( _environment, $5 )->name;
+        } else {
+            $$ = key_state( _environment, $5 )->name;
+        }
     }
     | KEY PRESSED OP expr CP {
-        $$ = key_pressed_var( _environment, $4 )->name;
+        if ( ((Environment *)_environment)->keyPressDutyCycle ) {
+            $$ = key_pressed_var( _environment, $4 )->name;
+        } else {
+            $$ = key_state_var( _environment, $4 )->name;
+        }
     }
     | KEY STATE OP expr CP {
-        $$ = keystate( _environment, $4 )->name;
+        $$ = key_state_var( _environment, $4 )->name;
     }
     | KEYSTATE OP expr CP {
-        $$ = keystate( _environment, $3 )->name;
+        $$ = key_state_var( _environment, $3 )->name;
     }
     | SCANSHIFT {
         $$ = scanshift( _environment )->name;
@@ -4209,10 +4322,7 @@ next_raster_definition:
   | next_raster_definition_expression;
 
 color_definition_simple:
-  expr OP_COMMA expr {
-      color_vars( _environment, $1, $3 );
-  }
-  | OP_HASH const_expr OP_COMMA expr {
+  OP_HASH const_expr OP_COMMA expr {
       color_semivars( _environment, $2, $4 );
   }
   | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
@@ -4228,8 +4338,27 @@ color_definition_simple:
       color_sprite( _environment, $2, $4 );
   };
 
-color_definition_expression:
-    BORDER expr {
+color_definition_expression :
+  expr OP_COMMA expr OP_COMMA expr {
+      color_tsb( _environment, $1, $3, $5 );
+  }
+  | 
+  expr OP_COMMA expr {
+      if ( ((Environment *)_environment)->dialect == DI_TSB ) {
+          color_tsb( _environment, $1, $3, NULL );
+      } else {
+          color_vars( _environment, $1, $3 );
+      }
+  }
+  |
+  OP_COMMA expr {
+      color_tsb( _environment, NULL, NULL, $2 );
+  }
+  |
+  expr {
+      color_tsb( _environment, $1, NULL, NULL );
+  }
+  | BORDER expr {
       color_border_var( _environment, $2 );
   }
   | BACK expr {
@@ -4274,63 +4403,49 @@ wait_definition_simple:
       wait_milliseconds( _environment, $1 );
     }
     | FIRE release {
-        begin_loop( _environment );
+        begin_do_loop( _environment );
             exit_loop_if( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, 0 );
-        end_loop( _environment );
+        end_do_loop( _environment );
         if ( $2 ) {
-            begin_loop( _environment );
+            begin_do_loop( _environment );
                 exit_loop_if( _environment, variable_not( _environment, joy_direction( _environment, 0, JOY_FIRE )->name )->name, 0 );
-            end_loop( _environment );
+            end_do_loop( _environment );
         }
     }
     | FIRE OP OP_HASH const_expr CP release {
-        begin_loop( _environment );
+        begin_do_loop( _environment );
             exit_loop_if( _environment, joy_direction( _environment, $4, JOY_FIRE )->name, 0 );
-        end_loop( _environment );
+        end_do_loop( _environment );
         if ( $6 ) {
-            begin_loop( _environment );
+            begin_do_loop( _environment );
                 exit_loop_if( _environment, variable_not( _environment, joy_direction( _environment, 0, JOY_FIRE )->name )->name, 0 );
-            end_loop( _environment );
+            end_do_loop( _environment );
         }
     }
     | KEY OR FIRE release {
-        begin_loop( _environment );
+        begin_do_loop( _environment );
             exit_loop_if( _environment, scancode( _environment )->name, 0 );
             exit_loop_if( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, 0 );
-        end_loop( _environment );
+        end_do_loop( _environment );
         if ( $4 ) {
-            begin_loop( _environment );
+            begin_do_loop( _environment );
                 exit_loop_if( _environment, variable_not( _environment, variable_or( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, scancode( _environment )->name )->name )->name, 0 );
-            end_loop( _environment );
+            end_do_loop( _environment );
         }
     }
     | KEY OR FIRE OP OP_HASH const_expr CP release {
-        begin_loop( _environment );
+        begin_do_loop( _environment );
             exit_loop_if( _environment, scancode( _environment )->name, 0 );
             exit_loop_if( _environment, joy_direction( _environment, $6, JOY_FIRE )->name, 0 );
-        end_loop( _environment );
+        end_do_loop( _environment );
         if ( $8 ) {
-            begin_loop( _environment );
+            begin_do_loop( _environment );
                 exit_loop_if( _environment, variable_not( _environment, variable_or( _environment, joy_direction( _environment, $6, JOY_FIRE )->name, scancode( _environment )->name )->name )->name, 0 );
-            end_loop( _environment );
+            end_do_loop( _environment );
         }
     }
     | KEY release {
-        wait_key( _environment );
-        if ( $2 ) {
-            begin_loop( _environment );
-                Variable * noKey = variable_temporary( _environment, VT_BYTE, "nokey" );
-                variable_move( _environment, scancode( _environment )->name, noKey->name );
-                exit_loop_if( _environment, 
-                    variable_not( _environment, 
-                        variable_compare( _environment, 
-                            scancode( _environment )->name, 
-                            noKey->name 
-                        )->name 
-                    )->name, 0 
-                );
-            end_loop( _environment );
-        }
+        wait_key( _environment, $2 );
     }
     | VBL {
       wait_vbl( _environment, NULL );
@@ -4351,13 +4466,13 @@ wait_definition_expression:
       wait_milliseconds_var( _environment, $1 );
     }
     | FIRE OP expr CP release {
-        begin_loop( _environment );
+        begin_do_loop( _environment );
             exit_loop_if( _environment, joy_direction_semivars( _environment, $3, JOY_FIRE )->name, 0 );
-        end_loop( _environment );
+        end_do_loop( _environment );
         if ( $5 ) {
-            begin_loop( _environment );
+            begin_do_loop( _environment );
                 exit_loop_if( _environment, variable_not( _environment, joy_direction_semivars( _environment, $3, JOY_FIRE )->name )->name, 0 );
-            end_loop( _environment );
+            end_do_loop( _environment );
         }
     }
     | UNTIL { 
@@ -4780,6 +4895,9 @@ as_datatype_suffix :
     | OP_EXCLAMATION {
         $$ = VT_FLOAT;
     }
+    | OP_DOLLAR {
+        $$ = VT_DSTRING;
+    }
     ;
 
 as_datatype_suffix_optional : 
@@ -4805,8 +4923,12 @@ var_definition_simple:
   | Identifier ON Identifier {
       variable_define( _environment, $1, VT_BYTE, 0 );
   }
-  | Identifier OP_DOLLAR ON Identifier {
-      variable_define( _environment, $1, VT_DSTRING, 0 );
+  | Identifier as_datatype_suffix ON Identifier {
+      if ( $2 != 0 ) {
+          variable_define( _environment, $1, $2, 0 );        
+      } else {
+          variable_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 );
+      }
   }
   | Identifier ON Identifier OP_ASSIGN direct_integer {
       variable_define( _environment, $1, VT_BYTE, $5 );
@@ -4817,9 +4939,13 @@ var_definition_simple:
       Variable * d = variable_define( _environment, $1, v->type, v->value );
       variable_move_naked( _environment, v->name, d->name );
   }
-  | Identifier OP_DOLLAR ON Identifier OP_ASSIGN expr {
+  | Identifier as_datatype_suffix ON Identifier OP_ASSIGN expr {
+      VariableType vt = $2;
+      if ( vt == 0 ) {
+        vt = ((struct _Environment *)_environment)->defaultVariableType;
+      }
       Variable * v = variable_retrieve( _environment, $6 );
-      Variable * d = variable_define( _environment, $1, VT_DSTRING, 0 );
+      Variable * d = variable_define( _environment, $1, vt, 0 );
       variable_move( _environment, v->name, d->name );
   }
   ;
@@ -4835,6 +4961,12 @@ restore_definition:
     |
     expr {
         restore_label( _environment, $1 );  
+    }
+  ;
+
+cgoto_definition:
+    expr {
+      cgoto( _environment, $1 );
     }
   ;
 
@@ -4901,6 +5033,16 @@ optional_x_or_string:
     }
     ;
 
+mandatory_x:
+    relative_option expr {
+        $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name;
+    };
+
+mandatory_y:
+    relative_option expr {
+        $$ = origin_resolution_relative_transform_y( _environment, $2, $1 )->name;
+    };
+
 optional_x:
     relative_option expr {
         $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name;
@@ -4930,11 +5072,11 @@ optional_expr:
 
 plot_definition_expression:
       optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        plot( _environment, $1, $3, $5 );
+        plot( _environment, $1, $3, resolve_color( _environment, $5 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
     }
     | optional_x OP_COMMA optional_y {
-        plot( _environment, $1, $3, NULL );
+        plot( _environment, $1, $3, NULL, 0 );
         gr_locate( _environment, $1, $3 );
     };
 
@@ -4942,12 +5084,16 @@ plot_definition:
     plot_definition_expression;
 
 circle_definition_expression:
-      optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
-        circle( _environment, $1, $3, $5, $7 );
+    optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
+        ellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $1, $3 );
+    }
+    | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
+        circle( _environment, $1, $3, $5, resolve_color( _environment, $7 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
     }
     | optional_x OP_COMMA optional_y OP_COMMA expr {
-        circle( _environment, $1, $3, $5, NULL );
+        circle( _environment, $1, $3, $5, NULL, 0 );
         gr_locate( _environment, $1, $3 );
     };
 
@@ -4956,11 +5102,11 @@ circle_definition:
 
 ellipse_definition_expression:
       optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
-        ellipse( _environment, $1, $3, $5, $7, $9 );
+        ellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
     }
     | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr {
-        ellipse( _environment, $1, $3, $5, $7, NULL );
+        ellipse( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $1, $3 );
     };
 
@@ -4968,7 +5114,18 @@ ellipse_definition:
     ellipse_definition_expression;
 
 get_definition_expression:
-    OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
+    Identifier as_datatype_suffix_optional {
+        if ( $2 != 0 ) {
+            if ( $2 != VT_STRING && $2 != VT_DSTRING ) {
+                CRITICAL_GET_NEED_STRING( $2 );
+            }
+        }
+        wait_key( _environment, 0 );
+        Variable * p = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
+        Variable * k = inkey( _environment );
+        variable_move( _environment, k->name, p->name );
+    }
+    | OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
         get_image( _environment, $13, $2, $4, $8, $10, NULL, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     }
@@ -5500,13 +5657,13 @@ box_mode :
 
 line_definition_expression:
     OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP {
-        draw( _environment, $2, $4, $8, $10, NULL );
+        draw( _environment, $2, $4, $8, $10, NULL, 0 );
         gr_locate( _environment, $8, $10 );
     }
     | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
-        draw( _environment, $2, $4, $8, $10, $13 );
+        draw( _environment, $2, $4, $8, $10, resolve_color( _environment, $13 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $8, $10 );
     }
     | OP_MINUS OP expr OP_COMMA expr CP {
@@ -5514,7 +5671,7 @@ line_definition_expression:
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $3, $5, NULL );
+        draw( _environment, implicitX->name, implicitY->name, $3, $5, NULL, 0 );
         gr_locate( _environment, $3, $5 );
     }
     | OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
@@ -5522,7 +5679,7 @@ line_definition_expression:
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $3, $5, $8 );
+        draw( _environment, implicitX->name, implicitY->name, $3, $5, resolve_color( _environment, $8 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $3, $5 );
     }
     | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode OP_COMMA box_mode {
@@ -5530,13 +5687,13 @@ line_definition_expression:
         variable_store( _environment, zero->name, 0 );
         switch( $15 ) {
             case 0:
-                draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name, 0 );
                 break;
             case 1:
-                box( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                box( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name, 0 );
                 break;
             case 2:
-                bar( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                bar( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name, 0 );
                 break;
         }
         gr_locate( _environment, $8, $10 );
@@ -5548,60 +5705,82 @@ line_definition_expression:
         variable_store( _environment, zero->name, 0 );
         switch( $10 ) {
             case 0:
-                draw( _environment, implicitX->name, implicitY->name, $3, $5, $8 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                draw( _environment, implicitX->name, implicitY->name, $3, $5, $8 == 0 ? NULL : color_get_vars( _environment, zero->name )->name, 0 );
                 break;
             case 1:
-                box( _environment, implicitX->name, implicitY->name, $3, $5, $8 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                box( _environment, implicitX->name, implicitY->name, $3, $5, $8 == 0 ? NULL : color_get_vars( _environment, zero->name )->name, 0 );
                 break;
             case 2:
-                bar( _environment, implicitX->name, implicitY->name, $3, $5, $8 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                bar( _environment, implicitX->name, implicitY->name, $3, $5, $8 == 0 ? NULL : color_get_vars( _environment, zero->name )->name, 0 );
                 break;
         }
         gr_locate( _environment, $3, $5 );
     }
-    | optional_x_or_string {
-        draw_string( _environment, $1 );
-    }
     | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        draw( _environment, $1, $3, $5, $7, $9 );
+        draw( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     }
     | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
-        draw( _environment, $1, $3, $5, $7, NULL );
+        draw( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $5, $7 );
     }
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     }
+    | INPUT {
+        ((Environment *)_environment)->lineInput = 1;
+    } input_definition;
     ;
 
 line_definition:
     line_definition_expression;
 
+draw_optional_string2:
+    OP_COMMA expr OP_COMMA expr {
+        draw_tsb_string( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, resolve_color( _environment, $4 ), ((Environment *)_environment)->colorImplicit );
+    }
+    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        draw( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $2, $4 );
+    }
+    | TO optional_x OP_COMMA optional_y  {
+        draw( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, $4, NULL, 0 );
+        gr_locate( _environment, $2, $4 );
+    };
+
+draw_optional_string :
+    {
+        draw_string( _environment, ((Environment *)_environment)->optionalX );
+    }
+    | OP_COMMA optional_y {
+         ((Environment *)_environment)->optionalY = $2;
+    } draw_optional_string2;
+
+
 draw_definition_expression:
     OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP {
-        draw( _environment, $2, $4, $8, $10, NULL );
+        draw( _environment, $2, $4, $8, $10, NULL, 0 );
         gr_locate( _environment, $8, $10 );
     }
     | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode {
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
-        draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+        draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name, 0 );
         gr_locate( _environment, $8, $10 );
     }
     | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
-        draw( _environment, $2, $4, $8, $10, $13 );
+        draw( _environment, $2, $4, $8, $10, resolve_color( _environment, $13 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $8, $10 );
     }
     | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode OP_COMMA box_mode {
@@ -5609,38 +5788,30 @@ draw_definition_expression:
         variable_store( _environment, zero->name, 0 );
         switch( $15 ) {
             case 0:
-                draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name, 0 );
                 break;
             case 1:
-                box( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                box( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name, 0 );
                 break;
             case 2:
-                bar( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name );
+                bar( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name, 0 );
                 break;
         }
         gr_locate( _environment, $8, $10 );
     }
     | optional_x_or_string {
-        draw_string( _environment, $1 );
-    }
-    | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        draw( _environment, $1, $3, $5, $7, $9 );
-        gr_locate( _environment, $5, $7 );
-    }
-    | optional_x_or_string OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
-        draw( _environment, $1, $3, $5, $7, NULL );
-        gr_locate( _environment, $5, $7 );
-    }
+        ((Environment *)_environment)->optionalX = $1;
+    } draw_optional_string
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     };
 
@@ -5665,29 +5836,40 @@ draw_tile_definition:
     draw_tile_definition_expression;
 
 box_definition_expression:
-      optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        box( _environment, $1, $3, $5, $7, $9 );
+    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        box( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     }
     | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
-        box( _environment, $1, $3, $5, $7, NULL );
+        box( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $5, $7 );
     }
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        box( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
+        box( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        box( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
+        box( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     };
 
 box_definition:
     box_definition_expression;
+
+rec_definition_expression:
+    mandatory_x OP_COMMA mandatory_y OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
+        Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
+        Variable * y2 = variable_add( _environment, $3, variable_retrieve_or_define( _environment, $7, VT_POSITION, 0 )->name );
+        box( _environment, $1, $3, x2->name, y2->name, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, x2->name, y2->name );
+    };
+
+rec_definition:
+    rec_definition_expression;
 
 console_definition_simple :
     OFF {
@@ -5733,29 +5915,38 @@ console_definition:
     | console_definition_expression;
 
 bar_definition_expression:
-      optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        bar( _environment, $1, $3, $5, $7, $9 );
+    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        bar( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     }
     | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
-        bar( _environment, $1, $3, $5, $7, NULL );
+        bar( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $5, $7 );
     }
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        bar( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
+        bar( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        bar( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
+        bar( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     };
 
 bar_definition:
     bar_definition_expression;
+
+block_definition_expression:
+    mandatory_x OP_COMMA mandatory_y OP_COMMA mandatory_x OP_COMMA mandatory_y OP_COMMA expr  {
+        bar( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $5, $7 );
+    };
+
+block_definition:
+    block_definition_expression;
 
 clip_definition_expression:
       expr OP_COMMA expr TO expr OP_COMMA expr {
@@ -5772,51 +5963,51 @@ polyline_definition_expression_continue:
       TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     } polyline_definition_expression_continue
     | TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     };
 
 polyline_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        draw( _environment, $1, $3, $5, $7, $9 );
+        draw( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     }
     | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
-        draw( _environment, $1, $3, $5, $7, NULL );
+        draw( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $5, $7 );
     }
     | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
-        draw( _environment, $1, $3, $5, $7, NULL );
+        draw( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $5, $7 );
     } polyline_definition_expression_continue
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     } polyline_definition_expression_continue;
 
@@ -6003,8 +6194,11 @@ add_definition :
     ;
 
 swap_definition :
-    Identifier OP_COMMA Identifier {
-        variable_swap( _environment, $1, $3 );
+    Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional {
+        if ( $2 != $5 ) {
+            CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( $1, $4 );
+        }
+        variable_swap( _environment, $1, $4 );
     }
     ;
 
@@ -6142,6 +6336,9 @@ datatype :
     }
     | BUFFER {
         $$ = VT_BUFFER;
+    }
+    | DOJOKA {
+        $$ = VT_DOJOKA;
     }
     | TASK {
         $$ = VT_THREAD;
@@ -6659,27 +6856,11 @@ readonly_optional :
     };
 
 dim_definition :
-    Identifier as_datatype_suffix {
-          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-          ((struct _Environment *)_environment)->arrayDimensions = 0;
-      } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, $2 );
-    } array_assign readonly_optional on_bank {
-        Variable * array = variable_retrieve( _environment, $1 );
-        array->readonly = $9;
-        if ( $10 ) {
-            if ( !banks_store( _environment, array, $10 ) ) {
-                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-            };
-        }
-    }
-    |
     Identifier datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
     } array_assign readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
@@ -6692,13 +6873,66 @@ dim_definition :
     }
     as_datatype_suffix
     |
-    Identifier OP_DOLLAR {
+    Identifier as_datatype_suffix_optional {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, VT_DSTRING );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+    } as_datatype {
+
+        int followRchackCocon1163 = 0;
+
+        /* retrocompatible hacks */
+
+        // If we are compiling "Cocon" game with a recent
+        // version of the compiler, arrays "til", "sts", 
+        // "bkg", "win" and "ugb" will be defined as BYTE, 
+        // to reduce to half the memory occupation.        
+        if ( ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163 ) {
+            if ( 
+                strcmp( $1, "til" ) == 0 || 
+                strcmp( $1, "sts" ) == 0 || 
+                strcmp( $1, "bkg" ) == 0 ||
+                strcmp( $1, "win" ) == 0 ||
+                strcmp( $1, "ugb" ) == 0
+                 ) {
+                followRchackCocon1163 = 1;
+            }
+        }
+
+        if ( followRchackCocon1163 ) {
+            variable_array_type( _environment, $1, VT_BYTE );
+        } else {
+            if ( $2 ) {
+                variable_array_type( _environment, $1, $2 );
+            } else {
+                variable_array_type( _environment, $1, $8 );
+            }
+        }
+
     } array_assign readonly_optional on_bank {
+        Variable * array = variable_retrieve( _environment, $1 );
+        array->readonly = $11;
+        if ( $12 ) {
+            if ( ! banks_store( _environment, array, $12 ) ) {
+                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+            };
+        }        
+    }
+    | Identifier WITH const_expr {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } OP dimensions CP {
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment,  $1, VT_TARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray->value = $3;
+        variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
+      } readonly_optional on_bank {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
         if ( $10 ) {
@@ -6711,7 +6945,7 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
         ((struct _Environment *)_environment)->currentArray->value = $4;
         variable_array_type( _environment, $1, $2 );
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
@@ -6729,7 +6963,7 @@ dim_definition :
             };
         }        
     }
-    | Identifier as_datatype {
+    | Identifier as_datatype_mandatory {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP as_datatype {
@@ -6765,11 +6999,11 @@ dim_definition :
             };
         }        
     }
-    | Identifier as_datatype WITH const_expr {
+    | Identifier as_datatype_mandatory WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
         ((struct _Environment *)_environment)->currentArray->value = $4;
         variable_array_type( _environment, $1, $2 );
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
@@ -6795,18 +7029,54 @@ dim_definitions :
     | dim_definition OP_COMMA dim_definitions
     ;
 
-fill_definition :
-      Identifier {
-        variable_array_fill( _environment, $1, 0 );
-    }
-    | Identifier WITH const_expr {
+fill_definition_array :
+    Identifier WITH const_expr {
         variable_array_fill( _environment, $1, $3 );
     }
     ;
 
+fill_definitions_array :
+      fill_definition_array
+    | fill_definition_array OP_COMMA fill_definitions_array
+
+fill_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        fill( _environment, $1, $3, $5, $7, $9, $11 );
+    };
+
 fill_definitions :
-      fill_definition
-    | fill_definition OP_COMMA fill_definitions
+    fill_definitions_array
+    | expr {
+        /* retrocompatible hacks */
+        variable_array_fill( _environment, $1, 0 );
+    }
+    | expr OP_COMMA expr {
+        /* retrocompatible hacks */
+        variable_array_fill( _environment, $1, 0 );
+        variable_array_fill( _environment, $3, 0 );
+    }
+    | expr OP_COMMA expr OP_COMMA expr {
+        /* retrocompatible hacks */
+        variable_array_fill( _environment, $1, 0 );
+        variable_array_fill( _environment, $3, 0 );
+        variable_array_fill( _environment, $5, 0 );
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        /* retrocompatible hacks */
+        variable_array_fill( _environment, $1, 0 );
+        variable_array_fill( _environment, $3, 0 );
+        variable_array_fill( _environment, $5, 0 );
+        variable_array_fill( _environment, $7, 0 );
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        /* retrocompatible hacks */
+        variable_array_fill( _environment, $1, 0 );
+        variable_array_fill( _environment, $3, 0 );
+        variable_array_fill( _environment, $5, 0 );
+        variable_array_fill( _environment, $7, 0 );
+        variable_array_fill( _environment, $9, 0 );
+    }
+    | fill_definition
     ;
 
 indexes :
@@ -7587,25 +7857,27 @@ vscroll_definition :
     ;
     
 input_definition2 :
-      Identifier {
-        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+      Identifier as_datatype_suffix_optional {
+        VariableType vt = $2;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
+        input( _environment, $1, vt );
         print_newline( _environment );
       }
-    | Identifier OP_DOLLAR {
-        input( _environment, $1, VT_DSTRING );
-        print_newline( _environment );
+    | Identifier as_datatype_suffix_optional OP_SEMICOLON {
+        VariableType vt = $2;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
+        input( _environment, $1, vt );
       }
-    | Identifier OP_SEMICOLON {
-        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
-      }
-    | Identifier OP_DOLLAR OP_SEMICOLON {
-        input( _environment, $1, VT_DSTRING );
-      }
-    | Identifier {
-        input( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
-      } OP_COMMA input_definition2
-    | Identifier OP_DOLLAR {
-        input( _environment, $1, VT_DSTRING );
+    | Identifier as_datatype_suffix_optional {
+        VariableType vt = $2;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
+        input( _environment, $1, vt );
       } OP_COMMA input_definition2
     ;
 
@@ -7636,7 +7908,7 @@ read_definition_single :
         parser_array_init( _environment );
     } OP indexes CP {
         Variable * a = variable_retrieve( _environment, $2 );
-        if ( a->type != VT_ARRAY ) {
+        if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
         Variable * read = variable_temporary( _environment, a->arrayType, "(temp for array)" );
@@ -7652,7 +7924,7 @@ read_definition_single :
         parser_array_init( _environment );
     } OP indexes CP {
         Variable * a = variable_retrieve( _environment, $2 );
-        if ( a->type != VT_ARRAY ) {
+        if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
         if ( a->arrayType != VT_DSTRING ) {
@@ -7669,19 +7941,11 @@ read_definition :
     | read_definition_single OP_COMMA read_definition;
 
 input_definition :
-      String op_comma_or_semicolon Identifier {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
+    String op_comma_or_semicolon Identifier as_datatype_suffix_optional {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
         }
-        print( _environment, string->name, 0 );
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
-        print_newline( _environment );
-    }
-    | String op_comma_or_semicolon Identifier OP_DOLLAR {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
@@ -7690,11 +7954,15 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
+        Variable * var = variable_retrieve_or_define( _environment, $3, vt, 0 );
         input( _environment, var->name, VT_DSTRING );
         print_newline( _environment );
     }
-    | String op_comma_or_semicolon Identifier OP_SEMICOLON {
+    | String op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
@@ -7703,9 +7971,13 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
+        input( _environment, $3, vt );
     }
-    | String op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
+    | String op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_COMMA {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
@@ -7714,34 +7986,11 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name, VT_DSTRING );
-    }
-    | String op_comma_or_semicolon Identifier OP_SEMICOLON {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
-        }
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
-    }  input_definition2
-    | String op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
-        }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name, VT_DSTRING );
+        input( _environment, $3, vt );
     }  input_definition2
     | input_definition2
-    | RawString op_comma_or_semicolon Identifier {
+    | RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional {
+        VariableType vt = ((struct _Environment *)_environment)->defaultVariableType;
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
@@ -7751,10 +8000,14 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
+        input( _environment, $3, vt );
         print_newline( _environment );
     }
-    | RawString op_comma_or_semicolon Identifier OP_DOLLAR {
+    | RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
@@ -7764,11 +8017,13 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name, VT_DSTRING );
-        print_newline( _environment );
+        input( _environment, $3, vt );
     }
-    | RawString op_comma_or_semicolon Identifier OP_SEMICOLON {
+    | RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_COMMA {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
@@ -7778,45 +8033,7 @@ input_definition :
             variable_store_string( _environment, qm->name, "?" );
             print( _environment, qm->name, 0 );
         }
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
-    }
-    | RawString op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        string->printable = 1;
-        print( _environment, string->name, 0 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
-        }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name, VT_DSTRING );
-    }
-    | RawString op_comma_or_semicolon Identifier OP_SEMICOLON {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        string->printable = 1;
-        print( _environment, string->name, 0 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
-        }
-        input( _environment, $3, ((struct _Environment *)_environment)->defaultVariableType );
-    }  input_definition2
-    | RawString op_comma_or_semicolon Identifier OP_DOLLAR OP_SEMICOLON {
-        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
-        variable_store_string( _environment, string->name, $1 );
-        string->printable = 1;
-        print( _environment, string->name, 0 );
-        if ( $2 == 1 ) {
-            Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
-            variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
-        }
-        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
-        input( _environment, var->name, VT_DSTRING );
+        input( _environment, $3, vt );
     }  input_definition2
   ;
 
@@ -7865,7 +8082,31 @@ audio_source :
     };
 
 define_definition :
-      AUDIO SYNC {
+      COLOR IMPLICIT {
+        ((struct _Environment *)_environment)->colorImplicit = 1;
+    }
+    | COLOR EXPLICIT {
+        ((struct _Environment *)_environment)->colorImplicit = 1;
+    }
+    | COMPRESSION RLE ON {
+        ((struct _Environment *)_environment)->enableRle = 1;
+    }
+    | COMPRESSION RLE OFF {
+        ((struct _Environment *)_environment)->enableRle = 0;
+    }
+    | CENTER WITH NEWLINE {
+        ((struct _Environment *)_environment)->centerWithoutNewLine = 0;
+    }
+    | CENTER WITHOUT NEWLINE {
+        ((struct _Environment *)_environment)->centerWithoutNewLine = 1;
+    }
+    | CLS IMPLICIT {
+        ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 1;
+    }
+    | CLS EXPLICIT {
+        ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 0;
+    }
+    | AUDIO SYNC {
         ((struct _Environment *)_environment)->audioConfig.async = 0;
     }
     | AUDIO ASYNC {
@@ -7877,6 +8118,15 @@ define_definition :
     | MSPRITE ASYNC {
         ((struct _Environment *)_environment)->multiplexingSpriteConfig.async = 1;
     }
+    | LOAD BANKED ON {
+        ((struct _Environment *)_environment)->bankedLoadDefault = 1;
+    }
+    | LOAD BANKED OFF {
+        ((struct _Environment *)_environment)->bankedLoadDefault = 0;
+    }
+    | KEY PRESSED SYNC {
+        ((Environment *)_environment)->keyPressDutyCycle = 1;
+    }
     | AUDIO TARGET audio_source {
         if ( ! define_audio_target_check( _environment, $3 ) ) {
             CRITICAL_AUDIO_TARGET_UNAVAILABLE( );
@@ -7885,6 +8135,12 @@ define_definition :
     }
     | FONT font_schema {
         ((struct _Environment *)_environment)->fontConfig.schema = $2;
+    }
+    | JOYSTICK VALUES DEFAULT {
+        ((struct _Environment *)_environment)->joystickConfig.values = 0;
+    }
+    | JOYSTICK VALUES TSB {
+        ((struct _Environment *)_environment)->joystickConfig.values = 1;
     }
     | JOYSTICK RETRIES const_expr {
         if ( $3 < 0 ) {
@@ -7947,17 +8203,50 @@ define_definition :
         }
         ((struct _Environment *)_environment)->inputConfig.cursor = $3;
     }    
+    | INPUT LATENCY const_expr  {
+        if ( $3 <= 0 || $3 >= 256 ) {
+            CRITICAL_INVALID_INPUT_LATENCY( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.latency = $3;
+    }
+    | INPUT LATENCY const_expr milliseconds {
+        int latency = $3 / 20;
+        if ( latency <= 0 || latency >= 256 ) {
+            CRITICAL_INVALID_INPUT_LATENCY_MS( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.latency = latency;
+    }
     | INPUT RATE const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_RATE( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.rate = $3;
+        ((struct _Environment *)_environment)->inputConfig.delay = 255 - $3;
     }
     | INPUT DELAY const_expr {
-        if ( $3 <= 0 ) {
+        if ( $3 <= 0 || $3 >= 256 ) {
             CRITICAL_INVALID_INPUT_DELAY( $3 );
         }
         ((struct _Environment *)_environment)->inputConfig.delay = $3;
+    }
+    | INPUT DELAY const_expr milliseconds {
+        int delay = $3 / 20;
+        if ( delay <= 0 || delay >= 256 ) {
+            CRITICAL_INVALID_INPUT_DELAY_MS( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.delay = delay;
+    }
+    | INPUT RELEASE const_expr {
+        if ( $3 <= 0 || $3 >= 256 ) {
+            CRITICAL_INVALID_INPUT_RELEASE( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.release = $3;
+    }
+    | INPUT RELEASE const_expr milliseconds {
+        int release = $3 / 20;
+        if ( release <= 0 || release >= 256 ) {
+            CRITICAL_INVALID_INPUT_RELEASE_MS( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.release = release;
     }
     | SCREEN MODE UNIQUE {
         ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 1;
@@ -7981,7 +8270,7 @@ define_definition :
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_RATE( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.rate = $3;
+        ((struct _Environment *)_environment)->inputConfig.delay = 255 - $3;
     }
     | KEYBOARD DELAY const_expr {
         if ( $3 <= 0 ) {
@@ -8506,7 +8795,25 @@ option_read :
     };
 
 option_definitions :
-     TYPE WIDE {
+    DIALECT UGBASIC {
+        option_dialect( _environment, DI_UGBASIC );
+    }
+    | DIALECT TSB {
+        option_dialect( _environment, DI_TSB );
+    }
+    | EXEC AS GOSUB {
+        ((struct _Environment *)_environment)->optionExecAsGosub = 1;
+    }
+    | EXEC AS GOTO {
+        ((struct _Environment *)_environment)->optionExecAsGosub = 0;
+    }
+     CALL AS GOSUB {
+        ((struct _Environment *)_environment)->optionCallAsGoto = 0;
+    }
+    | CALL AS GOTO {
+        ((struct _Environment *)_environment)->optionCallAsGoto = 1;
+    }
+    | TYPE WIDE {
         ((struct _Environment *)_environment)->defaultNarrowType = 0;
     }
     | TYPE NARROW {
@@ -8599,6 +8906,16 @@ sys_definition :
     }
     ;
 
+exec_definition :
+    sys_definition
+    | IdentifierSpaced {
+        if (  ((struct _Environment *)_environment)->optionExecAsGosub ) {
+            call_procedure( _environment, $1 );
+        } else {
+            goto_label( _environment, $1 );
+        }
+    };
+
 data_definition_single :
     const_expr {
         data_numeric( _environment, $1 );
@@ -8673,8 +8990,12 @@ pmode_definition :
         pmode( _environment, $2, $5 );
     };
 
-paint_definition : 
-    OP expr OP_COMMA expr CP {
+paint_definition :
+    expr OP_COMMA expr OP_COMMA expr  {
+        Variable * color = sbpen_get( _environment, $5 );
+        paint_vars( _environment, $1, $3, color->name, NULL );
+    } 
+    | OP expr OP_COMMA expr CP {
         paint_vars( _environment, $2, $4, NULL, NULL );
     }
     | OP expr OP_COMMA expr CP OP_COMMA expr {
@@ -8860,7 +9181,7 @@ flip_definition:
 thread_identifiers :
     expr {
         Variable * array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_ARRAY || array->arrayType != VT_THREAD ) {
+        if ( array->type != VT_TARRAY || array->arrayType != VT_THREAD ) {
             ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
             ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
         } else {
@@ -8874,7 +9195,7 @@ thread_identifiers :
     }
     | expr OP_COMMA thread_identifiers {
         Variable * array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_ARRAY || array->arrayType != VT_THREAD ) {
+        if ( array->type != VT_TARRAY || array->arrayType != VT_THREAD ) {
             ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
             ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
         } else {
@@ -8921,7 +9242,7 @@ spawn_definition :
   | Identifier OP_COMMA Identifier on_targets {
         if ( $4 ) {
             Variable * variable = variable_retrieve( _environment, $1 );
-            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+            if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
                 ((struct _Environment *)_environment)->parameters = 0;
                 variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
             } else {
@@ -8939,7 +9260,7 @@ spawn_definition :
     } values CSP on_targets {
       if ( $8 ) {
             Variable * variable = variable_retrieve( _environment, $1 );
-            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+            if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
                 ((struct _Environment *)_environment)->parameters = 0;
                 variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
             } else {
@@ -8956,7 +9277,7 @@ spawn_definition :
       ((struct _Environment *)_environment)->parameters = 0;
       if ( $6 ) {
             Variable * variable = variable_retrieve( _environment, $1 );
-            if ( variable->type != VT_ARRAY || variable->arrayType != VT_THREAD ) {
+            if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
                 ((struct _Environment *)_environment)->parameters = 0;
                 variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
             } else {
@@ -8969,6 +9290,214 @@ spawn_definition :
             }
       }
   };
+
+hires_definition_expression :
+    expr OP_COMMA expr {
+        hires( _environment, $1, $3 );
+    };
+
+hires_definition : 
+    hires_definition_expression;
+
+multi_definition_expression :
+    expr OP_COMMA expr OP_COMMA expr {
+        bitmap_enable( _environment, 0, 0, 32 );
+        sbpen_set( _environment, 1, $1 );
+        sbpen_set( _environment, 2, $3 );
+        sbpen_set( _environment, 3, $5 );
+    }
+    | ON {
+        bitmap_enable( _environment, 0, 0, 32 );
+    };
+
+multi_definition : 
+    multi_definition_expression;
+
+mod_definition_expression :
+    expr OP_COMMA expr {
+        sbpen_set( _environment, 1, $1 );
+        sbpen_set( _environment, 0, $3 );
+        paper( _environment, $3 );
+    };
+
+mod_definition : 
+    mod_definition_expression;
+
+keyget_definition :
+    Identifier as_datatype_suffix_optional {
+        if ( $2 != 0 ) {
+            if ( $2 != VT_STRING && $2 != VT_DSTRING ) {
+                CRITICAL_GET_NEED_STRING( $2 );
+            }
+        }
+        wait_key( _environment, 0 );
+        Variable * p = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
+        Variable * k = inkey( _environment );
+        variable_move( _environment, k->name, p->name );
+    };
+
+at_definition :
+    OP Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional CP {
+        if ( ($3 != 0) && ($6 != 0) && ($3 != $6) ) {
+            CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( DATATYPE_AS_STRING[$3], DATATYPE_AS_STRING[$6] );
+        }
+        if ( $3 != VT_DSTRING ) {
+            Variable * v1 = variable_retrieve( _environment, $2 );
+            if ( v1->type != VT_DSTRING ) {
+                CRITICAL_AT_UNSUPPORTED( v1->name, DATATYPE_AS_STRING[v1->type]);
+            }
+        }
+        if ( $6 != VT_DSTRING ) {
+            Variable * v2 = variable_retrieve( _environment, $5 );
+            if ( v2->type != VT_DSTRING ) {
+                CRITICAL_AT_UNSUPPORTED( v2->name, DATATYPE_AS_STRING[v2->type]);
+            }
+        }
+        variable_swap( _environment, $2, $5 );
+    };
+
+nrm_definition :
+    {
+        tilemap_enable( _environment, 0, 0, 0, 0, 0 );
+        cls( _environment, NULL );
+    };
+
+char_definition :
+    mandatory_x OP_COMMA mandatory_y OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        char_at( _environment, $1, $3, $5, $7, $9 );
+    };
+
+center_definition : 
+  | expr OP_SEMICOLON {
+      center( _environment, $1, 0, NULL);
+  }
+  | expr {
+      center( _environment, $1, 1, NULL );
+  }
+  | expr OP_COMMA expr {
+      center( _environment, $1, 1, $3 );
+  }
+  | AT OP expr OP_COMMA expr CP expr OP_COMMA expr {
+      locate( _environment, $3, $5 );
+      center( _environment, $7, 0, $9 );
+  }
+  ;
+
+insert_definition : 
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        insert( _environment, $1, $3, $5, $7, $9, $11 );
+    };
+
+envelope_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        envelope( _environment, $1, $3, $5, $7, $9 );
+    }
+
+pause_definition :
+    expr {
+        pause_seconds( _environment, NULL, $1 );
+    }
+    | expr OP_COMMA expr {
+        pause_seconds( _environment, $1, $3 );
+    };
+
+wave_definition :
+    expr OP_COMMA expr {
+        wave( _environment, $1, $3, NULL );
+    }
+    | expr OP_COMMA expr OP_COMMA expr {
+        wave( _environment, $1, $3, $5 );
+    }
+
+cset_definition : 
+    expr {
+        cset( _environment, $1 );
+    };
+
+rot_definition :
+    expr OP_COMMA expr {
+        rot( _environment, $1, $3 );
+    };
+
+key_definition:
+  SPEED const_expr milliseconds OP_COMMA const_expr milliseconds OP_COMMA const_expr milliseconds {
+    int latency = $2 / 20;
+    if ( latency <= 0 || latency >= 256 ) {
+        CRITICAL_INVALID_INPUT_LATENCY_MS( $2 );
+    }
+    ((struct _Environment *)_environment)->inputConfig.latency = latency;
+    int delay = $5 / 20;
+    if ( delay <= 0 || delay >= 256 ) {
+        CRITICAL_INVALID_INPUT_DELAY_MS( $5 );
+    }
+    ((struct _Environment *)_environment)->inputConfig.delay = delay;
+    int release = $8 / 20;
+    if ( release <= 0 || release >= 256 ) {
+        CRITICAL_INVALID_INPUT_RELEASE_MS( $8 );
+    }
+    ((struct _Environment *)_environment)->inputConfig.release = release;
+  }
+  | SPEED const_expr OP_COMMA const_expr OP_COMMA const_expr {
+    int latency = $2;
+    if ( latency <= 0 || latency >= 256 ) {
+        CRITICAL_INVALID_INPUT_LATENCY_MS( $2 );
+    }
+    ((struct _Environment *)_environment)->inputConfig.latency = latency;
+    int delay = $4;
+    if ( delay <= 0 || delay >= 256 ) {
+        CRITICAL_INVALID_INPUT_DELAY_MS( $4 );
+    }
+    ((struct _Environment *)_environment)->inputConfig.delay = delay;
+    int release = $6;
+    if ( release <= 0 || release >= 256 ) {
+        CRITICAL_INVALID_INPUT_RELEASE_MS( $6 );
+    }
+    ((struct _Environment *)_environment)->inputConfig.release = release;
+  };
+
+check_definition :
+    Identifier {
+
+    }
+    | IdentifierSpaced {
+
+    };
+
+mob_definition :
+    ON  {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_enable( _environment, i );
+        }
+    }
+    | ON expr {
+        sprite_enable_var( _environment, $2 );
+    }
+    | OFF {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_disable( _environment, i );
+        }
+    }
+    | OFF expr {
+        sprite_disable_var( _environment, $2 );
+    }
+    ;
+
+cmob_definition :
+    expr OP_COMMA expr {
+        color_sprite_semi_vars( _environment, 0, $1 );
+        color_sprite_semi_vars( _environment, 1, $3 );
+    };
+
+dojo_definition :
+    SEND expr {
+        dojo_send( _environment, $2 );
+    }
+    | DESTROY PORT expr {
+        dojo_destroy_port( _environment, $3 );
+    }
+    | PUT MESSAGE expr OP_COMMA expr {
+        dojo_put_message( _environment, $3, $5 );
+    };
 
 statement2nc:
     BANK bank_definition
@@ -8983,13 +9512,22 @@ statement2nc:
       ((struct _Environment *)_environment)->paletteIndex = 0;
       color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
   } palette_definition
+  | PAUSE pause_definition
   | WAIT wait_definition
+  | CMOB cmob_definition
+  | MOB mob_definition
   | SPRITE sprite_definition
+  | CSET cset_definition
   | CSPRITE sprite_definition
   | MSPRITE sprite_definition
   | MSPRITE UPDATE {
       msprite_update( _environment );
   }
+  | NRM nrm_definition
+  | MOD mod_definition
+  | HIRES hires_definition
+  | MULTI multi_definition
+  | KEYGET keyget_definition
   | BITMAP bitmap_definition
   | TEXTMAP textmap_definition
   | TILEMAP tilemap_definition
@@ -9005,6 +9543,7 @@ statement2nc:
   | CIRCLE circle_definition
   | ELLIPSE ellipse_definition
   | DRAW draw_definition
+  | ROT rot_definition
   | DTILE draw_tile_definition
   | DTILES draw_tile_definition
   | LINE line_definition
@@ -9016,12 +9555,15 @@ statement2nc:
   | GET get_definition
   | SLICE slice_definition
   | BOX box_definition
+  | REC rec_definition
   | CONSOLE console_definition
   | BAR bar_definition
+  | BLOCK block_definition
   | POLYLINE polyline_definition
   | CLIP clip_definition
   | USE use_definition
   | SET LINE expr {
+      ((Environment *)_environment)->lineNeeded = 1;
       variable_move( _environment, $3, "LINE" );
   }
   | INK ink_definition
@@ -9048,6 +9590,7 @@ statement2nc:
   | RUN {
     run( _environment );
   }
+  | KEY key_definition
   | DLOAD dload_definition
   | DSAVE dsave_definition
   | SWAP swap_definition
@@ -9058,6 +9601,13 @@ statement2nc:
   | CLEAR clear_definition
   | PMODE pmode_definition
   | PAINT paint_definition
+  | AT at_definition
+  | CHAR char_definition
+  | ENVELOPE envelope_definition
+  | INSERT insert_definition
+  | CHECK check_definition
+  | DOJO dojo_definition
+  | dojo_definition
   | PRINT print_definition
   | BORDER border_definition
   | PRINT BUFFER print_buffer_definition
@@ -9068,7 +9618,9 @@ statement2nc:
   | DEBUG expr {
       print( _environment, $2, 0 );
   }
-  | INPUT input_definition
+  | INPUT {
+        ((Environment *)_environment)->lineInput = 0;
+  } input_definition
   | QM print_definition
   | QM {
       print_newline( _environment );
@@ -9106,18 +9658,8 @@ statement2nc:
   | SET TAB expr {
       text_set_tab( _environment, $3 );
   }
-  | CENTER expr OP_SEMICOLON {
-      center( _environment, $2, 0 );
-  }
-  | CENTRE expr OP_SEMICOLON {
-      center( _environment, $2, 0 );
-  }
-  | CENTER expr {
-      center( _environment, $2, 1 );
-  }
-  | CENTRE expr {
-      center( _environment, $2, 1 );
-  }
+  | CENTRE center_definition
+  | CENTER center_definition
   | CLS {
       cls( _environment, NULL );
       home( _environment );
@@ -9136,6 +9678,9 @@ statement2nc:
   }
   | CLEAR KEY {
       clear_key( _environment );
+  }
+  | PUT KEY expr {
+      put_key( _environment, $3 );
   }
   | OP_INC Identifier {
       variable_increment( _environment, $2 );
@@ -9240,11 +9785,21 @@ statement2nc:
   | ENDSELECT {
       end_select_case( _environment );  
   }
+  | DO NULLkw {
+      wait_key( _environment, 1 );
+  }
   | DO {
-      begin_loop( _environment );  
+      begin_loop( _environment, 1 );  
   }
   | LOOP {
-      end_loop( _environment );  
+      if ( is_do_loop( _environment ) ) {
+          end_loop( _environment, 1 );  
+      } else {
+          begin_loop( _environment, 0 );  
+      }
+  }
+  | END LOOP {
+      end_loop( _environment, 0 );  
   }
   | WHILE { 
       begin_while( _environment );  
@@ -9311,14 +9866,18 @@ statement2nc:
       exit_loop_if( _environment, $4, $2 );  
   }
   | FOR Identifier as_datatype_suffix_optional OP_ASSIGN {
-      if ( $3 > 0 ) {
-        Variable * index = variable_retrieve_or_define( _environment, $2, $3, 0 );
-        if ( index->type != $3 ) {
-            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $3 ] );
-        }
-      }
-      begin_for_prepare( _environment );
-      begin_for_from_prepare( _environment );
+    VariableType vt = $3;
+    if ( vt == 0 ) {
+        vt = ((struct _Environment *)_environment)->defaultVariableType;
+    }
+    Variable * index;
+    if ( variable_exists( _environment, $2 ) ) {
+        index = variable_retrieve( _environment, $2 );
+    } else {
+        index = variable_define( _environment, $2, vt, 0 );
+    }
+    begin_for_prepare( _environment );
+    begin_for_from_prepare( _environment );
   } expr { 
       begin_for_from_assign( _environment, $6 );
   } TO {
@@ -9330,15 +9889,29 @@ statement2nc:
       begin_for_step_assign( _environment, $12 );
       begin_for_identifier( _environment, $2 );
   }
-  | FOR OSP Identifier CSP as_datatype_suffix_optional OP_ASSIGN {
-      if ( $5 > 0 ) {
-        Variable * index = variable_retrieve_or_define( _environment, $3, $5, 0 );
-        if ( index->type != VT_ARRAY || index->arrayType != $5 ) {
-            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $5 ] );
+  | FOR OSP Identifier as_datatype_suffix_optional CSP OP_ASSIGN {
+     Variable * index;
+     if ( variable_exists( _environment, $3 ) ) {
+        index = variable_retrieve( _environment, $3 );
+        if ( index->type != VT_TARRAY ) {
+            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
         }
-      }
-      begin_for_prepare_mt( _environment );
-      begin_for_from_prepare_mt( _environment );
+        VariableType vt = $4;
+        if ( vt != 0 ) {
+            if ( index->arrayType != vt ) {
+                CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
+            }
+        }
+     } else {
+        VariableType vt = $4;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
+        index = variable_define( _environment, $3, VT_TARRAY, 0 );
+        variable_array_type( _environment, $3, vt );
+     }
+     begin_for_prepare_mt( _environment );
+     begin_for_from_prepare_mt( _environment );
   } expr { 
       begin_for_from_assign_mt( _environment, $8 );
   } TO {
@@ -9366,7 +9939,7 @@ statement2nc:
   | NEXT OSP Identifier as_datatype_suffix_optional CSP {
     if ( $4 > 0 ) {
         Variable * index = variable_retrieve_or_define( _environment, $3, $4, 0 );
-        if ( index->type != VT_ARRAY ) {
+        if ( index->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
         }
         if ( index->arrayType != $4 ) {
@@ -9412,9 +9985,13 @@ statement2nc:
   }
   | PROC Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
-      call_procedure( _environment, $2 );
+      proc( _environment, $2 );
   }
-  | EXEC sys_definition
+  | PROC IdentifierSpaced {
+      ((struct _Environment *)_environment)->parameters = 0;
+      proc( _environment, $2 );
+  }  
+  | EXEC exec_definition
   | SYS sys_definition
   | on_targets AsmSnippet on_targets {
     if ( ((struct _Environment *)_environment)->tenLinerRulesEnforced ) {
@@ -9544,7 +10121,9 @@ statement2nc:
       end( _environment );
   }
   | ON on_definition
+  | WAVE wave_definition
   | GOTO goto_definition
+  | CGOTO cgoto_definition
   | GOSUB gosub_definition
   | EVERY every_definition
   | AFTER after_definition
@@ -9883,7 +10462,7 @@ statement2nc:
                 }
             }
         } else {
-            if ( variable->type == VT_ARRAY ) {
+            if ( variable->type == VT_TARRAY ) {
                 if ( expr->type != VT_BUFFER ) {
                     CRITICAL_CANNOT_ASSIGN_TO_ARRAY( $1, DATATYPE_AS_STRING[expr->type] );
                 }
@@ -9903,20 +10482,24 @@ statement2nc:
 
   }
   | Identifier as_datatype_suffix OP_ASSIGN expr {
+        VariableType vt = ((struct _Environment *)_environment)->defaultVariableType;
+        if ( $2 != 0 ) {
+            vt = $2;
+        }
         Variable * expr = variable_retrieve( _environment, $4 );
         Variable * variable;
         if ( variable_exists( _environment, $1 ) ) {
             variable = variable_retrieve( _environment, $1 );
         } else {
             if ( !((struct _Environment *)_environment)->optionExplicit ) {
-                variable = variable_define( _environment, $1, $2, 0 );
+                variable = variable_define( _environment, $1, vt, 0 );
             } else {
                 CRITICAL_VARIABLE_UNDEFINED( $1 );
             }
         }
 
-        if ( VT_UNSIGN( variable->type ) != VT_UNSIGN( $2 ) ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[variable->type], DATATYPE_AS_STRING[$2] );
+        if ( VT_UNSIGN( variable->type ) != VT_UNSIGN( vt ) ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[variable->type], DATATYPE_AS_STRING[vt] );
         }
 
         if ( variable->type != expr->type ) {
@@ -9939,7 +10522,7 @@ statement2nc:
       
     } OP_ASSIGN {
       Variable * var = variable_retrieve( _environment, $2 );
-      if ( var->type != VT_ARRAY ) {
+      if ( var->type != VT_TARRAY ) {
           CRITICAL_NOT_ARRAY( $2 );
       }
       ((struct _Environment *)_environment)->currentArray = var;
@@ -9948,28 +10531,17 @@ statement2nc:
       
     } OP_ASSIGN_DIRECT {
       Variable * var = variable_retrieve( _environment, $2 );
-      if ( var->type != VT_ARRAY ) {
+      if ( var->type != VT_TARRAY ) {
           CRITICAL_NOT_ARRAY( $2 );
       }
       ((struct _Environment *)_environment)->currentArray = var;
   } array_reassign
-  | Identifier OP_DOLLAR OP_ASSIGN expr {
-        Variable * expr = variable_retrieve( _environment, $4 );
-        if ( !variable_exists( _environment, $1 ) ) {
-            if ( !((struct _Environment *)_environment)->optionExplicit ) {
-                variable_define( _environment, $1, VT_DSTRING, 0 );
-            } else {
-                CRITICAL_VARIABLE_UNDEFINED( $1 );
-            }
-        }
-        variable_move( _environment, $4, $1 );
-  }
   | Identifier {
         parser_array_init( _environment );
     }    
       OP indexes CP OP_ASSIGN expr {
         Variable * array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
         Variable * expr = variable_retrieve_or_define( _environment, $7, array->arrayType, 0 );
@@ -9984,8 +10556,8 @@ statement2nc:
         if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_DSTRING] );
         }
-        if ( a->type != VT_ARRAY ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_ARRAY] );
+        if ( a->type != VT_TARRAY ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_TARRAY] );
         }
         if ( a->arrayType != VT_DSTRING ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
@@ -10001,7 +10573,7 @@ statement2nc:
         if ( x->type != $3 ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[$3] );
         }
-        if ( a->type != VT_ARRAY ) {
+        if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
         if ( a->arrayType != $3 ) {
@@ -10016,7 +10588,7 @@ statement2nc:
       OP_ASSIGN expr {
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * array = variable_retrieve( _environment, $2 );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
         Variable * expr = variable_retrieve_or_define( _environment, $6, array->arrayType, 0 );
@@ -10032,8 +10604,8 @@ statement2nc:
         if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_DSTRING] );
         }
-        if ( a->type != VT_ARRAY ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_ARRAY] );
+        if ( a->type != VT_TARRAY ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_TARRAY] );
         }
         if ( a->arrayType != VT_DSTRING ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
@@ -10050,7 +10622,7 @@ statement2nc:
         if ( x->type != $5 ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[$5] );
         }
-        if ( a->type != VT_ARRAY ) {
+        if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
         if ( a->arrayType != $5 ) {
@@ -10143,7 +10715,7 @@ program :
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.16.3";
+char version[MAX_TEMPORARY_STORAGE] = UGBASIC_VERSION;
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
@@ -10361,6 +10933,14 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->protothreadConfig.count = PROTOTHREAD_DEFAULT_COUNT;
 
+    _environment->inputConfig.latency = 350 / 20;
+    _environment->inputConfig.delay = 75 / 20;
+    _environment->inputConfig.release = 75 / 20;
+
+#if defined(__pc128op__) || defined(__to8__)
+    _environment->bankedLoadDefault = 1;
+#endif
+
 #if defined(__atari__) 
     _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
 #elif defined(__atarixl__) 
@@ -10407,8 +10987,10 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "1a:A:b:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:R:st:T:VvWX:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:R:st:T:VvWw:X:")) != -1) {
         switch (opt) {
+                case '@':
+                    show_troubleshooting_and_exit( _environment, _argc, _argv );
                 case 'a':
                     if ( ! _environment->listingFileName ) {
                         char listingFileName[MAX_TEMPORARY_STORAGE];
@@ -10420,10 +11002,25 @@ int main( int _argc, char *_argv[] ) {
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
                     break;
+                case 'B':
+                    if ( strcmp( optarg, "UGBASIC" ) ) {
+                        _environment->dialect = DI_UGBASIC;    
+                    } else if ( strcmp( optarg, "TSB" ) ) {
+                        _environment->dialect = DI_TSB;    
+                    } else {
+                        CRITICAL("Unknown dialect.");
+                    }
+                    break;
                 case 'C':
                     _environment->compilerFileName = strdup(optarg);
                     if( access( _environment->compilerFileName, F_OK ) != 0 ) {
                         CRITICAL("Compiler not found.");
+                    }
+                    break;
+                case 'w':
+                    _environment->cmdFileName = strdup(optarg);
+                    if( access( _environment->cmdFileName, F_OK ) != 0 ) {
+                        CRITICAL("Replaced cmd.exe not found.");
                     }
                     break;
                 case 'b':

@@ -139,7 +139,7 @@ void play_string( Environment * _environment, char * _string ) {
         // with a ',' so we are looking for that character, or for the end
         // of the original string, as well -- note that the end of the string
         // means end of the parameter itself.
-        begin_loop( _environment );
+        begin_do_loop( _environment );
 
             // Exit if playing string is ended
             cpu_compare_and_branch_8bit_const( _environment, size->realName, 0, readParameter2Label, 1 );
@@ -158,7 +158,7 @@ void play_string( Environment * _environment, char * _string ) {
             // playing commands string
             cpu_inc( _environment, psize->realName );
 
-        end_loop( _environment );
+        end_do_loop( _environment );
 
         cpu_label( _environment, readParameter3Label );
 
@@ -211,6 +211,7 @@ void play_string( Environment * _environment, char * _string ) {
         Variable * command = variable_temporary( _environment, VT_BYTE, "(command)" );
 
         // Note
+        Variable * note8 = variable_temporary( _environment, VT_BYTE, "(note8)" );
         Variable * note16 = variable_temporary( _environment, VT_WORD, "(note16)" );
         Variable * duration16 = variable_temporary( _environment, VT_WORD, "(duration16)" );
 
@@ -231,7 +232,7 @@ void play_string( Environment * _environment, char * _string ) {
         cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
 
         // ------------------------------------ FETCH AND DECODE LOOP
-        begin_loop( _environment );
+        begin_do_loop( _environment );
 
             // Are playing commands ended? Exit fetch and decode loop.
             cpu_compare_and_branch_8bit_const( _environment, size->realName, 0, label, 1 );
@@ -493,8 +494,8 @@ void play_string( Environment * _environment, char * _string ) {
             cpu_jump( _environment, note2CommandLabel );
 
             cpu_label( _environment, note2CommandLabel );
-            cpu_store_8bit( _environment, note16->realName, 12 );
-            cpu_math_mul_8bit_to_16bit( _environment, note16->realName, octave->realName, note16->realName, 0  );
+            cpu_store_8bit( _environment, note8->realName, 12 );
+            cpu_math_mul_8bit_to_16bit( _environment, note8->realName, octave->realName, note16->realName, 0  );
             cpu_math_add_16bit_with_8bit( _environment, note16->realName, temp->realName, note16->realName );
             cpu_math_mul_8bit_to_16bit( _environment, duration->realName, periodEquivalent->realName, duration16->realName, 0  );
 
@@ -506,7 +507,7 @@ void play_string( Environment * _environment, char * _string ) {
 
             cpu_label( _environment, doneCommandLabel );
 
-        end_loop( _environment );
+        end_do_loop( _environment );
         // ------------------------------------ FETCH AND DECODE LOOP (end)
 
         cpu_label( _environment, label );

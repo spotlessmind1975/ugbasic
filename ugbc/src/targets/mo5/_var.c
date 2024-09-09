@@ -65,6 +65,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead1("%s rzb 1", variable->realName);
                     }   
                     break;
+                case VT_DOJOKA:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 8", variable->realName);
+                    }   
+                    break;
                 case VT_WORD:
                 case VT_SWORD:
                 case VT_POSITION:
@@ -205,10 +212,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_TILEMAP:
-                case VT_ARRAY: {
+                case VT_TARRAY: {
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
-                        if ( variable->type == VT_ARRAY ) {
+                        if ( variable->type == VT_TARRAY ) {
                             if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
                                 CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
                             }
@@ -446,7 +453,9 @@ void variable_cleanup( Environment * _environment ) {
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[_environment->descriptors->first+i].data[j]) );
         }
     }
-    
+
+    generate_cgoto_address_table( _environment );
+
     variable_on_memory_init( _environment, 0 );
 
     DataSegment * dataSegment = _environment->dataSegment;
@@ -486,8 +495,11 @@ void variable_cleanup( Environment * _environment ) {
         outline0("");
         dataSegment = dataSegment->next;
     }
-    outhead0("DATAPTRE");
 
+    if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
+        outhead0("DATAPTRE");
+    }
+    
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
         outhead2("cstring%d fcb %d", staticStrings->id, (int)strlen(staticStrings->value) );
@@ -549,6 +561,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
+    deploy_inplace_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
     
     outhead0("CODESTART2");
 

@@ -35,7 +35,47 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-JOYSTICK:
+@IF joystickConfig.values
+
+JOYSTICKTSBREMAP:
+
+    db  $0, $1, $5, $0
+    db  $7, $8, $6, $0
+    db  $3, $2, $4, $0
+    db  $0, $0, $0, $0
+
+JOYSTICKTSB:
+    PUSH BC
+    PUSH HL
+    PUSH DE
+    LD B, A
+    AND $0F
+    LD HL, JOYSTICKTSBREMAP
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD A, (HL)
+    LD C, A
+    LD A, B
+    AND $10
+    CP 0
+    JR Z, JOYSTICKTSBNOFIRE
+JOYSTICKXTSBNOFIRE:
+    LD A, C
+    OR $80
+    LD C, A
+JOYSTICKTSBNOFIRE:
+    LD A, C
+    POP DE
+    POP HL
+    POP BC
+    RET    
+
+@ENDIF
+
+JOYSTICKMANAGER:
+    PUSH AF
+    PUSH BC
 	LD	A, $F
 	OUT ($A0), A
     LD A, B
@@ -51,4 +91,10 @@ JOYSTICK:
     IN A, ($A2)
     CPL
     AND $3F
+@IF joystickConfig.values
+    CALL JOYSTICKTSB
+@ENDIF    
+    LD (JOYSTICK0), A
+    POP BC
+    POP AF
     RET

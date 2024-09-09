@@ -62,11 +62,22 @@ VIC20STARTUPDONE:
     STY DATAPTRY
 @ENDIF
 
+@IF sysCallUsed
+
 SYSCALLDONE:
+
+@ENDIF
+
     CLI
+
     RTS
+
+@IF sysCallUsed
+
 SYSCALL:
     SEI
 SYSCALL0:
     JSR $0000
     JMP SYSCALLDONE
+
+@ENDIF

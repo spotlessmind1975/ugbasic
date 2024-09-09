@@ -94,8 +94,18 @@ SKIPGIMEROM
     LDA #$3e
     STA GIMEMMU6
 
+@IF deployed.timer
     JSR TIMERMANAGER
+@ENDIF
+@IF deployed.keyboard
+    JSR KEYBOARDMANAGER
+@ENDIF
+@IF deployed.joystick
+    JSR JOYSTICKMANAGER
+@ENDIF
+@IF deployed.music
     JSR MUSICPLAYER
+@ENDIF
 
     JSR IRQSVC
 
@@ -167,12 +177,21 @@ NMIISVCIRQ2NORAM
     PULS D
     JMP [OLDNMIISVC2]
 
+@IF sysCallUsed
+
 SYSCALLDONE
+
+@ENDIF
+
     STA $FFDF
     RTS
+
+@IF sysCallUsed
+
 SYSCALL
     STA $FFDE
 SYSCALL0
     JSR $0000
     BRA SYSCALLDONE
     
+@ENDIF

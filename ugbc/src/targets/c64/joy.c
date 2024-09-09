@@ -45,29 +45,20 @@ Variable * joy_vars( Environment * _environment, char * _port ) {
     Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    outline1("LDA %s", port->realName );
-    outline0("CMP #0" );
-    outline1("BEQ %sjoy0", label );
-    outline0("CMP #1" );
-    outline1("BEQ %sjoy1", label );
-    outline1("JMP %send2", label );
+    deploy( joystick, src_hw_c64_joystick_asm );
 
-    outhead1("%sjoy0:", label );
-    outline0("LDA $DC01");
-    outline0("EOR #$FF");
-    outline0("AND #$1F");
-    outline1("JMP %send", label );
+    outline1("LDX %s", port->realName );
+    outline1("BNE %sjoy2", label );
 
-    outhead1("%sjoy1:", label );
-    outline0("LDA $DC00");
-    outline0("EOR #$FF");
-    outline0("AND #$1F");
-    outline1("JMP %send", label );
+    outline1("%sjoy1:", label );
+    outline0("LDA JOYSTICK0" );
+    outline1("JMP %sendjoy", label );
 
-    outhead1("%send:", label );
+    outline1("%sjoy2:", label );
+    outline0("LDA JOYSTICK1" );
+    outhead1("%sendjoy:", label );
+
     outline1("STA %s", result->realName );
-
-    outhead1("%send2:", label );
 
     return result;
 
@@ -77,20 +68,18 @@ Variable * joy( Environment * _environment, int _port ) {
 
     MAKE_LABEL
 
+    deploy( joystick, src_hw_c64_joystick_asm );
+
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
     switch( _port ) {
 
         case 0:
-            outline0("LDA $DC01");
-            outline0("EOR #$FF");
-            outline0("AND #$1F");
+            outline0("LDA JOYSTICK0" );
             break;
 
         case 1:
-            outline0("LDA $DC00");
-            outline0("EOR #$FF");
-            outline0("AND #$1F");
+            outline0("LDA JOYSTICK1" );
             break;
 
     }

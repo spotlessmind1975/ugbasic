@@ -35,6 +35,7 @@
 #include "../../ugbc.h"
 #include "../../libs/stb_image.h"
 #include "../../libs/msc1.h"
+#include "../../libs/rle.h"
 
 /****************************************************************************
  * CODE SECTION 
@@ -192,6 +193,45 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     result->originalHeight = imageDescriptor->height;
     result->originalDepth = imageDescriptor->depth;
 
+#ifdef __c128__
+
+    if (!_environment->compressionForbidden&&_environment->enableRle) {
+
+        // Try to compress the result of image conversion.
+        // This means that the buffer will be compressed using RLE
+        // algorithm. The original size of the buffer will be considered
+        // as "uncompressed" size.
+        RLECompressor * compressor = rle_create( );
+        result->uncompressedSize = result->size;
+        MemoryBlock * output = rle_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
+
+        int temporary;
+        MemoryBlock * outputCheck = rle_uncompress( compressor, output, result->size, &temporary );
+
+        if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
+            CRITICAL("Compression failed");
+        }
+        rle_free( compressor );
+
+        // If the compressed memory is greater than the original
+        // size, we discard the compression and we will continue as
+        // usual.
+        if ( result->uncompressedSize < result->size ) {
+            result->size = result->uncompressedSize;
+            result->uncompressedSize = 0;
+            free( output );
+        } 
+        // Otherwise, we can safely replace the original data
+        // buffer with the compressed one.
+        else {
+            free( result->valueBuffer );
+            result->valueBuffer = output;
+            result->compression = CMP_RLE;
+        }
+
+    }
+
+#endif
     // If a bank expasion has been requested, and there is at least one bank...
     if ( _bank_expansion && _environment->expansionBanks ) {
 

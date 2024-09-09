@@ -52,9 +52,6 @@ void target_initialization( Environment * _environment ) {
     
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x0400, 0x0fff );
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
-
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x1000 );
     variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x9400 );
@@ -98,11 +95,12 @@ void target_initialization( Environment * _environment ) {
     deploy_deferred( startup, src_hw_vic20_startup_asm);
     cpu_call( _environment, "VIC20STARTUP" );
 
+    cpu_call( _environment, "VARINIT" );
+
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
+        cpu_call( _environment, "VARINIT" );
     }
-
-    cpu_call( _environment, "VARINIT" );
 
 }
 

@@ -40,7 +40,7 @@ BITMAPADDRESS       fdb     $0c00
 COLORMAPADDRESS     fdb     $a000
 CURRENTMODE         fcb     $2
 CURRENTTILEMODE     fcb     1
-EVERYSTATUS        fcb     0
+EVERYSTATUS         fcb     0
 
 TABCOUNT            fcb     4
 XCURS               fcb     0
@@ -49,8 +49,8 @@ EMPTYTILE           fcb     $60
 KBDRATE             fcb     16
 
 COCOTIMER           fdb     $0
-COCOTIMER2           fdb     $0
-TICKSPERSECOND       fcb     $0
+COCOTIMER2          fdb     $0
+TICKSPERSECOND      fcb     $0
 
 TMPPTR equ $10    ; $23
 TMPPTR2 equ $12    ; $25
@@ -112,6 +112,9 @@ DLOADERROR      fcb  $0
 DSAVEERROR      fcb  $0
 
 RAMENABLED      fcb  $1
+
+JOYSTICK0       fcb  $0
+JOYSTICK1       fcb  $0
 
 PIA0AD     equ   $FF00
 PIA0AC     equ   $FF01

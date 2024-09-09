@@ -40,13 +40,11 @@ BITMAPADDRESS       fdb     $0000
 COLORMAPADDRESS     fdb     $0000
 CURRENTMODE         fcb     $0
 CURRENTTILEMODE     fcb     0
-EVERYSTATUS        fcb     0
 
 TABCOUNT            fcb     4
 XCURS               fcb     0
 YCURS               fcb     0
 EMPTYTILE           fcb     $60
-KBDRATE             fcb     16
 TICKSPERSECOND      fcb     $0
 
 TMPPTR equ $10    ; $23

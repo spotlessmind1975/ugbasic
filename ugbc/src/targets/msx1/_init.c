@@ -108,22 +108,49 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
     variable_global( _environment, "TICKSPERSECOND" );   
 
+    variable_import( _environment, "JOYSTICK0", VT_BYTE, 0 );
+    variable_global( _environment, "JOYSTICK0" );   
+    variable_import( _environment, "JOYSTICK1", VT_BYTE, 0 );
+    variable_global( _environment, "JOYSTICK1" );   
+
     variable_import( _environment, "AY8910TIMER", VT_BUFFER, 6 );
     variable_global( _environment, "AY8910TIMER" );    
 
     variable_import( _environment, "KBDCHAR", VT_BYTE, 0 );
     variable_global( _environment, "KBDCHAR" );
-    variable_import( _environment, "KBDRATE", VT_BYTE, 16 );
-    variable_global( _environment, "KBDRATE" );
-    variable_import( _environment, "KBDDELAY", VT_BYTE, 64 );
-    variable_global( _environment, "KBDDELAY" );
-    variable_import( _environment, "KBDRATEC", VT_BYTE, 16 );
-    variable_global( _environment, "KBDRATEC" );
-    variable_import( _environment, "KBDDELAYC", VT_BYTE, 64 );
-    variable_global( _environment, "KBDDELAYC" );
 
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
+
+    variable_import( _environment, "SCANCODEREAD", VT_BUFFER, 16 );
+    variable_global( _environment, "SCANCODEREAD" );
+
+    variable_import( _environment, "KEYBOARDPRESSED", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDPRESSED" );
+
+    variable_import( _environment, "KEYBOARDACTUAL", VT_BYTE, 0xff );
+    variable_global( _environment, "KEYBOARDACTUAL" );
+
+    variable_import( _environment, "KEYBOARDELAPSED", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDELAPSED" );
+
+    variable_import( _environment, "KEYBOARDASFSTATE", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDASFSTATE" );
+
+    variable_import( _environment, "KEYBOARDQUEUEWPOS", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDQUEUEWPOS" );
+
+    variable_import( _environment, "KEYBOARDQUEUERPOS", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDQUEUERPOS" );
+
+    variable_import( _environment, "KEYBOARDQUEUE", VT_BUFFER, 10 );
+    variable_global( _environment, "KEYBOARDQUEUE" );
+
+    variable_import( _environment, "KEYBOARDINKEY", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDINKEY" );
+
+    variable_import( _environment, "KEYBOARDSHIFT", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDSHIFT" );
 
     for( int i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
@@ -143,61 +170,64 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
-    outhead0("SECTION code_user");
-    if ( _environment->outputFileType == OUTPUT_FILE_TYPE_ROM ) {
-        outhead0("ORG $4000");
-    } else {
-        outhead0("ORG $8100");
-    }
-    outhead0("SECTION data_user");
-    outhead0("ORG $C000");
-    outhead0("SECTION code_user");
+    // outhead0("SECTION code_user");
+    // if ( _environment->outputFileType == OUTPUT_FILE_TYPE_ROM ) {
+    //     outhead0("ORG $4000");
+    // } else {
+    //     outhead0("ORG $8100");
+    // }
+    // outhead0("SECTION data_user");
+    // outhead0("ORG $C000");
 
-    if ( _environment->outputFileType == OUTPUT_FILE_TYPE_ROM ) {
-        // +0	ID	Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
-        // +2	INIT	Address of the routine to call to initialize a work area or I/O ports, or run a game, etc. The system calls the address from INIT of each ROM header during the MSX initialisation in that order.
-        // +4	STATEMENT	Runtime address of a program whose purpose is to add instructions to the MSX-Basic using CALL. STATEMENT is called by CALL instructions. It is ignored when 0000h. It is not called at MSX start up.
-        // +6	DEVICE	Execution address of a program used to control a device built into the cartridge. For example, a disk interface. It is not called at MSX start up.
-        // +8	TEXT	Pointer of the tokenizen Basic program contained in ROM. TEXT must be always an address more than 8000h and be specified in the header of the page 8000h-BFFFh. In other cases, it must always be 0000h under penalty of causing crash or bug.
-        // +10	Reserved	6 bytes reserved for future updates.
-        outline0("DEFB $41, $42");
-        outline0("DEFW CODESTART");
-        outline0("DEFW $0");
-        outline0("DEFW $0");
-        outline0("DEFW $0");
-        outline0("DEFW $0");
-        outline0("DEFW $0");
-        outline0("DEFW $0");
+    // outhead0("SECTION code_user");
 
-        outhead0("CODESTART:")
+    // if ( _environment->outputFileType == OUTPUT_FILE_TYPE_ROM ) {
+    //     // +0	ID	Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
+    //     // +2	INIT	Address of the routine to call to initialize a work area or I/O ports, or run a game, etc. The system calls the address from INIT of each ROM header during the MSX initialisation in that order.
+    //     // +4	STATEMENT	Runtime address of a program whose purpose is to add instructions to the MSX-Basic using CALL. STATEMENT is called by CALL instructions. It is ignored when 0000h. It is not called at MSX start up.
+    //     // +6	DEVICE	Execution address of a program used to control a device built into the cartridge. For example, a disk interface. It is not called at MSX start up.
+    //     // +8	TEXT	Pointer of the tokenizen Basic program contained in ROM. TEXT must be always an address more than 8000h and be specified in the header of the page 8000h-BFFFh. In other cases, it must always be 0000h under penalty of causing crash or bug.
+    //     // +10	Reserved	6 bytes reserved for future updates.
+    //     outline0("DEFB $41, $42");
+    //     outline0("DEFW CODESTART");
+    //     outline0("DEFW $0");
+    //     outline0("DEFW $0");
+    //     outline0("DEFW $0");
+    //     outline0("DEFW $0");
+    //     outline0("DEFW $0");
+    //     outline0("DEFW $0");
+
+    //     outhead0("CODESTART:")
         
-        outline0("CALL $0138");
-        outline0("RRCA");
-        outline0("RRCA");
-        outline0("AND 3");
-        outline0("LD C, A");
-        outline0("LD B, 0");
-        outline0("LD HL, $FCC1");
-        outline0("ADD HL, BC");
-        outline0("LD A, (HL)");
-        outline0("AND $80");
-        outline0("OR C");
-        outline0("LD C, A");
-        outline0("INC HL");
-        outline0("INC HL");
-        outline0("INC HL");
-        outline0("INC HL");
-        outline0("LD A, (HL)");    
-        outline0("AND $C" );
-        outline0("OR C");
-        outline0("LD H, $80");
-        outline0("CALL $0024");
+    //     outline0("CALL $0138");
+    //     outline0("RRCA");
+    //     outline0("RRCA");
+    //     outline0("AND 3");
+    //     outline0("LD C, A");
+    //     outline0("LD B, 0");
+    //     outline0("LD HL, $FCC1");
+    //     outline0("ADD HL, BC");
+    //     outline0("LD A, (HL)");
+    //     outline0("AND $80");
+    //     outline0("OR C");
+    //     outline0("LD C, A");
+    //     outline0("INC HL");
+    //     outline0("INC HL");
+    //     outline0("INC HL");
+    //     outline0("INC HL");
+    //     outline0("LD A, (HL)");    
+    //     outline0("AND $C" );
+    //     outline0("OR C");
+    //     outline0("LD H, $80");
+    //     outline0("CALL $0024");
 
-    } else {
-        outhead0("CODESTART:")
-        outline0("LD HL, $8000");
-        outline0("LD ($f23d), HL");
-    }
+    // } else {
+    //     outhead0("CODESTART:")
+    //     outline0("LD HL, $8000");
+    //     outline0("LD ($f23d), HL");
+    // }
+
+    outhead0("CODESTART2:");
 
     outline0("CALL VARINIT2");
     cpu_call( _environment, "VARINIT" );
@@ -205,7 +235,7 @@ void target_initialization( Environment * _environment ) {
 
     z80_init( _environment );
 
-    deploy_deferred( startup, src_hw_msx1_startup_asm);
+    deploy_preferred( startup, src_hw_msx1_startup_asm);
 
     outline0("CALL MSX1STARTUP" );
 
@@ -216,6 +246,7 @@ void target_initialization( Environment * _environment ) {
     
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
+        outline0("CALL VARINIT2");
     }
 
 }

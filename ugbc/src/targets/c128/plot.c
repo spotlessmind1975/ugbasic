@@ -77,12 +77,12 @@ usata, che viene stoccata nelle variabili ''XGR'' e ''YGR''.
 @target c128
  </usermanual> */
 
-void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
+void plot( Environment * _environment, char * _x, char * _y, char *_c, int _preserve_color ) {
 
-    if ( _c ) {
+    vic2_pset_vars( _environment, _x, _y, _c );
+
+    if ( _c && !_preserve_color ) {
         pen( _environment, _c );
     }
-
-    vic2_pset_vars( _environment, _x, _y );
 
 }

@@ -42,6 +42,8 @@ extern char DATATYPE_AS_STRING[][16];
 
 static void read_data_safe( Environment * _environment, char * _variable ) {
 
+    _environment->dataNeeded = 1;
+
     MAKE_LABEL
 
     char typeMismatchDuringReadLabel[MAX_TEMPORARY_STORAGE]; sprintf( typeMismatchDuringReadLabel, "%stm", label );

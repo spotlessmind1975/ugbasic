@@ -53,11 +53,17 @@ The value must be indicated in square brackets (''[...]'').
 The value will then be copied into the ''PARAM'' variable and 
 returned by the call, if the call was made in the context of an expression.
 
+Important: if the ''OPTION CALL AS GOTO'' pragma is in effect, the instruction
+will be considered as a ''NOP''.
+
 @italian
 Come opzione è possibile indicare un valore da restituire da parte 
 della procedura. Il valore va indicato tra parentesi quadre. 
 Il valore sarà, quindi, copiato nella variable ''PARAM'' e restituito 
 dalla chiamata, se la chiamata è stata fatta nel contesto di una espressione.
+
+Importante: se il pragma ''OPTION CALL AS GOTO'' è attivo, l'istruzione
+sarà considerata un ''NOP''.
 
 @example PROCEDURE hundred
 @example END PROC[100]
@@ -90,8 +96,10 @@ void end_procedure( Environment * _environment, char * _value ) {
     if ( _environment->protothread ) {
         cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_ENDED );
     }
-    
-    cpu_return( _environment );
+
+    if ( ! _environment->optionCallAsGoto ) {
+        cpu_return( _environment );
+    }
 
     if ( _environment->protothread ) {
 

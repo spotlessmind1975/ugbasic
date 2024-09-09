@@ -62,7 +62,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 1,0", variable->realName);
+                        outhead1("%s: .res 1,0", variable->realName);
+                    }        
+                    break;
+                case VT_DOJOKA:
+                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s: .res 8,0", variable->realName);
                     }        
                     break;
                 case VT_WORD:
@@ -72,7 +79,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 2,0", variable->realName);
+                        outhead1("%s: .res 2,0", variable->realName);
                     }
                     break;
                 case VT_DWORD:
@@ -80,14 +87,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 4,0", variable->realName);
+                        outhead1("%s: .res 4,0", variable->realName);
                     }
                     break;
                 case VT_FLOAT:
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 4,0", variable->realName);
+                        outhead1("%s: .res 4,0", variable->realName);
                     }
                     break;
                 case VT_STRING:
@@ -112,7 +119,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 1,0", variable->realName);
+                        outhead1("%s: .res 1,0", variable->realName);
                     }
                     break;
                 case VT_TILE:
@@ -121,21 +128,21 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 1,0", variable->realName);
+                        outhead1("%s: .res 1,0", variable->realName);
                     }
                     break;
                 case VT_MSPRITE:
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 2,0", variable->realName);
+                        outhead1("%s: .res 2,0", variable->realName);
                     }
                     break;
                 case VT_TILES:
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .res 4,0", variable->realName);
+                        outhead1("%s: .res 4,0", variable->realName);
                     }
                     break;
                 case VT_BLIT:
@@ -154,7 +161,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                         char * string = malloc( variable->size + 1 );
                                         memset( string, 0, variable->size );
                                         memcpy( string, variable->valueBuffer, variable->size );
-                                        outline2("%s: .byte %s", variable->realName, escape_newlines( string ) );
+                                        outhead2("%s: .byte %s", variable->realName, escape_newlines( string ) );
                                     } else {
                                         out1("%s: .byte ", variable->realName);
                                         int i=0;
@@ -169,7 +176,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                         outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                                     }
                                 } else {
-                                    outline2("%s: .res %d,0", variable->realName, variable->size);
+                                    outhead2("%s: .res %d,0", variable->realName, variable->size);
                                 }
                             } else {
                                 if ( ! variable->memoryArea && variable->valueBuffer && ! variable->onStorage && variable->bankAssigned == -1 ) {
@@ -205,7 +212,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     char * string = malloc( variable->size + 1 );
                                     memset( string, 0, variable->size );
                                     memcpy( string, variable->valueBuffer, variable->size );
-                                    outline2("%s: .byte %s", variable->realName, escape_newlines( string ) );
+                                    outhead2("%s: .byte %s", variable->realName, escape_newlines( string ) );
                                 } else {
                                     out1("%s: .byte ", variable->realName);
                                     int i=0;
@@ -220,7 +227,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                                 }
                             } else {
-                                outline2("%s: .res %d,0", variable->realName, variable->size);
+                                outhead2("%s: .res %d,0", variable->realName, variable->size);
                             }
                         } else {
                             if ( ! variable->memoryArea && variable->valueBuffer && ! variable->onStorage && variable->bankAssigned == -1 ) {
@@ -243,10 +250,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_TILEMAP:
-                case VT_ARRAY: {
+                case VT_TARRAY: {
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
-                        if ( variable->type == VT_ARRAY ) {
+                        if ( variable->type == VT_TARRAY ) {
                             if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
                                 CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
                             }
@@ -299,7 +306,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 }                    
 
                             } else {
-                                outline2("%s: .res %d, 0", variable->realName, variable->size);
+                                outhead2("%s: .res %d, 0", variable->realName, variable->size);
                             }
                         }
                     }
@@ -333,6 +340,10 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_THREAD:
             outhead1("%s:", _variable->realName );
             outline1(" .byte $%1.1x", ( _variable->value & 0xff ) );
+            break;
+        case VT_DOJOKA:
+            outhead1("%s:", _variable->realName );
+            outline0(" .res 8, 0" );
             break;
         case VT_WORD:
         case VT_SWORD:
@@ -449,10 +460,10 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 }
             }
             break;
-        case VT_ARRAY: {
+        case VT_TARRAY: {
             if ( _variable->bankAssigned != -1 ) {
                 outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", _variable->bankAssigned, _variable->absoluteAddress, _variable->size, _variable->uncompressedSize );
-                if ( _variable->type == VT_ARRAY ) {
+                if ( _variable->type == VT_TARRAY ) {
                     if (VT_BITWIDTH( _variable->arrayType ) == 0 ) {
                         CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ _variable->arrayType ] );
                     }
@@ -505,7 +516,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                         }                    
 
                     } else {
-                        outline2("%s: .res %d, 0", _variable->realName, _variable->size);
+                        outhead2("%s: .res %d, 0", _variable->realName, _variable->size);
                     }
                 }
             }
@@ -537,7 +548,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
                     if ( variable->memoryArea ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s:", variable->realName);
+                        outhead1("%s:", variable->realName);
                     }
                     ++bitCount;
                     if ( bitCount == 8 ) {
@@ -552,7 +563,9 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 
     }
 
-    outline0("   .res 1,0");
+    if ( variable ) {
+        outline0("   .res 1,0");
+    }
 
 }
 
@@ -647,6 +660,8 @@ void variable_cleanup( Environment * _environment ) {
         cpu_address_table_lookup( _environment, "EXECOFFSETS", count );
 
     }
+
+    generate_cgoto_address_table( _environment );
 
     banks_generate( _environment );
 
@@ -785,17 +800,6 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
     deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
 
-    // Moved here for banking reasons.
-    if ( ! _environment->deployed.timer ) {
-        cpu_label( _environment, "TIMERMANAGER" );
-        outline0( "RTS" );
-    }
-    
-    if ( ! _environment->deployed.joystick ) {
-        cpu_label( _environment, "JOYSTICKMANAGER" );
-        outline0( "RTS" );
-    }
-
     // outhead0(".segment \"CODE\"" );
 
     variable_on_memory_init( _environment, 0 );
@@ -861,11 +865,10 @@ void variable_cleanup( Environment * _environment ) {
         outline0("");
         dataSegment = dataSegment->next;
     }
-    outhead0("DATAPTRE:");
 
-    // if ( _environment->storageTransientMemoryArea && !_environment->storageTransientMemoryArea->assigned ) {
-    //     outline2("%s: .res %d", _environment->storageTransientMemoryArea->realName, _environment->storageTransientMemoryArea->size);
-    // }
+    if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
+        outhead0("DATAPTRE:");
+    }
 
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {

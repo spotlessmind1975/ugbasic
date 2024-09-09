@@ -531,6 +531,10 @@ int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        ef9345_cls( _environment );
+    }
+
 }
 
 void ef9345_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -596,11 +600,11 @@ void ef9345_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void ef9345_pset_int( Environment * _environment, int _x, int _y ) {
+void ef9345_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
 }
 
-void ef9345_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void ef9345_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
 }
 
@@ -881,6 +885,10 @@ void ef9345_initialization( Environment * _environment ) {
     _environment->screenShades = 16;
 
     console_init( _environment );
+
+    if (_environment->vestigialConfig.clsImplicit ) {
+        ef9345_cls( _environment );
+    }
 
 }
 

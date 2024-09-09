@@ -40,9 +40,4 @@
 
 void every_cleanup( Environment * _environment ) {
 
-    if ( ! _environment->deployed.timer ) {
-        cpu_label( _environment, "TIMERMANAGER" );
-        outline0( "RET" );
-    }
-
 }

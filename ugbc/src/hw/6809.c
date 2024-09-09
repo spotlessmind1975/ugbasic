@@ -217,6 +217,40 @@ static void cpu6809_greater_than_const( Environment * _environment, char *_sourc
     outline1("STB %s", _other );
 }
 
+void cpu6809_ztoa( Environment * _environment ) {
+    
+    MAKE_LABEL
+
+    inline( cpu_ztoa )
+
+        outline1("BEQ %syes", label );
+        outline0("LDA #0");
+        outline1("JMP %s", label );
+        outhead1("%syes", label );
+        outline0("LDA #$ff");
+        outhead1("%s", label );
+
+    no_embedded( cpu_ztoa );
+
+}
+
+void cpu6809_ctoa( Environment * _environment ) {
+    
+    MAKE_LABEL
+
+    inline( cpu_ctoa )
+
+        outline1("BCS %syes", label );
+        outline0("LDA #0");
+        outline1("JMP %s", label );
+        outhead1("%syes", label );
+        outline0("LDA #$ff");
+        outhead1("%s", label );
+
+    no_embedded( cpu_ctoa );
+
+}
+
 /**
  * @brief <i>CPU 6809</i>: emit code to make long conditional jump
  *
@@ -2745,6 +2779,16 @@ void cpu6809_call_indirect( Environment * _environment, char * _value ) {
         cpu6809_call( _environment, indirectLabel );
 
     no_embedded( cpu_call_indirect )
+
+}
+
+void cpu6809_jump_indirect( Environment * _environment, char * _value ) {
+
+    inline( cpu_jump_indirect )
+
+        outline1( "JMP [%s]", _value );
+
+    no_embedded( cpu_jump_indirect )
 
 }
 

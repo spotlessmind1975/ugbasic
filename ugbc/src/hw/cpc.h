@@ -151,12 +151,18 @@
 #define BANK_COUNT          0
 #define BANK_SIZE           0
 
-void cpc_inkey( Environment * _environment, char * _pressed, char * _key );
-void cpc_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void cpc_wait_key( Environment * _environment, int _release );
+void cpc_key_state( Environment * _environment, char *_scancode, char * _result );
+void cpc_scancode( Environment * _environment, char * _scacode );
+void cpc_asciicode( Environment * _environment, char * _asciicode );
+void cpc_inkey( Environment * _environment, char * _key );
+void cpc_key_pressed( Environment * _environment, char *_scancode, char * _result );
+
 void cpc_scanshift( Environment * _environment, char * _shifts );
 void cpc_keyshift( Environment * _environment, char * _shifts );
-void cpc_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void cpc_clear_key( Environment * _environment );
+void cpc_put_key(  Environment * _environment, char *_string, char * _size );
+
 void cpc_irq_at( Environment * _environment, char * _label );
 void cpc_follow_irq( Environment * _environment );
 void cpc_joy( Environment * _environment, int _port, char * _value );
@@ -335,8 +341,8 @@ void cpc_tiles_get( Environment * _environment, char * _result );
 void cpc_get_width( Environment * _environment, char * _result );
 void cpc_get_height( Environment * _environment, char * _result );
 
-void cpc_pset_int( Environment * _environment, int _x, int _y );
-void cpc_pset_vars( Environment * _environment, char *_x, char *_y );
+void cpc_pset_int( Environment * _environment, int _x, int _y, int *_c );
+void cpc_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void cpc_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void cpc_cls( Environment * _environment );
 void cpc_scroll_text( Environment * _environment, int _direction );
@@ -385,5 +391,19 @@ void cpc_timer_set_address( Environment * _environment, char * _timer, char * _a
 void cpc_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void cpc_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void cpc_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
+
+void cpc_dojo_ready( Environment * _environment, char * _value );
+void cpc_dojo_read_byte( Environment * _environment, char * _value );
+void cpc_dojo_write_byte( Environment * _environment, char * _value );
+
+void cpc_dojo_ping( Environment * _environment, char * _result );
+void cpc_dojo_login( Environment * _environment, char * _name, char * _name_size, char * _password, char * _size, char * _unique_id );
+void cpc_dojo_success( Environment * _environment, char * _id, char * _result );
+void cpc_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id );
+void cpc_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _port_id );
+void cpc_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result );
+void cpc_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
+void cpc_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
+void cpc_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
 
 #endif

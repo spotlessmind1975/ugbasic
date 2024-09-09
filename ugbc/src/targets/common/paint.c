@@ -63,6 +63,11 @@ is to stop. It must also be between 0 and 8, the painting will continue
 over a border of any other colour. If omitted, the current foreground 
 colour is used.
 
+There is also an alternative syntax for ''PAINT'', that is  used to fill 
+enclosed areas in the color of the specified color source '<fq>' (see ''HIRES''), 
+starting from the starting point ''x'', ''y''. ''PAINT'' does nothing if the 
+selected starting point already has the desired color. 
+
 @italian
 
 Il comando ''PAINT'' viene utilizzato nelle modalità grafiche ad alta 
@@ -79,9 +84,16 @@ il painting. Inoltre deve essere compreso tra ''0'' e ''COLOR COUNT'', il riempi
 proseguirà su un bordo di qualsiasi altro colore. Se omesso, 
 viene utilizzato il colore di primo piano corrente.
 
+Esiste anche una sintassi alternativa per ''PAINT'', che viene utilizzata per 
+riempire le aree chiuse con il colore della sorgente di colore specificata 
+''<fq>'' (vedi ''HIRES''), a partire dal punto iniziale ''x '', ''y''. 
+''PAINT'' non fa nulla se il punto iniziale selezionato ha già il colore desiderato.
+
 @syntax PAINT (x,y)[, c[, b]]
+@syntax PAINT x, y, fq
 
 @example PAINT(100,100),RED
+@example PAINT 0,0,1
 
 @target all
 
@@ -272,7 +284,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
             cpu_call( _environment, pushQueue );
 
             // Color the pixel with the new color
-            plot( _environment, x->name, y->name, paintC->name );
+            plot( _environment, x->name, y->name, paintC->name, 0 );
 
             // ------------------------------[ BEGIN FLOOD FILL LOOP ]
             cpu_label( _environment, loopPaintLabel );
@@ -306,7 +318,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
                 cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0x00, skip1PaintLabel, 1 );
                 // Color with newC
                 // if valid and enqueue
-                plot( _environment, x->name, y->name, paintC->name );
+                plot( _environment, x->name, y->name, paintC->name, 0 );
                 // variable_move( _environment, 
                 //     variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
                 //     isValid->name );
@@ -334,7 +346,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
                 cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0x00, skip2PaintLabel, 1 );
                 // Color with newC
                 // if valid and enqueue
-                plot( _environment, x->name, y->name, paintC->name );
+                plot( _environment, x->name, y->name, paintC->name, 0 );
                 // variable_move( _environment, 
                 //     variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
                 //     isValid->name );
@@ -362,7 +374,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
                 cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0x00, skip3PaintLabel, 1 );
                 // Color with newC
                 // if valid and enqueue
-                plot( _environment, x->name, y->name, paintC->name );
+                plot( _environment, x->name, y->name, paintC->name, 0 );
                 // variable_move( _environment, 
                 //     variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
                 //     isValid->name );
@@ -390,7 +402,7 @@ void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, ch
                 cpu_compare_and_branch_8bit_const( _environment, isValid->realName, 0x00, skip4PaintLabel, 1 );
                 // Color with newC
                 // if valid and enqueue
-                plot( _environment, x->name, y->name, paintC->name );
+                plot( _environment, x->name, y->name, paintC->name, 0 );
                 // variable_move( _environment, 
                 //     variable_compare( _environment, queuePtr->name, queuePtrEnd->name )->name,
                 //     isValid->name );

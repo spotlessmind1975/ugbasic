@@ -59,9 +59,9 @@ Variable * inkey( Environment * _environment ) {
     char noKeyPressedLabel[MAX_TEMPORARY_STORAGE]; sprintf(noKeyPressedLabel, "%snokeyPressed", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
 
-    zx_inkey( _environment, pressed->realName, key->realName );
+    zx_inkey( _environment, key->realName );
 
-    cpu_bveq( _environment, pressed->realName, noKeyPressedLabel );
+    cpu_bveq( _environment, key->realName, noKeyPressedLabel );
 
     cpu_move_8bit_indirect(_environment, key->realName, address->realName );
     cpu_dsresize_size(_environment, result->realName, 1 );

@@ -42,16 +42,14 @@ extern char DATATYPE_AS_STRING[][16];
 
 void input( Environment * _environment, char * _variable, VariableType _default_type ) {
 
-    MAKE_LABEL
+        MAKE_LABEL
     
     Variable * result = variable_retrieve_or_define( _environment, _variable, _default_type, 0 );
 
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf(doneLabel, "%sdone", label );
     char backspaceLabel[MAX_TEMPORARY_STORAGE]; sprintf(backspaceLabel, "%sbackspace", label );
-    char skipCursorChangeLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipCursorChangeLabel, "%sskipcc", label );
-    char skipCursorChangeLabel2[MAX_TEMPORARY_STORAGE]; sprintf(skipCursorChangeLabel2, "%sskipcc2", label );
-    char skipCursorChangeLabel3[MAX_TEMPORARY_STORAGE]; sprintf(skipCursorChangeLabel3, "%sskipcc3", label );
 
     Variable * temporary = variable_temporary( _environment, VT_DSTRING, "(temporary storage for input)");
     Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset inside temporary storage)");
@@ -60,7 +58,6 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     Variable * comma = variable_temporary( _environment, VT_CHAR, "(comma)" );
     Variable * space = variable_temporary( _environment, VT_CHAR, "(space)" );
     Variable * underscore = variable_temporary( _environment, VT_CHAR, "(underscore)" );
-    Variable * underscoreTimer = variable_temporary( _environment, VT_BYTE, "(underscore timer)" );
     Variable * backspace = variable_temporary( _environment, VT_CHAR, "(backspace)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size max)" );
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
@@ -73,38 +70,27 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     cpu_store_8bit( _environment, space->realName, 32 );
     cpu_store_8bit( _environment, zero->realName, 0 );
 
-    cpu_store_8bit( _environment, comma->realName, _environment->inputConfig.separator == 0 ? INPUT_DEFAULT_SEPARATOR : _environment->inputConfig.separator );
+    if ( _environment->lineInput ) {
+        cpu_store_8bit( _environment, comma->realName, 13 );
+    } else {
+        cpu_store_8bit( _environment, comma->realName, _environment->inputConfig.separator == 0 ? INPUT_DEFAULT_SEPARATOR : _environment->inputConfig.separator );
+    }
+
     cpu_store_8bit( _environment, size->realName, _environment->inputConfig.size == 0 ? INPUT_DEFAULT_SIZE : _environment->inputConfig.size );
     cpu_store_8bit( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor );
-    cpu_store_8bit( _environment, "KBDRATE", 255 - ( _environment->inputConfig.rate == 0 ? INPUT_DEFAULT_RATE : _environment->inputConfig.rate ) );
-    cpu_store_8bit( _environment, "KBDDELAY", _environment->inputConfig.delay == 0 ? INPUT_DEFAULT_DELAY : _environment->inputConfig.delay );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     cpu_dsfree( _environment, temporary->realName );
     cpu_dsalloc( _environment, size->realName, temporary->realName );
     cpu_dsdescriptor( _environment, temporary->realName, address->realName, pressed->realName );
 
-    cpu_store_8bit( _environment, underscoreTimer->realName, 143 );
-
     cpu_label( _environment, repeatLabel );
-
-    cpu_dec( _environment, underscoreTimer->realName );
-    cpu_compare_and_branch_8bit_const( _environment, underscoreTimer->realName, 0, skipCursorChangeLabel, 0 );
-    cpu_store_8bit( _environment, underscoreTimer->realName, 32 );
-    cpu_compare_and_branch_8bit_const( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor, skipCursorChangeLabel2, 1 );
-    cpu_label( _environment, skipCursorChangeLabel3 );
-    cpu_store_8bit( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor );
-    cpu_jump( _environment, skipCursorChangeLabel );
-    cpu_label( _environment, skipCursorChangeLabel2 );
-    cpu_store_8bit( _environment, underscore->realName, 32 );
-    cpu_label( _environment, skipCursorChangeLabel );
 
     print( _environment, underscore->name, 0 );
     cmove_direct( _environment, -1, 0 );
 
-    cpc_inkey( _environment, pressed->realName, key->realName );
+    cpc_inkey( _environment, key->realName );
 
-    cpu_bveq( _environment, pressed->realName, repeatLabel );
     cpu_bveq( _environment, key->realName, repeatLabel );
 
     cpu_compare_8bit( _environment, key->realName, backspace->realName, pressed->realName, 1 );
@@ -153,7 +139,14 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     print( _environment, space->name, 0 );
     cmove_direct( _environment, -1, 0 );
-    
+
+    cpu_compare_8bit( _environment, comma->realName, enter->realName, pressed->realName, 1 );
+    cpu_bveq( _environment, pressed->realName, doneLabel );
+
+    print_newline( _environment );
+
+    cpu_label( _environment, doneLabel );
+
     cpu_dsresize( _environment, temporary->realName, offset->realName );
 
     switch( VT_BITWIDTH( result->type ) ) {
@@ -171,5 +164,6 @@ void input( Environment * _environment, char * _variable, VariableType _default_
                     CRITICAL_INPUT_UNSUPPORTED( _variable, DATATYPE_AS_STRING[result->type] );        
             }
     }
+
 
 }

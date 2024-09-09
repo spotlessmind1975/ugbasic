@@ -47,7 +47,9 @@ TO8TIMER  set *-2       ; (variable within code)
     LDA   #PAGE0          ; sets the direct page
     TFR   A,DP            ; for ugbc routines
     JSR   KBDMANAGER
+@IF deployed.timer
     JSR   TIMERMANAGER
+@ENDIF
     PULS  D
     JMP   >TO8IRQDEF    ; jump to next ISR
 TO8IRQN   set *-2       ; (variable within code)
@@ -287,9 +289,19 @@ BANKLOADL2
 
     JSR DATAPREPARATION
 
+@IF sysCallUsed
+
 SYSCALLDONE
+
+@ENDIF
+
     RTS
+
+@IF sysCallUsed
+
 SYSCALL
 SYSCALL0
     JSR $0000
     BRA SYSCALLDONE
+
+@ENDIF

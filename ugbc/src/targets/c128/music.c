@@ -154,7 +154,9 @@ La musica potrà essere riattivata utilizzando il comando ''MUSIC RESUME''.
 </usermanual> */
 void music_pause( Environment * _environment ) {
     
-    variable_store( _environment, "SN76489MUSICPAUSE", 0xff );
+    deploy( music, src_hw_sid_music_asm );
+
+    variable_store( _environment, "SIDMUSICPAUSE", 0xff );
     volume( _environment, 0, 0x7 );
 
 }
@@ -180,7 +182,9 @@ La musica viene sospesa dal comando ''MUSIC PAUSE''.
 </usermanual> */
 void music_resume( Environment * _environment ) {
 
-    variable_store( _environment, "SN76489MUSICPAUSE", 0x0 );
+    deploy( music, src_hw_sid_music_asm );
+
+    variable_store( _environment, "SIDMUSICPAUSE", 0x0 );
     volume( _environment, 255, 0x7 );
 
 }
@@ -204,8 +208,10 @@ Il comando ''MUSIC STOP'' permette di fermare in modo definitivo l'esecuzione di
 </usermanual> */
 void music_stop( Environment * _environment ) {
 
-    variable_store( _environment, "SN76489MUSICLOOP", 0x0 );
-    variable_store( _environment, "SN76489MUSICREADY", 0x0 );
+    deploy( music, src_hw_sid_music_asm );
+
+    variable_store( _environment, "SIDMUSICLOOP", 0x0 );
+    variable_store( _environment, "SIDMUSICREADY", 0x0 );
     volume( _environment, 0, 0x7 );
 
 }
@@ -229,10 +235,12 @@ Il comando ''MUSIC SEEK'' permette di spostare l'esecuzione a una posizione spec
 </usermanual> */
 void music_seek_var( Environment * _environment, char * _position ) {
 
+    deploy( music, src_hw_sid_music_asm );
+
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_WORD, 0 );
 
     cpu_move_8bit( _environment, address_displacement( _environment, position->realName, "1" ), "SN76489BLOCKS" );
-    cpu_move_8bit( _environment, position->realName, "SN76489LASTBLOCK" );
+    cpu_move_8bit( _environment, position->realName, "SIDLASTBLOCK" );
 
 }
 

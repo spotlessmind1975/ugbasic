@@ -891,6 +891,10 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        ted_cls( _environment );
+    }
+
 }
 
 void console_calculate( Environment * _environment ) {
@@ -995,7 +999,19 @@ void ted_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void ted_pset_int( Environment * _environment, int _x, int _y ) {
+void ted_charset_uppercase( Environment * _environment ) {
+
+}
+
+void ted_charset_lowercase( Environment * _environment ) {
+    
+}
+
+void ted_charset_at( Environment * _environment, char * _address ) {
+
+}
+
+void ted_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
@@ -1007,16 +1023,30 @@ void ted_pset_int( Environment * _environment, int _x, int _y ) {
     outline0("STA PLOTX+1");
     outline1("LDA %2.2x", ( _y & 0xff ) );
     outline0("STA PLOTY");
+    if ( _c ) {
+        outline1("LDA #$%2.2x", ( *_c & 0xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("LDA %s", c->realName );
+    }
+    outline0("STA PLOTCPE");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
 
 }
 
-void ted_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void ted_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * y = variable_retrieve( _environment, _y );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
 
     deploy( tedvars, src_hw_ted_vars_asm );
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
@@ -1032,6 +1062,8 @@ void ted_pset_vars( Environment * _environment, char *_x, char *_y ) {
     outline0("STA PLOTX+1");
     outline1("LDA %s", y->realName );
     outline0("STA PLOTY");
+    outline1("LDA %s", c->realName );
+    outline0("STA PLOTCPE");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");

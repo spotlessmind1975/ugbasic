@@ -59,7 +59,15 @@ OLDISVC
 
 ISVCIRQ
     JSR IRQSVC
+@IF deployed.timer
     JSR TIMERMANAGER
+@ENDIF
+@IF deployed.keyboard
+    JSR KEYBOARDMANAGER
+@ENDIF
+@IF deployed.joystick
+    JSR JOYSTICKMANAGER
+@ENDIF
     PSHS D
     LDD DRGTIMER
     ADDD #$1
@@ -113,9 +121,19 @@ D64NTSC
 
 D64STARTUPDONE
 
+@IF sysCallUsed
+
 SYSCALLDONE
+
+@ENDIF
+
     RTS
+
+@IF sysCallUsed
+
 SYSCALL
 SYSCALL0
     JSR $0000
     BRA SYSCALLDONE
+
+@ENDIF

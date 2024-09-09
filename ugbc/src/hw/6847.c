@@ -710,6 +710,10 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        c6847_cls( _environment );
+    }
+
 }
 
 void c6847_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -771,7 +775,7 @@ void c6847_textmap_at( Environment * _environment, char * _address ) {
     
 }
 
-void c6847_pset_int( Environment * _environment, int _x, int _y ) {
+void c6847_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm );
     deploy( plot, src_hw_6847_plot_asm );
@@ -780,6 +784,13 @@ void c6847_pset_int( Environment * _environment, int _x, int _y ) {
     outline0("STX <PLOTX");
     outline1("LDD %4.4x", ( _y & 0xffff ) );
     outline0("STD <PLOTY");
+    if ( _c ) {
+        outline1("LDA %2.2x", ( *_c & 0Xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("LDA %s", c->realName );
+    }
+    outline0("STA <PLOTCPE");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -787,10 +798,17 @@ void c6847_pset_int( Environment * _environment, int _x, int _y ) {
 
 }
 
-void c6847_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void c6847_pset_vars( Environment * _environment, char *_x, char *_y, char * _c ) {
 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
 
     deploy( c6847vars, src_hw_6847_vars_asm );
     deploy( plot, src_hw_6847_plot_asm );
@@ -799,6 +817,8 @@ void c6847_pset_vars( Environment * _environment, char *_x, char *_y ) {
     outline0("STX <PLOTX");
     outline1("LDD %s", y->realName );
     outline0("STD <PLOTY");
+    outline1("LDA %s", c->realName );
+    outline0("STA <PLOTCPE");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -1021,6 +1041,9 @@ void c6847_initialization( Environment * _environment ) {
     variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
     variable_global( _environment, "TABCOUNT" );
 
+    variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTCPE" );
+
     variable_import( _environment, "CLIPX1", VT_POSITION, 0 );
     variable_global( _environment, "CLIPX1" );
     variable_import( _environment, "CLIPX2", VT_POSITION, 255 );
@@ -1057,7 +1080,9 @@ void c6847_initialization( Environment * _environment ) {
 
     console_init( _environment );
     
-    c6847_cls( _environment );
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        c6847_cls( _environment );
+    }
 
 }
 

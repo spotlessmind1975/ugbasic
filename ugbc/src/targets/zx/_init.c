@@ -63,6 +63,9 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "EMPTYTILE" );    
     variable_import( _environment, "USING", VT_BYTE, 0 );
 
+    variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTCPE" );    
+
     variable_import( _environment, "IMAGEX", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEX" );    
     variable_import( _environment, "IMAGEY", VT_BYTE, 0 );
@@ -97,6 +100,36 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "ZXTIMER", VT_WORD, 0 );
     variable_global( _environment, "ZXTIMER" );    
 
+    variable_import( _environment, "SCANCODEREAD", VT_BUFFER, 16 );
+    variable_global( _environment, "SCANCODEREAD" );
+
+    variable_import( _environment, "KEYBOARDPRESSED", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDPRESSED" );
+
+    variable_import( _environment, "KEYBOARDACTUAL", VT_BYTE, 0xff );
+    variable_global( _environment, "KEYBOARDACTUAL" );
+
+    variable_import( _environment, "KEYBOARDELAPSED", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDELAPSED" );
+
+    variable_import( _environment, "KEYBOARDASFSTATE", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDASFSTATE" );
+
+    variable_import( _environment, "KEYBOARDQUEUEWPOS", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDQUEUEWPOS" );
+
+    variable_import( _environment, "KEYBOARDQUEUERPOS", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDQUEUERPOS" );
+
+    variable_import( _environment, "KEYBOARDQUEUE", VT_BUFFER, 10 );
+    variable_global( _environment, "KEYBOARDQUEUE" );
+
+    variable_import( _environment, "KEYBOARDINKEY", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDINKEY" );
+
+    variable_import( _environment, "KEYBOARDSHIFT", VT_BYTE, 0 );
+    variable_global( _environment, "KEYBOARDSHIFT" );
+
     outhead0("org 32768");
 
     outhead0("CODESTART:");
@@ -116,6 +149,7 @@ void target_initialization( Environment * _environment ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
+        cpu_call( _environment, "VARINIT" );
     }
 
 }

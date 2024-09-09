@@ -35,6 +35,17 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF joystickConfig.values
+
+JOYSTICKTSBREMAP:
+
+    .BYTE   $0, $1, $5, $0
+    .BYTE   $7, $8, $6, $0
+    .BYTE   $3, $2, $4, $0
+    .BYTE   $0, $0, $0, $0
+
+@ENDIF
+
 JOYSTICKMANAGER:
     
     PHP
@@ -49,6 +60,23 @@ JOYSTICKMANAGER:
     LDA $DC01
     AND #$1F
     EOR #$1F
+
+@IF joystickConfig.values
+    PHA
+    AND #$0F
+    TAY
+    LDA JOYSTICKTSBREMAP, Y
+    TAX
+    PLA
+    AND #$10
+    BEQ JOYSTICKNOFIRE0
+    TXA
+    ORA #$80
+    TAX
+JOYSTICKNOFIRE0:
+    TXA
+@ENDIF
+
     STA JOYSTICK0
 
     LDA #$E0
@@ -58,6 +86,23 @@ JOYSTICKMANAGER:
     STY $DC02
     AND #$1F
     EOR #$1F
+
+@IF joystickConfig.values
+    PHA
+    AND #$0F
+    TAY
+    LDA JOYSTICKTSBREMAP, Y
+    TAX
+    PLA
+    AND #$10
+    BEQ JOYSTICKNOFIRE1
+    TXA
+    ORA #$80
+    TAX
+JOYSTICKNOFIRE1:
+    TXA
+@ENDIF
+
     STA JOYSTICK1
 
     PLA

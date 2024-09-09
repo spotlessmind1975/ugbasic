@@ -40,6 +40,8 @@
 
 Variable * read_end( Environment * _environment ) {
 
+    _environment->dataNeeded = 1;
+
     MAKE_LABEL
 
     Variable * readEnd = variable_temporary( _environment, VT_BYTE, "(flag)" );

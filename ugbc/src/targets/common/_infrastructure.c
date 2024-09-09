@@ -32,16 +32,20 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#ifdef _WIN32
+    #include <windows.h>
+    #include <fileapi.h>
+    #include <sysinfoapi.h>
+    #include <errhandlingapi.h>
+#endif
+
 #include <math.h>
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifdef _WIN32
-    #include <fileapi.h>
-#endif
+#include "../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
@@ -92,7 +96,8 @@ char DATATYPE_AS_STRING[][16] = {
     "FLOAT",
     "TILEMAP",
     "BIT",
-    "MSPRITE"
+    "MSPRITE",
+    "DOJOKA"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -113,7 +118,7 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
 
     int neededSpace = 0;
 
-    if ( _variable->type == VT_ARRAY ) {
+    if ( _variable->type == VT_TARRAY ) {
         neededSpace = _variable->size;
     } else if ( _variable->type == VT_DSTRING ) {
         neededSpace = 1;
@@ -279,6 +284,24 @@ Offsetting * offsetting_size_count( Environment * _environment, int _size, int _
     }
 
     return actual;
+
+}
+
+static int calculate_cast_type_best_fit( Environment * _environment, int _type1, int _type2 ) {
+
+    if ( _type1 == VT_FLOAT || _type2 == VT_FLOAT ) {
+        return VT_FLOAT;
+    } else {
+        if ( VT_SIGNED( _type1 ) != VT_SIGNED( _type2 ) ) {
+            return VT_MAX_BITWIDTH_TYPE( _type1, _type2 );
+        } else {
+            if ( VT_SIGNED( _type1 ) || VT_SIGNED( _type2 ) ) {
+                return VT_SIGN( VT_MAX_BITWIDTH_TYPE( _type1, _type2 ) );
+            } else {
+                return VT_MAX_BITWIDTH_TYPE( _type1, _type2 );
+            }
+        }
+    }
 
 }
 
@@ -474,7 +497,7 @@ static Variable * variable_define_internal( Environment * _environment, Variable
         *_variables = var;
     }
 
-    if ( var->type == VT_ARRAY ) {
+    if ( var->type == VT_TARRAY ) {
         memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
         var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
     }
@@ -566,7 +589,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
     // very same type. This is allowed in BASIC programs.
 
     if ( var ) {
-        if ( ( var->type != _type ) || ( var->type == VT_ARRAY && var->arrayType != _type ) ) {
+        if ( ( var->type != _type ) || ( var->type == VT_TARRAY && var->arrayType != _type ) ) {
             CRITICAL_VARIABLE_REDEFINED_DIFFERENT_TYPE( _name );
         } else {
             return var;
@@ -774,7 +797,7 @@ Variable * variable_define_no_init( Environment * _environment, char * _name, Va
         } else {
             _environment->variables = var;
         }
-        if ( var->type == VT_ARRAY ) {
+        if ( var->type == VT_TARRAY ) {
             memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
             var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
         }
@@ -977,6 +1000,8 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         size *= 1;
     } else if ( var->arrayType == VT_MSPRITE ) {
         size *= 2;
+    } else if ( var->arrayType == VT_DOJOKA ) {
+        size *= 8;
     } else if ( var->arrayType == VT_TILE ) {
         size *= 1;
     } else if ( var->arrayType == VT_TILES ) {
@@ -1085,6 +1110,8 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
             sprintf(name, "Tstr%d", UNIQUE_ID);
         } else if ( _type == VT_BUFFER ) {
             sprintf(name, "Tbuf%d", UNIQUE_ID);
+        } else if ( _type == VT_DOJOKA ) {
+            sprintf(name, "Tdoj%d", UNIQUE_ID);
         } else if ( _type == VT_IMAGE ) {
             sprintf(name, "Timg%d", UNIQUE_ID);
         } else if ( _type == VT_IMAGES ) {
@@ -1110,6 +1137,8 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         if ( _type == VT_STRING ) {
             var->locked = 1;
         } else if ( _type == VT_BUFFER ) {
+            var->locked = 1;
+        } else if ( _type == VT_DOJOKA ) {
             var->locked = 1;
         } else if ( _type == VT_IMAGE ) {
             var->locked = 1;
@@ -1168,6 +1197,8 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
         sprintf(name, "Tstr%d", UNIQUE_ID);
     } else if ( _type == VT_BUFFER ) {
         sprintf(name, "Tbuf%d", UNIQUE_ID);
+    } else if ( _type == VT_DOJOKA ) {
+        sprintf(name, "Tdoj%d", UNIQUE_ID);
     } else if ( _type == VT_IMAGE ) {
         sprintf(name, "Timg%d", UNIQUE_ID);
     } else if ( _type == VT_IMAGES ) {
@@ -1193,6 +1224,8 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
     if ( _type == VT_STRING ) {
         var->locked = 1;
     } else if ( _type == VT_BUFFER ) {
+        var->locked = 1;
+    } else if ( _type == VT_DOJOKA ) {
         var->locked = 1;
     } else if ( _type == VT_IMAGE ) {
         var->locked = 1;
@@ -1353,7 +1386,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
             cpu_bit_inplace_8bit( _environment, destination->realName, destination->bitPosition, &_value );
             break;
         case 0:
-            if ( destination->type == VT_ARRAY ) {
+            if ( destination->type == VT_TARRAY ) {
                 int i=0,size=1;
                 for( i=0; i<destination->arrayDimensions; ++i ) {
                     size *= destination->arrayDimensionsEach[i];
@@ -1366,6 +1399,8 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     size *= 1;
                 } else if ( destination->arrayType == VT_MSPRITE ) {
                     size *= 2;
+                } else if ( destination->arrayType == VT_DOJOKA ) {
+                    size *= 8;
                 } else if ( destination->arrayType == VT_TILE ) {
                     size *= 1;
                 } else if ( destination->arrayType == VT_TILESET ) {
@@ -1656,7 +1691,7 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
 Variable * variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at ) {
     Variable * destination = variable_retrieve( _environment, _destination );
     switch( destination->type ) {
-        case VT_ARRAY:
+        case VT_TARRAY:
             if ( ! destination->valueBuffer ) {
                 destination->valueBuffer = malloc( _size );
                 memcpy( destination->valueBuffer, _buffer, _size );
@@ -2912,6 +2947,20 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
                             break;
+                        case VT_DOJOKA:
+                            switch( target->type ) {
+                                case VT_DOJOKA:
+                                    if ( target->size == 0 ) {
+                                        target->size = source->size;
+                                        target->valueBuffer = malloc( 8 );
+                                        memset( target->valueBuffer, 0, 8 );
+                                    }
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 8 );
+                                    break;
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                            }
+                            break;
                         case VT_BUFFER:
                             switch( target->type ) {
                                 case VT_DSTRING: {
@@ -3172,9 +3221,16 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
                     break;
                 }
+                case VT_DOJOKA: {
+                    if ( target->size == 0 ) {
+                        target->size = 8;
+                    }
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 8 );
+                    break;
+                }
                 case VT_SEQUENCE:
                 case VT_MUSIC:
-                case VT_ARRAY:
+                case VT_TARRAY:
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -3223,22 +3279,13 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
         CRITICAL_VARIABLE(_destination);
     }
 
-    if ( source->type == VT_STRING ) {
+    if ( source->type == VT_STRING || source->type == VT_DSTRING) {
 
     } else {
 
-        if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-            source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-            target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-        } else {
-            if ( VT_SIGNED( source->type ) || VT_SIGNED( target->type ) ) {
-                source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-                target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-            } else {
-                source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-                target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-            }
-        }
+        int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
+        source = variable_cast( _environment, source->name, best );
+        target = variable_cast( _environment, target->name, best );
 
     }
 
@@ -3429,7 +3476,7 @@ void variable_add_inplace_vars( Environment * _environment, char * _source, char
 void variable_add_inplace_array( Environment * _environment, char * _source, char * _destination ) {
 
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -3461,7 +3508,7 @@ void variable_add_inplace_mt( Environment * _environment, char * _source, char *
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -3472,7 +3519,7 @@ void variable_add_inplace_mt( Environment * _environment, char * _source, char *
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     variable_move_array( _environment, array->name, value->name );
@@ -3523,21 +3570,10 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
             cpu_dsresize( _environment, result->realName, size3->realName );
     } else {
 
-        if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-            result = variable_temporary( _environment, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ), "(result of subtracting)" );
-            source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-            target = variable_cast( _environment, _dest, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-        } else {
-            if ( VT_SIGNED( source->type ) || VT_SIGNED( target->type ) ) {
-                source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-                target = variable_cast( _environment, _dest, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-                result = variable_temporary( _environment, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ), "(result of subtracting)" );
-            } else {
-                source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-                target = variable_cast( _environment, _dest, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-                result = variable_temporary( _environment, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ), "(result of subtracting)" );
-            }
-        }
+        int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
+        source = variable_cast( _environment, source->name, best );
+        target = variable_cast( _environment, target->name, best );
+        result = variable_temporary( _environment, VT_SIGN( best ), "(result of subtracting)" );
 
         switch( VT_BITWIDTH( source->type ) ) {
             case 32:
@@ -3687,6 +3723,11 @@ void variable_swap( Environment * _environment, char * _source, char * _dest ) {
     
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _dest );
+
+    if ( source->type != target->type ) {
+        CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
+    }
+
     if ( VT_BITWIDTH( source->type ) != VT_BITWIDTH( target->type ) ) {
         CRITICAL_SWAP_DIFFERENT_BITWIDTH(target->name);
     }
@@ -3710,6 +3751,12 @@ void variable_swap( Environment * _environment, char * _source, char * _dest ) {
         }
         case 0:
             switch( source->type ) {
+                case VT_DSTRING: {
+                    cpu_xor_8bit( _environment, source->realName, target->realName, source->realName );
+                    cpu_xor_8bit( _environment, source->realName, target->realName, target->realName );
+                    cpu_xor_8bit( _environment, source->realName, target->realName, source->realName );
+                    break; 
+                }
                 case VT_FLOAT: {
                     Variable * temp = variable_temporary( _environment, VT_FLOAT, "(temp)" );
                     cpu_move_nbit( _environment, VT_FLOAT_BITWIDTH( source->precision ), source->realName, temp->realName );
@@ -3781,18 +3828,9 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
-    if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-        target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-    } else {
-        if ( VT_SIGNED( source->type ) || VT_SIGNED( target->type ) ) {
-            source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-            target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-        } else {
-            source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-            target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-        }
-    }
+    int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
+    source = variable_cast( _environment, source->name, best );
+    target = variable_cast( _environment, target->name, best );
 
     Variable * result = NULL;
     switch( VT_BITWIDTH( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) ) {
@@ -3879,16 +3917,9 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
-    if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        if ( VT_SIGNED( source->type ) ) {
-            target = variable_cast( _environment, _destination, source->type );
-        } else {
-            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
-            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
-        }
-    } else {
-        target = variable_cast( _environment, _destination, source->type );
-    }
+    int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
+    source = variable_cast( _environment, source->name, best );
+    target = variable_cast( _environment, target->name, best );
 
     Variable * result = NULL;
     Variable * remainder = NULL;
@@ -4074,7 +4105,7 @@ void variable_increment_array( Environment * _environment, char * _source ) {
     }
 
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -4100,7 +4131,7 @@ void variable_store_mt( Environment * _environment, char * _source, unsigned int
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     variable_store_array_const( _environment, array->name, _value );
@@ -4121,7 +4152,7 @@ Variable * variable_move_from_mt( Environment * _environment, char * _source, ch
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -4143,7 +4174,7 @@ Variable * variable_move_to_mt( Environment * _environment, char * _source, char
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _destination );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _destination );
     }
     variable_move_array( _environment, array->name, source->name );
@@ -4169,7 +4200,7 @@ void variable_increment_mt( Environment * _environment, char * _source ) {
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -4180,7 +4211,7 @@ void variable_increment_mt( Environment * _environment, char * _source ) {
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     variable_move_array( _environment, array->name, value->name );
@@ -4236,7 +4267,7 @@ void variable_decrement_array( Environment * _environment, char * _source ) {
     }
 
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -4265,7 +4296,7 @@ void variable_decrement_mt( Environment * _environment, char * _source ) {
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     Variable * value = variable_move_from_array( _environment, array->name );
@@ -4276,7 +4307,7 @@ void variable_decrement_mt( Environment * _environment, char * _source ) {
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
     array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _source );
     }
     variable_move_array( _environment, array->name, value->name );
@@ -5075,18 +5106,9 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
-    if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-        target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-    } else {
-        if ( VT_SIGNED( source->type ) || VT_SIGNED( target->type ) ) {
-            source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-            target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-        } else {
-            source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-            target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-        }
-    }
+    int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
+    source = variable_cast( _environment, source->name, best );
+    target = variable_cast( _environment, target->name, best );
 
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
@@ -5362,18 +5384,9 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
-    if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-        target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-    } else {
-        if ( VT_SIGNED( source->type ) || VT_SIGNED( target->type ) ) {
-            source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-            target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
-        } else {
-            source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-            target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
-        }
-    }
+    int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
+    source = variable_cast( _environment, source->name, best );
+    target = variable_cast( _environment, target->name, best );
 
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
@@ -5728,6 +5741,9 @@ utilizzare la funzione ''LEN''.
 @verified
  </usermanual> */
 Variable * variable_string_left( Environment * _environment, char * _string, char * _position ) {
+
+    outline0( "; variable_string_left" );
+
     Variable * string = variable_retrieve( _environment, _string );
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of left)" );
@@ -6127,6 +6143,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
             break;
         }
         case VT_DSTRING: {            
+
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
@@ -6138,6 +6155,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
 
             cpu_math_add_16bit_with_8bit( _environment, address->realName, position->realName, address->realName );
             cpu_dec_16bit( _environment, address->realName );
+
             if ( _len ) {
                 len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
                 cpu_move_8bit( _environment, len->realName, copyofLen->realName );
@@ -6145,7 +6163,6 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
                 cpu_move_8bit( _environment, len->realName, temp->realName );
                 cpu_math_add_8bit( _environment, position->realName, temp->realName, temp->realName );
                 cpu_greater_than_8bit( _environment, temp->realName, size->realName, temp->realName, 0, 0 );
-
                 char unlimitedLenLabel[MAX_TEMPORARY_STORAGE]; sprintf( unlimitedLenLabel, "%sunlim", label );
                 cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, unlimitedLenLabel, 1 );
                 cpu_move_8bit( _environment, size->realName, temp->realName );
@@ -6803,6 +6820,51 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     cpu_fill_indirect( _environment, address2->realName, size2->realName, address->realName );
 
     cpu_label( _environment, label );
+
+    return result;
+    
+}
+
+Variable * variable_string_dup( Environment * _environment, char * _string, char * _repetitions  ) {
+
+    MAKE_LABEL
+
+    Variable * string = variable_retrieve( _environment, _string );
+    Variable * stringAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * stringLen = variable_temporary( _environment, VT_BYTE, "(len)" );
+    Variable * repetitions = variable_retrieve_or_define( _environment, _repetitions, VT_BYTE, 0 );
+    Variable * copyOfRepetitions = variable_temporary( _environment, VT_BYTE, "(copy repetitions)" );
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of STRING)");
+    Variable * resultAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * resultLen = variable_temporary( _environment, VT_BYTE, "(len)" );
+
+    switch( string->type ) {
+        case VT_STRING: {
+            cpu_move_8bit( _environment, string->realName, stringLen->realName );
+            cpu_addressof_16bit( _environment, string->realName, stringAddress->realName );
+            cpu_inc_16bit( _environment, stringAddress->realName );
+            break;
+        }
+        case VT_DSTRING: {
+            cpu_dsdescriptor( _environment, string->realName, stringAddress->realName, stringLen->realName );
+            break;
+        }
+        default:
+            CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
+    }
+
+    Variable * repetitionsLen = variable_cast( _environment, variable_mul( _environment, repetitions->name, stringLen->name )->name, VT_BYTE );
+
+    cpu_dsalloc( _environment, repetitionsLen->realName, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, resultAddress->realName, resultLen->realName );
+
+    variable_move( _environment, repetitions->name, copyOfRepetitions->name );
+    
+    cpu_label( _environment, label );
+    cpu_mem_move( _environment, stringAddress->realName, resultAddress->realName, stringLen->realName );
+    cpu_math_add_16bit_with_8bit( _environment, resultAddress->realName, stringLen->realName, resultAddress->realName );
+    cpu_dec( _environment, copyOfRepetitions->realName );
+    cpu_compare_and_branch_8bit_const( _environment, copyOfRepetitions->realName, 0, label, 0 );
 
     return result;
     
@@ -7820,7 +7882,7 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
     Variable * array = variable_retrieve( _environment, _array );
     Variable * result = NULL;
 
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( _array );
     }
 
@@ -7971,7 +8033,7 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
         cpu_dsdescriptor( _environment, result2->realName, address2->realName, size2->realName );
         cpu_math_add_16bit_with_8bit( _environment, address->realName, size->realName, address->realName );
         cpu_math_sub_16bit_with_8bit( _environment, address->realName, digits->realName, address->realName );
-        cpu_inc_16bit( _environment, address->realName );
+        // cpu_dec_16bit( _environment, address->realName );
         cpu_mem_move( _environment, address->realName, address2->realName, digits->realName );
 
         cpu_label( _environment, finishedLabel );
@@ -8226,16 +8288,9 @@ Variable * variable_mod( Environment * _environment, char * _source, char * _des
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
-    if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        if ( VT_SIGNED( source->type ) ) {
-            target = variable_cast( _environment, _destination, source->type );
-        } else {
-            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
-            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
-        }
-    } else {
-        target = variable_cast( _environment, _destination, source->type );
-    }
+    int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
+    source = variable_cast( _environment, source->name, best );
+    target = variable_cast( _environment, target->name, best );
 
     Variable * result = NULL;
     Variable * remainder = NULL;
@@ -8491,7 +8546,7 @@ void variable_array_fill( Environment * _environment, char * _name, int _value )
     
     Variable * array = variable_retrieve( _environment, _name );
 
-    if ( array->type != VT_ARRAY ) {
+    if ( array->type != VT_TARRAY ) {
         CRITICAL_NOT_ARRAY( array->name );
     }
 
@@ -9461,8 +9516,15 @@ int system_call( Environment * _environment, char * _commandline ) {
         // Add quotes around the executable filename, 
         // in order to avoid wrong execution.
 
+        char systemDirectoryPath[MAX_TEMPORARY_STORAGE];
+        GetSystemDirectoryA( systemDirectoryPath, MAX_TEMPORARY_STORAGE );
+
         char batchFileName2[MAX_TEMPORARY_STORAGE];
-        sprintf( batchFileName2, "cmd.exe /C \"%s\"", batchFileName );
+        if ( _environment->cmdFileName ) {
+            sprintf( batchFileName2, "%s /C \"%s\"", _environment->cmdFileName, batchFileName );
+        } else {
+            sprintf( batchFileName2, "%s\\cmd.exe /C \"%s\"", systemDirectoryPath, batchFileName );
+        }
 
         // Now we can exec the batch file.
 
@@ -10397,6 +10459,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     var->frameSize = expr->frameSize;
     var->frameCount = expr->frameCount;
     var->readonly = expr->readonly;
+    var->compression = expr->compression;
     expr->assigned = 1;
     var->offsettingFrames = expr->offsettingFrames;
     if ( var->offsettingFrames ) {
@@ -10752,6 +10815,7 @@ Resource * build_resource_for_sequence( Environment * _environment, char * _imag
 
     resource->realName = image->realName;
     resource->type = image->type;
+    resource->compression = image->compression;
 
     if ( resource->type == VT_ADDRESS ) {
         resource->isAddress = 1;
@@ -10790,7 +10854,12 @@ char * get_default_temporary_path( ) {
 
     // Windows: The path reported by the Windows GetTempPath API function.
 
-    GetTempPathA( MAX_TEMPORARY_STORAGE, result );
+    int len = GetTempPathA( MAX_TEMPORARY_STORAGE, result );
+
+    if ( len > 0 ) {
+        GetTempPathA( len, result );
+        result[len] = 0;
+    }
 
     if ( result[strlen(result)-1] == '\\' || result[strlen(result)-1] == '/' ) {
         result[strlen(result)-1] = 0;
@@ -10897,4 +10966,447 @@ int file_get_size( Environment * _environment, char * _filename ) {
     fclose( lookedFileHandle );
     return fileSize;
 
+}
+
+Variable * variable_string_insert( Environment * _environment, char * _string, char * _altstring, char * _pos ) {
+
+    Variable * string = variable_retrieve_or_define( _environment, _string, VT_DSTRING, 0 );
+    Variable * altstring = variable_retrieve_or_define( _environment, _altstring, VT_DSTRING, 0 );
+    Variable * pos = variable_retrieve_or_define( _environment, _pos, VT_BYTE, 0 );
+    Variable * pos1 = variable_temporary( _environment, VT_BYTE, 0 );
+
+    variable_move( _environment, pos->name, pos1->name );
+    variable_increment( _environment, pos1->name );
+
+    Variable * left = variable_string_left( _environment, altstring->name, pos1->name );
+    variable_increment( _environment, pos1->name );
+    Variable * right = variable_string_mid( _environment, altstring->name, pos1->name, NULL );
+
+    Variable * result = variable_add( _environment, variable_add( _environment, left->name, string->name )->name, right->name );
+
+    return result;
+
+}
+
+Variable * variable_string_inst( Environment * _environment, char * _string, char * _altstring, char * _pos ) {
+
+    // INST overwrites the characters of the string <altstring> with the string <string> (first argument) 
+    // in the string <altstring> (second argument) from the position <pos> (third argument), whereby the 
+    // counting starts with 1, unlike in Simons' Basic (1 = first character; Simons' Basic: 0!). The length 
+    // of the string <altstring> does not change.
+
+    Variable * string = variable_retrieve_or_define( _environment, _string, VT_DSTRING, 0 );
+    Variable * altstring = variable_retrieve_or_define( _environment, _altstring, VT_DSTRING, 0 );
+    Variable * pos = variable_retrieve_or_define( _environment, _pos, VT_BYTE, 0 );
+    Variable * pos1 = variable_temporary( _environment, VT_BYTE, 0 );
+    variable_move( _environment, pos->name, pos1->name );
+
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result)");
+
+    variable_move( _environment, altstring->name, result->name );
+
+    Variable * stringLen = variable_string_len( _environment, string->name  );
+    variable_string_mid_assign( _environment, result->name, pos->name, stringLen->name, string->name );
+
+    return result;
+
+}
+
+Variable * variable_string_pick( Environment * _environment, char * _string, int _position ) {
+
+    Variable * result = variable_temporary( _environment, VT_CHAR, "(char)");
+
+    Variable * source = variable_retrieve( _environment, _string );
+    Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING1)");
+    Variable * sourceSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING1)");
+
+    switch( source->type ) {
+        case VT_STRING:
+            cpu_addressof_16bit( _environment, source->realName, sourceAddress->realName );
+            cpu_math_add_16bit_const( _environment, sourceAddress->realName, _position+1, sourceAddress->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, source->realName, sourceAddress->realName, sourceSize->realName );
+            cpu_math_add_16bit_const( _environment, sourceAddress->realName, _position, sourceAddress->realName );
+            break;
+    }
+
+    cpu_move_8bit_indirect2( _environment,  sourceAddress->realName, result->realName );
+
+    return result;
+
+}
+
+char * resolve_color( Environment * _environment, char * _color ) {
+
+    if ( _color ) {
+        Variable * color = NULL;
+        if (_environment->colorImplicit ) {
+            color = sbpen_get( _environment, _color );
+        } else {
+            color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
+        }
+        return color->name;
+    } else {
+        return NULL;
+    }
+
+}
+
+static int show_troubleshooting_accessing_path( Environment * _environment, char * _path, int _mode, int _create, int _show ) {
+
+    int check = 0;
+
+    if ( _create ) {
+        FILE * fh = fopen( _path, "wt" );
+        fprintf( fh, "test" );
+        fclose( fh );
+    }
+
+    if ( ( _mode & R_OK ) && access( _path, R_OK ) ) {
+        if ( _show ) {
+            printf( "#####> It cannot be read: %s\n", strerror(errno));
+        }
+        check |= R_OK;
+    }
+    if ( ( _mode & W_OK ) && access( _path, W_OK ) ) {
+        if ( _show ) {
+            printf( "#####> It cannot be write: %s\n", strerror(errno));
+        }
+        check |= W_OK;
+    }
+    if ( ( _mode & X_OK ) && access( _path, X_OK ) ) {
+        if ( _show ) {
+            printf( "#####> It cannot be executed: %s\n", strerror(errno));
+        }
+        check |= X_OK;
+    }
+    if ( ( _mode & F_OK ) && access( _path, F_OK ) ) {
+        if ( _show ) {
+            printf( "#####> It does not exist: %s\n", strerror(errno));
+        }
+        check |= F_OK;
+    }
+
+    if ( _create ) {
+        remove( _path );
+    }
+
+    return check;
+
+}
+
+static int show_troubleshooting_try_exec( Environment * _environment, char * _path, int _show ) {
+
+    char mutedExecutable[2*MAX_TEMPORARY_STORAGE]; sprintf( mutedExecutable, "%s >/dev/null 2>/dev/null", _path );
+    
+    int check = 0;
+
+    if ( system( mutedExecutable ) < 0 ) {
+        if ( _show ) {
+            printf( "#####> It cannot be executed: %s\n", strerror(errno));
+        }
+        check = 1;
+    }
+
+    return check;
+
+}
+
+int show_troubleshooting_and_exit( Environment * _environment, int _argc, char * _argv[] ) {
+
+    int check = 0;
+
+    printf( "========================\n");
+    printf( "=== TROUBLE SHOOTING ===\n");
+    printf( "========================\n\n");
+
+    printf( "Below you will find a brief analysis of the execution environment of\n" );
+    printf( "the following compiler: \"%s\".\n", _argv[0] );
+    printf( "For each entry, the outcome of a brief testing is reported,  where the possible\n" );
+    printf( "cause is also indicated. Please follow the preliminary indications contained\n" );
+    printf( "here and, in case you are not successful in producing an assembly listing or\n" );
+    printf( "an executable / binary file, please contact the author via GitHub here:\n" );
+    printf( "https://github.com/spotlessmind1975/ugbasic/issues/new\n\n" );
+
+#ifdef _WIN32
+
+    char systemDirectoryPath[2*MAX_TEMPORARY_STORAGE];
+    check = GetSystemDirectoryA( systemDirectoryPath, MAX_TEMPORARY_STORAGE );
+    if ( check>0 ) {
+        check = GetSystemDirectoryA( systemDirectoryPath, check );
+        systemDirectoryPath[check] = 0;
+        printf( "[PA0] SYSTEM DIRECTORY PATH = \"%s\" (%d)\n", systemDirectoryPath, check );
+    } else {
+        printf( "[PA0] SYSTEM DIRECTORY PATH: (unable to retrieve)\n" );
+        printf( "##### An error occurred while the program tried to \n" );
+        printf( "##### retrieve the name of the system directory: %d\n", GetLastError( ) );
+    }
+
+    char systemDirectoryCmdPath[MAX_TEMPORARY_STORAGE];
+    sprintf( systemDirectoryCmdPath, "%s\\cmd.exe", systemDirectoryPath );
+    printf( "[PA1] FULL NAME FOR CMD.EXE = \"%s\"\n", systemDirectoryCmdPath );
+    check = show_troubleshooting_accessing_path( _environment, systemDirectoryCmdPath, R_OK, 0, 1 );
+    if ( (check & R_OK) ) {
+        printf( "##### The cmd.exe program seems not to exists. \n" );
+    }
+
+    char systemPath[8*MAX_TEMPORARY_STORAGE];
+    check = GetEnvironmentVariable( "Path", systemPath, 8*MAX_TEMPORARY_STORAGE );
+    if ( check>0 ) {
+        check = GetEnvironmentVariable( "Path", systemPath, check );
+        systemPath[check] = 0;
+        printf( "[PA2] ENVIRONMENT PATH = \"%s\" (%d)\n", systemPath, check );
+    } else {
+        printf( "[PA2] ENVIRONMENT PATH: (unable to retrieve)\n" );
+        printf( "##### An error occurred while the program tried to \n" );
+        printf( "##### retrieve the variable Path: %d\n", GetLastError( ) );
+    }
+
+    printf( "[PA3] IS CMD.EXE IN PATH?\n" );
+    int checkComplete = 0;
+    char * t = strtok( systemPath, ";");
+    while( t ) {
+        char systemFileName[MAX_TEMPORARY_STORAGE];
+        sprintf( systemFileName, "%s\\cmd.exe", t );
+        check = show_troubleshooting_accessing_path( _environment, systemFileName, R_OK, 0, 0 );
+        if ( !(check & R_OK) ) {
+            printf( "[PA4] IS CMD.EXE IN PATH \"%s\"\n", systemFileName );
+            checkComplete = 1;
+        }
+        t = strtok( NULL, ";" );
+    }
+
+    if ( !checkComplete ) {
+        printf( "##### The cmd.exe does not seem to be present or reachable\n" );
+        printf( "##### inside the system Path.\n" );
+    }
+
+    printf( "[PA5] CMD.EXE REPLACEMENT: %s\n", ( _environment->cmdFileName ) ? _environment->cmdFileName : "(no replacement)" );
+    printf( "[PA6] IS (REPLACEMENT) COMMAND CMD.EXE EXECUTABLE? " );
+
+    // Now we can exec the batch file.
+
+    int cmdEsito = system( "cmd.exe /C" );
+
+    // If command is not a null pointer, system() shall return the
+    // termination status of the command language interpreter in 
+    // the format specified by waitpid(). 
+    
+    // The termination status shall be as defined for the sh 
+    // utility; otherwise, the termination status is unspecified. 
+    
+    switch( cmdEsito ) {
+
+        // If some error prevents the command language interpreter 
+        // from executing after the child process is created, the 
+        // return value from system() shall be as if the command 
+        // language interpreter had terminated using exit(127) 
+        // or _exit(127). 
+        case 127:
+            printf( "\n##### It is like some error prevents the cmd.exe \n" );
+            printf( "##### from executing after the child process is created.\n" );
+            break;
+
+        // If a child process cannot be created, or if the termination 
+        // status for the command language interpreter cannot be obtained, 
+        // system() shall return -1 and set errno to indicate the error.
+        case -1:
+            printf( "\n##### It is like the cmd.exe cannot be created, or if the\n" );
+            printf( "##### termination status for the cmd.exe\n" );
+            printf( "##### cannot be obtained (errno = %d).\n\n", errno );
+            perror( "##### Error from execution:");
+            break;
+
+        case 0:
+            printf( "yes, it is.\n");
+            break;
+
+        default:
+            printf( "\n##### It is like some error occurrend in execution of cmd.exe (%d).\n\n", cmdEsito );
+            break;
+    }
+
+#endif
+
+    char temporaryPath[MAX_TEMPORARY_STORAGE];
+
+#ifdef _WIN32
+
+    // Windows: The path reported by the Windows GetTempPath API function.
+
+    check = GetTempPathA( MAX_TEMPORARY_STORAGE, temporaryPath );
+    if ( check > 0 ) {
+        GetTempPathA( check, temporaryPath );
+        temporaryPath[check] = 0;
+    }
+
+#else
+
+    // ISO/IEC 9945 (POSIX): The path supplied by the first environment 
+    // variable found in the list TMPDIR, TMP, TEMP, TEMPDIR. If none of these are 
+    // found, "/tmp", or, if macro __ANDROID__ is defined, "/data/local/tmp"
+
+    char * tmp = getenv( "TMPDIR" );
+    if ( !tmp ) {
+        tmp = getenv( "TMP" );
+    }
+    if ( !tmp ) {
+        tmp = getenv( "TEMP" );
+    }
+    if ( !tmp ) {
+        tmp = getenv( "TEMPDIR" );
+    }
+    if ( !tmp ) {
+        tmp = strdup( "/tmp" );
+    }
+    strcpy( temporaryPath, tmp );
+    check = strlen(temporaryPath);
+
+#endif
+
+    if ( check ) {
+        printf( "[P01] TEMPORARY PATH : \"%s\"\n", temporaryPath );
+    } else {
+        printf( "[P01] TEMPORARY PATH : (unable to retrieve)\n" );
+        printf( "##### An error occurred while the program tried to \n" );
+        printf( "##### retrieve the path of the temporary directory.\n" );
+    }
+
+    check = show_troubleshooting_accessing_path( _environment, temporaryPath, R_OK | W_OK, 0, 1 );
+
+    if ( (check & R_OK) | (check & W_OK) | (check & X_OK) ) {
+        printf( "##### There is a problem in accessing the temporary path. Please, check the above\n" );
+        printf( "##### path, or use the '-T' parameter to set it in an explicit way.\n\n" );
+    }
+
+    char temporaryFileName[MAX_TEMPORARY_STORAGE];
+    strcpy( temporaryFileName, get_temporary_filename( _environment ) );
+    printf( "[P02] TEMPORARY FILENAME : \"%s\"\n", temporaryFileName );
+    check = show_troubleshooting_accessing_path( _environment, temporaryFileName, R_OK | W_OK | F_OK, 1, 1 );
+
+    if ( (check & R_OK) | (check & W_OK) | (check & F_OK) ) {
+        printf( "##### There is a problem in creating a temporary file. Please, check the above\n" );
+        printf( "##### path, or use the '-T' parameter to set a different temporary path.\n\n" );
+    }
+
+    char workingDirectory[MAX_TEMPORARY_STORAGE];
+    (void)!getcwd(workingDirectory, MAX_TEMPORARY_STORAGE);
+    printf( "[P03] WORKING DIRECTORY: \"%s\"\n", workingDirectory );
+    check = show_troubleshooting_accessing_path( _environment, workingDirectory, R_OK | W_OK | F_OK, 0, 1 );
+
+    if ( (check & R_OK) | (check & W_OK) | (check & F_OK) ) {
+        printf( "##### There is a problem in accessing the current (working) directory.\n" );
+        printf( "##### Please, check the permissions or use an explicit path with '-o'\n" );
+        printf( "##### option, otherwise the binary file cannot be created.\n" );
+    }
+
+#ifdef cpu6809
+
+    char executableName[MAX_TEMPORARY_STORAGE];
+    BUILD_TOOLCHAIN_ASM6809_GET_EXECUTABLE( _environment, executableName );
+    printf( "[P04] EXECUTABLE NAME FOR ASM6809: \"%s\"\n", executableName );
+    check = show_troubleshooting_try_exec( _environment, executableName, 1 );
+    if ( check ) {
+        printf( "##### The assembler for the 6809 processor does not appear to be present\n" );
+        printf( "##### or executable. Please check the path or specify it using the \n" );
+        printf( "##### '-C' option.\n" );
+    }
+
+    #ifdef _WIN32
+
+        // First of all, we will create a temporary batch file
+        // to call in place of the original command line.
+
+        char asmFileName[MAX_TEMPORARY_STORAGE];
+        sprintf( asmFileName, "%s.asm", get_temporary_filename( _environment ) );        
+        printf( "[P05] ASSEMBLY EXAMPLE (on temp path): \"%s\"\n", asmFileName );
+        check = show_troubleshooting_accessing_path( _environment, asmFileName, W_OK, 1, 1 );
+        if ( (check & W_OK) ) {
+            printf( "##### The sample assembly file cannot be created. This could be related \n" );
+            printf( "##### to any temporary path problem, so check the previous messages. \n" );
+        }
+
+        FILE * fh = fopen( asmFileName, "wt" );
+        if ( fh ) {
+            fprintf( fh, "TEST\n JMP TEST\n" );
+            fclose( fh );
+        }
+
+        char binaryFileName[MAX_TEMPORARY_STORAGE];
+        sprintf( binaryFileName, "%s.bin", get_temporary_filename( _environment ) );        
+        printf( "[P06] BINARY EXAMPLE (on temp path): \"%s\"\n", binaryFileName );
+        check = show_troubleshooting_accessing_path( _environment, binaryFileName, W_OK, 1, 1 );
+        if ( (check & W_OK) ) {
+            printf( "##### The sample binary file cannot be created. This could be related \n" );
+            printf( "##### to any temporary path problem, so check the previous messages. \n" );
+        }
+
+        char batchFileName[MAX_TEMPORARY_STORAGE];
+        sprintf( batchFileName, "%s.bat", get_temporary_filename( _environment ) );        
+        printf( "[P07] AUXILIARY BATCH FILE: \"%s\"\n", batchFileName );
+        check = show_troubleshooting_accessing_path( _environment, batchFileName, W_OK | X_OK, 1, 1 );
+        if ( (check & W_OK) || (check & X_OK)) {
+            printf( "##### The auxiliary batch file cannot be created or executed. This could be related \n" );
+            printf( "##### to any temporary path problem, so check the previous messages. Anyway, if the\n" );
+            printf( "##### file cannot be executed, the binary / disk image cannot be built.\n" );
+        }
+
+        fh = fopen( batchFileName, "w+t" );
+        if ( fh ) {
+            fprintf( fh, "@echo off\n\"%s\" -o \"%s\" \"%s\"\n", executableName, binaryFileName, asmFileName );
+            fclose( fh );
+        }
+
+        char batchFileName2[MAX_TEMPORARY_STORAGE];
+        sprintf( batchFileName2, "%s\\cmd.exe /C \"%s\"", systemDirectoryPath, batchFileName );
+        printf( "[P08] BATCH LAUNCHER COMMAND LINE: %s\n", batchFileName2 );
+
+        // Now we can exec the batch file.
+
+        int esito = system( batchFileName2 );
+
+        // If command is not a null pointer, system() shall return the
+        // termination status of the command language interpreter in 
+        // the format specified by waitpid(). 
+        
+        // The termination status shall be as defined for the sh 
+        // utility; otherwise, the termination status is unspecified. 
+        
+        switch( esito ) {
+
+            // If some error prevents the command language interpreter 
+            // from executing after the child process is created, the 
+            // return value from system() shall be as if the command 
+            // language interpreter had terminated using exit(127) 
+            // or _exit(127). 
+            case 127:
+                printf( "##### It is like some error prevents the command language interpreter \n" );
+                printf( "##### from executing after the child process is created.\n" );
+                break;
+
+            // If a child process cannot be created, or if the termination 
+            // status for the command language interpreter cannot be obtained, 
+            // system() shall return -1 and set errno to indicate the error.
+            case -1:
+                printf( "##### It is like the child process cannot be created, or if the\n" );
+                printf( "##### termination status for the command language interpreter\n" );
+                printf( "##### cannot be obtained (errno = %d).\n\n", errno );
+                perror( "##### Error from execution:");
+                break;
+
+            case 0:
+                break;
+
+            default:
+                printf( "##### It is like some error occurrend in execution.\n\n" );
+                break;
+        }
+        
+    #endif
+
+#endif
+
+    exit(0);
+    
 }

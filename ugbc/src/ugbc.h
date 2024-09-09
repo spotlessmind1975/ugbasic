@@ -58,6 +58,8 @@
  * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
 
+#define UGBASIC_VERSION                 "1.16.3"
+
 #ifdef _WIN32
     #define PATH_SEPARATOR              '\\'
     #define PATH_SEPARATOR_AS_STRING    "\\"
@@ -83,6 +85,30 @@
     #define TRACE1( s, p1 )         (void) s; (void) p1;
     #define TRACE2( s, p1, p2 )     (void) s; (void) p1; (void) p2;
 #endif
+
+/**
+ * @brief Type of dialects
+ */
+typedef enum _Dialect {
+
+    DI_UGBASIC = 0,
+
+    DI_TSB = 1,
+
+} Dialect;
+
+/**
+ * @brief Type of compression
+ */
+typedef enum _Compression {
+
+    CMP_NONE = 0,
+
+    CMP_MSC1 = 1,
+
+    CMP_RLE = 2
+
+} Compression;
 
 /**
  * @brief Type of memory banks
@@ -410,7 +436,7 @@ typedef enum _VariableType {
     VT_BUFFER = 11,
 
     /** Array of any kind */
-    VT_ARRAY = 12,
+    VT_TARRAY = 12,
 
     /** Strings (dynamic) */
     VT_DSTRING = 13,
@@ -461,7 +487,10 @@ typedef enum _VariableType {
     VT_BIT = 28,
 
     /** MSPRITE (multi hardware movable objects) */
-    VT_MSPRITE = 29
+    VT_MSPRITE = 29,
+
+    /** DOJOKA (handle of logged dojo connection) */
+    VT_DOJOKA = 30
 
 } VariableType;
 
@@ -470,6 +499,7 @@ typedef struct _Resource {
     char        *   realName;
     int             bankNumber;
     int             isAddress;
+    int             compression;
     VariableType    type;
 
 } Resource;
@@ -574,7 +604,8 @@ typedef struct _Resource {
         ( t == VT_TILESET ) + \
         ( t == VT_SEQUENCE ) + \
         ( t == VT_MUSIC ) + \
-        ( t == VT_TILEMAP ) \
+        ( t == VT_TILEMAP ) + \
+        ( t == VT_DOJOKA ) \
     )
 
 /**
@@ -925,6 +956,11 @@ typedef struct _Variable {
     int uncompressedSize;
 
     /** 
+     * The type of compressor.
+     */
+    Compression compression;
+
+    /** 
      * The absolute address of this variable (if any).
      */
     int absoluteAddress;
@@ -1204,7 +1240,10 @@ typedef enum _LoopType {
     LT_FOR_MT = 4,
 
     /** BEGIN...END GAMELOOP */
-    LT_GAMELOOP = 5
+    LT_GAMELOOP = 5,
+
+    /** LOOP...END LOOP */
+    LT_LOOP = 6
 
 } LoopType;
 
@@ -1340,6 +1379,8 @@ typedef struct _ScreenMode {
 
 typedef struct _Embedded {
 
+    int cpu_ztoa;
+    int cpu_ctoa;
     int cpu_beq;
     int cpu_bneq;
     int cpu_busy_wait;
@@ -1378,6 +1419,7 @@ typedef struct _Embedded {
     int cpu_jump;
     int cpu_call;
     int cpu_call_indirect;
+    int cpu_jump_indirect;
     int cpu_return;
     int cpu_pop;
     int cpu_label;
@@ -1584,6 +1626,7 @@ typedef struct _Deployed {
     int putimage;
     int putimagereu;
     int putimageram;
+    int putimageramrle;
     int getimage;
     int puttilemap;
     int blitimage;
@@ -1682,6 +1725,7 @@ typedef struct _Deployed {
     int read_data_unsafe;
     int irq;
     int draw_string;
+    int draw_tsb_string;
     int paint;
     int play_string;
     int put_tilemap;
@@ -1696,6 +1740,9 @@ typedef struct _Deployed {
     int flipimagex;
     int flipimagey;
     int random;
+    int dojo;
+    int console;
+    int music;
 
 } Deployed;
 
@@ -1718,6 +1765,8 @@ typedef struct _InputConfig {
     int size;
     char cursor;
     char rate;
+    char latency;
+    char release;
     char delay;
 
 } InputConfig;
@@ -1725,6 +1774,7 @@ typedef struct _InputConfig {
 typedef struct _JoystickConfig {
 
     int retries;
+    int values;
 
 } JoystickConfig;
 
@@ -1734,7 +1784,8 @@ typedef struct _VestigialConfig {
     char doubleBufferSelected;
     char doubleBuffer;
     char palettePreserve;
-
+    char clsImplicit;
+    
     /* retrocompatible hacks */
 
     // If 1 we are compiling "Cocon" game with a recent
@@ -1938,6 +1989,11 @@ typedef struct _Environment {
      * Filename of compiler 
      */
     char * compilerFileName;
+
+    /**
+     * Filename of cmd.exe (on Windows platform) 
+     */
+    char * cmdFileName;
 
     /**
      * Filename of app maker 
@@ -2145,6 +2201,14 @@ typedef struct _Environment {
      */
     Label * referredLabels;
 
+    int dataNeeded;
+
+    int lineNeeded;
+
+    int enableRle;
+    
+    int mspriteMsbokAddress;
+    
     /**
      * List of dataSegments.
      */
@@ -2233,6 +2297,8 @@ typedef struct _Environment {
      * at least once.
      */
     int runParallel;
+
+    int hasCGoto;
 
     /**
      * This flag marks if the program needs a BITMASK/BITMASKN temporary variable.
@@ -2527,10 +2593,26 @@ typedef struct _Environment {
      */
     int debugImageLoad;
     
+    int bankedLoadDefault;
+    
     /**
      * Default type for variables.
      */
     VariableType defaultVariableType;
+
+    /**
+     *
+     */
+    int optionCallAsGoto;
+
+    int optionExecAsGosub;
+
+    /**
+     *
+     */
+    int centerWithoutNewLine;
+    
+    int colorImplicit;
 
     /**
      * Current palette selection.
@@ -2674,6 +2756,9 @@ typedef struct _Environment {
      */
     int frameBufferStart2;
 
+    int lineInput;
+
+    int keyPressDutyCycle;
 
     /**
      * 
@@ -2715,6 +2800,8 @@ typedef struct _Environment {
      */
     int bitByte;
 
+    int sysCallUsed;
+
     /**
      * Size of the paint bucket
      */
@@ -2731,6 +2818,13 @@ typedef struct _Environment {
     ConfigureParameters     configureParameters;
 
     Program program;
+
+    Dialect dialect;
+
+    int clsCalledOnce;
+    
+    char * optionalX;
+    char * optionalY;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -2783,7 +2877,7 @@ typedef struct _Environment {
 #define UNIQUE_RESOURCE_ID   ((struct _Environment *)_environment)->uniqueResourceId++
 #define MAKE_LABEL  char label[32]; sprintf( label, "_label%d", UNIQUE_ID);
 
-#define CRITICAL( s ) fprintf(stderr, "%s %d\nCRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", __FILE__, __LINE__, ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -3089,6 +3183,17 @@ typedef struct _Environment {
 #define CRITICAL_VARIABLE_CANNOT_DIRECT_ASSIGN_WRONG_TYPE( v, t ) CRITICAL3("E292 - cannot direct assign this type", v, t );
 #define CRITICAL_INVALID_PROGRAM_START( a ) CRITICAL2i("E293 - invalid address for DEFINE PROGRAM START", a );
 #define CRITICAL_INVALID_JOYSTICK_RETRIES( a ) CRITICAL2i("E294 - invalid number of retries in DEFINE JOYSTICK RETRIES", a );
+#define CRITICAL_GET_NEED_STRING( v ) CRITICAL2i("E295 - GET needs variable of string type", v );
+#define CRITICAL_KEYGET_NEED_STRING( v ) CRITICAL2i("E296 - KEYGET needs variable of string type", v );
+#define CRITICAL_ARRAY_DATATYPE_WRONG( v ) CRITICAL2("E297 - wrong datatype of array", v );
+#define CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( v1, v2 ) CRITICAL3("E298 - cannot SWAP variables of different type", v1, v2 );
+#define CRITICAL_AT_UNSUPPORTED( v1, v2 ) CRITICAL3("E298 - cannot AT variables of not string type", v1, v2 );
+#define CRITICAL_INVALID_INPUT_LATENCY( v ) CRITICAL2i("E299 - invalid value for INPUT LATENCY", v );
+#define CRITICAL_INVALID_INPUT_LATENCY_MS( v ) CRITICAL2i("E300 - invalid milliseconds for INPUT LATENCY", v );
+#define CRITICAL_INVALID_INPUT_DELAY_MS( v ) CRITICAL2i("E301 - invalid milliseconds for INPUT DELAY", v );
+#define CRITICAL_INVALID_INPUT_RELEASE( v ) CRITICAL2i("E302 - invalid value for INPUT RELEASE", v );
+#define CRITICAL_INVALID_INPUT_RELEASE_MS( v ) CRITICAL2i("E303 - invalid milliseconds for INPUT RELEASE", v );
+#define CRITICAL_END_LOOP_WITHOUT_LOOP( ) CRITICAL("E304 - END LOOP without LOOP" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3105,6 +3210,8 @@ typedef struct _Environment {
 #define WARNING_DEPRECATED( k ) WARNING2("W009 - keyword has been deprecated and has no effect", k );
 
 int assemblyLineIsAComment( char * _buffer );
+
+typedef unsigned char MemoryBlock;
 
 typedef struct _Environment Environment;
 
@@ -4092,6 +4199,8 @@ char * get_default_temporary_path( );
 char * find_last_path_separator( char * _path );
 char * generate_storage_filename( Environment * _environment, char * _prefix, char * _suffix, int _number );
 
+int show_troubleshooting_and_exit( Environment * _environment, int _argc, char * _argv[] );
+
 //----------------------------------------------------------------------------
 // Common functions used by parser only
 //----------------------------------------------------------------------------
@@ -4127,6 +4236,7 @@ void                    add_complex_array( Environment * _environment, char * _v
 void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 char *                  address_displacement( Environment * _environment, char * _address, char * _displacement );
 void                    allow( Environment * _environment );
+Variable *              asciicode( Environment * _environment );
 
 //----------------------------------------------------------------------------
 // *B*
@@ -4154,7 +4264,7 @@ void                    bank_write_vars( Environment * _environment, char * _ban
 void                    bank_write_semi_var( Environment * _environment, char * _address2, int _bank, int _address1, int _size );
 void                    bank_write_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size );
-void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
+void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
 void                    begin_for_prepare( Environment * _environment );  
 void                    begin_for_from_prepare( Environment * _environment );  
 void                    begin_for_from_assign( Environment * _environment, char * _from );
@@ -4185,7 +4295,8 @@ void                    begin_for_to( Environment * _environment, char *_to );
 void                    begin_for_to_prepare( Environment * _environment );
 void                    begin_for_to_mt( Environment * _environment, char *_to );
 void                    begin_gameloop( Environment * _environment );
-void                    begin_loop( Environment * _environment );
+void                    begin_do_loop( Environment * _environment );
+void                    begin_loop( Environment * _environment, int _do );
 void                    begin_procedure( Environment * _environment, char * _name );
 void                    begin_repeat( Environment * _environment );
 void                    begin_storage( Environment * _environment, char * _name, char * _file_name );
@@ -4209,7 +4320,7 @@ void                    blit_define_end_compound( Environment * _environment, in
 void                    blit_image( Environment * _environment, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _flags );
 void                    boom( Environment * _environment, int _duration, int _channels );
 void                    boom_var( Environment * _environment, char * _duration, char * _channels );
-void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c );
+void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c, int _preserve_color );
 Resource *              build_resource_for_sequence( Environment * _environment, char * _image, char * _frame, char * _sequence );
 
 //----------------------------------------------------------------------------
@@ -4226,9 +4337,15 @@ void                    case_else( Environment * _environment );
 void                    case_equals( Environment * _environment, int _value );
 void                    case_equals_var( Environment * _environment, char * _value );
 void                    case_equals_label( Environment * _environment );
-void                    center( Environment * _environment, char * _string, int _newline );
+void                    center( Environment * _environment, char * _string, int _newline, char * _width );
+void                    cgoto( Environment * _environment, char * _expression );
+void                    char_at( Environment * _environment, char *_x, char *_y, char *_code, char *_type, char *_size );
+void                    charset_at( Environment * _environment, int _value );
+void                    charset_at_var( Environment * _environment, char * _value );
+void                    charset_uppercase( Environment * _environment );
+void                    charset_lowercase( Environment * _environment );
 int                     check_if_filename_is_valid( Environment * _environment,  char * _filename );
-void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
+void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c, int _preserve_color );
 void                    clear( Environment * _environment );
 Variable *              clear_key( Environment * _environment );
 void                    cline( Environment * _environment, char * _characters );
@@ -4247,7 +4364,9 @@ void                    color_background_vars( Environment * _environment, char 
 void                    color_border( Environment * _environment, int _border_color );
 void                    color_border_var( Environment * _environment, char * _border_color );
 void                    color_sprite( Environment * _environment, int _index, int _color );
+void                    color_sprite_semi_vars( Environment * _environment, int _index, char * _color );
 void                    color_sprite_vars( Environment * _environment, char * _sprite, char * _color );
+void                    color_tsb( Environment * _environment, char *_border, char *_background, char *_cursor );
 void                    colormap_at( Environment * _environment, int _address );
 void                    colormap_at_var( Environment * _environment, char * _address );
 void                    colormap_clear( Environment * _environment );
@@ -4270,6 +4389,7 @@ void                    const_define_float( Environment * _environment, char * _
 void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
 Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
+void                    cset( Environment * _environment, char * _value );
 
 //----------------------------------------------------------------------------
 // *D*
@@ -4289,10 +4409,23 @@ void                    defdgr_vars( Environment * _environment, char * _charact
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    double_buffer( Environment * _environment, int _enabled );
-void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
+Variable *              dojo_create_port( Environment * _environment, char * _session_id, char * _application );
+Variable *              dojo_destroy_port( Environment * _environment, char * _port_id );
+Variable *              dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _application );
+Variable *              dojo_put_message( Environment * _environment, char * _port_id, char *_message );
+Variable *              dojo_peek_message( Environment * _environment, char * _port_id );
+Variable *              dojo_get_message( Environment * _environment, char * _port_id );
+Variable *              dojo_login( Environment * _environment, char * _username, char * _password );
+Variable *              dojo_success( Environment * _environment, char * _id );
+Variable *              dojo_ping( Environment * _environment );
+Variable *              dojo_ready( Environment * _environment );
+Variable *              dojo_receive( Environment * _environment );
+void                    dojo_send( Environment * _environment, char * _value );
+void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
 void                    draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color );
 void                    draw_string( Environment * _environment, char * _string );
+void                    draw_tsb_string( Environment * _environment, char * _string, char * _x, char * _y, char * _c, int _preserve_color  );
 void                    dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    dstring_cleanup( Environment * _Environment );
 
@@ -4300,7 +4433,7 @@ void                    dstring_cleanup( Environment * _Environment );
 // *E*
 //----------------------------------------------------------------------------
 
-void                    ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c );
+void                    ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color );
 void                    else_if_then( Environment * _environment, char * _expression );
 void                    else_if_then_label( Environment * _environment );
 void                    end( Environment * _environment );
@@ -4308,13 +4441,15 @@ void                    end_for( Environment * _environment );
 void                    end_for_identifier( Environment * _environment, char * _identifier );
 void                    end_gameloop( Environment * _environment );
 void                    end_if_then( Environment * _environment  );
-void                    end_loop( Environment * _environment );
+void                    end_do_loop( Environment * _environment );
+void                    end_loop( Environment * _environment, int _do );
 void                    end_procedure( Environment * _environment, char * _value );
 void                    end_repeat( Environment * _environment );
 void                    end_repeat_condition( Environment * _environment, char * _expression );
 void                    end_select_case( Environment * _environment );
 void                    end_storage( Environment * _environment );
 void                    end_while( Environment * _environment );
+void                    envelope( Environment * _environment, char * _voice, char * _attack, char * _decay, char * _sustain, char * _release );
 char *                  escape_newlines( char * _string );
 void                    every_cleanup( Environment * _environment );
 void                    every_off( Environment * _environment, char * _timer );
@@ -4331,6 +4466,7 @@ void                    exit_procedure( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
+void                    fill( Environment * _environment, char * _x, char * _y, char * _w, char * _h, char * _char, char * _color );
 int                     find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
 void                    flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction );
 void                    flip_image_vars_direction( Environment * _environment, char * _image, char * _frame, char * _sequence, int _direction );
@@ -4348,6 +4484,7 @@ Variable *              fp_exp( Environment * _environment, char * _value );
 // *G*
 //----------------------------------------------------------------------------
 
+void                    generate_cgoto_address_table( Environment * _environment );
 Variable *              get_at( Environment * _environment, char * _x, char * _y );
 Variable *              get_cmove( Environment * _environment, char * _x, char * _y );
 Variable *              get_cmove_direct( Environment * _environment, int _x, int _y );
@@ -4375,6 +4512,7 @@ void                    gr_locate( Environment * _environment, char * _x, char *
 void                    halt( Environment * _environment );
 Variable *              hit_to( Environment * _environment, int _sprite );
 Variable *              hit_to_vars( Environment * _environment, char * _sprite );
+void                    hires( Environment * _environment, char * _foreground, char * _background );
 void                    home( Environment * _environment );
 
 //----------------------------------------------------------------------------
@@ -4405,6 +4543,7 @@ Variable *              image_storage( Environment * _environment, char * _sourc
 Variable *              images_storage( Environment * _environment, char * _source_name, char *_target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y );
 Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y );
 Variable *              images_load_from_buffer( Environment * _environment, char * _buffer, int _buffer_size );
+void                    insert( Environment * _environment, char * _string, char * _x, char * _y, char * _w, char * _h, char * _color );
 Variable *              in_var( Environment * _environment, char * _port );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
@@ -4413,7 +4552,7 @@ Variable *              input_string( Environment * _environment, char * _size )
 void                    instrument( Environment * _environment, int _instrument, int _channels );
 void                    instrument_semi_var( Environment * _environment, int _instrument, char * _channels );
 void                    interleaved_instructions( Environment * _environment );
-
+int                     is_do_loop( Environment * _environment );
 
 //----------------------------------------------------------------------------
 // *J*
@@ -4432,7 +4571,8 @@ Variable *              joyy_vars( Environment * _environment, char * _port );
 // *K*
 //----------------------------------------------------------------------------
 
-Variable *              keystate( Environment * _environment, char * _scancode );
+Variable *              key_state( Environment * _environment, int _scancode );
+Variable *              key_state_var( Environment * _environment, char * _scancode );
 Variable *              keyshift( Environment * _environment );
 Variable *              key_pressed( Environment * _environment, int _scancode );
 Variable *              key_pressed_var( Environment * _environment, char * _scancode );
@@ -4513,6 +4653,7 @@ void                    on_proc_end( Environment * _environment );
 void                    on_proc_index( Environment * _environment, char * _label );
 void                    on_scroll_call( Environment * _environment, int _x, int _y, char * _label );
 void                    on_scroll_gosub( Environment * _environment, int _x, int _y, char * _label );
+void                    option_dialect( Environment * _environment, Dialect _dialect );
 Variable *              origin_resolution_relative_transform_x( Environment * _environment, char * _x, int _is_relative );
 Variable *              origin_resolution_relative_transform_y( Environment * _environment, char * _y, int _is_relative );
 void                    out_var( Environment * _environment, char * _port, char * _value );
@@ -4534,6 +4675,7 @@ void                    paper( Environment * _environment, char * _paper );
 Variable *              param_procedure( Environment * _environment, char * _name );
 char *                  parse_buffer( Environment * _environment, char * _buffer, int * _size, int _hex_only );
 Variable *              parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type, int _hex_only );
+void                    pause_seconds( Environment * _environment, char * _string, char * _duration );
 Variable *              peek_var( Environment * _environment, char * _location );
 Variable *              peekw_var( Environment * _environment, char * _location );
 Variable *              peekd_var( Environment * _environment, char * _location );
@@ -4543,7 +4685,7 @@ void                    play_vars( Environment * _environment, char * _note, cha
 void                    play_off( Environment * _environment, int _channels );
 void                    play_off_var( Environment * _environment, char * _channels );
 void                    play_string( Environment * _environment, char * _string );
-void                    plot( Environment * _environment, char * _x, char * _y, char *_c );
+void                    plot( Environment * _environment, char * _x, char * _y, char *_c, int _preserve_color );
 void                    pmode( Environment * _environment, int _mode, int _start_page );
 Variable *              point( Environment * _environment, char * _x, char * _y );
 void                    point_at( Environment * _environment, int _x, int _y );
@@ -4560,6 +4702,8 @@ void                    print_buffer( Environment * _environment, char * _buffer
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
+void                    proc( Environment * _environment, char * _label );
+void                    put_key( Environment * _environment, char * _string );
 void                    put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
 void                    put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags );
 void                    put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
@@ -4587,6 +4731,7 @@ void                    read_data( Environment * _environment, char * _variable,
 void                    read_data_unsafe( Environment * _environment, char * _variable );
 void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
+char *                  resolve_color( Environment * _environment, char * _color );
 char *                  resource_load_asserts( Environment * _environment, char * _filename );
 Variable *              respawn_procedure( Environment * _environment, char * _name );
 void                    restore_label( Environment * _environment, char * _label );
@@ -4599,6 +4744,9 @@ int                     rgbi_extract_palette( Environment * _environment, unsign
 void                    rgbi_move( RGBi * _source, RGBi * _destination );
 int                     rgbi_distance( RGBi * _source, RGBi * _destination );
 Variable *              rnd( Environment * _environment, char * _value );
+Variable *              rnd0( Environment * _environment );
+Variable *              rnd1( Environment * _environment );
+void                    rot( Environment * _environment, char * _angle, char * _step );
 void                    run( Environment * _environment );
 void                    run_parallel( Environment * _environment );
 
@@ -4606,6 +4754,8 @@ void                    run_parallel( Environment * _environment );
 // *S*
 //----------------------------------------------------------------------------
 
+void                    sbpen_set( Environment * _environment, int _index, char * _color );
+Variable *              sbpen_get( Environment * _environment, char * _index );
 Variable *              scancode( Environment * _environment );
 Variable *              scanshift( Environment * _environment );
 Variable *              screen_can( Environment * _environment, int _mode );
@@ -4807,7 +4957,10 @@ Variable *              variable_store_string( Environment * _environment, char 
 Variable *              variable_store_float( Environment * _environment, char * _destination, double _value );
 Variable *              variable_string_asc( Environment * _environment, char * _char );
 Variable *              variable_string_chr( Environment * _environment, char * _ascii  );
+Variable *              variable_string_dup( Environment * _environment, char * _string, char * _repetitions  );
 Variable *              variable_string_flip( Environment * _environment, char * _string  );
+Variable *              variable_string_insert( Environment * _environment, char * _string, char * _altstring, char * _pos );
+Variable *              variable_string_inst( Environment * _environment, char * _string, char * _altstring, char * _pos );
 Variable *              variable_string_instr( Environment * _environment, char * _search, char * _searched, char * _start );
 Variable *              variable_string_left( Environment * _environment, char * _string, char * _position );
 void                    variable_string_left_assign( Environment * _environment, char * _string, char * _position, char * _expression );
@@ -4815,6 +4968,7 @@ Variable *              variable_string_len( Environment * _environment, char * 
 Variable *              variable_string_lower( Environment * _environment, char * _string );
 Variable *              variable_string_mid( Environment * _environment, char * _string, char * _position, char * _len );
 void                    variable_string_mid_assign( Environment * _environment, char * _string, char * _position, char * _len, char * _expression );
+Variable *              variable_string_pick( Environment * _environment, char * _string, int _position );
 Variable *              variable_string_right( Environment * _environment, char * _string, char * _position );
 void                    variable_string_right_assign( Environment * _environment, char * _string, char * _position, char * _expression );
 Variable *              variable_string_space( Environment * _environment, char * _repetitions  );
@@ -4842,7 +4996,7 @@ void                    volume_off_var( Environment * _environment, char * _chan
 
 void                    wait_cycles( Environment * _environment, int _timing, int _parallel );
 void                    wait_cycles_var( Environment * _environment, char * _timing, int _parallel );
-void                    wait_key( Environment * _environment );
+void                    wait_key( Environment * _environment, int _release );
 void                    wait_milliseconds( Environment * _environment, int _timing );
 void                    wait_milliseconds_var( Environment * _environment, char * _timing );
 void                    wait_ticks( Environment * _environment, int _timing );
@@ -4853,6 +5007,7 @@ void                    wait_until_condition( Environment * _environment, char *
 void                    wait_while( Environment * _environment );
 void                    wait_while_condition( Environment * _environment, char * _condition );
 void                    wait_parallel( Environment * _environment, char * _thread );
+void                    wave( Environment * _environment, char * _voice, char * _bits, char * _pulse );
 void                    writing( Environment * _environment, char * _mode, char * _parts );
 
 //----------------------------------------------------------------------------

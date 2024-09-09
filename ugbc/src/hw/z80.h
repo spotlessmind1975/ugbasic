@@ -53,6 +53,8 @@
 
 void z80_init( Environment * _environment );
 
+void z80_ztoa( Environment * _environment );
+void z80_ctoa( Environment * _environment );
 void z80_beq( Environment * _environment, char * _label );
 void z80_bneq( Environment * _environment, char * _label );
 void z80_busy_wait( Environment * _environment, char * _timing );
@@ -98,6 +100,7 @@ void z80_fill_blocks( Environment * _environment, char * _address, char * _block
 void z80_halt( Environment * _environment );
 void z80_end( Environment * _environment );
 void z80_jump( Environment * _environment, char * _label );
+void z80_jump_indirect( Environment * _environment, char * _value );
 void z80_call( Environment * _environment, char * _label );
 void z80_call_indirect( Environment * _environment, char * _value );
 void z80_set_asmio( Environment * _environment, int _asmio, int _value );
@@ -350,6 +353,8 @@ void z80_float_single_tan( Environment * _environment, char * _value, char * _re
 void z80_float_single_log( Environment * _environment, char * _value, char * _result );
 void z80_float_single_exp( Environment * _environment, char * _value, char * _result );
 
+#define cpu_ztoa( _environment ) z80_ztoa( _environment )
+#define cpu_ctoa( _environment ) z80_ctoa( _environment )
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_busy_wait( _environment,  _timing  ) z80_busy_wait( _environment,  _timing  )
@@ -395,6 +400,7 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_halt( _environment  ) z80_halt( _environment  )
 #define cpu_end( _environment  ) z80_end( _environment  )
 #define cpu_jump( _environment,  _label  ) z80_jump( _environment,  _label  )
+#define cpu_jump_indirect( _environment, _value ) z80_jump_indirect( _environment, _value )
 #define cpu_call( _environment,  _label  ) z80_call( _environment,  _label  )
 #define cpu_call_indirect( _environment,  _value  ) z80_call_indirect( _environment,  _value  )
 #define cpu_set_asmio( _environment, _asmio, _value ) z80_set_asmio( _environment, _asmio, _value )

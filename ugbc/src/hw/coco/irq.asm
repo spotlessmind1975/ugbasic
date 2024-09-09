@@ -76,8 +76,18 @@ ISVCIRQ
     TFR CC, A
     ANDA #$EF
     STA OLDCC
+@IF deployed.timer
     JSR TIMERMANAGER
+@ENDIF
+@IF deployed.keyboard
+    JSR KEYBOARDMANAGER
+@ENDIF
+@IF deployed.joystick
+    JSR JOYSTICKMANAGER
+@ENDIF
+@IF deployed.music
     JSR MUSICPLAYER
+@ENDIF
     LDD COCOTIMER
     ADDD #$1
     STD COCOTIMER

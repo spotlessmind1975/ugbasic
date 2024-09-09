@@ -80,7 +80,7 @@ bitmask di 16 bit con il comando ''SET LINE''.
 
 @target all
 </usermanual> */
-void bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c ) {
+void bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color ) {
 
     deploy_begin( bar );
 
@@ -106,7 +106,7 @@ void bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char *
         cpu_label( _environment, labelOrdered );
 
         begin_for( _environment, y->name, y0->name, y1->name );
-            draw( _environment, x0->name, y->name, x1->name, y->name, _c );
+            draw( _environment, x0->name, y->name, x1->name, y->name, _c, _preserve_color );
         end_for( _environment );
 
     cpu_return( _environment );

@@ -141,6 +141,8 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
 </usermanual> */
 void music_pause( Environment * _environment ) {
     
+    deploy( music, src_hw_sn76489m_music_asm );
+
     variable_store( _environment, "SN76489MUSICPAUSE", 0xff );
     volume( _environment, 0, 0x7 );
 
@@ -152,6 +154,8 @@ void music_pause( Environment * _environment ) {
 @target coco3
 </usermanual> */
 void music_resume( Environment * _environment ) {
+
+    deploy( music, src_hw_sn76489m_music_asm );
 
     variable_store( _environment, "SN76489MUSICPAUSE", 0x0 );
     volume( _environment, 255, 0x7 );
@@ -165,6 +169,8 @@ void music_resume( Environment * _environment ) {
 </usermanual> */
 void music_stop( Environment * _environment ) {
 
+    deploy( music, src_hw_sn76489m_music_asm );
+
     variable_store( _environment, "SN76489MUSICLOOP", 0x0 );
     variable_store( _environment, "SN76489MUSICREADY", 0x0 );
     volume( _environment, 0, 0x7 );
@@ -177,6 +183,8 @@ void music_stop( Environment * _environment ) {
 @target coco3
 </usermanual> */
 void music_seek_var( Environment * _environment, char * _position ) {
+
+    deploy( music, src_hw_sn76489m_music_asm );
 
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_WORD, 0 );
 

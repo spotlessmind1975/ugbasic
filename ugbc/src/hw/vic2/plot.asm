@@ -20,6 +20,7 @@ PLOTY    = $BC ; $BD
 PLOTM    = $BE
 PLOTOMA  = $C0
 PLOTAMA  = $BF
+PLOTCPE    = $BB
 
 ;--------------
 
@@ -68,6 +69,9 @@ PLOTCLIP5:
 @ENDIF
 
 PLOTMODE:
+
+@IF !vestigialConfig.screenModeUnique
+
     LDA CURRENTMODE
     ; BITMAP_MODE_STANDARD
     CMP #2
@@ -95,6 +99,10 @@ PLOT1X:
     JMP PLOT4
 PLOT4X:
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) )
 
 PLOT2:
 
@@ -190,6 +198,10 @@ PLOT2:
 
     JMP PLOTCOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
+
 PLOT3:
 
     ;-------------------------
@@ -267,7 +279,7 @@ PLOT3XXX:
 PLOT3XXX2:
     LDA $D021
     AND #$0f
-    CMP _PEN
+    CMP PLOTCPE
     BEQ PLOT3C0
     LDY #0
     LDA (PLOTCDEST),Y
@@ -275,16 +287,16 @@ PLOT3XXX2:
     LSR
     LSR
     LSR
-    CMP _PEN
+    CMP PLOTCPE
     BEQ PLOT3C1
     LDY #0
     LDA (PLOTCDEST),Y
     AND #$0F
-    CMP _PEN
+    CMP PLOTCPE
     BEQ PLOT3C2
     LDA (PLOTC2DEST),Y
     AND #$0F
-    CMP _PEN
+    CMP PLOTCPE
     BEQ PLOT3C3
 
     LDA LASTCOLOR
@@ -308,7 +320,7 @@ PLOT3SC1:
     LDA (PLOTCDEST),Y
     AND #$0f
     STA (PLOTCDEST),Y
-    LDA _PEN
+    LDA PLOTCPE
     ASL
     ASL
     ASL
@@ -328,7 +340,7 @@ PLOT3SC2:
     LDA (PLOTCDEST),Y
     AND #$f0
     STA (PLOTCDEST),Y
-    LDA _PEN
+    LDA PLOTCPE
     ORA (PLOTCDEST),Y
     STA (PLOTCDEST),Y
     LDA #2
@@ -341,7 +353,7 @@ PLOT3C2:
     JMP PLOT3PEN
 
 PLOT3SC3:
-    LDA _PEN
+    LDA PLOTCPE
     LDY #0
     STA (PLOTC2DEST),Y
     LDA #1
@@ -396,10 +408,30 @@ PLOT3PEN:
 
     JMP PLOTCOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) )
+
 PLOT0:
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) )
+
 PLOT1:
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 4 ) )
+
 PLOT4:
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
 
 PLOTCOMMON:
 
@@ -407,6 +439,16 @@ PLOTCOMMON:
     ;depending on PLOTM, routine draws or erases
     ;----------------------------------------------
 
+    ; If PEN color is equal to background, we are clearing the pixel
+
+    LDA _PAPER
+    AND #$0F
+    CMP PLOTCPE
+    BNE PLOTCOMMON2
+    LDA #0
+    STA PLOTM
+
+PLOTCOMMON2:
     LDA PLOTM                  ;(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
     CMP #0
     BEQ PLOTE                  ;if = 0 then branch to clear the point
@@ -433,7 +475,7 @@ PLOTD:
     LDA (PLOTCDEST),Y          ;get row with point in it
     AND #$0f                   ;isolate AND set the point
     STA (PLOTCDEST),Y          ;get row with point in it
-    LDA _PEN
+    LDA PLOTCPE
     ASL
     ASL
     ASL
@@ -612,3 +654,5 @@ PLOTANDBIT4:
     .byte %11001111
     .byte %11110011
     .byte %11111100
+
+@ENDIF

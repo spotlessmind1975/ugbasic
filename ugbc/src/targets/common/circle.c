@@ -55,18 +55,24 @@ This command allows you to draw a circle with starting coordinates in ''(x,y)''
 and radius ''r''. The color is indicated by the parameter ''c''. If the abscissa 
 and/or ordinate is omitted, the last graphic position drawn will be used. In 
 addition, the color can also be omitted and, if necessary, the last color set with the 
-''PEN'' or ''INK'' command will be used.
+''PEN'' or ''INK'' command will be used. There is also another syntax, that can be used 
+to draw ellipses: you can give both the radii ''rx'' and ''ry'' in the color determined 
+by ''fq'' (see ''HIRES''). 
 
 @italian
 Questo comando consente di disegnare un cerchio avente coordinate di partenza in 
 ''(x,y)'' e raggio ''r''. Il colore viene indicato dal parametro ''c''. Se 
 l'ascissa e/o l'ordinata viene omessa, sarà utilizzata l'ultima posizione grafica 
 disegnata. In più, anche il colore può essere omesso e, nel caso, sarà utilizzato 
-l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
+l'ultimo colore impostato con il comando ''PEN'' o ''INK''. Esiste anche un'altra 
+sintassi che può essere utilizzata per disegnare ellissi: è possibile specificare sia i 
+raggi ''rx'' che ''ry'' nel colore determinato da ''fq'' (vedere ''HIRES'').
 
 @syntax CIRCLE [x], [y], r[, c]
+@syntax CIRCLE x, y, rx, ry[, c]
 
 @example CIRCLE 100,100,42
+@example CIRCLE 100,100,21,42
 @example CIRCLE ,,21,RED
 @usedInExample graphics_position_01.bas
 @usedInExample graphics_position_02.bas
@@ -74,7 +80,7 @@ l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
 
 @target all
 </usermanual> */
-void circle( Environment * _environment, char * _x, char * _y, char * _r, char * _c ) {
+void circle( Environment * _environment, char * _x, char * _y, char * _r, char * _c, int _preserve_color ) {
 
     Variable * xCentre = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * yCentre = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
@@ -86,10 +92,10 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
     variable_store( _environment, y->name, 0 );
     Variable * p = variable_temporary( _environment, VT_SWORD, "(p)" );
 
-    plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
-    plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
-    plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
-    plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
+    plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, 0 );
+    plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, 0 );
+    plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, 0 );
+    plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, 0 );
     
     variable_move( _environment, variable_complement_const( _environment, r->name, 1 )->name, p->name );
 
@@ -111,16 +117,16 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
             exit_loop( _environment, 0 );
         end_if_then( _environment );
 
-        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
-        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
-        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
-        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
+        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, _preserve_color );
+        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, _preserve_color );
+        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, _preserve_color );
+        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, _preserve_color );
           
         //if_then( _environment, variable_compare_not( _environment, x->name, y->name )->name );
-            plot( _environment, variable_add( _environment, y->name, xCentre->name )->name, variable_add( _environment, x->name, yCentre->name )->name, _c );
-            plot( _environment, variable_sub( _environment, xCentre->name, y->name )->name, variable_add( _environment, x->name, yCentre->name )->name, _c );
-            plot( _environment, variable_add( _environment, y->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  x->name )->name, _c );
-            plot( _environment, variable_sub( _environment, xCentre->name, y->name )->name, variable_sub( _environment, yCentre->name,  x->name )->name, _c );
+            plot( _environment, variable_add( _environment, y->name, xCentre->name )->name, variable_add( _environment, x->name, yCentre->name )->name, _c, _preserve_color );
+            plot( _environment, variable_sub( _environment, xCentre->name, y->name )->name, variable_add( _environment, x->name, yCentre->name )->name, _c, _preserve_color );
+            plot( _environment, variable_add( _environment, y->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  x->name )->name, _c, _preserve_color );
+            plot( _environment, variable_sub( _environment, xCentre->name, y->name )->name, variable_sub( _environment, yCentre->name,  x->name )->name, _c, _preserve_color );
 
         //end_if_then( _environment );
 

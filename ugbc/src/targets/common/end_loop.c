@@ -49,7 +49,7 @@
 /* <usermanual>
 @keyword DO...LOOP
 </usermanual> */
-void end_loop( Environment * _environment ) {
+void end_loop( Environment * _environment, int _do ) {
 
     Loop * loop = _environment->loops;
 
@@ -57,8 +57,14 @@ void end_loop( Environment * _environment ) {
         CRITICAL_LOOP_WITHOUT_DO();
     }
 
-    if ( loop->type != LT_DO ) {
-        CRITICAL_LOOP_WITHOUT_DO();
+    if ( _do ) {
+        if ( loop->type != LT_DO ) {
+            CRITICAL_LOOP_WITHOUT_DO();
+        }
+    } else {
+        if ( loop->type != LT_LOOP ) {
+            CRITICAL_END_LOOP_WITHOUT_LOOP();
+        }
     }
 
     _environment->loops = _environment->loops->next;

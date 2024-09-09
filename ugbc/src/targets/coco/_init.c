@@ -51,9 +51,6 @@ void target_initialization( Environment * _environment ) {
     _environment->dstring.count = 32;
     _environment->dstring.space = 512;
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
-
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0c00 );
     variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xa000 );
@@ -78,8 +75,8 @@ void target_initialization( Environment * _environment ) {
     // outline0("STA $FFDF");
 
     deploy( vars, src_hw_coco_vars_asm);
-    deploy( irq, src_hw_coco_irq_asm);
-    deploy_deferred( startup, src_hw_coco_startup_asm);
+    deploy_preferred( irq, src_hw_coco_irq_asm);
+    deploy_preferred( startup, src_hw_coco_startup_asm);
     bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
 
     outline0( "JSR COCOSTARTUP" );
@@ -90,11 +87,13 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "COCOAUDIO1STARTUP" );
     sn76489m_initialization( _environment );
 
+    cpu_call( _environment, "VARINIT" );
+
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
-    }
 
-    cpu_call( _environment, "VARINIT" );
+        cpu_call( _environment, "VARINIT" );
+    }
 
 }
 

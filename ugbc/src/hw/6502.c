@@ -48,28 +48,48 @@ void cpu6502_init( Environment * _environment ) {
 
 }
 
-/**
- * @brief <i>CPU 6502</i>: emit code to make long conditional jump
- * 
- * This function outputs a code that guarantees an arbitrary distance jump 
- * with conditional check on equality. In fact, the opcode BEQ of the 
- * CPU 6502 processor allows to make a jump of maximum +/- 128 bytes with 
- * respect to the address where the processor is at that moment. 
- * To overcome this problem, this function will make a conditional jump to
- * a very close location, which (in turn) will make an unconditional jump 
- * to the true destination.
- * 
- * @param _environment Current calling environment
- * @param _label Destination of the conditional jump.
- */
-void cpu6502_beq( Environment * _environment, char * _label ) {
+void cpu_ztoa( Environment * _environment ) {
     
     MAKE_LABEL
+
+    inline( cpu_ztoa )
+
+        outline1("BEQ %syes", label );
+        outline0("LDA #0");
+        outline1("JMP %s", label );
+        outhead1("%syes:", label );
+        outline0("LDA #$ff");
+        outhead1("%s:", label );
+
+    no_embedded( cpu_ztoa );
+
+}
+
+void cpu_ctoa( Environment * _environment ) {
+    
+    MAKE_LABEL
+
+    inline( cpu_ctoa )
+
+        outline1("BCS %syes", label );
+        outline0("LDA #0");
+        outline1("JMP %s", label );
+        outhead1("%syes:", label );
+        outline0("LDA #$ff");
+        outhead1("%s:", label );
+
+    no_embedded( cpu_ctoa );
+
+}
+
+void cpu6502_beq( Environment * _environment, char * _label ) {
+
+     MAKE_LABEL
 
     inline( cpu_beq )
 
         outline1("BNE %s", label);
-        outline1("JMP %s", _label);    
+        outline1("JMP %s", _label);
         outline1("%s:", label);
 
     no_embedded( cpu_beq );
@@ -3415,6 +3435,33 @@ void cpu6502_call_indirect( Environment * _environment, char * _value ) {
         cpu6502_call( _environment, indirectLabel );
 
     no_embedded( cpu_call_indirect )
+
+}
+
+void cpu6502_jump_indirect( Environment * _environment, char * _value ) {
+
+
+    inline( cpu_jump_indirect )
+
+        MAKE_LABEL
+
+        char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
+
+        cpu6502_jump( _environment, label );
+        cpu6502_label( _environment, indirectLabel );
+        // We must use self-modifying code in order to avoid
+        // a 6502/6510 bug when using indirect addressing.
+        outline0( "JMP $0000" );
+        cpu6502_label( _environment, label );
+        outline0( "PHA" );
+        outline1( "LDA %s", _value );
+        outline1( "STA %s", address_displacement( _environment, indirectLabel, "1" ) );
+        outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
+        outline1( "STA %s", address_displacement( _environment, indirectLabel, "2" ) );
+        outline0( "PLA" );
+        cpu6502_jump( _environment, indirectLabel );
+
+    no_embedded( cpu_jump_indirect )
 
 }
 

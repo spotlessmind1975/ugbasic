@@ -781,6 +781,7 @@ void sn76489m_music( Environment * _environment, char * _music, int _size, int _
 
     deploy_deferred( sn76489vars, src_hw_sn76489m_vars_asm );
     deploy_deferred( sn76489startup, src_hw_sn76489m_startup_asm );
+    deploy_deferred( music, src_hw_sn76489m_music_asm );
 
     outline0("ORCC #$50");
     outline1("LDA #$%2.2x", _bank );

@@ -61,4 +61,31 @@ ATARISTARTUPDONE:
     LDY #0
     STY DATAPTRY
 @ENDIF
+
+@IF deployed.keyboard
+
+    SEI
+
+    LDA #<VKEYDREPLACEMENT
+    STA $0208
+    LDA #>VKEYDREPLACEMENT
+    STA $0209
+
+    LDA $0222
+    STA OLDSVC0222+1
+    LDA $0223
+    STA OLDSVC0222+2
+
+    LDA #<KEYBOARDMANAGER
+    STA $0222
+    LDA #>KEYBOARDMANAGER
+    STA $0223
+    
+    LDA OLDSVC0222      ; this read is needed to avoid peep-hole optimization
+    
+    CLI
+
+@ENDIF
+
     RTS
+

@@ -102,86 +102,80 @@ static int plotVBase[] = {
 static RGBi * commonPalette;
 static int lastUsedSlotInCommonPalette = 0;
 
-void cpc_inkey( Environment * _environment, char * _pressed, char * _key ) {
-
-    MAKE_LABEL
+void cpc_inkey( Environment * _environment, char * _key ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( scancode, src_hw_cpc_scancode_asm );
+    deploy( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL INKEY");
-    outline0("CP 0");
-    outline1("JR NZ, %skey", label);
-    outhead1("%snokey:", label);
-    outline1("LD (%s), A", _pressed);
     outline1("LD (%s), A", _key);
-    outline1("JP %sdone", label);
-    outhead1("%skey:", label);
-    outline1("LD (%s), A", _key);
-    outline0("LD B, A");
-    outline0("LD A, 1");
-    outline1("LD (%s), A", _pressed);
-    // outhead1("%srelease:", label);
-    // outline0("PUSH BC");
-    // outline0("CALL INKEY");
-    // outline0("POP BC");
-    // outline0("CP B");
-    // outline1("JR Z, %sequal", label);
-    // outline1("JP %sdone", label);
-    // outhead1("%sequal:", label);
-    // outline0("NOP");
-    // outline1("JP %srelease", label);
-    outhead1("%sdone:", label);
 
 }
 
-void cpc_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
-
-    MAKE_LABEL
+void cpc_wait_key( Environment * _environment, int _release ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( scancode, src_hw_cpc_scancode_asm );
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
+
+    if ( _release ) {
+        outline0("CALL WAITKEYRELEASE");
+    } else {
+        outline0("CALL WAITKEY");
+    }
+   
+}
+
+void cpc_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    MAKE_LABEL
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
+
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYSTATE");
+    cpu_ctoa( _environment );
+    outline1("LD (%s), A", _result);
+
+}
+
+void cpc_scancode( Environment * _environment, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL SCANCODE");
-    outline0("LD A, E");
-    outline0("CP 0");
-    outline1("JR NZ, %skey", label);
-    outhead1("%snokey:", label);
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _pressed);
-    outline1("LD (%s), A", _scancode);
-    outline1("JP %sdone", label);
-    outhead1("%skey:", label);
-    outline0("LD A, 1");
-    outline1("LD (%s), A", _pressed);
-    outline0("LD A, E");
-    outline1("LD (%s), A", _scancode);
-    outhead1("%sdone:", label);
+    outline1("LD (%s), A", _result );
+   
+}
+
+void cpc_asciicode( Environment * _environment, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm);
+
+    outline0("CALL ASCIICODE");
+    outline1("LD A, (%s)", _result );
    
 }
 
 void cpc_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
-    MAKE_LABEL
-
     _environment->bitmaskNeeded = 1;
 
-    deploy( scancode, src_hw_cpc_scancode_asm );
+    MAKE_LABEL
 
-    outline1("LD HL, (%s)", _scancode);
-    outline0("LD DE, HL");
-    outline0("CALL SCANCODEPRECISE");
-    outline1("JR NZ, %skey", label);
-    outhead1("%snokey:", label);
-    outline0("LD A, 0");
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
+
+    outline1("LD A, (%s)", _scancode);
+    outline0("CALL KEYPRESSED");
+    cpu_ctoa( _environment );
     outline1("LD (%s), A", _result);
-    outline1("JP %sdone", label);
-    outhead1("%skey:", label);
-    outline0("LD A, 1");
-    outline1("LD (%s), A", _result);
-    outhead1("%sdone:", label);
 
 }
 
@@ -191,9 +185,22 @@ void cpc_scanshift( Environment * _environment, char * _shifts ) {
 
 void cpc_keyshift( Environment * _environment, char * _shifts ) {
 
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
+
+    outline0("CALL KEYSHIFT" );
+    outline1("LD (%s), A", _shifts );
+
 }
 
 void cpc_clear_key( Environment * _environment ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
+
+    outline0("CALL CLEARKEY" );
 
 }
 
@@ -220,27 +227,40 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( scancode, src_hw_cpc_scancode_asm );
     deploy( joystick, src_hw_cpc_joystick_asm );
 
-    outline1("LD A, (%s)", _port );
-    outline0("LD B, A" );
-    outline0("CALL JOYSTICK");
-    outline1("LD (%s), A", _value );
+    MAKE_LABEL
+
+    outline1("LD A, (%s)", _port);
+    outline0("CP 0");
+    outline1("JR NZ, %spt1", label );
+    outline0("LD A, (JOYSTICK0)");
+    outline1("LD (%s), A", _value);
+    outline1("JR %sptx", label );
+    outhead1("%spt1:", label);
+    outline0("LD A, (JOYSTICK1)");
+    outline1("LD (%s), A", _value);
+    outline1("JR %sptx", label );
+    outhead1("%sptx:", label);
 
 }
 
 void cpc_joy( Environment * _environment, int _port, char * _value ) {
 
     _environment->bitmaskNeeded = 1;
-
-    deploy( scancode, src_hw_cpc_scancode_asm );
+    
     deploy( joystick, src_hw_cpc_joystick_asm );
 
-    outline1("LD A, 0x%2.2x", (unsigned char)(_port & 0xff) );
-    outline0("LD B, A" );
-    outline0("CALL JOYSTICK");
-    outline1("LD (%s), A", _value );
+    switch ( _port ) {
+        case 0:
+            outline0("LD A, (JOYSTICK0)");
+            outline1("LD (%s), A", _value);
+            break;
+        case 1:
+            outline0("LD A, (JOYSTICK1)");
+            outline1("LD (%s), A", _value);
+            break;
+    }
 
 }
 
@@ -627,6 +647,10 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        cpc_cls( _environment );
+    }
+
 }
 
 void cpc_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -642,7 +666,9 @@ void cpc_bitmap_enable( Environment * _environment, int _width, int _height, int
         _environment->currentMode = mode->id;
         _environment->currentTileMode = 0;
 
-        cpc_cls( _environment );
+        if (_environment->vestigialConfig.clsImplicit ) {
+            cpc_cls( _environment );
+        }
 
     } else {
         WARNING_SCREEN_MODE( -1 );
@@ -667,7 +693,9 @@ void cpc_tilemap_enable( Environment * _environment, int _width, int _height, in
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
         cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
 
-        cpc_cls( _environment );
+        if (_environment->vestigialConfig.clsImplicit ) {
+            cpc_cls( _environment );
+        }
 
     } else {
         // printf("cpc_tilemap_enable() -> -1\n" );
@@ -688,7 +716,7 @@ void cpc_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void cpc_pset_int( Environment * _environment, int _x, int _y ) {
+void cpc_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
@@ -700,15 +728,29 @@ void cpc_pset_int( Environment * _environment, int _x, int _y ) {
     outline0("LD E, A");
     outline1("LD A, 0x%2.2x", ( ( _x >> 8 ) & 0xff ) );
     outline0("LD IXL, A");
+    if ( _c ) {
+        outline1("LD A, $%2.2x", ( *_c & 0Xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("LD A, (%s)", c->realName );
+    }
+    outline0("LD (PLOTCPE), A");
     outline0("LD A, 1");
     outline0("CALL PLOT");
 
 }
 
-void cpc_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void cpc_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * y = variable_retrieve( _environment, _y );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
 
     deploy( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
@@ -718,6 +760,8 @@ void cpc_pset_vars( Environment * _environment, char *_x, char *_y ) {
     outline0("LD D, A");
     outline1("LD A, (%s)", x->realName );
     outline0("LD E, A");
+    outline1("LD A, (%s)", c->realName );
+    outline0("LD (PLOTCPE), A");
     if ( VT_BITWIDTH( x->type ) > 8 ) {
         outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
     } else {
@@ -1035,8 +1079,6 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "CPCTIMER2", VT_BYTE, 6 );
     variable_global( _environment, "CPCTIMER2" );
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
     variable_import( _environment, "EVERYCOUNTER", VT_BYTE, 0 );
     variable_global( _environment, "EVERYCOUNTER" );
     variable_import( _environment, "EVERYTIMING", VT_BYTE, 0 );
@@ -2358,6 +2400,8 @@ void cpc_slice_image_extract( Environment * _environment, char * _image,  char *
 
 void cpc_sys_call( Environment * _environment, int _destination ) {
 
+    _environment->sysCallUsed = 1;
+
     outline0("PUSH HL" );
     outline0("LD HL, SYSCALL0" );
     outline0("INC HL" );
@@ -2654,6 +2698,68 @@ void cpc_flip_image( Environment * _environment, Resource * _image, char * _fram
     //     deploy( flipimagey, src_hw_cpc_flip_image_y_asm );
     //     outline0("CALL FLIPIMAGEY");
     // }
+
+}
+
+
+void cpc_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_cpc_keyboard_asm);
+
+    outline1("LD HL, (%s)", _string );
+    outline1("LD A, (%s)", _size );
+    outline0("LD C, A" );
+    outline0("CALL PUTKEY" );
+
+}
+
+void cpc_dojo_ready( Environment * _environment, char * _value ) {
+
+}
+
+void cpc_dojo_read_byte( Environment * _environment, char * _value ) {
+
+}
+
+void cpc_dojo_write_byte( Environment * _environment, char * _value ) {
+
+}
+
+void cpc_dojo_login( Environment * _environment, char * _username, char * _size, char * _password, char * _password_size, char * _session_id ) {
+
+}
+
+void cpc_dojo_success( Environment * _environment, char * _id, char * _result ) {
+
+}
+
+void cpc_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id ) {
+
+}
+
+void cpc_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result ) {
+
+}
+
+void cpc_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _public_id ) {
+
+}
+
+void cpc_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result ) {
+
+}
+
+void cpc_dojo_peek_message( Environment * _environment, char * _port_id, char * _result ) {
+
+}
+
+void cpc_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message ) {
+
+}
+
+void cpc_dojo_ping( Environment * _environment, char * _result ) {
 
 }
 

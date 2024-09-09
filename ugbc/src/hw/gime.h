@@ -288,8 +288,8 @@ void gime_tiles_get( Environment * _environment, char * _result );
 void gime_get_width( Environment * _environment, char * _result );
 void gime_get_height( Environment * _environment, char * _result );
 
-void gime_pset_int( Environment * _environment, int _x, int _y );
-void gime_pset_vars( Environment * _environment, char *_x, char *_y );
+void gime_pset_int( Environment * _environment, int _x, int _y, int *_c );
+void gime_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void gime_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void gime_cls( Environment * _environment );
 void gime_scroll_text( Environment * _environment, int _direction );

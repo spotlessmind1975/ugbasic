@@ -754,7 +754,7 @@ void vdc_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void vdc_pset_int( Environment * _environment, int _x, int _y ) {
+void vdc_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( vdcvars, src_hw_vdc_vars_asm);
     deploy( vdcvarsGraphic, src_hw_vdc_vars_graphic_asm );
@@ -762,7 +762,7 @@ void vdc_pset_int( Environment * _environment, int _x, int _y ) {
     
 }
 
-void vdc_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void vdc_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );

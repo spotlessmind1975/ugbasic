@@ -49,18 +49,13 @@ static unsigned int SOUND_FREQUENCIES[] = {
 
 void sid_initialization( Environment * _environment ) {
 
-    cpu_call( _environment, "SIDSTARTUP" );
+    if ( _environment->deployed.sidstartup ) {
+        cpu_call( _environment, "SIDSTARTUP" );
+    }
 
 }
 
 void sid_finalization( Environment * _environment ) {
-
-    if ( ! _environment->deployed.sidstartup ) {
-        cpu_label( _environment, "SIDSTARTUP" );
-        outline0( "RTS" );
-        cpu_label( _environment, "MUSICPLAYER" );
-        outline0( "RTS" );
-    }
 
 }
 
@@ -173,7 +168,12 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     PROGRAM_WAVEFORM_V( c, w, p ) \
     outline1("LDA %s", ( c == NULL ? "#$7" : c ) ); \
-    outline0("LDX #$%2.2x", w ); \
+    outline1("LDX #$%2.2x", w ); \
+    outline0("JSR SIDPROGCTR" );
+
+#define     PROGRAM_WAVEFORM_VV( c, w, p ) \
+    outline1("LDA %s", ( c == NULL ? "#$7" : c ) ); \
+    outline1("LDX %s", w ); \
     outline0("JSR SIDPROGCTR" );
 
 #define     PROGRAM_WAVEFORM_SV( c, w ) \
@@ -257,6 +257,23 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
         outline0("JSR SIDWAITDURATION1" ); \
     if ( ( c & 0x04 ) ) \
         outline0("JSR SIDWAITDURATION2" ); \
+
+void sid_attack_decay_sustain_release( Environment * _environment, char * _voice, char * _attack, char * _decay, char * _sustain, char * _release ) {
+
+    PROGRAM_ATTACK_DECAY_V( _voice, _attack, _decay );
+    PROGRAM_SUSTAIN_RELEASE_V( _voice, _sustain, _release );
+
+}
+
+void sid_wave( Environment * _environment, char * _voice, char * _bits, char * _pulse ) {
+
+    PROGRAM_WAVEFORM_VV( _voice, _bits, NULL );
+
+    if ( _pulse ) {
+        PROGRAM_PULSE_V( _voice, _pulse );
+    }
+
+}
 
 void sid_set_program( Environment * _environment, int _channels, int _program ) {
 
@@ -816,6 +833,7 @@ void sid_music( Environment * _environment, char * _music, int _size, int _loop 
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
+    deploy( music, src_hw_sid_music_asm );
 
     outline0("SEI");
     outline1("LDA #<%s", _music);
@@ -837,7 +855,7 @@ void sid_set_duration( Environment * _environment, int _channels, int _duration 
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
-
+    
     PROGRAM_DURATION( _channels, _duration );
 
 }

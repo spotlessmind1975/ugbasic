@@ -63,8 +63,21 @@ VDPLOOPDQ0:
     RET
 
 ISRSVC:
+@IF deployed.ay8910startup
+	CALL AY8910MANAGER
+@ENDIF
+@IF deployed.music
     CALL MUSICPLAYER
+@ENDIF
+@IF deployed.keyboard
+    CALL KEYBOARDMANAGER
+@ENDIF
+@IF deployed.joystick
+    CALL JOYSTICKMANAGER
+@ENDIF
+@IF deployed.timer
     CALL TIMERMANAGER
+@ENDIF
     PUSH AF
     PUSH HL
     LD A, 1

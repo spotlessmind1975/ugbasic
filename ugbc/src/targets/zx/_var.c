@@ -56,6 +56,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_THREAD:
                     outline1("%s: defs 1", variable->realName);
                     break;
+                case VT_DOJOKA:
+                    outline1("%s: defs 8", variable->realName);
+                    break;
                 case VT_WORD:
                 case VT_SWORD:
                 case VT_POSITION:
@@ -157,10 +160,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_TILEMAP:
-                case VT_ARRAY: {
+                case VT_TARRAY: {
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
-                        if ( variable->type == VT_ARRAY ) {
+                        if ( variable->type == VT_TARRAY ) {
                             if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
                                 CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
                             }
@@ -370,6 +373,8 @@ void variable_cleanup( Environment * _environment ) {
         c = c->next;
     }
 
+    generate_cgoto_address_table( _environment );
+
     banks_generate( _environment );
         
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
@@ -446,8 +451,11 @@ void variable_cleanup( Environment * _environment ) {
         outline0("");
         dataSegment = dataSegment->next;
     }
-    outhead0("DATAPTRE:");
 
+    if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
+        outhead0("DATAPTRE:");
+    }
+    
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
         outline3("cstring%d: db %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );

@@ -86,8 +86,6 @@ void ay8910_finalization( Environment * _environment ) {
     if ( ! _environment->deployed.ay8910startup ) {
         cpu_label( _environment, "AY8910STARTUP" );
         outline0( "RET" );
-        cpu_label( _environment, "MUSICPLAYER" );
-        outline0( "RET" );
     }
 
 }
@@ -1024,6 +1022,7 @@ void ay8910_music( Environment * _environment, char * _music, int _size, int _lo
 
     deploy( ay8910vars, src_hw_ay8910_vars_asm );
     deploy( ay8910startup, src_hw_ay8910_startup_asm );
+    deploy( music, src_hw_ay8910_music_asm );
 
     // HL: music address, B: blocks, C: last block
     outline0("DI");

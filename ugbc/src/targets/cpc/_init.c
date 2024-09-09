@@ -98,14 +98,11 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "KBDCHAR", VT_BYTE, 0 );
     variable_global( _environment, "KBDCHAR" );
-    variable_import( _environment, "KBDRATE", VT_BYTE, 16 );
-    variable_global( _environment, "KBDRATE" );
-    variable_import( _environment, "KBDDELAY", VT_BYTE, 16 );
-    variable_global( _environment, "KBDDELAY" );
-    variable_import( _environment, "KBDRATEC", VT_BYTE, 16 );
-    variable_global( _environment, "KBDRATEC" );
-    variable_import( _environment, "KBDDELAYC", VT_BYTE, 16 );
-    variable_global( _environment, "KBDDELAYC" );
+
+    variable_import( _environment, "JOYSTICK0", VT_BYTE, 0 );
+    variable_global( _environment, "JOYSTICK0" );
+    variable_import( _environment, "JOYSTICK1", VT_BYTE, 0 );
+    variable_global( _environment, "JOYSTICK1" );
 
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
@@ -118,6 +115,9 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CLINEY", VT_BYTE, 0 );
     variable_global( _environment, "CLINEY" );    
+
+    variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTCPE" );    
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
@@ -140,6 +140,7 @@ void target_initialization( Environment * _environment ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
+        cpu_call( _environment, "VARINIT" );
     }
 
 }

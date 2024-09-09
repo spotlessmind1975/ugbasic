@@ -38,25 +38,81 @@
 IO_Joy1		EQU	0FCH		; Joystick 1 input port
 IO_Joy2		EQU	0FFH		; Joystick 2 input port
 
-JOYSTICK:
+@IF joystickConfig.values
+
+JOYSTICKTSBREMAP:
+
+    db  $0, $1, $3, $2
+    db  $5, $0, $4, $0
+    db  $7, $8, $0, $0
+    db  $6
+
+JOYSTICKTSB:
+    PUSH BC
+    PUSH HL
+    PUSH DE
+    LD B, A
+    AND $0F
+    LD HL, JOYSTICKTSBREMAP
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD A, (HL)
+    LD C, A
+    LD A, B
+    AND $40
+    CP 0
+    JR Z, JOYSTICKTSBNOFIRE
+JOYSTICKXTSBNOFIRE:
+    LD A, C
+    OR $80
+    LD C, A
+JOYSTICKTSBNOFIRE:
+    LD A, C
+    POP DE
+    POP HL
+    POP BC
+    RET    
+
+@ENDIF
+
+JOYSTICKMANAGER:
+    PUSH AF
+    PUSH BC
+    LD A, 0
     OUT	($C0),A
     NOP
     NOP
     NOP
     NOP
-    LD	A,B
-    OR	A
-    JR	NZ,JOYSTICK1
-JOYSTICK0:
+
     IN	A, ($FC)
     CPL
     AND $7F
-    JP JOYSTICKA
-JOYSTICK1:
+
+@IF joystickConfig.values
+    CALL JOYSTICKTSB
+@ENDIF
+
+    LD (JOYSTICK0), A
+
+    LD A, 1
+    OUT	($C0),A
+    NOP
+    NOP
+    NOP
+    NOP
+
     IN	A, ($FF)
     CPL
     AND $7F
-    JP JOYSTICKA
 
-JOYSTICKA:
+@IF joystickConfig.values
+    CALL JOYSTICKTSB
+@ENDIF
+
+    LD (JOYSTICK1), A
+
+    POP BC
+    POP AF
     RET

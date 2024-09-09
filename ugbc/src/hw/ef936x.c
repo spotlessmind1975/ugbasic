@@ -480,6 +480,10 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
 
     console_init( _environment );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        ef936x_cls( _environment );
+    }
+
 }
 
 void ef936x_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -530,7 +534,7 @@ void ef936x_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void ef936x_pset_int( Environment * _environment, int _x, int _y ) {
+void ef936x_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
@@ -538,13 +542,27 @@ void ef936x_pset_int( Environment * _environment, int _x, int _y ) {
     outline0("LDA #1");
     outline1("LDX %4.4x", (_x & 0xffff ) );
     outline1("LDU %4.4x", ( _y & 0xffff ) );
+    if ( _c ) {
+        outline1("LDB #$%2.2x", ( *_c & 0Xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("LDB %s", c->realName );
+    }
+    outline0("STB <PLOTCPE" );
     outline0("JSR PLOT");  
 }
 
-void ef936x_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void ef936x_pset_vars( Environment * _environment, char *_x, char *_y, char * _c ) {
 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
@@ -552,6 +570,8 @@ void ef936x_pset_vars( Environment * _environment, char *_x, char *_y ) {
     outline0("LDA #1");
     outline1("LDX %s", x->realName );
     outline1("LDU %s", y->realName );
+    outline1("LDB %s", c->realName );
+    outline0("STB <PLOTCPE" );
     outline0("JSR PLOT");
 
 }
@@ -690,7 +710,7 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size ) 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
     deploy( cls, src_hw_ef936x_cls_asm );
-    deploy( textEncodedAt, src_hw_ef936x_text_at_asm );
+    deploy_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
 
     if( ! _environment->descriptors ) {
         font_descriptors_init( _environment, 0 );

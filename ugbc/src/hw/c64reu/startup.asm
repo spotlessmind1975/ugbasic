@@ -83,12 +83,26 @@ NMISVC:
     RTI
 
 IRQSVC:
+@IF deployed.msprites
 MSPRITESMANAGERADDRESS:
     JSR MSPRITESMANAGER
+@ENDIF
     JSR JIFFYUPDATE
+@IF deployed.music
     JSR MUSICPLAYER
+@ENDIF
+@IF deployed.sidstartup
+    JSR SIDMANAGER
+@ENDIF
+@IF deployed.joystick
     JSR JOYSTICKMANAGER
+@ENDIF
+@IF deployed.keyboard
+    JSR KEYBOARDMANAGER
+@ENDIF
+@IF deployed.timer
     JSR TIMERMANAGER
+@ENDIF
     JMP ($0314)    
 
 IRQSVC2:

@@ -110,7 +110,7 @@ void end_for( Environment * _environment ) {
         parser_array_init( _environment );
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * array = variable_retrieve( _environment, loop->index->name );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( loop->index->name );
         }
         Variable * value = variable_move_from_array( _environment, loop->index->name );
@@ -126,7 +126,7 @@ void end_for( Environment * _environment ) {
         parser_array_init( _environment );
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         array = variable_retrieve( _environment, loop->index->name );
-        if ( array->type != VT_ARRAY ) {
+        if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( loop->index->name );
         }
         variable_move_array( _environment, loop->index->name, value->name );

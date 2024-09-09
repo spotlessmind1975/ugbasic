@@ -165,7 +165,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     }
                     break;
                 case VT_TILEMAP:
-                case VT_ARRAY: {
+                case VT_TARRAY: {
                     if ( variable->bankAssigned == -1 ) {
 
                         if ( variable->valueBuffer ) {
@@ -219,7 +219,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                         }
 
                     } else {
-                        if ( variable->type == VT_ARRAY ) {
+                        if ( variable->type == VT_TARRAY ) {
                             if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
                                 CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
                             }
@@ -276,6 +276,13 @@ static void variable_cleanup_entry_byte( Environment * _environment, Variable * 
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead1("%s rzb 1", variable->realName);
+                    }   
+                    break;
+                case VT_DOJOKA:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 8", variable->realName);
                     }   
                     break;
                 case VT_STRING:
@@ -629,6 +636,8 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
+    generate_cgoto_address_table( _environment );
+
     variable_on_memory_init( _environment, 0 );
 
     DataSegment * dataSegment = _environment->dataSegment;
@@ -668,8 +677,11 @@ void variable_cleanup( Environment * _environment ) {
         outline0("");
         dataSegment = dataSegment->next;
     }
-    outhead0("DATAPTRE");
-    
+
+    if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
+        outhead0("DATAPTRE");
+    }
+        
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
         outhead2("cstring%d fcb %d", staticStrings->id, (int)strlen(staticStrings->value) );
@@ -756,10 +768,13 @@ void variable_cleanup( Environment * _environment ) {
     outline0("fcb $ff");
 
     deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_inplace_preferred( startup, src_hw_pc128op_startup_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
+    deploy_inplace_preferred( keyboard, src_hw_pc128op_keyboard_asm );
     deploy_inplace_preferred( scancode, src_hw_pc128op_scancode_asm );
-    
+    deploy_inplace_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
+
     outhead0("CODESTART2");
     outline0("LDS #STACKEND");
 

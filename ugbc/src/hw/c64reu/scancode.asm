@@ -35,7 +35,13 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-SCANCODE:
+KEYBOARDMANAGER:
+	PHA
+	TYA
+	PHA
+	TXA
+	PHA
+
 	LDA	#$00
 	STA	$028D
 	LDY	#$40
@@ -144,6 +150,13 @@ SCANCODEL10:
 SCANCODEL13:
 	LDA	#$7F
 	STA	$DC00
+
+	PLA
+	TAX
+	PLA
+	TAY
+	PLA
+
 	RTS
 
 SCANCODEEVA:

@@ -94,100 +94,215 @@ void generate_bin( Environment * _environment ) {
 
 void generate_dsk( Environment * _environment ) {
 
-    Storage * storage = _environment->storage;
+    // Let's cut the executable file into multiple segments.
+    // The name of the binary is equal to the disk file name,
+    // but with a different extension.
+    char originalBinaryFile[MAX_TEMPORARY_STORAGE];
+    strcpy( originalBinaryFile, _environment->exeFileName );
+    char * p = strstr( originalBinaryFile, ".dsk" );
+    if ( p ) {
+        strcpy( p, ".bin" );
+    }
+
+    // Calculate the effective size.
+    FILE * fh = fopen( originalBinaryFile, "rb" );
+    int executableBinaryFileSize = 0;
+    if ( fh ) {
+        fseek( fh, 0, SEEK_END );
+        executableBinaryFileSize = ftell( fh );
+        fclose( fh );
+    } else {
+        CRITICAL( "cannot create dsk file");
+    }
+
+    // The LOADM command is able to read a limited size of binary file.
+    // So we are going to split the original file as follows:
+    // | $2a00 ............. $4d00 ... $4e00 ........ $xx00 .....
+    // +---------------------+---------+---------+....+---------+
+    // |   PROGRAM.EXE       | P01.DAT | P02.DAT |....| P0n.DAT |
+    // +---------------------+---------+---------+....+---------+
+    //
+
+    executableBinaryFileSize -= 5;
+    char * originalBinaryFileContent = malloc( executableBinaryFileSize );
+    fh = fopen( originalBinaryFile, "rb" );
+    (void)!fread( originalBinaryFileContent, 1, 5, fh);
+    (void)!fread( originalBinaryFileContent, 1, executableBinaryFileSize, fh);
+    fclose( fh );
+
+    fh = fopen( "/tmp/original.bin", "wb" );
+    fwrite( originalBinaryFileContent, 1, executableBinaryFileSize, fh);
+    fclose( fh );
+
+    int programExeSize = 0x4d00 - _environment->program.startingAddress;
+    if ( executableBinaryFileSize < programExeSize ) {
+        programExeSize = executableBinaryFileSize;
+    }
+    char * programExe = malloc( programExeSize );
+    memcpy( programExe, originalBinaryFileContent, programExeSize );
+    executableBinaryFileSize -= programExeSize;
+
+    char * programDats[MAX_TEMPORARY_STORAGE];
+    int programDatsSize[MAX_TEMPORARY_STORAGE];
+    int programDataCount = 0;
+
+    int blockSize = 0x1000;
+    if ( executableBinaryFileSize ) {
+        char * originalBinaryFileContentPtr = originalBinaryFileContent + programExeSize;
+        while( executableBinaryFileSize ) {
+            if ( blockSize > executableBinaryFileSize ) {
+                blockSize = executableBinaryFileSize;
+                executableBinaryFileSize = blockSize;
+            }
+            programDats[programDataCount] = malloc( blockSize );
+            programDatsSize[programDataCount] = blockSize;
+            memcpy( programDats[programDataCount], originalBinaryFileContentPtr, blockSize );
+            executableBinaryFileSize -= blockSize;
+            originalBinaryFileContentPtr += blockSize;
+            ++programDataCount;
+        }
+    }
 
     char temporaryPath[MAX_TEMPORARY_STORAGE];
     strcpy( temporaryPath, _environment->temporaryPath );
     strcat( temporaryPath, " " );
     temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
 
-    char commandLine[8*MAX_TEMPORARY_STORAGE];
-    char executableName[MAX_TEMPORARY_STORAGE];
-    char listingFileName[MAX_TEMPORARY_STORAGE];
-    char binaryName[MAX_TEMPORARY_STORAGE];
-    char originalFileName[MAX_TEMPORARY_STORAGE];
+    char outputFileName[MAX_TEMPORARY_STORAGE*2];
 
-    int fileSize = 0;
-    int standardSize = 0;
-    int ondemandSize = 0;
-    int blockSize = 0;
-    int blocks = 0;
-    int block = 0;
-    int remainSize = 0;
+    // Now we are going to write down the effective files, that must
+    // have the LOADM format, as follows:
+    //
+    // +------------+--------------....--------------+---------------+
+    // |  PREAMBLE  |              DATA              |    POSTAMBLE  |
+    // +------------+--------------....--------------+---------------+
+    // |00|LEN |LOAD| .............................. |FF|00|00| EXEC |
+    // +------------+--------------....--------------+---------------+
+    // 
 
-    strcpy( binaryName, _environment->exeFileName );
+    sprintf( outputFileName, "%sprogram.exe", temporaryPath);
+    fh = fopen( outputFileName, "wb" );
+    fputc( 0x00, fh );
+    fputc( programExeSize >> 8, fh );
+    fputc( programExeSize & 0xff, fh );
+    fputc( _environment->program.startingAddress >> 8, fh );
+    fputc( _environment->program.startingAddress & 0xff, fh );
+    fwrite( programExe, 1, programExeSize, fh );
+    fputc( 0xff, fh );
+    fputc( 0x00, fh );
+    fputc( 0x00, fh );
+    fputc( _environment->program.startingAddress >> 8, fh );
+    fputc( _environment->program.startingAddress & 0xff, fh );
+    fclose( fh );
 
-    BUILD_TOOLCHAIN_DECB_GET_EXECUTABLE( _environment, executableName );
+    if ( programDataCount ) {
+        for( int i=0; i<programDataCount; ++i ) {
 
-    FILE * fh = fopen( binaryName, "rb" );
-    if ( fh ) {
-        fseek( fh, 0, SEEK_END );
-        fileSize = ftell( fh );
-        fclose( fh );
-    } else {
-        CRITICAL( "cannot create dsk file");
+            // The dat files will be loaded to a fixed position,
+            // because they will be copied under ROM bank
+            // using the LOADER.BAS.
+            //
+            // +------------+--------------....--------------+--------------+
+            // |  PREAMBLE  |              DATA              |    POSTAMBLE |
+            // +------------+--------------....--------------+--------------+
+            // |00|LEN |3000| .............................. |FF|00|00|00|00|
+            // +------------+--------------....--------------+--------------+
+
+            sprintf( outputFileName, "%sprogram.%03d", temporaryPath, i);
+            fh = fopen( outputFileName, "wb" );
+            fputc( 0x00, fh );
+            fputc( programDatsSize[i] >> 8, fh );
+            fputc( programDatsSize[i] & 0xff, fh );
+            fputc( 0x30, fh );
+            fputc( 0x00, fh );
+            fwrite( programDats[i], 1, programDatsSize[i], fh );
+            fputc( 0xff, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+            fclose( fh );
+
+        }
     }
 
-    if ( fileSize < 22016 ) {
-        
-        standardSize = fileSize - 10;
-        ondemandSize = 0;
-        blockSize = 4096;
-        blocks = 0;
-        remainSize = 0;
+    // Now we are going to create the BASIC loader.
 
-    } else {
+    char basFileName[MAX_TEMPORARY_STORAGE];
 
-        standardSize = 22016;
-        ondemandSize = fileSize - standardSize - 10;
-        blockSize = 4096;
-        blocks = ( ondemandSize / blockSize ) + 1;
-        remainSize = ondemandSize - ( ( blocks - 1 ) * blockSize ) - 5;
+    sprintf( basFileName, "%sloader.bas", temporaryPath);
+    fh = fopen( basFileName, "wb" );
+    fprintf( fh, "1 REM ugBASIC loader\n" );
+    fprintf( fh, "2 REM --[ PROLOGUE ]--\n" );
+    fprintf( fh, "3 DATA  26, 80, 52, 16, 52,  6,142, 14\n");
+    fprintf( fh, "4 DATA   0,191,  0, 31, 31, 65, 16,206\n");
+    fprintf( fh, "5 DATA  15,  0, 16,255,  0, 33,198,255\n");
+    fprintf( fh, "6 DATA 166,133,167,229, 90, 38,249, 53\n");
+    fprintf( fh, "7 DATA   6, 53, 16, 28,159, 57, 26, 80\n");
+    fprintf( fh, "8 DATA 206, 16,  0,142, 48,  0, 16,142\n");
+    fprintf( fh, "9 DATA  42,  0,183,255,223,166,128,167\n");
+    fprintf( fh, "10DATA 160, 51, 95, 17,131,  0,  0, 38\n");
+    fprintf( fh, "11DATA 244,183,255,222, 28,159, 57, 26\n");
+    fprintf( fh, "12DATA  80,206, 16,  0,142, 42,  0, 16\n");
+    fprintf( fh, "13DATA 142,192,  0,183,255,223,134,  0\n");
+    fprintf( fh, "14DATA 183,255,166,166,128,167,160, 51\n");
+    fprintf( fh, "15DATA  95, 17,131,  0,  0, 38,244,134\n");
+    fprintf( fh, "16DATA  62,183,255,166,183,255,222, 28\n");
+    fprintf( fh, "17DATA 159, 57,  0\n" );
+    fprintf( fh, "18FORA=&HE00 TO &HE71:READX:POKEA,X:NEXTA\n" );
+    fprintf( fh, "19REM --[ MAIN ]--\n" );
+    fprintf( fh, "20CLEAR 999: EXEC &HE00: PRINT \"LOADING, PLEASE WAIT\";\n" );
 
-    }
+    int lineNr = 21;
 
-    int programExeSize = 5 + standardSize + data_coco3_footer_bin_len;
+    Bank * bank = _environment->expansionBanks;
+    while( bank ) {
+        int bankSize = bank->space - bank->remains;
+        if ( bankSize ) {
+            char line[MAX_TEMPORARY_STORAGE];
 
-    char * programExe = malloc( programExeSize );
-    memset( programExe, 0, programExeSize );
-    fh = fopen( binaryName, "rb" );
-    if ( !fh ) {
-        CRITICAL( "cannot create dsk file");
-    }        
-    (void)!fread( &programExe[0], 1, standardSize + 5, fh );
-    programExe[1] = standardSize >> 8;
-    programExe[2] = standardSize & 0xff;
-    memcpy( &programExe[standardSize + 5], &data_coco3_footer_bin[0], data_coco3_footer_bin_len );
+            if ( bankSize > blockSize ) {
+                fprintf( fh, "%dLOADM\"BANK0.%03d\":PRINT\".\";\n", lineNr, bank->id);
+                ++lineNr;
 
-    char * programBlocks = NULL;
-    int programBlockSize = 0;
+                fprintf( fh, "%dPOKE &HE51, &HC0: POKE &HE57, %d: EXEC &HE47\n", lineNr, bank->id);
+                ++lineNr;
 
-    if ( blocks ) {
+                fprintf( fh, "%dLOADM\"BANK1.%03d\":PRINT\".\";\n", lineNr, bank->id);
+                ++lineNr;
 
-        programBlockSize = 5 + blockSize + data_coco3_footer_bin_len;
-        programBlocks = malloc( programBlockSize * blocks );
-        memset( &programBlocks[0], 0, programBlockSize * blocks );
+                fprintf( fh, "%dPOKE &HE51, &HD0: EXEC &HE47\n", lineNr);
+                ++lineNr;
 
-        for( int block; block < blocks; ++block ) {
-
-            memcpy( &programBlocks[block * programBlockSize], &data_coco3_header_bin[0], data_coco3_header_bin_len );
-
-            if ( block < ( blocks - 1 ) ) {
-                (void)!fread( &programBlocks[block * programBlockSize + data_coco3_header_bin_len], 1, blockSize, fh );
-                memcpy( &programBlocks[block * programBlockSize + data_coco3_header_bin_len + blockSize], &data_coco3_footer_bin[0], data_coco3_footer_bin_len );
             } else {
-                (void)!fread( &programBlocks[block * programBlockSize + data_coco3_header_bin_len], 1, remainSize + 5, fh );
-                programBlocks[block * programBlockSize + 1] = ( remainSize + 5 ) >> 8;
-                programBlocks[block * programBlockSize + 2] = ( remainSize + 5 ) & 0xff;
-                memcpy( &programBlocks[block * programBlockSize + data_coco3_header_bin_len + remainSize + 5], &data_coco3_footer_bin[0], data_coco3_footer_bin_len );
+                fprintf( fh, "%dEXEC &HE46: LOADM\"BANK0.%03d\":PRINT\".\";\n", lineNr, bank->id);
+                ++lineNr;
+
+                fprintf( fh, "%dPOKE &HE51, &HC0: POKE &HE57, %d: EXEC &HE47\n", lineNr, bank->id);
+                ++lineNr;
+
             }
 
         }
-
+        bank = bank->next;
     }
 
+    for( int i=0; i<programDataCount; ++i ) {
+        fprintf( fh, "%dLOADM\"PROGRAM.%03d\":PRINT\".\";\n", lineNr, i);
+        ++lineNr;
+        int address = 0x4d + i*16;
+        fprintf( fh, "%dPOKE 3627, %d: EXEC 3620\n", lineNr, address );
+    }
+    fprintf( fh, "90PRINT \"...\";: LOADM\"PROGRAM.EXE\": PRINT \"...\": EXEC\n" );
     fclose( fh );
 
+    char binaryName[MAX_TEMPORARY_STORAGE];
+
+    char executableName[MAX_TEMPORARY_STORAGE];
+    BUILD_TOOLCHAIN_DECB_GET_EXECUTABLE( _environment, executableName );
+
+    strcpy( binaryName, _environment->exeFileName );
+    Storage * storage = _environment->storage;
     char buffer[MAX_TEMPORARY_STORAGE];
     if ( storage ) {
         char filemask[MAX_TEMPORARY_STORAGE];
@@ -222,6 +337,7 @@ void generate_dsk( Environment * _environment ) {
         _environment->exeFileName = strdup( binaryName );
     }
 
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
     remove( _environment->exeFileName );
     sprintf( commandLine, "\"%s\" dskini \"%s\"", executableName, _environment->exeFileName );
     if ( system_call( _environment,  commandLine ) ) {
@@ -229,94 +345,6 @@ void generate_dsk( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
     };
 
-    char * loaderBas = malloc( MAX_TEMPORARY_STORAGE * 100 );
-
-    strcpy( loaderBas, "1 REM ugBASIC loader\n" );
-    strcat( loaderBas, "2 REM --[ PROLOGUE ]--\n" );
-    strcat( loaderBas, "3 DATA  26, 80, 52, 16, 52,  6,142, 14\n");
-    strcat( loaderBas, "4 DATA   0,191,  0, 31, 31, 65, 16,206\n");
-    strcat( loaderBas, "5 DATA  15,  0, 16,255,  0, 33,198,255\n");
-    strcat( loaderBas, "6 DATA 166,133,167,229, 90, 38,249, 53\n");
-    strcat( loaderBas, "7 DATA   6, 53, 16, 28,159, 57, 26, 80\n");
-    strcat( loaderBas, "8 DATA 206, 16,  0,142, 42,  0, 16,142\n");
-    strcat( loaderBas, "9 DATA  42,  0,183,255,223,166,128,167\n");
-    strcat( loaderBas, "10DATA 160, 51, 95, 17,131,  0,  0, 38\n");
-    strcat( loaderBas, "11DATA 244,183,255,222, 28,159, 57, 26\n");
-    strcat( loaderBas, "12DATA  80,206, 16,  0,142, 42,  0, 16\n");
-    strcat( loaderBas, "13DATA 142,192,  0,183,255,223,134,  0\n");
-    strcat( loaderBas, "14DATA 183,255,166,166,128,167,160, 51\n");
-    strcat( loaderBas, "15DATA  95, 17,131,  0,  0, 38,244,134\n");
-    strcat( loaderBas, "16DATA  62,183,255,166,183,255,222, 28\n");
-    strcat( loaderBas, "17DATA 159, 57,  0\n" );
-    strcat( loaderBas, "18FORA=&HE00 TO &HE71:READX:POKEA,X:NEXTA\n" );
-    strcat( loaderBas, "19REM --[ MAIN ]--\n" );
-    strcat( loaderBas, "20CLEAR 999: PRINT \"LOADING, PLEASE WAIT\";\n" );
-
-    int lineNr = 21;
-
-    Bank * bank = _environment->expansionBanks;
-    while( bank ) {
-        int bankSize = bank->space - bank->remains;
-        if ( bankSize ) {
-            char line[MAX_TEMPORARY_STORAGE];
-
-            if ( bankSize > blockSize ) {
-                sprintf( line, "%dLOADM\"BANK0.%03d\":PRINT\".\";\n", lineNr, bank->id);
-                strcat( loaderBas, line );
-                ++lineNr;
-
-                sprintf( line, "%dPOKE &HE51, &HC0: POKE &HE57, %d: EXEC &HE47\n", lineNr, bank->id);
-                strcat( loaderBas, line );
-                ++lineNr;
-
-                sprintf( line, "%dLOADM\"BANK1.%03d\":PRINT\".\";\n", lineNr, bank->id);
-                strcat( loaderBas, line );
-                ++lineNr;
-
-                sprintf( line, "%dPOKE &HE51, &HD0: EXEC &HE47\n", lineNr);
-                strcat( loaderBas, line );
-                ++lineNr;
-
-            } else {
-                sprintf( line, "%dEXEC &HE46: LOADM\"BANK0.%03d\":PRINT\".\";\n", lineNr, bank->id);
-                strcat( loaderBas, line );
-                ++lineNr;
-
-                sprintf( line, "%dPOKE &HE51, &HC0: POKE &HE57, %d: EXEC &HE47\n", lineNr, bank->id);
-                strcat( loaderBas, line );
-                ++lineNr;
-
-            }
-
-        }
-        bank = bank->next;
-    }
-
-    char line[MAX_TEMPORARY_STORAGE];
-    for( block = 0; block < blocks; ++block ) {
-
-        sprintf( line, "%dLOADM\"PROGRAM.%03d\":PRINT\".\";\n", lineNr, block);
-        strcat( loaderBas, line );
-        ++lineNr;
-
-        int address = 128 + block*16;
-        sprintf( line, "%dPOKE &HE30, %d: EXEC &HE26\n", lineNr, address);
-        strcat( loaderBas, line );
-        ++lineNr;
-
-    }
-
-    sprintf( line, "%dEXEC &HE00: PRINT \"...\";: LOADM\"PROGRAM.EXE\": PRINT \"...\": EXEC\n", lineNr);
-    strcat( loaderBas, line );
-    ++lineNr;
-
-    char basFileName[MAX_TEMPORARY_STORAGE];
-    sprintf( basFileName, "%sloader.bas", temporaryPath );
-    
-    fh = fopen( basFileName, "wb" );
-    fwrite( loaderBas, 1, strlen(loaderBas), fh );
-    fclose( fh );
-    
     sprintf( commandLine, "\"%s\" copy -0 -t \"%s\" \"%s,LOADER.BAS\"",
         executableName, 
         basFileName, 
@@ -328,111 +356,28 @@ void generate_dsk( Environment * _environment ) {
 
     remove( basFileName );
 
-    char tempFileName[MAX_TEMPORARY_STORAGE];
-    sprintf( tempFileName, "%sprogram.exe", temporaryPath );
-
-    fh = fopen( tempFileName, "wb" );
-    fwrite( programExe, 1, programExeSize, fh );
-    fclose( fh );
-    
-    sprintf( commandLine, "\"%s\" copy -2 \"%s\" \"%s,PROGRAM.EXE\"",
+    sprintf( commandLine, "\"%s\" copy -2 \"%sprogram.exe\" \"%s,PROGRAM.EXE\"",
         executableName, 
-        tempFileName, 
+        temporaryPath, 
         _environment->exeFileName );
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n"); 
         printf("Please use option '-I' to install chain tool.\n\n");
     };
 
-    // remove( tempFileName );
-
-    for( block = 0; block < blocks; ++block ) {
-
-        sprintf( tempFileName, "%sprogram.%03d", temporaryPath, block );
-
-        fh = fopen( tempFileName, "wb" );
-        fwrite( &programBlocks[block * programBlockSize], 1, ( block < ( blocks - 1 ) ) ? programBlockSize : ( remainSize + 15 ), fh );
-        fclose( fh );
-        
-        sprintf( commandLine, "\"%s\" copy -2 \"%s\" \"%s,PROGRAM.%03d\"",
-            executableName, 
-            tempFileName, 
-            _environment->exeFileName,
-            block );
-        if ( system_call( _environment,  commandLine ) ) {
-            printf("The compilation of assembly program failed.\n\n"); 
-            printf("Please use option '-I' to install chain tool.\n\n");
-        };
-
-        // remove( tempFileName );
-
-    }
-
-    bank = _environment->expansionBanks;
-    while( bank ) {
-        int bankSize = bank->space - bank->remains;
-        if ( bankSize > 0 ) {
-            int effectiveSize = blockSize > bankSize ? bankSize : blockSize;
-            char bankFileName[MAX_TEMPORARY_STORAGE];
-            sprintf( bankFileName, "%sbank0.%03d", temporaryPath, bank->id );
-            fh = fopen( bankFileName, "wb" );
-            fputc( 0, fh );
-            fputc( (unsigned char) ( ( effectiveSize >> 8 ) & 0xff ), fh );
-            fputc( (unsigned char) ( ( effectiveSize ) & 0xff ), fh );
-            fputc( 0x2a, fh );
-            fputc( 0x00, fh );
-            fwrite( &bank->data[0], 1, effectiveSize, fh );
-            fputc( 0xff, fh );
-            fputc( 0x00, fh );
-            fputc( 0x00, fh );
-            fputc( 0x2a, fh );
-            fputc( 0x00, fh );
-            fputc( 0x00, fh );
-
-            fclose( fh );
-            sprintf( commandLine, "\"%s\" copy -2 -b \"%s\" \"%s,BANK0.%03d\"",
+    if ( programDataCount ) {
+        for( int i=0; i<programDataCount; ++i ) {
+            sprintf( commandLine, "\"%s\" copy -2 \"%sprogram.%03d\" \"%s,PROGRAM.%03d\"",
                 executableName, 
-                bankFileName, 
+                temporaryPath,
+                i, 
                 _environment->exeFileName,
-                bank->id );
+                i );
             if ( system_call( _environment,  commandLine ) ) {
                 printf("The compilation of assembly program failed.\n\n"); 
                 printf("Please use option '-I' to install chain tool.\n\n");
-                exit(0);
             };
-            // remove( bankFileName );
-
-            if ( bankSize > blockSize ) {
-                effectiveSize = bankSize - blockSize;
-                sprintf( bankFileName, "%sbank1.%03d", temporaryPath, bank->id );
-                fh = fopen( bankFileName, "wb" );
-                fputc( 0, fh );
-                fputc( (unsigned char) ( ( effectiveSize >> 8 ) & 0xff ), fh );
-                fputc( (unsigned char) ( ( effectiveSize ) & 0xff ), fh );
-                fputc( 0x2a, fh );
-                fputc( 0x00, fh );
-                fwrite( &bank->data[blockSize], 1, bankSize - blockSize, fh );
-                fputc( 0xff, fh );
-                fputc( 0x00, fh );
-                fputc( 0x00, fh );
-                fputc( 0x2a, fh );
-                fputc( 0x00, fh );
-                fputc( 0x00, fh );
-                fclose( fh );
-                sprintf( commandLine, "\"%s\" copy -2 -b \"%s\" \"%s,BANK1.%03d\"",
-                    executableName, 
-                    bankFileName, 
-                    _environment->exeFileName,
-                    bank->id );
-                if ( system_call( _environment,  commandLine ) ) {
-                    printf("The compilation of assembly program failed.\n\n"); 
-                    printf("Please use option '-I' to install chain tool.\n\n");
-                    exit(0);
-                };
-                // remove( bankFileName );
-            }
         }
-        bank = bank->next;
     }
 
     if ( !storage ) {
@@ -442,7 +387,7 @@ void generate_dsk( Environment * _environment ) {
         int i=0;
         while( storage ) {
             FileStorage * fileStorage = storage->files;
-            while( fileStorage ) {
+            while( fileStorage ) {                
                 int size;
                 char * buffer;
 
@@ -459,8 +404,8 @@ void generate_dsk( Environment * _environment ) {
                     fseek( file, 0, SEEK_END );
                     size = ftell( file );
                     fseek( file, 0, SEEK_SET );
-                    buffer = malloc( size );
-                    memset( buffer, 0, size );
+                    buffer = malloc( size + 2 );
+                    memset( buffer, 0, size + 2 );
                     (void)!fread( buffer, size, 1, file );
                     fclose( file );
                 }
@@ -480,6 +425,8 @@ void generate_dsk( Environment * _environment ) {
                     printf("The compilation of assembly program failed.\n\n"); 
                     printf("Please use option '-I' to install chain tool.\n\n");
                 };
+
+                remove( dataFilename );
                 fileStorage = fileStorage->next;
             }
 
@@ -522,6 +469,8 @@ void generate_dsk( Environment * _environment ) {
         }
 
     }
+
+    remove( originalBinaryFile );
 
 }
 

@@ -1034,6 +1034,10 @@ int vic2z_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        vic2z_cls( _environment );
+    }
+
 }
 
 void vic2z_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -1149,12 +1153,19 @@ void vic2z_textmap_at( Environment * _environment, char * _address ) {
 
 }
 
-void vic2z_pset_int( Environment * _environment, int _x, int _y ) {
+void vic2z_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( vic2zvars, src_hw_vic2z_vars_asm);
     deploy( vic2zvarsGraphic, src_hw_vic2z_vars_graphic_asm );
     deploy( plot, src_hw_vic2z_plot_asm );
     
+    if ( _c ) {
+        outline1("LDA #$%2.2x", ( *_c & 0xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("LDA %s", c->realName );
+    }
+    outline0("STA PLOTCPE");
     outline1("LDA %2.2x", (_x & 0xff ) );
     outline0("STA PLOTX");
     outline1("LDA %2.2x", ( ( _x >> 8 ) & 0xff ) );
@@ -1167,7 +1178,7 @@ void vic2z_pset_int( Environment * _environment, int _x, int _y ) {
 
 }
 
-void vic2z_pset_vars( Environment * _environment, char *_x, char *_y ) {
+void vic2z_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
@@ -1637,6 +1648,10 @@ void vic2z_initialization( Environment * _environment ) {
     _environment->screenShades = 16;
 
     outline0("JSR VIC2ZFINALIZATION");
+
+    if (_environment->vestigialConfig.clsImplicit ) {
+        vic2z_cls( _environment );
+    }
 
 }
 

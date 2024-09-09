@@ -121,11 +121,11 @@ PLOTMODE:
 
 PLOTD:
 
-    LD A, (_PEN)
+    LD A, (PLOTCPE)
     LD IXL, A
     LD A, 1
     LD IYL, A
-    LD A, (_PEN)
+    LD A, (PLOTCPE)
     CALL CPCSELECTPALETTE
     LD A, IXH
     LD B, A

@@ -50,23 +50,7 @@ POKEYFREQTABLE:
     .word 11,         10,         9,          8,          7,          6,          5,          4,          3,          2
     .word 1
     
-POKEYMUSICREADY: .byte $0
-POKEYMUSICPAUSE: .byte $0
-POKEYMUSICLOOP: .byte $0
-
-POKEYBLOCKS: .word $0
-POKEYLASTBLOCK: .byte $0
 POKEYTIMER: .byte $0, $0, $0, $0
-
-POKEYBLOCKS_BACKUP: .word $0
-POKEYLASTBLOCK_BACKUP: .byte $0
-POKEYTMPPTR_BACKUP: .word $0
-
-POKEYTMPPTR2 = $03 ; $04
-POKEYTMPPTR = $05 ; $06
-POKEYTMPOFS = $07
-POKEYTMPLEN = $08
-POKEYJIFFIES = $09 ; $0A
 
 POKEYAUDC0:     .BYTE   $A0
 POKEYAUDC1:     .BYTE   $A0

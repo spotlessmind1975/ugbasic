@@ -54,9 +54,6 @@ void target_initialization( Environment * _environment ) {
     
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "EVERYSTATUS" );
-
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0000 );
@@ -78,7 +75,7 @@ void target_initialization( Environment * _environment ) {
     // outline0("LDS #$2FFF");
     
     deploy( vars, src_hw_pc128op_vars_asm);
-    deploy( startup, src_hw_pc128op_startup_asm);
+    deploy_preferred( startup, src_hw_pc128op_startup_asm);
     // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
 
     outline0( "JSR PC128OPSTARTUP" );
@@ -89,16 +86,16 @@ void target_initialization( Environment * _environment ) {
     ef936x_initialization( _environment );
     sn76489m_initialization( _environment );
 
+    cpu_call( _environment, "VARINIT" );
+
     if ( _environment->tenLinerRulesEnforced ) {
-        cpu_call( _environment, "VARINIT" );
         outline0("LDS #$2FFF");
         if ( _environment->tenLinerRulesEnforced ) {
             shell_injection( _environment );
         }
         outline0("LDS #$A000");
+        cpu_call( _environment, "VARINIT" );
     }
-
-    cpu_call( _environment, "VARINIT" );
 
 }
 

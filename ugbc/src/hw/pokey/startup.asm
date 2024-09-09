@@ -624,216 +624,31 @@ POKEYSTOP3:
     STA POKEYAUDC3
     RTS
 
-MUSICPLAYERRESET:
-    SEI
-    LDA #$0
-    STA POKEYJIFFIES
-    STA POKEYTMPOFS
-    LDA #$1
-    STA POKEYMUSICREADY
-    LDA POKEYTMPPTR_BACKUP
-    STA POKEYTMPPTR
-    LDA POKEYTMPPTR_BACKUP+1
-    STA POKEYTMPPTR+1
-    LDA POKEYLASTBLOCK_BACKUP
-    STA POKEYLASTBLOCK
-    LDA POKEYBLOCKS_BACKUP
-    STA POKEYBLOCKS
-    BEQ MUSICPLAYERRESET3
-    LDA #$FF
-    JMP MUSICPLAYERRESET2
-MUSICPLAYERRESET3:
-    LDA POKEYLASTBLOCK_BACKUP
-MUSICPLAYERRESET2:
-    STA POKEYTMPLEN
-    CLI
-    RTS
-
-; This is the entry point for music play routine
-; using the interrupt. 
-MUSICPLAYER:
+POKEYTIMERMANAGER:
     PHA
-    LDA POKEYMUSICREADY
-    BEQ MUSICPLAYERQ
-    LDA POKEYMUSICPAUSE
-    BEQ MUSICPLAYERQ2
-    TXA
-    PHA
-    TYA
-    PHA
-    JSR MUSICPLAYERR
-    PLA
-    TAY
-    PLA
-    TAX
-    JMP MUSICPLAYERQ4
-MUSICPLAYERQ:
     LDA POKEYTIMER
-    BEQ MUSICPLAYERQ0
+    BEQ POKEYTIMERMANAGER0
     DEC POKEYTIMER
-    BNE MUSICPLAYERQ0
+    BNE POKEYTIMERMANAGER0
     JSR POKEYSTOP0
-MUSICPLAYERQ0:
+POKEYTIMERMANAGER0:
     LDA POKEYTIMER+1
-    BEQ MUSICPLAYERQ1
+    BEQ POKEYTIMERMANAGER1
     DEC POKEYTIMER+1
-    BNE MUSICPLAYERQ1
+    BNE POKEYTIMERMANAGER1
     JSR POKEYSTOP1
-MUSICPLAYERQ1:
+POKEYTIMERMANAGER1:
     LDA POKEYTIMER+2
-    BEQ MUSICPLAYERQ2
+    BEQ POKEYTIMERMANAGER2
     DEC POKEYTIMER+2
-    BNE MUSICPLAYERQ2
+    BNE POKEYTIMERMANAGER2
     JSR POKEYSTOP2
-MUSICPLAYERQ2:
+POKEYTIMERMANAGER2:
     LDA POKEYTIMER+3
-    BEQ MUSICPLAYERQ3
+    BEQ POKEYTIMERMANAGER3
     DEC POKEYTIMER+3
-    BNE MUSICPLAYERQ3
+    BNE POKEYTIMERMANAGER3
     JSR POKEYSTOP3
-MUSICPLAYERQ3:
-    LDA POKEYMUSICLOOP
-    BEQ MUSICPLAYERQ4
-    JSR MUSICPLAYERRESET
-MUSICPLAYERQ4:
+POKEYTIMERMANAGER3:
     PLA
     RTS
-
-MUSICPLAYERR:
-
-; This is the entry point to wait until the waiting jiffies
-; are exausted.
-MUSICPLAYERL1:
-    LDA POKEYJIFFIES
-    BEQ MUSICPLAYERL1B
-    DEC POKEYJIFFIES
-    RTS
-
-; This is the entry point to read the next instruction.
-MUSICPLAYERL1B:
-    ; Read the next byte.
-    JSR MUSICREADNEXTBYTE
-
-    ; Is the file NOT finished?
-    CPX #$0
-    BNE MUSICPLAYERL1X
-
-    ; Let's stop the play!
-    LDA #$0
-    STA POKEYMUSICREADY
-    STA POKEYTMPPTR
-    STA POKEYTMPPTR+1
-    STA POKEYJIFFIES
-    RTS
-
-; This is the entry point to decode the instruction
-; (contained into the A register).
-MUSICPLAYERL1X:
-    ASL
-    BCS MUSICPLAYERL1X0
-    JMP MUSICWAIT
-MUSICPLAYERL1X0:
-    ASL
-    ASL
-    BCS MUSICPLAYERL1X1
-    JMP MUSICNOTEON
-MUSICPLAYERL1X1:
-    ASL
-    BCS MUSICPLAYERL1X2
-    JMP MUSICNOTEOFF
-MUSICPLAYERL1X2:
-    RTS
-
-MUSICWAIT:
-    LSR
-    STA POKEYJIFFIES
-    RTS
-
-MUSICNOTEOFF:
-    LSR
-    LSR
-    LSR
-    LSR
-    JSR POKEYSTOP
-    RTS    
-
-MUSICNOTEON:
-    LSR
-    LSR
-    LSR
-    PHA
-    JSR MUSICREADNEXTBYTE
-    ASL
-    TAY
-    LDA (POKEYTMPPTR2),Y
-    TAX
-    INY
-    LDA (POKEYTMPPTR2),Y
-    TAY
-    PLA
-    PHA
-    JSR POKEYPROGFREQ
-    PLA
-    LDX #$0A
-    JSR POKEYPROGDIST
-    RTS
-
-; This routine has been added in order to read the
-; next byte in a "blocked" byte stream.
-MUSICREADNEXTBYTE:
-    ; Let's check if we arrived at the end of the block.
-    ; In that case, we must "load" the next block (or end
-    ; the reading).
-    LDY POKEYTMPOFS
-    CPY POKEYTMPLEN
-    BEQ MUSICREADNEXTBYTELE
-
-MUSICREADNEXTBYTE2:
-    LDX #$ff
-    LDA (POKEYTMPPTR), Y
-    INY
-    STY POKEYTMPOFS
-    RTS
-
-; This is the entry point if a block (256 or less bytes)
-; is finished, and we must move forward to the next block.
-MUSICREADNEXTBYTELE:
-    ; Is file finished?
-    LDA POKEYBLOCKS
-    BEQ MUSICREADNEXTBYTEEND
-
-    ; Increment the base address by 256
-    INC POKEYTMPPTR+1
-
-    ; Decrement the number of remaining blocks
-    DEC POKEYBLOCKS
-
-    ; If remaining blocks are 0, the last block
-    ; length is different from 256 bytes.
-    BEQ MUSICPLAYERLE2
-
-    ; Remaining block is 256 bytes lenght.
-    LDY #$FF
-    STY POKEYTMPLEN
-
-    ; Put the index to 0
-    LDY #$0
-    STY POKEYTMPOFS
-
-    JMP MUSICREADNEXTBYTE2
-
-    ; Remaining block is <256 bytes lenght.
-MUSICPLAYERLE2:
-    LDY POKEYLASTBLOCK
-    STY POKEYTMPLEN
-
-    ; Put the index to 0
-    LDY #$0
-    STY POKEYTMPOFS
-
-    JMP MUSICREADNEXTBYTE2
-
-MUSICREADNEXTBYTEEND:
-    LDX #$0
-    RTS
-

@@ -35,28 +35,74 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-JOYSTICK:
-    LD IXL, $0
+@IF joystickConfig.values
+
+JOYSTICKTSBREMAP:
+
+    db   $0, $1, $5, $0
+    db   $7, $8, $6, $0
+    db   $3, $2, $4, $0
+    db   $0, $0, $0, $0
+
+JOYSTICKTSB:
     PUSH BC
-    CALL SCANCODEENTIRE
-    POP BC
+    PUSH HL
+    PUSH DE
+    LD B, A
+    AND $0F
+    LD HL, JOYSTICKTSBREMAP
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD A, (HL)
+    LD C, A
     LD A, B
+    AND $10
     CP 0
-    JR Z, JOYSTICK0
+    JR Z, JOYSTICKTSBNOFIRE
+JOYSTICKXTSBNOFIRE:
+    LD A, C
+    OR $80
+    LD C, A
+JOYSTICKTSBNOFIRE:
+    LD A, C
+    POP DE
+    POP HL
+    POP BC
+    RET    
 
-JOYSTICK1:
-    LD HL, KEYMAP
-    ADD HL, 6
-    LD A,0
-    JMP JOYSTICKC
+@ENDIF
 
-JOYSTICK0:
-    LD HL, KEYMAP
+JOYSTICKMANAGER:
+
+    PUSH IX
+    PUSH HL
+    PUSH AF
+
+    LD HL, SCANCODEREAD
     ADD HL, 9
-    LD A,0
-    JMP JOYSTICKC
+    CALL JOYSTICKC
+@IF joystickConfig.values
+    CALL JOYSTICKTSB
+@ENDIF    
+    LD (JOYSTICK0), A
+
+    LD HL, SCANCODEREAD
+    ADD HL, 6
+    CALL JOYSTICKC
+@IF joystickConfig.values
+    CALL JOYSTICKTSB
+@ENDIF
+    LD (JOYSTICK1), A
+
+    POP AF
+    POP HL
+    POP IX
+
+    RET
 
 JOYSTICKC:
+    LD IXL, $0
 JOYSTICK1UP:
     LD A, (HL)
     BIT 0, A
