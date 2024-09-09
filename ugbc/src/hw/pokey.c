@@ -66,7 +66,7 @@ void pokey_finalization( Environment * _environment ) {
 void pokey_start( Environment * _environment, int _channels ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     if ( _channels & 0x01 ) {
         outline0("JSR POKEYSTART0");
@@ -86,7 +86,7 @@ void pokey_start( Environment * _environment, int _channels ) {
 void pokey_set_volume( Environment * _environment, int _channels, int _volume ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     // The lower 4 bits of the audio control register contain a 4-bit number
     // that specifies the volume of the sound. A zero in these bits means 
@@ -207,7 +207,7 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
 void pokey_set_program( Environment * _environment, int _channels, int _program ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     switch (_program) {
 
@@ -377,7 +377,7 @@ void pokey_set_parameter( Environment * _environment, int _channels, int _parame
 void pokey_set_frequency( Environment * _environment, int _channels, int _frequency ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     PROGRAM_FREQUENCY( _channels, _frequency );
 
@@ -386,7 +386,7 @@ void pokey_set_frequency( Environment * _environment, int _channels, int _freque
 void pokey_set_pitch( Environment * _environment, int _channels, int _pitch ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     PROGRAM_PITCH( _channels, _pitch );
 
@@ -395,7 +395,7 @@ void pokey_set_pitch( Environment * _environment, int _channels, int _pitch ) {
 void pokey_set_duration( Environment * _environment, int _channels, int _duration ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     PROGRAM_DURATION( _channels, _duration );
 
@@ -404,7 +404,7 @@ void pokey_set_duration( Environment * _environment, int _channels, int _duratio
 void pokey_wait_duration( Environment * _environment, int _channels ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     WAIT_DURATION( _channels );
 
@@ -419,7 +419,7 @@ void pokey_set_note( Environment * _environment, int _channels, int _note ) {
 void pokey_stop( Environment * _environment, int _channels ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     STOP_FREQUENCY( _channels );
 
@@ -428,7 +428,7 @@ void pokey_stop( Environment * _environment, int _channels ) {
 void pokey_start_var( Environment * _environment, char * _channels ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     outline1("LDA %s", ( _channels == NULL ? "#$f" : _channels ) );
     outline0("JSR POKEYSTART");
@@ -438,7 +438,7 @@ void pokey_start_var( Environment * _environment, char * _channels ) {
 void pokey_set_volume_vars( Environment * _environment, char * _channels, char * _volume ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     outline1("LDA %s", _volume );
     outline0("LSR" );
@@ -454,7 +454,7 @@ void pokey_set_volume_vars( Environment * _environment, char * _channels, char *
 void pokey_set_volume_semi_var( Environment * _environment, char * _channel, int _volume ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     outline1("LDA %s", _channel );
     outline1("LDX #$%2.2x", _volume );
@@ -465,7 +465,7 @@ void pokey_set_volume_semi_var( Environment * _environment, char * _channel, int
 void pokey_set_program_semi_var( Environment * _environment, char * _channels, int _program ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     switch (_program) {
 
@@ -631,7 +631,7 @@ void pokey_set_program_semi_var( Environment * _environment, char * _channels, i
 void pokey_set_frequency_vars( Environment * _environment, char * _channels, char * _frequency ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     if ( _channels ) {
         outline1("LDA %s", _channels );
@@ -648,7 +648,7 @@ void pokey_set_frequency_vars( Environment * _environment, char * _channels, cha
 void pokey_set_pitch_vars( Environment * _environment, char * _channels, char * _pitch ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     if ( _channels ) {
         outline1("LDA %s", _channels );
@@ -665,7 +665,7 @@ void pokey_set_pitch_vars( Environment * _environment, char * _channels, char * 
 void pokey_set_duration_vars( Environment * _environment, char * _channels, char * _duration ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     if ( _channels ) {
         outline1("LDA %s", _channels );
@@ -686,7 +686,7 @@ void pokey_set_duration_vars( Environment * _environment, char * _channels, char
 void pokey_wait_duration_vars( Environment * _environment, char * _channels ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
     
     if ( _channels ) {
         outline1("LDA %s", _channels );
@@ -701,7 +701,7 @@ void pokey_wait_duration_vars( Environment * _environment, char * _channels ) {
 void pokey_set_note_vars( Environment * _environment, char * _channels, char * _note ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     outline0("LDA #<POKEYFREQTABLE");
     outline0("STA TMPPTR");
@@ -730,7 +730,7 @@ void pokey_set_note_vars( Environment * _environment, char * _channels, char * _
 void pokey_stop_vars( Environment * _environment, char * _channels ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
 
     if ( _channels ) {
         outline1("LDA %s", _channels );
@@ -744,7 +744,8 @@ void pokey_stop_vars( Environment * _environment, char * _channels ) {
 void pokey_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
     deploy( pokeyvars, src_hw_pokey_vars_asm );
-    deploy( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_preferred( pokeystartup, src_hw_pokey_startup_asm );
+    deploy( music, src_hw_pokey_music_asm );
 
     outline0("SEI");
     outline1("LDA #<%s", _music);
