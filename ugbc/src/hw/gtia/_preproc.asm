@@ -55,11 +55,11 @@
 @@
 @@  LDA increment
 @@  CMP #$1
-@@  BNE PALETTEPRESERVE1_label2
+@@  BNE PALETTEPRESERVE1_labelb2
 @@
 @@  INC LASTCOLOR 
 @@
-@@PALETTEPRESERVE1_label2:
+@@PALETTEPRESERVE1_labelb2:
 @@
 @ENDMACRO
 
@@ -81,11 +81,11 @@
 @@
 @@  LDA increment
 @@  CMP #$1
-@@  BNE PALETTEPRESERVE2_label2
+@@  BNE PALETTEPRESERVE2_labelb2
 @@
 @@  INC LASTCOLOR 
 @@
-@@PALETTEPRESERVE2_label2:
+@@PALETTEPRESERVE2_labelb2:
 @@
 @ENDMACRO
 
@@ -107,11 +107,11 @@
 @@
 @@  LDA increment
 @@  CMP #$1
-@@  BNE PALETTEPRESERVE4_label2
+@@  BNE PALETTEPRESERVE4_labelb2
 @@
 @@  INC LASTCOLOR 
 @@
-@@PALETTEPRESERVE4_label2:
+@@PALETTEPRESERVE4_labelb2:
 @@
 @ENDMACRO
 
@@ -133,11 +133,11 @@
 @@
 @@  LDA increment
 @@  CMP #$1
-@@  BNE PALETTEPRESERVE8_label2
+@@  BNE PALETTEPRESERVE8_labelb2
 @@
 @@  INC LASTCOLOR 
 @@
-@@PALETTEPRESERVE8_label2:
+@@PALETTEPRESERVE8_labelb2:
 @@
 @ENDMACRO
 
@@ -159,11 +159,11 @@
 @@
 @@  LDA increment
 @@  CMP #$1
-@@  BNE PALETTEPRESERVE16_label2
+@@  BNE PALETTEPRESERVE16_labelb2
 @@
 @@  INC LASTCOLOR 
 @@
-@@PALETTEPRESERVE16_label2:
+@@PALETTEPRESERVE16_labelb2:
 @@
 @ENDMACRO
 
@@ -176,11 +176,11 @@
 @@
 @@  LDA increment
 @@  CMP #$1
-@@  BNE PALETTEPRESERVE1_label2
+@@  BNE PALETTEPRESERVE1_labelb2
 @@
 @@  INC LASTCOLOR 
 @@
-@@PALETTEPRESERVE1_label2:
+@@PALETTEPRESERVE1_labelb2:
 @@
 @ENDMACRO
 
@@ -191,11 +191,11 @@
 @@
 @@  LDA increment
 @@  CMP #$1
-@@  BNE PALETTEPRESERVE2_label2
+@@  BNE PALETTEPRESERVE2_labelb2
 @@
 @@  INC LASTCOLOR 
 @@
-@@PALETTEPRESERVE2_label2:
+@@PALETTEPRESERVE2_labelb2:
 @@
 @ENDMACRO
 
@@ -206,11 +206,11 @@
 @@
 @@  LDA increment
 @@  CMP #$1
-@@  BNE PALETTEPRESERVE4_label2
+@@  BNE PALETTEPRESERVE4_labelb2
 @@
 @@  INC LASTCOLOR 
 @@
-@@PALETTEPRESERVE4_label2:
+@@PALETTEPRESERVE4_labelb2:
 @@
 @ENDMACRO
 
@@ -221,11 +221,11 @@
 @@
 @@  LDA increment
 @@  CMP #$1
-@@  BNE PALETTEPRESERVE8_label2
+@@  BNE PALETTEPRESERVE8_labelb2
 @@
 @@  INC LASTCOLOR 
 @@
-@@PALETTEPRESERVE8_label2:
+@@PALETTEPRESERVE8_labelb2:
 @@
 @ENDMACRO
 
@@ -236,11 +236,11 @@
 @@
 @@  LDA increment
 @@  CMP #$1
-@@  BNE PALETTEPRESERVE16_label2
+@@  BNE PALETTEPRESERVE16_labelb2
 @@
 @@  INC LASTCOLOR 
 @@
-@@PALETTEPRESERVE16_label2:
+@@PALETTEPRESERVE16_labelb2:
 @@
 @ENDMACRO
 
