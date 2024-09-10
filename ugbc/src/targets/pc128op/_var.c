@@ -100,7 +100,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                             if ( variable->valueBuffer ) {
                                 if ( variable->printable ) {
                                     char * string = malloc( variable->size + 1 );
-                                    memset( string, 0, variable->size );
+                                    memset( string, 0, variable->size + 1 );
                                     memcpy( string, variable->valueBuffer, variable->size );
                                     // force +1 byte if size is odd
                                     if ( variable->size & 0x01 ) {
@@ -139,7 +139,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                             if ( variable->valueBuffer ) {
                                 if ( variable->printable ) {
                                     char * string = malloc( variable->size + 1 );
-                                    memset( string, 0, variable->size );
+                                    memset( string, 0, variable->size + 1 );
                                     memcpy( string, variable->valueBuffer, variable->size );
                                     // force +1 byte if size is odd
                                     if ( variable->size & 0x01 ) {
@@ -293,20 +293,6 @@ static void variable_cleanup_entry_byte( Environment * _environment, Variable * 
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        // if ( variable->printable ) {
-                        //     int c = strlen( variable->valueString->value );
-                        //     out2("%s fcb %d,", variable->realName, c );
-                        //     int i=0;
-                        //     for (i=0; i<(c-1); ++i ) {
-                        //         out1("$%2.2x,", (unsigned char)variable->valueString->value[i]);
-                        //     }
-                        //     outline1("$%2.2x", (unsigned char)variable->valueString->value[(c-1)]);                        
-                        // } else {
-                        //     outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString->value) );
-                        //     if ( strlen( variable->valueString->value ) > 0 ) {
-                        //         outhead1("   fcc %s", escape_newlines( variable->valueString->value ) );
-                        //     } 
-                        // }
                         outhead2("%s equ cstring%d", variable->realName, variable->valueString->id );
                     }   
                     break;
@@ -387,7 +373,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                             if ( variable->valueBuffer ) {
                                 if ( variable->printable ) {
                                     char * string = malloc( variable->size + 1 );
-                                    memset( string, 0, variable->size );
+                                    memset( string, 0, variable->size + 1 );
                                     memcpy( string, variable->valueBuffer, variable->size );
                                     // forced +1 byte to even alignment
                                     if ( variable->size & 0x01 ) {
@@ -426,7 +412,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                             if ( variable->valueBuffer ) {
                                 if ( variable->printable ) {
                                     char * string = malloc( variable->size + 1 );
-                                    memset( string, 0, variable->size );
+                                    memset( string, 0, variable->size + 1 );
                                     memcpy( string, variable->valueBuffer, variable->size );
                                     // forced +1 byte to even alignment
                                     if ( variable->size & 0x01 ) {

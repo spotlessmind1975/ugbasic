@@ -159,7 +159,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 if ( variable->valueBuffer && ! variable->onStorage ) {
                                     if ( variable->printable ) {
                                         char * string = malloc( variable->size + 1 );
-                                        memset( string, 0, variable->size );
+                                        memset( string, 0, variable->size + 1 );
                                         memcpy( string, variable->valueBuffer, variable->size );
                                         outhead2("%s: .byte %s", variable->realName, escape_newlines( string ) );
                                     } else {
@@ -183,7 +183,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                                     if ( variable->printable ) {
                                         char * string = malloc( variable->size + 1 );
-                                        memset( string, 0, variable->size );
+                                        memset( string, 0, variable->size + 1 );
                                         memcpy( string, variable->valueBuffer, variable->size );
                                         outline2("%scopy: .byte %s", variable->realName, escape_newlines( string ) );
                                     } else {
@@ -210,7 +210,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             if ( variable->valueBuffer && ! variable->onStorage ) {
                                 if ( variable->printable ) {
                                     char * string = malloc( variable->size + 1 );
-                                    memset( string, 0, variable->size );
+                                    memset( string, 0, variable->size + 1 );
                                     memcpy( string, variable->valueBuffer, variable->size );
                                     outhead2("%s: .byte %s", variable->realName, escape_newlines( string ) );
                                 } else {
@@ -234,7 +234,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                                 if ( variable->printable ) {
                                     char * string = malloc( variable->size + 1 );
-                                    memset( string, 0, variable->size );
+                                    memset( string, 0, variable->size + 1 );
                                     memcpy( string, variable->valueBuffer, variable->size );
                                     outline2("%scopy: .byte %s", variable->realName, escape_newlines( string ) );
                                 } else {
@@ -375,17 +375,6 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             break;
         }
         case VT_STRING:
-            // if ( _variable->printable ) {
-            //     int c = strlen( _variable->valueString->value );
-            //     out1("   .byte %d,", c);
-            //     int i=0;
-            //     for (i=0; i<(c-1); ++i ) {
-            //         out1("$%2.2x,", (unsigned char)_variable->valueString->value[i]);
-            //     }
-            //     outline1("$%2.2x", (unsigned char)_variable->valueString->value[(c-1)]);                        
-            // } else {
-            //     outline2("   .byte %d,%s", (int)strlen(_variable->valueString->value), escape_newlines( _variable->valueString->value ) );
-            // }
             outline2("%s = cstring%d", _variable->realName, _variable->valueString->id );
             break;
         case VT_DSTRING:
@@ -417,7 +406,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                     if ( _variable->valueBuffer && ! _variable->onStorage ) {
                         if ( _variable->printable ) {
                             char * string = malloc( _variable->size + 1 );
-                            memset( string, 0, _variable->size );
+                            memset( string, 0, _variable->size + 1 );
                             memcpy( string, _variable->valueBuffer, _variable->size );
                             outline1("    .byte %s", escape_newlines( string ) );
                         } else {
@@ -444,7 +433,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                 if ( _variable->valueBuffer && ! _variable->onStorage ) {
                     if ( _variable->printable ) {
                         char * string = malloc( _variable->size + 1 );
-                        memset( string, 0, _variable->size );
+                        memset( string, 0, _variable->size + 1 );
                         memcpy( string, _variable->valueBuffer, _variable->size );
                         outline1("    .byte %s", escape_newlines( string ) );
                     } else {
