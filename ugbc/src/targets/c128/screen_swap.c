@@ -48,6 +48,8 @@
 </usermanual> */
 void screen_swap( Environment * _environment ) {
 
-    outline0("JSR SWITCHTILEMAP");
+    if ( _environment->doubleBufferEnabled ) {
+        outline0("JSR SWITCHTILEMAP");
+    }
 
 }
