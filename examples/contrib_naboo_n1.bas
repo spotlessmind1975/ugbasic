@@ -18,6 +18,8 @@ REM @url http://patsos.de/New_Weblog/?p=671
 REM
 REM @include c128,coleco,sg1000,sc3000,zx,pc128op,to8
 
+	DEFINE SCREEN MODE UNIQUE
+	
 	PROCEDURE example ON ALL BUT VIC20
 
 		BITMAP ENABLE(320,200)

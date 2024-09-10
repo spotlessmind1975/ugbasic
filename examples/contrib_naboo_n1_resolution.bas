@@ -20,7 +20,9 @@ REM @url http://patsos.de/New_Weblog/?p=671
 REM
 REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,pc128op,to8
 
-PROCEDURE example ON ALL BUT VIC20
+DEFINE SCREEN MODE UNIQUE
+
+PROCEDURE example ON ALL BUT VIC20, ATARIXL
 
 	BITMAP ENABLE(320,200)
 
@@ -49,5 +51,5 @@ PROCEDURE example ON ALL BUT VIC20
 
 END PROCEDURE
 
-	example[] ON ALL BUT VIC20
+	example[] ON ALL BUT VIC20, ATARIXL
 
