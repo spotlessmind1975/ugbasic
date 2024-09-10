@@ -422,7 +422,7 @@ const_factor:
             } else if ( strcmp( $3, "doubleBufferSelected" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.doubleBufferSelected;
             } else if ( strcmp( $3, "doubleBuffer" ) == 0 ) {
-                $$ = ((struct _Environment *)_environment)->vestigialConfig.doubleBuffer;
+                $$ = ( ((struct _Environment *)_environment)->vestigialConfig.doubleBuffer ) || ( ((struct _Environment *)_environment)->doubleBufferEnabled );
             } else if ( strcmp( $3, "palettePreserve" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.palettePreserve;
             } else {
