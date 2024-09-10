@@ -116,7 +116,7 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         sid_start_var( _environment, channels->realName );
-        sid_set_program_semi_var( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
+        sid_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
         sid_set_frequency_vars( _environment, channels->realName, freq->realName );
         if ( _delay ) {
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
