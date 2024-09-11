@@ -227,6 +227,7 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
     _environment->bitmaskNeeded = 1;
 
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
     deploy( joystick, src_hw_cpc_joystick_asm );
 
     MAKE_LABEL
@@ -249,6 +250,7 @@ void cpc_joy( Environment * _environment, int _port, char * _value ) {
 
     _environment->bitmaskNeeded = 1;
     
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
     deploy( joystick, src_hw_cpc_joystick_asm );
 
     switch ( _port ) {
