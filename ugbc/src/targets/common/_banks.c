@@ -272,6 +272,10 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
         if ( _environment->maxExpansionBankSize[_resident] < _variable->frameSize ) {
             _environment->maxExpansionBankSize[_resident] = _variable->frameSize;
         }
+    } else {
+        if ( _environment->maxExpansionBankSize[_resident] <_variable->size ) {
+            _environment->maxExpansionBankSize[_resident] = _variable->size;
+        }
     }
 
     return 1;
