@@ -232,10 +232,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                         break;
                                     }
                                     case 8:
-                                        outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
+                                        outhead3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
                                         break;
                                     case 1:
-                                        outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
+                                        outhead3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                         break;
                                 }                    
                                 
@@ -366,7 +366,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
                     outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
                 } else {
                     if ( _variable->value ) {
-                        outline2("    .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value&0xff));
+                        outhead2("    .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value&0xff));
                     } else {
                         outline1("    .res %d,0", _variable->size);
                     }
@@ -690,7 +690,7 @@ void variable_cleanup( Environment * _environment ) {
     
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
-        outline3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
+        outhead3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
         staticStrings = staticStrings->next;
     }
 
