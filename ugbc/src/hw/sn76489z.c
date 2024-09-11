@@ -1043,6 +1043,7 @@ void sn76489z_music( Environment * _environment, char * _music, int _size, int _
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
     deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy( music, src_hw_sn76489z_music_asm );
 
     outline0("DI");
     outline1("LD HL, %s", _music);
