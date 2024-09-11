@@ -98,7 +98,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
 %token MOB CMOB PLACE DOJO READY LOGIN PASSWORD DOJOKA GAME HISCORE CREATE PORT DESTROY FIND MESSAGE PING
-%token SUCCESS RECEIVE SEND COMPRESSION RLE
+%token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -149,7 +149,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> using_background
 %type <integer> memory_video
 %type <integer> sprite_flag sprite_flags sprite_flags1
-%type <integer> on_bank
+%type <integer> on_bank_implicit on_bank_explicit
 %type <integer> note octave const_note
 %type <integer> const_instrument
 %type <integer> release
@@ -1786,9 +1786,26 @@ sequence_load_flags :
         $$ = $1;
     };
 
-on_bank :
+on_bank_explicit :
+    {
+        $$ = 0;
+    }
+    | BANKED {
+        $$ = 1;
+    }
+    | UNBANKED {
+        $$ = 0;
+    }
+    | BANKED OP const_expr CP {
+        $$ = $3;
+    };
+
+on_bank_implicit :
     {
         $$ = ((struct _Environment *)_environment)->bankedLoadDefault;
+    }
+    | UNBANKED {
+        $$ = 0;
     }
     | BANKED {
         $$ = 1;
@@ -3025,25 +3042,25 @@ exponential:
     | NEW MUSIC OP const_expr CP {        
         $$ = new_music( _environment, $4 )->name;
     }
-    | LOAD OP String CP on_bank load_flags {
+    | LOAD OP String CP on_bank_explicit load_flags {
         $$ = load( _environment, $3, NULL, 0, $5, $6 )->name;
       }
-    | LOAD OP String AS String CP on_bank load_flags {
+    | LOAD OP String AS String CP on_bank_explicit load_flags {
         $$ = load( _environment, $3, $5, 0, $7, $8 )->name;
       }
-    | LOAD OP String OP_COMMA Integer CP on_bank load_flags {
+    | LOAD OP String OP_COMMA Integer CP on_bank_explicit load_flags {
         $$ = load( _environment, $3, NULL, $5, $7, $8 )->name;
       }
-    | LOAD OP String AS String OP_COMMA Integer CP on_bank load_flags {
+    | LOAD OP String AS String OP_COMMA Integer CP on_bank_explicit load_flags {
         $$ = load( _environment, $3, $5, $7, $9, $10 )->name;
       }
-    | LOAD MUSIC OP String CP on_bank {
+    | LOAD MUSIC OP String CP on_bank_explicit {
         $$ = music_load( _environment, $4, NULL, $6 )->name;
       }
-    | LOAD MUSIC OP String AS String CP on_bank {
+    | LOAD MUSIC OP String AS String CP on_bank_explicit {
         $$ = music_load( _environment, $4, $6, $8 )->name;
       }
-    | load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+    | load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * sequence = sequence_load( 
             _environment, 
             $3, $5, 
@@ -3056,7 +3073,7 @@ exponential:
         sequence->readonly = $19;
         $$ = sequence->name;
       }
-    | load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {        
+    | load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {        
         Variable * sequence = sequence_load( 
             _environment, 
             $3, NULL, 
@@ -3069,7 +3086,7 @@ exponential:
         sequence->readonly = $17;
         $$ = sequence->name;
       }
-    | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+    | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * images = images_load( _environment, 
             $3, NULL, 
             ((struct _Environment *)_environment)->currentMode, 
@@ -3081,7 +3098,7 @@ exponential:
         images->readonly = $11;
         $$ = images->name;
       }
-    | load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+    | load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * images = images_load( _environment, 
             $3, $5, 
             ((struct _Environment *)_environment)->currentMode, 
@@ -3093,31 +3110,31 @@ exponential:
         images->readonly = $13;
         $$ = images->name;
       }
-    | load_tileset OP String CP images_load_flags using_transparency using_opacity using_background on_bank {
+    | load_tileset OP String CP images_load_flags using_transparency using_opacity using_background on_bank_implicit {
         $$ = tileset_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
       }
-    | load_tileset OP String AS String CP images_load_flags  using_transparency using_opacity using_background on_bank {
+    | load_tileset OP String AS String CP images_load_flags  using_transparency using_opacity using_background on_bank_implicit {
         $$ = tileset_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 )->name;
       }
-    | load_tilemap OP String CP images_load_flags using_transparency using_opacity using_background on_bank {
+    | load_tilemap OP String CP images_load_flags using_transparency using_opacity using_background on_bank_implicit {
         $$ = tilemap_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
       }
-    | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+    | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
         image->readonly = $10;
         $$ = image->name;
       }
-    | load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+    | load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 );
         image->readonly = $12;
         $$ = image->name;
       }
-    | load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+    | load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, NULL, $5, $7, $8+$9, $10, $11 );
         image->readonly = $12;
         $$ = image->name;
       }
-    | load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank readonly_optional {
+    | load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, $5, $7, $9, $10+$11, $12, $13 );
         image->readonly = $14;
         $$ = image->name;
@@ -6862,7 +6879,7 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
-    } array_assign readonly_optional on_bank {
+    } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
         if ( $10 ) {
@@ -6910,7 +6927,7 @@ dim_definition :
             }
         }
 
-    } array_assign readonly_optional on_bank {
+    } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $11;
         if ( $12 ) {
@@ -6932,7 +6949,7 @@ dim_definition :
         if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
-      } readonly_optional on_bank {
+      } readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
         if ( $10 ) {
@@ -6954,7 +6971,7 @@ dim_definition :
         if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
-      } readonly_optional on_bank {
+      } readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
         if ( $11 ) {
@@ -6990,7 +7007,7 @@ dim_definition :
         } else {
             variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
         }
-    } array_assign readonly_optional on_bank {
+    } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
         if ( $11 ) {
@@ -7012,7 +7029,7 @@ dim_definition :
         if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
-    } readonly_optional on_bank {
+    } readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
         if ( $11 ) {
@@ -10082,10 +10099,10 @@ statement2nc:
     ((Environment *)_environment)->lastDefinedLabel = strdup( $1 );
     ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
   } 
-  | LOAD String OP_COMMA Integer on_bank load_flags {
+  | LOAD String OP_COMMA Integer on_bank_explicit load_flags {
     load( _environment, $2, NULL, $4, $5, $6 );
   }
-  | LOAD String AS String OP_COMMA Integer on_bank load_flags {
+  | LOAD String AS String OP_COMMA Integer on_bank_explicit load_flags {
     load( _environment, $2, $4, $6, $7, $8 );
   }
   | RUN PARALLEL {
@@ -10169,21 +10186,21 @@ statement2nc:
   | FILEX const_expr_string AS const_expr_string {
         file_storage( _environment, $2, $4 );
   }
-  | IMAGE const_expr_string image_load_flags using_transparency using_opacity using_background on_bank to_variable {
+  | IMAGE const_expr_string image_load_flags using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = image_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $3+$4, $5, $6 );
         if ( $8 ) {
             prepare_variable_storage( _environment, $8, v );
         } 
         variable_temporary_remove( _environment, v->name );
   }
-  | IMAGE const_expr_string AS const_expr_string image_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+  | IMAGE const_expr_string AS const_expr_string image_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = image_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
         if ( $10 ) {
             prepare_variable_storage( _environment, $10, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | images_or_atlas const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+  | images_or_atlas const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = images_storage( 
             _environment, 
             $2, NULL, 
@@ -10198,7 +10215,7 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | images_or_atlas const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+  | images_or_atlas const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = images_storage( 
             _environment, 
             $2, $4, 
@@ -10213,7 +10230,7 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | SEQUENCE const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank to_variable{
+  | SEQUENCE const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable{
         Variable * v = sequence_storage( 
             _environment, 
             $2, $4, 
@@ -10228,7 +10245,7 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | SEQUENCE const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+  | SEQUENCE const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = sequence_storage( 
             _environment, 
             $2, NULL, 
@@ -10243,35 +10260,35 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | MUSIC const_expr_string AS const_expr_string on_bank to_variable {
+  | MUSIC const_expr_string AS const_expr_string on_bank_explicit to_variable {
         Variable * v = music_storage( _environment, $2, $4, $5 );
         if ( $6 ) {
             prepare_variable_storage( _environment, $6, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | TILESET const_expr_string images_load_flags using_transparency using_opacity using_background on_bank to_variable {
+  | TILESET const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = tileset_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $4+$5, $6, $7 );
         if ( $8 ) {
             prepare_variable_storage( _environment, $8, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | TILESET const_expr_string AS const_expr_string images_load_flags  using_transparency using_opacity using_background on_bank to_variable {
+  | TILESET const_expr_string AS const_expr_string images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = tileset_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
         if ( $10 ) {
             prepare_variable_storage( _environment, $10, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | TILEMAP const_expr_string images_load_flags using_transparency using_opacity using_background on_bank to_variable {
+  | TILEMAP const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = tilemap_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $4+$5, $6, $7 );
         if ( $8 ) {
             prepare_variable_storage( _environment, $8, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | TILEMAP const_expr_string AS const_expr_string images_load_flags using_transparency using_opacity using_background on_bank to_variable {
+  | TILEMAP const_expr_string AS const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = tilemap_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
         if ( $10 ) {
             prepare_variable_storage( _environment, $10, v );
