@@ -67,6 +67,23 @@ typedef struct _MSC1Sequences {
  * CODE SECTION 
  ****************************************************************************/
 
+void msc1_dump( MSC1Sequences * _sequences, int _count ) {
+
+    printf( "%d SEQUENCES\n", _sequences->count );
+    MSC1Sequence * actual = _sequences->first;
+
+    while( actual ) {
+        printf( "  %2.2x %2.2x %2.2x %2.2x = %d offsets\n", 
+            (unsigned char)(actual->value[0]), (unsigned char)(actual->value[1]), 
+            (unsigned char)(actual->value[2]), (unsigned char)(actual->value[3]), 
+            actual->count );
+        actual = actual->next;
+        --_count;
+        if ( !_count) break;
+    }
+
+}
+
 MSC1Sequence * msc1_find_sequence( MSC1Sequences * _sequences, MemoryBlock * _literal, int _limit ) {
 
     // If sequences are presente, we look if the same 
@@ -191,73 +208,92 @@ MSC1Sequences * msc1_generate_sequences( MemoryBlock * _input, int _size ) {
 
 }
 
-void msc1_sort( MSC1Sequences * _sequences ) {
+/* compares two sequences according to their use count */
+static int sequence_comparison(const void *_a, const void *_b) {
 
-    // Loop until no swap will be done.
-    int done = 0;
-    while( ! done ) {
+    const struct _MSC1Sequence *a = _a;
+    const struct _MSC1Sequence *b = _b;
 
-        done = 1;
-        
-        // Previous and actual node examinated.
-        MSC1Sequence * previous = NULL;
-        MSC1Sequence * actual = _sequences->first;
+    int diff = a->count - b->count;
 
-        // Until all nodes will be explored...
-        while( actual ) {
-
-            // No comparison is possibile if next node is missing.
-            if ( ! actual->next ) {
-                break;
-            }
-
-            // If the next node has a greater count, we have to
-            // move it on the upper part of the list.
-            if ( actual->count < actual->next->count ) {
-
-                // We have do differentiate if we are swapping the
-                // first node or any other node.
-                MSC1Sequence * swapped = NULL;
-
-                // Any other node...
-                if ( previous ) {
-                    swapped = actual->next->next;
-                    previous->next = actual->next;
-                    previous->next->next = actual;
-                    actual->next = swapped;
-                // First node...
-                } else {
-                    swapped = actual->next->next;
-                    _sequences->first = actual->next;
-                    _sequences->first->next = actual;
-                    actual->next = swapped;
-                }
-                done = 0;
-                break;
-            } else {
-                // Go ahead with the next node...
-                previous = actual;
-                actual = actual->next;
-            }
-
-        }
-
-    }
+    return diff < 0;
 
 }
 
-void msc1_dump( MSC1Sequences * _sequences ) {
+void msc1_sort( MSC1Sequences * _sequences ) {
 
-    printf( "%d SEQUENCES\n", _sequences->count );
-    MSC1Sequence * actual = _sequences->first;
+    // msc1_dump( _sequences, 10 );
 
-    while( actual ) {
-        printf( "  %2.2x %2.2x %2.2x %2.2x = %d offsets\n", 
-            (unsigned char)(actual->value[0]), (unsigned char)(actual->value[1]), 
-            (unsigned char)(actual->value[2]), (unsigned char)(actual->value[3]), 
-            actual->count );
-        actual = actual->next;
+    MSC1Sequence * sequences = malloc( sizeof( MSC1Sequence ) * _sequences->count );
+
+    memset( sequences, 0, sizeof( MSC1Sequence ) * _sequences->count );
+
+    MSC1Sequence * current = _sequences->first;
+    for( int i=0; i<_sequences->count && current; ++i ) {
+        memcpy( &sequences[i], current, sizeof( MSC1Sequence ) );
+        current = current->next;
     }
+
+    qsort(sequences, _sequences->count,  sizeof( MSC1Sequence ), sequence_comparison);
+
+    for( int i=0; i<( _sequences->count - 1 ); ++i ) {
+        sequences[i].next = &sequences[i+1];
+    }
+
+    _sequences->first = &sequences[0];
+
+    // msc1_dump( _sequences, 10 );
+
+    // // Loop until no swap will be done.
+    // int done = 0;
+    // while( ! done ) {
+
+    //     done = 1;
+        
+    //     // Previous and actual node examinated.
+    //     MSC1Sequence * previous = NULL;
+    //     MSC1Sequence * actual = _sequences->first;
+
+    //     // Until all nodes will be explored...
+    //     while( actual ) {
+
+    //         // No comparison is possibile if next node is missing.
+    //         if ( ! actual->next ) {
+    //             break;
+    //         }
+
+    //         // If the next node has a greater count, we have to
+    //         // move it on the upper part of the list.
+    //         if ( actual->count < actual->next->count ) {
+
+    //             // We have do differentiate if we are swapping the
+    //             // first node or any other node.
+    //             MSC1Sequence * swapped = NULL;
+
+    //             // Any other node...
+    //             if ( previous ) {
+    //                 swapped = actual->next->next;
+    //                 previous->next = actual->next;
+    //                 previous->next->next = actual;
+    //                 actual->next = swapped;
+    //             // First node...
+    //             } else {
+    //                 swapped = actual->next->next;
+    //                 _sequences->first = actual->next;
+    //                 _sequences->first->next = actual;
+    //                 actual->next = swapped;
+    //             }
+    //             done = 0;
+    //             break;
+    //         } else {
+    //             // Go ahead with the next node...
+    //             previous = actual;
+    //             actual = actual->next;
+    //         }
+
+    //     }
+
+    // }
 
 }
 
@@ -355,7 +391,7 @@ MemoryBlock * msc1_compress( MSC1Compressor * _msc1, MemoryBlock * _input, int _
     // and sort them in order to have the most frequent first.
     MSC1Sequences * sequences = msc1_generate_sequences( _input, _size );
     msc1_sort( sequences );
-    // msc1_dump( sequences );
+    // msc1_dump( sequences, 10 );
 
     MSC1Sequence * actual = NULL;
     MemoryBlock literal[128];
