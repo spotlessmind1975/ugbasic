@@ -709,7 +709,7 @@ generated/pc128op/asm/%.asm: compiler
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc128op$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.k7=.lis) $(subst generated/pc128op/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/pc128op/exe/%.k7: compiler
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc128op$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.k7=.lis) $(subst generated/pc128op/exe/,,$(@:.k7=.bas)) -o ../$@
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc128op$(UGBCEXESUFFIX) $(OPTIONS) -O k7 -L ../$(@:.k7=.lis) $(subst generated/pc128op/exe/,,$(@:.k7=.bas)) -o ../$@
 
 generated/pc128op/exe/%.bin: compiler
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
@@ -718,7 +718,7 @@ generated/pc128op/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.b
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc128op$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/pc128op/exeso/,,$(@:.bin=.bas))
 
 generated/pc128op/exeso/%.k7: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.k7=.bas))
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc128op$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O k7 $(subst generated/pc128op/exeso/,,$(@:.k7=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc128op$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O k7 -L ../$(@:.k7=.lis) $(subst generated/pc128op/exeso/,,$(@:.k7=.bas))
 
 #------------------------------------------------ 
 # plus4:
