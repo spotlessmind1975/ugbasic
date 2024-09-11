@@ -71,6 +71,9 @@ della tessera deve essere una costante.
 </usermanual> */
 int tile_id( Environment * _environment, char * _tileset, char * _id ) {
 
+    if ( _environment->emptyProcedure ) 
+        return 0;
+
     Variable * tileset = NULL;
 
     tileset = variable_retrieve( _environment, _tileset );

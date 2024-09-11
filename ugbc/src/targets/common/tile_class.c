@@ -74,6 +74,11 @@ Variable * tile_class( Environment * _environment, char * _tileset, int _id ) {
 
     Variable * tileset = NULL;
 
+    if ( _environment->emptyProcedure ) {
+        tileset = variable_temporary( _environment, VT_TILESET, "(tileset)");
+        return tileset;
+    }
+
     tileset = variable_retrieve( _environment, _tileset );
     if ( tileset->type != VT_IMAGES || tileset->originalTileset == NULL ) {
         CRITICAL_TILE_CLASS_NO_TILESET( _tileset );

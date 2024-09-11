@@ -72,6 +72,12 @@ essere una costante.
 </usermanual> */
 Variable * tile_probability( Environment * _environment, char * _tileset, int _id ) {
 
+    if ( _environment->emptyProcedure ) {
+        Variable * probability = variable_temporary( _environment, VT_FLOAT, "(probability)");
+        variable_store_float( _environment, probability->name, 0.0 );
+        return probability;
+    }
+
     Variable * tileset = NULL;
 
     tileset = variable_retrieve( _environment, _tileset );

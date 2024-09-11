@@ -986,11 +986,15 @@ const_factor:
           }
       }
       | TILE WIDTH OP expr CP {
-          Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
-              $$ = v->frameWidth;
+          if ( ! ((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
+                $$ = v->frameWidth;
+            } else {
+                CRITICAL_TILE_WIDTH_NO_TILESET( $4 );
+            }
           } else {
-             CRITICAL_TILE_WIDTH_NO_TILESET( $4 );
+            $$ = 0;
           }
       }
       | SCREEN COLUMNS {
@@ -1144,11 +1148,15 @@ const_factor:
           }
       }
       | TILE HEIGHT OP expr CP {
-          Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
-              $$ = v->frameHeight;
+          if ( ! ((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
+                $$ = v->frameHeight;
+            } else {
+                CRITICAL_TILE_HEIGHT_NO_TILESET( $4 );
+            }
           } else {
-             CRITICAL_TILE_HEIGHT_NO_TILESET( $4 );
+            $$ = 0;
           }
       }
       | SCREEN ROWS {
@@ -3690,12 +3698,17 @@ exponential:
         $$ = tilemap_get_width( _environment, $4 )->name;
     }
     | TILE WIDTH OP expr CP {
-        Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
-            $$ = tileset_tile_get_width( _environment, $4 )->name;
-        } else {
-            $$ = tile_get_width( _environment, $4 )->name;
-        }
+          if ( ! ((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
+                $$ = tileset_tile_get_width( _environment, $4 )->name;
+            } else {
+                $$ = tile_get_width( _environment, $4 )->name;
+            }
+          } else {
+            $$ = variable_temporary( _environment, VT_BYTE, "(zero)" )->name;
+            variable_store( _environment, $$, 0 );
+          }
     }
     | DLOAD ERROR {
         $$ = variable_temporary( _environment, VT_BYTE, "(DLOAD ERROR)" )->name;
@@ -3741,11 +3754,16 @@ exponential:
         $$ = tilemap_get_height( _environment, $4 )->name;
     }
     | TILE HEIGHT OP expr CP {
-        Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
-            $$ = tileset_tile_get_height( _environment, $4 )->name;
+        if ( ! ((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
+                $$ = tileset_tile_get_height( _environment, $4 )->name;
+            } else {
+                $$ = tile_get_height( _environment, $4 )->name;
+            }
         } else {
-            $$ = tile_get_height( _environment, $4 )->name;
+            $$ = variable_temporary( _environment, VT_BYTE, "(zero)" )->name;
+            variable_store( _environment, $$, 0 );
         }
     }
     | IMAGE HEIGHT OP expr CP {
@@ -8534,6 +8552,14 @@ target :
     |
     CPC {
         #ifdef __cpc__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    PLUS4 {
+        #ifdef __plus4__
             $$ = 1;
         #else
             $$ = 0;
