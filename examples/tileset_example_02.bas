@@ -22,7 +22,9 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,pc12
 
 	CLS
 
-	tileset := LOAD TILESET("kenney-tiny-town.tsx")
+PROCEDURE example ON ALL BUT PLUS4
+
+	tileset := LOAD TILESET("kenney-tiny-town.tsx") UNBANKED
 
 	classe = TILE CLASS( tileset, TILE ID( tileset, mushroom ) )
 	larghezza = TILE WIDTH( tileset )
@@ -36,6 +38,9 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,pc12
 	PRINT classe;" (" ; larghezza ; "x" ; altezza ; " px)"
 	PRINT " % = "; probabilita
 
+END PROC
+
+example[] ON ALL BUT PLUS4
 
 
 

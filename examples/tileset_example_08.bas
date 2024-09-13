@@ -19,7 +19,14 @@ REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,pc128op,to
 
     CLS
 
-    tilemap := LOAD TILEMAP("kenney-tiny-town-2layers.tmx")
+PROCEDURE example ON ALL BUT PLUS4
+
+    tilemap := LOAD TILEMAP("kenney-tiny-town-2layers.tmx") UNBANKED
 
     PRINT TILEMAP tilemap AT ( 0, 0 )
     PRINT TILEMAP tilemap LAYER 1 AT ( 0, 0 )
+
+END PROC
+
+    example[] ON ALL BUT PLUS4
+

@@ -19,7 +19,7 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,pc12
 
 	CLS
 
-	tilemap := LOAD TILEMAP("kenney-tiny-town-large.tmx")
+	tilemap := LOAD TILEMAP("kenney-tiny-town-large.tmx") UNBANKED
 
 	FOR x = 0 TO TILEMAP WIDTH(tilemap)-1
 		PUT TILEMAP tilemap FROM x, 1
