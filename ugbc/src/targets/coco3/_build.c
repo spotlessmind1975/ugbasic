@@ -146,7 +146,7 @@ void generate_dsk( Environment * _environment ) {
     int programDatsSize[MAX_TEMPORARY_STORAGE];
     int programDataCount = 0;
 
-    int blockSize = 0x1000;
+    int blockSize = 0x2000;
     if ( executableBinaryFileSize ) {
         char * originalBinaryFileContentPtr = originalBinaryFileContent + programExeSize;
         while( executableBinaryFileSize ) {
@@ -162,6 +162,8 @@ void generate_dsk( Environment * _environment ) {
             ++programDataCount;
         }
     }
+
+    blockSize = 0x2000;
 
     char temporaryPath[MAX_TEMPORARY_STORAGE];
     strcpy( temporaryPath, _environment->temporaryPath );
@@ -213,7 +215,7 @@ void generate_dsk( Environment * _environment ) {
             fputc( 0x00, fh );
             fputc( programDatsSize[i] >> 8, fh );
             fputc( programDatsSize[i] & 0xff, fh );
-            fputc( 0x30, fh );
+            fputc( 0x2a, fh );
             fputc( 0x00, fh );
             fwrite( programDats[i], 1, programDatsSize[i], fh );
             fputc( 0xff, fh );
@@ -239,7 +241,7 @@ void generate_dsk( Environment * _environment ) {
     fprintf( fh, "5 DATA  15,  0, 16,255,  0, 33,198,255\n");
     fprintf( fh, "6 DATA 166,133,167,229, 90, 38,249, 53\n");
     fprintf( fh, "7 DATA   6, 53, 16, 28,159, 57, 26, 80\n");
-    fprintf( fh, "8 DATA 206, 16,  0,142, 48,  0, 16,142\n");
+    fprintf( fh, "8 DATA 206, 16,  0,142, 42,  0, 16,142\n");
     fprintf( fh, "9 DATA  42,  0,183,255,223,166,128,167\n");
     fprintf( fh, "10DATA 160, 51, 95, 17,131,  0,  0, 38\n");
     fprintf( fh, "11DATA 244,183,255,222, 28,159, 57, 26\n");
@@ -288,10 +290,13 @@ void generate_dsk( Environment * _environment ) {
     }
 
     for( int i=0; i<programDataCount; ++i ) {
-        fprintf( fh, "%dLOADM\"PROGRAM.%03d\":PRINT\".\";\n", lineNr, i);
+        fprintf( fh, "%dLOADM\"PROGRAM.%03d\":?\".\";\n", lineNr, i);
         ++lineNr;
-        int address = 0x4d + i*16;
-        fprintf( fh, "%dPOKE 3627, %d: EXEC 3620\n", lineNr, address );
+        int address = 0x4d + i*32;
+        int sizeHi = ( programDatsSize[i] >> 8 ) & 0xff;
+        int sizeLo = ( programDatsSize[i] ) & 0xff;
+        fprintf( fh, "%dPOKE3632,%d:POKE3625,%d:POKE3626,%d:EXEC3620\n", lineNr, address, sizeHi, sizeLo );
+        ++lineNr;
     }
     fprintf( fh, "90PRINT \"...\";: LOADM\"PROGRAM.EXE\": PRINT \"...\": EXEC\n" );
     fclose( fh );
