@@ -1,10 +1,10 @@
-﻿REM TSB PROJECT OPTION CENTER AND NEW LINES
+﻿REM TSB PROJECT DEFINE CENTER AND NEW LINES
 REM
 REM This example will check the CENTER pragma, used to change
 REM the default behaviour of new line after a CENTER command.
 REM
 REM @italian
-REM PROGETTO TSB (ESEMPI) PRAGMA CENTER NEW LINE
+REM PROGETTO TSB (ESEMPI) DEFINE CENTER NEW LINE
 REM
 REM Questo esempio verificherà il pragma CENTER, usato per cambiare
 REM il comportamento di una "nuova linea" dopo un comando CENTER.
