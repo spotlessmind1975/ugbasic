@@ -13,7 +13,7 @@ REM sotto ugBASIC, emulando un (molto semplice)
 REM client chat. Per usarlo con un altro utente,
 REM devi conoscere il nome.
 REM 
-REM @include coco
+REM @include coco,c64
 
 CONST applicationName = "ugchat"
 
