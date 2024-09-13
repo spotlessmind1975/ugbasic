@@ -18,11 +18,11 @@ REM per garantire the l'immagine sia disegnata all'interno di uno "schermo virtu
 REM 
 REM @url http://patsos.de/New_Weblog/?p=671
 REM
-REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,pc128op,to8
+REM @include atari,c128,c128z,c64,c64reu,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,sc3000,sg1000,to8,vg5000,zx
 
 DEFINE SCREEN MODE UNIQUE
 
-PROCEDURE example ON ALL BUT VIC20, ATARIXL
+PROCEDURE example ON ALL BUT VIC20, ATARIXL, PLUS4
 
 	BITMAP ENABLE(320,200)
 
@@ -51,5 +51,5 @@ PROCEDURE example ON ALL BUT VIC20, ATARIXL
 
 END PROCEDURE
 
-	example[] ON ALL BUT VIC20, ATARIXL
+	example[] ON ALL BUT VIC20, ATARIXL, PLUS4
 

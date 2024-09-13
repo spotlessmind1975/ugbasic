@@ -16,11 +16,11 @@ REM l'array. Questo esempio renderizza "Naboo N1 Starfighter".
 REM 
 REM @url http://patsos.de/New_Weblog/?p=671
 REM
-REM @include c128,coleco,sg1000,sc3000,zx,pc128op,to8
+REM @include atari,c128,c128z,c64,c64reu,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,sc3000,sg1000,to8,vg5000,zx
 
 	DEFINE SCREEN MODE UNIQUE
-	
-	PROCEDURE example ON ALL BUT VIC20
+
+	PROCEDURE example ON ALL BUT VIC20, PLUS4, ATARIXL
 
 		BITMAP ENABLE(320,200)
 
@@ -31,7 +31,7 @@ REM @include c128,coleco,sg1000,sc3000,zx,pc128op,to8
 		DIM pos AS INTEGER = 0
 
 		DO
-			mode = data(pos): x = data(pos+1): y = data(pos+2)
+			mode = data(pos) : x = data(pos+1) : y = data(pos+2)
 			SELECT CASE mode
 				CASE #0
 					PLOT x, y
@@ -40,11 +40,9 @@ REM @include c128,coleco,sg1000,sc3000,zx,pc128op,to8
 				CASE ELSE
 					HALT
 			ENDSELECT
-			
 			INC pos : INC pos : INC pos
-			
 		LOOP
 
 	END PROC
 
-	example[] ON ALL BUT VIC20
+	example[] ON ALL BUT VIC20, PLUS4, ATARIXL
