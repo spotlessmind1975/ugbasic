@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM OTHER CONTRIBUTIONS THE MILL
 REM
 REM This example shows a simple way to load an entire bitmap screen
@@ -14,12 +14,21 @@ REM (c) oliverlindau on Deviant Art.
 REM
 REM @url https://www.deviantart.com/oliverlindau/art/The-Mill-670453724
 REM
-REM @include c128,c64,coleco,sg1000,sc3000,cpc
+REM @include atari,atarixl,c128,c128z,c64,c64reu,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,sc3000,sg1000,to8,vg5000,vic20,zx
 
     BITMAP ENABLE(16)
 
     CLS
 
-    themill := LOAD IMAGE("themill.png")
+    PROCEDURE example
 
-    PUT IMAGE themill AT 0, 0
+        themill := LOAD IMAGE("themill.png")
+
+        PUT IMAGE themill AT 0, 0
+
+    END PROC
+
+    example[]
+    
+    WAIT KEY
+    
