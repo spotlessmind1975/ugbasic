@@ -40,7 +40,7 @@ static RGBi SYSTEM_PALETTE[] = {
         { 0x00, 0x00, 0xff, 0xff, 1, "BLUE", 1 },
         { 0x88, 0x00, 0x00, 0xff, 2, "RED", 2 },
         { 0xff, 0x00, 0xff, 0xff, 3, "MAGENTA", 3 },
-        { 0x00, 0xcc, 0x00, 0xff, 4, "GREEN", 4 },
+        { 0x00, 0xff, 0x00, 0xff, 4, "GREEN", 4 },
         { 0xaa, 0xff, 0xe6, 0xff, 5, "CYAN", 5 },
         { 0xee, 0xee, 0x77, 0xff, 6, "YELLOW", 6 },
         { 0xff, 0xff, 0xff, 0xff, 7, "WHITE", 7 }
@@ -551,7 +551,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
                     _source = source + ( ( _offset_y * _width ) + _offset_x ) * _depth + 
                         ( ( image_y * _frame_width + image_x ) * _depth ) +
-                        ( ( y * 8 ) * _depth );
+                        ( ( y * _frame_width ) * _depth );
 
                     for( int x = 0; x<8; ++x ) {
                         
@@ -573,21 +573,27 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                         colorIndex = 0;
 
                         int minDistance = 9999;
-                        for( int index = 0; index <paletteColorCount; ++index ) {
-                            int distance = rgbi_distance(&commonPalette[index], &rgb );
+                        for( int index = 0; index <16; ++index ) {
+                            int distance = rgbi_distance(&SYSTEM_PALETTE[index], &rgb );
                             if ( distance < minDistance ) {
                                 minDistance = distance;
-                                colorIndex = commonPalette[index].index;
+                                colorIndex = SYSTEM_PALETTE[index].index;
                             }
                         }
 
+                        // printf( "%2.2x%2.2x%2.2x = %d ", rgb.red, rgb.green, rgb.blue, colorIndex );
+                        
                         ++colorIndexCount[colorIndex];
 
                         _source += _depth;
 
                     }
 
+                    // printf( "\n" );
+
                 }
+
+                // printf( "\n---\n" );
 
                 int colorBackgroundMax = 0;
                 int colorBackground = 0;
@@ -603,10 +609,9 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                             colorBackgroundMax = colorIndexCount[xx];
                         };
                     }
-
-                    colorIndexCount[colorBackground] = 0;
-                    
+                    colorIndexCount[colorBackground] = 0;                    
                 }
+
                 if ( _transparent_color & 0xf00000 ) {
                     colorForeground = ( _transparent_color & 0xff00 ) >> 8;
                 } else {
@@ -616,13 +621,10 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                             colorForegroundMax = colorIndexCount[xx];
                         };
                     }
-
                     if ( colorForeground == colorBackground ) {
                         colorForeground = ( colorBackground == 0 ) ? 1 : 0;
                     }
-
                     colorIndexCount[colorForeground] = 0;
-
                 }
 
                 // printf( "cell (%d,%d) = %2.2x, %2.2x\n", image_x>>3, image_y>>3, colorForeground, colorBackground );
