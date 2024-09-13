@@ -605,7 +605,7 @@ generated/coco3/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(COCO3DECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/coco3/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
-	@$(ASM6809) $(OPTIONS) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/coco3/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco3$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O dsk $(subst generated/coco3/exeso/,,$(@:.dsk=.bas))
