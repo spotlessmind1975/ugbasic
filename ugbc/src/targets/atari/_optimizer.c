@@ -456,7 +456,8 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         po_buf_match( buf[0], " LD* *", v1, v2 ) && 
         chg_write( buf[1], v1->str) && 
         po_buf_match( buf[2], " LD* *", v3, v4 )
-        && strcmp( v1->str, v3->str ) == 0 && strcmp( v2->str, v4->str ) == 0 ) {
+        && strcmp( v1->str, v3->str ) == 0 && strcmp( v2->str, v4->str ) == 0 
+        && strchr( v4->str, '+' ) == NULL ) {
         optim( buf[2], RULE "(LD x, |STx, LD y)->(LD y)", NULL );
         ++_environment->removedAssemblyLines;
     }
@@ -737,6 +738,14 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         };
 
     if( 
+        po_buf_match( buf[0], " ROR *",  arg )
+     ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+            v->nb_wr++;
+        };
+
+    if( 
         po_buf_match( buf[0], " LD* *",  tmp, arg ) && 
         strstr("A X Y", tmp->str)!=NULL
      ){
@@ -942,14 +951,14 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     /* unread */
     if(po_buf_match( buf[1], " ST* *, *", op, var, tmp) && vars_ok(var)) {
         struct var *v = vars_get(var);
-        if(v->nb_rd == 0 && v->offset!=-2) {
+        if(v->nb_rd == 0 && v->offset!=-2 && strchr(v->name, '+') == NULL && strchr(v->name, '-') == NULL) {
             v->offset = 0;
             optim(buf[1], "unread", NULL);
             ++_environment->removedAssemblyLines;
         }
     } else if(po_buf_match( buf[1], " ST* *", op, var) && vars_ok(var)) {
         struct var *v = vars_get(var);
-        if(v->nb_rd == 0 && v->offset!=-2) {
+        if(v->nb_rd == 0 && v->offset!=-2 && strchr(v->name, '+') == NULL && strchr(v->name, '-') == NULL) {
             v->offset = 0;
             optim(buf[1], "unread", NULL);
             ++_environment->removedAssemblyLines;
