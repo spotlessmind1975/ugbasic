@@ -2539,3 +2539,43 @@ delle due stringhe di caratteri individuali.
 @target c128
 @project tsb
 </usermanual> */
+
+/* <usermanual>
+@keyword DEFINE CENTER
+
+@english
+
+This pragma allows you to change the behavior of the ''CENTER'' command. 
+By definition, the ''CENTER'' command behaves exactly like the ''PRINT'' 
+command, with the difference that the text is centered.
+
+So if the ''CENTER'' command is followed by the parameter only, subsequent 
+writings will start from the next line; if, on the contrary, the semicolon 
+character ('';'') is added, subsequent writings will continue from the
+previous position.
+
+This behavior can be changed with the ''WITHOUT NEWLINE'' option, which 
+at this point will not move the cursor to the next line, in any case.
+
+@italian
+
+Questo pragma permette di cambiare il comportamento del comando ''CENTER''. 
+Per definizione, il comando ''CENTER'' si comporta esattamente come il 
+comando ''PRINT'', con la differenza che il testo viene centrato. 
+
+Quindi se il comando ''CENTER'' viene seguito dal solo parametro, le 
+successive scritture inizieranno dalla riga successiva; se, al contrario, 
+viene aggiunto il carattere punto e virgola ('';''), le successive 
+scritture continueranno dalla posizione precedente. 
+
+Tale comportamento può essere modificato con l'opzione ''WITHOUT NEWLINE'', 
+che a questo punto non farà spostare il cursore alla linea successiva, 
+in alcun caso.
+
+@syntax DEFINE CENTER WITHOUT NEWLINE
+@syntax DEFINE CENTER WITH NEWLINE
+
+@example DEFINE CENTER WITH NEWLINE
+
+@target all
+*/
