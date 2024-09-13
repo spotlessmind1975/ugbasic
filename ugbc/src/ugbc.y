@@ -8121,7 +8121,7 @@ define_definition :
         ((struct _Environment *)_environment)->colorImplicit = 1;
     }
     | COLOR EXPLICIT {
-        ((struct _Environment *)_environment)->colorImplicit = 1;
+        ((struct _Environment *)_environment)->colorImplicit = 0;
     }
     | COMPRESSION RLE ON {
         ((struct _Environment *)_environment)->enableRle = 1;
