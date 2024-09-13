@@ -103,13 +103,13 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
       begin_while_condition( _environment, variable_greater_than( _environment, x->name, y->name, 1 )->name );  
 
         if_then( _environment, variable_less_than_const( _environment, p->name, 0, 1 )->name );
-            variable_move( _environment, variable_add( _environment, variable_mul2_const( _environment, y->name, 1 )->name, p->name )->name, p->name );
+            variable_move( _environment, variable_add( _environment, variable_sl_const( _environment, y->name, 1 )->name, p->name )->name, p->name );
             variable_increment( _environment, p->name );
         else_if_then_label( _environment );              
         else_if_then( _environment, NULL );              
             variable_decrement( _environment, x->name );
-            variable_move( _environment, variable_add( _environment, variable_mul2_const( _environment, y->name, 1 )->name, p->name )->name, p->name );
-            variable_move( _environment, variable_sub( _environment, p->name, variable_mul2_const( _environment, x->name, 1 )->name )->name, p->name );
+            variable_move( _environment, variable_add( _environment, variable_sl_const( _environment, y->name, 1 )->name, p->name )->name, p->name );
+            variable_move( _environment, variable_sub( _environment, p->name, variable_sl_const( _environment, x->name, 1 )->name )->name, p->name );
             variable_increment( _environment, p->name );
         end_if_then( _environment );
 

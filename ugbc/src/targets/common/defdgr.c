@@ -75,7 +75,7 @@ void defdgr_vars( Environment * _environment, char * _character, char * _b0, cha
         Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)");
 
         Variable * offset = variable_retrieve_or_define( _environment, _character, VT_WORD, 0 );
-        variable_mul2_const( _environment, offset->name, 3 );
+        variable_sl_const( _environment, offset->name, 3 );
         Variable * b0 = variable_retrieve_or_define( _environment, _b0, VT_BYTE, 0 );
         Variable * b1 = variable_retrieve_or_define( _environment, _b1, VT_BYTE, 0 );
         Variable * b2 = variable_retrieve_or_define( _environment, _b2, VT_BYTE, 0 );

@@ -4848,6 +4848,40 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
     return result;
 }
 
+Variable * variable_sl_const( Environment * _environment, char * _destination, int _steps ) {
+
+    if ( _steps < 0 ) {
+        CRITICAL_MUL2_INVALID_STEPS( _destination );
+    }
+
+    Variable * destination = variable_retrieve( _environment, _destination );    
+
+    if ( _steps == 0 ) {
+        return destination;
+    }
+
+    Variable * result = variable_temporary( _environment, destination->type, "(mul2)" );    
+    variable_move_naked( _environment, destination->name, result->name );
+
+    switch( VT_BITWIDTH( destination->type ) ) {
+        case 32:
+            cpu_math_mul2_const_32bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
+            break;
+        case 16:
+            cpu_math_mul2_const_16bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
+            break;
+        case 8:
+            cpu_math_mul2_const_8bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
+            break;
+        case 1:
+        case 0:
+            // @todo VT_FLOAT mul2(const) to be supported?
+            CRITICAL_MUL2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
+            break;
+    }
+    return result;
+}
+
 /**
  * @brief Subdivide by two a variable for various times and return the result
  * 
@@ -4865,6 +4899,36 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
  * @throw EXIT_FAILURE "Destination variable does not exist"
  */
 Variable * variable_div2_const( Environment * _environment, char * _destination, int _bits ) {
+    Variable * destination = variable_retrieve( _environment, _destination );    
+    Variable * result = variable_temporary( _environment, destination->type, "(div2)" );    
+    variable_move_naked( _environment, destination->name, result->name );
+
+    switch( VT_BITWIDTH( destination->type ) ) {
+        case 32:
+            if ( (int)log2(_bits) > 0 ) {
+                cpu_math_div2_const_32bit( _environment, result->realName, (int)(log2(_bits)), VT_SIGNED( destination->type ) );
+            }
+            break;
+        case 16:
+            if ( (int)log2(_bits) > 0 ) {
+                cpu_math_div2_const_16bit( _environment, result->realName, (int)(log2(_bits)), VT_SIGNED( destination->type ) );
+            }
+            break;
+        case 8:
+            if ( (int)log2(_bits) > 0 ) {
+                cpu_math_div2_const_8bit( _environment, result->realName, (int)(log2(_bits)), VT_SIGNED( destination->type ) );
+            }
+            break;
+        case 1:
+        case 0:
+            // @todo VT_FLOAT div2(const) to be supported?
+            CRITICAL_DIV2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
+            break;
+    }
+    return result;
+}
+
+Variable * variable_sr_const( Environment * _environment, char * _destination, int _bits ) {
     Variable * destination = variable_retrieve( _environment, _destination );    
     Variable * result = variable_temporary( _environment, destination->type, "(div2)" );    
     variable_move_naked( _environment, destination->name, result->name );
@@ -7245,7 +7309,7 @@ void variable_store_array_const_bit( Environment * _environment, Variable * _arr
 
     variable_and_const( _environment, position->name, 7 );
 
-    offset = variable_div2_const( _environment, offset->name, 3 );
+    offset = variable_sr_const( _environment, offset->name, 3 );
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
@@ -7269,13 +7333,13 @@ void variable_store_array_const_byte( Environment * _environment, Variable * _ar
          case VT_SPRITE:
          case VT_MSPRITE:
          case VT_DSTRING:
-            offset = variable_mul2_const( _environment, offset->name, 0 );
+            offset = variable_sl_const( _environment, offset->name, 0 );
             break;
          case VT_TILES:
-            offset = variable_mul2_const( _environment, offset->name, 2 );
+            offset = variable_sl_const( _environment, offset->name, 2 );
             break;
          default:
-            offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( _array->arrayType ) >> 3 ) - 1 );
+            offset = variable_sl_const( _environment, offset->name, ( VT_BITWIDTH( _array->arrayType ) >> 3 ) - 1 );
             break;
     }
 
@@ -7395,7 +7459,7 @@ void variable_move_array_bit( Environment * _environment, Variable * _array, Var
 
     variable_and_const( _environment, position->name, 7 );
 
-    offset = variable_div2_const( _environment, offset->name, 3 );
+    offset = variable_sr_const( _environment, offset->name, 3 );
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
@@ -7418,7 +7482,7 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
 
     switch( _array->arrayType ) {
         case VT_FLOAT:
-            offset = variable_mul2_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( _array->arrayPrecision ) );
+            offset = variable_sl_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( _array->arrayPrecision ) );
             break;
         case VT_STRING:
             CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[_array->arrayType]);
@@ -7426,16 +7490,16 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
          case VT_TILESET:
          case VT_SPRITE:
          case VT_DSTRING:
-            offset = variable_mul2_const( _environment, offset->name, 0 );
+            offset = variable_sl_const( _environment, offset->name, 0 );
             break;
          case VT_MSPRITE:
-            offset = variable_mul2_const( _environment, offset->name, 1 );
+            offset = variable_sl_const( _environment, offset->name, 1 );
             break;
          case VT_TILES:
-            offset = variable_mul2_const( _environment, offset->name, 2 );
+            offset = variable_sl_const( _environment, offset->name, 2 );
             break;
          default:
-            offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( _array->arrayType ) >> 3 ) - 1 );
+            offset = variable_sl_const( _environment, offset->name, ( VT_BITWIDTH( _array->arrayType ) >> 3 ) - 1 );
             break;
     }
 
@@ -7602,7 +7666,7 @@ Variable * variable_move_from_array_bit( Environment * _environment, Variable * 
     Variable * position = variable_temporary( _environment, VT_BYTE, "(position)");
     variable_move( _environment, offset->name, position->name );
     variable_and_const( _environment, position->name, 7 );
-    offset = variable_div2_const( _environment, offset->name, 3 );
+    offset = variable_sr_const( _environment, offset->name, 3 );
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
@@ -7654,7 +7718,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                 }
                 case VT_TILES:{
 
-                    offset = variable_mul2_const( _environment, offset->name, 2 );
+                    offset = variable_sl_const( _environment, offset->name, 2 );
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
@@ -7667,7 +7731,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                 case VT_TILE:
                 case VT_SPRITE: {
 
-                    offset = variable_mul2_const( _environment, offset->name, 0 );
+                    offset = variable_sl_const( _environment, offset->name, 0 );
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
@@ -7678,7 +7742,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                 }
                 case VT_MSPRITE: {
 
-                    offset = variable_mul2_const( _environment, offset->name, 1 );
+                    offset = variable_sl_const( _environment, offset->name, 1 );
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
@@ -7711,7 +7775,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
 
                 case VT_FLOAT: {
 
-                    offset = variable_mul2_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( _array->arrayPrecision) );
+                    offset = variable_sl_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( _array->arrayPrecision) );
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
@@ -7730,10 +7794,10 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
             
                     switch( VT_BITWIDTH( _array->arrayType ) ) {
                         case 32:
-                            offset = variable_mul2_const( _environment, offset->name, 2 );
+                            offset = variable_sl_const( _environment, offset->name, 2 );
                             break;
                         case 16:
-                            offset = variable_mul2_const( _environment, offset->name, 1 );
+                            offset = variable_sl_const( _environment, offset->name, 1 );
                             break;
                         case 8:
                             break;
@@ -7783,7 +7847,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
             }
             case VT_TILES: {
 
-                offset = variable_mul2_const( _environment, offset->name, 4 );
+                offset = variable_sl_const( _environment, offset->name, 4 );
 
                 bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, result->name, 4 );
 
@@ -7794,7 +7858,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
             case VT_TILE:
             case VT_SPRITE: {
 
-                offset = variable_mul2_const( _environment, offset->name, 0 );
+                offset = variable_sl_const( _environment, offset->name, 0 );
 
                 bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, result->name, 1 );
 
@@ -7803,7 +7867,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
             }
             case VT_MSPRITE: {
 
-                offset = variable_mul2_const( _environment, offset->name, 1 );
+                offset = variable_sl_const( _environment, offset->name, 1 );
 
                 bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, result->name, 2 );
 
@@ -7834,10 +7898,10 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
         
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
                     case 32:
-                        offset = variable_mul2_const( _environment, offset->name, 2 );
+                        offset = variable_sl_const( _environment, offset->name, 2 );
                         break;
                     case 16:
-                        offset = variable_mul2_const( _environment, offset->name, 1 );
+                        offset = variable_sl_const( _environment, offset->name, 1 );
                         break;
                     case 8:
                         break;

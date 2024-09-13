@@ -140,7 +140,7 @@ void center( Environment * _environment, char * _string, int _newline, char * _w
     cpu_bvneq( _environment, result->realName, nothingLabel );
 
     Variable * w = variable_sub( _environment, currentWidth->name, len->name );
-    w = variable_div2_const( _environment, w->name, 1 );
+    w = variable_sr_const( _environment, w->name, 1 );
 
     locate( _environment, w->name, NULL );
 

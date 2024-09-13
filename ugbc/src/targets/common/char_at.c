@@ -66,8 +66,8 @@ void char_at( Environment * _environment, char *_x, char *_y, char *_code, char 
 
     pen( _environment, sbpen_get( _environment, _type )->name );
     locate( _environment, 
-                variable_div2_const( _environment, x->name, 3 )->name, 
-                variable_div2_const( _environment, y->name, 3 )->name 
+                variable_sr_const( _environment, x->name, 3 )->name, 
+                variable_sr_const( _environment, y->name, 3 )->name 
     );
     print( _environment, c->name, 0 );
 

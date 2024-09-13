@@ -186,9 +186,9 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
             variable_store( _environment, stepx->name, 1 );
         end_if_then( _environment );
         variable_move_naked( _environment, dy->name, dy2->name );
-        dy2 = variable_mul2_const( _environment, dy2->name, 1 );
+        dy2 = variable_sl_const( _environment, dy2->name, 1 );
         variable_move_naked( _environment, dx->name, dx2->name );
-        dx2 = variable_mul2_const( _environment, dx2->name, 1 );
+        dx2 = variable_sl_const( _environment, dx2->name, 1 );
         if ( _environment->lineNeeded ) {
             if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
         }        

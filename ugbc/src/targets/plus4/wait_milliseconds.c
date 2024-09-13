@@ -84,7 +84,7 @@ void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
     Variable * temp = variable_cast( _environment, timing->name, VT_BYTE );
 
-    temp = variable_div2_const( _environment, temp->name, 2 );
+    temp = variable_sr_const( _environment, temp->name, 2 );
 
     if_then( _environment, variable_compare_not( _environment, temp->name, zero->name )->name );
         ted_busy_wait( _environment, temp->realName );

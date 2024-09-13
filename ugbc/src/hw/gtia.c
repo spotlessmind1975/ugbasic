@@ -3642,7 +3642,7 @@ Variable * gtia_get_raster_line( Environment * _environment ) {
     Variable * result = variable_temporary( _environment, VT_BYTE, "(raster line)" );
 
     cpu_move_8bit( _environment, "$D40B", result->realName );
-    variable_mul2_const( _environment, result->name, 1 );
+    variable_sl_const( _environment, result->name, 1 );
 
     return result;
     

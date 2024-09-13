@@ -4914,6 +4914,7 @@ int                     variable_delete( Environment * _environment, char * _nam
 Variable *              variable_direct_assign( Environment * _environment, char * _var, char * _expr );
 Variable *              variable_div( Environment * _environment, char * _source, char * _dest, char * _remainder );
 Variable *              variable_div2_const( Environment * _environment, char * _source, int _bits );
+Variable *              variable_sr_const( Environment * _environment, char * _source, int _bits );
 void                    variable_global( Environment * _environment, char * _pattern );
 Variable *              variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable *              variable_greater_than_const( Environment * _environment, char * _source, int _dest, int _equal );
@@ -4936,6 +4937,7 @@ Variable *              variable_move_to_mt( Environment * _environment, char * 
 Variable *              variable_move_naked( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_mul( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_mul2_const( Environment * _environment, char * _source, int _bits );
+Variable *              variable_sl_const( Environment * _environment, char * _source, int _bits );
 Variable *              variable_not( Environment * _environment, char * _value );
 void                    variable_on_memory_init( Environment * _environment, int _imported_too );
 Variable *              variable_or( Environment * _environment, char * _left, char * _right );
