@@ -76,10 +76,9 @@ Variable * rnd0( Environment * _environment ) {
     char lastRandomLabel[MAX_TEMPORARY_STORAGE]; sprintf(lastRandomLabel, "%slr", label );
 
     Variable * maxValue = variable_temporary( _environment, VT_WORD, "(maxValue)");
-    variable_store( _environment, maxValue->name, 0x8fff );
+    variable_store( _environment, maxValue->name, 0x7fff );
     Variable * maxValueFloat = variable_cast( _environment, maxValue->name, VT_FLOAT );
-
-    Variable * randomNumberInteger = random_value( _environment, VT_WORD );
+    Variable * randomNumberInteger = variable_and_const( _environment, random_value( _environment, VT_WORD )->name, 0x7fff );
     Variable * randomNumberFloat = variable_cast( _environment, randomNumberInteger->name, VT_FLOAT );
     Variable * result = variable_div( _environment, randomNumberFloat->name, maxValueFloat->name, NULL );
     
@@ -116,10 +115,9 @@ Variable * rnd1( Environment * _environment ) {
     char lastRandomLabel[MAX_TEMPORARY_STORAGE]; sprintf(lastRandomLabel, "%slr", label );
 
     Variable * maxValue = variable_temporary( _environment, VT_WORD, "(maxValue)");
-    variable_store( _environment, maxValue->name, 0x8fff );
+    variable_store( _environment, maxValue->name, 0x7fff );
     Variable * maxValueFloat = variable_cast( _environment, maxValue->name, VT_FLOAT );
-
-    Variable * randomNumberInteger = random_value( _environment, VT_WORD );
+    Variable * randomNumberInteger = variable_and_const( _environment, random_value( _environment, VT_WORD )->name, 0x7fff );
     Variable * randomNumberFloat = variable_cast( _environment, randomNumberInteger->name, VT_FLOAT );
     Variable * result = variable_div( _environment, randomNumberFloat->name, maxValueFloat->name, NULL );
     
