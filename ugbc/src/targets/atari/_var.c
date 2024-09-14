@@ -416,7 +416,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 
     }
 
-    if ( variable ) {
+    if ( bitCount > 0 ) {
         outline0("   .res 1,0");
     }
 

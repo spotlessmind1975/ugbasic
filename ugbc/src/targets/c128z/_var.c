@@ -270,7 +270,9 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 
     }
 
-    outline0("   defs 1");
+    if ( bitCount > 0 ) {
+        outline0("   defs 1");
+    }
 
 }
 
