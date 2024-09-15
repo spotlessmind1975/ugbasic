@@ -55,10 +55,11 @@
 </usermanual> */
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
-    Variable * timing = variable_temporary( _environment, VT_WORD, "(0)" );
-    variable_store( _environment, timing->name, _timing >> 3 );
+    int timing = timing >> 3;
 
-    vic2_busy_wait( _environment, timing->realName );
+    outline1( "LDX #$%2.2x", (unsigned char)( timing & 0xff ) );
+    outline1( "LDY #$%2.2x", (unsigned char)( ( timing >> 8 ) & 0xff ) );
+    outline0( "JSR WAITTIMER" );
 
 }
 
@@ -79,17 +80,11 @@ void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
-    Variable * timing = variable_retrieve( _environment, _timing );
-    Variable * zero = variable_temporary( _environment, VT_WORD, "(0)" );
-    variable_store( _environment, zero->name, 0 );
+    Variable * timing = variable_sr_const( _environment, variable_retrieve( _environment, _timing )->name, 3 );
 
-    Variable * temp = variable_cast( _environment, timing->name, VT_WORD );
-
-    temp = variable_sr_const( _environment, temp->name, 3 );
-
-    if_then( _environment, variable_compare_not( _environment, temp->name, zero->name )->name );
-        vic2_busy_wait( _environment, temp->realName );
-    end_if_then( _environment );
+    outline1( "LDX %s", timing->realName );
+    outline1( "LDY %s", address_displacement( _environment, timing->realName, "1" ) );
+    outline0( "JSR WAITTIMER" );
     
 }
 
