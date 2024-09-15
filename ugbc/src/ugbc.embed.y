@@ -481,6 +481,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.sn76489startup;
             } else if ( strcmp( $3, "keyboard" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.keyboard;
+            } else if ( strcmp( $3, "joystick" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.joystick;
             } else {
                 $$ = 0;
             }
