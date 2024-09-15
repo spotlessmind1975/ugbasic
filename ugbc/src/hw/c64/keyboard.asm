@@ -818,7 +818,7 @@ KEYS_SHIFTED:
 	.byte	$29,$C9,$CA,$30,$CD,$CB,$CF,$CE
 	.byte	$DB,$D0,$CC,$DD,$3E,$5B,$BA,$3C
 	.byte	$A9,$C0,$5D,$93,$01,$3D,$DE,$3F
-	.byte	$21,$5F,$04,$22,$A0,$02,$D1,$83
+	.byte	$21,$5F,$04,$22,$20,$02,$D1,$83
 	.byte	$FF
 
 ; KEYS_CBM:
