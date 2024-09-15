@@ -2082,7 +2082,7 @@ void gtia_initialization( Environment * _environment ) {
 #if defined(__atari__)
     _environment->frameBufferStart = 0xbf00; // 256 byte boundary alignment
 #else
-    _environment->frameBufferStart = 0x9000; // 256 byte boundary alignment
+    _environment->frameBufferStart = 0xbf00; // 256 byte boundary alignment
 #endif
 
     gtia_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
