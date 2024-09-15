@@ -11374,6 +11374,14 @@ int main( int _argc, char *_argv[] ) {
         _environment->vestigialConfig.rchack_cocon_1163 = 1;
     }
 
+    /* retrocompatible hacks */
+    // If we are compiling "Pick the star" game with a recent
+    // version of the compiler (>1.16.3), we must use a different
+    // convention on joystick related return values (signed vs unsigned).
+    if ( strstr( _environment->sourceFileName, "pick-the-star-10liner") != NULL ) {
+        _environment->vestigialConfig.rchack_pick_the_star_1163 = 1;
+    }
+    
     if ( _environment->tenLinerRulesEnforced ) {
         FILE * fh = fopen( _environment->sourceFileName, "rb" );
         fseek( fh, 0, SEEK_END );

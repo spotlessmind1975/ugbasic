@@ -1797,6 +1797,13 @@ typedef struct _VestigialConfig {
     
     char rchack_cocon_1163;
 
+    // If 1 we are compiling "Pick the star" game with
+    // a recent version of the compiler, that use a 
+    // different convention on return value for joystick
+    // related commands (signed vs unsigned).
+    
+    char rchack_pick_the_star_1163;
+
 } VestigialConfig;
 
 typedef struct _FontConfig {

@@ -42,6 +42,11 @@ Variable * joy_direction_semivars( Environment * _environment, char * _port, int
 
     MAKE_LABEL
 
+    int joyResultType = VT_SBYTE;
+    if ( _environment->vestigialConfig.rchack_pick_the_star_1163 ) {
+        joyResultType = VT_BYTE;
+    }
+
     Variable * value = joy_vars( _environment, _port );
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of J*)" );
 

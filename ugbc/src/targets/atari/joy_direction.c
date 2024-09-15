@@ -42,8 +42,13 @@ Variable * joy_direction( Environment * _environment, int _port, int _direction 
 
     MAKE_LABEL
 
+    int joyResultType = VT_SBYTE;
+    if ( _environment->vestigialConfig.rchack_pick_the_star_1163 ) {
+        joyResultType = VT_BYTE;
+    }
+
     Variable * value = joy( _environment, _port );
-    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of J*)" );
+    Variable * result = variable_temporary( _environment, joyResultType, "(result of J*)" );
 
     cpu_bit_check( _environment, value->realName, _direction, result->realName, VT_BITWIDTH( value->type ) );
 
@@ -55,8 +60,13 @@ Variable * joy_direction_semivars( Environment * _environment, char * _port, int
 
     MAKE_LABEL
 
+    int joyResultType = VT_SBYTE;
+    if ( _environment->vestigialConfig.rchack_pick_the_star_1163 ) {
+        joyResultType = VT_BYTE;
+    }
+
     Variable * value = joy_vars( _environment, _port );
-    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of J*)" );
+    Variable * result = variable_temporary( _environment, joyResultType, "(result of J*)" );
 
     cpu_bit_check( _environment, value->realName, _direction, result->realName, VT_BITWIDTH( value->type ) );
 
