@@ -436,3 +436,17 @@ C64REUBANKASKDISKPROMPT3:
     .BYTE "and press any key to continue", 0
 
 @ENDIF
+
+WAITTIMER:
+    LDA $A2
+WAITTIMERL1:
+    CMP $A2
+    BEQ WAITTIMERL1
+    DEX
+    CPX #$FF
+    BNE WAITTIMER
+    DEY
+    CPY #$FF
+    BNE WAITTIMER
+    RTS
+    
