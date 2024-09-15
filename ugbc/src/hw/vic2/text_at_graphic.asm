@@ -44,8 +44,6 @@ TEXTATBITMAPMODE:
     ASL
     STA MATHPTR6
     
-@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
-
     LDA TEXTSIZE
     BNE TEXTATBITMAPMODEGO
     RTS
@@ -86,6 +84,8 @@ TEXTATBITMAPMODEGOFORCE3:
     LDA #$D0
     STA TEXTATBMSP0LOLOA, X
     ORA #$00
+    LDA TEXTATBMSP0LOLOA, X
+    ORA #$00
     STA TEXTATBITMAPMODEGOMI0, X
     ORA #$00
     LDA TEXTATBITMAPMODEGOMI0, X
@@ -123,6 +123,8 @@ TEXTATBITMAPMODEGOFORCE2:
     STA TEXTATBMSP0MIMI20, X
 
 TEXTATBITMAPMODEGOFORCEGO:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
 
     LDA #0
     STA TABSTODRAW
