@@ -1916,19 +1916,31 @@ void vic2_busy_wait( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     outline1("LDA %s", _timing );
-    outline0("STA MATHPTR0");
+    outline0("STA TMPPTR");
     outline1("LDA %s", address_displacement(_environment, _timing, "1") );
-    outline0("STA MATHPTR0+1");
+    outline0("STA TMPPTR+1");
     outhead1("%sfirst:", label );
-    outline0("LDA $D012");
-    outline0("CMP #$30");
-    outline1("BNE %sfirst", label);
-    outline0("DEC MATHPTR0");
-    outline0("LDA MATHPTR0");
+    outline0("LDA $D011");
+    outline0("AND #$80");
+    outline1("BEQ %ssecond", label);
+    outhead1("%ssecond:", label );
+    outline0("LDA $D011");
+    outline0("AND #$80");
+    outline1("BNE %ssecond", label);
+    outhead1("%sthird:", label );
+    outline0("LDA $D011");
+    outline0("AND #$80");
+    outline1("BEQ %sthird", label);
+    outhead1("%sfourth:", label );
+    outline0("LDA $D011");
+    outline0("AND #$80");
+    outline1("BNE %sfourth", label);
+    outline0("DEC TMPPTR");
+    outline0("LDA TMPPTR");
     outline0("CMP #$FF");
     outline1("BNE %sfirst", label);
-    outline0("DEC MATHPTR0+1");
-    outline0("LDA MATHPTR0+1");
+    outline0("DEC TMPPTR+1");
+    outline0("LDA TMPPTR+1");
     outline0("CMP #$FF");
     outline1("BNE %sfirst", label);
     
