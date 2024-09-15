@@ -6881,7 +6881,7 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
             CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
-    cpu_fill_indirect( _environment, address2->realName, size2->realName, address->realName );
+    cpu_fill_indirect( _environment, address2->realName, size2->realName, address->realName, 8 );
 
     cpu_label( _environment, label );
 

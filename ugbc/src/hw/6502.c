@@ -5799,7 +5799,7 @@ void cpu6502_convert_string_into_16bit( Environment * _environment, char * _stri
     done()
 }
 
-void cpu6502_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern ) {
+void cpu6502_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern, int _size_size ) {
 
     MAKE_LABEL
 
@@ -5812,10 +5812,12 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
         outline1("LDA %s", address_displacement(_environment, _address, "1"));
         outline0("STA TMPPTR+1");
 
-        outline1("LDA %s", _size);
-        outline0("STA MATHPTR0");
-        outline1("LDA %s", address_displacement(_environment, _size, "1"));
-        outline0("STA MATHPTR0+1");
+        if ( _size_size >= 16 ) {
+            outline1("LDA %s", _size);
+            outline0("STA MATHPTR0");
+            outline1("LDA %s", address_displacement(_environment, _size, "1"));
+            outline0("STA MATHPTR0+1");
+        }
 
         outline1("LDA %s", _pattern);
         outline0("STA TMPPTR2");
@@ -5824,7 +5826,12 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
         outline0("LDY #0");
         outline0("LDA (TMPPTR2),Y");
 
-        outline0("JSR CPUFILL16");
+        if ( _size_size >= 16 ) {
+            outline0("JSR CPUFILL16");
+        } else {
+            outline1("LDX %s", _size);
+            outline0("JSR CPUFILL8");
+        }
 
     done()
 

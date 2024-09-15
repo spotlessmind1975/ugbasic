@@ -4727,14 +4727,18 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
 
 }
 
-void cpu6809_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern ) {
+void cpu6809_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern, int _size_size ) {
 
     inline( cpu_fill_indirect )
 
         MAKE_LABEL
 
-        outline1("LDB %s", _size);
-        outline0("LDA #0");
+        if( _size_size >= 16 ) {
+            outline1("LDD %s", _size);
+        } else {
+            outline1("LDB %s", _size);
+            outline0("LDA #0");
+        }
         outline0("LEAY D,Y");
         outline1("LDX %s", _pattern );
         outline0("LDA ,X" );

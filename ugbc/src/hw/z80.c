@@ -4806,7 +4806,7 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
   
 }
 
-void z80_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern ) {
+void z80_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern, int _size_size ) {
 
     MAKE_LABEL
 
@@ -4815,14 +4815,29 @@ void z80_fill_indirect( Environment * _environment, char * _address, char * _siz
     outline1("LD HL, (%s)", _pattern);
 
     // Fill the bitmap with the given pattern.
-    outline1("LD A, (%s)", _size);
-    outline0("LD C, A" );
-    outhead1("%sx:", label);
-    outline0("LD A, (HL)");
-    outline0("LD (DE),A");
-    outline0("INC DE");
-    outline0("DEC C");
-    outline1("JR NZ,%sx", label);
+    if ( _size_size >= 16 ) {
+        outline1("LD A, (%s)", _size);
+        outline0("LD C, A" );
+        outline1("LD A, (%s+1)", _size);
+        outline0("LD B, A" );
+        outhead1("%sx:", label);
+        outline0("LD A, (HL)");
+        outline0("LD (DE),A");
+        outline0("INC DE");
+        outline0("DEC BC");
+        outline0("LD A, B");
+        outline0("OR C");
+        outline1("JR NZ,%sx", label);
+    } else {
+        outline1("LD A, (%s)", _size);
+        outline0("LD C, A" );
+        outhead1("%sx:", label);
+        outline0("LD A, (HL)");
+        outline0("LD (DE),A");
+        outline0("INC DE");
+        outline0("DEC C");
+        outline1("JR NZ,%sx", label);
+    }
 
 }
 
