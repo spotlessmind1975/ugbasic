@@ -11381,7 +11381,14 @@ int main( int _argc, char *_argv[] ) {
     if ( strstr( _environment->sourceFileName, "pick-the-star-10liner") != NULL ) {
         _environment->vestigialConfig.rchack_pick_the_star_1163 = 1;
     }
-    
+
+    /* retrocompatible hacks */
+    // We are compiling "4gravity" game with a recent
+    // version of the compiler (>1.16.3).
+    if ( strstr( _environment->sourceFileName, "4gravity") != NULL ) {
+        _environment->vestigialConfig.rchack_4gravity_1163 = 1;
+    }
+
     if ( _environment->tenLinerRulesEnforced ) {
         FILE * fh = fopen( _environment->sourceFileName, "rb" );
         fseek( fh, 0, SEEK_END );

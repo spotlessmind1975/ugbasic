@@ -1804,6 +1804,11 @@ typedef struct _VestigialConfig {
     
     char rchack_pick_the_star_1163;
 
+    // If 1 we are compiling "4 gravity" game with
+    // a recent version of the compiler.
+    
+    char rchack_4gravity_1163;
+
 } VestigialConfig;
 
 typedef struct _FontConfig {
