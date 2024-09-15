@@ -525,6 +525,12 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "elableRle" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->enableRle ) {
+                $$ = 1;
+            } else {
+                $$ = 0;
+            }
         } else {
             $$ = 0;
         }

@@ -3488,7 +3488,9 @@ void vic2_put_image( Environment * _environment, Resource * _image, char * _x, c
 #endif
 
 #ifdef __c128__
-    deploy( putimageramrle, src_hw_vic2_put_image_ram_rle_asm );
+    if ( _environment->enableRle ) {
+        deploy( putimageramrle, src_hw_vic2_put_image_ram_rle_asm );
+    }
 #endif
 
     MAKE_LABEL
