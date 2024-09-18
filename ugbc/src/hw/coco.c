@@ -104,6 +104,28 @@ void coco_wait_key( Environment * _environment, int _release ) {
    
 }
 
+void coco_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_coco_joystick_asm );
+    deploy( keyboard, src_hw_coco_keyboard_asm );
+    deploy( wait_key_or_fire, src_hw_coco_wait_key_or_fire_asm );
+
+    outline0("JSR WAITKEYFIRE");
+   
+}
+
+void coco_wait_fire( Environment * _environment, int _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_coco_joystick_asm );
+
+    outline0("JSR WAITFIRE");
+   
+}
+
 void coco_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
     _environment->bitmaskNeeded = 1;

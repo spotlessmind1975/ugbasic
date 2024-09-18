@@ -463,6 +463,34 @@ void variable_cleanup( Environment * _environment ) {
 
     variable_on_memory_init( _environment, 1 );
 
+    buffered_push_output( _environment );
+
+    outhead0("SECTION code_user");
+    outhead0("ORG $8000");
+    outhead0("SECTION data_user");
+    outhead0("ORG $7030");
+    outhead0("SECTION code_user");
+
+    // DB       0AAh,055h       ;Cartridge present:  Colecovision logo
+    // outline0("DEFB $aa, $55");
+    // ;DB       055h,0AAh       ;Cartridge present:  skip logo, Colecovision logo
+    outline0("DEFB $55, $aa");
+    // DW       0000           ;Pointer to the sprite name table
+    outline0("DEFW $0000");
+    // DW       0000           ;Pointer to the sprite order table
+    outline0("DEFW $0000");
+    // DW       0000           ;Pointer to the working buffer for WR_SPR_NM_TBL
+    outline0("DEFW $0000");
+    // DW       CONTROLLER_BUFFER ;Pointer to the hand controller input areas
+    outline0("DEFW CONTROLLER_BUFFER");
+    // DW       START      ;Entry point to the user program
+    outline0("DEFW CODESTART");
+
+    deploy_inplace_preferred( startup, src_hw_coleco_startup_asm);
+    deploy_inplace_preferred( startup, src_hw_coleco_startup2_asm);
+
+    buffered_prepend_output( _environment );
+
     DataSegment * dataSegment = _environment->dataSegment;
     while( dataSegment ) {
         int i=0;

@@ -139,6 +139,8 @@
 
 void vic20_xpen( Environment * _environment, char * _destination );
 void vic20_ypen( Environment * _environment, char * _destination );
+void vic20_wait_key_or_fire( Environment * _environment, int _port, int _release );
+void vic20_wait_fire( Environment * _environment, int _port, int _release );
 void vic20_inkey( Environment * _environment, char * _pressed, char * _key );
 void vic20_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void vic20_scancode( Environment * _environment, char * _pressed, char * _scacode );

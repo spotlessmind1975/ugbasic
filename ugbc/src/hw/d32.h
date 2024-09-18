@@ -170,6 +170,8 @@ void d32_xpen( Environment * _environment, char * _destination );
 void d32_ypen( Environment * _environment, char * _destination );
 
 void d32_wait_key( Environment * _environment, int _release );
+void d32_wait_fire( Environment * _environment, int _port, int _release );
+void d32_wait_key_or_fire( Environment * _environment, int _port, int _release );
 void d32_key_state( Environment * _environment, char *_scancode, char * _result );
 void d32_scancode( Environment * _environment, char * _scacode );
 void d32_asciicode( Environment * _environment, char * _asciicode );

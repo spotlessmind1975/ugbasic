@@ -164,6 +164,8 @@
 
 #define MAX_AUDIO_CHANNELS  3
 
+void coleco_wait_fire( Environment * _environment, int _port, int _release );
+void coleco_wait_key_or_fire( Environment * _environment, int _port, int _release );
 void coleco_inkey( Environment * _environment, char * _pressed, char * _key );
 void coleco_scancode( Environment * _environment, char * _pressed, char * _scacode );
 void coleco_scanshift( Environment * _environment, char * _shifts );

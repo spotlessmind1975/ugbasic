@@ -115,29 +115,29 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
-    outhead0("SECTION code_user");
-    outhead0("ORG $8000");
-    outhead0("SECTION data_user");
-    outhead0("ORG $7030");
-    outhead0("SECTION code_user");
+    // outhead0("SECTION code_user");
+    // outhead0("ORG $8000");
+    // outhead0("SECTION data_user");
+    // outhead0("ORG $7030");
+    // outhead0("SECTION code_user");
 
-    // DB       0AAh,055h       ;Cartridge present:  Colecovision logo
-    // outline0("DEFB $aa, $55");
-    // ;DB       055h,0AAh       ;Cartridge present:  skip logo, Colecovision logo
-    outline0("DEFB $55, $aa");
-    // DW       0000           ;Pointer to the sprite name table
-    outline0("DEFW $0000");
-    // DW       0000           ;Pointer to the sprite order table
-    outline0("DEFW $0000");
-    // DW       0000           ;Pointer to the working buffer for WR_SPR_NM_TBL
-    outline0("DEFW $0000");
-    // DW       CONTROLLER_BUFFER ;Pointer to the hand controller input areas
-    outline0("DEFW CONTROLLER_BUFFER");
-    // DW       START      ;Entry point to the user program
-    outline0("DEFW CODESTART");
+    // // DB       0AAh,055h       ;Cartridge present:  Colecovision logo
+    // // outline0("DEFB $aa, $55");
+    // // ;DB       055h,0AAh       ;Cartridge present:  skip logo, Colecovision logo
+    // outline0("DEFB $55, $aa");
+    // // DW       0000           ;Pointer to the sprite name table
+    // outline0("DEFW $0000");
+    // // DW       0000           ;Pointer to the sprite order table
+    // outline0("DEFW $0000");
+    // // DW       0000           ;Pointer to the working buffer for WR_SPR_NM_TBL
+    // outline0("DEFW $0000");
+    // // DW       CONTROLLER_BUFFER ;Pointer to the hand controller input areas
+    // outline0("DEFW CONTROLLER_BUFFER");
+    // // DW       START      ;Entry point to the user program
+    // outline0("DEFW CODESTART");
 
-    deploy_inplace( startup, src_hw_coleco_startup_asm);
-    deploy_deferred( startup, src_hw_coleco_startup2_asm);
+    deploy_preferred( startup, src_hw_coleco_startup_asm);
+    deploy_preferred( startup, src_hw_coleco_startup2_asm);
 
     outhead0("CODESTART:")
     outline0("LD SP, $73b8");

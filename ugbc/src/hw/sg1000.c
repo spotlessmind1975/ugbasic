@@ -59,6 +59,22 @@ void sg1000_inkey( Environment * _environment, char * _pressed, char * _key ) {
   
 }
 
+void sg1000_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
+
+    sg1000_wait_fire( _environment, _port, _release );
+   
+}
+
+void sg1000_wait_fire( Environment * _environment, int _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_sg1000_joystick_asm );
+
+    outline0("CALL WAITFIRE");
+   
+}
+
 void sg1000_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
 
     cpu_store_8bit( _environment, _pressed, 0 );

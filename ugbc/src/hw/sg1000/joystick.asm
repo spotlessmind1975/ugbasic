@@ -151,3 +151,9 @@ noKeyEngDiers:
 keybExit:
 	cpl
 	ret
+
+WAITFIRE:
+	CALL JOYSTICK
+	CP 0
+	JR Z, WAITFIRE
+	RET

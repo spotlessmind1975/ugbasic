@@ -168,6 +168,8 @@ void coco3_xpen( Environment * _environment, char * _destination );
 void coco3_ypen( Environment * _environment, char * _destination );
 
 void coco3_wait_key( Environment * _environment, int _release );
+void coco3_wait_fire( Environment * _environment, int _port, int _release );
+void coco3_wait_key_or_fire( Environment * _environment, int _port, int _release );
 void coco3_key_state( Environment * _environment, char *_scancode, char * _result );
 void coco3_scancode( Environment * _environment, char * _scacode );
 void coco3_asciicode( Environment * _environment, char * _asciicode );

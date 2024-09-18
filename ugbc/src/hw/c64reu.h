@@ -134,6 +134,8 @@ void c64reu_xpen( Environment * _environment, char * _destination );
 void c64reu_ypen( Environment * _environment, char * _destination );
 
 void c64reu_wait_key( Environment * _environment, int _release );
+void c64reu_wait_fire( Environment * _environment, int _port, int _release );
+void c64reu_wait_key_or_fire( Environment * _environment, int _port, int _release );
 void c64reu_key_state( Environment * _environment, char *_scancode, char * _result );
 void c64reu_scancode( Environment * _environment, char * _scacode );
 void c64reu_asciicode( Environment * _environment, char * _asciicode );

@@ -4438,46 +4438,16 @@ wait_definition_simple:
       wait_milliseconds( _environment, $1 );
     }
     | FIRE release {
-        begin_do_loop( _environment );
-            exit_loop_if( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, 0 );
-        end_do_loop( _environment );
-        if ( $2 ) {
-            begin_do_loop( _environment );
-                exit_loop_if( _environment, variable_not( _environment, joy_direction( _environment, 0, JOY_FIRE )->name )->name, 0 );
-            end_do_loop( _environment );
-        }
+        wait_fire( _environment, 0, $2 );
     }
     | FIRE OP OP_HASH const_expr CP release {
-        begin_do_loop( _environment );
-            exit_loop_if( _environment, joy_direction( _environment, $4, JOY_FIRE )->name, 0 );
-        end_do_loop( _environment );
-        if ( $6 ) {
-            begin_do_loop( _environment );
-                exit_loop_if( _environment, variable_not( _environment, joy_direction( _environment, 0, JOY_FIRE )->name )->name, 0 );
-            end_do_loop( _environment );
-        }
+        wait_fire( _environment, $4, $6 );
     }
     | KEY OR FIRE release {
-        begin_do_loop( _environment );
-            exit_loop_if( _environment, scancode( _environment )->name, 0 );
-            exit_loop_if( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, 0 );
-        end_do_loop( _environment );
-        if ( $4 ) {
-            begin_do_loop( _environment );
-                exit_loop_if( _environment, variable_not( _environment, variable_or( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, scancode( _environment )->name )->name )->name, 0 );
-            end_do_loop( _environment );
-        }
+        wait_key_or_fire( _environment, 0, $4 );
     }
     | KEY OR FIRE OP OP_HASH const_expr CP release {
-        begin_do_loop( _environment );
-            exit_loop_if( _environment, scancode( _environment )->name, 0 );
-            exit_loop_if( _environment, joy_direction( _environment, $6, JOY_FIRE )->name, 0 );
-        end_do_loop( _environment );
-        if ( $8 ) {
-            begin_do_loop( _environment );
-                exit_loop_if( _environment, variable_not( _environment, variable_or( _environment, joy_direction( _environment, $6, JOY_FIRE )->name, scancode( _environment )->name )->name )->name, 0 );
-            end_do_loop( _environment );
-        }
+        wait_key_or_fire( _environment, $6, $8 );
     }
     | KEY release {
         wait_key( _environment, $2 );

@@ -90,6 +90,28 @@ void c64_wait_key( Environment * _environment, int _release ) {
    
 }
 
+void c64_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_c64_joystick_asm );
+    deploy( keyboard, src_hw_c64_keyboard_asm );
+    deploy( wait_key_or_fire, src_hw_c64_wait_key_or_fire_asm );
+
+    outline0("JSR WAITKEYFIRE");
+   
+}
+
+void c64_wait_fire( Environment * _environment, int _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_c64_joystick_asm );
+
+    outline0("JSR WAITFIRE");
+   
+}
+
 void c64_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
     _environment->bitmaskNeeded = 1;

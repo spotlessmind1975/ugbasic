@@ -173,6 +173,16 @@ void zx_wait_key( Environment * _environment, int _release ) {
    
 }
 
+void zx_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
+
+    zx_wait_key( _environment, _release );
+   
+}
+
+void zx_wait_fire( Environment * _environment, int _port, int _release ) {
+
+}
+
 void zx_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
     _environment->bitmaskNeeded = 1;

@@ -1743,6 +1743,7 @@ typedef struct _Deployed {
     int dojo;
     int console;
     int music;
+    int wait_key_or_fire;
 
 } Deployed;
 
@@ -5010,7 +5011,9 @@ void                    volume_off_var( Environment * _environment, char * _chan
 
 void                    wait_cycles( Environment * _environment, int _timing, int _parallel );
 void                    wait_cycles_var( Environment * _environment, char * _timing, int _parallel );
+void                    wait_fire( Environment * _environment, int _port, int _release );
 void                    wait_key( Environment * _environment, int _release );
+void                    wait_key_or_fire( Environment * _environment, int _port, int _release );
 void                    wait_milliseconds( Environment * _environment, int _timing );
 void                    wait_milliseconds_var( Environment * _environment, char * _timing );
 void                    wait_ticks( Environment * _environment, int _timing );

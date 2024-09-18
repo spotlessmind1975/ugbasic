@@ -90,6 +90,14 @@ void to8_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline1("STA %s", _pressed );
 }
 
+void to8_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
+
+}
+
+void to8_wait_fire( Environment * _environment, int _port, int _release ) {
+
+}
+
 void to8_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
 
     MAKE_LABEL

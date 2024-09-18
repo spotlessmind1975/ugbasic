@@ -116,3 +116,12 @@ JOYSTICKMANAGER:
     POP BC
     POP AF
     RET
+
+WAITFIRE:
+    LD A, (JOYSTICK0)
+    LD B, A
+    LD A, (JOYSTICK1)
+    OR B
+    CP 0
+    JR Z, WAITFIRE
+    RET

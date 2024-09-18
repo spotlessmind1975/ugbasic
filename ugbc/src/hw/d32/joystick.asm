@@ -279,3 +279,14 @@ JOYX
     LDA B,X
     RTS
     
+    
+WAITFIRE
+    LDA JOYSTICK0
+    ANDA #$10
+    STA MATHPTR0
+    LDA JOYSTICK1
+    ANDA #$10
+    ORA MATHPTR0
+    BEQ WAITFIRE
+    RTS
+    

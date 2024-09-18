@@ -136,6 +136,8 @@ void c128_xpen( Environment * _environment, char * _destination );
 void c128_ypen( Environment * _environment, char * _destination );
 
 void c128_wait_key( Environment * _environment, int _release );
+void c128_wait_fire( Environment * _environment, int _port, int _release );
+void c128_wait_key_or_fire( Environment * _environment, int _port, int _release );
 void c128_key_state( Environment * _environment, char *_scancode, char * _result );
 void c128_scancode( Environment * _environment, char * _scacode );
 void c128_asciicode( Environment * _environment, char * _asciicode );

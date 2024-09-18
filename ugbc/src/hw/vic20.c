@@ -103,6 +103,14 @@ void vic20_inkey( Environment * _environment, char * _pressed, char * _key ) {
    
 }
 
+void vic20_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
+
+}
+
+void vic20_wait_fire( Environment * _environment, int _port, int _release ) {
+
+}
+
 void vic20_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
 
     MAKE_LABEL
