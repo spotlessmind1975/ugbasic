@@ -104,10 +104,10 @@ void coco_busy_wait( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     outline1("LDD %s", _timing );
-    outline0("LDX $0112");
+    outline0("LDX COCOTIMER");
     outline0("LEAX D, X");
     outhead1("%sfirst", label );
-    outline0("CMPX $0112");
+    outline0("CMPX COCOTIMER");
     outline1("BGT %sfirst", label);
 }
 
