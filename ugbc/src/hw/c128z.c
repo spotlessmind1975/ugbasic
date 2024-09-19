@@ -68,11 +68,33 @@ void c128z_wait_key( Environment * _environment, int _release ) {
 
 void c128z_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
 
-    c128z_wait_key( _environment, _release );
-   
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_c128z_joystick_asm );
+    deploy( keyboard, src_hw_c128z_keyboard_asm );
+    deploy( wait_key_or_fire, src_hw_c128z_wait_key_or_fire_asm );
+
+    outline0("CALL WAITKEYFIRE");
+
 }
 
 void c128z_wait_fire( Environment * _environment, int _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+    
+    deploy( joystick, src_hw_c128z_joystick_asm );
+
+    switch( _port ) {
+        case -1:
+            outline0("CALL WAITFIRE");
+            break;
+        case 0:
+            outline0("CALL WAITFIRE0");
+            break;
+        case 1:
+            outline0("CALL WAITFIRE1");
+            break;
+    }
 
 }
 

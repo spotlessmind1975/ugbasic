@@ -37,69 +37,48 @@
 
 @IF joystickConfig.values
 
-JOYSTICKTSBREMAP:
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ;- (TUNED) SIMON'S BASIC COMPATIBLE LAYER
+    ;-
+    ;- Change the reading values based on its convention.
+    ;-
+    ;- To enable: DEFINE JOYSTICK VALUES TSB
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    db   $0, $1, $5, $0
-    db   $7, $8, $6, $0
-    db   $3, $2, $4, $0
-    db   $0, $0, $0, $0
+    JOYSTICKTSBREMAP:
+        db   $0, $1, $5, $0
+        db   $7, $8, $6, $0
+        db   $3, $2, $4, $0
+        db   $0, $0, $0, $0
 
-JOYSTICKTSB:
-    PUSH BC
-    PUSH HL
-    PUSH DE
-    LD B, A
-    AND $0F
-    LD HL, JOYSTICKTSBREMAP
-    LD E, A
-    LD D, 0
-    ADD HL, DE
-    LD A, (HL)
-    LD C, A
-    LD A, B
-    AND $10
-    CP 0
-    JR Z, JOYSTICKTSBNOFIRE
-JOYSTICKXTSBNOFIRE:
-    LD A, C
-    OR $80
-    LD C, A
-JOYSTICKTSBNOFIRE:
-    LD A, C
-    POP DE
-    POP HL
-    POP BC
-    RET    
+    JOYSTICKTSB:
+        PUSH BC
+        PUSH HL
+        PUSH DE
+        LD B, A
+        AND $0F
+        LD HL, JOYSTICKTSBREMAP
+        LD E, A
+        LD D, 0
+        ADD HL, DE
+        LD A, (HL)
+        LD C, A
+        LD A, B
+        AND $10
+        CP 0
+        JR Z, JOYSTICKTSBNOFIRE
+    JOYSTICKXTSBNOFIRE:
+        LD A, C
+        OR $80
+        LD C, A
+    JOYSTICKTSBNOFIRE:
+        LD A, C
+        POP DE
+        POP HL
+        POP BC
+        RET    
 
 @ENDIF
-
-JOYSTICKMANAGER:
-
-    PUSH IX
-    PUSH HL
-    PUSH AF
-
-    LD HL, SCANCODEREAD
-    ADD HL, 9
-    CALL JOYSTICKC
-@IF joystickConfig.values
-    CALL JOYSTICKTSB
-@ENDIF    
-    LD (JOYSTICK0), A
-
-    LD HL, SCANCODEREAD
-    ADD HL, 6
-    CALL JOYSTICKC
-@IF joystickConfig.values
-    CALL JOYSTICKTSB
-@ENDIF
-    LD (JOYSTICK1), A
-
-    POP AF
-    POP HL
-    POP IX
-
-    RET
 
 JOYSTICKC:
     LD IXL, $0
@@ -144,11 +123,88 @@ JOYSTICK1DONE:
     LD A, IXL
     RET
 
-WAITFIRE:
-    LD A, (JOYSTICK0)
-    LD B, A
-    LD A, (JOYSTICK1)
-    OR B
-    CP 0
-    JR Z, WAITFIRE
+JOYSTICKREAD0:
+    LD HL, SCANCODEREAD
+    ADD HL, 9
+    CALL JOYSTICKC
     RET
+
+JOYSTICKREAD1:
+    LD HL, SCANCODEREAD
+    ADD HL, 6
+    CALL JOYSTICKC
+    RET
+
+@IF joystickConfig.sync
+
+    WAITFIRE0:
+        CALL JOYSTICKREAD0
+        AND $10
+        CP 0
+        JR Z, WAITFIRE0
+        RET
+
+    WAITFIRE1:
+        CALL JOYSTICKREAD1
+        AND $10
+        CP 0
+        JR Z, WAITFIRE1
+        RET
+
+    WAITFIRE:
+        CALL JOYSTICKREAD0
+        AND $10
+        LD B, A
+        CALL JOYSTICKREAD1
+        AND $10
+        OR B
+        CP 0
+        JR Z, WAITFIRE
+        RET
+
+@ELSE
+
+    JOYSTICKMANAGER:
+
+        PUSH IX
+        PUSH HL
+        PUSH AF
+
+        CALL JOYSTICKREAD0
+        LD (JOYSTICK0), A
+
+        CALL JOYSTICKREAD1
+        LD (JOYSTICK1), A
+
+        POP AF
+        POP HL
+        POP IX
+
+        RET
+
+    WAITFIRE0:
+        LD A, (JOYSTICK0)
+        AND $10
+        CP 0
+        JR Z, WAITFIRE0
+        RET
+
+    WAITFIRE1:
+        LD A, (JOYSTICK1)
+        AND $10
+        CP 0
+        JR Z, WAITFIRE1
+        RET
+
+    WAITFIRE:
+        LD A, (JOYSTICK0)
+        AND $10
+        LD B, A
+        LD A, (JOYSTICK1)
+        AND $10
+        OR B
+        CP 0
+        JR Z, WAITFIRE
+        RET
+
+@ENDIF

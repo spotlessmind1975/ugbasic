@@ -94,7 +94,7 @@ IRQVECTORSKIP:
 @IF deployed.timer
     CALL TIMERMANAGER
 @ENDIF
-@IF deployed.joystick
+@IF deployed.joystick && ! joystickConfig.sync
     CALL JOYSTICKMANAGER
 @ENDIF
 	POP	HL

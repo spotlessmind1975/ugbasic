@@ -46,6 +46,8 @@
 #define JOY_RIGHT           4
 #define JOY_FIRE            0
 
+#define JOYCONFIG_DEFAULT_SYNC      1
+
 #define KEY_NONE						255
 #define KEY_L						0
 #define KEY_J						1

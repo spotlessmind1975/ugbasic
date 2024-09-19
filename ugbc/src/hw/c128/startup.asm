@@ -100,7 +100,7 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.music
     JSR MUSICPLAYER
 @ENDIF
-@IF deployed.joystick
+@IF deployed.joystick && ! joystickConfig.sync
     JSR JOYSTICKMANAGER
 @ENDIF
 @IF deployed.keyboard

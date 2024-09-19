@@ -69,7 +69,7 @@ OLDNMIISVC2
 OLDCC
     fcb $0
 
-@IF deployed.joystick
+@IF deployed.joystick && !joystickConfig.sync
 JOYSTICKCOUNTER
     fcb $A
 @ENDIF
@@ -97,7 +97,7 @@ ISVCIRQ
     JSR KEYBOARDMANAGER
 ISVCIRQK
 @ENDIF
-@IF deployed.joystick
+@IF deployed.joystick && !joystickConfig.sync
     DEC JOYSTICKCOUNTER
     BNE ISVCIRQJ
     JSR JOYSTICKMANAGER

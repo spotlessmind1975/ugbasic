@@ -50,6 +50,10 @@ IRQSVC:
     CALL KEYBOARDMANAGER
 @ENDIF
 
+@IF deployed.joystick && !joystickConfig.sync
+    CALL JOYSTICKMANAGER
+@ENDIF
+
     LD BC, $D019
     LD A, $FF
     OUT (C), A

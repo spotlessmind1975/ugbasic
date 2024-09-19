@@ -94,7 +94,7 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.sidstartup
     JSR SIDMANAGER
 @ENDIF
-@IF deployed.joystick
+@IF deployed.joystick && !joystickConfig.sync
     JSR JOYSTICKMANAGER
 @ENDIF
 @IF deployed.keyboard

@@ -79,133 +79,6 @@ void coco3_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 }
 
-void coco3_inkey( Environment * _environment, char * _key ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    deploy( keyboard, src_hw_coco3_keyboard_asm);
-
-    outline0("JSR INKEY");
-    outline1("STA %s", _key);
-
-}
-
-void coco3_wait_key( Environment * _environment, int _release ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    deploy( keyboard, src_hw_coco3_keyboard_asm );
-
-    if ( _release ) {
-        outline0("JSR WAITKEYRELEASE");
-    } else {
-        outline0("JSR WAITKEY");
-    }
-   
-}
-
-void coco3_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    deploy( joystick, src_hw_coco3_joystick_asm );
-    deploy( keyboard, src_hw_coco3_keyboard_asm );
-    deploy( wait_key_or_fire, src_hw_coco3_wait_key_or_fire_asm );
-
-    outline0("JSR WAITKEYFIRE");
-   
-}
-
-void coco3_wait_fire( Environment * _environment, int _port, int _release ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    deploy( joystick, src_hw_coco3_joystick_asm );
-
-    outline0("JSR WAITFIRE");
-   
-}
-
-void coco3_key_state( Environment * _environment, char *_scancode, char * _result ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    MAKE_LABEL
-
-    deploy( keyboard, src_hw_coco3_keyboard_asm );
-
-    outline1("LDA %s", _scancode);
-    outline0("JSR KEYSTATE");
-    cpu_ctoa( _environment );
-    outline1("STA %s", _result);
-
-}
-
-void coco3_scancode( Environment * _environment, char * _result ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    deploy( keyboard, src_hw_coco3_keyboard_asm);
-
-    outline0("JSR SCANCODE");
-    outline1("STA %s", _result );
-   
-}
-
-void coco3_asciicode( Environment * _environment, char * _result ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    deploy( keyboard, src_hw_coco3_keyboard_asm);
-
-    outline0("JSR ASCIICODE");
-    outline1("STA %s", _result );
-   
-}
-
-void coco3_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    MAKE_LABEL
-
-    deploy( keyboard, src_hw_coco3_keyboard_asm );
-
-    outline1("LDA %s", _scancode);
-    outline0("JSR KEYPRESSED");
-    cpu_ctoa( _environment );
-    outline1("STA %s", _result);
-
-}
-
-void coco3_scanshift( Environment * _environment, char * _shifts ) {
-
-    coco3_keyshift( _environment, _shifts );
-    
-}
-
-void coco3_keyshift( Environment * _environment, char * _shifts ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    deploy( keyboard, src_hw_coco3_keyboard_asm );
-
-    outline0("JSR KEYSHIFT" );
-    outline1("STA %s", _shifts );
-
-
-}
-
-void coco3_clear_key( Environment * _environment ) {
-
-    _environment->bitmaskNeeded = 1;
-
-    deploy( keyboard, src_hw_coco3_keyboard_asm );
-
-    outline0("JSR CLEARKEY");
-
-}
-
 void coco3_initialization( Environment * _environment ) {
 
 }
@@ -255,7 +128,6 @@ void coco3_follow_irq( Environment * _environment ) {
     outline0("RTS" );
     
 }
-
 
 void coco3_sys_call( Environment * _environment, int _destination ) {
 
@@ -439,14 +311,6 @@ void coco3_dsave( Environment * _environment, char * _filename, char * _offset, 
     }
 
     outline0("JSR COCO3DSAVE");
-
-}
-
-void coco3_put_key(  Environment * _environment, char *_string, char * _size ) {
-
-    outline1("LDX %s", _string );
-    outline1("LDB %s", _size );
-    outline0("JSR PUTKEY" );
 
 }
 

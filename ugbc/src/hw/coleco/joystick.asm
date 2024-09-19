@@ -40,88 +40,172 @@ IO_Joy2		EQU	0FFH		; Joystick 2 input port
 
 @IF joystickConfig.values
 
-JOYSTICKTSBREMAP:
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ;- (TUNED) SIMON'S BASIC COMPATIBLE LAYER
+    ;-
+    ;- Change the reading values based on its convention.
+    ;-
+    ;- To enable: DEFINE JOYSTICK VALUES TSB
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    JOYSTICKTSBREMAP:
+        db  $0, $1, $3, $2
+        db  $5, $0, $4, $0
+        db  $7, $8, $0, $0
+        db  $6
 
-    db  $0, $1, $3, $2
-    db  $5, $0, $4, $0
-    db  $7, $8, $0, $0
-    db  $6
-
-JOYSTICKTSB:
-    PUSH BC
-    PUSH HL
-    PUSH DE
-    LD B, A
-    AND $0F
-    LD HL, JOYSTICKTSBREMAP
-    LD E, A
-    LD D, 0
-    ADD HL, DE
-    LD A, (HL)
-    LD C, A
-    LD A, B
-    AND $40
-    CP 0
-    JR Z, JOYSTICKTSBNOFIRE
-JOYSTICKXTSBNOFIRE:
-    LD A, C
-    OR $80
-    LD C, A
-JOYSTICKTSBNOFIRE:
-    LD A, C
-    POP DE
-    POP HL
-    POP BC
-    RET    
+    JOYSTICKTSB:
+        PUSH BC
+        PUSH HL
+        PUSH DE
+        LD B, A
+        AND $0F
+        LD HL, JOYSTICKTSBREMAP
+        LD E, A
+        LD D, 0
+        ADD HL, DE
+        LD A, (HL)
+        LD C, A
+        LD A, B
+        AND $40
+        CP 0
+        JR Z, JOYSTICKTSBNOFIRE
+    JOYSTICKXTSBNOFIRE:
+        LD A, C
+        OR $80
+        LD C, A
+    JOYSTICKTSBNOFIRE:
+        LD A, C
+        POP DE
+        POP HL
+        POP BC
+        RET    
 
 @ENDIF
 
-JOYSTICKMANAGER:
-    PUSH AF
-    PUSH BC
-    LD A, 0
-    OUT	($C0),A
-    NOP
-    NOP
-    NOP
-    NOP
+JOYSTICKREAD0:
+        LD A, 0
+        OUT	($C0),A
+        NOP
+        NOP
+        NOP
+        NOP
+        IN	A, ($FC)
+        CPL
+        AND $7F
+        RET
 
-    IN	A, ($FC)
-    CPL
-    AND $7F
+JOYSTICKREAD1:
+        LD A, 1
+        OUT	($C0),A
+        NOP
+        NOP
+        NOP
+        NOP
+        IN	A, ($FF)
+        CPL
+        AND $7F
+        RET
 
-@IF joystickConfig.values
-    CALL JOYSTICKTSB
+@IF joystickConfig.sync
+
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ;- SYNCHRONIZED JOYSTICK READING
+    ;-
+    ;- This is the actual implementation that will be used, where the programmer 
+    ;- chooses to read the joystick position at the specific moment the JOY or 
+    ;- similar instruction is executed.
+    ;-
+    ;- To enable: DEFINE JOYSTICK SYNC
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    WAITFIRE0:
+        CALL JOYSTICKREAD0
+        AND $10
+        CP 0
+        JR Z, WAITFIRE0
+        RET
+
+    WAITFIRE1:
+        CALL JOYSTICKREAD1
+        AND $10
+        CP 0
+        JR Z, WAITFIRE1
+        RET
+
+    WAITFIRE:
+        CALL JOYSTICKREAD0
+        LD B, A
+        CALL JOYSTICKREAD1
+        OR B
+        CP 0
+        JR Z, WAITFIRE
+        RET
+
+@ELSE
+
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ;- ASYNCRONOUS JOYSTICK READING (default)
+    ;-
+    ;- This is the implementation used where the programmer chooses to use 
+    ;- interrupts to read the joystick position.
+    ;-
+    ;- To enable: DEFINE JOYSTICK ASYNC
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    ; IRQ service routine
+
+    JOYSTICKMANAGER:
+
+        ; Save registers
+
+        PUSH AF
+        PUSH BC
+
+        ; Read JOY(0)
+
+        CALL JOYSTICKREAD0
+
+        ; Store it on dedicated storage
+
+        LD (JOYSTICK0), A
+
+        ; Read JOY(1)
+
+        CALL JOYSTICKREAD1
+
+        ; Store it on dedicated storage
+
+        LD (JOYSTICK1), A
+
+        ; Restore registers
+
+        POP BC
+        POP AF
+        RET
+
+    WAITFIRE0:
+        LD A, (JOYSTICK0)
+        AND $10
+        CP 0
+        JR Z, WAITFIRE0
+        RET
+
+    WAITFIRE1:
+        LD A, (JOYSTICK1)
+        AND $10
+        CP 0
+        JR Z, WAITFIRE1
+        RET
+
+    WAITFIRE:
+        LD A, (JOYSTICK0)
+        LD B, A
+        LD A, (JOYSTICK1)
+        OR B
+        CP 0
+        JR Z, WAITFIRE
+        RET
+
 @ENDIF
 
-    LD (JOYSTICK0), A
-
-    LD A, 1
-    OUT	($C0),A
-    NOP
-    NOP
-    NOP
-    NOP
-
-    IN	A, ($FF)
-    CPL
-    AND $7F
-
-@IF joystickConfig.values
-    CALL JOYSTICKTSB
-@ENDIF
-
-    LD (JOYSTICK1), A
-
-    POP BC
-    POP AF
-    RET
-
-WAITFIRE:
-    LD A, (JOYSTICK0)
-    LD B, A
-    LD A, (JOYSTICK1)
-    OR B
-    CP 0
-    JR Z, WAITFIRE
-    RET

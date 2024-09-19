@@ -180,6 +180,8 @@
 #define JOY_RIGHT           3
 #define JOY_FIRE            4
 
+#define JOYCONFIG_DEFAULT_SYNC      1
+
 #define MAX_AUDIO_CHANNELS  3
 
 void msx1_wait_key( Environment * _environment, int _release );

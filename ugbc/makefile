@@ -290,6 +290,22 @@ SOURCES_6502 := $(subst src/hw/6502/,src-generated/6502_,$(MODULES_6502:.asm=.c)
 src-generated/6502_%.c: $(MODULES_6502)
 	@xxd -i $(subst src-generated/6502_,src/hw/6502/,$(@:.c=.asm)) >$@
 
+# MOS Technology CIA
+
+MODULES_CIA := $(wildcard src/hw/cia/*.asm)
+SOURCES_CIA := $(subst src/hw/cia/,src-generated/cia_,$(MODULES_CIA:.asm=.c))
+
+src-generated/cia_%.c: $(MODULES_CIA)
+	@xxd -i $(subst src-generated/cia_,src/hw/cia/,$(@:.c=.asm)) >$@
+
+# Morotola PIA 6822
+
+MODULES_PIA := $(wildcard src/hw/pia/*.asm)
+SOURCES_PIA := $(subst src/hw/pia/,src-generated/pia_,$(MODULES_PIA:.asm=.c))
+
+src-generated/pia_%.c: $(MODULES_PIA)
+	@xxd -i $(subst src-generated/pia_,src/hw/pia/,$(@:.c=.asm)) >$@
+
 # ATARI POKEY
 
 MODULES_POKEY := $(wildcard src/hw/pokey/*.asm)
@@ -475,8 +491,8 @@ SOURCES_C128 := $(subst src/hw/c128/,src-generated/c128_,$(MODULES_C128:.asm=.c)
 src-generated/c128_%.c: $(MODULES_C128)
 	@xxd -i $(subst src-generated/c128_,src/hw/c128/,$(@:.c=.asm)) >$@
 
-src-generated/modules_c128.c: $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_VDC) $(SOURCES_SID)
-	@cat $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_VDC) $(SOURCES_SID) >src-generated/modules_c128.c
+src-generated/modules_c128.c: $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_VDC) $(SOURCES_SID) $(SOURCES_CIA)
+	@cat $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_VDC) $(SOURCES_SID) $(SOURCES_CIA) >src-generated/modules_c128.c
 	@grep "src" src-generated/modules_c128.c | awk -f modules.awk >src-generated/modules_c128.h
 	@grep "data" src-generated/modules_c128.c | awk -f modules.awk >>src-generated/modules_c128.h
 
@@ -501,8 +517,8 @@ SOURCES_C64 := $(subst src/hw/c64/,src-generated/c64_,$(MODULES_C64:.asm=.c))
 src-generated/c64_%.c: $(MODULES_C64)
 	@xxd -i $(subst src-generated/c64_,src/hw/c64/,$(@:.c=.asm)) >$@
 
-src-generated/modules_c64.c: $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) $(SOURCES_SID)
-	@cat $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) $(SOURCES_SID) >src-generated/modules_c64.c
+src-generated/modules_c64.c: $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) $(SOURCES_SID)  $(SOURCES_CIA)
+	@cat $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) $(SOURCES_SID) $(SOURCES_CIA) >src-generated/modules_c64.c
 	@grep "src" src-generated/modules_c64.c | awk -f modules.awk >src-generated/modules_c64.h
 	@grep "data" src-generated/modules_c64.c | awk -f modules.awk >>src-generated/modules_c64.h
 
@@ -514,8 +530,8 @@ SOURCES_C64REU := $(subst src/hw/c64reu/,src-generated/c64reu_,$(MODULES_C64REU:
 src-generated/c64reu_%.c: $(MODULES_C64REU)
 	@xxd -i $(subst src-generated/c64reu_,src/hw/c64reu/,$(@:.c=.asm)) >$@
 
-src-generated/modules_c64reu.c: $(SOURCES_6502) $(SOURCES_C64REU) $(SOURCES_VIC2) $(SOURCES_SID)
-	@cat $(SOURCES_6502) $(SOURCES_C64REU) $(SOURCES_VIC2) $(SOURCES_SID) >src-generated/modules_c64reu.c
+src-generated/modules_c64reu.c: $(SOURCES_6502) $(SOURCES_C64REU) $(SOURCES_VIC2) $(SOURCES_SID) $(SOURCES_CIA)
+	@cat $(SOURCES_6502) $(SOURCES_C64REU) $(SOURCES_VIC2) $(SOURCES_SID) $(SOURCES_CIA) >src-generated/modules_c64reu.c
 	@grep "src" src-generated/modules_c64reu.c | awk -f modules.awk >src-generated/modules_c64reu.h
 	@grep "data" src-generated/modules_c64reu.c | awk -f modules.awk >>src-generated/modules_c64reu.h
 
@@ -553,8 +569,8 @@ SOURCES_COCO := $(subst src/hw/coco/,src-generated/coco_,$(MODULES_COCO:.asm=.c)
 src-generated/coco_%.c: $(MODULES_COCO)
 	@xxd -i $(subst src-generated/coco_,src/hw/coco/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_COCO) $(COCO)
-	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_COCO) $(COCO) >src-generated/modules_coco.c
+src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCO) $(COCO) 
+	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCO) $(COCO) >src-generated/modules_coco.c
 	@grep "src" src-generated/modules_coco.c | awk -f modules.awk >src-generated/modules_coco.h
 	@grep "data" src-generated/modules_coco.c | awk -f modules.awk >>src-generated/modules_coco.h
 
@@ -566,8 +582,8 @@ SOURCES_COCO3 := $(subst src/hw/coco3/,src-generated/coco3_,$(MODULES_COCO3:.asm
 src-generated/coco3_%.c: $(MODULES_COCO3)
 	@xxd -i $(subst src-generated/coco3_,src/hw/coco3/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coco3.c: $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_SN76489M) $(SOURCES_COCO3) $(COCO3)
-	@cat $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_SN76489M) $(SOURCES_COCO3) $(COCO3) >src-generated/modules_coco3.c
+src-generated/modules_coco3.c: $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCO3) $(COCO3)
+	@cat $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCO3) $(COCO3) >src-generated/modules_coco3.c
 	@grep "src" src-generated/modules_coco3.c | awk -f modules.awk >src-generated/modules_coco3.h
 	@grep "data" src-generated/modules_coco3.c | awk -f modules.awk >>src-generated/modules_coco3.h
 
@@ -579,8 +595,8 @@ SOURCES_D32 := $(subst src/hw/d32/,src-generated/d32_,$(MODULES_D32:.asm=.c))
 src-generated/d32_%.c: $(MODULES_D32)
 	@xxd -i $(subst src-generated/d32_,src/hw/d32/,$(@:.c=.asm)) >$@
 
-src-generated/modules_d32.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D32)
-	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D32) >src-generated/modules_d32.c
+src-generated/modules_d32.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D32)  $(SOURCES_PIA)
+	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_PIA) $(SOURCES_D32) >src-generated/modules_d32.c
 	@grep "src" src-generated/modules_d32.c | awk -f modules.awk >src-generated/modules_d32.h
 	@grep "data" src-generated/modules_d32.c | awk -f modules.awk >>src-generated/modules_d32.h
 
@@ -592,8 +608,8 @@ SOURCES_D64 := $(subst src/hw/d64/,src-generated/d64_,$(MODULES_D64:.asm=.c))
 src-generated/d64_%.c: $(MODULES_D64)
 	@xxd -i $(subst src-generated/d64_,src/hw/d64/,$(@:.c=.asm)) >$@
 
-src-generated/modules_d64.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D64)
-	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D64) >src-generated/modules_d64.c
+src-generated/modules_d64.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D64) $(SOURCES_PIA)
+	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_PIA) $(SOURCES_D64) >src-generated/modules_d64.c
 	@grep "src" src-generated/modules_d64.c | awk -f modules.awk >src-generated/modules_d64.h
 	@grep "data" src-generated/modules_d64.c | awk -f modules.awk >>src-generated/modules_d64.h
 
@@ -759,6 +775,8 @@ SOURCES += $(wildcard src/targets/common/vic1/*.c)
 SOURCES += $(wildcard src/targets/common/zx/*.c)
 SOURCES += $(wildcard src/targets/common/gime/*.c)
 SOURCES += $(wildcard src/targets/common/vdcz/*.c)
+SOURCES += $(wildcard src/targets/common/cia/*.c)
+SOURCES += $(wildcard src/targets/common/pia/*.c)
 SOURCES += $(wildcard src/targets/$(target)/*.c)
 SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 
@@ -786,6 +804,8 @@ SOURCESTEST += $(wildcard src/targets/common/vic1/*.c)
 SOURCESTEST += $(wildcard src/targets/common/zx/*.c)
 SOURCESTEST += $(wildcard src/targets/common/gime/*.c)
 SOURCESTEST += $(wildcard src/targets/common/vdcz/*.c)
+SOURCESTEST += $(wildcard src/targets/common/cia/*.c)
+SOURCESTEST += $(wildcard src/targets/common/pia/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
 SOURCESTEST += $(wildcard src-test/tests/*.c)

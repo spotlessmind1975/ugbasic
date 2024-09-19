@@ -94,7 +94,7 @@ CPCISVC:
 @IF deployed.keyboard
 	CALL KEYBOARDMANAGER
 @ENDIF
-@IF deployed.joystick
+@IF deployed.joystick && !joystickConfig.sync
 	CALL JOYSTICKMANAGER
 @ENDIF
 @IF deployed.timer

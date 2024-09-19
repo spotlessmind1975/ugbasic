@@ -439,6 +439,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->joystickConfig.retries;
             } else if ( strcmp( $3, "values" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->joystickConfig.values;
+            } else if ( strcmp( $3, "sync" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->joystickConfig.sync;
             } else {
                 $$ = 0;
             }

@@ -4438,13 +4438,13 @@ wait_definition_simple:
       wait_milliseconds( _environment, $1 );
     }
     | FIRE release {
-        wait_fire( _environment, 0, $2 );
+        wait_fire( _environment, -1, $2 );
     }
     | FIRE OP OP_HASH const_expr CP release {
         wait_fire( _environment, $4, $6 );
     }
     | KEY OR FIRE release {
-        wait_key_or_fire( _environment, 0, $4 );
+        wait_key_or_fire( _environment, -1, $4 );
     }
     | KEY OR FIRE OP OP_HASH const_expr CP release {
         wait_key_or_fire( _environment, $6, $8 );
@@ -8111,6 +8111,12 @@ define_definition :
     | CLS EXPLICIT {
         ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 0;
     }
+    | JOYSTICK SYNC {
+        ((struct _Environment *)_environment)->joystickConfig.sync = 1;
+    }
+    | JOYSTICK ASYNC {
+        ((struct _Environment *)_environment)->joystickConfig.sync = 0;
+    }
     | AUDIO SYNC {
         ((struct _Environment *)_environment)->audioConfig.async = 0;
     }
@@ -10945,6 +10951,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->temporaryPath = get_default_temporary_path( );
 
     _environment->protothreadConfig.count = PROTOTHREAD_DEFAULT_COUNT;
+
+    _environment->joystickConfig.sync = JOYCONFIG_DEFAULT_SYNC;
 
     _environment->inputConfig.latency = 350 / 20;
     _environment->inputConfig.delay = 75 / 20;

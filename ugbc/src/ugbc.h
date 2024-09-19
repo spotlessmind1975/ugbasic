@@ -1776,6 +1776,7 @@ typedef struct _JoystickConfig {
 
     int retries;
     int values;
+    int sync;
 
 } JoystickConfig;
 
@@ -2835,7 +2836,12 @@ typedef struct _Environment {
     Dialect dialect;
 
     int clsCalledOnce;
-    
+
+    /**
+     * Is joystick sync?
+     */
+    int joystickSync;
+
     char * optionalX;
     char * optionalY;
 
@@ -5064,6 +5070,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/vic2.h"
     #include "hw/sid.h"
     #include "hw/c64.h"
+    #include "hw/cia.h"
     #include "outputs/d64.h"
 #elif __plus4__
     #include "../src-generated/modules_plus4.h"
@@ -5078,23 +5085,27 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_coco.h"
     #include "hw/6809.h"
     #include "hw/6847.h"
+    #include "hw/pia.h"
     #include "hw/coco.h"
     #include "hw/sn76489m.h"
 #elif __coco3__ 
     #include "../src-generated/modules_coco3.h"
     #include "hw/6809.h"
     #include "hw/gime.h"
+    #include "hw/pia.h"
     #include "hw/coco3.h"
     #include "hw/sn76489m.h"
 #elif __d32__ 
     #include "../src-generated/modules_d32.h"
     #include "hw/6809.h"
     #include "hw/6847.h"
+    #include "hw/pia.h"
     #include "hw/d32.h"
 #elif __d64__ 
     #include "../src-generated/modules_d64.h"
     #include "hw/6809.h"
     #include "hw/6847.h"
+    #include "hw/pia.h"
     #include "hw/d64.h"
 #elif __pc128op__ 
     #include "../src-generated/modules_pc128op.h"
@@ -5152,6 +5163,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/6502.h"
     #include "hw/vic2.h"
     #include "hw/sid.h"
+    #include "hw/cia.h"
     #include "hw/c128.h"
     #include "outputs/d64.h"
 #elif __c128z__
@@ -5170,6 +5182,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/6502.h"
     #include "hw/vic2.h"
     #include "hw/sid.h"
+    #include "hw/cia.h"
     #include "hw/c64reu.h"
     #include "outputs/d64.h"
 #endif

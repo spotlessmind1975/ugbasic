@@ -42,25 +42,52 @@
 ; for the passing FREE(0)->PRESSED(1). Since the keyboard could already have
 ; a key pressed, we must also wait for FREE(0) state, first.
 
-WAITKEYFIRE:
-    LD A, (KEYBOARDASFSTATE)
-    CP 0
-    JR Z, WAITKEYFIRE1
-WAITKEYFIRE0:
-    LD A, (KEYBOARDASFSTATE)
-    CP 0
-    JR NZ, WAITKEYFIRE0
-WAITKEYFIRE1:
-    LD A, (JOYSTICK0)
-    AND $10
-    LD B, A
-    LD A, (JOYSTICK1)
-    AND $10
-    OR B
-    LD B, A
-    LD A, (KEYBOARDASFSTATE)
-    OR B
-    CP 0
-    JR Z, WAITKEYFIRE1
-    RET
+@IF joystickConfig.sync
 
+    WAITKEYFIRE:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR Z, WAITKEYFIRE1
+    WAITKEYFIRE0:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR NZ, WAITKEYFIRE0
+    WAITKEYFIRE1:
+        CALL JOYSTICKREAD0
+        AND $10
+        LD B, A
+        CALL JOYSTICKREAD1
+        AND $10
+        OR B
+        LD B, A
+        LD A, (KEYBOARDASFSTATE)
+        OR B
+        CP 0
+        JR Z, WAITKEYFIRE1
+        RET
+
+@ELSE
+
+    WAITKEYFIRE:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR Z, WAITKEYFIRE1
+    WAITKEYFIRE0:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR NZ, WAITKEYFIRE0
+    WAITKEYFIRE1:
+        LD A, (JOYSTICK0)
+        AND $10
+        LD B, A
+        LD A, (JOYSTICK1)
+        AND $10
+        OR B
+        LD B, A
+        LD A, (KEYBOARDASFSTATE)
+        OR B
+        CP 0
+        JR Z, WAITKEYFIRE1
+        RET
+
+@ENDIF

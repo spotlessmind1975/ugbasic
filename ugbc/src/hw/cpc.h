@@ -146,6 +146,8 @@
 #define JOY_RIGHT           3
 #define JOY_FIRE            4
 
+#define JOYCONFIG_DEFAULT_SYNC      1
+
 #define DEFAULT_PAINT_BUCKET_SIZE   1024
 
 #define BANK_COUNT          0

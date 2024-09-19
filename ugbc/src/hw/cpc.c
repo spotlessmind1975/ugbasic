@@ -146,8 +146,18 @@ void cpc_wait_fire( Environment * _environment, int _port, int _release ) {
 
     deploy( joystick, src_hw_cpc_joystick_asm );
 
-    outline0("CALL WAITFIRE");
-   
+    switch( _port ) {
+        case -1:
+            outline0("CALL WAITFIRE");
+            break;
+        case 0:
+            outline0("CALL WAITFIRE0");
+            break;
+        case 1:
+            outline0("CALL WAITFIRE1");
+            break;
+    }
+      
 }
 
 void cpc_key_state( Environment * _environment, char *_scancode, char * _result ) {
@@ -258,11 +268,25 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value ) {
     outline1("LD A, (%s)", _port);
     outline0("CP 0");
     outline1("JR NZ, %spt1", label );
-    outline0("LD A, (JOYSTICK0)");
+    if ( _environment->joystickConfig.sync ) {
+        outline0("CALL JOYSTICKREAD0" );
+    } else {
+        outline0("LD A, (JOYSTICK0)" );
+    }
+    if ( _environment->joystickConfig.values ) {
+        outline0("CALL JOYSTICKTSB" );
+    }
     outline1("LD (%s), A", _value);
     outline1("JR %sptx", label );
     outhead1("%spt1:", label);
-    outline0("LD A, (JOYSTICK1)");
+    if ( _environment->joystickConfig.sync ) {
+        outline0("CALL JOYSTICKREAD1" );
+    } else {
+        outline0("LD A, (JOYSTICK1)" );
+    }
+    if ( _environment->joystickConfig.values ) {
+        outline0("CALL JOYSTICKTSB" );
+    }
     outline1("LD (%s), A", _value);
     outline1("JR %sptx", label );
     outhead1("%sptx:", label);
@@ -278,14 +302,24 @@ void cpc_joy( Environment * _environment, int _port, char * _value ) {
 
     switch ( _port ) {
         case 0:
-            outline0("LD A, (JOYSTICK0)");
-            outline1("LD (%s), A", _value);
+            if ( _environment->joystickConfig.sync ) {
+                outline0("CALL JOYSTICKREAD0" );
+            } else {
+                outline0("LD A, (JOYSTICK0)" );
+            }
             break;
         case 1:
-            outline0("LD A, (JOYSTICK1)");
-            outline1("LD (%s), A", _value);
+            if ( _environment->joystickConfig.sync ) {
+                outline0("CALL JOYSTICKREAD0" );
+            } else {
+                outline0("LD A, (JOYSTICK0)" );
+            }
             break;
     }
+    if ( _environment->joystickConfig.values ) {
+        outline0("CALL JOYSTICKTSB" );
+    }
+    outline1("LD (%s), A", _value);
 
 }
 
