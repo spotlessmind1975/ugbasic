@@ -308,9 +308,9 @@ KEYBOARDDETECTNONE:
     CCF
     RET
 
-@EMIT inputConfig.latency AS KEYBOARDLATENCY
-@EMIT inputConfig.delay AS KEYBOARDDELAY
-@EMIT inputConfig.release AS KEYBOARDRELEASE
+@EMIT keyboardConfig.latency AS KEYBOARDLATENCY
+@EMIT keyboardConfig.delay AS KEYBOARDDELAY
+@EMIT keyboardConfig.release AS KEYBOARDRELEASE
 
 ; ----------------------------------------------------------------------------
 ; KEYBOARDLATENCYELAPSED

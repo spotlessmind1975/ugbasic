@@ -444,13 +444,13 @@ const_factor:
             } else {
                 $$ = 0;
             }
-        } else if ( strcmp( $1, "inputConfig" ) == 0 ) {
+        } else if ( strcmp( $1, "keyboardConfig" ) == 0 ) {
             if ( strcmp( $3, "latency" ) == 0 ) {
-                $$ = ((struct _Environment *)_environment)->inputConfig.latency;
+                $$ = ((struct _Environment *)_environment)->keyboardConfig.latency;
             } else if ( strcmp( $3, "delay" ) == 0 ) {
-                $$ = ((struct _Environment *)_environment)->inputConfig.delay;
+                $$ = ((struct _Environment *)_environment)->keyboardConfig.delay;
             } else if ( strcmp( $3, "release" ) == 0 ) {
-                $$ = ((struct _Environment *)_environment)->inputConfig.release;
+                $$ = ((struct _Environment *)_environment)->keyboardConfig.release;
             } else {
                 $$ = 0;
             }
@@ -640,13 +640,13 @@ embed2:
             } else if ( strcmp( $5, "values" ) == 0 ) {
                 vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->joystickConfig.values );
             }
-        } else if ( strcmp( $3, "inputConfig" ) == 0 ) {
+        } else if ( strcmp( $3, "keyboardConfig" ) == 0 ) {
             if ( strcmp( $5, "latency" ) == 0 ) {
-                vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->inputConfig.latency );
+                vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->keyboardConfig.latency );
             } else if ( strcmp( $5, "delay" ) == 0 ) {
-                vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->inputConfig.delay );
+                vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->keyboardConfig.delay );
             } else if ( strcmp( $5, "release" ) == 0 ) {
-                vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->inputConfig.release );
+                vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->keyboardConfig.release );
             }
         }
 

@@ -1760,7 +1760,7 @@ typedef struct _ProtothreadConfig {
 
 } ProtothreadConfig;
 
-typedef struct _InputConfig {
+typedef struct _KeyboardConfig {
 
     char separator;
     int size;
@@ -1770,7 +1770,7 @@ typedef struct _InputConfig {
     char release;
     char delay;
 
-} InputConfig;
+} KeyboardConfig;
 
 typedef struct _JoystickConfig {
 
@@ -2107,7 +2107,7 @@ typedef struct _Environment {
     /**
      * 
      */
-    InputConfig inputConfig;
+    KeyboardConfig keyboardConfig;
 
     JoystickConfig joystickConfig;
 

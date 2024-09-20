@@ -8200,64 +8200,64 @@ define_definition :
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_SIZE( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.size = $3;
+        ((struct _Environment *)_environment)->keyboardConfig.size = $3;
     }    
     | INPUT SEPARATOR const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_SEPARATOR( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.separator = $3;
+        ((struct _Environment *)_environment)->keyboardConfig.separator = $3;
     }    
     | INPUT CURSOR const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_CURSOR( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.cursor = $3;
+        ((struct _Environment *)_environment)->keyboardConfig.cursor = $3;
     }    
     | INPUT LATENCY const_expr  {
         if ( $3 <= 0 || $3 >= 256 ) {
             CRITICAL_INVALID_INPUT_LATENCY( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.latency = $3;
+        ((struct _Environment *)_environment)->keyboardConfig.latency = $3;
     }
     | INPUT LATENCY const_expr milliseconds {
         int latency = $3 / 20;
         if ( latency <= 0 || latency >= 256 ) {
             CRITICAL_INVALID_INPUT_LATENCY_MS( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.latency = latency;
+        ((struct _Environment *)_environment)->keyboardConfig.latency = latency;
     }
     | INPUT RATE const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_RATE( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.delay = 255 - $3;
+        ((struct _Environment *)_environment)->keyboardConfig.delay = 255 - $3;
     }
     | INPUT DELAY const_expr {
         if ( $3 <= 0 || $3 >= 256 ) {
             CRITICAL_INVALID_INPUT_DELAY( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.delay = $3;
+        ((struct _Environment *)_environment)->keyboardConfig.delay = $3;
     }
     | INPUT DELAY const_expr milliseconds {
         int delay = $3 / 20;
         if ( delay <= 0 || delay >= 256 ) {
             CRITICAL_INVALID_INPUT_DELAY_MS( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.delay = delay;
+        ((struct _Environment *)_environment)->keyboardConfig.delay = delay;
     }
     | INPUT RELEASE const_expr {
         if ( $3 <= 0 || $3 >= 256 ) {
             CRITICAL_INVALID_INPUT_RELEASE( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.release = $3;
+        ((struct _Environment *)_environment)->keyboardConfig.release = $3;
     }
     | INPUT RELEASE const_expr milliseconds {
         int release = $3 / 20;
         if ( release <= 0 || release >= 256 ) {
             CRITICAL_INVALID_INPUT_RELEASE_MS( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.release = release;
+        ((struct _Environment *)_environment)->keyboardConfig.release = release;
     }
     | SCREEN MODE UNIQUE {
         ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 1;
@@ -8281,13 +8281,13 @@ define_definition :
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_RATE( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.delay = 255 - $3;
+        ((struct _Environment *)_environment)->keyboardConfig.delay = 255 - $3;
     }
     | KEYBOARD DELAY const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_DELAY( $3 );
         }
-        ((struct _Environment *)_environment)->inputConfig.delay = $3;
+        ((struct _Environment *)_environment)->keyboardConfig.delay = $3;
     }
     | PAINT BUFFER const_expr {
         if ( $3 <= 0 ) {
@@ -9444,34 +9444,34 @@ key_definition:
     if ( latency <= 0 || latency >= 256 ) {
         CRITICAL_INVALID_INPUT_LATENCY_MS( $2 );
     }
-    ((struct _Environment *)_environment)->inputConfig.latency = latency;
+    ((struct _Environment *)_environment)->keyboardConfig.latency = latency;
     int delay = $5 / 20;
     if ( delay <= 0 || delay >= 256 ) {
         CRITICAL_INVALID_INPUT_DELAY_MS( $5 );
     }
-    ((struct _Environment *)_environment)->inputConfig.delay = delay;
+    ((struct _Environment *)_environment)->keyboardConfig.delay = delay;
     int release = $8 / 20;
     if ( release <= 0 || release >= 256 ) {
         CRITICAL_INVALID_INPUT_RELEASE_MS( $8 );
     }
-    ((struct _Environment *)_environment)->inputConfig.release = release;
+    ((struct _Environment *)_environment)->keyboardConfig.release = release;
   }
   | SPEED const_expr OP_COMMA const_expr OP_COMMA const_expr {
     int latency = $2;
     if ( latency <= 0 || latency >= 256 ) {
         CRITICAL_INVALID_INPUT_LATENCY_MS( $2 );
     }
-    ((struct _Environment *)_environment)->inputConfig.latency = latency;
+    ((struct _Environment *)_environment)->keyboardConfig.latency = latency;
     int delay = $4;
     if ( delay <= 0 || delay >= 256 ) {
         CRITICAL_INVALID_INPUT_DELAY_MS( $4 );
     }
-    ((struct _Environment *)_environment)->inputConfig.delay = delay;
+    ((struct _Environment *)_environment)->keyboardConfig.delay = delay;
     int release = $6;
     if ( release <= 0 || release >= 256 ) {
         CRITICAL_INVALID_INPUT_RELEASE_MS( $6 );
     }
-    ((struct _Environment *)_environment)->inputConfig.release = release;
+    ((struct _Environment *)_environment)->keyboardConfig.release = release;
   };
 
 check_definition :
@@ -10954,9 +10954,9 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->joystickConfig.sync = JOYCONFIG_DEFAULT_SYNC;
 
-    _environment->inputConfig.latency = 350 / 20;
-    _environment->inputConfig.delay = 75 / 20;
-    _environment->inputConfig.release = 75 / 20;
+    _environment->keyboardConfig.latency = 350 / 20;
+    _environment->keyboardConfig.delay = 75 / 20;
+    _environment->keyboardConfig.release = 75 / 20;
 
 #if defined(__pc128op__) || defined(__to8__)
     _environment->bankedLoadDefault = 1;

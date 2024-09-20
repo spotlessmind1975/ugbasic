@@ -73,11 +73,11 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     if ( _environment->lineInput ) {
         cpu_store_8bit( _environment, comma->realName, 13 );
     } else {
-        cpu_store_8bit( _environment, comma->realName, _environment->inputConfig.separator == 0 ? INPUT_DEFAULT_SEPARATOR : _environment->inputConfig.separator );
+        cpu_store_8bit( _environment, comma->realName, _environment->keyboardConfig.separator == 0 ? INPUT_DEFAULT_SEPARATOR : _environment->keyboardConfig.separator );
     }
 
-    cpu_store_8bit( _environment, size->realName, _environment->inputConfig.size == 0 ? INPUT_DEFAULT_SIZE : _environment->inputConfig.size );
-    cpu_store_8bit( _environment, underscore->realName, _environment->inputConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->inputConfig.cursor );
+    cpu_store_8bit( _environment, size->realName, _environment->keyboardConfig.size == 0 ? INPUT_DEFAULT_SIZE : _environment->keyboardConfig.size );
+    cpu_store_8bit( _environment, underscore->realName, _environment->keyboardConfig.cursor == 0 ? INPUT_DEFAULT_CURSOR : _environment->keyboardConfig.cursor );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     cpu_dsfree( _environment, temporary->realName );
