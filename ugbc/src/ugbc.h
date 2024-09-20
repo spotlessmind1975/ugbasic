@@ -1769,6 +1769,7 @@ typedef struct _KeyboardConfig {
     char latency;
     char release;
     char delay;
+    char sync;
 
 } KeyboardConfig;
 
@@ -2836,11 +2837,6 @@ typedef struct _Environment {
     Dialect dialect;
 
     int clsCalledOnce;
-
-    /**
-     * Is joystick sync?
-     */
-    int joystickSync;
 
     char * optionalX;
     char * optionalY;
