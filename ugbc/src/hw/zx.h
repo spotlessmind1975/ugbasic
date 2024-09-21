@@ -182,6 +182,8 @@
 #define KEY_RIGHT                   0
 #define KEY_DIVISION                0
 
+#define KEYBOARD_CONFIG_DEFAULT_SYNC       1
+
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x5f
@@ -202,6 +204,8 @@
 #define JOY_LEFT            0
 #define JOY_RIGHT           0
 #define JOY_FIRE            0
+
+#define JOYSTICK_CONFIG_DEFAULT_SYNC      1
 
 #define SPRITE_COUNT                0
 #define SPRITE_WIDTH                0

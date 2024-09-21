@@ -114,6 +114,8 @@
 #define KEY_EQUAL					53
 #define KEY_SPACE					60
 
+#define KEYBOARD_CONFIG_DEFAULT_SYNC       0
+
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x60
@@ -123,6 +125,8 @@
 #define JOY_LEFT            3
 #define JOY_RIGHT           4
 #define JOY_FIRE            0
+
+#define JOYSTICK_CONFIG_DEFAULT_SYNC      0
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 

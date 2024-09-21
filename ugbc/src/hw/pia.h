@@ -143,7 +143,7 @@
     #define KEY_DEL                     0
     #define KEY_DIVISION                0
 
-    #define KEYBOARD_DEFAULT_SYNC       1
+    #define KEYBOARD_CONFIG_DEFAULT_SYNC       1
 
     #define         JOY_COUNT           2
     #define JOYSTICK_0					0
@@ -268,8 +268,8 @@
     #define KEY_DELETE                   0
     #define KEY_SEMICOLON				 0
 
-    #define KEYBOARD_DEFAULT_SYNC       1
-    
+    #define KEYBOARD_CONFIG_DEFAULT_SYNC       1
+
     #define         JOY_COUNT           2
     #define JOYSTICK_0					0
     #define JOYSTICK_1					1
@@ -280,6 +280,8 @@
     #define JOY_LEFT            2
     #define JOY_RIGHT           3
     #define JOY_FIRE            5
+
+    #define JOYSTICK_CONFIG_DEFAULT_SYNC      1
 
     #define INPUT_DEFAULT_SEPARATOR     ','
     #define INPUT_DEFAULT_SIZE          32
@@ -393,6 +395,8 @@
     #define KEY_DELETE                   0
     #define KEY_SEMICOLON				 0
 
+    #define KEYBOARD_CONFIG_DEFAULT_SYNC       1
+
     #define         JOY_COUNT           2
     #define JOYSTICK_0					0
     #define JOYSTICK_1					1
@@ -411,7 +415,7 @@
 
 #endif
 
-#define JOYCONFIG_DEFAULT_SYNC      1
+#define JOYSTICK_CONFIG_DEFAULT_SYNC      1
 
 void pia_wait_key( Environment * _environment, int _release );
 void pia_wait_fire( Environment * _environment, int _port, int _release );

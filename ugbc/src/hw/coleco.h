@@ -143,7 +143,7 @@
 #define KEY_RIGHT                   0xff
 #define KEY_DIVISION                0xff
 
-#define KEYBOARD_DEFAULT_SYNC       1
+#define KEYBOARD_CONFIG_DEFAULT_SYNC       1
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
@@ -159,7 +159,7 @@
 #define JOY_RIGHT           1
 #define JOY_FIRE            6
 
-#define JOYCONFIG_DEFAULT_SYNC      1
+#define JOYSTICK_CONFIG_DEFAULT_SYNC      1
 
 #define DEFAULT_PAINT_BUCKET_SIZE   64
 

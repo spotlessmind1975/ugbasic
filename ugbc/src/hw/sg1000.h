@@ -130,6 +130,8 @@
 #define KEY_RIGHT                    0x94
 #define KEY_DIVISION                 '/'
 
+#define KEYBOARD_CONFIG_DEFAULT_SYNC       1
+
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x60
@@ -150,6 +152,8 @@
 #define JOY_FIRE            4
 #define JOY_FIRE_LEFT       4
 #define JOY_FIRE_RIGHT      5
+
+#define JOYSTICK_CONFIG_DEFAULT_SYNC      1
 
 #define MAX_AUDIO_CHANNELS  3
 

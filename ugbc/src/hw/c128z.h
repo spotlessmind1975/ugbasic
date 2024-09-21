@@ -109,6 +109,8 @@
 #define KEY_LEFT					0
 #define KEY_RIGHT					0
 
+#define KEYBOARD_CONFIG_DEFAULT_SYNC       0
+
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x60
@@ -116,6 +118,8 @@
 #define INPUT_DEFAULT_DELAY         64
 
 #define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
+
+#define JOYSTICK_CONFIG_DEFAULT_SYNC       0
 
 #define JOY_COUNT           0
 

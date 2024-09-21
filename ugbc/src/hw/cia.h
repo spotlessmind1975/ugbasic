@@ -115,7 +115,7 @@
 #define INPUT_DEFAULT_RATE          96
 #define INPUT_DEFAULT_DELAY         128
 
-#define KEYBOARD_DEFAULT_SYNC       0
+#define KEYBOARD_CONFIG_DEFAULT_SYNC       0
 
 #define JOY_UP              0
 #define JOY_DOWN            1
@@ -125,7 +125,7 @@
 
 #define JOY_COUNT           2
 
-#define JOYCONFIG_DEFAULT_SYNC      0
+#define JOYSTICK_CONFIG_DEFAULT_SYNC      0
 
 void cia_wait_key( Environment * _environment, int _release );
 void cia_wait_fire( Environment * _environment, int _port, int _release );

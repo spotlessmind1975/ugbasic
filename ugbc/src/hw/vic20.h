@@ -48,6 +48,8 @@
 #define JOY_RIGHT           7
 #define JOY_FIRE            5
 
+#define JOYSTICK_CONFIG_DEFAULT_SYNC      1
+
 #define KEY_NONE					64
 #define KEY_0						35
 #define KEY_1						56
@@ -123,6 +125,8 @@
 #define KEY_DOWN                    0 // ?
 #define KEY_LEFT                    0 // ?
 #define KEY_RIGHT                   0 // ?
+
+#define KEYBOARD_CONFIG_DEFAULT_SYNC       1
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32

@@ -10958,8 +10958,8 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->protothreadConfig.count = PROTOTHREAD_DEFAULT_COUNT;
 
-    _environment->joystickConfig.sync = JOYCONFIG_DEFAULT_SYNC;
-    _environment->keyboardConfig.sync = KEYBOARD_DEFAULT_SYNC;
+    _environment->joystickConfig.sync = JOYSTICK_CONFIG_DEFAULT_SYNC;
+    _environment->keyboardConfig.sync = KEYBOARD_CONFIG_DEFAULT_SYNC;
 
     _environment->keyboardConfig.latency = 350 / 20;
     _environment->keyboardConfig.delay = 75 / 20;

@@ -46,7 +46,7 @@
 #define JOY_RIGHT           4
 #define JOY_FIRE            0
 
-#define JOYCONFIG_DEFAULT_SYNC      1
+#define JOYSTICK_CONFIG_DEFAULT_SYNC      1
 
 #define KEY_NONE						255
 #define KEY_L						0
@@ -136,7 +136,7 @@
 #define INPUT_DEFAULT_RATE          16
 #define INPUT_DEFAULT_DELAY         64
 
-#define KEYBOARD_DEFAULT_SYNC       0
+#define KEYBOARD_CONFIG_DEFAULT_SYNC       0
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
