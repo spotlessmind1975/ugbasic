@@ -123,6 +123,8 @@
 #define JOY_RIGHT           3
 #define JOY_FIRE            4
 
+#define JOY_COUNT           2
+
 #define JOYCONFIG_DEFAULT_SYNC      0
 
 void cia_wait_key( Environment * _environment, int _release );
