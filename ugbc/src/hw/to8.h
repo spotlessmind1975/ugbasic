@@ -130,6 +130,8 @@
 #define KEY_RIGHT                    0x09
 #define KEY_DIVISION                 '/'
 
+#define KEYBOARD_CONFIG_DEFAULT_SYNC    1
+
 #define         JOY_COUNT           0
 #define JOYSTICK_0					0
 #define JOYSTICK_1					1
