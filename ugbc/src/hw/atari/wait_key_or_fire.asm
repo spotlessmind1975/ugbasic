@@ -40,33 +40,65 @@
 ; ----------------------------------------------------------------------------
 ; This routine will wait for a key press OR a fire press. 
 
-WAITKEYFIRE:
-    LDA KEYBOARDASFSTATE
-    BEQ WAITKEYFIRE1
-WAITKEYFIRE0:
-    LDA KEYBOARDASFSTATE
-    BNE WAITKEYFIRE0
-WAITKEYFIRE1:
-    LDA $D010
-    AND #$01
-    EOR #$01
-    STA MATHPTR0
-    LDA $D011
-    AND #$01
-    EOR #$01
-    ORA MATHPTR0
-    STA MATHPTR0
-    LDA $D012
-    AND #$01
-    EOR #$01
-    ORA MATHPTR0
-    STA MATHPTR0
-    LDA $D013
-    AND #$01
-    EOR #$01
-    ORA MATHPTR0
-    LDA KEYBOARDASFSTATE
-    ORA MATHPTR0
-    BEQ WAITKEYFIRE1
-    RTS
+@IF keyboardConfig.sync
 
+    WAITKEYFIRE:
+        LDA $D010
+        AND #$01
+        EOR #$01
+        STA MATHPTR0
+        LDA $D011
+        AND #$01
+        EOR #$01
+        ORA MATHPTR0
+        STA MATHPTR0
+        LDA $D012
+        AND #$01
+        EOR #$01
+        ORA MATHPTR0
+        STA MATHPTR0
+        LDA $D013
+        AND #$01
+        EOR #$01
+        ORA MATHPTR0
+        LDA $2FC
+        EOR #$FF
+        ORA MATHPTR0
+        BEQ WAITKEYFIRE
+        LDA #$FF
+        STA $2FC
+        RTS
+
+@ELSE
+
+    WAITKEYFIRE:
+        LDA KEYBOARDASFSTATE
+        BEQ WAITKEYFIRE1
+    WAITKEYFIRE0:
+        LDA KEYBOARDASFSTATE
+        BNE WAITKEYFIRE0
+    WAITKEYFIRE1:
+        LDA $D010
+        AND #$01
+        EOR #$01
+        STA MATHPTR0
+        LDA $D011
+        AND #$01
+        EOR #$01
+        ORA MATHPTR0
+        STA MATHPTR0
+        LDA $D012
+        AND #$01
+        EOR #$01
+        ORA MATHPTR0
+        STA MATHPTR0
+        LDA $D013
+        AND #$01
+        EOR #$01
+        ORA MATHPTR0
+        LDA KEYBOARDASFSTATE
+        ORA MATHPTR0
+        BEQ WAITKEYFIRE1
+        RTS
+
+@ENDIF

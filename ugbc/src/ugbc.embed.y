@@ -451,6 +451,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->keyboardConfig.delay;
             } else if ( strcmp( $3, "release" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->keyboardConfig.release;
+            } else if ( strcmp( $3, "sync" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->keyboardConfig.sync;
             } else {
                 $$ = 0;
             }

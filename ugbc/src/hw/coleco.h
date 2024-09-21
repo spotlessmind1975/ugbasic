@@ -143,6 +143,8 @@
 #define KEY_RIGHT                   0xff
 #define KEY_DIVISION                0xff
 
+#define KEYBOARD_DEFAULT_SYNC       1
+
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x60

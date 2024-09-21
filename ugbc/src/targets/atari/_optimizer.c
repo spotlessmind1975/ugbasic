@@ -915,7 +915,10 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     // }
 
     /* variable in RAMs are not eligibile to inlining */
-    if( po_buf_match(buf[0], "* = *", tmp, arg) ) {
+    if( 
+        po_buf_match(buf[0], " * = *", tmp, arg) ||
+        po_buf_match(buf[0], "* = *", tmp, arg)
+     ) {
         struct var *v = vars_get(tmp);
         if ( v ) {
             // printf( "%s checking\n", v->name);
@@ -966,7 +969,10 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     } 
 
     /* remove changed variables */
-    if(po_buf_match( buf[0], "*: .byte ", var)
+    if(po_buf_match( buf[0], " *: .byte ", var)
+    || po_buf_match( buf[0], " *: .word ", var)
+    || po_buf_match( buf[0], " *: .res ", var)
+    || po_buf_match( buf[0], "*: .byte ", var)
     || po_buf_match( buf[0], "*: .word ", var)
     || po_buf_match( buf[0], "*: .res ", var)
     ) if(vars_ok(var)) {

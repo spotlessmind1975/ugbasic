@@ -35,6 +35,10 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF keyboardConfig.sync
+
+@ELSE
+
 SCANCODEREAD
 	FCB $00, $00, $00, $00, $00, $00, $00, $00
 	FCB $00, $00, $00, $00, $00, $00, $00, $00
@@ -882,3 +886,5 @@ CLEARKEY
     LDA #$FF
     STA KEYBOARDACTUAL
     RTS
+
+@ENDIF

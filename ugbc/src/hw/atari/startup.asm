@@ -66,23 +66,18 @@ ATARISTARTUPDONE:
 
     SEI
 
+    LDA $0208
+    STA OLDSVC0208+1
+    LDA $0209
+    STA OLDSVC0208+2    
+
     LDA #<VKEYDREPLACEMENT
     STA $0208
     LDA #>VKEYDREPLACEMENT
     STA $0209
 
-    LDA $0222
-    STA OLDSVC0222+1
-    LDA $0223
-    STA OLDSVC0222+2
+    LDA OLDSVC0208      ; this read is needed to avoid peep-hole optimization
 
-    LDA #<KEYBOARDMANAGER
-    STA $0222
-    LDA #>KEYBOARDMANAGER
-    STA $0223
-    
-    LDA OLDSVC0222      ; this read is needed to avoid peep-hole optimization
-    
     CLI
 
 @ENDIF

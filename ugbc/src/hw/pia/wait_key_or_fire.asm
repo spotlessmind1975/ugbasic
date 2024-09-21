@@ -42,6 +42,24 @@
 ; for the passing FREE(0)->PRESSED(1). Since the keyboard could already have
 ; a key pressed, we must also wait for FREE(0) state, first.
 
+@IF keyboardConfig.sync
+
+WAITKEYFIRE
+    LDA JOYSTICK0
+    ANDA #$10
+    STA MATHPTR0
+    LDA JOYSTICK1
+    ANDA #$10
+    ORA MATHPTR0
+    STA MATHPTR0
+    JSR SCANCODE
+    LDA KEYPRESS
+    ORA MATHPTR0
+    BEQ WAITKEYFIRE
+    RTS
+
+@ELSE
+
 WAITKEYFIRE
     LDA KEYBOARDASFSTATE
     BEQ WAITKEYFIRE1
@@ -61,3 +79,4 @@ WAITKEYFIRE1
     BEQ WAITKEYFIRE1
     RTS
 
+@ENDIF

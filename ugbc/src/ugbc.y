@@ -8117,6 +8117,12 @@ define_definition :
     | JOYSTICK ASYNC {
         ((struct _Environment *)_environment)->joystickConfig.sync = 0;
     }
+    | KEYBOARD SYNC {
+        ((struct _Environment *)_environment)->keyboardConfig.sync = 1;
+    }
+    | KEYBOARD ASYNC {
+        ((struct _Environment *)_environment)->keyboardConfig.sync = 0;
+    }
     | AUDIO SYNC {
         ((struct _Environment *)_environment)->audioConfig.async = 0;
     }
@@ -10953,6 +10959,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->protothreadConfig.count = PROTOTHREAD_DEFAULT_COUNT;
 
     _environment->joystickConfig.sync = JOYCONFIG_DEFAULT_SYNC;
+    _environment->keyboardConfig.sync = KEYBOARD_DEFAULT_SYNC;
 
     _environment->keyboardConfig.latency = 350 / 20;
     _environment->keyboardConfig.delay = 75 / 20;

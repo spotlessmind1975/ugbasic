@@ -44,10 +44,17 @@ void pia_inkey( Environment * _environment, char * _key ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_pia_keyboard_asm);
+    if ( _environment->keyboardConfig.sync ) {
+        deploy( scancode, src_hw_pia_scancode_asm);
+        outline0("JSR SCANCODE");
+        outline0("LDA KEYPRESS");
+        outline1("STA %s", _key);
+    } else {
+        deploy( keyboard, src_hw_pia_keyboard_asm);
+        outline0("JSR INKEY");
+        outline1("STA %s", _key);
+    }
 
-    outline0("JSR INKEY");
-    outline1("STA %s", _key);
 
 }
 
@@ -55,7 +62,11 @@ void pia_wait_key( Environment * _environment, int _release ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_pia_keyboard_asm );
+    if ( _environment->keyboardConfig.sync ) {
+        deploy( scancode, src_hw_pia_scancode_asm);
+    } else {
+        deploy( keyboard, src_hw_pia_keyboard_asm );
+    }
 
     if ( _release ) {
         outline0("JSR WAITKEYRELEASE");
@@ -70,7 +81,12 @@ void pia_wait_key_or_fire( Environment * _environment, int _port, int _release )
     _environment->bitmaskNeeded = 1;
 
     deploy( joystick, src_hw_pia_joystick_asm );
-    deploy( keyboard, src_hw_pia_keyboard_asm );
+    if ( _environment->keyboardConfig.sync ) {
+        deploy( scancode, src_hw_pia_scancode_asm);
+    } else {
+        deploy( keyboard, src_hw_pia_keyboard_asm );
+    }
+    
     deploy( wait_key_or_fire, src_hw_pia_wait_key_or_fire_asm );
 
     outline0("JSR WAITKEYFIRE");
@@ -91,14 +107,15 @@ void pia_key_state( Environment * _environment, char *_scancode, char * _result 
 
     _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
-
-    deploy( keyboard, src_hw_pia_keyboard_asm );
+    if ( _environment->keyboardConfig.sync ) {
+        deploy( scancode, src_hw_pia_scancode_asm);
+    } else {
+        deploy( keyboard, src_hw_pia_keyboard_asm );
+    }
 
     outline1("LDA %s", _scancode);
     outline0("JSR KEYSTATE");
     cpu_ctoa( _environment );
-    outline0("; store KEYSTATE");
     outline1("STA %s", _result);
 
 }
@@ -107,10 +124,16 @@ void pia_scancode( Environment * _environment, char * _result ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_pia_keyboard_asm);
-
-    outline0("JSR SCANCODE");
-    outline1("STA %s", _result );
+    if ( _environment->keyboardConfig.sync ) {
+        deploy( scancode, src_hw_pia_scancode_asm);
+        outline0("JSR SCANCODE");
+        outline0("LDA KEYPRESS");
+        outline1("STA %s", _result );
+    } else {
+        deploy( keyboard, src_hw_pia_keyboard_asm );
+        outline0("JSR SCANCODE");
+        outline1("STA %s", _result );
+    }
    
 }
 
@@ -118,11 +141,17 @@ void pia_asciicode( Environment * _environment, char * _result ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_pia_keyboard_asm);
+    if ( _environment->keyboardConfig.sync ) {
+        deploy( scancode, src_hw_pia_scancode_asm);
+        outline0("JSR SCANCODE");
+        outline0("LDA KEYPRESS");
+        outline1("STA %s", _result );
+    } else {
+        deploy( keyboard, src_hw_pia_keyboard_asm );
+        outline0("JSR ASCIICODE");
+        outline1("STA %s", _result );
+    }
 
-    outline0("JSR ASCIICODE");
-    outline1("STA %s", _result );
-   
 }
 
 void pia_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
@@ -131,7 +160,11 @@ void pia_key_pressed( Environment * _environment, char *_scancode, char * _resul
 
     MAKE_LABEL
 
-    deploy( keyboard, src_hw_pia_keyboard_asm );
+    if ( _environment->keyboardConfig.sync ) {
+        deploy( scancode, src_hw_pia_scancode_asm);
+    } else {
+        deploy( keyboard, src_hw_pia_keyboard_asm );
+    }
 
     outline1("LDA %s", _scancode);
     outline0("JSR KEYPRESSED");
@@ -153,9 +186,13 @@ void pia_keyshift( Environment * _environment, char * _shifts ) {
 
     deploy( keyboard, src_hw_pia_keyboard_asm );
 
-    outline0("JSR KEYSHIFT" );
-    outline1("STA %s", _shifts );
-
+    if ( _environment->keyboardConfig.sync ) {
+        deploy( scancode, src_hw_pia_scancode_asm);
+    } else {
+        deploy( keyboard, src_hw_pia_keyboard_asm );
+        outline0("JSR KEYSHIFT" );
+        outline1("STA %s", _shifts );
+    }
 
 }
 
@@ -163,17 +200,25 @@ void pia_clear_key( Environment * _environment ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_pia_keyboard_asm );
+    if ( _environment->keyboardConfig.sync ) {
 
-    outline0("JSR CLEARKEY");
+    } else {
+        deploy( keyboard, src_hw_pia_keyboard_asm );
+        outline0("JSR CLEARKEY");
+    }
 
 }
 
 void pia_put_key(  Environment * _environment, char *_string, char * _size ) {
 
-    outline1("LDX %s", _string );
-    outline1("LDB %s", _size );
-    outline0("JSR PUTKEY" );
+    if ( _environment->keyboardConfig.sync ) {
+        
+    } else {
+        deploy( keyboard, src_hw_pia_keyboard_asm );
+        outline1("LDX %s", _string );
+        outline1("LDB %s", _size );
+        outline0("JSR PUTKEY" );
+    }
 
 }
 

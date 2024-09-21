@@ -29,13 +29,16 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      KEYBOARD MATRIX DETECTION ON DRAGON 32/64              *
+;*                      KEYBOARD MATRIX DETECTION ON TRS-80 COLOR COMPUTER     *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-KEYBOARDMANAGER
+KEYPRESS
+    fcb $0
+    
+SCANCODE
     PSHS D
     PSHS X
     ; CLR $FF01
@@ -58,7 +61,6 @@ SCANCODENEXT2A
     ANDA #1
     CMPA #1
     BNE SCANCODENEXT2
-pippero
     LDA , X
     JMP SCANCODEE
 SCANCODENEXT2
@@ -80,8 +82,49 @@ SCANCODEE
     STA KEYPRESS
     PULS X
     PULS D
-
     RTS
+
+WAITKEY
+    JSR SCANCODE
+    LDA KEYPRESS
+    BEQ WAITKEY
+    RTS
+
+WAITKEYRELEASE
+    JSR WAITKEY
+WAITKEYRELEASE2
+    JSR SCANCODE
+    LDA KEYPRESS
+    BNE WAITKEYRELEASE2
+    RTS
+
+KEYPRESSED
+KEYSTATE
+    JSR SCANCODE
+    CMPA KEYPRESS
+    BEQ KEYSTATE1
+    LDA #0
+    RTS
+KEYSTATE1
+    LDA #$FF
+    RTS
+
+@IF COCO || COCO3
+
+SCANCODEMATRIX
+    fcb '@','H','P','X','0','8',$0d,$E3     ; // UNUSED
+    fcb 'A','I','Q','Y','1','9',$F9,$E4     ; // CLR, UNUSED
+    fcb 'B','J','R','Z','2',':',$D5,$E5     ; // BRK, UNUSED
+    fcb 'C','K','S',$FA,'3',';',$D6,$E6     ; // UP $FA, UNUSED, UNUSED
+    fcb 'D','L','T',$FB,'4',',',$D7,$E7     ; // DOWN $FB, UNUSED, UNUSED
+    fcb 'E','M','U',8,'5','-',$D8,$E8     ; // ?? $FC, .., LEFT, UNUSED, UNUSED
+    fcb 'F','N','V',$FD,'6','.',$D9,$E9     ; // RIGHT $FD, UNUSED, UNUSED
+SCANCODEMATRIXE
+    fcb 'G','O','W',' ','7','/',$F0,$FE     ; // UNUSED, SHIFT
+
+@ENDIF
+
+@IF DRAGON32 || DRAGON64
 
 SCANCODEMATRIX
     fcb '0','8','@','H','P','X',$0d,$00     ; // UNUSED
@@ -93,3 +136,5 @@ SCANCODEMATRIX
     fcb '6','/','F','N','V',$FD,$00,$00     ; // RIGHT, UNUSED, UNUSED
 SCANCODEMATRIXE
     fcb '7',' ','G','O','W',' ',$00,$FE     ; // UNUSED, SHIFT
+
+@ENDIF

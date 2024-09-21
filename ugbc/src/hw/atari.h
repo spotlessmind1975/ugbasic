@@ -136,6 +136,8 @@
 #define INPUT_DEFAULT_RATE          16
 #define INPUT_DEFAULT_DELAY         64
 
+#define KEYBOARD_DEFAULT_SYNC       0
+
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
 #define DEFAULT_PAINT_BUCKET_SIZE   512

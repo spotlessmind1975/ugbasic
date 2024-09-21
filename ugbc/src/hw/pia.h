@@ -143,6 +143,8 @@
     #define KEY_DEL                     0
     #define KEY_DIVISION                0
 
+    #define KEYBOARD_DEFAULT_SYNC       1
+
     #define         JOY_COUNT           2
     #define JOYSTICK_0					0
     #define JOYSTICK_1					1
@@ -266,6 +268,8 @@
     #define KEY_DELETE                   0
     #define KEY_SEMICOLON				 0
 
+    #define KEYBOARD_DEFAULT_SYNC       1
+    
     #define         JOY_COUNT           2
     #define JOYSTICK_0					0
     #define JOYSTICK_1					1

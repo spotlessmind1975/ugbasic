@@ -115,6 +115,8 @@
 #define INPUT_DEFAULT_RATE          96
 #define INPUT_DEFAULT_DELAY         128
 
+#define KEYBOARD_DEFAULT_SYNC       0
+
 #define JOY_UP              0
 #define JOY_DOWN            1
 #define JOY_LEFT            2
