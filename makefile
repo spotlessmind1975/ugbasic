@@ -582,7 +582,7 @@ generated/coco/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(COCODECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/coco/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
-	@$(ASM6809) $(OPTIONS) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/coco/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O dsk $(subst generated/coco/exeso/,,$(@:.dsk=.bas))
