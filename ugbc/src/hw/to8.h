@@ -141,6 +141,8 @@
 #define JOY_RIGHT           4
 #define JOY_FIRE            2
 
+#define JOYSTICK_CONFIG_DEFAULT_SYNC 1
+
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x60
