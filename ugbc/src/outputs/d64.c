@@ -100,8 +100,32 @@ int D64OffsetPerTrack[] = {
  * STATIC FUNCTIONS
  ****************************************************************************/
 
+
 static void d64_free_sectors_on_bam( D64BAMEntry * _entry, D64Sector _sectors );
 static void d64_free_sector_on_bam( D64BAMEntry * _entry, D64Sector _sector );
+
+static void d64_start_transaction( D64Handle * _handle ) {
+
+    _handle->snapshot = malloc( _handle->contentSize );
+    memset( _handle->snapshot, 0, _handle->contentSize );
+    memcpy( _handle->snapshot, _handle->content, _handle->contentSize );
+
+}
+
+static void d64_commit_transaction( D64Handle * _handle ) {
+
+    free( _handle->snapshot );
+    _handle->snapshot = NULL;
+
+}
+
+static void d64_rollback_transaction( D64Handle * _handle ) {
+
+    memcpy( _handle->content, _handle->snapshot, _handle->contentSize );
+    free( _handle->snapshot );
+    _handle->snapshot = NULL;
+    
+}
 
 /**
  * @brief Calculate the offset (in bytes) for the given track and sector.
@@ -230,12 +254,10 @@ static void d64_free_sector_on_bam( D64BAMEntry * _entry, D64Sector _sector ) {
  */
 static void d64_allocate_sector_on_bam( D64BAMEntry * _entry, D64Sector _sector ) {
 
-    // printf( "sector %d\n", _sector );
-    // printf( "free sectors = %d\n", _entry->freeSectors );
-
     // If the sector has no more free sectors,
     // we move away.
     if ( _entry->freeSectors == 0 ) {
+        // printf( " > no more sectors...\n");
         return;
     }
 
@@ -290,6 +312,8 @@ int d64_get_free_sectors( D64Handle * _handle ) {
  */
 static void d64_allocate_sector( D64Handle * _handle, D64Track _track, D64Sector _sector ) {
 
+    // printf( "d64_allocate_sector(..., %d, %d )\n", _track, _sector );
+    
     // Retrieve the sector with the BAM.
     D64SectorBAM * bam = (D64SectorBAM *) d64_get_sector( _handle, D64_BAM_TRACK, D64_BAM_SECTOR );
 
@@ -357,8 +381,6 @@ static void d64_find_free_sector( D64Handle * _handle, D64Track * _track, D64Sec
     // We are going to examinate tracks from 1 to the maximum number.
     while( _handle->lastUsedTrack != 0 ) {
 
-        // printf( " > track %d\n", i );
-
         // With tracks greater of 35 we have to use the extension
         // of the BAM based on disk's format.
         if ( _handle->lastUsedTrack > 35 ) {
@@ -388,7 +410,7 @@ static void d64_find_free_sector( D64Handle * _handle, D64Track * _track, D64Sec
             entry = &bam->entries[_handle->lastUsedTrack-1];
         }
 
-        // printf( " > free sectors = %d\n", entry->freeSectors );
+        // printf( "  >> track %d, free sectors = %d\n", _handle->lastUsedTrack, entry->freeSectors );
 
         // A fast check if free sectors are available.
         if ( entry->freeSectors > 0 ) {
@@ -403,9 +425,9 @@ static void d64_find_free_sector( D64Handle * _handle, D64Track * _track, D64Sec
                 // printf( " > offset, bitmap = %2.2x %2.2x\n", offset, bitmap );
                 // If the bit is set, the sector is free.
                 if ( ( entry->bitmappedFree[offset] & bitmap ) == bitmap ) {
-                    // printf( "found %2.2x %2.2x\n", offset, bitmap );
                     *_track = _handle->lastUsedTrack;
                     *_sector = sector;
+                    // printf( "found %2.2x %2.2x -> track = %d sector = %d\n", offset, bitmap, *_track, *_sector );
                     return;
                 }
                 sector += 10;
@@ -419,7 +441,7 @@ static void d64_find_free_sector( D64Handle * _handle, D64Track * _track, D64Sec
             _handle->lastUsedTrack = _handle->tracks;
         }
 
-        if ( _handle->lastUsedTrack == 17 ) {
+        if ( _handle->lastUsedTrack == 18 ) {
             _handle->lastUsedTrack = 0;
         }
 
@@ -476,6 +498,10 @@ static D64DirectoryEntry * d64_allocate_directory_entry( D64Handle * _handle ) {
                     D64Track track;
                     D64Sector sector;
                     d64_find_free_sector( _handle, &track, &sector );
+
+                    if ( track == 0 && sector == 0 ) {
+                        return NULL;
+                    }
 
                     // Allocate the sector.
                     d64_allocate_sector( _handle, track, sector );
@@ -773,7 +799,11 @@ D64Handle * d64_create( D64Format _format ) {
  * @param _buffer Buffer to write
  * @param _size Size to write (in bytes)
  */
-void d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType _type, unsigned char * _buffer, int _size ) {
+int d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType _type, unsigned char * _buffer, int _size ) {
+
+    // printf( "FILE = %s\n", _filename );
+
+    d64_start_transaction( _handle );
 
     // Track and sector number of the first sector data.
     D64Track firstTrack = 0;
@@ -809,6 +839,11 @@ void d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType
 
         // Find out a free t/s sector.
         d64_find_free_sector( _handle, &track, &sector );
+
+        if ( track == 0 && sector == 0 ) {
+            d64_rollback_transaction( _handle );
+            return 0;
+        }
 
         // Allocate the free t/s sector.
         d64_allocate_sector( _handle, track, sector );
@@ -869,8 +904,15 @@ void d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType
     // Allocate a new directory's entry.
     D64DirectoryEntry * entry = d64_allocate_directory_entry( _handle );
 
-    // Update the directory's entry.
-    d64_write_directory_entry( entry, _filename, _type, firstTrack, firstSector, sectors );
+    if ( entry ) {
+        // Update the directory's entry.
+        d64_write_directory_entry( entry, _filename, _type, firstTrack, firstSector, sectors );
+        d64_commit_transaction( _handle );
+        return 1;
+    } else {
+        d64_rollback_transaction( _handle );
+        return 0;
+    }
     
 }
 
