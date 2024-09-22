@@ -126,22 +126,28 @@ void generate_d64( Environment * _environment ) {
         Bank * bank = _environment->expansionBanks;
         while( bank ) {
             int bankSize = bank->space - bank->remains;
-            if ( ( d64_get_free_sectors( handle ) * 256 ) < bankSize ) {
-                d64_output( handle, storageFileName );
-                d64_free( handle );
-                if ( _environment->outputGeneratedFiles ) {
-                    printf( "%s\n", storageFileName );
-                }
-                ++diskNumber;
-                storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );
-                handle = d64_create( CBMDOS );
-            }
             if ( bank->remains < bank->space ) {
-                char bankFileName[MAX_TEMPORARY_STORAGE];
-                sprintf( bankFileName, "BANK%d", bank->id );
-                d64_write_file( handle, bankFileName, FT_SEQ, bank->data, bankSize );
+                int endOfDisk = ( d64_get_free_sectors( handle ) * 256 ) < bankSize;
+                if ( ! endOfDisk ) {
+                    char bankFileName[MAX_TEMPORARY_STORAGE];
+                    sprintf( bankFileName, "BANK%d", bank->id );
+                    endOfDisk = !d64_write_file( handle, bankFileName, FT_SEQ, bank->data, bankSize );
+                }
+                if ( endOfDisk ) {
+                    d64_output( handle, storageFileName );
+                    d64_free( handle );
+                    if ( _environment->outputGeneratedFiles ) {
+                        printf( "%s\n", storageFileName );
+                    }
+                    ++diskNumber;
+                    storageFileName = generate_storage_filename( _environment, exeFileName, "d64", diskNumber );
+                    handle = d64_create( CBMDOS );
+                } else {
+                    bank = bank->next;
+                }
+            } else {
+                bank = bank->next;
             }
-            bank = bank->next;
         }
         d64_output( handle, storageFileName );
         d64_free( handle );

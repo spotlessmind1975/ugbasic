@@ -603,6 +603,9 @@ typedef struct _D64Handle {
     // Raw disk data
     unsigned char   *   content;
 
+    // Snapshort disk data
+    unsigned char   *   snapshot;    
+
     // Raw disk data size
     int                 contentSize;
 
@@ -632,7 +635,7 @@ void                d64_set_dos_version( D64Handle * _handle, D64DosVersion _ver
 void                d64_set_disk_name( D64Handle * _handle, unsigned char * _disk_name );
 void                d64_set_disk_id( D64Handle * _handle, D64DiskId _disk_id );
 void                d64_set_dos_type( D64Handle * _handle, unsigned char * _dos_type );
-void                d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType _type, unsigned char * _buffer, int _size );
+int                 d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType _type, unsigned char * _buffer, int _size );
 void                d64_output( D64Handle * _handle, unsigned char * _filename );
 void                d64_free( D64Handle * _handle );
 
