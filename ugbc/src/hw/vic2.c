@@ -376,6 +376,7 @@ static void vic2_image_converter_tile_multicolor( Environment * _environment, ch
 
             }
 
+
             source += _depth;
 
         }
@@ -2486,8 +2487,46 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
-    vic2_image_converter_tiles_multicolor( _environment, _source, buffer+3, _frame_width, _frame_height, _depth, _width, palette[0].index );
+    int colorCount[16];
+    memset(colorCount, 0, 16 * sizeof( int ) );
+    char * tmpSource = _source;
+    for( int y = 0; y < _frame_height; ++y ) {
+        for( int x = 0; x < _frame_width; ++x ) {
+            RGBi rgb;
+            rgb.red = *tmpSource;
+            rgb.green = *(tmpSource + 1);
+            rgb.blue = *(tmpSource + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(tmpSource + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+            RGBi * systemColor = vic2_image_nearest_system_color( &rgb );
+            ++colorCount[systemColor->index];
+
+            tmpSource += _depth;
+        }
+
+        tmpSource += _depth * ( _width - _frame_width );
+    }
+
+    int colorBackground = 0, colorBackgroundMax = 0;
+    for( int i=0; i<16; ++i ) {
+        if ( colorBackgroundMax < colorCount[i] ) {
+            colorBackground = i;
+            colorBackgroundMax = colorCount[i];
+        }
+    }
+
+    vic2_image_converter_tiles_multicolor( _environment, _source, buffer+3, _frame_width, _frame_height, _depth, _width, colorBackground );
     
+    *(buffer+bufferSize-1) = colorBackground;
+
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
     return result;
