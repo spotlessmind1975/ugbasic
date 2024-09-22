@@ -2423,6 +2423,14 @@ PUTIMAGEREU3:
         ADC #0
         STA PLOTC2DEST+1
 
+        CLC
+        LDA PLOTC2DEST
+        ADC CURRENTTILESWIDTH
+        STA PLOTC2DEST
+        LDA PLOTC2DEST+1
+        ADC #0
+        STA PLOTC2DEST+1
+        
         ; Are there still lines to draw?
         DEC IMAGEH
         BEQ PUTIMAGEREU3E
