@@ -2285,6 +2285,14 @@ PUTIMAGEREU3:
         ADC #0
         STA PLOTCDEST+1
 
+        CLC
+        LDA PLOTCDEST
+        ADC CURRENTTILESWIDTH
+        STA PLOTCDEST
+        LDA PLOTCDEST+1
+        ADC #0
+        STA PLOTCDEST+1
+
         ; There are lines to draw? If not, we move to the next
         ; color map to draw.
         DEC IMAGEH
@@ -2501,23 +2509,23 @@ PUTIMAGEREU3:
 
     PUTIMAGEREU3E:
 
-        LDA REUREUBASE
-        STA TMPPTR2
-        LDA REUREUBASE+1
-        STA TMPPTR2+1
+        ; LDA REUREUBASE
+        ; STA TMPPTR2
+        ; LDA REUREUBASE+1
+        ; STA TMPPTR2+1
 
-        SEC
-        LDA TMPPTR2
-        SBC #1
-        STA TMPPTR2
-        LDA TMPPTR2+1
-        SBC #0
-        STA TMPPTR2+1
+        ; SEC
+        ; LDA TMPPTR2
+        ; SBC #1
+        ; STA TMPPTR2
+        ; LDA TMPPTR2+1
+        ; SBC #0
+        ; STA TMPPTR2+1
 
-        LDA TMPPTR2
-        STA REUREUBASE
-        LDA TMPPTR2+1
-        STA REUREUBASE+1
+        ; LDA TMPPTR2
+        ; STA REUREUBASE
+        ; LDA TMPPTR2+1
+        ; STA REUREUBASE+1
 
         ; IF bit 5 of IMAGEF is enabled it means that the image must be
         ; drawn as transparency -- and it means that colors cannot be
@@ -2542,6 +2550,8 @@ PUTIMAGEREU3:
 
         LDA #%10010001
         STA REUCOMMAND
+        NOP
+        NOP
         LDA C64REUBANKTMPBUF
         STA $D021
 
