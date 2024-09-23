@@ -98,7 +98,7 @@ POBuffer po_buf_cpy(POBuffer buf, char *string) {
 
 /* append a char at the end of the buffer */
 POBuffer po_buf_add(POBuffer buf, char c) {
-    if(buf && c != '\n' && c != '\r' ) {
+    if(buf) {
         _buf_cap(buf, buf->len + 1);
         buf->str[buf->len] = c;
         ++buf->len;
