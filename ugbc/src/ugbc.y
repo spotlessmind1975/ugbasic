@@ -10726,7 +10726,7 @@ statements_complex3:
     ;
 
 statements_complex2:
-    { variable_set( _environment ); } statements_complex3;
+    statements_complex3;
 
 statements_complex:
       statements_complex2

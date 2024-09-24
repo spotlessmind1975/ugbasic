@@ -949,13 +949,6 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
 }
 
 /**
- * @brief Set the usage flags for the temporary variable pool
- */
-void variable_set( Environment * _environment ) {
-    outline0("; VRP" );
-}
-
-/**
  * @brief Reset the usage flags for the temporary variable pool
  * 
  * This function allows you to reset the use flag of each temporary variable

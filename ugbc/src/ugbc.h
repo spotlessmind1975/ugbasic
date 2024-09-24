@@ -1826,7 +1826,7 @@ typedef struct _MultiplexingSpriteConfig {
 
 } MultiplexingSpriteConfig;
 
-typedef struct _MultiplexingConfig {
+typedef struct _AudioConfig {
 
     int                 async;
     AudioDeviceName     target;
@@ -4964,7 +4964,6 @@ int                     variable_exists( Environment * _environment, char * _nam
 Variable *              variable_retrieve( Environment * _environment, char * _name );
 Variable *              variable_retrieve_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
-void                    variable_set( Environment * _environment );
 Variable *              variable_store( Environment * _environment, char * _source, unsigned int _value );
 void                    variable_store_mt( Environment * _environment, char * _source, unsigned int _value );
 Variable *              variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at );
