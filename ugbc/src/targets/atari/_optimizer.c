@@ -1314,9 +1314,10 @@ typedef struct _UnusedSymbol {
 
 } UnusedSymbol;
 
-static int optim_remove_unused_temporary( Environment * _environment ) {
+static void optim_remove_unused_temporary( Environment * _environment ) {
 
     int i;
+
     POBuffer bufLine = TMP_BUF;
     POBuffer v1 = TMP_BUF;
     POBuffer v2 = TMP_BUF;
@@ -1342,62 +1343,45 @@ static int optim_remove_unused_temporary( Environment * _environment ) {
         exit(-1);
     }      
 
+    UnusedSymbol * currentlyUnusedSymbols = NULL;
+
+    int vspPointer = 0;
+
     while( !feof(fileAsm) ) {
 
-        po_buf_fgets(bufLine,fileAsm );
-        if ( po_buf_match( bufLine, " ; VRP" ) ) {
+        po_buf_fgets( bufLine, fileAsm );
 
-            int beginVrpSection = ftell( fileAsm );
-            int done = 0;
+        if ( po_buf_match( bufLine, " ; V *", v1 ) ) {
+            UnusedSymbol * s = malloc( sizeof( UnusedSymbol ) );
+            memset( s, 0, sizeof( UnusedSymbol ) );
+            s->realName = strdup( v1->str );
+            s->next = currentlyUnusedSymbols;
+            currentlyUnusedSymbols = s;
+        } else if ( po_buf_match( bufLine, " ; VSP" ) ) {
+            
+            // printf( "SYMBOLS COMPLETE: " );
+            // UnusedSymbol * s = currentlyUnusedSymbols;
+            // while( s ) {
+            //     printf( "%s, ", s->realName );
+            //     s = s->next;
+            // }
+            // printf( "\n\n" );
 
-            UnusedSymbol * unusedSymbol = NULL;
+            fseek( fileAsm, vspPointer, SEEK_SET );
 
-            while( !feof(fileAsm) && !done ) {
+            while( !feof(fileAsm) ) {
 
-                po_buf_fgets(bufLine,fileAsm );
+                po_buf_fgets( bufLine, fileAsm );
 
-                if ( po_buf_match( bufLine, " ; V *", v1 ) ) {
-                    UnusedSymbol * s = malloc( sizeof( UnusedSymbol ) );
-                    memset( s, 0, sizeof( UnusedSymbol ) );
-                    s->realName = strdup( v1->str );
-                    s->next = unusedSymbol;
-                    unusedSymbol = s;
-                }
-                
-                if ( po_buf_match( bufLine, " ; VSP" ) ) {
-                    done = 1;
-                }
-
-            }
-
-            int endVrpSection = ftell( fileAsm );
-
-            fseek( fileAsm, beginVrpSection, SEEK_SET );
-
-            done = 0;
-
-            int line = 0;
-
-            while( !feof(fileAsm) && !done ) {
-
-                /* shift the buffers */
-                po_buf_cpy(buf[0], buf[1]->str);
-
-                po_buf_fgets( buf[1], fileAsm );
-
-                if ( po_buf_match( buf[0], " ; VSP" ) ) {
-                    done = 1;
-                }
-                
-                POBuffer result = po_buf_match(buf[0], " ADC *", v1 );
-                if ( ! result ) result = po_buf_match(buf[0], " AND *", v1 );
-                if ( ! result ) result = po_buf_match(buf[0], " EOR *", v1 );
-                if ( ! result ) result = po_buf_match(buf[0], " LD* *", v2, v1 );
-                if ( ! result ) result = po_buf_match(buf[0], " ORA *", v1 );
-                if ( ! result ) result = po_buf_match(buf[0], " SBC *", v1 );
-                if ( ! result ) result = po_buf_match(buf[0], " CMP *", v1 );
-                if ( ! result ) result = po_buf_match(buf[0], " CPX *", v1 );
-                if ( ! result ) result = po_buf_match(buf[0], " CPY *", v1 );
+                POBuffer result = po_buf_match(bufLine, " ADC *", v1 );
+                if ( ! result ) result = po_buf_match(bufLine, " AND *", v1 );
+                if ( ! result ) result = po_buf_match(bufLine, " EOR *", v1 );
+                if ( ! result ) result = po_buf_match(bufLine, " LD* *", v2, v1 );
+                if ( ! result ) result = po_buf_match(bufLine, " ORA *", v1 );
+                if ( ! result ) result = po_buf_match(bufLine, " SBC *", v1 );
+                if ( ! result ) result = po_buf_match(bufLine, " CMP *", v1 );
+                if ( ! result ) result = po_buf_match(bufLine, " CPX *", v1 );
+                if ( ! result ) result = po_buf_match(bufLine, " CPY *", v1 );
                 if ( result ) {
                     char * realVarName = strdup( v1->str );
                     char * c = strstr( realVarName, "+" );
@@ -1416,14 +1400,14 @@ static int optim_remove_unused_temporary( Environment * _environment ) {
                     if ( c ) {
                         strcpy( c, c+1 );
                     }
-                    UnusedSymbol * tmp = unusedSymbol;
+                    UnusedSymbol * tmp = currentlyUnusedSymbols;
                     UnusedSymbol * previous = NULL;
                     while( tmp ) {
                         if ( strcmp( realVarName, tmp->realName ) == 0 ) {
                             if ( previous ) {
                                 previous->next = tmp->next;
                             } else {
-                                unusedSymbol = tmp->next;
+                                currentlyUnusedSymbols = tmp->next;
                             }
                             break;
                         }
@@ -1433,32 +1417,37 @@ static int optim_remove_unused_temporary( Environment * _environment ) {
 
                 }
 
+                if ( po_buf_match( bufLine, " ; VSP" ) ) {
+                    break;
+                }
+
             }
 
-            fseek( fileAsm, beginVrpSection, SEEK_SET );
+            // printf( "REALLY UNUSED SYMBOLS: " );
+            // s = currentlyUnusedSymbols;
+            // while( s ) {
+            //     printf( "%s, ", s->realName );
+            //     s = s->next;
+            // }
+            // printf( "\n\n" );
+            fseek( fileAsm, vspPointer, SEEK_SET );
 
-            done = 0;
+            int line = 0;
 
-            line = 0;
+            while( !feof(fileAsm) ) {
 
-            while( !feof(fileAsm) && !done ) {
-
-                if ( line >= 2 ) out(fileOptimized, buf[0]);
-
-                /* shift the buffers */
+                if ( line >= 1 ) out(fileOptimized, buf[0]);
                 po_buf_cpy(buf[0], buf[1]->str);
-
                 po_buf_fgets( buf[1], fileAsm );
+                ++line;
 
-                if ( po_buf_match( buf[0], " ; VSP" ) ) {
-                    done = 1;
-                } else if( po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[1], " STA *", v2 ) ) {
+                if( po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[1], " STA *", v2 ) ) {
                     char * realVarName = strdup( v2->str );
                     char * c = strstr( realVarName, "+" );
                     if ( c ) {
                         *c = 0;
                     }
-                    UnusedSymbol * tmp = unusedSymbol;
+                    UnusedSymbol * tmp = currentlyUnusedSymbols;
                     while( tmp ) {
                         if ( strcmp( realVarName, tmp->realName ) == 0 ) {
                             break;
@@ -1468,16 +1457,16 @@ static int optim_remove_unused_temporary( Environment * _environment ) {
                     if ( tmp ) {
                         optim( buf[0], RULE "unused temporary", NULL );
                         optim( buf[1], RULE "unused temporary", NULL );
+                        ++_environment->removedAssemblyLines;
+                        ++_environment->removedAssemblyLines;
                     }
-                    ++_environment->removedAssemblyLines;
-                    ++_environment->removedAssemblyLines;
                 } else if( po_buf_match( buf[0], " STA *", v2 ) ) {
                     char * realVarName = strdup( v2->str );
                     char * c = strstr( realVarName, "+" );
                     if ( c ) {
                         *c = 0;
                     }
-                    UnusedSymbol * tmp = unusedSymbol;
+                    UnusedSymbol * tmp = currentlyUnusedSymbols;
                     while( tmp ) {
                         if ( strcmp( realVarName, tmp->realName ) == 0 ) {
                             break;
@@ -1486,18 +1475,32 @@ static int optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     if ( tmp ) {
                         optim( buf[0], RULE "unused temporary", NULL );
+                        ++_environment->removedAssemblyLines;
                     }
-                    ++_environment->removedAssemblyLines;
                 }
 
-
-                ++line;
+                if ( po_buf_match( buf[1], " ; VSP" ) ) {
+                    out(fileOptimized, buf[0]);
+                    break;
+                }
 
             }
 
-            unusedSymbol = NULL;
+            vspPointer = ftell( fileAsm );
+
+            // printf( "vspPointer = %d\n", vspPointer );
+
+            currentlyUnusedSymbols = NULL;
 
         }
+
+    }
+
+    fseek( fileAsm, vspPointer, SEEK_SET );
+
+    while( !feof(fileAsm) ) {
+
+        po_buf_fgets( bufLine, fileAsm );
 
         out(fileOptimized, bufLine);
 
