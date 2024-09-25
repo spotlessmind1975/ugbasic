@@ -123,10 +123,11 @@ void end_procedure( Environment * _environment, char * _value ) {
 
             int i = 0;
 
+            cpu_prepare_for_compare_and_branch_8bit( _environment, step->realName );
             for(i=0;i<_environment->protothreadStep; ++i) {
                 outline1("; step %d", i );
                 char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, i );
-                cpu_compare_and_branch_8bit_const( _environment, step->realName, i, protothreadLabel, 1 );
+                cpu_execute_compare_and_branch_8bit_const( _environment, i, protothreadLabel, 1 );
             }
             cpu_protothread_save( _environment, "PROTOTHREADCT", 1 );
             char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, 0 );
