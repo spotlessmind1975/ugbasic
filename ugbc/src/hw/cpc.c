@@ -106,7 +106,7 @@ void cpc_inkey( Environment * _environment, char * _key ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_cpc_keyboard_asm);
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL INKEY");
     outline1("LD (%s), A", _key);
@@ -179,7 +179,7 @@ void cpc_scancode( Environment * _environment, char * _result ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_cpc_keyboard_asm);
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL SCANCODE");
     outline1("LD (%s), A", _result );
@@ -190,7 +190,7 @@ void cpc_asciicode( Environment * _environment, char * _result ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_cpc_keyboard_asm);
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL ASCIICODE");
     outline1("LD A, (%s)", _result );
@@ -265,6 +265,9 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
     MAKE_LABEL
 
+    if ( _environment->keyboardConfig.sync ) {
+        outline0("CALL SCANCODERAW" );
+    }
     outline1("LD A, (%s)", _port);
     outline0("CP 0");
     outline1("JR NZ, %spt1", label );
@@ -299,7 +302,9 @@ void cpc_joy( Environment * _environment, int _port, char * _value ) {
     
     deploy( keyboard, src_hw_cpc_keyboard_asm );
     deploy( joystick, src_hw_cpc_joystick_asm );
-
+    if ( _environment->keyboardConfig.sync ) {
+        outline0("CALL SCANCODERAW" );
+    }
     switch ( _port ) {
         case 0:
             if ( _environment->joystickConfig.sync ) {
@@ -2765,7 +2770,7 @@ void cpc_put_key(  Environment * _environment, char *_string, char * _size ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_cpc_keyboard_asm);
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm);
 
     outline1("LD HL, (%s)", _string );
     outline1("LD A, (%s)", _size );

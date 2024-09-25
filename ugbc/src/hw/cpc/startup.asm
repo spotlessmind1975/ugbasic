@@ -91,7 +91,7 @@ CPCISVC:
 @IF deployed.ay8910startup
 	CALL AY8910MANAGER
 @ENDIF
-@IF deployed.keyboard
+@IF deployed.keyboard && !keyboardConfig.sync
 	CALL KEYBOARDMANAGER
 @ENDIF
 @IF deployed.joystick && !joystickConfig.sync

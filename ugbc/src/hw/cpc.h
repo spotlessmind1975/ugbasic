@@ -130,7 +130,7 @@
 #define KEY_RIGHT                   1
 #define KEY_DIVISION                0xff
 
-#define KEYBOARD_CONFIG_DEFAULT_SYNC       0
+#define KEYBOARD_CONFIG_DEFAULT_SYNC       1
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32

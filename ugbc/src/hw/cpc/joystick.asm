@@ -138,6 +138,11 @@ JOYSTICKREAD1:
 @IF joystickConfig.sync
 
     WAITFIRE0:
+
+@IF keyboardConfig.sync    
+        CALL SCANCODERAW
+@ENDIF
+
         CALL JOYSTICKREAD0
         AND $10
         CP 0
@@ -145,6 +150,11 @@ JOYSTICKREAD1:
         RET
 
     WAITFIRE1:
+
+@IF keyboardConfig.sync    
+        CALL SCANCODERAW
+@ENDIF
+
         CALL JOYSTICKREAD1
         AND $10
         CP 0
@@ -152,6 +162,11 @@ JOYSTICKREAD1:
         RET
 
     WAITFIRE:
+
+@IF keyboardConfig.sync    
+        CALL SCANCODERAW
+@ENDIF
+
         CALL JOYSTICKREAD0
         AND $10
         LD B, A
@@ -169,6 +184,10 @@ JOYSTICKREAD1:
         PUSH IX
         PUSH HL
         PUSH AF
+
+@IF keyboardConfig.sync    
+        CALL SCANCODERAW
+@ENDIF
 
         CALL JOYSTICKREAD0
         LD (JOYSTICK0), A
