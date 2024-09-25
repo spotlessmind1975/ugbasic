@@ -104,10 +104,10 @@ void d32_busy_wait( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     outline1("LDD %s", _timing );
-    outline0("LDX COCOTIMER");
+    outline0("LDX D32TIMER");
     outline0("LEAX D, X");
     outhead1("%sfirst", label );
-    outline0("CMPX COCOTIMER");
+    outline0("CMPX D32TIMER");
     outline1("BGT %sfirst", label);
 }
 
