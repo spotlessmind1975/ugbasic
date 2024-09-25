@@ -35,11 +35,24 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF vestigialConfig.rchack_pick_the_star_1163
+
+PALETTE:    
+    DB      4,  10,  19,  12 
+    DB     11,  20,  21,  13
+    DB      6,  30,  31,   7 
+    DB      18, 25,  10,   0
+
+@ELSE
+
 PALETTE:    
     DB      4,  10,  19,  12 
     DB     11,  20,  21,  13
     DB      6,  30,  31,   7 
     DB      18, 25,  10,   7
+
+@ENDIF
+
 PALETTEUNUSED:
     DB $00
 PALETTEUSED:

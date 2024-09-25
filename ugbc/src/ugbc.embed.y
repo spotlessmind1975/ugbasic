@@ -425,6 +425,12 @@ const_factor:
                 $$ = ( ((struct _Environment *)_environment)->vestigialConfig.doubleBuffer ) || ( ((struct _Environment *)_environment)->doubleBufferEnabled );
             } else if ( strcmp( $3, "palettePreserve" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.palettePreserve;
+            } else if ( strcmp( $3, "rchack_cocon_1163" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163;
+            } else if ( strcmp( $3, "rchack_pick_the_star_1163" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->vestigialConfig.rchack_pick_the_star_1163;
+            } else if ( strcmp( $3, "rchack_4gravity_1163" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->vestigialConfig.rchack_4gravity_1163;
             } else {
                 $$ = 0;
             }
