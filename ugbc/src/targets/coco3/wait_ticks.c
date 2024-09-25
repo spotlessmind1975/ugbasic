@@ -74,11 +74,11 @@ void wait_ticks_var( Environment * _environment, char * _timing ) {
 
     Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
     
-    outline0("LDD COCOTIMER");
-    outline0("STD COCOTIMER2");
+    outline0("LDD COCO3TIMER");
+    outline0("STD COCO3TIMER2");
     outhead1("%s", label);
-    outline0("LDD COCOTIMER");
-    outline0("SUBD COCOTIMER2");
+    outline0("LDD COCO3TIMER");
+    outline0("SUBD COCO3TIMER2");
     outline1("CMPD %s", timing->realName );
     outline1("BNE %s", label );
 
