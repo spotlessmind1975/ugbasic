@@ -688,6 +688,7 @@ struct var *vars_get(POBuffer _name) {
 }
 
 static int vars_ok(POBuffer name) {
+    if(po_buf_match(name, "REU^"))   return 0;
     if(po_buf_match(name, "^_Tstr"))   return 0;
     if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
