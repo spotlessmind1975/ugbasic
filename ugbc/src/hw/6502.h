@@ -67,11 +67,13 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
 void cpu6502_compare_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void cpu6502_compare_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
+void cpu6502_prepare_for_compare_and_branch_8bit( Environment * _environment, char *_source );
 void cpu6502_compare_and_branch_8bit( Environment * _environment, char *_source, char * _destination,  char *_name, int _positive );
+void cpu6502_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
+void cpu6502_execute_compare_and_branch_8bit_const( Environment * _environment, int _destination,  char *_name, int _positive );
 void cpu6502_compare_and_branch_16bit( Environment * _environment, char *_source, char * _destination,  char *_name, int _positive );
 void cpu6502_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6502_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
-void cpu6502_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6502_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6502_di( Environment * _environment );
 void cpu6502_ei( Environment * _environment );
@@ -366,11 +368,13 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_compare_32bit_const( _environment, _source, _destination, _name, _positive ) cpu6502_compare_32bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_8bit( _environment, _source, _destination, _name, _positive ) cpu6502_compare_8bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_8bit_const( _environment, _source, _destination, _name, _positive ) cpu6502_compare_8bit_const( _environment, _source, _destination, _name, _positive )
+#define cpu_prepare_for_compare_and_branch_8bit( _environment, _source ) cpu6502_prepare_for_compare_and_branch_8bit( _environment, _source )
 #define cpu_compare_and_branch_8bit( _environment, _source, _destination, _name, _positive ) cpu6502_compare_and_branch_8bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive ) cpu6502_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive )
+#define cpu_execute_compare_and_branch_8bit_const( _environment, _destination, _name, _positive ) cpu6502_execute_compare_and_branch_8bit_const( _environment, _destination, _name, _positive )
 #define cpu_compare_and_branch_16bit( _environment, _source, _destination, _name, _positive ) cpu6502_compare_and_branch_16bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive ) cpu6502_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive ) cpu6502_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive )
-#define cpu_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive ) cpu6502_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_and_branch_char_const( _environment, _source, _destination, _name, _positive ) cpu6502_compare_and_branch_char_const( _environment, _source, _destination, _name, _positive )
 #define cpu_di( _environment ) cpu6502_di( _environment )
 #define cpu_ei( _environment ) cpu6502_ei( _environment )
