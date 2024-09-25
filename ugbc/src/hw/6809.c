@@ -746,6 +746,16 @@ void cpu6809_compare_8bit_const( Environment * _environment, char *_source, int 
 
 }
 
+void cpu6809_prepare_for_compare_and_branch_8bit( Environment * _environment, char *_source ) {
+
+    inline( cpu_compare_and_branch_8bit )
+
+        outline1("LDB %s", _source);
+
+    no_embedded( cpu_compare_and_branch_8bit )
+
+}
+
 void cpu6809_compare_and_branch_8bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
 
     inline( cpu_compare_and_branch_8bit )
@@ -776,6 +786,30 @@ void cpu6809_compare_and_branch_8bit_const( Environment * _environment, char *_s
     inline( cpu_compare_and_branch_8bit_const )
 
         outline1("LDB %s", _source);
+        outline1("CMPB #$%2.2x", _destination);
+        if ( _positive ) {
+            B(EQ, _label);
+        } else {
+            B(NE, _label);
+        }
+
+    no_embedded( cpu_compare_and_branch_8bit_const )
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void cpu6809_execute_compare_and_branch_8bit_const( Environment * _environment, int _destination,  char *_label, int _positive ) {
+
+    inline( cpu_compare_and_branch_8bit_const )
+
         outline1("CMPB #$%2.2x", _destination);
         if ( _positive ) {
             B(EQ, _label);
