@@ -788,6 +788,51 @@ void z80_compare_and_branch_8bit_const( Environment * _environment, char *_sourc
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
+void z80_prepare_for_compare_and_branch_8bit( Environment * _environment, char *_source ) {
+
+    inline( cpu_compare_and_branch_8bit_const )
+
+        outline1("LD A, (%s)", _source);
+
+    no_embedded( cpu_compare_and_branch_8bit_const )
+
+}
+
+/**
+ * @brief <i>Z80</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void z80_execute_compare_and_branch_8bit_const( Environment * _environment, int _destination,  char *_label, int _positive ) {
+
+    inline( cpu_compare_and_branch_8bit_const )
+
+        MAKE_LABEL
+
+        outline1("CP $%2.2x", _destination );
+        if ( _positive ) {
+            outline1("JP Z, %s", _label);
+        } else {
+            outline1("JP NZ, %s", _label);
+        }
+
+    no_embedded( cpu_compare_and_branch_8bit_const )
+
+}
+
+/**
+ * @brief <i>Z80</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
 void z80_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
 
     inline( cpu_compare_and_branch_8bit_const )
