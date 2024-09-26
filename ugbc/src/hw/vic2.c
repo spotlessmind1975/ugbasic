@@ -1568,7 +1568,7 @@ void vic2_sprite_disable( Environment * _environment, char * _sprite ) {
             deploy( sprite, src_hw_vic2_sprites_asm );
 
             outline1("LDY %s", sprite->realName );
-            outline0("JSR MSPRITEDISABLE" );
+            outline0("JSR SPRITEDISABLE" );
             break;
 
         case VT_MSPRITE:
