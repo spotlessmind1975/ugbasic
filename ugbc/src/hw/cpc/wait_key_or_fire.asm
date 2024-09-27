@@ -45,11 +45,21 @@
 @IF joystickConfig.sync
 
     WAITKEYFIRE:
-        LD A, (KEYBOARDASFSTATE)
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
         CP 0
         JR Z, WAITKEYFIRE1
     WAITKEYFIRE0:
-        LD A, (KEYBOARDASFSTATE)
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
         CP 0
         JR NZ, WAITKEYFIRE0
     WAITKEYFIRE1:
@@ -60,7 +70,12 @@
         AND $10
         OR B
         LD B, A
-        LD A, (KEYBOARDASFSTATE)
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
         OR B
         CP 0
         JR Z, WAITKEYFIRE1
@@ -69,15 +84,30 @@
 @ELSE
 
     WAITKEYFIRE:
-        LD A, (KEYBOARDASFSTATE)
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
         CP 0
         JR Z, WAITKEYFIRE1
     WAITKEYFIRE0:
-        LD A, (KEYBOARDASFSTATE)
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
         CP 0
         JR NZ, WAITKEYFIRE0
     WAITKEYFIRE1:
-        LD A, (JOYSTICK0)
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
         AND $10
         LD B, A
         LD A, (JOYSTICK1)
