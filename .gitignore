@@ -30,5 +30,7 @@ cocon/
 pick-the-star-10liner/
 tic-tac-toe-10liner/
 hangword/
+deepy/
+cv/
 *.sh
 
