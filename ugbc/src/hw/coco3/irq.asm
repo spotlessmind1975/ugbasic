@@ -69,16 +69,6 @@ OLDNMIISVC2
 OLDCC
     fcb $0
 
-@IF deployed.joystick && !joystickConfig.sync
-JOYSTICKCOUNTER
-    fcb $A
-@ENDIF
-
-@IF deployed.keyboard
-KEYBOARDCOUNTER
-    fcb $A
-@ENDIF
-
 ISVCIRQ
 
     PSHS D
@@ -107,21 +97,11 @@ SKIPGIMEROM
 @IF deployed.timer
     JSR TIMERMANAGER
 @ENDIF
-@IF deployed.keyboard
-    DEC KEYBOARDCOUNTER
-    BNE ISVCIRQK
-    LDA #$A
-    STA KEYBOARDCOUNTER
+@IF deployed.keyboard && !keyboardConfig.sync
     JSR KEYBOARDMANAGER
-ISVCIRQK
 @ENDIF
 @IF deployed.joystick && !joystickConfig.sync
-    DEC JOYSTICKCOUNTER
-    BNE ISVCIRQJ
     JSR JOYSTICKMANAGER
-    LDA #$A
-    STA JOYSTICKCOUNTER
-ISVCIRQJ
 @ENDIF
 @IF deployed.music
     JSR MUSICPLAYER
