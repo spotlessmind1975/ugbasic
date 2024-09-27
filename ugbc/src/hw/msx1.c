@@ -68,6 +68,17 @@ void msx1_joy( Environment * _environment, int _port, char * _value ) {
             }
             outline1("LD (%s), A", _value);
             break;
+        case 1:
+            if ( _environment->joystickConfig.sync ) {
+                outline0("CALL JOYSTICKREAD1" );
+            } else {
+                outline0("LD A, (JOYSTICK1)" );
+            }
+            if ( _environment->joystickConfig.values ) {
+                outline0("CALL JOYSTICKTSB" );
+            }
+            outline1("LD (%s), A", _value);
+            break;
     }
 
 }
@@ -78,6 +89,9 @@ void msx1_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
     MAKE_LABEL
 
+    outline1("LD A, (%s)", _port);
+    outline0("CP 0");
+    outline1("JR NZ, %spt1", label );
     if ( _environment->joystickConfig.sync ) {
         outline0("CALL JOYSTICKREAD0" );
     } else {
@@ -87,6 +101,19 @@ void msx1_joy_vars( Environment * _environment, char * _port, char * _value ) {
         outline0("CALL JOYSTICKTSB" );
     }
     outline1("LD (%s), A", _value);
+    outline1("JR %sptx", label );
+    outhead1("%spt1:", label);
+    if ( _environment->joystickConfig.sync ) {
+        outline0("CALL JOYSTICKREAD1" );
+    } else {
+        outline0("LD A, (JOYSTICK1)" );
+    }
+    if ( _environment->joystickConfig.values ) {
+        outline0("CALL JOYSTICKTSB" );
+    }
+    outline1("LD (%s), A", _value);
+    outline1("JR %sptx", label );
+    outhead1("%sptx:", label);
 
 }
 

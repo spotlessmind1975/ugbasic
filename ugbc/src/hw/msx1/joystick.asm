@@ -80,7 +80,7 @@
 
 @ENDIF
 
-JOYSTICKREAD0:
+JOYSTICKREAD:
     LD	A, $F
     OUT ($A0), A
     LD A, B
@@ -98,11 +98,39 @@ JOYSTICKREAD0:
     AND $3F
     RET
 
+JOYSTICKREAD0:
+    LD	B, 0
+    CALL JOYSTICKREAD
+    RET
+
+JOYSTICKREAD1:
+    LD	B, 1
+    CALL JOYSTICKREAD
+    RET
+
 @IF joystickConfig.sync
+
+    WAITFIRE0:
+        CALL JOYSTICKREAD0
+        AND $10
+        CP 0
+        JR Z, WAITFIRE
+        RET
+
+    WAITFIRE1:
+        CALL JOYSTICKREAD1
+        AND $10
+        CP 0
+        JR Z, WAITFIRE
+        RET
 
     WAITFIRE:
         CALL JOYSTICKREAD0
         AND $10
+        LD C, A
+        CALL JOYSTICKREAD1
+        AND $10
+        OR C
         CP 0
         JR Z, WAITFIRE
         RET
@@ -117,13 +145,35 @@ JOYSTICKREAD0:
 
         LD (JOYSTICK0), A
         
+        CALL JOYSTICKREAD1
+
+        LD (JOYSTICK1), A
+
         POP BC
         POP AF
         RET
 
-    WAITFIRE:
-        LD A, (JOYSTICK0)
+    WAITFIRE0:
+        LD A, (JOYSTICKREAD0)
         AND $10
+        CP 0
+        JR Z, WAITFIRE
+        RET
+
+    WAITFIRE1:
+        LD A, (JOYSTICKREAD1)
+        AND $10
+        CP 0
+        JR Z, WAITFIRE
+        RET
+
+    WAITFIRE:
+        LD A, (JOYSTICKREAD0)
+        AND $10
+        LD C, A
+        LD A, (JOYSTICKREAD1)
+        AND $10
+        OR C
         CP 0
         JR Z, WAITFIRE
         RET
