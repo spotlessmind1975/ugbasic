@@ -20,7 +20,7 @@ REM @include atari,atarixl,c128,c128z,c64,c64reu,coco,coco3,coleco,cpc,d32,d64,m
 
     CLS
 
-    PROCEDURE example
+    PROCEDURE example ON ALL BUT PC128OP
 
         themill := LOAD IMAGE("themill.png")
 
@@ -28,7 +28,7 @@ REM @include atari,atarixl,c128,c128z,c64,c64reu,coco,coco3,coleco,cpc,d32,d64,m
 
     END PROC
 
-    example[]
+    example[] ON ALL BUT PC128OP
     
     WAIT KEY
     
