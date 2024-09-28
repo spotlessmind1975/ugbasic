@@ -46,7 +46,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 %token Remark
 %token NewLine 
-%token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS OP_INC OP_DEC OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
+%token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS INC DEC OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
 %token OP_DISEQUAL OP_MULTIPLICATION OP_MULTIPLICATION2 OP_DOLLAR OP_DIVISION OP_DIVISION2 QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
 %token OP_EXCLAMATION OP_DOLLAR2
 
@@ -9707,38 +9707,38 @@ statement2nc:
   | PUT KEY expr {
       put_key( _environment, $3 );
   }
-  | OP_INC Identifier {
+  | INC Identifier {
       variable_increment( _environment, $2 );
   }
-  | OP_DEC Identifier {
+  | DEC Identifier {
       variable_decrement( _environment, $2 );
   }
-  | OP_INC TI {
+  | INC TI {
       Variable * ti = get_timer( _environment );
       variable_increment( _environment, ti->name );
       set_timer( _environment, ti->name );
   }
-  | OP_DEC TI {
+  | DEC TI {
       Variable * ti = get_timer( _environment );
       variable_decrement( _environment, ti->name );
       set_timer( _environment, ti->name );
   }
-  | OP_INC Identifier OP {
+  | INC Identifier OP {
         parser_array_init( _environment );
     } indexes CP {
         variable_increment_array( _environment, $2 );
         parser_array_cleanup( _environment );
   }
-  | OP_DEC Identifier OP {
+  | DEC Identifier OP {
         parser_array_init( _environment );
     } indexes CP {
         variable_decrement_array( _environment, $2 );
         parser_array_cleanup( _environment );
   }
-  | OP_INC OSP Identifier CSP {
+  | INC OSP Identifier CSP {
         variable_increment_mt( _environment, $3 );
   }
-  | OP_DEC OSP Identifier CSP {
+  | DEC OSP Identifier CSP {
         variable_decrement_mt( _environment, $3 );
   }
   | RANDOMIZE {

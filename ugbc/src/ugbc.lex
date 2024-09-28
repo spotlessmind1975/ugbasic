@@ -223,8 +223,8 @@ _[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
 ":=" { RETURN(OP_ASSIGN_DIRECT,1); }
 "+" { RETURN(OP_PLUS,1); }
 "-" { RETURN(OP_MINUS,1); }
-"++" { RETURN(OP_INC,1); }
-"--" { RETURN(OP_DEC,1); }
+"++" { RETURN(INC,1); }
+"--" { RETURN(DEC,1); }
 "#" { RETURN(OP_HASH,1); }
 "<" { RETURN(OP_LT,1); }
 "<=" { RETURN(OP_LTE,1); }
@@ -551,8 +551,8 @@ Dk { RETURN(DARK,1); }
 DATA { RETURN(DATA,1); }
 Da { RETURN(DATA,1); }
 DEBUG { RETURN(DEBUG,1); }
-DEC { RETURN(OP_DEC,1); }
-Dc { RETURN(OP_DEC,1); }
+DEC { RETURN(DEC,1); }
+Dc { RETURN(DEC,1); }
 DECLARE { RETURN(DECLARE,1); }
 Dec { RETURN(DECLARE,1); }
 DEFAULT { RETURN(DEFAULT,1); }
@@ -816,7 +816,7 @@ IMPLICIT { RETURN(IMPLICIT,1); }
 Imp { RETURN(IMPLICIT,1); }
 IN { RETURN(IN,1); }
 In { RETURN(IN,1); }
-INC { RETURN(OP_INC,1); }
+INC { RETURN(INC,1); }
 INK { RETURN(INK,1); }
 Ik { RETURN(INK,1); }
 INKEY { RETURN(INKEY,1); }
