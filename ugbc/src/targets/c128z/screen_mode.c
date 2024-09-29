@@ -46,9 +46,6 @@
  * @param _environment Current calling environment
  * @param _mode Mode to change to
  */
-/* <usermanual>
-@keyword SCREEN
-</usermanual> */
 void screen_mode( Environment * _environment, int _mode ) {
 
     ScreenMode * mode = find_screen_mode_by_id( _environment, _mode );

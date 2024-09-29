@@ -30,8 +30,8 @@ di spazio inutile.
 
 @syntax = IF (exp, valueTrue, valueFalse )
 
-@example pictureToUse = IF(SCREEN WIDTH > 160, "large.png", "small.png" )
 
+@example pictureToUse = IF(SCREEN WIDTH > 160, "large.png", "small.png" )
 @target all
 @version
 </usermanual> */
@@ -3224,3 +3224,216 @@ La costante ''SCREEN'' rappresenta le capacità del chipset video.
 @target all
 @seeAlso BITMAP (constant)
 </usermanual> */
+
+/* <usermanual>
+@keyword SCREEN WIDTH (constant)
+
+@english
+
+The ''SCREEN WIDTH'' constant represents the actual width of the screen,
+for the current video chipset and graphic / text mode, in terms of pixels.
+
+@italian
+
+La costante ''SCREEN WIDTH'' rappresenta la larghezza effettiva dello 
+schermo, per l'attuale chipset video e la modalità grafica/testo, 
+in termini di pixel.
+
+@syntax = SCREEN WIDTH
+
+@example IF SCREEN WIDTH > 128 THEN: PRINT "At least 128 pixels!!": ENDIF
+
+@target all
+@alias WIDTH (constant)
+</usermanual> */
+
+/* <usermanual>
+@keyword WIDTH (constant)
+
+@english
+
+Alias for ''SCREEN WIDTH''.
+
+@italian
+
+Alias per ''SCREEN WIDTH''.
+
+@syntax = WIDTH
+
+@example IF WIDTH > 128 THEN: PRINT "At least 128 pixels!!": ENDIF
+
+@target all
+@alias SCREEN WIDTH (constant)
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN HEIGHT (constant)
+
+@english
+
+The ''SCREEN HEIGHT'' constant represents the actual height of the screen,
+for the current video chipset and graphic / text mode, in terms of pixels.
+
+@italian
+
+La costante ''SCREEN HEIGHT'' rappresenta la larghezza effettiva dello 
+schermo, per l'attuale chipset video e la modalità grafica/testo, 
+in termini di pixel.
+
+@syntax = SCREEN HEIGHT
+
+@example IF SCREEN HEIGHT > 128 THEN: PRINT "At least 128 pixels!!": ENDIF
+
+@target all
+@alias HEIGHT (constant)
+</usermanual> */
+
+/* <usermanual>
+@keyword HEIGHT (constant)
+
+@english
+
+Alias for ''SCREEN HEIGHT''.
+
+@italian
+
+Alias per ''SCREEN HEIGHT''.
+
+@syntax = HEIGHT
+
+@example IF HEIGHT > 128 THEN: PRINT "At least 128 pixels!!": ENDIF
+
+@target all
+@alias SCREEN HEIGHT (constant)
+</usermanual> */
+
+///////////////
+
+/* <usermanual>
+@keyword SCREEN TILES WIDTH (constant)
+
+@english
+
+The ''SCREEN TILES WIDTH'' constant represents the actual width of the screen,
+for the current video chipset and graphic / text mode, in terms of tiles (characters).
+
+@italian
+
+La costante ''SCREEN TILES WIDTH'' rappresenta la larghezza effettiva dello 
+schermo, per l'attuale chipset video e la modalità grafica/testo, 
+in termini di tiles (caratteri).
+
+@syntax = SCREEN TILES WIDTH
+
+@example IF SCREEN TILES WIDTH > 40 THEN: PRINT "At least 40 columns!!": ENDIF
+
+@target all
+@alias TILES WIDTH (constant)
+@alias SCREEN COLUMNS (constant)
+</usermanual> */
+
+/* <usermanual>
+@keyword TILES WIDTH (constant)
+
+@english
+
+Alias for ''SCREEN TILES WIDTH''.
+
+@italian
+
+Alias per ''SCREEN TILES WIDTH''.
+
+@syntax = TILES WIDTH
+
+@example IF TILES WIDTH > 40 THEN: PRINT "At least 40 columns!!": ENDIF
+
+@target all
+@alias SCREEN TILES WIDTH (constant)
+@alias SCREEN COLUMNS (constant)
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN COLUMNS (constant)
+
+@english
+
+Alias for ''SCREEN TILES WIDTH''.
+
+@italian
+
+Alias per ''SCREEN TILES WIDTH''.
+
+@syntax = SCREEN COLUMNS
+
+@example IF SCREEN COLUMNS > 40 THEN: PRINT "At least 40 columns!!": ENDIF
+
+@target all
+@alias SCREEN TILES WIDTH (constant)
+@alias TILES WIDTH (constant)
+</usermanual> */
+
+//////////////
+
+/* <usermanual>
+@keyword SCREEN TILES HEIGHT (constant)
+
+@english
+
+The ''SCREEN TILES HEIGHT'' constant represents the actual width of the screen,
+for the current video chipset and graphic / text mode, in terms of tiles (characters).
+
+@italian
+
+La costante ''SCREEN TILES HEIGHT'' rappresenta la larghezza effettiva dello 
+schermo, per l'attuale chipset video e la modalità grafica/testo, 
+in termini di tiles (caratteri).
+
+@syntax = SCREEN TILES HEIGHT
+
+@example IF SCREEN TILES HEIGHT > 10 THEN: PRINT "At least 10 rows!!": ENDIF
+
+@target all
+@alias TILES HEIGHT (constant)
+@alias SCREEN COLUMNS (constant)
+</usermanual> */
+
+/* <usermanual>
+@keyword TILES HEIGHT (constant)
+
+@english
+
+Alias for ''SCREEN TILES HEIGHT''.
+
+@italian
+
+Alias per ''SCREEN TILES HEIGHT''.
+
+@syntax = TILES HEIGHT
+
+@example IF TILES HEIGHT > 10 THEN: PRINT "At least 10 rows!!": ENDIF
+
+@target all
+@alias SCREEN TILES HEIGHT (constant)
+@alias SCREEN COLUMNS (constant)
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN ROWS (constant)
+
+@english
+
+Alias for ''SCREEN TILES HEIGHT''.
+
+@italian
+
+Alias per ''SCREEN TILES HEIGHT''.
+
+@syntax = SCREEN ROWS
+
+@example IF SCREEN ROWS > 10 THEN: PRINT "At least 10 rows!!": ENDIF
+
+@target all
+@alias SCREEN TILES HEIGHT (constant)
+@alias TILES HEIGHT (constant)
+</usermanual> */
+

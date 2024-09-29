@@ -46,42 +46,6 @@
  * @param _environment Current calling environment
  * @param _mode Mode to change to
  */
-/* <usermanual>
-@keyword SCREEN
-
-@english
-
-The ''SCREEN'' command allows to select a specific hardware-dependent
-screen mode. Every target has a specific list of modes. Normally,
-these modes are selected by describing resolution and color depth.
-This is another way to select graphical modes.
-
-Moreover, there is another syntax for SCREEN. The second syntax
-allow to select the type and color scheme. Type is ''0'' for the text 
-screen and ''1'' for the high resolution screen, while the color
-scheme depends on target.
-
-@italian
-
-Il comando ''SCREEN'' consente di selezionare una modalità schermo 
-specifica dipendente dall'hardware. Ogni target ha un elenco 
-specifico di modalità. Normalmente, queste modalità vengono 
-selezionate descrivendo la risoluzione e la profondità del 
-colore. Questo è un altro modo per selezionare le modalità grafiche.
-
-Inoltre, esiste un'altra sintassi per ''SCREEN''. La seconda sintassi 
-consente di selezionare il tipo e la combinazione di colori. Il tipo 
-è ''0'' per lo schermo di testo e ''1'' per lo schermo ad alta 
-risoluzione, mentre lo schema dei colori dipende dal target.
-
-@syntax SCREEN #mode
-@syntax SCREEN #type, #colorset
-
-@example SCREEN #1
-@example SCREEN #1, #0
-
-@target all
-</usermanual> */
 void screen_mode( Environment * _environment, int _mode ) {
 
     ScreenMode * mode = find_screen_mode_by_id( _environment, _mode );
