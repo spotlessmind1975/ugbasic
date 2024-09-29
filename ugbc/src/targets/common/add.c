@@ -57,9 +57,9 @@ faster. There is a more complex version of ''ADD'', which is ideal for handling 
 loops much more quickly than the equivalent separate instructions. When those other 
 parameters are included, ''ADD v,a,b TO t'' is the equivalent to the following lines:
 
-  v=v+a
-  IF v<b THEN v=t: ENDIF
-  IF v>t THEN v=b: ENDIF
+  '''v=v+a'''
+  '''IF v<b THEN v=t: ENDIF'''
+  '''IF v>t THEN v=b: ENDIF'''
 
 @italian
 Il comando ''ADD'' può essere utilizzato per aggiungere il risultato di un'espressione 
@@ -69,9 +69,9 @@ per gestire determinati loop molto più rapidamente rispetto alle istruzioni sep
 equivalenti. Quando questi altri parametri sono inclusi, il comando ''ADD v, a, b TO t'' 
 è equivalente alle seguenti righe:
 
-  v=v+a
-  IF v<b THEN v=t: ENDIF
-  IF v>t THEN v=b: ENDIF
+  '''v=v+a'''
+  '''IF v<b THEN v=t: ENDIF'''
+  '''IF v>t THEN v=b: ENDIF'''
 
 @syntax ADD var, expr [, lower TO upper]
 
@@ -129,11 +129,6 @@ void add_complex_vars( Environment * _environment, char * _variable, char * _exp
  * @param _limit_lower Lower limit
  * @param _limit_upper Upper limit
  */
-/* <usermanual>
-@keyword ADD
-
-@target all
-</usermanual> */
 void add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
 
     parser_array_init( _environment );
@@ -167,11 +162,6 @@ void add_complex_mt( Environment * _environment, char * _variable, char * _expre
  * @param _limit_lower Lower limit
  * @param _limit_upper Upper limit
  */
-/* <usermanual>
-@keyword ADD
-
-@target all
-</usermanual> */
 void add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
 
     Variable * array = variable_retrieve( _environment, _variable );
@@ -186,10 +176,6 @@ void add_complex_array( Environment * _environment, char * _variable, char * _ex
 
 }
 
-/* <usermanual>
-@keyword ADD
-@target all
-</usermanual> */
 void add_complex( Environment * _environment, char * _variable, int _expression, int _limit_lower, int _limit_upper ) { 
 
     MAKE_LABEL

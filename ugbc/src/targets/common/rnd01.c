@@ -60,7 +60,7 @@ La funzione ''RND(0)'' genera numeri in virgola mobile pseudocasuali nell'interv
 a 1,0 (escluso). Utilizzando ''RND(0)'', viene fornito ogni volta un numero casuale diverso da una 
 sequenza predeterminata (il numero di sequenza è memorizzato internamente).
 
-@syntax RND(0)
+@syntax = RND(0)
 
 @example value = 42.0 * RND(0)
 
@@ -99,7 +99,7 @@ La funzione ''RND(1)'' genera numeri in virgola mobile pseudocasuali nell'interv
 a 1,0 (escluso). Utilizzando ''RND(1)'', viene fornito ogni volta un numero casuale diverso da una 
 sequenza predeterminata (il numero di sequenza è memorizzato internamente).
 
-@syntax RND(1)
+@syntax = RND(1)
 
 @example value = 42.0 * RND(1)
 

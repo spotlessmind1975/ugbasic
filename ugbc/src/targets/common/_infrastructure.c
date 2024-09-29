@@ -5373,6 +5373,77 @@ Variable * variable_or( Environment * _environment, char * _left, char * _right 
  * @param _value Left expression to check
  * @return Variable* The result of operation
  */
+ /* <usermanual>
+@keyword NOT
+
+@english
+Performs a logical negation on an expression, as a bitwise negation. For 
+comparisons managed as a boolean result (''TRUE'' or ''FALSE''), result is ''TRUE'' 
+if expresions evaluate as ''FALSE''. The following table shows how result 
+is determined:
+
+'''NOT TRUE = FALSE'''
+'''NOT FALSE = TRUE'''
+
+Generally speaking, the ''NOT'' operator performs a bitwise negation of the bits of 
+the expression and sets the corresponding bit in result according to the
+previous table.
+
+Note that ugBASIC uses the convention, very common in BASICs of the 1970s and 1980s, 
+of considering Boolean logic as implemented through the so-called "two's complement".
+
+In other words, the value ''FALSE'' is associated with a number composed of 
+all ''0''s, in terms of bits. The value ''TRUE'' is, instead, 
+associated with a number composed of all ''1''s, again in terms of bits. 
+According to the 2's complement representation, a number composed of all ones is 
+always equivalent to the number ''-1'', regardless of how many bits the 
+number is composed of, while a number composed of all zeros is always equivalent to zero.
+
+According to this convention, there is a coincidence between bitwise and logical 
+operations: in fact, a bitwise ''NOT'', applied to all the bits of the number, 
+will be equivalent to the logical operation. 
+
+Because the logical and bitwise operators have lower precedence than other arithmetic and relational 
+operators, all bitwise operations must be enclosed in parentheses to ensure accurate results.
+
+@italian
+
+Esegue una negazione logica su due espressioni, come negazione bit a bit. Per 
+i confronti gestiti come risultato booleano (''TRUE'' o ''FALSE''), result è ''TRUE'' 
+se entrambe le espressioni sono valutate in modo diverso. La seguente 
+tabella mostra come viene determinato il risultato:
+
+'''NOT TRUE = FALSE'''
+'''NOT FALSE = TRUE'''
+
+In generale, l'operatore ''NOT'' esegue una negazione bit a bit dei bit dell'espressione
+numerica e imposta il bit corrispondente in base alla tabella precedente.
+
+Nota che ugBASIC utilizza la convenzione, molto comune nei BASIC degli anni '70 e '80, 
+di considerare la logica booleana come implementata tramite il cosiddetto "complemento a due".
+
+In altre parole, il valore ''FALSE'' è associato a un numero composto da tutti ''0'', 
+in termini di bit. Il valore ''TRUE'' è, invece, associato a un numero composto da tutti ''1'',
+sempre in termini di bit.
+
+Secondo la rappresentazione del complemento a 2, un numero composto da tutti 1 è sempre 
+equivalente al numero ''-1'', indipendentemente dal numero di bit di cui è composto, mentre 
+un numero composto da tutti 0 è sempre equivalente a zero.
+
+Secondo questa convenzione, c'è una coincidenza tra operazioni bit a bit e logiche: infatti, 
+un ''NOT'' bit a bit, applicato a tutti i bit del numero, sarà equivalente all'operazione 
+logica.
+
+Poiché gli operatori logici e bitwise hanno una precedenza inferiore rispetto ad altri 
+operatori aritmetici e relazionali, tutte le operazioni bitwise devono essere racchiuse 
+tra parentesi per garantire risultati accurati.
+
+@syntax = NOT x
+
+@example IF NOT x THEN: PRINT "x is FALSE" : ELSE : PRINT "x is TRUE": ENDIF
+
+@target all
+</usermanual> */ 
 Variable * variable_not( Environment * _environment, char * _value ) {
 
     Variable * source = variable_retrieve( _environment, _value );
@@ -8599,6 +8670,54 @@ ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id ) {
 
 }
 
+/* <usermanual>
+@keyword MOD
+
+@english
+
+The operator ''MOD'' divides two numbers and returns only the remainder. The result 
+is the remainder after first expression is divided by the second expression. For 
+example, the expression ''14 MOD 4'' evaluates to ''2''.
+
+The result of a ''MOD'' operation will not retain the sign of any, and so it may be 
+only positive. The result is always in the range ''[0, divisor)'', exclusive. 
+
+For example:
+
+'''8 Mod  3 = 2'''
+'''-8 Mod  3 = 2'''
+'''8 Mod -3 = 2'''
+'''-8 Mod -3 = 2'''
+
+If divisor evaluates to zero, the behavior of the ''MOD'' operator is to return the
+dividend as result, without sign.
+
+@italian
+
+L'operatore ''MOD'' divide due numeri e restituisce solo il resto. Il risultato è il 
+resto dopo che la prima espressione è stata divisa per la seconda espressione. 
+Ad esempio, l'espressione ''14 MOD 4'' restituisce ''2''.
+
+Il risultato di un'operazione ''MOD'' non manterrà il segno di nessuno, quindi può 
+essere solo positivo. Il risultato è sempre compreso nell'intervallo ''[0, divisore)'', 
+escluso.
+
+Ad esempio:
+
+'''8 Mod 3 = 2'''
+'''-8 Mod 3 = 2'''
+'''8 Mod -3 = 2'''
+'''-8 Mod -3 = 2'''
+
+Se il divisore restituisce zero, il comportamento dell'operatore ''MOD'' è quello di 
+restituire il dividendo come risultato, senza segno.
+
+@syntax = x MOD y
+
+@example IF x MOD 2 THEN: PRINT "odd" : ELSE : PRINT "even": ENDIF
+
+@target all
+</usermanual> */
 Variable * variable_mod( Environment * _environment, char * _source, char * _destination ) {
     
     Variable * source = variable_retrieve( _environment, _source );

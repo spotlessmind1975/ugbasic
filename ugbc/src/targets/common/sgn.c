@@ -51,21 +51,16 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword SGN
 
 @english
-The ''SGN'' function returns a value representing the sign of a number. The three possible results are these:
-
-  * ''-1'' if the value is negative
-  * ''1'' if the value is positive
-  * ''0'' if the value is zero
+The ''SGN'' function returns a value representing the sign of a number. 
+The three possible results are ''-1'' if the value is negative, 
+''1'' if the value is positive and ''0'' if the value is zero.
 
 @italian
 La funzione ''SGN'' restituisce un valore che rappresenta il segno di un numero. 
-I tre possibili risultati sono questi:
+I tre possibili risultati sono ''-1'' se il valore è negativo, ''1'' se il valore è positivo
+e ''0'' se il valore è zero.
 
-   * "-1" se il valore è negativo
-   * "1" se il valore è positivo
-   * "0" se il valore è zero
-
-@syntax SGN([expression])
+@syntax = SGN(expression)
 
 @example x = SNG(-42)
 
