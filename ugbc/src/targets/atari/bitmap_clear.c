@@ -79,10 +79,6 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
  * @param _environment Current calling environment
  * @param _pattern Pattern to use
  */
-/* <usermanual>
-@keyword BITMAP CLEAR
-@target atari
-</usermanual> */
 void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
 
     Variable * pattern = variable_retrieve( _environment, _pattern );
@@ -105,10 +101,6 @@ void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
  * @param _environment Current calling environment
  * @throw EXIT_FAILURE CRITICAL: BITMAP CLEAR WITH xxx needs BITMAP ENABLED
  */
-/* <usermanual>
-@keyword BITMAP CLEAR
-@target atari
-</usermanual> */
 void bitmap_clear( Environment * _environment ) {
 
     gtia_clear( _environment, 0 );

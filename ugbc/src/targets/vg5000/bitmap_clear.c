@@ -53,9 +53,6 @@
  * @param _pattern Pattern to use
  * @throw EXIT_FAILURE "BITMAP CLEAR WITH xxx needs BITMAP ENABLED"
  */
-/* <usermanual>
-@keyword BITMAP CLEAR
-</usermanual> */
 void bitmap_clear_with( Environment * _environment, int _pattern ) {
 
 }

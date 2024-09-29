@@ -55,12 +55,9 @@
  */
 /* <usermanual>
 @keyword BITMAP CLEAR
-
 @target coleco
 </usermanual> */
 void bitmap_clear_with( Environment * _environment, int _pattern ) {
-
-    
 
     // Safety check -- bitmap address must be defined at least once.
     Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );

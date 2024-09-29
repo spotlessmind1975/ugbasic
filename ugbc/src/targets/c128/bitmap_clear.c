@@ -104,13 +104,6 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
  * @param _environment Current calling environment
  * @param _pattern Pattern to use
  */
-/* <usermanual>
-@keyword BITMAP CLEAR
-
-@syntax BITMAP CLEAR WITH expression
-
-@example BITMAP CLEAR WITH newValue
-</usermanual> */
 void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
 
     Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
@@ -135,13 +128,6 @@ void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
  * @param _environment Current calling environment
  * @throw EXIT_FAILURE CRITICAL: BITMAP CLEAR WITH xxx needs BITMAP ENABLED
  */
-/* <usermanual>
-@keyword BITMAP CLEAR
-
-@syntax BITMAP CLEAR
-
-@example BITMAP CLEAR
-</usermanual> */
 void bitmap_clear( Environment * _environment ) {
 
     bitmap_clear_with( _environment, 0 );

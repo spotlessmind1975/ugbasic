@@ -55,7 +55,6 @@
  */
 /* <usermanual>
 @keyword BITMAP CLEAR
-
 @target cpc
 </usermanual> */
 void bitmap_clear_with( Environment * _environment, int _pattern ) {
