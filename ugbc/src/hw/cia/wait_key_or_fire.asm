@@ -136,7 +136,7 @@
         RTS
 
     WAITKEYFIREA:
-        CP #0
+        CMP #0
         BEQ WAITKEYFIREA0
 
     WAITKEYFIREB0:
