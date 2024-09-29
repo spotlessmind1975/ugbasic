@@ -46,9 +46,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword DO...LOOP
-</usermanual> */
 void end_loop( Environment * _environment, int _do ) {
 
     Loop * loop = _environment->loops;
