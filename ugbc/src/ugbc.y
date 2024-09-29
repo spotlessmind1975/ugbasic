@@ -4580,6 +4580,81 @@ sprite_definition_all_action_simple:
         sprite_disable( _environment, i );
     }
   }
+  | MULTICOLOR {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_multicolor( _environment, i );
+    }
+  }
+  | MULTICOLOUR {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_multicolor( _environment, i );
+    }
+  }
+  | MONOCOLOR {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_monocolor( _environment, i );
+    }
+  }
+  | MONOCOLOUR {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_monocolor( _environment, i );
+    }
+  }
+  | COLOR direct_integer {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_color( _environment, i, $2 );
+    }
+  }
+  | COLOUR direct_integer {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_color( _environment, i, $2 );
+    }
+  }
+  | position direct_integer OP_COMMA direct_integer {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_at( _environment, i, $2, $4 );
+    }
+  }
+  | EXPAND VERTICAL {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_expand_vertical( _environment, i );
+    }
+  }
+  | COMPRESS VERTICAL {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_compress_vertical( _environment, i );
+    }
+  }
+  | VERTICAL EXPAND {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_expand_vertical( _environment, i );
+    }
+  }
+  | VERTICAL COMPRESS {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_compress_vertical( _environment, i );
+    }
+  }
+  | EXPAND HORIZONTAL {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_expand_horizontal( _environment, i );
+    }
+  }
+  | COMPRESS HORIZONTAL {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_compress_horizontal( _environment, i );
+    }
+  }
+  | HORIZONTAL EXPAND {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_expand_horizontal( _environment, i );
+    }
+  }
+  | HORIZONTAL COMPRESS {
+    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+        sprite_compress_horizontal( _environment, i );
+    }
+  }
   ;
 
 sprite_definition_all_simple:
