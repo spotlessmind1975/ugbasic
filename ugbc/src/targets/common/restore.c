@@ -51,7 +51,7 @@ resets the ''DATA'' pointer to the beginning. When using ''RESTORE'' without
 @italian
 
 Il ''RESTORE'' imposta il puntatore ''DATA'' interno su una ''etichetta'' della linea 
-BASIC desiderata. Se l'''etichetta'' viene omessa, il comando reimposta 
+BASIC desiderata. Se l'etichetta'' viene omessa, il comando reimposta 
 il puntatore ''DATA'' all'inizio. Quando si utilizza ''RESTORE'' senza ''label'', 
 è possibile che le informazioni ''DATA'' indesiderate debbano prima essere lette 
 in loop.

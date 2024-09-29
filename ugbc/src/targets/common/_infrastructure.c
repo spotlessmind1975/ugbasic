@@ -4961,6 +4961,91 @@ Variable * variable_sr_const( Environment * _environment, char * _destination, i
  * @return Variable* The result of operation
  * @throw EXIT_FAILURE "Destination variable does not exist"
  */
+/* <usermanual>
+@keyword AND
+
+@english
+Performs a logical conjunction on two expressions, as a bitwise conjunction. For comparisons managed
+as a boolean result (''TRUE'' or ''FALSE''), result is ''TRUE'' if, and 
+only if, both expresions evaluate to ''TRUE''. The following table shows how result is determined:
+
+'''TRUE AND TRUE = TRUE'''
+'''TRUE AND FALSE = FALSE'''
+'''FALSE AND TRUE = FALSE'''
+'''FALSE AND FALSE = FALSE'''
+
+Generally speaking, the ''AND'' operator performs a bitwise comparison of the bits of two numeric 
+expressions and sets the corresponding bit in result according to the previous table.
+
+Note that ugBASIC uses the convention, very common in BASICs of the 1970s and 1980s, 
+of considering Boolean logic as implemented through the so-called "two's complement".
+
+In other words, the value ''FALSE'' is associated with a number composed of 
+all ''0''s, in terms of bits. The value ''TRUE'' is, instead, 
+associated with a number composed of all ''1''s, again in terms of bits. 
+According to the 2's complement representation, a number composed of all ones is 
+always equivalent to the number ''-1'', regardless of how many bits the 
+number is composed of, while a number composed of all zeros is always equivalent to zero.
+
+According to this convention, there is a coincidence between bitwise and logical 
+operations: in fact, a bitwise ''AND'', applied to all the bits of the number, 
+will be equivalent to the logical operation. Note tha the ''AND'' operator always evaluates 
+both expressions, which can include executing routine calls.
+
+Because the logical and bitwise operators have lower precedence than other arithmetic and relational 
+operators, all bitwise operations must be enclosed in parentheses to ensure accurate results.
+
+If the operands consist of a ''SIGNED BYTE'' expression and a numeric expression,  converts the 
+''SIGNED BYTE'' expression to a numeric value (''-1'' for ''TRUE'' and 0 for ''FALSE'') and 
+performs a bitwise operation. So, the data type of the result is a numeric type appropriate 
+for the data types of both expressions.
+
+@italian
+
+Esegue una congiunzione logica su due espressioni, come congiunzione bit a bit. Per 
+i confronti gestiti come risultato booleano (''TRUE'' o ''FALSE''), result è ''TRUE'' 
+se, e solo se, entrambe le espressioni vengono valutate come ''TRUE''. La seguente 
+tabella mostra come viene determinato il risultato:
+
+'''TRUE AND TRUE = TRUE'''
+'''TRUE AND FALSE = FALSE'''
+'''FALSE AND TRUE = FALSE'''
+'''FALSE AND FALSE = FALSE'''
+
+In generale, l'operatore ''AND'' esegue un confronto bit a bit dei bit di due espressioni
+numeriche e imposta il bit corrispondente in result in base alla tabella precedente.
+
+Nota che ugBASIC utilizza la convenzione, molto comune nei BASIC degli anni '70 e '80, 
+di considerare la logica booleana come implementata tramite il cosiddetto "complemento a due".
+
+In altre parole, il valore ''FALSE'' è associato a un numero composto da tutti ''0'', 
+in termini di bit. Il valore ''TRUE'' è, invece, associato a un numero composto da tutti ''1'',
+sempre in termini di bit.
+
+Secondo la rappresentazione del complemento a 2, un numero composto da tutti 1 è sempre 
+equivalente al numero ''-1'', indipendentemente dal numero di bit di cui è composto, mentre 
+un numero composto da tutti 0 è sempre equivalente a zero.
+
+Secondo questa convenzione, c'è una coincidenza tra operazioni bit a bit e logiche: infatti, 
+un ''AND'' bit a bit, applicato a tutti i bit del numero, sarà equivalente all'operazione 
+logica. Nota che l'operatore ''AND'' valuta sempre entrambe le espressioni, il che può 
+includere l'esecuzione di chiamate di routine.
+
+Poiché gli operatori logici e bitwise hanno una precedenza inferiore rispetto ad altri 
+operatori aritmetici e relazionali, tutte le operazioni bitwise devono essere racchiuse 
+tra parentesi per garantire risultati accurati.
+
+Se gli operandi sono costituiti da un'espressione ''SIGNED BYTE'' e da un'espressione 
+numerica, converte l'espressione ''SIGNED BYTE'' in un valore numerico (''-1'' per 
+''TRUE'' e 0 per ''FALSE'') ed esegue un'operazione bitwise. Quindi, il tipo di dati 
+del risultato è un tipo numerico appropriato per i tipi di dati di entrambe le espressioni.
+
+@syntax = x AND y
+
+@example IF x AND 1 THEN: PRINT "x is odd" : ELSE : PRINT "x is even": ENDIF
+
+@target all
+</usermanual> */
 Variable * variable_and_const( Environment * _environment, char * _destination, int _mask ) {
     Variable * destination = variable_retrieve( _environment, _destination );
     switch( VT_BITWIDTH( destination->type ) ) {
@@ -5034,6 +5119,93 @@ Variable * variable_and( Environment * _environment, char * _left, char * _right
  * @param _right Right expression to check
  * @return Variable* The result of operation
  */
+/* <usermanual>
+@keyword XOR
+
+@english
+Performs a logical exclusion on two expressions, as a bitwise exclusion. For 
+comparisons managed as a boolean result (''TRUE'' or ''FALSE''), result is ''TRUE'' 
+if both expresions evaluate differently each other. The following table shows how result 
+is determined:
+
+'''TRUE XOR TRUE = FALSE'''
+'''TRUE XOR FALSE = TRUE'''
+'''FALSE XOR TRUE = TRUE'''
+'''FALSE XOR FALSE = FALSE'''
+
+Generally speaking, the ''XOR'' operator performs a bitwise comparison of the bits of 
+two numeric expressions and sets the corresponding bit in result according to the
+previous table.
+
+Note that ugBASIC uses the convention, very common in BASICs of the 1970s and 1980s, 
+of considering Boolean logic as implemented through the so-called "two's complement".
+
+In other words, the value ''FALSE'' is associated with a number composed of 
+all ''0''s, in terms of bits. The value ''TRUE'' is, instead, 
+associated with a number composed of all ''1''s, again in terms of bits. 
+According to the 2's complement representation, a number composed of all ones is 
+always equivalent to the number ''-1'', regardless of how many bits the 
+number is composed of, while a number composed of all zeros is always equivalent to zero.
+
+According to this convention, there is a coincidence between bitwise and logical 
+operations: in fact, a bitwise ''XOR'', applied to all the bits of the number, 
+will be equivalent to the logical operation. Note that the ''XOR'' operator always evaluates 
+both expressions, which can include executing routine calls.
+
+Because the logical and bitwise operators have lower precedence than other arithmetic and relational 
+operators, all bitwise operations must be enclosed in parentheses to ensure accurate results.
+
+If the operands consist of a ''SIGNED BYTE'' expression and a numeric expression,  converts the 
+''SIGNED BYTE'' expression to a numeric value (''-1'' for ''TRUE'' and 0 for ''FALSE'') and 
+performs a bitwise operation. So, the data type of the result is a numeric type appropriate 
+for the data types of both expressions.
+
+@italian
+
+Esegue una esclusione logica su due espressioni, come esclusione bit a bit. Per 
+i confronti gestiti come risultato booleano (''TRUE'' o ''FALSE''), result è ''TRUE'' 
+se entrambe le espressioni sono valutate in modo diverso. La seguente 
+tabella mostra come viene determinato il risultato:
+
+'''TRUE XOR TRUE = FALSE'''
+'''TRUE XOR FALSE = TRUE'''
+'''FALSE XOR TRUE = TRUE'''
+'''FALSE XOR FALSE = FALSE'''
+
+In generale, l'operatore ''XOR'' esegue un confronto bit a bit dei bit di due espressioni
+numeriche e imposta il bit corrispondente in result in base alla tabella precedente.
+
+Nota che ugBASIC utilizza la convenzione, molto comune nei BASIC degli anni '70 e '80, 
+di considerare la logica booleana come implementata tramite il cosiddetto "complemento a due".
+
+In altre parole, il valore ''FALSE'' è associato a un numero composto da tutti ''0'', 
+in termini di bit. Il valore ''TRUE'' è, invece, associato a un numero composto da tutti ''1'',
+sempre in termini di bit.
+
+Secondo la rappresentazione del complemento a 2, un numero composto da tutti 1 è sempre 
+equivalente al numero ''-1'', indipendentemente dal numero di bit di cui è composto, mentre 
+un numero composto da tutti 0 è sempre equivalente a zero.
+
+Secondo questa convenzione, c'è una coincidenza tra operazioni bit a bit e logiche: infatti, 
+un ''XOR'' bit a bit, applicato a tutti i bit del numero, sarà equivalente all'operazione 
+logica. Nota che l'operatore ''XOR'' valuta sempre entrambe le espressioni, il che può 
+includere l'esecuzione di chiamate di routine.
+
+Poiché gli operatori logici e bitwise hanno una precedenza inferiore rispetto ad altri 
+operatori aritmetici e relazionali, tutte le operazioni bitwise devono essere racchiuse 
+tra parentesi per garantire risultati accurati.
+
+Se gli operandi sono costituiti da un'espressione ''SIGNED BYTE'' e da un'espressione 
+numerica, converte l'espressione ''SIGNED BYTE'' in un valore numerico (''-1'' per 
+''TRUE'' e 0 per ''FALSE'') ed esegue un'operazione bitwise. Quindi, il tipo di dati 
+del risultato è un tipo numerico appropriato per i tipi di dati di entrambe le espressioni.
+
+@syntax = x OR y
+
+@example IF x XOR x THEN: PRINT "never executed" : ELSE : PRINT "always executed": ENDIF
+
+@target all
+</usermanual> */ 
 Variable * variable_xor( Environment * _environment, char * _left, char * _right ) {
 
     Variable * source = variable_retrieve( _environment, _left );
@@ -5074,6 +5246,93 @@ Variable * variable_xor( Environment * _environment, char * _left, char * _right
  * @param _right Right expression to check
  * @return Variable* The result of operation
  */
+/* <usermanual>
+@keyword OR
+
+@english
+Performs a logical disjunction on two expressions, as a bitwise disjunction. For 
+comparisons managed as a boolean result (''TRUE'' or ''FALSE''), result is ''TRUE'' 
+if just one expresions evaluate to ''TRUE''. The following table shows how result 
+is determined:
+
+'''TRUE OR TRUE = TRUE'''
+'''TRUE OR FALSE = TRUE'''
+'''FALSE OR TRUE = TRUE'''
+'''FALSE OR FALSE = FALSE'''
+
+Generally speaking, the ''OR'' operator performs a bitwise comparison of the bits of 
+two numeric expressions and sets the corresponding bit in result according to the
+previous table.
+
+Note that ugBASIC uses the convention, very common in BASICs of the 1970s and 1980s, 
+of considering Boolean logic as implemented through the so-called "two's complement".
+
+In other words, the value ''FALSE'' is associated with a number composed of 
+all ''0''s, in terms of bits. The value ''TRUE'' is, instead, 
+associated with a number composed of all ''1''s, again in terms of bits. 
+According to the 2's complement representation, a number composed of all ones is 
+always equivalent to the number ''-1'', regardless of how many bits the 
+number is composed of, while a number composed of all zeros is always equivalent to zero.
+
+According to this convention, there is a coincidence between bitwise and logical 
+operations: in fact, a bitwise ''OR'', applied to all the bits of the number, 
+will be equivalent to the logical operation. Note that the ''OR'' operator always evaluates 
+both expressions, which can include executing routine calls.
+
+Because the logical and bitwise operators have lower precedence than other arithmetic and relational 
+operators, all bitwise operations must be enclosed in parentheses to ensure accurate results.
+
+If the operands consist of a ''SIGNED BYTE'' expression and a numeric expression,  converts the 
+''SIGNED BYTE'' expression to a numeric value (''-1'' for ''TRUE'' and 0 for ''FALSE'') and 
+performs a bitwise operation. So, the data type of the result is a numeric type appropriate 
+for the data types of both expressions.
+
+@italian
+
+Esegue una disgiunzione logica su due espressioni, come disgiunzione bit a bit. Per 
+i confronti gestiti come risultato booleano (''TRUE'' o ''FALSE''), result è ''TRUE'' 
+se solo una espressione viene valutata come ''TRUE''. La seguente 
+tabella mostra come viene determinato il risultato:
+
+'''TRUE OR TRUE = TRUE'''
+'''TRUE OR FALSE = TRUE'''
+'''FALSE OR TRUE = TRUE'''
+'''FALSE OR FALSE = FALSE'''
+
+In generale, l'operatore ''OR'' esegue un confronto bit a bit dei bit di due espressioni
+numeriche e imposta il bit corrispondente in result in base alla tabella precedente.
+
+Nota che ugBASIC utilizza la convenzione, molto comune nei BASIC degli anni '70 e '80, 
+di considerare la logica booleana come implementata tramite il cosiddetto "complemento a due".
+
+In altre parole, il valore ''FALSE'' è associato a un numero composto da tutti ''0'', 
+in termini di bit. Il valore ''TRUE'' è, invece, associato a un numero composto da tutti ''1'',
+sempre in termini di bit.
+
+Secondo la rappresentazione del complemento a 2, un numero composto da tutti 1 è sempre 
+equivalente al numero ''-1'', indipendentemente dal numero di bit di cui è composto, mentre 
+un numero composto da tutti 0 è sempre equivalente a zero.
+
+Secondo questa convenzione, c'è una coincidenza tra operazioni bit a bit e logiche: infatti, 
+un ''OR'' bit a bit, applicato a tutti i bit del numero, sarà equivalente all'operazione 
+logica. Nota che l'operatore ''OR'' valuta sempre entrambe le espressioni, il che può 
+includere l'esecuzione di chiamate di routine.
+
+Poiché gli operatori logici e bitwise hanno una precedenza inferiore rispetto ad altri 
+operatori aritmetici e relazionali, tutte le operazioni bitwise devono essere racchiuse 
+tra parentesi per garantire risultati accurati.
+
+Se gli operandi sono costituiti da un'espressione ''SIGNED BYTE'' e da un'espressione 
+numerica, converte l'espressione ''SIGNED BYTE'' in un valore numerico (''-1'' per 
+''TRUE'' e 0 per ''FALSE'') ed esegue un'operazione bitwise. Quindi, il tipo di dati 
+del risultato è un tipo numerico appropriato per i tipi di dati di entrambe le espressioni.
+
+@syntax = x OR y
+
+@example IF x OR 1 THEN: PRINT "always executed" : ELSE : PRINT "never executed": ENDIF
+
+@target all
+</usermanual> */
 Variable * variable_or( Environment * _environment, char * _left, char * _right ) {
 
     Variable * source = variable_retrieve( _environment, _left );

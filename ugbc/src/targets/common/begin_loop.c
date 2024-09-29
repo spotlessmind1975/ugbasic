@@ -54,7 +54,7 @@
 Repeats a block of statements. Use a ''DO...LOOP'' structure when you want to repeat a set of statements an 
 indefinite number of times, or until an ''EXIT'' control out of the loop. If you want to repeat the statements a set number of times, the ''FOR...NEXT'' 
 statement is usually a better choice, while if you want to repeat for specific conditions, you should use
-the ''WHILE...WEND''' and ''REPEAT...UNTIL'' statements. 
+the ''WHILE...WEND'' and ''REPEAT...UNTIL'' statements. 
 
 The ''DO...LOOP'' structure gives you less flexibility than the ''WHILE'' / ''UNTIL'' statements because you cannot decide whether to end the loop 
 when a specific condition stops being ''TRUE'' or when it first becomes ''TRUE''. It also disallow you to 
