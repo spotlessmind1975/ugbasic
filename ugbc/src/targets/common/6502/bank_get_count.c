@@ -49,17 +49,15 @@
 @keyword BANK COUNT
 
 @english
-This function returns the number of (expansion) banks available.
-If the computer has more memory areas than the 
-normally addressable one, this function returns the number of banks. 
-Each bank is a Sharing space with a "window" of memory that starts at ''BANK ADDRESS 
-(bank)'' and is ''BANK SIZE (bank)'' bytes long.
+
+This function returns the number of expanded memory banks available to the program. 
+Depending on the target, this number can range from zero to the actual number of banks.
 
 @italian
-Questa funzione restituisce il numero di banchi (di espansione) disponibili. 
-Se il computer ha più aree di memoria di quelle normalmente indirizzabili, questa 
-funzione restituisce il numero di banchi. Ogni banco è uno spazio di condivisione con 
-una "finestra" di memoria che inizia da "BANK ADDRESS" ed è lunga "BANK SIZE" in byte.
+
+Questa funzione restituisce il numero di banchi di memoria espansa, disponibili per 
+il programma. A seconda del target, questo numero può andare da zero al numero 
+effettivo di banchi. 
 
 @syntax = BANK COUNT
 
@@ -73,7 +71,7 @@ una "finestra" di memoria che inizia da "BANK ADDRESS" ed è lunga "BANK SIZE" i
 @usedInExample expansion_bank_04.bas
 @usedInExample expansion_bank_05.bas
 
-@target atari
+@target all
 </usermanual> */
 Variable * bank_get_count( Environment * _environment ) {
 

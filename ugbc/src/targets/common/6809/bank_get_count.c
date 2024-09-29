@@ -45,9 +45,6 @@
  * @param _environment Current calling environment
  * @return Current number of banks present.
  */
-/* <usermanual>
-@keyword BANK COUNT
-</usermanual> */
 Variable * bank_get_count( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(bank count)" );
