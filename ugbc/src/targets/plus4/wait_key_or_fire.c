@@ -43,3 +43,7 @@ extern char DATATYPE_AS_STRING[][16];
 void wait_key_or_fire( Environment * _environment, int _port, int _release ) {
 
 }
+
+void wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+}
