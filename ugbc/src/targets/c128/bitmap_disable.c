@@ -50,9 +50,11 @@
 @keyword BITMAP DISABLE
 
 @english
+
 Disable bitmap graphics on the target machine.
 
 @italian
+
 Disabilita la grafica bitmap sulla macchina di destinazione.
 
 @syntax BITMAP DISABLE

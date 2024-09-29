@@ -46,23 +46,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword BITMAP DISABLE
-
-@english
-Disable bitmap graphics on the target machine.
-
-@italian
-Disabilita la grafica bitmap sulla macchina di destinazione.
-
-@syntax BITMAP DISABLE
-
-@example BITMAP DISABLE
-
-@seeAlso BITMAP ENABLE
-
-@target vic20
-</usermanual> */
 void bitmap_disable( Environment * _environment ) {
 
     vic1_bitmap_disable( _environment );

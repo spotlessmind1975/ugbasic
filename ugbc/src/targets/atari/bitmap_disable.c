@@ -49,6 +49,7 @@
 /* <usermanual>
 @keyword BITMAP DISABLE
 @target atari
+@target atarixl
 </usermanual> */
 void bitmap_disable( Environment * _environment ) {
 

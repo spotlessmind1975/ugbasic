@@ -48,20 +48,7 @@
  */
 /* <usermanual>
 @keyword BITMAP DISABLE
-
-@english
-Disable bitmap graphics on the target machine.
-
-@italian
-Disabilita la grafica bitmap sulla macchina di destinazione.
-
-@syntax BITMAP DISABLE
-
-@example BITMAP DISABLE
-
-@seeAlso BITMAP ENABLE
-
-@target c64
+@target c64reu
 </usermanual> */
 void bitmap_disable( Environment * _environment ) {
 

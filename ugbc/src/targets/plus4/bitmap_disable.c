@@ -48,7 +48,6 @@
  */
 /* <usermanual>
 @keyword BITMAP DISABLE
-
 @target plus4
 </usermanual> */
 void bitmap_disable( Environment * _environment ) {
