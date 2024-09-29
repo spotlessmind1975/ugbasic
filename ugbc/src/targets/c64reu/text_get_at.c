@@ -46,10 +46,10 @@
  * @param _y Row to locate to
  */
  /* <usermanual>
-@keyword AT$
+@keyword AT
 
 @english
-The ''AT$'' can be used to change the position of the text cursor directly from
+The ''AT'' (also ''AT$'') can be used to change the position of the text cursor directly from
 inside a character string. This is ideal for positioning text once and for all
 on screen, no matter what happens in the program, because the text cursor can
 be set during the program's initialisation phase. 
@@ -58,7 +58,7 @@ The string that is returned takes the standard format. So whenever this string
 is printed, the text cursor will be moved to the text coordinates held by x and y.
 
 @italian
-''AT$'' può essere utilizzato per modificare la posizione del cursore del 
+La funzione ''AT'' (anche ''AT$'') può essere utilizzato per modificare la posizione del cursore del 
 testo direttamente dall'interno di una stringa di caratteri. Questo è l'ideale 
 per posizionare il testo una volta per tutte sullo schermo, indipendentemente 
 da ciò che accade nel programma, perché il cursore del testo può essere
@@ -69,8 +69,9 @@ questa stringa viene stampata, il cursore del testo verrà spostato sulle
 coordinate testo x e y.
 
 @syntax = AT$( x , y )
+@syntax = AT( x , y )
 
-@example PRINT AT$(10,10)
+@example PRINT AT$(10,10); "at 10, 10"
 
 @usedInExample texts_position_05.bas
 @usedInExample texts_position_06.bas
