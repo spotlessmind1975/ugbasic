@@ -49,9 +49,6 @@
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
-/* <usermanual>
-@keyword SPRITE COMPRESS
-</usermanual> */
 void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
 
 }
@@ -65,9 +62,6 @@ void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
-/* <usermanual>
-@keyword SPRITE COMPRESS
-</usermanual> */
 void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
 
 }

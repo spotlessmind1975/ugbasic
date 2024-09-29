@@ -50,11 +50,6 @@
  * @param _sprite Index of the sprite for which to change color
  * @param _color Index of the color
  */
-/* <usermanual>
-@keyword SPRITE COLOR
-
-@target pc128op
-</usermanual> */
 void sprite_color( Environment * _environment, int _sprite, int _color ) {
 
 }
@@ -69,11 +64,6 @@ void sprite_color( Environment * _environment, int _sprite, int _color ) {
  * @param _sprite Expression with the index of the sprite for which to change color
  * @param _color Expression with the index of the color
  */
-/* <usermanual>
-@keyword SPRITE COLOR
-
-@target pc128op
-</usermanual> */
 void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
 
 }

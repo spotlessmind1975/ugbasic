@@ -50,13 +50,43 @@
  * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
 /* <usermanual>
-@keyword SPRITE COMPRESS
+@keyword SPRITE COMPRESS HORIZONTAL (command)
 
-@syntax SPRITE # [integer] COMPRESS HORIZONTAL
+@english
 
-@example SPRITE #1 COMPRESS HORIZONTAL
+With the ''SPRITE COMPRESS HORIZONTAL'' command you can compress the sprite 
+horizontally, so that it is effectively one pixel on the screen for every 
+pixel of the sprite.
 
+Note that the keyword to use is only ''COMPRESS HORIZONTAL'', which must therefore 
+be preceded by the keyword ''SPRITE'' and the sprite index. You can put multiple 
+''COMPRESS HORIZONTAL'' statements together, but of course this will have no effect.
+
+@italian
+
+Con il comando ''SPRITE COMPRESS HORIZONTAL'' puoi comprimere orizzontalmente 
+lo sprite, in modo che effettivamente valga un pixel sullo schermo per ogni 
+pixel dello sprite.
+
+Si noti che la parola chiave da usare è solo ''COMPRESS HORIZONTAL'', che deve 
+quindi essere preceduta dalla parola chiave ''SPRITE'' e dall'indice sprite. 
+È possibile accostare più istruzioni ''COMPRESS HORIZONTAL'' ma, ovviamente, 
+ciò non sortirà effetti.
+
+@syntax SPRITE index COMPRESS HORIZONTAL [command [command ...]]
+
+@example SPRITE ship COMPRESS HORIZONTAL
+
+@seeAlso SPRITE (function)
+@seeAlso SPRITE
+
+@target c64
+@target c64reu
 @target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
 </usermanual> */
 void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
     
@@ -71,15 +101,6 @@ void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
-/* <usermanual>
-@keyword SPRITE COMPRESS
-
-@syntax SPRITE [expression] COMPRESS HORIZONTAL
-
-@example SPRITE starship COMPRESS HORIZONTAL
-
-@target c128
-</usermanual> */
 void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
 
     vic2_sprite_compress_horizontal( _environment, _sprite );

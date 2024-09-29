@@ -50,17 +50,65 @@
  * @param _sprite Index of the sprite to disable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE DISABLE
-@target c128
+@keyword SPRITE DISABLE (command)
+
+@english
+
+With the ''SPRITE DISABLE'' command you can disable (hide) the sprite, 
+so that it will not be drawn anymore.
+
+Note that the keyword to use is only ''DISABLE'', which must therefore 
+be preceded by the keyword ''SPRITE'' and the sprite index. You can put multiple 
+''DISABLE'' statements together, but of course this will have no effect.
+
+@italian
+
+Con il comando ''SPRITE DISABLE'' puoi disabilitare (nascondere) lo sprite, in
+modo che non venga più disegnato.
+
+Nota che la parola chiave da usare è solo ''DISABLE'', che deve quindi essere 
+preceduta dalla parola chiave ''SPRITE'' e dall'indice dello sprite. Puoi mettere 
+insieme più istruzioni ''DISABLE'', ma ovviamente questo non avrà alcun effetto.
+
+@syntax SPRITE index DISABLE [command [command ...]]
+
+@example SPRITE ship DISABLE
+
+@seeAlso SPRITE (function)
+@seeAlso SPRITE
+
 @target c64
 @target c64reu
+@target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
 </usermanual> */
 /* <usermanual>
-@keyword SPRITE OFF
-@target c128
+@keyword SPRITE OFF (command)
+
+@english
+
+Alias for ''SPRITE DISABLE''.
+
+@italian
+
+Alias per ''SPRITE DISABLE''.
+
+@syntax SPRITE index OFF [command [command ...]]
+
+@example SPRITE ship OFF
+
 @target c64
 @target c64reu
+@target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
 </usermanual> */
+
 void sprite_disable( Environment * _environment, int _sprite ) {
 
 }

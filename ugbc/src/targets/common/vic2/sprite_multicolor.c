@@ -50,19 +50,41 @@
  * @param _sprite Index of the sprite for which enable multicolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE MULTICOLOR
+@keyword SPRITE MULTICOLOR (command)
 
 @english
-Enable multicolor for sprite.
+
+With the ''SPRITE MULTICOLOR'' command you can set the sprite 
+as polychrome.
+
+Note that the keyword to use is only ''MULTICOLOR'', which must therefore 
+be preceded by the keyword ''SPRITE'' and the sprite index. You can put multiple 
+''MULTICOLOR'' statements together, but of course this will have no effect.
 
 @italian
-Abilita il multicolor per lo sprite dato.
 
-@syntax SPRITE # [integer] MULTICOLOR
+Con il comando ''SPRITE MULTICOLOR'' puoi impostare lo sprite come
+policromatico.
 
-@example SPRITE #1 MULTICOLOR
+Si noti che la parola chiave da usare è solo ''MULTICOLOR'', che deve 
+quindi essere preceduta dalla parola chiave ''SPRITE'' e dall'indice sprite. 
+È possibile accostare più istruzioni ''MULTICOLOR'' ma, ovviamente, 
+ciò non sortirà effetti.
 
+@syntax SPRITE index MULTICOLOR [command [command ...]]
+
+@example SPRITE ship MULTICOLOR
+
+@seeAlso SPRITE (function)
+@seeAlso SPRITE
+
+@target c64
+@target c64reu
 @target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
 </usermanual> */
 void sprite_multicolor( Environment * _environment, int _sprite ) {
 
@@ -77,15 +99,6 @@ void sprite_multicolor( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
  */
-/* <usermanual>
-@keyword SPRITE MULTICOLOR
-
-@syntax SPRITE [expression] MULTICOLOR
-
-@example SPRITE starship MULTICOLOR
-
-@target c128
-</usermanual> */
 void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
 
     vic2_sprite_multicolor( _environment, _sprite );

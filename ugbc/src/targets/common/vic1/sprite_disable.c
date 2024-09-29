@@ -49,41 +49,6 @@
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite to disable (0...7)
  */
-/* <usermanual>
-@keyword SPRITE DISABLE
-
-@english
-Disable the sprite (by its number). If the number is omitted, all sprites
-will be disable.
-
-@italian
-Disabilita lo sprite (per numero). Se il numero viene omesso,
-tutti gli sprite saranno disabilitati.
-
-@syntax SPRITE #number DISABLE
-@syntax SPRITE DISABLE
-
-@example SPRITE #1 DISABLE
-
-@alias SPRITE OFF
-</usermanual> */
-/* <usermanual>
-@keyword SPRITE OFF
-
-@english
-Disable the sprite, alias di ''SPRITE DISABLE''.
-
-@italian
-Disabilita lo sprite, alias di ''SPRITE DISABLE''.
-
-@syntax SPRITE #number OFF
-@syntax SPRITE OFF
-
-@example SPRITE #1 OFF
-
-@alias SPRITE DISABLE
-</usermanual> */
-
 void sprite_disable( Environment * _environment, int _sprite ) {
 
     
@@ -103,20 +68,6 @@ void sprite_disable( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with the index of the sprite to disable (0...7)
  */
-/* <usermanual>
-@keyword SPRITE DISABLE
-
-@syntax SPRITE sprite DISABLE
-
-@example SPRITE starship DISABLE
-</usermanual> */
-/* <usermanual>
-@keyword SPRITE OFF
-
-@syntax SPRITE sprite OFF
-
-@example SPRITE starship OFF
-</usermanual> */
 void sprite_disable_var( Environment * _environment, char * _sprite ) {
 
     _environment->bitmaskNeeded = 1;

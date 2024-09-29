@@ -49,10 +49,6 @@
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite for which enable monocolor (0...7)
  */
-/* <usermanual>
-@keyword SPRITE MONOCOLOR
-@target pc128op
-</usermanual> */
 void sprite_monocolor( Environment * _environment, int _sprite ) {
 
 }
@@ -66,10 +62,6 @@ void sprite_monocolor( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
  */
-/* <usermanual>
-@keyword SPRITE MONOCOLOR
-@target pc128op
-</usermanual> */
 void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
 
 }

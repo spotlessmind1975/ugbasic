@@ -50,21 +50,6 @@
  * @param _sprite Index of the sprite for which to change color
  * @param _color Index of the color
  */
-/* <usermanual>
-@keyword SPRITE COLOR
-
-@english
-Change specific color for a given sprite.
-
-@italian
-Cambia il colore specifico per un dato sprite.
-
-@syntax SPRITE # [integer] COLOR # [integer]
-
-@example SPRITE #1 COLOR #2
-
-@target vic20
-</usermanual> */
 void sprite_color( Environment * _environment, int _sprite, int _color ) {
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf(spriteString, "#$%2.2x", _sprite );
@@ -84,15 +69,6 @@ void sprite_color( Environment * _environment, int _sprite, int _color ) {
  * @param _sprite Expression with the index of the sprite for which to change color
  * @param _color Expression with the index of the color
  */
-/* <usermanual>
-@keyword SPRITE COLOR
-
-@syntax SPRITE [expression] COLOR [expression]
-
-@example SPRITE #1 COLOR YELLOW
-
-@target vic20
-</usermanual> */
 void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
 
     Variable * sprite = variable_retrieve( _environment, _sprite );

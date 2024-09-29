@@ -51,9 +51,6 @@
  * @param _sprite Index of the sprite to define (0...7)
  * @param _address Address where the sprite data begins from
  */
-/* <usermanual>
-@keyword SPRITE DATA FROM
-</usermanual> */
 void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 
 }
@@ -69,9 +66,6 @@ void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
  * @param _sprite Expression with the index of the sprite to define (0...7)
  * @param _address Expression with the address where the sprite data begins from
  */
-/* <usermanual>
-@keyword SPRITE DATA FROM
-</usermanual> */
 void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address ) {
 
 }

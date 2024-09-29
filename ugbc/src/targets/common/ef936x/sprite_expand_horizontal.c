@@ -49,11 +49,6 @@
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite to expand horizontally (0...7)
  */
-/* <usermanual>
-@keyword SPRITE EXPAND
-
-@target pc128op
-</usermanual> */
 void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
 
 }
@@ -67,9 +62,6 @@ void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with the index of the sprite to expand horizontally (0...7)
  */
-/* <usermanual>
-@keyword SPRITE EXPAND
-</usermanual> */
 void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
 
 }

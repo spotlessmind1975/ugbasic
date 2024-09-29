@@ -49,21 +49,6 @@
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite to compress vertically (0...7)
  */
-/* <usermanual>
-@keyword SPRITE COMPRESS
-
-@english
-Compress a given sprite, vertically or horizontally,
-
-@italian
-Comprime un dato sprite, verticalmente oppure orizzontalmente.
-
-@syntax SPRITE # [integer] COMPRESS VERTICAL
-
-@example SPRITE #1 COMPRESS VERTICAL
-
-@target vic20
-</usermanual> */
 void sprite_compress_vertical( Environment * _environment, int _sprite ) {
 
     
@@ -83,15 +68,6 @@ void sprite_compress_vertical( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with the index of the sprite to compress vertically (0...7)
  */
-/* <usermanual>
-@keyword SPRITE COMPRESS
-
-@syntax SPRITE [expression] COMPRESS VERTICAL
-
-@example SPRITE #1 COMPRESS VERTICAL
-
-@target vic20
-</usermanual> */
 void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) {
 
     _environment->bitmaskNeeded = 1;

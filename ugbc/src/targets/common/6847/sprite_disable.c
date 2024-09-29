@@ -49,9 +49,6 @@
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite to disable (0...7)
  */
-/* <usermanual>
-@keyword SPRITE DISABLE
-</usermanual> */
 void sprite_disable( Environment * _environment, int _sprite ) {
 
 }
@@ -65,9 +62,6 @@ void sprite_disable( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with the index of the sprite to disable (0...7)
  */
-/* <usermanual>
-@keyword SPRITE DISABLE
-</usermanual> */
 void sprite_disable_var( Environment * _environment, char * _sprite ) {
 
 }

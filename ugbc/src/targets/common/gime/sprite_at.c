@@ -52,9 +52,6 @@
  * @param _x The abscissa of the sprite
  * @param _y The ordinate of the sprite
  */
-/* <usermanual>
-@keyword SPRITE AT
-</usermanual> */
 void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 
 }
@@ -71,9 +68,6 @@ void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
  * @param _x Expression with the abscissa of the sprite
  * @param _y Expression with the ordinate of the sprite
  */
-/* <usermanual>
-@keyword SPRITE AT
-</usermanual> */
 void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
 }

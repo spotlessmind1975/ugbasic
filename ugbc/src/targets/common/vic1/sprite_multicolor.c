@@ -49,24 +49,7 @@
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite for which enable multicolor (0...7)
  */
-/* <usermanual>
-@keyword SPRITE MULTICOLOR
-
-@english
-Enable multicolor for sprite.
-
-@italian
-Abilita il multicolor per lo sprite dato.
-
-@syntax SPRITE # [integer] MULTICOLOR
-
-@example SPRITE #1 MULTICOLOR
-
-@target vic20
-</usermanual> */
 void sprite_multicolor( Environment * _environment, int _sprite ) {
-
-    
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
@@ -83,18 +66,7 @@ void sprite_multicolor( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
  */
-/* <usermanual>
-@keyword SPRITE MULTICOLOR
-
-@syntax SPRITE [expression] MULTICOLOR
-
-@example SPRITE starship MULTICOLOR
-
-@target vic20
-</usermanual> */
 void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
-
-    
 
     _environment->bitmaskNeeded = 1;
     

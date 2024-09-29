@@ -3124,3 +3124,47 @@ che da quelli "compositi" (''CSPRITE''), ma non è possibile miscelarne l'uso.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword SPRITE
+
+@english
+
+The ''SPRITE'' instructions can be used to prefix one or more commands on specific 
+hardware sprites. Commands can be specified, one after the other, after specifying which 
+sprite to refer to. If the sprite number is omitted, it is assumed that the 
+operations will be performed on all hardware sprites.
+
+@italian
+
+L'istruzione ''SPRITE'' può essere utilizzata per premettere uno o più comandi su 
+specifici sprite hardware. I comandi possono essere indicate, una dopo l'altra, 
+dopo aver indicato a quale sprite si vuol far riferimento. Se viene omesso il 
+numero dello sprite, si intende che le operazioni saranno svolte su tutti gli 
+sprite hardware.
+
+@syntax SPRITE index command1 [command2 [command3 ...]]
+@syntax SPRITE command1 [command2 [command3 ...]]
+
+@example SPRITE 1 ENABLE MULTICOLOR
+@example SPRITE ON
+
+@target c64
+@target c64reu
+@target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
+@seeAlso SPRITE (function)
+@seeAlso SPRITE AT (command)
+@seeAlso SPRITE COLOR (command)
+@seeAlso SPRITE COMPRESS HORIZONTAL (command)
+@seeAlso SPRITE COMPRESS VERTICAL (command)
+@seeAlso SPRITE DISABLE (command)
+@seeAlso SPRITE ENABLE (command)
+@seeAlso SPRITE EXPAND HORIZONTAL (command)
+@seeAlso SPRITE EXPAND VERTICAL (command)
+@seeAlso SPRITE MONOCOLOR (command)
+@seeAlso SPRITE MULTICOLOR (command)
+</usermanual> */

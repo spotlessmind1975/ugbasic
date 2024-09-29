@@ -49,24 +49,7 @@
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite for which enable monocolor (0...7)
  */
-/* <usermanual>
-@keyword SPRITE MONOCOLOR
-
-@english
-Disable multicolor for sprite.
-
-@italian
-Disabilita il multicolor per lo sprite dato.
-
-@syntax SPRITE # [integer] MONOCOLOR
-
-@example SPRITE #1 MONOCOLOR
-
-@target vic20
-</usermanual> */
 void sprite_monocolor( Environment * _environment, int _sprite ) {
-
-    
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
@@ -83,18 +66,7 @@ void sprite_monocolor( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
  */
-/* <usermanual>
-@keyword SPRITE MONOCOLOR
-
-@syntax SPRITE [expression] MONOCOLOR
-
-@example SPRITE starship MONOCOLOR
-
-@target vic20
-</usermanual> */
 void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
-
-    
 
     _environment->bitmaskNeeded = 1;
     

@@ -49,24 +49,7 @@
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite to expand vertically (0...7)
  */
-/* <usermanual>
-@keyword SPRITE EXPAND
-
-@english
-Expand a given sprite, vertically or horizontally,
-
-@italian
-Espande un dato sprite, verticalmente oppure orizzontalmente.
-
-@syntax SPRITE # [integer] EXPAND VERTICAL
-
-@example SPRITE #1 EXPAND VERTICAL
-
-@target vic20
-</usermanual> */
 void sprite_expand_vertical( Environment * _environment, int _sprite ) {
-
-    
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
@@ -83,18 +66,7 @@ void sprite_expand_vertical( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with the index of the sprite to expand vertically (0...7)
  */
-/* <usermanual>
-@keyword SPRITE EXPAND
-
-@syntax SPRITE [expression] EXPAND VERTICAL
-
-@example SPRITE sharship EXPAND VERTICAL
-
-@target vic20
-</usermanual> */
 void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
-
-    
 
     _environment->bitmaskNeeded = 1;
     

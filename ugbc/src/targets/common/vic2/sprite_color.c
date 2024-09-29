@@ -51,19 +51,47 @@
  * @param _color Index of the color
  */
 /* <usermanual>
-@keyword SPRITE COLOR
+@keyword SPRITE COLOR (command)
 
 @english
-Change specific color for a given sprite.
+
+With the ''SPRITE COLOR'' command you can indicate the specific color in which 
+the sprite will be drawn. The color is specific to this sprite, and different 
+from the (possible) colors shared by all sprites, which can be changed by the 
+''COLOR SPRITE'' command.
+
+Note that the keyword to use is only ''COLOR'', which must therefore be preceded 
+by the ''SPRITE'' keyword and the sprite index. It is possible to put multiple 
+''COLOR'' instructions side by side, but obviously the processor speed is 
+such that only the last one will be the one that counts.
 
 @italian
-Cambia il colore specifico per un dato sprite.
 
-@syntax SPRITE # [integer] COLOR # [integer]
+Con il comando ''SPRITE COLOR'' puoi indicare il colore specifico in cui verrà 
+disegnato lo sprite. Il colore è quello specifico per questo sprite, e diverso 
+dagli (eventuali) colori condivisi da tutti gli sprite, che possono essere 
+modificati dal comando ''COLOR SPRITE''.
 
-@example SPRITE #1 COLOR #2
+Si noti che la parola chiave da usare è solo ''COLOR'', che deve quindi essere 
+preceduta dalla parola chiave ''SPRITE'' e dall'indice sprite. È possibile 
+accostare più istruzioni ''COLOR'' ma, ovviamente, la velocità del processore 
+è tale che solo l'ultima sarà quella che conta.
 
+@syntax SPRITE index COLOR color1 [command [command ...]]
+
+@example SPRITE ship COLOR WHITE
+
+@seeAlso SPRITE (function)
+@seeAlso SPRITE
+@seeAlso COLOR SPRITE
+
+@target c64
+@target c64reu
 @target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
 </usermanual> */
 void sprite_color( Environment * _environment, int _sprite, int _color ) {
 
@@ -79,15 +107,6 @@ void sprite_color( Environment * _environment, int _sprite, int _color ) {
  * @param _sprite Expression with the index of the sprite for which to change color
  * @param _color Expression with the index of the color
  */
-/* <usermanual>
-@keyword SPRITE COLOR
-
-@syntax SPRITE [expression] COLOR [expression]
-
-@example SPRITE #1 COLOR YELLOW
-
-@target c128
-</usermanual> */
 void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
 
     vic2_sprite_color( _environment, _sprite, _color );

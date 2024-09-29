@@ -53,19 +53,63 @@
  * @param _y The ordinate of the sprite
  */
 /* <usermanual>
-@keyword SPRITE AT
+@keyword SPRITE AT (command)
 
 @english
-Position a sprite to the (x,y) on the screen.
+
+With the ''SPRITE AT'' action you can indicate the position where the sprite will 
+be placed. The positioning will happen instantly, and the sprite will be drawn in 
+that position as soon as the video raster line reaches that position. Note that the
+position is indicated in sprites coordinates, and not in pixels: it follows that it
+is necessary to carry out the appropriate proportions using the constants (percentiles) 
+''SCREEN SPRITE RATIO X'' and ''SCREEN SPRITE RATIO Y''. 
+
+Additionally, the video screen may have a border around the area actually accessible 
+to the graphics chipset: as a result, a hardware sprite positioned with a coordinate
+that falls within the border may not be visible. To remedy this problem, and ensure 
+that the sprite is visible, it is necessary to start from the positions induced 
+by the ''SCREEN BORDER X'' and ''SCREEN BORDER Y'' coordinates.
+
+Finally, please note that the keyword to use is only ''AT'', which must therefore be
+prefixed by the ''SPRITE'' keyword and the sprite index. It is possible to 
+juxtapose multiple ''AT'' instructions but, obviously, the processor speed is such 
+that only the last one that counts will be the one that counts.
 
 @italian
-Posiziona uno sprite sullo schermo alla posizione (x,y).
 
-@syntax SPRITE # [integer] AT ( # [integer], # [integer] )
+Con il comando ''SPRITE AT'' si può indicare la posizione a cui andrà posizionato 
+lo sprite. Il posizionamento avverrà istantaneamente, e lo sprite sarà disegnato 
+in quella posizione non appena la linea del raster video raggiungerà quella posizione.
+Da notare che la posizione è indicata in coordinate sprites, e non in pixel: ne 
+consegue che è necessario svolgere le opportune proporzioni usando le costanti 
+(percentili) ''SCREEN SPRITE RATIO X'' e ''SCREEN SPRITE RATIO Y''.
 
-@example SPRITE #1 AT ( #42, #42 )
+Inoltre, lo schermo video potrebbe avere un bordo intorno alla zona effettivamente 
+accessibile al chipset grafico: ne consegue che uno sprite hardware posizionato 
+con una coordinata che ricada nel bordo potrebbe non essere visibile. Per rimediare 
+al problema, ed essere sicuri che lo sprite sia visibile, è necessario partire 
+dalle posizioni indotte dalle coordinate SCREEN BORDER X e SCREEN BORDER Y.
 
+Infine, si fa presente che la parola chiave da usare è solo ''AT'', che andrà quindi 
+fatta precedere alla parola chiave ''SPRITE'' e all'indice dello sprite. 
+
+E' possibile giustapporre più istruzioni ''AT'' ma, ovviamente, la velocità 
+del processore è tale per cui l'unica che conta sarà l'ultima.
+
+@syntax SPRITE index AT (x1, y1) [command [command ...]]
+
+@example SPRITE #1 AT ( #100, #100 )
+
+@seeAlso SPRITE (function)
+@seeAlso SPRITE
+
+@target c64
+@target c64reu
 @target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
 </usermanual> */
 void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 
@@ -83,13 +127,6 @@ void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
  * @param _x Expression with the abscissa of the sprite
  * @param _y Expression with the ordinate of the sprite
  */
-/* <usermanual>
-@keyword SPRITE AT
-
-@syntax SPRITE [expression] AT ( [expression], [expression] )
-
-@example SPRITE starship AT ( starshipX, starshipY )
-</usermanual> */
 void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
     vic2_sprite_at( _environment, _sprite, _x, _y );

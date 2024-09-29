@@ -47,12 +47,7 @@
  * @param _image image to use as SPRITE
  */
 /* <usermanual>
-@keyword SPRITE
-
-@target c128
-</usermanual> */
-/* <usermanual>
-@keyword SPRITE
+@keyword SPRITE (function)
 
 @english
 
@@ -128,7 +123,15 @@ evitare flickering.
 
 @example ship = SPRITE( imageShip ) IGNORE BLACK
 
-@target all
+@seeAlso SPRITE
+
+@target c64
+@target c64reu
+@target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
 </usermanual> */
 Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 

@@ -50,19 +50,41 @@
  * @param _sprite Index of the sprite for which enable monocolor (0...7)
  */
 /* <usermanual>
-@keyword SPRITE MONOCOLOR
+@keyword SPRITE MONOCOLOR (command)
 
 @english
-Disable multicolor for sprite.
+
+With the ''SPRITE MONOCOLOR'' command you can set the sprite 
+as monochrome.
+
+Note that the keyword to use is only ''MONOCOLOR'', which must therefore 
+be preceded by the keyword ''SPRITE'' and the sprite index. You can put multiple 
+''MONOCOLOR'' statements together, but of course this will have no effect.
 
 @italian
-Disabilita il multicolor per lo sprite dato.
 
-@syntax SPRITE # [integer] MONOCOLOR
+Con il comando ''SPRITE MONOCOLOR'' puoi impostare lo sprite come
+monocromatico.
 
-@example SPRITE #1 MONOCOLOR
+Si noti che la parola chiave da usare è solo ''MONOCOLOR'', che deve 
+quindi essere preceduta dalla parola chiave ''SPRITE'' e dall'indice sprite. 
+È possibile accostare più istruzioni ''MONOCOLOR'' ma, ovviamente, 
+ciò non sortirà effetti.
 
+@syntax SPRITE index MONOCOLOR [command [command ...]]
+
+@example SPRITE ship MONOCOLOR
+
+@seeAlso SPRITE (function)
+@seeAlso SPRITE
+
+@target c64
+@target c64reu
 @target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
 </usermanual> */
 void sprite_monocolor( Environment * _environment, int _sprite ) {
 
@@ -77,15 +99,6 @@ void sprite_monocolor( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
  */
-/* <usermanual>
-@keyword SPRITE MONOCOLOR
-
-@syntax SPRITE [expression] MONOCOLOR
-
-@example SPRITE starship MONOCOLOR
-
-@target c128
-</usermanual> */
 void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
 
     vic2_sprite_monocolor( _environment, _sprite );

@@ -50,19 +50,43 @@
  * @param _sprite Index of the sprite to expand vertically (0...7)
  */
 /* <usermanual>
-@keyword SPRITE EXPAND
+@keyword SPRITE EXPAND VERTICAL (command)
 
 @english
-Expand a given sprite, vertically or horizontally,
+
+With the ''SPRITE EXPAND VERTICAL'' command you can expand the sprite 
+horizontally, so that it is more than one pixel on the screen for every 
+pixel of the sprite.
+
+Note that the keyword to use is only ''EXPAND VERTICAL'', which must therefore 
+be preceded by the keyword ''SPRITE'' and the sprite index. You can put multiple 
+''EXPAN VERTICAL'' statements together, but of course this will have no effect.
 
 @italian
-Espande un dato sprite, verticalmente oppure orizzontalmente.
 
-@syntax SPRITE # [integer] EXPAND VERTICAL
+Con il comando ''SPRITE EXPAND VERTICAL'' puoi espandere orizzontalmente 
+lo sprite, in modo che effettivamente valga più di un pixel sullo schermo per ogni 
+pixel dello sprite.
 
-@example SPRITE #1 EXPAND VERTICAL
+Si noti che la parola chiave da usare è solo ''EXPAND VERTICAL'', che deve 
+quindi essere preceduta dalla parola chiave ''SPRITE'' e dall'indice sprite. 
+È possibile accostare più istruzioni ''EXPAND VERTICAL'' ma, ovviamente, 
+ciò non sortirà effetti.
 
+@syntax SPRITE index EXPAND VERTICAL [command [command ...]]
+
+@example SPRITE ship EXPAND VERTICAL
+
+@seeAlso SPRITE (function)
+@seeAlso SPRITE
+
+@target c64
+@target c64reu
 @target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
 </usermanual> */
 void sprite_expand_vertical( Environment * _environment, int _sprite ) {
 
@@ -77,15 +101,6 @@ void sprite_expand_vertical( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with the index of the sprite to expand vertically (0...7)
  */
-/* <usermanual>
-@keyword SPRITE EXPAND
-
-@syntax SPRITE [expression] EXPAND VERTICAL
-
-@example SPRITE sharship EXPAND VERTICAL
-
-@target c128
-</usermanual> */
 void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
 
     vic2_sprite_expand_vertical( _environment, _sprite );

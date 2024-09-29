@@ -50,16 +50,63 @@
  * @param _sprite Index of the sprite to enable (0...7)
  */
 /* <usermanual>
-@keyword SPRITE ENABLE
-@target c128
+@keyword SPRITE ENABLE (command)
+
+@english
+
+With the ''SPRITE ENABLE'' command you can enable (show) the sprite, 
+so that it will be drawn.
+
+Note that the keyword to use is only ''ENABLE'', which must therefore 
+be preceded by the keyword ''SPRITE'' and the sprite index. You can put multiple 
+''ENABLE'' statements together, but of course this will have no effect.
+
+@italian
+
+Con il comando ''SPRITE ENABLE'' puoi abilitare (mostrare) lo sprite, in
+modo che non venga più disegnato.
+
+Nota che la parola chiave da usare è solo ''ENABLE'', che deve quindi essere 
+preceduta dalla parola chiave ''SPRITE'' e dall'indice dello sprite. Puoi mettere 
+insieme più istruzioni ''ENABLE'', ma ovviamente questo non avrà alcun effetto.
+
+@syntax SPRITE index ENABLE [command [command ...]]
+
+@example SPRITE ship ENABLE
+
+@seeAlso SPRITE (function)
+@seeAlso SPRITE
+
 @target c64
 @target c64reu
+@target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
 </usermanual> */
 /* <usermanual>
-@keyword SPRITE ON
-@target c128
+@keyword SPRITE ON (command)
+
+@english
+
+Alias for ''SPRITE ENABLE''.
+
+@italian
+
+Alias per ''SPRITE ENABLE''.
+
+@syntax SPRITE index ON [command [command ...]]
+
+@example SPRITE ship ON
+
 @target c64
 @target c64reu
+@target c128
+@target msx1
+@target coleco
+@target sc3000
+@target sg1000
 </usermanual> */
 void sprite_enable( Environment * _environment, int _sprite ) {
 

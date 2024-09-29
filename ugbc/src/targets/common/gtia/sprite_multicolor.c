@@ -49,9 +49,6 @@
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite for which enable multicolor (0...7)
  */
-/* <usermanual>
-@keyword SPRITE MULTICOLOR
-</usermanual> */
 void sprite_multicolor( Environment * _environment, int _sprite ) {
 
 }
@@ -65,9 +62,6 @@ void sprite_multicolor( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
  */
-/* <usermanual>
-@keyword SPRITE MULTICOLOR
-</usermanual> */
 void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
 
 }

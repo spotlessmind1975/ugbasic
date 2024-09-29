@@ -49,10 +49,6 @@
  * @param _environment Current calling environment
  * @param _sprite Index of the sprite to expand vertically (0...7)
  */
-/* <usermanual>
-@keyword SPRITE EXPAND
-@target pc128op
-</usermanual> */
 void sprite_expand_vertical( Environment * _environment, int _sprite ) {
 
 }
@@ -66,9 +62,6 @@ void sprite_expand_vertical( Environment * _environment, int _sprite ) {
  * @param _environment Current calling environment
  * @param _sprite Expression with the index of the sprite to expand vertically (0...7)
  */
-/* <usermanual>
-@keyword SPRITE EXPAND
-</usermanual> */
 void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
 
 }
