@@ -49,7 +49,6 @@
  */
 /* <usermanual>
 @keyword NEXT RASTER
-
 @target plus4
 </usermanual> */
 void next_raster( Environment * _environment ) {

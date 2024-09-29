@@ -47,11 +47,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword NEXT RASTER
-
-@target coco
-</usermanual> */
 void next_raster( Environment * _environment ) {
 
 }

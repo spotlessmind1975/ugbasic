@@ -47,11 +47,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword NEXT RASTER
-
-@target d64
-</usermanual> */
 void next_raster( Environment * _environment ) {
 
 }

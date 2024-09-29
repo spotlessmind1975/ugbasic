@@ -49,20 +49,7 @@
  */
 /* <usermanual>
 @keyword NEXT RASTER
-
-@english
-Wait for the next raster. Meanwhile, the execution of the main 
-code will resume where it left off.
-
-@italian
-Aspetta il prossimo raster. Nel frattempo, l'esecuzione del 
-codice riprenderà da dove era stato interrotto.
-
-@syntax NEXT RASTER
-
-@example NEXT RASTER
-
-@target c64
+@target c64reu
 </usermanual> */
 void next_raster( Environment * _environment ) {
 

@@ -52,11 +52,10 @@
  */
 /* <usermanual>
 @keyword NEXT RASTER AT
+@target plus4
 </usermanual> */
 void next_raster_at_with( Environment * _environment, int _position, char * _label ) {
     
-    
-
     char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "%2.2x", (unsigned char) ( _position & 0xff )  );
     char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
 
@@ -76,12 +75,7 @@ void next_raster_at_with( Environment * _environment, int _position, char * _lab
  * @param _label Label to jump to when vertical raster reach the value given
  * @param _position The vertical position to wait for
  */
-/* <usermanual>
-@keyword NEXT RASTER AT
-</usermanual> */
 void next_raster_at_with_var( Environment * _environment, char * _position, char * _label ) {
-
-    
 
     MAKE_LABEL
 

@@ -47,16 +47,18 @@
 @keyword WAIT PARALLEL
 
 @english
-This keyword will suspend the current thread until another
-thread finished its execution.
+
+The ''WAIT PARALLEL'' command makes a thread wait until the thread specified
+as the parameter terminates.
 
 @italian
-Questa parola chiave sospende il thread corrente fino a che non
-finisce un altro thread.
 
-@syntax WAIT PARALLEL [expression]
+Il comando ''WAIT PARALLEL'' mette in attesa un thread fino al termine del 
+thread indicato come parametro.
 
-@example WAIT PARALLEL INVOKE example
+@syntax WAIT PARALLEL id
+
+@example WAIT PARALLEL exampleThread
 
 @target all
 </usermanual> */

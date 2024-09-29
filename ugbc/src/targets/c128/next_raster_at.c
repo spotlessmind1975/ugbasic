@@ -54,25 +54,24 @@
 @keyword NEXT RASTER AT
 
 @english
-Wait for the next raster at a specific, new, raster position
-and to execute the code at the given label. Meanwhile, the 
-execution of the main code will resume where it left off.
+
+The ''NEXT RASTER AT'' command allows you to continue execution of the main program
+until a new specific raster line is reached, indicating a new routine to call.
 
 @italian
-Attendi il raster successivo in una nuova posizione raster specifica
-ed esegui il codice in corrispondenza dell'etichetta data. Nel 
-frattempo, l'esecuzione del codice principale riprenderà da dove 
-era stata interrotta.
 
-@syntax NEXT RASTER AT #line WITH label
+Il comando ''NEXT RASTER AT'' permette di continuare l'esecuzione del programma 
+principale fino al raggiungimento di una nuova specifica linea di raster, 
+indicando una nuova routine da richiamare.
+
+@syntax NEXT RASTER AT line WITH label
+@syntax NEXT RASTER label AT line
 
 @example NEXT RASTER AT #$42 WITH myRasterRoutine
 
 @target c128
 </usermanual> */
 void next_raster_at_with( Environment * _environment, int _position, char * _label ) {
-    
-    
 
     char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "%2.2x", (unsigned char) ( _position & 0xff )  );
     char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
@@ -93,13 +92,6 @@ void next_raster_at_with( Environment * _environment, int _position, char * _lab
  * @param _label Label to jump to when vertical raster reach the value given
  * @param _position The vertical position to wait for
  */
-/* <usermanual>
-@keyword NEXT RASTER AT
-
-@syntax NEXT RASTER AT expression WITH label
-
-@example NEXT RASTER AT newRaterLine WITH myRasterRoutine
-</usermanual> */
 void next_raster_at_with_var( Environment * _environment, char * _position, char * _label ) {
 
     

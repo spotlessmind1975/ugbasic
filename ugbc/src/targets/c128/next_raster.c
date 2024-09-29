@@ -51,7 +51,8 @@
 @keyword NEXT RASTER
 
 @english
-Wait for the next raster. Meanwhile, the execution of the main 
+
+Wait for the next raster line. Meanwhile, the execution of the main 
 code will resume where it left off.
 
 @italian
