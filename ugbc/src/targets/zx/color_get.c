@@ -44,14 +44,18 @@
  * @param _index Index of the common color to set
  * @return Shade of the common color to set
  */
-/* <usermanual>
+ /* <usermanual>
 @keyword COLOR (function)
 
+@target zx
 </usermanual> */
 Variable * color_get_vars( Environment * _environment, char * _index ) {
 
+    Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_COLOR, "(shade)" );
 
+    variable_move( _environment, index->name, result->name );
+
     return result;
-    
+
 }

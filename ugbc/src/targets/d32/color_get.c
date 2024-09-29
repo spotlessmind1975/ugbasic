@@ -46,6 +46,8 @@
  */
 /* <usermanual>
 @keyword COLOR (function)
+
+@target d32
 </usermanual> */
 Variable * color_get_vars( Environment * _environment, char * _index ) {
 

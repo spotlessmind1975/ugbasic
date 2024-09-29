@@ -47,19 +47,8 @@
 /* <usermanual>
 @keyword COLOR (function)
 
-@english
-This function allows you to obtain the shade associated with the color 
-corresponding to the given index.
-
-@italian
-Questa funzione permette di ottenere la sfumatura associata al colore 
-corrispondente all'indice dato.
-
-@syntax = COLOR(index)
-
-@example c = COLOR(0)
-
 @target atari
+@target atarixl
 </usermanual> */
 Variable * color_get_vars( Environment * _environment, char * _index ) {
 

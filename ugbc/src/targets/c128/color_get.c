@@ -47,8 +47,34 @@
 /* <usermanual>
 @keyword COLOR (function)
 
+@english
+
+This function allows you to retrieve the color associated with the indicated position. 
+Depending on the video chipset considered, the parameter of this function can be the 
+number of possible colors or a specific register. Furthermore, the information returned 
+is of type ''COLOR'', so it can be used where it is necessary to indicate a color. 
+
+Note that this function does not necessarily return information on the "shade", but the 
+result can be compared with the predefined constants.
+
+@italian
+
+Questa funzione permette di recuperare il colore associato alla posizione indicata. 
+A seconda del chipset video considerato, il parametro di questa funzione può essere 
+il numero dei colori possibili oppure un registro specifico. Inoltre, l'informazione 
+restituita è di tipo ''COLOR'', quindi utilizzabile laddove sia necessario indicare 
+un colore.
+
+Da notare che questa funzione non restituisce necessariamente informazioni sulla 
+"sfumatura", ma il risultato può essere confrontato con le costanti predefinite.
+
+@syntax = COLOR(index)
+
+@example c = COLOR(0)
+
 @target c128
 </usermanual> */
+
 Variable * color_get_vars( Environment * _environment, char * _index ) {
 
     Variable * index = variable_retrieve_or_define( _environment, _index, VT_COLOR, COLOR_BLACK );

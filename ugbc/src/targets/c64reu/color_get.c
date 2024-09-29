@@ -47,7 +47,7 @@
 /* <usermanual>
 @keyword COLOR (function)
 
-@target c64
+@target c64reu
 </usermanual> */
 Variable * color_get_vars( Environment * _environment, char * _index ) {
 

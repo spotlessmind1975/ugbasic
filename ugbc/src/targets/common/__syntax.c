@@ -2579,3 +2579,213 @@ in alcun caso.
 
 @target all
 */
+
+/* <usermanual>
+@keyword COLORS (constant)
+
+@english
+
+This constant holds the maximum number of colors available for the target, for 
+the current mode. Note that, although this is the number of colors available, 
+it is not guaranteed that every single graphic or text element in the mode could 
+assume this number independently. This depends on the specific characteristics 
+of the video chipset available. Also, it is not guaranteed that the colors are 
+changeable. This information is useful when you want to choose a random color 
+from those available, or to perform loops on the actual availability of colors.
+
+@italian
+
+Questa costante mantiene il numero massimo di colori disponibili per il target, 
+per la modalità corrente. Nota che, sebbene questo sia il numero di colori 
+disponibili, non è detto che ogni singolo elemento grafico o testuale della 
+modalità possa assumerlo in modo indipendente. Questo dipende dalle caratteristiche 
+specifiche del chipset video a disposizione. Inoltre, non è detto che i colori 
+siano modificabili. Questa informazione è utile laddove si voglia scegliere un 
+colore a caso tra quelli disponibili, o effettuare cicli sulla effettiva 
+disponibilità di colori.
+
+@syntax = COLORS
+
+@alias SCREEN COLORS (constant)
+@alias COLORS COUNT (constant)
+@alias COLOR COUNT (constant)
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN COLORS (constant)
+
+@english
+
+Alias for ''COLORS''.
+
+@italian
+
+Alias per ''COLORS''.
+
+@syntax = SCREEN COLORS
+
+@alias COLORS (constant)
+@alias COLORS COUNT (constant)
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword COLORS COUNT (constant)
+
+@english
+
+Alias for ''COLORS''.
+
+@italian
+
+Alias per ''COLORS''.
+
+@syntax = COLORS COUNT
+
+@alias COLORS (constant)
+@alias SCREEN COLORS (constant)
+@alias COLOR COUNT (constant)
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword COLOR COUNT (constant)
+
+@english
+
+Alias for ''COLORS''.
+
+@italian
+
+Alias per ''COLORS''.
+
+@syntax = COLOR COUNT
+
+@alias COLORS (constant)
+@alias SCREEN COLORS (constant)
+@alias COLORS COUNT (constant)
+@target all
+</usermanual> */
+
+
+/* <usermanual>
+@keyword COLOURS (constant)
+
+@english
+
+Alias for ''COLORS''.
+
+@italian
+
+Alias per ''COLORS''
+
+@syntax = COLOURS
+
+@alias SCREEN COLOURS (constant)
+@alias COLOURS COUNT (constant)
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN COLOURS (constant)
+
+@english
+
+Alias for ''COLORS''.
+
+@italian
+
+Alias per ''COLORS''.
+
+@syntax = SCREEN COLORS
+
+@alias COLOURS (constant)
+@alias COLOURS COUNT (constant)
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword COLOURS COUNT (constant)
+
+@english
+
+Alias for ''COLORS''.
+
+@italian
+
+Alias per ''COLORS''.
+
+@syntax = COLOURS COUNT
+
+@alias COLOURS (constant)
+@alias SCREEN COLOURS (constant)
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword PEN COLORS (constant)
+
+@english
+
+This constant gives the number of colors that can be used with the ''PEN'' command. 
+It usually represents the maximum number of colors that can be managed in text mode,
+and has little to do with the actual number of colors available in the mode in use. 
+For that, it is advisable to use the ''COLORS'' constant.
+
+@italian
+
+Questa costante fornisce il numero di colori utilizzabili con il comando ''PEN''. 
+Di solito rappresenta il numero massimo di colori gestibili nella modalità testuale, 
+e non ha molta attinenza con l'effettivo numero di colori disponibili nella 
+modalità in uso. Per quello è consigliabile usare la costante ''COLORS''.
+
+@syntax = PEN COLORS
+
+@seeAlso COLORS (constant)
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword PAPER COLORS (constant)
+
+@english
+
+This constant gives the number of colors that can be used with the ''PAPER'' command. 
+It usually represents the maximum number of colors that can be managed in text mode,
+and has little to do with the actual number of colors available in the mode in use. 
+For that, it is advisable to use the ''COLORS'' constant.
+
+@italian
+
+Questa costante fornisce il numero di colori utilizzabili con il comando ''PAPER''. 
+Di solito rappresenta il numero massimo di colori gestibili nella modalità testuale, 
+e non ha molta attinenza con l'effettivo numero di colori disponibili nella 
+modalità in uso. Per quello è consigliabile usare la costante ''COLORS''.
+
+@syntax = PAPER COLORS
+
+@seeAlso COLORS (constant)
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword COLOR (data type)
+
+@english
+
+The ''COLOR'' data type holds enough information to represent a color on the target's 
+video chipset. This type of information allows one of several possible colors to be 
+selected, either predefined or redefined, depending on the targets' capabilities.
+
+@italian
+
+Il tipo di dato ''COLOR'' mantiene l'informazione sufficiente a rappresentare un colore 
+sul chipset video del target. Questo tipo di informazione permette di selezionare uno 
+dei colori possibili, predefiniti o ridefiniti, a seconda delle possibilità dei target.
+
+@syntax DIM c AS COLOR
+@syntax x = (COLOR) 42
+
+@target all
+</usermanual> */

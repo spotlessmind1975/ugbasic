@@ -47,6 +47,7 @@
 /* <usermanual>
 @keyword COLOR (function)
 
+@target sg1000
 </usermanual> */
 Variable * color_get_vars( Environment * _environment, char * _index ) {
 
