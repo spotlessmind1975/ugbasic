@@ -47,13 +47,22 @@
 @keyword WAIT WHILE
 
 @english
-This keyword will suspend the current thread while the condition
-is true.
+
+The ''WAIT WHILE'' command allows you to suspend the execution of a thread until 
+the indicated condition becomes ''FALSE''. In other words, the expression is 
+evaluated and, if ''TRUE'', the execution will be suspended to send another 
+scheduled thread to execute. If it becomes ''FALSE'', the execution of this thread
+will continue.
 
 @italian
-Questa parola chiave sospende il thread corrente mentre la condizione è true.
 
-@syntax WAIT WHILE [expression]
+Il comando ''WAIT WHILE'' permette di sospendere l'esecuzione di un thread fino a
+che la condizione indicata non diventa falsa. In altri termini, l'espressione 
+viene valutata e, se ''TRUE'', l'esecuzione sarà sospesa per mandare in esecuzione
+un altro thread di quelli schedulati.  Se invece diventa ''FALSE'', l'esecuzione di
+questo thread proseguirà.
+
+@syntax WAIT WHILE expression
 
 @example WAIT WHILE NOT done
 

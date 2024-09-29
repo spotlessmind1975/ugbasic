@@ -47,14 +47,22 @@
 @keyword WAIT UNTIL
 
 @english
-This keyword will suspend the current thread until the condition
-is true.
+
+The ''WAIT UNTIL'' command allows you to suspend the execution of a thread until 
+the indicated condition becomes ''TRUE''. In other words, the expression is 
+evaluated and, if ''FALSE'', the execution will be suspended to send another 
+scheduled thread to execute. If it becomes ''TRUE'', the execution of this thread
+will continue.
 
 @italian
-Questa parola chiave sospende il thread corrente, fino alla valutazione
-a true della condizione data.
 
-@syntax WAIT UNTIL [expression]
+Il comando ''WAIT UNTIL'' permette di sospendere l'esecuzione di un thread fino a
+che la condizione indicata non diventa vera. In altri termini, l'espressione 
+viene valutata e, se ''FALSE'', l'esecuzione sarà sospesa per mandare in esecuzione
+un altro thread di quelli schedulati.  Se invece diventa TRUE, l'esecuzione di
+questo thread proseguirà.
+
+@syntax WAIT UNTIL expression
 
 @example WAIT UNTIL x < 0
 
