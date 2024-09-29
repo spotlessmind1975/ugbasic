@@ -45,19 +45,6 @@
 void d32_xpen( Environment * _environment, char * _destination );
 void d32_ypen( Environment * _environment, char * _destination );
 
-void d32_wait_key( Environment * _environment, int _release );
-void d32_wait_fire( Environment * _environment, int _port, int _release );
-void d32_wait_key_or_fire( Environment * _environment, int _port, int _release );
-void d32_key_state( Environment * _environment, char *_scancode, char * _result );
-void d32_scancode( Environment * _environment, char * _scacode );
-void d32_asciicode( Environment * _environment, char * _asciicode );
-void d32_inkey( Environment * _environment, char * _key );
-void d32_key_pressed( Environment * _environment, char *_scancode, char * _result );
-void d32_put_key(  Environment * _environment, char *_string, char * _size );
-
-void d32_scanshift( Environment * _environment, char * _shifts );
-void d32_keyshift( Environment * _environment, char * _shifts );
-void d32_clear_key( Environment * _environment );
 void d32_busy_wait( Environment * _environment, char * _timing );
 void d32_irq_at( Environment * _environment, char * _label );
 void d32_follow_irq( Environment * _environment );

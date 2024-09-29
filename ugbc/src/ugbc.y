@@ -4471,14 +4471,7 @@ wait_definition_expression:
       wait_milliseconds_var( _environment, $1 );
     }
     | FIRE OP expr CP release {
-        begin_do_loop( _environment );
-            exit_loop_if( _environment, joy_direction_semivars( _environment, $3, JOY_FIRE )->name, 0 );
-        end_do_loop( _environment );
-        if ( $5 ) {
-            begin_do_loop( _environment );
-                exit_loop_if( _environment, variable_not( _environment, joy_direction_semivars( _environment, $3, JOY_FIRE )->name )->name, 0 );
-            end_do_loop( _environment );
-        }
+        wait_fire_vars( _environment, $3, $5 );
     }
     | UNTIL { 
         wait_until( _environment );  
