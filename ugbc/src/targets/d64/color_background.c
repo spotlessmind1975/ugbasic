@@ -45,11 +45,6 @@
  * @param _index Index of the background color
  * @param _background_color Index of the color to use
  */
-/* <usermanual>
-@keyword COLOR BACKGROUND
-
-@target d64
-</usermanual> */
 void color_background( Environment * _environment, int _index, int _background_color ) {
     
 }
@@ -64,9 +59,6 @@ void color_background( Environment * _environment, int _index, int _background_c
  * @param _index Expression with the index of the background color
  * @param _background_color Expression with the index of the color to use
  */
-/* <usermanual>
-@keyword COLOR BACKGROUND
-</usermanual> */
 void color_background_vars( Environment * _environment, char * _index, char * _background_color ) {
 
 }

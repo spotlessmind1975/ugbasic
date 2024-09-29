@@ -67,11 +67,6 @@ void color_border( Environment * _environment, int _color ) {
  * @param _environment Current calling environment
  * @param _color Variable with the expression.
  */
-/* <usermanual>
-@keyword COLOR BORDER
-
-@target plus4
-</usermanual> */
 void color_border_var( Environment * _environment, char * _color ) {
 
     

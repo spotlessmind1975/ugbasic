@@ -49,6 +49,11 @@
 
 @target pc128op
 </usermanual> */
+/* <usermanual>
+@keyword COLOUR
+
+@target pc128
+</usermanual> */
 void color( Environment * _environment, int _index, int _shade ) {
 
     ef936x_background_color( _environment, _index, _shade );
@@ -65,9 +70,6 @@ void color( Environment * _environment, int _index, int _shade ) {
  * @param _index Expression with the index of common color to set
  * @param _common_color Expression with the index of the color to use
  */
-/* <usermanual>
-@keyword COLOR
-</usermanual> */
 void color_semivars( Environment * _environment, int _index, char *_shade ) {
 
     Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_WORD, 0 );
@@ -86,9 +88,6 @@ void color_semivars( Environment * _environment, int _index, char *_shade ) {
  * @param _index Expression with the index of common color to set
  * @param _common_color Expression with the index of the color to use
  */
-/* <usermanual>
-@keyword COLOR
-</usermanual> */
 void color_vars( Environment * _environment, char *_index, char *_shade ) {
 
     Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );

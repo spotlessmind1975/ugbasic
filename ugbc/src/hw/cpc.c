@@ -1008,12 +1008,6 @@ void cpc_text( Environment * _environment, char * _text, char * _text_size ) {
 
 }
 
-/* <usermanual>
-@keyword RGB
-
-@target cpc
-</usermanual> */
-
 void cpc_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 160 );

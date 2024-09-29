@@ -66,9 +66,6 @@ void color_border( Environment * _environment, int _color ) {
  * @param _environment Current calling environment
  * @param _color Variable with the expression.
  */
-/* <usermanual>
-@keyword COLOR BORDER
-</usermanual> */
 void color_border_var( Environment * _environment, char * _color ) {
 	 Variable * var = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 	

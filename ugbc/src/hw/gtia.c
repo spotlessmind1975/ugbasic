@@ -1987,13 +1987,6 @@ void gtia_text( Environment * _environment, char * _text, char * _text_size ) {
 
 }
 
-/* <usermanual>
-@keyword RGB
-
-@target atari
-@target atarixl
-</usermanual> */
-
 void gtia_initialization( Environment * _environment ) {
 
     _environment->vestigialConfig.palettePreserve = 1;

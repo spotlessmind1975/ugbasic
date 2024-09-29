@@ -43,11 +43,6 @@
  * @param _environment Current calling environment
  * @param _color Index color to use.
  */
-/* <usermanual>
-@keyword COLOR BORDER
-
-@target vg5000
-</usermanual> */
 void color_border( Environment * _environment, int _color ) {
     
     char color[MAX_TEMPORARY_STORAGE]; sprintf(color, "$%2.2x", _color);

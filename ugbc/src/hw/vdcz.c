@@ -2380,12 +2380,6 @@ void vdcz_text( Environment * _environment, char * _text, char * _text_size ) {
 
 }
 
-/* <usermanual>
-@keyword RGB
-
-@target c128z
-</usermanual> */
-
 void vdcz_initialization( Environment * _environment ) {
 
     deploy( vdczvars, src_hw_vdcz_vars_asm );

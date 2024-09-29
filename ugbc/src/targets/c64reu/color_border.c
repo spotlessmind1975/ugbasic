@@ -45,7 +45,7 @@
  */
 /* <usermanual>
 @keyword COLOR BORDER
-@target c64
+@target c64reu
 </usermanual> */
 void color_border( Environment * _environment, int _color ) {
     
@@ -66,9 +66,6 @@ void color_border( Environment * _environment, int _color ) {
  * @param _environment Current calling environment
  * @param _color Variable with the expression.
  */
-/* <usermanual>
-@keyword COLOR BORDER
-</usermanual> */
 void color_border_var( Environment * _environment, char * _color ) {
 
     

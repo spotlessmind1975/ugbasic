@@ -46,6 +46,13 @@
  */
 /* <usermanual>
 @keyword COLOR
+
+@target c128z
+</usermanual> */
+/* <usermanual>
+@keyword COLOUR
+
+@target c128z
 </usermanual> */
 void color( Environment * _environment, int _index, int _shade ) {
 

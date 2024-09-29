@@ -725,14 +725,6 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size ) 
 
 }
 
-/* <usermanual>
-@keyword RGB
-
-@target pc128op
-@target mo5
-@target to8
-</usermanual> */
-
 void ef936x_initialization( Environment * _environment ) {
 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );

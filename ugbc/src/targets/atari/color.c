@@ -47,31 +47,14 @@
 /* <usermanual>
 @keyword COLOR
 
-@english
-This command allow to redefine every single color, and therefore to each index 
-can actually be assigned a hue among the hues available. The indices are 
-a small selection from a wide range of possible colors. 
-
-If we wish, we can set this number directly to a value between 0 and ''SCREEN SHADES''. 
-Typically, however, we use the ''RGB'' function that allows us to mix the gradient 
-by obtaining it from the sum of three simple components.
-
-@italian
-Questo comando permette di ridefinire ogni singolo colore, e quindi ad ogni indice 
-può essere effettivamente assegnata una tonalità tra quelle disponibili. 
-Gli indici rappresentano ora una piccola selezione da un'ampia gamma di 
-colori possibili. Il valore della tonalità definisce la tonalità precisa del colore 
-da assegnare all'indice. 
-
-E' possibile impostare il numero direttamente su un valore compreso tra 0 e 
-''SCREEN SHADES''. Tipicamente, però, utilizziamo la funzione ''RGB'' che ci permette 
-di mescolare il gradiente ricavandolo dalla somma di tre semplici componenti.
-
-@syntax COLOR index, shade
-
-@example COLOR 0, $fff
+@target atari
+@target atarixl
+</usermanual> */
+/* <usermanual>
+@keyword COLOUR
 
 @target atari
+@target atarixl
 </usermanual> */
 void color( Environment * _environment, int _index, int _shade ) {
 
@@ -89,9 +72,6 @@ void color( Environment * _environment, int _index, int _shade ) {
  * @param _index Expression with the index of common color to set
  * @param _common_color Expression with the index of the color to use
  */
-/* <usermanual>
-@keyword COLOR
-</usermanual> */
 void color_semivars( Environment * _environment, int _index, char *_shade ) {
 
     Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_COLOR, 0 );
@@ -110,9 +90,6 @@ void color_semivars( Environment * _environment, int _index, char *_shade ) {
  * @param _index Expression with the index of common color to set
  * @param _common_color Expression with the index of the color to use
  */
-/* <usermanual>
-@keyword COLOR
-</usermanual> */
 void color_vars( Environment * _environment, char *_index, char *_shade ) {
 
     Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );

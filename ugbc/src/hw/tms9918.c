@@ -1429,14 +1429,6 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size )
 
 }
 
-/* <usermanual>
-@keyword RGB
-
-@target coleco
-@target msx1
-@target sc3000
-@target sg100
-</usermanual> */
 void tms9918_initialization( Environment * _environment ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm );

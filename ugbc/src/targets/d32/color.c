@@ -46,6 +46,13 @@
  */
 /* <usermanual>
 @keyword COLOR
+
+@target d32
+</usermanual> */
+/* <usermanual>
+@keyword COLOUR
+
+@target d32
 </usermanual> */
 void color( Environment * _environment, int _index, int _shade ) {
 
@@ -73,9 +80,6 @@ void color( Environment * _environment, int _index, int _shade ) {
  * @param _index Expression with the index of common color to set
  * @param _common_color Expression with the index of the color to use
  */
-/* <usermanual>
-@keyword COLOR
-</usermanual> */
 void color_semivars( Environment * _environment, int _index, char *_shade ) {
 
     char indexAsString[MAX_TEMPORARY_STORAGE];
@@ -102,9 +106,6 @@ void color_semivars( Environment * _environment, int _index, char *_shade ) {
  * @param _index Expression with the index of common color to set
  * @param _common_color Expression with the index of the color to use
  */
-/* <usermanual>
-@keyword COLOR
-</usermanual> */
 void color_vars( Environment * _environment, char *_index, char *_shade ) {
 
     MAKE_LABEL

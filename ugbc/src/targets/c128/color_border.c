@@ -47,17 +47,48 @@
 @keyword COLOR BORDER
 
 @english
-Change the border color.
+
+The ''COLOR BORDER'' command allows you to redefine the color used by the graphics chipset
+for the border, where this is possible. "Redefinition" means assigning one of the possible 
+colors to specific registers called "palette registers".
+
+On some systems this is not possible at all, due to limitations of the chipset or 
+the absence of registers or even of the border: for this reason, in such cases the 
+command is ignored. On other systems this corresponds to the modification of specific 
+registers, to which one of the available colors is assigned. On others it is possible 
+to assign certain shades, which therefore go beyond the number of available colors.
+
+Where it is possible to assign a shade, the value can range from ''0'' to the constant 
+''SHADES''. However, it may be more practical to use the ''RGB'' function, which 
+allows you to calculate the shade starting from the color components (red, green and blue).
+
 
 @italian
-Modifica il colore del bordo (dello schermo).
 
-@syntax COLOR BORDER #value
+Il comando ''COLOR BORDER'' consente di ridefinire il colore utilizzato dal chipset grafico 
+per il bordo, laddove ciò sia possibile. "Ridefinire" significa assegnare uno dei colori 
+possibili a registri specifici chiamati "registri palette".
+
+Su alcuni sistemi questo non è affatto possibile, a causa di limitazioni del chipset o 
+dell'assenza di registri o addirittura del bordo: per questo motivo, in tali casi il 
+comando viene ignorato. Su altri sistemi ciò corrisponde alla modifica di registri 
+specifici, a cui viene assegnato uno dei colori disponibili. Su altri è possibile assegnare
+determinate tonalità, che quindi vanno oltre il numero di colori disponibili.
+
+Dove è possibile assegnare una tonalità, il valore può variare da ''0'' alla costante 
+''SHADES''. Tuttavia, può essere più pratico utilizzare la funzione ''RGB'', che consente 
+di calcolare la tonalità a partire dalle componenti del colore (rosso, verde e blu).
+
+@syntax COLOR BORDER value
 
 @example COLOR BORDER #$1
+
 @usedInExample control_uncond_jumps_01.bas
 @usedInExample control_uncond_jumps_02.bas
 
+@seeAlso COLOR
+@seeAlso SHADES (constant)
+@seeAlso RGB
 @target c128
 </usermanual> */
 void color_border( Environment * _environment, int _color ) {
@@ -79,13 +110,6 @@ void color_border( Environment * _environment, int _color ) {
  * @param _environment Current calling environment
  * @param _color Variable with the expression.
  */
-/* <usermanual>
-@keyword COLOR BORDER
-
-@syntax COLOR BORDER expr
-
-@example COLOR BORDER BLACK
-</usermanual> */
 void color_border_var( Environment * _environment, char * _color ) {
 
     

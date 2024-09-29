@@ -66,12 +66,6 @@ void color_background( Environment * _environment, int _index, int _background_c
  * @param _index Expression with the index of the background color
  * @param _background_color Expression with the index of the color to use
  */
-/* <usermanual>
-@keyword COLOR BACKGROUND
-
-@target plus4
-
-</usermanual> */
 void color_background_vars( Environment * _environment, char * _index, char * _background_color ) {
 
     Variable * index = variable_retrieve( _environment, _index );

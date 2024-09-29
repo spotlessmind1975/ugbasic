@@ -1793,8 +1793,11 @@ corrispondere a un colore valido.
 @usedInExample graphics_palette_01.bas
 @usedInExample images_get_03.bas
 
-@verified
+@seeAlso COLOR
+@seeAlso SHADES (constant)
+@target all
 </usermanual> */
+
 /* <usermanual>
 @keyword DEFINE STRING SPACE
 
@@ -2787,5 +2790,51 @@ dei colori possibili, predefiniti o ridefiniti, a seconda delle possibilità dei
 @syntax DIM c AS COLOR
 @syntax x = (COLOR) 42
 
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SHADES (constant)
+
+@english
+
+This constant holds the maximum number of shades available for the target, for 
+the current mode. Note that, although this is the number of shades available, 
+it is not guaranteed that every single graphic or text element in the mode could 
+assume this value, independently. This depends on the specific characteristics 
+of the video chipset available. 
+
+@italian
+
+Questa costante mantiene il numero massimo di sfumature disponibili per il target, 
+per la modalità corrente. Nota che, sebbene questo sia il numero di sfumature 
+disponibili, non è detto che ogni singolo elemento grafico o testuale della 
+modalità possa assumere tale vlaore in modo indipendente. Questo dipende dalle 
+caratteristiche specifiche del chipset video a disposizione. 
+
+@syntax = SHADES
+
+@alias SCREEN SHADES (constant)
+@seeAlso COLOR
+@seeAlso RGB
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN SHADES (constant)
+
+@english
+
+Alias for ''SHADES''.
+
+@italian
+
+Alias per ''SHADES''.
+
+@syntax = SCREEN SHADES
+
+@alias SHADES (constant)
+@seeAlso COLOR
+@seeAlso RGB
 @target all
 </usermanual> */

@@ -285,12 +285,6 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 }
 
-/* <usermanual>
-@keyword RGB
-
-@target zx
-</usermanual> */
-
 void zx_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256);
