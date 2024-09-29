@@ -330,24 +330,6 @@ void ef936x_next_raster_at( Environment * _environment, char * _label, char * _p
 
 }
 
-/**
- * @brief <i>VIC-II</i>: emit code to enable MCM
- * 
- * @param _environment Current calling environment
- */
-void ef936x_enable_mcm( Environment * _environment ) {
-
-}
-
-/**
- * @brief <i>VIC-II</i>: emit code to disable ECM
- * 
- * @param _environment Current calling environment
- */
-void ef936x_disable_mcm( Environment * _environment ) {
-
-}
-
 void ef936x_bank_select( Environment * _environment, int _bank ) {
 
 }

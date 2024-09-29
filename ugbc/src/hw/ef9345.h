@@ -126,8 +126,6 @@ void ef9345_tiles_at( Environment * _environment, char * _address );
 void ef9345_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
 void ef9345_bank_select( Environment * _environment, int _bank );
-void ef9345_enable_mcm( Environment * _environment );
-void ef9345_disable_mcm( Environment * _environment );
 void ef9345_screen_on( Environment * _environment );
 void ef9345_screen_off( Environment * _environment );
 void ef9345_screen_rows( Environment * _environment, char * _rows );

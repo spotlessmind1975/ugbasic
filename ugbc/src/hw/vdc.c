@@ -663,24 +663,6 @@ void vdc_next_raster_at( Environment * _environment, char * _label, char * _posi
 
 }
 
-/**
- * @brief <i>VDC</i>: emit code to enable MCM
- * 
- * @param _environment Current calling environment
- */
-void vdc_enable_mcm( Environment * _environment ) {
-
-}
-
-/**
- * @brief <i>VDC</i>: emit code to disable ECM
- * 
- * @param _environment Current calling environment
- */
-void vdc_disable_mcm( Environment * _environment ) {
-
-}
-
 void vdc_bank_select( Environment * _environment, int _bank ) {
     
 }

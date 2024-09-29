@@ -228,8 +228,6 @@ void c6847_tiles_at( Environment * _environment, char * _address );
 void c6847_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
 void c6847_bank_select( Environment * _environment, int _bank );
-void c6847_enable_mcm( Environment * _environment );
-void c6847_disable_mcm( Environment * _environment );
 void c6847_screen_on( Environment * _environment );
 void c6847_screen_off( Environment * _environment );
 void c6847_screen_rows( Environment * _environment, char * _rows );

@@ -714,14 +714,6 @@ void ted_next_raster_at( Environment * _environment, char * _label, char * _posi
 
 }
 
-void ted_enable_mcm( Environment * _environment ) {
-
-}
-
-void ted_disable_mcm( Environment * _environment ) {
-
-}
-
 void ted_bank_select( Environment * _environment, int _bank ) {
 
 }

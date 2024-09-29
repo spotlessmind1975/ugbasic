@@ -282,24 +282,6 @@ void vic1_next_raster_at( Environment * _environment, char * _label, char * _pos
 
 }
 
-/**
- * @brief <i>VIC</i>: emit code to enable MCM
- * 
- * @param _environment Current calling environment
- */
-void vic1_enable_mcm( Environment * _environment ) {
-
-}
-
-/**
- * @brief <i>VIC</i>: emit code to disable ECM
- * 
- * @param _environment Current calling environment
- */
-void vic1_disable_mcm( Environment * _environment ) {
-
-}
-
 void vic1_bank_select( Environment * _environment, int _bank ) {
     
 }

@@ -155,8 +155,6 @@ void vic2z_tiles_at( Environment * _environment, char * _address );
 void vic2z_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
 void vic2z_bank_select( Environment * _environment, int _bank );
-void vic2z_enable_mcm( Environment * _environment );
-void vic2z_disable_mcm( Environment * _environment );
 void vic2z_screen_on( Environment * _environment );
 void vic2z_screen_off( Environment * _environment );
 void vic2z_screen_rows( Environment * _environment, char * _rows );

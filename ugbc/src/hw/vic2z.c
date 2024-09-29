@@ -779,30 +779,6 @@ void vic2z_next_raster_at( Environment * _environment, char * _label, char * _po
 
 }
 
-/**
- * @brief <i>VIC-II</i>: emit code to enable MCM
- * 
- * @param _environment Current calling environment
- */
-void vic2z_enable_mcm( Environment * _environment ) {
-
-    outline0("LDA $D016" );
-    outline0("ORA #%00001000");
-    outline0("STA $D016" );
-}
-
-/**
- * @brief <i>VIC-II</i>: emit code to disable ECM
- * 
- * @param _environment Current calling environment
- */
-void vic2z_disable_mcm( Environment * _environment ) {
-
-    outline0("LDA $D016" );
-    outline0("AND #%11110111");
-    outline0("STA $D016" );
-}
-
 void vic2z_bank_select( Environment * _environment, int _bank ) {
     
     outline0("LDA $DD00" );

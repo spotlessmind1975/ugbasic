@@ -133,8 +133,6 @@ void ted_tiles_at( Environment * _environment, char * _address );
 void ted_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
 void ted_bank_select( Environment * _environment, int _bank );
-void ted_enable_mcm( Environment * _environment );
-void ted_disable_mcm( Environment * _environment );
 void ted_screen_on( Environment * _environment );
 void ted_screen_off( Environment * _environment );
 void ted_screen_rows( Environment * _environment, char * _rows );

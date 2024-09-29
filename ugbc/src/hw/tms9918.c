@@ -566,24 +566,6 @@ void tms9918_next_raster_at( Environment * _environment, char * _label, char * _
 
 }
 
-/**
- * @brief <i>TMS9918</i>: emit code to enable MCM
- * 
- * @param _environment Current calling environment
- */
-void tms9918_enable_mcm( Environment * _environment ) {
-
-}
-
-/**
- * @brief <i>TMS9918</i>: emit code to disable ECM
- * 
- * @param _environment Current calling environment
- */
-void tms9918_disable_mcm( Environment * _environment ) {
-
-}
-
 void tms9918_bank_select( Environment * _environment, int _bank ) {
     
 }

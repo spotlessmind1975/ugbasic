@@ -642,22 +642,6 @@ void gtia_sprite_common_color( Environment * _environment, char * _index, char *
 
 }
 
-void gtia_enable_ecm( Environment * _environment ) {
-
-}
-
-void gtia_disable_ecm( Environment * _environment ) {
-
-}
-
-void gtia_enable_mcm( Environment * _environment ) {
-
-}
-
-void gtia_disable_mcm( Environment * _environment ) {
-
-}
-
 void gtia_bank_select( Environment * _environment, int _bank ) {
 
 }

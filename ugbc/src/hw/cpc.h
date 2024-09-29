@@ -321,8 +321,6 @@ void cpc_tiles_at( Environment * _environment, char * _address );
 void cpc_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
 void cpc_bank_select( Environment * _environment, int _bank );
-void cpc_enable_mcm( Environment * _environment );
-void cpc_disable_mcm( Environment * _environment );
 void cpc_screen_on( Environment * _environment );
 void cpc_screen_off( Environment * _environment );
 void cpc_screen_rows( Environment * _environment, char * _rows );
