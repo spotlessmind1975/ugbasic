@@ -53,12 +53,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword BITMAP ENABLE
-
-@target vic20
-
-</usermanual> */
 void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
     // Let's define the special variable bitmapAddress.

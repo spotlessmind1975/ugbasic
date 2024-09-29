@@ -56,6 +56,7 @@
 /* <usermanual>
 @keyword BITMAP ENABLE
 @target atari
+@target atarixl
 </usermanual> */
 void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 

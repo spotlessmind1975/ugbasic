@@ -55,9 +55,7 @@
  */
 /* <usermanual>
 @keyword BITMAP ENABLE
-
-@target c64
-
+@target c64reu
 </usermanual> */
 void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 

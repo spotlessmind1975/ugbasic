@@ -94,8 +94,9 @@ Per cambiare risoluzione e colori, puoi usare le sintassi ''([width],[height],[c
 o ''([colors])'' dopo il comando ''BITMAP ENABLE''. Quindi, omettendo un parametro, significa che non è 
 importante impostarlo.
 
-@syntax BITMAP ENABLE ( width, height [, colors ] )
-@syntax BITMAP ENABLE ( colors )
+@syntax BITMAP ENABLE [(colors)]
+@syntax BITMAP ENABLE (width, height)
+@syntax BITMAP ENABLE (width, height, colors)
 
 @example BITMAP ENABLE
 @example BITMAP ENABLE (320,200,16)
@@ -105,9 +106,7 @@ importante impostarlo.
 
 @seeAlso BITMAP DISABLE
 @seeAlso TILEMAP ENABLE
-
 @target c128
-
 </usermanual> */
 void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
