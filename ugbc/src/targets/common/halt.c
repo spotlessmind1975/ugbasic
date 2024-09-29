@@ -51,14 +51,19 @@
 @keyword HALT
 
 @english
-Stop the main process indefinitely.  Note that even if the 
-main program is suspended, the raster and other functions 
-will continue without problems.
+
+This instruction stops the program execution, in "busy" mode. The implementation is
+by means of an infinite loop, which is executed when the instruction is executed. 
+With this expedient, the execution of interrupts will continue without being 
+interrupted while all other operations will be interrupted, including multithreading.
 
 @italian
-Interrompi il processo principale a tempo indeterminato. Notare che 
-anche se il programma principale viene sospeso, il raster e altre 
-funzioni continueranno senza problemi.
+
+Questa istruzione ferma l'esecuzione del programma, in modo "busy". L'implementazione 
+è per mezzo di un loop infinito, che viene eseguito in corrispondenza dell'esecuzione 
+dell'istruzione. Con tale espediente, l'esecuzione degli interrupt continuerà senza 
+essere interrotta mentre saranno interrotte tutte le altre operazioni, compreso 
+quindi il multithreading.
 
 @syntax HALT
 

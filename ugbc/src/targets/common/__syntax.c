@@ -2047,10 +2047,14 @@ Restituisce l'indirizzo di memoria assegnato all'interno del banco di memoria es
 @keyword ENABLE INTERRUPT
 
 @english
-Enable the interrupt at CPU level.
+
+This instruction enables CPU-level interrupts. If they were previously disabled, they will 
+now be enabled; if they were already enabled, nothing will happen.
 
 @italian
-Abilita l'interrupt a livello di CPU.
+
+Questa istruzione abilita gli interrupt a livello di CPU. Se prima erano disabilitate, 
+saranno quindi abilitate; se lo erano già, non accadrà nulla.
 
 @syntax ENABLE INTERRUPT
 
@@ -2063,10 +2067,14 @@ Abilita l'interrupt a livello di CPU.
 @keyword DISABLE INTERRUPT
 
 @english
-Disable the interrupt at CPU level.
+
+This instruction disables CPU-level interrupts. If they were previously enabled, they will 
+now be disabled; if they were already disabled, nothing will happen.
 
 @italian
-Disabilita l'interrupt a livello di CPU.
+
+Questa istruzione disabilita gli interrupt a livello di CPU. Se prima erano abilitate, 
+saranno quindi disabilitate; se lo erano già, non accadrà nulla.
 
 @syntax DISABLE INTERRUPT
 
