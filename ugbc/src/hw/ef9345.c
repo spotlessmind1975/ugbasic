@@ -403,24 +403,6 @@ void ef9345_next_raster_at( Environment * _environment, char * _label, char * _p
 }
 
 /**
- * @brief <i>EF9345</i>: emit code to enable ECM
- * 
- * @param _environment Current calling environment
- */
-void ef9345_enable_ecm( Environment * _environment ) {
-
-}
-
-/**
- * @brief <i>EF9345</i>: emit code to disable ECM
- * 
- * @param _environment Current calling environment
- */
-void ef9345_disable_ecm( Environment * _environment ) {
-
-}
-
-/**
  * @brief <i>EF9345</i>: emit code to enable MCM
  * 
  * @param _environment Current calling environment

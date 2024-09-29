@@ -261,8 +261,6 @@ void gime_tiles_at( Environment * _environment, char * _address );
 void gime_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
 void gime_bank_select( Environment * _environment, int _bank );
-void gime_enable_ecm( Environment * _environment );
-void gime_disable_ecm( Environment * _environment );
 void gime_enable_mcm( Environment * _environment );
 void gime_disable_mcm( Environment * _environment );
 void gime_screen_on( Environment * _environment );

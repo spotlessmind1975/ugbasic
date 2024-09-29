@@ -254,24 +254,6 @@ void gime_next_raster_at( Environment * _environment, char * _label, char * _pos
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to enable ECM
- * 
- * @param _environment Current calling environment
- */
-void gime_enable_ecm( Environment * _environment ) {
-
-}
-
-/**
- * @brief <i>VIC-II</i>: emit code to disable ECM
- * 
- * @param _environment Current calling environment
- */
-void gime_disable_ecm( Environment * _environment ) {
-
-}
-
-/**
  * @brief <i>VIC-II</i>: emit code to enable MCM
  * 
  * @param _environment Current calling environment

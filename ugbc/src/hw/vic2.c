@@ -873,30 +873,6 @@ void vic2_next_raster_at( Environment * _environment, char * _label, char * _pos
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to enable ECM
- * 
- * @param _environment Current calling environment
- */
-void vic2_enable_ecm( Environment * _environment ) {
-
-    outline0("LDA $D011" );
-    outline0("ORA #%01000000");
-    outline0("STA $D011" );
-}
-
-/**
- * @brief <i>VIC-II</i>: emit code to disable ECM
- * 
- * @param _environment Current calling environment
- */
-void vic2_disable_ecm( Environment * _environment ) {
-
-    outline0("LDA $D011" );
-    outline0("AND #%10111111");
-    outline0("STA $D011" );
-}
-
-/**
  * @brief <i>VIC-II</i>: emit code to enable MCM
  * 
  * @param _environment Current calling environment

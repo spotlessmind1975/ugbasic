@@ -210,24 +210,6 @@ void c6847_next_raster_at( Environment * _environment, char * _label, char * _po
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to enable ECM
- * 
- * @param _environment Current calling environment
- */
-void c6847_enable_ecm( Environment * _environment ) {
-
-}
-
-/**
- * @brief <i>VIC-II</i>: emit code to disable ECM
- * 
- * @param _environment Current calling environment
- */
-void c6847_disable_ecm( Environment * _environment ) {
-
-}
-
-/**
  * @brief <i>VIC-II</i>: emit code to enable MCM
  * 
  * @param _environment Current calling environment

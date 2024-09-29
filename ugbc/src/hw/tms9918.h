@@ -154,8 +154,6 @@ void tms9918_tiles_at( Environment * _environment, char * _address );
 void tms9918_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
 void tms9918_bank_select( Environment * _environment, int _bank );
-void tms9918_enable_ecm( Environment * _environment );
-void tms9918_disable_ecm( Environment * _environment );
 void tms9918_enable_mcm( Environment * _environment );
 void tms9918_disable_mcm( Environment * _environment );
 void tms9918_screen_on( Environment * _environment );

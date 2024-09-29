@@ -155,8 +155,6 @@ void vdc_tiles_at( Environment * _environment, char * _address );
 void vdc_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
 void vdc_bank_select( Environment * _environment, int _bank );
-void vdc_enable_ecm( Environment * _environment );
-void vdc_disable_ecm( Environment * _environment );
 void vdc_enable_mcm( Environment * _environment );
 void vdc_disable_mcm( Environment * _environment );
 void vdc_screen_on( Environment * _environment );

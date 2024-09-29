@@ -678,24 +678,6 @@ void vdcz_next_raster_at( Environment * _environment, char * _label, char * _pos
 }
 
 /**
- * @brief <i>VDCZ</i>: emit code to enable ECM
- * 
- * @param _environment Current calling environment
- */
-void vdcz_enable_ecm( Environment * _environment ) {
-
-}
-
-/**
- * @brief <i>VDCZ</i>: emit code to disable ECM
- * 
- * @param _environment Current calling environment
- */
-void vdcz_disable_ecm( Environment * _environment ) {
-
-}
-
-/**
  * @brief <i>VDCZ</i>: emit code to enable MCM
  * 
  * @param _environment Current calling environment
