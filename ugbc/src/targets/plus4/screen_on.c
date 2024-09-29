@@ -47,7 +47,6 @@
  */
 /* <usermanual>
 @keyword SCREEN ON
-
 @target plus4
 </usermanual> */
 void screen_on( Environment * _environment ) {

@@ -47,7 +47,6 @@
  */
 /* <usermanual>
 @keyword SCREEN OFF
-
 @target plus4
 </usermanual> */
 void screen_off( Environment * _environment ) {

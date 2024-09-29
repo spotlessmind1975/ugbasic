@@ -45,14 +45,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword SCREEN OFF
-
-@english
-Turn off the screen.
-
-@target d32
-</usermanual> */
 void screen_off( Environment * _environment ) {
 
 }

@@ -45,9 +45,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword SCREEN ON
-</usermanual> */
 void screen_on( Environment * _environment ) {
 
     gtia_screen_on( _environment );

@@ -45,9 +45,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword SCREEN OFF
-</usermanual> */
 void screen_off( Environment * _environment ) {
 
     gtia_screen_off( _environment );

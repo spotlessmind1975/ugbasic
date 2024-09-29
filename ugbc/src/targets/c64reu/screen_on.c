@@ -47,18 +47,7 @@
  */
 /* <usermanual>
 @keyword SCREEN ON
-
-@english
-Turn on the screen.
-
-@italian
-Riaccendi lo schermo.
-
-@syntax SCREEN ON
-
-@example SCREEN ON
-
-@target c64
+@target c64reu
 </usermanual> */
 void screen_on( Environment * _environment ) {
 

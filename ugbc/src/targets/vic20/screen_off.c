@@ -47,17 +47,6 @@
  */
 /* <usermanual>
 @keyword SCREEN OFF
-
-@english
-Turn off the screen.
-
-@italian
-Spegni lo schermo.
-
-@syntax SCREEN OFF
-
-@example SCREEN OFF
-
 @target vic20
 </usermanual> */
 void screen_off( Environment * _environment ) {

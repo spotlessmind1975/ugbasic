@@ -49,9 +49,11 @@
 @keyword SCREEN ON
 
 @english
+
 Turn on the screen.
 
 @italian
+
 Riaccendi lo schermo.
 
 @syntax SCREEN ON

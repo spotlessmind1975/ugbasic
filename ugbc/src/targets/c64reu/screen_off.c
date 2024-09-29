@@ -47,18 +47,7 @@
  */
 /* <usermanual>
 @keyword SCREEN OFF
-
-@english
-Turn off the screen.
-
-@italian
-Spegni lo schermo.
-
-@syntax SCREEN OFF
-
-@example SCREEN OFF
-
-@target c64
+@target c64reu
 </usermanual> */
 void screen_off( Environment * _environment ) {
 

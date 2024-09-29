@@ -45,11 +45,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword SCREEN ON
-
-@target d64
-</usermanual> */
 void screen_on( Environment * _environment ) {
 
 }

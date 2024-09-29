@@ -45,14 +45,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword SCREEN OFF
-
-@english
-Turn off the screen.
-
-@target pc128op
-</usermanual> */
 void screen_off( Environment * _environment ) {
 
 }
