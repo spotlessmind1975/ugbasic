@@ -74,7 +74,6 @@ Da notare che questa funzione non restituisce necessariamente informazioni sulla
 
 @target c128
 </usermanual> */
-
 Variable * color_get_vars( Environment * _environment, char * _index ) {
 
     Variable * index = variable_retrieve_or_define( _environment, _index, VT_COLOR, COLOR_BLACK );
