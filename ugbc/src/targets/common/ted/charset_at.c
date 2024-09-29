@@ -57,8 +57,7 @@
  * @param _address Address to use
  */
 /* <usermanual>
-@keyword BITMAP AT
-
+@keyword CHARSET AT
 @target plus4
 </usermanual> */
 void charset_at( Environment * _environment, int _address ) {

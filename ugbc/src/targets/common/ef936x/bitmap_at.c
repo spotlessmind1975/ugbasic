@@ -58,8 +58,10 @@
  */
 /* <usermanual>
 @keyword BITMAP AT
-
 @target mo5
+@target pc128op
+@target to8
+@seeAlso BITMAP (constant)
 </usermanual> */
 void bitmap_at( Environment * _environment, int _address ) {
 
@@ -90,9 +92,6 @@ void bitmap_at( Environment * _environment, int _address ) {
  * @param _environment Current calling environment
  * @param _address Address to use
  */
-/* <usermanual>
-@keyword BITMAP AT
-</usermanual> */
 void bitmap_at_var( Environment * _environment, char * _address ) {
 
     // Let's define the special variable bitmapAddress, and update

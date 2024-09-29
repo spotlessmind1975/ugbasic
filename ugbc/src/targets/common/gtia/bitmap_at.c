@@ -56,13 +56,7 @@
  * @param _environment Current calling environment
  * @param _address Address to use
  */
-/* <usermanual>
-@keyword BITMAP AT
-
-@target atari
-</usermanual> */
 void bitmap_at( Environment * _environment, int _address ) {
-
 
 }
 
@@ -82,9 +76,6 @@ void bitmap_at( Environment * _environment, int _address ) {
  * @param _environment Current calling environment
  * @param _address Address to use
  */
-/* <usermanual>
-@keyword BITMAP AT
-</usermanual> */
 void bitmap_at_var( Environment * _environment, char * _address ) {
 
 }

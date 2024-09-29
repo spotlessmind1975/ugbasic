@@ -3176,3 +3176,51 @@ sprite hardware.
 @seeAlso SPRITE MONOCOLOR (command)
 @seeAlso SPRITE MULTICOLOR (command)
 </usermanual> */
+
+/* <usermanual>
+@keyword BITMAP (constant)
+
+@english
+
+The ''BITMAP'' constant represents the position (in terms of bits) that tracks 
+whether the graphics chipset is capable of rendering graphics in "bitmap" mode, 
+i.e. whether it is possible to address individual pixels on the screen. 
+
+This constant can be used to query the ''SCREEN'' constant, in an attempt to 
+understand whether the functionality is available or not.
+
+@italian
+
+La costante ''BITMAP'' rappresenta la posizione (in termini di bit) che traccia 
+se il chipset grafico è in grado di rapprentare grafica nella modalità "bitmap", 
+cioè se è possibile indirizzare singolarmente i singoli pixel sullo schermo. 
+
+Questa costante può essere utilizzata per interrogare la costante ''SCREEN'', 
+nel tentativo di comprendere se la funzionalità è disponibile o meno.
+
+@syntax = BITMAP
+
+@example IF BIT BITMAP OF SCREEN THEN: PRINT "bitmap is available!": ENDIF
+
+@target all
+@seeAlso SCREEN (constant)
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN (constant)
+
+@english
+
+The ''SCREEN'' constant represents the capabilities of video chipset.
+
+@italian
+
+La costante ''SCREEN'' rappresenta le capacità del chipset video.
+
+@syntax = SCREEN
+
+@example IF BIT BITMAP OF SCREEN THEN: PRINT "bitmap is available!": ENDIF
+
+@target all
+@seeAlso BITMAP (constant)
+</usermanual> */

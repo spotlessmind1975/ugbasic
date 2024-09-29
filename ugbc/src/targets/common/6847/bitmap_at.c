@@ -59,7 +59,29 @@
 /* <usermanual>
 @keyword BITMAP AT
 
+@english
+
+The ''BITMAP AT'' instruction allows you to change the starting address of the bitmap, 
+in the graphics modes of the video chipset. Since not all chipsets can address 
+any address, it is possible that the input value is normalized. This normalized 
+address will then be used by ugBASIC for subsequent graphics operations.
+
+@italian
+
+L'istruzione BITMAP AT permette di modificare l'indirizzo di partenza della bitmap, 
+nelle modalità grafiche del chipset video. Poiché non tutti i chipset possono 
+indirizzare qualsiasi indirizzo, è possibile che il valore in ingresso venga 
+normalizzato. Tale indirizzo normalizzato sarà quindi utilizzato da ugBASIC per le
+successive operazioni grafiche.
+
+@syntax BITMAP AT address
+
+@example BITMAP AT $8000
+
 @target coco
+@target d32
+@target d64
+@seeAlso BITMAP (constant)
 </usermanual> */
 void bitmap_at( Environment * _environment, int _address ) {
 
@@ -85,9 +107,6 @@ void bitmap_at( Environment * _environment, int _address ) {
  * @param _environment Current calling environment
  * @param _address Address to use
  */
-/* <usermanual>
-@keyword BITMAP AT
-</usermanual> */
 void bitmap_at_var( Environment * _environment, char * _address ) {
 
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0x0c00 );

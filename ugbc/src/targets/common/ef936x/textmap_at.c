@@ -57,7 +57,7 @@
  * @param _address Address to use
  */
 /* <usermanual>
-@keyword BITMAP AT
+@keyword TEXTMAP AT
 
 @target mo5
 </usermanual> */
@@ -90,9 +90,6 @@ void textmap_at( Environment * _environment, int _address ) {
  * @param _environment Current calling environment
  * @param _address Address to use
  */
-/* <usermanual>
-@keyword BITMAP AT
-</usermanual> */
 void textmap_at_var( Environment * _environment, char * _address ) {
 
     // Let's define the special variable bitmapAddress, and update

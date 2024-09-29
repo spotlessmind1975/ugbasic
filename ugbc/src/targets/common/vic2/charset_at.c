@@ -57,8 +57,7 @@
  * @param _address Address to use
  */
 /* <usermanual>
-@keyword BITMAP AT
-
+@keyword CHARSET AT
 @target c64
 </usermanual> */
 void charset_at( Environment * _environment, int _address ) {
@@ -86,9 +85,6 @@ void charset_at( Environment * _environment, int _address ) {
  * @param _environment Current calling environment
  * @param _address Address to use
  */
-/* <usermanual>
-@keyword BITMAP AT
-</usermanual> */
 void charset_at_var( Environment * _environment, char * _address ) {
 
     outline1("LDA %s", address_displacement( _environment, _address, "1" ));
