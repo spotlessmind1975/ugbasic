@@ -112,11 +112,13 @@ che è la vera origine della mancata corrispondenza.
 
 Le righe ''DATA'' possono essere sparse nell'intero codice del programma.
 
-@syntax DATA c1[, c2[, c3[, ...]]]
-@syntax DATA AS type c1[, c2[, c3[, ...]]]
+@syntax DATA data1 [, data2 [, data3 ... ] ]
+@syntaxDATA [AS data type] data1 [, data2 [, data3 ... ] ]
+@syntaxDATA LOAD "filename" AS TEXT
 
 @example DATA 10, 20, "test"
 @example DATA AS INTEGER 10, 20, 30
+@example DATA LOAD "datas.txt" AS TEXT
 
 @usedInExample data_example_01.bas
 @usedInExample data_example_02.bas
