@@ -43,34 +43,6 @@
  * @param _environment Current calling environment
  * @return Current number of the bank selected
  */
-/* <usermanual>
-@keyword BANK (function)
-
-@english
-This function returns the index of the currently used (expansion) bank.
-In other words, if the computer has more memory areas than the 
-normally addressable one, this function returns the one that is 
-currently visible in the sharing space. 
-
-Sharing space is a "window" of memory that starts at ''BANK ADDRESS 
-(bank)'' and is ''BANK SIZE (bank)'' bytes long.
-
-@italian
-Questa funzione restituisce l'indice del banco (di espansione) 
-attualmente utilizzato. In altri termini, se il computer dispone 
-di più zone di memoria oltre quella normalmente indirizzabile, 
-questa funzione restituisce quella che al momento è visibile 
-nello spazio di condivisione. 
-
-Lo spazio di condivisione è una "finestra" di memoria che inizia 
-da ''BANK ADDRESS(bank)'' ed è lunga ''BANK SIZE(bank)'' bytes.
-
-@syntax = BANK()
-
-@example currentBank = BANK()
-
-@target to8
-</usermanual> */
 Variable * bank_get( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(bank number)" );

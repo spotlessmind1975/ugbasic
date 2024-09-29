@@ -47,6 +47,27 @@
  */
 /* <usermanual>
 @keyword BANK
+
+@english
+
+The ''BANK'' command allows you to change the currently selected bank. All 
+operations that are performed on the banks, and that do not explicitly indicate 
+the bank to operate on, work with the implicit bank, which is set by this command. 
+The minimum bank number is zero (''0'') while the maximum is equal to ''BANK COUNT - 1''.
+
+@italian
+
+Il comando ''BANK'' permette di modificare il banco selezionato attualmente. Tutte
+le operazioni che si svolgono sui banchi, e che non indicano espressamente il banco 
+su cui operare, lavorano con il banco implicito, che viene impostato da questo comando.
+Il numero minimo del banco è zero (''0'') mentre il massimo è pari a ''BANK COUNT - 1''.
+
+@syntax BANK id
+
+@example BANK #1
+
+@seeAlso BANK COUNT (constant)
+@target all
 </usermanual> */
 void bank_set( Environment * _environment, int _bank ) {
 
@@ -61,9 +82,6 @@ void bank_set( Environment * _environment, int _bank ) {
  * @param _environment Current calling environment
  * @param _bank Bank to select
  */
-/* <usermanual>
-@keyword BANK
-</usermanual> */
 void bank_set_var( Environment * _environment, char * _bank ) {
     
 }

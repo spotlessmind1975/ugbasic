@@ -44,33 +44,27 @@
  * @param _bank Bank to get size of
  * @return Current size of the bank selected
  */
-/* <usermanual>
+/*
 @keyword BANK SIZE
 
 @english
 
-The ''BANK SIZE'' returns the size of the shared memory area for 
-the bank, that is the memory area reachable by the CPU and on 
-which it is "mapped" to the main memory. 
-
-If you want to copy data from the bank or to the bank, this is 
-the maximum size to copy.
+The ''BANK SIZE'' function allows you to know the size of the given bank.
 
 @italian
-La funzione ''BANK SIZE'' restituisce la dimensione della zona di memoria 
-condivisa per il banco, ovvero la zona di memoria raggiungibile 
-dalla CPU e sulla quale viene "mappata" sulla memoria centrale. 
 
-Se si vuole copiare un dato dal banco o verso il banco, questa 
-è la dimensione massima.
+La funzione ''BANK SIZE'' consente di conoscere la dimensione del banco 
+di memoria indicato.
 
-@syntax = BANK SIZE(#bank)
+@syntax = BANK SIZE(id)
 
-@example PRINT BANK SIZE(#2)
+@example x = BANK SIZE(1)
 
-@target pc128op
-@verified
+@seeAlso BANK ADDRESS
+@seeAlso BANK (function)
+@target all
 </usermanual> */
+
 Variable * bank_get_size( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank size)" );
@@ -95,15 +89,6 @@ Variable * bank_get_size( Environment * _environment, int _bank ) {
  * @param _bank Bank to get address of
  * @return Current size of the bank selected
  */
-/* <usermanual>
-@keyword BANK SIZE
-
-@syntax = BANK SIZE(bank)
-
-@example y = BANK SIZE(banco)
-
-@target pc128op
-</usermanual> */
 Variable * bank_get_size_var( Environment * _environment, char * _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank size)" );

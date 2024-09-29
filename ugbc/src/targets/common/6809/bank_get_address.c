@@ -46,9 +46,6 @@
  * @param _bank Bank to get address of
  * @return Current address of the bank selected
  */
-/* <usermanual>
-@keyword BANK ADDRESS
-</usermanual> */
 Variable * bank_get_address( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
@@ -71,9 +68,6 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
  * @param _bank Bank to get address of
  * @return Current address of the bank selected
  */
-/* <usermanual>
-@keyword BANK ADDRESS
-</usermanual> */
 Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
 
     return banks_get_address_var( _environment, _bank );

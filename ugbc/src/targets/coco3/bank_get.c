@@ -43,10 +43,6 @@
  * @param _environment Current calling environment
  * @return Current number of the bank selected
  */
-/* <usermanual>
-@keyword BANK (function)
-@target c64
-</usermanual> */
 Variable * bank_get( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );

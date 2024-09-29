@@ -45,9 +45,6 @@
  * @param _environment Current calling environment
  * @param _bank Bank to select
  */
-/* <usermanual>
-@keyword BANK
-</usermanual> */
 void bank_set( Environment * _environment, int _bank ) {
 
 }
@@ -61,9 +58,6 @@ void bank_set( Environment * _environment, int _bank ) {
  * @param _environment Current calling environment
  * @param _bank Bank to select
  */
-/* <usermanual>
-@keyword BANK
-</usermanual> */
 void bank_set_var( Environment * _environment, char * _bank ) {
     
 }

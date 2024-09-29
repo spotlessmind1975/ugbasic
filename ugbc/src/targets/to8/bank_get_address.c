@@ -44,37 +44,6 @@
  * @param _bank Bank to get address of
  * @return Current address of the bank selected
  */
-/* <usermanual>
-@keyword BANK ADDRESS
-
-@english
-
-The ''BANK ADDRESS'' function returns the resident memory address of 
-the shared memory area for the bank, that is the memory area reachable
-by the CPU and on which it is "mapped" to the main memory. 
-
-If you want to copy data from any expanded bank or to the expanded bank, this is 
-the starting address.
-
-@italian
-
-Questa funzione restituisce l'indirizzo della zona di memoria 
-condivisa per il banco di memoria, ovvero la zona di memoria raggiungibile 
-dalla CPU e sulla quale viene "mappata" la memoria estesa sulla memoria centrale. 
-
-Se si vuole copiare un dato dal banco di memoria estesa o verso il banco di
-memoria estesa, questo è l'indirizzo di partenza.
-
-@syntax = BANK ADDRESS( #bank )
-
-@example POKE BANK ADDRESS( 2 ), 42
-
-@usedInExample expansion_bank_01.bas
-@usedInExample expansion_bank_02.bas
-
-@target to8
-@verified
-</usermanual> */
 Variable * bank_get_address( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
@@ -96,11 +65,6 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
  * @param _bank Bank to get address of
  * @return Current address of the bank selected
  */
-/* <usermanual>
-@keyword BANK ADDRESS
-@syntax = BANK ADDRESS( bank )
-@target to8
-</usermanual> */
 Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );

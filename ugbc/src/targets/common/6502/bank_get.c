@@ -47,6 +47,26 @@
  */
 /* <usermanual>
 @keyword BANK (function)
+
+@english
+
+The ''BANK'' function allows you to know the currently selected bank. All 
+operations that are performed on the banks, and that do not explicitly indicate 
+the bank to operate on, work with this implicit bank. 
+
+@italian
+
+La funzione ''BANK'' consente di conoscere il banco di memoria attualmente 
+selezionato. Tutte le operazioni che vengono eseguite sui banchi e che non 
+indicano esplicitamente la banca su cui operare, funzionano con questo banco 
+implicito.
+
+@syntax = BANK()
+
+@example x = BANK()
+
+@seeAlso BANK
+@target all
 </usermanual> */
 Variable * bank_get( Environment * _environment ) {
 

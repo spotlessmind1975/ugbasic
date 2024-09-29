@@ -43,10 +43,6 @@
  * @param _environment Current calling environment
  * @param _bank Bank to select
  */
-/* <usermanual>
-@keyword BANK
-@target c64
-</usermanual> */
 void bank_set( Environment * _environment, int _bank ) {
 
     variable_store( _environment, "BANKSHADOW", _bank );
@@ -62,9 +58,6 @@ void bank_set( Environment * _environment, int _bank ) {
  * @param _environment Current calling environment
  * @param _bank Bank to select
  */
-/* <usermanual>
-@keyword BANK
-</usermanual> */
 void bank_set_var( Environment * _environment, char * _bank ) {
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );

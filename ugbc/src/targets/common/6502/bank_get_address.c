@@ -48,6 +48,29 @@
  */
 /* <usermanual>
 @keyword BANK ADDRESS
+
+@english
+
+The ''BANK ADDRESS'' function allows you to know the memory address where the swap 
+window with the expanded memory appears, for the given bank. In the case of 
+expansion memories with DMA access, this area does not exist and therefore the
+function returns zero. Exactly the same value returned in case there are no memory expansions.
+
+@italian
+
+La funzione ''BANK ADDRESS'' consente di conoscere l'indirizzo di memoria dove 
+appare la finestra di scambio con la memoria espansa, per il dato banco. Nel caso di memorie di 
+espansione con accesso DMA, questa zona non esiste e quindi la funzione restituisce 
+zero. Esattamente lo stesso valore restituito in caso che non vi siano espansioni 
+di memoria.
+
+@syntax = BANK ADDRESS(id)
+
+@example x = BANK ADDRESS(1)
+
+@seeAlso BANK
+@seeAlso BANK COUNT (constant)
+@target all
 </usermanual> */
 Variable * bank_get_address( Environment * _environment, int _bank ) {
 
@@ -71,9 +94,6 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
  * @param _bank Bank to get address of
  * @return Current address of the bank selected
  */
-/* <usermanual>
-@keyword BANK ADDRESS
-</usermanual> */
 Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
 
     return banks_get_address_var( _environment, _bank );

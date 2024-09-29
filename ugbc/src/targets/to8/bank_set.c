@@ -43,26 +43,6 @@
  * @param _environment Current calling environment
  * @param _bank Bank to select
  */
-/* <usermanual>
-@keyword BANK
-
-@english
-
-The ''BANK'' command can be used to change the number of the current
-bank, as mapped in the expanded memory.
-
-@italian
-
-Il comando ''BANK'' può essere utilizzato per modificare il numero del 
-banco corrente, come mappato nella memoria espansa.
-
-@syntax BANK #bank
-
-@example BANK #1
-
-@target to8
-@verified
-</usermanual> */
 void bank_set( Environment * _environment, int _bank ) {
 
     outline1("LDA #$%2.2x", _bank  );
@@ -80,15 +60,6 @@ void bank_set( Environment * _environment, int _bank ) {
  * @param _environment Current calling environment
  * @param _bank Bank to select
  */
-/* <usermanual>
-@keyword BANK
-
-@syntax BANK bank
-
-@example BANK banco
-
-@target to8
-</usermanual> */
 void bank_set_var( Environment * _environment, char * _bank ) {
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );

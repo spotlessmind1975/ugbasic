@@ -46,7 +46,7 @@
  * @return Current number of banks present.
  */
 /* <usermanual>
-@keyword BANK COUNT
+@keyword BANK COUNT (constant)
 
 @english
 
@@ -71,6 +71,8 @@ effettivo di banchi.
 @usedInExample expansion_bank_04.bas
 @usedInExample expansion_bank_05.bas
 
+@seeAlso BANK
+@seeAlso BANK ADDRESS
 @target all
 </usermanual> */
 Variable * bank_get_count( Environment * _environment ) {
