@@ -47,11 +47,6 @@ extern char DATATYPE_AS_STRING[][16];
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword RASTER LINE
-
-@target all
-</usermanual> */
 Variable * get_raster_line( Environment * _environment ) {
 
     return ef936x_get_raster_line( _environment );

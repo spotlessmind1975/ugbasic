@@ -56,6 +56,7 @@
 @keyword RASTER AT
 
 @english
+
 Initialize a raster routine. In other words, asynchronously and in parallel 
 with the execution of the main program, the routine starting from the label 
 provided will be executed when the video raster on the screen reaches the 
@@ -67,7 +68,7 @@ con l'esecuzione del programma principale, viene impostata una routine a partire
 dall'etichetta fornita. Questa sarà eseguita quando il raster video sullo 
 schermo raggiunge il valore dato. 
 
-@syntax RASTER AT [integer] WITH [label]
+@syntax RASTER AT line WITH label
 
 @example RASTER AT #$42 WITH rasterRoutine
 
@@ -101,7 +102,7 @@ void raster_at( Environment * _environment, char * _label, int _position ) {
 /* <usermanual>
 @keyword RASTER AT
 
-@syntax RASTER AT [expression] WITH [label]
+@syntax RASTER AT line WITH label
 
 @example RASTER AT (rasterLine+1) WITH rasterRoutine
 </usermanual> */

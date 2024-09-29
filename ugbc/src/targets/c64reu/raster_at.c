@@ -52,26 +52,10 @@
  * @param _label Label to jump to when vertical raster reach the value given
  * @param _position The vertical position to wait for
  */
-/* <usermanual>
+ /* <usermanual>
 @keyword RASTER AT
 
-@english
-Initialize a raster routine. In other words, asynchronously and in parallel 
-with the execution of the main program, the routine starting from the label 
-provided will be executed when the video raster on the screen reaches the 
-value given. 
-
-@italian
-Inizializza una routine raster. In altre parole, in modo asincrono e in parallelo
-con l'esecuzione del programma principale, viene impostata una routine a partire 
-dall'etichetta fornita. Questa sarà eseguita quando il raster video sullo 
-schermo raggiunge il valore dato. 
-
-@syntax RASTER AT [integer] WITH [label]
-
-@example RASTER AT #$42 WITH rasterRoutine
-
-@target c64
+@target c64reu
 </usermanual> */
 void raster_at( Environment * _environment, char * _label, int _position ) {
     
@@ -98,13 +82,6 @@ void raster_at( Environment * _environment, char * _label, int _position ) {
  * @param _label Label to jump to when vertical raster reach the value given
  * @param _position The vertical position to wait for
  */
-/* <usermanual>
-@keyword RASTER AT
-
-@syntax RASTER AT [expression] WITH [label]
-
-@example RASTER AT (rasterLine+1) WITH rasterRoutine
-</usermanual> */
 void raster_at_var( Environment * _environment, char * _label, char * _position ) {
    
     

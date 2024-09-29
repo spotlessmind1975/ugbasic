@@ -52,11 +52,6 @@
  * @param _label Label to jump to when vertical raster reach the value given
  * @param _position The vertical position to wait for
  */
-/* <usermanual>
-@keyword RASTER AT
-
-@target to8
-</usermanual> */
 void raster_at( Environment * _environment, char * _label, int _position ) {
 
 }
@@ -75,9 +70,6 @@ void raster_at( Environment * _environment, char * _label, int _position ) {
  * @param _label Label to jump to when vertical raster reach the value given
  * @param _position The vertical position to wait for
  */
-/* <usermanual>
-@keyword RASTER AT
-</usermanual> */
 void raster_at_var( Environment * _environment, char * _label, char * _position ) {
 
 }

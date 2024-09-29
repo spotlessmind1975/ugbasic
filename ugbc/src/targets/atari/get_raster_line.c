@@ -50,7 +50,8 @@ extern char DATATYPE_AS_STRING[][16];
 /* <usermanual>
 @keyword RASTER LINE
 
-@target all
+@target atari
+@target atarixl
 </usermanual> */
 Variable * get_raster_line( Environment * _environment ) {
 
