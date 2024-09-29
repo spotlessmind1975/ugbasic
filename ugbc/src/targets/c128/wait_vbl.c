@@ -47,8 +47,35 @@
  */
 /* <usermanual>
 @keyword WAIT VBL
+
+@english
+
+The ''WAIT VBL'' command pauses program execution until a "vertical blank" is encountered. 
+This is a signal that is triggered at each screen refresh, which usually occurs at 50 Hz 
+in PAL standard and 60 Hz in NTSC standard.
+
+Some video chipsets also allow you to specify a specific raster line, so execution will 
+continue when that specific line is reached. If the chipset does not allow this, this 
+constraint will be ignored, while still respecting the arrival of a vertical blank.
+
+@italian
+
+Il comando ''WAIT VBL'' mette in pausa l'esecuzione del programma fino all'arrivo di 
+un "vertical blank". Si tratta di un segnale che viene innescato ad ogni aggiornamento 
+della schermata, che di solito avviene a 50 Hz in standard PAL e 60 Hz in standard NTSC. 
+
+Alcuni chipset video consentono di indicare anche una specifica linea di raster, 
+per cui l'esecuzione continuerà al raggiungimento di quella specifica linea. Se il 
+chipset non lo consente, tale vincolo sarà ignorato, pur rispettando l'arrivo di 
+un blank verticale.
+
+@syntax WAIT VBL [raster line]
+
+@example WAIT VBL 100
+
 @target c128
 </usermanual> */
+
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 
     vic2_wait_vbl( _environment, _raster_line );

@@ -45,10 +45,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword WAIT VBL
-@target coleco
-</usermanual> */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 
     // TODO: implementation

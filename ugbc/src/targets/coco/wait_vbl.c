@@ -47,7 +47,7 @@
  */
 /* <usermanual>
 @keyword WAIT VBL
-@target c64
+@target coco
 </usermanual> */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 

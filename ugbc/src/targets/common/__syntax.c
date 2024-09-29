@@ -1372,7 +1372,7 @@ joystick. Se non viene indicato il numero della porta, si intende il
 primo disponibile (quello con indice 0). Se viene aggiunta la parola chiave
 ''RELEASE'', l'istruzione attenderà anche il rilascio del tasto.
 
-@syntax WAIT FIRE { ( [port] ) } { RELEASE }
+@syntax WAIT FIRE [(port)] [RELEASE]
 
 @example WAIT FIRE
 
@@ -1392,7 +1392,7 @@ Questa istruzione consente di attendere la pressione di un qualsiasi
 tasto sulla tastiera. Se viene aggiunta la parola chiave
 ''RELEASE'', l'istruzione attenderà anche il rilascio del tasto.
 
-@syntax WAIT KEY { RELEASE }
+@syntax WAIT KEY [RELEASE]
 
 @example WAIT KEY
 
@@ -1414,7 +1414,7 @@ joystick, oppure di un tasto sulla tastiera. Se non viene indicato il numero del
 primo disponibile (quello con indice 0). Se viene aggiunta la parola chiave
 ''RELEASE'', l'istruzione attenderà anche il rilascio di entrambi i tasti.
 
-@syntax WAIT KEY OR FIRE { ( [port] ) } { RELEASE }
+@syntax WAIT KEY OR FIRE [([port])] [RELEASE]
 
 @example WAIT KEY OR FIRE
 

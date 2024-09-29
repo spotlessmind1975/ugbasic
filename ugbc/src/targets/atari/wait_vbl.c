@@ -48,6 +48,7 @@
 /* <usermanual>
 @keyword WAIT VBL
 @target atari
+@target atarixl
 </usermanual> */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 

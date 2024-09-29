@@ -47,7 +47,7 @@
  */
 /* <usermanual>
 @keyword WAIT VBL
-@target c64
+@target c64reu
 </usermanual> */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 
