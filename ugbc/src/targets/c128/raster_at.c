@@ -69,6 +69,7 @@ dall'etichetta fornita. Questa sarà eseguita quando il raster video sullo
 schermo raggiunge il valore dato. 
 
 @syntax RASTER AT line WITH label
+@syntax RASTER label AT line
 
 @example RASTER AT #$42 WITH rasterRoutine
 
@@ -103,6 +104,7 @@ void raster_at( Environment * _environment, char * _label, int _position ) {
 @keyword RASTER AT
 
 @syntax RASTER AT line WITH label
+@syntax RASTER label AT line
 
 @example RASTER AT (rasterLine+1) WITH rasterRoutine
 </usermanual> */
