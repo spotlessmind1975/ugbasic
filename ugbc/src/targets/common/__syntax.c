@@ -2897,3 +2897,230 @@ Alias per ''COLOR BORDER''.
 @alias COLOR BORDER
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword SPRITE COUNT (constant)
+
+@english
+
+This constant allows you to know the number of hardware sprites available on the 
+target considered. Note that this is the effective limit allowed by the video
+chipset: however, ugBASIC can provide additional mechanisms to multiply the 
+number of available sprites, such as the so-called "sprite multiplexing".
+
+@italian
+
+Questa costante permette di conoscere il numero di sprite hardware disponibili 
+sul target considerato. Da notare che questo è l'effettivo limite concesso
+dal chipset video: tuttavia, ugBASIC può dare meccanismi aggiuntivi per 
+moltiplicare il numero di sprite disponibili, come il cosiddetto 
+"sprite multiplexing".
+
+@syntax = SPRITE COUNT
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN SPRITE RATIO X (constant)
+
+@english
+
+This constant allows you to know the ratio (percentile) between the screen 
+reference system and the sprite reference system. In other words, given a
+coordinate according to the screen reference system, you can calculate the 
+one according to the sprite reference system with the following proportion:
+
+'''( SCREEN WIDTH * SCREEN SPRITE RATIO X ) / 100'''
+
+@italian
+
+Questa costante permette di conoscere il rapporto (percentile) tra il 
+sistema di riferimento dello schermo e quello degli sprite. In altri termini, 
+data una coordinata secondo il sistema di riferimento dello schermo, si può 
+calcolare quella secondo il sistema di riferimento degli sprite con la 
+seguente proporzione:
+
+'''( SCREEN WIDTH * SCREEN SPRITE RATIO X ) / 100'''
+
+@syntax = SCREEN SPRITE RATIO X
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN SPRITE RATIO Y (constant)
+
+@english
+
+This constant allows you to know the ratio (percentile) between the screen 
+reference system and the sprite reference system. In other words, given a
+coordinate according to the screen reference system, you can calculate the 
+one according to the sprite reference system with the following proportion:
+
+'''( SCREEN HEIGHT * SCREEN SPRITE RATIO Y ) / 100'''
+
+@italian
+
+Questa costante permette di conoscere il rapporto (percentile) tra il 
+sistema di riferimento dello schermo e quello degli sprite. In altri termini, 
+data una coordinata secondo il sistema di riferimento dello schermo, si può 
+calcolare quella secondo il sistema di riferimento degli sprite con la 
+seguente proporzione:
+
+'''( SCREEN HEIGHT * SCREEN SPRITE RATIO Y ) / 100'''
+
+@syntax = SCREEN SPRITE RATIO Y
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SPRITE HEIGHT (constant)
+
+@english
+
+This constant allows you to know the height of hardware sprites available on the 
+target considered. Note that this is the effective limit allowed by the video
+chipset: however, ugBASIC can provide additional mechanisms to increase the 
+height of sprites, such as the so-called "sprite multiplexing".
+
+@italian
+
+Questa costante permette di conoscere l'altezza degli sprite hardware disponibili 
+sul target considerato. Da notare che questo è l'effettivo limite concesso
+dal chipset video: tuttavia, ugBASIC può dare meccanismi aggiuntivi per 
+accrescere l'altezza degli sprite disponibili, come il cosiddetto 
+"sprite multiplexing".
+
+@syntax = SPRITE HEIGHT
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SPRITE WIDTH (constant)
+
+@english
+
+This constant allows you to know the width of hardware sprites available on the 
+target considered. Note that this is the effective limit allowed by the video
+chipset: however, ugBASIC can provide additional mechanisms to increase the 
+width of sprites, such as the so-called "sprite multiplexing".
+
+@italian
+
+Questa costante permette di conoscere la larghezza degli sprite hardware disponibili 
+sul target considerato. Da notare che questo è l'effettivo limite concesso
+dal chipset video: tuttavia, ugBASIC può dare meccanismi aggiuntivi per 
+accrescere la larghezza degli sprite disponibili, come il cosiddetto 
+"sprite multiplexing".
+
+@syntax = SPRITE WIDTH
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SPRITE X MIN (constant)
+
+@english
+
+This constant allows you to know the minimum value of horizontal position of hardware 
+sprites available on the target considered. Note that this is the effective limit 
+allowed by the video chipset.
+
+@italian
+
+Questa costante permette di conoscere il valor minimo della posizione X degli sprite 
+hardware disponibili  sul target considerato.
+
+@syntax = SPRITE X MIN
+@syntax = SPRITE MIN X
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SPRITE Y MIN (constant)
+
+@english
+
+This constant allows you to know the minimum value of vertical position of hardware 
+sprites available on the target considered. Note that this is the effective limit 
+allowed by the video chipset.
+
+@italian
+
+Questa costante permette di conoscere il valor minimo della posizione Y degli sprite 
+hardware disponibili sul target considerato.
+
+@syntax = SPRITE Y MIN
+@syntax = SPRITE MIN Y
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SPRITE X MAX (constant)
+
+@english
+
+This constant allows you to know the maximum value of horizontal position of hardware 
+sprites available on the target considered. Note that this is the effective limit 
+allowed by the video chipset.
+
+@italian
+
+Questa costante permette di conoscere il valor massimo della posizione X degli sprite 
+hardware disponibili  sul target considerato.
+
+@syntax = SPRITE X MAX
+@syntax = SPRITE MAX X
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SPRITE Y MAX (constant)
+
+@english
+
+This constant allows you to know the maximum value of vertical position of hardware 
+sprites available on the target considered. Note that this is the effective limit 
+allowed by the video chipset.
+
+@italian
+
+Questa costante permette di conoscere il valor massimo della posizione Y degli sprite 
+hardware disponibili sul target considerato.
+
+@syntax = SPRITE Y MAX
+@syntax = SPRITE MAX Y
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SPRITE (data type)
+
+@english
+
+This data type allows you to identify and use a hardware sprite resource. Its value is 
+not directly usable by the programmer, who must consider the variable that contains 
+it as a "placeholder" for the sprite. Furthermore, this data type is used by both 
+native hardware sprites (''SPRITE'') and "composite" ones (''CSPRITE''), but it is 
+not possible to mix their use.
+
+@italian
+
+Questo tipo di dato permette di individuare e utilizzare una risorsa di tipo 
+sprite hardware. Il suo valore non è direttamente utilizzabile dal programmatore, 
+che deve intendere la variabile che lo contiene come un "segnaposto" dello sprite.
+Inoltre, questo tipo di dato è usato sia dagli sprite hardware nativi (''SPRITE'') 
+che da quelli "compositi" (''CSPRITE''), ma non è possibile miscelarne l'uso.
+
+@syntax DIM x AS SPRITE: x = SPRITE(xImage)
+
+@target all
+</usermanual> */

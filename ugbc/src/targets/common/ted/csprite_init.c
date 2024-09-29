@@ -46,9 +46,6 @@
  * @param _environment Current calling environment
  * @param _image image to use as SPRITE
  */
-/* <usermanual>
-@keyword SPRITE
-</usermanual> */
 Variable * csprite_init( Environment * _environment, char * _image, char *_sprite, int _flags ) {
 
     Variable * index;

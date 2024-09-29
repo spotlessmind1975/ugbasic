@@ -46,11 +46,6 @@
  * @param _environment Current calling environment
  * @param _image image to use as SPRITE
  */
-/* <usermanual>
-@keyword SPRITE
-
-@target zx
-</usermanual> */
 Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
     Variable * index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );

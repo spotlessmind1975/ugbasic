@@ -46,11 +46,6 @@
  * @param _address2 address to write to (0 based)
  * @param _size size of memory to read/write
  */
-/* <usermanual>
-@keyword BANK WRITE
-@target mo5
-@verified
-</usermanual> */
 void bank_write_vars( Environment * _environment, char * _address1, char * _bank, char * _address2, char * _size ) {
 
     deploy_preferred( duff, src_hw_6809_duff_asm );

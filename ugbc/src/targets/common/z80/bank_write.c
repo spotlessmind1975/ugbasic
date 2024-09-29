@@ -48,9 +48,6 @@
  * @param _address2 address to write to (0 based)
  * @param _size size of memory to read/write
  */
-/* <usermanual>
-@keyword BANK WRITE
-</usermanual> */
 void bank_write_vars( Environment * _environment, char * _address1, char * _bank, char * _address2, char * _size ) {
 
     outline4("; bank write( ..., %s, %s, %s, %s)", _address1, _bank, _address2, _size );

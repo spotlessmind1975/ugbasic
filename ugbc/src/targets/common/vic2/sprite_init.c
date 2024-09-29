@@ -51,6 +51,85 @@
 
 @target c128
 </usermanual> */
+/* <usermanual>
+@keyword SPRITE
+
+@english
+
+This function can be used to define a hardware sprite. The first parameter must 
+be a monochrome graphics resource, while the second parameter (optional) can be 
+the identifier of an already defined sprite. If the second parameter is omitted, 
+the sprite will be created using a new identifier.
+
+A sprite declaration can be followed by one or more optional flags that serve 
+to better describe the desired characteristics of the sprite.
+
+With the ''MULTICOLOR'' flag you can indicate that the sprite is defined by more 
+than one color. Depending on the video chipset considered, this can mean up to 
+4 colors instead of the single color. The opposite is given by the ''MONOCOLOR'' 
+flag, which defines a monochrome sprite.
+
+The ''EXPAND VERTICAL'' flag allows you to increase the height of the sprite 
+and, depending on the video chipset considered, each pixel of the sprite will 
+be drawn with more pixels on the screen. The opposite is obtained with the 
+''COMPRESS VERTICAL'' flag.
+
+The ''EXPAND HORIZONTAL'' flag allows you to increase the width of the 
+sprite and, depending on the video chipset considered, each pixel of the 
+sprite will be drawn with more pixels on the screen. The opposite is 
+obtained with the ''COMPRESS HORIZONTAL'' flag.
+
+The last flag is ''IGNORE COLOR'', which allows you to indicate the color to be
+considered as transparency (that is: ignored).
+
+Please note that defining a sprite allows you to change its appearance 
+dynamically, and therefore allows you to perform (for example) animations. 
+This redefinition should be understood as synchronous, and therefore the 
+program should be written to ensure the appropriate timing, in order to 
+avoid flickering.
+
+@italian
+
+Questa funzione può essere usata per definire uno sprite hardware. Il primo 
+parametro deve essere una risorsa grafica monocromatica, mentre il secondo 
+parametro (opzionale) può essere l'identificativo di uno sprite già definito. 
+Se il secondo parametro viene omesso, lo sprite sarà creato utilizzando un nuovo
+identificativo.
+
+La dichiarazione di uno sprite può essere seguita da uno o più flag, opzionali, 
+che servono a descrivere meglio le caratteristiche desiderate dello sprite.
+
+Con il flag ''MULTICOLOR'' si può indicare che lo sprite è definito da più di 
+un colore. A seconda del chipset video considerato, questo può significare 
+fino a 4 colori invece che il singolo colore. Il contrario è dato dal flag 
+''MONOCOLOR'', che definisce uno sprite monocromatico. 
+
+Il flag ''EXPAND VERTICAL'' permette di incrementare l'altezza dello sprite 
+e, a seconda del chipset video considerato, ogni pixel dello sprite sarà 
+disegnato con più pixel sullo schermo. Il contrario lo si ottiene con il 
+flag ''COMPRESS VERTICAL''.
+
+Il flag ''EXPAND HORIZONTAL'' permette di incrementare la larghezza dello 
+sprite e, a seconda del chipset video considerato, ogni pixel dello sprite 
+sarà disegnato con più pixel sullo schermo. Il contrario lo si ottiene con 
+il flag ''COMPRESS HORIZONTAL''.
+
+L'ultimo flag è ''IGNORE COLOR'', che consente di indicare il colore da 
+considerare come trasparenza (cioè: ignorato).
+
+Si fa presente che la definizione di uno sprite consente di cambiare il suo 
+aspetto dinamicamente, e quindi permette di effettuare (ad esempio) animazioni. 
+Tale ridefinizione va intesa come sincrona, e quindi il programma dovrebbe 
+essere scritto per garantire le opportune temporizzazioni, al fine di 
+evitare flickering.
+
+@syntax = SPRITE( resource ) flags
+@syntax = SPRITE( resource, old ) flags
+
+@example ship = SPRITE( imageShip ) IGNORE BLACK
+
+@target all
+</usermanual> */
 Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
     if ( _environment->deployed.msprite ) {

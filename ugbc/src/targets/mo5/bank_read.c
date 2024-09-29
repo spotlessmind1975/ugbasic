@@ -46,11 +46,6 @@
  * @param _address2 address to write to (RAM)
  * @param _size size of memory to read/write
  */
-/* <usermanual>
-@keyword BANK READ
-@target mo5
-@verified
-</usermanual> */
 void bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size ) {
 
     deploy_preferred( duff, src_hw_6809_duff_asm );
@@ -96,10 +91,6 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
  * @param _address2 address to write to (RAM)
  * @param _size size of memory to read/write
  */
-/* <usermanual>
-@keyword BANK READ
-@target mo5
-</usermanual> */
 void bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
     deploy_preferred( duff, src_hw_6809_duff_asm );

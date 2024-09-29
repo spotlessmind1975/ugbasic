@@ -46,13 +46,6 @@
  * @param _environment Current calling environment
  * @param _image image to use as SPRITE
  */
-/* <usermanual>
-@keyword SPRITE
-
-@target c64
-@target c128
-@target c64reu
-</usermanual> */
 Variable * csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
     if ( _environment->deployed.msprite ) {
