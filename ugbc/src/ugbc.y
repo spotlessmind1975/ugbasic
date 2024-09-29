@@ -10161,9 +10161,6 @@ statement2nc:
   | POP {
       pop( _environment );
   }
-  | DONE  {
-      return 0;
-  }
   | LEFT OP expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_left_assign( _environment, $3, $5, $8 );
   }
