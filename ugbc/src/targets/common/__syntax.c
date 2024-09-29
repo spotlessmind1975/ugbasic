@@ -2838,3 +2838,62 @@ Alias per ''SHADES''.
 @seeAlso RGB
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword SCREEN BORDER X (constant)
+
+@english
+
+Returns the width of the border of the screen, in the reference frame used by sprites. If no sprites 
+are available, or if the border is not present, it is equal to ''0''. This constant should be used as
+a horizontal offset, to ensure that the sprite is visible beyond the left screen border.
+
+@italian
+
+Restituisce la larghezza del bordo dello schermo, nel sistema di riferimento utilizzato dagli sprites. Se 
+gli sprite non sono disponibili, oppure se il bordo non è presente, vale ''0''. Questa costante 
+deve essere utilizzata come offset orizzontale, per garantire che lo sprite sia visibile oltre
+il bordo sinistro dello schermo.
+
+@syntax = SCREEN BORDER X
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN BORDER Y (constant)
+
+@english
+
+Returns the height of the border of the screen, in the reference frame used by sprites. If no sprites 
+are available, or if the border is not present, it is equal to ''0''. This constant should be used as
+a vertical offset, to ensure that the sprite is visible beyond the top screen border.
+
+@italian
+
+Restituisce l'altezza del bordo dello schermo, nel sistema di riferimento utilizzato dagli sprites. Se 
+gli sprite non sono disponibili, oppure se il bordo non è presente, vale ''0''. Questa costante 
+deve essere utilizzata come offset verticale, per garantire che lo sprite sia visibile oltre
+il bordo superiore dello schermo.
+
+@syntax = SCREEN BORDER Y
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword BORDER
+
+@english
+
+Alias for ''COLOR BORDER''.
+
+@italian
+
+Alias per ''COLOR BORDER''.
+
+@syntax BORDER shade
+
+@alias COLOR BORDER
+@target all
+</usermanual> */

@@ -89,6 +89,7 @@ di calcolare la tonalità a partire dalle componenti del colore (rosso, verde e 
 @seeAlso COLOR
 @seeAlso SHADES (constant)
 @seeAlso RGB
+@alias BORDER
 @target c128
 </usermanual> */
 void color_border( Environment * _environment, int _color ) {
