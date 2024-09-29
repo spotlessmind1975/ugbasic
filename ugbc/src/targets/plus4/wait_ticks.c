@@ -46,13 +46,6 @@
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-
-@example WAIT #2 TICKS
-
-@target c64
-</usermanual> */
 void wait_ticks( Environment * _environment, int _timing ) {
 
     
@@ -71,11 +64,6 @@ void wait_ticks( Environment * _environment, int _timing ) {
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-
-@example WAIT timing TICKS
-</usermanual> */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL

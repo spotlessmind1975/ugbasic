@@ -4471,7 +4471,10 @@ wait_definition_expression:
       wait_milliseconds_var( _environment, $1 );
     }
     | FIRE OP expr CP release {
-        wait_fire_vars( _environment, $3, $5 );
+        wait_fire_semivar( _environment, $3, $5 );
+    }
+    | KEY OR FIRE OP expr CP release {
+        wait_key_or_fire_semivar( _environment, $5, $7 );
     }
     | UNTIL { 
         wait_until( _environment );  

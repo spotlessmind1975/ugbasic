@@ -46,9 +46,6 @@
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-</usermanual> */
 void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
     
@@ -106,9 +103,6 @@ void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-</usermanual> */
 void wait_cycles_var( Environment * _environment, char * _timing, int _parallel ) {
 
     MAKE_LABEL

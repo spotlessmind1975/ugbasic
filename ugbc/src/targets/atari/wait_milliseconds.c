@@ -46,10 +46,6 @@
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-@target atari
-</usermanual> */
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
     Variable * timing = variable_temporary( _environment, VT_WORD, "(0)" );
@@ -67,10 +63,6 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-@target atari
-</usermanual> */
 void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL

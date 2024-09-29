@@ -50,16 +50,42 @@
 @keyword WAIT
 
 @english
-Engages the CPU in a wait. The timing can be given as
-number of CPU cycles (''CYCLES''), number of 50th/seconds (''TICKS'')
-or milliseconds (''MILLISECONDS'' or ''MS'').
+
+Pauses execution for a certain period of time. The ''WAIT'' statement can be 
+accompanied by a suffix statement, which indicates the unit of measurement of
+the time to wait. The suffix ''CYCLES'' can be used to indicate CPU cycles, 
+''TICKS'' to indicate the number of vertical blanks at 50Hz (PAL) or 60Hz (NTSC),
+and ''MS'' (''MILLISECONDS'') to indicate a number of milliseconds.
+
+The pause is of the "busy" type, so the entire program is suspended, except for 
+the timer-related mechanisms but including the multithreading mechanism. To 
+avoid this, you can follow the instruction with the ''PARALLEL'' keyword, 
+which allows parallel processes to continue executing while waiting for the time.
+
+The ''PARALLEL'' keyword can only be used with waits related to ''CYCLES''.
 
 @italian
-Impiega la CPU in una attesa. Il tempo può essere espresso
-come numero di cicli CPU (''CYCLES''), numero di 50th/seconds (''TICKS''),
-o millisecondi (''MILLISECONDS'' oppure ''MS'').
 
-@syntax WAIT delay CYCLES|TICKS|MILLISECONDS
+Interrompe l'esecuzione per un certo periodo di tempo. L'istruzione ''WAIT'' può 
+essere corredata da una istruzione suffisso, che si occupa di indicare l'unità di 
+misura del tempo da attendere. Si può usare il suffisso ''CYCLES'' per indicare 
+cicli di CPU, ''TICKS'' per indicare il numero di blank verticali a 50Hz (PAL) 
+o 60Hz (NTSC), e ''MS'' (''MILLISECONDS'') per indicare un numero di millisecondi.
+
+La pausa è di tipo "busy", quindi tutto il programma viene sospeso, ad esclusione 
+dei meccanismi legati ai timer ma compreso il meccanismo di multithreading. Per 
+evitarlo è possibile far seguire l'istruzione dalla parola chiave ''PARALLEL'', 
+che consente di far proseguire l'esecuzione di processi paralleli mentre viene 
+atteso il tempo.
+
+La parola chiave ''PARALLEL'' può essere usata solo con attese legate ai ''CYCLES''.
+
+@syntax WAIT cycles [CYCLES] [PARALLEL]
+@syntax WAIT ticks TICK
+@syntax WAIT ticks TICKS
+@syntax WAIT time MILLISECOND
+@syntax WAIT time MILLISECONDS
+@syntax WAIT time MS
 
 @example WAIT #42 CYCLES
 @usedInExample control_uncond_jumps_01.bas
@@ -67,7 +93,7 @@ o millisecondi (''MILLISECONDS'' oppure ''MS'').
 @usedInExample control_returning_01.bas
 @usedInExample control_returning_02.bas
 
-@target c128
+@target all
 </usermanual> */
 void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
@@ -125,11 +151,6 @@ void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-
-@example WAIT delay CYCLES
-</usermanual> */
 void wait_cycles_var( Environment * _environment, char * _timing, int _parallel ) {
 
     MAKE_LABEL

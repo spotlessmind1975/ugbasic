@@ -46,11 +46,6 @@
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-
-@target sg1000
-</usermanual> */
 void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
     if ( _environment->protothread && _environment->procedureName && _parallel ) {

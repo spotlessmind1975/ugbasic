@@ -46,11 +46,6 @@
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-
-@target plus4
-</usermanual> */
 void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
     if ( _environment->protothread && _environment->procedureName && _parallel ) {
@@ -103,11 +98,6 @@ void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-
-@example WAIT delay CYCLES
-</usermanual> */
 void wait_cycles_var( Environment * _environment, char * _timing, int _parallel ) {
 
     Variable * timing = variable_retrieve( _environment, _timing );

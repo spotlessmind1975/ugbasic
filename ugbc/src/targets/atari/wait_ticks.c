@@ -46,10 +46,6 @@
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-@target atari
-</usermanual> */
 void wait_ticks( Environment * _environment, int _timing ) {
 
     char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing );
@@ -66,9 +62,6 @@ void wait_ticks( Environment * _environment, int _timing ) {
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-/* <usermanual>
-@keyword WAIT
-</usermanual> */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
