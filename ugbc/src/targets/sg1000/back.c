@@ -46,9 +46,7 @@
  */
 /* <usermanual>
 @keyword COLOR BACK
-
 @target sg1000
-
 </usermanual> */
 void back( Environment * _environment, char * _color ) {
 

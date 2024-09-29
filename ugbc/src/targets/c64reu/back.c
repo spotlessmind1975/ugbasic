@@ -47,7 +47,6 @@
 /* <usermanual>
 @keyword COLOR BACK
 @target c64
-@verified
 </usermanual> */
 void back( Environment * _environment, char * _color ) {
 

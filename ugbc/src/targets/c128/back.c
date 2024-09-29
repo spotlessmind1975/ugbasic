@@ -48,27 +48,25 @@
 @keyword COLOR BACK
 
 @english
-Fills the screen with the indicated color. The modified color is the background color,
-which is set as if the ''PAPER'' command had been issued. Depending on the active mode 
-(''TILEMAP'' or ''BITMAP'') the behavior of the filling can be different, depending 
-on the target computer.
+
+This command is a composition of two commands: one that sets the color to use as 
+background (''PAPER'' command) and another that cleans the screen using the 
+specific features of the video chipset.
 
 @italian
-Riempie lo schermo con il colore indicato. Il colore modificato è quello di sfondo, che
-viene impostato come se si fosse dato il comando ''PAPER''. A seconda della modalità attiva
-(''TILEMAP'' o ''BITMAP'') il comportamento del riempimento può essere diverso, 
-a seconda del computer target.
+
+Questo comando è una composizione di due comandi: uno che imposta il colore da 
+usare come sfondo (comando ''PAPER'') e un altro che ripulisce lo schermo usando 
+le funzionalità specifiche del chipset video. 
 
 @syntax COLOR BACK color
 
 @example COLOR BACK RED
 @example COLOR BACK WHITE
 
-@seeAlso COLOR BACKGROUND
 @usedInExample graphics_color_01.bas
 
 @target c128
-
 </usermanual> */
 void back( Environment * _environment, char * _color ) {
 

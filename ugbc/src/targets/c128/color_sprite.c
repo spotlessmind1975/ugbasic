@@ -47,16 +47,42 @@
 /* <usermanual>
 @keyword COLOR SPRITE
 
-@english
-Change the sprite color among those available.
+The ''COLOR SPRITE'' command allows you to redefine the (common) colors used by the graphics chipset
+for the sprites, where this is possible and/or they are available. "Redefinition" means 
+assigning one of the possible colors to specific registers called "palette registers".
+
+On some systems this is not possible at all, due to limitations of the chipset or 
+the absence of registers or even of the sprites: for this reason, in such cases the 
+command is ignored. On other systems this corresponds to the modification of specific 
+registers, to which one of the available colors is assigned. On others it is possible 
+to assign certain shades, which therefore go beyond the number of available colors.
+
+Where it is possible to assign a shade, the value can range from ''0'' to the constant 
+''SHADES''. However, it may be more practical to use the ''RGB'' function, which 
+allows you to calculate the shade starting from the color components (red, green and blue).
 
 @italian
-Modifica il colore comune dello sprite tra quelli disponibili.
 
-@syntax COLOR SPRITE #index TO #color
+Il comando ''COLOR SPRITE'' consente di ridefinire i colori comuni utilizzati dal chipset grafico 
+per gli sprite, laddove ciò sia possibile. "Ridefinire" significa assegnare uno dei colori 
+possibili a registri specifici chiamati "registri palette".
 
-@example COLOR SPRITE #$1 TO #$2
+Su alcuni sistemi questo non è affatto possibile, a causa di limitazioni del chipset o 
+dell'assenza di registri o addirittura degli sprite: per questo motivo, in tali casi il 
+comando viene ignorato. Su altri sistemi ciò corrisponde alla modifica di registri 
+specifici, a cui viene assegnato uno dei colori disponibili. Su altri è possibile assegnare
+determinate tonalità, che quindi vanno oltre il numero di colori disponibili.
 
+Dove è possibile assegnare una tonalità, il valore può variare da ''0'' alla costante 
+''SHADES''. Tuttavia, può essere più pratico utilizzare la funzione ''RGB'', che consente 
+di calcolare la tonalità a partire dalle componenti del colore (rosso, verde e blu).
+
+@syntax COLOR SPRITE index TO color
+
+@example COLOR SPRITE 1 TO YELLOW
+
+@seeAlso SHADES (constant)
+@seeAlso RGB
 @target c128
 </usermanual> */
 void color_sprite( Environment * _environment, int _index, int _common_color ) {
@@ -82,13 +108,6 @@ void color_sprite_semi_vars( Environment * _environment, int _index, char * _com
  * @param _index Expression with the index of common color to set
  * @param _common_color Expression with the index of the color to use
  */
-/* <usermanual>
-@keyword COLOR SPRITE
-
-@syntax COLOR SPRITE index TO color
-
-@example COLOR SPRITE mySprite TO YELLOW
-</usermanual> */
 void color_sprite_vars( Environment * _environment, char * _index, char * _common_color ) {
 
     Variable * index = variable_retrieve( _environment, _index );

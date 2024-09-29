@@ -46,9 +46,7 @@
  */
 /* <usermanual>
 @keyword COLOR BACK
-
 @target coco3
-
 </usermanual> */
 void back( Environment * _environment, char * _color ) {
                     
