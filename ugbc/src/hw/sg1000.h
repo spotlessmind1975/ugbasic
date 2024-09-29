@@ -159,7 +159,9 @@
 
 void sg1000_inkey( Environment * _environment, char * _pressed, char * _key );
 void sg1000_wait_fire( Environment * _environment, int _port, int _release );
+void sg1000_wait_fire_semivar( Environment * _environment, char * _port, int _release );
 void sg1000_wait_key_or_fire( Environment * _environment, int _port, int _release );
+void sg1000_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release );
 void sg1000_scancode( Environment * _environment, char * _pressed, char * _scacode );
 void sg1000_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void sg1000_scanshift( Environment * _environment, char * _shifts );

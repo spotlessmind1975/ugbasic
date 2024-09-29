@@ -130,6 +130,13 @@ JOYSTICKNOFIRE:
 
     RTS
 
+WAITFIREX:
+    LDA $D010,X
+    AND #$01
+    EOR #$01
+    BEQ WAITFIREX
+    RTS
+
 WAITFIRE:
     LDA $D010
     AND #$01

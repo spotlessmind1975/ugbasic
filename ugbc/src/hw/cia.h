@@ -129,7 +129,9 @@
 
 void cia_wait_key( Environment * _environment, int _release );
 void cia_wait_fire( Environment * _environment, int _port, int _release );
+void cia_wait_fire_semivar( Environment * _environment, char * _port, int _release );
 void cia_wait_key_or_fire( Environment * _environment, int _port, int _release );
+void cia_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release );
 void cia_key_state( Environment * _environment, char *_scancode, char * _result );
 void cia_scancode( Environment * _environment, char * _scacode );
 void cia_asciicode( Environment * _environment, char * _asciicode );

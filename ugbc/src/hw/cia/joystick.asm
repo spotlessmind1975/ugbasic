@@ -111,6 +111,10 @@ JOYSTICKREAD1:
         BEQ WAITFIRE0
         RTS
 
+    WAITFIREA:
+        CP #0
+        BEQ WAITFIRE0
+
     ; Wait for any fire is pressed on JOY(1)
 
     WAITFIRE1:
@@ -193,6 +197,10 @@ JOYSTICK1:      .BYTE   $0
         AND $10
         BEQ WAITFIRE0
         RTS
+
+    WAITFIREA:
+        CP #0
+        BEQ WAITFIRE0
 
     ; Wait for any fire is pressed on JOY(1)
 

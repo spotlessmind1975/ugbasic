@@ -96,7 +96,29 @@ void atari_wait_key_or_fire( Environment * _environment, int _port, int _release
     deploy( keyboard, src_hw_atari_keyboard_asm );
     deploy( wait_key_or_fire, src_hw_atari_wait_key_or_fire_asm );
 
-    outline0("JSR WAITKEYFIRE");
+    if ( _port == -1 ) {
+        outline0("JSR WAITKEYFIRE");
+    } else {
+        outline1("LDX #%2.2x", _port );
+        outline0("JSR WAITKEYFIREX");
+    }
+   
+}
+
+void atari_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_atari_joystick_asm );
+    deploy( keyboard, src_hw_atari_keyboard_asm );
+    deploy( wait_key_or_fire, src_hw_atari_wait_key_or_fire_asm );
+
+    if ( ! _port ) {
+        outline0("JSR WAITKEYFIRE");
+    } else {
+        outline1("LDX %s", _port );
+        outline0("JSR WAITKEYFIREX");
+    }
    
 }
 
@@ -106,7 +128,27 @@ void atari_wait_fire( Environment * _environment, int _port, int _release ) {
 
     deploy( joystick, src_hw_atari_joystick_asm );
 
-    outline0("JSR WAITFIRE");
+    if ( _port == 1 ) {
+        outline0("JSR WAITFIRE");
+    } else {
+        outline1("LDX #$%2.2x", _port );
+        outline0("JSR WAITFIREX");
+    }
+   
+}
+
+void atari_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_atari_joystick_asm );
+
+    if ( !_port ) {
+        outline0("JSR WAITFIRE");
+    } else {
+        outline1("LDX %s", _port );
+        outline0("JSR WAITFIREX");
+    }
    
 }
 

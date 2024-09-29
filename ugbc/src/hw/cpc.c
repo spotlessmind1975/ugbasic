@@ -136,7 +136,29 @@ void cpc_wait_key_or_fire( Environment * _environment, int _port, int _release )
     deploy( keyboard, src_hw_cpc_keyboard_asm );
     deploy( wait_key_or_fire, src_hw_cpc_wait_key_or_fire_asm );
 
-    outline0("CALL WAITKEYFIRE");
+    if ( _port == -1 ) {
+        outline0("CALL WAITKEYFIRE");
+    } else {
+        outline1("LD A, %2.2x", _port);
+        outline0("CALL WAITKEYFIREA");
+    }
+   
+}
+
+void cpc_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_cpc_joystick_asm );
+    deploy( keyboard, src_hw_cpc_keyboard_asm );
+    deploy( wait_key_or_fire, src_hw_cpc_wait_key_or_fire_asm );
+
+    if ( ! _port ) {
+        outline0("CALL WAITKEYFIRE");
+    } else {
+        outline1("LD A, (%s)", _port);
+        outline0("CALL WAITKEYFIREA");
+    }
    
 }
 
@@ -158,6 +180,21 @@ void cpc_wait_fire( Environment * _environment, int _port, int _release ) {
             break;
     }
       
+}
+
+void cpc_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_cpc_joystick_asm );
+
+    if ( ! _port ) {
+        outline0("CALL WAITFIRE");
+    } else {
+        outline1("LD A, (%s)", _port);
+        outline0("CALL WAITKEYFIREA");
+    }
+
 }
 
 void cpc_key_state( Environment * _environment, char *_scancode, char * _result ) {

@@ -245,7 +245,9 @@ void zx_cls( Environment * _environment, char * _pen, char * _paper );
 
 void zx_wait_key( Environment * _environment, int _release );
 void zx_wait_fire( Environment * _environment, int _port, int _release );
+void zx_wait_fire_semivar( Environment * _environment, char * _port, int _release );
 void zx_wait_key_or_fire( Environment * _environment, int _port, int _release );
+void zx_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release );
 void zx_key_state( Environment * _environment, char *_scancode, char * _result );
 void zx_scancode( Environment * _environment, char * _scacode );
 void zx_asciicode( Environment * _environment, char * _asciicode );

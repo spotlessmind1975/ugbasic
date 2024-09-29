@@ -188,7 +188,9 @@
 
 void msx1_wait_key( Environment * _environment, int _release );
 void msx1_wait_fire( Environment * _environment, int _port, int _release );
+void msx1_wait_fire_semivar( Environment * _environment, char * _port, int _release );
 void msx1_wait_key_or_fire( Environment * _environment, int _port, int _release );
+void msx1_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release );
 void msx1_key_state( Environment * _environment, char *_scancode, char * _result );
 void msx1_scancode( Environment * _environment, char * _scacode );
 void msx1_asciicode( Environment * _environment, char * _asciicode );

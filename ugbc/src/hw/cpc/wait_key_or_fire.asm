@@ -44,6 +44,76 @@
 
 @IF joystickConfig.sync
 
+    WAITKEYFIREA0:
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        CP 0
+        JR Z, WAITKEYFIREA1
+    WAITKEYFIREA0X:
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        CP 0
+        JR NZ, WAITKEYFIREA0X
+    WAITKEYFIREA1:
+        CALL JOYSTICKREAD0
+        AND $10
+        LD B, A
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        OR B
+        CP 0
+        JR Z, WAITKEYFIREA1
+        RET
+
+    WAITKEYFIREA:
+        CP $0
+        JR Z, WAITKEYFIREA0
+
+    WAITKEYFIREB0:
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        CP 0
+        JR Z, WAITKEYFIREB1
+    WAITKEYFIREB0X:
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        CP 0
+        JR NZ, WAITKEYFIREB0X
+    WAITKEYFIREB1:
+        CALL JOYSTICKREAD1
+        AND $10
+        LD B, A
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        OR B
+        CP 0
+        JR Z, WAITKEYFIREB1
+        RET
+
     WAITKEYFIRE:
         @IF keyboardConfig.sync
             CALL SCANCODERAW
@@ -83,6 +153,78 @@
 
 @ELSE
 
+    WAITKEYFIREA0:
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        CP 0
+        JR Z, WAITKEYFIREA1
+    WAITKEYFIREA0X:
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        CP 0
+        JR NZ, WAITKEYFIREA0X
+    WAITKEYFIREA1:
+        LD A, (JOYSTICK0)
+        AND $10
+        OR B
+        LD B, A
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        OR B
+        CP 0
+        JR Z, WAITKEYFIREA1
+        RET
+
+    WAITKEYFIREA:
+        CP $0
+        JR Z, WAITKEYFIREA0
+
+    WAITKEYFIREB0:
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        CP 0
+        JR Z, WAITKEYFIREB1
+    WAITKEYFIREB0X:
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        CP 0
+        JR NZ, WAITKEYFIREB0X
+    WAITKEYFIREB1:
+        LD A, (JOYSTICK1)
+        AND $10
+        OR B
+        LD B, A
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
+        OR B
+        CP 0
+        JR Z, WAITKEYFIREB1
+        RET
+
     WAITKEYFIRE:
         @IF keyboardConfig.sync
             CALL SCANCODERAW
@@ -102,19 +244,19 @@
         CP 0
         JR NZ, WAITKEYFIRE0
     WAITKEYFIRE1:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
+        LD A, (JOYSTICK0)
         AND $10
         LD B, A
         LD A, (JOYSTICK1)
         AND $10
         OR B
         LD B, A
-        LD A, (KEYBOARDASFSTATE)
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+            LD A, (KEYBOARDACTUAL)
+        @ELSE
+            LD A, (KEYBOARDASFSTATE)
+        @ENDIF
         OR B
         CP 0
         JR Z, WAITKEYFIRE1

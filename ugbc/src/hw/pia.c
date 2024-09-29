@@ -89,7 +89,34 @@ void pia_wait_key_or_fire( Environment * _environment, int _port, int _release )
     
     deploy( wait_key_or_fire, src_hw_pia_wait_key_or_fire_asm );
 
-    outline0("JSR WAITKEYFIRE");
+    if ( _port == -1 ) {
+        outline0("JSR WAITKEYFIRE");
+    } else {
+        outline1("LDA #$%2.2x", _port );
+        outline0("JSR WAITKEYFIREA");
+    }
+   
+}
+
+void pia_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_pia_joystick_asm );
+    if ( _environment->keyboardConfig.sync ) {
+        deploy( scancode, src_hw_pia_scancode_asm);
+    } else {
+        deploy( keyboard, src_hw_pia_keyboard_asm );
+    }
+    
+    deploy( wait_key_or_fire, src_hw_pia_wait_key_or_fire_asm );
+
+    if ( ! _port ) {
+        outline0("JSR WAITKEYFIRE");
+    } else {
+        outline1("LDA %s", _port );
+        outline0("JSR WAITKEYFIREA");
+    }
    
 }
 
@@ -99,7 +126,27 @@ void pia_wait_fire( Environment * _environment, int _port, int _release ) {
 
     deploy( joystick, src_hw_pia_joystick_asm );
 
-    outline0("JSR WAITFIRE");
+    if ( _port == -1 ) {
+        outline0("JSR WAITFIRE");
+    } else {
+        outline1("LDA #$%2.2x", _port );
+        outline0("JSR WAITFIREA");
+    }
+   
+}
+
+void pia_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_pia_joystick_asm );
+
+    if ( !_port ) {
+        outline0("JSR WAITFIRE");
+    } else {
+        outline1("LDA %s", _port );
+        outline0("JSR WAITFIREAA");
+    }
    
 }
 

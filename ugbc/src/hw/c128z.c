@@ -74,9 +74,32 @@ void c128z_wait_key_or_fire( Environment * _environment, int _port, int _release
     deploy( keyboard, src_hw_c128z_keyboard_asm );
     deploy( wait_key_or_fire, src_hw_c128z_wait_key_or_fire_asm );
 
-    outline0("CALL WAITKEYFIRE");
+    if ( _port == -1 ) {
+        outline0("CALL WAITKEYFIRE");
+    } else {
+        outline1("LD A, (%d)", _port );
+        outline0("CALL WAITKEYFIREA");
+    }
 
 }
+
+void c128z_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_c128z_joystick_asm );
+    deploy( keyboard, src_hw_c128z_keyboard_asm );
+    deploy( wait_key_or_fire, src_hw_c128z_wait_key_or_fire_asm );
+
+    if ( ! _port ) {
+        outline0("CALL WAITKEYFIRE");
+    } else {
+        outline1("LD A, (%s)", _port );
+        outline0("CALL WAITKEYFIREA");
+    }
+
+}
+
 
 void c128z_wait_fire( Environment * _environment, int _port, int _release ) {
 
@@ -94,6 +117,21 @@ void c128z_wait_fire( Environment * _environment, int _port, int _release ) {
         case 1:
             outline0("CALL WAITFIRE1");
             break;
+    }
+
+}
+
+void c128z_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+    
+    deploy( joystick, src_hw_c128z_joystick_asm );
+
+    if ( ! _port ) {
+        outline0("CALL WAITFIRE");
+    } else {
+        outline1("LD A, (%s)", _port );
+        outline0("CALL WAITFIREA");
     }
 
 }

@@ -137,6 +137,10 @@ JOYSTICKREAD1:
         JR Z, WAITFIRE0
         RET
 
+    WAITFIREA:
+        CP 0
+        JR Z, WAITFIRE0
+
     ; Wait for any fire is pressed on JOY(1)
 
     WAITFIRE1:
@@ -238,6 +242,11 @@ JOYSTICK1:      DB   $0
         CP 0
         JR Z, WAITFIRE0
         RET
+
+    WAITFIREA:
+        CP 0
+        JR Z, WAITFIRE0
+        JR WAITFIRE1
 
     ; Wait for any fire is pressed on JOY(1)
 

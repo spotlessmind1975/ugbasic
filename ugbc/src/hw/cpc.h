@@ -157,7 +157,9 @@
 
 void cpc_wait_key( Environment * _environment, int _release );
 void cpc_wait_fire( Environment * _environment, int _port, int _release );
+void cpc_wait_fire_semivar( Environment * _environment, char * _port, int _release );
 void cpc_wait_key_or_fire( Environment * _environment, int _port, int _release );
+void cpc_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release );
 void cpc_key_state( Environment * _environment, char *_scancode, char * _result );
 void cpc_scancode( Environment * _environment, char * _scacode );
 void cpc_asciicode( Environment * _environment, char * _asciicode );

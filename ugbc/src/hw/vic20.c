@@ -107,7 +107,15 @@ void vic20_wait_key_or_fire( Environment * _environment, int _port, int _release
 
 }
 
+void vic20_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+}
+
 void vic20_wait_fire( Environment * _environment, int _port, int _release ) {
+
+}
+
+void vic20_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
 
 }
 

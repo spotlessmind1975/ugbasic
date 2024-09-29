@@ -83,29 +83,26 @@ IO_Joy2		EQU	0FFH		; Joystick 2 input port
 
 @ENDIF
 
+JOYSTICKREAD:
+    OUT	($C0),A
+    NOP
+    NOP
+    NOP
+    NOP
+    IN	A, ($FC)
+    CPL
+    AND $7F
+    RET
+
 JOYSTICKREAD0:
-        LD A, 0
-        OUT	($C0),A
-        NOP
-        NOP
-        NOP
-        NOP
-        IN	A, ($FC)
-        CPL
-        AND $7F
-        RET
+    LD A, 0
+    CALL JOYSTICKREAD
+    RET
 
 JOYSTICKREAD1:
-        LD A, 1
-        OUT	($C0),A
-        NOP
-        NOP
-        NOP
-        NOP
-        IN	A, ($FF)
-        CPL
-        AND $7F
-        RET
+    LD A, 0
+    CALL JOYSTICKREAD
+    RET
 
 @IF joystickConfig.sync
 
@@ -125,6 +122,10 @@ JOYSTICKREAD1:
         CP 0
         JR Z, WAITFIRE0
         RET
+
+    WAITFIREA:
+        CP $0
+        JR Z, WAITFIRE0
 
     WAITFIRE1:
         CALL JOYSTICKREAD1
@@ -190,6 +191,10 @@ JOYSTICKREAD1:
         CP 0
         JR Z, WAITFIRE0
         RET
+
+    WAITFIREA:
+        CP $0
+        JR Z, WAITFIRE0
 
     WAITFIRE1:
         LD A, (JOYSTICK1)

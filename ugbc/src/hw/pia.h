@@ -419,7 +419,9 @@
 
 void pia_wait_key( Environment * _environment, int _release );
 void pia_wait_fire( Environment * _environment, int _port, int _release );
+void pia_wait_fire_semivar( Environment * _environment, char * _port, int _release );
 void pia_wait_key_or_fire( Environment * _environment, int _port, int _release );
+void pia_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release );
 void pia_key_state( Environment * _environment, char *_scancode, char * _result );
 void pia_scancode( Environment * _environment, char * _scacode );
 void pia_asciicode( Environment * _environment, char * _asciicode );

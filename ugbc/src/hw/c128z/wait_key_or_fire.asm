@@ -47,6 +47,46 @@
 ;- To enable: DEFINE JOYSTICK SYNC
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    WAITKEYFIREA0:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR Z, WAITKEYFIREA1
+    WAITKEYFIREA0X:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR NZ, WAITKEYFIREA0X
+    WAITKEYFIREA1:
+        CALL JOYSTICKREAD0
+        AND $10
+        LD B, A
+        LD A, (KEYBOARDASFSTATE)
+        OR B
+        CP 0
+        JR Z, WAITKEYFIREA1
+        RET
+
+    WAITKEYFIREA:
+        CP 0
+        JR Z, WAITKEYFIREA0
+        
+    WAITKEYFIREB0:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR Z, WAITKEYFIREB1
+    WAITKEYFIREB0X:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR NZ, WAITKEYFIREB0X
+    WAITKEYFIREB1:
+        CALL JOYSTICKREAD1
+        AND $10
+        LD B, A
+        LD A, (KEYBOARDASFSTATE)
+        OR B
+        CP 0
+        JR Z, WAITKEYFIREB1
+        RET
+
     WAITKEYFIRE:
         LD A, (KEYBOARDASFSTATE)
         CP 0
@@ -79,6 +119,46 @@
 ;-
 ;- To enable: DEFINE JOYSTICK ASYNC
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    WAITKEYFIREA0:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR Z, WAITKEYFIREA1
+    WAITKEYFIREA0X:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR NZ, WAITKEYFIREA0X
+    WAITKEYFIREA1:
+        LD A, (JOYSTICK0)
+        AND $10
+        LD B, A
+        LD A, (KEYBOARDASFSTATE)
+        OR B
+        CP 0
+        JR Z, WAITKEYFIREA1
+        RET
+
+    WAITKEYFIREA:
+        CP 0
+        JR Z, WAITKEYFIREA0
+        
+    WAITKEYFIREB0:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR Z, WAITKEYFIREB1
+    WAITKEYFIREB0X:
+        LD A, (KEYBOARDASFSTATE)
+        CP 0
+        JR NZ, WAITKEYFIREB0X
+    WAITKEYFIREB1:
+        LD A, (JOYSTICK1)
+        AND $10
+        LD B, A
+        LD A, (KEYBOARDASFSTATE)
+        OR B
+        CP 0
+        JR Z, WAITKEYFIREB1
+        RET
 
     WAITKEYFIRE:
         LD A, (KEYBOARDASFSTATE)

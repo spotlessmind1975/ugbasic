@@ -42,6 +42,19 @@
 
 @IF keyboardConfig.sync
 
+    WAITKEYFIREX:
+        LDA $D010,X
+        AND #$01
+        EOR #$01
+        STA MATHPTR0
+        LDA $2FC
+        EOR #$FF
+        ORA MATHPTR0
+        BEQ WAITKEYFIRE
+        LDA #$FF
+        STA $2FC
+        RTS
+
     WAITKEYFIRE:
         LDA $D010
         AND #$01
@@ -70,6 +83,22 @@
         RTS
 
 @ELSE
+
+    WAITKEYFIREX:
+        LDA KEYBOARDASFSTATE
+        BEQ WAITKEYFIRE1X
+    WAITKEYFIRE0X:
+        LDA KEYBOARDASFSTATE
+        BNE WAITKEYFIRE0X
+    WAITKEYFIRE1X:
+        LDA $D010, X
+        AND #$01
+        EOR #$01
+        STA MATHPTR0
+        LDA KEYBOARDASFSTATE
+        ORA MATHPTR0
+        BEQ WAITKEYFIRE1X
+        RTS
 
     WAITKEYFIRE:
         LDA KEYBOARDASFSTATE
