@@ -1227,6 +1227,8 @@ elemento, con lo stesso tipo di dato con cui è stata creata la matrice
 (con la sintassi ''# { ... }''), oppure descrivendo l'area di memoria che 
 occuperà la matrice, byte per byte (con la sintassi ''#[...]'').
 
+@syntax DIM variable [AS datatype] [, variable [AS datatype] [ , variable [AS datatype] ] ]
+@syntax DIM variable [AS datatype] = constant
 @syntax DIM id [AS type] ( d1 [, d2 [ , ... ] ] )
 @syntax DIM id [AS type] ( d1 [, d2 [ , ... ] ] ) = #[hex]
 @syntax DIM id [AS type] ( d1 [, d2 [ , ... ] ] ) = #{v1, v2, ... }

@@ -544,24 +544,22 @@ static Variable * variable_define_internal( Environment * _environment, Variable
 @keyword VAR
 
 @english
-Define a variable [name] on bank [bank]. Optionally,
-you can assign to that variable a value given by [expression].
+
+Alias for ''DIM''.
 
 @italian
-Definisci una variabile [name] sul banko [bank]. Eventualmente,
-è possibile assegnare alla variabile il valore dell'espressione
-[expression].
 
-@syntax VAR [name] ON [bank] { = [expression] }
+Alias per ''DIM''.
 
-@example VAR x ON bank1 = #$42
+@syntax VAR variable [AS datatype] [, variable [AS datatype] [ , variable [AS datatype] ] ]
+@syntax VAR variable [AS datatype] = constant
 
-@seeAlso BANK
+@example VAR x = 42
+
+@alias DIM
 
 @target all
-
- </usermanual> */
-
+</usermanual> */
 Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
     // Let's manage the variable definition in a more rational way.
