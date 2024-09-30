@@ -176,13 +176,13 @@
 #define KEY_RET                     0
 #define KEY_INS                     0
 #define KEY_DEL                     0
-#define KEY_LEFT                    0
-#define KEY_UP                      0
-#define KEY_DOWN                    0
-#define KEY_RIGHT                   0
+#define KEY_LEFT                    KEY_A
+#define KEY_UP                      KEY_W
+#define KEY_DOWN                    KEY_S
+#define KEY_RIGHT                   KEY_D
 #define KEY_DIVISION                0
 
-#define KEYBOARD_CONFIG_DEFAULT_SYNC       1
+#define KEYBOARD_CONFIG_DEFAULT_SYNC       0
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
