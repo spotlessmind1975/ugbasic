@@ -11029,9 +11029,9 @@ int main( int _argc, char *_argv[] ) {
     _environment->joystickConfig.sync = JOYSTICK_CONFIG_DEFAULT_SYNC;
     _environment->keyboardConfig.sync = KEYBOARD_CONFIG_DEFAULT_SYNC;
 
-    _environment->keyboardConfig.latency = 350 / 20;
-    _environment->keyboardConfig.delay = 75 / 20;
-    _environment->keyboardConfig.release = 75 / 20;
+    _environment->keyboardConfig.latency = 700 / 20;
+    _environment->keyboardConfig.delay = 150 / 20;
+    _environment->keyboardConfig.release = 150 / 20;
 
 #if defined(__pc128op__) || defined(__to8__)
     _environment->bankedLoadDefault = 1;
