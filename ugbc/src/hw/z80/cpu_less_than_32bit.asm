@@ -41,6 +41,7 @@ CPULT32S:
     LD B, (IX+3)
     LD A, B
     AND $80
+    CP 0
     JR NZ, CPULT32SNEGM1
     BIT 7, (IY+3)
     JR NZ, CPULT32SDONE
@@ -123,6 +124,7 @@ CPULTE32S:
     LD B, (IX+3)
     LD A, B
     AND $80
+    CP 0
     JR NZ, CPULTE32SNEGM1
     BIT 7, (IY+3)
     JR NZ, CPULTE32SDONE

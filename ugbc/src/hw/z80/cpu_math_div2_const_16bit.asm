@@ -44,6 +44,7 @@ CPUDIV2CONST16S:
     LD A, H
     AND $80
     PUSH AF
+    CP 0
     JR Z, CPUDIV2CONST16SPOS
 
     LD A, H
@@ -64,6 +65,7 @@ CPUDIV2CONST16SPOS:
 
     POP AF
     AND $80
+    CP 0
     RET Z
 
     LD A, H

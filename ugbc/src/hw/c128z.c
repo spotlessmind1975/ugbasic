@@ -200,6 +200,7 @@ void c128z_scanshift( Environment * _environment, char * _shifts ) {
     outline0("INC BC");
     outline0("IN A, (C)");
     outline0("AND $80");
+    outline0("CP 0");
     outline1("JR NZ, %snoleft", label);
     outline0("LD A, 1");
     outline1("LD A, (%s)", _shifts);

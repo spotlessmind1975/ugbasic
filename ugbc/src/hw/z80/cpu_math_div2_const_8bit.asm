@@ -40,6 +40,7 @@ CPUDIV2CONST8S:
     LD A, B
     AND $80
     PUSH AF
+    CP 0
     JR Z, CPUDIV2CONST8SPOS
 
     LD A, B
@@ -55,6 +56,7 @@ CPUDIV2CONST8SPOS:
 
     POP AF
     AND $80
+    CP 0
     RET Z
 
     LD A, B

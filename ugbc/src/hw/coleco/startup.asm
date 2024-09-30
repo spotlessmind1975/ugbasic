@@ -132,12 +132,14 @@ CHECKIF60HZ:
 VDPSYNC:
     IN A, ($bf)
 	AND $80
+    CP 0
 	JR Z, VDPSYNC
     LD HL, $0
 VDPLOOP:
     INC HL
     IN A, ($bf)
     AND $80
+    CP 0
 	JR Z, VDPLOOP
 VDPLOOPD:
 

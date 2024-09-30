@@ -1323,6 +1323,7 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
             outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
             outline0("AND $80" );
             outline0("PUSH AF" );
+            outline0("CP 0" );
             outline1("JR Z, %spos", label );
             z80_complement2_16bit( _environment, _source, _source );
             outline1("JMP %spos2", label );
@@ -1336,6 +1337,7 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
             outline1("LD (%s), A", _source );
             outline0("POP AF" );
             outline0("AND $80" );
+            outline0("CP 0" );
             outline1("JR Z, %sdone", label );
             z80_complement2_16bit( _environment, _source, _source );
             outhead1("%sdone:", label );
@@ -2020,6 +2022,7 @@ void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
             outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
             outline0("AND $80");
             outline0("PUSH AF");
+            outline0("CP 0");
             outline1("JR Z,%spositive", label);
             z80_complement2_16bit( _environment, _source, NULL );
             outhead1("%spositive:", label);
@@ -2027,6 +2030,7 @@ void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
             outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
             outline0("AND $80");
             outline0("PUSH AF");
+            outline0("CP 0");
             outline1("JR Z,%spositive2", label);
             z80_complement2_16bit( _environment, _destination, NULL );
             outhead1("%spositive2:", label);
@@ -2187,6 +2191,7 @@ void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _
         if ( _signed ) {
             outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
             outline0("AND $80" );
+            outline0("CP 0" );
             outline0("PUSH AF" );
             outline1("JR Z, %spos", label );
             z80_complement2_16bit( _environment, _source, _source );
@@ -2202,6 +2207,7 @@ void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _
             outline1("LD (%s), HL", _source );
             outline0("POP AF" );
             outline0("AND $80" );
+            outline0("CP 0" );
             outline1("JR Z, %sdone", label );
             z80_complement2_16bit( _environment, _source, _source );
             outhead1("%sdone:", label );
@@ -2258,6 +2264,7 @@ void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _
             outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
             outline0("AND $80" );
             outline0("PUSH AF" );
+            outline0("CP 0" );
             outline1("JR Z, %spos", label );
             z80_complement2_16bit( _environment, _source, _source );
             outline1("JMP %spos2", label );
@@ -2272,6 +2279,7 @@ void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _
             outline1("LD (%s), HL", _source );
             outline0("POP AF" );
             outline0("AND $80" );
+            outline0("CP 0" );
             outline1("JR Z, %sdone", label );
             z80_complement2_16bit( _environment, _source, _source );
             outhead1("%sdone:", label );
@@ -2546,6 +2554,7 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
             outline0("LD B, (IX+3)");
             outline0("LD A, B");
             outline0("AND $80");
+            outline0("CP 0" );
             outline1("JR NZ,%sNEGM1", label);
             outline0("BIT 7, (IY+3)");
             outline1("JR NZ,%sdone", label);
@@ -4794,6 +4803,7 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
 
     outline0("LD A, 0" );
     outline1("LD (%s), A", _value );
+    outline1("LD (%s+1), A", _value );
 
     outline1("LD HL, (%s)", _string );
 
@@ -5330,7 +5340,7 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
         outline0("LD A, B");
         outline0("XOR C");
         outline0("AND $80");
-        outline0("CMP $80");
+        outline0("CP $80");
         outline1("JR NZ, %srepositive3", label );
         z80_complement2_32bit( _environment, _other, NULL );
         outhead1("%srepositive3:", label);
@@ -5489,7 +5499,7 @@ void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, cha
         outline0("LD A, B");
         outline0("XOR C");
         outline0("AND $80");
-        outline0("CMP $80");
+        outline0("CP $80");
         outline1("JR NZ, %srepositive3", label );
         z80_complement2_16bit( _environment, _other, NULL );
         outhead1("%srepositive3:", label);
@@ -5541,6 +5551,7 @@ void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char 
         outline0("PUSH AF" );
         outline1("LD A, (%s)", _source );
         outline0("AND $80" );
+        outline0("CP 0" );
         outline1("JR Z,%spos", label );
         outline1("LD A, (%s)", _source );
         outline0("XOR $FF" );
@@ -5553,6 +5564,7 @@ void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char 
         
         outline1("LD A, (%s)", _destination );
         outline0("AND $80" );
+        outline0("CP 0" );
         outline1("JR Z,%sposx", label );
         outline1("LD A, (%s)", _destination );
         outline0("XOR $FF" );
