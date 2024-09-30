@@ -64,7 +64,7 @@
 
     WAITFIREA:
         CP 0
-        JR Z, WAITFIREA0
+        JR Z, WAITKEYFIREA0
 
     WAITKEYFIREB0:
         LD A, (KEYBOARDASFSTATE)
