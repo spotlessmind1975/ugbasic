@@ -177,6 +177,8 @@ KEYBOARDPOPNONE:
 
 KEYBOARDMANAGER:
 
+    ; Save registers
+
     PUSH HL
     PUSH BC
     PUSH DE
@@ -184,71 +186,128 @@ KEYBOARDMANAGER:
     PUSH IX
     PUSH IY
 
+    ; Initialize to zero the index used to track the key code.
+
     LD IY, 0
+
+    ; Now, we register that no key has been pressed, yet.
 
     LD A, 0
     LD (KEYBOARDPRESSED), A
 
+    ; Retrieve the address of list of I/O ports to use to retrieve the
+    ; key read from a specific keyboard matrix row.
+
     LD HL, KEYBOARDPORTS
+
+    ; Retrieve the address of the key state buffer.
+
     LD IX, SCANCODEREAD
+
+    ; Initialize the row matrix index.
+
     LD D, 8
+
+    ; Use the base I/O register ($FE)
+
     LD C, $FE
 SCANCODE0:
+
+    ; Load the I/O port to use,
+    ; move to the next I/O port and
+    ; read the valure from this port.
+
     LD B, (HL)
     INC HL
     IN A, (C)
+
+    ; Complement and extract the meaningful
+    ; data from it.
+
     XOR $FF
     AND $1F
+
+    ; Save the value read into the keyboard state buffer,
+    ; and move forward to the next keyboard matrix row.
+
     LD (IX), A
     INC IX
+    
     LD IYH, 5
+
+    ; If the key is zero, we have nothing to do.
+    ; Otherwise, we will loop throught it, 
+    ; to identify the key pressed.
+
     CP 0
     JR Z, SCANCODE0X
 
 SCANCODE0L1:
+
+    ; Move the least important bit into the carry.
+    ; If the carry is set, the key has been pressed.
+
     SRL A
     JR C, SCANCODE0L1Y
+
+    ; If the rest of the data read is zero, we can skip 
+    ; the rest of the check.
+
     CP 0
     JR Z, SCANCODE0X
+
+    ; Increase the current key code read,
+    ; and decrement the number of bit to check.
+    ; If there are still bits to check, go on.
+
     INC IYL
     DEC IYH
     JR SCANCODE0L1
-    
+
+    ; If we reach this line, it means that a key
+    ; has been pressed. Now check for shifting state.    
+
 SCANCODE0L1Y:
-    
+
     LD A, (SCANCODEREAD)
     AND $1
     CP $0
     JR Z, SCANCODE0L1YNOSHIFT
 
+    ; Key is shifted: we save the key actual pressed.
     LD A, IYL
-    ; CP 20
-    ; JR NZ, SCANCODE0L1YNOZERO
-
-    ; LD A, 0
     LD (KEYBOARDACTUAL), A
     JR SCANCODE0L1YDONE
 
 SCANCODE0L1YNOSHIFT:
 SCANCODE0L1YNOZERO:
+    ; Key is not shifted: we save the key actual pressed.
     LD A, IYL
     LD (KEYBOARDACTUAL), A
 
 SCANCODE0L1YDONE:
+    ; Key is pressed.
     LD A, 1
     LD (KEYBOARDPRESSED), A
 
 SCANCODE0X:
+
     LD A, IYL
     ADD IYH
     LD IYL, A
 
+    ; Move to the next keyboard's matrix row.
     DEC D
     JR NZ, SCANCODE0
+
+    ; If any key has been pressed, 
+    ; move to the rest of the routine.
 
     LD A, (KEYBOARDPRESSED)
     CP 1
     JR Z, SCANCODEFULLLN
+
+    ; No key has been pressed -- we update the actual key.
 
     LD A, $FF
     LD (KEYBOARDACTUAL), A
@@ -264,6 +323,8 @@ SCANCODEFULLLN:
     ; Update the ASF.
 
     CALL KEYBOARDASF    
+
+    ; Restore registers.
 
     POP IY
     POP IX
