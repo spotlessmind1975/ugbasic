@@ -2002,9 +2002,7 @@ void vic2_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTHEIGHT" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, 8, 8, "Standard Bitmap Mode" );
-    if ( !_environment->vestigialConfig.rchack_4gravity_1163 ) {
-        SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, 8, 8, "Multicolor Bitmap Mode"  );    
-    }
+    SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, 8, 8, "Multicolor Bitmap Mode"  );    
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 16, 8, 8, "Standard Character Mode" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_MULTICOLOR, 0, 40, 25, 32, 8, 8, "Multicolor Character Mode" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTENDED, 0, 40, 25, 20, 8, 8, "Extended Multicolor Character Mode" );
@@ -2433,7 +2431,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     int colorBackground = 0;
-    
+
     if ( _flags & FLAG_EXACT == 0 ) {
         int colorCount[16];
         memset(colorCount, 0, 16 * sizeof( int ) );
