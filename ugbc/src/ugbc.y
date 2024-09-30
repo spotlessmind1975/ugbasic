@@ -10090,12 +10090,18 @@ statement2nc:
   | EXEC exec_definition
   | SYS sys_definition
   | on_targets AsmSnippet on_targets {
+#if defined(__to8__)
+    if ( !((struct _Environment *)_environment)->vestigialConfig.rchack_ccarrots_1163 ) {
+#endif
     if ( ((struct _Environment *)_environment)->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED("ASM");
     }
     if ( $1 && $3 ) {
         outline1("%s", $2 );
     }
+#if defined(__to8__)
+    }
+#endif
   }
   | CALL Identifier on_targets {
       if ( $3 ) {
@@ -11449,6 +11455,13 @@ int main( int _argc, char *_argv[] ) {
         _environment->vestigialConfig.rchack_falling_balls_1163 = 1;
     }
 
+    /* retrocompatible hacks */
+    // We are compiling "Creepy carrots" game with a recent
+    // version of the compiler (>1.16.3).
+    if ( strstr( _environment->sourceFileName, "ccarrots") != NULL ) {
+        _environment->vestigialConfig.rchack_ccarrots_1163 = 1;
+    }
+    
     if ( _environment->tenLinerRulesEnforced ) {
         FILE * fh = fopen( _environment->sourceFileName, "rb" );
         fseek( fh, 0, SEEK_END );
