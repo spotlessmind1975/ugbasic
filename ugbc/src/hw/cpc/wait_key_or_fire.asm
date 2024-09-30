@@ -144,6 +144,9 @@
         CP 0
         JR NZ, WAITKEYFIRE0
     WAITKEYFIRE1:
+        @IF keyboardConfig.sync
+            CALL SCANCODERAW
+        @ENDIF    
         CALL JOYSTICKREAD0
         AND $10
         LD B, A
@@ -152,7 +155,6 @@
         OR B
         LD B, A
         @IF keyboardConfig.sync
-            CALL SCANCODERAW
             LD A, (KEYBOARDACTUAL)
             XOR $FF
         @ELSE

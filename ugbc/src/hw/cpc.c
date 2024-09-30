@@ -214,11 +214,19 @@ void cpc_key_state( Environment * _environment, char *_scancode, char * _result 
 
 void cpc_scancode( Environment * _environment, char * _result ) {
 
+    MAKE_LABEL
+
     _environment->bitmaskNeeded = 1;
 
     deploy_deferred( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL SCANCODE");
+    if ( _environment->vestigialConfig.rchack_falling_balls_1163 ) {
+        outline0("CP $FF");
+        outline1("JR NZ, %s", label );
+        outline0("XOR $FF");
+        outhead1("%s:", label );
+    }
     outline1("LD (%s), A", _result );
    
 }

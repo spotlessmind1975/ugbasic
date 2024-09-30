@@ -1812,6 +1812,11 @@ typedef struct _VestigialConfig {
     
     char rchack_4gravity_1163;
 
+    // If 1 we are compiling "falling balls" game with
+    // a recent version of the compiler.
+    
+    char rchack_falling_balls_1163;
+
 } VestigialConfig;
 
 typedef struct _FontConfig {
