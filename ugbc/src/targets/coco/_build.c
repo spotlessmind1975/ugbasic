@@ -38,11 +38,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-// This patch has been needed to port "beta" code under "main" branch
-#ifndef UGBASIC_VERSION
-    #define UGBASIC_VERSION "1.16.3"
-#endif
-
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void generate_bin( Environment * _environment ) {
