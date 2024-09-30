@@ -42,12 +42,24 @@ extern char DATATYPE_AS_STRING[][16];
 
 void wait_key_or_fire( Environment * _environment, int _port, int _release ) {
 
-    to8_wait_key_or_fire( _environment, _port, _release );
+    deploy_preferred( scancode, src_hw_to8_scancode_asm );
+
+    if ( _release ) {
+        outline0( "JSR WAITKEYRELEASE" );
+    } else {
+        outline0( "JSR WAITKEY" );
+    }
 
 }
 
 void wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release ) {
 
-    to8_wait_key_or_fire_semivar( _environment, _port, _release );
+    deploy_preferred( scancode, src_hw_to8_scancode_asm );
+
+    if ( _release ) {
+        outline0( "JSR WAITKEYRELEASE" );
+    } else {
+        outline0( "JSR WAITKEY" );
+    }
 
 }
