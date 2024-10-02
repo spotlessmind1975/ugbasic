@@ -689,6 +689,7 @@ struct var *vars_get(POBuffer _name) {
 
 static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "REU^"))   return 0;
+    if(po_buf_match(name, "MSPRITE^"))   return 0;
     if(po_buf_match(name, "^_Tstr"))   return 0;
     if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
@@ -861,6 +862,14 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     if( po_buf_match( buf[0], " STA (*),Y",  arg ) ) 
         if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
+            v->nb_rd++;
+            v->nb_wr++;
+        };
+
+    if( po_buf_match( buf[0], " STA (*), Y",  arg ) ) 
+        if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
             v->nb_wr++;
         };
 
@@ -868,6 +877,14 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_wr++;
+            v->nb_rd++;
+        };
+
+    if( po_buf_match( buf[0], " STA *, X",  arg ) ) 
+        if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_wr++;
+            v->nb_rd++;
         };
 
     if( po_buf_match( buf[0], "*: .byte *", tmp, arg) && vars_ok(tmp) && strchr(arg->str,',')==NULL ) {
