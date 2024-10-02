@@ -112,8 +112,8 @@ CLSG
     LDA DOUBLEBUFFERENABLED
     CMPA #0
     BEQ CLSGORIG
-    PULS D
 @ENDIF
+    PULS D
 
 
 @IF ( !vestigialConfig.doubleBufferSelected ) || ( vestigialConfig.doubleBuffer )
