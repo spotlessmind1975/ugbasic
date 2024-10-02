@@ -38,3 +38,6 @@ Source code originally published by satpro on [C= FORUM](https://www.lemon64.com
 [Animated Rat and Bat](https://github.com/spotlessmind1975/ugbasic/blob/main/examples/bat.png)
 Animated Rat and Bat by [Calciumtrice](https://opengameart.org/content/animated-rat-and-bat), usable under Creative Commons Attribution 3.0 license.
 
+[8x8 text font](https://github.com/spotlessmind1975/ugbasic/blob/main/examples/8x8text)
+8x8 pixel text font by [MIN](https://opengameart.org/content/8x8-font), usable under Creative Commons 0.0 license (PUBLIC DOMAIN).
+
