@@ -156,6 +156,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SEQUENCE:
                 case VT_MUSIC:
                 case VT_BUFFER:
+                    if ( variable->readonly ) {
+
+                    } else {
+                        outhead0("section data_user");
+                    }                
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {
                             if ( variable->printable ) {
@@ -177,9 +182,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 outline1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
                         } else {
-                            outhead0("section data_user");
                             outline2("%s: defs %d,0", variable->realName, variable->size);
-                            outhead0("section code_user");
                         }
                     } else {
                         outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -198,6 +201,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 outline1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
                         }
+                    }
+                    if ( variable->readonly ) {
+
+                    } else {
+                        outhead0("section code_user");
                     }
                     break;
                 case VT_TILEMAP:
