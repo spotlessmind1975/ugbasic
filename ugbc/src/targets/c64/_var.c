@@ -72,6 +72,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead1("%s: .res 8,0", variable->realName);
                     }        
                     break;
+                case VT_IMAGEREF:
+                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s: .res 12,0", variable->realName);
+                    }        
+                    break;
                 case VT_WORD:
                 case VT_SWORD:
                 case VT_POSITION:
@@ -333,6 +340,9 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_DOJOKA:
             outhead1("%s:", _variable->realName );
             outline0(" .res 8, 0" );
+            break;
+        case VT_IMAGEREF:
+            outhead1("%s: .res 12,0", _variable->realName);
             break;
         case VT_WORD:
         case VT_SWORD:
@@ -827,8 +837,8 @@ void variable_cleanup( Environment * _environment ) {
 
     for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
-            outhead2("BANKWINDOW%2.2x: .res %d,0", i, _environment->maxExpansionBankSize[i]);
             outhead1("BANKWINDOWID%2.2x: .byte $FF, $FF", i );
+            outhead2("BANKWINDOW%2.2x: .res %d,0", i, _environment->maxExpansionBankSize[i]);
         }
     }
 

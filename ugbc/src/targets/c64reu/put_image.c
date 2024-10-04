@@ -79,7 +79,7 @@ In tutti i casi la sintassi cambia leggermente.
 
 @target all
 </usermanual> */
-void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+void put_image_vars_original( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
     if ( _environment->emptyProcedure ) {
         return;
@@ -206,6 +206,151 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
 
+
+}
+
+void put_image_vars_imageref( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+
+    MAKE_LABEL
+
+    char labelNoBank[MAX_TEMPORARY_STORAGE]; sprintf( labelNoBank, "%snobank", label );
+    char labelDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDone, "%sdone", label );
+
+    Variable * image = variable_retrieve( _environment, _image );
+
+    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+    Variable * frame = NULL;
+    if ( _frame) {
+        frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+    }
+    Variable * sequence = NULL;
+    if ( _sequence) {
+        sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+    }
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(stub)" );
+
+    // Y = OFFSET
+
+    outline0("LDA #0" );
+    outline0("STA TMPPTR" );
+    outline0("STA TMPPTR+1" );
+
+    if ( _sequence ) {
+
+        outline0("CLC" );
+        outline0("LDA TMPPTR" );
+        outline0("ADC #3" );
+        outline0("STA TMPPTR" );
+        outline0("LDA TMPPTR+1" );
+        outline0("ADC #0" );
+        outline0("STA  TMPPTR+1" );
+
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline1("LDA %s", sequence->realName );
+            outline0("STA MATHPTR0" );
+            cpu6502_call_indirect( _environment, address_displacement( _environment, image->realName, "10") );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA %s", frame->realName );
+                outline0("STA MATHPTR0" );
+                cpu6502_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+
+            outline0("CLC" );
+            outline0("LDA TMPPTR" );
+            outline0("ADC #3" );
+            outline0("STA TMPPTR" );
+            outline0("LDA TMPPTR+1" );
+            outline0("ADC #0" );
+            outline0("STA  TMPPTR+1" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA %s", frame->realName );
+                outline0("STA MATHPTR0" );
+                cpu6502_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
+            }
+
+            outline0("LDA TMPPTR" );
+            outline1("STA %s", address->realName );
+            outline0("LDA TMPPTR+1" );
+            outline1("STA %s", address_displacement(_environment, address->realName, "1") );
+
+        } else {
+
+            outline1("LDA %s", image->realName );
+            outline1("STA %s", address->realName );
+            outline1("LDA %s", address_displacement( _environment, image->realName, "1") );
+            outline0("STA TMPPTR+1" );
+            outline1("STA %s", address_displacement(_environment, address->realName, "1") );
+
+        }
+
+    }
+
+    // Bank assigned?
+    outline1( "LDA %s", address_displacement( _environment, image->realName, "5" ) );
+    outline0( "AND #$04" );
+    outline1( "BEQ %s", labelNoBank );
+
+    outline1( "LDA %s", address_displacement( _environment, image->realName, "4" ) );
+    outline0( "STA BANKPTR" );
+    outline0( "LDA #$FF" );
+    outline0( "STA BANKUSE" );
+
+    Resource resource;
+    resource.realName = strdup( address->realName );
+    resource.bankNumber = image->bankAssigned;
+    resource.isAddress = 1;
+
+    vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
+
+    cpu_jump( _environment, labelDone );
+
+    cpu_label( _environment, labelNoBank );
+
+    resource.realName = strdup( address->realName );
+    resource.isAddress = 1;
+
+    vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
+
+    cpu_label( _environment, labelDone );
+
+}
+
+void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
+    Variable * image = variable_retrieve( _environment, _image );
+
+    switch( image->type ) {
+        case VT_IMAGE:
+        case VT_IMAGES:
+        case VT_SEQUENCE:
+        case VT_ADDRESS:
+            put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            break;
+        case VT_IMAGEREF:
+            put_image_vars_imageref( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            break;            
+        default:
+            CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
+    }
 
 }
 
