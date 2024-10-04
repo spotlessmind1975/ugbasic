@@ -255,58 +255,89 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
     // Y = OFFSET
 
-    if ( !_sequence && !_frame ) {
-        outline1("LD HL, (%s)", image->realName );
-    } else {
-        outline1("LD HL, (%s)", image->realName );
+    if ( _sequence ) {
 
-        if ( _sequence ) {
-            outline0("LD DE, $0003" );
-            outline0("ADD HL, DE" );
-            if ( strlen(_sequence) == 0 ) {
+        outline1("LDA %s", image->realName );
+        outline0("STA TMPPTR" );
+        outline1("LDA %s", address_displacement( _environment, image->realName, "1") );
+        outline0("STA TMPPTR+1" );
+
+        outline0("CLC" );
+        outline0("LDA TMPPTR" );
+        outline0("ADC #3" );
+        outline0("STA TMPPTR" );
+        outline0("LDA TMPPTR+1" );
+        outline0("ADC #0" );
+        outline0("STA  TMPPTR+1" );
+
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline1("LDA %s", sequence->realName );
+            outline0("STA MATHPTR0" );
+            cpu6502_call_indirect( _environment, address_displacement( _environment, image->realName, "10") );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
 
             } else {
-                outline1("LD A, (%s)", sequence->realName );
-                outline0("PUSH HL" );
-                outline0("POP IX" );
-                cpu_call_indirect( _environment, address_displacement( _environment, image->realName, "10") );
+                outline1("LDA %s", _frame );
+                outline0("STA MATHPTR0" );
+                cpu6502_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
             }
-            if ( _frame ) {
-                if ( strlen(_frame) == 0 ) {
+        }
 
-                } else {
-                    outline1("LD A, (%s)", frame->realName );
-                    outline0("PUSH HL" );
-                    outline0("POP IX" );
-                    cpu_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
-                }
+        outline0("LDA TMPPTR" );
+        outline1("STA %s", address->realName );
+        outline0("LDA TMPPTR+1" );
+        outline1("STA %s", address_displacement(_environment, address->realName, "1") );
+        
+    } else {
+
+        if ( _frame ) {
+
+            outline1("LDA %s", image->realName );
+            outline0("STA TMPPTR" );
+            outline1("LDA %s", address_displacement( _environment, image->realName, "1") );
+            outline0("STA TMPPTR+1" );
+
+            outline0("CLC" );
+            outline0("LDA TMPPTR" );
+            outline0("ADC #3" );
+            outline0("STA TMPPTR" );
+            outline0("LDA TMPPTR+1" );
+            outline0("ADC #0" );
+            outline0("STA  TMPPTR+1" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA %s", frame->realName );
+                outline0("STA MATHPTR0" );
+                cpu6502_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
             }
+
+            outline0("LDA TMPPTR" );
+            outline1("STA %s", address->realName );
+            outline0("LDA TMPPTR+1" );
+            outline1("STA %s", address_displacement(_environment, address->realName, "1") );
 
         } else {
 
-            if ( _frame ) {
-                outline0("LD DE, $0003" );
-                outline0("ADD HL, DE" );
-                if ( strlen(_frame) == 0 ) {
-
-                } else {
-                    outline0("PUSH HL" );
-                    outline0("POP IX" );
-                    outline1("LD A, (%s)", frame->realName );
-                    cpu_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
-                }
-            }
+            outline1("LDA %s", image->realName );
+            outline1("STA %s", address->realName );
+            outline1("LDA %s", address_displacement( _environment, image->realName, "1") );
+            outline0("STA TMPPTR+1" );
+            outline1("STA %s", address_displacement(_environment, address->realName, "1") );
 
         }
 
     }
-    outline1("LD (%s), HL", address->realName );
 
     Resource resource;
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    vdcz_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+    vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
 
 }
 
