@@ -1000,7 +1000,9 @@ void zx_put_image( Environment * _environment, Resource * _image, char * _x, cha
     deploy( vars, src_hw_zx_vars_asm);
     deploy( putimage, src_hw_zx_put_image_asm );
 
-    zx_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    if ( _frame_size ) {
+        zx_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    }
 
     outline1("LD A, (%s)", _x );
     outline0("LD (IMAGEX), A" );
