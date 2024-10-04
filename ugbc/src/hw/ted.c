@@ -1896,7 +1896,9 @@ void ted_put_image( Environment * _environment, Resource * _image, char * _x, ch
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( putimage, src_hw_ted_put_image_asm );
 
-    ted_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+    if ( _frame_size ) {
+        ted_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+    }
 
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
