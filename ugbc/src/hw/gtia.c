@@ -3177,7 +3177,9 @@ void gtia_put_image( Environment * _environment, Resource * _image, char * _x, c
     deploy( gtiapreproc, src_hw_gtia__preproc_asm );
     deploy( putimage, src_hw_gtia_put_image_asm );
 
-    gtia_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+    if ( _frame_size ) {
+        gtia_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+    }
 
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
