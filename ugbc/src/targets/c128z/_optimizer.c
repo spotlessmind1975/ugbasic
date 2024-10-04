@@ -769,7 +769,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
 
     /* makes our generated file the new asm file */
     remove(_environment->asmFileName);
-    (void)rename( fileNameOptimized, _environment->asmFileName );
+    BUILD_SAFE_MOVE( _environment, fileNameOptimized, _environment->asmFileName );
     
     return change;
 }

@@ -202,7 +202,7 @@ void generate_atr( Environment * _environment ) {
         strcat( atrFileName, ".atr");
     }
 
-    rename( _environment->exeFileName, mainFilename );
+    BUILD_SAFE_MOVE( _environment, _environment->exeFileName, mainFilename )
 
     FILE * fileOut;
 

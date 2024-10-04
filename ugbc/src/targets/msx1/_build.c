@@ -71,7 +71,7 @@ void generate_bin( Environment * _environment ) {
             *(p+4) = 0;
         }
         TRACE2( "  renaming %s to %s", binaryName, _environment->listingFileName );
-        rename( binaryName, _environment->listingFileName );
+        BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
     }
 
     strcpy( binaryName, _environment->asmFileName );
@@ -211,7 +211,7 @@ void generate_rom( Environment * _environment ) {
 
     remove( _environment->exeFileName );
 
-    rename( binaryName, _environment->exeFileName );
+    BUILD_SAFE_MOVE( _environment, binaryName, _environment->exeFileName );
 
     char symbolName[MAX_TEMPORARY_STORAGE];
     strcpy( symbolName, _environment->exeFileName );
@@ -227,7 +227,7 @@ void generate_rom( Environment * _environment ) {
             *p = 0;
             --p;
             strcat( p, ".sym");
-            rename( binaryName, symbolName );
+            BUILD_SAFE_MOVE( _environment, binaryName, symbolName );
         }
     }
 
@@ -238,7 +238,7 @@ void generate_rom( Environment * _environment ) {
             *p = 0;
             --p;
             strcat( p, ".lis");
-            rename( binaryName, _environment->listingFileName );
+            BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
         }
 
         if ( _environment->profileFileName && _environment->profileCycles ) {
@@ -364,7 +364,7 @@ void generate_dsk( Environment * _environment ) {
         strcat( p, ".bin");
     }
 
-    rename( binaryName2, binaryName );
+    BUILD_SAFE_MOVE( _environment, binaryName2, binaryName );
 
     BUILD_TOOLCHAIN_DSKTOOLS_GET_EXECUTABLE( _environment, diskToolsExecutableName );
 

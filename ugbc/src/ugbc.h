@@ -3223,6 +3223,9 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_INPUT_RELEASE_MS( v ) CRITICAL2i("E303 - invalid milliseconds for INPUT RELEASE", v );
 #define CRITICAL_END_LOOP_WITHOUT_LOOP( ) CRITICAL("E304 - END LOOP without LOOP" );
 #define CRITICAL_IMAGEREF_ON_NON_IMAGE( v ) CRITICAL2("E304 - IMAGEREF can be used only with IMAGE / ATLAS / SEQUENCE variables", v );
+#define CRITICAL_CANNOT_OPEN_FILE(f,n) CRITICAL3("E305 - cannot open file", f, n );
+#define CRITICAL_CANNOT_READ_FILE(f,n) CRITICAL3("E306 - cannot read file", f, n );
+#define CRITICAL_CANNOT_WRITE_FILE(f,n) CRITICAL3("E307 - cannot write file", f, n );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3919,6 +3922,9 @@ char * basename( char * _path );
 #define BUILD_SAFE_REMOVE(_environment, filename) \
     system_remove_safe( _environment, filename );
 
+#define BUILD_SAFE_MOVE( _environment, source, destination ) \
+    system_move_safe( _environment, source, destination )
+
 #define BUILD_TOOLCHAIN_CC65_GET_EXECUTABLE( _environment, executableName ) \
     if ( _environment->compilerFileName ) { \
         sprintf( executableName, "%s", _environment->compilerFileName ); \
@@ -4002,7 +4008,7 @@ char * basename( char * _path );
         if ( q ) { \
             strcpy( q, ".lis" ); \
         } \
-        rename( p, _environment->listingFileName ); \
+        BUILD_SAFE_MOVE( _environment, p, _environment->listingFileName ); \
     }
 
 #define BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName ) \
@@ -4227,6 +4233,8 @@ int file_get_size( Environment * _environment, char * _filename );
 char * get_default_temporary_path( );
 char * find_last_path_separator( char * _path );
 char * generate_storage_filename( Environment * _environment, char * _prefix, char * _suffix, int _number );
+int system_move_safe( Environment * _environment, char * _source, char * _destination );
+int system_remove_safe( Environment * _environment, char * _filename );
 
 int show_troubleshooting_and_exit( Environment * _environment, int _argc, char * _argv[] );
 
@@ -4854,7 +4862,6 @@ void                    sys( Environment * _environment, int _address );
 void                    sys_var( Environment * _environment, char * _address );
 void                    sys_call( Environment * _environment, int _address );
 int                     system_call( Environment * _environment, char * _command );
-int                     system_remove_safe( Environment * _environment, char * _filename );
 
 //----------------------------------------------------------------------------
 // *T*

@@ -83,7 +83,7 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
             *(p+4) = 0;
         }
         TRACE2( "  renaming %s to %s", binaryName, _environment->listingFileName );
-        rename( binaryName, _environment->listingFileName );
+        BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
     }
 
     strcpy( binaryName, _environment->asmFileName );
@@ -137,7 +137,7 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
 
     TRACE2( "  renaming %s to %s", binaryName, binaryName2 );
     
-    rename( binaryName, binaryName2 );
+    BUILD_SAFE_MOVE( _environment, binaryName, binaryName2 );
 
     strcpy( binaryName, _environment->asmFileName );
     p = strrchr( binaryName, '/' );
@@ -193,7 +193,7 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
         strcpy( diskName, "main.dsk" );
     }
 
-    rename( diskName, _environment->exeFileName );
+    BUILD_SAFE_MOVE( _environment, diskName, _environment->exeFileName );
 
     strcpy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
@@ -253,7 +253,7 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
             *(p+4) = 0;
         }
         TRACE2( "  renaming %s to %s", binaryName, _environment->listingFileName );
-        rename( binaryName, _environment->listingFileName );
+        BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
     }
 
     strcpy( binaryName, _environment->asmFileName );
@@ -307,7 +307,7 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
 
     TRACE2( "  renaming %s to %s", binaryName, binaryName2 );
     
-    rename( binaryName, binaryName2 );
+    BUILD_SAFE_MOVE( _environment, binaryName, binaryName2 );
 
     strcpy( binaryName, _environment->asmFileName );
     p = strrchr( binaryName, '/' );
@@ -373,7 +373,7 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
             return;
         }; 
 
-        rename( diskName, _environment->exeFileName );
+        BUILD_SAFE_MOVE( _environment, diskName, _environment->exeFileName );
 
     } else {
         int i=0;
