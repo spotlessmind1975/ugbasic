@@ -3202,6 +3202,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                 case VT_IMAGES: {
                     target->frameWidth = source->frameWidth;
                     target->frameHeight = source->frameHeight;
+                    target->bankAssigned = source->bankAssigned;
                     target->originalTileset = source->originalTileset;
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -3230,6 +3231,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                         CRITICAL_BUFFER_SIZE_MISMATCH(_source, _destination);
                     }
                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                    target->bankAssigned = source->bankAssigned;
                     break;
                 }
                 default:
