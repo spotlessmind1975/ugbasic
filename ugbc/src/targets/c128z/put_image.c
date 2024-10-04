@@ -310,6 +310,30 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
 }
 
+void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+    
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
+    Variable * image = variable_retrieve( _environment, _image );
+
+    switch( image->type ) {
+        case VT_IMAGE:
+        case VT_IMAGES:
+        case VT_SEQUENCE:
+        case VT_ADDRESS:
+            put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            break;
+        case VT_IMAGEREF:
+            put_image_vars_imageref( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            break;            
+        default:
+            CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
+    }
+
+}
+
 void put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
 
     char flagsConstantName[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
