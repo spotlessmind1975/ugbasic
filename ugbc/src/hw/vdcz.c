@@ -2803,7 +2803,9 @@ void vdcz_put_image( Environment * _environment, Resource * _image, char * _x, c
 
     outhead1("putimage%s:", label);
 
-    vdcz_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    if ( _frame_size ) {
+        vdcz_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    }
 
     outline1("LD DE, (%s)", _x );
     outline1("LD IY, (%s)", _y );
