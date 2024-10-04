@@ -3252,12 +3252,14 @@ void z80_call_indirect( Environment * _environment, char * _value ) {
 
     char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
 
+    outline0( "PUSH HL" )
     outline1( "LD HL, (%s)", _value )
     z80_jump( _environment, label );
     z80_label( _environment, indirectLabel );
     outline0( "JP (HL)" );
     z80_label( _environment, label );
     z80_call( _environment, indirectLabel );
+    outline0( "POP HL" )
 
 }
 
