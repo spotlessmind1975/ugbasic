@@ -475,6 +475,77 @@ void generate_dsk( Environment * _environment ) {
 
     }
 
+    bank = _environment->expansionBanks;
+    while( bank ) {
+        int bankSize = bank->space - bank->remains;
+        if ( bankSize > 0 ) {
+            int effectiveSize = blockSize > bankSize ? bankSize : blockSize;
+            char bankFileName[MAX_TEMPORARY_STORAGE];
+            sprintf( bankFileName, "%sbank0.%03d", temporaryPath, bank->id );
+            fh = fopen( bankFileName, "wb" );
+            fputc( 0, fh );
+            fputc( (unsigned char) ( ( effectiveSize >> 8 ) & 0xff ), fh );
+            fputc( (unsigned char) ( ( effectiveSize ) & 0xff ), fh );
+            fputc( 0x2a, fh );
+            fputc( 0x00, fh );
+            fwrite( &bank->data[0], 1, effectiveSize, fh );
+            fputc( 0xff, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+            fputc( 0x2a, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+            fclose( fh );
+
+            sprintf( commandLine, "\"%s\" copy -2 \"%sbank0.%03d\" \"%s,BANK0.%03d\"",
+                executableName, 
+                temporaryPath, 
+                bank->id,
+                _environment->exeFileName,
+                bank->id );
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The compilation of assembly program failed.\n\n"); 
+                printf("Please use option '-I' to install chain tool.\n\n");
+                exit(0);
+            };
+
+            if ( bankSize > blockSize ) {
+                effectiveSize = bankSize - blockSize;
+                sprintf( bankFileName, "%sbank1.%03d", temporaryPath, bank->id );
+                fh = fopen( bankFileName, "wb" );
+                fputc( 0, fh );
+                fputc( (unsigned char) ( ( effectiveSize >> 8 ) & 0xff ), fh );
+                fputc( (unsigned char) ( ( effectiveSize ) & 0xff ), fh );
+                fputc( 0x2a, fh );
+                fputc( 0x00, fh );
+                fwrite( &bank->data[blockSize], 1, bankSize - blockSize, fh );
+                fputc( 0xff, fh );
+                fputc( 0x00, fh );
+                fputc( 0x00, fh );
+                fputc( 0x2a, fh );
+                fputc( 0x00, fh );
+                fputc( 0x00, fh );
+                fclose( fh );
+                sprintf( commandLine, "\"%s\" copy -2 \"%sbank1.%03d\" \"%s,BANK1.%03d\"",
+                    executableName, 
+                    temporaryPath, 
+                    bank->id,
+                    _environment->exeFileName,
+                    bank->id );
+                if ( system_call( _environment,  commandLine ) ) {
+                    printf("The compilation of assembly program failed.\n\n"); 
+                    printf("Please use option '-I' to install chain tool.\n\n");
+                    exit(0);
+                };
+
+            }
+
+        }
+
+        bank = bank->next;
+
+    }
+
     remove( originalBinaryFile );
 
 }

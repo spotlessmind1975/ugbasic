@@ -2705,27 +2705,29 @@ void gime_put_image( Environment * _environment, Resource * _image, char * _x, c
     } else {
         outline1("LDY #%s", _image->realName );
     }
-    if ( _sequence ) {
-        outline0("LEAY 3,y" );
-        if ( strlen(_sequence) == 0 ) {
-        } else {
-            outline1("LDB %s", _sequence );
-            outline1("JSR %soffsetframe", _image->realName );
-        }
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
+    if ( _frame_size ) {
+        if ( _sequence ) {
+            outline0("LEAY 3,y" );
+            if ( strlen(_sequence) == 0 ) {
             } else {
-                outline1("LDB %s", _frame );
+                outline1("LDB %s", _sequence );
                 outline1("JSR %soffsetframe", _image->realName );
             }
-        }
-    } else {
-        if ( _frame ) {
-            outline0("LEAY 3,y" );
-            if ( strlen(_frame) == 0 ) {
-            } else {
-                outline1("LDB %s", _frame );
-                outline1("JSR %soffsetframe", _image->realName );
+            if ( _frame ) {
+                if ( strlen(_frame) == 0 ) {
+                } else {
+                    outline1("LDB %s", _frame );
+                    outline1("JSR %soffsetframe", _image->realName );
+                }
+            }
+        } else {
+            if ( _frame ) {
+                outline0("LEAY 3,y" );
+                if ( strlen(_frame) == 0 ) {
+                } else {
+                    outline1("LDB %s", _frame );
+                    outline1("JSR %soffsetframe", _image->realName );
+                }
             }
         }
     }
