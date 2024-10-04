@@ -1599,45 +1599,41 @@ void c6847_put_image( Environment * _environment, Resource * _source, char * _x,
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( putimage, src_hw_6847_put_image_asm );
 
-    if ( !_sequence && !_frame ) {
-        if ( _source->isAddress ) {
-            outline1("LDY %s", _source->realName );
-        } else {
-            outline1("LDY #%s", _source->realName );
-        }
+    if ( _source->isAddress ) {
+        outline1("LDY %s", _source->realName );
     } else {
+        outline1("LDY #%s", _source->realName );
+    }
 
-        if ( _source->isAddress ) {
-            outline1("LDY %s", _source->realName );
+    if ( _frame_size ) {
+        if ( !_sequence && !_frame ) {
         } else {
-            outline1("LDY #%s", _source->realName );
-        }
-
-        if ( _sequence ) {
-            outline0("LEAY 3,y" );
-            if ( strlen(_sequence) == 0 ) {
-            } else {
-                outline1("LDB %s", _sequence );
-                outline1("JSR %soffsetsequence", _source->realName );
-            }
-            if ( _frame ) {
-                if ( strlen(_frame) == 0 ) {
-                } else {
-                    outline1("LDB %s", _frame );
-                    outline1("JSR %soffsetframe", _source->realName );
-                }
-            }
-        } else {
-            if ( _frame ) {
+            if ( _sequence ) {
                 outline0("LEAY 3,y" );
-                if ( strlen(_frame) == 0 ) {
+                if ( strlen(_sequence) == 0 ) {
                 } else {
-                    outline1("LDB %s", _frame );
-                    outline1("JSR %soffsetframe", _source->realName );
+                    outline1("LDB %s", _sequence );
+                    outline1("JSR %soffsetsequence", _source->realName );
+                }
+                if ( _frame ) {
+                    if ( strlen(_frame) == 0 ) {
+                    } else {
+                        outline1("LDB %s", _frame );
+                        outline1("JSR %soffsetframe", _source->realName );
+                    }
+                }
+            } else {
+                if ( _frame ) {
+                    outline0("LEAY 3,y" );
+                    if ( strlen(_frame) == 0 ) {
+                    } else {
+                        outline1("LDB %s", _frame );
+                        outline1("JSR %soffsetframe", _source->realName );
+                    }
                 }
             }
-        }
 
+        }
     }
     
     outline1("LDD %s", _x );

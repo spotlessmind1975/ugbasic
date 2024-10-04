@@ -50,7 +50,7 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+void put_image_vars_original( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
     if ( _environment->emptyProcedure ) {
         return;
@@ -225,6 +225,93 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 c6847_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
             }
             break;
+        default:
+            CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
+    }
+
+}
+
+void put_image_vars_imageref( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+
+    MAKE_LABEL
+
+    Variable * image = variable_retrieve( _environment, _image );
+
+    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+    Variable * frame = NULL;
+    if ( _frame) {
+        frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+    }
+    Variable * sequence = NULL;
+    if ( _sequence) {
+        sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+    }
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(stub)" );
+
+    // Y = OFFSET
+
+    if ( _sequence ) {
+        outline0("LDY #$3" );
+        if ( strlen(_sequence) == 0 ) {
+        } else {
+            outline1("LDB %s", sequence->realName );
+            outline1("JSR [%s+10]", image->realName );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDB %s", frame->realName );
+                outline1("JSR [%s+8]", image->realName );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LDY #$3" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDB %s", frame->realName );
+                outline1("JSR [%s+8]", image->realName );
+            }
+        } else {
+            outline0("LDY #$0" );
+        }
+    }
+
+    // Y = BASE + OFFSET
+    outline0( "TFR Y, D" );
+    outline1( "ADDD %s", image->realName );
+    outline0( "TFR D, Y" );
+
+    outline1("STY %s", address->realName );
+
+    Resource resource;
+    resource.realName = strdup( address->realName );
+    resource.isAddress = 1;
+
+    c6847_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+
+}
+
+void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
+    Variable * image = variable_retrieve( _environment, _image );
+
+    switch( image->type ) {
+        case VT_IMAGE:
+        case VT_IMAGES:
+        case VT_SEQUENCE:
+        case VT_ADDRESS:
+            put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            break;
+        case VT_IMAGEREF:
+            put_image_vars_imageref( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            break;            
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
