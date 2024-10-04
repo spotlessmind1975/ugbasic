@@ -164,6 +164,13 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                         }
                     }
                     break;
+                case VT_IMAGEREF:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 12", variable->realName);
+                    }   
+                    break;
                 case VT_TILEMAP:
                 case VT_TARRAY: {
                     if ( variable->bankAssigned == -1 ) {
@@ -700,8 +707,8 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( bank, src_hw_pc128op_bank_asm );
     for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
-            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
             outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
+            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
         }
     }
 

@@ -50,7 +50,8 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+
+ void put_image_vars_original( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
     if ( _environment->emptyProcedure ) {
         return;
@@ -81,7 +82,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 sprintf(alreadyLoadedLabel, "%salready", label );
 
                 char bankWindowId[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
+                sprintf( bankWindowId, "(BANKWINDOW%2.2x-2)", image->residentAssigned );
 
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
@@ -236,6 +237,134 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
 
+
+}
+
+void put_image_vars_imageref( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+
+    MAKE_LABEL
+
+    char labelNoBank[MAX_TEMPORARY_STORAGE]; sprintf( labelNoBank, "%snobank", label );
+    char labelDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDone, "%sdone", label );
+
+    Variable * image = variable_retrieve( _environment, _image );
+
+    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+    Variable * frame = NULL;
+    if ( _frame) {
+        frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+    }
+    Variable * sequence = NULL;
+    if ( _sequence) {
+        sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+    }
+
+    // Y = OFFSET
+
+    if ( _sequence ) {
+        outline0("LDY #$3" );
+        if ( strlen(_sequence) == 0 ) {
+        } else {
+            outline1("LDB %s", sequence->realName );
+            outline1("JSR [%s+10]", image->realName );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDB %s", frame->realName );
+                outline1("JSR [%s+8]", image->realName );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LDY #$3" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDB %s", frame->realName );
+                outline1("JSR [%s+8]", image->realName );
+            }
+        } else {
+            outline0("LDY #$0" );
+        }
+    }
+
+    // Y = BASE + OFFSET
+    outline0( "TFR Y, D" );
+    outline1( "ADDD %s", image->realName );
+    outline0( "TFR D, Y" );
+
+    // Bank assigned?
+    outline1( "LDA %s+5", image->realName );
+    outline0( "ANDA #$04" );
+    outline1( "BEQ %s", labelNoBank );
+
+    // ; U : number of bank 
+    // ; Y : address on bank 
+    // ; D : size to read
+    // ; X : address on memory 
+
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
+    outline1("LDB %s+4", image->realName );
+    outline0("CLRA" );
+    outline0("TFR D, U" );
+    outline0("LEAY $6000,Y" );
+    outline1("LDX %s+6", image->realName );
+    outline1("LDD %s+2", image->realName );
+    outline0("JSR BANKREAD");
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(stub)" );
+
+    outline1("LDX %s+6", image->realName );
+    outline1("STX %s", address->realName );
+    outline0("LEAX -2, X");
+    outline0("LDD #$FFFF");
+    outline0("STD , X");
+
+    Resource resource;
+    resource.realName = strdup( address->realName );
+    resource.isAddress = 1;
+
+    ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+
+    cpu_jump( _environment, labelDone );
+
+    cpu_label( _environment, labelNoBank );
+
+    outline1("STY %s", address->realName );
+
+    resource.realName = strdup( address->realName );
+    resource.isAddress = 1;
+
+    ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+
+    cpu_label( _environment, labelDone );
+}
+
+void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
+    Variable * image = variable_retrieve( _environment, _image );
+
+    switch( image->type ) {
+        case VT_IMAGE:
+        case VT_IMAGES:
+        case VT_SEQUENCE:
+        case VT_ADDRESS:
+            put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            break;
+        case VT_IMAGEREF:
+            put_image_vars_imageref( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            break;            
+        default:
+            CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
+    }
 
 }
 

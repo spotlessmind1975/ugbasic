@@ -1895,7 +1895,9 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy_preferred( putimage, src_hw_ef936x_put_image_asm );
 
-    ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    if ( _frame_size ) {
+        ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    }
 
     outline1("LDD %s", _x );
     outline0("STD <IMAGEX" );
