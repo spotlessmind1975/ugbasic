@@ -196,7 +196,7 @@ int pc128op_convertbintok7_original(Environment * _environment)
 
     remove( temporaryFileName );
 
-    rename( _environment->exeFileName, temporaryFileName );
+    BUILD_SAFE_MOVE( _environment, _environment->exeFileName, temporaryFileName );
     
     fr=fopen(temporaryFileName,"rb");
 	if(!fr) 

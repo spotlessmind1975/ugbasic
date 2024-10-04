@@ -69,7 +69,7 @@ void target_linkage( Environment * _environment ) {
             *(p+4) = 0;
         }
         TRACE2( "  renaming %s to %s", binaryName, _environment->listingFileName );
-        rename( binaryName, _environment->listingFileName );
+        BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
     }
 
     strcpy( binaryName, _environment->asmFileName );
@@ -136,7 +136,7 @@ void target_linkage( Environment * _environment ) {
     fwrite( part, size, 1, binaryFile );
     fclose( binaryFile );
 
-    rename( binaryName, _environment->exeFileName );
+    BUILD_SAFE_MOVE( _environment, binaryName, _environment->exeFileName );
 
     strcpy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );

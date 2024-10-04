@@ -69,7 +69,7 @@ void target_linkage( Environment * _environment ) {
             *(p+4) = 0;
         }
         TRACE2( "  renaming %s to %s", binaryName, _environment->listingFileName );
-        rename( binaryName, _environment->listingFileName );
+        BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
     }
 
     char pipes[256];
@@ -98,7 +98,7 @@ void target_linkage( Environment * _environment ) {
 
     remove( _environment->exeFileName );
 
-    rename( binaryName, _environment->exeFileName );
+    BUILD_SAFE_MOVE( _environment, binaryName, _environment->exeFileName );
 
     char symbolName[MAX_TEMPORARY_STORAGE];
     strcpy( symbolName, _environment->exeFileName );
@@ -114,7 +114,7 @@ void target_linkage( Environment * _environment ) {
             *p = 0;
             --p;
             strcat( p, ".sym");
-            rename( binaryName, symbolName );
+            BUILD_SAFE_MOVE( _environment, binaryName, symbolName );
         }
     }
 
@@ -124,7 +124,7 @@ void target_linkage( Environment * _environment ) {
         *p = 0;
         --p;
         strcat( p, ".sym");
-        rename( binaryName, symbolName );
+        BUILD_SAFE_MOVE( _environment, binaryName, symbolName );
     }
 
     if ( _environment->listingFileName ) {
@@ -134,7 +134,7 @@ void target_linkage( Environment * _environment ) {
             *p = 0;
             --p;
             strcat( p, ".lis");
-            rename( binaryName, _environment->listingFileName );
+            BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
         }
 
         if ( _environment->profileFileName && _environment->profileCycles ) {

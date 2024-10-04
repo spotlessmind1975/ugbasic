@@ -133,7 +133,7 @@ int convertbintok7(Environment * _environment)
     char temporaryFileName[MAX_TEMPORARY_STORAGE];
     sprintf(temporaryFileName, "%s.bin", get_temporary_filename( _environment ) );
     remove( temporaryFileName );
-    rename( _environment->exeFileName, temporaryFileName );
+    BUILD_SAFE_MOVE( _environment, _environment->exeFileName, temporaryFileName );
     
     fr=fopen(temporaryFileName,"rb");
     if(!fr) 

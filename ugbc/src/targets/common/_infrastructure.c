@@ -11845,3 +11845,38 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     exit(0);
     
 }
+
+int system_move_safe( Environment * _environment, char * _source, char * _destination ) {
+
+    FILE * fi = fopen( _source, "rb" ); 
+    if ( ! fi ) {
+        return 0;
+    }
+    FILE * fo =  fopen( _destination, "wb" );
+    if ( ! fo ) {
+        CRITICAL_CANNOT_OPEN_FILE( _destination, strerror(errno) );
+    }
+
+    fseek( fi, 0, SEEK_END );
+    long size = ftell( fi );
+    fseek( fi, 0, SEEK_SET );
+
+    if ( size ) {
+        char * content = malloc( size );
+        memset( content, 0, size );
+        if ( ! fread( content, 1, size, fi ) ) {
+            CRITICAL_CANNOT_READ_FILE( _source, strerror(errno) );
+        };
+        if ( ! fwrite(content, 1, size, fo ) ) {
+            CRITICAL_CANNOT_WRITE_FILE( _destination, strerror(errno) );
+        }
+    }
+
+    fclose( fi );
+    fclose( fo );
+
+    system_remove_safe( _environment, _source );
+
+    return 1;
+    
+}
