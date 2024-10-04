@@ -42,8 +42,6 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
-    z80_init( _environment );
-
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
     _environment->audioConfig.async = 1;
@@ -137,6 +135,9 @@ void target_initialization( Environment * _environment ) {
     
     outline0("CALL VARINIT2");
     cpu_call( _environment, "VARINIT" );
+
+    z80_init( _environment );
+
     outline0("CALL PROTOTHREADINIT" );
     outline0("CALL SG1000STARTUP");
     outline0("CALL SG1000STARTUP2");
