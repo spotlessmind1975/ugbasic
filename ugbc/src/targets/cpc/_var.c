@@ -66,6 +66,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: defs 8", variable->realName);
                     }
                     break;
+                case VT_IMAGEREF:
+                    if ( variable->memoryArea ) {
+                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: defs 12", variable->realName);
+                    }
+                    break;
                 case VT_WORD:
                 case VT_SWORD:
                 case VT_POSITION:
@@ -500,8 +507,8 @@ void variable_cleanup( Environment * _environment ) {
 
     for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
-            outhead2("BANKWINDOW%2.2x: defs %d", i, _environment->maxExpansionBankSize[i]);
             outhead1("BANKWINDOWID%2.2x: defb $FF, $FF", i );
+            outhead2("BANKWINDOW%2.2x: defs %d", i, _environment->maxExpansionBankSize[i]);
         }
     }
 

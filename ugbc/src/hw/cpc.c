@@ -2035,7 +2035,9 @@ void cpc_put_image( Environment * _environment, Resource * _image, char * _x, ch
 
     MAKE_LABEL
 
-    cpc_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    if ( _frame_size ) {
+        cpc_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    }
 
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );
