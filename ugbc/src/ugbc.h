@@ -490,7 +490,10 @@ typedef enum _VariableType {
     VT_MSPRITE = 29,
 
     /** DOJOKA (handle of logged dojo connection) */
-    VT_DOJOKA = 30
+    VT_DOJOKA = 30,
+
+    /** IMAGEREF */
+    VT_IMAGEREF = 31
 
 } VariableType;
 
@@ -3219,6 +3222,7 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_INPUT_RELEASE( v ) CRITICAL2i("E302 - invalid value for INPUT RELEASE", v );
 #define CRITICAL_INVALID_INPUT_RELEASE_MS( v ) CRITICAL2i("E303 - invalid milliseconds for INPUT RELEASE", v );
 #define CRITICAL_END_LOOP_WITHOUT_LOOP( ) CRITICAL("E304 - END LOOP without LOOP" );
+#define CRITICAL_IMAGEREF_ON_NON_IMAGE( v ) CRITICAL2("E304 - IMAGEREF can be used only with IMAGE / ATLAS / SEQUENCE variables", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -3943,7 +3947,7 @@ char * basename( char * _path );
     }
 
 #define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, listingFileName, additionalParameters ) \
-    sprintf( commandLine, "\"%s\" %s -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
+    sprintf( commandLine, "\"%s\" %s -Ln /tmp/bug3.lbl -g -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
         executableName, \
         listingFileName, \
         _environment->exeFileName, \
@@ -4561,6 +4565,7 @@ Variable *              image_get_width( Environment * _environment, char * _ima
 char *                  image_enlarge_right( Environment * _environment, char * _source, int _width, int _height, int _delta );
 char *                  image_enlarge_bottom( Environment * _environment, char * _source, int _width, int _height, int _delta );
 RGBi *                  image_nearest_system_color( RGBi * _color );
+Variable *              image_ref( Environment * _environment, char * _image );
 char *                  image_roll_x_left( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_x_right( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_y_down( Environment * _environment, char * _source, int _width, int _height );
