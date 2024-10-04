@@ -2108,59 +2108,59 @@ static void tms9918_load_image_address_to_other_register( Environment * _environ
 
 static void tms9918_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    if ( !_sequence && !_frame ) {
-        if ( _source->isAddress ) {
-            outline1("LD HL, (%s)", _source->realName );
-        } else {
-            outline1("LD HL, %s", _source->realName );
-        }
+    if ( _source->isAddress ) {
+        outline1("LD HL, (%s)", _source->realName );
     } else {
-        if ( _source->isAddress ) {
-            outline1("LD HL, (%s)", _source->realName );
+        outline1("LD HL, %s", _source->realName );
+    }
+
+    if ( _frame_size ) {
+
+        if ( !_sequence && !_frame ) {
         } else {
-            outline1("LD HL, %s", _source->realName );
-        }
-
-        if ( _sequence ) {
-            outline0("LD DE, $0003" );
-            outline0("ADD HL, DE" );
-            if ( strlen(_sequence) == 0 ) {
-
-            } else {
-                outline1("LD A, (%s)", _sequence );
-                outline0("PUSH HL" );
-                outline0("POP IX" );
-                outline1("CALL %soffsetsequence", _source->realName );
-            }
-            if ( _frame ) {
-                if ( strlen(_frame) == 0 ) {
-
-                } else {
-                    outline1("LD A, (%s)", _frame );
-                    outline0("PUSH HL" );
-                    outline0("POP IX" );
-                    outline1("CALL %soffsetframe", _source->realName );
-                }
-            }
-
-        } else {
-
-            if ( _frame ) {
+            if ( _sequence ) {
                 outline0("LD DE, $0003" );
                 outline0("ADD HL, DE" );
-                if ( strlen(_frame) == 0 ) {
+                if ( strlen(_sequence) == 0 ) {
 
                 } else {
+                    outline1("LD A, (%s)", _sequence );
                     outline0("PUSH HL" );
                     outline0("POP IX" );
-                    outline1("LD A, (%s)", _frame );
-                    outline1("CALL %soffsetframe", _source->realName );
+                    outline1("CALL %soffsetsequence", _source->realName );
                 }
+                if ( _frame ) {
+                    if ( strlen(_frame) == 0 ) {
+
+                    } else {
+                        outline1("LD A, (%s)", _frame );
+                        outline0("PUSH HL" );
+                        outline0("POP IX" );
+                        outline1("CALL %soffsetframe", _source->realName );
+                    }
+                }
+
+            } else {
+
+                if ( _frame ) {
+                    outline0("LD DE, $0003" );
+                    outline0("ADD HL, DE" );
+                    if ( strlen(_frame) == 0 ) {
+
+                    } else {
+                        outline0("PUSH HL" );
+                        outline0("POP IX" );
+                        outline1("LD A, (%s)", _frame );
+                        outline1("CALL %soffsetframe", _source->realName );
+                    }
+                }
+
             }
 
         }
 
     }
+    
     if ( _register ) {
         outline1("LD (%s), HL", _register );
     }
