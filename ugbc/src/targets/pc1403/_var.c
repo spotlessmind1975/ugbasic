@@ -545,9 +545,12 @@ void variable_cleanup( Environment * _environment ) {
         // outline0("LD ($f23d), HL");
     }
 
-    // outline0("JMP CODESTART2");
+    outhead0(".area test (ABS)");
+    outhead0(".org 0xe030");
 
-    // deploy_inplace_preferred( startup, src_hw_pc1403_startup_asm);
+    outline0("JP CODESTART2");
+
+    deploy_inplace_preferred( startup, src_hw_pc1403_startup_asm);
 
     buffered_prepend_output( _environment );
 

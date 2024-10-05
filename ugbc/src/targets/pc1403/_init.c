@@ -227,7 +227,7 @@ void target_initialization( Environment * _environment ) {
     //     outline0("LD ($f23d), HL");
     // }
 
-    // outhead0("CODESTART2:");
+    outhead0("CODESTART2:");
 
     // outline0("CALL VARINIT2");
     // cpu_call( _environment, "VARINIT" );
@@ -237,9 +237,9 @@ void target_initialization( Environment * _environment ) {
 
     pc1403_initialization( _environment );
     
-    // deploy_preferred( startup, src_hw_pc1403_startup_asm);
+    deploy_preferred( startup, src_hw_pc1403_startup_asm);
 
-    // outline0("CALL PC1403STARTUP" );
+    outline0("CALL PC1403STARTUP" );
 
     setup_text_variables( _environment );
 
