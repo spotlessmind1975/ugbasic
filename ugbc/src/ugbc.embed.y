@@ -89,7 +89,7 @@ char *str_replace( char *orig, char *rep, char *with ) {
 %token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT OP_LT OP_LTE OP_GT OP_GTE OP_COMMA OP_TAB OP_PIPE
 %token IF ELSE ELSEIF ENDIF EMIT AS NewLine
 %token ATARI ATARIXL C128 C128Z C64 C64REU VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5 CPC COCO
-%token COCO1 COCO2 COCO3 MACRO ENDMACRO INLINE
+%token COCO1 COCO2 COCO3 MACRO ENDMACRO INLINE PC1403
 %token BIN PRG XEX K7O K7N K7 TAP ROM D64 DSK ATR REU TO8
 
 %token <string> Identifier
@@ -235,6 +235,14 @@ target :
     |
     MSX {
         #ifdef __msx1__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    PC1403 {
+        #ifdef __pc1403__
             $$ = 1;
         #else
             $$ = 0;

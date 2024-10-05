@@ -66,6 +66,8 @@ extern char * importPath;
     char targetName[] = "vg5000";
 #elif defined(__c64reu__)
     char targetName[] = "c64reu";
+#elif defined(__pc1403__)
+    char targetName[] = "pc1403";
 #endif
 
 int yyconcatlineno;
@@ -518,6 +520,7 @@ C% { RETURN(COUNT,1); }
 CPC { RETURN(CPC,1); }
 CPU6502 { RETURN(CPU6502,1); }
 CPU6809 { RETURN(CPU6809,1); }
+CPUSC61860 { RETURN(CPUSC61860,1); }
 CPUZ80 { RETURN(CPUZ80,1); }
 CREATE { RETURN(CREATE,1); }
 Crt { RETURN(CREATE,1); }
@@ -1082,6 +1085,7 @@ PAUSE { RETURN(PAUSE,1); }
 Pau { RETURN(PAUSE,1); }
 PCLS { RETURN(PCLS,1); }
 Pc { RETURN(PCLS,1); }
+PC1403 { RETURN(PC1403,1); }
 PARAM { RETURN(PARAM,1); }
 Pm { RETURN(PARAM,1); }
 PC128OP { RETURN(PC128OP,1); }

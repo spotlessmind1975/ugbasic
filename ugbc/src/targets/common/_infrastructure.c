@@ -112,7 +112,9 @@ char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
     "rom",
     "d64",
     "dsk",
-    "atr"
+    "atr",
+    "reu",
+    "ram"
 };
 
 void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
@@ -9176,6 +9178,8 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "coco3" );
 #elif __c64reu__
     strcat( lookedFilename, "c64reu" );
+#elif __pc1403__
+    strcat( lookedFilename, "pc1403" );
 #endif
 
     if ( strlen( lookedExtension ) ) {

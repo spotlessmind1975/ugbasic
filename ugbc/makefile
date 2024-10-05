@@ -339,6 +339,14 @@ SOURCES_AY8910 := $(subst src/hw/ay8910/,src-generated/ay8910_,$(MODULES_AY8910:
 src-generated/ay8910_%.c: $(MODULES_AY8910)
 	@xxd -i $(subst src-generated/ay8910_,src/hw/ay8910/,$(@:.c=.asm)) >$@
 
+# Hitachi SC61860
+
+MODULES_SC61860 := $(wildcard src/hw/sc61860/*.asm)
+SOURCES_SC61860 := $(subst src/hw/sc61860/,src-generated/sc61860_,$(MODULES_SC61860:.asm=.c))
+
+src-generated/SC61860_%.c: $(MODULES_SC61860)
+	@xxd -i $(subst src-generated/sc61860_,src/hw/sc61860/,$(@:.c=.asm)) >$@
+
 # MOS Technology VIC-I
 
 MODULES_VIC1 := $(wildcard src/hw/vic1/*.asm)
@@ -700,6 +708,19 @@ src-generated/modules_msx1.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_AY8910
 	@grep "src" src-generated/modules_msx1.c | awk -f modules.awk >src-generated/modules_msx1.h
 	@grep "data" src-generated/modules_msx1.c | awk -f modules.awk >>src-generated/modules_msx1.h
 
+# PC1403
+
+MODULES_PC1403 := $(wildcard src/hw/pc1403/*.asm)
+SOURCES_PC1403 := $(subst src/hw/pc1403/,src-generated/pc1403_,$(MODULES_PC1403:.asm=.c)) $(FONTS)
+
+src-generated/pc1403_%.c: $(MODULES_PC1403)
+	@xxd -i $(subst src-generated/pc1403_,src/hw/pc1403/,$(@:.c=.asm)) >$@
+
+src-generated/modules_pc1403.c: $(SOURCES_SC61860) $(SOURCES_PC1403)
+	@cat $(SOURCES_SC61860) $(SOURCES_PC1403) >src-generated/modules_pc1403.c
+	@grep "src" src-generated/modules_pc1403.c | awk -f modules.awk >src-generated/modules_pc1403.h
+	@grep "data" src-generated/modules_pc1403.c | awk -f modules.awk >>src-generated/modules_pc1403.h
+
 # VG5000
 
 MODULES_VG5000 := $(wildcard src/hw/vg5000/*.asm)
@@ -760,6 +781,7 @@ SOURCES += $(wildcard src/outputs/*.c)
 SOURCES += $(wildcard src/targets/common/*.c)
 SOURCES += $(wildcard src/targets/common/6502/*.c)
 SOURCES += $(wildcard src/targets/common/6809/*.c)
+SOURCES += $(wildcard src/targets/common/sc61860/*.c)
 SOURCES += $(wildcard src/targets/common/z80/*.c)
 SOURCES += $(wildcard src/targets/common/k7mo/*.c)
 SOURCES += $(wildcard src/targets/common/sid/*.c)
@@ -789,6 +811,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/common/6502/*.c)
 SOURCESTEST += $(wildcard src/targets/common/6809/*.c)
+SOURCESTEST += $(wildcard src/targets/common/sc61860/*.c)
 SOURCESTEST += $(wildcard src/targets/common/z80/*.c)
 SOURCESTEST += $(wildcard src/targets/common/k7mo/*.c)
 SOURCESTEST += $(wildcard src/targets/common/sid/*.c)

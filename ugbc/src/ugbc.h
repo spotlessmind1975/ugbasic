@@ -250,7 +250,8 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_D64 = 8,
     OUTPUT_FILE_TYPE_DSK = 9,
     OUTPUT_FILE_TYPE_ATR = 10,
-    OUTPUT_FILE_TYPE_REU = 11
+    OUTPUT_FILE_TYPE_REU = 11,
+    OUTPUT_FILE_TYPE_RAM = 12
 
 } OutputFileType;
 
@@ -2042,6 +2043,11 @@ typedef struct _Environment {
      * Filename of dsktools
      */
     char * dsktoolsFileName;
+
+    /**
+     * Filename of aslinker
+     */
+    char * asLinkerFileName;
 
     /**
      * Filename of additional information file
@@ -4156,6 +4162,56 @@ char * basename( char * _path );
         } \
     }
 
+#define BUILD_TOOLCHAIN_ASXV5PXX_GET_EXECUTABLE_AS61860( _environment, executableName ) \
+    if ( _environment->compilerFileName ) { \
+        sprintf( executableName, "%s", _environment->compilerFileName ); \
+    } else if( access( "modules\\asxv5pxx\\asxmak\\linux\\exe\\as61860.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules\\asxv5pxx\\asxmak\\linux\\exe\\as61860.exe" ); \
+    } else if( access( "..\\modules\\asxv5pxx\\asxmak\\linux\\exe\\as61860.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "..\\modules\\asxv5pxx\\asxmak\\linux\\exe\\as61860.exe" ); \
+    } else if( access( "modules/asxv5pxx/asxmak/linux/exe/as61860", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules/asxv5pxx/asxmak/linux/exe/as61860" ); \
+    } else if( access( "../modules/asxv5pxx/asxmak/linux/exe/as61860", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "../modules/asxv5pxx/asxmak/linux/exe/as61860" ); \
+    } else { \
+        sprintf(executableName, "%s", "as61860" ); \
+    }
+
+#define BUILD_TOOLCHAIN_ASXV5PXX_EXEC( _environment, target, executableName, listingFileName ) \
+    sprintf( commandLine, "\"%s\" -gloaxsff \"%s\"", \
+        executableName, \
+        target, \
+        _environment->asmFileName ); \
+    if ( system_call( _environment,  commandLine ) ) { \
+        printf("The compilation of assembly program failed.\n\n"); \
+        printf("Please check if %s is correctly installed.\n\n", executableName); \
+        printf("For more info, please visit: https://ugbasic.iwashere.eu/install.\n\n"); \
+        return; \
+    }; \
+    if ( _environment->listingFileName ) { \
+        char * p = strdup( _environment->asmFileName ); \
+        char * q = strchr( p, '.' ); \
+        if ( q ) { \
+            strcpy( q, ".lst" ); \
+        } \
+        BUILD_SAFE_MOVE( _environment, p, _environment->listingFileName ); \
+    }
+
+#define BUILD_TOOLCHAIN_ASXV5PXX_GET_EXECUTABLE_ASLINK( _environment, executableName ) \
+    if ( _environment->asLinkerFileName ) { \
+        sprintf( executableName, "%s", _environment->asLinkerFileName ); \
+    } else if( access( "modules\\asxv5pxx\\asxmak\\linux\\exe\\aslink.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules\\asxv5pxx\\asxmak\\linux\\exe\\aslink.exe" ); \
+    } else if( access( "..\\modules\\asxv5pxx\\asxmak\\linux\\exe\\aslink.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "..\\modules\\asxv5pxx\\asxmak\\linux\\exe\\aslink.exe" ); \
+    } else if( access( "modules/asxv5pxx/asxmak/linux/exe/aslink", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules/asxv5pxx/asxmak/linux/exe/aslink" ); \
+    } else if( access( "../modules/asxv5pxx/asxmak/linux/exe/aslink", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "../modules/asxv5pxx/asxmak/linux/exe/aslink" ); \
+    } else { \
+        sprintf(executableName, "%s", "aslink" ); \
+    }
+
 void setup_embedded( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
@@ -5204,6 +5260,10 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/cia.h"
     #include "hw/c64reu.h"
     #include "outputs/d64.h"
+#elif __pc1403__
+    #include "../src-generated/modules_pc1403.h"
+    #include "hw/sc61860.h"
+    #include "hw/pc1403.h"
 #endif
 
 #ifdef CPU_BIG_ENDIAN

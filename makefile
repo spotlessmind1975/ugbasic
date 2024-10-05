@@ -119,6 +119,9 @@ endif
 ifeq ($(target),zx)
   output=tap
 endif
+ifeq ($(target),pc1403)
+  output=ram
+endif
 endif
 
 #-----------------------------------------------------------------------------
@@ -172,6 +175,13 @@ ASM6809 = ./modules/asm6809/src/asm6809$(EXESUFFIX)
 DECB = ./modules/toolshed/build/unix/decb/decb$(EXESUFFIX)
 COCODECB = ./coco_decb.sh
 COCO3DECB = ./coco3_decb.sh
+
+#------------------------------------------------ 
+# CPU HITACHI SC61860 
+#------------------------------------------------ 
+AS61860 = ./modules/asxv5pxx/asxmak/linux/exe/as61860$(EXESUFFIX)
+ASLINK = ./modules/asxv5pxx/asxmak/linux/exe/aslink$(EXESUFFIX)
+PC1403RAM = ./pc1403_ram.sh
 
 #------------------------------------------------ 
 # Examples
@@ -327,6 +337,23 @@ $(Z80APPMAKE):
 	cd $(dir $(Z80APPMAKE)) && make
 
 z88dk: paths $(Z80ASM) $(Z80APPMAKE)
+
+#------------------------------------------------ 
+# as61860:
+#    ASxxxxx Assembler & linker
+#------------------------------------------------ 
+# 
+# The  ASxxxx  assemblers are a series of microprocessor assem-
+# blers written in the C programming  language.
+
+$(AS61860): 
+	cd $(dir $(AS61860))/../build && make
+
+$(ASLINK): 
+	cd $(dir $(ASLINK))/../build && make
+
+as61860: paths $(AS61860)
+aslink: paths $(ASLINK)
 
 #------------------------------------------------ 
 # disktools:
@@ -719,6 +746,25 @@ generated/pc128op/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.b
 
 generated/pc128op/exeso/%.k7: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.k7=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc128op$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O k7 -L ../$(@:.k7=.lis) $(subst generated/pc128op/exeso/,,$(@:.k7=.bas))
+
+#------------------------------------------------ 
+# pc1403:
+#    Sharp PC-1403/PC-1403h (sc61860)
+#------------------------------------------------ 
+#
+toolchain.pc1403: as61860 aslink
+
+generated/pc1403/asm/%.asm:
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc1403$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/pc1403/asm/,,$(@:.asm=.bas)) ../$@ 
+
+generated/pc1403/exe/%.ram:
+	@$(AS61860) -gloaxsff $(subst /exe/,/asm/,$(@:.ram=.asm)) >/dev/null 2>/dev/null
+	@mv $(subst /exe/,/asm/,$(@:.ram=.rel)) $(@:.ram=.rel)
+	@$(ASLINK) -t $(@:.ram=.rel) >/dev/null 2>/dev/null
+	@$(PC1403RAM) $(@:.ram=.bin) $(@) >/dev/null 2>/dev/null
+
+generated/pc1403/exeso/%.ram: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.ram=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc1403$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.ram=.info) -o ../$@ -O ram $(subst generated/pc1403/exeso/,,$(@:.ram=.bas))
 
 #------------------------------------------------ 
 # plus4:

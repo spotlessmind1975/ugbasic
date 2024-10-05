@@ -98,7 +98,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
 %token MOB CMOB PLACE DOJO READY LOGIN PASSWORD DOJOKA GAME HISCORE CREATE PORT DESTROY FIND MESSAGE PING
-%token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC IMAGEREF
+%token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC IMAGEREF CPUSC61860 PC1403
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1112,7 +1112,7 @@ const_factor:
             defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
             defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
             defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-            defined( __c64reu__)
+            defined( __c64reu__) || defined(__pc1403__) 
             $$ = 1;
         #else
             $$ = 0;
@@ -8520,6 +8520,13 @@ target :
             $$ = 0;
         #endif
     }
+    | CPUSC61860 {
+        #if defined(__pc1403__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
     | CPU6502 {
         #if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
             defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
@@ -8635,6 +8642,14 @@ target :
     |
     SG1000 {
         #ifdef __sg1000__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    PC1403 {
+        #ifdef __pc1403__
             $$ = 1;
         #else
             $$ = 0;
@@ -10868,6 +10883,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer 3";
 #elif __c64reu__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 64 + REU";
+#elif __pc1403__
+    char target[MAX_TEMPORARY_STORAGE] = "Sharp PC-1403";
 #endif
 
     printf("--------------------------------------------------\n");
@@ -10903,6 +10920,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #endif
 #if defined(__msx1__)
     printf("\t-t <file>    Path to DSKTOOLS tool\n" );
+#endif
+#if defined(__pc1403__)
+    printf("\t-t <file>    Path to ASLINK tool\n" );
 #endif
 #if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
     printf("\t-G <type>    Type of gamma correction on PALETTE generation:\n" );
@@ -10993,6 +11013,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                d64 - D64 disk image\n" );
     printf("\t                reu - REU RAM espansion image\n" );
     #define defaultExtension "d64"
+#elif __pc1403__
+    printf("\t                ram - RAM loadable by debugger\n" );
+    #define defaultExtension "ram"
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
@@ -11093,6 +11116,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
 #elif __c64reu__
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#elif __pc1403__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
 #endif
 
     while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:R:st:T:VvWw:X:")) != -1) {
@@ -11168,6 +11193,12 @@ int main( int _argc, char *_argv[] ) {
                         CRITICAL("dsktools tool not found.");
                     }
 #endif
+#if defined(__pc1403__)
+                    _environment->asLinkerFileName = strdup(optarg);
+                    if( access( _environment->asLinkerFileName, F_OK ) != 0 ) {
+                        CRITICAL("aslink tool not found.");
+                    }
+#endif
                     break;
                 case 'T':
                     _environment->temporaryPath = strdup(optarg);
@@ -11213,6 +11244,8 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ATR;
                     } else if ( strcmp( optarg, "reu") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_REU;
+                    } else if ( strcmp( optarg, "ram") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
                     } else {
                         CRITICAL2("Unknown output format", optarg);
                     }
