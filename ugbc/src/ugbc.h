@@ -4177,10 +4177,9 @@ char * basename( char * _path );
         sprintf(executableName, "%s", "as61860" ); \
     }
 
-#define BUILD_TOOLCHAIN_ASXV5PXX_EXEC( _environment, target, executableName, listingFileName ) \
+#define BUILD_TOOLCHAIN_ASXV5PXX_EXEC( _environment, target, executableName ) \
     sprintf( commandLine, "\"%s\" -gloaxsff \"%s\"", \
         executableName, \
-        target, \
         _environment->asmFileName ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \

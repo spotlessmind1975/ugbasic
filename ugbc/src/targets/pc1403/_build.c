@@ -48,97 +48,43 @@ void generate_bin( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
+    char relName[MAX_TEMPORARY_STORAGE];
     char binaryName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
 
-    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_Z80ASM( _environment, executableName );
+    BUILD_TOOLCHAIN_ASXV5PXX_GET_EXECUTABLE_AS61860( _environment, executableName );
 
-    BUILD_TOOLCHAIN_Z88DK_GET_LISTING_FILE( _environment, listingFileName );
-
-    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "pc1403", executableName, listingFileName );
+    BUILD_TOOLCHAIN_ASXV5PXX_EXEC( _environment, "pc1403", executableName );
 
     char * p;
 
-    if ( _environment->listingFileName ) {
-        strcpy( binaryName, _environment->asmFileName );
-        p = strstr( binaryName, ".asm" );
-        if ( p ) {
-            *(p+1) = 'l';
-            *(p+2) = 'i';
-            *(p+3) = 's';
-            *(p+4) = 0;
-        }
-        TRACE2( "  renaming %s to %s", binaryName, _environment->listingFileName );
-        BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
-    }
-
-    strcpy( binaryName, _environment->asmFileName );
-    p = strstr( binaryName, ".asm" );
+    strcpy( relName, _environment->asmFileName );
+    p = strstr( relName, ".asm" );
     if ( p ) {
-        *(p+1) = 'o';
-        *(p+2) = 0;
+        *(p+1) = 'r';
+        *(p+2) = 'e';
+        *(p+3) = 'l';
+        *(p+4) = 0;
     }
-    system_remove_safe( _environment, binaryName );
 
-    strcpy( binaryName, _environment->asmFileName );
-    p = strstr( binaryName, ".asm" );
+    strcpy( binaryName, _environment->exeFileName );
+    p = strstr( binaryName, ".ram" );
     if ( p ) {
-        *p = 0;
-        --p;
-        strcat( p, "_code_user.bin");
+        *(p+1) = 'r';
+        *(p+2) = 'e';
+        *(p+3) = 'l';
+        *(p+4) = 0;
     }
 
-    FILE * binaryFile = fopen( binaryName, "rb" );
-    fseek( binaryFile, 0, SEEK_END );
-    long size = ftell( binaryFile );
-    fseek( binaryFile, 0, SEEK_SET );
-    char * part = malloc( size );
-    (void)!fread( part, size, 1, binaryFile );
-    fclose( binaryFile );
+	// @mv $(subst /exe/,/asm/,$(@:.ram=.rel)) $(@:.ram=.rel)
 
-    strcpy( binaryName, _environment->asmFileName );
-    p = strstr( binaryName, ".asm" );
-    if ( p ) {
-        *p = 0;
-        --p;
-        strcat( p, ".bin");
-    }
+    BUILD_SAFE_MOVE( _environment, relName, binaryName );
 
-    binaryFile = fopen( binaryName, "wb" );
-    fwrite( part, size, 1, binaryFile );
-    fclose( binaryFile );
+	// @$(ASLINK) -t $(@:.ram=.rel) >/dev/null 2>/dev/null
 
-    strcpy( binaryName, _environment->asmFileName );
-    p = strstr( binaryName, ".asm" );
-    if ( p ) {
-        *p = 0;
-        --p;
-        strcat( p, "_data_user.bin");
-    }
-
-    binaryFile = fopen( binaryName, "rb" );
-    fseek( binaryFile, 0, SEEK_END );
-    size = ftell( binaryFile );
-    fseek( binaryFile, 0, SEEK_SET );
-    part = malloc( size );
-    (void)!fread( part, size, 1, binaryFile );
-    fclose( binaryFile );
-
-    strcpy( binaryName, _environment->asmFileName );
-    p = strstr( binaryName, ".asm" );
-    if ( p ) {
-        *p = 0;
-        --p;
-        strcat( p, ".bin");
-    }
-
-    binaryFile = fopen( binaryName, "a+b" );
-    fwrite( part, size, 1, binaryFile );
-    fclose( binaryFile );
-
-    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
+    BUILD_TOOLCHAIN_ASXV5PXX_GET_EXECUTABLE_ASLINK( _environment, executableName );
 
     char pipes[256];
 
@@ -148,19 +94,15 @@ void generate_bin( Environment * _environment ) {
         strcpy( pipes, ">/dev/null 2>/dev/null");
     #endif
 
-    strcpy( binaryName, _environment->asmFileName );
-    p = strstr( binaryName, ".asm" );
-    if ( p ) {
-        strcat( p, "_data_user.bin");
-    }
-    remove(binaryName);
-
-    strcpy( binaryName, _environment->asmFileName );
-    p = strstr( binaryName, ".asm" );
-    if ( p ) {
-        strcat( p, "_code_user.bin");
-    }
-    remove(binaryName);
+    sprintf( commandLine, "\"%s\" -t \"%s\" %s",
+        executableName,
+        binaryName,
+        pipes );
+    if ( system_call( _environment,  commandLine ) ) {
+        printf("The compilation of assembly program failed.\n\n");
+        printf("Please use option '-I' to install chain tool.\n\n");
+        return;
+    }; 
 
 }
 
@@ -169,118 +111,29 @@ void generate_ram( Environment * _environment ) {
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[MAX_TEMPORARY_STORAGE];
-    char listingFileName[MAX_TEMPORARY_STORAGE];
 
-    char * p;
-
-    strcpy( binaryName, _environment->asmFileName );
-    p = strstr( binaryName, ".asm" );
+    strcpy( binaryName, _environment->exeFileName );
+    char * p = strstr( binaryName, ".ram" );
     if ( p ) {
-        *p = 0;
-        --p;
-        strcat( p, ".bin");
+        *(p+1) = 'b';
+        *(p+2) = 'i';
+        *(p+3) = 'n';
+        *(p+4) = 0;
     }
 
-    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
+	// @$(PC1403RAM) $(@:.ram=.bin) $(@) >/dev/null 2>/dev/null
 
-    char pipes[256];
-
-    #ifdef _WIN32
-        strcpy( pipes, ">nul 2>nul");
-    #else
-        strcpy( pipes, ">/dev/null 2>/dev/null");
-    #endif
-
-    sprintf( commandLine, "\"%s\" +msxrom -b \"%s\" %s",
-        executableName,
-        binaryName,
-        pipes );
-
-    p = strstr( binaryName, ".bin" );
-    if ( p ) {
-        *(p+1) = 'r';
-        *(p+2) = 'o';
-        *(p+3) = 'm';
-    }
-
-    if ( system_call( _environment,  commandLine ) ) {
-        printf("The compilation of assembly program failed.\n\n");
-        printf("Please use option '-I' to install chain tool.\n\n");
-        return;
-    }; 
-
-    remove( _environment->exeFileName );
-
-    BUILD_SAFE_MOVE( _environment, binaryName, _environment->exeFileName );
-
-    char symbolName[MAX_TEMPORARY_STORAGE];
-    strcpy( symbolName, _environment->exeFileName );
-    p = strstr( symbolName, ".rom" );
-    if ( p ) {
-        *p = 0;
-        --p;
-        strcat( p, ".sym");
-
-        strcpy( binaryName, _environment->asmFileName );
-        p = strstr( binaryName, ".asm" );
-        if ( p ) {
-            *p = 0;
-            --p;
-            strcat( p, ".sym");
-            BUILD_SAFE_MOVE( _environment, binaryName, symbolName );
-        }
-    }
-
-    if ( _environment->listingFileName ) {
-        strcpy( binaryName, _environment->asmFileName );
-        p = strstr( binaryName, ".asm" );
-        if ( p ) {
-            *p = 0;
-            --p;
-            strcat( p, ".lis");
-            BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
-        }
-
-        if ( _environment->profileFileName && _environment->profileCycles ) {
-            strcpy( binaryName, _environment->profileFileName );
-            if ( _environment->executerFileName ) {
-                sprintf(executableName, "%s", _environment->executerFileName );
-            } else if( access( "runz80.exe", F_OK ) == 0 ) {
-                sprintf(executableName, "%s", "runz80.exe" );
-            } else {
-                sprintf(executableName, "%s", "runz80" );
-            }
-
-            sprintf( commandLine, "\"%s\" -m -p \"%s\" %d -l 4000 \"%s\" -R 4010 -u \"%s\" \"%s\"",
-                executableName,
-                binaryName,
-                _environment->profileCycles ? _environment->profileCycles : 1000000,
-                _environment->exeFileName,
-                _environment->listingFileName,
-                pipes );
-
-            if ( system_call( _environment,  commandLine ) ) {
-                printf("The profiling of assembly program failed.\n\n");
-                return;
-            }; 
-
-        }
-
-    }
-
-    strcpy( binaryName, _environment->asmFileName );
-    p = strstr( binaryName, ".asm" );
-    if ( p ) {
-        strcat( p, "_data_user.bin");
-    }
-    remove(binaryName);
-
-    strcpy( binaryName, _environment->asmFileName );
-    p = strstr( binaryName, ".asm" );
-    if ( p ) {
-        strcat( p, "_code_user.bin");
-    }
-    remove(binaryName);
+    FILE * fin = fopen( binaryName, "rb" );
+    FILE * fout = fopen( _environment->exeFileName, "wb" );
+    fseek( fin, 0, SEEK_END);
+    long size = ftell( fin );
+    fseek( fin, 5, SEEK_SET);
+    char * content = malloc( size - 10 );
+    memset( content, 0, size );
+    (void)!fread( content, 1, size, fin );
+    (void)!fwrite( content, 1, size, fout );
+    fclose( fout );
+    fclose( fin );
 
 }
 
@@ -303,12 +156,7 @@ void target_cleanup( Environment * _environment ) {
 
         char binFileName[MAX_TEMPORARY_STORAGE];
 
-        // strcpy( binFileName, _environment->exeFileName );
-        // char * p = strrchr( binFileName, '.' );
-        // memcpy( p, ".bin", 4 );
-
         remove( _environment->configurationFileName );
-        // remove( binFileName );
         remove( _environment->asmFileName );
 
         if ( _environment->analysis && _environment->listingFileName ) {
