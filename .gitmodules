@@ -43,3 +43,6 @@
 [submodule "modules/lib-spectrum"]
 	path = modules/lib-spectrum
 	url = https://github.com/spotlessmind1975/lib-spectrum.git
+[submodule "modules/asxv5pxx"]
+	path = modules/asxv5pxx
+	url = https://github.com/spotlessmind1975/asxv5pxx.git
