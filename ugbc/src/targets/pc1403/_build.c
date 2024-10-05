@@ -48,7 +48,8 @@ void generate_bin( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
-    char relName[MAX_TEMPORARY_STORAGE];
+    char relName1[MAX_TEMPORARY_STORAGE];
+    char relName2[MAX_TEMPORARY_STORAGE];
     char binaryName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
 
@@ -60,8 +61,8 @@ void generate_bin( Environment * _environment ) {
 
     char * p;
 
-    strcpy( relName, _environment->asmFileName );
-    p = strstr( relName, ".asm" );
+    strcpy( relName1, _environment->asmFileName );
+    p = strstr( relName1, ".asm" );
     if ( p ) {
         *(p+1) = 'r';
         *(p+2) = 'e';
@@ -69,8 +70,8 @@ void generate_bin( Environment * _environment ) {
         *(p+4) = 0;
     }
 
-    strcpy( binaryName, _environment->exeFileName );
-    p = strstr( binaryName, ".ram" );
+    strcpy( relName2, _environment->exeFileName );
+    p = strstr( relName2, ".ram" );
     if ( p ) {
         *(p+1) = 'r';
         *(p+2) = 'e';
@@ -80,7 +81,16 @@ void generate_bin( Environment * _environment ) {
 
 	// @mv $(subst /exe/,/asm/,$(@:.ram=.rel)) $(@:.ram=.rel)
 
-    BUILD_SAFE_MOVE( _environment, relName, binaryName );
+    BUILD_SAFE_MOVE( _environment, relName1, relName2 );
+
+    strcpy( binaryName, _environment->exeFileName );
+    p = strstr( binaryName, ".ram" );
+    if ( p ) {
+        *(p+1) = 'b';
+        *(p+2) = 'i';
+        *(p+3) = 'n';
+        *(p+4) = 0;
+    }
 
 	// @$(ASLINK) -t $(@:.ram=.rel) >/dev/null 2>/dev/null
 
@@ -94,9 +104,10 @@ void generate_bin( Environment * _environment ) {
         strcpy( pipes, ">/dev/null 2>/dev/null");
     #endif
 
-    sprintf( commandLine, "\"%s\" -t \"%s\" %s",
+    sprintf( commandLine, "\"%s\" \"-t+%s\" -t \"%s\" %s",
         executableName,
         binaryName,
+        relName2,
         pipes );
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
