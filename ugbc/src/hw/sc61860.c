@@ -147,7 +147,7 @@ void sc61860_bvneq( Environment * _environment, char * _value, char * _label ) {
 }
 
 void sc61860_label( Environment * _environment, char * _label ) {
-    // outhead1("%s:", _label);
+    outhead1("%s:", _label);
 }
 
 void sc61860_peek( Environment * _environment, char * _address, char * _target ) {
@@ -3202,7 +3202,7 @@ void sc61860_combine_nibbles( Environment * _environment, char * _low_nibble, ch
 
 void sc61860_jump( Environment * _environment, char * _label ) {
 
-    // outline1("jp %s", _label );
+    outline1("JP %s", _label );
 
 }
 
@@ -3812,8 +3812,8 @@ void sc61860_halt( Environment * _environment ) {
 
     MAKE_LABEL
 
-    // outhead1("%s:", label );
-    // outline1("jp %s", label );
+    outhead1("%s:", label );
+    outline1("JP %s", label );
 
 }
 
