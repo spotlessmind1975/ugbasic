@@ -126,9 +126,9 @@ void generate_ram( Environment * _environment ) {
     FILE * fin = fopen( binaryName, "rb" );
     FILE * fout = fopen( _environment->exeFileName, "wb" );
     fseek( fin, 0, SEEK_END);
-    long size = ftell( fin );
+    long size = ftell( fin ) - 10;
     fseek( fin, 5, SEEK_SET);
-    char * content = malloc( size - 10 );
+    char * content = malloc( size );
     memset( content, 0, size );
     (void)!fread( content, 1, size, fin );
     (void)!fwrite( content, 1, size, fout );
