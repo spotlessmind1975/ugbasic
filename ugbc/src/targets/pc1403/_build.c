@@ -136,13 +136,25 @@ void generate_ram( Environment * _environment ) {
 
     FILE * fin = fopen( binaryName, "rb" );
     FILE * fout = fopen( _environment->exeFileName, "wb" );
-    fseek( fin, 0, SEEK_END);
-    long size = ftell( fin ) - 10;
-    fseek( fin, 5, SEEK_SET);
-    char * content = malloc( size );
-    memset( content, 0, size );
-    (void)!fread( content, 1, size, fin );
-    (void)!fwrite( content, 1, size, fout );
+
+    while( !feof( fin ) ) {
+
+        int header = (int)fgetc(fin);
+        int size = (((int)fgetc(fin))<<8) + (((int)fgetc(fin)));
+        int address = (((int)fgetc(fin))<<8) + (((int)fgetc(fin)));
+
+        if ( header == 0 ) {
+            char * content = malloc( size );
+            memset( content, 0, size );
+            if ( ! fread( content, 1, size, fin ) ) {
+                perror( "Unable to read segment");
+            }
+            fwrite( content, 1, size, fout );
+            free( content );
+        }
+
+    }
+
     fclose( fout );
     fclose( fin );
 
