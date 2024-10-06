@@ -4489,8 +4489,8 @@ void cpu6809_move_8bit_indirect2_8bit( Environment * _environment, char * _value
         outline1("LDX #%s", _value);
         outline1("LDB %s", _offset);
         outline0("ABX");
-        outline0("LDA ,X");
-        outline1("STA %s", _source);
+        outline0("LDB ,X");
+        outline1("STB %s", _source);
 
     no_embedded( cpu_move_8bit_indirect2_8bit )
 
