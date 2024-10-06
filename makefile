@@ -181,7 +181,7 @@ COCO3DECB = ./coco3_decb.sh
 #------------------------------------------------ 
 AS61860 = ./modules/asxv5pxx/asxmak/linux/exe/as61860$(EXESUFFIX)
 ASLINK = ./modules/asxv5pxx/asxmak/linux/exe/aslink$(EXESUFFIX)
-PC1403RAM = ./pc1403_ram.sh
+COCOBIN2RAM = ./modules/cocobin2ram/cocobin2ram$(EXESUFFIX)
 
 #------------------------------------------------ 
 # Examples
@@ -354,6 +354,17 @@ $(ASLINK):
 
 as61860: paths $(AS61860)
 aslink: paths $(ASLINK)
+
+#------------------------------------------------ 
+# cocobin2ram:
+#    Tandy CoCo Disk BASIC binary convertor
+#------------------------------------------------ 
+# 
+
+$(COCOBIN2RAM): 
+	cd $(dir $(COCOBIN2RAM)) && make
+
+cocobin2ram: paths $(COCOBIN2RAM)
 
 #------------------------------------------------ 
 # disktools:
@@ -752,16 +763,16 @@ generated/pc128op/exeso/%.k7: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.k7
 #    Sharp PC-1403/PC-1403h (sc61860)
 #------------------------------------------------ 
 #
-toolchain.pc1403: as61860 aslink
+toolchain.pc1403: as61860 aslink cocobin2ram
 
 generated/pc1403/asm/%.asm:
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc1403$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/pc1403/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/pc1403/exe/%.ram:
-	@$(AS61860) -gloaxsff $(subst /exe/,/asm/,$(@:.ram=.asm)) >/dev/null 2>/dev/null
+	@$(AS61860) -gloaxsff $(subst /exe/,/asm/,$(@:.ram=.asm))
 	@mv $(subst /exe/,/asm/,$(@:.ram=.rel)) $(@:.ram=.rel)
-	@$(ASLINK) -t $(@:.ram=.rel) >/dev/null 2>/dev/null
-	@$(PC1403RAM) $(@:.ram=.bin) $(@) >/dev/null 2>/dev/null
+	@$(ASLINK) -t $(@:.ram=.rel)
+	@$(COCOBIN2RAM) $(@:.ram=.bin) $(@)
 
 generated/pc1403/exeso/%.ram: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.ram=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc1403$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.ram=.info) -o ../$@ -O ram $(subst generated/pc1403/exeso/,,$(@:.ram=.bas))
