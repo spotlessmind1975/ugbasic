@@ -42,6 +42,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
+    _environment->program.startingAddress = 0xe030;
+    
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
     banks_init( _environment );
@@ -239,7 +241,7 @@ void target_initialization( Environment * _environment ) {
     
     deploy_preferred( startup, src_hw_pc1403_startup_asm);
 
-    outline0("CALL PC1403STARTUP" );
+    // outline0("CALL PC1403STARTUP" );
 
     setup_text_variables( _environment );
 
