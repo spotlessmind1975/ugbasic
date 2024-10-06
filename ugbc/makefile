@@ -779,10 +779,7 @@ SOURCES += $(wildcard src/targets/*.c)
 SOURCES += $(wildcard src/hw/*.c)
 SOURCES += $(wildcard src/outputs/*.c)
 SOURCES += $(wildcard src/targets/common/*.c)
-SOURCES += $(wildcard src/targets/common/6502/*.c)
-SOURCES += $(wildcard src/targets/common/6809/*.c)
-SOURCES += $(wildcard src/targets/common/sc61860/*.c)
-SOURCES += $(wildcard src/targets/common/z80/*.c)
+SOURCES += $(wildcard src/targets/$(target)/*.c)
 SOURCES += $(wildcard src/targets/common/k7mo/*.c)
 SOURCES += $(wildcard src/targets/common/sid/*.c)
 SOURCES += $(wildcard src/targets/common/sn76489z/*.c)
@@ -799,10 +796,16 @@ SOURCES += $(wildcard src/targets/common/gime/*.c)
 SOURCES += $(wildcard src/targets/common/vdcz/*.c)
 SOURCES += $(wildcard src/targets/common/cia/*.c)
 SOURCES += $(wildcard src/targets/common/pia/*.c)
-SOURCES += $(wildcard src/targets/$(target)/*.c)
 SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 
 OBJS = $(SOURCES:%.c=objs.$(target)/%.o)
+
+SOURCES_CPU := $(wildcard src/targets/common/pia/*.c)
+SOURCES_CPU += $(wildcard src/targets/common/6502/*.c)
+SOURCES_CPU += $(wildcard src/targets/common/6809/*.c)
+SOURCES_CPU += $(wildcard src/targets/common/sc61860/*.c)
+SOURCES_CPU += $(wildcard src/targets/common/z80/*.c)
+OBJS_CPU = $(SOURCES_CPU:%.c=objs.$(target)/%.o)
 
 SOURCESTEST := $(wildcard src/*.c)
 SOURCESTEST += $(wildcard src/libs/*.c)
@@ -842,15 +845,19 @@ paths:
 paths-test:
 	@mkdir -p exe-test
 
-compiler: $(LIBXML2) $(OBJS)
-	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target)$(UGBCEXESUFFIX) $(LIBS)
+lib-cpu: $(OBJS_CPU)
+	$(AR) -rc objs.$(target)/libcpu.a $^
+
+compiler: $(LIBXML2) $(OBJS) lib-cpu
+	$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
+		-lm objs.$(target)/libcpu.a $(LIBS) 
 	
 objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
-	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
 
 tester: $(SOURCESTEST)
-	@$(CC) $(LFLAGS) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target)$(UGBCEXESUFFIX) -lm $(LIBS)
+	$(CC) $(LFLAGS) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target)$(UGBCEXESUFFIX) -lm $(LIBS)
 
 clean:
 	@rm -rf objs.$(target)/*
