@@ -164,7 +164,9 @@ void sc61860_peek( Environment * _environment, char * _address, char * _target )
 
     inline( cpu_peek )
 
-        outline1("LIP %s", _address);
+        outline1("LIDP %s", _address);
+        outline0("LP 0x04");
+        outline0("MVMD");
         outline0("LDM");
         outline1("LIDP %s", _target);
         outline0("STD");
@@ -177,10 +179,14 @@ void sc61860_poke( Environment * _environment, char * _address, char * _source )
 
     inline( cpu_poke )
 
-        outline1("LIP %s", _source);
+        outline1("LIDP %s", _source);
+        outline0("LP 0x04");
+        outline0("MVMD");
         outline0("LDM");
         outline1("LIDP %s", _address);
-        outline0("STD");
+        outline0("LP 0x06");
+        outline0("MVMD");
+        outline0("EXAM");
         
     no_embedded( cpu_poke )
 
@@ -579,8 +585,8 @@ void sc61860_move_8bit( Environment * _environment, char *_source, char *_destin
     
     inline( cpu_move_8bit )
 
-        outline1("LIP %s", _source);
-        outline0("LDM");
+        outline1("LIDP %s", _source);
+        outline0("LDD");
         outline1("LIDP %s", _destination);
         outline0("STD");
 
@@ -1450,12 +1456,18 @@ void sc61860_math_and_const_8bit( Environment * _environment, char *_source, int
  */
 void sc61860_move_16bit( Environment * _environment, char *_source, char *_destination ) {
     
-    // inline( cpu_move_16bit )
+    inline( cpu_move_16bit )
 
-        // outline1("LD HL, (%s)", _source );
-        // outline1("LD (%s), HL", _destination );
+        outline1("LIDP %s", _source);
+        outline0("LDD");
+        outline1("LIDP %s", _destination);
+        outline0("STD");
+        outline1("LIDP %s+1", _source);
+        outline0("LDD");
+        outline1("LIDP %s+1", _destination);
+        outline0("STD");
 
-    // no_embedded( cpu_move_16bit )
+    no_embedded( cpu_move_16bit )
 
 }
 
@@ -1479,12 +1491,17 @@ void sc61860_addressof_16bit( Environment * _environment, char *_source, char *_
  */
 void sc61860_store_16bit( Environment * _environment, char *_destination, int _value ) {
 
-    // inline( cpu_store_16bit )
+    inline( cpu_store_16bit )
 
-        // outline1("LD HL, 0x%4.4x", _value & 0xffff );
-        // outline1("LD (%s), HL", _destination );
+        outline1("LIA 0x%2.2x", (unsigned char) ( _value & 0xff) );
+        outline1("LIDP %s", _destination);
+        outline0("STD");
 
-    // no_embedded( cpu_store_16bit )
+        outline1("LIA 0x%2.2x", (unsigned char) ( ( _value >> 8 ) & 0xff) );
+        outline1("LIDP %s+1", _destination);
+        outline0("STD");
+
+    no_embedded( cpu_store_16bit )
 
 }
 
