@@ -149,8 +149,6 @@ può essere utile aggiungere la specifica del target ''ON''.
 </usermanual> */
 void sys( Environment * _environment, int _address ) {
 
-    char address[MAX_TEMPORARY_STORAGE]; sprintf( address, "$%4.4x", _address );
-
     if ( _environment->parameters ) {
         for( int i=0; i<_environment->parameters; ++i ) {
             if ( _environment->parametersEach[i] ) {
@@ -162,7 +160,7 @@ void sys( Environment * _environment, int _address ) {
         }
     }
 
-    cpu_call( _environment, address );
+    cpu_call_addr( _environment, _address );
 
     if ( _environment->returns ) {
         for( int i=0; i<_environment->returns; ++i ) {
