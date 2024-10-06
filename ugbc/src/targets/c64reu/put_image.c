@@ -197,9 +197,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.bankNumber = image->bankAssigned;
                 resource.isAddress = 1;
 
-                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
+                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags );
             } else {
-                vic2_put_image( _environment, resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
+                vic2_put_image( _environment, resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags );
             }
             break;
         default:

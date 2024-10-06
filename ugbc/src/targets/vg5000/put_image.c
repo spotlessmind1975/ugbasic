@@ -97,7 +97,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
             break;
         case VT_IMAGE:
         case VT_TARRAY:
-            ef9345_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+            ef9345_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

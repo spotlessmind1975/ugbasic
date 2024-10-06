@@ -220,9 +220,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                c6847_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+                c6847_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
             } else {
-                c6847_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+                c6847_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
             }
             break;
         default:

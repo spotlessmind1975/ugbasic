@@ -228,9 +228,9 @@ extern char DATATYPE_AS_STRING[][16];
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+                ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
             } else {
-                ef936x_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+                ef936x_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
             }
             break;
         default:
