@@ -846,18 +846,18 @@ paths-test:
 	@mkdir -p exe-test
 
 lib-cpu: $(OBJS_CPU)
-	$(AR) -rc objs.$(target)/libcpu.a $^
+	@$(AR) -rc objs.$(target)/libcpu.a $^
 
 compiler: $(LIBXML2) $(OBJS) lib-cpu
-	$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
+	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
 		-lm objs.$(target)/libcpu.a $(LIBS) 
 	
 objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
-	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
 
 tester: $(SOURCESTEST)
-	$(CC) $(LFLAGS) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target)$(UGBCEXESUFFIX) -lm $(LIBS)
+	@$(CC) $(LFLAGS) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target)$(UGBCEXESUFFIX) -lm $(LIBS)
 
 clean:
 	@rm -rf objs.$(target)/*
