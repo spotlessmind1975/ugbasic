@@ -330,7 +330,7 @@ void pc1403_follow_irq( Environment * _environment ) {
 
 void pc1403_sys_call( Environment * _environment, int _destination ) {
 
-    // outline1("CALL $%4.4x", _destination );
+    outline1("CALL 0x%4.4x", _destination );
 
 }
 

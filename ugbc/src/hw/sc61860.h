@@ -103,6 +103,7 @@ void sc61860_halt( Environment * _environment );
 void sc61860_end( Environment * _environment );
 void sc61860_jump( Environment * _environment, char * _label );
 void sc61860_jump_indirect( Environment * _environment, char * _value );
+void sc61860_call_addr( Environment * _environment, int _label );
 void sc61860_call( Environment * _environment, char * _label );
 void sc61860_call_indirect( Environment * _environment, char * _value );
 void sc61860_set_asmio( Environment * _environment, int _asmio, int _value );
@@ -405,6 +406,7 @@ void sc61860_float_single_exp( Environment * _environment, char * _value, char *
 #define cpu_end( _environment  ) sc61860_end( _environment  )
 #define cpu_jump( _environment,  _label  ) sc61860_jump( _environment,  _label  )
 #define cpu_jump_indirect( _environment, _value ) sc61860_jump_indirect( _environment, _value )
+#define cpu_call_addr( _environment,  _label  ) sc61860_call_addr( _environment,  _label  )
 #define cpu_call( _environment,  _label  ) sc61860_call( _environment,  _label  )
 #define cpu_call_indirect( _environment,  _value  ) sc61860_call_indirect( _environment,  _value  )
 #define cpu_set_asmio( _environment, _asmio, _value ) sc61860_set_asmio( _environment, _asmio, _value )

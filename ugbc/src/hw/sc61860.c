@@ -179,15 +179,23 @@ void sc61860_poke( Environment * _environment, char * _address, char * _source )
 
     inline( cpu_poke )
 
-        outline1("LIDP %s", _source);
-        outline0("LP 0x04");
-        outline0("MVMD");
-        outline0("LDM");
-        outline1("LIDP %s", _address);
-        outline0("LP 0x06");
-        outline0("MVMD");
-        outline0("EXAM");
-        
+        // DP <- address
+        outline1("LIDP %s", _address );
+
+        // Y <- DP
+
+        outline0("LII 0x01" );
+        outline0("LP 0x06" );
+        outline0("MVWD");
+
+        // A <- (source)
+        outline1("LIDP %s", _source );
+        outline0("LDD");
+
+        // (Y) <- A
+        outline0("DY");
+        outline0("IYS");
+
     no_embedded( cpu_poke )
 
 }
@@ -3233,9 +3241,15 @@ void sc61860_jump( Environment * _environment, char * _label ) {
 
 }
 
+void sc61860_call_addr( Environment * _environment, int _address ) {
+
+    outline1("CALL 0x%4.4x", _address );
+
+}
+
 void sc61860_call( Environment * _environment, char * _label ) {
 
-    // outline1("call %s", _label );
+    outline1("CALL %s", _label );
 
 }
 
