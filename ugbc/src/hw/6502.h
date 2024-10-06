@@ -105,6 +105,7 @@ void cpu6502_halt( Environment * _environment );
 void cpu6502_end( Environment * _environment );
 void cpu6502_jump( Environment * _environment, char * _label );
 void cpu6502_jump_indirect( Environment * _environment, char * _value );
+void cpu6502_call_addr( Environment * _environment, int _address );
 void cpu6502_call( Environment * _environment, char * _label );
 void cpu6502_call_indirect( Environment * _environment, char * _value );
 void cpu6502_set_asmio( Environment * _environment, int _asmio, int _value );
@@ -406,6 +407,7 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_end( _environment  ) cpu6502_end( _environment  )
 #define cpu_jump( _environment,  _label  ) cpu6502_jump( _environment,  _label  )
 #define cpu_jump_indirect( _environment, _value  ) cpu6502_jump_indirect( _environment, _value )
+#define cpu_call_addr( _environment, _address ) cpu6502_call_addr( _environment, _address )
 #define cpu_call( _environment,  _label  ) cpu6502_call( _environment,  _label  )
 #define cpu_call_indirect( _environment,  _value ) cpu6502_call_indirect( _environment, _value )
 #define cpu_set_asmio( _environment, _asmio, _value ) cpu6502_set_asmio( _environment, _asmio, _value )

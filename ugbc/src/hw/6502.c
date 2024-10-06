@@ -3441,6 +3441,12 @@ void cpu6502_jump( Environment * _environment, char * _label ) {
 
 }
 
+void cpu6502_call_addr( Environment * _environment, int _address ) {
+
+    outline1("JSR $%4.4x", _address );
+
+}
+
 void cpu6502_call( Environment * _environment, char * _label ) {
 
     inline( cpu_call )

@@ -3228,6 +3228,12 @@ void z80_jump( Environment * _environment, char * _label ) {
 
 }
 
+void z80_call_addr( Environment * _environment, int _address ) {
+
+    outline1("call $%4.4x", _address );
+
+}
+
 void z80_call( Environment * _environment, char * _label ) {
 
     outline1("call %s", _label );

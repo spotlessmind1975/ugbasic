@@ -103,6 +103,7 @@ void z80_halt( Environment * _environment );
 void z80_end( Environment * _environment );
 void z80_jump( Environment * _environment, char * _label );
 void z80_jump_indirect( Environment * _environment, char * _value );
+void z80_call_addr( Environment * _environment, int _address );
 void z80_call( Environment * _environment, char * _label );
 void z80_call_indirect( Environment * _environment, char * _value );
 void z80_set_asmio( Environment * _environment, int _asmio, int _value );
@@ -405,6 +406,7 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_end( _environment  ) z80_end( _environment  )
 #define cpu_jump( _environment,  _label  ) z80_jump( _environment,  _label  )
 #define cpu_jump_indirect( _environment, _value ) z80_jump_indirect( _environment, _value )
+#define cpu_call_addr( _environment, _address ) z80_call_addr( _environment, _address )
 #define cpu_call( _environment,  _label  ) z80_call( _environment,  _label  )
 #define cpu_call_indirect( _environment,  _value  ) z80_call_indirect( _environment,  _value  )
 #define cpu_set_asmio( _environment, _asmio, _value ) z80_set_asmio( _environment, _asmio, _value )
