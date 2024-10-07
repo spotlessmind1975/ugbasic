@@ -3414,6 +3414,20 @@ void cpu6809_xor_8bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
+void cpu6809_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    inline( cpu_xor_8bit )
+
+        MAKE_LABEL
+
+        outline1("LDB %s", _left );
+        outline1("EORB #$%2.2x", _right );
+        outline1("STB %s", _result);
+
+    no_embedded( cpu_xor_8bit )
+
+}
+
 void cpu6809_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     inline( cpu_xor_16bit )
@@ -3429,6 +3443,22 @@ void cpu6809_xor_16bit( Environment * _environment, char * _left, char * _right,
 
 }
 
+void cpu6809_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    inline( cpu_xor_16bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _left );
+        outline1("EORA #$%2.2x", (unsigned char)((_right >> 8) & 0xff ) );
+        outline1("EORB #$%2.2x", (unsigned char)((_right) & 0xff ) );
+        outline1("STD %s", _result);
+
+    no_embedded( cpu_xor_16bit )
+
+}
+
+
 void cpu6809_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     inline( cpu_xor_32bit )
@@ -3442,6 +3472,25 @@ void cpu6809_xor_32bit( Environment * _environment, char * _left, char * _right,
         outline1("LDD %s", address_displacement(_environment, _left, "2") );
         outline1("EORA %s", address_displacement(_environment, _right, "2") );
         outline1("EORB %s", address_displacement(_environment, _right, "3") );
+        outline1("STD %s", address_displacement(_environment, _result, "2"));
+
+    no_embedded( cpu_xor_32bit )
+
+}
+
+void cpu6809_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    inline( cpu_xor_32bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _left );
+        outline1("EORA #$%2.2x", (unsigned char)( (_right >> 24) & 0xff ) );
+        outline1("EORB #$%2.2x", (unsigned char)( (_right >> 16) & 0xff ) );
+        outline1("STD %s", _result);
+        outline1("LDD %s", address_displacement(_environment, _left, "2") );
+        outline1("EORA #$%2.2x", (unsigned char)( (_right >> 8) & 0xff ) );
+        outline1("EORB #$%2.2x", (unsigned char)( (_right) & 0xff ) );
         outline1("STD %s", address_displacement(_environment, _result, "2"));
 
     no_embedded( cpu_xor_32bit )

@@ -122,16 +122,19 @@ void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char *
 void cpu6502_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result );
+void cpu6502_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result );
 void cpu6502_not_8bit( Environment * _environment, char * _value, char * _result );
 void cpu6502_swap_8bit( Environment * _environment, char * _left, char * _right );
 void cpu6502_and_16bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_or_16bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result );
+void cpu6502_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result );
 void cpu6502_not_16bit( Environment * _environment, char * _value, char * _result );
 void cpu6502_swap_16bit( Environment * _environment, char * _left, char * _right );
 void cpu6502_and_32bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_or_32bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result );
+void cpu6502_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result );
 void cpu6502_not_32bit( Environment * _environment, char * _value, char * _result );
 void cpu6502_swap_32bit( Environment * _environment, char * _left, char * _right );
 void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
@@ -425,16 +428,19 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_and_8bit( _environment, _left, _right,  _result ) cpu6502_and_8bit( _environment, _left, _right,  _result )
 #define cpu_or_8bit( _environment, _left, _right,  _result ) cpu6502_or_8bit( _environment, _left, _right,  _result )
 #define cpu_xor_8bit( _environment, _left, _right,  _result ) cpu6502_xor_8bit( _environment, _left, _right,  _result )
+#define cpu_xor_8bit_const( _environment, _left, _right,  _result ) cpu6502_xor_8bit_const( _environment, _left, _right,  _result )
 #define cpu_swap_8bit( _environment, _left, _right ) cpu6502_swap_8bit( _environment, _left, _right )
 #define cpu_not_16bit( _environment, _value, _result ) cpu6502_not_16bit( _environment, _value, _result )
 #define cpu_and_16bit( _environment, _left, _right,  _result ) cpu6502_and_16bit( _environment, _left, _right,  _result )
 #define cpu_or_16bit( _environment, _left, _right,  _result ) cpu6502_or_16bit( _environment, _left, _right,  _result )
 #define cpu_xor_16bit( _environment, _left, _right,  _result ) cpu6502_xor_16bit( _environment, _left, _right,  _result )
+#define cpu_xor_16bit_const( _environment, _left, _right,  _result ) cpu6502_xor_16bit_const( _environment, _left, _right,  _result )
 #define cpu_swap_16bit( _environment, _left, _right ) cpu6502_swap_16bit( _environment, _left, _right )
 #define cpu_not_32bit( _environment, _value, _result ) cpu6502_not_32bit( _environment, _value, _result )
 #define cpu_and_32bit( _environment, _left, _right,  _result ) cpu6502_and_32bit( _environment, _left, _right,  _result )
 #define cpu_or_32bit( _environment, _left, _right,  _result ) cpu6502_or_32bit( _environment, _left, _right,  _result )
 #define cpu_xor_32bit( _environment, _left, _right,  _result ) cpu6502_xor_32bit( _environment, _left, _right,  _result )
+#define cpu_xor_32bit_const( _environment, _left, _right,  _result ) cpu6502_xor_32bit_const( _environment, _left, _right,  _result )
 #define cpu_swap_32bit( _environment, _left, _right ) cpu6502_swap_32bit( _environment, _left, _right )
 #define cpu_math_add_16bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_16bit_const( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit_const( _environment, _source, _destination,  _name  )

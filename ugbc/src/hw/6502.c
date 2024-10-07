@@ -4248,6 +4248,20 @@ void cpu6502_xor_8bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
+void cpu6502_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_xor_8bit )
+
+        outline1("LDA %s", _left );
+        outline1("EOR #$%2.2x", _right );
+        outline1("STA %s", _result);
+
+    no_embedded( cpu_xor_8bit )
+
+}
+
 void cpu6502_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
@@ -4259,6 +4273,23 @@ void cpu6502_xor_16bit( Environment * _environment, char * _left, char * _right,
         outline1("STA %s", _result);
         outline1("LDA %s", address_displacement(_environment, _left, "1") );
         outline1("EOR %s", address_displacement(_environment, _right, "1") );
+        outline1("STA %s", address_displacement(_environment, _result, "1"));
+
+    no_embedded( cpu_xor_16bit )
+
+}
+
+void cpu6502_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_xor_16bit )
+
+        outline1("LDA %s", _left );
+        outline1("EOR #$%2.2x", (unsigned char)(_right&0xff) );
+        outline1("STA %s", _result);
+        outline1("LDA %s", address_displacement(_environment, _left, "1") );
+        outline1("EOR #$%2.2x", (unsigned char)((_right>>8)&0xff) );
         outline1("STA %s", address_displacement(_environment, _result, "1"));
 
     no_embedded( cpu_xor_16bit )
@@ -4281,8 +4312,31 @@ void cpu6502_xor_32bit( Environment * _environment, char * _left, char * _right,
         outline1("EOR %s", address_displacement(_environment, _right, "2") );
         outline1("STA %s", address_displacement(_environment, _result, "2"));
         outline1("LDA %s", address_displacement(_environment, _left, "3") );
-        outline1("ORA %s", address_displacement(_environment, _right, "3") );
-        outline1("EOR %s", address_displacement(_environment, _result, "3"));
+        outline1("EOR %s", address_displacement(_environment, _right, "3") );
+        outline1("STA %s", address_displacement(_environment, _result, "3"));
+
+    no_embedded( cpu_xor_32bit )
+
+}
+
+void cpu6502_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_xor_32bit )
+
+        outline1("LDA %s", _left );
+        outline1("EOR #$%2.2x", (unsigned char)(_right&0xff) );
+        outline1("STA %s", _result);
+        outline1("LDA %s", address_displacement(_environment, _left, "1") );
+        outline1("EOR #$%2.2x", (unsigned char)((_right>>8)&0xff) );
+        outline1("STA %s", address_displacement(_environment, _result, "1"));
+        outline1("LDA %s", address_displacement(_environment, _left, "2") );
+        outline1("EOR #$%2.2x", (unsigned char)((_right>>16)&0xff) );
+        outline1("STA %s", address_displacement(_environment, _result, "2"));
+        outline1("LDA %s", address_displacement(_environment, _left, "3") );
+        outline1("EOR #$%2.2x", (unsigned char)((_right>>24)&0xff) );
+        outline1("STA %s", address_displacement(_environment, _result, "3"));
 
     no_embedded( cpu_xor_32bit )
 

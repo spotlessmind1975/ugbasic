@@ -1665,12 +1665,12 @@ void z80_compare_16bit_const( Environment * _environment, char *_source, int _de
 
         outline1("LD A, (%s)", _source);
         outline0("LD B, A");
-        outline1("LD A, $2.2x", (unsigned char)(_destination&0xff));
+        outline1("LD A, $%2.2x", (unsigned char)(_destination&0xff));
         outline0("CP B");
         outline1("JP NZ, %s", label);
         outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
         outline0("LD B, A");
-        outline1("LD A, $2.2x", (unsigned char)((_destination>>8)&0xff));
+        outline1("LD A, $%2.2x", (unsigned char)((_destination>>8)&0xff));
         outline0("CP B");
         outline1("JP NZ, %s", label);
         outline1("LD A, $%2.2x", 0xff*_positive);
@@ -4235,6 +4235,18 @@ void z80_xor_8bit( Environment * _environment, char * _left, char * _right, char
 
 }
 
+void z80_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)(_right&0xff) );
+    outline0("LD (DE), A" );
+
+}
+
 void z80_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
@@ -4254,6 +4266,26 @@ void z80_xor_16bit( Environment * _environment, char * _left, char * _right, cha
     outline0("INC DE" );
 
 }
+
+void z80_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)((_right) & 0xff) );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)((_right>>8) & 0xff) );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+
+}
+
 
 void z80_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
@@ -4279,6 +4311,33 @@ void z80_xor_32bit( Environment * _environment, char * _left, char * _right, cha
     outline0("INC DE" );
     outline0("LD A, (HL)" );
     outline0("XOR (IX+3)" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)(_right & 0xff ) );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)((_right>>8) & 0xff ) );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)((_right>>16) & 0xff ) );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)((_right>>24) & 0xff ) );
     outline0("LD (DE), A" );
 
 }
