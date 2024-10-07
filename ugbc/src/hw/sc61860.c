@@ -81,11 +81,11 @@ void sc61860_ctoa( Environment * _environment ) {
 }
 
 /**
- * @brief <i>Z80</i>: emit code to make long conditional jump
+ * @brief <i>SC616860</i>: emit code to make long conditional jump
  * 
  * This function outputs a code that guarantees an arbitrary distance jump 
  * with conditional check on equality. In fact, the opcode BEQ of the 
- * Z80 processor allows to make a jump of maximum +/- 128 bytes with 
+ * SC616860 processor allows to make a jump of maximum +/- 128 bytes with 
  * respect to the address where the processor is at that moment. 
  * To overcome this problem, this function will make a conditional jump to
  * a very close location, which (in turn) will make an unconditional jump 
@@ -111,7 +111,7 @@ void sc61860_beq( Environment * _environment, char * _label ) {
 }
 
 /**
- * @brief <i>Z80</i>: emit code to make long conditional jump
+ * @brief <i>SC616860</i>: emit code to make long conditional jump
 
  * @param _environment Current calling environment
  * @param _label Destination of the conditional jump.
@@ -169,19 +169,17 @@ void sc61860_peek( Environment * _environment, char * _address, char * _target )
         // DP <- address
         outline1("LIDP %s", _address );
 
-        // X <- DP
-
+        // X <- (DP)
         outline0("LII 0x01" );
         outline0("LP 0x04" );
         outline0("MVWD");
 
-        // DP <- address
-        outline1("LIDP %s", _target );
-        outline0("LDD");
-
         // A <- (X)
         outline0("DX");
         outline0("IXL");
+
+        // DP <- target
+        outline1("LIDP %s", _target );
 
         // (DP) <- A
         outline0("STD");
@@ -197,8 +195,7 @@ void sc61860_poke( Environment * _environment, char * _address, char * _source )
         // DP <- address
         outline1("LIDP %s", _address );
 
-        // Y <- DP
-
+        // Y <- (DP)
         outline0("LII 0x01" );
         outline0("LP 0x06" );
         outline0("MVWD");
@@ -219,12 +216,32 @@ void sc61860_peekw( Environment * _environment, char * _address, char * _target 
 
     // inline( cpu_peek )
 
-        // outline1("LD HL, (%s)", _address);
-        // outline0("LD A, (HL)");
-        // outline1("LD (%s), A", _target);
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline1("LD (%s), A", address_displacement( _environment, _target, "1" ) );
+        // DP <- address
+        outline1("LIDP %s", _address );
+
+        // X <- (DP)
+        outline0("LII 0x01" );
+        outline0("LP 0x04" );
+        outline0("MVWD");
+
+        // A <- (X)
+        outline0("DX");
+        outline0("IXL");
+
+        // DP <- target
+        outline1("LIDP %s", _target );
+
+        // (DP) <- A
+        outline0("STD");
+
+        // A <- (X)
+        outline0("IXL");
+
+        // DP <- target+1
+        outline1("LIDP %s", address_displacement( _environment, _target, "1" ) );
+
+        // (DP) <- A
+        outline0("STD");
 
     // no_embedded( cpu_peek )
 
@@ -234,12 +251,28 @@ void sc61860_pokew( Environment * _environment, char * _address, char * _source 
 
     // inline( cpu_poke )
 
-        // outline1("LD A, (%s)", _source);
-        // outline1("LD HL, (%s)", _address);
-        // outline0("LD (HL), A");
-        // outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
-        // outline1("LD HL, (%s)", address_displacement( _environment, _address, "1" ) );
-        // outline0("LD (HL), A");
+        // DP <- address
+        outline1("LIDP %s", _address );
+
+        // Y <- (DP)
+        outline0("LII 0x01" );
+        outline0("LP 0x06" );
+        outline0("MVWD");
+
+        // A <- (source)
+        outline1("LIDP %s", _source );
+        outline0("LDD");
+
+        // (Y) <- A
+        outline0("DY");
+        outline0("IYS");
+
+        // A <- (source+1)
+        outline1("LIDP %s", address_displacement( _environment, _source, "1" ) );
+        outline0("LDD");
+
+        // (Y) <- A
+        outline0("IYS");
 
     // no_embedded( cpu_poke )
 
@@ -249,18 +282,50 @@ void sc61860_peekd( Environment * _environment, char * _address, char * _target 
 
     // inline( cpu_peek )
 
-        // outline1("LD HL, (%s)", _address);
-        // outline0("LD A, (HL)");
-        // outline1("LD (%s), A", _target);
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline1("LD (%s), A", address_displacement( _environment, _target, "1" ) );
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline1("LD (%s), A", address_displacement( _environment, _target, "2" ) );
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline1("LD (%s), A", address_displacement( _environment, _target, "3" ) );
+        // DP <- address
+        outline1("LIDP %s", _address );
+
+        // X <- (DP)
+        outline0("LII 0x01" );
+        outline0("LP 0x04" );
+        outline0("MVWD");
+
+        // A <- (X)
+        outline0("DX");
+        outline0("IXL");
+
+        // DP <- target
+        outline1("LIDP %s", _target );
+
+        // (DP) <- A
+        outline0("STD");
+
+        // A <- (X)
+        outline0("IXL");
+
+        // DP <- target+1
+        outline1("LIDP %s", address_displacement( _environment, _target, "1" ) );
+
+        // (DP) <- A
+        outline0("STD");
+
+        // A <- (X)
+        outline0("IXL");
+
+        // DP <- target+2
+        outline1("LIDP %s", address_displacement( _environment, _target, "2" ) );
+
+        // (DP) <- A
+        outline0("STD");
+
+        // A <- (X)
+        outline0("IXL");
+
+        // DP <- target+1
+        outline1("LIDP %s", address_displacement( _environment, _target, "3" ) );
+
+        // (DP) <- A
+        outline0("STD");
 
     // no_embedded( cpu_peek )
 
@@ -270,25 +335,49 @@ void sc61860_poked( Environment * _environment, char * _address, char * _source 
 
     // inline( cpu_poke )
 
-        // outline1("LD A, (%s)", _source);
-        // outline1("LD HL, (%s)", _address);
-        // outline0("LD (HL), A");
-        // outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
-        // outline1("LD HL, (%s)", address_displacement( _environment, _address, "1" )  );
-        // outline0("LD (HL), A");
-        // outline1("LD A, (%s)", address_displacement( _environment, _source, "2" ) );
-        // outline1("LD HL, (%s)", address_displacement( _environment, _address, "2" )  );
-        // outline0("LD (HL), A");
-        // outline1("LD A, (%s)", address_displacement( _environment, _source, "3" ) );
-        // outline1("LD HL, (%s)", address_displacement( _environment, _address, "3" )  );
-        // outline0("LD (HL), A");
+        // DP <- address
+        outline1("LIDP %s", _address );
+
+        // Y <- (DP)
+        outline0("LII 0x01" );
+        outline0("LP 0x06" );
+        outline0("MVWD");
+
+        // A <- (source)
+        outline1("LIDP %s", _source );
+        outline0("LDD");
+
+        // (Y) <- A
+        outline0("DY");
+        outline0("IYS");
+
+        // A <- (source+1)
+        outline1("LIDP %s", address_displacement( _environment, _source, "1" ) );
+        outline0("LDD");
+
+        // (Y) <- A
+        outline0("IYS");
+
+        // A <- (source+2)
+        outline1("LIDP %s", address_displacement( _environment, _source, "2" ) );
+        outline0("LDD");
+
+        // (Y) <- A
+        outline0("IYS");
+
+        // A <- (source+3)
+        outline1("LIDP %s", address_displacement( _environment, _source, "3" ) );
+        outline0("LDD");
+
+        // (Y) <- A
+        outline0("IYS");
 
     // no_embedded( cpu_poke )
 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to fill up a memory area
+ * @brief <i>SC616860</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
  * memory area with a given pattern (pattern size: 1 byte). The starting 
@@ -346,7 +435,7 @@ void sc61860_fill_blocks( Environment * _environment, char * _address, char * _b
 }
 
 /**
- * @brief <i>Z80</i>: emit code to fill up a memory area
+ * @brief <i>SC616860</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
  * memory area with a given pattern (pattern size: 1 byte). The starting 
@@ -389,7 +478,7 @@ void sc61860_fill( Environment * _environment, char * _address, char * _bytes, i
 }
 
 /**
- * @brief <i>Z80</i>: emit code to fill up a memory area
+ * @brief <i>SC616860</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
  * memory area with a given pattern (pattern size: 1 byte). The starting 
@@ -432,7 +521,7 @@ void sc61860_fill_size( Environment * _environment, char * _address, int _bytes,
 }
 
 /**
- * @brief <i>Z80</i>: emit code to fill up a memory area
+ * @brief <i>SC616860</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
  * memory area with a given pattern (pattern size: 1 byte). The starting 
@@ -475,7 +564,7 @@ void sc61860_fill_size_value( Environment * _environment, char * _address, int _
 }
 
 /**
- * @brief <i>Z80</i>: emit code to fill up a memory area
+ * @brief <i>SC616860</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
  * memory area with a given pattern (pattern size: 1 byte). The starting 
@@ -508,7 +597,7 @@ void sc61860_fill_direct( Environment * _environment, char * _address, char * _b
 }
 
 /**
- * @brief <i>Z80</i>: emit code to fill up a memory area
+ * @brief <i>SC616860</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
  * memory area with a given pattern (pattern size: 1 byte). The starting 
@@ -551,7 +640,7 @@ void sc61860_fill_direct_size( Environment * _environment, char * _address, int 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to fill up a memory area
+ * @brief <i>SC616860</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
  * memory area with a given pattern (pattern size: 1 byte). The starting 
@@ -598,7 +687,7 @@ void sc61860_fill_direct_size_value( Environment * _environment, char * _address
  ****************************************************************************/
 
 /**
- * @brief <i>Z80</i>: emit code to move 8 bit
+ * @brief <i>SC616860</i>: emit code to move 8 bit
  * 
  * @param _environment Current calling environment
  * @param _source Source of movement
@@ -618,7 +707,7 @@ void sc61860_move_8bit( Environment * _environment, char *_source, char *_destin
 }
 
 /**
- * @brief <i>Z80</i>: emit code to store 8 bit
+ * @brief <i>SC616860</i>: emit code to store 8 bit
  * 
  * @param _environment Current calling environment
  * @param _destination Destination of store
@@ -637,7 +726,7 @@ void sc61860_store_8bit( Environment * _environment, char *_destination, int _va
 }
 
 /**
- * @brief <i>Z80</i>: emit code to store 8 bit
+ * @brief <i>SC616860</i>: emit code to store 8 bit
  * 
  * @param _environment Current calling environment
  * @param _destination Destination of store
@@ -659,17 +748,33 @@ void sc61860_store_8bit_with_offset( Environment * _environment, char *_destinat
 
     // inline( cpu_store_8bit_with_offset )
 
-        // outline1("LD DE, %s", _destination);
-        // outline1("ADD DE, 0x%2.2x", ( _offset & 0xff ) );
-        // outline1("LD A, 0x%2.2x", ( _value & 0xff ) );
-        // outline0("LD (DE), A");
+        // Y <- _destination
+        outline1("LIDP %s", _destination);
+        outline0("LII 0x01" );
+        outline0("LP 0x06" );
+        outline0("MVWD");
+
+        // Yl += low(_offset)
+        outline0("LP 0x06" );
+        outline1("ADIM 0X%2.2x", (unsigned char)(_offset & 0xff) );
+
+        // Yh += high(_offset)
+        outline0("LP 0x07" );
+        outline1("ADIM 0X%2.2x", (unsigned char)((_offset>>8) & 0xff) );
+
+        // A <- _value
+        outline1("LIA 0X%2.2X", _value );
+
+        // (Y) <- A
+        outline0("DY" );
+        outline0("IYS" );
 
     // no_embedded( cpu_store_8bit_with_offset )
 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -683,32 +788,64 @@ void sc61860_compare_8bit( Environment * _environment, char *_source, char *_des
 
     // inline( cpu_compare_8bit )
 
-        // outline1("LD HL, %s", _destination);
-        // outline1("LD A, (%s)", _source);
-        // outline0("CP (HL)");
-        // outline1("JP NZ, %s", label);
-        // outline1("LD A, 0x%2.2x", 0xff*_positive);
+        // X <- destination
+        outline1("LIDP %s", _destination);
+        outline0("LII 0x01" );
+        outline0("LP 0x04" );
+        outline0("MVWD");
+
+        // A <- (X)
+        outline0("DX");
+        outline0("IXL");
+
+        // A <-> B
+        outline0("LIP 0x03");
+        outline0("EXAM");
+
+        // A <- (_source)
+        outline1("LIDP %s", _source);
+        outline0("LDD");
+
+        // A == B ?
+        outline0( "CPMA" );
+
+        // jump if different
+        outline1("JRNZ %s", label )
+
+        // A = TRUE (if positive = 1)
+        outline1("LIA 0x%2.2x", 0xff*_positive );
+
         if ( _other ) {
-            // outline1("LD (%s), A", _other);
+            outline1("LIDP %s", _other);
+            outline0("STD");
         } else {
-            // outline0("LD (HL), A");
+            outline1("LIDP %s", _destination);
+            outline0("STD");
         }
-        // outline1("JMP %sb2", label);
-        // outhead1("%s:", label);
-        // outline1("LD A, 0x%2.2x", 0xff*(1-_positive));
+        
+        outline1("JP %sb2", label);
+
+        outhead1("%s:", label);
+        
+        // A = FALSE (if positive = 1)
+        outline1("LIA 0x%2.2x", 0xff*(1-_positive) );
+
         if ( _other ) {
-            // outline1("LD (%s), A", _other);
+            outline1("LIDP %s", _other);
+            outline0("STD");
         } else {
-            // outline0("LD (HL), A");
+            outline1("LIDP %s", _destination);
+            outline0("STD");
         }
-        // outhead1("%sb2:", label);
+        
+        outhead1("%sb2:", label);
 
     // no_embedded( cpu_compare_8bit )
 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -722,16 +859,43 @@ void sc61860_compare_8bit_const( Environment * _environment, char *_source, int 
 
     // inline( cpu_compare_8bit )
 
-        // outline1("LD A, (%s)", _source);
-        // outline1("CP 0x%2.2x", _destination);
-        // outline1("JP NZ, %s", label);
-        // outline1("LD A, 0x%2.2x", 0xff*_positive);
-        // outline1("LD (%s), A", _other);
-        // outline1("JMP %sb2", label);
-        // outhead1("%s:", label);
-        // outline1("LD A, 0x%2.2x", 0xff*(1-_positive));
-        // outline1("LD (%s), A", _other);
-        // outhead1("%sb2:", label);
+        // A <- (_source)
+        outline1("LIDP %s", _source);
+        outline0("LDD");
+
+        // A == constant ?
+        outline1( "CPIA 0x%2.2x", _destination );
+
+        // jump if different
+        outline1("JRNZ %s", label )
+
+        // A = TRUE (if positive = 1)
+        outline1("LIA 0x%2.2x", 0xff*_positive );
+
+        if ( _other ) {
+            outline1("LIDP %s", _other);
+            outline0("STD");
+        } else {
+            outline1("LIDP %s", _destination);
+            outline0("STD");
+        }
+        
+        outline1("JP %sb2", label);
+
+        outhead1("%s:", label);
+        
+        // A = FALSE (if positive = 1)
+        outline1("LIA 0x%2.2x", 0xff*(1-_positive) );
+
+        if ( _other ) {
+            outline1("LIDP %s", _other);
+            outline0("STD");
+        } else {
+            outline1("LIDP %s", _destination);
+            outline0("STD");
+        }
+        
+        outhead1("%sb2:", label);
 
     // no_embedded( cpu_compare_8bit )
 
@@ -743,22 +907,44 @@ void sc61860_compare_and_branch_8bit( Environment * _environment, char *_source,
 
         MAKE_LABEL
 
-        // outline1("LD A, (%s)", _destination);
-        // outline0("LD B, A");
-        // outline1("LD A, (%s)", _source);
-        // outline1("CP B", _destination );
+        // X <- destination
+        outline1("LIDP %s", _destination);
+        outline0("LII 0x01" );
+        outline0("LP 0x04" );
+        outline0("MVWD");
+
+        // A <- (X)
+        outline0("DX");
+        outline0("IXL");
+
+        // A <-> B
+        outline0("LIP 0x03");
+        outline0("EXAM");
+
+        // A <- (_source)
+        outline1("LIDP %s", _source);
+        outline0("LDD");
+
+        // A == B ?
+        outline0( "CPMA" );
+
         if ( _positive ) {
-            // outline1("JP Z, %s", _label);
+            // jump if different
+            outline1("JRNZ %s", label );
+            outline1("JP %s", _label );
         } else {
-            // outline1("JP NZ, %s", _label);
-        }
+            // jump if equal
+            outline1("JRZ %s", label );
+            outline1("JP %s", _label );
+        }            
+        outhead1("%s:", label);
 
     // no_embedded( cpu_compare_and_branch_8bit )
 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -770,22 +956,32 @@ void sc61860_compare_and_branch_8bit_const( Environment * _environment, char *_s
 
     // inline( cpu_compare_and_branch_8bit_const )
 
-        MAKE_LABEL
+         MAKE_LABEL
 
-        // outline1("LD A, (%s)", _source);
-        // outline1("CP 0x%2.2x", _destination );
+        // A <- (_source)
+        outline1("LIDP %s", _source);
+        outline0("LDD");
+
+        // A == constant ?
+        outline1( "CPIA 0x%2.2x", _destination );
+
         if ( _positive ) {
-            // outline1("JP Z, %s", _label);
+            // jump if different
+            outline1("JRNZ %s", label );
+            outline1("JP %s", _label );
         } else {
-            // outline1("JP NZ, %s", _label);
-        }
+            // jump if equal
+            outline1("JRZ %s", label );
+            outline1("JP %s", _label );
+        }            
+        outhead1("%s:", label);
 
     // no_embedded( cpu_compare_and_branch_8bit_const )
 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -797,14 +993,16 @@ void sc61860_prepare_for_compare_and_branch_8bit( Environment * _environment, ch
 
     // inline( cpu_compare_and_branch_8bit_const )
 
-        // outline1("LD A, (%s)", _source);
+        // A <- (_source)
+        outline1("LIDP %s", _source);
+        outline0("LDD");
 
     // no_embedded( cpu_compare_and_branch_8bit_const )
 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -818,19 +1016,26 @@ void sc61860_execute_compare_and_branch_8bit_const( Environment * _environment, 
 
         MAKE_LABEL
 
-        // outline1("CP 0x%2.2x", _destination );
+        // A == constant ?
+        outline1( "CPIA 0x%2.2x", _destination );
+
         if ( _positive ) {
-            // outline1("JP Z, %s", _label);
+            // jump if different
+            outline1("JRNZ %s", label );
+            outline1("JP %s", _label );
         } else {
-            // outline1("JP NZ, %s", _label);
-        }
+            // jump if equal
+            outline1("JRZ %s", label );
+            outline1("JP %s", _label );
+        }            
+        outhead1("%s:", label);
 
     // no_embedded( cpu_compare_and_branch_8bit_const )
 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -842,22 +1047,14 @@ void sc61860_compare_and_branch_char_const( Environment * _environment, char *_s
 
     // inline( cpu_compare_and_branch_8bit_const )
 
-        MAKE_LABEL
-
-        // outline1("LD A, (%s)", _source);
-        // outline1("CP '%c'", _destination );
-        if ( _positive ) {
-            // outline1("JP Z, %s", _label);
-        } else {
-            // outline1("JP NZ, %s", _label);
-        }
+        sc61860_compare_and_branch_8bit_const( _environment, _source, _destination, _label, _positive );
 
     // no_embedded( cpu_compare_and_branch_8bit_const )
 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -1133,7 +1330,7 @@ void sc61860_less_than_and_branch_8bit_const( Environment * _environment, char *
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -1160,7 +1357,7 @@ void sc61860_greater_than_8bit_const( Environment * _environment, char *_source,
 }
 
 /**
- * @brief <i>Z80</i>: emit code to add two 8 bit values
+ * @brief <i>SC616860</i>: emit code to add two 8 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to add
@@ -1203,7 +1400,7 @@ void sc61860_math_add_8bit_const( Environment * _environment, char *_source, int
 }
 
 /**
- * @brief <i>Z80</i>: emit code to subtract two 8 bit values
+ * @brief <i>SC616860</i>: emit code to subtract two 8 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to subtract
@@ -1231,7 +1428,7 @@ void sc61860_math_sub_8bit( Environment * _environment, char *_source, char *_de
 }
 
 /**
- * @brief <i>Z80</i>: emit code to double a 8 bit value
+ * @brief <i>SC616860</i>: emit code to double a 8 bit value
  * 
  * @param _environment Current calling environment
  * @param _source Value to double and destination for result (if _other is NULL)
@@ -1266,7 +1463,7 @@ void sc61860_math_double_8bit( Environment * _environment, char *_source, char *
 }
 
 /**
- * @brief <i>Z80</i>: emit code to multiply two 8bit values in a 16 bit register
+ * @brief <i>SC616860</i>: emit code to multiply two 8bit values in a 16 bit register
  * 
  * @param _environment Current calling environment
  * @param _source First value to multipy (8 bit)
@@ -1393,7 +1590,7 @@ void sc61860_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to halves for several times a 8 bit value 
+ * @brief <i>SC616860</i>: emit code to halves for several times a 8 bit value 
  * 
  * @param _environment Current calling environment
  * @param _source Value to halves and destination for result
@@ -1455,7 +1652,7 @@ void sc61860_math_div2_const_8bit( Environment * _environment, char *_source, in
 }
 
 /**
- * @brief <i>Z80</i>: emit code to double for several times a 8 bit value 
+ * @brief <i>SC616860</i>: emit code to double for several times a 8 bit value 
  * 
  * @param _environment Current calling environment
  * @param _source Value to double and destination for result
@@ -1508,7 +1705,7 @@ void sc61860_math_mul2_const_8bit( Environment * _environment, char *_source, in
 }
 
 /**
- * @brief <i>Z80</i>: emit code to calculate an 8 bit complement of a number
+ * @brief <i>SC616860</i>: emit code to calculate an 8 bit complement of a number
  * 
  * @param _environment Current calling environment
  * @param _source Value to complement
@@ -1529,7 +1726,7 @@ void sc61860_math_complement_const_8bit( Environment * _environment, char *_sour
 }
 
 /**
- * @brief <i>Z80</i>: emit code to mask with "and" a value of 8 bit
+ * @brief <i>SC616860</i>: emit code to mask with "and" a value of 8 bit
  * 
  * @param _environment Current calling environment
  * @param _source Value to mask (and destination of mask operation)
@@ -1552,7 +1749,7 @@ void sc61860_math_and_const_8bit( Environment * _environment, char *_source, int
  ****************************************************************************/
 
 /**
- * @brief <i>Z80</i>: emit code to move 16 bit
+ * @brief <i>SC616860</i>: emit code to move 16 bit
  * 
  * @param _environment Current calling environment
  * @param _source Source of movement
@@ -1587,7 +1784,7 @@ void sc61860_addressof_16bit( Environment * _environment, char *_source, char *_
 }
 
 /**
- * @brief <i>Z80</i>: emit code to store 16 bit
+ * @brief <i>SC616860</i>: emit code to store 16 bit
  * 
  * @param _environment Current calling environment
  * @param _destination Destination of store
@@ -1610,7 +1807,7 @@ void sc61860_store_16bit( Environment * _environment, char *_destination, int _v
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 16 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 16 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -1666,7 +1863,7 @@ void sc61860_compare_16bit( Environment * _environment, char *_source, char *_de
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 16 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 16 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -1740,7 +1937,7 @@ void sc61860_compare_and_branch_16bit( Environment * _environment, char *_source
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 16 bit values and jump if they are equal/different
+ * @brief <i>SC616860</i>: emit code to compare two 16 bit values and jump if they are equal/different
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -1775,7 +1972,7 @@ void sc61860_compare_and_branch_16bit_const( Environment * _environment, char *_
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -1990,7 +2187,7 @@ void sc61860_less_than_16bit_const( Environment * _environment, char *_source, i
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -2017,7 +2214,7 @@ void sc61860_greater_than_16bit_const( Environment * _environment, char *_source
 }
 
 /**
- * @brief <i>Z80</i>: emit code to add two 16 bit values
+ * @brief <i>SC616860</i>: emit code to add two 16 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to add (memory)
@@ -2069,7 +2266,7 @@ void sc61860_math_add_16bit_with_16bit( Environment * _environment, char *_sourc
 }
 
 /**
- * @brief <i>Z80</i>: emit code to double a 16 bit value
+ * @brief <i>SC616860</i>: emit code to double a 16 bit value
  * 
  * @param _environment Current calling environment
  * @param _source Value to double and destination for result (if _other is NULL)
@@ -2093,7 +2290,7 @@ void sc61860_math_double_16bit( Environment * _environment, char *_source, char 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to multiply two 16 bit values in a 32 bit register
+ * @brief <i>SC616860</i>: emit code to multiply two 16 bit values in a 32 bit register
  * 
  * @param _environment Current calling environment
  * @param _source First value to multipy (16 bit)
@@ -2220,7 +2417,7 @@ void sc61860_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 }
 
 /**
- * @brief <i>Z80</i>: emit code to subtract two 16 bit values
+ * @brief <i>SC616860</i>: emit code to subtract two 16 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to subtract
@@ -2246,7 +2443,7 @@ void sc61860_math_sub_16bit( Environment * _environment, char *_source, char *_d
 }
 
 /**
- * @brief <i>Z80</i>: emit code to calculate a 16 bit complement of a number
+ * @brief <i>SC616860</i>: emit code to calculate a 16 bit complement of a number
  * 
  * @param _environment Current calling environment
  * @param _source Value to complement
@@ -2273,7 +2470,7 @@ void sc61860_math_complement_const_16bit( Environment * _environment, char *_sou
 }
 
 /**
- * @brief <i>Z80</i>: emit code to halves for several times a 16 bit value 
+ * @brief <i>SC616860</i>: emit code to halves for several times a 16 bit value 
  * 
  * @param _environment Current calling environment
  * @param _source Value to halves and destination for result
@@ -2345,7 +2542,7 @@ void sc61860_math_div2_const_16bit( Environment * _environment, char *_source, i
 }
 
 /**
- * @brief <i>Z80</i>: emit code to halves for several times a 8 bit value 
+ * @brief <i>SC616860</i>: emit code to halves for several times a 8 bit value 
  * 
  * @param _environment Current calling environment
  * @param _source Value to halves and destination for result
@@ -2395,7 +2592,7 @@ void sc61860_math_mul2_const_16bit( Environment * _environment, char *_source, i
 }
 
 /**
- * @brief <i>Z80</i>: emit code to mask with "and" a value of 16 bit
+ * @brief <i>SC616860</i>: emit code to mask with "and" a value of 16 bit
  * 
  * @param _environment Current calling environment
  * @param _source Value to mask (and destination of mask operation)
@@ -2421,7 +2618,7 @@ void sc61860_math_and_const_16bit( Environment * _environment, char *_source, in
  ****************************************************************************/
 
 /**
- * @brief <i>Z80</i>: emit code to move 32 bit
+ * @brief <i>SC616860</i>: emit code to move 32 bit
  * 
  * @param _environment Current calling environment
  * @param _source Source of movement
@@ -2445,7 +2642,7 @@ void sc61860_move_32bit( Environment * _environment, char *_source, char *_desti
 }
 
 /**
- * @brief <i>Z80</i>: emit code to store 32 bit
+ * @brief <i>SC616860</i>: emit code to store 32 bit
  * 
  * @param _environment Current calling environment
  * @param _destination Destination of store
@@ -2465,7 +2662,7 @@ void sc61860_store_32bit( Environment * _environment, char *_destination, int _v
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 32 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 32 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -2532,7 +2729,7 @@ void sc61860_compare_32bit( Environment * _environment, char *_source, char *_de
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 32 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 32 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -2588,7 +2785,7 @@ void sc61860_compare_32bit_const( Environment * _environment, char *_source, int
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 32 bit values and jump if they are equal/different
+ * @brief <i>SC616860</i>: emit code to compare two 32 bit values and jump if they are equal/different
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -2630,7 +2827,7 @@ void sc61860_compare_and_branch_32bit_const( Environment * _environment, char *_
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -2957,7 +3154,7 @@ void sc61860_less_than_32bit_const( Environment * _environment, char *_source, i
 }
 
 /**
- * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to compare
@@ -2984,7 +3181,7 @@ void sc61860_greater_than_32bit_const( Environment * _environment, char *_source
 }
 
 /**
- * @brief <i>Z80</i>: emit code to add two 32 bit values
+ * @brief <i>SC616860</i>: emit code to add two 32 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to add
@@ -3042,7 +3239,7 @@ void sc61860_math_add_32bit_const( Environment * _environment, char *_source, in
 }
 
 /**
- * @brief <i>Z80</i>: emit code to double a 32 bit value
+ * @brief <i>SC616860</i>: emit code to double a 32 bit value
  * 
  * @param _environment Current calling environment
  * @param _source Value to double and destination for result (if _other is NULL)
@@ -3064,7 +3261,7 @@ void sc61860_math_double_32bit( Environment * _environment, char *_source, char 
 }
 
 /**
- * @brief <i>Z80</i>: emit code to subtract two 32 bit values
+ * @brief <i>SC616860</i>: emit code to subtract two 32 bit values
  * 
  * @param _environment Current calling environment
  * @param _source First value to subtract
@@ -3123,7 +3320,7 @@ void sc61860_math_sub_32bit( Environment * _environment, char *_source, char *_d
 }
 
 /**
- * @brief <i>Z80</i>: emit code to calculate a 32 bit complement of a number
+ * @brief <i>SC616860</i>: emit code to calculate a 32 bit complement of a number
  * 
  * @param _environment Current calling environment
  * @param _source Value to complement
@@ -3166,7 +3363,7 @@ void sc61860_math_complement_const_32bit( Environment * _environment, char *_sou
 }
 
 /**
- * @brief <i>Z80</i>: emit code to halves for several times a 32 bit value 
+ * @brief <i>SC616860</i>: emit code to halves for several times a 32 bit value 
  * 
  * @param _environment Current calling environment
  * @param _source Value to halves and destination for result
@@ -3224,7 +3421,7 @@ void sc61860_math_div2_const_32bit( Environment * _environment, char *_source, i
 }
 
 /**
- * @brief <i>Z80</i>: emit code to double for several times a 32 bit value 
+ * @brief <i>SC616860</i>: emit code to double for several times a 32 bit value 
  * 
  * @param _environment Current calling environment
  * @param _source Value to double and destination for result
@@ -3283,7 +3480,7 @@ void sc61860_math_mul2_const_32bit( Environment * _environment, char *_source, i
 }
 
 /**
- * @brief <i>Z80</i>: emit code to mask with "and" a value of 32 bit
+ * @brief <i>SC616860</i>: emit code to mask with "and" a value of 32 bit
  * 
  * @param _environment Current calling environment
  * @param _source Value to mask (and destination of mask operation)
@@ -3312,7 +3509,7 @@ void sc61860_math_and_const_32bit( Environment * _environment, char *_source, in
 }
 
 /**
- * @brief <i>Z80</i>: emit code to combine nibbles
+ * @brief <i>SC616860</i>: emit code to combine nibbles
  * 
  * @todo Not yet implemented
  */
@@ -4071,7 +4268,7 @@ void sc61860_busy_wait( Environment * _environment, char * _timing ) {
 }
 
 /**
- * @brief <i>Z80</i>: emit code to send one byte throught a I/O port
+ * @brief <i>SC616860</i>: emit code to send one byte throught a I/O port
  * 
  * @param _environment Current calling environment
  * @param _port Port to connect
@@ -6587,14 +6784,14 @@ void sc61860_string_sub( Environment * _environment, char * _source, char * _sou
     // done()
 }
 
-static char Z80_BLIT_REGISTER[][2] = {
+static char SC616860_BLIT_REGISTER[][2] = {
     "L",
     "H",
     "E",
     "D"
 };
 
-#define Z80_BLII_REGISTER_COUNT ( sizeof( Z80_BLIT_REGISTER ) / 2 )
+#define SC616860_BLII_REGISTER_COUNT ( sizeof( SC616860_BLIT_REGISTER ) / 2 )
 
 void sc61860_blit_initialize( Environment * _environment ) {
 
@@ -6618,10 +6815,10 @@ void sc61860_blit_finalize( Environment * _environment ) {
 
 char * sc61860_blit_register_name(  Environment * _environment, int _register ) {
     
-    if ( _register < Z80_BLII_REGISTER_COUNT ) {
-        return &Z80_BLIT_REGISTER[_register][0];
+    if ( _register < SC616860_BLII_REGISTER_COUNT ) {
+        return &SC616860_BLIT_REGISTER[_register][0];
     } else {
-        return &Z80_BLIT_REGISTER[ (_register & 0xff00) >> 8][0];
+        return &SC616860_BLIT_REGISTER[ (_register & 0xff00) >> 8][0];
     }
 }
 
@@ -6629,7 +6826,7 @@ int sc61860_blit_alloc_register(  Environment * _environment ) {
 
     int reg = 0;
 
-    for( reg = 0; reg < Z80_BLII_REGISTER_COUNT; ++reg ) {
+    for( reg = 0; reg < SC616860_BLII_REGISTER_COUNT; ++reg ) {
         int registerMask = ( 0x01 << reg );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( ! isRegisterUsed ) {
@@ -6645,11 +6842,11 @@ int sc61860_blit_alloc_register(  Environment * _environment ) {
         CRITICAL_BLIT_ALLOC_MEMORY_EXHAUSTED( );
     }
 
-    for( reg = 0; reg < Z80_BLII_REGISTER_COUNT; ++reg ) {
+    for( reg = 0; reg < SC616860_BLII_REGISTER_COUNT; ++reg ) {
         int registerMask = ( 0x10 << reg );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( ! isRegisterUsed ) {
-            // outline1( "LD A, %s", &Z80_BLIT_REGISTER[reg][0] );
+            // outline1( "LD A, %s", &SC616860_BLIT_REGISTER[reg][0] );
             // outline2( "LD (%sbs+0x%2.2x), A",  _environment->blit.realName, location );
             _environment->blit.freeRegisters |= registerMask;
             // printf( "sc61860_blit_alloc_register() -> %4.4x 0x%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
@@ -6668,7 +6865,7 @@ void sc61860_blit_free_register(  Environment * _environment, int _register ) {
     int location = _register & 0xff;
     int reg;
 
-    if ( _register < Z80_BLII_REGISTER_COUNT ) {
+    if ( _register < SC616860_BLII_REGISTER_COUNT ) {
         int registerMask = ( 0x01 << _register );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( isRegisterUsed ) {
@@ -6682,7 +6879,7 @@ void sc61860_blit_free_register(  Environment * _environment, int _register ) {
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( isRegisterUsed ) {
             // outline2( "LD A, (%sbs+0x%2.2x)",  _environment->blit.realName, location );
-            // outline1( "LD %s, A", &Z80_BLIT_REGISTER[reg][0] );
+            // outline1( "LD %s, A", &SC616860_BLIT_REGISTER[reg][0] );
             _environment->blit.freeRegisters &= ~registerMask;
             return;
         }
@@ -6693,7 +6890,7 @@ void sc61860_blit_free_register(  Environment * _environment, int _register ) {
 }
 
 /**
- * @brief <i>CPU Z80</i>: emit code to store n bit
+ * @brief <i>CPU SC616860</i>: emit code to store n bit
  * 
  * @param _environment Current calling environment
  * @param _destination Destination of store
@@ -6754,7 +6951,7 @@ void sc61860_store_nbit( Environment * _environment, char *_destination, int _n,
 }
 
 /**
- * @brief <i>CPU Z80</i>: emit code to store n bit
+ * @brief <i>CPU SC616860</i>: emit code to store n bit
  * 
  * @param _environment Current calling environment
  * @param _destination Destination of store
@@ -6825,7 +7022,7 @@ void sc61860_move_nbit( Environment * _environment, int _n, char * _source, char
 }
 
 /**
- * @brief <i>CPU Z80</i>: emit code to compare n bit
+ * @brief <i>CPU SC616860</i>: emit code to compare n bit
  * 
  * @param _environment Current calling environment
  * @param _destination Destination of store
