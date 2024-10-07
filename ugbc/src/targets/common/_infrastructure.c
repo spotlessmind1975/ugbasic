@@ -3523,6 +3523,113 @@ void variable_add_inplace_mt( Environment * _environment, char * _source, char *
 
 }
 
+void variable_xor_inplace( Environment * _environment, char * _source, int _destination ) {
+
+    if ( _destination ) {
+
+        Variable * source = variable_retrieve( _environment, _source );
+
+        switch( VT_BITWIDTH( source->type ) ) {
+            case 32:
+                cpu_xor_32bit_const( _environment, source->realName, _destination, source->realName );
+                break;
+            case 16:
+                cpu_xor_16bit_const( _environment, source->realName, _destination, source->realName );
+                break;
+            case 8:
+                cpu_xor_8bit_const( _environment, source->realName, _destination, source->realName );
+                break;
+            case 1:
+            case 0:
+                CRITICAL_XOR_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+        }
+
+    }
+}
+
+/**
+ * @brief Add two variable and return the sum of them on the first
+ * 
+ * This function allows you to sum the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name and destination of sum
+ * @param _destination Value to sum
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+void variable_xor_inplace_vars( Environment * _environment, char * _source, char * _destination ) {
+
+    Variable * source = variable_retrieve( _environment, _source );
+    Variable * target = variable_retrieve( _environment, _destination );
+
+    if ( source->type != target->type ) {
+        target = variable_cast( _environment, _destination, source->type );
+        if ( ! target ) {
+            CRITICAL_VARIABLE(_destination);
+        }
+    }
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_xor_32bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 16:
+            cpu_xor_16bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 8:
+            cpu_xor_8bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 1:
+        case 0:
+            CRITICAL_XOR_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+    }
+
+}
+
+/**
+ * @brief Add two variable and return the sum of them on the first
+ * 
+ * This function allows you to sum the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name and destination of sum
+ * @param _destination Value to sum
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+void variable_xor_inplace_mt( Environment * _environment, char * _source, char * _destination ) {
+
+    parser_array_init( _environment );
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+    Variable * array = variable_retrieve( _environment, _source );
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( _source );
+    }
+    Variable * value = variable_move_from_array( _environment, array->name );
+    parser_array_cleanup( _environment );
+
+    variable_xor_inplace_vars( _environment, value->name, _destination );
+
+    parser_array_init( _environment );    
+    parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+    array = variable_retrieve( _environment, _source );
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( _source );
+    }
+    variable_move_array( _environment, array->name, value->name );
+    parser_array_cleanup( _environment );
+
+}
+
 /**
  * @brief Make a differenze between two variable and return the difference of them
  * 
@@ -8075,7 +8182,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                     }
 
                     cpu_move_8bit( _environment, precalculatedOffset->realName, result->realName );
-                    
+
                     return result;
                 }
             }

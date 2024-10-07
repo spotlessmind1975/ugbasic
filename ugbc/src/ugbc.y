@@ -6269,6 +6269,18 @@ add_definition :
     }
     ;
 
+xor_definition :
+    Identifier OP_COMMA expr {
+        variable_xor_inplace_vars( _environment, $1, $3 );
+    }
+    | Identifier OP_COMMA OP_HASH const_expr {
+        variable_xor_inplace( _environment, $1, $4 );
+    }
+    | OSP Identifier CSP OP_COMMA expr {
+        variable_xor_inplace_mt( _environment, $2, $5 );
+    }
+    ;
+
 swap_definition :
     Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional {
         if ( $2 != $5 ) {
@@ -9689,6 +9701,7 @@ statement2nc:
   | ADD add_definition
   | MUL mul_definition
   | DIV div_definition
+  | XOR xor_definition
   | POKE poke_definition
   | POKEW pokew_definition
   | POKED poked_definition
