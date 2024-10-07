@@ -85,14 +85,12 @@ Variable * absolute( Environment * _environment, char * _value ) {
     switch( VT_BITWIDTH( value->type ) ) {
         case 32:
             if ( VT_SIGNED( value->type ) ) {
-                Variable * compareResult = variable_temporary( _environment, VT_SBYTE, "(result of ABS)");
 
                 #if CPU_BIG_ENDIAN
-                    cpu_less_than_8bit_const( _environment, value->realName, 0x80, compareResult->realName, 0, 0 );
+                    cpu_less_than_and_branch_8bit_const( _environment, value->realName, 0x80, positiveLabel, 0, 0 );
                 #else
-                    cpu6502_less_than_8bit_const( _environment, address_displacement( _environment, value->realName, "3" ), 0x80, compareResult->realName, 0, 0 );
+                    cpu_less_than_and_branch_8bit_const( _environment, address_displacement( _environment, value->realName, "3" ), 0x80, positiveLabel, 0, 0 );
                 #endif
-                cpu_compare_and_branch_8bit_const( _environment, compareResult->realName, 0xff, positiveLabel, 1 );
 
                 cpu_label( _environment, negativeLabel );
                 cpu_complement2_32bit( _environment, value->realName, result->realName );
@@ -111,11 +109,10 @@ Variable * absolute( Environment * _environment, char * _value ) {
                 Variable * compareResult = variable_temporary( _environment, VT_SBYTE, "(result of ABS)");
 
                 #if CPU_BIG_ENDIAN
-                    cpu_less_than_8bit_const( _environment, value->realName, 0x80, compareResult->realName, 0, 0 );
+                    cpu_less_than_and_branch_8bit_const( _environment, value->realName, 0x80, positiveLabel, 0, 0 );
                 #else
-                    cpu6502_less_than_8bit_const( _environment, address_displacement( _environment, value->realName, "1" ), 0x80, compareResult->realName, 0, 0 );
+                    cpu_less_than_and_branch_8bit_const( _environment, address_displacement( _environment, value->realName, "1" ), 0x80, positiveLabel, 0, 0 );
                 #endif
-                cpu_compare_and_branch_8bit_const( _environment, compareResult->realName, 0xff, positiveLabel, 1 );
 
                 cpu_label( _environment, negativeLabel );
                 cpu_complement2_16bit( _environment, value->realName, result->realName );
@@ -133,8 +130,7 @@ Variable * absolute( Environment * _environment, char * _value ) {
             if ( VT_SIGNED( value->type ) ) {
                 Variable * compareResult = variable_temporary( _environment, VT_SBYTE, "(result of ABS)");
 
-                cpu_less_than_8bit_const( _environment, value->realName, 0x80, compareResult->realName, 0, 0 );
-                cpu_compare_and_branch_8bit_const( _environment, compareResult->realName, 0xff, positiveLabel, 1 );
+                cpu_less_than_and_branch_8bit_const( _environment, value->realName, 0x80, positiveLabel, 0, 0 );
 
                 cpu_label( _environment, negativeLabel );
                 cpu_complement2_8bit( _environment, value->realName, result->realName );
