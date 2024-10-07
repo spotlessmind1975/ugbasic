@@ -7244,12 +7244,24 @@ parameters_expr :
 
 values : 
       expr {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ++((struct _Environment *)_environment)->parameters;
+            Variable * v = variable_retrieve( _environment, $1 );
+            if ( v->initializedByConstant && VT_BITWIDTH( v->type ) > 0 ) {
+              ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = v->value;
+              ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+            } else {
+              ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+            }
+            ++((struct _Environment *)_environment)->parameters;
     }
     | expr OP_COMMA values {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ++((struct _Environment *)_environment)->parameters;
+            Variable * v = variable_retrieve( _environment, $1 );
+            if ( v->initializedByConstant && VT_BITWIDTH( v->type ) > 0 ) {
+                ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = v->value;
+                ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+            } else {
+                ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+            }
+            ++((struct _Environment *)_environment)->parameters;
     }
     ;
 

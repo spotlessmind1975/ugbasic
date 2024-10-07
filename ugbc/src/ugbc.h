@@ -743,7 +743,7 @@ typedef struct _Constant {
     int emitted;
 
     char * relative;
-    
+
     /** Link to the next constant (NULL if this is the last one) */
     struct _Constant * next;
 
