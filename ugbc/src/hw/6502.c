@@ -940,6 +940,45 @@ void cpu6502_less_than_8bit_const( Environment * _environment, char *_source, in
 
 }
 
+void cpu6502_less_than_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _equal, int _signed ) {
+
+    MAKE_LABEL
+
+    inline( cpu_less_than_8bit_const )
+
+        if ( _signed ) {
+            outline1("LDA %s", _source);
+            outline0("SEC" );
+            outline1("SBC #$%2.2x", ( _destination & 0xff ) );
+            outline1("BVC %sv0", label );
+            outline0("EOR #$80" );
+            outhead1("%sv0:", label );
+            outline1("BMI %smi", label );
+            if ( _equal ) {
+                outline1("BEQ %smi", label );
+            }
+            outhead1("%spl:", label );
+            outline1("JMP %sen", label );
+            outhead1("%smi:", label );
+            outline1("JMP %s", _label );
+            outhead1("%sen:", label);
+        } else {
+            outline1("LDA %s", _source);
+            outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+            outline1("BCC %s", label);
+            if ( _equal ) {
+                outline1("BEQ %s", label);
+            }
+            outline1("JMP %s_2", label);
+            outhead1("%s:", label);
+            outline1("JMP %s", _label);
+            outhead1("%s_2:", label);
+        }
+
+    no_embedded( cpu6502_less_than_8bit_const )
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
  * 

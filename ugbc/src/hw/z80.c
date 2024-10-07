@@ -1046,6 +1046,87 @@ void z80_less_than_8bit_const( Environment * _environment, char *_source, int _d
 
 }
 
+void z80_less_than_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _equal, int _signed ) {
+
+    MAKE_LABEL
+
+    inline( cpu_less_than_8bit )
+
+        if ( _signed ) {
+
+            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            outline0("SUB A, B");
+            if ( _equal ) {
+                outline1("JP  Z,%strue", label);
+            }
+            outline1("JP PO,%snoxor", label);
+            outline0("XOR $80");
+            outhead1("%snoxor:", label);
+            outline1("JP M,%strue", label);
+            outline1("JP PE,%sfalse", label);
+            outhead1("%sfalse:", label);
+            outline1("JP %sb2", label);
+            outhead1("%strue:", label);
+            outline1("JP %s", _label);
+            outhead1("%sb2:", label);
+
+        } else {
+
+            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            outline0("CP B");
+            outline1("JR C, %s", label);
+            if ( _equal ) {
+                outline1("JR Z, %s", label);
+            }
+            outline1("JP %sb2", label);
+            outhead1("%s:", label);
+            outline1("JP %s", _label);
+            outhead1("%sb2:", label);
+
+        }
+
+    embedded( cpu_less_than_8bit, src_hw_z80_cpu_less_than_8bit_asm );
+
+        if ( _signed ) {
+
+            outline1("LD A, $%2.2x", _destination);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE8S");
+            } else {
+                outline0("CALL CPULT8S");
+            }
+            outline0("CP 0");
+            outline1("JR Z, %sno", label);
+            outline1("JP %s", _label);
+            outhead1("%sno:", label);
+
+        } else {
+
+            outline1("LD A, $%2.2x", _destination);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE8U");
+            } else {
+                outline0("CALL CPULT8U");
+            }
+            outline0("CP 0");
+            outline1("JR Z, %sno", label);
+            outline1("JP %s", _label);
+            outhead1("%sno:", label);
+
+        }
+
+    done(  )
+
+}
+
 /**
  * @brief <i>Z80</i>: emit code to compare two 8 bit values
  * 

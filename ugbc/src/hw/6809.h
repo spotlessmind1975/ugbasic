@@ -90,6 +90,7 @@ void cpu6809_less_than_8bit( Environment * _environment, char *_source, char *_d
 void cpu6809_less_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void cpu6809_less_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void cpu6809_less_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
+void cpu6809_less_than_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _equal, int _signed );
 void cpu6809_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
 void cpu6809_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
 void cpu6809_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
@@ -389,6 +390,7 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_less_than_16bit_const( _environment, _source, _destination, _name, _equal, _signed ) cpu6809_less_than_16bit_const( _environment, _source, _destination, _name, _equal, _signed )
 #define cpu_less_than_32bit_const( _environment, _source, _destination, _name, _equal, _signed ) cpu6809_less_than_32bit_const( _environment, _source, _destination, _name, _equal, _signed )
 #define cpu_less_than_8bit_const( _environment, _source, _destination, _name, _equal, _signed ) cpu6809_less_than_8bit_const( _environment, _source, _destination, _name, _equal, _signed )
+#define cpu_less_than_and_branch_8bit_const( _environment, _source, _destination, _label, _equal, _signed ) cpu6809_less_than_and_branch_8bit_const( _environment, _source, _destination, _label, _equal, _signed )
 #define cpu_greater_than_16bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6809_greater_than_16bit( _environment, _source, _destination, _name, _equal, _signed )
 #define cpu_greater_than_32bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6809_greater_than_32bit( _environment, _source, _destination, _name, _equal, _signed )
 #define cpu_greater_than_8bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6809_greater_than_8bit( _environment, _source, _destination, _name, _equal, _signed )

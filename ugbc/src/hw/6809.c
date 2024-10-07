@@ -163,6 +163,34 @@ static void cpu6809_less_than_const( Environment * _environment, char *_source, 
     outline1("STB %s", _other );
 }
 
+static void cpu6809_less_than_and_branch_const( Environment * _environment, char *_source, int _destination,  char *_label, int _equal, int _signed, int _bits) {
+    char REG = _bits==16 ? 'X' : 'A';
+
+    MAKE_LABEL
+
+    outline0("; cpu6809_less_than_and_branch_const");
+    outline0("CLRB");
+    outline2("LD%c %s",  REG, _source);
+    outline2("CMP%c #$%4.4x", REG, _destination);
+
+    if ( _signed ) {
+        if ( _equal ) {
+            outline1("BGT %s", label);
+        } else {
+            outline1("BGE %s", label);
+        }
+    } else {
+        if ( _equal ) {
+            outline1("BHI %s", label);
+        } else {
+            outline1("BHS %s", label);
+        }
+    }
+
+    outline1("JMP %s", _label);
+    outhead1("%s", label );
+}
+
 static void cpu6809_greater_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits ) {
     char REG = _bits==16 ? 'X' : 'A';
 
@@ -870,6 +898,16 @@ void cpu6809_less_than_8bit_const( Environment * _environment, char *_source, in
     inline( cpu_less_than_8bit_const )
 
         cpu6809_less_than_const(_environment, _source, _destination, _other, _equal, _signed, 8);
+
+    no_embedded( cpu_less_than_8bit_const )
+
+}
+
+void cpu6809_less_than_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_less_than_8bit_const )
+
+        cpu6809_less_than_and_branch_const(_environment, _source, _destination, _other, _equal, _signed, 8);
 
     no_embedded( cpu_less_than_8bit_const )
 
