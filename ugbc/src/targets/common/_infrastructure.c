@@ -3367,26 +3367,29 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
 
 void variable_add_inplace( Environment * _environment, char * _source, int _destination ) {
 
-    Variable * source = variable_retrieve( _environment, _source );
-    if ( source->type == VT_STRING ) {
-        source = variable_cast( _environment, _source, VT_DSTRING );
-    }
+    if ( _destination ) {
 
-    switch( VT_BITWIDTH( source->type ) ) {
-        case 32:
-            cpu_math_add_32bit_const( _environment, source->realName, _destination, source->realName );
-            break;
-        case 16:
-            cpu_math_add_16bit_const( _environment, source->realName, _destination, source->realName );
-            break;
-        case 8:
-            cpu_math_add_8bit_const( _environment, source->realName, _destination, source->realName );
-            break;
-        case 1:
-        case 0:
-            CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
-    }
+        Variable * source = variable_retrieve( _environment, _source );
+        if ( source->type == VT_STRING ) {
+            source = variable_cast( _environment, _source, VT_DSTRING );
+        }
 
+        switch( VT_BITWIDTH( source->type ) ) {
+            case 32:
+                cpu_math_add_32bit_const( _environment, source->realName, _destination, source->realName );
+                break;
+            case 16:
+                cpu_math_add_16bit_const( _environment, source->realName, _destination, source->realName );
+                break;
+            case 8:
+                cpu_math_add_8bit_const( _environment, source->realName, _destination, source->realName );
+                break;
+            case 1:
+            case 0:
+                CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+        }
+
+    }
 }
 
 /**
@@ -7795,10 +7798,39 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
     MAKE_LABEL;
 
     if ( _array->bankAssigned == -1 && _array->size < 256 && VT_BITWIDTH( _array->arrayType ) == 8 ) {
+
+        if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
+            if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] == NULL ) {
+
+                char precalculatedOffsetName[MAX_TEMPORARY_STORAGE];
+                sprintf( precalculatedOffsetName, "%s%2.2xaddr", _array->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
+
+                Constant * precalculatedOffset = constant_find( _environment->constants, precalculatedOffsetName );
+                
+                if ( !precalculatedOffset ) {
+                    precalculatedOffset = malloc( sizeof( Constant ) );
+                    memset( precalculatedOffset, 0, sizeof( Constant ) );
+                    precalculatedOffset->name = strdup( precalculatedOffsetName );
+                    precalculatedOffset->realName = strdup( precalculatedOffsetName );
+                    precalculatedOffset->value = _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0];
+                    precalculatedOffset->type = CT_INTEGER;
+                    precalculatedOffset->relative = _array->realName;
+                    precalculatedOffset->next = _environment->constants;
+                    _environment->constants = precalculatedOffset;
+                }
+
+                cpu_move_8bit( _environment, _value->realName, precalculatedOffset->realName );
+                return;
+            }
+        }
+
         Variable * offset = calculate_offset_in_array_byte( _environment, _array->name );
         cpu_move_8bit_with_offset2( _environment, _value->realName, _array->realName, offset->realName );
         return;
+
     }
+
+    outline0("; variable_move_array_byte(2)");
 
     // @bit2: ok
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
@@ -8021,6 +8053,33 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
             Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
             cpu_move_16bit_indirect2_8bit( _environment, _array->realName, index->realName, result->realName );
         } else if ( _array->size < 256 && VT_BITWIDTH( _array->arrayType ) == 8 ) {
+
+            if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
+                if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] == NULL ) {
+
+                    char precalculatedOffsetName[MAX_TEMPORARY_STORAGE];
+                    sprintf( precalculatedOffsetName, "%s%2.2xaddr", _array->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
+
+                    Constant * precalculatedOffset = constant_find( _environment->constants, precalculatedOffsetName );
+                    
+                    if ( !precalculatedOffset ) {
+                        precalculatedOffset = malloc( sizeof( Constant ) );
+                        memset( precalculatedOffset, 0, sizeof( Constant ) );
+                        precalculatedOffset->name = strdup( precalculatedOffsetName );
+                        precalculatedOffset->realName = strdup( precalculatedOffsetName );
+                        precalculatedOffset->value = _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0];
+                        precalculatedOffset->type = CT_INTEGER;
+                        precalculatedOffset->relative = _array->realName;
+                        precalculatedOffset->next = _environment->constants;
+                        _environment->constants = precalculatedOffset;
+                    }
+
+                    cpu_move_8bit( _environment, precalculatedOffset->realName, result->realName );
+                    
+                    return result;
+                }
+            }
+
             Variable * offset = calculate_offset_in_array_byte( _environment, _array->name );
             cpu_move_8bit_indirect2_8bit( _environment, _array->realName, offset->realName, result->realName );
         } else if ( _array->size < 256 && VT_BITWIDTH( _array->arrayType ) == 16 ) {
