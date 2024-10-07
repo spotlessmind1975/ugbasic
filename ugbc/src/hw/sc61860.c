@@ -48,35 +48,27 @@ void sc61860_init( Environment * _environment ) {
 
 void sc61860_ztoa( Environment * _environment ) {
 
-    inline( cpu_ztoa )
+    MAKE_LABEL
 
-        MAKE_LABEL
-
-        outline1("JRZP %syes", label );
-        outline0("LIA 0");
-        outline1("JRP %s", label );
-        outhead1("%syes:", label );
-        outline0("LIA 0xff");
-        outhead1("%s:", label );
-
-    no_embedded( cpu_ztoa )
+    outline1("JRZP %syes", label );
+    outline0("LIA 0");
+    outline1("JRP %s", label );
+    outhead1("%syes:", label );
+    outline0("LIA 0xff");
+    outhead1("%s:", label );
 
 }
 
 void sc61860_ctoa( Environment * _environment ) {
 
-    inline( cpu_ctoa )
+    MAKE_LABEL
 
-        MAKE_LABEL
-
-        outline1("JRC %syes", label );
-        outline0("LIA 0");
-        outline1("JRP %s", label );
-        outhead1("%syes:", label );
-        outline0("LIA 0xff");
-        outhead1("%s:", label );
-
-    no_embedded( cpu_ctoa )
+    outline1("JRC %syes", label );
+    outline0("LIA 0");
+    outline1("JRP %s", label );
+    outhead1("%syes:", label );
+    outline0("LIA 0xff");
+    outhead1("%s:", label );
 
 }
 
@@ -96,17 +88,13 @@ void sc61860_ctoa( Environment * _environment ) {
  */
 void sc61860_beq( Environment * _environment, char * _label ) {
 
-    inline( cpu_beq )
+    MAKE_LABEL
 
-        MAKE_LABEL
-
-        outline1("JRZP %syes", label );
-        outline1("JRP %s", label );
-        outhead1("%syes:", label );
-        outline1("JP %s", _label);
-        outhead1("%s:", label );
-
-    no_embedded( cpu_beq )
+    outline1("JRZP %syes", label );
+    outline1("JRP %s", label );
+    outhead1("%syes:", label );
+    outline1("JP %s", _label);
+    outhead1("%s:", label );
 
 }
 
@@ -118,43 +106,31 @@ void sc61860_beq( Environment * _environment, char * _label ) {
  */
 void sc61860_bneq( Environment * _environment, char * _label ) {
 
-    inline( cpu_bneq )
+    MAKE_LABEL
 
-        MAKE_LABEL
-
-        outline1("JRNZP %syes", label );
-        outline1("JRP %s", label );
-        outhead1("%syes:", label );
-        outline1("JP %s", _label);
-        outhead1("%s:", label );
-
-    no_embedded( cpu_bneq )
+    outline1("JRNZP %syes", label );
+    outline1("JRP %s", label );
+    outhead1("%syes:", label );
+    outline1("JP %s", _label);
+    outhead1("%s:", label );
 
 }
 
 void sc61860_bveq( Environment * _environment, char * _value, char * _label ) {
 
-    // inline( cpu_bveq )
-
-        outline1("LIDP %s", _value);
-        outline0("LDD");
-        outline0("CPIA 0");
-        sc61860_beq( _environment, _label );
-
-    // no_embedded( cpu_bneq )
+    outline1("LIDP %s", _value);
+    outline0("LDD");
+    outline0("CPIA 0");
+    sc61860_beq( _environment, _label );
 
 }
 
 void sc61860_bvneq( Environment * _environment, char * _value, char * _label ) {
 
-    // inline( cpu_bvneq )
-
-        outline1("LIDP %s", _value);
-        outline0("LDD");
-        outline0("CPIA 0");
-        sc61860_bneq( _environment, _label );
-
-    // no_embedded( cpu_bvneq )
+    outline1("LIDP %s", _value);
+    outline0("LDD");
+    outline0("CPIA 0");
+    sc61860_bneq( _environment, _label );
 
 }
 
@@ -164,215 +140,191 @@ void sc61860_label( Environment * _environment, char * _label ) {
 
 void sc61860_peek( Environment * _environment, char * _address, char * _target ) {
 
-    inline( cpu_peek )
+    // DP <- address
+    outline1("LIDP %s", _address );
 
-        // DP <- address
-        outline1("LIDP %s", _address );
+    // X <- (DP)
+    outline0("LII 0x01" );
+    outline0("LP 0x04" );
+    outline0("MVWD");
 
-        // X <- (DP)
-        outline0("LII 0x01" );
-        outline0("LP 0x04" );
-        outline0("MVWD");
+    // A <- (X)
+    outline0("DX");
+    outline0("IXL");
 
-        // A <- (X)
-        outline0("DX");
-        outline0("IXL");
+    // DP <- target
+    outline1("LIDP %s", _target );
 
-        // DP <- target
-        outline1("LIDP %s", _target );
-
-        // (DP) <- A
-        outline0("STD");
-
-    no_embedded( cpu_peek )
+    // (DP) <- A
+    outline0("STD");
 
 }
 
 void sc61860_poke( Environment * _environment, char * _address, char * _source ) {
 
-    inline( cpu_poke )
+    // DP <- address
+    outline1("LIDP %s", _address );
 
-        // DP <- address
-        outline1("LIDP %s", _address );
+    // Y <- (DP)
+    outline0("LII 0x01" );
+    outline0("LP 0x06" );
+    outline0("MVWD");
 
-        // Y <- (DP)
-        outline0("LII 0x01" );
-        outline0("LP 0x06" );
-        outline0("MVWD");
+    // A <- (source)
+    outline1("LIDP %s", _source );
+    outline0("LDD");
 
-        // A <- (source)
-        outline1("LIDP %s", _source );
-        outline0("LDD");
-
-        // (Y) <- A
-        outline0("DY");
-        outline0("IYS");
-
-    no_embedded( cpu_poke )
+    // (Y) <- A
+    outline0("DY");
+    outline0("IYS");
 
 }
 
 void sc61860_peekw( Environment * _environment, char * _address, char * _target ) {
 
-    // inline( cpu_peek )
+    // DP <- address
+    outline1("LIDP %s", _address );
 
-        // DP <- address
-        outline1("LIDP %s", _address );
+    // X <- (DP)
+    outline0("LII 0x01" );
+    outline0("LP 0x04" );
+    outline0("MVWD");
 
-        // X <- (DP)
-        outline0("LII 0x01" );
-        outline0("LP 0x04" );
-        outline0("MVWD");
+    // A <- (X)
+    outline0("DX");
+    outline0("IXL");
 
-        // A <- (X)
-        outline0("DX");
-        outline0("IXL");
+    // DP <- target
+    outline1("LIDP %s", _target );
 
-        // DP <- target
-        outline1("LIDP %s", _target );
+    // (DP) <- A
+    outline0("STD");
 
-        // (DP) <- A
-        outline0("STD");
+    // A <- (X)
+    outline0("IXL");
 
-        // A <- (X)
-        outline0("IXL");
+    // DP <- target+1
+    outline1("LIDP %s", address_displacement( _environment, _target, "1" ) );
 
-        // DP <- target+1
-        outline1("LIDP %s", address_displacement( _environment, _target, "1" ) );
-
-        // (DP) <- A
-        outline0("STD");
-
-    // no_embedded( cpu_peek )
+    // (DP) <- A
+    outline0("STD");
 
 }
 
 void sc61860_pokew( Environment * _environment, char * _address, char * _source ) {
 
-    // inline( cpu_poke )
+    // DP <- address
+    outline1("LIDP %s", _address );
 
-        // DP <- address
-        outline1("LIDP %s", _address );
+    // Y <- (DP)
+    outline0("LII 0x01" );
+    outline0("LP 0x06" );
+    outline0("MVWD");
 
-        // Y <- (DP)
-        outline0("LII 0x01" );
-        outline0("LP 0x06" );
-        outline0("MVWD");
+    // A <- (source)
+    outline1("LIDP %s", _source );
+    outline0("LDD");
 
-        // A <- (source)
-        outline1("LIDP %s", _source );
-        outline0("LDD");
+    // (Y) <- A
+    outline0("DY");
+    outline0("IYS");
 
-        // (Y) <- A
-        outline0("DY");
-        outline0("IYS");
+    // A <- (source+1)
+    outline1("LIDP %s", address_displacement( _environment, _source, "1" ) );
+    outline0("LDD");
 
-        // A <- (source+1)
-        outline1("LIDP %s", address_displacement( _environment, _source, "1" ) );
-        outline0("LDD");
-
-        // (Y) <- A
-        outline0("IYS");
-
-    // no_embedded( cpu_poke )
+    // (Y) <- A
+    outline0("IYS");
 
 }
 
 void sc61860_peekd( Environment * _environment, char * _address, char * _target ) {
 
-    // inline( cpu_peek )
+    // DP <- address
+    outline1("LIDP %s", _address );
 
-        // DP <- address
-        outline1("LIDP %s", _address );
+    // X <- (DP)
+    outline0("LII 0x01" );
+    outline0("LP 0x04" );
+    outline0("MVWD");
 
-        // X <- (DP)
-        outline0("LII 0x01" );
-        outline0("LP 0x04" );
-        outline0("MVWD");
+    // A <- (X)
+    outline0("DX");
+    outline0("IXL");
 
-        // A <- (X)
-        outline0("DX");
-        outline0("IXL");
+    // DP <- target
+    outline1("LIDP %s", _target );
 
-        // DP <- target
-        outline1("LIDP %s", _target );
+    // (DP) <- A
+    outline0("STD");
 
-        // (DP) <- A
-        outline0("STD");
+    // A <- (X)
+    outline0("IXL");
 
-        // A <- (X)
-        outline0("IXL");
+    // DP <- target+1
+    outline1("LIDP %s", address_displacement( _environment, _target, "1" ) );
 
-        // DP <- target+1
-        outline1("LIDP %s", address_displacement( _environment, _target, "1" ) );
+    // (DP) <- A
+    outline0("STD");
 
-        // (DP) <- A
-        outline0("STD");
+    // A <- (X)
+    outline0("IXL");
 
-        // A <- (X)
-        outline0("IXL");
+    // DP <- target+2
+    outline1("LIDP %s", address_displacement( _environment, _target, "2" ) );
 
-        // DP <- target+2
-        outline1("LIDP %s", address_displacement( _environment, _target, "2" ) );
+    // (DP) <- A
+    outline0("STD");
 
-        // (DP) <- A
-        outline0("STD");
+    // A <- (X)
+    outline0("IXL");
 
-        // A <- (X)
-        outline0("IXL");
+    // DP <- target+1
+    outline1("LIDP %s", address_displacement( _environment, _target, "3" ) );
 
-        // DP <- target+1
-        outline1("LIDP %s", address_displacement( _environment, _target, "3" ) );
-
-        // (DP) <- A
-        outline0("STD");
-
-    // no_embedded( cpu_peek )
+    // (DP) <- A
+    outline0("STD");
 
 }
 
 void sc61860_poked( Environment * _environment, char * _address, char * _source ) {
 
-    // inline( cpu_poke )
+    // DP <- address
+    outline1("LIDP %s", _address );
 
-        // DP <- address
-        outline1("LIDP %s", _address );
+    // Y <- (DP)
+    outline0("LII 0x01" );
+    outline0("LP 0x06" );
+    outline0("MVWD");
 
-        // Y <- (DP)
-        outline0("LII 0x01" );
-        outline0("LP 0x06" );
-        outline0("MVWD");
+    // A <- (source)
+    outline1("LIDP %s", _source );
+    outline0("LDD");
 
-        // A <- (source)
-        outline1("LIDP %s", _source );
-        outline0("LDD");
+    // (Y) <- A
+    outline0("DY");
+    outline0("IYS");
 
-        // (Y) <- A
-        outline0("DY");
-        outline0("IYS");
+    // A <- (source+1)
+    outline1("LIDP %s", address_displacement( _environment, _source, "1" ) );
+    outline0("LDD");
 
-        // A <- (source+1)
-        outline1("LIDP %s", address_displacement( _environment, _source, "1" ) );
-        outline0("LDD");
+    // (Y) <- A
+    outline0("IYS");
 
-        // (Y) <- A
-        outline0("IYS");
+    // A <- (source+2)
+    outline1("LIDP %s", address_displacement( _environment, _source, "2" ) );
+    outline0("LDD");
 
-        // A <- (source+2)
-        outline1("LIDP %s", address_displacement( _environment, _source, "2" ) );
-        outline0("LDD");
+    // (Y) <- A
+    outline0("IYS");
 
-        // (Y) <- A
-        outline0("IYS");
+    // A <- (source+3)
+    outline1("LIDP %s", address_displacement( _environment, _source, "3" ) );
+    outline0("LDD");
 
-        // A <- (source+3)
-        outline1("LIDP %s", address_displacement( _environment, _source, "3" ) );
-        outline0("LDD");
-
-        // (Y) <- A
-        outline0("IYS");
-
-    // no_embedded( cpu_poke )
+    // (Y) <- A
+    outline0("IYS");
 
 }
 
@@ -391,46 +343,38 @@ void sc61860_poked( Environment * _environment, char * _address, char * _source 
  */
 void sc61860_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
 
-    // inline( cpu_fill_blocks )
+    MAKE_LABEL
 
-        MAKE_LABEL
+    // DP <- blocks
+    outline1("LIDP %s", _blocks);
+    // J <- (DP) [blocks]
+    outline0("LII 0x00" );
+    outline0("LP 0x01" );
+    outline0("MVWD");
 
-        // outline1("LD A, (%s)", _pattern);
-        // outline1("LD HL, (%s)", _address);
-        // outline0("LD (HL),A")
-        // outline0("LD E,L");
-        // outline0("LD D,H");
-        // outline0("INC DE");
-        // outline0("LD (DE),A")
-        // outline0("LD C,0");
-        // outline1("LD A, (%s)", _blocks);
-        // outline0("CP 0");
-        // outline1("JR Z, %s// done", label);
-        // outline0("DEC A");
-        // outline0("LD B,A");
-        // outline0("LDIR");
+    // DP <- _pattern
+    outline1("LIDP %s", _pattern);
+    // A <- (DP) [pattern]
+    outline0("LDD");
 
-        // outline1("LD A, (%s)", _pattern);
-        // outline0("LD (HL),A")
-        // outline0("LD E,L");
-        // outline0("LD D,H");
-        // outline0("INC DE");
-        // outline0("LD (DE),A")
-        // outline0("LD C,255");
-        // outline0("LD A,0");
-        // outline0("LD B,A");
-        // outline0("LDIR");
-        // outhead1("%s// done:", label);
+    // DP <- address
+    outline1("LIDP %s", _address);
+    // X <- (address)
+    outline0("LII 0x01" );
+    outline0("LP 0x04" );
+    outline0("MVWD");
+    outline0("DX");
+    outline0("IX");
 
-    // embedded( cpu_fill_blocks, src_hw_sc61860_cpu_fill_blocks_asm );
+    outhead1("%s:", label );
 
-        // outline1("LD A, (%s)", _blocks);
-        // outline0("LD B, A");
-        // outline1("LD A, (%s)", _pattern);
-        // outline1("LD HL, (%s)", _address);
-        // outline0("CALL CPUFILLBLOCKS");
+    // (&1F): [(DP) <- A; DP++] * I
+    outline0("LII 0xff");
+    outline0("FILD");
 
-    // done(  )
+    // --J; REPEAT UNTIL J = 0
+    outline0("DECJ");
+    outline1("JRNZ %s", label);
 
 }
 
@@ -451,30 +395,73 @@ void sc61860_fill( Environment * _environment, char * _address, char * _bytes, i
 
     MAKE_LABEL
 
-    // no_inline( cpu_fill )
+    if ( _bytes_width == 8 ) {
 
-    // embedded( cpu_fill, src_hw_sc61860_cpu_fill_asm );
+        // DP <- bytes
+        outline1("LIDP %s", _bytes);
+        // I <- (DP) [bytes]
+        outline0("LII 0x00" );
+        outline0("LP 0x00" );
+        outline0("MVWD");
 
-        if ( _bytes_width == 8 ) {
-            // outline1("LD A, (%s)", _bytes);
-            // outline0("LD C, A");
-        } else {
-            // outline1("LD A, (%s)", _bytes);
-            // outline0("LD C, A");
-            // outline1("LD A, (%s+1)", _bytes);
-            // outline0("LD B, A");
-        }
+        // DP <- _pattern
+        outline1("LIDP %s", _pattern);
+        // A <- (DP) [pattern]
+        outline0("LDD");
 
-        // outline1("LD A, (%s)", _pattern);
-        // outline1("LD HL, (%s)", _address);
+        // DP <- address
+        outline1("LIDP %s", _address);
+        // X <- (address)
+        outline0("LII 0x01" );
+        outline0("LP 0x04" );
+        outline0("MVWD");
+        outline0("DX");
+        outline0("IX");
 
-        if ( _bytes_width == 8 ) {
-            // outline0("CALL CPUFILL8");
-        } else {
-            // outline0("CALL CPUFILL16");
-        }
+        // (&1F): [(DP) <- A; DP++] * I
+        outline0("FILD");
 
-    // done(  )
+    } else {
+
+        // DP <- bytes
+        outline1("LIDP %s", _bytes);
+        // I <- (DP) [bytes]
+        outline0("LII 0x00" );
+        outline0("LP 0x00" );
+        outline0("MVWD");
+
+        // DP <- _pattern
+        outline1("LIDP %s", _pattern);
+        // A <- (DP) [pattern]
+        outline0("LDD");
+
+        // DP <- address
+        outline1("LIDP %s", _address);
+        // X <- (address)
+        outline0("LII 0x01" );
+        outline0("LP 0x04" );
+        outline0("MVWD");
+        outline0("DX");
+        outline0("IX");
+
+        // (&1F): [(DP) <- A; DP++] * I
+        outline0("FILD");
+
+        outline0("DECJ");
+        outline1("JRZ %sdone", label);
+
+        outhead1("%s:", label );
+
+        // --J; REPEAT UNTIL J = 0
+        // (&1F): [(DP) <- A; DP++] * I
+        outline0("LII 0xff");
+        outline0("FILD");
+        outline0("DECJ");
+        outline1("JRNZ %s", label);
+
+        outhead1("%sdone:", label );
+    }
+
 }
 
 /**
@@ -494,29 +481,66 @@ void sc61860_fill_size( Environment * _environment, char * _address, int _bytes,
 
     MAKE_LABEL
 
-    // no_inline( cpu_fill )
+    if ( _bytes < 256 ) {
 
-    // embedded( cpu_fill, src_hw_sc61860_cpu_fill_asm );
+        // DP <- bytes
+        outline1("LIDP %s", _bytes);
+        // I <- (DP) [bytes]
+        outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
 
-        // outline1("LD A, 0x%2.2x", (unsigned char) ( _bytes & 0xff ) );
-        // outline0("LD C, A");
+        // DP <- _pattern
+        outline1("LIDP %s", _pattern);
+        // A <- (DP) [pattern]
+        outline0("LDD");
 
-        if ( _bytes < 256 ) {
+        // DP <- address
+        outline1("LIDP %s", _address);
+        // X <- (address)
+        outline0("LII 0x01" );
+        outline0("LP 0x04" );
+        outline0("MVWD");
+        outline0("DX");
+        outline0("IX");
 
-        } else {
-            // outline1("LD A, 0x%2.2x", (unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
-            // outline0("LD B, A");
-        }
+        // (&1F): [(DP) <- A; DP++] * I
+        outline0("FILD");
 
-        // outline1("LD A, (%s)", _pattern);
-        // outline1("LD HL, (%s)", _address);
-        if ( _bytes < 256 ) {
-            // outline0("CALL CPUFILL8");
-        } else {
-            // outline0("CALL CPUFILL16");
-        }
+    } else {
 
-    // done(  )
+        outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
+        outline1("LIJ 0x%2.2x", (unsigned char)((_bytes>>8)&0xff) );
+
+        // DP <- _pattern
+        outline1("LIDP %s", _pattern);
+        // A <- (DP) [pattern]
+        outline0("LDD");
+
+        // DP <- address
+        outline1("LIDP %s", _address);
+        // X <- (address)
+        outline0("LII 0x01" );
+        outline0("LP 0x04" );
+        outline0("MVWD");
+        outline0("DX");
+        outline0("IX");
+
+        // (&1F): [(DP) <- A; DP++] * I
+        outline0("FILD");
+
+        outline0("DECJ");
+        outline1("JRZ %sdone", label);
+
+        outhead1("%s:", label );
+
+        // --J; REPEAT UNTIL J = 0
+        // (&1F): [(DP) <- A; DP++] * I
+        outline0("LII 0xff");
+        outline0("FILD");
+        outline0("DECJ");
+        outline1("JRNZ %s", label);
+
+        outhead1("%sdone:", label );
+    }
 
 }
 
@@ -537,29 +561,61 @@ void sc61860_fill_size_value( Environment * _environment, char * _address, int _
 
     MAKE_LABEL
 
-    // no_inline( cpu_fill )
+    if ( _bytes < 256 ) {
 
-    // embedded( cpu_fill, src_hw_sc61860_cpu_fill_asm );
+        // DP <- bytes
+        outline1("LIDP %s", _bytes);
+        // I <- (DP) [bytes]
+        outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
 
-        // outline1("LD A, 0x%2.2x", (unsigned char) ( _bytes & 0xff ) );
-        // outline0("LD C, A");
+        outline1("LIA 0x%2.2x", _pattern);
 
-        if ( _bytes < 256 ) {
+        // DP <- address
+        outline1("LIDP %s", _address);
+        // X <- (address)
+        outline0("LII 0x01" );
+        outline0("LP 0x04" );
+        outline0("MVWD");
+        outline0("DX");
+        outline0("IX");
 
-        } else {
-            // outline1("LD A, 0x%2.2x", (unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
-            // outline0("LD B, A");
-        }
+        // (&1F): [(DP) <- A; DP++] * I
+        outline0("FILD");
 
-        // outline1("LD A, 0x%2.2x", _pattern);
-        // outline1("LD HL, (%s)", _address);
-        if ( _bytes < 256 ) {
-            // outline0("CALL CPUFILL8");
-        } else {
-            // outline0("CALL CPUFILL16");
-        }
+    } else {
 
-    // done(  )
+        outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
+        outline1("LIJ 0x%2.2x", (unsigned char)((_bytes>>8)&0xff) );
+
+        // A <- pattern
+        outline1("LIA 0x%2.2x", _pattern);
+
+        // DP <- address
+        outline1("LIDP %s", _address);
+        // X <- (address)
+        outline0("LII 0x01" );
+        outline0("LP 0x04" );
+        outline0("MVWD");
+        outline0("DX");
+        outline0("IX");
+
+        // (&1F): [(DP) <- A; DP++] * I
+        outline0("FILD");
+
+        outline0("DECJ");
+        outline1("JRZ %sdone", label);
+
+        outhead1("%s:", label );
+
+        // --J; REPEAT UNTIL J = 0
+        // (&1F): [(DP) <- A; DP++] * I
+        outline0("LII 0xff");
+        outline0("FILD");
+        outline0("DECJ");
+        outline1("JRNZ %s", label);
+
+        outhead1("%sdone:", label );
+    }
 
 }
 
@@ -580,19 +636,37 @@ void sc61860_fill_direct( Environment * _environment, char * _address, char * _b
 
     MAKE_LABEL
 
-    // no_inline( cpu_fill )
+    // DP <- bytes
+    outline1("LIDP %s", _bytes);
+    // I <- (DP) [bytes]
+    outline0("LII 0x00" );
+    outline0("LP 0x00" );
+    outline0("MVWD");
 
-    // embedded( cpu_fill, src_hw_sc61860_cpu_fill_asm );
+    // DP <- _pattern
+    outline1("LIDP %s", _pattern);
+    // A <- (DP) [pattern]
+    outline0("LDD");
 
-        // outline1("LD A, (%s)", _bytes);
-        // outline0("LD C, A");
-        // outline1("LD A, (%s+1)", _bytes);
-        // outline0("LD B, A");
-        // outline1("LD A, (%s)", _pattern);
-        // outline1("LD HL, %s", _address);
-        // outline0("CALL CPUFILL16");
+    // DP <- address
+    outline1("LIDP %s", _address);
 
-    // done(  )
+    // (&1F): [(DP) <- A; DP++] * I
+    outline0("FILD");
+
+    outline0("DECJ");
+    outline1("JRZ %sdone", label);
+
+    outhead1("%s:", label );
+
+    // --J; REPEAT UNTIL J = 0
+    // (&1F): [(DP) <- A; DP++] * I
+    outline0("LII 0xff");
+    outline0("FILD");
+    outline0("DECJ");
+    outline1("JRNZ %s", label);
+
+    outhead1("%sdone:", label );
 
 }
 
@@ -613,29 +687,36 @@ void sc61860_fill_direct_size( Environment * _environment, char * _address, int 
 
     MAKE_LABEL
 
-    // no_inline( cpu_fill )
+    // DP <- bytes
+    outline1("LIDP %s", _bytes);
+    // I <- (DP) [bytes]
+    outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
+    outline1("LIJ 0x%2.2x", (unsigned char)((_bytes>>8)&0xff) );
 
-    // embedded( cpu_fill, src_hw_sc61860_cpu_fill_asm );
+    // DP <- _pattern
+    outline1("LIDP %s", _pattern);
+    // A <- (DP) [pattern]
+    outline0("LDD");
 
-        // outline1("LD A, 0x%2.2x", (unsigned char) ( _bytes & 0xff ) );
-        // outline0("LD C, A");
+    // DP <- address
+    outline1("LIDP %s", _address);
 
-        if ( _bytes < 256 ) {
+    // (&1F): [(DP) <- A; DP++] * I
+    outline0("FILD");
 
-        } else {
-            // outline1("LD A, 0x%2.2x", (unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
-            // outline0("LD B, A");
-        }
+    outline0("DECJ");
+    outline1("JRZ %sdone", label);
 
-        // outline1("LD A, (%s)", _pattern);
-        // outline1("LD HL, %s", _address);
-        if ( _bytes < 256 ) {
-            // outline0("CALL CPUFILL8");
-        } else {
-            // outline0("CALL CPUFILL16");
-        }
+    outhead1("%s:", label );
 
-    // done(  )
+    // --J; REPEAT UNTIL J = 0
+    // (&1F): [(DP) <- A; DP++] * I
+    outline0("LII 0xff");
+    outline0("FILD");
+    outline0("DECJ");
+    outline1("JRNZ %s", label);
+
+    outhead1("%sdone:", label );
 
 }
 
@@ -655,30 +736,35 @@ void sc61860_fill_direct_size( Environment * _environment, char * _address, int 
 void sc61860_fill_direct_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
     MAKE_LABEL
-    
-    // no_inline( cpu_fill )
 
-    // embedded( cpu_fill, src_hw_sc61860_cpu_fill_asm );
+    // DP <- bytes
+    outline1("LIDP %s", _bytes);
+    // I <- (DP) [bytes]
+    outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
+    outline1("LIJ 0x%2.2x", (unsigned char)((_bytes>>8)&0xff) );
 
-        // outline1("LD A, 0x%2.2x", (unsigned char) ( _bytes & 0xff ) );
-        // outline0("LD C, A");
+    // DP <- _pattern
+    outline1("LIA 0x%2.2x", (unsigned char)(_pattern&0xff) );
 
-        if ( _bytes < 256 ) {
+    // DP <- address
+    outline1("LIDP %s", _address);
 
-        } else {
-            // outline1("LD A, 0x%2.2x", (unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
-            // outline0("LD B, A");
-        }
+    // (&1F): [(DP) <- A; DP++] * I
+    outline0("FILD");
 
-        // outline1("LD A, 0x%2.2x", _pattern);
-        // outline1("LD HL, %s", _address);
-        if ( _bytes < 256 ) {
-            // outline0("CALL CPUFILL8");
-        } else {
-            // outline0("CALL CPUFILL16");
-        }
+    outline0("DECJ");
+    outline1("JRZ %sdone", label);
 
-    // done(  )
+    outhead1("%s:", label );
+
+    // --J; REPEAT UNTIL J = 0
+    // (&1F): [(DP) <- A; DP++] * I
+    outline0("LII 0xff");
+    outline0("FILD");
+    outline0("DECJ");
+    outline1("JRNZ %s", label);
+
+    outhead1("%sdone:", label );
     
 }
 
@@ -695,14 +781,10 @@ void sc61860_fill_direct_size_value( Environment * _environment, char * _address
  */
 void sc61860_move_8bit( Environment * _environment, char *_source, char *_destination ) {
     
-    inline( cpu_move_8bit )
-
-        outline1("LIDP %s", _source);
-        outline0("LDD");
-        outline1("LIDP %s", _destination);
-        outline0("STD");
-
-    no_embedded( cpu_move_8bit )
+    outline1("LIDP %s", _source);
+    outline0("LDD");
+    outline1("LIDP %s", _destination);
+    outline0("STD");
 
 }
 
@@ -715,13 +797,9 @@ void sc61860_move_8bit( Environment * _environment, char *_source, char *_destin
  */
 void sc61860_store_8bit( Environment * _environment, char *_destination, int _value ) {
 
-    inline( cpu_store_8bit )
-
-        outline1("LIA 0x%2.2x", ( _value & 0xff ) );
-        outline1("LIDP %s", _destination);
-        outline0("STD");
-
-    no_embedded( cpu_store_8bit )
+    outline1("LIA 0x%2.2x", ( _value & 0xff ) );
+    outline1("LIDP %s", _destination);
+    outline0("STD");
 
 }
 
@@ -734,42 +812,34 @@ void sc61860_store_8bit( Environment * _environment, char *_destination, int _va
  */
 void sc61860_store_char( Environment * _environment, char *_destination, int _value ) {
 
-    inline( cpu_store_char )
-
-        outline1("LIA 0x%2.2x", ( _value & 0xff ) );
-        outline1("LIDP %s", _destination);
-        outline0("STD");
-
-    no_embedded( cpu_store_char )
+    outline1("LIA 0x%2.2x", ( _value & 0xff ) );
+    outline1("LIDP %s", _destination);
+    outline0("STD");
 
 }
 
 void sc61860_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
-    // inline( cpu_store_8bit_with_offset )
+    // Y <- _destination
+    outline1("LIDP %s", _destination);
+    outline0("LII 0x01" );
+    outline0("LP 0x06" );
+    outline0("MVWD");
 
-        // Y <- _destination
-        outline1("LIDP %s", _destination);
-        outline0("LII 0x01" );
-        outline0("LP 0x06" );
-        outline0("MVWD");
+    // Yl += low(_offset)
+    outline0("LP 0x06" );
+    outline1("ADIM 0X%2.2x", (unsigned char)(_offset & 0xff) );
 
-        // Yl += low(_offset)
-        outline0("LP 0x06" );
-        outline1("ADIM 0X%2.2x", (unsigned char)(_offset & 0xff) );
+    // Yh += high(_offset)
+    outline0("LP 0x07" );
+    outline1("ADIM 0X%2.2x", (unsigned char)((_offset>>8) & 0xff) );
 
-        // Yh += high(_offset)
-        outline0("LP 0x07" );
-        outline1("ADIM 0X%2.2x", (unsigned char)((_offset>>8) & 0xff) );
+    // A <- _value
+    outline1("LIA 0X%2.2X", _value );
 
-        // A <- _value
-        outline1("LIA 0X%2.2X", _value );
-
-        // (Y) <- A
-        outline0("DY" );
-        outline0("IYS" );
-
-    // no_embedded( cpu_store_8bit_with_offset )
+    // (Y) <- A
+    outline0("DY" );
+    outline0("IYS" );
 
 }
 
@@ -786,61 +856,57 @@ void sc61860_compare_8bit( Environment * _environment, char *_source, char *_des
 
     MAKE_LABEL
 
-    // inline( cpu_compare_8bit )
+    // X <- destination
+    outline1("LIDP %s", _destination);
+    outline0("LII 0x01" );
+    outline0("LP 0x04" );
+    outline0("MVWD");
 
-        // X <- destination
+    // A <- (X)
+    outline0("DX");
+    outline0("IXL");
+
+    // A <-> B
+    outline0("LIP 0x03");
+    outline0("EXAM");
+
+    // A <- (_source)
+    outline1("LIDP %s", _source);
+    outline0("LDD");
+
+    // A == B ?
+    outline0( "CPMA" );
+
+    // jump if different
+    outline1("JRNZ %s", label )
+
+    // A = TRUE (if positive = 1)
+    outline1("LIA 0x%2.2x", 0xff*_positive );
+
+    if ( _other ) {
+        outline1("LIDP %s", _other);
+        outline0("STD");
+    } else {
         outline1("LIDP %s", _destination);
-        outline0("LII 0x01" );
-        outline0("LP 0x04" );
-        outline0("MVWD");
+        outline0("STD");
+    }
+    
+    outline1("JP %sb2", label);
 
-        // A <- (X)
-        outline0("DX");
-        outline0("IXL");
+    outhead1("%s:", label);
+    
+    // A = FALSE (if positive = 1)
+    outline1("LIA 0x%2.2x", 0xff*(1-_positive) );
 
-        // A <-> B
-        outline0("LIP 0x03");
-        outline0("EXAM");
-
-        // A <- (_source)
-        outline1("LIDP %s", _source);
-        outline0("LDD");
-
-        // A == B ?
-        outline0( "CPMA" );
-
-        // jump if different
-        outline1("JRNZ %s", label )
-
-        // A = TRUE (if positive = 1)
-        outline1("LIA 0x%2.2x", 0xff*_positive );
-
-        if ( _other ) {
-            outline1("LIDP %s", _other);
-            outline0("STD");
-        } else {
-            outline1("LIDP %s", _destination);
-            outline0("STD");
-        }
-        
-        outline1("JP %sb2", label);
-
-        outhead1("%s:", label);
-        
-        // A = FALSE (if positive = 1)
-        outline1("LIA 0x%2.2x", 0xff*(1-_positive) );
-
-        if ( _other ) {
-            outline1("LIDP %s", _other);
-            outline0("STD");
-        } else {
-            outline1("LIDP %s", _destination);
-            outline0("STD");
-        }
-        
-        outhead1("%sb2:", label);
-
-    // no_embedded( cpu_compare_8bit )
+    if ( _other ) {
+        outline1("LIDP %s", _other);
+        outline0("STD");
+    } else {
+        outline1("LIDP %s", _destination);
+        outline0("STD");
+    }
+    
+    outhead1("%sb2:", label);
 
 }
 
@@ -857,55 +923,196 @@ void sc61860_compare_8bit_const( Environment * _environment, char *_source, int 
 
     MAKE_LABEL
 
-    // inline( cpu_compare_8bit )
+    // A <- (_source)
+    outline1("LIDP %s", _source);
+    outline0("LDD");
 
-        // A <- (_source)
-        outline1("LIDP %s", _source);
-        outline0("LDD");
+    // A == constant ?
+    outline1( "CPIA 0x%2.2x", _destination );
 
-        // A == constant ?
-        outline1( "CPIA 0x%2.2x", _destination );
+    // jump if different
+    outline1("JRNZ %s", label )
 
-        // jump if different
-        outline1("JRNZ %s", label )
+    // A = TRUE (if positive = 1)
+    outline1("LIA 0x%2.2x", 0xff*_positive );
 
-        // A = TRUE (if positive = 1)
-        outline1("LIA 0x%2.2x", 0xff*_positive );
+    if ( _other ) {
+        outline1("LIDP %s", _other);
+        outline0("STD");
+    } else {
+        outline1("LIDP %s", _destination);
+        outline0("STD");
+    }
+    
+    outline1("JP %sb2", label);
 
-        if ( _other ) {
-            outline1("LIDP %s", _other);
-            outline0("STD");
-        } else {
-            outline1("LIDP %s", _destination);
-            outline0("STD");
-        }
-        
-        outline1("JP %sb2", label);
+    outhead1("%s:", label);
+    
+    // A = FALSE (if positive = 1)
+    outline1("LIA 0x%2.2x", 0xff*(1-_positive) );
 
-        outhead1("%s:", label);
-        
-        // A = FALSE (if positive = 1)
-        outline1("LIA 0x%2.2x", 0xff*(1-_positive) );
-
-        if ( _other ) {
-            outline1("LIDP %s", _other);
-            outline0("STD");
-        } else {
-            outline1("LIDP %s", _destination);
-            outline0("STD");
-        }
-        
-        outhead1("%sb2:", label);
-
-    // no_embedded( cpu_compare_8bit )
+    if ( _other ) {
+        outline1("LIDP %s", _other);
+        outline0("STD");
+    } else {
+        outline1("LIDP %s", _destination);
+        outline0("STD");
+    }
+    
+    outhead1("%sb2:", label);
 
 }
 
 void sc61860_compare_and_branch_8bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
 
-    // inline( cpu_compare_and_branch_8bit )
+    MAKE_LABEL
 
-        MAKE_LABEL
+    // X <- destination
+    outline1("LIDP %s", _destination);
+    outline0("LII 0x01" );
+    outline0("LP 0x04" );
+    outline0("MVWD");
+
+    // A <- (X)
+    outline0("DX");
+    outline0("IXL");
+
+    // A <-> B
+    outline0("LIP 0x03");
+    outline0("EXAM");
+
+    // A <- (_source)
+    outline1("LIDP %s", _source);
+    outline0("LDD");
+
+    // A == B ?
+    outline0( "CPMA" );
+
+    if ( _positive ) {
+        // jump if different
+        outline1("JRNZ %s", label );
+        outline1("JP %s", _label );
+    } else {
+        // jump if equal
+        outline1("JRZ %s", label );
+        outline1("JP %s", _label );
+    }            
+    outhead1("%s:", label);
+
+}
+
+/**
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void sc61860_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    MAKE_LABEL
+
+    // A <- (_source)
+    outline1("LIDP %s", _source);
+    outline0("LDD");
+
+    // A == constant ?
+    outline1( "CPIA 0x%2.2x", _destination );
+
+    if ( _positive ) {
+        // jump if different
+        outline1("JRNZ %s", label );
+        outline1("JP %s", _label );
+    } else {
+        // jump if equal
+        outline1("JRZ %s", label );
+        outline1("JP %s", _label );
+    }            
+    outhead1("%s:", label);
+
+}
+
+/**
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void sc61860_prepare_for_compare_and_branch_8bit( Environment * _environment, char *_source ) {
+
+    // A <- (_source)
+    outline1("LIDP %s", _source);
+    outline0("LDD");
+
+}
+
+/**
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void sc61860_execute_compare_and_branch_8bit_const( Environment * _environment, int _destination,  char *_label, int _positive ) {
+
+    MAKE_LABEL
+
+    // A == constant ?
+    outline1( "CPIA 0x%2.2x", _destination );
+
+    if ( _positive ) {
+        // jump if different
+        outline1("JRNZ %s", label );
+        outline1("JP %s", _label );
+    } else {
+        // jump if equal
+        outline1("JRZ %s", label );
+        outline1("JP %s", _label );
+    }            
+    outhead1("%s:", label);
+
+}
+
+/**
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void sc61860_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    sc61860_compare_and_branch_8bit_const( _environment, _source, _destination, _label, _positive );
+
+}
+
+/**
+ * @brief <i>SC616860</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void sc61860_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+
+    MAKE_LABEL
+
+    if ( _signed ) {
+
+        CRITICAL_UNIMPLEMENTED( "sc61860_less_than_8bit(signed)" );
+
+    } else {
 
         // X <- destination
         outline1("LIDP %s", _destination);
@@ -925,245 +1132,34 @@ void sc61860_compare_and_branch_8bit( Environment * _environment, char *_source,
         outline1("LIDP %s", _source);
         outline0("LDD");
 
-        // A == B ?
+        // A <(=) B ?
         outline0( "CPMA" );
 
-        if ( _positive ) {
-            // jump if different
-            outline1("JRNZ %s", label );
-            outline1("JP %s", _label );
-        } else {
-            // jump if equal
-            outline1("JRZ %s", label );
-            outline1("JP %s", _label );
-        }            
-        outhead1("%s:", label);
-
-    // no_embedded( cpu_compare_and_branch_8bit )
-
-}
-
-/**
- * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
- * 
- * @param _environment Current calling environment
- * @param _source First value to compare
- * @param _destination Second value to compare
- * @param _label Where to jump
- * @param _positive Invert meaning of comparison
- */
-void sc61860_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
-
-    // inline( cpu_compare_and_branch_8bit_const )
-
-         MAKE_LABEL
-
-        // A <- (_source)
-        outline1("LIDP %s", _source);
-        outline0("LDD");
-
-        // A == constant ?
-        outline1( "CPIA 0x%2.2x", _destination );
-
-        if ( _positive ) {
-            // jump if different
-            outline1("JRNZ %s", label );
-            outline1("JP %s", _label );
-        } else {
-            // jump if equal
-            outline1("JRZ %s", label );
-            outline1("JP %s", _label );
-        }            
-        outhead1("%s:", label);
-
-    // no_embedded( cpu_compare_and_branch_8bit_const )
-
-}
-
-/**
- * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
- * 
- * @param _environment Current calling environment
- * @param _source First value to compare
- * @param _destination Second value to compare
- * @param _label Where to jump
- * @param _positive Invert meaning of comparison
- */
-void sc61860_prepare_for_compare_and_branch_8bit( Environment * _environment, char *_source ) {
-
-    // inline( cpu_compare_and_branch_8bit_const )
-
-        // A <- (_source)
-        outline1("LIDP %s", _source);
-        outline0("LDD");
-
-    // no_embedded( cpu_compare_and_branch_8bit_const )
-
-}
-
-/**
- * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
- * 
- * @param _environment Current calling environment
- * @param _source First value to compare
- * @param _destination Second value to compare
- * @param _label Where to jump
- * @param _positive Invert meaning of comparison
- */
-void sc61860_execute_compare_and_branch_8bit_const( Environment * _environment, int _destination,  char *_label, int _positive ) {
-
-    // inline( cpu_compare_and_branch_8bit_const )
-
-        MAKE_LABEL
-
-        // A == constant ?
-        outline1( "CPIA 0x%2.2x", _destination );
-
-        if ( _positive ) {
-            // jump if different
-            outline1("JRNZ %s", label );
-            outline1("JP %s", _label );
-        } else {
-            // jump if equal
-            outline1("JRZ %s", label );
-            outline1("JP %s", _label );
-        }            
-        outhead1("%s:", label);
-
-    // no_embedded( cpu_compare_and_branch_8bit_const )
-
-}
-
-/**
- * @brief <i>SC616860</i>: emit code to compare two 8 bit values and jump if they are equal/different
- * 
- * @param _environment Current calling environment
- * @param _source First value to compare
- * @param _destination Second value to compare
- * @param _label Where to jump
- * @param _positive Invert meaning of comparison
- */
-void sc61860_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
-
-    // inline( cpu_compare_and_branch_8bit_const )
-
-        sc61860_compare_and_branch_8bit_const( _environment, _source, _destination, _label, _positive );
-
-    // no_embedded( cpu_compare_and_branch_8bit_const )
-
-}
-
-/**
- * @brief <i>SC616860</i>: emit code to compare two 8 bit values
- * 
- * @param _environment Current calling environment
- * @param _source First value to compare
- * @param _destination Second value to compare and destination address for result (if _other is NULL)
- * @param _other Destination address for result
- * @param _equal True if equal
- */
-void sc61860_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
-
-    MAKE_LABEL
-
-    // inline( cpu_less_than_8bit )
-
-        if ( _signed ) {
-
-            // outline1("LD A, (%s)", _destination);
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            // outline0("SUB A, B");
-            if ( _equal ) {
-                // outline1("JP  Z,%strue", label);
-            }
-            // outline1("JP PO,%snoxor", label);
-            // outline0("XOR 0x80");
-            // outhead1("%snoxor:", label);
-            // outline1("JP M,%strue", label);
-            // outline1("JP PE,%sfalse", label);
-            // outhead1("%sfalse:", label);
-            // outline0("LD A, 0");
-            if ( _other ) {
-                // outline1("LD (%s), A", _other);
-            } else {
-                // outline1("LD (%s), A", _destination);
-            }
-            // outline1("JMP %sb2", label);
-            // outhead1("%strue:", label);
-            // outline0("LD A, 0xff");
-            if ( _other ) {
-                // outline1("LD (%s), A", _other);
-            } else {
-                // outline1("LD (%s), A", _destination);
-            }
-            // outhead1("%sb2:", label);
-
-        } else {
-
-            // outline1("LD A, (%s)", _destination);
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            // outline0("CP B");
-            // outline1("JR C, %s", label);
-            if ( _equal ) {
-                // outline1("JR Z, %s", label);
-            }
-            // outline0("LD A, 0");
-            if ( _other ) {
-                // outline1("LD (%s), A", _other);
-            } else {
-                // outline1("LD (%s), A", _destination);
-            }
-            // outline1("JMP %sb2", label);
-            // outhead1("%s:", label);
-            // outline0("LD A, 0xff");
-            if ( _other ) {
-                // outline1("LD (%s), A", _other);
-            } else {
-                // outline1("LD (%s), A", _destination);
-            }
-            // outhead1("%sb2:", label);
-
+        outline1("JRC %s", label);
+        if ( _equal ) {
+            outline1("JRZ, %s", label);
         }
-
-    // embedded( cpu_less_than_8bit, src_hw_sc61860_cpu_less_than_8bit_asm );
-
-        if ( _signed ) {
-
-            // outline1("LD A, (%s)", _destination);
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            if ( _equal ) {
-                // outline0("CALL CPULTE8S");
-            } else {
-                // outline0("CALL CPULT8S");
-            }
-            if ( _other ) {
-                // outline1("LD (%s), A", _other);
-            } else {
-                // outline1("LD (%s), A", _destination);
-            }
-
+        outline0("LIA 0x0");
+        if ( _other ) {
+            outline1("LIDP %s", _other);
+            outline0("STD");
         } else {
-
-            // outline1("LD A, (%s)", _destination);
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            if ( _equal ) {
-                // outline0("CALL CPULTE8U");
-            } else {
-                // outline0("CALL CPULT8U");
-            }
-            if ( _other ) {
-                // outline1("LD (%s), A", _other);
-            } else {
-                // outline1("LD (%s), A", _destination);
-            }
-
+            outline1("LIDP %s", _destination);
+            outline0("STD");
         }
+        outline1("JP %sb2", label);
+        outhead1("%s:", label);
+        outline0("LIA 0xff");
+        if ( _other ) {
+            outline1("LIDP %s", _other);
+            outline0("STD");
+        } else {
+            outline1("LIDP %s", _destination);
+            outline0("STD");
+        }
+        outhead1("%sb2:", label);
 
-    // done(  )
+    }
 
 }
 
@@ -1171,80 +1167,51 @@ void sc61860_less_than_8bit_const( Environment * _environment, char *_source, in
 
     MAKE_LABEL
 
-    // inline( cpu_less_than_8bit )
+    if ( _signed ) {
 
-        if ( _signed ) {
+        CRITICAL_UNIMPLEMENTED( "sc61860_less_than_8bit_const(signed)" );
 
-            // outline1("LD A, 0x%2.2x", ( _destination & 0xff ) );
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            // outline0("SUB A, B");
-            if ( _equal ) {
-                // outline1("JP  Z,%strue", label);
-            }
-            // outline1("JP PO,%snoxor", label);
-            // outline0("XOR 0x80");
-            // outhead1("%snoxor:", label);
-            // outline1("JP M,%strue", label);
-            // outline1("JP PE,%sfalse", label);
-            // outhead1("%sfalse:", label);
-            // outline0("LD A, 0");
-            // outline1("LD (%s), A", _other);
-            // outline1("JMP %sb2", label);
-            // outhead1("%strue:", label);
-            // outline0("LD A, 0xff");
-            // outline1("LD (%s), A", _other);
-            // outhead1("%sb2:", label);
+    } else {
 
-        } else {
+        // A <- _destination
+        outline1("LIA 0x%2.2x", _destination);
 
-            // outline1("LD A, 0x%2.2x", ( _destination & 0xff ) );
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            // outline0("CP B");
-            // outline1("JR C, %s", label);
-            if ( _equal ) {
-                // outline1("JR Z, %s", label);
-            }
-            // outline0("LD A, 0");
-            // outline1("LD (%s), A", _other);
-            // outline1("JMP %sb2", label);
-            // outhead1("%s:", label);
-            // outline0("LD A, 0xff");
-            // outline1("LD (%s), A", _other);
-            // outhead1("%sb2:", label);
+        // A <-> B
+        outline0("LIP 0x03");
+        outline0("EXAM");
 
+        // A <- (_source)
+        outline1("LIDP %s", _source);
+        outline0("LDD");
+
+        // A <(=) B ?
+        outline0( "CPMA" );
+
+        outline1("JRC %s", label);
+        if ( _equal ) {
+            outline1("JRZ, %s", label);
         }
-
-    // embedded( cpu_less_than_8bit, src_hw_sc61860_cpu_less_than_8bit_asm );
-
-        if ( _signed ) {
-
-            // outline1("LD A, 0x%2.2x", _destination);
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            if ( _equal ) {
-                // outline0("CALL CPULTE8S");
-            } else {
-                // outline0("CALL CPULT8S");
-            }
-            // outline1("LD (%s), A", _other);
-
+        outline0("LIA 0x0");
+        if ( _other ) {
+            outline1("LIDP %s", _other);
+            outline0("STD");
         } else {
-
-            // outline1("LD A, 0x%2.2x", _destination);
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            if ( _equal ) {
-                // outline0("CALL CPULTE8U");
-            } else {
-                // outline0("CALL CPULT8U");
-            }
-            // outline1("LD (%s), A", _other);
-
+            outline1("LIDP %s", _destination);
+            outline0("STD");
         }
+        outline1("JP %sb2", label);
+        outhead1("%s:", label);
+        outline0("LIA 0xff");
+        if ( _other ) {
+            outline1("LIDP %s", _other);
+            outline0("STD");
+        } else {
+            outline1("LIDP %s", _destination);
+            outline0("STD");
+        }
+        outhead1("%sb2:", label);
 
-    // done(  )
+    }
 
 }
 
@@ -1252,80 +1219,36 @@ void sc61860_less_than_and_branch_8bit_const( Environment * _environment, char *
 
     MAKE_LABEL
 
-    // inline( cpu_less_than_8bit )
+    if ( _signed ) {
 
-        if ( _signed ) {
+        CRITICAL_UNIMPLEMENTED( "sc61860_less_than_and_branch_8bit_const(signed)" );
 
-            // outline1("LD A, 0x%2.2x", ( _destination & 0xff ) );
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            // outline0("SUB A, B");
-            if ( _equal ) {
-                // outline1("JP  Z,%strue", label);
-            }
-            // outline1("JP PO,%snoxor", label);
-            // outline0("XOR 0x80");
-            // outhead1("%snoxor:", label);
-            // outline1("JP M,%strue", label);
-            // outline1("JP PE,%sfalse", label);
-            // outhead1("%sfalse:", label);
-            // outline0("LD A, 0");
-            // outline1("LD (%s), A", _other);
-            // outline1("JMP %sb2", label);
-            // outhead1("%strue:", label);
-            // outline0("LD A, 0xff");
-            // outline1("LD (%s), A", _other);
-            // outhead1("%sb2:", label);
+    } else {
 
-        } else {
+        // A <- _destination
+        outline1("LIA 0x%2.2x", _destination);
 
-            // outline1("LD A, 0x%2.2x", ( _destination & 0xff ) );
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            // outline0("CP B");
-            // outline1("JR C, %s", label);
-            if ( _equal ) {
-                // outline1("JR Z, %s", label);
-            }
-            // outline0("LD A, 0");
-            // outline1("LD (%s), A", _other);
-            // outline1("JMP %sb2", label);
-            // outhead1("%s:", label);
-            // outline0("LD A, 0xff");
-            // outline1("LD (%s), A", _other);
-            // outhead1("%sb2:", label);
+        // A <-> B
+        outline0("LIP 0x03");
+        outline0("EXAM");
 
+        // A <- (_source)
+        outline1("LIDP %s", _source);
+        outline0("LDD");
+
+        // A <(=) B ?
+        outline0( "CPMA" );
+
+        outline1("JRC %s", label);
+        if ( _equal ) {
+            outline1("JRZ, %s", label);
         }
+        outline1("JP %sb2", label);
+        outhead1("%s:", label);
+        outline1("JP %s", _label);
+        outhead1("%sb2:", label);
 
-    // embedded( cpu_less_than_8bit, src_hw_sc61860_cpu_less_than_8bit_asm );
-
-        if ( _signed ) {
-
-            // outline1("LD A, 0x%2.2x", _destination);
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            if ( _equal ) {
-                // outline0("CALL CPULTE8S");
-            } else {
-                // outline0("CALL CPULT8S");
-            }
-            // outline1("LD (%s), A", _other);
-
-        } else {
-
-            // outline1("LD A, 0x%2.2x", _destination);
-            // outline0("LD B, A");
-            // outline1("LD A, (%s)", _source);
-            if ( _equal ) {
-                // outline0("CALL CPULTE8U");
-            } else {
-                // outline0("CALL CPULT8U");
-            }
-            // outline1("LD (%s), A", _other);
-
-        }
-
-    // done(  )
+    }
 
 }
 
@@ -1366,36 +1289,78 @@ void sc61860_greater_than_8bit_const( Environment * _environment, char *_source,
  */
 void sc61860_math_add_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    // inline( cpu_math_add_8bit )
+    MAKE_LABEL
 
-        // outline0("LD B, 0" );
-        // outline1("LD A, (%s)", _source );
-        // outline0("LD B, A" );
-        // outline1("LD A, (%s)", _destination );
-        // outline0("ADD A, B" );
-        if ( _other ) {
-            // outline1("LD (%s), A", _other );
-        } else {
-            // outline1("LD (%s), A", _destination );
-        }
+    // X <- _source
+    outline1("LIDP %s", _source);
+    outline0("LII 0x01" );
+    outline0("LP 0x04" );
+    outline0("MVWD");
 
-    // no_embedded( cpu_math_add_8bit )
+    // A <- (X)
+    outline0("DX");
+    outline0("IXL");
+
+    // A <-> B
+    outline0("LP 0x03");
+    outline0("EXAM");
+
+    // Y <- destination
+    outline1("LIDP %s", _destination);
+    outline0("LII 0x01" );
+    outline0("LP 0x06" );
+    outline0("MVWD");
+
+    // A <- (Y)
+    outline0("DX");
+    outline0("IXL");
+
+    // B = B + A
+    outline0("LP 0x03");
+    outline0("ADM");
+
+    // A <-> B
+    outline0("EXAM");
+
+    if ( _other ) {
+        outline1("LIDP %s", _other );
+        outline0("STD" );
+    } else {
+        outline1("LIDP %s", _destination );
+        outline0("STD" );
+    }
 
 }
 
 void sc61860_math_add_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
-    // inline( cpu_math_add_8bit )
+    MAKE_LABEL
 
-        // outline0("LD B, 0" );
-        // outline1("LD A, (%s)", _source );
-        // outline0("ADD A, B" );
-        // outline0("LD B, A" );
-        // outline1("LD A, 0x%2.2x", ( _destination & 0xff ) );
-        // outline0("ADD A, B" );
-        // outline1("LD (%s), A", _other );
+    // X <- _source
+    outline1("LIDP %s", _source);
+    outline0("LDD" );
 
-    // no_embedded( cpu_math_add_8bit )
+    // A <-> B
+    outline0("LP 0x03");
+    outline0("EXAM");
+
+    // A <- _destination
+    outline1("LIA 0x%2.2x", _destination );
+
+    // B = B + A
+    outline0("LP 0x03");
+    outline0("ADM");
+
+    // A <-> B
+    outline0("EXAM");
+
+    if ( _other ) {
+        outline1("LIDP %s", _other );
+        outline0("STD" );
+    } else {
+        outline1("LIDP %s", _destination );
+        outline0("STD" );
+    }
 
 }
 
@@ -1409,21 +1374,46 @@ void sc61860_math_add_8bit_const( Environment * _environment, char *_source, int
  */
 void sc61860_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    // inline( cpu_math_sub_8bit )
+    MAKE_LABEL
 
-        // outline0("LD B, 0" );
-        // outline1("LD A, (%s)", _destination );
-        // outline0("SUB A, B" );
-        // outline0("LD B, A" );
-        // outline1("LD A, (%s)", _source );
-        // outline0("SUB A,B" );
-        if ( _other ) {
-            // outline1("LD (%s), A", _other );
-        } else {
-            // outline1("LD (%s), A", _destination );
-        }
+    // X <- _source
+    outline1("LIDP %s", _source);
+    outline0("LII 0x01" );
+    outline0("LP 0x04" );
+    outline0("MVWD");
 
-    // no_embedded( cpu_math_add_8bit )
+    // A <- (X)
+    outline0("DX");
+    outline0("IXL");
+
+    // A <-> B
+    outline0("LP 0x03");
+    outline0("EXAM");
+
+    // Y <- destination
+    outline1("LIDP %s", _destination);
+    outline0("LII 0x01" );
+    outline0("LP 0x06" );
+    outline0("MVWD");
+
+    // A <- (Y)
+    outline0("DX");
+    outline0("IXL");
+
+    // B = B - A
+    outline0("LP 0x03");
+    outline0("SBM");
+
+    // A <-> B
+    outline0("EXAM");
+
+    if ( _other ) {
+        outline1("LIDP %s", _other );
+        outline0("STD" );
+    } else {
+        outline1("LIDP %s", _destination );
+        outline0("STD" );
+    }
 
 }
 
@@ -1436,29 +1426,22 @@ void sc61860_math_sub_8bit( Environment * _environment, char *_source, char *_de
  */
 void sc61860_math_double_8bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
-    // inline( cpu_math_double_8bit )
+    if ( _signed ) {
 
-        if ( _signed ) {
+        CRITICAL_UNIMPLEMENTED( "sc61860_math_double_8bit(signed)" );
 
-            // outline1("LD A, (%s)", _source );
-            // outline0("ADD A, A" );
-            if ( _other ) {
-                // outline1("LD (%s), A", _other );
-            } else {
-                // outline1("LD (%s), A", _source );
-            }
-
+    } else {
+        outline1("LIDP %s", _source );
+        outline0("LDD" );
+        outline0("SL" );
+        if ( _other ) {
+            outline1("LIDP %s", _other );
+            outline0("STD" );
         } else {
-            // outline1("LD A, (%s)", _source );
-            // outline0("ADD A, A" );
-            if ( _other ) {
-                // outline1("LD (%s), A", _other );
-            } else {
-                // outline1("LD (%s), A", _source );
-            }
+            outline1("LIDP %s", _source );
+            outline0("STD" );
         }
-
-    // no_embedded( cpu_math_double_8bit )
+    }
 
 }
 
