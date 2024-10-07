@@ -981,6 +981,7 @@ static int vars_ok(POBuffer name) {
 static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     POBuffer tmp = TMP_BUF;
     POBuffer arg = TMP_BUF;
+    POBuffer arg2 = TMP_BUF;
 
     // if( po_buf_match( buf[0], " * _*+", NULL, buf) ) {
         // struct var *v = vars_get(buf);
@@ -1076,6 +1077,16 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         struct var *v = vars_get(tmp);
         v->size = 2;
         v->init = strdup(arg->str);
+    }
+
+    if( 
+        po_buf_match(buf[0], " * equ *+*", tmp, arg2, arg) ||
+        po_buf_match(buf[0], "* equ *+*", tmp, arg2, arg)
+     ) {
+        struct var *v = vars_get(arg2);
+        if ( v ) {
+            v->nb_rd = 1;
+        }
     }
 
     /* variable in RAMs are not eligibile to inlining */

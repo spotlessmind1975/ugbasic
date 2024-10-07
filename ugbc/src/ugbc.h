@@ -746,6 +746,8 @@ typedef struct _Constant {
 
     int emitted;
 
+    char * relative;
+
     /** Link to the next constant (NULL if this is the last one) */
     struct _Constant * next;
 
@@ -3232,6 +3234,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_OPEN_FILE(f,n) CRITICAL3("E305 - cannot open file", f, n );
 #define CRITICAL_CANNOT_READ_FILE(f,n) CRITICAL3("E306 - cannot read file", f, n );
 #define CRITICAL_CANNOT_WRITE_FILE(f,n) CRITICAL3("E307 - cannot write file", f, n );
+#define CRITICAL_XOR_INPLACE_UNSUPPORTED(v,t) CRITICAL3("E308 - cannot use inplace XOR with this datatype", v, t );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -5077,6 +5080,9 @@ Variable *              variable_temporary( Environment * _environment, Variable
 VariableType            variable_type_from_numeric_value( Environment * _environment, int _number );
 Variable *              variable_resident( Environment * _environment, VariableType _type, char * _meaning );
 Variable *              variable_xor( Environment * _environment, char * _left, char * _right );
+void                    variable_xor_inplace( Environment * _environment, char * _source, int _dest );
+void                    variable_xor_inplace_vars( Environment * _environment, char * _source, char * _dest );
+void                    variable_xor_inplace_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              varptr( Environment * _environment, char * _identifier );
 void                    volume( Environment * _environment, int _volume, int _channels );
 void                    volume_vars( Environment * _environment, char * _volume, char * _channels );

@@ -6272,6 +6272,18 @@ add_definition :
     }
     ;
 
+xor_definition :
+    Identifier OP_COMMA expr {
+        variable_xor_inplace_vars( _environment, $1, $3 );
+    }
+    | Identifier OP_COMMA OP_HASH const_expr {
+        variable_xor_inplace( _environment, $1, $4 );
+    }
+    | OSP Identifier CSP OP_COMMA expr {
+        variable_xor_inplace_mt( _environment, $2, $5 );
+    }
+    ;
+
 swap_definition :
     Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional {
         if ( $2 != $5 ) {
@@ -7250,12 +7262,24 @@ parameters_expr :
 
 values : 
       expr {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ++((struct _Environment *)_environment)->parameters;
+            Variable * v = variable_retrieve( _environment, $1 );
+            if ( v->initializedByConstant && VT_BITWIDTH( v->type ) > 0 ) {
+              ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = v->value;
+              ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+            } else {
+              ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+            }
+            ++((struct _Environment *)_environment)->parameters;
     }
     | expr OP_COMMA values {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ++((struct _Environment *)_environment)->parameters;
+            Variable * v = variable_retrieve( _environment, $1 );
+            if ( v->initializedByConstant && VT_BITWIDTH( v->type ) > 0 ) {
+                ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = v->value;
+                ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+            } else {
+                ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+            }
+            ++((struct _Environment *)_environment)->parameters;
     }
     ;
 
@@ -9698,6 +9722,7 @@ statement2nc:
   | ADD add_definition
   | MUL mul_definition
   | DIV div_definition
+  | XOR xor_definition
   | POKE poke_definition
   | POKEW pokew_definition
   | POKED poked_definition

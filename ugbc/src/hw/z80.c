@@ -1034,6 +1034,87 @@ void z80_less_than_8bit_const( Environment * _environment, char *_source, int _d
 
 }
 
+void z80_less_than_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _equal, int _signed ) {
+
+    MAKE_LABEL
+
+    inline( cpu_less_than_8bit )
+
+        if ( _signed ) {
+
+            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            outline0("SUB A, B");
+            if ( _equal ) {
+                outline1("JP  Z,%strue", label);
+            }
+            outline1("JP PO,%snoxor", label);
+            outline0("XOR $80");
+            outhead1("%snoxor:", label);
+            outline1("JP M,%strue", label);
+            outline1("JP PE,%sfalse", label);
+            outhead1("%sfalse:", label);
+            outline1("JP %sb2", label);
+            outhead1("%strue:", label);
+            outline1("JP %s", _label);
+            outhead1("%sb2:", label);
+
+        } else {
+
+            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            outline0("CP B");
+            outline1("JR C, %s", label);
+            if ( _equal ) {
+                outline1("JR Z, %s", label);
+            }
+            outline1("JP %sb2", label);
+            outhead1("%s:", label);
+            outline1("JP %s", _label);
+            outhead1("%sb2:", label);
+
+        }
+
+    embedded( cpu_less_than_8bit, src_hw_z80_cpu_less_than_8bit_asm );
+
+        if ( _signed ) {
+
+            outline1("LD A, $%2.2x", _destination);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE8S");
+            } else {
+                outline0("CALL CPULT8S");
+            }
+            outline0("CP 0");
+            outline1("JR Z, %sno", label);
+            outline1("JP %s", _label);
+            outhead1("%sno:", label);
+
+        } else {
+
+            outline1("LD A, $%2.2x", _destination);
+            outline0("LD B, A");
+            outline1("LD A, (%s)", _source);
+            if ( _equal ) {
+                outline0("CALL CPULTE8U");
+            } else {
+                outline0("CALL CPULT8U");
+            }
+            outline0("CP 0");
+            outline1("JR Z, %sno", label);
+            outline1("JP %s", _label);
+            outhead1("%sno:", label);
+
+        }
+
+    done(  )
+
+}
+
 /**
  * @brief <i>Z80</i>: emit code to compare two 8 bit values
  * 
@@ -1572,12 +1653,12 @@ void z80_compare_16bit_const( Environment * _environment, char *_source, int _de
 
         outline1("LD A, (%s)", _source);
         outline0("LD B, A");
-        outline1("LD A, $2.2x", (unsigned char)(_destination&0xff));
+        outline1("LD A, $%2.2x", (unsigned char)(_destination&0xff));
         outline0("CP B");
         outline1("JP NZ, %s", label);
         outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
         outline0("LD B, A");
-        outline1("LD A, $2.2x", (unsigned char)((_destination>>8)&0xff));
+        outline1("LD A, $%2.2x", (unsigned char)((_destination>>8)&0xff));
         outline0("CP B");
         outline1("JP NZ, %s", label);
         outline1("LD A, $%2.2x", 0xff*_positive);
@@ -4148,6 +4229,18 @@ void z80_xor_8bit( Environment * _environment, char * _left, char * _right, char
 
 }
 
+void z80_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)(_right&0xff) );
+    outline0("LD (DE), A" );
+
+}
+
 void z80_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
@@ -4167,6 +4260,26 @@ void z80_xor_16bit( Environment * _environment, char * _left, char * _right, cha
     outline0("INC DE" );
 
 }
+
+void z80_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)((_right) & 0xff) );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)((_right>>8) & 0xff) );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+
+}
+
 
 void z80_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
@@ -4192,6 +4305,33 @@ void z80_xor_32bit( Environment * _environment, char * _left, char * _right, cha
     outline0("INC DE" );
     outline0("LD A, (HL)" );
     outline0("XOR (IX+3)" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)(_right & 0xff ) );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)((_right>>8) & 0xff ) );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)((_right>>16) & 0xff ) );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline1("XOR $%2.2x", (unsigned char)((_right>>24) & 0xff ) );
     outline0("LD (DE), A" );
 
 }

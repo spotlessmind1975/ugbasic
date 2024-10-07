@@ -163,6 +163,34 @@ static void cpu6809_less_than_const( Environment * _environment, char *_source, 
     outline1("STB %s", _other );
 }
 
+static void cpu6809_less_than_and_branch_const( Environment * _environment, char *_source, int _destination,  char *_label, int _equal, int _signed, int _bits) {
+    char REG = _bits==16 ? 'X' : 'A';
+
+    MAKE_LABEL
+
+    outline0("; cpu6809_less_than_and_branch_const");
+    outline0("CLRB");
+    outline2("LD%c %s",  REG, _source);
+    outline2("CMP%c #$%4.4x", REG, _destination);
+
+    if ( _signed ) {
+        if ( _equal ) {
+            outline1("BGT %s", label);
+        } else {
+            outline1("BGE %s", label);
+        }
+    } else {
+        if ( _equal ) {
+            outline1("BHI %s", label);
+        } else {
+            outline1("BHS %s", label);
+        }
+    }
+
+    outline1("JMP %s", _label);
+    outhead1("%s", label );
+}
+
 static void cpu6809_greater_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits ) {
     char REG = _bits==16 ? 'X' : 'A';
 
@@ -870,6 +898,16 @@ void cpu6809_less_than_8bit_const( Environment * _environment, char *_source, in
     inline( cpu_less_than_8bit_const )
 
         cpu6809_less_than_const(_environment, _source, _destination, _other, _equal, _signed, 8);
+
+    no_embedded( cpu_less_than_8bit_const )
+
+}
+
+void cpu6809_less_than_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_less_than_8bit_const )
+
+        cpu6809_less_than_and_branch_const(_environment, _source, _destination, _other, _equal, _signed, 8);
 
     no_embedded( cpu_less_than_8bit_const )
 
@@ -3382,6 +3420,20 @@ void cpu6809_xor_8bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
+void cpu6809_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    inline( cpu_xor_8bit )
+
+        MAKE_LABEL
+
+        outline1("LDB %s", _left );
+        outline1("EORB #$%2.2x", _right );
+        outline1("STB %s", _result);
+
+    no_embedded( cpu_xor_8bit )
+
+}
+
 void cpu6809_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     inline( cpu_xor_16bit )
@@ -3397,6 +3449,22 @@ void cpu6809_xor_16bit( Environment * _environment, char * _left, char * _right,
 
 }
 
+void cpu6809_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    inline( cpu_xor_16bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _left );
+        outline1("EORA #$%2.2x", (unsigned char)((_right >> 8) & 0xff ) );
+        outline1("EORB #$%2.2x", (unsigned char)((_right) & 0xff ) );
+        outline1("STD %s", _result);
+
+    no_embedded( cpu_xor_16bit )
+
+}
+
+
 void cpu6809_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     inline( cpu_xor_32bit )
@@ -3410,6 +3478,25 @@ void cpu6809_xor_32bit( Environment * _environment, char * _left, char * _right,
         outline1("LDD %s", address_displacement(_environment, _left, "2") );
         outline1("EORA %s", address_displacement(_environment, _right, "2") );
         outline1("EORB %s", address_displacement(_environment, _right, "3") );
+        outline1("STD %s", address_displacement(_environment, _result, "2"));
+
+    no_embedded( cpu_xor_32bit )
+
+}
+
+void cpu6809_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    inline( cpu_xor_32bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _left );
+        outline1("EORA #$%2.2x", (unsigned char)( (_right >> 24) & 0xff ) );
+        outline1("EORB #$%2.2x", (unsigned char)( (_right >> 16) & 0xff ) );
+        outline1("STD %s", _result);
+        outline1("LDD %s", address_displacement(_environment, _left, "2") );
+        outline1("EORA #$%2.2x", (unsigned char)( (_right >> 8) & 0xff ) );
+        outline1("EORB #$%2.2x", (unsigned char)( (_right) & 0xff ) );
         outline1("STD %s", address_displacement(_environment, _result, "2"));
 
     no_embedded( cpu_xor_32bit )

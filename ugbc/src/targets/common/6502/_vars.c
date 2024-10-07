@@ -48,6 +48,12 @@ void vars_emit_constant_integer( Environment * _environment, char * _name, int _
 
 }
 
+void vars_emit_constant_integer_relative( Environment * _environment, char * _name, char * _relative, int _value ) {
+
+    outhead3("%s = %s+$%4.4x", _name, _relative, _value );
+
+}
+
 void vars_emit_constants( Environment * _environment ) {
 
     int i=0;
@@ -58,7 +64,11 @@ void vars_emit_constants( Environment * _environment ) {
             if ( ! actual->emitted ) {
                 switch( actual->type ) {
                     case CT_INTEGER:
-                        vars_emit_constant_integer( _environment, actual->realName, actual->value );
+                        if ( actual->relative ) {
+                           vars_emit_constant_integer_relative( _environment, actual->realName, actual->relative, actual->value );
+                        } else {
+                            vars_emit_constant_integer( _environment, actual->realName, actual->value );
+                        }
                         break;
                     case CT_STRING:
                     break;
