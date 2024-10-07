@@ -1078,6 +1078,16 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         v->init = strdup(arg->str);
     }
 
+    if( 
+        po_buf_match(buf[0], " * equ *+*", tmp, arg2, arg) ||
+        po_buf_match(buf[0], "* equ *+*", tmp, arg2, arg)
+     ) {
+        struct var *v = vars_get(arg2);
+        if ( v ) {
+            v->nb_rd = 1;
+        }
+    }
+
     /* variable in RAMs are not eligibile to inlining */
     if( po_buf_match(buf[0], "* equ $*", tmp, arg) ) {
         struct var *v = vars_get(tmp);
