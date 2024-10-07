@@ -981,6 +981,7 @@ static int vars_ok(POBuffer name) {
 static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     POBuffer tmp = TMP_BUF;
     POBuffer arg = TMP_BUF;
+    POBuffer arg2 = TMP_BUF;
 
     // if( po_buf_match( buf[0], " * _*+", NULL, buf) ) {
         // struct var *v = vars_get(buf);
