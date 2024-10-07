@@ -56,21 +56,21 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .ds 1", variable->realName);
+                        outline2("%s: .db 0x%2.2x", variable->realName, (unsigned char)(variable->value&0xff));
                     }
                     break;
                 case VT_DOJOKA:
                     if ( variable->memoryArea ) {
                         outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .ds 8", variable->realName);
+                        outline1("%s: .db 0, 0, 0, 0, 0, 0, 0, 0", variable->realName);
                     }
                     break;
                 case VT_IMAGEREF:
                     if ( variable->memoryArea ) {
                         outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .ds 12", variable->realName);
+                        outline1("%s: .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0", variable->realName);
                     }
                     break;
                 case VT_WORD:
@@ -80,7 +80,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .ds 2", variable->realName);
+                        outline3("%s: .db 0x%2.2x, 0x%2.2x", variable->realName, (unsigned char)(variable->value&0xff), (unsigned char)((variable->value>>8)&0xff));
                     }
                     break;
                 case VT_DWORD:
@@ -88,7 +88,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .ds 4", variable->realName);
+                        outline5("%s: .db 0x%2.2x, 0x%2.2x, 0x%2.2x, 0x%2.2x", variable->realName, (unsigned char)(variable->value&0xff), (unsigned char)((variable->value>>8)&0xff), (unsigned char)((variable->value>>16)&0xff), (unsigned char)((variable->value>>24)&0xff));
                     }
                     break;
                 case VT_FLOAT:

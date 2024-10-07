@@ -624,37 +624,37 @@ void pc1403_initialization( Environment * _environment ) {
     // deploy( tms9918vars, src_hw_tms9918_vars_asm );
     // deploy( tms9918startup, src_hw_tms9918_startup_asm );
 
-    variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
-    variable_global( _environment, "CURRENTWIDTH" );
-    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 192  );
-    variable_global( _environment, "CURRENTHEIGHT" );
-    variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
-    variable_global( _environment, "CURRENTTILES" );
-    variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 40 );
-    variable_global( _environment, "CURRENTTILESWIDTH" );
-    variable_import( _environment, "CURRENTTILESWIDTHX8", VT_WORD, 320 );
-    variable_global( _environment, "CURRENTTILESWIDTHX8" );
-    variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 24 );
-    variable_global( _environment, "CURRENTTILESHEIGHT" );
-    variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
-    variable_global( _environment, "FONTWIDTH" );
-    variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
-    variable_global( _environment, "FONTHEIGHT" );
-    variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "SPRITEADDRESS" );    
-    variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1000 );
-    variable_global( _environment, "SPRITEAADDRESS" );    
-    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x1800 );
-    variable_global( _environment, "TEXTADDRESS" );    
-    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x3800 );
-    variable_global( _environment, "COLORMAPADDRESS" );    
-    variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "PATTERNADDRESS" );    
-    variable_import( _environment, "PALETTE", VT_BUFFER, 16 );
-    variable_global( _environment, "PALETTE" ); 
+    // variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
+    // variable_global( _environment, "CURRENTWIDTH" );
+    // variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 192  );
+    // variable_global( _environment, "CURRENTHEIGHT" );
+    // variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
+    // variable_global( _environment, "CURRENTTILES" );
+    // variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 40 );
+    // variable_global( _environment, "CURRENTTILESWIDTH" );
+    // variable_import( _environment, "CURRENTTILESWIDTHX8", VT_WORD, 320 );
+    // variable_global( _environment, "CURRENTTILESWIDTHX8" );
+    // variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 24 );
+    // variable_global( _environment, "CURRENTTILESHEIGHT" );
+    // variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
+    // variable_global( _environment, "FONTWIDTH" );
+    // variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
+    // variable_global( _environment, "FONTHEIGHT" );
+    // variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x0000 );
+    // variable_global( _environment, "SPRITEADDRESS" );    
+    // variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1000 );
+    // variable_global( _environment, "SPRITEAADDRESS" );    
+    // variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x1800 );
+    // variable_global( _environment, "TEXTADDRESS" );    
+    // variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x3800 );
+    // variable_global( _environment, "COLORMAPADDRESS" );    
+    // variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
+    // variable_global( _environment, "PATTERNADDRESS" );    
+    // variable_import( _environment, "PALETTE", VT_BUFFER, 16 );
+    // variable_global( _environment, "PALETTE" ); 
 
-    char defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-    variable_store_buffer( _environment, "PALETTE", &defaultPalette[0], 16, 0 );
+    // char defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+    // variable_store_buffer( _environment, "PALETTE", &defaultPalette[0], 16, 0 );
 
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, 6, 8, "Text Mode" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 0, 32, 24, 16, 8, 8, "Graphic II" );
@@ -665,141 +665,141 @@ void pc1403_initialization( Environment * _environment ) {
  
     // outline0("CALL TMS9918STARTUP");
 
-    variable_import( _environment, "XGR", VT_POSITION, 0 );
-    variable_global( _environment, "XGR" );
-    variable_import( _environment, "YGR", VT_POSITION, 0 );
-    variable_global( _environment, "YGR" );
-    variable_import( _environment, "LINE", VT_WORD, (unsigned short)(0xffff) );
-    variable_global( _environment, "LINE" );
+    // variable_import( _environment, "XGR", VT_POSITION, 0 );
+    // variable_global( _environment, "XGR" );
+    // variable_import( _environment, "YGR", VT_POSITION, 0 );
+    // variable_global( _environment, "YGR" );
+    // variable_import( _environment, "LINE", VT_WORD, (unsigned short)(0xffff) );
+    // variable_global( _environment, "LINE" );
 
-    variable_import( _environment, "CLIPX1", VT_POSITION, 0 );
-    variable_global( _environment, "CLIPX1" );
-    variable_import( _environment, "CLIPX2", VT_POSITION, 255 );
-    variable_global( _environment, "CLIPX2" );
-    variable_import( _environment, "CLIPY1", VT_POSITION, 0 );
-    variable_global( _environment, "CLIPY1" );
-    variable_import( _environment, "CLIPY2", VT_POSITION, 191 );
-    variable_global( _environment, "CLIPY2" );
+    // variable_import( _environment, "CLIPX1", VT_POSITION, 0 );
+    // variable_global( _environment, "CLIPX1" );
+    // variable_import( _environment, "CLIPX2", VT_POSITION, 255 );
+    // variable_global( _environment, "CLIPX2" );
+    // variable_import( _environment, "CLIPY1", VT_POSITION, 0 );
+    // variable_global( _environment, "CLIPY1" );
+    // variable_import( _environment, "CLIPY2", VT_POSITION, 191 );
+    // variable_global( _environment, "CLIPY2" );
 
-    variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
-    variable_global( _environment, "ORIGINX" );
-    variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
-    variable_global( _environment, "ORIGINY" );
+    // variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
+    // variable_global( _environment, "ORIGINX" );
+    // variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
+    // variable_global( _environment, "ORIGINY" );
 
-    variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
-    variable_global( _environment, "RESOLUTIONX" );
-    variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
-    variable_global( _environment, "RESOLUTIONY" );
+    // variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
+    // variable_global( _environment, "RESOLUTIONX" );
+    // variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
+    // variable_global( _environment, "RESOLUTIONY" );
     
-    variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
-    variable_global( _environment, "TABCOUNT" );
+    // variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
+    // variable_global( _environment, "TABCOUNT" );
 
-    variable_import( _environment, "CLINEX", VT_BYTE, 0 );
-    variable_global( _environment, "CLINEX" );
+    // variable_import( _environment, "CLINEX", VT_BYTE, 0 );
+    // variable_global( _environment, "CLINEX" );
 
-    variable_import( _environment, "CLINEY", VT_BYTE, 0 );
-    variable_global( _environment, "CLINEY" );
+    // variable_import( _environment, "CLINEY", VT_BYTE, 0 );
+    // variable_global( _environment, "CLINEY" );
 
-    variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
-    variable_global( _environment, "PLOTCPE" );
+    // variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
+    // variable_global( _environment, "PLOTCPE" );
 
-    variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
-    variable_global( _environment, "TABSTODRAW" );
+    // variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
+    // variable_global( _environment, "TABSTODRAW" );
 
-    variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
-    variable_global( _environment, "CURRENTMODE" );
-    variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
-    variable_global( _environment, "CURRENTTILEMODE" );
+    // variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
+    // variable_global( _environment, "CURRENTMODE" );
+    // variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
+    // variable_global( _environment, "CURRENTTILEMODE" );
 
-    variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
-    variable_global( _environment, "SPRITECOUNT" );
+    // variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
+    // variable_global( _environment, "SPRITECOUNT" );
 
-    variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
-    variable_global( _environment, "SPRITEXY" );
+    // variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
+    // variable_global( _environment, "SPRITEXY" );
 
-    variable_import( _environment, "TILEX", VT_BYTE, 0 );
-    variable_global( _environment, "TILEX" );
-    variable_import( _environment, "TILEY", VT_BYTE, 0 );
-    variable_global( _environment, "TILEY" );
-    variable_import( _environment, "TILEX2", VT_BYTE, 0 );
-    variable_global( _environment, "TILEX2" );
-    variable_import( _environment, "TILET", VT_BYTE, 0 );
-    variable_global( _environment, "TILET" );
-    variable_import( _environment, "TILEW", VT_BYTE, 0 );
-    variable_global( _environment, "TILEW" );
-    variable_import( _environment, "TILEH", VT_BYTE, 0 );
-    variable_global( _environment, "TILEH" );
-    variable_import( _environment, "TILEW2", VT_BYTE, 0 );
-    variable_global( _environment, "TILEW2" );
-    variable_import( _environment, "TILEH2", VT_BYTE, 0 );
-    variable_global( _environment, "TILEH2" );
-    variable_import( _environment, "TILEA", VT_BYTE, 0 );
-    variable_global( _environment, "TILEA" );
-    variable_import( _environment, "TILEO", VT_WORD, 0 );
-    variable_global( _environment, "TILEO" );
+    // variable_import( _environment, "TILEX", VT_BYTE, 0 );
+    // variable_global( _environment, "TILEX" );
+    // variable_import( _environment, "TILEY", VT_BYTE, 0 );
+    // variable_global( _environment, "TILEY" );
+    // variable_import( _environment, "TILEX2", VT_BYTE, 0 );
+    // variable_global( _environment, "TILEX2" );
+    // variable_import( _environment, "TILET", VT_BYTE, 0 );
+    // variable_global( _environment, "TILET" );
+    // variable_import( _environment, "TILEW", VT_BYTE, 0 );
+    // variable_global( _environment, "TILEW" );
+    // variable_import( _environment, "TILEH", VT_BYTE, 0 );
+    // variable_global( _environment, "TILEH" );
+    // variable_import( _environment, "TILEW2", VT_BYTE, 0 );
+    // variable_global( _environment, "TILEW2" );
+    // variable_import( _environment, "TILEH2", VT_BYTE, 0 );
+    // variable_global( _environment, "TILEH2" );
+    // variable_import( _environment, "TILEA", VT_BYTE, 0 );
+    // variable_global( _environment, "TILEA" );
+    // variable_import( _environment, "TILEO", VT_WORD, 0 );
+    // variable_global( _environment, "TILEO" );
 
-    variable_import( _environment, "XSCROLLPOS", VT_BYTE, 0 );
-    variable_global( _environment, "XSCROLLPOS" );
-    variable_import( _environment, "YSCROLLPOS", VT_BYTE, 0 );
-    variable_global( _environment, "YSCROLLPOS" );
-    variable_import( _environment, "XSCROLL", VT_BYTE, 0 );
-    variable_global( _environment, "XSCROLL" );
-    variable_import( _environment, "YSCROLL", VT_BYTE, 0 );
-    variable_global( _environment, "YSCROLL" );
-    variable_import( _environment, "DIRECTION", VT_BYTE, 0 );
-    variable_global( _environment, "DIRECTION" );
+    // variable_import( _environment, "XSCROLLPOS", VT_BYTE, 0 );
+    // variable_global( _environment, "XSCROLLPOS" );
+    // variable_import( _environment, "YSCROLLPOS", VT_BYTE, 0 );
+    // variable_global( _environment, "YSCROLLPOS" );
+    // variable_import( _environment, "XSCROLL", VT_BYTE, 0 );
+    // variable_global( _environment, "XSCROLL" );
+    // variable_import( _environment, "YSCROLL", VT_BYTE, 0 );
+    // variable_global( _environment, "YSCROLL" );
+    // variable_import( _environment, "DIRECTION", VT_BYTE, 0 );
+    // variable_global( _environment, "DIRECTION" );
 
-    variable_import( _environment, "ONSCROLLUP", VT_BUFFER, 3 );
-    variable_global( _environment, "ONSCROLLUP" );
+    // variable_import( _environment, "ONSCROLLUP", VT_BUFFER, 3 );
+    // variable_global( _environment, "ONSCROLLUP" );
 
-    variable_import( _environment, "ONSCROLLDOWN", VT_BUFFER, 3 );
-    variable_global( _environment, "ONSCROLLDOWN" );
+    // variable_import( _environment, "ONSCROLLDOWN", VT_BUFFER, 3 );
+    // variable_global( _environment, "ONSCROLLDOWN" );
 
-    variable_import( _environment, "ONSCROLLLEFT", VT_BUFFER, 3 );
-    variable_global( _environment, "ONSCROLLLEFT" );
+    // variable_import( _environment, "ONSCROLLLEFT", VT_BUFFER, 3 );
+    // variable_global( _environment, "ONSCROLLLEFT" );
 
-    variable_import( _environment, "ONSCROLLRIGHT", VT_BUFFER, 3 );
-    variable_global( _environment, "ONSCROLLRIGHT" );
+    // variable_import( _environment, "ONSCROLLRIGHT", VT_BUFFER, 3 );
+    // variable_global( _environment, "ONSCROLLRIGHT" );
 
-    variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
-    variable_global( _environment, "IMAGEF" );
+    // variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
+    // variable_global( _environment, "IMAGEF" );
 
-    variable_import( _environment, "IMAGET", VT_BYTE, 0 );
-    variable_global( _environment, "IMAGET" );
+    // variable_import( _environment, "IMAGET", VT_BYTE, 0 );
+    // variable_global( _environment, "IMAGET" );
 
-    variable_import( _environment, "IMAGEY", VT_BYTE, 0 );
-    variable_global( _environment, "IMAGEY" );
+    // variable_import( _environment, "IMAGEY", VT_BYTE, 0 );
+    // variable_global( _environment, "IMAGEY" );
 
-    variable_import( _environment, "BLITIMAGEBLITTINGADDR", VT_ADDRESS, 0 );
-    variable_global( _environment, "BLITIMAGEBLITTINGADDR" );
-    variable_import( _environment, "BLITTMPPTR", VT_ADDRESS, 0 );
-    variable_global( _environment, "BLITTMPPTR" );
-    variable_import( _environment, "BLITTMPPTR2", VT_ADDRESS, 0 );
-    variable_global( _environment, "BLITTMPPTR2" );
+    // variable_import( _environment, "BLITIMAGEBLITTINGADDR", VT_ADDRESS, 0 );
+    // variable_global( _environment, "BLITIMAGEBLITTINGADDR" );
+    // variable_import( _environment, "BLITTMPPTR", VT_ADDRESS, 0 );
+    // variable_global( _environment, "BLITTMPPTR" );
+    // variable_import( _environment, "BLITTMPPTR2", VT_ADDRESS, 0 );
+    // variable_global( _environment, "BLITTMPPTR2" );
 
     // #if __coleco__
     //     variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );
     //     variable_global( _environment, "VDP_HOOK" );
     // #endif
 
-    variable_import( _environment, "VBLFLAG", VT_BYTE, 0 );
-    variable_global( _environment, "VBLFLAG" ); 
-    variable_import( _environment, "VDPINUSE", VT_BYTE, 0 );
-    variable_global( _environment, "VDPINUSE" );
+    // variable_import( _environment, "VBLFLAG", VT_BYTE, 0 );
+    // variable_global( _environment, "VBLFLAG" ); 
+    // variable_import( _environment, "VDPINUSE", VT_BYTE, 0 );
+    // variable_global( _environment, "VDPINUSE" );
 
-    variable_import( _environment, "SLICEX", VT_POSITION, 0 );
-    variable_global( _environment, "SLICEX" );
-    variable_import( _environment, "SLICEY", VT_POSITION, 0 );
-    variable_global( _environment, "SLICEY" );
-    variable_import( _environment, "SLICEDTARGET", VT_POSITION, 0 );
-    variable_global( _environment, "SLICEDTARGET" );
+    // variable_import( _environment, "SLICEX", VT_POSITION, 0 );
+    // variable_global( _environment, "SLICEX" );
+    // variable_import( _environment, "SLICEY", VT_POSITION, 0 );
+    // variable_global( _environment, "SLICEY" );
+    // variable_import( _environment, "SLICEDTARGET", VT_POSITION, 0 );
+    // variable_global( _environment, "SLICEDTARGET" );
 
-    variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
-    variable_global( _environment, "CONSOLESA" );
-    variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
-    variable_global( _environment, "CONSOLEHB" );
-    variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
-    variable_global( _environment, "CONSOLEWB" );
+    // variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
+    // variable_global( _environment, "CONSOLESA" );
+    // variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
+    // variable_global( _environment, "CONSOLEHB" );
+    // variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
+    // variable_global( _environment, "CONSOLEWB" );
 
     // tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 

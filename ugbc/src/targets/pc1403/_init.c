@@ -50,109 +50,109 @@ void target_initialization( Environment * _environment ) {
 
     _environment->audioConfig.async = 1;
 
-    variable_import( _environment, "DLOADERR", VT_BYTE, 0 );
-    variable_global( _environment, "DLOADERR" );
-    variable_import( _environment, "DSAVEERR", VT_BYTE, 0 );
-    variable_global( _environment, "DSAVEERR" );
+    // variable_import( _environment, "DLOADERR", VT_BYTE, 0 );
+    // variable_global( _environment, "DLOADERR" );
+    // variable_import( _environment, "DSAVEERR", VT_BYTE, 0 );
+    // variable_global( _environment, "DSAVEERR" );
 
-    variable_import( _environment, "TIMERRUNNING", VT_BYTE, 0 );
-    variable_global( _environment, "TIMERRUNNING" );
-    variable_import( _environment, "TIMERSTATUS", VT_BYTE, 0 );
-    variable_global( _environment, "TIMERSTATUS" );
-    variable_import( _environment, "TIMERCOUNTER", VT_BUFFER, 16 );
-    variable_global( _environment, "TIMERCOUNTER" );
-    variable_import( _environment, "TIMERINIT", VT_BUFFER, 16 );
-    variable_global( _environment, "TIMERINIT" );
-    variable_import( _environment, "TIMERADDRESS", VT_BUFFER, 16 );
-    variable_global( _environment, "TIMERADDRESS" );
+    // variable_import( _environment, "TIMERRUNNING", VT_BYTE, 0 );
+    // variable_global( _environment, "TIMERRUNNING" );
+    // variable_import( _environment, "TIMERSTATUS", VT_BYTE, 0 );
+    // variable_global( _environment, "TIMERSTATUS" );
+    // variable_import( _environment, "TIMERCOUNTER", VT_BUFFER, 16 );
+    // variable_global( _environment, "TIMERCOUNTER" );
+    // variable_import( _environment, "TIMERINIT", VT_BUFFER, 16 );
+    // variable_global( _environment, "TIMERINIT" );
+    // variable_import( _environment, "TIMERADDRESS", VT_BUFFER, 16 );
+    // variable_global( _environment, "TIMERADDRESS" );
 
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "BITMAPADDRESS" );
-    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "COLORMAPADDRESS" );
-    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "TEXTADDRESS" );    
-    variable_import( _environment, "TILESADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "TILESADDRESS" );    
-    variable_import( _environment, "EMPTYTILE", VT_TILE, 32 );
-    variable_global( _environment, "EMPTYTILE" );    
-    variable_import( _environment, "USING", VT_BYTE, 0 );
+    // variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
+    // variable_global( _environment, "BITMAPADDRESS" );
+    // variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0000 );
+    // variable_global( _environment, "COLORMAPADDRESS" );
+    // variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0000 );
+    // variable_global( _environment, "TEXTADDRESS" );    
+    // variable_import( _environment, "TILESADDRESS", VT_ADDRESS, 0x0000 );
+    // variable_global( _environment, "TILESADDRESS" );    
+    // variable_import( _environment, "EMPTYTILE", VT_TILE, 32 );
+    // variable_global( _environment, "EMPTYTILE" );    
+    // variable_import( _environment, "USING", VT_BYTE, 0 );
 
-    variable_import( _environment, "COPYOFBITMAPADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "COPYOFBITMAPADDRESS" );
-    variable_import( _environment, "COPYOFCOLORMAPADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "COPYOFCOLORMAPADDRESS" );
-    variable_import( _environment, "COPYOFTEXTADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "COPYOFTEXTADDRESS" );    
-    variable_import( _environment, "COPYOFTILESADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "COPYOFTILESADDRESS" );    
+    // variable_import( _environment, "COPYOFBITMAPADDRESS", VT_ADDRESS, 0x0000 );
+    // variable_global( _environment, "COPYOFBITMAPADDRESS" );
+    // variable_import( _environment, "COPYOFCOLORMAPADDRESS", VT_ADDRESS, 0x0000 );
+    // variable_global( _environment, "COPYOFCOLORMAPADDRESS" );
+    // variable_import( _environment, "COPYOFTEXTADDRESS", VT_ADDRESS, 0x0000 );
+    // variable_global( _environment, "COPYOFTEXTADDRESS" );    
+    // variable_import( _environment, "COPYOFTILESADDRESS", VT_ADDRESS, 0x0000 );
+    // variable_global( _environment, "COPYOFTILESADDRESS" );    
 
-    variable_import( _environment, "VDPDATAPORTREAD", VT_BYTE, 0x98 );
-    variable_global( _environment, "VDPDATAPORTREAD" );
+    // variable_import( _environment, "VDPDATAPORTREAD", VT_BYTE, 0x98 );
+    // variable_global( _environment, "VDPDATAPORTREAD" );
 
-    variable_import( _environment, "VDPDATAPORTWRITE", VT_BYTE, 0x98 );
-    variable_global( _environment, "VDPDATAPORTWRITE" );
+    // variable_import( _environment, "VDPDATAPORTWRITE", VT_BYTE, 0x98 );
+    // variable_global( _environment, "VDPDATAPORTWRITE" );
 
-    variable_import( _environment, "VDPCONTROLPORTREAD", VT_BYTE, 0x99 );
-    variable_global( _environment, "VDPCONTROLPORTREAD" );
+    // variable_import( _environment, "VDPCONTROLPORTREAD", VT_BYTE, 0x99 );
+    // variable_global( _environment, "VDPCONTROLPORTREAD" );
 
-    variable_import( _environment, "VDPCONTROLPORTWRITE", VT_BYTE, 0x99 );
-    variable_global( _environment, "VDPCONTROLPORTWRITE" );
+    // variable_import( _environment, "VDPCONTROLPORTWRITE", VT_BYTE, 0x99 );
+    // variable_global( _environment, "VDPCONTROLPORTWRITE" );
 
-    variable_import( _environment, "ISRSVC2", VT_BUFFER, 3 );
-    variable_global( _environment, "ISRSVC2" );
+    // variable_import( _environment, "ISRSVC2", VT_BUFFER, 3 );
+    // variable_global( _environment, "ISRSVC2" );
 
-    variable_import( _environment, "BANKSHADOW", VT_BYTE, 0 );
+    // variable_import( _environment, "BANKSHADOW", VT_BYTE, 0 );
 
-    variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
-    variable_global( _environment, "FPSCRAP" );
+    // variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
+    // variable_global( _environment, "FPSCRAP" );
 
-    variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
-    variable_global( _environment, "TICKSPERSECOND" );   
+    // variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
+    // variable_global( _environment, "TICKSPERSECOND" );   
 
-    variable_import( _environment, "JOYSTICK0", VT_BYTE, 0 );
-    variable_global( _environment, "JOYSTICK0" );   
-    variable_import( _environment, "JOYSTICK1", VT_BYTE, 0 );
-    variable_global( _environment, "JOYSTICK1" );   
+    // variable_import( _environment, "JOYSTICK0", VT_BYTE, 0 );
+    // variable_global( _environment, "JOYSTICK0" );   
+    // variable_import( _environment, "JOYSTICK1", VT_BYTE, 0 );
+    // variable_global( _environment, "JOYSTICK1" );   
 
-    variable_import( _environment, "AY8910TIMER", VT_BUFFER, 6 );
-    variable_global( _environment, "AY8910TIMER" );    
+    // variable_import( _environment, "AY8910TIMER", VT_BUFFER, 6 );
+    // variable_global( _environment, "AY8910TIMER" );    
 
-    variable_import( _environment, "KBDCHAR", VT_BYTE, 0 );
-    variable_global( _environment, "KBDCHAR" );
+    // variable_import( _environment, "KBDCHAR", VT_BYTE, 0 );
+    // variable_global( _environment, "KBDCHAR" );
 
-    variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
-    variable_global( _environment, "DATAPTR" );
+    // variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
+    // variable_global( _environment, "DATAPTR" );
 
-    variable_import( _environment, "SCANCODEREAD", VT_BUFFER, 16 );
-    variable_global( _environment, "SCANCODEREAD" );
+    // variable_import( _environment, "SCANCODEREAD", VT_BUFFER, 16 );
+    // variable_global( _environment, "SCANCODEREAD" );
 
-    variable_import( _environment, "KEYBOARDPRESSED", VT_BYTE, 0 );
-    variable_global( _environment, "KEYBOARDPRESSED" );
+    // variable_import( _environment, "KEYBOARDPRESSED", VT_BYTE, 0 );
+    // variable_global( _environment, "KEYBOARDPRESSED" );
 
-    variable_import( _environment, "KEYBOARDACTUAL", VT_BYTE, 0xff );
-    variable_global( _environment, "KEYBOARDACTUAL" );
+    // variable_import( _environment, "KEYBOARDACTUAL", VT_BYTE, 0xff );
+    // variable_global( _environment, "KEYBOARDACTUAL" );
 
-    variable_import( _environment, "KEYBOARDELAPSED", VT_BYTE, 0 );
-    variable_global( _environment, "KEYBOARDELAPSED" );
+    // variable_import( _environment, "KEYBOARDELAPSED", VT_BYTE, 0 );
+    // variable_global( _environment, "KEYBOARDELAPSED" );
 
-    variable_import( _environment, "KEYBOARDASFSTATE", VT_BYTE, 0 );
-    variable_global( _environment, "KEYBOARDASFSTATE" );
+    // variable_import( _environment, "KEYBOARDASFSTATE", VT_BYTE, 0 );
+    // variable_global( _environment, "KEYBOARDASFSTATE" );
 
-    variable_import( _environment, "KEYBOARDQUEUEWPOS", VT_BYTE, 0 );
-    variable_global( _environment, "KEYBOARDQUEUEWPOS" );
+    // variable_import( _environment, "KEYBOARDQUEUEWPOS", VT_BYTE, 0 );
+    // variable_global( _environment, "KEYBOARDQUEUEWPOS" );
 
-    variable_import( _environment, "KEYBOARDQUEUERPOS", VT_BYTE, 0 );
-    variable_global( _environment, "KEYBOARDQUEUERPOS" );
+    // variable_import( _environment, "KEYBOARDQUEUERPOS", VT_BYTE, 0 );
+    // variable_global( _environment, "KEYBOARDQUEUERPOS" );
 
-    variable_import( _environment, "KEYBOARDQUEUE", VT_BUFFER, 10 );
-    variable_global( _environment, "KEYBOARDQUEUE" );
+    // variable_import( _environment, "KEYBOARDQUEUE", VT_BUFFER, 10 );
+    // variable_global( _environment, "KEYBOARDQUEUE" );
 
-    variable_import( _environment, "KEYBOARDINKEY", VT_BYTE, 0 );
-    variable_global( _environment, "KEYBOARDINKEY" );
+    // variable_import( _environment, "KEYBOARDINKEY", VT_BYTE, 0 );
+    // variable_global( _environment, "KEYBOARDINKEY" );
 
-    variable_import( _environment, "KEYBOARDSHIFT", VT_BYTE, 0 );
-    variable_global( _environment, "KEYBOARDSHIFT" );
+    // variable_import( _environment, "KEYBOARDSHIFT", VT_BYTE, 0 );
+    // variable_global( _environment, "KEYBOARDSHIFT" );
 
     for( int i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
@@ -231,8 +231,8 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("CODESTART2:");
 
-    // outline0("CALL VARINIT2");
-    // cpu_call( _environment, "VARINIT" );
+    // cpu_call( _environment, "VARINIT2" );
+    cpu_call( _environment, "VARINIT" );
     // outline0("CALL PROTOTHREADINIT" );
 
     sc61860_init( _environment );
@@ -243,7 +243,7 @@ void target_initialization( Environment * _environment ) {
 
     // outline0("CALL PC1403STARTUP" );
 
-    setup_text_variables( _environment );
+    // setup_text_variables( _environment );
 
     // // tms9918_initialization( _environment );
     // ay8910_initialization( _environment );

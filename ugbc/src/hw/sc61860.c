@@ -136,8 +136,9 @@ void sc61860_bveq( Environment * _environment, char * _value, char * _label ) {
 
     // inline( cpu_bveq )
 
-        // outline1("LIP %s", _value);
-        // outline0("CPIM 0");
+        outline1("LIDP %s", _value);
+        outline0("LDD");
+        outline0("CPIA 0");
         sc61860_beq( _environment, _label );
 
     // no_embedded( cpu_bneq )
@@ -148,8 +149,9 @@ void sc61860_bvneq( Environment * _environment, char * _value, char * _label ) {
 
     // inline( cpu_bvneq )
 
-        // outline1("LIP %s", _value);
-        // outline0("CPIM 0");
+        outline1("LIDP %s", _value);
+        outline0("LDD");
+        outline0("CPIA 0");
         sc61860_bneq( _environment, _label );
 
     // no_embedded( cpu_bvneq )
@@ -164,11 +166,24 @@ void sc61860_peek( Environment * _environment, char * _address, char * _target )
 
     inline( cpu_peek )
 
-        outline1("LIDP %s", _address);
-        outline0("LP 0x04");
-        outline0("MVMD");
-        outline0("LDM");
-        outline1("LIDP %s", _target);
+        // DP <- address
+        outline1("LIDP %s", _address );
+
+        // X <- DP
+
+        outline0("LII 0x01" );
+        outline0("LP 0x04" );
+        outline0("MVWD");
+
+        // DP <- address
+        outline1("LIDP %s", _target );
+        outline0("LDD");
+
+        // A <- (X)
+        outline0("DX");
+        outline0("IXL");
+
+        // (DP) <- A
         outline0("STD");
 
     no_embedded( cpu_peek )
@@ -956,6 +971,87 @@ void sc61860_less_than_8bit( Environment * _environment, char *_source, char *_d
 }
 
 void sc61860_less_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    MAKE_LABEL
+
+    // inline( cpu_less_than_8bit )
+
+        if ( _signed ) {
+
+            // outline1("LD A, 0x%2.2x", ( _destination & 0xff ) );
+            // outline0("LD B, A");
+            // outline1("LD A, (%s)", _source);
+            // outline0("SUB A, B");
+            if ( _equal ) {
+                // outline1("JP  Z,%strue", label);
+            }
+            // outline1("JP PO,%snoxor", label);
+            // outline0("XOR 0x80");
+            // outhead1("%snoxor:", label);
+            // outline1("JP M,%strue", label);
+            // outline1("JP PE,%sfalse", label);
+            // outhead1("%sfalse:", label);
+            // outline0("LD A, 0");
+            // outline1("LD (%s), A", _other);
+            // outline1("JMP %sb2", label);
+            // outhead1("%strue:", label);
+            // outline0("LD A, 0xff");
+            // outline1("LD (%s), A", _other);
+            // outhead1("%sb2:", label);
+
+        } else {
+
+            // outline1("LD A, 0x%2.2x", ( _destination & 0xff ) );
+            // outline0("LD B, A");
+            // outline1("LD A, (%s)", _source);
+            // outline0("CP B");
+            // outline1("JR C, %s", label);
+            if ( _equal ) {
+                // outline1("JR Z, %s", label);
+            }
+            // outline0("LD A, 0");
+            // outline1("LD (%s), A", _other);
+            // outline1("JMP %sb2", label);
+            // outhead1("%s:", label);
+            // outline0("LD A, 0xff");
+            // outline1("LD (%s), A", _other);
+            // outhead1("%sb2:", label);
+
+        }
+
+    // embedded( cpu_less_than_8bit, src_hw_sc61860_cpu_less_than_8bit_asm );
+
+        if ( _signed ) {
+
+            // outline1("LD A, 0x%2.2x", _destination);
+            // outline0("LD B, A");
+            // outline1("LD A, (%s)", _source);
+            if ( _equal ) {
+                // outline0("CALL CPULTE8S");
+            } else {
+                // outline0("CALL CPULT8S");
+            }
+            // outline1("LD (%s), A", _other);
+
+        } else {
+
+            // outline1("LD A, 0x%2.2x", _destination);
+            // outline0("LD B, A");
+            // outline1("LD A, (%s)", _source);
+            if ( _equal ) {
+                // outline0("CALL CPULTE8U");
+            } else {
+                // outline0("CALL CPULT8U");
+            }
+            // outline1("LD (%s), A", _other);
+
+        }
+
+    // done(  )
+
+}
+
+void sc61860_less_than_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -3839,7 +3935,7 @@ void sc61860_get_asmio_indirect( Environment * _environment, int _asmio, char * 
 
 void sc61860_return( Environment * _environment ) {
 
-    // outline0("RET" );
+    outline0("RTN" );
 
 }
 
@@ -4161,6 +4257,19 @@ void sc61860_xor_8bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
+void sc61860_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    // outline1("LD HL, %s", _left );
+    // outline1("LD IX, %s", _right );
+    // outline1("LD DE, %s", _result );
+    // outline0("LD A, (HL)" );
+    // outline0("XOR (IX)" );
+    // outline0("LD (DE), A" );
+
+}
+
 void sc61860_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
@@ -4181,7 +4290,55 @@ void sc61860_xor_16bit( Environment * _environment, char * _left, char * _right,
 
 }
 
+void sc61860_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    // outline1("LD HL, %s", _left );
+    // outline1("LD IX, %s", _right );
+    // outline1("LD DE, %s", _result );
+    // outline0("LD A, (HL)" );
+    // outline0("XOR (IX)" );
+    // outline0("LD (DE), A" );
+    // outline0("INC HL" );
+    // outline0("INC DE" );
+    // outline0("LD A, (HL)" );
+    // outline0("XOR (IX+1)" );
+    // outline0("LD (DE), A" );
+    // outline0("INC HL" );
+    // outline0("INC DE" );
+
+}
+
 void sc61860_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    // outline1("LD HL, %s", _left );
+    // outline1("LD IX, %s", _right );
+    // outline1("LD DE, %s", _result );
+    // outline0("LD A, (HL)" );
+    // outline0("XOR (IX)" );
+    // outline0("LD (DE), A" );
+    // outline0("INC HL" );
+    // outline0("INC DE" );
+    // outline0("LD A, (HL)" );
+    // outline0("XOR (IX+1)" );
+    // outline0("LD (DE), A" );
+    // outline0("INC HL" );
+    // outline0("INC DE" );
+    // outline0("LD A, (HL)" );
+    // outline0("XOR (IX+2)" );
+    // outline0("LD (DE), A" );
+    // outline0("INC HL" );
+    // outline0("INC DE" );
+    // outline0("LD A, (HL)" );
+    // outline0("XOR (IX+3)" );
+    // outline0("LD (DE), A" );
+
+}
+
+void sc61860_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
     MAKE_LABEL
 
