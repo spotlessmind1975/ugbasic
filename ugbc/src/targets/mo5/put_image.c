@@ -122,26 +122,27 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
                 bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
 
-                cpu_store_16bit(_environment, bankWindowId, 0xffff );
+                // Optimization: D = $FFFF at the end of any BANKREAD
+                outline1( "STD %s", bankWindowId );
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
+                ef936x_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags );
 
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, x1->name, y1->name, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, x1->name, y1->name, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, x1->name, y1->name, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, x1->name, y1->name, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -185,19 +186,20 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
                 bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
 
-                cpu_store_16bit(_environment, bankWindowId, 0xffff );
+                // Optimization: D = $FFFF at the end of any BANKREAD
+                outline1( "STD %s", bankWindowId );
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
+                ef936x_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
                 if ( !frame ) {
-                    ef936x_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
+                    ef936x_put_image( _environment, resource, x1->name, y1->name, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    ef936x_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    ef936x_put_image( _environment, resource, x1->name, y1->name, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
@@ -227,9 +229,9 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+                ef936x_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
             } else {
-                ef936x_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+                ef936x_put_image( _environment, resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
             }
             break;
         default:

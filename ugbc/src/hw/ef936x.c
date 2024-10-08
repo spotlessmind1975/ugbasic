@@ -1897,9 +1897,20 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
 
     ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
 
-    outline1("LDD %s", _x );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+
+    if ( x->initializedByConstant ) {
+        outline1("LDD #$%4.4x", x->value );
+    } else {
+        outline1("LDD %s", x->realName );
+    }
     outline0("STD <IMAGEX" );
-    outline1("LDD %s", _y );
+    if ( y->initializedByConstant ) {
+        outline1("LDD #$%4.4x", y->value );
+    } else {
+        outline1("LDD %s", y->realName );
+    }
     outline0("STD <IMAGEY" );
     if( _flags ) {
         outline1("LDD %s", _flags );
