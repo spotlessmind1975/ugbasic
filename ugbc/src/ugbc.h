@@ -3226,6 +3226,8 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_READ_FILE(f,n) CRITICAL3("E306 - cannot read file", f, n );
 #define CRITICAL_CANNOT_WRITE_FILE(f,n) CRITICAL3("E307 - cannot write file", f, n );
 #define CRITICAL_XOR_INPLACE_UNSUPPORTED(v,t) CRITICAL3("E308 - cannot use inplace XOR with this datatype", v, t );
+#define CRITICAL_PUT_IMAGE_X_UNSUPPORTED( v, t ) CRITICAL3("E088 - PUT IMAGE unsupported for given datatype for x coordinates", v, t );
+#define CRITICAL_PUT_IMAGE_Y_UNSUPPORTED( v, t ) CRITICAL3("E088 - PUT IMAGE unsupported for given datatype for y coordinates", v, t );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

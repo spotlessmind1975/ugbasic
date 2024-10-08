@@ -127,24 +127,20 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
-                Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
-                ef936x_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags );
+                ef936x_put_image( _environment, &resource, _x1, _x2, NULL, NULL, image->frameSize, 0, _flags );
 
             } else {
-                Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
-                Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
                 if ( !sequence ) {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, resource, x1->name, y1->name, "", "", image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, _x1, _y1, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, resource, x1->name, y1->name, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, _x1, _y1, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, resource, x1->name, y1->name, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, _x1, _y1, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, resource, x1->name, y1->name, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, _x1, _y1, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -195,17 +191,13 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
-                Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
-                ef936x_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags );
+                ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
-                Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
-                Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
                 if ( !frame ) {
-                    ef936x_put_image( _environment, resource, x1->name, y1->name, "", NULL, image->frameSize, 0, _flags );
+                    ef936x_put_image( _environment, resource, _x1, _y1, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    ef936x_put_image( _environment, resource, x1->name, y1->name, frame->realName, NULL, image->frameSize, 0, _flags );
+                    ef936x_put_image( _environment, resource, _x1, _y1, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
@@ -235,13 +227,9 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
-                Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
-                ef936x_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
+                ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 0, 0, _flags );
             } else {
-                Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
-                Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
-                ef936x_put_image( _environment, resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
+                ef936x_put_image( _environment, resource, _x1, _y1, NULL, NULL, 0, 0, _flags );
             }
             break;
         default:
