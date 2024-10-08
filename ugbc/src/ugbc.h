@@ -1535,6 +1535,7 @@ typedef struct _Embedded {
     int cpu_move_8bit_with_offset;
     int cpu_move_8bit_with_offset2;
     int cpu_store_8bit_with_offset;
+    int cpu_store_8bit_with_offset2;
     int cpu_dsalloc_size;
     int cpu_complement2_8bit;
     int cpu_complement2_16bit;
