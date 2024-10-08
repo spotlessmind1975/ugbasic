@@ -7916,6 +7916,7 @@ void z80_float_single_sub( Environment * _environment, char * _x, char * _y, cha
 void z80_float_single_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
 
     deploy( fp_pushpop, src_hw_z80_fp_pushpop_asm );
+    deploy( fp_mul24_stack_based, src_hw_z80_fp_mul24_stack_based_asm );
     deploy( fp_single_mul, src_hw_z80_fp_single_mul_asm );
 
     outline1( "LD DE, %s", _y );
@@ -7999,6 +8000,7 @@ void z80_float_single_sin( Environment * _environment, char * _angle, char * _re
 
     MAKE_LABEL
 
+    deploy( fp_mul24_stack_based, src_hw_z80_fp_mul24_stack_based_asm );
     deploy( fp_single_vars, src_hw_z80_fp_single_vars_asm );
     deploy( fp_single_sin, src_hw_z80_fp_single_sin_asm );
     deploy( fp_single_cos, src_hw_z80_fp_single_cos_asm );
@@ -8068,6 +8070,7 @@ void z80_float_single_tan( Environment * _environment, char * _angle, char * _re
 
     MAKE_LABEL
 
+    deploy( fp_mul24_stack_based, src_hw_z80_fp_mul24_stack_based_asm );
     deploy( fp_single_vars, src_hw_z80_fp_single_vars_asm );
     deploy( fp_single_sin, src_hw_z80_fp_single_sin_asm );
     deploy( fp_single_cos, src_hw_z80_fp_single_cos_asm );
