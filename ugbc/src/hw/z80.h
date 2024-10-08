@@ -220,6 +220,7 @@ void z80_store_16bit( Environment * _environment, char *_source, int _value );
 void z80_store_32bit( Environment * _environment, char *_source, int _value );
 void z80_store_nbit( Environment * _environment, char *_source, int _n, int _value[] );
 void z80_store_8bit_with_offset( Environment * _environment, char *_source, int _value, int _offset );
+void z80_store_8bit_with_offset2( Environment * _environment, char *_source, char * _offset, int _value );
 void z80_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal );
 void z80_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal );
 void z80_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal );
@@ -566,6 +567,7 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_number_to_string( _environment, _number, _string, _string_size, _bits, _signed ) z80_number_to_string( _environment, _number, _string, _string_size, _bits, _signed )
 #define cpu_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset ) z80_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset )
 #define cpu_store_8bit_with_offset( _environment, _source, _value, _offset ) z80_store_8bit_with_offset( _environment, _source, _value, _offset )
+#define cpu_store_8bit_with_offset2( _environment, _source, _offset,  _value ) z80_store_8bit_with_offset2( _environment, _source, _offset, _value )
 #define cpu_move_8bit_indirect_with_offset( _environment, _source, _destination, _offset ) z80_move_8bit_indirect_with_offset( _environment, _source, _destination, _offset )
 #define cpu_dsdefine( _environment, _string, _index ) z80_dsdefine( _environment, _string, _index )
 #define cpu_dsalloc( _environment, _size, _index ) z80_dsalloc( _environment, _size, _index )

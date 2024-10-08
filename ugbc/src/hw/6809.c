@@ -5219,6 +5219,22 @@ void cpu6809_store_8bit_with_offset( Environment * _environment, char *_destinat
 
 }
 
+void cpu6809_store_8bit_with_offset2( Environment * _environment, char * _source, char * _offset, int _value ) {
+
+    inline( cpu_store_8bit_with_offset2 )
+
+        MAKE_LABEL
+
+        outline1("LDX #%s", _source);
+        outline1("LDB %s", _offset);
+        outline0("ABX");
+        outline1("LDA #$%2.2x", _value);
+        outline0("STA ,X");
+
+    no_embedded( cpu_store_8bit_with_offset2 )
+
+}
+
 void cpu6809_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
 
     if ( _destination ) {

@@ -6354,6 +6354,18 @@ void cpu6502_store_8bit_with_offset( Environment * _environment, char *_destinat
 
 }
 
+void cpu6502_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, int _value ) {
+
+    outline1("LDY %s", _offset);
+    outline1("LDA #<%s", _destination);
+    outline0("STA TMPPTR");
+    outline1("LDA #>%s", _destination);
+    outline0("STA TMPPTR+1");
+    outline1("LDA #$%2.2x", _value);
+    outline0("STA (TMPPTR),Y");
+
+}
+
 void cpu6502_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "LDA %s", _source );
     outline0( "EOR #$FF" );
