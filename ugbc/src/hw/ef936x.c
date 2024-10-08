@@ -1799,45 +1799,37 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 
 static void ef936x_load_image_address_to_y( Environment * _environment, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    outline1("LDY #%s", _source );
-    if ( _sequence ) {
-        outline0("LEAY 3,y" );
-        if ( strlen(_sequence) == 0 ) {
-        } else {
-            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
-            outline1("LDB %s", _sequence );
-            outline0("LDA #0" );
-            outline0("LEAX D, X" );
-            outline0("LEAX D, X" );
-            outline0("LDD ,X" );
-            outline0("LEAY D, Y" );
-        }
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
-            } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
-                outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
-            }
-        }
+    if ( !_sequence && !_frame ) {
+        outline1("LDY #%s", _source );
     } else {
-        if ( _frame ) {
+
+        outline1("LDY #%s", _source );
+
+        if ( _sequence ) {
             outline0("LEAY 3,y" );
-            if ( strlen(_frame) == 0 ) {
+            if ( strlen(_sequence) == 0 ) {
             } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
-                outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
+                outline1("LDB %s", _sequence );
+                outline1("JSR OFFSETS%4.4x", _frame_count * _frame_size );
+            }
+            if ( _frame ) {
+                if ( strlen(_frame) == 0 ) {
+                } else {
+                    outline1("LDB %s", _frame );
+                    outline1("JSR OFFSETS%4.4x", _frame_size );
+                }
+            }
+        } else {
+            if ( _frame ) {
+                outline0("LEAY 3,y" );
+                if ( strlen(_frame) == 0 ) {
+                } else {
+                    outline1("LDB %s", _frame );
+                    outline1("JSR OFFSETS%4.4x", _frame_size );
+                }
             }
         }
+
     }
 
 }
