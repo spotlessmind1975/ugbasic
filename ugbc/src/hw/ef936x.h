@@ -219,6 +219,7 @@ Variable * ef936x_new_sequence( Environment * _environment, int _sequences, int 
 void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette );
 
 void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
+void ef936x_calculate_sequence_frame_offset_regy( Environment * _environment, char * _sequence, char * _frame, int _frame_size, int _frame_count );
 
 void ef936x_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
 void ef936x_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );

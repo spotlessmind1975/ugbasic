@@ -2115,6 +2115,54 @@ Variable * ef936x_get_raster_line( Environment * _environment ) {
     
 }
 
+void ef936x_calculate_sequence_frame_offset_regy( Environment * _environment, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    if ( _sequence ) {
+        outline0("LEAY 3, Y" );
+        if ( strlen(_sequence) == 0 ) {
+        } else {
+
+            //outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
+            outline1("LDB %s", _sequence );
+            //outline0("LDA #0" );
+            //outline0("LEAX D, X" );
+            //outline0("LEAX D, X" );
+            //outline0("LDD ,X" );
+            //outline0("LEAY D, Y" );
+            outline1("JSR fs%4.4xoffsetsequence", _frame_count * _frame_size );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                // outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                // outline0("LDA #0" );
+                // outline0("LEAX D, X" );
+                // outline0("LEAX D, X" );
+                // outline0("LDD ,X" );
+                // outline0("LEAY D, Y" );
+                outline1("JSR fs%4.4xoffsetframe", _frame_size );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LEAY 3, Y" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                // outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                // outline0("LDA #0" );
+                // outline0("LEAX D, X" );
+                // outline0("LEAX D, X" );
+                // outline0("LDD ,X" );
+                // outline0("LEAY D, Y" );
+                outline1("JSR fs%4.4xoffsetframe", _frame_size );
+            }
+        }
+    }
+
+}
+
 void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     if ( _sequence ) {
@@ -2163,7 +2211,9 @@ void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * 
         }
     }
 
-    outline1("STY %s", _offset );
+    if ( _offset ) {
+        outline1("STY %s", _offset );
+    }
 
 }
 

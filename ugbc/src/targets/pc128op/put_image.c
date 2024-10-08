@@ -97,19 +97,21 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 // variable_store( _environment, frameSize->name, image->frameSize );
                 // Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
                 // variable_store( _environment, bank->name, image->bankAssigned );
-                Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                // Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+
+                outline1("LDY #$%4.4x", image->absoluteAddress );
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, "", "", image->frameSize, image->frameCount );
                     } else {
-                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, "", frame->realName, image->frameSize, image->frameCount );
                     }
                 } else {
                     if ( !frame ) {
-                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, sequence->realName, "", image->frameSize, image->frameCount );
                     } else {
-                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, sequence->realName, frame->realName, image->frameSize, image->frameCount );
                     }
                 }
 
@@ -117,12 +119,12 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 // variable_store( _environment, address->name, image->absoluteAddress );
                 // variable_add_inplace_vars( _environment, address->name, offset->name );
                 // bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
-                cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
+                // cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
 
                 // Optimization: inline read from bank.
 
                 // bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
-                outline1("LDY %s", offset->realName );
+
                 outline1("LDD #$%4.4x", image->frameSize );
                 if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                     outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
@@ -181,20 +183,22 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 // variable_store( _environment, frameSize->name, image->frameSize );
                 // Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
                 // variable_store( _environment, bank->name, image->bankAssigned );
-                Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                // Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+
+                outline1("LDY #$%4.4x", image->absoluteAddress );
 
                 if ( !frame ) {
-                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
+                    ef936x_calculate_sequence_frame_offset_regy(_environment, NULL, "", image->frameSize, 0 );
                 } else {
-                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    ef936x_calculate_sequence_frame_offset_regy(_environment, NULL, frame->realName, image->frameSize, 0 );
                 }
 
                 // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
                 // variable_store( _environment, address->name, image->absoluteAddress );
                 // variable_add_inplace_vars( _environment, address->name, offset->name );
-                cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
+                // cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
 
-                outline1("LDY %s", offset->realName );
+                // outline1("LDY %s", offset->realName );
                 outline1("LDD #$%4.4x", image->frameSize );
                 if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                     outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
