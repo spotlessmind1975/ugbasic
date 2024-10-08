@@ -2855,6 +2855,8 @@ typedef struct _Environment {
     char * optionalX;
     char * optionalY;
 
+    int residentDetectionEnabled;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

@@ -98,7 +98,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
 %token MOB CMOB PLACE DOJO READY LOGIN PASSWORD DOJOKA GAME HISCORE CREATE PORT DESTROY FIND MESSAGE PING
-%token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC
+%token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -8193,6 +8193,12 @@ define_definition :
     }
     | COMPRESSION RLE OFF {
         ((struct _Environment *)_environment)->enableRle = 0;
+    }
+    | RESIDENT DETECTION ON {
+        ((struct _Environment *)_environment)->residentDetectionEnabled = 1;
+    }
+    | RESIDENT DETECTION OFF {
+        ((struct _Environment *)_environment)->residentDetectionEnabled = 0;
     }
     | CENTER WITH NEWLINE {
         ((struct _Environment *)_environment)->centerWithoutNewLine = 0;

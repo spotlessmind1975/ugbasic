@@ -510,6 +510,8 @@ const_factor:
             $$ = ((struct _Environment *)_environment)->currentMode;
         } else if ( strcmp( $1, "outputFileType" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->outputFileType;
+        } else if ( strcmp( $1, "residentDetectionEnabled" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->residentDetectionEnabled;
         } else if ( strcmp( $1, "descriptors" ) == 0 ) {
             if ( ((struct _Environment *)_environment)->descriptors ) {
                 $$ = 1;

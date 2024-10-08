@@ -74,10 +74,14 @@ BANKREAD
 
     ANDCC #$AF
 
+@IF residentDetectionEnabled
+
     ; We load $FFFF into D, in order to be able
     ; to use this value to set a "used" BANK ID.
-
+    
     LDD #$FFFF
+
+@ENDIF
 
     RTS
 
@@ -198,10 +202,14 @@ BANKUNCOMPRESS
     
     ANDCC #$AF
 
+@IF residentDetectionEnabled
+
     ; We load $FFFF into D, in order to be able
     ; to use this value to set a "used" BANK ID.
     
     LDD #$FFFF
+
+@ENDIF
 
     RTS
 

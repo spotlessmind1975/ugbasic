@@ -128,8 +128,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                     outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
                 };
 
-                // Optimization: D = $FFFF at the end of any BANKREAD
-                outline1( "STD %s", bankWindowId );
+                if ( _environment->residentDetectionEnabled ) {
+                    // Optimization: D = $FFFF at the end of any BANKREAD
+                    outline1( "STD %s", bankWindowId );
+                }
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
@@ -215,8 +217,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                     outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
                 };
 
-                // Optimization: D = $FFFF at the end of any BANKREAD
-                outline1( "STD %s", bankWindowId );
+                if ( _environment->residentDetectionEnabled ) {
+                    // Optimization: D = $FFFF at the end of any BANKREAD
+                    outline1( "STD %s", bankWindowId );
+                }
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
@@ -254,19 +258,22 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 deploy_preferred( msc1, src_hw_6809_msc1_asm );
                 deploy_preferred( bank, src_hw_pc128op_bank_asm );
 
-                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                if ( _environment->residentDetectionEnabled ) {
+                    cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                }
                 if ( image->uncompressedSize ) {
                     outline1("LDX #$%4.4x", image->absoluteAddress );
                     // bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
                      if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                         outline1("JSR BANKUNCOMPRESS%2.2xXSDR", image->bankAssigned );
                     } else {
-                        outline1("LDX #%s", bankWindowName );
+                        outline1("LDY #%s", bankWindowName );
                         outline1("JSR BANKUNCOMPRESS%2.2xXS", image->bankAssigned );
                     };                    
                 } else {
                     // bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
                     outline1("LDY #$%4.4x", image->absoluteAddress );
+                    outline1("LDD #$%4.4x", image->size );
                     if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                         outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
                     } else {
@@ -274,8 +281,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                         outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
                     };            
                 }
-                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
-                cpu_label( _environment, alreadyLoadedLabel );
+                if ( _environment->residentDetectionEnabled ) {
+                    cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                    cpu_label( _environment, alreadyLoadedLabel );
+                }
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
