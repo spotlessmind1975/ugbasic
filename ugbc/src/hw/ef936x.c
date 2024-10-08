@@ -2057,10 +2057,60 @@ void ef936x_get_image( Environment * _environment, char * _image, char * _x, cha
 
     ef936x_load_image_address_to_y( _environment, _image, _sequence, _frame, _frame_size, _frame_count );
 
-    outline1("LDD %s", _x );
-    outline0("STD <IMAGEX" );
-    outline1("LDD %s", _y );
-    outline0("STD <IMAGEY" );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+
+    switch( VT_BITWIDTH( x->type ) ) {
+        case 16:
+            if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+                if ( x->initializedByConstant ) {
+                    outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
+                } else {
+                    outline1("LDB %s+1", x->realName );
+                }
+                outline0("STB <(IMAGEX+1)" );
+            } else {
+                if ( x->initializedByConstant ) {
+                    outline1("LDD #$%4.4x", (unsigned int)(x->value&0xffff) );
+                } else {
+                    outline1("LDD %s", x->realName );
+                }
+                outline0("STD <IMAGEX" );
+            }
+            break;
+        case 8:
+            if ( x->initializedByConstant ) {
+                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
+            } else {
+                outline1("LDB %s", x->realName );
+            }
+            outline0("STB <(IMAGEX+1)" );
+            break;
+        default:
+            CRITICAL_PUT_IMAGE_X_UNSUPPORTED( _x, DATATYPE_AS_STRING[x->type]);
+    }
+
+    switch( VT_BITWIDTH( y->type ) ) {
+        case 16:
+            if ( y->initializedByConstant ) {
+                outline1("LDB #$%2.42", y->value );
+            } else {
+                outline1("LDB %s+1", y->realName );
+            }
+            outline0("STB <(IMAGEY+1)" );
+            break;
+        case 8:
+            if ( y->initializedByConstant ) {
+                outline1("LDB #$%2.2x", y->value );
+            } else {
+                outline1("LDB %s", y->realName );
+            }
+            outline0("STB <(IMAGEY+1)" );
+            break;
+        default:
+            CRITICAL_PUT_IMAGE_X_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
+    }
+
     outline1("LDA #$%2.2x", _palette );
     outline0("STA <IMAGET" );
 
@@ -2173,7 +2223,7 @@ void ef936x_calculate_sequence_frame_offset_regy( Environment * _environment, ch
                 } else {
                     outline1("LDB %s", frame->realName );
                 }
-                
+
                 // outline0("LDA #0" );
                 // outline0("LEAX D, X" );
                 // outline0("LEAX D, X" );

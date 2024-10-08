@@ -207,7 +207,9 @@ GETIMAGE3DB
 
     PSHS Y
 
-    LDD <(IMAGEY)
+    CLRA
+    STA <(IMAGEY)
+    LDB <(IMAGEY+1)
     LSLB
     ROLA
     ADDD #PLOTVBASE
@@ -215,6 +217,8 @@ GETIMAGE3DB
     LDD , X
     TFR D, X
 
+    CLRA
+    STA <(IMAGEX)
     LDB <(IMAGEX+1)
     LSRB
     LSRB
@@ -487,7 +491,9 @@ GETIMAGE3
 
     PSHS Y
 
-    LDD <(IMAGEY)
+    CLRA
+    STA <(IMAGEY)
+    LDB <(IMAGEY+1)
     LSLB
     ROLA
     ADDD #PLOTVBASE
@@ -498,6 +504,8 @@ GETIMAGE3
 @ENDIF
     TFR D, X
 
+    CLRA
+    STA <(IMAGEX)
     LDB <(IMAGEX+1)
     LSRB
     LSRB
