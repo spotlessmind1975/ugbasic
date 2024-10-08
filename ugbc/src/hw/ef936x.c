@@ -2122,8 +2122,15 @@ void ef936x_calculate_sequence_frame_offset_regy( Environment * _environment, ch
         if ( strlen(_sequence) == 0 ) {
         } else {
 
+            Variable * sequence = variable_retrieve( _environment, _sequence );
+
+            if ( sequence->initializedByConstant ) {
+                outline1("LDB #$%2.2x", sequence->value );
+            } else {
+                outline1("LDB %s", sequence->realName );
+            }
+
             //outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
-            outline1("LDB %s", _sequence );
             //outline0("LDA #0" );
             //outline0("LEAX D, X" );
             //outline0("LEAX D, X" );
@@ -2135,7 +2142,15 @@ void ef936x_calculate_sequence_frame_offset_regy( Environment * _environment, ch
             if ( strlen(_frame) == 0 ) {
             } else {
                 // outline1("LDX #OFFSETS%4.4x", _frame_size );
-                outline1("LDB %s", _frame );
+
+                Variable * frame = variable_retrieve( _environment, _frame );
+
+                if ( frame->initializedByConstant ) {
+                    outline1("LDB #$%2.2x", frame->value );
+                } else {
+                    outline1("LDB %s", frame->realName );
+                }
+
                 // outline0("LDA #0" );
                 // outline0("LEAX D, X" );
                 // outline0("LEAX D, X" );
@@ -2150,7 +2165,15 @@ void ef936x_calculate_sequence_frame_offset_regy( Environment * _environment, ch
             if ( strlen(_frame) == 0 ) {
             } else {
                 // outline1("LDX #OFFSETS%4.4x", _frame_size );
-                outline1("LDB %s", _frame );
+
+                Variable * frame = variable_retrieve( _environment, _frame );
+
+                if ( frame->initializedByConstant ) {
+                    outline1("LDB #$%2.2x", frame->value );
+                } else {
+                    outline1("LDB %s", frame->realName );
+                }
+                
                 // outline0("LDA #0" );
                 // outline0("LEAX D, X" );
                 // outline0("LEAX D, X" );

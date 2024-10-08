@@ -62,15 +62,6 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
     Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
 
-    Variable * frame = NULL;
-    if ( _frame) {
-        frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
-    }
-    Variable * sequence = NULL;
-    if ( _sequence) {
-        sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
-    }
-
     switch( resource->type ) {
         case VT_SEQUENCE:
             if ( image->bankAssigned != -1 ) {
@@ -101,17 +92,17 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
                 outline1("LDY #$%4.4x", image->absoluteAddress );
 
-                if ( !sequence ) {
-                    if ( !frame ) {
+                if ( !_sequence ) {
+                    if ( !_frame ) {
                         ef936x_calculate_sequence_frame_offset_regy(_environment, "", "", image->frameSize, image->frameCount );
                     } else {
-                        ef936x_calculate_sequence_frame_offset_regy(_environment, "", frame->realName, image->frameSize, image->frameCount );
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, "", _frame, image->frameSize, image->frameCount );
                     }
                 } else {
-                    if ( !frame ) {
-                        ef936x_calculate_sequence_frame_offset_regy(_environment, sequence->realName, "", image->frameSize, image->frameCount );
+                    if ( !_frame ) {
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, _sequence, "", image->frameSize, image->frameCount );
                     } else {
-                        ef936x_calculate_sequence_frame_offset_regy(_environment, sequence->realName, frame->realName, image->frameSize, image->frameCount );
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, _sequence, _frame, image->frameSize, image->frameCount );
                     }
                 }
 
@@ -143,6 +134,15 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 ef936x_put_image( _environment, &resource, _x1, _x2, NULL, NULL, image->frameSize, 0, _flags );
 
             } else {
+                Variable * frame = NULL;
+                if ( _frame) {
+                    frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+                }
+                Variable * sequence = NULL;
+                if ( _sequence) {
+                    sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+                }
+
                 if ( !sequence ) {
                     if ( !frame ) {
                         ef936x_put_image( _environment, resource, _x1, _y1, "", "", image->frameSize, image->frameCount, _flags );
@@ -187,10 +187,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
                 outline1("LDY #$%4.4x", image->absoluteAddress );
 
-                if ( !frame ) {
+                if ( !_frame ) {
                     ef936x_calculate_sequence_frame_offset_regy(_environment, NULL, "", image->frameSize, 0 );
                 } else {
-                    ef936x_calculate_sequence_frame_offset_regy(_environment, NULL, frame->realName, image->frameSize, 0 );
+                    ef936x_calculate_sequence_frame_offset_regy(_environment, NULL, _frame, image->frameSize, 0 );
                 }
 
                 // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -217,6 +217,11 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
+                Variable * frame = NULL;
+                if ( _frame) {
+                    frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+                }
+
                 if ( !frame ) {
                     ef936x_put_image( _environment, resource, _x1, _y1, "", NULL, image->frameSize, 0, _flags );
                 } else {
