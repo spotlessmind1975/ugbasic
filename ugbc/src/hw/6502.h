@@ -271,7 +271,7 @@ void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _ad
 void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void cpu6502_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu6502_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset );
-void cpu6502_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, char * _value  );
+void cpu6502_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, int _value  );
 void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index );
 void cpu6502_complement2_8bit( Environment * _environment, char * _source, char * _destination );
 void cpu6502_complement2_16bit( Environment * _environment, char * _source, char * _destination );
