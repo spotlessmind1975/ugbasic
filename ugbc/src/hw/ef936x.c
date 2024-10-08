@@ -109,6 +109,7 @@ int lastUsedSlotInCommonPalette = 0;
  * CODE SECTION
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
 
 static int rgbConverterFunction( int _red, int _green, int _blue ) {
     
@@ -1798,45 +1799,37 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 
 static void ef936x_load_image_address_to_y( Environment * _environment, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    outline1("LDY #%s", _source );
-    if ( _sequence ) {
-        outline0("LEAY 3,y" );
-        if ( strlen(_sequence) == 0 ) {
-        } else {
-            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
-            outline1("LDB %s", _sequence );
-            outline0("LDA #0" );
-            outline0("LEAX D, X" );
-            outline0("LEAX D, X" );
-            outline0("LDD ,X" );
-            outline0("LEAY D, Y" );
-        }
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
-            } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
-                outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
-            }
-        }
+    if ( !_sequence && !_frame ) {
+        outline1("LDY #%s", _source );
     } else {
-        if ( _frame ) {
+
+        outline1("LDY #%s", _source );
+
+        if ( _sequence ) {
             outline0("LEAY 3,y" );
-            if ( strlen(_frame) == 0 ) {
+            if ( strlen(_sequence) == 0 ) {
             } else {
-                outline1("LDX #OFFSETS%4.4x", _frame_size );
-                outline1("LDB %s", _frame );
-                outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
+                outline1("LDB %s", _sequence );
+                outline1("JSR OFFSETS%4.4x", _frame_count * _frame_size );
+            }
+            if ( _frame ) {
+                if ( strlen(_frame) == 0 ) {
+                } else {
+                    outline1("LDB %s", _frame );
+                    outline1("JSR OFFSETS%4.4x", _frame_size );
+                }
+            }
+        } else {
+            if ( _frame ) {
+                outline0("LEAY 3,y" );
+                if ( strlen(_frame) == 0 ) {
+                } else {
+                    outline1("LDB %s", _frame );
+                    outline1("JSR OFFSETS%4.4x", _frame_size );
+                }
             }
         }
+
     }
 
 }
@@ -1899,10 +1892,60 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
         ef936x_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
     }
 
-    outline1("LDD %s", _x );
-    outline0("STD <IMAGEX" );
-    outline1("LDD %s", _y );
-    outline0("STD <IMAGEY" );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+
+    switch( VT_BITWIDTH( x->type ) ) {
+        case 16:
+            if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+                if ( x->initializedByConstant ) {
+                    outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
+                } else {
+                    outline1("LDB %s+1", x->realName );
+                }
+                outline0("STB <(IMAGEX+1)" );
+            } else {
+                if ( x->initializedByConstant ) {
+                    outline1("LDD #$%4.4x", (unsigned int)(x->value&0xffff) );
+                } else {
+                    outline1("LDD %s", x->realName );
+                }
+                outline0("STD <IMAGEX" );
+            }
+            break;
+        case 8:
+            if ( x->initializedByConstant ) {
+                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
+            } else {
+                outline1("LDB %s", x->realName );
+            }
+            outline0("STB <(IMAGEX+1)" );
+            break;
+        default:
+            CRITICAL_PUT_IMAGE_X_UNSUPPORTED( _x, DATATYPE_AS_STRING[x->type]);
+    }
+
+    switch( VT_BITWIDTH( y->type ) ) {
+        case 16:
+            if ( y->initializedByConstant ) {
+                outline1("LDB #$%2.42", y->value );
+            } else {
+                outline1("LDB %s+1", y->realName );
+            }
+            outline0("STB <(IMAGEY+1)" );
+            break;
+        case 8:
+            if ( y->initializedByConstant ) {
+                outline1("LDB #$%2.2x", y->value );
+            } else {
+                outline1("LDB %s", y->realName );
+            }
+            outline0("STB <(IMAGEY+1)" );
+            break;
+        default:
+            CRITICAL_PUT_IMAGE_X_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
+    }
+
     if( _flags ) {
         outline1("LDD %s", _flags );
         outline0("STD <IMAGET" );
@@ -2008,10 +2051,60 @@ void ef936x_get_image( Environment * _environment, char * _image, char * _x, cha
 
     ef936x_load_image_address_to_y( _environment, _image, _sequence, _frame, _frame_size, _frame_count );
 
-    outline1("LDD %s", _x );
-    outline0("STD <IMAGEX" );
-    outline1("LDD %s", _y );
-    outline0("STD <IMAGEY" );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+
+    switch( VT_BITWIDTH( x->type ) ) {
+        case 16:
+            if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+                if ( x->initializedByConstant ) {
+                    outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
+                } else {
+                    outline1("LDB %s+1", x->realName );
+                }
+                outline0("STB <(IMAGEX+1)" );
+            } else {
+                if ( x->initializedByConstant ) {
+                    outline1("LDD #$%4.4x", (unsigned int)(x->value&0xffff) );
+                } else {
+                    outline1("LDD %s", x->realName );
+                }
+                outline0("STD <IMAGEX" );
+            }
+            break;
+        case 8:
+            if ( x->initializedByConstant ) {
+                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
+            } else {
+                outline1("LDB %s", x->realName );
+            }
+            outline0("STB <(IMAGEX+1)" );
+            break;
+        default:
+            CRITICAL_PUT_IMAGE_X_UNSUPPORTED( _x, DATATYPE_AS_STRING[x->type]);
+    }
+
+    switch( VT_BITWIDTH( y->type ) ) {
+        case 16:
+            if ( y->initializedByConstant ) {
+                outline1("LDB #$%2.42", y->value );
+            } else {
+                outline1("LDB %s+1", y->realName );
+            }
+            outline0("STB <(IMAGEY+1)" );
+            break;
+        case 8:
+            if ( y->initializedByConstant ) {
+                outline1("LDB #$%2.2x", y->value );
+            } else {
+                outline1("LDB %s", y->realName );
+            }
+            outline0("STB <(IMAGEY+1)" );
+            break;
+        default:
+            CRITICAL_PUT_IMAGE_X_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
+    }
+
     outline1("LDA #$%2.2x", _palette );
     outline0("STA <IMAGET" );
 
@@ -2066,6 +2159,77 @@ Variable * ef936x_get_raster_line( Environment * _environment ) {
     
 }
 
+void ef936x_calculate_sequence_frame_offset_regy( Environment * _environment, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    if ( _sequence ) {
+        outline0("LEAY 3, Y" );
+        if ( strlen(_sequence) == 0 ) {
+        } else {
+
+            Variable * sequence = variable_retrieve( _environment, _sequence );
+
+            if ( sequence->initializedByConstant ) {
+                outline1("LDB #$%2.2x", sequence->value );
+            } else {
+                outline1("LDB %s", sequence->realName );
+            }
+
+            //outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
+            //outline0("LDA #0" );
+            //outline0("LEAX D, X" );
+            //outline0("LEAX D, X" );
+            //outline0("LDD ,X" );
+            //outline0("LEAY D, Y" );
+            outline1("JSR fs%4.4xoffsetsequence", _frame_count * _frame_size );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                // outline1("LDX #OFFSETS%4.4x", _frame_size );
+
+                Variable * frame = variable_retrieve( _environment, _frame );
+
+                if ( frame->initializedByConstant ) {
+                    outline1("LDB #$%2.2x", frame->value );
+                } else {
+                    outline1("LDB %s", frame->realName );
+                }
+
+                // outline0("LDA #0" );
+                // outline0("LEAX D, X" );
+                // outline0("LEAX D, X" );
+                // outline0("LDD ,X" );
+                // outline0("LEAY D, Y" );
+                outline1("JSR fs%4.4xoffsetframe", _frame_size );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LEAY 3, Y" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                // outline1("LDX #OFFSETS%4.4x", _frame_size );
+
+                Variable * frame = variable_retrieve( _environment, _frame );
+
+                if ( frame->initializedByConstant ) {
+                    outline1("LDB #$%2.2x", frame->value );
+                } else {
+                    outline1("LDB %s", frame->realName );
+                }
+
+                // outline0("LDA #0" );
+                // outline0("LEAX D, X" );
+                // outline0("LEAX D, X" );
+                // outline0("LDD ,X" );
+                // outline0("LEAY D, Y" );
+                outline1("JSR fs%4.4xoffsetframe", _frame_size );
+            }
+        }
+    }
+
+}
+
 void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     if ( _sequence ) {
@@ -2114,7 +2278,9 @@ void ef936x_calculate_sequence_frame_offset( Environment * _environment, char * 
         }
     }
 
-    outline1("STY %s", _offset );
+    if ( _offset ) {
+        outline1("STY %s", _offset );
+    }
 
 }
 

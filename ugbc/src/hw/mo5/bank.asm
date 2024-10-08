@@ -83,6 +83,11 @@ BANKREAD
 
     ANDCC #$AF
 
+    ; We load $FFFF into D, in order to be able
+    ; to use this value to set a "used" BANK ID.
+    
+    LDD #$FFFF
+
     RTS
 
 ; Move data (1 byte) from bank to main memory.
@@ -241,6 +246,11 @@ BANKUNCOMPRESS
     STA $A7CB
     
     ANDCC #$AF
+
+    ; We load $FFFF into D, in order to be able
+    ; to use this value to set a "used" BANK ID.
+    
+    LDD #$FFFF
 
     RTS
 

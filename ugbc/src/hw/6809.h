@@ -274,6 +274,7 @@ void cpu6809_dsdescriptor( Environment * _environment, char * _index, char * _ad
 void cpu6809_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void cpu6809_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu6809_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset );
+void cpu6809_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, int _value );
 void cpu6809_dsalloc_size( Environment * _environment, int _size, char * _index );
 void cpu6809_complement2_8bit( Environment * _environment, char * _source, char * _destination );
 void cpu6809_complement2_16bit( Environment * _environment, char * _source, char * _destination );
@@ -579,6 +580,7 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_dsdescriptor( _environment, _index, _address, _size ) cpu6809_dsdescriptor( _environment, _index, _address, _size )
 #define cpu_move_8bit_with_offset2( _environment, _source, _value, _offset ) cpu6809_move_8bit_with_offset2( _environment, _source, _value, _offset )
 #define cpu_store_8bit_with_offset( _environment, _destination, _value, _offset ) cpu6809_store_8bit_with_offset( _environment, _destination, _value, _offset )
+#define cpu_store_8bit_with_offset2( _environment, _destination, _offset, _value ) cpu6809_store_8bit_with_offset2( _environment, _destination, _offset, _value )
 #define cpu_dsalloc_size( _environment, _size, _index ) cpu6809_dsalloc_size( _environment, _size, _index )
 #define cpu_complement2_8bit( _environment, _source, _destination ) cpu6809_complement2_8bit( _environment, _source, _destination )
 #define cpu_complement2_16bit( _environment, _source, _destination ) cpu6809_complement2_16bit( _environment, _source, _destination )

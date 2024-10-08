@@ -172,6 +172,8 @@ typedef struct _Bank {
     /** Starting address for bank (if needed) */
     int bankAddress;
 
+    int defaultResident;
+
     /** Link to the next bank (NULL if this is the last one) */
     struct _Bank * next;
 
@@ -1537,6 +1539,7 @@ typedef struct _Embedded {
     int cpu_move_8bit_with_offset;
     int cpu_move_8bit_with_offset2;
     int cpu_store_8bit_with_offset;
+    int cpu_store_8bit_with_offset2;
     int cpu_dsalloc_size;
     int cpu_complement2_8bit;
     int cpu_complement2_16bit;
@@ -2862,6 +2865,8 @@ typedef struct _Environment {
     char * optionalX;
     char * optionalY;
 
+    int residentDetectionEnabled;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3235,6 +3240,8 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_READ_FILE(f,n) CRITICAL3("E306 - cannot read file", f, n );
 #define CRITICAL_CANNOT_WRITE_FILE(f,n) CRITICAL3("E307 - cannot write file", f, n );
 #define CRITICAL_XOR_INPLACE_UNSUPPORTED(v,t) CRITICAL3("E308 - cannot use inplace XOR with this datatype", v, t );
+#define CRITICAL_PUT_IMAGE_X_UNSUPPORTED( v, t ) CRITICAL3("E088 - PUT IMAGE unsupported for given datatype for x coordinates", v, t );
+#define CRITICAL_PUT_IMAGE_Y_UNSUPPORTED( v, t ) CRITICAL3("E088 - PUT IMAGE unsupported for given datatype for y coordinates", v, t );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -4253,6 +4260,7 @@ Variable * banks_get_address_var( Environment * _environment, char * _bank );
 int banks_store( Environment * _environment, Variable * _variable, int _resident );
 int banks_any_used( Environment * _environment );
 void banks_generate( Environment * _environment );
+int banks_get_default_resident( Environment * _environment, int _bank );
 
 void vars_emit_constant_integer( Environment * _environment, char * _name, int _value );
 void vars_emit_constants( Environment * _environment );

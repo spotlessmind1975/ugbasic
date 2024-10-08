@@ -651,6 +651,22 @@ void z80_store_8bit_with_offset( Environment * _environment, char *_destination,
 
 }
 
+void z80_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, int _value ) {
+
+    inline( cpu_store_8bit_with_offset2 )
+
+        outline1("LD HL, %s", _destination);
+        outline1("LD A, %s", _offset);
+        outline0("LD E, A");
+        outline0("LD D, 0");
+        outline0("ADD HL, DE" );
+        outline1("LD A, $%2.2x", ( _value & 0xff ) );
+        outline0("LD (DE), A");
+
+    no_embedded( cpu_store_8bit_with_offset2 )
+
+}
+
 /**
  * @brief <i>Z80</i>: emit code to compare two 8 bit values
  * 

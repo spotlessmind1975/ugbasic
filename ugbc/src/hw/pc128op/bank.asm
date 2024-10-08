@@ -43,6 +43,7 @@ BANKSHADOWPREV     fcb     $0
 ; Y : address on bank 
 ; D : size to read
 ; X : address on memory 
+; -> returns $ffff into D
 BANKREAD
 
     ORCC #$50
@@ -72,6 +73,15 @@ BANKREAD
     STA BASE_SEGMENT+$E5
 
     ANDCC #$AF
+
+@IF residentDetectionEnabled
+
+    ; We load $FFFF into D, in order to be able
+    ; to use this value to set a "used" BANK ID.
+    
+    LDD #$FFFF
+
+@ENDIF
 
     RTS
 
@@ -191,6 +201,15 @@ BANKUNCOMPRESS
     STA BASE_SEGMENT+$E5
     
     ANDCC #$AF
+
+@IF residentDetectionEnabled
+
+    ; We load $FFFF into D, in order to be able
+    ; to use this value to set a "used" BANK ID.
+    
+    LDD #$FFFF
+
+@ENDIF
 
     RTS
 

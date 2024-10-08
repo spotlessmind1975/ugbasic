@@ -7719,22 +7719,24 @@ static Variable * calculate_offset_in_array_byte( Environment * _environment, ch
     if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
         CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
     }
-
-    Variable * base = variable_temporary( _environment, VT_BYTE, "(base in array)");
+    
     Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset in array)");
-
-    variable_store( _environment, offset->name, 0 );
 
     int i,j;
 
     if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
         if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] == NULL ) {
-            variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
+            // variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
+            Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset in array)");
+            variable_store( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
+            return offset;
         } else {
-            Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0]);
-            variable_add_inplace_vars( _environment, offset->name, index->name );
+            Variable * offset = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0]);
+            return offset;
         }
     } else {
+        Variable * base = variable_temporary( _environment, VT_BYTE, "(base in array)");
+
         for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
             int baseValue = 1;
             for( j=0; j<(_environment->arrayIndexes[_environment->arrayNestedIndex]-i-1); ++j ) {
@@ -7959,13 +7961,23 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                     _environment->constants = precalculatedOffset;
                 }
 
-                cpu_move_8bit( _environment, _value->realName, precalculatedOffset->realName );
+                if ( _value->initializedByConstant ) {
+                    cpu_store_8bit( _environment, precalculatedOffset->realName, _value->value );
+                } else {
+                    cpu_move_8bit( _environment, _value->realName, precalculatedOffset->realName );
+                }
+
                 return;
             }
         }
 
         Variable * offset = calculate_offset_in_array_byte( _environment, _array->name );
-        cpu_move_8bit_with_offset2( _environment, _value->realName, _array->realName, offset->realName );
+
+        if ( _value->initializedByConstant ) {
+            cpu_store_8bit_with_offset2( _environment, _array->realName, offset->realName, _value->value );
+        } else {
+            cpu_move_8bit_with_offset2( _environment, _value->realName, _array->realName, offset->realName );
+        }
         return;
 
     }

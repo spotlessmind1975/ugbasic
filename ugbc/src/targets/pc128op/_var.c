@@ -707,9 +707,31 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( bank, src_hw_pc128op_bank_asm );
     for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
-            outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
+            if ( _environment->residentDetectionEnabled ) {
+                outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
+            }
             outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
         }
+    }
+
+    Bank * bank = _environment->expansionBanks;
+    while( bank ) {
+        if ( bank->address ) {
+            outhead1("BANKREADBANK%2.2xXSDR", bank->id );
+            outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
+            outhead1("BANKREADBANK%2.2xXS", bank->id );
+            outline1("LDU #%4.4x", bank->id );
+            outline0("LEAY $6000,Y" );
+            outline0("JMP BANKREAD" );
+
+            outhead1("BANKUNCOMPRESS%2.2xXSDR", bank->id );
+            outline1("LDY #BANKWINDOW%2.2x", bank->defaultResident );
+            outhead1("BANKUNCOMPRESS%2.2xXS", bank->id );
+            outline1("LDU #%4.4x", bank->id );
+            outline0("LEAX $6000,X" );
+            outline0("JMP BANKUNCOMPRESS" );
+        }
+        bank = bank->next;
     }
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
@@ -744,7 +766,7 @@ void variable_cleanup( Environment * _environment ) {
 
     outhead0("BANKLOAD");
 
-    Bank * bank = _environment->expansionBanks;
+    bank = _environment->expansionBanks;
 
     while( bank ) {
 

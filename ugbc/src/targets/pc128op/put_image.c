@@ -63,17 +63,6 @@ extern char DATATYPE_AS_STRING[][16];
 
     Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
 
-    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
-    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
-    Variable * frame = NULL;
-    if ( _frame) {
-        frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
-    }
-    Variable * sequence = NULL;
-    if ( _sequence) {
-        sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
-    }
-
     switch( resource->type ) {
         case VT_SEQUENCE:
             if ( image->bankAssigned != -1 ) {
@@ -100,19 +89,21 @@ extern char DATATYPE_AS_STRING[][16];
                 // variable_store( _environment, frameSize->name, image->frameSize );
                 // Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
                 // variable_store( _environment, bank->name, image->bankAssigned );
-                Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                // Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
-                if ( !sequence ) {
-                    if ( !frame ) {
-                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
+                outline1("LDY #$%4.4x", image->absoluteAddress );
+
+                if ( !_sequence ) {
+                    if ( !_frame ) {
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, "", "", image->frameSize, image->frameCount );
                     } else {
-                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, "", _frame, image->frameSize, image->frameCount );
                     }
                 } else {
-                    if ( !frame ) {
-                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
+                    if ( !_frame ) {
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, _sequence, "", image->frameSize, image->frameCount );
                     } else {
-                        ef936x_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, _sequence, _frame, image->frameSize, image->frameCount );
                     }
                 }
 
@@ -120,29 +111,56 @@ extern char DATATYPE_AS_STRING[][16];
                 // variable_store( _environment, address->name, image->absoluteAddress );
                 // variable_add_inplace_vars( _environment, address->name, offset->name );
                 // bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
-                cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
-                bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
+                // cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
 
-                cpu_store_16bit(_environment, bankWindowId, 0xffff );
+                // Optimization: inline read from bank.
+
+                // bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
+
+                deploy_preferred( duff, src_hw_6809_duff_asm );
+                deploy_preferred( msc1, src_hw_6809_msc1_asm );
+                deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
+                outline1("LDD #$%4.4x", image->frameSize );
+                if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
+                    outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                } else {
+                    outline1("LDX #%s", bankWindowName );
+                    outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                };
+
+                if ( _environment->residentDetectionEnabled ) {
+                    // Optimization: D = $FFFF at the end of any BANKREAD
+                    outline1( "STD %s", bankWindowId );
+                }
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
+                ef936x_put_image( _environment, &resource, _x1, _x2, NULL, NULL, image->frameSize, 0, _flags );
 
             } else {
+                Variable * frame = NULL;
+                if ( _frame) {
+                    frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+                }
+                Variable * sequence = NULL;
+                if ( _sequence) {
+                    sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+                }
+
                 if ( !sequence ) {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, _x1, _y1, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, _x1, _y1, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, _x1, _y1, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, _x1, _y1, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -172,33 +190,55 @@ extern char DATATYPE_AS_STRING[][16];
                 // variable_store( _environment, frameSize->name, image->frameSize );
                 // Variable * bank = variable_temporary( _environment, VT_BYTE, "(temporary)");
                 // variable_store( _environment, bank->name, image->bankAssigned );
-                Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
+                // Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
-                if ( !frame ) {
-                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
+                outline1("LDY #$%4.4x", image->absoluteAddress );
+
+                if ( !_frame ) {
+                    ef936x_calculate_sequence_frame_offset_regy(_environment, NULL, "", image->frameSize, 0 );
                 } else {
-                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    ef936x_calculate_sequence_frame_offset_regy(_environment, NULL, _frame, image->frameSize, 0 );
                 }
 
                 // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
                 // variable_store( _environment, address->name, image->absoluteAddress );
                 // variable_add_inplace_vars( _environment, address->name, offset->name );
-                cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
-                bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
+                // cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
 
-                cpu_store_16bit(_environment, bankWindowId, 0xffff );
+                deploy_preferred( duff, src_hw_6809_duff_asm );
+                deploy_preferred( msc1, src_hw_6809_msc1_asm );
+                deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
+                // outline1("LDY %s", offset->realName );
+                outline1("LDD #$%4.4x", image->frameSize );
+                if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
+                    outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                } else {
+                    outline1("LDX #%s", bankWindowName );
+                    outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                };
+
+                if ( _environment->residentDetectionEnabled ) {
+                    // Optimization: D = $FFFF at the end of any BANKREAD
+                    outline1( "STD %s", bankWindowId );
+                }
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
+                ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
+                Variable * frame = NULL;
+                if ( _frame) {
+                    frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+                }
+
                 if ( !frame ) {
-                    ef936x_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
+                    ef936x_put_image( _environment, resource, _x1, _y1, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    ef936x_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    ef936x_put_image( _environment, resource, _x1, _y1, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
@@ -215,22 +255,45 @@ extern char DATATYPE_AS_STRING[][16];
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
-                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                if ( image->uncompressedSize ) {
-                    bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
-                } else {
-                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                deploy_preferred( duff, src_hw_6809_duff_asm );
+                deploy_preferred( msc1, src_hw_6809_msc1_asm );
+                deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
+                if ( _environment->residentDetectionEnabled ) {
+                    cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
                 }
-                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
-                cpu_label( _environment, alreadyLoadedLabel );
+                if ( image->uncompressedSize ) {
+                    outline1("LDX #$%4.4x", image->absoluteAddress );
+                    // bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
+                     if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
+                        outline1("JSR BANKUNCOMPRESS%2.2xXSDR", image->bankAssigned );
+                    } else {
+                        outline1("LDY #%s", bankWindowName );
+                        outline1("JSR BANKUNCOMPRESS%2.2xXS", image->bankAssigned );
+                    };                    
+                } else {
+                    // bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                    outline1("LDY #$%4.4x", image->absoluteAddress );
+                    outline1("LDD #$%4.4x", image->size );
+                    if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
+                        outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                    } else {
+                        outline1("LDX #%s", bankWindowName );
+                        outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                    };            
+                }
+                if ( _environment->residentDetectionEnabled ) {
+                    cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                    cpu_label( _environment, alreadyLoadedLabel );
+                }
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
+                ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
             } else {
-                ef936x_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
+                ef936x_put_image( _environment, resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
             }
             break;
         default:

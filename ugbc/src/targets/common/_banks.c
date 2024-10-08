@@ -54,6 +54,7 @@ void banks_init_extended( Environment * _environment, int * _allowed, int _allow
         bank->space = _allowed_size;
         bank->next = _environment->expansionBanks;
         bank->data = malloc( _allowed_size );
+        bank->defaultResident = 1;
         memset( bank->data, 0, _allowed_size );
         _environment->expansionBanks = bank;
         _environment->maxExpansionBankSize[i+1] = 0;
@@ -75,6 +76,7 @@ void banks_init( Environment * _environment ) {
         bank->space = BANK_SIZE;
         bank->next = _environment->expansionBanks;
         bank->data = malloc( BANK_SIZE );
+        bank->defaultResident = 1;
         memset( bank->data, 0, BANK_SIZE );
         _environment->expansionBanks = bank;
         _environment->maxExpansionBankSize[i+1] = 0;
@@ -93,6 +95,20 @@ int banks_any_used( Environment * _environment ) {
     }
 
     return 0;
+
+}
+
+int banks_get_default_resident( Environment * _environment, int _bank ) {
+
+    Bank * bank = _environment->expansionBanks;
+    while( bank ) {
+        if ( bank->type == BT_EXPANSION && bank->id == _bank ) {
+            return bank->defaultResident;
+        }
+        bank = bank->next;
+    }
+
+    return 1;
 
 }
 
