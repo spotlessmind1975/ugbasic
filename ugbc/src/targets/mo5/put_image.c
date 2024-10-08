@@ -118,7 +118,16 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 // variable_add_inplace_vars( _environment, address->name, offset->name );
                 // bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
                 cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
-                bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
+                
+                // bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
+                outline1("LDY %s", offset->realName );
+                outline1("LDD #$%4.4x", image->frameSize );
+                if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
+                    outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                } else {
+                    outline1("LDX #%s", bankWindowName );
+                    outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                };
 
                 // Optimization: D = $FFFF at the end of any BANKREAD
                 outline1( "STD %s", bankWindowId );
@@ -182,7 +191,16 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 // variable_store( _environment, address->name, image->absoluteAddress );
                 // variable_add_inplace_vars( _environment, address->name, offset->name );
                 cpu_math_add_16bit_const( _environment, offset->realName, image->absoluteAddress, offset->realName );
-                bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
+                
+                // bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
+                outline1("LDY %s", offset->realName );
+                outline1("LDD #$%4.4x", image->frameSize );
+                if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
+                    outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                } else {
+                    outline1("LDX #%s", bankWindowName );
+                    outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                };
 
                 // Optimization: D = $FFFF at the end of any BANKREAD
                 outline1( "STD %s", bankWindowId );

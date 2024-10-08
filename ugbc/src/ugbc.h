@@ -172,6 +172,8 @@ typedef struct _Bank {
     /** Starting address for bank (if needed) */
     int bankAddress;
 
+    int defaultResident;
+
     /** Link to the next bank (NULL if this is the last one) */
     struct _Bank * next;
 
@@ -4197,6 +4199,7 @@ Variable * banks_get_address_var( Environment * _environment, char * _bank );
 int banks_store( Environment * _environment, Variable * _variable, int _resident );
 int banks_any_used( Environment * _environment );
 void banks_generate( Environment * _environment );
+int banks_get_default_resident( Environment * _environment, int _bank );
 
 void vars_emit_constant_integer( Environment * _environment, char * _name, int _value );
 void vars_emit_constants( Environment * _environment );

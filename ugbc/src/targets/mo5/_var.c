@@ -523,6 +523,19 @@ void variable_cleanup( Environment * _environment ) {
         outhead0("BANKLOAD");
 
         Bank * bank = _environment->expansionBanks;
+        while( bank ) {
+            if ( bank->address ) {
+                outhead1("BANKREADBANK%2.2xXSDR", bank->id );
+                outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
+                outhead1("BANKREADBANK%2.2xXS", bank->id );
+                outline1("LDU #%4.4x", bank->id );
+                outline0("LEAY $B000,Y" );
+                outline0("JMP BANKREAD" );
+            }
+            bank = bank->next;
+        }
+
+        bank = _environment->expansionBanks;
 
         while( bank ) {
 
