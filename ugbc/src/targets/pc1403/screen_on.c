@@ -47,4 +47,6 @@
  */
 void screen_on( Environment * _environment ) {
 
+    sys( _environment, 0x04b8 );
+
 }
