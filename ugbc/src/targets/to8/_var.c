@@ -688,6 +688,24 @@ void variable_cleanup( Environment * _environment ) {
     outline0("rzb 256");
     outhead0("STACKEND");
 
+    Bank * bank = _environment->expansionBanks;
+    while( bank ) {
+        if ( bank->address ) {
+
+            deploy_preferred( duff, src_hw_6809_duff_asm );
+            deploy_preferred( msc1, src_hw_6809_msc1_asm );
+            deploy_preferred( bank, src_hw_pc128op_bank_asm );
+                        
+            outhead1("BANKREADBANK%2.2xXSDR", bank->id );
+            outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
+            outhead1("BANKREADBANK%2.2xXS", bank->id );
+            outline1("LDU #$%4.4x", bank->id );
+            outline0("LEAY $A000,Y" );
+            outline0("JMP BANKREAD" );
+        }
+        bank = bank->next;
+    }
+
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_inplace_preferred( bank, src_hw_to8_bank_asm );
@@ -696,19 +714,6 @@ void variable_cleanup( Environment * _environment ) {
             outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
             outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
         }
-    }
-
-    Bank * bank = _environment->expansionBanks;
-    while( bank ) {
-        if ( bank->address ) {
-            outhead1("BANKREADBANK%2.2xXSDR", bank->id );
-            outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
-            outhead1("BANKREADBANK%2.2xXS", bank->id );
-            outline1("LDU #%4.4x", bank->id );
-            outline0("LEAY $A000,Y" );
-            outline0("JMP BANKREAD" );
-        }
-        bank = bank->next;
     }
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
