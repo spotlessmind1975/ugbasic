@@ -84,6 +84,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
+                deploy_preferred( duff, src_hw_6809_duff_asm );
+                deploy_preferred( msc1, src_hw_6809_msc1_asm );
+                deploy_preferred( bank, src_hw_mo5_bank_asm );
+
                 // cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
                 // if ( image->uncompressedSize ) {
                 //     bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
@@ -166,6 +170,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
+                deploy_preferred( duff, src_hw_6809_duff_asm );
+                deploy_preferred( msc1, src_hw_6809_msc1_asm );
+                deploy_preferred( bank, src_hw_mo5_bank_asm );
+
                 // cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
                 // if ( image->uncompressedSize ) {
                 //     bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
@@ -231,6 +239,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+
+                deploy_preferred( duff, src_hw_6809_duff_asm );
+                deploy_preferred( msc1, src_hw_6809_msc1_asm );
+                deploy_preferred( bank, src_hw_mo5_bank_asm );
 
                 cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
                 if ( image->uncompressedSize ) {
