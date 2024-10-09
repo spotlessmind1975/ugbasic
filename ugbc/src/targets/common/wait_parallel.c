@@ -70,6 +70,10 @@ void wait_parallel( Environment * _environment, char * _thread ) {
         CRITICAL_MULTITASKING_FORBIDDEN();
     }
 
+    if ( ! _environment->procedureName ) {
+        CRITICAL_WAIT_PARALLEL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE();
+    }
+
     yield( _environment );
 
     MAKE_LABEL

@@ -58,7 +58,7 @@ di un nuovo quanto di tempo.
 
 @example YIELD
 
-@target all
+Æ@target all
 </usermanual> */
 void yield( Environment * _environment ) {
 
@@ -67,6 +67,10 @@ void yield( Environment * _environment ) {
     }
 
     if ( _environment->anyProtothread ) {
+
+        if ( ! _environment->procedureName ) {
+            CRITICAL_YIELD_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE();
+        }
 
         char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, _environment->protothreadStep );
 

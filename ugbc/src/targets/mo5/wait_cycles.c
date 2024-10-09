@@ -48,8 +48,12 @@
  */
 void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
-    if ( _environment->protothread && _environment->procedureName && _parallel ) {
+    if ( _environment->protothread && _parallel ) {
 
+        if ( ! _environment->procedureName ) {
+            CRITICAL_WAIT_CYCLES_PARALLEL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE();
+        }
+        
         if ( _environment->protothreadForbid ) {
             CRITICAL_MULTITASKING_FORBIDDEN();
         }

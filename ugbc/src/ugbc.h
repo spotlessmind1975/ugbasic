@@ -3240,8 +3240,13 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_READ_FILE(f,n) CRITICAL3("E306 - cannot read file", f, n );
 #define CRITICAL_CANNOT_WRITE_FILE(f,n) CRITICAL3("E307 - cannot write file", f, n );
 #define CRITICAL_XOR_INPLACE_UNSUPPORTED(v,t) CRITICAL3("E308 - cannot use inplace XOR with this datatype", v, t );
-#define CRITICAL_PUT_IMAGE_X_UNSUPPORTED( v, t ) CRITICAL3("E088 - PUT IMAGE unsupported for given datatype for x coordinates", v, t );
-#define CRITICAL_PUT_IMAGE_Y_UNSUPPORTED( v, t ) CRITICAL3("E088 - PUT IMAGE unsupported for given datatype for y coordinates", v, t );
+#define CRITICAL_PUT_IMAGE_X_UNSUPPORTED( v, t ) CRITICAL3("E309 - PUT IMAGE unsupported for given datatype for x coordinates", v, t );
+#define CRITICAL_PUT_IMAGE_Y_UNSUPPORTED( v, t ) CRITICAL3("E310 - PUT IMAGE unsupported for given datatype for y coordinates", v, t );
+#define CRITICAL_YIELD_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE() CRITICAL("E311 - cannot call YIELD outside a PARALLEL procedure" );
+#define CRITICAL_WAIT_PARALLEL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE() CRITICAL("E312 - cannot call WAIT PARALLEL outside a PARALLEL procedure" );
+#define CRITICAL_WAIT_UNTIL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE() CRITICAL("E313 - cannot call WAIT UNTIL outside a PARALLEL procedure" );
+#define CRITICAL_WAIT_WHILE_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE() CRITICAL("E314 - cannot call WAIT WHILE outside a PARALLEL procedure" );
+#define CRITICAL_WAIT_CYCLES_PARALLEL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE()  CRITICAL("E315 - cannot call WAIT CYCLES PARALLEL outside a PARALLEL procedure" );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

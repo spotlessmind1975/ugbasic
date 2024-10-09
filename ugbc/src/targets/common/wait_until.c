@@ -82,6 +82,10 @@ void wait_until_condition( Environment * _environment, char * _condition ) {
         CRITICAL_MULTITASKING_FORBIDDEN();
     }
 
+    if ( ! _environment->procedureName ) {
+        CRITICAL_WAIT_UNTIL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE();
+    }
+
     MAKE_LABEL
 
     char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, _environment->protothreadStep );
