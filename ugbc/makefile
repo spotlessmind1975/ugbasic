@@ -344,7 +344,7 @@ src-generated/ay8910_%.c: $(MODULES_AY8910)
 MODULES_SC61860 := $(wildcard src/hw/sc61860/*.asm)
 SOURCES_SC61860 := $(subst src/hw/sc61860/,src-generated/sc61860_,$(MODULES_SC61860:.asm=.c))
 
-src-generated/SC61860_%.c: $(MODULES_SC61860)
+src-generated/sc61860_%.c: $(MODULES_SC61860)
 	@xxd -i $(subst src-generated/sc61860_,src/hw/sc61860/,$(@:.c=.asm)) >$@
 
 # MOS Technology VIC-I
