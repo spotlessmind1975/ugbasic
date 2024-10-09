@@ -42,6 +42,322 @@
 
 #if defined(__pc1403__)
 
+//////////////////////////////////////////////////////////////////////////////
+/// COMMON USED OPCODES
+//////////////////////////////////////////////////////////////////////////////
+
+static void op_addxl( Environment * _environment, int _offset ) {
+
+    // Xl += low(_offset)
+    outline0("LP 0x04" );
+    outline1("ADIM 0x%2.2x", (unsigned char)(_offset & 0xff) );
+
+}
+
+static void op_addba( Environment * _environment ) {
+
+    outline0("LP 0x03");
+    outline0("ADM");
+
+}
+
+static void op_addab( Environment * _environment ) {
+
+    outline0("LP 0x03");
+    outline0("ADM");
+    outline0("EXAM");
+
+}
+
+static void op_addx_direct( Environment * _environment, int _offset ) {
+
+    // Yl += low(_offset)
+    outline0("LP 0x04" );
+    outline1("ADIM 0x%2.2x", (unsigned char)(_offset & 0xff) );
+
+    // Yh += high(_offset)
+    outline0("LP 0x05" );
+    outline1("ADIM 0x%2.2x", (unsigned char)((_offset>>8) & 0xff) );
+
+}
+
+static void op_addya( Environment * _environment ) {
+
+    outline0("LP 0x06" );
+    outline0("ADM");
+    outline0("LIA 0");
+    outline0("LP 0x07" );
+    outline0("ADCM");
+
+}
+
+static void op_addyl_direct( Environment * _environment, int _offset ) {
+
+    // Yl += low(_offset)
+    outline0("LP 0x06" );
+    outline1("ADIM 0X%2.2x", (unsigned char)(_offset & 0xff) );
+
+}
+
+static void op_addy_direct( Environment * _environment, int _offset ) {
+
+    // Yl += low(_offset)
+    outline0("LP 0x06" );
+    outline1("ADIM 0X%2.2x", (unsigned char)(_offset & 0xff) );
+
+    // Yh += high(_offset)
+    outline0("LP 0x07" );
+    outline1("ADIM 0X%2.2x", (unsigned char)((_offset>>8) & 0xff) );
+
+}
+
+static void op_cpb( Environment * _environment ) {
+
+    outline0("LIP 0x03");
+    outline0("CPMA");
+
+}
+
+static void op_cp_direct( Environment * _environment, int _value ) {
+
+    outline1("CPIA 0x%2.2x", (unsigned char)(_value & 0xff));
+
+}
+
+static void op_decjnz( Environment * _environment, char * _label ) {
+
+    outline0("DECJ");
+    outline1("JRNZ %s", _label);
+
+}
+
+static void op_decjz( Environment * _environment, char * _label ) {
+
+    outline0("DECJ");
+    outline1("JRZ %s", _label);
+
+}
+
+static void op_decinz( Environment * _environment, char * _label ) {
+
+    outline0("DECI");
+    outline1("JRNZ %s", _label);
+
+}
+
+static void op_deciz( Environment * _environment, char * _label ) {
+
+    outline0("DECI");
+    outline1("JRZ %s", _label);
+
+}
+
+static void op_fild_direct( Environment * _environment, int _value ) {
+
+    outline1("LII 0x%2.2x", (unsigned char)( _value & 0xff ) );
+    outline0("FILD");
+
+}
+
+static void op_fild( Environment * _environment ) {
+
+    outline0("FILD");
+
+}
+
+static void op_lda( Environment * _environment, char * _address ) {
+
+    outline1("LiDP %s", _address );
+    outline0("LDD");
+
+}
+
+static void op_lda_direct( Environment * _environment, int _value ) {
+
+    outline1("LIA 0x%2.2x", (unsigned char)(_value & 0xff) );
+
+}
+
+static void op_lda_x( Environment * _environment ) {
+
+    // A <- (X)
+    outline0("DX");
+    outline0("IXL");
+
+}
+
+static void op_lda_xn( Environment * _environment ) {
+
+    outline0("IXL");
+
+}
+
+static void op_ldba( Environment * _environment ) {
+
+    outline0("LIP 0x03");
+    outline0("EXAM");
+
+}
+
+static void op_jc( Environment * _environment, char * _label ) {
+
+    outline1("JRC %s", _label);
+
+}
+
+static void op_jnc( Environment * _environment, char * _label ) {
+
+    outline1("JRNC %s", _label);
+
+}
+
+static void op_jp( Environment * _environment, char * _label ) {
+
+    outline1("JP %s", _label);
+
+}
+
+static void op_jz( Environment * _environment, char * _label ) {
+
+    outline1("JRZ %s", _label);
+
+}
+
+static void op_jnz( Environment * _environment, char * _label ) {
+
+    outline1("JRNZ %s", _label);
+
+}
+
+static void op_ldi( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x00" );
+    outline0("MVWD");
+
+}
+
+static void op_ldj( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x01" );
+    outline0("MVWD");
+
+}
+
+static void op_ldij( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x01" );
+    outline0("LP 0x00" );
+    outline0("MVWD");
+
+}
+
+static void op_ldij_direct( Environment * _environment, int _value ) {
+
+    outline1("LII 0x%2.2x", (unsigned char)(_value&0xff) );
+    outline1("LIJ 0x%2.2x", (unsigned char)((_value>>8)&0xff) );
+
+}
+
+static void op_ldx( Environment * _environment, char * _address ) {
+
+    // DP <- address
+    outline1("LIDP %s", _address );
+
+    // X <- (DP)
+    outline0("LII 0x01" );
+    outline0("LP 0x04" );
+    outline0("MVWD");
+
+}
+
+static void op_ldy( Environment * _environment, char * _address ) {
+
+    // DP <- address
+    outline1("LIDP %s", _address );
+
+    // Y <- (DP)
+    outline0("LII 0x01" );
+    outline0("LP 0x06" );
+    outline0("MVWD");
+
+}
+
+static void op_lddp_direct( Environment * _environment, char * _address ) {
+
+    // DP <- address
+    outline1("LIDP %s", _address);
+
+}
+
+static void op_lddp( Environment * _environment, char * _address ) {
+
+    // DP <- address
+    outline1("LIDP %s", _address);
+    // X <- (address)
+    outline0("LII 0x01" );
+    outline0("LP 0x04" );
+    outline0("MVWD");
+    outline0("DX");
+    outline0("IX");
+
+}
+
+static void op_sla( Environment * _environment ) {
+
+    outline0("SL");
+
+}
+
+static void op_sta( Environment * _environment, char * _address ) {
+
+    // DP <- target
+    outline1("LIDP %s", _address );
+
+    // (DP) <- A
+    outline0("STD");
+
+}
+
+static void op_sta_y( Environment * _environment ) {
+
+    outline0("DY");
+    outline0("IYS");
+
+}
+
+static void op_sta_yn( Environment * _environment ) {
+
+    outline0("IYS");
+
+}
+
+static void op_subba( Environment * _environment ) {
+
+    outline0("LP 0x03");
+    outline0("SBM");
+
+}
+
+static void op_subab( Environment * _environment ) {
+
+    outline0("LP 0x03");
+    outline0("SBM");
+    outline0("EXAM");
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
 void sc61860_init( Environment * _environment ) {
 
 }
@@ -140,191 +456,99 @@ void sc61860_label( Environment * _environment, char * _label ) {
 
 void sc61860_peek( Environment * _environment, char * _address, char * _target ) {
 
-    // DP <- address
-    outline1("LIDP %s", _address );
+    op_ldx( _environment, _address );
 
-    // X <- (DP)
-    outline0("LII 0x01" );
-    outline0("LP 0x04" );
-    outline0("MVWD");
+    op_lda_x( _environment );
 
-    // A <- (X)
-    outline0("DX");
-    outline0("IXL");
-
-    // DP <- target
-    outline1("LIDP %s", _target );
-
-    // (DP) <- A
-    outline0("STD");
+    op_sta( _environment, _target );
 
 }
 
 void sc61860_poke( Environment * _environment, char * _address, char * _source ) {
 
-    // DP <- address
-    outline1("LIDP %s", _address );
+    op_ldy( _environment, _address );
 
-    // Y <- (DP)
-    outline0("LII 0x01" );
-    outline0("LP 0x06" );
-    outline0("MVWD");
+    op_lda( _environment, _source );
 
-    // A <- (source)
-    outline1("LIDP %s", _source );
-    outline0("LDD");
-
-    // (Y) <- A
-    outline0("DY");
-    outline0("IYS");
+    op_sta_y( _environment );
 
 }
 
 void sc61860_peekw( Environment * _environment, char * _address, char * _target ) {
 
-    // DP <- address
-    outline1("LIDP %s", _address );
+    op_ldx( _environment, _address );
 
-    // X <- (DP)
-    outline0("LII 0x01" );
-    outline0("LP 0x04" );
-    outline0("MVWD");
+    op_lda_x( _environment );
 
-    // A <- (X)
-    outline0("DX");
-    outline0("IXL");
+    op_sta( _environment, _target );
 
-    // DP <- target
-    outline1("LIDP %s", _target );
+    op_lda_xn( _environment );
 
-    // (DP) <- A
-    outline0("STD");
-
-    // A <- (X)
-    outline0("IXL");
-
-    // DP <- target+1
-    outline1("LIDP %s", address_displacement( _environment, _target, "1" ) );
-
-    // (DP) <- A
-    outline0("STD");
+    op_sta( _environment, address_displacement( _environment, _target, "1" ) );
 
 }
 
 void sc61860_pokew( Environment * _environment, char * _address, char * _source ) {
 
-    // DP <- address
-    outline1("LIDP %s", _address );
+    op_ldy( _environment, _address );
 
-    // Y <- (DP)
-    outline0("LII 0x01" );
-    outline0("LP 0x06" );
-    outline0("MVWD");
+    op_lda( _environment, _source );
 
-    // A <- (source)
-    outline1("LIDP %s", _source );
-    outline0("LDD");
+    op_sta_y( _environment );
 
-    // (Y) <- A
-    outline0("DY");
-    outline0("IYS");
+    op_lda( _environment, address_displacement( _environment, _source, "1" ) );
 
-    // A <- (source+1)
-    outline1("LIDP %s", address_displacement( _environment, _source, "1" ) );
-    outline0("LDD");
+    op_sta_yn( _environment );
 
-    // (Y) <- A
-    outline0("IYS");
 
 }
 
 void sc61860_peekd( Environment * _environment, char * _address, char * _target ) {
 
-    // DP <- address
-    outline1("LIDP %s", _address );
+    op_ldx( _environment, _address );
 
-    // X <- (DP)
-    outline0("LII 0x01" );
-    outline0("LP 0x04" );
-    outline0("MVWD");
+    op_lda_x( _environment );
 
-    // A <- (X)
-    outline0("DX");
-    outline0("IXL");
+    op_sta( _environment, _target );
 
-    // DP <- target
-    outline1("LIDP %s", _target );
+    op_lda_xn( _environment );
 
-    // (DP) <- A
-    outline0("STD");
+    op_sta( _environment, address_displacement( _environment, _target, "1" ) );
 
-    // A <- (X)
-    outline0("IXL");
+    op_lda_xn( _environment );
 
-    // DP <- target+1
-    outline1("LIDP %s", address_displacement( _environment, _target, "1" ) );
+    op_sta( _environment, address_displacement( _environment, _target, "2" ) );
 
-    // (DP) <- A
-    outline0("STD");
+    op_lda_xn( _environment );
 
-    // A <- (X)
-    outline0("IXL");
+    op_sta( _environment, address_displacement( _environment, _target, "3" ) );
 
-    // DP <- target+2
-    outline1("LIDP %s", address_displacement( _environment, _target, "2" ) );
-
-    // (DP) <- A
-    outline0("STD");
-
-    // A <- (X)
-    outline0("IXL");
-
-    // DP <- target+1
-    outline1("LIDP %s", address_displacement( _environment, _target, "3" ) );
-
-    // (DP) <- A
-    outline0("STD");
 
 }
 
 void sc61860_poked( Environment * _environment, char * _address, char * _source ) {
 
-    // DP <- address
-    outline1("LIDP %s", _address );
+    op_ldy( _environment, _address );
 
-    // Y <- (DP)
-    outline0("LII 0x01" );
-    outline0("LP 0x06" );
-    outline0("MVWD");
+    op_lda( _environment, _source );
 
-    // A <- (source)
-    outline1("LIDP %s", _source );
-    outline0("LDD");
+    op_sta_y( _environment );
 
-    // (Y) <- A
-    outline0("DY");
-    outline0("IYS");
+    op_lda( _environment, address_displacement( _environment, _source, "1" ) );
 
-    // A <- (source+1)
-    outline1("LIDP %s", address_displacement( _environment, _source, "1" ) );
-    outline0("LDD");
+    op_sta_yn( _environment );
 
-    // (Y) <- A
-    outline0("IYS");
+    op_lda( _environment, address_displacement( _environment, _source, "2" ) );
 
-    // A <- (source+2)
-    outline1("LIDP %s", address_displacement( _environment, _source, "2" ) );
-    outline0("LDD");
+    op_sta_yn( _environment );
 
-    // (Y) <- A
-    outline0("IYS");
+    op_lda( _environment, address_displacement( _environment, _source, "3" ) );
 
-    // A <- (source+3)
-    outline1("LIDP %s", address_displacement( _environment, _source, "3" ) );
-    outline0("LDD");
+    op_sta_yn( _environment );
 
-    // (Y) <- A
-    outline0("IYS");
+    op_lda( _environment, address_displacement( _environment, _source, "4" ) );
+
+    op_sta_yn( _environment );
 
 }
 
@@ -345,36 +569,17 @@ void sc61860_fill_blocks( Environment * _environment, char * _address, char * _b
 
     MAKE_LABEL
 
-    // DP <- blocks
-    outline1("LIDP %s", _blocks);
-    // J <- (DP) [blocks]
-    outline0("LII 0x00" );
-    outline0("LP 0x01" );
-    outline0("MVWD");
+    op_ldj( _environment, _blocks );
 
-    // DP <- _pattern
-    outline1("LIDP %s", _pattern);
-    // A <- (DP) [pattern]
-    outline0("LDD");
+    op_lda( _environment, _pattern );
 
-    // DP <- address
-    outline1("LIDP %s", _address);
-    // X <- (address)
-    outline0("LII 0x01" );
-    outline0("LP 0x04" );
-    outline0("MVWD");
-    outline0("DX");
-    outline0("IX");
+    op_lddp( _environment, _address );
 
     outhead1("%s:", label );
 
-    // (&1F): [(DP) <- A; DP++] * I
-    outline0("LII 0xff");
-    outline0("FILD");
+    op_fild_direct( _environment, 0xff );
 
-    // --J; REPEAT UNTIL J = 0
-    outline0("DECJ");
-    outline1("JRNZ %s", label);
+    op_decjnz( _environment, label );
 
 }
 
@@ -397,69 +602,36 @@ void sc61860_fill( Environment * _environment, char * _address, char * _bytes, i
 
     if ( _bytes_width == 8 ) {
 
-        // DP <- bytes
-        outline1("LIDP %s", _bytes);
-        // I <- (DP) [bytes]
-        outline0("LII 0x00" );
-        outline0("LP 0x00" );
-        outline0("MVWD");
+        op_ldi( _environment, _bytes );
 
-        // DP <- _pattern
-        outline1("LIDP %s", _pattern);
-        // A <- (DP) [pattern]
-        outline0("LDD");
+        op_lda( _environment, _pattern );
 
-        // DP <- address
-        outline1("LIDP %s", _address);
-        // X <- (address)
-        outline0("LII 0x01" );
-        outline0("LP 0x04" );
-        outline0("MVWD");
-        outline0("DX");
-        outline0("IX");
+        op_lddp( _environment, _address );
 
-        // (&1F): [(DP) <- A; DP++] * I
-        outline0("FILD");
+        op_fild( _environment );
 
     } else {
 
-        // DP <- bytes
-        outline1("LIDP %s", _bytes);
-        // I <- (DP) [bytes]
-        outline0("LII 0x00" );
-        outline0("LP 0x00" );
-        outline0("MVWD");
+        char repeatLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( repeatLabel, "%srepeat", label );
 
-        // DP <- _pattern
-        outline1("LIDP %s", _pattern);
-        // A <- (DP) [pattern]
-        outline0("LDD");
+        op_ldi( _environment, _bytes );
 
-        // DP <- address
-        outline1("LIDP %s", _address);
-        // X <- (address)
-        outline0("LII 0x01" );
-        outline0("LP 0x04" );
-        outline0("MVWD");
-        outline0("DX");
-        outline0("IX");
+        op_lda( _environment, _pattern );
 
-        // (&1F): [(DP) <- A; DP++] * I
-        outline0("FILD");
+        op_lddp( _environment, _address );
 
-        outline0("DECJ");
-        outline1("JRZ %sdone", label);
+        op_fild( _environment );
 
-        outhead1("%s:", label );
+        op_decjz( _environment, label);
 
-        // --J; REPEAT UNTIL J = 0
-        // (&1F): [(DP) <- A; DP++] * I
-        outline0("LII 0xff");
-        outline0("FILD");
-        outline0("DECJ");
-        outline1("JRNZ %s", label);
+        outhead1("%s:", repeatLabel );
 
-        outhead1("%sdone:", label );
+        op_fild_direct( _environment, 0xff );
+        op_decjnz( _environment, repeatLabel );
+
+        outhead1("%s", label );
+
     }
 
 }
@@ -483,63 +655,34 @@ void sc61860_fill_size( Environment * _environment, char * _address, int _bytes,
 
     if ( _bytes < 256 ) {
 
-        // DP <- bytes
-        outline1("LIDP %s", _bytes);
-        // I <- (DP) [bytes]
-        outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
+        op_lda( _environment, _pattern );
 
-        // DP <- _pattern
-        outline1("LIDP %s", _pattern);
-        // A <- (DP) [pattern]
-        outline0("LDD");
+        op_lddp( _environment, _address );
 
-        // DP <- address
-        outline1("LIDP %s", _address);
-        // X <- (address)
-        outline0("LII 0x01" );
-        outline0("LP 0x04" );
-        outline0("MVWD");
-        outline0("DX");
-        outline0("IX");
-
-        // (&1F): [(DP) <- A; DP++] * I
-        outline0("FILD");
+        op_fild_direct( _environment, (unsigned char)(_bytes&0xff) );
 
     } else {
 
-        outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
-        outline1("LIJ 0x%2.2x", (unsigned char)((_bytes>>8)&0xff) );
+        char repeatLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( repeatLabel, "%srepeat", label );
 
-        // DP <- _pattern
-        outline1("LIDP %s", _pattern);
-        // A <- (DP) [pattern]
-        outline0("LDD");
+        op_ldij_direct( _environment, _bytes );
 
-        // DP <- address
-        outline1("LIDP %s", _address);
-        // X <- (address)
-        outline0("LII 0x01" );
-        outline0("LP 0x04" );
-        outline0("MVWD");
-        outline0("DX");
-        outline0("IX");
+        op_lda( _environment, _pattern );
 
-        // (&1F): [(DP) <- A; DP++] * I
-        outline0("FILD");
+        op_lddp( _environment, _address );
 
-        outline0("DECJ");
-        outline1("JRZ %sdone", label);
+        op_fild( _environment );
+        op_decjz( _environment, label );
+
+        outhead1("%s:", repeatLabel );
+
+        op_fild_direct( _environment, 0xff );
+
+        op_decjnz( _environment, repeatLabel );
 
         outhead1("%s:", label );
 
-        // --J; REPEAT UNTIL J = 0
-        // (&1F): [(DP) <- A; DP++] * I
-        outline0("LII 0xff");
-        outline0("FILD");
-        outline0("DECJ");
-        outline1("JRNZ %s", label);
-
-        outhead1("%sdone:", label );
     }
 
 }
@@ -563,58 +706,33 @@ void sc61860_fill_size_value( Environment * _environment, char * _address, int _
 
     if ( _bytes < 256 ) {
 
-        // DP <- bytes
-        outline1("LIDP %s", _bytes);
-        // I <- (DP) [bytes]
-        outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
+        op_lda_direct( _environment, _pattern );
 
-        outline1("LIA 0x%2.2x", _pattern);
+        op_lddp( _environment, _address );
 
-        // DP <- address
-        outline1("LIDP %s", _address);
-        // X <- (address)
-        outline0("LII 0x01" );
-        outline0("LP 0x04" );
-        outline0("MVWD");
-        outline0("DX");
-        outline0("IX");
-
-        // (&1F): [(DP) <- A; DP++] * I
-        outline0("FILD");
+        op_fild_direct( _environment, _bytes );
 
     } else {
 
-        outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
-        outline1("LIJ 0x%2.2x", (unsigned char)((_bytes>>8)&0xff) );
+        char repeatLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( repeatLabel, "%srepeat", label );
 
-        // A <- pattern
-        outline1("LIA 0x%2.2x", _pattern);
+        op_ldij_direct( _environment, _bytes );
 
-        // DP <- address
-        outline1("LIDP %s", _address);
-        // X <- (address)
-        outline0("LII 0x01" );
-        outline0("LP 0x04" );
-        outline0("MVWD");
-        outline0("DX");
-        outline0("IX");
+        op_lda_direct( _environment, _pattern );
 
-        // (&1F): [(DP) <- A; DP++] * I
-        outline0("FILD");
+        op_lddp( _environment, _address );
 
-        outline0("DECJ");
-        outline1("JRZ %sdone", label);
+        op_fild( _environment );
+
+        op_decjz( _environment, label );
+
+        outhead1("%s:", repeatLabel );
+
+        op_fild_direct( _environment, 0xff );
+        op_decjnz( _environment, label );
 
         outhead1("%s:", label );
-
-        // --J; REPEAT UNTIL J = 0
-        // (&1F): [(DP) <- A; DP++] * I
-        outline0("LII 0xff");
-        outline0("FILD");
-        outline0("DECJ");
-        outline1("JRNZ %s", label);
-
-        outhead1("%sdone:", label );
     }
 
 }
@@ -636,35 +754,22 @@ void sc61860_fill_direct( Environment * _environment, char * _address, char * _b
 
     MAKE_LABEL
 
-    // DP <- bytes
-    outline1("LIDP %s", _bytes);
-    // I <- (DP) [bytes]
-    outline0("LII 0x00" );
-    outline0("LP 0x00" );
-    outline0("MVWD");
+    char repeatLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( repeatLabel, "%srepeat", label );
 
-    // DP <- _pattern
-    outline1("LIDP %s", _pattern);
-    // A <- (DP) [pattern]
-    outline0("LDD");
+    op_ldij( _environment, _bytes );
 
-    // DP <- address
-    outline1("LIDP %s", _address);
+    op_lda( _environment, _pattern );
 
-    // (&1F): [(DP) <- A; DP++] * I
-    outline0("FILD");
+    op_lddp_direct( _environment, _address );
 
-    outline0("DECJ");
-    outline1("JRZ %sdone", label);
+    op_fild( _environment );
+    op_decjz( _environment, label );
 
-    outhead1("%s:", label );
+    outhead1("%s:", repeatLabel );
 
-    // --J; REPEAT UNTIL J = 0
-    // (&1F): [(DP) <- A; DP++] * I
-    outline0("LII 0xff");
-    outline0("FILD");
-    outline0("DECJ");
-    outline1("JRNZ %s", label);
+    op_fild_direct( _environment, 0xff );
+    op_decjnz( _environment, repeatLabel );
 
     outhead1("%sdone:", label );
 
@@ -687,36 +792,25 @@ void sc61860_fill_direct_size( Environment * _environment, char * _address, int 
 
     MAKE_LABEL
 
-    // DP <- bytes
-    outline1("LIDP %s", _bytes);
-    // I <- (DP) [bytes]
-    outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
-    outline1("LIJ 0x%2.2x", (unsigned char)((_bytes>>8)&0xff) );
+    char repeatLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( repeatLabel, "%srepeat", label );
 
-    // DP <- _pattern
-    outline1("LIDP %s", _pattern);
-    // A <- (DP) [pattern]
-    outline0("LDD");
+    op_ldij_direct( _environment, _bytes );
 
-    // DP <- address
-    outline1("LIDP %s", _address);
+    op_lda( _environment, _pattern );
 
-    // (&1F): [(DP) <- A; DP++] * I
-    outline0("FILD");
+    op_lddp_direct( _environment, _address );
 
-    outline0("DECJ");
-    outline1("JRZ %sdone", label);
+    op_fild( _environment );
+    op_decjz( _environment, label );
 
-    outhead1("%s:", label );
+    outhead1("%s:", repeatLabel );
 
-    // --J; REPEAT UNTIL J = 0
-    // (&1F): [(DP) <- A; DP++] * I
-    outline0("LII 0xff");
-    outline0("FILD");
-    outline0("DECJ");
-    outline1("JRNZ %s", label);
+    op_fild_direct( _environment, 0xff );
+    op_decjnz( _environment, repeatLabel );
 
     outhead1("%sdone:", label );
+
 
 }
 
@@ -737,32 +831,22 @@ void sc61860_fill_direct_size_value( Environment * _environment, char * _address
 
     MAKE_LABEL
 
-    // DP <- bytes
-    outline1("LIDP %s", _bytes);
-    // I <- (DP) [bytes]
-    outline1("LII 0x%2.2x", (unsigned char)(_bytes&0xff) );
-    outline1("LIJ 0x%2.2x", (unsigned char)((_bytes>>8)&0xff) );
+    char repeatLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( repeatLabel, "%srepeat", label );
 
-    // DP <- _pattern
-    outline1("LIA 0x%2.2x", (unsigned char)(_pattern&0xff) );
+    op_ldij_direct( _environment, _bytes );
 
-    // DP <- address
-    outline1("LIDP %s", _address);
+    op_lda_direct( _environment, _pattern );
 
-    // (&1F): [(DP) <- A; DP++] * I
-    outline0("FILD");
+    op_lddp_direct( _environment, _address );
 
-    outline0("DECJ");
-    outline1("JRZ %sdone", label);
+    op_fild( _environment );
+    op_decjz( _environment, label );
 
-    outhead1("%s:", label );
+    outhead1("%s:", repeatLabel );
 
-    // --J; REPEAT UNTIL J = 0
-    // (&1F): [(DP) <- A; DP++] * I
-    outline0("LII 0xff");
-    outline0("FILD");
-    outline0("DECJ");
-    outline1("JRNZ %s", label);
+    op_fild_direct( _environment, 0xff );
+    op_decjnz( _environment, repeatLabel );
 
     outhead1("%sdone:", label );
     
@@ -781,10 +865,9 @@ void sc61860_fill_direct_size_value( Environment * _environment, char * _address
  */
 void sc61860_move_8bit( Environment * _environment, char *_source, char *_destination ) {
     
-    outline1("LIDP %s", _source);
-    outline0("LDD");
-    outline1("LIDP %s", _destination);
-    outline0("STD");
+    op_lda( _environment, _source );
+
+    op_sta( _environment, _destination );
 
 }
 
@@ -797,9 +880,9 @@ void sc61860_move_8bit( Environment * _environment, char *_source, char *_destin
  */
 void sc61860_store_8bit( Environment * _environment, char *_destination, int _value ) {
 
-    outline1("LIA 0x%2.2x", ( _value & 0xff ) );
-    outline1("LIDP %s", _destination);
-    outline0("STD");
+    op_lda_direct( _environment, _value );
+    
+    op_sta( _environment, _destination );
 
 }
 
@@ -812,34 +895,35 @@ void sc61860_store_8bit( Environment * _environment, char *_destination, int _va
  */
 void sc61860_store_char( Environment * _environment, char *_destination, int _value ) {
 
-    outline1("LIA 0x%2.2x", ( _value & 0xff ) );
-    outline1("LIDP %s", _destination);
-    outline0("STD");
+    op_lda_direct( _environment, _value );
+    
+    op_sta( _environment, _destination );
 
 }
 
 void sc61860_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
-    // Y <- _destination
-    outline1("LIDP %s", _destination);
-    outline0("LII 0x01" );
-    outline0("LP 0x06" );
-    outline0("MVWD");
+    op_ldy( _environment, _destination );
 
-    // Yl += low(_offset)
-    outline0("LP 0x06" );
-    outline1("ADIM 0X%2.2x", (unsigned char)(_offset & 0xff) );
+    op_addy_direct( _environment, _offset );
 
-    // Yh += high(_offset)
-    outline0("LP 0x07" );
-    outline1("ADIM 0X%2.2x", (unsigned char)((_offset>>8) & 0xff) );
+    op_lda_direct( _environment, _value );
 
-    // A <- _value
-    outline1("LIA 0X%2.2X", _value );
+    op_sta_y( _environment );
 
-    // (Y) <- A
-    outline0("DY" );
-    outline0("IYS" );
+}
+
+void sc61860_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, int _value ) {
+
+    op_lda( _environment, _offset );
+
+    op_ldy( _environment, _destination );
+
+    op_addya( _environment );
+
+    op_lda_direct( _environment, _value );
+
+    op_sta_y( _environment );
 
 }
 
@@ -856,57 +940,40 @@ void sc61860_compare_8bit( Environment * _environment, char *_source, char *_des
 
     MAKE_LABEL
 
-    // X <- destination
-    outline1("LIDP %s", _destination);
-    outline0("LII 0x01" );
-    outline0("LP 0x04" );
-    outline0("MVWD");
+    char doneLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( doneLabel, "%sb2", label );
 
-    // A <- (X)
-    outline0("DX");
-    outline0("IXL");
+    op_ldx( _environment, _destination );
 
-    // A <-> B
-    outline0("LIP 0x03");
-    outline0("EXAM");
+    op_lda_x( _environment );
 
-    // A <- (_source)
-    outline1("LIDP %s", _source);
-    outline0("LDD");
+    op_ldba( _environment );
 
-    // A == B ?
-    outline0( "CPMA" );
+    op_lda( _environment, _source );
 
-    // jump if different
-    outline1("JRNZ %s", label )
+    op_cpb( _environment );
 
-    // A = TRUE (if positive = 1)
-    outline1("LIA 0x%2.2x", 0xff*_positive );
+    op_jnz( _environment, label );
+
+    op_lda_direct( _environment, 0xff*_positive );
 
     if ( _other ) {
-        outline1("LIDP %s", _other);
-        outline0("STD");
+        op_sta( _environment, _other );
     } else {
-        outline1("LIDP %s", _destination);
-        outline0("STD");
+        op_sta( _environment, _destination );
     }
-    
-    outline1("JP %sb2", label);
+
+    op_jp( _environment, doneLabel );
 
     outhead1("%s:", label);
     
-    // A = FALSE (if positive = 1)
-    outline1("LIA 0x%2.2x", 0xff*(1-_positive) );
+    op_lda_direct( _environment, 0xff*(1-_positive) );
 
     if ( _other ) {
-        outline1("LIDP %s", _other);
-        outline0("STD");
-    } else {
-        outline1("LIDP %s", _destination);
-        outline0("STD");
+        op_sta( _environment, _other );
     }
     
-    outhead1("%sb2:", label);
+    outhead1("%s:", doneLabel);
 
 }
 
@@ -923,43 +990,30 @@ void sc61860_compare_8bit_const( Environment * _environment, char *_source, int 
 
     MAKE_LABEL
 
-    // A <- (_source)
-    outline1("LIDP %s", _source);
-    outline0("LDD");
+    char doneLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( doneLabel, "%sb2", label );
 
-    // A == constant ?
-    outline1( "CPIA 0x%2.2x", _destination );
+    op_lda( _environment, _source );
 
-    // jump if different
-    outline1("JRNZ %s", label )
+    op_cp_direct( _environment, _destination );
 
-    // A = TRUE (if positive = 1)
-    outline1("LIA 0x%2.2x", 0xff*_positive );
+    op_jnz( _environment, label );
+
+    op_lda_direct( _environment, 0xff*_positive );
 
     if ( _other ) {
-        outline1("LIDP %s", _other);
-        outline0("STD");
-    } else {
-        outline1("LIDP %s", _destination);
-        outline0("STD");
+        op_sta( _environment, _other );
     }
-    
-    outline1("JP %sb2", label);
+
+    op_jp( _environment, doneLabel );
 
     outhead1("%s:", label);
     
-    // A = FALSE (if positive = 1)
-    outline1("LIA 0x%2.2x", 0xff*(1-_positive) );
+    op_lda_direct( _environment, 0xff*(1-_positive) );
 
-    if ( _other ) {
-        outline1("LIDP %s", _other);
-        outline0("STD");
-    } else {
-        outline1("LIDP %s", _destination);
-        outline0("STD");
-    }
+    op_sta( _environment, _other );
     
-    outhead1("%sb2:", label);
+    outhead1("%s:", doneLabel);
 
 }
 
@@ -967,36 +1021,24 @@ void sc61860_compare_and_branch_8bit( Environment * _environment, char *_source,
 
     MAKE_LABEL
 
-    // X <- destination
-    outline1("LIDP %s", _destination);
-    outline0("LII 0x01" );
-    outline0("LP 0x04" );
-    outline0("MVWD");
+    op_ldx( _environment, _destination );
 
-    // A <- (X)
-    outline0("DX");
-    outline0("IXL");
+    op_lda_x( _environment );
 
-    // A <-> B
-    outline0("LIP 0x03");
-    outline0("EXAM");
+    op_ldba( _environment );
 
-    // A <- (_source)
-    outline1("LIDP %s", _source);
-    outline0("LDD");
+    op_lda( _environment, _source );
 
-    // A == B ?
-    outline0( "CPMA" );
+    op_cpb( _environment );
 
     if ( _positive ) {
-        // jump if different
-        outline1("JRNZ %s", label );
-        outline1("JP %s", _label );
+        op_jnz( _environment, label );
+        op_jp( _environment, _label );
     } else {
-        // jump if equal
-        outline1("JRZ %s", label );
-        outline1("JP %s", _label );
-    }            
+        op_jz( _environment, label );
+        op_jp( _environment, _label );
+    }
+
     outhead1("%s:", label);
 
 }
@@ -1014,22 +1056,18 @@ void sc61860_compare_and_branch_8bit_const( Environment * _environment, char *_s
 
     MAKE_LABEL
 
-    // A <- (_source)
-    outline1("LIDP %s", _source);
-    outline0("LDD");
+    op_lda( _environment, _source );
 
-    // A == constant ?
-    outline1( "CPIA 0x%2.2x", _destination );
+    op_cp_direct( _environment, _destination );
 
     if ( _positive ) {
-        // jump if different
-        outline1("JRNZ %s", label );
-        outline1("JP %s", _label );
+        op_jnz( _environment, label );
+        op_jp( _environment, _label );
     } else {
-        // jump if equal
-        outline1("JRZ %s", label );
-        outline1("JP %s", _label );
-    }            
+        op_jz( _environment, label );
+        op_jp( _environment, _label );
+    }
+
     outhead1("%s:", label);
 
 }
@@ -1045,9 +1083,7 @@ void sc61860_compare_and_branch_8bit_const( Environment * _environment, char *_s
  */
 void sc61860_prepare_for_compare_and_branch_8bit( Environment * _environment, char *_source ) {
 
-    // A <- (_source)
-    outline1("LIDP %s", _source);
-    outline0("LDD");
+    op_lda( _environment, _source );
 
 }
 
@@ -1064,18 +1100,16 @@ void sc61860_execute_compare_and_branch_8bit_const( Environment * _environment, 
 
     MAKE_LABEL
 
-    // A == constant ?
-    outline1( "CPIA 0x%2.2x", _destination );
+    op_cp_direct( _environment, _destination );
 
     if ( _positive ) {
-        // jump if different
-        outline1("JRNZ %s", label );
-        outline1("JP %s", _label );
+        op_jnz( _environment, label );
+        op_jp( _environment, _label );
     } else {
-        // jump if equal
-        outline1("JRZ %s", label );
-        outline1("JP %s", _label );
-    }            
+        op_jz( _environment, label );
+        op_jp( _environment, _label );
+    }
+
     outhead1("%s:", label);
 
 }
@@ -1114,50 +1148,44 @@ void sc61860_less_than_8bit( Environment * _environment, char *_source, char *_d
 
     } else {
 
-        // X <- destination
-        outline1("LIDP %s", _destination);
-        outline0("LII 0x01" );
-        outline0("LP 0x04" );
-        outline0("MVWD");
+        char doneLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( doneLabel, "%sb2", label );
 
-        // A <- (X)
-        outline0("DX");
-        outline0("IXL");
+        op_ldx( _environment, _destination );
 
-        // A <-> B
-        outline0("LIP 0x03");
-        outline0("EXAM");
+        op_lda_x( _environment );
 
-        // A <- (_source)
-        outline1("LIDP %s", _source);
-        outline0("LDD");
+        op_ldba( _environment );
 
-        // A <(=) B ?
-        outline0( "CPMA" );
+        op_lda( _environment, _source );
 
-        outline1("JRC %s", label);
+        op_cpb( _environment );
+
+        op_jc( _environment, label );
         if ( _equal ) {
-            outline1("JRZ, %s", label);
+            op_jnz( _environment, label );
         }
-        outline0("LIA 0x0");
+
+        op_lda_direct( _environment, 0 );
+
         if ( _other ) {
-            outline1("LIDP %s", _other);
-            outline0("STD");
+            op_sta( _environment, _other );
         } else {
-            outline1("LIDP %s", _destination);
-            outline0("STD");
+            op_sta( _environment, _destination );
         }
-        outline1("JP %sb2", label);
+
+        op_jp( _environment, doneLabel );
+
         outhead1("%s:", label);
-        outline0("LIA 0xff");
+
+        op_lda_direct( _environment, 0xff );
+
         if ( _other ) {
-            outline1("LIDP %s", _other);
-            outline0("STD");
+            op_sta( _environment, _other );
         } else {
-            outline1("LIDP %s", _destination);
-            outline0("STD");
+            op_sta( _environment, _destination );
         }
-        outhead1("%sb2:", label);
+        outhead1("%s:", doneLabel);
 
     }
 
@@ -1173,43 +1201,34 @@ void sc61860_less_than_8bit_const( Environment * _environment, char *_source, in
 
     } else {
 
-        // A <- _destination
-        outline1("LIA 0x%2.2x", _destination);
+        char doneLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( doneLabel, "%sb2", label );
 
-        // A <-> B
-        outline0("LIP 0x03");
-        outline0("EXAM");
+        op_lda( _environment, _source );
 
-        // A <- (_source)
-        outline1("LIDP %s", _source);
-        outline0("LDD");
+        op_cp_direct( _environment, _destination );
 
-        // A <(=) B ?
-        outline0( "CPMA" );
-
-        outline1("JRC %s", label);
+        op_jc( _environment, label );
         if ( _equal ) {
-            outline1("JRZ, %s", label);
+            op_jnz( _environment, label );
         }
-        outline0("LIA 0x0");
+
+        op_lda_direct( _environment, 0 );
+
         if ( _other ) {
-            outline1("LIDP %s", _other);
-            outline0("STD");
-        } else {
-            outline1("LIDP %s", _destination);
-            outline0("STD");
+            op_sta( _environment, _other );
         }
-        outline1("JP %sb2", label);
+
+        op_jp( _environment, doneLabel );
+
         outhead1("%s:", label);
-        outline0("LIA 0xff");
+
+        op_lda_direct( _environment, 0xff );
+
         if ( _other ) {
-            outline1("LIDP %s", _other);
-            outline0("STD");
-        } else {
-            outline1("LIDP %s", _destination);
-            outline0("STD");
+            op_sta( _environment, _other );
         }
-        outhead1("%sb2:", label);
+        outhead1("%s:", doneLabel);
 
     }
 
@@ -1225,28 +1244,25 @@ void sc61860_less_than_and_branch_8bit_const( Environment * _environment, char *
 
     } else {
 
-        // A <- _destination
-        outline1("LIA 0x%2.2x", _destination);
+        char doneLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( doneLabel, "%sb2", label );
 
-        // A <-> B
-        outline0("LIP 0x03");
-        outline0("EXAM");
+        op_lda( _environment, _source );
 
-        // A <- (_source)
-        outline1("LIDP %s", _source);
-        outline0("LDD");
+        op_cp_direct( _environment, _destination );
 
-        // A <(=) B ?
-        outline0( "CPMA" );
-
-        outline1("JRC %s", label);
+        op_jc( _environment, label );
         if ( _equal ) {
-            outline1("JRZ, %s", label);
+            op_jnz( _environment, label );
         }
-        outline1("JP %sb2", label);
+
+        op_jp( _environment, doneLabel );
+
         outhead1("%s:", label);
-        outline1("JP %s", _label);
-        outhead1("%sb2:", label);
+
+        op_jp( _environment, _label );
+
+        outhead1("%s:", doneLabel);
 
     }
 
@@ -1291,43 +1307,18 @@ void sc61860_math_add_8bit( Environment * _environment, char *_source, char *_de
 
     MAKE_LABEL
 
-    // X <- _source
-    outline1("LIDP %s", _source);
-    outline0("LII 0x01" );
-    outline0("LP 0x04" );
-    outline0("MVWD");
+    op_lda( _environment, _source );
 
-    // A <- (X)
-    outline0("DX");
-    outline0("IXL");
+    op_ldba( _environment );
 
-    // A <-> B
-    outline0("LP 0x03");
-    outline0("EXAM");
+    op_lda( _environment, _destination );     
 
-    // Y <- destination
-    outline1("LIDP %s", _destination);
-    outline0("LII 0x01" );
-    outline0("LP 0x06" );
-    outline0("MVWD");
-
-    // A <- (Y)
-    outline0("DX");
-    outline0("IXL");
-
-    // B = B + A
-    outline0("LP 0x03");
-    outline0("ADM");
-
-    // A <-> B
-    outline0("EXAM");
+    op_addab( _environment );
 
     if ( _other ) {
-        outline1("LIDP %s", _other );
-        outline0("STD" );
+        op_sta( _environment, _other );
     } else {
-        outline1("LIDP %s", _destination );
-        outline0("STD" );
+        op_sta( _environment, _destination );
     }
 
 }
@@ -1336,30 +1327,16 @@ void sc61860_math_add_8bit_const( Environment * _environment, char *_source, int
 
     MAKE_LABEL
 
-    // X <- _source
-    outline1("LIDP %s", _source);
-    outline0("LDD" );
+    op_lda( _environment, _source );
 
-    // A <-> B
-    outline0("LP 0x03");
-    outline0("EXAM");
+    op_ldba( _environment );
 
-    // A <- _destination
-    outline1("LIA 0x%2.2x", _destination );
+    op_lda_direct( _environment, _destination );     
 
-    // B = B + A
-    outline0("LP 0x03");
-    outline0("ADM");
-
-    // A <-> B
-    outline0("EXAM");
+    op_addab( _environment );
 
     if ( _other ) {
-        outline1("LIDP %s", _other );
-        outline0("STD" );
-    } else {
-        outline1("LIDP %s", _destination );
-        outline0("STD" );
+        op_sta( _environment, _other );
     }
 
 }
@@ -1376,43 +1353,18 @@ void sc61860_math_sub_8bit( Environment * _environment, char *_source, char *_de
 
     MAKE_LABEL
 
-    // X <- _source
-    outline1("LIDP %s", _source);
-    outline0("LII 0x01" );
-    outline0("LP 0x04" );
-    outline0("MVWD");
+    op_lda( _environment, _source );
 
-    // A <- (X)
-    outline0("DX");
-    outline0("IXL");
+    op_ldba( _environment );
 
-    // A <-> B
-    outline0("LP 0x03");
-    outline0("EXAM");
+    op_lda( _environment, _destination );     
 
-    // Y <- destination
-    outline1("LIDP %s", _destination);
-    outline0("LII 0x01" );
-    outline0("LP 0x06" );
-    outline0("MVWD");
-
-    // A <- (Y)
-    outline0("DX");
-    outline0("IXL");
-
-    // B = B - A
-    outline0("LP 0x03");
-    outline0("SBM");
-
-    // A <-> B
-    outline0("EXAM");
+    op_subab( _environment );
 
     if ( _other ) {
-        outline1("LIDP %s", _other );
-        outline0("STD" );
+        op_sta( _environment, _other );
     } else {
-        outline1("LIDP %s", _destination );
-        outline0("STD" );
+        op_sta( _environment, _destination );
     }
 
 }
@@ -1431,15 +1383,13 @@ void sc61860_math_double_8bit( Environment * _environment, char *_source, char *
         CRITICAL_UNIMPLEMENTED( "sc61860_math_double_8bit(signed)" );
 
     } else {
-        outline1("LIDP %s", _source );
-        outline0("LDD" );
-        outline0("SL" );
+
+        op_lda( _environment, _source );
+        op_sla( _environment );
         if ( _other ) {
-            outline1("LIDP %s", _other );
-            outline0("STD" );
+            op_sta( _environment, _other );
         } else {
-            outline1("LIDP %s", _source );
-            outline0("STD" );
+            op_sta( _environment, _source );
         }
     }
 
