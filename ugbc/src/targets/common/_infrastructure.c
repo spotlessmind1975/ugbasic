@@ -7706,7 +7706,10 @@ static Variable * calculate_offset_in_array_byte( Environment * _environment, ch
             return offset;
         }
     } else {
+
         Variable * base = variable_temporary( _environment, VT_BYTE, "(base in array)");
+
+        variable_store( _environment, offset->name, 0 );
 
         for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
             int baseValue = 1;
