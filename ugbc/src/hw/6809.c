@@ -680,8 +680,8 @@ void cpu6809_move_8bit( Environment * _environment, char *_source, char *_destin
 
     inline( cpu_move_8bit )
 
-        outline1("LDA %s", _source);
-        outline1("STA %s", _destination);
+        outline1("LDB %s", _source);
+        outline1("STB %s", _destination);
 
     no_embedded( cpu_move_8bit )
 
