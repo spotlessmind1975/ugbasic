@@ -10728,8 +10728,7 @@ statement2nc:
         if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
-        Variable * expr = variable_retrieve_or_define( _environment, $7, array->arrayType, 0 );
-        variable_move_array( _environment, $1, expr->name );
+        variable_move_array( _environment, $1, $7 );
         parser_array_cleanup( _environment );
   }
   | Identifier OP_DOLLAR {
