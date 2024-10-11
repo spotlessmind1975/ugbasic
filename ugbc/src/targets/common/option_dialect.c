@@ -42,7 +42,7 @@ void option_dialect( Environment * _environment, Dialect _dialect ) {
 
     switch( _dialect ) {
         case DI_UGBASIC:
-            _environment->optionExecAsGosub = 0;
+            _environment->optionExecAsGosub = 1;
             _environment->optionCallAsGoto = 0;
             _environment->colorImplicit = 0;
             _environment->centerWithoutNewLine = 0;
