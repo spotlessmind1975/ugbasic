@@ -2869,7 +2869,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
 
                                         realAllocationSize = _environment->maxExpansionBankSize[source->residentAssigned];
 
-                                        cpu_compare_and_branch_16bit_const( _environment, bankWindowId, source->variableUniqueId, alreadyLoadedLabel, 1 );
+                                        if ( _environment->residentDetectionEnabled ) {
+                                            cpu_compare_and_branch_16bit_const( _environment, bankWindowId, source->variableUniqueId, alreadyLoadedLabel, 1 );
+                                        }
                                         if ( source->uncompressedSize ) {
                                             bank_uncompress_semi_var( _environment, source->bankAssigned, source->absoluteAddress, bankWindowName );
                                             realSize = source->uncompressedSize;
@@ -2877,8 +2879,10 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                             bank_read_semi_var( _environment, source->bankAssigned, source->absoluteAddress, bankWindowName, source->size );
                                             realSize = source->size;
                                         }
-                                        cpu_store_16bit(_environment, bankWindowId, source->variableUniqueId );
-                                        cpu_label( _environment, alreadyLoadedLabel );
+                                        if ( _environment->residentDetectionEnabled ) {
+                                            cpu_store_16bit(_environment, bankWindowId, source->variableUniqueId );
+                                            cpu_label( _environment, alreadyLoadedLabel );
+                                        }
                                     } else {
                                         strcpy( bankWindowName, source->realName );
                                         realSize = source->size;
@@ -7735,7 +7739,10 @@ static Variable * calculate_offset_in_array_byte( Environment * _environment, ch
             return offset;
         }
     } else {
+
         Variable * base = variable_temporary( _environment, VT_BYTE, "(base in array)");
+
+        variable_store( _environment, offset->name, 0 );
 
         for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
             int baseValue = 1;

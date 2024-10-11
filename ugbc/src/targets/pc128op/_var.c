@@ -702,6 +702,31 @@ void variable_cleanup( Environment * _environment ) {
     outline0("rzb 256");
     outhead0("STACKEND");
 
+    Bank * bank = _environment->expansionBanks;
+    while( bank ) {
+        if ( bank->address ) {
+
+            deploy_preferred( duff, src_hw_6809_duff_asm );
+            deploy_preferred( msc1, src_hw_6809_msc1_asm );
+            deploy_preferred( bank, src_hw_pc128op_bank_asm );
+
+            outhead1("BANKREADBANK%2.2xXSDR", bank->id );
+            outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
+            outhead1("BANKREADBANK%2.2xXS", bank->id );
+            outline1("LDU #$%4.4x", bank->id );
+            outline0("LEAY $6000,Y" );
+            outline0("JMP BANKREAD" );
+
+            outhead1("BANKUNCOMPRESS%2.2xXSDR", bank->id );
+            outline1("LDY #BANKWINDOW%2.2x", bank->defaultResident );
+            outhead1("BANKUNCOMPRESS%2.2xXS", bank->id );
+            outline1("LDU #$%4.4x", bank->id );
+            outline0("LEAX $6000,X" );
+            outline0("JMP BANKUNCOMPRESS" );
+        }
+        bank = bank->next;
+    }
+
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_inplace_preferred( bank, src_hw_pc128op_bank_asm );
@@ -712,26 +737,6 @@ void variable_cleanup( Environment * _environment ) {
             }
             outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
         }
-    }
-
-    Bank * bank = _environment->expansionBanks;
-    while( bank ) {
-        if ( bank->address ) {
-            outhead1("BANKREADBANK%2.2xXSDR", bank->id );
-            outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
-            outhead1("BANKREADBANK%2.2xXS", bank->id );
-            outline1("LDU #%4.4x", bank->id );
-            outline0("LEAY $6000,Y" );
-            outline0("JMP BANKREAD" );
-
-            outhead1("BANKUNCOMPRESS%2.2xXSDR", bank->id );
-            outline1("LDY #BANKWINDOW%2.2x", bank->defaultResident );
-            outhead1("BANKUNCOMPRESS%2.2xXS", bank->id );
-            outline1("LDU #%4.4x", bank->id );
-            outline0("LEAX $6000,X" );
-            outline0("JMP BANKUNCOMPRESS" );
-        }
-        bank = bank->next;
     }
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {

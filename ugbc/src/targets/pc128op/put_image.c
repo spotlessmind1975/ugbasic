@@ -138,7 +138,7 @@ extern char DATATYPE_AS_STRING[][16];
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ef936x_put_image( _environment, &resource, _x1, _x2, NULL, NULL, image->frameSize, 0, _flags );
+                ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags );
 
             } else {
                 Variable * frame = NULL;

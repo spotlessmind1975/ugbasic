@@ -532,10 +532,15 @@ void variable_cleanup( Environment * _environment ) {
         Bank * bank = _environment->expansionBanks;
         while( bank ) {
             if ( bank->address ) {
+
+                deploy_preferred( duff, src_hw_6809_duff_asm );
+                deploy_preferred( msc1, src_hw_6809_msc1_asm );
+                deploy_preferred( bank, src_hw_mo5_bank_asm );
+
                 outhead1("BANKREADBANK%2.2xXSDR", bank->id );
                 outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
                 outhead1("BANKREADBANK%2.2xXS", bank->id );
-                outline1("LDU #%4.4x", bank->id );
+                outline1("LDU #$%4.4x", bank->id );
                 outline0("LEAY $B000,Y" );
                 outline0("JMP BANKREAD" );
             }

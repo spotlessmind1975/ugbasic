@@ -1896,6 +1896,23 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
     Variable * y = variable_retrieve( _environment, _y );
 
     switch( VT_BITWIDTH( x->type ) ) {
+        case 32:
+            if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+                if ( x->initializedByConstant ) {
+                    outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
+                } else {
+                    outline1("LDB %s+3", x->realName );
+                }
+                outline0("STB <(IMAGEX+1)" );
+            } else {
+                if ( x->initializedByConstant ) {
+                    outline1("LDD #$%4.4x", (unsigned int)(x->value&0xffff) );
+                } else {
+                    outline1("LDD %s+2", x->realName );
+                }
+                outline0("STD <IMAGEX" );
+            }
+            break;
         case 16:
             if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
                 if ( x->initializedByConstant ) {
