@@ -69,7 +69,7 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // INFO
 
-                outline0( "LDA #$0f" );
+                outline1( "LDA #$%2.2x", 0x0f | ( (image->uncompressedSize>0) ? 0x40 : 0x00 ) );
                 outline1( "STA %s+5", imageRef->realName );
 
                 // RESIDENT
@@ -109,7 +109,7 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // INFO
 
-                outline0( "LDA #$03" );
+                outline1( "LDA #$%2.2x", 0X03 | ( (image->uncompressedSize>0) ? 0x40 : 0x00 ) );
                 outline1( "STA %s+5", imageRef->realName );
 
                 // RESIDENT
@@ -154,7 +154,7 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // INFO
 
-                outline0( "LDA #$1f" );
+                outline1( "LDA #$%2.2x", 0X1f |( (image->uncompressedSize>0) ? 0x40 : 0x00 ) );
                 outline1( "STA %s+5", imageRef->realName );
 
                 // RESIDENT
@@ -194,7 +194,7 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // INFO
 
-                outline0( "LDA #$13" );
+                outline1( "LDA #$%2.2x", 0x13 | ( (image->uncompressedSize>0) ? 0x40 : 0x00 ) );
                 outline1( "STA %s+5", imageRef->realName );
 
                 // RESIDENT
@@ -239,7 +239,7 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // INFO
 
-                outline0( "LDA #$3f" );
+                outline1( "LDA #$%2.2x", 0x3f | ( (image->uncompressedSize>0) ? 0x40 : 0x00 ) );
                 outline1( "STA %s+5", imageRef->realName );
 
                 // RESIDENT
@@ -279,7 +279,7 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // INFO
 
-                outline0( "LDA #$33" );
+                outline1( "LDA #$%2.2x", 0x33 |( (image->uncompressedSize>0) ? 0x40 : 0x00 ) );
                 outline1( "STA %s+5", imageRef->realName );
 
                 // RESIDENT

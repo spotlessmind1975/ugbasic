@@ -236,6 +236,8 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     MAKE_LABEL
 
     char labelNoBank[MAX_TEMPORARY_STORAGE]; sprintf( labelNoBank, "%snobank", label );
+    char labelNoBankCompressed[MAX_TEMPORARY_STORAGE]; sprintf( labelNoBankCompressed, "%snocompressed", label );
+    char labelDecompressionDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDecompressionDone, "%sdecompression", label );
     char labelDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDone, "%sdone", label );
 
     Variable * image = variable_retrieve( _environment, _image );
@@ -290,6 +292,11 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline0( "ANDA #$04" );
     outline1( "BEQ %s", labelNoBank );
 
+    // Image compressed?
+    outline1( "LDA %s+5", image->realName );
+    outline0( "ANDA #$40" );
+    outline1( "BEQ %s", labelNoBankCompressed );
+
     // ; U : number of bank 
     // ; Y : address on bank 
     // ; D : size to read
@@ -299,10 +306,22 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     deploy_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_preferred( bank, src_hw_coco3_bank_asm );
 
+    outline1("LDA %s+4", image->realName );
+    outline0("LEAY $C000, Y" );
+    outline0("TFR Y, X" );
+    outline1("LDY %s+6", image->realName );
+    outline0("JSR BANKUNCOMPRESS");
+
+    cpu_jump( _environment, labelDecompressionDone );
+
+    cpu_label( _environment, labelNoBankCompressed );
+
     outline1("LDA %s+4", image->realName ); // BANK
     outline1("LDX %s+6", image->realName ); // DEST
     outline1("LDU %s+2", image->realName ); // SIZE
     outline0("JSR BANKREAD");
+
+    cpu_label( _environment, labelDecompressionDone );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(stub)" );
 

@@ -263,12 +263,12 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     MAKE_LABEL
 
     char labelNoBank[MAX_TEMPORARY_STORAGE]; sprintf( labelNoBank, "%snobank", label );
+    char labelNoBankCompressed[MAX_TEMPORARY_STORAGE]; sprintf( labelNoBankCompressed, "%snocompressed", label );
+    char labelDecompressionDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDecompressionDone, "%sdecompression", label );
     char labelDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDone, "%sdone", label );
 
     Variable * image = variable_retrieve( _environment, _image );
 
-    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
-    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -317,6 +317,11 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline0( "ANDA #$04" );
     outline1( "BEQ %s", labelNoBank );
 
+    // Image compressed?
+    outline1( "LDA %s+5", image->realName );
+    outline0( "ANDA #$40" );
+    outline1( "BEQ %s", labelNoBankCompressed );
+
     // ; U : number of bank 
     // ; Y : address on bank 
     // ; D : size to read
@@ -329,13 +334,28 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline1("LDB %s+4", image->realName );
     outline0("CLRA" );
     outline0("TFR D, U" );
+    outline0("LEAY $A000, Y" );
+    outline0("TFR Y, X" );
+    outline1("LDY %s+6", image->realName );
+    outline0("JSR BANKUNCOMPRESS");
+
+    cpu_jump( _environment, labelDecompressionDone );
+
+    cpu_label( _environment, labelNoBankCompressed );
+
+    outline1("LDB %s+4", image->realName );
+    outline0("CLRA" );
+    outline0("TFR D, U" );
     outline1("LDX %s+6", image->realName );
     outline1("LDD %s+2", image->realName );
     outline0("JSR BANKREAD");
 
+    cpu_label( _environment, labelDecompressionDone );
+
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(stub)" );
 
     outline1("LDX %s+6", image->realName );
+    outline0("TFR X, Y");
     outline1("STX %s", address->realName );
     outline0("LEAX -2, X");
     outline0("LDD #$FFFF");
