@@ -3935,7 +3935,7 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
-    if ( VT_BITWIDTH(source->type) > 1 && VT_BITWIDTH(target->type) > 1 && target->initializedByConstant && ( log2(target->value) != (int)log2(target->value) ) ) { 
+    if ( VT_BITWIDTH(source->type) > 1 && VT_BITWIDTH(target->type) > 1 && target->initializedByConstant && ( log2(target->value) == (int)log2(target->value) ) ) { 
         return variable_mul2_const( _environment, _source, target->value );
     } 
 
@@ -4028,7 +4028,7 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
-    if ( VT_BITWIDTH(source->type) > 1 && VT_BITWIDTH(target->type) > 1 && target->initializedByConstant && ( log2(target->value) != (int)log2(target->value) ) ) { 
+    if ( VT_BITWIDTH(source->type) > 1 && VT_BITWIDTH(target->type) > 1 && target->initializedByConstant && ( log2(target->value) == (int)log2(target->value) ) ) { 
         return variable_div2_const( _environment, _source, target->value );
     } 
 
