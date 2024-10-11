@@ -345,7 +345,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 0, 0, _flags );
 
     cpu_jump( _environment, labelDone );
 
@@ -356,7 +356,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 0, 0, _flags );
 
     cpu_label( _environment, labelDone );
 }

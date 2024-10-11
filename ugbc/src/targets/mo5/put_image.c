@@ -279,8 +279,6 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
     Variable * image = variable_retrieve( _environment, _image );
 
-    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
-    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -359,7 +357,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 0, 0, _flags );
 
     cpu_jump( _environment, labelDone );
 
@@ -370,7 +368,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    ef936x_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 0, 0, _flags );
 
     cpu_label( _environment, labelDone );
 }
