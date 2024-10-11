@@ -3968,6 +3968,10 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
+    if ( VT_BITWIDTH(source->type) > 1 && VT_BITWIDTH(target->type) > 1 && target->initializedByConstant && ( log2(target->value) != (int)log2(target->value) ) ) { 
+        return variable_mul2_const( _environment, _source, target->value );
+    } 
+
     int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
     source = variable_cast( _environment, source->name, best );
     target = variable_cast( _environment, target->name, best );
@@ -4056,6 +4060,10 @@ di divisione.
 Variable * variable_div( Environment * _environment, char * _source, char * _destination, char * _remainder ) {
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
+
+    if ( VT_BITWIDTH(source->type) > 1 && VT_BITWIDTH(target->type) > 1 && target->initializedByConstant && ( log2(target->value) != (int)log2(target->value) ) ) { 
+        return variable_div2_const( _environment, _source, target->value );
+    } 
 
     int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
     source = variable_cast( _environment, source->name, best );
