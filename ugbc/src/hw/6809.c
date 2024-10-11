@@ -91,9 +91,13 @@ static void cpu6809_compare_const( Environment * _environment, char *_source, in
 
     MAKE_LABEL
 
-    outline0("CLRB");
     outline2("LD%c %s",  REG, _source);
-    outline2("CMP%c #$%2.2x", REG, _destination);
+    if ( _destination == 0 ) {
+
+    } else {
+        outline0("CLRB");
+        outline2("CMP%c #$%2.2x", REG, _destination);
+    }
 
     if(_positive) {
         outline1("BNE %s", label);
