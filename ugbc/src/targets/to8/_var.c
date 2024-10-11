@@ -41,13 +41,14 @@
 extern char BANK_TYPE_AS_STRING[][16];
 extern char DATATYPE_AS_STRING[][16];
 
-static void variable_cleanup_entry_multibyte( Environment * _environment, Variable * _first ) {
+static void variable_cleanup_entry_multibyte( Environment * _environment, Variable * _first, int _bank_read_write ) {
 
     Variable * variable = _first;
 
     while( variable ) {
 
-        if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
+        if ( variable->bankReadOrWrite == _bank_read_write &&                
+            ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
 
             if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
                 fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
@@ -254,13 +255,14 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
 
 }
 
-static void variable_cleanup_entry_byte( Environment * _environment, Variable * _first ) {
+static void variable_cleanup_entry_byte( Environment * _environment, Variable * _first, int _bank_read_write ) {
 
     Variable * variable = _first;
 
     while( variable ) {
 
-        if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
+        if ( variable->bankReadOrWrite == _bank_read_write &&
+            ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
 
             if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
                 fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
@@ -334,10 +336,10 @@ static void variable_cleanup_entry_byte( Environment * _environment, Variable * 
 
 }
 
-static void variable_cleanup_entry( Environment * _environment, Variable * _first ) {
+static void variable_cleanup_entry( Environment * _environment, Variable * _first, int _bank_read_write ) {
 
-    variable_cleanup_entry_multibyte( _environment, _first );
-    variable_cleanup_entry_byte( _environment, _first );
+    variable_cleanup_entry_multibyte( _environment, _first, _bank_read_write );
+    variable_cleanup_entry_byte( _environment, _first, _bank_read_write );
 
 }
 
@@ -439,7 +441,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
 
 }
 
-static void variable_cleanup_entry_bit( Environment * _environment, Variable * _first ) {
+static void variable_cleanup_entry_bit( Environment * _environment, Variable * _first, int _bank_read_write ) {
 
     Variable * variable = _first;
 
@@ -447,7 +449,8 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 
     while( variable ) {
 
-        if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
+        if ( variable->bankReadOrWrite == _bank_read_write && 
+            ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
 
             if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
                 fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
@@ -572,8 +575,8 @@ void variable_cleanup( Environment * _environment ) {
                 // outhead1(".segment \"%s\"", actual->name);
                 Variable * variable = _environment->variables;
 
-                variable_cleanup_entry( _environment, variable );
-                variable_cleanup_entry_bit( _environment, variable );
+                variable_cleanup_entry( _environment, variable, 0 );
+                variable_cleanup_entry_bit( _environment, variable, 0 );
 
             } else if ( actual->type == BT_TEMPORARY ) {
                 // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
@@ -582,14 +585,14 @@ void variable_cleanup( Environment * _environment ) {
 
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
-                    variable_cleanup_entry( _environment, variable );
-                    variable_cleanup_entry_bit( _environment, variable );
+                    variable_cleanup_entry( _environment, variable, 0 );
+                    variable_cleanup_entry_bit( _environment, variable, 0 );
                 } 
                 
                 Variable * variable = _environment->tempResidentVariables;
 
-                variable_cleanup_entry( _environment, variable );
-                variable_cleanup_entry_bit( _environment, variable );
+                variable_cleanup_entry( _environment, variable, 0 );
+                variable_cleanup_entry_bit( _environment, variable, 0 );
 
             } else if ( actual->type == BT_STRINGS ) {
                 // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
@@ -726,15 +729,18 @@ void variable_cleanup( Environment * _environment ) {
                 Variable * variable = _environment->variables;
 
                 variable_cleanup_entry_image( _environment, variable );
+                variable_cleanup_entry( _environment, variable, 1 );
 
             } else if ( actual->type == BT_TEMPORARY ) {
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
                     variable_cleanup_entry_image( _environment, variable );
+                    variable_cleanup_entry( _environment, variable, 1 );
                 } 
                 
                 Variable * variable = _environment->tempResidentVariables;
                 variable_cleanup_entry_image( _environment, variable );
+                variable_cleanup_entry( _environment, variable, 1 );
 
             } else if ( actual->type == BT_STRINGS ) {
                 // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);

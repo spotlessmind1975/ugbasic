@@ -1055,6 +1055,9 @@ typedef struct _Variable {
     /** Unique ID assigned to this variable (is banked) */
     int variableUniqueId;
 
+    /** is this variable object of a BANK READ / BANK WRITE? */
+    int bankReadOrWrite;
+    
     /** If VT_IMAGES, this is the original tsx' tileset attached (if used) */
     TsxTileset * originalTileset;
 
