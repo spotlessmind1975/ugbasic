@@ -1314,6 +1314,9 @@ expr :
 
 expr_math : 
       expr_math2
+    | expr_math2 OP_EQUAL OP_HASH const_expr_math2 {
+        $$ = variable_compare_const( _environment, $1, $4 )->name;
+    }
     | expr_math2 OP_EQUAL expr_math {
         Variable * expr = variable_retrieve( _environment, $3 );
         if ( expr->initializedByConstant ) {
@@ -1322,6 +1325,9 @@ expr_math :
             $$ = variable_compare( _environment, $1, $3 )->name;
         }
     }
+    | expr_math2 OP_ASSIGN OP_HASH const_expr_math2 {
+        $$ = variable_compare_const( _environment, $1, $4 )->name;
+    }
     | expr_math2 OP_ASSIGN expr_math {
         Variable * expr = variable_retrieve( _environment, $3 );
         if ( expr->initializedByConstant ) {
@@ -1329,6 +1335,9 @@ expr_math :
         } else {
             $$ = variable_compare( _environment, $1, $3 )->name;
         }
+    }
+    | expr_math2 OP_DISEQUAL direct_integer {
+        $$ = variable_compare_not_const( _environment, $1, $3 )->name;
     }
     | expr_math2 OP_DISEQUAL expr_math {
         Variable * expr = variable_retrieve( _environment, $3 );
@@ -1806,6 +1815,18 @@ on_bank_explicit :
     }
     | BANKED OP const_expr CP {
         $$ = $3;
+    }
+    | FOR BANK READ {
+        $$ = -1;
+    }
+    | FOR BANK WRITE {
+        $$ = -1;
+    }
+    | FOR READ BANK {
+        $$ = -1;
+    }
+    | FOR WRITE BANK {
+        $$ = -1;
     };
 
 on_bank_implicit :
@@ -3051,22 +3072,22 @@ exponential:
         $$ = new_music( _environment, $4 )->name;
     }
     | LOAD OP String CP on_bank_explicit load_flags {
-        $$ = load( _environment, $3, NULL, 0, $5, $6 )->name;
+        $$ = load( _environment, $3, NULL, 0, abs($5), $6 )->name;
       }
     | LOAD OP String AS String CP on_bank_explicit load_flags {
-        $$ = load( _environment, $3, $5, 0, $7, $8 )->name;
+        $$ = load( _environment, $3, $5, 0, abs($7), $8 )->name;
       }
     | LOAD OP String OP_COMMA Integer CP on_bank_explicit load_flags {
-        $$ = load( _environment, $3, NULL, $5, $7, $8 )->name;
+        $$ = load( _environment, $3, NULL, $5, abs($7), $8 )->name;
       }
     | LOAD OP String AS String OP_COMMA Integer CP on_bank_explicit load_flags {
-        $$ = load( _environment, $3, $5, $7, $9, $10 )->name;
+        $$ = load( _environment, $3, $5, $7, abs($9), $10 )->name;
       }
     | LOAD MUSIC OP String CP on_bank_explicit {
-        $$ = music_load( _environment, $4, NULL, $6 )->name;
+        $$ = music_load( _environment, $4, NULL, abs($6) )->name;
       }
     | LOAD MUSIC OP String AS String CP on_bank_explicit {
-        $$ = music_load( _environment, $4, $6, $8 )->name;
+        $$ = music_load( _environment, $4, $6, abs($8) )->name;
       }
     | load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * sequence = sequence_load( 
@@ -6959,10 +6980,12 @@ dim_definition :
     } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
-        if ( $10 ) {
+        if ( $10 > 0 ) {
             if ( ! banks_store( _environment, array, $10 ) ) {
                 CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
             };
+        } else if ( $10 < 0 ) {
+            array->bankReadOrWrite = 1;
         }
     }
     as_datatype_suffix
@@ -7007,11 +7030,13 @@ dim_definition :
     } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $11;
-        if ( $12 ) {
+        if ( $12 > 0 ) {
             if ( ! banks_store( _environment, array, $12 ) ) {
                 CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
             };
-        }        
+        } else if ( $12 < 0 ) {
+            array->bankReadOrWrite = 1;
+        }
     }
     | Identifier WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -7029,11 +7054,13 @@ dim_definition :
       } readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
-        if ( $10 ) {
+        if ( $10 > 0 ) {
             if ( ! banks_store( _environment, array, $10 ) ) {
                 CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
             };
-        }        
+        } else if ( $10 < 0 ) {
+            array->bankReadOrWrite = 1;
+        }
     }
     | Identifier datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -7051,11 +7078,13 @@ dim_definition :
       } readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
-        if ( $11 ) {
+        if ( $11 > 0 ) {
             if ( ! banks_store( _environment, array, $11 ) ) {
                 CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
             };
-        }        
+        } else if ( $11 < 0 ) {
+            array->bankReadOrWrite = 1;
+        }
     }
     | Identifier as_datatype_mandatory {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -7087,11 +7116,13 @@ dim_definition :
     } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
-        if ( $11 ) {
+        if ( $11 > 0 ) {
             if ( ! banks_store( _environment, array, $11 ) ) {
                 CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
             };
-        }        
+        } else if ( $11 < 0 ) {
+            array->bankReadOrWrite = 1;
+        }
     }
     | Identifier as_datatype_mandatory WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -7109,11 +7140,13 @@ dim_definition :
     } readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
-        if ( $11 ) {
+        if ( $11 > 0 ) {
             if ( ! banks_store( _environment, array, $11 ) ) {
                 CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
             };
-        }        
+        } else if ( $11 < 0 ) {
+            array->bankReadOrWrite = 1;
+        }
     }
     ;
 
@@ -10237,10 +10270,10 @@ statement2nc:
     ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
   } 
   | LOAD String OP_COMMA Integer on_bank_explicit load_flags {
-    load( _environment, $2, NULL, $4, $5, $6 );
+    load( _environment, $2, NULL, $4, abs($5), $6 );
   }
   | LOAD String AS String OP_COMMA Integer on_bank_explicit load_flags {
-    load( _environment, $2, $4, $6, $7, $8 );
+    load( _environment, $2, $4, $6, abs($7), $8 );
   }
   | RUN PARALLEL {
       run_parallel( _environment );
@@ -10395,7 +10428,7 @@ statement2nc:
         variable_temporary_remove( _environment, v->name );
   }
   | MUSIC const_expr_string AS const_expr_string on_bank_explicit to_variable {
-        Variable * v = music_storage( _environment, $2, $4, $5 );
+        Variable * v = music_storage( _environment, $2, $4, abs($5) );
         if ( $6 ) {
             prepare_variable_storage( _environment, $6, v );
         }
