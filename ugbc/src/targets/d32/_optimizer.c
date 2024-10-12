@@ -1582,7 +1582,9 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
 
                 po_buf_fgets( bufLine, fileAsm );
 
-                POBuffer result = po_buf_match(bufLine, " ADC* *", v2, v1 );
+                POBuffer result = po_buf_match(bufLine, "* equ **-1", v1 );
+                if ( ! result ) result = po_buf_match(bufLine, "* equ **-2", v2, v1 );
+                if ( ! result ) result = po_buf_match( bufLine, " ADC* *", v2, v1);
                 if ( ! result ) result = po_buf_match( bufLine, " ADD* *", v2, v1);
                 if ( ! result ) result = po_buf_match( bufLine, " ADC* *", v2, v1);
                 if ( ! result ) result = po_buf_match( bufLine, " AND* *", v2, v1);
@@ -1784,7 +1786,7 @@ void target_peephole_optimizer( Environment * _environment ) {
         TMP_BUF_CLR;
     }
     
-    // optim_remove_unused_temporary( _environment );
+    optim_remove_unused_temporary( _environment );
 
 }
 
