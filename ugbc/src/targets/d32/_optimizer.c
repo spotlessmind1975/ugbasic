@@ -1582,8 +1582,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
 
                 po_buf_fgets( bufLine, fileAsm );
 
-                POBuffer result = po_buf_match( bufLine, "* equ **-1", v1);
-                if ( ! result ) result = po_buf_match(bufLine, " ADC* *", v2, v1 );
+                POBuffer result = po_buf_match(bufLine, " ADC* *", v2, v1 );
                 if ( ! result ) result = po_buf_match( bufLine, " ADD* *", v2, v1);
                 if ( ! result ) result = po_buf_match( bufLine, " ADC* *", v2, v1);
                 if ( ! result ) result = po_buf_match( bufLine, " AND* *", v2, v1);
@@ -1610,20 +1609,6 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                 if ( ! result ) result = po_buf_match( bufLine, " ASL [*]", v1);
                 if ( ! result ) result = po_buf_match( bufLine, " ASR [*]", v1);
                 if ( ! result ) result = po_buf_match( bufLine, " TST [*]", v1);
-                if ( ! result ) result = po_buf_match(bufLine, " ADC* <(*)", v2, v1 );
-                if ( ! result ) result = po_buf_match( bufLine, " ADD* <(*)", v2, v1);
-                if ( ! result ) result = po_buf_match( bufLine, " ADC* <(*)", v2, v1);
-                if ( ! result ) result = po_buf_match( bufLine, " AND* <(*)", v2, v1);
-                if ( ! result ) result = po_buf_match( bufLine, " CMP* <(*)", v2, v1);
-                if ( ! result ) result = po_buf_match( bufLine, " EOR* <(*)", v2, v1);
-                if ( ! result ) result = po_buf_match( bufLine, " LD* <(*)", v2, v1);
-                if ( ! result ) result = po_buf_match( bufLine, " OR* <(*)", v2, v1);
-                if ( ! result ) result = po_buf_match( bufLine, " SBC* <(*)", v2, v1);
-                if ( ! result ) result = po_buf_match( bufLine, " ST* <(*)", v2, v1);
-                if ( ! result ) result = po_buf_match( bufLine, " SUB* <(*)", v2, v1);
-                if ( ! result ) result = po_buf_match( bufLine, " ASL <(*)", v1);
-                if ( ! result ) result = po_buf_match( bufLine, " ASR <(*)", v1);
-                if ( ! result ) result = po_buf_match( bufLine, " TST <(*)", v1);
                 if ( result ) {
                     char * realVarName = strdup( v1->str );
                     char * c = strstr( realVarName, "+" );
@@ -1666,47 +1651,25 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
             fseek( fileAsm, vspPointer, SEEK_SET );
 
             int line = 0;
-            int endOfSection = 0;
 
             while( !feof(fileAsm) ) {
 
                 if ( line >= 1 ) out(fileOptimized, buf[0]);
                 po_buf_cpy(buf[0], buf[1]->str);
                 po_buf_fgets( buf[1], fileAsm );
-                while( isAComment(buf[1]) && !feof(fileAsm) && ! endOfSection ) {
-                    if ( po_buf_match( bufLine, " ; VSP" ) ) {
-                        endOfSection = 1;
-                    }
-
-                    if(KEEP_COMMENTS) po_buf_cat(buf[0], buf[1]->str);
-                    po_buf_fgets( buf[1], fileAsm );
-                }
                 ++line;
-
-                // printf( "----- Checking\n0[[%s]]\n%s\n", buf[0]->str, buf[1]->str );
 
                 if ( 
                     ( po_buf_match( buf[0], " LDA #*", v1 ) && po_buf_match( buf[1], " STA *", v2 ) ) ||
                     ( po_buf_match( buf[0], " LDB #*", v1 ) && po_buf_match( buf[1], " STB *", v2 ) ) ||
-                    ( po_buf_match( buf[0], " LDD #*", v1 ) && po_buf_match( buf[1], " STD *", v2 ) ) ||
-                    ( po_buf_match( buf[0], " LDA #*", v1 ) && po_buf_match( buf[1], " STA <(*)", v2 ) ) ||
-                    ( po_buf_match( buf[0], " LDB #*", v1 ) && po_buf_match( buf[1], " STB <(*)", v2 ) ) ||
-                    ( po_buf_match( buf[0], " LDD #*", v1 ) && po_buf_match( buf[1], " STD <(*)", v2 ) )
+                    ( po_buf_match( buf[0], " LDD #*", v1 ) && po_buf_match( buf[1], " STD *", v2 ) )
                     ) {
                     char * realVarName = strdup( v2->str );
                     char * c = strstr( realVarName, "+" );
                     if ( c ) {
                         *c = 0;
                     }
-                    c = strstr( realVarName, "<(" );
-                    if ( c ) {
-                        strcpy( c, c+2 );
-                    }
-                    c = strstr( realVarName, ")" );
-                    if ( c ) {
-                        *c = 0;
-                    }
-                    // printf( "  > matched (%s)\n", realVarName );
+
                     UnusedSymbol * tmp = currentlyUnusedSymbols;
                     while( tmp ) {
                         if ( strcmp( realVarName, tmp->realName ) == 0 ) {
@@ -1720,28 +1683,12 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                         ++_environment->removedAssemblyLines;
                         ++_environment->removedAssemblyLines;
                     }
-                } else if( 
-                        po_buf_match( buf[0], " STA *", v2 ) || 
-                        po_buf_match( buf[0], " STB *", v2 ) || 
-                        po_buf_match( buf[0], " STD *", v2 ) ||
-                        po_buf_match( buf[0], " STA <(*)", v2 ) || 
-                        po_buf_match( buf[0], " STB <(*)", v2 ) || 
-                        po_buf_match( buf[0], " STD <(*)", v2 )
-                         ) {
+                } else if( po_buf_match( buf[0], " STA *", v2 ) || po_buf_match( buf[0], " STB *", v2 ) || po_buf_match( buf[0], " STD *", v2 ) ) {
                     char * realVarName = strdup( v2->str );
                     char * c = strstr( realVarName, "+" );
                     if ( c ) {
                         *c = 0;
                     }
-                    c = strstr( realVarName, "<(" );
-                    if ( c ) {
-                        strcpy( c, c+2 );
-                    }
-                    c = strstr( realVarName, ")" );
-                    if ( c ) {
-                        *c = 0;
-                    }
-                    // printf( "  > matched2 (%s)\n", realVarName );
                     UnusedSymbol * tmp = currentlyUnusedSymbols;
                     while( tmp ) {
                         if ( strcmp( realVarName, tmp->realName ) == 0 ) {
@@ -1750,26 +1697,18 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                         tmp = tmp->next;
                     }
                     if ( tmp ) {
-                        // printf( "   >> really unused!\n" );
                         optim( buf[0], RULE "unused temporary", NULL );
                         ++_environment->removedAssemblyLines;
                     }
                 }
 
-                if ( endOfSection ) {
-                    // printf( "!!! end of section!\n" );
+                if ( po_buf_match( buf[1], " ; VSP" ) ) {
                     out(fileOptimized, buf[0]);
-                    // out(fileOptimized, buf[1]);
                     break;
                 }
 
             }
 
-            // if ( feof(fileAsm ) ) {
-            //     out(fileOptimized, buf[0]);
-            //     out(fileOptimized, buf[1]);
-            // }
-            
             vspPointer = ftell( fileAsm );
 
             // printf( "vspPointer = %d\n", vspPointer );
@@ -1806,6 +1745,7 @@ void target_peephole_optimizer( Environment * _environment ) {
 
     optim_remove_unused_temporary( _environment );
 
+
     if ( _environment->peepholeOptimizationLimit > 0 ) {
         POBuffer buf[LOOK_AHEAD];
         int i;
@@ -1826,9 +1766,7 @@ void target_peephole_optimizer( Environment * _environment ) {
         for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_del(buf[i]);
         TMP_BUF_CLR;
     }
-
-    optim_remove_unused_temporary( _environment );
-
+    
 }
 
 void target_finalize( Environment * _environment ) {
