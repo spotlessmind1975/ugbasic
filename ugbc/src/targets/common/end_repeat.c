@@ -78,7 +78,12 @@ void end_repeat_condition( Environment * _environment, char * _expression ) {
 
     _environment->loops = _environment->loops->next;
 
-    Variable * expression = variable_retrieve_or_define( _environment, _expression, VT_BYTE, 0 );
+    Variable * expression = NULL;
+    if ( variable_exists( _environment, _expression ) ) {
+        expression = variable_retrieve( _environment, _expression );
+    } else {
+        expression = variable_retrieve_or_define( _environment, _expression, VT_BYTE, 0 );
+    }
 
     cpu_bveq( _environment,  expression->realName, loop->label );
 
