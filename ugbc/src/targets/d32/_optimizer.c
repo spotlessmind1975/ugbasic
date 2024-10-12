@@ -1652,11 +1652,23 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
 
             int line = 0;
 
+            po_buf_cpy(buf[0], "");
+            po_buf_cpy(buf[1], "");
+
             while( !feof(fileAsm) ) {
+
+                int endOfSection = 0;
 
                 if ( line >= 1 ) out(fileOptimized, buf[0]);
                 po_buf_cpy(buf[0], buf[1]->str);
                 po_buf_fgets( buf[1], fileAsm );
+                while( isAComment( buf[1] ) && !endOfSection && !feof( fileAsm ) ) {
+                    if(KEEP_COMMENTS) po_buf_cat(buf[0], buf[1]->str);
+                    po_buf_fgets( buf[1], fileAsm );
+                    if ( po_buf_match( buf[1], " ; VSP" ) ) {
+                        endOfSection = 1;
+                    }
+                }
                 ++line;
 
                 if ( 
@@ -1702,10 +1714,16 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                 }
 
-                if ( po_buf_match( buf[1], " ; VSP" ) ) {
+                if ( endOfSection ) {
                     out(fileOptimized, buf[0]);
+                    out(fileOptimized, buf[1]);
                     break;
                 }
+
+                // if ( po_buf_match( buf[1], " ; VSP" ) ) {
+                //     out(fileOptimized, buf[0]);
+                //     break;
+                // }
 
             }
 
@@ -1745,7 +1763,6 @@ void target_peephole_optimizer( Environment * _environment ) {
 
     optim_remove_unused_temporary( _environment );
 
-
     if ( _environment->peepholeOptimizationLimit > 0 ) {
         POBuffer buf[LOOK_AHEAD];
         int i;
@@ -1767,6 +1784,8 @@ void target_peephole_optimizer( Environment * _environment ) {
         TMP_BUF_CLR;
     }
     
+    // optim_remove_unused_temporary( _environment );
+
 }
 
 void target_finalize( Environment * _environment ) {
