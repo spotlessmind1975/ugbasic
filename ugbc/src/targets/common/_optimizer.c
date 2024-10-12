@@ -289,7 +289,16 @@ POBuffer po_buf_match(POBuffer _buf, const char *_pattern, ...) {
                 ret = NULL;
                 break;
             }
-        } else if(*p=='*') {
+        } else if( *p=='*' ) {
+            if ( *(p+1) == '*' ) {
+                if(*s != '*') {
+                    ret = NULL;
+                    break;
+                }
+                ++p;++p;
+                ++s;
+                continue;
+            }
             POBuffer m = va_arg(ap, POBuffer); ++p;
             if(m != NULL) {
                 ret = po_buf_cpy(m, "");
