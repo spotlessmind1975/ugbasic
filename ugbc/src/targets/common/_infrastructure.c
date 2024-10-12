@@ -170,6 +170,8 @@ static void variable_reset_pool( Environment * _environment, Variable * _pool ) 
                 actual->used = 0;
                 if ( actual->initializedByConstant ) {
                     outline1("; V %s", actual->realName );
+                } else {
+                    outline1("; Q %s", actual->realName );
                 }
             }     
         }
