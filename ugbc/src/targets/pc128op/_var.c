@@ -734,12 +734,24 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_inplace_preferred( bank, src_hw_pc128op_bank_asm );
+
+    int page0LastAddressUsed = 0;    
     for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
             if ( _environment->residentDetectionEnabled ) {
-                outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
+                if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+                    outhead2("BANKWINDOWID%2.2x equ $%4.4x", i, page0LastAddressUsed );
+                    page0LastAddressUsed += 2;
+                } else {
+                    outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
+                }
             }
-            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
+            if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+                outhead2("BANKWINDOW%2.2x equ $%4.4x", i, page0LastAddressUsed);
+                page0LastAddressUsed += _environment->maxExpansionBankSize[i];
+            } else {
+                outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
+            }
         }
     }
 
@@ -807,6 +819,18 @@ void variable_cleanup( Environment * _environment ) {
 
     outhead0("CODESTART2");
     outline0("LDS #STACKEND");
+
+    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
+        if ( _environment->maxExpansionBankSize[i] ) {
+            if ( _environment->residentDetectionEnabled ) {
+                if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+                    char bankWindowId[MAX_TEMPORARY_STORAGE];
+                    sprintf( bankWindowId, "BANKWINDOWID%2.2x", i );
+                    cpu_store_16bit( _environment, bankWindowId, 0xffff );
+                }
+            }
+        }
+    }
 
     buffered_prepend_output( _environment );
 
