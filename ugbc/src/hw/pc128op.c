@@ -81,7 +81,8 @@ void pc128op_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 void pc128op_inkey( Environment * _environment, char * _key ) {
 
-   _environment->bitmaskNeeded = 1;
+    _environment->bitmaskNeeded = 1;
+    _environment->keyboardFullSupport = 1;
 
     deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm);
 
@@ -153,6 +154,7 @@ void pc128op_scancode( Environment * _environment, char * _result ) {
 void pc128op_asciicode( Environment * _environment, char * _result ) {
 
     _environment->bitmaskNeeded = 1;
+    _environment->keyboardFullSupport = 1;
 
     deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm);
 
@@ -186,6 +188,7 @@ void pc128op_scanshift( Environment * _environment, char * _shifts ) {
 void pc128op_keyshift( Environment * _environment, char * _shifts ) {
 
     _environment->bitmaskNeeded = 1;
+    _environment->keyboardFullSupport = 1;
 
     deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm );
 

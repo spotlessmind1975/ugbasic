@@ -2865,6 +2865,8 @@ typedef struct _Environment {
 
     int clsCalledOnce;
 
+    int keyboardFullSupport;
+
     char * optionalX;
     char * optionalY;
 
@@ -4683,6 +4685,7 @@ Variable *              joyy_vars( Environment * _environment, char * _port );
 // *K*
 //----------------------------------------------------------------------------
 
+int                     key_constant( Environment * _environment, int _key );
 Variable *              key_state( Environment * _environment, int _scancode );
 Variable *              key_state_var( Environment * _environment, char * _scancode );
 Variable *              keyshift( Environment * _environment );
