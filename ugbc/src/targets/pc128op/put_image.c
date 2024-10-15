@@ -405,22 +405,24 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline1("LDX %s+6", image->realName );
     outline1("LDD %s+2", image->realName );
     outline0("JSR BANKREAD");
-
+    
     cpu_label( _environment, labelDecompressionDone );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(stub)" );
 
     outline1("LDX %s+6", image->realName );
     outline1("STX %s", address->realName );
-    outline0("LEAX -2, X");
-    outline0("LDD #$FFFF");
-    outline0("STD , X");
+    if ( _environment->residentDetectionEnabled ) {
+        outline0("LEAX -2, X");
+        outline0("LDD #$FFFF");
+        outline0("STD , X");
+    }
 
     Resource resource;
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 0, 0, _flags );
+    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
 
     cpu_jump( _environment, labelDone );
 
@@ -431,7 +433,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 0, 0, _flags );
+    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
 
     cpu_label( _environment, labelDone );
 }
