@@ -1810,13 +1810,13 @@ static void ef936x_load_image_address_to_y( Environment * _environment, char * _
             if ( strlen(_sequence) == 0 ) {
             } else {
                 outline1("LDB %s", _sequence );
-                outline1("JSR OFFSETS%4.4x", _frame_count * _frame_size );
+                outline1("JSR fs%4.4xoffsetsequence", _frame_count * _frame_size );
             }
             if ( _frame ) {
                 if ( strlen(_frame) == 0 ) {
                 } else {
                     outline1("LDB %s", _frame );
-                    outline1("JSR OFFSETS%4.4x", _frame_size );
+                    outline1("JSR fs%4.4xoffsetframe", _frame_size );
                 }
             }
         } else {
@@ -1825,7 +1825,7 @@ static void ef936x_load_image_address_to_y( Environment * _environment, char * _
                 if ( strlen(_frame) == 0 ) {
                 } else {
                     outline1("LDB %s", _frame );
-                    outline1("JSR OFFSETS%4.4x", _frame_size );
+                    outline1("JSR fs%4.4xoffsetframe", _frame_size );
                 }
             }
         }
