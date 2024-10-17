@@ -3592,3 +3592,26 @@ o potrebbe non esservi del tutto.
 @example INSTRUMENT ACOUSTIC BASS ON #7
 
 </usermanual> */
+
+
+/* <usermanual>
+@keyword ADDRESS (data type)
+
+@english
+
+Data type ''ADDRESS'' represents a 16-bit address, that is used by processors to access 
+computer's memory. The memory address is represented by a binary number 
+of 16 digits (bits). With 16 bits, we can represent 2^16 = 65,536 different addresses.
+
+@italian
+
+Il tipo di dati ''ADDRESS'' rappresenta un indirizzo a 16 bit, utilizzato dai processori 
+per accedere alla memoria del computer. L'indirizzo di memoria è rappresentato da un 
+numero binario di 16 cifre (bit). Con 16 bit, possiamo rappresentare 2^16 = 65.536 
+indirizzi diversi.
+
+@syntax ... AS ADDRESS
+
+@example DIM limit AS ADDRESS = &H8000
+
+</usermanual> */
