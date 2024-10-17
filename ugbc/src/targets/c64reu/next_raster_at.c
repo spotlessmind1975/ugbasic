@@ -56,8 +56,8 @@
 </usermanual> */
 void next_raster_at_with( Environment * _environment, int _position, char * _label ) {
 
-    char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "%2.2x", (unsigned char) ( _position & 0xff )  );
-    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
+    char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "#$%2.2x", (unsigned char) ( _position & 0xff )  );
+    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "#$%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
 
     vic2_next_raster_at( _environment, _label, positionlo, positionhi );
 

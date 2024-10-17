@@ -55,26 +55,32 @@
 
 @english
 
-The ''NEXT RASTER AT'' command allows you to continue execution of the main program
-until a new specific raster line is reached, indicating a new routine to call.
+The ''NEXT RASTER AT'' instruction will resume execution of the main program from
+where it had stopped, before serving the interrupt for the raster, and will set
+the next raster line where the main program will be interrupted.
 
 @italian
 
-Il comando ''NEXT RASTER AT'' permette di continuare l'esecuzione del programma 
-principale fino al raggiungimento di una nuova specifica linea di raster, 
-indicando una nuova routine da richiamare.
+L'istruzione ''NEXT RASTER AT'' riprenderà l'esecuzione del programma principale 
+dal punto in cui si era interrotta, prima di servire l'interruzione per il raster, 
+e imposterà la successiva riga raster in cui il programma principale verrà 
+interrotto.
 
 @syntax NEXT RASTER AT line WITH label
 @syntax NEXT RASTER label AT line
 
-@example NEXT RASTER AT #$42 WITH myRasterRoutine
+@example NEXT RASTER AT #&H42 WITH myRasterRoutine
 
 @target c128
+
+@seeAlso NEXT RASTER
+@seeAlso RASTER AT
+
 </usermanual> */
 void next_raster_at_with( Environment * _environment, int _position, char * _label ) {
 
-    char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "%2.2x", (unsigned char) ( _position & 0xff )  );
-    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
+    char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "#$%2.2x", (unsigned char) ( _position & 0xff )  );
+    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "#$%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
 
     vic2_next_raster_at( _environment, _label, positionlo, positionhi );
 
