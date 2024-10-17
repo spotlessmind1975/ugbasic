@@ -53,7 +53,7 @@
 The ''PAINT'' command is used in high resolution graphics modes, to fill a 
 shape with a specified colour.
 
-The ''x,y'' are the co−ordinates of the point where the painting is to start.
+The ''x,y'' are the coordinates of the point where the painting is to start.
 ''c'' is the colour code of the colours to be used to paint. It must be 
 between ''0'' and ''COLOR COUNT'' and be one of the available colour set 
 for the working mode. If omitted, the current foreground colour is used.

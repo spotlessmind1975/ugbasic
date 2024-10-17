@@ -1679,33 +1679,62 @@ di 0 (nessun ritardo) a un valore massimo di 255 (massimo ritardo).
 @keyword REM
 
 @english
-The ''REM'' keyword is used to include explanatory remarks in the source code of a program.
-In the text of any comment you want to include, that is optional, a space is required 
-between the ''REM'' keyword and comment.
 
-You can put a ''REM'' statement alone on a line, or you can put it on a line following 
-another statement . The ''REM'' statement must be the last statement on the line. If it follows 
-another statement, the ''REM'' must be separated from that statement by a colon ('':'').
+In BASIC, the ''REM'' keyword (also abbreviated by the single quotation character (')) 
+is used to insert comments into code. A comment is a note or explanation that is added 
+to code to make it easier for the developer to understand, as well as for other
+programmers who may read it in the future. 
 
-You can use a single quotation mark (') instead of ''REM''. This is true whether your comment follows
-another statement on the same line or sits alone on a line. However, you cannot continue a 
-''REM'' statement by using a line-continuation sequence (''_''). This means that, for a multiple-line 
-comment, you need to use as many ''REM''s statements as the lines you comment.
+When the computer compile the ugBASIC program, it completely ignores everything that follows 
+the ''REM'' keyword on the same line. The word ''REM'' can be placed at the beginning of a line
+or after a colon. In either case, the rest of the line will be treated as a comment.
+To comment out multiple lines of code, you can use ''REM'' at the beginning of each line.
+Note that you cannot continue a ''REM'' statement by using a line-continuation sequence 
+(''_''). This means that, for a multiple-line comment, you need to use as many ''REM''s
+statements as the lines you comment.
+
+Comments have the role to describe the purpose of a particular section of code 
+or individual statement, and it provide information about the program, who created it, 
+when it was created, and what changes were made. They make code easier to understand, 
+even for people who didn write the program: when you return to code after some time, 
+comments help you remember the purpose of different parts of the program.
+
+Moreover, it is the best way to disable
+a piece of code without deleting it, simply add ''REM'' to the beginning of the line.
+
+The main guidelines in using ''REM'' it to use simple, direct language to explain the code,
+avoiding long or complicated sentences. Generally, they should be used on parts of the code 
+that are not obvious. You do not need to comment on every single line.
 
 @italian
-La parola chiave ''REM'' viene utilizzata per includere commenti esplicativi nel codice sorgente di 
-un programma. Nel testo di qualsiasi commento che si desidera includere, e che è facoltativo, è 
-richiesto uno spazio tra la parola chiave ''REM'' e il commento.
+In BASIC, la parola chiave ''REM'' (abbreviata anche con il carattere di virgoletta 
+singola (')) viene utilizzata per inserire commenti nel codice. Un commento è una nota 
+o una spiegazione che viene aggiunta al codice per renderlo più facile da comprendere per 
+lo sviluppatore, così come per altri programmatori che potrebbero leggerlo in futuro.
 
-E' possibile introdurree un'istruzione ''REM'' da sola su una riga, oppure su una riga dopo un'altra 
-istruzione. L'istruzione ''REM'' deve essere l'ultima istruzione sulla riga. Se segue un'altra istruzione, 
-il ''REM'' deve essere separato da quell'istruzione con i due punti ('':'').
+Quando il computer compila il programma ugBASIC, ignora completamente tutto ciò che segue 
+la parola chiave ''REM'' sulla stessa riga. La parola ''REM'' può essere posizionata 
+all'inizio di una riga o dopo i due punti. In entrambi i casi, il resto della riga verrà 
+trattato come un commento. Per commentare più righe di codice, puoi usare ''REM'' all'inizio 
+di ogni riga.
 
-È possibile utilizzare un'apice (') invece di ''REM''. Questo è vero sia che il commento segua un'altra 
-istruzione sulla stessa riga o che si trovi da solo su una riga. Tuttavia, non è possibile continuare 
-un'istruzione ''REM'' utilizzando la sequenza di continuazione della riga (''_''). Ciò significa che, 
-per un commento su più righe, è necessario utilizzare tante istruzioni ''REM' quante sono le righe 
-da commentare.
+Nota che non puoi continuare un'istruzione ''REM'' usando una sequenza di continuazione 
+di riga (''_''). Ciò significa che per un commento multiriga, devi usare tante istruzioni
+''REM'' quante sono le righe che stai commentando.
+
+I commenti vengono utilizzati per descrivere lo scopo di una particolare sezione 
+di codice o di una singola istruzione e forniscono informazioni sul programma, 
+chi lo ha creato, quando è stato creato e quali modifiche sono state apportate. 
+Rendono il codice più facile da capire, anche per chi non ha scritto il programma: 
+quando si torna al codice dopo un po' di tempo, i commenti aiutano a ricordare 
+lo scopo delle diverse parti del programma.
+
+Inoltre, è il modo migliore per disabilitare un pezzo di codice senza eliminarlo, 
+basta aggiungere ''REM'' all'inizio della riga. Le linee guida principali 
+nell'uso di ''REM'' sono di usare un linguaggio semplice e diretto per spiegare 
+il codice, evitando frasi lunghe o complicate. In genere, dovrebbero essere 
+utilizzati su parti del codice che non sono ovvie. Non è necessario commentare 
+ogni singola riga.
 
 @syntax REM [comment]
 @syntax ' [comment]
@@ -1715,7 +1744,6 @@ da commentare.
 @example PRINT "ok": REM I am printing ok
 
 @target all
-@verified
 </usermanual> */
 
 /* <usermanual>
@@ -2364,8 +2392,8 @@ Nota che non tutti i target supportano entrambe le modalità.
 two parameters ''x1'' and ''y1'', the coordinates of the bottom right corner of the rectangle 
 are determined by parameters three and four (''x2'' and ''y2'', where ''x2=x1+width'' and 
 ''y2=y1+height'', important for ''REC''). The color of the rectangle is determined by the 
-last parameter (''fq'', color source). Permissible values ​​are 0..''SCREEN WIDTH'' for ''x1''
-and ''x2' . For ''y1'' and ''y2'', values ​​from 0 to ''SCREEN HEIGHT'' are permitted in both cases. 
+last parameter (''fq'', color source). Permissible values are 0..''SCREEN WIDTH'' for ''x1''
+and ''x2' . For ''y1'' and ''y2'', values from 0 to ''SCREEN HEIGHT'' are permitted in both cases. 
 The color also depends on the graphics mode and refers to the color specifications behind ''HIRES''
 on the one hand and ''MULTI'' and ''LOW COL'' on the other. The point 0,0 is in the top left corner.
 
@@ -2406,8 +2434,8 @@ parameters ''x'' and ''y'', the width and height of the rectangle by parameters 
 (''sa'' and ''sb''). The color of the edge lines is determined by the last parameter (''fq'', 
 color source). The four corners of the rectangle are always drawn.
 
-Permissible values ​​are 0..''SCREEN WIDTH'' for ''x'' and ''sa''. 
-For ''y'' or ''sb'', values ​​from 0 to ''SCREEN HEIGHT'' are permitted in both cases. The color also depends on
+Permissible values are 0..''SCREEN WIDTH'' for ''x'' and ''sa''. 
+For ''y'' or ''sb'', values from 0 to ''SCREEN HEIGHT'' are permitted in both cases. The color also depends on
 the graphics mode and refers to the color specifications behind ''HIRES'' on the one hand and 
 ''MULTI'' and ''LOW COL'' on the other. The point 0,0 is in the top left corner.
 
@@ -2444,7 +2472,7 @@ sarà ritagliato
 @english
 
 `HIRES` is used to switch from text to high-resolution graphics mode and to use the specified colors: 
-''ink'' for the writing color and ''paper'' for the background color (both with values ​​from 0 to ''SCREEN COLORS'').
+''ink'' for the writing color and ''paper'' for the background color (both with values from 0 to ''SCREEN COLORS'').
 The graphics memory is deleted and preset with the specified colors. The color of the screen frame 
 remains unaffected. The selected mode remains active until it is switched off or changed by a command 
 (''MULTI'', ''CSET'' or ''NRM''). Important: the color specifications of almost all other graphics 
