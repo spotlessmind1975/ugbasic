@@ -7208,16 +7208,59 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
 @keyword HEX
 
 @english
-This function converts a number into hexadecimal.
+The ''HEX'' statement is used to convert a decimal number to a hexadecimal number. 
+Hexadecimal, or base 16, is a numbering system that uses 16 digits (0 through 9 and 
+the letters A through F) to represent numbers. 
+
+This system is widely used in 
+computing, especially to represent memory addresses, colors, and character codes.
+Moreover, it is a concise way of representing binary numbers, which are the basis 
+of how computers work, and bit-level operations are often easier to display and 
+manipulate in hexadecimal.
+
+The ''expression'' is the value you want to convert to hexadecimal, and it must
+be an integer value. The ''HEX'' statement will return a string representing 
+the hexadecimal value corresponding to the input number. The length of the 
+returned string depends on the size (in bytes) of ''expression''.
 
 @italian
-Questa funzione converte un numero in formato esadecimale.
+L'istruzione ''HEX'' viene utilizzata per convertire un numero decimale in 
+un numero esadecimale. L'esadecimale, o base 16, è un sistema di numerazione 
+che utilizza 16 cifre (da 0 a 9 e le lettere da A a F) per rappresentare i numeri.
 
-@syntax = HEX(number)
-@syntax = HEX(variable)
+Questo sistema è ampiamente utilizzato nell'informatica, in particolare per 
+rappresentare indirizzi di memoria, colori e codici di carattere. Inoltre, è un modo 
+conciso di rappresentare i numeri binari, che sono la base del funzionamento 
+dei computer, e le operazioni a livello di bit sono spesso più facili da visualizzare
+e manipolare in esadecimale.
+
+Il parametro ''expression'' è il valore che si desidera convertire in esadecimale e
+deve essere un valore intero. L'istruzione ''HEX'' restituirà una stringa che 
+rappresenta il valore esadecimale corrispondente al numero di input. La 
+lunghezza della stringa restituita dipende dalla dimensione (in byte) di ''expression''.
+
+@syntax = HEX(expression)
 
 @example x = HEX( 42 )
 @example PRINT HEX( y )
+
+@alias $$
+
+@target all
+ </usermanual> */
+/* <usermanual>
+@keyword $$
+
+@english
+
+@italian
+
+@syntax = $$(expression)
+
+@example x = $$( 42 )
+@example PRINT $$( y )
+
+@alias HEX
 
 @target all
  </usermanual> */
@@ -8640,15 +8683,19 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
 @keyword HAS BIT
 
 @english
-This instruction allows you to check if a certain bit in a certain position (0 based)
-in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
-the instruction will return the value `FALSE`. Otherwise, the statement will return `TRUE`.
+Think of a number as a sequence of switches, each of which can be on (1) or off (0). 
+Each switch represents a bit. The ''HAS BIT'' instruction will check
+a bit on (1), by checking the state of a specific switch within this sequence.
+The parameter ''position'' refers to the bit position inside the data. This value
+is zero based, and starts from the less significative bit and go on.
 
 @italian
-Questa istruzione permette di verificare se un certo bit in una certa posizione 
-(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
-Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `FALSE`. 
-Altrimenti, l'istruzione restituirà il valore `TRUE`.
+Pensa a un numero come a una sequenza di switch, ognuno dei quali può essere 
+acceso (1) o spento (0). Ogni switch rappresenta un bit. L'istruzione ''HAS BIT'' 
+controllerà un bit acceso (1), controllando lo stato di uno switch specifico 
+all'interno di questa sequenza. Il parametro ''position'' si riferisce alla 
+posizione del bit all'interno dei dati. Questo valore è zero-based e inizia 
+dal bit meno significativo.
 
 @syntax = value HAS BIT position
 
@@ -8660,8 +8707,8 @@ Altrimenti, l'istruzione restituirà il valore `TRUE`.
 @usedInExample screens_tilemap_01.bas
 
 @seeAlso HAS NOT BIT
-@seeAlso IS
-@seeAlso IS NOT
+@alias IS
+@alias IS NOT
 
 @target all
  </usermanual> */
@@ -8669,15 +8716,19 @@ Altrimenti, l'istruzione restituirà il valore `TRUE`.
 @keyword HAS NOT BIT
 
 @english
-This instruction allows you to check if a certain bit in a certain position (0 based)
-in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
-the instruction will return the value `TRUE`. Otherwise, the statement will return `FALSE`.
+Think of a number as a sequence of switches, each of which can be on (1) or off (0). 
+Each switch represents a bit. The ''HAS NOT BIT'' instruction will check
+a bit off (0), by checking the state of a specific switch within this sequence.
+The parameter ''position'' refers to the bit position inside the data. This value
+is zero based, and starts from the less significative bit and go on.
 
 @italian
-Questa istruzione permette di verificare se un certo bit in una certa posizione 
-(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
-Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `TRUE`. 
-Altrimenti, l'istruzione restituirà il valore `FALSE`.
+Pensa a un numero come a una sequenza di switch, ognuno dei quali può essere 
+acceso (1) o spento (0). Ogni switch rappresenta un bit. L'istruzione ''HAS NOT BIT'' 
+controllerà un bit spento (0), controllando lo stato di uno switch specifico 
+all'interno di questa sequenza. Il parametro ''position'' si riferisce alla 
+posizione del bit all'interno dei dati. Questo valore è zero-based e inizia 
+dal bit meno significativo.
 
 @syntax = value HAS NOT BIT position
 
@@ -8687,8 +8738,8 @@ Altrimenti, l'istruzione restituirà il valore `FALSE`.
 @usedInExample controls_keyboard_05.bas
 
 @seeAlso HAS NOT BIT
-@seeAlso IS
-@seeAlso IS NOT
+@alias IS
+@alias IS NOT
 
 @target all
  </usermanual> */
@@ -8696,15 +8747,8 @@ Altrimenti, l'istruzione restituirà il valore `FALSE`.
 @keyword IS
 
 @english
-This instruction allows you to check if a certain bit in a certain position (0 based)
-in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
-the instruction will return the value `FALSE`. Otherwise, the statement will return `TRUE`.
 
 @italian
-Questa istruzione permette di verificare se un certo bit in una certa posizione 
-(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
-Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `FALSE`. 
-Altrimenti, l'istruzione restituirà il valore `TRUE`.
 
 @syntax = value IS position
 
@@ -8714,8 +8758,8 @@ Altrimenti, l'istruzione restituirà il valore `TRUE`.
 @usedInExample controls_keyboard_03.bas
 
 @seeAlso IS NOT
-@seeAlso HAS BIT
-@seeAlso HAS NOT BIT
+@alias HAS BIT
+@alias HAS NOT BIT
 
 @target all
  </usermanual> */
@@ -8723,15 +8767,8 @@ Altrimenti, l'istruzione restituirà il valore `TRUE`.
 @keyword IS NOT
 
 @english
-This instruction allows you to check if a certain bit in a certain position (0 based)
-in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
-the instruction will return the value `TRUE`. Otherwise, the statement will return `FALSE`.
 
 @italian
-Questa istruzione permette di verificare se un certo bit in una certa posizione 
-(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
-Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `TRUE`. 
-Altrimenti, l'istruzione restituirà il valore `FALSE`.
 
 @syntax = value IS NOT position
 
@@ -8741,8 +8778,7 @@ Altrimenti, l'istruzione restituirà il valore `FALSE`.
 @usedInExample controls_keyboard_05.bas
 
 @seeAlso IS BIT
-@seeAlso HAS BIT
-@seeAlso HAS NOT BIT
+@alias HAS NOT BIT
 
 @target all
  </usermanual> */
@@ -8750,23 +8786,14 @@ Altrimenti, l'istruzione restituirà il valore `FALSE`.
 @keyword BIT...OF
 
 @english
-This instruction allows you to check if a certain bit in a certain position (0 based)
-in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
-the instruction will return the value `FALSE`. Otherwise, the statement will return `TRUE`.
 
 @italian
-Questa istruzione permette di verificare se un certo bit in una certa posizione 
-(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
-Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `FALSE`. 
-Altrimenti, l'istruzione restituirà il valore `TRUE`.
 
 @syntax = BIT position OF value
 
 @example IF BIT 2 OF x THEN: PRINT "bit 2 is 1!": ENDIF
 
-@seeAlso IS NOT
-@seeAlso HAS BIT
-@seeAlso HAS NOT BIT
+@alias HAS BIT
 
 @target all
  </usermanual> */

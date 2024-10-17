@@ -93,34 +93,6 @@ istruzioni al momento della compilazione.
 </usermanual> */
 
 /* <usermanual>
-@keyword hash operator
-
-@english
-In general, the hash operator (''#'') allows you to indicate the will to refer, 
-explicitly, to a constant rather than to a value mediated by a variable. 
-Without this operator, ugBASIC may decide to make a temporary copy of the 
-value before using it. This can be inefficient. Therefore it is possible to 
-indicate the will to actually refer to the equivalent value. 
-For this reason, this operator works only if it is used with a constant value 
-(eg: an integer) or with the name of a constant.
-
-@italian
-In generale, l'operatore hash (''#'') permette di indicare la volontà di fare riferimento, 
-in modo esplicito, ad una costante piuttosto che ad un valore mediato da una variabile. 
-Senza questo operatore, ugBASIC potrebbe decidere di fare una copia temporanea del valore
-prima di usarlo. Questo può essere inefficiente. Pertanto è possibile indicare la volontà 
-di riferirsi effettivamente al valore. Per questo motivo questo operatore funziona solo 
-se utilizzato con un valore costante (es: un intero) o con il nome di una costante.
-
-@syntax = #constant
-
-@example fontSize = #constantSize
-@example fontSize = #42
-
-@target all
-</usermanual> */
-
-/* <usermanual>
 @keyword BLACK
 
 @english
