@@ -51,32 +51,54 @@
 @keyword ADD
 
 @english
-The ''ADD'' command can be used to add the result of an expression to a whole number variable. 
-It is the equivalent to make a ''variable=variable+expression'' but performs the addition 
-faster. There is a more complex version of ''ADD'', which is ideal for handling certain 
-loops much more quickly than the equivalent separate instructions. When those other 
-parameters are included, ''ADD v,a,b TO t'' is the equivalent to the following lines:
 
-  '''v=v+a'''
-  '''IF v<b THEN v=t: ENDIF'''
-  '''IF v>t THEN v=b: ENDIF'''
+The ''ADD'' statement is used to increment the value of a numeric variable by 
+a specified amount. In other words, it is like adding one number to another. 
+
+The basic syntax take the ''var'' to which you want 
+to add a value and the ''expr'' as the expression you want to add to the variable. 
+The full syntax takes also two additional parameters: ''min'' and ''max'',
+that are the minimum and maximum value that the variable can take after
+the increment. In other words, the ''var''  is incremented, but its value is 
+"squeezed" between ''min'' and ''max''. If the result of the addition 
+had been greater than ''max'', the level would still have been set to ''max''.
+
+The purpose of this second syntax is to prevent a variable from taking 
+invalid value for your program. It can also help to simulating real-world 
+systems: for example, in a game you can limit a character's life between 
+0 and 100. This instruction can also help to create special effects: you can 
+create bouncing or wrapping effects, by making a variable "bounce" between 
+two values. In videogames, the typical use is to limit the maximum score 
+in a game, or to preventing a difficulty level from exceeding a certain value.
 
 @italian
-Il comando ''ADD'' può essere utilizzato per aggiungere il risultato di un'espressione 
-a una variabile intera. È l'equivalente di ''variabile = variabile + espressione'' ma esegue 
-l'addizione molto più velocemente. Esiste una versione più complessa di ''ADD'', ideale 
-per gestire determinati loop molto più rapidamente rispetto alle istruzioni separate 
-equivalenti. Quando questi altri parametri sono inclusi, il comando ''ADD v, a, b TO t'' 
-è equivalente alle seguenti righe:
+L'istruzione ''ADD'' viene utilizzata per incrementare il valore di una 
+variabile numerica di una quantità specificata. In altre parole, è come 
+aggiungere un numero a un altro.
 
-  '''v=v+a'''
-  '''IF v<b THEN v=t: ENDIF'''
-  '''IF v>t THEN v=b: ENDIF'''
+La sintassi di base prende la ''var'' a cui vuoi aggiungere un 
+valore e il ''expr'' come espressione che si vuol aggiungere alla variabile.
+La sintassi completa prende anche due parametri aggiuntivi: ''min'' e 
+''max'', che sono il valore minimo e massimo che la variabile può 
+assumere dopo l'incremento. In altre parole, la ''variable'' viene 
+incrementata, ma il suo valore viene "compresso" tra ''min'' e ''max''. 
+Se il risultato dell'addizione fosse stato maggiore di ''max'', 
+il livello sarebbe stato comunque impostato su ''max''.
 
-@syntax ADD var, expr [, lower TO upper]
+Lo scopo di questa seconda sintassi è impedire a una variabile di 
+assumere valori non validi per il tuo programma. Può anche aiutare 
+a simulare sistemi del mondo reale: ad esempio, in un gioco puoi 
+limitare la vita di un personaggio tra 0 e 100. Questa istruzione 
+può anche aiutare a creare effetti speciali: puoi creare effetti 
+di rimbalzo o di avvolgimento, facendo "rimbalzare" una variabile
+tra due valori. Nei videogiochi, l'uso tipico è quello di limitare 
+il punteggio massimo in un gioco o di impedire che un livello di 
+difficoltà superi un certo valore.
 
-@example ADD x,42,1 TO 100
+@syntax ADD var, expr [, min TO max]
+
 @example ADD y,10
+@example ADD x,42,1 TO 100
 
 @usedInExample maths_fast_02.bas
 

@@ -3439,3 +3439,156 @@ Alias per ''SCREEN TILES HEIGHT''.
 @alias TILES HEIGHT (constant)
 </usermanual> */
 
+/* <usermanual>
+@keyword AAHS (constant)
+
+@english
+
+This constant represent the "Choir Aahs" instrument, when used as parameter
+for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
+due to hardware limitations, or may not exist at all.
+
+@italian
+
+Questa costante rappresenta lo strumento "Choir Aahs", quando utilizzato 
+come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
+strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
+o potrebbe non esservi del tutto.
+
+@syntax = AAHS
+
+@example INSTRUMENT AAHS ON #7
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ACCORDION (constant)
+
+@english
+
+This constant represent the "Accordion" instrument, when used as parameter
+for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
+due to hardware limitations, or may not exist at all.
+
+@italian
+
+Questa costante rappresenta lo strumento "Fisarmonica", quando utilizzato 
+come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
+strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
+o potrebbe non esservi del tutto.
+
+@syntax = AAHS
+
+@example INSTRUMENT ACCORDION ON #7
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ACOUSTIC GRAND PIANO (constant)
+
+@english
+
+This constant represent the "Acoustic Grand Piano" instrument, when used as parameter
+for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
+due to hardware limitations, or may not exist at all.
+
+@italian
+
+Questa costante rappresenta lo strumento "Piano Acustico Grande", quando utilizzato 
+come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
+strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
+o potrebbe non esservi del tutto.
+
+@syntax = ACOUSTIC GRAND PIANO
+
+@example INSTRUMENT ACOUSTIC GRAND PIANO ON #7
+
+</usermanual> */
+
+/* <usermanual>
+@keyword BRIGHT ACOUSTIC PIANO (constant)
+
+@english
+
+This constant represent the "Bright Acoustic Piano" instrument, when used as parameter
+for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
+due to hardware limitations, or may not exist at all.
+
+@italian
+
+Questa costante rappresenta lo strumento "Piano Acustico Allegro", quando utilizzato 
+come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
+strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
+o potrebbe non esservi del tutto.
+
+@syntax = BRIGHT ACOUSTIC PIANO
+
+@example INSTRUMENT BRIGHT ACOUSTIC PIANO ON #7
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ACOUSTIC GUITAR NYLON (constant)
+
+@english
+
+This constant represent the "Acoustic Guitar Nylon" instrument, when used as parameter
+for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
+due to hardware limitations, or may not exist at all.
+
+@italian
+
+Questa costante rappresenta lo strumento "Chitarra acustica (nylon)", quando utilizzato 
+come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
+strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
+o potrebbe non esservi del tutto.
+
+@syntax = ACOUSTIC GUITAR NYLON
+
+@example INSTRUMENT ACOUSTIC GUITAR NYLON ON #7
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ACOUSTIC GUITAR STEEL (constant)
+
+@english
+
+This constant represent the "Acoustic Guitar Steel" instrument, when used as parameter
+for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
+due to hardware limitations, or may not exist at all.
+
+@italian
+
+Questa costante rappresenta lo strumento "Chitarra acustica (metallo)", quando utilizzato 
+come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
+strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
+o potrebbe non esservi del tutto.
+
+@syntax = ACOUSTIC GUITAR STEEL
+
+@example INSTRUMENT ACOUSTIC GUITAR STEEL ON #7
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ACOUSTIC BASS (constant)
+
+@english
+
+This constant represent the "Acoustic Bass" instrument, when used as parameter
+for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
+due to hardware limitations, or may not exist at all.
+
+@italian
+
+Questa costante rappresenta lo strumento "Basso acustico", quando utilizzato 
+come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
+strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
+o potrebbe non esservi del tutto.
+
+@syntax = ACOUSTIC BASS
+
+@example INSTRUMENT ACOUSTIC BASS ON #7
+
+</usermanual> */
