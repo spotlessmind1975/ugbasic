@@ -93,7 +93,7 @@ istruzioni al momento della compilazione.
 </usermanual> */
 
 /* <usermanual>
-@keyword BLACK
+@keyword BLACK (constant)
 
 @english
 This keyword represents the color black. Depending on the methodology and technique, 
@@ -123,7 +123,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword WHITE
+@keyword WHITE (constant)
 
 @english
 This keyword represents the color white. Depending on the methodology and technique, 
@@ -155,7 +155,7 @@ Qui di seguito si forniscono le componenti cromatiche per ogni target e chipset:
 </usermanual> */
 
 /* <usermanual>
-@keyword RED
+@keyword RED (constant)
 
 @english
 This keyword represents the color red. Depending on the methodology and technique, 
@@ -185,7 +185,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword CYAN
+@keyword CYAN (constant)
 
 @english
 This keyword represents the color cyan. Depending on the methodology and technique, 
@@ -210,7 +210,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword VIOLET
+@keyword VIOLET (constant)
 
 @english
 This keyword represents the color violet. Depending on the methodology and technique, 
@@ -235,7 +235,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword GREEN
+@keyword GREEN (constant)
 
 @english
 This keyword represents the color green. Depending on the methodology and technique, 
@@ -264,7 +264,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword BLUE
+@keyword BLUE (constant)
 
 @english
 This keyword represents the color blue. Depending on the methodology and technique, 
@@ -292,7 +292,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword YELLOW
+@keyword YELLOW (constant)
 
 @english
 This keyword represents the color yellow. Depending on the methodology and technique, 
@@ -322,7 +322,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword ORANGE
+@keyword ORANGE (constant)
 
 @english
 This keyword represents the color orange. Depending on the methodology and technique, 
@@ -352,7 +352,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword BROWN
+@keyword BROWN (constant)
 
 @english
 This keyword represents the color brown. Depending on the methodology and technique, 
@@ -377,7 +377,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword LIGHT RED
+@keyword LIGHT RED (constant)
 
 @english
 This keyword represents the color light red. Depending on the methodology and technique, 
@@ -402,7 +402,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword DARK GREY
+@keyword DARK GREY (constant)
 
 @english
 This keyword represents the color dark grey. Depending on the methodology and technique, 
@@ -427,7 +427,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword GREY
+@keyword GREY (constant)
 
 @english
 This keyword represents the color grey. Depending on the methodology and technique, 
@@ -452,7 +452,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword LIGHT GREEN
+@keyword LIGHT GREEN (constant)
 
 @english
 This keyword represents the color light green. Depending on the methodology and technique, 
@@ -477,7 +477,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword LIGHT BLUE
+@keyword LIGHT BLUE (constant)
 
 @english
 This keyword represents the color light blue. Depending on the methodology and technique, 
@@ -502,7 +502,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword LIGHT GREY
+@keyword LIGHT GREY (constant)
 
 @english
 This keyword represents the color light grey. Depending on the methodology and technique, 
@@ -527,7 +527,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword DARK BLUE
+@keyword DARK BLUE (constant)
 
 @english
 This keyword represents the color dark blue. Depending on the methodology and technique, 
@@ -552,7 +552,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword MAGENTA
+@keyword MAGENTA (constant)
 
 @english
 This keyword represents the color magenta. Depending on the methodology and technique, 
@@ -577,7 +577,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword PURPLE
+@keyword PURPLE (constant)
 
 @english
 This keyword represents the color purple. Depending on the methodology and technique, 
@@ -602,7 +602,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword LAVENDER
+@keyword LAVENDER (constant)
 
 @english
 This keyword represents the color lavender. Depending on the methodology and technique, 
@@ -627,7 +627,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword GOLD
+@keyword GOLD (constant)
 
 @english
 This keyword represents the color gold. Depending on the methodology and technique, 
@@ -652,7 +652,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword TURQUOISE
+@keyword TURQUOISE (constant)
 
 @english
 This keyword represents the color turquoise. Depending on the methodology and technique, 
@@ -677,7 +677,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword TAN
+@keyword TAN (constant)
 
 @english
 This keyword represents the color tan. Depending on the methodology and technique, 
@@ -702,7 +702,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword YELLOW GREEN
+@keyword YELLOW GREEN (constant)
 
 @english
 This keyword represents the color yellow green. Depending on the methodology and technique, 
@@ -727,7 +727,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword OLIVE GREEN
+@keyword OLIVE GREEN (constant)
 
 @english
 This keyword represents the color olive green. Depending on the methodology and technique, 
@@ -752,7 +752,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword PINK
+@keyword PINK (constant)
 
 @english
 This keyword represents the color pink. Depending on the methodology and technique, 
@@ -777,7 +777,7 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword PEACH
+@keyword PEACH (constant)
 
 @english
 This keyword represents the color peach. Depending on the methodology and technique, 
