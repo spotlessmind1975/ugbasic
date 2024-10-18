@@ -57,44 +57,66 @@
 @keyword BITMAP ENABLE
 
 @english
-Enable bitmap graphics on the target machine. Bitmap resolution and colors depends on hardware.
-Enabling the bitmap also sets the starting address in memory, for those computers that have 
-graphics mapped in memory. 
 
-Given the great variety of hardware that ugBASIC supports and the isomorphic approach adopted, 
-this commands can be used to require a specific resolution, color depth and other characteristics in a
+The ''BITMAP ENABLE' command is a fundamental tool, since it allows to
+configure the graphics mode of the screen, that is, to define how data 
+was displayed on the screen, determining aspects such as the number of 
+horizontal and vertical pixels that make up the image on the screen, and
+the color palette available for drawing images.
+
+In 8-bit computers, memory was limited and processing power was much 
+lower than modern computers. The ''BITMAP ENABLE'' allows you to optimize 
+the use of resources by choosing the graphics mode best suited to the 
+needs of the program and, at the same time, to generalize if the
+program must be ported on other hardware.
+
+Given the great variety of hardware that ugBASIC supports and the
+isomorphic approach adopted, this commands can be used to require a
+specific resolution, color depth and other characteristics in a
 hardware independent way. 
 
-In this regard, the following approach has been adopted. It is possible to ask for specific 
-chacteristics, such as height and width of the screen. However ugBASIC will choose the closest 
-resolution, based on the hardware on which it will runs.
+In this regard, the following approach has been adopted. It is possible
+to ask for specific chacteristics, such as height and width of the 
+screen. However ugBASIC will choose the closest resolution, based 
+on the hardware on which it will runs.
 
 Likewise, if no type of resolution constraint is set, the best is offered.
 
-To change resolution and colors, you can use the ''([width],[height],[colors])'', ''([width],[height])'' 
-or the ''([colors])'' syntax after ''BITMAP ENABLE'' command. So, if you omit a parameters, it means that
-it is not important to set.
+To change resolution and colors, you can use the ''([width],[height],[colors])'', 
+''([width],[height])'' or the ''([colors])'' syntax after ''BITMAP ENABLE'' command. 
+So, if you omit a parameters, it means thatit is not important to set.
 
 @italian
-Abilita la grafica bitmap sulla macchina di destinazione. La risoluzione e i colori dipendono 
-dall'hardware. L'abilitazione della bitmap imposta anche l'indirizzo iniziale in memoria, 
-per quei computer che hanno la grafica mappata in memoria.
 
-Data la grande varietà di hardware che ugBASIC supporta e l'approccio isomorfo adottato,
-questi comandi possono essere utilizzati per richiedere una specifica risoluzione, profondità
-di colore e altre caratteristiche in a modo indipendente dall'hardware.
+Il comando ''BITMAP ENABLE'' è uno strumento fondamentale, poiché consente 
+di configurare la modalità grafica dello schermo, ovvero di definire come i 
+dati sono stati visualizzati sullo schermo, determinando aspetti come il 
+numero di pixel orizzontali e verticali che compongono l'immagine sullo 
+schermo e la tavolozza dei colori disponibile per disegnare le immagini.
 
-A tal riguardo è stato adottato il seguente approccio. E' possibile richiedere specifiche
-caratteristiche, come l'altezza e la larghezza dello schermo. Tuttavia ugBASIC sceglierà il più vicino
-risoluzione, in base all'hardware su cui verrà eseguito.
+Nei computer a 8 bit, la memoria era limitata e la potenza di elaborazione 
+era molto inferiore rispetto ai computer moderni. Il comando ''BITMAP ENABLE'' 
+consente di ottimizzare l'uso delle risorse scegliendo la modalità grafica 
+più adatta alle esigenze del programma e, allo stesso tempo, di generalizzare 
+se il programma deve essere portato su altro hardware.
 
-Allo stesso modo, se non viene impostato alcun tipo di vincolo di risoluzione, viene offerto il meglio.
+Data la grande varietà di hardware che ugBASIC supporta e l'approccio 
+isomorfo adottato, questi comandi possono essere utilizzati per richiedere 
+una risoluzione specifica, profondità di colore e altre caratteristiche in 
+modo indipendente dall'hardware.
 
-Per cambiare risoluzione e colori, puoi usare le sintassi ''([width],[height],[colors])'', ''([width],[height])''
-o ''([colors])'' dopo il comando ''BITMAP ENABLE''. Quindi, omettendo un parametro, significa che non è 
-importante impostarlo.
+A questo proposito, è stato adottato il seguente approccio. È possibile richiedere
+caratteristiche specifiche, come altezza e larghezza dello schermo. Tuttavia 
+ugBASIC sceglierà la risoluzione più vicina, in base all'hardware su cui verrà eseguito.
 
-@syntax BITMAP ENABLE [(colors)]
+Allo stesso modo, se non è impostato alcun tipo di vincolo di risoluzione, 
+viene offerto il migliore. Per modificare la risoluzione e i colori, puoi usare 
+la sintassi ''(width, height, colors)'', ''(width, height)'' o ''(colors) '' 
+dopo il comando ''BITMAP ENABLE''. Quindi, se ometti un parametro, significa 
+che non è importante impostarlo.
+
+@syntax BITMAP ENABLE
+@syntax BITMAP ENABLE (colors)
 @syntax BITMAP ENABLE (width, height)
 @syntax BITMAP ENABLE (width, height, colors)
 
@@ -106,6 +128,7 @@ importante impostarlo.
 
 @seeAlso BITMAP DISABLE
 @seeAlso TILEMAP ENABLE
+
 @target c128
 </usermanual> */
 void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {

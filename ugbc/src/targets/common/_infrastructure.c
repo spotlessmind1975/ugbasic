@@ -8709,16 +8709,42 @@ int pattern_match(char *_pattern, char * _value)
 @keyword BIN
 
 @english
-This function converts a number into a string of bits ("0" and "1"), from the most significant
-to the least significant. It is also possible to indicate the number of digits 
-to be represented. If this parameter is omitted, the minimum number of digits 
-for that data format (8, 16 or 32 digits) will be used.
+
+The ''BIN'' command allows you to convert a decimal number into a binary 
+representation. In other words, it takes a number that we are used to 
+writing in base 10 (with the digits 0 through 9) and turns it into a 
+sequence of 0s and 1s, which is the base that computers use to represent 
+data internally. It decode from the most significant to the least significant. 
+
+It is also possible to indicate the number of digits to be represented. 
+If this parameter is omitted, the minimum number of digits for that data 
+format (8, 16 or 32 digits) will be used.
+
+This command is essential for those who want to delve deeper into how 
+computers work at a lower level. Infact, this command allows you to 
+operate directly on individual bits of a number, which is useful in
+some applications such as graphics or communications. Moreover,
+many encryption algorithms rely on bit-level operations.
 
 @italian
-Questa funzione converte un numero in una stringa di bit ("0" e "1"), dal più significativo 
-al meno significativo. E' possibile indicare anche il numero di cifre da 
-rappresentare. Se questo parametro viene omesso, sarà utilizzato il numero di 
-cifre minimo per quel formato di dati (8, 16 o 32 cifre).
+
+Il comando ''BIN'' consente di convertire un numero decimale in una 
+rappresentazione binaria. In altre parole, prende un numero che siamo 
+abituati a scrivere in base 10 (con le cifre da 0 a 9) e lo trasforma 
+in una sequenza di 0 e 1, che è la base che i computer utilizzano per 
+rappresentare i dati internamente. Decodifica dal più significativo 
+al meno significativo. È anche possibile indicare il numero di cifre 
+da rappresentare.
+
+Se questo parametro viene omesso, verrà utilizzato il numero minimo 
+di cifre per quel formato di dati (8, 16 o 32 cifre).
+
+Questo comando è essenziale per coloro che desiderano approfondire 
+il funzionamento dei computer a un livello inferiore. Infatti, 
+questo comando consente di operare direttamente su singoli bit di 
+un numero, il che è utile in alcune applicazioni come la grafica 
+o le comunicazioni. Inoltre, molti algoritmi di crittografia si 
+basano su operazioni a livello di bit.
 
 @syntax = BIN( value [, digits] )
 
@@ -8936,9 +8962,29 @@ dal bit meno significativo.
 @example IF BIT 2 OF x THEN: PRINT "bit 2 is 1!": ENDIF
 
 @alias HAS BIT
+@alias BIT (function)
 
 @target all
  </usermanual> */
+ /* <usermanual>
+@keyword BIT (function)
+
+@english
+
+@italian
+
+@syntax = BIT( value, position )
+
+@example IF BIT( 2,  x ) 
+@example    PRINT "bit 2 is 1!"
+@example ENDIF
+
+@alias HAS BIT
+@alias BIT OF
+
+@target all
+ </usermanual> */
+
 Variable * variable_bit( Environment * _environment, char * _value, char * _position ) {
     Variable * value = variable_retrieve( _environment, _value );
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 1 );

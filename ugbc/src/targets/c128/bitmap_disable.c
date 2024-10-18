@@ -51,11 +51,11 @@
 
 @english
 
-Disable bitmap graphics on the target machine.
+The ''BITMAP DISABLE'' command disables bitmap graphics on the target machine.
 
 @italian
 
-Disabilita la grafica bitmap sulla macchina di destinazione.
+Il comando ''BITMAP DISABLE'' disabilita la grafica bitmap sulla macchina di destinazione.
 
 @syntax BITMAP DISABLE
 

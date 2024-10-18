@@ -909,46 +909,6 @@ compilazione, per evitare di far riferimento a una variabile di tipo numerico.
 </usermanual> */
 
 /* <usermanual>
-@keyword casting operator
-
-@english
-ugBASIC is a loosely typed language. However, there are occasions when the use of certain
-types is not permitted without the explicit consent of the programmer. For this purpose, 
-a "type casting" mechanism has been integrated very similar to that available in other 
-programming languages, such as C. 
-
-In a nutshell, it is possible to add an expression in brackets as a prefix an expression 
-(enclosed by brackets) or an integer, which represents the type conversion you want to make. 
-Conversion from one type to another always generates a temporary variable, which 
-is why it is not possible to change the original value directly. This mechanism, 
-therefore, has the sole purpose of ensuring that conversions always 
-take place correctly.
-
-@italian
-ugBASIC è un linguaggio lascamente tipizzato. Tuttavia, vi sono delle occasioni in cui 
-l'utilizzo di determinati tipi non è permesso senza l'esplicito consenso da parte 
-del programmatore. A tale scopo è stato integrato un meccanismo di "type casting" 
-molto simile a quello disponibile in altri linguaggi di programmazione, come il C. 
-
-In estrema sintesi, è possibile aggiungere, come prefisso ad una espressione (racchiusa
-tra parentesi) oppure a un intero, una espressione tra parentesi che rappresenta 
-la conversione di tipo che si desidera effettuare. La conversione da un tipo ad un 
-altro genera sempre una variabile temporanea, ragion per cui non è possibile modificare 
-direttamente il valore originale. Questo meccanismo, quindi, ha il solo scopo di garantire 
-che le conversioni avvengano sempre correttamente.
-
-@syntax ... = ( type ) #value
-@syntax ... = ( type ) (expression)
-
-@example y = (POSITION) 42
-@example x = 42: y = (POSITION) ( x )
-
-@usedInExample multitasking_example_06.bas
-
-@target all
-</usermanual> */
-
-/* <usermanual>
 @keyword buffer definition
 
 @english
@@ -2003,33 +1963,155 @@ Recupera il valore minimo dell'indice di un array, data la dimensione.
 </usermanual> */
 
 /* <usermanual>
-@keyword BIG ENDIAN
+@keyword BIG ENDIAN (constant)
 
 @english
-Returns not zero if the CPU has big endian byte order, zero otherwise.
+
+The ''BIG ENDIAN'' is a constant that values non zero if the rappresentation
+of data on the local CPU is in big endian. Endianness is a concept that concerns 
+the order in which the bytes of a multi-byte number are stored in memory. 
+
+Imagine having an integer that spans more than one byte. Endianness determines 
+whether the most significant byte (the one that represents the highest digit) 
+is stored first (at the lowest memory address) or last. In this case, the most 
+significant byte is stored first. It is like reading a book from left to right, 
+starting with the most important word. 
+
+Endianness is a fundamental aspect of computer architecture, as it affects how
+data is interpreted and manipulated. Different architectures use different 
+endianness conventions. For example: Motorola 6809 is ''BIG ENDIAN'',
+MOS 6502 is ''LITTLE ENDIAN''. 
+
+In 8-bit computers, endianness was a crucial consideration, especially when 
+it came to managing integers across multiple bytes. Since these computers 
+had limited memory, it was essential to maximize storage space.
+
+With limited memory available, it was essential to use each byte efficiently, and
+endianess directly affected arithmetic operations on multi-byte numbers, such as 
+addition and subtraction. Moreover, when exchanging data between systems with 
+different endianness, appropriate conversions is needed.
+
+If you are writing code that directly manipulates memory, it is essential to know 
+the endianness of the system to avoid data interpretation errors.  If you are 
+developing software that needs to run on different platforms, you need to account 
+for endianness differences and implement data conversion mechanisms, for data
+that are not manager by ugBASIC itself.
 
 @italian
-Restituisce un valore diverso da zero se la CPU ha un ordinamento "big endian", zero altrimenti.
+
+La costante ''BIG ENDIAN'' ha un valore diverso da zero se la rappresentazione
+dei dati sulla CPU locale è in big endian. L'endianness è un concetto che 
+riguarda l'ordine in cui i byte di un numero multi-byte vengono memorizzati nella memoria.
+
+Immagina di avere un intero che si estende su più di un byte. L'endianness 
+determina se il byte più significativo (quello che rappresenta la cifra più alta) 
+viene memorizzato per primo (all'indirizzo di memoria più basso) o per ultimo. 
+In questo caso, il byte più significativo viene memorizzato per primo. È come 
+leggere un libro da sinistra a destra, iniziando dalla parola più importante.
+
+L'endianness è un aspetto fondamentale dell'architettura dei computer, 
+poiché influisce sul modo in cui i dati vengono interpretati e manipolati. 
+Architetture diverse utilizzano diverse convenzioni di endianness. Ad esempio: 
+Motorola 6809 è ''BIG ENDIAN'', MOS 6502 è ''LITTLE ENDIAN''.
+
+Nei computer a 8 bit, l'endianness era una considerazione cruciale, soprattutto 
+quando si trattava di gestire interi su più byte. Poiché questi computer 
+avevano una memoria limitata, era essenziale massimizzare lo spazio di archiviazione.
+
+Con una memoria limitata disponibile, era essenziale utilizzare ogni byte in
+modo efficiente e l'endianness influenzava direttamente le operazioni aritmetiche 
+su numeri multi-byte, come addizione e sottrazione. Inoltre, quando si scambiavano 
+dati tra sistemi con endianness diversa, erano necessarie conversioni appropriate.
+
+Se si scrive codice che manipola direttamente la memoria, è essenziale conoscere 
+l'endianness del sistema per evitare errori di interpretazione dei dati. Se si 
+sviluppa software che deve essere eseguito su piattaforme diverse, è necessario 
+tenere conto delle differenze di endianness e implementare meccanismi di 
+conversione dei dati, per i dati che non sono gestiti da ugBASIC stesso.
 
 @syntax = BIG ENDIAN
 
-@example IF BIG ENDIAN THEN : PRINT "BIG ENDIAN" : ENDIF
+@example IF BIG ENDIAN THEN 
+@example    PRINT "This CPU is big endian"
+@example ENDIF
+
+@seeAlso LITTLE ENDIAN (constant)
 
 @target all
 </usermanual> */
 
 /* <usermanual>
-@keyword LITTLE ENDIAN
+@keyword LITTLE ENDIAN (constant)
 
 @english
-Returns not zero if the CPU has little endian byte order, zero otherwise.
+
+The ''LITTLE ENDIAN'' is a constant that values non zero if the rappresentation
+of data on the local CPU is in little endian. Endianness is a concept that concerns 
+the order in which the bytes of a multi-byte number are stored in memory. 
+
+Imagine having an integer that spans more than one byte. Endianness determines 
+whether the most significant byte (the one that represents the highest digit) 
+is stored first (at the lowest memory address) or last. In this case, the least 
+significant byte is stored first. It is like reading a book from right to left, 
+starting with the least important word. 
+
+Endianness is a fundamental aspect of computer architecture, as it affects how
+data is interpreted and manipulated. Different architectures use different 
+endianness conventions. For example: Motorola 6809 is ''BIG ENDIAN'',
+MOS 6502 is ''LITTLE ENDIAN''. 
+
+In 8-bit computers, endianness was a crucial consideration, especially when 
+it came to managing integers across multiple bytes. Since these computers 
+had limited memory, it was essential to maximize storage space.
+
+With limited memory available, it was essential to use each byte efficiently, and
+endianess directly affected arithmetic operations on multi-byte numbers, such as 
+addition and subtraction. Moreover, when exchanging data between systems with 
+different endianness, appropriate conversions is needed.
+
+If you are writing code that directly manipulates memory, it is essential to know 
+the endianness of the system to avoid data interpretation errors.  If you are 
+developing software that needs to run on different platforms, you need to account 
+for endianness differences and implement data conversion mechanisms, for data
+that are not manager by ugBASIC itself.
 
 @italian
-Restituisce un valore diverso da zero se la CPU ha un ordinamento "little endian", zero altrimenti.
+
+''LITTLE ENDIAN'' è una costante che ha un valore diverso da zero se la rappresentazione
+dei dati sulla CPU locale è in little endian. L'endianità è un concetto che riguarda
+l'ordine in cui i byte di un numero multi-byte vengono archiviati nella memoria.
+
+Immagina di avere un intero che si estende su più di un byte. L'endianità determina
+se il byte più significativo (quello che rappresenta la cifra più alta)
+viene archiviato per primo (all'indirizzo di memoria più basso) o per ultimo. 
+In questo caso, il byte meno significativo viene archiviato per primo. È come 
+leggere un libro da destra a sinistra, iniziando dalla parola meno importante.
+
+L'endianità è un aspetto fondamentale dell'architettura dei computer, poiché 
+influenza il modo in cui i dati vengono interpretati e manipolati. Architetture 
+diverse utilizzano diverse convenzioni di endianità. Ad esempio: Motorola 6809 
+è ''BIG ENDIAN'', MOS 6502 è ''LITTLE ENDIAN''.
+
+Nei computer a 8 bit, l'endianness era una considerazione cruciale, soprattutto 
+quando si trattava di gestire interi su più byte. Poiché questi computer avevano 
+una memoria limitata, era essenziale massimizzare lo spazio di archiviazione. 
+Con una memoria limitata disponibile, era essenziale utilizzare ogni byte in modo
+efficiente e l'endianness influenzava direttamente le operazioni aritmetiche su 
+numeri multi-byte, come l'addizione e la sottrazione. Inoltre, quando si scambiano 
+dati tra sistemi con endianness diversa, sono necessarie conversioni appropriate. 
+Se si scrive codice che manipola direttamente la memoria, è essenziale conoscere 
+l'endianness del sistema per evitare errori di interpretazione dei dati. Se si 
+sviluppa un software che deve essere eseguito su piattaforme diverse, è necessario 
+tenere conto delle differenze di endianness e implementare meccanismi di conversione 
+dei dati, per i dati che non sono gestiti da ugBASIC stesso.
 
 @syntax = LITTLE ENDIAN
 
-@example IF LITTLE ENDIAN THEN : PRINT "LITTLE ENDIAN" : ENDIF
+@example IF LITTLE ENDIAN THEN 
+@example    PRINT "This CPU is little endian"
+@example ENDIF
+
+@seeAlso BIG ENDIAN (constant)
 
 @target all
 </usermanual> */
@@ -3832,8 +3914,6 @@ target corrispondente, il valore sarà zero.
 @example    PRINT "ASTERISK has been pressed!"
 @example ENDIF
 
-@alias ASTERISK (constant)
-
 </usermanual> */
 
 /* <usermanual>
@@ -3858,8 +3938,6 @@ target corrispondente, il valore sarà zero.
 @example IF KET STATE(AT) THEN
 @example    PRINT "ASTERISK has been pressed!"
 @example ENDIF
-
-@alias ASTERISK (constant)
 
 </usermanual> */
 
@@ -3898,3 +3976,52 @@ che può essere usata per disegnarle sullo schermo.
 
 </usermanual> */
 
+/* <usermanual>
+@keyword BETA (constant)
+
+@english
+
+This constant is set to non-zero if the compiler used to generate the executable 
+is in beta version. The beta version is not the final version of the compiler, 
+and may contain bugs or run unstable. This constant helps to isolate the
+part of codes that depends on aspects available on beta version only.
+
+@italian
+
+Questa costante è impostata su un valore diverso da zero se il compilatore 
+utilizzato per generare l'eseguibile è in versione beta. La versione beta non 
+è la versione finale del compilatore e potrebbe contenere bug o risultare instabile. 
+Questa costante aiuta a isolare la parte di codice che dipende da aspetti disponibili 
+solo nella versione beta.
+
+@syntax = BETA
+
+@example IF NOT BETA THEN
+@example    PRINT "We are in a stable compiler."
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword BIT (data type)
+
+@english
+
+The ''BIT'' data type is the smallest unit of information in a computer,
+it takes up very little memory, since ut is "packed" on the minimum 
+number of bytes. This data type can be used to create compact and efficient 
+data structures, such as "bitsets", just using them in an array.
+
+@italian
+
+Il tipo di dati ''BIT'' è la più piccola unità di informazione in un 
+computer, occupa pochissima memoria, poiché è "impacchettato" sul numero 
+minimo di byte. Questo tipo di dati può essere utilizzato per creare 
+strutture di dati compatte ed efficienti, come i "bitset", semplicemente 
+utilizzandoli in un array.
+
+@syntax ... AS BIT
+
+@target all
+
+</usermanual> */
