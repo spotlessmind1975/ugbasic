@@ -195,6 +195,8 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
             cpu_bvneq( _environment, counter->realName, label );
             cpu_label( _environment, endLabel );
             break;
+        case 0:
+            CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[base->type]);
     }
     return result;
 }
