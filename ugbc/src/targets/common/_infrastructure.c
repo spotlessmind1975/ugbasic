@@ -3826,6 +3826,93 @@ void variable_sub_inplace( Environment * _environment, char * _source, char * _d
  * @param _source Source variable's name
  * @param _destination Destination variable's name
  */
+ 
+/* <usermanual>
+@keyword AT (instruction)
+
+@english
+
+The ''AT'' command is used to swap the values of two string variables. In practice, 
+the reference of the first variable are assigned to the second and vice versa, 
+in a single operation, and without memory movement. Infact, the ''AT''
+command actually performs a similar operation at the machine level, 
+but more efficiently and hidden from the programmer.
+
+The ''AT'' command makes code more concise and readable by avoiding the use of a 
+temporary variable for swapping. Using this command is a fundamental operation 
+in many sorting algorithms with array of strings, such as bubble sort.  In general, 
+swapping strings is a common operation in many programs, and ''AT'' provides a 
+simple and efficient way to do it. This command can only be used with variables of 
+the type string. 
+
+@italian
+
+Il comando ''AT'' viene utilizzato per scambiare i valori di due variabili 
+stringa. In pratica, il riferimento della prima variabile viene assegnato 
+alla seconda e viceversa, in un'unica operazione e senza spostamento di memoria. 
+Infatti, il comando ''AT'' esegue effettivamente un'operazione simile a livello 
+assembly, ma in modo più efficiente e nascosto al programmatore.
+
+Il comando ''AT'' rende il codice più conciso e leggibile evitando l'uso 
+di una variabile temporanea per lo scambio. L'uso di questo comando è 
+un'operazione fondamentale in molti algoritmi di ordinamento con array di 
+stringhe, come il bubble sort. In generale, lo scambio di stringhe è 
+un'operazione comune in molti programmi e ''AT'' fornisce un modo semplice ed 
+efficiente per farlo. Questo comando può essere utilizzato solo con 
+variabili di tipo stringa.
+
+@syntax AT var1, var2
+
+@example a$ = "primo" : b$ = "secondo"
+@example AT a$, b$
+@example PRINT a$, b$
+
+@seeAlso SWAP
+
+</usermanual> */
+/* <usermanual>
+@keyword SWAP
+
+@english
+
+The ''SWAP'' command is used to swap the values of two variables. In practice, 
+the contents of the first variable are assigned to the second and vice versa, 
+in a single operation.
+
+The ''SWAP'' command makes code more concise and readable by avoiding the use 
+of a temporary variable for swapping. Since swapping elements is a fundamental 
+operation in many sorting algorithms, such as bubble sort, it is important
+that it is an efficient operation. Infact, actually performs a similar operation 
+at the assembly level, more efficiently and hidden from the programmer.
+
+The ''SWAP'' operation can only be used with variables of the same
+bit width (in case of numeric type) or the same type (if strings).
+
+@italian
+
+Il comando ''SWAP'' serve per scambiare i valori di due variabili. 
+In pratica, il contenuto della prima variabile viene assegnato alla seconda 
+e viceversa, in un'unica operazione.
+
+Il comando ''SWAP'' rende il codice più conciso e leggibile evitando 
+l'uso di una variabile temporanea per lo scambio. Poiché lo scambio 
+di elementi è un'operazione fondamentale in molti algoritmi di ordinamento,
+come il bubble sort, è importante che sia un'operazione efficiente. Infatti, 
+esegue efficacemente un'operazione simile a livello di assembly, in modo più 
+efficiente e nascosto al programmatore.
+
+L'operazione ''SWAP'' può essere utilizzata solo con variabili della stessa 
+larghezza di bit (in caso di tipo numerico) o dello stesso tipo (in caso di stringhe).
+
+@syntax SWAP var1, var2
+
+@example a = 42 : b = 84
+@example AT a, b
+@example PRINT a, b
+
+@seeAlso AT
+
+</usermanual> */
 void variable_swap( Environment * _environment, char * _source, char * _dest ) {
     
     Variable * source = variable_retrieve( _environment, _source );

@@ -3466,160 +3466,6 @@ Alias per ''SCREEN TILES HEIGHT''.
 </usermanual> */
 
 /* <usermanual>
-@keyword AAHS (constant)
-
-@english
-
-This constant represent the "Choir Aahs" instrument, when used as parameter
-for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
-due to hardware limitations, or may not exist at all.
-
-@italian
-
-Questa costante rappresenta lo strumento "Choir Aahs", quando utilizzato 
-come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
-strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
-o potrebbe non esservi del tutto.
-
-@syntax = AAHS
-
-@example INSTRUMENT AAHS ON #7
-
-</usermanual> */
-
-/* <usermanual>
-@keyword ACCORDION (constant)
-
-@english
-
-This constant represent the "Accordion" instrument, when used as parameter
-for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
-due to hardware limitations, or may not exist at all.
-
-@italian
-
-Questa costante rappresenta lo strumento "Fisarmonica", quando utilizzato 
-come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
-strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
-o potrebbe non esservi del tutto.
-
-@syntax = AAHS
-
-@example INSTRUMENT ACCORDION ON #7
-
-</usermanual> */
-
-/* <usermanual>
-@keyword ACOUSTIC GRAND PIANO (constant)
-
-@english
-
-This constant represent the "Acoustic Grand Piano" instrument, when used as parameter
-for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
-due to hardware limitations, or may not exist at all.
-
-@italian
-
-Questa costante rappresenta lo strumento "Piano Acustico Grande", quando utilizzato 
-come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
-strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
-o potrebbe non esservi del tutto.
-
-@syntax = ACOUSTIC GRAND PIANO
-
-@example INSTRUMENT ACOUSTIC GRAND PIANO ON #7
-
-</usermanual> */
-
-/* <usermanual>
-@keyword BRIGHT ACOUSTIC PIANO (constant)
-
-@english
-
-This constant represent the "Bright Acoustic Piano" instrument, when used as parameter
-for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
-due to hardware limitations, or may not exist at all.
-
-@italian
-
-Questa costante rappresenta lo strumento "Piano Acustico Allegro", quando utilizzato 
-come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
-strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
-o potrebbe non esservi del tutto.
-
-@syntax = BRIGHT ACOUSTIC PIANO
-
-@example INSTRUMENT BRIGHT ACOUSTIC PIANO ON #7
-
-</usermanual> */
-
-/* <usermanual>
-@keyword ACOUSTIC GUITAR NYLON (constant)
-
-@english
-
-This constant represent the "Acoustic Guitar Nylon" instrument, when used as parameter
-for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
-due to hardware limitations, or may not exist at all.
-
-@italian
-
-Questa costante rappresenta lo strumento "Chitarra acustica (nylon)", quando utilizzato 
-come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
-strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
-o potrebbe non esservi del tutto.
-
-@syntax = ACOUSTIC GUITAR NYLON
-
-@example INSTRUMENT ACOUSTIC GUITAR NYLON ON #7
-
-</usermanual> */
-
-/* <usermanual>
-@keyword ACOUSTIC GUITAR STEEL (constant)
-
-@english
-
-This constant represent the "Acoustic Guitar Steel" instrument, when used as parameter
-for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
-due to hardware limitations, or may not exist at all.
-
-@italian
-
-Questa costante rappresenta lo strumento "Chitarra acustica (metallo)", quando utilizzato 
-come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
-strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
-o potrebbe non esservi del tutto.
-
-@syntax = ACOUSTIC GUITAR STEEL
-
-@example INSTRUMENT ACOUSTIC GUITAR STEEL ON #7
-
-</usermanual> */
-
-/* <usermanual>
-@keyword ACOUSTIC BASS (constant)
-
-@english
-
-This constant represent the "Acoustic Bass" instrument, when used as parameter
-for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
-due to hardware limitations, or may not exist at all.
-
-@italian
-
-Questa costante rappresenta lo strumento "Basso acustico", quando utilizzato 
-come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
-strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
-o potrebbe non esservi del tutto.
-
-@syntax = ACOUSTIC BASS
-
-@example INSTRUMENT ACOUSTIC BASS ON #7
-
-</usermanual> */
-
-/* <usermanual>
 @keyword ADDRESS (data type)
 
 @english
@@ -3638,28 +3484,6 @@ indirizzi diversi.
 @syntax ... AS ADDRESS
 
 @example DIM limit AS ADDRESS = &H8000
-
-</usermanual> */
-
-/* <usermanual>
-@keyword PAD 1 NEW AGE (constant)
-
-@english
-
-This constant represent the "Synth Pad 1 (New Age)" instrument, when used as parameter
-for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
-due to hardware limitations, or may not exist at all.
-
-@italian
-
-Questa costante rappresenta lo strumento "Synth Pad 1 (New Age)", quando utilizzato 
-come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
-strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
-o potrebbe non esservi del tutto.
-
-@syntax = PAD 1 NEW AGE
-
-@example INSTRUMENT PAD 1 NEW AGE ON #7
 
 </usermanual> */
 
@@ -3746,51 +3570,6 @@ come maschera di bit per l'istruzione ''KEY SHIFT''.
 @alias RIGHT ALT (constant)
 
 </usermanual> */
-
-/* <usermanual>
-@keyword ALTO SAX (constant)
-
-@english
-
-This constant represent the "Alto Sax" instrument, when used as parameter
-for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
-due to hardware limitations, or may not exist at all.
-
-@italian
-
-Questa costante rappresenta lo strumento "Sax Alto", quando utilizzato 
-come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
-strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
-o potrebbe non esservi del tutto.
-
-@syntax = ALTO SAX
-
-@example INSTRUMENT ALTO SAX ON #7
-
-</usermanual> */
-
-/* <usermanual>
-@keyword APPLAUSE (constant)
-
-@english
-
-This constant represent the "Applause" audio effect, when used as parameter
-for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
-due to hardware limitations, or may not exist at all.
-
-@italian
-
-Questa costante rappresenta l'effetto "Applauso", quando utilizzato 
-come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
-strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
-o potrebbe non esservi del tutto.
-
-@syntax = APPLAUSE
-
-@example INSTRUMENT APPLAUSE ON #7
-
-</usermanual> */
-
 
 /* <usermanual>
 @keyword ARRAY var = ...
@@ -4029,3 +3808,93 @@ con codice legacy o specifico per un hardware.
 @example END ASM ON CPU6502
 
 </usermanual> */
+
+/* <usermanual>
+@keyword ASTERISK (constant)
+
+@english
+
+This constant represent the asterisk key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto asterisco, quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = ASTERISK
+
+@example IF KET STATE(ASTERISK) THEN
+@example    PRINT "ASTERISK has been pressed!"
+@example ENDIF
+
+@alias ASTERISK (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword AT (constant)
+
+@english
+
+This constant represent the "at" (@) key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto chiocciolina (@), quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = AT
+
+@example IF KET STATE(AT) THEN
+@example    PRINT "ASTERISK has been pressed!"
+@example ENDIF
+
+@alias ASTERISK (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ATLAS (data type)
+
+@english
+
+The ''ATLAS'' data type maintains a reference to the collection of images that
+can be used to draw them on the screen.
+
+@italian
+
+Il tipo di dato ''ATLAS'' mantiene un riferimento alla collezione di immagini 
+che può essere usata per disegnarle sullo schermo.
+
+@syntax ... AS ATLAS
+
+@target all
+
+@alias IMAGES
+</usermanual> */
+
+/* <usermanual>
+@keyword IMAGES (data type)
+
+@english
+
+@italian
+
+@syntax ... AS IMAGES
+
+@target all
+
+@alias ATLAS
+
+</usermanual> */
+

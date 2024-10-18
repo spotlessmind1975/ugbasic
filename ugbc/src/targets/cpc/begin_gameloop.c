@@ -51,33 +51,6 @@
  */
 /* <usermanual>
 @keyword BEGIN GAMELOOP
-
-@english
-Define the starting point of a game loop. A game loop is nothing more 
-than an implicit loop, within which all the logic of the program (or
-of the game) runs. The end point of a game loop can correspond to 
-the end of the program or to the ''END GAMELOOP'' statement.
-
-In some platforms, it will implictly "sync" the activity with the
-vertical blank, so the action inside the loop should be executed
-in a single "frame" of game.
-
-@italian
-Definisce il punto di partenza di un loop di gioco. Un loop di 
-gioco non è altro che un ciclo implicito, all'interno del quale 
-tutta la logica del programma (o del gioco) viene eseguita. 
-Il punto finale di un ciclo di gioco può corrispondere al termine
-del programma o all'istruzione ''END GAMELOOP''. 
-
-In alcune piattaforme, "sincronizza" implicitamente l'attività con il
-"vertical blank", quindi l'azione all'interno del ciclo dovrebbe 
-essere eseguita in un unico "frame" di gioco.
-
-@syntax BEGIN GAMELOOP
-
-@example BEGIN GAMELOOP
-
-@target cpc
 </usermanual> */
 void begin_gameloop( Environment * _environment ) {
 

@@ -49,15 +49,36 @@
 
 @english
 
-This command is a composition of two commands: one that sets the color to use as 
-background (''PAPER'' command) and another that cleans the screen using the 
-specific features of the video chipset.
+The ''COLOR BACK'' command used on target that support both color graphics,
+backgorund colors and specialized clearing screen routines. Its primary function 
+is to set the background color of the screen or a specific area of the screen,
+and then clearing the screen using that color.
+
+This command can be used to customize the appearance of programs by creating
+colored backgrounds, and could be essential for creating simple games or 
+graphical applications, where the background color contributes to aesthetics 
+and readability. This can be used to highlight certain areas of the screen 
+or to create visual contrasts.
+
+The availability of colors and the accuracy of their representation depend 
+on the computer's video chipsed.
 
 @italian
 
-Questo comando è una composizione di due comandi: uno che imposta il colore da 
-usare come sfondo (comando ''PAPER'') e un altro che ripulisce lo schermo usando 
-le funzionalità specifiche del chipset video. 
+Il comando ''COLOR BACK'' utilizzato su target che supporta sia la grafica a 
+colori, i colori di sfondo e le routine specializzate di cancellazione 
+dello schermo. La sua funzione principale è quella di impostare il colore 
+di sfondo dello schermo o di un'area specifica dello schermo, quindi cancellare 
+lo schermo utilizzando quel colore.
+
+Questo comando può essere utilizzato per personalizzare l'aspetto dei programmi 
+creando sfondi colorati e può essere essenziale per creare semplici giochi o 
+applicazioni grafiche, in cui il colore di sfondo contribuisce all'estetica e 
+alla leggibilità. Può essere utilizzato per evidenziare determinate aree dello 
+schermo o per creare contrasti visivi.
+
+La disponibilità dei colori e l'accuratezza della loro rappresentazione 
+dipendono dal chip video del computer.
 
 @syntax COLOR BACK color
 
@@ -65,6 +86,9 @@ le funzionalità specifiche del chipset video.
 @example COLOR BACK WHITE
 
 @usedInExample graphics_color_01.bas
+
+@seeAlso PAPER
+@seeAlso CLS
 
 @target c128
 </usermanual> */

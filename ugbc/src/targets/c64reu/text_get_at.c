@@ -46,27 +46,33 @@
  * @param _y Row to locate to
  */
  /* <usermanual>
-@keyword AT
+@keyword AT (function)
 
 @english
-The ''AT'' (also ''AT$'') can be used to change the position of the text cursor directly from
-inside a character string. This is ideal for positioning text once and for all
-on screen, no matter what happens in the program, because the text cursor can
-be set during the program's initialisation phase. 
+
+The ''AT'' function is used to create a string to position the cursor to an exact position on the screen,
+when it will be printed on the screen. It's like telling a painter where to start painting on a canvas,
+not moving immediately but storing the command in a string. 
+
+The ''AT'' function is followed by two expressions, 
+separated by a comma: ''x'' indicates the column in which move the cursor, while ''y'' will be the line 
+in which to start writing. 
 
 The string that is returned takes the standard format. So whenever this string
-is printed, the text cursor will be moved to the text coordinates held by x and y.
+is printed, the text cursor will be moved to the text coordinates held by ''x'' and y.
 
 @italian
-La funzione ''AT'' (anche ''AT$'') può essere utilizzato per modificare la posizione del cursore del 
-testo direttamente dall'interno di una stringa di caratteri. Questo è l'ideale 
-per posizionare il testo una volta per tutte sullo schermo, indipendentemente 
-da ciò che accade nel programma, perché il cursore del testo può essere
-impostato durante la fase di inizializzazione del programma.
+La funzione ''AT'' viene utilizzata per creare una stringa per posizionare il cursore in una 
+posizione esatta sullo schermo, quando verrà stampato sullo schermo. È come dire a un pittore 
+dove iniziare a dipingere su una tela, non muovendosi immediatamente ma memorizzando il 
+comando in una stringa.
 
-La stringa restituita assume il formato standard. Quindi ogni volta che
-questa stringa viene stampata, il cursore del testo verrà spostato sulle 
-coordinate testo x e y.
+La funzione ''AT'' è seguita da due espressioni, separate da una virgola: ''x'' indica la 
+colonna in cui spostare il cursore, mentre ''y'' sarà la riga in cui iniziare a scrivere.
+
+La stringa restituita assume il formato standard. Quindi ogni volta che questa stringa 
+viene stampata, il cursore del testo verrà spostato alle coordinate del testo mantenute 
+da ''x'' e y.
 
 @syntax = AT$( x , y )
 @syntax = AT( x , y )
@@ -77,7 +83,6 @@ coordinate testo x e y.
 @usedInExample texts_position_06.bas
 
 @seeAlso LOCATE
-@target atari
 </usermanual> */
 Variable * get_at( Environment * _environment, char * _x, char * _y ) {
     
