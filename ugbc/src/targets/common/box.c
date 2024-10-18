@@ -77,6 +77,8 @@ bitmask di 16 bit con il comando ''SET LINE''.
 @example BOX ,10 TO ,100
 @usedInExample graphics_lines_02.bas
 
+@alias REC
+
 @target all
 </usermanual> */
 void box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c, int _preserve_color ) {

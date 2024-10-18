@@ -4013,3 +4013,48 @@ per specificare come manipolare i canali di input.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword BUFFER (data type)
+
+@english
+
+This data type holds a reference to any generic buffer, that is
+a memory area of any kind, from a spare memory to a specific and 
+big resource. 
+
+@italian
+
+Questo tipo di dati contiene un riferimento a qualsiasi buffer 
+generico, ovvero un'area di memoria di qualsiasi tipo, da una 
+memoria di riserva a una risorsa specifica e di grandi dimensioni.
+
+@syntax ... AS BUFFER
+
+@example DIM x AS BUFFER
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword BYTE (data type)
+
+@english
+
+The ''BYTE'' represent the data type for 8 bit numbers. This kind of data can
+represent a single character, such as a letter or number, could be represented with a byte,
+integers between 0 and 255 could be represented directly in a byte. 
+
+@italian
+
+Il ''BYTE'' rappresenta il tipo di dati per numeri a 8 bit. Questo tipo di dati 
+può rappresentare un singolo carattere, come una lettera o un numero, potrebbe 
+essere rappresentato con un byte, gli interi tra 0 e 255 potrebbero essere 
+rappresentati direttamente in un byte.
+
+@syntax ... AS BYTE
+
+@example DIM x AS BYTE
+
+@target all
+</usermanual> */
