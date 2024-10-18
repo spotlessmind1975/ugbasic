@@ -997,7 +997,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
@@ -1163,7 +1163,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
 static Variable * ef936x_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
 #if defined( __mo5__ ) 
 
@@ -1400,7 +1400,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
 static Variable * ef936x_image_converter_multicolor_mode4( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
 #if defined( __mo5__ ) 
 
@@ -1593,7 +1593,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
 static Variable * ef936x_image_converter_multicolor_mode16( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
 #if defined( __mo5__ ) 
 
