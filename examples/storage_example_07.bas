@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM STORAGE MANAGEMENT LOADING ON VARIABLES
 REM
 REM This example shows how to make ugBASIC understand the
@@ -12,6 +12,8 @@ REM Questo esempio mostra come far sì che ugBASIC comprenda
 REM le necessità di memoria dei vari elementi stoccati nelle
 REM memorie di massa, senza aver necessità di definirli 
 REM esplicitamente.
+REM 
+REM @include atari,atarixl,c128,c64,coco,coco3,vic20,cpc
 
 GLOBAL track
 

@@ -7,6 +7,8 @@ REM @italian
 REM MEMORIE DI MASSA SALVARE UN FILE
 REM
 REM Questo esempio mostra come salvare un file al momento dell'esecuzione.
+REM 
+REM @include atari,atarixl,c128,c64,coco,coco3,vic20,cpc
 
 CLS
 
