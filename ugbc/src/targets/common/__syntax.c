@@ -1104,9 +1104,9 @@ sono inclusi, mentre una parentesi tonda si intende che gli estremi sono esclusi
 
 @syntax [POSITIVE] CONST identifier = value
 @syntax CONST identifier IN (min,max) = value
-@syntax CONST identifier IN [min,max) = value
-@syntax CONST identifier IN (min,max] = value
-@syntax CONST identifier IN [min,max] = value
+@syntax CONST identifier IN "[" min,max) = value
+@syntax CONST identifier IN (min,max "]" = value
+@syntax CONST identifier IN "[" min,max "]"" = value
 
 @example CONST x = 42
 @example POSITIVE CONST y = -42: ' this raises an error!
@@ -1115,6 +1115,11 @@ sono inclusi, mentre una parentesi tonda si intende che gli estremi sono esclusi
 @usedInExample contrib_sierpinski.bas
 @usedInExample contrib_sierpinski2.bas
 @usedInExample contrib_sierpinski3.bas
+
+@alias SHARED CONST
+@alias CONST SHARED
+@alias GLOBAL CONST
+@alias CONST GLOBAL
 
 @target all
 </usermanual> */
@@ -2290,7 +2295,7 @@ Leggi il valore della porta del joystick, e controlla il bit "fuoco".
 </usermanual> */
 
 /* <usermanual>
-@keyword JOY COUNT
+@keyword JOY COUNT (constant)
 
 @english
 Read the number of joysticks installed into the system.
@@ -4167,3 +4172,201 @@ nell'ultima console definita.
 @seeAlso SCREEN COLUMNS (constant)
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword CONFIGURE
+
+@english
+
+The ''CONFIGURE'' command allow to customize hardware configuration, and 
+gives the possibility of generating hardware selection menus via software. 
+The configuration allows two types of manipulation: a ''STATIC'' one, 
+which is adopted at compilation time (useful for development and 
+unconventional startup) and a ''DYNAMIC'' one, which is adopted at 
+execution time (useful for creating configuration menus).
+Static changes must begin with the ''CONFIGURE STATIC'' keywords, 
+while dynamic changes must begin with the ''CONFIGURE DYNAMIC'' keywords.
+By default, the changes are to be considered static.
+
+Each hardware change request must begin with the ''CONFIGURE'' keyword 
+followed by the name of the hardware to be configured. Each request for 
+hardware modification must concern one or more parameters prefixed by 
+the ''SET'' command. The value that can be assigned to these 
+variables must be consistent with the expected and acceptable values. 
+
+Finally, it is possbile to assign multiple values consecutively, 
+separating them with a comma, without using the ''SET'' command.
+
+@italian
+
+Il comando ''CONFIGURE'' consente di personalizzare la 
+configurazione hardware e fornisce la possibilità di generare 
+menu di selezione hardware tramite software.
+
+La configurazione consente due tipi di manipolazione: una ''STATIC'',
+che viene adottata in fase di compilazione (utile per lo sviluppo e
+l'avvio non convenzionale) e una ''DYNAMIC'', che viene adottata 
+in fase di esecuzione (utile per la creazione di menu di configurazione).
+
+Le modifiche statiche devono iniziare con le parole chiave ''CONFIGURE STATIC'',
+mentre le modifiche dinamiche devono iniziare con le parole chiave 
+''CONFIGURE DYNAMIC''. Per impostazione predefinita, le modifiche 
+sono considerate statiche.
+
+Ogni richiesta di modifica hardware deve iniziare con la parola 
+chiave ''CONFIGURE'' seguita dal nome dell'hardware da configurare. 
+Ogni richiesta di modifica hardware deve riguardare uno o più 
+parametri preceduti dal comando ''SET''. Il valore che può essere 
+assegnato a queste variabili deve essere coerente con i valori 
+previsti e accettabili.
+
+Infine, è possibile assegnare più valori consecutivamente, 
+separandoli con una virgola, senza utilizzare il comando ''SET''.
+
+@syntax CONFIGURE STATIC hw SET p1 = v1 [, p2 = v2 [, ...]]
+@syntax CONFIGURE DYNAMIC hw SET p1 = v1 [, p2 = v2 [, ...]]
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CONST SHARED
+
+@english
+
+@italian
+
+@syntax [POSITIVE] CONST SHARED identifier = value
+@syntax CONST SHARED identifier IN (min,max) = value
+@syntax CONST SHARED identifier IN "[" min,max) = value
+@syntax CONST SHARED identifier IN (min,max "]" = value
+@syntax CONST SHARED identifier IN "[" min,max "]"" = value
+
+@example CONST SHARED x = 42
+@example POSITIVE CONST SHARED y = -42: ' this raises an error!
+@example CONST SHARED width IN (0,320] = 128
+
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@alias SHARED CONST
+@alias SHARED
+@alias GLOBAL CONST
+@alias CONST GLOBAL
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SHARED CONST
+
+@english
+
+@italian
+
+@syntax [POSITIVE] SHARED CONST identifier = value
+@syntax SHARED CONST identifier IN (min,max) = value
+@syntax SHARED CONST identifier IN "[" min,max) = value
+@syntax SHARED CONST identifier IN (min,max "]" = value
+@syntax SHARED CONST identifier IN "[" min,max "]"" = value
+
+@example SHARED CONST x = 42
+@example POSITIVE SHARED CONST y = -42: ' this raises an error!
+@example SHARED CONST width IN (0,320] = 128
+
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@alias SHARED
+@alias CONST SHARED
+@alias GLOBAL CONST
+@alias CONST GLOBAL
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CONST GLOBAL
+
+@english
+
+@italian
+
+@syntax [POSITIVE] CONST GLOBAL identifier = value
+@syntax CONST GLOBAL identifier IN (min,max) = value
+@syntax CONST GLOBAL identifier IN "[" min,max) = value
+@syntax CONST GLOBAL identifier IN (min,max "]" = value
+@syntax CONST GLOBAL identifier IN "[" min,max "]"" = value
+
+@example CONST GLOBAL x = 42
+@example POSITIVE CONST GLOBAL y = -42: ' this raises an error!
+@example CONST GLOBAL width IN (0,320] = 128
+
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@alias SHARED
+@alias CONST SHARED
+@alias SHARED CONST
+@alias GLOBAL CONST
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword GLOBAL CONST
+
+@english
+
+@italian
+
+@syntax [POSITIVE] GLOBAL CONST identifier = value
+@syntax GLOBAL CONST identifier IN (min,max) = value
+@syntax GLOBAL CONST identifier IN "[" min,max) = value
+@syntax GLOBAL CONST identifier IN (min,max "]" = value
+@syntax GLOBAL CONST identifier IN "[" min,max "]"" = value
+
+@example GLOBAL CONST x = 42
+@example POSITIVE GLOBAL CONST y = -42: ' this raises an error!
+@example GLOBAL CONST width IN (0,320] = 128
+
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@alias SHARED
+@alias CONST SHARED
+@alias SHARED CONST
+@alias CONST GLOBAL
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CONTROL (constant)
+
+@english
+
+This constant represent the "CONTROL" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "CONTROL", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = CONTROL
+
+@example IF KET STATE(CONTROL) THEN
+@example    PRINT "CONTROL has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
