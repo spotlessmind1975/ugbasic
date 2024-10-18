@@ -48,22 +48,47 @@
 @keyword CLS
 
 @english
-The ''CLS'' command clears the screen, setting it (possibly) to a given background color. 
-The clearing occurs with respect to the selected mode, so it will be a "pixel by pixel" 
-clearing (if in bitmap mode) or "tile by tile" (if in tile mode). In the second case, the 
-value of the ''EMPTYTILE'' variable will be used, possibly overridden. The cursor
-position will be put at the left top position of the screen, as well.
+
+The ''CLS'' command is used to clear the screen and return the cursor to the
+upper left corner. In other words, ''CLS'' clears the screen, eliminating 
+everything that was previously printed. 
+
+Before printing new data to the screen, it is often useful to use ''CLS'' to
+have a clean and tidy space. In combination with other instructions, 
+''CLS'' can be used to create simple animations by erasing and redrawing 
+elements on the screen. It allows you to update the user interface without 
+leaving traces of previous operations.
+
+The CLS command is generally very fast to execute and can also be used 
+in graphics mode to clear the entire drawing area. It also has
+the ability to set a default background color, if possible. The clearing 
+occurs with respect to the selected mode, so it will be a "pixel by pixel" 
+clearing (if in bitmap mode) or "tile by tile" (if in tile mode). In the 
+second case, the value of the ''EMPTYTILE'' variable will be used, 
+possibly overridden
 
 @italian
-Il comando ''CLS'' cancella lo schermo, impostandolo (eventualmente) a un dato colore
-di sfondo. La cancellazione avviene rispetto alla modalità selezionata, quindi sarà una 
-cancellazione "pixel per pixel" (se in modalità bitmap) oppure "tile per tile" (se in 
-modalità tile). Nel secondo caso, sarà utilizzato il valore della variabile ''EMPTYTILE'', 
-eventualmente prevalorizzato. In ogni caso, la posizione del cursore sarà posta alla
-posizione in alto a sinistra sullo schermo.
+
+Il comando ''CLS'' viene utilizzato per cancellare lo schermo e riportare
+il cursore nell'angolo in alto a sinistra. In altre parole, ''CLS'' cancella 
+lo schermo, eliminando tutto ciò che era stato stampato in precedenza.
+
+Prima di stampare nuovi dati sullo schermo, è spesso utile usare ''CLS'' 
+per avere uno spazio pulito e ordinato. In combinazione con altre istruzioni, 
+''CLS'' può essere utilizzato per creare semplici animazioni cancellando e 
+ridisegnando elementi sullo schermo. Consente di aggiornare l'interfaccia 
+utente senza lasciare tracce delle operazioni precedenti.
+
+Il comando CLS è generalmente molto veloce da eseguire e può essere 
+utilizzato anche in modalità grafica per cancellare l'intera area di 
+disegno. Ha anche la possibilità di impostare un colore di sfondo predefinito, 
+se possibile. La cancellazione avviene rispetto alla modalità selezionata, 
+quindi sarà una cancellazione "pixel per pixel" (se in modalità bitmap) o 
+"tile per tile" (se in modalità tile). Nel secondo caso, verrà utilizzato 
+il valore della variabile ''EMPTYTILE'', eventualmente sovrascritto
 
 @syntax CLS
-@syntax CLS [color]
+@syntax CLS color
 
 @example CLS
 @example CLS WHITE

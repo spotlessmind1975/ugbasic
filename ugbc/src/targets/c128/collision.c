@@ -55,16 +55,20 @@
 @keyword COLLISION
 
 @english
+
 Verify if a sprite has had a collision with another sprite. If the sprite
 has collided, the function will return TRUE. Otherwise, it will return FALSE.
 
 @italian
+
 Verifica se uno sprite ha avuto una collisione con un altro sprite. In caso
 di collisione, viene restituito TRUE, altrimenti FALSE.
 
-@syntax = COLLISION(#sprite)
+@syntax = COLLISION(sprite)
 
-@example x = COLLISION(#1)
+@example x = COLLISION(1)
+
+@alias HIT
 
 @target c128
 </usermanual> */
@@ -77,7 +81,7 @@ Alias for ''COLLISION''.
 @italian
 Alias per ''COLLISION''.
 
-@seeAlso HIT
+@alias COLLISION
 
 @target c128
 </usermanual> */
@@ -102,13 +106,6 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
  * @return Variable* Temporary variable with the result of collision (0 = no 
  *                      collision, 1 = collision occurred)
  */
-/* <usermanual>
-@keyword COLLISION
-
-@syntax = COLLISION(expression)
-
-@example x = COLLISION(newValue+1)
-</usermanual> */
 Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
 
     return vic2_collision( _environment, _sprite );

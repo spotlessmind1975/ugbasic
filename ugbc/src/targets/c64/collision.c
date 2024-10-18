@@ -80,9 +80,6 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
  * @return Variable* Temporary variable with the result of collision (0 = no 
  *                      collision, 1 = collision occurred)
  */
-/* <usermanual>
-@keyword COLLISION
-</usermanual> */
 Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
 
     return vic2_collision( _environment, _sprite );

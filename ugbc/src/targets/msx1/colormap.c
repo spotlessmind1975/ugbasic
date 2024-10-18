@@ -56,8 +56,6 @@
  */
 /* <usermanual>
 @keyword COLORMAP AT
-
-@target msx1
 </usermanual> */
 void colormap_at( Environment * _environment, int _address ) {
 

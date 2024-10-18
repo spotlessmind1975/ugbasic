@@ -51,6 +51,7 @@
  */
 /* <usermanual>
 @keyword SCREEN COLUMNS
+@target c64
 </usermanual> */
 void screen_columns( Environment * _environment, int _columns ) {
 
@@ -73,6 +74,7 @@ void screen_columns( Environment * _environment, int _columns ) {
  */
 /* <usermanual>
 @keyword SCREEN COLUMNS
+@target c64
 </usermanual> */
 void screen_columns_var( Environment * _environment, char * _columns ) {
 

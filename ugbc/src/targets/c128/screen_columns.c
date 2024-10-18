@@ -51,6 +51,7 @@
  */
 /* <usermanual>
 @keyword SCREEN COLUMNS
+@target c128
 </usermanual> */
 void screen_columns( Environment * _environment, int _columns ) {
 

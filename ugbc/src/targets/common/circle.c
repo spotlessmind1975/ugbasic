@@ -51,27 +51,47 @@
 @keyword CIRCLE
 
 @english
+
+The ''CIRCLE'' command in BASIC draws a circle on the screen. In other words, it defines 
+a complete circle based on the coordinates and radius that you specify. 
+
 This command allows you to draw a circle with starting coordinates in ''(x,y)'' 
 and radius ''r''. The color is indicated by the parameter ''c''. If the abscissa 
 and/or ordinate is omitted, the last graphic position drawn will be used. In 
 addition, the color can also be omitted and, if necessary, the last color set with the 
-''PEN'' or ''INK'' command will be used. There is also another syntax, that can be used 
+''PEN'' or ''INK'' command will be used. 
+
+There is also another additional syntax, that can be used 
 to draw ellipses: you can give both the radii ''rx'' and ''ry'' in the color determined 
 by ''fq'' (see ''HIRES''). 
 
+The accuracy of the circle depends on the resolution of your screen. Lower-resolution screens 
+may display less sharp circles.
+
 @italian
-Questo comando consente di disegnare un cerchio avente coordinate di partenza in 
-''(x,y)'' e raggio ''r''. Il colore viene indicato dal parametro ''c''. Se 
-l'ascissa e/o l'ordinata viene omessa, sarà utilizzata l'ultima posizione grafica 
-disegnata. In più, anche il colore può essere omesso e, nel caso, sarà utilizzato 
-l'ultimo colore impostato con il comando ''PEN'' o ''INK''. Esiste anche un'altra 
-sintassi che può essere utilizzata per disegnare ellissi: è possibile specificare sia i 
-raggi ''rx'' che ''ry'' nel colore determinato da ''fq'' (vedere ''HIRES'').
+
+Il comando ''CIRCLE'' in BASIC disegna un cerchio sullo schermo. In altre parole, 
+definisce un cerchio completo in base alle coordinate e al raggio specificati.
+
+Questo comando consente di disegnare un cerchio con coordinate iniziali in ''(x,y)'' 
+e raggio ''r''. Il colore è indicato dal parametro ''c''. Se l'ascissa e/o l'ordinata 
+vengono omesse, verrà utilizzata l'ultima posizione grafica disegnata. Inoltre, è 
+possibile omettere anche il colore e, se necessario, verrà utilizzato l'ultimo colore 
+impostato con il comando ''PEN'' o ''INK''.
+
+Esiste anche un'altra sintassi aggiuntiva, che può essere utilizzata per disegnare 
+ellissi: è possibile specificare sia i raggi ''rx'' che ''ry'' nel colore determinato 
+da ''fq'' (vedere ''HIRES'').
+
+La precisione del cerchio dipende dalla risoluzione dello schermo. Gli schermi a 
+bassa risoluzione potrebbero visualizzare cerchi meno nitidi.
 
 @syntax CIRCLE [x], [y], r[, c]
 @syntax CIRCLE x, y, rx, ry[, c]
 
+@example ' Draw a circle
 @example CIRCLE 100,100,42
+@example ' Draw an ellipse
 @example CIRCLE 100,100,21,42
 @example CIRCLE ,,21,RED
 @usedInExample graphics_position_01.bas

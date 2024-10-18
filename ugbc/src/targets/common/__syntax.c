@@ -3615,8 +3615,7 @@ come maschera di bit per l'istruzione ''KEY SHIFT''.
 </usermanual> */
 
 /* <usermanual>
-@keyword ARRAY var = ...
-@keyword ARRAY var := ...
+@keyword ARRAY
 
 @english
 
@@ -3651,6 +3650,7 @@ elementi con valori diversi, l'assegnazione diretta può essere più
 leggibile.
 
 @syntax ARRAY var = ...
+@syntax ARRAY var := ...
 
 @example DIM var(4) AS BYTE
 @example ARRAY var = #{42424242}
@@ -4097,4 +4097,73 @@ come maschera di bit per l'istruzione ''KEY SHIFT''.
 
 @alias CAPS LOCK (constant)
 
+</usermanual> */
+
+/*
+@tobe CHECK
+ */
+
+/* <usermanual>
+@keyword CLEAR (constant)
+
+@english
+
+This constant represent the "CLEAR" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "CLEAR", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = CLEAR
+
+@example IF KET STATE(CLEAR) THEN
+@example    PRINT "CLEAR has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword CMOB
+
+@english
+
+The ''CMOB'' instruction attribute the two colors that are the same for all multicolor 
+sprites in VIC-II registers. Color for individual sprites are available with the 
+''MOB SET'' command or, even, ''MOBCOL''. 
+
+@italian
+
+L'istruzione ''CMOB'' attribuisce i due colori che sono gli stessi per tutti gli 
+sprite multicolor nei registri VIC-II. I colori per i singoli sprite sono disponibili 
+con il comando ''MOB SET'' o, persino, ''MOBCOL''.
+
+@syntax CMOB c1, c2
+
+@example CMOB RED, BLUE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword COLUMNS (constant)
+
+@english
+
+This constant represents the number of columns present 
+in the last defined console.
+
+@italian
+
+Questa costante rappresenta il numero di colonne presenti 
+nell'ultima console definita.
+
+@syntax = COLUMNS
+
+@seeAlso SCREEN COLUMNS (constant)
+@target all
 </usermanual> */

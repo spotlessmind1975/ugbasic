@@ -45,17 +45,7 @@
  * @param _string String to center
  */
 /* <usermanual>
-@keyword CHAR AT
-
-@english
-
-@italian
-
-@syntax 
-
-@example
-
-@target all
+@tobe CHAR AT
 </usermanual> */
 
 void char_at( Environment * _environment, char *_x, char *_y, char *_code, char *_type, char *_size ) {

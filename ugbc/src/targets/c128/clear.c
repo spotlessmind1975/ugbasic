@@ -38,6 +38,35 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword CLEAR
+
+@english
+
+The ''CLEAR'' command serves two purposes: when ''CLEAR'' is executed, all numeric 
+variables are initialized to zero and all strings are set to the empty string (""). 
+This is especially useful at the beginning of a program to ensure that there are 
+no residual values from previous executions. It can be used to resize (statically)
+allocated memory for dynamic strings. This may be necessary to avoid "out of memory" 
+errors when working with strings.
+
+@italian
+
+Il comando ''CLEAR'' ha due scopi: quando ''CLEAR'' viene eseguito, tutte le 
+variabili numeriche vengono inizializzate a zero e tutte le stringhe vengono 
+impostate sulla stringa vuota (""). Ciò è particolarmente utile all'inizio 
+di un programma per garantire che non vi siano valori residui dalle esecuzioni 
+precedenti. Può essere utilizzato per ridimensionare (staticamente) la memoria 
+allocata per le stringhe dinamiche. Ciò potrebbe essere necessario per evitare errori 
+di "memoria insufficiente" quando si lavora con le stringhe.
+
+@syntax CLEAR size
+
+@example CLEAR 2048
+
+@target all
+@verified
+</usermanual> */
 void clear( Environment * _environment ) {
 
     cpu_call( _environment, "VARINIT" );
