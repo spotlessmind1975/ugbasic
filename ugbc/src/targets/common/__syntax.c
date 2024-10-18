@@ -4370,3 +4370,52 @@ target corrispondente, il valore sarà zero.
 
 </usermanual> */
 
+/* <usermanual>
+@keyword CRSR LEFT RIGHT (constant)
+
+@english
+
+This constant represent the "CRSR LEFT RIGHT" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "CRSR LEFT RIGHT", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = CRSR LEFT RIGHT
+
+@example IF KET STATE(CRSR LEFT RIGHT) THEN
+@example    PRINT "CRSR LEFT RIGHT has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword CRSR UP DOWN (constant)
+
+@english
+
+This constant represent the "CRSR UP DOWN" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "CRSR UP DOWNT", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = CRSR UP DOWN
+
+@example IF KET STATE(CRSR UP DOWN) THEN
+@example    PRINT "CRSR UP DOWN has been pressed!"
+@example ENDIF
+
+</usermanual> */
