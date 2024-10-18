@@ -72,8 +72,9 @@ colore vengono mantenute invariate.
 Notare che la bitmap deve essere abilitata almeno una volta con 
 l'istruzione ''BITMAP ENABLE''.
 
-@syntax BITMAP CLEAR WITH #value
+@syntax BITMAP CLEAR [ WITH value ]
 
+@example BITMAP CLEAR
 @example BITMAP CLEAR WITH #$42
 
 @seeAlso BITMAP ENABLE

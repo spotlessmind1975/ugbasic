@@ -202,7 +202,7 @@ static void blit_define_bltb( Environment * _environment, int _op, char * _a, ch
  */
 
 /* <usermanual>
-@keyword BLIT
+@keyword BLIT (instruction)
 
 @english
 
@@ -237,6 +237,9 @@ possono comportare ''AND'', ''OR'', ''XOR'' e altre operazioni più complesse.
 @example BLIT bop1 AS ( ( SOURCE ) AND ( DESTINATION ) )
 
 @usedInExample blit_basic_mask.bas
+
+@seeAlso BLIT (data type)
+@seeAlso BLIT IMAGE
 
 @target all
 </usermanual> */

@@ -50,6 +50,37 @@
  */
 /* <usermanual>
 @keyword BOOM
+
+@english
+This command makes the computer emit an explosion-like sound. It is possible to indicate 
+the duration of sound effect and on which voices the system should emit the sound. If omitted, it will be issued on all.
+
+Note that the execution of the effect can be synchronous or asynchronous, depending on the target. 
+Synchronous execution means that the program will wait for the effect to complete before returning; 
+on the contrary, asynchronous execution requires the program to continue executing subsequent instructions.
+
+The behavior can be modified by the ''DEFINE AUDIO SYNC'' and ''DEFINE AUDIO ASYNC'' 
+pragmas, which however may not be available for the target in question.
+
+@italian
+Questo comando fa emettere al computer un suono simile a una esplosione. E' possibile
+indicare la durata dell'effetto e su quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
+
+Da notare che l'esecuzione dell'effetto può essere sincrono o asincrono, a seconda
+del target. L'esecuzione sincrona implica che il programma attenderà che l'effetto
+si completi prima di tornare; al contrario, l'esecuzione asincrona prevede che il
+programma continui ad eseguire le successive istruzioni.
+
+Il comportamento può essere modificato dai pragma ''DEFINE AUDIO SYNC'' e 
+''DEFINE AUDIO ASYNC'', che tuttavia potrebbe non essere disponibile per 
+il target in oggetto.
+
+@syntax BOOM [#duration [MS]] [ON #channel]
+@syntax BOOM [duration [MS]] [ON channel]
+
+@example BOOM 1000 MS
+@example BOOM 100 MS ON %001
+
 @target c128
 @target c64
 </usermanual> */

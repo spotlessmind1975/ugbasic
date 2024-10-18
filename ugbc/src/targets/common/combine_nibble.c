@@ -47,11 +47,13 @@
 @keyword COMBINE NIBBLE
 
 @english
+
 The command ''COMBINE NIBBLE'' allows you to combine two variables that 
 contains a 4 bit value (nibble) into a single 8 bit value. The first
 value is the high nibble.
 
 @italian
+
 Il comando ''COMBINE NIBBLE'' consente di combinare due variabili che 
 contengono un valore a 4 bit (nibble) in un unico valore a 8 bit.
 Il primo valore è quello del nibble più significativo.

@@ -38,6 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword CREATE PORT
+</usermanual> */
+
 Variable * dojo_create_port( Environment * _environment, char * _session_id, char * _application ) {
 
     Variable * sessionId = variable_retrieve( _environment, _session_id );

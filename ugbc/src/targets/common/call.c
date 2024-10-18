@@ -49,45 +49,87 @@
 
 @english
 
-The ''CALL'' keyword Transfers control to a routine. The first parameter is the
-procedure to call. The procedure can be called using a list of variables or 
-expressions representing arguments passed to the procedure when it is called. 
-Multiple arguments are separated by commas. If you include prameters, you must 
-enclose it in parentheses.
+The ''CALL'' command is used to call a previously defined procedure 
+(or subroutine) within the same program. A procedure is a separate 
+block of code designed to perform a specific task. By using ''CALL'', 
+you can execute the code within the procedure multiple times, without 
+having to rewrite the same statements each time.
 
-You can use the CALL keyword when calling a procedure. For most procedure calls, it is 
-not necessary to use this keyword. Typically you use the CALL keyword when the called 
-expression does not begin with an identifier. 
+Before you can call a procedure, you must define it. In ugBASIC, a 
+procedure is typically defined with the ''PROCEDURE'' keyword followed 
+by the name of the procedure. Inside the procedure, you write 
+the statements that should be executed when the procedure is called.
 
-If the procedure returns a value, the calling statement deletes it.
+To execute the code within the procedure, you use the ''CALL'' command 
+followed by the name of the procedure.
+
+When the program reaches this line, control is transferred to the 
+first statement in the procedure. Once all the statements in the procedure 
+are executed, control returns to the line after ''CALL''.
+
+Dividing a program into procedures makes the code more organized and easier to read,
+and a procedure can be called multiple times from different parts of the program, 
+avoiding code duplication. Procedures can be used to break a complex problem into
+simpler subproblems, that helps to create a hierarchical structure in the program.
+
+You can also pass arguments to a procedure, enclosed in square parameters: 
+arguments are values that are passed to the procedure when it is called and 
+that can be used within the procedure itself. If the procedure returns a value, 
+the calling statement just ignore  it.
+
+By breaking code into procedures, it becomes easier to understand and maintain,
+and by reusing the same procedures in multiple parts of the program, you reduce 
+the chances of introducing errors. Finally, if you need to change one part of 
+the code, you can simply change the corresponding procedure, without having 
+to make changes in all the parts of the program that use that part of the code.
 
 Important: if the ''OPTION CALL AS GOTO'' pragma is in effect, the instruction
 will be considered as a ''GOTO'' rather than a ''GOSUB''. So, no return value and
 no return, at all. This not applies to system calls.
 
 @italian
-La parola chiave ''CALL'' Trasferisce il controllo a una routine. Il primo 
-parametro è la procedura da chiamare. La procedura può essere chiamata utilizzando 
-un elenco di variabili o espressioni che rappresentano gli argomenti passati alla 
-procedura quando viene chiamata. Più argomenti sono separati da virgole. Se si includono 
-parametri, vanno racchiusi tra parentesi.
 
-È possibile utilizzare la parola chiave ''CALL'' quando si richiama una procedura. 
-Per la maggior parte delle chiamate di procedura non è necessario utilizzare questa
-parola chiave. In genere si utilizza la parola chiave ''CALL'' quando si chiama
-l'espressione non inizia con un identificatore.
+Il comando ''CALL'' viene utilizzato per chiamare una procedura (o subroutine) 
+definita in precedenza all'interno dello stesso programma. Una procedura è un 
+blocco di codice separato progettato per eseguire un'attività specifica. 
+Utilizzando ''CALL'', è possibile eseguire il codice all'interno della procedura più 
+volte, senza dover riscrivere le stesse istruzioni ogni volta.
 
-Se la procedura restituisce un valore, l'istruzione chiamante lo elimina.
+Prima di poter chiamare una procedura, è necessario definirla. In ugBASIC, una 
+procedura è in genere definita con la parola chiave ''PROCEDURE'' seguita dal nome 
+della procedura. All'interno della procedura, si scrivono le istruzioni che devono essere 
+eseguite quando la procedura viene chiamata.
 
-Importante: se il pragma ''OPTION CALL AS GOTO'' è attivo, l'istruzione
-sarà considerata un ''GOTO'' piuttosto che un ''GOSUB''. Quindi, nessun
-valore di ritorno e, anzi, nessun ritorno sarà previsto. Questo non si applica
-alle chiamate di sistema.
+Per eseguire il codice all'interno della procedura, si utilizza il comando ''CALL''
+seguito dal nome della procedura. Quando il programma raggiunge questa riga, il controllo 
+viene trasferito alla prima istruzione nella procedura. Una volta eseguite tutte le istruzioni 
+nella procedura, il controllo torna alla riga dopo ''CALL''.
+
+Dividere un programma in procedure rende il codice più organizzato e facile da leggere, 
+e una procedura può essere chiamata più volte da diverse parti del programma, evitando 
+la duplicazione del codice. Le procedure possono essere utilizzate per suddividere un 
+problema complesso in sottoproblemi più semplici, il che aiuta a creare una struttura 
+gerarchica nel programma.
+
+Puoi anche passare argomenti a una procedura, racchiusi in parametri quadrati: gli 
+argomenti sono valori che vengono passati alla procedura quando viene chiamata e che 
+possono essere utilizzati all'interno della procedura stessa. Se la procedura restituisce 
+un valore, l'istruzione chiamante lo ignora.
+
+Suddividendo il codice in procedure, diventa più facile da comprendere e gestire, e riutilizzando
+le stesse procedure in più parti del programma, riduci le possibilità di introdurre errori. 
+Infine, se hai bisogno di modificare una parte del codice, puoi semplicemente modificare la 
+procedura corrispondente, senza dover apportare modifiche in tutte le parti del programma che 
+utilizzano quella parte del codice.
+
+Importante: se è in vigore il pragma ''OPTION CALL AS GOTO'', l'istruzione verrà considerata 
+come un ''GOTO'' anziché un ''GOSUB''. Quindi, nessun valore di ritorno e nessun ritorno, 
+per niente. Questo non si applica alle chiamate di sistema.
 
 @syntax CALL name
-@syntax CALL name[par1 [,par 2 [, ....]]]
+@syntax CALL name parameters "[" [par1 [, par2[, ...]]] "]"
 
-@example CALL factorial(42)
+@example CALL factorial[42]
 
 @usedInExample procedures_param_01.bas
 @usedInExample procedures_param_02.bas

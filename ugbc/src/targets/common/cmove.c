@@ -66,9 +66,10 @@ void cmove_direct( Environment * _environment, int _dx, int _dy ) {
  * @param _environment 
  */
 /* <usermanual>
-@keyword CMOVE
+@keyword CMOVE (instruction)
 
 @english
+
 ''CMOVE'' allows to move the text cursor a pre-set distance away from its current position. 
 The command is followed by a pair of variables that represent the width and height of the 
 required offset, and these values are added to the current cursor coordinates. Like 
@@ -91,6 +92,8 @@ e offset positivi.
 @usedInExample texts_position_03.bas
 @usedInExample texts_position_04.bas
 @usedInExample texts_position_07.bas
+
+@seeAlso CMOVE (function)
 
 @target all
 </usermanual> */

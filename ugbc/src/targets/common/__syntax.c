@@ -1104,9 +1104,9 @@ sono inclusi, mentre una parentesi tonda si intende che gli estremi sono esclusi
 
 @syntax [POSITIVE] CONST identifier = value
 @syntax CONST identifier IN (min,max) = value
-@syntax CONST identifier IN [min,max) = value
-@syntax CONST identifier IN (min,max] = value
-@syntax CONST identifier IN [min,max] = value
+@syntax CONST identifier IN "[" min,max) = value
+@syntax CONST identifier IN (min,max "]" = value
+@syntax CONST identifier IN "[" min,max "]"" = value
 
 @example CONST x = 42
 @example POSITIVE CONST y = -42: ' this raises an error!
@@ -1115,6 +1115,11 @@ sono inclusi, mentre una parentesi tonda si intende che gli estremi sono esclusi
 @usedInExample contrib_sierpinski.bas
 @usedInExample contrib_sierpinski2.bas
 @usedInExample contrib_sierpinski3.bas
+
+@alias SHARED CONST
+@alias CONST SHARED
+@alias GLOBAL CONST
+@alias CONST GLOBAL
 
 @target all
 </usermanual> */
@@ -1913,22 +1918,6 @@ l'interruzione con priorità più alta.
 </usermanual> */
 
 /* <usermanual>
-@keyword BORDER
-
-@english
-Change the color of the border of the screen.
-
-@italian
-Questa istruzione cambia il colore del bordo.
-
-@syntax BORDER color
-
-@example BORDER YELLOW
-
-@target all
-</usermanual> */
-
-/* <usermanual>
 @keyword UBOUND
 
 @english
@@ -2306,7 +2295,7 @@ Leggi il valore della porta del joystick, e controlla il bit "fuoco".
 </usermanual> */
 
 /* <usermanual>
-@keyword JOY COUNT
+@keyword JOY COUNT (constant)
 
 @english
 Read the number of joysticks installed into the system.
@@ -2468,31 +2457,7 @@ Nota che non tutti i target supportano entrambe le modalità.
 
 @english
 
-''BLOCK'' draws a filled rectangle. The location of the top left corner is determined by the first 
-two parameters ''x1'' and ''y1'', the coordinates of the bottom right corner of the rectangle 
-are determined by parameters three and four (''x2'' and ''y2'', where ''x2=x1+width'' and 
-''y2=y1+height'', important for ''REC''). The color of the rectangle is determined by the 
-last parameter (''fq'', color source). Permissible values are 0..''SCREEN WIDTH'' for ''x1''
-and ''x2' . For ''y1'' and ''y2'', values from 0 to ''SCREEN HEIGHT'' are permitted in both cases. 
-The color also depends on the graphics mode and refers to the color specifications behind ''HIRES''
-on the one hand and ''MULTI'' and ''LOW COL'' on the other. The point 0,0 is in the top left corner.
-
-Note: Unfortunately, the parameter types of ''REC'' and ''BLOCK'' do not match, which makes 
-programming a little more complicated (see program example). 
-
 @italian
-
-''BLOCK'' disegna un rettangolo pieno. La posizione dell'angolo in alto a sinistra è determinata
-dai primi due parametri ''x1'' e ''y1'', le coordinate dell'angolo in basso a destra del rettangolo
-sono determinate dai parametri tre e quattro (''x2'' e ''y2'', dove ''x2=x1+larghezza'' e 
-''y2=y1+altezza'', importante per ''REC''). Il colore del rettangolo è determinato dall'ultimo 
-parametro (''fq'', fonte colore). I valori consentiti sono 0..''SCREEN WIDTH'' per ''x1'' e ''x2'.
-Per ''y1'' e ''y2'' sono ammessi in entrambi i casi i valori da 0 a ''SCREEN HEIGHT''. Il colore 
-dipende anche dalla modalità grafica e si riferisce alle specifiche del colore dietro ''HIRES''
-da un lato e ''MULTI'' e ''LOW COL'' dall'altro. Il punto 0,0 si trova nell'angolo in alto a sinistra.
-
-Nota: Sfortunatamente i tipi di parametri di ''REC'' e ''BLOCK'' non corrispondono, il che rende 
-la programmazione un po' più complicata (vedi esempio di programma).
 
 @syntax BLOCK x1, y1, x2, y2, fq
 
@@ -2500,7 +2465,8 @@ la programmazione un po' più complicata (vedi esempio di programma).
 
 @usedInExample tsb_block_rec_01.bas
 
-@target c128
+@alias BAR
+
 @project tsb
 </usermanual> */
 
@@ -3654,8 +3620,7 @@ come maschera di bit per l'istruzione ''KEY SHIFT''.
 </usermanual> */
 
 /* <usermanual>
-@keyword ARRAY var = ...
-@keyword ARRAY var := ...
+@keyword ARRAY
 
 @english
 
@@ -3690,6 +3655,7 @@ elementi con valori diversi, l'assegnazione diretta può essere più
 leggibile.
 
 @syntax ARRAY var = ...
+@syntax ARRAY var := ...
 
 @example DIM var(4) AS BYTE
 @example ARRAY var = #{42424242}
@@ -4023,5 +3989,433 @@ utilizzandoli in un array.
 @syntax ... AS BIT
 
 @target all
+
+</usermanual> */
+
+/* <usermanual>
+@keyword BLIT (data type)
+
+@english
+
+This data type holds a reference to the blitting operation. It can be used 
+as an argument to the blitting instruction, to specify how to manipulate 
+the input channels.
+
+@italian
+
+Questo tipo di dati contiene un riferimento all'operazione di blitting. 
+Può essere utilizzato come argomento per l'istruzione di blitting, 
+per specificare come manipolare i canali di input.
+
+@syntax ... AS BLIT
+
+@example DIM x AS BLIT
+
+@usedInExample blit_basic_mask.bas
+
+@seeAlso BLIT (instruction)
+@seeAlso BLIT IMAGE
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword BUFFER (data type)
+
+@english
+
+This data type holds a reference to any generic buffer, that is
+a memory area of any kind, from a spare memory to a specific and 
+big resource. 
+
+@italian
+
+Questo tipo di dati contiene un riferimento a qualsiasi buffer 
+generico, ovvero un'area di memoria di qualsiasi tipo, da una 
+memoria di riserva a una risorsa specifica e di grandi dimensioni.
+
+@syntax ... AS BUFFER
+
+@example DIM x AS BUFFER
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword BYTE (data type)
+
+@english
+
+The ''BYTE'' represent the data type for 8 bit numbers. This kind of data can
+represent a single character, such as a letter or number, could be represented with a byte,
+integers between 0 and 255 could be represented directly in a byte. 
+
+@italian
+
+Il ''BYTE'' rappresenta il tipo di dati per numeri a 8 bit. Questo tipo di dati 
+può rappresentare un singolo carattere, come una lettera o un numero, potrebbe 
+essere rappresentato con un byte, gli interi tra 0 e 255 potrebbero essere 
+rappresentati direttamente in un byte.
+
+@syntax ... AS BYTE
+
+@example DIM x AS BYTE
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CAPS LOCK (constant)
+
+@english
+
+This constant represent the "CAPS LOCK" key, when used as bitmask
+for ''KEY SHIFT'' instruction.
+
+@italian
+
+Questa costante rappresenta il tasto "CAPS LOCK", quando utilizzato 
+come maschera di bit per l'istruzione ''KEY SHIFT''.
+
+@syntax = CAPS LOCK
+
+@example IF KEY SHIFT AND CAPS LOCK THEN
+@example    PRINT "CAPS LOCK has been pressed!"
+@example ENDIF
+
+@alias CAPSLOCK (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword CAPSLOCK (constant)
+
+@english
+
+@italian
+
+@syntax = CAPSLOCK
+
+@example IF KEY SHIFT AND CAPSLOCK THEN
+@example    PRINT "CAPS LOCK has been pressed!"
+@example ENDIF
+
+@alias CAPS LOCK (constant)
+
+</usermanual> */
+
+/*
+@tobe CHECK
+ */
+
+/* <usermanual>
+@keyword CLEAR (constant)
+
+@english
+
+This constant represent the "CLEAR" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "CLEAR", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = CLEAR
+
+@example IF KET STATE(CLEAR) THEN
+@example    PRINT "CLEAR has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword CMOB
+
+@english
+
+The ''CMOB'' instruction attribute the two colors that are the same for all multicolor 
+sprites in VIC-II registers. Color for individual sprites are available with the 
+''MOB SET'' command or, even, ''MOBCOL''. 
+
+@italian
+
+L'istruzione ''CMOB'' attribuisce i due colori che sono gli stessi per tutti gli 
+sprite multicolor nei registri VIC-II. I colori per i singoli sprite sono disponibili 
+con il comando ''MOB SET'' o, persino, ''MOBCOL''.
+
+@syntax CMOB c1, c2
+
+@example CMOB RED, BLUE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword COLUMNS (constant)
+
+@english
+
+This constant represents the number of columns present 
+in the last defined console.
+
+@italian
+
+Questa costante rappresenta il numero di colonne presenti 
+nell'ultima console definita.
+
+@syntax = COLUMNS
+
+@seeAlso SCREEN COLUMNS (constant)
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CONFIGURE
+
+@english
+
+The ''CONFIGURE'' command allow to customize hardware configuration, and 
+gives the possibility of generating hardware selection menus via software. 
+The configuration allows two types of manipulation: a ''STATIC'' one, 
+which is adopted at compilation time (useful for development and 
+unconventional startup) and a ''DYNAMIC'' one, which is adopted at 
+execution time (useful for creating configuration menus).
+Static changes must begin with the ''CONFIGURE STATIC'' keywords, 
+while dynamic changes must begin with the ''CONFIGURE DYNAMIC'' keywords.
+By default, the changes are to be considered static.
+
+Each hardware change request must begin with the ''CONFIGURE'' keyword 
+followed by the name of the hardware to be configured. Each request for 
+hardware modification must concern one or more parameters prefixed by 
+the ''SET'' command. The value that can be assigned to these 
+variables must be consistent with the expected and acceptable values. 
+
+Finally, it is possbile to assign multiple values consecutively, 
+separating them with a comma, without using the ''SET'' command.
+
+@italian
+
+Il comando ''CONFIGURE'' consente di personalizzare la 
+configurazione hardware e fornisce la possibilità di generare 
+menu di selezione hardware tramite software.
+
+La configurazione consente due tipi di manipolazione: una ''STATIC'',
+che viene adottata in fase di compilazione (utile per lo sviluppo e
+l'avvio non convenzionale) e una ''DYNAMIC'', che viene adottata 
+in fase di esecuzione (utile per la creazione di menu di configurazione).
+
+Le modifiche statiche devono iniziare con le parole chiave ''CONFIGURE STATIC'',
+mentre le modifiche dinamiche devono iniziare con le parole chiave 
+''CONFIGURE DYNAMIC''. Per impostazione predefinita, le modifiche 
+sono considerate statiche.
+
+Ogni richiesta di modifica hardware deve iniziare con la parola 
+chiave ''CONFIGURE'' seguita dal nome dell'hardware da configurare. 
+Ogni richiesta di modifica hardware deve riguardare uno o più 
+parametri preceduti dal comando ''SET''. Il valore che può essere 
+assegnato a queste variabili deve essere coerente con i valori 
+previsti e accettabili.
+
+Infine, è possibile assegnare più valori consecutivamente, 
+separandoli con una virgola, senza utilizzare il comando ''SET''.
+
+@syntax CONFIGURE STATIC hw SET p1 = v1 [, p2 = v2 [, ...]]
+@syntax CONFIGURE DYNAMIC hw SET p1 = v1 [, p2 = v2 [, ...]]
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CONST SHARED
+
+@english
+
+@italian
+
+@syntax [POSITIVE] CONST SHARED identifier = value
+@syntax CONST SHARED identifier IN (min,max) = value
+@syntax CONST SHARED identifier IN "[" min,max) = value
+@syntax CONST SHARED identifier IN (min,max "]" = value
+@syntax CONST SHARED identifier IN "[" min,max "]"" = value
+
+@example CONST SHARED x = 42
+@example POSITIVE CONST SHARED y = -42: ' this raises an error!
+@example CONST SHARED width IN (0,320] = 128
+
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@alias SHARED CONST
+@alias SHARED
+@alias GLOBAL CONST
+@alias CONST GLOBAL
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SHARED CONST
+
+@english
+
+@italian
+
+@syntax [POSITIVE] SHARED CONST identifier = value
+@syntax SHARED CONST identifier IN (min,max) = value
+@syntax SHARED CONST identifier IN "[" min,max) = value
+@syntax SHARED CONST identifier IN (min,max "]" = value
+@syntax SHARED CONST identifier IN "[" min,max "]"" = value
+
+@example SHARED CONST x = 42
+@example POSITIVE SHARED CONST y = -42: ' this raises an error!
+@example SHARED CONST width IN (0,320] = 128
+
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@alias SHARED
+@alias CONST SHARED
+@alias GLOBAL CONST
+@alias CONST GLOBAL
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CONST GLOBAL
+
+@english
+
+@italian
+
+@syntax [POSITIVE] CONST GLOBAL identifier = value
+@syntax CONST GLOBAL identifier IN (min,max) = value
+@syntax CONST GLOBAL identifier IN "[" min,max) = value
+@syntax CONST GLOBAL identifier IN (min,max "]" = value
+@syntax CONST GLOBAL identifier IN "[" min,max "]"" = value
+
+@example CONST GLOBAL x = 42
+@example POSITIVE CONST GLOBAL y = -42: ' this raises an error!
+@example CONST GLOBAL width IN (0,320] = 128
+
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@alias SHARED
+@alias CONST SHARED
+@alias SHARED CONST
+@alias GLOBAL CONST
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword GLOBAL CONST
+
+@english
+
+@italian
+
+@syntax [POSITIVE] GLOBAL CONST identifier = value
+@syntax GLOBAL CONST identifier IN (min,max) = value
+@syntax GLOBAL CONST identifier IN "[" min,max) = value
+@syntax GLOBAL CONST identifier IN (min,max "]" = value
+@syntax GLOBAL CONST identifier IN "[" min,max "]"" = value
+
+@example GLOBAL CONST x = 42
+@example POSITIVE GLOBAL CONST y = -42: ' this raises an error!
+@example GLOBAL CONST width IN (0,320] = 128
+
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@alias SHARED
+@alias CONST SHARED
+@alias SHARED CONST
+@alias CONST GLOBAL
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CONTROL (constant)
+
+@english
+
+This constant represent the "CONTROL" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "CONTROL", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = CONTROL
+
+@example IF KET STATE(CONTROL) THEN
+@example    PRINT "CONTROL has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword CRSR LEFT RIGHT (constant)
+
+@english
+
+This constant represent the "CRSR LEFT RIGHT" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "CRSR LEFT RIGHT", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = CRSR LEFT RIGHT
+
+@example IF KET STATE(CRSR LEFT RIGHT) THEN
+@example    PRINT "CRSR LEFT RIGHT has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword CRSR UP DOWN (constant)
+
+@english
+
+This constant represent the "CRSR UP DOWN" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "CRSR UP DOWNT", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = CRSR UP DOWN
+
+@example IF KET STATE(CRSR UP DOWN) THEN
+@example    PRINT "CRSR UP DOWN has been pressed!"
+@example ENDIF
 
 </usermanual> */

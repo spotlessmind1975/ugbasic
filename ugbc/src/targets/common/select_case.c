@@ -61,32 +61,69 @@
 @keyword SELECT CASE...CASE...CASE ELSE...ENDSELECT
 
 @english
-These commands implement a multiple conditional jump. It is a question 
-of verifying whether a given expression, supplied as first, is equal 
-to the various expressions that will be gradually registered through 
-the ''CASE'' statement. If they are, the code following the CASE statement 
-will be executed. Otherwise, we will move on.
 
-If the ''CASE ELSE'' statement is given, it will be executed if there is no 
-other match. It follows that it must be placed last.
+The ''SELECT CASE'' command is part of the ''SELECT CASE...END SELECT'' structure.
+It allows you to execute different blocks of code depending on the value of a
+variable or expression. In practice, it is like having a series of "cases" and 
+the program executes the code corresponding to the case that occurs.
 
-The code executed is always and only the one between the ''CASE'' that satisfies 
-the condition and the next one (or the ''CASE ELSE''). The code on ''CASE ELSE''
-will be execute always and only if other matches fail.
+The ''expression'' is evaluated at the beginning of the control block,
+and its value is compared to the values specified in the cases.
+Each ''CASE'' represents a possible value or a range of values
+of the expression. Inside each case, you insert the instructions that 
+will be executed if the value of the expression matches that case.
+The ''CASE ELSE'' is optional, and it is executed if no previous 
+case is true. In 8-bit computers, the semantics of ''SELECT CASE'' are
+closely tied to data representation. Because registers and variables were 
+often limited to 8 bits, the values that could be compared in cases are
+integers between 0 and 255, also if ugBASIC supports any integer type
+Anyway, it allows the expression to be compared to any integer value but,
+due to the 8-bit limitation, the range of values that could be 
+compared should be limited, to be effective, in terms of performances. 
+
+Using ''SELECT CASE'' makes code clearer and easier to understand 
+than a series of nested ''IF...THEN...ELSE'' statements. It can
+be more efficient than a series of ''IF...THEN...ELSE'' statements.
 
 @italian
-Questi comandi implementano un salto condizionato multiplo. Si tratta di verificare
-se una data espressione, fornita come prima, è pari alle varie espressioni che 
-saranno via via censite tramite l'istruzione ''CASE''. In caso lo siano, sarà eseguito 
-il codice che segue all'istruzione ''CASE''. Altrimenti si passerà oltre.
 
-Se viene indicata l'istruzione ''CASE ELSE'', questa sarà eseguita se non vi sono 
-altre corrispondenze. Ne consegue che dovrà essere posta per ultima. 
+Il comando ''SELECT CASE'' fa parte della struttura 
+''SELECT CASE...END SELECT''. Consente di eseguire diversi blocchi di 
+codice a seconda del valore di una variabile o espressione. In pratica, 
+è come avere una serie di "casi" e il programma esegue il codice 
+corrispondente al caso che si verifica.
 
-Il codice eseguito è sempre e soltanto quello tra il ''CASE'' che soddisfa la 
-condizione e il successivo (o il ''CASE ELSE'').
+L'espressione viene valutata all'inizio del blocco di controllo e 
+il suo valore viene confrontato con i valori specificati nei casi.
+Ogni ''CASE'' rappresenta un possibile valore o un intervallo di 
+valori dell'espressione. All'interno di ogni caso, inserisci le 
+istruzioni che verranno eseguite se il valore dell'espressione 
+corrisponde a quel caso.
 
-@syntax SELECT CASE [expression] : CASE [match1] : ... {: CASE [match2] : ... } { : CASE ELSE : .... } : ENDSELECT
+Il ''CASE ELSE'' è facoltativo e viene eseguito se nessun caso
+precedente è vero. Nei computer a 8 bit, la semantica di 
+''SELECT CASE'' è strettamente legata alla rappresentazione dei 
+dati. Poiché registri e variabili erano spesso limitati a 8 bit, 
+i valori che potevano essere confrontati in casi sono interi tra 
+0 e 255, anche se ugBASIC supporta qualsiasi tipo di intero. In 
+ogni caso, consente di confrontare l'espressione con qualsiasi 
+valore intero ma, a causa della limitazione a 8 bit, l'intervallo
+di valori che potevano essere confrontati dovrebbe essere limitato, 
+per essere efficace, in termini di prestazioni.
+
+L'utilizzo di ''SELECT CASE'' rende il codice più chiaro e 
+facile da capire rispetto a una serie di istruzioni ''IF...THEN...ELSE'' 
+annidate. Può essere più efficiente di una serie di istruzioni ''IF...THEN...ELSE''.
+
+@syntax SELECT CASE expression
+@syntax    CASE value1:
+@syntax       ...
+@syntax    CASE value2:
+@syntax       ...
+@syntax    ...
+@syntax    [ CASE ELSE ]
+@syntax       ...
+@syntax ENDSELECT
 
 @example SELECT CASE number
 @example   CASE 1
@@ -98,6 +135,10 @@ condizione e il successivo (o il ''CASE ELSE'').
 @example ENDSELCT
 
 @usedInExample control_case_01.bas
+
+@seeAlso CASE
+@seeAlso CASE ELSE
+@seeAlso ENDSELECT
 
 @target all
 </usermanual> */

@@ -49,12 +49,22 @@
 @keyword CMOVE (function)
 
 @english
-The ''CMOVE$'' function can be used to print something relative to the current 
-cursor position.
+
+The ''CMOVE$'' function can be used to generate a string that moves the text cursor a 
+pre-set distance away from its current position. The command is followed by a pair 
+of variables that represent the width and height of the required offset, and these 
+values are added to the current cursor coordinates. Like ''LOCATE'', either of the
+coordinates can be omitted, as long as the comma is positioned correctly. An additional 
+technique is to use negative values as well as positive offsets.
 
 @italian
-La funzione ''CMOVE''" può essere utilizzata per stampare qualcosa relativo 
-alla posizione corrente del cursore.
+
+The ''CMOVE$'' function can be used to generate a string that moves the text cursor
+a preset distance from its current position. The command is followed by a pair of 
+variables representing the width and height of the requested offset, and these values 
+​​are added to the current cursor coordinates. Like ''LOCATE'', both coordinates can be 
+omitted, as long as the comma is correctly positioned. Another technique is to use 
+negative values ​​and positive offsets.
 
 @syntax = CMOVE$( x, y )
 
@@ -62,7 +72,7 @@ alla posizione corrente del cursore.
 
 @usedInExample texts_position_04.bas
 
-@seeAlso CMOVE
+@seeAlso CMOVE (instruction)
 @target all
 </usermanual> */
 Variable * get_cmove( Environment * _environment, char * _x, char * _y ) {

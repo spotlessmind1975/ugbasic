@@ -38,6 +38,38 @@
  * CODE SECTION 
  ****************************************************************************/
 
+
+/* <usermanual>
+@keyword CSET
+
+@english
+
+The ''CSET'' command switches with ''value'' between the two character sets 
+of the VIC-II: uppercase graphics characters (0) and uppercase/lowercase 
+(CSET 1). You can also use this to switch to graphics mode without clearing 
+the graphics memory (see ''HIRES''), for this you use CSET 2. 
+
+@italian
+
+Il comando ''CSET'' commuta con ''value'' tra i due set di caratteri
+del VIC-II: caratteri grafici maiuscoli (0) e maiuscolo/minuscolo
+(CSET 1). È possibile utilizzarlo anche per passare alla modalità grafica 
+senza cancellare la memoria grafica (vedere ''HIRES''), per questo si 
+utilizza CSET 2.
+
+@syntax CSET value
+
+@example CSET 1
+
+@target c64
+@target c64reu
+@target c128
+
+</usermanual> */
+
+
+
+
 void cset( Environment * _environment, char * _value ) {
 
     MAKE_LABEL

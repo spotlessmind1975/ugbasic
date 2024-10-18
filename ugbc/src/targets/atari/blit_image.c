@@ -81,13 +81,16 @@ con due differenze principali. La prima è la possibilità di indicare più imma
 (separate tra loro da una virgola) e la seconda è quella di poter indicare quale operazione
 di blitting si vuole utilizzare.
 
-@syntax BLIT IMAGE img1, img2, ... AT [x], [y] WITH blit
-@syntax BLIT IMAGE img1, img2, ... FRAME frame AT [x], [y] WITH blit
-@syntax BLIT IMAGE img1, img2, ... SEQUENCE seq FRAME frame AT [x], [y] WITH blit
+@syntax BLIT IMAGE i1, i2, ... AT [x], [y] WITH b
+@syntax BLIT IMAGE i1, i2, ... FRAME frame AT [x], [y] WITH b
+@syntax BLIT IMAGE i1, i2, ... SEQUENCE s FRAME f AT [x], [y] WITH b
 
 @example BLIT IMAGE test AT 0, 0 WITH bop
 
 @usedInExample blit_basic_mask.bas
+
+@seeAlso BLIT (data type)
+@seeAlso BLIT (instruction)
 
 @target all
 </usermanual> */

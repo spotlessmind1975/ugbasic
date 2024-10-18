@@ -105,10 +105,6 @@ void colormap_at( Environment * _environment, int _address ) {
  */
 /* <usermanual>
 @keyword COLORMAP AT
-
-@syntax COLORMAP AT address
-
-@example COLORMAP AT newAddress
 </usermanual> */
 void colormap_at_var( Environment * _environment, char * _address ) {
 
