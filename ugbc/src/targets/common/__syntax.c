@@ -4058,3 +4058,43 @@ rappresentati direttamente in un byte.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword CAPS LOCK (constant)
+
+@english
+
+This constant represent the "CAPS LOCK" key, when used as bitmask
+for ''KEY SHIFT'' instruction.
+
+@italian
+
+Questa costante rappresenta il tasto "CAPS LOCK", quando utilizzato 
+come maschera di bit per l'istruzione ''KEY SHIFT''.
+
+@syntax = CAPS LOCK
+
+@example IF KEY SHIFT AND CAPS LOCK THEN
+@example    PRINT "CAPS LOCK has been pressed!"
+@example ENDIF
+
+@alias CAPSLOCK (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword CAPSLOCK (constant)
+
+@english
+
+@italian
+
+@syntax = CAPSLOCK
+
+@example IF KEY SHIFT AND CAPSLOCK THEN
+@example    PRINT "CAPS LOCK has been pressed!"
+@example ENDIF
+
+@alias CAPS LOCK (constant)
+
+</usermanual> */

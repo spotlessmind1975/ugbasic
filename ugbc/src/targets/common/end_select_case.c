@@ -47,9 +47,33 @@
  * @param _expression Expression with the true / false condition
  */
 /* <usermanual>
-@keyword SELECT CASE...CASE...CASE ELSE...ENDSELECT
+@keyword ENDSELECT
 
-@target all
+@english
+
+The ''ENDSELECT'' command is part of ''SELECT...ENDSELECT'' construct, and
+delimit the end of the ''SELECT CASE''.
+
+@italian
+
+
+115 / 5.000
+Il comando ''ENDSELECT'' fa parte della struttura ''SELECT...ENDSELECT''
+e delimita la fine di ''SELECT CASE''.
+
+@syntax CASE expression
+
+@example SELECT CASE answer
+@example    CASE 42
+@example       PRINT "The answer!"
+@example    CASE ELSE
+@example       PRINT "I am still thinking..."
+@example ENDSELECT
+
+@seeAlso SELECT CASE
+@seeAlso CASE ELSE
+@seeAlso ENDSELECT
+
 </usermanual> */
 void end_select_case( Environment * _environment ) {
 

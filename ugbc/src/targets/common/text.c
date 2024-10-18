@@ -118,12 +118,14 @@ void text_question_mark( Environment * _environment ) {
 }
 
 /* <usermanual>
-@keyword CDOWN
+@keyword CDOWN (instruction)
 
 @english
+
 By using the ''CDOWN'' command you can force the text cursor down a single line.
 
 @italian
+
 Utilizzando il comando ''CDOWN'' è possibile forzare il cursore del testo
 verso il basso di una singola riga.
 
@@ -145,11 +147,13 @@ verso il basso di una singola riga.
 @keyword CDOWN (function)
 
 @english
+
 The effect of summoning up the special control character ''CDOWN$'' is exactly the 
 same as printing after a ''CDOWN'' command. The advantage of this alternative is 
 that several text cursor movements can be combined in a single string, using ''CDOWN$''.
 
 @italian
+
 L'effetto dell'uso del carattere di controllo speciale ''CDOWN$'' è esattamente lo
 stesso della stampa dopo un comando ''CDOWN''. Il vantaggio di questa alternativa
 è che diversi movimenti del cursore di testo possono essere combinati
@@ -171,7 +175,7 @@ in una singola stringa, utilizzando ''CDOWN$''.
 
 
 /* <usermanual>
-@keyword CUP
+@keyword CUP (instruction)
 
 @english
 By using the ''CUP'' command you can force the text cursor up a single line.
@@ -224,7 +228,7 @@ in una singola stringa, utilizzando ''CUP$''.
 
 
 /* <usermanual>
-@keyword CRIGHT
+@keyword CRIGHT (instruction)
 
 @english
 By using the ''CRIGHT'' command you can force the text cursor right by a single character.
@@ -276,7 +280,7 @@ in una singola stringa, utilizzando ''CRIGHT$''.
 </usermanual> */
 
 /* <usermanual>
-@keyword CLEFT
+@keyword CLEFT (instruction)
 
 @english
 By using the ''CLEFT'' command you can force the text cursor left by a single character.

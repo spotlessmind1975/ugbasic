@@ -38,6 +38,39 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword CASE
+
+@english
+
+The ''CASE'' command is part of ''SELECT...ENDSELECT'' construct. Each ''CASE'' 
+represents a possible value of the expression. After each case, you can insert 
+the statements that will be executed if the value of the expression matches that case.
+The code will be executed up to the ''ENDSELECT'' instruction, another ''CASE''
+instruction and, finally, when a ''CASE ELSE'' is matched.
+
+@italian
+
+Il comando ''CASE'' fa parte del costrutto ''SELECT...ENDSELECT''. Ogni ''CASE'' 
+rappresenta un possibile valore dell'espressione. Dopo ogni caso, puoi inserire 
+le istruzioni che verranno eseguite se il valore dell'espressione corrisponde 
+a quel caso. Il codice verrà eseguito fino all'istruzione ''ENDSELECT'', 
+un'altra istruzione ''CASE'' e, infine, quando viene trovato un ''CASE ELSE''.
+
+@syntax CASE value
+
+@example SELECT CASE answer
+@example    CASE 42
+@example       PRINT "The answer!"
+@example    CASE ELSE
+@example       PRINT "I am still thinking..."
+@example ENDSELECT
+
+@seeAlso SELECT CASE
+@seeAlso CASE ELSE
+@seeAlso ENDSELECT
+
+</usermanual> */
 void case_equals_label( Environment * _environment ) {
 
     Conditional * conditional = _environment->conditionals;

@@ -49,23 +49,9 @@
 
 @english
 
-The ''CENTRE'' (or ''CENTER'') command can be used to position text in the 
-centre of the current line, and to save you the effort of calculating the text 
-coordinates in order to achieve this. The CENTRE command takes a string, a variable
-or a string expression, and it prints it in the middle of the line currently occupied 
-by the cursor. If the statement is followed by a semicolon, the cursor 
-will remain on the same line. Otherwise, it will move to the next line.
-
 @italian
-Il comando ''CENTRE'' (o ''CENTER'') può essere utilizzato per posizionare
-il testo al centro della linea corrente dello schermo e per risparmiare lo sforzo di 
-calcolare le coordinate del testo per ottenere ciò. Il comando ''CENTER''
-prende una stringa di caratteri e la stampa al centro della riga 
-attualmente occupata dal cursore. Se l'istruzione è seguita dal punto e virgola, 
-il cursore rimarrà sulla medesima riga. Altrimenti, si sposterà nella 
-riga successiva.
 
-@syntax CENTRE expression [;]
+@syntax CENTRE text [;]
 
 @example CENTRE "HELLO!"
 @example CENTRE "HELLO!";
@@ -76,6 +62,9 @@ riga successiva.
 @usedInExample screens_resolution_02.bas
 
 @target all
+
+@alias CENTER
+
 @verified
 </usermanual> */
 /* <usermanual>
@@ -83,23 +72,41 @@ riga successiva.
 
 @english
 
-The ''CENTER'' (or ''CENTRE'') command can be used to position text in the 
-CENTER of the current line, and to save you the effort of calculating the text 
-coordinates in order to achieve this. The CENTER command takes a string, a variable
-or a string expression, and it prints it in the middle of the line currently occupied 
-by the cursor. If the statement is followed by a semicolon, the cursor 
+The ''CENTER'' command aligns a text string in the center of a line. In other words, 
+it allows you to position a word or phrase so that it occupies the available space 
+in a symmetrical manner. The ''CENTER'' command calculates the white space needed 
+on the sides of the string to center it within the specified width and 
+adds the necessary spaces. If the statement is followed by a semicolon, the cursor 
 will remain on the same line. Otherwise, it will move to the next line.
 
-@italian
-Il comando ''CENTER'' (o ''CENTRE'') può essere utilizzato per posizionare
-il testo al centro della linea corrente dello schermo e per risparmiare lo sforzo di 
-calcolare le coordinate del testo per ottenere ciò. Il comando ''CENTER''
-prende una stringa di caratteri e la stampa al centro della riga 
-attualmente occupata dal cursore. Se l'istruzione è seguita dal punto e virgola, 
-il cursore rimarrà sulla medesima riga. Altrimenti, si sposterà nella 
-riga successiva.
+This command can be used to create aesthetically pleasing section or chapter titles,
+to center menu options in the center of the console and to format data neatly 
+in a report. Centered text is easier to read and makes programs look neater.
 
-@syntax CENTER expression [;]
+By using CENTER, you can ensure that text is aligned uniformly in different 
+parts of the program, and on different targets. Moreover, reduce the need 
+to manually calculate character positions. 
+
+@italian
+
+Il comando ''CENTER'' allinea una stringa di testo al centro di una riga. 
+In altre parole, consente di posizionare una parola o una frase in modo 
+che occupi lo spazio disponibile in modo simmetrico. Il comando ''CENTER'' 
+calcola lo spazio bianco necessario ai lati della stringa per centrarla entro
+la larghezza specificata e aggiunge gli spazi necessari. Se l'istruzione è 
+seguita da un punto e virgola, il cursore rimarrà sulla stessa riga. Altrimenti,
+si sposterà alla riga successiva.
+
+Questo comando può essere utilizzato per creare titoli di sezioni o capitoli 
+esteticamente gradevoli, per centrare le opzioni di menu al centro della console 
+e per formattare i dati in modo ordinato in un report. Il testo centrato è più 
+facile da leggere e rende i programmi più ordinati.
+
+Utilizzando CENTER, è possibile garantire che il testo sia allineato uniformemente
+in diverse parti del programma e su diversi target. Inoltre, si riduce la necessità
+di calcolare manualmente le posizioni dei caratteri.
+
+@syntax CENTER text [;]
 
 @example CENTER "HELLO!"
 @example CENTER "HELLO!";
@@ -110,7 +117,8 @@ riga successiva.
 @usedInExample screens_resolution_02.bas
 
 @target all
-@verified
+
+@alias CENTRE
 </usermanual> */
 
 void center( Environment * _environment, char * _string, int _newline, char * _width ) {

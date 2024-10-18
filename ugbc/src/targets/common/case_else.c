@@ -47,9 +47,33 @@
  * @param _expression Expression with the true / false condition
  */
 /* <usermanual>
-@keyword SELECT CASE...CASE...CASE ELSE...ENDSELECT
+@keyword CASE ELSE
 
-@target all
+@english
+
+The ''CASE ELSE'' command is part of ''SELECT...ENDSELECT'' construct.
+It is optional and is executed if none of the previous cases are true.
+The code will be executed up to the ''ENDSELECT'' instruction.
+
+@italian
+
+Il comando ''CASE ELSE'' fa parte della costruzione ''SELECT...ENDSELECT''.
+È facoltativo e viene eseguito se nessuno dei casi precedenti è vero.
+Il codice verrà eseguito fino all'istruzione ''ENDSELECT''.
+
+@syntax CASE ELSE
+
+@example SELECT CASE answer
+@example    CASE 42
+@example       PRINT "The answer!"
+@example    CASE ELSE
+@example       PRINT "I am still thinking..."
+@example ENDSELECT
+
+@seeAlso SELECT CASE
+@seeAlso CASE
+@seeAlso ENDSELECT
+
 </usermanual> */
 void case_else( Environment * _environment ) {
 
