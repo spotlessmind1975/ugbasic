@@ -57,19 +57,25 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword POW
 
 @english
-The ''POW'' function raises a number to the power of another number. The result is a number raised to
-the power of exponent. It can be also represented using the ''^'' (circumflex) character as exponential 
-symbol. The type of the result is big enough to maintain the next size of the operands. The exponent 
-value must be integer and positive. When more than one exponent is executed in a single expression, 
-the ^ operator is evaluated as it is encountered from left to right.
+The ''POW'' instruction is short for "power" and is used to calculate the
+power of a number. In other words, it allows you to raise a base number 
+to a certain exponent. It multiplies the base by itself a number of times 
+equal to the exponent. For example, ''POW(2, 3)'' means to multiply 2 
+by itself 3 times: ''2 * 2 * 2''. The variables used for the base and 
+exponent must be integer. So can be computationally expensive for very large 
+exponents. In some cases, there may be more efficient algorithms 
+for calculating powers.
 
 @italian
-La funzione ''POW'' eleva un numero alla potenza di un altro numero. Il risultato è un numero elevato 
-alla potenza dell'esponente. Può anche essere rappresentato utilizzando il carattere ''^'' (accento 
-circonflesso) come simbolo esponenziale. Il tipo del risultato è abbastanza grande da mantenere la 
-dimensione successiva degli operandi. Il valore dell'esponente deve essere intero e positivo. 
-Quando viene eseguito più di un esponente in una singola espressione, l'operatore ''^'' viene valutato 
-così come viene incontrato da sinistra a destra.
+L'istruzione ''POW'' è l'abbreviazione di "power" (potenza) e viene 
+utilizzata per calcolare la potenza di un numero. In altre parole, 
+consente di elevare un numero di base a un certo esponente. Moltiplica 
+la base per se stessa un numero di volte pari all'esponente. Ad esempio, 
+''POW(2, 3)'' significa moltiplicare 2 per se stesso 3 volte: ''2 * 2 * 2''. 
+Le variabili utilizzate per la base e l'esponente devono essere intere. 
+Quindi può essere computazionalmente costoso per esponenti molto grandi. 
+In alcuni casi, potrebbero esserci algoritmi più efficienti per 
+calcolare le potenze.
 
 @syntax = POW( base, exponent )
 @syntax = base ^ exponent

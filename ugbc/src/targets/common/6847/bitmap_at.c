@@ -81,7 +81,6 @@ successive operazioni grafiche.
 @target coco
 @target d32
 @target d64
-@seeAlso BITMAP (constant)
 </usermanual> */
 void bitmap_at( Environment * _environment, int _address ) {
 

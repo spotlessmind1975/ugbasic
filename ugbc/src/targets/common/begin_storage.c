@@ -45,32 +45,45 @@
  * @param _name Name of the storage
  */
 /* <usermanual>
-@keyword STORAGE...ENDSTORAGE
+@keyword BEGIN STORAGE
 
 @english
-This command can be used to start defining a mass storage. If the selected 
-output corresponds to a mass memory (tape, disk, ...) then it will have the 
-form described in this structure. It is possible to define more than one 
-mass memory, and the executable will be inserted in the first of them.
+
+The ''BEGIN STORAGE'' allows to begin describing 
+the content of a storage media. The syntax of this command
+allows to define up to two parameter. The first parameter,
+''name'', refers to the internal name of the storage.
+The ''filename'', optional, will define the file name
+that will contain the "image" of the storage. If omitted,
+the program filename will be used, and an additional incremented
+number will be appended, one for each storage media.
+
 
 @italian
-Questo comando può essere utilizzato per iniziare la definizione di una 
-memoria di massa. Se l'output selezionato corrisponde a una memoria di 
-massa (nastro, disco, ...) allora avrà la forma descritta in questa 
-struttura. E' possibile definire più di una memoria di massa, e 
-l'eseguibile sarà inserito nel primo di essi.
+Il comando ''BEGIN STORAGE'' consente di iniziare a descrivere 
+il contenuto di un supporto di memorizzazione. La sintassi di 
+questo comando consente di definire fino a due parametri. Il 
+primo parametro, ''name'', si riferisce al nome interno del 
+supporto di memorizzazione. Il comando ''filename'', 
+facoltativo, definirà il nome del file che conterrà l'"immagine" 
+del supporto di memorizzazione. Se omesso, verrà utilizzato il 
+nome del file del programma e verrà aggiunto un numero 
+incrementato aggiuntivo, uno per ciascun supporto di 
+memorizzazione.
 
-@syntax STORAGE [name]
-@syntax ...
-@syntax ENDSTORAGE
+@syntax BEGIN STORAGE [name] [AS filename]
+@syntax STORAGE [name] [AS filename]
 
-@example STORAGE "dischetto"
+@example BEGIN STORAGE "dischetto"
 @example ...
 @example ENDSTORAGE
 
 @usedInExample storage_example_01.bas
 
-@target c64
+@alias STORAGE
+@seeAlso ENDSTORAGE
+
+@target atari c128 c64 c64reu coco coco3 cpc msx1 vic20 
 </usermanual> */
 void begin_storage( Environment * _environment, char * _name, char * _file_name ) {
 

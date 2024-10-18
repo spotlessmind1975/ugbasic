@@ -88,7 +88,7 @@ Se si utilizza ''BF'', il rettangolo viene disegnato e riempito.
 
 @syntax DRAW [x1], [y1] TO x2, y2[, c]
 @syntax DRAW TO x2, y2[, c]
-@syntax DRAW (x1,y1) − (x2,y2)[,mode][,B|,BF]
+@syntax DRAW (x1,y1) - (x2,y2)[,mode][,B|,BF]
 
 @example DRAW 10,10 TO 100,100,WHITE
 @example DRAW TO 100,100
@@ -125,7 +125,7 @@ bitmask di 16 bit con il comando ''SET LINE''.
 
 @syntax LINE [x1], [y1] TO x2, y2[, c]
 @syntax LINE TO x2, y2[, c]
-@syntax LINE (x1,y1) − (x2,y2)[,mode]
+@syntax LINE (x1,y1) - (x2,y2)[,mode]
 
 @example LINE 10,10 TO 100,100,WHITE
 @example LINE TO 100,100

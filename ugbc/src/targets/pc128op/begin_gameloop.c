@@ -51,8 +51,6 @@
  */
 /* <usermanual>
 @keyword BEGIN GAMELOOP
-
-@target pc128op
 </usermanual> */
 void begin_gameloop( Environment * _environment ) {
 

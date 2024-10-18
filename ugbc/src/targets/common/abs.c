@@ -51,20 +51,43 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword ABS
 
 @english
-The function ''ABS'' can be used to convert arguments into a positive number. 
-''ABS'' returns an absolute value of an integer or fractional number, paying 
-no attention to whether that number is positive or negative, in other words, 
-ignoring its sign.
+
+The ''ABS'' command is a mathematical function that returns the absolute value 
+of a number. In essence, it removes the negative sign from a number, always 
+returning a positive or zero value. The parameter ''expression'' is the value whose 
+absolute value you want to calculate. This can be a constant numeric value, 
+a variable, or a mathematical expression.
+
+The ''ABS'' command is very useful in several situations.  When calculating 
+the distance between two points, the absolute value ensures that the distance
+is always positive, regardless of the order in which you consider the points.
+You can use ''ABS'' inside conditions to test whether a value is greater 
+than or less than a certain threshold, ignoring the sign. In many applications, 
+you need to work with absolute values to avoid errors or unexpected results.
+
+The ''ABS'' command can be applied only to integers.
 
 @italian
-La funzione ''ABS'' può essere utilizzata per convertire gli argomenti 
-in un numero positivo. Restituisce un valore assoluto di un numero intero o 
-frazionario, non tenendo in alcuna considerazione il fatto che quel numero 
-sia positivo o negativo, in altre parole, ignorando il suo segno.
+Il comando ''ABS'' è una funzione matematica che restituisce il valore assoluto 
+di un numero. In sostanza, rimuove il segno negativo da un numero, restituendo 
+sempre un valore positivo o zero. Il parametro ''expression'' è il valore di cui 
+si desidera calcolare il valore assoluto. Può essere un valore numerico costante,
+una variabile o un'espressione matematica.
 
-@syntax =ABS(expression)
+Il comando ''ABS'' è molto utile in diverse situazioni. Quando si calcola la 
+distanza tra due punti, il valore assoluto assicura che la distanza sia 
+sempre positiva, indipendentemente dall'ordine in cui si considerano i punti. 
+È possibile utilizzare ''ABS'' all'interno delle condizioni per verificare se
+un valore è maggiore o minore di una certa soglia, ignorando il segno. 
+In molte applicazioni, è necessario lavorare con valori assoluti per evitare 
+errori o risultati imprevisti.
 
-@example x = ABS(-1)
+Il comando ''ABS'' può essere usato solo con valori interi.
+
+@syntax = ABS(expression)
+
+@example ' Calculate the distance between two abscissa
+@example distance = ABS(x1 - x2)
 
 @usedInExample maths_abs_01.bas
 @usedInExample contrib_if_test_speed.bas

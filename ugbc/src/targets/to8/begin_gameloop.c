@@ -51,8 +51,6 @@
  */
 /* <usermanual>
 @keyword BEGIN GAMELOOP
-
-@target to8
 </usermanual> */
 void begin_gameloop( Environment * _environment ) {
 

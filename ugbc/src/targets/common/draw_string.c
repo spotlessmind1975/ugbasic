@@ -48,7 +48,7 @@ string constant, or a string variable, containing a set of the draw
 subcommands. Usually the first action of any drawing is to move 
 to the start point. 
 
-''M x,y'' means move to the co−ordinates given by ''x,y''.
+''M x,y'' means move to the coordinates given by ''x,y''.
 If you wanto to move to a point, it is usually a good idea to make a "blank" move, 
 that is move without drawing or lifting the pencil off the paper. 
 

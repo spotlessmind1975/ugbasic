@@ -49,8 +49,6 @@
  */
 /* <usermanual>
 @keyword BELL
-
-@target zx
 </usermanual> */
 void bell( Environment * _environment, int _note, int _duration, int _channels ) {
 

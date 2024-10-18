@@ -3861,6 +3861,93 @@ void variable_sub_inplace( Environment * _environment, char * _source, char * _d
  * @param _source Source variable's name
  * @param _destination Destination variable's name
  */
+ 
+/* <usermanual>
+@keyword AT (instruction)
+
+@english
+
+The ''AT'' command is used to swap the values of two string variables. In practice, 
+the reference of the first variable are assigned to the second and vice versa, 
+in a single operation, and without memory movement. Infact, the ''AT''
+command actually performs a similar operation at the machine level, 
+but more efficiently and hidden from the programmer.
+
+The ''AT'' command makes code more concise and readable by avoiding the use of a 
+temporary variable for swapping. Using this command is a fundamental operation 
+in many sorting algorithms with array of strings, such as bubble sort.  In general, 
+swapping strings is a common operation in many programs, and ''AT'' provides a 
+simple and efficient way to do it. This command can only be used with variables of 
+the type string. 
+
+@italian
+
+Il comando ''AT'' viene utilizzato per scambiare i valori di due variabili 
+stringa. In pratica, il riferimento della prima variabile viene assegnato 
+alla seconda e viceversa, in un'unica operazione e senza spostamento di memoria. 
+Infatti, il comando ''AT'' esegue effettivamente un'operazione simile a livello 
+assembly, ma in modo più efficiente e nascosto al programmatore.
+
+Il comando ''AT'' rende il codice più conciso e leggibile evitando l'uso 
+di una variabile temporanea per lo scambio. L'uso di questo comando è 
+un'operazione fondamentale in molti algoritmi di ordinamento con array di 
+stringhe, come il bubble sort. In generale, lo scambio di stringhe è 
+un'operazione comune in molti programmi e ''AT'' fornisce un modo semplice ed 
+efficiente per farlo. Questo comando può essere utilizzato solo con 
+variabili di tipo stringa.
+
+@syntax AT var1, var2
+
+@example a$ = "primo" : b$ = "secondo"
+@example AT a$, b$
+@example PRINT a$, b$
+
+@seeAlso SWAP
+
+</usermanual> */
+/* <usermanual>
+@keyword SWAP
+
+@english
+
+The ''SWAP'' command is used to swap the values of two variables. In practice, 
+the contents of the first variable are assigned to the second and vice versa, 
+in a single operation.
+
+The ''SWAP'' command makes code more concise and readable by avoiding the use 
+of a temporary variable for swapping. Since swapping elements is a fundamental 
+operation in many sorting algorithms, such as bubble sort, it is important
+that it is an efficient operation. Infact, actually performs a similar operation 
+at the assembly level, more efficiently and hidden from the programmer.
+
+The ''SWAP'' operation can only be used with variables of the same
+bit width (in case of numeric type) or the same type (if strings).
+
+@italian
+
+Il comando ''SWAP'' serve per scambiare i valori di due variabili. 
+In pratica, il contenuto della prima variabile viene assegnato alla seconda 
+e viceversa, in un'unica operazione.
+
+Il comando ''SWAP'' rende il codice più conciso e leggibile evitando 
+l'uso di una variabile temporanea per lo scambio. Poiché lo scambio 
+di elementi è un'operazione fondamentale in molti algoritmi di ordinamento,
+come il bubble sort, è importante che sia un'operazione efficiente. Infatti, 
+esegue efficacemente un'operazione simile a livello di assembly, in modo più 
+efficiente e nascosto al programmatore.
+
+L'operazione ''SWAP'' può essere utilizzata solo con variabili della stessa 
+larghezza di bit (in caso di tipo numerico) o dello stesso tipo (in caso di stringhe).
+
+@syntax SWAP var1, var2
+
+@example a = 42 : b = 84
+@example AT a, b
+@example PRINT a, b
+
+@seeAlso AT
+
+</usermanual> */
 void variable_swap( Environment * _environment, char * _source, char * _dest ) {
     
     Variable * source = variable_retrieve( _environment, _source );
@@ -5199,7 +5286,11 @@ del risultato è un tipo numerico appropriato per i tipi di dati di entrambe le 
 
 @syntax = x AND y
 
-@example IF x AND 1 THEN: PRINT "x is odd" : ELSE : PRINT "x is even": ENDIF
+@example IF x AND 1 THEN
+@example    PRINT "x is odd" 
+@example ELSE
+@example    PRINT "x is even"
+@example ENDIF
 
 @target all
 </usermanual> */
@@ -7243,16 +7334,59 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
 @keyword HEX
 
 @english
-This function converts a number into hexadecimal.
+The ''HEX'' statement is used to convert a decimal number to a hexadecimal number. 
+Hexadecimal, or base 16, is a numbering system that uses 16 digits (0 through 9 and 
+the letters A through F) to represent numbers. 
+
+This system is widely used in 
+computing, especially to represent memory addresses, colors, and character codes.
+Moreover, it is a concise way of representing binary numbers, which are the basis 
+of how computers work, and bit-level operations are often easier to display and 
+manipulate in hexadecimal.
+
+The ''expression'' is the value you want to convert to hexadecimal, and it must
+be an integer value. The ''HEX'' statement will return a string representing 
+the hexadecimal value corresponding to the input number. The length of the 
+returned string depends on the size (in bytes) of ''expression''.
 
 @italian
-Questa funzione converte un numero in formato esadecimale.
+L'istruzione ''HEX'' viene utilizzata per convertire un numero decimale in 
+un numero esadecimale. L'esadecimale, o base 16, è un sistema di numerazione 
+che utilizza 16 cifre (da 0 a 9 e le lettere da A a F) per rappresentare i numeri.
 
-@syntax = HEX(number)
-@syntax = HEX(variable)
+Questo sistema è ampiamente utilizzato nell'informatica, in particolare per 
+rappresentare indirizzi di memoria, colori e codici di carattere. Inoltre, è un modo 
+conciso di rappresentare i numeri binari, che sono la base del funzionamento 
+dei computer, e le operazioni a livello di bit sono spesso più facili da visualizzare
+e manipolare in esadecimale.
+
+Il parametro ''expression'' è il valore che si desidera convertire in esadecimale e
+deve essere un valore intero. L'istruzione ''HEX'' restituirà una stringa che 
+rappresenta il valore esadecimale corrispondente al numero di input. La 
+lunghezza della stringa restituita dipende dalla dimensione (in byte) di ''expression''.
+
+@syntax = HEX(expression)
 
 @example x = HEX( 42 )
 @example PRINT HEX( y )
+
+@alias $$
+
+@target all
+ </usermanual> */
+/* <usermanual>
+@keyword $$
+
+@english
+
+@italian
+
+@syntax = $$(expression)
+
+@example x = $$( 42 )
+@example PRINT $$( y )
+
+@alias HEX
 
 @target all
  </usermanual> */
@@ -7576,18 +7710,69 @@ Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
 @keyword ASC
 
 @english
-This function returns the internal ASCII code of the first character
-in a string. If the string is empty, the value returned will be 0.
+
+The ''ASC'' command performs a very specific function: it converts the first 
+character of a string into its corresponding ASCII code. ASCII stands for 
+American Standard Code for Information Interchange and it is a standard 
+encoding that associates each alphanumeric character and many symbols 
+with an integer between 0 and 127. This number represents the internal 
+representation of the character within the computer.
+
+The ''ASC'' command allows you to manipulate the individual characters 
+of a string numerically. For example, you can check whether a character 
+is an uppercase letter (its ASCII code will be between 65 and 90), or whether 
+it is a number (its ASCII code will be between 48 and 57).
+
+Comparing the ASCII codes of two characters is an efficient way to establish 
+the alphabetical order between them and, in some applications, you need to 
+convert characters to numbers or vice versa. ''ASC'' is a fundamental tool 
+for this type of operation.
+
+In 8-bit computers, memory is organized in bytes, which are sequences of 
+8 bits. Each byte can represent a number from 0 to 255. Since ASCII 
+encoding uses only 7 bits, a byte can represent 128 different characters.
+On 8-bit computers, the supported character set is limited to 128 ASCII 
+characters. This means that accented characters or characters from other
+languages cannot be directly represented.  The exact meaning of an ASCII 
+code can vary slightly depending on the encoding used. Note that the ''CHR$'' 
+command is the inverse of ''ASC'', it converts an ASCII code to a character. 
 
 @italian
-Questa funzione ritorna il codice ASCII del primo carattere di una stringa.
-Se la stringa è vuota, il valore restituito sarà zero (0).
+
+Il comando ''ASC'' esegue una funzione molto specifica: converte il primo 
+carattere di una stringa nel suo codice ASCII corrispondente. ASCII sta per 
+American Standard Code for Information Interchange ed è una codifica standard che
+associa ogni carattere alfanumerico e molti simboli a un numero intero compreso 
+tra 0 e 127. Questo numero rappresenta la rappresentazione interna del carattere 
+all'interno del computer.
+
+Il comando ''ASC'' consente di manipolare numericamente i singoli caratteri 
+di una stringa. Ad esempio, è possibile verificare se un carattere è una lettera
+maiuscola (il suo codice ASCII sarà compreso tra 65 e 90) o se è un numero 
+(il suo codice ASCII sarà compreso tra 48 e 57).
+
+Confrontare i codici ASCII di due caratteri è un modo efficiente per stabilire
+l'ordine alfabetico tra di essi e, in alcune applicazioni, è necessario convertire 
+i caratteri in numeri o viceversa. ''ASC'' è uno strumento fondamentale per 
+questo tipo di operazione.
+
+Nei computer a 8 bit, la memoria è organizzata in byte, che sono sequenze di 
+8 bit. Ogni byte può rappresentare un numero da 0 a 255. Poiché la codifica 
+ASCII utilizza solo 7 bit, un byte può rappresentare 128 caratteri diversi. 
+Nei computer a 8 bit, il set di caratteri supportato è limitato a 128 caratteri 
+ASCII. Ciò significa che i caratteri accentati o i caratteri di altre lingue 
+non possono essere rappresentati direttamente. Il significato esatto di un 
+codice ASCII può variare leggermente a seconda della codifica utilizzata. 
+Nota che il comando ''CHR$'' è l'inverso di ''ASC'', converte un codice 
+ASCII in un carattere.
 
 @syntax = ASC( string )
 
 @example x = ASC( "UGBASIC" )
 
 @usedInExample strings_asc_01.bas
+
+@seeAlso CHR
 
 @target all
  </usermanual> */
@@ -8559,16 +8744,42 @@ int pattern_match(char *_pattern, char * _value)
 @keyword BIN
 
 @english
-This function converts a number into a string of bits ("0" and "1"), from the most significant
-to the least significant. It is also possible to indicate the number of digits 
-to be represented. If this parameter is omitted, the minimum number of digits 
-for that data format (8, 16 or 32 digits) will be used.
+
+The ''BIN'' command allows you to convert a decimal number into a binary 
+representation. In other words, it takes a number that we are used to 
+writing in base 10 (with the digits 0 through 9) and turns it into a 
+sequence of 0s and 1s, which is the base that computers use to represent 
+data internally. It decode from the most significant to the least significant. 
+
+It is also possible to indicate the number of digits to be represented. 
+If this parameter is omitted, the minimum number of digits for that data 
+format (8, 16 or 32 digits) will be used.
+
+This command is essential for those who want to delve deeper into how 
+computers work at a lower level. Infact, this command allows you to 
+operate directly on individual bits of a number, which is useful in
+some applications such as graphics or communications. Moreover,
+many encryption algorithms rely on bit-level operations.
 
 @italian
-Questa funzione converte un numero in una stringa di bit ("0" e "1"), dal più significativo 
-al meno significativo. E' possibile indicare anche il numero di cifre da 
-rappresentare. Se questo parametro viene omesso, sarà utilizzato il numero di 
-cifre minimo per quel formato di dati (8, 16 o 32 cifre).
+
+Il comando ''BIN'' consente di convertire un numero decimale in una 
+rappresentazione binaria. In altre parole, prende un numero che siamo 
+abituati a scrivere in base 10 (con le cifre da 0 a 9) e lo trasforma 
+in una sequenza di 0 e 1, che è la base che i computer utilizzano per 
+rappresentare i dati internamente. Decodifica dal più significativo 
+al meno significativo. È anche possibile indicare il numero di cifre 
+da rappresentare.
+
+Se questo parametro viene omesso, verrà utilizzato il numero minimo 
+di cifre per quel formato di dati (8, 16 o 32 cifre).
+
+Questo comando è essenziale per coloro che desiderano approfondire 
+il funzionamento dei computer a un livello inferiore. Infatti, 
+questo comando consente di operare direttamente su singoli bit di 
+un numero, il che è utile in alcune applicazioni come la grafica 
+o le comunicazioni. Inoltre, molti algoritmi di crittografia si 
+basano su operazioni a livello di bit.
 
 @syntax = BIN( value [, digits] )
 
@@ -8675,15 +8886,19 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
 @keyword HAS BIT
 
 @english
-This instruction allows you to check if a certain bit in a certain position (0 based)
-in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
-the instruction will return the value `FALSE`. Otherwise, the statement will return `TRUE`.
+Think of a number as a sequence of switches, each of which can be on (1) or off (0). 
+Each switch represents a bit. The ''HAS BIT'' instruction will check
+a bit on (1), by checking the state of a specific switch within this sequence.
+The parameter ''position'' refers to the bit position inside the data. This value
+is zero based, and starts from the less significative bit and go on.
 
 @italian
-Questa istruzione permette di verificare se un certo bit in una certa posizione 
-(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
-Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `FALSE`. 
-Altrimenti, l'istruzione restituirà il valore `TRUE`.
+Pensa a un numero come a una sequenza di switch, ognuno dei quali può essere 
+acceso (1) o spento (0). Ogni switch rappresenta un bit. L'istruzione ''HAS BIT'' 
+controllerà un bit acceso (1), controllando lo stato di uno switch specifico 
+all'interno di questa sequenza. Il parametro ''position'' si riferisce alla 
+posizione del bit all'interno dei dati. Questo valore è zero-based e inizia 
+dal bit meno significativo.
 
 @syntax = value HAS BIT position
 
@@ -8695,8 +8910,8 @@ Altrimenti, l'istruzione restituirà il valore `TRUE`.
 @usedInExample screens_tilemap_01.bas
 
 @seeAlso HAS NOT BIT
-@seeAlso IS
-@seeAlso IS NOT
+@alias IS
+@alias IS NOT
 
 @target all
  </usermanual> */
@@ -8704,15 +8919,19 @@ Altrimenti, l'istruzione restituirà il valore `TRUE`.
 @keyword HAS NOT BIT
 
 @english
-This instruction allows you to check if a certain bit in a certain position (0 based)
-in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
-the instruction will return the value `TRUE`. Otherwise, the statement will return `FALSE`.
+Think of a number as a sequence of switches, each of which can be on (1) or off (0). 
+Each switch represents a bit. The ''HAS NOT BIT'' instruction will check
+a bit off (0), by checking the state of a specific switch within this sequence.
+The parameter ''position'' refers to the bit position inside the data. This value
+is zero based, and starts from the less significative bit and go on.
 
 @italian
-Questa istruzione permette di verificare se un certo bit in una certa posizione 
-(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
-Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `TRUE`. 
-Altrimenti, l'istruzione restituirà il valore `FALSE`.
+Pensa a un numero come a una sequenza di switch, ognuno dei quali può essere 
+acceso (1) o spento (0). Ogni switch rappresenta un bit. L'istruzione ''HAS NOT BIT'' 
+controllerà un bit spento (0), controllando lo stato di uno switch specifico 
+all'interno di questa sequenza. Il parametro ''position'' si riferisce alla 
+posizione del bit all'interno dei dati. Questo valore è zero-based e inizia 
+dal bit meno significativo.
 
 @syntax = value HAS NOT BIT position
 
@@ -8722,8 +8941,8 @@ Altrimenti, l'istruzione restituirà il valore `FALSE`.
 @usedInExample controls_keyboard_05.bas
 
 @seeAlso HAS NOT BIT
-@seeAlso IS
-@seeAlso IS NOT
+@alias IS
+@alias IS NOT
 
 @target all
  </usermanual> */
@@ -8731,15 +8950,8 @@ Altrimenti, l'istruzione restituirà il valore `FALSE`.
 @keyword IS
 
 @english
-This instruction allows you to check if a certain bit in a certain position (0 based)
-in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
-the instruction will return the value `FALSE`. Otherwise, the statement will return `TRUE`.
 
 @italian
-Questa istruzione permette di verificare se un certo bit in una certa posizione 
-(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
-Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `FALSE`. 
-Altrimenti, l'istruzione restituirà il valore `TRUE`.
 
 @syntax = value IS position
 
@@ -8749,8 +8961,8 @@ Altrimenti, l'istruzione restituirà il valore `TRUE`.
 @usedInExample controls_keyboard_03.bas
 
 @seeAlso IS NOT
-@seeAlso HAS BIT
-@seeAlso HAS NOT BIT
+@alias HAS BIT
+@alias HAS NOT BIT
 
 @target all
  </usermanual> */
@@ -8758,15 +8970,8 @@ Altrimenti, l'istruzione restituirà il valore `TRUE`.
 @keyword IS NOT
 
 @english
-This instruction allows you to check if a certain bit in a certain position (0 based)
-in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
-the instruction will return the value `TRUE`. Otherwise, the statement will return `FALSE`.
 
 @italian
-Questa istruzione permette di verificare se un certo bit in una certa posizione 
-(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
-Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `TRUE`. 
-Altrimenti, l'istruzione restituirà il valore `FALSE`.
 
 @syntax = value IS NOT position
 
@@ -8776,8 +8981,7 @@ Altrimenti, l'istruzione restituirà il valore `FALSE`.
 @usedInExample controls_keyboard_05.bas
 
 @seeAlso IS BIT
-@seeAlso HAS BIT
-@seeAlso HAS NOT BIT
+@alias HAS NOT BIT
 
 @target all
  </usermanual> */
@@ -8785,26 +8989,37 @@ Altrimenti, l'istruzione restituirà il valore `FALSE`.
 @keyword BIT...OF
 
 @english
-This instruction allows you to check if a certain bit in a certain position (0 based)
-in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
-the instruction will return the value `FALSE`. Otherwise, the statement will return `TRUE`.
 
 @italian
-Questa istruzione permette di verificare se un certo bit in una certa posizione 
-(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
-Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `FALSE`. 
-Altrimenti, l'istruzione restituirà il valore `TRUE`.
 
 @syntax = BIT position OF value
 
 @example IF BIT 2 OF x THEN: PRINT "bit 2 is 1!": ENDIF
 
-@seeAlso IS NOT
-@seeAlso HAS BIT
-@seeAlso HAS NOT BIT
+@alias HAS BIT
+@alias BIT (function)
 
 @target all
  </usermanual> */
+ /* <usermanual>
+@keyword BIT (function)
+
+@english
+
+@italian
+
+@syntax = BIT( value, position )
+
+@example IF BIT( 2,  x ) 
+@example    PRINT "bit 2 is 1!"
+@example ENDIF
+
+@alias HAS BIT
+@alias BIT OF
+
+@target all
+ </usermanual> */
+
 Variable * variable_bit( Environment * _environment, char * _value, char * _position ) {
     Variable * value = variable_retrieve( _environment, _value );
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 1 );
@@ -9252,6 +9467,27 @@ void image_converter_asserts( Environment * _environment, int _width, int _heigh
     }
 
 }
+
+void image_converter_asserts_free( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
+
+    if ( *_frame_width == 0 ) {
+        *_frame_width = _width;
+    }
+
+    if ( (_offset_x < 0) || (_offset_x >= _width) || ( ( _offset_x + (*_frame_width ) ) > _width ) ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_X( _offset_x );
+    }
+
+    if ( *_frame_height == 0 ) {
+        *_frame_height = _height;
+    }
+
+    if ( (_offset_y < 0) || (_offset_y >= _height) || ( ( _offset_y + ( *_frame_height )) > _height ) ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_Y( _offset_y );
+    }
+
+}
+
 
 void image_converter_asserts_free_width( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
 

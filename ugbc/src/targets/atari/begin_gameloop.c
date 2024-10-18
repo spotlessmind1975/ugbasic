@@ -51,8 +51,6 @@
  */
 /* <usermanual>
 @keyword BEGIN GAMELOOP
-
-@target c64
 </usermanual> */
 void begin_gameloop( Environment * _environment ) {
 

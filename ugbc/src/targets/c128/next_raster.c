@@ -52,16 +52,20 @@
 
 @english
 
-Wait for the next raster line. Meanwhile, the execution of the main 
-code will resume where it left off.
+The ''NEXT RASTER'' instruction will resume execution of the main program from
+where it had stopped, before serving the interrupt for the raster.
 
 @italian
-Aspetta il prossimo raster. Nel frattempo, l'esecuzione del 
-codice riprenderà da dove era stato interrotto.
+L'istruzione ''NEXT RASTER'' riprenderà l'esecuzione del programma principale 
+dal punto in cui si era interrotta, prima di fornire l'interruzione per il 
+raster.
 
 @syntax NEXT RASTER
 
 @example NEXT RASTER
+
+@seeAlso NEXT RASTER AT
+@seeAlso RASTER AT
 
 @target c128
 </usermanual> */

@@ -52,27 +52,44 @@
 @keyword BAR
 
 @english
-This instruction draws a filled rectangle (a bar) on the screen, starting from the coordinates ''(x1, y1)''
-to arrive at the coordinates ''(x2, y2)'', using the color ''c''. The start or the final
-coordinates can be omitted: in this case, ugBASIC will draw, respectively, starting from 
-the last drawn position and arriving at the last drawn position. If the color is 
-omitted, the last color selected with the ''INK'' or ''PEN'' command will be used. 
-Finally, the default line style is full but a 16 bit bitmask can be set with the ''SET LINE''
-command.
+
+The ''BAR'' instruction will draw a filled rectangle on the screen, specifying the 
+coordinates of its opposite corners. The ''x1'' and ''y1'' are the left top
+coordinates, while the ''x2'' and ''y2'' are the right bottom coordinates.
+
+The fill color could be the one predefined, or specified by additional parameter.
+The start or the final coordinates can be omitted: in this case, ugBASIC will draw, 
+respectively, starting from the last drawn position and arriving at the last drawn 
+position.
+
+Drawing (and filling) rectangles is a common operation in graphics. A dedicated command would 
+make the code more concise and readable. Filled rectangles can be used to create buttons, 
+text boxes, and other interface elements. The ''BAR'' command could be used as a basis 
+for creating more complex shapes.
 
 @italian
-Questa istruzione disegna un rettangolo riempito (una "barra") sullo schermo, a partire dalle coordinate ''(x1,y1)''
-per arrivare alle coordinate ''(x2,y2)'', utilizzando il colore ''c''. Le coordinate di inizio o
-quelle di fine possono essere omesse: in tal caso, ugBASIC disegnerà, rispettivamente, 
-ùa partire dall'ultima posizione disegnata arrivando all'ultima posizione disegnata. 
-Se il colore viene omesso sarà utilizzato l'ultimo colore selezionato con il comando ''INK'' 
-oppure ''PEN'. Infine, lo stile della linea di default è pieno ma può essere impostata una 
-bitmask di 16 bit con il comando ''SET LINE''.
 
-@syntax BAR [x1], [y1] TO x2, y2[, c ]
-@syntax BAR TO x2, y2[, c ]
+L'istruzione ''BAR'' disegnerà un rettangolo pieno sullo schermo, specificando 
+le coordinate dei suoi angoli opposti. ''x1'' e ''y1'' sono le coordinate in alto 
+a sinistra, mentre ''x2'' e ''y2'' sono le coordinate in basso a destra.
+Il colore di riempimento potrebbe essere quello predefinito o specificato da un 
+parametro aggiuntivo.
 
-@example BAR 10,10 TO 100,100,WHITE
+Le coordinate di inizio o fine possono essere omesse: in questo caso, ugBASIC disegnerà, 
+rispettivamente, partendo dall'ultima posizione disegnata e arrivando all'ultima posizione
+disegnata.
+
+Disegnare (e riempire) rettangoli è un'operazione comune nella grafica. Un comando 
+dedicato renderebbe il codice più conciso e leggibile. I rettangoli pieni possono 
+essere utilizzati per creare pulsanti, caselle di testo e altri elementi 
+dell'interfaccia. Il comando ''BAR'' potrebbe essere utilizzato come base per 
+creare forme più complesse.
+
+@syntax BAR [x1], [y1], [x2], [y2], [c]
+@syntax BAR [x1], [y1] TO [x2], [y2]
+@syntax BAR TO [x2], [y2][, c ]
+
+@example BAR 10,10,100,100,WHITE
 @example BAR TO 100,100
 @example BAR ,10 TO ,100
 

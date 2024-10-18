@@ -48,6 +48,68 @@
  /* <usermanual>
 @keyword DLOAD
 
+@english
+
+The ''DLOAD'' command  load data from a mass storage (normally, a floppy disk) into 
+the computer's memory. This data can be programs, numeric data, text, or any 
+other information that has previously been saved to disk.
+
+The ''DLOAD'' command was primarily used to load numeric data, text, or 
+images for use within a program. Some games allowed you to save the current 
+state of the game to a disk using ''DLOAD'' so you could resume playing 
+at a later time. 
+
+The syntax allows 
+you to load a specific file (''filename'') starting from a specific ''offset'' 
+within the file, towards a specific ''address'' in memory for a certain 
+number of ''bytes''. Note that the behavior of this instruction strictly 
+depends on the target where it is executed. It follows that not all options 
+are necessarily available on every target.
+
+The time it takes to load a file depended on the speed of the drive and 
+the size of the file. Files loaded had to be in the correct format for 
+the computer and the program using them. The amount of data that could 
+be loaded was limited by the available RAM.
+
+On the ''atari'' and ''atarixl'' target, it is not possible to omit
+the number of bytes and the starting address.
+
+On the ''c64'' and ''c128'' target, you cannot indicate
+the offset and the size.
+
+@italian
+
+Il comando ''DLOAD'' carica dati da un archivio di massa (normalmente 
+un floppy disk) nella memoria del computer. Questi dati possono 
+essere programmi, dati numerici, testo o qualsiasi altra informazione 
+precedentemente salvata su disco.
+
+Il comando ''DLOAD'' era utilizzato principalmente per caricare dati 
+numerici, testo o immagini da utilizzare all'interno di un programma. 
+Alcuni giochi ti consentivano di salvare lo stato corrente del gioco 
+su un disco utilizzando ''DLOAD'' in modo da poter riprendere a 
+giocare in un secondo momento.
+
+La sintassi ti consente di caricare un file specifico (''nomefile'') 
+a partire da uno specifico ''offset'' all'interno del file, verso 
+uno specifico ''indirizzo'' in memoria per un certo numero di 
+''byte''. Il comportamento di questa istruzione dipende strettamente 
+dal target in cui viene eseguita. Ne consegue che non tutte le 
+opzioni sono necessariamente disponibili su ogni target.
+
+Il tempo necessario per caricare un file dipende dalla velocità 
+dell'unità e dalle dimensioni del file. I file caricati dovevano 
+essere nel formato corretto per il computer e il programma che 
+li utilizzava. La quantità di dati che potevano essere caricati 
+era limitata dalla RAM disponibile.
+
+Sul target ''atari'' e ''atarixl'', non è possibile omettere il 
+numero di byte e l'indirizzo di partenza.
+
+@syntax DLOAD filename [FROM offset] [TO address] [SIZE size]
+
+@example DLOAD "test" TO finalAddress SIZE 16
+
 @target c128
 
 </usermanual> */

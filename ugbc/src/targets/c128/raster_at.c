@@ -56,24 +56,71 @@
 @keyword RASTER AT
 
 @english
+The ''RASTER AT'' instruction will set the next execution raster line for a
+raster routine. A raster routine is a small program or sequence of instructions 
+that uses a particular moment in the screen display to be activated. This is 
+when the electron beam (the raster beam) scans the screen, line by line, to 
+draw the image.
 
-Initialize a raster routine. In other words, asynchronously and in parallel 
-with the execution of the main program, the routine starting from the label 
-provided will be executed when the video raster on the screen reaches the 
-value given. 
+The mechanism is simple. The computer generated an interrupt (a signal that 
+stopped the main program being executed) every time the raster beam reached 
+the given line on this instruction. When the interrupt occurred, the 
+processor passed execution to the raster routine. The routine directly does
+something, like modify the video memory o registers. Once the change was 
+complete (by using the instruction ''NEXT RASTER''), the processor would 
+resume execution of the main program from where it had stopped.
+
+Using this mechanism, programmers could create very simple, but often 
+surprisingly engaging, graphics, animations, and games, considering the
+hardware limitations of the time. They were essential 
+for creating effects such as scrolling, moving sprites around the screen, 
+creating explosion or deformation effects. 
+
+Raster routines offers very precise control over image generation, 
+allowing for customized and optimized effects, and stimulated 
+the creativity of programmers, who could invent new ways to exploit 
+the mechanism to create innovative visual effects.
 
 @italian
-Inizializza una routine raster. In altre parole, in modo asincrono e in parallelo
-con l'esecuzione del programma principale, viene impostata una routine a partire 
-dall'etichetta fornita. Questa sarà eseguita quando il raster video sullo 
-schermo raggiunge il valore dato. 
+L'istruzione ''RASTER AT'' imposterà la successiva riga raster 
+di esecuzione per una routine raster. Una routine raster è un 
+piccolo programma o sequenza di istruzioni che utilizza un momento
+particolare nella visualizzazione dello schermo per essere attivata. 
+Questo è quando il fascio di elettroni (il fascio raster) esegue 
+la scansione dello schermo, riga per riga, per disegnare l'immagine.
+
+Il meccanismo è semplice. Il computer generava un'interruzione 
+(un segnale che interrompeva l'esecuzione del programma principale) 
+ogni volta che il fascio raster raggiungeva la riga specificata 
+in questa istruzione. Quando si verificava l'interruzione, il 
+processore passava l'esecuzione alla routine raster. La routine 
+fa qualcosa direttamente, come modificare la memoria video o i 
+registri. Una volta completata la modifica (utilizzando 
+l'istruzione ''NEXT RASTER''), il processore riprendeva l'esecuzione del
+programma principale da dove si era interrotta.
+
+Utilizzando questo meccanismo, i programmatori potevano creare grafiche, 
+animazioni e giochi molto semplici, ma spesso sorprendentemente 
+coinvolgenti, considerando le limitazioni hardware dell'epoca. 
+Erano essenziali per creare effetti come lo scorrimento, lo 
+spostamento di sprite sullo schermo, la creazione di effetti 
+di esplosione o deformazione.
+
+Le routine raster offrono un controllo molto preciso sulla 
+generazione delle immagini, consentendo effetti personalizzati e ottimizzati 
+e stimolando la creatività dei programmatori, che hanno potuto inventare 
+nuovi modi per sfruttare il meccanismo per creare effetti visivi innovativi.
 
 @syntax RASTER AT line WITH label
 @syntax RASTER label AT line
 
-@example RASTER AT #$42 WITH rasterRoutine
+@example RASTER AT #&H42 WITH rasterRoutine
 
 @target c128
+
+@seeAlso NEXT RASTER
+@seeAlso NEXT RASTER AT
+
 </usermanual> */
 void raster_at( Environment * _environment, char * _label, int _position ) {
     

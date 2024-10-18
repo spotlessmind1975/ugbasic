@@ -61,7 +61,6 @@
 @target mo5
 @target pc128op
 @target to8
-@seeAlso BITMAP (constant)
 </usermanual> */
 void bitmap_at( Environment * _environment, int _address ) {
 
