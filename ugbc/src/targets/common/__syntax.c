@@ -1841,35 +1841,61 @@ di stringe dinamiche concorrenti consentite.
 @keyword AFTER...CALL
 
 @english
-Define the call of a procedure after a specific amout of time, without 
-interfering with the main program. You must specifying the length of time 
-to wait, measured in TICKS. The ugBASIC branches to the 
-procedure after ''value''/''TICKS PER SECONDS'' seconds.
 
-There are 8 delay timers from 0 to 7 which can be specified with ''timer''. 
-If omitted ''timer'' defaults to 0. In the case of parallel task has 0 the 
-highest and 8 the lowest priority.
+The ''AFTER...CALL'' command implement a countdown timer for your program.
+It is a very useful tool for making a piece of code run after a specific interval, 
+essentially turning your program into a countdown. You must specifying the length 
+of time to wait, measured in ''TICKS''. 
+
+When the timer reaches the specified timer, the program stops executing the current 
+code and jumps to the ''PROCEDURE'' indicated by the label. After executing the 
+routine, the program returns to where it left off and resumes execution. After the call, 
+the timer is disabled. You must use, again, the ''AFTER...CALL'' to enable again the mechanism. 
+
+There are 8 delay timers from 0 to 7 which can be specified with ''timer''
+parameter. If omitted, ''timer'' will be considered as 0. In the case of parallel 
+timers, 0 will be the highest and 7 the lowest priority. 
 
 With ''EVERY OFF'' and ''EVERY ON'' you can disable or enable the timed 
-calls. It is important to know or realise that 
-low-priority-procedures which occurs simultanously to higher-priority-procedures 
-are not lost. Their task remains or handled again after finishing the higher-prio interrupt.
+calls. It is important to know or realise that low-priority-procedures 
+which occurs simultanously to higher-priority-procedures are not lost. 
+Their task remains or handled again after finishing the higher-prio interrupt.
+
+Finally, note that the accuracy of the timer can vary depending on hardware and operating system,
+and it can be used to create animations, simulate real-time events, or simply to execute 
+tasks after a specific time.
 
 @italian
-Introduce la chiamata di una procedura dopo un certo tempo, senza interferire 
-con il programma principale. È necessario specificare l'intervallo di tempo da attendere, 
-misurato in ''TICKS''. Il compilatore ugBASIC passa alla procedura 
-dopo ''value''/''TICKS PER SECOND'' secondi.
+Il comando ''AFTER...CALL'' implementa un timer di conto alla
+rovescia per il programma.
 
-Vi sono 8 timer di ritardo da 0 a 7 che possono essere specificati con ''timer''. 
-Se omesso, il valore predefinito ''timer'' è 0. Nel caso di attività parallela, 
-0 ha la priorità più alta e 8 la priorità più bassa.
+È uno strumento molto utile per far sì che un pezzo di codice venga eseguito 
+dopo un intervallo specifico, trasformando essenzialmente il tuo programma 
+in un conto alla rovescia. Devi specificare la durata del tempo di attesa,
+ misurata in ''TICKS''.
 
-Con ''EVERY OFF'' e ''EVERY ON'' è possibile disabilitare o abilitare le chiamate 
-temporizzate. È importante sapere o realizzare che le procedure a bassa priorità che si 
-verificano contemporaneamente alle procedure a priorità più alta non vanno perse. 
-Il loro compito rimane o viene gestito nuovamente dopo aver terminato 
-l'interruzione con priorità più alta.
+Quando il timer raggiunge il tempo specificato, il programma interrompe 
+l'esecuzione del codice corrente e passa alla ''PROCEDURE'' indicata 
+dall'etichetta. Dopo aver eseguito la routine, il programma torna al punto 
+in cui si era interrotto e riprende l'esecuzione. Dopo la chiamata, 
+il timer viene disabilitato. Devi usare, di nuovo, ''AFTER...CALL'' 
+per abilitare nuovamente il meccanismo.
+
+Ci sono 8 timer di ritardo da 0 a 7 che possono essere specificati con il 
+parametro ''timer''. Se omesso, ''timer'' verrà considerato come 0. 
+Nel caso di timer paralleli, 0 sarà la priorità più alta e 7 la priorità 
+più bassa.
+
+Con ''EVERY OFF'' e ''EVERY ON'' puoi disabilitare o abilitare le 
+chiamate temporizzate. È importante sapere o realizzare che le procedure 
+a bassa priorità che si verificano simultaneamente alle procedure a 
+priorità più alta non vengono perse. Il loro compito rimane o viene gestito 
+di nuovo dopo aver terminato l'interruzione a priorità più alta.
+
+Infine, nota che la precisione del timer può variare a seconda dell'hardware
+e del sistema operativo e può essere utilizzato per creare animazioni, 
+simulare eventi in tempo reale o semplicemente per eseguire attività dopo un 
+tempo specifico.
 
 @syntax AFTER value[,timer] TICKS CALL identifier
 
@@ -3593,7 +3619,6 @@ o potrebbe non esservi del tutto.
 
 </usermanual> */
 
-
 /* <usermanual>
 @keyword ADDRESS (data type)
 
@@ -3613,5 +3638,394 @@ indirizzi diversi.
 @syntax ... AS ADDRESS
 
 @example DIM limit AS ADDRESS = &H8000
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PAD 1 NEW AGE (constant)
+
+@english
+
+This constant represent the "Synth Pad 1 (New Age)" instrument, when used as parameter
+for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
+due to hardware limitations, or may not exist at all.
+
+@italian
+
+Questa costante rappresenta lo strumento "Synth Pad 1 (New Age)", quando utilizzato 
+come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
+strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
+o potrebbe non esservi del tutto.
+
+@syntax = PAD 1 NEW AGE
+
+@example INSTRUMENT PAD 1 NEW AGE ON #7
+
+</usermanual> */
+
+/* <usermanual>
+@keyword LEFT ALT (constant)
+
+@english
+
+This constant represent the left "ALT" key, when used as bitmask
+for ''KEY SHIFT'' instruction.
+
+@italian
+
+Questa costante rappresenta il tasto sinistro "ALT", quando utilizzato 
+come maschera di bit per l'istruzione ''KEY SHIFT''.
+
+@syntax = LEFT ALT
+
+@example IF KEY SHIFT AND LEFT ALT THEN
+@example    PRINT "LEFT ALT has been pressed!"
+@example ENDIF
+
+@alias ALT LEFT (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ALT LEFT (constant)
+
+@english
+
+This constant represent the left "ALT" key, when used as bitmask
+for ''KEY SHIFT'' instruction.
+
+@italian
+
+Questa costante rappresenta il tasto sinistro "ALT", quando utilizzato 
+come maschera di bit per l'istruzione ''KEY SHIFT''.
+
+@syntax = LEFT ALT
+
+@alias LEFT ALT (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword RIGHT ALT (constant)
+
+@english
+
+This constant represent the left "ALT" key, when used as bitmask
+for ''KEY SHIFT'' instruction.
+
+@italian
+
+Questa costante rappresenta il tasto sinistro "ALT", quando utilizzato 
+come maschera di bit per l'istruzione ''KEY SHIFT''.
+
+@syntax = RIGHT ALT
+
+@example IF KEY SHIFT AND RIGHT ALT THEN
+@example    PRINT "RIGHT ALT has been pressed!"
+@example ENDIF
+
+@alias ALT RIGHT (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ALT RIGHT (constant)
+
+@english
+
+This constant represent the left "ALT" key, when used as bitmask
+for ''KEY SHIFT'' instruction.
+
+@italian
+
+Questa costante rappresenta il tasto sinistro "ALT", quando utilizzato 
+come maschera di bit per l'istruzione ''KEY SHIFT''.
+
+@syntax = RIGHT ALT
+
+@alias RIGHT ALT (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ALTO SAX (constant)
+
+@english
+
+This constant represent the "Alto Sax" instrument, when used as parameter
+for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
+due to hardware limitations, or may not exist at all.
+
+@italian
+
+Questa costante rappresenta lo strumento "Sax Alto", quando utilizzato 
+come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
+strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
+o potrebbe non esservi del tutto.
+
+@syntax = ALTO SAX
+
+@example INSTRUMENT ALTO SAX ON #7
+
+</usermanual> */
+
+/* <usermanual>
+@keyword APPLAUSE (constant)
+
+@english
+
+This constant represent the "Applause" audio effect, when used as parameter
+for ''INSTRUMENT'' instruction. Please note that the actual tool may differ, 
+due to hardware limitations, or may not exist at all.
+
+@italian
+
+Questa costante rappresenta l'effetto "Applauso", quando utilizzato 
+come parametro per l'istruzione ''INSTRUMENT''. Da notare che l'effettivo 
+strumento potrebbe essere diverso, a causa delle limitazioni dell'hardware, 
+o potrebbe non esservi del tutto.
+
+@syntax = APPLAUSE
+
+@example INSTRUMENT APPLAUSE ON #7
+
+</usermanual> */
+
+
+/* <usermanual>
+@keyword ARRAY var = ...
+@keyword ARRAY var := ...
+
+@english
+
+The ''ARRAY'' keyword allows you to copy a block of memory from a static definition
+to an array at run time. In simple terms, it copies an array of bytes from the right
+expression to a ''var''. It is especially useful when you want to initialize an 
+array with a specific value or assign an entire array.
+
+This method is generally faster than copying element by element,
+ especially for large arrays. It provides a concise way to initialize an entire 
+ array with a constant value.
+
+If you want to initialize an array to a single byte, memset is more efficient.
+For small arrays or when initializing elements with different values, direct 
+assignment can be more readable.
+
+@italian
+
+La parola chiave ''ARRAY'' consente di copiare un blocco di memoria da una 
+definizione statica a un array in fase di esecuzione. In parole povere, 
+copia un array di byte dall'espressione corretta a una ''var''. 
+È particolarmente utile quando si desidera inizializzare un array con un 
+valore specifico o assegnare un intero array.
+
+Questo metodo è generalmente più veloce della copia elemento per elemento, 
+soprattutto per array di grandi dimensioni. Fornisce un modo conciso per 
+inizializzare un intero array con un valore costante.
+
+Se si desidera inizializzare un array a un singolo byte, memset 
+è più efficiente. Per array di piccole dimensioni o quando si inizializzano 
+elementi con valori diversi, l'assegnazione diretta può essere più 
+leggibile.
+
+@syntax ARRAY var = ...
+
+@example DIM var(4) AS BYTE
+@example ARRAY var = #{42424242}
+
+</usermanual> */
+
+/* <usermanual>
+@keyword LEFT ARROW (constant)
+
+@english
+
+This constant represent the left arrow key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto freccia sinistra, quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = LEFT ARROW
+
+@example IF SCANCODE = LEFT ARROW THEN
+@example    PRINT "LEFT ARROW has been pressed!"
+@example ENDIF
+
+@alias ARROW LEFT (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ARROW LEFT (constant)
+
+@english
+
+This constant represent the left arrow key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto freccia sinistra, quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = ARROW LEFT
+
+@example IF KET STATE(ARROW LEFT) THEN
+@example    PRINT "LEFT ARROW has been pressed!"
+@example ENDIF
+
+@alias LEFT ARROW (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword UP ARROW (constant)
+
+@english
+
+This constant represent the up arrow key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto freccia in alto, quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = UP ARROW
+
+@example IF SCANCODE = UP ARROW THEN
+@example    PRINT "UP ARROW has been pressed!"
+@example ENDIF
+
+@alias ARROW UP (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ARROW UP (constant)
+
+@english
+
+This constant represent the up arrow key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto freccia in alto, quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = ARROW UP
+
+@example IF KET STATE(ARROW UP) THEN
+@example    PRINT "UP ARROW has been pressed!"
+@example ENDIF
+
+@alias UP ARROW (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ASM
+
+@english
+
+The ''ASM'' command is a bridge between ugBASIC and the assembly language. 
+It allows you to directly insert instructions in machine language or 
+assembly language into the source code.
+
+In some sections of the code, especially those that require maximum 
+performance or very precise control over the hardware, writing directly 
+in assembly can bring significant speed improvements. Assembly allows you
+to interact directly with the registers and instructions of the CPU, 
+offering granular control over the hardware.
+
+When dealing with code that must run on different architectures, 
+assembly can be used to write portions of code that are highly 
+optimized for a specific platform. In some cases, you may need to 
+interface with code written in assembly or with pre-existing libraries.
+
+The first syntax allow to introduce a single machine code
+for each line, while the second one allows to introduce multiple
+lines, at once.
+
+Note that assembly code is tightly coupled to the processor 
+architecture. A block of assembly code written for a Zilog Z80
+will not run on an MOS 6502. Moreover, it is less readable than
+ugBASIC language, making it more difficult to maintain. Finally,
+a single error in assembly can cause the program to crash,
+and indiscriminate use of assembly can interact with compiler
+optimizations.
+
+Inline assembly should be used sparingly and only when 
+absolutely necessary. It is best used for small sections of 
+performance-critical code, for direct access to processor-specific 
+registers or instructions and to Interface with legacy code or
+specific hardware.
+
+@italian
+
+Il comando ''ASM'' è un ponte tra ugBASIC e il linguaggio assembly.
+Consente di inserire direttamente istruzioni in linguaggio macchina 
+o assembly nel codice sorgente.
+
+In alcune sezioni del codice, in particolare quelle che richiedono 
+le massime prestazioni o un controllo molto preciso sull'hardware, 
+scrivere direttamente in assembly può apportare notevoli miglioramenti 
+di velocità. L'assembly consente di interagire direttamente con i 
+registri e le istruzioni della CPU, offrendo un controllo 
+granulare sull'hardware.
+
+Quando si ha a che fare con codice che deve essere eseguito su 
+architetture diverse, l'assembly può essere utilizzato per scrivere 
+porzioni di codice altamente ottimizzate per una piattaforma specifica. 
+In alcuni casi, potrebbe essere necessario interfacciarsi con codice 
+scritto in assembly o con librerie preesistenti.
+
+La prima sintassi consente di introdurre un singolo codice macchina 
+per ogni riga, mentre la seconda consente di introdurre più righe 
+contemporaneamente.
+
+Nota che il codice assembly è strettamente accoppiato all'architettura 
+del processore. Un blocco di codice assembly scritto per uno Zilog Z80 
+non funzionerà su un MOS 6502. Inoltre, è meno leggibile del linguaggio 
+ugBASIC, il che lo rende più difficile da gestire. Infine, un singolo 
+errore in assembly può causare l'arresto anomalo del programma e l'uso 
+indiscriminato dell'assembly può interagire con le ottimizzazioni 
+del compilatore.
+
+L'assembly inline dovrebbe essere utilizzato con parsimonia e solo 
+quando assolutamente necessario. È meglio utilizzarlo per piccole 
+sezioni di codice critiche per le prestazioni, per l'accesso diretto 
+a registri o istruzioni specifici del processore e per interfacciarsi 
+con codice legacy o specifico per un hardware.
+
+@syntax ASM line
+@syntax BEGIN ASM
+@syntax    ...
+@syntax END ASM
+
+@example BEGIN ASM
+@example     LDA #02
+@example     STA $D020
+@example END ASM ON CPU6502
 
 </usermanual> */

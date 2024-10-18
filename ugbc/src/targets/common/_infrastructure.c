@@ -5164,7 +5164,11 @@ del risultato è un tipo numerico appropriato per i tipi di dati di entrambe le 
 
 @syntax = x AND y
 
-@example IF x AND 1 THEN: PRINT "x is odd" : ELSE : PRINT "x is even": ENDIF
+@example IF x AND 1 THEN
+@example    PRINT "x is odd" 
+@example ELSE
+@example    PRINT "x is even"
+@example ENDIF
 
 @target all
 </usermanual> */
@@ -7584,18 +7588,69 @@ Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
 @keyword ASC
 
 @english
-This function returns the internal ASCII code of the first character
-in a string. If the string is empty, the value returned will be 0.
+
+The ''ASC'' command performs a very specific function: it converts the first 
+character of a string into its corresponding ASCII code. ASCII stands for 
+American Standard Code for Information Interchange and it is a standard 
+encoding that associates each alphanumeric character and many symbols 
+with an integer between 0 and 127. This number represents the internal 
+representation of the character within the computer.
+
+The ''ASC'' command allows you to manipulate the individual characters 
+of a string numerically. For example, you can check whether a character 
+is an uppercase letter (its ASCII code will be between 65 and 90), or whether 
+it is a number (its ASCII code will be between 48 and 57).
+
+Comparing the ASCII codes of two characters is an efficient way to establish 
+the alphabetical order between them and, in some applications, you need to 
+convert characters to numbers or vice versa. ''ASC'' is a fundamental tool 
+for this type of operation.
+
+In 8-bit computers, memory is organized in bytes, which are sequences of 
+8 bits. Each byte can represent a number from 0 to 255. Since ASCII 
+encoding uses only 7 bits, a byte can represent 128 different characters.
+On 8-bit computers, the supported character set is limited to 128 ASCII 
+characters. This means that accented characters or characters from other
+languages cannot be directly represented.  The exact meaning of an ASCII 
+code can vary slightly depending on the encoding used. Note that the ''CHR$'' 
+command is the inverse of ''ASC'', it converts an ASCII code to a character. 
 
 @italian
-Questa funzione ritorna il codice ASCII del primo carattere di una stringa.
-Se la stringa è vuota, il valore restituito sarà zero (0).
+
+Il comando ''ASC'' esegue una funzione molto specifica: converte il primo 
+carattere di una stringa nel suo codice ASCII corrispondente. ASCII sta per 
+American Standard Code for Information Interchange ed è una codifica standard che
+associa ogni carattere alfanumerico e molti simboli a un numero intero compreso 
+tra 0 e 127. Questo numero rappresenta la rappresentazione interna del carattere 
+all'interno del computer.
+
+Il comando ''ASC'' consente di manipolare numericamente i singoli caratteri 
+di una stringa. Ad esempio, è possibile verificare se un carattere è una lettera
+maiuscola (il suo codice ASCII sarà compreso tra 65 e 90) o se è un numero 
+(il suo codice ASCII sarà compreso tra 48 e 57).
+
+Confrontare i codici ASCII di due caratteri è un modo efficiente per stabilire
+l'ordine alfabetico tra di essi e, in alcune applicazioni, è necessario convertire 
+i caratteri in numeri o viceversa. ''ASC'' è uno strumento fondamentale per 
+questo tipo di operazione.
+
+Nei computer a 8 bit, la memoria è organizzata in byte, che sono sequenze di 
+8 bit. Ogni byte può rappresentare un numero da 0 a 255. Poiché la codifica 
+ASCII utilizza solo 7 bit, un byte può rappresentare 128 caratteri diversi. 
+Nei computer a 8 bit, il set di caratteri supportato è limitato a 128 caratteri 
+ASCII. Ciò significa che i caratteri accentati o i caratteri di altre lingue 
+non possono essere rappresentati direttamente. Il significato esatto di un 
+codice ASCII può variare leggermente a seconda della codifica utilizzata. 
+Nota che il comando ''CHR$'' è l'inverso di ''ASC'', converte un codice 
+ASCII in un carattere.
 
 @syntax = ASC( string )
 
 @example x = ASC( "UGBASIC" )
 
 @usedInExample strings_asc_01.bas
+
+@seeAlso CHR
 
 @target all
  </usermanual> */

@@ -47,15 +47,42 @@
 @keyword FORBID
 
 @english
-This keyword will disable the multitasking up to the next ''ALLOW'' keyword.
+
+In some situations, it is necessary to ensure that a sequence of operations is executed 
+atomically, without interruption. The ''FORBID'' instruction plays a crucial role 
+in this way, offering the programmer a way to take full control of the system's execution, 
+at least temporarily.
+
+In simple terms, ''FORBID'' blocks any attempt by ugBASIC to pass execution from one task 
+to another. This means that the task that called ''FORBID'' will continue to execute 
+its code without interruption until a corresponding call to ''ALLOW'' is made. The ''FORBID''
+ensures that a sequence of critical operations is executed indivisibly, 
+without interference from other tasks. This gives the programmer granular control 
+over the system's execution.
 
 @italian
-Questa parola chiave sospende il multitasking, fino alla prossima parola
-chiave ''ALLOW''.
+
+In alcune situazioni, è necessario garantire che una sequenza di operazioni venga 
+eseguita in modo atomico, senza interruzioni. L'istruzione ''FORBID'' svolge un ruolo 
+cruciale in questo senso, offrendo al programmatore un modo per assumere il pieno 
+controllo dell'esecuzione del sistema, almeno temporaneamente.
+
+In parole povere, ''FORBID'' blocca qualsiasi tentativo di ugBASIC di passare 
+l'esecuzione da un task a un altro. Ciò significa che il task che ha chiamato 
+''FORBID'' continuerà a eseguire il suo codice senza interruzioni finché non verrà 
+effettuata una chiamata corrispondente a ''ALLOW''. ''FORBID'' assicura che 
+una sequenza di operazioni critiche venga eseguita in modo indivisibile, 
+senza interferenze da parte di altri task. Ciò fornisce al programmatore 
+un controllo granulare sull'esecuzione del sistema.
 
 @syntax FORBID
 
-@example FORBID
+@example PARALLEL PROCEDURE test
+@example    FORBID
+@example    ' busy waiting, multitasking is suspended!
+@example    FOR i=0 TO 1000: WAIT 1 MS : NEXT i
+@example    ALLOW
+@example END PROC
 
 @target all
 </usermanual> */
