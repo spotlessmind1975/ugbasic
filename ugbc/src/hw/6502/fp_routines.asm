@@ -2031,6 +2031,13 @@ FSIN:
 
        JSR FSUB ; x - pi/2
 FCOS:
+
+       ; cos(x) = cos(-x)
+
+       LDA M1
+       AND #$7F
+       STA M1
+
        ; 
        ; cos x = 1
        LDA N1
