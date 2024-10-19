@@ -116,8 +116,6 @@ void target_initialization( Environment * _environment ) {
 
     }
 
-    cpu_call( _environment, "VARINITFLOAT" );
-    
 }
 
 
