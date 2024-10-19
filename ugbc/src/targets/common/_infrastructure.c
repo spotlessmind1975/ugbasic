@@ -1617,7 +1617,7 @@ Variable * variable_store_float( Environment * _environment, char * _destination
                 //     FLOAT
                 //     M1 MUL 10^q
                 //     STORE
-                double q = fabs( _value ), n = 1;
+                double q = fabs( _value ), n = 0;
                 int s = _value >= 0 ? 1 : -1;
                 while ( q > 32767 ) {
                     q = q / pow( 10, n );
@@ -1654,10 +1654,11 @@ Variable * variable_store_float( Environment * _environment, char * _destination
                 //     FLOAT
                 //     M1 DIV 10^q
                 //     STORE            
-                double q = fabs( _value ), n = 1;
+                double q = fabs( _value ), n = 0;
                 int s = _value >= 0 ? 1 : -1;
                 do {
                     q = q * 10;
+                    n = n + 1;
                     double integral;
                     double fractional = modf(q, &integral);
                     if ( fractional == 0.0 ) {
@@ -11384,7 +11385,6 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     }
 
     if ( ! VT_DIRECT_ASSIGN( expr->type ) ) {
-        printf( "%d = %d\n", var->type, expr->type );
         CRITICAL_VARIABLE_CANNOT_DIRECT_ASSIGN_WRONG_TYPE( _var, DATATYPE_AS_STRING[expr->type] );
     }
 
