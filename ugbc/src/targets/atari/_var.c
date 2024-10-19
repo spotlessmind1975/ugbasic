@@ -456,14 +456,17 @@ static void variable_cleanup_memory_mapped_float_init( Environment * _environmen
                 variable_store( _environment, word->name, (int)(q) * s);
                 Variable * scale = variable_temporary( _environment, VT_WORD, "(tmp)");
                 variable_store( _environment, scale->name, (int)(pow(10, n)));
+                Variable * scalefp = variable_temporary( _environment, VT_FLOAT, "(tmp)");
                 switch( _variable->precision ) {
                     case FT_FAST:
                         cpu_float_fast_from_16( _environment, word->realName, _variable->realName, 1 );
-                        cpu_float_fast_mul( _environment, _variable->realName, scale->realName, _variable->realName );
+                        cpu_float_fast_from_16( _environment, scale->realName, scalefp->realName, 1 );
+                        cpu_float_fast_mul( _environment, _variable->realName, scalefp->realName, _variable->realName );
                         break;
                     case FT_SINGLE:
                         cpu_float_single_from_16( _environment, word->realName, _variable->realName, 1 );
-                        cpu_float_single_mul( _environment, _variable->realName, scale->realName, _variable->realName );
+                        cpu_float_single_from_16( _environment, scale->realName, scalefp->realName, 1 );
+                        cpu_float_single_mul( _environment, _variable->realName, scalefp->realName, _variable->realName );
                         break;
                     default:
                         CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[_variable->type], "FLOAT" );
@@ -491,14 +494,17 @@ static void variable_cleanup_memory_mapped_float_init( Environment * _environmen
                 variable_store( _environment, word->name, (int)(q) * s);
                 Variable * scale = variable_temporary( _environment, VT_WORD, "(tmp)");
                 variable_store( _environment, scale->name, (int)(pow(10, n)));
+                Variable * scalefp = variable_temporary( _environment, VT_FLOAT, "(tmp)");
                 switch( _variable->precision ) {
                     case FT_FAST:
                         cpu_float_fast_from_16( _environment, word->realName, _variable->realName, 1 );
-                        cpu_float_fast_div( _environment, _variable->realName, scale->realName, _variable->realName );
+                        cpu_float_fast_from_16( _environment, scale->realName, scalefp->realName, 1 );
+                        cpu_float_fast_div( _environment, _variable->realName, scalefp->realName, _variable->realName );
                         break;
                     case FT_SINGLE:
                         cpu_float_single_from_16( _environment, word->realName, _variable->realName, 1 );
-                        cpu_float_single_div( _environment, _variable->realName, scale->realName, _variable->realName );
+                        cpu_float_single_from_16( _environment, scale->realName, scalefp->realName, 1 );
+                        cpu_float_single_div( _environment, _variable->realName, scalefp->realName, _variable->realName );
                         break;
                     default:
                         CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[_variable->type], "FLOAT" );

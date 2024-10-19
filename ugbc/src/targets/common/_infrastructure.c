@@ -1607,7 +1607,91 @@ Variable * variable_store_float( Environment * _environment, char * _destination
                     break;
             }
 
+#if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
+    defined(__c64reu__) || defined(__c128__)
+            double integral;
+            double fractional = modf( _value, &integral);
+            if ( fractional == 0.0 ) {
+                // n > 65535 -> q | n / 10^q < 65535
+                //     M1  <- n/q
+                //     FLOAT
+                //     M1 MUL 10^q
+                //     STORE
+                double q = fabs( _value ), n = 1;
+                int s = _value >= 0 ? 1 : -1;
+                while ( q > 32767 ) {
+                    q = q / pow( 10, n );
+                    n = n + 1;
+                    if ( n >= 4 ) {
+                        break;
+                    }
+                }
+                if ( n >= 4 ) {
+                    WARNING_BITWIDTH( destination->name, destination->name );
+                }                
+                Variable * word = variable_temporary( _environment, VT_SWORD, "(tmp)");
+                variable_store( _environment, word->name, (int)(q) * s);
+                Variable * scale = variable_temporary( _environment, VT_WORD, "(tmp)");
+                variable_store( _environment, scale->name, (int)(pow(10, n)));
+                Variable * scalefp = variable_temporary( _environment, VT_FLOAT, "(scalefp)");
+                switch( destination->precision ) {
+                    case FT_FAST:
+                        cpu_float_fast_from_16( _environment, word->realName, destination->realName, 1 );
+                        cpu_float_fast_from_16( _environment, scale->realName, scalefp->realName, 1 );
+                        cpu_float_fast_mul( _environment, destination->realName, scalefp->realName, destination->realName );
+                        break;
+                    case FT_SINGLE:
+                        cpu_float_single_from_16( _environment, word->realName, destination->realName, 1 );
+                        cpu_float_single_from_16( _environment, scale->realName, scalefp->realName, 1 );
+                        cpu_float_single_mul( _environment, destination->realName, scalefp->realName, destination->realName );
+                        break;
+                    default:
+                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[destination->type], "FLOAT" );
+                }
+            } else {
+                // n != INT(n)	->	q | INT(n * 10^q) == n * 10^q
+                //     M1 <- n*10^q
+                //     FLOAT
+                //     M1 DIV 10^q
+                //     STORE            
+                double q = fabs( _value ), n = 1;
+                int s = _value >= 0 ? 1 : -1;
+                do {
+                    q = q * 10;
+                    double integral;
+                    double fractional = modf(q, &integral);
+                    if ( fractional == 0.0 ) {
+                        break;
+                    }
+                } while( n < 4 );
+                if ( n >= 4 ) {
+                    WARNING_BITWIDTH( destination->name, destination->name );
+                }
+                Variable * word = variable_temporary( _environment, VT_SWORD, "(tmp)");
+                variable_store( _environment, word->name, (int)(q) * s);
+                Variable * scale = variable_temporary( _environment, VT_WORD, "(tmp)");
+                variable_store( _environment, scale->name, (int)(pow(10, n)));
+                Variable * scalefp = variable_temporary( _environment, VT_FLOAT, "(scalefp)");
+                switch( destination->precision ) {
+                    case FT_FAST:
+                        cpu_float_fast_from_16( _environment, word->realName, destination->realName, 1 );
+                        cpu_float_fast_from_16( _environment, scale->realName, scalefp->realName, 1 );
+                        cpu_float_fast_div( _environment, destination->realName, scalefp->realName, destination->realName );
+                        break;
+                    case FT_SINGLE:
+                        cpu_float_single_from_16( _environment, word->realName, destination->realName, 1 );
+                        cpu_float_single_from_16( _environment, scale->realName, scalefp->realName, 1 );
+                        cpu_float_single_div( _environment, destination->realName, scalefp->realName, destination->realName );
+                        break;
+                    default:
+                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[destination->type], "FLOAT" );
+                }
+            }
+
+
+#else
             cpu_store_nbit( _environment, destination->realName, VT_FLOAT_BITWIDTH( destination->precision ), result );
+#endif
 
             break;
         }
