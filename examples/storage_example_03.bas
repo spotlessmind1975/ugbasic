@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM STORAGE MANAGEMENT LOADING AN IMAGE (2)
 REM
 REM This example shows how to load an image at runtime. This example
@@ -11,6 +11,8 @@ REM
 REM Questo esempio mostra come caricare una immagine a runtime. Questo
 REM esempio mostra il primo approccio, che è per così dire "manuale",
 REM ed applicato a immagini multiple.
+REM 
+REM @include atari,atarixl,c128,c64,coco,coco3,vic20,cpc
 
     BITMAP ENABLE
 

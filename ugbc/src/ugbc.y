@@ -3017,12 +3017,24 @@ exponential:
     }
     | PI {
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
+#if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+    defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__)
         variable_store_float( _environment, pi->name, M_PI );
+#else
+        cpu_move_32bit( _environment, "PI", pi->realName );
+#endif
         $$ = pi->name;
       }
     | PI OP CP {
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
+#if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+    defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__)
         variable_store_float( _environment, pi->name, M_PI );
+#else
+        cpu_move_32bit( _environment, "PI", pi->realName );
+#endif
         $$ = pi->name;
       }
     | SQR OP expr CP {

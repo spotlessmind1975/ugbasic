@@ -116,7 +116,6 @@ void target_initialization( Environment * _environment ) {
 
     }
 
-    
 }
 
 

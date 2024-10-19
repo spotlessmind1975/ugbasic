@@ -33,6 +33,7 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
+#include <math.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -357,20 +358,21 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             outline1(" .dword $%4.4x", ( _variable->value & 0xffff ) );
             break;
         case VT_FLOAT: {
-            outhead1("%s:", _variable->realName );
-            int bytes = VT_FLOAT_BITWIDTH( _variable->precision ) >> 3;
-            int * data = malloc( bytes * sizeof( int ) );
-            switch( _variable->precision ) {
-                case FT_FAST:
-                    cpu_float_fast_from_double_to_int_array( _environment, _variable->valueFloating, data );
-                    break;
-                case FT_SINGLE:
-                    cpu_float_single_from_double_to_int_array( _environment, _variable->valueFloating, data );
-                    break;
-            }
-            for( int i=0; i<bytes; ++i ) {
-                outline1(" .byte $%2.2x", (unsigned char)( ( data[i] ) & 0xff ) );
-            }
+            // outhead1("%s:", _variable->realName );
+            // int bytes = VT_FLOAT_BITWIDTH( _variable->precision ) >> 3;
+            // int * data = malloc( bytes * sizeof( int ) );
+            // switch( _variable->precision ) {
+            //     case FT_FAST:
+            //         cpu_float_fast_from_double_to_int_array( _environment, _variable->valueFloating, data );
+            //         break;
+            //     case FT_SINGLE:
+            //         cpu_float_single_from_double_to_int_array( _environment, _variable->valueFloating, data );
+            //         break;
+            // }
+            // for( int i=0; i<bytes; ++i ) {
+            //     outline1(" .byte $%2.2x", (unsigned char)( ( data[i] ) & 0xff ) );
+            // }
+            outhead1("%s: .res 4,0", _variable->realName);
             break;
         }
         case VT_STRING:
