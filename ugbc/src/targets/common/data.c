@@ -49,18 +49,21 @@
 
 @english
 
-The ''DATA'' command is used to store constant information in the program code,
-and is used with the BASIC-command ''READ''. Each ''DATA''-line can contain one
-or more constants separated by commas. Expressions containing variables 
-will not be evaluated here.
+The ''DATA'' command is used to create a list of data that will be used 
+in other parts of the program. It is like a container where values ​​are 
+stored that will then be "read" and used by other commands.
 
-The instruction stores numeric data in an optimized way: so, if you enter a numeric
-constant that can be represented by a single byte, it will be stored in the program
-as a single byte. Floating point numbers are stored with default precision. 
-Finally, strings are stored "as is". As a result, when you use the ''READ'' command, 
-ugBASIC will implicitly perform the conversion if the same data type is not used,
-and it is posssible. It is possible to avoid optimization by using the ''AS'' 
-keyword with the data type.
+The ''DATA'' command is usually placed at the beginning of the program or in
+a section dedicated to the definitions of data, but it is not mandatory.
+The ''data1'', ''data2'', ... so on should be replaced witht he data you want to 
+store inside the program. These can be numbers or text strings. To read the 
+data contained in a ''DATA'' statement, you use the ''READ'' command. 
+This command assigns the values ​​contained in ''DATA'' to variables.
+
+You can use multiple ''DATA'' statements to fill an array with a set of values.
+Another usage is to create small tables of data, for example to represent 
+menus or product lists. You can also store constants that are used frequently 
+in the program.
 
 The ''DATA'' values will be read from left to right, beginning with the first 
 line containing a ''DATA'' statement. Each time a ''READ'' instruction is 
@@ -72,45 +75,74 @@ the pointer of the current ''DATA'' position the program start so that
 next ''READ'' will read from the first ''DATA'' found from the beginning 
 of the program.
 
-In case ''READ'' uses the wrong variable type, variable will be untouched
-and pointer will be left to the current position. There is no easy way
-to get the position of the ''READ'' statement which is the real origin of 
-the mismatch. 
+The instruction ''DATA'' stores numeric data in an optimized way: so, if you enter a numeric
+constant that can be represented by a single byte, it will be stored in the program
+as a single byte. Floating point numbers are stored with default precision. 
+Finally, strings are stored "as is". As a result, when you use the ''READ'' command, 
+ugBASIC will implicitly perform the conversion if the same data type is not used,
+and if it is posssible. It is possible to avoid this behavious by using the ''AS'' 
+keyword, followed by the data type.
 
-''DATA'' lines may scattered over the whole program code. 
+Separates the definition of data from its use, makes the code more readable 
+and maintainable. You can change the data without having to change the 
+logic of the program. Finally, the same data can be read multiple times 
+in different parts of the program.
+
+There is also a version of the syntax that allows you to load values ​​from 
+an external file. This syntax is currently limited to numeric data that must be
+separated by a non-numeric separator.
 
 @italian
 
-Il comando ''DATA'' viene utilizzato per memorizzare informazioni costanti 
-nel codice del programma e viene utilizzato con il comando BASIC ''READ''. 
-Ogni riga ''DATA'' può contenere una o più costanti separate da virgole. 
-Le espressioni contenenti variabili non verranno valutate.
+Il comando ''DATA'' serve per creare un elenco di dati che saranno 
+utilizzati in altre parti del programma. È come un contenitore in 
+cui vengono memorizzati valori che saranno poi "letti" e utilizzati 
+da altri comandi.
 
-L'istruzione memorizza i dati numerici in modo ottimizzato: quindi, se 
-si inserisce una costante numerica che può essere rappresentata da un
-singolo byte, così sarà memorizzata nel programma. I numeri in virgola 
-mobile sono memorizzati secondo la precisione di default. Infine, le stringhe
-sono memorizzate "as is". Ne consegue che, quando si utilizzerà il comando 
-''READ'', ugBASIC effettuerà implicitamente la conversione laddove 
-non si utilizzi lo stesso tipo di dato, laddove possibile. Si può evitare
-l'ottimizzazione utilizzando la parola chiave AS con il tipo di dato.
+Il comando ''DATA'' è solitamente posizionato all'inizio del programma 
+o in una sezione dedicata alle definizioni dei dati, ma non è obbligatorio.
+''data1'', ''data2'', ... e così via devono essere sostituiti con i dati che si 
+desidera memorizzare all'interno del programma. Possono essere numeri o 
+stringhe di testo. Per leggere i dati contenuti in un'istruzione ''DATA'', 
+si utilizza il comando ''READ''. Questo comando assegna i valori contenuti 
+in ''DATA'' alle variabili.
 
-I valori ''DATA'' verranno letti da sinistra a destra, iniziando con la 
+È possibile utilizzare più istruzioni ''DATA'' per riempire un array con
+un set di valori. Un altro utilizzo è quello di creare piccole tabelle di 
+dati, ad esempio per rappresentare menu o elenchi di prodotti. È inoltre 
+possibile memorizzare costanti che vengono utilizzate frequentemente nel 
+programma.
+
+I valori ''DATA'' verranno letti da sinistra a destra, iniziando dalla 
 prima riga contenente un'istruzione ''DATA''. Ogni volta che viene eseguita 
-un'istruzione ''READ'', la posizione ''DATA'' salvata dell'ultima ''READ'' 
-viene avanzata al valore successivo. Le stringhe devono essere scritte tra 
-virgolette, quindi caratteri come virgola, spazio, due punti, caratteri grafici 
-o caratteri di controllo devono essere scritti tra virgolette doppie come le 
-costanti di stringa. Il ''RESTORE'' reimposta il puntatore della posizione corrente 
-dei ''DATA'' all'inizio del programma in modo che il successivo ''READ'' leggerà 
-dal primo ''DATA'' trovato dall'inizio del programma.
+un'istruzione ''READ'', la posizione ''DATA'' salvata dell'ultimo ''READ'' 
+viene avanzata al valore successivo. Le stringhe devono essere scritte 
+tra virgolette, quindi caratteri come virgola, spazio, due punti, 
+caratteri grafici o caratteri di controllo devono essere scritti tra 
+virgolette doppie come le costanti stringa. ''RESTORE'' reimposta il 
+puntatore della posizione ''DATA'' corrente all'avvio del programma 
+in modo che il successivo ''READ'' legga dal primo ''DATA'' trovato 
+dall'inizio del programma.
 
-Nel caso in cui ''READ'' utilizzi il tipo di variabile sbagliato, la variabile 
-non verrà toccata e il puntatore verrà lasciato nella posizione corrente. 
-Non esiste un modo semplice per ottenere la posizione dell'istruzione ''READ'' 
-che è la vera origine della mancata corrispondenza.
+L'istruzione ''DATA'' memorizza i dati numerici in modo ottimizzato: 
+quindi, se si immette una costante numerica che può essere rappresentata 
+da un singolo byte, verrà memorizzata nel programma come un singolo byte. 
+I numeri in virgola mobile vengono memorizzati con precisione predefinita.
+Infine, le stringhe vengono memorizzate "così come sono". Di conseguenza, 
+quando si usa il comando ''READ'', ugBASIC eseguirà implicitamente la 
+conversione se non viene usato lo stesso tipo di dati e se è possibile. 
+È possibile evitare questo comportamento usando la parola chiave ''AS'', 
+seguita dal tipo di dati.
 
-Le righe ''DATA'' possono essere sparse nell'intero codice del programma.
+Separa la definizione dei dati dal loro utilizzo, rende il codice più 
+leggibile e gestibile. È possibile modificare i dati senza dover cambiare 
+la logica del programma. Infine, gli stessi dati possono essere letti 
+più volte in diverse parti del programma. 
+
+E' disponibile anche una versione della sintassi che permette di caricare
+i valori presenti in un file esterno. Questa sintassi, al momento, è 
+limitata ai dati di tipo numerico che devono essere separati da un 
+separatore non numerico.
 
 @syntax DATA data1 [, data2 [, data3 ... ] ]
 @syntaxDATA [AS data type] data1 [, data2 [, data3 ... ] ]
@@ -125,8 +157,6 @@ Le righe ''DATA'' possono essere sparse nell'intero codice del programma.
 @usedInExample data_example_03.bas
 @usedInExample data_example_05.bas
 
-@target all
-@verified
 </usermanual> */
 void data_numeric( Environment * _environment, int _value ) {
 
