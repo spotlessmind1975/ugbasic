@@ -2089,6 +2089,15 @@ FCOSL1:
 
        JSR FSUB
 
+       LDA X1
+       STA RES
+       LDA M1
+       STA RES+1
+       LDA M1+1
+       STA RES+2
+       LDA M1+2
+       STA RES+3
+       
        LDA MATHPTR0
        EOR #$FF
        STA MATHPTR0
