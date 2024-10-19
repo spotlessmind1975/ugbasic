@@ -69,7 +69,13 @@ Variable * fp_tan( Environment * _environment, char * _angle ) {
         case FT_FAST:
             if ( _environment->floatType.angle == FT_DEGREE ) {
                 Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
+#if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+    defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__)
                 variable_store_float( _environment, pi->name, M_PI );
+#else
+                cpu_move_32bit( _environment, "PI", pi->realName );
+#endif
                 Variable * d180 = variable_temporary( _environment, VT_FLOAT, "(d180)" );
                 variable_store_float( _environment, d180->name, 180.0 );
                 Variable * radianAngle = variable_temporary( _environment, VT_FLOAT, "(tan)");
@@ -83,7 +89,13 @@ Variable * fp_tan( Environment * _environment, char * _angle ) {
         case FT_SINGLE:
             if ( _environment->floatType.angle == FT_DEGREE ) {
                 Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
+#if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+    defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__)
                 variable_store_float( _environment, pi->name, M_PI );
+#else
+                cpu_move_32bit( _environment, "PI", pi->realName );
+#endif
                 Variable * d180 = variable_temporary( _environment, VT_FLOAT, "(d180)" );
                 variable_store_float( _environment, d180->name, 180.0 );
                 Variable * radianAngle = variable_temporary( _environment, VT_FLOAT, "(tan)");
