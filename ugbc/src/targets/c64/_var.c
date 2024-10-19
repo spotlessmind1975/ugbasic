@@ -33,6 +33,7 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
+#include <math.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -349,18 +350,19 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_FLOAT: {
             outhead1("%s:", _variable->realName );
             int bytes = VT_FLOAT_BITWIDTH( _variable->precision ) >> 3;
-            int * data = malloc( bytes * sizeof( int ) );
-            switch( _variable->precision ) {
-                case FT_FAST:
-                    cpu_float_fast_from_double_to_int_array( _environment, _variable->valueFloating, data );
-                    break;
-                case FT_SINGLE:
-                    cpu_float_single_from_double_to_int_array( _environment, _variable->valueFloating, data );
-                    break;
-            }
-            for( int i=0; i<bytes; ++i ) {
-                outline1(" .byte $%2.2x", (unsigned char)( ( data[i] ) & 0xff ) );
-            }
+            // int * data = malloc( bytes * sizeof( int ) );
+            // switch( _variable->precision ) {
+            //     case FT_FAST:
+            //         cpu_float_fast_from_double_to_int_array( _environment, _variable->valueFloating, data );
+            //         break;
+            //     case FT_SINGLE:
+            //         cpu_float_single_from_double_to_int_array( _environment, _variable->valueFloating, data );
+            //         break;
+            // }
+            // for( int i=0; i<bytes; ++i ) {
+            //     outline1(" .byte $%2.2x", (unsigned char)( ( data[i] ) & 0xff ) );
+            // }
+            outhead1("%s: .res 4,0", _variable->realName);
             break;
         }
         case VT_STRING:
@@ -543,6 +545,95 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 
     if ( bitCount > 0 ) {
         outline0("   .res 1,0");
+    }
+
+}
+
+static void variable_cleanup_memory_mapped_float_init( Environment * _environment, Variable * _variable ) {
+
+    outhead2("; %s (%4.4x)", _variable->realName, _variable->absoluteAddress );
+
+    switch( _variable->type ) {
+        case VT_FLOAT: {
+            outhead1("%s:", _variable->realName );
+
+            double integral;
+            double fractional = modf( _variable->valueFloating, &integral);
+            if ( fractional == 0.0 ) {
+                // n > 65535 -> q | n / 10^q < 65535
+                //     M1  <- n/q
+                //     FLOAT
+                //     M1 MUL 10^q
+                //     STORE
+                double q = fabs( _variable->valueFloating ), n = 1;
+                int s = _variable->valueFloating >= 0 ? 1 : -1;
+                while ( q > 32767 ) {
+                    q = q / pow( 10, n );
+                    n = n + 1;
+                    if ( n >= 4 ) {
+                        break;
+                    }
+                }
+                if ( n >= 4 ) {
+                    WARNING_BITWIDTH( _variable->name, _variable->name );
+                }                
+                Variable * word = variable_temporary( _environment, VT_SWORD, "(tmp)");
+                variable_store( _environment, word->name, (int)(q) * s);
+                Variable * scale = variable_temporary( _environment, VT_WORD, "(tmp)");
+                variable_store( _environment, scale->name, (int)(pow(10, n)));
+                switch( _variable->precision ) {
+                    case FT_FAST:
+                        cpu_float_fast_from_16( _environment, word->realName, _variable->realName, 1 );
+                        cpu_float_fast_mul( _environment, _variable->realName, scale->realName, _variable->realName );
+                        break;
+                    case FT_SINGLE:
+                        cpu_float_single_from_16( _environment, word->realName, _variable->realName, 1 );
+                        cpu_float_single_mul( _environment, _variable->realName, scale->realName, _variable->realName );
+                        break;
+                    default:
+                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[_variable->type], "FLOAT" );
+                }
+            } else {
+                // n != INT(n)	->	q | INT(n * 10^q) == n * 10^q
+                //     M1 <- n*10^q
+                //     FLOAT
+                //     M1 DIV 10^q
+                //     STORE            
+                double q = fabs( _variable->valueFloating ), n = 1;
+                int s = _variable->valueFloating >= 0 ? 1 : -1;
+                do {
+                    q = q * 10;
+                    double integral;
+                    double fractional = modf(q, &integral);
+                    if ( fractional == 0.0 ) {
+                        break;
+                    }
+                } while( n < 4 );
+                if ( n >= 4 ) {
+                    WARNING_BITWIDTH( _variable->name, _variable->name );
+                }
+                Variable * word = variable_temporary( _environment, VT_SWORD, "(tmp)");
+                variable_store( _environment, word->name, (int)(q) * s);
+                Variable * scale = variable_temporary( _environment, VT_WORD, "(tmp)");
+                variable_store( _environment, scale->name, (int)(pow(10, n)));
+                switch( _variable->precision ) {
+                    case FT_FAST:
+                        cpu_float_fast_from_16( _environment, word->realName, _variable->realName, 1 );
+                        cpu_float_fast_div( _environment, _variable->realName, scale->realName, _variable->realName );
+                        break;
+                    case FT_SINGLE:
+                        cpu_float_single_from_16( _environment, word->realName, _variable->realName, 1 );
+                        cpu_float_single_div( _environment, _variable->realName, scale->realName, _variable->realName );
+                        break;
+                    default:
+                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[_variable->type], "FLOAT" );
+                }
+            }
+
+            break;
+        }
+
+
     }
 
 }
@@ -775,7 +866,43 @@ void variable_cleanup( Environment * _environment ) {
 
     // outhead0(".segment \"CODE\"" );
 
+    outhead0( "VARINITFLOAT:");
+
+    for(i=0; i<BANK_TYPE_COUNT; ++i) {
+        Bank * actual = _environment->banks[i];
+        while( actual ) {
+            if ( actual->type == BT_VARIABLES ) {
+                // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
+                // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+                // outhead1(".segment \"%s\"", actual->name);
+                Variable * variable = _environment->variables;
+
+                variable_cleanup_memory_mapped_float_init( _environment, variable );
+
+            } else if ( actual->type == BT_TEMPORARY ) {
+                // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
+                // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+                // outhead1(".segment \"%s\"", actual->name);
+
+                for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
+                    Variable * variable = _environment->tempVariables[j];
+                    variable_cleanup_memory_mapped_float_init( _environment, variable );
+                }
+                
+                Variable * variable = _environment->tempResidentVariables;
+
+                variable_cleanup_memory_mapped_float_init( _environment, variable );
+
+            }
+           actual = actual->next;
+        }
+    }    
+
+    outline0("RTS");
+
     variable_on_memory_init( _environment, 0 );
+
+    // variable_cleanup_memory_mapped_float_init( _environment, Variable * _variable );
 
     DataSegment * dataSegment = _environment->dataSegment;
     while( dataSegment ) {
