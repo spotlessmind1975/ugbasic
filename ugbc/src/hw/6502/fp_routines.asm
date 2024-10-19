@@ -2038,6 +2038,64 @@ FCOS:
        AND #$7F
        STA M1
 
+       LDA #0
+       STA MATHPTR0
+
+       LDA X1
+       STA RES
+       LDA M1
+       STA RES+1
+       LDA M1+1
+       STA RES+2
+       LDA M1+2
+       STA RES+3
+
+FCOSL1:
+
+       ; X1 > PI/2 ?
+
+       LDA PI2
+       STA X2
+       LDA PI2+1
+       STA M2
+       LDA PI2+2
+       STA M2+1
+       LDA PI2+3
+       STA M2+2
+
+       JSR FCMP
+       CMP #$FF
+       BEQ FCOSOK
+       
+       ; cos(x) = -cos(x-PI/2)
+
+       LDA RES
+       STA X2
+       LDA RES+1
+       STA M2
+       LDA RES+2
+       STA M2+1
+       LDA RES+3
+       STA M2+2
+
+       LDA PI2
+       STA X1
+       LDA PI2+1
+       STA M1
+       LDA PI2+2
+       STA M1+1
+       LDA PI2+3
+       STA M1+2
+
+       JSR FSUB
+
+       LDA MATHPTR0
+       EOR #$FF
+       STA MATHPTR0
+
+       JMP FCOSL1
+
+FCOSOK:
        ; 
        ; cos x = 1
        LDA N1
@@ -2214,6 +2272,15 @@ FCOS:
        JSR FSUB ; - ( txc720 )
 
        ; R1 ---> cos x = 1 - ( dxc2 ) + ( qxc24 ) - ( txc720 )
+
+       LDA MATHPTR0
+       BEQ FCOSDONE
+
+       LDA M1
+       EOR #$80
+       STA M1
+
+FCOSDONE:
 
        RTS
 
