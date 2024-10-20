@@ -425,7 +425,24 @@ immagini per individuare il colore da utilizzare.
 
 @example PEN DARK GREY
 
+@alias DARK GRAY (constant)
+
 @target all
+</usermanual> */
+
+/* <usermanual>
+@keyword DARK GRAY (constant)
+
+@english
+
+@italian
+
+@syntax = DARK GRAY
+
+@example PEN DARK GRAY
+
+@alias DARK GREY (constant)
+
 </usermanual> */
 
 /* <usermanual>
@@ -449,6 +466,24 @@ immagini per individuare il colore da utilizzare.
 @syntax = GREY
 
 @example PEN GREY
+
+@alias GRAY (constant)
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword GRAY (constant)
+
+@english
+
+@italian
+
+@syntax = GRAY
+
+@example PEN GRAY
+
+@alias GREY (constant)
 
 @target all
 </usermanual> */

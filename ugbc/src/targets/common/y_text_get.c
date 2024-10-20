@@ -59,11 +59,13 @@ Questa funzione esegue la conversione delle ordinate del formato grafico in ordi
 formato testo e può essere utilizzato per posizionare un'area della grafica 
 sul testo.
 
-@syntax = Y TEXT([x graphics])
+@syntax = Y TEXT(y)
 
 @example x = Y TEXT(100)
 
 @usedInExample graphics_text_03.bas
+
+@alias YTEXT
 
 @target all
 </usermanual> */
@@ -76,7 +78,7 @@ Alias for ''Y TEXT''.
 @italian
 Alias per ''Y TEXT''.
 
-@seeAlso Y TEXT
+@alias Y TEXT
 
 @target all
 </usermanual> */

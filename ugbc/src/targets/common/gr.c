@@ -49,21 +49,41 @@
 @keyword GR LOCATE
 
 @english
-This command allows you to set the coordinates ''(x, y)'' for the next graphic operation. 
-If the component is omitted, the current one will remain.
+
+The ''GR LOCATE'' allows you to position the graphics cursor in a specific position on the screen, 
+thus preparing the ground for subsequent drawing operations, such as printing text, drawing lines 
+or shapes.
+
+Before drawing lines, rectangles, or other shapes, you must position the graphics cursor at the
+starting point of the shape. By combining ''GR LOCATE'' with other graphics commands, you can 
+create animations by moving objects around the screen.
+
+Obviously, the coordinate system and screen size depend on the graphics mode selected with the
+''BITMAP ENABLE'' or ''SCREEN'' commands. The ugBASIC offers other graphics functions, such as 
+''PLOT'' for drawing points, ''LINE'' for drawing lines, and many more.
 
 @italian
-Questo comando permette di impostare le coordinate ''(x,y)'' per le prossime operazioni 
-grafiche. Se la componente viene omessa, rimarrà quella attuale. 
+
+''GR LOCATE'' consente di posizionare il cursore grafico in una posizione specifica sullo 
+schermo, preparando così il terreno per le successive operazioni di disegno, 
+come la stampa di testo, il disegno di linee o forme.
+
+Prima di disegnare linee, rettangoli o altre forme, è necessario posizionare il cursore 
+grafico nel punto di partenza della forma. Combinando ''GR LOCATE'' con altri comandi 
+grafici, è possibile creare animazioni spostando gli oggetti sullo schermo.
+
+Ovviamente, il sistema di coordinate e le dimensioni dello schermo dipendono dalla modalità 
+grafica selezionata con i comandi ''BITMAP ENABLE'' o ''SCREEN''. ugBASIC offre altre 
+funzioni grafiche, come ''PLOT'' per disegnare punti, ''LINE'' per disegnare linee e molte 
+altre.
 
 @syntax GR LOCATE [x], [y]
 
 @example GR LOCATE 100,10
+
 @usedInExample graphics_clip_01.bas
 @usedInExample graphics_position_01.bas
 @usedInExample graphics_shapes_02.bas
-
-@target all
 </usermanual> */
 
 void gr_locate( Environment * _environment, char * _x, char * _y ) {

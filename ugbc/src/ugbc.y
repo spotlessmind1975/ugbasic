@@ -818,6 +818,12 @@ const_color_enumeration:
       | GREY {
           $$ = COLOR_GREY;
       }
+      | DARK GRAY {
+          $$ = COLOR_DARK_GREY;
+      }
+      | GRAY {
+          $$ = COLOR_GREY;
+      }
       | DARK GREEN {
           $$ = COLOR_DARK_GREEN;
       }
@@ -828,6 +834,9 @@ const_color_enumeration:
           $$ = COLOR_LIGHT_BLUE;
       }
       | LIGHT GREY {
+          $$ = COLOR_LIGHT_GREY;
+      }
+      | LIGHT GRAY {
           $$ = COLOR_LIGHT_GREY;
       }
       | DARK BLUE {
@@ -1994,6 +2003,14 @@ color_enumeration:
           $$ = variable_temporary( _environment, VT_COLOR, "(color GREY)" )->name;
           variable_store( _environment, $$, COLOR_GREY );
       }
+      | DARK GRAY {
+          $$ = variable_temporary( _environment, VT_COLOR, "(color DARK GREY)" )->name;
+          variable_store( _environment, $$, COLOR_DARK_GREY );
+      }
+      | GRAY {
+          $$ = variable_temporary( _environment, VT_COLOR, "(color GREY)" )->name;
+          variable_store( _environment, $$, COLOR_GREY );
+      }
       | DARK GREEN {
           $$ = variable_temporary( _environment, VT_COLOR, "(color DARK GREEN)" )->name;
           variable_store( _environment, $$, COLOR_DARK_GREEN );
@@ -2007,6 +2024,10 @@ color_enumeration:
           variable_store( _environment, $$, COLOR_LIGHT_BLUE );
       }
       | LIGHT GREY {
+          $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT GREY)" )->name;
+          variable_store( _environment, $$, COLOR_LIGHT_GREY );
+      }
+      | LIGHT GRAY {
           $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT GREY)" )->name;
           variable_store( _environment, $$, COLOR_LIGHT_GREY );
       }

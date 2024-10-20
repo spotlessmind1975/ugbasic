@@ -58,11 +58,13 @@ used to position text over an area of graphics on the screen.
 Questa funzione esegue la conversione delle ascisse del formato testo in ascisse del formato grafico e può essere
 utilizzato per posizionare il testo su un'area della grafica sullo schermo.
 
-@syntax = X GRAPHIC([x text])
+@syntax = X GRAPHIC(x)
 
 @example x = X GRAPHIC(10)
 
 @usedInExample graphics_text_01.bas
+
+@alias XGRAPHIC
 
 @target all
 </usermanual> */
@@ -75,7 +77,7 @@ Alias for ''X GRAPHIC''.
 @italian
 Alias per ''X GRAPHIC''.
 
-@seeAlso X GRAPHIC
+@alias X GRAPHIC
 
 @target all
 </usermanual> */
