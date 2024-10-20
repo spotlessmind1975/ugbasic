@@ -4772,3 +4772,28 @@ delle variabili.
 @seeAlso SHARED
 
 </usermanual> */
+
+/* <usermanual>
+@keyword HOME (constant)
+
+@english
+
+This constant represent the "HOME" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "HOME", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = HOME
+
+@example IF KET STATE(HOME) THEN
+@example    PRINT "HOME has been pressed!"
+@example ENDIF
+
+</usermanual> */
