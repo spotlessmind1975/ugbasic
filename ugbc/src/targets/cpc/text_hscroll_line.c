@@ -38,6 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword HSCROLL
+@target cpc
+</usermanual> */
 void text_hscroll_line( Environment * _environment, int _direction ) {
 
     cpc_hscroll_line( _environment, _direction );

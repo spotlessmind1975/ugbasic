@@ -38,6 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword HSCROLL
+@target plus4
+</usermanual> */
 void text_hscroll_line( Environment * _environment, int _direction ) {
 
     ted_hscroll_line( _environment, _direction );

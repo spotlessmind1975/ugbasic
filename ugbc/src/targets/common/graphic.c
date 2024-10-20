@@ -54,34 +54,16 @@
 @keyword GRAPHIC
 
 @english
+
 Do a quickly initialization with the high resolution graphics mode. 
-It is equivalent to running the following commands:
-
-  - ''BITMAP ENABLE''
-
-  - ''BITMAP CLEAR''
-
-  - ''COLORMAP CLEAR''
-
-  - ''COLOR BORDER BLACK''
 
 @italian
 Eseguire una rapida inizializzazione con la modalità grafica ad 
-alta risoluzione. Equivale a eseguire i seguenti comandi:
-
-  - ''BITMAP ENABLE''
-
-  - ''BITMAP CLEAR''
-
-  - ''COLORMAP CLEAR''
-  
-  - ''COLOR BORDER BLACK''
+alta risoluzione.
 
 @syntax GRAPHIC
 
 @example GRAPHIC
-
-@target all
 </usermanual> */
 void graphic( Environment * _environment ) {
 

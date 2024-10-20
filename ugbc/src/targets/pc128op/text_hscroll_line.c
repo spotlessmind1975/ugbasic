@@ -38,6 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword HSCROLL
+@target pc128op
+</usermanual> */
 void text_hscroll_line( Environment * _environment, int _direction ) {
 
     ef936x_hscroll_line( _environment, _direction );

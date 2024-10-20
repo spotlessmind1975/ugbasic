@@ -425,7 +425,24 @@ immagini per individuare il colore da utilizzare.
 
 @example PEN DARK GREY
 
+@alias DARK GRAY (constant)
+
 @target all
+</usermanual> */
+
+/* <usermanual>
+@keyword DARK GRAY (constant)
+
+@english
+
+@italian
+
+@syntax = DARK GRAY
+
+@example PEN DARK GRAY
+
+@alias DARK GREY (constant)
+
 </usermanual> */
 
 /* <usermanual>
@@ -449,6 +466,24 @@ immagini per individuare il colore da utilizzare.
 @syntax = GREY
 
 @example PEN GREY
+
+@alias GRAY (constant)
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword GRAY (constant)
+
+@english
+
+@italian
+
+@syntax = GRAY
+
+@example PEN GRAY
+
+@alias GREY (constant)
 
 @target all
 </usermanual> */
@@ -4735,5 +4770,30 @@ delle variabili.
 @example GLOBAL "a*"
 
 @seeAlso SHARED
+
+</usermanual> */
+
+/* <usermanual>
+@keyword HOME (constant)
+
+@english
+
+This constant represent the "HOME" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "HOME", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = HOME
+
+@example IF KET STATE(HOME) THEN
+@example    PRINT "HOME has been pressed!"
+@example ENDIF
 
 </usermanual> */

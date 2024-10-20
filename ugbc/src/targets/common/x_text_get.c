@@ -59,11 +59,13 @@ Questa funzione esegue la conversione delle ascisse del formato grafico in ascis
 formato testo e può essere utilizzato per posizionare un'area della grafica 
 sul testo.
 
-@syntax = X TEXT([x graphics])
+@syntax = X TEXT(x)
 
 @example x = X TEXT(100)
 
 @usedInExample graphics_text_03.bas
+
+@alias XTEXT
 
 @target all
 </usermanual> */
@@ -76,7 +78,7 @@ Alias for ''X TEXT''.
 @italian
 Alias per ''X TEXT''.
 
-@seeAlso X TEXT
+@alias X TEXT
 
 @target all
 </usermanual> */

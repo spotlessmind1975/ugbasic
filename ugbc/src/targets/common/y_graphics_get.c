@@ -58,11 +58,13 @@ used to position text over an area of graphics on the screen.
 Questa funzione esegue la conversione delle ordinate del formato testo in ordinate del formato grafico e può essere
 utilizzato per posizionare il testo su un'area della grafica sullo schermo.
 
-@syntax = Y GRAPHIC([x text])
+@syntax = Y GRAPHIC(y)
 
 @example x = Y GRAPHIC(10)
 
 @usedInExample graphics_text_01.bas
+
+@alias YGRAPHIC
 
 @target all
 </usermanual> */
@@ -75,7 +77,7 @@ Alias for ''Y GRAPHIC''.
 @italian
 Alias per ''Y GRAPHIC''.
 
-@seeAlso Y GRAPHIC
+@alias Y GRAPHIC
 
 @target all
 </usermanual> */

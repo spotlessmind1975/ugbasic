@@ -67,7 +67,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
-%token BACK CAN ELSEIF BUFFER LOAD SIZE IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
+%token BACK CAN ELSEIF BUFFER LOAD SIZE IMAGE PUT VISIBLE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
@@ -97,7 +97,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
-%token MOB CMOB PLACE DOJO READY LOGIN PASSWORD DOJOKA HISCORE CREATE PORT DESTROY FIND MESSAGE PING
+%token MOB CMOB PLACE DOJO READY LOGIN PASSWORD DOJOKA CREATE PORT DESTROY FIND MESSAGE PING
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
@@ -818,6 +818,12 @@ const_color_enumeration:
       | GREY {
           $$ = COLOR_GREY;
       }
+      | DARK GRAY {
+          $$ = COLOR_DARK_GREY;
+      }
+      | GRAY {
+          $$ = COLOR_GREY;
+      }
       | DARK GREEN {
           $$ = COLOR_DARK_GREEN;
       }
@@ -828,6 +834,9 @@ const_color_enumeration:
           $$ = COLOR_LIGHT_BLUE;
       }
       | LIGHT GREY {
+          $$ = COLOR_LIGHT_GREY;
+      }
+      | LIGHT GRAY {
           $$ = COLOR_LIGHT_GREY;
       }
       | DARK BLUE {
@@ -1994,6 +2003,14 @@ color_enumeration:
           $$ = variable_temporary( _environment, VT_COLOR, "(color GREY)" )->name;
           variable_store( _environment, $$, COLOR_GREY );
       }
+      | DARK GRAY {
+          $$ = variable_temporary( _environment, VT_COLOR, "(color DARK GREY)" )->name;
+          variable_store( _environment, $$, COLOR_DARK_GREY );
+      }
+      | GRAY {
+          $$ = variable_temporary( _environment, VT_COLOR, "(color GREY)" )->name;
+          variable_store( _environment, $$, COLOR_GREY );
+      }
       | DARK GREEN {
           $$ = variable_temporary( _environment, VT_COLOR, "(color DARK GREEN)" )->name;
           variable_store( _environment, $$, COLOR_DARK_GREEN );
@@ -2007,6 +2024,10 @@ color_enumeration:
           variable_store( _environment, $$, COLOR_LIGHT_BLUE );
       }
       | LIGHT GREY {
+          $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT GREY)" )->name;
+          variable_store( _environment, $$, COLOR_LIGHT_GREY );
+      }
+      | LIGHT GRAY {
           $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT GREY)" )->name;
           variable_store( _environment, $$, COLOR_LIGHT_GREY );
       }
