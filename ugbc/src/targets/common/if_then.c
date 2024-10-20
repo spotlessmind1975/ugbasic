@@ -59,12 +59,20 @@
 @keyword IF...THEN...ELSE...ELSEIF...ENDIF
 
 @english
+
 Implement a conditional jump. This implementation assumes that
 an expression passed as a parameter is 0 (for false) and not 
 zero (for true). In this case, if the expression is zero, it 
 jumps directly to the statement following the corresponding 
 ''ENDIF'' (or ''ELSE'', if present). Otherwise, the following 
 code will be executed (up to ''ENDIF'' or ''ELSE'').
+
+The compiler also accepts a number of variants to the command, 
+which were however widespread in other BASIC dialects. The first 
+variant is the one for which the action to be performed is 
+unique, and only an unconditional jump via ''GOTO'' or even as a number
+immediately after the ''THEN''. There is also a variant that 
+directly accepts a single command after the THEN.
 
 @italian
 Implementa il salto condizionato. Questa implementazione presuppone che
@@ -73,6 +81,12 @@ zero (per vero). In questo caso, se l'espressione è zero, esso
 salta direttamente all'istruzione che segue il corrispondente
 ''ENDIF'' (oppure ''ELSE'', se presente). In caso contrario, 
 verrà eseguito il codice seguente (fino a ''ENDIF'').
+
+Il compilatore accetta anche una serie di varianti del comando, che erano 
+tuttavia diffuse in altri dialetti BASIC. La prima variante è quella per 
+cui l'azione da eseguire è unica, e solo un salto incondizionato tramite 
+''GOTO'' o anche come numero immediatamente dopo ''THEN''. Vi è anche una 
+variante che accetta direttamente un singolo comando dopo il THEN.
 
 @syntax IF expression THEN
 @syntax    ...
@@ -87,6 +101,9 @@ verrà eseguito il codice seguente (fino a ''ENDIF'').
 @syntax ELSE
 @syntax    ...
 @syntax ENDIF
+@syntax IF expression THEN GOTO number
+@syntax IF expression THEN number [ELSE number]
+@syntax IF expression THEN statement
 
 @example IF ( x == 42 ) THEN : x = 0 : ELSE : x = 1 : ENDIF
 @example IF ( x == 42 ) THEN : x = 0 : ELSE IF y == 0 THEN : y = 42 : ELSE : x = 1 : ENDIF
@@ -102,7 +119,6 @@ verrà eseguito il codice seguente (fino a ''ENDIF'').
 @usedInExample control_returning_02.bas
 @usedInExample control_popping_91.bas
 
-@target all
 </usermanual> */
 void if_then( Environment * _environment, char * _expression ) {
 

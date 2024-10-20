@@ -1,5 +1,5 @@
 /* <usermanual>
-@keyword IF
+@keyword IF (function)
 
 @english
 
@@ -32,8 +32,6 @@ di spazio inutile.
 
 
 @example pictureToUse = IF(SCREEN WIDTH > 160, "large.png", "small.png" )
-@target all
-@version
 </usermanual> */
 
 /* <usermanual>
@@ -4795,5 +4793,22 @@ target corrispondente, il valore sarà zero.
 @example IF KET STATE(HOME) THEN
 @example    PRINT "HOME has been pressed!"
 @example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword IMAGE (data type)
+
+@english
+
+The ''IMAGE'' data type maintains a reference to an image that
+can be drawn on the screen
+
+@italian
+
+Il tipo di dato ''IMAGE'' mantiene un riferimento a una immagine
+che può essere disegnata sullo schermo.
+
+@syntax ... AS IMAGE
 
 </usermanual> */
