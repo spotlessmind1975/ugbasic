@@ -48,15 +48,30 @@
 @keyword DEFDGR
 
 @english
-This command allows you to customize a single character of those used for rendering texts
-in graphic mode. Customization happens at runtime. If you want to customize the font at 
-compile time, refer to the ''LOAD FONT'' command.
+
+This command allows you to customize a single character from those used in graphical
+mode. The character is defined by means of an 8 pixel by 8 pixel monochrome matrix. 
+
+If the system font has fewer pixels along one or both directions, the character 
+will be aligned to the top left and the extra pixels will be ignored. The 
+customization of the character occurs at runtime.
+
+If you want to customize the characters used in text mode, or during compilation, 
+you must use the ''LOAD FONT'' command.
+
 
 @italian
-Questo comando permette di personalizzare un singolo carattere di quelli utilizzati per 
-il rendering dei testi in modalità grafica. La personalizzazione avviene a runtime. Se
-si vuole personalizzare il font al momento della compilazione, far riferimento al comando 
-''LOAD FONT''.
+
+Questo comando consente di personalizzare un singolo carattere tra quelli 
+utilizzati in modalità grafica. Il carattere è definito tramite una matrice 
+monocromatica di 8 pixel per 8 pixel.
+
+Se il font di sistema ha meno pixel lungo una o entrambe le direzioni, il 
+carattere verrà allineato in alto a sinistra e i pixel in più verranno 
+ignorati. La personalizzazione del carattere avviene in fase di esecuzione.
+
+Se si desidera personalizzare i caratteri utilizzati in modalità testo o 
+durante la compilazione, è necessario utilizzare il comando ''LOAD FONT''.
 
 @syntax DEFDGR[$](x) = b0, b1, ... , b7
 
@@ -65,8 +80,6 @@ si vuole personalizzare il font al momento della compilazione, far riferimento a
 
 @usedInExample font_example_02.bas
 
-@target all
-@verified
 </usermanual> */
 void defdgr_vars( Environment * _environment, char * _character, char * _b0, char * _b1, char * _b2, char * _b3, char * _b4, char * _b5, char * _b6, char * _b7 ) {
 

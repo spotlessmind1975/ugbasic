@@ -45,6 +45,36 @@
  * @param _color 
  * @return Variable* 
  */
+/* <usermanual>
+@keyword PEN (function)
+
+@english
+
+The ''PEN$'' command create a special control sequence (string) that define the foreground color of
+the screen. This means that, whenever the string is printed on the screen, the pre-set pen colour 
+is automatically assigned  to it. The format of the string returned by ''PEN$'' is not specific 
+for the target.  The parameter ''color'' is represented  by a value in the available colors, 
+from 0 to maximum (''PAPER COLORS''). 
+
+@italian
+
+Il comando ''PEN$'' crea una sequenza di controllo speciale (stringa) che definisce il colore di
+sfondo dello schermo. Ciò significa che, ogni volta che la stringa viene stampata sullo schermo, 
+le viene automaticamente assegnato il colore della carta preimpostato. Il formato della stringa 
+restituita da ''PEN$'' non è specifico per il target. Il parametro ''color'' è rappresentato 
+da un valore nei colori disponibili, da 0 al massimo (''PEN COLORS'').
+
+@syntax = PEN$(expression)
+
+@example PRINT PEN$(RED)
+
+@UsedInExample texts_options_02.bas
+
+@seeAlso PEN (instruction)
+@seeAlso PAPER (function)
+
+@target all
+</usermanual> */
 Variable * get_pen( Environment * _environment, char * _color ) {
     
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );

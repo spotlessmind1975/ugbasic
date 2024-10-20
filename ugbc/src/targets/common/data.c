@@ -50,7 +50,7 @@
 @english
 
 The ''DATA'' command is used to create a list of data that will be used 
-in other parts of the program. It is like a container where values ​​are 
+in other parts of the program. It is like a container where values are 
 stored that will then be "read" and used by other commands.
 
 The ''DATA'' command is usually placed at the beginning of the program or in
@@ -58,7 +58,7 @@ a section dedicated to the definitions of data, but it is not mandatory.
 The ''data1'', ''data2'', ... so on should be replaced witht he data you want to 
 store inside the program. These can be numbers or text strings. To read the 
 data contained in a ''DATA'' statement, you use the ''READ'' command. 
-This command assigns the values ​​contained in ''DATA'' to variables.
+This command assigns the values contained in ''DATA'' to variables.
 
 You can use multiple ''DATA'' statements to fill an array with a set of values.
 Another usage is to create small tables of data, for example to represent 
@@ -88,7 +88,7 @@ and maintainable. You can change the data without having to change the
 logic of the program. Finally, the same data can be read multiple times 
 in different parts of the program.
 
-There is also a version of the syntax that allows you to load values ​​from 
+There is also a version of the syntax that allows you to load values from 
 an external file. This syntax is currently limited to numeric data that must be
 separated by a non-numeric separator.
 

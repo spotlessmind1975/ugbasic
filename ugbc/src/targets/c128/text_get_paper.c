@@ -49,25 +49,29 @@
 @keyword PAPER (function)
 
 @english
-The ''PAPER$'' function returns a special control sequence that changes
-the paper colour inside a string. This means that, whenever the string is 
-printed on the screen, the pre-set paper colour is automatically assigned 
-to it. The format of the string returned by ''PAPER$'' is not specific 
-for the target. 
+
+The ''PAPER$'' command create a special control sequence (string) that define the background color of
+the screen. This means that, whenever the string is printed on the screen, the pre-set paper colour 
+is automatically assigned  to it. The format of the string returned by ''PAPER$'' is not specific 
+for the target.  The parameter ''color'' is represented  by a value in the available colors, 
+from 0 to maximum (''PAPER COLORS''). 
 
 @italian
-La funzione ''PAPER$'' restituisce una speciale sequenza di controllo 
-che cambia il colore dello sfondo all'interno di una stringa. 
-Ciò significa che, ogni volta che la stringa viene stampata 
-sullo schermo, le viene automaticamente assegnato il colore 
-dello sfondo preimpostato. Il formato della stringa restituita da
-''PAPER$'' non è specifico per l'hardware
+
+Il comando ''PAPER$'' crea una sequenza di controllo speciale (stringa) che definisce il colore di
+sfondo dello schermo. Ciò significa che, ogni volta che la stringa viene stampata sullo schermo, 
+le viene automaticamente assegnato il colore della carta preimpostato. Il formato della stringa 
+restituita da ''PAPER$'' non è specifico per il target. Il parametro ''color'' è rappresentato 
+da un valore nei colori disponibili, da 0 al massimo (''PAPER COLORS'').
 
 @syntax = PAPER$(expression)
 
 @example PRINT PAPER$(WHITE)
 
 @UsedInExample texts_options_02.bas
+
+@seeAlso PEN (instruction)
+@seeAlso PAPER (instruction)
 
 @target all
 </usermanual> */

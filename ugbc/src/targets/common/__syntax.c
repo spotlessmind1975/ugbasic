@@ -1554,65 +1554,6 @@ L'indice non è il codice ASCII ma lo screen code.
 @target all
 </usermanual> */
 /* <usermanual>
-@keyword DEFINE KEYBOARD RATE
-
-@english
-This command allows you to define the speed with which the characters will be 
-received by the input system on repetition, with the INPUT or INKEY command. The speed depends
-on the target, with a minimum value of 0 (maximum speed) to a maximum value of 
-254 (minimum speed).
-
-@italian
-Questo comando permette di definire la velocità con la quale i caratteri saranno 
-recepiti dal sistema di input in ripetizione, con il comando INPUT oppure INKEY. La velocità 
-dipende dal target, con un valore minimo di 0 (massima velocità) a un valore 
-massimo di 254 (minima velocità).
-
-@syntax DEFINE KEYBOARD RATE value
-
-@example DEFINE KEYBOARD RATE 123
-
-@target atari
-@target atarixl
-@target c128
-@target c128z
-@target coco
-@target coco3
-@target cpc
-@target d32
-@target d64
-@target mo5
-@target msx1
-@target pc128op
-</usermanual> */
-/* <usermanual>
-@keyword DEFINE KEYBOARD DELAY
-
-@english
-This command allows you to define the delay to wait before the characters will be 
-repeated by the input system, with the INPUT or INKEY command. The delay depends
-on the target, with a minimum value of 1 (no delay) to a maximum value of 
-255 (maximum delay).
-
-@italian
-Questo comando permette di definire il ritardo che il sistema attenderà
-prima di iniziare la ripetizione dei caratteri  dal sistema di input, con il 
-comando INPUT oppure INKEY. Il ritardo dipende dal target, con un valore minimo 
-di 0 (nessun ritardo) a un valore massimo di 255 (massimo ritardo).
-
-@syntax DEFINE KEYBOARD DELAY value
-
-@example DEFINE KEYBOARD DELAY 50
-
-@target atari
-@target atarixl
-@target c128
-@target c128z
-@target cpc
-@target msx1
-</usermanual> */
-
-/* <usermanual>
 @keyword REM
 
 @english
@@ -1762,43 +1703,6 @@ corrispondere a un colore valido.
 
 @seeAlso COLOR
 @seeAlso SHADES (constant)
-@target all
-</usermanual> */
-
-/* <usermanual>
-@keyword DEFINE STRING SPACE
-
-@english
-
-With the ''DEFINE STRING SPACE'' instruction it is possible to define the space 
-dedicated to dynamic strings.
-
-@italian
-Con l'istruzione DEFINE STRING SPACE è possibile definire lo spazio dedicato 
-alle stringe dinamiche.
-
-@syntax DEFINE STRING SPACE bytes
-
-@example DEFINE STRING SPACE 512
-
-@target all
-</usermanual> */
-/* <usermanual>
-@keyword DEFINE STRING COUNT
-
-@english
-
-With the ''DEFINE STRING COUNT'' instruction it is possible to define the number 
-of concurrent dynamic strings allowed.
-
-@italian
-Con l'istruzione DEFINE STRING COUNT è possibile definire il massimo numero
-di stringe dinamiche concorrenti consentite.
-
-@syntax DEFINE STRING COUNT strings
-
-@example DEFINE STRING COUNT 64
-
 @target all
 </usermanual> */
 
@@ -2415,44 +2319,6 @@ Alias di ''JOY Y''
 </usermanual> */
 
 /* <usermanual>
-@keyword DEFINE AUDIO
-
-@english
-
-This pragma allows you to indicate whether the sound should be played 
-synchronously or asynchronously with the execution of subsequent instructions. 
-
-Specifically, with ''DEFINE AUDIO SYNC'', effects and notes are played 
-synchronously, so you do not have to wait for completion to execute the next 
-command. On the contrary, with ''DEFINE AUDIO ASYNC'', effects and notes are
-played asynchronously, so you must wait for completion otherwise subsequent 
-commands will be executed during the sound effect/note.
-
-Note that not all targets support both modes.
-
-@italian
-
-Questa pragma consente di indicare se il suono deve essere riprodotto in
-modo sincrono o asincrono con l'esecuzione delle istruzioni successive.
-
-In particolare, con ''DEFINE AUDIO SYNC'', effetti e note vengono riprodotti
-in modo sincrono, quindi non è necessario attendere il completamento per eseguire 
-il comando successivo. Al contrario, con ''DEFINE AUDIO ASYNC'', effetti e 
-note vengono riprodotti in modo asincrono, quindi è necessario attendere il
-completamento, altrimenti i comandi successivi verranno eseguiti durante 
-l'effetto sonoro/nota.
-
-Nota che non tutti i target supportano entrambe le modalità.
-
-@syntax DEFINE AUDIO SYNC
-@syntax DEFINE AUDIO ASYNC
-
-@example DEFINE AUDIO SYNC
-
-@target all
-*/
-
-/* <usermanual>
 @keyword BLOCK
 
 @english
@@ -2626,46 +2492,6 @@ delle due stringhe di caratteri individuali.
 @target c128
 @project tsb
 </usermanual> */
-
-/* <usermanual>
-@keyword DEFINE CENTER
-
-@english
-
-This pragma allows you to change the behavior of the ''CENTER'' command. 
-By definition, the ''CENTER'' command behaves exactly like the ''PRINT'' 
-command, with the difference that the text is centered.
-
-So if the ''CENTER'' command is followed by the parameter only, subsequent 
-writings will start from the next line; if, on the contrary, the semicolon 
-character ('';'') is added, subsequent writings will continue from the
-previous position.
-
-This behavior can be changed with the ''WITHOUT NEWLINE'' option, which 
-at this point will not move the cursor to the next line, in any case.
-
-@italian
-
-Questo pragma permette di cambiare il comportamento del comando ''CENTER''. 
-Per definizione, il comando ''CENTER'' si comporta esattamente come il 
-comando ''PRINT'', con la differenza che il testo viene centrato. 
-
-Quindi se il comando ''CENTER'' viene seguito dal solo parametro, le 
-successive scritture inizieranno dalla riga successiva; se, al contrario, 
-viene aggiunto il carattere punto e virgola ('';''), le successive 
-scritture continueranno dalla posizione precedente. 
-
-Tale comportamento può essere modificato con l'opzione ''WITHOUT NEWLINE'', 
-che a questo punto non farà spostare il cursore alla linea successiva, 
-in alcun caso.
-
-@syntax DEFINE CENTER WITHOUT NEWLINE
-@syntax DEFINE CENTER WITH NEWLINE
-
-@example DEFINE CENTER WITH NEWLINE
-
-@target all
-*/
 
 /* <usermanual>
 @keyword COLORS (constant)
