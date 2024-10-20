@@ -37,7 +37,11 @@
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
-
+/* <usermanual>
+@keyword HSCROLL
+@target atari
+@target atarixl
+</usermanual> */
 void text_hscroll_line( Environment * _environment, int _direction ) {
 
     gtia_hscroll_line( _environment, _direction );

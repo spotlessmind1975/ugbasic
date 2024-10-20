@@ -38,6 +38,11 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword HSCROLL
+@target c64reu
+</usermanual> */
+
 void text_hscroll_line( Environment * _environment, int _direction ) {
 
     vic2_hscroll_line( _environment, _direction );

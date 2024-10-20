@@ -38,6 +38,32 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword HSCROLL
+
+@english
+
+Il comando HSCROLL permette di effettuare lo scrolling orizzontale, 
+sia di una singola linea che di tutto lo scherrmo, a destra oppure 
+a sinistra.
+
+
+@italian
+
+Il comando HSCROLL permette di effettuare lo scorrimento orizzontale, 
+sia di una singola linea che di tutto lo schermo, a destra 
+oppure a sinistra.
+
+@syntax HSCROLL LEFT
+@syntax HSCROLL SCREEN LEFT
+@syntax HSCROLL RIGHT
+@syntax HSCROLL SCREEN RIGHT
+
+@example HSCROLL LEFT
+
+@target c64
+</usermanual> */
+
 void text_hscroll_line( Environment * _environment, int _direction ) {
 
     vic2_hscroll_line( _environment, _direction );

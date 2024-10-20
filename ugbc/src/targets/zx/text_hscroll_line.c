@@ -38,6 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword HSCROLL
+@target zx
+</usermanual> */
 void text_hscroll_line( Environment * _environment, int _direction ) {
 
     zx_hscroll_line( _environment, _direction );

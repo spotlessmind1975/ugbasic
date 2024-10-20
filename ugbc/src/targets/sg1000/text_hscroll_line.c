@@ -38,6 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword HSCROLL
+@target sg1000
+</usermanual> */
 void text_hscroll_line( Environment * _environment, int _direction ) {
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
