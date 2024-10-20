@@ -46,6 +46,7 @@
  */
 /* <usermanual>
 @keyword DOUBLE BUFFER
+@target coco3
 </usermanual> */
 void double_buffer( Environment * _environment, int _enabled ) {
 

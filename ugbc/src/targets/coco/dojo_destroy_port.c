@@ -38,6 +38,15 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword DESTROY PORT
+@target coco
+</usermanual> */
+/* <usermanual>
+@keyword DOJO DESTROY PORT
+@target coco
+</usermanual> */
+
 Variable * dojo_destroy_port( Environment * _environment, char * _port_id ) {
 
     Variable * portId = variable_retrieve( _environment, _port_id );

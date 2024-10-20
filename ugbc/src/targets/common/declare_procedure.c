@@ -54,17 +54,15 @@ and to insert assembly into the sources. The procedures defined in this way can 
 were an integral part of the language. Once the procedure has been declared, it will be sufficient 
 to invoke it with one of the following syntaxes:
 
-  CALL test
-
-  PROC test
-
-  test[]
+  '''CALL test'''
+  '''PROC test'''
+  '''test[]'''
 
 as if it were any ugBASIC procedure. If desired, parameters can be added. For each it is obviously 
 necessary to indicate how the value will be passed to the function written in machine language. 
 
-The ugBASIC compiler allows you to declare functions and procedures that are “system”. What does 
-“system” mean? It means that the machine code resides in a ROM, preloaded at run time and therefore 
+The ugBASIC compiler allows you to declare functions and procedures that are “system”. 
+It means that the machine code resides in a ROM, preloaded at run time and therefore 
 already made available to any program that knows how to call it.
 
 However, since ugBASIC makes available all memory space allowed by the hardware, it is possible that
@@ -81,17 +79,15 @@ e per inserire assembly nei sorgenti. Le procedure così definite possono essere
 fossero parte integrante del linguaggio. Una volta dichiarata la procedura sarà sufficiente invocarla 
 con una delle seguenti sintassi:
 
-  CALL test
-
-  PROC test
-
-  test[]
+  '''CALL test'''
+  '''PROC test'''
+  '''test[]'''
 
 come se fosse una procedura ugBASIC. Se lo si desidera, è possibile aggiungere parametri. Per ognuno 
 è ovviamente necessario indicare come verrà passato il valore alla funzione scritta in linguaggio macchina.
 
-Il compilatore ugBASIC consente di dichiarare funzioni e procedure che sono “di sistema”. Cosa significa 
-“di sistema”? Vuol dire che il codice macchina risiede in una ROM, precaricata in fase di esecuzione e 
+Il compilatore ugBASIC consente di dichiarare funzioni e procedure che sono “di sistema”. 
+Vuol dire che il codice macchina risiede in una ROM, precaricata in fase di esecuzione e 
 quindi già resa disponibile a qualsiasi programma che sappia chiamarla.
 
 Tuttavia, poiché ugBASIC mette a disposizione tutto lo spazio di memoria consentito dall'hardware, è 
@@ -101,84 +97,41 @@ eseguire la richiesta, disattivandola all'uscita.
 
 Per dichiarare una procedura o una funzione come sistema, utilizzare semplicemente la parola chiave ''SYSTEM''.
 
-@syntax DECLARE [SYSTEM] PROCEDURE name AT address [ ( par1 [, par2 [, ... ] ] ) ] [ ON targets ]
-@syntax par : name AS type ON register
-@syntax par : name AS type ON STACK(width)
-@syntax width: BYTE | WORD | DWORD
-@syntax targets : name of targets, separated by comma (,)
+@syntax DECLARE [SYSTEM] PROCEDURE name AT address [ ( par [, par [, ... ] ] ) ] [ ON targets ]
+@syntax   par : name AS type ON register
+@syntax   par : name AS type ON STACK(width)
+@syntax   width: BYTE | WORD | DWORD
+@syntax   targets : name of targets, separated by comma (,)
 
 @example DECLARE SYSTEM PROCEDURE test ON CPC, ZX
 
 @usedInExample extern_example_11.bas
 
+@alias DECLARE PROC
+@seeAlso DECLARE FUNCTION
+
 @target all
 </usermanual> */
+
 /* <usermanual>
 @keyword DECLARE PROC
 
 @english
 
-The ''DECLARE PROC'' is a way to define and call external procedures written in machine language 
-and to insert assembly into the sources. The procedures defined in this way can be called as if they 
-were an integral part of the language. Once the procedure has been declared, it will be sufficient 
-to invoke it with one of the following syntaxes:
-
-  CALL test
-
-  PROC test
-
-  test[]
-
-as if it were any ugBASIC procedure. If desired, parameters can be added. For each it is obviously 
-necessary to indicate how the value will be passed to the function written in machine language. 
-
-The ugBASIC compiler allows you to declare functions and procedures that are “system”. What does 
-“system” mean? It means that the machine code resides in a ROM, preloaded at run time and therefore 
-already made available to any program that knows how to call it.
-
-However, since ugBASIC makes available all memory space allowed by the hardware, it is possible that
-the ROMs have been disabled or otherwise made unreachable. Indicating that you want to call a procedure
-or a system function, ugBASIC will take care of re-enabling the ROM before executing the request, 
-deactivating it on exit. 
-
-To declare a procedure or function to be system, simply use the ''SYSTEM'' keyword. 
-
 @italian
 
-Il ''DECLARE PROC'' è un modo per definire e chiamare procedure esterne scritte in linguaggio macchina 
-e per inserire assembly nei sorgenti. Le procedure così definite possono essere richiamate come se 
-fossero parte integrante del linguaggio. Una volta dichiarata la procedura sarà sufficiente invocarla 
-con una delle seguenti sintassi:
+@syntax DECLARE [SYSTEM] PROC name AT address [ ( par [, par [, ... ] ] ) ] [ ON targets ]
+@syntax   par : name AS type ON register
+@syntax   par : name AS type ON STACK(width)
+@syntax   width: BYTE | WORD | DWORD
+@syntax   targets : name of targets, separated by comma (,)
 
-  CALL test
-
-  PROC test
-
-  test[]
-
-come se fosse una procedura ugBASIC. Se lo si desidera, è possibile aggiungere parametri. Per ognuno 
-è ovviamente necessario indicare come verrà passato il valore alla funzione scritta in linguaggio macchina.
-
-Il compilatore ugBASIC consente di dichiarare funzioni e procedure che sono “di sistema”. Cosa significa 
-“di sistema”? Vuol dire che il codice macchina risiede in una ROM, precaricata in fase di esecuzione e 
-quindi già resa disponibile a qualsiasi programma che sappia chiamarla.
-
-Tuttavia, poiché ugBASIC mette a disposizione tutto lo spazio di memoria consentito dall'hardware, è 
-possibile che le ROM siano state disabilitate o comunque rese irraggiungibili. Indicando che si vuole 
-chiamare una procedura o una funzione di sistema, ugBASIC si occuperà di riabilitare la ROM prima di 
-eseguire la richiesta, disattivandola all'uscita.
-
-Per dichiarare una procedura o una funzione come sistema, utilizzare semplicemente la parola chiave ''SYSTEM''.
-
-@syntax DECLARE [SYSTEM] PROC name AT address [ ( par1 [, par2 [, ... ] ] ) ] [ ON targets ]
-@syntax par : name AS type ON register
-@syntax par : name AS type ON STACK(width)
-@syntax width: BYTE | WORD | DWORD
-@syntax targets : name of targets, separated by comma (,)
-
-@example DECLARE SYSTEM PROCEDURE test ON CPC, ZX
+@example DECLARE SYSTEM PROC test ON CPC, ZX
 
 @usedInExample extern_example_11.bas
+
+@alias DECLARE PROCEDURE
+@seeAlso DECLARE FUNCTION
 
 @target all
 </usermanual> */
@@ -188,49 +141,21 @@ Per dichiarare una procedura o una funzione come sistema, utilizzare semplicemen
 
 @english
 
-The ''DECLARE FUNCTION'' is a way to define and call external functions written in machine language 
-and to insert assembly into the sources. The functions defined in this way can be called as if they 
-were an integral part of the language. Once the function has been declared, it will be sufficient 
-to invoke it with one of the following syntaxes:
+The ''DECLARE FUNCTION'' is a way to define and call external procedures written in machine language 
+and to insert assembly into the sources. The procedures defined in this way can be called as if they 
+were an integral part of the language, and any result value can be retrieved by calling it
+as a function:
 
-  x = test[ ]
-
-as if it were any ugBASIC function. If desired, parameters can be added. For each it is obviously 
-necessary to indicate how the value will be passed to the function written in machine language. 
-
-The ugBASIC compiler allows you to declare functions and procedures that are “system”. What does 
-“system” mean? It means that the machine code resides in a ROM, preloaded at run time and therefore 
-already made available to any program that knows how to call it.
-
-However, since ugBASIC makes available all memory space allowed by the hardware, it is possible that
-the ROMs have been disabled or otherwise made unreachable. Indicating that you want to call a procedure
-or a system function, ugBASIC will take care of re-enabling the ROM before executing the request, 
-deactivating it on exit. 
-
-To declare a procedure or function to be system, simply use the ''SYSTEM'' keyword. 
+  '''value = test[]'''
 
 @italian
 
-Il ''DECLARE FUNCTION'' è un modo per definire e chiamare funzioni esterne scritte in linguaggio macchina 
-e per inserire assembly nei sorgenti. Le funzioni così definite possono essere richiamate come se 
-fossero parte integrante del linguaggio. Una volta dichiarata la funzione sarà sufficiente invocarla 
-con una delle seguenti sintassi:
+La ''DECLARE FUNCTION'' è un modo per definire e chiamare procedure esterne scritte in linguaggio 
+macchina e per inserire assembly nelle sorgenti. Le procedure definite in questo modo possono essere 
+chiamate come se fossero parte integrante del linguaggio e qualsiasi valore di risultato può essere 
+recuperato chiamandolo come una funzione:
 
-  x = test[ ]
-
-come se fosse una procedura ugBASIC. Se lo si desidera, è possibile aggiungere parametri. Per ognuno 
-è ovviamente necessario indicare come verrà passato il valore alla funzione scritta in linguaggio macchina.
-
-Il compilatore ugBASIC consente di dichiarare funzioni e procedure che sono “di sistema”. Cosa significa 
-“di sistema”? Vuol dire che il codice macchina risiede in una ROM, precaricata in fase di esecuzione e 
-quindi già resa disponibile a qualsiasi programma che sappia chiamarla.
-
-Tuttavia, poiché ugBASIC mette a disposizione tutto lo spazio di memoria consentito dall'hardware, è 
-possibile che le ROM siano state disabilitate o comunque rese irraggiungibili. Indicando che si vuole 
-chiamare una procedura o una funzione di sistema, ugBASIC si occuperà di riabilitare la ROM prima di 
-eseguire la richiesta, disattivandola all'uscita.
-
-Per dichiarare una procedura o una funzione come sistema, utilizzare semplicemente la parola chiave ''SYSTEM''.
+'''value = test[]'''
 
 @syntax DECLARE [SYSTEM] FUNCTION name AT address [ ( par1 [, par2 [, ... ] ] ) ] RETURN ret [ ON targets ]
 @syntax par : name AS type ON register
@@ -242,6 +167,8 @@ Per dichiarare una procedura o una funzione come sistema, utilizzare semplicemen
 @example DECLARE SYSTEM FUNCTION test ON CPC, ZX
 
 @usedInExample extern_example_11.bas
+
+@seeAlso DECLARE PROCEDURE
 
 @target all
 </usermanual> */

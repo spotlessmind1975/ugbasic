@@ -72,9 +72,6 @@ position dello schermo.
 @example result = DISTANCE( x1, y1 TO x2, y2 )
 
 @usedInExample maths_distance_01.bas
-
-@target all
-@verified
 </usermanual> */
 Variable * distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 ) {
 

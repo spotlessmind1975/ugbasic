@@ -38,6 +38,51 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword DESTROY PORT
+
+@english
+
+The ''DESTROY PORT'' instruction destroy a message port that is not more
+needed. The ''portId'' parameter is the same one that returned the call to 
+''CREATE PORT'' function, and identifies the working port at that moment. 
+
+@italian
+
+L'istruzione ''DESTROY PORT'' distrugge una porta messaggio che non è 
+più necessaria. Il parametro ''portId'' è lo stesso che ha restituito 
+la chiamata alla funzione ''CREATE PORT'' e identifica la porta funzionante 
+in quel momento.
+
+@syntax DESTROY PORT portId
+
+@example sessionId = LOGIN( "user", "password" )
+@example port = CREATE PORT( sessionId, "testApp" )
+@example DESTROY PORT port
+
+@alias DOJO DESTROY PORT
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO DESTROY PORT
+
+@english
+
+@italian
+
+@syntax DESTROY PORT portId
+
+@example sessionId = DOJO LOGIN( "user", "password" )
+@example port = DOJO CREATE PORT( sessionId, "testApp" )
+@example DOJO DESTROY PORT port
+
+@alias DOJO DESTROY PORT
+
+@target c64
+</usermanual> */
+
 Variable * dojo_destroy_port( Environment * _environment, char * _port_id ) {
 
     Variable * portId = variable_retrieve( _environment, _port_id );

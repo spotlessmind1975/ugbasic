@@ -51,29 +51,49 @@
 
 @english
 
-Repeats a block of statements. Use a ''DO...LOOP'' structure when you want to repeat a set of statements an 
-indefinite number of times, or until an ''EXIT'' control out of the loop. If you want to repeat the statements a set number of times, the ''FOR...NEXT'' 
-statement is usually a better choice, while if you want to repeat for specific conditions, you should use
-the ''WHILE...WEND'' and ''REPEAT...UNTIL'' statements. 
+The ''DO...LOOP'' command is used for repeatedly executing a
+block of statements. It creates a loop, which is a sequence of 
+statements that is executed repeatedly, forever (unless exits
+using the ''EXIT'' keyword). You can nest ''DO LOOP''s within other 
+loops, creating more complex control structures.
 
-The ''DO...LOOP'' structure gives you less flexibility than the ''WHILE'' / ''UNTIL'' statements because you cannot decide whether to end the loop 
-when a specific condition stops being ''TRUE'' or when it first becomes ''TRUE''. It also disallow you to 
-test condition at either the start or the end of the loop. You can nest ''DO...LOOPS'' by putting one loop within another. You can also nest different kinds of control 
-structures within each other. 
+If you want to repeat the statements a set number of times, 
+the ''FOR...NEXT'' statement is usually a better choice, 
+while if you want to repeat for specific conditions, 
+you should use the ''WHILE...WEND'' and ''REPEAT...UNTIL'' 
+statements. 
+
+It can be used, i.e., to ask the user to enter a choice and repeat 
+the menu until the exit option is selected. If you want to exit a loop, 
+make sure the exit condition of the loop 
+is changed within the loop itself, otherwise you may create an 
+infinite loop. If possible, avoid performing complex calculations 
+within the exit condition, as they will be repeated with each iteration
+of the loop.
+
 
 @italian
 
-Ripete un blocco di istruzioni. Si usa una struttura ''DO...LOOP'' quando si desidera ripetere una serie di 
-istruzioni un numero indefinito di volte o fino a quando un controllo ''EXIT'' esce dal ciclo. Se si vuol 
-ripetere le istruzioni un determinato numero di volte, l'istruzione ''FOR...NEXT'' è solitamente una scelta
-migliore, mentre se si vuol ripetere per condizioni specifiche, dovresti usare l'istruzione ''WHILE...WEND'
-e ''REPEAT...UNTIL''.
+Il comando ''DO...LOOP'' viene utilizzato per eseguire ripetutamente 
+un blocco di istruzioni. Crea un ciclo, ovvero una sequenza di 
+istruzioni che viene eseguita ripetutamente, per sempre (a meno che
+non esca utilizzando la parola chiave ''EXIT''). Puoi annidare 
+''DO LOOP'' all'interno di altri cicli, creando strutture di controllo 
+più complesse.
 
-La struttura ''DO...LOOP'' offre meno flessibilità rispetto alle istruzioni ''WHILE'' / ''UNTIL'' perché non 
-è possibile decidere se terminare il ciclo quando una condizione specifica smette di essere ''TRUE'' o quando 
-diventa per la prima volta ''TRUE''. Inoltre non consente di testare la condizione all'inizio o alla fine del
-ciclo. Puoi annidare ''DO...LOOPS'' inserendo un loop all'interno di un altro. Puoi anche annidare diversi tipi
-di strutture di controllo l'una nell'altra.
+Se vuoi ripetere le istruzioni un numero di volte stabilito, l'istruzione 
+''FOR...NEXT'' è solitamente una scelta migliore, mentre se vuoi 
+ripetere per condizioni specifiche, dovresti usare le istruzioni 
+''WHILE... WEND'' e ''REPEAT...UNTIL''.
+
+Può essere utilizzato, ad esempio, per chiedere all'utente di 
+immettere una scelta e ripetere il menu finché non viene selezionata 
+l'opzione di uscita. Se vuoi uscire da un ciclo, assicurati che 
+la condizione di uscita del ciclo venga modificata all'interno 
+del ciclo stesso, altrimenti potresti creare un ciclo infinito. 
+Se possibile, evita di eseguire calcoli complessi all'interno 
+della condizione di uscita, poiché verranno ripetuti a ogni 
+iterazione del ciclo.
 
 @syntax DO
 @syntax   ... instructions ...
@@ -82,11 +102,15 @@ di strutture di controllo l'una nell'altra.
 @example DO
 @example   x = x + 1
 @example LOOP
+
 @usedInExample control_loops_01.bas
 @usedInExample control_loops_02.bas
 @usedInExample control_loops_03.bas
 @usedInExample control_loops_04.bas
 @usedInExample control_loops_05.bas
+
+@seeAlso WHILE...WEND
+@seeAlso REPEAT...UNTIL
 
 @target all
 </usermanual> */

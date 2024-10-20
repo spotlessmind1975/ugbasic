@@ -4212,11 +4212,13 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
 @keyword DIV
 
 @english
+
 The ''DIV'' statement allows you to make a division using the dividend 
 as a variable where the result will be stored. Optionally, it is possible 
 to indicate a variable where to store the remainder of the division operation. 
 
 @italian
+
 L'istruzione ''DIV'' consente di effettuare una divisione utilizzando il 
 dividendo come variabile dove sarà memorizzato il risultato. In opzione, 
 è possibile indicare una variabile dove memorizzare il resto dell'operazione 
@@ -4228,8 +4230,6 @@ di divisione.
 @example DIV a,3,q
 
 @usedInExample contrib_sierpinski3.bas
-
-@target all
 </usermanual> */
 Variable * variable_div( Environment * _environment, char * _source, char * _destination, char * _remainder ) {
     Variable * source = variable_retrieve( _environment, _source );
@@ -4550,6 +4550,41 @@ void variable_increment_mt( Environment * _environment, char * _source ) {
  * @param _source Source variable's name
  * @return Variable* The source variable
  */
+ 
+/* <usermanual>
+@keyword DEC
+
+@english
+
+The ''DEC'' command is used to decrement (i.e. decrease) the value 
+of a numeric variable by one. It is a quick and concise way to subtract 
+1 from the value contained in a variable. In place of ''variable'', enter the
+name of the numeric variable you want to decrement.
+
+The ''DEC'' command is actually a shorthand for the subtraction operation, as
+writing ''num=num-1''. However, ''DEC'' is often preferred because of its 
+more concise syntax and its specific decrement function. The ''DEC'' command 
+can only be applied to numeric variables (integer). 
+
+@italian
+
+Il comando ''DEC'' viene utilizzato per decrementare (cioè diminuire) il 
+valore di una variabile numerica di uno. È un modo rapido e conciso per 
+sottrarre 1 dal valore contenuto in una variabile. Al posto di ''variabile'', 
+inserisci il nome della variabile numerica che vuoi decrementare.
+
+Il comando ''DEC'' è in realtà una scorciatoia per l'operazione di sottrazione, 
+come scrivere ''num=num-1''. Tuttavia, ''DEC'' è spesso preferito per la sua
+sintassi più concisa e la sua specifica funzione di decremento. Il comando 
+''DEC'' può essere applicato solo a variabili numeriche (intere).
+
+@syntax DEC variable
+
+@example x = 43
+@example DEC x
+@example PRINT x: ' It prints "42"
+
+</usermanual> */
 void variable_decrement( Environment * _environment, char * _source ) {
 
     if ( _environment->emptyProcedure ) {

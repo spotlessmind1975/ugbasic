@@ -49,50 +49,69 @@
  * @param _c Color to use for drawing the line
  */
 /* <usermanual>
-@keyword DRAW
+@keyword DRAW (instruction) 
 
-@english
-This instruction draws a line on the screen, starting from the coordinates ''(x1, y1)''
-to arrive at the coordinates ''(x2, y2)'', using the color ''c''. The start or the final
-coordinates can be omitted: in this case, ugBASIC will draw, respectively, starting from 
-the last drawn position and arriving at the last drawn position. If the color is 
-omitted, the last color selected with the ''INK'' or ''PEN'' command will be used. 
-Finally, the default line style is full but a 16 bit bitmask can be set with the ''SET LINE''
-command.
+The ''DRAW'' command allows you to draw line segments and rectangles 
+on the screen, forming one of the basic building blocks for creating 
+simple graphics. This command can be used to draw coordinate axes 
+and data points, to create characters, environments, and objects, 
+to draw windows, buttons, and other interface elements. 
 
-On the other syntax, you can select the ''mode'' that can be ''PSET'' or ''PRESET''. If 
-''PSET'' is used the line is drawn in the current foreground colour. If ''PRESET'', the 
-line is drawn in the background colour.
+It starts drawing from the coordinates ''(x1, y1)''
+to arrive at the coordinates ''(x2, y2)'', using the color ''c''. 
+The start or the final coordinates can be omitted: in this case, ugBASIC 
+will draw, respectively, starting from the last drawn position and 
+arriving at the last drawn position. If the color is omitted, the 
+last color selected with the ''INK'' or ''PEN'' command will be used. 
 
-The last, if used, it is either ''B'' or ''BF''. If ''B'', a rectangle is
-drawn instead of a line, the upper corner of the rectangle will be x1, y1, and
-the lower right corner x2, y2. If ''BF'' is used, the rectangle is drawn and filled
-with the current foreground colour.
+The ''DRAW'' command offers several additional options to customize 
+the drawing. After the color, that is optinal, you can put the letter
+''B'' to draw a rectangle. The letters ''BF'' means that the
+rectangle must be filled, too. Finally, the default line style is normally
+"complete" but a 16 bit bitmask can be set with the ''SET LINE'' command.
+You can also select the ''mode'' that can be ''PSET'' or ''PRESET''. If 
+''PSET'' is used the line is drawn in the current foreground colour. 
+If ''PRESET'', the line is drawn in the background colour.
+
+The accuracy of the drawings is limited by the resolution of the screen,
+and drawing many lines can slow down the program, especially on 8-bit computers.
 
 @italian
-Questa istruzione disegna un segmento di linea sullo schermo, a partire dalle coordinate ''(x1,y1)''
-per arrivare alle coordinate ''(x2,y2)'', utilizzando il colore ''c''. Le coordinate di inizio o
-quelle di fine possono essere omesse: in tal caso, ugBASIC disegnerà, rispettivamente, 
-ùa partire dall'ultima posizione disegnata arrivando all'ultima posizione disegnata. 
-Se il colore viene omesso sarà utilizzato l'ultimo colore selezionato con il comando ''INK'' 
-oppure ''PEN'. Infine, lo stile della linea di default è pieno ma può essere impostata una 
-bitmask di 16 bit con il comando ''SET LINE''.
 
-Dall'altra sintassi è possibile selezionare la ''mode'' (modalità) che può essere ''PSET'' o ''PRESET''. 
-Se si utilizza ''PSET'' la linea viene disegnata nel colore di primo piano corrente. Se ''PRESET'', 
-la linea viene disegnata con il colore di sfondo.
+Il comando ''DRAW'' consente di disegnare segmenti di linea e rettangoli 
+sullo schermo, formando uno degli elementi di base per la creazione di 
+semplici elementi grafici. Questo comando può essere utilizzato per disegnare 
+assi di coordinate e punti dati, per creare personaggi, ambienti e oggetti, 
+per disegnare finestre, pulsanti e altri elementi dell'interfaccia.
 
-L'ultimo, se utilizzato, è ''B'' o ''BF''. Se ''B'' viene disegnato un rettangolo invece di
-una linea, l'angolo superiore del rettangolo sarà x1, y1 e l'angolo inferiore destro x2, y2. 
-Se si utilizza ''BF'', il rettangolo viene disegnato e riempito.
+Inizia a disegnare dalle coordinate ''(x1, y1)'' per arrivare alle coordinate 
+''(x2, y2)'', utilizzando il colore ''c''. Le coordinate di partenza o di 
+arrivo possono essere omesse: in questo caso, ugBASIC disegnerà, 
+rispettivamente, partendo dall'ultima posizione disegnata e arrivando 
+all'ultima posizione disegnata. Se il colore viene omesso, 
+verrà utilizzato l'ultimo colore selezionato con il comando 
+''INK'' o ''PEN''.
 
+Il comando ''DRAW'' offre diverse opzioni aggiuntive per personalizzare 
+il disegno. Dopo il colore, che è facoltativo, puoi mettere la lettera 
+''B'' per disegnare un rettangolo. Le lettere ''BF'' indicano che anche 
+il rettangolo deve essere riempito. Infine, lo stile di linea predefinito 
+è normalmente "completo", ma è possibile impostare una maschera di bit 
+a 16 bit con il comando ''SET LINE''.
+
+È anche possibile selezionare la ''mode'' che può essere ''PSET'' 
+o ''PRESET''. Se si utilizza ''PSET'', la linea viene disegnata nel 
+colore di primo piano corrente. Se ''PRESET'', la linea viene disegnata 
+nel colore di sfondo.
+
+La precisione dei disegni è limitata dalla risoluzione dello schermo 
+e disegnare molte linee può rallentare il programma, specialmente 
+su computer a 8 bit.
+
+@syntax DRAW (x1,y1)-(x2,y2),c[,B[F]]
+@syntax DRAW (x1,y1)-(x2,y2),c[,[mode]][,B[F]]
 @syntax DRAW [x1], [y1] TO x2, y2[, c]
-@syntax DRAW TO x2, y2[, c]
-@syntax DRAW (x1,y1) - (x2,y2)[,mode][,B|,BF]
-
-@example DRAW 10,10 TO 100,100,WHITE
-@example DRAW TO 100,100
-@example DRAW ,10 TO ,100
+@syntax DRAW TO [y2],[y2][,c]
 
 @usedInExample graphics_color_01.bas
 @usedInExample graphics_lines_01.bas
@@ -100,28 +119,20 @@ Se si utilizza ''BF'', il rettangolo viene disegnato e riempito.
 @usedInExample graphics_shapes_02.bas
 @usedInExample graphics_shapes_03.bas
 
+@alias LINE
+@seeAlso BAR
+@seeAlso BOX
+@seeAlso SET LINE
+
 @target all
 </usermanual> */
+
 /* <usermanual>
 @keyword LINE
 
 @english
-This instruction draws a line on the screen, starting from the coordinates ''(x1, y1)''
-to arrive at the coordinates ''(x2, y2)'', using the color ''c''. The start or the final
-coordinates can be omitted: in this case, ugBASIC will draw, respectively, starting from 
-the last drawn position and arriving at the last drawn position. If the color is 
-omitted, the last color selected with the ''INK'' or ''PEN'' command will be used. 
-Finally, the default line style is full but a 16 bit bitmask can be set with the ''SET LINE''
-command.
 
 @italian
-Questa istruzione disegna un segmento di linea sullo schermo, a partire dalle coordinate ''(x1,y1)''
-per arrivare alle coordinate ''(x2,y2)'', utilizzando il colore ''c''. Le coordinate di inizio o
-quelle di fine possono essere omesse: in tal caso, ugBASIC disegnerà, rispettivamente, 
-ùa partire dall'ultima posizione disegnata arrivando all'ultima posizione disegnata. 
-Se il colore viene omesso sarà utilizzato l'ultimo colore selezionato con il comando ''INK'' 
-oppure ''PEN'. Infine, lo stile della linea di default è pieno ma può essere impostata una 
-bitmask di 16 bit con il comando ''SET LINE''.
 
 @syntax LINE [x1], [y1] TO x2, y2[, c]
 @syntax LINE TO x2, y2[, c]
@@ -136,7 +147,8 @@ bitmask di 16 bit con il comando ''SET LINE''.
 @usedInExample graphics_shapes_02.bas
 @usedInExample graphics_shapes_03.bas
 
-@target all
+@alias DRAW (instruction)
+
 </usermanual> */
 void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color ) {
 
