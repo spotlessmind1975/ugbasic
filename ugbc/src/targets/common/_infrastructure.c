@@ -7588,6 +7588,47 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     
 }
 
+
+/* <usermanual>
+@keyword DUP
+
+@english
+
+The ''DUP'' command allows you to duplicate portions of text 
+within a program. This feature is especially useful when you 
+need to repeat a sequence of characters multiple times, without 
+having to retype it manually.
+
+The ''DUP'' command can be combined with other commands to create
+more complex effects. You can concatenate the result of ''DUP'' with 
+other strings to form sentences or paragraphs. You can assign the 
+result of ''DUP'' to a variable for later use. You can combine it
+with other string manipulation functions to create even more customized 
+effects. Displaying an increasing number of characters in a bar can use ''DUP'',
+as well as to write tables or reports with fixed-width columns.
+
+@italian
+
+Il comando ''DUP'' consente di duplicare porzioni di testo 
+all'interno di un programma. Questa funzionalità è 
+particolarmente utile quando è necessario ripetere una sequenza 
+di caratteri più volte, senza doverla riscrivere manualmente.
+
+Il comando ''DUP'' può essere combinato con altri comandi per creare 
+effetti più complessi. È possibile concatenare il risultato di 
+''DUP'' con altre stringhe per formare frasi o paragrafi. 
+È possibile assegnare il risultato di ''DUP'' a una variabile 
+per un uso successivo. È possibile combinarlo con altre funzioni 
+di manipolazione delle stringhe per creare effetti ancora più 
+personalizzati. La visualizzazione di un numero crescente di 
+caratteri in una barra può utilizzare ''DUP'', nonché per 
+scrivere tabelle o report con colonne a larghezza fissa.
+
+@syntax = DUP( string, times )
+
+@example PRINT DUP( "***", 10 )
+
+</usermanual> */
 Variable * variable_string_dup( Environment * _environment, char * _string, char * _repetitions  ) {
 
     MAKE_LABEL

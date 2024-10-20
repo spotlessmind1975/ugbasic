@@ -50,8 +50,38 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
+
 /* <usermanual>
-@keyword PUT TILE
+@keyword DTILE
+
+@english
+
+This command allows you to draw a row or column of "tiles", 
+or predefined characters.
+
+@italian
+
+Questo comando permette di disegnare una riga o una colonna di "tiles", 
+ovvero di caratteri predefiniti.
+
+@syntax DTILE v ROW y, x1 TO x2[, c]
+@syntax DTILE v COLUMN x, y1 TO y2[, c]
+
+@alias DTILES
+
+</usermanual> */
+/* <usermanual>
+@keyword DTILES
+
+@english
+
+@italian
+
+@syntax DTILES v ROW y, x1 TO x2[, c]
+@syntax DTILES v COLUMN x, y1 TO y2[, c]
+
+@alias DTILE
+
 </usermanual> */
 void draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color ) {
 

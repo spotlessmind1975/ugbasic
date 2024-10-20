@@ -2183,17 +2183,38 @@ Restituisce l'indirizzo di memoria assegnato all'interno del banco di memoria es
 
 @english
 
-This instruction enables CPU-level interrupts. If they were previously disabled, they will 
-now be enabled; if they were already enabled, nothing will happen.
+An interrupt is a signal that temporarily stops the normal execution of a program, 
+allowing the processor to handle external events or internal exceptions. These events can be
+a key being pressed on the keyboard, data arriving from a serial port or a timer reaching zero.
+
+Interrupts allow the processor to respond quickly and efficiently to external events, 
+avoiding delays in processing, so that you can handle events that occur independently 
+of the main program execution and so the computer can communicate with external devices 
+such as keyboard.
+
+This instruction will change the specific register of the main processor, so that interrupts will
+be served again.
 
 @italian
 
-Questa istruzione abilita gli interrupt a livello di CPU. Se prima erano disabilitate, 
-saranno quindi abilitate; se lo erano già, non accadrà nulla.
+Un interrupt è un segnale che interrompe temporaneamente la normale esecuzione di un programma, 
+consentendo al processore di gestire eventi esterni o eccezioni interne. Questi eventi possono 
+essere la pressione di un tasto sulla tastiera, l'arrivo di dati da una porta seriale o un timer 
+che raggiunge lo zero.
+
+Gli interrupt consentono al processore di rispondere in modo rapido ed efficiente agli eventi 
+esterni, evitando ritardi nell'elaborazione, in modo da poter gestire eventi che si verificano 
+indipendentemente dall'esecuzione del programma principale e in modo che il computer possa 
+comunicare con dispositivi esterni come la tastiera.
+
+Questa istruzione modificherà il registro specifico del processore principale, in modo che 
+gli interrupt vengano nuovamente serviti.
 
 @syntax ENABLE INTERRUPT
 
 @example ENABLE INTERRUPT
+
+@seeAlso DISABLE INTERRUPT
 
 @target all
 </usermanual> */
@@ -2203,19 +2224,39 @@ saranno quindi abilitate; se lo erano già, non accadrà nulla.
 
 @english
 
-This instruction disables CPU-level interrupts. If they were previously enabled, they will 
-now be disabled; if they were already disabled, nothing will happen.
+An interrupt is a signal that temporarily stops the normal execution of a program, 
+allowing the processor to handle external events or internal exceptions. These events can be
+a key being pressed on the keyboard, data arriving from a serial port or a timer reaching zero.
+
+Interrupts allow the processor to respond quickly and efficiently to external events, 
+avoiding delays in processing, so that you can handle events that occur independently 
+of the main program execution and so the computer can communicate with external devices 
+such as keyboard.
+
+This instruction will change the specific register of the main processor, so that interrupts will
+not be served anymore.
 
 @italian
 
-Questa istruzione disabilita gli interrupt a livello di CPU. Se prima erano abilitate, 
-saranno quindi disabilitate; se lo erano già, non accadrà nulla.
+Un interrupt è un segnale che interrompe temporaneamente la normale esecuzione di un programma, 
+consentendo al processore di gestire eventi esterni o eccezioni interne. Questi eventi possono 
+essere la pressione di un tasto sulla tastiera, l'arrivo di dati da una porta seriale o un timer 
+che raggiunge lo zero.
+
+Gli interrupt consentono al processore di rispondere in modo rapido ed efficiente agli eventi 
+esterni, evitando ritardi nell'elaborazione, in modo da poter gestire eventi che si verificano 
+indipendentemente dall'esecuzione del programma principale e in modo che il computer possa 
+comunicare con dispositivi esterni come la tastiera.
+
+Questa istruzione modificherà il registro specifico del processore principale, in modo che 
+gli interrupt non siano più serviti.
 
 @syntax DISABLE INTERRUPT
 
 @example DISABLE INTERRUPT
 
-@target all
+@seeAlso ENABLE INTERRUPT
+
 </usermanual> */
 
 /* <usermanual>
@@ -4492,5 +4533,63 @@ target corrispondente, il valore sarà zero.
 @example IF KET STATE(DOWN) THEN
 @example    PRINT "DOWN has been pressed!"
 @example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword DWORD (data type)
+
+The ''DWORD'' is a data type that allow to store a 32-bit word (''WORD''). 
+
+@italian
+
+''DWORD'' è un tipo di dati che consente di memorizzare una 
+parola (''WORD'') a 32 bit.
+
+@syntax ... AS DWORD
+
+@example DIM parolaLunga AS DWORD
+
+</usermanual> */
+
+/* <usermanual>
+@keyword EMPTY TILE
+
+@english
+
+This is a special parameter of ugBASIC, which allows you to change what 
+is considered the "space" character on the screen. It is used, in text 
+modes, to clear the screen.
+
+@italian
+
+Questo è un parametro speciale di ugBASIC, che consente di modificare 
+quello che viene considerato il carattere "spazio" sullo schermo. 
+Viene utilizzato, nelle modalità testuali, per cancellare lo schermo.
+
+@syntax = EMPTY TILE
+@syntax EMPTY TILE = ...
+
+@example EMPTY TILE = 65
+@example CLS
+
+@alias EMPTYTILE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword EMPTYTILE
+
+@english
+
+@italian
+
+@syntax = EMPTYTILE
+@syntax EMPTYTILE = ...
+
+@example EMPTYTILE = 65
+@example CLS
+
+@alias EMPTY TILE
 
 </usermanual> */
