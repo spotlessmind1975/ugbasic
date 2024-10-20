@@ -45,8 +45,7 @@
  */
 /* <usermanual>
 @keyword EVERY ON
-
-@example EVERY ON
+@target coco
 </usermanual> */
 void every_on( Environment * _environment, char * _timer ) {
 

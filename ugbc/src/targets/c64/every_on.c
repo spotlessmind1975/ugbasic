@@ -45,14 +45,7 @@
  */
 /* <usermanual>
 @keyword EVERY ON
-
-@english
-
-@italian
-
-@syntax EVERY ON
-
-@example EVERY ON
+@target c64
 </usermanual> */
 void every_on( Environment * _environment, char * _timer ) {
    

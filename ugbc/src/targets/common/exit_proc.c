@@ -44,31 +44,54 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-@keyword POP PROC
+@keyword EXIT PROCEDURE
 
 @english
-This keyword will exit from a procedure. 
+
+The ''EXIT PROCEDURE'' command is used to stop execution of a specific procedure,
+and transfer control of the program to the first statement following the calling
+of that procedure. 
+
+The command is useful to exit when an error or unexpected condition occurs, and it
+can be used to end the procedure and handle the error appropriately. In some cases, 
+using ''EXIT PROCEDURE'' can make your code more efficient by avoiding executing unnecessary 
+statements. ''EXIT PROCEDURE'' allows you to create more complex control flows and
+make dynamic decisions  during program execution.  Excessive use of ''EXIT PROCEDURE'', however,
+can make your code more difficult to read and maintain.
 
 @italian
-Questa parola chiave fa uscire da una procedura.
 
-@syntax POP PROC
+Il comando ''EXIT PROCEDURE'' viene utilizzato per interrompere l'esecuzione 
+di una procedura specifica e trasferire il controllo del programma alla prima 
+istruzione successiva alla chiamata di tale procedura.
 
-@example POP PROC
+Il comando è utile per uscire quando si verifica un errore o una condizione imprevista,
+e può essere utilizzato per terminare la procedura e gestire l'errore in modo appropriato.
+In alcuni casi, l'utilizzo di ''EXIT PROCEDURE'' può rendere il codice più efficiente 
+evitando di eseguire istruzioni non necessarie. ''EXIT PROCEDURE'' consente di creare 
+flussi di controllo più complessi e prendere decisioni dinamiche durante l'esecuzione 
+del programma. Tuttavia, un utilizzo eccessivo di ''EXIT PROCEDURE'' può rendere il 
+codice più difficile da leggere e gestire.
 
-@usedInExample procedures_jumping_02.bas
+@syntax EXIT PROCEDURE
 
-@target all
+@example PROCEDURE test[ x AS INTEGER ]
+@example    IF x > 10 THEN EXIT PROCEDURE
+@example       PRINT "X is less or equal to 10"
+@example    ENDIF
+@example END PROC
+
+@alias POP PROCEDURE
+@alias EXIT PROC
+
 </usermanual> */
 
 /* <usermanual>
 @keyword POP PROCEDURE
 
 @english
-This keyword will exit from a procedure. 
 
 @italian
-Questa parola chiave fa uscire da una procedura.
 
 @syntax POP PROCEDURE
 
@@ -76,17 +99,16 @@ Questa parola chiave fa uscire da una procedura.
 
 @usedInExample procedures_jumping_02.bas
 
-@target all
+@alias EXIT PROCEDURE
+@alias EXIT PROC
 </usermanual> */
 
 /* <usermanual>
 @keyword EXIT PROC
 
 @english
-This keyword will exit from a procedure. 
 
 @italian
-Questa parola chiave fa uscire da una procedura.
 
 @syntax EXIT PROC
 
@@ -94,25 +116,9 @@ Questa parola chiave fa uscire da una procedura.
 
 @usedInExample procedures_jumping_02.bas
 
-@target all
-</usermanual> */
+@alias POP PROCEDURE
+@alias EXIT PROCEDURE
 
-/* <usermanual>
-@keyword EXIT PROCEDURE
-
-@english
-This keyword will exit from a procedure. 
-
-@italian
-Questa parola chiave fa uscire da una procedura.
-
-@syntax EXIT PROCEDURE
-
-@example EXIT PROCEDURE
-
-@usedInExample procedures_jumping_02.bas
-
-@target all
 </usermanual> */
 
 void exit_procedure( Environment * _environment ) {

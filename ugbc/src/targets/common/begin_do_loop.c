@@ -109,11 +109,33 @@ iterazione del ciclo.
 @usedInExample control_loops_04.bas
 @usedInExample control_loops_05.bas
 
+@seeAlso FOR...NEXT
 @seeAlso WHILE...WEND
 @seeAlso REPEAT...UNTIL
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword LOOP...END LOOP
+
+@english
+
+@italian
+
+@syntax LOOP
+@syntax   ... instructions ...
+@syntax END LOOP
+
+@example LOOP
+@example   x = x + 1
+@example END LOOP
+
+@alias DO...LOOP
+
+@target all
+</usermanual> */
+
 void begin_do_loop( Environment * _environment ) {
 
     begin_loop( _environment, 1 );

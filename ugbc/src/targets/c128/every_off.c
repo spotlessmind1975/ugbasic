@@ -45,8 +45,28 @@
  */
 /* <usermanual>
 @keyword EVERY OFF
+
+@english
+
+With ''EVERY OFF'' you can enable (or re-enable) the timed calls.
+
+@italian
+
+Con ''EVERY OFF'' puoi abilitare (o riabilitare) le chiamate temporizzate.
+
+@syntax EVERY OFF [timer]
+
+@example EVERY OFF
+
+@usedInExample control_periodic_02.bas
+@usedInExample control_periodic_03.bas
+
+@seeAlso AFTER...GOSUB
+@seeAlso AFTER...CALL
+@seeAlso EVERY ON
 @target c128
 </usermanual> */
+
 void every_off( Environment * _environment, char * _timer ) {
    
     Variable * timer = NULL;

@@ -112,7 +112,30 @@ numero di byte e l'indirizzo di partenza.
 
 @target c128
 
+@seeAlso DLOAD ERROR
+
 </usermanual> */
+/* <usermanual>
+@keyword DLOAD ERROR
+
+@english
+
+The ''DLOAD ERROR'' function lets you know whether the last 
+''DLOAD'' instruction returned an error or not.
+
+@italian
+
+La funzione ''DLOAD ERROR'' consente di sapere se l'ultima istruzione 
+''DLOAD'' ha dato errore o meno.
+
+@syntax = DLOAD ERROR
+
+@target c128
+
+@seeAlso DLOAD
+
+</usermanual> */
+
 void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
     if ( _environment->tenLinerRulesEnforced ) {

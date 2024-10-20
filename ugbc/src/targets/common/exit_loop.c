@@ -51,22 +51,38 @@
 @keyword EXIT
 
 @english
-The instruction forces the program to leave a loop immediately, and it can 
-be used to escape from all the types of loop, such as ''FOR...NEXT'', 
-''REPEAT...UNTIL'', ''WHILE...WEND'' and ''DO...LOOP''.
 
-When used on its own, ''EXIT'' will short-circuit the innermost loop only. 
-By including a number after EXIT, that number of nested loops will be taken 
-into account before the ''EXIT'' is made.
+The ''EXIT'' command is used to stop execution of a specific block of code
+and transfer control of the program to the first statement following that block.
+It is often used inside ''FOR...NEXT'', ''WHILE...WEND'', or ''DO...LOOP'' loops 
+to terminate the loop prematurely when a certain condition is met. The optional parameter
+''number'' specifies the number of inner blocks you want to exit. If missing,
+the implicit value is 1.
+
+The command is useful to exit when an error or unexpected condition occurs, and it
+can be used to end the code block and handle the error appropriately. In some cases, 
+using ''EXIT'' can make your code more efficient by avoiding executing unnecessary 
+statements. ''EXIT'' allows you to create more complex control flows and make dynamic decisions 
+during program execution.  Excessive use of ''EXIT'', however,
+can make your code more difficult to read and maintain.
 
 @italian
-Questa istruzione forza il programma ad abbandonare immediatamente un 
-ciclo e può essere usato per uscire da tutti i tipi di loop, come 
-''FOR...NEXT'', ''REPEAT...UNTIL'', ''WHILE...WEND'' e ''DO...LOOP''.
 
-Se usato da solo, ''EXIT'' uscità solo dal loop più interno.
-Includendo un numero dopo ''EXIT'', si uscirà da quel numero di 
-cicli annidati.
+Il comando ''EXIT'' viene utilizzato per interrompere l'esecuzione di un blocco 
+di codice specifico e trasferire il controllo del programma alla prima istruzione 
+successiva a tale blocco.
+
+Viene spesso utilizzato all'interno dei cicli ''FOR...NEXT'', ''WHILE...WEND'' o
+''DO...LOOP'' per terminare il ciclo prematuramente quando viene soddisfatta 
+una determinata condizione. Il parametro facoltativo ''number'' specifica il numero 
+di blocchi interni da cui si desidera uscire. Se manca, il valore implicito è 1. 
+Il comando è utile per uscire quando si verifica un errore o una condizione 
+imprevista e può essere utilizzato per terminare il blocco di codice e gestire 
+l'errore in modo appropriato. In alcuni casi, l'utilizzo di ''EXIT'' può rendere 
+il codice più efficiente evitando di eseguire istruzioni non necessarie. ''EXIT'' 
+consente di creare flussi di controllo più complessi e di prendere decisioni 
+dinamiche durante l'esecuzione del programma. L'uso eccessivo di ''EXIT'' 
+può rendere il codice più difficile da leggere e gestire.
 
 @syntax EXIT [number]
 

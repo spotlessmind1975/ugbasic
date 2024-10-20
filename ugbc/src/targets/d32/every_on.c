@@ -45,8 +45,7 @@
  */
 /* <usermanual>
 @keyword EVERY ON
-
-@example EVERY ON
+@target d32
 </usermanual> */
 void every_on( Environment * _environment, char * _timer ) {
 

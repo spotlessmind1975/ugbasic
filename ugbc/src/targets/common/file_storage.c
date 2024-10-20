@@ -48,6 +48,7 @@
 @keyword FILE
 
 @english
+
 The ''FILE'' command, inserted inside a ''BEGIN STORAGE'' - ''ENDSTORAGE'' block, 
 allows you to define the content of the mass storage element. The basic syntax requires 
 indicating the name of the ''source'' file that will be inserted into the medium. 
@@ -67,8 +68,8 @@ indicare un alias (''AS target'').
 
 @usedInExample storage_example_01.bas
 
+@seeAlso BEGIN STORAGE
 @target all
-@verified
 </usermanual> */
 void file_storage( Environment * _environment, char * _source_name, char * _target_name ) {
 

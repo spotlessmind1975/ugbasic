@@ -51,6 +51,12 @@
 @target c64
 
 </usermanual> */
+/* <usermanual>
+@keyword DLOAD ERROR
+
+@target c64
+</usermanual> */
+
 void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
     if ( _environment->tenLinerRulesEnforced ) {

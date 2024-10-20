@@ -44,13 +44,46 @@
 
 @english
 
+The ''EXP'' command is a mathematical function that calculates the natural 
+exponential of a number. In other words, it raises Napier's number (e = 2.71828) 
+to the specified power.
+
+The ''EXP'' function has numerous applications in mathematics, science, 
+and engineering. It is used to describe phenomena that grow at a rate 
+proportional to the amount present, such as population growth or 
+radioactive decay. The natural exponential is closely related to 
+trigonometric functions and can be used to calculate them.
+
+Many differential equations have solutions that involve the 
+natural exponential, and it appears in many probability distributions, 
+such as the exponential distribution and the normal distribution.
+
+Noe that ''EXP'' function is defined only for ''FLOAT'' numbers.
+
 @italian
+
+Il comando ''EXP'' è una funzione matematica che calcola l'esponenziale 
+naturale di un numero. In altre parole, eleva il numero di Napier 
+(e = 2,71828) alla potenza specificata.
+
+La funzione ''EXP'' ha numerose applicazioni in matematica, scienza e 
+ingegneria. Viene utilizzata per descrivere fenomeni che crescono a 
+una velocità proporzionale alla quantità presente, come la crescita 
+della popolazione o il decadimento radioattivo. L'esponenziale 
+naturale è strettamente correlato alle funzioni trigonometriche 
+e può essere utilizzato per calcolarle.
+
+Molte equazioni differenziali hanno soluzioni che coinvolgono 
+l'esponenziale naturale e appare in molte distribuzioni di 
+probabilità, come la distribuzione esponenziale e la 
+distribuzione normale.
+
+Noto che la funzione ''EXP'' è definita solo per numeri ''FLOAT''.
 
 @syntax = EXP(number)
 
 @example x = EXP(21)
 
-@target all
 </usermanual> */
 Variable * fp_exp( Environment * _environment, char * _value ) {
 

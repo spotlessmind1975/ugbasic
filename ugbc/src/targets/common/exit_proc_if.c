@@ -47,49 +47,124 @@
  * @param _expression Expression to check
  */
 /* <usermanual>
-@keyword EXIT PROC IF
-
-@english
-The instruction forces the program to leave a procedure under a specific 
-set of conditions. The ''EXIT'' will only be performed ''IF'' the
-result is found to true. 
-
-@italian
-Questa istruzione forza il programma ad abbandonare una procedura
-in base a delle condizioni: tale istruzione uscirà
-(''EXIT'') solo se (''IF'') il risultato viene valutato come vero.
-
-@syntax EXIT PROC IF expression
-
-@example EXIT PROC IF lifes = 0
-
-@usedInExample control_loops_02.bas
-@usedInExample control_loops_03.bas
-
-@target all
-</usermanual> */
-
-/* <usermanual>
 @keyword EXIT PROCEDURE IF
 
 @english
-The instruction forces the program to leave a procedure under a specific 
-set of conditions. The ''EXIT'' will only be performed ''IF'' the
-result is found to true. 
+
+The ''EXIT PROCEDURE IF'' command is used to stop execution of a specific procedure,
+and transfer control of the program to the first statement following the calling
+of that procedure, in case an expression is true.''TRUE''
+
+The command is useful to exit when an error or unexpected condition occurs, and it
+can be used to end the procedure and handle the error appropriately. In some cases, 
+using ''EXIT PROCEDURE IF'' can make your code more efficient by avoiding executing unnecessary 
+statements. ''EXIT PROCEDURE IF'' allows you to create more complex control flows and
+make dynamic decisions  during program execution.  Excessive use of ''EXIT PROCEDURE IF'', however,
+can make your code more difficult to read and maintain.
 
 @italian
-Questa istruzione forza il programma ad abbandonare una procedura
-in base a delle condizioni: tale istruzione uscirà
-(''EXIT'') solo se (''IF'') il risultato viene valutato come vero.
+
+Il comando ''EXIT PROCEDURE IF'' viene utilizzato per interrompere l'esecuzione 
+di una procedura specifica e trasferire il controllo del programma alla prima 
+istruzione successiva alla chiamata di tale procedura, nel caso la condizione
+indicata sia ''TRUE''.
+
+Il comando è utile per uscire quando si verifica un errore o una condizione imprevista,
+e può essere utilizzato per terminare la procedura e gestire l'errore in modo appropriato.
+In alcuni casi, l'utilizzo di ''EXIT PROCEDURE IF'' può rendere il codice più efficiente 
+evitando di eseguire istruzioni non necessarie. ''EXIT PROCEDURE IF'' consente di creare 
+flussi di controllo più complessi e prendere decisioni dinamiche durante l'esecuzione 
+del programma. Tuttavia, un utilizzo eccessivo di ''EXIT PROCEDURE IF'' può rendere il 
+codice più difficile da leggere e gestire.
 
 @syntax EXIT PROCEDURE IF expression
 
-@example EXIT PROCEDURE IF lifes = 0
+@example PROCEDURE test[ x AS INTEGER ]
+@example    EXIT PROCEDURE IF x > 10
+@example    PRINT "X is less or equal to 10"
+@example END PROC
 
-@usedInExample control_loops_02.bas
-@usedInExample control_loops_03.bas
+@alias EXIT PROC IF
 
-@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword EXIT PROC IF
+
+@english
+
+@italian
+
+@syntax EXIT PROC IF expression
+
+@example EXIT PROC IF
+
+@usedInExample procedures_jumping_02.bas
+
+@alias EXIT PROCEDURE IF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword EXIT PROCEDURE WITH...IF
+
+@english
+
+The ''EXIT PROCEDURE WITH...IF'' command is used to stop execution of a specific function,
+and transfer control of the program to the first statement following the calling
+of that procedure, giving back a value in case an expression is true.''TRUE''
+
+The command is useful to exit when an error or unexpected condition occurs, and it
+can be used to end the procedure and handle the error appropriately. In some cases, 
+using ''EXIT PROCEDURE WITH...IF'' can make your code more efficient by avoiding executing unnecessary 
+statements. ''EXIT PROCEDURE WITH...IF'' allows you to create more complex control flows and
+make dynamic decisions  during program execution.  Excessive use of ''EXIT PROCEDURE WITH...IF'', however,
+can make your code more difficult to read and maintain.
+
+@italian
+
+Il comando ''EXIT PROCEDURE WITH...IF'' viene utilizzato per interrompere l'esecuzione 
+di una funzione specifica e trasferire il controllo del programma alla prima 
+istruzione successiva alla chiamata di tale procedura, restituendo un valore,
+nel caso la condizione indicata sia ''TRUE''.
+
+Il comando è utile per uscire quando si verifica un errore o una condizione imprevista,
+e può essere utilizzato per terminare la procedura e gestire l'errore in modo appropriato.
+In alcuni casi, l'utilizzo di ''EXIT PROCEDURE WITH...IF'' può rendere il codice più efficiente 
+evitando di eseguire istruzioni non necessarie. ''EXIT PROCEDURE WITH...IF'' consente di creare 
+flussi di controllo più complessi e prendere decisioni dinamiche durante l'esecuzione 
+del programma. Tuttavia, un utilizzo eccessivo di ''EXIT PROCEDURE WITH...IF'' può rendere il 
+codice più difficile da leggere e gestire.
+
+@syntax EXIT PROCEDURE WITH value IF expression
+
+@example PROCEDURE test[ x AS INTEGER ]
+@example    EXIT PROCEDURE WITH 0 IF x > 10
+@example    PRINT "X is less or equal to 10"
+@example    RETURN 1
+@example END PROC
+
+@alias EXIT PROC IF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword EXIT PROC WITH...IF
+
+@english
+
+@italian
+
+@syntax EXIT PROC WITH value IF expression
+
+@example PROCEDURE test[ x AS INTEGER ]
+@example    EXIT PROC WITH 0 IF x > 10
+@example    PRINT "X is less or equal to 10"
+@example    RETURN 1
+@example END PROC
+
+@alias EXIT PROCEDURE WITH...IF
+
 </usermanual> */
 
 void exit_proc_if( Environment * _environment, char * _expression, char * _value ) {

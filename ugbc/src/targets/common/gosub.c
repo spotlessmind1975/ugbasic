@@ -52,26 +52,65 @@
 @keyword GOSUB
 
 @english
-Do an unconditional jump to an alphanumeric label, previously or 
-subsequently defined, with the syntax of the labels. When a ''RETURN''
-is encountered, the execution will continue to the instruction next
-to this one.
+
+The ''GOSUB'' command allows you to "jump" to a specific part of the program,
+execute a set of instructions and then return exactly to the point where 
+you started. 
+
+It allows you to break a program into smaller, more manageable 
+blocks of code, improving readability and maintenance. A subroutine can be called 
+multiple times from different parts of the program, avoiding rewriting the same 
+code multiple times. It helps organize the flow of the program, making it clearer 
+and easier to follow. 
+
+While ''GOTO'' allows an unconditional jump to any line of the program, 
+''GOSUB'' is more structured and allows a return to the starting point. 
+In general, ''GOSUB'' is considered a more powerful and flexible tool than 
+''GOTO'', as it allows for better organization of the code.
+
+It is possible to nest subroutines, but it is important to make sure that 
+each ''GOSUB'' has its corresponding ''RETURN''. So, a common mistake is to 
+forget to put ''RETURN'' at the end of a subroutine, causing unpredictable 
+behavior of the program.
+
+Subroutines are often implemented through functions and procedures, which 
+offer more advanced functionality and more rigorous management of
+variable scope.
 
 @italian
-Effettua un salto incondizionato a un'etichetta, definita in precedenza o
-successivamente. Quando si incontrerà il comando ''RETURN'', l'esecuzione
-continuerà all'istruzione successiva a qeusta.
+
+Il comando ''GOSUB'' consente di "saltare" a una parte specifica del programma, 
+eseguire una serie di istruzioni e quindi tornare esattamente al punto di partenza.
+
+Consente di suddividere un programma in blocchi di codice più piccoli e gestibili, 
+migliorandone la leggibilità e la manutenzione. Una subroutine può essere chiamata 
+più volte da diverse parti del programma, evitando di riscrivere lo stesso codice 
+più volte. Aiuta a organizzare il flusso del programma, rendendolo più chiaro e 
+facile da seguire.
+
+Mentre ''GOTO'' consente un salto incondizionato a qualsiasi riga del programma, 
+''GOSUB'' è più strutturato e consente di tornare al punto di partenza.
+In generale, ''GOSUB'' è considerato uno strumento più potente e flessibile 
+di ''GOTO'', poiché consente una migliore organizzazione del codice.
+
+È possibile annidare le subroutine, ma è importante assicurarsi che ogni ''GOSUB'' 
+abbia il suo ''RETURN'' corrispondente. Quindi, un errore comune è dimenticare 
+di mettere ''RETURN'' alla fine di una subroutine, causando un comportamento 
+imprevedibile del programma.
+
+Le subroutine sono spesso implementate tramite funzioni e procedure, che 
+offrono funzionalità più avanzate e una gestione più rigorosa dell'ambito 
+delle variabili.
 
 @syntax GOSUB label
 
 @example GOSUB leggiTasti
 
-@target all
+@usedInExample control_returning_01.bas
+@usedInExample control_returning_02.bas
 
 @seeAlso RETURN
 @seeAlso POP
-@usedInExample control_returning_01.bas
-@usedInExample control_returning_02.bas
 
 </usermanual> */
 void gosub_label( Environment * _environment, char * _label ) {
@@ -92,14 +131,6 @@ void gosub_label( Environment * _environment, char * _label ) {
  * @param _environment Current calling environment
  * @param _label Label where to jump to
  */
-/* <usermanual>
-@keyword GOSUB
-
-@syntax GOSUB number
-
-@example GOSUB 42
-
-</usermanual> */
 void gosub_number( Environment * _environment, int _number ) {
 
     label_referred_define_numeric( _environment, _number );

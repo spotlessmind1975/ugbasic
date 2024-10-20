@@ -98,6 +98,8 @@ bassa risoluzione potrebbero visualizzare cerchi meno nitidi.
 @usedInExample graphics_position_02.bas
 @usedInExample graphics_shapes_02.bas
 
+@seeAlso ELLIPSE
+
 @target all
 </usermanual> */
 void circle( Environment * _environment, char * _x, char * _y, char * _r, char * _c, int _preserve_color ) {

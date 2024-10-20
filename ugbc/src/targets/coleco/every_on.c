@@ -43,6 +43,10 @@
  * 
  * @param _environment Current calling environment
  */
+/* <usermanual>
+@keyword EVERY ON
+@target coleco
+</usermanual> */
 void every_on( Environment * _environment, char * _timer ) {
    
     Variable * timer = NULL;

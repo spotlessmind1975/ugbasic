@@ -57,7 +57,7 @@ The instruction forces the program to leave a loop, such as ''FOR...NEXT'',
 set of conditions. The ''EXIT'' will only be performed ''IF'' the
 result is found to true. 
 
-An optional number can be given to specify the number of loops 
+An optional ''number'' can be given to specify the number of loops 
 to be jumped out, otherwise only the current loop will be aborted.
 
 @italian
@@ -70,8 +70,8 @@ in base a delle condizioni: tale istruzione uscirà
 Può essere fornito un numero opzionale per specificare il numero di loop
 da cui uscire, altrimenti verrà interrotto solo il loop più interno.
 
-@syntax EXIT IF expression[, levels]
-@syntax EXIT levels IF expression
+@syntax EXIT IF expression[, number]
+@syntax EXIT number IF expression
 
 @example EXIT IF lifes = 0, 2
 @example EXIT 2 IF lifes

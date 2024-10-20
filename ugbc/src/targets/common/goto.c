@@ -52,22 +52,65 @@
 @keyword GOTO
 
 @english
-Do an unconditional jump to an alphanumeric label, previously or 
-subsequently defined, with the syntax of the labels.
+
+The ''GOTO'' command is a statement that allows you to jump unconditionally 
+to another part of the program. In practice, instead of executing the instructions 
+in sequence, the program "jumps" directly to the line indicated by the ''GOTO'' command.
+
+Despite its simplicity, indiscriminate use of the ''GOTO'' command can lead to several 
+problems. It can make the code very difficult to follow and understand, creating 
+so-called "spaghetti code". If a program contains many unconditional jumps, it can 
+become very difficult to find the source of an error. Frequent use of ''GOTO'' tends to
+create a poorly structured flow of control that is difficult to maintain.
+
+The ugBASIC ​​offers more sophisticated and readable control structures, such as: 
+''IF...THEN...ELSE'', ''FOR...NEXT'', ''DO...LOOP'', and so on. These structures make
+the code clearer and make it easier to manage the flow of control.
+
+In some specific cases, however, the use of ''GOTO'' can be justified, for example 
+in very specific situations, a ''GOTO'' can be used to exit a nested loop more efficiently.
+In some cases, a ''GOTO'' can be used to handle errors in the most direct way.
+In general, it is advisable to avoid the use of ''GOTO'' and prefer more modern 
+control structures. A well-structured and readable code is easier to maintain 
+and to change over time.
 
 @italian
-Esegue un salto incondizionato a un'etichetta, definita in precedenza o
-successivamente.
+
+Il comando ''GOTO'' è un'istruzione che consente di saltare incondizionatamente 
+a un'altra parte del programma. In pratica, invece di eseguire le istruzioni 
+in sequenza, il programma "salta" direttamente alla riga indicata dal comando 
+''GOTO''.
+
+Nonostante la sua semplicità, l'uso indiscriminato del comando ''GOTO'' può 
+portare a diversi problemi. Può rendere il codice molto difficile da seguire 
+e comprendere, creando il cosiddetto "codice spaghetti". Se un programma contiene 
+molti salti incondizionati, può diventare molto difficile trovare la fonte di 
+un errore. L'uso frequente di ''GOTO'' tende a creare un flusso di controllo 
+mal strutturato che è difficile da mantenere.
+
+L'ugBASIC offre strutture di controllo più sofisticate e leggibili, come: 
+''IF...THEN...ELSE'', ''FOR...NEXT'', ''DO...LOOP'' e così via. Queste 
+strutture rendono il codice più chiaro e facilitano la gestione del 
+flusso di controllo.
+
+In alcuni casi specifici, tuttavia, l'uso di ''GOTO'' può essere giustificato, 
+ad esempio in situazioni molto specifiche, un ''GOTO'' può essere utilizzato 
+per uscire da un ciclo annidato in modo più efficiente.
+
+In alcuni casi, un ''GOTO'' può essere utilizzato per gestire gli errori 
+nel modo più diretto. In generale, è consigliabile evitare l'uso di ''GOTO'' 
+e preferire strutture di controllo più moderne. Un codice ben strutturato e 
+leggibile è più facile da mantenere e da modificare nel tempo.
 
 @syntax GOTO label
 
 @example GOTO nuovaEtichetta
+
 @usedInExample control_uncond_jumps_01.bas
 @usedInExample control_uncond_jumps_02.bas
 @usedInExample control_returning_01.bas
 @usedInExample control_returning_02.bas
 
-@target all
 </usermanual> */
 void goto_label( Environment * _environment, char * _label ) {
 

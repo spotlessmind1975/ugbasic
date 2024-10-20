@@ -45,9 +45,7 @@
  */
 /* <usermanual>
 @keyword EVERY ON
-
 @target plus4
-
 </usermanual> */
 void every_on( Environment * _environment, char * _timer ) {
    

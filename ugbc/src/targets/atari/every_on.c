@@ -45,8 +45,8 @@
  */
 /* <usermanual>
 @keyword EVERY ON
-
-@example EVERY ON
+@target atari
+@target atarixl
 </usermanual> */
 void every_on( Environment * _environment, char * _timer ) {
    

@@ -48,12 +48,25 @@
 
 @english
 
+With ''EVERY ON'' you can enable (or re-enable) the timed calls.
+
 @italian
 
-@syntax EVERY ON
+Con ''EVERY ON'' puoi abilitare (o riabilitare) le chiamate temporizzate.
+
+@syntax EVERY ON [timer]
 
 @example EVERY ON
+
+@usedInExample control_periodic_02.bas
+@usedInExample control_periodic_03.bas
+
+@seeAlso AFTER...GOSUB
+@seeAlso AFTER...CALL
+@seeAlso EVERY OFF
+@target c128
 </usermanual> */
+
 void every_on( Environment * _environment, char * _timer ) {
    
      Variable * timer = NULL;

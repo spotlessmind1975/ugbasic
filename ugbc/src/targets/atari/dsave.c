@@ -47,31 +47,13 @@
  */
  /* <usermanual>
 @keyword DSAVE
-
-@english
-Dynamically (at run-time) save a file to a mass storage. The DSAVE command 
-allows you to (dynamically) save a file to a mass device. The syntax allows 
-you to save a specific file (''filename'') starting from a specific ''offset'' 
-within the file, from a specific ''address'' in memory for a certain 
-number of ''bytes''. Note that the behavior of this instruction strictly 
-depends on the target where it is executed. It follows that not all options 
-are necessarily available on every target.
-
-@italian
-Il comando DLOAD permette di salvare (dinamicamente) un file verso una periferica
-di massa. La sintassi permette di salvare un file specifico (''filename'') a 
-partire da uno specifico ''offset'' all'interno del file, da uno specifico 
-indirizzo (''address'') in memoria per un certo numero di ''bytes''.
-Da notare che il comportamento di questa istruzione dipende strettamente 
-dal target dove viene eseguito. Ne consegue che non è detto che tutte 
-le opzioni siano disponibili.
-
-@syntax DSAVE filename [TO offset] [FROM address] [SIZE size]
-
-@example DSAVE "test" FROM finalAddress SIZE 16
-
 @target atari
-
+@target atarixl
+</usermanual> */
+/* <usermanual>
+@keyword DSAVE ERROR
+@target atari
+@target atarixl
 </usermanual> */
 void dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 

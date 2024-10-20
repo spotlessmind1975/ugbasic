@@ -49,6 +49,11 @@
 @keyword DLOAD
 @target coco3
 </usermanual> */
+/* <usermanual>
+@keyword DLOAD ERROR
+
+@target coco3
+</usermanual> */
 void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
     if ( _environment->tenLinerRulesEnforced ) {

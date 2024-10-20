@@ -52,6 +52,7 @@
 @keyword ELLIPSE
 
 @english
+
 This command allows you to draw an ellipse with starting coordinates in ''(x,y)'' 
 and radius ''rx'' for the horizontal component and ''ry'' for the vertical component. 
 The color is indicated by the parameter ''c''. If the abscissa 
@@ -74,7 +75,8 @@ l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
 @usedInExample graphics_clip_01.bas
 @usedInExample graphics_shapes_03.bas
 
-@target all
+@seeAlso CIRCLE
+
 </usermanual> */
 void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color ) {
 

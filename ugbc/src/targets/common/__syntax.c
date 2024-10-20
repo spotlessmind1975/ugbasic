@@ -37,7 +37,7 @@ di spazio inutile.
 </usermanual> */
 
 /* <usermanual>
-@keyword FONT WIDTH
+@keyword FONT WIDTH (constant)
 
 @english
 This function allows you to obtain the width of the current font, expressed in pixels. 
@@ -61,11 +61,12 @@ istruzioni al momento della compilazione.
 
 @example fontSize = FONT WIDTH
 
-@target all
+@seeAlso FONT HEIGHT (constant)
+
 </usermanual> */
 
 /* <usermanual>
-@keyword FONT HEIGHT
+@keyword FONT HEIGHT (constant)
 
 @english
 This function allows you to obtain the height of the current font, expressed in pixels. 
@@ -89,7 +90,8 @@ istruzioni al momento della compilazione.
 
 @example fontSize = FONT HEIGHT
 
-@target all
+@seeAlso FONT WIDTH (constant)
+
 </usermanual> */
 
 /* <usermanual>
@@ -973,22 +975,19 @@ Retrieves the free space still available for strings, in terms of bytes.
 This is how many characters are still available to be stored. The maximum 
 value when calling this function is that indicated by the 
 ''DEFINE STRING SPACE'' statement. The default value for string 
-storage is 1024 bytes.
+storage is 1024 bytes. The command implicitly invokes garbage collection.
 
 @italian
 Recupera lo spazio libero ancora disponibile per le stringhe, in termini di bytes. 
 Equivale a quanti caratteri sono ancora disponibili per essere memorizzati. Il 
 valore massimo, nel richiamare questa funzione, è quello indicato 
 dall'istruzione ''DEFINE STRING SPACE'', ed è pari a 1024 bytes se non viene
-impostato diversamente.
+impostato diversamente. Il comando invoca implicitamente una garbage collection.
 
 @syntax ... = FREE
 
 @example PRINT FREE
 
-@seeAlso DEFINE STRING SPACE
-
-@target all
 </usermanual> */
 
 /* <usermanual>
@@ -1625,21 +1624,13 @@ a font.
 The command support a set of modern image format, like:
 
   * JPEG baseline & progressive
-
   * PNG 1/2/4/8/16-bit-per-channel
-
   * TGA
-
   * BMP (non-1bpp, non-RLE)
-
   * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
-
   * GIF
-
   * HDR (radiance rgbE format)
-
   * PIC (Softimage PIC)
-
   * PNM (PPM and PGM binary only)
 
 The image will be converted into a way that can be efficiently drawn
@@ -2183,17 +2174,38 @@ Restituisce l'indirizzo di memoria assegnato all'interno del banco di memoria es
 
 @english
 
-This instruction enables CPU-level interrupts. If they were previously disabled, they will 
-now be enabled; if they were already enabled, nothing will happen.
+An interrupt is a signal that temporarily stops the normal execution of a program, 
+allowing the processor to handle external events or internal exceptions. These events can be
+a key being pressed on the keyboard, data arriving from a serial port or a timer reaching zero.
+
+Interrupts allow the processor to respond quickly and efficiently to external events, 
+avoiding delays in processing, so that you can handle events that occur independently 
+of the main program execution and so the computer can communicate with external devices 
+such as keyboard.
+
+This instruction will change the specific register of the main processor, so that interrupts will
+be served again.
 
 @italian
 
-Questa istruzione abilita gli interrupt a livello di CPU. Se prima erano disabilitate, 
-saranno quindi abilitate; se lo erano già, non accadrà nulla.
+Un interrupt è un segnale che interrompe temporaneamente la normale esecuzione di un programma, 
+consentendo al processore di gestire eventi esterni o eccezioni interne. Questi eventi possono 
+essere la pressione di un tasto sulla tastiera, l'arrivo di dati da una porta seriale o un timer 
+che raggiunge lo zero.
+
+Gli interrupt consentono al processore di rispondere in modo rapido ed efficiente agli eventi 
+esterni, evitando ritardi nell'elaborazione, in modo da poter gestire eventi che si verificano 
+indipendentemente dall'esecuzione del programma principale e in modo che il computer possa 
+comunicare con dispositivi esterni come la tastiera.
+
+Questa istruzione modificherà il registro specifico del processore principale, in modo che 
+gli interrupt vengano nuovamente serviti.
 
 @syntax ENABLE INTERRUPT
 
 @example ENABLE INTERRUPT
+
+@seeAlso DISABLE INTERRUPT
 
 @target all
 </usermanual> */
@@ -2203,19 +2215,39 @@ saranno quindi abilitate; se lo erano già, non accadrà nulla.
 
 @english
 
-This instruction disables CPU-level interrupts. If they were previously enabled, they will 
-now be disabled; if they were already disabled, nothing will happen.
+An interrupt is a signal that temporarily stops the normal execution of a program, 
+allowing the processor to handle external events or internal exceptions. These events can be
+a key being pressed on the keyboard, data arriving from a serial port or a timer reaching zero.
+
+Interrupts allow the processor to respond quickly and efficiently to external events, 
+avoiding delays in processing, so that you can handle events that occur independently 
+of the main program execution and so the computer can communicate with external devices 
+such as keyboard.
+
+This instruction will change the specific register of the main processor, so that interrupts will
+not be served anymore.
 
 @italian
 
-Questa istruzione disabilita gli interrupt a livello di CPU. Se prima erano abilitate, 
-saranno quindi disabilitate; se lo erano già, non accadrà nulla.
+Un interrupt è un segnale che interrompe temporaneamente la normale esecuzione di un programma, 
+consentendo al processore di gestire eventi esterni o eccezioni interne. Questi eventi possono 
+essere la pressione di un tasto sulla tastiera, l'arrivo di dati da una porta seriale o un timer 
+che raggiunge lo zero.
+
+Gli interrupt consentono al processore di rispondere in modo rapido ed efficiente agli eventi 
+esterni, evitando ritardi nell'elaborazione, in modo da poter gestire eventi che si verificano 
+indipendentemente dall'esecuzione del programma principale e in modo che il computer possa 
+comunicare con dispositivi esterni come la tastiera.
+
+Questa istruzione modificherà il registro specifico del processore principale, in modo che 
+gli interrupt non siano più serviti.
 
 @syntax DISABLE INTERRUPT
 
 @example DISABLE INTERRUPT
 
-@target all
+@seeAlso ENABLE INTERRUPT
+
 </usermanual> */
 
 /* <usermanual>
@@ -2315,19 +2347,51 @@ Leggi il valore della porta del joystick, e controlla il bit "fuoco".
 </usermanual> */
 
 /* <usermanual>
-@keyword FIRE
+@keyword FIRE (function)
 
 @english
+
 Read the joystick port and check for "fire button" bit.
 
 @italian
-Leggi il valore della porta del joystick, e controlla il bit "fuoco".
+
+Leggi il valore della porta del joystick, e controlla il bit "FIRE".
 
 @syntax = FIRE( port )
 
 @example x = FIRE(0)
+</usermanual> */
 
-@target all
+/* <usermanual>
+@keyword FIRE (constant)
+
+@english
+
+Return the bitmask for joystick's fire bit.
+
+@italian
+
+Restituisce il bitmask per il bit FIRE del joystick.
+
+@syntax = FIRE
+
+@example x = FIRE
+
+@alias JOY FIRE (constant)
+</usermanual> */
+
+/* <usermanual>
+@keyword JOY FIRE (constant)
+
+@english
+
+@italian
+
+@syntax = JOY FIRE
+
+@example x = JOY FIRE
+
+@alias FIRE (constant)
 </usermanual> */
 
 /* <usermanual>
@@ -4492,5 +4556,184 @@ target corrispondente, il valore sarà zero.
 @example IF KET STATE(DOWN) THEN
 @example    PRINT "DOWN has been pressed!"
 @example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword DWORD (data type)
+
+The ''DWORD'' is a data type that allow to store a 32-bit word (''WORD''). 
+
+@italian
+
+''DWORD'' è un tipo di dati che consente di memorizzare una 
+parola (''WORD'') a 32 bit.
+
+@syntax ... AS DWORD
+
+@example DIM parolaLunga AS DWORD
+
+</usermanual> */
+
+/* <usermanual>
+@keyword EMPTY TILE
+
+@english
+
+This is a special parameter of ugBASIC, which allows you to change what 
+is considered the "space" character on the screen. It is used, in text 
+modes, to clear the screen.
+
+@italian
+
+Questo è un parametro speciale di ugBASIC, che consente di modificare 
+quello che viene considerato il carattere "spazio" sullo schermo. 
+Viene utilizzato, nelle modalità testuali, per cancellare lo schermo.
+
+@syntax = EMPTY TILE
+@syntax EMPTY TILE = ...
+
+@example EMPTY TILE = 65
+@example CLS
+
+@alias EMPTYTILE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword EMPTYTILE
+
+@english
+
+@italian
+
+@syntax = EMPTYTILE
+@syntax EMPTYTILE = ...
+
+@example EMPTYTILE = 65
+@example CLS
+
+@alias EMPTY TILE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword EQUAL (constant)
+
+@english
+
+This constant represent the "EQUAL" key (=), when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "UGUALE" (=), quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = EQUAL
+
+@example IF KET STATE(EQUAL) THEN
+@example    PRINT "EQUAL has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword FALSE (constant)
+
+@english
+
+This constant represent the boolean value for FALSE (0).
+
+@italian
+
+Questa costante rappresenta il valore booleano per FALSE (0).
+
+@syntax = FALSE
+
+@example IF v = FALSE THEN
+@example    PRINT "V is false!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword FLOAT (data type)
+
+The ''FLOAT'' is a data type that allow to store a floating
+point number.
+
+@italian
+
+''FLOAT'' è un tipo di dati che consente di memorizzare un
+numero in virgola mobile.
+
+@syntax ... AS FLOAT
+
+@example DIM numero AS FLOAT
+
+</usermanual> */
+
+/* <usermanual>
+@keyword GET
+
+@italian
+
+@syntax GET var
+
+@example GET tasto
+
+@alias INKEY
+
+</usermanual> */
+
+/* <usermanual>
+@keyword GLOBAL
+
+@english
+
+When you write a program, variables are like containers that store data. 
+Depending on where you declare them, these variables can have different "scopes," 
+meaning they can be accessed from different parts of your code. The ''GLOBAL''
+command allows to define a variable as accessible from everywhere.
+
+You should use ''GLOBAL'' to store parameters that do not change during program execution,
+to share the state between different parts of your code, and generally to improve performance,
+but it is important to weigh the pros and cons carefully. In general, it is a good idea to limit 
+the use of global variables and use local variables whenever possible.
+
+You can use the name of variables to make them global, or a string with a "pattern"
+to follow, to choose if a variable will be global or not. Pattern uses "wildcard"
+to match any letter in name of the variables.
+
+@italian
+
+Quando scrivi un programma, le variabili sono come contenitori che memorizzano dati.
+A seconda di dove le dichiari, queste variabili possono avere diversi "ambiti", 
+ovvero possono essere accessibili da diverse parti del tuo codice. Il comando ''GLOBAL'' 
+consente di definire una variabile come accessibile da qualsiasi luogo.
+
+Dovresti usare ''GLOBAL'' per memorizzare parametri che non cambiano durante 
+l'esecuzione del programma, per condividere lo stato tra diverse parti del tuo 
+codice e in generale per migliorare le prestazioni, ma è importante soppesare 
+attentamente i pro e i contro. In generale, è una buona idea limitare l'uso di 
+variabili globali e usare variabili locali quando possibile.
+
+Puoi usare il nome delle variabili per renderle globali o una stringa con un 
+"pattern" da seguire, per scegliere se una variabile sarà globale o meno. 
+Il pattern usa "carattere jolly" per abbinare qualsiasi lettera nel nome 
+delle variabili.
+
+@syntax GLOBAL var[, var[, ...]]
+@syntax GLOBAL string
+
+@example GLOBAL var42
+@example GLOBAL "a*"
+
+@seeAlso SHARED
 
 </usermanual> */
