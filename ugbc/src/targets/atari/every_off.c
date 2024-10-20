@@ -45,25 +45,8 @@
  */
 /* <usermanual>
 @keyword EVERY OFF
-
-@english
-
-''EVERY OFF'' statement interrupt system used by the ''EVERY'' commands. A ''timer''
-can be given as parameter. If omitted, ''timer'' is 0.
-
-@italian
-
-Sistema di interruzione dell'istruzione ''EVERY OFF'' utilizzato dai comandi ''EVERY''. 
-Può essere indicato il ''timer'' di interesse. Se omesso, vale 0.
-
-@syntax EVERY OFF [timer]
-
-@example EVERY OFF
-@example EVERY OFF 2
-
-@seeAlso EVERY
-@seeAlso EVERY ON
 @target atari
+@target atarixl
 </usermanual> */
 void every_off( Environment * _environment, char * _timer ) {
    

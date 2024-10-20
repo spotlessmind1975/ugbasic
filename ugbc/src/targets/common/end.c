@@ -49,16 +49,44 @@
 @keyword END
 
 @english
-Stop every process indefinitely.
+
+The ''END'' command is used to terminate the execution of a program. 
+When the computer encounters this command, it stops executing 
+subsequent instructions.
+
+Generally, the ''END'' command is placed at the end of a program 
+to indicate its conclusion. It can be used within the program to 
+interrupt execution in a controlled manner, for example when a 
+particular condition occurs.
+
+When the ''END'' command is encountered, the computer stops
+immediately execution, also interrupts are not served anymore.
+This is different from the ''HALT'' command, which only suspends 
+execution but not interrupts.
 
 @italian
-Interrompi tutti i processi a tempo indeterminato.
+
+Il comando ''END'' viene utilizzato per terminare l'esecuzione 
+di un programma. Quando il computer incontra questo comando, 
+interrompe l'esecuzione delle istruzioni successive.
+
+In genere, il comando ''END'' viene posizionato alla fine di 
+un programma per indicarne la conclusione. Può essere utilizzato 
+all'interno del programma per interrompere l'esecuzione 
+in modo controllato, ad esempio quando si verifica una particolare 
+condizione.
+
+Quando viene incontrato il comando ''END'', il computer interrompe 
+immediatamente l'esecuzione, inoltre gli interrupt non vengono 
+più serviti. Questo è diverso dal comando ''HALT'', che sospende 
+solo l'esecuzione ma non gli interrupt.
 
 @syntax END
 
 @example END
 
-@target all
+@seeAlso HALT
+
 </usermanual> */
 void end( Environment * _environment ) {
 

@@ -42,14 +42,27 @@
 @keyword EVERY...CALL
 
 @english
-Define the call of a procedure at regular intervals, without 
-interfering with the main program. You must specifying the length of time 
-between every call, measured in TICKS. The ugBASIC branches to the 
-procedure EVERY ''value''/''TICKS PER SECONDS'' seconds.
 
-Note that the procedure execution 
-time should be less than the interval time, or the main program timings 
-will be affected. 
+The ''EVERY'' allows to execute a procedure at specified intervals of time. 
+It is especially useful for creating animations, handling real-time events, 
+and simulating dynamic behavior in your programs. You can give the
+''value'' as number of ticks to wait for triggering the call, and
+''timer'' to select a specific timer (up to 8 timers are present).
+
+It allows you to create smooth animations by moving objects on the 
+screen at regular intervals, and it is essential for managing real-time 
+events, such as character movement, object collisions, and keyboard input management.
+It can be used also to simulate physical or biological phenomena that evolve 
+over time., or to create dynamic visual effects, such as sparks, explosions, 
+or screen transitions.
+
+The speed at which ''EVERY'' commands execute depends on the frame 
+rate of your computer, and from the parameter ''value'' given. A 
+higher frame rate means that actions will be executed more frequently,
+while an higher ''value'' means that actions will be executed less frequently.
+
+Note that the procedure execution time should be less than the interval time, 
+or the main program timings will be affected!
 
 There are 8 delay timers from 0 to 7 which can be specified with ''timer''. 
 If omitted ''timer'' defaults to 0. In the case of parallel task has 0 the 
@@ -62,31 +75,45 @@ low-priority-procedures which occurs simultanously to higher-priority-procedures
 are not lost. Their task remains or handled again after finishing the higher-prio interrupt.
 
 Important: the meaning of this command is not altered by ''OPTION CALL'' pragma,
-so this is always a ''GOSUB'' and not a ''GOTO''.
+so this is always a ''GOSUB'' and not a ''GOTO''!
 
 @italian
-Introduce la chiamata di una procedura a intervalli regolari, senza interferire 
-con il programma principale. È necessario specificare l'intervallo di tempo tra
-ogni chiamata, misurato in ''TICKS''. Il compilatore ugBASIC passa alla procedura 
-ogni ''value''/''TICKS PER SECOND'' secondi.
 
-Si noti che il tempo di esecuzione della procedura dovrebbe essere inferiore al 
-tempo dell'intervallo, altrimenti i tempi del programma principale verranno influenzati. 
+''EVERY'' consente di eseguire azioni a intervalli di tempo specificati.
+È particolarmente utile per creare animazioni, gestire eventi in tempo 
+reale e simulare comportamenti dinamici nei tuoi programmi. Puoi dare ''value'' 
+come numero di tick da attendere per l'attivazione della chiamata e ''timer'' 
+per selezionare un timer specifico (sono presenti fino a 8 timer).
 
-Vi sono 8 timer di ritardo da 0 a 7 che possono essere specificati con ''timer''. 
-Se omesso, il valore predefinito ''timer'' è 0. Nel caso di attività parallela, 
+Ti consente di creare animazioni fluide spostando oggetti sullo schermo a 
+intervalli regolari ed è essenziale per gestire eventi in tempo reale, come 
+il movimento dei personaggi, le collisioni di oggetti e la gestione dell'input 
+da tastiera. Può anche essere utilizzato per simulare fenomeni fisici o biologici 
+che si evolvono nel tempo, o per creare effetti visivi dinamici, come scintille, 
+esplosioni o transizioni dello schermo.
+
+La velocità con cui vengono eseguiti i comandi ''EVERY'' dipende dal frame rate 
+del tuo computer e dal parametro ''value'' fornito. Un frame rate più alto significa
+che le azioni saranno eseguite più frequentemente, mentre un ''valore'' più alto 
+significa che le azioni saranno eseguite meno frequentemente.
+
+Nota che il tempo di esecuzione della procedura dovrebbe essere inferiore al 
+tempo di intervallo, altrimenti i tempi del programma principale saranno 
+influenzati!
+
+Ci sono 8 timer di ritardo da 0 a 7 che possono essere specificati con ''timer''.
+Se omesso, ''timer'' è impostato di default su 0. Nel caso di attività parallele, 
 0 ha la priorità più alta e 8 la priorità più bassa.
 
-Con ''EVERY OFF'' e ''EVERY ON'' è possibile disabilitare o abilitare le chiamate 
-temporizzate. Le procedure vengono eseguite finché viene eseguito il 
-ciclo/programma principale, anche se il programma principale è in pausa. 
-È importante sapere o realizzare che le procedure a bassa priorità che si 
-verificano contemporaneamente alle procedure a priorità più alta non vanno perse. 
-Il loro compito rimane o viene gestito nuovamente dopo aver terminato 
-l'interruzione con priorità più alta.
+Con ''EVERY OFF'' e ''EVERY ON'' puoi disabilitare o abilitare le chiamate 
+temporizzate. Le procedure vengono eseguite finché il ciclo/programma principale 
+è in esecuzione, anche il programma principale è in pausa. È importante sapere
+o realizzare che le procedure a bassa priorità che si verificano simultaneamente 
+a procedure a priorità più alta non vengono perse. Il loro compito rimane o viene
+gestito di nuovo dopo aver terminato l'interruzione a priorità più alta.
 
-ImportantE: la semantica di questo comando non viene modificata dal pragma ''OPTION CALL'',
-quindi è sempre un ''GOSUB'' e mai un ''GOTO''.
+Importante: il significato di questo comando non viene alterato dalla direttiva 
+''OPTION CALL'', quindi si tratta sempre di un ''GOSUB'' e non di un ''GOTO''!
 
 @syntax EVERY value[,timer] TICKS CALL identifier
 
@@ -96,6 +123,9 @@ quindi è sempre un ''GOSUB'' e mai un ''GOTO''.
 @usedInExample control_periodic_02.bas
 @usedInExample control_periodic_03.bas
 
+@seeAlso AFTER...GOSUB
+@seeAlso EVERY ON
+@seeAlso EVERY OFF
 @target coleco
 </usermanual> */
 void every_ticks_call( Environment * _environment, char * _timing, char * _name, char * _timer ) {

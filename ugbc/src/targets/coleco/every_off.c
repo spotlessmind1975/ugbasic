@@ -43,6 +43,10 @@
  * 
  * @param _environment Current calling environment
  */
+ /* <usermanual>
+@keyword EVERY OFF
+@target coleco
+</usermanual> */
 void every_off( Environment * _environment, char * _timer ) {
    
     Variable * timer = NULL;
