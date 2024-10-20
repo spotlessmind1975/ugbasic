@@ -38,6 +38,61 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword GET MESSAGE
+
+@english
+
+The command ''GET MESSAGE'' fetch the message from the given port. Note that 
+the message port behaves like a queue, that is, the first message that is 
+inserted is the first that is retrieved. Therefore, if a program sends three
+messages in a row to the attention of the port of another, the receiving 
+program will receive the three messages in the same order.
+
+Obviously, if several programs do the same thing, the messages will be 
+interspersed but, in the end, they will be in the same order.
+
+@italian
+
+Il comando ''GET MESSAGE'' recupera il messaggio dalla porta specificata. 
+Nota che la porta del messaggio si comporta come una coda, ovvero il 
+primo messaggio che viene inserito è il primo che viene recuperato. 
+Pertanto, se un programma invia tre messaggi di seguito all'attenzione 
+della porta di un altro, il programma ricevente riceverà i tre messaggi 
+nello stesso ordine.
+
+Ovviamente, se più programmi fanno la stessa cosa, i messaggi saranno 
+intervallati ma, alla fine, saranno nello stesso ordine.
+
+@syntax port = GET MESSAGE( portId )
+
+@example sessionId = LOGIN( "user", "password" )
+@example port = FIND( sessionId, "user2", "testApp" )
+@example msg = GET MESSAGE( port )
+
+@alias DOJO GET MESSAGE
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO GET MESSAGE
+
+@english
+
+@italian
+
+@syntax port = GET MESSAGE( portId )
+
+@example sessionId = LOGIN( "user", "password" )
+@example port = FIND( sessionId, "user2", "testApp" )
+@example msg = GET MESSAGE( port )
+
+@alias GET MESSAGE
+
+@target c64
+</usermanual> */
+
 Variable * dojo_get_message( Environment * _environment, char * _port_id ) {
 
     Variable * portId = variable_retrieve( _environment, _port_id );

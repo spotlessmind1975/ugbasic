@@ -4678,3 +4678,62 @@ numero in virgola mobile.
 
 </usermanual> */
 
+/* <usermanual>
+@keyword GET
+
+@italian
+
+@syntax GET var
+
+@example GET tasto
+
+@alias INKEY
+
+</usermanual> */
+
+/* <usermanual>
+@keyword GLOBAL
+
+@english
+
+When you write a program, variables are like containers that store data. 
+Depending on where you declare them, these variables can have different "scopes," 
+meaning they can be accessed from different parts of your code. The ''GLOBAL''
+command allows to define a variable as accessible from everywhere.
+
+You should use ''GLOBAL'' to store parameters that do not change during program execution,
+to share the state between different parts of your code, and generally to improve performance,
+but it is important to weigh the pros and cons carefully. In general, it is a good idea to limit 
+the use of global variables and use local variables whenever possible.
+
+You can use the name of variables to make them global, or a string with a "pattern"
+to follow, to choose if a variable will be global or not. Pattern uses "wildcard"
+to match any letter in name of the variables.
+
+@italian
+
+Quando scrivi un programma, le variabili sono come contenitori che memorizzano dati.
+A seconda di dove le dichiari, queste variabili possono avere diversi "ambiti", 
+ovvero possono essere accessibili da diverse parti del tuo codice. Il comando ''GLOBAL'' 
+consente di definire una variabile come accessibile da qualsiasi luogo.
+
+Dovresti usare ''GLOBAL'' per memorizzare parametri che non cambiano durante 
+l'esecuzione del programma, per condividere lo stato tra diverse parti del tuo 
+codice e in generale per migliorare le prestazioni, ma è importante soppesare 
+attentamente i pro e i contro. In generale, è una buona idea limitare l'uso di 
+variabili globali e usare variabili locali quando possibile.
+
+Puoi usare il nome delle variabili per renderle globali o una stringa con un 
+"pattern" da seguire, per scegliere se una variabile sarà globale o meno. 
+Il pattern usa "carattere jolly" per abbinare qualsiasi lettera nel nome 
+delle variabili.
+
+@syntax GLOBAL var[, var[, ...]]
+@syntax GLOBAL string
+
+@example GLOBAL var42
+@example GLOBAL "a*"
+
+@seeAlso SHARED
+
+</usermanual> */

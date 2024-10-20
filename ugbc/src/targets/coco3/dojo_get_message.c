@@ -38,6 +38,15 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword GET MESSAGE
+@target coco3
+</usermanual> */
+/* <usermanual>
+@keyword DOJO GET MESSAGE
+@target coco3
+</usermanual> */
+
 Variable * dojo_get_message( Environment * _environment, char * _port_id ) {
 
     Variable * portId = variable_retrieve( _environment, _port_id );

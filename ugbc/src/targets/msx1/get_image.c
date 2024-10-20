@@ -55,16 +55,29 @@ extern char DATATYPE_AS_STRING[][16];
 
 @english
 
-The ''GET IMAGE'' instruction copies a portion of the screen into an image in memory,
-which must be defined in advance. The dimensions of the image to be captured are 
-defined by the variable where the image will be stored. The image is also captured 
-with color components.
+The purpose of the ''GET IMAGE'' command is to store the contents of the screen 
+in a variable. The first syntax is where the programmer provides the coordinates 
+of the rectangle to be stored. This syntax will store only the bitmap of the
+image. You need to give the ''G'' option if you want to store color component,
+too.
+
+The second, instead, only requires the point from which to start storing the image,
+whose dimensions are implicitly obtained from the variable. The color component
+is acquired implictly. The ''GET IMAGE'' syntax is the only one that supports 
+''ATLAS'' and ''SEQUENCE'' version, so you can acquire a single frame from the screen.
 
 @italian
-L'istruzione ''GET IMAGE'' copia una porzione dello schermo in un'immagine in memoria, 
-che deve essere definita in anticipo. Le dimensioni dell'immagine da catturare sono 
-definite dalla variabile dove l'immagine sarà memorizzata. L'immagine viene catturata 
-anche con le componenti colore.
+
+Lo scopo del comando ''GET IMAGE'' è di memorizzare il contenuto dello schermo in una 
+variabile. La prima sintassi è quella in cui il programmatore fornisce le coordinate 
+del rettangolo da memorizzare. Questa sintassi memorizzerà solo la bitmap dell'immagine. 
+Devi dare l'opzione ''G'' se vuoi memorizzare anche la componente colore.
+
+La seconda, invece, richiede solo il punto da cui iniziare a memorizzare l'immagine, 
+le cui dimensioni sono ricavate implicitamente dalla variabile. La componente colore 
+è acquisita implicitamente. La sintassi ''GET IMAGE'' è l'unica che supporta la 
+versione ''ATLAS'' e ''SEQUENCE'', quindi puoi acquisire un singolo fotogramma 
+dallo schermo.
 
 @syntax GET IMAGE var FROM [x], [y]
 @syntax GET (x1,y1) - (x2,y2), var[, G]
@@ -72,7 +85,35 @@ anche con le componenti colore.
 @example background = NEW IMAGE(16, 16)
 @example GET IMAGE background FROM 0, 0
 
-@target msx1
+@seeAlso GET BITMAP
+
+</usermanual> */
+/* <usermanual>
+@keyword GET BITMAP
+
+@english
+
+The purpose of the ''GET BITMAP'' command is to store the contents of the screen 
+in a variable, just the bitmap component so without color component. The syntax 
+requires the point from which to start storing the image, whose dimensions are 
+implicitly obtained from the variable. This command ssupports ''ATLAS'' and 
+''SEQUENCE'' version, so you can acquire a single frame from the screen.
+
+@italian
+
+Lo scopo del comando ''GET BITMAP'' è di memorizzare il contenuto dello schermo
+in una variabile, solo la componente bitmap quindi senza componente colore. La sintassi
+richiede il punto da cui iniziare a memorizzare l'immagine, le cui dimensioni sono
+implicitamente ottenute dalla variabile. Questo comando supporta la versione ''ATLAS'' e
+''SEQUENCE'', quindi è possibile acquisire un singolo fotogramma dallo schermo.
+
+@syntax GET BITMAP var FROM [x], [y]
+
+@example background = NEW IMAGE(16, 16)
+@example GET BITMAP background FROM 0, 0
+
+@seeAlso GET IMAGE
+
 </usermanual> */
 void get_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _palette ) {
 
