@@ -45,6 +45,14 @@
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer
  */
+/* <usermanual>
+@keyword DSAVE
+@target c64
+</usermanual> */
+/* <usermanual>
+@keyword DSAVE ERROR
+@target c64
+</usermanual> */
 void dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
