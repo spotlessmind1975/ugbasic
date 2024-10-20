@@ -739,14 +739,14 @@ void variable_cleanup( Environment * _environment ) {
     for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
             if ( _environment->residentDetectionEnabled ) {
-                if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+                if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 && _environment->doubleBufferEnabled ) {
                     outhead2("BANKWINDOWID%2.2x equ $%4.4x", i, page0LastAddressUsed );
                     page0LastAddressUsed += 2;
                 } else {
                     outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
                 }
             }
-            if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+            if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 && _environment->doubleBufferEnabled ) {
                 outhead2("BANKWINDOW%2.2x equ $%4.4x", i, page0LastAddressUsed);
                 page0LastAddressUsed += _environment->maxExpansionBankSize[i];
             } else {
