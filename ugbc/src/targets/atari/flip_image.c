@@ -50,54 +50,9 @@ extern char DATATYPE_AS_STRING[][16];
  */
  /* <usermanual>
 @keyword FLIP IMAGE
-
-@english
-This command allows you to flip an image on the same image,
-along the X axis or the Y axis.
-The programmer can flip a single image (''IMAGE''), a 
-frame of a series of images (''IMAGES'') or a frame of a pose of a 
-sequence of images (''SEQUENCES''). In all cases the syntax changes 
-slightly.
-
-It is possible to flip an image either programmatically, directly indicating
-the ''X'' or ''Y'' direction, or by delegating these operations to the 
-value of a variable. In this case, this value will be preceded by the 
-''DIRECTION'' keyword. Acceptable values are ''1'' for the horizontal 
-direction, ''2'' for the vertical direction, ''3'' for both directions.
-
-@italian
-Questa capovolge una immagine.
-Il programmatore può capovolgere una singola immagine 
-(''IMAGE''), un frame di una serie di immagini (''IMAGES'') oppure 
-un frame di una posa di una sequenza di immagini (''SEQUENCES''). 
-In tutti i casi la sintassi cambia leggermente.
-
-E' possibile capovolgere una immagine sia in modo programmatico, indicando
-direttamente la direzione ''X'' oppure ''Y'', oppure delegando tale operazioni al
-valore di una variabile. In tal caso, tale valore andrà previsso dalla
-parola chiave ''DIRECTION''.
-
-I valori accettabili sono ''1'' per la direzione orizzontale, ''2'' per
-quella verticale, ''3'' per entrambe le direzioni.
-
-@syntax FLIP IMAGE resource [X|Y|XY|YX]
-@syntax FLIP IMAGE resource FRAME frame [X|Y|XY|YX]
-@syntax FLIP IMAGE resource SEQUENCE sequence FRAME frame [X|Y|XY|YX]
-@syntax FLIP [X|Y|XY|YX] IMAGE resource
-@syntax FLIP [X|Y|XY|YX] IMAGE resource FRAME frame
-@syntax FLIP [X|Y|XY|YX] IMAGE resource SEQUENCE sequence FRAME frame
-@syntax FLIP IMAGE resource DIRECTION direction
-@syntax FLIP IMAGE resource FRAME frame DIRECTION direction
-@syntax FLIP IMAGE resource SEQUENCE sequence FRAME frame DIRECTION direction
-@syntax FLIP DIRECTION direction IMAGE resource
-@syntax FLIP DIRECTION direction IMAGE resource FRAME frame
-@syntax FLIP DIRECTION direction IMAGE resource SEQUENCE sequence FRAME frame
-
-@example FLIP X IMAGE object
-
-@target all
+@target atari
+@target atarixl
 </usermanual> */
-
 void flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction ) {
 
     if ( _environment->emptyProcedure ) {

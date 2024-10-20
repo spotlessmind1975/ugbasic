@@ -48,6 +48,10 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _environment Current calling environment
  * @param _image Image to draw
  */
+/* <usermanual>
+@keyword FLIP IMAGE
+@target d64
+</usermanual> */
 void flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction ) {
 
     if ( _environment->emptyProcedure ) {

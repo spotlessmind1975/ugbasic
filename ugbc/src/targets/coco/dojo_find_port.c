@@ -38,6 +38,14 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword FIND PORT
+@target coco
+</usermanual> */
+/* <usermanual>
+@keyword DOJO FIND PORT
+@target coco
+</usermanual> */
 Variable * dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _application ) {
 
     Variable * sessionId = variable_retrieve( _environment, _session_id );

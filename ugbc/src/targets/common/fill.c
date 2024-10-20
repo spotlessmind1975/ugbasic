@@ -38,6 +38,23 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword FILL (instruction)
+
+@english
+
+The ''FILL'' command allows you to fill the screen with a particular character.
+
+@italian
+
+Il comando ''FILL'' permette di riempire lo schermo con un carattere specifico.
+
+@syntax FILL x,y,w,h,char,color
+
+@example FILL 0, 0, COLUMNS / 2, ROWS / 2, ASC('A')
+
+@target all
+</usermanual> */
 void fill( Environment * _environment, char * _x, char * _y, char * _w, char * _h, char * _char, char * _color ) {
 
     MAKE_LABEL

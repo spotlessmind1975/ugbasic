@@ -37,7 +37,7 @@ di spazio inutile.
 </usermanual> */
 
 /* <usermanual>
-@keyword FONT WIDTH
+@keyword FONT WIDTH (constant)
 
 @english
 This function allows you to obtain the width of the current font, expressed in pixels. 
@@ -61,11 +61,12 @@ istruzioni al momento della compilazione.
 
 @example fontSize = FONT WIDTH
 
-@target all
+@seeAlso FONT HEIGHT (constant)
+
 </usermanual> */
 
 /* <usermanual>
-@keyword FONT HEIGHT
+@keyword FONT HEIGHT (constant)
 
 @english
 This function allows you to obtain the height of the current font, expressed in pixels. 
@@ -89,7 +90,8 @@ istruzioni al momento della compilazione.
 
 @example fontSize = FONT HEIGHT
 
-@target all
+@seeAlso FONT WIDTH (constant)
+
 </usermanual> */
 
 /* <usermanual>
@@ -973,22 +975,19 @@ Retrieves the free space still available for strings, in terms of bytes.
 This is how many characters are still available to be stored. The maximum 
 value when calling this function is that indicated by the 
 ''DEFINE STRING SPACE'' statement. The default value for string 
-storage is 1024 bytes.
+storage is 1024 bytes. The command implicitly invokes garbage collection.
 
 @italian
 Recupera lo spazio libero ancora disponibile per le stringhe, in termini di bytes. 
 Equivale a quanti caratteri sono ancora disponibili per essere memorizzati. Il 
 valore massimo, nel richiamare questa funzione, è quello indicato 
 dall'istruzione ''DEFINE STRING SPACE'', ed è pari a 1024 bytes se non viene
-impostato diversamente.
+impostato diversamente. Il comando invoca implicitamente una garbage collection.
 
 @syntax ... = FREE
 
 @example PRINT FREE
 
-@seeAlso DEFINE STRING SPACE
-
-@target all
 </usermanual> */
 
 /* <usermanual>
@@ -1625,21 +1624,13 @@ a font.
 The command support a set of modern image format, like:
 
   * JPEG baseline & progressive
-
   * PNG 1/2/4/8/16-bit-per-channel
-
   * TGA
-
   * BMP (non-1bpp, non-RLE)
-
   * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
-
   * GIF
-
   * HDR (radiance rgbE format)
-
   * PIC (Softimage PIC)
-
   * PNM (PPM and PGM binary only)
 
 The image will be converted into a way that can be efficiently drawn
@@ -2356,19 +2347,51 @@ Leggi il valore della porta del joystick, e controlla il bit "fuoco".
 </usermanual> */
 
 /* <usermanual>
-@keyword FIRE
+@keyword FIRE (function)
 
 @english
+
 Read the joystick port and check for "fire button" bit.
 
 @italian
-Leggi il valore della porta del joystick, e controlla il bit "fuoco".
+
+Leggi il valore della porta del joystick, e controlla il bit "FIRE".
 
 @syntax = FIRE( port )
 
 @example x = FIRE(0)
+</usermanual> */
 
-@target all
+/* <usermanual>
+@keyword FIRE (constant)
+
+@english
+
+Return the bitmask for joystick's fire bit.
+
+@italian
+
+Restituisce il bitmask per il bit FIRE del joystick.
+
+@syntax = FIRE
+
+@example x = FIRE
+
+@alias JOY FIRE (constant)
+</usermanual> */
+
+/* <usermanual>
+@keyword JOY FIRE (constant)
+
+@english
+
+@italian
+
+@syntax = JOY FIRE
+
+@example x = JOY FIRE
+
+@alias FIRE (constant)
 </usermanual> */
 
 /* <usermanual>
@@ -4618,3 +4641,40 @@ target corrispondente, il valore sarà zero.
 @example ENDIF
 
 </usermanual> */
+
+/* <usermanual>
+@keyword FALSE (constant)
+
+@english
+
+This constant represent the boolean value for FALSE (0).
+
+@italian
+
+Questa costante rappresenta il valore booleano per FALSE (0).
+
+@syntax = FALSE
+
+@example IF v = FALSE THEN
+@example    PRINT "V is false!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword FLOAT (data type)
+
+The ''FLOAT'' is a data type that allow to store a floating
+point number.
+
+@italian
+
+''FLOAT'' è un tipo di dati che consente di memorizzare un
+numero in virgola mobile.
+
+@syntax ... AS FLOAT
+
+@example DIM numero AS FLOAT
+
+</usermanual> */
+

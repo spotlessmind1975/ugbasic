@@ -49,7 +49,7 @@
 @keyword FRAMES
 
 @english
-This function allows you to obtain the number of frames that make up a set of images (''IMAGES'').
+This function allows you to obtain the number of frames that make up a set of images (''ATLAS'').
 If applied to a single image resource (''IMAGE''), however, it always returns 1. 
 The value is obtained by retrieving it from the resource itself, and therefore is 
 constant for the entire duration of the execution.
@@ -60,7 +60,7 @@ the instructions at the time of compilation.
 
 @italian
 Questa funzione permette di ottenere il numero di fotogrammi di cui è composta una risorsa che
-contiene un'insieme di immagini (''IMAGES''). Se applicato a una risorsa di tipo singola 
+contiene un'insieme di immagini (''ATLAS''). Se applicato a una risorsa di tipo singola 
 immagine (''IMAGE''), invece, ritorna sempre 1. Il valore è ottenuto recuperandolo dalla risorsa stessa, 
 e quindi è costante per l'intera durata dell'esecuzione. 
 
@@ -71,7 +71,7 @@ istruzioni al momento della compilazione.
 
 @syntax = FRAMES(images)
 
-@example animazione := LOAD IMAGES("images.png") FRAME SIZE (16, 16)
+@example animazione := LOAD ATLAS("images.png") FRAME SIZE (16, 16)
 @example FOR i = 0 TO FRAMES(animazione)
 @example    PRINT "frame ";i
 @example NEXT
@@ -79,32 +79,40 @@ istruzioni al momento della compilazione.
 @usedInExample images_load_06.bas
 @usedInExample multitasking_example_06.bas
 
-@target all
+@alias FRAME
+@alias IMAGES COUNT
+@alias IMAGE COUNT
+@alias FRAMES COUNT
+@alias FRAME COUNT
+
+</usermanual> */
+
+/* <usermanual>
+@keyword FRAME
+
+@english
+
+@italian
+
+@syntax = FRAME(images)
+
+@example animazione := LOAD ATLAS("images.png") FRAME SIZE (16, 16)
+@example FOR i = 0 TO FRAME(animazione)
+@example    PRINT "frame ";i
+@example NEXT
+
+@alias FRAMES
+@alias IMAGES COUNT
+@alias IMAGE COUNT
+
 </usermanual> */
 
 /* <usermanual>
 @keyword IMAGES COUNT
 
 @english
-This function allows you to obtain the number of frames that make up a set of images (''IMAGES'').
-If applied to a single image resource (''IMAGE''), however, it always returns 1. 
-The value is obtained by retrieving it from the resource itself, and therefore is 
-constant for the entire duration of the execution.
-
-There is also a compile-level function for this keyword, which is called when the value 
-is used to initialize a constant. In this case, the value is that taken from inspecting 
-the instructions at the time of compilation.
 
 @italian
-Questa funzione permette di ottenere il numero di fotogrammi di cui è composta una risorsa che
-contiene un'insieme di immagini (''IMAGES''). Se applicato a una risorsa di tipo singola 
-immagine (''IMAGE''), invece, ritorna sempre 1. Il valore è ottenuto recuperandolo dalla risorsa stessa, 
-e quindi è costante per l'intera durata dell'esecuzione. 
-
-Di questa parola chiave esiste anche una funzione a livello di compilazione, 
-che viene richiamata quando il valore viene utilizzato per inizializzare una 
-costante. In tal caso, il valore è quello desunto dall'ispezione delle 
-istruzioni al momento della compilazione.
 
 @syntax = IMAGES COUNT(images)
 
@@ -116,6 +124,12 @@ istruzioni al momento della compilazione.
 @usedInExample images_load_06.bas
 @usedInExample multitasking_example_06.bas
 
+@alias FRAMES
+@alias IMAGES COUNT
+@alias IMAGE COUNT
+@alias FRAMES COUNT
+@alias FRAME COUNT
+
 @target all
 </usermanual> */
 
@@ -123,25 +137,8 @@ istruzioni al momento della compilazione.
 @keyword FRAMES COUNT
 
 @english
-This function allows you to obtain the number of frames that make up a set of images (''IMAGES'').
-If applied to a single image resource (''IMAGE''), however, it always returns 1. 
-The value is obtained by retrieving it from the resource itself, and therefore is 
-constant for the entire duration of the execution.
-
-There is also a compile-level function for this keyword, which is called when the value 
-is used to initialize a constant. In this case, the value is that taken from inspecting 
-the instructions at the time of compilation.
 
 @italian
-Questa funzione permette di ottenere il numero di fotogrammi di cui è composta una risorsa che
-contiene un'insieme di immagini (''IMAGES''). Se applicato a una risorsa di tipo singola 
-immagine (''IMAGE''), invece, ritorna sempre 1. Il valore è ottenuto recuperandolo dalla risorsa stessa, 
-e quindi è costante per l'intera durata dell'esecuzione. 
-
-Di questa parola chiave esiste anche una funzione a livello di compilazione, 
-che viene richiamata quando il valore viene utilizzato per inizializzare una 
-costante. In tal caso, il valore è quello desunto dall'ispezione delle 
-istruzioni al momento della compilazione.
 
 @syntax = FRAMES COUNT(images)
 
@@ -153,7 +150,10 @@ istruzioni al momento della compilazione.
 @usedInExample images_load_06.bas
 @usedInExample multitasking_example_06.bas
 
-@target all
+@alias FRAME
+@alias IMAGES COUNT
+@alias FRAMES
+
 </usermanual> */
 
 

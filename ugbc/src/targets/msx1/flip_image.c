@@ -50,6 +50,10 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
+/* <usermanual>
+@keyword FLIP IMAGE
+@target msx1
+</usermanual> */
 void flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction ) {
 
     if ( _environment->emptyProcedure ) {

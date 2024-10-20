@@ -7721,10 +7721,12 @@ Variable * variable_string_space( Environment * _environment, char * _repetition
 @keyword FLIP (function)
 
 @english
-The ''FLIP'' function  simply reverses the order of the characters held in the parameter.
+The ''FLIP'' function  simply reverses the order of the characters 
+held in the parameter.
 
 @italian
-La funzione ''FLIP'' inverte semplicemente l'ordine dei caratteri contenuti nel parametro.
+La funzione ''FLIP'' inverte semplicemente l'ordine dei caratteri 
+contenuti nel parametro.
 
 @syntax = FLIP( string )
 
@@ -9568,6 +9570,24 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
 
 }
 
+/* <usermanual>
+@keyword FILL (array)
+
+@english
+
+The ''FILL'' command allows you to fill an array with a specific value.
+
+@italian
+
+Il comando FILL permette di riempire un array con un valore specifico.
+
+@syntax FILL v1 WITH value[,v2 WITH value[,...]]
+
+@example DIM a(42) AS BYTE
+@example FILL a WITH 1
+
+@target all
+</usermanual> */
 void variable_array_fill( Environment * _environment, char * _name, int _value ) {
     
     Variable * array = variable_retrieve( _environment, _name );

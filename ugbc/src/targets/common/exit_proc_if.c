@@ -163,7 +163,7 @@ codice più difficile da leggere e gestire.
 @example    RETURN 1
 @example END PROC
 
-@alias EXIT PROC WITH...IF
+@alias EXIT PROCEDURE WITH...IF
 
 </usermanual> */
 

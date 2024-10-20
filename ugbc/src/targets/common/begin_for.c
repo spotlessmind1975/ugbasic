@@ -53,35 +53,56 @@
 @keyword FOR...NEXT
 
 @english
-This instruction implements a loop with explicit number of times to repeat.
-Each ''FOR'' statement must be matched by a single ''NEXT'', and pairs of ''FOR...NEXT'' 
-loops can be nested inside one another. Each loop repeats a list of 
-instructions for a specific number of times, governed by an index which 
-counts the number of times the loop is repeated. Once inside the loop, 
-this index can be read by the program as if it is a normal variable.
+
+The ''FOR...NEXT''  is a basic tool for executing a block of code a 
+specified number of times. It is a control structure that creates a 
+loop, which is a segment of code that is repeated until a certain 
+condition is met. Once inside the loop, the index used to loop
+can be read and modified by the program as if it is a normal variable.
 
 Normally, the index counter is increased by 1 unit at every turn of a 
 ''FOR...NEXT'' loop. When the current value exceeds that of the last 
 number specified, the loop is terminated. ''STEP'' is used to 
 change the size of increase in the index value.
 
-@italian
-Questa istruzione implementa un ciclo con un numero di ripetizioni indicato
-esplicitamente. Ogni istruzione ''FOR'' deve essere abbinata a una singola
-istruzione ''NEXT'' e le coppie di cicli ''FOR...NEXT'' possono essere 
-annidate l'una nell'altra. Ogni ciclo ripete un elenco di istruzioni per 
-un numero specifico di volte, governato da un indice che conta il numero 
-di volte che il ciclo viene ripetuto. Una volta all'interno del ciclo,
-questo indice può essere letto dal programma come se fosse una normale variabile.
+The ''FOR...NEXT'' loop is ideal for performing the same operation 
+a specific number of times. It can be used to create tables of 
+values, such as a multiplication table. It is often used in 
+algorithms that require repeated calculations, such as calculating 
+the factorial of a number. Generally speaking, you can use the
+''FOR...NEXT'' when you know the number of iterations in advance,
+want to perform a sequence of operations repetitively and you
+need a simple and effective control structure.
 
-Normalmente, il contatore dell'indice viene incrementato di uno ad ogni 
-ciclo. Quando il valore attuale supera quello dell'ultimo numero specificato, 
-il ciclo si intende terminato. L'istruzione ''STEP'' può essere sfruttata
-per modificare la dimensione dell'incremento del valore dell'indice.
+@italian
+
+''FOR...NEXT'' è uno strumento di base per eseguire un blocco 
+di codice un numero di volte specificato. È una struttura di 
+controllo che crea un ciclo, ovvero un segmento di codice 
+che viene ripetuto finché non viene soddisfatta una determinata 
+condizione. Una volta all'interno del ciclo, l'indice utilizzato 
+per il ciclo può essere letto e modificato dal programma come 
+se fosse una variabile normale.
+
+Normalmente, il contatore dell'indice viene aumentato di 1 unità 
+a ogni giro di un ciclo ''FOR...NEXT''. Quando il valore corrente 
+supera quello dell'ultimo numero specificato, il ciclo viene terminato. 
+''STEP'' viene utilizzato per modificare la dimensione dell'aumento 
+del valore dell'indice.
+
+Il ciclo ''FOR...NEXT'' è ideale per eseguire la stessa operazione
+un numero di volte specifico. Può essere utilizzato per creare 
+tabelle di valori, come una tabella di moltiplicazione. Viene spesso
+utilizzato in algoritmi che richiedono calcoli ripetuti, come il 
+calcolo del fattoriale di un numero. In generale, è possibile 
+utilizzare ''FOR...NEXT'' quando si conosce in anticipo il numero
+di iterazioni, si desidera eseguire una sequenza di operazioni 
+in modo ripetitivo e si necessita di una struttura di controllo
+semplice ed efficace.
 
 @syntax FOR var = start TO end [ STEP increment ]
 @syntax    ...
-@syntax NEXT
+@syntax NEXT [var]
 
 @example i = 0
 @example FOR i = 1 TO 100 STEP 2
@@ -91,7 +112,10 @@ per modificare la dimensione dell'incremento del valore dell'indice.
 @usedInExample control_controlled_01.bas
 @usedInExample control_controlled_02.bas
 
-@target all
+@seeAlso DO...LOOP
+@seeAlso WHILE...WEND
+@seeAlso REPEAT...UNTIL
+
 </usermanual> */
 
 void begin_for_prepare( Environment * _environment ) {
