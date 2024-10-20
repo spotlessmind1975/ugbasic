@@ -49,22 +49,53 @@
 
 @english
 
-The ''DOUBLE BUFFER'' instruction activates, where available, the double buffering functionality.
-The double buffering is the use of more than one buffer to hold a screen data. So that a "reader" 
-will see a complete (though perhaps old) version of the data, rather than a partially updated 
-version of the data being created. It is very commonly used for computer display images.
+The ''DOUBLE BUFFER'' is a command that enable / disable the graphics programming 
+technique used to avoid screen flickering, which is especially noticeable in 
+animations and interactive graphics applications. It is especially useful in 
+8-bit computers, where graphics resources are limited.
+
+Imagine having a screen and two areas of memory, called buffers, dedicated to 
+graphics. In the first the entire frame (the complete image) that we want 
+to display on the screen is drawn. While drawing in the first buffer, 
+the contents of the second buffer are displayed on the screen. Once the 
+drawing in the first buffer is complete, the two buffers are swapped: 
+the contents of the first buffer are copied to the second and displayed 
+on the screen, while the first buffer is emptied and prepared for the 
+next frame. This process is repeated continuously.
+
+The command will enable this method, and screens will be swapped
+if the ''SCREEN SWAP'' is used.
+
+This instruction activates the technique only where available.
 
 @italian
 
-L'istruzione ''DOUBLE BUFFER'' attiva, ove disponibile, la funzionalità di doppio buffering. 
-Il doppio buffering è l'uso di più di un buffer per contenere i dati dello schermo. In modo che 
-un "lettore" vedrà una versione completa (anche se forse vecchia) dei dati, piuttosto che una 
-versione parzialmente aggiornata dei dati in fase di creazione. È molto comunemente usato per le 
-immagini visualizzate sul computer.
+Il ''DOUBLE BUFFER'' è un comando che abilita/disabilita la tecnica
+di programmazione grafica utilizzata per evitare lo sfarfallio dello 
+schermo, che è particolarmente evidente nelle animazioni e nelle 
+applicazioni grafiche interattive. È particolarmente utile nei 
+computer a 8 bit, dove le risorse grafiche sono limitate.
 
-@syntax DOUBLE BUFFER
+Immagina di avere uno schermo e due aree di memoria, chiamate buffer, 
+dedicate alla grafica. Nella prima viene disegnato l'intero frame 
+(l'immagine completa) che vogliamo visualizzare sullo schermo. 
+Mentre disegni nel primo buffer, il contenuto del secondo buffer 
+viene visualizzato sullo schermo. Una volta completato il disegno 
+nel primo buffer, i due buffer vengono scambiati: il contenuto del 
+primo buffer viene copiato nel secondo e visualizzato sullo schermo, 
+mentre il primo buffer viene svuotato e preparato per il frame 
+successivo. Questo processo viene ripetuto continuamente.
 
-@example DOUBLE BUFFER
+Il comando abiliterà questo metodo e gli schermi verranno scambiati 
+se viene utilizzato ''SCREEN SWAP''.
+
+Questa istruzione attiva la tecnica solo dove disponibile.
+
+@syntax DOUBLE BUFFER [ON|OFF]
+
+@example DOUBLE BUFFER ON
+
+@seeAlso SCREEN SWAP
 
 @target c64
 </usermanual> */

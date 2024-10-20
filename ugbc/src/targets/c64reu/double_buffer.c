@@ -46,27 +46,7 @@
  */
 /* <usermanual>
 @keyword DOUBLE BUFFER
-
-@english
-
-The ''DOUBLE BUFFER'' instruction activates, where available, the double buffering functionality.
-The double buffering is the use of more than one buffer to hold a screen data. So that a "reader" 
-will see a complete (though perhaps old) version of the data, rather than a partially updated 
-version of the data being created. It is very commonly used for computer display images.
-
-@italian
-
-L'istruzione ''DOUBLE BUFFER'' attiva, ove disponibile, la funzionalità di doppio buffering. 
-Il doppio buffering è l'uso di più di un buffer per contenere i dati dello schermo. In modo che 
-un "lettore" vedrà una versione completa (anche se forse vecchia) dei dati, piuttosto che una 
-versione parzialmente aggiornata dei dati in fase di creazione. È molto comunemente usato per le 
-immagini visualizzate sul computer.
-
-@syntax DOUBLE BUFFER
-
-@example DOUBLE BUFFER
-
-@target c64
+@target c64reu
 </usermanual> */
 void double_buffer( Environment * _environment, int _enabled ) {
 

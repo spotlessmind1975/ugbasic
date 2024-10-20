@@ -1125,51 +1125,94 @@ sono inclusi, mentre una parentesi tonda si intende che gli estremi sono esclusi
 </usermanual> */
 
 /* <usermanual>
-@keyword DIM
+@keyword DIM (array)
 
 @english
-The ''DIM'' command allows you to define a vector or a multidimensional array of values, 
-and to initialize this array with the preferred values.
 
-The simplest syntax is that which defines a vector of a single dimension: in this case, 
-it is sufficient to indicate the number of elements in parentheses. With the keyword 
-''AS'' you can indicate the data type of each single element. You can, of course, 
-define a matrix (i.e. a vector with two or more dimensions). In this case it is 
-sufficient to indicate the number of elements for each dimension, separating them 
+The ''DIM'' command is used to reserve a specific space in the computer's 
+memory to hold data that you will use during the execution of your program. 
+In practice, it is like reserving empty boxes where you can store objects
+(data) of different sizes and types.
+
+The ''DIM'' command is used primarily to create arrays, which are data 
+structures that allow you to group multiple values under a single name, 
+accessing each value through a numeric index. You can  define both
+vectors (mono dimensional array) or a multidimensional array of values, 
+and to initialize this array with the preferred values. You must also
+specify the size of the array, that is, the number of elements it can contain.
+When you declare an array with ''DIM'', you reserve a portion of memory 
+sufficient to hold all the elements of the array.
+
+The simplest syntax is that which defines a vector of a single dimension: 
+in this case, it is sufficient to indicate the number of elements in 
+parentheses. With the keyword ''AS'' you can indicate the data type 
+of each single element. 
+
+You can, of course, define a matrix (i.e. 
+a vector with two or more dimensions). In this case it is sufficient to
+indicate the number of elements for each dimension, separating them 
 with a comma.
 
-By definition, the array will be initialized with a value of zero for each element. 
-You can change this behavior by specifying an initialization by assignment. The 
-initialization can be done by indicating each single value of each single element, 
-with the same type of data with which the matrix was created (with the ''# {...}''
-syntax ), or by describing the memory area that will occupy the array, byte by byte 
-(with the ''# [...]'' syntax ).
+By definition, the array will be initialized with a value of zero 
+for each element. You can change this behavior by specifying an 
+initialization by assignment. The initialization can be done by 
+indicating a single initialization value, each single value 
+of each single element, with the same type of data with which 
+the matrix was created (with the ''# {...}'' syntax), or by 
+describing the memory area that will occupy the array, 
+byte by byte (with the ''# [...]'' syntax ).
+
+Arrays allow you to organize data in a structured way, making it easier 
+to access and manipulate. By declaring arrays before using them, you 
+define a specific size of the data. The ''DIM'' command makes code 
+more readable, because it explicitly declares the data structures 
+used.
 
 @italian
-Il comando ''DIM'' permette di definire un vettore o una matrice multidimensionale
-di valori, e di inizializzare tale array con i valori che preferiamo.
 
-La sintassi più semplice è quella che definisce un vettore di una singola dimensione:
-in tal caso, è sufficiente indicare il numero di elementi tra parentesi.
-Con la parola chiave ''AS'' si può indicare il tipo di dato di ogni singolo elemento.
-Si può, ovviamente, definire una matrice (cioè un vettore con due o più dimensioni). 
-In tal caso è sufficiente indicare il numero di elementi per ogni dimensione, 
-separandoli con una virgola.
+Il comando ''DIM'' serve per riservare uno spazio specifico nella
+memoria del computer per contenere i dati che utilizzerai durante 
+l'esecuzione del tuo programma. In pratica, è come riservare delle 
+caselle vuote in cui puoi memorizzare oggetti (dati) di diverse 
+dimensioni e tipi.
 
-Per definizione, l'array sarà inizializzato con un valore pari a zero per ogni elemento. 
-Si può cambiare tale comportamento indicando una inizializzazione per assegnazione.
+Il comando ''DIM'' serve principalmente per creare array, che 
+sono strutture dati che consentono di raggruppare più valori 
+sotto un unico nome, accedendo a ciascun valore tramite un indice 
+numerico. Puoi definire sia vettori (array monodimensionale) sia un 
+array multidimensionale di valori e inizializzare questo array con
+i valori preferiti. Devi anche specificare la dimensione dell'array,
+ovvero il numero di elementi che può contenere. Quando dichiari un array
+con ''DIM'', riservi una porzione di memoria sufficiente a contenere tutti gli elementi dell'array.
 
-L'inizializzazione può essere fatta indicando ogni singolo valore di ogni singolo 
-elemento, con lo stesso tipo di dato con cui è stata creata la matrice 
-(con la sintassi ''# { ... }''), oppure descrivendo l'area di memoria che 
-occuperà la matrice, byte per byte (con la sintassi ''#[...]'').
+La sintassi più semplice è quella che definisce un vettore di 
+una sola dimensione: in questo caso, è sufficiente indicare il numero di
+elementi tra parentesi. Con la parola chiave ''AS'' puoi indicare il tipo 
+di dati di ogni singolo elemento.
 
-@syntax DIM variable [AS datatype] [, variable [AS datatype] [ , variable [AS datatype] ] ]
-@syntax DIM variable [AS datatype] = constant
-@syntax DIM id [AS type] ( d1 [, d2 [ , ... ] ] )
-@syntax DIM id [AS type] ( d1 [, d2 [ , ... ] ] ) = #[hex]
-@syntax DIM id [AS type] ( d1 [, d2 [ , ... ] ] ) = #{v1, v2, ... }
-@syntax DIM id [AS type] WITH v ( d1 [, d2 [ , ... ] ] )
+Puoi, naturalmente, definire una matrice (cioè un vettore con due o 
+più dimensioni). In questo caso è sufficiente indicare il numero di elementi
+per ogni dimensione, separandoli con una virgola.
+
+Per definizione, l'array verrà inizializzato con un valore pari a zero 
+per ogni elemento. Puoi modificare questo comportamento specificando 
+un'inizializzazione tramite assegnazione. L'inizializzazione può essere 
+effettuata indicando un singolo valore di inizializzazione, ogni singolo 
+valore di ogni singolo elemento, con lo stesso tipo di dati con cui è 
+stata creata la matrice (con la sintassi ''# {...}''), oppure descrivendo 
+l'area di memoria che occuperà l'array, byte per byte (con la sintassi 
+''# [...]'').
+
+Gli array consentono di organizzare i dati in modo strutturato,
+rendendoli più facili da accedere e manipolare. Dichiarando gli array 
+prima di utilizzarli, definisci una dimensione specifica dei dati. 
+Il comando ''DIM'' rende il codice più leggibile, perché dichiara 
+esplicitamente le strutture dati utilizzate.
+
+@syntax DIM name [AS type] (d1[,d2[,...]])
+@syntax DIM name [AS type] (d1[,d2[,...]]) = #"["hex"]"
+@syntax DIM name [AS type] (d1[,d2[,...]]) = #{v,v,...}
+@syntax DIM name [AS type] WITH v (d1[,d2[,...]])
 
 @example DIM x(42)
 @example DIM values AS DWORD(20,20)
@@ -1177,6 +1220,9 @@ occuperà la matrice, byte per byte (con la sintassi ''#[...]'').
 @example DIM z AS BYTE(8) = _
 @example              #{ 255, 128, 255, 128, 255, 128, 255, 128 }
 @example DIM scores WITH 0 (2)
+
+@example DIM x(42)
+@example DIM y(4) AS BYTE = #{ 1, 2, 3, 4 }
 
 @usedInExample arrays_examples_01.bas
 @usedInExample arrays_examples_02.bas
@@ -1187,7 +1233,93 @@ occuperà la matrice, byte per byte (con la sintassi ''#[...]'').
 @usedInExample contrib_sierpinski2.bas
 @usedInExample contrib_sierpinski3.bas
 
-@seeAlso VAR
+@seeAlso DIM (variable)
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword DIM (variable)
+
+@english
+
+The ''DIM'' command is used to reserve a specific space in the computer's 
+memory to hold data that you will use during the execution of your program. 
+In particular, you can use ''DIM'' for a single variable
+
+Declaring variables explicitly makes your code more readable and understandable,
+especially in longer programs. Specifying the data type prevents type errors 
+when your program runs. You can initialize a variable when you declare it, 
+giving it an initial value different by 0 (the ugBASIC default value).
+Moreover, when you need to use a particular data type (e.g. ''FLOAT'' 
+for scientific calculations), it is advisable to explicitly declare the variable.
+
+The scope of a variable declared with ''DIM'' depend on the context in which 
+it is declared. It may be local to a procedure or global to the entire program.
+It is always a good practice to declare all variables at the beginning of a 
+program or procedure to improve readability and maintainability of the code, and
+ugBASIC gives you the ''OPTION EXPLICIT'' directive to ensure that you use
+only defined variables.
+
+Note that ugBASIC language, as other BASIC dialect, do not need to use ''DIM'' to 
+declare a variable. The data type and scope is inferred from the context in which 
+the variable is first used.
+
+@italian
+
+Il comando ''DIM'' viene utilizzato per riservare uno spazio specifico nella 
+memoria del computer per contenere i dati che utilizzerai durante l'esecuzione 
+del tuo programma.
+
+In particolare, puoi utilizzare ''DIM'' per una singola variabile. Dichiarare 
+le variabili in modo esplicito rende il tuo codice più leggibile e comprensibile, 
+specialmente nei programmi più lunghi. Specificare il tipo di dati impedisce 
+errori di tipo quando il tuo programma viene eseguito. Puoi inizializzare una 
+variabile quando la dichiari, assegnandole un valore iniziale diverso da 0 
+(il valore predefinito di ugBASIC).
+
+Inoltre, quando hai bisogno di utilizzare un particolare tipo di dati (ad 
+esempio ''FLOAT'' per calcoli scientifici), è consigliabile dichiarare 
+esplicitamente la variabile.
+
+L'ambito di una variabile dichiarata con ''DIM'' dipende dal contesto in cui 
+viene dichiarata. Può essere locale a una procedura o globale all'intero 
+programma. È sempre una buona norma dichiarare tutte le variabili all'inizio 
+di un programma o di una procedura per migliorare la leggibilità e la 
+manutenibilità del codice, e ugBASIC fornisce la direttiva ''OPTION EXPLICIT'' 
+per garantire che vengano utilizzate solo variabili definite.
+
+Nota che il linguaggio ugBASIC, come altri dialetti BASIC, non ha bisogno di 
+usare ''DIM'' per dichiarare una variabile. Il tipo di dati e l'ambito vengono 
+dedotti dal contesto in cui la variabile viene utilizzata per la prima volta.
+
+@syntax DIM name [AS type] [= v][,name [AS type] [= v][, ...]]
+
+@example DIM x AS INTEGER = 42, y AS BYTE = 21
+
+@usedInExample arrays_examples_01.bas
+@usedInExample arrays_examples_02.bas
+@usedInExample arrays_examples_03.bas
+@usedInExample arrays_examples_04.bas
+@usedInExample arrays_examples_05.bas
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@alias VAR
+@seeAlso DIM (array)
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword VAR
+
+@english
+
+@italian
+
+@alias DIM (variable)
 
 @target all
 </usermanual> */
@@ -2438,7 +2570,8 @@ e può essere utilizzata in una riga ''IF'' (dopo ''THEN'' o ''ELSE'').
 
 @usedInExample tsb_block_rec_01.bas
 
-@target c128
+@seeAlso WAIT KEY
+
 @project tsb
 </usermanual> */
 
@@ -4242,6 +4375,122 @@ target corrispondente, il valore sarà zero.
 
 @example IF KET STATE(CRSR UP DOWN) THEN
 @example    PRINT "CRSR UP DOWN has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword DEGREE
+
+@english
+
+This command allows you to select the angle mode with 
+trigonometric functions, setting it to 360 degrees.
+
+@italian
+
+Questo comando permette di selezionare la modalità 
+degli angoli nelle funzioni trigonometriche, impostandola a gradi su 360. 
+
+@syntax DEGREE
+
+@example x1 = COS(3.1415)
+@example DEGREE
+@example x2 = COS(180)
+@example PRINT x1;" ";x2
+
+</usermanual> */
+
+
+/* <usermanual>
+@keyword RADIAN
+
+@english
+
+This command allows you to select the angle mode with 
+trigonometric functions, setting it to radiants.
+
+@italian
+
+Questo comando permette di selezionare la modalità 
+degli angoli nelle funzioni trigonometriche, impostandola a radianti
+
+@syntax RADIAN
+
+@example DEGREE
+@example x1 = COS(180)
+@example RADIAN
+@example x2 = COS(3.1415)
+@example PRINT x1;" ";x2
+
+</usermanual> */
+
+/* <usermanual>
+@keyword DELETE (constant)
+
+@english
+
+This constant represent the "DELETE" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "DELETE", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = DELETE
+
+@example IF KET STATE(DELETE) THEN
+@example    PRINT "DELETE has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJOKA (data type)
+
+@english
+
+This data type holds a reference to a connection or communication 
+port with the DOJO protocol.
+
+@italian
+
+Questo tipo di dato mantiene un riferimento a una connessione o
+a una porta di comunicazione con il protocollo ''DOJO''.
+
+@syntax ... AS DOJOKA
+
+@example DIM accessId AS DOJOKA
+@example accessId = LOGIN( "user", "password" )
+
+</usermanual> */
+
+/* <usermanual>
+@keyword DOWN (constant)
+
+@english
+
+This constant represent the "DOWN" key (move cursor down), when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "DOWN" (muovi il cusorse in giù), quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = DOWN
+
+@example IF KET STATE(DOWN) THEN
+@example    PRINT "DOWN has been pressed!"
 @example ENDIF
 
 </usermanual> */
