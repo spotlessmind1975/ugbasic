@@ -63,7 +63,7 @@ so-called "spaghetti code". If a program contains many unconditional jumps, it c
 become very difficult to find the source of an error. Frequent use of ''GOTO'' tends to
 create a poorly structured flow of control that is difficult to maintain.
 
-The ugBASIC ​​offers more sophisticated and readable control structures, such as: 
+The ugBASIC offers more sophisticated and readable control structures, such as: 
 ''IF...THEN...ELSE'', ''FOR...NEXT'', ''DO...LOOP'', and so on. These structures make
 the code clearer and make it easier to manage the flow of control.
 

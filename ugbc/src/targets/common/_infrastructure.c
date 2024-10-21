@@ -4338,18 +4338,36 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
 @keyword INC
 
 @english
-The ''INC'' command allows you to increase a variable by one. 
-This is much more efficient than using the standard syntax ''v = v + 1''.
+
+The ''INC'' command is used to increment (i.e. increase) the value 
+of a numeric variable by one. It is a quick and concise way to add 
+1 from the value contained in a variable. In place of ''variable'', enter the
+name of the numeric variable you want to increment.
+
+The ''INC'' command is actually a shorthand for the adding operation, as
+writing ''num=num+1''. However, ''DEC'' is often preferred because of its 
+more concise syntax and its specific increment function. The ''INC'' command 
+can only be applied to numeric variables (integer). 
 
 @italian
-Il comando ''INC'' permette di incrementare di uno una variabile. 
-Tale operazione è assai più efficiente che utilizzare la sintassi standard ''v = v + 1''.
+
+Il comando ''INC'' viene utilizzato per incrementare (ovvero aumentare) il valore 
+di una variabile numerica di uno. È un modo rapido e conciso per aggiungere 1 
+al valore contenuto in una variabile. Invece di ''variabile'', inserisci il nome
+della variabile numerica che vuoi incrementare.
+
+Il comando ''INC'' è in realtà una scorciatoia per l'operazione di addizione, 
+come scrivere ''num=num+1''. Tuttavia, ''DEC'' è spesso preferito per la sua 
+sintassi più concisa e la sua specifica funzione di incremento. Il comando ''INC'' 
+può essere applicato solo a variabili numeriche (intere).
 
 @syntax INC var
 
 @example INC score
 
 @usedInExample contrib_sierpinski3.bas
+
+@seeAlso DEC
 
 @target all
 </usermanual> */
@@ -4548,6 +4566,8 @@ sintassi più concisa e la sua specifica funzione di decremento. Il comando
 @example x = 43
 @example DEC x
 @example PRINT x: ' It prints "42"
+
+@seeAlso INC
 
 </usermanual> */
 void variable_decrement( Environment * _environment, char * _source ) {

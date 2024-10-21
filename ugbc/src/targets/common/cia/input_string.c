@@ -42,6 +42,51 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
+/* <usermanual>
+@keyword INPUT (function)
+
+@english
+
+The INPUT$ function reads a string of characters specified on the 
+keyboard and stores them in a variable. Unlike ''INPUT'', which pauses 
+and waits until the user presses wnter, ''INPUT$'' reads a fixed 
+''number'' of characters without prompting for an enter.
+
+It is used to read barcodes, serial numbers, or other fixed 
+character sequences, and to create simpler and more direct 
+user interfaces, avoiding the need to press enter after each 
+character. 
+
+''INPUT$'' always reads the specified ''number'' of characters, 
+even if the user types fewer than that. It does not perform any 
+checks on the validity of the characters entered.
+
+@italian
+
+La funzione ''INPUT$'' legge una stringa di caratteri specificati 
+sulla tastiera e li memorizza in una variabile. ''INPUT'', che si
+ferma e attende che l'utente prema wnter, ''INPUT$'' legge un 
+''number'' fisso di caratteri senza richiedere un invio.
+
+Viene utilizzata per leggere codici a barre, numeri di serie 
+o altre sequenze di caratteri fisse e per creare interfacce 
+utente più semplici e dirette, evitando la necessità di premere
+invio dopo ogni carattere.
+
+''INPUT$'' legge sempre il ''number'' di caratteri specificato, 
+anche se l'utente ne digita meno. Non esegue alcun controllo 
+sulla validità dei caratteri immessi.
+
+@syntax = INPUT$(number)
+
+@example IF INPUT$(3) = "123" THEN
+@example    PRINT "123 has been pressed!"
+@example ENDIF
+
+@seeAlso INPUT (instruction)
+
+</usermanual> */
+
 Variable * input_string( Environment * _environment, char * _size ) {
 
     MAKE_LABEL

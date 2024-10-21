@@ -4812,3 +4812,25 @@ che può essere disegnata sullo schermo.
 @syntax ... AS IMAGE
 
 </usermanual> */
+
+/* <usermanual>
+@keyword INCLUDE
+
+@english
+
+The ''INCLUDE'' command allows you to insert a source from an external 
+file. In practice, what happens is that the content of the file, without 
+any interpretation, is copied "as is" at the point where the statement 
+was inserted. All variables and scopes will be maintained.
+
+@italian
+
+Il comando ''INCLUDE'' consente di inserire una sorgente da un file esterno. 
+In pratica, ciò che accade è che il contenuto del file, senza alcuna 
+interpretazione, viene copiato "così com'è" nel punto in cui è stata inserita 
+l'istruzione. Tutte le variabili e gli ambiti verranno mantenuti.
+
+@syntax INCLUDE "filename"
+
+</usermanual> */
+

@@ -47,7 +47,7 @@
  * @param _sequence Sequence to extract, NULL if IMAGES
  */
 /* <usermanual>
-@keyword IMAGE
+@keyword IMAGE (data type)
 
 @english
 The ''IMAGE'' command allows you to extract an image from a collection of images 
@@ -70,7 +70,6 @@ risorsa grafica già caricata e ottimizzata.
 @example starship = IMAGE( LOAD IMAGES(("tiles.png") FRAME 1 )
 @example starship = IMAGE( LOAD SEQUENCE(("tiles.png") SEQUENCE 1 FRAME 2 )
 
-@target all
 </usermanual> */
 Variable * image_extract( Environment * _environment, char * _images, int _frame, int * _sequence ) {
 
