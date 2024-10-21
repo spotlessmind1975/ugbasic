@@ -1981,34 +1981,87 @@ l'interruzione con priorità più alta.
 @keyword UBOUND
 
 @english
-Retrieves the maximum value of the index of an array, given the dimension.
+
+The ''UBOUND'' command (short for "upper bound") is used to determine the 
+highest index of an array. In other words, it tells you how far up 
+the array goes.
+
+Imagine you have a box of numbered chocolates. ''UBOUND'' tells you what 
+the number of the last chocolate is. This is useful when you need to 
+iterate over all the elements of an array, because it gives you the end 
+point of the loop.
+
+''UBOUND'' and ''LBOUND'' are often used together to define the bounds 
+of a ''FOR'' loop, and are complementary commands: they allow you to obtain 
+complete information about the structure of an array. Knowing these two 
+values, you can iterate over all the elements of the array, calculate 
+its total size, and perform many other operations.
 
 @italian
-Recupera il valore massimo dell'indice di un array, data la dimensione.
+
+Il comando ''UBOUND'' (abbreviazione di "upper bound") viene utilizzato 
+per determinare l'indice più alto di un array. In altre parole, ti dice 
+come funziona la composizione dell'array.
+
+Immagina di avere una scatola di cioccolatini numerati. ''UBOUND'' ti dice
+qual è il numero dell'ultimo cioccolatino. Questo è utile quando devi 
+scorrere tutti gli elementi di un array, perché ti fornisce il punto finale 
+del ciclo.
+
+''UBOUND'' e ''LBOUND'' vengono spesso utilizzati insieme per definire
+i limiti di un ciclo ''FOR'' e sono comandi complementari: ti consentono
+di ottenere informazioni complete sulla struttura di un array. Conoscendo
+questi due valori, puoi scorrere tutti gli elementi dell'array, calcolarne
+la dimensione totale ed eseguire molte altre operazioni.
 
 @syntax = UBOUND( array [, dimension])
 
 @example DIM a(10,20)
 @example PRINT UBOUND(a,1) : REM it will print 20
 
-@target all
 </usermanual> */
 
 /* <usermanual>
 @keyword LBOUND
 
 @english
-Retrieves the minimum value of the index of an array, given the dimension.
+
+The ''LBOUND'' command (short for "lower bound") is used to determine the
+lowest index of an array. In other words, it tells you where the count 
+of elements in an array begins.
+
+Imagine an array as a cabinet with many numbered drawers. ''LBOUND'' tells you 
+what the number of the first drawer is. This is useful when you need to 
+iterate through all the elements of an array, because it gives you the 
+starting point of the loop.
+
+If you have an array with multiple dimensions, you can specify the dimension 
+for which you want to find the lower bound:
+
+''LBOUND'' is essential when you write ''FOR'' loops to iterate through all 
+the elements of an array. It allows you to set the initial value of the loop 
+counter correctly. 
 
 @italian
-Recupera il valore minimo dell'indice di un array, data la dimensione.
+
+Il comando ''LBOUND'' (abbreviazione di "lower bound") viene utilizzato per
+determinare l'indice più basso di un array. In altre parole, ti dice dove
+inizia il conteggio degli elementi in un array.
+
+Immagina un array come un mobile con molti cassetti numerati. ''LBOUND'' ti dice
+qual è il numero del primo cassetto. Questo è utile quando devi scorrere tutti
+gli elementi di un array, perché ti fornisce il punto di partenza del ciclo.
+
+Se hai un array con più dimensioni, puoi specificare la dimensione per cui 
+vuoi trovare il limite inferiore: ''LBOUND'' è essenziale quando scrivi cicli 
+''FOR'' per scorrere tutti gli elementi di un array. Ti consente di impostare 
+il valore iniziale corretto del contatore del ciclo.
 
 @syntax = LBOUND( array [, dimension])
 
 @example DIM a(10,20)
 @example PRINT LBOUND(a) : REM it will print 0
 
-@target all
 </usermanual> */
 
 /* <usermanual>
@@ -2440,7 +2493,7 @@ Recupera il numero di porte joystick installate nel sistema.
 
 @example x = JOY COUNT
 
-@target all
+@alias JOYCOUNT
 </usermanual> */
 
 /* <usermanual>
@@ -2456,7 +2509,8 @@ Recupera il numero di porte joystick installate nel sistema.
 
 @example x = JOYCOUNT
 
-@target all
+@alias JOY COUNT
+
 </usermanual> */
 
 /* <usermanual>
@@ -2480,16 +2534,17 @@ Un valore prossimo allo 0 significa "nessuna direzione".
 @target coco3
 @target d32
 @target d64
+
+@alias JOYX
+
 </usermanual> */
 
 /* <usermanual>
 @keyword JOYX
 
 @english
-Alias per ''JOY X''.
 
 @italian
-Alias di ''JOY X''
 
 @syntax = JOYX( port )
 
@@ -2524,16 +2579,17 @@ Un valore prossimo allo 0 significa "nessuna direzione".
 @target coco3
 @target d32
 @target d64
+
+@alias JOYY
+
 </usermanual> */
 
 /* <usermanual>
 @keyword JOYY
 
 @english
-Alias per ''JOY Y''.
 
 @italian
-Alias di ''JOY Y''
 
 @syntax = JOYY( port )
 
@@ -2697,30 +2753,52 @@ estesa è disattivata.
 </usermanual> */
 
 /* <usermanual>
-@keyword INSERT
+@keyword INSERT (function)
 
 @english
 
-''INSERT'' inserts the character string ''<string>'' (first argument) into the character string 
-''<altstring>'' (second argument) starting at the position ''<pos>'' (third argument), whereby 
+The ''INSERT'' command allows you to insert a substring into an existing string, 
+at a specific position that you specify. ''INSERT'' inserts the character string 
+''string'' (first argument) into the character string 
+''alt'' (second argument) starting at the position ''pos'' (third argument), whereby 
 the counting starts with ''1''. The resulting character string is as long as the sum of the two 
 individual character strings.
 
+You can use ''INSERT'' to join strings 
+more precisely than simple concatenation with the ''+'' symbol. You can insert 
+spaces, special characters, or other elements to format strings to your liking.
+You can correct typos, add or remove text precisely. You can build complex strings 
+by combining static and variable parts.
+
+The position ''pos'' you specify must be an integer between 1 and the length 
+of the main string plus 1. ''INSERT'' creates a copy of the final string.
+
+
 @italian
 
-''INSERT'' inserisce la stringa di caratteri ''<string>'' (primo argomento) nella stringa di 
-caratteri ''<altstring>'' (secondo argomento) a partire dalla posizione ''<pos>'' (terzo argomento), 
-per cui il conteggio inizia con ''1''. La stringa di caratteri risultante è lunga quanto la somma 
-delle due stringhe di caratteri individuali.
+Il comando ''INSERT'' consente di inserire una sottostringa in una stringa 
+esistente, in una posizione specifica da te specificata. ''INSERT'' inserisce 
+la stringa di caratteri ''string'' (primo argomento) nella stringa di caratteri
+''alt'' (secondo argomento) a partire dalla posizione ''pos'' (terzo argomento), 
+per cui il conteggio inizia con ''1''. La stringa di caratteri risultante è 
+lunga quanto la somma delle due stringhe di caratteri individuali.
 
-@syntax = INSERT(<string>,<altstring>,<pos>) 
+Puoi usare ''INSERT'' per unire stringhe in modo più preciso rispetto alla 
+semplice concatenazione con il simbolo ''+''. Puoi inserire spazi, caratteri 
+speciali o altri elementi per formattare le stringhe a tuo piacimento.
+Puoi correggere errori di battitura, aggiungere o rimuovere testo in modo 
+preciso. Puoi creare stringhe complesse combinando parti statiche e variabili.
+
+La posizione ''pos'' specificata deve essere un numero intero compreso tra 
+1 e la lunghezza della stringa principale più 1. ''INSERT'' crea una copia 
+della stringa finale.
+
+@syntax = INSERT( string, alt, pos ) 
 
 @example c$=INSERT(a$,b$,9)
 
 @usedInExample tsb_insert_01.bas
 
-@target c128
-@project tsb
 </usermanual> */
 
 /* <usermanual>
@@ -4595,6 +4673,8 @@ target corrispondente, il valore sarà zero.
 /* <usermanual>
 @keyword DWORD (data type)
 
+@english
+
 The ''DWORD'' is a data type that allow to store a 32-bit word (''WORD''). 
 
 @italian
@@ -4696,6 +4776,8 @@ Questa costante rappresenta il valore booleano per FALSE (0).
 
 /* <usermanual>
 @keyword FLOAT (data type)
+
+@english
 
 The ''FLOAT'' is a data type that allow to store a floating
 point number.
@@ -4834,3 +4916,246 @@ l'istruzione. Tutte le variabili e gli ambiti verranno mantenuti.
 
 </usermanual> */
 
+/* <usermanual>
+@keyword INSERT (constant)
+
+@english
+
+This constant represent the "INSERT" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "INSERT", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = INSERT
+
+@example IF KET STATE(INSERT) THEN
+@example    PRINT "INSERT has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword INT (data type)
+
+@english
+
+The ''INT'' is a data type that allow to store a signed 16-bit word.
+
+@italian
+
+Il tipo ''INT'' è un tipo di dati che consente di memorizzare una 
+parola con segno a 16 bit.
+
+@syntax ... AS INT
+
+@example DIM parolaLunga AS INT
+
+@alias INTEGER
+
+</usermanual> */
+
+/* <usermanual>
+@keyword INTEGER (data type)
+
+@english
+
+@italian
+
+@syntax ... AS INTEGER
+
+@example DIM parolaLunga AS INTEGER
+
+@alias INT
+
+</usermanual> */
+
+/* <usermanual>
+@keyword JOY UP (constant)
+
+@english
+
+This constant represents the bitmask to use to identify the "up direction" 
+bit for the value returned by the JOY function.
+
+@italian
+
+Questa costante rappresenta la bitmask da utilizzare per identificare il 
+bit "direzione su" per il valore restituito dalla funzione JOY.
+
+@syntax = JOY UP
+
+@example IF JOY(0) AND JOY UP THEN
+@example    PRINT "UP!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword JOY DOWN (constant)
+
+@english
+
+This constant represents the bitmask to use to identify the "down direction" 
+bit for the value returned by the JOY function.
+
+@italian
+
+Questa costante rappresenta la bitmask da utilizzare per identificare il 
+bit "direzione giù" per il valore restituito dalla funzione JOY.
+
+@syntax = JOY DOWN
+
+@example IF JOY(0) AND JOY DOWN THEN
+@example    PRINT "DOWN!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword JOY LEFT (constant)
+
+@english
+
+This constant represents the bitmask to use to identify the "left direction" 
+bit for the value returned by the JOY function.
+
+@italian
+
+Questa costante rappresenta la bitmask da utilizzare per identificare il 
+bit "direzione sinistra" per il valore restituito dalla funzione JOY.
+
+@syntax = JOY LEFT
+
+@example IF JOY(0) AND JOY LEFT THEN
+@example    PRINT "LEFT!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword JOY RIGHT (constant)
+
+@english
+
+This constant represents the bitmask to use to identify the "right direction" 
+bit for the value returned by the JOY function.
+
+@italian
+
+Questa costante rappresenta la bitmask da utilizzare per identificare il 
+bit "direzione destra" per il valore restituito dalla funzione JOY.
+
+@syntax = JOY RIGHT
+
+@example IF JOY(0) AND JOY RIGHT THEN
+@example    PRINT "RIGHT!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword LEFT (constant)
+
+@english
+
+This constant represent the "LEFT" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "LEFT", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = LEFT
+
+@example IF KET STATE(LEFT) THEN
+@example    PRINT "LEFT has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword RIGHT (constant)
+
+@english
+
+This constant represent the "RIGHT" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "RIGHT", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = RIGHT
+
+@example IF KET STATE(RIGHT) THEN
+@example    PRINT "RIGHT has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword UP (constant)
+
+@english
+
+This constant represent the "UP" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "UP", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = UP
+
+@example IF KET STATE(UP) THEN
+@example    PRINT "UP has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword DOWN (constant)
+
+@english
+
+This constant represent the "DOWN" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "DOWN", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = DOWN
+
+@example IF KET STATE(DOWN) THEN
+@example    PRINT "DOWN has been pressed!"
+@example ENDIF
+
+</usermanual> */

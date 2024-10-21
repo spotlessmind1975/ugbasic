@@ -48,17 +48,31 @@
 @keyword KILL
 
 @english
-This keyword will ''KILL'' a (parallel) procedure. 
+
+The ''KILL'' command terminates the execution of a thread, 
+thereby stopping its execution and returning it to a "terminated" 
+state. This command occurs regardless of what the thread is doing; 
+therefore, it can cause processes or procedures to fail. Any 
+thread can be killed at any time, as long as it is active. 
+If a thread is not active, killing it will have no effect.
+You can interrupt a set of threads contained in an array 
+by supplying the array name.
 
 @italian
-Questa parola chiave termina una procedura (parallela).
 
-@syntax KILL value
-@syntax KILL expression
+Il comando ''KILL'' termina l'esecuzione di un thread, fermandone 
+così l'esecuzione e riportandolo allo stato "terminato". Questo 
+comando si verifica indipendentemente da ciò che sta facendo il 
+thread; pertanto, può causare il fallimento di processi o p
+rocedure. Qualsiasi thread può essere terminato in qualsiasi 
+momento, purché sia ​​attivo. Se un thread non è attivo, 
+terminarlo non avrà alcun effetto. E' possibile interrompere 
+un insieme di thread contenuti in un array fornendo il nome dell'array.
+
+@syntax KILL id[,id[,...]]
 
 @example KILL handleThread
 
-@target all
 </usermanual> */
 void kill_procedure( Environment * _environment, char * _handle ) {
 

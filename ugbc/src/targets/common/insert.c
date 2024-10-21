@@ -38,6 +38,36 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword INSERT (instruction)
+
+@english
+
+The ''INSERT'' command can draw frames on the screen in text mode. The appearance 
+of the frame is determined by the first parameter ''string''. It must contain a 
+character string that is exactly nine characters long and consists of the characters
+that define the frame: top left corner, top edge, top right corner, left edge, 
+fill character, right edge, bottom left corner, bottom edge, bottom right corner. 
+If this string is too long or too short, the behaviour is undefined.
+
+@italian
+
+Il comando ''INSERT'' può disegnare cornici sullo schermo in modalità testo. 
+L'aspetto della cornice è determinato dal primo parametro ''string''. Deve contenere 
+una stringa di caratteri lunga esattamente nove caratteri e composta dai caratteri 
+che definiscono la cornice: angolo in alto a sinistra, bordo in alto, angolo in alto 
+a destra, bordo sinistro, carattere di riempimento, bordo destro, angolo in basso a 
+sinistra, bordo in basso, angolo in basso a destra. Se questa stringa è troppo lunga 
+o troppo corta, il comportamento non è definito.
+
+@syntax INSERT string, x, y, w, h, c
+
+@example INSERT "+-+| |+-+", 0, 0, 10, 10, RED
+
+@usedInExample tsb_insert_01.bas
+
+</usermanual> */
+
 void insert( Environment * _environment, char * _string, char * _x, char * _y, char * _w, char * _h, char * _c ) {
 
     MAKE_LABEL

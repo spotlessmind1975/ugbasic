@@ -45,7 +45,7 @@
  * @param _name Name of the storage
  */
 /* <usermanual>
-@keyword FILE
+@keyword FILE (storage)
 
 @english
 

@@ -102,6 +102,42 @@ schermo il carattere premuto.
 
 </usermanual> */
 
+/* <usermanual>
+@keyword KEYGET
+
+@english
+
+The ''KEYGET' capture a single character typed by the user 
+without having to press enter. In other words, the program is "listening" 
+to the keyboard and, as soon as a key is pressed, "captures" it and 
+stores it in a variable given as parameter.
+
+Unlike the ''INPUT'' command, which requires the user to press enter after
+typing, ''KEYGET'' reads the character as soon as it is pressed. If no key 
+has been pressed, ''KEYGET'' will wait. Finally, the captured 
+character is stored in a string variable.
+
+@italian
+
+''KEYGET'' cattura un singolo carattere digitato dall'utente
+senza dover premere Invio. In altre parole, il programma "ascolta"
+la tastiera e, non appena viene premuto un tasto, lo "cattura" e
+lo memorizza in una variabile specificata come parametro.
+
+A differenza del comando ''INPUT'', che richiede all'utente di premere Invio
+dopo aver digitato, ''KEYGET'' legge il carattere non appena viene premuto. 
+Se non è stato premuto alcun tasto, ''KEYGET'' attenderà. Infine, 
+il carattere catturato viene memorizzato in una variabile stringa.
+
+@syntax KEYGET variable
+
+@example KEYGET var$
+@example PRINT var$;" pressed"
+
+@seeAlso INKEY
+
+</usermanual> */
+
 Variable * inkey( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of INKEY$)");
