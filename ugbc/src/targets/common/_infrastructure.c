@@ -7990,10 +7990,31 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
 @keyword LEN
 
 @english
-This function returns the number of characters stored in a string.
+
+the ''LEN'' command (short for "length") is used to determine the length 
+of a string, or the total number of characters in the string. This 
+is a very useful command when you need to know the size of a string 
+to perform manipulation or comparison operations.
+
+You can check whether a string exceeds a certain maximum length or not.
+You can use ''LEN'' to create strings of a fixed length by adding spaces 
+or other characters. You can combine ''LEN'' with other functions such as 
+''LEFT$'', ''RIGHT$'', and ''MID$'' to extract and modify parts of a string.
+You can compare the length of two strings to make decisions in your program.
 
 @italian
-Questa funzione restituisce il numero di caratteri memorizzato in una stringa.
+
+il comando ''LEN'' (abbreviazione di "length") è usato per determinare la
+lunghezza di una stringa, o il numero totale di caratteri nella stringa. 
+Questo è un comando molto utile quando hai bisogno di conoscere la dimensione 
+di una stringa per eseguire operazioni di manipolazione o confronto.
+
+Puoi controllare se una stringa supera una certa lunghezza massima o meno.
+Puoi usare ''LEN'' per creare stringhe di lunghezza fissa aggiungendo 
+spazi o altri caratteri. Puoi combinare ''LEN'' con altre funzioni come 
+''LEFT$'', ''RIGHT$'' e ''MID$'' per estrarre e modificare parti di una stringa.
+Puoi confrontare la lunghezza di due stringhe per prendere decisioni nel 
+tuo programma.
 
 @syntax = LEN( text )
 
@@ -8001,7 +8022,6 @@ Questa funzione restituisce il numero di caratteri memorizzato in una stringa.
 
 @usedInExample strings_len_01.bas
 
-@target all
  </usermanual> */
 Variable * variable_string_len( Environment * _environment, char * _string  ) {
 

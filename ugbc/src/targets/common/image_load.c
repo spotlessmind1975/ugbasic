@@ -52,74 +52,135 @@
 @keyword LOAD IMAGE
 
 @english
+
 The ''LOAD IMAGE'' command allows you to load an image and to convert it into 
 an ''IMAGE''. The second parameter is the mode to use to convert 
 the given data (by default, it is equal to current mode) 
 
-The command support a set of modern image format, like:
+The command support a set of modern image format, like JPEG baseline & progressive,
+PNG 1/2/4/8/16-bit-per-channel, TGA, BMP (non-1bpp, non-RLE), PSD 
+(composited view only, no extra channels, 8/16 bit-per-channel), 
+GIF, HDR (radiance rgbE format), PIC (Softimage PIC) and PNM (PPM and PGM 
+binary only) The image will be converted into a way that can be 
+efficiently drawn on the screen. 
 
-  * JPEG baseline & progressive
+Since it is possible to load only one file of the same 
+type at a time, it is necessary to be able to indicate an "alias" with 
+which to exceed this limit. In this regard, there is also 
+the ''AS'' syntax, which allows you to load the same file several 
+times but with different names. 
 
-  * PNG 1/2/4/8/16-bit-per-channel
+A series of flags, separated by spaces, can be added at loading time 
+to modify the behavior of ugBASIC.
 
-  * TGA
+The ''FLIP X'' flag allows you to flip the image horizontally,
+before translating it into the native format. The same is true for the 
+''FLIP Y'' command, which instead inverts the image vertically. 
+There is also the ''FLIP XY'' (or ''FLIP YX'') parameter to act, 
+simultaneously, on both directions.
 
-  * BMP (non-1bpp, non-RLE)
+The ''COMPRESSED'' flag allows you to compress the image, if 
+possible. Compression is a space-saving mechanism, in which the 
+native data of the image is represented in a more compact form, 
+which ugBASIC will be able to quickly convert into graphics at 
+the appropriate time.
 
-  * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
+The ''OVERLAYED'' flag can be used on systems with a palette 
+of few colors, to indicate which of them must be preserved 
+during the drawing phase, to have the transparency effect.
 
-  * GIF
+The ''EXACT'' flag allows you to bypass the automatic detection 
+of the palette, opting for the representation of the colors 
+according to what is contained in it.
 
-  * HDR (radiance rgbE format)
+The image can be loaded as a transparent image (if the original
+image has no transparency) using the keyword ''TRANSPARENCY'',
+followe by an optional parameter that represent the color
+to consider as transparent.
 
-  * PIC (Softimage PIC)
+The image can be loaded as a transparent image (if the original
+image has no transparency) using the keyword ''OPACITY'',
+followe by an optional parameter that represent the color
+to consider as pavement,.
 
-  * PNM (PPM and PGM binary only)
+The image can be loaded directly into the expansion
+memory using the BANKED keyword. The number represent
+the shared resident to use as target for this image.
+For some targets this is the default. If you want,
+you can move the image onto the resident memory by
+using the ''UNBANKED'' keyword.
 
-The image will be converted into a way that can be efficiently drawn 
-on the screen. It could be converted into indexed palette, and can be 
-rescaled as well.
-
-Since it is possible to load only one file of the same type at a time, it is necessary 
-to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also 
-the ''AS'' syntax, which allows you to load the same file several times but with different names. 
+Finally, if the image is not expected to change during gameplay, it can be marked 
+with the ''READONLY'' attribute: in this case, the image will be stored 
+in read-only memory, if available.
 
 @italian
-Il comando ''LOAD IMAGE'' permette di caricare un file immagine, e di convertirlo
-in una ''IMAGE''. Il secondo parametro è la modalità grafica da usare
-per convertire il dato (per default, è il modo corrente).
 
-Il comando supporta una serie di formati moderni:
+Il comando ''LOAD IMAGE'' consente di caricare un'immagine e convertirla in
+una ''IMMAGINE''. Il secondo parametro è la modalità da utilizzare per convertire
+i dati forniti (per impostazione predefinita, è uguale alla modalità corrente)
 
-  * JPEG baseline & progressive
+Il comando supporta un set di formati immagine moderni, come JPEG baseline e progressivo,
+PNG 1/2/4/8/16 bit per canale, TGA, BMP (non 1bpp, non RLE), PSD
+(solo vista composita, nessun canale extra, 8/16 bit per canale),
+GIF, HDR (formato radiance rgbE), PIC (Softimage PIC) e PNM (solo PPM e PGM
+binary). L'immagine verrà convertita in un modo che può essere
+disegnata in modo efficiente sullo schermo.
 
-  * PNG 1/2/4/8/16-bit-per-canale
+Poiché è possibile caricare un solo file dello stesso
+tipo alla volta, è necessario poter indicare un "alias" con
+il quale superare questo limite. A questo proposito, esiste anche
+la sintassi ''AS'', che consente di caricare più volte lo stesso
+file ma con nomi diversi.
 
-  * TGA
+Una serie di flag, separati da spazi, possono essere aggiunti in fase di caricamento
+per modificare il comportamento di ugBASIC.
 
-  * BMP (non-1bpp, non-RLE)
+Il flag ''FLIP X'' consente di capovolgere l'immagine orizzontalmente,
+prima di tradurla nel formato nativo. Lo stesso vale per il
+comando ''FLIP Y'', che invece inverte l'immagine verticalmente.
+Esiste anche il parametro ''FLIP XY'' (o ''FLIP YX'') per agire,
+contemporaneamente, su entrambe le direzioni.
 
-  * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
+Il flag ''COMPRESSED'' consente di comprimere l'immagine, se
+possibile. La compressione è un meccanismo di risparmio di spazio, in cui i dati nativi dell'immagine sono rappresentati in una forma più compatta, che
+ugBASIC sarà in grado di convertire rapidamente in grafica al momento opportuno.
 
-  * GIF
+Il flag ''OVERLAYED'' può essere utilizzato su sistemi con una tavolozza
+di pochi colori, per indicare quali di essi devono essere conservati
+durante la fase di disegno, per avere l'effetto trasparenza.
 
-  * HDR (formato radiance rgbE)
+Il flag ''EXACT'' consente di bypassare il rilevamento automatico
+della tavolozza, optando per la rappresentazione dei colori
+in base a ciò che è contenuto in essa.
 
-  * PIC (Softimage PIC)
+L'immagine può essere caricata come immagine trasparente (se l'immagine originale
+non ha trasparenza) utilizzando la parola chiave ''TRANSPARENCY'',
+seguita da un parametro opzionale che rappresenta il colore
+da considerare come trasparente.
 
-  * PNM (solo formato binario PPM e PGM)
+L'immagine può essere caricata come immagine trasparente (se l'immagine originale non ha trasparenza) usando la parola chiave ''OPACITY'',
+seguita da un parametro opzionale che rappresenta il colore
+da considerare come pavimentazione.
 
-L'immagine verrà convertita in un modo che possa essere disegnata in modo efficiente
-sullo schermo. Potrebbe essere convertita in una tavolozza indicizzata, e potrebbe essere
-anche ridimensionata.
+L'immagine può essere caricata direttamente nella memoria di espansione
+usando la parola chiave BANKED. Il numero rappresenta
+il residente condiviso da usare come target per questa immagine.
+Per alcuni target questa è l'impostazione predefinita. Se vuoi,
+puoi spostare l'immagine nella memoria residente
+usando la parola chiave ''UNBANKED''.
 
-Dal momento in cui è possibile caricare un solo file dello stesso tipo alla volta, 
-è necessario poter indicare un "alias" con cui superare questo limite. A tal riguardo 
-esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
-ma con nomi diversi.
+Infine, se non è previsto che l'immagine cambi durante il gioco, può essere contrassegnata
+con l'attributo ''READONLY'': in questo caso, l'immagine verrà archiviata
+nella memoria di sola lettura, se disponibile.
 
-@syntax = LOAD IMAGE( filename[,mode] )
-@syntax = LOAD IMAGE( filename AS alias[,mode] )
+@syntax = LOAD IMAGE( filename [AS alias][,mode] ) [fl] [tr] [op] [bg] [bk] [READONLY]
+@syntax     fl : [FLIP X] [FLIP Y] [FLIPXY] [FLIPYX] 
+@syntax          [COMPRESSED] [OVERLAYED] [EXACT]
+@syntax     tr : [TRANSPARENCY | TRANSPARENCY color]
+@syntax     op : [OPACITY | OPACITY color]
+@syntax     bg : [BACKGROUND color]
+@syntax     bk : [UNBANKED | BANKED | BANKED(number)]
 
 @example starship = LOAD IMAGE("starship.png")
 @example starship2 = LOAD IMAGE("starship.png" AS "starship2")
@@ -128,8 +189,14 @@ ma con nomi diversi.
 
 @usedInExample image_loading_01.bas
 
-@target all
+@alias IMAGE LOAD
 </usermanual> */
+
+/* <usermanual>
+@keyword IMAGE LOAD
+@alias LOAD IMAGE
+</usermanual> */
+
 Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
 
     // First of all, we create a variable to store the image.
