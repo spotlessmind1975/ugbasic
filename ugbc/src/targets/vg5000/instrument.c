@@ -48,9 +48,7 @@
  * @param _instrument instrument to use
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword INSTRUMENT
-</usermanual> */
+
 void instrument( Environment * _environment, int _instrument, int _channels ) {
 
 }
@@ -65,9 +63,6 @@ void instrument( Environment * _environment, int _instrument, int _channels ) {
  * @param _instrument instrument to use
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword INSTRUMENT
-</usermanual> */
 void instrument_semi_var( Environment * _environment, int _instrument, char * _channels ) {
 
 }

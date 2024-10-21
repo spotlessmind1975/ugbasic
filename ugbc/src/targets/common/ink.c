@@ -48,12 +48,10 @@
 @keyword INK
 
 @english
-Alias for ''[[PEN]]''.
 
 @italian
-Alias for ''[[PEN]]''.
 
-@syntax INK [expression]
+@syntax INK color
 
 @example INK 4
 
@@ -64,7 +62,8 @@ Alias for ''[[PEN]]''.
 @UsedInExample graphics_shapes_02.bas
 @UsedInExample graphics_shapes_03.bas
 
-@target all
+@alias PEN
+
 </usermanual> */
 
 void ink( Environment * _environment, char * _color ) {

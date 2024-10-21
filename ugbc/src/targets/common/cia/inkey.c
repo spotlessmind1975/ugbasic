@@ -42,6 +42,102 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
+/* <usermanual>
+@keyword INKEY
+
+@english
+
+The ''INKEY' (or ''INKEY$'') capture a single character typed by the user 
+without having to press enter. In other words, the program is "listening" 
+to the keyboard and, as soon as a key is pressed, "captures" it and 
+stores it in a variable.
+
+Unlike the ''INPUT'' command, which requires the user to press enter after
+typing, ''INKEY'' reads the character as soon as it is pressed. If no key 
+has been pressed, ''INKEY$'' returns an empty string (""). The captured 
+character is stored in a string variable.
+
+It is used to create interactive games where the user can control the 
+character or objects by pressing specific keys, to create text menus 
+where the user can select an option by pressing a letter or number
+or to create programs that respond to external events, such as 
+pressing a key to start or stop an action.
+
+The ''INKEY$'' only reads one character at a time. To read a complete 
+string, you must use other commands or techniques. The command
+does not usually display the pressed character on the screen.
+
+@italian
+
+''INKEY' (o ''INKEY$'') cattura un singolo carattere digitato 
+dall'utente senza dover premere Invio. In altre parole, il 
+programma "ascolta" la tastiera e, non appena viene premuto un 
+tasto, lo "cattura" e lo memorizza in una variabile.
+
+A differenza del comando ''INPUT'', che richiede all'utente di 
+premere Invio dopo aver digitato, ''INKEY'' legge il carattere 
+non appena viene premuto. Se non è stato premuto alcun tasto, 
+''INKEY$'' restituisce una stringa vuota (""). Il carattere 
+catturato viene memorizzato in una variabile stringa.
+
+Viene utilizzato per creare giochi interattivi in ​​cui l'utente 
+può controllare il personaggio o gli oggetti premendo tasti 
+specifici, per creare menu di testo in cui l'utente può 
+selezionare un'opzione premendo una lettera o un numero o 
+per creare programmi che rispondono a eventi esterni, come 
+la pressione di un tasto per avviare o interrompere un'azione.
+
+''INKEY$'' legge solo un carattere alla volta. Per leggere
+una stringa completa, è necessario utilizzare altri comandi 
+o tecniche. Solitamente il comando non visualizza sullo 
+schermo il carattere premuto.
+
+@syntax = INKEY$
+
+@example IF INKEY$ = "A" THEN
+@example    PRINT "A has been pressed!"
+@example ENDIF
+
+@seeAlso SCANCODE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword KEYGET
+
+@english
+
+The ''KEYGET' capture a single character typed by the user 
+without having to press enter. In other words, the program is "listening" 
+to the keyboard and, as soon as a key is pressed, "captures" it and 
+stores it in a variable given as parameter.
+
+Unlike the ''INPUT'' command, which requires the user to press enter after
+typing, ''KEYGET'' reads the character as soon as it is pressed. If no key 
+has been pressed, ''KEYGET'' will wait. Finally, the captured 
+character is stored in a string variable.
+
+@italian
+
+''KEYGET'' cattura un singolo carattere digitato dall'utente
+senza dover premere Invio. In altre parole, il programma "ascolta"
+la tastiera e, non appena viene premuto un tasto, lo "cattura" e
+lo memorizza in una variabile specificata come parametro.
+
+A differenza del comando ''INPUT'', che richiede all'utente di premere Invio
+dopo aver digitato, ''KEYGET'' legge il carattere non appena viene premuto. 
+Se non è stato premuto alcun tasto, ''KEYGET'' attenderà. Infine, 
+il carattere catturato viene memorizzato in una variabile stringa.
+
+@syntax KEYGET variable
+
+@example KEYGET var$
+@example PRINT var$;" pressed"
+
+@seeAlso INKEY
+
+</usermanual> */
+
 Variable * inkey( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of INKEY$)");

@@ -4373,18 +4373,36 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
 @keyword INC
 
 @english
-The ''INC'' command allows you to increase a variable by one. 
-This is much more efficient than using the standard syntax ''v = v + 1''.
+
+The ''INC'' command is used to increment (i.e. increase) the value 
+of a numeric variable by one. It is a quick and concise way to add 
+1 from the value contained in a variable. In place of ''variable'', enter the
+name of the numeric variable you want to increment.
+
+The ''INC'' command is actually a shorthand for the adding operation, as
+writing ''num=num+1''. However, ''DEC'' is often preferred because of its 
+more concise syntax and its specific increment function. The ''INC'' command 
+can only be applied to numeric variables (integer). 
 
 @italian
-Il comando ''INC'' permette di incrementare di uno una variabile. 
-Tale operazione è assai più efficiente che utilizzare la sintassi standard ''v = v + 1''.
+
+Il comando ''INC'' viene utilizzato per incrementare (ovvero aumentare) il valore 
+di una variabile numerica di uno. È un modo rapido e conciso per aggiungere 1 
+al valore contenuto in una variabile. Invece di ''variabile'', inserisci il nome
+della variabile numerica che vuoi incrementare.
+
+Il comando ''INC'' è in realtà una scorciatoia per l'operazione di addizione, 
+come scrivere ''num=num+1''. Tuttavia, ''DEC'' è spesso preferito per la sua 
+sintassi più concisa e la sua specifica funzione di incremento. Il comando ''INC'' 
+può essere applicato solo a variabili numeriche (intere).
 
 @syntax INC var
 
 @example INC score
 
 @usedInExample contrib_sierpinski3.bas
+
+@seeAlso DEC
 
 @target all
 </usermanual> */
@@ -4583,6 +4601,8 @@ sintassi più concisa e la sua specifica funzione di decremento. Il comando
 @example x = 43
 @example DEC x
 @example PRINT x: ' It prints "42"
+
+@seeAlso INC
 
 </usermanual> */
 void variable_decrement( Environment * _environment, char * _source ) {
@@ -6446,39 +6466,42 @@ Variable * variable_greater_than_const( Environment * _environment, char * _sour
 
 @english
 
-The ''LEFT'' function returns a (dynamic) string containing a specified 
-number of characters, from the left side of a given string. The function 
-has two parameters. 
+The ''LEFT$'' function lets you extract a portion of characters from a string, 
+starting from the beginning. In other words, it lets you "cut" a string 
+from the left.
 
-The first parameter is the string expression from which the 
-leftmost characters are returned. If string is empty, an empty string is
-returned. 
+You can get prefixes, codes, or any other initial part of a string, to 
+combine ''LEFT$'' with other functions to manipulate, format, and parse strings,
+to use ''LEFT$'' to check the length or initial content of a string.
 
-The second parameter is a numeric expression, indicating how 
-many characters to return. If 0, an empty string (''""'') is returned. 
-On the other hand, if greater than or equal to the number of characters 
-in string, the entire string is returned, untouched. 
+The numbering of characters in a string always starts at 1. If the specified 
+number_of_characters is greater than the length of the string, ''LEFT$'' will 
+return the entire string.
 
-To determine the number of characters in string, you should use 
-the ''LEN'' function.
+Make sure both string$ and substring$ are declared as strings (typically using 
+a $ at the end of the variable name). ''LEFT$'' is a very useful function for 
+manipulating strings in BASIC, allowing you to extract specific areas from 
+a longer string.
 
 @italian
 
-La funzione ''LEFT'' restituisce una stringa (dinamica) contenente un 
-numero specificato di caratteri, dal lato sinistro di una determinata 
-stringa. La funzione ha due parametri.
+La funzione ''LEFT$'' consente di estrarre una porzione di caratteri da 
+una stringa, partendo dall'inizio. In altre parole, consente di "tagliare" 
+una stringa da sinistra.
 
-Il primo parametro è l'espressione stringa da cui vengono restituiti 
-i caratteri più a sinistra. Se la stringa è vuota, viene restituita 
-una stringa vuota.
+È possibile ottenere prefissi, codici o qualsiasi altra parte iniziale di
+una stringa, combinare ''LEFT$'' con altre funzioni per manipolare, 
+formattare e analizzare stringhe, utilizzare ''LEFT$'' per controllare 
+la lunghezza o il contenuto iniziale di una stringa.
 
-Il secondo parametro è un'espressione numerica, che indica quanti 
-caratteri restituire. Se 0, viene restituita una stringa vuota (''""''). 
-D'altra parte, se maggiore o uguale al numero di caratteri nella stringa, 
-viene restituita l'intera stringa, intatta.
+La numerazione dei caratteri in una stringa inizia sempre da 1. Se 
+il numero_di_caratteri specificato è maggiore della lunghezza della stringa, 
+''LEFT$'' restituirà l'intera stringa.
 
-Per determinare il numero di caratteri in una stringa, è necessario 
-utilizzare la funzione ''LEN''.
+Assicurarsi che sia string$ che substring$ siano dichiarate come stringhe 
+(in genere utilizzando un $ alla fine del nome della variabile). LEFT$ è 
+una funzione molto utile per manipolare stringhe in BASIC, che consente
+di estrarre aree specifiche da una stringa più lunga.
 
 @syntax = LEFT( text, position )
 
@@ -6487,13 +6510,11 @@ utilizzare la funzione ''LEN''.
 @usedInExample strings_left_01.bas
 
 @seeAlso RIGHT (function)
-@seeAlso RIGHT
+@seeAlso RIGHT (instruction)
 @seeAlso MID (function)
-@seeAlso MID
+@seeAlso MID (instruction)
 @seeAlso LEN
 
-@target all
-@verified
  </usermanual> */
 Variable * variable_string_left( Environment * _environment, char * _string, char * _position ) {
 
@@ -6542,7 +6563,7 @@ Variable * variable_string_left( Environment * _environment, char * _string, cha
  * @return Variable* Result of text extraction
  */
 /* <usermanual>
-@keyword LEFT
+@keyword LEFT (instruction)
 
 @english
 
@@ -6562,21 +6583,19 @@ the ''LEN'' function.
 
 @italian
 
-La funzione ''LEFT'' restituisce una stringa (dinamica) contenente un 
-numero specificato di caratteri, dal lato sinistro di una determinata 
-stringa. La funzione ha due parametri.
+Il comando ''LEFT'' sostituisce i caratteri più a sinistra nella 
+stringa di destinazione con i caratteri equivalenti dalle stringhe 
+fornite. Il comando ha due parametri.
 
-Il primo parametro è l'espressione stringa da cui vengono restituiti 
-i caratteri più a sinistra. Se la stringa è vuota, viene restituita 
-una stringa vuota.
+Il primo parametro è l'espressione stringa da modificare.
 
-Il secondo parametro è un'espressione numerica, che indica quanti 
-caratteri restituire. Se 0, viene restituita una stringa vuota (''""''). 
-D'altra parte, se maggiore o uguale al numero di caratteri nella stringa, 
-viene restituita l'intera stringa, intatta.
+Il secondo parametro è un'espressione numerica che indica quanti 
+caratteri restituire. Se 0, viene restituita una stringa vuota (''""'').
+D'altra parte, se è maggiore o uguale al numero di caratteri 
+nella stringa, viene restituita l'intera stringa, intatta.
 
-Per determinare il numero di caratteri in una stringa, è necessario 
-utilizzare la funzione ''LEN''.
+Per determinare il numero di caratteri nella stringa, dovresti 
+usare la funzione ''LEN''.
 
 @syntax = LEFT( text, position )
 
@@ -6585,13 +6604,11 @@ utilizzare la funzione ''LEN''.
 @usedInExample strings_left_01.bas
 
 @seeAlso RIGHT (function)
-@seeAlso RIGHT
+@seeAlso RIGHT (instruction)
 @seeAlso MID (function)
-@seeAlso MID
+@seeAlso MID (instruction)
 @seeAlso LEN
 
-@target all
-@verified
  </usermanual> */
 void variable_string_left_assign( Environment * _environment, char * _string, char * _position, char * _expression ) {
     Variable * string = variable_retrieve( _environment, _string );
@@ -8008,10 +8025,31 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
 @keyword LEN
 
 @english
-This function returns the number of characters stored in a string.
+
+the ''LEN'' command (short for "length") is used to determine the length 
+of a string, or the total number of characters in the string. This 
+is a very useful command when you need to know the size of a string 
+to perform manipulation or comparison operations.
+
+You can check whether a string exceeds a certain maximum length or not.
+You can use ''LEN'' to create strings of a fixed length by adding spaces 
+or other characters. You can combine ''LEN'' with other functions such as 
+''LEFT$'', ''RIGHT$'', and ''MID$'' to extract and modify parts of a string.
+You can compare the length of two strings to make decisions in your program.
 
 @italian
-Questa funzione restituisce il numero di caratteri memorizzato in una stringa.
+
+il comando ''LEN'' (abbreviazione di "length") è usato per determinare la
+lunghezza di una stringa, o il numero totale di caratteri nella stringa. 
+Questo è un comando molto utile quando hai bisogno di conoscere la dimensione 
+di una stringa per eseguire operazioni di manipolazione o confronto.
+
+Puoi controllare se una stringa supera una certa lunghezza massima o meno.
+Puoi usare ''LEN'' per creare stringhe di lunghezza fissa aggiungendo 
+spazi o altri caratteri. Puoi combinare ''LEN'' con altre funzioni come 
+''LEFT$'', ''RIGHT$'' e ''MID$'' per estrarre e modificare parti di una stringa.
+Puoi confrontare la lunghezza di due stringhe per prendere decisioni nel 
+tuo programma.
 
 @syntax = LEN( text )
 
@@ -8019,7 +8057,6 @@ Questa funzione restituisce il numero di caratteri memorizzato in una stringa.
 
 @usedInExample strings_len_01.bas
 
-@target all
  </usermanual> */
 Variable * variable_string_len( Environment * _environment, char * _string  ) {
 
@@ -11935,6 +11972,48 @@ Resource * build_resource_for_sequence( Environment * _environment, char * _imag
 
 }
 
+/* <usermanual>
+@keyword INT (function)
+
+@english
+
+The ''INT'' command is a mathematical function that rounds a ''FLOAT''
+to the smallest ''INT'' number. In other words, it cuts off the decimal 
+part of the number, returning only the whole part.
+
+If you apply ''INT'' to a number that is already an integer, the result 
+will be the same number. ''INT'' is rounded down, so for negative numbers 
+it means taking the largest integer (in absolute value) less than or 
+equal to the original number.
+
+''INT'' is useful when you need to work only with the integer part of 
+a number. It can be used in combination with other mathematical operations 
+to perform more complex calculations. Sometimes you need to convert a ''FLOAT''
+to an integer in order to use it in certain functions or data structures.
+
+@italian
+
+Il comando ''INT'' è una funzione matematica che arrotonda un ''FLOAT'' 
+al numero ''INT'' più piccolo. In altre parole, taglia la parte decimale 
+del numero, restituendo solo la parte intera.
+
+Se applichi ''INT'' a un numero che è già un intero, il risultato sarà 
+lo stesso numero. ''INT'' viene arrotondato per difetto, quindi per i 
+numeri negativi significa prendere l'intero più grande (in valore assoluto) 
+minore o uguale al numero originale.
+
+''INT'' è utile quando devi lavorare solo con la parte intera di un numero. 
+Può essere utilizzato in combinazione con altre operazioni matematiche per 
+eseguire calcoli più complessi. A volte devi convertire un ''FLOAT'' in un 
+intero per utilizzarlo in determinate funzioni o strutture dati.
+
+@syntax = INT(value)
+
+@example x = 1.5
+@example PRINT INT(x) : ' It prints 1
+
+</usermanual> */
+
 Variable * variable_int( Environment * _environment, char * _expression ) {
 
     Variable * expression = variable_retrieve( _environment, _expression );
@@ -12090,6 +12169,31 @@ Variable * variable_string_insert( Environment * _environment, char * _string, c
     return result;
 
 }
+
+/* <usermanual>
+@keyword INST
+
+@english
+
+The ''INST'' function overwrites the characters of the string ''alt' with the character string 
+''string'' (first argument) in the character string ''alt'' (second argument) from the position 
+''pos'' (third argument), whereby the counting starts with 1. The length of the character 
+string ''altstring'' does not change. 
+
+@italian
+
+La funzione ''INST'' sovrascrive i caratteri della stringa ''alt'' con la stringa di caratteri 
+''string'' (primo argomento) nella stringa di caratteri ''alt'' (secondo argomento) dalla posizione 
+''pos'' (terzo argomento), per cui il conteggio inizia da 1. La lunghezza della stringa di 
+caratteri ''altstring'' non cambia.
+
+@syntax = INST( string, alt, pos ) 
+
+@example c$=INST(a$,b$,9)
+
+@usedInExample tsb_insert_01.bas
+
+</usermanual> */
 
 Variable * variable_string_inst( Environment * _environment, char * _string, char * _altstring, char * _pos ) {
 

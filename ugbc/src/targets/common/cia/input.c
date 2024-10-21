@@ -42,6 +42,111 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
+
+/* <usermanual>
+@keyword INPUT (function)
+
+@english
+
+The ''INPUT'' command allows you to ask the user to enter data, such as 
+numbers or text, while your program is running. When your program 
+encounters an ''INPUT'' statement, it stops executing and displays 
+a prompt (usually the name of the variable) that invites the user 
+to enter a value. The user types the value and presses Enter. 
+The entered value is then stored in the specified variable.
+
+Make sure the variable type matches the type of data you want 
+to capture (e.g. a numeric variable for a number, a string 
+variable for text). The message is optional but highly 
+recommended to make it clear to the user what to enter.
+After entering the value, the user must always press Enter to confirm.
+
+@italian
+
+Il comando ''INPUT'' consente di chiedere all'utente di immettere dati, 
+come numeri o testo, mentre il programma è in esecuzione. Quando il 
+programma incontra un'istruzione ''INPUT'', interrompe l'esecuzione e
+visualizza un prompt (solitamente il nome della variabile) che invita 
+l'utente a immettere un valore. L'utente digita il valore e preme Invio.
+Il valore immesso viene quindi memorizzato nella variabile specificata.
+
+Assicurati che il tipo di variabile corrisponda al tipo di dati che 
+desideri acquisire (ad esempio una variabile numerica per un numero, 
+una variabile stringa per il testo). Il messaggio è facoltativo ma 
+altamente consigliato per chiarire all'utente cosa immettere.
+Dopo aver immesso il valore, l'utente deve sempre premere 
+invio per confermare.
+
+@syntax INPUT [prompt];v1[;v2[;...]
+@syntax INPUT [prompt];v1[,v2[,...]
+@syntax INPUT [prompt],v1[;v2[;...]
+@syntax INPUT [prompt],v1[,v2[,...]
+
+@example INPUT "Type a string ", a$
+@example PRINT "The string was "; a$
+
+@seeAlso INPUT (function)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword LINE INPUT
+
+@english
+
+The ''LINE INPUT'' command takes a complete line of text entered 
+by the user and assign it to a string variable. Unlike the ''INPUT'' 
+command, which stops at the first comma or space, ''LINE INPUT''
+reads all the characters until the user presses enter.
+
+Typically, you precede the ''LINE INPUT'' command with a message 
+that tells the user what to enter. When the user presses enter, 
+the entire line of text typed is assigned to the variable specified 
+after the ''LINE INPUT'' command.
+
+The variable containing the captured string can be used later in
+the program for various operations, such as printing the value, 
+comparing it to other strings, or manipulating it further.
+
+The ''LINE INPUT'' is especially useful when you want to capture 
+sentences or longer texts, which may contain spaces, commas, and 
+other special characters. It does not impose restrictions on the 
+format of the input, allowing the user to enter any type of 
+character. It is a command that is easy to use and understand.
+
+@italian
+
+Il comando ''LINE INPUT'' prende una riga completa di testo 
+immessa dall'utente e la assegna a una variabile stringa. A 
+differenza del comando ''INPUT'', che si ferma alla prima virgola
+o spazio, ''LINE INPUT'' legge tutti i caratteri finché l'utente
+ non preme Invio.
+
+In genere, si fa precedere il comando ''LINE INPUT'' da un messaggio
+che indica all'utente cosa immettere. Quando l'utente preme Invio, 
+l'intera riga di testo digitata viene assegnata alla variabile 
+specificata dopo il comando ''LINE INPUT''.
+
+La variabile contenente la stringa catturata può essere utilizzata 
+in seguito nel programma per varie operazioni, come la stampa del 
+valore, il confronto con altre stringhe o l'ulteriore manipolazione.
+
+''LINE INPUT'' è particolarmente utile quando si desidera catturare 
+frasi o testi più lunghi, che possono contenere spazi, virgole e 
+altri caratteri speciali. Non impone restrizioni al formato 
+dell'input, consentendo all'utente di immettere qualsiasi tipo 
+di carattere. È un comando facile da usare e da capire.
+
+@syntax LINE INPUT [prompt];v1
+@syntax LINE INPUT [prompt],v1
+
+@example LINE INPUT "Type a line ", a$
+@example PRINT a$
+
+@seeAlso INPUT (instruction)
+
+</usermanual> */
+
 void input( Environment * _environment, char * _variable, VariableType _default_type ) {
 
     MAKE_LABEL

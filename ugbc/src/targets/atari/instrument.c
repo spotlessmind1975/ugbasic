@@ -48,26 +48,6 @@
  * @param _instrument instrument to use
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword INSTRUMENT
-
-@english
-This command allows you to select one of the available tools. Instruments 
-can be set for all voices, or for a set of particular voices.
-
-@italian
-Questo comando permette di selezionare uno tra gli strumenti disponibili. 
-Si possono impostare strumenti per tutte le voci, o per un insieme di voci 
-particolari. 
-
-@syntax INSTRUMENT #instrument [ON #channels]
-@syntax INSTRUMENT name [ON #channels]
-
-@example INSTRUMENT #42 ON %001
-@example INSTRUMENT SHAMISEN
-
-@target atari
-</usermanual> */
 void instrument( Environment * _environment, int _instrument, int _channels ) {
 
     pokey_start( _environment, _channels );
@@ -85,10 +65,7 @@ void instrument( Environment * _environment, int _instrument, int _channels ) {
  * @param _instrument instrument to use
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword INSTRUMENT
-@target atari
-</usermanual> */
+
 void instrument_semi_var( Environment * _environment, int _instrument, char * _channels ) {
 
     if ( _channels ) {
