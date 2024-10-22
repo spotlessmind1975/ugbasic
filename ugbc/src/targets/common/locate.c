@@ -53,24 +53,23 @@ The ''LOCATE'' command moves the text cursor to specific coordinates,
 and this new location sets the start position for all subsequent 
 text printing until commanded otherwise. 
 
-All screen positions are measured in “text coordinates”, which are 
-measured in units of one printed character on screen, with the 
+All console positions are measured in “text coordinates”, which are 
+measured in units of one printed character on console, with the 
 x-coordinate controlling the horizontal position and the 
 y-coordinate referring to the vertical. 
 
-The top left-hand corner of the screen has coordinates of 0,0 
+The top left-hand corner of the console has coordinates of 0,0 
 whereas text coordinates of 15,10 refer to a position 15 characters 
-from the left-hand edge of the screen and 10 characters from the top.
+from the left-hand edge of the console and 10 characters from the top.
 
 The range of these coordinates will depend on the size of your character 
-set and the dimensions of the display area allocated, known as a “window”. 
+set and the dimensions of the display area allocated, known as a “console". 
 
 All coordinate measurements are taken using text coordinates relative to 
-the current window. If you try and print something outside of these 
-limits, an error will be generated or the screen will be automatically
-scrolled down.
+the current console. If you try and print something outside of these 
+console,the console will be automatically scrolled down.
 
-The current screen is automatically treated as a window, so there is no 
+The current console is automatically treated as a window, so there is no 
 need to "open" one.
 
 @italian
@@ -78,24 +77,23 @@ Il comando ''LOCATE'' sposta il cursore del testo su coordinate specifiche,
 e questa nuova posizione definisce la posizione iniziale per tutti i successivi
 comandi di stampa testo fino a quando non viene comandato diversamente.
 
-Tutte le posizioni dello schermo sono misurate in "coordinate di testo", che sono
-misurate in unità di un carattere stampato sullo schermo, con la coordinata x 
+Tutte le posizioni della console sono misurate in "coordinate di testo", che sono
+misurate in unità di un carattere stampato sulla console, con la coordinata x 
 che controlla la posizione orizzontale e la coordinata y riferita alla
 posizione verticale.
 
-L'angolo in alto a sinistra dello schermo ha coordinate 0,0
+L'angolo in alto a sinistra della console ha coordinate 0,0
 mentre le coordinate di testo di 15,10 si riferiscono a una posizione di 15 caratteri
-dal bordo sinistro dello schermo e 10 caratteri dall'alto.
+dal bordo sinistro della console e 10 caratteri dall'alto.
 
 L'intervallo di queste coordinate dipenderà dalle dimensioni del carattere
-e le dimensioni dell'area di visualizzazione assegnata, denominata "finestra".
+e le dimensioni dell'area di visualizzazione assegnata, denominata "console".
 
 Tutte le misurazioni di coordinate vengono effettuate utilizzando le coordinate 
-di  testo relative a la finestra corrente. Provare a stampare qualcosa al di fuori di questi
-limiti verrà generato un errore o la schermata verrà automaticamente
-fatta scorrere verso il basso.
+di  testo relative a la console corrente. Provare a stampare qualcosa al di fuori di questi
+limiti verrà automaticamente fatta scorrere verso il basso.
 
-La schermata corrente viene automaticamente trattata come una finestra, quindi non c'è
+La schermata corrente viene automaticamente trattata come una console, quindi non c'è
 bisogno di "aprirne" una.
 
 @syntax LOCATE [x],[y]
@@ -108,7 +106,6 @@ bisogno di "aprirne" una.
 
 @seeAlso AT$
 @seeAlso CMOVE
-@target all
 </usermanual> */
 void locate( Environment * _environment, char * _x, char * _y ) {
 

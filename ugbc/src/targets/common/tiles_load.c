@@ -158,11 +158,19 @@ nella memoria di sola lettura, se disponibile.
 @example alien2 = LOAD TILES("alien.jpg" AS "alien2",11)
 
 @alias TILES LOAD
+@alias FONT LOAD
 </usermanual> */
 
 /* <usermanual>
 @keyword TILES LOAD
 @alias LOAD TILES
+@alias FONT LOAD
+</usermanual> */
+
+/* <usermanual>
+@keyword FONT LOAD
+@alias LOAD TILES
+@alias TILES LOAD
 </usermanual> */
 
 Variable * tiles_load( Environment * _environment, char * _filename, int _flags, char * _tileset, int _index ) {
