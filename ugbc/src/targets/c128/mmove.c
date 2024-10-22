@@ -53,8 +53,30 @@ extern char DATATYPE_AS_STRING[][16];
 /* <usermanual>
 @keyword MMOVE
 
-@target c128
+@english
+
+This command moves a block of memory of ''size'' bytes between two memory 
+locations. In particular, it is possible to indicate whether the destination
+or source of the movement is the computer's resident memory or the memory 
+dedicated to the video card, which on some targets is separate from the 
+main memory.
+
+@italian
+
+Questo comando sposta un blocco di memoria di ''size'' byte tra due posizioni
+di memoria. In particolare, è possibile indicare se la destinazione o la 
+sorgente dello spostamento è la memoria residente del computer o la memoria 
+dedicata alla scheda video, che su alcuni target è separata dalla memoria 
+principale.
+
+@syntax MMOVE [MEMORY] address1 TO [MEMORY] address2 SIZE size
+@syntax MMOVE [MEMORY] address1 TO VIDEO address2 SIZE size
+@syntax MMOVE VIDEO address1 TO [MEMORY] address2 SIZE size
+
+@example MMOVE MEMORY &Hc000 TO VIDEO &H8000 SIZE 100
+
 </usermanual> */
+
 void mmove_memory_memory( Environment * _environment, char * _from, char * _to, char * _size ) {
 
     Variable * from = variable_retrieve_or_define( _environment, _from, VT_ADDRESS, 0 );
@@ -79,9 +101,6 @@ void mmove_memory_memory( Environment * _environment, char * _from, char * _to, 
  * @param _to Destination address to move to
  * @param _size Size of the memory to move
  */
-/* <usermanual>
-@keyword MMOVE
-</usermanual> */
 void mmove_memory_video( Environment * _environment, char * _from, char * _to, char * _size ) {
 
     Variable * from = variable_retrieve_or_define( _environment, _from, VT_ADDRESS, 0 );
@@ -106,9 +125,6 @@ void mmove_memory_video( Environment * _environment, char * _from, char * _to, c
  * @param _to Destination address to move to
  * @param _size Size of the memory to move
  */
-/* <usermanual>
-@keyword MMOVE
-</usermanual> */
 void mmove_video_memory( Environment * _environment, char * _from, char * _to, char * _size ) {
 
     Variable * from = variable_retrieve_or_define( _environment, _from, VT_ADDRESS, 0 );

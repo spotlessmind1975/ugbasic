@@ -80,8 +80,6 @@ In particolare, le stringhe statiche vengono sempre promosse a stringhe dinamich
 
 @usedInExample maths_relative_01.bas
 
-@target all
-@verified
 </usermanual> */
 Variable * maximum( Environment * _environment, char * _source, char * _destination ) {
     

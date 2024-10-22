@@ -6815,10 +6815,10 @@ caratteri dalla posizione iniziale alla fine della stringa.
 @usedInExample strings_mid_01.bas
 
 @seeAlso LEFT (function)
-@seeAlso LEFT
-@seeAlso MID
+@seeAlso LEFT (instruction)
+@seeAlso MID (instruction)
 @seeAlso RIGHT (function)
-@seeAlso RIGHT
+@seeAlso RIGHT (instruction)
 @seeAlso LEN
 
 @target all
@@ -6950,7 +6950,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
  * @return Variable* Result of text extraction
  */
 /* <usermanual>
-@keyword MID
+@keyword MID (instruction)
 
 @english
 
@@ -6984,17 +6984,17 @@ Se omesso o se nel testo sono presenti meno caratteri della lunghezza (incluso i
 carattere iniziale), tutti i caratteri dalla posizione iniziale alla fine della 
 stringa vengono sostituiti.
 
-@syntax MID( text, position[, len] ) = value
+@syntax MID( string, pos[, len] ) = value
 
 @example  a$ = "PUNTO": MID( a$, 1, 3 ) = "PON": PRINT a$: REM prints "PONTO"
 
 @usedInExample strings_mid_01.bas
 
 @seeAlso LEFT (function)
-@seeAlso LEFT
+@seeAlso LEFT (instruction)
 @seeAlso MID (function)
 @seeAlso RIGHT (function)
-@seeAlso RIGHT
+@seeAlso RIGHT (instruction)
 @seeAlso LEN
 
 @target all

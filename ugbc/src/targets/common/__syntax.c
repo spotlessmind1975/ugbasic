@@ -5177,3 +5177,28 @@ parola (''WORD'') a 32 bit con segno.
 @example DIM parolaLunga AS LONG
 
 </usermanual> */
+
+/* <usermanual>
+@keyword MINUS (constant)
+
+@english
+
+This constant represent the "MINUS" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "MINUS", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = MINUS
+
+@example IF KET STATE(MINUS) THEN
+@example    PRINT "MINUS has been pressed!"
+@example ENDIF
+
+</usermanual> */

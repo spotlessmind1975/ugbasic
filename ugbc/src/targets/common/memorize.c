@@ -62,7 +62,6 @@ definisce in modo implicito la ''CONSOLE 0''.
 @usedInExample texts_tracking_02.bas
 
 @seeAlso REMEMBER
-@target all
 </usermanual> */
 
 void memorize( Environment * _environment ) {

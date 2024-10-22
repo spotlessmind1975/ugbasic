@@ -50,11 +50,6 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _to Destination address to move to
  * @param _size Size of the memory to move
  */
-/* <usermanual>
-@keyword MMOVE
-
-@target pc128op
-</usermanual> */
 void mmove_memory_memory( Environment * _environment, char * _from, char * _to, char * _size ) {
 
     Variable * from = variable_retrieve_or_define( _environment, _from, VT_ADDRESS, 0 );
@@ -79,9 +74,6 @@ void mmove_memory_memory( Environment * _environment, char * _from, char * _to, 
  * @param _to Destination address to move to
  * @param _size Size of the memory to move
  */
-/* <usermanual>
-@keyword MMOVE
-</usermanual> */
 void mmove_memory_video( Environment * _environment, char * _from, char * _to, char * _size ) {
 
     Variable * from = variable_retrieve_or_define( _environment, _from, VT_ADDRESS, 0 );
@@ -106,9 +98,6 @@ void mmove_memory_video( Environment * _environment, char * _from, char * _to, c
  * @param _to Destination address to move to
  * @param _size Size of the memory to move
  */
-/* <usermanual>
-@keyword MMOVE
-</usermanual> */
 void mmove_video_memory( Environment * _environment, char * _from, char * _to, char * _size ) {
 
     Variable * from = variable_retrieve_or_define( _environment, _from, VT_ADDRESS, 0 );
