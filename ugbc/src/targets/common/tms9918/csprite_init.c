@@ -48,53 +48,6 @@
  */
  /* <usermanual>
 @keyword CSPRITE
-
-@english
-
-This statement allows you to define a composite sprite. Composite sprites are those 
-sprites that are rendered by means of an overlay of hardware sprites. The definition 
-corresponds to the transfer of graphic information from the graphic resource to the 
-memory space of the machine's hardware. In practice, it is the moment in which the 
-sprite is defined graphically, to be displayed.
-
-The function accepts the ''name'' of a graphic resource, among those previously 
-loaded. This must correspond to a single image: therefore it can be an image 
-or a frame of an ''ATLAS'' or a ''SEQUENCE''. The system, in a completely 
-automatic way, will convert the resource into graphic data compatible with the 
-sprite format, decoding each color component with a separate sprite.
-
-The command accepts a series of parameters, which can be added after the
-name of the graphic resource. The ''EXPAND VERTICAL'' parameter allows you
-to double the vertical dimensions, making each pixel occupy two or more 
-vertical pixels. On the other hand, the ''COMPRESS VERTICAL'' command allows 
-you to restore the original dimensions. The ''EXPAND HORIZONTAL'' parameter 
-allows you to double the vertical dimensions, making each pixel occupy 
-two or more vertical pixels. On the other hand, the ''COMPRESS HORIZONTAL'' 
-command allows you to restore the original dimensions. Finally, it is possible 
-to indicate one of the colors in the palette as "transparent", and therefore 
-that it does not need to generate a hardware sprite. This can be useful where 
-the graphic resource does not use the color black, which is the standard color 
-to characterize the background. Due to the isomorphic nature of the language, 
-not all flags are usable, or have an effect, on all targets that support sprites.
-
-The function provides additional syntax, valid for redefining a sprite already 
-defined. The purpose of such syntax is to modify the graphic information inherent 
-to a sprite already defined previously, thus being able to dynamically replace the 
-appearance of the sprite. In this case, it is necessary to provide a reference to 
-the previously defined sprite (''previous''), and ensure that the graphic 
-characteristics (such as the number of colors) are identical.
-
-@italian
-
-@syntax = CSPRITE ( name flags )
-@syntax = CSPRITE ( name, previous flags )
-
-@example spaceshift = CSPRITE( LOAD IMAGE( "spaceship.png" ) IGNORE COLOR GREEN )
-@example alien = CSPRITE( LOAD IMAGE( "alien1.png" ) )
-@example alien = CSPRITE( LOAD IMAGE( "alien2.png" ), alien )
-
-@seeAlso SPRITE
-
 @target msx1
 @target coleco
 @target sg1000

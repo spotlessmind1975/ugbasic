@@ -50,9 +50,9 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-/* <usermanual>
-keyword MOVE TILE
-</usermanual> */
+/* 
+@tobe MOVE TILE
+*/
 void move_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
     Variable * tile = variable_retrieve( _environment, _tile );

@@ -44,9 +44,6 @@
  * @param _environment Current calling environment
  * @param _image image to use as SPRITE
  */
-/* <usermanual>
-@keyword MSPRITE UPDATE
-</usermanual> */
 void msprite_update( Environment * _environment ) {
 
 }

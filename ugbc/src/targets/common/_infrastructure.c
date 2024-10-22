@@ -9352,12 +9352,16 @@ ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id ) {
 
 @english
 
-The operator ''MOD'' divides two numbers and returns only the remainder. The result 
-is the remainder after first expression is divided by the second expression. For 
-example, the expression ''14 MOD 4'' evaluates to ''2''.
-
+The ''MOD'' operator is used to perform the modulo operation. This operation 
+returns the remainder of the integer division of two numbers.
 The result of a ''MOD'' operation will not retain the sign of any, and so it may be 
 only positive. The result is always in the range ''[0, divisor)'', exclusive. 
+
+If the result of ''MOD'' is 0, it means that the first number is divisible 
+by the second. Often used in conjunction with a pseudo-random number generator
+to obtain random numbers within a certain range. It can be used to create loops 
+that repeat a certain number of times or to handle situations that repeat 
+periodically.
 
 For example:
 
@@ -9371,29 +9375,36 @@ dividend as result, without sign.
 
 @italian
 
-L'operatore ''MOD'' divide due numeri e restituisce solo il resto. Il risultato è il 
-resto dopo che la prima espressione è stata divisa per la seconda espressione. 
-Ad esempio, l'espressione ''14 MOD 4'' restituisce ''2''.
+L'operatore ''MOD'' viene utilizzato per eseguire l'operazione di modulo. 
+Questa operazione restituisce il resto dell'intera divisione di due numeri.
+Il risultato di un'operazione ''MOD'' non manterrà il segno di nessuno, 
+quindi può essere solo positivo. Il risultato è sempre compreso nell'intervallo 
+''[0, divisore)'', escluso.
 
-Il risultato di un'operazione ''MOD'' non manterrà il segno di nessuno, quindi può 
-essere solo positivo. Il risultato è sempre compreso nell'intervallo ''[0, divisore)'', 
-escluso.
-
-Ad esempio:
+Ad esempio: 
 
 '''8 Mod 3 = 2'''
 '''-8 Mod 3 = 2'''
 '''8 Mod -3 = 2'''
 '''-8 Mod -3 = 2'''
 
-Se il divisore restituisce zero, il comportamento dell'operatore ''MOD'' è quello di 
-restituire il dividendo come risultato, senza segno.
+Se il risultato di ''MOD'' è 0, significa che il primo numero è divisibile 
+per il secondo. Spesso utilizzato insieme a un generatore di numeri 
+pseudo-casuali per ottenere numeri casuali entro un certo intervallo. 
+Può essere utilizzato per creare cicli che si ripetono un certo 
+numero di volte o per gestire situazioni che si ripetono periodicamente.
+
+Se il divisore è pari a zero, il comportamento dell'operatore ''MOD'' è quello 
+di restituire il dividendo come risultato, senza segno.
 
 @syntax = x MOD y
 
-@example IF x MOD 2 THEN: PRINT "odd" : ELSE : PRINT "even": ENDIF
+@example IF x MOD 2 THEN
+@example   PRINT "odd"
+@example ELSE
+@example   PRINT "even"
+@example ENDIF
 
-@target all
 </usermanual> */
 Variable * variable_mod( Environment * _environment, char * _source, char * _destination ) {
     

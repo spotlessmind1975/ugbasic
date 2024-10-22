@@ -5202,3 +5202,48 @@ target corrispondente, il valore sarà zero.
 @example ENDIF
 
 </usermanual> */
+
+/* <usermanual>
+@keyword MOB ON
+
+@english
+
+@italian
+
+@syntax MOB ON
+
+@alias SPRITE ENABLE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MOB OFF
+
+@english
+
+@italian
+
+@syntax MOB OFF
+
+@alias SPRITE DISABLE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MSPRITE (data type)
+
+@english
+
+The ''MSPRITE'' is a data type that allow to store a reference to a multiplexed
+sprite.
+
+@italian
+
+''MSPRITE'' è un tipo di dati che consente di memorizzare il riferimento
+a uno sprite multiplexed.
+
+@syntax ... AS MSPRITE
+
+@example DIM player AS MSPRITE
+
+</usermanual> */

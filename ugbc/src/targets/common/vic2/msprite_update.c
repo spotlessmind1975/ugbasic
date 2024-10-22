@@ -49,6 +49,16 @@
 /* <usermanual>
 @keyword MSPRITE UPDATE
 
+@english
+
+This instruction causes multiplexed sprites to be updated, 
+where an asynchronous update has been requested.
+
+@italian 
+
+Questa istruzione determina l'aggiornamento degli sprite multiplexed, 
+laddove sia stato richiesto un aggiornamento asincrono.
+
 @target c64
 @target c128
 @target c64reu
