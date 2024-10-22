@@ -9777,7 +9777,7 @@ statement2nc:
   | POKEW pokew_definition
   | POKED poked_definition
   | NOP {
-      outline0( "NOP" );
+      cpu_nop(_environment);
   }
   | RUN {
     run( _environment );

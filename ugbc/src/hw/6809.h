@@ -55,6 +55,7 @@
 
 void cpu6809_init( Environment * _environment );
 
+void cpu6809_nop( Environment * _environment );
 void cpu6809_ztoa( Environment * _environment );
 void cpu6809_ctoa( Environment * _environment );
 void cpu6809_beq( Environment * _environment, char * _label );
@@ -359,6 +360,7 @@ void cpu6809_f32log10( char * _x, char * _result );
 void cpu6809_f32mul( char * _x, char * _y, char * _result );
 void cpu6809_f32sub( char * _x, char * _y, char * _result );
 
+#define cpu_nop( _environment  ) cpu6809_nop( _environment  )
 #define cpu_ztoa( _environment  ) cpu6809_ztoa( _environment  )
 #define cpu_ctoa( _environment  ) cpu6809_ctoa( _environment  )
 #define cpu_beq( _environment,  _label  ) cpu6809_beq( _environment,  _label  )

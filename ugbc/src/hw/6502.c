@@ -48,6 +48,11 @@ void cpu6502_init( Environment * _environment ) {
 
 }
 
+void cpu6502_nop( Environment * _environment ) {
+    
+    outline0("NOP");
+
+}
 void cpu_ztoa( Environment * _environment ) {
     
     MAKE_LABEL
