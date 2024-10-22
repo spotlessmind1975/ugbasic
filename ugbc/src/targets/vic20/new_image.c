@@ -46,11 +46,6 @@
  * @param _height Heigth of the image, in pixel
  * @param _mode Mode to use
  */
-/* <usermanual>
-@keyword NEW IMAGE
-
-@target all
-</usermanual> */
 Variable * new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
     Variable * result = vic1_new_image( _environment, _width, _height, _mode );

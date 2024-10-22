@@ -46,11 +46,6 @@
  * @param _height Heigth of the image, in pixel
  * @param _mode Mode to use
  */
-/* <usermanual>
-@keyword NEW IMAGES
-
-@target all
-</usermanual> */
 Variable * new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
     Variable * result = ef936x_new_images( _environment, _frames, _width, _height, _mode );

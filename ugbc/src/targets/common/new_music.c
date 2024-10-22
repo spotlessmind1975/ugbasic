@@ -49,7 +49,20 @@
 /* <usermanual>
 @keyword NEW MUSIC
 
-@target all
+@english
+
+The ''NEW MUSIC'' command allows you to define a memory area where you can 
+store a set of notes for a MUSIC.
+
+@italian
+
+Il comando ''NEW MUSIC'' consente di definire un'area di memoria in cui sarà
+possibile memorizzare un set di note per una MUSICA.
+
+@syntax = NEW MUSIC( size )
+
+@example track = NEW MUSIC(1260)
+
 </usermanual> */
 Variable * new_music( Environment * _environment, int _size ) {
 
