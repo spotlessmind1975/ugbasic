@@ -38,6 +38,15 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword PUT MESSAGE
+@target c64reu
+</usermanual> */
+/* <usermanual>
+@keyword DOJO PUT MESSAGE
+@target c64reu
+</usermanual> */
+
 Variable * dojo_put_message( Environment * _environment, char * _port_id, char * _message ) {
 
     Variable * portId = variable_retrieve( _environment, _port_id );

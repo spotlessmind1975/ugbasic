@@ -5704,3 +5704,64 @@ target corrispondente, il valore sarà zero.
 @example ENDIF
 
 </usermanual> */
+
+/* <usermanual>
+@keyword POLYLINE
+
+@english
+
+The ''POLYLINE'' command allows you to draw a 
+certain number of concatenated lines.
+
+@italian
+
+Il comando ''POLYLINE'' permette di disegnare 
+un certo numero di linee concatenate.
+
+@syntax POLYLINE [[x1],[y1]] TO [x2],[y2] [TO [x3],[y3] [TO [x4],[y4]]]...
+
+@example POLYLINE 10,10 TO 20,10 TO 20,20 TO 10,20 TO 10,10
+
+</usermanual> */
+
+/* <usermanual>
+@keyword POSITION (data type)
+
+@english
+
+The ''POSITION'' is a data type that represent a coordinate into the video chipset.
+
+@italian
+
+''POSITION'' è un tipo di dati che rappresenta una coordinata nel chipset video.
+
+@syntax ... AS POSITION
+
+@example DIM x AS POSITION
+
+</usermanual> */
+
+/* <usermanual>
+@keyword POUND (constant)
+
+@english
+
+This constant represent the "POUND" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "sterlina", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = POUND
+
+@example IF KET STATE(POUND) THEN
+@example    PRINT "POUND has been pressed!"
+@example ENDIF
+
+</usermanual> */
