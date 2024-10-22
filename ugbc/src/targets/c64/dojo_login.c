@@ -38,6 +38,71 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword LOGIN
+
+@english
+
+The ''LOGIN'' function will allow to connect with a DOJO server. On DOJO 
+servers there is no different process between registration and access 
+to the systems: this is because, in fact, it is unlikely that the user's 
+situation has persisted on the retrocomputers. It follows that, at the 
+first attempt to access, there will also be contextual registration of the 
+user; after the first access, each subsequent access must have the same 
+credentials, and there is no way to change them, at least with actual 
+version of the DOJO protocol.
+
+The ''LOGIN'' function return a ''sessionId'', to be used on other 
+commands / functions. To verify that the operation has taken place, 
+the ''SUCCESS''() function must be used. If ''SUCCESS(...)'' returns 
+a ''TRUE'' result, then the login process was successful; if it returns a 
+''FALSE'' result, then the process must be considered failed for some 
+reason (the username may have already been used, or the credentials are 
+incorrect, and so on).
+
+@italian
+
+La funzione ''LOGIN'' consente di connettersi a un server DOJO. Sui server 
+DOJO non c'è un processo diverso tra registrazione e login ai sistemi: 
+questo perché, di fatto, è improbabile che la situazione dell'utente sia
+persistente sui retrocomputer. Ne consegue che, al primo tentativo di login, 
+vi sarà anche una contestuale registrazione dell'utente; dopo il primo login, 
+ogni login successivo dovrà avere le stesse credenziali, e non c'è modo di 
+cambiarle, almeno con la versione attuale del protocollo DOJO.
+
+La funzione ''LOGIN'' restituisce un ''sessionId'', da utilizzare su altri 
+comandi / funzioni. Per verificare che l'operazione abbia avuto luogo,
+deve essere utilizzata la funzione ''SUCCESS''(). Se ''SUCCESS(...)'' 
+restituisce un risultato ''TRUE'', allora il processo di login è andato 
+a buon fine; se restituisce un risultato ''FALSE'', allora il processo deve 
+essere considerato fallito per qualche ragione (il nome utente potrebbe essere 
+già stato utilizzato, o le credenziali potrebbero essere errate, e così via).
+
+@syntax = LOGIN( username, password )
+
+@example sessionId = LOGIN( "user", "password" )
+
+@alias DOJO LOGIN
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO LOGIN
+
+@english
+
+@italian
+
+@syntax = DOJO CREATE PORT( sessionId, application )
+
+@example sessionId = DOJO LOGIN( "user", "password" )
+
+@alias LOGIN
+
+@target c64
+</usermanual> */
+
 Variable * dojo_login( Environment * _environment, char * _name, char * _password ) {
 
     Variable * name = variable_retrieve( _environment, _name );

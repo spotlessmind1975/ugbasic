@@ -81,8 +81,6 @@ In particolare, le stringhe statiche vengono sempre promosse a stringhe dinamich
 
 @usedInExample maths_relative_02.bas
 
-@target all
-@verified
 </usermanual> */
 Variable * minimum( Environment * _environment, char * _source, char * _destination ) {
 

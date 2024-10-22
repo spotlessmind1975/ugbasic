@@ -38,6 +38,16 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword LOGIN
+@target c64reu
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO LOGIN
+@target c64reu
+</usermanual> */
+
 Variable * dojo_login( Environment * _environment, char * _name, char * _password ) {
 
     Variable * name = variable_retrieve( _environment, _name );

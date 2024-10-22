@@ -95,6 +95,7 @@ characteristics (such as the number of colors) are identical.
 @example alien = CSPRITE( LOAD IMAGE( "alien2.png" ), alien )
 
 @seeAlso SPRITE
+@seeAlso MSPRITE
 
 @target c64
 @target c128

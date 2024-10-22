@@ -6850,10 +6850,10 @@ caratteri dalla posizione iniziale alla fine della stringa.
 @usedInExample strings_mid_01.bas
 
 @seeAlso LEFT (function)
-@seeAlso LEFT
-@seeAlso MID
+@seeAlso LEFT (instruction)
+@seeAlso MID (instruction)
 @seeAlso RIGHT (function)
-@seeAlso RIGHT
+@seeAlso RIGHT (instruction)
 @seeAlso LEN
 
 @target all
@@ -6985,7 +6985,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
  * @return Variable* Result of text extraction
  */
 /* <usermanual>
-@keyword MID
+@keyword MID (instruction)
 
 @english
 
@@ -7019,17 +7019,17 @@ Se omesso o se nel testo sono presenti meno caratteri della lunghezza (incluso i
 carattere iniziale), tutti i caratteri dalla posizione iniziale alla fine della 
 stringa vengono sostituiti.
 
-@syntax MID( text, position[, len] ) = value
+@syntax MID( string, pos[, len] ) = value
 
 @example  a$ = "PUNTO": MID( a$, 1, 3 ) = "PON": PRINT a$: REM prints "PONTO"
 
 @usedInExample strings_mid_01.bas
 
 @seeAlso LEFT (function)
-@seeAlso LEFT
+@seeAlso LEFT (instruction)
 @seeAlso MID (function)
 @seeAlso RIGHT (function)
-@seeAlso RIGHT
+@seeAlso RIGHT (instruction)
 @seeAlso LEN
 
 @target all
@@ -7237,10 +7237,40 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
 @keyword LOWER
 
 @english
-This function converts the characters in a string into lower case (capital) letters.
+
+The ''LOWER'' function converts all uppercase characters in a string to lowercase. 
+In other words, it takes a string as input and returns a new string that is 
+identical to the first, but with all the letters lowercase.
+
+The ''LOWER'' function examines each character in the input string. If the 
+character is an uppercase letter, it is converted to its lowercase equivalent. 
+All other characters (numbers, symbols, spaces) remain unchanged.
+
+Before comparing or searching strings, it is often useful to convert all 
+strings to lowercase or uppercase to avoid case-sensitive problems.
+It can be used to make user input less case-sensitive, such as to check 
+whether a keyword was entered correctly regardless of case. To perform search 
+and replace, text parsing, and other string manipulation, the ''LOWER'' 
+command is ideal. 
 
 @italian
-Questa funzione converte i caratteri presenti in una stringa in lettere minuscole.
+
+La funzione ''LOWER'' converte tutti i caratteri maiuscoli in una stringa 
+in minuscoli. In altre parole, accetta una stringa come input e restituisce 
+una nuova stringa identica alla prima, ma con tutte le lettere minuscole.
+
+La funzione ''LOWER'' esamina ogni carattere nella stringa di input. Se 
+il carattere è una lettera maiuscola, viene convertito nel suo equivalente 
+minuscolo. Tutti gli altri caratteri (numeri, simboli, spazi) rimangono invariati.
+
+Prima di confrontare o cercare stringhe, è spesso utile convertire tutte le 
+stringhe in minuscolo o maiuscolo per evitare problemi di distinzione tra 
+maiuscole e minuscole. Può essere utilizzato per rendere l'input dell'utente 
+meno sensibile alle maiuscole e minuscole, ad esempio per verificare 
+se una parola chiave è stata immessa correttamente indipendentemente dalle 
+maiuscole e dalle minuscole. Per eseguire la ricerca e la sostituzione, 
+l'analisi del testo e altre manipolazioni di stringhe, il comando ''LOWER'' 
+è l'ideale.
 
 @syntax = LOWER( text )
 
@@ -7248,8 +7278,25 @@ Questa funzione converte i caratteri presenti in una stringa in lettere minuscol
 
 @usedInExample strings_cases_01.bas
 
-@target all
+@alias LCASE
+
  </usermanual> */
+
+ /* <usermanual>
+@keyword LCASE
+
+@english
+
+@italian
+
+@syntax = LCASE( text )
+
+@example x = LCASE( "ugBASIC" )
+
+@alias LOWER
+
+ </usermanual> */
+
 Variable * variable_string_lower( Environment * _environment, char * _string ) {
     Variable * string = variable_retrieve( _environment, _string );
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of LOWER)" );
@@ -9340,12 +9387,16 @@ ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id ) {
 
 @english
 
-The operator ''MOD'' divides two numbers and returns only the remainder. The result 
-is the remainder after first expression is divided by the second expression. For 
-example, the expression ''14 MOD 4'' evaluates to ''2''.
-
+The ''MOD'' operator is used to perform the modulo operation. This operation 
+returns the remainder of the integer division of two numbers.
 The result of a ''MOD'' operation will not retain the sign of any, and so it may be 
 only positive. The result is always in the range ''[0, divisor)'', exclusive. 
+
+If the result of ''MOD'' is 0, it means that the first number is divisible 
+by the second. Often used in conjunction with a pseudo-random number generator
+to obtain random numbers within a certain range. It can be used to create loops 
+that repeat a certain number of times or to handle situations that repeat 
+periodically.
 
 For example:
 
@@ -9359,29 +9410,36 @@ dividend as result, without sign.
 
 @italian
 
-L'operatore ''MOD'' divide due numeri e restituisce solo il resto. Il risultato è il 
-resto dopo che la prima espressione è stata divisa per la seconda espressione. 
-Ad esempio, l'espressione ''14 MOD 4'' restituisce ''2''.
+L'operatore ''MOD'' viene utilizzato per eseguire l'operazione di modulo. 
+Questa operazione restituisce il resto dell'intera divisione di due numeri.
+Il risultato di un'operazione ''MOD'' non manterrà il segno di nessuno, 
+quindi può essere solo positivo. Il risultato è sempre compreso nell'intervallo 
+''[0, divisore)'', escluso.
 
-Il risultato di un'operazione ''MOD'' non manterrà il segno di nessuno, quindi può 
-essere solo positivo. Il risultato è sempre compreso nell'intervallo ''[0, divisore)'', 
-escluso.
-
-Ad esempio:
+Ad esempio: 
 
 '''8 Mod 3 = 2'''
 '''-8 Mod 3 = 2'''
 '''8 Mod -3 = 2'''
 '''-8 Mod -3 = 2'''
 
-Se il divisore restituisce zero, il comportamento dell'operatore ''MOD'' è quello di 
-restituire il dividendo come risultato, senza segno.
+Se il risultato di ''MOD'' è 0, significa che il primo numero è divisibile 
+per il secondo. Spesso utilizzato insieme a un generatore di numeri 
+pseudo-casuali per ottenere numeri casuali entro un certo intervallo. 
+Può essere utilizzato per creare cicli che si ripetono un certo 
+numero di volte o per gestire situazioni che si ripetono periodicamente.
+
+Se il divisore è pari a zero, il comportamento dell'operatore ''MOD'' è quello 
+di restituire il dividendo come risultato, senza segno.
 
 @syntax = x MOD y
 
-@example IF x MOD 2 THEN: PRINT "odd" : ELSE : PRINT "even": ENDIF
+@example IF x MOD 2 THEN
+@example   PRINT "odd"
+@example ELSE
+@example   PRINT "even"
+@example ENDIF
 
-@target all
 </usermanual> */
 Variable * variable_mod( Environment * _environment, char * _source, char * _destination ) {
     

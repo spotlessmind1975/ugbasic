@@ -5159,3 +5159,91 @@ target corrispondente, il valore sarà zero.
 @example ENDIF
 
 </usermanual> */
+
+/* <usermanual>
+@keyword LONG (data type)
+
+@english
+
+The ''LONG'' is a data type that allow to store a signed 32-bit word. 
+
+@italian
+
+''LONG'' è un tipo di dati che consente di memorizzare una 
+parola (''WORD'') a 32 bit con segno.
+
+@syntax ... AS LONG
+
+@example DIM parolaLunga AS LONG
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MINUS (constant)
+
+@english
+
+This constant represent the "MINUS" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "MINUS", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = MINUS
+
+@example IF KET STATE(MINUS) THEN
+@example    PRINT "MINUS has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MOB ON
+
+@english
+
+@italian
+
+@syntax MOB ON
+
+@alias SPRITE ENABLE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MOB OFF
+
+@english
+
+@italian
+
+@syntax MOB OFF
+
+@alias SPRITE DISABLE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MSPRITE (data type)
+
+@english
+
+The ''MSPRITE'' is a data type that allow to store a reference to a multiplexed
+sprite.
+
+@italian
+
+''MSPRITE'' è un tipo di dati che consente di memorizzare il riferimento
+a uno sprite multiplexed.
+
+@syntax ... AS MSPRITE
+
+@example DIM player AS MSPRITE
+
+</usermanual> */

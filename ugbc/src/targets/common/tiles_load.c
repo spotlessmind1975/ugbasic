@@ -50,77 +50,129 @@
 @keyword LOAD TILES
 
 @english
+
 The ''LOAD TILES'' command allows you to load an image and to convert it into 
-a set of ''TILES''.
+multiple ''TILE'', that is a format that will be converted into a way that can be efficiently drawn 
+on the screen using the tiles. The second parameter is the mode to use to convert 
+the given data (by default, it is equal to current mode) 
 
-The command support a set of modern image format, like: 
+The command support a set of modern image format, like JPEG baseline & progressive,
+PNG 1/2/4/8/16-bit-per-channel, TGA, BMP (non-1bpp, non-RLE), PSD 
+(composited view only, no extra channels, 8/16 bit-per-channel), 
+GIF, HDR (radiance rgbE format), PIC (Softimage PIC) and PNM (PPM and PGM 
+binary only) The image will be converted into a way that can be 
+efficiently drawn on the screen. 
 
-  * JPEG baseline & progressive
+Since it is possible to load only one file of the same 
+type at a time, it is necessary to be able to indicate an "alias" with 
+which to exceed this limit. In this regard, there is also 
+the ''AS'' syntax, which allows you to load the same file several 
+times but with different names. 
 
-  * PNG 1/2/4/8/16-bit-per-channel
+A series of flags, separated by spaces, can be added at loading time 
+to modify the behavior of ugBASIC.
 
-  * TGA
+The ''FLIP X'' flag allows you to flip the image horizontally,
+before translating it into the native format. The same is true for the 
+''FLIP Y'' command, which instead inverts the image vertically. 
+There is also the ''FLIP XY'' (or ''FLIP YX'') parameter to act, 
+simultaneously, on both directions.
 
-  * BMP (non-1bpp, non-RLE)
+The ''COMPRESSED'' flag allows you to compress the image, if 
+possible. Compression is a space-saving mechanism, in which the 
+native data of the image is represented in a more compact form, 
+which ugBASIC will be able to quickly convert into graphics at 
+the appropriate time.
 
-  * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
-
-  * GIF
-
-  * HDR (radiance rgbE format)
-
-  * PIC (Softimage PIC)
-
-  * PNM (PPM and PGM binary only)
-
-
-The image will be converted into a way that can be efficiently drawn 
-on the screen using the tiles.
-
-Since it is possible to load only one file of the same type at a time, it is necessary 
-to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also 
-the ''AS'' syntax, which allows you to load the same file several times but with different names. 
+The ''ROLL X'' flag allows you to SHIFT the (entire) image horizontally,
+for the entire size of a frame, in order to generate intermediate
+frames. The very same for ''ROLL Y'' command, which does the same
+vertically. There is also the ''ROLL XY'' (or ''ROLL YX'') parameter to act, 
+simultaneously, on both directions.
 
 @italian
-Il comando ''LOAD TILES'' permette di caricare un file immagine, e di convertirlo
-in una serie di ''TILES''. Il secondo parametro è la modalità grafica da usare
-per convertire il dato (per default, è il modo corrente).
 
-Il comando supporta una serie di formati moderni:
+Il comando ''LOAD TILES'' consente di caricare un'immagine e convertirla in
+una ''TILE''. Il secondo parametro è la modalità da utilizzare per convertire
+i dati forniti (per impostazione predefinita, è uguale alla modalità corrente)
 
-  * JPEG baseline & progressive
+Il comando supporta un set di formati immagine moderni, come JPEG baseline e progressivo,
+PNG 1/2/4/8/16 bit per canale, TGA, BMP (non 1bpp, non RLE), PSD
+(solo vista composita, nessun canale extra, 8/16 bit per canale),
+GIF, HDR (formato radiance rgbE), PIC (Softimage PIC) e PNM (solo PPM e PGM
+binary). L'immagine verrà convertita in un modo che può essere
+disegnata in modo efficiente sullo schermo.
 
-  * PNG 1/2/4/8/16-bit-per-canale
+Poiché è possibile caricare un solo file dello stesso
+tipo alla volta, è necessario poter indicare un "alias" con
+il quale superare questo limite. A questo proposito, esiste anche
+la sintassi ''AS'', che consente di caricare più volte lo stesso
+file ma con nomi diversi.
 
-  * TGA
+Una serie di flag, separati da spazi, possono essere aggiunti in fase di caricamento
+per modificare il comportamento di ugBASIC.
 
-  * BMP (non-1bpp, non-RLE)
+Il flag ''FLIP X'' consente di capovolgere l'immagine orizzontalmente,
+prima di tradurla nel formato nativo. Lo stesso vale per il
+comando ''FLIP Y'', che invece inverte l'immagine verticalmente.
+Esiste anche il parametro ''FLIP XY'' (o ''FLIP YX'') per agire,
+contemporaneamente, su entrambe le direzioni.
 
-  * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
+Il flag ''ROLL X'' consente di spostare l'intera immagine in orizzontale,
+per l'intera dimensione di un frame, per generare i fotogrammi intercalari.
+Lo stesso per il flag ''ROLL Y'', che fa lo stesso verticalmente, e
+''ROLL XY '' (o ''ROLL YX'') per  agire, contemporaneamente, su entrambe le
+ direzioni.
 
-  * GIF
+Il flag ''COMPRESSED'' consente di comprimere l'immagine, se
+possibile. La compressione è un meccanismo di risparmio di spazio, in cui i dati nativi dell'immagine sono rappresentati in una forma più compatta, che
+ugBASIC sarà in grado di convertire rapidamente in grafica al momento opportuno.
 
-  * HDR (formato radiance rgbE)
+L'immagine può essere caricata come immagine trasparente (se l'immagine originale
+non ha trasparenza) utilizzando la parola chiave ''TRANSPARENCY'',
+seguita da un parametro opzionale che rappresenta il colore
+da considerare come trasparente.
 
-  * PIC (Softimage PIC)
+L'immagine può essere caricata come immagine trasparente (se l'immagine originale non ha trasparenza) usando la parola chiave ''OPACITY'',
+seguita da un parametro opzionale che rappresenta il colore
+da considerare come pavimentazione.
 
-  * PNM (solo formato binario PPM e PGM)
+L'immagine può essere caricata direttamente nella memoria di espansione
+usando la parola chiave BANKED. Il numero rappresenta
+il residente condiviso da usare come target per questa immagine.
+Per alcuni target questa è l'impostazione predefinita. Se vuoi,
+puoi spostare l'immagine nella memoria residente
+usando la parola chiave ''UNBANKED''.
 
-L'immagine verrà convertita in un modo che possa essere disegnata in modo efficiente
-sullo schermo. Potrebbe essere convertita in una tavolozza indicizzata, e potrebbe essere
-anche ridimensionata.
+Infine, se non è previsto che l'immagine cambi durante il gioco, può essere contrassegnata
+con l'attributo ''READONLY'': in questo caso, l'immagine verrà archiviata
+nella memoria di sola lettura, se disponibile.
 
-Dal momento in cui è possibile caricare un solo file dello stesso tipo alla volta, 
-è necessario poter indicare un "alias" con cui superare questo limite. A tal riguardo 
-esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
-ma con nomi diversi.
-
-@syntax = LOAD TILES(filename)
+@syntax = LOAD TILE( filename [AS alias][,mode] ) [fl] 
+@syntax     fl : [FLIP X] [FLIP Y] [FLIP XY] [FLIP YX] 
+@syntax     fl : [ROLL X] [ROLL Y] [ROLL XY] [ROLL YX] 
 
 @example starship = LOAD TILES("starship.png")
+@example starship2 = LOAD TILES("starship.png" AS "starship2")
+@example alienAt11 = LOAD TILES("alien.jpg",11)
+@example alien2 = LOAD TILES("alien.jpg" AS "alien2",11)
 
-@target all
+@alias TILES LOAD
+@alias FONT LOAD
 </usermanual> */
+
+/* <usermanual>
+@keyword TILES LOAD
+@alias LOAD TILES
+@alias FONT LOAD
+</usermanual> */
+
+/* <usermanual>
+@keyword FONT LOAD
+@alias LOAD TILES
+@alias TILES LOAD
+</usermanual> */
+
 Variable * tiles_load( Environment * _environment, char * _filename, int _flags, char * _tileset, int _index ) {
 
     Variable * tileset = NULL;

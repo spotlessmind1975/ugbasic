@@ -117,7 +117,7 @@ in read-only memory, if available.
 @italian
 
 Il comando ''LOAD IMAGE'' consente di caricare un'immagine e convertirla in
-una ''IMMAGINE''. Il secondo parametro è la modalità da utilizzare per convertire
+una ''IMAGE''. Il secondo parametro è la modalità da utilizzare per convertire
 i dati forniti (per impostazione predefinita, è uguale alla modalità corrente)
 
 Il comando supporta un set di formati immagine moderni, come JPEG baseline e progressivo,

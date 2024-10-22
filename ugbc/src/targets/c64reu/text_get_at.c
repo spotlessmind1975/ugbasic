@@ -82,8 +82,29 @@ da ''x'' e y.
 @usedInExample texts_position_05.bas
 @usedInExample texts_position_06.bas
 
-@seeAlso LOCATE
+@seeAlso LOCATE (function)
+
 </usermanual> */
+
+ /* <usermanual>
+@keyword LOCATE (function)
+
+@english
+
+@italian
+
+@syntax = LOCATE$( x , y )
+@syntax = LOCATE( x , y )
+
+@example PRINT LOCATE$(10,10); "at 10, 10"
+
+@usedInExample texts_position_05.bas
+@usedInExample texts_position_06.bas
+
+@seeAlso AT (function)
+
+</usermanual> */
+
 Variable * get_at( Environment * _environment, char * _x, char * _y ) {
     
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
