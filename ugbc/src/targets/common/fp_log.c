@@ -44,13 +44,31 @@
 
 @english
 
+The ''LOG'' instruction calculate the natural logarithm of the given ''number'',
+that must be ''FLOAT''. This is a mathematical function that is the inverse 
+of the natural exponential 
+(with base e). In other words, the natural logarithm of a number ''x'' is the 
+exponent to which Napier's number (e = 2.71828) must be raised to obtain ''x''.
+
+This function can be used to solve differential equations, calculate integrals 
+and approximate functions, for normalizing data and it is used in many physical 
+and biological models.
+
 @italian
+
+L'istruzione ''LOG'' calcola il logaritmo naturale del ''numero'' dato, che deve
+essere ''FLOAT''. Questa è una funzione matematica che è l'inverso dell'esponenziale 
+naturale (con base e). In altre parole, il logaritmo naturale di un numero ''x'' è 
+l'esponente a cui deve essere elevato il numero di Nepier (e = 2,71828) per ottenere ''x''.
+
+Questa funzione può essere utilizzata per risolvere equazioni differenziali, calcolare 
+integrali e funzioni approssimate, per normalizzare i dati ed è utilizzata in molti 
+modelli fisici e biologici.
 
 @syntax = LOG(number)
 
 @example x = LOG(21)
 
-@target all
 </usermanual> */
 Variable * fp_log( Environment * _environment, char * _value ) {
 

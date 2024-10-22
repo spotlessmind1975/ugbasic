@@ -5159,3 +5159,21 @@ target corrispondente, il valore sarà zero.
 @example ENDIF
 
 </usermanual> */
+
+/* <usermanual>
+@keyword LONG (data type)
+
+@english
+
+The ''LONG'' is a data type that allow to store a signed 32-bit word. 
+
+@italian
+
+''LONG'' è un tipo di dati che consente di memorizzare una 
+parola (''WORD'') a 32 bit con segno.
+
+@syntax ... AS LONG
+
+@example DIM parolaLunga AS LONG
+
+</usermanual> */

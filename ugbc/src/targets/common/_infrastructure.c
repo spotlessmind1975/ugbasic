@@ -7202,10 +7202,40 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
 @keyword LOWER
 
 @english
-This function converts the characters in a string into lower case (capital) letters.
+
+The ''LOWER'' function converts all uppercase characters in a string to lowercase. 
+In other words, it takes a string as input and returns a new string that is 
+identical to the first, but with all the letters lowercase.
+
+The ''LOWER'' function examines each character in the input string. If the 
+character is an uppercase letter, it is converted to its lowercase equivalent. 
+All other characters (numbers, symbols, spaces) remain unchanged.
+
+Before comparing or searching strings, it is often useful to convert all 
+strings to lowercase or uppercase to avoid case-sensitive problems.
+It can be used to make user input less case-sensitive, such as to check 
+whether a keyword was entered correctly regardless of case. To perform search 
+and replace, text parsing, and other string manipulation, the ''LOWER'' 
+command is ideal. 
 
 @italian
-Questa funzione converte i caratteri presenti in una stringa in lettere minuscole.
+
+La funzione ''LOWER'' converte tutti i caratteri maiuscoli in una stringa 
+in minuscoli. In altre parole, accetta una stringa come input e restituisce 
+una nuova stringa identica alla prima, ma con tutte le lettere minuscole.
+
+La funzione ''LOWER'' esamina ogni carattere nella stringa di input. Se 
+il carattere è una lettera maiuscola, viene convertito nel suo equivalente 
+minuscolo. Tutti gli altri caratteri (numeri, simboli, spazi) rimangono invariati.
+
+Prima di confrontare o cercare stringhe, è spesso utile convertire tutte le 
+stringhe in minuscolo o maiuscolo per evitare problemi di distinzione tra 
+maiuscole e minuscole. Può essere utilizzato per rendere l'input dell'utente 
+meno sensibile alle maiuscole e minuscole, ad esempio per verificare 
+se una parola chiave è stata immessa correttamente indipendentemente dalle 
+maiuscole e dalle minuscole. Per eseguire la ricerca e la sostituzione, 
+l'analisi del testo e altre manipolazioni di stringhe, il comando ''LOWER'' 
+è l'ideale.
 
 @syntax = LOWER( text )
 
@@ -7213,8 +7243,25 @@ Questa funzione converte i caratteri presenti in una stringa in lettere minuscol
 
 @usedInExample strings_cases_01.bas
 
-@target all
+@alias LCASE
+
  </usermanual> */
+
+ /* <usermanual>
+@keyword LCASE
+
+@english
+
+@italian
+
+@syntax = LCASE( text )
+
+@example x = LCASE( "ugBASIC" )
+
+@alias LOWER
+
+ </usermanual> */
+
 Variable * variable_string_lower( Environment * _environment, char * _string ) {
     Variable * string = variable_retrieve( _environment, _string );
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of LOWER)" );
