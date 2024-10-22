@@ -38,6 +38,15 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword PING
+@target c64reu
+</usermanual> */
+/* <usermanual>
+@keyword DOJO PING
+@target c64reu
+</usermanual> */
+
 Variable * dojo_ping( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result)" );

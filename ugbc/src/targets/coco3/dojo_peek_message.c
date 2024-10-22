@@ -38,6 +38,15 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword PEEK MESSAGE
+@target coco3
+</usermanual> */
+/* <usermanual>
+@keyword DOJO PEEK MESSAGE
+@target coco3
+</usermanual> */
+
 Variable * dojo_peek_message( Environment * _environment, char * _port_id ) {
 
     Variable * portId = variable_retrieve( _environment, _port_id );

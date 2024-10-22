@@ -5557,3 +5557,126 @@ secondo dei due buffer di uno schermo con doppio buffering.
 @alias PAGE B
 
 </usermanual> */
+
+/* <usermanual>
+@keyword PAL (constant)
+
+@english
+
+The keyword ''PAL'' allows you to know if the target is running
+with a video chipset that supports PAL standard.
+
+@italian
+
+La parola chiave ''PAL'' consente di sapere se il target è in
+esecuzione con un chipset video che supporta lo standard PAL.
+
+@syntax = PAL
+
+@example IF PAL THEN
+@example    PRINT "I am using the PAL video standard!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PALETTE
+
+@english
+
+The ''PALETTE'' command allows you to define and modify the range of colors that can
+be used to draw on the screen. You can give a number for each element of the
+palette, sequentially. Thenumber is then used to refer to the specific color 
+when drawing shapes or objects. Thanks to RGB function you can change the 
+red, green and blue value of each color in the palette, allowing you to 
+create custom color combinations, provided that the hardware allows it.
+
+The palette is applied immediately to all the graphic elements on the screen.
+This allows you to define a color palette that adapts to the atmosphere 
+of the game, creating particular visual effects. It allows to
+create transition effects between different colors, simulating for example 
+the passage of time or changes in state. Finally, it customizes the appearance 
+of the interface, making it more attractive and functional.
+
+The maximum number of colors that can be defined in a palette varies 
+depending on the video chipset and the mode selected.
+
+@italian
+
+Il comando ''PALETTE'' consente di definire e modificare la gamma di colori 
+che possono essere utilizzati per disegnare sullo schermo. È possibile 
+assegnare un numero a ciascun elemento della tavolozza, in sequenza. 
+Il numero viene quindi utilizzato per fare riferimento al colore specifico 
+quando si disegnano forme o oggetti. Grazie alla funzione RGB è possibile 
+modificare il valore rosso, verde e blu di ciascun colore nella tavolozza, 
+consentendo di creare combinazioni di colori personalizzate, a condizione che 
+l'hardware lo consenta.
+
+La tavolozza viene applicata immediatamente a tutti gli elementi grafici 
+sullo schermo. Ciò consente di definire una tavolozza di colori che si 
+adatta all'atmosfera del gioco, creando effetti visivi particolari. 
+Consente di creare effetti di transizione tra diversi colori, simulando ad 
+esempio il passare del tempo o i cambiamenti di stato. Infine, personalizza 
+l'aspetto dell'interfaccia, rendendola più accattivante e funzionale.
+
+Il numero massimo di colori che possono essere definiti in una tavolozza 
+varia a seconda del chipset video e della modalità selezionata.
+
+@syntax PALETTE c0[,c1[,c2[,...]]]
+
+@example PALETTE WHITE, RED, GREEN, BLUE
+@example PALETTE RGB(0,0,0),RGB(255,0,0),RGB(255,255,255)
+
+@seeAlso RGB
+@seeAlso COLOR
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PERIOD (constant)
+
+@english
+
+This constant represent the "PERIOD" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "punto", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = HOME
+
+@example IF KET STATE(HOME) THEN
+@example    PRINT "HOME has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PI (constant)
+
+@english
+
+The ''PI'' constant is a mathematical constant that indicates the 
+ratio of the circumference of a circle to its diameter. The value 
+of ''PI'' is approximately 3.14159. It is a fundamental constant 
+in many geometric and trigonometric calculations.
+
+@italian
+
+The ''PI'' constant is a mathematical constant that indicates the 
+ratio of the circumference of a circle to its diameter. The value 
+of ''PI'' is approximately 3.14159. It is a fundamental constant 
+in many geometric and trigonometric calculations.
+
+@syntax = PI
+
+@example c = PI * 2 * r
+
+</usermanual> */
+

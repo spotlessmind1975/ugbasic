@@ -97,7 +97,14 @@ il valore della variabile ''EMPTYTILE'', eventualmente sovrascritto
 @usedInExample texts_position_02.bas
 
 @target c128
+@alias PCLS
 </usermanual> */
+
+/* <usermanual>
+@keyword PCLS
+@alias CLS
+</usermanual> */
+
 void cls( Environment * _environment, char * _paper ) {
 
     if ( _paper ) {

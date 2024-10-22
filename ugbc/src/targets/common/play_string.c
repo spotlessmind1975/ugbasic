@@ -43,15 +43,36 @@
 
 @english
 
+The ''PLAY'' allows you to generate music directly from your computer, 
+turning it into a real musical instrument. The ''PLAY'' command uses 
+a specific syntax to describe notes, duration, volume, and other 
+musical parameters. 
+
+Musical notes can be specified using the letters A through G, with numbers 
+to indicate the octave, or a number from 1 to 9. The duration of a note can be specified 
+with the letter L. To insert a rest, use the letter P. The octave can be 
+specified with the letter O followed by a number. The tempo of the song can be 
+changed with the T command, while the volume can be changed using the V letter.
+
 @italian
 
-@syntax PLAY instructions
+Il comando ''PLAY'' ti consente di generare musica direttamente dal tuo computer, 
+trasformandolo in un vero strumento musicale. Il comando ''PLAY'' utilizza una 
+sintassi specifica per descrivere note, durata, volume e altri parametri musicali.
+
+Le note musicali possono essere specificate utilizzando le lettere dalla A alla G (o un numero da 1 a 9), 
+con numeri per indicare l'ottava. La durata di una nota può essere specificata con 
+la lettera L. Per inserire una pausa, utilizzare la lettera P. L'ottava può essere 
+specificata con la lettera O seguita da un numero. Il tempo del brano può essere 
+modificato con il comando T, mentre il volume può essere modificato utilizzando 
+la lettera V.
+
+@syntax PLAY string
 
 @example PLAY "O1V31T2L4GGL8GGL4B-AAGGF+G"
 
 @usedInExample audio_play_02.bas
 
-@target all
 </usermanual> */
 void play_string( Environment * _environment, char * _string ) {
 

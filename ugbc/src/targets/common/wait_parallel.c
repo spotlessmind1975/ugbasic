@@ -48,19 +48,22 @@
 
 @english
 
-The ''WAIT PARALLEL'' command makes a thread wait until the thread specified
-as the parameter terminates.
+The ''WAIT PARALLEL'' command allows you to wait for the completion 
+of a previously running mandatory thread. In order for the thread 
+to be considered completed, it must reach the last statement of 
+the parallel procedure, or have executed the ''EXIT PROCEDURE'' command.
 
 @italian
 
-Il comando ''WAIT PARALLEL'' mette in attesa un thread fino al termine del 
-thread indicato come parametro.
+Il comando ''WAIT PARALLEL'' permette di attendere il completamento di 
+un thread obbligatorio in esecuzione in precedenza. Affinché il thread 
+possa considerarsi completato deve raggiungere l'ultima istruzione della 
+procedura parallela, oppure aver eseguito il comando ''EXIT PROCEDURE''.
 
 @syntax WAIT PARALLEL id
 
 @example WAIT PARALLEL exampleThread
 
-@target all
 </usermanual> */
 void wait_parallel( Environment * _environment, char * _thread ) {
 

@@ -7113,9 +7113,25 @@ numero di caratteri nella stringa da cercare.
 @usedInExample strings_instr_01.bas
 @usedInExample strings_instr_02.bas
 
-@target all
-@verified
- </usermanual> */
+@alias PLACE
+</usermanual> */
+
+/* <usermanual>
+@keyword PLACE
+
+@english
+
+@italian
+
+@syntax = PLACE( text, searched [, start] )
+
+@example x = PLACE( "ugBASIC", "A" )
+@example x = PLACE( "ugBASIC", "A", 2 )
+
+@alias PLACE
+</usermanual> */
+ 
+
 Variable * variable_string_instr( Environment * _environment, char * _search, char * _searched, char * _start ) {
     Variable * search = variable_retrieve( _environment, _search );
     Variable * searched = variable_retrieve( _environment, _searched );
@@ -12258,6 +12274,26 @@ Variable * variable_string_inst( Environment * _environment, char * _string, cha
     return result;
 
 }
+
+
+/* <usermanual>
+@keyword PICK
+
+@english
+
+The ''PICK'' function allows you to obtain the ASCII code of any character present in a 
+string, provided that the offset within the string is provided.
+
+@italian
+
+La funzione ''PICK'' permette di ottenere il codice ASCII di un qualsiasi 
+carattere presente in una stringa, purché sia fornito l'offset all'interno della stringa.
+
+@syntax = PICK( string, offset )
+
+@example PRINT PICK( "TEST", 2 )
+
+</usermanual> */
 
 Variable * variable_string_pick( Environment * _environment, char * _string, int _position ) {
 

@@ -67,7 +67,6 @@ La funzione ''PARAM'' recupera il risultato di un'espressione in un'istruzione '
 @usedInExample procedures_param_01.bas
 @usedInExample procedures_param_02.bas
 
-@target all
 </usermanual> */
 Variable * param_procedure( Environment * _environment, char * _name ) {
 

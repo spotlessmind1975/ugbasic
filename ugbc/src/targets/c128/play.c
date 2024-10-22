@@ -50,9 +50,33 @@
  * @param _channels channels to play on
  */
 /* <usermanual>
-@keyword PLAY
+@keyword PLAY (instruction)
+
+@english
+This command allows you to play a certain note, for a certain time and on certain 
+channels. The command has a number of variations. First, you can omit the channel. 
+In this case, the sound will be played on all channels (or on those enabled by the 
+''VOICES''/''CHANNELS'' command). Then you can omit the duration, in which case the sound will 
+continue to play while the next instruction is executed. Duration is expressed
+in milliseconds.
+
+@italian
+Questo comando permette di suonare una certa nota, per un certo tempo e su certi 
+canali. Il comando ha una serie di varianti. In primo luogo, è possibile omettere il 
+canale. In tal caso, il suono sarà suonato su tutti i canali (oppure su quelli abilitati 
+dal comando ''VOICES''/''CHANNELS''). Poi è possibile omettere la durata, e in tal caso il suono 
+continuerà ad essere suonato mentre viene eseguita l'istruzione successiva. La durata è
+espressa in millisecondi.
+
+@syntax PLAY #note[, #duration] [ON #channels]
+
+@example PLAY #32
+@example PLAY #24, #250
+@example PLAY #60, #1250 ON #%001
+
 @target c128
 </usermanual> */
+
 void play( Environment * _environment, int _note, int _delay, int _channels ) {
 
     sid_start( _environment, _channels );
@@ -74,10 +98,6 @@ void play( Environment * _environment, int _note, int _delay, int _channels ) {
  * @param _delay delay of playing
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword PLAY
-@target c128
-</usermanual> */
 void play_vars( Environment * _environment, char * _note, char * _delay, char * _channels ) {
 
     Variable * note = variable_retrieve_or_define( _environment, _note, VT_BYTE, 42 );
