@@ -5362,3 +5362,79 @@ The ''MUSIC'' is a data type that reference the data for any music track.
 </usermanual> */
 
 // @tobe NEW TILESET
+
+/* <usermanual>
+@keyword NONE (constant)
+
+@english
+
+This constant represent the fact that no key has been pressed, when used 
+as a valueto compare with ''SCANCODE''. 
+
+@italian
+
+Questa costante rappresenta il fatto che non è stato premuto alcun tasto, 
+quando viene utilizzata come valore da confrontare con ''SCANCODE''.
+
+@syntax = NONE
+
+@example IF SCANCODE = NONE THEN
+@example    PRINT "No key has been pressed"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword NOP
+
+@english
+
+''NOP'' is short for "No OPeration" and it is a very special instruction:
+it generates an equivalent instruction in assembly languages that
+does not perform any useful operation, that is, it does not change the
+state of the processor or the data in memory.
+
+By inserting a sequence of ''NOP'' instructions, you can create a timed 
+delay within your program. This can be useful, for example, to synchronize 
+several actions or to create animation effects. In some cases, it is necessary 
+to align the code to certain memory locations. By inserting ''NOP'' instructions, 
+you can "fill" the missing space and ensure correct alignment. NOP instructions 
+can be used to insert "placeholders" into code, making debugging and testing 
+easier. 
+
+When the program encounters a ''NOP'' instruction, it simply increments 
+the program counter (PC) to the next instruction, without performing any data 
+operations. In effect, the processor "wastes time" executing this empty instruction.
+
+It is important to note that excessive use of NOP instructions can slow 
+down the execution of the program, so it is advisable to use them sparingly 
+and only when absolutely necessary.
+
+@italian
+
+''NOP'' è l'abbreviazione di "No OPeration" ed è un'istruzione molto speciale:
+genera un'istruzione equivalente nei linguaggi assembly che
+non esegue alcuna operazione utile, ovvero non modifica lo
+stato del processore o i dati in memoria.
+
+Inserendo una sequenza di istruzioni ''NOP'', puoi creare un ritardo temporizzato all'interno del tuo programma. Questo può essere utile, ad esempio, per sincronizzare
+diverse azioni o per creare effetti di animazione. In alcuni casi, è necessario
+allineare il codice a determinate posizioni di memoria. Inserendo istruzioni ''NOP'',
+puoi "riempire" lo spazio mancante e garantire un allineamento corretto. Le istruzioni NOP
+possono essere utilizzate per inserire "segnaposto" nel codice, semplificando il debug e il test.
+
+Quando il programma incontra un'istruzione ''NOP'', incrementa semplicemente
+il contatore del programma (PC) all'istruzione successiva, senza eseguire alcuna operazione sui dati. In effetti, il processore "perde tempo" eseguendo questa istruzione vuota.
+
+È importante notare che un uso eccessivo di istruzioni NOP può rallentare
+l'esecuzione del programma, quindi è consigliabile usarle con parsimonia
+e solo quando assolutamente necessario.
+
+@syntax NOP
+
+@example IF tooEarly THEN
+@example    NOP: NOP: NOP: NOP: NOP
+@example ENDIF
+
+</usermanual> */
+
