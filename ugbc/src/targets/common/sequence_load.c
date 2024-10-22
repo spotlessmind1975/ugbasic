@@ -47,87 +47,187 @@
  * @param _filename Filename to read into buffer
  * @param _mode Mode to use to convert data
  */
+
 /* <usermanual>
 @keyword LOAD SEQUENCE
 
 @english
-The ''LOAD SEQUENCE'' command allows you to load an image and to convert 
-in a dictionary of array of images. Each image will be of ''[w]x[h]'' pixels. Offset 
-will be calculated automatically on the base of the original image. 
 
-The command support a set of modern image format, like: 
+The ''LOAD SEQUENCE'' command allows you to load an set of images and to convert each one
+into a ''SEQUENCE''. A Sequence is a set of set of images, numbered by 0 to sequence
+count (vertically), and from 0 to frame count each (horizontally), which can be used individually with the PUT IMAGE 
+command, referring to the corresponding frame and sequence.
+The frames are cut out of the original image, using the size provided in the 
+''FRAME SIZE (w, h)''. It should be noted that, for this reason, ''SEQUENCE'' images
+must have a total of a size equal to an entire multiple of the size of the individual frame. 
+It is also possible to indicate an offset from which you will have to start cutting the image 
+(parameter ''ORIGIN(zx,zy)'') and one related to each individual cutout (''OFFSET (dx, dy)'').
 
-  * JPEG baseline & progressive
+So, the first parameter is the filename to parse. The command support a set of modern image
+format, like JPEG baseline & progressive,
+PNG 1/2/4/8/16-bit-per-channel, TGA, BMP (non-1bpp, non-RLE), PSD 
+(composited view only, no extra channels, 8/16 bit-per-channel), 
+GIF, HDR (radiance rgbE format), PIC (Softimage PIC) and PNM (PPM and PGM 
+binary only) The image will be converted into a way that can be 
+efficiently drawn on the screen. 
 
-  * PNG 1/2/4/8/16-bit-per-channel
+The second parameter is the mode to use to convert the given data (by default, it is 
+equal to current mode) 
 
-  * TGA
+Since it is possible to load only one file of the same 
+type at a time, it is necessary to be able to indicate an "alias" with 
+which to exceed this limit. In this regard, there is also 
+the ''AS'' syntax, which allows you to load the same file several 
+times but with different names. 
 
-  * BMP (non-1bpp, non-RLE)
+A series of flags, separated by spaces, can be added at loading time 
+to modify the behavior of ugBASIC.
 
-  * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
+The ''FLIP X'' flag allows you to flip the (entire) image horizontally,
+before cutting and translating it into the native format. The same is true for the 
+''FLIP Y'' command, which instead inverts the (entire) image vertically. 
+There is also the ''FLIP XY'' (or ''FLIP YX'') parameter to act, 
+simultaneously, on both directions.
 
-  * GIF
+The ''ROLL X'' flag allows you to SHIFT the (entire) image horizontally,
+for the entire size of a frame, in order to generate intermediate
+frames. The very same for ''ROLL Y'' command, which does the same
+vertically. There is also the ''ROLL XY'' (or ''ROLL YX'') parameter to act, 
+simultaneously, on both directions.
 
-  * HDR (radiance rgbE format)
+The ''COMPRESSED'' flag allows you to compress the image, if 
+possible. Compression is a space-saving mechanism, in which the 
+native data of the image is represented in a more compact form, 
+which ugBASIC will be able to quickly convert into graphics at 
+the appropriate time.
 
-  * PIC (Softimage PIC)
+The ''OVERLAYED'' flag can be used on systems with a palette 
+of few colors, to indicate which of them must be preserved 
+during the drawing phase, to have the transparency effect.
 
-  * PNM (PPM and PGM binary only)
-  
-The image will be converted into a way that can be efficiently drawn 
-on the screen. It could be converted into indexed palette, and can be 
-rescaled as well.
+The ''EXACT'' flag allows you to bypass the automatic detection 
+of the palette, opting for the representation of the colors 
+according to what is contained in it.
 
-Since it is possible to load only one file of the same type at a time, it is necessary 
-to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also 
-the ''AS'' syntax, which allows you to load the same file several times but with different names. 
+The (entire) image can be loaded as a transparent image (if the original
+image has no transparency) using the keyword ''TRANSPARENCY'',
+followe by an optional parameter that represent the color
+to consider as transparent.
+
+The (entire) image can be loaded as a transparent image (if the original
+image has no transparency) using the keyword ''OPACITY'',
+followe by an optional parameter that represent the color
+to consider as pavement,.
+
+The resulting ''SEQUENCE'' can be loaded directly into the expansion
+memory using the ''BANKED'' keyword. The number represent
+the shared resident to use as target for this image.
+For some targets this is the default. If you want,
+you can move the image onto the resident memory by
+using the ''UNBANKED'' keyword.
+
+Finally, if the image is not expected to change during gameplay, it can be marked 
+with the ''READONLY'' attribute: in this case, the image will be stored 
+in read-only memory, if available.
 
 @italian
-Il comando ''LOAD SEQUENCE'' permette di caricare un'immagine e di convertirla
-in un dizionario di serie di immagini. Ogni immagine sarà di ''[w]x[h]'' pixel. Lo scostamentto
-di ogni fotogramma è calcolato automaticamente sulla base dell'immagine originale. 
 
-Il comando supporta una serie di formati moderni:
+Il comando ''LOAD SEQUENCE'' consente di caricare un set di immagini come ''SEQUENCE''. 
+Un ''SEQUENCE'' è un set di immagini, numerata per il conteggio di 0 a frame, che
+può essere utilizzato individualmente con il comando PUT IMAGE, facendo riferimento 
+al frame corrispondente. I frame vengono ritagliati dall'immagine originale, 
+utilizzando le dimensioni fornite in ''FRAME SIZE (w, h) ''. Va notato che, 
+per questo motivo, l'immagine intera originale deve avere un totale di una 
+dimensione pari a un intero multiplo della dimensione del singolo frame.
+È anche possibile indicare un offset da cui si dovrà iniziare a tagliare l'immagine
+(parametro ''ORIGIN(zx,zy)'') e uno relativo a ogni singolo ritaglio (''OFFSET(dx,dy) '').
 
-  * JPEG baseline & progressive
+Quindi, il primo parametro è il nome file da analizzare. Il comando supporta
+un set formati moderni, come JPEG Baseline & Progressive,
+PNG 1/2/4/8/16-bit-per-channel, TGA, BMP (non-1bpp, non-rle), PSD
+(Vista composita solo, nessun canale extra, 8/16 bit-per-channel),
+GIF, HDR (formato radiante RGBE), foto (softimage pic) e PNM (PPM e PGM
+Solo binario) l'immagine verrà convertita in un modo che può essere
+disegnato in modo efficiente sullo schermo.
 
-  * PNG 1/2/4/8/16-bit-per-canale
+Il secondo parametro è la modalità da utilizzare per convertire i dati forniti 
+(per impostazione predefinita, è uguale alla modalità corrente)
 
-  * TGA
+Poiché è possibile caricare solo un file dello stesso nome alla volta, è necessario 
+essere in grado di indicare un "alias" con che per superare questo limite. 
+A questo proposito, c'è anche La sintassi ''AS'', che consente di caricare lo 
+stesso file diverse volte ma con nomi diversi.
 
-  * BMP (non-1bpp, non-RLE)
+Una serie di flag, separate da spazi, può essere aggiunta al momento del caricamento
+Per modificare il comportamento di ugBASIC.
 
-  * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
+Il flag ''FLIP X '' consente di capovolgere l'intera immagine in orizzontale, prima
+di tagliarla e tradurla nel formato nativo. Lo stesso vale per il flag ''FLIP Y'',
+che invece inverte l'intera immagine in verticale. Vi è anche il flag ''FLIP XY'' 
+(o ''FLIP XY'') per agire, contemporaneamente, su entrambe le direzioni.
 
-  * GIF
+Il flag ''ROLL X'' consente di spostare l'intera immagine in orizzontale,
+per l'intera dimensione di un frame, per generare i fotogrammi intercalari.
+Lo stesso per il flag ''ROLL Y'', che fa lo stesso verticalmente, e
+''ROLL XY '' (o ''ROLL YX'') per  agire, contemporaneamente, su entrambe le
+ direzioni.
 
-  * HDR (formato radiance rgbE)
+Il flag "COMPRESSED" consente di comprimere l'immagine, se possibile. La 
+compressione è un meccanismo di risparmio spaziale, in cui i dati nativi 
+dell'immagine sono rappresentati in una forma più compatta, così che
+ugBASIC sia in grado di convertirsi rapidamente al momento appropriato.
 
-  * PIC (Softimage PIC)
+La flag "ORVERLAYED" può essere utilizzata sui sistemi con una tavolozza
+di pochi colori, per indicare quale di essi deve essere preservato,
+durante la fase di disegno, per avere l'effetto di trasparenza.
 
-  * PNM (solo formato binario PPM e PGM)
+Il flag "EXACT" consente di bypassare il rilevamento automatico
+della tavolozza, optando per la rappresentazione dei colori precisa.
 
-L'immagine verrà convertita in un modo che possa essere disegnata in modo efficiente
-sullo schermo. Potrebbe essere convertita in una tavolozza indicizzata, e potrebbe essere
-anche ridimensionata.
+L'immagine (intera) può essere caricata come un'immagine trasparente (se l'originale
+L'immagine non ha trasparenza) usando la parola chiave ''TRANSPARENCY'',
+seguire da un parametro opzionale che rappresenta il colore
+considerare trasparente.
 
-Dal momento in cui è possibile caricare un solo file dello stesso tipo alla volta, 
-è necessario poter indicare un "alias" con cui superare questo limite. A tal riguardo 
-esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
-ma con nomi diversi.
+L'immagine (intera) può essere caricata come un'immagine trasparente (se l'originale
+L'immagine non ha trasparenza) usando la parola chiave ''OPACITY'',
+seguire da un parametro opzionale che rappresenta il colore
+considerare come pavimentazione,.
 
-@syntax = LOAD IMAGES( filename ) FRAME SIZE (w,h)
-@syntax = LOAD IMAGES( filename AS alias) FRAME SIZE (w,h)
+La ''SEQUENCE'' risultante può essere caricata direttamente nell'espansione
+memoria utilizzando la parola chiave ''BANK''. Il numero rappresenta
+il blocco residente condiviso, da utilizzare come target per questa 
+immagine. Per alcuni target questo è il flag predefinito. Si può cambiare
+tale impostazione usando la parola chiave ''UNBANKED''.
 
-@example starship = LOAD IMAGES("starship.png") FRAME SIZE (8,8)
-@example alienAt11 = LOAD IMAGES("alien.png") FRAME SIZE (16,16)
-@example alien2 = LOAD IMAGES("alien.png" AS "alien2") FRAME SIZE (16,16)
+Infine, se l'immagine non dovesse cambiare durante il gameplay, può 
+essere contrassegnata con l'attributo "READONLY": in questo caso, 
+l'immagine verrà memorizzata Nella memoria di sola lettura, se disponibile.
 
-@usedInExample images_loading_01.bas
+@syntax = LOAD SEQUENCE( filename [AS alias][,mode] ) frame [ORIGIN(dx,dy)] [fl] [tr] [op] [bg] [bk] [READONLY]
+@syntax = LOAD SEQUENCE( filename [AS alias][,mode] ) frame [fl] [tr] [op] [bg] [bk] [READONLY]
+@syntax     frame : [ FRAME SIZE(w, h) [OFFSET(dx,dy)] [ORIGIN(zx, zy)] | FRAME AUTO]
+@syntax     fl : [FLIP X] [FLIP Y] [FLIP XY] [FLIP YX] 
+@syntax          [COMPRESSED] [OVERLAYED] [EXACT]
+@syntax          [ROLL X] [ROLL Y] [ROLL XY] [ROLL YX]
+@syntax     tr : [TRANSPARENCY | TRANSPARENCY color]
+@syntax     op : [OPACITY | OPACITY color]
+@syntax     bg : [BACKGROUND color]
+@syntax     bk : [UNBANKED | BANKED | BANKED(number)]
 
-@target all
+@example starship = LOAD SEQUENCE("starship.png") FRAME SIZE (16, 16)
+@example starship2 = LOAD SEQUENCE("starship.png" AS "starship2") FRAME SIZE (32, 32) OFFSET(2,2)
+@example alienAt11 = LOAD SEQUENCE("alien.jpg",11) FRAME SIZE AUTO
+@example alien2 = LOAD SEQUENCE("alien.jpg" AS "alien2",11) FRAME SIZE(8,8) TRANSPARENCY
+
+@alias SEQUENCE LOAD
 </usermanual> */
+
+/* <usermanual>
+@keyword SEQUENCE LOAD
+@alias LOAD SEQUENCE
+</usermanual> */
+
 Variable * sequence_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y ) {
 
     Variable * final = variable_temporary( _environment, VT_SEQUENCE, 0 );

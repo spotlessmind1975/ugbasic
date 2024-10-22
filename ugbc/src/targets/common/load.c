@@ -85,7 +85,6 @@ ma con nomi diversi.
 
 @usedInExample buffers_definition_02.bas
 
-@target all
 </usermanual> */
 Variable * load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion, int _flags ) {
 
