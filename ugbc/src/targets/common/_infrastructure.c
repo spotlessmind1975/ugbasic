@@ -5793,9 +5793,11 @@ tra parentesi per garantire risultati accurati.
 
 @syntax = NOT x
 
-@example IF NOT x THEN: PRINT "x is FALSE" : ELSE : PRINT "x is TRUE": ENDIF
-
-@target all
+@example IF NOT x THEN
+@example     PRINT "x is FALSE"
+@example ELSE
+@example     PRINT "x is TRUE"
+@example ENDIF
 </usermanual> */ 
 Variable * variable_not( Environment * _environment, char * _value ) {
 
@@ -9023,6 +9025,23 @@ basano su operazioni a livello di bit.
 @target all
 @verified
  </usermanual> */
+ /* <usermanual>
+@keyword %%
+
+@english
+
+@italian
+
+@syntax = %%(expression)
+
+@example x = %%( 42 )
+@example PRINT %%( y )
+
+@alias BIN
+
+@target all
+ </usermanual> */
+
 Variable * variable_bin( Environment * _environment, char * _value, char * _digits ) {
 
     MAKE_LABEL

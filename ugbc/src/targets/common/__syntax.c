@@ -1615,7 +1615,6 @@ sinistra con l'asse delle Y verso il basso.
 
 @example ORIGIN 100, 100 UP
 
-@target all
 </usermanual> */
 
 /* <usermanual>
@@ -2748,8 +2747,6 @@ estesa è disattivata.
 
 @usedInExample tsb_block_rec_01.bas
 
-@target c128
-@project tsb
 </usermanual> */
 
 /* <usermanual>
@@ -5438,3 +5435,125 @@ e solo quando assolutamente necessario.
 
 </usermanual> */
 
+
+/* <usermanual>
+@keyword NOTE (constant)
+
+@english
+
+The keyword ''NOTE'' allows you to indicate a note on the musical scale. 
+The syntax must indicate the note, any variations and the reference octave. 
+If the octave is omitted, octave no. 4 (the fifth octave) is understood.
+
+@italian
+
+La parola chiave ''NOTE'' permette di indicare una nota sulla scala musicale. 
+La sintassi deve indicare la nota, eventuali variazioni e l'ottava di 
+riferimento. Se l'ottava viene omessa, si intende l'ottava nr. 4 
+(la quinta ottava).
+
+@syntax NOTE note [#] [octave]
+@syntax  note: C|D|E|F|G|A|B
+
+@example SOUND NOTE C#3, 200
+
+</usermanual> */
+
+/* <usermanual>
+@keyword NTSC (constant)
+
+@english
+
+The keyword ''NTSC'' allows you to know if the target is running
+with a video chipset that supports NTSC standard.
+
+@italian
+
+La parola chiave ''NTSC'' consente di sapere se il target è in
+ esecuzione con un chipset video che supporta lo standard NTSC.
+
+@syntax = NTSC
+
+@example IF NTSC THEN
+@example    PRINT "I am using the NTSC video standard!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PAGE A (constant)
+
+@english
+
+This constant can be used to identify the first of two 
+buffers in a double buffering screen.
+
+@italian
+
+Questa costante può essere utilizzata per identificare il 
+primo dei due buffer di uno schermo con doppio buffering.
+
+@syntax = PAGE A
+
+@example IF SCREEN PAGE = PAGE A THEN
+@example    PRINT "I am showing the page A!"
+@example ENDIF
+
+@alias PAGE 0
+</usermanual> */
+
+/* <usermanual>
+@keyword PAGE 0 (constant)
+
+@english
+
+@italian
+
+@syntax = PAGE 0
+
+@example IF SCREEN PAGE = PAGE 0 THEN
+@example    PRINT "I am showing the page 0!"
+@example ENDIF
+
+@alias PAGE A
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PAGE A (constant)
+
+@english
+
+This constant can be used to identify the second of two 
+buffers in a double buffering screen.
+
+@italian
+
+Questa costante può essere utilizzata per identificare il 
+secondo dei due buffer di uno schermo con doppio buffering.
+
+@syntax = PAGE B
+
+@example IF SCREEN PAGE = PAGE B THEN
+@example    PRINT "I am showing the page B!"
+@example ENDIF
+
+@alias PAGE 1
+</usermanual> */
+
+/* <usermanual>
+@keyword PAGE 1 (constant)
+
+@english
+
+@italian
+
+@syntax = PAGE 1
+
+@example IF SCREEN PAGE = PAGE 1 THEN
+@example    PRINT "I am showing the page 1!"
+@example ENDIF
+
+@alias PAGE B
+
+</usermanual> */
