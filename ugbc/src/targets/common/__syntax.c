@@ -5247,3 +5247,116 @@ a uno sprite multiplexed.
 @example DIM player AS MSPRITE
 
 </usermanual> */
+
+/* <usermanual>
+@keyword MUL
+
+@english
+
+The ''MUL'' statement is used to multiply the value of a numeric variable by 
+a specified amount. In other words, it is like multiply one number with another.
+It is the same as ''var = var * expr''.
+
+It takes the ''var'' to which you want 
+to multiply a value and the ''expr'' as the expression you want to multiply
+to the variable. 
+
+@italian
+
+L'istruzione ''MUL'' viene utilizzata per moltiplicare il valore di una 
+variabile numerica per una quantità specificata. In altre parole, è come 
+moltiplicare un numero per un altro. È uguale a ''var = var * expr''.
+
+Prende la ''var'' a cui vuoi moltiplicare un valore e ''expr'' come 
+espressione che vuoi moltiplicare per la variabile.
+
+@syntax MUL var, expr
+
+@example MUL v, 42
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MULTI
+
+@english
+
+MULTI sets three of the colors of the C64's multicolor mode and switches 
+the multicolor mode on. The fourth possible color (the background color, 
+multicolor bit combination %00, controlled by memory address $D021) is defined with 
+the ''COLOR'' command. The first parameter of ''MULTI'' (''color1'') controls 
+the color of the bit combination %01, ''color2'' corresponds to the color of the 
+bit combination %10 and ''color3'' colors the bit combination %11. 
+
+@italian
+
+''MULTI'' imposta tre dei colori della modalità multicolore del C64 e attiva la 
+modalità multicolore. Il quarto colore possibile (il colore di sfondo, la 
+combinazione di bit multicolore %00, controllata dall'indirizzo di memoria $D021) 
+è definito con il comando ''COLOR''. Il primo parametro di ''MULTI'' (''color1'') 
+controlla il colore della combinazione di bit %01, ''color2'' corrisponde al 
+colore della combinazione di bit %10 e ''color3'' colora la combinazione di 
+bit %11.
+
+@syntax MULTI color1, color2, color3
+
+@example MULTI RED, GREEN, YELLOW
+@seeAlso MULTI ON
+@seeAlso MULTI OFF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MULTI ON
+
+@english
+
+''MULTI ON'' activates the multicolor mode without setting any colors. 
+
+@italian
+
+''MULTI ON'' attiva la modalità multicolore senza impostare alcun colore.
+
+@syntax MULTI ON
+
+@example MULTI ON
+
+@seeAlso MULTI OFF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MULTI OFF
+
+@english
+
+''MULTI OFF'' deactivates the multicolor mode.
+
+@italian
+
+''MULTI OFF'' disattiva la modalità multicolore.
+
+@syntax MULTI OFF
+
+@example MULTI OFF
+
+@seeAlso MULTI ON
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MUSIC (data type)
+
+@english
+
+The ''MUSIC'' is a data type that reference the data for any music track.
+
+@italian
+
+''MUSIC'' è un tipo di dati che fa riferimento ai dati di qualsiasi traccia musicale.
+
+@syntax ... AS MUSIC
+
+@example DIM music AS MUSIC
+
+</usermanual> */
