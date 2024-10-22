@@ -38,6 +38,48 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword PING
+
+@english
+
+The ''PING'' function lets you know if there is a DOJO server available or 
+running at the time you call it.
+
+@italian
+
+La funzione PING consente di sapere se vi è un server DOJO disponibile o 
+in funzione, al momento in cui viene richiamato.
+
+@syntax = PING()
+
+@example IF PING( ) THEN
+@example    PRINT "DOJO is available"
+@example ENDIF
+
+@alias DOJO LOGIN
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO PING
+
+@english
+
+@italian
+
+@syntax = DOJO PING()
+
+@example IF DOJO PING( ) THEN
+@example    PRINT "DOJO is available"
+@example ENDIF
+
+@alias PING
+
+@target c64
+</usermanual> */
+
 Variable * dojo_ping( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result)" );

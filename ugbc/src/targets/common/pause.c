@@ -38,6 +38,32 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword OUT
+
+@english
+
+The ''PAUSE'' command will pause a running program in a time-controlled manner. 
+In order to have an easy way of signaling such a pause to the user, ''PAUSE'' 
+offers the optional ''string'' parameter. The string is output at the current 
+cursor position and does not append a line feed. After output, the cursor
+remains behind the output string, as with the ''PRINT'' command.
+
+@italian
+
+Il comando ''PAUSE'' metterà in pausa un programma in esecuzione in modo 
+controllato nel tempo. Per avere un modo semplice per segnalare tale pausa 
+all'utente, ''PAUSE'' offre il parametro facoltativo ''string''. La 
+stringa viene emessa nella posizione corrente del cursore e non aggiunge 
+un avanzamento di riga. Dopo l'emissione, il cursore rimane dietro la 
+stringa di emissione, come con il comando ''PRINT''.
+
+@syntax PAUSE [string,] time
+
+@example PAUSE "Waiting...", 3
+
+</usermanual> */
+
 void pause_seconds( Environment * _environment, char * _string, char * _duration ) {
 
     MAKE_LABEL

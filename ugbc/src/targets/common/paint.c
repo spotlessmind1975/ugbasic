@@ -86,7 +86,7 @@ viene utilizzato il colore di primo piano corrente.
 
 Esiste anche una sintassi alternativa per ''PAINT'', che viene utilizzata per 
 riempire le aree chiuse con il colore della sorgente di colore specificata 
-''<fq>'' (vedi ''HIRES''), a partire dal punto iniziale ''x '', ''y''. 
+''fq'' (vedi ''HIRES''), a partire dal punto iniziale ''x '', ''y''. 
 ''PAINT'' non fa nulla se il punto iniziale selezionato ha già il colore desiderato.
 
 @syntax PAINT (x,y)[, c[, b]]
@@ -94,8 +94,6 @@ riempire le aree chiuse con il colore della sorgente di colore specificata
 
 @example PAINT(100,100),RED
 @example PAINT 0,0,1
-
-@target all
 
 </usermanual> */
 void paint_vars( Environment * _environment, char * _x, char * _y, char * _c, char * _b ) {

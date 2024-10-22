@@ -50,7 +50,7 @@
  * @param _channels channels to play on
  */
 /* <usermanual>
-@keyword PLAY
+@keyword PLAY (instruction)
 </usermanual> */
 void play( Environment * _environment, int _note, int _delay, int _channels ) {
 
@@ -67,9 +67,6 @@ void play( Environment * _environment, int _note, int _delay, int _channels ) {
  * @param _delay delay of playing
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword PLAY
-</usermanual> */
 void play_vars( Environment * _environment, char * _note, char * _delay, char * _channels ) {
 
 }

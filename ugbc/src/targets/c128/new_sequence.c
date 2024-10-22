@@ -49,8 +49,40 @@
 /* <usermanual>
 @keyword NEW SEQUENCE
 
-@target all
+@english
+
+The ''NEW SEQUENCE'' command allows you to define a memory area where you can 
+store a set of images coming from the screen (with the ''GET IMAGE'' command), or 
+from another graphic resource. 
+
+The area must be defined by (constant) number of strips, (constant) frames, (constant) width and 
+(constant) height, expressed in pixels. The actual size, 
+in terms of bytes of RAM, will depend on the graphics mode selected at the time. 
+
+If it is not possible to define an image in that screen mode, a specific error 
+will be issued.
+
+@italian
+
+Il comando ''NEW SEQUENCE'' permette di definire un'area di memoria dove poter 
+memorizzare un insieme di immagini provenienti dallo schermo (con il comando ''GET IMAGE''), 
+oppure da un'altra risorsa grafica. 
+
+L'area deve essere definita per mezzo del numero di fotogrammi (costante), 
+della larghezza (costante) e dell'altezza (costante), espressa in pixel. 
+
+La dimensione effettiva, in termini di bytes in memoria, dipenderà dalla modalità grafica 
+selezionata in quel momento. Se non è possibile definire una immagine in quella modalità, 
+sarà emesso uno specifico errore.
+
+@syntax = NEW SEQUENCE( strips, frames, width, height )
+
+@example background = NEW SEQUENCE(2, 16, 32,32)
+
+@alias NEW IMAGES
+
 </usermanual> */
+
 Variable * new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
 
     Variable * result = vic2_new_sequence( _environment, _sequences, _frames, _width, _height, _mode );

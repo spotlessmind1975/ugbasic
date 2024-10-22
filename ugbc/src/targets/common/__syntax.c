@@ -1615,7 +1615,6 @@ sinistra con l'asse delle Y verso il basso.
 
 @example ORIGIN 100, 100 UP
 
-@target all
 </usermanual> */
 
 /* <usermanual>
@@ -2748,8 +2747,6 @@ estesa è disattivata.
 
 @usedInExample tsb_block_rec_01.bas
 
-@target c128
-@project tsb
 </usermanual> */
 
 /* <usermanual>
@@ -5245,5 +5242,526 @@ a uno sprite multiplexed.
 @syntax ... AS MSPRITE
 
 @example DIM player AS MSPRITE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MUL
+
+@english
+
+The ''MUL'' statement is used to multiply the value of a numeric variable by 
+a specified amount. In other words, it is like multiply one number with another.
+It is the same as ''var = var * expr''.
+
+It takes the ''var'' to which you want 
+to multiply a value and the ''expr'' as the expression you want to multiply
+to the variable. 
+
+@italian
+
+L'istruzione ''MUL'' viene utilizzata per moltiplicare il valore di una 
+variabile numerica per una quantità specificata. In altre parole, è come 
+moltiplicare un numero per un altro. È uguale a ''var = var * expr''.
+
+Prende la ''var'' a cui vuoi moltiplicare un valore e ''expr'' come 
+espressione che vuoi moltiplicare per la variabile.
+
+@syntax MUL var, expr
+
+@example MUL v, 42
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MULTI
+
+@english
+
+MULTI sets three of the colors of the C64's multicolor mode and switches 
+the multicolor mode on. The fourth possible color (the background color, 
+multicolor bit combination %00, controlled by memory address $D021) is defined with 
+the ''COLOR'' command. The first parameter of ''MULTI'' (''color1'') controls 
+the color of the bit combination %01, ''color2'' corresponds to the color of the 
+bit combination %10 and ''color3'' colors the bit combination %11. 
+
+@italian
+
+''MULTI'' imposta tre dei colori della modalità multicolore del C64 e attiva la 
+modalità multicolore. Il quarto colore possibile (il colore di sfondo, la 
+combinazione di bit multicolore %00, controllata dall'indirizzo di memoria $D021) 
+è definito con il comando ''COLOR''. Il primo parametro di ''MULTI'' (''color1'') 
+controlla il colore della combinazione di bit %01, ''color2'' corrisponde al 
+colore della combinazione di bit %10 e ''color3'' colora la combinazione di 
+bit %11.
+
+@syntax MULTI color1, color2, color3
+
+@example MULTI RED, GREEN, YELLOW
+@seeAlso MULTI ON
+@seeAlso MULTI OFF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MULTI ON
+
+@english
+
+''MULTI ON'' activates the multicolor mode without setting any colors. 
+
+@italian
+
+''MULTI ON'' attiva la modalità multicolore senza impostare alcun colore.
+
+@syntax MULTI ON
+
+@example MULTI ON
+
+@seeAlso MULTI OFF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MULTI OFF
+
+@english
+
+''MULTI OFF'' deactivates the multicolor mode.
+
+@italian
+
+''MULTI OFF'' disattiva la modalità multicolore.
+
+@syntax MULTI OFF
+
+@example MULTI OFF
+
+@seeAlso MULTI ON
+
+</usermanual> */
+
+/* <usermanual>
+@keyword MUSIC (data type)
+
+@english
+
+The ''MUSIC'' is a data type that reference the data for any music track.
+
+@italian
+
+''MUSIC'' è un tipo di dati che fa riferimento ai dati di qualsiasi traccia musicale.
+
+@syntax ... AS MUSIC
+
+@example DIM music AS MUSIC
+
+</usermanual> */
+
+// @tobe NEW TILESET
+
+/* <usermanual>
+@keyword NONE (constant)
+
+@english
+
+This constant represent the fact that no key has been pressed, when used 
+as a valueto compare with ''SCANCODE''. 
+
+@italian
+
+Questa costante rappresenta il fatto che non è stato premuto alcun tasto, 
+quando viene utilizzata come valore da confrontare con ''SCANCODE''.
+
+@syntax = NONE
+
+@example IF SCANCODE = NONE THEN
+@example    PRINT "No key has been pressed"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword NOP
+
+@english
+
+''NOP'' is short for "No OPeration" and it is a very special instruction:
+it generates an equivalent instruction in assembly languages that
+does not perform any useful operation, that is, it does not change the
+state of the processor or the data in memory.
+
+By inserting a sequence of ''NOP'' instructions, you can create a timed 
+delay within your program. This can be useful, for example, to synchronize 
+several actions or to create animation effects. In some cases, it is necessary 
+to align the code to certain memory locations. By inserting ''NOP'' instructions, 
+you can "fill" the missing space and ensure correct alignment. NOP instructions 
+can be used to insert "placeholders" into code, making debugging and testing 
+easier. 
+
+When the program encounters a ''NOP'' instruction, it simply increments 
+the program counter (PC) to the next instruction, without performing any data 
+operations. In effect, the processor "wastes time" executing this empty instruction.
+
+It is important to note that excessive use of NOP instructions can slow 
+down the execution of the program, so it is advisable to use them sparingly 
+and only when absolutely necessary.
+
+@italian
+
+''NOP'' è l'abbreviazione di "No OPeration" ed è un'istruzione molto speciale:
+genera un'istruzione equivalente nei linguaggi assembly che
+non esegue alcuna operazione utile, ovvero non modifica lo
+stato del processore o i dati in memoria.
+
+Inserendo una sequenza di istruzioni ''NOP'', puoi creare un ritardo temporizzato all'interno del tuo programma. Questo può essere utile, ad esempio, per sincronizzare
+diverse azioni o per creare effetti di animazione. In alcuni casi, è necessario
+allineare il codice a determinate posizioni di memoria. Inserendo istruzioni ''NOP'',
+puoi "riempire" lo spazio mancante e garantire un allineamento corretto. Le istruzioni NOP
+possono essere utilizzate per inserire "segnaposto" nel codice, semplificando il debug e il test.
+
+Quando il programma incontra un'istruzione ''NOP'', incrementa semplicemente
+il contatore del programma (PC) all'istruzione successiva, senza eseguire alcuna operazione sui dati. In effetti, il processore "perde tempo" eseguendo questa istruzione vuota.
+
+È importante notare che un uso eccessivo di istruzioni NOP può rallentare
+l'esecuzione del programma, quindi è consigliabile usarle con parsimonia
+e solo quando assolutamente necessario.
+
+@syntax NOP
+
+@example IF tooEarly THEN
+@example    NOP: NOP: NOP: NOP: NOP
+@example ENDIF
+
+</usermanual> */
+
+
+/* <usermanual>
+@keyword NOTE (constant)
+
+@english
+
+The keyword ''NOTE'' allows you to indicate a note on the musical scale. 
+The syntax must indicate the note, any variations and the reference octave. 
+If the octave is omitted, octave no. 4 (the fifth octave) is understood.
+
+@italian
+
+La parola chiave ''NOTE'' permette di indicare una nota sulla scala musicale. 
+La sintassi deve indicare la nota, eventuali variazioni e l'ottava di 
+riferimento. Se l'ottava viene omessa, si intende l'ottava nr. 4 
+(la quinta ottava).
+
+@syntax NOTE note [#] [octave]
+@syntax  note: C|D|E|F|G|A|B
+
+@example SOUND NOTE C#3, 200
+
+</usermanual> */
+
+/* <usermanual>
+@keyword NTSC (constant)
+
+@english
+
+The keyword ''NTSC'' allows you to know if the target is running
+with a video chipset that supports NTSC standard.
+
+@italian
+
+La parola chiave ''NTSC'' consente di sapere se il target è in
+ esecuzione con un chipset video che supporta lo standard NTSC.
+
+@syntax = NTSC
+
+@example IF NTSC THEN
+@example    PRINT "I am using the NTSC video standard!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PAGE A (constant)
+
+@english
+
+This constant can be used to identify the first of two 
+buffers in a double buffering screen.
+
+@italian
+
+Questa costante può essere utilizzata per identificare il 
+primo dei due buffer di uno schermo con doppio buffering.
+
+@syntax = PAGE A
+
+@example IF SCREEN PAGE = PAGE A THEN
+@example    PRINT "I am showing the page A!"
+@example ENDIF
+
+@alias PAGE 0
+</usermanual> */
+
+/* <usermanual>
+@keyword PAGE 0 (constant)
+
+@english
+
+@italian
+
+@syntax = PAGE 0
+
+@example IF SCREEN PAGE = PAGE 0 THEN
+@example    PRINT "I am showing the page 0!"
+@example ENDIF
+
+@alias PAGE A
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PAGE A (constant)
+
+@english
+
+This constant can be used to identify the second of two 
+buffers in a double buffering screen.
+
+@italian
+
+Questa costante può essere utilizzata per identificare il 
+secondo dei due buffer di uno schermo con doppio buffering.
+
+@syntax = PAGE B
+
+@example IF SCREEN PAGE = PAGE B THEN
+@example    PRINT "I am showing the page B!"
+@example ENDIF
+
+@alias PAGE 1
+</usermanual> */
+
+/* <usermanual>
+@keyword PAGE 1 (constant)
+
+@english
+
+@italian
+
+@syntax = PAGE 1
+
+@example IF SCREEN PAGE = PAGE 1 THEN
+@example    PRINT "I am showing the page 1!"
+@example ENDIF
+
+@alias PAGE B
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PAL (constant)
+
+@english
+
+The keyword ''PAL'' allows you to know if the target is running
+with a video chipset that supports PAL standard.
+
+@italian
+
+La parola chiave ''PAL'' consente di sapere se il target è in
+esecuzione con un chipset video che supporta lo standard PAL.
+
+@syntax = PAL
+
+@example IF PAL THEN
+@example    PRINT "I am using the PAL video standard!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PALETTE
+
+@english
+
+The ''PALETTE'' command allows you to define and modify the range of colors that can
+be used to draw on the screen. You can give a number for each element of the
+palette, sequentially. Thenumber is then used to refer to the specific color 
+when drawing shapes or objects. Thanks to RGB function you can change the 
+red, green and blue value of each color in the palette, allowing you to 
+create custom color combinations, provided that the hardware allows it.
+
+The palette is applied immediately to all the graphic elements on the screen.
+This allows you to define a color palette that adapts to the atmosphere 
+of the game, creating particular visual effects. It allows to
+create transition effects between different colors, simulating for example 
+the passage of time or changes in state. Finally, it customizes the appearance 
+of the interface, making it more attractive and functional.
+
+The maximum number of colors that can be defined in a palette varies 
+depending on the video chipset and the mode selected.
+
+@italian
+
+Il comando ''PALETTE'' consente di definire e modificare la gamma di colori 
+che possono essere utilizzati per disegnare sullo schermo. È possibile 
+assegnare un numero a ciascun elemento della tavolozza, in sequenza. 
+Il numero viene quindi utilizzato per fare riferimento al colore specifico 
+quando si disegnano forme o oggetti. Grazie alla funzione RGB è possibile 
+modificare il valore rosso, verde e blu di ciascun colore nella tavolozza, 
+consentendo di creare combinazioni di colori personalizzate, a condizione che 
+l'hardware lo consenta.
+
+La tavolozza viene applicata immediatamente a tutti gli elementi grafici 
+sullo schermo. Ciò consente di definire una tavolozza di colori che si 
+adatta all'atmosfera del gioco, creando effetti visivi particolari. 
+Consente di creare effetti di transizione tra diversi colori, simulando ad 
+esempio il passare del tempo o i cambiamenti di stato. Infine, personalizza 
+l'aspetto dell'interfaccia, rendendola più accattivante e funzionale.
+
+Il numero massimo di colori che possono essere definiti in una tavolozza 
+varia a seconda del chipset video e della modalità selezionata.
+
+@syntax PALETTE c0[,c1[,c2[,...]]]
+
+@example PALETTE WHITE, RED, GREEN, BLUE
+@example PALETTE RGB(0,0,0),RGB(255,0,0),RGB(255,255,255)
+
+@seeAlso RGB
+@seeAlso COLOR
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PERIOD (constant)
+
+@english
+
+This constant represent the "PERIOD" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "punto", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = HOME
+
+@example IF KET STATE(HOME) THEN
+@example    PRINT "HOME has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PI (constant)
+
+@english
+
+The ''PI'' constant is a mathematical constant that indicates the 
+ratio of the circumference of a circle to its diameter. The value 
+of ''PI'' is approximately 3.14159. It is a fundamental constant 
+in many geometric and trigonometric calculations.
+
+@italian
+
+The ''PI'' constant is a mathematical constant that indicates the 
+ratio of the circumference of a circle to its diameter. The value 
+of ''PI'' is approximately 3.14159. It is a fundamental constant 
+in many geometric and trigonometric calculations.
+
+@syntax = PI
+
+@example c = PI * 2 * r
+
+</usermanual> */
+
+/* <usermanual>
+@keyword PLUS (constant)
+
+@english
+
+This constant represent the "PLUS" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "più", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = PLUS
+
+@example IF KET STATE(PLUS) THEN
+@example    PRINT "PLUS has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword POLYLINE
+
+@english
+
+The ''POLYLINE'' command allows you to draw a 
+certain number of concatenated lines.
+
+@italian
+
+Il comando ''POLYLINE'' permette di disegnare 
+un certo numero di linee concatenate.
+
+@syntax POLYLINE [[x1],[y1]] TO [x2],[y2] [TO [x3],[y3] [TO [x4],[y4]]]...
+
+@example POLYLINE 10,10 TO 20,10 TO 20,20 TO 10,20 TO 10,10
+
+</usermanual> */
+
+/* <usermanual>
+@keyword POSITION (data type)
+
+@english
+
+The ''POSITION'' is a data type that represent a coordinate into the video chipset.
+
+@italian
+
+''POSITION'' è un tipo di dati che rappresenta una coordinata nel chipset video.
+
+@syntax ... AS POSITION
+
+@example DIM x AS POSITION
+
+</usermanual> */
+
+/* <usermanual>
+@keyword POUND (constant)
+
+@english
+
+This constant represent the "POUND" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "sterlina", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = POUND
+
+@example IF KET STATE(POUND) THEN
+@example    PRINT "POUND has been pressed!"
+@example ENDIF
 
 </usermanual> */

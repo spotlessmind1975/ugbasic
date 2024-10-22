@@ -49,12 +49,48 @@
 @keyword OUT
 
 @english
-This command allows you to send a byte to an I/O port, provided that the underlying hardware 
-allows it. If it wasn't allowed, the statement will do nothing.
+
+The ''OUT'' command is a statement that allows your program to interact directly 
+with your computer's hardware, specifically its input/output (I/O) ports. This
+command is especially useful in contexts where you want to control external 
+devices connected to your computer, such as printers, sound cards, or 
+data acquisition devices.
+
+When you use the ''OUT'' command, you specify a port address and a value to 
+send to that port. The port address identifies a particular hardware 
+device connected to your computer, while the value sent determines the action
+the device will perform.
+
+The use of the ''OUT'' command is highly dependent on the specific hardware 
+of your computer. The port addresses and values to send vary depending on 
+the type of device connected and the system configuration. 
+
+Improper use of the ''OUT'' command can damage the hardware or cause the 
+system to malfunction. It is essential to have a thorough understanding 
+of the hardware you are interacting with and to use this command with caution.
 
 @italian
-Questo comando permette di inviare un byte a una porta di I/O, sempre che ciò sia consentito 
-dall'hardware sottostante. Se non fosse consentito, l'istruzione non farà nulla. 
+
+Il comando ''OUT'' è un'istruzione che consente al programma di interagire 
+direttamente con l'hardware del computer, in particolare con le porte di 
+input/output (I/O). Questo comando è particolarmente utile nei contesti 
+in cui si desidera controllare dispositivi esterni collegati al computer, 
+come stampanti, schede audio o dispositivi di acquisizione dati.
+
+Quando si utilizza il comando ''OUT'', si specifica un indirizzo di porta 
+e un valore da inviare a tale porta. L'indirizzo di porta identifica un 
+particolare dispositivo hardware collegato al computer, mentre il valore 
+inviato determina l'azione che il dispositivo eseguirà.
+
+L'utilizzo del comando ''OUT'' dipende in larga misura dall'hardware 
+specifico del computer. Gli indirizzi di porta e i valori da inviare 
+variano a seconda del tipo di dispositivo collegato e della configurazione 
+del sistema.
+
+L'utilizzo improprio del comando ''OUT'' può danneggiare l'hardware o 
+causare malfunzionamenti del sistema. È essenziale avere una conoscenza 
+approfondita dell'hardware con cui si sta interagendo e utilizzare questo 
+comando con cautela.
 
 @syntax OUT port, value
 

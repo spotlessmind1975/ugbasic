@@ -5828,9 +5828,11 @@ tra parentesi per garantire risultati accurati.
 
 @syntax = NOT x
 
-@example IF NOT x THEN: PRINT "x is FALSE" : ELSE : PRINT "x is TRUE": ENDIF
-
-@target all
+@example IF NOT x THEN
+@example     PRINT "x is FALSE"
+@example ELSE
+@example     PRINT "x is TRUE"
+@example ENDIF
 </usermanual> */ 
 Variable * variable_not( Environment * _environment, char * _value ) {
 
@@ -7146,9 +7148,25 @@ numero di caratteri nella stringa da cercare.
 @usedInExample strings_instr_01.bas
 @usedInExample strings_instr_02.bas
 
-@target all
-@verified
- </usermanual> */
+@alias PLACE
+</usermanual> */
+
+/* <usermanual>
+@keyword PLACE
+
+@english
+
+@italian
+
+@syntax = PLACE( text, searched [, start] )
+
+@example x = PLACE( "ugBASIC", "A" )
+@example x = PLACE( "ugBASIC", "A", 2 )
+
+@alias PLACE
+</usermanual> */
+ 
+
 Variable * variable_string_instr( Environment * _environment, char * _search, char * _searched, char * _start ) {
     Variable * search = variable_retrieve( _environment, _search );
     Variable * searched = variable_retrieve( _environment, _searched );
@@ -9058,6 +9076,23 @@ basano su operazioni a livello di bit.
 @target all
 @verified
  </usermanual> */
+ /* <usermanual>
+@keyword %%
+
+@english
+
+@italian
+
+@syntax = %%(expression)
+
+@example x = %%( 42 )
+@example PRINT %%( y )
+
+@alias BIN
+
+@target all
+ </usermanual> */
+
 Variable * variable_bin( Environment * _environment, char * _value, char * _digits ) {
 
     MAKE_LABEL
@@ -12276,6 +12311,26 @@ Variable * variable_string_inst( Environment * _environment, char * _string, cha
     return result;
 
 }
+
+
+/* <usermanual>
+@keyword PICK
+
+@english
+
+The ''PICK'' function allows you to obtain the ASCII code of any character present in a 
+string, provided that the offset within the string is provided.
+
+@italian
+
+La funzione ''PICK'' permette di ottenere il codice ASCII di un qualsiasi 
+carattere presente in una stringa, purché sia fornito l'offset all'interno della stringa.
+
+@syntax = PICK( string, offset )
+
+@example PRINT PICK( "TEST", 2 )
+
+</usermanual> */
 
 Variable * variable_string_pick( Environment * _environment, char * _string, int _position ) {
 

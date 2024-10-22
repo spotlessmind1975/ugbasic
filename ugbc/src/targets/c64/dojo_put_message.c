@@ -38,6 +38,58 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword PUT MESSAGE
+
+@english
+
+The ''PUT MESSAGE'' allows to put a message on a specific port. This is a statement, 
+not a function. It follows that we cannot know if the statement was successful. 
+This does not really represent a limitation, for the simple fact that the statement 
+will always be successful: if the program on the other side of the port is not available,
+for some reason, the message will be preserved by the DOJO server, and it will be 
+delivered at the first available moment.
+
+@italian
+
+''PUT MESSAGE'' consente di mettere un messaggio su una porta specifica. 
+Questa è un'istruzione, non una funzione. Ne consegue che non possiamo 
+sapere se l'istruzione ha avuto successo.
+
+Questo non rappresenta realmente una limitazione, per il semplice fatto 
+che l'istruzione avrà sempre successo: se il programma dall'altra parte 
+della porta non è disponibile, per qualche motivo, il messaggio verrà 
+conservato dal server DOJO e verrà consegnato al primo momento disponibile.
+
+@syntax PUT MESSAGE portId, string
+
+@example sessionId = LOGIN( "user", "password" )
+@example port = FIND( sessionId, "user2", "testApp" )
+@example PUT MESSAGE port, "hello!"
+
+@alias DOJO PUT MESSAGE
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO PUT MESSAGE
+
+@english
+
+@italian
+
+@syntax DOJO PUT MESSAGE portId, string
+
+@example sessionId = DOJO LOGIN( "user", "password" )
+@example port = DOJO FIND( sessionId, "user2", "testApp" )
+@example DOJO PUT MESSAGE port, "hello!"
+
+@alias PUT MESSAGE
+
+@target c64
+</usermanual> */
+
 Variable * dojo_put_message( Environment * _environment, char * _port_id, char * _message ) {
 
     Variable * portId = variable_retrieve( _environment, _port_id );

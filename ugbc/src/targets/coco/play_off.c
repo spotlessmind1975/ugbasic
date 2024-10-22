@@ -61,9 +61,6 @@ void play_off( Environment * _environment, int _channels ) {
  * @param _environment Current calling environment
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword PLAY OFF
-</usermanual> */
 void play_off_var( Environment * _environment, char * _channels ) {
 
 }

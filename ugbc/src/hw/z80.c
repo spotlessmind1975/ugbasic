@@ -76,6 +76,12 @@ void z80_init( Environment * _environment ) {
 
 }
 
+void z80_nop( Environment * _environment ) {
+
+    outline0("NOP");
+
+}
+
 void z80_ztoa( Environment * _environment ) {
 
     inline( cpu_ztoa )

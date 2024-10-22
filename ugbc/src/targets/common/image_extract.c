@@ -47,14 +47,15 @@
  * @param _sequence Sequence to extract, NULL if IMAGES
  */
 /* <usermanual>
-@keyword IMAGE (data type)
+@keyword IMAGE (function)
 
 @english
 The ''IMAGE'' command allows you to extract an image from a collection of images 
 stored in an ''IMAGES'' or ''SEQUENCE'' variable. Note that extraction occurs at compile 
 time: therefore, no extra resources are allocated in the compiled program. This command 
 is intended for all those commands that need an image to function, but want to exploit a
-graphic resource already loaded and optimized.
+graphic resource already loaded and optimized. If ''resource'' is a TILESET, you 
+can look for a specific frame by name, unsing the ''NAMED'' parameter.
 
 @italian
 Il comando ''IMAGE'' consente di estrarre un'immagine da una raccolta di immagini 
@@ -62,13 +63,16 @@ memorizzate in una variabile ''IMAGES'' o ''SEQUENCE''. Si noti che l'estrazione
 avviene al momento della compilazione: pertanto, non viene allocata alcuna risorsa 
 suppletiva nel programma compilato. Questo comando è inteso per tutti quei comandi 
 che hanno bisogno di una immagine per poter funzionare, ma si vuole sfruttare una 
-risorsa grafica già caricata e ottimizzata.
+risorsa grafica già caricata e ottimizzata. Se ''resource'' è un TILESET, puoi 
+cercare un frame specifico per nome, usando il parametro ''NAMED''.
 
 @syntax = IMAGE( resource FRAME num )
 @syntax = IMAGE( resource SEQUENCE seq FRAME num )
+@syntax = IMAGE( resource NAMED name )
 
 @example starship = IMAGE( LOAD IMAGES(("tiles.png") FRAME 1 )
-@example starship = IMAGE( LOAD SEQUENCE(("tiles.png") SEQUENCE 1 FRAME 2 )
+@example starship = IMAGE( LOAD SEQUENCE("tiles.png") SEQUENCE 1 FRAME 2 )
+@example tile = IMAGE( LOAD TILESET("tiles.tsx") NAMED pavimento )
 
 </usermanual> */
 Variable * image_extract( Environment * _environment, char * _images, int _frame, int * _sequence ) {
