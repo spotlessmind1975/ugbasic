@@ -1661,7 +1661,8 @@ questa risoluzione virtuale.
 
 @example RESOLUTION 100, 100
 
-@target all
+@seeAlso ORIGIN
+
 </usermanual> */
 
 /* <usermanual>
@@ -2676,8 +2677,8 @@ sarà ritagliato
 
 @usedInExample tsb_block_rec_01.bas
 
-@target c128
-@project tsb
+@alias BOX
+
 </usermanual> */
 
 /* <usermanual>
