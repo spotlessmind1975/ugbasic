@@ -50,27 +50,10 @@
  * @param _rows Number of rows
  */
 /* <usermanual>
-@keyword SCREEN ROWS
-
-@english
-Changes the number of lines that can be displayed. Depending 
-on the hardware, the effect can be different as different 
-are the acceptable values.
-
-@italian
-Modifica il numero di righe che possono essere visualizzate. A seconda
-dell'hardware, l'effetto può essere diverso come diversi sono i valori 
-accettabili.
-
-@syntax SCREEN ROWS [integer]
-
-@example SCREEN ROWS 24
-
+@keyword SCREEN ROWS (instruction)
 @target vic20
 </usermanual> */
 void screen_rows( Environment * _environment, int _rows ) {
-
-    
 
     char rowsString[MAX_TEMPORARY_STORAGE]; sprintf( rowsString, "#$%2.2x", _rows );
 
@@ -89,16 +72,7 @@ void screen_rows( Environment * _environment, int _rows ) {
  * @param _environment Current calling environment
  * @param _rows Number of rows
  */
-/* <usermanual>
-@keyword SCREEN ROWS
-
-@syntax SCREEN ROWS [expression]
-
-@example SCREEN ROWS newRows
-</usermanual> */
 void screen_rows_var( Environment * _environment, char * _rows ) {
-
-    
 
     Variable * rows = variable_retrieve( _environment, _rows );
     vic1_screen_rows( _environment, rows->realName );

@@ -50,7 +50,7 @@
  * @param _rows Number of rows
  */
 /* <usermanual>
-@keyword SCREEN ROWS
+@keyword SCREEN ROWS (instruction)
 
 @english
 Changes the number of lines that can be displayed. Depending 
@@ -62,7 +62,7 @@ Modifica il numero di righe che possono essere visualizzate. A seconda
 dell'hardware, l'effetto può essere diverso come diversi sono i valori 
 accettabili.
 
-@syntax SCREEN ROWS [integer]
+@syntax SCREEN ROWS rows
 
 @example SCREEN ROWS 24
 
@@ -89,13 +89,6 @@ void screen_rows( Environment * _environment, int _rows ) {
  * @param _environment Current calling environment
  * @param _rows Number of rows
  */
-/* <usermanual>
-@keyword SCREEN ROWS
-
-@syntax SCREEN ROWS [expression]
-
-@example SCREEN ROWS newRows
-</usermanual> */
 void screen_rows_var( Environment * _environment, char * _rows ) {
 
     

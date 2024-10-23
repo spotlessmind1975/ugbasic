@@ -5868,3 +5868,50 @@ Questa costante fornisce il numero effettivo di righe della console attiva.
 @alias ROWS (constant)
 
 </usermanual> */
+
+/* <usermanual>
+@keyword RUN STOP (constant)
+
+@english
+
+This constant represent the "RUN STOP" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "RUN STOP", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = RUN STOP
+
+@alias RUNSTOP (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword RUNSTOP (constant)
+
+@english
+
+This constant represent the "RUNSTOP" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "RUNSTOP", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = RUNSTOP
+
+alias RUN STOP (constant)
+
+</usermanual> */
+

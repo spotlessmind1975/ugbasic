@@ -47,16 +47,21 @@
 @keyword RUN 
 
 @english
-This keyword will restart the program from the beginning.
+
+the ''RUN'' command restarts the execution of a program. When the program encounter this
+command, the computer begins executing from the very firstr instructions in your program, 
+one after the other.
 
 @italian
-Questa parola chiave farà iniziare il programma dall'inizio.
+
+il comando ''RUN'' riavvia l'esecuzione di un programma. Quando il programma incontra 
+questo comando, il computer inizia l'esecuzione dalle primissime istruzioni del programma, 
+una dopo l'altra.
 
 @syntax RUN
 
 @example RUN
 
-@target all
 </usermanual> */
 void run( Environment * _environment ) {
 
