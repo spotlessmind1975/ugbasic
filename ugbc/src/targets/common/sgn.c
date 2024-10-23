@@ -51,22 +51,35 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword SGN
 
 @english
-The ''SGN'' function returns a value representing the sign of a number. 
-The three possible results are ''-1'' if the value is negative, 
-''1'' if the value is positive and ''0'' if the value is zero.
+
+The ''SGN'' function is a very simple but useful mathematical function. Its main 
+function is to determine the sign of a number. In other words, ''SGN'' tells you 
+whether a number is positive, negative, or zero. So, it returns 1 if number 
+is positive, 0 if ''number'' is zero and -1 if ''number'' is negative.
+
+You can use ''SGN'' inside an ''IF'' condition to perform different actions 
+depending on the sign of a number, and in some cases, ''SGN'' can make your 
+code more concise and readable.
+
 
 @italian
-La funzione ''SGN'' restituisce un valore che rappresenta il segno di un numero. 
-I tre possibili risultati sono ''-1'' se il valore è negativo, ''1'' se il valore è positivo
-e ''0'' se il valore è zero.
 
-@syntax = SGN(expression)
+La funzione ''SGN'' è una funzione matematica molto semplice ma utile. 
+La sua funzione principale è determinare il segno di un numero. In altre 
+parole, ''SGN'' ti dice se un numero è positivo, negativo o zero. Quindi, 
+restituisce 1 se il ''number'' è positivo, 0 se ''number'' è zero e -1 se 
+''number'' è negativo.
+
+Puoi usare ''SGN'' all'interno di una condizione ''IF'' per eseguire azioni 
+diverse a seconda del segno di un numero e, in alcuni casi, ''SGN'' può 
+rendere il tuo codice più conciso e leggibile.
+
+@syntax = SGN(number)
 
 @example x = SNG(-42)
 
 @usedInExample maths_signs_01.bas
 
-@target all
 </usermanual> */
 
 Variable * sign( Environment * _environment, char * _value ) {

@@ -53,25 +53,42 @@
 @keyword SOUND
 
 @english
-This command allows you to play a certain frequency, for a certain time and on certain 
-channels. The command has a number of variations. First, you can omit the channel. 
-In this case, the sound will be played on all channels (or on those enabled by the 
-''VOICES''/''CHANNELS'' command). Then you can omit the duration, in which case the sound will 
-continue to play while the next instruction is executed. Duration is expressed
-in milliseconds.
+
+The ''SOUND'' command add a touch of interactivity and liveliness to your programs. Simply put, 
+the ''SOUND'' command allows you to generate sounds directly from your computer. You can
+give just the frequency (to start an infinite sound) or a frequency followed by a duration.
+You can play multiple sounds by concatenating frequencies or frequencies and durations.
+
+By combining several ''SOUND'' commands with different frequencies and durations, you 
+can compose short melodies. For example, you can make a sound play when the user presses 
+a button or reaches a goal in the game. You can simulate the sounds of explosions, 
+gunshots, or any other effect you want. 
+
+This command allows you to handle multiple audio channels at the same time, if the
+target has them, allowing you to create more complex sounds. The waveform of the sound 
+generated can vary depending on the available hardware.
 
 @italian
-Questo comando permette di suonare una certa frequenza, per un certo tempo e su certi 
-canali. Il comando ha una serie di varianti. In primo luogo, è possibile omettere il 
-canale. In tal caso, il suono sarà suonato su tutti i canali (oppure su quelli abilitati 
-dal comando ''VOICES''/''CHANNELS''). Poi è possibile omettere la durata, e in tal caso il suono 
-continuerà ad essere suonato mentre viene eseguita l'istruzione successiva. La durata è
-espressa in millisecondi.
 
-@syntax SOUND #[freq] {, #[duration] {ON #[channels]}}
+Il comando ''SOUND'' aggiunge un tocco di interattività e vivacità ai tuoi programmi. 
+In parole povere, il comando ''SOUND'' ti consente di generare suoni direttamente 
+dal tuo computer. Puoi fornire solo la frequenza (per avviare un suono infinito) o 
+una frequenza seguita da una durata. Puoi riprodurre più suoni concatenando 
+frequenze o frequenze e durate.
+
+Combinando più comandi ''SOUND'' con frequenze e durate diverse, puoi comporre brevi 
+melodie. Ad esempio, puoi far riprodurre un suono quando l'utente preme un pulsante 
+o raggiunge un obiettivo nel gioco. Puoi simulare i suoni di esplosioni, spari 
+o qualsiasi altro effetto desideri.
+
+Questo comando ti consente di gestire più canali audio contemporaneamente, se 
+il bersaglio li ha, consentendoti di creare suoni più complessi. La forma d'onda 
+del suono generato può variare a seconda dell'hardware disponibile.
+
+@syntax SOUND f1[,d1][;f1[,d2][;...]] [ON channels]
 
 @example SOUND #440
-@example SOUND #440, #250
+@example SOUND la;do;mi;sol
 @example SOUND #440, #250 ON #%001
 
 @target c128
@@ -99,17 +116,6 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
  * @param _delay delay of frequency
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword SOUND
-
-@syntax SOUND [freq] {, [duration] {ON [channels]}}
-
-@example SOUND laDiesis
-@example SOUND solMaggiore, breve
-@example SOUND solMaggiore, lunga ON primaVoce
-
-@target c128
-</usermanual> */
 void sound_vars( Environment * _environment, char * _freq, char * _delay, char * _channels ) {
 
     Variable * freq = variable_retrieve_or_define( _environment, _freq, VT_WORD, 440 );

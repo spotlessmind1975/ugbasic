@@ -49,9 +49,6 @@
  * @param _delay delay of frequency
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword SOUND
-</usermanual> */
 void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 
 }
@@ -67,9 +64,6 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
  * @param _delay delay of frequency
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword SOUND
-</usermanual> */
 void sound_vars( Environment * _environment, char * _freq, char * _delay, char * _channels ) {
 
 }

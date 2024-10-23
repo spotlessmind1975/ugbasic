@@ -57,13 +57,12 @@ Il comando ''SET TAB'' specifica il numero di caratteri che
 il cursore di testo sposterà a destra quando verrà stampato 
 il successivo TAB $.
 
-@syntax SET TAB [expression]
+@syntax SET TAB expression
 
 @example SET TAB 10
 
 @usedInExample texts_position_08.bas
 
-@target all
 </usermanual> */
 void text_set_tab( Environment * _environment, char * _new_tab ) {
 

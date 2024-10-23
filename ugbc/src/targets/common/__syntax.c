@@ -4215,6 +4215,26 @@ rappresentati direttamente in un byte.
 </usermanual> */
 
 /* <usermanual>
+@keyword SIGNED BYTE (data type)
+
+@english
+
+The ''SIGNED BYTE'' represent the data type for 8 bit numbers with sign. This kind of data can
+represent a relative number, integers between -127 and 127 could be represented directly in a byte. 
+
+@italian
+
+Il ''SIGNED BYTE'' rappresenta il tipo di dati per numeri a 8 bit con segno. Questo tipo 
+di dati può rappresentare un numero relativo, gli interi tra -127 e 127 potrebbero essere 
+rappresentati direttamente in un byte.
+
+@syntax ... AS SIGNED BYTE
+
+@example DIM x AS SIGNED BYTE
+
+</usermanual> */
+
+/* <usermanual>
 @keyword CAPS LOCK (constant)
 
 @english
@@ -4687,6 +4707,44 @@ target corrispondente, il valore sarà zero.
 </usermanual> */
 
 /* <usermanual>
+@keyword WORD (data type)
+
+@english
+
+The ''WORD'' is a data type that allow to store a 16-bit word. 
+
+@italian
+
+''WORD'' è un tipo di dati che consente di memorizzare una 
+parola a 16  bit.
+
+@syntax ... AS WORD
+
+@example DIM parolaLunga AS WORD
+
+</usermanual> */
+
+/* <usermanual>
+@keyword SIGNED WORD (data type)
+
+@english
+
+The ''SIGNED WORD'' is a data type that allow to store a 16-bit word, with sign. 
+
+@italian
+
+''WORD'' è un tipo di dati che consente di memorizzare una 
+parola a 16  bit, con segno.
+
+@syntax ... AS SIGNED WORD
+
+@example DIM parolaLunga AS SIGNED WORD
+
+@alias INT (data type)
+@alias INTEGER (data type)
+</usermanual> */
+
+/* <usermanual>
 @keyword DWORD (data type)
 
 @english
@@ -4701,6 +4759,26 @@ parola (''WORD'') a 32 bit.
 @syntax ... AS DWORD
 
 @example DIM parolaLunga AS DWORD
+
+</usermanual> */
+
+/* <usermanual>
+@keyword SIGNED DWORD (data type)
+
+@english
+
+The ''SIGNED DDWORD'' is a data type that allow to store a 32-bit word (''DWORD''), with sign. 
+
+@italian
+
+''SIGNED DWORD'' è un tipo di dati che consente di memorizzare una 
+parola lunga a 32 bit, con segno.
+
+@syntax ... AS SIGNED DWORD
+
+@example DIM parolaLunga AS SIGNED DWORD
+
+@alias LONG (data type)
 
 </usermanual> */
 
@@ -4973,7 +5051,8 @@ parola con segno a 16 bit.
 
 @example DIM parolaLunga AS INT
 
-@alias INTEGER
+@alias INTEGER (data type)
+@alias SIGNED WORD (data type)
 
 </usermanual> */
 
@@ -4988,7 +5067,8 @@ parola con segno a 16 bit.
 
 @example DIM parolaLunga AS INTEGER
 
-@alias INT
+@alias INT (data type)
+@alias SIGNED WORD (data type)
 
 </usermanual> */
 
@@ -5191,6 +5271,8 @@ parola (''WORD'') a 32 bit con segno.
 @syntax ... AS LONG
 
 @example DIM parolaLunga AS LONG
+
+@alias SIGNED DWORD (data type)
 
 </usermanual> */
 
@@ -5912,6 +5994,66 @@ target corrispondente, il valore sarà zero.
 @syntax = RUNSTOP
 
 alias RUN STOP (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword SEQUENCE (data type)
+
+@english
+
+The ''SEQUENCE'' data type maintains a reference to the collection of strips of images that
+can be used to draw them on the screen.
+
+@italian
+
+Il tipo di dato ''SEQUENCE'' mantiene un riferimento alla collezione di pose di immagini 
+che può essere usata per disegnarle sullo schermo.
+
+@syntax ... AS SEQUENCE
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SET LINE
+
+@english
+
+The ''SET LINE'' statement changes the pattern used to draw lines.
+
+@italian
+
+L'istruzione ''SET LINE'' modifica il pattern utilizzato per disegnare le linee.
+
+@syntax SET LINE pattern
+
+@example SET LINE %1010101010101010
+
+</usermanual> */
+
+/* <usermanual>
+@keyword SLASH (constant)
+
+@english
+
+This constant represent the "SLASH" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "BARRA IN AVANTI", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = SLASH
+
+@example IF SCANCODE = SLASH THEN
+@example    PRINT "SLASH has been pressed!"
+@example ENDIF
 
 </usermanual> */
 
