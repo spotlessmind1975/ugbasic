@@ -1467,8 +1467,6 @@ UPPER\$ { RETURN(UPPER,1); }
 Up { RETURN(UPPER,1); }
 USE { RETURN(USE,1); }
 Ux { RETURN(USE,1); }
-USING { RETURN(USING,1); }
-Us { RETURN(USING,1); }
 
 %{ /* --------------------------------- V --------------------------------- */ %}
 

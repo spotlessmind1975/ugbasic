@@ -64,16 +64,20 @@ come quello di fine. Questo comando fornisce un modo conveniente per ripetere un
 di istruzioni per tutto il tempo nel quale una particolare condizione è vera. La condizione è
 controllata di nuovo ad ogni ciclo, fino a quando non è più vera.
 
-@syntax WHILE [expression] : ... : WEND
-@syntax WHILE [expression]
+@syntax WHILE expression 
 @syntax   ...
 @syntax WEND
 
-@example WHILE alive : score = score + 1 : WEND
+@example WHILE alive
+@example    score = score + 1
+@example WEND
 
 @usedInExample control_loops_04.bas
 
-@target all
+@seeAlso DO...LOOP
+@seeAlso REPEAT...UNTIL
+@seeAlso FOR...NEXT
+
 </usermanual> */
 
 void begin_while( Environment * _environment ) {

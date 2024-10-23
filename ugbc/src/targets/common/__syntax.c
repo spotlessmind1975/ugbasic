@@ -6146,3 +6146,120 @@ Questa costante mantiene il numero di tick che avvengono ad ogni secondo.
 @syntax = TICK PER SECOND
 
 </usermanual> */
+
+/* <usermanual>
+@keyword VOLUME MIN
+
+@english
+
+Minimum value usable for audio volume.
+
+@italian
+
+Valore minimo utilizzabile per il volume audio.
+
+@syntax = VOLUME MIN
+
+</usermanual> */
+
+/* <usermanual>
+@keyword VOLUME MAX
+
+@english
+
+Maximum value usable for audio volume.
+
+@italian
+
+Valore massimo utilizzabile per il volume audio.
+
+@syntax = VOLUME MAX
+
+</usermanual> */
+
+/* <usermanual>
+@keyword XCURS
+
+@english
+
+Returns the X value of the cursor position.
+
+@italian
+
+Restituisci la posizione orizzontale del cursore.
+
+@syntax = XCURS
+
+@alias X CURS
+</usermanual> */
+
+/* <usermanual>
+@keyword X CURS
+
+@english
+
+@italian
+
+@syntax = X CURS
+
+@alias XCURS
+</usermanual> */
+
+/* <usermanual>
+@keyword YCURS
+
+@english
+
+Returns the Y value of the cursor position.
+
+@italian
+
+Restituisci la posizione verticale del cursore.
+
+@syntax = YCURS
+
+@alias Y CURS
+</usermanual> */
+
+/* <usermanual>
+@keyword Y CURS
+
+@english
+
+@italian
+
+@syntax = Y CURS
+
+@alias YCURS
+</usermanual> */
+
+
+/* <usermanual>
+@keyword XGR
+
+@english
+
+Returns the X value of the last graphical position.
+
+@italian
+
+Restituisci la posizione orizzontale dell'ultima posizione grafica.
+
+@syntax = XGR
+
+</usermanual> */
+
+/* <usermanual>
+@keyword YGR
+
+@english
+
+Returns the Y value of the last graphical position.
+
+@italian
+
+Restituisci la posizione verticale dell'ultima posizione grafica.
+
+@syntax = YGR
+
+</usermanual> */

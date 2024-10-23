@@ -7518,17 +7518,43 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
 @keyword VAL
 
 @english
-This function converts strings into number.
+
+The ''VAL'' command is a function that allows you to convert a string that represents 
+a number into a integer numeric value. In other words, it takes a string that contains 
+numbers and returns the corresponding numeric value.
+
+The ''VAL'' command is very useful when working with user input, because the user 
+often enters numbers as strings. For example, if we ask the user to enter their age,
+the input will be a string. In order to perform calculations with this age, we must 
+first convert it to a number.
+
+The ''VAL'' function reads the string from left to right and stops at the first 
+character that is not a number. The ''VAL'' function ignores spaces at the beginning 
+of the string. If the string does not begin with a number or contains only 
+non-numeric characters, the ''VAL'' function returns zero.
 
 @italian
-Questa funzione converte le stringhe in numeri.
 
-@syntax = VAL( [number] )
+Il comando ''VAL'' è una funzione che consente di convertire una stringa che 
+rappresenta un numero in un valore numerico intero. In altre parole, prende 
+una stringa che contiene numeri e restituisce il valore numerico corrispondente.
 
-@example x = VAL( 42 )
+Il comando ''VAL'' è molto utile quando si lavora con l'input dell'utente, 
+perché l'utente spesso inserisce i numeri come stringhe. Ad esempio, se 
+chiediamo all'utente di inserire la sua età, l'input sarà una stringa. Per 
+eseguire calcoli con questa età, dobbiamo prima convertirla in un numero.
+
+La funzione ''VAL'' legge la stringa da sinistra a destra e si ferma al primo 
+carattere che non è un numero. La funzione ''VAL'' ignora gli spazi all'inizio 
+della stringa. Se la stringa non inizia con un numero o contiene solo caratteri 
+non numerici, la funzione ''VAL'' restituisce zero.
+
+@syntax = VAL(string)
+
+@example PRINT VAL("123")
 @usedInExample strings_val_01.bas
 
-@target all
+@seeAlso STR
  </usermanual> */
 Variable * variable_string_val( Environment * _environment, char * _value ) {
 
