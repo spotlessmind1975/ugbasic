@@ -56,20 +56,55 @@ extern char DATATYPE_AS_STRING[][16];
 @english
 This function draws an image at a specific position on the screen.
 The programmer can draw on the screen a single image (''IMAGE''), a 
-frame of a series of images (''IMAGES'') or a frame of a pose of a 
-sequence of images (''SEQUENCES''). In all cases the syntax changes 
+frame of a series of images (''ATLAS'') or a frame of a strip of a 
+sequence of images (''SEQUENCE''). In all cases the syntax changes 
 slightly.
+
+Every ''PUT IMAGE'' can be followed by a flag that modify the
+wayt the image will be drawn on the screen. The ''WITH TRANSPARENCY''
+will enable the transparency effect when the image is drawn,
+while ''DOUBLE Y'' will double the vertical size of the image. Both
+flags could be not available on all targerts and graphical modes.
+
+Another syntax is more compatible with other BASICs, that requires
+that the ''PUT IMAGE'' is followed with the bounds to draw to. This
+is only a syntatic equivalence, there is no "clipping" around the
+bounds. Moreover, it is possible to give a flag that alter the
+default behaviour of ''PUT IMAGE''. The ''PSET'' is the standard
+behaviour of ''PUT IMAGE'', while ''PRESET'' will put only the
+bitmap part of the image (if possible). The ''AND'' and ''OR''
+flags will activate the same logical operation between the
+image and the background. ''NOT'' is not currently supported.
 
 @italian
 Questa funzione disegna una immagine in una specifica posizione dello schermo.
 Il programmatore può disegnare sullo schermo una singola immagine 
-(''IMAGE''), un frame di una serie di immagini (''IMAGES'') oppure 
-un frame di una posa di una sequenza di immagini (''SEQUENCES''). 
+(''IMAGE''), un frame di una serie di immagini (''ATLAS'') oppure 
+un frame di una posa di una sequenza di immagini (''SEQUENCE''). 
 In tutti i casi la sintassi cambia leggermente.
 
-@syntax PUT IMAGE resource AT [x],[y]
-@syntax PUT IMAGE resource FRAME frame AT [x],[y]
-@syntax PUT IMAGE resource SEQUENCE sequence FRAME frame AT [x],[y]
+Ogni ''PUT IMAGE'' può essere seguito da un flag che modifica il
+modo in cui l'immagine verrà disegnata sullo schermo. ''WITH TRANSPARENCY''
+abilita l'effetto trasparenza quando l'immagine viene disegnata,
+mentre ''DOUBLE Y'' raddoppia la dimensione verticale dell'immagine. Entrambi i
+flag potrebbero non essere disponibili su tutti i target e le modalità grafiche.
+
+Un'altra sintassi è più compatibile con altri BASIC, che richiede
+che ''PUT IMAGE'' sia seguito dai limiti su cui disegnare. Questa
+è solo un'equivalenza sintattica, non c'è alcun "clipping" attorno ai
+limiti. Inoltre, è possibile fornire un flag che alteri il
+comportamento predefinito di ''PUT IMAGE''. ''PSET'' è il comportamento
+standard di ''PUT IMAGE'', mentre ''PRESET'' inserirà solo la
+parte bitmap dell'immagine (se possibile). I flag ''AND'' e ''OR''
+attiveranno la stessa operazione logica tra l'immagine e lo sfondo. 
+''NOT'' non è attualmente supportato.
+
+@syntax PUT IMAGE resource [ AT [x],[y] ] [fl]
+@syntax PUT IMAGE resource FRAME f [ AT [x],[y] ] [fl]
+@syntax PUT IMAGE resource STRIP s FRAME f [ AT [x],[y] ] [fl]
+@syntax   fl: [WITH TRANSPARENCY] [DOUBLE Y]
+@syntax PUT ([x1],[y1])-(x2,y2),resource[,fl2]
+@syntax   fl2: PSET|PRESET|AND|OR|NOT
 
 @example PUT IMAGE airplane AT 10,10
 
@@ -77,7 +112,48 @@ In tutti i casi la sintassi cambia leggermente.
 @usedInExample defines_screen_01.bas
 @usedInExample images_load_05.bas
 
-@target all
+@seeAlso PUT BITMAP
+
+</usermanual> */
+/* <usermanual>
+@keyword PUT BITMAP
+
+@english
+This function draws the bitmap component of an image at a specific position on the screen.
+The programmer can draw on the screen a single bitmap (''IMAGE''), a 
+frame of a series of bitmaps (''ATLAS'') or a frame of a strip of a 
+sequence of bitmaps (''SEQUENCE''). In all cases the syntax changes 
+slightly.
+
+Every ''PUT BITMAP'' can be followed by a flag that modify the
+wayt the image will be drawn on the screen. The ''DOUBLE Y''
+flag will double the vertical size of the image. This flag
+could be not available on all targerts and graphical modes.
+
+@italian
+Questa funzione disegna una bitmap (immagine senza colori) in una specifica posizione dello schermo.
+Il programmatore può disegnare sullo schermo una singola bitmap 
+(''IMAGE''), un frame di una serie di bitmap (''ATLAS'') oppure 
+un frame di una posa di una sequenza di bitmap (''SEQUENCE''). 
+In tutti i casi la sintassi cambia leggermente.
+
+Ogni ''PUT BITMAP'' può essere seguito da un flag che modifica il
+modo in cui l'immagine verrà disegnata sullo schermo. Il flag
+''DOUBLE Y'' raddoppia la dimensione verticale della bitmap, ma
+potrebbe non essere disponibile su tutti i target e le modalità grafiche.
+
+@syntax PUT BITMAP resource [ AT [x],[y] ] [DOUBLE Y]
+@syntax PUT BITMAP resource FRAME f [ AT [x],[y] ] [DOUBLE Y]
+@syntax PUT BITMAP resource STRIP s FRAME f [ AT [x],[y] ] [DOUBLE Y]
+
+@example PUT BITMAP airplane AT 10,10
+
+@usedInExample contrib_themill.bas
+@usedInExample defines_screen_01.bas
+@usedInExample images_load_05.bas
+
+@seeAlso PUT IMAGE
+
 </usermanual> */
 void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 

@@ -38,6 +38,31 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword READ END
+
+@english
+
+The ''READ END'' function allows you to know if you have reached the last value
+to read with the ''READ'' command. If the function returns true, this means that 
+the next ''READ'' command will ignore the read.
+
+@italian
+
+La funzione ''READ END'' permette di sapere se se è arrivato all'ultimo valore da 
+leggere con il comando ''READ''. Se la funzione restituisce true, questo vuol dire 
+che il prossimo comando ''READ'' ignorerà la lettura.
+
+@syntax = READ END
+
+@example IF READ END THEN
+@example    RESTORE
+@example ENDIF
+
+@usedInExample data_example_04.bas
+@usedInExample data_example_05.bas
+
+</usermanual> */
 Variable * read_end( Environment * _environment ) {
 
     deploy( read_data_unsafe, src_hw_6502_read_data_unsafe_asm );

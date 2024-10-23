@@ -1194,6 +1194,14 @@ the matrix was created (with the ''# {...}'' syntax), or by
 describing the memory area that will occupy the array, 
 byte by byte (with the ''# [...]'' syntax ).
 
+The array could be assigned to a "read only" memory, in order
+to save RAM space. This can be done using ''READ ONLY'' flag.
+
+Finally, the array can be assigned to a specific expansion
+bank by using the ''BANKED'' keyword. Otherwise, if an array
+could be used as destination of ''BANK READ'' / ''BANK WRITE''
+command, you should add this flag.
+
 Arrays allow you to organize data in a structured way, making it easier 
 to access and manipulate. By declaring arrays before using them, you 
 define a specific size of the data. The ''DIM'' command makes code 
@@ -1235,19 +1243,29 @@ stata creata la matrice (con la sintassi ''# {...}''), oppure descrivendo
 l'area di memoria che occuperà l'array, byte per byte (con la sintassi 
 ''# [...]'').
 
+L'array potrebbe essere assegnato a una memoria a "sola lettura", per
+risparmiare spazio RAM. Questo può essere fatto usando il flag ''READ ONLY''.
+
+Infine, l'array può essere assegnato a una specifica memoria di espansione 
+usando la parola chiave ''BANKED''. Altrimenti, se un array può essere 
+usato come destinazione del comando ''BANK READ'' / ''BANK WRITE'', 
+dovresti aggiungere questo flag.
+
 Gli array consentono di organizzare i dati in modo strutturato,
 rendendoli più facili da accedere e manipolare. Dichiarando gli array 
 prima di utilizzarli, definisci una dimensione specifica dei dati. 
 Il comando ''DIM'' rende il codice più leggibile, perché dichiara 
 esplicitamente le strutture dati utilizzate.
 
-@syntax DIM name [AS type] (d1[,d2[,...]])
-@syntax DIM name [AS type] (d1[,d2[,...]]) = #"["hex"]"
-@syntax DIM name [AS type] (d1[,d2[,...]]) = #{v,v,...}
-@syntax DIM name [AS type] WITH v (d1[,d2[,...]])
+@syntax DIM name [AS type] (d1[,d2[,...]]) [ro] [fl]
+@syntax DIM name [AS type] (d1[,d2[,...]]) = #"["hex"]" [ro] [fl]
+@syntax DIM name [AS type] (d1[,d2[,...]]) = #{v,v,...} [ro] [fl]
+@syntax DIM name [AS type] WITH v (d1[,d2[,...]]) [ro] [fl]
+@syntax   ro: [READ ONLY|READONLY]
+@syntax   fl: [BANKED|BANKED(n)|UNBANKED|FOR BANK READ|FOR BANK WRITE]
 
 @example DIM x(42)
-@example DIM values AS DWORD(20,20)
+@example DIM values AS DWORD(20,20) BANKED
 @example DIM y AS BYTE(8) = #[ff80ff80ff80ff80]
 @example DIM z AS BYTE(8) = _
 @example              #{ 255, 128, 255, 128, 255, 128, 255, 128 }
