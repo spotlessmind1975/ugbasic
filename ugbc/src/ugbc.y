@@ -97,7 +97,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token AUDIO SYNC ASYNC TARGET SJ2 CONSOLE SAVE COMBINE NIBBLE INTERRUPT MSPRITE UPDATE OFFSET JOYSTICK AVAILABLE
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
-%token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING
+%token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
@@ -3954,7 +3954,7 @@ exponential:
     | IMAGE OP expr frame const_expr CP {
         $$ = image_extract( _environment, $3, $5, NULL )->name;
     }
-    | IMAGE OP expr SEQUENCE const_expr frame const_expr CP {
+    | IMAGE OP expr sequence_or_strip const_expr frame const_expr CP {
         int sequence = $5;
         $$ = image_extract( _environment, $3, $7, &sequence )->name;
     }
@@ -5274,7 +5274,7 @@ get_definition_expression:
         get_image( _environment, $2, $6, $8, NULL, NULL, $4, NULL, 1 );
         gr_locate( _environment, $6, $8 );
     }
-    | IMAGE expr SEQUENCE expr frame expr FROM optional_x OP_COMMA optional_y  {
+    | IMAGE expr sequence_or_strip expr frame expr FROM optional_x OP_COMMA optional_y  {
         get_image( _environment, $2, $8, $10, NULL, NULL, $6, $4, 1 );
         gr_locate( _environment, $8, $10 );
     }
@@ -5286,7 +5286,7 @@ get_definition_expression:
         get_image( _environment, $2, $6, $8, NULL, NULL, $4, NULL, 0 );
         gr_locate( _environment, $6, $8 );
     }
-    | BITMAP expr SEQUENCE expr frame expr FROM optional_x OP_COMMA optional_y  {
+    | BITMAP expr sequence_or_strip expr frame expr FROM optional_x OP_COMMA optional_y  {
         get_image( _environment, $2, $8, $10, NULL, NULL, $6, $4, 1 );
         gr_locate( _environment, $8, $10 );
     }    
@@ -5317,7 +5317,7 @@ slice_definition_expression:
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         slice_image( _environment, $2, calculatedFrame->name, NULL, $8 );
     }
-    | IMAGE expr SEQUENCE expr frame expr slice_source_options TO Identifier {
+    | IMAGE expr sequence_or_strip expr frame expr slice_source_options TO Identifier {
         slice_image( _environment, $2, $6, $6, $9 );
     }
     ;
@@ -5422,7 +5422,7 @@ put_definition_expression:
         put_image( _environment, $2, $7, $9, NULL, NULL, calculatedFrame->name, NULL, $10 );
         gr_locate( _environment, $7, $9 );
     }
-    |  IMAGE expr SEQUENCE expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
+    |  IMAGE expr sequence_or_strip expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
         $11 = $11 | FLAG_WITH_PALETTE;
         put_image( _environment, $2, $8, $10, NULL, NULL, $6, $4, $11 );
         gr_locate( _environment, $8, $10 );
@@ -5447,7 +5447,7 @@ put_definition_expression:
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, calculatedFrame->name, NULL, $6 );
     }
-    | IMAGE expr SEQUENCE expr frame expr put_image_flags {
+    | IMAGE expr sequence_or_strip expr frame expr put_image_flags {
         $7 = $7 | FLAG_WITH_PALETTE;
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
@@ -5468,7 +5468,7 @@ put_definition_expression:
         put_image( _environment, $2, $7, $9, NULL, NULL, calculatedFrame->name, NULL, $10 );
         gr_locate( _environment, $7, $9 );
     }
-    | BITMAP expr SEQUENCE expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
+    | BITMAP expr sequence_or_strip expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
         put_image( _environment, $2, $8, $10, NULL, NULL, $6, $4, $11 );
         gr_locate( _environment, $8, $10 );
     }
@@ -5489,7 +5489,7 @@ put_definition_expression:
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, calculatedFrame->name, NULL, $6 );
     }
-    | BITMAP expr SEQUENCE expr frame expr put_image_flags {
+    | BITMAP expr sequence_or_strip expr frame expr put_image_flags {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, $6, $4, $7 );
@@ -5679,6 +5679,10 @@ blit_definition_define_expression :
     | Identifier op_assign blit_unary_op OP_COMMA blit_unary_op OP_COMMA blit_binary_op OP_COMMA blit_unary_op OP_COMMA blit_unary_op OP_COMMA blit_binary_op OP_COMMA blit_unary_op {
         blit_define( _environment, $1, $3, $5, $7, $9, $11, $13, $15 );
       }
+    ;
+
+sequence_or_strip : 
+    SEQUENCE | STRIP
     ;
 
 image_or_images : 
