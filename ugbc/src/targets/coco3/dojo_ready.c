@@ -38,6 +38,15 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword READY
+@target coco3
+</usermanual> */
+/* <usermanual>
+@keyword DOJO READY
+@target coco3
+</usermanual> */
+
 Variable * dojo_ready( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
