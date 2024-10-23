@@ -47,7 +47,7 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-@keyword RETURN
+@keyword RETURN (instruction)
 
 @english
 Return from unconditional jump. The execution will continue to the instruction next

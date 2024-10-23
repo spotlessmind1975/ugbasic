@@ -45,21 +45,43 @@
  * @param _name Name of the procedure
  */
 /* <usermanual>
-@keyword RESPAWN
+@keyword RESPAWN (instruction)
 
 @english
+
 This keyword will restart a (finished) (parallel) procedure. 
 
 @italian
+
 Questa parola chiave fa ricominciare una funzione terminata,
 affinché sia eseguita in parallelo.
 
-@syntax RESPAWN [name][{[parameter],{[parameter],....}}]
+@syntax RESPAWN identifier
 
-@example RESPAWN factorialHandle(42)
+@example RESPAWN factorialHandle
 
-@target all
 </usermanual> */
+
+/* <usermanual>
+@keyword RESPAWN (function)
+
+@english
+
+This keyword will restart a (finished) (parallel) procedure,
+giving back a thread id.
+
+@italian
+
+Questa parola chiave fa ricominciare una funzione terminata,
+affinché sia eseguita in parallelo, restituendo il codice
+identificativo del thread.
+
+@syntax = RESPAWN(identifier)
+
+@example newHandle = RESPAWN(factorialHandle)
+
+</usermanual> */
+
 Variable * respawn_procedure( Environment * _environment, char * _name ) {
 
     MAKE_LABEL

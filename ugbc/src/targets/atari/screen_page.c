@@ -43,9 +43,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword SCREEN PAGE
-</usermanual> */
 Variable * screen_page( Environment * _environment ) {
 
     Variable * page = variable_temporary( _environment, VT_BYTE, "(page)" );

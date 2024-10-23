@@ -43,26 +43,53 @@
 
 @english
 
-The ''RESTORE'' sets the internal DATA pointer to a desired
-BASIC line ''label''. If the ''label'' is omitted, the command completely 
-resets the ''DATA'' pointer to the beginning. When using ''RESTORE'' without
-''label'', unwanted ''DATA'' information may first have to be read over in a loop.
+The ''RESTORE'' command is used to reset the data read pointer to the beginning 
+of a list of ''DATA''. Imagine having a cassette tape with numbers on it, and 
+you want to read those numbers one at a time. When you use ''RESTORE'', it's as 
+if you're rewinding the tape to the beginning, ready to read all the numbers again.
+
+When the program encounters this command, the data read pointer is automatically 
+reset to the beginning of the first data list you defined. If you give a ''parameter'',
+you can set the pointer to the label given.
+
+The ''RESTORE'' command is especially useful when you want to reuse a list of data.
+If you need to read the same data multiple times in your program, you can use 
+''RESTORE'' to reset the pointer to the beginning of the list without having to
+retype it. If you want to read only part of the data, you can use ''RESTORE'' to 
+skip parts of the list and start reading from a specific point. If you want to 
+create loops that read the data, by combining ''RESTORE'' with other commands 
+such as ''READ'' and ''DATA'', you can create loops that repeatedly read 
+the same data.
 
 @italian
 
-Il ''RESTORE'' imposta il puntatore ''DATA'' interno su una ''etichetta'' della linea 
-BASIC desiderata. Se l'etichetta'' viene omessa, il comando reimposta 
-il puntatore ''DATA'' all'inizio. Quando si utilizza ''RESTORE'' senza ''label'', 
-è possibile che le informazioni ''DATA'' indesiderate debbano prima essere lette 
-in loop.
+Il comando ''RESTORE'' viene utilizzato per reimpostare il puntatore di lettura 
+dei dati all'inizio di un elenco di ''DATA''. Immagina di avere una cassetta con dei 
+numeri e di voler leggere quei numeri uno alla volta. Quando utilizzi ''RESTORE'', 
+è come se stessi riavvolgendo il nastro all'inizio, pronto per leggere di nuovo 
+tutti i numeri.
 
-@syntax RESTORE [label]
+Quando il programma incontra questo comando, il puntatore di lettura dei dati viene 
+automaticamente reimpostato all'inizio del primo elenco di dati che hai definito. 
+Se fornisci un ''label'', puoi impostare il puntatore all'etichetta specificata.
+
+Il comando ''RESTORE'' è particolarmente utile quando vuoi riutilizzare un 
+elenco di dati. Se hai bisogno di leggere gli stessi dati più volte nel tuo 
+programma, puoi utilizzare ''RESTORE'' per reimpostare il puntatore all'inizio 
+dell'elenco senza doverlo digitare di nuovo. Se vuoi leggere solo una parte dei dati, 
+puoi utilizzare ''RESTORE'' per saltare parti dell'elenco e iniziare la lettura da un
+punto specifico. Se vuoi creare loop che leggono i dati, combinando ''RESTORE'' con altri 
+comandi come ''READ'' e ''DATA'', puoi creare loop che leggono ripetutamente gli stessi dati.
+
+@syntax RESTORE label
 
 @example RESTORE inizio
 
 @usedInExample data_example_03.bas
 
-@target all
+@seeAlso READ
+@seeAlso DATA
+
 </usermanual> */
 
 void restore_label( Environment * _environment, char * _label ) {

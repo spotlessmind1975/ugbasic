@@ -155,6 +155,7 @@ potrebbe non essere disponibile su tutti i target e le modalità grafiche.
 @seeAlso PUT IMAGE
 
 </usermanual> */
+
 void put_image_vars_original( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
     if ( _environment->emptyProcedure ) {

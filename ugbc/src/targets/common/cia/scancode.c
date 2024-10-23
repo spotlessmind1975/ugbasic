@@ -42,6 +42,58 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
+/* <usermanual>
+@keyword SCANCODE
+
+@english
+
+The ''SCANCODE' (or ''SCAN CODE'') capture a single character typed by the user 
+without having to press enter. In other words, the program is "listening" 
+to the keyboard and, as soon as a key is pressed, "captures" it and 
+stores it in a variable.
+
+Like the  ''INKEY'' command, it  reads the character as soon as it is 
+pressed. If no key has been pressed, it returns NONE. The captured 
+character is stored in a ''BYTE'' variable, and it is in a target
+dependent encoding. You must use the various constants to compare
+the value returned with the key wanted.
+
+It is used to create interactive games where the user can control the 
+character or objects by pressing specific keys, to create text menus 
+where the user can select an option by pressing a letter or number
+or to create programs that respond to external events, such as 
+pressing a key to start or stop an action.
+
+@italian
+
+''SCANCODE'' (o ''SCAN CODE'') cattura un singolo carattere 
+digitato dall'utente senza dover premere Invio. In altre parole, 
+il programma "ascolta" la tastiera e, non appena viene premuto un tasto, 
+lo "cattura" e lo memorizza in una variabile.
+
+Come il comando ''INKEY'', legge il carattere non appena viene premuto. 
+Se non è stato premuto alcun tasto, restituisce NONE. Il carattere
+catturato viene memorizzato in una variabile ''BYTE'' ed è in una codifica 
+dipendente dal target. È necessario utilizzare le varie costanti per
+confrontare il valore restituito con il tasto desiderato.
+
+Viene utilizzato per creare giochi interattivi in ​​cui l'utente può 
+controllare il personaggio o gli oggetti premendo tasti specifici, 
+per creare menu di testo in cui l'utente può selezionare un'opzione 
+premendo una lettera o un numero, o per creare programmi che rispondono 
+a eventi esterni, come la pressione di un tasto per avviare o interrompere 
+un'azione.
+
+@syntax = SCANCODE
+
+@example IF SCANCODE = KEY A THEN
+@example    PRINT "A has been pressed!"
+@example ENDIF
+
+@seeAlso SCANCODE
+
+</usermanual> */
+
 Variable * scancode( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANCODE)");

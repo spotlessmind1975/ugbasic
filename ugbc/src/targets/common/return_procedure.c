@@ -45,7 +45,7 @@
  * @param _value Value to the return
  */
 /* <usermanual>
-@keyword RETURN ...
+@keyword RETURN (procedure)
 
 @english
 If you want to return a parameter from inside a procedure, that is to say, 
@@ -66,7 +66,10 @@ L'istruzione ''RETURN'' prende il risultato di un'espressione e lo inserisce
 nella variabile ''PARAM'' e, contemporaneamente, lo restituisce come 
 espressione come il risultato della chiamata.
 
-@syntax RETURN [expression]
+Un altro utilizzo di questo comando è per tornare da un ''GOSUB'': 
+in questo caso, non è necessario alcun parametro.
+
+@syntax RETURN expression
 
 @example RETURN 42
 
@@ -74,7 +77,8 @@ espressione come il risultato della chiamata.
 @usedInExample procedures_param_02.bas
 @usedInExample procedures_param_03.bas
 
-@target all
+@seeAlso PROCEDURE
+
 </usermanual> */
 void return_procedure( Environment * _environment, char * _value ) {
 

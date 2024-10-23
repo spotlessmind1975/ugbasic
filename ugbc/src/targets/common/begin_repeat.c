@@ -50,28 +50,55 @@
 @keyword REPEAT...UNTIL
 
 @english
-This instruction define a conditional loop, or a list of statements that will be executed
-until an expression is true. ''REPEAT'' acts as the starting position while ''UNTIL'' 
-as the ending one. This command provides a convenient way of making the program repeat 
-a group of instructions all the time a particular condition is false. The condition is
-checked again at ending of every turn of the loop, until it is no longer false. 
+
+The '''REPEAT...UNTIL'' command will repeatedly execute a block of code until a certain 
+condition is met. In essence, it creates a loop that continues to repeat until a specific 
+exit condition is met.
+
+When you don't know exactly how many times you want to repeat a block of code, but you 
+want to continue until a certain condition is met, this is the best command to use.
+For example, to repeatedly prompt the user for input until they enter it correctly.
+Another usage is to perform calculations that require multiple iterations, such as 
+finding the square root of a number using the Newton-Raphson method.
+
+Make sure the condition inside ''UNTIL'' can become true at some point, otherwise your 
+program may end up in an infinite loop. If you need to execute a loop a large number 
+of times, consider optimizing your code to improve performance.
 
 @italian
-Questa istruzione definisce un ciclo condizionale o un elenco di istruzioni che verranno eseguite
-mentre fino a che un'espressione diventa vera. ''REPEAT'' funge da posizione di partenza del loop mentre ''UNTIL''
-come quello di fine. Questo comando fornisce un modo conveniente per ripetere un gruppo
-di istruzioni per tutto il tempo nel quale una particolare condizione è falsa. La condizione è
-controllata di nuovo ad ogni ciclo, fino a quando non è più vera.
+
+Il comando '''REPEAT...UNTIL'' eseguirà ripetutamente un blocco di codice finché 
+non viene soddisfatta una determinata condizione. In sostanza, crea un ciclo che 
+continua a ripetersi finché non viene soddisfatta una specifica condizione di uscita.
+
+Quando non sai esattamente quante volte vuoi ripetere un blocco di codice, ma vuoi 
+continuare finché non viene soddisfatta una determinata condizione, questo è il 
+comando migliore da usare. 
+
+Ad esempio, per chiedere ripetutamente all'utente di immettere un input finché non 
+lo inserisce correttamente. Un altro utilizzo è per eseguire calcoli che richiedono 
+più iterazioni, come trovare la radice quadrata di un numero utilizzando il metodo 
+Newton-Raphson.
+
+Assicurati che la condizione all'interno di ''UNTIL'' possa diventare vera a un 
+certo punto, altrimenti il ​​tuo programma potrebbe finire in un ciclo infinito. 
+Se hai bisogno di eseguire un ciclo un gran numero di volte, prendi in considerazione 
+l'ottimizzazione del tuo codice per migliorare le prestazioni.
 
 @syntax REPEAT 
 @syntax     ...
 @syntax UNTIL expression 
 
-@example REPEAT : score = score + 1 : UNTIL NOT alive
+@example REPEAT
+@example   score = score + 1
+@example UNTIL alive
 
 @usedInExample control_loops_05.bas
 
-@target all
+@seeAlso DO...LOOP
+@seeAlso WHILE...WEND
+@seeAlso FOR...NEXT
+
 </usermanual> */
 void begin_repeat( Environment * _environment ) {
 

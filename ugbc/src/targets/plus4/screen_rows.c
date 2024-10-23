@@ -50,8 +50,7 @@
  * @param _rows Number of rows
  */
 /* <usermanual>
-@keyword SCREEN ROWS
-
+@keyword SCREEN ROWS (instruction)
 @target plus4
 </usermanual> */
 void screen_rows( Environment * _environment, int _rows ) {
@@ -75,14 +74,7 @@ void screen_rows( Environment * _environment, int _rows ) {
  * @param _environment Current calling environment
  * @param _rows Number of rows
  */
-/* <usermanual>
-@keyword SCREEN ROWS
-
-@target plus4
-</usermanual> */
 void screen_rows_var( Environment * _environment, char * _rows ) {
-
-    
 
     Variable * rows = variable_retrieve( _environment, _rows );
     ted_screen_rows( _environment, rows->realName );

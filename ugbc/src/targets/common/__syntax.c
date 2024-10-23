@@ -1024,7 +1024,7 @@ impostato diversamente. Il comando invoca implicitamente una garbage collection.
 </usermanual> */
 
 /* <usermanual>
-@keyword SCREEN
+@keyword SCREEN (constant)
 
 @english
 Retrieves a bitmask with screen characteristics, such as whether or 
@@ -1661,7 +1661,8 @@ questa risoluzione virtuale.
 
 @example RESOLUTION 100, 100
 
-@target all
+@seeAlso ORIGIN
+
 </usermanual> */
 
 /* <usermanual>
@@ -2676,8 +2677,8 @@ sarà ritagliato
 
 @usedInExample tsb_block_rec_01.bas
 
-@target c128
-@project tsb
+@alias BOX
+
 </usermanual> */
 
 /* <usermanual>
@@ -5783,3 +5784,134 @@ target corrispondente, il valore sarà zero.
 @example ENDIF
 
 </usermanual> */
+
+/* <usermanual>
+@keyword RETURN (constant)
+
+@english
+
+This constant represent the "RETURN" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "RETURN", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = RETURN
+
+@example IF KET STATE(RETURN) THEN
+@example    PRINT "RETURN has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword RIGHT SHIFT (constant)
+
+@english
+
+This constant represent the right "SHIFT" key, when used as bitmask
+for ''KEY SHIFT'' instruction.
+
+@italian
+
+Questa costante rappresenta il tasto destro "SHIFT", quando utilizzato 
+come maschera di bit per l'istruzione ''KEY SHIFT''.
+
+@syntax = RIGHT SHIFT
+
+@example IF KEY SHIFT AND RIGHT SHIFT THEN
+@example    PRINT "RIGHT SHIFT has been pressed!"
+@example ENDIF
+
+@alias SHIFT RIGHT (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword SHIFT RIGHT (constant)
+
+@english
+
+This constant represent the right "SHIFT" key, when used as bitmask
+for ''KEY SHIFT'' instruction.
+
+@italian
+
+Questa costante rappresenta il tasto destro "SHIFT", quando utilizzato 
+come maschera di bit per l'istruzione ''KEY SHIFT''.
+
+@syntax = SHIFT RIGHT
+
+@alias RIGHT SHIFT (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword ROWS (constant)
+
+@english
+
+This constant gives you the number of rows of the actual console.
+
+@italian
+
+Questa costante fornisce il numero effettivo di righe della console attiva.
+
+@syntax = ROWS
+
+@alias ROWS (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword RUN STOP (constant)
+
+@english
+
+This constant represent the "RUN STOP" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "RUN STOP", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = RUN STOP
+
+@alias RUNSTOP (constant)
+
+</usermanual> */
+
+/* <usermanual>
+@keyword RUNSTOP (constant)
+
+@english
+
+This constant represent the "RUNSTOP" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero. 
+
+@italian
+
+Questa costante rappresenta il tasto "RUNSTOP", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = RUNSTOP
+
+alias RUN STOP (constant)
+
+</usermanual> */
+

@@ -47,32 +47,34 @@
  * @param _mode Mode to change to
  */
 /* <usermanual>
-@keyword SCREEN
+@keyword SCREEN (instruction)
 
 @english
 
-The ''SCREEN'' command allows to select a specific hardware-dependent
-screen mode. Every target has a specific list of modes. Normally,
-these modes are selected by describing resolution and color depth.
-This is another way to select graphical modes.
+The ''SCREEN'' command allows you to switch mode, from text mode 
+(where you can display only characters) to graphics mode, 
+where you can draw points, lines, and complex shapes on the screen.
 
-Moreover, there is another syntax for SCREEN. The second syntax
-allow to select the type and color scheme. Type is ''0'' for the text 
-screen and ''1'' for the high resolution screen, while the color
-scheme depends on target.
+Most games use graphics mode to display characters, scenery, and 
+animations. You can create slide shows and presentations with 
+eye-catching visuals, and you will have access to canvas 
+to create digital art.
+
+The ''mode'' parameter represent a specific graphic mode, different
+from target to target.
 
 @italian
 
-Il comando ''SCREEN'' consente di selezionare una modalità schermo 
-specifica dipendente dall'hardware. Ogni target ha un elenco 
-specifico di modalità. Normalmente, queste modalità vengono 
-selezionate descrivendo la risoluzione e la profondità del 
-colore. Questo è un altro modo per selezionare le modalità grafiche.
+Il comando ''SCREEN'' ti consente di cambiare modalità, dalla 
+modalità testo (dove puoi visualizzare solo caratteri) alla modalità 
+grafica, dove puoi disegnare punti, linee e forme complesse sullo schermo.
 
-Inoltre, esiste un'altra sintassi per ''SCREEN''. La seconda sintassi 
-consente di selezionare il tipo e la combinazione di colori. Il tipo 
-è ''0'' per lo schermo di testo e ''1'' per lo schermo ad alta 
-risoluzione, mentre lo schema dei colori dipende dal target.
+La maggior parte dei giochi usa la modalità grafica per visualizzare 
+personaggi, scenari e animazioni. Puoi creare presentazioni e slideshow 
+con immagini accattivanti e avrai accesso a canvas per creare arte digitale.
+
+Il parametro ''mode'' rappresenta una modalità grafica specifica, diversa 
+da target a target.
 
 @syntax SCREEN #mode
 @syntax SCREEN #type, #colorset
@@ -80,7 +82,8 @@ risoluzione, mentre lo schema dei colori dipende dal target.
 @example SCREEN #1
 @example SCREEN #1, #0
 
-@target all
+@seeAlso BITMAP ENABLE
+
 </usermanual> */
 void screen_mode( Environment * _environment, int _mode ) {
 

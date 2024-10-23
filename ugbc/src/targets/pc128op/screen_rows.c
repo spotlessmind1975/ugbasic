@@ -49,11 +49,6 @@
  * @param _environment Current calling environment
  * @param _rows Number of rows
  */
-/* <usermanual>
-@keyword SCREEN ROWS
-
-@target pc128op
-</usermanual> */
 void screen_rows( Environment * _environment, int _rows ) {
 
 }
@@ -69,9 +64,6 @@ void screen_rows( Environment * _environment, int _rows ) {
  * @param _environment Current calling environment
  * @param _rows Number of rows
  */
-/* <usermanual>
-@keyword SCREEN ROWS
-</usermanual> */
 void screen_rows_var( Environment * _environment, char * _rows ) {
 
 }

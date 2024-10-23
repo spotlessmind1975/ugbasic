@@ -38,6 +38,46 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword RECEIVE
+
+@english
+
+The ''RECEIVE'' function waits for a character from DOJO connection.
+
+@italian
+
+La funzione ''RECEIVE'' attende un carattere dalla connessione DOJO.
+
+@syntax = RECEIVE()
+
+@example IF READY( ) THEN
+@example    PRINT RECEIVE()
+@example ENDIF
+
+@alias DOJO RECEIVE
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO RECEIVE
+
+@english
+
+@italian
+
+@syntax = DOJO RECEIVE()
+
+@example IF DOJO READY( ) THEN
+@example    PRINT DOJO RECEIVE()
+@example ENDIF
+
+@alias RECEIVE
+
+@target c64
+</usermanual> */
+
 Variable * dojo_receive( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );

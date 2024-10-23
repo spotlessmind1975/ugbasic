@@ -38,6 +38,15 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword RECEIVE
+@target coco
+</usermanual> */
+/* <usermanual>
+@keyword DOJO RECEIVE
+@target coco
+</usermanual> */
+
 Variable * dojo_receive( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
