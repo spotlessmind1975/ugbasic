@@ -6661,15 +6661,14 @@ utilizzare la funzione ''LEN''.
 
 @usedInExample strings_right_01.bas
 
+@seeAlso RIGHT (instruction)
 @seeAlso LEFT (function)
-@seeAlso LEFT
+@seeAlso LEFT (instruction)
 @seeAlso MID (function)
-@seeAlso MID
+@seeAlso MID (instruction)
 @seeAlso LEN
 
-@target all
-@verified
- </usermanual> */
+</usermanual> */
 Variable * variable_string_right( Environment * _environment, char * _string, char * _position ) {
     Variable * string = variable_retrieve( _environment, _string );
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
@@ -6729,13 +6728,51 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
  * @return Variable* Result of text extraction
  */
 /* <usermanual>
-@keyword RIGHT
+@keyword RIGHT (instruction)
 
-@syntax RIGHT( [text], [position] ) = [expression]
+@english
+
+The ''RIGHT'' command replaces the rightmost characters in the 
+destination string with the equivalent characters from the given
+strings. The command has two parameters. 
+
+The first parameter is the string expression to change. 
+
+The second parameter is a numeric expression, indicating how 
+many characters to return. If 0, an empty string (''""'') is returned. 
+On the other hand, if greater than or equal to the number of characters 
+in string, the entire string is returned, untouched. 
+
+To determine the number of characters in string, you should use 
+the ''LEN'' function.
+
+@italian
+
+Il comando ''RIGHT'' sostituisce i caratteri più a destra nella stringa 
+di destinazione con i caratteri equivalenti dalle stringhe fornite. 
+Il comando ha due parametri.
+
+Il primo parametro è l'espressione stringa da modificare.
+
+Il secondo parametro è un'espressione numerica che indica quanti caratteri 
+restituire. Se 0, viene restituita una stringa vuota (''""'').
+
+D'altra parte, se è maggiore o uguale al numero di caratteri nella stringa, 
+viene restituita l'intera stringa, intatta.
+
+Per determinare il numero di caratteri nella stringa, dovresti usare la funzione ''LEN''.
+
+@syntax RIGHT(text,position) = expression
 
 @example RIGHT( "TEST", 2 ) = "AM"
 
-@target all
+@seeAlso RIGHT (function)
+@seeAlso LEFT (function)
+@seeAlso LEFT (instruction)
+@seeAlso MID (function)
+@seeAlso MID (instruction)
+@seeAlso LEN
+
  </usermanual> */
 void variable_string_right_assign( Environment * _environment, char * _string, char * _position, char * _expression ) {
     Variable * string = variable_retrieve( _environment, _string );

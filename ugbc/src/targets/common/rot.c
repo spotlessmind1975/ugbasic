@@ -43,13 +43,20 @@
 
 @english
 
+The ''ROT'' command is used to set the starting angle and step for subsequent 
+drawing operations with the DRAW command.
+
 @italian
+
+Il comando ROT ha lo scopo di impostare l'angolo di partenza e lo step per 
+le successive operazioni di disegno con il comando DRAW.
 
 @example DRAW "BM0,0;R10;U10;L10;D10"
 
 @usedInExample graphics_draw_01.bas
 
-@target all
+@seeAlso DRAW (program)
+
 </usermanual> */
 void rot( Environment * _environment, char * _angle, char * _step ) {
 
