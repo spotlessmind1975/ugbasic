@@ -1024,7 +1024,7 @@ impostato diversamente. Il comando invoca implicitamente una garbage collection.
 </usermanual> */
 
 /* <usermanual>
-@keyword SCREEN
+@keyword SCREEN (constant)
 
 @english
 Retrieves a bitmask with screen characteristics, such as whether or 
