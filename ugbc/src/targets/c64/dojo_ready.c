@@ -38,6 +38,48 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword READY
+
+@english
+
+The ''READY'' function lets you know if there is a byte available on DOJO 
+connection.
+
+@italian
+
+La funzione ''READY'' consente di sapere se c'è un byte disponibile 
+sulla connessione DOJO.
+
+@syntax = READY()
+
+@example IF READY( ) THEN
+@example    PRINT "DOJO data is available"
+@example ENDIF
+
+@alias DOJO READY
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO READY
+
+@english
+
+@italian
+
+@syntax = DOJO READY()
+
+@example IF DOJO READY( ) THEN
+@example    PRINT "DOJO data is available"
+@example ENDIF
+
+@alias READY
+
+@target c64
+</usermanual> */
+
 Variable * dojo_ready( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
