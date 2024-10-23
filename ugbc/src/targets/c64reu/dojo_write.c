@@ -38,6 +38,14 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword SEND
+@target c64reu
+</usermanual> */
+/* <usermanual>
+@keyword DOJO SEND
+@target c64reu
+</usermanual> */
 void dojo_send( Environment * _environment, char * _value ) {
 
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_BYTE, 0 );

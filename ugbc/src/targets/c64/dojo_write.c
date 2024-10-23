@@ -38,6 +38,44 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword SEND
+
+@english
+
+The ''SEND'' function send a character to DOJO connection.
+
+@italian
+
+La funzione ''SEND''invia un carattere dalla connessione DOJO.
+
+@syntax SEND data
+
+@example    SEND "a"
+
+@alias DOJO SEND
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO SEND
+
+@english
+
+@italian
+
+@syntax DOJO SEND data
+
+@example IF DOJO READY( ) THEN
+@example    PRINT DOJO RECEIVE()
+@example ENDIF
+
+@alias SEND
+
+@target c64
+</usermanual> */
+
 void dojo_send( Environment * _environment, char * _value ) {
 
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_BYTE, 0 );

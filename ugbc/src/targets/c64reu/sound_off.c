@@ -48,19 +48,7 @@
  */
 /* <usermanual>
 @keyword SOUND OFF
-
-@english
-This command allows you to stop the play on all channels or specific channels.
-
-@italian
-Questo comando permette di interrompere il suono su tutti i canali o su canali specifici.
-
-@syntax SOUND OFF {ON #channels}
-
-@example SOUND OFF
-@example SOUND OFF ON #%001
-
-@target c64
+@target c64reu
 </usermanual> */
 void sound_off( Environment * _environment, int _channels ) {
 
@@ -76,16 +64,6 @@ void sound_off( Environment * _environment, int _channels ) {
  * @param _environment Current calling environment
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword SOUND OFF
-
-@syntax SOUND OFF {ON [channels]}
-
-@example SOUND OFF
-@example SOUND OFF ON primaVoce
-
-@target c64
-</usermanual> */
 void sound_off_var( Environment * _environment, char * _channels ) {
 
     if ( _channels ) {

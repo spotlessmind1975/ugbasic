@@ -40,20 +40,6 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-/* <usermanual>
-@keyword SLICE IMAGE
-
-@english
-
-@italian
-
-@syntax SLICE IMAGE [image] AT [x],[y]
-
-@example SLICE IMAGE airplane TO plane
-
-@target all
-
-</usermanual> */
 void slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _destination ) {
     
 }

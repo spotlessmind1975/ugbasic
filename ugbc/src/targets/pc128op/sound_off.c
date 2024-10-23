@@ -46,9 +46,6 @@
  * @param _environment Current calling environment
  * @param _channels channels to play off
  */
-/* <usermanual>
-@keyword SOUND OFF
-</usermanual> */
 void sound_off( Environment * _environment, int _channels ) {
 
     sn76489m_stop( _environment, _channels );
@@ -63,9 +60,6 @@ void sound_off( Environment * _environment, int _channels ) {
  * @param _environment Current calling environment
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword SOUND OFF
-</usermanual> */
 void sound_off_var( Environment * _environment, char * _channels ) {
 
     if ( _channels ) {

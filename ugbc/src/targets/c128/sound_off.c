@@ -50,18 +50,21 @@
 @keyword SOUND OFF
 
 @english
-This command allows you to stop the play on all channels or specific channels.
+
+The ''SOUND OFF'' command can be used to stop play a sound on a channel or on all channels.
 
 @italian
-Questo comando permette di interrompere il suono su tutti i canali o su canali specifici.
 
-@syntax SOUND OFF {ON #channels}
+Il comando ''SOUND OFF'' può essere utilizzato per interrompere la riproduzione di un suono su un canale o su tutti i canali.
+
+@syntax SOUND OFF {ON [channels]}
 
 @example SOUND OFF
-@example SOUND OFF ON #%001
+@example SOUND OFF ON primaVoce
 
 @target c128
 </usermanual> */
+
 void sound_off( Environment * _environment, int _channels ) {
 
     sid_stop( _environment, _channels );
@@ -76,16 +79,6 @@ void sound_off( Environment * _environment, int _channels ) {
  * @param _environment Current calling environment
  * @param _channels channels to play on
  */
-/* <usermanual>
-@keyword SOUND OFF
-
-@syntax SOUND OFF {ON [channels]}
-
-@example SOUND OFF
-@example SOUND OFF ON primaVoce
-
-@target c128
-</usermanual> */
 void sound_off_var( Environment * _environment, char * _channels ) {
 
     if ( _channels ) {

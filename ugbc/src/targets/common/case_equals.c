@@ -103,11 +103,6 @@ void case_equals_label( Environment * _environment ) {
  * @param _environment Current calling environment
  * @param _expression Expression with the true / false condition
  */
-/* <usermanual>
-@keyword SELECT CASE...CASE...CASE ELSE...ENDSELECT
-
-@target all
-</usermanual> */
 void case_equals_var( Environment * _environment, char * _value ) {
 
     Conditional * conditional = _environment->conditionals;
@@ -145,11 +140,6 @@ void case_equals_var( Environment * _environment, char * _value ) {
  * @param _environment Current calling environment
  * @param _expression Expression with the true / false condition
  */
-/* <usermanual>
-@keyword SELECT CASE...CASE...CASE ELSE...ENDSELECT
-
-@target all
-</usermanual> */
 void case_equals( Environment * _environment, int _value ) {
 
     Conditional * conditional = _environment->conditionals;
