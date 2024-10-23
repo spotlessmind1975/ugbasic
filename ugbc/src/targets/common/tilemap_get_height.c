@@ -57,7 +57,7 @@ is expressed in tiles
 Questa funzione permette di ottenere l'altezza di una mappa di tile (''TILEMAP''). 
 L'altezza è espressa in tessere.
 
-@syntax = TILEMAP HEIGHT([tilemap])
+@syntax = TILEMAP HEIGHT(tilemap)
 
 @example starshipHeight = TILEMAP HEIGHT( tilemap )
 

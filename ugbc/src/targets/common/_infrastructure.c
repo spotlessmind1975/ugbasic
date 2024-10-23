@@ -7397,17 +7397,55 @@ Variable * variable_string_lower( Environment * _environment, char * _string ) {
 @keyword UPPER
 
 @english
-This function converts the characters in a string into upper case (capital) letters.
+
+The UPPER command (short for "Upper Case") is a function that converts all lowercase 
+letters in a string to uppercase. In other words, it takes any string and returns a 
+new string that is identical to the first, but with all letters in uppercase.
+
+If you want to compare two strings without regard to case, you can convert both 
+strings to uppercase before performing the comparison. You can use this command
+to standardize user input, for example to ensure that all names are uppercase.
+You can use it to make the output more readable or to conform to specific 
+formatting conventions.
 
 @italian
-Questa funzione converte i caratteri presenti in una stringa in lettere maiuscole.
 
-@syntax = UPPER( [text] )
+Il comando ''UPPER'' (abbreviazione di "Upper Case") è una funzione che converte
+tutte le lettere minuscole in una stringa in maiuscolo. In altre parole, prende 
+una stringa qualsiasi e restituisce una nuova stringa identica alla prima, ma 
+con tutte le lettere in maiuscolo.
+
+Se vuoi confrontare due stringhe senza considerare le maiuscole e le minuscole, 
+puoi convertire entrambe le stringhe in maiuscolo prima di eseguire il confronto. 
+Puoi usare questo comando per standardizzare l'input dell'utente, ad esempio per 
+assicurarti che tutti i nomi siano in maiuscolo.
+
+Puoi usarlo per rendere l'output più leggibile o per conformarti a specifiche 
+convenzioni di formattazione.
+
+@syntax = UPPER(text)
 
 @example x = UPPER( "ugBASIC" )
 @usedInExample strings_cases_01.bas
 
-@target all
+@alias UCASE
+
+ </usermanual> */
+ /* <usermanual>
+@keyword UCASE
+
+@english
+
+@italian
+
+@syntax = UCASE(text)
+
+@example x = UCASE( "ugBASIC" )
+
+@usedInExample strings_cases_01.bas
+
+@alias UPPER
+
  </usermanual> */
 Variable * variable_string_upper( Environment * _environment, char * _string ) {
     Variable * string = variable_retrieve( _environment, _string );
@@ -7467,13 +7505,13 @@ ma che funzionano bene con  parametri sotto forma di stringhe. Inoltre, quando
 viene eseguita l'aggiunta di stringhe, tutti gli operandi devono essere stringhe, 
 quindi questa funzione è davvero utile.
 
-@syntax = STR( [number] )
+@syntax = STR(number)
 
-@example x = STR( 42 )
+@example x = STR(42)
+
 @usedInExample strings_str_01.bas
 
-@target all
- </usermanual> */
+</usermanual> */
 Variable * variable_string_str( Environment * _environment, char * _value ) {
     Variable * value = variable_retrieve( _environment, _value );
     Variable * dword = variable_temporary( _environment, VT_DWORD, "(bcd result of STR)" );
@@ -7515,17 +7553,43 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
 @keyword VAL
 
 @english
-This function converts strings into number.
+
+The ''VAL'' command is a function that allows you to convert a string that represents 
+a number into a integer numeric value. In other words, it takes a string that contains 
+numbers and returns the corresponding numeric value.
+
+The ''VAL'' command is very useful when working with user input, because the user 
+often enters numbers as strings. For example, if we ask the user to enter their age,
+the input will be a string. In order to perform calculations with this age, we must 
+first convert it to a number.
+
+The ''VAL'' function reads the string from left to right and stops at the first 
+character that is not a number. The ''VAL'' function ignores spaces at the beginning 
+of the string. If the string does not begin with a number or contains only 
+non-numeric characters, the ''VAL'' function returns zero.
 
 @italian
-Questa funzione converte le stringhe in numeri.
 
-@syntax = VAL( [number] )
+Il comando ''VAL'' è una funzione che consente di convertire una stringa che 
+rappresenta un numero in un valore numerico intero. In altre parole, prende 
+una stringa che contiene numeri e restituisce il valore numerico corrispondente.
 
-@example x = VAL( 42 )
+Il comando ''VAL'' è molto utile quando si lavora con l'input dell'utente, 
+perché l'utente spesso inserisce i numeri come stringhe. Ad esempio, se 
+chiediamo all'utente di inserire la sua età, l'input sarà una stringa. Per 
+eseguire calcoli con questa età, dobbiamo prima convertirla in un numero.
+
+La funzione ''VAL'' legge la stringa da sinistra a destra e si ferma al primo 
+carattere che non è un numero. La funzione ''VAL'' ignora gli spazi all'inizio 
+della stringa. Se la stringa non inizia con un numero o contiene solo caratteri 
+non numerici, la funzione ''VAL'' restituisce zero.
+
+@syntax = VAL(string)
+
+@example PRINT VAL("123")
 @usedInExample strings_val_01.bas
 
-@target all
+@seeAlso STR
  </usermanual> */
 Variable * variable_string_val( Environment * _environment, char * _value ) {
 
@@ -7681,14 +7745,28 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
 @keyword STRING (function)
 
 @english
-This function can be used to create  a new string filled with the 
-required number of copies of the first character from an existing 
-string.
+
+The ''STRING'' function is used to create a string by repeating a single 
+character or substring a certain number of times. This is very useful 
+for creating fixed-length strings, such as borders, padding, or separators.
+
+The ''STRING'' function has several applications: it can be used to create
+borders for your tables or to delimit sections of text, and spaces to align 
+text or to create fixed-width columns. You can create lines of special 
+characters to separate different sections of an output, or a create 
+repeating patterns of characters.
 
 @italian
-Questa funzione può essere utilizzata per creare
-una nuova stringa riempita con tante copie della prima lettera
-della stringa in ingresso.
+
+La funzione ''STRING'' viene utilizzata per creare una stringa ripetendo 
+un singolo carattere o sottostringa un certo numero di volte. Ciò è molto 
+utile per creare stringhe di lunghezza fissa, come bordi, padding o separatori.
+
+La funzione ''STRING'' ha diverse applicazioni: può essere utilizzata per 
+creare bordi per le tabelle o per delimitare sezioni di testo e spazi per 
+allineare il testo o per creare colonne di larghezza fissa. È possibile 
+creare righe di caratteri speciali per separare diverse sezioni di un output 
+o per creare modelli ripetuti di caratteri.
 
 @syntax = STRING( text, repetitions )
 
@@ -7696,8 +7774,6 @@ della stringa in ingresso.
 
 @usedInExample strings_string_01.bas
 
-@target all
-@verified
  </usermanual> */
 Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  ) {
 
@@ -7836,23 +7912,37 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
  * @return Variable* Result of production
  */
 /* <usermanual>
-@keyword SPACE
+@keyword SPACE (function)
 
 @english
-This function can be used to create 
-a new string filled with the required number of spaces.
+
+The ''SPACE'' command is used to generate a string of a specified number of white 
+spaces. This string can then be used in various operations, such as formatting text, 
+creating spacing, or aligning data within a line.
+
+The ''SPACE'' command has many applications: you can use it to create margins, 
+indentations, or to align text precisely. By combining ''SPACE'' with other 
+commands, you can build simple tables with aligned columns. You can also
+usethe '' SPACE'' to add or remove spaces from an existing string.
 
 @italian
-Questa funzione può essere utilizzata per creare
-una nuova stringa riempita con tanti spazi quanto
-quelli richiesti.
 
-@syntax = SPACE( [number] )
+Il comando ''SPACE'' viene utilizzato per generare una stringa di un numero 
+specificato di spazi vuoti. Questa stringa può quindi essere utilizzata in 
+varie operazioni, come la formattazione del testo, la creazione di spaziature 
+o l'allineamento dei dati all'interno di una riga.
 
-@example x = SPACE( 42 )
+Il comando ''SPACE'' ha molte applicazioni: puoi utilizzarlo per creare margini, 
+rientri o per allineare il testo in modo preciso. Combinando ''SPACE'' con altri 
+comandi, puoi creare semplici tabelle con colonne allineate. Puoi anche utilizzare 
+''SPACE'' per aggiungere o rimuovere spazi da una stringa esistente.
+
+@syntax = SPACE(number)
+
+@example y = 42: x = SPACE( y )
+
 @usedInExample strings_space_01.bas
 
-@target all
  </usermanual> */
 Variable * variable_string_space( Environment * _environment, char * _repetitions  ) {
     

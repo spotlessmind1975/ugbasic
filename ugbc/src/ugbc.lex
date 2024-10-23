@@ -1452,6 +1452,8 @@ Ty { RETURN(TYPE,1); }
 
 U { RETURN(U,1); }
 UBOUND { RETURN(UBOUND,1); }
+UCASE { RETURN(UCASE,1); }
+Uca { RETURN(UCASE,1); }
 UGBASIC { RETURN(UGBASIC,1); }
 Ug { RETURN(UGBASIC,1); }
 Ub { RETURN(UBOUND,1); }
@@ -1471,8 +1473,6 @@ UPPER\$ { RETURN(UPPER,1); }
 Up { RETURN(UPPER,1); }
 USE { RETURN(USE,1); }
 Ux { RETURN(USE,1); }
-USING { RETURN(USING,1); }
-Us { RETURN(USING,1); }
 
 %{ /* --------------------------------- V --------------------------------- */ %}
 

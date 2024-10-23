@@ -51,8 +51,7 @@ The ''TAB$'' function returns a special control character called ''TAB'',
 which carries the ASCII code of ''9''. When this character is printed, 
 the text cursor is automatically moved to the next tabulated column 
 setting (tab) to the right. The default setting for this is four
-characters, which can be changed using ''[[SET TAB]]''. 
-
+characters, which can be changed using ''SET TAB''. 
 
 @italian
 La funzione ''TAB$'' restituisce un carattere di controllo speciale 
@@ -60,7 +59,7 @@ chiamato "TAB", che contiene il codice ASCII 9. Quando questo carattere
 viene stampato, il cursore del testo viene automaticamente spostato 
 alla successiva impostazione della colonna tabulata (tabulazione) 
 a destra. L'impostazione predefinita per questo è di quattro caratteri,
-che può essere modificata utilizzando il comando ''[[SET TAB]]''.
+che può essere modificata utilizzando il comando ''SET TAB''.
 
 @syntax = TAB$
 
@@ -68,7 +67,6 @@ che può essere modificata utilizzando il comando ''[[SET TAB]]''.
 
 @usedInExample texts_position_08.bas
 
-@target all
 </usermanual> */
 Variable * get_tab( Environment * _environment ) {
     

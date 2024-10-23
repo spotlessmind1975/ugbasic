@@ -38,6 +38,44 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword SUCCESS
+
+@english
+
+The ''SUCCESS'' function will return ''TRUE'' if the last DOJO command
+has been successfully executed.
+
+@italian
+
+La funzione ''SUCCESS'' restituirà ''TRUE'' se l'ultimo comando 
+DOJO è stato eseguito correttamente.
+
+@syntax = SUCCESS( )
+
+@example IF SUCCESS( ) THEN PRINT "ok!"
+
+@alias DOJO SUCCESS
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO SUCCESS
+
+@english
+
+@italian
+
+@syntax = DOJO SUCCESS( )
+
+@example success = DOJO SUCCESS( )
+
+@alias SUCCESS
+
+@target c64
+</usermanual> */
+
 Variable * dojo_success( Environment * _environment, char * _id ) {
 
     Variable * id = variable_retrieve( _environment, _id );

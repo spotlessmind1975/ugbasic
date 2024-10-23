@@ -51,18 +51,48 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword SQR
 
 @english
-The ''SQR'' function returns a value representing the square root of a number.
+
+The ''SQR'' command (short for "square root") is a mathematical function that
+is used to calculate the square root of a number. In other words, given a number
+''x'', the command ''SQR(x)'' returns the number that, when multiplied by itself, 
+gives the result ''x''.
+
+The ''SQR'' command has many applications in programming: it is used in any 
+calculation that requires the calculation of the square root, such as in the 
+Pythagorean theorem. The square root is present in many physics formulas, 
+such as in the calculation of velocity. It is used also to calculate the 
+lengths of segments or areas of geometric figures, and in many statistical 
+calculations, such as in the calculation of standard deviation.
+
+The square root of a negative number is not defined in real numbers. If you 
+try to calculate the square root of a negative number, the result is indefinite.
+Moreover, the function is defined in the integer numbers domain.
 
 @italian
-La funzione ''SQR'' restituisce un valore che rappresenta la radice quadrata di un numero.
 
-@syntax SQR([expression])
+Il comando ''SQR'' (abbreviazione di "square root") è una funzione matematica 
+utilizzata per calcolare la radice quadrata di un numero. In altre parole, 
+dato un numero ''x'', il comando ''SQR(x)'' restituisce il numero che, 
+moltiplicato per se stesso, dà il risultato ''x''.
 
-@example x = SNG(81)
+Il comando ''SQR'' ha molte applicazioni nella programmazione: viene utilizzato 
+in qualsiasi calcolo che richieda il calcolo della radice quadrata, come nel 
+teorema di Pitagora. La radice quadrata è presente in molte formule fisiche, 
+come nel calcolo della velocità. Viene anche utilizzata per calcolare le 
+lunghezze di segmenti o aree di figure geometriche e in molti calcoli statistici, 
+come nel calcolo della deviazione standard.
+
+La radice quadrata di un numero negativo non è definita nei numeri reali. 
+Se si tenta di calcolare la radice quadrata di un numero negativo, 
+il risultato è indefinito. Inoltre, la funzione è definita nel dominio
+nei numeri interi.
+
+@syntax = SQR(expression)
+
+@example PRINT SNG(81)
 
 @usedInExample maths_sqr_01.bas
 
-@target all
 </usermanual> */
 
 Variable * sqroot( Environment * _environment, char * _value ) {

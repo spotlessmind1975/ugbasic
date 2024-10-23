@@ -71,7 +71,8 @@ and "as is" for strings, while complex data will be printed out with an unique d
 
 Because the ''PRINT'' instruction prints with mono-spaced characters, there is a  correlation between
 the number of characters printed and the number of columns those characters occupy. This ensures 
-that each character uses only one column.
+that each character uses only one column. You can use the ''SPC'' keyword to print after
+a specific number of spaces.
 
 It is also possible to put the output to a specific location. The ''PRINT @'' command is used 
 to place output at a specified place on the screen. For this purpose the screen is divided 

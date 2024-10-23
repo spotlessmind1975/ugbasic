@@ -51,18 +51,17 @@ extern char DATATYPE_AS_STRING[][16];
 @keyword STRPTR
 
 @english
-This function allows you to retrieve the memory address
-where a string is found.
+This function allows you to retrieves the address 
+in memory where the actual text of a given string is located.
 
 @italian
-Questa funzione permette di recuperare l'indirizzo di memoria 
-dove si trova la stringa contenuta in una variabile.
+Questa funzione consente di recuperare l'indirizzo di 
+memoria in cui si trova il testo effettivo di una determinata stringa.
 
-@syntax = STRPTR([var])
+@syntax = STRPTR(var)
 
 @example address = STRPTR(x)
 
-@target all
 </usermanual> */
 Variable * strptr( Environment * _environment, char * _name ) {
 

@@ -49,18 +49,37 @@
 @keyword VARPTR
 
 @english
-This function allows you to retrieve the memory address
-where a variable is found.
+
+The ''VARPTR'' command (short for "variable pointer") is a pretty advanced statement 
+that lets you get the memory address of a variable. Essentially, it tells you "where" 
+in memory the value of a specific variable is stored.
+
+In some advanced cases, you may want to directly manipulate the contents of memory. 
+This is useful for things like creating custom data structures or optimizing the 
+speed of execution of certain operations.
+
+Directly manipulating memory can lead to program errors that are difficult to 
+detect and correct. If you are not completely sure what you are doing, it is
+ best to avoid using ''VARPTR''.
 
 @italian
-Questa funzione permette di recuperare l'indirizzo di memoria 
-dove si trova una variabile.
 
-@syntax = VARPTR([var])
+Il comando ''VARPTR'' (abbreviazione di "puntatore di variabile") è un'istruzione piuttosto
+ avanzata che consente di ottenere l'indirizzo di memoria di una variabile. In 
+ sostanza, indica "dove" nella memoria è archiviato il valore di una variabile specifica.
+
+In alcuni casi avanzati, potresti voler manipolare direttamente il contenuto della memoria.
+Ciò è utile per cose come la creazione di strutture dati personalizzate o l'ottimizzazione 
+della velocità di esecuzione di determinate operazioni.
+
+La manipolazione diretta della memoria può portare a errori di programma difficili da 
+rilevare e correggere. Se non sei completamente sicuro di cosa stai facendo, è meglio 
+evitare di usare ''VARPTR''.
+
+@syntax = VARPTR(var)
 
 @example address = VARPTR(x)
 
-@target all
 </usermanual> */
 Variable * varptr( Environment * _environment, char * _name ) {
 

@@ -72,18 +72,14 @@ posizione x, y e, se presente, al layer dato.
 
 @english
 
-Alias for ''TILEMAP INDEX''.
-
 @italian
-
-Alias per ''TILEMAP INDEX''.
 
 @syntax = TILEMAP TILE AT( column, row [, layer] )
 
 @example index = TILEMAP TILE AT( 0, 0 )
 @example index = TILEMAP TILE AT( 0, 0, 1 )
 
-@seeAlso TILEMAP INDEX
+@alias TILEMAP INDEX
 
 @target all
 @verified

@@ -57,7 +57,7 @@ is expressed in tiles
 Questa funzione permette di ottenere la larghezza di una mappa di tile (''TILEMAP''). 
 La larghezza è espressa in tessere.
 
-@syntax = TILEMAP WIDTH([tilemap])
+@syntax = TILEMAP WIDTH(tilemap)
 
 @example w = TILEMAP WIDTH( tilemap )
 

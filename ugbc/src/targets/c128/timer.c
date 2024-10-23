@@ -88,13 +88,10 @@ Questa variabile può essere abbreviata come ''TI''.
 @keyword TI
 
 @english
-Alias for ''TIMER''.
 
 @italian
-Alias per ''TIMER''.
 
-@seeAlso TIMER
-@target all
+@alias TIMER
 </usermanual> */
 Variable * get_timer( Environment * _environment ) {
 

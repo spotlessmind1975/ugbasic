@@ -38,6 +38,15 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword SUCCESS
+@target coco3
+</usermanual> */
+/* <usermanual>
+@keyword DOJO SUCCESS
+@target coco3
+</usermanual> */
+
 Variable * dojo_success( Environment * _environment, char * _id ) {
 
     Variable * id = variable_retrieve( _environment, _id );

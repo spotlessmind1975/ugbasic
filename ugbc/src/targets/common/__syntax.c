@@ -1056,7 +1056,7 @@ Si può verificare con un semplice confronto bit a bit.
 </usermanual> */
 
 /* <usermanual>
-@keyword TILEMAP
+@keyword TILEMAP (constant)
 
 @english
 This is the bitmask used to select the TILE mode.
@@ -1071,10 +1071,12 @@ Questa è la maschera di bit per indicare la modalità TILE.
 @usedInExample screens_bitmap_01.bas
 
 @target all
+
+@seeAlso BITMAP (constant)
 </usermanual> */
 
 /* <usermanual>
-@keyword BITMAP
+@keyword BITMAP (constant)
 
 @english
 This is the bitmask used to select the BITMAP mode.
@@ -1088,7 +1090,7 @@ Questa è la maschera di bit per indicare la modalità BITMAP.
 
 @usedInExample screens_bitmap_01.bas
 
-@target all
+@seeAlso TILEMAP (constant)
 </usermanual> */
 
 /* <usermanual>
@@ -1375,7 +1377,7 @@ dedotti dal contesto in cui la variabile viene utilizzata per la prima volta.
 </usermanual> */
 
 /* <usermanual>
-@keyword SPRITE MAX X
+@keyword SPRITE MAX X (constant)
 
 @english
 This constant allows us to know which is the largest abscissa 
@@ -1397,11 +1399,10 @@ la gestione dei bordi sul VIC-II).
 
 @example maxX = SPRITE MAX X
 
-@target c64
 </usermanual> */
 
 /* <usermanual>
-@keyword SPRITE MIN X
+@keyword SPRITE MIN X (constant)
 
 @english
 This constant allows us to know which is the smallest abscissa 
@@ -1423,11 +1424,10 @@ la gestione dei bordi sul VIC-II).
 
 @example minX = SPRITE MIN X
 
-@target c64
 </usermanual> */
 
 /* <usermanual>
-@keyword SPRITE MAX Y
+@keyword SPRITE MAX Y (constant)
 
 @english
 This constant allows us to know which is the largest ordinate
@@ -1449,11 +1449,10 @@ la gestione dei bordi sul VIC-II).
 
 @example maxY = SPRITE MAX Y
 
-@target c64
 </usermanual> */
 
 /* <usermanual>
-@keyword SPRITE MIN Y
+@keyword SPRITE MIN Y (constant)
 
 @english
 This constant allows us to know which is the smallest ordinate 
@@ -1475,7 +1474,6 @@ la gestione dei bordi sul VIC-II).
 
 @example minX = SPRITE MIN Y
 
-@target c64
 </usermanual> */
 
 /* <usermanual>
@@ -1540,32 +1538,6 @@ primo disponibile (quello con indice 0). Se viene aggiunta la parola chiave
 @example WAIT KEY OR FIRE
 
 @target all
-</usermanual> */
-
-/* <usermanual>
-@keyword SPRITE MIN Y
-
-@english
-This constant allows us to know which is the smallest ordinate 
-(y) that can assume the vertical position of a sprite. It 
-may or may not coincide with zero of the 
-screen, in the sense that some graphics chipsets can move 
-sprites far beyond what is representable (example: border 
-management on the VIC-II).
-
-@italian
-Questa costante permette di sapere qual è l'ordinata (y) più 
-piccola che può assumere la posizione verticale di uno sprite.
-Può o meno coincidere con lo zero dello 
-schermo, nel senso che  alcuni chipset grafici possono muovere 
-sprite ben oltre quello che è rappresentabile (esempio: 
-la gestione dei bordi sul VIC-II).
-
-@syntax = SPRITE MIN Y
-
-@example minX = SPRITE MIN Y
-
-@target c64
 </usermanual> */
 
 /* <usermanual>
@@ -3360,7 +3332,7 @@ che da quelli "compositi" (''CSPRITE''), ma non è possibile miscelarne l'uso.
 </usermanual> */
 
 /* <usermanual>
-@keyword SPRITE
+@keyword SPRITE (instruction)
 
 @english
 
@@ -6057,3 +6029,237 @@ target corrispondente, il valore sarà zero.
 
 </usermanual> */
 
+/* <usermanual>
+@keyword SPACE (constant)
+
+@english
+
+This constant represent the "SPACE" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "BARRA SPAZIATRICE", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = SPACE
+
+@example IF SCANCODE = SPACE THEN
+@example    PRINT "SPACE has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword STRING (data type)
+
+@english
+
+The ''STRING'' data type maintains a reference to a static or dynamic string.
+
+@italian
+
+Il tipo di dati ''STRING'' mantiene un riferimento a una stringa statica o dinamica.
+
+@syntax ... AS STRING
+
+</usermanual> */
+
+/* <usermanual>
+@keyword TAB (constant)
+
+@english
+
+This constant represent the "TAB" key, when used as a value
+to compare with ''SCANCODE'',''KEY STATE'' and ''KEY PRESSED''. 
+If the key does not exist in the corresponding target, the
+value will be zero.
+
+@italian
+
+Questa costante rappresenta il tasto "TABULAZIONE", quando 
+viene utilizzata come valore da confrontare con ''SCANCODE'',
+''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
+target corrispondente, il valore sarà zero.
+
+@syntax = TAB
+
+@example IF SCANCODE = TAB THEN
+@example    PRINT "TAB has been pressed!"
+@example ENDIF
+
+</usermanual> */
+
+/* <usermanual>
+@keyword THREAD (data type)
+
+@english
+
+The ''THREAD'' data type holds a reference to a thread created with
+''SPAWN'' command.
+
+@italian
+
+Il tipo di dati ''THREAD'' contiene un riferimento a un thread 
+creato con il comando ''SPAWN''.
+
+@syntax ... AS THREAD
+
+@alias TASK
+
+</usermanual> */
+
+/* <usermanual>
+@keyword TASK (data type)
+
+@english
+
+The ''TASK'' data type holds a reference to a thread created with
+''SPAWN'' command.
+
+@italian
+
+Il tipo di dati ''TASK'' contiene un riferimento a un thread 
+creato con il comando ''SPAWN''.
+
+@syntax ... AS TASK
+
+@alias THREAD
+
+</usermanual> */
+
+/* <usermanual>
+@keyword TICK PER SECOND
+
+@english
+
+This constant holds the number of ticks that occur each second.
+
+@italian
+
+Questa costante mantiene il numero di tick che avvengono ad ogni secondo.
+
+@syntax = TICK PER SECOND
+
+</usermanual> */
+
+/* <usermanual>
+@keyword VOLUME MIN
+
+@english
+
+Minimum value usable for audio volume.
+
+@italian
+
+Valore minimo utilizzabile per il volume audio.
+
+@syntax = VOLUME MIN
+
+</usermanual> */
+
+/* <usermanual>
+@keyword VOLUME MAX
+
+@english
+
+Maximum value usable for audio volume.
+
+@italian
+
+Valore massimo utilizzabile per il volume audio.
+
+@syntax = VOLUME MAX
+
+</usermanual> */
+
+/* <usermanual>
+@keyword XCURS
+
+@english
+
+Returns the X value of the cursor position.
+
+@italian
+
+Restituisci la posizione orizzontale del cursore.
+
+@syntax = XCURS
+
+@alias X CURS
+</usermanual> */
+
+/* <usermanual>
+@keyword X CURS
+
+@english
+
+@italian
+
+@syntax = X CURS
+
+@alias XCURS
+</usermanual> */
+
+/* <usermanual>
+@keyword YCURS
+
+@english
+
+Returns the Y value of the cursor position.
+
+@italian
+
+Restituisci la posizione verticale del cursore.
+
+@syntax = YCURS
+
+@alias Y CURS
+</usermanual> */
+
+/* <usermanual>
+@keyword Y CURS
+
+@english
+
+@italian
+
+@syntax = Y CURS
+
+@alias YCURS
+</usermanual> */
+
+
+/* <usermanual>
+@keyword XGR
+
+@english
+
+Returns the X value of the last graphical position.
+
+@italian
+
+Restituisci la posizione orizzontale dell'ultima posizione grafica.
+
+@syntax = XGR
+
+</usermanual> */
+
+/* <usermanual>
+@keyword YGR
+
+@english
+
+Returns the Y value of the last graphical position.
+
+@italian
+
+Restituisci la posizione verticale dell'ultima posizione grafica.
+
+@syntax = YGR
+
+</usermanual> */
