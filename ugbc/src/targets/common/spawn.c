@@ -49,7 +49,7 @@
 
 @english
 This keyword will invoke a (parallel) procedure. The procedure can be
-invoked in an "halted" state using the keyword ''HALT'', so that a ''RESPAWN'' 
+invoked in an "halted" state using the keyword ''HALTED'', so that a ''RESPAWN'' 
 command must be issued in order to "wake up" the procedure.
 
 @italian
@@ -58,10 +58,10 @@ in parallelo. La procedura può essere invocata in uno stato "sospeso"
 con la parola chiave ''HALTED'', così che sia necessario usare
 il comando ''RESPAWN'' per "risvegliare" la procedura.
 
-@syntax [HALTED] SPAWN [name][{[parameter],{[parameter],....}}]
+@syntax [HALTED] SPAWN [identifier]
 
-@example SPAWN factorial(42)
-@example HALTED SPAWN moveArrow
+@example handle = SPAWN moveShip
+@example handle = HALTED SPAWN moveArrow
 
 @target all
 </usermanual> */

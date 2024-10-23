@@ -67,7 +67,6 @@ sul testo.
 
 @alias XTEXT
 
-@target all
 </usermanual> */
 /* <usermanual>
 @keyword XTEXT
@@ -80,7 +79,6 @@ Alias per ''X TEXT''.
 
 @alias X TEXT
 
-@target all
 </usermanual> */
 Variable * x_text_get( Environment * _environment, char * _x ) {
 

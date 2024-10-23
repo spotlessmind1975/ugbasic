@@ -7432,13 +7432,13 @@ ma che funzionano bene con  parametri sotto forma di stringhe. Inoltre, quando
 viene eseguita l'aggiunta di stringhe, tutti gli operandi devono essere stringhe, 
 quindi questa funzione è davvero utile.
 
-@syntax = STR( [number] )
+@syntax = STR(number)
 
-@example x = STR( 42 )
+@example x = STR(42)
+
 @usedInExample strings_str_01.bas
 
-@target all
- </usermanual> */
+</usermanual> */
 Variable * variable_string_str( Environment * _environment, char * _value ) {
     Variable * value = variable_retrieve( _environment, _value );
     Variable * dword = variable_temporary( _environment, VT_DWORD, "(bcd result of STR)" );
@@ -7646,14 +7646,28 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
 @keyword STRING (function)
 
 @english
-This function can be used to create  a new string filled with the 
-required number of copies of the first character from an existing 
-string.
+
+The ''STRING'' function is used to create a string by repeating a single 
+character or substring a certain number of times. This is very useful 
+for creating fixed-length strings, such as borders, padding, or separators.
+
+The ''STRING'' function has several applications: it can be used to create
+borders for your tables or to delimit sections of text, and spaces to align 
+text or to create fixed-width columns. You can create lines of special 
+characters to separate different sections of an output, or a create 
+repeating patterns of characters.
 
 @italian
-Questa funzione può essere utilizzata per creare
-una nuova stringa riempita con tante copie della prima lettera
-della stringa in ingresso.
+
+La funzione ''STRING'' viene utilizzata per creare una stringa ripetendo 
+un singolo carattere o sottostringa un certo numero di volte. Ciò è molto 
+utile per creare stringhe di lunghezza fissa, come bordi, padding o separatori.
+
+La funzione ''STRING'' ha diverse applicazioni: può essere utilizzata per 
+creare bordi per le tabelle o per delimitare sezioni di testo e spazi per 
+allineare il testo o per creare colonne di larghezza fissa. È possibile 
+creare righe di caratteri speciali per separare diverse sezioni di un output 
+o per creare modelli ripetuti di caratteri.
 
 @syntax = STRING( text, repetitions )
 
@@ -7661,8 +7675,6 @@ della stringa in ingresso.
 
 @usedInExample strings_string_01.bas
 
-@target all
-@verified
  </usermanual> */
 Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  ) {
 
@@ -7801,23 +7813,37 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
  * @return Variable* Result of production
  */
 /* <usermanual>
-@keyword SPACE
+@keyword SPACE (function)
 
 @english
-This function can be used to create 
-a new string filled with the required number of spaces.
+
+The ''SPACE'' command is used to generate a string of a specified number of white 
+spaces. This string can then be used in various operations, such as formatting text, 
+creating spacing, or aligning data within a line.
+
+The ''SPACE'' command has many applications: you can use it to create margins, 
+indentations, or to align text precisely. By combining ''SPACE'' with other 
+commands, you can build simple tables with aligned columns. You can also
+usethe '' SPACE'' to add or remove spaces from an existing string.
 
 @italian
-Questa funzione può essere utilizzata per creare
-una nuova stringa riempita con tanti spazi quanto
-quelli richiesti.
 
-@syntax = SPACE( [number] )
+Il comando ''SPACE'' viene utilizzato per generare una stringa di un numero 
+specificato di spazi vuoti. Questa stringa può quindi essere utilizzata in 
+varie operazioni, come la formattazione del testo, la creazione di spaziature 
+o l'allineamento dei dati all'interno di una riga.
 
-@example x = SPACE( 42 )
+Il comando ''SPACE'' ha molte applicazioni: puoi utilizzarlo per creare margini, 
+rientri o per allineare il testo in modo preciso. Combinando ''SPACE'' con altri 
+comandi, puoi creare semplici tabelle con colonne allineate. Puoi anche utilizzare 
+''SPACE'' per aggiungere o rimuovere spazi da una stringa esistente.
+
+@syntax = SPACE(number)
+
+@example y = 42: x = SPACE( y )
+
 @usedInExample strings_space_01.bas
 
-@target all
  </usermanual> */
 Variable * variable_string_space( Environment * _environment, char * _repetitions  ) {
     

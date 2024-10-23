@@ -40,7 +40,7 @@
  ****************************************************************************/
 
 /* <usermanual>
-@keyword TAN
+@keyword TAN (function)
 
 @english
 This function will calculate the tangent value of an angle. It is the ratio 
@@ -52,13 +52,12 @@ Questa funzione calcolerà il valore della tangente di un angolo. È il rapporto
 tra il lato opposto e il lato adiacente dell'angolo considerato in un triangolo 
 rettangolo.
 
-@syntax = TAN([angle])
+@syntax = TAN(angle)
 
 @example x = TAN(0)
 
 @usedInExample float_tan.bas
 
-@target all
 </usermanual> */
 Variable * fp_tan( Environment * _environment, char * _angle ) {
 

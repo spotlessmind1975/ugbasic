@@ -83,6 +83,24 @@ void text_tab( Environment * _environment ) {
     
 }
 
+/* <usermanual>
+@keyword TEXT
+
+@english
+
+The ''TEXT'' command allows you to write text at a certain position on the screen.
+
+@italian
+
+Il comando ''TEXT'' permette di scrivere un testo ad una certa posizione sullo schermo.
+
+@syntax TEXT [AT] x, y, string
+
+@seeAlso LOCATE
+@seeAlso PRINT
+
+</usermanual> */
+
 void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
 
     setup_text_variables( _environment );
