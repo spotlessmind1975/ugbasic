@@ -7362,17 +7362,55 @@ Variable * variable_string_lower( Environment * _environment, char * _string ) {
 @keyword UPPER
 
 @english
-This function converts the characters in a string into upper case (capital) letters.
+
+The UPPER command (short for "Upper Case") is a function that converts all lowercase 
+letters in a string to uppercase. In other words, it takes any string and returns a 
+new string that is identical to the first, but with all letters in uppercase.
+
+If you want to compare two strings without regard to case, you can convert both 
+strings to uppercase before performing the comparison. You can use this command
+to standardize user input, for example to ensure that all names are uppercase.
+You can use it to make the output more readable or to conform to specific 
+formatting conventions.
 
 @italian
-Questa funzione converte i caratteri presenti in una stringa in lettere maiuscole.
 
-@syntax = UPPER( [text] )
+Il comando ''UPPER'' (abbreviazione di "Upper Case") è una funzione che converte
+tutte le lettere minuscole in una stringa in maiuscolo. In altre parole, prende 
+una stringa qualsiasi e restituisce una nuova stringa identica alla prima, ma 
+con tutte le lettere in maiuscolo.
+
+Se vuoi confrontare due stringhe senza considerare le maiuscole e le minuscole, 
+puoi convertire entrambe le stringhe in maiuscolo prima di eseguire il confronto. 
+Puoi usare questo comando per standardizzare l'input dell'utente, ad esempio per 
+assicurarti che tutti i nomi siano in maiuscolo.
+
+Puoi usarlo per rendere l'output più leggibile o per conformarti a specifiche 
+convenzioni di formattazione.
+
+@syntax = UPPER(text)
 
 @example x = UPPER( "ugBASIC" )
 @usedInExample strings_cases_01.bas
 
-@target all
+@alias UCASE
+
+ </usermanual> */
+ /* <usermanual>
+@keyword UCASE
+
+@english
+
+@italian
+
+@syntax = UCASE(text)
+
+@example x = UCASE( "ugBASIC" )
+
+@usedInExample strings_cases_01.bas
+
+@alias UPPER
+
  </usermanual> */
 Variable * variable_string_upper( Environment * _environment, char * _string ) {
     Variable * string = variable_retrieve( _environment, _string );

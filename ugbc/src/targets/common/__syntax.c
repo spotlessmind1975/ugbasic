@@ -1056,7 +1056,7 @@ Si può verificare con un semplice confronto bit a bit.
 </usermanual> */
 
 /* <usermanual>
-@keyword TILEMAP
+@keyword TILEMAP (constant)
 
 @english
 This is the bitmask used to select the TILE mode.
@@ -1071,10 +1071,12 @@ Questa è la maschera di bit per indicare la modalità TILE.
 @usedInExample screens_bitmap_01.bas
 
 @target all
+
+@seeAlso BITMAP (constant)
 </usermanual> */
 
 /* <usermanual>
-@keyword BITMAP
+@keyword BITMAP (constant)
 
 @english
 This is the bitmask used to select the BITMAP mode.
@@ -1088,7 +1090,7 @@ Questa è la maschera di bit per indicare la modalità BITMAP.
 
 @usedInExample screens_bitmap_01.bas
 
-@target all
+@seeAlso TILEMAP (constant)
 </usermanual> */
 
 /* <usermanual>
@@ -6127,5 +6129,20 @@ creato con il comando ''SPAWN''.
 @syntax ... AS TASK
 
 @alias THREAD
+
+</usermanual> */
+
+/* <usermanual>
+@keyword TICK PER SECOND
+
+@english
+
+This constant holds the number of ticks that occur each second.
+
+@italian
+
+Questa costante mantiene il numero di tick che avvengono ad ogni secondo.
+
+@syntax = TICK PER SECOND
 
 </usermanual> */
