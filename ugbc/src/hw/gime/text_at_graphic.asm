@@ -604,6 +604,9 @@ TEXTATBMSP0
 
     JSR TEXTATBMDRAWCHAR
 
+    CMPB #0
+    LBEQ TEXTATBMEND2
+
     JMP TEXTATBMINCX
 
     ; If the program reach this point, it means that must skip
@@ -676,14 +679,10 @@ TEXTATBMNEXT
     ; tabs marker, move ahead and loop.
 
     LDA TABSTODRAW
-    LBNE TEXTATBMLOOP2
+    JMP TEXTATBMLOOP2
 
-    ; If there are still characters to print,
-    ; loop again.
-    
-    CMPB #0
-    LBNE TEXTATBMLOOP2
-    
+TEXTATBMEND2
+
     RTS
 
 TEXTATFLIP
