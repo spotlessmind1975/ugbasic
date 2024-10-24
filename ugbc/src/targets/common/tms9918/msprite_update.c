@@ -46,7 +46,7 @@
  * @param _environment Current calling environment
  * @param _image image to use as SPRITE
  */
-oid msprite_update( Environment * _environment ) {
+void msprite_update( Environment * _environment ) {
 
 }
 
