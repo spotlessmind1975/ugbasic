@@ -885,7 +885,25 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
 void console_calculate( Environment * _environment ) {
 
-    int consoleSA = 6 * 0x0400 + ( _environment->activeConsole.y1 * _environment->screenTilesWidth ) + _environment->activeConsole.x1;
+    int startAddress = 0;
+
+    switch( _environment->currentMode ) {
+        // M1 M2 M3 Display Mode
+        // 0  0  0  Graphics I Mode
+        // 0  0  1  Graphics II Mode
+        // 0  1  0  Multicolor Mode
+        // 1  0  0  Text Mode
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_GRAPHIC1:
+            startAddress = 6 * 0x0400;
+            break;
+        case BITMAP_MODE_GRAPHIC2:
+        case BITMAP_MODE_MULTICOLOR:
+            startAddress = 0x0e * 0x0400;
+            break;
+    }
+
+    int consoleSA = startAddress + ( _environment->activeConsole.y1 * _environment->screenTilesWidth ) + _environment->activeConsole.x1;
     int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
     int consoleHB = _environment->activeConsole.height * 8;
 
@@ -1579,6 +1597,8 @@ void tms9918_initialization( Environment * _environment ) {
 
     font_descriptors_init( _environment, 0 );
     
+    console_calculate( _environment );
+
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
 

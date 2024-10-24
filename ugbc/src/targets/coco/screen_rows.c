@@ -64,7 +64,6 @@ void screen_rows( Environment * _environment, int _rows ) {
  * @param _environment Current calling environment
  * @param _rows Number of rows
  */
-/* <usermanual>
 void screen_rows_var( Environment * _environment, char * _rows ) {
 
 }

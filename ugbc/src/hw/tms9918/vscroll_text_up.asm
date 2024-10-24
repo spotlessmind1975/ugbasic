@@ -83,7 +83,6 @@ VSCROLLTUP0:
     LD A, (CONSOLEH)
     LD B, A
     DEC B
-    DEC B
     LD A, (CONSOLEW)
     LD C, A
     LD A, (CURRENTTILESWIDTH)
