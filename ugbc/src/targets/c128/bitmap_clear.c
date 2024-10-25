@@ -78,8 +78,11 @@ l'istruzione ''BITMAP ENABLE''.
 @example BITMAP CLEAR WITH #$42
 
 @seeAlso BITMAP ENABLE
+@seeAlso CLS
 
 @target c128
+
+@deprecated
 </usermanual> */
 void bitmap_clear_with( Environment * _environment, int _pattern ) {
 

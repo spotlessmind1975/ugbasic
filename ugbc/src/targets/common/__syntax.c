@@ -837,145 +837,6 @@ immagini per individuare il colore da utilizzare.
 </usermanual> */
 
 /* <usermanual>
-@keyword array operator
-
-@english
-In ugBASIC, arrays are accessed using the parenthesis operator (''('' and '')'') next to the name 
-of the variable that contains the array. The indices must be inserted inside the brackets to 
-access the individual elements of the array. 
-
-There is no limit to the number of dimensions: 
-however, the cardinality of indices must be the same as the one used when defining the
-array itself. There is, also, a limit related to memory availability. Furthermore, 
-access to locations is not controlled and therefore particular care must be taken not to exceed
-the boundaries of the area intended to hold the information on the array.
-
-When an array is accessed, it can be done in two ways: to retrieve a value (read access) 
-or to set a value (write access). Read access occurs any time the array is used in an 
-expression. Conversely, for write access, the indexed array must be used as the target variable.
-
-In accessing the array, as in any other variable, the dollar sign (''$'') can be juxtaposed 
-to indicate that you want to access a variable of type string. In this case, a further 
-type check will be carried out during the compilation, to avoid referring to a variable
-of numerical type.
-
-@italian
-In ugBASIC, si accede agli array utilizzando l'operatore parentesi (''('' e '')''), aggiunto
-accanto al nome della variabile che contiene l'array. Gli indici devono essere inseriti 
-all'interno delle parentesi per accedere ai singoli elementi dell'array. 
-
-Non c'è limite al numero di dimensioni: tuttavia, la cardinalità degli indici deve essere la stessa 
-di quella utilizzata nella definizione della matrice stessa. Esiste, inoltre, un limite 
-relativo alla disponibilità di memoria. Per di più, l'accesso agli elementi non è controllato 
-e pertanto si deve prestare particolare attenzione a non eccedere i confini dell'area 
-destinata a contenere le informazioni sull'array.
-
-Quando si accede a un array lo si può fare in due modi: per recuperare un valore 
-(accesso in lettura) o per impostare un valore (accesso in scrittura). 
-L'accesso in lettura avviene in qualsiasi momento l'array sia utilizzato in una 
-espressione. Al contrario, per accedere in scrittura bisogna utilizzare l'array 
-indicizzato come variabile di destinazione.
-
-Nell'accesso all'array, come in qualsiasi altra variabile, può essere giustapposto il 
-simbolo del dollaro (''$''), per indicare che si vuole accedere a una variabile di 
-tipo stringa. In tal caso, un ulteriore controllo di tipo sarà svolto in sede di 
-compilazione, per evitare di far riferimento a una variabile di tipo numerico.
-
-@syntax ... = var( o1 [, i2 [, ...] ] )
-@syntax var( o1 [, i2 [, ...] ] ) = expr
-@syntax ... = var$( o1 [, i2 [, ...] ] )
-@syntax var$( o1 [, i2 [, ...] ] ) = expr$
-
-@example readElement = a(42,3)
-@example b(1,1) = 42
-@example word = words$(42)
-@example words$(1) = "ok!"
-
-@target all
-</usermanual> */
-
-/* <usermanual>
-@keyword local task variable operator
-
-@english
-To guarantee the use of local variables within parallel procedures, since the procedure does 
-not have a stack, it is necessary to prepare an array to contain this type of information. 
-Therefore, using the array access operator, it is then possible to access the individual 
-variables, using the task identifier as an index.
-
-ugBASIC provides a compact form to indicate this type of access. Instead of writing ''v(THREAD)''
-you can write ''[v]''. This operator, called the "local task variable operator", can be used 
-anywhere, and in any expression, and can be used as the target of the variable.
-
-In accessing the array, as in any other variable, the dollar sign (''$'') can be juxtaposed 
-to indicate that you want to access a variable of type string. In this case, a further 
-type check will be carried out during the compilation, to avoid referring to a variable
-of numerical type.
-
-@italian
-Per garantire l'utilizzo di variabili locali all'interno di procedure parallele, essendo 
-la procedura priva di uno stack, è necessario predisporre un array per contenere questo 
-tipo di informazione. Utilizzando, quindi, l'operatore di accesso agli array, è quindi 
-possibile accedere alle singole variabili, utilizzando come indice l'identificativo del task.
-
-ugBASIC fornisce una forma compatta per indicare questo tipo di accesso. Invece di scrivere 
-''v(THREAD)'' si può scrivere ''[v]''. Questo operatore, chiamato "local task variable operator", 
-può essere utilizzato dovunque, e in qualsiasi espressione, e può essere utilizzato come 
-destinazione della variabile.
-
-Nell'accesso all'array, come in qualsiasi altra variabile, può essere giustapposto il 
-simbolo del dollaro (''$''), per indicare che si vuole accedere a una variabile di 
-tipo stringa. In tal caso, un ulteriore controllo di tipo sarà svolto in sede di 
-compilazione, per evitare di far riferimento a una variabile di tipo numerico.
-
-@syntax = [variable]
-@syntax [variable] = expression
-@syntax = [variable$]
-@syntax [variable$] = expression
-
-@example PUT IMAGE token AT [x],[y]
-@example [x] = [x] + 1
-@example PRINT [word$]
-@example [word$] = "ok!"
-
-@usedInExample multitasking_example_06.bas
-
-@target all
-</usermanual> */
-
-/* <usermanual>
-@keyword buffer definition
-
-@english
-ugBASIC is able to define a byte buffer "in line", ie directly in the code. 
-This can be useful in those occasions where it is necessary to include 
-binary data, not being able to access an external file. 
-
-The definition of a buffer occurs with the sequence of the hash operator (''#'') 
-followed by the opening square bracket (''[''), by the hexadecimal couples and, 
-optionally, terminated by the closing square bracket.
-
-@italian
-ugBASIC è in grado di definire un buffer di byte "in linea", cioè direttamente nel codice. 
-Questo può essere utile in quelle occasioni dove sia necessario includere un dato binario, 
-non potendo accedere a un file esterno. 
-
-La definizione di un buffer avviene con la sequenza dell'operatore hash (''#'') seguita 
-dalla parentesi quadra aperta (''[''), dalle coppie esadecimali e, opzionalmente, 
-terminata dalla parentesi quadra chiusa.
-
-@syntax ... = #[xx...
-@syntax ... = #[xx...]
-
-@example y = #[424280
-@example x = #[424280]
-
-@usedInExample buffers_definition_01.bas
-
-@target all
-</usermanual> */
-
-/* <usermanual>
 @keyword SIZE
 
 @english
@@ -1053,6 +914,8 @@ Si può verificare con un semplice confronto bit a bit.
 @usedInExample screens_bitmap_01.bas
 
 @target all
+
+@deprecated
 </usermanual> */
 
 /* <usermanual>
@@ -1768,58 +1631,6 @@ ogni singola riga.
 @example PRINT "ok": REM I am printing ok
 
 @target all
-</usermanual> */
-
-/* <usermanual>
-@keyword defining labels
-
-@english
-
-In ugBASIC it is possible to indicate the position within a program with the use of 
-so-called "labels". The labels can be represented in the BASIC standard, i.e. with numeric 
-labels, or with alphanumeric labels, and are used to jump within specific positions of the program.
-
-@italian
-
-In ugBASIC è possibile indicare la posizione all'interno di un programma con l'utilizzo delle cosiddette
-"etichette". Le etichette possono essere rappresentate nello standard BASIC, ovvero con etichette numeriche,
-oppure con etichetta alfanumeriche, e servono per saltare all'interno di specifiche posizioni del programma.
-
-@syntax number instruction
-@syntax label: instruction
-@syntax [label:] instruction
-
-@example 100 PRINT "oK!": GOTO 100
-@example begin: PRINT "OK!" : GOTO begin
-@example [begin:] PRINT "OK!" : GOTO begin
-
-@usedInExample contrib_cube_10lines.bas
-
-@target all
-@verified
-</usermanual> */
-
-/* <usermanual>
-@keyword separating instructions
-
-@english
-
-In ugBASIC, the instructions are separated using a colon character ('':''). Since this character
-is used also as a suffix for a label, you have to use the ''[label:]'' variant, to avoid to
-consider ''label'' as a instruction.
-
-@italian
-
-In ugBASIC, le istruzioni sono separate utilizzando i due punti ('':''). Poiché questo carattere 
-viene utilizzato anche come suffisso per un'etichetta, è necessario utilizzare la variante ''[label:]'',
-per evitare di considerare ''label'' come una istruzione.
-
-@syntax instruction1 : instruction2 : ...
-
-@example PRINT : CLS : PRINT
-
-@target all
-@verified
 </usermanual> */
 
 /* <usermanual>
@@ -3402,6 +3213,8 @@ nel tentativo di comprendere se la funzionalità è disponibile o meno.
 
 @target all
 @seeAlso SCREEN (constant)
+
+@deprecated
 </usermanual> */
 
 /* <usermanual>
@@ -3421,6 +3234,9 @@ La costante ''SCREEN'' rappresenta le capacità del chipset video.
 
 @target all
 @seeAlso BITMAP (constant)
+
+@deprecated
+
 </usermanual> */
 
 /* <usermanual>

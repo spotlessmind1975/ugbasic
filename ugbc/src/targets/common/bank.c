@@ -72,53 +72,38 @@ extern char BANK_TYPE_AS_STRING[][16];
 
 @english
 
-Define a bank of memory named "identifier", starting from "address" 
-and of type "bankType". Optionally, fill the bank of memory with static 
-data coming from a specific "filename".
+Define a bank of memory named ''id'', starting from ''address'' 
+and of type ''type''. Optionally, fill the bank of memory with static 
+data coming from a specific ''filename''.
 
-Available "bankType":
+Available ''type'': ''CODE'' for executable code (binary), ''VARIABLES'' 
+for program's variables, ''TEMPORARY'' for temporary variables and
+''DATA'' for unspecified data.
 
-    * ''CODE'' executable code (binary)
-
-    * ''VARIABLES'' program's variables
-
-    * ''TEMPORARY'' temporary variables
-
-    * ''DATA'' unspecified data
-
-If "identifier" is missing, the bank will have an unique name.
-If "bankType" is missing, the default type is ''DATA''.
-If "filename" is missing, the default is a simply memory reservation.
+If ''id'' is missing, the bank will have an unique name.
+If ''type'' is missing, the default type is ''DATA''.
+If ''filename'' is missing, the default is a simply memory reservation.
 
 @italian
 
-Definisce un banco di memoria di nome "identifier", che inizia
-all'indirizzo "address" e del tipo "bankType". In opzione, è possibile
-riempire tale banco con dei dati statici che provengano dal file
-"filename".
+Definisce un banco di memoria denominata ''id'', che inizia da ''address''
+e di tipo ''type''. Facoltativamente, riempie il banco di memoria con dati statici
+da un ''filename'' specificato.
 
-I tipi di banco sono:
+Valori di''type'' accettabili: ''CODE'' per codice eseguibile (binario), ''VARIABLES''
+per variabili di programma, ''TEMPORARY'' per variabili temporanee e ''DATA'' per dati non specificati.
 
-    * ''CODE'' codice eseguibile (binario)
+Se ''id'' manca, la banca avrà un nome univoco.
+Se ''type'' manca, il tipo predefinito è ''DATA''.
+Se ''filename'' manca, il valore predefinito è una semplice prenotazione di memoria.
 
-    * ''VARIABLES'' variabili del programma
-
-    * ''TEMPORARY'' variabili temporanee
-
-    * ''DATA'' dati non meglio specificati
-
-Se "identifier" manca, al banco sarà assegnato un nome univoco.
-Se non viene indicato il "bankType", quello di default è ''DATA''.
-Se manca il "filename" allora il banco non sarà preriempito.
-
-@syntax BANK [identifier] AT #address [ AS bankType ] [ WITH filename ]
+@syntax BANK [id] AT #address [AS type] [WITH filename]
 
 @example BANK VARIABLES AT $c000
 
 @seeAlso VAR
 
-@target all
-
+@deprecated
  </usermanual> */
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename ) {
 

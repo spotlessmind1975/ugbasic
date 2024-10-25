@@ -60,6 +60,9 @@ want to copy (the $0000 implies the beginning of the bank),
 the size in bytes and finally the destination address, 
 which will be the RAM memory.
 
+Note that, if the destination of read is an array, the array 
+must be declared with the flag ''FOR BANK READ''.
+
 @italian
 
 Questa istruzione può essere utilizzata per leggere un certo
@@ -68,6 +71,9 @@ Si deve quindi indicare uno dei banchi disponibili, l'indirizzo
 di memoria dal quale si vuole copiare (lo $0000 implica l'inizio
 del banco), la dimensione in byte ed infine l'indirizzo di
 destinazione, che sarà la memoria RAM.
+
+Si noti che se la destinazione della lettura è un array, 
+l'array deve essere dichiarato con il flag ''FOR BANK READ''.
 
 @syntax BANK READ bank FROM address1 TO address2 SIZE size
 

@@ -66,6 +66,8 @@ In caso contrario, l'istruzione restituirà ''FALSE''.
 @usedInExample screens_cls_03.bas
 
 @target all
+
+@deprecated
  </usermanual> */
 Variable * screen_can( Environment * _environment, int _mode ) {
 

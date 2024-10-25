@@ -75,7 +75,6 @@ Il comportamento può essere modificato dai pragma ''DEFINE AUDIO SYNC'' e
 ''DEFINE AUDIO ASYNC'', che tuttavia potrebbe non essere disponibile per 
 il target in oggetto.
 
-@syntax BOOM [#duration [MS]] [ON #channel]
 @syntax BOOM [duration [MS]] [ON channel]
 
 @example BOOM 1000 MS
