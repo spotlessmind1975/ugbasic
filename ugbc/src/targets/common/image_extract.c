@@ -39,7 +39,7 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>IMAGE(... FRAME ... SEQUENCE ...)</strong>
+ * @brief Emit code for <strong>IMAGE(... FRAME ... STRIP ...)</strong>
  * 
  * @param _environment Current calling environment
  * @param _image IMAGES/SEQUENCE variable datatype
@@ -67,11 +67,11 @@ risorsa grafica già caricata e ottimizzata. Se ''resource'' è un TILESET, puoi
 cercare un frame specifico per nome, usando il parametro ''NAMED''.
 
 @syntax = IMAGE( resource FRAME num )
-@syntax = IMAGE( resource SEQUENCE seq FRAME num )
+@syntax = IMAGE( resource STRIP seq FRAME num )
 @syntax = IMAGE( resource NAMED name )
 
 @example starship = IMAGE( LOAD IMAGES(("tiles.png") FRAME 1 )
-@example starship = IMAGE( LOAD SEQUENCE("tiles.png") SEQUENCE 1 FRAME 2 )
+@example starship = IMAGE( LOAD SEQUENCE("tiles.png") STRIP 1 FRAME 2 )
 @example tile = IMAGE( LOAD TILESET("tiles.tsx") NAMED pavimento )
 
 </usermanual> */

@@ -82,16 +82,16 @@ quella verticale, ''3'' per entrambe le direzioni.
 
 @syntax FLIP IMAGE resource [X|Y|XY|YX]
 @syntax FLIP IMAGE resource FRAME frame [X|Y|XY|YX]
-@syntax FLIP IMAGE resource SEQUENCE sequence FRAME frame [X|Y|XY|YX]
+@syntax FLIP IMAGE resource STRIP sequence FRAME frame [X|Y|XY|YX]
 @syntax FLIP [X|Y|XY|YX] IMAGE resource
 @syntax FLIP [X|Y|XY|YX] IMAGE resource FRAME frame
-@syntax FLIP [X|Y|XY|YX] IMAGE resource SEQUENCE sequence FRAME frame
+@syntax FLIP [X|Y|XY|YX] IMAGE resource STRIP sequence FRAME frame
 @syntax FLIP IMAGE resource DIRECTION direction
 @syntax FLIP IMAGE resource FRAME frame DIRECTION direction
-@syntax FLIP IMAGE resource SEQUENCE sequence FRAME frame DIRECTION direction
+@syntax FLIP IMAGE resource STRIP sequence FRAME frame DIRECTION direction
 @syntax FLIP DIRECTION direction IMAGE resource
 @syntax FLIP DIRECTION direction IMAGE resource FRAME frame
-@syntax FLIP DIRECTION direction IMAGE resource SEQUENCE sequence FRAME frame
+@syntax FLIP DIRECTION direction IMAGE resource STRIP sequence FRAME frame
 
 @example FLIP X IMAGE object
 

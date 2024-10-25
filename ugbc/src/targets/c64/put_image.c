@@ -69,7 +69,7 @@ In tutti i casi la sintassi cambia leggermente.
 
 @syntax PUT IMAGE resource AT [x],[y]
 @syntax PUT IMAGE resource FRAME frame AT [x],[y]
-@syntax PUT IMAGE resource SEQUENCE sequence FRAME frame AT [x],[y]
+@syntax PUT IMAGE resource STRIP sequence FRAME frame AT [x],[y]
 
 @example PUT IMAGE airplane AT 10,10
 
