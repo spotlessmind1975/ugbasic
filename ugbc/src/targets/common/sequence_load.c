@@ -220,11 +220,11 @@ l'immagine verrà memorizzata Nella memoria di sola lettura, se disponibile.
 @example alienAt11 = LOAD SEQUENCE("alien.jpg",11) FRAME SIZE AUTO
 @example alien2 = LOAD SEQUENCE("alien.jpg" AS "alien2",11) FRAME SIZE(8,8) TRANSPARENCY
 
-@alias SEQUENCE LOAD
+@alias STRIP LOAD
 </usermanual> */
 
 /* <usermanual>
-@keyword SEQUENCE LOAD
+@keyword STRIP LOAD
 @alias LOAD SEQUENCE
 </usermanual> */
 

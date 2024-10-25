@@ -29,10 +29,12 @@ soko64/
 cocon/
 pick-the-star-10liner/
 tic-tac-toe-10liner/
-hangword/
-deepy/
+hangword*/
 cv/
-deepy1/
-mokong5/
+deepy*/
+mokong*/
 *.sh
+*.log
+*.asm
+book/
 

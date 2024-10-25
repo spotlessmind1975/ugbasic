@@ -47,7 +47,7 @@
  * @param _name Name of the storage
  */
 /* <usermanual>
-@keyword SEQUENCE (storage)
+@keyword STRIP (storage)
 
 @english
 The ''SEQUENCE'' command, inserted inside a ''BEGIN STORAGE'' - ''ENDSTORAGE'' block, 
@@ -63,10 +63,10 @@ di massa come una sequenza di immagini. La sintassi di base prevede di indicare 
 sorgente che sarà convertito e inserito nel supporto. Se non si vuole utilizzare 
 lo stesso nome, è possibile indicare un alias (''AS target'').
 
-@syntax SEQUENCE source [AS target] FRAME SIZE (widh, height)
+@syntax STRIP source [AS target] FRAME SIZE (widh, height)
 
-@example SEQUENCE "examples/data.png" FRAME SIZE (32, 32)
-@example SEQUENCE "sprites.bmp" AS "sprites.dat" FRAME SIZE (32, 32)
+@example STRIP "examples/data.png" FRAME SIZE (32, 32)
+@example STRIP "sprites.bmp" AS "sprites.dat" FRAME SIZE (32, 32)
 
 @usedInExample storage_example_03.bas
 

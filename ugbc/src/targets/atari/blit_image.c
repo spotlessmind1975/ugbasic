@@ -83,7 +83,7 @@ di blitting si vuole utilizzare.
 
 @syntax BLIT IMAGE i1, i2, ... AT [x], [y] WITH b
 @syntax BLIT IMAGE i1, i2, ... FRAME frame AT [x], [y] WITH b
-@syntax BLIT IMAGE i1, i2, ... SEQUENCE s FRAME f AT [x], [y] WITH b
+@syntax BLIT IMAGE i1, i2, ... STRIP s FRAME f AT [x], [y] WITH b
 
 @example BLIT IMAGE test AT 0, 0 WITH bop
 
