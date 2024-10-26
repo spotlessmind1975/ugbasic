@@ -130,10 +130,6 @@ void generate_dsk( Environment * _environment ) {
     (void)!fread( originalBinaryFileContent, 1, executableBinaryFileSize, fh);
     fclose( fh );
 
-    fh = fopen( "/tmp/original.bin", "wb" );
-    fwrite( originalBinaryFileContent, 1, executableBinaryFileSize, fh);
-    fclose( fh );
-
     int programExeSize = 0x4d00 - _environment->program.startingAddress;
     if ( executableBinaryFileSize < programExeSize ) {
         programExeSize = executableBinaryFileSize;
