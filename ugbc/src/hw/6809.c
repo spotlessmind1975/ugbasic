@@ -2834,7 +2834,7 @@ void cpu6809_jump( Environment * _environment, char * _label ) {
 
 void cpu6809_call_addr( Environment * _environment, int  _address ) {
 
-    outline1( "JSR %4.4x", _address );
+    outline1( "JSR $%4.4x", _address );
 
 }
 
