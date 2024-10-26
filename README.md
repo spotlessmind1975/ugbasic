@@ -6,9 +6,8 @@ An **isomorphic BASIC** language compiler for retrocomputers by Marco Spedaletti
 
 A cross compiler of BASIC dialect specialized in programs that are [very efficient "by design"](https://ugbasic.iwashere.eu/manual/isomorphism) on various [8-bit platforms](https://ugbasic.iwashere.eu/targets) (based on **[MOS 6502/6510](https://ugbasic.iwashere.eu/targets)**, **[Motorola 6809](https://ugbasic.iwashere.eu/targets)** and **[Zilog Z80](https://ugbasic.iwashere.eu/targets)**), without the need for "fine tuning" them and without compromises of other dev-kits.
 
-<a href="https://spotlessmind1975.itch.io/ugbasic-user-manual"><img style="float: right; maxwith: 400px; height:auto;" src="https://ugbasic.iwashere.eu/assets/img/book01.jpg"></a>
+<img align="right" width="300" height="426" src="https://ugbasic.iwashere.eu/assets/img/book01.jpg"> [**An user manual**](https://spotlessmind1975.itch.io/ugbasic-user-manual) is available to guide you into the language. 
 
-[**An user manual**](https://spotlessmind1975.itch.io/ugbasic-user-manual) is available to guide you into the language. 
 The book starts from "basic" concepts, like variables, operators, control statements, subroutines, and explain how to do graphics and sound, images, sprites, and even write multitasking programs. You will discover how to create programs while taking advantage of the hardware limitations of retro computers.
 
 **This book is updated frequently**, and it is interesting if you want to discover how to apply modern programming techniques to retro computers, and it is essential if you want to use **ugBASIC** to its fullest.
