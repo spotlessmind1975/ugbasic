@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLT
+    
+    ORCC #$50
+
     LDA CONSOLEX1
     BNE VSCROLLTNEW
     LDA CONSOLEY1
@@ -61,6 +64,9 @@ VSCROLLTNEW
 ; ----------------------------------------------
 
 VSCROLLTNEWDB
+
+    ANDCC #$AF
+
 	RTS
 
 ; ----------------------------------------------
@@ -103,6 +109,9 @@ VSCROLLTNEW3X
     BNE VSCROLLTNEW4X
     JMP VSCROLLTNEW4
 VSCROLLTNEW4X
+    
+    ANDCC #$AF
+
     RTS
 
 VSCROLLTNEW0
@@ -259,6 +268,7 @@ VSCROLLTNEWDOWN
 
 VSCROLLTNEWE
     PULS A,B,X,Y,U
+    ANDCC #$AF
     RTS
 
 ; -------------------------------
@@ -268,6 +278,7 @@ VSCROLLTORG
     PSHS D
     LDD BITMAPADDRESS
     ADDD CURRENTFRAMESIZE
+    SUBB CURRENTSL    
     STD <MATHPTR0
     PULS D
 
@@ -282,6 +293,7 @@ VSCROLLTORG
 ; ----------------------------------------------
 
 VSCROLLTORGDB
+    ANDCC #$AF
 	RTS
 
 ; ----------------------------------------------
@@ -291,7 +303,7 @@ VSCROLLTORGDB
 VSCROLLTORGORIG
 
     ANDCC #$FE
-    LDA _PEN
+    LDA _PAPER
     ANDA #$0F
     ASLA
     ASLA
@@ -324,6 +336,7 @@ VSCROLLTORG3X
     BNE VSCROLLTORG4X
     JMP VSCROLLTORG4
 VSCROLLTORG4X
+    ANDCC #$AF
     RTS
 
 VSCROLLTORG0
@@ -371,7 +384,7 @@ VSCROLLTORGUPYSCR1
     STA ,X+
     CMPY <MATHPTR0
     BNE VSCROLLTORGUPYSCR1
-    LDA #0
+    LDA <MATHPTR5
 VSCROLLTORGUPREFILL
     STA ,X+
     CMPX <MATHPTR0
@@ -483,4 +496,5 @@ VSCROLLTORGDOWNREFILLC
 
 VSCROLLTORGE
     PULS A,B,X,Y,U
+    ANDCC #$AF
     RTS
