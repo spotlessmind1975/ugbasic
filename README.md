@@ -4,30 +4,16 @@ An **isomorphic BASIC** language compiler for retrocomputers by Marco Spedaletti
 
 ## ABOUT THIS SOFTWARE
 
-A cross compiler of BASIC dialect specialized in programs that are [very efficient "by design"](https://retroprogramming.iwashere.eu/midres_library:isomorphism) on various [8-bit platforms](https://ugbasic.iwashere.eu/targets) (based on **[MOS 6502/6510](https://ugbasic.iwashere.eu/targets)**, **[Motorola 6809](https://ugbasic.iwashere.eu/targets)** and **[Zilog Z80](https://ugbasic.iwashere.eu/targets)**), without the need for "fine tuning" them and without compromises of other dev-kits.
+A cross compiler of BASIC dialect specialized in programs that are [very efficient "by design"](https://ugbasic.iwashere.eu/manual/isomorphism) on various [8-bit platforms](https://ugbasic.iwashere.eu/targets) (based on **[MOS 6502/6510](https://ugbasic.iwashere.eu/targets)**, **[Motorola 6809](https://ugbasic.iwashere.eu/targets)** and **[Zilog Z80](https://ugbasic.iwashere.eu/targets)**), without the need for "fine tuning" them and without compromises of other dev-kits.
 
- * **Installation and usage**
-    * [Installation guide](https://ugbasic.iwashere.eu/install)
-    * [Usage guide](https://retroprogramming.iwashere.eu/ugbasic:usage)
-    * [Supported targets](https://ugbasic.iwashere.eu/targets)
- * **About the language** 
-    * [Basics of language](https://retroprogramming.iwashere.eu/ugbasic:user:basics)
-    * [Syntax](https://retroprogramming.iwashere.eu/ugbasic:syntax)
-    * [Data Types](https://retroprogramming.iwashere.eu/ugbasic:datatypes)
-    * [Variables (and constants)](https://retroprogramming.iwashere.eu/ugbasic:variables)
- * **Programming guides** 
-    * [Strings](https://retroprogramming.iwashere.eu/ugbasic:user:strings)
-    * [Maths](https://retroprogramming.iwashere.eu/ugbasic:user:maths)
-    * [Control structures](https://retroprogramming.iwashere.eu/ugbasic:user:control)
-    * [Procedures](https://retroprogramming.iwashere.eu/ugbasic:user:procedures)
-    * [Texts](https://retroprogramming.iwashere.eu/ugbasic:user:texts)
-    * [I/O control](https://retroprogramming.iwashere.eu/ugbasic:user:controls)
-    * [Screens](https://retroprogramming.iwashere.eu/ugbasic:user:screens)
-    * [Graphics](https://retroprogramming.iwashere.eu/ugbasic:user:graphics)
-    * [Images](https://retroprogramming.iwashere.eu/ugbasic:user:images)
-    * [Multitasking](https://retroprogramming.iwashere.eu/ugbasic:user:multitasking)
-    * [Memory expansions](https://retroprogramming.iwashere.eu/ugbasic:user:expansion)
-    * [Audio](https://retroprogramming.iwashere.eu/ugbasic:user:audio)
+<a href="https://spotlessmind1975.itch.io/ugbasic-user-manual"><img style="float: right; maxwith: 400px; height:auto;" src="https://ugbasic.iwashere.eu/assets/img/book01.jpg"></a>
+
+[**An user manual**](https://spotlessmind1975.itch.io/ugbasic-user-manual) is available to guide you into the language. 
+The book starts from "basic" concepts, like variables, operators, control statements, subroutines, and explain how to do graphics and sound, images, sprites, and even write multitasking programs. You will discover how to create programs while taking advantage of the hardware limitations of retro computers.
+
+**This book is updated frequently**, and it is interesting if you want to discover how to apply modern programming techniques to retro computers, and it is essential if you want to use **ugBASIC** to its fullest.
+
+There is also an [online version](https://ugbasic.iwashere.eu/manual/isomorphism), and the [reference manual](https://ugbasic.iwashere.eu/docs/reference/), useful for those wishing to modify and/or to extend the language.
 
 ## WHY SHOULD I USE "ugBASIC"?
 
@@ -43,30 +29,6 @@ For more information please [look here](https://ugbasic.iwashere.eu/).
 
 ## SUPPORTED HARDWARE
 
-This is a short list of supported hardware and output file formats:
-
- * Atari 400/800 (`atari`)
- * Atari 1200XL (`atarixl`)
- * Atari 600XL/800XL (`atarixl`)
- * Atari XE Video Game System (`atarixl`)
- * Commodore 128 (`c128`)
- * Commodore 64 (`c64`)
- * Commodore 64 REU (`c64reu`)
- * Commodore PLUS/4 (`plus4`)
- * Commodore VIC-20 (`vic20`)
- * Dragon 32 (`d32`)
- * Dragon 64 (`d64`)
- * Dragon 200-E (`d64`)
- * Olivetti PC128 Prodest (`pc128op`)
- * Thomson (`mo5`)
- * Amstrad CPC (`cpc`)
- * ColecoVision (`coleco`)
- * MSX (`msx1`)
- * SEGA SC-3000 (`sc3000`)
- * SEGA SG-1000 (`sg1000`)
- * TRS-80 Color Computer (`coco`)
- * ZX Spectrum 48K (`zx`)
-
 The complete list of targets can be [found here](https://ugbasic.iwashere.eu/targets).
 
 ## WHAT DOES "ug" MEAN?
@@ -75,7 +37,6 @@ It is an acronym.
 
  * The letter **u** stands for "micro" because it is a "minimal" language, which is translated as linearly as possible into assembly without abstractions. Note that the nature of isomorphism is like that it may not be "minimal" in terms of syntax. There may be redundancies, but the concept remains.
  * The letter **g** stands for "game", because the language was designed to write video games, even advanced ones. It has a number of primitives that hook directly to hardware characteristics. For example, there are instructions to synchronize the execution to the vertical blank, to manage animations, background music and so on.
-
 
 ## LICENSE
 
