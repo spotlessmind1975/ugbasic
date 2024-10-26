@@ -3979,7 +3979,7 @@ char * basename( char * _path );
     }
 
 #define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, listingFileName, additionalParameters ) \
-    sprintf( commandLine, "\"%s\" %s -Ln /tmp/bug3.lbl -g -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
+    sprintf( commandLine, "\"%s\" %s -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
         executableName, \
         listingFileName, \
         _environment->exeFileName, \
