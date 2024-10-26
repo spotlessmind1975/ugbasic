@@ -47,21 +47,6 @@
  * @param _filename Filename to read into buffer
  * @param _mode Mode to use to convert data
  */
-/* <usermanual>
-@keyword IMAGE from buffer
-
-@english
-The ''(IMAGE)#[...]'' command allows you to load an image from a buffer.
-
-@italian
-Il comando ''(IMAGE)#[...]'' permette di caricare una immagine da un buffer.
-
-@syntax = (IMAGE)#[hexadecimal string]
-
-@example starship = (IMAGE)#[100010100010ff20ff20...ffff]
-
-@target all
-</usermanual> */
 Variable * image_load_from_buffer( Environment * _environment, char * _buffer, int _buffer_size ) {
 
     // First of all, we create a variable to store the image.

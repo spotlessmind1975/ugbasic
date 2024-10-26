@@ -74,9 +74,6 @@ void bank_uncompress_semi_var( Environment * _environment, int _bank, int _addre
  * @param _address1 address to uncompress from (0 based)
  * @param _address2 address to write to (RAM)
  */
-/* <usermanual>
-@keyword BANK UNCOMPRESS
-</usermanual> */
 void bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 ) {
 
     Variable * bankAddress = banks_get_address_var( _environment, _bank );

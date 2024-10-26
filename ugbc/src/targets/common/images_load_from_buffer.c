@@ -45,19 +45,6 @@
  * @param _filename Filename to read into buffer
  * @param _mode Mode to use to convert data
  */
-/* <usermanual>
-@keyword IMAGES from buffer
-
-@english
-The ''(IMAGES)#[...]'' command allows you to load an image and to convert 
-in an array of images, starting from a buffer.
-
-@italian
-Il comando ''(IMAGES)#[...]'' permette di caricare un'immagine e di convertirla
-in una serie di immagini, a partire da un buffer.
-
-@target all
-</usermanual> */
 Variable * images_load_from_buffer( Environment * _environment, char * _buffer, int _buffer_size ) {
 
     Variable * final = variable_temporary( _environment, VT_IMAGES, 0 );
