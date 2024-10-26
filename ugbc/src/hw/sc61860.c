@@ -485,9 +485,9 @@ static void op_stab( Environment * _environment, char * _address ) {
     outline1("LIDP %s", _address );
 
     // (DP) <- A
-    outline0("EXAM");
+    outline0("EXAB");
     outline0("STD");
-    outline0("EXAM");
+    outline0("EXAB");
 
     // DP <- target
     outline1("LIDP %s", address_displacement( _environment, _address, "1" ) );
@@ -533,6 +533,12 @@ static void op_subabc( Environment * _environment ) {
 
 }
 
+static void op_swab( Environment * _environment ) {
+
+    outline0("EXAB");
+
+}
+
 static void op_xab( Environment * _environment ) {
 
     outline0("LIP 0x03");
@@ -567,7 +573,7 @@ static void op_wait_direct( Environment * _environment, int _value ) {
 void sc61860_nop( Environment * _environment ) {
 
     outline0("NOPW");
-    
+
 }
 
 void sc61860_init( Environment * _environment ) {
@@ -2193,6 +2199,8 @@ void sc61860_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
         if ( _signed ) {
 
+            CRITICAL_UNIMPLEMENTED( "sc61860_math_mul_16bit_to_32bit(signed)" );
+
             // outline1("LD IX, (%s)", _source );
             // outline1("LD IY, (%s)", _destination );
             // outline0("CALL CPUMUL16B16T32S")
@@ -2272,21 +2280,23 @@ void sc61860_math_sub_16bit( Environment * _environment, char *_source, char *_d
  */
 void sc61860_math_complement_const_16bit( Environment * _environment, char *_source, int _value ) {
 
-    // inline( cpu_math_complement_const_16bit )
+    op_lda( _environment, _source );
 
-        // outline1("LD HL, 0x%4.4x", _value );
-        // outline1("LD DE, (%s)", _source );
-        // outline0("LD A, E" );
-        // outline0("XOR 0xFF" );
-        // outline0("LD E, A" );
-        // outline0("LD A, D" );
-        // outline0("XOR 0xFF" );
-        // outline0("LD D, A" );
-        // outline0("INC DE" );
-        // outline0("ADD HL, DE" );
-        // outline1("LD (%s), HL", _source );
+    op_ldab( _environment, _source );
 
-    // no_embedded( cpu_math_complement_const_16bit )
+    op_lda_direct( _environment, _value & 0xff );
+
+    op_subab( _environment );
+
+    op_sta( _environment, _source );
+
+    op_ldab( _environment, address_displacement( _environment, _source, "1" ) );
+
+    op_lda_direct( _environment, ( _value >> 8 ) );
+
+    op_subabc( _environment );
+
+    op_sta( _environment, address_displacement( _environment, _source, "1" ) );
 
 }
 
@@ -2299,66 +2309,27 @@ void sc61860_math_complement_const_16bit( Environment * _environment, char *_sou
  */
 void sc61860_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    // inline( cpu_math_div2_const_16bit )
+    MAKE_LABEL
 
-        MAKE_LABEL
+    if ( _signed ) {
 
-        if ( _signed ) {
-            // outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
-            // outline0("AND 0x80" );
-            // outline0("CP 0" );
-            // outline0("PUSH AF" );
-            // outline1("JR Z, %spos", label );
-            sc61860_complement2_16bit( _environment, _source, _source );
-            // outline1("JMP %spos2", label );
-            // outhead1("%spos:", label );
-            // outhead1("%spos2:", label );
-            // outline1("LD HL, (%s)", _source );
-            while( _steps ) {
-                // outline0("SRA H" );
-                // outline0("RR L" );
-                --_steps;
-            }
-            // outline1("LD (%s), HL", _source );
-            // outline0("POP AF" );
-            // outline0("AND 0x80" );
-            // outline0("CP 0" );
-            // outline1("JR Z, %s// done", label );
-            sc61860_complement2_16bit( _environment, _source, _source );
-            // outhead1("%s// done:", label );
-        } else {
-            // outline1("LD HL, (%s)", _source );
-            while( _steps ) {
-                // outline0("SRA H" );
-                // outline0("RR L" );
-                --_steps;
-            }
-            // outline1("LD (%s), HL", _source );
-            
+        CRITICAL_UNIMPLEMENTED( "sc61860_math_div2_const_16bit(signed)" );
+
+    } else {
+
+        op_ldab( _environment, _source );
+
+        while( _steps ) {
+            op_sla( _environment );
+            op_swab( _environment );
+            op_sla( _environment );
+            op_swab( _environment );
+            --_steps;
         }
 
-    // embedded( cpu_math_div2_const_16bit, src_hw_sc61860_cpu_math_div2_const_16bit_asm )
-
-        if ( _signed ) {
-            if ( _steps ) {
-                // outline1("LD HL, (%s)", _source );
-                // outline1("LD A, 0x%2.2x", _steps );
-                // outline0("LD C, A" );
-                // outline0("CALL CPUDIV2CONST16S" );
-                // outline1("LD (%s), HL", _source );
-            }
-        } else {
-            if ( _steps ) {
-                // outline1("LD HL, (%s)", _source );
-                // outline1("LD A, 0x%2.2x", _steps );
-                // outline0("LD C, A" );
-                // outline0("CALL CPUDIV2CONST16U" );
-                // outline1("LD (%s), HL", _source );
-            }
-            
-        }
-
-    // done( )
+        op_stab( _environment, _source );
+        
+    }
 
 }
 
