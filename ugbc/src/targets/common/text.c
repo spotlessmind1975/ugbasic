@@ -69,7 +69,7 @@ void text_newline( Environment * _environment ) {
 
     text_vscroll_screen( _environment, -1 );
 
-    cpu_move_8bit( _environment, "CONSOLEY2", "YCURSYS" );
+    variable_move( _environment, "CONSOLEY2", "YCURSYS" );
 
     cpu_label( _environment, endLabel );
 
