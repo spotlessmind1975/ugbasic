@@ -564,6 +564,12 @@ static void op_wait_direct( Environment * _environment, int _value ) {
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+void sc61860_nop( Environment * _environment ) {
+
+    outline0("NOPW");
+    
+}
+
 void sc61860_init( Environment * _environment ) {
 
 }

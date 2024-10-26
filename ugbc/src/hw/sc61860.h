@@ -53,6 +53,7 @@
 
 void sc61860_init( Environment * _environment );
 
+void sc61860_nop( Environment * _environment );
 void sc61860_ztoa( Environment * _environment );
 void sc61860_ctoa( Environment * _environment );
 void sc61860_beq( Environment * _environment, char * _label );
@@ -361,6 +362,7 @@ void sc61860_float_single_tan( Environment * _environment, char * _value, char *
 void sc61860_float_single_log( Environment * _environment, char * _value, char * _result );
 void sc61860_float_single_exp( Environment * _environment, char * _value, char * _result );
 
+#define cpu_nop( _environment ) sc61860_nop( _environment )
 #define cpu_ztoa( _environment ) sc61860_ztoa( _environment )
 #define cpu_ctoa( _environment ) sc61860_ctoa( _environment )
 #define cpu_beq( _environment,  _label  ) sc61860_beq( _environment,  _label  )
