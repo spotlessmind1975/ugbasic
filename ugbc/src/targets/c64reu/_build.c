@@ -94,9 +94,15 @@ void generate_prg( Environment * _environment ) {
 
 void generate_d64( Environment * _environment ) {
 
+    char * exeFileName = strdup( _environment->exeFileName );
+    char * extension = strstr( exeFileName, ".d64" );
+    if ( extension ) {
+        * extension = 0;
+    }
+
     FILE * prgHandle = fopen(_environment->exeFileName, "rb");
     if ( ! prgHandle ) {
-        CRITICAL("Cannot generate d64 file");
+        CRITICAL_BUILD_CANNOT_READ_EXECUTABLE_FOR_DSK( exeFileName, _environment->exeFileName );
     }
     fseek( prgHandle, 0, SEEK_END );
     int prgSize = ftell( prgHandle );
@@ -107,11 +113,6 @@ void generate_d64( Environment * _environment ) {
 
     remove(_environment->exeFileName);
 
-    char * exeFileName = strdup( _environment->exeFileName );
-    char * extension = strstr( exeFileName, ".d64" );
-    if ( extension ) {
-        * extension = 0;
-    }
     int diskNumber = 1;
 
     D64Handle * handle = NULL;
