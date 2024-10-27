@@ -184,9 +184,27 @@ static void op_decinz( Environment * _environment, char * _label ) {
 
 }
 
+static void op_decijnz( Environment * _environment, char * _label ) {
+
+    outline0("DECI");
+    outline1("JRNZ %s", _label);
+    outline0("DECJ");
+    outline1("JRNZ %s", _label);
+
+}
+
 static void op_deciz( Environment * _environment, char * _label ) {
 
     outline0("DECI");
+    outline1("JRZ %s", _label);
+
+}
+
+static void op_decijz( Environment * _environment, char * _label ) {
+
+    outline0("DECI");
+    outline1("JRZ %s", _label);
+    outline0("DECJ");
     outline1("JRZ %s", _label);
 
 }
@@ -4118,46 +4136,27 @@ void sc61860_xor_32bit_const( Environment * _environment, char * _left, int _rig
 
 void sc61860_swap_8bit( Environment * _environment, char * _left, char * _right ) {
 
-    // no_inline( cpu_swap_8bit )
-
-    // embedded( cpu_swap_8bit, src_hw_sc61860_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
-
-        // outline1("LD HL, %s", _right );
-        // outline1("LD DE, %s", _left );
-        // outline0("LD B, 1" );
-        // outline0("CALL CPUSWAP" );
-
-    // done( )
+    op_lda( _environment, _left );
+    op_ldb( _environment, _right );
+    op_xab( _environment );
+    op_sta( _environment, _left );
+    op_sta( _environment, _right );
 
 }    
 
 void sc61860_swap_16bit( Environment * _environment, char * _left, char * _right ) {
 
-    // no_inline( cpu_swap_8bit )
-
-    // embedded( cpu_swap_8bit, src_hw_sc61860_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
-
-        // outline1("LD HL, %s", _right );
-        // outline1("LD DE, %s", _left );
-        // outline0("LD B, 2" );
-        // outline0("CALL CPUSWAP" );
-
-    // done( )
+    sc61860_swap_8bit( _environment, _left,  _right );
+    sc61860_swap_8bit( _environment, address_displacement( _environment, _left, "1" ),  address_displacement( _environment, _right, "1" ) );
 
 }
 
 void sc61860_swap_32bit( Environment * _environment, char * _left, char * _right ) {
 
-    // no_inline( cpu_swap_8bit )
-
-    // embedded( cpu_swap_8bit, src_hw_sc61860_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
-
-        // outline1("LD HL, %s", _right );
-        // outline1("LD DE, %s", _left );
-        // outline0("LD B, 4" );
-        // outline0("CALL CPUSWAP" );
-
-    // done( )
+    sc61860_swap_8bit( _environment, _left,  _right );
+    sc61860_swap_8bit( _environment, address_displacement( _environment, _left, "1" ),  address_displacement( _environment, _right, "1" ) );
+    sc61860_swap_8bit( _environment, address_displacement( _environment, _left, "2" ),  address_displacement( _environment, _right, "2" ) );
+    sc61860_swap_8bit( _environment, address_displacement( _environment, _left, "3" ),  address_displacement( _environment, _right, "3" ) );
     
 }
 
@@ -4295,25 +4294,41 @@ void sc61860_dec_16bit( Environment * _environment, char * _variable ) {
 
 void sc61860_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    // deploy( duff, src_hw_sc61860_duff_asm );
+    MAKE_LABEL
 
-    // outline1("LD HL, (%s)", _source);
-    // outline1("LD DE, (%s)", _destination);
-    // outline1("LD A, (%s)", _size);
-    // outline0("LD C, A");
-    // outline0("LD B, 0");
-    // outline0("CALL DUFFDEVICE");
+    op_ldi( _size );
+    op_ldx( _source );
+    op_ldy( _destination );
+
+    outline0("DX");
+    outline0("DY");
+
+    sc61860_label( _environment, label );
+    outline0("IXL")
+    outline0("LDD")
+    outline0("IYL")
+    outline0("STD")
+    op_decinz( _environment, label );
 
 }
 
 void sc61860_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    // deploy( duff, src_hw_sc61860_duff_asm );
+    MAKE_LABEL
 
-    // outline1("LD HL, (%s)", _source);
-    // outline1("LD DE, (%s)", _destination);
-    // outline1("LD BC, (%s)", _size);
-    // outline0("CALL DUFFDEVICE");
+    op_ldij( _size );
+    op_ldx( _source );
+    op_ldy( _destination );
+
+    outline0("DX");
+    outline0("DY");
+
+    sc61860_label( _environment, label );
+    outline0("IXL")
+    outline0("LDD")
+    outline0("IYL")
+    outline0("STD")
+    op_decijnz( _environment, label );
 
 }
 
