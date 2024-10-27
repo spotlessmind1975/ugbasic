@@ -3264,7 +3264,8 @@ typedef struct _Environment {
 #define CRITICALB3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s, %d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2 ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB4si( s, v, d1, d2 ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s, %d, %d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2 ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 
-#define CRITICAL_BUILD_CANNOT_READ_EXECUTABLE_FOR_DSK(d,f)  CRITICALB3("B001 - cannot read executable for disk image", d, f );
+#define CRITICAL_BUILD_CANNOT_READ_EXECUTABLE_FOR_DSK(d,f) CRITICALB3("B001 - cannot read executable for disk image", d, f );
+#define CRITICAL_BUILD_INVALID_FILENAME_K7(f) CRITICALB2("B002 - invalid filename for K7 format", d, f );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

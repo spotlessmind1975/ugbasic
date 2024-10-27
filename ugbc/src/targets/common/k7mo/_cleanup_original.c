@@ -70,9 +70,7 @@ static int frmt( Environment * _environment, char * ptr, char size,char* out)
 		int p=strcspn(ptr,point);
 		if(p==size-1||p>8||size>12||p==0)
 		{
-    		CRITICAL("abort");
-			// printf("incompatible string\nplease use *******.*** format\n");
-			// return -1;
+    		CRITICAL_BUILD_INVALID_FILENAME_K7(ptr);
 		}
 		for(i=0;i<size;i++)
 		{
@@ -164,7 +162,7 @@ int convertbintok7_original(Environment * _environment)
 
 	if(frmt(_environment, "main.exe",strlen("main.exe"),nome))
 	{
-		CRITICAL("abort");
+		CRITICAL_BUILD_INVALID_FILENAME_K7("main.exe");
 	}
 
 	unsigned char byt;
