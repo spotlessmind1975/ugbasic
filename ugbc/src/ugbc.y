@@ -11286,13 +11286,13 @@ int main( int _argc, char *_argv[] ) {
 #if defined(__msx1__)
                     _environment->dsktoolsFileName = strdup(optarg);
                     if( access( _environment->dsktoolsFileName, F_OK ) != 0 ) {
-                        CRITICAL(""Option '-t': dsktools tool not found.");
+                        CRITICAL("Option '-t': dsktools tool not found.");
                     }
 #endif
 #if defined(__pc1403__)
                     _environment->asLinkerFileName = strdup(optarg);
                     if( access( _environment->asLinkerFileName, F_OK ) != 0 ) {
-                        CRITICAL(""Option '-t': aslink tool not found.");
+                        CRITICAL("Option '-t': aslink tool not found.");
                     }
 #endif
                     break;
