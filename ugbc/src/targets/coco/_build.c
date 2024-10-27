@@ -42,12 +42,15 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void generate_bin( Environment * _environment ) {
 
+    char exeFileName[8*MAX_TEMPORARY_STORAGE];
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
     char binaryName[MAX_TEMPORARY_STORAGE];
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
+
+    strcpy( exeFileName, _environment->exeFileName );
 
     strcpy( binaryName, _environment->exeFileName );
     char * p = strstr( binaryName, ".dsk" );
@@ -90,6 +93,8 @@ void generate_bin( Environment * _environment ) {
     
     }
 
+    strcpy( _environment->exeFileName, exeFileName );
+
 }
 
 void generate_dsk( Environment * _environment ) {
@@ -112,7 +117,7 @@ void generate_dsk( Environment * _environment ) {
         executableBinaryFileSize = ftell( fh );
         fclose( fh );
     } else {
-        CRITICAL( "cannot create dsk file");
+        CRITICAL_BUILD_CANNOT_READ_EXECUTABLE_FOR_DSK( _environment->exeFileName, originalBinaryFile );
     }
 
     // The LOADM command is able to read a limited size of binary file.
