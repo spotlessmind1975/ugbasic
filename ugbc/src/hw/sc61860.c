@@ -95,6 +95,13 @@ static void op_anda_direct( Environment * _environment, int _direct ) {
 
 }
 
+static void op_andab( Environment * _environment ) {
+
+    outline0("LP 0x03" );
+    outline0("ANMA");
+
+}
+
 static void op_addya( Environment * _environment ) {
 
     outline0("LP 0x06" );
@@ -753,6 +760,13 @@ static void op_lddp( Environment * _environment, char * _address ) {
     outline0("MVWD");
     outline0("DX");
     outline0("IX");
+
+}
+
+static void op_orab( Environment * _environment ) {
+
+    outline0("LP 0x03" );
+    outline0("ORMA");
 
 }
 
@@ -3882,79 +3896,47 @@ void sc61860_logical_and_8bit( Environment * _environment, char * _left, char * 
 
     MAKE_LABEL
 
-    // outline1("LD A, (%s)", _left );
-    // outline0("CMP 0" );
-    // outline1("JR Z, %s", label );
-    // outline1("LD A, (%s)", _right );
-    // outline0("CMP 0" );
-    // outline1("JR Z, %s", label );
-    // outline0("LD A, 0xff" );
-    // outline1("LD (%s), A", _result );
-    // outline1("JMP %s_2", label );
-    // outhead1("%s:", label );
-    // outline0("LD A, 0" );
-    // outline1("LD (%s), A", _result );
-    // outhead1("%s_2:", label );
+    char doneLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( doneLabel, "%sdone", label );
 
+    op_lda( _environment, _left );
+    op_cp_direct( _environment, 0 );
+    op_jz( _environment, label );
+    op_lda( _environment, _right );
+    op_cp_direct( _environment, 0 );
+    op_jz( _environment, label );
+    op_lda_direct( _environment, 0xff );
+    op_sta( _environment, _result );
+    op_jp( _environment, doneLabel );
+    sc61860_label( _environment, label );
+    op_lda_direct( _environment, 0 );
+    op_sta( _environment, _result );
+    sc61860_label( _environment, doneLabel );
 
 }
 
 void sc61860_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    MAKE_LABEL
-
-    // outline1("LD HL, %s", _left );
-    // outline1("LD IX, %s", _right );
-    // outline1("LD DE, %s", _result );
-    // outline0("LD A, (HL)" );
-    // outline0("AND (IX)" );
-    // outline0("LD (DE), A" );
+    op_ldb( _environment, _right );
+    op_lda( _environment, _left );
+    op_andab( _environment );
+    op_stb( _environment, _result );
 
 }
 
 void sc61860_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    MAKE_LABEL
-
-    // outline1("LD HL, %s", _left );
-    // outline1("LD IX, %s", _right );
-    // outline1("LD DE, %s", _result );
-    // outline0("LD A, (HL)" );
-    // outline0("AND (IX)" );
-    // outline0("LD (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("LD A, (HL)" );
-    // outline0("AND (IX+1)" );
-    // outline0("LD (DE), A" );
+    sc61860_and_8bit( _environment, _left, _right, _result );
+    sc61860_and_8bit( _environment, address_displacement( _environment, _left, "1" ), address_displacement( _environment, _right, "1" ), address_displacement( _environment, _result, "1" ) );
 
 }
 
 void sc61860_and_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    MAKE_LABEL
-
-    // outline1("LD HL, %s", _left );
-    // outline1("LD IX, %s", _right );
-    // outline1("LD DE, %s", _result );
-    // outline0("LD A, (HL)" );
-    // outline0("AND (IX)" );
-    // outline0("LD (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("LD A, (HL)" );
-    // outline0("AND (IX+1)" );
-    // outline0("LD (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("LD A, (HL)" );
-    // outline0("AND (IX+2)" );
-    // outline0("LD (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("LD A, (HL)" );
-    // outline0("AND (IX+3)" );
-    // outline0("LD (DE), A" );
+    sc61860_and_8bit( _environment, _left, _right, _result );
+    sc61860_and_8bit( _environment, address_displacement( _environment, _left, "1" ), address_displacement( _environment, _right, "1" ), address_displacement( _environment, _result, "1" ) );
+    sc61860_and_8bit( _environment, address_displacement( _environment, _left, "2" ), address_displacement( _environment, _right, "2" ), address_displacement( _environment, _result, "2" ) );
+    sc61860_and_8bit( _environment, address_displacement( _environment, _left, "3" ), address_displacement( _environment, _right, "2" ), address_displacement( _environment, _result, "3" ) );
 
 }
 
@@ -3962,31 +3944,33 @@ void sc61860_logical_or_8bit( Environment * _environment, char * _left, char * _
 
     MAKE_LABEL
 
-    // outline1("LD A, (%s)", _left );
-    // outline1("JR NZ, %sd1", label );
-    // outline1("LD A, (%s)", _right );
-    // outline1("JR NZ, %sd1", label );
-    // outhead1("%s0:", label );
-    // outline0("LD A, 0" );
-    // outline1("LD (%s), A", _result );
-    // outline1("JMP %sx", label );
-    // outhead1("%sd1:", label );
-    // outline0("LD A, 0xff" );
-    // outline1("LD (%s), A", _result );
-    // outhead1("%sx:", label );
+    char doneLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( doneLabel, "%sdone", label );
 
+    op_lda( _environment, _left );
+    op_cp_direct( _environment, 0 );
+    op_jnz( _environment, label );
+    op_lda( _environment, _right );
+    op_cp_direct( _environment, 0 );
+    op_jnz( _environment, label );
+    op_lda_direct( _environment, 0 );
+    op_sta( _environment, _result );
+    op_jp( _environment, doneLabel );
+    sc61860_label( _environment, label );
+    op_lda_direct( _environment, 0xff );
+    op_sta( _environment, _result );
+    sc61860_label( _environment, doneLabel );
+    
 }
 
 void sc61860_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
-    // outline1("LD HL, %s", _left );
-    // outline1("LD IX, %s", _right );
-    // outline1("LD DE, %s", _result );
-    // outline0("LD A, (HL)" );
-    // outline0("OR (IX)" );
-    // outline0("LD (DE), A" );
+    op_ldb( _environment, _right );
+    op_lda( _environment, _left );
+    op_orab( _environment );
+    op_stb( _environment, _result );
 
 }
 
@@ -3994,19 +3978,8 @@ void sc61860_or_16bit( Environment * _environment, char * _left, char * _right, 
 
     MAKE_LABEL
 
-    // outline1("LD HL, %s", _left );
-    // outline1("LD IX, %s", _right );
-    // outline1("LD DE, %s", _result );
-    // outline0("LD A, (HL)" );
-    // outline0("OR (IX)" );
-    // outline0("LD (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("LD A, (HL)" );
-    // outline0("OR (IX+1)" );
-    // outline0("LD (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
+    sc61860_or_8bit( _environment, _left, _right, _result );
+    sc61860_or_8bit( _environment, address_displacement( _environment, _left, "1" ), address_displacement( _environment, _right, "1" ), address_displacement( _environment, _result, "1" ) );
 
 }
 
@@ -4014,27 +3987,10 @@ void sc61860_or_32bit( Environment * _environment, char * _left, char * _right, 
 
     MAKE_LABEL
 
-    // outline1("LD HL, %s", _left );
-    // outline1("LD IX, %s", _right );
-    // outline1("LD DE, %s", _result );
-    // outline0("LD A, (HL)" );
-    // outline0("OR (IX)" );
-    // outline0("LD (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("LD A, (HL)" );
-    // outline0("OR (IX+1)" );
-    // outline0("LD (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("LD A, (HL)" );
-    // outline0("OR (IX+2)" );
-    // outline0("LD (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("LD A, (HL)" );
-    // outline0("OR (IX+3)" );
-    // outline0("LD (DE), A" );
+    sc61860_or_8bit( _environment, _left, _right, _result );
+    sc61860_or_8bit( _environment, address_displacement( _environment, _left, "1" ), address_displacement( _environment, _right, "1" ), address_displacement( _environment, _result, "1" ) );
+    sc61860_or_8bit( _environment, address_displacement( _environment, _left, "2" ), address_displacement( _environment, _right, "2" ), address_displacement( _environment, _result, "2" ) );
+    sc61860_or_8bit( _environment, address_displacement( _environment, _left, "3" ), address_displacement( _environment, _right, "2" ), address_displacement( _environment, _result, "3" ) );
 
 }
 
