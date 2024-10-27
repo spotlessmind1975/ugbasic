@@ -2929,6 +2929,7 @@ typedef struct _Environment {
 #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL4si( s, v, d1, d2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+
 #define CRITICAL_UNIMPLEMENTED( v ) CRITICAL2("E000 - Internal method not implemented:", v );
 #define CRITICAL_TEMPORARY2( v ) CRITICAL2("E001 - Unable to create space for temporary variable", v );
 #define CRITICAL_VARIABLE( v ) CRITICAL2("E002 - Using of an undefined variable", v );
@@ -3252,6 +3253,16 @@ typedef struct _Environment {
 #define CRITICAL_WAIT_UNTIL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE() CRITICAL("E313 - cannot call WAIT UNTIL outside a PARALLEL procedure" );
 #define CRITICAL_WAIT_WHILE_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE() CRITICAL("E314 - cannot call WAIT WHILE outside a PARALLEL procedure" );
 #define CRITICAL_WAIT_CYCLES_PARALLEL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE()  CRITICAL("E315 - cannot call WAIT CYCLES PARALLEL outside a PARALLEL procedure" );
+#define CRITICAL_MISSING_CONSTANT(v)  CRITICAL2("E316 - trying to emit a constant that does not exist" );
+
+#define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICALB2i( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICALB3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s, %s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2 ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICALB3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s, %d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2 ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICALB4si( s, v, d1, d2 ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s, %d, %d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2 ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+
+#define CRITICAL_BUILD_CANNOT_READ_EXECUTABLE_FOR_DSK(d,f)  CRITICALB3("B001 - cannot read executable for disk image", d, f );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
