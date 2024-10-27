@@ -2872,6 +2872,8 @@ typedef struct _Environment {
 
     int residentDetectionEnabled;
 
+    int removeComments;
+    
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

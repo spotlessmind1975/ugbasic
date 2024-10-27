@@ -11307,6 +11307,9 @@ int main( int _argc, char *_argv[] ) {
                 case 'd':
                     _environment->debugImageLoad = 1;
                     break;
+                case 'r':
+                    _environment->removeComments = 1;
+                    break;
                 case 'v':
                     _environment->outputGeneratedFiles = 1;
                     break;

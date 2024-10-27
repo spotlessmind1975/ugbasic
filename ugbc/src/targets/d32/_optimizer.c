@@ -2258,6 +2258,49 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
 
 }
 
+static void optim_remove_comments( Environment * _environment ) {
+
+    int i;
+
+    POBuffer bufLine = TMP_BUF;
+
+    char fileNameOptimized[MAX_TEMPORARY_STORAGE];
+    FILE * fileAsm;
+    FILE * fileOptimized;
+
+    sprintf( fileNameOptimized, "%s.asm", get_temporary_filename( _environment ) );
+        
+    fileAsm = fopen( _environment->asmFileName, "rt" );
+    if(fileAsm == NULL) {
+        perror(_environment->asmFileName);
+        exit(-1);
+    }
+
+    fileOptimized = fopen( fileNameOptimized, "wt" );
+    if(fileOptimized == NULL) {
+        perror(fileNameOptimized);
+        exit(-1);
+    }      
+
+    while( !feof(fileAsm) ) {
+
+        po_buf_fgets( bufLine, fileAsm );
+
+        if ( !isAComment( bufLine ) ) {
+            out( fileOptimized, bufLine );
+        }
+
+    }
+
+    (void)fclose(fileAsm);
+    (void)fclose(fileOptimized);
+
+    /* makes our generated file the new asm file */
+    remove(_environment->asmFileName);
+    BUILD_SAFE_MOVE( _environment, fileNameOptimized, _environment->asmFileName );
+
+}
+
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
 
@@ -2291,6 +2334,10 @@ void target_peephole_optimizer( Environment * _environment ) {
     
     // printf("SECOND 2)\n");
     optim_remove_unused_temporary( _environment );
+
+    if ( _environment->removeComments ) {
+        optim_remove_comments(_environment);
+    }
 
 }
 
