@@ -8645,6 +8645,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
             case VT_MSPRITE:
                 cpu_move_16bit_indirect( _environment, _value->realName, offset->realName );
                 break;
+            case VT_DSTRING:
+                cpu_move_8bit_indirect( _environment, _value->realName, offset->realName );
+                break;
             default:
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
                     case 32:
