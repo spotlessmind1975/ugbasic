@@ -4296,9 +4296,9 @@ void sc61860_mem_move( Environment * _environment, char *_source, char *_destina
 
     MAKE_LABEL
 
-    op_ldi( _size );
-    op_ldx( _source );
-    op_ldy( _destination );
+    op_ldi( _environment, _size );
+    op_ldx( _environment, _source );
+    op_ldy( _environment, _destination );
 
     outline0("DX");
     outline0("DY");
@@ -4316,9 +4316,9 @@ void sc61860_mem_move_16bit( Environment * _environment, char *_source, char *_d
 
     MAKE_LABEL
 
-    op_ldij( _size );
-    op_ldx( _source );
-    op_ldy( _destination );
+    op_ldij( _environment, _size );
+    op_ldx( _environment, _source );
+    op_ldy( _environment, _destination );
 
     outline0("DX");
     outline0("DY");
@@ -4371,14 +4371,21 @@ void sc61860_mem_move_size( Environment * _environment, char *_source, char *_de
 
     if ( _size > 0 ) {
 
-        // deploy( duff, src_hw_sc61860_duff_asm );
+        MAKE_LABEL
 
-        // outline1("LD HL, (%s)", _source);
-        // outline1("LD DE, (%s)", _destination);
-        // outline1("LD A, 0x%2.2x", ( _size & 0xff ) );
-        // outline0("LD C, A");
-        // outline1("LD B, 0x%2.2x", ( _size >> 8 ) & 0xff );
-        // outline0("CALL DUFFDEVICE");
+        op_ldij_direct( _environment, _size );
+        op_ldx( _environment, _source );
+        op_ldy( _environment, _destination );
+
+        outline0("DX");
+        outline0("DY");
+
+        sc61860_label( _environment, label );
+        outline0("IXL")
+        outline0("LDD")
+        outline0("IYL")
+        outline0("STD")
+        op_decijnz( _environment, label );
 
     }
 
