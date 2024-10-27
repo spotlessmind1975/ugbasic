@@ -647,7 +647,7 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
         MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
 
         if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
-            CRITICAL("Compression failed");
+            CRITICAL_COMPRESSION_FAILED(_filename);
         }
         msc1_free( compressor );
 
@@ -684,7 +684,7 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
         int temporary;
         MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
         if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
-            CRITICAL("Compression failed");
+            CRITICAL_COMPRESSION_FAILED(_filename);
         }
         msc1_free( compressor );
 

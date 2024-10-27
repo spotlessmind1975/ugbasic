@@ -278,7 +278,7 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
         int temporary;
         MemoryBlock * outputCheck = msc1_uncompress( compressor, output, final->size, &temporary );
         if ( memcmp( outputCheck, final->valueBuffer, final->uncompressedSize ) != 0 ) {
-            CRITICAL("Compression failed");
+            CRITICAL_COMPRESSION_FAILED(_filename);
         }
         msc1_free( compressor );
         // printf( "%s: %d bytes -> %d bytes\n", _filename, final->uncompressedSize, final->size );

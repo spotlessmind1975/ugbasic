@@ -108,7 +108,7 @@ Variable * image_storage( Environment * _environment, char * _source_name, char 
         int temporary;
         MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
         if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
-            CRITICAL("Compression failed");
+            CRITICAL_COMPRESSION_FAILED(_filename);
         }
         msc1_free( compressor );
 

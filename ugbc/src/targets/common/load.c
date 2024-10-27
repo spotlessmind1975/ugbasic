@@ -141,41 +141,6 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
     // If a bank expasion has been requested, and there is at least one bank...
     if ( _bank_expansion && _environment->expansionBanks ) {
 
-        // if ( !_environment->compressionForbidden ) {
-
-        //     // Try to compress the result of image conversion.
-        //     // This means that the buffer will be compressed using MSC1
-        //     // algorithm, up to 32 frequent sequences. The original size of
-        //     // the buffer will be considered as "uncompressed" size.
-        //     MSC1Compressor * compressor = msc1_create( 32 );
-        //     result->uncompressedSize = result->size;
-        //     MemoryBlock * output = msc1_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
-
-        //     int temporary;
-        //     MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
-
-        //     if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
-        //         CRITICAL("Compression failed");
-        //     }
-        //     msc1_free( compressor );
-
-        //     // If the compressed memory is greater than the original
-        //     // size, we discard the compression and we will continue as
-        //     // usual.
-        //     if ( result->uncompressedSize < result->size ) {
-        //         result->size = result->uncompressedSize;
-        //         result->uncompressedSize = 0;
-        //         free( output );
-        //     } 
-        //     // Otherwise, we can safely replace the original data
-        //     // buffer with the compressed one.
-        //     else {
-        //         free( result->valueBuffer );
-        //         result->valueBuffer = output;
-        //     }
-
-        // }
-
         if ( ! banks_store( _environment, result, _bank_expansion ) ) {
             CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
         }
@@ -210,7 +175,7 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
         //     };
         // }
         if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
-            CRITICAL("Compression failed");
+            CRITICAL_COMPRESSION_FAILED(_filename);
         }
         msc1_free( compressor );
         // printf( "%s: %d bytes -> %d bytes\n", _filename, result->uncompressedSize, result->size );
