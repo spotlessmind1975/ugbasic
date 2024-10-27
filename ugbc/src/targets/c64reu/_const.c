@@ -58,7 +58,7 @@ void const_emit( Environment * _environment, char * _name ) {
                 }
             }
     } else {
-        CRITICAL_MISSING_CONSTANT( "Trying to emit an undefined constant");
+        CRITICAL_MISSING_CONSTANT(_name);
     }
 
 }

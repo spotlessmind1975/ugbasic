@@ -2873,7 +2873,7 @@ typedef struct _Environment {
     int residentDetectionEnabled;
 
     int removeComments;
-    
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3256,7 +3256,7 @@ typedef struct _Environment {
 #define CRITICAL_WAIT_UNTIL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE() CRITICAL("E313 - cannot call WAIT UNTIL outside a PARALLEL procedure" );
 #define CRITICAL_WAIT_WHILE_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE() CRITICAL("E314 - cannot call WAIT WHILE outside a PARALLEL procedure" );
 #define CRITICAL_WAIT_CYCLES_PARALLEL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE()  CRITICAL("E315 - cannot call WAIT CYCLES PARALLEL outside a PARALLEL procedure" );
-#define CRITICAL_MISSING_CONSTANT(v)  CRITICAL2("E316 - trying to emit a constant that does not exist" );
+#define CRITICAL_MISSING_CONSTANT(v)  CRITICAL2("E316 - trying to emit a constant that does not exist", v );
 #define CRITICAL_COMPRESSION_FAILED(v)  CRITICAL2("E317 - the compression algorithm failed in compressing", v );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
