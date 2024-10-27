@@ -3752,9 +3752,7 @@ void cpu6809_mem_move_16bit( Environment * _environment, char *_source, char *_d
 
     deploy_preferred( duff, src_hw_6809_duff_asm );
 
-    inline( cpu_mem_move )
-
-        CRITICAL( "Inline cpu6809_mem_move_16bit is not available!");
+    no_inline( cpu_mem_move )
 
     embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm )
 

@@ -144,12 +144,7 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
  */
 void colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background ) {
 
-    
-
     Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0400 );
-    if ( ! colormapAddress ) {
-        CRITICAL( "COLORMAP CLEAR WITH xxx ON xxx needs BITMAP ENABLED");
-    }
 
     Variable * foreground = variable_retrieve_or_define( _environment, _foreground, VT_COLOR, COLOR_WHITE );
 

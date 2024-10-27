@@ -102,15 +102,12 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 @syntax COLORMAP CLEAR WITH fore ON back
 
 @example COLORMAP CLEAR WITH YELLOW ON RED
+
+@deprecated
 </usermanual> */
 void colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background ) {
 
-    
-
     Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x8400 );
-    if ( ! colormapAddress ) {
-        CRITICAL( "COLORMAP CLEAR WITH xxx ON xxx needs BITMAP ENABLED");
-    }
 
     Variable * foreground = variable_retrieve( _environment, _foreground );
 

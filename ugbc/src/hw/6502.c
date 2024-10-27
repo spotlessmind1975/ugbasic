@@ -4626,9 +4626,7 @@ void cpu6502_mem_move_16bit( Environment * _environment, char *_source, char *_d
 
     MAKE_LABEL
 
-    inline( cpu_mem_move )
-
-        CRITICAL( "Inline cpu_mem_move_16bit not available!")
+    no_inline( cpu_mem_move )
 
     embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
 
