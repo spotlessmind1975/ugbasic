@@ -216,6 +216,22 @@ static void op_lda_direct( Environment * _environment, int _value ) {
 
 }
 
+static void op_ldb( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x03" );
+    outline0("MVWD");
+
+}
+
+static void op_ldb_direct( Environment * _environment, int _value ) {
+
+    outline1("LIB 0x%2.2x", (unsigned char)(_value & 0xff) );
+
+}
+
 static void op_lda_address_low( Environment * _environment, char * _address ) {
 
     outline1("LIA %s", _address );
@@ -252,6 +268,46 @@ static void op_ldklmn( Environment * _environment, char * _address ) {
 
 }
 
+static void op_ldk( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x08" );
+    outline0("MVWD");
+
+}
+
+static void op_ldl( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x09" );
+    outline0("MVWD");
+
+}
+
+static void op_ldm( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x0a" );
+    outline0("MVWD");
+
+}
+
+static void op_ldn( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x0b" );
+    outline0("MVWD");
+
+}
+
 static void op_ldklmn_direct( Environment * _environment, int _value ) {
 
     outline1("LIA 0x%2.2x", (unsigned char)( _value & 0xff ) );
@@ -272,6 +328,62 @@ static void op_ldklmn_direct( Environment * _environment, int _value ) {
 
 }
 
+static void op_stxl( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x04" );
+    outline0("MVDM");
+
+}
+
+static void op_stxh( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x05" );
+    outline0("MVDM");
+
+}
+
+static void op_ldxl_direct( Environment * _environment, int _value ) {
+
+    outline1("LIA 0x%2.2x", (unsigned char)( _value & 0xff ) );
+    outline0("LP 0x04" );
+    outline0("EXAM");
+
+}
+
+static void op_ldxl( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x04" );
+    outline0("MVWD");
+
+}
+
+static void op_ldxh_direct( Environment * _environment, int _value ) {
+
+    outline1("LIA 0x%2.2x", (unsigned char)( _value & 0xff ) );
+    outline0("LP 0x05" );
+    outline0("EXAM");
+    
+}
+
+static void op_ldxh( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x05" );
+    outline0("MVWD");
+
+}
+
 static void op_ldx_direct( Environment * _environment, int _value ) {
 
     outline1("LIA 0x%2.2x", (unsigned char)( _value & 0xff ) );
@@ -280,6 +392,78 @@ static void op_ldx_direct( Environment * _environment, int _value ) {
 
     outline1("LIA 0x%2.2x", (unsigned char)( (_value >> 8) & 0xff ) );
     outline0("LP 0x05" );
+    outline0("EXAM");
+
+}
+
+static void op_ldyl_direct( Environment * _environment, int _value ) {
+
+    outline0("PUSH" );
+    outline1("LIA 0x%2.2x", (unsigned char)( _value & 0xff ) );
+    outline0("LP 0x06" );
+    outline0("EXAM");
+    outline0("POP" );
+
+}
+
+static void op_ldyl( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x06" );
+    outline0("MVWD");
+
+}
+
+static void op_ldyh_direct( Environment * _environment, int _value ) {
+
+    outline0("PUSH" );
+    outline1("LIA 0x%2.2x", (unsigned char)( _value & 0xff ) );
+    outline0("LP 0x07" );
+    outline0("EXAM");
+    outline0("POP" );
+    
+}
+
+static void op_ldyh( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x07" );
+    outline0("MVWD");
+
+}
+
+static void op_styl( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x06" );
+    outline0("MVDM");
+
+}
+
+static void op_styh( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x07" );
+    outline0("MVDM");
+
+}
+
+static void op_ldy_direct( Environment * _environment, int _value ) {
+
+    outline1("LIA 0x%2.2x", (unsigned char)( _value & 0xff ) );
+    outline0("LP 0x06" );
+    outline0("EXAM");
+
+    outline1("LIA 0x%2.2x", (unsigned char)( (_value >> 8) & 0xff ) );
+    outline0("LP 0x07" );
     outline0("EXAM");
 
 }
@@ -368,6 +552,16 @@ static void op_ldi( Environment * _environment, char * _address ) {
 
 }
 
+static void op_sti( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x00" );
+    outline0("MVDM");
+
+}
+
 static void op_ldi_direct( Environment * _environment, int _value ) {
 
     outline1("LII 0x%2.2x", (unsigned char)(_value & 0xff ) );
@@ -381,6 +575,16 @@ static void op_ldj( Environment * _environment, char * _address ) {
     outline0("LII 0x00" );
     outline0("LP 0x01" );
     outline0("MVWD");
+
+}
+
+static void op_stj( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x01" );
+    outline0("MVDM");
 
 }
 
@@ -435,16 +639,6 @@ static void op_ldab_direct( Environment * _environment, int _value ) {
 
 }
 
-static void op_ldk( Environment * _environment, char * _address ) {
-
-    outline1("LIDP %s", _address );
-
-    outline0("LII 0x00" );
-    outline0("LP 0x08" );
-    outline0("MVWD");
-
-}
-
 static void op_ldk_direct( Environment * _environment, int _value ) {
 
     outline1("LIA #%2.2x", (unsigned char)(_value) );
@@ -453,13 +647,14 @@ static void op_ldk_direct( Environment * _environment, int _value ) {
 
 }
 
-static void op_ldl( Environment * _environment, char * _address ) {
+
+static void op_stk( Environment * _environment, char * _address ) {
 
     outline1("LIDP %s", _address );
 
     outline0("LII 0x00" );
-    outline0("LP 0x09" );
-    outline0("MVWD");
+    outline0("LP 0x08" );
+    outline0("MVDM");
 
 }
 
@@ -468,6 +663,52 @@ static void op_ldl_direct( Environment * _environment, int _value ) {
     outline1("LIA #%2.2x", (unsigned char)(_value) );
     outline0("LP 0x09" );
     outline0("EXAM");
+
+}
+
+static void op_stl( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x09" );
+    outline0("MVDM");
+
+}
+
+static void op_ldm_direct( Environment * _environment, int _value ) {
+
+    outline1("LIA #%2.2x", (unsigned char)(_value) );
+    outline0("LP 0x0a" );
+    outline0("EXAM");
+
+}
+
+static void op_stm( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x0a" );
+    outline0("MVDM");
+
+}
+
+static void op_ldn_direct( Environment * _environment, int _value ) {
+
+    outline1("LIA #%2.2x", (unsigned char)(_value) );
+    outline0("LP 0x0b" );
+    outline0("EXAM");
+
+}
+
+static void op_stn( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x00" );
+    outline0("LP 0x0b" );
+    outline0("MVDM");
 
 }
 
@@ -515,6 +756,18 @@ static void op_lddp( Environment * _environment, char * _address ) {
 
 }
 
+static void op_push( Environment * _environment ) {
+
+    outline0("PUSH");
+
+}
+
+static void op_pop( Environment * _environment ) {
+
+    outline0("POP");
+
+}
+
 static void op_sla( Environment * _environment ) {
 
     outline0("SL");
@@ -552,6 +805,16 @@ static void op_stab( Environment * _environment, char * _address ) {
 
     // (DP) <- A
     outline0("STD");
+
+}
+
+static void op_stb( Environment * _environment, char * _address ) {
+
+    outline1("LIDP %s", _address );
+
+    outline0("LII 0x01" );
+    outline0("LP 0x01" );
+    outline0("MVDM");
 
 }
 
@@ -2422,7 +2685,6 @@ void sc61860_math_mul2_const_16bit( Environment * _environment, char *_source, i
         
     }
 
-
 }
 
 /**
@@ -2434,7 +2696,7 @@ void sc61860_math_mul2_const_16bit( Environment * _environment, char *_source, i
  */
 void sc61860_math_and_const_16bit( Environment * _environment, char *_source, int _mask ) {
 
-    inline( cpu_math_and_const_8bit )
+    inline( cpu_math_and_const_16bit )
 
         op_ldab( _environment, _source );
 
@@ -2448,7 +2710,7 @@ void sc61860_math_and_const_16bit( Environment * _environment, char *_source, in
 
         op_stab( _environment, _source );
 
-    no_embedded( cpu_math_and_const_8bit )
+    no_embedded( cpu_math_and_const_16bit )
 
 }
 
@@ -2661,155 +2923,31 @@ void sc61860_less_than_32bit_const( Environment * _environment, char *_source, i
 
     MAKE_LABEL
 
-    // inline( cpu_less_than_32bit )
+    no_inline( cpu_less_than_32bit )
+
+    embedded( cpu_less_than_32bit, src_hw_sc61860_cpu_less_than_32bit_asm );
 
         if ( _signed ) {
 
-            // // outline1("LD IX, %s", _source);
-            // // outline1("LD IY, %s", _destination);
-            // // outline0("LD B, (IX+3)");
-            // // outline0("LD A, B");
-            // // outline0("AND 0x80");
-            // // outline1("JR NZ,%sNEGM1", label);
-            // // outline0("BIT 7, (IY+3)");
-            // // outline1("JR NZ,%s// done", label);
-            // // outline0("LD A, B");
-            // // outline0("CP (IY+3)");
-            // // outline1("JR NZ,%s// done", label);
-            // // outline0("LD A, (IX+2)");
-            // // outline0("CP (IY+2)");
-            // // outline1("JR NZ,%s// done", label);
-            // // outline0("LD A, (IX+1)");
-            // // outline0("CP (IY+1)");
-            // // outline1("JR NZ,%s// done", label);
-            // // outline0("LD A, (IX)");
-            // // outline0("CP (IY)");
-            // // outline1("JMP %s// done", label);
-            // // outhead1("%sNEGM1:", label);
-            // // outline0("XOR (IY+3)");
-            // // outline0("RLA");
-            // // outline1("JR C,%s// done", label);
-            // // outline0("LD A, B");
-            // // outline0("CP (IY+3)");
-            // // outline1("JR NZ,%s// done", label);
-            // // outline0("LD A, (IX+2)");
-            // // outline0("CP (IY+2)");
-            // // outline1("JR NZ,%s// done", label);
-            // // outline0("LD A, (IX+1)");
-            // // outline0("CP (IY+1)");
-            // // outline1("JR NZ,%s// done", label);
-            // // outline0("LD A, (IX)");
-            // // outline0("CP (IY)");
-            // // outline1("JMP %s// done", label);
-            // // outhead1("%s// done:", label);
-            // if ( _equal ) {
-            //     // outline1("JR Z,%smi", label);
-            // }
-            // // outline1("JR C,%smi", label);
-            // // outhead1("%spl:", label);
-            // // outline0("LD A, 0");
-            // if ( _other ) {
-            //     // outline1("LD (%s), A", _other);
-            // } else {
-            //     // outline1("LD (%s), A", _destination);
-            // }
-            // // outline1("JMP %s// done2", label);
-            // // outhead1("%smi:", label);
-            // // outline0("LD A, 0xff");
-            // if ( _other ) {
-            //     // outline1("LD (%s), A", _other);
-            // } else {
-            //     // outline1("LD (%s), A", _destination);
-            // }
-            // // outline1("JMP %s// done2", label);
-            // // outhead1("%s// done2:", label);
+            CRITICAL_UNIMPLEMENTED( "sc61860_less_than_32bit_const(signed)" );
 
         } else {
 
-            // outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
-            // outline0("LD B, A");
-            // outline1("LD A, 0x%2.2x", ( ( _destination >> 24 ) && 0xff ) );
-            // outline0("CP B");
-            // outline1("JR Z, %s_2", label);
-            // outline1("JR C, %s", label);
-            // outline1("JR %s_ok", label);
-            // outhead1("%s_2:", label);
-            // outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
-            // outline0("LD B, A");
-            // outline1("LD A, 0x%2.2x", ( ( _destination >> 16 ) && 0xff ) );
-            // outline0("CP B");
-            // outline1("JR Z, %s_1", label);
-            // outline1("JR C, %s", label);
-            // outline1("JR %s_ok", label);
-            // outhead1("%s_1:", label);
-            // outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-            // outline0("LD B, A");
-            // outline1("LD A, 0x%2.2x", ( ( _destination >> 8 ) && 0xff ) );
-            // outline0("CP B");
-            // outline1("JR Z, %s_0", label);
-            // outline1("JR C, %s", label);
-            // outline1("JR %s_ok", label);
-            // outhead1("%s_0:", label);
-            // outline1("LD A, (%s)", _source);
-            // outline0("LD B, A");
-            // outline1("LD A, 0x%2.2x", ( _destination && 0xff ) );
-            // outline0("CP B");
-            // outline1("JR C, %s", label);
+            op_ldijab( _environment, _source );
+
+            op_ldklmn_direct( _environment, _destination );
+
             if ( _equal ) {
-                // outline1("JR Z, %s", label);
+                op_call( _environment, "CPULTE32U" );
+            } else {
+                op_call( _environment, "CPULT32U" );
             }
-            // outhead1("%s_ok:", label);
-            // outline0("LD A, 0xff");
-            // outline1("LD (%s), A", _other);
-            // outline1("JMP %s_xx", label);
-            // outhead1("%s:", label);
-            // outline0("LD A, 0x0");
-            // outline1("LD (%s), A", _other);
-            // outhead1("%s_xx:", label);
+
+            op_sta( _environment, _other );
 
         }
 
-    // embedded( cpu_less_than_32bit, src_hw_sc61860_cpu_less_than_32bit_asm );
-
-        if ( _signed ) {
-
-            // outline1("LD DE, 0x%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
-            // outline0("PUSH DE" );
-            // outline1("LD DE, 0x%4.4x", ( _destination & 0xffff ) );
-            // outline0("PUSH DE" );
-            // outline0("LD DE, SP" );
-            // outline0("LD IY, DE" );
-            // outline1("LD IX, %s", _source);
-            if ( _equal ) {
-                // outline0("CALL CPULTE32S");
-            } else {
-                // outline0("CALL CPULT32S");
-            }
-            // outline1("LD (%s), A", _other);
-            // outline0("POP DE" );
-            // outline0("POP DE" );
-
-        } else {
-
-            // outline1("LD DE, 0x%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
-            // outline0("PUSH DE" );
-            // outline1("LD DE, 0x%4.4x", ( _destination & 0xffff ) );
-            // outline0("PUSH DE" );
-            // outline0("LD DE, SP" );
-            // outline0("LD IY, DE" );
-            // outline1("LD IX, %s", _source);
-            if ( _equal ) {
-                // outline0("CALL CPULTE32U");
-            } else {
-                // outline0("CALL CPULT32U");
-            }
-            // outline1("LD (%s), A", _other);
-            // outline0("POP DE" );
-            // outline0("POP DE" );
-            
-        }
-
-    // done(  )
+    done(  )
 
 }
 
@@ -2850,51 +2988,117 @@ void sc61860_greater_than_32bit_const( Environment * _environment, char *_source
  */
 void sc61860_math_add_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    // inline( cpu_math_add_32bit )
+    inline( cpu_math_add_16bit )
 
-        // outline1("LD HL, (%s)", _source );
-        // outline1("LD DE, (%s)", _destination );
-        // outline0("EXX" );
-        // outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
-        // outline1("LD DE, (%s)", address_displacement(_environment, _destination, "2") );
-        // outline0("EXX" );
-        // outline0("ADD HL, DE" );
-        // outline0("EXX" );
-        // outline0("ADC HL, DE" );
-        // outline0("EXX" );
+        MAKE_LABEL
+
+        op_lda( _environment, _source );
+
+        op_xab( _environment );
+
+        op_lda( _environment, _destination );     
+
+        op_addab( _environment );
+
         if ( _other ) {
-            // outline1("LD (%s), HL", _other );
-            // outline0("EXX" );
-            // outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
+            op_sta( _environment, _other );
         } else {
-            // outline1("LD (%s), HL", _destination );
-            // outline0("EXX" );
-            // outline1("LD (%s), HL", address_displacement( _environment, _destination, "2" ) );
+            op_sta( _environment, _destination );
         }
 
-    // no_embedded( cpu_math_add_32bit )
+        op_lda( _environment, address_displacement( _environment, _source, "1" ) );
+
+        op_xab( _environment );
+
+        op_lda( _environment, address_displacement( _environment, _destination, "1" ) );     
+
+        op_addabc( _environment );
+
+        if ( _other ) {
+            op_sta( _environment, address_displacement( _environment, _other, "1" )  );
+        } else {
+            op_sta( _environment, address_displacement( _environment, _destination, "1" ) );
+        }
+
+        op_lda( _environment, address_displacement( _environment, _source, "2" ) );
+
+        op_xab( _environment );
+
+        op_lda( _environment, address_displacement( _environment, _destination, "2" ) );     
+
+        op_addabc( _environment );
+
+        if ( _other ) {
+            op_sta( _environment, address_displacement( _environment, _other, "2" )  );
+        } else {
+            op_sta( _environment, address_displacement( _environment, _destination, "2" ) );
+        }
+        
+        op_lda( _environment, address_displacement( _environment, _source, "3" ) );
+
+        op_xab( _environment );
+
+        op_lda( _environment, address_displacement( _environment, _destination, "3" ) );     
+
+        op_addabc( _environment );
+
+        if ( _other ) {
+            op_sta( _environment, address_displacement( _environment, _other, "3" )  );
+        } else {
+            op_sta( _environment, address_displacement( _environment, _destination, "3" ) );
+        }
+
+    no_embedded( cpu_math_add_16bit )
 
 }
 
 void sc61860_math_add_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
-    // inline( cpu_math_add_32bit_const )
+    inline( cpu_math_add_16bit )
 
-        // outline1("LD HL, (%s)", _source );
-        // outline1("LD DE, 0x%4.4x", ( _destination & 0xffff ) );
-        // outline0("EXX" );
-        // outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
-        // outline1("LD DE, 0x%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
-        // outline0("EXX" );
-        // outline0("ADD HL, DE" );
-        // outline0("EXX" );
-        // outline0("ADC HL, DE" );
-        // outline0("EXX" );
-        // outline1("LD (%s), HL", _other );
-        // outline0("EXX" );
-        // outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
+        MAKE_LABEL
 
-    // no_embedded( cpu_math_add_32bit_const )
+        op_lda( _environment, _source );
+
+        op_xab( _environment );
+
+        op_lda_direct( _environment, _destination );     
+
+        op_addab( _environment );
+
+        op_sta( _environment, _other );
+
+        op_lda( _environment, address_displacement( _environment, _source, "1" ) );
+
+        op_xab( _environment );
+
+        op_lda_direct( _environment,_destination >> 8 );     
+
+        op_addabc( _environment );
+
+        op_sta( _environment, address_displacement( _environment, _other, "1" )  );
+
+        op_lda( _environment, address_displacement( _environment, _source, "2" ) );
+
+        op_xab( _environment );
+
+        op_lda_direct( _environment,_destination >> 16 );
+
+        op_addabc( _environment );
+
+        op_sta( _environment, address_displacement( _environment, _other, "2" )  );
+        
+        op_lda( _environment, address_displacement( _environment, _source, "3" ) );
+
+        op_xab( _environment );
+
+        op_lda_direct( _environment,_destination >> 24 );
+
+        op_addabc( _environment );
+
+        op_sta( _environment, address_displacement( _environment, _other, "3" )  );
+
+    no_embedded( cpu_math_add_16bit )
 
 }
 
@@ -2908,15 +3112,11 @@ void sc61860_math_add_32bit_const( Environment * _environment, char *_source, in
  */
 void sc61860_math_double_32bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
-    // inline( cpu_math_double_32bit )
-
-        if ( _other ) {
-            sc61860_math_add_32bit( _environment, _source, _source, _other );
-        } else {
-            sc61860_math_add_32bit( _environment, _source, _source, _source );
-        }
-
-    // no_embedded( cpu_math_double_32bit )
+    if ( _other ) {
+        sc61860_math_add_32bit( _environment, _source, _source, _other );
+    } else {
+        sc61860_math_add_32bit( _environment, _source, _source, _source );
+    }
 
 }
 
@@ -2930,52 +3130,67 @@ void sc61860_math_double_32bit( Environment * _environment, char *_source, char 
  */
 void sc61860_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    // inline( cpu_math_sub_32bit )
+    inline( cpu_math_sub_16bit )
 
         MAKE_LABEL
 
-        // outline1("LD HL, (%s)", _source );
-        // outline1("LD DE, (%s)", _destination );
-        // outline0("LD A, E" );
-        // outline0("XOR 0xFF" );
-        // outline0("LD E, A" );
-        // outline0("LD A, D" );
-        // outline0("XOR 0xFF" );
-        // outline0("LD D, A" );
-        // outline0("INC DE" );
-        // outline0("LD A, D" );
-        // outline0("OR E" );
-        // outline0("PUSH AF" );
-        // outline0("EXX" );
-        // outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
-        // outline1("LD DE, (%s)", address_displacement(_environment, _destination, "2") );
-        // outline0("LD A, E" );
-        // outline0("XOR 0xFF" );
-        // outline0("LD E, A" );
-        // outline0("LD A, D" );
-        // outline0("XOR 0xFF" );
-        // outline0("LD D, A" );
-        // outline0("POP AF" );
-        // outline0("CP 0" );
-        // outline1("JR NZ, %snoincde", label );
-        // outline0("INC DE" );
-        // outline1("%snoincde:", label );
-        // outline0("EXX" );
-        // outline0("ADD HL, DE" );
-        // outline0("EXX" );
-        // outline0("ADC HL, DE" );
-        // outline0("EXX" );
+        op_lda( _environment, _source );
+
+        op_xab( _environment );
+
+        op_lda( _environment, _destination );     
+
+        op_subab( _environment );
+
         if ( _other ) {
-            // outline1("LD (%s), HL", _other );
-            // outline0("EXX" );
-            // outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
+            op_sta( _environment, _other );
         } else {
-            // outline1("LD (%s), HL", _destination );
-            // outline0("EXX" );
-            // outline1("LD (%s), HL", address_displacement( _environment, _destination, "2" ) );
+            op_sta( _environment, _destination );
         }
 
-    // no_embedded( cpu_math_sub_32bit )
+        op_lda( _environment, address_displacement( _environment, _source, "1" ) );
+
+        op_xab( _environment );
+
+        op_lda( _environment, address_displacement( _environment, _destination, "1" ) );     
+
+        op_subabc( _environment );
+
+        if ( _other ) {
+            op_sta( _environment, address_displacement( _environment, _other, "1" )  );
+        } else {
+            op_sta( _environment, address_displacement( _environment, _destination, "1" ) );
+        }
+
+        op_lda( _environment, address_displacement( _environment, _source, "2" ) );
+
+        op_xab( _environment );
+
+        op_lda( _environment, address_displacement( _environment, _destination, "2" ) );     
+
+        op_subabc( _environment );
+
+        if ( _other ) {
+            op_sta( _environment, address_displacement( _environment, _other, "2" )  );
+        } else {
+            op_sta( _environment, address_displacement( _environment, _destination, "2" ) );
+        }
+
+        op_lda( _environment, address_displacement( _environment, _source, "3" ) );
+
+        op_xab( _environment );
+
+        op_lda( _environment, address_displacement( _environment, _destination, "3" ) );
+
+        op_subabc( _environment );
+
+        if ( _other ) {
+            op_sta( _environment, address_displacement( _environment, _other, "3" )  );
+        } else {
+            op_sta( _environment, address_displacement( _environment, _destination, "3" ) );
+        }
+
+    no_embedded( cpu_math_sub_16bit )
 
 }
 
@@ -2988,38 +3203,51 @@ void sc61860_math_sub_32bit( Environment * _environment, char *_source, char *_d
  */
 void sc61860_math_complement_const_32bit( Environment * _environment, char *_source, int _value ) {
 
-    // inline( cpu_math_complement_const_32bit )
+    inline( cpu_math_sub_16bit )
 
-        // outline1("LD HL, 0x%4.4x", ( _value & 0xffff ) );
-        // outline1("LD DE, (%s)", _source );
-        // outline0("LD A, E" );
-        // outline0("XOR 0xFF" );
-        // outline0("LD E, A" );
-        // outline0("LD A, D" );
-        // outline0("XOR 0xFF" );
-        // outline0("LD D, A" );
-        // outline0("INC DE" );
-        // outline0("EXX" );
-        // outline1("LD HL, 0x%4.4x", ( ( _value >> 16 ) & 0xffff ) );
-        // outline1("LD DE, (%s)", address_displacement(_environment, _source, "2") );
-        // outline0("LD A, E" );
-        // outline0("XOR 0xFF" );
-        // outline0("LD E, A" );
-        // outline0("LD A, D" );
-        // outline0("XOR 0xFF" );
-        // outline0("LD D, A" );
-        // outline0("INC DE" );
-        // outline0("EXX" );
-        // outline0("ADD HL, DE" );
-        // outline0("EXX" );
-        // outline0("ADC HL, DE" );
-        // outline0("EXX" );
-        // outline1("LD (%s), HL", _source );
-        // outline0("EXX" );
-        // outline1("LD (%s), HL", address_displacement( _environment, _source, "2" ) );
+        MAKE_LABEL
 
-    // no_embedded( cpu_math_complement_const_32bit )
+        op_lda( _environment, _source );
 
+        op_xab( _environment );
+
+        op_lda_direct( _environment, _value );     
+
+        op_subab( _environment );
+
+        op_sta( _environment, _source );
+
+        op_lda( _environment, address_displacement( _environment, _source, "1" ) );
+
+        op_xab( _environment );
+
+        op_lda_direct( _environment, _value >> 8 );     
+
+        op_subabc( _environment );
+
+        op_sta( _environment, address_displacement( _environment, _source, "1" )  );
+
+        op_lda( _environment, address_displacement( _environment, _source, "2" ) );
+
+        op_xab( _environment );
+
+        op_lda_direct( _environment, _value >> 16 );
+
+        op_subabc( _environment );
+
+        op_sta( _environment, address_displacement( _environment, _source, "2" ) );
+
+        op_lda( _environment, address_displacement( _environment, _source, "3" ) );
+
+        op_xab( _environment );
+
+        op_lda_direct( _environment, _value >> 24 );
+
+        op_subabc( _environment );
+
+        op_sta( _environment, address_displacement( _environment, _source, "3" )  );
+
+    no_embedded( cpu_math_sub_16bit )
 }
 
 /**
@@ -3031,52 +3259,31 @@ void sc61860_math_complement_const_32bit( Environment * _environment, char *_sou
  */
 void sc61860_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    // inline( cpu_math_div2_const_32bit )
+    MAKE_LABEL
 
-        MAKE_LABEL
+    if ( _signed ) {
 
-        if ( _signed ) {
-            // outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
-            // outline0("AND 0x80" );
-            // outline0("CP 0" );
-            // outline0("PUSH AF" );
-            // outline1("JR Z, %spos", label );
-            sc61860_complement2_32bit( _environment, _source, _source );
-            // outline1("JMP %spos2", label );
-            // outhead1("%spos:", label );
-            // outhead1("%spos2:", label );
-            // outline1("LD DE, (%s)", _source );
-            // outline1("LD BC, (%s)", address_displacement(_environment, _source, "2") );
-            while( _steps ) {
-                // outline0("SRA B" );
-                // outline0("RR C" );
-                // outline0("RR D" );
-                // outline0("RR E" );
-                --_steps;
-            }
-            // outline1("LD (%s),DE", _source );
-            // outline1("LD (%s),BC", address_displacement( _environment, _source, "2" ) );
-            // outline0("POP AF" );
-            // outline0("AND 0x80" );
-            // outline0("CP 0" );
-            // outline1("JR Z, %s// done", label );
-            sc61860_complement2_32bit( _environment, _source, _source );
-            // outhead1("%s// done:", label );
-        } else {
-            // outline1("LD DE, (%s)", _source );
-            // outline1("LD BC, (%s)", address_displacement(_environment, _source, "2") );
-            while( _steps ) {
-                // outline0("SRA B" );
-                // outline0("RR C" );
-                // outline0("RR D" );
-                // outline0("RR E" );
-                --_steps;
-            }
-            // outline1("LD (%s), DE", _source );
-            // outline1("LD (%s), BC", address_displacement( _environment, _source, "2" ) );    
+        CRITICAL_UNIMPLEMENTED( "sc61860_math_div2_const_16bit(signed)" );
+
+    } else {
+
+        while( _steps ) {
+            op_ldab( _environment, _source );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_stab( _environment, _source );
+            op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_stab( _environment, address_displacement( _environment, _source, "2" ) );
+            --_steps;
         }
-
-    // no_embedded( cpu_math_div2_const_32bit )
+        
+    }
 
 }
 
@@ -3090,52 +3297,31 @@ void sc61860_math_div2_const_32bit( Environment * _environment, char *_source, i
  */
 void sc61860_math_mul2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    // inline( cpu_math_mul2_const_32bit )
+    MAKE_LABEL
 
-        MAKE_LABEL
+    if ( _signed ) {
 
-        if ( _signed ) {
-            // outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
-            // outline0("AND 0x80" );
-            // outline0("CP 0" );
-            // outline0("PUSH AF" );
-            // outline1("JR Z, %spos", label );
-            sc61860_complement2_32bit( _environment, _source, _source );
-            // outline1("JMP %spos2", label );
-            // outhead1("%spos:", label );
-            // outhead1("%spos2:", label );
-            // outline1("LD HL, (%s)", _source );
-            // outline1("LD DE, (%s)", address_displacement(_environment, _source, "2") );
-            while( _steps ) {
-                // outline0("SLA L" );
-                // outline0("RL H" );
-                // outline0("RL E" );
-                // outline0("RL D" );
-                --_steps;
-            }
-            // outline1("LD (%s), HL", _source );
-            // outline1("LD (%s), DE", address_displacement( _environment, _source, "2" ) );
-            // outline0("POP AF" );
-            // outline0("AND 0x80" );
-            // outline0("CP 0" );
-            // outline1("JR Z, %s// done", label );
-            sc61860_complement2_32bit( _environment, _source, _source );
-            // outhead1("%s// done:", label );
-        } else {
-            // outline1("LD HL, (%s)", _source );
-            // outline1("LD DE, (%s)", address_displacement(_environment, _source, "2") );
-            while( _steps ) {
-                // outline0("SLA L" );
-                // outline0("RL H" );
-                // outline0("RL D" );
-                // outline0("RL E" );
-                --_steps;
-            }
-            // outline1("LD (%s), HL", _source );
-            // outline1("LD (%s), DE", address_displacement( _environment, _source, "2" ) );
+        CRITICAL_UNIMPLEMENTED( "sc61860_math_div2_const_16bit(signed)" );
+
+    } else {
+
+        while( _steps ) {
+            op_ldab( _environment, _source );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_stab( _environment, _source );
+            op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_stab( _environment, address_displacement( _environment, _source, "2" ) );
+            --_steps;
         }
 
-    // no_embedded( cpu_math_mul2_const_32bit )
+    }
     
 }
 
@@ -3149,22 +3335,33 @@ void sc61860_math_mul2_const_32bit( Environment * _environment, char *_source, i
  */
 void sc61860_math_and_const_32bit( Environment * _environment, char *_source, int _mask ) {
 
-    // inline( cpu_math_and_const_32bit )
+    inline( cpu_math_and_const_32bit )
 
-        // outline1("LD A, (%s)", _source );
-        // outline1("AND 0x%2.2x", ( _mask & 0xff ) );
-        // outline1("LD (%s), A", _source );
-        // outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
-        // outline1("AND 0x%2.2x", ( ( _mask >> 8 ) & 0xff ) );
-        // outline1("LD (%s), A", address_displacement(_environment, _source, "1") );
-        // outline1("LD A, (%s)", address_displacement(_environment, _source, "2") );
-        // outline1("AND 0x%2.2x", ( ( _mask >> 16 ) & 0xff ) );
-        // outline1("LD (%s), A", address_displacement(_environment, _source, "2") );
-        // outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
-        // outline1("AND 0x%2.2x", ( ( _mask >> 24 ) & 0xff ) );
-        // outline1("LD (%s), A", address_displacement(_environment, _source, "3") );
+        op_ldab( _environment, _source );
 
-    // no_embedded( cpu_math_and_const_32bit )
+        op_anda_direct( _environment, _mask >> 8 );
+
+        op_swab( _environment );
+
+        op_anda_direct( _environment, _mask );
+
+        op_swab( _environment );
+
+        op_stab( _environment, _source );
+
+        op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+
+        op_anda_direct( _environment, _mask >> 24 );
+
+        op_swab( _environment );
+
+        op_anda_direct( _environment, _mask >> 16 );
+
+        op_swab( _environment );
+
+        op_stab( _environment, address_displacement( _environment, _source, "2" ) );
+
+    no_embedded( cpu_math_and_const_32bit )
 
 }
 
@@ -3175,16 +3372,7 @@ void sc61860_math_and_const_32bit( Environment * _environment, char *_source, in
  */
 void sc61860_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte ) {
 
-    // no_inline( cpu_combine_nibbles )
-
-    // embedded( cpu_combine_nibbles, src_hw_sc61860_cpu_combine_nibbles_asm );
-
-        // outline1("LD A, (%s)", _hi_nibble );
-        // outline1("LD HL, %s", _low_nibble );
-        // outline1("LD DE, %s", _byte );
-        // outline0("CALL CPUCOMBINENIBBLES" );
-
-    // done( )
+    CRITICAL_UNIMPLEMENTED( "sc61860_combine_nibbles" );
 
 }
 
@@ -3212,21 +3400,31 @@ void sc61860_call_indirect( Environment * _environment, char * _value ) {
 
     char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
 
-    // outline0( "PUSH HL" )
-    // outline1( "LD HL, (%s)", _value )
     sc61860_jump( _environment, label );
     sc61860_label( _environment, indirectLabel );
-    // outline0( "JP (HL)" );
+    sc61860_jump( _environment, "0x0000" );
     sc61860_label( _environment, label );
+    op_ldab( _environment, _value );
+    op_stab( _environment, address_displacement( _environment, indirectLabel, "1" ) );
     sc61860_call( _environment, indirectLabel );
-    // outline0( "POP HL" )
 
 }
 
 void sc61860_jump_indirect( Environment * _environment, char * _value ) {
 
-    // outline1( "LD HL, (%s)", _value )
-    // outline0( "JP (HL)" );
+    MAKE_LABEL
+
+    char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
+
+    sc61860_jump( _environment, label );
+
+    sc61860_label( _environment, indirectLabel );
+    sc61860_jump( _environment, "0x0000" );
+
+    sc61860_label( _environment, label );
+    op_ldab( _environment, _value );
+    op_stab( _environment, address_displacement( _environment, indirectLabel, "1" ) );
+    sc61860_jump( _environment, indirectLabel );
 
 }
 
@@ -3240,70 +3438,22 @@ int sc61860_register_decode( Environment * _environment, char * _register ) {
             result = REGISTER_A;
         } else if ( strcmp( _register, "B" ) == 0 ) {
             result = REGISTER_B;
-        } else if ( strcmp( _register, "C" ) == 0 ) {
-            result = REGISTER_C;
-        } else if ( strcmp( _register, "D" ) == 0 ) {
-            result = REGISTER_D;
-        } else if ( strcmp( _register, "E" ) == 0 ) {
-            result = REGISTER_E;
-        } else if ( strcmp( _register, "H" ) == 0 ) {
-            result = REGISTER_H;
+        } else if ( strcmp( _register, "XL" ) == 0 ) {
+            result = REGISTER_XL;
+        } else if ( strcmp( _register, "XH" ) == 0 ) {
+            result = REGISTER_XH;
+        } else if ( strcmp( _register, "YL" ) == 0 ) {
+            result = REGISTER_YL;
+        } else if ( strcmp( _register, "YH" ) == 0 ) {
+            result = REGISTER_YH;
+        } else if ( strcmp( _register, "K" ) == 0 ) {
+            result = REGISTER_K;
         } else if ( strcmp( _register, "L" ) == 0 ) {
             result = REGISTER_L;
-        } else if ( strcmp( _register, "F" ) == 0 ) {
-            if ( !_environment->emptyProcedure ) {
-                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-            }
-            // result = REGISTER_F;
-        } else if ( strcmp( _register, "I" ) == 0 ) {
-            if ( !_environment->emptyProcedure ) {
-                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-            }
-            // result = REGISTER_I;
-        } else if ( strcmp( _register, "R" ) == 0 ) {
-            if ( !_environment->emptyProcedure ) {
-                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-            }
-            // result = REGISTER_R;
-        } else if ( strcmp( _register, "SP" ) == 0 ) {
-            if ( !_environment->emptyProcedure ) {
-                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-            }
-            // result = REGISTER_SP;
-        } else if ( strcmp( _register, "PC" ) == 0 ) {
-            if ( !_environment->emptyProcedure ) {
-                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-            }
-            // result = REGISTER_PC;
-        } else if ( strcmp( _register, "IX" ) == 0 ) {
-            result = REGISTER_IX;
-        } else if ( strcmp( _register, "IY" ) == 0 ) {
-            result = REGISTER_IY;
-        } else if ( strcmp( _register, "AF" ) == 0 ) {
-            if ( !_environment->emptyProcedure ) {
-                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-            }
-            // result = REGISTER_AF;
-        } else if ( strcmp( _register, "BC" ) == 0 ) {
-            result = REGISTER_BC;
-        } else if ( strcmp( _register, "DE" ) == 0 ) {
-            result = REGISTER_DE;
-        } else if ( strcmp( _register, "HL" ) == 0 ) {
-            result = REGISTER_HL;
-        } else if ( strcmp( _register, "IXL" ) == 0 ) {
-            result = REGISTER_IXL;
-        } else if ( strcmp( _register, "IXH" ) == 0 ) {
-            result = REGISTER_IXH;
-        } else if ( strcmp( _register, "IYL" ) == 0 ) {
-            result = REGISTER_IYL;
-        } else if ( strcmp( _register, "IYH" ) == 0 ) {
-            result = REGISTER_IYH;
-        } else if ( strcmp( _register, "CARRY" ) == 0 ) {
-            result = REGISTER_CARRY;
-        } else if ( strcmp( _register, "ZERO" ) == 0 ) {
-            result = REGISTER_ZERO;
-        } else if ( strcmp( _register, "HLA" ) == 0 ) {
-            result = REGISTER_HLA;
+        } else if ( strcmp( _register, "M" ) == 0 ) {
+            result = REGISTER_M;
+        } else if ( strcmp( _register, "N" ) == 0 ) {
+            result = REGISTER_N;
         } else {
 
         }
@@ -3326,119 +3476,54 @@ void sc61860_set_asmio( Environment * _environment, int _asmio, int _value ) {
             case REGISTER_NONE:
                 CRITICAL_UNKNOWN_CPU_REGISTER( );
                 break;
-            case REGISTER_F:
-            case REGISTER_I:
-            case REGISTER_R:
-            case REGISTER_SP:
-            case REGISTER_PC:
-            case REGISTER_AF:
+            case REGISTER_J:
+                op_ldj_direct( _environment, _value );
                 break;
             case REGISTER_A:
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
+                op_lda_direct( _environment, _value );
                 break;
             case REGISTER_B:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "LD B, A" );
-                // outline0( "POP AF" );
+                op_ldb_direct( _environment, _value );
                 break;
-            case REGISTER_C:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "LD C, A" );
-                // outline0( "POP AF" );
+            case REGISTER_XL:
+                op_push( _environment );
+                op_ldxl_direct( _environment, _value );
+                op_pop( _environment );
                 break;
-            case REGISTER_D:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "LD D, A" );
-                // outline0( "POP AF" );
+            case REGISTER_XH:
+                op_push( _environment );
+                op_ldxh_direct( _environment, _value );
+                op_pop( _environment );
                 break;
-            case REGISTER_E:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "LD E, A" );
-                // outline0( "POP AF" );
+            case REGISTER_YL:
+                op_push( _environment );
+                op_ldyl_direct( _environment, _value );
+                op_pop( _environment );
                 break;
-            case REGISTER_H:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "LD H, A" );
-                // outline0( "POP AF" );
+            case REGISTER_YH:
+                op_push( _environment );
+                op_ldyh_direct( _environment, _value );
+                op_pop( _environment );
+                break;
+            case REGISTER_K:
+                op_push( _environment );
+                op_ldk_direct( _environment, _value );
+                op_pop( _environment );
                 break;
             case REGISTER_L:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "LD L, A" );
-                // outline0( "POP AF" );
+                op_push( _environment );
+                op_ldl_direct( _environment, _value );
+                op_pop( _environment );
                 break;
-            case REGISTER_IX:
-                // outline1( "LD IX, 0x%4.4x", (unsigned short)(_value & 0xffff) );
+            case REGISTER_M:
+                op_push( _environment );
+                op_ldm_direct( _environment, _value );
+                op_pop( _environment );
                 break;
-            case REGISTER_IY:
-                // outline1( "LD IY, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-                break;
-            case REGISTER_BC:
-                // outline0( "PUSH HL" );
-                // outline1( "LD HL, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-                // outline0( "LD BC, HL" );
-                // outline0( "POP HL" );
-                break;
-            case REGISTER_DE:
-                // outline0( "PUSH HL" );
-                // outline1( "LD HL, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-                // outline0( "LD DE, HL" );
-                // outline0( "POP HL" );
-                break;
-            case REGISTER_HL:
-                // outline1( "LD HL, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-                break;
-            case REGISTER_IXL:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "LD IXL, A" );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_IXH:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "LD IXH, A" );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_IYL:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "LD IYL, A" );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_IYH:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "LD IYH, A" );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_CARRY:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "CP 0" );
-                // outline1( "JR Z, %snoc", label );
-                // outline0( "LD A, 0x1" );
-                // outline0( "SRL A" );
-                // outline1( "JP %s// done", label );
-                // outhead1( "%snoc:", label );
-                // outline0( "SRL A" );
-                // outhead1( "%s// done:", label );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_ZERO:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "CP 0" );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_HLA:
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline1( "LD HL, 0x%4.4x", (unsigned char)((_value >> 8 ) & 0xffff ) );
+            case REGISTER_N:
+                op_push( _environment );
+                op_ldn_direct( _environment, _value );
+                op_pop( _environment );
                 break;
         }
 
@@ -3450,18 +3535,24 @@ void sc61860_set_asmio( Environment * _environment, int _asmio, int _value ) {
             case STACK_NONE:
                 break;
             case STACK_BYTE:
-                // outline1( "LD A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-                // outline0( "PUSH A" );
+                op_lda_direct( _environment, _value );
+                op_push( _environment );
                 break;
             case STACK_WORD:
-                // outline1( "LD HL, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-                // outline0( "PUSH HL" );
+                op_lda_direct( _environment, _value );
+                op_push( _environment );
+                op_lda_direct( _environment, _value >> 8 );
+                op_push( _environment );
                 break;
             case STACK_DWORD:
-                // outline1( "LD HL, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-                // outline0( "PUSH HL" );
-                // outline1( "LD HL, 0x%4.4x", (unsigned short)((_value>>16) & 0xffff) );
-                // outline0( "PUSH HL" );
+                op_lda_direct( _environment, _value );
+                op_push( _environment );
+                op_lda_direct( _environment, _value >> 8 );
+                op_push( _environment );
+                op_lda_direct( _environment, _value >> 16 );
+                op_push( _environment );
+                op_lda_direct( _environment, _value >> 24 );
+                op_push( _environment );
                 break;
         }
 
@@ -3481,122 +3572,38 @@ void sc61860_set_asmio_indirect( Environment * _environment, int _asmio, char * 
             case REGISTER_NONE:
                 CRITICAL_UNKNOWN_CPU_REGISTER( );
                 break;
-            case REGISTER_F:
-            case REGISTER_I:
-            case REGISTER_R:
-            case REGISTER_SP:
-            case REGISTER_PC:
-            case REGISTER_AF:
+            case REGISTER_J:
+                op_ldj( _environment, _value );
                 break;
             case REGISTER_A:
-                // outline1( "LD A, (%s)", _value );
+                op_lda( _environment, _value );
                 break;
             case REGISTER_B:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "LD B, A" );
-                // outline0( "POP AF" );
+                op_ldb( _environment, _value );
                 break;
-            case REGISTER_C:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "LD C, A" );
-                // outline0( "POP AF" );
+            case REGISTER_XL:
+                op_ldxl( _environment, _value );
                 break;
-            case REGISTER_D:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "LD D, A" );
-                // outline0( "POP AF" );
+            case REGISTER_XH:
+                op_ldxh( _environment, _value );
                 break;
-            case REGISTER_E:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "LD E, A" );
-                // outline0( "POP AF" );
+            case REGISTER_YL:
+                op_ldyl( _environment, _value );
                 break;
-            case REGISTER_H:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "LD H, A" );
-                // outline0( "POP AF" );
+            case REGISTER_YH:
+                op_ldyh( _environment, _value );
+                break;
+            case REGISTER_K:
+                op_ldk( _environment, _value );
                 break;
             case REGISTER_L:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "LD L, A" );
-                // outline0( "POP AF" );
+                op_ldl( _environment, _value );
                 break;
-            case REGISTER_IX:
-                // outline1( "LD IX, (%s)", _value );
+            case REGISTER_M:
+                op_ldm( _environment, _value );
                 break;
-            case REGISTER_IY:
-                // outline1( "LD IY, (%s)", _value );
-                break;
-            case REGISTER_BC:
-                // outline0( "PUSH HL" );
-                // outline1( "LD HL, (%s)", _value );
-                // outline0( "LD BC, HL" );
-                // outline0( "POP HL" );
-                break;
-            case REGISTER_DE:
-                // outline0( "PUSH HL" );
-                // outline1( "LD HL, (%s)", _value );
-                // outline0( "LD DE, HL" );
-                // outline0( "POP HL" );
-                break;
-            case REGISTER_HL:
-                // outline1( "LD HL, (%s)", _value );
-                break;
-            case REGISTER_IXL:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "LD IXL, A" );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_IXH:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "LD IXH, A" );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_IYL:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "LD IYL, A" );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_IYH:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "LD IYH, A" );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_CARRY:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "CP 0" );
-                // outline1( "JR Z, %snoc", label );
-                // outline0( "LD A, 0x1" );
-                // outline0( "SRL A" );
-                // outline1( "JP %s// done", label );
-                // outhead1( "%snoc:", label );
-                // outline0( "SRL A" );
-                // outhead1( "%s// done:", label );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_ZERO:
-                // outline0( "PUSH AF" );
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "CP 0" );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_HLA:
-                // outline1( "LD A, (%s)", address_displacement( _environment, _value, "2" ) );
-                // outline0( "LD H, A" );
-                // outline1( "LD A, (%s)", address_displacement( _environment, _value, "1" ) );
-                // outline0( "LD L, A" );
-                // outline1( "LD A, (%s)", _value );
+            case REGISTER_N:
+                op_ldn( _environment, _value );
                 break;
         }
 
@@ -3608,18 +3615,24 @@ void sc61860_set_asmio_indirect( Environment * _environment, int _asmio, char * 
             case STACK_NONE:
                 break;
             case STACK_BYTE:
-                // outline1( "LD A, (%s)", _value );
-                // outline0( "PUSH A" );
+                op_lda( _environment, _value );
+                op_push( _environment );
                 break;
             case STACK_WORD:
-                // outline1( "LD HL, (%s)", _value );
-                // outline0( "PUSH HL" );
+                op_lda( _environment, _value );
+                op_push( _environment );
+                op_lda( _environment, address_displacement( _environment, _value, "1" ) );
+                op_push( _environment );
                 break;
             case STACK_DWORD:
-                // outline1( "LD HL, (%s)", address_displacement( _environment, _value, "0" ) );
-                // outline0( "PUSH HL" );
-                // outline1( "LD HL, (%s)", address_displacement( _environment, _value, "2" ) );
-                // outline0( "PUSH HL" );
+                op_lda( _environment, _value );
+                op_push( _environment );
+                op_lda( _environment, address_displacement( _environment, _value, "1" ) );
+                op_push( _environment );
+                op_lda( _environment, address_displacement( _environment, _value, "2" ) );
+                op_push( _environment );
+                op_lda( _environment, address_displacement( _environment, _value, "3" ) );
+                op_push( _environment );
                 break;
         }
 
@@ -3639,127 +3652,41 @@ void sc61860_get_asmio_indirect( Environment * _environment, int _asmio, char * 
             case REGISTER_NONE:
                 CRITICAL_UNKNOWN_CPU_REGISTER( );
                 break;
-            case REGISTER_F:
             case REGISTER_I:
-            case REGISTER_R:
-            case REGISTER_SP:
-            case REGISTER_PC:
-            case REGISTER_AF:
+                op_sti( _environment, _value );
+                break;
+            case REGISTER_J:
+                op_stj( _environment, _value );
                 break;
             case REGISTER_A:
-                // outline1( "LD (%s), A", _value );
+                op_sta( _environment, _value );
                 break;
             case REGISTER_B:
-                // outline0( "PUSH AF" );
-                // outline0( "LD A, B" );
-                // outline1( "LD (%s), A", _value );
-                // outline0( "POP AF" );
+                op_stb( _environment, _value );
                 break;
-            case REGISTER_C:
-                // outline0( "PUSH AF" );
-                // outline0( "LD A, C" );
-                // outline1( "LD (%s), A", _value );
-                // outline0( "POP AF" );
+            case REGISTER_XL:
+                op_stxl( _environment, _value );
                 break;
-            case REGISTER_D:
-                // outline0( "PUSH AF" );
-                // outline0( "LD A, D" );
-                // outline1( "LD (%s), A", _value );
-                // outline0( "POP AF" );
+            case REGISTER_XH:
+                op_stxh( _environment, _value );
                 break;
-            case REGISTER_E:
-                // outline0( "PUSH AF" );
-                // outline0( "LD A, E" );
-                // outline1( "LD (%s), A", _value );
-                // outline0( "POP AF" );
+            case REGISTER_YL:
+                op_styl( _environment, _value );
                 break;
-            case REGISTER_H:
-                // outline0( "PUSH AF" );
-                // outline0( "LD A, H" );
-                // outline1( "LD (%s), A", _value );
-                // outline0( "POP AF" );
+            case REGISTER_YH:
+                op_styh( _environment, _value );
+                break;
+            case REGISTER_K:
+                op_stk( _environment, _value );
                 break;
             case REGISTER_L:
-                // outline0( "PUSH AF" );
-                // outline0( "LD A, L" );
-                // outline1( "LD (%s), A", _value );
-                // outline0( "POP AF" );
+                op_stl( _environment, _value );
                 break;
-            case REGISTER_IX:
-                // outline1( "LD (%s), IX", _value );
+            case REGISTER_M:
+                op_stm( _environment, _value );
                 break;
-            case REGISTER_IY:
-                // outline1( "LD (%s), IY", _value );
-                break;
-            case REGISTER_BC:
-                // outline0( "PUSH HL" );
-                // outline0( "LD HL, BC" );
-                // outline1( "LD (%s), HL", _value );
-                // outline0( "POP HL" );
-                break;
-            case REGISTER_DE:
-                // outline0( "PUSH HL" );
-                // outline0( "LD HL, DE" );
-                // outline1( "LD (%s), HL", _value );
-                // outline0( "POP HL" );
-                break;
-            case REGISTER_HL:
-                // outline1( "LD (%s), HL", _value );
-                break;
-            case REGISTER_IXL:
-                // outline0( "PUSH AF" );
-                // outline0( "LD A, IXL" );
-                // outline1( "LD (%s), A", _value );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_IXH:
-                // outline0( "PUSH AF" );
-                // outline0( "LD A, IXH" );
-                // outline1( "LD (%s), A", _value );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_IYL:
-                // outline0( "PUSH AF" );
-                // outline0( "LD A, IYL" );
-                // outline1( "LD (%s), A", _value );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_IYH:
-                // outline0( "PUSH AF" );
-                // outline0( "LD A, IYH" );
-                // outline1( "LD (%s), A", _value );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_CARRY:
-                // outline0( "PUSH AF" );
-                // outline1( "JR NC, %snoc", label );
-                // outline0( "LD A, 0x1" );
-                // outline1( "LD (%s), A", _value );
-                // outline1( "JP %s// done", label );
-                // outhead1( "%snoc:", label );
-                // outline0( "LD A, 0x0" );
-                // outline1( "LD (%s), A", _value );
-                // outhead1( "%s// done:", label );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_ZERO:
-                // outline0( "PUSH AF" );
-                // outline1( "JR NZ, %snoz", label );
-                // outline0( "LD A, 0x1" );
-                // outline1( "LD (%s), A", _value );
-                // outline1( "JP %s// done", label );
-                // outhead1( "%snoz:", label );
-                // outline0( "LD A, 0x0" );
-                // outline1( "LD (%s), A", _value );
-                // outhead1( "%s// done:", label );
-                // outline0( "POP AF" );
-                break;
-            case REGISTER_HLA:
-                // outline1( "LD (%s), A", _value );
-                // outline0( "LD A, L" );
-                // outline1( "LD (%s), A", address_displacement( _environment, _value, "1" ) );
-                // outline0( "LD A, H" );
-                // outline1( "LD (%s), A", address_displacement( _environment, _value, "2" ) );
+            case REGISTER_N:
+                op_stn( _environment, _value );
                 break;
         }
 
@@ -3771,18 +3698,24 @@ void sc61860_get_asmio_indirect( Environment * _environment, int _asmio, char * 
             case STACK_NONE:
                 break;
             case STACK_BYTE:
-                // outline0( "POP AF" );
-                // outline1( "LD (%s), A", _value );
+                op_lda( _environment, _value );
+                op_push( _environment );
                 break;
             case STACK_WORD:
-                // outline0( "POP HL" );
-                // outline1( "LD (%s), HL", _value );
+                op_lda( _environment, _value );
+                op_push( _environment );
+                op_lda( _environment, address_displacement( _environment, _value, "1" ) );
+                op_push( _environment );
                 break;
             case STACK_DWORD:
-                // outline0( "POP HL" );
-                // outline1( "LD (%s), HL", address_displacement( _environment, _value, "0" ) );
-                // outline0( "POP HL" );
-                // outline1( "LD (%s), HL", address_displacement( _environment, _value, "2" ) );
+                op_lda( _environment, _value );
+                op_push( _environment );
+                op_lda( _environment, address_displacement( _environment, _value, "1" ) );
+                op_push( _environment );
+                op_lda( _environment, address_displacement( _environment, _value, "2" ) );
+                op_push( _environment );
+                op_lda( _environment, address_displacement( _environment, _value, "3" ) );
+                op_push( _environment );
                 break;
         }
 
@@ -3798,7 +3731,7 @@ void sc61860_return( Environment * _environment ) {
 
 void sc61860_pop( Environment * _environment ) {
 
-    // outline0("POP IX" );
+    outline0("POP" );
 
 }
 
@@ -3813,8 +3746,7 @@ void sc61860_halt( Environment * _environment ) {
 
 void sc61860_end( Environment * _environment ) {
 
-    // outline0("DI");
-    // outline0("HLT");
+    sc61860_halt( _environment );
 
 }
 
