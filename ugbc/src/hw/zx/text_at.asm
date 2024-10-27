@@ -227,14 +227,14 @@ LIBPRINTSTRING0:
     CP 4
     JP Z, LIBPRINTSTRINGATAT
     CALL LIBPRINTCHAR
-    DEC C                       ; Decrease C of the string
-    JP Z, LIBPRINTSTRING1B
 
     INC L				        ; Go to the next screen address
     INC IY
     LD A, (XCURSYS)
     ADD 1
     LD (XCURSYS), A
+    DEC C                       ; Decrease C of the string
+    JP Z, LIBPRINTSTRING1B
     LD A, (CONSOLEX2)
     LD B, A
     LD A, (XCURSYS)
