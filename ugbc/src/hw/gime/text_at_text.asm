@@ -514,9 +514,6 @@ TEXTATSP0
     JSR GIMEBANKVIDEO
     STA , X+
 
-    CMPB #0
-    LBEQ TEXTATEND2
-
 TEXTATSP0C
 
     LDA <PLOTC
@@ -539,6 +536,11 @@ TEXTATINCX
     ; Increment the current horizontal position.
 
     INC <XCURSYS
+
+    ; Exit if the string is ended
+    
+    CMPB #0
+    LBEQ TEXTATEND2
 
     ; If the current horizontal position is at the end
     ; of the line, we must increment the vertical position.

@@ -604,9 +604,6 @@ TEXTATBMSP0
 
     JSR TEXTATBMDRAWCHAR
 
-    CMPB #0
-    LBEQ TEXTATBMEND2
-
     JMP TEXTATBMINCX
 
     ; If the program reach this point, it means that must skip
@@ -624,6 +621,11 @@ TEXTATBMINCX
     ; Increment the current horizontal position.
 
     INC <XCURSYS
+
+    ; Exit if the string is ended.
+    
+    CMPB #0
+    LBEQ TEXTATBMEND2
 
     ; If the current horizontal position is at the end
     ; of the line, we must increment the vertical position.
