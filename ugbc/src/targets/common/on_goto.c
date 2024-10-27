@@ -107,11 +107,11 @@ void on_goto_index( Environment * _environment, char * _label ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("Syntax error on ON GOTO");
+        CRITICAL_INTERNAL_ERROR("on_goto_index called out of order (1)");
     }
 
     if ( conditional->type != CT_ON_GOTO ) {
-        CRITICAL("ON ... GO");
+        CRITICAL_INTERNAL_ERROR("on_goto_index called out of order (2)");
     }
 
     Variable * index = variable_resident( _environment, VT_BYTE, "(index)");
@@ -156,11 +156,11 @@ void on_goto_end( Environment * _environment ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("Syntax error on ON GOTO");
+        CRITICAL_INTERNAL_ERROR("on_goto_end called out of order (1)");
     }
 
     if ( conditional->type != CT_ON_GOTO ) {
-        CRITICAL("ON ... GO");
+        CRITICAL_INTERNAL_ERROR("on_goto_end called out of order (2)");
     }
 
     _environment->conditionals->expression->locked = 0;

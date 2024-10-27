@@ -101,11 +101,11 @@ void begin_while_condition( Environment * _environment, char * _expression ) {
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
-        CRITICAL("Internal error on WHILE...WEND");
+        CRITICAL_INTERNAL_ERROR("begin_while_condition called out of order (1)");
     }
 
     if ( loop->type != LT_WHILE ) {
-        CRITICAL("Internal error on WHILE...WEND (2)");
+        CRITICAL_INTERNAL_ERROR("begin_while_condition called out of order (1)");
     }
 
     Variable * expression = variable_retrieve_or_define( _environment, _expression, VT_BYTE, 0 );

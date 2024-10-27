@@ -118,11 +118,11 @@ void on_proc_index( Environment * _environment, char * _label ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("Syntax error on ON PROC");
+        CRITICAL_INTERNAL_ERROR("on_proc_index called out of order (1)");
     }
 
     if ( conditional->type != CT_ON_PROC ) {
-        CRITICAL("ON ... PROC");
+        CRITICAL_INTERNAL_ERROR("on_proc_index called out of order (1)");
     }
 
     Variable * index = variable_resident( _environment, VT_BYTE, "(index)");
@@ -160,11 +160,11 @@ void on_proc_end( Environment * _environment ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("Syntax error on ON PROC");
+        CRITICAL_INTERNAL_ERROR("on_proc_end called out of order (1)");
     }
 
     if ( conditional->type != CT_ON_PROC ) {
-        CRITICAL("ON ... PROC");
+        CRITICAL_INTERNAL_ERROR("on_proc_end called out of order (1)");
     }
 
     char newLabel2[MAX_TEMPORARY_STORAGE]; sprintf(newLabel2, "%sfinal", conditional->label );
