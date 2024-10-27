@@ -752,7 +752,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->fontHeight = 8;
             _environment->screenWidth = 320;
             _environment->screenHeight = 200;
-            _environment->screenColors = 2;
+            _environment->screenColors = 16;
             // Enable graphics.
             outline0("LDA $FF06" );
             outline0("ORA #%00100000");
@@ -784,7 +784,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->fontHeight = 8;
             _environment->screenWidth = 160;
             _environment->screenHeight = 200;
-            _environment->screenColors = 4;
+            _environment->screenColors = 16;
             // Enable graphics.
             outline0("LDA $FF06" );
             outline0("ORA #%00100000");
