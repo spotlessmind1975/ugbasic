@@ -8645,8 +8645,22 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
             case VT_MSPRITE:
                 cpu_move_16bit_indirect( _environment, _value->realName, offset->realName );
                 break;
-            case VT_DSTRING:
-                cpu_move_8bit_indirect( _environment, _value->realName, offset->realName );
+            case VT_DSTRING: {
+
+                Variable * dstring = variable_temporary( _environment, _array->arrayType, "(array element)");
+
+                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+                Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+
+                cpu_dsdescriptor( _environment, _value->realName, address->realName, size->realName );
+                cpu_dsalloc( _environment, size->realName, dstring->realName );
+                cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
+                cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+                cpu_move_8bit_indirect( _environment, dstring->realName, offset->realName );
+
+                }
                 break;
             default:
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
