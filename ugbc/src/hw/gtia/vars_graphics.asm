@@ -473,6 +473,9 @@ CALCPOS15X:
 
 CALCPOS8:
 
+    TXA
+    PHA
+    
     LDA #2
     STA PATTERN
 
@@ -504,6 +507,9 @@ CALCPOS8:
     ; ADC PLOT4HI,X
     STA PLOTDEST+1
 
+    PLA
+    TAX
+
     RTS
 
 @ENDIF
@@ -511,6 +517,10 @@ CALCPOS8:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 9 ) )
 
 CALCPOS9:
+
+    TXA
+    PHA
+   
 
     LDA #1
     STA PATTERN
@@ -542,6 +552,9 @@ CALCPOS9:
     ADC PLOT4VBASEHI,Y          ;do the high byte
     STA PLOTDEST+1
 
+    PLA
+    TAX
+
     RTS
 
 @ENDIF
@@ -549,6 +562,9 @@ CALCPOS9:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 10 ) )
 
 CALCPOS10:
+
+    TXA
+    PHA
 
     LDA #2
     STA PATTERN
@@ -581,6 +597,9 @@ CALCPOS10:
     ADC PLOT5VBASEHI,Y          ;do the high byte
     STA PLOTDEST+1
 
+    PLA
+    TAX
+
     RTS
 
 @ENDIF
@@ -589,6 +608,9 @@ CALCPOS10:
 
 CALCPOS11:
 
+    TXA
+    PHA
+    
     LDA #1
     STA PATTERN
 
@@ -619,6 +641,9 @@ CALCPOS11:
     ADC PLOT5VBASEHI,Y          ;do the high byte
     STA PLOTDEST+1
 
+    PLA
+    TAX
+
     RTS
 
 @ENDIF
@@ -627,6 +652,9 @@ CALCPOS11:
 
 CALCPOS12:
 
+    TXA
+    PHA
+    
     LDA #1
     STA PATTERN
 
@@ -658,6 +686,9 @@ CALCPOS12:
     ADC PLOT5VBASEHI,Y          ;do the high byte
     STA PLOTDEST+1
     
+    PLA
+    TAX
+
     RTS
 
 @ENDIF
@@ -666,6 +697,9 @@ CALCPOS12:
 
 CALCPOS13:
 
+    TXA
+    PHA
+    
     LDA #2
     STA PATTERN
 
@@ -697,6 +731,9 @@ CALCPOS13:
     ADC PLOT6VBASEHI,Y          ;do the high byte
     STA PLOTDEST+1
 
+    PLA
+    TAX
+
     RTS
 
 @ENDIF
@@ -705,6 +742,9 @@ CALCPOS13:
 
 CALCPOS14:
 
+    TXA
+    PHA
+    
     LDA #0
     STA PATTERN
 
@@ -736,6 +776,9 @@ CALCPOS14:
     ADC PLOT5VBASEHI,Y          ;do the high byte
     STA PLOTDEST+1
 
+    PLA
+    TAX
+
     RTS
 
 @ENDIF
@@ -744,6 +787,9 @@ CALCPOS14:
 
 CALCPOS15:
 
+    TXA
+    PHA
+    
     LDA #0
     STA PATTERN
 
@@ -773,6 +819,9 @@ CALCPOS15:
     LDA #0
     ADC PLOT6XVBASEHI,Y          ;do the high byte
     STA PLOTDEST+1
+
+    PLA
+    TAX
 
     RTS
 

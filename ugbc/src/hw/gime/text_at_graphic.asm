@@ -433,18 +433,18 @@ TEXTATBMCLS
 
 TEXTATBMLF
 
-    ; In order to move to the next line, I have to move ahead of
-    ; an entire line, and "come back" for a number of character
-    ; that is equal to the horizontal position. Move one character
-    ; back and update the address.
+    ; ; In order to move to the next line, I have to move ahead of
+    ; ; an entire line, and "come back" for a number of character
+    ; ; that is equal to the horizontal position. Move one character
+    ; ; back and update the address.
 
-    LDA CURRENTTILESWIDTH
-    SUBA <XCURSYS
-    SUBA #1
-    LEAX A,X
+    ; LDA CURRENTTILESWIDTH
+    ; SUBA <XCURSYS
+    ; SUBA #1
+    ; LEAX A,X
 
-    ; Move to the routine that should scroll the video if we are
-    ; printing on the last line of the screen.
+    ; ; Move to the routine that should scroll the video if we are
+    ; ; printing on the last line of the screen.
 
     JMP TEXTATBMNEXT2
 
@@ -681,6 +681,12 @@ TEXTATBMNEXT
     ; tabs marker, move ahead and loop.
 
     LDA TABSTODRAW
+
+    ; Exit if the string is ended.
+    
+    CMPB #0
+    BEQ TEXTATBMEND2
+
     JMP TEXTATBMLOOP2
 
 TEXTATBMEND2

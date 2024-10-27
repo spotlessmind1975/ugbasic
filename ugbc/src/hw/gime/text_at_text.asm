@@ -281,21 +281,21 @@ TEXTATCLS
 
 TEXTATLF
 
-    ; In order to move to the next line, I have to move ahead of
-    ; an entire line, and "come back" for a number of character
-    ; that is equal to the horizontal position. Move one character
-    ; back and update the address.
+    ; ; In order to move to the next line, I have to move ahead of
+    ; ; an entire line, and "come back" for a number of character
+    ; ; that is equal to the horizontal position. Move one character
+    ; ; back and update the address.
 
-    LDA CURRENTTILESWIDTH
-    SUBA <XCURSYS
-    SUBA #1
-    PSHS D
-    TFR A, B
-    ABX
-    PULS D
+    ; LDA CURRENTTILESWIDTH
+    ; SUBA <XCURSYS
+    ; SUBA #1
+    ; PSHS D
+    ; TFR A, B
+    ; ABX
+    ; PULS D
 
-    ; Move to the routine that should scroll the video if we are
-    ; printing on the last line of the screen.
+    ; ; Move to the routine that should scroll the video if we are
+    ; ; printing on the last line of the screen.
 
     JMP TEXTATNEXT2
 
@@ -619,7 +619,7 @@ TEXTATNEXT
     ; loop again.
     
     CMPB #0
-    LBNE TEXTATLOOP2
+    BEQ TEXTATEND2
     
     JSR GIMEBANKROM
 
