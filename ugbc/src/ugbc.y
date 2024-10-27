@@ -11237,31 +11237,31 @@ int main( int _argc, char *_argv[] ) {
                     } else if ( strcmp( optarg, "TSB" ) ) {
                         _environment->dialect = DI_TSB;    
                     } else {
-                        CRITICAL("Unknown dialect.");
+                        CRITICAL("Option '-B': unknown dialect.");
                     }
                     break;
                 case 'C':
                     _environment->compilerFileName = strdup(optarg);
                     if( access( _environment->compilerFileName, F_OK ) != 0 ) {
-                        CRITICAL("Compiler not found.");
+                        CRITICAL("Option '-C': compiler not found.");
                     }
                     break;
                 case 'w':
                     _environment->cmdFileName = strdup(optarg);
                     if( access( _environment->cmdFileName, F_OK ) != 0 ) {
-                        CRITICAL("Replaced cmd.exe not found.");
+                        CRITICAL("Option '-w': replaced cmd.exe not found.");
                     }
                     break;
                 case 'b':
                     _environment->decbFileName = strdup(optarg);
                     if( access( _environment->decbFileName, F_OK ) != 0 ) {
-                        CRITICAL("Image tool not found.");
+                        CRITICAL("Option '-b': decb application not found.");
                     }
                     break;
                 case 'X':
                     _environment->executerFileName = strdup(optarg);
                     if( access( _environment->executerFileName, F_OK ) != 0 ) {
-                        CRITICAL("Executer not found.");
+                        CRITICAL("Option '-X': executer not found.");
                     }
                     break;
                 case 'P':
@@ -11270,7 +11270,7 @@ int main( int _argc, char *_argv[] ) {
                 case 'A':
                     _environment->appMakerFileName = strdup(optarg);
                     if( access( _environment->appMakerFileName, F_OK ) != 0 ) {
-                        CRITICAL("App maker no found.");
+                        CRITICAL("Option '-A': app maker no found.");
                     }
                     break;
                 case 'i':
@@ -11280,19 +11280,19 @@ int main( int _argc, char *_argv[] ) {
 #if defined(__atari__) || defined(__atarixl__)
                     _environment->dir2atrFileName = strdup(optarg);
                     if( access( _environment->dir2atrFileName, F_OK ) != 0 ) {
-                        CRITICAL("dir2atr tool not found.");
+                        CRITICAL("Option '-t': dir2atr  not found.");
                     }
 #endif
 #if defined(__msx1__)
                     _environment->dsktoolsFileName = strdup(optarg);
                     if( access( _environment->dsktoolsFileName, F_OK ) != 0 ) {
-                        CRITICAL("dsktools tool not found.");
+                        CRITICAL(""Option '-t': dsktools tool not found.");
                     }
 #endif
 #if defined(__pc1403__)
                     _environment->asLinkerFileName = strdup(optarg);
                     if( access( _environment->asLinkerFileName, F_OK ) != 0 ) {
-                        CRITICAL("aslink tool not found.");
+                        CRITICAL(""Option '-t': aslink tool not found.");
                     }
 #endif
                     break;
@@ -11362,7 +11362,7 @@ int main( int _argc, char *_argv[] ) {
                     _environment->warningsEnabled = 1;
                     break;
                 case 'I':
-                    CRITICAL("Option -I has been removed, see bug#641" );
+                    CRITICAL("Option '-I' has been removed, see bug#641" );
                     break;
                 case 'l':
                     _environment->debuggerLabelsFileName = strdup(optarg);
