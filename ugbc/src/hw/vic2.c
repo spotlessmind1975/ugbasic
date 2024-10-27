@@ -914,7 +914,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_STANDARD:
             _environment->screenWidth = 320;
             _environment->screenHeight = 200;
-            _environment->screenColors = 2;
+            _environment->screenColors = 16;
             _environment->currentModeBW = 1;
             // This fix is necessary to set the starting address of the bitmap 
             // to $A000 (which is an address available on C=64).
@@ -954,7 +954,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->fontWidth = 8;
             _environment->screenWidth = 160;
             _environment->screenHeight = 200;
-            _environment->screenColors = 4;
+            _environment->screenColors = 16;
             _environment->currentModeBW = 2;
             // This fix is necessary to set the starting address of the bitmap 
             // to $A000 (which is an address available on C=64) instead of the 
