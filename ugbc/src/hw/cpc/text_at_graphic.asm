@@ -149,6 +149,7 @@ TEXTATBMPAPER:
     ; STA $d021
     ; STA $d020
     INC DE
+    DEC C
     JP TEXTATBMNEXT
 
 TEXTATBMCMOVEPREPARE:
@@ -444,6 +445,7 @@ TEXTATFONT0L1:
 ; pixel 0 (bit 1)	pixel 1 (bit 1)	pixel 2 (bit 1)	pixel 3 (bit 1)	pixel 0 (bit 0)	pixel 1(bit 0)	pixel 2 (bit 0)	pixel 3 (bit 0)
 
 TEXTATFONT1L1X:
+TEXTATFONT1L1:
 
     LD A, (_PEN)
     LD IXL, A
@@ -452,8 +454,6 @@ TEXTATFONT1L1X:
     CALL CPCSELECTPALETTE
     LD A, IXH
     LD B, A
-
-TEXTATFONT1L1:
 
     LD A, (HL)
     SRL A
@@ -472,6 +472,41 @@ TEXTATFONT1L1:
 
     DEC DE
     
+    ; PAPER
+
+    LD A, (_PAPER)
+    LD IXL, A
+    LD A, 1
+    LD IYL, A
+    CALL CPCSELECTPALETTE
+    LD A, IXH
+    LD B, A
+
+    LD A, (HL)
+    XOR $FF
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    CALL CPCVIDEOMUL82
+    LD IXH, A
+    LD A, (DE)
+    OR IXH
+    LD (DE), A
+
+    INC DE
+
+    LD A, (HL)
+    XOR $FF
+    AND $0F
+    CALL CPCVIDEOMUL82
+    LD (DE), A
+    LD IXH, A
+    LD A, (DE)
+    OR IXH
+
+    DEC DE
+
     PUSH HL
     LD HL, DE
     LD DE, $800
@@ -493,13 +528,17 @@ TEXTATFONT1L1:
 
 TEXTATFONT2L1X:
 
-    LD A, (_PEN)
+    LD A, (_PAPER)
+    LD IXH, 0
     LD IXL, A
-    LD A, 1
-    LD IYL, A
-    CALL CPCSELECTPALETTE
-    LD A, IXH
-    LD B, A
+    LD IYL, 1
+    CALL CPCUPDATEPALETTE
+
+    LD A, (_PEN)
+    LD IXH, 1
+    LD IXL, A
+    LD IYL, 1
+    CALL CPCUPDATEPALETTE
 
 TEXTATFONT2L1:
 
