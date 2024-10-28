@@ -167,6 +167,9 @@
 #define INPUT_DEFAULT_RATE          16
 #define INPUT_DEFAULT_DELAY         64
 
+#define SCREEN_WIDTH                128
+#define SCREEN_HEIGHT                 8
+
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
 #define DEFAULT_PAINT_BUCKET_SIZE   512
