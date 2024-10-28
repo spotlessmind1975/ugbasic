@@ -52,12 +52,12 @@
 ; py = 1 << sl(7-y)
 
 ; Calculate the position inside the LCD.
-; Input:    I = x; J = y
+; Input:    K = x; L = y
 ; Ouput:    Y = address to write to (A=1); A = "OR" mask
 CALCPOSG:
 
     ; if x > 63 then
-    LP 0
+    LP 8
     LDM
     CPIA 63
     JRCP CALCPOSG2
@@ -110,39 +110,44 @@ CALCPOSDONE:
     ; J = J - A
     ; A = 7-y
     LIB 7
-    LP 1
+    LP 9
     LDM
+    LP 3
     SBM 
+    EXAM
 
     CPIA 0
     JRZP CALCPOSDONE2
 
     ; J = A
+    LP 1
     EXAM
 
     LIA 1
-
-    JP CALCPOSDONE3
 
     ; A = 1 << sl(7-y)
 CALCPOSDONEL1:
     SL
     DECJ
     JRNZM CALCPOSDONEL1
-    
+
+    JP CALCPOSDONE3
+
 CALCPOSDONE2:
     LIA 1
 CALCPOSDONE3:
     ; X = Y
-    LIP 4
-    LDM
+    PUSH
     LIP 6
-    EXAM
-    LIP 5
     LDM
-    LIP 7
+    LIP 4
     EXAM
-    
+    LIP 7
+    LDM
+    LIP 5
+    EXAM
+    POP 
+
     RTN
 
 ; Plot a point inside the LCD.
@@ -164,6 +169,13 @@ PLOTE:
 
 PLOTD:
     CALL CALCPOSG
+    EXAB
+    DX
+    IXL
+    LP 3
+    ORMA
+    EXAB
+    DY
     IYS     
     JP PLOTP
 

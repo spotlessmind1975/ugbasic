@@ -80,8 +80,14 @@ void pc1403_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( plot, src_hw_pc1403_plot_asm );
     
-    outline1("LII %2.2x", (_x & 0xff ) );
-    outline1("LIJ %2.2x", ( _y & 0xff ) );
+    outline1("LIA 0x%2.2x", (_x & 0xff ) );
+    outline0("LP 8" );
+    outline0("EXAM" );
+
+    outline1("LIA 0x%2.2x", (_y & 0xff ) );
+    outline0("LP 9" );
+    outline0("EXAM" );
+
     outline0("LIA #1");
     outline0("CALL PLOT");
 
@@ -101,14 +107,13 @@ void pc1403_pset_vars( Environment * _environment, char *_x, char *_y, char *_c 
     //     c = variable_retrieve( _environment, "PEN" );
     // }
 
-    outline1("LIDP %s", x->realName );
     outline0("LII 0x00" );
-    outline0("LP 0x00" );
+    outline1("LIDP %s", x->realName );
+    outline0("LP 8" );
     outline0("MVWD");
 
     outline1("LIDP %s", y->realName );
-    outline0("LII 0x01" );
-    outline0("LP 0x00" );
+    outline0("LP 9" );
     outline0("MVWD");
 
     outline0("LIA #1");
@@ -124,14 +129,13 @@ void pc1403_pget_color_vars( Environment * _environment, char *_x, char *_y, cha
     Variable * y = variable_retrieve( _environment, _y );
     Variable * result = variable_retrieve( _environment, _result );
     
-    outline1("LIDP %s", x->realName );
     outline0("LII 0x00" );
-    outline0("LP 0x00" );
+    outline1("LIDP %s", x->realName );
+    outline0("LP 8" );
     outline0("MVWD");
 
     outline1("LIDP %s", y->realName );
-    outline0("LII 0x01" );
-    outline0("LP 0x00" );
+    outline0("LP 9" );
     outline0("MVWD");
 
     outline0("LIA #3");
