@@ -293,7 +293,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
     // outhead0("section data_user");
     while( variable ) {
 
-        if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
+        if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->memoryArea ) {
 
             if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
                 fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );

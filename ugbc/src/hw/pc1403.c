@@ -157,9 +157,11 @@ void pc1403_text( Environment * _environment, char * _text, char * _text_size ) 
 
 }
 
-void pc1403_cls( Environment * _environment, char * _pen, char * _paper ) {
+void pc1403_cls( Environment * _environment ) {
 
-    CRITICAL_UNIMPLEMENTED("pc1403_cls");
+    deploy( cls, src_hw_pc1403_cls_asm );
+
+    cpu_call( _environment, "CLS" );
 
 }
 

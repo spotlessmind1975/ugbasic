@@ -45,10 +45,10 @@
 </usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 
-    if ( _paper ) {
-        paper( _environment, _paper );
-    }
+    // if ( _paper ) {
+    //     paper( _environment, _paper );
+    // }
 
-    // // tms9918_cls( _environment );
+    pc1403_cls( _environment );
     
 }

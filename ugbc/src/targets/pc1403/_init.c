@@ -243,7 +243,7 @@ void target_initialization( Environment * _environment ) {
 
     // outline0("CALL PC1403STARTUP" );
 
-    // setup_text_variables( _environment );
+    setup_text_variables( _environment );
 
     // // tms9918_initialization( _environment );
     // ay8910_initialization( _environment );
