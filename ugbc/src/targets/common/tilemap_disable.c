@@ -59,7 +59,7 @@ Disabilita la modalità a tiles.
 
 @example TILEMAP DISABLE
 
-@target c64
+@deprecated
 </usermanual> */
 void tilemap_disable( Environment * _environment ) {
     

@@ -50,6 +50,7 @@
 @keyword BITMAP DISABLE
 @target atari
 @target atarixl
+@deprecated
 </usermanual> */
 void bitmap_disable( Environment * _environment ) {
 
