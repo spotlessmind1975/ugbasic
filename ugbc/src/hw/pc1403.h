@@ -278,6 +278,10 @@ void pc1403_timer_set_address( Environment * _environment, char * _timer, char *
 void pc1403_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void pc1403_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 
+void pc1403_pset_int( Environment * _environment, int _x, int _y, int *_c );
+void pc1403_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
+void pc1403_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
+
 void pc1403_dojo_ready( Environment * _environment, char * _value );
 void pc1403_dojo_read_byte( Environment * _environment, char * _value );
 void pc1403_dojo_write_byte( Environment * _environment, char * _value );
