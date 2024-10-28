@@ -64,8 +64,17 @@ di "memoria insufficiente" quando si lavora con le stringhe.
 
 @example CLEAR 2048
 
-@target all
-@verified
+@alias CLR
+</usermanual> */
+
+/* <usermanual>
+@keyword CLR
+
+@syntax CLR size
+
+@example CLR 2048
+
+@alias CLEAR
 </usermanual> */
 void clear( Environment * _environment ) {
 
