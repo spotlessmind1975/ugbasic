@@ -3784,6 +3784,8 @@ void sc61860_end( Environment * _environment ) {
 
 void sc61860_random( Environment * _environment, char * _entropy ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_random" );
+
     MAKE_LABEL
 
     // inline( cpu_random )
@@ -3834,6 +3836,8 @@ void sc61860_random( Environment * _environment, char * _entropy ) {
 
 void sc61860_random_8bit( Environment * _environment, char * _entropy, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_random_8bit" );
+
     sc61860_random( _environment, _entropy );
 
     if ( _result ) {
@@ -3846,6 +3850,8 @@ void sc61860_random_8bit( Environment * _environment, char * _entropy, char * _r
 
 void sc61860_random_16bit( Environment * _environment, char * _entropy, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_random_16bit" );
+
     sc61860_random( _environment, _entropy );
 
     if ( _result ) {
@@ -3856,6 +3862,8 @@ void sc61860_random_16bit( Environment * _environment, char * _entropy, char * _
 }
 
 void sc61860_random_32bit( Environment * _environment, char * _entropy, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_random_32bit" );
 
     sc61860_random( _environment, _entropy );
 
@@ -3868,6 +3876,8 @@ void sc61860_random_32bit( Environment * _environment, char * _entropy, char * _
 }
 
 void sc61860_limit_16bit( Environment * _environment, char * _variable, int _value ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_limit_16bit" );
 
     MAKE_LABEL
 
@@ -4014,6 +4024,8 @@ void sc61860_or_32bit( Environment * _environment, char * _left, char * _right, 
 
 void sc61860_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_xor_8bit" );
+
     MAKE_LABEL
 
     // outline1("LD HL, %s", _left );
@@ -4027,6 +4039,8 @@ void sc61860_xor_8bit( Environment * _environment, char * _left, char * _right, 
 
 void sc61860_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_xor_8bit_const" );
+
     MAKE_LABEL
 
     // outline1("LD HL, %s", _left );
@@ -4039,6 +4053,8 @@ void sc61860_xor_8bit_const( Environment * _environment, char * _left, int _righ
 }
 
 void sc61860_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_xor_16bit" );
 
     MAKE_LABEL
 
@@ -4060,6 +4076,8 @@ void sc61860_xor_16bit( Environment * _environment, char * _left, char * _right,
 
 void sc61860_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_xor_16bit_const" );
+
     MAKE_LABEL
 
     // outline1("LD HL, %s", _left );
@@ -4079,6 +4097,8 @@ void sc61860_xor_16bit_const( Environment * _environment, char * _left, int _rig
 }
 
 void sc61860_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_xor_32bit" );
 
     MAKE_LABEL
 
@@ -4107,6 +4127,8 @@ void sc61860_xor_32bit( Environment * _environment, char * _left, char * _right,
 }
 
 void sc61860_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_xor_32bit_const" );
 
     MAKE_LABEL
 
@@ -4334,6 +4356,8 @@ void sc61860_mem_move_16bit( Environment * _environment, char *_source, char *_d
 
 void sc61860_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_mem_move_direct" );
+
     // deploy( duff, src_hw_sc61860_duff_asm );
 
     // outline1("LD HL, %s", _source);
@@ -4347,6 +4371,8 @@ void sc61860_mem_move_direct( Environment * _environment, char *_source, char *_
 
 void sc61860_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_mem_move_direct2" );
+
     // deploy( duff, src_hw_sc61860_duff_asm );
 
     // outline1("LD HL, (%s)", _source);
@@ -4357,6 +4383,8 @@ void sc61860_mem_move_direct2( Environment * _environment, char *_source, char *
 }
 
 void sc61860_mem_move_direct2_size( Environment * _environment, char *_source, char *_destination,  int _size ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_mem_move_direct2_size" );
 
     // deploy( duff, src_hw_sc61860_duff_asm );
 
@@ -4393,6 +4421,8 @@ void sc61860_mem_move_size( Environment * _environment, char *_source, char *_de
 
 void sc61860_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_mem_move_direct_size" );
+
     if ( _size > 0 ) {
 
         // deploy( duff, src_hw_sc61860_duff_asm );
@@ -4408,6 +4438,8 @@ void sc61860_mem_move_direct_size( Environment * _environment, char *_source, ch
 }
 
 void sc61860_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_mem_move_direct_indirect_size" );
 
     if ( _size ) {
 
@@ -4425,6 +4457,8 @@ void sc61860_mem_move_direct_indirect_size( Environment * _environment, char *_s
 
 void sc61860_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_mem_move_indirect_direct_size" );
+
     if ( _size ) {
 
         // deploy( duff, src_hw_sc61860_duff_asm );
@@ -4440,6 +4474,8 @@ void sc61860_mem_move_indirect_direct_size( Environment * _environment, char *_s
 }
 
 void sc61860_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_compare_memory" );
 
     MAKE_LABEL
 
@@ -4472,6 +4508,8 @@ void sc61860_compare_memory( Environment * _environment, char *_source, char *_d
 
 void sc61860_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_compare_memory_size" );
+
     MAKE_LABEL
 
     // outline1("LD HL, (%s)", _source);
@@ -4499,6 +4537,8 @@ void sc61860_compare_memory_size( Environment * _environment, char *_source, cha
 }
 
 void sc61860_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_less_than_memory" );
 
     MAKE_LABEL
 
@@ -4535,6 +4575,8 @@ void sc61860_less_than_memory( Environment * _environment, char *_source, char *
 
 void sc61860_less_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_less_than_memory_size" );
+
     MAKE_LABEL
 
     // outline1("LD HL, (%s)", _source);
@@ -4570,6 +4612,8 @@ void sc61860_less_than_memory_size( Environment * _environment, char *_source, c
 
 void sc61860_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_greater_than_memory" );
+
     MAKE_LABEL
 
     // outline1("LD HL, (%s)", _source);
@@ -4600,6 +4644,8 @@ void sc61860_greater_than_memory( Environment * _environment, char *_source, cha
 }
 
 void sc61860_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_greater_than_memory_size" );
 
     MAKE_LABEL
 
@@ -4632,6 +4678,8 @@ void sc61860_greater_than_memory_size( Environment * _environment, char *_source
 
 void sc61860_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_math_add_16bit_with_8bit" );
+
     // outline1("LD HL, (%s)", _source );
     // outline0("LD DE, 0" );
     // outline1("LD A, (%s)", _destination );
@@ -4647,6 +4695,8 @@ void sc61860_math_add_16bit_with_8bit( Environment * _environment, char *_source
 
 void sc61860_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_math_sub_16bit_with_8bit" );
+
     // outline1("LD HL, (%s)", _source );
     // outline0("LD DE, 0" );
     // outline1("LD A, (%s)", _destination );
@@ -4661,6 +4711,8 @@ void sc61860_math_sub_16bit_with_8bit( Environment * _environment, char *_source
 }
 
 void sc61860_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_uppercase" );
 
     MAKE_LABEL
 
@@ -4700,6 +4752,8 @@ void sc61860_uppercase( Environment * _environment, char *_source, char *_size, 
 void sc61860_lowercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
     MAKE_LABEL
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_lowercase" );
 
     // outline1("LD A, (%s)", _size);
     // outline0("LD C, A" );
@@ -4744,6 +4798,8 @@ void sc61860_convert_string_into_8bit( Environment * _environment, char * _strin
 }
 
 void sc61860_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_convert_string_into_16bit" );
 
     MAKE_LABEL
 
@@ -4813,6 +4869,8 @@ void sc61860_convert_string_into_16bit( Environment * _environment, char * _stri
 
 void sc61860_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern, int _size_size ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_fill_indirect" );
+
     MAKE_LABEL
 
     // Use the current bitmap address as starting address for filling routine.
@@ -4848,6 +4906,8 @@ void sc61860_fill_indirect( Environment * _environment, char * _address, char * 
 
 void sc61860_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_flip" );
+
     // no_inline( cpu_flip )
 
     // embedded( cpu_flip, src_hw_sc61860_cpu_flip_asm );
@@ -4863,6 +4923,8 @@ void sc61860_flip( Environment * _environment, char * _source, char * _size, cha
 
 void sc61860_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_8bit_indirect" );
+
     // outline1("LD DE, (%s)", _value);
     // outline1("LD A, (%s)", _source);
     // outline0("LD (DE), A");
@@ -4870,6 +4932,8 @@ void sc61860_move_8bit_indirect( Environment * _environment, char *_source, char
 }
 
 void sc61860_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_8bit_with_offset2" );
 
     // outline1("LD HL, %s", _value);
     // outline1("LD A, (%s)", _offset );
@@ -4883,6 +4947,8 @@ void sc61860_move_8bit_with_offset2( Environment * _environment, char *_source, 
 
 void sc61860_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_8bit_indirect_with_offset" );
+
     // outline1("LD HL, (%s)", _value);
     // outline1("LD DE, 0x%2.2x", ( _offset & 0xff ) );
     // outline0("ADD HL, DE" );
@@ -4893,6 +4959,8 @@ void sc61860_move_8bit_indirect_with_offset( Environment * _environment, char *_
 
 void sc61860_move_8bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_8bit_indirect2" );
+
     // outline1("LD DE, (%s)", _value);
     // outline0("LD A, (DE)");
     // outline1("LD (%s), A", _source);
@@ -4900,6 +4968,8 @@ void sc61860_move_8bit_indirect2( Environment * _environment, char * _value, cha
 }
 
 void sc61860_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_8bit_indirect2_8bit" );
 
     // outline1("LD HL, %s", _value);
     // outline1("LD A, (%s)", _offset);
@@ -4914,6 +4984,8 @@ void sc61860_move_8bit_indirect2_8bit( Environment * _environment, char * _value
 
 void sc61860_move_8bit_indirect2_16bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_8bit_indirect2_16bit" );
+
     // outline1("LD HL, %s", _value);
     // outline1("LD DE, (%s)", _offset);
     // outline0("ADD HL, DE");
@@ -4923,6 +4995,8 @@ void sc61860_move_8bit_indirect2_16bit( Environment * _environment, char * _valu
 }
 
 void sc61860_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_16bit_indirect" );
 
     // outline1("LD DE, (%s)", _value);
     // outline1("LD HL, (%s)", _source);
@@ -4936,6 +5010,8 @@ void sc61860_move_16bit_indirect( Environment * _environment, char *_source, cha
 
 void sc61860_move_16bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_16bit_indirect2" );
+
     // outline1("LD DE, (%s)", _value);
     // outline0("LD A, (DE)");
     // outline1("LD (%s), A", _source);
@@ -4946,6 +5022,8 @@ void sc61860_move_16bit_indirect2( Environment * _environment, char * _value, ch
 }
 
 void sc61860_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_16bit_indirect2_8bit" );
 
     // outline1("LD HL, %s", _value);
     // outline1("LD A, (%s)", _offset);
@@ -4963,6 +5041,8 @@ void sc61860_move_16bit_indirect2_8bit( Environment * _environment, char * _valu
 }
 
 void sc61860_move_32bit_indirect( Environment * _environment, char *_source, char * _value ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_32bit_indirect" );
 
     // outline1("LD DE, (%s)", _value);
     // outline1("LD HL, (%s)", _source);
@@ -4983,6 +5063,8 @@ void sc61860_move_32bit_indirect( Environment * _environment, char *_source, cha
 }
 
 void sc61860_move_nbit_indirect( Environment * _environment, int _n, char *_source, char * _value ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_nbit_indirect" );
 
     // outline1("LD DE, (%s)", _value);
 
@@ -5067,6 +5149,8 @@ void sc61860_move_nbit_indirect( Environment * _environment, int _n, char *_sour
 
 void sc61860_move_32bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_32bit_indirect2" );
+
     // outline1("LD DE, (%s)", _value);
     // outline0("LD A, (DE)");
     // outline0("LD L, A");
@@ -5086,6 +5170,8 @@ void sc61860_move_32bit_indirect2( Environment * _environment, char * _value, ch
 }
 
 void sc61860_move_nbit_indirect2( Environment * _environment, int _n, char * _value, char *_source ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_nbit_indirect2" );
 
     // outline1("LD DE, (%s)", _value);
 
@@ -5170,6 +5256,8 @@ void sc61860_move_nbit_indirect2( Environment * _environment, int _n, char * _va
 }
 
 void sc61860_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_math_div_32bit_to_16bit" );
 
     MAKE_LABEL
 
@@ -5388,6 +5476,8 @@ void sc61860_math_div_32bit_to_16bit( Environment * _environment, char *_source,
 
 void sc61860_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_math_div_16bit_to_16bit" );
+
     MAKE_LABEL
 
     if ( _signed ) {
@@ -5489,6 +5579,8 @@ void sc61860_math_div_16bit_to_16bit( Environment * _environment, char *_source,
 
 void sc61860_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_math_div_8bit_to_8bit" );
+
     MAKE_LABEL
 
     if ( _signed ) {
@@ -5579,6 +5671,8 @@ void sc61860_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
 
 void sc61860_bit_check( Environment * _environment, char *_value, int _position, char * _result, int _bitwidth ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_bit_check" );
+
     // no_inline( cpu_bit_check_extended )
 
     // embedded( cpu_bit_check_extended, src_hw_sc61860_cpu_bit_check_extended_asm );
@@ -5596,6 +5690,8 @@ void sc61860_bit_check( Environment * _environment, char *_value, int _position,
 }
 
 void sc61860_bit_check_extended( Environment * _environment, char *_value, char * _position, char * _result, int _bitwidth ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_bit_check_extended" );
 
     MAKE_LABEL
 
@@ -5616,6 +5712,8 @@ void sc61860_bit_check_extended( Environment * _environment, char *_value, char 
 }
 
 void sc61860_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_bit_inplace_8bit" );
 
     _environment->bitmaskNeeded = 1;
 
@@ -5642,6 +5740,8 @@ void sc61860_bit_inplace_8bit( Environment * _environment, char * _value, int _p
 }
 
 void sc61860_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, char * _bit ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_bit_inplace_8bit_extended_indirect" );
 
     _environment->bitmaskNeeded = 1;
 
@@ -5676,6 +5776,8 @@ void sc61860_number_to_string_vars( Environment * _environment ) {
 }
 
 void sc61860_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_number_to_string" );
 
     MAKE_LABEL
         
@@ -5800,6 +5902,8 @@ void sc61860_bits_to_string_vars( Environment * _environment ) {
 
 void sc61860_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_bits_to_string" );
+
     // deploy_with_vars( bitsToString,src_hw_sc61860_bits_to_string_asm, sc61860_bits_to_string_vars );
 
     switch( _bits ) {
@@ -5836,6 +5940,8 @@ void sc61860_bits_to_string( Environment * _environment, char * _number, char * 
 }
 
 void sc61860_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_hex_to_string" );
 
     MAKE_LABEL
 
@@ -5892,6 +5998,8 @@ void sc61860_hex_to_string( Environment * _environment, char * _number, char * _
 
 void sc61860_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_dsdefine" );
+
     // deploy( dstring,src_hw_sc61860_dstring_asm );
 
     // outline1( "LD HL, %s", _string );
@@ -5902,6 +6010,8 @@ void sc61860_dsdefine( Environment * _environment, char * _string, char * _index
 }
 
 void sc61860_dsalloc( Environment * _environment, char * _size, char * _index ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_dsalloc" );
 
     // deploy( dstring,src_hw_sc61860_dstring_asm );
 
@@ -5915,6 +6025,8 @@ void sc61860_dsalloc( Environment * _environment, char * _size, char * _index ) 
 
 void sc61860_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_dsalloc_size" );
+
     // deploy( dstring,src_hw_sc61860_dstring_asm );
 
     // outline1( "LD A, 0x%2.2x", ( _size & 0xff ) );
@@ -5927,6 +6039,8 @@ void sc61860_dsalloc_size( Environment * _environment, int _size, char * _index 
 
 void sc61860_dsfree( Environment * _environment, char * _index ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_dsfree" );
+
     // deploy( dstring,src_hw_sc61860_dstring_asm );
 
     // outline1( "LD A, (%s)", _index );
@@ -5937,6 +6051,8 @@ void sc61860_dsfree( Environment * _environment, char * _index ) {
 
 void sc61860_dswrite( Environment * _environment, char * _index ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_dswrite" );
+
     // deploy( dstring,src_hw_sc61860_dstring_asm );
 
     // outline1( "LD A, (%s)", _index );
@@ -5946,6 +6062,8 @@ void sc61860_dswrite( Environment * _environment, char * _index ) {
 }
 
 void sc61860_dsresize( Environment * _environment, char * _index, char * _resize ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_dsresize" );
 
     // deploy( dstring,src_hw_sc61860_dstring_asm );
 
@@ -5959,6 +6077,8 @@ void sc61860_dsresize( Environment * _environment, char * _index, char * _resize
 
 void sc61860_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_dsresize_size" );
+
     // deploy( dstring,src_hw_sc61860_dstring_asm );
 
     // outline1( "LD A, (%s)", _index );
@@ -5971,6 +6091,8 @@ void sc61860_dsresize_size( Environment * _environment, char * _index, int _resi
 
 void sc61860_dsgc( Environment * _environment ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_dsgc" );
+
     // deploy( dstring,src_hw_sc61860_dstring_asm );
 
     // outline0( "CALL DSGC" );
@@ -5978,6 +6100,8 @@ void sc61860_dsgc( Environment * _environment ) {
 }
 
 void sc61860_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_dsdescriptor" );
 
     // deploy( dstring,src_hw_sc61860_dstring_asm );
 
@@ -5995,6 +6119,8 @@ void sc61860_dsdescriptor( Environment * _environment, char * _index, char * _ad
 
 void sc61860_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_8bit_indirect_with_offset2" );
+
     // outline1("LD HL, (%s)", _value);
     // outline1("LD A, (%s)", _offset );
     // outline0("LD E, A" );
@@ -6007,6 +6133,9 @@ void sc61860_move_8bit_indirect_with_offset2( Environment * _environment, char *
 }
 
 void sc61860_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_complement2_8bit" );
+
     // outline1( "LD A, (%s)", _source );
     // outline0( "XOR 0xFF" );
     if ( _destination ) {
@@ -6022,6 +6151,9 @@ void sc61860_complement2_8bit( Environment * _environment, char * _source, char 
 }
 
 void sc61860_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_complement2_16bit" );
+
     // outline1( "LD A, (%s)", _source );
     // outline0( "XOR 0xFF" );
     if ( _destination ) {
@@ -6044,6 +6176,9 @@ void sc61860_complement2_16bit( Environment * _environment, char * _source, char
 }
 
 void sc61860_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
+    
+    CRITICAL_UNIMPLEMENTED( "sc61860_complement2_32bit" );
+    
     // outline1( "LD A, (%s)", _source );
     // outline0( "XOR 0xFF" );
     if ( _destination ) {
@@ -6081,6 +6216,8 @@ void sc61860_complement2_32bit( Environment * _environment, char * _source, char
 
 void sc61860_sqroot( Environment * _environment, char * _number, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_sqroot" );
+
     // deploy( sqr, src_hw_sc61860_sqr_asm );
 
     // outline1("LD HL, (%s)", _number );
@@ -6092,6 +6229,8 @@ void sc61860_sqroot( Environment * _environment, char * _number, char * _result 
 }
 
 void sc61860_dstring_vars( Environment * _environment ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_dstring_vars" );
 
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
@@ -6112,6 +6251,8 @@ void sc61860_dstring_vars( Environment * _environment ) {
 
 void sc61860_protothread_vars( Environment * _environment ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_vars" );
+
     int count = _environment->protothreadConfig.count;
 
     variable_import( _environment, "PROTOTHREADLC", VT_BUFFER, count );
@@ -6128,6 +6269,8 @@ void sc61860_protothread_vars( Environment * _environment ) {
 
 void sc61860_protothread_loop( Environment * _environment ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_loop" );
+
     // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
     // outline0("CALL PROTOTHREADLOOP" );
@@ -6135,6 +6278,8 @@ void sc61860_protothread_loop( Environment * _environment ) {
 }
 
 void sc61860_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_register_at" );
 
     // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
@@ -6147,6 +6292,8 @@ void sc61860_protothread_register_at( Environment * _environment, char * _index,
 }
 
 void sc61860_protothread_register( Environment * _environment, char * _label, char * _index ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_register" );
 
     // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
@@ -6161,6 +6308,8 @@ void sc61860_protothread_register( Environment * _environment, char * _label, ch
 
 void sc61860_protothread_unregister( Environment * _environment, char * _index ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_unregister" );
+
     // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
     // outline1("LD A, (%s)", _index );
@@ -6171,6 +6320,8 @@ void sc61860_protothread_unregister( Environment * _environment, char * _index )
 }
 
 void sc61860_protothread_save( Environment * _environment, char * _index, int _step ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_save" );
 
     // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
@@ -6183,6 +6334,8 @@ void sc61860_protothread_save( Environment * _environment, char * _index, int _s
 }
 
 void sc61860_protothread_restore( Environment * _environment, char * _index, char * _step ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_restore" );
 
     // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
@@ -6197,6 +6350,8 @@ void sc61860_protothread_restore( Environment * _environment, char * _index, cha
 
 void sc61860_protothread_set_state( Environment * _environment, char * _index, int _state ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_set_state" );
+
     // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
     // outline1("LD A, (%s)", _index );
@@ -6208,6 +6363,8 @@ void sc61860_protothread_set_state( Environment * _environment, char * _index, i
 }
 
 void sc61860_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_get_state" );
 
     // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
@@ -6222,6 +6379,8 @@ void sc61860_protothread_get_state( Environment * _environment, char * _index, c
 
 void sc61860_protothread_current( Environment * _environment, char * _current ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_current" );
+
     // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
     // outline0("LD A, (PROTOTHREADCT)" );
@@ -6230,6 +6389,8 @@ void sc61860_protothread_current( Environment * _environment, char * _current ) 
 }
 
 void sc61860_set_callback( Environment * _environment, char * _callback, char * _label ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_set_callback" );
 
     // outline1("LD DE, %s", _label );
     // outline1("LD HL, %s", _callback );
@@ -6241,6 +6402,8 @@ void sc61860_set_callback( Environment * _environment, char * _callback, char * 
 }
 
 void sc61860_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_msc1_uncompress_direct_direct" );
 
     MAKE_LABEL
 
@@ -6258,6 +6421,8 @@ void sc61860_msc1_uncompress_direct_direct( Environment * _environment, char * _
 
 void sc61860_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_msc1_uncompress_direct_indirect" );
+
     MAKE_LABEL
 
     // inline( cpu_msc1_uncompress )
@@ -6273,6 +6438,8 @@ void sc61860_msc1_uncompress_direct_indirect( Environment * _environment, char *
 }
 
 void sc61860_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_msc1_uncompress_indirect_direct" );
 
     MAKE_LABEL
 
@@ -6290,6 +6457,8 @@ void sc61860_msc1_uncompress_indirect_direct( Environment * _environment, char *
 
 void sc61860_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_msc1_uncompress_indirect_indirect" );
+
     MAKE_LABEL
 
     // inline( cpu_msc1_uncompress )
@@ -6306,6 +6475,8 @@ void sc61860_msc1_uncompress_indirect_indirect( Environment * _environment, char
 
 void sc61860_out( Environment * _environment, char * _port, char * _value ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_out" );
+
     // outline1("LD A, (%s)", _value );
     // outline1("LD BC, (%s)", _port );
     // outline0("OUT (C), A" );
@@ -6313,6 +6484,8 @@ void sc61860_out( Environment * _environment, char * _port, char * _value ) {
 }
 
 void sc61860_in( Environment * _environment, char * _port, char * _value ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_in" );
 
     // outline1("LD BC, (%s)", _port );
     // outline0("IN A, (C)" );
@@ -6322,6 +6495,8 @@ void sc61860_in( Environment * _environment, char * _port, char * _value ) {
 
 void sc61860_out_direct( Environment * _environment, char * _port, char * _value ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_out_direct" );
+
     // outline1("LD A, (%s)", _value );
     // outline1("LD BC, %s", _port );
     // outline0("OUT (C), A" );
@@ -6329,6 +6504,8 @@ void sc61860_out_direct( Environment * _environment, char * _port, char * _value
 }
 
 void sc61860_in_direct( Environment * _environment, char * _port, char * _value ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_in_direct" );
 
     // outline1("LD BC, %s", _port );
     // outline0("IN A, (C)" );
@@ -6338,6 +6515,8 @@ void sc61860_in_direct( Environment * _environment, char * _port, char * _value 
 
 void sc61860_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_string_sub" );
+
     MAKE_LABEL
 
     // inline( cpu_string_sub )
@@ -6382,6 +6561,8 @@ static char SC616860_BLIT_REGISTER[][2] = {
 
 void sc61860_blit_initialize( Environment * _environment ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_blit_initialize" );
+
     _environment->blit.freeRegisters = 0;
     _environment->blit.usedMemory = 0;
 
@@ -6391,6 +6572,8 @@ void sc61860_blit_initialize( Environment * _environment ) {
 }
 
 void sc61860_blit_finalize( Environment * _environment ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_blit_finalize" );
 
     _environment->blit.freeRegisters = 0;
     _environment->blit.usedMemory = 0;
@@ -6402,6 +6585,8 @@ void sc61860_blit_finalize( Environment * _environment ) {
 
 char * sc61860_blit_register_name(  Environment * _environment, int _register ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_blit_register_name" );
+
     if ( _register < SC616860_BLII_REGISTER_COUNT ) {
         return &SC616860_BLIT_REGISTER[_register][0];
     } else {
@@ -6410,6 +6595,8 @@ char * sc61860_blit_register_name(  Environment * _environment, int _register ) 
 }
 
 int sc61860_blit_alloc_register(  Environment * _environment ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_blit_alloc_register" );
 
     int reg = 0;
 
@@ -6446,6 +6633,8 @@ int sc61860_blit_alloc_register(  Environment * _environment ) {
 }
 
 void sc61860_blit_free_register(  Environment * _environment, int _register ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_blit_free_register" );
 
     // printf( "sc61860_blit_free_register(0x%4.4x)\n", _register );
 
@@ -6485,6 +6674,8 @@ void sc61860_blit_free_register(  Environment * _environment, int _register ) {
  * @param _value[] Value to store (segmented in 32 bit each)
  */
 void sc61860_store_nbit( Environment * _environment, char *_destination, int _n, int _value[] ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_store_nbit" );
 
     int i = 0;
     while( _n ) {
@@ -6546,6 +6737,8 @@ void sc61860_store_nbit( Environment * _environment, char *_destination, int _n,
  * @param _value[] Value to store (segmented in 32 bit each)
  */
 void sc61860_move_nbit( Environment * _environment, int _n, char * _source, char *_destination ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_move_nbit" );
 
     int i = 0;
     while( _n ) {
@@ -6617,6 +6810,8 @@ void sc61860_move_nbit( Environment * _environment, int _n, char * _source, char
  * @param _value[] Value to store (segmented in 32 bit each)
  */
 void sc61860_compare_nbit( Environment * _environment, int _n, char *_source, char *_destination,  char *_name, int _positive ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_compare_nbit" );
 
     MAKE_LABEL
 
@@ -6712,6 +6907,8 @@ void sc61860_compare_nbit( Environment * _environment, int _n, char *_source, ch
 // FAST	    (24)	seeeeeee mmmmmmmm mmmmmmmm
 
 void sc61860_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_from_double_to_int_array" );
 
     double value = 0.0;
     double integral = 0.0;
@@ -6930,6 +7127,8 @@ void sc61860_float_fast_from_double_to_int_array( Environment * _environment, do
 
 void sc61860_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_from_double_to_int_array" );
+
     double value = 0.0;
     double integral = 0.0;
     double fractional = 0.0;
@@ -7163,9 +7362,13 @@ void sc61860_float_single_from_double_to_int_array( Environment * _environment, 
 
 void sc61860_float_double_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_double_from_double_to_int_array" );
+
 }
 
 void sc61860_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_to_string" );
 
     MAKE_LABEL
 
@@ -7215,6 +7418,8 @@ void sc61860_float_fast_to_string( Environment * _environment, char * _x, char *
 
 void sc61860_float_single_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_to_string" );
+
     MAKE_LABEL
 
     // deploy( fp_pushpop, src_hw_sc61860_fp_pushpop_asm );
@@ -7258,10 +7463,14 @@ void sc61860_float_single_to_string( Environment * _environment, char * _x, char
 
 void sc61860_float_double_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_double_to_string" );
+
 }
 
 void sc61860_float_fast_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_from_16" );
+
     // deploy( fp_fast_from_16, src_hw_sc61860_fp_fast_from_16_asm );
 
     // outline1( "LD HL, (%s)", _value );
@@ -7280,6 +7489,8 @@ void sc61860_float_fast_from_16( Environment * _environment, char * _value, char
 
 void sc61860_float_fast_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_from_8" );
+
     // deploy( fp_fast_from_8, src_hw_sc61860_fp_fast_from_8_asm );
 
     // outline1( "LD A, (%s)", _value );
@@ -7298,6 +7509,8 @@ void sc61860_float_fast_from_8( Environment * _environment, char * _value, char 
 
 void sc61860_float_fast_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_to_16" );
+
     // deploy( fp_fast_to_16, src_hw_sc61860_fp_fast_to_16_asm );
 
     // outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
@@ -7316,6 +7529,8 @@ void sc61860_float_fast_to_16( Environment * _environment, char * _value, char *
 
 void sc61860_float_fast_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_to_8" );
+
     // deploy( fp_fast_to_8, src_hw_sc61860_fp_fast_to_8_asm );
 
     // outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
@@ -7333,6 +7548,8 @@ void sc61860_float_fast_to_8( Environment * _environment, char * _value, char * 
 }
 
 void sc61860_float_fast_add( Environment * _environment, char * _x, char * _y, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_add" );
 
     // deploy( fp_fast_add, src_hw_sc61860_fp_fast_add_asm );
 
@@ -7358,6 +7575,8 @@ void sc61860_float_fast_add( Environment * _environment, char * _x, char * _y, c
 }
 
 void sc61860_float_fast_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_sub" );
 
     // deploy( fp_fast_add, src_hw_sc61860_fp_fast_add_asm );
     // deploy( fp_fast_sub, src_hw_sc61860_fp_fast_sub_asm );
@@ -7385,6 +7604,8 @@ void sc61860_float_fast_sub( Environment * _environment, char * _x, char * _y, c
 
 void sc61860_float_fast_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_mul" );
+
     // deploy( fp_mul16, src_hw_sc61860_fp_mul16_asm );
     // deploy( fp_fast_mul, src_hw_sc61860_fp_fast_mul_asm );
 
@@ -7410,6 +7631,8 @@ void sc61860_float_fast_mul( Environment * _environment, char * _x, char * _y, c
 
 void sc61860_float_fast_div( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_div" );
+
     // deploy( fp_fast_div, src_hw_sc61860_fp_fast_div_asm );
 
     // outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
@@ -7433,6 +7656,8 @@ void sc61860_float_fast_div( Environment * _environment, char * _x, char * _y, c
 }
 
 void sc61860_float_fast_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_cmp" );
 
     MAKE_LABEL
 
@@ -7472,6 +7697,8 @@ void sc61860_float_fast_cmp( Environment * _environment, char * _x, char * _y, c
 
 void sc61860_float_fast_sin( Environment * _environment, char * _angle, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_sin" );
+
     MAKE_LABEL
 
     // deploy( fp_mul16, src_hw_sc61860_fp_mul16_asm );
@@ -7502,6 +7729,8 @@ void sc61860_float_fast_sin( Environment * _environment, char * _angle, char * _
 
 void sc61860_float_fast_cos( Environment * _environment, char * _angle, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_cos" );
+
     MAKE_LABEL
 
     // deploy( fp_mul16, src_hw_sc61860_fp_mul16_asm );
@@ -7531,6 +7760,8 @@ void sc61860_float_fast_cos( Environment * _environment, char * _angle, char * _
 
 void sc61860_float_fast_tan( Environment * _environment, char * _angle, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_tan" );
+
     MAKE_LABEL
 
     // deploy( fp_fast_tan, src_hw_sc61860_fp_fast_tan_asm );
@@ -7556,6 +7787,8 @@ void sc61860_float_fast_tan( Environment * _environment, char * _angle, char * _
 
 void sc61860_float_fast_sqr( Environment * _environment, char * _value, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_sqr" );
+
     MAKE_LABEL
 
     // deploy( fp_mul16, src_hw_sc61860_fp_mul16_asm );
@@ -7580,6 +7813,8 @@ void sc61860_float_fast_sqr( Environment * _environment, char * _value, char * _
 
 void sc61860_float_fast_mod1( Environment * _environment, char * _value, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_mod1" );
+
     MAKE_LABEL
 
     // deploy( fp_fast_mod1, src_hw_sc61860_fp_fast_mod1_asm );
@@ -7601,6 +7836,8 @@ void sc61860_float_fast_mod1( Environment * _environment, char * _value, char * 
 }
 
 void sc61860_float_fast_neg( Environment * _environment, char * _value, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_fast_neg" );
 
     MAKE_LABEL
 
@@ -7624,6 +7861,8 @@ void sc61860_float_fast_neg( Environment * _environment, char * _value, char * _
 
 void sc61860_float_single_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_from_16" );
+
     // deploy( fp_pushpop, src_hw_sc61860_fp_pushpop_asm );
     // deploy( fp_single_from_16, src_hw_sc61860_fp_single_from_16_asm );
 
@@ -7639,6 +7878,8 @@ void sc61860_float_single_from_16( Environment * _environment, char * _value, ch
 
 void sc61860_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_from_8" );
+
     // deploy( fp_single_from_8, src_hw_sc61860_fp_single_from_8_asm );
 
     // outline1( "LD A, (%s)", _value );
@@ -7654,6 +7895,8 @@ void sc61860_float_single_from_8( Environment * _environment, char * _value, cha
 
 void sc61860_float_single_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_to_16" );
+
     // deploy( fp_single_to_16, src_hw_sc61860_fp_single_to_16_asm );
 
     // outline1( "LD HL, %s", _value );
@@ -7668,6 +7911,8 @@ void sc61860_float_single_to_16( Environment * _environment, char * _value, char
 
 void sc61860_float_single_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_to_8" );
+
     // deploy( fp_single_to_8, src_hw_sc61860_fp_single_to_8_asm );
 
     // outline1( "LD HL, %s", _value );
@@ -7682,6 +7927,8 @@ void sc61860_float_single_to_8( Environment * _environment, char * _value, char 
 
 void sc61860_float_single_add( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_add" );
+
     // deploy( fp_pushpop, src_hw_sc61860_fp_pushpop_asm );
     // deploy( fp_single_add, src_hw_sc61860_fp_single_add_asm );
 
@@ -7693,6 +7940,8 @@ void sc61860_float_single_add( Environment * _environment, char * _x, char * _y,
 }
 
 void sc61860_float_single_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_sub" );
 
     // deploy( fp_pushpop, src_hw_sc61860_fp_pushpop_asm );
     // deploy( fp_single_sub, src_hw_sc61860_fp_single_sub_asm );
@@ -7707,6 +7956,8 @@ void sc61860_float_single_sub( Environment * _environment, char * _x, char * _y,
 
 void sc61860_float_single_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_mul" );
+
     // deploy( fp_pushpop, src_hw_sc61860_fp_pushpop_asm );
     // deploy( fp_single_mul, src_hw_sc61860_fp_single_mul_asm );
 
@@ -7718,6 +7969,8 @@ void sc61860_float_single_mul( Environment * _environment, char * _x, char * _y,
 }
 
 void sc61860_float_single_div( Environment * _environment, char * _x, char * _y, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_div" );
 
     // deploy( fp_pushpop, src_hw_sc61860_fp_pushpop_asm );
     // deploy( fp_div24_24, src_hw_sc61860_fp_div24_24_asm );
@@ -7731,6 +7984,8 @@ void sc61860_float_single_div( Environment * _environment, char * _x, char * _y,
 }
 
 void sc61860_float_single_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_cmp" );
 
     MAKE_LABEL
 
@@ -7761,6 +8016,8 @@ void sc61860_float_single_cmp( Environment * _environment, char * _x, char * _y,
 
 void sc61860_float_single_neg( Environment * _environment, char * _value, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_neg" );
+
     // MAKE_LABEL
 
     // // deploy( fp_single_sub, src_hw_sc61860_fp_single_sub_asm );
@@ -7788,6 +8045,8 @@ void sc61860_float_single_neg( Environment * _environment, char * _value, char *
 }
 
 void sc61860_float_single_sin( Environment * _environment, char * _angle, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_sin" );
 
     MAKE_LABEL
 
@@ -7821,6 +8080,8 @@ void sc61860_float_single_sin( Environment * _environment, char * _angle, char *
 }
 
 void sc61860_float_single_cos( Environment * _environment, char * _angle, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_cos" );
 
     MAKE_LABEL
 
@@ -7857,6 +8118,8 @@ void sc61860_float_single_cos( Environment * _environment, char * _angle, char *
 }
 
 void sc61860_float_single_tan( Environment * _environment, char * _angle, char * _result ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_tan" );
 
     MAKE_LABEL
 
@@ -7895,6 +8158,8 @@ void sc61860_float_single_tan( Environment * _environment, char * _angle, char *
 
 void sc61860_float_single_sqr( Environment * _environment, char * _value, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_sqr" );
+
     // MAKE_LABEL
 
     // // deploy( fp_single_mul, src_hw_sc61860_fp_single_mul_asm );
@@ -7918,6 +8183,8 @@ void sc61860_float_single_sqr( Environment * _environment, char * _value, char *
 
 void sc61860_float_single_mod1( Environment * _environment, char * _value, char * _result ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_float_single_mod1" );
+
     // MAKE_LABEL
 
     // // deploy( fp_single_mod1, src_hw_sc61860_fp_single_mod1_asm );
@@ -7940,6 +8207,8 @@ void sc61860_float_single_mod1( Environment * _environment, char * _value, char 
 
 void sc61860_address_table_build( Environment * _environment, char * _table, int * _values, char *_address[], int _count ) {
 
+    CRITICAL_UNIMPLEMENTED( "sc61860_address_table_build" );
+
     // outhead1("%s:", _table );
     for( int i=0; i<_count; ++i ) {
         // outline2("DEFW 0x%4.4x, %s", _values[i], _address[i] );
@@ -7948,6 +8217,8 @@ void sc61860_address_table_build( Environment * _environment, char * _table, int
 }
 
 void sc61860_address_table_lookup( Environment * _environment, char * _table, int _count ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_address_table_lookup" );
 
     // outhead1("LOOKFOR%s:", _table );
     if ( _count ) {
@@ -7988,6 +8259,8 @@ void sc61860_address_table_lookup( Environment * _environment, char * _table, in
 }
 
 void sc61860_address_table_call( Environment * _environment, char * _table, char * _value, char * _address ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_address_table_call" );
 
     // outline1("LD DE, (%s)", _value );
     // outline1("CALL LOOKFOR%s", _table );
