@@ -145,6 +145,7 @@ TEXTATBMPAPER:
     INC DE
     DEC C
     LD A, (DE)
+    LD (_PAPER), A
     ; STA $d021
     ; STA $d020
     INC DE
@@ -300,6 +301,7 @@ TEXTATBMSP0:
 ; pixel 0 (bit 0)	pixel 1 (bit 0)	pixel 0 (bit 2)	pixel 1 (bit 2)	pixel 0 (bit 1)	pixel 1 (bit 1)	pixel 0 (bit 3)	pixel 1 (bit 3)
 
 TEXTATFONT0L1X:
+TEXTATFONT0L1:
 
     LD A, (_PEN)
     LD IXL, A
@@ -308,8 +310,6 @@ TEXTATFONT0L1X:
     CALL CPCSELECTPALETTE
     LD A, IXH
     LD B, A
-
-TEXTATFONT0L1:
 
     PUSH DE
 
@@ -352,6 +352,73 @@ TEXTATFONT0L1:
 
     POP DE
 
+    ;;;;;;;;;; PAPER
+
+    LD A, (_PAPER)
+    LD IXL, A
+    LD A, 1
+    LD IYL, A
+    CALL CPCSELECTPALETTE
+    LD A, IXH
+    LD B, A
+
+    PUSH DE
+
+    LD A, (HL)
+    XOR $FF
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    CALL CPCVIDEOMUL84
+    LD IXH, A
+    LD A, (DE)
+    OR IXH
+    LD (DE), A
+    
+    INC DE
+
+    LD A, (HL)
+    XOR $FF
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    AND $03
+    CALL CPCVIDEOMUL84
+    LD IXH, A
+    LD A, (DE)
+    OR IXH
+    LD (DE), A
+
+    INC DE
+
+    LD A, (HL)
+    XOR $FF
+    SRL A
+    SRL A
+    AND $03
+    CALL CPCVIDEOMUL84
+    LD IXH, A
+    LD A, (DE)
+    OR IXH
+    LD (DE), A
+
+    INC DE
+
+    LD A, (HL)
+    XOR $FF
+    AND $03
+    CALL CPCVIDEOMUL84
+    LD IXH, A
+    LD A, (DE)
+    OR IXH
+    LD (DE), A
+
+    POP DE
+
     PUSH HL
     LD HL, DE
     LD DE, $800
@@ -368,6 +435,7 @@ TEXTATFONT0L1:
 
     POP BC
     POP DE
+
 
     JP TEXTATFONTLE
 
