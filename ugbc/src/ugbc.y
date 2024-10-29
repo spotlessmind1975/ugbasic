@@ -117,13 +117,14 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token <string> Register
 %token <string> AsmSnippet
 
-%type <string> expr term modula factor exponential expr_math expr_math2
+%type <string> expr term modula factor exponential exponential_less expr_math expr_math2
 %type <integer> const_expr const_term const_modula const_factor const_expr_math const_expr_math2
 %type <string> const_expr_string const_expr_string_const
 %type <floating> const_expr_floating
 %type <integer> direct_integer
 %type <string> random_definition_simple random_definition
 %type <string> color_enumeration
+%type <string> casting
 %type <string> writing_mode_definition writing_part_definition
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
 %type <integer> const_key_scancode_definition const_key_scancode_alphadigit const_key_scancode_function_digit
@@ -1305,8 +1306,44 @@ const_factor:
       }
       ;
 
+casting :
+    OP BIT CP exponential_less { 
+        $$ = variable_cast( _environment, $4, VT_BIT )->name;
+    }
+    | OP BYTE CP exponential_less { 
+        $$ = variable_cast( _environment, $4, VT_BYTE )->name;
+      }
+    | OP SIGNED BYTE OP exponential_less { 
+        $$ = variable_cast( _environment, $5, VT_SBYTE )->name;
+      }
+    | OP WORD CP exponential_less { 
+        $$ = variable_cast( _environment, $4, VT_WORD )->name;
+      }
+    | OP SIGNED WORD CP exponential_less { 
+        $$ = variable_cast( _environment, $5, VT_SWORD )->name;
+      }
+    | OP FLOAT CP exponential_less { 
+        $$ = variable_cast( _environment, $4, VT_FLOAT )->name;
+      }
+    | OP DWORD CP exponential_less { 
+        $$ = variable_cast( _environment, $4, VT_DWORD )->name;
+      }
+    | OP SIGNED DWORD CP exponential_less { 
+        $$ = variable_cast( _environment, $5, VT_SDWORD )->name;
+      }
+    | OP POSITION CP exponential_less { 
+        $$ = variable_cast( _environment, $4, VT_POSITION )->name;
+      }
+    | OP COLOR CP exponential_less { 
+        $$ = variable_cast( _environment, $4, VT_COLOR )->name;
+      }
+    | OP COLOUR CP exponential_less { 
+        $$ = variable_cast( _environment, $4, VT_COLOR )->name;
+      }
+    ;
+
 expr : 
-      expr_math
+    expr_math
     | expr_math AND expr {        
         $$ = variable_and( _environment, $1, $3 )->name;
     } 
@@ -2720,7 +2757,7 @@ dojo_functions :
         $$ = dojo_get_message( _environment, $4 )->name;
     };
 
-exponential:
+exponential_less:
     Identifier as_datatype_suffix_optional {
         parser_array_init( _environment );
     }
@@ -2862,127 +2899,59 @@ exponential:
         variable->printable = 1;
         $$ = variable->name;
       }
-    | OP BIT CP Integer { 
-        $$ = variable_temporary( _environment, VT_BIT, "(BIT value)" )->name;
-        variable_store( _environment, $$, $4 );
-      }
-    | OP BYTE CP Integer { 
+    | OP BYTE CP direct_integer {
         $$ = parser_casted_numeric( _environment, VT_BYTE, $4 )->name;
       }
-    | OP BYTE CP direct_integer { 
-        $$ = parser_casted_numeric( _environment, VT_BYTE, $4 )->name;
-      }
-    | OP BYTE CP Float { 
-        $$ = parser_casted_numeric( _environment, VT_BYTE, (int)$4 )->name;
-      }
-    | OP BYTE CP OP expr CP { 
+    | OP BYTE CP OP expr CP {
         $$ = variable_cast( _environment, $5, VT_BYTE )->name;
       }
-    | OP SIGNED BYTE CP Integer { 
+    | OP SIGNED BYTE CP direct_integer {
         $$ = parser_casted_numeric( _environment, VT_SBYTE, $5 )->name;
       }
-    | OP SIGNED BYTE CP Float { 
-        $$ = parser_casted_numeric( _environment, VT_SBYTE, (int)$5 )->name;
-      }
-    | OP SIGNED BYTE CP direct_integer { 
-        $$ = parser_casted_numeric( _environment, VT_SBYTE, $5 )->name;
-      }
-    | OP SIGNED BYTE CP OP expr CP { 
+    | OP SIGNED BYTE CP OP expr CP {
         $$ = variable_cast( _environment, $6, VT_SBYTE )->name;
       }
-    | OP WORD CP Integer { 
+    | OP WORD CP direct_integer {
         $$ = parser_casted_numeric( _environment, VT_WORD, $4 )->name;
       }
-    | OP WORD CP Float { 
-        $$ = parser_casted_numeric( _environment, VT_WORD, (int)$4 )->name;
-      }
-    | OP WORD CP direct_integer { 
-        $$ = parser_casted_numeric( _environment, VT_WORD, $4 )->name;
-      }
-    | OP WORD CP OP expr CP { 
+    | OP WORD CP OP expr CP {
         $$ = variable_cast( _environment, $5, VT_WORD )->name;
       }
-    | OP SIGNED WORD CP Integer { 
-        $$ = parser_casted_numeric( _environment, VT_SWORD, $5 )->name;
-    }
-    | OP SIGNED WORD CP Float { 
-        $$ = parser_casted_numeric( _environment, VT_SWORD, (int)$5 )->name;
-    }
-    | OP SIGNED WORD CP direct_integer { 
+    | OP SIGNED WORD CP direct_integer {
         $$ = parser_casted_numeric( _environment, VT_SWORD, $5 )->name;
       }
-    | OP SIGNED WORD CP OP expr CP { 
+    | OP SIGNED WORD CP OP expr CP {
         $$ = variable_cast( _environment, $6, VT_SWORD )->name;
       }
-    | OP FLOAT CP OP expr CP { 
+    | OP FLOAT CP OP expr CP {
         $$ = variable_cast( _environment, $5, VT_FLOAT )->name;
       }
-    | OP DWORD CP Integer { 
+    | OP DWORD CP direct_integer {
         $$ = parser_casted_numeric( _environment, VT_DWORD, $4 )->name;
       }
-    | OP DWORD CP Float { 
-        $$ = parser_casted_numeric( _environment, VT_DWORD, (int)$4 )->name;
-      }
-    | OP DWORD CP direct_integer { 
-        $$ = parser_casted_numeric( _environment, VT_DWORD, $4 )->name;
-      }
-    | OP DWORD CP OP expr CP { 
+    | OP DWORD CP OP expr CP {
         $$ = variable_cast( _environment, $5, VT_DWORD )->name;
       }
-    | OP SIGNED DWORD CP Integer { 
+    | OP SIGNED DWORD CP direct_integer {
         $$ = parser_casted_numeric( _environment, VT_SDWORD, $5 )->name;
       }
-    | OP SIGNED DWORD CP Float { 
-        $$ = parser_casted_numeric( _environment, VT_SDWORD, (int)$5 )->name;
-      }
-    | OP SIGNED DWORD CP direct_integer { 
-        $$ = parser_casted_numeric( _environment, VT_SDWORD, $5 )->name;
-      }
-    | OP FLOAT CP Float { 
-        $$ = variable_temporary( _environment, VT_FLOAT, "(float)" )->name;
-        variable_store_float( _environment, $$, $4 );
-    }
-    | OP SIGNED DWORD CP OP expr CP { 
+    | OP SIGNED DWORD CP OP expr CP {
         $$ = variable_cast( _environment, $6, VT_SDWORD )->name;
       }
-    | OP POSITION CP Integer { 
-        $$ = parser_casted_numeric( _environment, VT_POSITION, $4 )->name;
-      }
-    | OP POSITION CP Float { 
-        $$ = parser_casted_numeric( _environment, VT_POSITION, (int)$4 )->name;
-      }
-    | OP POSITION CP direct_integer { 
-        $$ = parser_casted_numeric( _environment, VT_POSITION, $4 )->name;
-      }
-    | OP POSITION CP OP expr CP { 
-        $$ = variable_cast( _environment, $5, VT_POSITION )->name;
-      }
-    | OP COLOR CP Integer { 
+    | OP COLOR CP direct_integer {
         $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name;
       }
-    | OP COLOR CP Float { 
-        $$ = parser_casted_numeric( _environment, VT_COLOR, (int)$4 )->name;
-      }
-    | OP COLOR CP direct_integer { 
-        $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name;
-      }
-    | OP COLOR CP OP expr CP { 
+    | OP COLOR CP OP expr CP {
         $$ = variable_cast( _environment, $5, VT_COLOR )->name;
       }
-    | OP COLOUR CP Integer { 
+    | OP COLOUR CP direct_integer {
         $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name;
       }
-    | OP COLOUR CP Float { 
-        $$ = parser_casted_numeric( _environment, VT_COLOR, (int)$4 )->name;
-      }
-    | OP COLOUR CP direct_integer { 
-        $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name;
-      }
-    | OP COLOUR CP OP expr CP { 
+    | OP COLOUR CP OP expr CP {
         $$ = variable_cast( _environment, $5, VT_COLOR )->name;
       }
-    | OP STRING CP Identifier { 
-        $$ = variable_cast( _environment, $4, VT_DSTRING )->name;        
+    | OP STRING CP Identifier {
+        $$ = variable_cast( _environment, $4, VT_DSTRING )->name;
       }
     | BufferDefinitionHex { 
         $$ = parse_buffer_definition( _environment, $1, VT_BUFFER, 1 )->name;
@@ -3481,8 +3450,9 @@ exponential:
             $$ = rnd( _environment, $3 )->name;
         }
     }
-    | OP expr CP {
-        $$ = $2;
+    |
+    casting {
+        $$ = $1;
     }
     | FREE {
         cpu_dsgc( _environment );
@@ -4264,6 +4234,13 @@ exponential:
     | NOTE const_note {
         $$ = variable_temporary( _environment, VT_BYTE, "(note)" )->name;
         variable_store( _environment, $$, $2 );
+    }
+    ;
+
+exponential:
+    exponential_less
+    | OP expr CP {
+        $$ = $2;
     }
     ;
 
