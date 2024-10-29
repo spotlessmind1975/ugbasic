@@ -44,27 +44,32 @@
 @keyword TEXTADDRESS
 
 @english
-This is a variable (16 bit) that contains the actual address of the textmap. 
+This is a variable (16 bit) that contains the actual address of the textmap,
+the video memory containing the various chars that makes a text on the screen
+in text mode. It could refer to a  certain position in RAM memory or in a separate
+video memory. It  depends on the computer you are programming. 
+
 It can be modified directly by using assignment, and can be read as any 
 other variable. Note that no check is done when using this variable, so an
 invalid value lead to undefined behaviours. If you want to use a valid value
 please use the ''TEXTMAP AT'' command.
 
 @italian
-Questa variabile contiene l'indirizzo effettivo (a 16 bit) della mappa 
-di memoria con i contenuti testuali. Può essere modificata direttamente 
-utilizzando l'assegnazione, e può essere letta come qualsiasi altra 
-variabile. Si noti che non viene eseguito alcun controllo quando si utilizza
-questa variabile, quindi un valore non valido porta a comportamenti 
-indefiniti. Se vuoi assegnare un valore valido usa il comando ''TEXTMAP AT''.
+Questa è una variabile (16 bit) che contiene l'indirizzo effettivo della textmap, 
+la memoria video contenente i vari caratteri che compongono un testo sullo schermo 
+in modalità testo. Potrebbe fare riferimento a una determinata posizione nella memoria 
+RAM o in una memoria video separata. Dipende dal computer che stai programmando.
+
+Può essere modificata direttamente tramite assegnazione e può essere letta come 
+qualsiasi altra variabile. Nota che non viene eseguito alcun controllo quando si 
+utilizza questa variabile, quindi un valore non valido porta a comportamenti 
+indefiniti. Se vuoi utilizzare un valore valido, utilizza il comando ''TEXTMAP AT''.
 
 @syntax = TEXTADDRESS
 @syntax TEXTADDRESS = ...
 
 @example actual = TEXTADDRESS
-@example TEXTADDRESS = $8400
-
-@target vic20
+@example TEXTADDRESS = &H8400
 
 @seeAlso TEXTMAP AT
 </usermanual> */

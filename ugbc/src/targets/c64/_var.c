@@ -60,11 +60,15 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SBYTE:
                 case VT_COLOR:
                 case VT_THREAD:
-                    if ( variable->memoryArea && variable->bankAssigned != -1 ) {
-                        // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    if ( strcmp( variable->name, "PEN" ) == 0 ) {
+                        outhead1("%s = 646", variable->realName);
                     } else {
-                        outhead1("%s: .res 1,0", variable->realName);
-                    }        
+                        if ( variable->memoryArea && variable->bankAssigned != -1 ) {
+                            // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        } else {
+                            outhead1("%s: .res 1,0", variable->realName);
+                        }        
+                    }
                     break;
                 case VT_DOJOKA:
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
@@ -335,8 +339,12 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SBYTE:
         case VT_COLOR:
         case VT_THREAD:
-            outhead1("%s:", _variable->realName );
-            outline1(" .byte $%1.1x", ( _variable->value & 0xff ) );
+            if ( strcmp( _variable->name, "PEN" ) == 0 ) {
+                outhead1("%s = 646", _variable->realName);
+            } else {        
+                outhead1("%s:", _variable->realName );
+                outline1(" .byte $%1.1x", ( _variable->value & 0xff ) );
+            }
             break;
         case VT_DOJOKA:
             outhead1("%s:", _variable->realName );

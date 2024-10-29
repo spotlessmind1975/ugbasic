@@ -38,11 +38,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/* <usermanual>
-@keyword TEXTADDRESS
-@target coco
-</usermanual> */
-
 /**
  * @brief Emit ASM code for <b>TEXTMAP AT [int]xx</b>
  * 

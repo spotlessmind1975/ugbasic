@@ -40,10 +40,6 @@
 
 #if defined(__atari__) || defined(__atarixl__)
 
-/* <usermanual>
-@keyword TEXTADDRESS
-</usermanual> */
-
 /**
  * @brief Emit ASM code for <b>TEXTMAP AT [int]xx</b>
  * 

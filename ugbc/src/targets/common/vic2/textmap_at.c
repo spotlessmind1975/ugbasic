@@ -40,35 +40,6 @@
 
 #if defined(__c64__) || defined(__c64reu__) || defined(__c128__)
 
-/* <usermanual>
-@keyword TEXTADDRESS
-
-@english
-This is a variable (16 bit) that contains the actual address of the textmap. 
-It can be modified directly by using assignment, and can be read as any 
-other variable. Note that no check is done when using this variable, so an
-invalid value lead to undefined behaviours. If you want to use a valid value
-please use the [[TEXTMAP AT]] command.
-
-@italian
-Questa variabile contiene l'indirizzo effettivo (a 16 bit) della mappa 
-di memoria con i contenuti testuali. Può essere modificata direttamente 
-utilizzando l'assegnazione, e può essere letta come qualsiasi altra 
-variabile. Si noti che non viene eseguito alcun controllo quando si utilizza
-questa variabile, quindi un valore non valido porta a comportamenti 
-indefiniti. Se vuoi assegnare un valore valido usa il comando [[TEXTMAP AT]].
-
-@syntax [variable] = TEXTADDRESS
-@syntax TEXTADDRESS = [expression]
-
-@example actual = TEXTADDRESS
-@example TEXTADDRESS = $8400
-
-@target c64
-
-@seeAlso TEXTMAP AT
-</usermanual> */
-
 /**
  * @brief Emit ASM code for <b>TEXTMAP AT [int]xx</b>
  * 
