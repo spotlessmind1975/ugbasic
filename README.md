@@ -12,7 +12,7 @@ The book starts from "basic" concepts, like variables, operators, control statem
 
 **This book is updated frequently**, and it is interesting if you want to discover how to apply modern programming techniques to retro computers, and it is essential if you want to use **ugBASIC** to its fullest.
 
-There is also an [online version](https://ugbasic.iwashere.eu/manual/isomorphism), and the [reference manual](https://ugbasic.iwashere.eu/docs/reference/), useful for those wishing to modify and/or to extend the language.
+There is also an [online version](https://ugbasic.iwashere.eu/manual), and the [reference manual](https://ugbasic.iwashere.eu/docs/reference/), useful for those wishing to modify and/or to extend the language.
 
 ## WHY SHOULD I USE "ugBASIC"?
 
