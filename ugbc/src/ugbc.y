@@ -6555,6 +6555,7 @@ array_assign:
                 }
             } else {
                 ((struct _Environment *)_environment)->currentArray->arrayDimensionsEach[0] = size / ( VT_BITWIDTH( ((struct _Environment *)_environment)->currentArray->arrayType ) / 8 );
+                ((struct _Environment *)_environment)->currentArray->size = size;
             }
         }
 
