@@ -450,6 +450,17 @@ void variable_cleanup( Environment * _environment ) {
     
     banks_generate( _environment );
 
+    StaticString * staticStrings = _environment->strings;
+    while( staticStrings ) {
+        out2("cstring%d: .db %d,", staticStrings->id, (int)strlen(staticStrings->value) );
+        for( i=0; i<((int)strlen(staticStrings->value)-1); ++i ) {
+            out1("0x%2.2x,", (unsigned char)(staticStrings->value[i]&0xff) );
+        }
+        out1("0x%2.2x", (unsigned char)(staticStrings->value[i]&0xff) );
+        outline0("");
+        staticStrings = staticStrings->next;
+    }
+
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {
@@ -539,17 +550,6 @@ void variable_cleanup( Environment * _environment ) {
         outhead0("DATAPTRE:");
     }
     
-    StaticString * staticStrings = _environment->strings;
-    while( staticStrings ) {
-        out2("cstring%d: .db %d,", staticStrings->id, (int)strlen(staticStrings->value) );
-        for( i=0; i<((int)strlen(staticStrings->value)-1); ++i ) {
-            out1("0x%2.2x,", (unsigned char)(staticStrings->value[i]&0xff) );
-        }
-        out1("0x%2.2x", (unsigned char)(staticStrings->value[i]&0xff) );
-        outline0("");
-        staticStrings = staticStrings->next;
-    }
-
     if ( _environment->descriptors ) {
         outhead0("UDCCHAR:" );
         int i=0,j=0;
