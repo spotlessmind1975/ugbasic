@@ -99,7 +99,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
-%token CLR
+%token CLR SUBSTRING
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3324,6 +3324,12 @@ exponential_less:
     }
     | MID OP expr OP_COMMA expr OP_COMMA expr CP {
         $$ = variable_string_mid( _environment, $3, $5, $7 )->name;
+    }
+    | SUBSTRING OP expr OP_COMMA expr CP {
+        $$ = variable_string_substring( _environment, $3, $5, NULL )->name;
+    }
+    | SUBSTRING OP expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = variable_string_substring( _environment, $3, $5, $7 )->name;
     }
     | PLACE OP expr OP_COMMA expr CP {
         $$ = variable_string_instr( _environment, $5, $3, NULL )->name;

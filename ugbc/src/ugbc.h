@@ -5107,6 +5107,7 @@ void                    variable_string_right_assign( Environment * _environment
 Variable *              variable_string_space( Environment * _environment, char * _repetitions  );
 Variable *              variable_string_str( Environment * _environment, char * _value );
 Variable *              variable_string_string( Environment * _environment, char * _string, char * _repetitions  );
+Variable *              variable_string_substring( Environment * _environment, char * _string, char * _start, char * _end );
 Variable *              variable_string_upper( Environment * _environment, char * _string );
 Variable *              variable_string_val( Environment * _environment, char * _value );
 Variable *              variable_sub( Environment * _environment, char * _source, char * _dest );

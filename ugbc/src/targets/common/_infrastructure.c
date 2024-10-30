@@ -7058,6 +7058,70 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
 }
 
 /**
+ * @brief Emit code for <b>= SUBSTRING( ..., ... [, ...] )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to extract text from
+ * @param _start Position to start from
+ * @param _end Length to end to
+ * @return Variable* Result of text extraction
+ */
+/* <usermanual>
+@keyword SUBSTRING (function)
+
+@english
+
+The ''SUBSTRING'' allows you to extract a specific portion of a text string 
+(i.e. a sequence of characters). The first parameter, ''string'', is
+the entire text from which you want to extract the substring. The starting position 
+is given by ''start'' and the ending position is given by ''end''.
+If you try to extract a substring that is longer than the original string, 
+the original string is retrieved. 
+
+There are many applications for ''SUBSTRING'': you can extract keywords, titles, 
+authors from documents, change the appearance of a text, for example by extracting 
+only the initials of a name, check whether a string contains a specific substring, 
+such as whether a zip code is formatted correctly and, finally, concatenate multiple 
+substrings to create new strings.
+
+@italian
+
+''SUBSTRING'' consente di estrarre una porzione specifica di una stringa di testo 
+(ad esempio una sequenza di caratteri). Il primo parametro, ''string'', è l'intero 
+testo da cui si desidera estrarre la sottostringa. La posizione iniziale è data da 
+''start'' e la posizione finale è data da ''end''. Se si tenta di estrarre una 
+sottostringa più lunga della stringa originale, viene recuperata la stringa originale.
+
+Esistono molte applicazioni per ''SUBSTRING'': è possibile estrarre parole chiave, 
+titoli, autori da documenti, modificare l'aspetto di un testo, ad esempio estraendo 
+solo le iniziali di un nome, verificare se una stringa contiene una sottostringa 
+specifica, ad esempio se un codice postale è formattato correttamente e, infine, 
+concatenare più sottostringhe per creare nuove stringhe.
+
+@syntax = SUBSTRING( text, start, end )
+
+@example x = MID( "TEST", 2, 3 )
+
+@seeAlso MID (function)
+
+@target all
+@verified
+ </usermanual> */
+Variable * variable_string_substring( Environment * _environment, char * _string, char * _start, char * _end ) {
+
+    Variable * start = variable_retrieve_or_define( _environment, _start, VT_BYTE, 0 );
+    Variable * len = NULL;
+    if ( _end ) {
+        Variable * end = variable_retrieve_or_define( _environment, _end, VT_BYTE, 0 );
+        len = variable_sub( _environment, end->name, start->name );
+        cpu_inc( _environment, len->realName );
+    }
+
+    return variable_string_mid( _environment, _string, start->name, _end ? len->name : NULL );
+
+}
+
+/**
  * @brief Emit code for <b>MID( ..., ... [, ...] ) = ...</b>
  * 
  * @param _environment Current calling environment
