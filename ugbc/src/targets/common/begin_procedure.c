@@ -100,7 +100,7 @@ un parametro, i parametri devono essere separate da virgole.
 @syntax END PROC[ expression ]
 
 @example PROCEDURE test[ a, b ]
-@example    DEBUG "HELLO WORLD! "; (a+b)
+@example    PRINT "HELLO WORLD! "; (a+b)
 @example END PROC
 @example 
 @example PROCEDURE sumOf( x, y )
