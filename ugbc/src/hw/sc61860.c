@@ -2314,7 +2314,20 @@ void sc61860_less_than_16bit( Environment * _environment, char *_source, char *_
 
         if ( _signed ) {
 
-            CRITICAL_UNIMPLEMENTED( "sc61860_less_than_16bit(signed)" );
+            op_ldij( _environment, _source );
+
+            op_ldab( _environment, _destination );
+
+            if ( _equal ) {
+                op_call( _environment, "CPULTE16S" );
+            } else {
+                op_call( _environment, "CPULT16S" );
+            }
+            if ( _other ) {
+                op_sta( _environment, _other );
+            } else {
+                op_sta( _environment, _destination );
+            }
 
         } else {
 
@@ -2349,7 +2362,17 @@ void sc61860_less_than_16bit_const( Environment * _environment, char *_source, i
 
         if ( _signed ) {
 
-            CRITICAL_UNIMPLEMENTED( "sc61860_less_than_16bit(signed)" );
+            op_ldij( _environment, _source );
+
+            op_ldab_direct( _environment, _destination );
+
+            if ( _equal ) {
+                op_call( _environment, "CPULTE16S" );
+            } else {
+                op_call( _environment, "CPULT16S" );
+            }
+
+            op_sta( _environment, _other );
 
         } else {
 
