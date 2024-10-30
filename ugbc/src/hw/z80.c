@@ -4752,7 +4752,7 @@ void z80_less_than_memory_size( Environment * _environment, char *_source, char 
     MAKE_LABEL
 
     outline1("LD HL, (%s)", _source);
-    outline1("LD DE, (%s)", _destination);
+    outline1("LD DE, (%s)",_destination);
     outline1("LD A, $%2.2x", ( _size & 0xff ) );
     outline0("LD C, A");
     outhead1("%s:", label );
