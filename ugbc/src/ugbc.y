@@ -10660,7 +10660,7 @@ statement2nc:
             }
         } else {
             if ( variable->type == VT_TARRAY ) {
-                if ( expr->type != VT_BUFFER ) {
+                if ( expr->type != VT_BUFFER && expr->type != VT_TARRAY ) {
                     CRITICAL_CANNOT_ASSIGN_TO_ARRAY( $1, DATATYPE_AS_STRING[expr->type] );
                 }
                 if ( expr->size != variable->size ) {

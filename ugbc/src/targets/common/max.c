@@ -100,7 +100,7 @@ Variable * maximum( Environment * _environment, char * _source, char * _destinat
     char greaterThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( greaterThanLabel, "%sl1", label );
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf( endLabel, "%sl2", label );
 
-    Variable * compare = variable_greater_than( _environment, source->name, target->name, 0 );
+    Variable * compare = variable_greater_than( _environment, source->name, target->name, 1);
 
     cpu_bveq( _environment, compare->realName, greaterThanLabel );
 
