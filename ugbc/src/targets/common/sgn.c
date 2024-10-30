@@ -90,6 +90,7 @@ Variable * sign( Environment * _environment, char * _value ) {
     MAKE_LABEL
 
     char positiveLabel[MAX_TEMPORARY_STORAGE]; sprintf(positiveLabel, "%spos", label );
+    char zeroLabel[MAX_TEMPORARY_STORAGE]; sprintf(zeroLabel, "%szero", label );
     char negativeLabel[MAX_TEMPORARY_STORAGE]; sprintf(negativeLabel, "%snev", label );
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label );
 
@@ -98,11 +99,18 @@ Variable * sign( Environment * _environment, char * _value ) {
         case 16:
         case 8:
             if ( VT_SIGNED( value->type ) ) {
+                
+                cpu_bveq( _environment, value->realName, zeroLabel );
+
                 cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName, VT_BITWIDTH( value->type ) );
                 cpu_bveq( _environment, result->realName, positiveLabel );
 
                 cpu_label( _environment, negativeLabel );
                 variable_store( _environment, result->name, VT_SIGN_8BIT(-1) );
+                cpu_jump( _environment, endLabel );
+
+                cpu_label( _environment, zeroLabel );
+                variable_store( _environment, result->name, 0 );
                 cpu_jump( _environment, endLabel );
 
                 cpu_label( _environment, positiveLabel );
