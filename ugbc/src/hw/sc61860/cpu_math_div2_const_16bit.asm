@@ -35,10 +35,13 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; A / 2^I -> A (unsigned)
-CPUDIV2CONST8U:
-CPUDIV2CONST8UL1:
+; A:B / 2^I -> A:B (unsigned)
+CPUDIV2CONST16U:
+CPUDIV2CONST16UL1:
     SR
+    EXAB
+    SR
+    EXAB
     DECI
     JRNZ CPUDIV2CONST8UL1
     RTN
@@ -48,9 +51,9 @@ CPUDIV2CONST16S:
 CPUDIV2CONST16SL1:
     PUSH
     ANIA 0x7F
-    CALL CPUDIV2CONST8U
+    CALL CPUDIV2CONST16U
     LP 0
-    EXAM    
+    EXAM
     POP
     ANIA 0x80
     ORMA
