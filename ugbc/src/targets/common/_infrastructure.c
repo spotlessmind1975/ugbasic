@@ -3042,6 +3042,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                             }
                             break;
                         case VT_BUFFER:
+                        case VT_TARRAY:
                             switch( target->type ) {
                                 case VT_DSTRING: {
                                     if ( source->size > 255 ) {
@@ -3072,6 +3073,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     } else {
                                         CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                                     }
+                                    break;
+                                case VT_TARRAY:
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
                                     break;
                             }
                             break;
