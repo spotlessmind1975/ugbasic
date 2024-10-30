@@ -4813,8 +4813,18 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                     break;
                 }
                 case 0:
-                    // @todo direct comparing 32bit ==/!= VT_FLOAT to be supported?
-                    CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
+                    switch( target->type ) {
+                        // 32 bit <-> FLOAT
+                        case VT_FLOAT: {
+                                Variable * floatToInteger = variable_temporary( _environment, VT_SDWORD, "(floatToInteger)" );
+                                variable_move( _environment, target->name, floatToInteger->name );
+                                return variable_compare( _environment, source->name, floatToInteger->name );
+                            }
+                            break;
+                        default:
+                            CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
+                    }
+                    break;
             }
             break;
         case 16:
@@ -4859,8 +4869,18 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                     break;
                 }
                 case 0:
-                    // @todo direct comparing 16bit ==/!= VT_FLOAT to be supported?
-                    CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
+                    switch( target->type ) {
+                        // 16 bit <-> FLOAT
+                        case VT_FLOAT: {
+                                Variable * floatToInteger = variable_temporary( _environment, VT_SWORD, "(floatToInteger)" );
+                                variable_move( _environment, target->name, floatToInteger->name );
+                                return variable_compare( _environment, source->name, floatToInteger->name );
+                            }
+                            break;
+                        default:
+                            CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
+                    }
+                    break;
             }
             break;
         case 8:
@@ -4898,8 +4918,18 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                     break;
                 }
                 case 0:
-                    // @todo direct comparing 8bit ==/!= VT_FLOAT to be supported?
-                    CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
+                    switch( target->type ) {
+                        // 8 bit <-> FLOAT
+                        case VT_FLOAT: {
+                                Variable * floatToInteger = variable_temporary( _environment, VT_SBYTE, "(floatToInteger)" );
+                                variable_move( _environment, target->name, floatToInteger->name );
+                                return variable_compare( _environment, source->name, floatToInteger->name );
+                            }
+                            break;
+                        default:
+                            CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
+                    }
+                    break;
             }
             break;
         case 1: {
