@@ -2016,22 +2016,35 @@ void sc61860_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
  */
 void sc61860_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
+    MAKE_LABEL
+
     no_inline( cpu_math_div2_const_8bit )
 
     embedded( cpu_math_div2_const_8bit, src_hw_sc61860_cpu_math_div2_const_8bit_asm );
 
         if ( _signed ) {
-            CRITICAL_UNIMPLEMENTED( "cpu_math_div2_const_8bit(signed)" );
+
+            op_ldi_direct( _environment, _steps );
+
+            op_lda( _environment, _source );
+
+            op_call( _environment, "CPUDIV2CONST8S" );
+
+            op_sta( _environment, _source );
+
         } else {
-            if ( _steps ) {
-                op_lda( _environment, _source );
-                op_ldi_direct( _environment, _steps );
-                op_call( _environment, "CPUDIV2CONST8U" );
-                op_sta( _environment, _source );
-            }
+
+            op_ldi_direct( _environment, _steps );
+
+            op_lda( _environment, _source );
+
+            op_call( _environment, "CPUDIV2CONST8U" );
+
+            op_sta( _environment, _source );
+
         }
 
-    done( )
+    done(  )
 
 }
 
@@ -2044,22 +2057,35 @@ void sc61860_math_div2_const_8bit( Environment * _environment, char *_source, in
  */
 void sc61860_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
+    MAKE_LABEL
+
     no_inline( cpu_math_mul2_const_8bit )
 
     embedded( cpu_math_mul2_const_8bit, src_hw_sc61860_cpu_math_mul2_const_8bit_asm );
 
         if ( _signed ) {
-            CRITICAL_UNIMPLEMENTED( "sc61860_math_mul2_const_8bit(signed)" );
+
+            op_ldi_direct( _environment, _steps );
+
+            op_lda( _environment, _source );
+
+            op_call( _environment, "CPUMUL2CONST8S" );
+
+            op_sta( _environment, _source );
+
         } else {
-            if ( _steps ) {
-                op_lda( _environment, _source );
-                op_ldi_direct( _environment, _steps );
-                op_call( _environment, "CPUDIV2CONST8U" );
-                op_sta( _environment, _source );
-            }
+
+            op_ldi_direct( _environment, _steps );
+
+            op_lda( _environment, _source );
+
+            op_call( _environment, "CPUMUL2CONST8U" );
+
+            op_sta( _environment, _source );
+
         }
 
-    done( )
+    done(  )
 
 }
 
@@ -2687,25 +2713,33 @@ void sc61860_math_div2_const_16bit( Environment * _environment, char *_source, i
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    no_inline( cpu_math_div2_const_16bit )
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_math_div2_const_16bit(signed)" );
+    embedded( cpu_math_div2_const_16bit, src_hw_sc61860_cpu_math_div2_const_16bit_asm );
 
-    } else {
+        if ( _signed ) {
 
-        op_ldab( _environment, _source );
+            op_ldi_direct( _environment, _steps );
 
-        while( _steps ) {
-            op_swab( _environment );
-            op_sra( _environment );
-            op_swab( _environment );
-            op_sra( _environment );
-            --_steps;
+            op_ldab( _environment, _source );
+
+            op_call( _environment, "CPUDIV2CONST16S" );
+
+            op_stab( _environment, _source );
+
+        } else {
+
+            op_ldi_direct( _environment, _steps );
+
+            op_ldab( _environment, _source );
+
+            op_call( _environment, "CPUDIV2CONST16U" );
+
+            op_stab( _environment, _source );
+
         }
 
-        op_stab( _environment, _source );
-        
-    }
+    done(  )
 
 }
 
@@ -2718,28 +2752,35 @@ void sc61860_math_div2_const_16bit( Environment * _environment, char *_source, i
  */
 void sc61860_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    MAKE_LABEL
+MAKE_LABEL
 
-    if ( _signed ) {
+    no_inline( cpu_math_mul2_const_8bit )
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_math_div2_const_16bit(signed)" );
+    embedded( cpu_math_mul2_const_8bit, src_hw_sc61860_cpu_math_mul2_const_8bit_asm );
 
-    } else {
+        if ( _signed ) {
 
-        op_ldab( _environment, _source );
+            op_ldi_direct( _environment, _steps );
 
-        while( _steps ) {
-            op_sla( _environment );
-            op_swab( _environment );
-            op_sla( _environment );
-            op_swab( _environment );
-            --_steps;
+            op_ldab( _environment, _source );
+
+            op_call( _environment, "CPUMUL2CONST16S" );
+
+            op_stab( _environment, _source );
+
+        } else {
+
+            op_ldi_direct( _environment, _steps );
+
+            op_ldab( _environment, _source );
+
+            op_call( _environment, "CPUMUL2CONST16U" );
+
+            op_stab( _environment, _source );
+
         }
 
-        op_stab( _environment, _source );
-        
-    }
-
+    done(  )
 }
 
 /**
@@ -8320,7 +8361,23 @@ void sc61860_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char
 
 void sc61860_move_8bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_move_8bit_signed_32bit_signed(signed)" );
+    MAKE_LABEL
+
+    char positiveLabel[MAX_TEMPORARY_STORAGE];
+    sprintf(positiveLabel, "%spos", label );
+
+    op_lda(_environment, _source );
+    op_sta(_environment, _destination );
+    op_cp_direct(_environment, 0x80 );
+    op_jc(_environment, positiveLabel );
+    op_lda_direct( _environment, 0xff );
+    op_jp( _environment, label );
+    sc61860_label(_environment, positiveLabel );
+    op_lda_direct( _environment, 0x00 );
+    sc61860_label(_environment, label );
+    op_sta(_environment, address_displacement( _environment, _destination, "1" ) );
+    op_sta(_environment, address_displacement( _environment, _destination, "2" ) );
+    op_sta(_environment, address_displacement( _environment, _destination, "3" ) );
 
 }
 
@@ -8349,13 +8406,15 @@ void sc61860_move_16bit_signed_8bit_signed( Environment * _environment, char *_s
 }
 void sc61860_move_16bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_move_16bit_signed_8bit_unsigned(signed)" );
+    op_lda( _environment, _source );
+    op_sta( _environment, _source );
 
 }
 
 void sc61860_move_16bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_move_16bit_unsigned_8bit_signed(signed)" );
+    op_lda( _environment, _source );
+    op_sta( _environment, _source );
 
 }
 
