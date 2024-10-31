@@ -128,7 +128,14 @@ void zx_text( Environment * _environment, char * _text, char * _text_size, int _
     outline0("LD C, A");
     outline0("LD B, 0");
     outline1("LD HL, (%s)", _text );
-    outline0("CALL TEXTAT");
+
+    if ( _raw ) {
+        deploy( textEncodedAtTextRaw, src_hw_zx_text_at_text_raw_asm );
+        outline0("CALL TEXTATRAW");
+    } else {
+        deploy( textEncodedAtText, src_hw_zx_text_at_text_asm );
+        outline0("CALL TEXTAT");
+    } 
 
 }
 
