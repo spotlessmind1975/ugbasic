@@ -174,7 +174,17 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     // }
                                 // }
                             } else {
-                                outline2("%s: .ds %d", variable->realName, variable->size);
+                                    out1("%s: .db ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                            outline1("%d", 0);
+                                            out0("  .db  " );
+                                        } else {
+                                            out1("%d,", 0);
+                                        }
+                                    }
+                                    outline1("%d", 0);                                
                             }
                         } else {
                             outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
@@ -308,7 +318,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
                     }
                     ++bitCount;
                     if ( bitCount == 8 ) {
-                        outline0("   .ds 1");
+                        outline0("   .dB 0");
                     }        
                     break;
             }
@@ -320,7 +330,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
     }
 
     if ( bitCount > 0 ) {
-        outline0("   .ds 1");
+        outline0("   .ds 0");
     }
     
 }
@@ -566,7 +576,11 @@ void variable_cleanup( Environment * _environment ) {
     for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
             outhead1("BANKWINDOWID%2.2x: .db 0xFF, 0xFF", i );
-            outhead2("BANKWINDOW%2.2x: .ds %d", i, _environment->maxExpansionBankSize[i]);
+            outhead1("BANKWINDOW%2.2x:", i);
+            for( int j=0; j<_environment->maxExpansionBankSize[i]-1; ++j ) {
+                out1("%d,", 0 );
+            }
+            out1("%d", 0 );
         }
     }   
 
