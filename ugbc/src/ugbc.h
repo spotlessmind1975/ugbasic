@@ -1617,7 +1617,9 @@ typedef struct _Deployed {
     int scancode;
     int textEncodedAt;
     int textEncodedAtText;
+    int textEncodedAtTextRaw;
     int textEncodedAtGraphic;
+    int textEncodedAtGraphicRaw;
     int numberToString;
     int bitsToString;
     int vScroll;

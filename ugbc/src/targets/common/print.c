@@ -80,6 +80,12 @@ into a ''SCREEN COLUMNS'' x ''SCREEN ROWS'' grid, giving a certain amount of pos
 The expression after the ''@'' can be a number, a variable or an arithmetic expression, as
 long as the value is between ''0'' and ''((SCREEN COLUMNS*SCREEN ROWS)-1)''.
 
+Finally, note that the supplied string to print may contain control characters (clear 
+screen, move cursor, and so on), which will be interpreted by the ''PRINT'' command. 
+Since some targets give meaning to these characters, it is possible to omit 
+this behavior by using the RAW keyword. This keyword will turn off interpretation for the 
+expression that follows it, and turn it back on for the next one.
+
 @italian
 
 L'istruzione ''PRINT'' visualizza le informazioni sullo schermo, a partire dalla posizione attuale del 
@@ -109,11 +115,19 @@ in una griglia ''SCREEN COLUMNS'' x ''SCREEN ROWS'', fornendo un certo numero di
 L'espressione dopo ''@'' può essere un numero, una variabile o un'espressione aritmetica, purché il 
 valore sia compreso tra ''0'' e ''((SCREEN COLUMNS*SCREEN ROWS)-1)''.
 
-@syntax PRINT [expr] [; [expr] [; ...] ... ]
-@syntax PRINT [expr] [, [expr] [, ...] ... ]
-@syntax PRINT @expr, [, [expr] [, ...] ... ]
+Infine, è da notare che la stringa fornita da stampare potrebbe presentare caratteri di controllo 
+(di cancellazione schermo, di spostamento del cursore, e così via), che saranno interpretati 
+dal comando ''PRINT''. Poiché alcuni target danno significato a questi caratteri, è 
+possibile omettere questo comportamento usanto la parola chiave ''RAW''. Tale parola chiave 
+disattiverà l'interpretazione per l'espressione che la segua, e la riattiverà alla 
+successiva.
+
+@syntax PRINT [[RAW] expr] [; [[RAW]expr] [; ...] ... ]
+@syntax PRINT [[RAW] expr] [, [[RAW]expr] [, ...] ... ]
+@syntax PRINT @expr, [, [[RAW]expr] [, ...] ... ]
 
 @example PRINT "HELLO WORLD!"
+@example PRINT RAW "RAW";"NOT RAW";RAW "RAW"
 @example PRINT (a + b);" IS A SUM!";
 @example PRINT @100, "HELLO WORLD!"
 

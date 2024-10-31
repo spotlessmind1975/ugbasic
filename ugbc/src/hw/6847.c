@@ -941,16 +941,30 @@ void c6847_text( Environment * _environment, char * _text, char * _text_size, in
     outline1("LDA %s", _text_size);
     outline0("STA <TEXTSIZE" );
 
-    if ( _environment->currentMode < 7 ) {
-        deploy( clsText, src_hw_6847_cls_text_asm );
-        deploy( vScrollText, src_hw_6847_vscroll_text_asm );
-        deploy( textEncodedAtText, src_hw_6847_text_at_text_asm );
-        outline0("JSR TEXTATTILEMODE");
+    if ( _raw ) {
+        if ( _environment->currentMode < 7 ) {
+            deploy( clsText, src_hw_6847_cls_text_asm );
+            deploy( vScrollText, src_hw_6847_vscroll_text_asm );
+            deploy( textEncodedAtTextRaw, src_hw_6847_text_at_text_raw_asm );
+            outline0("JSR TEXTATTILEMODERAW");
+        } else {
+            deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
+            deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
+            deploy( textEncodedAtGraphicRaw, src_hw_6847_text_at_graphic_raw_asm );
+            outline0("JSR TEXTATBITMAPMODERAW");
+        }
     } else {
-        deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
-        deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
-        deploy( textEncodedAtGraphic, src_hw_6847_text_at_graphic_asm );
-        outline0("JSR TEXTATBITMAPMODE");
+        if ( _environment->currentMode < 7 ) {
+            deploy( clsText, src_hw_6847_cls_text_asm );
+            deploy( vScrollText, src_hw_6847_vscroll_text_asm );
+            deploy( textEncodedAtText, src_hw_6847_text_at_text_asm );
+            outline0("JSR TEXTATTILEMODE");
+        } else {
+            deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
+            deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
+            deploy( textEncodedAtGraphic, src_hw_6847_text_at_graphic_asm );
+            outline0("JSR TEXTATBITMAPMODE");
+        }
     }
 
 }
