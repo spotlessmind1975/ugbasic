@@ -203,6 +203,12 @@ BLITR3 EQU $60
 ;     fcb >(70*4),>(71*4),>(72*4),>(73*4),>(74*4),>(75*4),>(76*4),>(77*4),>(78*4),>(79*4)
 
 CALCPOSG
+    PSHS D
+    BSR CALCPOSGR
+    PULS D
+    RTS
+    
+CALCPOSGR
     LDA CURRENTMODE
     CMPA #7
     BNE CALCPOS7X
