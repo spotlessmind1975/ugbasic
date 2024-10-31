@@ -1385,28 +1385,59 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size, 
     outline1("LD A, (%s)", _text_size);
     outline0("LD C, A");
 
-    if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
-        deploy( clsGraphic, src_hw_tms9918_cls_graphic_asm );
-        deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
-        deploy( textEncodedAt, src_hw_tms9918_text_asm );
-        deploy( textEncodedAtGraphic, src_hw_tms9918_text_at_graphic_asm );
-        if ( ! _environment->hasGameLoop ) {
-            outline0("CALL TEXTATBITMAPMODE");
+    if ( _raw ) {
+
+        if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
+            deploy( clsGraphic, src_hw_tms9918_cls_graphic_asm );
+            deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
+            deploy( textEncodedAt, src_hw_tms9918_text_asm );
+            deploy( textEncodedAtGraphicRaw, src_hw_tms9918_text_at_graphic_raw_asm );
+            if ( ! _environment->hasGameLoop ) {
+                outline0("CALL TEXTATBITMAPMODERAW");
+            } else {
+                outline0("CALL TEXTATBITMAPMODENMI2RAW");
+            }
         } else {
-            outline0("CALL TEXTATBITMAPMODENMI2");
+            deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
+            deploy( clsText, src_hw_tms9918_cls_text_asm );
+            #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__) || defined(__coleco__)
+                    deploy( textEncodedAt, src_hw_tms9918_text_asm );
+            #endif
+            deploy( textEncodedAtTextRaw, src_hw_tms9918_text_at_text_raw_asm );
+            if ( ! _environment->hasGameLoop ) {
+                outline0("CALL TEXTATTILEMODERAW");
+            } else {
+                outline0("CALL TEXTATTILEMODENMI2RAW");
+            }
         }
+
     } else {
-        deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
-        deploy( clsText, src_hw_tms9918_cls_text_asm );
-        #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__) || defined(__coleco__)
-                deploy( textEncodedAt, src_hw_tms9918_text_asm );
-        #endif
-        deploy( textEncodedAtText, src_hw_tms9918_text_at_text_asm );
-        if ( ! _environment->hasGameLoop ) {
-            outline0("CALL TEXTATTILEMODE");
+
+        if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
+            deploy( clsGraphic, src_hw_tms9918_cls_graphic_asm );
+            deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
+            deploy( textEncodedAt, src_hw_tms9918_text_asm );
+            deploy( textEncodedAtGraphic, src_hw_tms9918_text_at_graphic_asm );
+            if ( ! _environment->hasGameLoop ) {
+                outline0("CALL TEXTATBITMAPMODE");
+            } else {
+                outline0("CALL TEXTATBITMAPMODENMI2");
+            }
         } else {
-            outline0("CALL TEXTATTILEMODENMI2");
+            deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
+            deploy( clsText, src_hw_tms9918_cls_text_asm );
+            #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__) || defined(__coleco__)
+                    deploy( textEncodedAt, src_hw_tms9918_text_asm );
+            #endif
+            deploy( textEncodedAtText, src_hw_tms9918_text_at_text_asm );
+            if ( ! _environment->hasGameLoop ) {
+                outline0("CALL TEXTATTILEMODE");
+            } else {
+                outline0("CALL TEXTATTILEMODENMI2");
+            }
         }
+
+
     }
 
 }
