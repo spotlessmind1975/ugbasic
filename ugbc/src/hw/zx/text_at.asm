@@ -212,6 +212,7 @@ LIBPRINTSTRING:
 LIBPRINTSTRING0:
     LD A, (IX)			        ; Fetch the character to print
     INC IX				        ; Increase HL to the next character
+    DEC C
     CP 13
     JP Z, LIBPRINTSTRINGLF
     CP 10
@@ -233,7 +234,8 @@ LIBPRINTSTRING0:
     LD A, (XCURSYS)
     ADD 1
     LD (XCURSYS), A
-    DEC C                       ; Decrease C of the string
+    LD A, C
+    CP 0
     JP Z, LIBPRINTSTRING1B
     LD A, (CONSOLEX2)
     LD B, A
