@@ -666,7 +666,7 @@ static void op_ldab_direct( Environment * _environment, int _value ) {
 
 static void op_ldk_direct( Environment * _environment, int _value ) {
 
-    outline1("LIA #%2.2x", (unsigned char)(_value) );
+    outline1("LIA 0x%2.2x", (unsigned char)(_value) );
     outline0("LP 0x08" );
     outline0("EXAM");
 
@@ -685,7 +685,7 @@ static void op_stk( Environment * _environment, char * _address ) {
 
 static void op_ldl_direct( Environment * _environment, int _value ) {
 
-    outline1("LIA #%2.2x", (unsigned char)(_value) );
+    outline1("LIA 0x%2.2x", (unsigned char)(_value) );
     outline0("LP 0x09" );
     outline0("EXAM");
 
@@ -703,7 +703,7 @@ static void op_stl( Environment * _environment, char * _address ) {
 
 static void op_ldm_direct( Environment * _environment, int _value ) {
 
-    outline1("LIA #%2.2x", (unsigned char)(_value) );
+    outline1("LIA 0x%2.2x", (unsigned char)(_value) );
     outline0("LP 0x0a" );
     outline0("EXAM");
 
@@ -721,7 +721,7 @@ static void op_stm( Environment * _environment, char * _address ) {
 
 static void op_ldn_direct( Environment * _environment, int _value ) {
 
-    outline1("LIA #%2.2x", (unsigned char)(_value) );
+    outline1("LIA 0x%2.2x", (unsigned char)(_value) );
     outline0("LP 0x0b" );
     outline0("EXAM");
 
@@ -2754,9 +2754,9 @@ void sc61860_math_mul2_const_16bit( Environment * _environment, char *_source, i
 
 MAKE_LABEL
 
-    no_inline( cpu_math_mul2_const_8bit )
+    no_inline( cpu_math_mul2_const_16bit )
 
-    embedded( cpu_math_mul2_const_8bit, src_hw_sc61860_cpu_math_mul2_const_8bit_asm );
+    embedded( cpu_math_mul2_const_16bit, src_hw_sc61860_cpu_math_mul2_const_16bit_asm );
 
         if ( _signed ) {
 
