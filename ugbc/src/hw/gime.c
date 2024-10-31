@@ -1466,15 +1466,28 @@ void gime_text( Environment * _environment, char * _text, char * _text_size, int
     outline1("LDA %s", _text_size);
     outline0("STA <TEXTSIZE" );
 
-    if ( _environment->currentMode < 0x10 ) {
-        deploy_preferred( clsText, src_hw_gime_cls_text_asm );
-        deploy_preferred( vScrollText, src_hw_gime_vscroll_text_asm );
-        deploy_preferred( textEncodedAtText, src_hw_gime_text_at_text_asm );
-        outline0("JSR TEXTATTILEMODE");
+    if ( _raw ) {
+        if ( _environment->currentMode < 0x10 ) {
+            deploy_preferred( clsText, src_hw_gime_cls_text_asm );
+            deploy_preferred( vScrollText, src_hw_gime_vscroll_text_asm );
+            deploy_preferred( textEncodedAtTextRaw, src_hw_gime_text_at_text_raw_asm );
+            outline0("JSR TEXTATTILEMODERAW");
+        } else {
+            deploy_preferred( clsGraphic, src_hw_gime_cls_graphic_asm );
+            deploy_preferred( textEncodedAtGraphicRaw, src_hw_gime_text_at_graphic_raw_asm );
+            outline0("JSR TEXTATBITMAPMODERAW");
+        }
     } else {
-        deploy_preferred( clsGraphic, src_hw_gime_cls_graphic_asm );
-        deploy_preferred( textEncodedAtGraphic, src_hw_gime_text_at_graphic_asm );
-        outline0("JSR TEXTATBITMAPMODE");
+        if ( _environment->currentMode < 0x10 ) {
+            deploy_preferred( clsText, src_hw_gime_cls_text_asm );
+            deploy_preferred( vScrollText, src_hw_gime_vscroll_text_asm );
+            deploy_preferred( textEncodedAtText, src_hw_gime_text_at_text_asm );
+            outline0("JSR TEXTATTILEMODE");
+        } else {
+            deploy_preferred( clsGraphic, src_hw_gime_cls_graphic_asm );
+            deploy_preferred( textEncodedAtGraphic, src_hw_gime_text_at_graphic_asm );
+            outline0("JSR TEXTATBITMAPMODE");
+        }
     }
 
 }
