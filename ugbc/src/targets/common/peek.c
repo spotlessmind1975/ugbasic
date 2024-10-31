@@ -111,7 +111,7 @@ questo comando.
 </usermanual> */
 Variable * peek_var( Environment * _environment, char * _location ) {
 
-    Variable * location = variable_retrieve( _environment, _location );
+    Variable * location = variable_retrieve_or_define( _environment, _location, VT_ADDRESS, 0 );
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 
@@ -184,7 +184,7 @@ questo comando.
 
 Variable * peekw_var( Environment * _environment, char * _location ) {
 
-    Variable * location = variable_retrieve( _environment, _location );
+    Variable * location = variable_retrieve_or_define( _environment, _location, VT_ADDRESS, 0 );
 
     Variable * result = variable_temporary( _environment, VT_WORD, "(result)" );
 
@@ -255,7 +255,7 @@ questo comando.
 </usermanual> */
 Variable * peekd_var( Environment * _environment, char * _location ) {
 
-    Variable * location = variable_retrieve( _environment, _location );
+    Variable * location = variable_retrieve_or_define( _environment, _location, VT_ADDRESS, 0 );
 
     Variable * result = variable_temporary( _environment, VT_DWORD, "(result)" );
 
