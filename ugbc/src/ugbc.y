@@ -150,6 +150,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> using_opacity
 %type <integer> using_background
 %type <integer> memory_video
+%type <integer> raw_optional
 %type <integer> sprite_flag sprite_flags sprite_flags1
 %type <integer> on_bank_implicit on_bank_explicit
 %type <integer> note octave const_note
@@ -7538,22 +7539,22 @@ print_definition :
         Variable * y = variable_div( _environment, p->name, screen_tiles_get_width( _environment )->name, x->name );
         locate( _environment, x->name, y->name );
     } OP_COMMA print_definition
-  | expr {
-        print( _environment, $1, 1 );
+  | raw_optional expr {
+        print( _environment, $2, 1, $1 );
     }
-  | expr OP_COMMA {
-        print( _environment, $1, 0 );
+  | raw_optional expr OP_COMMA {
+        print( _environment, $2, 0, $1 );
         print_tab( _environment, 0 );
   }
-  | expr OP_SEMICOLON {
-        print( _environment, $1, 0 );
+  | raw_optional expr OP_SEMICOLON {
+        print( _environment, $2, 0, $1 );
   }
-  | expr OP_COMMA {
-        print( _environment, $1, 0 );
+  | raw_optional expr OP_COMMA {
+        print( _environment, $2, 0, $1 );
         print_tab( _environment, 0 );
   }  print_definition
-  | expr OP_SEMICOLON  {
-        print( _environment, $1, 0 );
+  | raw_optional expr OP_SEMICOLON  {
+        print( _environment, $2, 0, $1 );
   } print_definition
   ;
 
@@ -8109,11 +8110,11 @@ input_definition :
         }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0 );
+        print( _environment, string->name, 0, 0 );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
+            print( _environment, qm->name, 0, 0 );
         }
         Variable * var = variable_retrieve_or_define( _environment, $3, vt, 0 );
         input( _environment, var->name, VT_DSTRING );
@@ -8126,11 +8127,11 @@ input_definition :
         }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0 );
+        print( _environment, string->name, 0, 0 );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
+            print( _environment, qm->name, 0, 0 );
         }
         input( _environment, $3, vt );
     }
@@ -8141,11 +8142,11 @@ input_definition :
         }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0 );
+        print( _environment, string->name, 0, 0 );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
+            print( _environment, qm->name, 0, 0 );
         }
         input( _environment, $3, vt );
     }  input_definition2
@@ -8155,11 +8156,11 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
-        print( _environment, string->name, 0 );
+        print( _environment, string->name, 0, 0 );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
+            print( _environment, qm->name, 0, 0 );
         }
         input( _environment, $3, vt );
         print_newline( _environment );
@@ -8172,11 +8173,11 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
-        print( _environment, string->name, 0 );
+        print( _environment, string->name, 0, 0 );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
+            print( _environment, qm->name, 0, 0 );
         }
         input( _environment, $3, vt );
     }
@@ -8188,11 +8189,11 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
-        print( _environment, string->name, 0 );
+        print( _environment, string->name, 0, 0 );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0 );
+            print( _environment, qm->name, 0, 0 );
         }
         input( _environment, $3, vt );
     }  input_definition2
@@ -9699,6 +9700,14 @@ dojo_definition :
     }
     | PUT MESSAGE expr OP_COMMA expr {
         dojo_put_message( _environment, $3, $5 );
+    };
+
+raw_optional : 
+    {
+        $$ = 0;
+    }
+    | RAW {
+        $$ = 1;
     };
 
 statement2nc:

@@ -106,15 +106,15 @@ void insert( Environment * _environment, char * _string, char * _x, char * _y, c
     pen( _environment, c->name );
 
     locate( _environment, x->name, y->name );
-    print( _environment, tl->name, 0 );
+    print( _environment, tl->name, 0, 0 );
     variable_move( _environment, w->name, i->name );
     variable_decrement( _environment, i->name );
     variable_decrement( _environment, i->name );
     cpu_label( _environment, topLabel );
-        print( _environment, te->name, 0 );
+        print( _environment, te->name, 0, 0 );
         variable_decrement( _environment, i->name );
         variable_compare_and_branch_const( _environment, i->name, 0, topLabel, 0 );
-    print( _environment, tr->name, 1 );
+    print( _environment, tr->name, 1, 0 );
 
     variable_move( _environment, h->name, j->name );
     variable_decrement( _environment, j->name );
@@ -124,25 +124,25 @@ void insert( Environment * _environment, char * _string, char * _x, char * _y, c
         variable_move( _environment, w->name, i->name );
         variable_decrement( _environment, i->name );
         variable_decrement( _environment, i->name );
-        print( _environment, le->name, 0 );
+        print( _environment, le->name, 0, 0 );
             cpu_label( _environment, edgeLabel );
-            print( _environment, fi->name, 0 );
+            print( _environment, fi->name, 0, 0 );
             variable_decrement( _environment, i->name );
             variable_compare_and_branch_const( _environment, i->name, 0, edgeLabel, 0 );
-        print( _environment, re->name, 1 );
+        print( _environment, re->name, 1, 0 );
         variable_decrement( _environment, j->name );
         variable_compare_and_branch_const( _environment, j->name, 0, lineLabel, 0 );
 
     locate( _environment, x->name, NULL );
-    print( _environment, bl->name, 0 );
+    print( _environment, bl->name, 0, 0 );
     variable_move( _environment, w->name, i->name );
     variable_decrement( _environment, i->name );
     variable_decrement( _environment, i->name );
     cpu_label( _environment, bottomLabel );
-        print( _environment, be->name, 0 );
+        print( _environment, be->name, 0, 0 );
         variable_decrement( _environment, i->name );
         variable_compare_and_branch_const( _environment, i->name, 0, bottomLabel, 0 );
-    print( _environment, br->name, 1 );
+    print( _environment, br->name, 1, 0 );
 
     // The next two parameters specify the location of the top left corner of the frame: <zl> = line 
     // (value range 0 to 23) and <sp> = column (value range 0 to 38). 

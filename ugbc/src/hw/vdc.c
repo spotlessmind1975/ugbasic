@@ -895,7 +895,7 @@ void vdc_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void vdc_text( Environment * _environment, char * _text, char * _text_size ) {
+void vdc_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( vdcvars, src_hw_vdc_vars_asm);
     deploy( vScrollTextUp, src_hw_vdc_vscroll_text_up_asm );

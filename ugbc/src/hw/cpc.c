@@ -1000,7 +1000,7 @@ void cpc_scroll_text( Environment * _environment, int _direction ) {
     
 }
 
-void cpc_text( Environment * _environment, char * _text, char * _text_size ) {
+void cpc_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( cpcvars, src_hw_cpc_vars_asm);
     deploy( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );

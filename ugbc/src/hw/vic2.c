@@ -1950,7 +1950,7 @@ void vic2_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void vic2_text( Environment * _environment, char * _text, char * _text_size ) {
+void vic2_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );

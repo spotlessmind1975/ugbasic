@@ -670,7 +670,7 @@ void ef936x_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void ef936x_text( Environment * _environment, char * _text, char * _text_size ) {
+void ef936x_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );

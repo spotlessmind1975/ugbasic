@@ -59,7 +59,7 @@ void char_at( Environment * _environment, char *_x, char *_y, char *_code, char 
                 variable_sr_const( _environment, x->name, 3 )->name, 
                 variable_sr_const( _environment, y->name, 3 )->name 
     );
-    print( _environment, c->name, 0 );
+    print( _environment, c->name, 0, 0 );
 
 }
 

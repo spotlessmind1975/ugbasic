@@ -160,7 +160,7 @@ void center( Environment * _environment, char * _string, int _newline, char * _w
 
     cpu_label( _environment, doneLabel );
 
-    text_text( _environment, string->name );
+    text_text( _environment, string->name, 0 );
 
     if ( _newline && ( _environment->centerWithoutNewLine == 0 ) ) {
         text_newline( _environment );

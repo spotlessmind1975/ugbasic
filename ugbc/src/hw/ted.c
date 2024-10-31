@@ -1276,7 +1276,7 @@ void ted_scroll( Environment * _environment, int _dx, int _dy ) {
 
 }
 
-void ted_text( Environment * _environment, char * _text, char * _text_size ) {
+void ted_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );

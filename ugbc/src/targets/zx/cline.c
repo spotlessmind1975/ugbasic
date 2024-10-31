@@ -54,7 +54,7 @@ void cline( Environment * _environment, char * _characters ) {
     }
     MAKE_LABEL
     cpu_label( _environment, label );
-    print( _environment, space->name, 0 );
+    print( _environment, space->name, 0, 0 );
     cpu_dec( _environment, characters->realName );
     cpu_compare_and_branch_8bit_const( _environment, characters->realName, 0, label, 0 );
 

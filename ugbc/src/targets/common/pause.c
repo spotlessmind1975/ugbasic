@@ -71,7 +71,7 @@ void pause_seconds( Environment * _environment, char * _string, char * _duration
     char loopLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopLabel, "%sloop", label );
 
     if ( _string ) {
-        print( _environment, _string, 0 );
+        print( _environment, _string, 0, 0 );
     }
 
     Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_BYTE, 0 );

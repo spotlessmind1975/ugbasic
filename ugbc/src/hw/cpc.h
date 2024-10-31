@@ -352,7 +352,7 @@ void cpc_cls( Environment * _environment );
 void cpc_scroll_text( Environment * _environment, int _direction );
 void cpc_hscroll_line( Environment * _environment, int _direction );
 void cpc_hscroll_screen( Environment * _environment, int _direction );
-void cpc_text( Environment * _environment, char * _text, char * _text_size );
+void cpc_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void cpc_cline( Environment * _environment, char * _characters );
 void cpc_scroll( Environment * _environment, int _dx, int _dy );
 

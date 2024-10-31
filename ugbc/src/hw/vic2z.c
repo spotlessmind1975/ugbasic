@@ -1488,7 +1488,7 @@ void vic2z_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void vic2z_text( Environment * _environment, char * _text, char * _text_size ) {
+void vic2z_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( vic2zvars, src_hw_vic2z_vars_asm);
     deploy( vScrollTextUp, src_hw_vic2z_vscroll_text_up_asm );

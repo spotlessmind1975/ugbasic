@@ -193,7 +193,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_label( _environment, repeatLabel );
 
-    print( _environment, underscore->name, 0 );
+    print( _environment, underscore->name, 0, 0 );
     cmove_direct( _environment, -1, 0 );
 
     cia_inkey( _environment, key->realName );
@@ -212,7 +212,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_bvneq( _environment, pressed->realName, finishedLabel );
 
-    print( _environment, key->name, 0 );
+    print( _environment, key->name, 0, 0 );
 
     cpu_move_8bit_indirect_with_offset2( _environment, key->realName, address->realName, offset->realName );
 
@@ -232,11 +232,11 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_dec( _environment, offset->realName );
 
-    print( _environment, space->name, 0 );
+    print( _environment, space->name, 0, 0 );
 
     cmove_direct( _environment, -2, 0 );
 
-    print( _environment, space->name, 0 );
+    print( _environment, space->name, 0, 0 );
 
     cmove_direct( _environment, -1, 0 );
     
@@ -244,7 +244,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_label( _environment, finishedLabel );
 
-    print( _environment, space->name, 0 );
+    print( _environment, space->name, 0, 0 );
     cmove_direct( _environment, -1, 0 );
 
     cpu_compare_8bit( _environment, comma->realName, enter->realName, pressed->realName, 1 );

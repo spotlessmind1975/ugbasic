@@ -157,7 +157,7 @@ void ef9345_cls( Environment * _environment );
 void ef9345_scroll_text( Environment * _environment, int _direction );
 void ef9345_hscroll_line( Environment * _environment, int _direction );
 void ef9345_hscroll_screen( Environment * _environment, int _direction );
-void ef9345_text( Environment * _environment, char * _text, char * _text_size );
+void ef9345_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void ef9345_cline( Environment * _environment, char * _characters );
 void ef9345_scroll( Environment * _environment, int _dx, int _dy );
 

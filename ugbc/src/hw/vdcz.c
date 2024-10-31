@@ -2319,7 +2319,7 @@ void vdcz_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void vdcz_text( Environment * _environment, char * _text, char * _text_size ) {
+void vdcz_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( vdczvars, src_hw_vdcz_vars_asm);
     deploy( textEncodedAt, src_hw_vdcz_text_at_asm );

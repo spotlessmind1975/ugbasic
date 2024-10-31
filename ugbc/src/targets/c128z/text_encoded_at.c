@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper  ) {
+void text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper, int _raw  ) {
 
     Variable * text = variable_retrieve( _environment, _text );
     Variable * pen = variable_retrieve( _environment, _pen );
@@ -64,6 +64,6 @@ void text_encoded( Environment * _environment, char * _text, char * _pen, char *
             break;        
     }
 
-    vdcz_text( _environment, address->realName, size->realName );
+    vdcz_text( _environment, address->realName, size->realName, _raw );
 
 }

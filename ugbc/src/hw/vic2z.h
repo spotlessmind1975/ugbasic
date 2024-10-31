@@ -186,7 +186,7 @@ void vic2z_cls( Environment * _environment );
 void vic2z_scroll_text( Environment * _environment, int _direction );
 void vic2z_hscroll_line( Environment * _environment, int _direction );
 void vic2z_hscroll_screen( Environment * _environment, int _direction );
-void vic2z_text( Environment * _environment, char * _text, char * _text_size );
+void vic2z_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void vic2z_cline( Environment * _environment, char * _characters );
 void vic2z_scroll( Environment * _environment, int _dx, int _dy );
 

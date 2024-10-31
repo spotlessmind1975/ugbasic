@@ -684,7 +684,7 @@ void ef9345_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void ef9345_text( Environment * _environment, char * _text, char * _text_size ) {
+void ef9345_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( ef9345vars, src_hw_ef9345_vars_asm);
     deploy( textEncodedAt, src_hw_ef9345_text_at_asm );

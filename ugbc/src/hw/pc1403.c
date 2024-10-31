@@ -151,7 +151,7 @@ void pc1403_vscroll( Environment * _environment, int _displacement ) {
 
 }
 
-void pc1403_text( Environment * _environment, char * _text, char * _text_size ) {
+void pc1403_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     CRITICAL_UNIMPLEMENTED("pc1403_text");
 

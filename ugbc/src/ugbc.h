@@ -4830,7 +4830,7 @@ void                    pop( Environment * _environment );
 Variable *              powering( Environment * _environment, char * _source, char * _dest );
 TileDescriptors *       precalculate_tile_descriptors_for_font( char * _fontData, int _fontSize );
 void                    prepare_variable_storage( Environment * _environment, char * _name, Variable * _variable );
-void                    print( Environment * _environment, char * _text, int _new_line );
+void                    print( Environment * _environment, char * _text, int _new_line, int _raw );
 void                    print_buffer( Environment * _environment, char * _buffer, int _new_line, int _printable );
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
@@ -4964,7 +4964,7 @@ int                     system_call( Environment * _environment, char * _command
 
 
 void                    text_at( Environment * _environment, char * _x, char * _y, char * _text );
-void                    text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper );
+void                    text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper, int _raw );
 Variable *              text_get_xcurs( Environment * _environment );
 Variable *              text_get_ycurs( Environment * _environment );
 void                    text_hscroll_line( Environment * _environment, int _direction );
@@ -4973,7 +4973,7 @@ void                    text_newline( Environment * _environment );
 void                    text_question_mark( Environment * _environment );
 void                    text_set_tab( Environment * _environment, char * _net_tab );
 void                    text_tab( Environment * _environment );
-void                    text_text( Environment * _environment, char * _text );
+void                    text_text( Environment * _environment, char * _text, int _raw );
 void                    text_vscroll( Environment * _environment );
 void                    text_vscroll_screen( Environment * _environment, int _direction );
 void                    textmap_at( Environment * _environment, int _address );

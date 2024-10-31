@@ -240,7 +240,7 @@ void zx_color_border( Environment * _environment, char * _color );
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 void zx_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 void zx_vscroll( Environment * _environment, int _displacement );
-void zx_text( Environment * _environment, char * _text, char * _text_size );
+void zx_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void zx_cls( Environment * _environment, char * _pen, char * _paper );
 
 void zx_wait_key( Environment * _environment, int _release );

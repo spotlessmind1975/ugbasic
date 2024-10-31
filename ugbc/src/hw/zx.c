@@ -116,7 +116,7 @@ void zx_vscroll( Environment * _environment, int _displacement ) {
 
 }
 
-void zx_text( Environment * _environment, char * _text, char * _text_size ) {
+void zx_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( vars,src_hw_zx_vars_asm);
     deploy( vScroll, src_hw_zx_vscroll_asm );

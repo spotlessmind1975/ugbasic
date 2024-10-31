@@ -1455,7 +1455,7 @@ void gime_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void gime_text( Environment * _environment, char * _text, char * _text_size ) {
+void gime_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy_preferred( gimevars, src_hw_gime_vars_asm);
 

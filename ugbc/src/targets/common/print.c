@@ -124,7 +124,7 @@ valore sia compreso tra ''0'' e ''((SCREEN COLUMNS*SCREEN ROWS)-1)''.
 @target all
 @verified
 </usermanual> */
-void print( Environment * _environment, char * _value, int _new_line ) {
+void print( Environment * _environment, char * _value, int _new_line, int _raw ) {
 
     MAKE_LABEL
 
@@ -326,10 +326,10 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                             CRITICAL_PRINT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
                     }
             }
-            text_text( _environment, value->name );
+            text_text( _environment, value->name, _raw );
             cpu_dsfree( _environment, value->realName );
         } else {
-            text_text( _environment, value->name );
+            text_text( _environment, value->name, _raw );
         }
 
     }

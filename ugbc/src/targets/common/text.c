@@ -38,13 +38,13 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_text( Environment * _environment, char * _text ) {
+void text_text( Environment * _environment, char * _text, int _raw ) {
 
     Variable * text = variable_retrieve( _environment, _text );
     Variable * pen = variable_retrieve( _environment, "PEN" );
     Variable * paper = variable_retrieve( _environment, "PAPER" );
 
-    text_encoded( _environment, text->name, pen->name, paper->name );
+    text_encoded( _environment, text->name, pen->name, paper->name, _raw );
     
 }
 
@@ -79,7 +79,7 @@ void text_tab( Environment * _environment ) {
 
     Variable * tab = variable_retrieve( _environment, "TAB" );
 
-    text_text( _environment, tab->name );
+    text_text( _environment, tab->name, 0 );
     
 }
 
@@ -107,7 +107,7 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
 
     locate( _environment, _x, _y );
 
-    text_text( _environment, _text );
+    text_text( _environment, _text, 0 );
     
 }
 
@@ -131,7 +131,7 @@ void text_question_mark( Environment * _environment ) {
 
     variable_store_string(_environment, questionMark->name, resultString );
 
-    text_text( _environment, questionMark->name );
+    text_text( _environment, questionMark->name, 0 );
 
 }
 

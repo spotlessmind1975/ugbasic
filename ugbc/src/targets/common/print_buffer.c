@@ -188,7 +188,7 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
     cpu_math_add_16bit_const( _environment, sourceAddress->realName, bufferSizeSegment, sourceAddress->realName );
     cpu_math_add_16bit_const( _environment, bufferSize->realName, -bufferSizeSegment, bufferSize->realName );
 
-    text_text( _environment, dstring->name );
+    text_text( _environment, dstring->name, 0 );
 
     cpu_jump( _environment, printBufferLabel );
 
@@ -198,7 +198,7 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
     cpu_dsalloc( _environment, bufferSize->realName, dstring->realName );
     cpu_dsdescriptor( _environment, dstring->realName, targetAddress->realName, size->realName );
     cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, bufferSize->realName );
-    text_text( _environment, dstring->name );
+    text_text( _environment, dstring->name, 0 );
     cpu_dsfree( _environment, dstring->realName );
 
     if ( _new_line ) {

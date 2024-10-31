@@ -1944,7 +1944,7 @@ void gtia_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void gtia_text( Environment * _environment, char * _text, char * _text_size ) {
+void gtia_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );

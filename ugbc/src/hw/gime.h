@@ -291,7 +291,7 @@ void gime_cls( Environment * _environment );
 void gime_scroll_text( Environment * _environment, int _direction );
 void gime_hscroll_line( Environment * _environment, int _direction );
 void gime_hscroll_screen( Environment * _environment, int _direction );
-void gime_text( Environment * _environment, char * _text, char * _text_size );
+void gime_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void gime_cline( Environment * _environment, char * _characters );
 void gime_scroll( Environment * _environment, int _dx, int _dy );
 

@@ -684,7 +684,7 @@ void vic1_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void vic1_text( Environment * _environment, char * _text, char * _text_size ) {
+void vic1_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( vic1vars, src_hw_vic1_vars_asm);
     deploy( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );

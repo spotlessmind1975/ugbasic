@@ -159,7 +159,7 @@ void vdcz_cls( Environment * _environment );
 void vdcz_scroll_text( Environment * _environment, int _direction );
 void vdcz_hscroll_line( Environment * _environment, int _direction );
 void vdcz_hscroll_screen( Environment * _environment, int _direction );
-void vdcz_text( Environment * _environment, char * _text, char * _text_size );
+void vdcz_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void vdcz_cline( Environment * _environment, char * _characters );
 void vdcz_scroll( Environment * _environment, int _dx, int _dy );
 

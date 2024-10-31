@@ -185,7 +185,7 @@ void tms9918_cls( Environment * _environment );
 void tms9918_scroll_text( Environment * _environment, int _direction );
 void tms9918_hscroll_line( Environment * _environment, int _direction );
 void tms9918_hscroll_screen( Environment * _environment, int _direction );
-void tms9918_text( Environment * _environment, char * _text, char * _text_size );
+void tms9918_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void tms9918_cline( Environment * _environment, char * _characters );
 void tms9918_scroll( Environment * _environment, int _dx, int _dy );
 

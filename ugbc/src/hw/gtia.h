@@ -298,7 +298,7 @@ void gtia_cls( Environment * _environment );
 void gtia_scroll_text( Environment * _environment, int _direction );
 void gtia_hscroll_line( Environment * _environment, int _direction );
 void gtia_hscroll_screen( Environment * _environment, int _direction );
-void gtia_text( Environment * _environment, char * _text, char * _text_size );
+void gtia_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void gtia_cline( Environment * _environment, char * _characters );
 void gtia_scroll( Environment * _environment, int _dx, int _dy );
 

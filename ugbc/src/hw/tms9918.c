@@ -1376,7 +1376,7 @@ void tms9918_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void tms9918_text( Environment * _environment, char * _text, char * _text_size ) {
+void tms9918_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );

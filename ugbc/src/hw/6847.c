@@ -931,7 +931,7 @@ void c6847_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void c6847_text( Environment * _environment, char * _text, char * _text_size ) {
+void c6847_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( textEncodedAt, src_hw_6847_text_at_asm );

@@ -79,27 +79,27 @@ void fill( Environment * _environment, char * _x, char * _y, char * _w, char * _
     locate( _environment, x->name, y->name );
     variable_move( _environment, w->name, i->name );
     cpu_label( _environment, topLabel );
-        print( _environment, ch->name, 0 );
+        print( _environment, ch->name, 0, 0 );
         variable_decrement( _environment, i->name );
         variable_compare_and_branch_const( _environment, i->name, 0, topLabel, 0 );
-    print( _environment, NULL, 1 );
+    print( _environment, NULL, 1, 0 );
 
     variable_move( _environment, h->name, j->name );
     locate( _environment, x->name, NULL );
     cpu_label( _environment, lineLabel );
         variable_move( _environment, w->name, i->name );
         cpu_label( _environment, edgeLabel );
-            print( _environment, ch->name, 0 );
+            print( _environment, ch->name, 0, 0 );
             variable_decrement( _environment, i->name );
             variable_compare_and_branch_const( _environment, i->name, 0, edgeLabel, 0 );
-            print( _environment, NULL, 1 );
+            print( _environment, NULL, 1, 0 );
         variable_decrement( _environment, j->name );
         variable_compare_and_branch_const( _environment, j->name, 0, lineLabel, 0 );
 
     locate( _environment, x->name, NULL );
     variable_move( _environment, w->name, i->name );
     cpu_label( _environment, bottomLabel );
-        print( _environment, ch->name, 0 );
+        print( _environment, ch->name, 0, 0 );
         variable_decrement( _environment, i->name );
         variable_compare_and_branch_const( _environment, i->name, 0, bottomLabel, 0 );
 
