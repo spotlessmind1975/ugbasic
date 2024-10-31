@@ -2328,17 +2328,32 @@ void vdcz_text( Environment * _environment, char * _text, char * _text_size, int
     outline1("LD A, (%s)", _text_size);
     outline0("LD C, A");
 
-    if ( _environment->currentMode != TILEMAP_MODE_STANDARD ) {
-        deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm);
-        deploy( vScroll, src_hw_vdcz_vscroll_asm );
-        deploy( clsGraphic, src_hw_vdcz_cls_graphic_asm );
-        deploy( textEncodedAtGraphic, src_hw_vdcz_text_at_graphic_asm );
-        outline0("CALL TEXTATBITMAPMODE");
+    if ( _raw ) {
+        if ( _environment->currentMode != TILEMAP_MODE_STANDARD ) {
+            deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm);
+            deploy( vScroll, src_hw_vdcz_vscroll_asm );
+            deploy( clsGraphic, src_hw_vdcz_cls_graphic_asm );
+            deploy( textEncodedAtGraphicRaw, src_hw_vdcz_text_at_graphic_raw_asm );
+            outline0("CALL TEXTATBITMAPMODERAW");
+        } else {
+            deploy( vScrollTextUp, src_hw_vdcz_vscroll_text_up_asm );
+            deploy( clsText, src_hw_vdcz_cls_text_asm );
+            deploy( textEncodedAtTextRaw, src_hw_vdcz_text_at_text_raw_asm );
+            outline0("CALL TEXTATTILEMODERAW");
+        }
     } else {
-        deploy( vScrollTextUp, src_hw_vdcz_vscroll_text_up_asm );
-        deploy( clsText, src_hw_vdcz_cls_text_asm );
-        deploy( textEncodedAtText, src_hw_vdcz_text_at_text_asm );
-        outline0("CALL TEXTATTILEMODE");
+        if ( _environment->currentMode != TILEMAP_MODE_STANDARD ) {
+            deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm);
+            deploy( vScroll, src_hw_vdcz_vscroll_asm );
+            deploy( clsGraphic, src_hw_vdcz_cls_graphic_asm );
+            deploy( textEncodedAtGraphic, src_hw_vdcz_text_at_graphic_asm );
+            outline0("CALL TEXTATBITMAPMODE");
+        } else {
+            deploy( vScrollTextUp, src_hw_vdcz_vscroll_text_up_asm );
+            deploy( clsText, src_hw_vdcz_cls_text_asm );
+            deploy( textEncodedAtText, src_hw_vdcz_text_at_text_asm );
+            outline0("CALL TEXTATTILEMODE");
+        }
     }
 
 
