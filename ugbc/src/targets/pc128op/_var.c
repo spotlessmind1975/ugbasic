@@ -815,7 +815,8 @@ void variable_cleanup( Environment * _environment ) {
         deploy_inplace_preferred( keyboard, src_hw_pc128op_scancode_asm );
     }
     deploy_inplace_preferred( scancode, src_hw_pc128op_scancode_asm );
-    deploy_inplace_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
+    deploy_inplace_preferred( textEncodedAtGraphic, src_hw_ef936x_text_at_asm );
+    deploy_inplace_preferred( textEncodedAtGraphicRaw, src_hw_ef936x_text_at_raw_asm );
 
     outhead0("CODESTART2");
     outline0("LDS #STACKEND");

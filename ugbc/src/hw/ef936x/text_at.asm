@@ -35,11 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTPTR equ $01
-TEXTSIZE equ $03
-TABSTODRAW equ $04
-SCREENCODE equ $08
-
 TEXTATDECODE
     CMPA #$1F
     BHI TEXTATDECODEX1F

@@ -675,7 +675,6 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size, i
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
     deploy( cls, src_hw_ef936x_cls_asm );
-    deploy_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
 
     if( ! _environment->descriptors ) {
         font_descriptors_init( _environment, 0 );
@@ -686,7 +685,13 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size, i
     outline1("LDA %s", _text_size);
     outline0("STA <TEXTSIZE" );
 
-    outline0("JSR TEXTAT");
+    if ( _raw ) {
+        deploy_preferred( textEncodedAtGraphicRaw, src_hw_ef936x_text_at_raw_asm );
+        outline0("JSR TEXTATRAW");
+    } else {
+        deploy_preferred( textEncodedAtGraphic, src_hw_ef936x_text_at_asm );
+        outline0("JSR TEXTAT");
+    }
 
 }
 
