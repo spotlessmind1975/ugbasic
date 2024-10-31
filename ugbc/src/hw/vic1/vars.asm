@@ -235,3 +235,8 @@ CONSOLEHB:    .byte 16        ; <-- calculated (bytes)
 ;
 CONSOLES:     .res 4*8        ; <-- storage for virtual consoles
 CONSOLES2:    .res 4*2        ; <-- storage for memorize / remember
+
+TEXTPTR = $20
+TEXTSIZE = $24
+TABSTODRAW = $36
+SCREENCODE = $2E

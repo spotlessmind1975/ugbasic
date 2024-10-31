@@ -690,7 +690,6 @@ void vic1_text( Environment * _environment, char * _text, char * _text_size, int
     deploy( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
     deploy( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
     deploy( cls, src_hw_vic1_cls_asm );
-    deploy( textEncodedAt, src_hw_vic1_text_at_asm );
 
     outline1("LDA %s", _text);
     outline0("STA TEXTPTR" );
@@ -699,7 +698,13 @@ void vic1_text( Environment * _environment, char * _text, char * _text_size, int
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
 
-    outline0("JSR TEXTAT");
+    if ( _raw ) {
+        deploy( textEncodedAtTextRaw, src_hw_vic1_text_at_raw_asm );
+        outline0("JSR TEXTATRAW");
+    } else {
+        deploy( textEncodedAtText, src_hw_vic1_text_at_asm );
+        outline0("JSR TEXTAT");
+    }
 
 }
 

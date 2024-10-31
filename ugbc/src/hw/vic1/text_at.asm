@@ -35,11 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTPTR = $20
-TEXTSIZE = $24
-TABSTODRAW = $36
-SCREENCODE = $2E
-
 TEXTATDECODE:
     CMP #32
     BCS TEXTATXSP128
