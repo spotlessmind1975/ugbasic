@@ -171,6 +171,11 @@ TIMERMANAGERJMP2AL:
     LD A, IXH
     LD H, A
 
+    ; Disable timer before calling
+
+    LD C, 0
+    CALL TIMERSETSTATUS
+
     CALL TIMERMANAGERJMP
 
     POP DE
@@ -213,7 +218,7 @@ TIMERMANAGERL2:
     PUSH AF
     LD A, B
     CP 8
-    JR NZ, TIMERMANAGERL1
+    JP NZ, TIMERMANAGERL1
     POP AF
     
     ; Finally, restore the actual state of registers
@@ -238,6 +243,8 @@ TIMERMANAGERL2:
 
 ; TIMERSETSTATUS(B,C)
 TIMERSETSTATUS:
+    PUSH AF
+    PUSH BC
     LD A, B
     CP 0
     LD A, 1
@@ -257,6 +264,8 @@ TIMERSETSTATUS1:
     POP AF
     OR B
     LD (TIMERSTATUS), A
+    POP BC
+    POP AF
     RET
 TIMERSETSTATUS0:
     LD A, (TIMERSTATUS)
@@ -265,6 +274,8 @@ TIMERSETSTATUS0:
     XOR $FF
     AND B
     LD (TIMERSTATUS), A
+    POP BC
+    POP AF
     RET
 
 ; TIMERSETCOUNTER(B,IX)
