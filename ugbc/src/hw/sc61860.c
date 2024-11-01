@@ -4016,6 +4016,15 @@ void sc61860_and_8bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
+void sc61860_and_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    op_ldb_direct( _environment, _right );
+    op_lda( _environment, _left );
+    op_andab( _environment );
+    op_stb( _environment, _result );
+
+}
+
 void sc61860_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     sc61860_and_8bit( _environment, _left, _right, _result );

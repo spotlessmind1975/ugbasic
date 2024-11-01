@@ -496,7 +496,10 @@ typedef enum _VariableType {
     VT_DOJOKA = 30,
 
     /** IMAGEREF */
-    VT_IMAGEREF = 31
+    VT_IMAGEREF = 31,
+
+    /** PATH */
+    VT_PATH = 31
 
 } VariableType;
 
@@ -1440,7 +1443,9 @@ typedef struct _Embedded {
     int cpu_logical_or_8bit;
     int cpu_not_8bit;
     int cpu_and_8bit;
+    int cpu_and_8bit_const;
     int cpu_or_8bit;
+    int cpu_or_8bit_const;
     int cpu_xor_8bit;
     int cpu_swap_8bit;
     int cpu_not_16bit;

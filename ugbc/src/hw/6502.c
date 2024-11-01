@@ -4127,6 +4127,21 @@ void cpu6502_and_8bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
+void cpu6502_and_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_and_8bit_const )
+
+        outline1("LDA %s", _left );
+        outline1("AND #$%2.2x", _right );
+        outline1("STA %s", _result);
+
+    no_embedded( cpu_and_8bit_const )
+
+}
+
+
 void cpu6502_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL

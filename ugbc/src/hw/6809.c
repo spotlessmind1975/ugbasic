@@ -3313,6 +3313,20 @@ void cpu6809_and_8bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
+void cpu6809_and_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    inline( cpu_and_8bit )
+
+        MAKE_LABEL
+
+        outline1("LDB %s", _left );
+        outline1("ANDB #$%2.2x", _right );
+        outline1("STB %s", _result);
+
+    no_embedded( cpu_and_8bit )
+
+}
+
 void cpu6809_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     inline( cpu_and_16bit )

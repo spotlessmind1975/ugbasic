@@ -4112,6 +4112,16 @@ void z80_and_8bit( Environment * _environment, char * _left, char * _right, char
 
 }
 
+void z80_and_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD A, (%s)", _left );
+    outline1("OR $%2.2x", _right );
+    outline1("LD (%s), A", _result );
+
+}
+
 void z80_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
