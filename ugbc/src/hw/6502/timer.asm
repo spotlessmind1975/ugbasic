@@ -172,6 +172,11 @@ TIMERMANAGERJMP2AL:
     TYA
     PHA
 
+    ; Disable timer before execution.
+
+    LDY #0
+    JSR TIMERSETSTATUS
+
     JSR TIMERMANAGERJMP
 
     PLA
