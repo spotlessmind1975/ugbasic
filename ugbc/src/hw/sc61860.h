@@ -121,6 +121,7 @@ void sc61860_logical_or_8bit( Environment * _environment, char * _left, char * _
 void sc61860_logical_not_8bit( Environment * _environment, char * _value, char * _result );
 void sc61860_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void sc61860_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
+void sc61860_or_8bit_const( Environment * _environment, char * _left, int _right, char * _result );
 void sc61860_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void sc61860_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result );
 void sc61860_not_8bit( Environment * _environment, char * _value, char * _result );
@@ -430,6 +431,7 @@ void sc61860_float_single_exp( Environment * _environment, char * _value, char *
 #define cpu_logical_not_8bit( _environment, _value,  _result ) sc61860_logical_not_8bit( _environment, _value,  _result )
 #define cpu_and_8bit( _environment, _left, _right,  _result ) sc61860_and_8bit( _environment, _left, _right,  _result )
 #define cpu_or_8bit( _environment, _left, _right,  _result ) sc61860_or_8bit( _environment, _left, _right,  _result )
+#define cpu_or_8bit_const( _environment, _left, _right,  _result ) sc61860_or_8bit_const( _environment, _left, _right,  _result )
 #define cpu_xor_8bit( _environment, _left, _right,  _result ) sc61860_xor_8bit( _environment, _left, _right,  _result )
 #define cpu_xor_8bit_const( _environment, _left, _right,  _result ) sc61860_xor_8bit_const( _environment, _left, _right,  _result )
 #define cpu_not_8bit( _environment, _value,  _result ) sc61860_not_8bit( _environment, _value,  _result )

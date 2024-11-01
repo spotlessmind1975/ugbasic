@@ -4066,6 +4066,17 @@ void sc61860_or_8bit( Environment * _environment, char * _left, char * _right, c
 
 }
 
+void sc61860_or_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    op_ldb_direct( _environment, _right );
+    op_lda( _environment, _left );
+    op_orab( _environment );
+    op_stb( _environment, _result );
+
+}
+
 void sc61860_or_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL

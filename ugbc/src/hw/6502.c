@@ -4205,6 +4205,20 @@ void cpu6502_or_8bit( Environment * _environment, char * _left, char * _right, c
 
 }
 
+void cpu6502_or_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_or_8bit_const )
+
+        outline1("LDA %s", _left );
+        outline1("ORA #$%2.2x", _right );
+        outline1("STA %s", _result);
+
+    no_embedded( cpu_or_8bit_const )
+
+}
+
 void cpu6502_or_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
