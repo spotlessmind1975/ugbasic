@@ -111,9 +111,9 @@ Variable * get_cmove_direct( Environment * _environment, int _x, int _y ) {
 
     Variable * tmp = variable_temporary( _environment, VT_BYTE, "(get_cmove)" );
     cpu_store_8bit( _environment, tmp->realName, ( _x & 0xff ) );
-    z80_move_8bit_indirect_with_offset( _environment, tmp->realName, address->realName, 1 );
+    cpu_move_8bit_indirect_with_offset( _environment, tmp->realName, address->realName, 1 );
     cpu_store_8bit( _environment, tmp->realName, ( _y & 0xff ) );
-    z80_move_8bit_indirect_with_offset( _environment, tmp->realName, address->realName, 2 );
+    cpu_move_8bit_indirect_with_offset( _environment, tmp->realName, address->realName, 2 );
         
     return result;
 
