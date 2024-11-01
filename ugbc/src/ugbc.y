@@ -98,7 +98,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token PROGRAM START JOYX JOYY RETRIES PALETTE1 BLOCK REC HIRES IMPLICIT NULLkw KEYGET NRM NEWLINE WITHOUT TSB
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
-%token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION
+%token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION CLAMP
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -178,6 +178,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> audio_source
 %type <integer> PALETTE1
 %type <string> dojo_functions
+%type <integer> clamp_optional
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -6267,14 +6268,22 @@ after_definition :
         }
     };
 
+clamp_optional : {
+        $$ = 0;
+    }
+    | CLAMP {
+        $$ = 1;
+    };
+
 limits: 
     {
         ((struct _Environment *)_environment)->upperLimit = NULL;
         ((struct _Environment *)_environment)->lowerLimit = NULL;
     }
-    | OP_COMMA expr TO expr {
+    | OP_COMMA expr TO expr clamp_optional {
         ((struct _Environment *)_environment)->upperLimit = $2;
         ((struct _Environment *)_environment)->lowerLimit = $4;
+        ((struct _Environment *)_environment)->clamp = $5;
     };
 
 add_definition :
@@ -6284,22 +6293,22 @@ add_definition :
     | Identifier OP_COMMA OP_HASH const_expr {
         variable_add_inplace( _environment, $1, $4 );
     }
-    | Identifier OP_COMMA expr OP_COMMA expr TO expr {
-        add_complex_vars( _environment, $1, $3, $5, $7 );
+    | Identifier OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
+        add_complex_vars( _environment, $1, $3, $5, $7, $8 );
     }
-    | Identifier OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr {
-        add_complex( _environment, $1, $4, $7, $10 );
+    | Identifier OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr clamp_optional {
+        add_complex( _environment, $1, $4, $7, $10, $11 );
     }
     | OSP Identifier CSP OP_COMMA expr {
         variable_add_inplace_mt( _environment, $2, $5 );
     }
-    | OSP Identifier CSP OP_COMMA expr OP_COMMA expr TO expr {
-        add_complex_mt( _environment, $2, $5, $7, $9 );
+    | OSP Identifier CSP OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
+        add_complex_mt( _environment, $2, $5, $7, $9, $10 );
     }
     | Identifier OP {
         parser_array_init( _environment );
     } indexes CP OP_COMMA expr limits {
-        add_complex_array( _environment, $1, $7, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit );
+        add_complex_array( _environment, $1, $7, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
         parser_array_cleanup( _environment );
     }
     ;

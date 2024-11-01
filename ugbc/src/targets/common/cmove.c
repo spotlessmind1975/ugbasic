@@ -46,7 +46,7 @@ void cmove_direct( Environment * _environment, int _dx, int _dy ) {
         Variable * windowCX = variable_retrieve( _environment, "XCURSYS" );
         Variable * dx = variable_temporary( _environment, VT_SBYTE, "(cmove hz)" );
         variable_store( _environment, dx->name, _dx );
-        add_complex_vars( _environment, windowCX->name, dx->name, consoleX1->name, consoleX2->name );
+        add_complex_vars( _environment, windowCX->name, dx->name, consoleX1->name, consoleX2->name, 1 );
     }
 
     if ( _dy ) {
@@ -55,7 +55,7 @@ void cmove_direct( Environment * _environment, int _dx, int _dy ) {
         Variable * windowCY = variable_retrieve( _environment, "YCURSYS" );
         Variable * dy = variable_temporary( _environment, VT_SBYTE, "(cmove vt)" );
         variable_store( _environment, dy->name, _dy );
-        add_complex_vars( _environment, windowCY->name, dy->name, consoleY1->name, consoleY2->name );
+        add_complex_vars( _environment, windowCY->name, dy->name, consoleY1->name, consoleY2->name, 1 );
     }
 
 }
@@ -101,18 +101,18 @@ void cmove( Environment * _environment, char * _dx, char * _dy ) {
 
     if ( _dx ) {
         Variable * consoleX1 = variable_retrieve( _environment, "CONSOLEX1" );
-        Variable * consoleX2 = variable_sub_const( _environment, variable_retrieve( _environment, "CONSOLEX2" )->name, 1 );
+        Variable * consoleX2 = variable_retrieve( _environment, "CONSOLEX2" );
         Variable * windowCX = variable_retrieve( _environment, "XCURSYS" );
         Variable * dx = variable_retrieve_or_define( _environment, _dx, VT_SBYTE, 0 );
-        add_complex_vars( _environment, windowCX->name, dx->name, consoleX1->name, consoleX2->name );
+        add_complex_vars( _environment, windowCX->name, dx->name, consoleX1->name, consoleX2->name, 1 );
     }
 
     if ( _dy ) {
         Variable * consoleY1 = variable_retrieve( _environment, "CONSOLEY1" );
-        Variable * consoleY2 = variable_sub_const( _environment, variable_retrieve( _environment, "CONSOLEY2" )->name, 1 );
+        Variable * consoleY2 = variable_retrieve( _environment, "CONSOLEY2" );;
         Variable * windowCY = variable_retrieve( _environment, "YCURSYS" );
         Variable * dy = variable_retrieve_or_define( _environment, _dy, VT_SBYTE, 0 );
-        add_complex_vars( _environment, windowCY->name, dy->name, consoleY1->name, consoleY2->name );
+        add_complex_vars( _environment, windowCY->name, dy->name, consoleY1->name, consoleY2->name, 1 );
     }
 
 }

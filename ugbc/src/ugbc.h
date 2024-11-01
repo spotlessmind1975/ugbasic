@@ -2443,6 +2443,8 @@ typedef struct _Environment {
      */
     char * upperLimit;
 
+    int clamp;
+
     /**
      * Current procedure
      */
@@ -4283,10 +4285,10 @@ Variable * parser_casted_numeric( Environment * _environment, VariableType _type
 //----------------------------------------------------------------------------
 
 Variable *              absolute( Environment * _environment, char * _value );
-void                    add_complex( Environment * _environment, char * _variable, int _expression, int _limit_lower, int _limit_upper );
-void                    add_complex_vars( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
-void                    add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
-void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
+void                    add_complex( Environment * _environment, char * _variable, int _expression, int _limit_lower, int _limit_upper, int _clamp );
+void                    add_complex_vars( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp );
+void                    add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp  );
+void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp  );
 char *                  address_displacement( Environment * _environment, char * _address, char * _displacement );
 void                    allow( Environment * _environment );
 Variable *              asciicode( Environment * _environment );

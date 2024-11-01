@@ -103,14 +103,14 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_dec( _environment, underscoreTimer->realName );
     cpu_compare_and_branch_8bit_const( _environment, underscoreTimer->realName, 0, skipColorChangeLabel, 0 );
-    add_complex( _environment, underscore->name, 16, 143, 224 );
+    add_complex( _environment, underscore->name, 16, 143, 224, 0 );
     cpu_store_8bit( _environment, underscoreTimer->realName, 128 );
     cpu_jump( _environment, skipColorChangeLabel );
 
     cpu_label( _environment, graphicalCursor );
     cpu_dec( _environment, underscoreTimer->realName );
     cpu_compare_and_branch_8bit_const( _environment, underscoreTimer->realName, 0, skipColorChangeLabel, 0 );
-    add_complex( _environment, underscore->name, 10, 32, 42 );
+    add_complex( _environment, underscore->name, 10, 32, 42, 0 );
     cpu_store_8bit( _environment, underscoreTimer->realName, 128 );
 
     cpu_label( _environment, skipColorChangeLabel );

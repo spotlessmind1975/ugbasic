@@ -61,7 +61,13 @@ The full syntax takes also two additional parameters: ''min'' and ''max'',
 that are the minimum and maximum value that the variable can take after
 the increment. In other words, the ''var''  is incremented, but its value is 
 "squeezed" between ''min'' and ''max''. If the result of the addition 
-had been greater than ''max'', the level would still have been set to ''max''.
+had been greater than ''max'', the level would be put to ''min''. Otherwise,
+if the ''var'' si less than ''min'', the variable will be set to ''max''.
+
+It is possible to "clamp" the value of ''var'' instead of turn around
+the limits. By using the ''CLAMP'' keyword, you can change the behaviour:
+''var'' will be assigned to ''min'' if a value is lesser than ''min'' and
+to ''max'' if a value is greater than ''max''.
 
 The purpose of this second syntax is to prevent a variable from taking 
 invalid value for your program. It can also help to simulating real-world 
@@ -82,8 +88,15 @@ La sintassi completa prende anche due parametri aggiuntivi: ''min'' e
 ''max'', che sono il valore minimo e massimo che la variabile può 
 assumere dopo l'incremento. In altre parole, la ''variable'' viene 
 incrementata, ma il suo valore viene "compresso" tra ''min'' e ''max''. 
-Se il risultato dell'addizione fosse stato maggiore di ''max'', 
-il livello sarebbe stato comunque impostato su ''max''.
+Se il risultato dell'addizione fosse stato maggiore di ''max'', il 
+valore sarebbe stato impostato su ''min''. Altrimenti, se ''var'' 
+è minore di ''min'', la variabile verrà impostata su ''max''.
+
+È possibile "bloccare" il valore di ''var'' invece di aggirare i 
+limiti. Utilizzando la parola chiave ''CLAMP'', è possibile 
+modificare il comportamento: ''var'' verrà assegnato a ''min'' 
+se un valore è minore di ''min'' e a ''max'' se un valore 
+è maggiore di ''max''.
 
 Lo scopo di questa seconda sintassi è impedire a una variabile di 
 assumere valori non validi per il tuo programma. Può anche aiutare 
@@ -95,16 +108,16 @@ tra due valori. Nei videogiochi, l'uso tipico è quello di limitare
 il punteggio massimo in un gioco o di impedire che un livello di 
 difficoltà superi un certo valore.
 
-@syntax ADD var, expr [, min TO max]
+@syntax ADD var, expr [, min TO max] [CLAMP]
 
 @example ADD y,10
-@example ADD x,42,1 TO 100
+@example ADD x,42,1 TO 100 CLAMP
 
 @usedInExample maths_fast_02.bas
 
 @target all
 </usermanual> */
-void add_complex_vars( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
+void add_complex_vars( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp ) { 
 
     MAKE_LABEL
 
@@ -112,15 +125,25 @@ void add_complex_vars( Environment * _environment, char * _variable, char * _exp
     char greaterThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( greaterThanLabel, "%sg", label );
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf( endLabel, "%se", label );
     
+    outline2("; variable_add_inplace_vars( , %s, %s )", _variable, _expression );
+
     variable_add_inplace_vars( _environment, _variable, _expression );
 
     if ( _limit_lower ) {
+
+        outline2("; variable_less_than( , %s, %s, 0 )", _variable, _limit_lower );
 
         Variable * less = variable_less_than( _environment, _variable, _limit_lower, 0 );
 
         cpu_bveq( _environment, less->realName, greaterThanLabel );
 
-        variable_move( _environment, _limit_upper, _variable );
+        outline2("; variable_move( , %s, %s )", _limit_upper, _variable );
+
+        if ( _clamp ) {
+            variable_move( _environment, _limit_lower, _variable );
+        } else {
+            variable_move( _environment, _limit_upper, _variable );
+        }     
 
         cpu_jump( _environment, endLabel );
 
@@ -132,7 +155,11 @@ void add_complex_vars( Environment * _environment, char * _variable, char * _exp
 
             cpu_bveq( _environment, greater->realName, endLabel );
 
-            variable_move( _environment, _limit_lower, _variable );
+            if ( _clamp ) {
+                variable_move( _environment, _limit_upper, _variable );
+            } else {
+                variable_move( _environment, _limit_lower, _variable );
+            }
 
         }
         
@@ -151,7 +178,7 @@ void add_complex_vars( Environment * _environment, char * _variable, char * _exp
  * @param _limit_lower Lower limit
  * @param _limit_upper Upper limit
  */
-void add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
+void add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp ) { 
 
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
@@ -162,7 +189,7 @@ void add_complex_mt( Environment * _environment, char * _variable, char * _expre
     Variable * value = variable_move_from_array( _environment, array->name );
     parser_array_cleanup( _environment );
 
-    add_complex_vars( _environment, value->name, _expression, _limit_lower, _limit_upper );
+    add_complex_vars( _environment, value->name, _expression, _limit_lower, _limit_upper, _clamp );
 
     parser_array_init( _environment );
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
@@ -184,7 +211,7 @@ void add_complex_mt( Environment * _environment, char * _variable, char * _expre
  * @param _limit_lower Lower limit
  * @param _limit_upper Upper limit
  */
-void add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
+void add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp ) { 
 
     Variable * array = variable_retrieve( _environment, _variable );
     if ( array->type != VT_TARRAY ) {
@@ -192,13 +219,13 @@ void add_complex_array( Environment * _environment, char * _variable, char * _ex
     }
     Variable * value = variable_move_from_array( _environment, array->name );
 
-    add_complex_vars( _environment, value->name, _expression, _limit_lower, _limit_upper );
+    add_complex_vars( _environment, value->name, _expression, _limit_lower, _limit_upper, _clamp );
 
     variable_move_array( _environment, array->name, value->name );
 
 }
 
-void add_complex( Environment * _environment, char * _variable, int _expression, int _limit_lower, int _limit_upper ) { 
+void add_complex( Environment * _environment, char * _variable, int _expression, int _limit_lower, int _limit_upper, int _clamp ) { 
 
     MAKE_LABEL
 
@@ -212,7 +239,11 @@ void add_complex( Environment * _environment, char * _variable, int _expression,
 
     cpu_bveq( _environment, less->realName, greaterThanLabel );
 
-    variable_store( _environment, _variable, _limit_upper );
+    if ( _clamp ) {
+        variable_store( _environment, _variable, _limit_lower );
+    } else {
+        variable_store( _environment, _variable, _limit_upper );
+    }
 
     cpu_jump( _environment, endLabel );
 
@@ -222,7 +253,11 @@ void add_complex( Environment * _environment, char * _variable, int _expression,
 
     cpu_bvneq( _environment, lesser->realName, endLabel );
 
-    variable_store( _environment, _variable, _limit_lower );
+    if ( _clamp ) {
+        variable_store( _environment, _variable, _limit_upper );
+    } else {
+        variable_store( _environment, _variable, _limit_lower );
+    }
 
     cpu_label( _environment, endLabel );
 
