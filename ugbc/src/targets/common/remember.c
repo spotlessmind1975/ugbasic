@@ -81,10 +81,9 @@ void remember( Environment * _environment ) {
     Variable * ycursys = variable_retrieve( _environment, "YCURSYS" );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(consoles)" );
-    cpu_addressof_16bit( _environment, "CONSOLES", address->realName  );
+    cpu_addressof_16bit( _environment, "CONSOLES2", address->realName  );
 
     Variable * actualNumber = variable_temporary( _environment, VT_BYTE, 0 );
-    cpu_addressof_16bit( _environment, "CONSOLES", address->realName  );
     cpu_move_8bit( _environment, "CONSOLEID", actualNumber->realName );
     cpu_math_mul2_const_8bit( _environment, actualNumber->realName, 1, 0 );
     cpu_math_add_16bit_with_8bit( _environment, address->realName, actualNumber->realName, address->realName );
