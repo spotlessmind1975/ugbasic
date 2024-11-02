@@ -89,6 +89,13 @@ VSCROLLTUP:
     ; HL = HL + DE
 
     ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
 
     ; If just one line, we do not scroll!
     LD A, C
