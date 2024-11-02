@@ -98,7 +98,8 @@ char DATATYPE_AS_STRING[][16] = {
     "BIT",
     "MSPRITE",
     "DOJOKA",
-    "IMAGEREF"
+    "IMAGEREF",
+    "PATH"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -1000,6 +1001,8 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         size *= 8;
     } else if ( var->arrayType == VT_IMAGEREF ) {
         size *= 12;
+    } else if ( var->arrayType == VT_PATH ) {
+        size *= 14;
     } else if ( var->arrayType == VT_TILE ) {
         size *= 1;
     } else if ( var->arrayType == VT_TILES ) {
@@ -1112,6 +1115,8 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
             sprintf(name, "Tdoj%d", UNIQUE_ID);
         } else if ( _type == VT_IMAGEREF ) {
             sprintf(name, "Timr%d", UNIQUE_ID);
+        } else if ( _type == VT_PATH ) {
+            sprintf(name, "Tpat%d", UNIQUE_ID);
         } else if ( _type == VT_IMAGE ) {
             sprintf(name, "Timg%d", UNIQUE_ID);
         } else if ( _type == VT_IMAGES ) {
@@ -1141,6 +1146,8 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         } else if ( _type == VT_DOJOKA ) {
             var->locked = 1;
         } else if ( _type == VT_IMAGEREF ) {
+            var->locked = 1;
+        } else if ( _type == VT_PATH ) {
             var->locked = 1;
         } else if ( _type == VT_IMAGE ) {
             var->locked = 1;
@@ -1203,6 +1210,8 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
         sprintf(name, "Tdoj%d", UNIQUE_ID);
     } else if ( _type == VT_IMAGEREF ) {
         sprintf(name, "Timr%d", UNIQUE_ID);
+    } else if ( _type == VT_PATH ) {
+        sprintf(name, "Tpat%d", UNIQUE_ID);
     } else if ( _type == VT_IMAGE ) {
         sprintf(name, "Timg%d", UNIQUE_ID);
     } else if ( _type == VT_IMAGES ) {
@@ -1232,6 +1241,8 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
     } else if ( _type == VT_DOJOKA ) {
         var->locked = 1;
     } else if ( _type == VT_IMAGEREF ) {
+        var->locked = 1;
+    } else if ( _type == VT_PATH ) {
         var->locked = 1;
     } else if ( _type == VT_IMAGE ) {
         var->locked = 1;
@@ -1409,6 +1420,8 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     size *= 8;
                 } else if ( destination->arrayType == VT_IMAGEREF ) {
                     size *= 12;
+                } else if ( destination->arrayType == VT_PATH ) {
+                    size *= 14;
                 } else if ( destination->arrayType == VT_TILE ) {
                     size *= 1;
                 } else if ( destination->arrayType == VT_TILESET ) {
@@ -2929,6 +2942,17 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     break;
                             }
                             break;
+                        case VT_PATH:
+                            switch( target->type ) {
+                                case VT_PATH: {
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 14 );
+                                    break;
+                                }
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    break;
+                            }
+                            break;
                         case VT_IMAGE:
                             switch( target->type ) {
                                 case VT_IMAGE:
@@ -3346,6 +3370,13 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                         target->size = 12;
                     }
                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, 12 );
+                    break;
+                }
+                case VT_PATH: {
+                    if ( target->size == 0 ) {
+                        target->size = 14;
+                    }
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 14 );
                     break;
                 }
                 case VT_SEQUENCE:

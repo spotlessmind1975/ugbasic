@@ -99,7 +99,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
-%token CLR SUBSTRING CLAMP
+%token CLR SUBSTRING CLAMP PATH TRAVEL
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3288,6 +3288,9 @@ exponential_less:
     | IMAGEREF OP Identifier CP {
         $$ = image_ref( _environment, $3 )->name;
     }
+    | CREATE PATH OP optional_x OP_COMMA optional_y TO expr OP_COMMA expr CP {
+        $$ = create_path( _environment, $4, $6, $8, $10  )->name;
+    }
     | VARBANK OP Identifier CP {
         Variable * variable = variable_retrieve( _environment, $3 );
         Variable * bank = variable_temporary( _environment, VT_BYTE, "(bank)");
@@ -6455,6 +6458,9 @@ datatype :
     }
     | IMAGEREF {
         $$ = VT_IMAGEREF;
+    }
+    | PATH {
+        $$ = VT_PATH;
     }
     | MUSIC {
         $$ = VT_MUSIC;
@@ -9719,6 +9725,11 @@ raw_optional :
         $$ = 1;
     };
 
+travel_definition :
+    Identifier TO Identifier OP_COMMA Identifier {
+        travel_path( _environment, $1, $3, $5 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -9830,6 +9841,7 @@ statement2nc:
   | DOJO dojo_definition
   | dojo_definition
   | PRINT print_definition
+  | TRAVEL travel_definition
   | BORDER border_definition
   | PRINT BUFFER print_buffer_definition
   | PRINT BUFFER RAW print_buffer_raw_definition

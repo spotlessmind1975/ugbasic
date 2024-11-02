@@ -499,7 +499,7 @@ typedef enum _VariableType {
     VT_IMAGEREF = 31,
 
     /** PATH */
-    VT_PATH = 31
+    VT_PATH = 32
 
 } VariableType;
 
@@ -1670,6 +1670,8 @@ typedef struct _Deployed {
 
     int draw;
     int bar;
+    int create_path;
+    int travel_path;
 
     Embedded embedded;
 
@@ -4526,6 +4528,7 @@ void                    const_define_string( Environment * _environment, char * 
 void                    const_define_float( Environment * _environment, char * _name, double _value );
 void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
+Variable *              create_path( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1 );
 Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
 void                    cset( Environment * _environment, char * _value );
 
@@ -5013,6 +5016,7 @@ Variable *              tileset_load( Environment * _environment, char * _filena
 Variable *              tilemap_storage( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              tileset_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              tileset_of_vars( Environment * _environment, char * _tilemap );
+void                    travel_path( Environment * _environment, char * _p, char * _x, char * _y );
 
 //----------------------------------------------------------------------------
 // *u*

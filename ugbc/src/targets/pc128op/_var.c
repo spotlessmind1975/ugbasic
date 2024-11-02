@@ -173,6 +173,13 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                         outhead1("%s rzb 12", variable->realName);
                     }   
                     break;
+                case VT_PATH:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 14", variable->realName);
+                    }   
+                    break;
                 case VT_TILEMAP:
                 case VT_TARRAY: {
                     if ( variable->bankAssigned == -1 ) {

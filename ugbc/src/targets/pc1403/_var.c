@@ -73,6 +73,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0", variable->realName);
                     }
                     break;
+                case VT_PATH:
+                    if ( variable->memoryArea ) {
+                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0", variable->realName);
+                    }
+                    break;
                 case VT_WORD:
                 case VT_SWORD:
                 case VT_POSITION:
