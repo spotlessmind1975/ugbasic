@@ -62,7 +62,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_IMAGEREF:
                     outline1("%s: defs 12", variable->realName);
                     break;
-                case VT_path:
+                case VT_PATH:
                     outline1("%s: defs 14", variable->realName);
                     break;
                 case VT_WORD:
