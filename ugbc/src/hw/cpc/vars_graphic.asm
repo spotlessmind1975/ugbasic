@@ -705,3 +705,126 @@ CONSOLECALCULATE2:
     LD (CONSOLEWB), A
 
     RET
+
+
+; Convert a color in range 0..15 to bitmask valid for mode 0
+; Input: 
+;       B = color (0...15)
+;       A = 0 if pixel 0, 1 if pixel 1
+; Output:
+;       A = bitmask value
+
+COLORBITMAPCONVERTERSETCARRY:
+    SCF
+    RET
+
+COLORBITMAPCONVERT0:
+    PUSH BC
+    PUSH DE
+    LD E, 0
+    LD D, 0
+    CP 0
+    JR Z, COLORBITMAPCONVERT0P0
+COLORBITMAPCONVERT0P1:
+    LD E, 1
+COLORBITMAPCONVERT0P0:
+    ; pixel 0 bit 0
+    LD A, B
+    BIT 0, A
+    CALL NZ, COLORBITMAPCONVERTERSETCARRY
+    RL D
+    ; pixel 1 bit 0
+    AND A
+    RL D
+    ; pixel 0 bit 2
+    LD A, B
+    BIT 2, A
+    CALL NZ, COLORBITMAPCONVERTERSETCARRY
+    RL D
+    ; pixel 1 bit 2
+    AND A
+    RL D
+    ; pixel 0 bit 3
+    LD A, B
+    BIT 1, A
+    CALL NZ, COLORBITMAPCONVERTERSETCARRY
+    RL D
+    ; pixel 1 bit 3
+    AND A
+    RL D
+    ; pixel 0 bit 1
+    LD A, B
+    BIT 3, A
+    CALL NZ, COLORBITMAPCONVERTERSETCARRY
+    RL D
+    ; pixel 1 bit 1
+    AND A
+    RL D
+    LD A, E
+    CP $0
+    JR Z, COLORBITMAPCONVERT0DONE
+    SRL D
+COLORBITMAPCONVERT0DONE:
+    LD A, D
+    POP DE
+    POP BC
+    RET
+
+; Convert a color in range 0..3 to bitmask valid for mode 1
+; Input: 
+;       B = color (0...3)
+;       A = 0 if pixel 0, 1 if pixel 1, and so on
+; Output:
+;       A = bitmask value
+
+COLORBITMAPCONVERT1:
+    PUSH BC
+    PUSH DE
+    LD E, A
+    LD D, 0
+    ; pixel 0 (bit 0)	
+    LD A, B
+    BIT 0, A
+    CALL NZ, COLORBITMAPCONVERTERSETCARRY
+    RL D
+    ; pixel 1 (bit 0)	
+    AND A
+    RL D
+    ; pixel 2 (bit 0)	
+    RL D
+    ; pixel 3 (bit 0)	
+    RL D
+    ; pixel 0 (bit 1)	
+    LD A, B
+    BIT 1, A
+    CALL NZ, COLORBITMAPCONVERTERSETCARRY
+    RL D
+    ; pixel 1 (bit 1)	
+    AND A
+    RL D
+    ; pixel 2 (bit 1)	
+    RL D
+    ; pixel 3 (bit 1)
+    RL D
+    LD A, E
+    ; pixel 0
+    CP 0 
+    JR Z, COLORBITMAPCONVERT1DONE
+    ; pixel 1
+    SRL D
+    DEC A
+    JR Z, COLORBITMAPCONVERT1DONE
+    ; pixel 2
+    SRL D
+    DEC A
+    JR Z, COLORBITMAPCONVERT1DONE
+    ; pixel 3
+    SRL D
+COLORBITMAPCONVERT1DONE:
+    LD A, D
+    POP DE
+    POP BC
+    RET
+
+
+
