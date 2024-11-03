@@ -82,3 +82,37 @@ TEXTATSM128:
 TEXTATDECODE0:
     STA SCREENCODE
     RTS
+
+; Read a char from the text buffer to print.
+; Input: TEXTPTR - pointer to the string to print
+;        X - characters left to print
+; Output: TEXTPTR is updated; X is updated
+TEXTATREADCHAR:
+    LDA (TEXTPTR),Y
+    DEX
+    INC TEXTPTR
+    BNE TEXTATREADCHARL1
+    INC TEXTPTR+1
+TEXTATREADCHARL1:
+    RTS
+
+; Parse TAB character.
+; Input: XCURSYS - current X cursor position
+;        TABCOUNT - size of TAB spacing
+; Output: TABSTODRAW - number of characters to skip
+TEXTATTAB:
+    LDA XCURSYS
+TEXTATTAB2:
+    CMP TABCOUNT
+    BCC TEXTATTAB3
+    SEC
+    SBC TABCOUNT
+    JMP TEXTATTAB2
+TEXTATTAB3:
+    STA TMPPTR
+    LDA TABCOUNT
+    SEC
+    SBC TMPPTR
+    STA TABSTODRAW
+    RTS
+
