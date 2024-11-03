@@ -142,36 +142,27 @@ PLOTD:
     RET
 
 PLOTD0:
+
     LD A, E
     AND $01
-    CP 0
-    JR Z, PLOTD00
-    LD A, $55
-    JR PLOTD00X
-PLOTD00:
-    LD A, $aa
-PLOTD00X:
+    LD IYL, A
 
     LD DE, HL
 
-    ; H = bitmask of pixels
     ; B = color index
     ; L = masking against existing pixels / existing pixels 
     ; DE = starting memory location on screen
-    LD H, A
 
-    ; Calculate mask for this pixel component
-    LD A, H
     ; Calculate color components for mask if color was
     ; all 1's ($ff)
     PUSH BC
     LD B, $F
-    CALL CPCVIDEOMUL84
+    LD A, IYL
+    CALL COLORBITMAPCONVERT0
 
     ; Negate it for masking
     XOR $FF
     LD L, A
-
     POP BC
 
     ; Masquerade existing pixels
@@ -180,8 +171,8 @@ PLOTD00X:
     LD L, A
 
     ; Calculate new pixels
-    LD A, H
-    CALL CPCVIDEOMUL84
+    LD A, IYL
+    CALL COLORBITMAPCONVERT0
 
     ; Sum up old and new pixels.
     OR L
@@ -191,20 +182,11 @@ PLOTD00X:
     
     JP PLOTDONE
 
-
 PLOTD1:
-    PUSH HL
-    PUSH DE
-    LD HL, CPCVIDEOBITMASK2
-    LD A, 0
-    LD D, A
+
     LD A, E
     AND $3
-    LD E, A
-    ADD HL, DE
-    LD A, (HL)
-    POP DE
-    POP HL
+    LD IYL, A
 
     LD DE, HL
 
@@ -219,8 +201,9 @@ PLOTD1:
     ; Calculate color components for mask if color was
     ; all 1's ($ff)
     PUSH BC
+    LD A, IYL
     LD B, $3
-    CALL CPCVIDEOMUL82
+    CALL COLORBITMAPCONVERT1
 
     ; Negate it for masking
     XOR $FF
@@ -234,8 +217,8 @@ PLOTD1:
     LD L, A
 
     ; Calculate new pixels
-    LD A, H
-    CALL CPCVIDEOMUL82
+    LD A, IYL
+    CALL COLORBITMAPCONVERT1
 
     ; Sum up old and new pixels.
     OR L
